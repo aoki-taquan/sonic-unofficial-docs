@@ -23806,9 +23806,9 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを確認する必要があります。egress mirror、outer DSCP 書換、packet trimming はこの性質が強い機能です。</p>
+<p><a href="../../../reference/glossary/#term-acl">ACL</a> action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、<a href="../../../reference/glossary/#term-sai">SAI</a> capability と <a href="../../../reference/glossary/#term-orchagent">orchagent</a> の実装が揃っているかを確認する必要があります。egress mirror、outer DSCP 書換、packet trimming はこの性質が強い機能です。</p>
 <h2 id="acl-action-capability">ACL Action Capability<a class="headerlink" href="#acl-action-capability" title="Permanent link">&para;</a></h2>
-<p>SAI は ingress / egress stage ごとに使える ACL action が異なります。SONiC は <code>AclOrch</code> 起動時に SAI へ action capability を問い合わせ、STATE_DB の <code>SWITCH_CAPABILITY</code> に <code>ACL_ACTIONS|&lt;stage&gt;</code> として公開します。<code>acl-loader</code> などの producer は投入前に capability を見て、未対応 action を早く弾けます。</p>
+<p>SAI は ingress / egress stage ごとに使える ACL action が異なります。SONiC は <code>AclOrch</code> 起動時に SAI へ action capability を問い合わせ、<a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の <code>SWITCH_CAPABILITY</code> に <code>ACL_ACTIONS|&lt;stage&gt;</code> として公開します。<code>acl-loader</code> などの producer は投入前に capability を見て、未対応 action を早く弾けます。</p>
 <p>この仕組みは「設定は accepted だが hardware には入らない」という問題を減らします。ただし capability が公開されていても、個別 table type や bind point、ASIC resource の都合で失敗する可能性は残るため、STATE_DB の ACL status と counter も併せて見ます。</p>
 <h2 id="egress-mirror">Egress Mirror<a class="headerlink" href="#egress-mirror" title="Permanent link">&para;</a></h2>
 <p>SAI には ingress mirror と egress mirror の action が分かれて存在します。SONiC では従来の <code>MIRROR_ACTION</code> に加えて、<code>MIRROR_INGRESS_ACTION</code> と <code>MIRROR_EGRESS_ACTION</code> を使い分けます。</p>
@@ -23821,9 +23821,9 @@
 <p>egress mirror は、traffic が出ていく段階での観測が必要なときに使います。ingress table に egress mirror action を書けるか、egress table で mirror できるかは platform 依存なので、capability と test coverage を確認します。</p>
 <h2 id="outer-dscp">Outer DSCP 書換<a class="headerlink" href="#outer-dscp" title="Permanent link">&para;</a></h2>
 <p>encap 後の outer header DSCP を、inner packet の field に基づいて egress で書き換えたい場合、単純な ingress DSCP rewrite では inner DSCP を壊してしまいます。Egress Outer DSCP 書換 ACL は、ingress 側で ACL metadata を付け、egress 側で metadata に match して outer DSCP を設定する設計です。</p>
-<p>ユーザには <code>UNDERLAY_SET_DSCP</code> のような table type に見せ、内部では <code>MARK_META</code> と <code>EGR_SET_DSCP</code> に展開します。この設計は <code>SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA</code> と <code>SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META</code> に依存するため、HLD-only の仕様として読む必要があります。</p>
+<p>ユーザには <code>UNDERLAY_SET_DSCP</code> のような table type に見せ、内部では <code>MARK_META</code> と <code>EGR_SET_DSCP</code> に展開します。この設計は <code>SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA</code> と <code>SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META</code> に依存するため、<a href="../../../reference/glossary/#term-hld">HLD</a>-only の仕様として読む必要があります。</p>
 <h2 id="packet-trimming">Packet Trimming<a class="headerlink" href="#packet-trimming" title="Permanent link">&para;</a></h2>
-<p>Packet Trimming は congestion 時に packet 全体を落とさず、ヘッダと先頭 payload だけ残した trimmed packet を届ける機能です。global 設定、buffer profile、QoS、ACL action が関係します。ACL 側では <code>DISABLE_TRIMMING</code> action により、特定 match の packet を trim 対象から外す設計です。</p>
+<p>Packet Trimming は congestion 時に packet 全体を落とさず、ヘッダと先頭 payload だけ残した trimmed packet を届ける機能です。global 設定、buffer profile、<a href="../../../reference/glossary/#term-qos">QoS</a>、ACL action が関係します。ACL 側では <code>DISABLE_TRIMMING</code> action により、特定 match の packet を trim 対象から外す設計です。</p>
 <p>運用上は packet trimming を ACL の派生 action としてだけ見ると不足します。<code>SWITCH_TRIMMING</code>、<code>BUFFER_PROFILE.packet_trimming</code>、trim 後 DSCP、queue、drop counter の組み合わせで読む必要があります。</p>
 <h2 id="_2">読むときの注意<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>このページで扱う機能は ASIC / SAI の対応差が大きく、既存ページの verification も混在しています。egress mirror capability は code-verified、outer DSCP と packet trimming は HLD-only です。設計判断に使う場合は、該当 platform の STATE_DB capability、syslog、orchagent 実装、SAI 実装を必ず合わせて確認します。</p>
@@ -23867,7 +23867,7 @@
 <tr>
 <td><code>acl-loader</code> (<code>sonic-utilities/acl_loader/</code>)</td>
 <td>python CLI</td>
-<td>DASH / data-plane ACL の JSON loader</td>
+<td><a href="../../../reference/glossary/#term-dash">DASH</a> / data-plane ACL の JSON loader</td>
 </tr>
 </tbody>
 </table>
@@ -23891,7 +23891,7 @@
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_ACL_COUNTER</code></td>
-<td>counter object（COUNTERS_DB 反映）</td>
+<td>counter object（<a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> 反映）</td>
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_POLICER</code></td>
@@ -23899,7 +23899,7 @@
 </tr>
 </tbody>
 </table>
-<p>CoPP / hostif:</p>
+<p><a href="../../../reference/glossary/#term-copp">CoPP</a> / hostif:</p>
 <table>
 <thead>
 <tr>
@@ -23955,7 +23955,7 @@
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ACL / CoPP / Mirror は Redis pub/sub のみ。ZMQ は使用しない（DASH 系は別経路、→ 13 章）。</li>
+<li>ACL / CoPP / Mirror は <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub のみ。ZMQ は使用しない（DASH 系は別経路、→ 13 章）。</li>
 <li>ACL counter は <code>flexcounter</code> の <code>ACL_STAT_COUNTER</code> group が定期 polling し COUNTERS_DB を更新。</li>
 <li>Mirror session の nexthop 解決待ちは <code>MirrorOrch</code> 内 Observer で <code>NeighOrch</code> / <code>RouteOrch</code> の更新を待つ（プロセス内）。</li>
 </ul>
@@ -23963,9 +23963,9 @@
 <ul>
 <li>ACL の <strong>stage / bind point / action / field</strong> の組み合わせは ASIC の TCAM レイアウト依存で、HLD で書ける組み合わせでも <code>STATE_DB:SWITCH_CAPABILITY</code> で許されていないと無効。capability が公開されていない ASIC では確認が困難。</li>
 <li><code>MIRROR_EGRESS</code> action はベンダ依存が大きく、<code>MIRROR_INGRESS</code> のみ実装で <code>MIRROR_EGRESS</code> 未対応の ASIC では egress mirror が黙って ingress mirror に倒れる discrepancy が報告されている。</li>
-<li>CoPP の queue / policer 設定は <code>copp_cfg.json</code> のテンプレートに依存し、CONFIG_DB の動的変更が即時反映されない経路がある（<code>hostcfgd</code> 経由のものは reload が必要）。</li>
+<li>CoPP の queue / policer 設定は <code>copp_cfg.json</code> のテンプレートに依存し、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の動的変更が即時反映されない経路がある（<code>hostcfgd</code> 経由のものは reload が必要）。</li>
 <li>ACL counter は ASIC によって entry per counter か rule per counter かが分かれ、SONiC は両方を抽象化するが、counter clear / reset の挙動が ASIC で違う。</li>
-<li>Mirror session の ERSPAN destination が ECMP の場合、<code>MirrorOrch</code> は単一 nexthop のみ採用し、ECMP の動的 rehash には追従しない。</li>
+<li>Mirror session の ERSPAN destination が <a href="../../../reference/glossary/#term-ecmp">ECMP</a> の場合、<code>MirrorOrch</code> は単一 nexthop のみ採用し、ECMP の動的 rehash には追従しない。</li>
 </ul>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23973,6 +23973,7 @@
 <li><a href="../../../acl-qos/egress-outer-dscp-change-table/">Egress Outer DSCP 書換 ACL</a></li>
 <li><a href="../../../architecture/sonic-packet-trimming/">Packet Trimming</a></li>
 </ul>
+<!-- glossary-links-injected: c4fe9e359764 -->
 
 
 

@@ -23907,20 +23907,20 @@
 <h1 id="sonic-mpls">SONiC の MPLS 基盤<a class="headerlink" href="#sonic-mpls" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>SONiC で MPLS が動く範囲はどこまでか（静的 LSP か、LDP / RSVP-TE まで含むのか）</li>
-<li>per-RIF で MPLS を on/off する設定はどこに入るか</li>
-<li>ラベル経路は kernel → APPL_DB → ASIC のどの経路で流れるか</li>
-<li>CRM や CLI、ASIC リソース監視は何が増えるか</li>
+<li>SONiC で <a href="../../reference/glossary/#term-mpls">MPLS</a> が動く範囲はどこまでか（静的 LSP か、LDP / RSVP-TE まで含むのか）</li>
+<li>per-<a href="../../reference/glossary/#term-rif">RIF</a> で MPLS を on/off する設定はどこに入るか</li>
+<li>ラベル経路は kernel → <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> → ASIC のどの経路で流れるか</li>
+<li><a href="../../reference/glossary/#term-crm">CRM</a> や CLI、ASIC リソース監視は何が増えるか</li>
 </ul>
 <h2 id="lsp">スコープ（静的 LSP 中心）<a class="headerlink" href="#lsp" title="Permanent link">&para;</a></h2>
 <p>SONiC の初期 MPLS 対応は <strong>静的 LSP</strong> を前提に、IPv4/IPv6 routing インフラを MPLS にも拡げる方針<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>per-RIF で MPLS を enable/disable</strong></li>
 <li><strong>Push / Pop / Swap</strong> ラベル操作（implicit-null / explicit-null 対応）</li>
-<li><strong>bulk MPLS in-segment entry の SAI programming</strong></li>
+<li><strong>bulk MPLS in-segment entry の <a href="../../reference/glossary/#term-sai">SAI</a> programming</strong></li>
 <li><strong>CRM</strong> に MPLS 系リソースを統合</li>
 </ol>
-<p>LDP / RSVP-TE 等の動的シグナリングと L3VPN / EVPN-MPLS は <strong>scope 外</strong>（Future Requirements）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>LDP / RSVP-TE 等の動的シグナリングと L3VPN / <a href="../../reference/glossary/#term-evpn">EVPN</a>-MPLS は <strong>scope 外</strong>（Future Requirements）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   KERNEL[Linux kernel&lt;br/&gt;MPLS netlink] --&gt; FPM[fpmsyncd]
@@ -23935,8 +23935,8 @@
   ASIC2 --&gt; SYN</code></pre>
 <p>要点<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>ラベル経路は <strong>kernel → fpmsyncd → APPL_DB</strong> が基本（FRR ldpd / staticd / cRPD 等から流れる）</li>
-<li>IntfMgr は CONFIG_DB の MPLS フラグを APPL_DB へ伝搬</li>
+<li>ラベル経路は <strong>kernel → <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → APPL_DB</strong> が基本（<a href="../../reference/glossary/#term-frr">FRR</a> ldpd / staticd / cRPD 等から流れる）</li>
+<li>IntfMgr は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の MPLS フラグを APPL_DB へ伝搬</li>
 <li>RouteOrch が <code>LABEL_ROUTE_TABLE</code> を読み INSEG_ENTRY 化</li>
 <li><strong>bulk SAI API</strong> で大量 in-segment エントリを効率的に programming</li>
 </ul>
@@ -23976,7 +23976,7 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show mpls
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show mpls route
 </span></code></pre></div>
-<p>CLI 名称は HLD で完全には固定されていない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CLI 名称は <a href="../../reference/glossary/#term-hld">HLD</a> で完全には固定されていない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <table>
@@ -24021,7 +24021,7 @@
 <ul>
 <li><strong>FRR / cRPD</strong>: 動的に静的 LSP を流すには <code>staticd</code> MPLS 拡張または cRPD LDP 等が必要</li>
 <li><strong>CRM</strong>: 新規リソース監視</li>
-<li><strong>EVPN / VXLAN</strong>: MPLS は別 encapsulation（共存はベンダ依存）</li>
+<li><strong>EVPN / <a href="../../reference/glossary/#term-vxlan">VXLAN</a></strong>: MPLS は別 encapsulation（共存はベンダ依存）</li>
 <li><strong>fpmsyncd</strong>: kernel MPLS netlink を APPL_DB に橋渡し</li>
 <li><strong>interface MTU</strong>: MPLS ラベル分 MTU を消費するので隣接と整合</li>
 </ul>
@@ -24052,6 +24052,8 @@
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7255dd3dca3a -->
 
 <div class="footnote">
 <hr />

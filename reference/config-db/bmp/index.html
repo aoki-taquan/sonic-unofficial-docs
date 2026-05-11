@@ -23600,7 +23600,7 @@
 
 <h1 id="bmp">BMP テーブル<a class="headerlink" href="#bmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BGP Monitoring Protocol (BMP, RFC 7854) の <strong>テーブルダンプ機能のオンオフ</strong>を設定するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
+<p><a href="../../glossary/#term-bgp">BGP</a> Monitoring Protocol (BMP, RFC 7854) の <strong>テーブルダンプ機能のオンオフ</strong>を設定するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
 BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<code>BMP</code> テーブルは「どのテーブルダンプ (BGP neighbor / Adj-RIB-In / Adj-RIB-Out) を送るか」のフラグだけを持つ。</p>
 <p><code>openbmpd</code>（BMP collector 側）ではなく、SONiC スイッチ側の BMP exporter を制御する想定。</p>
 <!-- cdb-mermaid -->
@@ -23652,12 +23652,12 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BMP exporter（<code>bmpcfgd</code> 系。BGP container 内のサイドカー）が CONFIG_DB を購読し、FRR の BMP プラグインに反映</li>
+<li>BMP exporter（<code>bmpcfgd</code> 系。BGP container 内のサイドカー）が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<a href="../../glossary/#term-frr">FRR</a> の BMP プラグインに反映</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>BGP_MONITORS</code>（BMP collector 接続定義）</li>
-<li>関連 YANG: <code>sonic-bmp</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bmp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23688,6 +23688,8 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>bmp
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->
 
 <div class="footnote">
 <hr />

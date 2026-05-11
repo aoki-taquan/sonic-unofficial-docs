@@ -23930,7 +23930,7 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。本ページは各機能の出口（show コマンド / DB / ログ）と、よく遭遇する異常パターン、その復旧手順を実例ベースで並べます。</p>
+<p><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing の運用確認は、「設定が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に正しく入ったか」「<a href="../../../reference/glossary/#term-frr">FRR</a> / netlink 経由で APP_DB に渡ったか」「<a href="../../../reference/glossary/#term-sai">SAI</a> / ASIC に programming されたか」の三段を順に追います。本ページは各機能の出口（show コマンド / DB / ログ）と、よく遭遇する異常パターン、その復旧手順を実例ベースで並べます。</p>
 <h2 id="srv6">SRv6<a class="headerlink" href="#srv6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">設定が CONFIG_DB に入ったかの確認<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ redis-cli -n 4 KEYS &quot;SRV6_MY_LOCATORS|*&quot;
@@ -23963,14 +23963,14 @@
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>fc00:0:1:e000::   uN                            zebra         loc1
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>fc00:0:1:e001::   uA (nh fe80::1)               bgp           loc1
 </span></code></pre></div>
-<p>bgpcfgd 経由で <code>vtysh</code> に流れる経路は <a href="../architecture/">アーキテクチャ</a> を参照します。<code>vtysh</code> 側に出ない場合は bgpcfgd ログ（<code>/var/log/syslog</code> 内 <code>bgpcfgd</code> プレフィックス）を見ます。</p>
+<p><a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> 経由で <code>vtysh</code> に流れる経路は <a href="../architecture/">アーキテクチャ</a> を参照します。<code>vtysh</code> 側に出ない場合は bgpcfgd ログ（<code>/var/log/syslog</code> 内 <code>bgpcfgd</code> プレフィックス）を見ます。</p>
 <h3 id="app_db-asic_db-programming">APP_DB / ASIC_DB の programming 確認<a class="headerlink" href="#app_db-asic_db-programming" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ redis-cli -n 0 KEYS &quot;SRV6_MY_SID_TABLE:*&quot;
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>1) &quot;SRV6_MY_SID_TABLE:32:16:16:0:fc00:0:1:e000::&quot;
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_MY_SID_ENTRY:*&quot; | wc -l
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>2
 </span></code></pre></div>
-<p>APP_DB に乗っているのに ASIC_DB に出ない場合、<code>srv6orch</code> の pending queue で止まっている可能性が高いです。<code>docker exec swss supervisorctl tail -f orchagent</code> で <code>SRv6Orch</code> のログを追います。次のいずれかが典型です。</p>
+<p>APP_DB に乗っているのに <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に出ない場合、<code>srv6orch</code> の pending queue で止まっている可能性が高いです。<code>docker exec swss supervisorctl tail -f orchagent</code> で <code>SRv6Orch</code> のログを追います。次のいずれかが典型です。</p>
 <table>
 <thead>
 <tr>
@@ -23998,7 +23998,7 @@
 </tbody>
 </table>
 <h3 id="_2">トラフィック観測<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<p>MySID 単位の counter は phase 機能で、現状の SONiC master では IPv6 forwarding 全体の RIF counter で代用するのが現実的です。</p>
+<p>MySID 単位の counter は phase 機能で、現状の SONiC master では IPv6 forwarding 全体の <a href="../../../reference/glossary/#term-rif">RIF</a> counter で代用するのが現実的です。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ sonic-clear counters
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$ show interfaces counters rif
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    IFACE    RX_OK    RX_BPS    RX_PPS  ...
@@ -24022,7 +24022,7 @@
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a> 16             SR (LDP)    10.0.0.1        17
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a> 17             SR (LDP)    10.0.0.2        Pop Label
 </span></code></pre></div>
-<p>LSP が消えるパターンは多くが LDP / BGP-LU の neighbor down です。<code>vtysh -c "show mpls ldp neighbor"</code> / <code>vtysh -c "show bgp ipv4 labeled-unicast summary"</code> を最初に見ます。</p>
+<p>LSP が消えるパターンは多くが LDP / <a href="../../../reference/glossary/#term-bgp">BGP</a>-LU の neighbor down です。<code>vtysh -c "show mpls ldp neighbor"</code> / <code>vtysh -c "show bgp ipv4 labeled-unicast summary"</code> を最初に見ます。</p>
 <h3 id="app_db-asic_db">APP_DB と ASIC_DB<a class="headerlink" href="#app_db-asic_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ redis-cli -n 0 KEYS &quot;LABEL_ROUTE_TABLE:*&quot; | head
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>1) &quot;LABEL_ROUTE_TABLE:16&quot;
@@ -24048,7 +24048,7 @@
 </span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>admin@sonic:~$ sudo config crm thresholds mpls inseg type percentage
 </span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>admin@sonic:~$ sudo config crm thresholds mpls inseg high 85
 </span></code></pre></div>
-<p>大規模静的 LSP では事前に threshold を設定すると、<code>/var/log/syslog</code> に CRM の警告が出ます。QoS が効かないときは <code>MPLS_TC_TO_TC_MAP</code> → <code>PORT_QOS_MAP</code> の参照を CONFIG_DB から辿ります。</p>
+<p>大規模静的 LSP では事前に threshold を設定すると、<code>/var/log/syslog</code> に <a href="../../../reference/glossary/#term-crm">CRM</a> の警告が出ます。<a href="../../../reference/glossary/#term-qos">QoS</a> が効かないときは <code>MPLS_TC_TO_TC_MAP</code> → <code>PORT_QOS_MAP</code> の参照を CONFIG_DB から辿ります。</p>
 <h2 id="path-tracing">Path Tracing<a class="headerlink" href="#path-tracing" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-show">CONFIG_DB と show<a class="headerlink" href="#config_db-show" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>admin@sonic:~$ show interface path-tracing
@@ -24069,13 +24069,13 @@
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_TEMPLATE3
 </span></code></pre></div>
 <p>probe 生成・回収は SONiC 外側（PT Source / Sink / Regional Collector）の仕事です。SONiC は midpoint として <strong>HbH-PT の MCD を書き足す</strong> だけなので、検証は経路上で実トラフィックをキャプチャして MCD が増えているかを確認するのが手っ取り早いです。</p>
-<p>SRv6 <code>H.Encaps.Red</code> と Path Tracing を併用するときは、外側 IPv6 の HbH-PT が内側にどう写るかが ASIC 実装依存で、HLD の前提と乖離していることがあります（<a href="../../../routing/path-tracing-midpoint/">discrepancy</a> 参照）。</p>
+<p>SRv6 <code>H.Encaps.Red</code> と Path Tracing を併用するときは、外側 IPv6 の HbH-PT が内側にどう写るかが ASIC 実装依存で、<a href="../../../reference/glossary/#term-hld">HLD</a> の前提と乖離していることがあります（<a href="../../../routing/path-tracing-midpoint/">discrepancy</a> 参照）。</p>
 <h2 id="_3">障害切り分けの順序（共通）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>機能を問わず、次の順で潰すと迷いにくくなります。</p>
 <ol>
 <li><strong>CONFIG_DB</strong>: 設定が入っているか（<code>redis-cli -n 4</code>）。</li>
-<li><strong>APP_DB / netlink</strong>: FRR / fpmsyncd / bgpcfgd の中継が動いているか（<code>redis-cli -n 0</code>、<code>vtysh -c "show ..."</code>）。</li>
-<li><strong>ASIC_DB</strong>: orchagent が SAI に投げたか（<code>redis-cli -n 1</code>）。</li>
+<li><strong>APP_DB / netlink</strong>: FRR / <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / bgpcfgd の中継が動いているか（<code>redis-cli -n 0</code>、<code>vtysh -c "show ..."</code>）。</li>
+<li><strong>ASIC_DB</strong>: <a href="../../../reference/glossary/#term-orchagent">orchagent</a> が SAI に投げたか（<code>redis-cli -n 1</code>）。</li>
 <li><strong>ERROR_DB</strong>: SAI が拒否していないか（<code>redis-cli -n 13</code>）。</li>
 <li><strong>ASIC counter / RIF counter</strong>: パケットが本当に流れているか（<code>show interfaces counters rif</code>、<code>show interfaces counters</code>）。</li>
 <li><strong>キャプチャ</strong>: ヘッダ・ラベル・HbH-PT の中身まで降りる（<code>tcpdump</code>、ASIC の port mirror）。</li>
@@ -24112,7 +24112,7 @@
 <td><code>Srv6Orch</code>、<code>MplsRouteOrch</code></td>
 </tr>
 <tr>
-<td>syncd</td>
+<td><a href="../../../reference/glossary/#term-syncd">syncd</a></td>
 <td><code>docker exec syncd supervisorctl tail syncd</code></td>
 <td><code>SAI_STATUS</code>、<code>MY_SID</code>、<code>INSEG</code></td>
 </tr>
@@ -24129,6 +24129,7 @@
 <li><a href="../../04-vrf-ecmp/">VRF / ECMP 章</a>（next-hop / nexthop group の確認）</li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 章</a>（共通の SAI 失敗観察）</li>
 </ul>
+<!-- glossary-links-injected: a98eecda549c -->
 
 
 

@@ -23810,7 +23810,7 @@
 <tr>
 <td><code>config override-config-table</code></td>
 <td>single-ASIC のみ</td>
-<td>multi-ASIC 対応（<a href="https://github.com/sonic-net/sonic-utilities/pull/2738">sonic-utilities #2738</a>）</td>
+<td>multi-ASIC 対応（[<a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> #2738]）</td>
 </tr>
 <tr>
 <td><code>config apply-patch</code></td>
@@ -23847,7 +23847,7 @@
   SAVE[config save &amp;lt;file&amp;gt;] --&gt; AGG[host + 全 asic を集約]
   AGG --&gt; GC</code></pre>
 <h2 id="yang">YANG はどう当てるか<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h2>
-<p>Top に namespace layer が増えたままでは既存 YANG では検証できない。<strong>namespace 単位（host / 各 asic）に分割して既存 YANG で validate</strong> すれば良いという整理<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新フィールドは不要。</p>
+<p>Top に namespace layer が増えたままでは既存 <a href="../../reference/glossary/#term-yang">YANG</a> では検証できない。<strong>namespace 単位（host / 各 asic）に分割して既存 YANG で validate</strong> すれば良いという整理<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新フィールドは不要。</p>
 <h3 id="pros-cons">Pros / Cons<a class="headerlink" href="#pros-cons" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23905,7 +23905,7 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 <ul>
 <li><a href="../../topics/12-multi-asic-voq/operations/">Topics 12 Multi-ASIC / VOQ - operations</a></li>
 <li><a href="../../topics/12-multi-asic-voq/architecture/">Topics 12 Multi-ASIC / VOQ - architecture</a></li>
-<li>関連 HLD: <a href="../1-sonic-on-multi-asic-platforms/">SONiC on Multi-ASIC platforms</a> / <a href="../db-design-for-multi-asic-scenarios/">DB design for multi-ASIC</a></li>
+<li>関連 <a href="../../reference/glossary/#term-hld">HLD</a>: <a href="../1-sonic-on-multi-asic-platforms/">SONiC on Multi-ASIC platforms</a> / <a href="../db-design-for-multi-asic-scenarios/">DB design for multi-ASIC</a></li>
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
@@ -23920,6 +23920,8 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0c9d5bf2f30d -->
 
 <div class="footnote">
 <hr />

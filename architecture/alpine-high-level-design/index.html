@@ -23817,7 +23817,7 @@
     SS -- libsai-grpc --&gt; DP
     SS -- UPM(packet I/O) --&gt; DP
     DP -- KNE links --&gt; Other[他 ALViS / Host]</code></pre>
-<p><code>SwitchStack Container</code> は qemu で SONiC VM を立ち上げ、その内部で全 SONiC コンテナが動く<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> は <strong>gRPC ベースの SAI クライアント</strong> (<code>libsai-grpc</code>) で別 container の dataplane と通信する。CPU port の packet in/out は <strong>UPM (Userspace Packet Module)</strong> が担う。</p>
+<p><code>SwitchStack Container</code> は qemu で SONiC VM を立ち上げ、その内部で全 SONiC コンテナが動く<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> は <strong>gRPC ベースの <a href="../../reference/glossary/#term-sai">SAI</a> クライアント</strong> (<code>libsai-grpc</code>) で別 container の dataplane と通信する。CPU port の packet in/out は <strong>UPM (Userspace Packet Module)</strong> が担う。</p>
 <p><code>ASIC Simulation Container</code> がソフトウェア dataplane。デフォルトは OpenConfig 由来の <strong>Lucius</strong> (lemming プロジェクト)<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。vendor は (1) ASIC sim container イメージ、(2) socket ベースの SAI 実装、(3) UPM、の 3 点を提供すれば差し替え可能。</p>
 <h3 id="2-container_1">2 container にする理由<a class="headerlink" href="#2-container_1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23938,6 +23938,8 @@ reasoning: 2-container 構成と各 container の役割の根拠。
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->
 
 <div class="footnote">
 <hr />

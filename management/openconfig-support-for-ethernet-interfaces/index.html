@@ -23884,7 +23884,7 @@
 </div>
 <h1 id="openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer">OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）<a class="headerlink" href="#openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>openconfig-interfaces</code> / <code>openconfig-if-ethernet</code> / <code>openconfig-if-ip</code> を <strong>REST (RESTCONF) と gNMI</strong> で配信する仕組みを SONiC の Management Framework に追加する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>openconfig-interfaces</code> / <code>openconfig-if-ethernet</code> / <code>openconfig-if-ip</code> を <strong>REST (RESTCONF) と <a href="../../reference/glossary/#term-gnmi">gNMI</a></strong> で配信する仕組みを SONiC の Management Framework に追加する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ポイント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>CLI（KLISH）はスコープ外</strong>。REST と gNMI のみ</li>
@@ -23892,7 +23892,7 @@
 <li>gNMI <strong>subscription</strong> は対象外（GET / SET / DELETE のみ）</li>
 <li>secondary IP 構成は対象外</li>
 <li>既存の <strong>translib App ベース実装を transformer ベース実装に置き換える</strong> 方向性</li>
-<li><strong>CONFIG_DB / APP_DB / STATE_DB / ASIC_DB / COUNTER_DB のスキーマ追加なし</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。OpenConfig YANG → 既存 SONiC YANG への mapping だけで処理する</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> / COUNTER_DB のスキーマ追加なし</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。OpenConfig <a href="../../reference/glossary/#term-yang">YANG</a> → 既存 SONiC YANG への mapping だけで処理する</li>
 </ul>
 <p>実装は <code>sonic-mgmt-common</code> リポジトリの <strong>Management Framework コンテナ</strong>（REST server + gnmi コンテナ）に入る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -24050,7 +24050,7 @@ reasoning: transformer の attribute mapping ルールの根拠。
 <!-- evidence-rendered:end -->
 
 <h3 id="negative">Negative ケース（仕様上は禁止）<a class="headerlink" href="#negative" title="Permanent link">&para;</a></h3>
-<p>HLD の Negative Test Cases から派生する不可操作<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> の Negative Test Cases から派生する不可操作<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>interfaces</code> / <code>interface</code> / <code>interface/name</code> コンテナそのものへの <strong>DELETE 不可</strong></li>
 <li>Ethernet interface への <code>REPLACE</code> 不可（PATCH のみ）</li>
@@ -24106,8 +24106,8 @@ reasoning: transformer の attribute mapping ルールの根拠。
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存 SONiC CLI / <code>config interface ...</code></strong>: KLISH は別経路で同じ CONFIG_DB を変更する。並行設定で競合する場合は最後の write が勝つ</li>
-<li><strong>portsyncd / IntfMgr</strong>: CONFIG_DB の <code>PORT</code> / <code>INTERFACE</code> を監視する既存 daemon。OpenConfig 経由の変更も同経路で APP_DB / kernel に反映される</li>
-<li><strong>SONiC YANG validation (sonic-mgmt-common)</strong>: transformer は SONiC YANG の制約を後段で適用するため、OpenConfig 側で valid でも SONiC YANG 側で reject される可能性</li>
+<li><strong><a href="../../reference/glossary/#term-portsyncd">portsyncd</a> / IntfMgr</strong>: CONFIG_DB の <code>PORT</code> / <code>INTERFACE</code> を監視する既存 daemon。OpenConfig 経由の変更も同経路で APP_DB / kernel に反映される</li>
+<li><strong>SONiC YANG validation (<a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common)</strong>: transformer は SONiC YANG の制約を後段で適用するため、OpenConfig 側で valid でも SONiC YANG 側で reject される可能性</li>
 <li><strong>gNSI Pathz</strong>: 有効化されていれば、OC path 単位で gNMI read/write が認可で絞られる</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24126,6 +24126,8 @@ reasoning: transformer の attribute mapping ルールの根拠。
 - translib App から transformer への移行進捗
 - 重複 IP 検出の実装位置（transformer / SONiC YANG validator）
 -->
+
+<!-- glossary-links-injected: 34da0d5f7679 -->
 
 <div class="footnote">
 <hr />

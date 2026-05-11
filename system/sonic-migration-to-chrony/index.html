@@ -23762,7 +23762,7 @@
 <li><strong>port 123 を listen</strong> する必要があり、interface 追加削除に追従させるのが面倒</li>
 <li>たまに <strong>NTP packet を送らなくなる</strong> 不安定動作</li>
 </ol>
-<p>この HLD は <code>ntpd</code> を <strong>chrony</strong> に置き換え、上記をすべて解消する移行を定める。systemd-timesyncd は SNTP のみで step する仕様のため不採用。</p>
+<p>この <a href="../../reference/glossary/#term-hld">HLD</a> は <code>ntpd</code> を <strong>chrony</strong> に置き換え、上記をすべて解消する移行を定める。systemd-timesyncd は SNTP のみで step する仕様のため不採用。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="chrony">chrony の優位点<a class="headerlink" href="#chrony" title="Permanent link">&para;</a></h3>
 <table>
@@ -23831,7 +23831,7 @@
 <h3 id="sonic-ntpd-chrony">既存 SONiC ntpd → chrony への変更点<a class="headerlink" href="#sonic-ntpd-chrony" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>packaging</strong>: <code>chrony</code> を host に install。<code>ntp</code> / <code>ntpsec</code> を削除</li>
-<li><strong>設定</strong>: <code>/etc/chrony/chrony.conf</code>（テンプレ）+ <code>chrony.keys</code>。CONFIG_DB の <code>NTP</code> / <code>NTP_SERVER</code> から生成</li>
+<li><strong>設定</strong>: <code>/etc/chrony/chrony.conf</code>（テンプレ）+ <code>chrony.keys</code>。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>NTP</code> / <code>NTP_SERVER</code> から生成</li>
 <li><strong>CLI</strong>: 旧 <code>ntpq -p</code> / <code>ntpdate</code> 等は <strong><code>chronyc sources</code>, <code>chronyc tracking</code>, <code>chronyc makestep</code></strong> に置換</li>
 <li><strong>HW RTC</strong>: 従来明示的に <code>hwclock</code> を呼んでいた reboot 経路は、kernel 11min auto-sync があるため <strong>手動 sync 不要</strong>（リーガル枠として残す可能性は別途整理）</li>
 <li><strong>port 123 listen</strong>: 不要（client mode）。NTP server として動かす場合のみ listen 設定</li>
@@ -23901,6 +23901,8 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c5a6ce567024 -->
 
 <div class="footnote">
 <hr />

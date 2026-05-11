@@ -24154,7 +24154,7 @@
 
 <h1 id="clear-sonic-clear">clear (sonic-clear) コマンド<a class="headerlink" href="#clear-sonic-clear" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>実行ファイル名は <code>sonic-clear</code> だが click のエントリ名は <code>cli</code>（<code>/usr/local/bin/sonic-clear</code> 経由で呼ばれる）。<strong>カウンタ系のリセット、ARP/NDP テーブルのフラッシュ、FDB クリア、NAT 統計クリア、PBH カウンタ保存、route flow counter リセット、ASIC/SDK health-event 消去</strong>などをまとめている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>実行ファイル名は <code>sonic-clear</code> だが click のエントリ名は <code>cli</code>（<code>/usr/local/bin/sonic-clear</code> 経由で呼ばれる）。<strong>カウンタ系のリセット、<a href="../../glossary/#term-arp">ARP</a>/<a href="../../glossary/#term-ndp">NDP</a> テーブルのフラッシュ、<a href="../../glossary/#term-fdb">FDB</a> クリア、<a href="../../glossary/#term-nat">NAT</a> 統計クリア、PBH カウンタ保存、route flow counter リセット、ASIC/SDK health-event 消去</strong>などをまとめている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ほとんどのコマンドが <code>portstat</code> / <code>intfstat</code> / <code>queuestat</code> / <code>pfcstat</code> / <code>dropstat</code> / <code>tunnelstat</code> / <code>srv6stat</code> / <code>switchstat</code> / <code>watermarkstat</code> / <code>wredstat</code> / <code>fdbclear</code> / <code>flow_counters_stat</code> / <code>natclear</code> / <code>consutil</code> 等の <strong>C++/python ユーティリティを <code>-c</code> (clear) フラグで呼び出すラッパ</strong>。</p>
 <p><code>clear/main.py</code> の <code>AliasedGroup</code> は <strong>alias 自動補完</strong>（例: <code>st</code> → <code>status</code>）と <code>aliases.ini</code> 読み込みを実装している。</p>
 <h2 id="_2">コマンドツリー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -24205,7 +24205,7 @@
 <h3 id="sonic-clear-ndp-ipaddress-n-namespace"><code>sonic-clear ndp [&lt;ipaddress&gt;] [-n &lt;namespace&gt;]</code><a class="headerlink" href="#sonic-clear-ndp-ipaddress-n-namespace" title="Permanent link">&para;</a></h3>
 <p><code>arp</code> と対称。<code>ip -6</code> 系。</p>
 <h3 id="sonic-clear-counters"><code>sonic-clear counters</code><a class="headerlink" href="#sonic-clear-counters" title="Permanent link">&para;</a></h3>
-<p><code>portstat -c</code> を起動。<code>portstat</code> は COUNTERS_DB の各ポートのスナップショットを <code>/tmp/portstat-&lt;uid&gt;</code> 等にコピーする実装で、表示時の差分計算用ベースラインを更新する。</p>
+<p><code>portstat -c</code> を起動。<code>portstat</code> は <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の各ポートのスナップショットを <code>/tmp/portstat-&lt;uid&gt;</code> 等にコピーする実装で、表示時の差分計算用ベースラインを更新する。</p>
 <h3 id="sonic-clear-rifcounters-interface"><code>sonic-clear rifcounters [&lt;interface&gt;]</code><a class="headerlink" href="#sonic-clear-rifcounters-interface" title="Permanent link">&para;</a></h3>
 <p><code>intfstat -c [-i &lt;interface&gt;]</code>。Routed Interface (L3 SVI / sub-interface) の RX/TX を扱う。</p>
 <h3 id="sonic-clear-queuecounters"><code>sonic-clear queuecounters</code><a class="headerlink" href="#sonic-clear-queuecounters" title="Permanent link">&para;</a></h3>
@@ -24221,23 +24221,23 @@
 <h3 id="sonic-clear-headroom-pool-watermark-headroom-pool-persistent-watermark"><code>sonic-clear headroom-pool watermark</code> / <code>headroom-pool persistent-watermark</code><a class="headerlink" href="#sonic-clear-headroom-pool-watermark-headroom-pool-persistent-watermark" title="Permanent link">&para;</a></h3>
 <p><code>watermarkstat -c [-p] -t headroom_pool [-n &lt;ns&gt;]</code>。</p>
 <h3 id="sonic-clear-fdb-all"><code>sonic-clear fdb all</code><a class="headerlink" href="#sonic-clear-fdb-all" title="Permanent link">&para;</a></h3>
-<p><code>fdbclear</code> を起動。<strong><code>fdb port</code> / <code>fdb vlan</code> はソースコード上ではコメントアウト</strong>されており、現行 master では起動できない仕様（必要なら APPL_DB の <code>FDB_TABLE</code> を直接操作する形になる）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>fdbclear</code> を起動。<strong><code>fdb port</code> / <code>fdb vlan</code> はソースコード上ではコメントアウト</strong>されており、現行 master では起動できない仕様（必要なら <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>FDB_TABLE</code> を直接操作する形になる）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="sonic-clear-line-target-d-devicename"><code>sonic-clear line &lt;target&gt; [-d|--devicename]</code><a class="headerlink" href="#sonic-clear-line-target-d-devicename" title="Permanent link">&para;</a></h3>
 <p><code>consutil clear &lt;target&gt;</code> または <code>consutil clear --devicename &lt;target&gt;</code>。コンソールサーバ機能で他プロセスが掴んでいる line を強制解放する。</p>
 <h3 id="sonic-clear-nat-statistics-nat-translations"><code>sonic-clear nat statistics</code> / <code>nat translations</code><a class="headerlink" href="#sonic-clear-nat-statistics-nat-translations" title="Permanent link">&para;</a></h3>
 <p><code>natclear -s</code> / <code>natclear -t</code>。</p>
 <h3 id="sonic-clear-pbh-statistics"><code>sonic-clear pbh statistics</code><a class="headerlink" href="#sonic-clear-pbh-statistics" title="Permanent link">&para;</a></h3>
-<p>実装が他と異なり、<code>PBH_RULE</code> を CONFIG_DB から取得 → <code>read_pbh_counters</code> で現在値を読み出し → <code>serialize_pbh_counters</code> で <code>/tmp</code> 系のファイルへ書き出す。<strong>「クリア」ではなくスナップショット保存</strong>で、表示時の差分計算用ベースラインに使う。</p>
+<p>実装が他と異なり、<code>PBH_RULE</code> を <a href="../../glossary/#term-config_db">CONFIG_DB</a> から取得 → <code>read_pbh_counters</code> で現在値を読み出し → <code>serialize_pbh_counters</code> で <code>/tmp</code> 系のファイルへ書き出す。<strong>「クリア」ではなくスナップショット保存</strong>で、表示時の差分計算用ベースラインに使う。</p>
 <h3 id="sonic-clear-flowcnt-trap"><code>sonic-clear flowcnt-trap</code><a class="headerlink" href="#sonic-clear-flowcnt-trap" title="Permanent link">&para;</a></h3>
-<p><code>flow_counters_stat -c -t trap</code>。CoPP trap 名ごとのカウンタをリセット。</p>
+<p><code>flow_counters_stat -c -t trap</code>。<a href="../../glossary/#term-copp">CoPP</a> trap 名ごとのカウンタをリセット。</p>
 <h3 id="sonic-clear-flowcnt-route-pattern-prefix-pattern-route-prefix"><code>sonic-clear flowcnt-route [pattern &lt;prefix-pattern&gt;] [route &lt;prefix&gt;]</code><a class="headerlink" href="#sonic-clear-flowcnt-route-pattern-prefix-pattern-route-prefix" title="Permanent link">&para;</a></h3>
-<p>サブコマンド省略時は全 route flow counter をクリア。<code>pattern &lt;pattern&gt;</code> でワイルドカード絞り、<code>route &lt;prefix&gt;</code> で 1 prefix 指定。<code>--vrf</code> で VRF/VNET 指定可能。</p>
+<p>サブコマンド省略時は全 route flow counter をクリア。<code>pattern &lt;pattern&gt;</code> でワイルドカード絞り、<code>route &lt;prefix&gt;</code> で 1 prefix 指定。<code>--vrf</code> で <a href="../../glossary/#term-vrf">VRF</a>/<a href="../../glossary/#term-vnet">VNET</a> 指定可能。</p>
 <h3 id="sonic-clear-asic-sdk-health-event-n-namespace"><code>sonic-clear asic-sdk-health-event [-n &lt;namespace&gt;]</code><a class="headerlink" href="#sonic-clear-asic-sdk-health-event-n-namespace" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB ではなく <strong>STATE_DB の <code>ASIC_SDK_HEALTH_EVENT_TABLE*</code> キーを namespace ごとに delete</strong> する。multi-ASIC 時に <code>-n</code> 指定で対象 namespace のみ。</p>
+<p>CONFIG_DB ではなく <strong><a href="../../glossary/#term-state_db">STATE_DB</a> の <code>ASIC_SDK_HEALTH_EVENT_TABLE*</code> キーを namespace ごとに delete</strong> する。multi-ASIC 時に <code>-n</code> 指定で対象 namespace のみ。</p>
 <h3 id="sonic-clear-spanning-tree"><code>sonic-clear spanning-tree</code><a class="headerlink" href="#sonic-clear-spanning-tree" title="Permanent link">&para;</a></h3>
 <p><code>clear/stp.py</code> 由来の BPDU 統計クリア / 学習エントリリセット用サブグループ。</p>
 <h2 id="ip-ipv6">ip / ipv6 サブグループ<a class="headerlink" href="#ip-ipv6" title="Permanent link">&para;</a></h2>
-<p><code>cli.add_command(arp)</code> と <code>ip.add_command(arp)</code> の <strong>両方</strong>が呼ばれており、<code>sonic-clear arp</code> と <code>sonic-clear ip arp</code> がエイリアス的に同じ機能を提供する（NDP も同様）。BGP セッションリセット系は <code>routing_stack</code> の値に応じて <code>clear/bgp_quagga_v4.py</code> または <code>clear/bgp_frr_v6.py</code> 等が動的に <code>ip.add_command(bgp)</code> / <code>ipv6.add_command(bgp)</code> を実行する。</p>
+<p><code>cli.add_command(arp)</code> と <code>ip.add_command(arp)</code> の <strong>両方</strong>が呼ばれており、<code>sonic-clear arp</code> と <code>sonic-clear ip arp</code> がエイリアス的に同じ機能を提供する（NDP も同様）。<a href="../../glossary/#term-bgp">BGP</a> セッションリセット系は <code>routing_stack</code> の値に応じて <code>clear/bgp_quagga_v4.py</code> または <code>clear/bgp_frr_v6.py</code> 等が動的に <code>ip.add_command(bgp)</code> / <code>ipv6.add_command(bgp)</code> を実行する。</p>
 <h2 id="state_db-config_db">STATE_DB / CONFIG_DB との接点<a class="headerlink" href="#state_db-config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24260,7 +24260,7 @@
 </tr>
 </tbody>
 </table>
-<p>それ以外のコマンドは <strong>kernel neighbor table</strong> や <strong>SAI 経由の SDK 状態</strong> を操作するもので CONFIG_DB は触らない。</p>
+<p>それ以外のコマンドは <strong>kernel neighbor table</strong> や <strong><a href="../../glossary/#term-sai">SAI</a> 経由の SDK 状態</strong> を操作するもので CONFIG_DB は触らない。</p>
 <!-- ref-triangle:start -->
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -24288,6 +24288,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>mac
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 14dca49aeb7d -->
 
 <div class="footnote">
 <hr />

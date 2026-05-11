@@ -23956,7 +23956,7 @@
 
 <h1 id="show-platform">show platform サブコマンド<a class="headerlink" href="#show-platform" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show platform</code> はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・SSD・PCIe・syseeprom・firmware・BMC・leakage）を表示する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>ほとんどのコマンドが <code>psushow</code> / <code>fanshow</code> / <code>tempershow</code> / <code>sensorshow</code> / <code>pcieutil</code> / <code>decode-syseeprom</code> / <code>ssdutil</code> / <code>fwutil</code> / <code>leakageshow</code> などの外部コマンドラッパ</strong>で、CONFIG_DB は読まない。<code>sonic-platform</code> API から取得するのは <code>summary</code> と <code>bmc</code> 系のみ。</p>
+<p><code>show platform</code> はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・SSD・PCIe・syseeprom・firmware・BMC・leakage）を表示する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>ほとんどのコマンドが <code>psushow</code> / <code>fanshow</code> / <code>tempershow</code> / <code>sensorshow</code> / <code>pcieutil</code> / <code>decode-syseeprom</code> / <code>ssdutil</code> / <code>fwutil</code> / <code>leakageshow</code> などの外部コマンドラッパ</strong>で、<a href="../../glossary/#term-config_db">CONFIG_DB</a> は読まない。<code>sonic-platform</code> API から取得するのは <code>summary</code> と <code>bmc</code> 系のみ。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24034,7 +24034,7 @@
 <code>sudo decode-syseeprom -d</code> を実行して、ONIE の TLV フォーマット syseeprom を表示する。</p>
 <h3 id="show-platform-psustatus-i-index-json"><code>show platform psustatus [-i &lt;index&gt;] [--json]</code><a class="headerlink" href="#show-platform-psustatus-i-index-json" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-<code>psushow -s [-i &lt;index&gt;] [-j]</code> を実行。pmon コンテナの psud daemon が STATE_DB に書き込んだ <code>PSU_INFO|PSU&lt;N&gt;</code> を整形表示する（実際のクエリは psushow 側）。</p>
+<code>psushow -s [-i &lt;index&gt;] [-j]</code> を実行。pmon コンテナの psud daemon が <a href="../../glossary/#term-state_db">STATE_DB</a> に書き込んだ <code>PSU_INFO|PSU&lt;N&gt;</code> を整形表示する（実際のクエリは psushow 側）。</p>
 <h3 id="show-platform-ssdhealth-device-verbose-vendor"><code>show platform ssdhealth [&lt;device&gt;] [--verbose] [--vendor]</code><a class="headerlink" href="#show-platform-ssdhealth-device-verbose-vendor" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
 <code>&lt;device&gt;</code> 省略時は <code>platform.json</code> の <code>chassis.disk.device</code> を使う。さらに省略されていれば <code>ssdutil</code> をデフォルトで起動（<code>/host</code> パーティション含むデバイスを対象）。<code>--vendor</code> は ssdutil の <code>-e</code> オプションを付ける。</p>
@@ -24145,6 +24145,8 @@
 <li><a href="../../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

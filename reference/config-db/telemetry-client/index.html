@@ -23639,7 +23639,7 @@
 
 <h1 id="telemetry_client">TELEMETRY_CLIENT テーブル<a class="headerlink" href="#telemetry_client" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>docker-sonic-gnmi</code> (旧 <code>docker-sonic-telemetry</code>) の <strong>dial-out</strong> モードで使う、コレクタ宛のサブスクリプション情報を CONFIG_DB に登録するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>Global</code> (共通設定) と、<code>Subscription</code> / <code>DestinationGroup</code> の 2 種類のエントリリストから成る。</p>
+<p><code>docker-sonic-gnmi</code> (旧 <code>docker-sonic-telemetry</code>) の <strong>dial-out</strong> モードで使う、コレクタ宛のサブスクリプション情報を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に登録するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>Global</code> (共通設定) と、<code>Subscription</code> / <code>DestinationGroup</code> の 2 種類のエントリリストから成る。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23771,7 +23771,7 @@
 <ul>
 <li>関連 CONFIG_DB: <a href="../telemetry/"><code>TELEMETRY</code></a> (dial-in 側設定)</li>
 <li>CLI: 標準 CLI ラッパなし。CONFIG_DB / init_cfg.json で直接設定</li>
-<li>関連 YANG: <code>sonic-telemetry_client</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-telemetry_client</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23804,6 +23804,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>dial-out
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->
 
 <div class="footnote">
 <hr />

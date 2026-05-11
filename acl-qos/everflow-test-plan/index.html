@@ -23840,10 +23840,10 @@
 </div>
 <h1 id="everflow-ingress-egress-mirrorlag-ecmp-ipv6">Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）<a class="headerlink" href="#everflow-ingress-egress-mirrorlag-ecmp-ipv6" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Everflow（SAI mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく <strong>本番に近い構成での functional / negative テスト</strong> を行うプラン<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。LAG・BGP route advertise・ECMP next-hop 変動・neighbor MAC 変更・policer DSCP enforcement を含む。</p>
+<p>Everflow（<a href="../../reference/glossary/#term-sai">SAI</a> mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく <strong>本番に近い構成での functional / negative テスト</strong> を行うプラン<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-lag">LAG</a>・<a href="../../reference/glossary/#term-bgp">BGP</a> route advertise・<a href="../../reference/glossary/#term-ecmp">ECMP</a> next-hop 変動・neighbor MAC 変更・policer DSCP enforcement を含む。</p>
 <p>旧 Everflow テストプランからの拡張点:</p>
 <ul>
-<li><strong>Egress ACL table</strong> と <strong>Egress mirror session</strong> の追加カバレッジ</li>
+<li><strong>Egress <a href="../../reference/glossary/#term-acl">ACL</a> table</strong> と <strong>Egress mirror session</strong> の追加カバレッジ</li>
 <li>ACL rule で <code>IN_PORTS</code> マッチ（既存スクリプトでは未カバー）</li>
 <li>ICMP <code>type</code> / <code>code</code> マッチ</li>
 <li><strong>IPv6 Everflow</strong></li>
@@ -24007,6 +24007,8 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 33e61764da82 -->
 
 <div class="footnote">
 <hr />

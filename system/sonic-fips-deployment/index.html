@@ -23781,7 +23781,7 @@
 <ul>
 <li><strong>runtime で有効化</strong> 可能（再起動なしで control/management plane = sshd / telemetry / restapi を切替）</li>
 <li><strong>enforce mode</strong> は <strong>kernel cmdline</strong> に依存するため、切替に warm/fast-reboot が必須</li>
-<li>状態フラグは <strong><code>/etc/fips/fips_enabled</code></strong>（HLD 表記）/ 実装は <code>/etc/fips/fips_enable</code> という単純なファイル（<code>1</code>/<code>0</code>）</li>
+<li>状態フラグは <strong><code>/etc/fips/fips_enabled</code></strong>（<a href="../../reference/glossary/#term-hld">HLD</a> 表記）/ 実装は <code>/etc/fips/fips_enable</code> という単純なファイル（<code>1</code>/<code>0</code>）</li>
 </ul>
 <p>スコープは SONiC OS v11+ / 202205 / 202211 / master<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2">2 つのモード<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
@@ -23852,7 +23852,7 @@
 </tr>
 <tr>
 <td>runtime <code>enable</code> 変更</td>
-<td>upgrade 完了後 CONFIG_DB 再読み込みで反映</td>
+<td>upgrade 完了後 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 再読み込みで反映</td>
 </tr>
 </tbody>
 </table>
@@ -23883,7 +23883,7 @@
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>enable=true</code> でも sshd が FIPS 化していない → <code>cat /etc/fips/fips_enable</code> が <code>1</code> か host と各 container で確認</li>
-<li>STATE_DB が更新されない → <code>hostcfgd</code> ログ確認</li>
+<li><a href="../../reference/glossary/#term-state_db">STATE_DB</a> が更新されない → <code>hostcfgd</code> ログ確認</li>
 <li>enforce が反映されない → <code>cat /proc/cmdline</code> で kernel cmdline 確認</li>
 <li>upgrade 後に enforce が外れた → 新 image の default を確認</li>
 </ul>
@@ -23893,7 +23893,7 @@
 <tr>
 <th>項目</th>
 <th>HLD 表記</th>
-<th>実装（hostcfgd）</th>
+<th>実装（<a href="../../reference/glossary/#term-hostcfgd">hostcfgd</a>）</th>
 </tr>
 </thead>
 <tbody>
@@ -23917,7 +23917,7 @@
 <p>CONFIG_DB の <code>FIPS|global</code> 表記は HLD どおりで問題なし。</p>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/11494">sonic-buildimage #11494: [TestOnly] Support openssl fips disable openssl fips mod (open)</a> — FIPS 有効/無効切替の長期 open PR。本 HLD の <code>/etc/fips/fips_enabled</code> 制御と直接関連。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/11494">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #11494: [TestOnly] Support openssl fips disable openssl fips mod (open)</a> — FIPS 有効/無効切替の長期 open PR。本 HLD の <code>/etc/fips/fips_enabled</code> 制御と直接関連。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/11205">sonic-buildimage #11205: [sonic-fips] Makefile bugfix (open)</a> — FIPS ビルド系の修正 PR。長期 open で取り込み停滞を示唆。</li>
 <li>FIPS 140-3 全体（140-2 → 140-3 移行）を束ねるトラッキング Issue は確認できず。</li>
 </ul>
@@ -23932,6 +23932,8 @@
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 43901919356e -->
 
 <div class="footnote">
 <hr />

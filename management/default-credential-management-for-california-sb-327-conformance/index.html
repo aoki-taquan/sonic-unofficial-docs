@@ -23862,7 +23862,7 @@
 </div>
 <h1 id="california-sb-327">既定パスワードの初回ログイン強制変更（California SB-327 準拠）<a class="headerlink" href="#california-sb-327" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=201720180SB327">California SB-327</a> は IoT 機器の既定パスワード使用を制限する州法であり、<strong>初回ログイン時にユーザに強制でパスワード変更させる</strong> ことが代表的な準拠手段である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD はこれを SONiC OS で実装する設計を定める。</p>
+<p><a href="https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=201720180SB327">California SB-327</a> は IoT 機器の既定パスワード使用を制限する州法であり、<strong>初回ログイン時にユーザに強制でパスワード変更させる</strong> ことが代表的な準拠手段である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> はこれを SONiC OS で実装する設計を定める。</p>
 <p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>初回ログイン時に既定パスワードの変更を強制</li>
@@ -23873,7 +23873,7 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="linux">利用する Linux 標準ツール<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h3>
-<p>DB / CLI / SAI 変更なし。<strong>Linux 既存機構</strong> で実装する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>DB / CLI / <a href="../../reference/glossary/#term-sai">SAI</a> 変更なし。<strong>Linux 既存機構</strong> で実装する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23954,7 +23954,7 @@
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Remote AAA (LDAP / RADIUS / TACACS+) では動作しない</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。リモート認証はカスタマー責務</li>
+<li><strong>Remote <a href="../../reference/glossary/#term-aaa">AAA</a> (LDAP / RADIUS / TACACS+) では動作しない</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。リモート認証はカスタマー責務</li>
 <li><strong>build flag が必須</strong>。runtime に有効化する CLI / DB は無い</li>
 <li>機能は <strong>Linux native ツール (<code>chage</code> + <code>pam_unix_account.so</code>) に依拠</strong>。これらの挙動が変わると同期が必要</li>
 <li><code>/etc/rc.local</code> の 1st boot 検知ロジックの堅牢性は HLD では明示されていない</li>
@@ -23991,6 +23991,8 @@
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0ada85adabfc -->
 
 <div class="footnote">
 <hr />

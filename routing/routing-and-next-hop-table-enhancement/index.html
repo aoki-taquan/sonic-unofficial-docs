@@ -23818,7 +23818,7 @@
 </div>
 <h1 id="next_hop_group_table-app_db">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離<a class="headerlink" href="#next_hop_group_table-app_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来の SONiC は <code>APP_DB.ROUTE_TABLE</code> 各エントリにネクストホップ情報 (<code>nexthop</code> / <code>ifname</code>) を <strong>直接埋め込んで</strong> いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートで同一情報を APP_DB に書き orchagent でパースするため、メモリと処理時間が二重に重い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>従来の SONiC は <code>APP_DB.ROUTE_TABLE</code> 各エントリにネクストホップ情報 (<code>nexthop</code> / <code>ifname</code>) を <strong>直接埋め込んで</strong> いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートで同一情報を APP_DB に書き <a href="../../reference/glossary/#term-orchagent">orchagent</a> でパースするため、メモリと処理時間が二重に重い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は <strong>APP_DB 側でネクストホップ群を独立テーブルに切り出し</strong>、ルートはそのキー参照だけを持つ形に変える。</p>
 <h2 id="_2">どう動くか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="app_db">スキーマ変更（APP_DB）<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
@@ -23833,7 +23833,7 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  key            = ROUTE_TABLE:&lt;prefix&gt;
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  nexthop_group  = NEXT_HOP_GROUP_TABLE:key   ; 新規。指定時は nexthop/ifname の代替
 </span></code></pre></div>
-<p>キーはアプリ任意の文字列で HLD は命名規則を規定しない。</p>
+<p>キーはアプリ任意の文字列で <a href="../../reference/glossary/#term-hld">HLD</a> は命名規則を規定しない。</p>
 <div class="admonition note">
 <p class="admonition-title">競合ルール</p>
 <p><code>nexthop_group</code> と従来の <code>nexthop</code>/<code>ifname</code> を <strong>両方</strong> 持つエントリは無視される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -23847,11 +23847,11 @@
   SINGLE --&gt; MAP[APP_DB key ↔ SAI ID マップ更新]
   MULTI --&gt; MAP
   MAP --&gt; RT[RouteOrch が参照解決]</code></pre>
-<p>ルート側 <code>RouteOrch</code> は <code>nexthop_group</code> フィールドを見て <code>NhgOrch</code> に SAI OID を問い合わせる。群未到着なら pending リストへ。ハード上限で群作成不能なら <strong>1 メンバ暫定使用</strong> に縮退し、ルートは「暫定形式」通知を受けて pending を維持する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ルート側 <code>RouteOrch</code> は <code>nexthop_group</code> フィールドを見て <code>NhgOrch</code> に <a href="../../reference/glossary/#term-sai">SAI</a> OID を問い合わせる。群未到着なら pending リストへ。ハード上限で群作成不能なら <strong>1 メンバ暫定使用</strong> に縮退し、ルートは「暫定形式」通知を受けて pending を維持する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">参照カウント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>群は参照ルートが残っている間は削除されない。<code>NhgOrch</code> が参照カウントを保持する。<code>orchagent</code> 再起動時は ROUTE_TABLE 更新で回復する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>群は参照ルートが残っている間は削除されない。<code>NhgOrch</code> が参照カウントを保持する。<code>orchagent</code> 再起動時は <a href="../../reference/glossary/#term-route_table">ROUTE_TABLE</a> 更新で回復する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="routeorch">既存 RouteOrch 群との非干渉<a class="headerlink" href="#routeorch" title="Permanent link">&para;</a></h3>
-<p><code>RouteOrch</code> 暗黙管理の既存群（メンバ集合キー）と新 <code>NhgOrch</code> 群（任意キー）は <strong>同一メンバでも別物として ASIC_DB に書かれる</strong>。HLD は「全ルートを旧か新のいずれかに統一」想定<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Fine grained ECMP 群は影響を受けない。</p>
+<p><code>RouteOrch</code> 暗黙管理の既存群（メンバ集合キー）と新 <code>NhgOrch</code> 群（任意キー）は <strong>同一メンバでも別物として <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> に書かれる</strong>。HLD は「全ルートを旧か新のいずれかに統一」想定<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Fine grained <a href="../../reference/glossary/#term-ecmp">ECMP</a> 群は影響を受けない。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/ip/next_hop_group_hld.md#L106-L137 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23876,7 +23876,7 @@ reasoning: 単一/複数メンバ分岐・暫定モード・参照カウント�
 <!-- evidence-rendered:end -->
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>APP_DB スキーマ拡張のため <strong>CONFIG_DB / CLI 変更なし</strong>。書き込むのは外部ルーティングアプリ（カスタム fpmsyncd 等）。<code>show ip route</code> / <code>show ipv6 route</code> は <strong>出力フォーマット不変</strong> が要件で、CLI 側が <code>nexthop_group</code> を解決する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>APP_DB スキーマ拡張のため <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI 変更なし</strong>。書き込むのは外部ルーティングアプリ（カスタム <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 等）。<code>show ip route</code> / <code>show ipv6 route</code> は <strong>出力フォーマット不変</strong> が要件で、CLI 側が <code>nexthop_group</code> を解決する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>NEXT_HOP_GROUP_TABLE:NHG1
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  nexthop = 10.0.0.1,10.0.0.2
@@ -23896,7 +23896,7 @@ reasoning: 単一/複数メンバ分岐・暫定モード・参照カウント�
 <ul>
 <li><strong>Fine grained ECMP</strong>: 既存 fine grained 群は挙動不変<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>Warm boot</strong>: ルート-群対応の維持責務は <strong>アプリ側</strong>。群キーを再起動跨ぎで安定化するか APP_DB から復元すること<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>Fast reboot / BGP graceful restart</strong>: 影響なし</li>
+<li><strong>Fast reboot / <a href="../../reference/glossary/#term-bgp">BGP</a> graceful restart</strong>: 影響なし</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23917,6 +23917,8 @@ reasoning: 単一/複数メンバ分岐・暫定モード・参照カウント�
 <li><a href="../../topics/04-vrf-ecmp/">Topics: VRF / ECMP / RIB-FIB パイプライン</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: fa4061b260ea -->
 
 <div class="footnote">
 <hr />

@@ -23809,7 +23809,7 @@
 <li>import: <code>ietf-inet-types</code>, <code>sonic-bgp-common</code>, <code>sonic-port</code>, <code>sonic-portchannel</code>, <code>sonic-bgp-global</code>, <code>sonic-bgp-peergroup</code></li>
 <li>top container: <code>sonic-bgp-neighbor</code></li>
 </ul>
-<p>SONIC BGP Neighbor<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>SONIC <a href="../../glossary/#term-bgp">BGP</a> Neighbor<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -24013,7 +24013,7 @@
 <td>yes</td>
 <td></td>
 <td>/bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name</td>
-<td>Network-instance/VRF name</td>
+<td>Network-instance/<a href="../../glossary/#term-vrf">VRF</a> name</td>
 </tr>
 <tr>
 <td><code>neighbor</code></td>
@@ -24202,7 +24202,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Enable Bidirectional Forwarding Detection (BFD) for rapid link failure detection on this peer.</td>
+<td>Enable Bidirectional Forwarding Detection (<a href="../../glossary/#term-bfd">BFD</a>) for rapid link failure detection on this peer.</td>
 </tr>
 <tr>
 <td><code>bfd_check_ctrl_plane_failure</code></td>
@@ -24650,7 +24650,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>BGP_NEIGHBOR</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_NEIGHBOR</code></li>
 <li>CONFIG_DB: <code>BGP_NEIGHBOR_AF</code></li>
 <li>CLI: <code>config bgp</code></li>
 </ul>
@@ -24667,7 +24667,7 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BGP neighbor の静的設定。<code>BGP_NEIGHBOR|&lt;addr&gt;</code> を bgpcfgd が FRR neighbor stanza に展開。</li>
+<li>BGP neighbor の静的設定。<code>BGP_NEIGHBOR|&lt;addr&gt;</code> を <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> が <a href="../../glossary/#term-frr">FRR</a> neighbor stanza に展開。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
@@ -24680,6 +24680,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 1187f506dd55 -->
+
 <div class="footnote">
 <hr />
 <ol>

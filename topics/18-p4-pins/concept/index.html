@@ -23850,9 +23850,9 @@
 
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>PINS は SONiC に「外部の SDN コントローラが <strong>P4Runtime gRPC</strong> を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。BGP や orchagent といった従来の制御パスは残ったままで、コントローラが必要なテーブルだけを上書きする設計のため、<code>APPL_DB</code> の従来テーブル群と並んで <code>P4RT_TABLE</code> 系が増えると考えると掴みやすくなります。</p>
+<p><a href="../../../reference/glossary/#term-pins">PINS</a> は SONiC に「外部の SDN コントローラが <strong>P4Runtime gRPC</strong> を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。<a href="../../../reference/glossary/#term-bgp">BGP</a> や <a href="../../../reference/glossary/#term-orchagent">orchagent</a> といった従来の制御パスは残ったままで、コントローラが必要なテーブルだけを上書きする設計のため、<code>APPL_DB</code> の従来テーブル群と並んで <code>P4RT_TABLE</code> 系が増えると考えると掴みやすくなります。</p>
 <h2 id="_2">この章は何のためにあるか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>通常の SONiC ではコントロールプレーンは「switch 内部の daemon が CONFIG_DB / APPL_DB を埋める」前提です。PINS はその前提を一部だけひっくり返し、「外部コントローラが P4Runtime で直接エントリを書く」面を opt-in で追加します。本章は、その違いがどこで効くのか、既存 SONiC とどう同居するのか、どこで責任分界線が引かれるのかを読み解くために用意しています。</p>
+<p>通常の SONiC ではコントロールプレーンは「switch 内部の daemon が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> を埋める」前提です。PINS はその前提を一部だけひっくり返し、「外部コントローラが P4Runtime で直接エントリを書く」面を opt-in で追加します。本章は、その違いがどこで効くのか、既存 SONiC とどう同居するのか、どこで責任分界線が引かれるのかを読み解くために用意しています。</p>
 <p>読み手が最初に持つ疑問は次の 5 つです。本章はこの順で答えます。</p>
 <ol>
 <li>P4 / P4Runtime / PINS は、それぞれ言語・API・実装のどれにあたるのか</li>
@@ -23863,7 +23863,7 @@
 </ol>
 <h2 id="_3">何を解決するか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>SAI 実装差の縮小</strong>: P4 で pipeline を表現することで、ベンダ間 SAI 実装差を「P4Info に対する整合性」として明示化する。</li>
+<li><strong><a href="../../../reference/glossary/#term-sai">SAI</a> 実装差の縮小</strong>: P4 で pipeline を表現することで、ベンダ間 SAI 実装差を「P4Info に対する整合性」として明示化する。</li>
 <li><strong>コントローラ駆動の forwarding</strong>: hyperscaler の SDN コントローラ（例: ONF SD-Fabric、Google 内部コントローラ）が SONiC を SAI ASIC の汎用 backend として扱えるようにする。</li>
 <li><strong>CRUD の確実性</strong>: P4Runtime は CRUD を同期 API として規定する。orchagent の非同期書き込みでは応答に乗らなかった「ASIC に書き込まれた／失敗した」が、<code>APPL_STATE_DB</code> 経由でコントローラに正しく返る。</li>
 </ul>
@@ -23966,7 +23966,7 @@
 <td>OpenFlow は fixed pipeline。P4Runtime は P4Info で pipeline 自体を表現できる。</td>
 </tr>
 <tr>
-<td>gNMI / OpenConfig との違い</td>
+<td><a href="../../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig との違い</td>
 <td>gRPC で switch を制御</td>
 <td>gNMI は <strong>設定 / 状態 / telemetry</strong>、P4Runtime は <strong>forwarding テーブルそのもの</strong>。</td>
 </tr>
@@ -23996,13 +23996,13 @@
 <h2 id="send-to-ingress-packetio">Send to Ingress と PacketIO の違い<a class="headerlink" href="#send-to-ingress-packetio" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>PacketIO</strong>: controller が install した punt flow にマッチしたパケットを <strong>generic netlink</strong> 経由でコントローラに届け、また controller から ASIC への送信も受ける機構。Receive と Transmit の両方を扱う。</li>
-<li><strong>Send to Ingress</strong>: PacketIO の Transmit のうち、<strong>ASIC の ingress pipeline にパケットを再注入する</strong> モード。ECMP / WCMP の判定を ASIC に任せたいケースで使う。専用の <code>SEND_TO_INGRESS_PORT</code> テーブルと SAI hostif で実現する。</li>
+<li><strong>Send to Ingress</strong>: PacketIO の Transmit のうち、<strong>ASIC の ingress pipeline にパケットを再注入する</strong> モード。<a href="../../../reference/glossary/#term-ecmp">ECMP</a> / WCMP の判定を ASIC に任せたいケースで使う。専用の <code>SEND_TO_INGRESS_PORT</code> テーブルと SAI hostif で実現する。</li>
 </ul>
 <p>詳細は <a href="../../../management/packetio/">PacketIO HLD</a> と <a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a> を参照してください。</p>
 <h2 id="_7">他章との境界<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>BGP / 静的 route の通常パスは <a href="../../02-bgp/">02 BGP</a> と <a href="../../04-vrf-ecmp/">04 VRF / ECMP</a> で扱います。本章は同じ宛先を P4Runtime で上書きする場合の責務分界線を示すに留めます。</li>
-<li>ACL / mirror の SONiC ネイティブ実装は <a href="../../07-acl-copp-mirror/">07 ACL / CoPP / Mirror</a> を参照してください。PINS では <code>ACL_TABLE_DEFINITION</code> を P4Info から派生させますが、本章は API 面の違いに集中します。</li>
+<li><a href="../../../reference/glossary/#term-acl">ACL</a> / mirror の SONiC ネイティブ実装は <a href="../../07-acl-copp-mirror/">07 ACL / CoPP / Mirror</a> を参照してください。PINS では <code>ACL_TABLE_DEFINITION</code> を P4Info から派生させますが、本章は API 面の違いに集中します。</li>
 <li>gNMI / OpenConfig は <a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig</a> の章に置きます。「PINS は forwarding テーブル」「gNMI は config/state/telemetry」と覚えると棲み分けが明確です。</li>
 <li>orchagent や SAI の共通設計は <a href="../../20-swss-sai-redis/">20 SWSS / SAI / Redis</a> に集めています。<code>APPL_STATE_DB</code> の位置づけはそちらと合わせて読むと立体的になります。</li>
 </ul>
@@ -24030,6 +24030,7 @@
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 <li><a href="../../10-gnmi-openconfig/">gNMI / gNOI / OpenConfig / YANG</a></li>
 </ul>
+<!-- glossary-links-injected: e366b49e1b86 -->
 
 
 

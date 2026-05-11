@@ -23751,14 +23751,14 @@
 </div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show chassis modules status</code> で DPU の state が <code>Offline</code> / <code>Empty</code> のまま</li>
-<li>DPU 上の DASH service にトラフィックが乗らない</li>
+<li><code>show chassis modules status</code> で <a href="../../glossary/#term-dpu">DPU</a> の state が <code>Offline</code> / <code>Empty</code> のまま</li>
+<li>DPU 上の <a href="../../glossary/#term-dash">DASH</a> service にトラフィックが乗らない</li>
 <li>mid-plane bridge 経由の ping (host → DPU) が落ちる</li>
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>DPU electrical power が startup-pending</strong>: <code>chassisd</code> から起動命令が出ていない / DPU が応答しない</li>
-<li><strong>mid-plane bridge IP の設計不整合</strong>: NPU 側と DPU 側で同一 subnet 期待だが片側のみ設定</li>
+<li><strong>mid-plane bridge IP の設計不整合</strong>: <a href="../../glossary/#term-npu">NPU</a> 側と DPU 側で同一 subnet 期待だが片側のみ設定</li>
 <li><strong>PCIe / management link の障害</strong>: HW 側</li>
 <li><strong>DPU OS イメージが boot 不能</strong>: DPU 内 SONiC が起動途中で stuck</li>
 <li><strong><code>CHASSIS_MODULE|DPU0</code> の admin_status が <code>down</code></strong></li>
@@ -23803,8 +23803,8 @@
 <ul>
 <li>ソフト reset: <code>sudo config chassis modules shutdown DPU0</code> → <code>startup DPU0</code></li>
 <li>chassisd 再起動: <code>sudo systemctl restart pmon</code></li>
-<li>mid-plane bridge を再構成 (CONFIG_DB の <code>MID_PLANE_BRIDGE</code> を minigraph 由来で再生成)</li>
-<li>DPU OS image を再 install（ベンダー手順に従う。SONiC SmartSwitch では <code>dpu-installer</code> 系コマンド）</li>
+<li>mid-plane bridge を再構成 (<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>MID_PLANE_BRIDGE</code> を minigraph 由来で再生成)</li>
+<li>DPU OS image を再 install（ベンダー手順に従う。SONiC <a href="../../glossary/#term-smartswitch">SmartSwitch</a> では <code>dpu-installer</code> 系コマンド）</li>
 <li>HW 障害が疑われる場合は techsupport で chassis 全体を取得し保守依頼</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23814,6 +23814,8 @@
 <li><a href="../../../architecture/smart-switch-database-design/">../../architecture/smart-switch-database-design.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 52050b757b2f -->
+
 <div class="footnote">
 <hr />
 <ol>

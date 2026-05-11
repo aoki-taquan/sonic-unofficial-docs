@@ -23984,8 +23984,8 @@
 </div>
 <h1 id="gearbox-phy-macsec-backend-macsec_supported">Gearbox PHY ごとの MACsec backend 決定（<code>macsec_supported</code>）<a class="headerlink" href="#gearbox-phy-macsec-backend-macsec_supported" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 SAI（gbsyncd）の <code>switch_id</code> に紐づいて管理されている。従来の MACsec orchestration は <strong>「Gearbox ポートなら PHY 側で MACsec オブジェクトを作る」</strong> という固定動作だった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。問題は、PHY SAI が MACsec エンジンを実装していない場合に <strong><code>SAI_STATUS_NOT_IMPLEMENTED</code></strong> が返り、<code>gbsyncd</code> がエラー、orchagent が不安定になる点。</p>
-<p>本 HLD は HWSKU の <code>gearbox_config.json</code> に <strong>PHY ごとの <code>macsec_supported</code>（boolean）</strong> を加え、<code>MACsecOrch</code> がその capability を見て「PHY backend」か「NPU backend（既定 SAI switch）」を <strong>決定論的に選ぶ</strong> ようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。runtime probing やフォールバックは行わない。</p>
+<p>外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 <a href="../../reference/glossary/#term-sai">SAI</a>（gbsyncd）の <code>switch_id</code> に紐づいて管理されている。従来の MACsec orchestration は <strong>「Gearbox ポートなら PHY 側で MACsec オブジェクトを作る」</strong> という固定動作だった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。問題は、PHY SAI が MACsec エンジンを実装していない場合に <strong><code>SAI_STATUS_NOT_IMPLEMENTED</code></strong> が返り、<code>gbsyncd</code> がエラー、<a href="../../reference/glossary/#term-orchagent">orchagent</a> が不安定になる点。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は HWSKU の <code>gearbox_config.json</code> に <strong>PHY ごとの <code>macsec_supported</code>（boolean）</strong> を加え、<code>MACsecOrch</code> がその capability を見て「PHY backend」か「<a href="../../reference/glossary/#term-npu">NPU</a> backend（既定 SAI switch）」を <strong>決定論的に選ぶ</strong> ようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。runtime probing やフォールバックは行わない。</p>
 <p>互換性を保つため、フィールドが無い場合は <strong><code>true</code>（PHY backend）扱い</strong>。既存挙動を壊さない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -24103,7 +24103,7 @@ reasoning: 「フォールバックしない」「不在は true 扱い」とい
 <h3 id="backward-compatibility">Backward Compatibility<a class="headerlink" href="#backward-compatibility" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>macsec_supported</code> は <strong>optional</strong>。指定が無いプラットフォームは従来どおり PHY backend</li>
-<li>CONFIG_DB / APP_DB の意味論は変わらない（追加フィールドのみ）</li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB の意味論は変わらない（追加フィールドのみ）</li>
 <li>ローリングアップグレード安全<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -24117,7 +24117,7 @@ reasoning: 「フォールバックしない」「不在は true 扱い」とい
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>専用 CLI は導入しない。プラットフォームオーナが HWSKU 側 <code>gearbox_config.json</code> で宣言する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD で言及されていない。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>対象は <strong>外部 PHY / Gearbox プラットフォームのみ</strong>。NPU 直結ポートには影響なし</li>
@@ -24153,6 +24153,8 @@ reasoning: 「フォールバックしない」「不在は true 扱い」とい
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ece1ecd2bc09 -->
 
 <div class="footnote">
 <hr />

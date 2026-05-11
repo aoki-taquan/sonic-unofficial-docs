@@ -23802,7 +23802,7 @@
 
 <h1 id="prefix_list-bgp">PREFIX_LIST テーブル (BGP)<a class="headerlink" href="#prefix_list-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BGP のルートフィルタ用 prefix リストを CONFIG_DB に持たせるための簡易テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code> テンプレートで FRR の <code>ip prefix-list</code> / <code>ipv6 prefix-list</code> に展開される。共通ルーティングポリシ用の汎用 <a href="../prefix-set/"><code>PREFIX_SET</code></a> / <code>PREFIX_LIST</code> (sonic-routing-policy-sets) とは別物（こちらは BGP 限定の簡易 entry）。</p>
+<p><a href="../../glossary/#term-bgp">BGP</a> のルートフィルタ用 prefix リストを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に持たせるための簡易テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code> テンプレートで <a href="../../glossary/#term-frr">FRR</a> の <code>ip prefix-list</code> / <code>ipv6 prefix-list</code> に展開される。共通ルーティングポリシ用の汎用 <a href="../prefix-set/"><code>PREFIX_SET</code></a> / <code>PREFIX_LIST</code> (sonic-routing-policy-sets) とは別物（こちらは BGP 限定の簡易 entry）。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23851,7 +23851,7 @@
 </table>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG <code>must</code>: <code>family</code> が <code>IPv6</code> のとき <code>ip-prefix</code> に <code>:</code> を含むこと、<code>IPv4</code> のとき <code>.</code> を含むこと</li>
+<li><a href="../../glossary/#term-yang">YANG</a> <code>must</code>: <code>family</code> が <code>IPv6</code> のとき <code>ip-prefix</code> に <code>:</code> を含むこと、<code>IPv4</code> のとき <code>.</code> を含むこと</li>
 <li>簡易テーブルのため、シーケンス番号や action (permit/deny) は持たない。順序付き / アクション付きが必要なら <code>PREFIX_SET</code> + <code>PREFIX</code> (sonic-routing-policy-sets) を使う</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23889,6 +23889,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip prefix-list&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->
 
 <div class="footnote">
 <hr />

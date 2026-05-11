@@ -23950,14 +23950,14 @@
 </div>
 <h1 id="voq-lagsystem_lag_table-system_lag_id">分散 VOQ シャシでの LAG（<code>SYSTEM_LAG_TABLE</code> と <code>system_lag_id</code>）<a class="headerlink" href="#voq-lagsystem_lag_table-system_lag_id" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>分散 VOQ シャシは <strong>複数 ASIC が独立した SONiC instance</strong> で動き、ASIC 間情報共有は <strong>supervisor 上の <code>CHASSIS_APP_DB</code></strong> で行う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。LAG は全 ASIC で共通に見せる必要があり、本 HLD はその仕組みを定義する。</p>
+<p>分散 <a href="../../reference/glossary/#term-voq">VOQ</a> シャシは <strong>複数 ASIC が独立した SONiC instance</strong> で動き、ASIC 間情報共有は <strong>supervisor 上の <code>CHASSIS_APP_DB</code></strong> で行う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-lag">LAG</a> は全 ASIC で共通に見せる必要があり、本 <a href="../../reference/glossary/#term-hld">HLD</a> はその仕組みを定義する。</p>
 <p>要件と制約<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>メンバは <strong>同一 ASIC に閉じる</strong>（複数 ASIC 跨ぎ LAG は不可）</li>
 <li>別 ASIC で受けたトラフィックを <strong>他 ASIC 上の LAG egress</strong> に出すのは可</li>
-<li>LACP / 動的 LAG / 動的メンバ変更は非 VOQ 機と同等</li>
+<li><a href="../../reference/glossary/#term-lacp">LACP</a> / 動的 LAG / 動的メンバ変更は非 VOQ 機と同等</li>
 </ul>
-<p>VOQ SAI 側の前提<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>VOQ <a href="../../reference/glossary/#term-sai">SAI</a> 側の前提<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>LAG は <strong>全 ASIC SAI で create</strong>、active メンバリストも一致</li>
 <li>SAI は <strong>system port のリスト</strong> をメンバとして受け取れるよう拡張済</li>
@@ -24062,7 +24062,7 @@
 </thead>
 <tbody>
 <tr>
-<td>CONFIG_DB</td>
+<td><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a></td>
 <td><code>PORTCHANNEL</code> / <code>_MEMBER</code> / <code>_INTERFACE</code></td>
 <td>既存スキーマ、変更なし</td>
 </tr>
@@ -24072,7 +24072,7 @@
 <td>system LAG name 生成元</td>
 </tr>
 <tr>
-<td>APPL_DB</td>
+<td><a href="../../reference/glossary/#term-appl_db">APPL_DB</a></td>
 <td><code>LAG_TABLE</code> / <code>LAG_MEMBER_TABLE</code></td>
 <td>local LAG のみ</td>
 </tr>
@@ -24115,7 +24115,7 @@
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/12-multi-asic-voq/concept/">12-multi-asic-voq/concept</a>: VOQ シャシの全体像</li>
-<li><a href="../../topics/06-l2-vlan-lag/internals/">06-l2-vlan-lag/internals</a>: LAG / teamd / portsorch</li>
+<li><a href="../../topics/06-l2-vlan-lag/internals/">06-l2-vlan-lag/internals</a>: LAG / <a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / portsorch</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -24125,6 +24125,8 @@
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3279fa7c3594 -->
 
 <div class="footnote">
 <hr />

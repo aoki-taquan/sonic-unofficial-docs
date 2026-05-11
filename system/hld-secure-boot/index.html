@@ -24056,7 +24056,7 @@
 </tr>
 </tbody>
 </table>
-<p>production スクリプトは <strong>ベンダ各社が自分のフローに合わせて実装</strong> する想定。HLD は dev 用スクリプトのみ供給する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>production スクリプトは <strong>ベンダ各社が自分のフローに合わせて実装</strong> する想定。<a href="../../reference/glossary/#term-hld">HLD</a> は dev 用スクリプトのみ供給する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
   subgraph BUILD[Build Process]
     SRC[shim / grub / vmlinuz / KO]
@@ -24090,7 +24090,7 @@
 <li>production スクリプトは標準提供せず、ベンダ実装が前提</li>
 </ul>
 <h3 id="cli-config_db">CLI / CONFIG_DB<a class="headerlink" href="#cli-config_db" title="Permanent link">&para;</a></h3>
-<p>HLD では具体的な CONFIG_DB / CLI 拡張は <strong>明示されていない</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Secure Boot の有効化は build 時の <code>SB_BUILD</code> と UEFI 側の Setup Mode / User Mode 切替で決まり、ランタイム設定は基本ない。署名済イメージを書き込んで boot するだけ。</p>
+<p>HLD では具体的な <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI 拡張は <strong>明示されていない</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Secure Boot の有効化は build 時の <code>SB_BUILD</code> と UEFI 側の Setup Mode / User Mode 切替で決まり、ランタイム設定は基本ない。署名済イメージを書き込んで boot するだけ。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>該当なし。</p>
@@ -24188,7 +24188,7 @@
 <ul>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/5282">sonic-buildimage #5282: Secure boot (open)</a> — Secure Boot 機能の元 PR。長期 open で部分マージのみ。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/24287">sonic-buildimage #24287: Secureboot: Install boot components in sonic-to-sonic installs for Secure Boot enabled images (open)</a> — sonic-to-sonic upgrade パスでの secureboot 整合性修正 PR (open)。</li>
-<li><a href="https://github.com/sonic-net/sonic-buildimage/issues/24249">sonic-buildimage #24249: Bug: [Trixie] Debian 13 with grub 2.12-9 can't chainload onie with grub 2.04 on secure boot enabled machines (open)</a> — chain of trust の現実装上の制約を示す bug。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/issues/24249">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #24249: Bug: [Trixie] Debian 13 with grub 2.12-9 can't chainload onie with grub 2.04 on secure boot enabled machines (open)</a> — chain of trust の現実装上の制約を示す bug。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -24197,6 +24197,8 @@
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8935cf9724b3 -->
 
 <div class="footnote">
 <hr />

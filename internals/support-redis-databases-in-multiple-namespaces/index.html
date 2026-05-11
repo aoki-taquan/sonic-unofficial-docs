@@ -23962,8 +23962,8 @@
 </div>
 <h1 id="multi-asic-redisdatabase_globaljson-sonicdbconfig">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）<a class="headerlink" href="#multi-asic-redisdatabase_globaljson-sonicdbconfig" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Multi-ASIC SONiC（複数 NPU を持つデバイス）では、各 NPU を <strong>Linux network namespace</strong> で隔離し、その中で <code>swss</code> / <code>syncd</code> / <code>database</code> 等のコンテナを別個に動かす。これにより 1 デバイス内に複数の Redis インスタンスが並走することになる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は次を定義する:</p>
+<p>Multi-ASIC SONiC（複数 <a href="../../reference/glossary/#term-npu">NPU</a> を持つデバイス）では、各 NPU を <strong>Linux network namespace</strong> で隔離し、その中で <code>swss</code> / <code>syncd</code> / <code>database</code> 等のコンテナを別個に動かす。これにより 1 デバイス内に複数の <a href="../../reference/glossary/#term-redis">Redis</a> インスタンスが並走することになる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は次を定義する:</p>
 <ol>
 <li>グローバル Redis（host 側）と NPU 別 Redis の <strong>2 階層構成</strong></li>
 <li>名前空間ごとに独立した <code>database_config.json</code></li>
@@ -23987,7 +23987,7 @@
   GDB -.-&gt; DB0
   GDB -.-&gt; DB1</code></pre>
 <ul>
-<li><strong>Global namespace</strong>: AAA / syslog / ASIC↔interface マッピングのような <strong>システム共通属性</strong> を持つ</li>
+<li><strong>Global namespace</strong>: <a href="../../reference/glossary/#term-aaa">AAA</a> / syslog / ASIC↔interface マッピングのような <strong>システム共通属性</strong> を持つ</li>
 <li><strong>NPU namespace</strong>: その NPU 配下のインタフェース・カウンタ・state 等を持つ</li>
 </ul>
 <p>Single-ASIC の SONiC は「Global = host = 唯一の Redis」として後方互換が取れる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24192,16 +24192,16 @@ reasoning: 異 namespace への接続が Unix socket 必須であることの根
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>異 namespace への TCP 接続は不可</strong>: Unix socket 経由のみ。スクリプト改修時にこの制約を踏まえる必要がある<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>{NS_REF_CNT}</code> は NPU 数と等価前提</strong>: 1 NPU 1 namespace の前提が組み込まれている。SmartSwitch 等の DPU では別の整理が必要<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>{NS_REF_CNT}</code> は NPU 数と等価前提</strong>: 1 NPU 1 namespace の前提が組み込まれている。<a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> 等の <a href="../../reference/glossary/#term-dpu">DPU</a> では別の整理が必要<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>single-ASIC 互換性</strong>: <code>database_global.json</code> を作らない（または <code>INCLUDES</code> が 1 entry のみ）構成で旧来動作を維持する。改修されたクライアントは旧構成でも壊れないこと。</li>
 <li><strong>j2 テンプレで static に展開</strong>: 起動時に NPU 数が確定する前提。動的 NPU 追加は本 HLD のスコープ外。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Multi-ASIC swss / syncd</strong>: 各 namespace で独立に走る。本 HLD は彼らが触る Redis の置き場を整える基盤。</li>
+<li><strong>Multi-ASIC swss / <a href="../../reference/glossary/#term-syncd">syncd</a></strong>: 各 namespace で独立に走る。本 HLD は彼らが触る Redis の置き場を整える基盤。</li>
 <li><strong><code>is_multi_asic</code> 系判定</strong>: <code>sonic-py-common.device_info</code> の関数群と組み合わせて、CLI 各処理が namespace ループを回す。</li>
 <li><strong>VoQ Chassis（<a href="../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/">Chassis DB</a>）</strong>: 別レイヤの「Chassis DB」概念とは混同しないこと。本ページは 1 デバイス内 multi-NPU、Chassis DB はシャーシ全体の supervisor↔linecards。</li>
-<li><strong>gNMI / REST</strong>: クライアントが host で動くなら <code>database_global.json</code> 経由で全 namespace を辿る必要がある。</li>
+<li><strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> / REST</strong>: クライアントが host で動くなら <code>database_global.json</code> 経由で全 namespace を辿る必要がある。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24216,6 +24216,8 @@ reasoning: 異 namespace への接続が Unix socket 必須であることの根
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9bb22471f747 -->
 
 <div class="footnote">
 <hr />

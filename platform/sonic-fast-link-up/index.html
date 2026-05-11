@@ -23929,7 +23929,7 @@
 <li><strong>回復時のみ動作</strong>: 初回はフル EQ、フラップ後の再起動でのみ高速経路を試行</li>
 <li><strong>品質ゲート</strong>: <code>guard_time</code> で BER をチェック、<code>ber_threshold</code> 超過なら full EQ</li>
 <li><strong>3 グローバル + ポート毎 enable</strong>: <code>polling_time</code> / <code>guard_time</code> / <code>ber_threshold</code> をスイッチ全体、<code>fast_linkup</code> をポート毎</li>
-<li><strong>Capability ゲート</strong>: SAI から対応可否とレンジを問合せ、未対応は拒否 or safe no-op</li>
+<li><strong>Capability ゲート</strong>: <a href="../../reference/glossary/#term-sai">SAI</a> から対応可否とレンジを問合せ、未対応は拒否 or safe no-op</li>
 </ol>
 <h2 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -24098,7 +24098,7 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show interfaces fast-linkup status
 </span></code></pre></div>
 <h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-fast-linkup.yang</code> モジュール（<code>SWITCH_FAST_LINKUP.GLOBAL</code> のみ）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ポート側 <code>fast_linkup</code> は <code>sonic-port.yang</code>。動的レンジは YANG ではモデリングせず CLI で STATE_DB を見て検証する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>sonic-fast-linkup.yang</code> モジュール（<code>SWITCH_FAST_LINKUP.GLOBAL</code> のみ）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ポート側 <code>fast_linkup</code> は <code>sonic-port.yang</code>。動的レンジは <a href="../../reference/glossary/#term-yang">YANG</a> ではモデリングせず CLI で <a href="../../reference/glossary/#term-state_db">STATE_DB</a> を見て検証する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;SWITCH_CAPABILITY|switch&#39;</span><span class="w">   </span><span class="c1"># capability 確認</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>switch-fast-linkup<span class="w"> </span>global<span class="w"> </span>--polling-time<span class="w"> </span><span class="m">60</span><span class="w"> </span>--guard-time<span class="w"> </span><span class="m">10</span><span class="w"> </span>--ber<span class="w"> </span><span class="m">12</span>
@@ -24133,6 +24133,8 @@
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: db593ae1fe11 -->
 
 <div class="footnote">
 <hr />

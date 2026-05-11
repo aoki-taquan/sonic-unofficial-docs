@@ -23564,16 +23564,16 @@
 <p>warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「express reboot」、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。</p>
 <h2 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Express reboot</strong>: warm reboot のさらに先にある「ASIC を温存したまま OS だけ swap する」設計。<code>fast-reboot-flow-improvements</code> と <code>express-reboot</code> HLD を組み合わせて、SAI 状態の export / import と syncd の handover を最小ダウンタイムで行う。</li>
+<li><strong>Express reboot</strong>: warm reboot のさらに先にある「ASIC を温存したまま OS だけ swap する」設計。<code>fast-reboot-flow-improvements</code> と <code>express-reboot</code> <a href="../../../reference/glossary/#term-hld">HLD</a> を組み合わせて、<a href="../../../reference/glossary/#term-sai">SAI</a> 状態の export / import と <a href="../../../reference/glossary/#term-syncd">syncd</a> の handover を最小ダウンタイムで行う。</li>
 <li><strong>System-wide warm reboot</strong>: 単一 SONiC instance ではなく、複数 ASIC / chassis 全体を 1 回の手順で warm reboot する。<code>multi-asic-warm-reboot</code> と組み合わせて line card 順序や Supervisor のロールを設計する。</li>
-<li><strong>gNOI 駆動 upgrade</strong>: <code>gnoi.os.Install</code> / <code>Activate</code> で controller から SONiC イメージを投入し、warm/fast reboot を制御 plane から発火。手動 ssh 不要化と監査ログ統合が利点。</li>
-<li><strong>graceful drain &amp; restore</strong>: reboot 前に BGP / BFD を drain し、ECMP から外れた状態で reboot する手順。<code>config bgp shutdown all</code> / <code>reliable-tsa</code> と組合せて切替の transient を避ける。</li>
-<li><strong>Warm reboot 中の orch 状態</strong>: warm-restart 対応 daemon (bgpd, swssconfig, syncd, teamd, lldpd 等) の <code>WARM_RESTART_TABLE</code> ステートマシン。reconciliation timeout の管理が要点。</li>
+<li><strong><a href="../../../reference/glossary/#term-gnoi">gNOI</a> 駆動 upgrade</strong>: <code>gnoi.os.Install</code> / <code>Activate</code> で controller から SONiC イメージを投入し、warm/fast reboot を制御 plane から発火。手動 ssh 不要化と監査ログ統合が利点。</li>
+<li><strong>graceful drain &amp; restore</strong>: reboot 前に <a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-bfd">BFD</a> を drain し、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> から外れた状態で reboot する手順。<code>config bgp shutdown all</code> / <code>reliable-tsa</code> と組合せて切替の transient を避ける。</li>
+<li><strong>Warm reboot 中の orch 状態</strong>: warm-restart 対応 daemon (bgpd, <a href="../../../reference/glossary/#term-swssconfig">swssconfig</a>, syncd, <a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>, lldpd 等) の <code>WARM_RESTART_TABLE</code> ステートマシン。reconciliation timeout の管理が要点。</li>
 <li><strong>2-stage reboot</strong>: kernel kexec → SONiC 初期化 → 経路収束、を時系列で計測し、各 stage の wall clock を切り分けると改善ポイントが見える。</li>
 </ul>
 <h2 id="_2">既知の制約と回避方法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Warm reboot 中の経路 stale</strong>: BGP graceful restart が機能しないと FIB が古いまま残り、収束後にループや誤転送が起こる。FRR 側 GR / LLGR 設定と peer 側互換を必ず確認する。</li>
+<li><strong>Warm reboot 中の経路 stale</strong>: BGP graceful restart が機能しないと FIB が古いまま残り、収束後にループや誤転送が起こる。<a href="../../../reference/glossary/#term-frr">FRR</a> 側 GR / LLGR 設定と peer 側互換を必ず確認する。</li>
 <li><strong>Fast reboot で counter リセット</strong>: fast reboot は ASIC reset を伴うため、<code>COUNTERS_DB</code> の累積値が 0 に戻る。telemetry collector 側で counter rollover として誤検出する事例がある。</li>
 <li><strong>Express reboot の platform 依存</strong>: SAI capability に依存し、対応 ASIC が限られる。実機サポート状況を <code>sonic-platform</code> 配下の sai profile / platform docs と照合する。</li>
 <li><strong>Multi-ASIC reboot の順序</strong>: Supervisor → Line card の順を間違えると Chassis DB の整合が崩れる。<code>config chassis modules shutdown</code> / <code>startup</code> の順序を厳守する。</li>
@@ -23582,11 +23582,11 @@
 <ul>
 <li>Express reboot の community 対応拡大と SAI attribute 標準化が継続テーマ。</li>
 <li>gNOI / gNSI 経由の upgrade orchestration が enterprise 運用で標準化方向。手動手順の自動化と監査トレースの統合が論点。</li>
-<li>Smart switch / DASH 構成 (<a href="../../13-dash-smartswitch/">13</a>) では DPU 側の独立した reboot 経路が追加され、NPU と DPU の協調 reboot の設計が future work。</li>
+<li>Smart switch / <a href="../../../reference/glossary/#term-dash">DASH</a> 構成 (<a href="../../13-dash-smartswitch/">13</a>) では <a href="../../../reference/glossary/#term-dpu">DPU</a> 側の独立した reboot 経路が追加され、<a href="../../../reference/glossary/#term-npu">NPU</a> と DPU の協調 reboot の設計が future work。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc4724">RFC 4724</a> — BGP Graceful Restart</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc4724">RFC 4724</a> — BGP <a href="../../../reference/glossary/#term-graceful-restart">Graceful Restart</a></li>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc9494">RFC 9494</a> — Long-Lived Graceful Restart (LLGR)</li>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc5882">RFC 5882</a> — BFD Generic Application</li>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc8071">RFC 8071</a> — NETCONF Call Home (集中管理参考)</li>
@@ -23596,7 +23596,7 @@
 <ul>
 <li><code>sonic-buildimage</code> で <code>fast-reboot</code> / <code>warm-reboot</code> script の logging / status report 改善 PR が継続。stage ごとの elapsed time 出力で運用デバッグが容易になる。</li>
 <li><code>sonic-swss</code> の orch 群で warm restart reconciliation のタイムアウトと race condition 修正 PR が定期的に入る。</li>
-<li>DASH / SmartSwitch 関連で DPU 独立 reboot のサポート議論が進行中。NPU 側 reboot との同期がどこまで required かは scenario ごとに分岐。</li>
+<li>DASH / <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> 関連で DPU 独立 reboot のサポート議論が進行中。NPU 側 reboot との同期がどこまで required かは scenario ごとに分岐。</li>
 </ul>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23607,6 +23607,7 @@
 <li><a href="../../../system/multi-asic-warm-reboot/">Multi-ASIC warm reboot</a></li>
 <li><a href="../../12-multi-asic-voq/">12 Multi-ASIC / VOQ</a></li>
 </ul>
+<!-- glossary-links-injected: db511538c2a3 -->
 
 
 

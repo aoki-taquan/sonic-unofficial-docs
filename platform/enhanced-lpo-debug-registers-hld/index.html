@@ -23774,7 +23774,7 @@
 </div>
 <h1 id="lpo-vma-oma-per-lane-redis">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）<a class="headerlink" href="#lpo-vma-oma-per-lane-redis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 SerDes の電気信号が直接モジュレータを駆動するため、debug には <strong>TX 側 VMA</strong>（電気振幅）と <strong>RX 側 OMA</strong>（光振幅）の監視が決定的。本 HLD は CMIS LPO 上に <strong>拡張デバッグレジスタ</strong>を新設し、SONiC から Redis に公開する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 SerDes の電気信号が直接モジュレータを駆動するため、debug には <strong>TX 側 VMA</strong>（電気振幅）と <strong>RX 側 OMA</strong>（光振幅）の監視が決定的。本 <a href="../../reference/glossary/#term-hld">HLD</a> は CMIS LPO 上に <strong>拡張デバッグレジスタ</strong>を新設し、SONiC から <a href="../../reference/glossary/#term-redis">Redis</a> に公開する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">拡張レジスタの所在<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>CMIS Page 01h Byte 195 = <code>0x4C</code> (<code>'L'</code>) でモジュールが拡張対応を宣言。Byte 196 で仕様バージョン。実体レジスタは Upper Page <strong>C1h / C2h</strong> に集約。Page 01h Byte 195 != 0x4C のモジュールは従来 CMIS 扱い。</p>
@@ -23891,7 +23891,7 @@
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>xcvrd / TRANSCEIVER_INFO</strong>: 既存スキーマに新 key を追加。テレメトリ / sonic-mgmt の telemetry テスト側の更新が必要</li>
+<li><strong>xcvrd / TRANSCEIVER_INFO</strong>: 既存スキーマに新 key を追加。テレメトリ / <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> の telemetry テスト側の更新が必要</li>
 <li><strong>CmisApi / CCmisApi</strong>: 同階層の sibling</li>
 <li><strong>vendor 個別 PN マッチ</strong>: vendor が増えるほど factory 分岐が増える</li>
 </ul>
@@ -23908,6 +23908,8 @@
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ab90f1e23035 -->
 
 <div class="footnote">
 <hr />

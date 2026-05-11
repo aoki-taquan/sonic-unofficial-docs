@@ -23972,7 +23972,7 @@
 
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ACL（Access Control List）と CoPP（Control Plane Policing）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、<strong>それぞれが解いている問題は別</strong> です。最初にこの 3 つを分けて理解しておかないと、<code>ACL_TABLE</code> / <code>COPP_TRAP</code> / <code>MIRROR_SESSION</code> の使い分けで迷うことになります。</p>
+<p><a href="../../../reference/glossary/#term-acl">ACL</a>（Access Control List）と <a href="../../../reference/glossary/#term-copp">CoPP</a>（Control Plane Policing）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、<strong>それぞれが解いている問題は別</strong> です。最初にこの 3 つを分けて理解しておかないと、<code>ACL_TABLE</code> / <code>COPP_TRAP</code> / <code>MIRROR_SESSION</code> の使い分けで迷うことになります。</p>
 <h2 id="3">この 3 機能は何を解決するか<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23988,7 +23988,7 @@
 </tr>
 <tr>
 <td>CoPP</td>
-<td>ASIC から CPU へ punt される <strong>control plane traffic（BGP / LLDP / ARP / DHCP 等）を policer で守る</strong></td>
+<td>ASIC から CPU へ punt される <strong>control plane traffic（<a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-lldp">LLDP</a> / <a href="../../../reference/glossary/#term-arp">ARP</a> / DHCP 等）を policer で守る</strong></td>
 </tr>
 <tr>
 <td>Mirror</td>
@@ -23996,7 +23996,7 @@
 </tr>
 </tbody>
 </table>
-<p>つまり ACL は「data plane の流量制御 + 分類」、CoPP は「CPU 行きトラフィックの DDoS 防御」、Mirror は「観測 / トラブルシュート用のコピー」が主目的です。3 つは独立した機能ですが、SAI 上では policer / counter / ACL entry など部品を共有します。</p>
+<p>つまり ACL は「data plane の流量制御 + 分類」、CoPP は「CPU 行きトラフィックの DDoS 防御」、Mirror は「観測 / トラブルシュート用のコピー」が主目的です。3 つは独立した機能ですが、<a href="../../../reference/glossary/#term-sai">SAI</a> 上では policer / counter / ACL entry など部品を共有します。</p>
 <h2 id="sonic">SONiC の中での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24008,7 +24008,7 @@
 <tbody>
 <tr>
 <td>Management plane</td>
-<td><code>config acl</code>, <code>acl-loader</code>, CoPP の <code>copp_cfg.j2</code>, <code>MIRROR_SESSION</code> CONFIG_DB</td>
+<td><code>config acl</code>, <code>acl-loader</code>, CoPP の <code>copp_cfg.j2</code>, <code>MIRROR_SESSION</code> <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a></td>
 </tr>
 <tr>
 <td>Control plane</td>
@@ -24040,7 +24040,7 @@
 </tr>
 <tr>
 <td>Stage</td>
-<td><code>ingress</code> / <code>egress</code>。bind 先（PORT / LAG / VLAN / SWITCH）と組み合わさる</td>
+<td><code>ingress</code> / <code>egress</code>。bind 先（PORT / <a href="../../../reference/glossary/#term-lag">LAG</a> / <a href="../../../reference/glossary/#term-vlan">VLAN</a> / SWITCH）と組み合わさる</td>
 </tr>
 <tr>
 <td>Table type</td>
@@ -24102,7 +24102,7 @@
 <h2 id="counter">Counter は何を答えるか<a class="headerlink" href="#counter" title="Permanent link">&para;</a></h2>
 <p>ACL counter は「この rule に何パケット hit したか」に答えます。Trap flow counter は「CPU に punt された trap 種別ごとの量」に答えます。Drop counter は「ASIC がどの drop reason で落としたか」に答えます。同じ drop 調査でも、ACL rule の hit を見たいのか、CPU bound traffic を見たいのか、L2/L3 の不正パケットを見たいのかで入口が変わります。</p>
 <h2 id="p4-dash-acl">P4 / DASH ACL の置き場所<a class="headerlink" href="#p4-dash-acl" title="Permanent link">&para;</a></h2>
-<p>DASH ACL は通常の <code>ACL_TABLE</code> / <code>ACL_RULE</code> と同じ名前空間ではなく、DASH 用 APP_DB テーブルと DASH orch の流れで扱われます。この章では「ACL と似た分類・action 概念を持つ派生領域」として位置付け、詳細は発展トピックから辿ります。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a> ACL は通常の <code>ACL_TABLE</code> / <code>ACL_RULE</code> と同じ名前空間ではなく、DASH 用 APP_DB テーブルと DASH orch の流れで扱われます。この章では「ACL と似た分類・action 概念を持つ派生領域」として位置付け、詳細は発展トピックから辿ります。</p>
 <h2 id="_4">似た / 混同しやすい機能との違い<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24195,7 +24195,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>ACL_TABLE_TYPE</code> を使うと「どの match を許す table を作るか」をユーザ側で定義でき、user-defined table type のサンプルとして DASH や P4 拡張系の HLD が引かれます。詳細は <a href="../../../acl-qos/acl-user-defined-table-type-support/">ACL user-defined table type support</a> を参照してください。</p>
+<p><code>ACL_TABLE_TYPE</code> を使うと「どの match を許す table を作るか」をユーザ側で定義でき、user-defined table type のサンプルとして DASH や P4 拡張系の <a href="../../../reference/glossary/#term-hld">HLD</a> が引かれます。詳細は <a href="../../../acl-qos/acl-user-defined-table-type-support/">ACL user-defined table type support</a> を参照してください。</p>
 <h2 id="stage-bind-point">stage と bind point の組み合わせ<a class="headerlink" href="#stage-bind-point" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   Pkt[受信パケット] --&gt; Ing{Ingress ACL&lt;br/&gt;port/lag/vlan/switch}
@@ -24247,6 +24247,7 @@
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: ab534bf19f1d -->
 
 
 

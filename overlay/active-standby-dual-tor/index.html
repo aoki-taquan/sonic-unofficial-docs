@@ -24166,13 +24166,13 @@
 <li>dual ToR の基本構成と <strong>要件</strong> は？</li>
 <li><strong>誰が</strong> active/standby を判定して切り替えるのか？</li>
 <li><strong>standby ToR で受けたサーバ宛トラフィック</strong> はどう転送されるのか？</li>
-<li><strong>neighbor / ARP / NDP</strong> の特殊扱いはなぜ必要？</li>
+<li><strong>neighbor / <a href="../../reference/glossary/#term-arp">ARP</a> / <a href="../../reference/glossary/#term-ndp">NDP</a></strong> の特殊扱いはなぜ必要？</li>
 <li>y-cable I2C 障害時はどうなる？</li>
 <li><strong>CLI / DB</strong> の最小セットは？</li>
 <li>switchover 遅延を測りたいときに見るテーブルは？</li>
 </ol>
 <h2 id="1">1. 構成と要件<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p><strong>2 台の ToR (UTO / LTO) と 1 台のサーバ NIC を smart y-cable で接続</strong> し、片側を active、もう片側を standby として運用する構成<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>linkmgrd</code> が link health を監視し、不健全を検知すると <strong>standby 側が自発的に active へ昇格</strong> する。standby 側で受けたトラフィックは <strong>IPinIP tunnel</strong> で peer ToR に転送する。</p>
+<p><strong>2 台の ToR (UTO / LTO) と 1 台のサーバ NIC を smart y-cable で接続</strong> し、片側を active、もう片側を standby として運用する構成<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>linkmgrd</code> が link health を監視し、不健全を検知すると <strong>standby 側が自発的に active へ昇格</strong> する。standby 側で受けたトラフィックは <strong><a href="../../reference/glossary/#term-ipinip">IPinIP</a> tunnel</strong> で peer ToR に転送する。</p>
 <p>要件は <strong>「リンク or ToR 障害時に健全な側へ切り替えられること」</strong> に尽きる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ToR ↔ NIC の動作<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -24184,7 +24184,7 @@
 </ul>
 <p>routing 側<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>両 ToR は <strong>同じ VLAN 設定 + 同じ virtual MAC</strong> を保持し T1 に同じ prefix を広告</li>
+<li>両 ToR は <strong>同じ <a href="../../reference/glossary/#term-vlan">VLAN</a> 設定 + 同じ virtual MAC</strong> を保持し T1 に同じ prefix を広告</li>
 <li>同じ port が <strong>両 ToR で active / standby</strong> に分かれる</li>
 <li>standby ToR で受けた server 宛 traffic は <strong>L3 IPinIP tunnel</strong> で peer ToR に転送</li>
 </ul>
@@ -24230,7 +24230,7 @@
 </table>
 <p>IPv4 / IPv6 双方を送るが <strong>判定は IPv4 のみ</strong>。IPv6 はモニタ用で interval が長い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="muxstate-i2c">MuxState (I2C 経由)<a class="headerlink" href="#muxstate-i2c" title="Permanent link">&para;</a></h3>
-<p>y-cable の I2C レジスタ（例: Credo の <code>B132 @ page 4</code>）から MUX 方向を取得<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>MuxActive</code> / <code>MuxStandby</code> / <code>MuxUnknown</code>（I2C 応答なし = cable 故障 / 電源 OFF）。</p>
+<p>y-cable の I2C レジスタ（例: Credo の <code>B132 @ page 4</code>）から <a href="../../reference/glossary/#term-mux">MUX</a> 方向を取得<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>MuxActive</code> / <code>MuxStandby</code> / <code>MuxUnknown</code>（I2C 応答なし = cable 故障 / 電源 OFF）。</p>
 <h3 id="linkmanager">LinkManager 状態遷移表<a class="headerlink" href="#linkmanager" title="Permanent link">&para;</a></h3>
 <p>LinkProber + LinkState + MuxState の合成状態。<strong>standby ToR が能動的に switchover を駆動</strong> する設計（両 ToR が同時に切替を試みるのを防ぐ）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>LinkUp 時:</p>
@@ -24317,15 +24317,15 @@
 <li><code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code> を MuxOrch の next hop として供給</li>
 </ul>
 <h3 id="muxorch">MuxOrch<a class="headerlink" href="#muxorch" title="Permanent link">&para;</a></h3>
-<p>linkmgrd の状態変化を購読し<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> の状態変化を購読し<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>tunnel route 追加 / 削除</li>
-<li><strong>standby port での ingress drop ACL</strong> 追加 / 削除</li>
+<li><strong>standby port での ingress drop <a href="../../reference/glossary/#term-acl">ACL</a></strong> 追加 / 削除</li>
 <li>neighbor entry の取り扱い（後述）</li>
 </ol>
-<p>HLD は neighbor 取扱い 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）を比較するが最終採用案を明示していない。<strong>現行 master は「neighbor + standalone tunnel route」併用案</strong> を採用（後段「実装との乖離 / 補足」参照）。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> は neighbor 取扱い 3 案（route+neighbor 共存 / <a href="../../reference/glossary/#term-orchagent">orchagent</a> delete / ACL redirect）を比較するが最終採用案を明示していない。<strong>現行 master は「neighbor + standalone tunnel route」併用案</strong> を採用（後段「実装との乖離 / 補足」参照）。</p>
 <h3 id="rollback">Rollback 動作<a class="headerlink" href="#rollback" title="Permanent link">&para;</a></h3>
-<p>orchagent が遷移失敗した場合<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: 元状態に rollback → APP_DB に新状態 → ycabled が STATE_DB に書き戻し → orchagent が STATE_DB に <code>unknown</code> を書く → linkmgrd が再判定。orchagent は state 変化に対して <strong>idempotent</strong> であること。</p>
+<p>orchagent が遷移失敗した場合<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: 元状態に rollback → APP_DB に新状態 → ycabled が <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に書き戻し → orchagent が STATE_DB に <code>unknown</code> を書く → linkmgrd が再判定。orchagent は state 変化に対して <strong>idempotent</strong> であること。</p>
 <h2 id="4-neighbor">4. neighbor の特殊扱い<a class="headerlink" href="#4-neighbor" title="Permanent link">&para;</a></h2>
 <p>standby ToR では ARP request が drop されるため、通常の neighbor 学習が成立しない。次の仕掛けを併用する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <h3 id="proxy-arpipv4">Proxy ARP（IPv4）<a class="headerlink" href="#proxy-arpipv4" title="Permanent link">&para;</a></h3>
@@ -24579,7 +24579,7 @@
 <h2 id="_3">干渉する機能<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>linkmgrd</code></strong>: state machine 主体</li>
-<li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>MuxOrch</code> / <code>TunnelOrch</code>)</strong>: SAI 反映 + tunnel + ACL drop</li>
+<li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>MuxOrch</code> / <code>TunnelOrch</code>)</strong>: <a href="../../reference/glossary/#term-sai">SAI</a> 反映 + tunnel + ACL drop</li>
 <li><strong><code>ycabled</code> (旧 <code>xcvrd</code>)</strong>: I2C 経由の MUX 制御</li>
 <li><strong><code>nbrmgrd</code> / <code>arp_update</code> / kernel sysctl</strong>: proxy ARP / GARP / NDP / proxy_ndp / accept_untracked_na</li>
 <li><strong>decap-after-tunnel CPU trap 対策の Python service</strong>: 6.3.5.1 の neighbor miss 解消用</li>
@@ -24618,6 +24618,8 @@
 <li><a href="../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b5409080014b -->
 
 <div class="footnote">
 <hr />

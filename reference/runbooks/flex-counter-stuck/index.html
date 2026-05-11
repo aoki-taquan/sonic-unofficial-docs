@@ -23760,8 +23760,8 @@
 <li><strong><code>FLEX_COUNTER_TABLE</code> で該当 group が <code>disable</code></strong>: counterpoll 自体が止まっている</li>
 <li><strong><code>FLEX_COUNTER_DELAY_STATUS</code> が <code>system_ready</code> 待ち</strong>: 起動直後で polling が始まっていない</li>
 <li><strong>polling interval が長過ぎ / 0</strong> で実用上更新されない</li>
-<li><strong>syncd の counter thread が hang / CPU 飽和</strong></li>
-<li><strong>COUNTERS_DB の対応 key 欠落</strong>: object が後から作られたが counter 登録が漏れている</li>
+<li><strong><a href="../../glossary/#term-syncd">syncd</a> の counter thread が hang / CPU 飽和</strong></li>
+<li><strong><a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の対応 key 欠落</strong>: object が後から作られたが counter 登録が漏れている</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-counterpoll-interval">1. counterpoll の有効状態と interval<a class="headerlink" href="#1-counterpoll-interval" title="Permanent link">&para;</a></h3>
@@ -23780,7 +23780,7 @@
 </span></code></pre></div>
 <ul>
 <li>期待: <code>system_ready</code> または該当無し</li>
-<li>異常: 長時間 delay → 上位 orchagent が ready 状態を出していない</li>
+<li>異常: 長時間 delay → 上位 <a href="../../glossary/#term-orchagent">orchagent</a> が ready 状態を出していない</li>
 </ul>
 <h3 id="3-counters_db">3. COUNTERS_DB の生死<a class="headerlink" href="#3-counters_db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;COUNTERS:oid:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
@@ -23811,14 +23811,16 @@
 <li><a href="../../config-db/flex-counter-table/">../config-db/flex-counter-table.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: ce96ade25a61 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ 4305596 — flexcounterorch&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — flexcounterorch&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — counterpoll CLI&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — counterpoll CLI&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

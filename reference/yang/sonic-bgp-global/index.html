@@ -23809,7 +23809,7 @@
 <li>import: <code>sonic-vrf</code>, <code>ietf-inet-types</code>, <code>sonic-route-map</code>, <code>sonic-extension</code></li>
 <li>top container: <code>sonic-bgp-global</code></li>
 </ul>
-<p>SONIC BGP Global YANG<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>SONIC <a href="../../glossary/#term-bgp">BGP</a> Global <a href="../../glossary/#term-yang">YANG</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23934,7 +23934,7 @@
 <td>yes</td>
 <td></td>
 <td>union(string, leafref)</td>
-<td>VRF name</td>
+<td><a href="../../glossary/#term-vrf">VRF</a> name</td>
 </tr>
 <tr>
 <td><code>router_id</code></td>
@@ -23988,7 +23988,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Set F-bit indication that FIB is preserved while doing Graceful Restart.</td>
+<td>Set F-bit indication that FIB is preserved while doing <a href="../../glossary/#term-graceful-restart">Graceful Restart</a>.</td>
 </tr>
 <tr>
 <td><code>gr_restart_time</code></td>
@@ -24611,7 +24611,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>BGP_GLOBALS</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_GLOBALS</code></li>
 <li>CONFIG_DB: <code>BGP_GLOBALS_AF</code></li>
 <li>CLI: <code>config bgp</code></li>
 </ul>
@@ -24628,7 +24628,7 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BGP グローバル / AF 設定。<code>BGP_GLOBALS</code> <code>BGP_GLOBALS_AF</code> を bgpcfgd が FRR テンプレに流し込む。</li>
+<li>BGP グローバル / AF 設定。<code>BGP_GLOBALS</code> <code>BGP_GLOBALS_AF</code> を <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> が <a href="../../glossary/#term-frr">FRR</a> テンプレに流し込む。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
@@ -24641,6 +24641,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: c1ba91027e65 -->
+
 <div class="footnote">
 <hr />
 <ol>

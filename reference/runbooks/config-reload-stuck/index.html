@@ -23697,9 +23697,9 @@
 <ol>
 <li><strong><code>config_db.json</code> の構文エラー / 必須 key 欠落</strong> — <code>sonic-cfggen</code> が無限 retry に近い動きをする</li>
 <li><strong>依存関係のあるサービスが停止しきれない</strong> — <code>database</code> container が PID 1 待ちで残る</li>
-<li><strong><code>bgp.service</code> が FRR の old socket を握ったまま</strong> — <code>/var/run/frr/*.pid</code> の残骸</li>
-<li><strong>orchagent の初期 sync 中に ASIC エラー</strong> — <code>swss-orchagent-busy-loop.md</code> 参照</li>
-<li><strong>gNMI / telemetry container の graceful stop timeout</strong> — 既定 10 秒だが応答せず 5 分待ち</li>
+<li><strong><code>bgp.service</code> が <a href="../../glossary/#term-frr">FRR</a> の old socket を握ったまま</strong> — <code>/var/run/frr/*.pid</code> の残骸</li>
+<li><strong><a href="../../glossary/#term-orchagent">orchagent</a> の初期 sync 中に ASIC エラー</strong> — <code>swss-orchagent-busy-loop.md</code> 参照</li>
+<li><strong><a href="../../glossary/#term-gnmi">gNMI</a> / telemetry container の graceful stop timeout</strong> — 既定 10 秒だが応答せず 5 分待ち</li>
 <li><strong>NTP 未同期で証明書時刻が未来</strong> — gnmi/telemetry が起動失敗</li>
 </ol>
 <h2 id="_5">対処<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23716,6 +23716,7 @@
 <li><a href="../config-db-persistence-failure/">config-db-persistence-failure.md</a></li>
 <li><a href="../minigraph-reload-stuck/">minigraph-reload-stuck.md</a></li>
 </ul>
+<!-- glossary-links-injected: 1f4a6b7af56d -->
 
 
 

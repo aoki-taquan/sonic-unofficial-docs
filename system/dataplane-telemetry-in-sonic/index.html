@@ -23784,7 +23784,7 @@
 </div>
 <h1 id="dataplane-telemetrydtel-int-postcard-drop-queue-report">Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）<a class="headerlink" href="#dataplane-telemetrydtel-int-postcard-drop-queue-report" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>Dataplane Telemetry (DTel)</strong> は ASIC dataplane から <strong>per-packet メタデータ</strong>（path / latency / queue / drop など）を抽出して collector に送る機構<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。In-band Network Telemetry (INT)、Postcard、Drop report、Queue report の 4 系統を扱い、SAI 側は OCP の <code>SAI-Proposal-Data-Plane-Telemetry.md</code>、SONiC 側は本 HLD で <strong>CONFIG_DB 中心の構成</strong> を定義する。当初は CLI が無く <code>redis-cli</code> / <code>swss-py-sdk</code> / 専用 Python モジュール <code>euclid</code> で設定する。</p>
+<p><strong>Dataplane Telemetry (DTel)</strong> は ASIC dataplane から <strong>per-packet メタデータ</strong>（path / latency / queue / drop など）を抽出して collector に送る機構<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。In-band Network Telemetry (<a href="../../reference/glossary/#term-int">INT</a>)、Postcard、Drop report、Queue report の 4 系統を扱い、<a href="../../reference/glossary/#term-sai">SAI</a> 側は OCP の <code>SAI-Proposal-Data-Plane-Telemetry.md</code>、SONiC 側は本 <a href="../../reference/glossary/#term-hld">HLD</a> で <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 中心の構成</strong> を定義する。当初は CLI が無く <code>redis-cli</code> / <code>swss-py-sdk</code> / 専用 Python モジュール <code>euclid</code> で設定する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="config_dbswitch-global-session">CONFIG_DB（switch global と session 系）<a class="headerlink" href="#config_dbswitch-global-session" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DTEL|SWITCH_ID                  SWITCH_ID            = &lt;int&gt;
@@ -23929,9 +23929,9 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>AclOrch</strong>: 新 watchlist テーブルの新規 rule subclass を共有</li>
-<li><strong>PFC / queue 系</strong>: queue report の閾値設定と queue scheduler は密接</li>
+<li><strong><a href="../../reference/glossary/#term-pfc">PFC</a> / queue 系</strong>: queue report の閾値設定と queue scheduler は密接</li>
 <li><strong>SAI dtel proposal</strong>: 仕様の上流文書</li>
-<li><strong>gNMI / sonic-telemetry</strong>: 別系統の telemetry。DTel は dataplane 側</li>
+<li><strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> / sonic-telemetry</strong>: 別系統の telemetry。DTel は dataplane 側</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
@@ -23949,6 +23949,8 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1d2244168bb3 -->
 
 <div class="footnote">
 <hr />

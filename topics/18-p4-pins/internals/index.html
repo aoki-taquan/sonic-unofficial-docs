@@ -23828,9 +23828,9 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>PINS の中身を読むときに、まず押さえるのは <strong>P4Orch の Manager 群と P4OidMapper</strong>、次に <strong>entity_cache_ の Write 連動更新</strong>、最後に <strong>APPL_STATE_DB を介した同期応答</strong> の 3 点です。HLD 当初の設計から実装が拡張されているところがあるため、現行 master の構造に沿って整理します。</p>
+<p><a href="../../../reference/glossary/#term-pins">PINS</a> の中身を読むときに、まず押さえるのは <strong>P4Orch の Manager 群と P4OidMapper</strong>、次に <strong>entity_cache_ の Write 連動更新</strong>、最後に <strong>APPL_STATE_DB を介した同期応答</strong> の 3 点です。<a href="../../../reference/glossary/#term-hld">HLD</a> 当初の設計から実装が拡張されているところがあるため、現行 master の構造に沿って整理します。</p>
 <h2 id="p4orch-manager">P4Orch の Manager 群<a class="headerlink" href="#p4orch-manager" title="Permanent link">&para;</a></h2>
-<p>P4Orch は <code>sonic-swss/orchagent/p4orch/</code> に置かれ、<code>p4orch.cpp</code> / <code>p4orch.h</code> が本体です。各 Manager が独立した SAI オブジェクト種別を担当します:</p>
+<p>P4Orch は <code>sonic-swss/orchagent/p4orch/</code> に置かれ、<code>p4orch.cpp</code> / <code>p4orch.h</code> が本体です。各 Manager が独立した <a href="../../../reference/glossary/#term-sai">SAI</a> オブジェクト種別を担当します:</p>
 <ul>
 <li><code>router_interface_manager</code></li>
 <li><code>neighbor_manager</code></li>
@@ -23850,7 +23850,7 @@
 </ul>
 <p>HLD 当初は 7 Manager の構成でしたが、現行 master ではこれらにさらに拡張されています。詳細は <a href="../../../internals/p4-orchagent/">P4Orch HLD</a> を参照してください。</p>
 <h2 id="objectmanagerinterface">ObjectManagerInterface の抽象<a class="headerlink" href="#objectmanagerinterface" title="Permanent link">&para;</a></h2>
-<p>各 Manager は <code>object_manager_interface.h</code> の <code>enqueue</code> / <code>drain</code> / <code>drainWithNotExecuted</code> を実装します。<code>enqueue</code> で APPL_DB から取り出した entry を蓄え、<code>drain</code> で SAI 呼び出しを実行し、<code>drainWithNotExecuted</code> でエラーケースのリカバリを記述するという 3 つの責務分離です。</p>
+<p>各 Manager は <code>object_manager_interface.h</code> の <code>enqueue</code> / <code>drain</code> / <code>drainWithNotExecuted</code> を実装します。<code>enqueue</code> で <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> から取り出した entry を蓄え、<code>drain</code> で SAI 呼び出しを実行し、<code>drainWithNotExecuted</code> でエラーケースのリカバリを記述するという 3 つの責務分離です。</p>
 <h2 id="p4oidmapper">P4OidMapper<a class="headerlink" href="#p4oidmapper" title="Permanent link">&para;</a></h2>
 <p><code>p4oidmapper.h</code> の <code>P4OidMapper</code> は <code>(sai_object_type_t, key) → (oid, ref_count)</code> の対応を保持します。<code>getRefCount</code> を public 公開しており、複数 Manager から参照される共有オブジェクト（next_hop が wcmp / route から参照される等）の生存管理に使います。</p>
 <h2 id="entity_cache_-write">entity_cache_ の Write 連動更新<a class="headerlink" href="#entity_cache_-write" title="Permanent link">&para;</a></h2>
@@ -23861,7 +23861,7 @@
 </ul>
 <p>型は HLD 記載の <code>table_entry_cache_</code> から <strong><code>entity_cache_</code>（<code>absl::flat_hash_map&lt;pdpi::EntityKey, p4::v1::Entity&gt;</code>）</strong> へ汎化されており、TableEntry に加え PacketReplicationEngineEntry も保持します。Read は <code>p4runtime_read.cc</code> の <code>AppendTableEntryReads</code> が <code>entity_cache_</code> を走査して AppDb をスキップします。詳細は <a href="../../../management/p4rt-read-cache-hld/">Read キャッシュ HLD</a> を参照してください。</p>
 <h2 id="appl_state_db">同期書き込みと APPL_STATE_DB<a class="headerlink" href="#appl_state_db" title="Permanent link">&para;</a></h2>
-<p>通常の orchagent は SAI を非同期に呼びますが、P4Orch は <strong>SAI 応答を待ち、結果を APPL_STATE_DB に書き戻す</strong> ことで P4RT App が controller に成否を返せるようにします。<code>APPL_STATE_DB=14</code> は <code>sonic-swss-common/common/schema.h</code> で定義されており、PINS のために追加されたものです（SmartSwitch 向けに <code>DPU_APPL_STATE_DB=16</code> も別途追加）。</p>
+<p>通常の <a href="../../../reference/glossary/#term-orchagent">orchagent</a> は SAI を非同期に呼びますが、P4Orch は <strong>SAI 応答を待ち、結果を APPL_STATE_DB に書き戻す</strong> ことで P4RT App が controller に成否を返せるようにします。<code>APPL_STATE_DB=14</code> は <code>sonic-swss-common/common/schema.h</code> で定義されており、PINS のために追加されたものです（<a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> 向けに <code>DPU_APPL_STATE_DB=16</code> も別途追加）。</p>
 <h2 id="warm-boot">warm boot とキャッシュの整合<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h2>
 <p><code>warm_boot_state_adapter_</code> が warm boot 時のキャッシュ復元基盤を提供しており、HLD で挙げられていた事前充填案を踏まえた骨組みになっています。整合は <code>P4RuntimeImpl::VerifyState()</code> が <code>VerifyP4rtTableWithCacheEntities</code> で確認します。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23972,7 +23972,7 @@
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>p4rt-app と orchagent の間は <strong>Redis pub/sub + ProducerStateTable / NotificationConsumer</strong>。</li>
+<li>p4rt-app と orchagent の間は <strong><a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub + <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / NotificationConsumer</strong>。</li>
 <li>ZMQ は使わない。</li>
 <li>controller との sync は gRPC StreamChannel で、P4RT 上の packet I/O も gRPC stream で行う。</li>
 <li>APPL_STATE_DB は ack 用専用 DB で、orchagent が SAI 応答後に書き込む（通常 orchagent は APPL_STATE_DB を使わない）。</li>
@@ -23992,6 +23992,7 @@
 <li><a href="../../../management/p4rt-read-cache-hld/">P4RT Read cache HLD</a></li>
 <li><a href="../../../management/p4rt-application-hld/">P4RT Application HLD</a></li>
 </ul>
+<!-- glossary-links-injected: b22d62b3d852 -->
 
 
 

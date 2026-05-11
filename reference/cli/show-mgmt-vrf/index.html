@@ -23556,7 +23556,7 @@
 
 <h1 id="show-mgmt-vrf">show mgmt-vrf サブコマンド<a class="headerlink" href="#show-mgmt-vrf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show mgmt-vrf</code> は管理 VRF (<code>mgmt</code>) の有効・無効状態、Linux 上の VRF デバイス情報、ルーティングテーブルを表示する。<code>invoke_without_command=True</code> の Click group として実装されており、サブコマンドを指定しなくても本体ロジックが動く特殊な構造になっている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>show mgmt-vrf</code> は管理 <a href="../../glossary/#term-vrf">VRF</a> (<code>mgmt</code>) の有効・無効状態、Linux 上の VRF デバイス情報、ルーティングテーブルを表示する。<code>invoke_without_command=True</code> の Click group として実装されており、サブコマンドを指定しなくても本体ロジックが動く特殊な構造になっている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23587,7 +23587,7 @@
 </ul>
 <p><strong>動作</strong>:</p>
 <ol>
-<li><code>is_mgmt_vrf_enabled(ctx)</code> で CONFIG_DB の <code>MGMT_VRF_CONFIG</code> を参照し、<code>mgmtVrfEnabled</code> が false の場合は <code>ManagementVRF : Disabled</code> を表示して終了</li>
+<li><code>is_mgmt_vrf_enabled(ctx)</code> で <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>MGMT_VRF_CONFIG</code> を参照し、<code>mgmtVrfEnabled</code> が false の場合は <code>ManagementVRF : Disabled</code> を表示して終了</li>
 <li><code>routes</code> 引数なしで有効な場合: <code>ManagementVRF : Enabled</code> を表示し、<code>ip -d link show mgmt</code> と <code>ip link show vrf mgmt</code> を続けて実行</li>
 <li><code>routes</code> 引数ありで有効な場合: <code>ip route show table 6000</code> を実行（管理 VRF 専用 routing table の固定 ID）</li>
 </ol>
@@ -23654,7 +23654,7 @@ excerpt: |
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <code>sonic-mgmt-vrf</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mgmt-vrf</code></li>
 <li>CONFIG_DB: <a href="../../config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -23665,6 +23665,8 @@ excerpt: |
 <li><a href="../../config-db/mgmt-vrf-config/">CONFIG_DB: MGMT_VRF_CONFIG</a></li>
 <li><a href="../show-ip/">reference/CLI: show ip</a></li>
 </ul>
+<!-- glossary-links-injected: a6c6612be307 -->
+
 <div class="footnote">
 <hr />
 <ol>

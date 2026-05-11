@@ -23650,9 +23650,9 @@
 <p><a href="https://github.com/sonic-net/SONiC">SONiC NOS</a>（Software for Open Networking in the Cloud）のコミュニティ版を対象に、AI 駆動で<strong>日本語の非公式ドキュメントを再構成</strong>することを目的としています。</p>
 <p>SONiC の公式ドキュメントには以下のような構造的な課題があります。</p>
 <ul>
-<li>HLD（High-Level Design）が複数のリポジトリ（<a href="https://github.com/sonic-net/SONiC">SONiC</a>, <a href="https://github.com/sonic-net/sonic-buildimage">sonic-buildimage</a>, <a href="https://github.com/sonic-net/sonic-swss">sonic-swss</a> など）に散在している。</li>
+<li><a href="../reference/glossary/#term-hld">HLD</a>（High-Level Design）が複数のリポジトリ（<a href="https://github.com/sonic-net/SONiC">SONiC</a>, <a href="https://github.com/sonic-net/sonic-buildimage">sonic-buildimage</a>, <a href="https://github.com/sonic-net/sonic-swss">sonic-swss</a> など）に散在している。</li>
 <li>HLD と実装の更新タイミングが乖離しており、HLD に書かれていない仕様が実コードや GitHub Issue にしか存在しないケースが多い。</li>
-<li>設定（CONFIG_DB）、CLI、YANG、daemon／orch 実装の対応関係を機械的に追える資料がない。</li>
+<li>設定（<a href="../reference/glossary/#term-config_db">CONFIG_DB</a>）、CLI、<a href="../reference/glossary/#term-yang">YANG</a>、daemon／orch 実装の対応関係を機械的に追える資料がない。</li>
 </ul>
 <p>本プロジェクトは公式 HLD の翻訳ではなく、<strong>HLD・実コード・YANG・CLI・Issue を横断して再構成</strong>することにより、読み手が「探す単位」でページを引けるドキュメントを目指しています。</p>
 <h2 id="_3">スコープ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23668,7 +23668,7 @@
 <tr>
 <td>ディストリビューション</td>
 <td>コミュニティ版 SONiC（<a href="https://github.com/sonic-net">sonic-net 配下</a>）</td>
-<td>ベンダー版 SONiC（NVIDIA / Edgecore / Cisco / AsterNOS など）</td>
+<td>ベンダー版 SONiC（NVIDIA / Edgecore / Cisco / <a href="../reference/glossary/#term-asternos">AsterNOS</a> など）</td>
 </tr>
 <tr>
 <td>ブランチ</td>
@@ -23789,6 +23789,7 @@
 <li><a href="../_meta/coverage/">カバレッジ状況 (_meta/coverage)</a></li>
 <li><a href="../_meta/discrepancies/">HLD と実装の乖離一覧 (_meta/discrepancies)</a></li>
 </ul>
+<!-- glossary-links-injected: ac66cb8fa7e1 -->
 
 
 

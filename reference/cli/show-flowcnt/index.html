@@ -23580,7 +23580,7 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>show flowcnt-trap</code> と <code>show flowcnt-route</code> は <strong>フローカウンタ</strong> 機能の表示コマンド。<code>show/flow_counters.py</code> で定義され、<code>show/main.py</code> 側で <code>cli.add_command(flow_counters.flowcnt_trap)</code> / <code>cli.add_command(flow_counters.flowcnt_route)</code> として登録されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。両グループとも <code>flow_counters_stat</code> スクリプトを内部で呼び出す。</p>
 <ul>
-<li><code>flowcnt-trap</code>: コントロールプレーンへ送られる <strong>trap パケット</strong> (ARP, LLDP, BGP, etc.) を type 別にカウント</li>
+<li><code>flowcnt-trap</code>: コントロールプレーンへ送られる <strong>trap パケット</strong> (<a href="../../glossary/#term-arp">ARP</a>, <a href="../../glossary/#term-lldp">LLDP</a>, <a href="../../glossary/#term-bgp">BGP</a>, etc.) を type 別にカウント</li>
 <li><code>flowcnt-route</code>: 設定された prefix pattern にマッチする <strong>ルート毎</strong> のフローカウンタ</li>
 </ul>
 <p><code>flowcnt-route</code> はプラットフォームサポートが必要で、未対応プラットフォームでは <code>exit_if_route_flow_counter_not_support()</code> で即終了する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
@@ -23654,7 +23654,7 @@ excerpt: |
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show flowcnt-route config
 </span></code></pre></div>
 <p><strong>動作</strong>:
-CONFIG_DB の <code>FLOW_COUNTER_ROUTE_PATTERN</code> テーブルを <code>db.cfgdb.get_table</code> で取得し、key (<code>&lt;vrf&gt;|&lt;prefix&gt;</code>) を <code>extract_route_pattern</code> で分解、<code>max</code> フィールドとともに tabulate 表示する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FLOW_COUNTER_ROUTE_PATTERN</code> テーブルを <code>db.cfgdb.get_table</code> で取得し、key (<code>&lt;vrf&gt;|&lt;prefix&gt;</code>) を <code>extract_route_pattern</code> で分解、<code>max</code> フィールドとともに tabulate 表示する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="show-flowcnt-route-stats-patternroute"><code>show flowcnt-route stats [pattern|route]</code><a class="headerlink" href="#show-flowcnt-route-stats-patternroute" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show flowcnt-route stats [--verbose] [-n|--namespace &lt;ns&gt;]
@@ -23667,7 +23667,7 @@ CONFIG_DB の <code>FLOW_COUNTER_ROUTE_PATTERN</code> テーブルを <code>db.c
 <li><code>pattern &lt;p&gt;</code>: <code>flow_counters_stat -t route --prefix_pattern &lt;p&gt;</code></li>
 <li><code>route &lt;p&gt;</code>: <code>flow_counters_stat -t route --prefix &lt;p&gt;</code></li>
 </ul>
-<p>いずれも <code>--vrf</code> で VRF/VNET フィルタが可能。<code>stats</code> は <code>invoke_without_command=True</code> の group になっており、引数なしで呼ぶと内部の本体ロジックが、subcommand を付けると pattern/route 関数が走る Click パターン。</p>
+<p>いずれも <code>--vrf</code> で <a href="../../glossary/#term-vrf">VRF</a>/<a href="../../glossary/#term-vnet">VNET</a> フィルタが可能。<code>stats</code> は <code>invoke_without_command=True</code> の group になっており、引数なしで呼ぶと内部の本体ロジックが、subcommand を付けると pattern/route 関数が走る Click パターン。</p>
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/flow_counters.py#L53-L93 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
@@ -23748,6 +23748,8 @@ excerpt: |
 <li><a href="../show-interfaces/">reference/CLI: show interfaces</a></li>
 <li><a href="../show-route-map/">reference/CLI: show route-map</a></li>
 </ul>
+<!-- glossary-links-injected: 35bf215a8536 -->
+
 <div class="footnote">
 <hr />
 <ol>

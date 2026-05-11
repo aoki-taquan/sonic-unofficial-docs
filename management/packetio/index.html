@@ -23935,7 +23935,7 @@
 <li>ベンダ ASIC ドライバに何を実装してもらう必要があるか</li>
 </ul>
 <h2 id="packetio">なぜ PacketIO に拡張が要るか<a class="headerlink" href="#packetio" title="Permanent link">&para;</a></h2>
-<p>通常 netdev では <strong>すべての punt パケット</strong> が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>通常 netdev では <strong>すべての punt パケット</strong> が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（<a href="../../reference/glossary/#term-pins">PINS</a> / SDN コントローラ）は次が必要<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>Receive: controller が install した punt flow にマッチする <strong>専用チャネル</strong>、<strong>input port + target egress port</strong> のメタデータ付き</li>
 <li>Transmit: 任意 port への directed transmit、および <strong><code>send_to_ingress</code></strong>（ASIC pipeline 再注入で egress 選択を ASIC に任せる送信モード）</li>
@@ -23945,7 +23945,7 @@
 <table>
 <thead>
 <tr>
-<th>SAI 属性</th>
+<th><a href="../../reference/glossary/#term-sai">SAI</a> 属性</th>
 <th>用途</th>
 </tr>
 </thead>
@@ -23975,7 +23975,7 @@
     else
         KDR-&gt;&gt;KDR: 既存 netdev へ
     end</code></pre>
-<p>CoppOrch は <strong>CPU queue ごとの新 trap group</strong> を処理し、ACL entry 単位で trap を作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CoppOrch は <strong>CPU queue ごとの新 trap group</strong> を処理し、<a href="../../reference/glossary/#term-acl">ACL</a> entry 単位で trap を作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="kernel-driver-3">ベンダ kernel driver の責務（3 つ）<a class="headerlink" href="#kernel-driver-3" title="Permanent link">&para;</a></h2>
 <p><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <ol>
@@ -24000,12 +24000,12 @@
     NDV --&gt; CPU[CPU port (ASIC)]
     CPU --&gt; PIPE[forwarding pipeline]
     PIPE --&gt; EGR[egress port 自動選択]</code></pre>
-<p>設定は CONFIG_DB の <code>SEND_TO_INGRESS_PORT</code>:</p>
+<p>設定は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>SEND_TO_INGRESS_PORT</code>:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span><span class="nt">&quot;SEND_TO_INGRESS_PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;send_to_ingress&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}}}</span>
 </span></code></pre></div>
 <p><code>PortsOrch</code> がこれを購読し、SAI <code>create_hostif</code> を <strong>CPU port に対して</strong> 呼ぶ（netdev type hostif を CPU port に紐づける）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="transmit_1">ベンダ Transmit 拡張<a class="headerlink" href="#transmit_1" title="Permanent link">&para;</a></h3>
-<p>通常 SAI hostif (netdev) は <strong>physical port / VLAN / LAG にのみ作成可能</strong>。CPU port 用に作れるようベンダ SAI の拡張が必要<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CPU port ingress を ASIC が forward するベンダ固有設定もセットで要る。</p>
+<p>通常 SAI hostif (netdev) は <strong>physical port / <a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-lag">LAG</a> にのみ作成可能</strong>。CPU port 用に作れるようベンダ SAI の拡張が必要<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CPU port ingress を ASIC が forward するベンダ固有設定もセットで要る。</p>
 <h2 id="_2">設定<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
@@ -24050,7 +24050,7 @@
 </tbody>
 </table>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>本 HLD は CLI 拡張を伴わない<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。P4Runtime / PINS コントローラ経由で操作する。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は CLI 拡張を伴わない<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。P4Runtime / PINS コントローラ経由で操作する。</p>
 <h3 id="_3">設定例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// /etc/sonic/config_db.json 抜粋</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span><span class="nt">&quot;SEND_TO_INGRESS_PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;send_to_ingress&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}}}</span>
@@ -24069,7 +24069,7 @@
 <li><strong>PortsOrch</strong>: <code>SEND_TO_INGRESS_PORT</code> 処理 + CPU port netdev 作成</li>
 <li><strong>既存 sFlow / <code>psample</code></strong>: genetlink 仕様を共有</li>
 <li><strong>ベンダ ASIC SDK / kernel driver</strong>: receive 経路と CPU port ingress を実装</li>
-<li><strong>既存 CoPP (<code>copp_cfg.j2</code>)</strong>: trap group / queue マッピングの拡張</li>
+<li><strong>既存 <a href="../../reference/glossary/#term-copp">CoPP</a> (<code>copp_cfg.j2</code>)</strong>: trap group / queue マッピングの拡張</li>
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24098,6 +24098,8 @@
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 334f0ec53f10 -->
 
 <div class="footnote">
 <hr />

@@ -23780,7 +23780,7 @@
 
 <h1 id="feature">FEATURE テーブル<a class="headerlink" href="#feature" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の機能 docker（bgp、teamd、snmp、sflow、telemetry 等）の有効化、自動再起動、起動遅延、scope（global / per-asic / per-dpu）、Kubernetes 管理切り替えを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> の <code>FeatureHandler</code> がこのテーブルを購読し、systemd サービスファイル (<code>sonic.target.wants/&lt;feature&gt;.service</code>) の enable/disable とテンプレ展開を行う。</p>
+<p>SONiC の機能 docker（bgp、<a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>、snmp、sflow、telemetry 等）の有効化、自動再起動、起動遅延、scope（global / per-asic / per-dpu）、Kubernetes 管理切り替えを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> の <code>FeatureHandler</code> がこのテーブルを購読し、systemd サービスファイル (<code>sonic.target.wants/&lt;feature&gt;.service</code>) の enable/disable とテンプレ展開を行う。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23856,7 +23856,7 @@
 <td>string</td>
 <td>-</td>
 <td><code>false</code></td>
-<td>true で DPU ごとにインスタンス</td>
+<td>true で <a href="../../glossary/#term-dpu">DPU</a> ごとにインスタンス</td>
 </tr>
 <tr>
 <td><code>high_mem_alert</code></td>
@@ -23888,7 +23888,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>state</code> / <code>auto_restart</code> / <code>delayed</code> / <code>has_*_scope</code> / <code>high_mem_alert</code> は YANG 上 <code>feature-state</code> または <code>feature-scope-status</code> という非制約な string 型で、運用上 <code>enabled</code>/<code>disabled</code> 等の文字列を入れる。厳密な enum 制約は実装側のチェックに依る。</p>
+<p><code>state</code> / <code>auto_restart</code> / <code>delayed</code> / <code>has_*_scope</code> / <code>high_mem_alert</code> は <a href="../../glossary/#term-yang">YANG</a> 上 <code>feature-state</code> または <code>feature-scope-status</code> という非制約な string 型で、運用上 <code>enabled</code>/<code>disabled</code> 等の文字列を入れる。厳密な enum 制約は実装側のチェックに依る。</p>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>hostcfgd</code> の <code>FeatureHandler</code>: systemd サービス制御、<code>SUPERVISORD</code> config 更新、Kubernetes container 切替え</li>
@@ -23896,7 +23896,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>KUBERNETES_MASTER</code>（<code>set_owner = kube</code> のとき）、<code>SYSLOG_CONFIG_FEATURE</code>（<code>support_syslog_rate_limit = true</code> のとき）</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>KUBERNETES_MASTER</code>（<code>set_owner = kube</code> のとき）、<code>SYSLOG_CONFIG_FEATURE</code>（<code>support_syslog_rate_limit = true</code> のとき）</li>
 <li>関連 CLI: <code>config feature state &lt;name&gt; &lt;enabled|disabled&gt;</code>、<code>config feature autorestart</code></li>
 <li>関連 YANG: <code>sonic-feature</code></li>
 </ul>
@@ -23921,7 +23921,7 @@
 </ul>
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>state: disabled</code> で必須コンテナ（<code>swss</code> 等）を止めると orchagent ごと止まる。</li>
+<li><code>state: disabled</code> で必須コンテナ（<code>swss</code> 等）を止めると <a href="../../glossary/#term-orchagent">orchagent</a> ごと止まる。</li>
 <li><code>auto_restart: disabled</code> で crash すると手動再起動が必要。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
@@ -23929,6 +23929,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>feature<span class="w"> </span>status
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9a2381a3263e -->
 
 <div class="footnote">
 <hr />

@@ -23862,7 +23862,7 @@
 </div>
 <h1 id="port-auto-fecsai_port_attr_auto_neg_fec_mode_override-fecauto">Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）<a class="headerlink" href="#port-auto-fecsai_port_attr_auto_neg_fec_mode_override-fecauto" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ポートの <strong>autoneg と FEC モードの組み合わせの挙動を決定論的にする</strong> ための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。従来は autoneg=on のとき FEC（none / RS / FC）を user 設定したらどう動くか vendor SAI 任せだった。SAI に新属性 <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> を入れ、<strong>FEC mode = <code>auto</code></strong> という新値を SONiC に追加することで、user 意図を明示する。</p>
+<p>ポートの <strong>autoneg と FEC モードの組み合わせの挙動を決定論的にする</strong> ための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。従来は autoneg=on のとき FEC（none / RS / FC）を user 設定したらどう動くか vendor <a href="../../reference/glossary/#term-sai">SAI</a> 任せだった。SAI に新属性 <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> を入れ、<strong>FEC mode = <code>auto</code></strong> という新値を SONiC に追加することで、user 意図を明示する。</p>
 <table>
 <thead>
 <tr>
@@ -23924,7 +23924,7 @@
 <h3 id="yang">YANG 拡張<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p><code>sonic-port</code> の <code>fec</code> enum に <strong><code>auto</code></strong> を追加<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="warm-fast-boot">Warm / Fast boot<a class="headerlink" href="#warm-fast-boot" title="Permanent link">&para;</a></h3>
-<p><code>PORT.fec=auto</code> は CONFIG_DB に persist されるため warm/fast boot 越しに継続。autoneg 折衝は再起動後にやり直し<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>PORT.fec=auto</code> は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に persist されるため warm/fast boot 越しに継続。autoneg 折衝は再起動後にやり直し<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/port_auto_neg/auto-fec.md#L56-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24026,6 +24026,8 @@ reasoning: 新 SAI 属性と FEC=auto 値の根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 96667c52d98d -->
 
 <div class="footnote">
 <hr />

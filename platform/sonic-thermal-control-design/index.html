@@ -23870,7 +23870,7 @@
 </tr>
 </tbody>
 </table>
-<p>しきい値超過 → <code>warning_status=true</code> を STATE_DB に書き syslog 出力<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>しきい値超過 → <code>warning_status=true</code> を <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に書き syslog 出力<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="fanbasefan"><code>FanBase</code>（fan 抽象）<a class="headerlink" href="#fanbasefan" title="Permanent link">&para;</a></h3>
 <p><code>get_speed()</code> / <code>set_speed()</code> / <code>get_target_speed()</code> / <code>get_presence()</code> 等で PWM 制御と冗長監視を行う。</p>
 <h2 id="state_db">どこに値が出るか（STATE_DB）<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
@@ -23896,7 +23896,7 @@
 </span></code></pre></div>
 <p><code>object_name</code> は <code>cpu_core_0</code> / <code>asic</code> / <code>psu_2</code> のように <strong>device_name + index</strong>。温度の推奨 poll 間隔は <strong>60 秒</strong>（短期変動が小さいため）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_1">ポリシーの例<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>HLD で例示されている代表ケース<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> で例示されている代表ケース<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>PSU 1 個が未挿入 → PWM 100%</li>
 <li>FAN drawer 未挿入 / tachometer 故障 → PWM 100%</li>
@@ -23946,7 +23946,7 @@ reasoning: ベンダ実装と SONiC 共通実装の境界、ポリシー例の�
 <!-- evidence-rendered:end -->
 
 <h2 id="cli">設定 / CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB スキーマは無し。policy はベンダの <code>/usr/share/sonic/device/$PLATFORM/thermal_policy.json</code> 等で配布される。CLI は HLD で明示されないが、典型的には <code>show platform temperature</code> / <code>show platform fan</code> で STATE_DB 値を取り出す。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマは無し。policy はベンダの <code>/usr/share/sonic/device/$PLATFORM/thermal_policy.json</code> 等で配布される。CLI は HLD で明示されないが、典型的には <code>show platform temperature</code> / <code>show platform fan</code> で STATE_DB 値を取り出す。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;TEMPERATURE_INFO|*&quot;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;TEMPERATURE_INFO|asic&quot;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;FAN_INFO|fan1&quot;</span>
@@ -23991,6 +23991,8 @@ reasoning: ベンダ実装と SONiC 共通実装の境界、ポリシー例の�
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0823a263c666 -->
 
 <div class="footnote">
 <hr />

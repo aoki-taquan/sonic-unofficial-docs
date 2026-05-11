@@ -23846,7 +23846,7 @@
 
 <h1 id="flex_counter_table">FLEX_COUNTER_TABLE テーブル<a class="headerlink" href="#flex_counter_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>orchagent / syncd に対し、各種ハードウェアカウンタのポーリング有効化と周期、bulk API のチャンクサイズを指定するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> の <code>FlexCounter</code> モジュールがこのテーブルを購読し、SAI bulk counter API の周期呼び出しスケジュールを切り替える。fast-reboot 時の <code>FLEX_COUNTER_DELAY_STATUS = true</code> で system-ready まで停止可能。</p>
+<p><a href="../../glossary/#term-orchagent">orchagent</a> / <a href="../../glossary/#term-syncd">syncd</a> に対し、各種ハードウェアカウンタのポーリング有効化と周期、bulk API のチャンクサイズを指定するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> の <code>FlexCounter</code> モジュールがこのテーブルを購読し、<a href="../../glossary/#term-sai">SAI</a> bulk counter API の周期呼び出しスケジュールを切り替える。fast-reboot 時の <code>FLEX_COUNTER_DELAY_STATUS = true</code> で system-ready まで停止可能。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23862,7 +23862,7 @@
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FLEX_COUNTER_TABLE|&lt;group&gt;
 </span></code></pre></div>
-<p><code>&lt;group&gt;</code> は固定の counter グループ名。23 グループ前後が YANG で定義される（下表）。</p>
+<p><code>&lt;group&gt;</code> は固定の counter グループ名。23 グループ前後が <a href="../../glossary/#term-yang">YANG</a> で定義される（下表）。</p>
 <h2 id="_3">共通フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>各グループ共通でとりうる leaf:</p>
 <table>
@@ -23921,7 +23921,7 @@
 </tr>
 <tr>
 <td><code>ENI</code></td>
-<td>DASH ENI カウンタ</td>
+<td><a href="../../glossary/#term-dash">DASH</a> <a href="../../glossary/#term-eni">ENI</a> カウンタ</td>
 </tr>
 <tr>
 <td><code>DASH_METER</code> / <code>HA_SET</code></td>
@@ -23929,7 +23929,7 @@
 </tr>
 <tr>
 <td><code>PFCWD</code></td>
-<td>PFC watchdog</td>
+<td><a href="../../glossary/#term-pfc">PFC</a> watchdog</td>
 </tr>
 <tr>
 <td><code>PG_DROP</code> / <code>PG_WATERMARK</code></td>
@@ -23949,7 +23949,7 @@
 </tr>
 <tr>
 <td><code>ACL</code></td>
-<td>ACL ヒットカウンタ</td>
+<td><a href="../../glossary/#term-acl">ACL</a> ヒットカウンタ</td>
 </tr>
 <tr>
 <td><code>FLOW_CNT_TRAP</code></td>
@@ -23965,11 +23965,11 @@
 </tr>
 <tr>
 <td><code>WRED_ECN_QUEUE</code> / <code>WRED_ECN_PORT</code></td>
-<td>WRED/ECN マーキング</td>
+<td><a href="../../glossary/#term-wred">WRED</a>/ECN マーキング</td>
 </tr>
 <tr>
 <td><code>SRV6</code></td>
-<td>SRv6</td>
+<td><a href="../../glossary/#term-srv6">SRv6</a></td>
 </tr>
 <tr>
 <td><code>SWITCH</code></td>
@@ -23979,11 +23979,11 @@
 </table>
 <h2 id="_5">関連サブテーブル<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>FLOW_COUNTER_ROUTE_PATTERN</code> (key: <code>ip_prefix</code>): default VRF のルートフロー対象パターン<ul>
+<li><code>FLOW_COUNTER_ROUTE_PATTERN</code> (key: <code>ip_prefix</code>): default <a href="../../glossary/#term-vrf">VRF</a> のルートフロー対象パターン<ul>
 <li><code>max_match_count</code> (uint32, 1..50): バインドする最大ルート数</li>
 </ul>
 </li>
-<li><code>FLOW_COUNTER_ROUTE_PATTERN</code> の VRF 版 list (key: <code>vrf_name</code>, <code>ip_prefix</code>): VRF / VNET 名スコープ</li>
+<li><code>FLOW_COUNTER_ROUTE_PATTERN</code> の VRF 版 list (key: <code>vrf_name</code>, <code>ip_prefix</code>): VRF / <a href="../../glossary/#term-vnet">VNET</a> 名スコープ</li>
 </ul>
 <h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23993,7 +23993,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>FLOW_COUNTER_ROUTE_PATTERN</code>、<code>COUNTERS_DB</code>（実カウンタ値の読み出し先）</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>FLOW_COUNTER_ROUTE_PATTERN</code>、<code>COUNTERS_DB</code>（実カウンタ値の読み出し先）</li>
 <li>関連 CLI: <code>counterpoll &lt;group&gt; enable/disable</code>、<code>counterpoll &lt;group&gt; interval &lt;ms&gt;</code></li>
 <li>関連 YANG: <code>sonic-flex_counter</code></li>
 </ul>
@@ -24018,7 +24018,7 @@
 <h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>key 形式: <code>FLEX_COUNTER_TABLE|&lt;group&gt;</code> (PORT / QUEUE / PG_WATERMARK / RIF 等)`。</li>
+<li>key 形式: <code>FLEX_COUNTER_TABLE|&lt;group&gt;</code> (PORT / QUEUE / PG_WATERMARK / <a href="../../glossary/#term-rif">RIF</a> 等)`。</li>
 <li><code>FLEX_COUNTER_STATUS</code>: <code>enable</code>、<code>POLL_INTERVAL</code>: 1000〜10000ms。</li>
 </ul>
 <h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
@@ -24030,6 +24030,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>counterpoll<span class="w"> </span>show
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 2925fe8ca9ca -->
 
 <div class="footnote">
 <hr />

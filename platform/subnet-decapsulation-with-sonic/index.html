@@ -23806,8 +23806,8 @@
 </div>
 <h1 id="vlan-subnet-decapnetscan-ipinip-mp2mp">VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）<a class="headerlink" href="#vlan-subnet-decapnetscan-ipinip-mp2mp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Azure Netscan は <strong>IPinIP プローブ</strong>（outer DIP=デバイス Loopback、inner DIP=Netscan 送信元）でネットワーク経路の blackhole を検知する。従来は host node 上の VLAN subnet IP までは可視化できなかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は T0 SONiC に <strong>VLAN subnet 全体</strong>を IPinIP decap 対象にする <code>IPINIP_SUBNET</code> / <code>IPINIP_V6_SUBNET</code> を自動生成し、Netscan IPinIP probe を T0 が代理で受けて inner を Netscan に戻すことで <strong>VLAN subnet IP の経路 blackhole を検知できる</strong> ようにする。</p>
+<p>Azure Netscan は <strong><a href="../../reference/glossary/#term-ipinip">IPinIP</a> プローブ</strong>（outer DIP=デバイス Loopback、inner DIP=Netscan 送信元）でネットワーク経路の blackhole を検知する。従来は host node 上の <a href="../../reference/glossary/#term-vlan">VLAN</a> subnet IP までは可視化できなかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は T0 SONiC に <strong>VLAN subnet 全体</strong>を IPinIP decap 対象にする <code>IPINIP_SUBNET</code> / <code>IPINIP_V6_SUBNET</code> を自動生成し、Netscan IPinIP probe を T0 が代理で受けて inner を Netscan に戻すことで <strong>VLAN subnet IP の経路 blackhole を検知できる</strong> ようにする。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="tunnel-term">自動生成される tunnel / term<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#tunnel-term" title="Permanent link">&para;</a></h3>
 <table>
@@ -23903,9 +23903,9 @@
   T0 --&gt;|decap + route back| Net</code></pre>
 <p><code>TunnelDecapOrch</code> は <code>SUBNET_DECAP</code> の <strong>src_ip / src_ip_v6 変更</strong> に追従し、対応する decap term の source IP を更新する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="dual-tor">Dual-ToR 考慮<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#dual-tor" title="Permanent link">&para;</a></h3>
-<p>両 ToR は同じ VLAN/decap 設定。T1 → ToR は ECMP なのでどちらの ToR が受けても decap → Netscan へ戻せる。</p>
+<p>両 ToR は同じ VLAN/decap 設定。T1 → ToR は <a href="../../reference/glossary/#term-ecmp">ECMP</a> なのでどちらの ToR が受けても decap → Netscan へ戻せる。</p>
 <h3 id="warm-reboot">Warm-reboot<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
-<p>現状 SONiC は warm-reboot 後に <code>ipinip.json</code> を再 load しない。本機能で追加した 2 tunnel (<code>IPINIP_SUBNET</code> / <code>IPINIP_V6_SUBNET</code>) のみ warm 後に APPL_DB へ書く処理を <strong><code>swssconfig.sh</code> に拡張</strong> する必要がある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存 tunnel の重複書込は避ける。</p>
+<p>現状 SONiC は warm-reboot 後に <code>ipinip.json</code> を再 load しない。本機能で追加した 2 tunnel (<code>IPINIP_SUBNET</code> / <code>IPINIP_V6_SUBNET</code>) のみ warm 後に <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> へ書く処理を <strong><code>swssconfig.sh</code> に拡張</strong> する必要がある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存 tunnel の重複書込は避ける。</p>
 <h3 id="cli">CLI<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># show tunnel brief
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Tunnel Name       Type    Dscp Mode    ECN Mode         TTL Mode
@@ -23930,14 +23930,14 @@
 <ul>
 <li><strong>既存 IPINIP_TUNNEL / IPINIP_V6_TUNNEL</strong>: 共存。本機能は別の 2 tunnel を追加</li>
 <li><strong>TunnelDecapOrch</strong>: 既存処理を拡張。<code>SUBNET_DECAP</code> テーブル subscribe を追加</li>
-<li><strong>swssconfig</strong>: warm-reboot 後の選択的書込</li>
+<li><strong><a href="../../reference/glossary/#term-swssconfig">swssconfig</a></strong>: warm-reboot 後の選択的書込</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
 <p><code>sonic-swss/orchagent/tunneldecaporch.cpp</code> を確認:</p>
 <ul>
 <li><code>CFG_SUBNET_DECAP_TABLE_NAME</code> を SubscriberStateTable として登録するロジックが <code>tunneldecaporch.cpp:39, 48, 69</code> に存在。</li>
-<li><code>TUNNEL_TERM_TYPE_MP2MP</code> の文字列マッピングと SAI 対応が <code>tunneldecaporch.cpp:345, 446, 451, 461, 474, 504, 934, 936, 948, 965, 1546</code> に実装され、<code>MP2MP</code> term の SAI 設定 (<code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP</code>) や src/dst IP mask の制御も含まれる。</li>
+<li><code>TUNNEL_TERM_TYPE_MP2MP</code> の文字列マッピングと <a href="../../reference/glossary/#term-sai">SAI</a> 対応が <code>tunneldecaporch.cpp:345, 446, 451, 461, 474, 504, 934, 936, 948, 965, 1546</code> に実装され、<code>MP2MP</code> term の SAI 設定 (<code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP</code>) や src/dst IP mask の制御も含まれる。</li>
 <li><code>is_subnet_decap_term</code> フラグで「subnet decap tunnel に紐づく term は MP2MP のみ許容」のバリデーション (line 446-453) が入っており、HLD の「<code>IPINIP_SUBNET</code> / <code>IPINIP_V6_SUBNET</code> 自動生成は MP2MP 形式」と整合。</li>
 <li><code>sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2</code> / <code>swssconfig.sh</code> と <code>sonic-config-engine/tests/sample_output/py3/ipinip_subnet_decap_enable.json</code> に subnet decap 用の自動生成テンプレート / サンプルが存在し、warm-reboot 対応の swssconfig 経路も裏取り。</li>
 </ul>
@@ -23948,6 +23948,8 @@
 <li><a href="../../topics/03-vxlan-evpn/">Topics: VXLAN / EVPN / VNET オーバーレイ</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 302763aa20ce -->
 
 <div class="footnote">
 <hr />

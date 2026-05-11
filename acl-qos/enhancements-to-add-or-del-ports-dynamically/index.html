@@ -24342,13 +24342,13 @@
 </div>
 <h1 id="add-delzero-port-post-init">ポートの動的 add / del（zero-port 起動と post-init 操作）<a class="headerlink" href="#add-delzero-port-post-init" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに <strong>post-init で動的に CONFIG_DB の <code>PORT</code> テーブルに add/del</strong> することでポート追加・削除を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに <strong>post-init で動的に <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PORT</code> テーブルに add/del</strong> することでポート追加・削除を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>全ポートを <code>config_db</code> に持って起動</li>
 <li>一部ポートだけ持って起動</li>
 <li><strong>ゼロポート</strong> で起動（line-card manager がプロビジョニング時に追加する想定）</li>
 </ul>
-<p>ポート削除前にユーザは ACL / VLAN / LAG / Buffer PG など <strong>全依存設定を先に削除する責任</strong> を負う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ポート削除前にユーザは <a href="../../reference/glossary/#term-acl">ACL</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-lag">LAG</a> / Buffer PG など <strong>全依存設定を先に削除する責任</strong> を負う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="app-db">初期化フェーズと App-DB フラグ<a class="headerlink" href="#app-db" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
@@ -24362,7 +24362,7 @@
   PSYNC --&gt; SDB[(STATE_DB)]
   PSYNC --&gt;|全 host i/f 完了| FLAG2[PortInitDone]</code></pre>
 <ul>
-<li><strong><code>PortConfigDone</code></strong>: portsyncd がポート設定を APP_DB に反映完了。orchagent は <strong>これを待ってから</strong> SAI ポート作成を始める<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>PortConfigDone</code></strong>: <a href="../../reference/glossary/#term-portsyncd">portsyncd</a> がポート設定を APP_DB に反映完了。<a href="../../reference/glossary/#term-orchagent">orchagent</a> は <strong>これを待ってから</strong> <a href="../../reference/glossary/#term-sai">SAI</a> ポート作成を始める<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong><code>PortInitDone</code></strong>: 全 host interface が作成完了。<code>xcvrd</code> / <code>buffermgrd</code> / <code>natmgr</code> / <code>natsync</code> は <strong>これを待つ</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h3 id="_3">ゼロポート起動<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -24382,11 +24382,11 @@
 </thead>
 <tbody>
 <tr>
-<td>sonic-buildimage #7999</td>
+<td><a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> #7999</td>
 <td><code>cfggen</code> を port 無しで動かす</td>
 </tr>
 <tr>
-<td>sonic-swss #1808</td>
+<td><a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> #1808</td>
 <td><code>portsyncd</code> を port 無しで動かす</td>
 </tr>
 <tr>
@@ -24474,14 +24474,14 @@
 <li>Queue port counters（queue / queue watermark）— <strong>追加要</strong></li>
 <li>PG counters — <strong>追加要</strong></li>
 <li>Debug counters: port ingress / egress drops（<code>DEBUG_COUNTER</code> table）— <strong>追加要</strong></li>
-<li>PFC watchdog counters — <strong>追加要</strong></li>
+<li><a href="../../reference/glossary/#term-pfc">PFC</a> watchdog counters — <strong>追加要</strong></li>
 </ul>
 <p>これら counter は従来 init 完了後に <strong>全ポートまとめて作成</strong> されていた。動的化すれば未存在ポートに対する誤登録が消える<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は sonic-swss #2019 で対応中。</p>
 <h3 id="buffermgrd-race-condition">buffermgrd の改修と race condition<a class="headerlink" href="#buffermgrd-race-condition" title="Permanent link">&para;</a></h3>
 <h4 id="race">加入時 race<a class="headerlink" href="#race" title="Permanent link">&para;</a></h4>
 <p>ユーザが port を追加 → buffer cfg を入れる順だが、port 加入と並行に buffermgr が cfg を見ると、APP_DB に未到着のうちに buffer cfg を流し込む可能性がある。<strong>APP_DB に port が存在することを buffermgr 側でチェックしてから書く</strong> 設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="race_1">削除時 race（深刻）<a class="headerlink" href="#race_1" title="Permanent link">&para;</a></h4>
-<p>依存 buffer cfg を残したまま port を消すと、portsorch が SAI port を消す前に buffer cfg が残っていて SAI エラーが連発する。HLD の解決策<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>依存 buffer cfg を残したまま port を消すと、portsorch が SAI port を消す前に buffer cfg が残っていて SAI エラーが連発する。<a href="../../reference/glossary/#term-hld">HLD</a> の解決策<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>buffer cfg にも <strong>per-port reference counter</strong> を持たせる（既存の ACL/VLAN/INTERFACE と同じ仕組み）</li>
 <li>ref-count &gt; 0 の port は portsorch が削除を拒否する</li>
@@ -24496,7 +24496,7 @@
 </ul>
 <h4 id="_5">提案<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
 <ul>
-<li><code>lldpcli</code> 実行前に <strong>STATE_DB の port エントリ（=host i/f 存在）を確認</strong></li>
+<li><code>lldpcli</code> 実行前に <strong><a href="../../reference/glossary/#term-state_db">STATE_DB</a> の port エントリ（=host i/f 存在）を確認</strong></li>
 <li>APP_DB の del イベント受信時に <code>pending_cmds</code> から該当を <strong>除去</strong></li>
 <li>CONFIG_DB と APP_DB の両方を見る既存ロジックは整理する</li>
 </ul>
@@ -24575,7 +24575,7 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <ul>
 <li>ポート追加に時間がかかる: <code>PortConfigDone</code> / <code>PortInitDone</code> フラグの状態を確認。orchagent 連動が止まっている可能性。</li>
 <li>ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>LLDP が古いポート情報を保持し続ける: <code>lldpmgrd</code> の <code>pending_cmds</code> を確認、改修取り込み状況を確認<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><a href="../../reference/glossary/#term-lldp">LLDP</a> が古いポート情報を保持し続ける: <code>lldpmgrd</code> の <code>pending_cmds</code> を確認、改修取り込み状況を確認<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。</li>
 </ul>
 <h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
@@ -24617,7 +24617,7 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <li><code>sudo config interface shutdown EthernetX</code> 後に CONFIG_DB から直接 <code>PORT|EthernetX</code> を消すと、orchagent が以下を順次出す:</li>
 <li><code>SAI_STATUS_OBJECT_IN_USE</code>（VLAN_MEMBER / ACL_TABLE / BUFFER_PG が参照中）</li>
 <li><code>SAI_STATUS_INVALID_OBJECT_ID</code>（既に部分削除された下流 SAI オブジェクト）</li>
-<li>最悪は orchagent 自体が <code>abort()</code> し syncd / swss コンテナが crash loop に入る。<code>fast-reboot</code> / <code>warm-reboot</code> が必要になる。</li>
+<li>最悪は orchagent 自体が <code>abort()</code> し <a href="../../reference/glossary/#term-syncd">syncd</a> / swss コンテナが crash loop に入る。<code>fast-reboot</code> / <code>warm-reboot</code> が必要になる。</li>
 <li>chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / lldpmgrd の起動順次第で <code>pending_cmds</code> が滞留し、lldp neighbor 表に古い情報が残る。</li>
 <li>HLD で「ref counter で守られているから順序気にせず消してよい」と読んで自動化スクリプトを書くと、上記 race を踏む。</li>
 </ul>
@@ -24662,7 +24662,7 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <p>orchagent 側に上記前処理が無いため、<strong>運用側で全部やりきる</strong>しかない。</p>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="https://github.com/sonic-net/sonic-swss/pull/1112">sonic-swss #1112: [DPB portsyncd/portmgrd/portorch] Support dynamic port add/deletion without dependencies (merged)</a> — 動的 port add/del のコア実装（DPB: Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/1112">sonic-swss #1112: [DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch] Support dynamic port add/deletion without dependencies (merged)</a> — 動的 port add/del のコア実装（<a href="../../reference/glossary/#term-dpb">DPB</a>: Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。</li>
 <li>HLD 内で言及されていた PR #2022（port buffer ref counter）は CLOSED で未マージのまま。後継 PR も提案されておらず、機能ギャップは継続。</li>
 </ul>
 <h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
@@ -24674,6 +24674,8 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7d213842fcc9 -->
 
 <div class="footnote">
 <hr />

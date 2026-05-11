@@ -23990,7 +23990,7 @@
 
 <h1 id="show-mclag-mclagdctl">show mclag (mclagdctl) コマンド<a class="headerlink" href="#show-mclag-mclagdctl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC には <code>show mclag</code> という Click サブコマンドは存在しない。MCLAG の状態確認は <strong><code>mclagdctl</code></strong> コマンド経由で行い、これは <code>iccpd</code> コンテナ内の Unix ソケット (<code>/var/run/iccpd/mclagdctl.sock</code>) に接続する <code>iccpd</code> 由来のユーティリティである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC には <code>show mclag</code> という Click サブコマンドは存在しない。<a href="../../glossary/#term-mclag">MCLAG</a> の状態確認は <strong><code>mclagdctl</code></strong> コマンド経由で行い、これは <code>iccpd</code> コンテナ内の Unix ソケット (<code>/var/run/iccpd/mclagdctl.sock</code>) に接続する <code>iccpd</code> 由来のユーティリティである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ホスト側の <code>/usr/local/bin/mclagdctl</code> は <code>docker exec -i iccpd mclagdctl "$@"</code> を呼ぶだけのラッパーで、引数はそのままコンテナ内 <code>mclagdctl</code> に渡る<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><code>mclagdctl.c</code> の <code>command_types[]</code> で実装されているサブコマンドは次の通り<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>:</p>
@@ -24008,7 +24008,7 @@
 </tr>
 <tr>
 <td><code>mclagdctl -i &lt;domain_id&gt; dump arp</code></td>
-<td>MCLAG 同期されている ARP テーブル</td>
+<td>MCLAG 同期されている <a href="../../glossary/#term-arp">ARP</a> テーブル</td>
 </tr>
 <tr>
 <td><code>mclagdctl -i &lt;domain_id&gt; dump nd</code></td>
@@ -24045,7 +24045,7 @@
 <h3 id="mclagdctl-dump-state"><code>mclagdctl dump state</code><a class="headerlink" href="#mclagdctl-dump-state" title="Permanent link">&para;</a></h3>
 <p>ICCP / KA セッションの状態と ToR 識別子、peer link、isolation 状態などを表示する。<code>/etc/iccpd/iccpd.conf</code> のロード状態と <code>MCLAG_DOMAIN</code> テーブルの設定値が想定通り適用されているかの確認に使う。</p>
 <h3 id="mclagdctl-dump-portlist-local-peer"><code>mclagdctl dump portlist local</code> / <code>peer</code><a class="headerlink" href="#mclagdctl-dump-portlist-local-peer" title="Permanent link">&para;</a></h3>
-<p>local は自ノードの MCLAG メンバ PortChannel + そのメンバ物理 port、peer はピア側からの ICCP メッセージで取得した port 状態。<code>peer</code> 側は ICCP セッション断絶中はステイル状態となる。</p>
+<p>local は自ノードの MCLAG メンバ <a href="../../glossary/#term-portchannel">PortChannel</a> + そのメンバ物理 port、peer はピア側からの ICCP メッセージで取得した port 状態。<code>peer</code> 側は ICCP セッション断絶中はステイル状態となる。</p>
 <h3 id="mclagdctl-dump-arp-dump-nd-dump-mac"><code>mclagdctl dump arp</code> / <code>dump nd</code> / <code>dump mac</code><a class="headerlink" href="#mclagdctl-dump-arp-dump-nd-dump-mac" title="Permanent link">&para;</a></h3>
 <p>ICCP 経由でピアと同期しているフォワーディングテーブルのスナップショット。Dual-ToR の片側でしか学習されていない MAC / ARP の検出に有用。</p>
 <h3 id="mclagdctl-dump-unique_ip"><code>mclagdctl dump unique_ip</code><a class="headerlink" href="#mclagdctl-dump-unique_ip" title="Permanent link">&para;</a></h3>
@@ -24062,7 +24062,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/mclag-domain/"><code>MCLAG_DOMAIN</code></a> / <code>MCLAG_INTERFACE</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/mclag-domain/"><code>MCLAG_DOMAIN</code></a> / <code>MCLAG_INTERFACE</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -24111,8 +24111,8 @@
 <h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
-<li>MC-LAG のピアリンク・keepalive・メンバ LAG の同期状態を確認する。</li>
-<li>ARP/ND/MAC の同期 (mclag syncd) が想定どおり動いているかを判定する。</li>
+<li>MC-<a href="../../glossary/#term-lag">LAG</a> のピアリンク・keepalive・メンバ LAG の同期状態を確認する。</li>
+<li>ARP/ND/MAC の同期 (mclag <a href="../../glossary/#term-syncd">syncd</a>) が想定どおり動いているかを判定する。</li>
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
@@ -24125,6 +24125,8 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>mclagdctl<span class="w"> </span>-i<span class="w"> </span><span class="m">1000</span><span class="w"> </span>dump<span class="w"> </span>state
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0db2469421e6 -->
 
 <div class="footnote">
 <hr />

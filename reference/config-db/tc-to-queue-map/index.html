@@ -23802,7 +23802,7 @@
 
 <h1 id="tc_to_queue_map">TC_TO_QUEUE_MAP テーブル<a class="headerlink" href="#tc_to_queue_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Traffic Class (TC) を egress queue インデックスへマップする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>DSCP_TO_TC_MAP</code> で TC 化された値が、このマップで物理キューに振り分けられる。<code>qosorch</code> が SAI map (<code>SAI_QOS_MAP_TYPE_TC_TO_QUEUE</code>) を生成し、<code>PORT_QOS_MAP.tc_to_queue_map</code> で各ポートに適用する。</p>
+<p>Traffic Class (TC) を egress queue インデックスへマップする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>DSCP_TO_TC_MAP</code> で TC 化された値が、このマップで物理キューに振り分けられる。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> map (<code>SAI_QOS_MAP_TYPE_TC_TO_QUEUE</code>) を生成し、<code>PORT_QOS_MAP.tc_to_queue_map</code> で各ポートに適用する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23854,13 +23854,13 @@
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosorch</code>: SAI QoS map 生成</li>
+<li><code>qosorch</code>: SAI <a href="../../glossary/#term-qos">QoS</a> map 生成</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORT_QOS_MAP</code>、<code>QUEUE</code>、<code>DSCP_TO_TC_MAP</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORT_QOS_MAP</code>、<code>QUEUE</code>、<code>DSCP_TO_TC_MAP</code></li>
 <li>関連 CLI: なし</li>
-<li>関連 YANG: <code>sonic-tc-queue-map</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-tc-queue-map</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23894,6 +23894,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>qos<span class="w"> </span>map<span class="w"> </span>tc-queue
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 75132586f6c7 -->
 
 <div class="footnote">
 <hr />

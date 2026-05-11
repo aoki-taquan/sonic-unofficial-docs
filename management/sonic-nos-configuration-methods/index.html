@@ -23923,7 +23923,7 @@
 <li>「触ってはいけない」低レベル手段はどれか</li>
 </ul>
 <h2 id="10-config_db">入口は 10 種類、収束先は CONFIG_DB<a class="headerlink" href="#10-config_db" title="Permanent link">&para;</a></h2>
-<p>SONiC は CONFIG_DB（Redis db 4）に <strong>複数の入口</strong> を提供し、最終的に <code>/etc/sonic/config_db.json</code> で永続化する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>（<a href="../../reference/glossary/#term-redis">Redis</a> db 4）に <strong>複数の入口</strong> を提供し、最終的に <code>/etc/sonic/config_db.json</code> で永続化する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>graph TD
     USER[Operator] --&gt; CFG[config CLI]
     USER --&gt; CFGGEN[sonic-cfggen]
@@ -23985,12 +23985,12 @@
 <tr>
 <td>RESTCONF</td>
 <td>即時</td>
-<td>YANG</td>
+<td><a href="../../reference/glossary/#term-yang">YANG</a></td>
 <td>○</td>
 <td>コントローラ</td>
 </tr>
 <tr>
-<td>gNMI</td>
+<td><a href="../../reference/glossary/#term-gnmi">gNMI</a></td>
 <td>即時</td>
 <td>YANG</td>
 <td>◎</td>
@@ -24004,7 +24004,7 @@
 <td>IaC</td>
 </tr>
 <tr>
-<td>ZTP</td>
+<td><a href="../../reference/glossary/#term-ztp">ZTP</a></td>
 <td>初回起動時</td>
 <td>スクリプト次第</td>
 <td>◎</td>
@@ -24013,7 +24013,7 @@
 <tr>
 <td><code>vtysh</code></td>
 <td>しない</td>
-<td>FRR</td>
+<td><a href="../../reference/glossary/#term-frr">FRR</a></td>
 <td>×</td>
 <td>routing 詳細</td>
 </tr>
@@ -24039,7 +24039,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y
 </span></code></pre></div>
-<p><code>show</code> は STATE_DB / APPL_DB の閲覧専用。</p>
+<p><code>show</code> は <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の閲覧専用。</p>
 <h3 id="sonic-cfggen"><code>sonic-cfggen</code><a class="headerlink" href="#sonic-cfggen" title="Permanent link">&para;</a></h3>
 <p>JSON ↔ Redis のブリッジ。スクリプト/自動化用。入力 JSON は SONiC schema に従う必要があり、不適合だと書き込み時エラー<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="config_dbjson"><code>config_db.json</code> 直編集<a class="headerlink" href="#config_dbjson" title="Permanent link">&para;</a></h3>
@@ -24047,7 +24047,7 @@
 <h3 id="restconf-gnmi">RESTCONF / gNMI<a class="headerlink" href="#restconf-gnmi" title="Permanent link">&para;</a></h3>
 <p>YANG モデルに基づく標準 API。RESTCONF は OpenConfig 対応でマルチベンダ向け、gNMI は gRPC ベースで telemetry streaming もサポート。<strong>明示的に有効化 + 認証設定</strong> が必須<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="ansible-napalm">Ansible / NAPALM<a class="headerlink" href="#ansible-napalm" title="Permanent link">&para;</a></h3>
-<p>宣言的に interface / BGP / VLAN / ACL を管理。CI/CD パイプライン統合に向く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>宣言的に interface / <a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-acl">ACL</a> を管理。CI/CD パイプライン統合に向く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="ztp">ZTP<a class="headerlink" href="#ztp" title="Permanent link">&para;</a></h3>
 <p>工場出荷後の初回 boot で DHCP option 67 または USB から設定スクリプトを取得し自動適用。ログは <code>/var/log/ztp.log</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="vtyshfrrouting"><code>vtysh</code>（FRRouting）<a class="headerlink" href="#vtyshfrrouting" title="Permanent link">&para;</a></h3>
@@ -24108,6 +24108,8 @@
 <li><a href="../../topics/01-overview/">Topics: SONiC 全体像と設定基盤</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 32fbe70babcc -->
 
 <div class="footnote">
 <hr />

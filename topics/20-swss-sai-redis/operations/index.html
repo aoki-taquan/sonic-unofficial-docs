@@ -23796,7 +23796,7 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>機能章を読む上で必要な「SAI 失敗時の見方」「内部 dump の取り方」「health/system ready の解釈」をここに集める。機能固有の切り分け（BGP の neighbor down、ACL の install 失敗、L2 の port flap など）は各機能章の運用ページに任せ、ここは共通の観察ポイントを扱う。</p>
+<p>機能章を読む上で必要な「<a href="../../../reference/glossary/#term-sai">SAI</a> 失敗時の見方」「内部 dump の取り方」「health/system ready の解釈」をここに集める。機能固有の切り分け（<a href="../../../reference/glossary/#term-bgp">BGP</a> の neighbor down、<a href="../../../reference/glossary/#term-acl">ACL</a> の install 失敗、L2 の port flap など）は各機能章の運用ページに任せ、ここは共通の観察ポイントを扱う。</p>
 <h2 id="db">DB 一覧（番号）<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <p>最初に頭に入れておくと迷わない。</p>
 <table>
@@ -23810,27 +23810,27 @@
 <tbody>
 <tr>
 <td>0</td>
-<td>APPL_DB</td>
-<td>orchagent への入力（fpmsyncd、teamsyncd、portsyncd、p4rt-app など）</td>
+<td><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a></td>
+<td><a href="../../../reference/glossary/#term-orchagent">orchagent</a> への入力（<a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a>、teamsyncd、<a href="../../../reference/glossary/#term-portsyncd">portsyncd</a>、p4rt-app など）</td>
 </tr>
 <tr>
 <td>1</td>
-<td>ASIC_DB</td>
-<td>orchagent → syncd / SAI への出力。<code>ASIC_STATE:*</code></td>
+<td><a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a></td>
+<td>orchagent → <a href="../../../reference/glossary/#term-syncd">syncd</a> / SAI への出力。<code>ASIC_STATE:*</code></td>
 </tr>
 <tr>
 <td>2</td>
-<td>COUNTERS_DB</td>
+<td><a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a></td>
 <td>flex counter</td>
 </tr>
 <tr>
 <td>4</td>
-<td>CONFIG_DB</td>
+<td><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a></td>
 <td>ユーザ設定の真実</td>
 </tr>
 <tr>
 <td>6</td>
-<td>STATE_DB</td>
+<td><a href="../../../reference/glossary/#term-state_db">STATE_DB</a></td>
 <td>各 daemon の状態（PORT_TABLE、INTERFACE_TABLE 等）</td>
 </tr>
 <tr>
@@ -23884,7 +23884,7 @@
 <tbody>
 <tr>
 <td><code>SAI_STATUS_TABLE_FULL</code></td>
-<td>CRM 枯渇（route、ACL、neighbor 等）</td>
+<td><a href="../../../reference/glossary/#term-crm">CRM</a> 枯渇（route、ACL、neighbor 等）</td>
 <td><code>crm show resources</code> でテーブル特定、scale を下げる / threshold を設定</td>
 </tr>
 <tr>
@@ -23918,7 +23918,7 @@
 </span></code></pre></div>
 <p>採取の仕掛けと出力場所は <a href="../../../platform/dump-on-sai-failure/">SAI 失敗時の dump 取得</a> を読む。</p>
 <h2 id="dump-utility-db">dump utility による DB 横断調査<a class="headerlink" href="#dump-utility-db" title="Permanent link">&para;</a></h2>
-<p>機能の不具合切り分けでは、ある port や VRF に紐づく key が <code>CONFIG_DB</code>、<code>APPL_DB</code>、<code>STATE_DB</code>、<code>ASIC_DB</code> に同時に存在することを確認したい。dump utility は「モジュール（例: port、vrf）」を起点に複数 DB から関連 key を集約する CLI で、内部実装の経路を辿る作業を簡略化する。</p>
+<p>機能の不具合切り分けでは、ある port や <a href="../../../reference/glossary/#term-vrf">VRF</a> に紐づく key が <code>CONFIG_DB</code>、<code>APPL_DB</code>、<code>STATE_DB</code>、<code>ASIC_DB</code> に同時に存在することを確認したい。dump utility は「モジュール（例: port、vrf）」を起点に複数 DB から関連 key を集約する CLI で、内部実装の経路を辿る作業を簡略化する。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ sonic-db-dump -n CONFIG_DB -k &quot;PORT|Ethernet0&quot; -y
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>admin@sonic:~$ dump state port Ethernet0
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>admin@sonic:~$ dump state vlan Vlan1000
@@ -24014,9 +24014,10 @@
 <li><a href="../../../architecture/debug-framework-in-sonic/">Debug Framework（コンポーネント dump 登録 / assert 拡張）</a></li>
 <li><a href="../../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a></li>
 <li><a href="../../../system/system-ready-hld/">System Ready（sysmonitor + per-app closest UP status の event 集約）</a></li>
-<li><a href="../../19-build-packaging/">Build / Packaging 章</a>（FEATURE / hostcfgd との関係）</li>
+<li><a href="../../19-build-packaging/">Build / Packaging 章</a>（FEATURE / <a href="../../../reference/glossary/#term-hostcfgd">hostcfgd</a> との関係）</li>
 <li><a href="../../17-srv6-mpls/operations/">SRv6 / MPLS 章</a>（SAI 失敗の実例）</li>
 </ul>
+<!-- glossary-links-injected: f2f28aee324f -->
 
 
 

@@ -24080,7 +24080,7 @@
 
 <h1 id="show-runningconfiguration-startupconfiguration">show runningconfiguration / startupconfiguration サブコマンド<a class="headerlink" href="#show-runningconfiguration-startupconfiguration" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC で「現在の running config」を見るには CLI が <strong><code>show runningconfiguration</code></strong>（<code>show running-config</code> のエイリアスではない、空白なしの単一トークン）。本ページは同グループ配下のサブコマンドを網羅する。実装は <code>show/main.py</code> 内の <code>runningconfiguration</code> group<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。多くのサブコマンドは <code>sonic-cfggen -d --var-json &lt;TABLE&gt;</code> の薄いラッパで、CONFIG_DB から JSON を取り出して表示する。<code>startupconfiguration bgp</code> も合わせて扱う。</p>
+<p>SONiC で「現在の running config」を見るには CLI が <strong><code>show runningconfiguration</code></strong>（<code>show running-config</code> のエイリアスではない、空白なしの単一トークン）。本ページは同グループ配下のサブコマンドを網羅する。実装は <code>show/main.py</code> 内の <code>runningconfiguration</code> group<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。多くのサブコマンドは <code>sonic-cfggen -d --var-json &lt;TABLE&gt;</code> の薄いラッパで、<a href="../../glossary/#term-config_db">CONFIG_DB</a> から JSON を取り出して表示する。<code>startupconfiguration bgp</code> も合わせて扱う。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="show-runningconfiguration"><code>show runningconfiguration ...</code><a class="headerlink" href="#show-runningconfiguration" title="Permanent link">&para;</a></h3>
 <table>
@@ -24109,7 +24109,7 @@
 </tr>
 <tr>
 <td><code>show runningconfiguration bgp [-n NS]</code></td>
-<td>FRR の vtysh <code>show running-config</code></td>
+<td><a href="../../glossary/#term-frr">FRR</a> の vtysh <code>show running-config</code></td>
 <td><code>bgp_util.run_bgp_show_command</code></td>
 </tr>
 <tr>
@@ -24124,7 +24124,7 @@
 </tr>
 <tr>
 <td><code>show runningconfiguration snmp</code></td>
-<td>SNMP / SNMP_COMMUNITY / SNMP_USER 全部</td>
+<td><a href="../../glossary/#term-snmp">SNMP</a> / SNMP_COMMUNITY / SNMP_USER 全部</td>
 <td><code>show_run_snmp</code></td>
 </tr>
 <tr>
@@ -24344,12 +24344,12 @@ excerpt: |
 <h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>現在 CONFIG_DB に載っている設定スナップショットの取得。</li>
-<li>BGP / VRF / interface ごとの部分出力。</li>
+<li><a href="../../glossary/#term-bgp">BGP</a> / <a href="../../glossary/#term-vrf">VRF</a> / interface ごとの部分出力。</li>
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>show runningconfiguration all</code> は JSON 出力で巨大。区分ごとのサブコマンドが実用的。</li>
-<li>FRR 側 (bgp / zebra) は CONFIG_DB に同期されていない部分がある。</li>
+<li>FRR 側 (bgp / <a href="../../glossary/#term-zebra">zebra</a>) は CONFIG_DB に同期されていない部分がある。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all
@@ -24357,6 +24357,8 @@ excerpt: |
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 34d76fce17e7 -->
 
 <div class="footnote">
 <hr />

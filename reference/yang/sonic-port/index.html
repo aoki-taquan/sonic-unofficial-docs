@@ -24074,7 +24074,7 @@
 <td></td>
 <td>Ext</td>
 <td>pattern <code>Ext|Int|Inb|Rec|Dpc</code></td>
-<td>Internal port or External port for multi-asic or SmartSwitch platform</td>
+<td>Internal port or External port for multi-asic or <a href="../../glossary/#term-smartswitch">SmartSwitch</a> platform</td>
 </tr>
 <tr>
 <td><code>admin_status</code></td>
@@ -24178,7 +24178,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>PORT</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORT</code></li>
 <li>CLI: <code>config interface</code></li>
 <li>CLI: <code>show interfaces</code></li>
 </ul>
@@ -24195,11 +24195,11 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>物理 port 設定 (admin_status, speed, mtu, autoneg, fec)。<code>PORT|&lt;port&gt;</code> を portmgrd が processing。</li>
+<li>物理 port 設定 (admin_status, speed, mtu, autoneg, fec)。<code>PORT|&lt;port&gt;</code> を <a href="../../glossary/#term-portmgrd">portmgrd</a> が processing。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>speed</code> と <code>breakout</code> mode の不整合で SAI が port 作成失敗。breakout 変更直後は xcvrd の安定化を待つ。</li>
+<li><code>speed</code> と <code>breakout</code> mode の不整合で <a href="../../glossary/#term-sai">SAI</a> が port 作成失敗。breakout 変更直後は xcvrd の安定化を待つ。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT|*&#39;</span>
@@ -24215,6 +24215,8 @@
 <li><a href="../../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 75a44208cf9a -->
 
 <div class="footnote">
 <hr />

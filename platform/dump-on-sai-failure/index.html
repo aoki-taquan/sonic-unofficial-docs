@@ -23796,7 +23796,7 @@
 </div>
 <h1 id="sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）<a class="headerlink" href="#sai-dump-syncd_dumpsh-sai_redis_notify_syncd_invoke_dump" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SAI 呼び出しが失敗すると <code>orchagent</code> は <strong>abort</strong> し、syncd を含む各 service が再起動される。この再起動で <strong>失敗時点の SAI / SDK / 下位レイヤ状態が失われ</strong>、原因解析ができなくなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-sai">SAI</a> 呼び出しが失敗すると <code>orchagent</code> は <strong>abort</strong> し、<a href="../../reference/glossary/#term-syncd">syncd</a> を含む各 service が再起動される。この再起動で <strong>失敗時点の SAI / SDK / 下位レイヤ状態が失われ</strong>、原因解析ができなくなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は SAI 失敗を検知した瞬間に、<code>orchagent</code> が <strong>abort 前に syncd へ dump を依頼</strong> し、結果をホストから見える <code>/var/log/sai_failure_dump/</code> に保存する。後で <code>techsupport</code> を取ると自動回収される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">全体シーケンス<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
@@ -23819,7 +23819,7 @@
 <ol>
 <li><code>orchagent</code> が SAI 失敗を検知</li>
 <li>abort 直前に <code>SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD = SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> を set</li>
-<li><code>syncd</code> が受け、汎用スクリプト（HLD は <code>syncd_dump.sh</code> / <strong>実装は <code>sai_failure_dump.sh</code></strong>）を実行<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>syncd</code> が受け、汎用スクリプト（<a href="../../reference/glossary/#term-hld">HLD</a> は <code>syncd_dump.sh</code> / <strong>実装は <code>sai_failure_dump.sh</code></strong>）を実行<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>汎用は <code>platform_syncd_dump.sh</code> の有無を確認、あれば呼ぶ<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>/var/log/sai_failure_dump/</code> をローテーション、abort 続行</li>
 </ol>
@@ -23855,9 +23855,9 @@
     ROTATE --&gt; TS[techsupport]
     TS --&gt; ARCHIVE[tarball 収納]
     TS --&gt; CLEAR[ディレクトリ clear]</code></pre>
-<p>dump はあくまで <strong>失敗時点の証拠保全</strong>。orchagent の abort 自体は防がない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>dump はあくまで <strong>失敗時点の証拠保全</strong>。<a href="../../reference/glossary/#term-orchagent">orchagent</a> の abort 自体は防がない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="cli-yang">設定 / CLI / YANG<a class="headerlink" href="#cli-yang" title="Permanent link">&para;</a></h2>
-<p>新規 config / show / YANG / DB Migrator の追加は <strong>無し</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。warm/fast boot にも影響なし。SAI 失敗時にだけ動く “見えない安全網”。</p>
+<p>新規 config / show / <a href="../../reference/glossary/#term-yang">YANG</a> / DB Migrator の追加は <strong>無し</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。warm/fast boot にも影響なし。SAI 失敗時にだけ動く “見えない安全網”。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/log/sai_failure_dump/<span class="w">         </span><span class="c1"># 直近 dump 確認</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ls<span class="w"> </span>-la<span class="w"> </span>/usr/bin/sai_failure_dump.sh<span class="w"> </span>/usr/bin/platform_syncd_dump.sh
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>grep<span class="w"> </span>SAI_FAILURE_DUMP<span class="w"> </span>/var/log/syslog<span class="w">    </span><span class="c1"># 発火履歴</span>
@@ -23942,6 +23942,8 @@
 <li><a href="../../topics/11-reboot/">11-reboot</a>: abort 後の再起動経路</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 2d37518e0eae -->
+
 <div class="footnote">
 <hr />
 <ol>

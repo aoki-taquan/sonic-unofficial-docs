@@ -23511,8 +23511,8 @@
 
 <h1 id="config_db">CONFIG_DB リファレンス<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>CONFIG_DB</code> は SONiC における <strong>中央設定 DB</strong>。Redis instance の <code>DB 4</code> 上に置かれ、CLI (<code>config ...</code>) や gNMI / REST API、<code>config_db.json</code> のロードによって書き込まれる。各 Orch / daemon (orchagent, bgpcfgd, intfmgrd, vlanmgrd, portmgrd, teammgrd, ...) が CONFIG_DB の対象テーブルを <strong>subscribe</strong> し、APPL_DB やシステム設定（FRR・kernel・docker）に反映する。</p>
-<p>ユーザの設定は <strong>YANG モデル</strong> (<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-*.yang</code>) で記述された制約に従う必要がある。CLI / REST 経由の入力は <code>sonic-mgmt-common</code> の translib / transformer を通って YANG 検証されるが、<code>config_db.json</code> の直接ロード経路では <code>DEVICE_METADATA.localhost.yang_config_validation = enable</code> のときだけ検証が走る。</p>
+<p><code>CONFIG_DB</code> は SONiC における <strong>中央設定 DB</strong>。<a href="../glossary/#term-redis">Redis</a> instance の <code>DB 4</code> 上に置かれ、CLI (<code>config ...</code>) や <a href="../glossary/#term-gnmi">gNMI</a> / REST API、<code>config_db.json</code> のロードによって書き込まれる。各 Orch / daemon (<a href="../glossary/#term-orchagent">orchagent</a>, <a href="../glossary/#term-bgpcfgd">bgpcfgd</a>, <a href="../glossary/#term-intfmgrd">intfmgrd</a>, <a href="../glossary/#term-vlanmgrd">vlanmgrd</a>, <a href="../glossary/#term-portmgrd">portmgrd</a>, teammgrd, ...) が <a href="../glossary/#term-config_db">CONFIG_DB</a> の対象テーブルを <strong>subscribe</strong> し、<a href="../glossary/#term-appl_db">APPL_DB</a> やシステム設定（<a href="../glossary/#term-frr">FRR</a>・kernel・docker）に反映する。</p>
+<p>ユーザの設定は <strong><a href="../glossary/#term-yang">YANG</a> モデル</strong> (<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-*.yang</code>) で記述された制約に従う必要がある。CLI / REST 経由の入力は <code>sonic-mgmt-common</code> の translib / transformer を通って YANG 検証されるが、<code>config_db.json</code> の直接ロード経路では <code>DEVICE_METADATA.localhost.yang_config_validation = enable</code> のときだけ検証が走る。</p>
 <h2 id="_2">ページ粒度<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>このリファレンスは <strong>1 テーブル = 1 ページ</strong> で構成する。ファイル名は <code>&lt;TABLE_NAME&gt;</code> を kebab-case 化したもの。</p>
 <table>
@@ -23554,7 +23554,7 @@
 <ul>
 <li>YANG にテーブル定義があるもの → <code>verification: code-verified</code></li>
 <li>YANG に未定義 (<code>init_cfg.json.j2</code> や orch のコードからのみ確認できる) → <code>code-verified</code> のまま、本文で「YANG 未定義」と注記</li>
-<li>HLD のみ参照したものはこのリファレンスには載せない（リファレンス系は実装一致が前提）</li>
+<li><a href="../glossary/#term-hld">HLD</a> のみ参照したものはこのリファレンスには載せない（リファレンス系は実装一致が前提）</li>
 </ul>
 <h2 id="_3">主要テーブル一覧（順次拡充中）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>CONFIG_DB のテーブル数は YANG モジュール 100 超に対し 200 以上ある。本リファレンスは利用頻度の高いテーブルから順次ページ化していく。</p>
@@ -23562,14 +23562,14 @@
 <li><code>DEVICE_METADATA</code> ... 装置全体のメタ情報（hostname / ASN / role / hwsku 等）</li>
 <li><code>PORT</code> ... 物理ポート設定（admin/oper、speed、MTU、FEC、autoneg 等）</li>
 <li><code>INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> / <code>MGMT_INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> ... L3 インタフェース上の IP アサイン</li>
-<li><code>VLAN</code> / <code>VLAN_MEMBER</code> ... VLAN 定義とポートメンバ</li>
-<li><code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> ... LAG 定義とメンバ</li>
-<li><code>BGP_NEIGHBOR</code> / <code>BGP_GLOBALS</code> / <code>BGP_DEVICE_GLOBAL</code> ... BGP セッション・ルータ全体・スイッチ全体スコープの BGP 状態</li>
-<li><code>ACL_TABLE</code> / <code>ACL_RULE</code> ... ACL コンテナとルール</li>
-<li><code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> ... EVPN VXLAN トンネルと VNI マップ</li>
+<li><code>VLAN</code> / <code>VLAN_MEMBER</code> ... <a href="../glossary/#term-vlan">VLAN</a> 定義とポートメンバ</li>
+<li><code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> ... <a href="../glossary/#term-lag">LAG</a> 定義とメンバ</li>
+<li><code>BGP_NEIGHBOR</code> / <code>BGP_GLOBALS</code> / <code>BGP_DEVICE_GLOBAL</code> ... <a href="../glossary/#term-bgp">BGP</a> セッション・ルータ全体・スイッチ全体スコープの BGP 状態</li>
+<li><code>ACL_TABLE</code> / <code>ACL_RULE</code> ... <a href="../glossary/#term-acl">ACL</a> コンテナとルール</li>
+<li><code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> ... <a href="../glossary/#term-evpn">EVPN</a> <a href="../glossary/#term-vxlan">VXLAN</a> トンネルと VNI マップ</li>
 <li><code>MGMT_PORT</code> ... 管理ポート L1/L2 設定</li>
-<li><code>VRF</code> ... VRF (Virtual Routing and Forwarding) インスタンス</li>
-<li><code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> ... QoS バッファ階層</li>
+<li><code>VRF</code> ... <a href="../glossary/#term-vrf">VRF</a> (Virtual Routing and Forwarding) インスタンス</li>
+<li><code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> ... <a href="../glossary/#term-qos">QoS</a> バッファ階層</li>
 <li><code>QUEUE</code> / <code>SCHEDULER</code> ... キュー設定とスケジューラ</li>
 <li><code>DSCP_TO_TC_MAP</code> / <code>TC_TO_QUEUE_MAP</code> ... QoS マッピング</li>
 <li><code>DHCP_SERVER_IPV4</code> / <code>DHCP_RELAY</code> ... DHCP サーバ / リレー</li>
@@ -23585,6 +23585,8 @@
 <li><a href="../../topics/22-reference-index/">Topics: リファレンス横断索引</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: acf63e8e2a7e -->
 
 
 

@@ -23824,7 +23824,7 @@
 
 <h1 id="auto_techsupport">AUTO_TECHSUPPORT テーブル<a class="headerlink" href="#auto_techsupport" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>イベント駆動 (core dump 生成) で <code>show techsupport</code> を自動実行・古いダンプを掃除する機能の設定。グローバル既定値の <code>AUTO_TECHSUPPORT|GLOBAL</code> と feature 別オーバーライドの <code>AUTO_TECHSUPPORT_FEATURE|&lt;feature_name&gt;</code> の 2 系統を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>auto-techsupport.service</code> / <code>coredump-compress</code> ホストサービスが CONFIG_DB を購読する。</p>
+<p>イベント駆動 (core dump 生成) で <code>show techsupport</code> を自動実行・古いダンプを掃除する機能の設定。グローバル既定値の <code>AUTO_TECHSUPPORT|GLOBAL</code> と feature 別オーバーライドの <code>AUTO_TECHSUPPORT_FEATURE|&lt;feature_name&gt;</code> の 2 系統を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>auto-techsupport.service</code> / <code>coredump-compress</code> ホストサービスが <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23927,7 +23927,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>feature_name</code> は <code>FEATURE</code> テーブルとの整合が前提だが現状 leafref は張られていない (YANG 内コメント <code>TODO: Leafref once the FEATURE YANG is added</code>)。</p>
+<p><code>feature_name</code> は <code>FEATURE</code> テーブルとの整合が前提だが現状 leafref は張られていない (<a href="../../glossary/#term-yang">YANG</a> 内コメント <code>TODO: Leafref once the FEATURE YANG is added</code>)。</p>
 <h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>coredump_gen_handler.py</code> (host service): core 検出時に <code>show techsupport</code> を起動し、本テーブルの閾値を尊重</li>
@@ -23973,6 +23973,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>auto-techsupport<span class="w"> </span>global
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->
 
 <div class="footnote">
 <hr />

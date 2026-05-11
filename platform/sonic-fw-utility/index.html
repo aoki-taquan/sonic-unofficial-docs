@@ -23747,7 +23747,7 @@
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>platform plugin が必要</strong>: plugin 未実装の component は <code>fwutil</code> から触れない</li>
-<li><strong>ASIC 本体の firmware は対象外</strong>: SAI/SDK 経由で扱う想定（fwutil は周辺コンポーネント向け）</li>
+<li><strong>ASIC 本体の firmware は対象外</strong>: <a href="../../reference/glossary/#term-sai">SAI</a>/SDK 経由で扱う想定（fwutil は周辺コンポーネント向け）</li>
 <li><strong>手動 image 指定 vs manifest</strong>: 両者で受け付ける引数フォーマットが異なる</li>
 <li><strong>書き換え失敗の rollback</strong>: 多くは hardware 側保証（dual-bank） に依存</li>
 </ul>
@@ -23755,7 +23755,7 @@
 <ul>
 <li><strong>secure-upgrade / secure-boot</strong>: 署名検証や TPM 連携が必要な platform では fwutil の install 経路にも影響</li>
 <li><strong>show platform</strong>: <code>show platform firmware</code> で同じ情報を見られる platform もある</li>
-<li><strong>smart-switch DPU graceful shutdown</strong>: DPU 側 firmware 更新時のシャットダウン整合</li>
+<li><strong>smart-switch <a href="../../reference/glossary/#term-dpu">DPU</a> graceful shutdown</strong>: DPU 側 firmware 更新時のシャットダウン整合</li>
 <li><strong>kdump / fast-reboot</strong>: firmware install で求められる reboot 種別との相性</li>
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -23780,6 +23780,8 @@
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7bc589d85f65 -->
 
 <div class="footnote">
 <hr />

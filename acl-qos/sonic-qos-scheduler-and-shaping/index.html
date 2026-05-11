@@ -23840,12 +23840,12 @@
 </div>
 <h1 id="qos-scheduler-shapersp-wrr-dwrr-minmax-bandwidth">QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）<a class="headerlink" href="#qos-scheduler-shapersp-wrr-dwrr-minmax-bandwidth" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の QoS には <strong>scheduling</strong> と <strong>shaping</strong> の 2 軸がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC の <a href="../../reference/glossary/#term-qos">QoS</a> には <strong>scheduling</strong> と <strong>shaping</strong> の 2 軸がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>Scheduling</strong>: egress queue への帯域配分。SP / WRR / DWRR の 3 方式</li>
 <li><strong>Shaping</strong>: queue / port 単位の最大帯域（および queue では最小帯域）制限</li>
 </ul>
-<p>scheduler オブジェクトは <strong>profile</strong> 単位で定義し、queue または port にバインドする。SAI レイヤでは <code>saischeduler.h</code> の <code>create_scheduler</code> / <code>set_scheduler_group_attribute</code> / <code>set_port_attribute</code> を使う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>scheduler オブジェクトは <strong>profile</strong> 単位で定義し、queue または port にバインドする。<a href="../../reference/glossary/#term-sai">SAI</a> レイヤでは <code>saischeduler.h</code> の <code>create_scheduler</code> / <code>set_scheduler_group_attribute</code> / <code>set_port_attribute</code> を使う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>要件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>各 egress queue で SP / WRR / DWRR を選択可能</li>
@@ -23961,8 +23961,8 @@
 </table>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>物理ポートおよびその egress queue にのみ適用可能。<strong>VLAN / PortChannel インタフェースでは設定不可</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>scheduler profile 上限は ASIC 依存。HLD 上の参考値は <strong>128</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>物理ポートおよびその egress queue にのみ適用可能。<strong><a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> インタフェースでは設定不可</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>scheduler profile 上限は ASIC 依存。<a href="../../reference/glossary/#term-hld">HLD</a> 上の参考値は <strong>128</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>専用の <code>show scheduler</code> 等の CLI は無く、queue 統計で間接的に観測する</li>
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23983,6 +23983,8 @@
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 19aae067fe9e -->
 
 <div class="footnote">
 <hr />

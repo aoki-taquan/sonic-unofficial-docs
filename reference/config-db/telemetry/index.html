@@ -23824,7 +23824,7 @@
 
 <h1 id="telemetry">TELEMETRY テーブル<a class="headerlink" href="#telemetry" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>gRPC ストリーミングテレメトリ / gNMI サーバの設定。TLS 証明書パスと gNMI ランタイムオプションを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>telemetry</code> コンテナ (<code>docker-telemetry</code>、<code>docker-gnmi</code>) が起動時に CONFIG_DB を読み込む。</p>
+<p>gRPC ストリーミングテレメトリ / <a href="../../glossary/#term-gnmi">gNMI</a> サーバの設定。TLS 証明書パスと gNMI ランタイムオプションを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>telemetry</code> コンテナ (<code>docker-telemetry</code>、<code>docker-gnmi</code>) が起動時に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み込む。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23923,7 +23923,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>GNMI_CLIENT_CERT</code> (gNMI クライアント証明書 fingerprint)</li>
 <li>関連 CLI: <code>config telemetry config-db</code>、<code>config telemetry server</code>、<code>gnoi-system reboot</code> 等</li>
-<li>関連 YANG: <code>sonic-telemetry</code>、<code>sonic-gnmi</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-telemetry</code>、<code>sonic-gnmi</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23958,6 +23958,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>systemctl<span class="w"> </span>status<span class="w"> </span>telemetry
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4c576d9c7fa6 -->
 
 <div class="footnote">
 <hr />

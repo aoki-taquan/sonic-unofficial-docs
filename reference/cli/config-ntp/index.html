@@ -23678,7 +23678,7 @@
 
 <h1 id="config-ntp">config ntp サブコマンド<a class="headerlink" href="#config-ntp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config ntp</code> は NTP サーバ（chrony で動作）の追加・削除を行う CLI グループ。CONFIG_DB の <code>NTP_SERVER</code> テーブルを直接書き換え、<code>chrony</code> サービスを再起動する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config ntp</code> は NTP サーバ（chrony で動作）の追加・削除を行う CLI グループ。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>NTP_SERVER</code> テーブルを直接書き換え、<code>chrony</code> サービスを再起動する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>SONiC では NTP daemon として <code>chrony</code> を採用しており、<code>config ntp</code> で <code>NTP_SERVER</code> テーブルを書くと <code>chrony.conf</code> テンプレートが再生成され、<code>systemctl restart chrony</code> で反映される。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -23787,7 +23787,7 @@ excerpt: |
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>既存 IP に再度 <code>add</code> してもオプションは更新されない（早期 return する）。オプション変更は一度 <code>del</code> してから再 <code>add</code> する。</li>
-<li>chrony 再起動が伴うため、SSH や BGP 等が NTP に依存している場合は短時間のタイムスタンプ揺らぎがありうる。</li>
+<li>chrony 再起動が伴うため、SSH や <a href="../../glossary/#term-bgp">BGP</a> 等が NTP に依存している場合は短時間のタイムスタンプ揺らぎがありうる。</li>
 </ul>
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -23809,7 +23809,7 @@ excerpt: |
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-ntp/"><code>sonic-ntp</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-ntp/"><code>sonic-ntp</code></a></li>
 <li>CONFIG_DB: <a href="../../config-db/ntp-server/"><code>NTP_SERVER</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -23835,7 +23835,7 @@ excerpt: |
 <h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
-<li>NTP server 追加・削除、VRF (mgmt) 越し設定。</li>
+<li>NTP server 追加・削除、<a href="../../glossary/#term-vrf">VRF</a> (mgmt) 越し設定。</li>
 <li>時刻同期失敗の調査前段。</li>
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
@@ -23854,6 +23854,8 @@ excerpt: |
 <ul>
 <li><a href="../../yang/sonic-ntp/">YANG: sonic-ntp</a></li>
 </ul>
+<!-- glossary-links-injected: 3f1a66b76c8d -->
+
 <div class="footnote">
 <hr />
 <ol>

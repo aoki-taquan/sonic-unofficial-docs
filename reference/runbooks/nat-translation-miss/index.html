@@ -23757,8 +23757,8 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>NAT zone 設定漏れ</strong>: interface に <code>nat_zone</code> が未設定 / inside/outside の組合せ不正</li>
-<li><strong>CRM NAT table の枯渇</strong>: dynamic NAT で空きエントリなし</li>
+<li><strong><a href="../../glossary/#term-nat">NAT</a> zone 設定漏れ</strong>: interface に <code>nat_zone</code> が未設定 / inside/outside の組合せ不正</li>
+<li><strong><a href="../../glossary/#term-crm">CRM</a> NAT table の枯渇</strong>: dynamic NAT で空きエントリなし</li>
 <li><strong>timeout 短すぎ</strong>: idle timeout / udp_timeout で先に削除</li>
 <li><strong>protocol 別 binding ない</strong>: TCP のみ pool に bind され UDP / ICMP は通らない</li>
 <li><strong>conntrack 連携の不整合</strong>: <code>nf_conntrack</code> が ASIC 側 NAT と乖離</li>
@@ -23803,11 +23803,13 @@
 <li><a href="../../../topics/16-nat-dhcp-dns/operations/">../../topics/16-nat-dhcp-dns/operations.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 6132e8ff8c52 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ master — natorch.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ master — natorch.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>sonic-net/sonic-swss @ master — natsyncd.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

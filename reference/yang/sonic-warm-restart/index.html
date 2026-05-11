@@ -23557,7 +23557,7 @@
 <li>import: なし</li>
 <li>top container: <code>sonic-warm-restart</code></li>
 </ul>
-<p>Warm restart configuration per module for hitless software upgrades<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BGP EOIU 信号と各 syncd 系のタイマーをモジュール別に保持する。</p>
+<p>Warm restart configuration per module for hitless software upgrades<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-bgp">BGP</a> EOIU 信号と各 <a href="../../glossary/#term-syncd">syncd</a> 系のタイマーをモジュール別に保持する。</p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23603,7 +23603,7 @@
 <td><code>module-name</code></td>
 <td>yes</td>
 <td></td>
-<td>system, bgp, teamd, swss, syncd, natsyncd, etc.</td>
+<td>system, bgp, <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>, swss, syncd, natsyncd, etc.</td>
 <td>Name of the module</td>
 </tr>
 <tr>
@@ -23640,7 +23640,7 @@
 <td></td>
 <td></td>
 <td>range 1..9999</td>
-<td>neighsyncd warm restart timer (seconds)</td>
+<td><a href="../../glossary/#term-neighsyncd">neighsyncd</a> warm restart timer (seconds)</td>
 </tr>
 </tbody>
 </table>
@@ -23654,7 +23654,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>WARM_RESTART</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>WARM_RESTART</code></li>
 <li>CLI: <code>config warm_restart</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23667,6 +23667,8 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: acba13d26a22 -->
+
 <div class="footnote">
 <hr />
 <ol>

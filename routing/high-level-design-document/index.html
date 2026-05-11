@@ -23811,10 +23811,10 @@
 </div>
 <h1 id="ordered-ecmpip-nexthop-sequence_id-torappliance">Ordered ECMP（IP ソート順で nexthop に <code>sequence_id</code> を付け同一フローを同 ToR/Appliance に固定）<a class="headerlink" href="#ordered-ecmpip-nexthop-sequence_id-torappliance" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>T0 配下に <strong>flow state を持つ appliance</strong>（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。フロー状態が appliance 間で同期されないと <strong>同じフローが別 appliance に行き当たって state miss する</strong> 恐れがある。T1 から T0 への ECMP 選択を <strong>全 T1 で同一順序</strong> にすれば、フローは常に同じ T0 → 同じ appliance に着く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は SONiC で <strong>Ordered ECMP</strong>（nexthop の順序を保持した ECMP）を実装する設計。Phase 1 では<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>T0 配下に <strong>flow state を持つ appliance</strong>（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。フロー状態が appliance 間で同期されないと <strong>同じフローが別 appliance に行き当たって state miss する</strong> 恐れがある。T1 から T0 への <a href="../../reference/glossary/#term-ecmp">ECMP</a> 選択を <strong>全 T1 で同一順序</strong> にすれば、フローは常に同じ T0 → 同じ appliance に着く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は SONiC で <strong>Ordered ECMP</strong>（nexthop の順序を保持した ECMP）を実装する設計。Phase 1 では<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>nexthop IP アドレスでソート</strong> した順を sequence_id として SAI に渡す</li>
+<li><strong>nexthop IP アドレスでソート</strong> した順を sequence_id として <a href="../../reference/glossary/#term-sai">SAI</a> に渡す</li>
 <li>全 T1 で同じ entropy 計算 + 同じ順序前提なら、同じフローは必ず同 nexthop に landing</li>
 <li>knob で feature 有効化、SAI 非対応 ASIC では従来挙動にフォールバック</li>
 <li><strong>link up/down で nexthop が増減</strong>するときも順序を保つ</li>
@@ -23869,7 +23869,7 @@
 <ul>
 <li>init knob で sort key を IP 以外に変更可能化</li>
 <li>T0 上での warm restart サポート</li>
-<li>CONFIG_DB knob による有効化（reload 必要）</li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> knob による有効化（reload 必要）</li>
 <li>Nexthop Group OA への移行</li>
 </ul>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23885,6 +23885,8 @@
 <li><strong>ECMP HW Acceleration</strong>: link up/down で nexthop 集合が変わる場面で seq 維持</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: a0c968f284e3 -->
+
 <div class="footnote">
 <hr />
 <ol>

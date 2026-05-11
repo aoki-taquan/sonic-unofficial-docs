@@ -23539,15 +23539,15 @@
 
 
 <h1 id="dash-smartswitch">DASH と SmartSwitch<a class="headerlink" href="#dash-smartswitch" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC で「NPU スイッチに DPU をぶら下げ、その上で DASH オーバーレイを処理する」SmartSwitch 構成を読み解くための入口です。</p>
-<p>DASH 系と SmartSwitch 系の既存 HLD は、NPU 側 / DPU 側 / HA / 管理経路にまたがって分散しています。ここでは「NPU と DPU はどう役割を分けているのか」「コントローラから入れた設定はどの DB を通って DPU に届くのか」「HA フェイルオーバーや DPU の reboot / upgrade はどの daemon が動かすのか」という運用者・設計者の質問順に並べ直します。</p>
+<p>この章は、SONiC で「<a href="../../reference/glossary/#term-npu">NPU</a> スイッチに <a href="../../reference/glossary/#term-dpu">DPU</a> をぶら下げ、その上で <a href="../../reference/glossary/#term-dash">DASH</a> オーバーレイを処理する」<a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> 構成を読み解くための入口です。</p>
+<p>DASH 系と SmartSwitch 系の既存 <a href="../../reference/glossary/#term-hld">HLD</a> は、NPU 側 / DPU 側 / HA / 管理経路にまたがって分散しています。ここでは「NPU と DPU はどう役割を分けているのか」「コントローラから入れた設定はどの DB を通って DPU に届くのか」「HA フェイルオーバーや DPU の reboot / upgrade はどの daemon が動かすのか」という運用者・設計者の質問順に並べ直します。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>DASH、DPU、SmartSwitch、ENI Based Forwarding はそれぞれ何を指しているのか。</li>
-<li>NPU 側 Redis と DPU 側 overlay Redis はどう分かれ、どう同期するのか。</li>
-<li>ENI ベース転送と DASH ACL タグはどの ACL レイヤに入るのか。</li>
+<li>DASH、DPU、SmartSwitch、<a href="../../reference/glossary/#term-eni">ENI</a> Based Forwarding はそれぞれ何を指しているのか。</li>
+<li>NPU 側 <a href="../../reference/glossary/#term-redis">Redis</a> と DPU 側 overlay Redis はどう分かれ、どう同期するのか。</li>
+<li>ENI ベース転送と DASH <a href="../../reference/glossary/#term-acl">ACL</a> タグはどの ACL レイヤに入るのか。</li>
 <li>SmartSwitch HA（HAMgrD）と DPU の reboot / upgrade / graceful shutdown はどの順序で動くのか。</li>
-<li>gNMI フィードバックと gNOI 系 API は SmartSwitch でどこに位置付けられるのか。</li>
+<li><a href="../../reference/glossary/#term-gnmi">gNMI</a> フィードバックと <a href="../../reference/glossary/#term-gnoi">gNOI</a> 系 API は SmartSwitch でどこに位置付けられるのか。</li>
 </ul>
 <h2 id="_2">読み進め方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
@@ -23555,7 +23555,7 @@
 <li><a href="internals/">内部構造</a>: NPU-DPU DB アーキテクチャ、ENI ベース転送、DASH ACL タグ。</li>
 <li><a href="setup/">設定</a>: DPU IP 割当、gNMI フィードバック、DASH KVM での検証。</li>
 <li><a href="operations/">運用</a>: HA フェイルオーバー、PMON、reboot / shutdown / upgrade。</li>
-<li><a href="advanced/">発展トピック</a>: gNOI 系との関係、Multi-ASIC / VOQ との境界、管理章への橋渡し。</li>
+<li><a href="advanced/">発展トピック</a>: gNOI 系との関係、Multi-ASIC / <a href="../../reference/glossary/#term-voq">VOQ</a> との境界、管理章への橋渡し。</li>
 </ol>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23582,6 +23582,7 @@
 <li><a href="../11-reboot/">Reboot / Upgrade / Lifecycle</a></li>
 <li><a href="../12-multi-asic-voq/">Multi-ASIC / VOQ Chassis</a></li>
 </ul>
+<!-- glossary-links-injected: 7409e80dd9a7 -->
 
 
 

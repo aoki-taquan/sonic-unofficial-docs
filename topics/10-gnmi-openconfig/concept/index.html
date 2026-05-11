@@ -23806,13 +23806,13 @@
 
 
 <h1 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。どの入口を使うかで操作対象が変わるわけではなく、同じ YANG モデルで定義された操作が、別の transport で表現されているにすぎない。この理解がないと「gNMI Set で OpenConfig をいじったら CLI が反映していない」ように見えてしまう。</p>
+<p>SONiC のモデル駆動管理は、CLI、<a href="../../../reference/glossary/#term-gnmi">gNMI</a>、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。どの入口を使うかで操作対象が変わるわけではなく、同じ <a href="../../../reference/glossary/#term-yang">YANG</a> モデルで定義された操作が、別の transport で表現されているにすぎない。この理解がないと「gNMI Set で OpenConfig をいじったら CLI が反映していない」ように見えてしまう。</p>
 <h2 id="gnmi-openconfig">gNMI / OpenConfig 機能は何を解決するか<a class="headerlink" href="#gnmi-openconfig" title="Permanent link">&para;</a></h2>
 <p>データセンタの規模で運用していると、CLI でログインして 1 台ずつ設定する世界はすぐに破綻する。NMS / SDN コントローラから API でまとめて投入し、戻りも構造化データで取りたい、しかもベンダーが混ざってもなるべく同じ表現で扱いたい。この要求に答えるのが gNMI（プロトコル）と OpenConfig（モデル）の組み合わせで、SONiC では次の問題を一気に解消している。</p>
 <ul>
 <li>CLI 専用機能と API 専用機能が分裂し、片方からしか触れないコマンドが生まれる問題</li>
 <li>ベンダー固有の MIB / CLI を毎回翻訳しないと NMS から触れない問題</li>
-<li>設定の get / set を別プロトコル（SSH/CLI と SNMP）で行わなければならない問題</li>
+<li>設定の get / set を別プロトコル（SSH/CLI と <a href="../../../reference/glossary/#term-snmp">SNMP</a>）で行わなければならない問題</li>
 <li>「いまの設定」と「いまの状態」を片方ずつ取りに行く（candidate / running / operational がバラバラ）問題</li>
 <li>設定変更を pull する手段しかなく、変更通知を push できない問題</li>
 </ul>
@@ -23821,16 +23821,16 @@
 <p>gNMI / OpenConfig は <strong>management plane の中心</strong> に座る。具体的には次の経路で動く。</p>
 <ul>
 <li><strong>Transport 層</strong>: <code>telemetry</code> コンテナ内の gnmi-server が gRPC を受け、<code>mgmt-framework</code> コンテナの REST server が同じ Translib に乗る。</li>
-<li><strong>モデル変換層</strong>: Translib / Transformer が OpenConfig YANG ↔ SONiC native YANG ↔ CONFIG_DB の構造を相互変換する。CLI auto-generation tool は同じ YANG から CLI コマンド本体を生成する。</li>
+<li><strong>モデル変換層</strong>: Translib / Transformer が OpenConfig YANG ↔ SONiC native YANG ↔ <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の構造を相互変換する。CLI auto-generation tool は同じ YANG から CLI コマンド本体を生成する。</li>
 <li><strong>検証層</strong>: <code>sonic-yang-models</code> が pyang ベースで YANG 制約をチェック。違反は Transport 層に RPC error として戻る。</li>
-<li><strong>永続化層</strong>: CONFIG_DB writer が Redis に書き、<code>config save</code> 相当の挙動が <code>save-on-set</code> 設定で自動化される。</li>
-<li><strong>反映層</strong>: 他章と同じく orchagent → syncd → SAI → ASIC の通常経路を流れる。</li>
+<li><strong>永続化層</strong>: CONFIG_DB writer が <a href="../../../reference/glossary/#term-redis">Redis</a> に書き、<code>config save</code> 相当の挙動が <code>save-on-set</code> 設定で自動化される。</li>
+<li><strong>反映層</strong>: 他章と同じく <a href="../../../reference/glossary/#term-orchagent">orchagent</a> → <a href="../../../reference/glossary/#term-syncd">syncd</a> → <a href="../../../reference/glossary/#term-sai">SAI</a> → ASIC の通常経路を流れる。</li>
 </ul>
 <p>つまり gNMI / OpenConfig 章は「<strong>ConfigDB に到達するまでの道のり</strong>」を扱う。ConfigDB から先（orchagent から ASIC まで）は他章の責任、という切り分けで読めばよい。</p>
 <h2 id="_2">用語の定義<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>gNMI</strong>: gRPC Network Management Interface。<code>Capabilities</code> / <code>Get</code> / <code>Set</code> / <code>Subscribe</code> の 4 RPC を持つ。</li>
-<li><strong>gNOI</strong>: gRPC Network Operations Interface。<code>Reboot</code> / <code>File</code> / <code>OS</code> / <code>Healthz</code> / <code>Cert</code> などの操作 RPC。</li>
+<li><strong><a href="../../../reference/glossary/#term-gnoi">gNOI</a></strong>: gRPC Network Operations Interface。<code>Reboot</code> / <code>File</code> / <code>OS</code> / <code>Healthz</code> / <code>Cert</code> などの操作 RPC。</li>
 <li><strong>gNSI</strong>: gRPC Network Security Interface。<code>Authz</code> / <code>Pathz</code> / <code>Credentialz</code> / <code>Certz</code> などのセキュリティ管理 RPC。</li>
 <li><strong>OpenConfig</strong>: ベンダー非依存の YANG モデル群。<code>openconfig-interfaces</code>、<code>openconfig-bgp</code> などが主要。</li>
 <li><strong>SONiC YANG (native)</strong>: <code>sonic-port</code>、<code>sonic-vlan</code> のように CONFIG_DB スキーマ 1:1 で書かれた YANG モデル群。</li>
@@ -23904,7 +23904,7 @@
 <h2 id="openconfig-sonic-native-yang">OpenConfig と SONiC native YANG の使い分け<a class="headerlink" href="#openconfig-sonic-native-yang" title="Permanent link">&para;</a></h2>
 <p>SONiC は両方の YANG モデルを並行サポートする。</p>
 <ul>
-<li><strong>OpenConfig</strong>: ベンダー非依存、業界標準。ethernet interface、VLAN、PortChannel、BGP など主要機能のサブセットがマップされる。NMS から差分を取り、複数ベンダー混在環境で運用するときの選択肢。</li>
+<li><strong>OpenConfig</strong>: ベンダー非依存、業界標準。ethernet interface、<a href="../../../reference/glossary/#term-vlan">VLAN</a>、<a href="../../../reference/glossary/#term-portchannel">PortChannel</a>、<a href="../../../reference/glossary/#term-bgp">BGP</a> など主要機能のサブセットがマップされる。NMS から差分を取り、複数ベンダー混在環境で運用するときの選択肢。</li>
 <li><strong>SONiC native YANG</strong>: CONFIG_DB のスキーマに 1:1 で対応する。SONiC 固有機能や、OpenConfig がまだ表現しない operational 詳細を扱うときに使う。YANG モデルの命名規約と書き方は <a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG model guidelines</a> を参照する。</li>
 </ul>
 <p>同じ機能を OpenConfig と SONiC YANG の両方から触れる場合、Transformer がフィールド単位で変換するため、片方からの設定がもう片方の get でも見えるのが原則である。ただし、OpenConfig 側がそのフィールドを表現しない場合は SONiC YANG だけで操作する。OpenConfig マップの実装範囲は機能ごとに異なるため、interface は <a href="../../../management/openconfig-support-for-ethernet-interfaces/">OpenConfig support for ethernet interfaces</a>、PortChannel は <a href="../../../switching/openconfig-support-for-portchannel-aggregate-interface/">OpenConfig PortChannel</a>、VLAN は <a href="../../../switching/add-support-for-vlan-interface-using-openconfig-yang/">OpenConfig VLAN</a>、BGP は <a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">SONiC FRR BGP Unified Mgmt Framework</a> を参照する。</p>
@@ -23983,6 +23983,7 @@
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../09-telemetry-snmp/">Telemetry / SNMP / Observability</a></li>
 </ul>
+<!-- glossary-links-injected: 73c1da851dd5 -->
 
 
 

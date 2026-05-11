@@ -23796,7 +23796,7 @@
 </div>
 <h1 id="tacacs-authorization-accountingpatched-bash-audisp-tacplus">TACACS+ コマンド authorization / accounting（patched bash + <code>audisp-tacplus</code>）<a class="headerlink" href="#tacacs-authorization-accountingpatched-bash-audisp-tacplus" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>TACACS+ Authentication（既存）の上に <strong>コマンド単位の authorization と accounting</strong> を追加する HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>TACACS+ Authentication（既存）の上に <strong>コマンド単位の authorization と accounting</strong> を追加する <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>既存: authentication / session authz / session accounting / コマンド authz（ローカル permission のみ）</li>
 <li>追加: <strong>コマンド authorization（TACACS+）</strong> と <strong>コマンド accounting（TACACS+）</strong></li>
@@ -23860,7 +23860,7 @@
 <li><code>/etc/sudoers</code> の <code>PASSWD_CMDS</code> 正規表現で <strong>secret を <code>***</code> にマスク</strong>してから送信<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="hostcfg-enforcer">hostcfg enforcer<a class="headerlink" href="#hostcfg-enforcer" title="Permanent link">&para;</a></h3>
-<p><code>AAA Config</code> モジュールが CONFIG_DB から bash config / auditd config / TACACS+ config を生成する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>AAA Config</code> モジュールが <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から bash config / auditd config / TACACS+ config を生成する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <pre class="mermaid"><code>flowchart LR
   CLI --&gt; CDB[(CONFIG_DB&lt;br&gt;TACPLUS / TACPLUS_SERVER / AAA)]
   CDB --&gt; HE[hostcfg enforcer]
@@ -23869,7 +23869,7 @@
   HE --&gt; TC[TACACS+ config file]</code></pre>
 <p><code>AAA</code> テーブルは <code>authentication</code> / <code>authorization</code> / <code>accounting</code> の 3 種をキーとして持ち、各キーで <code>login</code>（実体は protocol リスト, e.g. <code>local,tacacs+</code>）、<code>fallback</code>、<code>failthrough</code> を管理<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <blockquote>
-<p>注: 過去 HLD 上は <code>protocol</code> 属性として記載されたが、現行 <code>sonic-system-aaa</code> YANG では <code>login</code> 属性として実装されており、互換性のため <code>login</code> のままとする<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>注: 過去 HLD 上は <code>protocol</code> 属性として記載されたが、現行 <code>sonic-system-aaa</code> <a href="../../reference/glossary/#term-yang">YANG</a> では <code>login</code> 属性として実装されており、互換性のため <code>login</code> のままとする<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 </blockquote>
 <h2 id="cli">関連 CLI<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Authorization</span>
@@ -23948,6 +23948,8 @@
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 <div class="footnote">
 <hr />

@@ -23960,7 +23960,7 @@
 </div>
 <h1 id="acl-flex-counter-acl_counter-counters_acl_counter_rule_map">ACL カウンタの flex counter 化（<code>ACL_COUNTER</code> + <code>COUNTERS_ACL_COUNTER_RULE_MAP</code>）<a class="headerlink" href="#acl-flex-counter-acl_counter-counters_acl_counter_rule_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">これは何か（一行で）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ACL ルール per packet/byte counter の polling を <strong>orchagent から syncd の flex counter へ移譲</strong> し、polling 間隔を <code>counterpoll</code> CLI で制御できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-acl">ACL</a> ルール per packet/byte counter の polling を <strong><a href="../../reference/glossary/#term-orchagent">orchagent</a> から <a href="../../reference/glossary/#term-syncd">syncd</a> の flex counter へ移譲</strong> し、polling 間隔を <code>counterpoll</code> CLI で制御できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">なぜ移譲したか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>ACL counter は当初 orchagent が 10 秒固定間隔で polling していた。orchagent はシングルスレッドなので、ルール数が増えると main loop を counter 取得で長時間専有し、他タスクの応答が遅延する。<strong>port / PG / queue / watermark で既に使われている flex counter インフラ</strong> に乗せれば polling は syncd の専用スレッドが担う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>要件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23974,7 +23974,7 @@
 <table>
 <thead>
 <tr>
-<th>SAI 属性</th>
+<th><a href="../../reference/glossary/#term-sai">SAI</a> 属性</th>
 <th>用途</th>
 </tr>
 </thead>
@@ -23991,7 +23991,7 @@
 </table>
 <p>ACL rule が動的に生成・削除されるため、flex counter manager は <strong>動的 register / de-register</strong> に対応する。</p>
 <h2 id="orchagent">orchagent<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h2>
-<p><code>AclOrch</code> に <code>FlexCounterManager</code>（HLD では <code>m_acl_fc_mgr</code>、実装は generic な <code>m_flex_counter_manager</code>）を持つ。<code>StatsMode::READ</code>、初期 polling 間隔 10 秒、default enable<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>flex_counter_manager.h</code> に <code>CounterType::ACL_COUNTER</code> を新設<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>AclOrch</code> に <code>FlexCounterManager</code>（<a href="../../reference/glossary/#term-hld">HLD</a> では <code>m_acl_fc_mgr</code>、実装は generic な <code>m_flex_counter_manager</code>）を持つ。<code>StatsMode::READ</code>、初期 polling 間隔 10 秒、default enable<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>flex_counter_manager.h</code> に <code>CounterType::ACL_COUNTER</code> を新設<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="counters_db">COUNTERS_DB<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h2>
 <p><strong>counter 値</strong>は OID 単位:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>127.0.0.1:6379[2]&gt; hgetall COUNTERS:oid:0x100000000037a
@@ -24074,7 +24074,7 @@
 <p><code>aclshow</code> の例外処理<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>map に entry なし → <code>N/A</code>（counter 未作成 / map 未書込）</li>
-<li>map に VID あるが COUNTERS_DB に値なし → <code>N/A</code>（polling 無効 / syncd 未書込）</li>
+<li>map に VID あるが <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に値なし → <code>N/A</code>（polling 無効 / syncd 未書込）</li>
 </ul>
 <p><code>sonic-clear acl</code> は <code>/home/admin</code> 配下にダンプを書き、次回 <code>aclshow</code> 実行時にダンプ差分を表示する <strong>ユーザごとの clear 状態</strong> 方式（他 counter group と共通）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ aclshow -a
@@ -24117,7 +24117,7 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">FLEX_COUNTER_STATUS</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">flex_status</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>HLD 当時 <strong>YANG に <code>POLL_INTERVAL</code> 未定義</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>HLD 当時 <strong><a href="../../reference/glossary/#term-yang">YANG</a> に <code>POLL_INTERVAL</code> 未定義</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="syncd">syncd<a class="headerlink" href="#syncd" title="Permanent link">&para;</a></h3>
 <p><code>syncd/FlexCounter.cpp</code> に ACL group のサポートを追加<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存 group と同様、別スレッドで間隔ベース polling。</p>
 <h2 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -24175,6 +24175,8 @@
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d36474e99740 -->
 
 <div class="footnote">
 <hr />

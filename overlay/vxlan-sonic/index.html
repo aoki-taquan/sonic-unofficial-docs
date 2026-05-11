@@ -24017,27 +24017,27 @@
 <h1 id="vxlan-vnet-vxlanorch-vnetorch-vrf-mapper">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）<a class="headerlink" href="#vxlan-vnet-vxlanorch-vnetorch-vrf-mapper" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
-<li>SONiC の VXLAN は <strong>VTEP と VNet の組合せ</strong> とよく言われるが、両者の関係は？</li>
+<li>SONiC の <a href="../../reference/glossary/#term-vxlan">VXLAN</a> は <strong>VTEP と VNet の組合せ</strong> とよく言われるが、両者の関係は？</li>
 <li><strong>L2 VXLAN と L3 VXLAN</strong> はどう作り分けられる？（mapper / tunnel が別なのか）</li>
-<li><strong>どの orchagent が何を担当</strong> するのか？</li>
-<li><strong>CONFIG_DB / APP_DB に何を入れれば</strong> VNet ピアリングが動くのか？</li>
-<li><strong>BGP EVPN との関係</strong>は？ Phase 1 と Phase 2 で何が違う？</li>
+<li><strong>どの <a href="../../reference/glossary/#term-orchagent">orchagent</a> が何を担当</strong> するのか？</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB に何を入れれば</strong> VNet ピアリングが動くのか？</li>
+<li><strong><a href="../../reference/glossary/#term-bgp">BGP</a> <a href="../../reference/glossary/#term-evpn">EVPN</a> との関係</strong>は？ Phase 1 と Phase 2 で何が違う？</li>
 <li><strong>Warm restart</strong> は使えるのか？</li>
 <li>トラブル時に最低限見るテーブルは？</li>
 </ol>
 <h2 id="1-vtep-vnet-orch">1. 全体像（VTEP + VNet + Orch 群）<a class="headerlink" href="#1-vtep-vnet-orch" title="Permanent link">&para;</a></h2>
-<p>SONiC の VXLAN は <strong>VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ</strong> で実装される。HLD は次のスコープを定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC の VXLAN は <strong>VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ</strong> で実装される。<a href="../../reference/glossary/#term-hld">HLD</a> は次のスコープを定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>Phase 1</strong>: VTEP として動作。顧客 VM ↔ ベアメタルサーバ間の VNet ピアリング、Symmetric IRB（RIOT）の分散 VXLAN ルーティング</li>
 <li><strong>Phase 2</strong>: BGP EVPN 統合、L2 VXLAN（タグ・無タグ）、HER（Head End Replication）、CLI 整備</li>
 </ul>
-<p>Kernel VRF（L3mdev）の programming は <strong>本 HLD のスコープ外</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Kernel <a href="../../reference/glossary/#term-vrf">VRF</a>（L3mdev）の programming は <strong>本 HLD のスコープ外</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主要 orchagent:</p>
 <ul>
 <li><code>VxlanOrch</code>（実コード上は <code>VxlanTunnelOrch</code> 等に分割）: VXLAN tunnel object、encap/decap mapper、tunnel termination</li>
 <li><code>VnetOrch</code> / <code>VnetRouteOrch</code>: VNet 単位の VRF / BRIDGE、ピアリング、VNet 経路</li>
-<li><code>VrfMgrD</code> / <code>VrfOrch</code>: kernel L3mdev と SAI VRF の同期</li>
-<li><code>IntfMgrD</code> / <code>IntfsOrch</code>: VNet 配下の RIF</li>
+<li><code>VrfMgrD</code> / <code>VrfOrch</code>: kernel L3mdev と <a href="../../reference/glossary/#term-sai">SAI</a> VRF の同期</li>
+<li><code>IntfMgrD</code> / <code>IntfsOrch</code>: VNet 配下の <a href="../../reference/glossary/#term-rif">RIF</a></li>
 <li><code>FdbOrch</code>: remote VTEP の MAC 学習</li>
 </ul>
 <pre class="mermaid"><code>flowchart TB
@@ -24067,7 +24067,7 @@
     VXO --&gt; SAI
     FDB[FdbOrch] --&gt; VXO</code></pre>
 <h2 id="2-l2-l3-vxlan">2. L2 / L3 VXLAN の作り分け<a class="headerlink" href="#2-l2-l3-vxlan" title="Permanent link">&para;</a></h2>
-<p><code>VxlanOrch</code> は <code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> から <strong>L2 VXLAN（VLAN ↔ VNI）</strong> と <strong>L3 VXLAN（VRF ↔ VNI）</strong> を <strong>別トンネル</strong> として作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それぞれに encap/decap mapper を attach。</p>
+<p><code>VxlanOrch</code> は <code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> から <strong>L2 VXLAN（<a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ VNI）</strong> と <strong>L3 VXLAN（VRF ↔ VNI）</strong> を <strong>別トンネル</strong> として作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それぞれに encap/decap mapper を attach。</p>
 <p>SAI 属性の対応:</p>
 <table>
 <thead>
@@ -24126,7 +24126,7 @@
     ADB--&gt;&gt;VO: SET
     VO-&gt;&gt;VO: SAI VRF / Bridge 作成</code></pre>
 <ul>
-<li><code>VrfMgrD</code>: VNet 設定から kernel L3mdev を作成 + STATE_DB に状態出力</li>
+<li><code>VrfMgrD</code>: VNet 設定から kernel L3mdev を作成 + <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に状態出力</li>
 <li><code>VrfOrch</code>: 通常 VRF を APP_DB から SAI に投入（RouteOrch が利用）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="vnetorch-vnetrouteorch">VnetOrch / VnetRouteOrch<a class="headerlink" href="#vnetorch-vnetrouteorch" title="Permanent link">&para;</a></h3>
@@ -24321,8 +24321,8 @@
 <li><strong>BGP EVPN（Phase 2）</strong>: 経路供給源として <code>VNET_ROUTE_TUNNEL_TABLE</code> を埋める</li>
 <li><strong>VLAN / VLAN_MEMBER</strong>: L2 VXLAN は VLAN ↔ VNI mapping 前提</li>
 <li><strong>VRF（通常 VRF）</strong>: <code>VrfOrch</code> 経由</li>
-<li><strong>DASH / SmartSwitch</strong>: 新しい HLD（<a href="../smartswitch-eni-based-forwarding/">ENI Based Forwarding</a>）は本 HLD の VxLAN tunnel を利用</li>
-<li><strong>MC-LAG / dual-ToR</strong>: 拡張あり</li>
+<li><strong><a href="../../reference/glossary/#term-dash">DASH</a> / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong>: 新しい HLD（<a href="../smartswitch-eni-based-forwarding/">ENI Based Forwarding</a>）は本 HLD の VxLAN tunnel を利用</li>
+<li><strong>MC-<a href="../../reference/glossary/#term-lag">LAG</a> / dual-ToR</strong>: 拡張あり</li>
 </ul>
 <!-- evidence:
 source: sonic-net/SONiC/doc/vxlan/Vxlan_hld.md#L299-L330 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -24376,6 +24376,8 @@ reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経
 <li><a href="../../topics/03-vxlan-evpn/">Topics: VXLAN / EVPN / VNET オーバーレイ</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: edc9bd421e86 -->
 
 <div class="footnote">
 <hr />

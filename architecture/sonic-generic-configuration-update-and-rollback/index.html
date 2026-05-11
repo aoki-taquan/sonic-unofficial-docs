@@ -23696,11 +23696,11 @@
 </div>
 <h1 id="generic-config-update-rollbackgcujson-patchcheckpoint">Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）<a class="headerlink" href="#generic-config-update-rollbackgcujson-patchcheckpoint" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config reload</code> で全コンテナを restart せずに、<strong>実行中の CONFIG_DB に増分パッチを安全適用</strong> するための仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config reload</code> で全コンテナを restart せずに、<strong>実行中の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に増分パッチを安全適用</strong> するための仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>特徴:</p>
 <ul>
 <li><strong>入力は RFC 6902 JSON Patch</strong>（<code>add</code> / <code>remove</code> / <code>replace</code> の op 列）</li>
-<li>適用前に <strong>YANG ベースで validation</strong> し、整合性違反は reject</li>
+<li>適用前に <strong><a href="../../reference/glossary/#term-yang">YANG</a> ベースで validation</strong> し、整合性違反は reject</li>
 <li>内部で <strong>依存解析</strong> して安全な適用順を決め、可能ならフィールド単位で増分書き込み</li>
 <li>失敗時は <strong>自動 rollback</strong>、成功後も任意時点に <strong>checkpoint</strong> を残せる</li>
 </ul>
@@ -23742,15 +23742,15 @@
 <ul>
 <li><strong>すべての CONFIG_DB テーブルに依存解析が定義されているわけではない</strong>: 新しいテーブルを追加した場合は sorter / YANG モデル側で対応が必要</li>
 <li><strong>特定の op は破壊的</strong>: <code>replace</code> で大規模置換すると内部的に巨大 patch になり、依存解析が遅延・失敗する場合あり</li>
-<li><strong>checkpoint は CONFIG_DB のみ</strong>: STATE_DB / APP_DB / kernel state は対象外</li>
-<li><strong>multi-asic 対応</strong>: namespace ごとに patch を生成・適用する想定。multi-asic への一括 apply は HLD 後に拡張されている可能性あり</li>
+<li><strong>checkpoint は CONFIG_DB のみ</strong>: <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / APP_DB / kernel state は対象外</li>
+<li><strong>multi-asic 対応</strong>: namespace ごとに patch を生成・適用する想定。multi-asic への一括 apply は <a href="../../reference/glossary/#term-hld">HLD</a> 後に拡張されている可能性あり</li>
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>config reload</code></strong>: GCU は reload を避けるための仕組み。両者を混在させると意図しないリセットを誘発し得る</li>
+<li><strong><code>config reload</code></strong>: <a href="../../reference/glossary/#term-gcu">GCU</a> は reload を避けるための仕組み。両者を混在させると意図しないリセットを誘発し得る</li>
 <li><strong>JSON Patch ordering（YANG-based）</strong>: 同 area の別 HLD（<code>json-patch-ordering-using-yang-models</code>）が並べ替え戦略を扱う</li>
 <li><strong>save-on-set / config save</strong>: GCU 適用後に persistent 化したいなら明示的に <code>config save</code> する</li>
-<li><strong>mgmt-framework / gNMI</strong>: external API から GCU を呼ぶ経路。gNMI Set はこの基盤を利用するケースがある</li>
+<li><strong>mgmt-framework / <a href="../../reference/glossary/#term-gnmi">gNMI</a></strong>: external API から GCU を呼ぶ経路。gNMI Set はこの基盤を利用するケースがある</li>
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23767,6 +23767,8 @@
 - multi-asic 環境での namespace ごと apply の現行サポート状況確認
 - gNMI / mgmt-framework から GCU を呼ぶ経路の現行実装確認
 -->
+
+<!-- glossary-links-injected: 0566ccbe2f14 -->
 
 <div class="footnote">
 <hr />

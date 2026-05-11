@@ -23753,13 +23753,13 @@
 <ul>
 <li><code>config chassis modules shutdown DPU0</code> がタイムアウト</li>
 <li><code>show chassis modules status</code> で <code>oper_status</code> が <code>Online</code> のまま</li>
-<li>shutdown 後も DPU プロセスが残り CPU を消費</li>
+<li>shutdown 後も <a href="../../glossary/#term-dpu">DPU</a> プロセスが残り CPU を消費</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>active ENI / flow 残存</strong>: drain 完了前に shutdown 要求</li>
+<li><strong>active <a href="../../glossary/#term-eni">ENI</a> / flow 残存</strong>: drain 完了前に shutdown 要求</li>
 <li><strong>chassisd ↔ DPU 内部 RPC タイムアウト</strong></li>
-<li><strong>STATE_DB の状態遷移が遅延</strong>: <code>CHASSIS_MODULE_TABLE</code> 更新詰まり</li>
+<li><strong><a href="../../glossary/#term-state_db">STATE_DB</a> の状態遷移が遅延</strong>: <code>CHASSIS_MODULE_TABLE</code> 更新詰まり</li>
 <li><strong>PCIe / power 制御コマンドの失敗</strong>: platform plugin の異常</li>
 <li><strong>暴走プロセスが SIGTERM を無視</strong></li>
 </ol>
@@ -23798,6 +23798,8 @@
 <li><a href="../dash-eni-down/">./dash-eni-down.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: d32d5a339f26 -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23805,7 +23807,7 @@
 <p>sonic-net/sonic-platform-daemons @ master — chassisd&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ master — chassis_modules.py&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ master — chassis_modules.py&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -23896,7 +23896,7 @@
 <li><strong><code>config_db.json</code> 以外</strong> の設定（frr 等）も対象に</li>
 <li>設定初期化中の <strong>中間 reboot</strong> をサポート（SDK 変更で reboot 必要なケース）</li>
 <li>新版インストール時の <strong>migration インフラ</strong> を提供</li>
-<li><strong>ZTP / updategraph 等</strong> の他経路と整合</li>
+<li><strong><a href="../../reference/glossary/#term-ztp">ZTP</a> / updategraph 等</strong> の他経路と整合</li>
 </ol>
 <h3 id="cliusrbinconfig-setup">CLI（<code>/usr/bin/config-setup</code>）<a class="headerlink" href="#cliusrbinconfig-setup" title="Permanent link">&para;</a></h3>
 <p>主用途<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23927,7 +23927,7 @@
 </tbody>
 </table>
 <blockquote>
-<p>HLD は具体的なサブコマンド名を列挙しないので、上の整理は機能カテゴリを示すのみ。実際のコマンド面は実装側で確認のこと。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> は具体的なサブコマンド名を列挙しないので、上の整理は機能カテゴリを示すのみ。実際のコマンド面は実装側で確認のこと。</p>
 </blockquote>
 <h3 id="boot">Boot 時のフロー<a class="headerlink" href="#boot" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
@@ -23941,7 +23941,7 @@
   ASIS --&gt; CDB
   CDB --&gt; START[他 SWSS サービス起動]</code></pre>
 <h3 id="updategraph"><code>updategraph</code> からの移行<a class="headerlink" href="#updategraph" title="Permanent link">&para;</a></h3>
-<p>従来 <code>updategraph</code> が担っていた <strong>「minigraph.xml から config_db.json を作る」</strong> 仕事と「<strong>設定の場所を整える</strong>」仕事を分離し、後者を <code>config-setup</code> に寄せる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。最終的に <code>updategraph</code> 廃止が目標。</p>
+<p>従来 <code>updategraph</code> が担っていた <strong>「<a href="../../reference/glossary/#term-minigraph.xml">minigraph.xml</a> から <a href="../../reference/glossary/#term-config_db.json">config_db.json</a> を作る」</strong> 仕事と「<strong>設定の場所を整える</strong>」仕事を分離し、後者を <code>config-setup</code> に寄せる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。最終的に <code>updategraph</code> 廃止が目標。</p>
 <h3 id="config-db">Config DB 外の設定の扱い<a class="headerlink" href="#config-db" title="Permanent link">&para;</a></h3>
 <p>frr.conf のように Config DB に乗らない設定も backup / restore 対象として扱う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ただし HLD は具体的な <strong>対象ファイル一覧</strong> を固定せず、追加可能な仕組みであることを要件としている。</p>
 <h3 id="warm-boot">Warm-boot 影響<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h3>
@@ -23971,7 +23971,7 @@ reasoning: config-setup の存在動機と updategraph 廃止計画の根拠。
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし（本サービスは <strong>CONFIG_DB の生成元</strong> であって、CONFIG_DB 内に table を持たない）。</p>
+<p>該当なし（本サービスは <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の生成元</strong> であって、CONFIG_DB 内に table を持たない）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p><code>config-setup</code> 一本（サブコマンドで factory / backup / migrate 等を分岐）。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -24011,6 +24011,8 @@ reasoning: config-setup の存在動機と updategraph 廃止計画の根拠。
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>updategraph
 </span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 944345ff21b0 -->
+
 <div class="footnote">
 <hr />
 <ol>

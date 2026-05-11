@@ -24090,7 +24090,7 @@
 
 <h1 id="config-bgp">config bgp サブコマンド<a class="headerlink" href="#config-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config bgp</code> は BGP セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-ECMP、および aggregate-address (集約広告) の操作を提供する。BGP データプレーン本体は FRR が握っているが、SONiC はその設定状態を <strong>CONFIG_DB</strong> に保存し、<code>bgpcfgd</code> が CONFIG_DB → FRR (vtysh) に反映する。<code>config bgp</code> は CONFIG_DB を直接書き換える役割を担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config bgp</code> は <a href="../../glossary/#term-bgp">BGP</a> セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-<a href="../../glossary/#term-ecmp">ECMP</a>、および aggregate-address (集約広告) の操作を提供する。BGP データプレーン本体は <a href="../../glossary/#term-frr">FRR</a> が握っているが、SONiC はその設定状態を <strong><a href="../../glossary/#term-config_db">CONFIG_DB</a></strong> に保存し、<code>bgpcfgd</code> が CONFIG_DB → FRR (vtysh) に反映する。<code>config bgp</code> は CONFIG_DB を直接書き換える役割を担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>config/main.py</code> 末尾で <code>config.commands['bgp'].add_command(bgp_cli.DEVICE_GLOBAL)</code> <code>add_command(bgp_cli.AGGREGATE_ADDRESS)</code> の形で <code>config/bgp_cli.py</code> のサブグループが追加される構造のため、cli.json (機械抽出) には <code>device-global</code> / <code>aggregate-address</code> 配下が現れない。本ページでは両方を統合して扱う。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -24259,7 +24259,7 @@ excerpt: |
 <li><code>--aggregate-address-prefix-list &lt;name&gt;</code> ... 集約 prefix を追加する prefix list 名</li>
 <li><code>--contributing-address-prefix-list &lt;name&gt;</code> ... contributing prefix の選別に使う prefix list 名</li>
 </ul>
-<p>prefix-list 名は YANG 由来の制約 <code>[0-9a-zA-Z_-]*</code>、最大 128 文字でバリデートされる<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<p>prefix-list 名は <a href="../../glossary/#term-yang">YANG</a> 由来の制約 <code>[0-9a-zA-Z_-]*</code>、最大 128 文字でバリデートされる<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
 <p><strong>動作</strong>:
 CONFIG_DB の <code>BGP_AGGREGATE_ADDRESS|&lt;address&gt;</code> を <code>set_entry</code> で作成。同じ key が既存ならエラーで終了する（idempotent ではない）。</p>
 <!-- evidence:
@@ -24423,6 +24423,8 @@ excerpt: |
 <li><a href="../../config-db/bgp-neighbor/">CONFIG_DB: BGP_NEIGHBOR</a></li>
 <li><a href="../../yang/sonic-bgp-neighbor/">YANG: sonic-bgp-neighbor</a></li>
 </ul>
+<!-- glossary-links-injected: 33c50b5734df -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23753,7 +23753,7 @@
 <ul>
 <li><code>show interfaces portchannel</code> で <code>S</code> (Selected) ではなく <code>D</code> (DOWN) / <code>I</code> (Individual) のままになる</li>
 <li><code>teamdctl &lt;PortChannel&gt; state</code> の <code>runner.aggregator.selected</code> が <code>false</code></li>
-<li>片側のみ UP（LACP unidirectional）</li>
+<li>片側のみ UP（<a href="../../glossary/#term-lacp">LACP</a> unidirectional）</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
@@ -23761,7 +23761,7 @@
 <li><strong>対向側の LACP mode 不一致</strong>: 一方が <code>active</code> / 他方が <code>off</code>（static）</li>
 <li><strong>speed / duplex mismatch</strong>: メンバーごとに速度が異なると LACP は member を eligible にしない</li>
 <li><strong><code>min_links</code> 未達</strong>: PORTCHANNEL の <code>min_links</code> を満たすメンバーが UP していない</li>
-<li><strong>teamd / teammgrd の異常</strong>: <code>teamd@&lt;PortChannel&gt;.service</code> が crash ループ</li>
+<li><strong><a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / teammgrd の異常</strong>: <code>teamd@&lt;PortChannel&gt;.service</code> が crash ループ</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-l1">1. メンバーポートの L1 状態<a class="headerlink" href="#1-l1" title="Permanent link">&para;</a></h3>
@@ -23769,7 +23769,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
 </span></code></pre></div>
 <ul>
-<li>期待: 全メンバーが <code>up/up</code>、PortChannel の Protocol が <code>LACP(A)(Up)</code></li>
+<li>期待: 全メンバーが <code>up/up</code>、<a href="../../glossary/#term-portchannel">PortChannel</a> の Protocol が <code>LACP(A)(Up)</code></li>
 <li>異常: メンバーが down → SFP / FEC を確認（<a href="../fec-errors/">fec-errors.md</a>）</li>
 </ul>
 <h3 id="2-teamd">2. teamd の生の状態<a class="headerlink" href="#2-teamd" title="Permanent link">&para;</a></h3>
@@ -23812,14 +23812,16 @@
 <li><a href="../../config-db/portchannel/">../config-db/portchannel.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 12d931c88dd6 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ 4305596 — cfgmgr/teammgr.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — cfgmgr/teammgr.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — show interfaces portchannel&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — show interfaces portchannel&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

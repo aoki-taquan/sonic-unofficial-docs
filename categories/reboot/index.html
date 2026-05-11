@@ -23707,8 +23707,8 @@
 
 <h1 id="warm-reboot-fast-reboot">Warm-Reboot / Fast-Reboot 関連<a class="headerlink" href="#warm-reboot-fast-reboot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>Warm Reboot</strong> はデータパス維持（無瞬断）を目標とした SONiC 再起動方式、<strong>Fast Reboot</strong> は数十秒〜数分のサービス停止を許容しつつ通常 reboot より高速にイメージを切り替える方式です。両者とも <code>kexec</code> で新カーネルにジャンプし、SWSS / syncd / orchagent / BGP / LACP などのプロセスを <strong>warm restart モード</strong> で再立ち上げして、ASIC の状態を可能な限り再利用します。</p>
-<p>このカテゴリは、warm/fast reboot に関わるページを area 横断でまとめます。<strong>system</strong>（warm-reboot 全体順序・SWSS docker warm restart・libsairedis idempotence・Multi-ASIC warm-reboot）・<strong>switching</strong>（LACP retry 拡張・ProducerStateTable view switching）・<strong>routing</strong>（BGP テストプラン）・<strong>reference</strong>（<code>reboot</code> / <code>fast-reboot</code> / <code>warm-reboot</code> CLI）に分散しています。</p>
+<p><strong><a href="../../reference/glossary/#term-warm-reboot">Warm Reboot</a></strong> はデータパス維持（無瞬断）を目標とした SONiC 再起動方式、<strong><a href="../../reference/glossary/#term-fast-reboot">Fast Reboot</a></strong> は数十秒〜数分のサービス停止を許容しつつ通常 reboot より高速にイメージを切り替える方式です。両者とも <code>kexec</code> で新カーネルにジャンプし、SWSS / <a href="../../reference/glossary/#term-syncd">syncd</a> / <a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-lacp">LACP</a> などのプロセスを <strong>warm restart モード</strong> で再立ち上げして、ASIC の状態を可能な限り再利用します。</p>
+<p>このカテゴリは、warm/fast reboot に関わるページを area 横断でまとめます。<strong>system</strong>（warm-reboot 全体順序・SWSS docker warm restart・libsairedis idempotence・Multi-ASIC warm-reboot）・<strong>switching</strong>（LACP retry 拡張・<a href="../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> view switching）・<strong>routing</strong>（BGP テストプラン）・<strong>reference</strong>（<code>reboot</code> / <code>fast-reboot</code> / <code>warm-reboot</code> CLI）に分散しています。</p>
 <p>歴史的に warm-reboot は「syncd view comparison 方式」と「libsairedis idempotence 方式」の 2 系統で発展しており、現行マスターは後者ベースです。設計の経緯は <a href="../../system/what-are-the-development-phases-and-scope-for-warm-reboot/"><code>what-are-the-development-phases-and-scope-for-warm-reboot.md</code></a> を参照すると理解しやすいです。</p>
 <p>主要キーワード: <code>warm reboot</code>, <code>fast reboot</code>, <code>warm restart</code>, <code>kexec</code>, <code>SWSS</code>, <code>docker</code>, <code>libsairedis idempotence</code></p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23751,7 +23751,7 @@
 <h2 id="verification">verification ステータス注意点<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>hld-only</strong>: <code>fast-reboot-flow-improvements-hld.md</code>, <code>vrf-feature-ansible-test-plan-omit-in-toc.md</code></li>
-<li><strong>discrepancy-found</strong>: <code>swss-docker-warm-restart-code-reference.md</code>, <code>sonic-libsairedis-api-idempotence-support.md</code>（HLD と現行コードの差異）</li>
+<li><strong>discrepancy-found</strong>: <code>swss-docker-warm-restart-code-reference.md</code>, <code>sonic-libsairedis-api-idempotence-support.md</code>（<a href="../../reference/glossary/#term-hld">HLD</a> と現行コードの差異）</li>
 </ul>
 <h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23766,6 +23766,8 @@
 <li><a href="../../topics/11-reboot/">Topics: Reboot / Upgrade / Lifecycle</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1af70874b912 -->
 
 
 

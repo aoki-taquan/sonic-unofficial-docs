@@ -23802,7 +23802,7 @@
 
 <h1 id="as_path_set">AS_PATH_SET テーブル<a class="headerlink" href="#as_path_set" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BGP の AS path access-list を CONFIG_DB に持たせるテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-routing-policy-sets.yang</code> の <code>AS_PATH_SET</code> コンテナで定義され、<code>ROUTE_MAP</code> の <code>match as-path</code> 等から参照される。</p>
+<p><a href="../../glossary/#term-bgp">BGP</a> の AS path access-list を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に持たせるテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-routing-policy-sets.yang</code> の <code>AS_PATH_SET</code> コンテナで定義され、<code>ROUTE_MAP</code> の <code>match as-path</code> 等から参照される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23848,7 +23848,7 @@
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>as_path_set_member</code> は <code>ordered-by user</code>。ユーザ指定順を維持する</li>
-<li>メンバは正規表現文字列（FRR <code>bgp as-path access-list</code> の regex 構文）</li>
+<li>メンバは正規表現文字列（<a href="../../glossary/#term-frr">FRR</a> <code>bgp as-path access-list</code> の regex 構文）</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23857,7 +23857,7 @@
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <a href="../community-set/"><code>COMMUNITY_SET</code></a>、<a href="../prefix-set/"><code>PREFIX_SET</code></a>、<code>ROUTE_MAP</code></li>
-<li>関連 YANG: <code>sonic-routing-policy-sets</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-routing-policy-sets</code></li>
 <li>関連 CLI: なし（<code>config_db.json</code> 投入）</li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23887,6 +23887,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show ip as-path-access-list&quot;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->
 
 <div class="footnote">
 <hr />

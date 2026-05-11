@@ -23728,18 +23728,18 @@
 </div>
 <h1 id="mclag-enhancements">MCLAG Enhancements<a class="headerlink" href="#mclag-enhancements" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>大きな HLD（42 KB）。本ページは architecturally distinctive な要素に絞る。詳細は <code>doc/mclag/MCLAG_Enhancements_HLD.md</code> を参照。</p>
+<p>大きな <a href="../../reference/glossary/#term-hld">HLD</a>（42 KB）。本ページは architecturally distinctive な要素に絞る。詳細は <code>doc/mclag/MCLAG_Enhancements_HLD.md</code> を参照。</p>
 </blockquote>
 <h2 id="_1">なぜ拡張するのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>MCLAG（Multi-Chassis LAG）は 2 台が <strong>互いに peer</strong> となり、下流ホストから 1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-mclag">MCLAG</a>（Multi-Chassis <a href="../../reference/glossary/#term-lag">LAG</a>）は 2 台が <strong>互いに peer</strong> となり、下流ホストから 1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li><strong>dynamic configuration</strong>（再起動なしで domain / mclag_interface を CONFIG_DB から触れる）</li>
+<li><strong>dynamic configuration</strong>（再起動なしで domain / mclag_interface を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から触れる）</li>
 <li><strong>keep-alive / session timeout の動的設定</strong></li>
 <li><strong>static MAC</strong> の peer 間同期</li>
 <li><strong>ICCP 学習 MAC の aging disable</strong></li>
 <li><strong>MAC sync 最適化</strong></li>
 <li><strong>isolation group</strong> で peer-link 経由の重複転送を抑止</li>
-<li><strong>unique IP</strong> で MCLAG VLAN 上の L3 プロトコル（OSPF 等）対応</li>
+<li><strong>unique IP</strong> で MCLAG <a href="../../reference/glossary/#term-vlan">VLAN</a> 上の L3 プロトコル（OSPF 等）対応</li>
 </ol>
 <h2 id="_2">全体構造<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23766,8 +23766,8 @@
 <p>要点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong><code>iccpd</code></strong> が ICCP メッセージで peer と同期</li>
-<li><strong><code>MclagSyncd</code></strong> が ICCP 由来の MAC / interface state を APPL_DB に橋渡し</li>
-<li>旧 MclagSyncd 内部 FDB はリファクタで撤廃され、APPL_DB の <code>APP_MCLAG_FDB_TABLE</code> に集約<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><code>MclagSyncd</code></strong> が ICCP 由来の MAC / interface state を <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に橋渡し</li>
+<li>旧 MclagSyncd 内部 <a href="../../reference/glossary/#term-fdb">FDB</a> はリファクタで撤廃され、APPL_DB の <code>APP_MCLAG_FDB_TABLE</code> に集約<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_3">各拡張ポイント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
@@ -23788,7 +23788,7 @@
 </tr>
 <tr>
 <td><strong>Isolation Group</strong></td>
-<td>peer-link 経由の重複転送/ループを防ぐため MCLAG メンバ port group から peer-link を isolate。SAI は <code>SAI_OBJECT_TYPE_ISOLATION_GROUP</code><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>peer-link 経由の重複転送/ループを防ぐため MCLAG メンバ port group から peer-link を isolate。<a href="../../reference/glossary/#term-sai">SAI</a> は <code>SAI_OBJECT_TYPE_ISOLATION_GROUP</code><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><strong>Aging disable</strong></td>
@@ -23831,11 +23831,11 @@
 <li>HLD は Rev 0.1 で日付欄空欄</li>
 <li>ICCP は <strong>2 台ピアまで</strong>（3-way 以上は未対応）</li>
 <li>isolation group は SAI 対応必須。未対応 ASIC では peer-link 経由のループ抑止は別手法</li>
-<li>unique IP では active/active 両方が L3 で見える。OSPF cost / BGP を peer 間で揃える必要</li>
+<li>unique IP では active/active 両方が L3 で見える。OSPF cost / <a href="../../reference/glossary/#term-bgp">BGP</a> を peer 間で揃える必要</li>
 <li>大量 static MAC sync は ICCP メッセージ量増、scalability 影響あり</li>
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>iccpd / FdbOrch / PortsOrch / VRRP / OSPF / BGP（unique IP）/ VXLAN・EVPN MH（別冗長機構）/ L3 PortChannel・sub-interface。</p>
+<p>iccpd / FdbOrch / PortsOrch / VRRP / OSPF / BGP（unique IP）/ <a href="../../reference/glossary/#term-vxlan">VXLAN</a>・<a href="../../reference/glossary/#term-evpn">EVPN</a> MH（別冗長機構）/ L3 <a href="../../reference/glossary/#term-portchannel">PortChannel</a>・sub-interface。</p>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>mclag<span class="w"> </span>brief
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;STATE_MCLAG_TABLE|1&quot;</span>
@@ -23855,6 +23855,8 @@
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 26d6d1d39324 -->
 
 <div class="footnote">
 <hr />

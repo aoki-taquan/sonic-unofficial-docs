@@ -23862,7 +23862,7 @@
 
 
 <h1 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。HLD 単位では別物に見えても、CONFIG_DB の <code>PORT</code> や <code>DEVICE_METADATA</code>、pmon コンテナ内の各 daemon といった共通点があります。</p>
+<p>SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。<a href="../../../reference/glossary/#term-hld">HLD</a> 単位では別物に見えても、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PORT</code> や <code>DEVICE_METADATA</code>、pmon コンテナ内の各 daemon といった共通点があります。</p>
 <h2 id="platform-abstraction">Platform abstraction の層<a class="headerlink" href="#platform-abstraction" title="Permanent link">&para;</a></h2>
 <p>SONiC は、ベンダーハードウェアの差を <code>sonic_platform</code> パッケージとして抽象化します。<code>psuutil</code> のような旧来クラスは platform 固有実装でしたが、現在は global な base class とプラグイン的な platform 実装に分かれており、共通 CLI / daemon が同じ API を呼びます。詳細は <a href="../../../platform/global-platform-specific-psuutil-class-instance/">global platform specific PSU util class instance</a> を参照してください。</p>
 <p>この抽象化があるため、<code>show platform</code> 系コマンドや pmon の各 daemon (<code>thermalctld</code>、<code>psud</code>、<code>pcied</code>、<code>ssdmon</code>、<code>xcvrd</code> など) は、ハード差を意識せずに同じ DB / sysfs パスへ書き込めます。</p>
@@ -23875,18 +23875,18 @@
   S --&gt; H[ASIC / PHY / optics]
   H --&gt;|EEPROM, DOM| X[xcvrd]
   X --&gt; A[APP_DB / STATE_DB]</code></pre>
-<p>ここで重要なのは、port 設定が <code>PORT</code> テーブル → PortMgr → orchagent → SAI と一方向に流れる一方で、optics 側の検出や DOM 値は逆向きに STATE_DB へ反映される点です。port 設定の再構成は <a href="../../../architecture/sonic-port-configuration-refactor-design/">port configuration refactor design</a> にまとまっています。</p>
+<p>ここで重要なのは、port 設定が <code>PORT</code> テーブル → PortMgr → <a href="../../../reference/glossary/#term-orchagent">orchagent</a> → <a href="../../../reference/glossary/#term-sai">SAI</a> と一方向に流れる一方で、optics 側の検出や DOM 値は逆向きに <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> へ反映される点です。port 設定の再構成は <a href="../../../architecture/sonic-port-configuration-refactor-design/">port configuration refactor design</a> にまとまっています。</p>
 <h2 id="_2">「ポート」とは何のことか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>SONiC で「ポート」と言ったとき、対象は文脈で変わります。</p>
 <ul>
 <li><code>PORT</code> テーブルの行: 名前 (<code>Ethernet0</code> など)、speed、lanes、auto-neg、FEC、admin/oper status を持つ論理単位。</li>
 <li>物理ケージ / モジュール: SFP / QSFP / OSFP のスロット。breakout で 1 ケージから複数 <code>PORT</code> が生える。</li>
 <li>SAI port object: ASIC 側の port object ID。</li>
-<li>PHY / Gearbox port: NPU と optics の間に挟まる PHY デバイスのチャネル。</li>
+<li>PHY / Gearbox port: <a href="../../../reference/glossary/#term-npu">NPU</a> と optics の間に挟まる PHY デバイスのチャネル。</li>
 </ul>
 <p>スキーマ詳細は <a href="../../../reference/config-db/port/">PORT テーブル</a> と <a href="../../../reference/yang/sonic-port/">sonic-port YANG</a> が一次資料です。</p>
 <h2 id="health">装置 health の系統<a class="headerlink" href="#health" title="Permanent link">&para;</a></h2>
-<p>ポートの上下とは独立に、装置側の状態 (thermal、PSU、fan、SSD、PCIe、BMC) も常時監視されます。これらは pmon コンテナ内の各 daemon が STATE_DB を更新し、CLI / SNMP / Redfish が同じ DB を見ます。port 章と切り離しても良いように見えますが、thermal shutdown は port を強制 down させるため、運用上は同じ章で読むのが楽です。</p>
+<p>ポートの上下とは独立に、装置側の状態 (thermal、PSU、fan、SSD、PCIe、BMC) も常時監視されます。これらは pmon コンテナ内の各 daemon が STATE_DB を更新し、CLI / <a href="../../../reference/glossary/#term-snmp">SNMP</a> / Redfish が同じ DB を見ます。port 章と切り離しても良いように見えますが、thermal shutdown は port を強制 down させるため、運用上は同じ章で読むのが楽です。</p>
 <h2 id="_3">まず読み手の質問に答える<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="_4">この機能はそもそも何か<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>「Platform / Port / Optics」は単独の機能名ではなく、<strong>SONiC が一台のスイッチ装置として動くために最低限必要な物理層・装置層の抽象化</strong> をまとめた章です。具体的には次の 3 系統です。</p>
@@ -23940,7 +23940,7 @@
 <li><strong><code>xcvrd</code></strong>: Transceiver daemon。SFP/QSFP/OSFP の EEPROM 読み出し、CMIS state machine、DOM 監視、PM（performance monitoring）を STATE_DB に書く。</li>
 <li><strong>PortMgr / <code>portsyncd</code></strong>: CONFIG_DB の <code>PORT</code> を読んで APP_DB に流す側と、Linux netdev 状態を APP_DB に同期する側。</li>
 <li><strong>PortOrch</strong>: orchagent 内の port object responsible。SAI port を生成 / 設定する。</li>
-<li><strong>port_config.ini</strong>: HwSKU ごとの port lane / speed の初期マップ。CONFIG_DB が無い起動初期に PortMgr が参照する。</li>
+<li><strong><a href="../../../reference/glossary/#term-port-config-ini">port_config.ini</a></strong>: HwSKU ごとの port lane / speed の初期マップ。CONFIG_DB が無い起動初期に PortMgr が参照する。</li>
 <li><strong>breakout</strong>: 1 物理ケージから複数 <code>PORT</code> を生やす機能（例 400G OSFP → 4×100G）。</li>
 <li><strong>CMIS</strong>: Common Management Interface Specification（OIF）。400G/800G 世代の optics 標準。state machine を <code>xcvrd</code> が回す。</li>
 <li><strong>DOM</strong>: Digital Optical Monitoring。Tx/Rx power、温度、Vcc、bias current。</li>
@@ -23979,11 +23979,11 @@
 <tbody>
 <tr>
 <td><a href="../../08-qos-buffer/">QoS / Buffer</a></td>
-<td>ポート上のキュー・バッファ・FEC は QoS 章。物理層の存在そのものはこの章</td>
+<td>ポート上のキュー・バッファ・FEC は <a href="../../../reference/glossary/#term-qos">QoS</a> 章。物理層の存在そのものはこの章</td>
 </tr>
 <tr>
 <td><a href="../../07-acl-copp-mirror/">ACL / CoPP</a></td>
-<td>ACL は port を入力として参照するが、port 定義そのものはこの章</td>
+<td><a href="../../../reference/glossary/#term-acl">ACL</a> は port を入力として参照するが、port 定義そのものはこの章</td>
 </tr>
 <tr>
 <td><a href="../../05-dual-tor/">Dual-ToR</a></td>
@@ -24023,6 +24023,7 @@
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 </ul>
+<!-- glossary-links-injected: d1d326fff20e -->
 
 
 

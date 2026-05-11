@@ -23674,7 +23674,7 @@
 
 
 <h1 id="overlay">Overlay アーキテクチャ<a class="headerlink" href="#overlay" title="Permanent link">&para;</a></h1>
-<p>Overlay を読むときの中心は、設定テーブルそのものではなく「誰がどの table を見て、最終的にどの SAI object を作るか」です。VXLAN/VNET/EVPN は入口が違っても、VTEP、tunnel map、tunnel nexthop、VRF/VNI map、route の組み合わせに落ちます。</p>
+<p>Overlay を読むときの中心は、設定テーブルそのものではなく「誰がどの table を見て、最終的にどの <a href="../../../reference/glossary/#term-sai">SAI</a> object を作るか」です。<a href="../../../reference/glossary/#term-vxlan">VXLAN</a>/<a href="../../../reference/glossary/#term-vnet">VNET</a>/<a href="../../../reference/glossary/#term-evpn">EVPN</a> は入口が違っても、VTEP、tunnel map、tunnel nexthop、<a href="../../../reference/glossary/#term-vrf">VRF</a>/VNI map、route の組み合わせに落ちます。</p>
 <h2 id="_1">主要コンポーネント<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23690,23 +23690,23 @@
 </tr>
 <tr>
 <td><code>VxlanTunnelOrch</code> / <code>VxlanTunnelMapOrch</code></td>
-<td>VXLAN tunnel、termination、VLAN/VRF/VNI map を SAI に作る</td>
+<td>VXLAN tunnel、termination、<a href="../../../reference/glossary/#term-vlan">VLAN</a>/VRF/VNI map を SAI に作る</td>
 </tr>
 <tr>
 <td><code>VnetOrch</code></td>
-<td>VNET の VRF / bridge、VNET route、tunnel nexthop、ECMP group を管理する</td>
+<td>VNET の VRF / bridge、VNET route、tunnel nexthop、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> group を管理する</td>
 </tr>
 <tr>
 <td><code>FRR bgpd</code></td>
-<td>EVPN Type-2 / Type-3 / Type-5 を BGP で交換する</td>
+<td>EVPN Type-2 / Type-3 / Type-5 を <a href="../../../reference/glossary/#term-bgp">BGP</a> で交換する</td>
 </tr>
 <tr>
 <td><code>fpmsyncd</code> / route sync 経路</td>
-<td>FRR から SONiC DB / orchagent 側へ route 情報を渡す</td>
+<td><a href="../../../reference/glossary/#term-frr">FRR</a> から SONiC DB / <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 側へ route 情報を渡す</td>
 </tr>
 <tr>
 <td><code>BfdOrch</code></td>
-<td>Overlay ECMP の endpoint 生存性を BFD で監視する</td>
+<td>Overlay ECMP の endpoint 生存性を <a href="../../../reference/glossary/#term-bfd">BFD</a> で監視する</td>
 </tr>
 <tr>
 <td>SAI / ASIC</td>
@@ -23714,7 +23714,7 @@
 </tr>
 </tbody>
 </table>
-<p>HLD 名では <code>VxlanOrch</code> と書かれる箇所がありますが、現行の整理では VXLAN tunnel、map、EVPN NVO などが複数の orch クラスに分かれています。読み物としては「VXLAN 系 orch が tunnel と mapper を担当し、VNET 系 orch が route と nexthop を担当する」と捉えるのが実用的です。</p>
+<p><a href="../../../reference/glossary/#term-hld">HLD</a> 名では <code>VxlanOrch</code> と書かれる箇所がありますが、現行の整理では VXLAN tunnel、map、EVPN NVO などが複数の orch クラスに分かれています。読み物としては「VXLAN 系 orch が tunnel と mapper を担当し、VNET 系 orch が route と nexthop を担当する」と捉えるのが実用的です。</p>
 <h2 id="type-2-type-5-vnet-route">Type-2 / Type-5 と VNET route<a class="headerlink" href="#type-2-type-5-vnet-route" title="Permanent link">&para;</a></h2>
 <p>EVPN Type-2 は MAC/IP の到達性、Type-5 は IP prefix の到達性を配ります。一方、VNET route は SONiC の DB で local / tunnel route を表す形式です。両者は同一ではありませんが、最終的には remote endpoint への tunnel nexthop や route として ASIC へ入ります。</p>
 <pre class="mermaid"><code>flowchart TB
@@ -23750,7 +23750,7 @@
 <p><code>VNET_ROUTE_TABLE</code> は VNET 内の subnet / local route、<code>VNET_ROUTE_TUNNEL_TABLE</code> は remote endpoint へ encapsulate する route として扱います。tunnel route では endpoint、必要なら endpoint monitor、MAC、VNI、BFD profile、primary/secondary、custom monitoring などが判断材料になります。</p>
 <p>Overlay ECMP では、同じ prefix に複数 endpoint を持たせ、VnetOrch が tunnel nexthop group を作ります。BFD monitoring が有効な設計では、monitoring IP の BFD state に応じて NHG member を出し入れします。拡張版では primary/secondary、custom monitoring、<code>pinned_state</code>、per-route BFD timer、directly connected nexthop が追加されます。</p>
 <h2 id="local-endpoint-forwarding">Local endpoint forwarding<a class="headerlink" href="#local-endpoint-forwarding" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch / DPU 連携では、remote endpoint に見える nexthop が実は local DPU と直結している場合があります。<code>check_directly_connected=true</code> を使うと、VnetOrch は ARP / neighbor を確認し、直結なら tunnel route ではなく通常 ECMP route として扱います。failover の transient state では、tunnel decap 後のパケットを local nexthop へ redirect する高優先 ACL が使われます。</p>
+<p><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> / <a href="../../../reference/glossary/#term-dpu">DPU</a> 連携では、remote endpoint に見える nexthop が実は local DPU と直結している場合があります。<code>check_directly_connected=true</code> を使うと、VnetOrch は <a href="../../../reference/glossary/#term-arp">ARP</a> / neighbor を確認し、直結なら tunnel route ではなく通常 ECMP route として扱います。failover の transient state では、tunnel decap 後のパケットを local nexthop へ redirect する高優先 <a href="../../../reference/glossary/#term-acl">ACL</a> が使われます。</p>
 <h2 id="evpn-multihoming">EVPN multihoming の位置<a class="headerlink" href="#evpn-multihoming" title="Permanent link">&para;</a></h2>
 <p>EVPN multihoming は、Type-1 / Type-4、ESI、DF election、split-horizon を使って host を複数 leaf に接続する発展機能です。基本の Type-2 / Type-5 VXLAN EVPN の上に乗るため、この章では境界だけを扱い、詳細は <a href="../../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming</a> へ譲ります。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23762,6 +23762,7 @@
 <li><a href="../../../overlay/vnet-local-endpoint-forwarding/">VNET の Local Endpoint Forwarding</a></li>
 <li><a href="../../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming</a></li>
 </ul>
+<!-- glossary-links-injected: 0b9d9dc04257 -->
 
 
 

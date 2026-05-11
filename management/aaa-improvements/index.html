@@ -23784,7 +23784,7 @@
 </div>
 <h1 id="aaa-improvementspam-nss-d-bus-rbac">AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）<a class="headerlink" href="#aaa-improvementspam-nss-d-bus-rbac" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の AAA（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC の <a href="../../reference/glossary/#term-aaa">AAA</a>（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>多重ロール（RBAC）非対応</strong>: RADIUS / TACACS+ から学習した role を Primary GID 1 つに突っ込んでいる</li>
 <li><strong>RADIUS user は 2 回ログインしないと role が反映されない</strong>: 1 回目で <code>getpwnam()</code> 失敗 → PAM 認証中に local account を生成 → 2 回目で動く、という workaround</li>
@@ -23808,7 +23808,7 @@
     SD-&gt;&gt;PAM: 認証 / 認可 / cred / session
     PAM--&gt;&gt;SD: result (RADIUS/TACACS+/LDAP/local)
     SD-&gt;&gt;SH: fork → drop privs → initgroups → exec shell</code></pre>
-<p><code>getpwnam()</code> が <strong>PAM 認証より先</strong>に走るため、RADIUS から role を取って Primary GID にしようとすると鶏卵問題が起きる。これが本 HLD の出発点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>getpwnam()</code> が <strong>PAM 認証より先</strong>に走るため、RADIUS から role を取って Primary GID にしようとすると鶏卵問題が起きる。これが本 <a href="../../reference/glossary/#term-hld">HLD</a> の出発点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">提案の核<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23872,7 +23872,7 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 <!-- evidence-rendered:end -->
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>HLD は提案中心のため、CONFIG_DB / CLI の最終形は具体化されていない。<code>AAA</code> / <code>RADIUS</code> / <code>RADIUS_SERVER</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> 既存テーブルは前提として継続利用する想定。</p>
+<p>HLD は提案中心のため、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI の最終形は具体化されていない。<code>AAA</code> / <code>RADIUS</code> / <code>RADIUS_SERVER</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> 既存テーブルは前提として継続利用する想定。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>設計討議文書</strong>であり、SONiC が全面採用したか不明</li>
@@ -23916,6 +23916,8 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a9c18564f33f -->
 
 <div class="footnote">
 <hr />

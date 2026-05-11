@@ -23874,7 +23874,7 @@
 </div>
 <h1 id="smartswitch-gnmi-dpu-appl_state_db-version_id">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）<a class="headerlink" href="#smartswitch-gnmi-dpu-appl_state_db-version_id" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が <strong>NPU 上の gNMI サーバ</strong> を介して各 DPU を設定する。本 HLD はその gNMI 経路で「設定要求の結果が DPU SAI まで通ったか」をコントローラに返すフィードバック機構を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> アーキテクチャでは外部コントローラ（<a href="../../reference/glossary/#term-vnet">VNET</a> / SDN コントローラ）が <strong><a href="../../reference/glossary/#term-npu">NPU</a> 上の <a href="../../reference/glossary/#term-gnmi">gNMI</a> サーバ</strong> を介して各 <a href="../../reference/glossary/#term-dpu">DPU</a> を設定する。本 <a href="../../reference/glossary/#term-hld">HLD</a> はその gNMI 経路で「設定要求の結果が DPU <a href="../../reference/glossary/#term-sai">SAI</a> まで通ったか」をコントローラに返すフィードバック機構を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>1 リクエストで複数オペレーションを束ねる <strong>batch gNMI</strong> 操作</li>
@@ -23990,7 +23990,7 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <!-- evidence-rendered:end -->
 
 <h3 id="dpu-appl_state_db">DPU APPL_STATE_DB スキーマ<a class="headerlink" href="#dpu-appl_state_db" title="Permanent link">&para;</a></h3>
-<p>APPL_STATE_DB の各エントリは APPL_DB のエントリ <strong>同名 key にマップ</strong> される。値は親オブジェクトなら <code>result</code> + <code>version_id</code>、子なら <code>result</code> のみ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>APPL_STATE_DB の各エントリは <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> のエントリ <strong>同名 key にマップ</strong> される。値は親オブジェクトなら <code>result</code> + <code>version_id</code>、子なら <code>result</code> のみ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>result</code> は <code>uint32</code>。<strong>0=成功</strong>、&gt;0 はエラーコード<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>例 1: <code>DASH_ROUTE_TABLE</code>（子オブジェクト）</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DASH_ROUTE_TABLE:{group_id}:{prefix}
@@ -24004,7 +24004,7 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <p><code>version_id</code> はコントローラが set 時に渡したものがそのまま反映される。Get / Subscribe でこれを見ることでコントローラは「自分が投入したバージョンが DPU まで届いたか」を確認できる<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
-<p>本 HLD は gNMI 経路の動作仕様であり、ユーザ向け CONFIG_DB / CLI 表面は持たない。設定経路は gNMI（外部）と APPL_DB / APPL_STATE_DB（内部）に閉じる。</p>
+<p>本 HLD は gNMI 経路の動作仕様であり、ユーザ向け <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI 表面は持たない。設定経路は gNMI（外部）と APPL_DB / APPL_STATE_DB（内部）に閉じる。</p>
 <h3 id="gnmi">関連する gNMI 操作<a class="headerlink" href="#gnmi" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24040,9 +24040,9 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>DASH スキーマ</strong>: <code>DASH_ROUTE_TABLE</code> / <code>DASH_ROUTE_GROUP_TABLE</code> / <code>DASH_VNET_MAPPING</code> などが APPL_STATE_DB のミラー対象。DASH 機能の変更は本 HLD のキー設計に直結する。</li>
+<li><strong><a href="../../reference/glossary/#term-dash">DASH</a> スキーマ</strong>: <code>DASH_ROUTE_TABLE</code> / <code>DASH_ROUTE_GROUP_TABLE</code> / <code>DASH_VNET_MAPPING</code> などが APPL_STATE_DB のミラー対象。DASH 機能の変更は本 HLD のキー設計に直結する。</li>
 <li><strong>ZMQ producer/consumer state table</strong>: NPU の gNMI Server から DPU SWSS への伝送路として ZMQ ベースの producer/consumer state table パターンを使う。</li>
-<li><strong>DPU 側 syncd</strong>: 実際に SAI コールするのは DPU SONiC の SYNCD。NPU SONiC は仲介役。</li>
+<li><strong>DPU 側 <a href="../../reference/glossary/#term-syncd">syncd</a></strong>: 実際に SAI コールするのは DPU SONiC の SYNCD。NPU SONiC は仲介役。</li>
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24070,6 +24070,8 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e6fe2bd4ede5 -->
 
 <div class="footnote">
 <hr />

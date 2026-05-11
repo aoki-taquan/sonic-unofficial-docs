@@ -23721,9 +23721,9 @@
 <p>1 台の chassis 内に複数 ASIC を持つ platform で SONiC を動かすための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>ASIC ごとに linux network namespace を分ける</strong>（<code>asic0</code> / <code>asic1</code> / ...）</li>
-<li>各 namespace に<strong>独自の Redis インスタンス</strong>（<code>database0</code>、<code>database1</code>...）と独自の SWSS / syncd / FRR</li>
-<li>ASIC 間は <strong>internal links（sonic-net / fabric / cross-port）と internal BGP</strong> で結ぶ</li>
-<li>外部から見える操作（CLI / SNMP / gNMI）は <strong>host namespace 上の集約レイヤ</strong>が ASIC 横断で扱う</li>
+<li>各 namespace に<strong>独自の <a href="../../reference/glossary/#term-redis">Redis</a> インスタンス</strong>（<code>database0</code>、<code>database1</code>...）と独自の SWSS / <a href="../../reference/glossary/#term-syncd">syncd</a> / <a href="../../reference/glossary/#term-frr">FRR</a></li>
+<li>ASIC 間は <strong>internal links（sonic-net / fabric / cross-port）と internal <a href="../../reference/glossary/#term-bgp">BGP</a></strong> で結ぶ</li>
+<li>外部から見える操作（CLI / <a href="../../reference/glossary/#term-snmp">SNMP</a> / <a href="../../reference/glossary/#term-gnmi">gNMI</a>）は <strong>host namespace 上の集約レイヤ</strong>が ASIC 横断で扱う</li>
 </ul>
 <h2 id="_2">どんな構造か<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23753,14 +23753,14 @@
 <ul>
 <li><strong><code>asic.conf</code> / <code>platform.json</code></strong>: ASIC 数・type・internal port マッピング・role（front-panel / fabric）を宣言</li>
 <li><strong>per-namespace docker</strong>: <code>swss@asic0</code>、<code>syncd@asic0</code> のような instanced systemd unit</li>
-<li><strong>共有 CONFIG_DB（host）+ per-asic DB</strong>: device-wide 設定は host CONFIG_DB に、port / asic 固有は per-asic に分離</li>
+<li><strong>共有 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>（host）+ per-asic DB</strong>: device-wide 設定は host CONFIG_DB に、port / asic 固有は per-asic に分離</li>
 <li><strong>internal BGP</strong>: front-panel ASIC 同士で iBGP を張り route 情報を共有（<code>BGP_INTERNAL_NEIGHBOR</code>）</li>
 <li><strong>CLI 集約</strong>: <code>show ... -n asic0</code> で per-asic、引数なしで全 ASIC 集約</li>
 </ul>
 <h3 id="sub_role"><code>sub_role</code> による役割分担<a class="headerlink" href="#sub_role" title="Permanent link">&para;</a></h3>
 <p><code>DEVICE_METADATA|&lt;asic&gt;.sub_role</code> が <code>FrontEnd</code> / <code>BackEnd</code> を区別<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>FrontEnd</strong>: 外向き port を持つ。BGP / ARP / 通常の SONiC 機能が動く</li>
+<li><strong>FrontEnd</strong>: 外向き port を持つ。BGP / <a href="../../reference/glossary/#term-arp">ARP</a> / 通常の SONiC 機能が動く</li>
 <li><strong>BackEnd</strong>: fabric 役。traffic は通すが control plane は限定</li>
 </ul>
 <h2 id="cli">設定 / CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
@@ -23814,16 +23814,16 @@
 </table>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>multi-asic 対応の sonic-utilities</strong> が必要。<code>-n</code> 未対応コマンドは ASIC 横断で正しく動かない</li>
+<li><strong>multi-asic 対応の <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a></strong> が必要。<code>-n</code> 未対応コマンドは ASIC 横断で正しく動かない</li>
 <li><strong>memory 消費</strong>: ASIC 数 × Redis / swss / syncd / FRR の常駐で CPU / メモリ要件が高い</li>
 <li><strong>warm reboot 同期</strong>: 全 ASIC を協調的に shutdown / boot する仕組みが必要</li>
-<li><strong>single-json multi-asic</strong>: <code>multi-asic-single-json</code> HLD で扱う統合 config 形式とは使い分け</li>
+<li><strong>single-json multi-asic</strong>: <code>multi-asic-single-json</code> <a href="../../reference/glossary/#term-hld">HLD</a> で扱う統合 config 形式とは使い分け</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>multi-asic warm reboot</strong>: per-asic syncd / swss を協調 shutdown する HLD</li>
 <li><strong>single-json multi-asic config</strong>: 一枚の JSON で per-asic 設定を一元管理する HLD（<a href="../multi-asic-single-json-configuration-design/">multi-asic-single-json-configuration-design</a>）</li>
-<li><strong>CRM（critical resource monitoring）</strong>: per-asic で監視</li>
+<li><strong><a href="../../reference/glossary/#term-crm">CRM</a>（critical resource monitoring）</strong>: per-asic で監視</li>
 <li><strong>Internal BGP / chassis BGP</strong>: 内部 iBGP と外部 eBGP の境界</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23845,6 +23845,8 @@
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: aaa8798bb58a -->
 
 <div class="footnote">
 <hr />

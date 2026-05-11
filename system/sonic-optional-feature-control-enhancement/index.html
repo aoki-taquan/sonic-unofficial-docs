@@ -23833,10 +23833,10 @@
 </div>
 <h1 id="feature">FEATURE テーブルによるオプショナル機能の有効/無効制御<a class="headerlink" href="#feature" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC には telemetry agent 等、デバイスによっては不要な <strong>オプショナルなコンテナ/サービス</strong> がある。本 HLD（2019 年の初期提案）はこれらを <code>CONFIG_DB.FEATURE</code> テーブルで一括制御する仕組みを定義した<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の各種拡張（auto_restart, delayed, mgmt-framework 連携など）の <strong>基盤となる初版設計</strong> である。</p>
+<p>SONiC には telemetry agent 等、デバイスによっては不要な <strong>オプショナルなコンテナ/サービス</strong> がある。本 <a href="../../reference/glossary/#term-hld">HLD</a>（2019 年の初期提案）はこれらを <code>CONFIG_DB.FEATURE</code> テーブルで一括制御する仕組みを定義した<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の各種拡張（auto_restart, delayed, mgmt-framework 連携など）の <strong>基盤となる初版設計</strong> である。</p>
 <p>本提案の要点は次の 3 つ:</p>
 <ol>
-<li>CONFIG_DB に <strong><code>FEATURE</code></strong> テーブルを追加し、機能名 → <code>status: enabled/disabled</code> を持つ</li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に <strong><code>FEATURE</code></strong> テーブルを追加し、機能名 → <code>status: enabled/disabled</code> を持つ</li>
 <li>CLI <code>config feature enable|disable &lt;feature_name&gt;</code> および対応 <code>show</code> を追加</li>
 <li><code>hostcfgd</code> が FEATURE テーブルを購読し、対応 service を <strong>systemd で start+enable または stop+disable</strong> する</li>
 </ol>
@@ -23942,7 +23942,7 @@ reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両
 <h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <p><code>config feature enable/disable</code> と <code>show feature</code>。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは初版 HLD で言及されていない（後発の拡張で <code>sonic-feature.yang</code> 等が追加されている）。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは初版 HLD で言及されていない（後発の拡張で <code>sonic-feature.yang</code> 等が追加されている）。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 機能を有効化</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>feature<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>telemetry
@@ -23961,7 +23961,7 @@ reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>hostcfgd</code></strong>: FEATURE 購読の主担当。AAA / TACACS / Banner など他の hostcfgd 機能と並列に動く</li>
+<li><strong><code>hostcfgd</code></strong>: FEATURE 購読の主担当。<a href="../../reference/glossary/#term-aaa">AAA</a> / TACACS / Banner など他の <a href="../../reference/glossary/#term-hostcfgd">hostcfgd</a> 機能と並列に動く</li>
 <li><strong><code>sonic-cfggen</code></strong>: デフォルト FEATURE エントリ生成</li>
 <li><strong>後発の HLD（auto_restart / delayed / FEATURE.event-driven 起動）</strong>: 本 HLD の上に積み重なっている</li>
 <li><strong><code>config save</code> / <code>config reload</code></strong>: FEATURE 変更が永続化されるか・reload で reapply されるかは hostcfgd の処理に依存</li>
@@ -23980,6 +23980,8 @@ reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両
 - sonic-feature.yang 等 YANG モジュールの追加状況
 - 後発 HLD (event-driven config reload, delayed services) との重なり
 -->
+
+<!-- glossary-links-injected: 5491cc477cce -->
 
 <div class="footnote">
 <hr />

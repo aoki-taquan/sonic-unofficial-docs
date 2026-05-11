@@ -23877,8 +23877,8 @@
 </div>
 <h1 id="crm">クリティカルリソースモニタリング (CRM) 要件<a class="headerlink" href="#crm" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / ACL TCAM / FDB といった <strong>テーブル容量が有限なリソース</strong> を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring (CRM) は、こうしたリソースの <strong>使用量と空き容量を SAI 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知</strong> するための機能要件である。</p>
-<p>本ページの一次情報は <strong>要件定義 (<code>CRM_requirements.md</code>)</strong> であり、実装方針（COUNTER_DB を介する FLEX Counter 流の構成）は HLD 内で「設計会議で詰める」と注記されている段階のものである点に注意する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / <a href="../../reference/glossary/#term-acl">ACL</a> TCAM / <a href="../../reference/glossary/#term-fdb">FDB</a> といった <strong>テーブル容量が有限なリソース</strong> を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring (<a href="../../reference/glossary/#term-crm">CRM</a>) は、こうしたリソースの <strong>使用量と空き容量を <a href="../../reference/glossary/#term-sai">SAI</a> 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知</strong> するための機能要件である。</p>
+<p>本ページの一次情報は <strong>要件定義 (<code>CRM_requirements.md</code>)</strong> であり、実装方針（COUNTER_DB を介する FLEX Counter 流の構成）は <a href="../../reference/glossary/#term-hld">HLD</a> 内で「設計会議で詰める」と注記されている段階のものである点に注意する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">機能要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>CRM が満たすべき基本要件は次の 2 点である。</p>
@@ -23931,7 +23931,7 @@
 <li>実使用カウント（actual used count）</li>
 <li>実空きカウント（actual free count）</li>
 </ol>
-<p>ユーザ設定値は CONFIG_DB に記録される（テーブル名は本 HLD では明示されていない）。<strong>ユーザ未設定時のデフォルト</strong> は次のとおり一般的な値で固定される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ユーザ設定値は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に記録される（テーブル名は本 HLD では明示されていない）。<strong>ユーザ未設定時のデフォルト</strong> は次のとおり一般的な値で固定される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -24023,7 +24023,7 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 <ul>
 <li>CRM Orch 実装: <code>.cache/sonic-sources/sonic-swss/orchagent/crmorch.cpp</code> / <code>crmorch.h</code>（Route / Nexthop / Neighbor / NextHop Group / ACL Table / ACL Group / ACL Counter / FDB / IPMC / SNAT / DNAT 等の resource 使用量を SAI 経由でポーリングし、threshold 超過時 syslog WARNING を出す）</li>
 <li>CRM CLI: <code>.cache/sonic-sources/sonic-utilities/crm/</code> ディレクトリ、テスト <code>sonic-utilities/tests/crm_test.py</code></li>
-<li>DASH 拡張: <code>sonic-swss/orchagent/p4orch/tests/fake_crmorch.cpp</code> および <code>sonic-utilities/tests/crm_dash_test.py</code> で DASH ACL 系 resource を CRM に追加</li>
+<li><a href="../../reference/glossary/#term-dash">DASH</a> 拡張: <code>sonic-swss/orchagent/p4orch/tests/fake_crmorch.cpp</code> および <code>sonic-utilities/tests/crm_dash_test.py</code> で DASH ACL 系 resource を CRM に追加</li>
 </ul>
 <p>HLD の主要要件（SAI 経由のポーリング・しきい値超過時の syslog 通知・CLI 表示）はすべて実装済み。<code>code-verified</code> に昇格。</p>
 <!-- topics-back-ref -->
@@ -24032,6 +24032,8 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 421df673b3f7 -->
 
 <div class="footnote">
 <hr />

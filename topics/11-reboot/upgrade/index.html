@@ -23652,7 +23652,7 @@
 
 
 <h1 id="upgrade-lifecycle">Upgrade lifecycle<a class="headerlink" href="#upgrade-lifecycle" title="Permanent link">&para;</a></h1>
-<p>upgrade は reboot と同じではありません。upgrade は「どの image / package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。SONiC では OS image、Docker image、Debian base、FRR、DPU image などが別々の粒度で更新されます。</p>
+<p>upgrade は reboot と同じではありません。upgrade は「どの image / package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。SONiC では OS image、Docker image、Debian base、<a href="../../../reference/glossary/#term-frr">FRR</a>、<a href="../../../reference/glossary/#term-dpu">DPU</a> image などが別々の粒度で更新されます。</p>
 <h2 id="image-upgrade">image upgrade の基本線<a class="headerlink" href="#image-upgrade" title="Permanent link">&para;</a></h2>
 <p><code>sonic-installer</code> は SONiC OS image の install、list、default/next boot 設定、FIPS 設定、image 検証を扱う CLI です。reboot script は次回 boot image の検証に <code>sonic-installer verify-next-image</code> を使うため、upgrade と reboot はここで接続します。コマンド詳細は <a href="../../../reference/cli/sonic-installer/">sonic-installer コマンド</a> を参照します。</p>
 <p>一般的な流れは、image を install し、next boot/default を確認し、必要なら secure/FIPS 条件を満たしてから reboot で切り替える、という順です。reboot に入ってから image 検証で失敗する状態は避けます。</p>
@@ -23671,7 +23671,7 @@
 <p><a href="../../../system/sonic-debian-upgrade-cadence/">SONiC Debian アップグレード方針</a> は、base image、container、submodule、廃止 cadence の考え方を扱います。これは単発の <code>sonic-installer</code> 実行手順ではなく、リリース全体でどの Debian と package set に追随するかの方針です。</p>
 <p><a href="../../../system/sonic-os-sonic-docker-images-versioning/">SONiC OS と Docker イメージのセマンティックバージョニング</a> は、OS package API、Docker image、Conventional Commits、package release flow の整合性を見るページです。container warm restart を使う場合でも、versioning の互換性が崩れると復元 path は成立しません。</p>
 <h2 id="dpu-independent-upgrade">DPU independent upgrade<a class="headerlink" href="#dpu-independent-upgrade" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch では DPU が独立して upgrade される場合があります。<a href="../../../system/independent-dpu-upgrade/">Smart Switch: DPU 独立アップグレード</a> は gNOI 経路、upgrade sequence、影響範囲を説明します。NPU 側 SONiC image の切替とは別 lifecycle なので、全体 reboot、DPU reboot、DPU graceful shutdown と区別して計画します。</p>
+<p><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> では DPU が独立して upgrade される場合があります。<a href="../../../system/independent-dpu-upgrade/">Smart Switch: DPU 独立アップグレード</a> は <a href="../../../reference/glossary/#term-gnoi">gNOI</a> 経路、upgrade sequence、影響範囲を説明します。<a href="../../../reference/glossary/#term-npu">NPU</a> 側 SONiC image の切替とは別 lifecycle なので、全体 reboot、DPU reboot、DPU graceful shutdown と区別して計画します。</p>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/sonic-installer/">sonic-installer コマンド</a></li>
@@ -23680,6 +23680,7 @@
 <li><a href="../../../system/sonic-os-sonic-docker-images-versioning/">SONiC OS と Docker イメージのセマンティックバージョニング</a></li>
 <li><a href="../../../system/independent-dpu-upgrade/">Smart Switch: DPU 独立アップグレード</a></li>
 </ul>
+<!-- glossary-links-injected: 35048036a2de -->
 
 
 

@@ -23611,7 +23611,7 @@
 
 <h1 id="port_qos_map">PORT_QOS_MAP テーブル<a class="headerlink" href="#port_qos_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>PORT_QOS_MAP</code> は QoS map、PFC enable bitmap、PFC watchdog software enable bitmap、scheduler profile を port または global default に bind する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では APPL_DB 側の <code>PORT_QOS_MAP_TABLE</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>PORT_QOS_MAP</code> は <a href="../../glossary/#term-qos">QoS</a> map、<a href="../../glossary/#term-pfc">PFC</a> enable bitmap、PFC watchdog software enable bitmap、scheduler profile を port または global default に bind する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>PORT_QOS_MAP_TABLE</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23701,13 +23701,13 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> の <code>QosOrch</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>): CONFIG_DB の QoS map binding を直接 subscribe し、SAI QoS map、scheduler、PFC 設定として port に反映する（master には独立した <code>qosmgrd</code> プロセスは存在せず、CONFIG_DB → APPL_DB の中間段は無い）。</li>
+<li><code>orchagent</code> の <code>QosOrch</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>): CONFIG_DB の QoS map binding を直接 subscribe し、<a href="../../glossary/#term-sai">SAI</a> QoS map、scheduler、PFC 設定として port に反映する（master には独立した <code>qosmgrd</code> プロセスは存在せず、CONFIG_DB → APPL_DB の中間段は無い）。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>PORT</code>、<code>DSCP_TO_TC_MAP</code>、<code>TC_TO_QUEUE_MAP</code>、<code>TC_TO_PRIORITY_GROUP_MAP</code>、<code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code>、<code>SCHEDULER</code>、<code>PFC_WD</code></li>
 <li>関連 CLI: <code>config qos</code></li>
-<li>関連 YANG: <code>sonic-port-qos-map</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-port-qos-map</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23743,6 +23743,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>qos<span class="w"> </span>map
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 13283933a7dc -->
 
 <div class="footnote">
 <hr />

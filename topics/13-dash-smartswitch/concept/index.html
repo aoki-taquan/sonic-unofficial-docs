@@ -23906,15 +23906,15 @@
 
 
 <h1 id="dash-smartswitch">DASH と SmartSwitch の考え方<a class="headerlink" href="#dash-smartswitch" title="Permanent link">&para;</a></h1>
-<p>DASH と SmartSwitch は混同されやすい言葉ですが、別レイヤのものです。DASH は <strong>「ENI 単位で VNet / ACL / metering / Service Tunnel を高速にこなす」データプレーン API と SONiC 実装</strong> を指し、SmartSwitch は <strong>「NPU スイッチに複数の DPU をぶら下げ、DASH を含む処理を DPU で動かす」物理 / 制御プラットフォーム</strong> を指します。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a> と <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> は混同されやすい言葉ですが、別レイヤのものです。DASH は <strong>「<a href="../../../reference/glossary/#term-eni">ENI</a> 単位で VNet / <a href="../../../reference/glossary/#term-acl">ACL</a> / metering / Service Tunnel を高速にこなす」データプレーン API と SONiC 実装</strong> を指し、SmartSwitch は <strong>「<a href="../../../reference/glossary/#term-npu">NPU</a> スイッチに複数の <a href="../../../reference/glossary/#term-dpu">DPU</a> をぶら下げ、DASH を含む処理を DPU で動かす」物理 / 制御プラットフォーム</strong> を指します。</p>
 <p>つまり「DASH を動かす器」が SmartSwitch であり、SmartSwitch 上で動く主役のオーバーレイ処理が DASH です。</p>
 <h2 id="dash">DASH は何を解くか<a class="headerlink" href="#dash" title="Permanent link">&para;</a></h2>
-<p>DASH は ENI（Elastic Network Interface）という単位を中心に置きます。1 つの ENI は 1 つの VM ないしテナント接続点で、その配下に VNet（VxLAN VNI と underlay）、Outbound / Inbound ルーティング、ACL、metering、Service Tunnel、Private Link 等の設定が紐付きます。コントローラはこれらを <code>DASH_VNET</code> / <code>DASH_ENI</code> / <code>DASH_ROUTE</code> / <code>DASH_ACL_GROUP</code> 等のテーブルとしてプッシュし、<code>DashOrch</code> / <code>DashVnetOrch</code> / <code>DashAclOrch</code> といった orchagent が SAI へ落とします。</p>
+<p>DASH は ENI（Elastic Network Interface）という単位を中心に置きます。1 つの ENI は 1 つの VM ないしテナント接続点で、その配下に VNet（VxLAN VNI と underlay）、Outbound / Inbound ルーティング、ACL、metering、Service Tunnel、Private Link 等の設定が紐付きます。コントローラはこれらを <code>DASH_VNET</code> / <code>DASH_ENI</code> / <code>DASH_ROUTE</code> / <code>DASH_ACL_GROUP</code> 等のテーブルとしてプッシュし、<code>DashOrch</code> / <code>DashVnetOrch</code> / <code>DashAclOrch</code> といった <a href="../../../reference/glossary/#term-orchagent">orchagent</a> が <a href="../../../reference/glossary/#term-sai">SAI</a> へ落とします。</p>
 <p>DASH 自体はホスト型 SmartNIC でも appliance card でも動く設計ですが、SONiC コミュニティの SmartSwitch では「DPU を SONiC で動かし、その上で DASH を回す」形を取ります。</p>
 <h2 id="smartswitch">SmartSwitch の役割分担<a class="headerlink" href="#smartswitch" title="Permanent link">&para;</a></h2>
 <p>SmartSwitch は次の 2 つから成ります。</p>
 <ul>
-<li><strong>NPU</strong>: 従来の SONiC スイッチ。物理 port、underlay forwarding、ACL、BGP、HA の制御 daemon、DPU 管理を担う。</li>
+<li><strong>NPU</strong>: 従来の SONiC スイッチ。物理 port、underlay forwarding、ACL、<a href="../../../reference/glossary/#term-bgp">BGP</a>、HA の制御 daemon、DPU 管理を担う。</li>
 <li><strong>DPU</strong>: DASH オーバーレイ処理用の SoC。SONiC OS が乗り、<code>DashOrch</code> 系の orchagent と SAI 実装が走る。NPU と midplane で繋がる。</li>
 </ul>
 <p>NPU は DPU に対して次を提供します。</p>
@@ -23923,11 +23923,11 @@
 <li>管理 IP の払い出し（midplane bridge 上の DHCP server）</li>
 <li>overlay 設定の中継先 redis（後述）</li>
 <li>HA actor（HAMgrD）</li>
-<li>gNMI / gNOI 経由の外部 API 接続点</li>
+<li><a href="../../../reference/glossary/#term-gnmi">gNMI</a> / <a href="../../../reference/glossary/#term-gnoi">gNOI</a> 経由の外部 API 接続点</li>
 </ul>
 <p>DPU は NPU を gateway のように扱い、自身の overlay 状態を NPU 側に置いた redis に書き出します。</p>
 <h2 id="npu-db-dpu-overlay-db">NPU 側 DB と DPU overlay DB<a class="headerlink" href="#npu-db-dpu-overlay-db" title="Permanent link">&para;</a></h2>
-<p>DPU はメモリが厳しいため、DASH の全オブジェクト（多数の ENI、VNET、ACL、route 等）を DPU 自身の redis に保持するのは現実的ではありません。そこで <strong>DPU 用の overlay redis を NPU 上に立てて、DPU から remote 接続させる</strong> 構成を取ります。NPU 上には DPU 数だけ独立した <code>database</code> container（<code>redisdpu0</code> / <code>redisdpu1</code> …）が動き、それぞれ別 redis インスタンスとして DPU 1 つに対応します。</p>
+<p>DPU はメモリが厳しいため、DASH の全オブジェクト（多数の ENI、<a href="../../../reference/glossary/#term-vnet">VNET</a>、ACL、route 等）を DPU 自身の redis に保持するのは現実的ではありません。そこで <strong>DPU 用の overlay redis を NPU 上に立てて、DPU から remote 接続させる</strong> 構成を取ります。NPU 上には DPU 数だけ独立した <code>database</code> container（<code>redisdpu0</code> / <code>redisdpu1</code> …）が動き、それぞれ別 redis インスタンスとして DPU 1 つに対応します。</p>
 <p>この設計の利点は次の通りです。</p>
 <ul>
 <li>DPU 側の RAM 圧迫を避ける</li>
@@ -24009,7 +24009,7 @@
 <h2 id="_2">まず読み手の質問に答える<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">この機能はそもそも何か<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>DASH は「VM / コンテナ単位のオーバーレイ処理を、ホスト CPU ではなく専用ハードウェア（DPU や appliance）に下ろすための SONiC データプレーン API」です。SmartSwitch は「その DPU を 1 〜数台ぶら下げた物理スイッチを SONiC として制御する箱」です。前者がソフトウェア契約、後者が箱の話です。</p>
-<p>エンドユーザー視点では、「テナント単位の VNet ルーティング・ACL・metering・Service Tunnel をパブリッククラウド規模（数万 ENI 級）で 1 装置にまとめたい」というニーズに応えます。これを SONiC ノースバウンド API（gNMI / Redis）で投入すると、ノースバウンド側は DPU を意識せず、SmartSwitch 内部の NPU/DPU 分担は SONiC 側が引き受けます。</p>
+<p>エンドユーザー視点では、「テナント単位の VNet ルーティング・ACL・metering・Service Tunnel をパブリッククラウド規模（数万 ENI 級）で 1 装置にまとめたい」というニーズに応えます。これを SONiC ノースバウンド API（gNMI / <a href="../../../reference/glossary/#term-redis">Redis</a>）で投入すると、ノースバウンド側は DPU を意識せず、SmartSwitch 内部の NPU/DPU 分担は SONiC 側が引き受けます。</p>
 <h3 id="_4">何を解決するか<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>従来の VxLAN gateway や software ロードバランサで「テナント数が増えると CPU が詰まる / フロー数が増えると state table が破綻する」問題が起きていました。DASH は次のように分解して解決します。</p>
 <ul>
@@ -24030,12 +24030,12 @@
 <tbody>
 <tr>
 <td>ノースバウンド</td>
-<td>gNMI / Redis CONFIG_DB / <code>DASH_*</code> テーブル</td>
+<td>gNMI / Redis <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <code>DASH_*</code> テーブル</td>
 <td>テナント / ENI / VNet 設定の投入口</td>
 </tr>
 <tr>
 <td>NPU 制御面</td>
-<td><code>swss</code>、<code>bgpd</code>（FRR）、<code>HAMgrD</code>、<code>pmon</code>、<code>featured</code></td>
+<td><code>swss</code>、<code>bgpd</code>（<a href="../../../reference/glossary/#term-frr">FRR</a>）、<code>HAMgrD</code>、<code>pmon</code>、<code>featured</code></td>
 <td>underlay 経路、DPU 管理、HA actor</td>
 </tr>
 <tr>
@@ -24102,7 +24102,7 @@
 </thead>
 <tbody>
 <tr>
-<td>通常の SONiC VxLAN / EVPN ゲートウェイ（<a href="../../03-vxlan-evpn/">03 章</a>）</td>
+<td>通常の SONiC VxLAN / <a href="../../../reference/glossary/#term-evpn">EVPN</a> ゲートウェイ（<a href="../../03-vxlan-evpn/">03 章</a>）</td>
 <td>テナント数・per-ENI state が増えると CPU/TCAM が破綻する。DASH は per-ENI state を DPU 側に押し込む</td>
 </tr>
 <tr>
@@ -24118,14 +24118,14 @@
 <td>CPU 上で動かす分柔軟だが、per-flow CPU コストが線形に効く。DASH はパイプライン処理</td>
 </tr>
 <tr>
-<td>MPLS / SRv6 ベース L3VPN（<a href="../../17-srv6-mpls/">17 章</a>）</td>
+<td><a href="../../../reference/glossary/#term-mpls">MPLS</a> / <a href="../../../reference/glossary/#term-srv6">SRv6</a> ベース L3VPN（<a href="../../17-srv6-mpls/">17 章</a>）</td>
 <td>DASH は ENI 単位の policy / metering まで含む。MPLS / SRv6 はラベル経路提供が主</td>
 </tr>
 </tbody>
 </table>
 <h3 id="_8">読了後にできるようになること<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li>HLD のどれが「DASH スキーマ側」でどれが「SmartSwitch 物理側」なのかを切り分けて読める</li>
+<li><a href="../../../reference/glossary/#term-hld">HLD</a> のどれが「DASH スキーマ側」でどれが「SmartSwitch 物理側」なのかを切り分けて読める</li>
 <li><code>DASH_*</code> テーブルや <code>redisdpuN</code> container の役割を見て「どのレイヤの問題か」を判定できる</li>
 <li>HA や DPU 障害時の駆動主体が NPU 側（HAMgrD）であることを前提に <a href="../operations/">運用</a> を組める</li>
 <li>他社 SmartSwitch / DPU 製品との比較で SONiC / DASH 採用範囲を質問できる</li>
@@ -24146,6 +24146,7 @@
 <li><a href="../../03-vxlan-evpn/">VXLAN / EVPN / VNET オーバーレイ</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: 64d25cd729a3 -->
 
 
 

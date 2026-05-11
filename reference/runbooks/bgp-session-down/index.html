@@ -23753,15 +23753,15 @@
 <ul>
 <li><code>show ip bgp summary</code> で対向の State が <code>Active</code> / <code>Connect</code> / <code>Idle (Admin)</code> のままになる</li>
 <li>Peer の確立後すぐ flap する (<code>Established</code> → <code>Idle</code>)</li>
-<li>Container <code>bgp</code> 内では FRR (bgpd) が動作しているが、SONiC 側 <code>show</code> で peer が表示されない</li>
+<li>Container <code>bgp</code> 内では <a href="../../glossary/#term-frr">FRR</a> (bgpd) が動作しているが、SONiC 側 <code>show</code> で peer が表示されない</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>L1 / L2 / L3 の事前条件が満たされていない</strong>: interface oper down、IP 未設定、MTU 不一致、対向側 ACL でブロック</li>
-<li><strong>CONFIG_DB と FRR の同期失敗</strong>: <code>bgpcfgd</code> (= FRR config generator) がテンプレ生成エラーで停止し、<code>vtysh -c "show run"</code> に neighbor が出ない</li>
+<li><strong>L1 / L2 / L3 の事前条件が満たされていない</strong>: interface oper down、IP 未設定、MTU 不一致、対向側 <a href="../../glossary/#term-acl">ACL</a> でブロック</li>
+<li><strong><a href="../../glossary/#term-config_db">CONFIG_DB</a> と FRR の同期失敗</strong>: <code>bgpcfgd</code> (= FRR config generator) がテンプレ生成エラーで停止し、<code>vtysh -c "show run"</code> に neighbor が出ない</li>
 <li><strong>AS 番号 / router-id の設定誤り</strong>: ローカル AS が <code>DEVICE_METADATA|localhost</code> の <code>bgp_asn</code> と一致しない</li>
 <li><strong>管理上 disable されている</strong>: <code>BGP_NEIGHBOR|&lt;ip&gt;</code> の <code>admin_status</code> = <code>down</code></li>
-<li><strong>BFD セッション断</strong>: <code>bfdd</code> が UP しないと BGP が即 down する構成（bfd hold-down）</li>
+<li><strong><a href="../../glossary/#term-bfd">BFD</a> セッション断</strong>: <code>bfdd</code> が UP しないと <a href="../../glossary/#term-bgp">BGP</a> が即 down する構成（bfd hold-down）</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-ip">1. リンク・IP の確認<a class="headerlink" href="#1-ip" title="Permanent link">&para;</a></h3>
@@ -23806,7 +23806,7 @@
 <ul>
 <li>「3.」で CONFIG_DB と FRR が乖離している場合: <code>sudo systemctl restart bgp</code> で再生成。これでも反映されないなら <code>bgpcfgd</code> テンプレ (<code>/usr/share/sonic/templates/bgpd/</code>) を確認</li>
 <li>AS / router-id を修正する場合: <code>sonic-cfggen -j /etc/sonic/config_db.json</code> での import 後 <code>config save -y</code> → <code>config reload -y</code></li>
-<li>BFD で flap している場合: <code>BFD_SESSION_TABLE</code>（APPL_DB）で session 状態を確認し、BFD timer を緩める</li>
+<li>BFD で flap している場合: <code>BFD_SESSION_TABLE</code>（<a href="../../glossary/#term-appl_db">APPL_DB</a>）で session 状態を確認し、BFD timer を緩める</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23817,6 +23817,8 @@
 <li><a href="../../config-db/bgp-neighbor/">../config-db/bgp-neighbor.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: fa5251a92f24 -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23824,10 +23826,10 @@
 <p>sonic-net/sonic-frr @ 799f47f — bgpd FSM&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ 4305596 — bfdorch / fpmsyncd&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — bfdorch / <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>sonic-net/sonic-utilities @ 39732bceb — show bgp 実装&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — show bgp 実装&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

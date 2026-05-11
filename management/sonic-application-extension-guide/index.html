@@ -23818,7 +23818,7 @@
 </div>
 <h1 id="sonic-application-extension">SONiC Application Extension 開発・移植ガイド<a class="headerlink" href="#sonic-application-extension" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の docker 化された機能（DHCP relay 等）を <strong>Application Extension</strong> 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録するフローを示す開発者向けガイド<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。コアの HLD は別ファイル（<code>sonic-application-extention-hld.md</code>）であり、本ページはその実践ガイド側。</p>
+<p>SONiC の docker 化された機能（DHCP relay 等）を <strong>Application Extension</strong> 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録するフローを示す開発者向けガイド<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。コアの <a href="../../reference/glossary/#term-hld">HLD</a> は別ファイル（<code>sonic-application-extention-hld.md</code>）であり、本ページはその実践ガイド側。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="sonic-docker-extension">既存 SONiC docker を Extension に移植する手順<a class="headerlink" href="#sonic-docker-extension" title="Permanent link">&para;</a></h3>
 <p>例として DHCP relay の移植コミット <a href="https://github.com/sonic-net/sonic-buildimage/commit/b3b6938fda9244607fb00bfd36a74bccab0c38a9">b3b6938fd</a> が示されている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。手順は次のとおり。</p>
@@ -23849,7 +23849,7 @@
 <p>外部リポジトリの Docker 化されたアプリを SONiC の package database に追加することで、エンドユーザがビルド済みイメージから動的にインストールできる。<code>sonic-package-manager</code> のレジストリに manifest と URL を登録する形。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>ガイド本文には CONFIG_DB エントリは出てこない（extension ごとに独自スキーマ）。</p>
+<p>ガイド本文には <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリは出てこない（extension ごとに独自スキーマ）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23879,7 +23879,7 @@
 </table>
 <p>詳細サブコマンドは <code>sonic-package-manager --help</code> を参照。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>ガイド本文には記述なし。各 extension が独自 YANG を持つ場合は manifest で宣言する。</p>
+<p>ガイド本文には記述なし。各 extension が独自 <a href="../../reference/glossary/#term-yang">YANG</a> を持つ場合は manifest で宣言する。</p>
 <h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-package-manager<span class="w"> </span>install<span class="w"> </span>--from-tarball<span class="w"> </span>./my-extension.tar.gz
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-package-manager<span class="w"> </span>list
@@ -23905,6 +23905,8 @@
 <li>アップグレードで設定が消える → manifest の volume 宣言で永続化対象を明示しているかを確認。</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 20dbc11976b6 -->
+
 <div class="footnote">
 <hr />
 <ol>

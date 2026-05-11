@@ -23905,11 +23905,11 @@
 <p><code>dhcp_rate_limit</code> の <strong>データ層 + CLI</strong> は取り込み済み（<code>sonic-yang-models/yang-models/sonic-port.yang</code> L106、<code>sonic-utilities/scripts/db_migrator.py</code> L514-524 で既定 300 を migration、<code>sonic-utilities/config/main.py</code> L5948-6002）。一方、HLD が要求する <strong>portmgrd の <code>tc qdisc</code> / <code>tc filter</code> 投入ロジック</strong> は <code>sonic-swss/cfgmgr/</code> に未取り込み（grep ヒット 0）。<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> に <code>dhcp_relay: trap_ids="dhcp,dhcpv6"</code> が残り、HLD が前提とする「CoPP 全体 DHCP 制限の削除」も未実施。仕様参考扱い（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="dhcp-dos-dhcp-linux-tc">DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）<a class="headerlink" href="#dhcp-dos-dhcp-linux-tc" title="Permanent link">&para;</a></h1>
-<p>「なぜ CoPP 全体ではダメか」「何を投入すれば効くのか」「いま master でどこまで効くのか」が読み手の最大の関心。順に答える。<strong>結論を先に</strong>: 仕様は揃ったが portmgrd の TC 投入が未実装なので、CLI で値を入れても効かない（後述「実装との乖離」を参照）。</p>
+<p>「なぜ <a href="../../reference/glossary/#term-copp">CoPP</a> 全体ではダメか」「何を投入すれば効くのか」「いま master でどこまで効くのか」が読み手の最大の関心。順に答える。<strong>結論を先に</strong>: 仕様は揃ったが <a href="../../reference/glossary/#term-portmgrd">portmgrd</a> の TC 投入が未実装なので、CLI で値を入れても効かない（後述「実装との乖離」を参照）。</p>
 <h2 id="copp">なぜ CoPP 全体ではダメなのか<a class="headerlink" href="#copp" title="Permanent link">&para;</a></h2>
-<p>SONiC の従来挙動は <strong>CoPP で DHCP をシステム全体 300 pps に絞る</strong>。攻撃者が偽装 MAC で大量 DISCOVER を送ると、その共有上限を使い切り、同 VLAN の正規クライアントの DISCOVER までドロップされる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。被害ドメインを局所化するため <strong>ポート単位</strong> に切り替える必要がある。</p>
+<p>SONiC の従来挙動は <strong>CoPP で DHCP をシステム全体 300 pps に絞る</strong>。攻撃者が偽装 MAC で大量 DISCOVER を送ると、その共有上限を使い切り、同 <a href="../../reference/glossary/#term-vlan">VLAN</a> の正規クライアントの DISCOVER までドロップされる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。被害ドメインを局所化するため <strong>ポート単位</strong> に切り替える必要がある。</p>
 <h2 id="_1">何を投入すれば効くのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SAI / ASIC オフロードではなく <strong>Linux Traffic Control (tc) の ingress qdisc + filter</strong> をホスト側で使う。<code>portmgrd</code> が <code>PORT.dhcp_rate_limit</code> を subscribe し、対応する <code>tc</code> コマンドをカーネルに投入する。SAI API の追加・変更は無い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-sai">SAI</a> / ASIC オフロードではなく <strong>Linux Traffic Control (tc) の ingress qdisc + filter</strong> をホスト側で使う。<code>portmgrd</code> が <code>PORT.dhcp_rate_limit</code> を subscribe し、対応する <code>tc</code> コマンドをカーネルに投入する。SAI API の追加・変更は無い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     CLI[config interface&lt;br/&gt;dhcp-mitigation-rate] --&gt; CDB[(CONFIG_DB&lt;br/&gt;PORT.dhcp_rate_limit)]
     CDB --&gt;|subscribe| PORTMGR[portmgrd]
@@ -23931,13 +23931,13 @@
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 3. 確認</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>sudo<span class="w"> </span>tc<span class="w"> </span>-s<span class="w"> </span>qdisc<span class="w"> </span>show<span class="w"> </span>dev<span class="w"> </span>&lt;interface&gt;<span class="w"> </span>handle<span class="w"> </span>ffff:
 </span></code></pre></div>
-<p>CONFIG_DB の値は <strong>pps</strong>。<code>tc</code> は bps しか受けないので <strong>1 DHCP DISCOVER = 406 バイト</strong> で換算<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の値は <strong>pps</strong>。<code>tc</code> は bps しか受けないので <strong>1 DHCP DISCOVER = 406 バイト</strong> で換算<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>別途 <strong>ドロップ監視デーモン</strong> が全ポートの <code>tc qdisc</code> ドロップ数を周期的に確認し、増加でログに警告を書く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="config_db-yang-db_migrator">CONFIG_DB / YANG / db_migrator<a class="headerlink" href="#config_db-yang-db_migrator" title="Permanent link">&para;</a></h2>
 <p><code>PORT.dhcp_rate_limit</code> を追加。既存ポートは <code>db_migrator</code> が既定 300 を埋める<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;dhcp_rate_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;300&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
-<p>YANG: <code>uint32 { range 0..8000; }</code><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a>: <code>uint32 { range 0..8000; }</code><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/Dhcp_Mitigation/DHCP Mitigation.md#L148-L151 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24011,7 +24011,7 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 </ul>
 <h3 id="_6">回避策<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>HLD の効果を得たい場合</strong>: 外部スクリプトで <code>tc qdisc add ... ingress</code> + <code>tc filter add ... police rate=&lt;pps*406&gt;bps</code> を投入。一括投入例:</li>
+<li><strong><a href="../../reference/glossary/#term-hld">HLD</a> の効果を得たい場合</strong>: 外部スクリプトで <code>tc qdisc add ... ingress</code> + <code>tc filter add ... police rate=&lt;pps*406&gt;bps</code> を投入。一括投入例:</li>
 </ul>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">for</span><span class="w"> </span>p<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT|Ethernet*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/PORT|//&#39;</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nv">r</span><span class="o">=</span><span class="k">$(</span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;PORT|</span><span class="nv">$p</span><span class="s2">&quot;</span><span class="w"> </span>dhcp_rate_limit<span class="k">)</span>
@@ -24065,6 +24065,8 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1d898453d360 -->
 
 <div class="footnote">
 <hr />

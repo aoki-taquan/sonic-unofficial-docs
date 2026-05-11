@@ -23802,7 +23802,7 @@
 
 <h1 id="buffer_profile">BUFFER_PROFILE テーブル<a class="headerlink" href="#buffer_profile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>バッファプロファイル（プール参照、reserved size、admission threshold、PFC xon/xoff など）を名前付きで定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>buffermgrd</code> がこのテーブルを APPL_DB の <code>BUFFER_PROFILE_TABLE</code> に転送し、<code>orchagent</code> <code>BufferOrch</code> が SAI buffer profile を生成する。<code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> から leafref で参照される。</p>
+<p>バッファプロファイル（プール参照、reserved size、admission threshold、<a href="../../glossary/#term-pfc">PFC</a> xon/xoff など）を名前付きで定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>buffermgrd</code> がこのテーブルを <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>BUFFER_PROFILE_TABLE</code> に転送し、<code>orchagent</code> <code>BufferOrch</code> が <a href="../../glossary/#term-sai">SAI</a> buffer profile を生成する。<code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> から leafref で参照される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23916,9 +23916,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BUFFER_POOL</code>、<code>BUFFER_PG</code>、<code>BUFFER_QUEUE</code>、<code>DEVICE_METADATA</code> (<code>buffer_model</code>)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BUFFER_POOL</code>、<code>BUFFER_PG</code>、<code>BUFFER_QUEUE</code>、<code>DEVICE_METADATA</code> (<code>buffer_model</code>)</li>
 <li>関連 CLI: 通常は <code>config_db.json</code> からロード。CLI 直接編集は限定的</li>
-<li>関連 YANG: <code>sonic-buffer-profile</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-buffer-profile</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23955,6 +23955,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>buffer<span class="w"> </span>profile
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: faaeb5caf487 -->
 
 <div class="footnote">
 <hr />

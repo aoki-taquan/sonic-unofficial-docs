@@ -24089,7 +24089,7 @@
 </div>
 <h1 id="sagstatic-anycast-gatewayfor-sonic">SAG（Static Anycast Gateway）for SONiC<a class="headerlink" href="#sagstatic-anycast-gatewayfor-sonic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>EVPN/VxLAN ファブリックで全 leaf が <strong>同一 IP / MAC をデフォルトゲートウェイ</strong> として応答するための仕組み。各 leaf 上の VLAN 仮想インタフェースに共通の仮想 MAC を割り当て、ホスト側ポートに対してのみ応答（ファブリック側には広告しない）させる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-evpn">EVPN</a>/VxLAN ファブリックで全 leaf が <strong>同一 IP / MAC をデフォルトゲートウェイ</strong> として応答するための仕組み。各 leaf 上の <a href="../../reference/glossary/#term-vlan">VLAN</a> 仮想インタフェースに共通の仮想 MAC を割り当て、ホスト側ポートに対してのみ応答（ファブリック側には広告しない）させる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>EVPN を使わずに単独でも使える設計。SONiC では <strong>新規 daemon 不要</strong> で、既存の <code>IntfMgr</code> / <code>IntfsOrch</code> に処理を追加する形で実現される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネントへの追加<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -24102,15 +24102,15 @@
 </thead>
 <tbody>
 <tr>
-<td>sonic-swss-common</td>
+<td><a href="../../reference/glossary/#term-sonic-swss-common">sonic-swss-common</a></td>
 <td><code>SAG</code> テーブル定義の schema 追加</td>
 </tr>
 <tr>
-<td>sonic-swss</td>
+<td><a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a></td>
 <td><code>IntfMgr</code> / <code>IntfsOrch</code> に SAG ハンドラ追加。VLAN_INTERFACE の有効化フィールドを処理</td>
 </tr>
 <tr>
-<td>sonic-utilities</td>
+<td><a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a></td>
 <td><code>config static-anycast-gateway</code> / <code>config vlan static-anycast-gateway</code> / <code>show static-anycast-gateway</code> 追加。<code>show vlan brief</code> に列追加</td>
 </tr>
 </tbody>
@@ -24123,7 +24123,7 @@
     ADB --&gt; IO[IntfsOrch]
     IO --&gt; ASIC[(ASIC RIF)]
     IO --&gt; RT[RouteOrch\n IPv6 LL me-route 更新]</code></pre>
-<p>VLAN_INTERFACE の <code>static_anycast_gateway</code> が <code>true</code> でグローバル <code>SAG|GLOBAL.gateway_mac</code> が設定されているとき、<code>IntfsOrch</code> は ASIC RIF の MAC を <strong>CPU MAC ではなく SAG MAC</strong> に書き換える。<code>false</code> または SAG MAC 未設定なら従来どおり CPU MAC を使う。</p>
+<p>VLAN_INTERFACE の <code>static_anycast_gateway</code> が <code>true</code> でグローバル <code>SAG|GLOBAL.gateway_mac</code> が設定されているとき、<code>IntfsOrch</code> は ASIC <a href="../../reference/glossary/#term-rif">RIF</a> の MAC を <strong>CPU MAC ではなく SAG MAC</strong> に書き換える。<code>false</code> または SAG MAC 未設定なら従来どおり CPU MAC を使う。</p>
 <p>IPv6 link-local アドレスは MAC から派生するため、SAG ↔ CPU MAC の切替時は <code>RouteOrch</code> の API を呼んで <strong>古い link-local の me-route を削除し、新しい MAC ベースの link-local を入れ直す</strong> 必要がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -24186,7 +24186,7 @@
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>グローバル MAC は <strong>1 つだけ</strong> で、VLAN 毎に異なる SAG MAC は設定できない。</li>
-<li>ルータ IF 数の監視は CRM 経由で可能だが、HLD 時点では「router interfaces monitoring が CRM に未実装」と明記されており、別途エンハンスが必要<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ルータ IF 数の監視は <a href="../../reference/glossary/#term-crm">CRM</a> 経由で可能だが、<a href="../../reference/glossary/#term-hld">HLD</a> 時点では「router interfaces monitoring が CRM に未実装」と明記されており、別途エンハンスが必要<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>Warm/Fast boot 影響なし（HLD で明記）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>ファブリック側へは仮想 IP/MAC を広告しない設計のため、ファブリック内 anycast 経路設計は別途 EVPN/VxLAN 側で組む必要がある。</li>
 </ul>
@@ -24194,16 +24194,16 @@
 <ul>
 <li><strong>VxLAN / EVPN</strong>: 主たる組み合わせ。SAG はホスト面の默認ゲートウェイ集約として機能し、ファブリックでは個別 VTEP IP が使われる。</li>
 <li><strong>IPv6 Link-Local</strong>: MAC ベースの link-local アドレス変更があるため、<code>NeighOrch</code> / <code>RouteOrch</code> の link-local me-route 更新が必要。</li>
-<li><strong>ARP / ND</strong>: 各 leaf が同一 SAG MAC でゲートウェイ ARP/ND 応答するため、ホスト側で MAC 矛盾は発生しない（FRR/EVPN による自然な広告は別の話）。</li>
+<li><strong><a href="../../reference/glossary/#term-arp">ARP</a> / ND</strong>: 各 leaf が同一 SAG MAC でゲートウェイ ARP/ND 応答するため、ホスト側で MAC 矛盾は発生しない（<a href="../../reference/glossary/#term-frr">FRR</a>/EVPN による自然な広告は別の話）。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VLAN 仮想 IF の MAC が SAG MAC にならない → <code>SAG|GLOBAL.gateway_mac</code> と <code>VLAN_INTERFACE|&lt;vlan&gt;.static_anycast_gateway</code> の両方が設定されているか確認。</li>
 <li>IPv6 link-local 応答が来ない → MAC 変更後の link-local me-route 再追加が走っているか。<code>ip -6 route show local</code> で確認。</li>
-<li>ファブリック側にもゲートウェイ IP が広告されてしまう → これは SAG の責務外。EVPN/BGP 側のフィルタを確認。</li>
+<li>ファブリック側にもゲートウェイ IP が広告されてしまう → これは SAG の責務外。EVPN/<a href="../../reference/glossary/#term-bgp">BGP</a> 側のフィルタを確認。</li>
 </ul>
 <h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p>2026-05 時点で <strong>SAG コード / YANG / CLI は community master に取り込まれておらず、HLD 提案段階</strong>。</p>
+<p>2026-05 時点で <strong>SAG コード / <a href="../../reference/glossary/#term-yang">YANG</a> / CLI は community master に取り込まれておらず、HLD 提案段階</strong>。</p>
 <h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> に <code>sonic-sag.yang</code> 相当が<strong>存在しない</strong>（<code>grep -rn "SAG\b\|static_anycast" .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/</code> 0 件）。<code>SAG</code> テーブル / <code>static_anycast_gateway</code> leaf は未登録。</li>
@@ -24212,11 +24212,11 @@
 <li><code>sonic-frr/</code> に SAG 連携の patch は見当たらない（hit は babeld 等の無関係箇所のみ）。</li>
 </ul>
 <h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
-<p>HLD は <code>SAG|GLOBAL.gateway_mac</code>（グローバル SAG MAC）+ <code>VLAN_INTERFACE|&lt;vlan&gt;.static_anycast_gateway</code>（VLAN ごとの有効化フラグ）を CONFIG_DB に追加し、<code>SagOrch</code> が VLAN RIF の MAC を SAG MAC へ差し替える、と述べているが、<strong>3 つの取り込み箇所（YANG / orchagent / CLI）すべてが master に無い</strong>。NVIDIA など一部ベンダー fork で実装済みだが、community master には未マージ。</p>
+<p>HLD は <code>SAG|GLOBAL.gateway_mac</code>（グローバル SAG MAC）+ <code>VLAN_INTERFACE|&lt;vlan&gt;.static_anycast_gateway</code>（VLAN ごとの有効化フラグ）を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に追加し、<code>SagOrch</code> が VLAN RIF の MAC を SAG MAC へ差し替える、と述べているが、<strong>3 つの取り込み箇所（YANG / <a href="../../reference/glossary/#term-orchagent">orchagent</a> / CLI）すべてが master に無い</strong>。NVIDIA など一部ベンダー fork で実装済みだが、community master には未マージ。</p>
 <h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>HLD どおりに <code>sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f</code> を実行しても <code>No such command</code> で終わる。コマンドそのものが存在しない。</li>
-<li>EVPN-VXLAN マルチ leaf 構成で「同一仮想 GW MAC でホストにとっての default gateway を冗長化する」用途は、本機能を待つ間は<strong>個別に各 leaf に同じ MAC を振る運用回避</strong>が必要（後述）。</li>
+<li>EVPN-<a href="../../reference/glossary/#term-vxlan">VXLAN</a> マルチ leaf 構成で「同一仮想 GW MAC でホストにとっての default gateway を冗長化する」用途は、本機能を待つ間は<strong>個別に各 leaf に同じ MAC を振る運用回避</strong>が必要（後述）。</li>
 <li>本ページの仕様記述は将来仕様 / ベンダー fork 仕様の参考であって、現行 community SONiC で動く設定ではない。</li>
 </ul>
 <h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
@@ -24245,8 +24245,8 @@
 <h4 id="_12">読者への影響<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <ul>
 <li>HLD どおりに <code>sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f</code> を叩くと <code>Error: No such command "static-anycast-gateway"</code> で終了。CLI ハンドラが click ツリーに登録されていない。</li>
-<li><code>CONFIG_DB</code> に直接 <code>SAG|GLOBAL</code> / <code>VLAN_INTERFACE|Vlan100</code> の <code>static_anycast_gateway</code> を書いても、それを購読する <code>SagOrch</code> が起動していないため SAI 側に何も伝播しない（YANG validation も無いので <code>config save</code> 後に <code>config load</code> で消えないだけ）。</li>
-<li>EVPN-VXLAN の leaf 冗長構成で「同一仮想 GW MAC」運用を community master 標準だけで実現する手段は <strong>無い</strong>。ベンダー fork（NVIDIA / Edgecore Enterprise SONiC / AsterNOS）か、手動の anycast 設定（後述）で代替。</li>
+<li><code>CONFIG_DB</code> に直接 <code>SAG|GLOBAL</code> / <code>VLAN_INTERFACE|Vlan100</code> の <code>static_anycast_gateway</code> を書いても、それを購読する <code>SagOrch</code> が起動していないため <a href="../../reference/glossary/#term-sai">SAI</a> 側に何も伝播しない（YANG validation も無いので <code>config save</code> 後に <code>config load</code> で消えないだけ）。</li>
+<li>EVPN-VXLAN の leaf 冗長構成で「同一仮想 GW MAC」運用を community master 標準だけで実現する手段は <strong>無い</strong>。ベンダー fork（NVIDIA / Edgecore Enterprise SONiC / <a href="../../reference/glossary/#term-asternos">AsterNOS</a>）か、手動の anycast 設定（後述）で代替。</li>
 </ul>
 <h4 id="_13">回避策の実コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <p>community master で SAG 相当を <strong>手動で</strong>作る方法:</p>
@@ -24273,11 +24273,13 @@
 <li><a href="https://github.com/sonic-net/sonic-swss/pull/3167">sonic-swss #3167: [swss] add static anycast gateway support (open)</a> — SagOrch 実装提案 PR、現役レビュー対象。</li>
 <li><a href="https://github.com/sonic-net/sonic-swss/pull/1974">sonic-swss #1974: [SAG]: Add SAG implementation (open, 古い)</a> — 旧提案、長期 stale。</li>
 <li><a href="https://github.com/sonic-net/sonic-utilities/pull/3339">sonic-utilities #3339: [CLI] add static anycast gateway support (open)</a> — CLI 側提案 PR。</li>
-<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/19069">sonic-buildimage #19069: [Yang] Add SAG Yang models (open)</a> — YANG 側提案 PR。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/19069">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #19069: [Yang] Add SAG Yang models (open)</a> — YANG 側提案 PR。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/13676">sonic-buildimage #13676: Defining a SAG setup on an ISP connected route/switch breaks Uplink BGP peer settings (open, Edgecore)</a> — ベンダー fork 上でも組み合わせバグが既知。</li>
 </ul>
 <h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
+<!-- glossary-links-injected: 7335cacf02a5 -->
+
 <div class="footnote">
 <hr />
 <ol>

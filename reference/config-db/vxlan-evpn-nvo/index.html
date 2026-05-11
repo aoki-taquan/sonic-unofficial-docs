@@ -23611,7 +23611,7 @@
 
 <h1 id="vxlan_evpn_nvo">VXLAN_EVPN_NVO テーブル<a class="headerlink" href="#vxlan_evpn_nvo" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>VXLAN_EVPN_NVO</code> テーブルは EVPN ベースの Network Virtualization Overlay (NVO) インスタンスを CONFIG_DB に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。EVPN コントロールプレーン (FRR + bgpd の <code>l2vpn evpn</code>) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (<code>max-elements 1</code>)。</p>
+<p><code>VXLAN_EVPN_NVO</code> テーブルは <a href="../../glossary/#term-evpn">EVPN</a> ベースの Network Virtualization Overlay (NVO) インスタンスを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。EVPN コントロールプレーン (<a href="../../glossary/#term-frr">FRR</a> + bgpd の <code>l2vpn evpn</code>) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (<code>max-elements 1</code>)。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23674,13 +23674,13 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>vxlanorch</code> (sonic-swss)</li>
+<li><code>vxlanorch</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>)</li>
 <li><code>bgpcfgd</code> / <code>bgpd</code> — EVPN address-family の起動条件</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>VXLAN_TUNNEL</code>、<code>VXLAN_TUNNEL_MAP</code>、<code>VNET</code>、<code>BGP_GLOBALS_AF</code> (l2vpn evpn)</li>
-<li>関連 YANG: <code>sonic-vxlan</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vxlan</code></li>
 <li>関連 CLI: <code>config vxlan evpn_nvo</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23714,6 +23714,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9d75cd71afa3 -->
 
 <div class="footnote">
 <hr />

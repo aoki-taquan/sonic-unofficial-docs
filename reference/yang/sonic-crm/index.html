@@ -23690,7 +23690,7 @@
 <li>import: <code>sonic-types</code>, <code>sonic-device_metadata</code></li>
 <li>top container: <code>sonic-crm</code></li>
 </ul>
-<p>Critical Resource Monitoring (CRM) 設定の YANG モデル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC 上の各種ハードウェアリソース（ACL カウンタ/エントリ、route、neighbor、nexthop、FDB、NAT、MPLS、SRv6、DASH オブジェクト 等）について <code>threshold_type</code> / <code>high_threshold</code> / <code>low_threshold</code> の 3 リーフをひとセットとして繰り返し定義する大型モジュール。</p>
+<p>Critical Resource Monitoring (<a href="../../glossary/#term-crm">CRM</a>) 設定の <a href="../../glossary/#term-yang">YANG</a> モデル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC 上の各種ハードウェアリソース（<a href="../../glossary/#term-acl">ACL</a> カウンタ/エントリ、route、neighbor、nexthop、<a href="../../glossary/#term-fdb">FDB</a>、<a href="../../glossary/#term-nat">NAT</a>、<a href="../../glossary/#term-mpls">MPLS</a>、<a href="../../glossary/#term-srv6">SRv6</a>、<a href="../../glossary/#term-dash">DASH</a> オブジェクト 等）について <code>threshold_type</code> / <code>high_threshold</code> / <code>low_threshold</code> の 3 リーフをひとセットとして繰り返し定義する大型モジュール。</p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23798,7 +23798,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>CRM|Config</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>CRM|Config</code></li>
 <li>CLI: <code>crm config thresholds &lt;type&gt; &lt;resource&gt; ...</code>, <code>crm show resources</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23814,7 +23814,7 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Critical Resource Monitor の閾値設定。<code>CRM|Config</code> を crmorch が読んで SAI カウンタと比較し syslog 警告を出す。</li>
+<li>Critical Resource Monitor の閾値設定。<code>CRM|Config</code> を crmorch が読んで <a href="../../glossary/#term-sai">SAI</a> カウンタと比較し syslog 警告を出す。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23828,6 +23828,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 9e946ae6784c -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23762,7 +23762,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>VRF / ECMP / RIB-FIB パイプラインの内部実装は、「route が FRR で best になった瞬間」から「ASIC に program され、peer に advertise される瞬間」までの長いパイプラインに、どこに非対称性や遅延が入るかを意識すると整理しやすいです。</p>
+<p><a href="../../../reference/glossary/#term-vrf">VRF</a> / <a href="../../../reference/glossary/#term-ecmp">ECMP</a> / RIB-FIB パイプラインの内部実装は、「route が <a href="../../../reference/glossary/#term-frr">FRR</a> で best になった瞬間」から「ASIC に program され、peer に advertise される瞬間」までの長いパイプラインに、どこに非対称性や遅延が入るかを意識すると整理しやすいです。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   BGPD[bgpd / staticd] --&gt; ZEBRA[zebra&lt;br/&gt;RIB]
@@ -23788,7 +23788,7 @@
 <tr>
 <td><code>zebra</code> (FRR)</td>
 <td><code>zebra/zebra_fpm.c</code></td>
-<td>RIB best path を FPM 経由で送信。<code>ip route</code> の VRF はカーネル table id に対応</td>
+<td>RIB best path を <a href="../../../reference/glossary/#term-fpm">FPM</a> 経由で送信。<code>ip route</code> の VRF はカーネル table id に対応</td>
 </tr>
 <tr>
 <td><code>fpmsyncd</code> (<code>fpmsyncd/fpmlink.cpp</code>)</td>
@@ -23798,7 +23798,7 @@
 <tr>
 <td><code>RouteOrch</code> (<code>orchagent/routeorch.cpp</code>)</td>
 <td><code>RouteOrch::doTask</code>、<code>addRoute</code>、<code>removeRoute</code></td>
-<td><code>ROUTE_TABLE</code> から SAI route entry を作成。nexthop group を NhgOrch に依頼</td>
+<td><code>ROUTE_TABLE</code> から <a href="../../../reference/glossary/#term-sai">SAI</a> route entry を作成。nexthop group を NhgOrch に依頼</td>
 </tr>
 <tr>
 <td><code>NhgOrch</code> (<code>orchagent/nhgorch.cpp</code>)</td>
@@ -23808,7 +23808,7 @@
 <tr>
 <td><code>NeighOrch</code> (<code>orchagent/neighorch.cpp</code>)</td>
 <td><code>addNeighbor</code>、<code>resolveNeighbor</code></td>
-<td>ARP/ND を <code>SAI_NEIGHBOR_ENTRY</code> / <code>SAI_NEXT_HOP</code> に投影</td>
+<td><a href="../../../reference/glossary/#term-arp">ARP</a>/ND を <code>SAI_NEIGHBOR_ENTRY</code> / <code>SAI_NEXT_HOP</code> に投影</td>
 </tr>
 <tr>
 <td><code>VRFOrch</code> (<code>orchagent/vrforch.cpp</code>)</td>
@@ -23858,7 +23858,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>FINE_GRAIN_ECMP</code> は FgNhgOrch のための拡張で、ベンダ差が出やすい SAI 属性です。PIC（Prefix Independent Convergence）では BFD-down 時に group member の <code>weight</code> を 0 化する path（<code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code> の動的更新）に頼るため、ASIC で WEIGHT のホットスワップが効くかが分かれ目になります。</p>
+<p><code>FINE_GRAIN_ECMP</code> は FgNhgOrch のための拡張で、ベンダ差が出やすい SAI 属性です。PIC（Prefix Independent Convergence）では <a href="../../../reference/glossary/#term-bfd">BFD</a>-down 時に group member の <code>weight</code> を 0 化する path（<code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code> の動的更新）に頼るため、ASIC で WEIGHT のホットスワップが効くかが分かれ目になります。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB:
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  VRF             ─&gt; VRFOrch
@@ -23880,19 +23880,19 @@
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub の使用<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>大量 route の loading 時、<code>fpmsyncd</code> は Redis pipeline を pump し、<code>orchagent</code> 側は ring buffer（<code>gRingBuffer</code>）+ assistant thread で <code>ConsumerStateTable</code> の dequeue を加速する設計が入っています（BGP Loading Optimization）。</li>
+<li>大量 route の loading 時、<code>fpmsyncd</code> は <a href="../../../reference/glossary/#term-redis">Redis</a> pipeline を pump し、<code>orchagent</code> 側は ring buffer（<code>gRingBuffer</code>）+ assistant thread で <code>ConsumerStateTable</code> の dequeue を加速する設計が入っています（<a href="../../../reference/glossary/#term-bgp">BGP</a> Loading Optimization）。</li>
 <li><code>sairedis</code> は async モードで書き込み、<code>ASIC_DB</code> の <code>_temp</code> キーを使った redis transaction を avoid する設計です。</li>
 <li><code>RouteOrch</code> ↔ <code>NeighOrch</code> ↔ <code>NhgOrch</code> 間はプロセス内 <code>Observer</code> で notify します（Redis を経由しない）。</li>
 </ul>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>VRF を跨ぐ leak route は <code>VRFOrch</code> の view では暗黙の依存が増えるため、orchagent 内では VRF 単位の lock が太く、極端な VRF 数（数千）では route convergence の serialization が問題になります。</li>
+<li>VRF を跨ぐ leak route は <code>VRFOrch</code> の view では暗黙の依存が増えるため、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> 内では VRF 単位の lock が太く、極端な VRF 数（数千）では route convergence の serialization が問題になります。</li>
 <li>ECMP の hash field 設定は <code>SwitchOrch</code> が <code>SAI_SWITCH_ATTR_ECMP_HASH_*</code> をまとめて投入する仕組みで、per-VRF / per-route の hash 切替は SONiC master では未対応です。</li>
-<li><code>Suppress FIB Pending</code> の offload-feedback path は、ASIC reject（capacity over や属性 unsupported）の通知を <code>STATE_DB.ROUTE_TABLE</code> の <code>offloaded</code> field 経由で FRR に返しますが、ベンダ syncd が <code>offloaded</code> を更新しない場合に suppress が解除されない discrepancy がよく観測されます。</li>
+<li><code>Suppress FIB Pending</code> の offload-feedback path は、ASIC reject（capacity over や属性 unsupported）の通知を <code>STATE_DB.ROUTE_TABLE</code> の <code>offloaded</code> field 経由で FRR に返しますが、ベンダ <a href="../../../reference/glossary/#term-syncd">syncd</a> が <code>offloaded</code> を更新しない場合に suppress が解除されない discrepancy がよく観測されます。</li>
 <li>FgNhgOrch は <code>FG_NHG_PREFIX</code> テーブルに登録された prefix のみ fine-grained 扱いになり、その範囲外の ECMP は通常の <code>NhgOrch</code> 経路を通ります。</li>
 </ul>
 <h2 id="vrf-linux-kernel">VRF と Linux kernel の連携<a class="headerlink" href="#vrf-linux-kernel" title="Permanent link">&para;</a></h2>
-<p>SONiC は VRF を Linux kernel の VRF（<code>l3mdev</code>）と SAI の <code>VIRTUAL_ROUTER</code> の二重で表現します。<code>IntfMgr</code> が CONFIG_DB の <code>INTERFACE|&lt;intf&gt;</code> の <code>vrf_name</code> フィールドを見て、kernel に <code>ip link set &lt;intf&gt; master Vrf-Red</code> を発行し、同時に APPL_DB 経路で orchagent に SAI router interface の VRF 属性を更新させます。</p>
+<p>SONiC は VRF を Linux kernel の VRF（<code>l3mdev</code>）と SAI の <code>VIRTUAL_ROUTER</code> の二重で表現します。<code>IntfMgr</code> が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>INTERFACE|&lt;intf&gt;</code> の <code>vrf_name</code> フィールドを見て、kernel に <code>ip link set &lt;intf&gt; master Vrf-Red</code> を発行し、同時に <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> 経路で orchagent に SAI router interface の VRF 属性を更新させます。</p>
 <table>
 <thead>
 <tr>
@@ -23926,7 +23926,7 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ecmp_hash: &quot;SRC_IP,DST_IP,IP_PROTOCOL,L4_SRC_PORT,L4_DST_PORT,INNER_*&quot;
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  lag_hash:  &quot;...&quot;
 </span></code></pre></div>
-<p>これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは VXLAN / SRv6 でしばしば問題になります（→ 03 章、17 章）。</p>
+<p>これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-srv6">SRv6</a> でしばしば問題になります（→ 03 章、17 章）。</p>
 <h2 id="nhg-resync">NHG 参照カウントと resync<a class="headerlink" href="#nhg-resync" title="Permanent link">&para;</a></h2>
 <p><code>NhgOrch</code> は同一の <code>(prefix, nexthop set)</code> を共有して SAI 上の <code>NEXT_HOP_GROUP</code> を再利用します。参照カウントは以下のように動きます。</p>
 <table>
@@ -23965,6 +23965,7 @@
 <li><a href="../../../routing/routing-and-next-hop-table-enhancement/">Routing / Next Hop table enhancement</a></li>
 <li><a href="../../../routing/sonic-vrf-support-design-spec-draft/">VRF design spec (draft)</a></li>
 </ul>
+<!-- glossary-links-injected: 988efd6b37a0 -->
 
 
 

@@ -23757,7 +23757,7 @@
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong><code>FEATURE|&lt;name&gt;</code> の <code>state</code> が <code>disabled</code> / <code>always_disabled</code></strong> → hostcfgd が起動を抑制</li>
+<li><strong><code>FEATURE|&lt;name&gt;</code> の <code>state</code> が <code>disabled</code> / <code>always_disabled</code></strong> → <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が起動を抑制</li>
 <li><strong>対象 feature の sub-system 依存が満たされない</strong> (例: <code>bgp</code> の起動には <code>swss</code> が先に Ready)</li>
 <li><strong>イメージ pull / 展開失敗</strong>: docker image が存在しない or 破損</li>
 <li><strong>設定ファイル不備</strong>: <code>/etc/sonic/config_db.json</code> の必須 key 欠落で起動スクリプトが abort</li>
@@ -23817,6 +23817,8 @@
 <li><a href="../../config-db/feature/">../config-db/feature.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 3e47d0d86b63 -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23824,7 +23826,7 @@
 <p>sonic-net/sonic-host-services @ c5bbbe8 — hostcfgd&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — config feature state&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config feature state&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

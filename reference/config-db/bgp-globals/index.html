@@ -23824,7 +23824,7 @@
 
 <h1 id="bgp_globals">BGP_GLOBALS テーブル<a class="headerlink" href="#bgp_globals" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VRF 単位の BGP 全体パラメータ（router-id、local AS、graceful restart、route reflector、bestpath 比較ルール、confederation、keepalive/holdtime、max-med、max delay 等）を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code> または <code>frr-mgmt-framework</code> が読み出し、FRR の <code>router bgp &lt;asn&gt; vrf &lt;vrf&gt;</code> ブロックに反映する。<code>BGP_GLOBALS_AF</code> / <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> / <code>BGP_GLOBALS_AF_NETWORK</code> がアドレスファミリ依存の設定を持つ。</p>
+<p><a href="../../glossary/#term-vrf">VRF</a> 単位の <a href="../../glossary/#term-bgp">BGP</a> 全体パラメータ（router-id、local AS、graceful restart、route reflector、bestpath 比較ルール、confederation、keepalive/holdtime、max-med、max delay 等）を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code> または <code>frr-mgmt-framework</code> が読み出し、<a href="../../glossary/#term-frr">FRR</a> の <code>router bgp &lt;asn&gt; vrf &lt;vrf&gt;</code> ブロックに反映する。<code>BGP_GLOBALS_AF</code> / <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> / <code>BGP_GLOBALS_AF_NETWORK</code> がアドレスファミリ依存の設定を持つ。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23874,7 +23874,7 @@
 <td><code>load_balance_mp_relax</code></td>
 <td>boolean</td>
 <td>-</td>
-<td>multipath-relax (AS path 異なる ECMP 許容)</td>
+<td>multipath-relax (AS path 異なる <a href="../../glossary/#term-ecmp">ECMP</a> 許容)</td>
 </tr>
 <tr>
 <td><code>graceful_restart_enable</code></td>
@@ -24116,14 +24116,14 @@
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>bgpcfgd</code> / <code>frr-mgmt-framework</code>: CONFIG_DB → vtysh / FRR config に変換</li>
+<li><code>bgpcfgd</code> / <code>frr-mgmt-framework</code>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> → vtysh / FRR config に変換</li>
 <li><code>bgpd</code> (FRR)</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>BGP_NEIGHBOR</code>、<code>BGP_DEVICE_GLOBAL</code>、<code>BGP_AGGREGATE_ADDRESS</code>、<code>VRF</code>、<code>ROUTE_MAP_SET</code></li>
 <li>関連 CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
-<li>関連 YANG: <code>sonic-bgp-global</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-global</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24161,6 +24161,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config bgpd&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 35efc0f6df25 -->
 
 <div class="footnote">
 <hr />

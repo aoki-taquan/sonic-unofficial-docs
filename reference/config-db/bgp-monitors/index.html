@@ -23611,7 +23611,7 @@
 
 <h1 id="bgp_monitors">BGP_MONITORS テーブル<a class="headerlink" href="#bgp_monitors" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>BGP_MONITORS</code> テーブルは BGP Monitoring Protocol (BMP) ではなく、BGP モニター用の特殊隣接（route-monitor）を定義する。<code>bgpcfgd</code> がテンプレ展開して <code>bgpd</code> の <code>neighbor</code> 設定を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各エントリは BGP 隣接共通プロパティ (<code>sonic-bgp-cmn-neigh</code> grouping) を流用する。</p>
+<p><code>BGP_MONITORS</code> テーブルは <a href="../../glossary/#term-bgp">BGP</a> Monitoring Protocol (BMP) ではなく、BGP モニター用の特殊隣接（route-monitor）を定義する。<code>bgpcfgd</code> がテンプレ展開して <code>bgpd</code> の <code>neighbor</code> 設定を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各エントリは BGP 隣接共通プロパティ (<code>sonic-bgp-cmn-neigh</code> grouping) を流用する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23683,16 +23683,16 @@
 </table>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>name</code> は <code>BGPMonitor</code> 固定（YANG <code>must</code> で強制）。複数モニターは <code>addr</code> で区別する</li>
+<li><code>name</code> は <code>BGPMonitor</code> 固定（<a href="../../glossary/#term-yang">YANG</a> <code>must</code> で強制）。複数モニターは <code>addr</code> で区別する</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>bgpcfgd</code> (<code>docker-fpm-frr</code>)</li>
-<li>間接的に <code>bgpd</code> (FRR)</li>
+<li>間接的に <code>bgpd</code> (<a href="../../glossary/#term-frr">FRR</a>)</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BGP_NEIGHBOR</code>、<code>BGP_GLOBALS</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_NEIGHBOR</code>、<code>BGP_GLOBALS</code></li>
 <li>関連 YANG: <code>sonic-bgp-monitor</code>、<code>sonic-bgp-common</code></li>
 <li>関連 CLI: <code>config bgp</code></li>
 </ul>
@@ -23726,6 +23726,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp summary&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->
 
 <div class="footnote">
 <hr />

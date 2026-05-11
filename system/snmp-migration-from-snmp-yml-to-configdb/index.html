@@ -23818,7 +23818,7 @@
 </div>
 <h1 id="snmp-snmpyml-config_db">SNMP 設定の snmp.yml → CONFIG_DB 移行<a class="headerlink" href="#snmp-snmpyml-config_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>/etc/sonic/snmp.yml</code> には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、<strong>全 SNMP 設定を CONFIG_DB に集約</strong> するための移行設計。コンテナ起動時に従来の yaml を読み込んで CONFIG_DB に流し込むコンバータを併走させ、後方互換性を保ったまま乗り換える計画<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>/etc/sonic/snmp.yml</code> には community / location が、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> には <a href="../../reference/glossary/#term-acl">ACL</a> のみが入る、という分散した <a href="../../reference/glossary/#term-snmp">SNMP</a> 設定状態を解消し、<strong>全 SNMP 設定を CONFIG_DB に集約</strong> するための移行設計。コンテナ起動時に従来の yaml を読み込んで CONFIG_DB に流し込むコンバータを併走させ、後方互換性を保ったまま乗り換える計画<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>3 つの新規 CONFIG_DB テーブル <code>SNMP</code> / <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> が <code>doc/snmp/snmp-schema-addition.md</code> で定義されており、本ページはそれを使う側の運用と CLI を扱う。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -23895,7 +23895,7 @@
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>show run snmp [community|contact|location|user] [--json]
 </span></code></pre></div>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG 追加の記述は無い（<code>snmp-schema-addition.md</code> 側で示唆されるのみ）。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> に <a href="../../reference/glossary/#term-yang">YANG</a> 追加の記述は無い（<code>snmp-schema-addition.md</code> 側で示唆されるのみ）。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>snmp<span class="w"> </span>location<span class="w"> </span>add<span class="w"> </span><span class="s2">&quot;Emerald City&quot;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>snmp<span class="w"> </span>contact<span class="w"> </span>add<span class="w"> </span>joe<span class="w"> </span>joe@contoso.com
@@ -23907,7 +23907,7 @@
 <ul>
 <li>HLD は移行用コンバータの最終形式（snmp.yml 削除タイミング）を明示していない。「将来的に snmp.yml を撤去する」とする方針のみ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>SNMP_COMMUNITY.TYPE</code> の <code>RW</code> は将来用で、当時は実装側で <code>RO</code> のみが有効と他 HLD で言及されている。</li>
-<li>パスワードは平文で CONFIG_DB に入る点に注意（既存の sonic-utilities の慣例どおり）。</li>
+<li>パスワードは平文で CONFIG_DB に入る点に注意（既存の <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> の慣例どおり）。</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23928,6 +23928,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a44572fede5f -->
 
 <div class="footnote">
 <hr />

@@ -23884,8 +23884,8 @@
 </div>
 <h1 id="loglevel_db-config_dblogger">ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）<a class="headerlink" href="#loglevel_db-config_dblogger" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC では <code>swssloglevel</code> コマンドで <code>orchagent</code> / <code>syncd</code> / 各種 <code>*mgrd</code> / <code>*syncd</code> / SAI API ごとに動的にログ深さを変えられる。しかし設定先が <strong>LOGLEVEL_DB (#3)</strong> に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 <code>NOTICE</code> に戻ってしまっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デバッグ目的で <code>DEBUG</code> を出していても、再起動を挟むと忘れられる運用上の不便があった。</p>
-<p>本機能はログレベルテーブルを <strong>CONFIG_DB (#4) の <code>LOGGER</code> テーブル</strong> に移し、<code>config save</code> の対象に含めることで永続化する。Phase は 2 段で、Phase 1 は移行のみ、Phase 2 で LOGLEVEL_DB と <code>JINJA2_CACHE</code> を完全削除する設計である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC では <code>swssloglevel</code> コマンドで <code>orchagent</code> / <code>syncd</code> / 各種 <code>*mgrd</code> / <code>*syncd</code> / <a href="../../reference/glossary/#term-sai">SAI</a> API ごとに動的にログ深さを変えられる。しかし設定先が <strong><a href="../../reference/glossary/#term-loglevel_db">LOGLEVEL_DB</a> (#3)</strong> に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 <code>NOTICE</code> に戻ってしまっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デバッグ目的で <code>DEBUG</code> を出していても、再起動を挟むと忘れられる運用上の不便があった。</p>
+<p>本機能はログレベルテーブルを <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> (#4) の <code>LOGGER</code> テーブル</strong> に移し、<code>config save</code> の対象に含めることで永続化する。Phase は 2 段で、Phase 1 は移行のみ、Phase 2 で LOGLEVEL_DB と <code>JINJA2_CACHE</code> を完全削除する設計である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">スキーマ移行<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>旧 LOGLEVEL_DB (#3) のキーは <code>&lt;component&gt;:&lt;component&gt;</code> 形式（例: <code>orchagent:orchagent</code>）だった<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -23947,7 +23947,7 @@
 </tbody>
 </table>
 <h3 id="warm-upgrade">Warm upgrade の移行ロジック<a class="headerlink" href="#warm-upgrade" title="Permanent link">&para;</a></h3>
-<p>旧バージョンから warm upgrade する場合、起動直後は LOGLEVEL_DB (#3) にデータが残っている可能性がある。HLD は <strong><code>db_migrator</code> を拡張</strong> して以下を行うと明記する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>旧バージョンから warm upgrade する場合、起動直後は LOGLEVEL_DB (#3) にデータが残っている可能性がある。<a href="../../reference/glossary/#term-hld">HLD</a> は <strong><code>db_migrator</code> を拡張</strong> して以下を行うと明記する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <ol>
 <li><code>db_migrator</code> に LOGLEVEL_DB コネクタを追加。</li>
 <li>LOGLEVEL_DB の Logger テーブルを CONFIG_DB に移し（キー名を変換）、LOGLEVEL_DB を消す。</li>
@@ -24098,6 +24098,8 @@ reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除す�
 <li><code>swssloglevel -p</code> の出力に出てこないコンポーネント: そのコンポーネントが Logger シングルトン経由でない、または listener thread が未対応。HLD 列挙コンポーネント以外は本機能の対象外。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: d59e75d0b079 -->
+
 <div class="footnote">
 <hr />
 <ol>

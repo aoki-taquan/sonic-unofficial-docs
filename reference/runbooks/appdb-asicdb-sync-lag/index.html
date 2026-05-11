@@ -23751,15 +23751,15 @@
 </div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BGP で受信した route が <code>show ip route</code> に出るが、ASIC 側 forwarding に反映されない</li>
+<li><a href="../../glossary/#term-bgp">BGP</a> で受信した route が <code>show ip route</code> に出るが、ASIC 側 forwarding に反映されない</li>
 <li><code>sonic-db-cli APPL_DB hgetall ROUTE_TABLE:...</code> に値があるのに、対応する <code>ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*</code> が存在しない</li>
 <li><code>swss</code> / <code>syncd</code> の CPU が継続的に高い</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>orchagent が特定 task で詰まる</strong>: ACL / Nexthop group 再計算で長時間ロック</li>
-<li><strong>syncd ↔ SAI 呼び出しでベンダ SDK がブロック</strong></li>
-<li><strong>CRM 枯渇による SAI 書込失敗</strong>: <code>SAI_STATUS_TABLE_FULL</code> で retry ループ</li>
+<li><strong><a href="../../glossary/#term-orchagent">orchagent</a> が特定 task で詰まる</strong>: <a href="../../glossary/#term-acl">ACL</a> / Nexthop group 再計算で長時間ロック</li>
+<li><strong><a href="../../glossary/#term-syncd">syncd</a> ↔ <a href="../../glossary/#term-sai">SAI</a> 呼び出しでベンダ SDK がブロック</strong></li>
+<li><strong><a href="../../glossary/#term-crm">CRM</a> 枯渇による SAI 書込失敗</strong>: <code>SAI_STATUS_TABLE_FULL</code> で retry ループ</li>
 <li><strong>redis broken pipe / slow consumer</strong>: PUB/SUB チャネルで詰まり</li>
 <li><strong>multi-asic namespace の reflection 遅延</strong></li>
 </ol>
@@ -23802,14 +23802,16 @@
 <li><a href="../flex-counter-stuck/">./flex-counter-stuck.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 867f28b4b211 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ master — orchdaemon.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ master — orchdaemon.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-sairedis @ master — Syncd.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-sairedis">sonic-sairedis</a> @ master — Syncd.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

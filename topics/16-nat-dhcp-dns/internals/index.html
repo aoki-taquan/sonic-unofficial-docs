@@ -23852,7 +23852,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>NAT / DHCP / DNS の内部実装は「SONiC は何を ASIC に任せ、何を Linux user space daemon に任せているか」の切り分けを意識すると整理しやすいです。NAT は SAI で hardware offload する path と conntrack で kernel に任せる path があり、DHCP は relay agent / server agent の二種類、DNS は基本 systemd-resolved + /etc/resolv.conf です。</p>
+<p><a href="../../../reference/glossary/#term-nat">NAT</a> / DHCP / DNS の内部実装は「SONiC は何を ASIC に任せ、何を Linux user space daemon に任せているか」の切り分けを意識すると整理しやすいです。NAT は <a href="../../../reference/glossary/#term-sai">SAI</a> で hardware offload する path と conntrack で kernel に任せる path があり、DHCP は relay agent / server agent の二種類、DNS は基本 systemd-resolved + /etc/resolv.conf です。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="nat">NAT<a class="headerlink" href="#nat" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23883,7 +23883,7 @@
 <tr>
 <td><code>natmgrd</code> (<code>cfgmgr/natmgr.cpp</code>)</td>
 <td><code>NatMgr::doTask</code></td>
-<td><code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <code>NAT_POOL</code> / <code>NAT_BINDINGS</code> を <code>iptables</code> と APPL_DB に展開</td>
+<td><code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <code>NAT_POOL</code> / <code>NAT_BINDINGS</code> を <code>iptables</code> と <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に展開</td>
 </tr>
 <tr>
 <td><code>NatOrch</code> (<code>orchagent/natorch.cpp</code>)</td>
@@ -23897,7 +23897,7 @@
 </tr>
 <tr>
 <td><code>iptables</code> rules (NAT/MANGLE)</td>
-<td>natmgrd が生成</td>
+<td><a href="../../../reference/glossary/#term-natmgrd-natsyncd">natmgrd</a> が生成</td>
 <td>初回パケットを kernel で NAT してから ASIC に load する</td>
 </tr>
 </tbody>
@@ -23920,7 +23920,7 @@
 <tr>
 <td><code>dhcp_server_ipv4</code> (<code>src/sonic-dhcp-server</code>)</td>
 <td><code>kea-dhcp4</code> based</td>
-<td>フル DHCP server。<code>DHCP_SERVER_IPV4*</code> 系テーブルから設定生成、lease を Redis に書く</td>
+<td>フル DHCP server。<code>DHCP_SERVER_IPV4*</code> 系テーブルから設定生成、lease を <a href="../../../reference/glossary/#term-redis">Redis</a> に書く</td>
 </tr>
 <tr>
 <td><code>dhcp6relay</code></td>
@@ -23987,9 +23987,9 @@
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>NAT: 通常の ProducerStateTable / SubscriberStateTable のみ。</li>
+<li>NAT: 通常の <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / SubscriberStateTable のみ。</li>
 <li><code>natsyncd</code> は <code>conntrack-tools</code> の netlink を直接 listen し、Redis に書く片方向経路。conntrack 自体が pub/sub ではない点に注意。</li>
-<li>DHCP: <code>dhcpmon</code> が pcap または syslog をパースする実装で、Redis 経由ではなく直接 counter を STATE_DB に書く。</li>
+<li>DHCP: <code>dhcpmon</code> が pcap または syslog をパースする実装で、Redis 経由ではなく直接 counter を <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に書く。</li>
 <li>DNS: pub/sub 経路はありません。</li>
 </ul>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23999,10 +23999,10 @@
 <li>DHCP server (<code>kea-dhcp4</code>) はまだ全機能を網羅しておらず、特に option 82 周辺と高可用構成は限定的です。</li>
 <li>DHCP relay の counter は <code>dhcpmon</code> が pcap-based で kernel iptables NFLOG を見ている実装で、高負荷時にパケットを取りこぼします。「relay packets <count>」を SLA に使うのは避けてください。</li>
 <li>DNS は SONiC で独自設定はなく、<code>hostcfgd</code> が <code>/etc/resolv.conf</code> を上書きする単純な実装。DNS-over-TLS や split-DNS は未対応。</li>
-<li>IPv6 NAT（NAT66 / NPTv6）は SAI で属性は定義されているが、SONiC orchagent の対応が partial で、HLD と実装の discrepancy が出やすい部分です。</li>
+<li>IPv6 NAT（NAT66 / NPTv6）は SAI で属性は定義されているが、SONiC <a href="../../../reference/glossary/#term-orchagent">orchagent</a> の対応が partial で、<a href="../../../reference/glossary/#term-hld">HLD</a> と実装の discrepancy が出やすい部分です。</li>
 </ul>
 <h2 id="dhcp-relay-packet-path">DHCP relay の packet path<a class="headerlink" href="#dhcp-relay-packet-path" title="Permanent link">&para;</a></h2>
-<p>DHCP relay (<code>dhcprelayd</code> および <code>kea-dhcp4</code>/<code>kea-dhcp6</code> relay モード) は CoPP 経由で trap された DHCP パケットを処理します。</p>
+<p>DHCP relay (<code>dhcprelayd</code> および <code>kea-dhcp4</code>/<code>kea-dhcp6</code> relay モード) は <a href="../../../reference/glossary/#term-copp">CoPP</a> 経由で trap された DHCP パケットを処理します。</p>
 <pre class="mermaid"><code>flowchart LR
   CLIENT[DHCP client] --&gt;|broadcast / multicast| PORT[ingress port]
   PORT --&gt;|CoPP trap| CPU[CPU queue]
@@ -24021,6 +24021,7 @@
 <li><a href="../../../routing/dhcp-relay-for-ipv6-hld/">DHCP relay for IPv6 HLD</a></li>
 <li><a href="../../../routing/dhcp-relay-per-interface-counter/">DHCP relay per-interface counter</a></li>
 </ul>
+<!-- glossary-links-injected: 88eb10d428e5 -->
 
 
 

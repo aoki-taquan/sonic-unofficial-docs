@@ -23824,7 +23824,7 @@
 
 <h1 id="crm">CRM テーブル<a class="headerlink" href="#crm" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Critical Resource Monitoring (CRM) は ASIC の HW リソース使用率 (route / nexthop / FDB / ACL / NAT / MPLS / SRv6 / DASH) をポーリング監視し、閾値超過時に <code>THRESHOLD_EXCEEDED</code> / <code>THRESHOLD_CLEAR</code> アラートを生成する機能。設定は <code>CRM|Config</code> の単一エントリに集約される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>CrmOrch</code> が CONFIG_DB を購読し、<code>COUNTERS_DB</code> の CRM 統計を更新する。</p>
+<p>Critical Resource Monitoring (<a href="../../glossary/#term-crm">CRM</a>) は ASIC の HW リソース使用率 (route / nexthop / <a href="../../glossary/#term-fdb">FDB</a> / <a href="../../glossary/#term-acl">ACL</a> / <a href="../../glossary/#term-nat">NAT</a> / <a href="../../glossary/#term-mpls">MPLS</a> / <a href="../../glossary/#term-srv6">SRv6</a> / <a href="../../glossary/#term-dash">DASH</a>) をポーリング監視し、閾値超過時に <code>THRESHOLD_EXCEEDED</code> / <code>THRESHOLD_CLEAR</code> アラートを生成する機能。設定は <code>CRM|Config</code> の単一エントリに集約される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>CrmOrch</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<code>COUNTERS_DB</code> の CRM 統計を更新する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23862,7 +23862,7 @@
 <td><code>ipv4_route</code>, <code>ipv6_route</code>, <code>ipv4_nexthop</code>, <code>ipv6_nexthop</code>, <code>ipv4_neighbor</code>, <code>ipv6_neighbor</code></td>
 </tr>
 <tr>
-<td>ECMP</td>
+<td><a href="../../glossary/#term-ecmp">ECMP</a></td>
 <td><code>nexthop_group</code>, <code>nexthop_group_member</code></td>
 </tr>
 <tr>
@@ -23912,13 +23912,13 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> の <code>CrmOrch</code>: ポーリング、SAI から使用量取得、COUNTERS_DB 更新、syslog アラート</li>
+<li><code>orchagent</code> の <code>CrmOrch</code>: ポーリング、<a href="../../glossary/#term-sai">SAI</a> から使用量取得、<a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 更新、syslog アラート</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>DEVICE_METADATA</code></li>
 <li>関連 CLI: <code>crm config thresholds ...</code>、<code>crm show resources/thresholds</code></li>
-<li>関連 YANG: <code>sonic-crm</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-crm</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23956,6 +23956,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: e0ed5cb93cdf -->
 
 <div class="footnote">
 <hr />

@@ -23628,7 +23628,7 @@
 
 <h1 id="config-buffer">config buffer サブコマンド<a class="headerlink" href="#config-buffer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config buffer</code> は dynamic buffer が有効なシステムで、CONFIG_DB の <code>BUFFER_PROFILE</code> を追加・更新する CLI グループ。グループ入口で <code>DEVICE_METADATA|localhost</code> の <code>buffer_model</code> を確認し、dynamic 以外では実行を拒否する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config buffer</code> は dynamic buffer が有効なシステムで、<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>BUFFER_PROFILE</code> を追加・更新する CLI グループ。グループ入口で <code>DEVICE_METADATA|localhost</code> の <code>buffer_model</code> を確認し、dynamic 以外では実行を拒否する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23752,7 +23752,7 @@
 <h3 id="_10">よくある落とし穴<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>switchmode 変更は <code>config save</code> + reload 必須。即時切替不可。</li>
-<li>PG/queue から profile を外す前に profile を削除すると orchagent が拒否する。</li>
+<li>PG/queue から profile を外す前に profile を削除すると <a href="../../glossary/#term-orchagent">orchagent</a> が拒否する。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>buffer<span class="w"> </span>profile
@@ -23760,6 +23760,8 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>buffer<span class="w"> </span>pool
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f6aa270ee665 -->
 
 <div class="footnote">
 <hr />

@@ -23840,7 +23840,7 @@
 </div>
 <h1 id="interface-mib-l3">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）<a class="headerlink" href="#interface-mib-l3" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。一方 SONiC は Router Interface（以下 RIF）や VLAN インタフェース、LAG などの L3 オブジェクトに対しても SAI 経由で独立したカウンタを保持している。本 HLD は、SNMP から見える <code>ifInOctets</code> などの値に <strong>L3 で観測される drop / error / 通過パケットを取り込み</strong>、運用ツールが L3 ドロップを SNMP 越しに観測できるようにするための設計を定義している。</p>
+<p><a href="../../reference/glossary/#term-snmp">SNMP</a> の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。一方 SONiC は Router Interface（以下 <a href="../../reference/glossary/#term-rif">RIF</a>）や <a href="../../reference/glossary/#term-vlan">VLAN</a> インタフェース、<a href="../../reference/glossary/#term-lag">LAG</a> などの L3 オブジェクトに対しても <a href="../../reference/glossary/#term-sai">SAI</a> 経由で独立したカウンタを保持している。本 <a href="../../reference/glossary/#term-hld">HLD</a> は、SNMP から見える <code>ifInOctets</code> などの値に <strong>L3 で観測される drop / error / 通過パケットを取り込み</strong>、運用ツールが L3 ドロップを SNMP 越しに観測できるようにするための設計を定義している。</p>
 <p>主眼は次の 2 点に置かれている。</p>
 <ul>
 <li>RIF 単位の L3 SAI カウンタを、対応する物理ポートの L2 カウンタへ <strong>集約</strong> して MIB に返す。</li>
@@ -24013,7 +24013,7 @@ reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設
 <!-- evidence-rendered:end -->
 
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>本機能は SNMP MIB の挙動拡張であり、ユーザが明示的に設定する CONFIG_DB エントリは HLD 上では定義されていない。RIF カウンタの有効化はプラットフォーム / ベンダー側の対応に依存する。</p>
+<p>本機能は SNMP MIB の挙動拡張であり、ユーザが明示的に設定する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリは HLD 上では定義されていない。RIF カウンタの有効化はプラットフォーム / ベンダー側の対応に依存する。</p>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>HLD には記載なし。実装側で <code>FLEX_COUNTER_TABLE|RIF</code> 等が関連すると推測されるが未確認。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
@@ -24049,6 +24049,8 @@ reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 21d98f8b47d2 -->
 
 <div class="footnote">
 <hr />

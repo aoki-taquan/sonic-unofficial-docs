@@ -23809,7 +23809,7 @@
 <li>import: <code>ietf-yang-types</code>, <code>sonic-types</code>, <code>sonic-port</code>, <code>sonic-vrf</code>, <code>sonic-vnet</code></li>
 <li>top container: <code>sonic-interface</code></li>
 </ul>
-<p>Physical Ethernet interface L3 configuration including IP addressing, VRF binding, and NAT zones<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Physical Ethernet interface L3 configuration including IP addressing, <a href="../../glossary/#term-vrf">VRF</a> binding, and <a href="../../glossary/#term-nat">NAT</a> zones<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23881,7 +23881,7 @@
 <td><code>leafref</code></td>
 <td></td>
 <td></td>
-<td>/svnet:sonic-vnet/svnet:VNET/svnet:VNET_LIST/svnet:name</td>
+<td>/svnet:sonic-vnet/svnet:<a href="../../glossary/#term-vnet">VNET</a>/svnet:VNET_LIST/svnet:name</td>
 <td>Reference to the name of a VNET in sonic-vnet model</td>
 </tr>
 <tr>
@@ -23900,7 +23900,7 @@
 <td></td>
 <td></td>
 <td>enable, disable</td>
-<td>Enable/disable MPLS routing for the interface</td>
+<td>Enable/disable <a href="../../glossary/#term-mpls">MPLS</a> routing for the interface</td>
 </tr>
 <tr>
 <td><code>ipv6_use_link_local_only</code></td>
@@ -23980,7 +23980,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>INTERFACE</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>INTERFACE</code></li>
 <li>CLI: <code>config interface</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23996,7 +23996,7 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>L3 interface (sub-IP) 設定。<code>INTERFACE|&lt;port&gt;</code> / <code>INTERFACE|&lt;port&gt;|&lt;prefix&gt;</code> を intfmgrd が処理。</li>
+<li>L3 interface (sub-IP) 設定。<code>INTERFACE|&lt;port&gt;</code> / <code>INTERFACE|&lt;port&gt;|&lt;prefix&gt;</code> を <a href="../../glossary/#term-intfmgrd">intfmgrd</a> が処理。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
@@ -24009,6 +24009,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 498676200d13 -->
+
 <div class="footnote">
 <hr />
 <ol>

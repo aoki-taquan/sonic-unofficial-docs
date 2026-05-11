@@ -23600,8 +23600,8 @@
 
 <h1 id="bgp_allowed_prefixes">BGP_ALLOWED_PREFIXES テーブル<a class="headerlink" href="#bgp_allowed_prefixes" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>BGP_ALLOWED_PREFIXES</code> は <strong>deployment ID 単位の prefix 許可リスト</strong> を CONFIG_DB に格納するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。bgpcfgd の Jinja テンプレが読み込み、ToR / leaf スイッチで広告する prefix-list / route-map を生成する。Microsoft 由来の deployment 駆動構成 (T0/T1/T2 ロール) で利用される。</p>
-<p>YANG モジュール 1 つで 4 つの list（key の組合せが異なる）を持つ:</p>
+<p><code>BGP_ALLOWED_PREFIXES</code> は <strong>deployment ID 単位の prefix 許可リスト</strong> を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に格納するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> の Jinja テンプレが読み込み、ToR / leaf スイッチで広告する prefix-list / route-map を生成する。Microsoft 由来の deployment 駆動構成 (T0/T1/T2 ロール) で利用される。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> モジュール 1 つで 4 つの list（key の組合せが異なる）を持つ:</p>
 <ol>
 <li><code>BGP_ALLOWED_PREFIXES_LIST</code> (deployment, id)</li>
 <li><code>BGP_ALLOWED_PREFIXES_NEIGH_LIST</code> (deployment, id, neighbor, neighbor_type)</li>
@@ -23661,7 +23661,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>bgp-allowed-ipv4-prefix</code> / <code>bgp-allowed-ipv6-prefix</code> は <strong><code>&lt;prefix&gt; [le|ge &lt;len&gt;]</code></strong> という FRR-like の構文を許す独自 typedef。例: <code>10.0.0.0/8 le 32</code>。</p>
+<p><code>bgp-allowed-ipv4-prefix</code> / <code>bgp-allowed-ipv6-prefix</code> は <strong><code>&lt;prefix&gt; [le|ge &lt;len&gt;]</code></strong> という <a href="../../glossary/#term-frr">FRR</a>-like の構文を許す独自 typedef。例: <code>10.0.0.0/8 le 32</code>。</p>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>&lt;deployment&gt;</code> キーは固定パターン <code>DEPLOYMENT_ID</code> / <code>NEIGHBOR_TYPE</code> に縛られるため、CONFIG_DB に書き込む際は必ずこのリテラルを使う。</li>
@@ -23671,7 +23671,7 @@
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>bgpcfgd</code> (<code>docker-fpm-frr</code>): deployment id ごとに <code>BGP_ALLOWED_PREFIXES_*</code> を読み、Jinja テンプレで <code>ip prefix-list</code> / <code>route-map</code> 文を vtysh に流す</li>
-<li><code>bgpd</code> (FRR): 生成された prefix-list / route-map を BGP neighbor / peer-group に適用</li>
+<li><code>bgpd</code> (FRR): 生成された prefix-list / route-map を <a href="../../glossary/#term-bgp">BGP</a> neighbor / peer-group に適用</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23704,6 +23704,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config bgp&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0a371cf7e1da -->
 
 <div class="footnote">
 <hr />

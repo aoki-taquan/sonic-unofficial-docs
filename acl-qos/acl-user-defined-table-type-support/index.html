@@ -23928,8 +23928,8 @@
 </div>
 <h1 id="acl-acl_table_type-acltabletype">ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）<a class="headerlink" href="#acl-acl_table_type-acltabletype" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来の ACL は <code>L3</code> / <code>L3V6</code> / <code>MIRROR</code> / <code>PFC_WD</code> 等の <strong>事前定義テーブルタイプ</strong> を <code>AclOrch</code> 内に持っており、新機能追加のたびに orchagent を改修する必要があった。さらに事前定義タイプが固定的に持つマッチフィールド集合は、用途次第で <strong>必要以上の HW リソースを消費</strong> していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は <strong>ユーザがマッチ／アクション／バインドポイントを自由に定義した ACL テーブルタイプを CONFIG_DB から作れる</strong> ようにする。新タイプは <code>ACL_TABLE_TYPE</code> テーブルに定義し、<code>ACL_TABLE</code> の <code>TYPE</code> フィールドからその名前を参照する。</p>
+<p>従来の <a href="../../reference/glossary/#term-acl">ACL</a> は <code>L3</code> / <code>L3V6</code> / <code>MIRROR</code> / <code>PFC_WD</code> 等の <strong>事前定義テーブルタイプ</strong> を <code>AclOrch</code> 内に持っており、新機能追加のたびに <a href="../../reference/glossary/#term-orchagent">orchagent</a> を改修する必要があった。さらに事前定義タイプが固定的に持つマッチフィールド集合は、用途次第で <strong>必要以上の HW リソースを消費</strong> していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は <strong>ユーザがマッチ／アクション／バインドポイントを自由に定義した ACL テーブルタイプを <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から作れる</strong> ようにする。新タイプは <code>ACL_TABLE_TYPE</code> テーブルに定義し、<code>ACL_TABLE</code> の <code>TYPE</code> フィールドからその名前を参照する。</p>
 <p>組み込みタイプ（<code>L3</code>、<code>MIRROR</code> 等）は <strong>特殊扱いが必要なため</strong> orchagent 側に残る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（特に <code>MIRROR</code> / <code>MIRRORV6</code>）。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -23976,7 +23976,7 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="state_db-capability">STATE_DB の Capability 公開<a class="headerlink" href="#state_db-capability" title="Permanent link">&para;</a></h3>
-<p><code>AclOrch</code> 起動時に SAI から取得した capability を STATE_DB に書く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>AclOrch</code> 起動時に <a href="../../reference/glossary/#term-sai">SAI</a> から取得した capability を <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に書く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ACL_STAGE_CAPABILITY|&lt;INGRESS|EGRESS&gt;
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  is_action_list_mandatory = true|false
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  action_list = &quot;PACKET_ACTION,MIRROR_INGRESS_ACTION,REDIRECT_ACTION&quot;
@@ -24019,7 +24019,7 @@
 </span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">AclTable</span><span class="o">&amp;</span><span class="w">   </span><span class="n">m_table</span><span class="p">;</span>
 </span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">};</span>
 </span></code></pre></div>
-<p>create/update/remove は protected で、外部からは AclOrch の public API（<code>addAclRule</code> 等）経由でしか呼べない。これにより CRM / Flex Counter 管理が AclOrch に集約される<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>create/update/remove は protected で、外部からは AclOrch の public API（<code>addAclRule</code> 等）経由でしか呼べない。これにより <a href="../../reference/glossary/#term-crm">CRM</a> / Flex Counter 管理が AclOrch に集約される<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="aclorch-api">AclOrch 公開 API<a class="headerlink" href="#aclorch-api" title="Permanent link">&para;</a></h3>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">addAclTable</span><span class="w">   </span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">AclTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aclTable</span><span class="p">);</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">removeAclTable</span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="n">aclTableName</span><span class="p">);</span>
@@ -24082,7 +24082,7 @@ reasoning: 公開 API と更新セマンティクスの根拠。
 <p>CLI は ACL_TABLE_TYPE 名を CONFIG_DB に対して検証し、actions が STATE_DB 公開 capability に含まれているかも検証する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 </span></code></pre></div>
-<p>新規 CLI（カスタムタイプ自体を作るコマンド）は <strong>本 HLD では追加しない</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB / config_db.json 直接編集または gNMI から作る前提。</p>
+<p>新規 CLI（カスタムタイプ自体を作るコマンド）は <strong>本 <a href="../../reference/glossary/#term-hld">HLD</a> では追加しない</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB / <a href="../../reference/glossary/#term-config_db.json">config_db.json</a> 直接編集または <a href="../../reference/glossary/#term-gnmi">gNMI</a> から作る前提。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="_5">設定例（既出）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p><code>CUSTOM_L3</code> を定義して <code>DATAACL</code> テーブルがそれを使うパターンを参照。</p>
@@ -24091,7 +24091,7 @@ reasoning: 公開 API と更新セマンティクスの根拠。
 <li><strong>table type の matches / actions / bind_points は CREATE-only</strong>: テーブルタイプを変えるには、テーブル＋ルールも作り直しが必要<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>組み込みタイプは残る</strong>: <code>L3</code> / <code>MIRROR</code> 等は依然 orchagent ハードコード。完全な汎用化ではない<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>CLI からカスタムタイプは作れない</strong>: CLI 改修は本 HLD のスコープ外。<code>config_db.json</code> 直接編集または gNMI ルート<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>YANG validation の限界</strong>: STATE_DB（capability）への validation 連動は YANG infra の対応次第。Open Question として残る<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><a href="../../reference/glossary/#term-yang">YANG</a> validation の限界</strong>: STATE_DB（capability）への validation 連動は YANG infra の対応次第。Open Question として残る<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>マッチ capability の SAI クエリ</strong>: <code>sai_query_attribute_capability</code> は CREATE/SET/GET 実装の有無は返すが「サポートか否か」を直接返さない。HLD は Open Question として残している<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24114,6 +24114,8 @@ reasoning: 公開 API と更新セマンティクスの根拠。
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c3f7b90f3488 -->
 
 <div class="footnote">
 <hr />

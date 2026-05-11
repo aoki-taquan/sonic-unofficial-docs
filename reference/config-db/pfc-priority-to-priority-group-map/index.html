@@ -23611,7 +23611,7 @@
 
 <h1 id="pfc_priority_to_priority_group_map">PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル<a class="headerlink" href="#pfc_priority_to_priority_group_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> は PFC priority 0..7 を ingress priority group 0..7 に対応付ける named QoS map テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT_QOS_MAP.pfc_to_pg_map</code> から参照され、lossless traffic の buffer priority group 選択に使われる。<code>schema.h</code> では APPL_DB 側の <code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> は <a href="../../glossary/#term-pfc">PFC</a> priority 0..7 を ingress priority group 0..7 に対応付ける named <a href="../../glossary/#term-qos">QoS</a> map テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT_QOS_MAP.pfc_to_pg_map</code> から参照され、lossless traffic の buffer priority group 選択に使われる。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23629,7 +23629,7 @@
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|&lt;name&gt;|&lt;pfc_priority&gt;
 </span></code></pre></div>
-<p>YANG 上は map 名を key にする outer list と、<code>pfc_priority</code> を key にする inner list の 2 階層。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> 上は map 名を key にする outer list と、<code>pfc_priority</code> を key にする inner list の 2 階層。</p>
 <h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23665,7 +23665,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> の <code>QosOrch</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>): CONFIG_DB の QoS map を直接 subscribe し、SAI QoS map (<code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP</code>) として作成、port QoS binding に利用する（master には独立した <code>qosmgrd</code> プロセスは存在しない）。</li>
+<li><code>orchagent</code> の <code>QosOrch</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> の QoS map を直接 subscribe し、<a href="../../glossary/#term-sai">SAI</a> QoS map (<code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP</code>) として作成、port QoS binding に利用する（master には独立した <code>qosmgrd</code> プロセスは存在しない）。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23695,7 +23695,7 @@
 <h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|&lt;map-name&gt;</code>。</li>
-<li>lossless 用に dot1p <code>3</code>→PG <code>3</code>、<code>4</code>→PG <code>4</code> をマップするのが RoCE v2 の定番。</li>
+<li>lossless 用に dot1p <code>3</code>→PG <code>3</code>、<code>4</code>→PG <code>4</code> をマップするのが <a href="../../glossary/#term-roce">RoCE</a> v2 の定番。</li>
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23706,6 +23706,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>priority-group<span class="w"> </span>persistent-watermark
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a142710d04f2 -->
 
 <div class="footnote">
 <hr />

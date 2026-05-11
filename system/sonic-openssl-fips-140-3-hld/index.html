@@ -23821,7 +23821,7 @@
 </div>
 <h1 id="openssl-fips-140-3symcrypt-engine-sonic_fips1">OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）<a class="headerlink" href="#openssl-fips-140-3symcrypt-engine-sonic_fips1" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>FIPS 140-3 認定済みの cryptographic module だけを使うよう SONiC を組み立てるための HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC が依存する暗号モジュールは <strong>OpenSSL / Kerberos / Golang / Libgcrypt / Linux Kernel crypto</strong> だが、本 HLD で扱うのは <strong>OpenSSL / Kerberos / Golang</strong> の 3 つ（Kernel と Libgcrypt は scope 外）。OpenSSL 1.1.1 自体には FIPS 認定 module が無いため、Microsoft が提供する <strong>SymCrypt OpenSSL Engine (SCOSSL)</strong> を engine として読み込ませ、Microsoft が CMVP に出している <strong>SymCrypt</strong> を実体として使う構成。Kerberos は内蔵 crypto をやめ OpenSSL 経由、Golang は RedHat の <code>dev.boringcrypto</code> ベースの patch で OpenSSL に流すパスを利用する。</p>
+<p>FIPS 140-3 認定済みの cryptographic module だけを使うよう SONiC を組み立てるための <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC が依存する暗号モジュールは <strong>OpenSSL / Kerberos / Golang / Libgcrypt / Linux Kernel crypto</strong> だが、本 HLD で扱うのは <strong>OpenSSL / Kerberos / Golang</strong> の 3 つ（Kernel と Libgcrypt は scope 外）。OpenSSL 1.1.1 自体には FIPS 認定 module が無いため、Microsoft が提供する <strong>SymCrypt OpenSSL Engine (SCOSSL)</strong> を engine として読み込ませ、Microsoft が CMVP に出している <strong>SymCrypt</strong> を実体として使う構成。Kerberos は内蔵 crypto をやめ OpenSSL 経由、Golang は RedHat の <code>dev.boringcrypto</code> ベースの patch で OpenSSL に流すパスを利用する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23929,6 +23929,8 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 167700005048 -->
 
 <div class="footnote">
 <hr />

@@ -23906,7 +23906,7 @@
 </div>
 <h1 id="dhcpv4-relay-giaddr-primary-vlan_interface-secondary">DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）<a class="headerlink" href="#dhcpv4-relay-giaddr-primary-vlan_interface-secondary" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VLAN に <strong>複数のサブネット</strong> を載せたい運用は珍しくない。例えばベアメタルサーバ上の VM 用に追加 IP プレフィックスを生やすケースや、セキュリティドメインで分離したいケースがそれにあたる。一方、SONiC の DHCPv4 リレーエージェント（ISC <code>dhcrelay</code>）は VLAN 配下の複数 IP インタフェースを単純に列挙するだけで、リレー時に <strong><code>giaddr</code> 欄をどのサブネットの IP にするかが事実上ランダム</strong> になる問題があった。サーバ側 DHCP は <code>giaddr</code> をもとにスコープを選ぶため、毎回違う <code>giaddr</code> が来るとプール選択がブレてしまう<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-vlan">VLAN</a> に <strong>複数のサブネット</strong> を載せたい運用は珍しくない。例えばベアメタルサーバ上の VM 用に追加 IP プレフィックスを生やすケースや、セキュリティドメインで分離したいケースがそれにあたる。一方、SONiC の DHCPv4 リレーエージェント（ISC <code>dhcrelay</code>）は VLAN 配下の複数 IP インタフェースを単純に列挙するだけで、リレー時に <strong><code>giaddr</code> 欄をどのサブネットの IP にするかが事実上ランダム</strong> になる問題があった。サーバ側 DHCP は <code>giaddr</code> をもとにスコープを選ぶため、毎回違う <code>giaddr</code> が来るとプール選択がブレてしまう<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は <code>VLAN_INTERFACE</code> テーブルに <strong><code>secondary</code> フラグ</strong> を追加し、<code>dhcrelay</code> の起動引数に <strong><code>-pg &lt;primary-gateway&gt;</code></strong> を渡すことで、リレーが常に primary サブネットの IP を <code>giaddr</code> に書き込むよう固定する。複数サブネットを持ちつつ DHCP は primary の 1 系統に集約する設計である。<strong>IPv4 限定</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="primary-secondary">Primary / Secondary の意味<a class="headerlink" href="#primary-secondary" title="Permanent link">&para;</a></h3>
@@ -23932,7 +23932,7 @@
 </tr>
 </tbody>
 </table>
-<p>理想は <strong>VLAN 配下に primary は 1 つ、それ以外を secondary</strong> にする運用。複数 primary がある場合の挙動は HLD では定義されないが、<code>-pg</code> で渡される 1 つの IP のみが <code>giaddr</code> に固定されるため、結局 primary は 1 つに絞られる。</p>
+<p>理想は <strong>VLAN 配下に primary は 1 つ、それ以外を secondary</strong> にする運用。複数 primary がある場合の挙動は <a href="../../reference/glossary/#term-hld">HLD</a> では定義されないが、<code>-pg</code> で渡される 1 つの IP のみが <code>giaddr</code> に固定されるため、結局 primary は 1 つに絞られる。</p>
 <h3 id="dhcrelay">dhcrelay 起動引数<a class="headerlink" href="#dhcrelay" title="Permanent link">&para;</a></h3>
 <p><code>docker-dhcp-relay</code> の supervisord ファイルを生成する jinja で、Primary IP を <code>-pg</code> に渡す<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>/usr/sbin/dhcrelay ... -pg &lt;primary_subnet_gateway_ip&gt; ...
@@ -24052,7 +24052,7 @@ reasoning: 4 つの要件 (CONFIG_DB / parsing / -pg 渡し / dhcrelay 拡張) �
 <ul>
 <li><strong>Minigraph</strong>: <code>SecondarySubnets</code> 等の minigraph フィールドが追加される。<code>sonic-config-engine</code> のテストにそれを取り込む変更が入る<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>DHCPv6 Relay</strong>: 本機能は IPv4 限定。IPv6 リレーには影響しない。</li>
-<li><strong>Routing / FRR</strong>: secondary プレフィックスも IP インタフェースとして OS には設定されるため、ルーティングプロトコルから見える経路に変化はない。secondary だからといって OS から消えるわけではない点に注意。</li>
+<li><strong>Routing / <a href="../../reference/glossary/#term-frr">FRR</a></strong>: secondary プレフィックスも IP インタフェースとして OS には設定されるため、ルーティングプロトコルから見える経路に変化はない。secondary だからといって OS から消えるわけではない点に注意。</li>
 <li><strong>Warm/Fast boot</strong>: 影響なし（HLD 明記）。</li>
 <li><strong>メモリ</strong>: 機能 disabled 時の追加コスト無し（HLD 明記）。</li>
 </ul>
@@ -24070,6 +24070,8 @@ reasoning: 4 つの要件 (CONFIG_DB / parsing / -pg 渡し / dhcrelay 拡張) �
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 800751a0842d -->
 
 <div class="footnote">
 <hr />

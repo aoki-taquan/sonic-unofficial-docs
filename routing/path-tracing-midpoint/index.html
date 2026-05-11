@@ -23910,11 +23910,11 @@
 <p>役割<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>PT Source</strong>: probe 生成</li>
-<li><strong>PT Midpoint</strong>: 通常の IPv6 forwarding / SRv6 endpoint 処理に加え、自分の <strong>MCD</strong> を HbH-PT に書き足す</li>
+<li><strong>PT Midpoint</strong>: 通常の IPv6 forwarding / <a href="../../reference/glossary/#term-srv6">SRv6</a> endpoint 処理に加え、自分の <strong>MCD</strong> を HbH-PT に書き足す</li>
 <li><strong>PT Sink</strong>: SRC からの probe を集めて Regional Collector へ</li>
 <li><strong>RC (Regional Collector)</strong>: probe を Time Series DB に保存し path / 時刻系列を再構築</li>
 </ul>
-<p>本 HLD は <strong>Midpoint</strong> の SONiC 実装を扱う。Source / Sink の HLD は別<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>Midpoint</strong> の SONiC 実装を扱う。Source / Sink の HLD は別<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="mcdmidpoint-compressed-data">MCD（Midpoint Compressed Data）の中身<a class="headerlink" href="#mcdmidpoint-compressed-data" title="Permanent link">&para;</a></h3>
 <p>各 midpoint は<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23964,7 +23964,7 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  pt_interface_id        = &lt;0..65535&gt;
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  pt_timestamp_template  = &quot;template1&quot; | &quot;template2&quot; | &quot;template3&quot; | &quot;template4&quot;
 </span></code></pre></div>
-<p>APPL_DB の <code>PORT_TABLE</code> にも対応 field が伝搬する（portmgrd 経由）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>PORT_TABLE</code> にも対応 field が伝搬する（<a href="../../reference/glossary/#term-portmgrd">portmgrd</a> 経由）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">CLI（追加）<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24086,6 +24086,8 @@ reasoning: SAI 属性追加と timestamp template 4 種の根拠。
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 024b36777c6d -->
 
 <div class="footnote">
 <hr />

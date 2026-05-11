@@ -24056,7 +24056,7 @@
 
 <h1 id="config-syslog">config syslog サブコマンド<a class="headerlink" href="#config-syslog" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config syslog</code> は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を CONFIG_DB に書き込む CLI で、<code>config/syslog.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config syslog</code> は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込む CLI で、<code>config/syslog.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>hostcfgd</code> および各 feature コンテナの supervisord ラッパが CONFIG_DB を購読して <code>rsyslog</code> 設定を再生成する。CLI 自身は rsyslog をリスタートしないため、変更が反映されるまでタイムラグがある。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -24104,7 +24104,7 @@
 <li><code>&lt;server_ip_address&gt;</code> ... IPv4 / IPv6。<code>ip_addr_validator</code> で検証。</li>
 <li><code>--source &lt;ip&gt;</code> ... 送信元 IP (Loopback 等を想定)。<code>source_validator</code> がアドレス整合と存在検査を行う。</li>
 <li><code>--port &lt;port&gt;</code> ... 送信先 UDP port (省略時 514)。</li>
-<li><code>--vrf &lt;vrf&gt;</code> ... 出力 VRF。<code>mgmt</code> (mgmt-vrf) または CONFIG_DB の <code>VRF</code> テーブルに存在する VRF。<code>source</code> と組み合わせる場合 <code>source_to_vrf_validator</code> で同 VRF 内のインタフェースかをチェックする。</li>
+<li><code>--vrf &lt;vrf&gt;</code> ... 出力 <a href="../../glossary/#term-vrf">VRF</a>。<code>mgmt</code> (mgmt-vrf) または CONFIG_DB の <code>VRF</code> テーブルに存在する VRF。<code>source</code> と組み合わせる場合 <code>source_to_vrf_validator</code> で同 VRF 内のインタフェースかをチェックする。</li>
 </ul>
 <p><strong>動作</strong>:
 <code>SYSLOG_SERVER|&lt;server_ip&gt;</code> を新規作成する。同じ key が既存ならエラー終了 (重複はサポートしない)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
@@ -24243,6 +24243,8 @@
 <li><a href="../../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 84c52960aadd -->
 
 <div class="footnote">
 <hr />

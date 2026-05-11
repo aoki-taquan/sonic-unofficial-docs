@@ -23802,7 +23802,7 @@
 
 <h1 id="device_neighbor">DEVICE_NEIGHBOR テーブル<a class="headerlink" href="#device_neighbor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>直接接続される隣接機器（cable 配線レベル）と自スイッチの port を紐付けるテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。LLDP の正解値 (expected neighbor) として <code>lldp</code> / <code>lldpmgrd</code> が利用するほか、minigraph 取り込み時にも生成される。隣接機器の hwsku 等のメタデータは <a href="../device-neighbor-metadata/"><code>DEVICE_NEIGHBOR_METADATA</code></a> 側で管理する。</p>
+<p>直接接続される隣接機器（cable 配線レベル）と自スイッチの port を紐付けるテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-lldp">LLDP</a> の正解値 (expected neighbor) として <code>lldp</code> / <code>lldpmgrd</code> が利用するほか、minigraph 取り込み時にも生成される。隣接機器の hwsku 等のメタデータは <a href="../device-neighbor-metadata/"><code>DEVICE_NEIGHBOR_METADATA</code></a> 側で管理する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23866,16 +23866,16 @@
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>local_port</code> は <code>PORT_LIST.name</code> への leafref。存在しないポートを指定するとバリデーションで弾かれる</li>
-<li><code>name</code> は <code>DEVICE_NEIGHBOR_METADATA_LIST.name</code> と慣習的に一致させ、メタデータ側を joins する運用が一般的（YANG レベルでは leafref 化されていない）</li>
+<li><code>name</code> は <code>DEVICE_NEIGHBOR_METADATA_LIST.name</code> と慣習的に一致させ、メタデータ側を joins する運用が一般的（<a href="../../glossary/#term-yang">YANG</a> レベルでは leafref 化されていない）</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>lldpmgrd</code>: 期待 neighbor として LLDP の判定に利用</li>
-<li>minigraph パーサ (sonic-cfggen): <code>minigraph.xml</code> から生成</li>
+<li>minigraph パーサ (<a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a>): <code>minigraph.xml</code> から生成</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <a href="../device-neighbor-metadata/"><code>DEVICE_NEIGHBOR_METADATA</code></a>、<code>PORT</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../device-neighbor-metadata/"><code>DEVICE_NEIGHBOR_METADATA</code></a>、<code>PORT</code></li>
 <li>関連 YANG: <code>sonic-device_neighbor</code>、<code>sonic-device_neighbor_metadata</code></li>
 <li>関連 CLI: なし（minigraph または <code>config_db.json</code> 経由で投入）</li>
 </ul>
@@ -23898,13 +23898,15 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>name</code> が <code>DEVICE_NEIGHBOR_METADATA</code> に未登録だと BGP の neighbor 名解決が失敗。</li>
+<li><code>name</code> が <code>DEVICE_NEIGHBOR_METADATA</code> に未登録だと <a href="../../glossary/#term-bgp">BGP</a> の neighbor 名解決が失敗。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DEVICE_NEIGHBOR|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>lldp<span class="w"> </span>neighbors
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 429c29da8627 -->
 
 <div class="footnote">
 <hr />

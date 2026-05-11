@@ -23802,7 +23802,7 @@
 
 <h1 id="loopback_interface">LOOPBACK_INTERFACE テーブル<a class="headerlink" href="#loopback_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ルータ ID やサービス IP として使う仮想ループバック IF を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>Loopback0</code> は通常 BGP の router-id / source として使われる。<code>intfmgrd</code> が Linux 上の dummy IF を生成し、<code>orchagent</code> <code>IntfsOrch</code> が SAI ルータ IF を作る。</p>
+<p>ルータ ID やサービス IP として使う仮想ループバック IF を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>Loopback0</code> は通常 <a href="../../glossary/#term-bgp">BGP</a> の router-id / source として使われる。<code>intfmgrd</code> が Linux 上の dummy IF を生成し、<code>orchagent</code> <code>IntfsOrch</code> が <a href="../../glossary/#term-sai">SAI</a> ルータ IF を作る。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23850,14 +23850,14 @@
 <td>leafref <code>VRF.name</code></td>
 <td>-</td>
 <td>-</td>
-<td>バインドする VRF</td>
+<td>バインドする <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 <tr>
 <td><code>nat_zone</code></td>
 <td>uint8 (0..3)</td>
 <td>-</td>
 <td><code>0</code></td>
-<td>NAT zone</td>
+<td><a href="../../glossary/#term-nat">NAT</a> zone</td>
 </tr>
 <tr>
 <td><code>admin_status</code></td>
@@ -23913,9 +23913,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>VRF</code>、<code>DEVICE_METADATA</code> (<code>bgp_adv_lo_prefix_as_128</code>)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VRF</code>、<code>DEVICE_METADATA</code> (<code>bgp_adv_lo_prefix_as_128</code>)</li>
 <li>関連 CLI: <code>config loopback add/del</code>、<code>config interface ip add Loopback0 ...</code></li>
-<li>関連 YANG: <code>sonic-loopback-interface</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-loopback-interface</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23943,6 +23943,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Loopback
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 29ce8582b809 -->
 
 <div class="footnote">
 <hr />

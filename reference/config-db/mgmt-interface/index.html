@@ -23802,7 +23802,7 @@
 
 <h1 id="mgmt_interface">MGMT_INTERFACE テーブル<a class="headerlink" href="#mgmt_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>帯域外管理 IF (<code>eth0</code>) に対する IP / gateway / forced routes を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> がこのテーブルから <code>/etc/network/interfaces</code> の <code>mgmt-</code> セクションを再生成する。<code>MGMT_VRF_CONFIG.mgmtVrfEnabled = true</code> のとき forced routes は mgmt VRF テーブルに追加される。</p>
+<p>帯域外管理 IF (<code>eth0</code>) に対する IP / gateway / forced routes を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> がこのテーブルから <code>/etc/network/interfaces</code> の <code>mgmt-</code> セクションを再生成する。<code>MGMT_VRF_CONFIG.mgmtVrfEnabled = true</code> のとき forced routes は mgmt <a href="../../glossary/#term-vrf">VRF</a> テーブルに追加される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23867,9 +23867,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>MGMT_PORT</code>、<code>MGMT_VRF_CONFIG</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>MGMT_PORT</code>、<code>MGMT_VRF_CONFIG</code></li>
 <li>関連 CLI: <code>config interface ip add eth0 ...</code></li>
-<li>関連 YANG: <code>sonic-mgmt_interface</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mgmt_interface</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23900,6 +23900,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ip<span class="w"> </span>-4<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>vrf<span class="w"> </span>mgmt
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->
 
 <div class="footnote">
 <hr />

@@ -23628,7 +23628,7 @@
 
 <h1 id="pbh_table-pbh_rule">PBH_TABLE / PBH_RULE テーブル<a class="headerlink" href="#pbh_table-pbh_rule" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Policy Based Hashing (PBH) は、packet match 条件ごとに ECMP / LAG hash profile を切り替えるための CONFIG_DB テーブル群。<code>PBH_TABLE</code> が適用 interface の集合を定義し、<code>PBH_RULE</code> が table 内の match 条件、priority、適用する <code>PBH_HASH</code> を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。hash profile と hash field は同じ YANG モジュールの <code>PBH_HASH</code> / <code>PBH_HASH_FIELD</code> で定義され、実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p>Policy Based Hashing (PBH) は、packet match 条件ごとに <a href="../../glossary/#term-ecmp">ECMP</a> / <a href="../../glossary/#term-lag">LAG</a> hash profile を切り替えるための <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル群。<code>PBH_TABLE</code> が適用 interface の集合を定義し、<code>PBH_RULE</code> が table 内の match 条件、priority、適用する <code>PBH_HASH</code> を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。hash profile と hash field は同じ <a href="../../glossary/#term-yang">YANG</a> モジュールの <code>PBH_HASH</code> / <code>PBH_HASH_FIELD</code> で定義され、実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23759,7 +23759,7 @@
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-utilities/scripts/pbh</code>（CLI 側スクリプト）: CONFIG_DB の PBH table / rule / hash / hash-field を読み取り、ユーザ向け CLI を提供する（独立した <code>pbhmgrd</code> プロセスは master には存在しない）。</li>
-<li><code>orchagent</code> の <code>PbhOrch</code> (<code>sonic-swss/orchagent/pbhorch.cpp</code>): CONFIG_DB の PBH 設定を直接 subscribe して SAI hash / ACL 相当のオブジェクトへ反映する。</li>
+<li><code>orchagent</code> の <code>PbhOrch</code> (<code>sonic-swss/orchagent/pbhorch.cpp</code>): CONFIG_DB の PBH 設定を直接 subscribe して <a href="../../glossary/#term-sai">SAI</a> hash / <a href="../../glossary/#term-acl">ACL</a> 相当のオブジェクトへ反映する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23798,6 +23798,8 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show<span class="w"> </span>pbh<span class="w"> </span>statistics
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: df88c1264148 -->
 
 <div class="footnote">
 <hr />

@@ -24079,7 +24079,7 @@
 <h1 id="config-sflow">config sflow サブコマンド<a class="headerlink" href="#config-sflow" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>config sflow</code> は sFlow のグローバル制御（admin / polling-interval / sample-direction / agent-id）と、インターフェイス単位のサンプル設定、最大 2 件のコレクタ登録を扱う。すべて <code>config/main.py</code> 内に直接定義され、3 段の click group (<code>sflow</code> / <code>sflow interface</code> / <code>sflow collector</code> / <code>sflow agent-id</code>) で構成される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>config sflow enable</code> だけは特殊で、<code>SFLOW|global.admin_state</code> を <code>up</code> にしたうえで <code>systemctl is-active sflow</code> を確認し、未アクティブなら <code>systemctl enable sflow</code> + <code>start sflow</code> を実行する。それ以外のコマンドは CONFIG_DB 書き込みのみ。</p>
+<p><code>config sflow enable</code> だけは特殊で、<code>SFLOW|global.admin_state</code> を <code>up</code> にしたうえで <code>systemctl is-active sflow</code> を確認し、未アクティブなら <code>systemctl enable sflow</code> + <code>start sflow</code> を実行する。それ以外のコマンドは <a href="../../glossary/#term-config_db">CONFIG_DB</a> 書き込みのみ。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24214,7 +24214,7 @@ excerpt: |
 <ul>
 <li><strong>egress sampling</strong>（<code>tx</code> / <code>both</code>）: <code>STATE_DB.SWITCH_CAPABILITY|switch.PORT_EGRESS_SAMPLE_CAPABLE</code> を見て無効化される。</li>
 <li><strong>コレクタ数</strong>: 2 件固定（コード上のリテラル）。</li>
-<li><strong>VRF</strong>: <code>default</code> と <code>mgmt</code> のみ。任意 data VRF はサポート外。</li>
+<li><strong><a href="../../glossary/#term-vrf">VRF</a></strong>: <code>default</code> と <code>mgmt</code> のみ。任意 data VRF はサポート外。</li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24289,6 +24289,8 @@ excerpt: |
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>docker<span class="w"> </span>logs<span class="w"> </span>sflow
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 84c52960aadd -->
 
 <div class="footnote">
 <hr />

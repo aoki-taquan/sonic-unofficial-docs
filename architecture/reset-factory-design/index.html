@@ -23884,7 +23884,7 @@
 </div>
 <h1 id="reset-factorykeep-basic-keep-all-config-only-config"><code>reset-factory</code>（keep-basic / keep-all-config / only-config）<a class="headerlink" href="#reset-factorykeep-basic-keep-all-config-only-config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC スイッチの <strong>工場出荷状態への復元</strong> を 1 コマンド <code>reset-factory</code> で行えるようにする HLD。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC スイッチの <strong>工場出荷状態への復元</strong> を 1 コマンド <code>reset-factory</code> で行えるようにする <a href="../../reference/glossary/#term-hld">HLD</a>。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主要な設計方針:</p>
 <ul>
 <li>ロジックは <code>/usr/bin/reset-factory</code> シェルスクリプトに集約</li>
@@ -24048,9 +24048,9 @@ reasoning: 4 モードの分岐が「ステップごとに skip 条件を変え�
 </tbody>
 </table>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB スキーマには変更なし。<code>KEEP_BASIC_TABLES</code> で保持対象の <strong>テーブル群</strong> を <code>/etc/config-setup/config-setup.conf</code> に定義する。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマには変更なし。<code>KEEP_BASIC_TABLES</code> で保持対象の <strong>テーブル群</strong> を <code>/etc/config-setup/config-setup.conf</code> に定義する。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD で言及されていない。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 完全リセット</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>reset-factory
@@ -24075,7 +24075,7 @@ reasoning: 4 モードの分岐が「ステップごとに skip 条件を変え�
 <li><strong>overlayfs</strong>: <code>/etc/sonic</code> のクリアは upperdir 削除で実現</li>
 <li><strong><code>config-setup</code> hook</strong>: ユーザカスタマイズ ポイント</li>
 <li><strong><code>/etc/shadow</code> / <code>/etc/sonic/default_users.json</code></strong>: パスワード初期化に依存</li>
-<li><strong>AAA / TACACS / LDAP</strong>: 非 default ユーザ削除と整合させる必要</li>
+<li><strong><a href="../../reference/glossary/#term-aaa">AAA</a> / TACACS / LDAP</strong>: 非 default ユーザ削除と整合させる必要</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24093,6 +24093,8 @@ reasoning: 4 モードの分岐が「ステップごとに skip 条件を変え�
 - sonic-environment immutable 取り扱い
 - gNOI FactoryReset との関係
 -->
+
+<!-- glossary-links-injected: 04127c73f090 -->
 
 <div class="footnote">
 <hr />

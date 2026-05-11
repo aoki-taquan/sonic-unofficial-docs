@@ -23786,8 +23786,8 @@
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>warm reboot とは何で、cold / fast / express とどう違うか</strong></li>
-<li><strong>どこに何が保存され、何が復元されるか</strong>（SAI dump / Redis dump）</li>
-<li><strong>各 docker（bgp / teamd / swss / lldp / dhcp_relay）は何を準備するべきか</strong></li>
+<li><strong>どこに何が保存され、何が復元されるか</strong>（<a href="../../reference/glossary/#term-sai">SAI</a> dump / <a href="../../reference/glossary/#term-redis">Redis</a> dump）</li>
+<li><strong>各 docker（bgp / <a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / swss / lldp / dhcp_relay）は何を準備するべきか</strong></li>
 <li><strong>どの CLI で有効化・実行・確認するか</strong></li>
 <li><strong>データプレーン断や reconcile 失敗のときに何を見るか</strong></li>
 </ol>
@@ -23796,7 +23796,7 @@
 <ul>
 <li>同 image / version upgrade は対象、<strong>downgrade は対象外</strong></li>
 <li>すべての docker / SAI vendor が warm restart を実装している前提</li>
-<li>BGP の GR-helper や teamd の LACP 拡張 timer が peer 側に必要</li>
+<li><a href="../../reference/glossary/#term-bgp">BGP</a> の GR-helper や teamd の <a href="../../reference/glossary/#term-lacp">LACP</a> 拡張 timer が peer 側に必要</li>
 </ul>
 <p>cold / fast / express との関係は <a href="../../topics/11-reboot/">11-reboot</a> を参照。詳細な going-down / up path と <code>SONIC_BOOT_TYPE</code> の扱いは <a href="../system-wide-warmboot/"><code>system-wide-warmboot.md</code></a>。</p>
 <h2 id="2">2. どこに何が保存されるか<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
@@ -23817,7 +23817,7 @@
 <tr>
 <td>Redis 全体</td>
 <td><code>/host/warmboot/dump.rdb</code></td>
-<td>APP_DB / ASIC_DB / STATE_DB を再起動後 load</td>
+<td>APP_DB / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> を再起動後 load</td>
 </tr>
 <tr>
 <td><code>WARM_RESTART_TABLE:system</code></td>
@@ -23838,7 +23838,7 @@
 <ul>
 <li>ASIC_DB / 制御 channel から warm shutdown を受けて SAI に橋渡し</li>
 <li>復旧時に Redis dump と SAI dump を read</li>
-<li>orchagent との <strong>init view → apply view → diff</strong> で差分のみ SAI に流す</li>
+<li><a href="../../reference/glossary/#term-orchagent">orchagent</a> との <strong>init view → apply view → diff</strong> で差分のみ SAI に流す</li>
 </ul>
 <h3 id="_2">アプリケーション<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p>各 docker は自身の orch / state を warm reboot を跨いで永続化する責務を持つ:</p>
@@ -23886,7 +23886,7 @@
 </tr>
 </tbody>
 </table>
-<p>CONFIG_DB:</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>:</p>
 <table>
 <thead>
 <tr>
@@ -23907,7 +23907,7 @@
 </table>
 <h2 id="6">6. トラブルシューティング<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>90s 超のデータプレーン断</strong> → syncd warm recovery 失敗。<code>sai-warmboot.bin</code> の有無を確認</li>
+<li><strong>90s 超のデータプレーン断</strong> → <a href="../../reference/glossary/#term-syncd">syncd</a> warm recovery 失敗。<code>sai-warmboot.bin</code> の有無を確認</li>
 <li><strong>BGP convergence 不良</strong> → peer の GR-helper 対応、<code>config bgp graceful-restart</code> の値</li>
 <li><strong>orchagent reconcile が永遠</strong> → APP_DB と ASIC_DB の不一致、syncd ログ</li>
 </ul>
@@ -23923,6 +23923,8 @@
 <li><a href="../../topics/11-reboot/">Topics: Reboot / Upgrade / Lifecycle</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 28f6e043a6cd -->
 
 <div class="footnote">
 <hr />

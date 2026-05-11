@@ -23972,13 +23972,13 @@
 
 
 <h1 id="l3-vrf">L3 基盤と VRF<a class="headerlink" href="#l3-vrf" title="Permanent link">&para;</a></h1>
-<p>SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞いは VRF と interface に強く依存し、next hop の解決もリンク状態と隣接探索に依存するためです。この章は <strong>VRF と interface を最初に押さえる</strong> ための入口です。</p>
+<p>SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞いは <a href="../../../reference/glossary/#term-vrf">VRF</a> と interface に強く依存し、next hop の解決もリンク状態と隣接探索に依存するためです。この章は <strong>VRF と interface を最初に押さえる</strong> ための入口です。</p>
 <h2 id="sonic-l3">SONiC の L3 は何の問題を解決するか<a class="headerlink" href="#sonic-l3" title="Permanent link">&para;</a></h2>
 <p>データセンタースイッチ単位で見ると、SONiC の L3 は以下を引き受けます。</p>
 <ul>
-<li>物理 / VLAN / PortChannel / Loopback / sub-port を <strong>L3 interface</strong> として束ね、VRF に所属させる。</li>
-<li>BGP / static で得た経路を <strong>VRF 単位</strong> で持ち、Linux kernel と ASIC 両方に反映する。</li>
-<li>IPv4 / IPv6、link-local、ECMP、management traffic 分離など、運用上必要な L3 機能を Linux + ASIC で 1 つの NOS として扱う。</li>
+<li>物理 / <a href="../../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../../reference/glossary/#term-portchannel">PortChannel</a> / Loopback / sub-port を <strong>L3 interface</strong> として束ね、VRF に所属させる。</li>
+<li><a href="../../../reference/glossary/#term-bgp">BGP</a> / static で得た経路を <strong>VRF 単位</strong> で持ち、Linux kernel と ASIC 両方に反映する。</li>
+<li>IPv4 / IPv6、link-local、<a href="../../../reference/glossary/#term-ecmp">ECMP</a>、management traffic 分離など、運用上必要な L3 機能を Linux + ASIC で 1 つの NOS として扱う。</li>
 </ul>
 <p>特に <strong>management traffic 用の VRF (mgmt VRF) と forwarding 用の VRF を別に持つ</strong> こと、<strong>Linux と ASIC の両方に VRF を作る</strong> ことが SONiC 特有の押さえどころです。</p>
 <h2 id="sonic">SONiC の中での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
@@ -23996,11 +23996,11 @@
 </tr>
 <tr>
 <td>Control plane</td>
-<td>vrfmgrd, intfmgrd, FRR staticd / zebra, fpmsyncd</td>
+<td><a href="../../../reference/glossary/#term-vrfmgrd">vrfmgrd</a>, <a href="../../../reference/glossary/#term-intfmgrd">intfmgrd</a>, <a href="../../../reference/glossary/#term-frr">FRR</a> staticd / <a href="../../../reference/glossary/#term-zebra">zebra</a>, <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a></td>
 </tr>
 <tr>
 <td>Data plane</td>
-<td>VRFOrch, IntfsOrch, RouteOrch, NhgOrch, NeighOrch, SAI Virtual Router / Router Interface</td>
+<td>VRFOrch, IntfsOrch, RouteOrch, NhgOrch, NeighOrch, <a href="../../../reference/glossary/#term-sai">SAI</a> Virtual Router / Router Interface</td>
 </tr>
 </tbody>
 </table>
@@ -24022,7 +24022,7 @@
 <td>IP / VRF を持つ interface。<code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code></td>
 </tr>
 <tr>
-<td>RIF (Router Interface)</td>
+<td><a href="../../../reference/glossary/#term-rif">RIF</a> (Router Interface)</td>
 <td>SAI 上の L3 interface object</td>
 </tr>
 <tr>
@@ -24030,11 +24030,11 @@
 <td>route の出口。IP + interface + （link-local の場合） interface alias を含むキー</td>
 </tr>
 <tr>
-<td>NHG (Next Hop Group)</td>
+<td>NHG (<a href="../../../reference/glossary/#term-next-hop-group">Next Hop Group</a>)</td>
 <td>ECMP / WCMP / FG-ECMP を表す SAI object 群</td>
 </tr>
 <tr>
-<td>FPM</td>
+<td><a href="../../../reference/glossary/#term-fpm">FPM</a></td>
 <td>FRR zebra から SONiC へ経路を送るプロトコル</td>
 </tr>
 <tr>
@@ -24080,10 +24080,10 @@
 </tr>
 </tbody>
 </table>
-<p>VRF の設計詳細は <a href="../../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート</a> が入口です。static route の CONFIG_DB から FRR への経路は <a href="../../../routing/static-ip-route-configuration/">Static IP Route 設定</a> を参照してください。</p>
+<p>VRF の設計詳細は <a href="../../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート</a> が入口です。static route の <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> から FRR への経路は <a href="../../../routing/static-ip-route-configuration/">Static IP Route 設定</a> を参照してください。</p>
 <h2 id="vrf-linux-asic">VRF は Linux と ASIC の両方に現れる<a class="headerlink" href="#vrf-linux-asic" title="Permanent link">&para;</a></h2>
 <p>SONiC の VRF は、Linux 上では VRF master device として、ASIC 側では SAI Virtual Router として扱われます。<code>vrfmgrd</code> は <code>CONFIG_DB.VRF</code> から Linux VRF を作り、<code>VRFOrch</code> は <code>APP_DB.VRF_TABLE</code> 側を受けて SAI Virtual Router を作ります。interface は <code>intfmgrd</code> / <code>IntfsOrch</code> を通って Linux と ASIC の両方に反映されます。</p>
-<p>重要なのは、VRF は単なる CLI 上の名前ではなく、FRR、kernel、orchagent、SAI の共通キーになることです。non-default VRF の経路を調べるときは、常に「その route はどの VRF の route か」「next hop は同じ VRF か、<code>nexthop-vrf</code> で別 VRF を参照しているか」を確認します。</p>
+<p>重要なのは、VRF は単なる CLI 上の名前ではなく、FRR、kernel、<a href="../../../reference/glossary/#term-orchagent">orchagent</a>、SAI の共通キーになることです。non-default VRF の経路を調べるときは、常に「その route はどの VRF の route か」「next hop は同じ VRF か、<code>nexthop-vrf</code> で別 VRF を参照しているか」を確認します。</p>
 <h2 id="_3">典型的な使用シーン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-tenant-data-vrf-mgmt-vrf">シーン 1: tenant 分離のための data VRF + mgmt VRF<a class="headerlink" href="#1-tenant-data-vrf-mgmt-vrf" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -24104,7 +24104,7 @@
 <p>1 prefix に複数 nexthop を結び、SAI Next Hop Group object として ASIC に書き込みます。BGP multipath と組み合わせて leaf-spine fabric の主流の経路形態になります。</p>
 <h2 id="management-vrf-vrf">Management VRF はデータ VRF と用途が違う<a class="headerlink" href="#management-vrf-vrf" title="Permanent link">&para;</a></h2>
 <p>management VRF は front panel port の転送ではなく、<code>eth0</code> を使う管理面トラフィックを分離するための VRF です。<code>config vrf add mgmt</code> は通常のデータ VRF と違い、<code>MGMT_VRF_CONFIG</code> や management interface 側の処理に関係します。</p>
-<p>古い management VRF HLD には cgroup を使う起動ラッパー方式が出てきますが、現行ページでは iproute2 の VRF master device 方式へ寄っている点が注記されています。詳細は <a href="../../../routing/sonic-management-vrf-design-document-201911-release/">Management VRF 設計</a> を確認してください。</p>
+<p>古い management VRF <a href="../../../reference/glossary/#term-hld">HLD</a> には cgroup を使う起動ラッパー方式が出てきますが、現行ページでは iproute2 の VRF master device 方式へ寄っている点が注記されています。詳細は <a href="../../../routing/sonic-management-vrf-design-document-201911-release/">Management VRF 設計</a> を確認してください。</p>
 <h2 id="ipv6-link-local-next-hop-interface">IPv6 link-local は next hop のキーに interface を含める<a class="headerlink" href="#ipv6-link-local-next-hop-interface" title="Permanent link">&para;</a></h2>
 <p>IPv6 link-local の next hop はアドレスだけでは一意になりません。同じ <code>fe80::...</code> が複数 interface 上に存在し得るため、SONiC の next hop key は link-local 利用時に interface alias を含めて扱います。BGP unnumbered や RFC 5549 を読むときは、next hop IP と出力 interface をセットで見ます。</p>
 <p>IPv6 link-local-only の設定条件、<code>fe80::/10</code> の route-to-CPU、IP2ME の扱いは <a href="../../../routing/ipv6-link-local-enhancements/">IPv6 Link-Local アドレス管理</a> にまとまっています。</p>
@@ -24125,8 +24125,8 @@
 <td>VLAN は L2 broadcast domain。L3 として使うには <code>VLAN_INTERFACE</code> で SVI 化して VRF に所属させる必要がある</td>
 </tr>
 <tr>
-<td>VNET</td>
-<td>VXLAN を前提にした overlay 用の仮想ネットワーク。data VRF と概念的に重なるが、tunnel と VNI を持つ</td>
+<td><a href="../../../reference/glossary/#term-vnet">VNET</a></td>
+<td><a href="../../../reference/glossary/#term-vxlan">VXLAN</a> を前提にした overlay 用の仮想ネットワーク。data VRF と概念的に重なるが、tunnel と VNI を持つ</td>
 </tr>
 <tr>
 <td>Sub-interface</td>
@@ -24181,7 +24181,7 @@
 </tr>
 <tr>
 <td><code>NEIGH</code> / <code>FDB</code></td>
-<td>neighbor / MAC 解決の入口（運用時に STATE_DB と対照）</td>
+<td>neighbor / MAC 解決の入口（運用時に <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> と対照）</td>
 </tr>
 <tr>
 <td><code>DEVICE_METADATA.localhost</code></td>
@@ -24220,7 +24220,7 @@
 <td>fine-grained ecmp HLD</td>
 </tr>
 <tr>
-<td>Overlay ECMP + BFD</td>
+<td>Overlay ECMP + <a href="../../../reference/glossary/#term-bfd">BFD</a></td>
 <td>overlay nexthop の生死で再選択</td>
 <td>dynamic（BFD 通知）</td>
 <td>overlay-ecmp-with-bfd-monitoring</td>
@@ -24235,9 +24235,9 @@
   Orch --&gt; ASIC[(ASIC_DB)]
   ASIC --&gt; SAI[SAI route / nexthop / nhg]
   FRR -.-&gt;|kernel zebra| Kernel[Linux FIB]</code></pre>
-<p><code>show ip route</code> を見ても、それが FRR RIB（vtysh）か Linux FIB（<code>ip route</code>）か SONiC FIB（<code>sonic-db-cli APPL_DB</code>）か ASIC FIB（ASIC_DB）かで意味が違います。VRF 付きの問題切り分けでは「どの VRF の table を見ているか」を都度確認します。</p>
+<p><code>show ip route</code> を見ても、それが FRR RIB（vtysh）か Linux FIB（<code>ip route</code>）か SONiC FIB（<code>sonic-db-cli APPL_DB</code>）か ASIC FIB（<a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a>）かで意味が違います。VRF 付きの問題切り分けでは「どの VRF の table を見ているか」を都度確認します。</p>
 <h2 id="management-vrf">management VRF の特殊性<a class="headerlink" href="#management-vrf" title="Permanent link">&para;</a></h2>
-<p>management VRF（既定 <code>mgmt</code>）は <strong>front panel 経路ではなく <code>eth0</code> の管理通信を分離する</strong> ための VRF です。現行 SONiC は iproute2 の VRF master device 方式を採り、古い HLD に出てくる cgroup wrapper 方式は使われなくなっています。NTP / DNS / TACACS / SNMP の source interface 設定や、<code>config save -y</code> / <code>sonic-installer</code> 系コマンドが management VRF 側を経由する点が、forwarding 系 VRF との運用差分になります。</p>
+<p>management VRF（既定 <code>mgmt</code>）は <strong>front panel 経路ではなく <code>eth0</code> の管理通信を分離する</strong> ための VRF です。現行 SONiC は iproute2 の VRF master device 方式を採り、古い HLD に出てくる cgroup wrapper 方式は使われなくなっています。NTP / DNS / TACACS / <a href="../../../reference/glossary/#term-snmp">SNMP</a> の source interface 設定や、<code>config save -y</code> / <code>sonic-installer</code> 系コマンドが management VRF 側を経由する点が、forwarding 系 VRF との運用差分になります。</p>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート</a></li>
@@ -24255,6 +24255,7 @@
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: 1eba53f4f29c -->
 
 
 

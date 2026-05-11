@@ -23872,9 +23872,9 @@
 
 
 <h1 id="dpu-ip-gnmi-kvm">DPU の IP 割当・gNMI 連携・KVM 検証<a class="headerlink" href="#dpu-ip-gnmi-kvm" title="Permanent link">&para;</a></h1>
-<p>SmartSwitch / DASH の設定は「DPU の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の 3 つに分けて考えると見通しが良くなります。</p>
+<p><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> / <a href="../../../reference/glossary/#term-dash">DASH</a> の設定は「<a href="../../../reference/glossary/#term-dpu">DPU</a> の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の 3 つに分けて考えると見通しが良くなります。</p>
 <h2 id="dash-controller-driven">このページの読み方: DASH は controller-driven 系<a class="headerlink" href="#dash-controller-driven" title="Permanent link">&para;</a></h2>
-<p>DASH / SmartSwitch は「運用者が CLI を叩いて 1 件ずつ ENI / VNET / Route を投入する」プロダクトではありません。<strong>人手で <code>config dash ...</code> のような CLI を打つことはほぼ無く</strong>、外部の DASH appliance controller（典型的には Microsoft Azure SDN のような大規模 SDN コントローラ）が gNMI / gRPC で <code>DASH_*</code> テーブルを送り込みます。本ページの CLI 例は「コントローラ無しで開発・検証する際のショートカット」「障害時の確認手段」として読んでください。</p>
+<p>DASH / SmartSwitch は「運用者が CLI を叩いて 1 件ずつ <a href="../../../reference/glossary/#term-eni">ENI</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a> / Route を投入する」プロダクトではありません。<strong>人手で <code>config dash ...</code> のような CLI を打つことはほぼ無く</strong>、外部の DASH appliance controller（典型的には Microsoft Azure SDN のような大規模 SDN コントローラ）が <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / gRPC で <code>DASH_*</code> テーブルを送り込みます。本ページの CLI 例は「コントローラ無しで開発・検証する際のショートカット」「障害時の確認手段」として読んでください。</p>
 <p>代表的な設定経路は次の通りです。</p>
 <table>
 <thead>
@@ -23887,8 +23887,8 @@
 <tbody>
 <tr>
 <td>DASH appliance controller (gNMI / gRPC)</td>
-<td>本番。ENI / VNET / Route / ACL を大量 push</td>
-<td><code>APPL_DB</code> の <code>DASH_*_TABLE</code>（NPU 側 gNMI server 経由）</td>
+<td>本番。ENI / VNET / Route / <a href="../../../reference/glossary/#term-acl">ACL</a> を大量 push</td>
+<td><code>APPL_DB</code> の <code>DASH_*_TABLE</code>（<a href="../../../reference/glossary/#term-npu">NPU</a> 側 gNMI server 経由）</td>
 </tr>
 <tr>
 <td><code>swssconfig</code> で JSON 流し込み</td>
@@ -23940,12 +23940,12 @@
 <tr>
 <td>スキーマ / バリデーション</td>
 <td>gNMI <code>SetResponse</code> で <code>INVALID_ARGUMENT</code>、<code>NOT_FOUND</code></td>
-<td>path が <code>/sonic-db:APPL_DB/DASH_*</code> の規約通りか、YANG 定義との突き合わせ</td>
+<td>path が <code>/sonic-db:APPL_DB/DASH_*</code> の規約通りか、<a href="../../../reference/glossary/#term-yang">YANG</a> 定義との突き合わせ</td>
 </tr>
 <tr>
 <td>反映遅延 / 不一致</td>
 <td><code>version_id</code> が <code>APPL_STATE_DB</code> に降りない、controller subscribe が古い version で stuck</td>
-<td><code>dashorch</code> ログ、<code>sairedis.rec</code> の SAI status、DPU 側 <code>database-dpu.service</code> 生死</td>
+<td><code>dashorch</code> ログ、<code>sairedis.rec</code> の <a href="../../../reference/glossary/#term-sai">SAI</a> status、DPU 側 <code>database-dpu.service</code> 生死</td>
 </tr>
 </tbody>
 </table>
@@ -23966,7 +23966,7 @@
 <li><strong>platform 認識</strong>: <code>platform.json</code> / <code>platform_components.json</code> で DPU が module として宣言されており、<code>pmon</code> が pick up していることを確認。</li>
 <li><strong>midplane</strong>: NPU 上で midplane bridge と DHCP server が起動し、DPU の管理 IP が決定論的に払い出される。</li>
 <li><strong>DPU Online</strong>: NPU から <code>redisdpuN</code> に到達でき、<code>CHASSIS_STATE_DB</code> で DPU が Online。</li>
-<li><strong>DASH 制御</strong>: コントローラから gNMI ないし <code>swssconfig</code> で <code>DASH_*</code> テーブルを APPL_DB に投入し、<code>dashorch</code> 経由で SAI / DPU データプレーンへ。</li>
+<li><strong>DASH 制御</strong>: コントローラから gNMI ないし <code>swssconfig</code> で <code>DASH_*</code> テーブルを <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に投入し、<code>dashorch</code> 経由で SAI / DPU データプレーンへ。</li>
 <li><strong>検証</strong>: 物理機がなければ <code>dash-sonic-kvm</code> で同じ流れを KVM + BMv2 で再現。</li>
 </ol>
 <p>以降のシナリオはこの順番に沿って書きます。</p>
@@ -23985,11 +23985,11 @@
 <p>ポイントは次の通りです。</p>
 <ul>
 <li>コントローラは <code>version_id</code> を付けて設定を送る。</li>
-<li>DPU 側 orchagent は SAI 反映後、その <code>version_id</code> を <code>APPL_STATE_DB</code> に書く。</li>
+<li>DPU 側 <a href="../../../reference/glossary/#term-orchagent">orchagent</a> は SAI 反映後、その <code>version_id</code> を <code>APPL_STATE_DB</code> に書く。</li>
 <li>NPU 側 gNMI server がそれを集約し、subscribe しているコントローラへ返す。</li>
 <li>これによりコントローラは「どの version までが DPU で active か」を確認できる。</li>
 </ul>
-<p>この経路は HLD 範囲では <code>hld-only</code> の項目もあるため、最新の実装差分は <a href="../../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック設計</a> で確認してください。</p>
+<p>この経路は <a href="../../../reference/glossary/#term-hld">HLD</a> 範囲では <code>hld-only</code> の項目もあるため、最新の実装差分は <a href="../../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック設計</a> で確認してください。</p>
 <h2 id="dash-sonic-kvm">DASH SONiC KVM での検証<a class="headerlink" href="#dash-sonic-kvm" title="Permanent link">&para;</a></h2>
 <p>物理 SmartSwitch がなくても、DASH の動作確認は <strong>BMv2 ベースの仮想 DPU</strong> で行えます。<code>dash-sonic-kvm</code> は KVM 上で SONiC を動かし、DPU を BMv2（P4 ソフトウェアスイッチ）として接続することで、<code>DashOrch</code> 系 → SAI → BMv2 のループを再現します。</p>
 <p>検証で確認できる主な観点は次の通りです。</p>
@@ -24017,9 +24017,9 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>DPU0      Pensando DPU    N/A             Online         up
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>DPU1      Pensando DPU    N/A             Online         up
 </span></code></pre></div>
-<p><code>redis-cli</code> 側は <code>PONG</code> が返れば NPU から DPU の Redis インスタンスへ到達できています。Online にならない場合は、まず midplane bridge の link、次に DHCP リース、最後に DPU 側の <code>database-dpu.service</code> の起動順で切り分けます。</p>
+<p><code>redis-cli</code> 側は <code>PONG</code> が返れば NPU から DPU の <a href="../../../reference/glossary/#term-redis">Redis</a> インスタンスへ到達できています。Online にならない場合は、まず midplane bridge の link、次に DHCP リース、最後に DPU 側の <code>database-dpu.service</code> の起動順で切り分けます。</p>
 <h2 id="2-dash-eni-vnet">設定シナリオ 2: DASH ENI と VNET の最小投入<a class="headerlink" href="#2-dash-eni-vnet" title="Permanent link">&para;</a></h2>
-<p>DPU が Online になったら、コントローラなしでも CONFIG_DB に直接書いて DASH のスモークテストができます。<code>APPL_DB</code> の <code>DASH_*</code> テーブルへ <code>swssconfig</code> で投入する形式を取ります。</p>
+<p>DPU が Online になったら、コントローラなしでも <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に直接書いて DASH のスモークテストができます。<code>APPL_DB</code> の <code>DASH_*</code> テーブルへ <code>swssconfig</code> で投入する形式を取ります。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">&quot;DASH_VNET_TABLE:Vnet1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;45654&quot;</span><span class="p">,</span>
@@ -24176,6 +24176,7 @@
 <li><a href="../../../overlay/dash-sonic-kvm/">DASH SONiC KVM</a></li>
 <li><a href="../../../architecture/smart-switch-database-design/">Smart Switch のデータベース構成</a></li>
 </ul>
+<!-- glossary-links-injected: d50204739097 -->
 
 
 

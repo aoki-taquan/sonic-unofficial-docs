@@ -23789,7 +23789,7 @@
 </div>
 <h1 id="twamp-lightsession-sender-session-reflector">TWAMP Light（Session-Sender / Session-Reflector）<a class="headerlink" href="#twamp-lightsession-sender-session-reflector" title="Permanent link">&para;</a></h1>
 <h2 id="_1">どんな機能か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>RFC 5357 に基づく軽量な双方向性能測定（latency / jitter / packet loss）を SONiC ASIC offload で実装する HLD（2023-06）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。control connection を持たず、Session-Sender 側が Test-Request を送り、Session-Reflector が timestamp 付きで返す純粋な data-plane プロトコル。</p>
+<p>RFC 5357 に基づく軽量な双方向性能測定（latency / jitter / packet loss）を SONiC ASIC offload で実装する <a href="../../reference/glossary/#term-hld">HLD</a>（2023-06）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。control connection を持たず、Session-Sender 側が Test-Request を送り、Session-Reflector が timestamp 付きで返す純粋な data-plane プロトコル。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Latency = (t3 - t0) - (t2 - t1)
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Jitter  = | Latency_n - Latency_{n-1} |
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>PLR     = (txPkt - rxPkt) / txPkt
@@ -23825,7 +23825,7 @@
 <ul>
 <li><code>STATE_TWAMP_SESSION_TABLE|&lt;name&gt;</code>: 状態（active / completed / error）、<code>tx_packets</code> / <code>rx_packets</code> / latency / jitter</li>
 <li><code>STATE_SWITCH_CAPABILITY_TABLE</code>: ASIC TWAMP support flag、CLI が事前 check<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>COUNTERS_DB: session 単位で <code>tx_pkts</code> / <code>rx_pkts</code> / <code>latency_*</code> / <code>jitter_*</code> polling<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a>: session 単位で <code>tx_pkts</code> / <code>rx_pkts</code> / <code>latency_*</code> / <code>jitter_*</code> polling<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <p>ASIC は packet-count 終了時 / error 発生時に session-sender event を発行、orch が STATE を更新<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config twamp-light start/stop</code> で restart 可能（counter リセット → session 再 create）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="cli">CLI / 設定例<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
@@ -23859,7 +23859,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>注意</strong>: 現状 CLI / YANG は未取り込み（実装との乖離を参照）。CONFIG_DB 直書きで起動するしかない:</p>
+<p><strong>注意</strong>: 現状 CLI / <a href="../../reference/glossary/#term-yang">YANG</a> は未取り込み（実装との乖離を参照）。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 直書きで起動するしかない:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Sender 側</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hmset<span class="w"> </span><span class="s1">&#39;TWAMP_SESSION|sender1&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>mode<span class="w"> </span><span class="s2">&quot;LIGHT&quot;</span><span class="w"> </span>role<span class="w"> </span><span class="s2">&quot;SENDER&quot;</span><span class="w"> </span><span class="se">\</span>
@@ -23886,9 +23886,9 @@
 </ul>
 <h2 id="_3">干渉する機能<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VRF</strong>: <code>vrf_name</code> で VRF 内 session</li>
-<li><strong>CRM / TCAM</strong>: session ごとに ASIC リソースを消費</li>
-<li><strong>SNMP / gNMI / OAM</strong>: 結果吸い上げ経路は HLD 外</li>
+<li><strong><a href="../../reference/glossary/#term-vrf">VRF</a></strong>: <code>vrf_name</code> で VRF 内 session</li>
+<li><strong><a href="../../reference/glossary/#term-crm">CRM</a> / TCAM</strong>: session ごとに ASIC リソースを消費</li>
+<li><strong><a href="../../reference/glossary/#term-snmp">SNMP</a> / <a href="../../reference/glossary/#term-gnmi">gNMI</a> / OAM</strong>: 結果吸い上げ経路は HLD 外</li>
 </ul>
 <h2 id="_4">トラブルシューティング<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;TWAMP_SESSION_TABLE|sender1&#39;</span><span class="w">         </span><span class="c1"># error code</span>
@@ -23896,7 +23896,7 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COUNTERS_TWAMP_SESSION_NAME_MAP&#39;</span>
 </span></code></pre></div>
 <ul>
-<li><code>error</code> 終了 → STATE_DB の error code を確認</li>
+<li><code>error</code> 終了 → <a href="../../reference/glossary/#term-state_db">STATE_DB</a> の error code を確認</li>
 <li>capability not supported → ASIC TWAMP offload 未対応</li>
 </ul>
 <h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23909,16 +23909,16 @@
 </thead>
 <tbody>
 <tr>
-<td>Orch / SAI</td>
+<td>Orch / <a href="../../reference/glossary/#term-sai">SAI</a></td>
 <td><strong>取り込み済</strong>（<code>twamporch.cpp</code> 実装、SAI_TWAMP_* 属性使用、test 完備）</td>
 </tr>
 <tr>
 <td>YANG <code>sonic-twamp-light</code></td>
-<td><strong>欠落</strong>（sonic-buildimage に存在せず）</td>
+<td><strong>欠落</strong>（<a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> に存在せず）</td>
 </tr>
 <tr>
 <td><code>config/show twamp-light</code> CLI</td>
-<td><strong>欠落</strong>（sonic-utilities 配下に grep ヒット 0）</td>
+<td><strong>欠落</strong>（<a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> 配下に grep ヒット 0）</td>
 </tr>
 </tbody>
 </table>
@@ -23933,7 +23933,7 @@
 </blockquote>
 <h3 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="https://github.com/sonic-net/sonic-swss/pull/2927">sonic-swss #2927: [orchagent] TWAMP Light orchagent implementation (merged)</a> — TwampOrch 取り込み確定 PR</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/2927">[sonic-swss](../reference/glossary.md#term-sonic-swss) #2927: [[orchagent](../reference/glossary.md#term-orchagent)] TWAMP Light orchagent implementation (merged)</a> — TwampOrch 取り込み確定 PR</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/24135">sonic-buildimage #24135: Enhancement: [YANG] YANG model needed for TWAMP_SESSION (open)</a> — YANG 欠落 issue</li>
 <li><a href="https://github.com/sonic-net/SONiC/issues/1192">SONiC #1192: Two-Way Active Measurement Protocol (TWAMP) Light (open)</a> — community 全体トラッキング</li>
 </ul>
@@ -23949,6 +23949,8 @@
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e898d1bd00b3 -->
 
 <div class="footnote">
 <hr />

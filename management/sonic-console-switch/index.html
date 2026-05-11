@@ -23923,7 +23923,7 @@
 <ul>
 <li><strong>reverse SSH</strong>: <code>ssh -p &lt;line-port&gt; &lt;sonic-mgmt-ip&gt;</code> で直接 line に接続できる</li>
 <li><strong>port-based forwarding</strong> と <strong>IP-based forwarding</strong> の 2 方式</li>
-<li>各 line ごとに baudrate / flow control / remote device name / management IP を CONFIG_DB に persist</li>
+<li>各 line ごとに baudrate / flow control / remote device name / management IP を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に persist</li>
 <li>Active session は <strong>1 line に 1 つ</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23952,7 +23952,7 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  start_time
 </span></code></pre></div>
 <h3 id="underlying-tty-device-mapping">Underlying TTY device mapping<a class="headerlink" href="#underlying-tty-device-mapping" title="Permanent link">&para;</a></h3>
-<p>vendor / serial hub ドライバ依存で <code>/dev/ttyXXX</code> の番号と line number の対応が変わる。HLD は <strong>mapping 定義 sample</strong> を別表で示す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>vendor / serial hub ドライバ依存で <code>/dev/ttyXXX</code> の番号と line number の対応が変わる。<a href="../../reference/glossary/#term-hld">HLD</a> は <strong>mapping 定義 sample</strong> を別表で示す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>line 1  -&gt; /dev/ttyUSB0
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>line 2  -&gt; /dev/ttyUSB1
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>...
@@ -23984,7 +23984,7 @@
 </tr>
 <tr>
 <td><code>consutil sync</code></td>
-<td>STATE_DB と実 TTY 状態の整合</td>
+<td><a href="../../reference/glossary/#term-state_db">STATE_DB</a> と実 TTY 状態の整合</td>
 </tr>
 <tr>
 <td><code>config console add &lt;line&gt; --baud 9600 --flow-control enabled --device &lt;name&gt;</code></td>
@@ -24042,9 +24042,9 @@
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>AAA / RADIUS / TACACS+</strong>: console session も RADIUS 認証可能か（PAM <code>login</code> 経由扱い）</li>
+<li><strong><a href="../../reference/glossary/#term-aaa">AAA</a> / RADIUS / TACACS+</strong>: console session も RADIUS 認証可能か（PAM <code>login</code> 経由扱い）</li>
 <li><strong>reverse SSH の port range</strong>: 既存 SSH (22) と衝突しないようにする</li>
-<li><strong>mgmt VRF</strong>: line 用 management IP を mgmt VRF に置く運用が多い</li>
+<li><strong>mgmt <a href="../../reference/glossary/#term-vrf">VRF</a></strong>: line 用 management IP を mgmt VRF に置く運用が多い</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24065,7 +24065,7 @@
 <p>per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:</p>
 <ul>
 <li><code>consutil</code> CLI: <code>.cache/sonic-sources/sonic-utilities/consutil/{__init__.py,lib.py,main.py}</code> に存在 → 取り込み済み</li>
-<li><code>sonic-console.yang</code> (CONSOLE_PORT / CONSOLE_SWITCH の YANG): <code>.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang</code> に存在（revision 2026-02-12 <code>escape_char</code> 追加 / 2022-08-22 First Revision）</li>
+<li><code>sonic-console.yang</code> (CONSOLE_PORT / CONSOLE_SWITCH の <a href="../../reference/glossary/#term-yang">YANG</a>): <code>.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang</code> に存在（revision 2026-02-12 <code>escape_char</code> 追加 / 2022-08-22 First Revision）</li>
 <li><code>consoled</code> デーモン本体・<code>ser2net</code> 連携・reverse SSH の port/IP forwarding ロジック: <code>sonic-buildimage</code> / <code>sonic-host-services</code> のいずれにも検出できず</li>
 </ul>
 <p>HLD が想定する「serial hub 機能を備えた switch hub としての reverse SSH 集約」までは未統合のため、<code>discrepancy-found</code> を維持。</p>
@@ -24079,6 +24079,8 @@
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c4cccaa7fc71 -->
 
 <div class="footnote">
 <hr />

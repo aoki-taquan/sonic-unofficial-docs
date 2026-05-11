@@ -23699,7 +23699,7 @@
 </div>
 <h1 id="critical-resource-monitoringcrmsai">Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）<a class="headerlink" href="#critical-resource-monitoringcrmsai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要なのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ASIC 側の各種リソース（route 表、neighbor、ACL counter、FDB、NAT 等）は <strong>ハードウェアサイズで上限がある</strong>。上限到達で<strong>運用中に突然パケットドロップやプログラム失敗</strong>が起きるため、CRM は使用量をポーリングして <strong>しきい値超えで WARN / CRITICAL を syslog に出す</strong> ことで障害前検知を狙う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ASIC 側の各種リソース（route 表、neighbor、<a href="../../reference/glossary/#term-acl">ACL</a> counter、<a href="../../reference/glossary/#term-fdb">FDB</a>、<a href="../../reference/glossary/#term-nat">NAT</a> 等）は <strong>ハードウェアサイズで上限がある</strong>。上限到達で<strong>運用中に突然パケットドロップやプログラム失敗</strong>が起きるため、<a href="../../reference/glossary/#term-crm">CRM</a> は使用量をポーリングして <strong>しきい値超えで WARN / CRITICAL を syslog に出す</strong> ことで障害前検知を狙う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ねらい:</p>
 <ul>
 <li>表枯渇を <strong>障害発生前に</strong> 通知</li>
@@ -23707,14 +23707,14 @@
 <li>しきい値の <code>percentage</code> / <code>used</code> / <code>free</code> モード、<code>high</code> / <code>low</code> の双方を扱う</li>
 </ul>
 <h2 id="resource">監視対象の resource<a class="headerlink" href="#resource" title="Permanent link">&para;</a></h2>
-<p>主要種別（HLD ベース、後発追加あり）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>主要種別（<a href="../../reference/glossary/#term-hld">HLD</a> ベース、後発追加あり）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>L3: <code>IPV4_ROUTE</code> / <code>IPV6_ROUTE</code> / <code>IPV4_NEIGHBOR</code> / <code>IPV6_NEIGHBOR</code> / <code>IPV4_NEXTHOP</code> / <code>IPV6_NEXTHOP</code></li>
 <li>L3 group: <code>NEXTHOP_GROUP</code> / <code>NEXTHOP_GROUP_MEMBER</code></li>
 <li>L2: <code>FDB_ENTRY</code></li>
 <li>ACL: <code>ACL_TABLE</code> / <code>ACL_GROUP</code> / <code>ACL_ENTRY</code> / <code>ACL_COUNTER</code></li>
 <li>NAT / multicast: <code>DNAT_ENTRY</code> / <code>SNAT_ENTRY</code> / <code>IPMC_ENTRY</code></li>
-<li>Tunnel / SRv6 等は後発で追加</li>
+<li>Tunnel / <a href="../../reference/glossary/#term-srv6">SRv6</a> 等は後発で追加</li>
 </ul>
 <h2 id="_2">どう動くのか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23777,7 +23777,7 @@
 </table>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>SAI 側 availability API が必要</strong>。vendor 未対応 resource は値が出ない</li>
+<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> 側 availability API が必要</strong>。vendor 未対応 resource は値が出ない</li>
 <li>WARN/CRIT は syslog のみで <strong>自動 recovery アクションは無い</strong></li>
 <li>多 resource を高頻度ポーリングすると <strong>ASIC SDK 負荷増</strong></li>
 <li><code>ACL_COUNTER</code> / <code>FDB_ENTRY</code> は SDK query が高コストになることがあり、長めの polling 推奨</li>
@@ -23793,7 +23793,7 @@
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/07-acl-copp-mirror/">07-acl-copp-mirror</a>: ACL リソース消費</li>
-<li><a href="../../topics/20-swss-sai-redis/">20-swss-sai-redis</a>: orchagent と SAI の関係</li>
+<li><a href="../../topics/20-swss-sai-redis/">20-swss-sai-redis</a>: <a href="../../reference/glossary/#term-orchagent">orchagent</a> と SAI の関係</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -23802,6 +23802,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4bc7eca3bfbd -->
 
 <div class="footnote">
 <hr />

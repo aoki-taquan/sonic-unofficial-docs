@@ -24032,7 +24032,7 @@
 <h3 id="subcomponent-reboot">subcomponent 指定の reboot<a class="headerlink" href="#subcomponent-reboot" title="Permanent link">&para;</a></h3>
 <p><code>subcomponents: []types.Path</code> で <strong>特定の component のみ reboot</strong> することを許可（例: <code>/components/component[name=ASIC0]</code>）。platform が対応していなければ sanity check で拒否される<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="warm-nsf-reboot">warm / NSF reboot との関係<a class="headerlink" href="#warm-nsf-reboot" title="Permanent link">&para;</a></h3>
-<p><code>WARM</code> / <code>NSF</code> の挙動は <strong>vendor 定義</strong>。HLD 本文では「<code>WARM</code> と <code>NSF</code> が同じかは実装次第」と明記<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC での具体実装は別 HLD（Warmboot Manager HLD、リンク先は upstream / fork のドラフト段階）に委ねており、本 HLD 自体には warm reboot 経路の詳細記載は無い<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>WARM</code> / <code>NSF</code> の挙動は <strong>vendor 定義</strong>。<a href="../../reference/glossary/#term-hld">HLD</a> 本文では「<code>WARM</code> と <code>NSF</code> が同じかは実装次第」と明記<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC での具体実装は別 HLD（Warmboot Manager HLD、リンク先は upstream / fork のドラフト段階）に委ねており、本 HLD 自体には warm reboot 経路の詳細記載は無い<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/mgmt/gnmi/gnoi_system_hld.md#L176-L188 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24091,7 +24091,7 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 </tbody>
 </table>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及無し。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD で言及無し。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 即時 cold reboot</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gnoi_client<span class="w"> </span>system<span class="w"> </span>reboot<span class="w"> </span>--method<span class="w"> </span>COLD<span class="w"> </span>--message<span class="w"> </span><span class="s2">&quot;scheduled maintenance&quot;</span>
@@ -24116,7 +24116,7 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>gNOI OS Activate</strong>: <code>Activate(no_reboot=true)</code> 後の本 RPC で実 reboot を発火する想定<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-gnoi">gNOI</a> OS Activate</strong>: <code>Activate(no_reboot=true)</code> 後の本 RPC で実 reboot を発火する想定<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>gNOI FactoryReset.Start</strong>: <code>RESET</code> の代替。reboot とは別のセマンティクス</li>
 <li><strong>Warm / Fast reboot 機構</strong>: SONiC 標準の <code>warm-reboot</code> / <code>fast-reboot</code> スクリプトとの連携経路は別 HLD 側で詳細化</li>
 <li><strong><code>config save</code> / <code>config reload</code></strong>: reboot で揮発する設定が無いか事前確認</li>
@@ -24143,6 +24143,8 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 809619d7ad9f -->
 
 <div class="footnote">
 <hr />

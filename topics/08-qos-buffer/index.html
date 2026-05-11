@@ -23539,12 +23539,12 @@
 
 
 <h1 id="qos-buffer-pfc-watermark">QoS / Buffer / PFC / Watermark<a class="headerlink" href="#qos-buffer-pfc-watermark" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混んだら誰に止まってもらうか」「混み具合をどう測るか」を、読み手の質問順にまとめ直したものです。既存ページは buffer 計算、scheduler、PFC、watermark、reclaim といった単独 HLD に分かれていて、互いの関係が見えづらいので、ここでは「設定 → 流れ → 観測」を一本の地図にします。</p>
-<p><code>BUFFER_POOL</code> / <code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> / <code>QUEUE</code> / <code>SCHEDULER</code> / <code>WRED_PROFILE</code> / <code>DSCP_TO_TC_MAP</code> / <code>TC_TO_QUEUE_MAP</code> / <code>PORT_QOS_MAP</code> / <code>PFC_WD</code> といったテーブルは、最終的には SAI の buffer profile、queue、scheduler、PG オブジェクトに落ちます。PFC は受信側の輻輳通知、watermark / PFCWD はその記録と暴走停止です。同じ「輻輳」を別角度から見ているだけで、設定面は意外と直線的につながっています。</p>
+<p>この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混んだら誰に止まってもらうか」「混み具合をどう測るか」を、読み手の質問順にまとめ直したものです。既存ページは buffer 計算、scheduler、<a href="../../reference/glossary/#term-pfc">PFC</a>、watermark、reclaim といった単独 <a href="../../reference/glossary/#term-hld">HLD</a> に分かれていて、互いの関係が見えづらいので、ここでは「設定 → 流れ → 観測」を一本の地図にします。</p>
+<p><code>BUFFER_POOL</code> / <code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> / <code>QUEUE</code> / <code>SCHEDULER</code> / <code>WRED_PROFILE</code> / <code>DSCP_TO_TC_MAP</code> / <code>TC_TO_QUEUE_MAP</code> / <code>PORT_QOS_MAP</code> / <code>PFC_WD</code> といったテーブルは、最終的には <a href="../../reference/glossary/#term-sai">SAI</a> の buffer profile、queue、scheduler、PG オブジェクトに落ちます。PFC は受信側の輻輳通知、watermark / PFCWD はその記録と暴走停止です。同じ「輻輳」を別角度から見ているだけで、設定面は意外と直線的につながっています。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Buffer pool / profile / PG / queue はどのテーブルから読み始めるのか。</li>
-<li>WRED / ECN、scheduler / shaper、PFC、watermark はどこで交わるのか。</li>
+<li><a href="../../reference/glossary/#term-wred">WRED</a> / ECN、scheduler / shaper、PFC、watermark はどこで交わるのか。</li>
 <li>Reclaim reserved buffer と dynamic headroom は何の問題を解決しているのか。</li>
 <li><code>show buffer</code>、<code>show queue</code>、<code>show priority-group</code>、<code>show pfc</code> は何を見せてくれるのか。</li>
 <li>輻輳で困ったとき、どの順番で観測コマンドを叩けばよいのか。</li>
@@ -23552,7 +23552,7 @@
 <h2 id="_2">読み進め方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><a href="concept/">概念</a>: pool / PG / queue / scheduler / WRED の登場順と境界。</li>
-<li><a href="architecture/">アーキテクチャ</a>: BufferOrch / QosOrch / PfcWdOrch / FlexCounter と SAI への変換。</li>
+<li><a href="architecture/">アーキテクチャ</a>: BufferOrch / QosOrch / PfcWdOrch / <a href="../../reference/glossary/#term-flexcounter">FlexCounter</a> と SAI への変換。</li>
 <li><a href="setup/">設定</a>: lossless / lossy の代表設定、PFC、PFCWD、WRED の最小例。</li>
 <li><a href="operations/">運用</a>: 輻輳・PFC storm・drop counter 調査の順序。</li>
 <li><a href="internals/">内部実装</a>: reclaim、dynamic headroom、port add/del での再計算。</li>
@@ -23586,6 +23586,7 @@
 <li><a href="../06-l2-vlan-lag/">L2 / VLAN / LAG / MC-LAG</a></li>
 <li><a href="../12-multi-asic-voq/">Multi-ASIC / VOQ Chassis</a></li>
 </ul>
+<!-- glossary-links-injected: 4d8906fd5d56 -->
 
 
 

@@ -23751,14 +23751,14 @@
 </div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>RoCE / lossless トラフィックでスループットが想定の数 % にとどまる</li>
+<li><a href="../../glossary/#term-roce">RoCE</a> / lossless トラフィックでスループットが想定の数 % にとどまる</li>
 <li><code>pfcwd show stats</code> で <code>STORM</code> が継続検出され、特定 queue が <code>disabled</code> 状態</li>
 <li><code>show queue counters</code> で <code>pkts_dropped</code> が増え続ける</li>
 <li><code>show priority-group persistent-watermark</code> で PG buffer の usage が常時 100% 近い</li>
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>PFC enabled priority と PORT_QOS_MAP の DSCP→TC マッピング不一致</strong> → 想定の queue に乗っていない</li>
+<li><strong><a href="../../glossary/#term-pfc">PFC</a> enabled priority と PORT_QOS_MAP の DSCP→TC マッピング不一致</strong> → 想定の queue に乗っていない</li>
 <li><strong>buffer profile / pool sizing 不足</strong>: <code>BUFFER_POOL|ingress_lossless_pool</code> の <code>size</code> がトラフィック量に対して過小</li>
 <li><strong>対向側で PFC pause を生成し続け、PFC storm に陥っている</strong>: PFC WD が queue を強制 disable</li>
 <li><strong>headroom 計算が cable length と一致していない</strong> (<code>CABLE_LENGTH</code> テーブル誤設定)</li>
@@ -23824,14 +23824,16 @@
 <li><a href="../../config-db/buffer-pool/">../config-db/buffer-pool.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 700a048ebcfc -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ 4305596 — bufferorch / pfcwdorch&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — bufferorch / pfcwdorch&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — pfcwd CLI&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — pfcwd CLI&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

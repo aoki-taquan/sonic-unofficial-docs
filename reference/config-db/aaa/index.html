@@ -23611,7 +23611,7 @@
 
 <h1 id="aaa">AAA テーブル<a class="headerlink" href="#aaa" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ログイン認証 (authentication) / 認可 (authorization) / アカウンティング (accounting) の手段優先順序を CONFIG_DB に保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> の AAA ハンドラが読み出し、Linux PAM (<code>/etc/pam.d/common-auth</code>, <code>/etc/pam.d/sshd</code> 等) と nsswitch / sshd 設定を再生成する。</p>
+<p>ログイン認証 (authentication) / 認可 (authorization) / アカウンティング (accounting) の手段優先順序を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> の <a href="../../glossary/#term-aaa">AAA</a> ハンドラが読み出し、Linux PAM (<code>/etc/pam.d/common-auth</code>, <code>/etc/pam.d/sshd</code> 等) と nsswitch / sshd 設定を再生成する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23691,7 +23691,7 @@
 <ul>
 <li>関連 CONFIG_DB: <a href="../tacplus-server/"><code>TACPLUS_SERVER</code></a>, <a href="../radius/"><code>RADIUS</code></a>, <a href="../ldap-server/"><code>LDAP_SERVER</code></a></li>
 <li>関連 CLI: <code>config aaa authentication { login | failthrough | fallback | debug | trace }</code></li>
-<li>関連 YANG: <code>sonic-system-aaa</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-system-aaa</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23725,6 +23725,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>aaa
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ec4ea08af950 -->
 
 <div class="footnote">
 <hr />

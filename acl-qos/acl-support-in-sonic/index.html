@@ -23928,7 +23928,7 @@
 </div>
 <h1 id="acl-acl_table-acl_rule">ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）<a class="headerlink" href="#acl-acl_table-acl_rule" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の data plane ACL の <strong>初期設計</strong> を定義する文書。ハードウェア（SAI）に降ろすための ACL テーブル / ルールの <strong>APP_DB スキーマ</strong> と、それを操作する <code>swssconfig</code> ベースの設定フローを規定している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の data plane <a href="../../reference/glossary/#term-acl">ACL</a> の <strong>初期設計</strong> を定義する文書。ハードウェア（<a href="../../reference/glossary/#term-sai">SAI</a>）に降ろすための ACL テーブル / ルールの <strong>APP_DB スキーマ</strong> と、それを操作する <code>swssconfig</code> ベースの設定フローを規定している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>要件は <strong>Must Have (M)</strong> と <strong>Should Have (S)</strong> に分かれており、リリース必須機能は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>データプレーン ACL のサポート</li>
@@ -23987,14 +23987,14 @@
     }
     ACL_TABLE "1" --&gt; "*" ACL_RULE : owns</code></pre>
 <h3 id="_3">サポートされる操作<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>HLD の Supported operations<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> の Supported operations<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>ACL テーブルを <strong>type 指定</strong> で作成</li>
 <li>ACL ルールを作成し ACL テーブルに紐付け</li>
 <li>ACL テーブルをポートに <strong>attach / detach</strong></li>
 <li>ACL ルールの削除</li>
 </ul>
-<p>これだけが初期スコープ。LAG への bind や port 削除時の自動 unbind はリリース時点では <strong>対象外</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>これだけが初期スコープ。<a href="../../reference/glossary/#term-lag">LAG</a> への bind や port 削除時の自動 unbind はリリース時点では <strong>対象外</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">ポート連携<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>ACL テーブルの bind は <strong>物理ポート（front panel port）のみ</strong>。LAG への bind は初期版では非対応<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -24109,7 +24109,7 @@ reasoning: 設定フローと full / partial モードの根拠。
 </table>
 <p>注: HLD では実際のキー名として <code>ACL_RULE_TABLE</code> も登場する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>が、ここは APP_DB 側の表記揺れ（<code>ACL_TABLE</code> / <code>ACL_RULE_TABLE</code>）として整理されているため、最終実装では <code>aclorch</code> のソースを参照する必要がある（裏取り課題）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD の段階では <strong><code>config acl</code> 系 CLI は定義されていない</strong>。設定は <code>swssconfig</code> + JSON ファイルで投入する想定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の sonic-utilities では <code>config acl</code> / <code>show acl</code> 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。</p>
+<p>HLD の段階では <strong><code>config acl</code> 系 CLI は定義されていない</strong>。設定は <code>swssconfig</code> + JSON ファイルで投入する想定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後続の <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> では <code>config acl</code> / <code>show acl</code> 系コマンドが追加されているが、それらは別 HLD・別実装の範疇。</p>
 <h3 id="hld">設定例（HLD ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE:DATAACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -24166,6 +24166,8 @@ reasoning: 設定フローと full / partial モードの根拠。
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6946893a7d04 -->
 
 <div class="footnote">
 <hr />

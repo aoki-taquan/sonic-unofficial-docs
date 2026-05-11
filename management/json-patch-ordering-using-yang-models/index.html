@@ -23740,7 +23740,7 @@
 </div>
 <h1 id="json-patch-orderingyang-apply-patch">JSON Patch ordering（YANG 制約に従う <code>apply-patch</code> のステップ分割）<a class="headerlink" href="#json-patch-orderingyang-apply-patch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config apply-patch &lt;jsonpatch&gt;</code> で投入された JsonPatch (RFC6902) を、<strong>SONiC YANG モデル制約を満たしつつ任意の中間状態が valid となるように複数 <code>JsonChange</code> に分割</strong> するアルゴリズム<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Generic Config Update and Rollback の "Patch Orderer" 構成要素にあたる。</p>
+<p><code>config apply-patch &lt;jsonpatch&gt;</code> で投入された JsonPatch (RFC6902) を、<strong>SONiC <a href="../../reference/glossary/#term-yang">YANG</a> モデル制約を満たしつつ任意の中間状態が valid となるように複数 <code>JsonChange</code> に分割</strong> するアルゴリズム<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Generic Config Update and Rollback の "Patch Orderer" 構成要素にあたる。</p>
 <p>インタフェース<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">list</span><span class="o">&lt;</span><span class="n">JsonChange</span><span class="o">&gt;</span> <span class="n">order</span><span class="o">-</span><span class="n">patch</span><span class="p">(</span><span class="n">JsonPatch</span> <span class="n">jsonPatch</span><span class="p">)</span>
 </span></code></pre></div>
@@ -23806,7 +23806,7 @@
 <li><strong>move 自体</strong>: 「2 つの依存ある変更が同 <code>JsonChange</code> に同居していないか」をチェック。もし 1 操作の <code>replace</code> で全 config を書き換える move を許すと探索が崩壊するため、operation 自体の妥当性も評価対象とする</li>
 </ol>
 <h3 id="create-only"><code>create-only</code> 拡張<a class="headerlink" href="#create-only" title="Permanent link">&para;</a></h3>
-<p><code>SAI_PORT_ATTR_HW_LANE_LIST</code> のように <strong>CREATE_ONLY</strong> な属性は <code>replace</code> で書き換え不可。HLD は <code>sonic-extension.yang</code> に <strong>新拡張 <code>create-only</code></strong> を追加する提案<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>SAI_PORT_ATTR_HW_LANE_LIST</code> のように <strong>CREATE_ONLY</strong> な属性は <code>replace</code> で書き換え不可。<a href="../../reference/glossary/#term-hld">HLD</a> は <code>sonic-extension.yang</code> に <strong>新拡張 <code>create-only</code></strong> を追加する提案<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">extension</span><span class="w"> </span><span class="nv">create-only</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="k">description</span><span class="w"> </span><span class="s2">&quot;During apply-patch operation the field can only be created (i.e. added) or re-created (i.e. removed then added) but cannot be modified (i.e. replaced).&quot;</span><span class="p">;</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
@@ -23889,11 +23889,13 @@ reasoning: create-only 拡張のセマンティクスを直接引用
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Generic Config Update and Rollback</strong>: 本機能を内包する上位 HLD</li>
-<li><strong><code>apply-patch</code> CLI</strong> / <strong>gNMI Set RPC</strong>: 本 orderer を使う代表的な呼び元</li>
+<li><strong><code>apply-patch</code> CLI</strong> / <strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> Set RPC</strong>: 本 orderer を使う代表的な呼び元</li>
 <li><strong>Dynamic Port Breakout</strong>: <code>create-only</code> 拡張の主要動機</li>
-<li><strong>CRM 等 <code>must</code>-based 制約</strong>: ユニットテスト 16 番が直接連動依存と must 依存の両方をカバー<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-crm">CRM</a> 等 <code>must</code>-based 制約</strong>: ユニットテスト 16 番が直接連動依存と must 依存の両方をカバー<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 8038cebfeb87 -->
+
 <div class="footnote">
 <hr />
 <ol>

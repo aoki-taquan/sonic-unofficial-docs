@@ -23818,15 +23818,15 @@
 </div>
 <h1 id="bgp-suppress-fib-pendingdplane_fpm_nl-rtm_f_offload">BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）<a class="headerlink" href="#bgp-suppress-fib-pendingdplane_fpm_nl-rtm_f_offload" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>T1 リブート直後に「FIB に乗っていない prefix を BGP がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / PFC storm」というシナリオを防ぐため、<strong>ASIC 書き込み完了まで BGP advertise を抑止する</strong> end-to-end フィードバック機構<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>T1 リブート直後に「FIB に乗っていない prefix を <a href="../../reference/glossary/#term-bgp">BGP</a> がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / <a href="../../reference/glossary/#term-pfc">PFC</a> storm」というシナリオを防ぐため、<strong>ASIC 書き込み完了まで BGP advertise を抑止する</strong> end-to-end フィードバック機構<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>要点:</p>
 <ul>
-<li>FRR の <strong>bgp suppress-fib-pending</strong> 機能を活用。FRR は zebra から <code>RTM_NEWROUTE</code> に <code>RTM_F_OFFLOAD</code> フラグが立った応答を受けると当該 prefix を peer に advertise する</li>
-<li>SONiC 側は orchagent / fpmsyncd 経由で「ASIC 書き込み完了」を zebra に返すループを実装</li>
+<li><a href="../../reference/glossary/#term-frr">FRR</a> の <strong>bgp suppress-fib-pending</strong> 機能を活用。FRR は <a href="../../reference/glossary/#term-zebra">zebra</a> から <code>RTM_NEWROUTE</code> に <code>RTM_F_OFFLOAD</code> フラグが立った応答を受けると当該 prefix を peer に advertise する</li>
+<li>SONiC 側は <a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 経由で「ASIC 書き込み完了」を zebra に返すループを実装</li>
 <li><strong>FRR の <code>dplane_fpm_nl</code> 新プラグインへの移行が前提</strong>（旧 <code>fpm</code> plugin は対応せず）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>グローバル ON/OFF を <code>DEVICE_METADATA.localhost.suppress-fib-pending</code> で切替。default disabled、ランタイム切替可</li>
 </ul>
-<p>スコープ外: MPLS、VNET routes。directly connected / kernel routes は本機構の対象外で従来通り即時 advertise<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スコープ外: <a href="../../reference/glossary/#term-mpls">MPLS</a>、<a href="../../reference/glossary/#term-vnet">VNET</a> routes。directly connected / kernel routes は本機構の対象外で従来通り即時 advertise<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">フィードバックループ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -23846,7 +23846,7 @@
     F-&gt;&gt;Z: RTM_NEWROUTE with RTM_F_OFFLOAD set
     Z-&gt;&gt;B: route offloaded
     B-&gt;&gt;B: advertise to peers</code></pre>
-<p>応答チャネルは「<strong>fpmsyncd ↔ zebra の TCP/FPM ソケット双方向利用</strong>」。HLD で response channel performance（per-route 通知のオーバーヘッド低減）の節を立てている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>応答チャネルは「<strong>fpmsyncd ↔ zebra の TCP/<a href="../../reference/glossary/#term-fpm">FPM</a> ソケット双方向利用</strong>」。<a href="../../reference/glossary/#term-hld">HLD</a> で response channel performance（per-route 通知のオーバーヘッド低減）の節を立てている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DEVICE_METADATA|localhost:
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  suppress-fib-pending = enabled | disabled   # default disabled
@@ -23888,7 +23888,7 @@ reasoning: dplane_fpm_nl 移行が機能の前提条件である根拠。
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD では専用 CLI の言及は無い。<code>config device-metadata</code> 系で書く想定か、CONFIG_DB を直接編集する。</p>
+<p>HLD では専用 CLI の言及は無い。<code>config device-metadata</code> 系で書く想定か、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を直接編集する。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>suppress-fib-pending<span class="w"> </span>enabled
 </span></code></pre></div>
@@ -23903,14 +23903,14 @@ reasoning: dplane_fpm_nl 移行が機能の前提条件である根拠。
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>fpmsyncd NextHop Group 拡張</strong>: 同じ <code>dplane_fpm_nl</code> を共有するため、両機能の有効化状態が干渉しないか要確認</li>
-<li><strong>routeorch / orchagent crash</strong>: 従来は「route install 失敗 = orchagent crash で全 service restart」だったが、本機能はあくまで advertise 抑止であり crash 経路は別問題（ARP / nh resolution と組み合わせて議論）</li>
-<li><strong>CRM</strong>: ASIC リソース不足時の advertise 抑止に効くが、CRM threshold 設定との連携は HLD では未深堀</li>
+<li><strong>routeorch / orchagent crash</strong>: 従来は「route install 失敗 = orchagent crash で全 service restart」だったが、本機能はあくまで advertise 抑止であり crash 経路は別問題（<a href="../../reference/glossary/#term-arp">ARP</a> / nh resolution と組み合わせて議論）</li>
+<li><strong><a href="../../reference/glossary/#term-crm">CRM</a></strong>: ASIC リソース不足時の advertise 抑止に効くが、CRM threshold 設定との連携は HLD では未深堀</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>有効化したが advertise が止まらない → BGP session を reset（<code>clear bgp *</code>）必要</li>
 <li>有効化後に route advertise が極端に遅い → <code>dplane_fpm_nl</code> への移行が完了しているか確認</li>
-<li>consistency monitor が誤判定 → スクリプトの周期と STATE_DB 反映遅延の関係を確認</li>
+<li>consistency monitor が誤判定 → スクリプトの周期と <a href="../../reference/glossary/#term-state_db">STATE_DB</a> 反映遅延の関係を確認</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
@@ -23929,6 +23929,8 @@ reasoning: dplane_fpm_nl 移行が機能の前提条件である根拠。
 <li><code>sonic-swss/fpmsyncd/routesync.h:19-22</code> で <code>RTM_F_OFFLOAD</code> の define、<code>routesync.cpp:3115</code> で <code>rtm-&gt;rtm_flags |= RTM_F_OFFLOAD</code> を発行する zebra 応答ロジックが実装されている。fpmsyncd は <code>dplane_fpm_nl</code> 経由で zebra に offload 応答を返すフィードバックループの一端を担う。</li>
 </ul>
 <p>HLD と実装は一致。<code>code-verified</code> に昇格。</p>
+<!-- glossary-links-injected: 7ebdde32cc55 -->
+
 <div class="footnote">
 <hr />
 <ol>

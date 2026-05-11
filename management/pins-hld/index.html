@@ -23773,8 +23773,8 @@
 <h1 id="pinsp4-integrated-network-stack">PINS（P4 Integrated Network Stack）<a class="headerlink" href="#pinsp4-integrated-network-stack" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>PINS とは何で、既存 SONiC に何を足すのか</li>
-<li>なぜ SAI pipeline を <strong>P4 で表現</strong> するアプローチを取るのか</li>
+<li><a href="../../reference/glossary/#term-pins">PINS</a> とは何で、既存 SONiC に何を足すのか</li>
+<li>なぜ <a href="../../reference/glossary/#term-sai">SAI</a> pipeline を <strong>P4 で表現</strong> するアプローチを取るのか</li>
 <li>既存 RouteOrch / NeighOrch との <strong>同 ASIC table 共有</strong> をどう成立させるのか</li>
 <li>応答経路（response path）と新規 <code>APPL_STATE_DB</code> の役割</li>
 <li>Packet IO の <strong>3 種類</strong>（packet in / port 直送 / send_to_ingress）</li>
@@ -23809,7 +23809,7 @@
 <tbody>
 <tr>
 <td><strong>P4RT Application</strong></td>
-<td>独立 container、複数 gRPC client を受ける。APPL_DB の P4RT table へ書込、結果を controller に通知。read も対応<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>独立 container、複数 gRPC client を受ける。<a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の P4RT table へ書込、結果を controller に通知。read も対応<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><strong>P4 Programs / P4Info</strong></td>
@@ -23821,7 +23821,7 @@
 </tr>
 <tr>
 <td><strong>P4Orch</strong></td>
-<td>APPL_DB → ASIC_DB の翻訳。他 orch の SAI object を <strong>参照しつつ refcount を上げる</strong></td>
+<td>APPL_DB → <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> の翻訳。他 orch の SAI object を <strong>参照しつつ refcount を上げる</strong></td>
 </tr>
 <tr>
 <td><strong>APPL_STATE_DB</strong></td>
@@ -23835,7 +23835,7 @@
 </table>
 <h2 id="path-path">並行 path 方式と応答 path<a class="headerlink" href="#path-path" title="Permanent link">&para;</a></h2>
 <p>P4Orch は <strong>同一 ASIC table への複数 writer（RouteOrch 等）</strong> を扱う必要がある。現行 SWSS は <strong>ownership tag と response path が無い</strong> ため、緑色 path は既存テーブル使い回しでなく <strong>並行 path</strong> として実装される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。将来 SWSS が同機能を持てば既存パスへ統合する方針。</p>
-<p>応答 path: SWSS ↔ syncd の同期通信を <strong>app まで延伸</strong> する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SDN controller は各プログラム要求の成否 ack で次動作を決めるため必須。<code>APPL_STATE_DB</code> への応答書出しは config フラグで on/off できる設計。</p>
+<p>応答 path: SWSS ↔ <a href="../../reference/glossary/#term-syncd">syncd</a> の同期通信を <strong>app まで延伸</strong> する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SDN controller は各プログラム要求の成否 ack で次動作を決めるため必須。<code>APPL_STATE_DB</code> への応答書出しは config フラグで on/off できる設計。</p>
 <h2 id="packet-io">Packet IO<a class="headerlink" href="#packet-io" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23847,7 +23847,7 @@
 <tbody>
 <tr>
 <td><strong>Packet In</strong></td>
-<td>controller が ACL を program して punt/copy。punt 先は <code>genetlink</code> type host interface（sFlow と同方式）。target egress port 等の追加属性は ASIC 非依存モデルで P4RT App container に渡す</td>
+<td>controller が <a href="../../reference/glossary/#term-acl">ACL</a> を program して punt/copy。punt 先は <code>genetlink</code> type host interface（sFlow と同方式）。target egress port 等の追加属性は ASIC 非依存モデルで P4RT App container に渡す</td>
 </tr>
 <tr>
 <td><strong>Packet Out (port 直送)</strong></td>
@@ -23868,21 +23868,21 @@
 <h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI 変更なし</li>
-<li>CONFIG_DB に PINS 機能 enable/disable フラグ（例: APPL_STATE_DB 応答書出しの on/off）</li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に PINS 機能 enable/disable フラグ（例: APPL_STATE_DB 応答書出しの on/off）</li>
 <li>gRPC listen はデフォルト <strong>tcp/9559</strong> ハードコード（将来 ConfigDB モデル化予定）</li>
 </ul>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>初版 MVP は IP route / next hop / next hop group / ACL（drop / punt）のみ</li>
 <li>gRPC port は hardcode (<code>9559</code>)</li>
-<li>関連 supplementary HLD（P4RT App / P4Orch / SAI P4 / Packet IO / APPL_STATE_DB / P4 拡張 / DB Schema）の多くが <code>in_progress</code></li>
+<li>関連 supplementary <a href="../../reference/glossary/#term-hld">HLD</a>（P4RT App / P4Orch / SAI P4 / Packet IO / APPL_STATE_DB / P4 拡張 / DB Schema）の多くが <code>in_progress</code></li>
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>RouteOrch / NeighOrch / AclOrch</strong>: P4Orch が同 ASIC table を共有し SAI object 参照</li>
 <li><strong>sFlow</strong>: packet-in の genetlink hostif 機構を共有</li>
-<li><strong>gNMI / sonic-telemetry</strong>: 将来 ConfigDB モデル化の参考</li>
-<li><strong>DASH / SmartSwitch</strong>: SDN モデルとして思想的近接</li>
+<li><strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> / sonic-telemetry</strong>: 将来 ConfigDB モデル化の参考</li>
+<li><strong><a href="../../reference/glossary/#term-dash">DASH</a> / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong>: SDN モデルとして思想的近接</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -23898,6 +23898,8 @@
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b59b552ea208 -->
 
 <div class="footnote">
 <hr />

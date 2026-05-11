@@ -23990,7 +23990,7 @@
 
 <h1 id="show-vlan">show vlan サブコマンド<a class="headerlink" href="#show-vlan" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show vlan</code> は VLAN とそのメンバーポート、L3 SVI 状態（IP アドレス・proxy_arp）を 2 種類の表で表示する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>show/vlan.py</code> 単体に閉じており、CONFIG_DB の <code>VLAN</code> / <code>VLAN_INTERFACE</code> / <code>VLAN_MEMBER</code> を直接読み出して整形する。</p>
+<p><code>show vlan</code> は <a href="../../glossary/#term-vlan">VLAN</a> とそのメンバーポート、L3 SVI 状態（IP アドレス・proxy_arp）を 2 種類の表で表示する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>show/vlan.py</code> 単体に閉じており、<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>VLAN</code> / <code>VLAN_INTERFACE</code> / <code>VLAN_MEMBER</code> を直接読み出して整形する。</p>
 <p><code>VlanBrief.COLUMNS</code> はクラス変数として定義されており、<strong>外部プラグイン（dhcp-relay 等）が <code>register_column</code> で列を追加できる</strong>設計。実際 <code>dhcp_relay</code> プラグインが <code>DHCPv4 Servers</code> / <code>DHCPv6 Servers</code> 列を append している。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -24003,7 +24003,7 @@
 <tbody>
 <tr>
 <td><code>show vlan brief [-n &lt;ns&gt;]</code></td>
-<td>VLAN サマリ（VLAN ID / IP / Ports / Tagging / Proxy ARP）</td>
+<td>VLAN サマリ（VLAN ID / IP / Ports / Tagging / Proxy <a href="../../glossary/#term-arp">ARP</a>）</td>
 </tr>
 <tr>
 <td><code>show vlan config [-n &lt;ns&gt;]</code></td>
@@ -24198,6 +24198,8 @@ excerpt: |
 <li><a href="../../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 145837b8a94b -->
 
 <div class="footnote">
 <hr />

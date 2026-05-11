@@ -23639,10 +23639,10 @@
 
 <h1 id="map_pfc_priority_to_queue">MAP_PFC_PRIORITY_TO_QUEUE テーブル<a class="headerlink" href="#map_pfc_priority_to_queue" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>PFC priority (0..7) → 出力キュー (qindex 0..7) のマッピング</strong> を定義する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT_QOS_MAP.pfc_to_queue_map</code> から参照され、<code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE</code> として ASIC に反映される。</p>
+<p><strong><a href="../../glossary/#term-pfc">PFC</a> priority (0..7) → 出力キュー (qindex 0..7) のマッピング</strong> を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT_QOS_MAP.pfc_to_queue_map</code> から参照され、<code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE</code> として ASIC に反映される。</p>
 <p>PFC frame の Priority 値から、どの egress queue を一時停止対象とするかを決めるためのマップ。<code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> (ingress 側 PG マップ) と対になる egress 側の表。</p>
 <blockquote>
-<p>テーブル名は YANG container 名そのまま <code>MAP_PFC_PRIORITY_TO_QUEUE</code> で、<code>PFC_PRIORITY_TO_QUEUE_MAP</code> ではない点に注意。CONFIG_DB key にもこの名前が使われる。</p>
+<p>テーブル名は <a href="../../glossary/#term-yang">YANG</a> container 名そのまま <code>MAP_PFC_PRIORITY_TO_QUEUE</code> で、<code>PFC_PRIORITY_TO_QUEUE_MAP</code> ではない点に注意。CONFIG_DB key にもこの名前が使われる。</p>
 </blockquote>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -23716,7 +23716,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosorch</code> (<code>docker-swss</code>): CONFIG_DB → SAI <code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE</code> オブジェクト生成</li>
+<li><code>qosorch</code> (<code>docker-swss</code>): CONFIG_DB → <a href="../../glossary/#term-sai">SAI</a> <code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE</code> オブジェクト生成</li>
 <li>反映先は <code>PORT_QOS_MAP.pfc_to_queue_map</code> 経由でポートにバインドされる</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -23758,6 +23758,8 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>queue<span class="w"> </span>counters
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3dadbe92257e -->
 
 <div class="footnote">
 <hr />

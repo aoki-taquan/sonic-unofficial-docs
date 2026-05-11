@@ -23579,7 +23579,7 @@
 <li>import: <code>sonic-types</code>, <code>sonic-port</code>, <code>sonic-portchannel</code>, <code>sonic-vrf</code>, <code>sonic-vnet</code></li>
 <li>top container: <code>sonic-vlan-sub-interface</code></li>
 </ul>
-<p>VLAN sub-interface configuration for dot1q encapsulated sub-ports on physical or PortChannel interfaces<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p><a href="../../glossary/#term-vlan">VLAN</a> sub-interface configuration for dot1q encapsulated sub-ports on physical or <a href="../../glossary/#term-portchannel">PortChannel</a> interfaces<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23636,7 +23636,7 @@
 <td><code>list</code></td>
 <td><code>sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST</code></td>
 <td><code>name</code></td>
-<td>Configuration entry for a VLAN sub-interface including VLAN encapsulation and VRF binding</td>
+<td>Configuration entry for a VLAN sub-interface including VLAN encapsulation and <a href="../../glossary/#term-vrf">VRF</a> binding</td>
 </tr>
 <tr>
 <td><code>list</code></td>
@@ -23693,7 +23693,7 @@
 <td><code>leafref</code></td>
 <td></td>
 <td></td>
-<td>/svnet:sonic-vnet/svnet:VNET/svnet:VNET_LIST/svnet:name</td>
+<td>/svnet:sonic-vnet/svnet:<a href="../../glossary/#term-vnet">VNET</a>/svnet:VNET_LIST/svnet:name</td>
 <td>Reference to the name of a VNET in sonic-vnet model</td>
 </tr>
 <tr>
@@ -23746,7 +23746,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>VLAN_SUB_INTERFACE</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VLAN_SUB_INTERFACE</code></li>
 <li>CLI: <code>config subinterface</code></li>
 <li>CLI: <code>show subinterfaces</code></li>
 </ul>
@@ -23766,6 +23766,8 @@
 <li><a href="../../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4a09d82fb5a4 -->
 
 <div class="footnote">
 <hr />

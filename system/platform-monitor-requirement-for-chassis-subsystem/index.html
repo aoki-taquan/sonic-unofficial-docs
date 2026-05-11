@@ -23896,7 +23896,7 @@
 </div>
 <h1 id="platform-monitor-mandatory-future">シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）<a class="headerlink" href="#platform-monitor-mandatory-future" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>このドキュメントはシャーシ型 SONiC（Supervisor + Linecards + Fabric Cards）における <strong>PMON 関連の必須要件と将来要件</strong> を箇条書きで挙げたチェックリスト形式の HLD である。具体実装は各サブ HLD（chassisd / psud / thermalctld / pcie-monitoring 等）に委ねられる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>このドキュメントはシャーシ型 SONiC（Supervisor + Linecards + Fabric Cards）における <strong>PMON 関連の必須要件と将来要件</strong> を箇条書きで挙げたチェックリスト形式の <a href="../../reference/glossary/#term-hld">HLD</a> である。具体実装は各サブ HLD（chassisd / psud / thermalctld / pcie-monitoring 等）に委ねられる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="mandatory-21">Mandatory 要件（21 項目）<a class="headerlink" href="#mandatory-21" title="Permanent link">&para;</a></h3>
 <p>カテゴリ別に整理すると<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23965,11 +23965,11 @@
 </tr>
 <tr>
 <td>9</td>
-<td><code>CHASSIS_ASIC_TABLE|&lt;key&gt;</code> も埋める。SUP 上で FABRIC ASIC ready を待って swss/syncd 起動を制御</td>
+<td><code>CHASSIS_ASIC_TABLE|&lt;key&gt;</code> も埋める。SUP 上で FABRIC ASIC ready を待って swss/<a href="../../reference/glossary/#term-syncd">syncd</a> 起動を制御</td>
 </tr>
 <tr>
 <td>12</td>
-<td>Supervisor と LC の両方が <code>TEMPERATURE_INFO</code> を <strong>Chassis State DB</strong> に反映。LC STATE_DB にもローカル分が残る</td>
+<td>Supervisor と LC の両方が <code>TEMPERATURE_INFO</code> を <strong>Chassis State DB</strong> に反映。LC <a href="../../reference/glossary/#term-state_db">STATE_DB</a> にもローカル分が残る</td>
 </tr>
 </tbody>
 </table>
@@ -24070,7 +24070,7 @@
 </tr>
 <tr>
 <td>6</td>
-<td>Midplane switch の counter 監視と QoS 調整（HW midplane 機種向け）</td>
+<td>Midplane switch の counter 監視と <a href="../../reference/glossary/#term-qos">QoS</a> 調整（HW midplane 機種向け）</td>
 </tr>
 </tbody>
 </table>
@@ -24099,7 +24099,7 @@ reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィ�
 
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-state_db">関連する CONFIG_DB / STATE_DB<a class="headerlink" href="#config_db-state_db" title="Permanent link">&para;</a></h3>
-<p>本 HLD は要件のみで CONFIG_DB スキーマを規定しない。STATE_DB / Chassis State DB 側の主要テーブルとして以下が言及される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>本 HLD は要件のみで <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマを規定しない。STATE_DB / Chassis State DB 側の主要テーブルとして以下が言及される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -24180,6 +24180,8 @@ reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィ�
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: afb862484b2b -->
 
 <div class="footnote">
 <hr />

@@ -23728,9 +23728,9 @@
 </div>
 <h1 id="vlan-openconfig-yang">VLAN インタフェースの OpenConfig YANG 対応<a class="headerlink" href="#vlan-openconfig-yang" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は従来 VLAN を <strong>SONiC 独自 YANG</strong> 経由でしか REST / gNMI 公開していなかった。本機能はこれに <strong>OpenConfig YANG</strong> (<code>openconfig-interfaces</code> + <code>openconfig-vlan</code> + <code>openconfig-if-ip</code>) を追加し、相互運用性を上げる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>実装は <code>sonic-mgmt-common</code> の <strong>transformer</strong> 経路（translib ベースではない）。Management Framework / gNMI コンテナにコードを追加するだけで、<strong>CONFIG_DB / APP_DB / STATE_DB / ASIC_DB / COUNTER_DB のスキーマ変更は無し</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>スコープ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: ✅ VLAN interface / member の設定取得、Ethernet / PortChannel メンバ管理、VLAN intf の IPv4/IPv6。❌ KLISH CLI 変更なし、❌ Subinterface 非対応。</p>
+<p>SONiC は従来 <a href="../../reference/glossary/#term-vlan">VLAN</a> を <strong>SONiC 独自 <a href="../../reference/glossary/#term-yang">YANG</a></strong> 経由でしか REST / <a href="../../reference/glossary/#term-gnmi">gNMI</a> 公開していなかった。本機能はこれに <strong>OpenConfig YANG</strong> (<code>openconfig-interfaces</code> + <code>openconfig-vlan</code> + <code>openconfig-if-ip</code>) を追加し、相互運用性を上げる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>実装は <code>sonic-mgmt-common</code> の <strong>transformer</strong> 経路（translib ベースではない）。Management Framework / gNMI コンテナにコードを追加するだけで、<strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> / COUNTER_DB のスキーマ変更は無し</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スコープ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: ✅ VLAN interface / member の設定取得、Ethernet / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> メンバ管理、VLAN intf の IPv4/IPv6。❌ KLISH CLI 変更なし、❌ Subinterface 非対応。</p>
 <h2 id="_2">全体像<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   CTL[Client&lt;br&gt;REST / gNMI] --&gt; MF[Management Framework]
@@ -23795,7 +23795,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;https://&lt;dut&gt;/restconf/data/openconfig-interfaces:interfaces/interface=Vlan10&quot;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;accept: application/yang-data+json&quot;</span>
 </span></code></pre></div>
-<p>gNMI は <code>Set</code> (REPLACE / UPDATE / DELETE) / <code>Get</code> / <code>Subscribe</code> (ON_CHANGE / SAMPLE) をサポート<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。詳細ペイロード例とエラーカタログは原文 HLD §3〜§6 参照。</p>
+<p>gNMI は <code>Set</code> (REPLACE / UPDATE / DELETE) / <code>Get</code> / <code>Subscribe</code> (ON_CHANGE / SAMPLE) をサポート<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。詳細ペイロード例とエラーカタログは原文 <a href="../../reference/glossary/#term-hld">HLD</a> §3〜§6 参照。</p>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>subinterface 非対応</strong>（本 HLD スコープ外）</li>
@@ -23805,7 +23805,7 @@
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存 SONiC YANG 経路</strong>: <code>sonic-vlan</code> / <code>sonic-vlan-interface</code> と CONFIG_DB を共有</li>
-<li><strong>VlanMgr / orchagent</strong>: スキーマ変更なしなので透過的に動く</li>
+<li><strong>VlanMgr / <a href="../../reference/glossary/#term-orchagent">orchagent</a></strong>: スキーマ変更なしなので透過的に動く</li>
 <li><strong>trunk/access 切替</strong>: <code>VLAN_MEMBER</code> キーの追加・削除と <code>tagging_mode</code> 書き換えで表現</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23827,6 +23827,8 @@
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 86faf626ff2b -->
 
 <div class="footnote">
 <hr />

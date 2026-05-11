@@ -23826,7 +23826,7 @@
 </tbody>
 </table>
 <h3 id="configuration-cli">Configuration / CLI<a class="headerlink" href="#configuration-cli" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB / YANG への新規追加は無し<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-installer install</code> の挙動が変わるのみ。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> への新規追加は無し<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-installer install</code> の挙動が変わるのみ。</p>
 <h3 id="build">Build フラグまとめ<a class="headerlink" href="#build" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SECURE_UPGRADE_MODE          = no_sign | dev | prod
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>SECURE_UPGRADE_DEV_SIGNING_KEY  = &lt;path&gt;
@@ -23864,7 +23864,7 @@ reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Secure Boot HLD (<code>hld_secure_boot.md</code>)</strong>: UEFI 段 chain of trust と接続</li>
+<li><strong>Secure Boot <a href="../../reference/glossary/#term-hld">HLD</a> (<code>hld_secure_boot.md</code>)</strong>: UEFI 段 chain of trust と接続</li>
 <li><strong>ONIE secure boot/upgrade</strong>: 別 PR で組込</li>
 <li><strong><code>sonic-installer</code></strong>: install path に検証ステップを挿入</li>
 <li><strong><code>build_image.sh</code> / <code>onie-mk-demo.sh</code></strong>: build フラグ駆動</li>
@@ -23885,6 +23885,8 @@ reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 <div class="footnote">
 <hr />

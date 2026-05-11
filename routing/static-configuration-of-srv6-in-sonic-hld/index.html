@@ -23996,8 +23996,8 @@
 </div>
 <h1 id="srv6-static-sidlocator-config_db-bgpcfgd-frr">SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）<a class="headerlink" href="#srv6-static-sidlocator-config_db-bgpcfgd-frr" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SRv6 SDN を BGP に頼らず構築するシナリオ向けに、SONiC の CONFIG_DB から SRv6 ロケータと local SID を <strong>静的に</strong> 投入する仕組みを定義する。BGP signaling を使わない SDN コントローラ運用を想定している。</p>
-<p>既存の SONiC では FRR が SRv6 関連テーブルを APPL_DB に書く経路（<code>fpmsyncd</code> 経由）はあるが、CONFIG_DB から SRv6 そのものを構成する経路がなかった。本機能は <code>bgpcfgd</code> に <strong>SRv6 Manager</strong> モジュールを追加し、2 つの新規 CONFIG_DB テーブル <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を購読して FRR の <code>segment-routing srv6</code> config に変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-srv6">SRv6</a> SDN を <a href="../../reference/glossary/#term-bgp">BGP</a> に頼らず構築するシナリオ向けに、SONiC の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から SRv6 ロケータと local SID を <strong>静的に</strong> 投入する仕組みを定義する。BGP signaling を使わない SDN コントローラ運用を想定している。</p>
+<p>既存の SONiC では <a href="../../reference/glossary/#term-frr">FRR</a> が SRv6 関連テーブルを <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に書く経路（<code>fpmsyncd</code> 経由）はあるが、CONFIG_DB から SRv6 そのものを構成する経路がなかった。本機能は <code>bgpcfgd</code> に <strong>SRv6 Manager</strong> モジュールを追加し、2 つの新規 CONFIG_DB テーブル <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を購読して FRR の <code>segment-routing srv6</code> config に変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>なお <code>frrcfgd</code> 側にも SRv6 を FRR にプログラムする経路は別途存在するが、そちらは BGP で SID を伝搬するシナリオ向けで、本ページの仕組みとはユースケースが異なる（コントローラはどちらかを選択する）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">モジュール構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -24026,7 +24026,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>interface       = string                ; uA 必須
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>adj             = ipv6 address          ; uA 任意（省略時は interface から解決）
 </span></code></pre></div>
-<p>サポート behavior（HLD 時点）は次の 3 種類。</p>
+<p>サポート behavior（<a href="../../reference/glossary/#term-hld">HLD</a> 時点）は次の 3 種類。</p>
 <table>
 <thead>
 <tr>
@@ -24162,8 +24162,8 @@ reasoning: HLD 3.2.1 / 3.2.2 セクションのコンパイル例。CONFIG_DB �
 </ul>
 <h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>fpmsyncd / SRV6_MY_SID_TABLE (APPL_DB)</strong>: FRR は今回投入された static-sids を最終的に APPL_DB の SRv6 関連テーブルに書き出すため、orchagent / SAI 側の SRv6 サポートが前提となる。</li>
-<li><strong>VRF</strong>: <code>decap_vrf</code> / <code>vrf</code> 引数は <code>VRF_TABLE</code> に該当キーが存在することが前提。</li>
+<li><strong><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / SRV6_MY_SID_TABLE (APPL_DB)</strong>: FRR は今回投入された static-sids を最終的に APPL_DB の SRv6 関連テーブルに書き出すため、<a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-sai">SAI</a> 側の SRv6 サポートが前提となる。</li>
+<li><strong><a href="../../reference/glossary/#term-vrf">VRF</a></strong>: <code>decap_vrf</code> / <code>vrf</code> 引数は <code>VRF_TABLE</code> に該当キーが存在することが前提。</li>
 <li><strong>BGP SRv6 (frrcfgd 経路)</strong>: 同一ノードで BGP signaling 由来の SID と本機能の static SID が重複しないよう、コントローラ側で名前空間を整理する必要がある。</li>
 </ul>
 <h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
@@ -24179,6 +24179,8 @@ reasoning: HLD 3.2.1 / 3.2.2 セクションのコンパイル例。CONFIG_DB �
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8e0e202b14c9 -->
 
 <div class="footnote">
 <hr />

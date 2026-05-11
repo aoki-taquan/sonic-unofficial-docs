@@ -23725,7 +23725,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$SystemLogRateLimitInterval 300
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$SystemLogRateLimitBurst 20000
 </span></code></pre></div>
-<p><code>Interval</code> 秒の窓内に <code>Burst</code> 件を超えると以降を drop。flood 防止だが「もっと緩く/厳しく」したいし、host 側にも追加したい。本機能は両者を <strong>CONFIG_DB から動的に変更</strong> できるようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>Interval</code> 秒の窓内に <code>Burst</code> 件を超えると以降を drop。flood 防止だが「もっと緩く/厳しく」したいし、host 側にも追加したい。本機能は両者を <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から動的に変更</strong> できるようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <p>新設 2 テーブル<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -23786,7 +23786,7 @@
 </span></code></pre></div>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>HLD は Rev 0.1 で日付欄空欄</li>
+<li><a href="../../reference/glossary/#term-hld">HLD</a> は Rev 0.1 で日付欄空欄</li>
 <li>App extension は capability 申告ベース（強制ではない）</li>
 <li>host 設定はコンテナに伝播しないため、全体抑制には各 container にも設定が必要</li>
 <li>single-ASIC で <code>rsyslog.conf</code> → <code>rsyslog-container.conf.j2</code> への切替は後方互換破壊の可能性あり</li>
@@ -23810,6 +23810,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">09-telemetry-snmp</a>: ログ / 監視</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: c5a6ce567024 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23762,7 +23762,7 @@
 
 
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 HLD だが、<strong>リリース時にまとめて満たしておきたい条件</strong> という共通点がある。</p>
+<p>リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 <a href="../../../reference/glossary/#term-hld">HLD</a> だが、<strong>リリース時にまとめて満たしておきたい条件</strong> という共通点がある。</p>
 <h2 id="arm-armhf-arm64">ARM (armhf / arm64) サポート<a class="headerlink" href="#arm-armhf-arm64" title="Permanent link">&para;</a></h2>
 <p>SONiC の build system は元々 AMD64 中心だったため、ARM 系プラットフォームへ広げるには <code>sonic-slave</code>、<code>dockers/</code>、<code>rules/</code>、<code>Makefile</code>、<code>apt</code> repo、kernel ビルド、<code>onie-image-*.conf</code>、<code>installer/install.sh</code> などを横断的に修正する必要があった。</p>
 <p>実装では <code>Makefile.work</code> の <code>CONFIGURED_ARCH</code> / <code>PLATFORM_ARCH</code>（default <code>amd64</code>）と、<code>sonic-slave-&lt;dist&gt;</code> を <code>-march-&lt;arch&gt;</code> サフィックス付きで切り替える仕組みに収束している。HLD で示された <code>sonic-slave-armhf</code> / <code>sonic-slave-arm64</code> という固定ディレクトリ命名は廃止されている。詳細と裏取りは <a href="../../../architecture/sonic-arm-architecture-support/">ARM architecture support</a> を読む。</p>
@@ -23831,6 +23831,7 @@
 <li>SPM (<code>sonic-package-manager</code>) で manifest schema 拡張と署名検証関連の議論が継続。</li>
 <li>SBOM 出力と CVE スキャン自動化の PR が CI 周りで議題化。</li>
 </ul>
+<!-- glossary-links-injected: 167700005048 -->
 
 
 

@@ -23617,7 +23617,7 @@
 
 <h1 id="show-mac">show mac サブコマンド<a class="headerlink" href="#show-mac" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show mac</code> は FDB (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は <code>fdbshow</code> スクリプトの薄いラッパで、CLI 側はオプションを <code>fdbshow</code> の引数に machine-translate するだけ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>invoke_without_command="true"</code> の Click group なので、サブコマンドなしで呼ぶと FDB を、<code>aging-time</code> を指定すると別系統 (APPL_DB) を読みに行く。</p>
+<p><code>show mac</code> は <a href="../../glossary/#term-fdb">FDB</a> (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は <code>fdbshow</code> スクリプトの薄いラッパで、CLI 側はオプションを <code>fdbshow</code> の引数に machine-translate するだけ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>invoke_without_command="true"</code> の Click group なので、サブコマンドなしで呼ぶと FDB を、<code>aging-time</code> を指定すると別系統 (<a href="../../glossary/#term-appl_db">APPL_DB</a>) を読みに行く。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23651,7 +23651,7 @@
 </span></code></pre></div>
 <p><strong>オプション</strong>:</p>
 <ul>
-<li><code>-v / --vlan</code> ... 特定 VLAN の FDB のみ</li>
+<li><code>-v / --vlan</code> ... 特定 <a href="../../glossary/#term-vlan">VLAN</a> の FDB のみ</li>
 <li><code>-p / --port</code> ... 特定ポート上の FDB のみ</li>
 <li><code>-a / --address</code> ... 指定 MAC アドレス</li>
 <li><code>-t / --type</code> ... <code>static</code> / <code>dynamic</code> のみ</li>
@@ -23738,7 +23738,7 @@ excerpt: |
 
 <h2 id="_4">補足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>fdbshow</code> 自体は APPL_DB / ASIC_DB / STATE_DB を読み合わせて FDB を組み立てる。CONFIG_DB は使わない</li>
+<li><code>fdbshow</code> 自体は APPL_DB / <a href="../../glossary/#term-asic_db">ASIC_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> を読み合わせて FDB を組み立てる。<a href="../../glossary/#term-config_db">CONFIG_DB</a> は使わない</li>
 <li>aging time の <strong>設定</strong> は <code>config mac aging_time &lt;seconds&gt;</code> 等が存在する場合に行う（本ページは表示系のみ）</li>
 </ul>
 <!-- cli-mermaid -->
@@ -23787,6 +23787,8 @@ excerpt: |
 <li><a href="../show-vlan/">reference/CLI: show vlan</a></li>
 <li><a href="../show-interfaces/">reference/CLI: show interfaces</a></li>
 </ul>
+<!-- glossary-links-injected: b36cf35fd34f -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23794,7 +23796,7 @@ excerpt: |
 <p><a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1199">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1199</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>APPL_DB の <code>SWITCH_TABLE</code> は orchagent が書き込む。<code>fdb_aging_time</code> は秒単位。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>APPL_DB の <code>SWITCH_TABLE</code> は <a href="../../glossary/#term-orchagent">orchagent</a> が書き込む。<code>fdb_aging_time</code> は秒単位。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -23685,7 +23685,7 @@
 
 <h1 id="mib-snmp">MIB / SNMP 関連<a class="headerlink" href="#mib-snmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の SNMP エージェントは <strong>Net-SNMP + sonic_ax_impl (AgentX subagent)</strong> で構成され、<code>snmpd</code> が標準 MIB を提供し、Python ベースの subagent が SONiC 固有 MIB（ポート / インタフェース / 物理エンティティ / センサー / トランシーバ / VRF / Dot1agtm 等）を実装しています。設定は歴史的に <code>snmp.yml</code> で行っていましたが、現行マスターは CONFIG_DB の <code>SNMP</code> / <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> / <code>SNMP_AGENT_ADDRESS_CONFIG</code> テーブルに移行済みです。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-snmp">SNMP</a> エージェントは <strong>Net-SNMP + sonic_ax_impl (AgentX subagent)</strong> で構成され、<code>snmpd</code> が標準 MIB を提供し、Python ベースの subagent が SONiC 固有 MIB（ポート / インタフェース / 物理エンティティ / センサー / トランシーバ / <a href="../../reference/glossary/#term-vrf">VRF</a> / Dot1agtm 等）を実装しています。設定は歴史的に <code>snmp.yml</code> で行っていましたが、現行マスターは <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>SNMP</code> / <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> / <code>SNMP_AGENT_ADDRESS_CONFIG</code> テーブルに移行済みです。</p>
 <p>このカテゴリは MIB / SNMP に関わるページを area 横断でまとめます。<strong>system</strong>（snmp.yml → CONFIG_DB 移行、SNMP IPv6 対応、Entity / Sensor MIB 拡張、Transceiver Monitoring、SNMP TABLE スキーマ提案）・<strong>switching</strong>（L2 モードでの SNMP 検証）・<strong>architecture</strong>（ポート不正パケット用 MIB 拡張）・<strong>reference</strong>（<code>config snmp</code> / <code>snmpagentaddress</code> / <code>snmptrap</code> CLI）に分散しています。</p>
 <p>SNMP IPv6 では応答 SRC IP が listening address と一致しない問題があり、<code>SNMP_AGENT_ADDRESS_CONFIG</code> で送信元 IP を縛る運用回避が標準です。Entity MIB はシャーシ・ラインカード・PSU / Fan / Sensor を <code>entPhysicalEntry</code> の階層に並べる構造で、chassis 環境で重要です。</p>
 <p>主要キーワード: <code>MIB</code>, <code>SNMP</code>, <code>Entity MIB</code>, <code>Sensor MIB</code>, <code>trap</code>, <code>community</code>, <code>IPv6</code>, <code>AgentX</code></p>
@@ -23731,6 +23731,7 @@
 <li><a href="../multi-asic/">Multi-ASIC / VOQ chassis 関連</a></li>
 <li><a href="../gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a></li>
 </ul>
+<!-- glossary-links-injected: ad6993c42691 -->
 
 
 

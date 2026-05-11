@@ -23706,7 +23706,7 @@
 </div>
 <h1 id="srv6-sid-l3-ua-endx-udx4-udx6-enddx4-enddx6">SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）<a class="headerlink" href="#srv6-sid-l3-ua-endx-udx4-udx6-enddx4-enddx6" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の SRv6 サポートは別 HLD（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">srv6_hld.md</a>）で定義済みだが、<strong>cross-connect 系 behavior</strong>（<code>uA</code> / <code>End.X</code> / <code>uDX4</code> / <code>uDX6</code> / <code>End.DX4</code> / <code>End.DX6</code>）は出口の <strong>L3 隣接 (L3Adj)</strong> を必要とする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これらの behavior 用に <strong>APPL_DB に <code>adj</code> パラメータ</strong> が追加されているにもかかわらず、<code>SRv6Orch</code> がこれを処理していなかった。本 HLD は <strong><code>SRv6Orch</code> を L3Adj 対応に拡張</strong> し、SID と nexthop ID を ASIC に programming できるようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-srv6">SRv6</a> サポートは別 <a href="../../reference/glossary/#term-hld">HLD</a>（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">srv6_hld.md</a>）で定義済みだが、<strong>cross-connect 系 behavior</strong>（<code>uA</code> / <code>End.X</code> / <code>uDX4</code> / <code>uDX6</code> / <code>End.DX4</code> / <code>End.DX6</code>）は出口の <strong>L3 隣接 (L3Adj)</strong> を必要とする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これらの behavior 用に <strong><a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に <code>adj</code> パラメータ</strong> が追加されているにもかかわらず、<code>SRv6Orch</code> がこれを処理していなかった。本 HLD は <strong><code>SRv6Orch</code> を L3Adj 対応に拡張</strong> し、SID と nexthop ID を ASIC に programming できるようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>対象 behavior<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -23756,7 +23756,7 @@
 <li><code>SRv6Orch</code> は NeighOrch の Neighbor 変化通知を購読し、ADD で walk → install、DELETE で ASIC から SID を削除して pending に戻す</li>
 </ul>
 <h2 id="sai">SAI 側はどうなるか<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
-<p><code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code> には既に <code>SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</code> 属性があり、cross-connect 系 endpoint behavior（<code>X</code>, <code>DX4</code>, <code>DX6</code>, <code>B6_ENCAPS</code>, <code>B6_ENCAPS_RED</code>, <code>B6_INSERT</code>, <code>B6_INSERT_RED</code>）で <code>validonly</code> として参照される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>SAI 側に新規 API は不要</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code> には既に <code>SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</code> 属性があり、cross-connect 系 endpoint behavior（<code>X</code>, <code>DX4</code>, <code>DX6</code>, <code>B6_ENCAPS</code>, <code>B6_ENCAPS_RED</code>, <code>B6_INSERT</code>, <code>B6_INSERT_RED</code>）で <code>validonly</code> として参照される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong><a href="../../reference/glossary/#term-sai">SAI</a> 側に新規 API は不要</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nl">type</span><span class="p">:</span><span class="w"> </span><span class="n">sai_object_id_t</span><span class="w"> </span><span class="p">(</span><span class="n">NEXT_HOP</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">NEXT_HOP_GROUP</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ROUTER_INTERFACE</span><span class="p">)</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nl">flags</span><span class="p">:</span><span class="w"> </span><span class="n">CREATE_AND_SET</span><span class="p">,</span><span class="w"> </span><span class="n">allownull</span>
@@ -23764,14 +23764,14 @@
 </span></code></pre></div>
 <p>参考 PR: <code>sonic-swss#2902</code> (<code>[orchagent]: Extend the SRv6Orch to support the programming of the L3Adj</code>)<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">設定<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>本 HLD は <strong>CONFIG_DB / CLI / YANG への変更を伴わない</strong>。<code>SRV6_MY_SID_TABLE</code> の <code>adj</code> パラメータは既存スキーマ（srv6_hld 側で定義済み）であり、本 HLD はその処理を実装するだけ。実際の SID 投入は FRR + <code>dplane_fpm_sonic</code> 経由で APPL_DB に書かれる。</p>
+<p>本 HLD は <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> への変更を伴わない</strong>。<code>SRV6_MY_SID_TABLE</code> の <code>adj</code> パラメータは既存スキーマ（srv6_hld 側で定義済み）であり、本 HLD はその処理を実装するだけ。実際の SID 投入は <a href="../../reference/glossary/#term-frr">FRR</a> + <code>dplane_fpm_sonic</code> 経由で APPL_DB に書かれる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 直接 APPL_DB に書く例（通常は FRR 経由）</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;SRV6_MY_SID_TABLE:fc00:1::ffff:0:0:0/128&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>action<span class="w"> </span><span class="s1">&#39;uA&#39;</span><span class="w"> </span>adj<span class="w"> </span><span class="s1">&#39;10.0.0.1&#39;</span><span class="w"> </span>vrf<span class="w"> </span><span class="s1">&#39;default&#39;</span>
 </span></code></pre></div>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>L3Adj 対応は <strong>uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6 のみ</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>End</code> / <code>End.T</code> / <code>End.DT4</code> / <code>End.DT6</code> 等は別経路（VRF 等）</li>
+<li>L3Adj 対応は <strong>uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6 のみ</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>End</code> / <code>End.T</code> / <code>End.DT4</code> / <code>End.DT6</code> 等は別経路（<a href="../../reference/glossary/#term-vrf">VRF</a> 等）</li>
 <li>nexthop が未解決のまま SID が長く pending list に残っても気付きづらい</li>
 <li>Neighbor DELETE で SID を ASIC から削除する設計は traffic 断を伴う</li>
 <li>ベンダ SAI 実装で <code>SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</code> の <code>validonly</code> 制約が異なる可能性</li>
@@ -23793,7 +23793,7 @@
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/17-srv6-mpls/">17-srv6-mpls</a>: SRv6 / MPLS / Segment Routing 全般</li>
+<li><a href="../../topics/17-srv6-mpls/">17-srv6-mpls</a>: SRv6 / <a href="../../reference/glossary/#term-mpls">MPLS</a> / Segment Routing 全般</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -23802,6 +23802,8 @@
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bc7fc7c93f94 -->
 
 <div class="footnote">
 <hr />

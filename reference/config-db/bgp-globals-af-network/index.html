@@ -23611,7 +23611,7 @@
 
 <h1 id="bgp_globals_af_network">BGP_GLOBALS_AF_NETWORK テーブル<a class="headerlink" href="#bgp_globals_af_network" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>VRF × アドレスファミリ単位</strong> で BGP に <strong>静的に注入するネットワーク</strong> (<code>network &lt;prefix&gt;</code> ステートメント) を定義する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FRR <code>bgpd</code> の <code>address-family &lt;afi&gt; &lt;safi&gt;</code> 配下の <code>network &lt;ip_prefix&gt;</code> に対応する。<code>frr-mgmt-framework</code> 経路 (DEVICE_METADATA <code>frr_mgmt_framework_config = true</code>) で使用される。</p>
+<p><strong><a href="../../glossary/#term-vrf">VRF</a> × アドレスファミリ単位</strong> で <a href="../../glossary/#term-bgp">BGP</a> に <strong>静的に注入するネットワーク</strong> (<code>network &lt;prefix&gt;</code> ステートメント) を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-frr">FRR</a> <code>bgpd</code> の <code>address-family &lt;afi&gt; &lt;safi&gt;</code> 配下の <code>network &lt;ip_prefix&gt;</code> に対応する。<code>frr-mgmt-framework</code> 経路 (DEVICE_METADATA <code>frr_mgmt_framework_config = true</code>) で使用される。</p>
 <p><code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> が複数の動的ルートを <strong>集約</strong> するのに対し、こちらは管理者が <strong>明示的に広告したいプレフィックス</strong> を列挙する用途。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -23686,7 +23686,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>, <code>BGP_GLOBALS_AF</code>, <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code>, <code>ROUTE_MAP_SET</code>, <code>STATIC_ROUTE</code></li>
 <li>関連 CLI: vtysh の <code>network &lt;prefix&gt;</code> (<code>frr-mgmt-framework</code> 経路では CONFIG_DB 投入)</li>
-<li>関連 YANG: <code>sonic-bgp-global</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-global</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23721,6 +23721,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show ip bgp&quot;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 07040282b44e -->
 
 <div class="footnote">
 <hr />

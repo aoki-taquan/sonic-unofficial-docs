@@ -23856,7 +23856,7 @@
 </div>
 <h1 id="local-arsadaptive-routing-switching-local">Local ARS（Adaptive Routing &amp; Switching の local 完結版）<a class="headerlink" href="#local-arsadaptive-routing-switching-local" title="Permanent link">&para;</a></h1>
 <h2 id="design">design 意図<a class="headerlink" href="#design" title="Permanent link">&para;</a></h2>
-<p>Local ARS は ECMP の next-hop 選択を <strong>静的ハッシュではなく、出力キューの瞬時負荷や link 利用率に応じて動的に変える</strong> 機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。AI / HPC 向けに RDMA 通信の hot-spot を抑え、tail latency を低減することを狙う。</p>
+<p>Local ARS は <a href="../../reference/glossary/#term-ecmp">ECMP</a> の next-hop 選択を <strong>静的ハッシュではなく、出力キューの瞬時負荷や link 利用率に応じて動的に変える</strong> 機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。AI / HPC 向けに RDMA 通信の hot-spot を抑え、tail latency を低減することを狙う。</p>
 <p>「Local」とは、<strong>自スイッチ内の ASIC 観測値だけで判断</strong> することを示す。複数ホップ協調の Global ARS は別テーマ。</p>
 <h2 id="_1">動作仕様<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23869,7 +23869,7 @@
 <p>主要な構成要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>ARS profile</strong>: idle window / sample interval / quantization band / threshold 等のパラメータ束</li>
-<li><strong>ARS object（SAI）</strong>: nexthop group や ECMP に紐づける ASIC 機能 object。SAI 側で <code>SAI_OBJECT_TYPE_ARS</code> 系拡張に対応</li>
+<li><strong>ARS object（<a href="../../reference/glossary/#term-sai">SAI</a>）</strong>: nexthop group や ECMP に紐づける ASIC 機能 object。SAI 側で <code>SAI_OBJECT_TYPE_ARS</code> 系拡張に対応</li>
 <li><strong>ARS interface</strong>: per-egress-port の有効化と max load</li>
 <li><strong>flowlet 風挙動</strong>: 同一フローでも idle window 後は別 path に切り替え可（ARS の本質）</li>
 </ul>
@@ -23896,7 +23896,7 @@
 </tr>
 <tr>
 <td><code>ARS_NEXTHOP_GROUP_MAP</code></td>
-<td>nexthop group に profile を紐づけ（HLD 表現上）</td>
+<td>nexthop group に profile を紐づけ（<a href="../../reference/glossary/#term-hld">HLD</a> 表現上）</td>
 </tr>
 </tbody>
 </table>
@@ -23929,7 +23929,7 @@
 </table>
 <h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>対応 ASIC のみ</strong>: SAI ARS 拡張をサポートする NPU でのみ動く</li>
+<li><strong>対応 ASIC のみ</strong>: SAI ARS 拡張をサポートする <a href="../../reference/glossary/#term-npu">NPU</a> でのみ動く</li>
 <li><strong>Local 観測のみ</strong>: 自スイッチを越えた congestion は見えないため、fabric の global view が必要なケースはカバー外</li>
 <li><strong>profile チューニング</strong>: idle window / quantization の設定が不適切だと flapping や順序逆転を招く</li>
 <li><strong>ECMP との組み合わせ</strong>: 既存 ECMP（policy-based hashing 等）と評価順序が衝突しないか注意</li>
@@ -23939,7 +23939,7 @@
 <li><strong>inner packet hashing in ECMP</strong>: ECMP ハッシュキー設定との組み合わせ</li>
 <li><strong>policy-based hashing</strong>: フィールド指定ハッシュと ARS の動的選択の競合</li>
 <li><strong>fine-grained ECMP / weighted ECMP</strong>: 重みづけ next-hop と ARS の relative priority</li>
-<li><strong>congestion control（PFC / ECN）</strong>: ARS の判断材料となる出力 queue 観測</li>
+<li><strong>congestion control（<a href="../../reference/glossary/#term-pfc">PFC</a> / ECN）</strong>: ARS の判断材料となる出力 queue 観測</li>
 </ul>
 <h2 id="_4">トラブルシューティング<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23953,7 +23953,7 @@
 <ul>
 <li><strong>HLD 記述</strong>: <code>ArsOrch</code>（または <code>NextHopGroupOrch</code> 拡張）が <code>ARS</code> / <code>ARS_PROFILE</code> / <code>ARS_INTERFACE</code> テーブルを subscribe して SAI ARS object に反映する。</li>
 <li><strong>実装位置</strong>: <code>sonic-swss/orchagent/</code> に <code>arsorch.cpp</code> / <code>arsorch.h</code> 相当ファイル無し（grep ヒット 0）。<code>nhgorch.cpp</code> (NhgOrch) にも ARS 連携コードは存在しない。</li>
-<li><strong>差分の中身</strong>: orch 層の処理が無いため CONFIG_DB に <code>ARS|*</code> を書いても何も起きない。<code>gDirectory</code> への ArsOrch 登録も無い。</li>
+<li><strong>差分の中身</strong>: orch 層の処理が無いため <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に <code>ARS|*</code> を書いても何も起きない。<code>gDirectory</code> への ArsOrch 登録も無い。</li>
 <li><strong>読者への影響</strong>: 設定しても ASIC への反映経路が存在しないため、ARS は機能しない。</li>
 <li><strong>回避策</strong>:</li>
 <li><strong>コミュニティ SONiC master では現状利用不可</strong>。</li>
@@ -23966,7 +23966,7 @@
 <li><strong>実装位置</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> に <code>sonic-ars.yang</code> 無し。<code>sonic-cfggen</code> のテンプレート集にも参照無し。</li>
 <li><strong>差分の中身</strong>: yang validation が ARS テーブルを受け付けないため、<code>config_db.json</code> に <code>ARS</code> セクションを書くと <code>sonic-cfggen</code> でエラーになる可能性がある（ConfigMgmt の strict 検証時）。</li>
 <li><strong>読者への影響</strong>: 設定ファイルとして書く手段が無い。</li>
-<li><strong>回避策</strong>: 設定を試したい場合は <code>sonic-db-cli CONFIG_DB HSET 'ARS|global' admin_mode enabled</code> のように Redis 直書きで yang を迂回する。ただし orch が受けないため効果は無い。</li>
+<li><strong>回避策</strong>: 設定を試したい場合は <code>sonic-db-cli CONFIG_DB HSET 'ARS|global' admin_mode enabled</code> のように <a href="../../reference/glossary/#term-redis">Redis</a> 直書きで yang を迂回する。ただし orch が受けないため効果は無い。</li>
 </ul>
 <h3 id="3-cliconfig-ars-show-ars">3. CLI（<code>config ars</code> / <code>show ars</code>）未取り込み<a class="headerlink" href="#3-cliconfig-ars-show-ars" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23998,6 +23998,8 @@
 - 対応 ASIC platform リスト（特に AI cluster 向け NPU）の現行確認
 - inner packet hashing / policy-based hashing / fine-grained ECMP との同居挙動確認
 -->
+
+<!-- glossary-links-injected: abf52c3eb945 -->
 
 <div class="footnote">
 <hr />

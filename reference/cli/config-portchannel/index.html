@@ -24012,8 +24012,8 @@
 
 <h1 id="config-portchannel">config portchannel サブコマンド<a class="headerlink" href="#config-portchannel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config portchannel</code> は LACP ベースの Link Aggregation (LAG) を設定する。LAG 本体の作成・削除（<code>add</code> / <code>del</code>）、メンバー Ethernet ポートの追加・削除、<code>teamd</code> の retry-count パラメータ取得・設定の 3 グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>LACP の実体は <strong><code>teamd</code> (libteam)</strong> で、SONiC の <code>teammgrd</code> が <code>PORTCHANNEL</code> テーブルを APPL_DB へ反映し、teamd 設定ファイルを生成する。<code>config portchannel</code> は <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> テーブルを CONFIG_DB に直接書き込む役割を担う。</p>
+<p><code>config portchannel</code> は <a href="../../glossary/#term-lacp">LACP</a> ベースの Link Aggregation (<a href="../../glossary/#term-lag">LAG</a>) を設定する。LAG 本体の作成・削除（<code>add</code> / <code>del</code>）、メンバー Ethernet ポートの追加・削除、<code>teamd</code> の retry-count パラメータ取得・設定の 3 グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>LACP の実体は <strong><code>teamd</code> (libteam)</strong> で、SONiC の <code>teammgrd</code> が <code>PORTCHANNEL</code> テーブルを <a href="../../glossary/#term-appl_db">APPL_DB</a> へ反映し、<a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> 設定ファイルを生成する。<code>config portchannel</code> は <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> テーブルを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に直接書き込む役割を担う。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24265,6 +24265,8 @@ CONFIG_DB ではなく <code>teamdctl &lt;portchannel_name&gt; state item get ru
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>portchannel
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 38d67752c4a9 -->
 
 <div class="footnote">
 <hr />

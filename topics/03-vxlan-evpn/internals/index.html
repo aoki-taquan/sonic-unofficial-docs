@@ -23762,7 +23762,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>VXLAN / EVPN / VNET の内部実装は「FRR (bgpd) が EVPN type-2/type-5 を学習し、zebra が kernel/fpmsyncd に渡し、orchagent が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて SAI tunnel 系オブジェクトを ASIC_DB に投入する」という縦の流れと「外部 controller が VNET_TUNNEL / VNET_ROUTE_TUNNEL を直接 APPL_DB に書く」という横の流れに分かれます。HLD の章をまたいで読むときは、この二経路をまず分離します。</p>
+<p><a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a> の内部実装は「<a href="../../../reference/glossary/#term-frr">FRR</a> (bgpd) が EVPN type-2/type-5 を学習し、<a href="../../../reference/glossary/#term-zebra">zebra</a> が kernel/<a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> に渡し、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて <a href="../../../reference/glossary/#term-sai">SAI</a> tunnel 系オブジェクトを <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に投入する」という縦の流れと「外部 controller が VNET_TUNNEL / VNET_ROUTE_TUNNEL を直接 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に書く」という横の流れに分かれます。<a href="../../../reference/glossary/#term-hld">HLD</a> の章をまたいで読むときは、この二経路をまず分離します。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   subgraph control[制御プレーン]
@@ -23805,7 +23805,7 @@
 <tr>
 <td><code>VxlanTunnelMapOrch</code></td>
 <td><code>VxlanTunnelMapOrch::doTask</code></td>
-<td>VNI ↔ VLAN / VRF の tunnel-map entry を管理</td>
+<td>VNI ↔ <a href="../../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../../reference/glossary/#term-vrf">VRF</a> の tunnel-map entry を管理</td>
 </tr>
 <tr>
 <td><code>VNetOrch</code> (<code>orchagent/vnetorch.cpp</code>)</td>
@@ -23834,13 +23834,13 @@
 </tr>
 <tr>
 <td><code>bgpcfgd</code> (<code>dockers/docker-fpm-frr/bgpcfgd/</code>)</td>
-<td>jinja2 + bgpcfgd</td>
-<td>CONFIG_DB の <code>BGP_*</code> / <code>DEVICE_METADATA</code> から FRR の vtysh config を生成</td>
+<td>jinja2 + <a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a></td>
+<td><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>BGP_*</code> / <code>DEVICE_METADATA</code> から FRR の vtysh config を生成</td>
 </tr>
 <tr>
 <td><code>fpmsyncd</code> (<code>fpmsyncd/fpmlink.cpp</code>)</td>
 <td><code>FpmLink::processFpmMessage</code></td>
-<td>zebra の FPM netlink を <code>ROUTE_TABLE</code> / <code>LABEL_ROUTE_TABLE</code> に書き込み</td>
+<td>zebra の <a href="../../../reference/glossary/#term-fpm">FPM</a> netlink を <code>ROUTE_TABLE</code> / <code>LABEL_ROUTE_TABLE</code> に書き込み</td>
 </tr>
 </tbody>
 </table>
@@ -23900,19 +23900,19 @@
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>ASIC_DB:
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>  SAI_OBJECT_TYPE_TUNNEL / TUNNEL_MAP / TUNNEL_TERM_TABLE_ENTRY / NEXT_HOP / ROUTE_ENTRY
 </span></code></pre></div>
-<p>VNET monitoring / BFD は <code>BFD_SESSION_TABLE</code> 経由で <code>BfdOrch</code> に届き、ECMP nexthop の up/down 判定にフィードバックされます。</p>
+<p>VNET monitoring / <a href="../../../reference/glossary/#term-bfd">BFD</a> は <code>BFD_SESSION_TABLE</code> 経由で <code>BfdOrch</code> に届き、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> nexthop の up/down 判定にフィードバックされます。</p>
 <h2 id="zmq-pub-sub">ZMQ / pub-sub の使用<a class="headerlink" href="#zmq-pub-sub" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>VNET_ROUTE_TUNNEL_TABLE</code> は外部 controller からの大量 push を想定し、<strong>ZMQ producer/consumer 経路</strong>で APPL_DB を経由せずに orchagent に直接渡す経路があります（<code>zmq_server_address</code> の <code>ORCHAGENT</code> 設定）。SDN コントローラ統合 HLD で導入された経路で、Redis pub/sub のスループット限界回避のためです。</li>
-<li>通常 EVPN 経路は ProducerStateTable / SubscriberStateTable を使う Redis pub/sub のみで、ZMQ は使いません。</li>
+<li><code>VNET_ROUTE_TUNNEL_TABLE</code> は外部 controller からの大量 push を想定し、<strong>ZMQ producer/consumer 経路</strong>で APPL_DB を経由せずに orchagent に直接渡す経路があります（<code>zmq_server_address</code> の <code>ORCHAGENT</code> 設定）。SDN コントローラ統合 HLD で導入された経路で、<a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub のスループット限界回避のためです。</li>
+<li>通常 EVPN 経路は <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / SubscriberStateTable を使う Redis pub/sub のみで、ZMQ は使いません。</li>
 <li><code>BfdOrch</code> から <code>VNetOrch</code> への通知は orchagent 内 <code>Observer</code> パターン（プロセス内 callback）で、Redis を経由しません。</li>
 </ul>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VxLAN encap source IP は <strong>loopback IP</strong> をひとつ選ぶ設計で、複数 source を SAI 側で同時に持つことは tunnel object 単位では未対応です（HLD で明記）。</li>
 <li>ベンダ ASIC によっては <code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID</code>（type-5 用）が未実装で、EVPN type-5 を MAC-VRF + IRB で代替する実装に倒れることがあります。これは discrepancy として記録する典型例です。</li>
-<li>VNET BGP（VNET 内 BGP セッション）は BGP route の VNET 帰属を nexthop で識別する設計で、同一 nexthop が複数 VNET から指される構成は HLD では除外されています。</li>
-<li>type-2 で学んだ ARP/ND の老化は kernel ではなく orchagent の <code>NeighOrch</code> が tunnel route と一緒に管理するため、tcpdump で aging を観測しても挙動が一致しないことがあります。</li>
+<li>VNET <a href="../../../reference/glossary/#term-bgp">BGP</a>（VNET 内 BGP セッション）は BGP route の VNET 帰属を nexthop で識別する設計で、同一 nexthop が複数 VNET から指される構成は HLD では除外されています。</li>
+<li>type-2 で学んだ <a href="../../../reference/glossary/#term-arp">ARP</a>/ND の老化は kernel ではなく orchagent の <code>NeighOrch</code> が tunnel route と一緒に管理するため、tcpdump で aging を観測しても挙動が一致しないことがあります。</li>
 </ul>
 <h2 id="vni-vrf-vlan">VNI ↔ VRF / VLAN マッピング<a class="headerlink" href="#vni-vrf-vlan" title="Permanent link">&para;</a></h2>
 <p>EVPN は VNI を L2（type-2）と L3（type-5）の両方で使うため、VNI の意味を文脈で分ける必要があります。</p>
@@ -23942,7 +23942,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>fpmsyncd</code> は FRR からの EVPN route を <code>EVPN_REMOTE_VNI_TABLE</code> 系で受け、<code>VnetOrch</code> がそれを SAI tunnel / FDB / route に変換します。VNI が L2 と L3 で衝突する設定は CONFIG_DB の整合性チェックで拒否される設計ですが、bgpcfgd 経由でない手動の vtysh 投入では拒否されない既知の隙があります。</p>
+<p><code>fpmsyncd</code> は FRR からの EVPN route を <code>EVPN_REMOTE_VNI_TABLE</code> 系で受け、<code>VnetOrch</code> がそれを SAI tunnel / <a href="../../../reference/glossary/#term-fdb">FDB</a> / route に変換します。VNI が L2 と L3 で衝突する設定は CONFIG_DB の整合性チェックで拒否される設計ですが、bgpcfgd 経由でない手動の vtysh 投入では拒否されない既知の隙があります。</p>
 <h2 id="tunnel-decap-term">tunnel decap term の使い分け<a class="headerlink" href="#tunnel-decap-term" title="Permanent link">&para;</a></h2>
 <p><code>SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY</code> には P2P / P2MP / MP2MP の 3 種があり、SONiC は EVPN の挙動に合わせて切り替えます。</p>
 <table>
@@ -23979,6 +23979,7 @@
 <li><a href="../../../overlay/vxlan-sonic/">VXLAN SONiC HLD</a></li>
 <li><a href="../../../overlay/vnet-local-endpoint-forwarding/">VNET local endpoint forwarding</a></li>
 </ul>
+<!-- glossary-links-injected: fc9afb9971f0 -->
 
 
 

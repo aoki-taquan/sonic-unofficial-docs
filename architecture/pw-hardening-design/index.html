@@ -23718,7 +23718,7 @@
 </div>
 <h1 id="password-hardening-aging-complexity-history">パスワード強化（password hardening / aging / complexity / history）<a class="headerlink" href="#password-hardening-aging-complexity-history" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ローカルユーザのパスワードに対して <strong>エイジング</strong>（強制更新）、<strong>複雑度要件</strong>、<strong>履歴禁止</strong>、<strong>ロックアウト</strong> を Linux 標準の PAM スタックを通じて適用する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC 側は CONFIG_DB の <code>PASSW_HARDENING</code> テーブルを単一の真実源として、<code>hostcfgd</code> が <code>/etc/login.defs</code>・<code>/etc/pam.d/common-password</code>・<code>/etc/security/pwquality.conf</code> 等を rendering する。</p>
+<p>ローカルユーザのパスワードに対して <strong>エイジング</strong>（強制更新）、<strong>複雑度要件</strong>、<strong>履歴禁止</strong>、<strong>ロックアウト</strong> を Linux 標準の PAM スタックを通じて適用する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC 側は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PASSW_HARDENING</code> テーブルを単一の真実源として、<code>hostcfgd</code> が <code>/etc/login.defs</code>・<code>/etc/pam.d/common-password</code>・<code>/etc/security/pwquality.conf</code> 等を rendering する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     CFG[CONFIG_DB\nPASSW_HARDENING|POLICIES] --&gt; HC[hostcfgd]
@@ -23734,7 +23734,7 @@
 <li><strong>length</strong>: <code>minlen</code> などの最小長</li>
 <li><strong>complexity</strong>: 大文字・小文字・数字・記号の最低数（<code>pwquality</code> の <code>ucredit / lcredit / dcredit / ocredit</code>）</li>
 <li><strong>history</strong>: <code>pam_pwhistory</code> の <code>remember=N</code> で過去パスワード再利用禁止</li>
-<li><strong>lockout</strong>: <code>pam_tally2</code> / <code>pam_faillock</code> で連続失敗時のロック（HLD 文脈による）</li>
+<li><strong>lockout</strong>: <code>pam_tally2</code> / <code>pam_faillock</code> で連続失敗時のロック（<a href="../../reference/glossary/#term-hld">HLD</a> 文脈による）</li>
 <li><strong>expiration policy</strong>: 既存ローカルユーザに対するマイグレーション（<code>chage</code> 適用方針）</li>
 </ul>
 <h3 id="config_db">設定例 (CONFIG_DB)<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -23805,7 +23805,7 @@
 <ul>
 <li><strong>ローカルユーザのみ</strong>: TACACS+ / LDAP / RADIUS でリモート認証する場合、サーバ側のポリシーが優先されローカル hardening は無関係になる</li>
 <li><strong>既存ハッシュには遡及しない</strong>: complexity を強化しても既存パスワードハッシュの強度を改めるわけではない。再設定で初めて適用</li>
-<li><strong>PAM スタックが上書きされる前提</strong>: 他機能（AAA 改善、SSH global config 等）が <code>/etc/pam.d/</code> を編集する場合、<code>hostcfgd</code> の rendering 順序に依存</li>
+<li><strong>PAM スタックが上書きされる前提</strong>: 他機能（<a href="../../reference/glossary/#term-aaa">AAA</a> 改善、SSH global config 等）が <code>/etc/pam.d/</code> を編集する場合、<code>hostcfgd</code> の rendering 順序に依存</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23835,6 +23835,8 @@
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a9c18564f33f -->
 
 <div class="footnote">
 <hr />

@@ -23752,15 +23752,15 @@
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>syncd</code> コンテナが <code>Exited (134)</code> / <code>Aborted (core dumped)</code> で再起動を繰り返す</li>
-<li><code>ASIC_DB</code> への書き込みが詰まる、orchagent ログに <code>SAI API failed</code> が連続</li>
+<li><code>ASIC_DB</code> への書き込みが詰まる、<a href="../../glossary/#term-orchagent">orchagent</a> ログに <code>SAI API failed</code> が連続</li>
 <li>ASIC レベルのテーブル限界エラー (<code>CRM</code> の overflow) が観測される</li>
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>CRM (Critical Resource Monitor) で table 枯渇</strong>: FDB / ROUTE / NEXTHOP / ACL のいずれかが ASIC 容量を超過</li>
-<li><strong>SAI 属性の未対応</strong>: SDK バージョンが古く、orchagent が新属性を打って失敗</li>
+<li><strong><a href="../../glossary/#term-crm">CRM</a> (Critical Resource Monitor) で table 枯渇</strong>: <a href="../../glossary/#term-fdb">FDB</a> / ROUTE / NEXTHOP / <a href="../../glossary/#term-acl">ACL</a> のいずれかが ASIC 容量を超過</li>
+<li><strong><a href="../../glossary/#term-sai">SAI</a> 属性の未対応</strong>: SDK バージョンが古く、orchagent が新属性を打って失敗</li>
 <li><strong>同名 object の重複作成 / 削除順序ミス</strong>: 古い参照を残したまま親 object を削除</li>
-<li><strong>メモリ / shared memory 不足</strong>: redis / syncd が OOM kill</li>
+<li><strong>メモリ / shared memory 不足</strong>: redis / <a href="../../glossary/#term-syncd">syncd</a> が OOM kill</li>
 <li><strong>HW 側の障害</strong>: ASIC reset、PCIe link down、Fabric link error</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23816,14 +23816,16 @@
 <li><a href="../../config-db/crm/">../config-db/crm.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 39cba99ab9f2 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-sairedis @ 88bc51a — syncd 本体&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-sairedis">sonic-sairedis</a> @ 88bc51a — syncd 本体&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ 4305596 — orchagent&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — orchagent&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

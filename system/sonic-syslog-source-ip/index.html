@@ -23743,8 +23743,8 @@
 </div>
 <h1 id="syslog-source-ip">Syslog Source IP<a class="headerlink" href="#syslog-source-ip" title="Permanent link">&para;</a></h1>
 <h2 id="source-ip-vrf">なぜ Source IP / VRF が必要か<a class="headerlink" href="#source-ip-vrf" title="Permanent link">&para;</a></h2>
-<p>SONiC の syslog forwarding に <strong>source IP / VRF / port / protocol / filter / severity</strong> を設定できるようにする HLD（2022, v0.2 で大幅拡張）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。security / 識別、Mgmt VRF 利用時の到達性確保が動機。</p>
-<p><code>rsyslogd</code> の <strong><code>omfwd</code> 出力モジュール</strong> 機能を流用し、CONFIG_DB → <code>rsyslog-config</code> daemon → <code>/etc/rsyslog.conf</code> 生成の経路を通す。</p>
+<p>SONiC の syslog forwarding に <strong>source IP / <a href="../../reference/glossary/#term-vrf">VRF</a> / port / protocol / filter / severity</strong> を設定できるようにする <a href="../../reference/glossary/#term-hld">HLD</a>（2022, v0.2 で大幅拡張）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。security / 識別、Mgmt VRF 利用時の到達性確保が動機。</p>
+<p><code>rsyslogd</code> の <strong><code>omfwd</code> 出力モジュール</strong> 機能を流用し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> → <code>rsyslog-config</code> daemon → <code>/etc/rsyslog.conf</code> 生成の経路を通す。</p>
 <p>スコープ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>In</strong>: UDP の source IP 設定</li>
@@ -23897,6 +23897,8 @@
 <li><a href="../../topics/15-security-aaa/">15-security-aaa</a>: 監査ログ運用</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 0f664a284ac4 -->
+
 <div class="footnote">
 <hr />
 <ol>

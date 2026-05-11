@@ -23780,7 +23780,7 @@
 
 <h1 id="route_map">ROUTE_MAP テーブル<a class="headerlink" href="#route_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ルーティングポリシー (route-map) の statement 単位の定義テーブル。BGP neighbor / peer-group や redistribute から名前で参照される。<code>frr-mgmt-framework</code> (<code>DEVICE_METADATA.frr_mgmt_framework_config = true</code>) が CONFIG_DB を購読し FRR <code>route-map</code> コマンドに変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ルーティングポリシー (route-map) の statement 単位の定義テーブル。<a href="../../glossary/#term-bgp">BGP</a> neighbor / peer-group や redistribute から名前で参照される。<code>frr-mgmt-framework</code> (<code>DEVICE_METADATA.frr_mgmt_framework_config = true</code>) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し <a href="../../glossary/#term-frr">FRR</a> <code>route-map</code> コマンドに変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23841,7 +23841,7 @@
 <tr>
 <td><code>match_src_vrf</code></td>
 <td>union (<code>default</code>/leafref <code>VRF.name</code>)</td>
-<td>source VRF match</td>
+<td>source <a href="../../glossary/#term-vrf">VRF</a> match</td>
 </tr>
 <tr>
 <td><code>match_neighbor</code></td>
@@ -23945,7 +23945,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>ROUTE_MAP_SET</code> (名前一覧)、<code>PREFIX_SET</code>、<code>COMMUNITY_SET</code>、<code>AS_PATH_SET</code>、<code>BGP_NEIGHBOR_AF</code>、<code>BGP_PEER_GROUP_AF</code></li>
 <li>関連 CLI: <code>config route_map</code>、<code>vtysh -c "show route-map"</code></li>
-<li>関連 YANG: <code>sonic-route-map</code>、<code>sonic-routing-policy-sets</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-route-map</code>、<code>sonic-routing-policy-sets</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23973,6 +23973,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show route-map&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 07040282b44e -->
 
 <div class="footnote">
 <hr />

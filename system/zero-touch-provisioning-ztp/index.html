@@ -23678,7 +23678,7 @@
 <h1 id="zero-touch-provisioningztpdhcp-option-plugin-state-machine">Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）<a class="headerlink" href="#zero-touch-provisioningztpdhcp-option-plugin-state-machine" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>ZTP はいつ自動で動き出すか</strong>（トリガ条件）</li>
+<li><strong><a href="../../reference/glossary/#term-ztp">ZTP</a> はいつ自動で動き出すか</strong>（トリガ条件）</li>
 <li><strong>ZTP JSON はどこから取られ、どんな構造か</strong></li>
 <li><strong>どんな種類の section / plugin があるか</strong></li>
 <li><strong>どのファイルで現在状態を見るか、CLI でどう再試行するか</strong></li>
@@ -23782,12 +23782,12 @@
 <h2 id="5">5. 制限事項と干渉する機能<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>management interface 経由が基本</strong>: data port 経由 ZTP は DHCP option / route 設定が要る</li>
-<li><strong>HTTPS の cert 検証</strong>: 本番は信頼 CA / pinning が必要（HLD は緩い検証も許す）</li>
+<li><strong>HTTPS の cert 検証</strong>: 本番は信頼 CA / pinning が必要（<a href="../../reference/glossary/#term-hld">HLD</a> は緩い検証も許す）</li>
 <li><strong>plugin 拡張の互換性</strong>: vendor 拡張 plugin には対応版 ztp daemon が要る</li>
 <li><strong>failure 時の半適用</strong>: 一部 section だけ成功した状態で停止すると整合性保証なし</li>
 <li><strong>DHCP relay (v4/v6)</strong>: ZTP は DHCP に強く依存。relay の設定不備が直撃</li>
 <li><strong>fwutil / secure-upgrade / secure-boot</strong>: firmware section / image 検証で連動</li>
-<li><strong>gNOI OS / file APIs</strong>: 後発の運用 API と用途が一部重なる</li>
+<li><strong><a href="../../reference/glossary/#term-gnoi">gNOI</a> OS / file APIs</strong>: 後発の運用 API と用途が一部重なる</li>
 </ul>
 <h2 id="6">6. トラブルシューティング<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23801,6 +23801,8 @@
 <li><a href="../../topics/11-reboot/">11-reboot</a>: <code>reboot-on-success</code> / <code>reboot-on-failure</code> で起こる再起動</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 7429d2aea81c -->
+
 <div class="footnote">
 <hr />
 <ol>

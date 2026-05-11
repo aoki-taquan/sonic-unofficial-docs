@@ -23608,7 +23608,7 @@
 
 
 <h1 id="yang">YANG リファレンス<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h1>
-<p>このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引である。SONiC native YANG のページは <code>docs/reference/yang/*.md</code> に並んでおり、CONFIG_DB のテーブルスキーマと 1:1 対応する。OpenConfig 側のマップ範囲は、機能ごとに <a href="../concept/">概要</a> の表と、各機能 HLD を参照する。</p>
+<p>このページは、機能章 (本書の章 01〜21) から <a href="../../../reference/glossary/#term-yang">YANG</a> モジュールを逆引きするための索引である。SONiC native YANG のページは <code>docs/reference/yang/*.md</code> に並んでおり、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> のテーブルスキーマと 1:1 対応する。OpenConfig 側のマップ範囲は、機能ごとに <a href="../concept/">概要</a> の表と、各機能 <a href="../../../reference/glossary/#term-hld">HLD</a> を参照する。</p>
 <h2 id="yang_1">機能章別 YANG モジュール<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23625,37 +23625,37 @@
 <td>device 識別、機能 enable / disable</td>
 </tr>
 <tr>
-<td>02 BGP / FRR</td>
+<td>02 <a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-frr">FRR</a></td>
 <td><a href="../../../reference/yang/sonic-bgp-global/">sonic-bgp-global</a>, <a href="../../../reference/yang/sonic-bgp-neighbor/">sonic-bgp-neighbor</a>, <a href="../../../reference/yang/sonic-bgp-peergroup/">sonic-bgp-peergroup</a>, <a href="../../../reference/yang/sonic-bgp-aggregate-address/">sonic-bgp-aggregate-address</a>, <a href="../../../reference/yang/sonic-route-map/">sonic-route-map</a>, <a href="../../../reference/yang/sonic-route-common/">sonic-route-common</a>, <a href="../../../reference/yang/sonic-static-route/">sonic-static-route</a></td>
 <td>BGP 設定、route map、static route</td>
 </tr>
 <tr>
-<td>03 VXLAN / EVPN / VNET</td>
+<td>03 <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a></td>
 <td><a href="../../../reference/yang/sonic-vxlan/">sonic-vxlan</a>, <a href="../../../reference/yang/sonic-vnet/">sonic-vnet</a></td>
 <td>VXLAN tunnel、VNET overlay</td>
 </tr>
 <tr>
-<td>04 L2 / VLAN / LAG / MC-LAG</td>
+<td>04 L2 / <a href="../../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../../reference/glossary/#term-lag">LAG</a> / MC-LAG</td>
 <td><a href="../../../reference/yang/sonic-vlan/">sonic-vlan</a>, <a href="../../../reference/yang/sonic-vlan-sub-interface/">sonic-vlan-sub-interface</a>, <a href="../../../reference/yang/sonic-portchannel/">sonic-portchannel</a>, <a href="../../../reference/yang/sonic-mclag/">sonic-mclag</a>, <a href="../../../reference/yang/sonic-lldp/">sonic-lldp</a></td>
 <td>L2 / LAG / MC-LAG 設定</td>
 </tr>
 <tr>
-<td>06 VRF / ECMP</td>
+<td>06 <a href="../../../reference/glossary/#term-vrf">VRF</a> / <a href="../../../reference/glossary/#term-ecmp">ECMP</a></td>
 <td><a href="../../../reference/yang/sonic-vrf/">sonic-vrf</a></td>
 <td>VRF テーブル</td>
 </tr>
 <tr>
-<td>07 ACL / CoPP / Mirror</td>
+<td>07 <a href="../../../reference/glossary/#term-acl">ACL</a> / <a href="../../../reference/glossary/#term-copp">CoPP</a> / Mirror</td>
 <td><a href="../../../reference/yang/sonic-copp/">sonic-copp</a>, <a href="../../../reference/yang/sonic-mirror-session/">sonic-mirror-session</a>, <a href="../../../reference/yang/sonic-pbh/">sonic-pbh</a></td>
 <td>CoPP、mirror、PBH</td>
 </tr>
 <tr>
-<td>08 QoS / Buffer / PFC</td>
+<td>08 <a href="../../../reference/glossary/#term-qos">QoS</a> / Buffer / <a href="../../../reference/glossary/#term-pfc">PFC</a></td>
 <td><a href="../../../reference/yang/sonic-buffer-pool/">sonic-buffer-pool</a>, <a href="../../../reference/yang/sonic-buffer-profile/">sonic-buffer-profile</a>, <a href="../../../reference/yang/sonic-buffer-pg/">sonic-buffer-pg</a>, <a href="../../../reference/yang/sonic-buffer-queue/">sonic-buffer-queue</a>, <a href="../../../reference/yang/sonic-queue/">sonic-queue</a>, <a href="../../../reference/yang/sonic-scheduler/">sonic-scheduler</a>, <a href="../../../reference/yang/sonic-dscp-tc-map/">sonic-dscp-tc-map</a>, <a href="../../../reference/yang/sonic-tc-queue-map/">sonic-tc-queue-map</a>, <a href="../../../reference/yang/sonic-port-qos-map/">sonic-port-qos-map</a>, <a href="../../../reference/yang/sonic-pfcwd/">sonic-pfcwd</a></td>
 <td>QoS / Buffer / PFCWD</td>
 </tr>
 <tr>
-<td>09 Telemetry / SNMP</td>
+<td>09 Telemetry / <a href="../../../reference/glossary/#term-snmp">SNMP</a></td>
 <td><a href="../../../reference/yang/sonic-syslog/">sonic-syslog</a></td>
 <td>syslog</td>
 </tr>
@@ -23665,12 +23665,12 @@
 <td>port / interface</td>
 </tr>
 <tr>
-<td>15 Security / AAA</td>
+<td>15 Security / <a href="../../../reference/glossary/#term-aaa">AAA</a></td>
 <td><a href="../../../reference/yang/sonic-system-aaa/">sonic-system-aaa</a></td>
 <td>AAA</td>
 </tr>
 <tr>
-<td>16 NAT / DHCP / Time / DNS</td>
+<td>16 <a href="../../../reference/glossary/#term-nat">NAT</a> / DHCP / Time / DNS</td>
 <td><a href="../../../reference/yang/sonic-nat/">sonic-nat</a>, <a href="../../../reference/yang/sonic-dhcp-server/">sonic-dhcp-server</a>, <a href="../../../reference/yang/sonic-ntp/">sonic-ntp</a>, <a href="../../../reference/yang/sonic-dns/">sonic-dns</a></td>
 <td>NAT / DHCP / NTP / DNS</td>
 </tr>
@@ -23685,6 +23685,7 @@
 <li><a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG model guidelines</a></li>
 <li><a href="../../../management/sonic-config-update-validation-via-yang/">SONiC config update validation via YANG</a></li>
 </ul>
+<!-- glossary-links-injected: 31d4e5a93358 -->
 
 
 

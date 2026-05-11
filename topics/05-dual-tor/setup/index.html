@@ -23862,7 +23862,7 @@
 
 
 <h1 id="dual-tor">Dual-ToR の設定<a class="headerlink" href="#dual-tor" title="Permanent link">&para;</a></h1>
-<p>Dual-ToR の設定は、port ごとの <code>MUX_CABLE</code> と peer ToR を表す <code>PEER_SWITCH</code> を起点に読みます。CLI の <code>config muxcable</code> は便利ですが、何が CONFIG_DB に残る設定で、何が xcvrd / ycabled への一時的な低レイヤ操作なのかを分けておくと運用しやすくなります。</p>
+<p>Dual-ToR の設定は、port ごとの <code>MUX_CABLE</code> と peer ToR を表す <code>PEER_SWITCH</code> を起点に読みます。CLI の <code>config muxcable</code> は便利ですが、何が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に残る設定で、何が xcvrd / ycabled への一時的な低レイヤ操作なのかを分けておくと運用しやすくなります。</p>
 <h2 id="server-facing-port">最小単位は server-facing port<a class="headerlink" href="#server-facing-port" title="Permanent link">&para;</a></h2>
 <p><code>MUX_CABLE|&lt;ifname&gt;</code> は、サーバに向かう Ethernet port ごとに作ります。最低限見るフィールドは次の通りです。</p>
 <table>
@@ -23952,7 +23952,7 @@
 </span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>DEVICE_METADATA.subtype = DualToR</code> は linkmgrd / mux-related orchestration の有効化フラグです。これが無いと MUX_CABLE row があっても <code>linkmgrd</code> は起動しない実装になっています。</p>
+<p><code>DEVICE_METADATA.subtype = DualToR</code> は <a href="../../../reference/glossary/#term-linkmgrd">linkmgrd</a> / mux-related orchestration の有効化フラグです。これが無いと MUX_CABLE row があっても <code>linkmgrd</code> は起動しない実装になっています。</p>
 <p><code>state: auto</code> により <code>linkmgrd</code> が状態遷移を管理します。<code>neighbor_mode: prefix-route</code> にすると、サーバ向け neighbor を残したまま route の nexthop を直接 neighbor / tunnel 間で切り替える設計になります。</p>
 <h3 id="show">show コマンドで確認<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>muxcable<span class="w"> </span>status
@@ -24062,7 +24062,7 @@
 </table>
 <p><code>cable_type: active-active</code> と <code>cable_type: active-standby</code> を box 内で混在させる構成は基本的に想定外です。port 単位の混在は controller / linkmgrd の前提を崩します。</p>
 <h2 id="sonic-cfggen">sonic-cfggen で部分パッチを当てる<a class="headerlink" href="#sonic-cfggen" title="Permanent link">&para;</a></h2>
-<p>deployment template (<code>minigraph.xml</code> → <code>sonic-cfggen</code> 経路) ではなく、運用中に Dual-ToR 関連の row を追加・削除したいときは sonic-cfggen の部分パッチを使います。</p>
+<p>deployment template (<code>minigraph.xml</code> → <code>sonic-cfggen</code> 経路) ではなく、運用中に Dual-ToR 関連の row を追加・削除したいときは <a href="../../../reference/glossary/#term-sonic-cfggen">sonic-cfggen</a> の部分パッチを使います。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/tmp/mux_patch.json<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="s">{</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="s">  &quot;MUX_CABLE&quot;: {</span>
@@ -24098,12 +24098,12 @@
 <td>静的設定 (cable_type, state, server_ip 等)</td>
 </tr>
 <tr>
-<td>APPL_DB</td>
+<td><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a></td>
 <td><code>MUX_CABLE_TABLE</code></td>
 <td>linkmgrd が反映した動的設定</td>
 </tr>
 <tr>
-<td>STATE_DB</td>
+<td><a href="../../../reference/glossary/#term-state_db">STATE_DB</a></td>
 <td><code>MUX_CABLE_TABLE</code></td>
 <td>現在状態 (active/standby, link prober 状態)</td>
 </tr>
@@ -24116,7 +24116,7 @@
 </table>
 <p><code>show muxcable status</code> が混乱した出力をするときは、STATE_DB の <code>MUX_CABLE_TABLE</code> と <code>HW_MUX_CABLE_TABLE</code> の不一致を <code>redis-cli -n 6 keys 'MUX*'</code> で確認します。CONFIG_DB の <code>state</code> を変えても hardware が追従していないケース (cable firmware ハング、ycabled デッドロック) はこの 2 table の差分で判別できます。</p>
 <h2 id="yang">YANG を見る場面<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h2>
-<p>Dual-ToR 関連の YANG モジュールは <code>sonic-mux-cable</code> (<code>MUX_CABLE</code> の型)、<code>sonic-peer-switch</code> (<code>PEER_SWITCH</code>)、<code>sonic-tunnel</code> (<code>TUNNEL</code>) の 3 つに分かれます。<code>cable_type</code> の enum (<code>active-standby</code> / <code>active-active</code>) や <code>state</code> の許容値はここに定義されています。外部から gNMI で設定する場合は値の正規化を YANG 側で確認します。</p>
+<p>Dual-ToR 関連の <a href="../../../reference/glossary/#term-yang">YANG</a> モジュールは <code>sonic-mux-cable</code> (<code>MUX_CABLE</code> の型)、<code>sonic-peer-switch</code> (<code>PEER_SWITCH</code>)、<code>sonic-tunnel</code> (<code>TUNNEL</code>) の 3 つに分かれます。<code>cable_type</code> の enum (<code>active-standby</code> / <code>active-active</code>) や <code>state</code> の許容値はここに定義されています。外部から <a href="../../../reference/glossary/#term-gnmi">gNMI</a> で設定する場合は値の正規化を YANG 側で確認します。</p>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/config-db/mux-cable/">MUX_CABLE テーブル</a></li>
@@ -24125,6 +24125,7 @@
 <li><a href="../../../reference/cli/show-muxcable/">show muxcable サブコマンド</a></li>
 <li><a href="../../../reference/config-db/tunnel/">TUNNEL テーブル</a></li>
 </ul>
+<!-- glossary-links-injected: d2689548bde0 -->
 
 
 

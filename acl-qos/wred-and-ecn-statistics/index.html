@@ -23872,7 +23872,7 @@
 </div>
 <h1 id="wred-ecn-per-queue-per-portcapability">WRED / ECN 統計（per-queue / per-port、capability ベース）<a class="headerlink" href="#wred-ecn-per-queue-per-portcapability" title="Permanent link">&para;</a></h1>
 <h2 id="_1">これは何か（一行で）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SAI が出す WRED ドロップ / ECN マーク専用カウンタを Flex Counter で <code>COUNTERS_DB</code> に出し、<code>show queue wredcounters</code> および <code>show interfaces counters detailed</code> の拡張で見えるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-sai">SAI</a> が出す <a href="../../reference/glossary/#term-wred">WRED</a> ドロップ / ECN マーク専用カウンタを Flex Counter で <code>COUNTERS_DB</code> に出し、<code>show queue wredcounters</code> および <code>show interfaces counters detailed</code> の拡張で見えるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">どんなときに使うか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li>「<code>portstat</code> の <code>RX_DRP</code> が増えているが、これが WRED 起因か知りたい」</li>
@@ -23881,7 +23881,7 @@
 </ul>
 <h2 id="capability">設計上のキモ: capability ベース<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h2>
 <p>プラットフォームによって対応カウンタが異なるため、<code>orchagent</code> が起動時に <strong><code>sai_query_stats_capability</code></strong> を呼び、<code>STATE_DB</code> に結果を書く。CLI はそれを見て <strong>対応カウンタだけを取得・表示</strong> し、非対応は <code>N/A</code><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>SAI_PORT_STAT_ECN_MARKED_PACKETS</code>（ポート単位 ECN マーク）は本 HLD の <strong>次フェーズ</strong> 扱い。</p>
+<p><code>SAI_PORT_STAT_ECN_MARKED_PACKETS</code>（ポート単位 ECN マーク）は本 <a href="../../reference/glossary/#term-hld">HLD</a> の <strong>次フェーズ</strong> 扱い。</p>
 <h2 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     SAI[SAI] --&gt; ORCH[orchagent 起動時]
@@ -24033,7 +24033,7 @@
 </span></code></pre></div>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>portstat</code> / <code>queuestat</code></strong>: 共通 Flex Counter インフラに並ぶ。<code>POLL_INTERVAL</code> を縮めすぎると syncd 全体の負荷が増える</li>
+<li><strong><code>portstat</code> / <code>queuestat</code></strong>: 共通 Flex Counter インフラに並ぶ。<code>POLL_INTERVAL</code> を縮めすぎると <a href="../../reference/glossary/#term-syncd">syncd</a> 全体の負荷が増える</li>
 <li><strong>WRED 設定 (<code>WRED_PROFILE</code>)</strong>: プロファイルがキューに紐付いていないと drop / mark は増えない</li>
 <li><strong>ECN マーキング</strong>: WRED プロファイル内の <code>ecn</code> 設定が必要。無効なキューでは <code>EcnMarked/*</code> が 0 のまま</li>
 <li><strong>Warm/fast boot</strong>: HLD で「影響なし」と明記<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -24063,6 +24063,8 @@
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 039e19279416 -->
 
 <div class="footnote">
 <hr />

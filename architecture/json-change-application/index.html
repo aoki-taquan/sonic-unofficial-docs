@@ -23814,7 +23814,7 @@
 <li>どこで実装されているか</li>
 </ul>
 <h2 id="_2">結論<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>親 HLD <code>Generic Config Update and Rollback</code> で定義された <code>apply-change(JsonChange)</code> の実装設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>table 単位 alphabetical 順</strong> で CONFIG_DB 書込み → service 再起動（必要時）→ 反映確認 → 最終 diff 検証。失敗しても自動 rollback はせず、上位 <code>apply-patch</code> が責任を持つ。</p>
+<p>親 <a href="../../reference/glossary/#term-hld">HLD</a> <code>Generic Config Update and Rollback</code> で定義された <code>apply-change(JsonChange)</code> の実装設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>table 単位 alphabetical 順</strong> で <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 書込み → service 再起動（必要時）→ 反映確認 → 最終 diff 検証。失敗しても自動 rollback はせず、上位 <code>apply-patch</code> が責任を持つ。</p>
 <h2 id="_3">動作仕様<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="_4">入力契約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">void</span> <span class="n">apply_change</span><span class="p">(</span><span class="n">JsonChange</span> <span class="n">jsonChange</span><span class="p">)</span>  <span class="c1"># エラーは例外</span>
@@ -23906,7 +23906,7 @@ reasoning: alphabetical 順と per-table フローの根拠。
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Generic Config Update / Rollback (<code>apply-patch</code>)</strong>: 上位呼出</li>
-<li><strong>YANG validation</strong>: <code>JsonChange</code> 妥当性検証は親 HLD 側</li>
+<li><strong><a href="../../reference/glossary/#term-yang">YANG</a> validation</strong>: <code>JsonChange</code> 妥当性検証は親 HLD 側</li>
 <li><strong>個別 service</strong>: <code>swss</code>, <code>bgp</code>, <code>dhcp_relay</code>, <code>rsyslog</code>, <code>ntp</code>, <code>restapi</code> 等で restart vs subscribe 分岐</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -23921,6 +23921,8 @@ reasoning: alphabetical 順と per-table フローの根拠。
 - `generic_updater.py` で `ChangeApplier` / `DryRunChangeApplier` 切替
 - `config apply-patch` は `config/main.py` から `apply_patch_from_file` を呼ぶ
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 <div class="footnote">
 <hr />

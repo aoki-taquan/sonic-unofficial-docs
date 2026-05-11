@@ -23751,13 +23751,13 @@
 <h1 id="zmq-producerstatetable-consumerstatetable">ZMQ ProducerStateTable / ConsumerStateTable 設計<a class="headerlink" href="#zmq-producerstatetable-consumerstatetable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Redis 版 <code>ProducerStateTable</code> / <code>ConsumerStateTable</code> と何が違うのか</li>
+<li><a href="../../reference/glossary/#term-redis">Redis</a> 版 <code>ProducerStateTable</code> / <code>ConsumerStateTable</code> と何が違うのか</li>
 <li>なぜ ZMQ に置き換えるのか、何を犠牲にして何を得るのか</li>
 <li><code>dbPersistence</code> フラグを off にしたとき、データはどこに残るのか</li>
-<li>既存 orchagent のループに統合する際の前提</li>
+<li>既存 <a href="../../reference/glossary/#term-orchagent">orchagent</a> のループに統合する際の前提</li>
 </ul>
 <h2 id="zmq">なぜ ZMQ 版が必要か<a class="headerlink" href="#zmq" title="Permanent link">&para;</a></h2>
-<p>通常の <code>ProducerStateTable</code> / <code>ConsumerStateTable</code> は Redis 経由でメッセージを運ぶ。永続化・観測性は得られるが <strong>書き込みコストが Redis に縛られる</strong>。本 HLD は API シグネチャを保ったまま <strong>ZMQ をトランスポートに使う</strong> バリエーションを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>通常の <code>ProducerStateTable</code> / <code>ConsumerStateTable</code> は Redis 経由でメッセージを運ぶ。永続化・観測性は得られるが <strong>書き込みコストが Redis に縛られる</strong>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は API シグネチャを保ったまま <strong>ZMQ をトランスポートに使う</strong> バリエーションを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>Redis を経由せず低レイテンシで直接プロセス間メッセージング</li>
 <li>Consumer 側で <strong>DB 更新を on/off できる</strong>（メモリ削減 / 高性能ユースケース向け）</li>
@@ -23844,7 +23844,7 @@
 </blockquote>
 <p>DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Redis を完全に外せるため最速。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>ライブラリレベル API のため CONFIG_DB / CLI による直接の制御点は HLD に無い。DB 更新 on/off は <strong>コード側で <code>ZmqConsumerStateTable</code> 構築時に指定</strong>。</p>
+<p>ライブラリレベル API のため <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI による直接の制御点は HLD に無い。DB 更新 on/off は <strong>コード側で <code>ZmqConsumerStateTable</code> 構築時に指定</strong>。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>ZmqClient::sendMsg</code> はリトライ失敗で <strong>例外</strong>。呼出し側で握る前提</li>
@@ -23871,6 +23871,8 @@
 <li><a href="../../topics/20-swss-sai-redis/architecture/">Topic 20 SWSS/SAI/Redis - architecture</a></li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 7aa3a64b7a02 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23862,7 +23862,7 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。ここでは代表機能 (interface, VLAN, PortChannel, BGP) について OpenConfig 側のマップを起点にする。実コマンド例と容量は <a href="../../../management/gnmi-usage/">gNMI usage</a> にまとまっている。</p>
+<p><a href="../../../reference/glossary/#term-gnmi">gNMI</a> からの Get / Set / Subscribe は、対象の <a href="../../../reference/glossary/#term-yang">YANG</a> path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。ここでは代表機能 (interface, <a href="../../../reference/glossary/#term-vlan">VLAN</a>, <a href="../../../reference/glossary/#term-portchannel">PortChannel</a>, <a href="../../../reference/glossary/#term-bgp">BGP</a>) について OpenConfig 側のマップを起点にする。実コマンド例と容量は <a href="../../../management/gnmi-usage/">gNMI usage</a> にまとまっている。</p>
 <h2 id="1-gnmi-server">シナリオ 1: gNMI server 立ち上げ<a class="headerlink" href="#1-gnmi-server" title="Permanent link">&para;</a></h2>
 <p>DUT 側 (telemetry container) の起動と、client 側からの疎通確認まで。証明書は <code>/etc/sonic/telemetry/</code> 配下に置く。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># DUT 側</span>
@@ -23960,7 +23960,7 @@
 <ul>
 <li><strong>Get</strong>: 単発取得。<code>encoding=JSON_IETF</code> で OpenConfig パスを与える形と、<code>encoding=JSON</code> で SONiC native YANG パスを与える形がある。</li>
 <li><strong>Set</strong>: replace / update / delete を 1 リクエストで混在できる。replace は YANG モデル意味論で部分木を置換する。delete は OpenConfig 側で表現可能なノードのみ対応するため、SONiC native 側を併用するケースがある。詳細は <a href="../../../management/model-based-replace-delete-in-mgmt-framework-transformer/">Model-based replace/delete in Transformer</a> を参照する。</li>
-<li><strong>Subscribe</strong>: ON_CHANGE / SAMPLE / TARGET_DEFINED。CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB をまたいで購読できる。</li>
+<li><strong>Subscribe</strong>: ON_CHANGE / SAMPLE / TARGET_DEFINED。<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> をまたいで購読できる。</li>
 </ul>
 <p>クライアント実装例、<code>gnmi_cli</code> / <code>gnmi_get</code> / <code>gnmi_set</code> の引数組み立て、TLS 設定は <a href="../../../management/gnmi-usage/">gNMI usage</a> を参照する。</p>
 <h2 id="openconfig">OpenConfig パスのよく使うエントリ<a class="headerlink" href="#openconfig" title="Permanent link">&para;</a></h2>
@@ -23971,7 +23971,7 @@
 <h3 id="portchannel-lag">PortChannel (LAG)<a class="headerlink" href="#portchannel-lag" title="Permanent link">&para;</a></h3>
 <p>OpenConfig <code>aggregate</code> interface として PortChannel を扱う。member 追加は <code>aggregate-id</code> を物理 interface に設定する形で表現される。SONiC native では <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> テーブルが対象。詳細は <a href="../../../switching/openconfig-support-for-portchannel-aggregate-interface/">OpenConfig PortChannel</a> を参照する。</p>
 <h3 id="bgp">BGP<a class="headerlink" href="#bgp" title="Permanent link">&para;</a></h3>
-<p>BGP は OpenConfig BGP と SONiC native BGP の両方が定義され、Management Framework の選択 (<code>frr_mgmt_framework_config</code>) によって FRR への反映経路が変わる。OpenConfig 経由で書く場合は <code>frrcfgd</code> が CONFIG_DB の差分から FRR vty を生成する。詳細は <a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">BGP / FRR Unified Mgmt Framework</a> と章 02 の <a href="../../02-bgp/setup/">BGP - 設定</a> を参照する。</p>
+<p>BGP は OpenConfig BGP と SONiC native BGP の両方が定義され、Management Framework の選択 (<code>frr_mgmt_framework_config</code>) によって <a href="../../../reference/glossary/#term-frr">FRR</a> への反映経路が変わる。OpenConfig 経由で書く場合は <code>frrcfgd</code> が CONFIG_DB の差分から FRR vty を生成する。詳細は <a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">BGP / FRR Unified Mgmt Framework</a> と章 02 の <a href="../../02-bgp/setup/">BGP - 設定</a> を参照する。</p>
 <h2 id="sonic-native-yang">SONiC native YANG の役割<a class="headerlink" href="#sonic-native-yang" title="Permanent link">&para;</a></h2>
 <p>OpenConfig がカバーしないフィールド (たとえば SONiC 固有の feature flag、ASIC 特有の counter、telemetry 設定、特定の hardware option) は SONiC native YANG から入る。Native YANG のモジュール命名と書き方は <a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG model guidelines</a> にまとまっている。</p>
 <p>機能章別の YANG モジュール一覧は <a href="../yang-reference/">YANG リファレンス</a> を参照する。</p>
@@ -24048,6 +24048,7 @@
 <li><a href="../../../management/sonic-cli-auto-generation-tool/">SONiC CLI auto-generation tool</a></li>
 <li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a> / <a href="../yang-reference/">yang-reference</a></li>
 </ul>
+<!-- glossary-links-injected: 617e688be241 -->
 
 
 

@@ -23825,7 +23825,7 @@
 <h1 id="port">PORT テーブル<a class="headerlink" href="#port" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>物理スイッチポートの設定を保持するテーブル。ポート名（<code>Ethernet0</code> など）をキーに、speed、lanes、MTU、admin status、FEC、auto-negotiation、breakout subport、MACsec プロファイル、TPID、mux cable 情報、400G ZR トランシーバ向けの tx-power / laser_freq などを記載する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>portmgrd</code> / <code>orchagent</code> の <code>PortsOrch</code> が PORT テーブルを購読し、SAI 経由で hardware に設定を反映する。<code>speed</code> と <code>lanes</code> は通常 <code>port_config.ini</code> 由来の初期値で、運用中に CLI で変更可能。</p>
+<p><code>portmgrd</code> / <code>orchagent</code> の <code>PortsOrch</code> が PORT テーブルを購読し、<a href="../../glossary/#term-sai">SAI</a> 経由で hardware に設定を反映する。<code>speed</code> と <code>lanes</code> は通常 <code>port_config.ini</code> 由来の初期値で、運用中に CLI で変更可能。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23998,7 +23998,7 @@
 <td>string <code>Ext</code>/<code>Int</code>/<code>Inb</code>/<code>Rec</code>/<code>Dpc</code></td>
 <td>-</td>
 <td><code>Ext</code></td>
-<td>多 ASIC / SmartSwitch のロール</td>
+<td>多 ASIC / <a href="../../glossary/#term-smartswitch">SmartSwitch</a> のロール</td>
 </tr>
 <tr>
 <td><code>admin_status</code></td>
@@ -24026,7 +24026,7 @@
 <td>string <code>on</code>/<code>off</code></td>
 <td>-</td>
 <td>-</td>
-<td>非対称 PFC</td>
+<td>非対称 <a href="../../glossary/#term-pfc">PFC</a></td>
 </tr>
 <tr>
 <td><code>tpid</code></td>
@@ -24087,9 +24087,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB テーブル / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>VLAN_MEMBER</code>（PORT を leafref 参照）、<code>PORTCHANNEL_MEMBER</code>（PORT を leafref）、<code>INTERFACE</code>（L3 用 PORT 上の IP）、<code>MACSEC_PROFILE</code>、<code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VLAN_MEMBER</code>（PORT を leafref 参照）、<code>PORTCHANNEL_MEMBER</code>（PORT を leafref）、<code>INTERFACE</code>（L3 用 PORT 上の IP）、<code>MACSEC_PROFILE</code>、<code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code></li>
 <li>関連 CLI: <a href="../../cli/config-interface/"><code>config interface</code></a>（speed / mtu / admin / fec / autoneg を変更）</li>
-<li>関連 YANG: <code>sonic-port</code>、<code>sonic-types</code>（<code>switchport_mode</code>、<code>admin_status</code>、<code>interface_type</code>、<code>tpid_type</code>）</li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-port</code>、<code>sonic-types</code>（<code>switchport_mode</code>、<code>admin_status</code>、<code>interface_type</code>、<code>tpid_type</code>）</li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24113,7 +24113,7 @@
 <h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>Ethernet0</code> 等の <code>EthernetN</code> 形式キー。<code>N</code> は port_config.ini 由来の lane base。</li>
+<li><code>Ethernet0</code> 等の <code>EthernetN</code> 形式キー。<code>N</code> は <a href="../../glossary/#term-port-config-ini">port_config.ini</a> 由来の lane base。</li>
 <li><code>speed</code>: 10000 / 25000 / 40000 / 100000 / 400000 (Mbps)。</li>
 <li><code>mtu</code>: 9100（jumbo を有効にする一般運用値）。</li>
 <li><code>admin_status</code>: <code>up</code>（運用ポート）。</li>
@@ -24124,8 +24124,8 @@
 <ul>
 <li><code>speed</code> を <code>lanes</code> 数と不整合な値にすると SAI が <code>SAI_STATUS_INVALID_PARAMETER</code> を返してポートが down のまま。</li>
 <li>対向と <code>fec</code> が不一致だと PHY は up しても link 不安定。両端を同じ FEC モードに揃える。</li>
-<li><code>mtu</code> を VLAN/PortChannel メンバ間で揃えないと L2 で巨大フレームがドロップされる。</li>
-<li>Breakout 中の親ポートに <code>admin_status: up</code> を残すと subport と二重設定で orchagent エラー。</li>
+<li><code>mtu</code> を <a href="../../glossary/#term-vlan">VLAN</a>/<a href="../../glossary/#term-portchannel">PortChannel</a> メンバ間で揃えないと L2 で巨大フレームがドロップされる。</li>
+<li>Breakout 中の親ポートに <code>admin_status: up</code> を残すと subport と二重設定で <a href="../../glossary/#term-orchagent">orchagent</a> エラー。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span>
@@ -24133,6 +24133,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>eeprom<span class="w"> </span>Ethernet0
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ea1f97661839 -->
 
 <div class="footnote">
 <hr />

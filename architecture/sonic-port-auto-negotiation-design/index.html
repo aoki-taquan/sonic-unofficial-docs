@@ -23912,7 +23912,7 @@
 <li>Twisted-pair（Non-Gearbox）</li>
 <li>SFP / QSFP / QSFP-DD CR/KR transceiver（Non-Gearbox）</li>
 </ul>
-<p>ベンダ固有 SAI の挙動詳細は scope 外。</p>
+<p>ベンダ固有 <a href="../../reference/glossary/#term-sai">SAI</a> の挙動詳細は scope 外。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="sai">SAI 属性<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <p>利用する port attribute<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23966,8 +23966,8 @@
 <li>AN 有効 + adv_speeds 空 → <strong>全サポート速度を advertise</strong></li>
 <li>AN 有効 + adv_interface_types 空 → <strong>全サポート interface type を advertise</strong></li>
 <li>AN 無効 + interface_type 未設定 → <code>SAI_PORT_INTERFACE_TYPE_NONE</code></li>
-<li>AN 有効中の <code>speed</code> 設定変更 → AN を <strong>無効化してはならない</strong>。設定値は orchagent でキャッシュし AN OFF 時に replay</li>
-<li>AN 有効中の <code>interface_type</code> の <strong>CONFIG_DB 経由更新は block</strong>。ただし <code>pmon#xcvrd</code> 経由 APPL_DB の <strong>動的 interface_type 更新は SAI に伝達</strong> して advertisement を更新する</li>
+<li>AN 有効中の <code>speed</code> 設定変更 → AN を <strong>無効化してはならない</strong>。設定値は <a href="../../reference/glossary/#term-orchagent">orchagent</a> でキャッシュし AN OFF 時に replay</li>
+<li>AN 有効中の <code>interface_type</code> の <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 経由更新は block</strong>。ただし <code>pmon#xcvrd</code> 経由 <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <strong>動的 interface_type 更新は SAI に伝達</strong> して advertisement を更新する</li>
 <li>SFP/QSFP 系で AN 有効 → SAI は <strong>link-training も同時に活性化</strong>（TX FIR 動的調整）</li>
 <li>SFP/QSFP 系で AN を ON → OFF にした瞬間 → speed / FEC / interface_type / TX FIR を APPL_DB の値に <strong>復元</strong>。APPL_DB に該当が無ければ SAI driver default（IT=NONE, FEC=NONE, TX FIR=ベンダ依存）</li>
 </ol>
@@ -24012,7 +24012,7 @@
 </tr>
 <tr>
 <td><code>show interfaces autoneg status [&lt;if&gt;]</code></td>
-<td>運用状態表示（STATE_DB から）</td>
+<td>運用状態表示（<a href="../../reference/glossary/#term-state_db">STATE_DB</a> から）</td>
 <td>–</td>
 </tr>
 </tbody>
@@ -24068,8 +24068,8 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 <p>既存 <code>PORT.autoneg</code> の値が boolean 表記から enum 表記へ変わる場合などに DB migrator が一括変換する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。レガシー設定との後方互換性は migrator 側で吸収する。</p>
 <h3 id="portsyncd-portmgrd-port-breakout-xcvrd">portsyncd / portmgrd / Port Breakout / xcvrd の影響<a class="headerlink" href="#portsyncd-portmgrd-port-breakout-xcvrd" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>portsyncd</strong>: kernel netlink 連携。AN 関連の状態は STATE_DB に流す</li>
-<li><strong>portmgrd</strong>: CONFIG_DB → APPL_DB の incremental 反映。Rev 0.4 で <strong>incremental</strong> 化された<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-portsyncd">portsyncd</a></strong>: kernel netlink 連携。AN 関連の状態は STATE_DB に流す</li>
+<li><strong><a href="../../reference/glossary/#term-portmgrd">portmgrd</a></strong>: CONFIG_DB → APPL_DB の incremental 反映。Rev 0.4 で <strong>incremental</strong> 化された<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>Port Breakout</strong>: breakout で port 集合が変わるたび AN 設定を再構成。breakout config の <code>autoneg</code> を尊重</li>
 <li><strong>PMON xcvrd</strong>: 挿入された transceiver の media 種別に応じて <code>interface_type</code> を APPL_DB に動的更新（AN ON 中もこの経路だけは SAI に届く）</li>
 </ul>
@@ -24142,6 +24142,8 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9a441a703260 -->
 
 <div class="footnote">
 <hr />

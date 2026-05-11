@@ -23743,15 +23743,15 @@
 </div>
 <h1 id="sonic-os-docker">SONiC OS と Docker イメージのセマンティックバージョニング<a class="headerlink" href="#sonic-os-docker" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要なのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC Application Extension Infrastructure により <strong>SONiC docker（= SONiC Package）と Base OS が独立配布</strong> されるようになった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。docker 同士・docker と OS の <strong>互換性</strong> をどう担保するかが課題で、SONiC docker 群に <a href="https://semver.org">semver.org</a> を適用するガイドラインが本 HLD。</p>
+<p>SONiC Application Extension Infrastructure により <strong>SONiC docker（= SONiC Package）と Base OS が独立配布</strong> されるようになった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。docker 同士・docker と OS の <strong>互換性</strong> をどう担保するかが課題で、SONiC docker 群に <a href="https://semver.org">semver.org</a> を適用するガイドラインが本 <a href="../../reference/glossary/#term-hld">HLD</a>。</p>
 <p>主旨:</p>
 <ul>
 <li>各 SONiC Package は独自の <code>major.minor.patch</code> を持つ</li>
-<li><strong>API 互換性の判定基準は Redis DB スキーマ</strong></li>
+<li><strong>API 互換性の判定基準は <a href="../../reference/glossary/#term-redis">Redis</a> DB スキーマ</strong></li>
 <li>依存先制約は <code>package.json</code> の <code>depends</code> で表現</li>
 </ul>
 <h2 id="api-version">API の定義と version 増分規則<a class="headerlink" href="#api-version" title="Permanent link">&para;</a></h2>
-<p>「Package API」は <strong>Redis DB インタフェース</strong>（CONFIG_DB / APPL_DB / STATE_DB のそのパッケージが提供する schema）と定義される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC SDK / SAI / カーネルレベル API は別カテゴリ。</p>
+<p>「Package API」は <strong>Redis DB インタフェース</strong>（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のそのパッケージが提供する schema）と定義される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC SDK / <a href="../../reference/glossary/#term-sai">SAI</a> / カーネルレベル API は別カテゴリ。</p>
 <table>
 <thead>
 <tr>
@@ -23807,7 +23807,7 @@
 <tbody>
 <tr>
 <td><code>sonic-utilities</code></td>
-<td>sonic-utilities contributor が API 互換維持</td>
+<td><a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> contributor が API 互換維持</td>
 </tr>
 <tr>
 <td>新カーネル機能（例 3-tuple conntrack）</td>
@@ -23834,7 +23834,7 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;libswsscommon&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^1.0.0,^2.0.0&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}]</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="_3">設定・運用<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>CLI / CONFIG_DB / YANG への変更は <strong>無い</strong>。<code>package.json</code> の manifest と Conventional Commits の運用ガイドラインのみ。</p>
+<p>CLI / CONFIG_DB / <a href="../../reference/glossary/#term-yang">YANG</a> への変更は <strong>無い</strong>。<code>package.json</code> の manifest と Conventional Commits の運用ガイドラインのみ。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>install<span class="w"> </span>foo
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>show<span class="w"> </span>foo
 </span></code></pre></div>
@@ -23857,7 +23857,7 @@
 <p><code>sonic-package-manager</code> (sonic-utilities) / Application Extension Infrastructure / <code>swss</code> / <code>syncd</code> / <code>bgp</code> 等 default docker / CI（Conventional Commits 連動） / <code>config_db.json</code> schema migration（major bump 時）。</p>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>install で version 制約エラー → <code>depends</code> 制約と install 済 swss / syncd version を比較</li>
+<li>install で version 制約エラー → <code>depends</code> 制約と install 済 swss / <a href="../../reference/glossary/#term-syncd">syncd</a> version を比較</li>
 <li><code>^X.Y.Z,^A.B.C</code> 不正解釈 → 実装は AND 解釈、<code>||</code> 表記を検討</li>
 <li>新 swss で docker 不動作 → major bump 起きている可能性、docker manifest 更新</li>
 </ul>
@@ -23867,6 +23867,8 @@
 <li><a href="../../topics/20-swss-sai-redis/">20-swss-sai-redis</a>: Redis schema を API とみなす根拠</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 6ac6abee60c7 -->
+
 <div class="footnote">
 <hr />
 <ol>

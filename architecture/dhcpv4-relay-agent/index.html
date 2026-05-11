@@ -23774,12 +23774,12 @@
 </div>
 <h1 id="dhcpv4-relay-agentdhcpmon-dhcrelay-option-82-circuit-id">DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）<a class="headerlink" href="#dhcpv4-relay-agentdhcpmon-dhcrelay-option-82-circuit-id" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ToR スイッチが downstream client から受けた DHCPDISCOVER / REQUEST broadcast を、upstream の DHCP サーバ群へ unicast で中継する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC は ISC 由来の <code>dhcrelay</code> を VLAN 単位で起動し、付随する <code>dhcpmon</code> で監視・統計収集する。</p>
+<p>ToR スイッチが downstream client から受けた DHCPDISCOVER / REQUEST broadcast を、upstream の DHCP サーバ群へ unicast で中継する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC は ISC 由来の <code>dhcrelay</code> を <a href="../../reference/glossary/#term-vlan">VLAN</a> 単位で起動し、付随する <code>dhcpmon</code> で監視・統計収集する。</p>
 <p>主な責務:</p>
 <ul>
 <li>VLAN broadcast → upstream へ relay（複数 server に対する parallel forwarding）</li>
 <li>option-82（Relay Agent Information）に <strong>circuit-id</strong> / <strong>remote-id</strong> を埋め込む</li>
-<li>dual ToR / MC-LAG 環境で 1 client の DHCPLEASE が双方の ToR から重複して返らないように調整</li>
+<li>dual ToR / MC-<a href="../../reference/glossary/#term-lag">LAG</a> 環境で 1 client の DHCPLEASE が双方の ToR から重複して返らないように調整</li>
 <li>counter / リーク検知のための状態を <code>STATE_DB</code> / log に出す</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23795,14 +23795,14 @@
     MON --&gt; STDB[STATE_DB / log]</code></pre>
 <p>ポイント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>dhcrelay</code> は CONFIG_DB の <code>DHCP_RELAY|&lt;VLAN&gt;</code> から <code>dhcp_servers</code> リストを読み、VLAN 単位に起動。VLAN を VRF にバインドしている場合は VRF コンテキスト指定で動かす</li>
+<li><code>dhcrelay</code> は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>DHCP_RELAY|&lt;VLAN&gt;</code> から <code>dhcp_servers</code> リストを読み、VLAN 単位に起動。VLAN を <a href="../../reference/glossary/#term-vrf">VRF</a> にバインドしている場合は VRF コンテキスト指定で動かす</li>
 <li>option-82 の <strong>circuit-id</strong> はデフォルトで client 側 interface 名相当（実装によっては VLAN + port）、<strong>remote-id</strong> は switch hostname or MAC ベース</li>
 <li><code>dhcpmon</code> は <code>dhcrelay</code> の入出力を観測してドロップ / カウンタを <code>STATE_DB</code> に出す。dual-ToR / active-active 構成で peer 側との整合性を見る運用に用いる</li>
 </ul>
 <h3 id="dual-tor-mc-lag">dual ToR / MC-LAG での挙動<a class="headerlink" href="#dual-tor-mc-lag" title="Permanent link">&para;</a></h3>
 <ul>
 <li>両 ToR で <code>dhcrelay</code> を起動する設計だが、リース重複や ToR 切替えで lease の移行が発生し得る</li>
-<li>詳細はこの HLD では概要のみ。dual-ToR の active-active / standby ページを参照する</li>
+<li>詳細はこの <a href="../../reference/glossary/#term-hld">HLD</a> では概要のみ。dual-ToR の active-active / standby ページを参照する</li>
 </ul>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -23867,7 +23867,7 @@
 <li><strong>dual ToR active-active / standby</strong>: lease 整合と repaire の挙動が ToR モードで変わる</li>
 <li><strong>VRF</strong>: server 到達経路の VRF 指定が必要。<code>mgmt</code> VRF か data VRF か明確化が要件</li>
 <li><strong>ipv4-port-based-dhcp-server</strong>: SONiC 側で local DHCP server を立てる場合との排他関係（用途が違う）</li>
-<li><strong>DHCP DoS mitigation / dhcp-mac-move-test</strong>: ACL / 監視系がパケットドロップの原因になり得る</li>
+<li><strong>DHCP DoS mitigation / dhcp-mac-move-test</strong>: <a href="../../reference/glossary/#term-acl">ACL</a> / 監視系がパケットドロップの原因になり得る</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23891,6 +23891,8 @@
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a4ef6587dfc6 -->
 
 <div class="footnote">
 <hr />

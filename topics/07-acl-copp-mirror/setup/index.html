@@ -23840,7 +23840,7 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。<code>config acl</code> は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。rule は JSON に書いて <code>config acl update full</code> または <code>incremental</code> で投入します。</p>
+<p><a href="../../../reference/glossary/#term-acl">ACL</a> の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。<code>config acl</code> は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。rule は JSON に書いて <code>config acl update full</code> または <code>incremental</code> で投入します。</p>
 <h2 id="acl">最小 ACL<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h2>
 <p>例として <code>Ethernet0</code> に入ってくる特定送信元を drop する L3 ACL を考えます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>table<span class="w"> </span>DATAACL<span class="w"> </span>L3<span class="w"> </span>-p<span class="w"> </span>Ethernet0<span class="w"> </span>-s<span class="w"> </span>ingress<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;drop selected sources&quot;</span>
@@ -23866,14 +23866,14 @@
 <p><code>PRIORITY</code> は値が大きいほど優先です。match は <code>SRC_IP</code> / <code>DST_IP</code>、<code>SRC_IPV6</code> / <code>DST_IPV6</code>、<code>IP_PROTOCOL</code>、<code>L4_SRC_PORT</code> / <code>L4_DST_PORT</code>、<code>ETHER_TYPE</code>、<code>TCP_FLAGS</code> などを組み合わせます。action は <code>PACKET_ACTION</code>、<code>REDIRECT_ACTION</code>、mirror action、<code>POLICER</code>、DSCP 書換などです。</p>
 <p>table type が action の可否を制限するため、rule JSON だけを別 table に移すと失敗することがあります。特に egress stage、mirror、DSCP 書換、packet trimming のような action は ASIC capability の影響を受けます。</p>
 <h2 id="policer">Policer<a class="headerlink" href="#policer" title="Permanent link">&para;</a></h2>
-<p><code>POLICER</code> は単独で packet を分類しません。ACL rule、CoPP group、mirror session などから参照される rate limiting 部品です。<code>METER_TYPE</code>、<code>MODE</code>、<code>CIR</code> / <code>CBS</code>、<code>PIR</code> / <code>PBS</code>、色別 action を持ちます。</p>
+<p><code>POLICER</code> は単独で packet を分類しません。ACL rule、<a href="../../../reference/glossary/#term-copp">CoPP</a> group、mirror session などから参照される rate limiting 部品です。<code>METER_TYPE</code>、<code>MODE</code>、<code>CIR</code> / <code>CBS</code>、<code>PIR</code> / <code>PBS</code>、色別 action を持ちます。</p>
 <p>ACL で使う場合は rule の action として policer 名を参照します。CoPP では <code>COPP_GROUP</code> 内に queue、trap action、meter、rate を持つ形で control plane traffic に適用されます。</p>
 <h2 id="mirror-session">Mirror Session<a class="headerlink" href="#mirror-session" title="Permanent link">&para;</a></h2>
 <p><code>MIRROR_SESSION</code> は SPAN または ERSPAN のセッション定義です。SPAN はローカル <code>dst_port</code> へコピーし、ERSPAN は <code>src_ip</code>、<code>dst_ip</code>、GRE type、DSCP、TTL などの outer header を持って collector へ送ります。</p>
 <p>ACL と組み合わせる場合、先に mirror session を作り、<code>ACL_RULE</code> から <code>MIRROR_ACTION</code>、<code>MIRROR_INGRESS_ACTION</code>、<code>MIRROR_EGRESS_ACTION</code> で参照します。ポート単位で常時 mirror したい場合は <code>MIRROR_SESSION.src_port</code> / <code>direction</code> 側を読む方が近道です。</p>
 <h2 id="copp">CoPP<a class="headerlink" href="#copp" title="Permanent link">&para;</a></h2>
-<p>CoPP は <code>COPP_TRAP</code> が trap ID 群を定義し、<code>COPP_GROUP</code> が CPU queue と policer を定義します。<code>COPP_TRAP.trap_group</code> が <code>COPP_GROUP</code> を参照し、<code>coppmgr</code> が APPL_DB の <code>COPP_TABLE</code> に変換し、<code>CoppOrch</code> が SAI hostif trap / trap group / policer に反映します。</p>
-<p>YANG の正本は <code>sonic-copp</code> で、<code>COPP_GROUP</code> と <code>COPP_TRAP</code> の tree、leaf、leafref を確認できます。mirror session の YANG は <code>sonic-mirror-session</code> で、ERSPAN / SPAN の必須条件や <code>POLICER</code> への leafref を確認できます。</p>
+<p>CoPP は <code>COPP_TRAP</code> が trap ID 群を定義し、<code>COPP_GROUP</code> が CPU queue と policer を定義します。<code>COPP_TRAP.trap_group</code> が <code>COPP_GROUP</code> を参照し、<code>coppmgr</code> が <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>COPP_TABLE</code> に変換し、<code>CoppOrch</code> が <a href="../../../reference/glossary/#term-sai">SAI</a> hostif trap / trap group / policer に反映します。</p>
+<p><a href="../../../reference/glossary/#term-yang">YANG</a> の正本は <code>sonic-copp</code> で、<code>COPP_GROUP</code> と <code>COPP_TRAP</code> の tree、leaf、leafref を確認できます。mirror session の YANG は <code>sonic-mirror-session</code> で、ERSPAN / SPAN の必須条件や <code>POLICER</code> への leafref を確認できます。</p>
 <h2 id="1-uplink-source-ip-filter-acl">典型シナリオ 1: 上位 uplink で source IP filter ACL を入れる<a class="headerlink" href="#1-uplink-source-ip-filter-acl" title="Permanent link">&para;</a></h2>
 <p>「上位 spine から特定 prefix (10.0.0.0/8) しか受け取らない」というケース。</p>
 <h3 id="cli-json">CLI と JSON<a class="headerlink" href="#cli-json" title="Permanent link">&para;</a></h3>
@@ -23899,7 +23899,7 @@
 <p>投入:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>acl-loader<span class="w"> </span>update<span class="w"> </span>incremental<span class="w"> </span>/tmp/uplink_filter.json
 </span></code></pre></div>
-<p>CONFIG_DB の表現:</p>
+<p><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の表現:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;UPLINK_FILTER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -23981,7 +23981,7 @@
 </span></code></pre></div>
 <p><code>Status: error</code> の場合は dst_ip への route 未到達か、underlay reachability の問題。</p>
 <h2 id="3-bgp-control-plane-traffic-copp-rate">典型シナリオ 3: BGP control-plane traffic の CoPP rate を上げる<a class="headerlink" href="#3-bgp-control-plane-traffic-copp-rate" title="Permanent link">&para;</a></h2>
-<p>default の BGP CoPP rate を引き上げて、フラップ復旧時の neighbor 再収束を速くする。</p>
+<p>default の <a href="../../../reference/glossary/#term-bgp">BGP</a> CoPP rate を引き上げて、フラップ復旧時の neighbor 再収束を速くする。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">&quot;COPP_GROUP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="nt">&quot;queue4_group2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -24108,6 +24108,7 @@
 <li><a href="../../../reference/yang/sonic-copp/">sonic-copp YANG</a></li>
 <li><a href="../../../reference/yang/sonic-mirror-session/">sonic-mirror-session YANG</a></li>
 </ul>
+<!-- glossary-links-injected: 9311b0e01b19 -->
 
 
 

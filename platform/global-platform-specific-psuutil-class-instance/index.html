@@ -23899,7 +23899,7 @@
 <li>ベンダーは build 時に <code>sonic_platform</code> パッケージを wheel にコンパイル。</li>
 <li>初回ブート時、対応プラットフォーム用 wheel を <code>/usr/share/sonic/device/&lt;PLATFORM&gt;/</code> にコピー。</li>
 <li>pmon コンテナ起動時、<code>sonic_platform</code> が未インストールなら wheel をインストール。</li>
-<li><code>pmon</code> 内の各デーモンが Platform API 経由でハードを読み、結果を STATE_DB に書く。</li>
+<li><code>pmon</code> 内の各デーモンが Platform API 経由でハードを読み、結果を <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に書く。</li>
 <li>ホスト側 CLI は STATE_DB を引いて表示。</li>
 <li>リアルタイム値（光モジュール光信号など）は CLI が DB に「読め」と書いて pmon デーモンが読み直す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
@@ -23919,11 +23919,11 @@
 </span></code></pre></div>
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には CONFIG_DB エントリの記述は無い。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> には <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリの記述は無い。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>新 API は CLI を直接定義しない。<code>pmon</code> 内のデーモンが書き込んだ STATE_DB を、既存の <code>show platform</code>、<code>show interfaces transceiver</code> 等の CLI が読み出す。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG モデルの記述は無い。</p>
+<p>HLD に <a href="../../reference/glossary/#term-yang">YANG</a> モデルの記述は無い。</p>
 <h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p>ベンダー実装側の最小例（<code>sonic_platform/chassis.py</code>）：</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sonic_platform_base.chassis_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChassisBase</span>
@@ -23960,6 +23960,8 @@
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4e4b0dab1086 -->
 
 <div class="footnote">
 <hr />

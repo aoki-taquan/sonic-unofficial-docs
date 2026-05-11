@@ -23674,7 +23674,7 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>観測経路は ASIC 側で値を作り、syncd / orchagent / 各 daemon が Redis に書き、上から SNMP / gNMI / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。</p>
+<p>観測経路は ASIC 側で値を作り、<a href="../../../reference/glossary/#term-syncd">syncd</a> / <a href="../../../reference/glossary/#term-orchagent">orchagent</a> / 各 daemon が <a href="../../../reference/glossary/#term-redis">Redis</a> に書き、上から <a href="../../../reference/glossary/#term-snmp">SNMP</a> / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。</p>
 <h2 id="counter">Counter 収集の全体像<a class="headerlink" href="#counter" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TB
   ASIC[ASIC / SAI counters] --&gt; SD[syncd&lt;br&gt;flex counter groups]
@@ -23690,9 +23690,9 @@
   STDB --&gt; TEL
   TEL --&gt; GNMI[gNMI subscriber]
   SNMPS --&gt; SNMP[snmpd]</code></pre>
-<p>ASIC counter は syncd 側の flex counter group がまとめて polling し、COUNTERS_DB の <code>COUNTERS:</code> 名前空間に書きます。group ごとに有効化と polling interval を <code>FLEX_COUNTER_TABLE</code> で制御します。CRM は別スレッドで ASIC resource を読み、STATE_DB の CRM 名前空間に書きます。Linux side の sensor / process / memory 統計は別 daemon が APPL_DB / STATE_DB に書き、上位は同じ telemetry / SNMP / CLI から見えます。</p>
+<p>ASIC counter は syncd 側の flex counter group がまとめて polling し、<a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> の <code>COUNTERS:</code> 名前空間に書きます。group ごとに有効化と polling interval を <code>FLEX_COUNTER_TABLE</code> で制御します。<a href="../../../reference/glossary/#term-crm">CRM</a> は別スレッドで ASIC resource を読み、<a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の CRM 名前空間に書きます。Linux side の sensor / process / memory 統計は別 daemon が <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / STATE_DB に書き、上位は同じ telemetry / SNMP / CLI から見えます。</p>
 <h2 id="flexcounter-refactor">FlexCounter Refactor の意味<a class="headerlink" href="#flexcounter-refactor" title="Permanent link">&para;</a></h2>
-<p>FlexCounter refactor 以前は orchagent が固定周期で counter を読み、main loop の遅延要因になりました。Refactor 後は syncd の flex counter infra に責務が移り、group 単位で対象 OID と interval を制御します。<code>COUNTERS_PORT_NAME_MAP</code> / <code>COUNTERS_QUEUE_NAME_MAP</code> のような map が、論理名（<code>Ethernet0</code> など）から SAI OID への変換を提供します。</p>
+<p><a href="../../../reference/glossary/#term-flexcounter">FlexCounter</a> refactor 以前は orchagent が固定周期で counter を読み、main loop の遅延要因になりました。Refactor 後は syncd の flex counter infra に責務が移り、group 単位で対象 OID と interval を制御します。<code>COUNTERS_PORT_NAME_MAP</code> / <code>COUNTERS_QUEUE_NAME_MAP</code> のような map が、論理名（<code>Ethernet0</code> など）から <a href="../../../reference/glossary/#term-sai">SAI</a> OID への変換を提供します。</p>
 <p>Counter initialization optimization は、起動直後に全 port / queue / PG に対して flex counter を 1 件ずつ install すると遅いという問題に対し、bulk API で一括登録する変更です。読み手にとっては、起動直後の counter 出現タイミングが早まる点と、<code>counterpoll</code> 状態が <code>disable</code> のときは MAP は作られても polling されない点を覚えておけば十分です。</p>
 <h2 id="crm">CRM のレイヤ<a class="headerlink" href="#crm" title="Permanent link">&para;</a></h2>
 <p>CRM は 2 つの世代があります。古い CRM は ASIC sdk の固有 API で resource 使用量を取り、STATE_DB に書きます。新しい SAI generic extension 版は SAI 標準の object stat と attribute capability で同じ用途を実現し、CRM のための ASIC 専用 API を廃止します。読み手にとっては、<code>crmconfig</code> で閾値を設定し、<code>show crm summary</code> で resource 使用率を見る、という入口は変わりません。</p>
@@ -23718,6 +23718,7 @@
 <li><a href="../../../reference/config-db/crm/">CONFIG_DB CRM</a></li>
 <li><a href="../../../reference/config-db/flex-counter-table/">FLEX_COUNTER_TABLE</a></li>
 </ul>
+<!-- glossary-links-injected: 8ee080235646 -->
 
 
 

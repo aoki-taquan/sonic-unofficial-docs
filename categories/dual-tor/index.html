@@ -23751,8 +23751,8 @@
 
 <h1 id="dual-tor">Dual-ToR 関連<a class="headerlink" href="#dual-tor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>Dual-ToR</strong> は、サーバを 2 つの ToR スイッチに <strong>active-standby</strong> または <strong>active-active</strong> で冗長接続し、片側 ToR の障害時にもサービス断を最小化するクラウド向けトポロジです。Microsoft Azure 由来で、現行 SONiC は <strong>y-cable + linkmgrd</strong> ベースの active-standby と、<strong>prefix-based neighbor + gRPC</strong> ベースの active-active の 2 系統を実装しています。</p>
-<p>このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。<strong>overlay</strong>（active-active / active-standby の HLD、トンネル DSCP リマップ）・<strong>routing</strong>（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・<strong>platform</strong>（ICMP HW offload による link prober NPU 化）・<strong>management</strong>（DualToR 用 gRPC client）・<strong>reference</strong>（<code>config muxcable</code> / <code>show muxcable</code> / <code>MUX_CABLE</code> テーブル）に分散しているのが特徴です。</p>
+<p><strong>Dual-ToR</strong> は、サーバを 2 つの ToR スイッチに <strong>active-standby</strong> または <strong>active-active</strong> で冗長接続し、片側 ToR の障害時にもサービス断を最小化するクラウド向けトポロジです。Microsoft Azure 由来で、現行 SONiC は <strong>y-cable + <a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a></strong> ベースの active-standby と、<strong>prefix-based neighbor + gRPC</strong> ベースの active-active の 2 系統を実装しています。</p>
+<p>このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。<strong>overlay</strong>（active-active / active-standby の <a href="../../reference/glossary/#term-hld">HLD</a>、トンネル DSCP リマップ）・<strong>routing</strong>（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・<strong>platform</strong>（ICMP HW offload による link prober <a href="../../reference/glossary/#term-npu">NPU</a> 化）・<strong>management</strong>（DualToR 用 gRPC client）・<strong>reference</strong>（<code>config muxcable</code> / <code>show muxcable</code> / <code>MUX_CABLE</code> テーブル）に分散しているのが特徴です。</p>
 <p>Dual-ToR は <strong>active-standby</strong> のほうがマスター実装としては成熟しており、<strong>active-active</strong> は比較的新しく gRPC ベースのケーブル制御に依存します。Y-cable と SoC（Service-on-Cable）が混在する用語空間なので、最初に <a href="../../overlay/active-standby-dual-tor/"><code>active-standby-dual-tor.md</code></a> を読むと state machine の語彙が整理されます。</p>
 <p>主要キーワード: <code>Dual-ToR</code>, <code>active-active</code>, <code>active-standby</code>, <code>MUX</code>, <code>linkmgrd</code>, <code>Y-cable</code>, <code>SoC</code>, <code>linkprober</code></p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23785,18 +23785,18 @@
 </ul>
 <h2 id="_3">典型的な読み進め方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>active-standby 全体像</strong> → <code>active-standby-dual-tor.md</code> で linkmgrd state machine と y-cable・IPinIP tunnel を把握</li>
+<li><strong>active-standby 全体像</strong> → <code>active-standby-dual-tor.md</code> で linkmgrd state machine と y-cable・<a href="../../reference/glossary/#term-ipinip">IPinIP</a> tunnel を把握</li>
 <li><strong>CLI / DB</strong> → <code>config-muxcable.md</code> / <code>show-muxcable.md</code> / <code>mux-cable.md</code> で実機操作の語彙</li>
 <li><strong>mux 経路制御</strong> → <code>prefix-based-mux-neighbors.md</code> → <code>multiple-nexthop-route-hld.md</code> で routing 側の挙動</li>
 <li><strong>active-active</strong> → <code>active-active-dual-tor.md</code> で gRPC ベースの新方式</li>
-<li><strong>運用上の落とし穴</strong> → <code>dscp-remapping-for-tunnel-traffic.md</code> で PFC デッドロック回避</li>
+<li><strong>運用上の落とし穴</strong> → <code>dscp-remapping-for-tunnel-traffic.md</code> で <a href="../../reference/glossary/#term-pfc">PFC</a> デッドロック回避</li>
 <li><strong>オフロード最適化</strong> → <code>icmp-hardware-offload.md</code> で linkprober の NPU 化</li>
 </ol>
 <h2 id="topics">関連 Topics 章<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/05-dual-tor/">Topics 05: Dual-ToR</a> — Dual-ToR を段階的に学ぶ章</li>
-<li><a href="../../topics/02-bgp/">Topics 02: BGP</a> — Dual-ToR の上流 BGP 構成</li>
-<li><a href="../../topics/06-l2-vlan-lag/">Topics 06: L2 VLAN / LAG</a> — VLAN 設計の前提</li>
+<li><a href="../../topics/02-bgp/">Topics 02: BGP</a> — Dual-ToR の上流 <a href="../../reference/glossary/#term-bgp">BGP</a> 構成</li>
+<li><a href="../../topics/06-l2-vlan-lag/">Topics 06: L2 VLAN / LAG</a> — <a href="../../reference/glossary/#term-vlan">VLAN</a> 設計の前提</li>
 </ul>
 <h2 id="verification">verification ステータス注意点<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23814,6 +23814,8 @@
 <li><a href="../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 856e5b1efe05 -->
 
 
 

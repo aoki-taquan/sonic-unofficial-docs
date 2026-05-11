@@ -23868,7 +23868,7 @@
 
 <h1 id="config-kdump">config kdump サブコマンド<a class="headerlink" href="#config-kdump" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config kdump</code> は Linux kdump (panic 時のクラッシュダンプ機構) を CONFIG_DB の <code>KDUMP</code> テーブル経由で制御する CLI で、<code>config/kdump.py</code> の <code>@click.group(name='kdump')</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。書き込み先キーは常に <code>KDUMP|config</code> の <strong>単一エントリ</strong> で、フィールドは <code>enabled</code> / <code>memory</code> / <code>num_dumps</code> / <code>remote</code> / <code>ssh_string</code> / <code>ssh_path</code> の 6 つ。</p>
+<p><code>config kdump</code> は Linux kdump (panic 時のクラッシュダンプ機構) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>KDUMP</code> テーブル経由で制御する CLI で、<code>config/kdump.py</code> の <code>@click.group(name='kdump')</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。書き込み先キーは常に <code>KDUMP|config</code> の <strong>単一エントリ</strong> で、フィールドは <code>enabled</code> / <code>memory</code> / <code>num_dumps</code> / <code>remote</code> / <code>ssh_string</code> / <code>ssh_path</code> の 6 つ。</p>
 <p><code>hostcfgd</code> がこのテーブルを subscribe して <code>/etc/default/kdump-tools</code> を再生成し、<code>crashkernel=</code> カーネル引数や ssh 転送設定を反映する。<strong>反映には reboot が必要</strong> で、CLI は変更時に必ずその旨を警告する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -23989,6 +23989,8 @@
 <li><a href="../../../system/kdump/">HLD: kdump</a></li>
 <li><a href="../../config-db/kdump/">CONFIG_DB: KDUMP</a></li>
 </ul>
+<!-- glossary-links-injected: 896d391185a9 -->
+
 <div class="footnote">
 <hr />
 <ol>

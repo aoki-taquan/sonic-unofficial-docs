@@ -23884,10 +23884,10 @@
 </div>
 <h1 id="dataplane-telemetry-dtel-int-sourcesinktransit-postcard-dropqueue-report">Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）<a class="headerlink" href="#dataplane-telemetry-dtel-int-sourcesinktransit-postcard-dropqueue-report" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>In-band Network Telemetry (INT) と Postcard / Drop / Queue report を含む <strong>Dataplane Telemetry</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> の機能を PTF + sonic-mgmt で検証する設計。各テストは設定投入 → トラフィック送出 → 検証 → 設定戻しを完結して行う。</p>
+<p>In-band Network Telemetry (<a href="../../reference/glossary/#term-int">INT</a>) と Postcard / Drop / Queue report を含む <strong>Dataplane Telemetry</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> の機能を PTF + <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> で検証する設計。各テストは設定投入 → トラフィック送出 → 検証 → 設定戻しを完結して行う。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="sonic-mgmt">sonic-mgmt 側モジュール構造<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#sonic-mgmt" title="Permanent link">&para;</a></h3>
-<p><code>dtel/</code> サブモジュール（DTel 抽象）と <code>sonic/</code> サブモジュール（CONFIG_DB 連携）の二層:</p>
+<p><code>dtel/</code> サブモジュール（DTel 抽象）と <code>sonic/</code> サブモジュール（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 連携）の二層:</p>
 <table>
 <thead>
 <tr>
@@ -23968,7 +23968,7 @@
 <p><code>dtel.yml</code> を tag <code>dtel</code> で実行すると、各テストが setup/送信/検証/restore を自己完結する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>全 ACL 関連テストが pass している前提（regression 防止のため）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>全 <a href="../../reference/glossary/#term-acl">ACL</a> 関連テストが pass している前提（regression 防止のため）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>INT パケット解析は max hop 8 まで</li>
 <li>Drop report は SRC MAC 異常等での意図的 drop が前提</li>
 </ul>
@@ -23976,7 +23976,7 @@
 <ul>
 <li><strong>ACL</strong>: DTel watchlist の正体は ACL ベース。ACL テストの後段で DTel が走る</li>
 <li><strong>Mirror / Everflow</strong>: report packet 送出パスで共通インフラ</li>
-<li><strong>SAI DTel object types</strong>: <code>SAI_OBJECT_TYPE_DTEL_*</code> 群</li>
+<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> DTel object types</strong>: <code>SAI_OBJECT_TYPE_DTEL_*</code> 群</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
@@ -23994,6 +23994,8 @@
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8f15c1459e58 -->
 
 <div class="footnote">
 <hr />

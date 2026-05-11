@@ -23784,7 +23784,7 @@
 
 
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ここでは platform 層の信頼チェーンと container hardening を扱います。OpenSSL FIPS、secure boot、secure upgrade、container hardening は、それぞれ独立した HLD として整備されており、本ページは「どの順で読み、どこで交わるか」を示すための導線です。</p>
+<p>ここでは platform 層の信頼チェーンと container hardening を扱います。OpenSSL FIPS、secure boot、secure upgrade、container hardening は、それぞれ独立した <a href="../../../reference/glossary/#term-hld">HLD</a> として整備されており、本ページは「どの順で読み、どこで交わるか」を示すための導線です。</p>
 <h2 id="_2">信頼チェーンの全体像<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   subgraph BOOT["起動時の信頼チェーン (secure boot)"]
@@ -23825,7 +23825,7 @@
 <h2 id="secure-upgrade">Secure upgrade<a class="headerlink" href="#secure-upgrade" title="Permanent link">&para;</a></h2>
 <p><a href="../../../system/secure-upgrade/">secure upgrade</a> は、<code>sonic-installer</code> などで適用する image を署名検証込みで取り扱うための仕組みです。warm/fast/SONiC-To-SONiC の手順そのものは <a href="../../11-reboot/">Reboot / Upgrade / Lifecycle</a> で扱い、本章では「どの鍵で誰が署名し、どこで検証するか」という信頼チェーンの面に絞ります。</p>
 <h2 id="container-hardening">Container hardening<a class="headerlink" href="#container-hardening" title="Permanent link">&para;</a></h2>
-<p>SONiC は機能を Docker コンテナに分割しており、各コンテナの権限・capabilities・mount を絞ることが防御深度の鍵になります。設計の意図と推奨デフォルトは <a href="../../../system/sonic-container-hardening/">container hardening</a> にまとまっています。AAA や MACsec のような機密に近い経路を持つコンテナほど、不要な capability を削る恩恵が大きい点に注意します。</p>
+<p>SONiC は機能を Docker コンテナに分割しており、各コンテナの権限・capabilities・mount を絞ることが防御深度の鍵になります。設計の意図と推奨デフォルトは <a href="../../../system/sonic-container-hardening/">container hardening</a> にまとまっています。<a href="../../../reference/glossary/#term-aaa">AAA</a> や MACsec のような機密に近い経路を持つコンテナほど、不要な capability を削る恩恵が大きい点に注意します。</p>
 <h2 id="_3">章間リンク<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>認証認可・管理面: <a href="../concept/">概念</a>、<a href="../architecture/">アーキテクチャ</a>、<a href="../setup/">設定</a>、<a href="../operations/">運用</a></li>
@@ -23835,7 +23835,7 @@
 </ul>
 <h2 id="_4">発展トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>gNSI による証明書 / authz 集中管理</strong>: gNMI 接続の TLS 証明書、RBAC、Pathz による path レベル authz を controller から push する仕組み。手動 ssh と分離した運用と監査が可能になる。</li>
+<li><strong>gNSI による証明書 / authz 集中管理</strong>: <a href="../../../reference/glossary/#term-gnmi">gNMI</a> 接続の TLS 証明書、RBAC、Pathz による path レベル authz を controller から push する仕組み。手動 ssh と分離した運用と監査が可能になる。</li>
 <li><strong>MACsec MKA scale</strong>: MACsec を全 port に展開する場合、MKA セッション数と鍵更新コストが ASIC / CPU に効く。<code>MACSEC_PROFILE</code> の rekey interval 設計が要点。</li>
 <li><strong>HSM / TPM 連携</strong>: secure boot 鍵や TLS 秘密鍵を HSM / TPM に保管する構成。<code>tpm2-tools</code> と secure upgrade の連携が議題。</li>
 <li><strong>role-based access control (RBAC)</strong>: ユーザロールと権限の細分化。AAA 認証後の authz で扱うが、CLI / gNMI 両面で一貫した role が要求される。</li>
@@ -23868,8 +23868,9 @@
 <ul>
 <li><code>sonic-gnmi</code> で gNSI 関連 PR が継続して入る。証明書回転、authz ポリシー push の SDK が拡張。</li>
 <li>secure upgrade 周りで署名検証パスのリファクタが進行中。<code>sonic-installer</code> のテレメトリ出力改善も並走。</li>
-<li>container hardening の対象 docker (bgp, swss, syncd, telemetry など) ごとに capability 削減 PR が段階投入されている。</li>
+<li>container hardening の対象 docker (bgp, swss, <a href="../../../reference/glossary/#term-syncd">syncd</a>, telemetry など) ごとに capability 削減 PR が段階投入されている。</li>
 </ul>
+<!-- glossary-links-injected: f871da4a7b84 -->
 
 
 

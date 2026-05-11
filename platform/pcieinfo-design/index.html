@@ -23840,7 +23840,7 @@
 </div>
 <h1 id="pcieutil-show-platform-pcieinfopcie-pcieyaml">pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）<a class="headerlink" href="#pcieutil-show-platform-pcieinfopcie-pcieyaml" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が <strong>本来あるべきトポロジ</strong> から欠落していないかを検査するためのツール群を追加する HLD。プラットフォーム標準の PCIe デバイス一覧を <code>pcie.yaml</code> に焼いておき、起動時や運用中に実際の lspci 相当出力と比較してハードウェア異常を検知する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が <strong>本来あるべきトポロジ</strong> から欠落していないかを検査するためのツール群を追加する <a href="../../reference/glossary/#term-hld">HLD</a>。プラットフォーム標準の PCIe デバイス一覧を <code>pcie.yaml</code> に焼いておき、起動時や運用中に実際の lspci 相当出力と比較してハードウェア異常を検知する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>提供される CLI は 3 コマンド<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -23985,7 +23985,7 @@ reasoning: API シグネチャと設定ファイル配置の根拠。
 </span></code></pre></div>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-yang">関連する CONFIG_DB / YANG<a class="headerlink" href="#config_db-yang" title="Permanent link">&para;</a></h3>
-<p>該当しない。<code>pcie.yaml</code> はプラットフォーム同梱ファイルであり CONFIG_DB / YANG 経路は持たない。</p>
+<p>該当しない。<code>pcie.yaml</code> はプラットフォーム同梱ファイルであり <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> 経路は持たない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24042,6 +24042,8 @@ reasoning: API シグネチャと設定ファイル配置の根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 <div class="footnote">
 <hr />

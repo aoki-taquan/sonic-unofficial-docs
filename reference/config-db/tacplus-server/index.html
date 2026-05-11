@@ -23846,7 +23846,7 @@
 
 <h1 id="tacplus_server">TACPLUS_SERVER テーブル<a class="headerlink" href="#tacplus_server" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>TACACS+ 認証サーバの一覧と global TACACS+ クライアント設定を保持する。最大 8 サーバ。<code>hostcfgd</code> が CONFIG_DB を購読して <code>/etc/pam.d/*</code>, <code>/etc/nss-tacplus.conf</code>, <code>/etc/tacplus_nss.conf</code> を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>TACACS+ 認証サーバの一覧と global TACACS+ クライアント設定を保持する。最大 8 サーバ。<code>hostcfgd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読して <code>/etc/pam.d/*</code>, <code>/etc/nss-tacplus.conf</code>, <code>/etc/tacplus_nss.conf</code> を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23915,7 +23915,7 @@
 <td><code>vrf</code></td>
 <td>string <code>mgmt</code>/<code>default</code></td>
 <td>-</td>
-<td>サーバ到達 VRF</td>
+<td>サーバ到達 <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 </tbody>
 </table>
@@ -23971,7 +23971,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>AAA</code>、<code>LDAP_SERVER</code>、<code>RADIUS_SERVER</code></li>
 <li>関連 CLI: <code>config tacacs add/delete/passkey/timeout/authtype/default</code>、<code>show tacacs</code></li>
-<li>関連 YANG: <code>sonic-system-tacacs</code>、<code>sonic-system-aaa</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-system-tacacs</code>、<code>sonic-system-aaa</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24012,6 +24012,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>tacacs
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->
 
 <div class="footnote">
 <hr />

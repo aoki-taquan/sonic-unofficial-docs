@@ -23786,10 +23786,10 @@
 <h1 id="qos-buffer">QoS / Buffer の内部実装<a class="headerlink" href="#qos-buffer" title="Permanent link">&para;</a></h1>
 <p>ここでは「設定が変わるたびに buffer がどう再計算されるか」「ポートを足したり消したりしたとき何が起きるか」「使われていない reserved 領域はどう返却されるか」といった、動的バッファモード固有の話を扱います。</p>
 <h2 id="_1">動的ヘッドルーム計算<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../../acl-qos/dynamically-headroom-calculation/">Dynamically headroom calculation</a> は、port speed / cable length / MTU / PG mode から PFC headroom（<code>xon</code> / <code>xoff</code> / <code>xon_offset</code> / <code>size</code>）を実行時に決める仕組みです。</p>
+<p><a href="../../../acl-qos/dynamically-headroom-calculation/">Dynamically headroom calculation</a> は、port speed / cable length / MTU / PG mode から <a href="../../../reference/glossary/#term-pfc">PFC</a> headroom（<code>xon</code> / <code>xoff</code> / <code>xon_offset</code> / <code>size</code>）を実行時に決める仕組みです。</p>
 <ul>
 <li>入力は <code>PORT_TABLE</code> の <code>speed</code> / <code>mtu</code>、<code>CABLE_LENGTH</code> テーブル、<code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code>。</li>
-<li>計算は buffermgrd 内の Lua スクリプト + Jinja テンプレートで、結果は CONFIG_DB / APPL_DB の <code>BUFFER_PROFILE</code> に書き戻されます。</li>
+<li>計算は buffermgrd 内の Lua スクリプト + Jinja テンプレートで、結果は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>BUFFER_PROFILE</code> に書き戻されます。</li>
 <li>同じ条件（speed, cable, MTU）の PG は同じ profile を共有するので、profile の数は爆発しません。</li>
 <li>speed を変えるだけで profile が差し替わる、これが動的モードのキモです。</li>
 </ul>
@@ -23815,7 +23815,7 @@
 <ul>
 <li>削除順序: PG/queue 参照を外す → profile 参照を外す → port を消す。</li>
 <li>追加順序: port を作る → profile を当てる → PG/queue を生成する → speed / cable から headroom 再計算。</li>
-<li>この順序を間違えると SAI 側で「参照中の profile を消そうとして失敗」「存在しない queue を参照」が起きます。</li>
+<li>この順序を間違えると <a href="../../../reference/glossary/#term-sai">SAI</a> 側で「参照中の profile を消そうとして失敗」「存在しない queue を参照」が起きます。</li>
 <li>watermark 側でも、削除直後に幽霊 queue が残るのを防ぐため <a href="../../../acl-qos/align-watermark-flow-with-port-configuration-hld/">align watermark flow with port configuration</a> が同期を取っています。</li>
 </ul>
 <h2 id="buffer-drop-counter">Buffer drop counter の系列<a class="headerlink" href="#buffer-drop-counter" title="Permanent link">&para;</a></h2>
@@ -23825,15 +23825,15 @@
 <li><code>SAI_PORT_STAT_PFC_*_RX_PKTS</code> / <code>..._TX_PKTS</code> — PFC frame カウント。</li>
 <li>queue / PG 側のドロップは <code>SAI_QUEUE_STAT_DROPPED_PKTS</code> / <code>SAI_INGRESS_PRIORITY_GROUP_STAT_DROPPED_PACKETS</code> が一次情報。</li>
 </ul>
-<p>これらを FlexCounter が拾って STATE_DB / COUNTERS_DB に書き、<code>show queue counters</code> / <code>show priority-group counters</code> / <code>show interfaces counters</code> が表示しています。</p>
+<p>これらを <a href="../../../reference/glossary/#term-flexcounter">FlexCounter</a> が拾って <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に書き、<code>show queue counters</code> / <code>show priority-group counters</code> / <code>show interfaces counters</code> が表示しています。</p>
 <h2 id="_3">なぜこの章だけテーブルが多いのか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>QoS / buffer は「同じ概念をプラットフォーム差を吸収しつつ均す」ために抽象化を 3 層持っています。</p>
+<p><a href="../../../reference/glossary/#term-qos">QoS</a> / buffer は「同じ概念をプラットフォーム差を吸収しつつ均す」ために抽象化を 3 層持っています。</p>
 <ol>
 <li><strong>pool</strong> — switch-wide のメモリ枠（プラットフォーム依存度高）。</li>
 <li><strong>profile</strong> — 使い方のテンプレート（lossless / lossy / mirror など）。</li>
 <li><strong>PG / queue 割当</strong> — ポート×index への適用。</li>
 </ol>
-<p>そして「ConfigDB の SCHEDULER / WRED / MAP は SAI のオブジェクトに 1:1」「BUFFER_PROFILE は SAI に 1:1 だが、同じ意味のものは共有」「BUFFER_PG / BUFFER_QUEUE は SAI の port × index の attribute 更新になる」と、それぞれ SAI 側での扱いが違うのが厄介な点です。設定変更時に「参照を外す → 値を変える → 参照を戻す」の順序を守る必要があるのはこのためです。</p>
+<p>そして「ConfigDB の SCHEDULER / <a href="../../../reference/glossary/#term-wred">WRED</a> / MAP は SAI のオブジェクトに 1:1」「BUFFER_PROFILE は SAI に 1:1 だが、同じ意味のものは共有」「BUFFER_PG / BUFFER_QUEUE は SAI の port × index の attribute 更新になる」と、それぞれ SAI 側での扱いが違うのが厄介な点です。設定変更時に「参照を外す → 値を変える → 参照を戻す」の順序を守る必要があるのはこのためです。</p>
 <h2 id="qos-buffer_1">データフロー（QoS / Buffer 全体）<a class="headerlink" href="#qos-buffer_1" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   CFG[(CONFIG_DB&lt;br/&gt;BUFFER_POOL/PROFILE/PG/QUEUE&lt;br/&gt;QUEUE/SCHEDULER/WRED/*_MAP)] --&gt; BMG[buffermgrd&lt;br/&gt;+ Lua / Jinja]
@@ -23945,7 +23945,7 @@
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ZMQ は使わない。すべて Redis pub/sub と <code>flexcounter</code> の polling 経路。</li>
+<li>ZMQ は使わない。すべて <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub と <code>flexcounter</code> の polling 経路。</li>
 <li>PFC watchdog の検出は ASIC からの notification ではなく、<code>flexcounter</code> 経由の queue stat polling で stuck queue を検知する仕組み。</li>
 </ul>
 <h2 id="_4">既知の実装上の制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -23956,6 +23956,7 @@
 <li>PFC watchdog は queue 単位の statistical detection で、瞬間的な burst にも反応する設計。<code>detection_time</code> / <code>restoration_time</code> のチューニングが必要。</li>
 <li>WRED / ECN の閾値は ASIC で粒度（cell vs byte）が違い、<code>SAI_WRED_ATTR_*</code> の単位解釈が SDK ベンダごとに分かれる。</li>
 </ul>
+<!-- glossary-links-injected: 9561e337df7c -->
 
 
 

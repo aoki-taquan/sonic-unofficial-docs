@@ -23772,7 +23772,7 @@
 </div>
 <h1 id="portchannel-lag-openconfig-yang">PortChannel (LAG) の OpenConfig YANG サポート<a class="headerlink" href="#portchannel-lag-openconfig-yang" title="Permanent link">&para;</a></h1>
 <h2 id="openconfig">なぜ OpenConfig が必要か<a class="headerlink" href="#openconfig" title="Permanent link">&para;</a></h2>
-<p>SONiC の PortChannel は REST/gNMI で操作できるが、SONiC 独自 YANG（<code>sonic-portchannel</code> 等）に縛られる。本 HLD は <strong>ベンダ間共通の OpenConfig</strong> ツリー（<code>openconfig-interfaces</code> / <code>openconfig-if-aggregate</code> / <code>openconfig-if-ethernet</code>）で read/write できることを目指す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。マッピングは <strong><code>sonic-mgmt-common</code> の transformer 基盤</strong> に閉じ、<strong>DB スキーマ変更を一切伴わない</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-portchannel">PortChannel</a> は REST/<a href="../../reference/glossary/#term-gnmi">gNMI</a> で操作できるが、SONiC 独自 <a href="../../reference/glossary/#term-yang">YANG</a>（<code>sonic-portchannel</code> 等）に縛られる。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>ベンダ間共通の OpenConfig</strong> ツリー（<code>openconfig-interfaces</code> / <code>openconfig-if-aggregate</code> / <code>openconfig-if-ethernet</code>）で read/write できることを目指す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。マッピングは <strong><code>sonic-mgmt-common</code> の transformer 基盤</strong> に閉じ、<strong>DB スキーマ変更を一切伴わない</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>スコープ: REST + gNMI（KLISH CLI / subinterface は対象外）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>graph LR
@@ -23829,7 +23829,7 @@
 <p>gNMI も <code>Capabilities</code> で同 YANG を公開し <code>Get</code> / <code>Set</code> で同等<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="db-cli">DB / CLI への影響<a class="headerlink" href="#db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB / COUNTERS_DB のスキーマ変更なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> のスキーマ変更なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>既存 <code>config portchannel</code> 等の KLISH CLI は変更されない（対象外）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>既存 SONiC YANG ベースの REST PATCH/GET は並存。OpenConfig 経路は別ルート</li>
 </ul>
@@ -23848,7 +23848,7 @@
 </tr>
 <tr>
 <td><code>openconfig-if-aggregate</code></td>
-<td>LAG（<code>min-links</code>, <code>aggregate-id</code>）</td>
+<td><a href="../../reference/glossary/#term-lag">LAG</a>（<code>min-links</code>, <code>aggregate-id</code>）</td>
 </tr>
 <tr>
 <td><code>openconfig-if-ethernet</code></td>
@@ -23858,13 +23858,13 @@
 </table>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>subinterface（VLAN / L3 サブ）は対象外<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>subinterface（<a href="../../reference/glossary/#term-vlan">VLAN</a> / L3 サブ）は対象外<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>KLISH CLI 経由の同等 OpenConfig 操作は提供しない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>min-links</code> 等のマッピングは transformer 実装に依存</li>
 <li>gNMI subscribe / streaming telemetry の挙動は明示記述なし</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p><code>sonic-mgmt-common</code> transformer / <code>teamd</code> / <code>teamsyncd</code>（最終反映先）/ <code>PortChannelOrch</code> / <code>PortChannelMemberOrch</code>（SAI 反映）/ 既存 SONiC YANG ベースの経路。</p>
+<p><code>sonic-mgmt-common</code> transformer / <code>teamd</code> / <code>teamsyncd</code>（最終反映先）/ <code>PortChannelOrch</code> / <code>PortChannelMemberOrch</code>（<a href="../../reference/glossary/#term-sai">SAI</a> 反映）/ 既存 SONiC YANG ベースの経路。</p>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>PUT/PATCH で 400/403 → URI と <code>Content-Type: application/yang-data+json</code> を確認</li>
@@ -23884,6 +23884,8 @@
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6bd1731a2f9b -->
 
 <div class="footnote">
 <hr />

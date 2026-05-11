@@ -23730,12 +23730,12 @@
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-installer install --dpu &lt;DPU0&gt; &lt;image.bin&gt;</code> が exit code 非 0</li>
-<li>DPU が <code>installing</code> 状態で固まる</li>
+<li><a href="../../glossary/#term-dpu">DPU</a> が <code>installing</code> 状態で固まる</li>
 <li>再起動後 <code>show chassis modules</code> で DPU が DOWN</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>image の DPU platform 不一致</strong>: NPU 用 image を DPU に流した</li>
+<li><strong>image の DPU platform 不一致</strong>: <a href="../../glossary/#term-npu">NPU</a> 用 image を DPU に流した</li>
 <li><strong>空き flash 不足</strong>: DPU の SSD 使用率 90%+</li>
 <li><strong>PCIe / chassisd 通信失敗</strong>: DPU 側 control plane に届かない</li>
 <li><strong>DPU が graceful shutdown できていない</strong></li>
@@ -23768,6 +23768,8 @@
 <li><a href="../smartswitch-dpu-graceful-shutdown-failure/">smartswitch-dpu-graceful-shutdown-failure.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 0999bc110a44 -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23775,7 +23777,7 @@
 <p>sonic-net/sonic-platform-daemons @ 4305596 — chassisd&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — sonic-installer&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — sonic-installer&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

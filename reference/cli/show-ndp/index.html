@@ -23635,7 +23635,7 @@
 <p><code>show ipv6</code> グループにも <code>add_command(ndp)</code> されており、<code>show ipv6 neighbors</code> 系のサブコマンド経由でも近い情報が引ける。</p>
 <p>クリア側は <code>sonic-clear ndp [&lt;ipaddress&gt;] [-n &lt;ns&gt;]</code>。詳細は <a href="../clear/">clear (sonic-clear) コマンド</a> を参照。</p>
 <h2 id="config_db">CONFIG_DB との接点<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
-<p>NDP テーブルは <strong>kernel の IPv6 neighbor table</strong> および swss/neighsyncd で APPL_DB に同期されるもので、CONFIG_DB を読まない。</p>
+<p><a href="../../glossary/#term-ndp">NDP</a> テーブルは <strong>kernel の IPv6 neighbor table</strong> および swss/<a href="../../glossary/#term-neighsyncd">neighsyncd</a> で <a href="../../glossary/#term-appl_db">APPL_DB</a> に同期されるもので、<a href="../../glossary/#term-config_db">CONFIG_DB</a> を読まない。</p>
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23675,6 +23675,8 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEIGH_TABLE:*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9b9dce032e0d -->
 
 <div class="footnote">
 <hr />

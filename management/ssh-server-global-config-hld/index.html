@@ -23862,7 +23862,7 @@
 </div>
 <h1 id="ssh-ssh_serverpolicies">SSH サーバ全体設定（SSH_SERVER.POLICIES）<a class="headerlink" href="#ssh-ssh_serverpolicies" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の SSH サーバは Debian 標準 <code>sshd</code> をそのまま使う構成で、運用ポリシーを変えるたびに <code>/etc/ssh/sshd_config</code> を直接書き換える必要があった。本機能は CONFIG_DB の <code>SSH_SERVER</code> テーブルに 5 種のポリシーを集約し、<strong><code>hostcfgd</code> がテーブル変更を購読して <code>sshd_config</code> などを更新 → SSH サービスを再起動</strong> することで、CONFIG_DB だけで一貫した SSH 運用ポリシー管理を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の SSH サーバは Debian 標準 <code>sshd</code> をそのまま使う構成で、運用ポリシーを変えるたびに <code>/etc/ssh/sshd_config</code> を直接書き換える必要があった。本機能は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>SSH_SERVER</code> テーブルに 5 種のポリシーを集約し、<strong><code>hostcfgd</code> がテーブル変更を購読して <code>sshd_config</code> などを更新 → SSH サービスを再起動</strong> することで、CONFIG_DB だけで一貫した SSH 運用ポリシー管理を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>設定対象は次の 5 ポリシー<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
@@ -23916,7 +23916,7 @@
     HC --&gt;|render limits.conf.j2| LIM[/etc/security/limits.conf]
     HC --&gt;|系列共通の inactivity flow| TM[/etc/profile.d/* など]
     HC --&gt;|systemctl restart| SVC[ssh service]</code></pre>
-<p><code>hostcfgd</code> は <strong>ホスト直接動作（コンテナ内ではない）</strong> のデーモンで、これは「ホスト側の SSH 設定ファイルを書き換える必要があるため」と HLD で明示されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>hostcfgd</code> は <strong>ホスト直接動作（コンテナ内ではない）</strong> のデーモンで、これは「ホスト側の SSH 設定ファイルを書き換える必要があるため」と <a href="../../reference/glossary/#term-hld">HLD</a> で明示されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">各ポリシーのマッピング先<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23944,7 +23944,7 @@
 </tr>
 <tr>
 <td><code>inactivity_timeout</code></td>
-<td>hostcfgd の <strong>既存 inactivity フロー</strong> で <code>TMOUT</code> 系を更新</td>
+<td><a href="../../reference/glossary/#term-hostcfgd">hostcfgd</a> の <strong>既存 inactivity フロー</strong> で <code>TMOUT</code> 系を更新</td>
 <td>シェルレベル idle</td>
 </tr>
 <tr>
@@ -23961,7 +23961,7 @@
 </span></code></pre></div>
 <p><code>inactivity_timeout</code> 用の <code>TMOUT</code> は <strong>Serial console 機能の HLD と同じ既存 inactivity フロー</strong> に合流する設計（管理者シェル全般の自動ログアウト）。SSH 専用ではなく、シリアルと共通である<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="ports"><code>ports</code> の構文<a class="headerlink" href="#ports" title="Permanent link">&para;</a></h3>
-<p>YANG の正規表現で複数ポートを <code>,</code> 区切りで許可している<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。例: <code>"22,2222"</code>. 数字は 1..65536（YANG 上は 65536 までの上限が確認できる正規表現）。</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a> の正規表現で複数ポートを <code>,</code> 区切りで許可している<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。例: <code>"22,2222"</code>. 数字は 1..65536（YANG 上は 65536 までの上限が確認できる正規表現）。</p>
 <h3 id="_5">起動シーケンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
     participant U as user
@@ -24060,7 +24060,7 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD 上では「<strong>現状は CONFIG_DB を手動で編集</strong>」しており、<code>config ssh ...</code> のような専用 CLI は Phase 1 では定義されていない。<code>config_db.json</code> 直接編集 / <code>sonic-cfggen</code> / gNMI 経由で投入する想定。</p>
+<p>HLD 上では「<strong>現状は CONFIG_DB を手動で編集</strong>」しており、<code>config ssh ...</code> のような専用 CLI は Phase 1 では定義されていない。<code>config_db.json</code> 直接編集 / <code>sonic-cfggen</code> / <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由で投入する想定。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p><code>sonic-ssh-server.yang</code> の <code>SSH_SERVER.POLICIES</code><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-yang highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">POLICIES</span><span class="w"> </span><span class="p">{</span>
@@ -24100,6 +24100,8 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ff031fbb8bc1 -->
 
 <div class="footnote">
 <hr />

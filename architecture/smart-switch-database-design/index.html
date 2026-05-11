@@ -23895,14 +23895,14 @@
 <h1 id="smart-switch-npu-dpu-overlay-db">Smart Switch のデータベース構成（NPU 上の DPU overlay DB）<a class="headerlink" href="#smart-switch-npu-dpu-overlay-db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Smart Switch で DPU の overlay データはどこに置かれるか</li>
-<li>なぜ DPU 上の Redis にそのまま置けないのか</li>
-<li>NPU と DPU はどう繋がり、どの port を使うのか</li>
+<li>Smart Switch で <a href="../../reference/glossary/#term-dpu">DPU</a> の overlay データはどこに置かれるか</li>
+<li>なぜ DPU 上の <a href="../../reference/glossary/#term-redis">Redis</a> にそのまま置けないのか</li>
+<li><a href="../../reference/glossary/#term-npu">NPU</a> と DPU はどう繋がり、どの port を使うのか</li>
 <li>どの FEATURE フラグでこれを ON にするのか</li>
 <li>メモリはどれくらい食うのか</li>
 </ul>
 <h2 id="_2">結論<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>DPU の DASH overlay 用 Redis を <strong>NPU 側に container として立て、DPU から midplane 経由で remote 接続</strong> させる。DPU の RAM 不足を NPU 側に肩代わりさせ、multi-ASIC と同じ機構（<code>featured</code> + <code>has_per_*_scope</code>）を流用する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>DPU の <a href="../../reference/glossary/#term-dash">DASH</a> overlay 用 Redis を <strong>NPU 側に container として立て、DPU から midplane 経由で remote 接続</strong> させる。DPU の RAM 不足を NPU 側に肩代わりさせ、multi-ASIC と同じ機構（<code>featured</code> + <code>has_per_*_scope</code>）を流用する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">動作仕様<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="_4">全体図<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23959,7 +23959,7 @@
 <td><code>DPU_APPL_DB</code></td>
 <td>15</td>
 <td>proto</td>
-<td>DASH overlay objects（VNET, ENI, ACL, ROUTE）の書込先</td>
+<td>DASH overlay objects（<a href="../../reference/glossary/#term-vnet">VNET</a>, <a href="../../reference/glossary/#term-eni">ENI</a>, <a href="../../reference/glossary/#term-acl">ACL</a>, ROUTE）の書込先</td>
 </tr>
 <tr>
 <td><code>DPU_APPL_STATE_DB</code></td>
@@ -23981,7 +23981,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>DPU_APPL_DB</code> は protobuf エンコード。GNMI に「proto → human-readable」変換 CLI が想定されているが具体的コマンド名は HLD に明示なし<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>DPU_APPL_DB</code> は protobuf エンコード。GNMI に「proto → human-readable」変換 CLI が想定されているが具体的コマンド名は <a href="../../reference/glossary/#term-hld">HLD</a> に明示なし<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="dpu">DPU 側の参照設定<a class="headerlink" href="#dpu" title="Permanent link">&para;</a></h3>
 <p>DPU 側 <code>database_config.json</code> で <code>redis</code>（ローカル :6379）と <code>remote_redis</code>（NPU :6381+ID）の 2 instance を定義し、<code>DPU_*</code> DB を <code>remote_redis</code> に紐づける<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_5">データフロー<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -23998,7 +23998,7 @@
   SYN-&gt;&gt;DPUDB: counters を flex counter で更新</code></pre>
 <ul>
 <li>上位 → DPU swss の主経路は <strong>GNMI 経由 ZMQ</strong>。<code>DPU_APPL_DB</code> 書込はバックアップ・debug・migration 用<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>counters は DPU の syncd flex counter が <code>DPU_COUNTERS_DB</code> に書く</li>
+<li>counters は DPU の <a href="../../reference/glossary/#term-syncd">syncd</a> flex counter が <code>DPU_COUNTERS_DB</code> に書く</li>
 </ul>
 <!-- evidence:
 source: sonic-net/SONiC/doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md#L300-L320 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -24077,6 +24077,8 @@ reasoning: GNMI/ZMQ 主経路と DPU_APPL_DB バックアップ用途の根拠�
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d5b6931e63bd -->
 
 <div class="footnote">
 <hr />

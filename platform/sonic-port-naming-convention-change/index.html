@@ -24131,7 +24131,7 @@
 <h3 id="_5">未解決の論点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>提案文書時点で未解決として明示されているもの<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>PortChannel（LAG）の命名規則</strong>: <code>et[sX]pY[abcd]</code> のような枠組みに乗せるか、別系統で持つか未定</li>
+<li><strong><a href="../../reference/glossary/#term-portchannel">PortChannel</a>（<a href="../../reference/glossary/#term-lag">LAG</a>）の命名規則</strong>: <code>et[sX]pY[abcd]</code> のような枠組みに乗せるか、別系統で持つか未定</li>
 </ul>
 <h3 id="_6">移行ステージ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>破壊的変更を一気にやるのではなく、4 段階に分けて段階移行する案<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -24165,7 +24165,7 @@
 </tr>
 </tbody>
 </table>
-<p>Stage 1 の段階で <strong>alias は新命名、内部名は EthernetN のまま</strong> という共存状態が続く。CLI 表示・SNMP・LLDP などユーザ視認領域は alias を出すことで命名移行を先行できる構成。</p>
+<p>Stage 1 の段階で <strong>alias は新命名、内部名は EthernetN のまま</strong> という共存状態が続く。CLI 表示・<a href="../../reference/glossary/#term-snmp">SNMP</a>・<a href="../../reference/glossary/#term-lldp">LLDP</a> などユーザ視認領域は alias を出すことで命名移行を先行できる構成。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24195,11 +24195,11 @@ reasoning: 4 段階移行プランの根拠。
 
 <h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>本提案は CONFIG_DB のスキーマを直接変えるのではなく、<code>port_config.ini</code> の <code>alias</code> 列をまず新命名にする運用面の提案<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT|alias</code> の値が変わる。</p>
+<p>本提案は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> のスキーマを直接変えるのではなく、<code>port_config.ini</code> の <code>alias</code> 列をまず新命名にする運用面の提案<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT|alias</code> の値が変わる。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>CLI 自体の追加・削除は提案されていない。<code>show interface</code> 等の出力や CLI 入力で使うキーが alias ベースに切替わるかが運用上のポイント。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは <a href="../../reference/glossary/#term-hld">HLD</a> で言及されていない。</p>
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>本ドキュメントは提案段階</strong>。コミュニティが採択して全 stage を完了したかは別途確認が必要</li>
@@ -24211,7 +24211,7 @@ reasoning: 4 段階移行プランの根拠。
 <ul>
 <li><strong><code>port_config.ini</code> / hwsku パッケージング</strong>: alias 列の更新</li>
 <li><strong>CLI / <code>show interface</code> / SNMP / LLDP</strong>: alias がユーザ可視領域に出るので、運用ドキュメントとの整合</li>
-<li><strong>テスト基盤（DVS / pytest / sonic-mgmt）</strong>: <code>Ethernet0</code> 等のハードコード除去が必要</li>
+<li><strong>テスト基盤（DVS / pytest / <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>）</strong>: <code>Ethernet0</code> 等のハードコード除去が必要</li>
 <li><strong>chassis HLD</strong>: slot 番号 (<code>sX</code>) を意識した命名は chassis ユースケースが主動機</li>
 </ul>
 <h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
@@ -24269,7 +24269,7 @@ reasoning: 4 段階移行プランの根拠。
 <ul>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/22955">sonic-buildimage #22955: sonic-buildimage: update quicksilver-p port names (merged)</a> — 新命名規則 (et[sX]pY[abcd] 系) の実プラットフォーム適用 PR の代表例。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/22577">sonic-buildimage #22577: sonic-buildimage: update quicksilver-512 port names (merged)</a> — 同上、512 ポート版。</li>
-<li>命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の port_config.ini 更新で部分採用。</li>
+<li>命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の <a href="../../reference/glossary/#term-port-config-ini">port_config.ini</a> 更新で部分採用。</li>
 </ul>
 <h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
@@ -24286,6 +24286,8 @@ reasoning: 4 段階移行プランの根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: fbe81f6f4471 -->
 
 <div class="footnote">
 <hr />

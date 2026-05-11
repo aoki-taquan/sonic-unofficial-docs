@@ -23850,27 +23850,27 @@
 
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。</p>
+<p>Multi-ASIC と <a href="../../../reference/glossary/#term-voq">VOQ</a> chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。</p>
 <h2 id="multi-asic-voq">Multi-ASIC / VOQ は何を解決するか<a class="headerlink" href="#multi-asic-voq" title="Permanent link">&para;</a></h2>
 <p>1 ASIC の pizza-box では足りない radix（ポート数 × 帯域）が必要になったとき、ハードウェア側は「1 筐体に複数 ASIC を載せる」「複数 line card を fabric でつなぐ」という拡張を取ります。ところが NOS から見ると、ASIC が複数あるだけで以下が一気に難しくなります。</p>
 <ul>
 <li>ポート命名空間: <code>Ethernet0</code> が複数 ASIC の片方にあるのか、どちらにあるのか</li>
-<li>routing daemon: 同じ BGP プロセスから複数 ASIC の RIB を更新するのか、ASIC ごとに別 daemon を立てるのか</li>
-<li>設定永続化: CONFIG_DB は 1 つで全 ASIC を表すのか、ASIC ごとに 1 つ持つのか</li>
+<li>routing daemon: 同じ <a href="../../../reference/glossary/#term-bgp">BGP</a> プロセスから複数 ASIC の RIB を更新するのか、ASIC ごとに別 daemon を立てるのか</li>
+<li>設定永続化: <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> は 1 つで全 ASIC を表すのか、ASIC ごとに 1 つ持つのか</li>
 <li>counter / show: <code>show interfaces counters</code> は ASIC を跨ぐのか、まとめるのか</li>
 <li>fabric / chassis: line card を跨いだ system port は単一 switch に見えるのか</li>
 </ul>
-<p>Multi-ASIC SONiC と VOQ SONiC が解決しているのは、<strong>「複数 ASIC があるのに 1 つのスイッチとして運用できる」UX を NOS 側で組み上げる</strong>ことです。具体的な手段が、namespace 分離、Redis インスタンス多重化、Chassis DB、system port、distributed VOQ の組み合わせです。</p>
+<p>Multi-ASIC SONiC と VOQ SONiC が解決しているのは、<strong>「複数 ASIC があるのに 1 つのスイッチとして運用できる」UX を NOS 側で組み上げる</strong>ことです。具体的な手段が、namespace 分離、<a href="../../../reference/glossary/#term-redis">Redis</a> インスタンス多重化、Chassis DB、system port、distributed VOQ の組み合わせです。</p>
 <h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
 <p>Multi-ASIC / VOQ は data plane の構造を反映した <strong>全層横断のアーキテクチャ変更</strong> で、特定 1 機能ではなく次の各層に変更が入ります。</p>
 <ul>
-<li><strong>Linux</strong>: ASIC ごとに <code>asic0</code>、<code>asic1</code> ... の network namespace を作り、portmgmtd / orchagent / syncd / bgpd を namespace 内で複数起動</li>
-<li><strong>Redis / DB</strong>: ASIC ごとに <code>redis&lt;N&gt;.sock</code> を立て、CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB をそれぞれ分離。host namespace は管理系の CONFIG_DB を別途持つ</li>
-<li><strong>Routing</strong>: BGP は ASIC namespace ごとに bgpd を立て、internal-BGP で各 ASIC 間を繋ぐ。FRR の <code>vrf</code> ではなく namespace で分離</li>
+<li><strong>Linux</strong>: ASIC ごとに <code>asic0</code>、<code>asic1</code> ... の network namespace を作り、portmgmtd / <a href="../../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../../reference/glossary/#term-syncd">syncd</a> / bgpd を namespace 内で複数起動</li>
+<li><strong>Redis / DB</strong>: ASIC ごとに <code>redis&lt;N&gt;.sock</code> を立て、CONFIG_DB / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> をそれぞれ分離。host namespace は管理系の CONFIG_DB を別途持つ</li>
+<li><strong>Routing</strong>: BGP は ASIC namespace ごとに bgpd を立て、internal-BGP で各 ASIC 間を繋ぐ。<a href="../../../reference/glossary/#term-frr">FRR</a> の <code>vrf</code> ではなく namespace で分離</li>
 <li><strong>Forwarding plane</strong>: VOQ chassis では fabric ASIC + system port + distributed VOQ により、line card 間で 1 つの論理 switch を構成</li>
 <li><strong>CLI</strong>: <code>show</code> 系コマンドが <code>--namespace</code> を取り、引数なしのときは全 namespace を集約。<code>sonic-utilities</code> が namespace 一覧を <code>/usr/share/sonic/device/.../asic.conf</code> から読む</li>
 </ul>
-<p>つまり Multi-ASIC / VOQ 章は、他の機能章（BGP / VXLAN / QoS / Reboot...）が<strong>「1 ASIC の前提」で書かれている内容に対する例外条項集</strong>でもあります。BGP 章の話を Multi-ASIC で適用するときに何が変わるか、というレンズで読み返すと意味が立ち上がります。</p>
+<p>つまり Multi-ASIC / VOQ 章は、他の機能章（BGP / <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-qos">QoS</a> / Reboot...）が<strong>「1 ASIC の前提」で書かれている内容に対する例外条項集</strong>でもあります。BGP 章の話を Multi-ASIC で適用するときに何が変わるか、というレンズで読み返すと意味が立ち上がります。</p>
 <h2 id="_2">用語の定義<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Pizza-box</strong>: 1U〜2U 程度の fixed switch。多くは 1 ASIC。</li>
@@ -23893,7 +23893,7 @@
 <li><strong>Multi-ASIC (1 筐体・複数 ASIC)</strong>: 1 つの NOS インスタンスの中で、ASIC ごとに独立した network namespace (<code>asic0</code>, <code>asic1</code>, ...) と独立した Redis インスタンスを持ちます。host namespace は外向きの CLI / management、ASIC namespace は実際の port / route を持ちます。</li>
 <li><strong>VOQ Chassis (複数 line card + supervisor)</strong>: 各 line card が Multi-ASIC SONiC として動き、supervisor 上の <strong>Chassis DB</strong> と fabric ASIC が、複数 line card の system port を 1 つの論理スイッチとして束ねます。</li>
 </ul>
-<p>つまり VOQ chassis は Multi-ASIC を内包しつつ、さらに「複数 line card を 1 つの switch に見せる」層を持ちます。Multi-ASIC platforms HLD が namespace の枠組みを定義し、VOQ SONiC HLD がその上に Chassis DB / system port / distributed VOQ を載せる構造です。</p>
+<p>つまり VOQ chassis は Multi-ASIC を内包しつつ、さらに「複数 line card を 1 つの switch に見せる」層を持ちます。Multi-ASIC platforms <a href="../../../reference/glossary/#term-hld">HLD</a> が namespace の枠組みを定義し、VOQ SONiC HLD がその上に Chassis DB / system port / distributed VOQ を載せる構造です。</p>
 <h2 id="namespace-redis">Namespace と Redis インスタンス<a class="headerlink" href="#namespace-redis" title="Permanent link">&para;</a></h2>
 <p>Multi-ASIC では、ASIC ごとに <code>/var/run/redis&lt;N&gt;/redis.sock</code> のような分離された Redis を持ち、<code>CONFIG_DB</code>, <code>APPL_DB</code>, <code>STATE_DB</code>, <code>ASIC_DB</code>, <code>COUNTERS_DB</code> がそれぞれの namespace 内に存在します。host namespace は別に <code>CONFIG_DB</code> を持ち、管理系（hostname、management interface、BGP の grouping 情報など）を扱います。</p>
 <p>orchagent / syncd / bgpd といった主要プロセスは namespace ごとに 1 セット起動します。CLI ツールは <code>--namespace</code> 引数を取り、引数なしの場合は内部で全 namespace に対して問い合わせて集約表示します。</p>
@@ -23907,7 +23907,7 @@
 <h2 id="fabric-port-recirculation-port">Fabric Port と Recirculation Port<a class="headerlink" href="#fabric-port-recirculation-port" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>fabric port</strong>: line card と fabric card を結ぶ内部 port です。fabric ASIC は L2 / L3 forwarding をせず、cell ベースで line card 間をつなぐスイッチング機構を提供します。</li>
-<li><strong>recirculation port</strong>: 1 つの ASIC の中で「もう一度パイプラインを通したい」ときに使う内部ループ用 port です。VOQ 系では特に MPLS / GRE / IP-in-IP のような multi-pass 処理で利用されます。</li>
+<li><strong>recirculation port</strong>: 1 つの ASIC の中で「もう一度パイプラインを通したい」ときに使う内部ループ用 port です。VOQ 系では特に <a href="../../../reference/glossary/#term-mpls">MPLS</a> / GRE / IP-in-IP のような multi-pass 処理で利用されます。</li>
 </ul>
 <p>front-panel port は運用者が触る port、fabric port は normally hidden、recirculation port は ASIC capability に応じて自動確保されるリソース、と覚えると見分けがつきやすいです。</p>
 <h2 id="distributed-voq">Distributed VOQ アーキテクチャ<a class="headerlink" href="#distributed-voq" title="Permanent link">&para;</a></h2>
@@ -23947,9 +23947,9 @@
 </thead>
 <tbody>
 <tr>
-<td>MLAG (MCLAG)</td>
+<td>MLAG (<a href="../../../reference/glossary/#term-mclag">MCLAG</a>)</td>
 <td>複数装置を 1 つに見せたい</td>
-<td>MLAG は別筐体 2 台を LACP 観点で 1 つに見せるだけ。control plane は分離、forwarding は分散</td>
+<td>MLAG は別筐体 2 台を <a href="../../../reference/glossary/#term-lacp">LACP</a> 観点で 1 つに見せるだけ。control plane は分離、forwarding は分散</td>
 </tr>
 <tr>
 <td>Stack switch</td>
@@ -23957,7 +23957,7 @@
 <td>stack は management の統合が主、forwarding は stack link 経由。VOQ chassis のような cell-based fabric ではない</td>
 </tr>
 <tr>
-<td>VRF</td>
+<td><a href="../../../reference/glossary/#term-vrf">VRF</a></td>
 <td>namespace に似て見える</td>
 <td>VRF は L3 route table の論理分離。Multi-ASIC namespace は OS レベルの完全分離</td>
 </tr>
@@ -23967,7 +23967,7 @@
 <td>container は process / mount / network の分離。namespace 分離は network 軸のみ</td>
 </tr>
 <tr>
-<td>SmartSwitch (DPU)</td>
+<td><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> (<a href="../../../reference/glossary/#term-dpu">DPU</a>)</td>
 <td>複数 ASIC 的に見える</td>
 <td>SmartSwitch は switch ASIC + DPU の組合せで、Multi-ASIC とは構造が違う。詳細は dash-smartswitch 章</td>
 </tr>
@@ -23998,6 +23998,7 @@
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 <li><a href="../../02-bgp/">BGP と FRR 制御プレーン</a></li>
 </ul>
+<!-- glossary-links-injected: b6a1be57dc45 -->
 
 
 

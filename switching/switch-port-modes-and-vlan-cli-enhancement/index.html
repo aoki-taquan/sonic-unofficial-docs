@@ -24185,10 +24185,10 @@
 </div>
 <h1 id="switchport-access-trunk-routed-vlan-cli">Switchport モード（access / trunk / routed）と VLAN CLI 拡張<a class="headerlink" href="#switchport-access-trunk-routed-vlan-cli" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のレガシー VLAN CLI は <code>config vlan add 10</code> / <code>config vlan member add 10 Ethernet0 -u</code> のように <strong>VLAN ID 単発操作</strong> を強いる。多数 VLAN の運用では繰り返し叩くことになり、誤入力やループスクリプトでのレース問題があった。さらにポートの「routed / access / trunk」のような <strong>意味的なモード</strong>は CLI に明示されておらず、運用者の認知コストが高かった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC のレガシー <a href="../../reference/glossary/#term-vlan">VLAN</a> CLI は <code>config vlan add 10</code> / <code>config vlan member add 10 Ethernet0 -u</code> のように <strong>VLAN ID 単発操作</strong> を強いる。多数 VLAN の運用では繰り返し叩くことになり、誤入力やループスクリプトでのレース問題があった。さらにポートの「routed / access / trunk」のような <strong>意味的なモード</strong>は CLI に明示されておらず、運用者の認知コストが高かった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は次の 2 つを導入する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li><strong>Switchport mode</strong>: ポート（<code>PORT</code>）と LAG（<code>PORTCHANNEL</code>）に対して <code>routed</code> / <code>access</code> / <code>trunk</code> のモード概念を CONFIG_DB に持ち、CLI から切替可能にする</li>
+<li><strong>Switchport mode</strong>: ポート（<code>PORT</code>）と <a href="../../reference/glossary/#term-lag">LAG</a>（<code>PORTCHANNEL</code>）に対して <code>routed</code> / <code>access</code> / <code>trunk</code> のモード概念を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に持ち、CLI から切替可能にする</li>
 <li><strong>複数 VLAN 一括 CLI</strong>: 範囲指定（<code>10-20</code>）またはカンマ区切り（<code>10,15,20</code>）で複数 VLAN を 1 コマンドで add / del</li>
 </ol>
 <p>アーキテクチャは大きく変わらず、変更は <strong>CLI コンテナと CONFIG_DB に閉じる</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24216,7 +24216,7 @@
 </tr>
 </tbody>
 </table>
-<p>物理ポート / PortChannel いずれも同じ 3 モードをサポートする<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>物理ポート / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> いずれも同じ 3 モードをサポートする<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="port-portchannel">状態遷移（Port / PortChannel）<a class="headerlink" href="#port-portchannel" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>stateDiagram-v2
   [*] --&gt; routed
@@ -24384,9 +24384,9 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 </span></code></pre></div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>モード切替は VLAN 整合が前提</strong>: <code>routed</code> に戻すには既存 VLAN メンバを先に外す必要がある（HLD 例参照）<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>モード切替は VLAN 整合が前提</strong>: <code>routed</code> に戻すには既存 VLAN メンバを先に外す必要がある（<a href="../../reference/glossary/#term-hld">HLD</a> 例参照）<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>truncate ポリシー</strong>: 一括 CLI で 1 件失敗するとそこで停止する。前段は反映済みなので途中状態に注意<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>アーキテクチャ拡張なし</strong>: orchagent / SAI / vlanmgr 等の改修は無く、CLI と CONFIG_DB の契約だけが変わる。新ベンダ依存・SAI 改修なし。</li>
+<li><strong>アーキテクチャ拡張なし</strong>: <a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-sai">SAI</a> / vlanmgr 等の改修は無く、CLI と CONFIG_DB の契約だけが変わる。新ベンダ依存・SAI 改修なし。</li>
 <li><strong>詳細仕様は原文必読</strong>: 本ページは概要のみ。state diagram・sequence diagram・コーナーケース例は原文 HLD §High-level Design / §Examples を参照<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24490,6 +24490,8 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4da1da4a7ec6 -->
 
 <div class="footnote">
 <hr />

@@ -23872,13 +23872,13 @@
 </div>
 <h1 id="show-acl-state_dbacl_table_table-acl_rule_table-status"><code>show acl</code> 強化（<code>STATE_DB.ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> の status）<a class="headerlink" href="#show-acl-state_dbacl_table_table-acl_rule_table-status" title="Permanent link">&para;</a></h1>
 <h2 id="_1">これは何か（一行で）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ACL 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。それを <code>show acl table</code> / <code>show acl rule</code> の <strong><code>Status</code> 列</strong>（Active / Inactive）で見えるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-acl">ACL</a> 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。それを <code>show acl table</code> / <code>show acl rule</code> の <strong><code>Status</code> 列</strong>（Active / Inactive）で見えるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">どんなときに使うか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li>投入は通っているのに、<code>acl</code> が効いてない（trap されない / hit カウンタが上がらない）ときの一次切り分け</li>
 <li>大量 ACL を入れた直後に「どこまで反映されたか」を一目で見たい</li>
 </ul>
-<p>本機能は <strong>データプレーン ACL 専用</strong>。コントロールプレーン ACL は別 HLD<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は <strong>データプレーン ACL 専用</strong>。コントロールプレーン ACL は別 <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="vs">旧フロー vs 新フロー<a class="headerlink" href="#vs" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TB
     subgraph 旧
@@ -23894,7 +23894,7 @@
       SHOW2[show acl] --&gt; CFG2
       SHOW2 --&gt; ST
     end</code></pre>
-<p>設定経路（add/update/delete）は変えず、<code>aclorch</code> が SAI 戻り値で STATE_DB を Active / Inactive に更新する。<code>show</code> 側は CONFIG_DB と STATE_DB を join する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>設定経路（add/update/delete）は変えず、<code>aclorch</code> が <a href="../../reference/glossary/#term-sai">SAI</a> 戻り値で <a href="../../reference/glossary/#term-state_db">STATE_DB</a> を Active / Inactive に更新する。<code>show</code> 側は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> と STATE_DB を join する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="state_db">STATE_DB スキーマ<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ACL_TABLE_TABLE|&lt;acl_table_name&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    status : &quot;Active&quot; | &quot;Inactive&quot;
@@ -23963,7 +23963,7 @@
 <h2 id="_5">対象外・制限<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>データプレーン ACL のみ</strong>。コントロールプレーン ACL は別 HLD<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>PFC / dual-ToR Mux handler が内部生成する ACL は対象外</strong>（CONFIG_DB に対応行が無いため join できない）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-pfc">PFC</a> / dual-ToR Mux handler が内部生成する ACL は対象外</strong>（CONFIG_DB に対応行が無いため join できない）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>Status</code> 値は <code>Active</code> / <code>Inactive</code> の 2 値のみ。失敗理由の詳細は syslog 参照</li>
 <li><strong>warm/fast boot を跨いで保持しない</strong>。boot 後に <code>aclorch</code> が再書きするため追加の影響は無い<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
@@ -23972,7 +23972,7 @@
 <li><strong><code>aclorch</code></strong>: 主要変更箇所。SAI 戻り値の解釈と STATE_DB 反映が追加</li>
 <li><strong><code>acl-loader</code></strong>: 投入後の確認が CLI ベースになり、自動化が書きやすい</li>
 <li><strong>PFC / dual-ToR Mux</strong>: 内部生成 ACL は出ない（運用上の混乱要注意）</li>
-<li><strong>sonic-mgmt 既存テスト</strong>: syslog 監視ベースから新 CLI ベースへ移行可能<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> 既存テスト</strong>: syslog 監視ベースから新 CLI ベースへ移行可能<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24004,6 +24004,8 @@
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 25f52bcfe718 -->
 
 <div class="footnote">
 <hr />

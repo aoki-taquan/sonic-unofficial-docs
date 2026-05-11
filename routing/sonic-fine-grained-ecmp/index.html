@@ -23807,10 +23807,10 @@
 <h1 id="fine-grained-ecmpfg_nhg-fgnhgorch">Fine Grained ECMP（FG_NHG / fgnhgorch）<a class="headerlink" href="#fine-grained-ecmpfg_nhg-fgnhgorch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読者が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>通常 ECMP と何が違うのか、<strong>いつ FG ECMP を選ぶ</strong> べきか</li>
+<li>通常 <a href="../../reference/glossary/#term-ecmp">ECMP</a> と何が違うのか、<strong>いつ FG ECMP を選ぶ</strong> べきか</li>
 <li><strong>3 つの match_mode</strong>（route-based / nexthop-based / prefix-based）の違い</li>
-<li><strong>CONFIG_DB のキー</strong> と <strong>bucket_size の決め方</strong></li>
-<li>内部で <strong>どの orch / SAI 属性</strong> が動くか、warm boot で何が残るか</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> のキー</strong> と <strong>bucket_size の決め方</strong></li>
+<li>内部で <strong>どの orch / <a href="../../reference/glossary/#term-sai">SAI</a> 属性</strong> が動くか、warm boot で何が残るか</li>
 <li>スケールと既知の落とし穴</li>
 </ul>
 <h2 id="1-fg-ecmp">1. いつ FG ECMP を使うか<a class="headerlink" href="#1-fg-ecmp" title="Permanent link">&para;</a></h2>
@@ -23915,7 +23915,7 @@
 <ul>
 <li><strong>next-hop down</strong>: 同 bank 内の生存 NH に「down した NH のバケットだけ」を均等再配布。bank 内ゼロのときのみ対向 bank に流す（"entire VM set down" シナリオ）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>next-hop add</strong>: bank 内に生存 NH があれば新規 NH に均等にバケットを返す。ゼロ → 1 復活時は対向 bank から戻す</li>
-<li><strong>prefix-based</strong>: BGP 学習で動的に取得した NH のうち先着 <code>max_next_hops</code> までを対象<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>prefix-based</strong>: <a href="../../reference/glossary/#term-bgp">BGP</a> 学習で動的に取得した NH のうち先着 <code>max_next_hops</code> までを対象<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="5-sai">5. SAI とのインタフェース<a class="headerlink" href="#5-sai" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP
@@ -23930,7 +23930,7 @@
 <h2 id="7">7. 制限事項<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>スケール: グループ数 8、bucket size は HW 依存（最大 4k）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>全 prefix に consistent ECMP を効かせる「動的有効化」は HLD スコープ外<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>全 prefix に consistent ECMP を効かせる「動的有効化」は <a href="../../reference/glossary/#term-hld">HLD</a> スコープ外<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>route/nexthop モードでは <code>FG_NHG_MEMBER</code> 未定義の NH は <strong>黙って ASIC に伝播されない</strong>（syslog エラーのみ）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="8">8. 干渉する機能<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
@@ -23988,6 +23988,8 @@ reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原�
 <li><a href="../../topics/04-vrf-ecmp/">Topics: VRF / ECMP / RIB-FIB パイプライン</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4d2766506160 -->
 
 <div class="footnote">
 <hr />

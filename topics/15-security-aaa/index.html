@@ -23550,8 +23550,8 @@
 
 
 <h1 id="security-aaa-fips-hardening">Security / AAA / FIPS / Hardening<a class="headerlink" href="#security-aaa-fips-hardening" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC で「誰がログインできるか」「どの経路で管理できるか」「データプレーンの暗号と完全性」「起動とアップグレードの信頼チェーン」を一望するための入口です。既存ページは AAA、SSH、MACsec、FIPS、secure boot などの HLD 単位に分かれているため、ここでは管理者が「セキュリティ要件をどこに落とすか」を考える順に並べ直します。</p>
-<p>SONiC のセキュリティは大きく三つの層に分かれます。第一は control plane で、TACACS+ / RADIUS / LDAP / local user による認証と、SSH / serial console / banner などの管理面ポリシーが該当します。第二は data plane で、MACsec / MKA とその ASIC / Gearbox サイドの実装が該当します。第三は platform で、OpenSSL FIPS、secure boot、secure upgrade、container hardening、SAI POST が該当します。本章ではこの分類で既存 HLD を再配置します。</p>
+<p>この章は、SONiC で「誰がログインできるか」「どの経路で管理できるか」「データプレーンの暗号と完全性」「起動とアップグレードの信頼チェーン」を一望するための入口です。既存ページは <a href="../../reference/glossary/#term-aaa">AAA</a>、SSH、MACsec、FIPS、secure boot などの <a href="../../reference/glossary/#term-hld">HLD</a> 単位に分かれているため、ここでは管理者が「セキュリティ要件をどこに落とすか」を考える順に並べ直します。</p>
+<p>SONiC のセキュリティは大きく三つの層に分かれます。第一は control plane で、TACACS+ / RADIUS / LDAP / local user による認証と、SSH / serial console / banner などの管理面ポリシーが該当します。第二は data plane で、MACsec / MKA とその ASIC / Gearbox サイドの実装が該当します。第三は platform で、OpenSSL FIPS、secure boot、secure upgrade、container hardening、<a href="../../reference/glossary/#term-sai">SAI</a> POST が該当します。本章ではこの分類で既存 HLD を再配置します。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>AAA、TACACS+、RADIUS、LDAP、local user はどの順番で読むのか。</li>
@@ -23571,7 +23571,7 @@
 <h2 id="_3">関連章<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../01-overview/">SONiC 全体像と設定基盤</a>: <code>CONFIG_DB</code> と daemon の前提。</li>
-<li><a href="../07-acl-copp-mirror/">ACL / CoPP / Mirror</a>: 管理プレーン保護として CoPP を併用する場合の接続点。</li>
+<li><a href="../07-acl-copp-mirror/">ACL / CoPP / Mirror</a>: 管理プレーン保護として <a href="../../reference/glossary/#term-copp">CoPP</a> を併用する場合の接続点。</li>
 <li><a href="../11-reboot/">Reboot / Upgrade / Lifecycle</a>: secure upgrade とライフサイクルの全体像。</li>
 </ul>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -23596,6 +23596,7 @@
 <li><a href="../16-nat-dhcp-dns/">NAT / DHCP Relay / Time-DNS Services</a></li>
 <li><a href="../19-build-packaging/">Build / Packaging / Application Extension</a></li>
 </ul>
+<!-- glossary-links-injected: e522e31a0ddd -->
 
 
 

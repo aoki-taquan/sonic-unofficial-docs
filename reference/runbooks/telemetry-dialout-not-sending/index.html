@@ -23760,7 +23760,7 @@
 <li><strong><code>TELEMETRY_CLIENT</code> テーブル未設定 / 不整合</strong>: <code>DialOut|&lt;dst&gt;:port</code> キー欠落、<code>encoding</code> / <code>report_type</code> 不一致</li>
 <li><strong>TLS 証明書 / CA 不整合</strong>: collector 側 root CA とスイッチ側証明書チェーンの不一致、SAN 不足</li>
 <li><strong>L3 到達不能 / firewall</strong>: collector への TCP/8080(or 設定 port) 不通</li>
-<li><strong><code>unix_socket_address</code> を使う構成で counters/STATE_DB 取得失敗</strong>: subscribe path が無効で publish 抑止</li>
+<li><strong><code>unix_socket_address</code> を使う構成で counters/<a href="../../glossary/#term-state_db">STATE_DB</a> 取得失敗</strong>: subscribe path が無効で publish 抑止</li>
 <li><strong>dial-out client goroutine が panic で終了</strong>: log に stack trace が出ているがプロセスは生存（telemetry container 自体は up）</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23802,7 +23802,7 @@
 <ul>
 <li><code>TELEMETRY_CLIENT</code> の値が誤っている: <code>sonic-db-cli</code> で hset し、<code>docker restart telemetry</code>。<strong>ロールバック</strong>: 変更前にダンプした key/value を hset で書き戻す</li>
 <li>証明書差し替え: 旧証明書を <code>/etc/sonic/telemetry/backup.&lt;date&gt;/</code> に退避してから配置 → <code>systemctl restart telemetry</code>。<strong>ロールバック</strong>: 退避ディレクトリから戻す</li>
-<li>L3 不達: ルーティング / ACL 修正、<code>mgmt_vrf</code> 経由なら <code>ip vrf exec mgmt curl</code> で疎通確認</li>
+<li>L3 不達: ルーティング / <a href="../../glossary/#term-acl">ACL</a> 修正、<code>mgmt_vrf</code> 経由なら <code>ip vrf exec mgmt curl</code> で疎通確認</li>
 <li>panic ループ: <code>docker logs telemetry</code> の stack trace から module を特定し、対応 PR を upstream で確認</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23811,6 +23811,8 @@
 <li><a href="../../config-db/telemetry/">../config-db/telemetry.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: a271dccb6572 -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23818,7 +23820,7 @@
 <p>sonic-net/sonic-telemetry @ master — dialout_client.go&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-gnmi @ master — gNMI server&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-gnmi @ master — <a href="../../glossary/#term-gnmi">gNMI</a> server&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

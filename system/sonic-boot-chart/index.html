@@ -23902,7 +23902,7 @@
 <h1 id="sonic-boot-chartsystemd-bootchart">SONiC Boot Chart（<code>systemd-bootchart</code> 統合）<a class="headerlink" href="#sonic-boot-chartsystemd-bootchart" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC は <strong>モジュール構成</strong> で、各機能はスクリプト・ユーティリティ・daemon・docker container として実装される。多くの起動スクリプトが Jinja2 テンプレート展開や Python / Bash の短命プロセスを起動するため、boot 時間の劣化を引き起こしやすい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <code>systemd-bootchart</code> を SONiC に統合し、<strong>boot プロセスの sampling profiling</strong> を行う仕組みを定義する。出力は SVG で可視化される。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <code>systemd-bootchart</code> を SONiC に統合し、<strong>boot プロセスの sampling profiling</strong> を行う仕組みを定義する。出力は SVG で可視化される。</p>
 <p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>systemd-bootchart</code> を SONiC OS に統合し、<strong>default install / default disable</strong></li>
@@ -24008,7 +24008,7 @@
     CLI-&gt;&gt;FS: SVG 一覧表示</code></pre>
 <h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="cli-yang-config_db">CLI / YANG / CONFIG_DB<a class="headerlink" href="#cli-yang-config_db" title="Permanent link">&para;</a></h3>
-<p>本機能は <strong>YANG / CONFIG_DB に変更なし</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>/etc/systemd/bootchart.conf</code> の直接書き換えで設定する独立ユーティリティ。</p>
+<p>本機能は <strong><a href="../../reference/glossary/#term-yang">YANG</a> / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に変更なし</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>/etc/systemd/bootchart.conf</code> の直接書き換えで設定する独立ユーティリティ。</p>
 <table>
 <thead>
 <tr>
@@ -24082,6 +24082,8 @@
 - /run/log への SVG 出力パスが現行 systemd-bootchart 仕様と一致するか未確認
 - sonic-installer に bootchart 設定 migration が取り込まれたか（HLD Open Item）の現状確認
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 <div class="footnote">
 <hr />

@@ -23896,7 +23896,7 @@
 </div>
 <h1 id="voq-fabric-fabric-asic-link-monitoring">VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）<a class="headerlink" href="#voq-fabric-fabric-asic-link-monitoring" title="Permanent link">&para;</a></h1>
 <h2 id="_1">何のための仕組みか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VOQ シャーシは <strong>forwarding ASIC</strong>（front panel を持つ NPU）を <strong>fabric ASIC</strong>（cell ベースの内部 fabric）で相互接続する。本 HLD は <strong>fabric ASIC を forwarding ASIC と同様に syncd / sairedis で管理</strong>し、fabric link の状態監視・統計収集・自動 isolation を行う枠組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-voq">VOQ</a> シャーシは <strong>forwarding ASIC</strong>（front panel を持つ <a href="../../reference/glossary/#term-npu">NPU</a>）を <strong>fabric ASIC</strong>（cell ベースの内部 fabric）で相互接続する。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>fabric ASIC を forwarding ASIC と同様に <a href="../../reference/glossary/#term-syncd">syncd</a> / sairedis で管理</strong>し、fabric link の状態監視・統計収集・自動 isolation を行う枠組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <blockquote>
 <p>詳細は HLD <code>doc/voq/fabric.md</code> および <code>doc/voq/architecture.md</code> を参照。</p>
 </blockquote>
@@ -23908,7 +23908,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  switch_type = &quot;fabric&quot;
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  switch_id   = &lt;一意の番号&gt;
 </span></code></pre></div>
-<p>SAI VOQ 仕様の推奨: fabric ASIC の <code>switch_id</code> は forwarding ASIC と重複させない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-sai">SAI</a> VOQ 仕様の推奨: fabric ASIC の <code>switch_id</code> は forwarding ASIC と重複させない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   subgraph LC0[Line Card 0]
@@ -23950,7 +23950,7 @@
 <ul>
 <li><code>IN_FEC_NOT_CORRECTABLE_FRAMES</code> 等を周期チェック</li>
 <li>しきい値超過 → リンクを論理的に isolate（fabric から外す）</li>
-<li>リンクダウン時はダウン理由（CRC / misaligned）も STATE_DB に表記</li>
+<li>リンクダウン時はダウン理由（CRC / misaligned）も <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に表記</li>
 <li>Rev 3.6 で <strong>persistent link flap</strong> 検出が追加（short up/down 繰り返しも isolate）</li>
 </ul>
 <p>しきい値の具体値・判定窓は HLD で完全固定されておらず、実装側のチューニング余地あり。</p>
@@ -24020,7 +24020,7 @@ reasoning: 継続的に改訂されている fabric link 監視機能の設計�
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VOQ chassis 構成専用。pizza-box には無関係</li>
-<li>fabric ASIC は front-panel を持たないため LLDP / BGP 等は disable 強制</li>
+<li>fabric ASIC は front-panel を持たないため <a href="../../reference/glossary/#term-lldp">LLDP</a> / <a href="../../reference/glossary/#term-bgp">BGP</a> 等は disable 強制</li>
 <li>自動 isolation のしきい値設計は HLD で完全固定されていない</li>
 <li>HLD は 25KB+ で改訂多数。フローや edge case は本文を参照</li>
 </ul>
@@ -24052,6 +24052,8 @@ reasoning: 継続的に改訂されている fabric link 監視機能の設計�
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c96384f4952f -->
 
 <div class="footnote">
 <hr />

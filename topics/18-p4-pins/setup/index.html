@@ -23996,10 +23996,10 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>PINS は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で ASIC を直接制御できるようにする機能です。本ページでは、PINS を実用的に動かすための設定フローを「P4RT を起動する」「コントローラ接続を許可する」「Send to Ingress / PacketIO を有効化する」の 3 フェーズで示し、よくある詰まりどころと対処も併記します。</p>
-<p>CLI / CONFIG_DB の reference 整備が PINS では他機能より薄いため (後述の「現時点で不足している reference」節を参照)、本ページの CONFIG_DB スキーマは HLD と既存実装（<code>sonic-buildimage/dockers/docker-sonic-p4rt</code>、<code>sonic-pins/</code>）から推定したものを示します。実機では必ず <code>redis-cli HGETALL</code> で実際のキーを確認してから運用に組み込んでください。</p>
+<p><a href="../../../reference/glossary/#term-pins">PINS</a> は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で ASIC を直接制御できるようにする機能です。本ページでは、PINS を実用的に動かすための設定フローを「P4RT を起動する」「コントローラ接続を許可する」「Send to Ingress / PacketIO を有効化する」の 3 フェーズで示し、よくある詰まりどころと対処も併記します。</p>
+<p>CLI / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の reference 整備が PINS では他機能より薄いため (後述の「現時点で不足している reference」節を参照)、本ページの CONFIG_DB スキーマは <a href="../../../reference/glossary/#term-hld">HLD</a> と既存実装（<code>sonic-buildimage/dockers/docker-sonic-p4rt</code>、<code>sonic-pins/</code>）から推定したものを示します。実機では必ず <code>redis-cli HGETALL</code> で実際のキーを確認してから運用に組み込んでください。</p>
 <h2 id="pins-controller-driven">このページの読み方: PINS は controller-driven 系<a class="headerlink" href="#pins-controller-driven" title="Permanent link">&para;</a></h2>
-<p>PINS は「運用者が <code>config p4rt ...</code> で 1 ルートずつ ACL / route / nexthop を入れる」プロダクトではありません。<strong>人手で CLI を打つのは P4RT 自体の起動 / 証明書配備 / feature toggle あたりまで</strong>で、データプレーンの設定 (route, ACL, nexthop, mirror, VRF など) は基本的に外部の <strong>P4 controller</strong> が P4Runtime gRPC で直接 ASIC に書き込みます。本ページの CLI / <code>redis-cli</code> 例は「P4RT を立ち上げる側」と「障害時の状態確認」を中心に据え、データプレーンの flow 投入は controller 側の責務であることを念頭に読んでください。</p>
+<p>PINS は「運用者が <code>config p4rt ...</code> で 1 ルートずつ <a href="../../../reference/glossary/#term-acl">ACL</a> / route / nexthop を入れる」プロダクトではありません。<strong>人手で CLI を打つのは P4RT 自体の起動 / 証明書配備 / feature toggle あたりまで</strong>で、データプレーンの設定 (route, ACL, nexthop, mirror, <a href="../../../reference/glossary/#term-vrf">VRF</a> など) は基本的に外部の <strong>P4 controller</strong> が P4Runtime gRPC で直接 ASIC に書き込みます。本ページの CLI / <code>redis-cli</code> 例は「P4RT を立ち上げる側」と「障害時の状態確認」を中心に据え、データプレーンの flow 投入は controller 側の責務であることを念頭に読んでください。</p>
 <p>代表的な設定経路は次の通りです。</p>
 <table>
 <thead>
@@ -24013,10 +24013,10 @@
 <tr>
 <td>P4 controller (P4Runtime gRPC)</td>
 <td>本番。ForwardingPipelineConfig + Write RPC で flow を大量投入</td>
-<td><code>p4rt-app</code> 経由で <code>APPL_DB:P4RT_TABLE</code> → SAI</td>
+<td><code>p4rt-app</code> 経由で <code>APPL_DB:P4RT_TABLE</code> → <a href="../../../reference/glossary/#term-sai">SAI</a></td>
 </tr>
 <tr>
-<td>gNMI (<code>/openconfig-interfaces:interfaces</code> 等)</td>
+<td><a href="../../../reference/glossary/#term-gnmi">gNMI</a> (<code>/openconfig-interfaces:interfaces</code> 等)</td>
 <td>port / VRF / interface の基盤側</td>
 <td><code>CONFIG_DB</code> 各種</td>
 </tr>
@@ -24088,7 +24088,7 @@
 <tr>
 <td>PacketIO</td>
 <td>PacketIn が来ない、PacketOut が ASIC に届かない</td>
-<td>CoPP trap install、<code>psample</code> genl、<code>send_to_ingress</code> netdev</td>
+<td><a href="../../../reference/glossary/#term-copp">CoPP</a> trap install、<code>psample</code> genl、<code>send_to_ingress</code> netdev</td>
 </tr>
 </tbody>
 </table>
@@ -24181,7 +24181,7 @@
 <h2 id="3-packetio-send-to-ingress">シナリオ 3: PacketIO + Send to Ingress を有効化<a class="headerlink" href="#3-packetio-send-to-ingress" title="Permanent link">&para;</a></h2>
 <p>PINS でデータプレーン punt (PacketIn) と CPU 注入 (PacketOut / Send to Ingress) を使う場合の追加設定です。</p>
 <h3 id="send-to-ingress-hostif">Send to Ingress hostif<a class="headerlink" href="#send-to-ingress-hostif" title="Permanent link">&para;</a></h3>
-<p><code>SEND_TO_INGRESS_PORT</code> を APPL_DB に宣言すると <code>PortsOrch</code> が <code>send_to_ingress</code> netdev を生成します。CONFIG_DB ではなく APPL_DB なので注意:</p>
+<p><code>SEND_TO_INGRESS_PORT</code> を <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に宣言すると <code>PortsOrch</code> が <code>send_to_ingress</code> netdev を生成します。CONFIG_DB ではなく APPL_DB なので注意:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># APPL_DB は db number 0</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HSET<span class="w"> </span><span class="s2">&quot;SEND_TO_INGRESS_PORT_TABLE:send_to_ingress&quot;</span><span class="w"> </span>NULL<span class="w"> </span>NULL
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
@@ -24288,7 +24288,7 @@
 <li><a href="../../../reference/config-db/port/">reference/config-db/port.md</a> — hostif / netdev 関連</li>
 <li><a href="../../../reference/config-db/copp-group/">reference/config-db/copp-group.md</a> — CoPP の trap group</li>
 <li><a href="../../../reference/config-db/copp-trap/">reference/config-db/copp-trap.md</a> — trap 個別</li>
-<li><a href="../../../reference/yang/sonic-copp/">reference/yang/sonic-copp.md</a> — CoPP YANG (schema 側の正本)</li>
+<li><a href="../../../reference/yang/sonic-copp/">reference/yang/sonic-copp.md</a> — CoPP <a href="../../../reference/glossary/#term-yang">YANG</a> (schema 側の正本)</li>
 </ul>
 <h2 id="reference_1">現時点で不足している reference<a class="headerlink" href="#reference_1" title="Permanent link">&para;</a></h2>
 <p>PINS 系は <code>reference/cli/*</code>、<code>reference/config-db/p4rt.md</code>、<code>reference/yang/sonic-p4rt.md</code> が未整備で、HLD の <code>config_db: []</code> / <code>cli: []</code> / <code>yang: []</code> が空のまま残っています。今後の reference batch で以下を補完予定:</p>
@@ -24308,6 +24308,7 @@
 <li><a href="../../../management/packetio/">PacketIO HLD</a></li>
 <li><a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a></li>
 </ul>
+<!-- glossary-links-injected: fd64496a02ec -->
 
 
 

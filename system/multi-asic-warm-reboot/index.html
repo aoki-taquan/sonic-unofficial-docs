@@ -23666,12 +23666,12 @@
 </div>
 <h1 id="multi-asic-warm-rebootnamespace-shutdown-boot">Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）<a class="headerlink" href="#multi-asic-warm-rebootnamespace-shutdown-boot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>multi-ASIC platform では各 ASIC が <strong>独自の swss / syncd / FRR インスタンス</strong> を持つ。warm reboot を成立させるには、<strong>namespace を跨いだ協調 shutdown / boot</strong> が必要<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>multi-ASIC platform では各 ASIC が <strong>独自の swss / <a href="../../reference/glossary/#term-syncd">syncd</a> / <a href="../../reference/glossary/#term-frr">FRR</a> インスタンス</strong> を持つ。warm reboot を成立させるには、<strong>namespace を跨いだ協調 shutdown / boot</strong> が必要<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ポイント:</p>
 <ul>
 <li>すべての namespace で <strong>同時に</strong> GR を有効化、<code>WARM_RESTART_TABLE</code> を更新する</li>
 <li>syncd warm shutdown は <strong>per-namespace</strong> に走り、<code>/host/warmboot/sai-warmboot.bin</code> 系のファイルも namespace ごとに分離する</li>
-<li>BGP は host namespace の <code>bgpcfgd</code> / FRR と各 asic namespace の FRR の両方で GR</li>
+<li><a href="../../reference/glossary/#term-bgp">BGP</a> は host namespace の <code>bgpcfgd</code> / FRR と各 asic namespace の FRR の両方で GR</li>
 <li>internal BGP（<code>BGP_INTERNAL_NEIGHBOR</code>）の hold time にも warm reboot を完走させるマージンを持たせる</li>
 </ul>
 <h2 id="going-down">動作仕様（going down 順序）<a class="headerlink" href="#going-down" title="Permanent link">&para;</a></h2>
@@ -23682,12 +23682,12 @@
     DUMP --&gt; SYNCD[syncd@asicN 全 warm shutdown\nsai-warmboot.bin per-namespace]
     SYNCD --&gt; DB[per-namespace database 停止]
     DB --&gt; KEXEC[kexec\nSONIC_BOOT_TYPE=warm]</code></pre>
-<p>going up は逆順を namespace ごとに走らせ、orchagent compare 完了後に bgp / teamd を起動する。</p>
+<p>going up は逆順を namespace ごとに走らせ、<a href="../../reference/glossary/#term-orchagent">orchagent</a> compare 完了後に bgp / <a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> を起動する。</p>
 <h2 id="_2">制約と注意点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>per-namespace の同期</strong>: ある namespace だけ早く落ちると ASIC 間 internal BGP がフラップする</li>
-<li><strong>CPU / disk の負荷スパイク</strong>: namespace 数 × Redis dump / syncd shutdown が同時に走るためリソースに余裕が必要</li>
-<li><strong>internal link</strong>: shutdown 中も internal link は up のままにする（forwarding は SAI state に従う）</li>
+<li><strong>CPU / disk の負荷スパイク</strong>: namespace 数 × <a href="../../reference/glossary/#term-redis">Redis</a> dump / syncd shutdown が同時に走るためリソースに余裕が必要</li>
+<li><strong>internal link</strong>: shutdown 中も internal link は up のままにする（forwarding は <a href="../../reference/glossary/#term-sai">SAI</a> state に従う）</li>
 <li><strong>ファイル配置</strong>: <code>/host/warmboot/&lt;ns&gt;/dump.rdb</code> のように namespace 識別子で分離する設計</li>
 </ul>
 <h2 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
@@ -23739,6 +23739,8 @@
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3cf123812bf9 -->
 
 <div class="footnote">
 <hr />

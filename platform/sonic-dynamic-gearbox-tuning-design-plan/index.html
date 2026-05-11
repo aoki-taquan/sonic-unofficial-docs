@@ -23892,8 +23892,8 @@
   ORCH --&gt;|内部 ASIC serdes attr| SAI3[SAI ASIC]</code></pre>
 <p>ポイント<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>xcvrd / media_settings parser は <strong>既存の更新メカニズムを流用</strong>。ASIC 用 <code>pre1/main/post1/...</code> と並べて <code>gb_line_*</code> / <code>gb_system_*</code> を APPL_DB に書く（HLD Rev 0.3 で format を整理し xcvrd 改造を不要にした<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>）</li>
-<li>orchagent は APPL_DB 変化を検出し <code>doPortTask(SET)</code> を実行。<strong>line-side / system-side ごとに新 serdes attribute</strong> を作って SAI 経由で gearbox に programming する</li>
+<li>xcvrd / media_settings parser は <strong>既存の更新メカニズムを流用</strong>。ASIC 用 <code>pre1/main/post1/...</code> と並べて <code>gb_line_*</code> / <code>gb_system_*</code> を <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に書く（<a href="../../reference/glossary/#term-hld">HLD</a> Rev 0.3 で format を整理し xcvrd 改造を不要にした<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>）</li>
+<li><a href="../../reference/glossary/#term-orchagent">orchagent</a> は APPL_DB 変化を検出し <code>doPortTask(SET)</code> を実行。<strong>line-side / system-side ごとに新 serdes attribute</strong> を作って <a href="../../reference/glossary/#term-sai">SAI</a> 経由で gearbox に programming する</li>
 <li>現バージョンでは <code>pre1/pre2/pre3/main/post1/post2/post3</code> 7 種のみ対応<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="appl_db">APPL_DB の形<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
@@ -23993,6 +23993,8 @@ reasoning: orchagent doPortTask での反映と新 serdes 属性、PR #4113 の�
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ef44d3c07b8f -->
 
 <div class="footnote">
 <hr />

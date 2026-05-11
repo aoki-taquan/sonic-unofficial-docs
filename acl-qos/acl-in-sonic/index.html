@@ -23727,17 +23727,17 @@
 <p><code>sonic-swss/orchagent/aclorch.cpp</code> / <code>aclorch.h</code> / <code>acltable.h</code> で AclOrch 本体が実装。APPL_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> は <code>sonic-swss-common/common/schema.h:94,96</code> で <code>APP_ACL_TABLE_TABLE_NAME</code> として定義。後発の DASH ACL は <code>APP_DASH_ACL_RULE_TABLE_NAME</code> (schema.h:178) として別系統で共存。</p>
 </div>
 <h1 id="acl-in-sonic-swss">ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）<a class="headerlink" href="#acl-in-sonic-swss" title="Permanent link">&para;</a></h1>
-<p>読み手が真っ先に知りたいのは「SONiC の ACL はどの単位で書き、どこを経由して TCAM に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。</p>
+<p>読み手が真っ先に知りたいのは「SONiC の <a href="../../reference/glossary/#term-acl">ACL</a> はどの単位で書き、どこを経由して TCAM に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。</p>
 <h2 id="acl">ACL はどの単位で書くのか<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h2>
-<p>SONiC の ACL は <strong>table（型を持つ）+ rule</strong> の二層構造。table の <strong>type</strong> で許される match / action と bind 先（port / LAG / VLAN / switch）が決まる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の ACL は <strong>table（型を持つ）+ rule</strong> の二層構造。table の <strong>type</strong> で許される match / action と bind 先（port / <a href="../../reference/glossary/#term-lag">LAG</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a> / switch）が決まる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主な type:</p>
 <ul>
 <li><code>L3</code> / <code>L3v6</code>: ingress IPv4 / IPv6 ACL</li>
 <li><code>MIRROR</code> / <code>MIRRORV6</code>: ingress traffic を mirror</li>
-<li><code>PFCWD</code>, <code>EVERFLOW</code>, <code>DROP</code>, <code>MUX</code>: 用途別の派生 type（HLD 本体は基礎のみ記述、後発で追加）</li>
-<li>カスタム: Rev 1.1 (2025-04) で <strong>VXLAN inner src MAC rewrite</strong> 用 type が追加<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>PFCWD</code>, <code>EVERFLOW</code>, <code>DROP</code>, <code>MUX</code>: 用途別の派生 type（<a href="../../reference/glossary/#term-hld">HLD</a> 本体は基礎のみ記述、後発で追加）</li>
+<li>カスタム: Rev 1.1 (2025-04) で <strong><a href="../../reference/glossary/#term-vxlan">VXLAN</a> inner src MAC rewrite</strong> 用 type が追加<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<p>CONFIG_DB のキーは次の 2 つだけ。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> のキーは次の 2 つだけ。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ACL_TABLE|&lt;table_name&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  type   = &quot;L3&quot; | &quot;L3v6&quot; | &quot;MIRROR&quot; | ...
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  ports  = &quot;Ethernet0,PortChannel001,...&quot;   # bind 対象
@@ -23749,7 +23749,7 @@
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  SRC_IP / DST_IP / IP_PROTOCOL / L4_*_PORT / ETHER_TYPE / TCP_FLAGS / IN_PORTS …
 </span></code></pre></div>
 <h2 id="cli-asic">CLI → ASIC まで何が起きるのか<a class="headerlink" href="#cli-asic" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB → APPL_DB → AclOrch → SAI Redis → ASIC_DB → syncd → SAI → ASIC TCAM、というスタックを通る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CONFIG_DB → <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> → AclOrch → <a href="../../reference/glossary/#term-sai">SAI</a> <a href="../../reference/glossary/#term-redis">Redis</a> → <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> → <a href="../../reference/glossary/#term-syncd">syncd</a> → SAI → ASIC TCAM、というスタックを通る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
   CONF[config_db.json /&lt;br/&gt;swssconfig.json] --&gt; APP[APPL_DB&lt;br/&gt;ACL_TABLE_TABLE&lt;br/&gt;ACL_RULE_TABLE]
   APP --&gt; ORCH[AclOrch]
@@ -23871,7 +23871,7 @@ reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの�
 <ul>
 <li><strong>Mirror セッション</strong>: Mirror table は <code>MIRROR_SESSION</code> と密結合</li>
 <li><strong>EVERFLOW / DSCP-based mirror</strong>: Mirror 上に積み重ねる別 HLD</li>
-<li><strong>PFCWD / DROP / MUX</strong>: 同じ ACL_TABLE 機構を type 違いで再利用</li>
+<li><strong>PFCWD / DROP / <a href="../../reference/glossary/#term-mux">MUX</a></strong>: 同じ ACL_TABLE 機構を type 違いで再利用</li>
 <li><strong>ACL Flex Counters</strong>: Phase 2 から導入</li>
 <li><strong>port / LAG</strong>: <code>ports</code> で bind。LAG 解体時の rebind は AclOrch 側ロジック</li>
 </ul>
@@ -23891,6 +23891,8 @@ reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの�
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 53f5206a8a22 -->
 
 <div class="footnote">
 <hr />

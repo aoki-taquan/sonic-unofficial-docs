@@ -23611,7 +23611,7 @@
 
 <h1 id="snmp_agent_address_config">SNMP_AGENT_ADDRESS_CONFIG テーブル<a class="headerlink" href="#snmp_agent_address_config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>snmpd</code> のリッスンアドレスと UDP ポートを CONFIG_DB に登録するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>docker-snmp</code> 起動スクリプトが CONFIG_DB を読み、<code>snmpd.conf</code> の <code>agentaddress</code> 行を生成する。複数エントリで複数アドレス / ポート / VRF を同時に bind できる。</p>
+<p><code>snmpd</code> のリッスンアドレスと UDP ポートを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に登録するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>docker-snmp</code> 起動スクリプトが CONFIG_DB を読み、<code>snmpd.conf</code> の <code>agentaddress</code> 行を生成する。複数エントリで複数アドレス / ポート / <a href="../../glossary/#term-vrf">VRF</a> を同時に bind できる。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23641,7 +23641,7 @@
 <tr>
 <td><code>agent_ip</code></td>
 <td><code>inet:ip-address</code></td>
-<td>SNMP エージェントの bind IP</td>
+<td><a href="../../glossary/#term-snmp">SNMP</a> エージェントの bind IP</td>
 </tr>
 <tr>
 <td><code>port</code></td>
@@ -23668,7 +23668,7 @@
 <ul>
 <li>関連 CONFIG_DB: <a href="../snmp/"><code>SNMP</code></a>, <code>SNMP_COMMUNITY</code>, <code>SNMP_USER</code></li>
 <li>関連 CLI: <code>config snmp agentaddress { add | del } &lt;ip&gt; [-p &lt;port&gt;] [-v &lt;vrf&gt;]</code></li>
-<li>関連 YANG: <code>sonic-snmp</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-snmp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23700,6 +23700,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>snmp
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 60a02696c221 -->
 
 <div class="footnote">
 <hr />

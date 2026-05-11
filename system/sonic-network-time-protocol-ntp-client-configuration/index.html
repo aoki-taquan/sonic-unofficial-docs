@@ -23993,11 +23993,11 @@
 </div>
 <h1 id="sonic-ntp-clientchrony-ntp_server-mgmt-vrf">SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）<a class="headerlink" href="#sonic-ntp-clientchrony-ntp_server-mgmt-vrf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のシステム時刻は外部 NTP サーバから同期する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は CONFIG_DB の <strong><code>NTP</code> / <code>NTP_SERVER</code> / <code>NTP_KEY</code></strong> を真実源として、<code>hostcfgd</code> が <code>/etc/ntp.conf</code> (or <code>/etc/chrony/chrony.conf</code>) を rendering する設計を扱う。</p>
+<p>SONiC のシステム時刻は外部 NTP サーバから同期する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <strong><code>NTP</code> / <code>NTP_SERVER</code> / <code>NTP_KEY</code></strong> を真実源として、<code>hostcfgd</code> が <code>/etc/ntp.conf</code> (or <code>/etc/chrony/chrony.conf</code>) を rendering する設計を扱う。</p>
 <p>主要な観点:</p>
 <ul>
 <li><strong>server リスト</strong>: <code>iburst</code> / <code>prefer</code> / 認証鍵参照</li>
-<li><strong>mgmt VRF / data VRF</strong>: NTP のクエリは大抵 mgmt VRF。<code>MGMT_VRF_CONFIG</code> の <code>ntp_enabled</code> が連動</li>
+<li><strong>mgmt <a href="../../reference/glossary/#term-vrf">VRF</a> / data VRF</strong>: NTP のクエリは大抵 mgmt VRF。<code>MGMT_VRF_CONFIG</code> の <code>ntp_enabled</code> が連動</li>
 <li><strong>認証</strong>: NTP shared key（symmetric MD5/SHA）または NTS（chrony）</li>
 <li><strong>source IP / interface</strong>: VRF / loopback の選択</li>
 </ul>
@@ -24115,7 +24115,7 @@
 </tr>
 <tr>
 <td>設定生成</td>
-<td><code>ntp.conf.j2</code> を hostcfgd が render</td>
+<td><code>ntp.conf.j2</code> を <a href="../../reference/glossary/#term-hostcfgd">hostcfgd</a> が render</td>
 <td><code>chrony.conf.j2</code> を <code>chrony-config.sh</code> + jinja で render（<code>files/image_config/chrony/</code>）</td>
 </tr>
 <tr>
@@ -24213,7 +24213,7 @@
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/25729">sonic-buildimage #25729: Issue 25728: Add vrf ordering dependency to chrony config (merged)</a> — chrony の VRF 起動順序バグ修正。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/24333">sonic-buildimage #24333: Bug: NTP - chrony does not sync time over MGMT VRF (open)</a> — mgmt VRF 越し同期失敗の既知バグ。HLD の理想動作と現実の乖離点。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/23904">sonic-buildimage #23904: Failed to restart chrony.service on NTP server add (open, NVIDIA)</a> — server add 直後の reload race。</li>
-<li><a href="https://github.com/sonic-net/sonic-buildimage/issues/25863">sonic-buildimage #25863: [chrony] NTP not synchronized when MGMT_INTERFACE IP is not static (open)</a> — DHCP mgmt IP 利用時の起動順問題。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/issues/25863">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #25863: [chrony] NTP not synchronized when MGMT_INTERFACE IP is not static (open)</a> — DHCP mgmt IP 利用時の起動順問題。</li>
 </ul>
 <h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
@@ -24223,6 +24223,8 @@
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2fe85315ed00 -->
 
 <div class="footnote">
 <hr />

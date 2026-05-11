@@ -23578,7 +23578,7 @@
 
 <h1 id="show-buffer_pool-headroom-pool">show buffer_pool / headroom-pool サブコマンド<a class="headerlink" href="#show-buffer_pool-headroom-pool" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show buffer_pool</code> および <code>show headroom-pool</code> は QoS バッファプール / ヘッドルームプールの <strong>watermark 統計</strong> を表示するためのコマンドグループ。両グループは構造が完全に対称で、それぞれ <code>watermarkstat -t buffer_pool</code> / <code>watermarkstat -t headroom_pool</code> を呼び出す薄いラッパとして実装されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB は読まず、COUNTERS_DB の watermark カウンタを <code>watermarkstat</code> 経由で取得する。</p>
+<p><code>show buffer_pool</code> および <code>show headroom-pool</code> は <a href="../../glossary/#term-qos">QoS</a> バッファプール / ヘッドルームプールの <strong>watermark 統計</strong> を表示するためのコマンドグループ。両グループは構造が完全に対称で、それぞれ <code>watermarkstat -t buffer_pool</code> / <code>watermarkstat -t headroom_pool</code> を呼び出す薄いラッパとして実装されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> は読まず、<a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の watermark カウンタを <code>watermarkstat</code> 経由で取得する。</p>
 <p><code>show buffer</code> (= <code>show-buffer.md</code> で扱う <code>buffer_pool</code> 設定の表示) とは別の系統である点に注意。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -23646,7 +23646,7 @@ excerpt: |
 <code>watermarkstat -p -t buffer_pool</code> を実行。<code>-p</code> で persistent モード（ユーザがクリアできず、再起動まで残る）。</p>
 <h3 id="show-headroom-pool-watermark-persistent-watermark"><code>show headroom-pool watermark</code> / <code>persistent-watermark</code><a class="headerlink" href="#show-headroom-pool-watermark-persistent-watermark" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-<code>watermarkstat -t headroom_pool</code> / <code>watermarkstat -p -t headroom_pool</code> を実行。ヘッドルームプール（PFC 用ロスレストラフィックの予約バッファ）専用の WM 集計。</p>
+<code>watermarkstat -t headroom_pool</code> / <code>watermarkstat -p -t headroom_pool</code> を実行。ヘッドルームプール（<a href="../../glossary/#term-pfc">PFC</a> 用ロスレストラフィックの予約バッファ）専用の WM 集計。</p>
 <h2 id="_4">補足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>watermarkstat</code> は COUNTERS_DB の <code>USER_WATERMARKS</code> / <code>PERSISTENT_WATERMARKS</code> テーブルを読みに行く。WM の更新周期は <code>WATERMARK_TABLE|TELEMETRY_INTERVAL</code> で設定可能（<code>config watermark telemetry interval</code>）</li>
@@ -23680,6 +23680,8 @@ excerpt: |
 <li><a href="../show-pfc/">reference/CLI: show pfc</a></li>
 <li><a href="../show-priority-group/">reference/CLI: show priority-group</a></li>
 </ul>
+<!-- glossary-links-injected: abeaefab6cb2 -->
+
 <div class="footnote">
 <hr />
 <ol>

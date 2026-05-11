@@ -23678,7 +23678,7 @@
 </div>
 <h1 id="gnmi-subscription-for-yang-dataon_change-sample-target_defined">gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）<a class="headerlink" href="#gnmi-subscription-for-yang-dataon_change-sample-target_defined" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>gNMI Subscribe は YANG path に紐づくデータを <strong>stream / poll / once</strong> モードでクライアントに push する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC は <code>sonic-mgmt-framework</code> の Translib + STATE_DB / COUNTERS_DB / APPL_DB の表購読を組合せ、openconfig YANG パスでのサブスクリプションを実現する。</p>
+<p><a href="../../reference/glossary/#term-gnmi">gNMI</a> Subscribe は <a href="../../reference/glossary/#term-yang">YANG</a> path に紐づくデータを <strong>stream / poll / once</strong> モードでクライアントに push する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC は <code>sonic-mgmt-framework</code> の Translib + <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の表購読を組合せ、openconfig YANG パスでのサブスクリプションを実現する。</p>
 <p>サポートする SubscriptionMode（per-path）:</p>
 <ul>
 <li><strong>ON_CHANGE</strong>: 値が変化したときのみ送る（例: link state、neighbor state）</li>
@@ -23698,7 +23698,7 @@
 <p>主要な仕組み<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>Sync 期 → Stream 期</strong>: 最初に現在値の snapshot（sync_response）を送り、以後 update を流す</li>
-<li><strong>ON_CHANGE が成立する path</strong>: STATE_DB のキー単位（<code>PORT_TABLE</code> 等）。Redis keyspace notification と組合せ</li>
+<li><strong>ON_CHANGE が成立する path</strong>: STATE_DB のキー単位（<code>PORT_TABLE</code> 等）。<a href="../../reference/glossary/#term-redis">Redis</a> keyspace notification と組合せ</li>
 <li><strong>SAMPLE の interval</strong>: subscribe 時に client が指定。下限は server 設定で抑える</li>
 <li><strong>wildcards</strong>: <code>interfaces/interface[name=*]/state/oper-status</code> のように expand してから subscribe</li>
 <li><strong>TARGET_DEFINED の選択</strong>: counter 系 → SAMPLE、state 系 → ON_CHANGE が一般的</li>
@@ -23734,7 +23734,7 @@
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>management framework</strong>: Translib / Transformer の同居機構</li>
-<li><strong>gNMI Master Arbitration</strong>: 複数クライアントの集中制御で先行ロックを取る HLD（management area）</li>
+<li><strong>gNMI Master Arbitration</strong>: 複数クライアントの集中制御で先行ロックを取る <a href="../../reference/glossary/#term-hld">HLD</a>（management area）</li>
 <li><strong>dial-in / dial-out telemetry</strong>: dial-out では subscribe をサーバ側起動で行う</li>
 <li><strong>STATE_DB schema</strong>: ON_CHANGE 効率は STATE_DB スキーマ設計に依存</li>
 </ul>
@@ -23753,6 +23753,8 @@
 - TLS / cert 認証と gNSI / gNOI 統合の現行実装確認
 - gNMI Master Arbitration / dial-out telemetry との実装関係確認
 -->
+
+<!-- glossary-links-injected: 9cb1b1c08d60 -->
 
 <div class="footnote">
 <hr />

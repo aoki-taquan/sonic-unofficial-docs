@@ -23884,7 +23884,7 @@
 </div>
 <h1 id="ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82">ポートベース IPv4 DHCP Server（<code>kea-dhcp-server</code> + <code>dhcrelay</code> Option 82 連携）<a class="headerlink" href="#ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC に <strong>組み込み IPv4 DHCP Server</strong> を持つ。MAC でも DHCP option でもなく <strong>入ってきた物理 / LAG ポート</strong> で IP を割り当てる "port-based" モード<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。利点は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC に <strong>組み込み IPv4 DHCP Server</strong> を持つ。MAC でも DHCP option でもなく <strong>入ってきた物理 / <a href="../../reference/glossary/#term-lag">LAG</a> ポート</strong> で IP を割り当てる "port-based" モード<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。利点は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>設定外のポートからの request には IP を払い出さないため安全</li>
 <li>外部ホスト情報を仕込まず、ポート単位で予約 IP / 範囲だけ書けば自走する小規模 NW 構築に向く</li>
@@ -23917,7 +23917,7 @@
   dhcpservd --&gt; STATE[(STATE_DB&lt;br&gt;DHCP_SERVER_IPV4_LEASE)]
   CFG --&gt; dhcprelayd
   dhcprelayd --&gt;|kill/start/restart| dhcrelay</code></pre>
-<p><code>dhcprelayd</code> は <code>VLAN</code> / <code>VLAN_MEMBER</code> / <code>DHCP_SERVER_IPV4*</code> を CONFIG_DB から subscribe し、関連変更や <code>dhcp_relay</code> container 起動時に <code>dhcrelay</code> プロセスを起動・再起動する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>dhcprelayd</code> は <code>VLAN</code> / <code>VLAN_MEMBER</code> / <code>DHCP_SERVER_IPV4*</code> を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から subscribe し、関連変更や <code>dhcp_relay</code> container 起動時に <code>dhcrelay</code> プロセスを起動・再起動する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="kea-dhcp-server-dhcpservd">kea-dhcp-server の設定（dhcpservd が生成）<a class="headerlink" href="#kea-dhcp-server-dhcpservd" title="Permanent link">&para;</a></h3>
 <p><code>dhcrelay</code> の Option 82 に <strong>circuit-id = <code>&lt;hostname&gt;:&lt;port_alias&gt;</code> (例 <code>hostname:etp1</code>)</strong> が乗ることを使い、kea 側で <code>client-classes</code> でクライアントを分類し、対応 pool から払い出す<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
@@ -23992,7 +23992,7 @@
 </tr>
 </tbody>
 </table>
-<p>YANG <code>must</code> 制約で <strong><code>ips</code> と <code>ranges</code> を同時指定不可</strong>、<code>ranges</code> 配列は 1〜2 要素<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a> <code>must</code> 制約で <strong><code>ips</code> と <code>ranges</code> を同時指定不可</strong>、<code>ranges</code> 配列は 1〜2 要素<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24038,14 +24038,14 @@
 <ul>
 <li><strong>モードは <code>PORT</code> のみ</strong>。<code>DYNAMIC</code> 等は将来予定<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>dhcp_server enable 中は dhcp_relay と同一スイッチで併用不可。CLI 側で拒否される<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ポート移動時の lease 振替は無く、<strong>lease 期限切れまで旧ポートからの新規割当が止まる</strong>ケースあり（FDB 連動の release は将来）<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>ポート移動時の lease 振替は無く、<strong>lease 期限切れまで旧ポートからの新規割当が止まる</strong>ケースあり（<a href="../../reference/glossary/#term-fdb">FDB</a> 連動の release は将来）<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>ranges</code> は 1〜2 要素 (start[, end])</li>
 <li>option 1/3/51/53/54 は customized で上書き不可</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>dhcp_relay</strong>: 同時 enable 不可。CLI 拒否</li>
-<li><strong>VLAN / PortChannel / Port</strong>: <code>DHCP_SERVER_IPV4_PORT</code> の参照先で leafref。VLAN 削除には連動チェックが必要</li>
+<li><strong><a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> / Port</strong>: <code>DHCP_SERVER_IPV4_PORT</code> の参照先で leafref。VLAN 削除には連動チェックが必要</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24061,6 +24061,8 @@
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 987cec9fd0c5 -->
 
 <div class="footnote">
 <hr />

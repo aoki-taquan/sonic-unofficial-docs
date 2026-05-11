@@ -23863,13 +23863,13 @@
 <h1 id="bgpcfgd-dynamic-bgp-peer">bgpcfgd の dynamic BGP peer 動的変更<a class="headerlink" href="#bgpcfgd-dynamic-bgp-peer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>SDN コントローラから dynamic BGP peer（listen-range）を動的に追加・削除したい。今までの bgpcfgd で何が足りなかったか</li>
+<li>SDN コントローラから dynamic <a href="../../reference/glossary/#term-bgp">BGP</a> peer（listen-range）を動的に追加・削除したい。今までの <a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> で何が足りなかったか</li>
 <li>update / delete が <code>bgpcfgd</code> のどこで処理されるか、後方互換は保たれるか</li>
 <li>SDN 側はどこで「反映済み」を確認できるか</li>
 <li>何が <strong>peer_type 依存</strong> なのか</li>
 </ul>
 <h2 id="_2">何が問題だったか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>従来 bgpcfgd は <code>BGP_PEER_RANGE</code> を <strong>create only</strong> で扱い、runtime での range 追加/削除や route-map / prefix-list / peer-group 等の付随設定変更を受け付けなかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SDN コントローラから VNET / VRF 単位で dynamic peer を CRUD する要件に応えるため、本 HLD は <strong>update / delete テンプレート</strong> と <strong>STATE_DB ミラー table</strong> を追加する。</p>
+<p>従来 bgpcfgd は <code>BGP_PEER_RANGE</code> を <strong>create only</strong> で扱い、runtime での range 追加/削除や route-map / prefix-list / peer-group 等の付随設定変更を受け付けなかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SDN コントローラから <a href="../../reference/glossary/#term-vnet">VNET</a> / <a href="../../reference/glossary/#term-vrf">VRF</a> 単位で dynamic peer を CRUD する要件に応えるため、本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>update / delete テンプレート</strong> と <strong><a href="../../reference/glossary/#term-state_db">STATE_DB</a> ミラー table</strong> を追加する。</p>
 <p>スケール目標<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -23904,7 +23904,7 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>STATE_DB.BGP_PEER_CONFIGURED_TABLE|&lt;VRF/VNET&gt;|&lt;Peer&gt;
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    （CONFIG_DB と同じフィールドのミラー）
 </span></code></pre></div>
-<p>dynamic / static 両 peer で同じ table 名を使う。SDN は CONFIG_DB に投入 → STATE_DB をポーリングして反映確認する想定<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>dynamic / static 両 peer で同じ table 名を使う。SDN は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に投入 → STATE_DB をポーリングして反映確認する想定<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="bgpcfgd">bgpcfgd の挙動<a class="headerlink" href="#bgpcfgd" title="Permanent link">&para;</a></h2>
 <h3 id="_3">起動時のテンプレート探索<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p><code>BGPPeerMgrBase</code> は init 時に peer_type ごとのテンプレート directory を探す<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24012,7 +24012,7 @@
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>bgpcfgd / docker-fpm-frr</strong>: 主体</li>
-<li><strong>FRR bgpd / vtysh</strong>: 現行 listen-range の取得と適用先</li>
+<li><strong><a href="../../reference/glossary/#term-frr">FRR</a> bgpd / vtysh</strong>: 現行 listen-range の取得と適用先</li>
 <li><strong>SDN controller</strong>: CONFIG_DB 投入と STATE_DB ポーリング</li>
 <li><strong>VRF / VNET</strong>: 名前解決と routing instance 切替</li>
 </ul>
@@ -24021,7 +24021,7 @@
 <li>listen-range 追加が反映されない → ベンダ template dir に <code>update.conf.j2</code> があるか確認</li>
 <li><code>BGP_PEER_CONFIGURED_TABLE</code> に entry が出ない → bgpcfgd ログで render エラーを確認</li>
 <li>diff が誤算出 → vtysh の <code>show ip bgp listen range</code> と CONFIG_DB を突き合わせ</li>
-<li>VNET 上で <code>show ip bgp vrf &lt;name&gt;</code> が動かない → sonic-utilities のバージョン確認</li>
+<li>VNET 上で <code>show ip bgp vrf &lt;name&gt;</code> が動かない → <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> のバージョン確認</li>
 </ul>
 <h2 id="topic">関連 Topic<a class="headerlink" href="#topic" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24030,6 +24030,8 @@
 <li><a href="../../topics/04-vrf-ecmp/concept/">04 VRF &amp; ECMP / concept</a></li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: f2b208f4ed9e -->
+
 <div class="footnote">
 <hr />
 <ol>

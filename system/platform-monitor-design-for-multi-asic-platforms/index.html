@@ -23884,7 +23884,7 @@
 </div>
 <h1 id="pmon-multi-asic-global-db-per-asic-namespace">PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）<a class="headerlink" href="#pmon-multi-asic-global-db-per-asic-namespace" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Multi-ASIC SONiC では、システム共通の DB が <strong>host 上の "global database" container</strong> に居て、ASIC 毎の DB は <strong>各 ASIC namespace 内の database container</strong> に居る。PMON の各 daemon は元々シングル ASIC 想定で書かれているため、<strong>どの table をどちらの DB に書くか</strong> を切り分ける必要がある。本 HLD はその切り分け方針を定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Multi-ASIC SONiC では、システム共通の DB が <strong>host 上の "global database" container</strong> に居て、ASIC 毎の DB は <strong>各 ASIC namespace 内の database container</strong> に居る。PMON の各 daemon は元々シングル ASIC 想定で書かれているため、<strong>どの table をどちらの DB に書くか</strong> を切り分ける必要がある。本 <a href="../../reference/glossary/#term-hld">HLD</a> はその切り分け方針を定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>PMON 自体は <strong>host 上に 1 個</strong> のまま。daemon を namespace 別に複製するのではなく、<strong>daemon 内部で namespace を選び分ける</strong> 設計を取る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="table-global-vs-asic-namespace">Table の置き場（global vs ASIC namespace）<a class="headerlink" href="#table-global-vs-asic-namespace" title="Permanent link">&para;</a></h3>
@@ -23900,7 +23900,7 @@
 <tbody>
 <tr>
 <td><code>PSU_INFO</code>, <code>CHASSIS_INFO</code></td>
-<td><strong>global STATE_DB</strong>（host）</td>
+<td><strong>global <a href="../../reference/glossary/#term-state_db">STATE_DB</a></strong>（host）</td>
 <td>psud</td>
 <td>system-wide HW で ASIC 非依存</td>
 </tr>
@@ -23923,7 +23923,7 @@
 <td>port は ASIC 配下</td>
 </tr>
 <tr>
-<td>APPL_DB の <code>PORT_TABLE</code>（LED 連動用）</td>
+<td><a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>PORT_TABLE</code>（LED 連動用）</td>
 <td><strong>per-ASIC APPL_DB</strong></td>
 <td>ledd, xcvrd</td>
 <td>同上</td>
@@ -23936,7 +23936,7 @@
 <li><strong>port / interface</strong> に紐づく情報 → ASIC namespace の DB</li>
 </ul>
 <h3 id="front-end-back-end-asic">Front-end / back-end ASIC の扱い<a class="headerlink" href="#front-end-back-end-asic" title="Permanent link">&para;</a></h3>
-<p>Multi-ASIC chassis（VOQ や fixed multi-NPU）では<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>Multi-ASIC chassis（<a href="../../reference/glossary/#term-voq">VOQ</a> や fixed multi-<a href="../../reference/glossary/#term-npu">NPU</a>）では<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>front-end ASIC</strong>: front panel port を持つ</li>
 <li><strong>back-end ASIC</strong>: ASIC 同士をつなぐ backplane</li>
@@ -24000,7 +24000,7 @@ reasoning: table の global / per-ASIC 振り分けと port_config.ini の ASIC 
 <!-- evidence-rendered:end -->
 
 <h3 id="mellanox">Mellanox 例外<a class="headerlink" href="#mellanox" title="Permanent link">&para;</a></h3>
-<p>Mellanox プラットフォームでは transceiver plug in/out イベントが <strong>mlnx SDK 経由 syncd 内</strong> で出る。multi-ASIC では <strong>syncd は per-namespace</strong> になるので、xcvrd の plugin が namespace 別に SDK と通信する形に変える必要がある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Mellanox プラットフォームでは transceiver plug in/out イベントが <strong>mlnx SDK 経由 <a href="../../reference/glossary/#term-syncd">syncd</a> 内</strong> で出る。multi-ASIC では <strong>syncd は per-namespace</strong> になるので、xcvrd の plugin が namespace 別に SDK と通信する形に変える必要がある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>該当なし。本 HLD は SONiC 内部の DB アクセス整理であり、ユーザ設定はない。</p>
@@ -24024,8 +24024,8 @@ reasoning: table の global / per-ASIC 振り分けと port_config.ini の ASIC 
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>multi-ASIC HLD</strong>: container 配置の前提</li>
-<li><strong>port_config.ini / hwsku ディレクトリ構成</strong>: per-ASIC 配置に従って解釈する必要</li>
-<li><strong>Entity MIB</strong>: psud / thermalctld / xcvrd 由来データを SNMP に出す側。データソース DB が分散することを意識する</li>
+<li><strong><a href="../../reference/glossary/#term-port-config-ini">port_config.ini</a> / hwsku ディレクトリ構成</strong>: per-ASIC 配置に従って解釈する必要</li>
+<li><strong>Entity MIB</strong>: psud / thermalctld / xcvrd 由来データを <a href="../../reference/glossary/#term-snmp">SNMP</a> に出す側。データソース DB が分散することを意識する</li>
 <li><strong><code>thermalctld</code> / <code>psud</code></strong>: グローバル DB のままで動くが、後発の SensorMon 等の同居設計では再考の余地あり</li>
 <li><strong><code>xcvrd</code> の SDK 連携</strong>: Mellanox を典型に、syncd 配置と紐づく</li>
 </ul>
@@ -24048,6 +24048,8 @@ reasoning: table の global / per-ASIC 振り分けと port_config.ini の ASIC 
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f5c7d9a7109a -->
 
 <div class="footnote">
 <hr />

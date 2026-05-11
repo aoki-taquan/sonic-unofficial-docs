@@ -23690,7 +23690,7 @@
 <tr>
 <td>機能章 (topics)</td>
 <td><code>docs/topics/&lt;NN&gt;-&lt;feature&gt;/</code></td>
-<td>読み物。設定 → 運用 → 内部実装の順に複数 HLD を再構成する</td>
+<td>読み物。設定 → 運用 → 内部実装の順に複数 <a href="../../../reference/glossary/#term-hld">HLD</a> を再構成する</td>
 <td>章 = 4〜8 ページ</td>
 </tr>
 <tr>
@@ -23702,7 +23702,7 @@
 <tr>
 <td>カテゴリ (categories)</td>
 <td><code>docs/categories/</code></td>
-<td>軸別の集約 (例: SAI 拡張、CLI 章ごとの章まとめ)。area 横断のメタ整理</td>
+<td>軸別の集約 (例: <a href="../../../reference/glossary/#term-sai">SAI</a> 拡張、CLI 章ごとの章まとめ)。area 横断のメタ整理</td>
 <td>1 ページ = 1 軸</td>
 </tr>
 </tbody>
@@ -23711,9 +23711,9 @@
 <h2 id="_2">「機能章から参照、辞書章から逆引き」<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>辞書ページの本文は HLD と CLI 実装ベースで書かれているため、機能章本文側で再度長文の仕様を書くと内容が二重化する。Phase B 着手時のルールは次の通り。</p>
 <ul>
-<li>機能章の「設定」ページからは、CONFIG_DB table のスキーマ詳細を引きたい場合に reference ページへリンクする。本文では table 名と主キー、最小設定例の意味だけを書く。</li>
+<li>機能章の「設定」ページからは、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> table のスキーマ詳細を引きたい場合に reference ページへリンクする。本文では table 名と主キー、最小設定例の意味だけを書く。</li>
 <li>機能章の「運用」ページからは、CLI コマンドの全オプションを引きたい場合に reference ページへリンクする。本文では「どの順番でどのコマンドを叩くか」だけを書く。</li>
-<li>機能章の「内部実装」ページからは、YANG モデル名と native / OpenConfig の対応を引きたい場合に reference ページへリンクする。</li>
+<li>機能章の「内部実装」ページからは、<a href="../../../reference/glossary/#term-yang">YANG</a> モデル名と native / OpenConfig の対応を引きたい場合に reference ページへリンクする。</li>
 <li>reference ページからは、関連機能章へ戻れるリンクが望ましい (本章は逆引き表をここでまとめるため、reference ページ自身の本文は触らない)。</li>
 </ul>
 <h2 id="_3">カテゴリページとの関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23724,7 +23724,7 @@
 <li>platform / port lifecycle</li>
 <li>ほかドキュメント整理軸</li>
 </ul>
-<p>カテゴリは「実装階層の縦軸 (SAI / SWSS / syncd) に沿って HLD を束ねたい」「ある主題 (counter、test plan) を横断したい」など、機能章とは別の軸でページを集める用途で残す。機能章で読み終えた読者が、さらに「同じ階層で関連する HLD を一覧したい」ときに辿る位置付けである。</p>
+<p>カテゴリは「実装階層の縦軸 (SAI / SWSS / <a href="../../../reference/glossary/#term-syncd">syncd</a>) に沿って HLD を束ねたい」「ある主題 (counter、test plan) を横断したい」など、機能章とは別の軸でページを集める用途で残す。機能章で読み終えた読者が、さらに「同じ階層で関連する HLD を一覧したい」ときに辿る位置付けである。</p>
 <h2 id="discrepancy-reference-gap">discrepancy と reference gap の位置<a class="headerlink" href="#discrepancy-reference-gap" title="Permanent link">&para;</a></h2>
 <p>Phase 6 で <code>verification: hld-only</code> のページを 0 件にし、すべて <code>code-verified</code> または <code>discrepancy-found</code> に振り分けた。discrepancy が見つかった箇所は <code>docs/_meta/discrepancies.md</code> に一覧化し、reference 側で未カバーのまま残っている項目は <code>meta/reference-gaps.md</code> に積み上げてある。これらは本章 <a href="../quality-gaps/">品質と gap</a> で扱う。</p>
 <h2 id="_4">このページの位置付け<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -23740,6 +23740,7 @@
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 </ul>
+<!-- glossary-links-injected: 2e72833604bb -->
 
 
 

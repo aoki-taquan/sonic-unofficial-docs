@@ -23824,7 +23824,7 @@
 
 <h1 id="vlan_interface">VLAN_INTERFACE テーブル<a class="headerlink" href="#vlan_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VLAN を L3 IF (SVI) として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local、grat ARP / proxy ARP、loopback action、MAC を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../glossary/#term-vlan">VLAN</a> を L3 IF (SVI) として扱う設定を保持する。<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding、IP アサイン、<a href="../../glossary/#term-nat">NAT</a> zone、<a href="../../glossary/#term-mpls">MPLS</a>、IPv6 link-local、grat <a href="../../glossary/#term-arp">ARP</a> / proxy ARP、loopback action、MAC を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23978,14 +23978,14 @@
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>intfmgrd</code>: VRF / MAC / MPLS / IPv6 LL / proxy_arp / grat_arp を Linux に反映</li>
-<li><code>orchagent</code> <code>IntfsOrch</code>: SAI ルータインタフェースを生成</li>
+<li><code>orchagent</code> <code>IntfsOrch</code>: <a href="../../glossary/#term-sai">SAI</a> ルータインタフェースを生成</li>
 <li><code>arpresponder</code> 等: proxy ARP / grat ARP を扱う</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>VLAN</code>、<code>VLAN_MEMBER</code>、<code>VRF</code>、<code>VNET</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VLAN</code>、<code>VLAN_MEMBER</code>、<code>VRF</code>、<code>VNET</code></li>
 <li>関連 CLI: <code>config interface ip add/remove Vlan&lt;id&gt;</code>、<code>config vlan proxy_arp</code></li>
-<li>関連 YANG: <code>sonic-vlan</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vlan</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24021,6 +24021,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9a96ec343525 -->
 
 <div class="footnote">
 <hr />

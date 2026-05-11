@@ -23916,12 +23916,12 @@
 </div>
 <h1 id="copp-neighbor-miss-trap-enum-capability-queryshow-copp-configuration">CoPP Neighbor Miss trap と enum capability query（<code>show copp configuration</code>）<a class="headerlink" href="#copp-neighbor-miss-trap-enum-capability-queryshow-copp-configuration" title="Permanent link">&para;</a></h1>
 <h2 id="_1">これは何か（一行で）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CoPP に <strong><code>neighbor_miss</code> trap</strong>（ARP/ND 未解決 IP パケット用）を追加し、SAI <strong>enum capability query</strong> で対応 trap を事前判定、<code>hw_status</code> を STATE_DB に出して <code>show copp configuration</code> で見える化する 4 点セットの改善<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-copp">CoPP</a> に <strong><code>neighbor_miss</code> trap</strong>（<a href="../../reference/glossary/#term-arp">ARP</a>/ND 未解決 IP パケット用）を追加し、<a href="../../reference/glossary/#term-sai">SAI</a> <strong>enum capability query</strong> で対応 trap を事前判定、<code>hw_status</code> を <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に出して <code>show copp configuration</code> で見える化する 4 点セットの改善<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">なぜ必要か<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ARP 解決前の IP トラフィックが CPU に殺到</strong> → IP2ME など重要 trap を巻き添えにする問題があった</li>
-<li>SAI が知らない trap を投げて orchagent が落ちる事象を <strong>enum capability query で根絶</strong></li>
-<li>「自分の ASIC は BGP trap を install できているか？」が CLI で見えなかった → <code>hw_status</code> 列で公開</li>
+<li>SAI が知らない trap を投げて <a href="../../reference/glossary/#term-orchagent">orchagent</a> が落ちる事象を <strong>enum capability query で根絶</strong></li>
+<li>「自分の ASIC は <a href="../../reference/glossary/#term-bgp">BGP</a> trap を install できているか？」が CLI で見えなかった → <code>hw_status</code> 列で公開</li>
 </ul>
 <h2 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23944,7 +23944,7 @@
 <li>query 自体が非対応の SAI は <strong><code>default_supported_trap_ids</code></strong> にフォールバック（後方互換）</li>
 <li><code>supported_trap_ids</code> を <code>STATE_DB.COPP_TRAP_CAPABILITY_TABLE|traps</code> に出版</li>
 </ol>
-<p><strong>Config</strong> 時（APPL_DB から CoPP trap 設定が来た時）:</p>
+<p><strong>Config</strong> 時（<a href="../../reference/glossary/#term-appl_db">APPL_DB</a> から CoPP trap 設定が来た時）:</p>
 <ol>
 <li><code>supported_trap_ids</code> に含まれるか確認</li>
 <li>含まれる → SAI に <code>create_hostif_trap</code> で投入し <code>hw_status=installed</code></li>
@@ -24025,7 +24025,7 @@
 <ul>
 <li><code>SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS</code> の対応は <strong>ベンダー依存</strong>。未実装 ASIC では <code>hw_status=not-installed</code></li>
 <li><code>default_supported_trap_ids</code> は古い SAI 向けフォールバック。新 trap を default に入れ忘れると未 install になる可能性</li>
-<li>HLD デフォルト（CIR/CBS=200、queue=1）はデバイス・トラフィックに合わせて調整余地あり</li>
+<li><a href="../../reference/glossary/#term-hld">HLD</a> デフォルト（CIR/CBS=200、queue=1）はデバイス・トラフィックに合わせて調整余地あり</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24065,6 +24065,8 @@
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c2d0a7a9c2aa -->
 
 <div class="footnote">
 <hr />

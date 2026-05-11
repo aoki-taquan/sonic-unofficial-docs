@@ -23862,14 +23862,14 @@
 </div>
 <h1 id="egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp">Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）<a class="headerlink" href="#egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>encapsulated 後の <strong>outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える</strong> ための ACL table type<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Microsoft 提案、2024-07 初版。</p>
+<p>encapsulated 後の <strong>outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える</strong> ための <a href="../../reference/glossary/#term-acl">ACL</a> table type<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Microsoft 提案、2024-07 初版。</p>
 <p>既存の手段の限界:</p>
 <ul>
 <li>Ingress L3 ACL で DSCP を書き換えると <strong>inner DSCP 自体が変わってしまう</strong>（後段で復元できない）</li>
 <li>Tunnel encap 設定で inner→outer DSCP コピーは可能だが、書き換えの自由度が無い</li>
 <li>Egress L3 ACL は outer の DSCP を書けるが、<strong>inner L3 フィールドにマッチできるかは ASIC 依存</strong></li>
 </ul>
-<p>本 HLD は ASIC ハードウェア要件として <code>SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA</code> と <code>SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META</code> を使うことで、platform 中立な解を出す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は ASIC ハードウェア要件として <code>SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA</code> と <code>SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META</code> を使うことで、platform 中立な解を出す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="option-cdummy-table">採用案: Option-C（dummy table → 内部展開）<a class="headerlink" href="#option-cdummy-table" title="Permanent link">&para;</a></h3>
 <p>3 案検討した上で、<strong>Option-C</strong> を推奨<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23892,11 +23892,11 @@
 <li>platform が両方サポートしていない場合、本 ACL table type は <strong>作成不可</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="capability">Capability の公開<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h3>
-<p><code>STATE_DB.ACL_ACTIONS</code> に <code>metadata range</code>（platform がサポートする値範囲）と capability を出す<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI / orchagent が事前 check に使う。</p>
+<p><code>STATE_DB.ACL_ACTIONS</code> に <code>metadata range</code>（platform がサポートする値範囲）と capability を出す<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI / <a href="../../reference/glossary/#term-orchagent">orchagent</a> が事前 check に使う。</p>
 <h3 id="match-field">Match field<a class="headerlink" href="#match-field" title="Permanent link">&para;</a></h3>
 <p>ユーザ ACL は標準 L3 IPv4 / IPv6 と同じ match セット（<code>MATCH_SRC_IP</code> / <code>DST_IP</code> / <code>IP_PROTOCOL</code> / <code>L4_SRC_PORT</code> / <code>L4_DST_PORT</code> / <code>TCP_FLAGS</code> / <code>DSCP</code>）。出力は <code>SET_DSCP</code>（outer に効く）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="bind-point">bind point<a class="headerlink" href="#bind-point" title="Permanent link">&para;</a></h3>
-<p><code>PORT</code> / <code>LAG</code>。VLAN bind は HLD の表に無い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>PORT</code> / <code>LAG</code>。<a href="../../reference/glossary/#term-vlan">VLAN</a> bind は HLD の表に無い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/acl/egress_outer_dscp_change_table.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23959,7 +23959,7 @@ reasoning: 採用案 Option-C と SAI 要件の根拠。
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>SAI metadata 属性が必須</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。未対応 platform では作成不可</li>
+<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> metadata 属性が必須</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。未対応 platform では作成不可</li>
 <li>inner / outer の対象は encapsulated パケット限定。一般的な egress L3 ACL のように non-encap には掛けない設計</li>
 <li>metadata range は platform 依存。多数 rule が同 metadata 値で衝突しないよう AclOrch が管理する</li>
 </ul>
@@ -23998,6 +23998,8 @@ reasoning: 採用案 Option-C と SAI 要件の根拠。
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2e78c47a04ed -->
 
 <div class="footnote">
 <hr />

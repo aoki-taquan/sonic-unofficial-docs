@@ -23824,7 +23824,7 @@
 
 <h1 id="dhcp_server_ipv4">DHCP_SERVER_IPV4 テーブル<a class="headerlink" href="#dhcp_server_ipv4" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>組み込み DHCPv4 サーバ機能の VLAN/IF 単位設定を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>dhcpservd</code>（<code>sonic-dhcp-server</code> パッケージ）が <code>kea-dhcp4</code> の設定を生成、起動する。<code>DEVICE_METADATA.localhost.dhcp_server</code> で全体有効化が制御される。</p>
+<p>組み込み DHCPv4 サーバ機能の <a href="../../glossary/#term-vlan">VLAN</a>/IF 単位設定を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>dhcpservd</code>（<code>sonic-dhcp-server</code> パッケージ）が <code>kea-dhcp4</code> の設定を生成、起動する。<code>DEVICE_METADATA.localhost.dhcp_server</code> で全体有効化が制御される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23840,7 +23840,7 @@
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DHCP_SERVER_IPV4|&lt;name&gt;
 </span></code></pre></div>
-<p><code>&lt;name&gt;</code> は VLAN 名 (<code>Vlan&lt;id&gt;</code>) または SmartSwitch の bridge 参照 (<code>MID_PLANE_BRIDGE.GLOBAL.bridge</code>) の union。</p>
+<p><code>&lt;name&gt;</code> は VLAN 名 (<code>Vlan&lt;id&gt;</code>) または <a href="../../glossary/#term-smartswitch">SmartSwitch</a> の bridge 参照 (<code>MID_PLANE_BRIDGE.GLOBAL.bridge</code>) の union。</p>
 <h2 id="_3">フィールド一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23903,7 +23903,7 @@
 <li><code>DHCP_SERVER_IPV4_RANGE|&lt;name&gt;</code>: アドレスレンジ</li>
 <li><code>DHCP_SERVER_IPV4_IP|&lt;vlan&gt;|&lt;port&gt;</code>: 静的予約</li>
 </ul>
-<p>詳細は YANG モジュール <code>sonic-dhcp-server-ipv4</code> を直参照。</p>
+<p>詳細は <a href="../../glossary/#term-yang">YANG</a> モジュール <code>sonic-dhcp-server-ipv4</code> を直参照。</p>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>dhcpservd</code> (<code>sonic-dhcp-server</code> 内)</li>
@@ -23911,7 +23911,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>VLAN</code>、<code>VLAN_INTERFACE</code>、<code>DEVICE_METADATA</code> (<code>dhcp_server</code>)、<code>DHCP_RELAY</code> 系</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VLAN</code>、<code>VLAN_INTERFACE</code>、<code>DEVICE_METADATA</code> (<code>dhcp_server</code>)、<code>DHCP_RELAY</code> 系</li>
 <li>関連 CLI: <code>config dhcp_server ipv4 add/del/range/port</code></li>
 <li>関連 YANG: <code>sonic-dhcp-server-ipv4</code></li>
 </ul>
@@ -23948,6 +23948,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>info
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 998984a93e58 -->
 
 <div class="footnote">
 <hr />

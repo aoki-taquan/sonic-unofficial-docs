@@ -23824,7 +23824,7 @@
 
 <h1 id="debug_counter">DEBUG_COUNTER テーブル<a class="headerlink" href="#debug_counter" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SAI debug counter（パケットドロップ要因別の汎用カウンタ）を CONFIG_DB から定義するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>debugcounterorch</code> (orchagent) が消費し、SAI debug counter オブジェクトを作成する。各カウンタには別テーブル <code>DEBUG_COUNTER_DROP_REASON</code> でドロップ理由 (<code>L3_ANY</code>、<code>SMAC_EQUALS_DMAC</code> 等) が紐付く。</p>
+<p><a href="../../glossary/#term-sai">SAI</a> debug counter（パケットドロップ要因別の汎用カウンタ）を <a href="../../glossary/#term-config_db">CONFIG_DB</a> から定義するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>debugcounterorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が消費し、SAI debug counter オブジェクトを作成する。各カウンタには別テーブル <code>DEBUG_COUNTER_DROP_REASON</code> でドロップ理由 (<code>L3_ANY</code>、<code>SMAC_EQUALS_DMAC</code> 等) が紐付く。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23920,7 +23920,7 @@
 </ul>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>type</code> は <strong>mandatory</strong>（YANG <code>mandatory true</code>）</li>
+<li><code>type</code> は <strong>mandatory</strong>（<a href="../../glossary/#term-yang">YANG</a> <code>mandatory true</code>）</li>
 <li><code>DEBUG_COUNTER_DROP_REASON.name</code> は親 <code>DEBUG_COUNTER_LIST.name</code> に存在することが必須</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23929,7 +23929,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>COUNTERS_DEBUG_NAME_MAP</code> (COUNTERS_DB 側)</li>
+<li>関連 CONFIG_DB: <code>COUNTERS_DEBUG_NAME_MAP</code> (<a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 側)</li>
 <li>関連 YANG: <code>sonic-debug-counter</code></li>
 <li>関連 CLI: <code>config debug counter</code> / <code>show debug counter</code> 系</li>
 </ul>
@@ -23959,6 +23959,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>configuration
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 447a5e337bb2 -->
 
 <div class="footnote">
 <hr />

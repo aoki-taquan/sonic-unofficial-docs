@@ -23887,7 +23887,7 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 <li><strong>既定無効</strong>: 全プラットフォームで自動で速くなるわけではない。明示的に有効化する必要がある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>ストレージコスト</strong>: Stage 1 出力の squashfs を保持するため、ビルドサーバの一時領域が増える。</li>
 <li><strong>互換性確認の責務</strong>: 既存ビルドフローで動いていた hook（<code>sonic_debian_extension.sh</code> の前後で何かを差し込んでいる組織）は、Stage の境界をまたぐと動作が変わる可能性がある。</li>
-<li><strong>HLD は Rev 0.1</strong>: 改訂が進んでいない可能性。実装の細部（squashfs パス、命名規則等）は実装側で決定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><a href="../../reference/glossary/#term-hld">HLD</a> は Rev 0.1</strong>: 改訂が進んでいない可能性。実装の細部（squashfs パス、命名規則等）は実装側で決定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23908,6 +23908,8 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 - sonic-buildimage/slave.mk:1701-1702 export RFS_SPLIT_FIRST_STAGE=n; RFS_SPLIT_LAST_STAGE=y
 - ENABLE_RFS_SPLIT_BUILD という単一フラグは grep ヒットなし -> HLD の文中表現と現行命名が異なる
 -->
+
+<!-- glossary-links-injected: 167700005048 -->
 
 <div class="footnote">
 <hr />

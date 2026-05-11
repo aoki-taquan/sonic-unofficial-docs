@@ -23718,7 +23718,7 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の <code>show</code> 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。</p>
+<p>監視機能の設定は経路ごとに別の <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の <code>show</code> 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。</p>
 <h2 id="1-snmp-v2c-read-only-v3-priv-user">シナリオ 1: SNMP v2c read-only と v3 priv user の併設<a class="headerlink" href="#1-snmp-v2c-read-only-v3-priv-user" title="Permanent link">&para;</a></h2>
 <p>社内監視は v2c community で読ませ、外部 SaaS から触らせるアクセスだけ v3 priv で絞る、という典型構成。<code>snmp.yml</code> ベースの古い設定は廃止経路にあり、現状は CONFIG_DB の <code>SNMP</code> / <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> を CLI 経由で更新します。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># v2c read-only</span>
@@ -23766,7 +23766,7 @@
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span>-x<span class="w"> </span>AES<span class="w"> </span>-X<span class="w"> </span><span class="s1">&#39;PrivPass!2026&#39;</span><span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>sysName.0
 </span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>SNMPv2-MIB::sysName.0<span class="w"> </span><span class="o">=</span><span class="w"> </span>STRING:<span class="w"> </span>sonic-tor-01
 </span></code></pre></div>
-<p>古い <code>snmp.yml</code> から CONFIG_DB への移行は SNMP migration で扱われ、<code>config load_minigraph</code> 時に再生成されます。詳細は <a href="../../../system/snmp-migration-from-snmp-yml-to-configdb/">SNMP migration</a> を参照。</p>
+<p>古い <code>snmp.yml</code> から CONFIG_DB への移行は <a href="../../../reference/glossary/#term-snmp">SNMP</a> migration で扱われ、<code>config load_minigraph</code> 時に再生成されます。詳細は <a href="../../../system/snmp-migration-from-snmp-yml-to-configdb/">SNMP migration</a> を参照。</p>
 <h2 id="2-sflow-2-collector">シナリオ 2: sFlow を 2 collector に同時に送る<a class="headerlink" href="#2-sflow-2-collector" title="Permanent link">&para;</a></h2>
 <p>flow ベースの可視化（NDR、Kentik など）と長期 packet sampling の両方を並行運用するパターン。SONiC の sFlow は global、collector、per-port の 3 段で構成され、collector は最大 2 つまで登録できます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>sflow<span class="w"> </span><span class="nb">enable</span>
@@ -23808,7 +23808,7 @@
 </span></code></pre></div>
 <p><code>sample_direction</code> の <code>rx</code> / <code>tx</code> / <code>both</code> と、interface の <code>sample_rate</code> / <code>admin_state</code> が動作を決めます。エージェントは hsflowd で、collector 設定が消えると datagram は止まります。</p>
 <h2 id="3-syslog-mgmt-vrf-2">シナリオ 3: Syslog を mgmt VRF 越しに 2 台へ転送<a class="headerlink" href="#3-syslog-mgmt-vrf-2" title="Permanent link">&para;</a></h2>
-<p>mgmt VRF 経由で外部 SIEM に syslog を送る構成。management VRF を有効にしてある box では <code>--vrf mgmt</code> 指定が必須で、忘れると default VRF から DNS lookup が走って到達不能になります。</p>
+<p>mgmt <a href="../../../reference/glossary/#term-vrf">VRF</a> 経由で外部 SIEM に syslog を送る構成。management VRF を有効にしてある box では <code>--vrf mgmt</code> 指定が必須で、忘れると default VRF から DNS lookup が走って到達不能になります。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config<span class="w"> </span>syslog<span class="w"> </span>add<span class="w"> </span><span class="m">192</span>.0.2.20<span class="w"> </span>--vrf<span class="w"> </span>mgmt
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>config<span class="w"> </span>syslog<span class="w"> </span>add<span class="w"> </span><span class="m">192</span>.0.2.21<span class="w"> </span>--vrf<span class="w"> </span>mgmt
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
@@ -23831,9 +23831,9 @@
 </span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="m">13</span>:24:15.001<span class="w"> </span>IP<span class="w"> </span><span class="m">10</span>.0.0.10.43210<span class="w"> </span>&gt;<span class="w"> </span><span class="m">192</span>.0.2.20.514:<span class="w"> </span>SYSLOG<span class="w"> </span>...
 </span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="m">13</span>:24:15.001<span class="w"> </span>IP<span class="w"> </span><span class="m">10</span>.0.0.10.43211<span class="w"> </span>&gt;<span class="w"> </span><span class="m">192</span>.0.2.21.514:<span class="w"> </span>SYSLOG<span class="w"> </span>...
 </span></code></pre></div>
-<p>YANG model は <code>sonic-syslog.yang</code>、CONFIG_DB は <a href="../../../reference/config-db/syslog-server/"><code>SYSLOG_SERVER</code></a>。</p>
+<p><a href="../../../reference/glossary/#term-yang">YANG</a> model は <code>sonic-syslog.yang</code>、CONFIG_DB は <a href="../../../reference/config-db/syslog-server/"><code>SYSLOG_SERVER</code></a>。</p>
 <h2 id="4-telemetry-gnmi-server">シナリオ 4: Telemetry (gNMI server) を有効化する<a class="headerlink" href="#4-telemetry-gnmi-server" title="Permanent link">&para;</a></h2>
-<p>dial-in / dial-out 両方をサポートする gNMI server を立ち上げます。証明書は通常 <code>/etc/sonic/telemetry/</code> 配下に置きます。</p>
+<p>dial-in / dial-out 両方をサポートする <a href="../../../reference/glossary/#term-gnmi">gNMI</a> server を立ち上げます。証明書は通常 <code>/etc/sonic/telemetry/</code> 配下に置きます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 証明書配置</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>dut.crt<span class="w"> </span>dut.key<span class="w"> </span>ca.crt<span class="w"> </span>/etc/sonic/telemetry/
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/sonic/telemetry/dut.key
@@ -23886,7 +23886,7 @@
 <ol>
 <li><code>redis-cli -n 4 KEYS '&lt;TABLE&gt;|*'</code> で CONFIG_DB の entry が存在するか。</li>
 <li>対応 daemon (<code>snmpd</code> / <code>hsflowd</code> / <code>telemetry</code> / <code>rsyslogd</code>) が running か (<code>systemctl status</code>、<code>docker ps</code>)。</li>
-<li>APPL_DB / STATE_DB に反映があるか (<code>show &lt;feature&gt;</code> か <code>redis-cli -n 0/6</code>)。</li>
+<li><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に反映があるか (<code>show &lt;feature&gt;</code> か <code>redis-cli -n 0/6</code>)。</li>
 <li>syslog の該当 container に reject や parse error が出ていないか (<code>docker logs snmp 2&gt;&amp;1 | tail -50</code>)。</li>
 </ol>
 <h2 id="_3">よくある設定エラーと対処<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23949,6 +23949,7 @@
 <li><a href="../../../reference/yang/sonic-syslog/">sonic-syslog YANG</a></li>
 <li><a href="../../../system/snmp-migration-from-snmp-yml-to-configdb/">SNMP yml から CONFIG_DB への移行</a></li>
 </ul>
+<!-- glossary-links-injected: ee15e5ef29a6 -->
 
 
 

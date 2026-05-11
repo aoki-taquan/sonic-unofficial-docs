@@ -23611,7 +23611,7 @@
 
 <h1 id="buffer_port_egress_profile_list">BUFFER_PORT_EGRESS_PROFILE_LIST テーブル<a class="headerlink" href="#buffer_port_egress_profile_list" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>ポートに紐づけるエグレスバッファプロファイル群</strong> を定義する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAI における <code>SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST</code> 相当。<code>BUFFER_PROFILE</code> で定義した複数プロファイルをポート単位で順序付きリストにまとめる。</p>
+<p><strong>ポートに紐づけるエグレスバッファプロファイル群</strong> を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-sai">SAI</a> における <code>SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST</code> 相当。<code>BUFFER_PROFILE</code> で定義した複数プロファイルをポート単位で順序付きリストにまとめる。</p>
 <p><code>BUFFER_QUEUE</code> テーブル (queue 単位の buffer profile) と並ぶ別レベルで、こちらはポート全体としての egress プロファイル群の集約。<code>BUFFER_PORT_INGRESS_PROFILE_LIST</code> と対になる構造。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -23666,14 +23666,14 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>buffermgrd</code>: CONFIG_DB → APPL_DB <code>BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE</code></li>
+<li><code>buffermgrd</code>: CONFIG_DB → <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE</code></li>
 <li><code>orchagent</code> (BufferOrch): SAI 側 port egress profile list 設定</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>BUFFER_PROFILE</code>, <code>BUFFER_POOL</code>, <code>BUFFER_QUEUE</code>, <code>PORT</code>, <code>BUFFER_PORT_INGRESS_PROFILE_LIST</code></li>
 <li>関連 CLI: <code>config buffer profile</code> 系</li>
-<li>関連 YANG: <code>sonic-buffer-port-egress-profile-list</code>, <code>sonic-buffer-profile</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-buffer-port-egress-profile-list</code>, <code>sonic-buffer-profile</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23710,6 +23710,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>buffer<span class="w"> </span>pool
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 77766b59392d -->
 
 <div class="footnote">
 <hr />

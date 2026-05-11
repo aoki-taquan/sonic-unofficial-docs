@@ -23840,14 +23840,14 @@
 
 
 <h1 id="vrf-static-route">VRF と Static Route の設定<a class="headerlink" href="#vrf-static-route" title="Permanent link">&para;</a></h1>
-<p>設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは CONFIG_DB、外部管理システムが検証する型は YANG です。このページでは VRF 付き L3 設定の最小単位をその順で整理します。</p>
+<p>設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a>、外部管理システムが検証する型は <a href="../../../reference/glossary/#term-yang">YANG</a> です。このページでは <a href="../../../reference/glossary/#term-vrf">VRF</a> 付き L3 設定の最小単位をその順で整理します。</p>
 <h2 id="_1">最小構成の流れ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li>VRF を作る。</li>
 <li>L3 interface を VRF に bind する。</li>
 <li>interface に IP address を付ける。</li>
 <li>static route を VRF 付きで追加する。</li>
-<li>必要なら nexthop VRF、blackhole、FG ECMP を加える。</li>
+<li>必要なら nexthop VRF、blackhole、FG <a href="../../../reference/glossary/#term-ecmp">ECMP</a> を加える。</li>
 </ol>
 <p>CLI の詳細な引数は <a href="../../../reference/cli/config-vrf/">config vrf</a> と <a href="../../../reference/cli/config-route/">config route</a> を参照してください。</p>
 <h2 id="1-tenant-vrf-l3">典型シナリオ 1: tenant VRF を新規作成して L3 サブインタフェースに割り当てる<a class="headerlink" href="#1-tenant-vrf-l3" title="Permanent link">&para;</a></h2>
@@ -23939,7 +23939,7 @@
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  * 192.0.2.0, via Ethernet0, weight 1
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  * 192.0.2.2, via Ethernet4, weight 1
 </span></code></pre></div>
-<p>両 nexthop に <code>*</code> が出れば両方 active。片方だけなら ARP / next-hop reachability を疑います。</p>
+<p>両 nexthop に <code>*</code> が出れば両方 active。片方だけなら <a href="../../../reference/glossary/#term-arp">ARP</a> / next-hop reachability を疑います。</p>
 <h2 id="3-vrf-leaking-blackhole">典型シナリオ 3: VRF leaking と blackhole<a class="headerlink" href="#3-vrf-leaking-blackhole" title="Permanent link">&para;</a></h2>
 <p>「青 VRF から赤 VRF の loopback (10.99.0.1/32) を見えるようにする」。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>route<span class="w"> </span>add<span class="w"> </span>prefix<span class="w"> </span>vrf<span class="w"> </span>Vrf_blue<span class="w"> </span><span class="m">10</span>.99.0.1/32<span class="w"> </span><span class="se">\</span>
@@ -23967,7 +23967,7 @@
 </span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>blackhole=true</code> の場合 <code>nexthop</code> は空でよい (orchagent が null route を installs)。</p>
+<p><code>blackhole=true</code> の場合 <code>nexthop</code> は空でよい (<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が null route を installs)。</p>
 <h2 id="config_db_1">CONFIG_DB で見る形<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h2>
 <p>VRF は <code>VRF|&lt;name&gt;</code>、物理 L3 interface は <code>INTERFACE|&lt;name&gt;</code>、static route は <code>STATIC_ROUTE|&lt;vrf&gt;|&lt;prefix&gt;</code> を見ます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>VRF|Vrf_blue
@@ -23983,7 +23983,7 @@
 </span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    ifname = Ethernet0
 </span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    distance = 0
 </span></code></pre></div>
-<p>Loopback を使う場合は <code>LOOPBACK_INTERFACE</code> を読みます。BGP の router-id や per-VRF loopback を扱うときは <a href="../../../reference/config-db/loopback-interface/">LOOPBACK_INTERFACE テーブル</a> が入口です。</p>
+<p>Loopback を使う場合は <code>LOOPBACK_INTERFACE</code> を読みます。<a href="../../../reference/glossary/#term-bgp">BGP</a> の router-id や per-VRF loopback を扱うときは <a href="../../../reference/config-db/loopback-interface/">LOOPBACK_INTERFACE テーブル</a> が入口です。</p>
 <h2 id="ecmp-static-route">ECMP static route の表現<a class="headerlink" href="#ecmp-static-route" title="Permanent link">&para;</a></h2>
 <p>複数 next hop はカンマ区切りの同じ index で揃えます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>STATIC_ROUTE|Vrf_blue|203.0.113.0/24
@@ -24048,11 +24048,11 @@
 <tr>
 <td><code>interface &lt;name&gt; does not exist.</code></td>
 <td>route の <code>ifname</code> 未作成</td>
-<td>先に物理 / VLAN / PortChannel interface を確認</td>
+<td>先に物理 / <a href="../../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../../reference/glossary/#term-portchannel">PortChannel</a> interface を確認</td>
 </tr>
 <tr>
 <td><code>portchannel does not exist.</code></td>
-<td>LAG ifname を指定したが LAG 未作成</td>
+<td><a href="../../../reference/glossary/#term-lag">LAG</a> ifname を指定したが LAG 未作成</td>
 <td><code>config portchannel add</code></td>
 </tr>
 <tr>
@@ -24086,6 +24086,7 @@
 <li><a href="../../../reference/yang/sonic-static-route/">YANG: sonic-static-route</a></li>
 <li><a href="../../../reference/yang/sonic-route-common/">YANG: sonic-route-common</a></li>
 </ul>
+<!-- glossary-links-injected: 3643cd287eaf -->
 
 
 

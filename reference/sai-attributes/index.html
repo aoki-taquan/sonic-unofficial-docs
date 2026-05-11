@@ -23930,9 +23930,9 @@
 
 <h1 id="sai">頻出 SAI 属性早見表<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定を投入する。本ページは
-<strong>orchagent / syncd が実際に参照する SAI 属性のうち頻出のもの</strong>を object_type 別にまとめた早見表。
-属性名・object_type・用途・関連 orchagent クラス / CONFIG_DB テーブル・関連ドキュメントを併記する。</p>
+<p>SONiC <a href="../glossary/#term-syncd">syncd</a> は <a href="../glossary/#term-sai">SAI</a> (Switch Abstraction Interface) を介して ASIC に設定を投入する。本ページは
+<strong><a href="../glossary/#term-orchagent">orchagent</a> / syncd が実際に参照する SAI 属性のうち頻出のもの</strong>を object_type 別にまとめた早見表。
+属性名・object_type・用途・関連 orchagent クラス / <a href="../glossary/#term-config_db">CONFIG_DB</a> テーブル・関連ドキュメントを併記する。</p>
 <p>データ収集は <code>.cache/sonic-sources/sonic-swss/orchagent/</code> 配下を <code>grep -roh 'SAI_&lt;TYPE&gt;_ATTR_[A-Z_0-9]*'</code>
 で全件抽出し、頻出かつ意味の明確なものに絞った（commit
 <a href="https://github.com/sonic-net/sonic-sairedis/commit/88bc51ae95df66977601957515e5527119ffd4c5"><code>88bc51a</code></a>
@@ -23972,7 +23972,7 @@
 </tr>
 <tr>
 <td><code>SAI_SWITCH_ATTR_DEFAULT_TRAP_GROUP</code></td>
-<td>既定 CoPP trap group</td>
+<td>既定 <a href="../glossary/#term-copp">CoPP</a> trap group</td>
 <td><code>CoppOrch</code></td>
 </tr>
 <tr>
@@ -23992,12 +23992,12 @@
 </tr>
 <tr>
 <td><code>SAI_SWITCH_ATTR_FDB_AGING_TIME</code></td>
-<td>FDB エージングタイマ</td>
+<td><a href="../glossary/#term-fdb">FDB</a> エージングタイマ</td>
 <td><code>SwitchOrch</code> (<code>SWITCH\|switch</code> table)</td>
 </tr>
 <tr>
 <td><code>SAI_SWITCH_ATTR_ECMP_HASH</code> / <code>LAG_HASH</code></td>
-<td>ECMP/LAG ハッシュ OID</td>
+<td><a href="../glossary/#term-ecmp">ECMP</a>/<a href="../glossary/#term-lag">LAG</a> ハッシュ OID</td>
 <td><code>SwitchOrch</code></td>
 </tr>
 <tr>
@@ -24012,7 +24012,7 @@
 </tr>
 <tr>
 <td><code>SAI_SWITCH_ATTR_ACL_STAGE_INGRESS</code> / <code>ACL_STAGE_EGRESS</code></td>
-<td>サポート ACL ステージ</td>
+<td>サポート <a href="../glossary/#term-acl">ACL</a> ステージ</td>
 <td><code>AclOrch</code> (capability 取得)</td>
 </tr>
 <tr>
@@ -24057,7 +24057,7 @@
 </tr>
 <tr>
 <td><code>SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY</code></td>
-<td>BFD 状態通知 cb</td>
+<td><a href="../glossary/#term-bfd">BFD</a> 状態通知 cb</td>
 <td><code>BfdOrch</code></td>
 </tr>
 <tr>
@@ -24199,7 +24199,7 @@
 </tr>
 <tr>
 <td><code>SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP</code> / <code>DSCP_TO_TC_MAP</code> / <code>TC_TO_QUEUE_MAP</code></td>
-<td>QoS マップ</td>
+<td><a href="../glossary/#term-qos">QoS</a> マップ</td>
 <td><code>QosOrch</code></td>
 </tr>
 <tr>
@@ -24214,7 +24214,7 @@
 </tr>
 <tr>
 <td><code>SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL</code> / <code>_MODE</code> / <code>_RX</code> / <code>_TX</code></td>
-<td>PFC</td>
+<td><a href="../glossary/#term-pfc">PFC</a></td>
 <td><code>PfcWdOrch</code>, <code>QosOrch</code></td>
 </tr>
 <tr>
@@ -24234,12 +24234,12 @@
 </tr>
 <tr>
 <td><code>SAI_PORT_ATTR_ISOLATION_GROUP</code></td>
-<td>private VLAN 分離</td>
+<td>private <a href="../glossary/#term-vlan">VLAN</a> 分離</td>
 <td><code>IsoGrpOrch</code></td>
 </tr>
 <tr>
 <td><code>SAI_PORT_ATTR_FABRIC_ATTACHED</code> / <code>FABRIC_ATTACHED_PORT_INDEX</code> / <code>FABRIC_ATTACHED_SWITCH_ID</code> / <code>FABRIC_ISOLATE</code></td>
-<td>VOQ fabric</td>
+<td><a href="../glossary/#term-voq">VOQ</a> fabric</td>
 <td><code>FabricPortsOrch</code></td>
 </tr>
 <tr>
@@ -24385,7 +24385,7 @@
 </tr>
 <tr>
 <td><code>SAI_BRIDGE_PORT_ATTR_TUNNEL_ID</code></td>
-<td>VXLAN tunnel BP</td>
+<td><a href="../glossary/#term-vxlan">VXLAN</a> tunnel BP</td>
 <td><code>VxlanTunnelOrch</code></td>
 </tr>
 <tr>
@@ -24437,7 +24437,7 @@
 </tr>
 <tr>
 <td><code>SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER</code></td>
-<td>所属 VRF</td>
+<td>所属 <a href="../glossary/#term-vrf">VRF</a></td>
 <td><code>BfdOrch</code></td>
 </tr>
 <tr>
@@ -24792,7 +24792,7 @@
 </tr>
 <tr>
 <td><code>SAI_QUEUE_ATTR_WRED_PROFILE_ID</code></td>
-<td>WRED バインド</td>
+<td><a href="../glossary/#term-wred">WRED</a> バインド</td>
 <td><code>QosOrch</code></td>
 </tr>
 <tr>
@@ -24869,7 +24869,7 @@
 </tr>
 <tr>
 <td><code>SAI_HOSTIF_ATTR_OBJ_ID</code></td>
-<td>対応する port / RIF</td>
+<td>対応する port / <a href="../glossary/#term-rif">RIF</a></td>
 <td><code>HostIntfMgr</code></td>
 </tr>
 <tr>
@@ -24899,7 +24899,7 @@
 </tr>
 <tr>
 <td><code>SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE</code></td>
-<td>BGP / LACP / ARP / LLDP 等</td>
+<td><a href="../glossary/#term-bgp">BGP</a> / <a href="../glossary/#term-lacp">LACP</a> / <a href="../glossary/#term-arp">ARP</a> / <a href="../glossary/#term-lldp">LLDP</a> 等</td>
 <td><code>CoppOrch</code> (<code>COPP_TRAP</code>)</td>
 </tr>
 <tr>
@@ -24941,7 +24941,7 @@
 <tbody>
 <tr>
 <td><code>SAI_TUNNEL_ATTR_TYPE</code></td>
-<td>VXLAN / IPINIP / MPLS / SRV6</td>
+<td>VXLAN / IPINIP / <a href="../glossary/#term-mpls">MPLS</a> / SRV6</td>
 <td><code>VxlanTunnelOrch</code>, <code>TunnelDecapOrch</code></td>
 </tr>
 <tr>
@@ -25053,7 +25053,7 @@
 </tr>
 <tr>
 <td><code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code></td>
-<td>NAT zone</td>
+<td><a href="../glossary/#term-nat">NAT</a> zone</td>
 <td><code>NatOrch</code></td>
 </tr>
 <tr>
@@ -25163,7 +25163,7 @@
 <tr>
 <td><code>SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX</code></td>
 <td>overlay encap idx</td>
-<td><code>NeighOrch</code> (EVPN)</td>
+<td><code>NeighOrch</code> (<a href="../glossary/#term-evpn">EVPN</a>)</td>
 </tr>
 <tr>
 <td><code>SAI_NEIGHBOR_ENTRY_ATTR_IS_LOCAL</code></td>
@@ -25192,7 +25192,7 @@
 </tr>
 <tr>
 <td><code>SAI_NEXT_HOP_ATTR_SRV6_SIDLIST_ID</code></td>
-<td>SRv6 H.Encaps</td>
+<td><a href="../glossary/#term-srv6">SRv6</a> H.Encaps</td>
 <td><code>Srv6Orch</code></td>
 </tr>
 <tr>
@@ -25328,7 +25328,7 @@
 <ul>
 <li>syncd の <code>SAI_REDIS</code> ログや <code>saidump</code> 出力中の <code>SAI_*_ATTR_*</code> を本表で検索すれば、
   どの orch が書いた・どの CONFIG_DB に対応するかを当てやすい。</li>
-<li>ASIC_DB (<code>COUNTERS_DB</code> 上の Redis) を <code>redis-cli -n 1 HGETALL ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...</code>
+<li><a href="../glossary/#term-asic_db">ASIC_DB</a> (<code>COUNTERS_DB</code> 上の <a href="../glossary/#term-redis">Redis</a>) を <code>redis-cli -n 1 HGETALL ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...</code>
   すると、ここに並ぶ属性キーがそのまま値として現れる。</li>
 <li>完全な仕様（取得可否・型・デフォルト値・mandatory flag）は SAI ヘッダの doxygen コメントに記載。
   本表は「実装で実際に触られているかどうか」を補完するもの。</li>
@@ -25339,6 +25339,7 @@
 <li><a href="https://github.com/sonic-net/sonic-swss/tree/master/orchagent">sonic-net/sonic-swss <code>orchagent/</code></a> — <code>SAI_*_ATTR_*</code> の全件 grep より抽出</li>
 <li>SAI ヘッダ本体: <a href="https://github.com/sonic-net/SAI">sonic-net/SAI</a> の <code>inc/sai*.h</code></li>
 </ul>
+<!-- glossary-links-injected: 31fc35d7a539 -->
 
 
 

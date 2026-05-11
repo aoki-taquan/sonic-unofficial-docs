@@ -23758,9 +23758,9 @@
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>p4rt container が未起動 / crash loop</strong></li>
-<li><strong><code>PORT_ID</code> 未割当</strong>: PINS は port_id を持たない interface に対して write を拒否</li>
+<li><strong><code>PORT_ID</code> 未割当</strong>: <a href="../../glossary/#term-pins">PINS</a> は port_id を持たない interface に対して write を拒否</li>
 <li><strong>primary election ID 衝突</strong>: 複数 controller が同 election_id で接続</li>
-<li><strong>APPL_DB → ASIC_DB pipeline が詰まる</strong>: orchagent / syncd 滞留</li>
+<li><strong><a href="../../glossary/#term-appl_db">APPL_DB</a> → <a href="../../glossary/#term-asic_db">ASIC_DB</a> pipeline が詰まる</strong>: <a href="../../glossary/#term-orchagent">orchagent</a> / <a href="../../glossary/#term-syncd">syncd</a> 滞留</li>
 <li><strong>TLS / mTLS 証明書失敗</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23802,6 +23802,8 @@
 <li><a href="../../../topics/18-p4-pins/concept/">../../topics/18-p4-pins/concept.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 2dcef9a41725 -->
+
 <div class="footnote">
 <hr />
 <ol>

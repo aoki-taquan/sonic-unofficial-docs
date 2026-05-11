@@ -23841,7 +23841,7 @@
 <h1 id="gns3-vm-sonic-sonic-vsimg-qemu">GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）<a class="headerlink" href="#gns3-vm-sonic-sonic-vsimg-qemu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="https://docs.gns3.com/">GNS3</a> はネットワーク機器をエミュレートして簡易トポロジを Windows 上または Ubuntu サーバ上で実行できるツールである。SONiC は <strong><code>sonic-vs.img</code></strong>（Virtual Switch ビルド）として Qemu 上で動かせるため、GNS3 上に SONiC ノードを並べてトポロジ実験を行える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本ドキュメントは公式 HLD 文書 <code>doc/sonic-gns3/GNS3 VM for SONiC.md</code> のうち、操作のキー手順だけを抜き出したガイドである。スクリーンショット原本（GNS3 GUI 画像）は本ページでは省略する。</p>
+<p>本ドキュメントは公式 <a href="../../reference/glossary/#term-hld">HLD</a> 文書 <code>doc/sonic-gns3/GNS3 VM for SONiC.md</code> のうち、操作のキー手順だけを抜き出したガイドである。スクリーンショット原本（GNS3 GUI 画像）は本ページでは省略する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23927,14 +23927,14 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Azure Pipeline URL の有効性</strong>: 番号 142 や URL は将来変わる可能性がある。HLD 中の URL を盲信せず、最新の sonic-build 配置を確認する。</li>
-<li><strong>VS ビルドの位置づけ</strong>: <code>sonic-vs.img</code> は機能テスト・トポロジ実験用。実 ASIC を持たないため、SAI コールはソフト VS で受ける。性能ベンチマーク用途には不向き。</li>
+<li><strong>VS ビルドの位置づけ</strong>: <code>sonic-vs.img</code> は機能テスト・トポロジ実験用。実 ASIC を持たないため、<a href="../../reference/glossary/#term-sai">SAI</a> コールはソフト VS で受ける。性能ベンチマーク用途には不向き。</li>
 <li><strong>GNS3 自体の制約</strong>: GUI 中心。CI 用途には KVM 直接または別の自動化基盤（<a href="https://github.com/sonic-net/sonic-mgmt"><code>sonic-mgmt</code> のテストベッド</a>）が一般的。</li>
 <li><strong>ホスト OS 依存</strong>: Windows ホスト、Linux ホスト（GNS3 サーバモード）で手順が分かれる。本ドキュメントは Windows 中心の手順を示している<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>SONiC VS（Virtual Switch）ビルド</strong>: 本機能は VS イメージ前提。SAI バックエンドは <code>libsai_vs.so</code> 系。</li>
-<li><strong><code>sonic-mgmt</code> テストベッド</strong>: 同じく VS イメージを使うが、GNS3 ではなく KVM を直接叩く。GNS3 と sonic-mgmt はトポロジ管理レイヤが別。</li>
+<li><strong><code>sonic-mgmt</code> テストベッド</strong>: 同じく VS イメージを使うが、GNS3 ではなく KVM を直接叩く。GNS3 と <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> はトポロジ管理レイヤが別。</li>
 <li><strong>Qemu リソース</strong>: vCPU 4 / RAM 8 GB を複数ノード分用意する必要がある。物理ホストの容量で並列度が決まる。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
@@ -23957,6 +23957,8 @@ reasoning: 推奨リソースとデフォルト認証情報の根拠。
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3f2b880c9935 -->
 
 <div class="footnote">
 <hr />

@@ -23950,7 +23950,7 @@
 </div>
 <h1 id="icmp-hardware-offloaddualtor-link-prober-npu">ICMP Hardware Offload（DualToR link prober の NPU 化）<a class="headerlink" href="#icmp-hardware-offloaddualtor-link-prober-npu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を <strong>ICMP echo の往復</strong> で監視している。<code>linkmgrd</code> 内のソフトウェアベース link prober が Linux raw socket 経由でパケットを生成・受信するため、検出時間は <strong>200〜400 ms</strong> が下限となっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は ICMP echo セッションを <strong>NPU にオフロード</strong> することで、検出時間を <strong>&lt; 10 ms</strong> まで短縮することを要件とする。</p>
+<p>SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を <strong>ICMP echo の往復</strong> で監視している。<code>linkmgrd</code> 内のソフトウェアベース link prober が Linux raw socket 経由でパケットを生成・受信するため、検出時間は <strong>200〜400 ms</strong> が下限となっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は ICMP echo セッションを <strong><a href="../../reference/glossary/#term-npu">NPU</a> にオフロード</strong> することで、検出時間を <strong>&lt; 10 ms</strong> まで短縮することを要件とする。</p>
 <p>オフロードに伴い <code>linkmgrd</code> の挙動が大きく変わる。プローブには 3 ms オーダーの極小タイマーを使うため deadline timer を廃止し、ハードウェア処理と TLV パケットを処理するソフトウェアスレッドを併存させる <strong>ハイブリッドモデル</strong> を採用する。NPU が認識しないコントロールメッセージ（TLV 入り ICMP）はソフトウェア側 cookie で送出する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23962,7 +23962,7 @@
     IO --&gt;|publish state| SDB[(STATE_DB\nICMP_ECHO_SESSION_TABLE)]
     SDB --&gt;|consume| LM
     LM --&gt;|TLV ICMP のみ\n(software cookie)| KSOCK[Linux raw socket]</code></pre>
-<p><code>IcmpOrch</code> は新規追加コンポーネント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAI 1.12 で導入された <code>saiicmpecho.h</code> 系属性とスイッチ通知を扱う。</p>
+<p><code>IcmpOrch</code> は新規追加コンポーネント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-sai">SAI</a> 1.12 で導入された <code>saiicmpecho.h</code> 系属性とスイッチ通知を扱う。</p>
 <h3 id="normal-rx">セッションタイプ（NORMAL / RX）<a class="headerlink" href="#normal-rx" title="Permanent link">&para;</a></h3>
 <p>各 mux ポートにつき <strong>2 セッション</strong> を作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -24156,7 +24156,7 @@ reasoning: capability fallback の根拠。
 <td><code>dst_ip</code>, <code>dst_mac</code>, <code>tx_interval</code>, <code>rx_interval</code>, <code>session_cookie</code>, <code>session_guid</code>, <code>src_ip</code></td>
 </tr>
 <tr>
-<td>STATE_DB</td>
+<td><a href="../../reference/glossary/#term-state_db">STATE_DB</a></td>
 <td><code>ICMP_ECHO_SESSION_TABLE</code></td>
 <td><code>default\|Ethernet0\|6000\|NORMAL</code></td>
 <td>上記 + <code>state</code> (<code>Up</code>/<code>Down</code>), <code>hw_lookup</code></td>
@@ -24201,12 +24201,12 @@ reasoning: capability fallback の根拠。
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>show<span class="w"> </span>icmp<span class="w"> </span>sessions
 </span></code></pre></div>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD には専用 YANG モジュール定義の記述がない（既存 <code>sonic-mux-cable.yang</code> 系の拡張になると推測されるが未明記）。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> には専用 <a href="../../reference/glossary/#term-yang">YANG</a> モジュール定義の記述がない（既存 <code>sonic-mux-cable.yang</code> 系の拡張になると推測されるが未明記）。</p>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Software link prober</strong>: 同一 mux ポートで HW / SW の両方を同時に走らせない設計。capability が無ければ自動 SW にフォールバック。</li>
 <li><strong>TLV パケット</strong>: HW モードでも TLV 入り ICMP は SW 経路でやりとりされる。peer NPU が誤って offload しないよう、software cookie の固定値が peer 側 NPU の検査ロジックに浸透している必要がある。</li>
-<li><strong>CoPP / ACL</strong>: ICMP echo が大量に増えるため、ACL / CoPP の制御値によっては ASIC レベルで絞られる。HW offload なら CoPP を通らない経路が一般的だが、プラットフォーム依存。</li>
+<li><strong><a href="../../reference/glossary/#term-copp">CoPP</a> / <a href="../../reference/glossary/#term-acl">ACL</a></strong>: ICMP echo が大量に増えるため、ACL / CoPP の制御値によっては ASIC レベルで絞られる。HW offload なら CoPP を通らない経路が一般的だが、プラットフォーム依存。</li>
 <li><strong>Loopback IP</strong>: HLD は両 ToR が <strong>同じ Loopback IP を ICMP echo の src</strong> として使うトポロジ前提。これは DualToR の active-active 設計と整合する。</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24224,6 +24224,8 @@ reasoning: capability fallback の根拠。
 <li><a href="../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 712ec0192f02 -->
 
 <div class="footnote">
 <hr />

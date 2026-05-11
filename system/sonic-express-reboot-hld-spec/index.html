@@ -23962,7 +23962,7 @@
 </div>
 <h1 id="express-rebootcisco-8000">Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）<a class="headerlink" href="#express-rebootcisco-8000" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Express Reboot は SONiC の再起動シーケンスを拡張し、<strong>サブ秒のデータプレーン断</strong> で SW アップグレードを行うためのモード。Warm Reboot と異なり、外部 PHY を再初期化せず、NPU は <strong>設定再投入が完了してから</strong> 初期化する点が要点<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は SAI 側の既存 fastfast boot 用属性 <code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> を拡張流用する。</p>
+<p>Express Reboot は SONiC の再起動シーケンスを拡張し、<strong>サブ秒のデータプレーン断</strong> で SW アップグレードを行うためのモード。<a href="../../reference/glossary/#term-warm-reboot">Warm Reboot</a> と異なり、外部 PHY を再初期化せず、<a href="../../reference/glossary/#term-npu">NPU</a> は <strong>設定再投入が完了してから</strong> 初期化する点が要点<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は <a href="../../reference/glossary/#term-sai">SAI</a> 側の既存 fastfast boot 用属性 <code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> を拡張流用する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -24046,7 +24046,7 @@
 </ul>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には CONFIG_DB エントリの記述は無い（コマンドラインからの起動シーケンスのみ）。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> には <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリの記述は無い（コマンドラインからの起動シーケンスのみ）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24067,7 +24067,7 @@
 </tbody>
 </table>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG モデルの記述は無い。</p>
+<p>HLD に <a href="../../reference/glossary/#term-yang">YANG</a> モデルの記述は無い。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Cisco 8000 上でのみ動作</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>express-reboot
@@ -24081,7 +24081,7 @@
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Warm Reboot / Fast Reboot</strong>: 同じ <code>fast-reboot</code> スクリプトを共有する。<code>SONIC_BOOT_TYPE</code> で識別。</li>
+<li><strong>Warm Reboot / <a href="../../reference/glossary/#term-fast-reboot">Fast Reboot</a></strong>: 同じ <code>fast-reboot</code> スクリプトを共有する。<code>SONIC_BOOT_TYPE</code> で識別。</li>
 <li><strong>fastfast boot (Mellanox)</strong>: <code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> の起動後セマンティクスを共有する（pre-shutdown のみ express 固有）。</li>
 <li><strong><code>show reboot-cause</code></strong>: <code>cause</code> に <code>express</code> が出る拡張を <code>sonic-host-services</code> 側で行う。</li>
 </ul>
@@ -24098,6 +24098,8 @@
 <li><a href="../../topics/11-reboot/">Topics: Reboot / Upgrade / Lifecycle</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1704188b56f9 -->
 
 <div class="footnote">
 <hr />

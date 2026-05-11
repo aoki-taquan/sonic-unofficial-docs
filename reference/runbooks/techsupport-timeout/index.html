@@ -23759,8 +23759,8 @@
 <ol>
 <li><strong><code>debug dump</code> モジュール（<code>--debug-dump</code>）が ASIC の重い snapshot を取る</strong>: 大規模 ASIC で 1 module だけで分単位</li>
 <li><strong><code>/var/log</code> 配下の log file が巨大</strong>: <code>tar</code> の <code>gzip</code> フェーズで CPU 飽和</li>
-<li><strong><code>vtysh -c "show ..."</code> 系が hang</strong>: bgpd / zebra busy → コマンド単位で stuck</li>
-<li><strong><code>syncd</code> が SAI dump 中に busy</strong>: ASIC API 呼び出しが直列化されレスポンス遅延</li>
+<li><strong><code>vtysh -c "show ..."</code> 系が hang</strong>: bgpd / <a href="../../glossary/#term-zebra">zebra</a> busy → コマンド単位で stuck</li>
+<li><strong><code>syncd</code> が <a href="../../glossary/#term-sai">SAI</a> dump 中に busy</strong>: ASIC API 呼び出しが直列化されレスポンス遅延</li>
 <li><strong>core file / dump 過多</strong>: 過去 dump が片付かず <code>/var/dump</code> が容量圧迫</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23815,11 +23815,13 @@
 <li><a href="../../../internals/dump-utility-for-easy-debugging/">../../internals/dump-utility-for-easy-debugging.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: cf632b22cdc5 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-utilities @ 39732bceb — <code>scripts/generate_dump</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>scripts/generate_dump</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>sonic-net/sonic-utilities @ 39732bceb — <code>show/main.py</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

@@ -23997,7 +23997,7 @@
     RATES --&gt; CLI[portstat -f / show fec-stats]
     RATES --&gt; TEL[telemetry]</code></pre>
 <h3 id="sai-counter">使う SAI counter<a class="headerlink" href="#sai-counter" title="Permanent link">&para;</a></h3>
-<p>すべて既存の SAI port counter<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>すべて既存の <a href="../../reference/glossary/#term-sai">SAI</a> port counter<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES</code></li>
 <li><code>SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES</code></li>
@@ -24036,7 +24036,7 @@
 </tr>
 </tbody>
 </table>
-<p>CONFIG_DB / SAI API / sonic-platform-common には変更なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / SAI API / sonic-platform-common には変更なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="observed-fec-flr">Observed FEC FLR<a class="headerlink" href="#observed-fec-flr" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
     A[Δ uncorrectable_cw\n= NOT_CORR - NOT_CORR_last] --&gt; C
@@ -24172,7 +24172,7 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <tr>
 <td><code>FLEX_COUNTER_TABLE</code></td>
 <td><code>PORT</code></td>
-<td><code>FLR_INTERVAL_FACTOR</code>（FlexCounterOrch が CONFIG_DB → FLEX_COUNTER_DB に伝搬）</td>
+<td><code>FLR_INTERVAL_FACTOR</code>（FlexCounterOrch が CONFIG_DB → <a href="../../reference/glossary/#term-flex_counter_db">FLEX_COUNTER_DB</a> に伝搬）</td>
 </tr>
 </tbody>
 </table>
@@ -24226,8 +24226,8 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <li><strong>既存 <code>port_rates.lua</code></strong>: 同じ <code>PORT_STAT_COUNTER_FLEX_COUNTER_GROUP</code> プラグイン。両方が同じ COUNTER_DB を参照</li>
 <li><strong>FlexCounterOrch / counterpoll</strong>: poll 周期を共有。<code>counterpoll port disable</code> するとこの計算も止まる</li>
 <li><strong>show interfaces counters fec-stats</strong>: FEC pre/post BER 計算と並行して FLR を載せる</li>
-<li><strong>telemetry</strong>: <code>COUNTER_DB:RATES</code> の <code>FEC_FLR</code> / <code>FEC_FLR_PREDICTED</code> を gNMI で配信できる</li>
-<li><strong>port speed 変更（DPB / breakout）</strong>: interleaving factor X が再評価される</li>
+<li><strong>telemetry</strong>: <code>COUNTER_DB:RATES</code> の <code>FEC_FLR</code> / <code>FEC_FLR_PREDICTED</code> を <a href="../../reference/glossary/#term-gnmi">gNMI</a> で配信できる</li>
+<li><strong>port speed 変更（<a href="../../reference/glossary/#term-dpb">DPB</a> / breakout）</strong>: interleaving factor X が再評価される</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24237,7 +24237,7 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <li>値が想定の半分/倍: interleaving factor X の取り違え。port speed と lane 数を再確認</li>
 </ul>
 <h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>2026-05-09 時点の現行 master を裏取り。本機能の <strong>コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み</strong>だが、<strong>HLD で示唆された動的設定 CLI（<code>counterpoll port flr-interval-factor</code>）は未実装</strong>であり、poll 周期は lua スクリプト内のハードコード値に固定されている。</p>
+<p>2026-05-09 時点の現行 master を裏取り。本機能の <strong>コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み</strong>だが、<strong><a href="../../reference/glossary/#term-hld">HLD</a> で示唆された動的設定 CLI（<code>counterpoll port flr-interval-factor</code>）は未実装</strong>であり、poll 周期は lua スクリプト内のハードコード値に固定されている。</p>
 <table>
 <thead>
 <tr>
@@ -24343,6 +24343,8 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 14f8bd377123 -->
 
 <div class="footnote">
 <hr />

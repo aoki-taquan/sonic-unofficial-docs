@@ -23674,7 +23674,7 @@
 
 
 <h1 id="l2">L2 のアーキテクチャ<a class="headerlink" href="#l2" title="Permanent link">&para;</a></h1>
-<p>L2 設定は、CONFIG_DB のテーブルごとに担当 daemon が決まり、APPL_DB や orchagent を通って ASIC に反映されます。読むときの軸は「VLAN を作る経路」「LAG を作る経路」「L3 interface を作る経路」「MC-LAG で peer と同期する経路」の 4 つです。</p>
+<p>L2 設定は、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> のテーブルごとに担当 daemon が決まり、<a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> や <a href="../../../reference/glossary/#term-orchagent">orchagent</a> を通って ASIC に反映されます。読むときの軸は「<a href="../../../reference/glossary/#term-vlan">VLAN</a> を作る経路」「<a href="../../../reference/glossary/#term-lag">LAG</a> を作る経路」「L3 interface を作る経路」「MC-LAG で peer と同期する経路」の 4 つです。</p>
 <h2 id="l2_1">通常 L2 の反映経路<a class="headerlink" href="#l2_1" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   CLI[CLI / mgmt] --&gt; CDB[(CONFIG_DB)]
@@ -23690,10 +23690,10 @@
   PM --&gt; Kernel
   ADB --&gt; Orch[orchagent&lt;br&gt;VlanMgr / LagOrch / IntfsOrch / FdbOrch]
   Orch --&gt; SAI[SAI / ASIC]</code></pre>
-<p><code>sonic-ip-lag-incremental-update</code> の設計原則では、1 つの CONFIG_DB テーブルには 1 つの manager daemon が対応します。たとえば port admin / MTU は <code>portmgrd</code>、IP interface は <code>intfmgrd</code>、PortChannel は <code>teammgrd</code> が中心です。この分担により、再起動なしの incremental update を table 単位で扱えます。</p>
+<p><code>sonic-ip-lag-incremental-update</code> の設計原則では、1 つの CONFIG_DB テーブルには 1 つの manager daemon が対応します。たとえば port admin / MTU は <code>portmgrd</code>、IP interface は <code>intfmgrd</code>、<a href="../../../reference/glossary/#term-portchannel">PortChannel</a> は <code>teammgrd</code> が中心です。この分担により、再起動なしの incremental update を table 単位で扱えます。</p>
 <h2 id="vlan-fdb">VLAN と FDB<a class="headerlink" href="#vlan-fdb" title="Permanent link">&para;</a></h2>
 <p><code>VLAN</code> は VLAN オブジェクト、<code>VLAN_MEMBER</code> は VLAN と port / PortChannel の所属関係を表します。<code>VLAN_INTERFACE</code> は VLAN 上の L3 interface です。</p>
-<p>FDB は VLAN 内の MAC 学習結果を保持します。L2 forwarding 強化では、flush の粒度が重要です。</p>
+<p><a href="../../../reference/glossary/#term-fdb">FDB</a> は VLAN 内の MAC 学習結果を保持します。L2 forwarding 強化では、flush の粒度が重要です。</p>
 <table>
 <thead>
 <tr>
@@ -23722,7 +23722,7 @@
 </table>
 <p>static FDB は CONFIG_DB の設定として残し、条件が整ったときに再 program する設計です。現行 CLI との乖離がある項目は <a href="../../../switching/layer-2-forwarding-enhancements/">L2 Forwarding 強化</a> 側で確認してください。</p>
 <h2 id="lag">LAG の制御面<a class="headerlink" href="#lag" title="Permanent link">&para;</a></h2>
-<p>PortChannel は <code>PORTCHANNEL</code> と <code>PORTCHANNEL_MEMBER</code> から作られます。<code>teammgrd</code> が <code>teamd</code> 設定を生成し、<code>teamsyncd</code> / APPL_DB を介して orchagent が SAI LAG と member を作ります。<code>min_links</code>、<code>fallback</code>、<code>fast_rate</code> は集約の up 判定や LACP 動作に関わります。</p>
+<p>PortChannel は <code>PORTCHANNEL</code> と <code>PORTCHANNEL_MEMBER</code> から作られます。<code>teammgrd</code> が <code>teamd</code> 設定を生成し、<code>teamsyncd</code> / APPL_DB を介して orchagent が <a href="../../../reference/glossary/#term-sai">SAI</a> LAG と member を作ります。<code>min_links</code>、<code>fallback</code>、<code>fast_rate</code> は集約の up 判定や <a href="../../../reference/glossary/#term-lacp">LACP</a> 動作に関わります。</p>
 <p>PortChannel は 2 つの顔を持ちます。<code>VLAN_MEMBER|Vlan100|PortChannel10</code> のように L2 trunk / access として使う場合と、<code>PORTCHANNEL_INTERFACE|PortChannel10|192.0.2.1/31</code> のように L3 interface として使う場合です。同じ PortChannel を同時に両方へ混ぜないよう、テーブル間制約と CLI の事前チェックを意識します。</p>
 <h2 id="mc-lag-iccp">MC-LAG / ICCP<a class="headerlink" href="#mc-lag-iccp" title="Permanent link">&para;</a></h2>
 <p>MC-LAG では、通常の LAG に加えて <code>iccpd</code> と <code>MclagSyncd</code> が peer 間の状態を同期します。</p>
@@ -23740,7 +23740,7 @@
     A1 --&gt; O1[orchagent]
   end
   I0 &lt;--&gt;|ICCP over peer-link| I1</code></pre>
-<p><code>MCLAG_DOMAIN</code> は peer IP、source IP、peer-link、keepalive / session timeout を持ちます。<code>MCLAG_INTERFACE</code> は domain に属する PortChannel を示します。<code>MCLAG_UNIQUE_IP</code> は MCLAG VLAN interface 上で OSPF などの L3 protocol を動かすため、仮想 IP ではなく個別 IP を扱うモードです。</p>
+<p><code>MCLAG_DOMAIN</code> は peer IP、source IP、peer-link、keepalive / session timeout を持ちます。<code>MCLAG_INTERFACE</code> は domain に属する PortChannel を示します。<code>MCLAG_UNIQUE_IP</code> は <a href="../../../reference/glossary/#term-mclag">MCLAG</a> VLAN interface 上で OSPF などの L3 protocol を動かすため、仮想 IP ではなく個別 IP を扱うモードです。</p>
 <h2 id="stp-mstp">STP / MSTP<a class="headerlink" href="#stp-mstp" title="Permanent link">&para;</a></h2>
 <p>MSTP は <code>stp</code> コンテナの <code>stpd</code>、CONFIG_DB の <code>STP</code> / <code>STP_MST*</code>、<code>stpmgrd</code>、APPL_DB、STP Orch、SAI STP オブジェクトで構成されます。VLAN 群を MST instance にまとめ、instance 単位で topology を計算します。</p>
 <p>FDB flush と STP は近い位置にあります。Topology change は L2 loop 解消後も古い MAC 学習が残ると誤転送を起こすため、影響範囲の dynamic FDB を flush します。</p>
@@ -23752,6 +23752,7 @@
 <li><a href="../../../switching/sonic-ip-lag-incremental-update/">IP / LAG / MTU Incremental Update</a></li>
 <li><a href="../../../switching/layer-2-forwarding-enhancements/">L2 Forwarding 強化</a></li>
 </ul>
+<!-- glossary-links-injected: 6370fa155abe -->
 
 
 

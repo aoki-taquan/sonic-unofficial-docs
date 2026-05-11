@@ -23696,7 +23696,7 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent → SAI → ASIC」「FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に乗ります。ここでは feature ごとの object flow を、その共通図に当てはめて読みます。</p>
+<p><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing は別機能ですが、SONiC 内部では「<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> → <a href="../../../reference/glossary/#term-orchagent">orchagent</a> → <a href="../../../reference/glossary/#term-sai">SAI</a> → ASIC」「<a href="../../../reference/glossary/#term-frr">FRR</a>/netlink → <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に乗ります。ここでは feature ごとの object flow を、その共通図に当てはめて読みます。</p>
 <h2 id="srv6-object-flow">SRv6 の object flow<a class="headerlink" href="#srv6-object-flow" title="Permanent link">&para;</a></h2>
 <p>SRv6 の中核は <code>srv6orch</code> で、CONFIG_DB の <code>SRV6_MY_SID_TABLE</code> / <code>SRV6_SID_LIST</code> / <code>SRV6_POLICY</code> / <code>SRV6_STEER</code> を読み、SAI の <code>SAI_MY_SID_ENTRY_*</code> や <code>SAI_OBJECT_TYPE_SRV6_SIDLIST</code> を組み立てます。Static SID 経路では <code>bgpcfgd</code> の <code>SRv6Mgr</code> が CONFIG_DB の <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を受け、<code>vtysh</code> で FRR に <code>segment-routing srv6 static-sids</code> を書き込みます。</p>
 <pre class="mermaid"><code>flowchart LR
@@ -23708,7 +23708,7 @@
   APP --&gt; SRC
   SRC --&gt;|MY_SID_ENTRY&lt;br/&gt;SRV6_SIDLIST&lt;br/&gt;NEXT_HOP| SAI[SAI / syncd]
   SAI --&gt; ASIC[ASIC]</code></pre>
-<p><code>srv6orch</code> の <code>end_behavior_map</code> には <code>end</code> / <code>end.dt46</code> / <code>end.dt4</code> / <code>end.dt6</code> / <code>un</code> / <code>ua</code> / <code>udt4</code> / <code>udt6</code> / <code>udt46</code> / <code>udx4</code> / <code>udx6</code> などが登録されており、それぞれ <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> にマップされます。Phase 1 では <code>END</code> / <code>END.DT46</code> / <code>H.Encaps.Red</code>、uSID HLD で <code>uN</code> / <code>uA</code> / <code>uDT*</code> / <code>uDX*</code> が追加され、L3Adj HLD で <code>uA</code> / <code>End.X</code> 系の出口 nexthop 処理が完成しました。</p>
+<p><code>srv6orch</code> の <code>end_behavior_map</code> には <code>end</code> / <code>end.dt46</code> / <code>end.dt4</code> / <code>end.dt6</code> / <code>un</code> / <code>ua</code> / <code>udt4</code> / <code>udt6</code> / <code>udt46</code> / <code>udx4</code> / <code>udx6</code> などが登録されており、それぞれ <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> にマップされます。Phase 1 では <code>END</code> / <code>END.DT46</code> / <code>H.Encaps.Red</code>、uSID <a href="../../../reference/glossary/#term-hld">HLD</a> で <code>uN</code> / <code>uA</code> / <code>uDT*</code> / <code>uDX*</code> が追加され、L3Adj HLD で <code>uA</code> / <code>End.X</code> 系の出口 nexthop 処理が完成しました。</p>
 <h2 id="l3">L3 隣接の解決<a class="headerlink" href="#l3" title="Permanent link">&para;</a></h2>
 <p><code>uA</code> / <code>End.X</code> / <code>uDX4</code> / <code>uDX6</code> / <code>End.DX4</code> / <code>End.DX6</code> のような cross-connect 系 behavior は出口に L3 隣接が必須です。<code>srv6orch</code> は <code>m_pendingSRv6MySIDEntries</code> という pending queue を持ち、Neighbor 未解決時は SID 投入を保留、Neighbor が確定したタイミングで queue を flush し、<code>SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID</code> を SAI に渡します。これにより「先に SID を CONFIG_DB に書いて、後から neighbor が上がる」順序にも耐えます。</p>
 <h2 id="srv6-vpn-policy">SRv6 VPN / Policy<a class="headerlink" href="#srv6-vpn-policy" title="Permanent link">&para;</a></h2>
@@ -23730,8 +23730,8 @@
 <h2 id="topic">共通する topic<a class="headerlink" href="#topic" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>counter</strong> — SRv6 の MySID counter（後続 phase）、MPLS の in-segment 統計、router interface counter は同じ flex counter / counterd 系基盤に乗ります。<a href="../../02-bgp/operations/">02 BGP の運用</a> で扱う FRR 経路と区別するには、APP_DB / netlink どちらから入った route かを見ます。</li>
-<li><strong>CRM</strong> — MPLS は <code>CRM</code> テーブルに in-segment / nexthop の使用量を加えています。SRv6 系は HLD 時点で CRM 統合がはっきり書かれていない領域があり、今後拡張される想定です。</li>
-<li><strong>YANG</strong> — <code>sonic-srv6</code> が SRV6_MY_LOCATORS / SRV6_MY_SIDS を、<code>sonic-interface</code> 等が <code>mpls</code> 属性を、<code>sonic-port</code> が PT 関連属性を持ちます。設定ページからの逆引きはこの章で集約します。</li>
+<li><strong><a href="../../../reference/glossary/#term-crm">CRM</a></strong> — MPLS は <code>CRM</code> テーブルに in-segment / nexthop の使用量を加えています。SRv6 系は HLD 時点で CRM 統合がはっきり書かれていない領域があり、今後拡張される想定です。</li>
+<li><strong><a href="../../../reference/glossary/#term-yang">YANG</a></strong> — <code>sonic-srv6</code> が SRV6_MY_LOCATORS / SRV6_MY_SIDS を、<code>sonic-interface</code> 等が <code>mpls</code> 属性を、<code>sonic-port</code> が PT 関連属性を持ちます。設定ページからの逆引きはこの章で集約します。</li>
 </ul>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23742,6 +23742,7 @@
 <li><a href="../../../routing/mpls-for-sonic-high-level-design-document/">SONiC の MPLS 基盤</a></li>
 <li><a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
 </ul>
+<!-- glossary-links-injected: 825df0651edd -->
 
 
 

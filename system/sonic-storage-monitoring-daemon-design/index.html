@@ -23681,7 +23681,7 @@
 </div>
 <h1 id="storagemondssd-emmc-health">storagemond（SSD / eMMC の health 監視）<a class="headerlink" href="#storagemondssd-emmc-health" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>storagemond</code> は <strong>SSD / eMMC など内部ストレージの health / wear-out</strong> を定期監視し、STATE_DB に publish する pmon 系 daemon<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。狙いは:</p>
+<p><code>storagemond</code> は <strong>SSD / eMMC など内部ストレージの health / wear-out</strong> を定期監視し、<a href="../../reference/glossary/#term-state_db">STATE_DB</a> に publish する pmon 系 daemon<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。狙いは:</p>
 <ul>
 <li>vendor 別ツール（<code>smartctl</code>、<code>mmc-utils</code> 等）の出力を SONiC 共通スキーマに正規化</li>
 <li>write amplification、reserved blocks、temperature、life-remaining を読みやすい形にする</li>
@@ -23694,7 +23694,7 @@
     SD --&gt; STATE[STATE_DB\nSTORAGE_INFO]
     SD --&gt; SYS[syslog / system health monitor]
     SHOW[show platform storage] --&gt; STATE</code></pre>
-<p>主な観測項目（HLD 概念）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>主な観測項目（<a href="../../reference/glossary/#term-hld">HLD</a> 概念）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>device 名</strong>, <strong>model</strong>, <strong>serial</strong>, <strong>firmware revision</strong></li>
 <li><strong>temperature</strong></li>
@@ -23775,6 +23775,8 @@
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 10394a5e95a8 -->
 
 <div class="footnote">
 <hr />

@@ -23906,8 +23906,8 @@
 </div>
 <h1 id="nvgre-nvgreorch-decap-mapper">NVGRE トンネル（nvgreorch / decap mapper）<a class="headerlink" href="#nvgre-nvgreorch-decap-mapper" title="Permanent link">&para;</a></h1>
 <h2 id="_1">何のための機能か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>NVGRE (Network Virtualization using Generic Routing Encapsulation) は L3 上に多数の仮想 L2 セグメントを張る方式。VxLAN と同じ「L2 over L3」だが GRE を使い 24 bit VSID でテナントを識別する。本機能は SONiC に <strong>NVGRE の decap 受信側</strong> を追加し、外部から来た NVGRE フレームを内側の VLAN または Bridge にマップして転送できるようにする。<strong>Phase 1 は decap のみ、encap mapper はスコープ外</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>カウンタは非対応。SAI 1.9 以上が必須<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>NVGRE (Network Virtualization using Generic Routing Encapsulation) は L3 上に多数の仮想 L2 セグメントを張る方式。VxLAN と同じ「L2 over L3」だが GRE を使い 24 bit VSID でテナントを識別する。本機能は SONiC に <strong>NVGRE の decap 受信側</strong> を追加し、外部から来た NVGRE フレームを内側の <a href="../../reference/glossary/#term-vlan">VLAN</a> または Bridge にマップして転送できるようにする。<strong>Phase 1 は decap のみ、encap mapper はスコープ外</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>カウンタは非対応。<a href="../../reference/glossary/#term-sai">SAI</a> 1.9 以上が必須<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">どう動くか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23915,7 +23915,7 @@
     CDB --&gt;|subscribe| ORCH[nvgreorch]
     ORCH --&gt;|register| OD[orchdaemon]
     ORCH --&gt;|create_tunnel&lt;br/&gt;create_tunnel_map| SAI[SAI]</code></pre>
-<p>新規 orch <code>nvgreorch</code> を <code>orchdaemon</code> に登録し、CONFIG_DB を購読する。トンネル作成時に <strong>VLAN マッパーと Bridge マッパーの両方を既定で生成</strong> するので、<code>vlan_id</code> を渡しても、後から bridge マップを足しても動く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>新規 orch <code>nvgreorch</code> を <code>orchdaemon</code> に登録し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を購読する。トンネル作成時に <strong>VLAN マッパーと Bridge マッパーの両方を既定で生成</strong> するので、<code>vlan_id</code> を渡しても、後から bridge マップを足しても動く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>NVGRE_TUNNEL|&lt;tunnel_name&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    src_ip = &lt;ipv4 or ipv6&gt;
@@ -24060,7 +24060,7 @@ reasoning: SAI 種別と P2MP 終端、二系統の decap mapper の根拠。
 </tr>
 </tbody>
 </table>
-<p>CLI は YANG から auto-generation tool で生成<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CLI は <a href="../../reference/glossary/#term-yang">YANG</a> から auto-generation tool で生成<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p><code>sonic-nvgre-tunnel</code> モジュールに 2 コンテナを定義<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">NVGRE_TUNNEL</span><span class="w"> </span><span class="p">{</span>
@@ -24118,6 +24118,8 @@ reasoning: SAI 種別と P2MP 終端、二系統の decap mapper の根拠。
 <li><a href="../../topics/03-vxlan-evpn/">Topics: VXLAN / EVPN / VNET オーバーレイ</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 900cdc977a64 -->
 
 <div class="footnote">
 <hr />

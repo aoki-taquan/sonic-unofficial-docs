@@ -23678,7 +23678,7 @@
 </div>
 <h1 id="sonic-container-hardeningcapability-read-only-privileged">SONiC Container Hardening（capability / read-only / privileged 削減）<a class="headerlink" href="#sonic-container-hardeningcapability-read-only-privileged" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の docker は歴史的に多くが <strong><code>--privileged</code></strong> で動いていた。CVE 対策とコンプライアンス要請から、<strong>最低限必要な linux capability・mount・device だけを与える</strong> 形に絞り込む取り組みが本 HLD のスコープ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の docker は歴史的に多くが <strong><code>--privileged</code></strong> で動いていた。CVE 対策とコンプライアンス要請から、<strong>最低限必要な linux capability・mount・device だけを与える</strong> 形に絞り込む取り組みが本 <a href="../../reference/glossary/#term-hld">HLD</a> のスコープ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主な硬化軸:</p>
 <ul>
 <li><strong>capabilities</strong>: <code>--cap-add</code> のみで必要な能力を与え、それ以外は drop</li>
@@ -23694,9 +23694,9 @@
     RUN --&gt; CONT[(docker container)]</code></pre>
 <p>各 docker は <strong>何が必要か</strong> を改修ごとに洗い出してテンプレート化する。たとえば<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>swss / syncd</strong>: Redis socket / shm へのアクセス、syncd は SAI vendor の特殊 device が必要なことがある</li>
+<li><strong>swss / <a href="../../reference/glossary/#term-syncd">syncd</a></strong>: <a href="../../reference/glossary/#term-redis">Redis</a> socket / shm へのアクセス、syncd は <a href="../../reference/glossary/#term-sai">SAI</a> vendor の特殊 device が必要なことがある</li>
 <li><strong>bgp</strong>: routing socket、netlink 操作。NET_ADMIN 等は必要</li>
-<li><strong>teamd</strong>: NET_ADMIN、NET_RAW</li>
+<li><strong><a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a></strong>: NET_ADMIN、NET_RAW</li>
 <li><strong>lldp</strong>: NET_RAW + 特定 interface への access</li>
 <li><strong>dhcp_relay</strong>: NET_BIND_SERVICE / NET_RAW</li>
 </ul>
@@ -23744,6 +23744,8 @@
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f6289dc80312 -->
 
 <div class="footnote">
 <hr />

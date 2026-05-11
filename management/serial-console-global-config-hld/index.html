@@ -23896,7 +23896,7 @@
 </div>
 <h1 id="serial_consolepolicies">シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）<a class="headerlink" href="#serial_consolepolicies" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>シリアル（<code>tty</code>）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、<strong>自動ログアウトのタイマー</strong> と <strong>SysRq カパビリティ</strong> を運用ポリシーに合わせて設定したいという要件がある。SONiC は当初これらをハードコードしていたが、本機能はそれらを CONFIG_DB から制御できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>シリアル（<code>tty</code>）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、<strong>自動ログアウトのタイマー</strong> と <strong>SysRq カパビリティ</strong> を運用ポリシーに合わせて設定したいという要件がある。SONiC は当初これらをハードコードしていたが、本機能はそれらを <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から制御できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>Phase 1 では次の 2 ポリシーを対象とする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
@@ -23919,7 +23919,7 @@
 </tr>
 </tbody>
 </table>
-<p>実装は <strong>CONFIG_DB → hostcfgd → serial-config.service → /etc/profile.d, /proc/sys/kernel/sysrq, /etc/sysctl.d</strong> の経路で、ホスト側 OS 設定ファイルを書き換えることで反映する。</p>
+<p>実装は <strong>CONFIG_DB → <a href="../../reference/glossary/#term-hostcfgd">hostcfgd</a> → serial-config.service → /etc/profile.d, /proc/sys/kernel/sysrq, /etc/sysctl.d</strong> の経路で、ホスト側 OS 設定ファイルを書き換えることで反映する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23942,7 +23942,7 @@
 </span></code></pre></div>
 <p><code>tty | grep -q tty</code> 判定は SSH セッション等を除外するためで、ネットワーク経由のセッションには影響しない（<code>SSH_CONNECTION</code> の有無で分岐する <code>pty</code> セッションは false）。</p>
 <h4 id="sysrq_capabilities">sysrq_capabilities<a class="headerlink" href="#sysrq_capabilities" title="Permanent link">&para;</a></h4>
-<p><code>/etc/sysctl.d/95-sysrq-sysctl.conf</code> に <code>kernel.sysrq=0/1</code> を書き出し、起動時の sysctl 反映に使う。同時に runtime にも反映するため <code>/proc/sys/kernel/sysrq</code> への書き込みも行うと HLD は明記している<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>/etc/sysctl.d/95-sysrq-sysctl.conf</code> に <code>kernel.sysrq=0/1</code> を書き出し、起動時の sysctl 反映に使う。同時に runtime にも反映するため <code>/proc/sys/kernel/sysrq</code> への書き込みも行うと <a href="../../reference/glossary/#term-hld">HLD</a> は明記している<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-jinja highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">{%</span> <span class="k">set</span> <span class="nv">sysrq</span> <span class="o">=</span> <span class="m">0</span> <span class="cp">%}</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="cp">{%</span> <span class="k">set</span> <span class="nv">serial_policies</span> <span class="o">=</span> <span class="o">(</span><span class="nv">SERIAL_CONSOLE</span> <span class="o">|</span> <span class="nf">d</span><span class="o">({}))</span><span class="nv">.get</span><span class="o">(</span><span class="s1">&#39;POLICIES&#39;</span><span class="o">,</span> <span class="o">{})</span> <span class="cp">%}</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="cp">{%</span> <span class="k">if</span> <span class="nv">serial_policies.sysrq_capabilities</span> <span class="o">==</span> <span class="s1">&#39;enabled&#39;</span> <span class="cp">%}</span>
@@ -24026,7 +24026,7 @@ reasoning: 2 ポリシーの値域・既定値・初期化経路の根拠。
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD 上では「<strong>現状は CONFIG_DB を手動で編集</strong>」と書かれており、<code>config serial-console ...</code> のような専用 CLI は Phase 1 では定義されていない。<code>config_db.json</code> 直接編集 / <code>sonic-cfggen</code> / gNMI 経由で投入する想定。</p>
+<p>HLD 上では「<strong>現状は CONFIG_DB を手動で編集</strong>」と書かれており、<code>config serial-console ...</code> のような専用 CLI は Phase 1 では定義されていない。<code>config_db.json</code> 直接編集 / <code>sonic-cfggen</code> / <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由で投入する想定。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p><code>sonic-serial-console.yang</code> の <code>SERIAL_CONSOLE.POLICIES</code> コンテナに 2 leaf を定義<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-yang highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">POLICIES</span><span class="w"> </span><span class="p">{</span>
@@ -24084,6 +24084,8 @@ reasoning: 2 ポリシーの値域・既定値・初期化経路の根拠。
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9b26b6a2b5fc -->
 
 <div class="footnote">
 <hr />

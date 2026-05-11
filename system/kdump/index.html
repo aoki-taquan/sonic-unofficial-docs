@@ -23850,7 +23850,7 @@
 </div>
 <h1 id="kdumpkexec-kernel-crash-dump-makedumpfile">kdump（kexec ベース kernel crash dump / makedumpfile）<a class="headerlink" href="#kdumpkexec-kernel-crash-dump-makedumpfile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Linux kernel の <strong>kexec</strong> を使い、kernel panic 直後に <strong>予約された別メモリ領域に展開済みの capture kernel</strong> を起動して crash dump を <code>/var/crash/&lt;timestamp&gt;/</code> に保存する標準仕組みを SONiC に統合する HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Debian の <code>kdump-tools</code> を SONiC host に同梱し、<code>makedumpfile</code> で不要 page を除外した圧縮 dump を作成する。CLI で memory 確保量と保持数を制御し、kernel 開発者が community に bug report する際の最小限の素材を取れるようにする。</p>
+<p>Linux kernel の <strong>kexec</strong> を使い、kernel panic 直後に <strong>予約された別メモリ領域に展開済みの capture kernel</strong> を起動して crash dump を <code>/var/crash/&lt;timestamp&gt;/</code> に保存する標準仕組みを SONiC に統合する <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Debian の <code>kdump-tools</code> を SONiC host に同梱し、<code>makedumpfile</code> で不要 page を除外した圧縮 dump を作成する。CLI で memory 確保量と保持数を制御し、kernel 開発者が community に bug report する際の最小限の素材を取れるようにする。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="crash-capture">Crash → Capture フロー<a class="headerlink" href="#crash-capture" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -24008,6 +24008,8 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 167700005048 -->
 
 <div class="footnote">
 <hr />

@@ -23862,9 +23862,9 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>PINS の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。本ページでは出口（show / DB / ログ / kernel netlink）を実例で並べ、よくある異常と復旧手順を整理します。</p>
+<p><a href="../../../reference/glossary/#term-pins">PINS</a> の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。本ページでは出口（show / DB / ログ / kernel netlink）を実例で並べ、よくある異常と復旧手順を整理します。</p>
 <h2 id="write-asic">Write が ASIC に届いているかの確認<a class="headerlink" href="#write-asic" title="Permanent link">&para;</a></h2>
-<p>P4Orch は同期書き込みなので、コントローラの RPC レスポンス（gRPC <code>WriteResponse</code>）がそのまま成否を表します。レスポンスが OK にも関わらず ASIC に効いていないと感じる場合は、APPL_STATE_DB と ASIC_DB を直接見て切り分けます。</p>
+<p>P4Orch は同期書き込みなので、コントローラの RPC レスポンス（gRPC <code>WriteResponse</code>）がそのまま成否を表します。レスポンスが OK にも関わらず ASIC に効いていないと感じる場合は、APPL_STATE_DB と <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> を直接見て切り分けます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ redis-cli -n 0 KEYS &quot;P4RT_TABLE:*&quot; | head
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>1) &quot;P4RT_TABLE:FIXED_ROUTER_INTERFACE_TABLE:{...}&quot;
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>2) &quot;P4RT_TABLE:FIXED_NEIGHBOR_TABLE:{...}&quot;
@@ -23880,7 +23880,7 @@
 <table>
 <thead>
 <tr>
-<th>APPL_DB</th>
+<th><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a></th>
 <th>APPL_STATE_DB</th>
 <th>ASIC_DB</th>
 <th>判定</th>
@@ -23897,7 +23897,7 @@
 <td>あり</td>
 <td><code>SWSS_RC_*</code> で失敗</td>
 <td>なし</td>
-<td>P4Orch / SAI で拒否。<code>err_str</code> と orchagent ログを見る</td>
+<td>P4Orch / <a href="../../../reference/glossary/#term-sai">SAI</a> で拒否。<code>err_str</code> と <a href="../../../reference/glossary/#term-orchagent">orchagent</a> ログを見る</td>
 </tr>
 <tr>
 <td>あり</td>
@@ -23919,7 +23919,7 @@
 </span></code></pre></div>
 <p>詳細な責務分担は <a href="../../../internals/p4-orchagent/">P4Orch HLD</a> と <a href="../../../management/p4rt-application-hld/">P4RT App HLD</a> を参照してください。</p>
 <h2 id="cpu-packet-pathpacketio-receive">CPU packet path（PacketIO Receive）の確認<a class="headerlink" href="#cpu-packet-pathpacketio-receive" title="Permanent link">&para;</a></h2>
-<p>PacketIO Receive は generic netlink + CoPP trap group が両方そろわないと届きません。次の順で確認します。</p>
+<p>PacketIO Receive は generic netlink + <a href="../../../reference/glossary/#term-copp">CoPP</a> trap group が両方そろわないと届きません。次の順で確認します。</p>
 <h3 id="1-copp-trap-group-genetlink">1. CoPP の trap group に genetlink が設定されているか<a class="headerlink" href="#1-copp-trap-group-genetlink" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ redis-cli -n 4 HGETALL &quot;COPP_GROUP|queue2_group1&quot;
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>1) &quot;queue&quot;
@@ -23945,17 +23945,17 @@
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$ show ip access-lists
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>admin@sonic:~$ redis-cli -n 6 KEYS &quot;USER_WATERMARKS|COPP_*&quot;
 </span></code></pre></div>
-<p><code>aclshow</code> で punt 用 ACL の counter が増えるか、CoPP queue の counter が増えるかを見ます。</p>
+<p><code>aclshow</code> で punt 用 <a href="../../../reference/glossary/#term-acl">ACL</a> の counter が増えるか、CoPP queue の counter が増えるかを見ます。</p>
 <h3 id="_2">よくある罠<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <ul>
-<li>ベンダ側 kernel の <code>genl_packet</code> filter 実装が無い ASIC では HLD どおりには動かない。<code>docker exec syncd dmesg | grep genl_packet</code> で確認。</li>
+<li>ベンダ側 kernel の <code>genl_packet</code> filter 実装が無い ASIC では <a href="../../../reference/glossary/#term-hld">HLD</a> どおりには動かない。<code>docker exec syncd dmesg | grep genl_packet</code> で確認。</li>
 <li>CoPP の policer に潰されて p4rt-app に届かない。<code>show platform inventory copp</code> や trap group の <code>cir</code> / <code>cbs</code> を見る。</li>
 </ul>
 <p>詳細は <a href="../../../management/packetio/">PacketIO HLD</a> を参照してください。</p>
 <h2 id="send-to-ingress">Send to Ingress の使い分け<a class="headerlink" href="#send-to-ingress" title="Permanent link">&para;</a></h2>
 <p>Send to Ingress は <strong>ASIC の ingress pipeline にパケットを再注入する</strong> モードです。</p>
 <ul>
-<li><strong>使う</strong>: controller が宛先を決め切れず、ECMP / WCMP を ASIC に判定させたい。テスト用途で「CPU 起点で ingress に入れたパケットの ASIC ルーティングを観察したい」。</li>
+<li><strong>使う</strong>: controller が宛先を決め切れず、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> / WCMP を ASIC に判定させたい。テスト用途で「CPU 起点で ingress に入れたパケットの ASIC ルーティングを観察したい」。</li>
 <li><strong>使わない</strong>: 送信先 port がすでに決まっている。Direct transmit（対応 netdev のソケット）で十分。</li>
 </ul>
 <p>確認手順:</p>
@@ -23965,7 +23965,7 @@
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  | xargs -I{} redis-cli -n 1 HGET {} SAI_HOSTIF_ATTR_NAME 2&gt;/dev/null \
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  | grep -i send_to_ingress
 </span></code></pre></div>
-<p><code>PortsOrch::addSendToIngressHostIf()</code> がコールされた痕跡は orchagent ログにあります。netdev が見えない場合は CONFIG_DB の有効化、ASIC の対応、syncd ログ（<code>SAI_STATUS_NOT_SUPPORTED</code>）を順に見ます。</p>
+<p><code>PortsOrch::addSendToIngressHostIf()</code> がコールされた痕跡は orchagent ログにあります。netdev が見えない場合は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の有効化、ASIC の対応、<a href="../../../reference/glossary/#term-syncd">syncd</a> ログ（<code>SAI_STATUS_NOT_SUPPORTED</code>）を順に見ます。</p>
 <p>詳細は <a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a> を参照してください。</p>
 <h2 id="read">Read が遅いときの確認<a class="headerlink" href="#read" title="Permanent link">&para;</a></h2>
 <p>Read の遅さは AppDb への <code>HGETALL</code> 大量発行が支配的でした。entity_cache_（旧 table_entry_cache_）が効いていれば 16,000 フローでも約 40ms に収まる想定です。</p>
@@ -24118,6 +24118,7 @@
 <li><a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror 章</a>（trap group / policer の詳細）</li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 章</a>（SAI 失敗観察）</li>
 </ul>
+<!-- glossary-links-injected: 062eaeb99c58 -->
 
 
 

@@ -23818,7 +23818,7 @@
 </div>
 <h1 id="warm-reboot-oid-idempotent-libsairedis-vs-syncd-view-comparison">Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）<a class="headerlink" href="#warm-reboot-oid-idempotent-libsairedis-vs-syncd-view-comparison" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の Warm Reboot 設計に関する <strong>open issues / 設計の選択肢</strong> を整理した文書<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。3 段階の development phase、docker warm upgrade の手順、kernel warm reboot コマンド、SAI API 互換性、OID 復元の 2 アプローチ、planned vs unplanned warm restart、成功判定方法を扱う。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-warm-reboot">Warm Reboot</a> 設計に関する <strong>open issues / 設計の選択肢</strong> を整理した文書<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。3 段階の development phase、docker warm upgrade の手順、kernel warm reboot コマンド、<a href="../../reference/glossary/#term-sai">SAI</a> API 互換性、OID 復元の 2 アプローチ、planned vs unplanned warm restart、成功判定方法を扱う。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">開発フェーズ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
@@ -23831,11 +23831,11 @@
 <tbody>
 <tr>
 <td>Phase 1</td>
-<td>swss / BGP の docker warm restart</td>
+<td>swss / <a href="../../reference/glossary/#term-bgp">BGP</a> の docker warm restart</td>
 </tr>
 <tr>
 <td>Phase 2</td>
-<td>teamd / syncd（libsai / SDK 含む）の docker warm restart</td>
+<td><a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / <a href="../../reference/glossary/#term-syncd">syncd</a>（libsai / SDK 含む）の docker warm restart</td>
 </tr>
 <tr>
 <td>Phase 3</td>
@@ -23902,10 +23902,12 @@
 <ul>
 <li><strong>fast-reboot</strong>: 関連だが state save 規模が異なる</li>
 <li><strong>libsai / SDK</strong>: warm restart 対応の baseline</li>
-<li><strong>sonic-sairedis</strong>: 両アプローチの主舞台</li>
-<li><strong>CONFIG_DB / APPL_DB save/restore</strong>: Phase 3 の system warm reboot</li>
+<li><strong><a href="../../reference/glossary/#term-sonic-sairedis">sonic-sairedis</a></strong>: 両アプローチの主舞台</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> save/restore</strong>: Phase 3 の system warm reboot</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: d01061035612 -->
+
 <div class="footnote">
 <hr />
 <ol>

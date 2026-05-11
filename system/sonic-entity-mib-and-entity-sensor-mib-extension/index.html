@@ -23862,7 +23862,7 @@
 </div>
 <h1 id="entity-mib-entity-sensor-mib-chassis-sensor-fan-psu">Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）<a class="headerlink" href="#entity-mib-entity-sensor-mib-chassis-sensor-fan-psu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の SNMP Entity MIB（RFC 2737）実装は当初、<code>entityPhysical</code> グループの <strong>transceiver と DOM sensor</strong> だけが対象で、<code>entPhysicalContainedIn</code> も埋まっておらず物理階層を取れなかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD はこれを拡張して:</p>
+<p>SONiC の <a href="../../reference/glossary/#term-snmp">SNMP</a> Entity MIB（RFC 2737）実装は当初、<code>entityPhysical</code> グループの <strong>transceiver と DOM sensor</strong> だけが対象で、<code>entPhysicalContainedIn</code> も埋まっておらず物理階層を取れなかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> はこれを拡張して:</p>
 <ol>
 <li><strong><code>entityPhysical</code> の MIB object を全部</strong> 実装する</li>
 <li><strong>thermal sensor / fan / fan tachometer / PSU / PSU fan / PSU 内 sensor</strong> を物理エンティティとして追加</li>
@@ -23901,7 +23901,7 @@
 </span></code></pre></div>
 <p>それぞれが <code>entPhysicalContainedIn = &lt;親 entPhysicalIndex&gt;</code> を持つ<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">データソース<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p><code>sonic-snmpagent</code> (<code>sonic_ax_impl</code>) は Redis を直接読む実装。各 sensor / module 情報は STATE_DB のテーブルに依存:</p>
+<p><code>sonic-snmpagent</code> (<code>sonic_ax_impl</code>) は <a href="../../reference/glossary/#term-redis">Redis</a> を直接読む実装。各 sensor / module 情報は <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のテーブルに依存:</p>
 <table>
 <thead>
 <tr>
@@ -24019,6 +24019,8 @@ reasoning: 拡張対象の MIB object 一覧と階層化要件の根拠。
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3ef536773086 -->
 
 <div class="footnote">
 <hr />

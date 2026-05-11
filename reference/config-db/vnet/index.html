@@ -23639,7 +23639,7 @@
 
 <h1 id="vnet-vnet_route">VNET / VNET_ROUTE テーブル<a class="headerlink" href="#vnet-vnet_route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。<code>VNET</code> が VNI と VXLAN tunnel の対応を持ち、<code>VNET_ROUTE</code> と <code>VNET_ROUTE_TUNNEL</code> が VNET スコープの静的経路を表す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では APPL_DB 側の <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> と、CONFIG_DB 側の <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><a href="../../glossary/#term-vnet">VNET</a> は <a href="../../glossary/#term-vxlan">VXLAN</a> overlay 上の仮想ネットワークを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義するテーブル群。<code>VNET</code> が VNI と VXLAN tunnel の対応を持ち、<code>VNET_ROUTE</code> と <code>VNET_ROUTE_TUNNEL</code> が VNET スコープの静的経路を表す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> と、CONFIG_DB 側の <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23790,7 +23790,7 @@
 <td><code>metric</code></td>
 <td>uint8</td>
 <td>no</td>
-<td>route 分類用 metric。YANG コメント上、経路動作には影響しない</td>
+<td>route 分類用 metric。<a href="../../glossary/#term-yang">YANG</a> コメント上、経路動作には影響しない</td>
 </tr>
 </tbody>
 </table>
@@ -23803,7 +23803,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>vxlanmgrd</code> / <code>vnetorch</code> 系: CONFIG_DB の VNET 設定を APPL_DB <code>VNET_TABLE</code> 系へ投影し、orchagent 側で SAI overlay / route に反映する。</li>
+<li><code>vxlanmgrd</code> / <code>vnetorch</code> 系: CONFIG_DB の VNET 設定を APPL_DB <code>VNET_TABLE</code> 系へ投影し、<a href="../../glossary/#term-orchagent">orchagent</a> 側で <a href="../../glossary/#term-sai">SAI</a> overlay / route に反映する。</li>
 <li><code>orchagent</code>: APPL_DB <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> を消費する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -23843,6 +23843,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>vnet<span class="w"> </span>routes<span class="w"> </span>all
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f21bcbaa368c -->
 
 <div class="footnote">
 <hr />

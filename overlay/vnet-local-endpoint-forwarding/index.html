@@ -23818,10 +23818,10 @@
 </div>
 <h1 id="vnet-local-endpoint-forwardingdpu-nexthop">VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）<a class="headerlink" href="#vnet-local-endpoint-forwardingdpu-nexthop" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Smart Switch（NPU + 複数 DPU）の HA では NPU から <strong>local DPU</strong> / <strong>remote DPU</strong> へパケットを送り分ける。全体像は <code>smart-switch-ha-hld.md</code> の 4.2 節（data path HA）が担い、本ページはその上で 2 つの最適化を定義する小さな拡張<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>Smart Switch（<a href="../../reference/glossary/#term-npu">NPU</a> + 複数 <a href="../../reference/glossary/#term-dpu">DPU</a>）の HA では NPU から <strong>local DPU</strong> / <strong>remote DPU</strong> へパケットを送り分ける。全体像は <code>smart-switch-ha-hld.md</code> の 4.2 節（data path HA）が担い、本ページはその上で 2 つの最適化を定義する小さな拡張<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li><strong>directly connected nexthop</strong>: local DPU が NPU から直結（ARP で見える）なら tunnel route ではなく <strong>通常の ECMP route</strong> で扱う。</li>
-<li><strong>failover transient state のドロップ防止</strong>: failover の瞬間に <strong>high-priority ACL</strong> で <code>TUNNEL_TERM</code> を見て必ず <strong>local nexthop</strong> にリダイレクトする。</li>
+<li><strong>directly connected nexthop</strong>: local DPU が NPU から直結（<a href="../../reference/glossary/#term-arp">ARP</a> で見える）なら tunnel route ではなく <strong>通常の <a href="../../reference/glossary/#term-ecmp">ECMP</a> route</strong> で扱う。</li>
+<li><strong>failover transient state のドロップ防止</strong>: failover の瞬間に <strong>high-priority <a href="../../reference/glossary/#term-acl">ACL</a></strong> で <code>TUNNEL_TERM</code> を見て必ず <strong>local nexthop</strong> にリダイレクトする。</li>
 </ol>
 <h2 id="_2">どう動くか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="vnet_route_tunnel_table"><code>VNET_ROUTE_TUNNEL_TABLE</code> の拡張<a class="headerlink" href="#vnet_route_tunnel_table" title="Permanent link">&para;</a></h3>
@@ -23831,7 +23831,7 @@
 </span></code></pre></div>
 <p><code>true</code> の場合、<code>VnetOrch</code> は ARP テーブルを引いて directly connected か確認する:</p>
 <ul>
-<li>直結なら tunnel route ではなく <strong>通常 ECMP route</strong>（VxLAN ECMP と同じく BFD liveness に追従<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>）</li>
+<li>直結なら tunnel route ではなく <strong>通常 ECMP route</strong>（VxLAN ECMP と同じく <a href="../../reference/glossary/#term-bfd">BFD</a> liveness に追従<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>）</li>
 <li>そうでなければ従来どおり tunnel route</li>
 </ul>
 <pre class="mermaid"><code>flowchart TD
@@ -23870,7 +23870,7 @@
 </tr>
 <tr>
 <td><code>VxlanTunnelOrch</code></td>
-<td>tunnel nexthop の SAI 投入</td>
+<td>tunnel nexthop の <a href="../../reference/glossary/#term-sai">SAI</a> 投入</td>
 </tr>
 <tr>
 <td><code>IntfOrch</code></td>
@@ -23974,7 +23974,7 @@ reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM ma
 </table>
 <p><code>hamgrd</code> が <code>VNET_ROUTE_TUNNEL_TABLE</code> を編集してパイプラインが起動。ACL 系は <code>VnetOrch</code> が必要に応じて自動投入<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli-yang">CLI / YANG<a class="headerlink" href="#cli-yang" title="Permanent link">&para;</a></h3>
-<p>直接の CLI / YANG は HLD 内に定義なし。Smart Switch / HA 管理 CLI 経由で <code>VNET_ROUTE_TUNNEL_TABLE</code> が更新される運用前提。</p>
+<p>直接の CLI / <a href="../../reference/glossary/#term-yang">YANG</a> は <a href="../../reference/glossary/#term-hld">HLD</a> 内に定義なし。Smart Switch / HA 管理 CLI 経由で <code>VNET_ROUTE_TUNNEL_TABLE</code> が更新される運用前提。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>check_directly_connected</code> は optional（無指定なら従来の tunnel route のみ）</li>
@@ -24005,6 +24005,8 @@ reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM ma
 <li><a href="../sonic-dash-hld/">sonic-dash-hld</a></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 4dc7b054596d -->
+
 <div class="footnote">
 <hr />
 <ol>

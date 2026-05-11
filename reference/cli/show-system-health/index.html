@@ -23890,7 +23890,7 @@
 
 <h1 id="show-system-health">show system-health サブコマンド<a class="headerlink" href="#show-system-health" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show system-health</code> は <code>system-health</code> デーモン（<code>HealthCheckerManager</code>）が保持するシステム状態（サービス・ハードウェア・ファイルシステムなど）と、SmartSwitch 構成での DPU 状態、システムが boot 完了したかの「sysready」状態を表示する。実装は <code>show/system_health.py</code>、<code>show/main.py</code> 末尾で <code>cli.add_command(system_health.system_health)</code> の形で登録される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>show system-health</code> は <code>system-health</code> デーモン（<code>HealthCheckerManager</code>）が保持するシステム状態（サービス・ハードウェア・ファイルシステムなど）と、<a href="../../glossary/#term-smartswitch">SmartSwitch</a> 構成での <a href="../../glossary/#term-dpu">DPU</a> 状態、システムが boot 完了したかの「sysready」状態を表示する。実装は <code>show/system_health.py</code>、<code>show/main.py</code> 末尾で <code>cli.add_command(system_health.system_health)</code> の形で登録される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>HealthCheckerManager</code> の本体は <code>health_checker/</code> パッケージで、<code>/usr/share/sonic/device/&lt;platform&gt;/system_health_monitoring_config.json</code> をベースに監視対象を決める。<code>show system-health</code> は <strong>root 権限必須</strong>（<code>os.geteuid()</code> チェック）。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -24085,6 +24085,8 @@ excerpt: |
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>platform<span class="w"> </span>fan
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: cce0edbb8271 -->
 
 <div class="footnote">
 <hr />

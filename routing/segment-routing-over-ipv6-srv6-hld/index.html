@@ -23762,7 +23762,7 @@
 </div>
 <h1 id="srv6segment-routing-over-ipv6-enddt46-hencapsred">SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）<a class="headerlink" href="#srv6segment-routing-over-ipv6-enddt46-hencapsred" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>IETF RFC 8754 / 8986 で定義される <strong>Segment Routing over IPv6</strong> を SONiC に実装する HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SRv6 は SDN 向け IPv6 ベースのプログラマブル forwarding で、SID list を SRH に積み込むことで TE / VPN / EVPN 等を実現する。Phase 1 では SONiC を <strong>headend / endpoint</strong> 双方として動作させ、Phase 2 以降で uSID / G-SID / HMAC / sBFD / anycast SID 等に拡張する設計。FRR 側 SRv6 が成熟するまでは <strong>静的 SID と policy を CONFIG_DB に直接書く</strong>運用。</p>
+<p>IETF RFC 8754 / 8986 で定義される <strong>Segment Routing over IPv6</strong> を SONiC に実装する <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-srv6">SRv6</a> は SDN 向け IPv6 ベースのプログラマブル forwarding で、SID list を SRH に積み込むことで TE / VPN / <a href="../../reference/glossary/#term-evpn">EVPN</a> 等を実現する。Phase 1 では SONiC を <strong>headend / endpoint</strong> 双方として動作させ、Phase 2 以降で uSID / G-SID / HMAC / sBFD / anycast SID 等に拡張する設計。<a href="../../reference/glossary/#term-frr">FRR</a> 側 SRv6 が成熟するまでは <strong>静的 SID と policy を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に直接書く</strong>運用。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="phase-1">Phase 1 のサポート機能<a class="headerlink" href="#phase-1" title="Permanent link">&para;</a></h3>
 <table>
@@ -23781,7 +23781,7 @@
 </tr>
 <tr>
 <td><code>END.DT46</code></td>
-<td>endpoint with decap + VRF lookup（IP L3VPN）</td>
+<td>endpoint with decap + <a href="../../reference/glossary/#term-vrf">VRF</a> lookup（IP L3VPN）</td>
 <td>8986</td>
 </tr>
 <tr>
@@ -23836,9 +23836,9 @@
   APP --&gt; ORCH[Srv6Orch]
   ORCH --&gt; ASIC[(ASIC_DB)]
   ASIC --&gt; SAI[SAI SRv6 attributes]</code></pre>
-<p>Phase 1 では <strong>controller / swss スクリプトが Translib 経由で APPL_DB 直接更新</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FRR が SRv6 を full サポートしたら fpmsyncd 経由に切替。</p>
+<p>Phase 1 では <strong>controller / swss スクリプトが Translib 経由で <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> 直接更新</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FRR が SRv6 を full サポートしたら <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 経由に切替。</p>
 <h3 id="counterv05">Counter（v0.5 で追加）<a class="headerlink" href="#counterv05" title="Permanent link">&para;</a></h3>
-<p>各 MySID 単位の <strong>packet/byte counter</strong> を SAI に問い合わせる機能を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI で:</p>
+<p>各 MySID 単位の <strong>packet/byte counter</strong> を <a href="../../reference/glossary/#term-sai">SAI</a> に問い合わせる機能を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI で:</p>
 <ul>
 <li><code>config srv6 counter &lt;enable|disable&gt;</code></li>
 <li><code>config srv6 counter polling-interval &lt;sec&gt;</code></li>
@@ -23846,7 +23846,7 @@
 <li><code>clear srv6 counter</code></li>
 </ul>
 <h3 id="warm-boot">Warm boot<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h3>
-<p>planned 系 / swss / BGP warm reboot で対応想定<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MySID と SID list は CONFIG_DB から再復元、<code>Srv6Orch</code> が再 program。</p>
+<p>planned 系 / swss / <a href="../../reference/glossary/#term-bgp">BGP</a> warm reboot で対応想定<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MySID と SID list は CONFIG_DB から再復元、<code>Srv6Orch</code> が再 program。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/srv6/srv6_hld.md#L78-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23885,8 +23885,8 @@ reasoning: Phase 1 のサポート機能の根拠。
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既存 routing (BGP / VRF / ROUTE_TABLE)</strong>: ROUTE_TABLE の拡張で共存</li>
-<li><strong>MPLS L3VPN</strong>: 等価機能の置き換え候補</li>
+<li><strong>既存 routing (BGP / VRF / <a href="../../reference/glossary/#term-route_table">ROUTE_TABLE</a>)</strong>: ROUTE_TABLE の拡張で共存</li>
+<li><strong><a href="../../reference/glossary/#term-mpls">MPLS</a> L3VPN</strong>: 等価機能の置き換え候補</li>
 <li><strong>EVPN over SRv6</strong>: 後段の利用形</li>
 <li><strong>PIC / wcmp / ARS</strong>: NHG / multipath との関係</li>
 <li><strong>FRR / fpmsyncd</strong>: 将来の入力経路</li>
@@ -23907,6 +23907,8 @@ reasoning: Phase 1 のサポート機能の根拠。
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ed6625c06753 -->
 
 <div class="footnote">
 <hr />

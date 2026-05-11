@@ -23784,24 +23784,24 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>この章の機能は CLI と CONFIG_DB の二系統から設定でき、それぞれ YANG モデルで形式化されています。各リファレンスページの内容はそちら側を正にし、ここでは「どこを最初に編集するか」と「どの順で組み合わせるか」だけ示します。</p>
+<p>この章の機能は CLI と <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の二系統から設定でき、それぞれ <a href="../../../reference/glossary/#term-yang">YANG</a> モデルで形式化されています。各リファレンスページの内容はそちら側を正にし、ここでは「どこを最初に編集するか」と「どの順で組み合わせるか」だけ示します。</p>
 <h2 id="nat">NAT の設定入口<a class="headerlink" href="#nat" title="Permanent link">&para;</a></h2>
-<p>NAT は次のレイヤで構成します。</p>
+<p><a href="../../../reference/glossary/#term-nat">NAT</a> は次のレイヤで構成します。</p>
 <ul>
 <li>グローバル: <code>NAT_GLOBAL</code> で機能 enable / timeout / TCP/UDP の挙動を決めます。CLI は <code>config nat feature enable</code> と <code>config nat add ...</code>。</li>
 <li>ゾーン: <code>NAT_ZONE</code> で interface に inside / outside を付けます（<code>config interface nat add inside|outside</code>）。</li>
 <li>静的: <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> で 1:1 アドレス / port マッピング。</li>
-<li>動的: <code>NAT_POOL</code> + <code>NAT_BINDINGS</code> + ACL でプール / バインディング / マッチ条件を組みます。</li>
+<li>動的: <code>NAT_POOL</code> + <code>NAT_BINDINGS</code> + <a href="../../../reference/glossary/#term-acl">ACL</a> でプール / バインディング / マッチ条件を組みます。</li>
 </ul>
 <p>CLI ツリーは <a href="../../../reference/cli/config-nat/">config nat</a> / <a href="../../../reference/cli/show-nat/">show nat</a> を参照してください。CONFIG_DB スキーマは <a href="../../../reference/config-db/nat/">NAT テーブル群</a> と <a href="../../../reference/yang/sonic-nat/">sonic-nat YANG</a> にあります。</p>
 <h2 id="dhcp-relay">DHCP relay の設定入口<a class="headerlink" href="#dhcp-relay" title="Permanent link">&para;</a></h2>
-<p>DHCPv4 relay は VLAN ごとに upstream server を指定する形です。</p>
+<p>DHCPv4 relay は <a href="../../../reference/glossary/#term-vlan">VLAN</a> ごとに upstream server を指定する形です。</p>
 <ul>
 <li>CLI: <code>config vlan dhcp_relay add &lt;vlan&gt; &lt;server_ip&gt;</code> / <code>config vlan dhcp_relay del ...</code>。CLI plugin の正確な階層は <a href="../../../reference/cli/config-dhcp-relay/">config dhcp_relay リファレンス</a> を参照してください。</li>
 <li>CONFIG_DB: <code>DHCP_RELAY|&lt;vlan&gt;</code> の <code>dhcp_servers</code> リスト。v6 は同 entry の <code>dhcpv6_servers</code> と <code>dhcpv6_option|rfc6939_support</code>。詳細は <a href="../../../reference/config-db/dhcpv4-relay/">DHCPV4_RELAY スキーマ</a> にあります。</li>
 <li>giaddr 固定: <code>config interface ip add --secondary</code> で <code>VLAN_INTERFACE</code> に <code>secondary: "true"</code> を付けると、primary IPv4 が <code>-pg</code> で giaddr に固定されます。</li>
 </ul>
-<p>per-interface counter / Option 82 は CLI / CONFIG_DB レベルでは特別な操作が要らず、relay 起動時に自動で COUNTERS_DB に書かれます。</p>
+<p>per-interface counter / Option 82 は CLI / CONFIG_DB レベルでは特別な操作が要らず、relay 起動時に自動で <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に書かれます。</p>
 <h2 id="dhcp-server">DHCP server の設定入口<a class="headerlink" href="#dhcp-server" title="Permanent link">&para;</a></h2>
 <p>ポートベース DHCP server は次の順で書きます。</p>
 <ol>
@@ -23855,7 +23855,7 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>acl<span class="w"> </span>rule<span class="w"> </span>create<span class="w"> </span>NAT_ACL<span class="w"> </span>R10<span class="w"> </span>--src-ip<span class="w"> </span><span class="m">10</span>.10.0.0/24<span class="w"> </span>--action<span class="w"> </span>FORWARD
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>binding<span class="w"> </span>BIND1<span class="w"> </span>--pool<span class="w"> </span>POOL1<span class="w"> </span>--acl-name<span class="w"> </span>NAT_ACL<span class="w"> </span>--nat-type<span class="w"> </span>dnat
 </span></code></pre></div>
-<p><code>NAT_POOL</code> / <code>NAT_BINDINGS</code> テーブルに反映され、<code>natsyncd</code> が conntrack を作成して <code>APPL_DB:NAT_TABLE</code> 経由で SAI へ流します。</p>
+<p><code>NAT_POOL</code> / <code>NAT_BINDINGS</code> テーブルに反映され、<code>natsyncd</code> が conntrack を作成して <code>APPL_DB:NAT_TABLE</code> 経由で <a href="../../../reference/glossary/#term-sai">SAI</a> へ流します。</p>
 <h2 id="3-tor-dhcp-relay-giaddr">設定シナリオ 3: ToR の DHCP relay と giaddr 固定<a class="headerlink" href="#3-tor-dhcp-relay-giaddr" title="Permanent link">&para;</a></h2>
 <p>VLAN 10 / 20 を持つ ToR で、外部 DHCP server に中継する最小構成は次の通りです。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config vlan dhcp_relay add 10 10.0.0.1
@@ -23963,7 +23963,7 @@
 <ul>
 <li>CLI: <code>config nat</code>、<code>show nat</code>、<code>config interface nat</code>、<code>config vlan dhcp_relay</code>、<code>config dhcp_server ipv4</code>、<code>show dhcp_relay ipv4</code>、<code>show dhcp_server ipv4</code></li>
 <li>CONFIG_DB: <code>NAT_GLOBAL</code>、<code>NAT_ZONE</code>、<code>STATIC_NAT</code>、<code>STATIC_NAPT</code>、<code>NAT_POOL</code>、<code>NAT_BINDINGS</code>、<code>DHCP_RELAY</code>、<code>DHCP_SERVER_IPV4</code>、<code>DHCP_SERVER_IPV4_RANGE</code>、<code>DHCP_SERVER_IPV4_PORT</code>、<code>DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS</code>、<code>VLAN_INTERFACE</code>（secondary giaddr 用）</li>
-<li>APPL_DB: <code>NAT_TABLE</code>、<code>NAPT_TABLE</code>、<code>NAT_TWICE_TABLE</code></li>
+<li><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a>: <code>NAT_TABLE</code>、<code>NAPT_TABLE</code>、<code>NAT_TWICE_TABLE</code></li>
 <li>COUNTERS_DB: NAT / DHCP relay の per-entry / per-interface counter</li>
 <li>YANG: <a href="../../../reference/yang/sonic-nat/"><code>sonic-nat</code></a>、<a href="../../../reference/yang/sonic-dhcp-server/"><code>sonic-dhcp-server</code></a>、<code>sonic-dhcpv4-relay</code></li>
 </ul>
@@ -23978,6 +23978,7 @@
 <li><a href="../../../reference/yang/sonic-nat/">sonic-nat YANG</a></li>
 <li><a href="../../../reference/yang/sonic-dhcp-server/">sonic-dhcp-server YANG</a></li>
 </ul>
+<!-- glossary-links-injected: 469d17d8763e -->
 
 
 

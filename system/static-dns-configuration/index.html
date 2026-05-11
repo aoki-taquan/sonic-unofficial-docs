@@ -23878,7 +23878,7 @@
 <h1 id="dns-dns_nameserver-resolvconf">静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）<a class="headerlink" href="#dns-dns_nameserver-resolvconf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC は管理インタフェース経由で <strong>DHCP から DNS リゾルバ情報を動的に受け取る</strong> のが既定挙動である。一方、ユーザが手動で <code>/etc/resolv.conf</code> を書いてもタイミングによっては DHCP の更新で上書きされてしまい、<strong>静的 DNS が保護されない</strong> という問題があった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は CONFIG_DB に <code>DNS_NAMESERVER</code> テーブルを追加し、CLI から永続的に静的 DNS を投入できるようにする。中継には Debian の <code>resolvconf</code> パッケージを使う。<code>resolvconf</code> は「複数の DNS 情報供給源を統合してアプリに通知する」フレームワークで、これに <code>mgmt-intf.static</code> という形でユーザ設定を流し込み、動的 DHCP 情報と静的設定の優先制御を行う設計である。</p>
+<p>本機能は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に <code>DNS_NAMESERVER</code> テーブルを追加し、CLI から永続的に静的 DNS を投入できるようにする。中継には Debian の <code>resolvconf</code> パッケージを使う。<code>resolvconf</code> は「複数の DNS 情報供給源を統合してアプリに通知する」フレームワークで、これに <code>mgmt-intf.static</code> という形でユーザ設定を流し込み、動的 DHCP 情報と静的設定の優先制御を行う設計である。</p>
 <p>加えて、SONiC の各 docker コンテナ内 <code>/etc/resolv.conf</code> も同期する必要があるため、新規の resolvconf プラグイン <strong><code>update-containers</code></strong> が DNS 変更時に各コンテナへ <code>/etc/resolv.conf</code> をコピーする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント図<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23951,7 +23951,7 @@
 <p><code>sonic-cfggen</code> がこれを <code>DNS_NAMESERVER</code> テーブルへ展開する。</p>
 <h3 id="_6">制限<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>管理インタフェースが静的 IP の場合、動的 DNS が動かない</strong>。HLD で明示的に書かれた制限。これは <code>dhclient</code> 経由で <code>&lt;mgmt-intf&gt;.dhclient</code> ファイルが作成されないためであり、本機能というより resolvconf 連携の都合である<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>管理インタフェースが静的 IP の場合、動的 DNS が動かない</strong>。<a href="../../reference/glossary/#term-hld">HLD</a> で明示的に書かれた制限。これは <code>dhclient</code> 経由で <code>&lt;mgmt-intf&gt;.dhclient</code> ファイルが作成されないためであり、本機能というより resolvconf 連携の都合である<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>Warm/fast boot には影響なし。</li>
 <li>Config migration は特別扱い不要。</li>
 </ul>
@@ -23998,7 +23998,7 @@ reasoning: 静的 / 動的の排他切替ロジックの根拠。
 </tr>
 </tbody>
 </table>
-<p>YANG では最大 3 件まで（<code>max-elements 3</code>）に制限される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a> では最大 3 件まで（<code>max-elements 3</code>）に制限される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24054,7 +24054,7 @@ reasoning: 静的 / 動的の排他切替ロジックの根拠。
 <ul>
 <li><strong>DHCP (mgmt インタフェース)</strong>: 静的 DNS 設定がある間は DHCP 経由 DNS は無視される（resolvconf の動的更新を停止するため）。</li>
 <li><strong>管理インタフェース静的 IP</strong>: dhclient が走らないため、そもそも動的 DNS が来ない。静的 DNS を入れない限り名前解決ができない可能性。</li>
-<li><strong>Docker コンテナ内 DNS 利用</strong>: SNMP / TACACS / NTP 等が FQDN で設定されている場合、<code>update-containers</code> プラグインによる伝播タイミングが遅れると瞬間的に解決失敗する可能性。</li>
+<li><strong>Docker コンテナ内 DNS 利用</strong>: <a href="../../reference/glossary/#term-snmp">SNMP</a> / TACACS / NTP 等が FQDN で設定されている場合、<code>update-containers</code> プラグインによる伝播タイミングが遅れると瞬間的に解決失敗する可能性。</li>
 <li><strong><code>config reload</code></strong>: <code>sonic.target</code> 再起動の流れで <code>resolv-config.service</code> も再走するので、DNS_NAMESERVER の変更は永続化していれば再 reload 後も反映される。</li>
 </ul>
 <h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
@@ -24071,6 +24071,8 @@ reasoning: 静的 / 動的の排他切替ロジックの根拠。
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c2ecb3310ac8 -->
 
 <div class="footnote">
 <hr />

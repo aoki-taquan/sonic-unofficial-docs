@@ -23896,7 +23896,7 @@
 </div>
 <h1 id="snmp-table-snmp-snmp_community-snmp_user">SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）<a class="headerlink" href="#snmp-table-snmp-snmp_community-snmp_user" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の SNMP 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が <code>/etc/sonic/snmp.yml</code> と <code>config_db.json</code> の <code>SNMP_ACL</code> に分散していた状態を解消し、CONFIG_DB に <strong>SNMP / SNMP_COMMUNITY / SNMP_USER</strong> の 3 テーブルとして集約するためのスキーマ提案<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的な移行手順や CLI は別 HLD（<code>snmp-configdb-migration-hld.md</code>）が扱う。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-snmp">SNMP</a> 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が <code>/etc/sonic/snmp.yml</code> と <code>config_db.json</code> の <code>SNMP_ACL</code> に分散していた状態を解消し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に <strong>SNMP / SNMP_COMMUNITY / SNMP_USER</strong> の 3 テーブルとして集約するためのスキーマ提案<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的な移行手順や CLI は別 <a href="../../reference/glossary/#term-hld">HLD</a>（<code>snmp-configdb-migration-hld.md</code>）が扱う。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">スキーマ詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <h4 id="snmp">SNMP（グローバル）<a class="headerlink" href="#snmp" title="Permanent link">&para;</a></h4>
@@ -23985,7 +23985,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>本 HLD は CLI を扱わない。CLI は <code>snmp-configdb-migration-hld.md</code> 側で <code>config snmp ...</code> / <code>show run snmp ...</code> として定義される。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD には YANG モデルの記述は無い。</p>
+<p>HLD には <a href="../../reference/glossary/#term-yang">YANG</a> モデルの記述は無い。</p>
 <h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="s1">  &quot;SNMP&quot;: {</span>
@@ -24017,7 +24017,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 <ul>
 <li><strong>SNMP_ACL（既存）</strong>: 本提案は ACL 部分を扱わない。引き続き既存の <code>SNMP_ACL</code> テーブルが ACL を表す。</li>
 <li><strong><code>docker-snmp</code> 起動順</strong>: CONFIG_DB が起動済みである必要がある（既存 SONiC 設計と同じ）。</li>
-<li><strong>caclmgrd</strong>: HLD は <code>snmpd-config-updater</code> の caclmgrd 置き換えを前提としているため、ACL 反映ルートが将来変わる可能性に注意。</li>
+<li><strong>caclmgrd</strong>: HLD は <code>snmpd-config-updater</code> の caclmgrd 置き換えを前提としているため、<a href="../../reference/glossary/#term-acl">ACL</a> 反映ルートが将来変わる可能性に注意。</li>
 </ul>
 <h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24025,6 +24025,8 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 <li>値が <code>redis-cli -n 4 hgetall SNMP|LOCATION</code> で見えるが community が効かない → <code>SNMP_COMMUNITY</code> のキーは小文字大文字を区別する点に注意。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 601f13437a09 -->
+
 <div class="footnote">
 <hr />
 <ol>

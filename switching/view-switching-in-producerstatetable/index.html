@@ -23718,8 +23718,8 @@
 </div>
 <h1 id="producerstatetable-view-switching">ProducerStateTable view switching<a class="headerlink" href="#producerstatetable-view-switching" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>warm reboot では、各 daemon が <strong>新しい状態を一気に作って consumer に届ける</strong> 必要がある。再起動直後に旧 view と新 view を比較し <strong>差分だけ</strong> SAI に流せれば、再 program によるデータプレーン断が最小化される。</p>
-<p>本 HLD は <code>ProducerStateTable</code> に「一時 view をプロセス内メモリで構築 → <code>apply_temp_view()</code> で旧 view との差分だけ Redis に書き出す」機構を追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。差分計算は producer 側で行うため <strong><code>ConsumerStateTable</code> (pop 含む) は無変更</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>warm reboot では、各 daemon が <strong>新しい状態を一気に作って consumer に届ける</strong> 必要がある。再起動直後に旧 view と新 view を比較し <strong>差分だけ</strong> <a href="../../reference/glossary/#term-sai">SAI</a> に流せれば、再 program によるデータプレーン断が最小化される。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <code>ProducerStateTable</code> に「一時 view をプロセス内メモリで構築 → <code>apply_temp_view()</code> で旧 view との差分だけ <a href="../../reference/glossary/#term-redis">Redis</a> に書き出す」機構を追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。差分計算は producer 側で行うため <strong><code>ConsumerStateTable</code> (pop 含む) は無変更</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>前提: <strong>1 テーブルにつき producer は 1 つだけ</strong>。複数 producer が同テーブルを書くと、view 切替中の二次 producer の書き込みが <code>apply_temp_view()</code> で失われる可能性がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="api">API と動作<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
 <p><code>ProducerStateTable</code> 追加 2 API<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23831,9 +23831,11 @@
 <ul>
 <li><a href="../../topics/11-reboot/architecture/">11-reboot/architecture</a>: warm reboot 全体像</li>
 <li><a href="../../topics/11-reboot/internals/">11-reboot/internals</a>: view switching 内部</li>
-<li><a href="../../topics/20-swss-sai-redis/internals/">20-swss-sai-redis/internals</a>: ProducerStateTable / ConsumerStateTable</li>
+<li><a href="../../topics/20-swss-sai-redis/internals/">20-swss-sai-redis/internals</a>: <a href="../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / <a href="../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a></li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: ccf91819747c -->
+
 <div class="footnote">
 <hr />
 <ol>

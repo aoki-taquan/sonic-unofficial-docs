@@ -23740,12 +23740,12 @@
 </div>
 <h1 id="route-flow-counterroute_match-route-pattern-orch">Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）<a class="headerlink" href="#route-flow-counterroute_match-route-pattern-orch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜこの機能が必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>prefix パターンに一致する route について、ASIC 上の <strong>Generic Counter</strong> を ECMP NHG / route entry に bind し、hit / byte を CLI で確認できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Trap Flow Counter / FDB Flow Counter と同系列の Flex Counter インフラ上に、route 用の <strong>Route Pattern Orch</strong> を新設する設計。</p>
+<p>prefix パターンに一致する route について、ASIC 上の <strong>Generic Counter</strong> を <a href="../../reference/glossary/#term-ecmp">ECMP</a> NHG / route entry に bind し、hit / byte を CLI で確認できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Trap Flow Counter / <a href="../../reference/glossary/#term-fdb">FDB</a> Flow Counter と同系列の Flex Counter インフラ上に、route 用の <strong>Route Pattern Orch</strong> を新設する設計。</p>
 <p>Phase 1 スコープ:</p>
 <ul>
 <li>パターンは IPv4 / IPv6 <strong>各 1 つ、計 2 件まで</strong></li>
 <li>パターンあたり max <strong>50</strong>（default 30）。<strong>reboot またぎで同じ route が選ばれる保証なし</strong></li>
-<li>key: 通常 <code>(vrf, prefix)</code>、VNET の場合 <code>(vnet, prefix)</code>。default VRF は省略可</li>
+<li>key: 通常 <code>(vrf, prefix)</code>、<a href="../../reference/glossary/#term-vnet">VNET</a> の場合 <code>(vnet, prefix)</code>。default <a href="../../reference/glossary/#term-vrf">VRF</a> は省略可</li>
 <li><code>0.0.0.0</code> / <code>::</code> パターンは default route の exact match</li>
 </ul>
 <h2 id="_2">コンポーネント<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23769,7 +23769,7 @@
 <li>route 削除 → Bound なら counter unbind + destroy、Unbound なら cache 削除のみ</li>
 <li>pattern 変更 → 旧 pattern のみ match は unbind、新 pattern 対象を bind 直し</li>
 </ol>
-<p>容量超過時の選定基準は HLD で曖昧、<strong>reboot 後に同じ route が選ばれる保証なし</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>容量超過時の選定基準は <a href="../../reference/glossary/#term-hld">HLD</a> で曖昧、<strong>reboot 後に同じ route が選ばれる保証なし</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="countertype-flexcounter">CounterType / FlexCounter<a class="headerlink" href="#countertype-flexcounter" title="Permanent link">&para;</a></h3>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CounterType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">ROUTE_MATCH</span><span class="w"> </span><span class="p">};</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">counter_id_field_lookup</span><span class="p">[</span><span class="n">ROUTE_MATCH</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FLOW_COUNTER_ID_LIST</span><span class="p">;</span>
@@ -23780,7 +23780,7 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    max_match_count = &lt;int&gt;   # default 30, max 50
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a># VNET ケースは FLOW_COUNTER_ROUTE_PATTERN|&lt;vnet&gt;|&lt;prefix&gt;
 </span></code></pre></div>
-<p><code>orchagent</code> 起動時に SAI Generic Counter サポートを query し、<code>STATE_DB.FLOW_COUNTER_CAPABILITY_TABLE</code> に書く。CLI はこれを見て対応 platform 判定<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>orchagent</code> 起動時に <a href="../../reference/glossary/#term-sai">SAI</a> Generic Counter サポートを query し、<code>STATE_DB.FLOW_COUNTER_CAPABILITY_TABLE</code> に書く。CLI はこれを見て対応 platform 判定<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="cli">CLI / 設定例<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23836,6 +23836,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">09-telemetry-snmp</a>: Flex Counter / Generic Counter 全般</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: f28bb438d6e7 -->
+
 <div class="footnote">
 <hr />
 <ol>

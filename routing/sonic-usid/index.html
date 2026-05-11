@@ -23818,8 +23818,8 @@
 </div>
 <h1 id="srv6-usidsrv6orch-unuaudtudx">SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）<a class="headerlink" href="#srv6-usidsrv6orch-unuaudtudx" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>uSID（micro-SID）は IETF <a href="https://datatracker.ietf.org/doc/draft-ietf-spring-srv6-srh-compression/">Compressed SRv6 Segment List Encoding</a> と <a href="https://datatracker.ietf.org/doc/draft-filsfils-spring-net-pgm-extension-srv6-usid/">SRv6 uSID instructions</a> で定義される、SRv6 SID を <strong>16 bit などに圧縮</strong> する仕組みである。完全な 128bit IPv6 を SID として使う通常の SRv6 と異なり、1 つの 128bit IPv6 アドレス（uSID carrier）に <strong>最大 6 個の uSID</strong> を詰められる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MTU オーバヘッドを抑えつつ、長いセグメントリストを表現できる。</p>
-<p>本 HLD は SONiC の既存 <code>srv6orch</code>（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 系）に対し、<strong>uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加</strong> する拡張のみを定義する。SAI API は既存の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> ですべて表現できるため、SAI の変更は不要である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC の FRR 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。</p>
+<p>uSID（micro-SID）は IETF <a href="https://datatracker.ietf.org/doc/draft-ietf-spring-srv6-srh-compression/">Compressed SRv6 Segment List Encoding</a> と <a href="https://datatracker.ietf.org/doc/draft-filsfils-spring-net-pgm-extension-srv6-usid/">SRv6 uSID instructions</a> で定義される、<a href="../../reference/glossary/#term-srv6">SRv6</a> SID を <strong>16 bit などに圧縮</strong> する仕組みである。完全な 128bit IPv6 を SID として使う通常の SRv6 と異なり、1 つの 128bit IPv6 アドレス（uSID carrier）に <strong>最大 6 個の uSID</strong> を詰められる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MTU オーバヘッドを抑えつつ、長いセグメントリストを表現できる。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は SONiC の既存 <code>srv6orch</code>（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 系）に対し、<strong>uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加</strong> する拡張のみを定義する。<a href="../../reference/glossary/#term-sai">SAI</a> API は既存の <code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*</code> ですべて表現できるため、SAI の変更は不要である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC の <a href="../../reference/glossary/#term-frr">FRR</a> 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="end-behavior">追加される end behavior<a class="headerlink" href="#end-behavior" title="Permanent link">&para;</a></h3>
 <table>
@@ -23871,7 +23871,7 @@
 <p>要点:</p>
 <ul>
 <li><code>uN</code> / <code>uA</code> は <strong>PSP（Penultimate Segment Pop）と USD（Ultimate Segment Decapsulation）の両方を持つ flavor</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>uDT*</code> / <code>uDX*</code> は SAI レイヤでは既存の End.DT<em> / End.DX</em> と完全に同じ。orchagent の文字列マッピングだけが追加される</li>
+<li><code>uDT*</code> / <code>uDX*</code> は SAI レイヤでは既存の End.DT<em> / End.DX</em> と完全に同じ。<a href="../../reference/glossary/#term-orchagent">orchagent</a> の文字列マッピングだけが追加される</li>
 </ul>
 <h3 id="orchagent">orchagent 側変更<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23879,7 +23879,7 @@
     ORCH --&gt;|behavior + flavor 解決| MAP{end_behavior_map\nend_flavor_map}
     MAP --&gt; SAI[SAI my_sid_entry create]
     SAI --&gt; ASIC[ASIC]</code></pre>
-<p><code>srv6orch</code> は <code>APPL_DB.SRV6_MY_SID_TABLE</code> を購読する。HLD は新しい <code>action</code> 文字列（<code>un</code>, <code>ua</code>, <code>udt4</code>, <code>udt6</code>, <code>udt46</code>, <code>udx4</code>, <code>udx6</code>）を <strong>既存の <code>end_behavior_map</code> / <code>end_flavor_map</code> に追記する</strong> だけの変更とする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。APPL_DB スキーマ自体に変更は無い。</p>
+<p><code>srv6orch</code> は <code>APPL_DB.SRV6_MY_SID_TABLE</code> を購読する。HLD は新しい <code>action</code> 文字列（<code>un</code>, <code>ua</code>, <code>udt4</code>, <code>udt6</code>, <code>udt46</code>, <code>udx4</code>, <code>udx6</code>）を <strong>既存の <code>end_behavior_map</code> / <code>end_flavor_map</code> に追記する</strong> だけの変更とする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-appl_db">APPL_DB</a> スキーマ自体に変更は無い。</p>
 <p>具体的なマップ追記内容（HLD 抜粋）:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// end_behavior_map に追加</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">{</span><span class="s">&quot;udx6&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6</span><span class="p">},</span>
@@ -23959,7 +23959,7 @@ reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最�
 <p><code>srv6orch</code> の locator パース長は既存どおり <code>locator_block_len:locator_node_len:function_len:args_len</code>（例: <code>16:8:8:8</code>）を再利用する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD では新規 CONFIG_DB スキーマは導入されない。SRv6 全体としては既存の <code>SRV6_MY_SID_TABLE</code>（APPL_DB）と関連する CONFIG_DB スキーマ（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 参照）を使う。</p>
+<p>HLD では新規 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマは導入されない。SRv6 全体としては既存の <code>SRV6_MY_SID_TABLE</code>（APPL_DB）と関連する CONFIG_DB スキーマ（<a href="https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md">SRv6 HLD</a> 参照）を使う。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>専用 CLI は本 HLD で提案されていない。</p>
 <h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
@@ -23970,7 +23970,7 @@ reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最�
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>uDT46（VRF にデキャプ）:</p>
+<p>uDT46（<a href="../../reference/glossary/#term-vrf">VRF</a> にデキャプ）:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">&quot;SRV6_MY_SID_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;16:8:8:8:2001:41f0:0100::&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;udt46&quot;</span><span class="p">,</span>
@@ -23980,7 +23980,7 @@ reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最�
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>本 HLD のスコープは <strong>データプレーン programming のみ</strong>。SONiC の FRR は SRv6 制御プレーンを持たないため、uSID を含む経路を BGP / IS-IS で配布する経路は別問題<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>本 HLD のスコープは <strong>データプレーン programming のみ</strong>。SONiC の FRR は SRv6 制御プレーンを持たないため、uSID を含む経路を <a href="../../reference/glossary/#term-bgp">BGP</a> / IS-IS で配布する経路は別問題<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>uN / uA は flavor が <strong>PSP_AND_USD 固定</strong>。他の flavor を選びたいユースケースは現状非対応</li>
 <li>ベース SRv6 HLD 由来の制約（locator パース、locator_block_len 等の事前合意値）はそのまま継承する</li>
 </ul>
@@ -24009,6 +24009,8 @@ reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最�
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 462a4dbe73d7 -->
 
 <div class="footnote">
 <hr />

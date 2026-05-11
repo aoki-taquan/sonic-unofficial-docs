@@ -23639,7 +23639,7 @@
 
 <h1 id="vlan_sub_interface">VLAN_SUB_INTERFACE テーブル<a class="headerlink" href="#vlan_sub_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>VLAN_SUB_INTERFACE</code> は物理 port または PortChannel 上の 802.1Q sub-interface を定義する CONFIG_DB テーブル。<code>Ethernet0.100</code> や <code>PortChannel10.100</code> のような親 interface + VLAN ID 形式をキーに、admin state、VRF / VNET binding、loopback action、encapsulation VLAN、IP prefix を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では CONFIG_DB テーブル名として <code>CFG_VLAN_SUB_INTF_TABLE_NAME</code> が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>VLAN_SUB_INTERFACE</code> は物理 port または <a href="../../glossary/#term-portchannel">PortChannel</a> 上の 802.1Q sub-interface を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。<code>Ethernet0.100</code> や <code>PortChannel10.100</code> のような親 interface + <a href="../../glossary/#term-vlan">VLAN</a> ID 形式をキーに、admin state、<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding、loopback action、encapsulation VLAN、IP prefix を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では CONFIG_DB テーブル名として <code>CFG_VLAN_SUB_INTF_TABLE_NAME</code> が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23728,14 +23728,14 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>intfmgrd</code>: CONFIG_DB の sub-interface と IP prefix を APPL_DB 側の interface 設定へ展開する。</li>
-<li><code>orchagent</code> / <code>intfsorch</code>: APPL_DB 経由で router interface、IP address、VRF / VNET binding を SAI / kernel へ反映する。</li>
+<li><code>intfmgrd</code>: CONFIG_DB の sub-interface と IP prefix を <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の interface 設定へ展開する。</li>
+<li><code>orchagent</code> / <code>intfsorch</code>: APPL_DB 経由で router interface、IP address、VRF / VNET binding を <a href="../../glossary/#term-sai">SAI</a> / kernel へ反映する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>PORT</code>、<code>PORTCHANNEL</code>、<code>VRF</code>、<code>VNET</code></li>
 <li>関連 CLI: <code>config interface</code></li>
-<li>関連 YANG: <code>sonic-vlan-sub-interface</code>、<code>sonic-port</code>、<code>sonic-portchannel</code>、<code>sonic-vrf</code>、<code>sonic-vnet</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vlan-sub-interface</code>、<code>sonic-port</code>、<code>sonic-portchannel</code>、<code>sonic-vrf</code>、<code>sonic-vnet</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23770,6 +23770,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>subinterface<span class="w"> </span>status
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f53f85ca209b -->
 
 <div class="footnote">
 <hr />

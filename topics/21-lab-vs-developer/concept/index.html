@@ -23830,7 +23830,7 @@
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>「lab」と一口に言っても、SONiC では大きく次の 3 つの面が混ざっています。読み手の役割と目的で使い分けを決めると迷いません。</p>
 <h2 id="_2">この章は何のためにあるか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>SONiC コミュニティの HLD / test plan / guide は、書き手が想定している読者がページごとに違います。同じ「lab」でも、開発者の CI 自動化と、運用者の事前検証と、評価者の機能トライアルでは前提と粒度が異なります。本章はその違いを整理して、読み手が「自分はどのガイドのどこから入ればいいか」を即答できる地図を提供します。</p>
+<p>SONiC コミュニティの <a href="../../../reference/glossary/#term-hld">HLD</a> / test plan / guide は、書き手が想定している読者がページごとに違います。同じ「lab」でも、開発者の CI 自動化と、運用者の事前検証と、評価者の機能トライアルでは前提と粒度が異なります。本章はその違いを整理して、読み手が「自分はどのガイドのどこから入ればいいか」を即答できる地図を提供します。</p>
 <p>読み手の最初の疑問は次の 4 つで、各節がそれに答えます。</p>
 <ol>
 <li>自分はどの persona なのか（評価者 / 初学者 / 運用者 / 開発者）</li>
@@ -23871,7 +23871,7 @@
 <tbody>
 <tr>
 <td>SONiC-VS</td>
-<td>SAI VS を使った仮想 SONiC</td>
+<td><a href="../../../reference/glossary/#term-sai">SAI</a> VS を使った仮想 SONiC</td>
 <td>Linux bridge を ASIC 代わりに使う</td>
 </tr>
 <tr>
@@ -23892,7 +23892,7 @@
 <tr>
 <td>Ansible test plan</td>
 <td>Ansible を使った大規模 topology テスト</td>
-<td>sonic-mgmt リポ配下</td>
+<td><a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> リポ配下</td>
 </tr>
 <tr>
 <td>PR Gate</td>
@@ -23907,7 +23907,7 @@
 <tr>
 <td>Mgmt DUT</td>
 <td>テスト対象 SONiC</td>
-<td>mgmt VRF や PTF と接続される</td>
+<td>mgmt <a href="../../../reference/glossary/#term-vrf">VRF</a> や PTF と接続される</td>
 </tr>
 </tbody>
 </table>
@@ -23944,7 +23944,7 @@
 <tr>
 <td>Mininet との違い</td>
 <td>Linux 上で仮想 switch を組む</td>
-<td>SONiC-VS は SAI VS + sairedis を含み、orchagent も走る。Mininet は OVS や user-space switch を使う。</td>
+<td>SONiC-VS は SAI VS + sairedis を含み、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> も走る。Mininet は OVS や user-space switch を使う。</td>
 </tr>
 <tr>
 <td>ベンダ NOS の VM 版との違い</td>
@@ -23954,7 +23954,7 @@
 <tr>
 <td>単なる Docker テストとの違い</td>
 <td>コンテナを並べる</td>
-<td>SONiC-VS は CONFIG_DB / APPL_DB / ASIC_DB を備えた状態管理ありの環境。HW を伴わない以外は本番に近い。</td>
+<td>SONiC-VS は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> を備えた状態管理ありの環境。HW を伴わない以外は本番に近い。</td>
 </tr>
 </tbody>
 </table>
@@ -23978,7 +23978,7 @@
 <tr>
 <td>初学者 (beginner)</td>
 <td><a href="../../../guides/beginner/">初学者向けガイド</a></td>
-<td>docker / Redis / orchagent などの基本構造を学ぶ</td>
+<td>docker / <a href="../../../reference/glossary/#term-redis">Redis</a> / orchagent などの基本構造を学ぶ</td>
 </tr>
 <tr>
 <td>運用者 (operator)</td>
@@ -23996,13 +23996,13 @@
 <h2 id="virtual-physical">virtual / physical の境界<a class="headerlink" href="#virtual-physical" title="Permanent link">&para;</a></h2>
 <p>仮想 SONiC は ASIC を SAI VS（virtual switch）で置き換えた構成です。SAI VS は Linux kernel の bridge / route table を ASIC の代わりに使うため、次のような層が「実機と挙動が違う」または「再現されない」ことに注意します。</p>
 <ul>
-<li>ASIC 固有の SAI capability、buffer / queue 容量、PFC / watermark のような ASIC counter</li>
+<li>ASIC 固有の SAI capability、buffer / queue 容量、<a href="../../../reference/glossary/#term-pfc">PFC</a> / watermark のような ASIC counter</li>
 <li>optics（CMIS / SFP）、PHY、gearbox、retimer</li>
 <li>thermal、PSU、fan、LED、BMC、PCIe</li>
-<li>HW offload に依存する mux / EVPN VXLAN encap / DASH の一部</li>
+<li>HW offload に依存する mux / <a href="../../../reference/glossary/#term-evpn">EVPN</a> <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> encap / <a href="../../../reference/glossary/#term-dash">DASH</a> の一部</li>
 <li>線速で出る drop / 微小遅延 / micro-burst</li>
 </ul>
-<p>逆に、CONFIG_DB / sairedis / orchagent / FRR / lldp / snmp / gNMI といった control plane の動作は、SONiC-VS で十分に再現できます。仕様レベルの HLD 検証は virtual で、HW capability に踏み込む検証は physical で、と切り分けるのが基本です。</p>
+<p>逆に、CONFIG_DB / sairedis / orchagent / <a href="../../../reference/glossary/#term-frr">FRR</a> / lldp / snmp / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> といった control plane の動作は、SONiC-VS で十分に再現できます。仕様レベルの HLD 検証は virtual で、HW capability に踏み込む検証は physical で、と切り分けるのが基本です。</p>
 <h2 id="test-plan-persona">test plan を「どの persona の読み物か」で読む<a class="headerlink" href="#test-plan-persona" title="Permanent link">&para;</a></h2>
 <p><code>docs/routing/</code>、<code>docs/acl-qos/</code>、<code>docs/system/</code>、<code>docs/platform/</code> には test plan 系のページが多くあります。これらは developer / CI 担当のためのページで、運用者が日常で開く章ではありません。</p>
 <ul>
@@ -24031,6 +24031,7 @@
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 </ul>
+<!-- glossary-links-injected: c41a67c19350 -->
 
 
 

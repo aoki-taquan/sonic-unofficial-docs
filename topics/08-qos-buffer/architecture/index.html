@@ -23630,7 +23630,7 @@
 
 
 <h1 id="qos-buffer">QoS / Buffer のアーキテクチャ<a class="headerlink" href="#qos-buffer" title="Permanent link">&para;</a></h1>
-<p>ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、そしてどの daemon が橋渡しをしているかをまとめます。</p>
+<p>ConfigDB の <a href="../../../reference/glossary/#term-qos">QoS</a> / buffer テーブルが、最終的に <a href="../../../reference/glossary/#term-sai">SAI</a> のどのオブジェクトに対応するか、そしてどの daemon が橋渡しをしているかをまとめます。</p>
 <h2 id="configdb-sai">ConfigDB から SAI までのデータフロー<a class="headerlink" href="#configdb-sai" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   subgraph CFG[CONFIG_DB]
@@ -23684,14 +23684,14 @@
   FC -. counters .-&gt; STATE_W
   BO --&gt; APPL_BUF
   QO --&gt; APPL_Q</code></pre>
-<p>ポイントは「ConfigDB の同じ階層構造（pool → profile → PG/queue）がそのまま SAI に届く」ことと、「PFCWD だけは別 orch」「watermark は SAI の値を FlexCounter が STATE_DB に書く」ことです。</p>
+<p>ポイントは「ConfigDB の同じ階層構造（pool → profile → PG/queue）がそのまま SAI に届く」ことと、「PFCWD だけは別 orch」「watermark は SAI の値を <a href="../../../reference/glossary/#term-flexcounter">FlexCounter</a> が <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に書く」ことです。</p>
 <h2 id="daemon-orch">各 daemon / orch の責務<a class="headerlink" href="#daemon-orch" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>BufferOrch</strong> — <code>BUFFER_POOL</code> / <code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> を SAI buffer pool / profile / PG / queue オブジェクトへ変換します。動的バッファモードのときは buffer manager から流れてくる「再計算後の profile」を扱います。</li>
-<li><strong>QosOrch</strong> — <code>QUEUE</code> / <code>SCHEDULER</code> / <code>WRED_PROFILE</code> / <code>*_TO_*_MAP</code> 系を SAI の scheduler / WRED / map オブジェクト、および port qos 属性に落とします。背景は <a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">SONiC QoS scheduler and shaping</a> を参照。</li>
-<li><strong>PortsOrch</strong> — ポート単位の PFC enable mask、<code>PORT_QOS_MAP</code> の参照、PG/queue 数の取得など、ポート寄りの設定を扱います。</li>
+<li><strong>QosOrch</strong> — <code>QUEUE</code> / <code>SCHEDULER</code> / <code>WRED_PROFILE</code> / <code>*_TO_*_MAP</code> 系を SAI の scheduler / <a href="../../../reference/glossary/#term-wred">WRED</a> / map オブジェクト、および port qos 属性に落とします。背景は <a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">SONiC QoS scheduler and shaping</a> を参照。</li>
+<li><strong>PortsOrch</strong> — ポート単位の <a href="../../../reference/glossary/#term-pfc">PFC</a> enable mask、<code>PORT_QOS_MAP</code> の参照、PG/queue 数の取得など、ポート寄りの設定を扱います。</li>
 <li><strong>PfcWdOrch</strong> — <code>PFC_WD</code> テーブルを読み、queue ごとに storm 監視を仕掛けます。検出時には SAI 経由で queue を一時停止し、回復したら戻します。詳細は <a href="../../../reference/config-db/pfc-wd/"><code>PFC_WD</code></a> と上位の monitor 機構の説明を参照。</li>
-<li><strong>FlexCounterOrch</strong> — queue / PG / buffer pool 単位で SAI から counter / watermark を fetch し、STATE_DB / COUNTERS_DB に書きます。watermark の意味は <a href="../../../acl-qos/watermark-counters-in-sonic/">watermark counters in SONiC</a>、port buffer drop counter は <a href="../../../acl-qos/port-buffer-drop-counters-in-sonic/">port buffer drop counters</a> を参照。</li>
+<li><strong>FlexCounterOrch</strong> — queue / PG / buffer pool 単位で SAI から counter / watermark を fetch し、STATE_DB / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に書きます。watermark の意味は <a href="../../../acl-qos/watermark-counters-in-sonic/">watermark counters in SONiC</a>、port buffer drop counter は <a href="../../../acl-qos/port-buffer-drop-counters-in-sonic/">port buffer drop counters</a> を参照。</li>
 </ul>
 <h2 id="buffer-manager">buffer manager と動的バッファモード<a class="headerlink" href="#buffer-manager" title="Permanent link">&para;</a></h2>
 <p><code>BUFFER_POOL:mode</code> が <code>dynamic</code> のとき、SONiC は buffermgrd / buffer template によって、port speed / cable length / MTU から <code>BUFFER_PROFILE</code> を実行時に再計算します。<code>config interface speed</code> で speed を変えれば profile が差し替わる、というのがこのモードの肝です。</p>
@@ -23700,10 +23700,11 @@
 <li>未使用 PG / queue 用の reserved buffer を pool に返す仕組みが <a href="../../../acl-qos/reclaim-reserved-buffer/">reclaim reserved buffer</a> と <a href="../../../acl-qos/reclaim-reserved-buffer-sequence-flow/">reclaim reserved buffer sequence flow</a> です。</li>
 <li>実行時にポートを足したり消したりするときの buffer 再計算は <a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">enhancements to add or del ports dynamically</a> にあります。</li>
 </ul>
-<p>これらの「動的計算」が走るのは BufferOrch ではなく buffermgrd 側で、結果が CONFIG_DB / APPL_DB を経由して BufferOrch に届くという二段構えになっています。</p>
+<p>これらの「動的計算」が走るのは BufferOrch ではなく buffermgrd 側で、結果が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> を経由して BufferOrch に届くという二段構えになっています。</p>
 <h2 id="watermark-historical-pfc">watermark と historical PFC<a class="headerlink" href="#watermark-historical-pfc" title="Permanent link">&para;</a></h2>
 <p>Watermark は SAI から「直近の peak」を読み取る属性で、ConfigDB から telemetry 間隔（<code>FLEX_COUNTER_TABLE</code>）を変えられます。historical PFC は別の保存パスで、<code>COUNTERS_DB</code> の長期テーブルに記録されます。詳細は <a href="../../../acl-qos/pfc-historical-statistics/">PFC historical statistics</a> を参照。</p>
 <p>Watermark の対象を「設定上有効なオブジェクトだけ」に揃える変更が <a href="../../../acl-qos/align-watermark-flow-with-port-configuration-hld/">align watermark flow with port configuration</a> で、port が remove されたあと幽霊 watermark が残らないようにする仕組みです（テストは <a href="../../../acl-qos/test-plan-for-align-watermark-flow-with-port-configuration/">test plan</a>）。</p>
+<!-- glossary-links-injected: 3bb9215c364d -->
 
 
 

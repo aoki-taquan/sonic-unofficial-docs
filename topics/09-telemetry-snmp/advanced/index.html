@@ -23806,15 +23806,15 @@
 
 
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>このページは、基本の observability 経路（CLI / counter / SNMP / gNMI / techsupport）から外れる、専門観測機能と最近の telemetry 拡張をまとめます。設計判断に直結する局面以外は深追い不要です。</p>
+<p>このページは、基本の observability 経路（CLI / counter / <a href="../../../reference/glossary/#term-snmp">SNMP</a> / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / techsupport）から外れる、専門観測機能と最近の telemetry 拡張をまとめます。設計判断に直結する局面以外は深追い不要です。</p>
 <h2 id="dataplane-telemetry-dtel">Dataplane Telemetry (DTel)<a class="headerlink" href="#dataplane-telemetry-dtel" title="Permanent link">&para;</a></h2>
-<p>DTel は In-band Network Telemetry を SONiC スイッチがエクスポートする機能です。ASIC が flow ごとにスイッチ内部情報（latency、queue 状態、drop reason 等）を packet header に書き込み、INT report として外部 collector に送出します。SONiC は collector / report session / watchlist を CONFIG_DB と APP_DB に持ち、<code>dtelorch</code> が SAI DTEL object に変換します。</p>
+<p>DTel は In-band Network Telemetry を SONiC スイッチがエクスポートする機能です。ASIC が flow ごとにスイッチ内部情報（latency、queue 状態、drop reason 等）を packet header に書き込み、<a href="../../../reference/glossary/#term-int">INT</a> report として外部 collector に送出します。SONiC は collector / report session / watchlist を <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> と APP_DB に持ち、<code>dtelorch</code> が <a href="../../../reference/glossary/#term-sai">SAI</a> DTEL object に変換します。</p>
 <p>DTel は ASIC capability への依存が大きく、すべての platform で同じ event type / report mode が出るわけではありません。test plan ページは、SAI DTEL object と SONiC table の対応、report format の検証観点を整理しています。</p>
 <h2 id="sflow">sFlow<a class="headerlink" href="#sflow" title="Permanent link">&para;</a></h2>
 <p>sFlow は古典的なサンプリング + counter polling 型 telemetry です。hsflowd が <code>psample</code> 経由で kernel から packet sample を取り、<code>SFLOW_COLLECTOR</code> 宛に sFlow datagram を送ります。Counter polling も hsflowd が担当し、<code>SFLOW.global.polling_interval</code> で interval を制御します。</p>
 <p>sFlow と DTel の住み分けは、sFlow が「サンプリングされた粗い flow telemetry」、DTel が「flow ごとの精密 in-band telemetry」と覚えると整理できます。test plan ページは collector / agent / sampling rate の確認観点をまとめます。</p>
 <h2 id="entity-mib-sensor-mib">Entity MIB と Sensor MIB<a class="headerlink" href="#entity-mib-sensor-mib" title="Permanent link">&para;</a></h2>
-<p>SONiC SNMP は標準で IF-MIB / IF-X 系を提供しますが、Entity MIB / Entity Sensor MIB 拡張により、シャーシ / module / sensor / fan / PSU の階層と sensor 値（temp、voltage、current）を SNMP で読めます。<code>entPhysicalTable</code> と <code>entitySensor</code> の OID 群が Redis の platform daemon 出力（<code>STATE_DB</code> の <code>TEMPERATURE_INFO</code> / <code>FAN_INFO</code> / <code>PSU_INFO</code>）から組み立てられます。</p>
+<p>SONiC SNMP は標準で IF-MIB / IF-X 系を提供しますが、Entity MIB / Entity Sensor MIB 拡張により、シャーシ / module / sensor / fan / PSU の階層と sensor 値（temp、voltage、current）を SNMP で読めます。<code>entPhysicalTable</code> と <code>entitySensor</code> の OID 群が <a href="../../../reference/glossary/#term-redis">Redis</a> の platform daemon 出力（<code>STATE_DB</code> の <code>TEMPERATURE_INFO</code> / <code>FAN_INFO</code> / <code>PSU_INFO</code>）から組み立てられます。</p>
 <p>SNMP polling を中心とした既存運用に、新しい platform sensor を載せたいときの入口です。</p>
 <h2 id="snmp-transceiver-monitoring">SNMP Transceiver Monitoring<a class="headerlink" href="#snmp-transceiver-monitoring" title="Permanent link">&para;</a></h2>
 <p>Optics の DOM (Digital Optical Monitoring) を SNMP でも読みたいニーズに対し、<code>xcvrd</code> が <code>STATE_DB</code> の <code>TRANSCEIVER_DOM_SENSOR</code> などに書く値を、SNMP subagent から OID にマップします。Test plan ページは、対応 OID と DOM 値の取得観点、warning / alarm threshold の確認方法を扱います。</p>
@@ -23827,7 +23827,7 @@
 </ul>
 <p>いずれも従来は CLI を ssh 越しに叩いていた情報を streaming で扱えるようにする変更で、外部 SDN controller との連携を容易にします。</p>
 <h2 id="snmp-yml">SNMP yml 互換性の注意<a class="headerlink" href="#snmp-yml" title="Permanent link">&para;</a></h2>
-<p>SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産の <code>snmp.yml</code> をそのまま入れたいケースもあります。Migration HLD では <code>config load_minigraph</code> 時の生成挙動と、手動で <code>snmp.yml</code> を編集する運用が共存できるかが整理されています。将来の deprecate を見据え、CONFIG_DB 側で管理することが推奨です。</p>
+<p>SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産の <code>snmp.yml</code> をそのまま入れたいケースもあります。Migration <a href="../../../reference/glossary/#term-hld">HLD</a> では <code>config load_minigraph</code> 時の生成挙動と、手動で <code>snmp.yml</code> を編集する運用が共存できるかが整理されています。将来の deprecate を見据え、CONFIG_DB 側で管理することが推奨です。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/dataplane-telemetry-in-sonic/">Dataplane Telemetry</a></li>
@@ -23845,7 +23845,7 @@
 <li><strong>IPFIX / sFlow v5 統合</strong>: 既存 sFlow に加え、IPFIX (RFC 7011) 出力を望むユースケースが増えており、export pipeline を統一する提案がある。</li>
 <li><strong>DTel report の sampling</strong>: 全 flow を export すると collector が飽和するため、watchlist と sampling rate の組合せで scale を制御する。queue / latency event のみ extract する mode も検討対象。</li>
 <li><strong>OTel (OpenTelemetry) との橋渡し</strong>: SONiC counter / log を OTel collector へ流す community 提案がある。observability stack の統合が進めば、SNMP polling の比重が下がる。</li>
-<li><strong>YANG-modeled SNMP</strong>: legacy <code>snmp.yml</code> を YANG モデル経由で生成し、SNMP 設定も gNMI Set で扱える流れ。<code>sonic-snmp.yang</code> の拡充が前提。</li>
+<li><strong><a href="../../../reference/glossary/#term-yang">YANG</a>-modeled SNMP</strong>: legacy <code>snmp.yml</code> を YANG モデル経由で生成し、SNMP 設定も gNMI Set で扱える流れ。<code>sonic-snmp.yang</code> の拡充が前提。</li>
 <li><strong>High-frequency counter streaming</strong>: per-port / per-queue counters を 100ms 級で stream する用途。<code>telemetry</code> docker の CPU 影響と subscription 上限が論点。</li>
 </ul>
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -23876,6 +23876,7 @@
 <li><code>sonic-snmpagent</code> で transceiver / entity / sensor 対応の拡張、SNMP v3 関連修正が継続。</li>
 <li>DTel / sFlow の test plan が更新され、ASIC capability matrix が PR で明確化される傾向。</li>
 </ul>
+<!-- glossary-links-injected: fe5aa1fcc436 -->
 
 
 

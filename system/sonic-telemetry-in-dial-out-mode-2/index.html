@@ -23918,9 +23918,9 @@
 </div>
 <h1 id="telemetry-dial-out-gnmidialoutpublish-telemetry_client">telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT）<a class="headerlink" href="#telemetry-dial-out-gnmidialoutpublish-telemetry_client" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>通常の telemetry（gNMI Subscribe）はコレクタが DUT に <strong>接続を張りに行く</strong>「dial-in」型。一方 dial-out モードは <strong>DUT 側から</strong> コレクタへ接続を張り、テレメトリを stream する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。次のシナリオで使う:</p>
+<p>通常の telemetry（<a href="../../reference/glossary/#term-gnmi">gNMI</a> Subscribe）はコレクタが DUT に <strong>接続を張りに行く</strong>「dial-in」型。一方 dial-out モードは <strong>DUT 側から</strong> コレクタへ接続を張り、テレメトリを stream する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。次のシナリオで使う:</p>
 <ul>
-<li>DUT とコレクタ間に Firewall / NAT があり、コレクタ側からの接続が困難な場合</li>
+<li>DUT とコレクタ間に Firewall / <a href="../../reference/glossary/#term-nat">NAT</a> があり、コレクタ側からの接続が困難な場合</li>
 <li>コレクタを <strong>stateless</strong> にしたい場合（接続先のリストを管理する責務を別系（NetConf / CLI）に押し付けられる）</li>
 </ul>
 <p>実装は openconfig の <code>gNMIDialOut</code> サービス<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23931,7 +23931,7 @@
 <p><code>SubscribeResponse</code> は通常の gNMI Subscribe と同じセマンティクス。<code>PublishResponse</code> は <strong>optional</strong>（既定スキップ。<code>unidirectional=true</code> で完全一方向化）。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-telemetry_client-3">CONFIG_DB <code>TELEMETRY_CLIENT</code> の 3 種別<a class="headerlink" href="#config_db-telemetry_client-3" title="Permanent link">&para;</a></h3>
-<p>設定は openconfig telemetry YANG を参照しつつ、CONFIG_DB の <code>TELEMETRY_CLIENT</code> テーブルに 3 種類のキーで構造化する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>設定は openconfig telemetry <a href="../../reference/glossary/#term-yang">YANG</a> を参照しつつ、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>TELEMETRY_CLIENT</code> テーブルに 3 種類のキーで構造化する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <h4 id="1-global">1. Global<a class="headerlink" href="#1-global" title="Permanent link">&para;</a></h4>
 <p>接続まわりの全体設定:</p>
 <table>
@@ -24054,7 +24054,7 @@
     CLI-&gt;&gt;DST2: COUNTERS_DB の paths を SubscribeResponse として送信
   end</code></pre>
 <h3 id="db-non-db">既存の DB / non-DB クライアント分離<a class="headerlink" href="#db-non-db" title="Permanent link">&para;</a></h3>
-<p>dial-out も dial-in も「<strong>DB client</strong>（redis 内データ）」と「<strong>non-DB client</strong>（redis 外）」の 2 種に分かれる。本 HLD で扱うのは gRPC dial-out（DB client 系）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>dial-out も dial-in も「<strong>DB client</strong>（redis 内データ）」と「<strong>non-DB client</strong>（redis 外）」の 2 種に分かれる。本 <a href="../../reference/glossary/#term-hld">HLD</a> で扱うのは gRPC dial-out（DB client 系）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/sonic-gnmi/doc/dialout.md#L100-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24114,7 +24114,7 @@ reasoning: dialout_client_cli の起動方法と DestinationGroup フェイル�
 <p>上記 JSON を <code>config load</code> 等で投入。<code>unidirectional=true</code> の純送信モードで挙動が安定する。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>HLD は <code>dialout_client_cli</code> 経由の <strong>gRPC dial-out のみ</strong> を扱う。NetConf / SNMP の dial-out は対象外</li>
+<li>HLD は <code>dialout_client_cli</code> 経由の <strong>gRPC dial-out のみ</strong> を扱う。NetConf / <a href="../../reference/glossary/#term-snmp">SNMP</a> の dial-out は対象外</li>
 <li>DestinationGroup のフェイルオーバは <strong>list の先頭から順次試行</strong>。重み付けや負荷分散はない<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>PublishResponse</code> を返す処理は optional で省略可能。stateful にコレクタ側で ack するシナリオは規定されているが既定では無効</li>
 <li>HLD は openconfig telemetry YANG を「参照する」と書くに留まり、SONiC 側 YANG モデルとの完全な mapping は別途確認</li>
@@ -24139,6 +24139,8 @@ reasoning: dialout_client_cli の起動方法と DestinationGroup フェイル�
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>/usr/sbin/dialout_client_cli<span class="w"> </span>-insecure<span class="w"> </span>-logtostderr<span class="w"> </span>-v<span class="w"> </span><span class="m">1</span>
 </span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 5a5d755682b5 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23830,28 +23830,28 @@
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。</p>
 <h2 id="flexcounter-group">FlexCounter Group の仕事分担<a class="headerlink" href="#flexcounter-group" title="Permanent link">&para;</a></h2>
-<p>syncd 内部に flex counter infrastructure があり、group ごとに次の項目を持ちます。</p>
+<p><a href="../../../reference/glossary/#term-syncd">syncd</a> 内部に flex counter infrastructure があり、group ごとに次の項目を持ちます。</p>
 <ul>
-<li>対象 SAI object（port、queue、PG、buffer pool、ACL counter、route flow、trap flow など）</li>
+<li>対象 <a href="../../../reference/glossary/#term-sai">SAI</a> object（port、queue、PG、buffer pool、<a href="../../../reference/glossary/#term-acl">ACL</a> counter、route flow、trap flow など）</li>
 <li>polling interval</li>
 <li>対象 stat ID のリスト</li>
 <li>有効化フラグ</li>
 </ul>
-<p><code>FLEX_COUNTER_TABLE|PORT</code> のような CONFIG_DB entry がこれらを制御します。group をまたぐ counter は同じ thread に乗らないため、port counter の interval を短くしても queue counter には影響しません。Refactor 以前は orchagent main loop に counter polling を抱えていたため、ACL や route 操作との競合がありました。</p>
+<p><code>FLEX_COUNTER_TABLE|PORT</code> のような <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> entry がこれらを制御します。group をまたぐ counter は同じ thread に乗らないため、port counter の interval を短くしても queue counter には影響しません。Refactor 以前は <a href="../../../reference/glossary/#term-orchagent">orchagent</a> main loop に counter polling を抱えていたため、ACL や route 操作との競合がありました。</p>
 <h2 id="counter-initialization-bulk">Counter Initialization の bulk 化<a class="headerlink" href="#counter-initialization-bulk" title="Permanent link">&para;</a></h2>
 <p>起動直後、SONiC は全 port / queue / PG / ACL に対して flex counter を install しようとします。1 件ずつ install する古い実装では数百 port のシステムで数分かかることがあったため、bulk install API でまとめて登録するように変更されています。</p>
 <p>Bulk 化の前後で外向きの API は変わりませんが、起動直後の <code>show interfaces counters</code> が空に見える時間が短くなり、<code>COUNTERS_PORT_NAME_MAP</code> の生成タイミングも早まります。Debug でこの map が空のときは、syncd が bulk 登録途中の可能性があります。</p>
 <h2 id="byte-packet-rate">Byte / Packet Rate の出どころ<a class="headerlink" href="#byte-packet-rate" title="Permanent link">&para;</a></h2>
-<p>ポート利用率を出す <code>show interfaces counters --rates</code> は、COUNTERS_DB の累積値そのものではなく、<code>portstat</code> ユーティリティが直前のスナップショットと現在値の差分を計算しています。一方、<code>RATES:</code> 系の table を期待するクエリは flex counter group <code>RATES</code> の更新に依存します。</p>
+<p>ポート利用率を出す <code>show interfaces counters --rates</code> は、<a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> の累積値そのものではなく、<code>portstat</code> ユーティリティが直前のスナップショットと現在値の差分を計算しています。一方、<code>RATES:</code> 系の table を期待するクエリは flex counter group <code>RATES</code> の更新に依存します。</p>
 <p>「使用率の表示が止まる」原因は、累積値ではなく rate 計算側の polling、または <code>portstat</code> の cache <code>/tmp/portstat-*</code> の rotate です。累積 counter が動いているのに rate が出ないときは、まず group <code>RATES</code> の state を見ます。</p>
 <h2 id="logging-pipeline">Logging Pipeline<a class="headerlink" href="#logging-pipeline" title="Permanent link">&para;</a></h2>
 <p>syslog は container ごとの rsyslogd と host の rsyslogd が二段でつながります。Container の rsyslogd は <code>omfwd</code> で host の <code>/dev/log</code> 相当に転送し、host 側がさらに <code>SYSLOG_SERVER</code> で設定された外部宛先に送ります。<code>SYSLOG_CONFIG_FEATURE</code> は container 単位の severity 切替を許し、不要な debug を本番で抑えられます。</p>
 <p>Auto-techsupport は、<code>coredump_gen_handler</code> が core 生成イベントを受け、<code>SystemReady</code> 達成後かつ rate limit 内であれば <code>show techsupport</code> を非同期で実行します。ディスク使用量とメモリ使用量の threshold を満たさないと skip し、syslog に reason を残します。</p>
 <h2 id="snmp-subagent">SNMP Subagent の構造<a class="headerlink" href="#snmp-subagent" title="Permanent link">&para;</a></h2>
-<p>SONiC SNMP は <code>snmp</code> container 内で snmpd と Python 実装の AgentX subagent (<code>sonic_ax_impl</code>) が動きます。subagent は Redis を購読し、IF-MIB / IF-X-TABLE / Entity MIB / RFC1213 / SONIC-LLDP 系などの OID 群を Redis の値から組み立てます。</p>
+<p>SONiC <a href="../../../reference/glossary/#term-snmp">SNMP</a> は <code>snmp</code> container 内で snmpd と Python 実装の AgentX subagent (<code>sonic_ax_impl</code>) が動きます。subagent は <a href="../../../reference/glossary/#term-redis">Redis</a> を購読し、IF-MIB / IF-X-TABLE / Entity MIB / RFC1213 / SONIC-<a href="../../../reference/glossary/#term-lldp">LLDP</a> 系などの OID 群を Redis の値から組み立てます。</p>
 <p>OID から Redis path への mapping は subagent 内のクラスに分散しており、新しい MIB を増やすには subagent 側に MIB-specific クラスを書く必要があります。MIB を新設しない範囲では、Redis 側の table 構造を変えると subagent が古い key を見ようとして空値を返す挙動になる点に注意します。</p>
 <h2 id="telemetry-agent-subscribe-path">Telemetry Agent の subscribe path<a class="headerlink" href="#telemetry-agent-subscribe-path" title="Permanent link">&para;</a></h2>
-<p><code>telemetry</code> / <code>gnmi</code> container は SONiC native YANG / OpenConfig を Redis path にマップし、gNMI Subscribe を CDB / SDB / APPL_DB の event listener に変換します。<code>ON_CHANGE</code> は Redis keyspace notifications に依存し、<code>SAMPLE</code> は内部の polling timer で current value を返します。</p>
+<p><code>telemetry</code> / <code>gnmi</code> container は SONiC native <a href="../../../reference/glossary/#term-yang">YANG</a> / OpenConfig を Redis path にマップし、<a href="../../../reference/glossary/#term-gnmi">gNMI</a> Subscribe を CDB / SDB / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の event listener に変換します。<code>ON_CHANGE</code> は Redis keyspace notifications に依存し、<code>SAMPLE</code> は内部の polling timer で current value を返します。</p>
 <p>加えて telemetry-agent には、process / docker 統計、memory 統計、reboot cause のように「Redis に元々無い情報」を取り込んで gNMI で publish する拡張があり、これらは subscribe path として現れます（発展トピックで扱います）。</p>
 <h2 id="telemetry-snmp-counter">データフロー（telemetry / SNMP / counter 全体）<a class="headerlink" href="#telemetry-snmp-counter" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23890,7 +23890,7 @@
 <tr>
 <td><code>CounterCheck</code> / <code>flex_counter_table_consumer</code></td>
 <td>orchagent 側</td>
-<td>CONFIG_DB:FLEX_COUNTER_TABLE → ASIC_DB:FLEX_COUNTER_TABLE 反映</td>
+<td>CONFIG_DB:FLEX_COUNTER_TABLE → <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a>:FLEX_COUNTER_TABLE 反映</td>
 </tr>
 <tr>
 <td><code>sonic_ax_impl</code> (<code>src/sonic-snmpagent/</code>)</td>
@@ -23915,7 +23915,7 @@
 </tbody>
 </table>
 <h2 id="sai">SAI 属性使用一覧<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
-<p>主要な stat ID（FlexCounter が <code>sai_get_*_stats</code> / <code>sai_bulk_get_*_stats</code> で取得）:</p>
+<p>主要な stat ID（<a href="../../../reference/glossary/#term-flexcounter">FlexCounter</a> が <code>sai_get_*_stats</code> / <code>sai_bulk_get_*_stats</code> で取得）:</p>
 <table>
 <thead>
 <tr>
@@ -23945,7 +23945,7 @@
 <td>counter object 経由（<code>SAI_ACL_COUNTER_ATTR_PACKETS / BYTES</code>）</td>
 </tr>
 <tr>
-<td>trap (CoPP)</td>
+<td>trap (<a href="../../../reference/glossary/#term-copp">CoPP</a>)</td>
 <td><code>SAI_HOSTIF_TRAP_GROUP_STAT_PACKETS</code></td>
 </tr>
 </tbody>
@@ -23985,6 +23985,7 @@
 <li><a href="../../../internals/byte-packet-rates-port-utilization-in-sonic/">Byte / packet rate と port utilization</a></li>
 <li><a href="../../../system/sonic-logging-system-dumps-arch-spec/">Logging と system dump 仕様</a></li>
 </ul>
+<!-- glossary-links-injected: c7066d08df4e -->
 
 
 

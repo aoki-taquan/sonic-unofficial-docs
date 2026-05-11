@@ -23539,8 +23539,8 @@
 
 
 <h1 id="p4-pins-programmable-pipeline">P4 / PINS / Programmable Pipeline<a class="headerlink" href="#p4-pins-programmable-pipeline" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC を <strong>P4Runtime ベースの SDN コントローラから直接プログラムする</strong> ための仕組み（PINS: P4 Integrated Network Stack）をまとめて読むための入口です。PINS は SONiC の従来パス（BGP / FRR / orchagent 群）を残したまま、opt-in の外部チャネルで forwarding を書き換える設計のため、関連コンポーネントが管理面、orchagent、CPU パケット注入と複数章にまたがります。ここでは読み手の質問順に並べ直し、既存ページへリンクで誘導します。</p>
-<p>PINS の中心は 4 点です。コントローラと話す <strong>P4RT App</strong>（gRPC port 9559）、それを SAI に翻訳する <strong>P4Orch</strong>（orchagent 内の同期 manager 群）、Read を高速化する <strong>table_entry_cache_（entity_cache_）</strong>、CPU と ASIC の間でパケットを流す <strong>PacketIO + send_to_ingress</strong>。これらは APPL_DB / APPL_STATE_DB / SAI hostif / generic netlink といった既存の SONiC 部品の上に乗っています。</p>
+<p>この章は、SONiC を <strong>P4Runtime ベースの SDN コントローラから直接プログラムする</strong> ための仕組み（<a href="../../reference/glossary/#term-pins">PINS</a>: P4 Integrated Network Stack）をまとめて読むための入口です。PINS は SONiC の従来パス（<a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-frr">FRR</a> / <a href="../../reference/glossary/#term-orchagent">orchagent</a> 群）を残したまま、opt-in の外部チャネルで forwarding を書き換える設計のため、関連コンポーネントが管理面、orchagent、CPU パケット注入と複数章にまたがります。ここでは読み手の質問順に並べ直し、既存ページへリンクで誘導します。</p>
+<p>PINS の中心は 4 点です。コントローラと話す <strong>P4RT App</strong>（gRPC port 9559）、それを <a href="../../reference/glossary/#term-sai">SAI</a> に翻訳する <strong>P4Orch</strong>（orchagent 内の同期 manager 群）、Read を高速化する <strong>table_entry_cache_（entity_cache_）</strong>、CPU と ASIC の間でパケットを流す <strong>PacketIO + send_to_ingress</strong>。これらは <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / APPL_STATE_DB / SAI hostif / generic netlink といった既存の SONiC 部品の上に乗っています。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>PINS、P4Runtime App、P4Orch、PacketIO はどの関係か。</li>
@@ -23555,7 +23555,7 @@
 <li><a href="setup/">設定</a>: P4RT サービス、controller 接続、<code>SEND_TO_INGRESS_PORT</code> の最小構成。</li>
 <li><a href="operations/">運用</a>: PacketIO 経路の確認、Read cache の挙動、Send to Ingress の使い分け。</li>
 <li><a href="internals/">内部実装</a>: P4Orch の Manager 群、<code>P4OidMapper</code>、同期書き込みと APPL_STATE_DB。</li>
-<li><a href="advanced/">発展トピック</a>: gNMI / OpenConfig との接続、HashOrch HLD と実装の乖離。</li>
+<li><a href="advanced/">発展トピック</a>: <a href="../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig との接続、HashOrch <a href="../../reference/glossary/#term-hld">HLD</a> と実装の乖離。</li>
 </ol>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23584,6 +23584,7 @@
 <li><a href="../17-srv6-mpls/">SRv6 / MPLS / Path Tracing</a></li>
 <li><a href="../19-build-packaging/">Build / Packaging / Application Extension</a></li>
 </ul>
+<!-- glossary-links-injected: 9d7f47a8f2d1 -->
 
 
 

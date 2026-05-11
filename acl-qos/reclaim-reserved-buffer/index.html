@@ -23877,7 +23877,7 @@
 <p>両方で reclaim が走る。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">「単純削除」では起きる不整合<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>最初に思いつくのは「admin-down ポートの BUFFER_PG / BUFFER_QUEUE エントリを削除する」だが、HLD はこれを否定する。SAI / SDK は <strong>「設定が無いとき = SDK default 値（一部は非ゼロ）」</strong> であり、設定削除（<code>SAI_NULL_OBJECT_ID</code>）すると <strong>0 にリセット</strong> される。結果、</p>
+<p>最初に思いつくのは「admin-down ポートの BUFFER_PG / BUFFER_QUEUE エントリを削除する」だが、<a href="../../reference/glossary/#term-hld">HLD</a> はこれを否定する。<a href="../../reference/glossary/#term-sai">SAI</a> / SDK は <strong>「設定が無いとき = SDK default 値（一部は非ゼロ）」</strong> であり、設定削除（<code>SAI_NULL_OBJECT_ID</code>）すると <strong>0 にリセット</strong> される。結果、</p>
 <ul>
 <li>起動時設定なし → SDK default（非ゼロ）</li>
 <li>起動後に削除 → 0</li>
@@ -23956,7 +23956,7 @@ reasoning: lossless PG は削除、それ以外は zero_profile という分担�
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>HLD 内で reclaim 専用の CLI 言及は無い。<code>config interface shutdown</code> / <code>startup</code> のフックとして buffer manager が自動で <code>zero_profile</code> を着脱する設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p><code>zero_profile</code> 系は <strong>テンプレート（buffers_config.j2）に同梱</strong> される vendor 提供データ。CONFIG_DB に手書きする運用は想定されない。</p>
+<p><code>zero_profile</code> 系は <strong>テンプレート（buffers_config.j2）に同梱</strong> される vendor 提供データ。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に手書きする運用は想定されない。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>vendor が zero_profile テンプレートを提供している platform 限定</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -23967,11 +23967,11 @@ reasoning: lossless PG は削除、それ以外は zero_profile という分担�
 <ul>
 <li><strong>Dynamic Buffer Calculation</strong>: 同じ buffer manager が司る。dynamic mode では shutdown 時の自動 reclaim が標準動作になる</li>
 <li><strong>db_migrator</strong>: 旧 image からの upgrade 時に admin-down ポートを zero_profile に置換</li>
-<li><strong>PFC / lossless</strong>: lossless PG は zero_profile ではなく削除なので、enable し直しの順序に注意</li>
+<li><strong><a href="../../reference/glossary/#term-pfc">PFC</a> / lossless</strong>: lossless PG は zero_profile ではなく削除なので、enable し直しの順序に注意</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか APPL_DB で確認</li>
+<li>shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> で確認</li>
 <li>lossless トラフィックが落ちる → admin-down 後 admin-up した際の lossless PG 再作成順序を確認</li>
 </ul>
 <h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
@@ -23996,6 +23996,8 @@ reasoning: lossless PG は削除、それ以外は zero_profile という分担�
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 568143337d00 -->
 
 <div class="footnote">
 <hr />

@@ -23600,8 +23600,8 @@
 
 <h1 id="switch_hash">SWITCH_HASH テーブル<a class="headerlink" href="#switch_hash" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ECMP / LAG ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
-<code>orchagent</code> が CONFIG_DB から読んで SAI <code>SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*</code> / <code>SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*</code> 系属性として SAI に push する。</p>
+<p><a href="../../glossary/#term-ecmp">ECMP</a> / <a href="../../glossary/#term-lag">LAG</a> ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
+<code>orchagent</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読んで <a href="../../glossary/#term-sai">SAI</a> <code>SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*</code> / <code>SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*</code> 系属性として SAI に push する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23654,7 +23654,7 @@
 </table>
 <p><code>hash-field</code> enum (<code>sonic-hash.yang</code>):</p>
 <p><code>IN_PORT</code> / <code>DST_MAC</code> / <code>SRC_MAC</code> / <code>ETHERTYPE</code> / <code>VLAN_ID</code> / <code>IP_PROTOCOL</code> / <code>DST_IP</code> / <code>SRC_IP</code> / <code>L4_DST_PORT</code> / <code>L4_SRC_PORT</code> / <code>INNER_*</code> 同等 / <code>IPV6_FLOW_LABEL</code></p>
-<p><code>ordered-by user</code> が付くため、ユーザー設定順が保たれる (実装上はベンダーによっては順序を無視するが、YANG 上の意味は保存される)。</p>
+<p><code>ordered-by user</code> が付くため、ユーザー設定順が保たれる (実装上はベンダーによっては順序を無視するが、<a href="../../glossary/#term-yang">YANG</a> 上の意味は保存される)。</p>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>orchagent</code>（<code>SwitchOrch</code> の Generic Hash 拡張）</li>
@@ -23695,6 +23695,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>switch-hash<span class="w"> </span>global
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a4763c04a26b -->
 
 <div class="footnote">
 <hr />

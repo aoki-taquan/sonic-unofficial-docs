@@ -23802,7 +23802,7 @@
 
 <h1 id="portchannel">PORTCHANNEL テーブル<a class="headerlink" href="#portchannel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>LACP ベースの Link Aggregation Group (LAG) を定義する。<code>teamd</code> がこのテーブルから設定を読み、Linux teamd 経由で物理ポートを bond する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>PortsOrch</code> / <code>LagOrch</code> が SAI LAG オブジェクトを構成する。</p>
+<p><a href="../../glossary/#term-lacp">LACP</a> ベースの Link Aggregation Group (<a href="../../glossary/#term-lag">LAG</a>) を定義する。<code>teamd</code> がこのテーブルから設定を読み、Linux <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> 経由で物理ポートを bond する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>PortsOrch</code> / <code>LagOrch</code> が <a href="../../glossary/#term-sai">SAI</a> LAG オブジェクトを構成する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23917,9 +23917,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORTCHANNEL_MEMBER</code>、<code>PORTCHANNEL_INTERFACE</code>、<code>PORT</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORTCHANNEL_MEMBER</code>、<code>PORTCHANNEL_INTERFACE</code>、<code>PORT</code></li>
 <li>関連 CLI: <code>config portchannel</code>、<a href="../../cli/config-portchannel/"><code>config portchannel</code></a></li>
-<li>関連 YANG: <code>sonic-portchannel</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-portchannel</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23951,7 +23951,7 @@
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>min_links</code> をメンバ総数以上にすると LAG が常時 down。</li>
-<li><code>fallback: true</code> を未設定で対向が LACP 未対応だと PortChannel が永遠に down。</li>
+<li><code>fallback: true</code> を未設定で対向が LACP 未対応だと <a href="../../glossary/#term-portchannel">PortChannel</a> が永遠に down。</li>
 <li>メンバ間で <code>speed</code>/<code>mtu</code> を揃えないと teamd が LAG を組まない。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
@@ -23960,6 +23960,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>teamdctl<span class="w"> </span>PortChannel0001<span class="w"> </span>state
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 70a8686d90f5 -->
 
 <div class="footnote">
 <hr />

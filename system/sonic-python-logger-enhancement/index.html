@@ -24034,14 +24034,14 @@
 </tr>
 </tbody>
 </table>
-<p>本 HLD は <code>SysLogger</code> を中心に <strong>runtime ログレベル変更</strong> を可能にし、redis 未起動時のフォールバックも担保する。<code>swsscommon.Logger</code> のような <strong>常駐スレッド方式は採らず</strong>、CLI 経由で <strong>SIGHUP</strong> を送って refresh する設計を採用する（Python script は短命なものが多く、スレッド常駐がコストになるため）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <code>SysLogger</code> を中心に <strong>runtime ログレベル変更</strong> を可能にし、redis 未起動時のフォールバックも担保する。<code>swsscommon.Logger</code> のような <strong>常駐スレッド方式は採らず</strong>、CLI 経由で <strong>SIGHUP</strong> を送って refresh する設計を採用する（Python script は短命なものが多く、スレッド常駐がコストになるため）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="syslogger"><code>SysLogger</code> クラスの変更<a class="headerlink" href="#syslogger" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Singleton 化</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>__init__</code> に <code>enable_runtime_config: bool = False</code> 引数を追加</li>
 <li><code>True</code> 指定のデーモンだけが runtime 設定を使う</li>
-<li><code>True</code> のとき初期化で CONFIG_DB から log level を読む（DB に設定があれば）</li>
+<li><code>True</code> のとき初期化で <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から log level を読む（DB に設定があれば）</li>
 <li><code>True</code> のとき DB に設定が無ければ初期化で <strong>デフォルトを DB に書き込む</strong>（<code>save</code> フォールバック）</li>
 <li>新しいクラスメソッド <code>update_log_level</code>: load / save の制御を集約</li>
 </ul>
@@ -24199,7 +24199,7 @@ reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    require_manual_refresh : &quot;true&quot; | (未設定)
 </span></code></pre></div>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD で言及されていない。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>対象は <strong><code>sonic_py_common.syslogger.SysLogger</code> のみ</strong>。<code>logger.Logger</code> は deprecate 予定で対象外<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -24262,6 +24262,8 @@ reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設
 - redis 未起動時の fallback 経路の実装
 - swssloglevel の deprecation 計画
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 <div class="footnote">
 <hr />

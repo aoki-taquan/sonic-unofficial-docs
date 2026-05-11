@@ -23606,7 +23606,7 @@
 
 <h1 id="config-warm_restart">config warm_restart サブコマンド<a class="headerlink" href="#config-warm_restart" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config warm_restart</code> は warm restart の enable 状態と daemon timer を設定する CLI グループ。enable/disable は STATE_DB の <code>WARM_RESTART_ENABLE_TABLE|&lt;module&gt;</code> を更新し、timer 系は CONFIG_DB の <code>WARM_RESTART</code> を更新する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config warm_restart</code> は warm restart の enable 状態と daemon timer を設定する CLI グループ。enable/disable は <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>WARM_RESTART_ENABLE_TABLE|&lt;module&gt;</code> を更新し、timer 系は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>WARM_RESTART</code> を更新する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23626,7 +23626,7 @@
 </tr>
 <tr>
 <td><code>config warm_restart neighsyncd_timer [--namespace &lt;ns&gt;] &lt;seconds&gt;</code></td>
-<td><code>swss</code> の neighsyncd timer を設定</td>
+<td><code>swss</code> の <a href="../../glossary/#term-neighsyncd">neighsyncd</a> timer を設定</td>
 </tr>
 <tr>
 <td><code>config warm_restart bgp_timer [--namespace &lt;ns&gt;] &lt;seconds&gt;</code></td>
@@ -23638,7 +23638,7 @@
 </tr>
 <tr>
 <td><code>config warm_restart bgp_eoiu [--namespace &lt;ns&gt;] [true|false]</code></td>
-<td>BGP EOIU を設定</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> EOIU を設定</td>
 </tr>
 </tbody>
 </table>
@@ -23692,7 +23692,7 @@
 <h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="_8">典型的な利用シーン<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BGP / teamd / swss / syncd の warm-restart 有効化と timer 調整。</li>
+<li>BGP / <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / swss / <a href="../../glossary/#term-syncd">syncd</a> の warm-restart 有効化と timer 調整。</li>
 <li>ソフト再起動前の安全弁としての有効化。</li>
 </ul>
 <h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
@@ -23706,6 +23706,8 @@
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4836d1c1f005 -->
 
 <div class="footnote">
 <hr />

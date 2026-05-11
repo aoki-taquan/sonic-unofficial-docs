@@ -23731,14 +23731,14 @@
 <ul>
 <li>大きい packet (&gt;1500B) のみ落ちる</li>
 <li><code>ping -s 1472 -M do</code> が通り、<code>ping -s 8000 -M do</code> が通らない</li>
-<li>BGP UPDATE が大きい場合のみ session reset</li>
+<li><a href="../../glossary/#term-bgp">BGP</a> UPDATE が大きい場合のみ session reset</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>両端 MTU 不一致</strong>: ローカル 9100、対向 1500 等</li>
-<li><strong>VLAN / PortChannel の MTU が member より小さい</strong>: 上位論理 IF が L1 を絞る</li>
-<li><strong>MPLS / VXLAN encapsulation オーバーヘッド未考慮</strong>: VTEP で +50B 越え</li>
-<li><strong>PMTUD ブラックホール</strong>: 中間 ACL が ICMP <code>frag-needed</code> を破棄</li>
+<li><strong><a href="../../glossary/#term-vlan">VLAN</a> / <a href="../../glossary/#term-portchannel">PortChannel</a> の MTU が member より小さい</strong>: 上位論理 IF が L1 を絞る</li>
+<li><strong><a href="../../glossary/#term-mpls">MPLS</a> / <a href="../../glossary/#term-vxlan">VXLAN</a> encapsulation オーバーヘッド未考慮</strong>: VTEP で +50B 越え</li>
+<li><strong>PMTUD ブラックホール</strong>: 中間 <a href="../../glossary/#term-acl">ACL</a> が ICMP <code>frag-needed</code> を破棄</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-mtu">1. 両端 MTU 比較<a class="headerlink" href="#1-mtu" title="Permanent link">&para;</a></h3>
@@ -23776,14 +23776,16 @@
 <li><a href="../../config-db/port/">../config-db/port.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 58e771fab653 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ 4305596 — portsorch.cpp の MTU 反映&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — portsorch.cpp の MTU 反映&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — config interface mtu&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config interface mtu&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

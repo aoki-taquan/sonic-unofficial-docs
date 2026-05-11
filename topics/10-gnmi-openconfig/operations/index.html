@@ -23818,7 +23818,7 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。それぞれ HLD が別々に存在するため、ここで一望できるようにまとめる。</p>
+<p><a href="../../../reference/glossary/#term-gnmi">gNMI</a> を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。それぞれ <a href="../../../reference/glossary/#term-hld">HLD</a> が別々に存在するため、ここで一望できるようにまとめる。</p>
 <h2 id="master-arbitration">Master arbitration<a class="headerlink" href="#master-arbitration" title="Permanent link">&para;</a></h2>
 <p>複数の NMS / 自動化 client が同じ switch に書き込むと、race condition による不整合が起きる。SONiC は gNMI master arbitration で「現在の writer は 1 つだけ」を強制できる。election ID を交換し、より大きい ID を持つ client が master になる。slave 化された client の Set は失敗で返るため、運用 script 側で master 化失敗時の fallback を書く必要がある。</p>
 <p>詳細は <a href="../../../management/gnmi-master-arbitration-hld/">gNMI master arbitration HLD</a> を参照する。election ID のリセット条件、failover の手順、observability の見方はそのページにまとまっている。</p>
@@ -23831,7 +23831,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>INFO master_arbitration: master changed: old_id=10 new_id=12 client=10.1.2.3:54321
 </span></code></pre></div>
 <h2 id="save-on-set">Save-on-set による永続化<a class="headerlink" href="#save-on-set" title="Permanent link">&para;</a></h2>
-<p>gNMI Set は CONFIG_DB を更新するが、CONFIG_DB は memory 上の Redis のため、再起動を跨ぐと失われる可能性がある。SONiC では <code>config save</code> 相当の処理を gNMI Set のたびに自動で走らせる save-on-set モードを持つ。</p>
+<p>gNMI Set は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を更新するが、CONFIG_DB は memory 上の <a href="../../../reference/glossary/#term-redis">Redis</a> のため、再起動を跨ぐと失われる可能性がある。SONiC では <code>config save</code> 相当の処理を gNMI Set のたびに自動で走らせる save-on-set モードを持つ。</p>
 <ul>
 <li>有効化すると、Set 完了後に <code>/etc/sonic/config_db.json</code> への書き出しが行われる。</li>
 <li>大量の Set を高頻度で打つ用途では、write amplification によりディスクへの負担が増えるため、明示的な save を使うパターンと使い分ける。</li>
@@ -23839,7 +23839,7 @@
 <p>挙動の詳細、エラー処理、<code>config save</code> との衝突回避は <a href="../../../management/save-on-set-hld/">Save-on-set HLD</a> を参照する。</p>
 <p>設定の有無は <code>redis-cli -n 4 hgetall "DEVICE_METADATA|localhost"</code> または telemetry の起動オプションで確認する。<code>config_db.json</code> の更新タイムスタンプを <code>stat /etc/sonic/config_db.json</code> で監視すると、Set 後に永続化が走ったかを後追いできる。</p>
 <h2 id="telemetry-dial-in-dial-out">Telemetry: dial-in と dial-out<a class="headerlink" href="#telemetry-dial-in-dial-out" title="Permanent link">&para;</a></h2>
-<p>SONiC telemetry は、collector 側が gNMI Subscribe で switch から pull する <strong>dial-in</strong> が標準だが、firewall / NAT 越しなどで collector へ switch から push する <strong>dial-out</strong> モードも持つ。</p>
+<p>SONiC telemetry は、collector 側が gNMI Subscribe で switch から pull する <strong>dial-in</strong> が標準だが、firewall / <a href="../../../reference/glossary/#term-nat">NAT</a> 越しなどで collector へ switch から push する <strong>dial-out</strong> モードも持つ。</p>
 <table>
 <thead>
 <tr>
@@ -23872,8 +23872,8 @@
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--path<span class="w"> </span><span class="s1">&#39;/openconfig-interfaces:interfaces/interface[name=Ethernet0]/state/counters&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--mode<span class="w"> </span>stream<span class="w"> </span>--stream-mode<span class="w"> </span>sample<span class="w"> </span>--sample-interval<span class="w"> </span>10s
 </span></code></pre></div>
-<p>応答 JSON の主要キーは <code>in-octets</code>、<code>out-octets</code>、<code>in-errors</code>、<code>out-errors</code> などで、内部的に COUNTERS_DB から拾われる。<code>counterpoll show</code> で PORT_STAT が enable でないとカウンタが進まないため、Subscribe が空応答ばかりになる場合はまず polling を疑う。</p>
-<p>dial-out 側は <code>/etc/sonic/telemetry/dialout.cfg</code> 相当の設定を CONFIG_DB の <code>TELEMETRY_CLIENT</code> に書く。状態は STATE_DB の <code>TELEMETRY_CLIENT_STATE</code> を確認する。</p>
+<p>応答 JSON の主要キーは <code>in-octets</code>、<code>out-octets</code>、<code>in-errors</code>、<code>out-errors</code> などで、内部的に <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> から拾われる。<code>counterpoll show</code> で PORT_STAT が enable でないとカウンタが進まないため、Subscribe が空応答ばかりになる場合はまず polling を疑う。</p>
+<p>dial-out 側は <code>/etc/sonic/telemetry/dialout.cfg</code> 相当の設定を CONFIG_DB の <code>TELEMETRY_CLIENT</code> に書く。状態は <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の <code>TELEMETRY_CLIENT_STATE</code> を確認する。</p>
 <h2 id="_2">クライアントツールでの確認<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>実機で gNMI を試すときは <code>gnmic</code> か <code>gnmi_cli</code> を使う。telemetry container 自身に同梱されているのは <code>gnmi_get</code> / <code>gnmi_set</code> / <code>gnmi_cli</code> で、外部からは <code>gnmic</code> が読み書きしやすい。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Capability (server がどの YANG model に対応しているか)</span>
@@ -23892,7 +23892,7 @@
 </span></code></pre></div>
 <p>CONFIG_DB を直接弄りたいときは SONiC 拡張の <code>sonic-*</code> model (例: <code>/sonic-port:sonic-port/PORT/...</code>) を使い、ベンダ間互換性を取りたい場合は OpenConfig (<code>/openconfig-interfaces:interfaces/...</code>) を使う、というのが基本方針。</p>
 <h2 id="subscription">Subscription の使い方と注意<a class="headerlink" href="#subscription" title="Permanent link">&para;</a></h2>
-<p>YANG path に対する Subscribe は SAMPLE / ON_CHANGE / TARGET_DEFINED の 3 モードがある。SONiC では COUNTERS_DB ベースの数値系メトリクスは SAMPLE 向き、CONFIG_DB ベースの状態は ON_CHANGE 向きである。BGP RIB のように規模が大きいデータを subscribe するときの注意は <a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a> にまとまっている。</p>
+<p><a href="../../../reference/glossary/#term-yang">YANG</a> path に対する Subscribe は SAMPLE / ON_CHANGE / TARGET_DEFINED の 3 モードがある。SONiC では COUNTERS_DB ベースの数値系メトリクスは SAMPLE 向き、CONFIG_DB ベースの状態は ON_CHANGE 向きである。<a href="../../../reference/glossary/#term-bgp">BGP</a> RIB のように規模が大きいデータを subscribe するときの注意は <a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a> にまとまっている。</p>
 <p>実運用では次の点を抑える。</p>
 <ul>
 <li>同じ path に複数 subscribe を重ねない (server 側で重複 stream を持つ)。</li>
@@ -23920,7 +23920,7 @@
 <li><strong>接続</strong>: TLS handshake、認証、ポート開放を確認する。telemetry container のログを最初に見る。</li>
 <li><strong>Get / Set の echo</strong>: <code>gnmi_get</code> で簡単な OpenConfig path を引き、応答があるかを確認する。</li>
 <li><strong>Translib / Transformer</strong>: 期待した YANG path が CONFIG_DB のどのテーブルに落ちるかを Transformer の対応で確認する。詳細は <a href="../architecture/">アーキテクチャ</a> を参照する。</li>
-<li><strong>Validation</strong>: YANG validation エラーが返るときは、依存テーブル (たとえば PORT が存在しない VLAN member) を疑う。</li>
+<li><strong>Validation</strong>: YANG validation エラーが返るときは、依存テーブル (たとえば PORT が存在しない <a href="../../../reference/glossary/#term-vlan">VLAN</a> member) を疑う。</li>
 <li><strong>永続化</strong>: 再起動後に消える場合は save-on-set が有効か、または明示的に <code>config save</code> を打ったかを確認する。</li>
 </ol>
 <h3 id="_4">典型ログ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
@@ -23929,7 +23929,7 @@
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>ERROR translib: validation failed: dependent key PORT|Ethernet0 not found
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>WARN telemetry: subscription cancelled by client (sid=42 path=/openconfig-platform:components)
 </span></code></pre></div>
-<p><code>validation failed: dependent key ... not found</code> は典型的な「親が無いところに子を作ろうとした」ケース。VLAN を作る前に member を入れた、PortChannel を作る前に member を入れた、などが該当する。</p>
+<p><code>validation failed: dependent key ... not found</code> は典型的な「親が無いところに子を作ろうとした」ケース。VLAN を作る前に member を入れた、<a href="../../../reference/glossary/#term-portchannel">PortChannel</a> を作る前に member を入れた、などが該当する。</p>
 <h2 id="_5">対応コマンド早見表<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24006,8 +24006,8 @@
 </table>
 <h2 id="_6">関連章<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>章 <a href="../../07-acl-copp-mirror/operations/">07 ACL / CoPP / mirror</a> — gNMI で ACL を投入する場合の確認</li>
-<li>章 <a href="../../08-qos-buffer/operations/">08 QoS / Buffer</a> — QoS の宣言的設定</li>
+<li>章 <a href="../../07-acl-copp-mirror/operations/">07 ACL / CoPP / mirror</a> — gNMI で <a href="../../../reference/glossary/#term-acl">ACL</a> を投入する場合の確認</li>
+<li>章 <a href="../../08-qos-buffer/operations/">08 QoS / Buffer</a> — <a href="../../../reference/glossary/#term-qos">QoS</a> の宣言的設定</li>
 <li>章 <a href="../../09-telemetry-snmp/operations/">09 telemetry / SNMP / observability</a> — system-health / techsupport</li>
 </ul>
 <h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24018,6 +24018,7 @@
 <li><a href="../../../system/sonic-telemetry-in-dial-out-mode-2/">Telemetry dial-out mode 2</a></li>
 <li><a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a></li>
 </ul>
+<!-- glossary-links-injected: 3cdf5e8a0b59 -->
 
 
 

@@ -23674,13 +23674,13 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>この章は NAT、DHCP relay、DHCP server の内部構造を「container → daemon → 設定生成 → packet path」の順に並べます。time / DNS と TWAMP Light は OS / SAI 寄りなので発展トピックに分けました。</p>
+<p>この章は <a href="../../../reference/glossary/#term-nat">NAT</a>、DHCP relay、DHCP server の内部構造を「container → daemon → 設定生成 → packet path」の順に並べます。time / DNS と TWAMP Light は OS / <a href="../../../reference/glossary/#term-sai">SAI</a> 寄りなので発展トピックに分けました。</p>
 <h2 id="docker-nat-nat-orch">docker-nat と NAT orch<a class="headerlink" href="#docker-nat-nat-orch" title="Permanent link">&para;</a></h2>
 <p>NAT は <code>docker-nat</code> という独立 container に閉じています。中で動く daemon は次の通りです。</p>
 <ul>
-<li><code>natmgrd</code>: CONFIG_DB の <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <code>NAT_POOL</code> / <code>NAT_BINDINGS</code> / <code>NAT_ZONE</code> / <code>NAT_GLOBAL</code> を読み、Linux iptables の nat table と conntrack を設定します。<code>sonic-swss/cfgmgr/natmgrd.cpp</code> 系で実装されています。</li>
+<li><code>natmgrd</code>: <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <code>NAT_POOL</code> / <code>NAT_BINDINGS</code> / <code>NAT_ZONE</code> / <code>NAT_GLOBAL</code> を読み、Linux iptables の nat table と conntrack を設定します。<code>sonic-swss/cfgmgr/natmgrd.cpp</code> 系で実装されています。</li>
 <li><code>natsyncd</code>: kernel の conntrack notification を購読し、動的 NAT entry を APP_DB に push します。<code>sonic-swss/natsyncd/natsyncd.cpp</code> 系です。</li>
-<li><code>NatOrch</code>: orchagent 側の sub-orch で、APP_DB の NAT entry を SAI NAT API（SAI_OBJECT_TYPE_NAT_ENTRY）にプログラムします。</li>
+<li><code>NatOrch</code>: <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 側の sub-orch で、APP_DB の NAT entry を SAI NAT API（SAI_OBJECT_TYPE_NAT_ENTRY）にプログラムします。</li>
 </ul>
 <pre class="mermaid"><code>flowchart LR
   CFG[(CONFIG_DB STATIC_NAT/NAT_*)] --&gt; NM[natmgrd]
@@ -23694,9 +23694,9 @@
 <h2 id="docker-dhcp-relay-dhcrelay-dhcpmon-dhcprelayd">docker-dhcp-relay と dhcrelay / dhcpmon / dhcprelayd<a class="headerlink" href="#docker-dhcp-relay-dhcrelay-dhcpmon-dhcprelayd" title="Permanent link">&para;</a></h2>
 <p><code>docker-dhcp-relay</code> には複数プロセスが supervisord で起動します。</p>
 <ul>
-<li><code>dhcrelay</code>（v4）: VLAN ごとに 1 プロセス。<code>docker-dhcp-relay/dhcp-relay.programs.j2</code> で <code>DHCP_RELAY[vlan_name]['dhcp_servers']</code> から <code>program:dhcrelay-Vlan&lt;N&gt;</code> が生成されます。</li>
-<li><code>dhcrelay -6</code>: 同 container に並走し、<code>dhcpv6_servers</code> を持つ VLAN だけ起動します。DHCPv6 リレー HLD はこの並走構成を定義したものです。</li>
-<li><code>dhcpmon</code>: relay と並走して DHCP packet を監視し、per-interface counter を COUNTERS_DB に書きます。マルチスレッド化済みです。</li>
+<li><code>dhcrelay</code>（v4）: <a href="../../../reference/glossary/#term-vlan">VLAN</a> ごとに 1 プロセス。<code>docker-dhcp-relay/dhcp-relay.programs.j2</code> で <code>DHCP_RELAY[vlan_name]['dhcp_servers']</code> から <code>program:dhcrelay-Vlan&lt;N&gt;</code> が生成されます。</li>
+<li><code>dhcrelay -6</code>: 同 container に並走し、<code>dhcpv6_servers</code> を持つ VLAN だけ起動します。DHCPv6 リレー <a href="../../../reference/glossary/#term-hld">HLD</a> はこの並走構成を定義したものです。</li>
+<li><code>dhcpmon</code>: relay と並走して DHCP packet を監視し、per-interface counter を <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に書きます。マルチスレッド化済みです。</li>
 <li><code>dhcp6relay</code>: 独立した DHCPv6 relay daemon（<code>sonic-dhcp-relay</code> リポジトリ）。Option 79（RFC 6939）対応と dual-ToR の loopback アドレス利用が責務です。</li>
 <li><code>dhcprelayd</code>: kea ローカルモードのとき dhcrelay 側と協調して動的に config を更新する agent です。</li>
 </ul>
@@ -23710,7 +23710,7 @@
   D4 --&gt;|stats syslog/SHM| M
   M --&gt; CD[(COUNTERS_DB DHCPV4/V6_COUNTER_TABLE)]
   D6R --&gt; CD</code></pre>
-<p>per-interface counter は VLAN / PortChannel 単位だけでなく interface 単位で <code>DHCPV4_COUNTER_TABLE</code> / <code>DHCPV6_COUNTER_TABLE</code> を持つよう拡張されています。詳細は <a href="../../../routing/dhcp-relay-per-interface-counter/">per-interface counter ページ</a>を参照してください。</p>
+<p>per-interface counter は VLAN / <a href="../../../reference/glossary/#term-portchannel">PortChannel</a> 単位だけでなく interface 単位で <code>DHCPV4_COUNTER_TABLE</code> / <code>DHCPV6_COUNTER_TABLE</code> を持つよう拡張されています。詳細は <a href="../../../routing/dhcp-relay-per-interface-counter/">per-interface counter ページ</a>を参照してください。</p>
 <h2 id="giaddr-secondary-subnet">giaddr 固定（secondary subnet 対応）<a class="headerlink" href="#giaddr-secondary-subnet" title="Permanent link">&para;</a></h2>
 <p>VLAN_INTERFACE に secondary IPv4 を付けると、デフォルトの <code>dhcrelay</code> は最初に見つけたアドレスを giaddr にしてしまい、server 側 pool 選択がブレます。SONiC は ISC dhcrelay にパッチ（<code>-pg</code>）を当てて、primary subnet の gateway を明示するようテンプレート（<code>dhcpv4-relay.agents.j2</code>）で <code>VLAN_INTERFACE | get_primary_addr</code> を回しています。<code>config interface ip add --secondary</code> で書き込む <code>secondary: "true"</code> フラグが起点です。詳細は <a href="../../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/">giaddr 固定ページ</a>を参照してください。</p>
 <h2 id="docker-dhcp-server-kea-dhcp4">docker-dhcp-server と kea-dhcp4<a class="headerlink" href="#docker-dhcp-server-kea-dhcp4" title="Permanent link">&para;</a></h2>
@@ -23718,7 +23718,7 @@
 <ul>
 <li><code>dhcpservd</code>: CONFIG_DB の <code>DHCP_SERVER_IPV4</code> / <code>DHCP_SERVER_IPV4_RANGE</code> / <code>DHCP_SERVER_IPV4_PORT</code> / <code>DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS</code> を読み、<code>kea-dhcp4.conf</code> を生成して kea を再起動します。</li>
 <li><code>kea-dhcp4</code>: 実際の DHCP server プロセス。relay からの giaddr で subnet を選び、port 単位の reservation を Option 82 circuit-id 経由で照合します。</li>
-<li><code>lease_update.sh</code>: kea の lease ファイル変更を FDB / ARP と同期する hook。</li>
+<li><code>lease_update.sh</code>: kea の lease ファイル変更を <a href="../../../reference/glossary/#term-fdb">FDB</a> / <a href="../../../reference/glossary/#term-arp">ARP</a> と同期する hook。</li>
 </ul>
 <pre class="mermaid"><code>flowchart LR
   CFG[(CONFIG_DB DHCP_SERVER_IPV4*)] --&gt; DS[dhcpservd]
@@ -23729,7 +23729,7 @@
   LU --&gt; ST[(STATE_DB)]</code></pre>
 <p><code>FEATURE</code> テーブルで <code>docker-dhcp-server</code> を有効化するのが起点で、無効化されている装置では <code>dhcprelayd</code> が外部 server 向けに動作します。詳細は <a href="../../../management/ipv4-port-based-dhcp-server-in-sonic/">port-based DHCP server ページ</a>を参照してください。</p>
 <h2 id="dhcp-dos-portmgrd-linux-tc">DHCP DoS 緩和（portmgrd + Linux tc）<a class="headerlink" href="#dhcp-dos-portmgrd-linux-tc" title="Permanent link">&para;</a></h2>
-<p>DHCP DoS 緩和は SAI / CoPP ではなく Linux Traffic Control を使う設計です。<code>PORT</code> の <code>dhcp_rate_limit</code> を <code>portmgrd</code> が読み、<code>tc qdisc add dev &lt;port&gt; ingress</code> と <code>tc filter</code> を投入します。ただし master では portmgrd 側の tc 投入ロジックは未取り込みで、CoPP の <code>dhcp_relay</code> trap も従来どおり残っています（<a href="../../../acl-qos/dhcp-dos-mitigation-in-sonic/">ページ参照</a>）。本章では「設計上の置き場所」として CoPP / ACL 章ではなく DHCP 側に置きます。</p>
+<p>DHCP DoS 緩和は SAI / <a href="../../../reference/glossary/#term-copp">CoPP</a> ではなく Linux Traffic Control を使う設計です。<code>PORT</code> の <code>dhcp_rate_limit</code> を <code>portmgrd</code> が読み、<code>tc qdisc add dev &lt;port&gt; ingress</code> と <code>tc filter</code> を投入します。ただし master では <a href="../../../reference/glossary/#term-portmgrd">portmgrd</a> 側の tc 投入ロジックは未取り込みで、CoPP の <code>dhcp_relay</code> trap も従来どおり残っています（<a href="../../../acl-qos/dhcp-dos-mitigation-in-sonic/">ページ参照</a>）。本章では「設計上の置き場所」として CoPP / <a href="../../../reference/glossary/#term-acl">ACL</a> 章ではなく DHCP 側に置きます。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../architecture/nat-in-sonic/">NAT in SONiC</a></li>
@@ -23740,6 +23740,7 @@
 <li><a href="../../../management/ipv4-port-based-dhcp-server-in-sonic/">ポートベース IPv4 DHCP Server</a></li>
 <li><a href="../../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly/">DHCPv4 Relay giaddr 固定</a></li>
 </ul>
+<!-- glossary-links-injected: cd2e0a4b6527 -->
 
 
 

@@ -23787,7 +23787,7 @@
 <p>障害調査では「どこまで生きているか」「いつから壊れたか」「保全は取れたか」の順で見ます。SONiC は調べる対象によって CLI が分かれているので、調査順をルーチン化しておくと迷いません。</p>
 <h2 id="_2">起動直後の確認<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><code>show system-health summary</code> と <code>show system-health detail</code> で、システム全体の health monitor 状態と監視対象 daemon / service / docker の up/down を見ます。配下では <code>system-health</code> monitor が <code>system_health_monitoring_config.json</code> に従い、container や critical process、user defined check を polling しています。</p>
-<p><code>show system-health monitor-list</code> で「いま何を見ているか」、<code>show system-health events</code> で過去 24 時間のステータス変化を確認します。<code>system-ready</code> の HLD と組み合わせると、起動 sequence の途中で詰まっているのか、起動後に壊れたのかを切り分けられます。</p>
+<p><code>show system-health monitor-list</code> で「いま何を見ているか」、<code>show system-health events</code> で過去 24 時間のステータス変化を確認します。<code>system-ready</code> の <a href="../../../reference/glossary/#term-hld">HLD</a> と組み合わせると、起動 sequence の途中で詰まっているのか、起動後に壊れたのかを切り分けられます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ show system-health summary
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>System status summary
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -23839,17 +23839,17 @@
 <tr>
 <td><code>show queue counters</code> が空</td>
 <td><code>COUNTERS_QUEUE_NAME_MAP</code> 空</td>
-<td><code>counterpoll queue</code> disable / syncd 未起動</td>
+<td><code>counterpoll queue</code> disable / <a href="../../../reference/glossary/#term-syncd">syncd</a> 未起動</td>
 </tr>
 <tr>
 <td><code>aclshow</code> が更新されない</td>
-<td><code>COUNTERS_DB</code> ACL counter</td>
+<td><code>COUNTERS_DB</code> <a href="../../../reference/glossary/#term-acl">ACL</a> counter</td>
 <td><code>counterpoll acl</code> disable</td>
 </tr>
 <tr>
 <td><code>portstat</code> の数字が増えない</td>
 <td><code>COUNTERS:Ethernet*</code></td>
-<td>syncd / orchagent stuck、SAI hang</td>
+<td>syncd / <a href="../../../reference/glossary/#term-orchagent">orchagent</a> stuck、<a href="../../../reference/glossary/#term-sai">SAI</a> hang</td>
 </tr>
 <tr>
 <td>すべての counter が止まる</td>
@@ -23859,7 +23859,7 @@
 </tbody>
 </table>
 <h2 id="techsupport">障害時の保全: techsupport<a class="headerlink" href="#techsupport" title="Permanent link">&para;</a></h2>
-<p><code>show techsupport</code> は <code>/var/dump/sonic_dump_*.tar.gz</code> を生成します。中身は CLI 一式、<code>/var/log/</code> 配下、core dump、syslog、Redis dump、journal などです。容量が大きいので、調査では <code>--since "2 hours ago"</code> のような時間窓制限を付けます。</p>
+<p><code>show techsupport</code> は <code>/var/dump/sonic_dump_*.tar.gz</code> を生成します。中身は CLI 一式、<code>/var/log/</code> 配下、core dump、syslog、<a href="../../../reference/glossary/#term-redis">Redis</a> dump、journal などです。容量が大きいので、調査では <code>--since "2 hours ago"</code> のような時間窓制限を付けます。</p>
 <p>Event-driven techsupport は coredump や critical event を契機に <code>show techsupport</code> を自動実行する仕組みです。<code>AUTO_TECHSUPPORT_FEATURE</code> で feature 単位の rate limit を制御し、同じ問題で tarball が爆発するのを防ぎます。</p>
 <p>光モジュール障害の調査では、<code>show techsupport</code> が SFP EEPROM page の dump を含むため、<code>sfputil</code> で取り直さなくても tarball から transceiver state を読めます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 直近 2 時間に絞る</span>
@@ -23887,7 +23887,7 @@
 </span></code></pre></div>
 <p><code>rate_limit_interval</code> (秒) 以内に再発した同 feature の coredump では tarball を作りません。</p>
 <h2 id="dump-utility-object">Dump utility で個別 object を深掘り<a class="headerlink" href="#dump-utility-object" title="Permanent link">&para;</a></h2>
-<p><code>sonic-dump -m PORT -i Ethernet0</code> のように、object と instance を指定すると、全 DB と対応 CLI 出力を 1 つの JSON にまとめます。「この port は CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB / ASIC_DB のどこまで反映されているか」を 1 コマンドで横断確認できます。<code>show techsupport</code> よりも軽く、object と DB の整合性チェックに向きます。</p>
+<p><code>sonic-dump -m PORT -i Ethernet0</code> のように、object と instance を指定すると、全 DB と対応 CLI 出力を 1 つの JSON にまとめます。「この port は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> / <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> のどこまで反映されているか」を 1 コマンドで横断確認できます。<code>show techsupport</code> よりも軽く、object と DB の整合性チェックに向きます。</p>
 <h2 id="platform">Platform を疑うとき<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h2>
 <p><code>show platform summary</code> / <code>show platform syseeprom</code> / <code>show platform psustatus</code> / <code>show platform fan</code> / <code>show platform temperature</code> / <code>show platform transceiver</code> / <code>show platform fwutil status</code> で、それぞれ PSU、fan、temp、optics、firmware を見ます。PMON コンテナと platform daemon (<code>psud</code> / <code>thermalctld</code> / <code>xcvrd</code> / <code>pcied</code> / <code>ssdmon</code>) が値を STATE_DB に書き、CLI が表示する構造です。</p>
 <p>Platform 系の詳細（CMIS、thermal、PSU、SSD、PCIe）は別途 platform 章にまとまります。observability 章ではあくまで「show platform で health 系を読む入口」として扱います。</p>
@@ -23902,7 +23902,7 @@
 </span></code></pre></div>
 <p><code>Operational State: Not Ready</code> のときは <code>dmesg | grep -i crashkernel</code> で起動オプションを確認します。<code>config kdump memory 512M</code> 後、reboot が必須です。</p>
 <h2 id="snmp">SNMP 経路の確認<a class="headerlink" href="#snmp" title="Permanent link">&para;</a></h2>
-<p>snmpd (<code>docker exec snmp ...</code>) と sonic_ax_impl が SNMP を担います。MIB のうち、IF-MIB は port counter、ENTITY-MIB は platform inventory、SNMPv2-MIB の sysName 等が基本です。</p>
+<p>snmpd (<code>docker exec snmp ...</code>) と sonic_ax_impl が <a href="../../../reference/glossary/#term-snmp">SNMP</a> を担います。MIB のうち、IF-MIB は port counter、ENTITY-MIB は platform inventory、SNMPv2-MIB の sysName 等が基本です。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 外部ホストから</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>snmpwalk<span class="w"> </span>-v<span class="w"> </span>2c<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span>sw01<span class="w"> </span>IF-MIB::ifInOctets
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>snmpwalk<span class="w"> </span>-v<span class="w"> </span>2c<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span>sw01<span class="w"> </span>IF-MIB::ifInErrors
@@ -23970,7 +23970,7 @@
 <ul>
 <li>章 <a href="../../07-acl-copp-mirror/operations/">07 ACL / CoPP / mirror</a> — data plane drop の counter</li>
 <li>章 <a href="../../08-qos-buffer/operations/">08 QoS / Buffer</a> — queue / PG counter polling</li>
-<li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — telemetry を gNMI で取る</li>
+<li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — telemetry を <a href="../../../reference/glossary/#term-gnmi">gNMI</a> で取る</li>
 <li>章 <a href="../../11-reboot/operations/">11 Reboot</a> — reboot-cause / techsupport 連携</li>
 </ul>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -23984,6 +23984,7 @@
 <li><a href="../../../system/kdump-remote-ssh/">kdump remote SSH</a></li>
 <li><a href="../../../internals/dump-utility-for-easy-debugging/">Dump utility</a></li>
 </ul>
+<!-- glossary-links-injected: 86d533e3fc0d -->
 
 
 

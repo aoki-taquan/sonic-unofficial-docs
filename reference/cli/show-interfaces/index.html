@@ -24222,8 +24222,8 @@
 
 <h1 id="show-interfaces">show interfaces サブコマンド<a class="headerlink" href="#show-interfaces" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show interfaces</code> は物理ポート・PortChannel・SubInterface の <strong>状態 / 速度 / FEC / Auto-Negotiation / Breakout / トランシーバ / カウンタ</strong> を一覧表示する。<code>show/interfaces/__init__.py</code> がメインで、<code>show/main.py</code> 末尾の <code>cli.add_command(interfaces.interfaces)</code> で登録される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ほとんどのコマンドが内部で <strong><code>intfutil</code></strong> または <strong><code>portstat</code></strong> を <code>subprocess</code> で起動して整形済みテーブルを生成する。CONFIG_DB / STATE_DB / COUNTERS_DB から直接読むのは breakout 表示などごく一部。</p>
+<p><code>show interfaces</code> は物理ポート・<a href="../../glossary/#term-portchannel">PortChannel</a>・SubInterface の <strong>状態 / 速度 / FEC / Auto-Negotiation / Breakout / トランシーバ / カウンタ</strong> を一覧表示する。<code>show/interfaces/__init__.py</code> がメインで、<code>show/main.py</code> 末尾の <code>cli.add_command(interfaces.interfaces)</code> で登録される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ほとんどのコマンドが内部で <strong><code>intfutil</code></strong> または <strong><code>portstat</code></strong> を <code>subprocess</code> で起動して整形済みテーブルを生成する。<a href="../../glossary/#term-config_db">CONFIG_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> / <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> から直接読むのは breakout 表示などごく一部。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24263,7 +24263,7 @@
 </tr>
 <tr>
 <td><code>show interfaces neighbor</code></td>
-<td>LLDP 情報を含む隣接表示</td>
+<td><a href="../../glossary/#term-lldp">LLDP</a> 情報を含む隣接表示</td>
 </tr>
 <tr>
 <td><code>show interfaces neighbor expected</code></td>
@@ -24311,7 +24311,7 @@
 </tr>
 <tr>
 <td><code>show interfaces portchannel</code></td>
-<td>LAG とメンバ状態（<code>teamshow</code>）</td>
+<td><a href="../../glossary/#term-lag">LAG</a> とメンバ状態（<code>teamshow</code>）</td>
 </tr>
 </tbody>
 </table>
@@ -24321,7 +24321,7 @@
 <code>multi_asic.get_port_table</code> で全 namespace の <code>PORT</code> テーブルから <code>alias</code> 列を集めて <code>tabulate</code> で出力。引数なしの場合は全ポート、<code>&lt;interfacename&gt;</code> 指定で 1 件のみ。<code>--display external/all</code> で internal port を除外可能。</p>
 <h3 id="show-interfaces-status-interfacename"><code>show interfaces status [&lt;interfacename&gt;]</code><a class="headerlink" href="#show-interfaces-status-interfacename" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-<code>intfutil -c status -i &lt;intf&gt; [-d &lt;display&gt;] [-n &lt;namespace&gt;]</code> を起動。表示列: Interface / Lanes / Speed / MTU / FEC / Alias / Vlan / Oper / Admin / Type / Asym PFC。</p>
+<code>intfutil -c status -i &lt;intf&gt; [-d &lt;display&gt;] [-n &lt;namespace&gt;]</code> を起動。表示列: Interface / Lanes / Speed / MTU / FEC / Alias / Vlan / Oper / Admin / Type / Asym <a href="../../glossary/#term-pfc">PFC</a>。</p>
 <h3 id="show-interfaces-description-interfacename"><code>show interfaces description [&lt;interfacename&gt;]</code><a class="headerlink" href="#show-interfaces-description-interfacename" title="Permanent link">&para;</a></h3>
 <p><code>intfutil -c description ...</code>。Oper / Admin / Description（PORT テーブルの description）を表示。</p>
 <h3 id="show-interfaces-breakout"><code>show interfaces breakout</code><a class="headerlink" href="#show-interfaces-breakout" title="Permanent link">&para;</a></h3>
@@ -24379,11 +24379,11 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    [-p|--period &lt;sec&gt;] [-i|--interface &lt;list&gt;] [-a|--printall] [-j|--json] [-n|--namespace]
 </span></code></pre></div>
 <p><strong>動作</strong>:
-<code>portstat -c &lt;category&gt; ...</code> を起動して整形 stdout を表示。<code>--period N</code> で前回の <code>portstat -d &lt;ns&gt;</code> cache との差分を出して <strong>N 秒間のレート</strong>を表示する。<code>fec-histogram</code> は SAI Bin 値を可視化する詳細サブコマンド。</p>
+<code>portstat -c &lt;category&gt; ...</code> を起動して整形 stdout を表示。<code>--period N</code> で前回の <code>portstat -d &lt;ns&gt;</code> cache との差分を出して <strong>N 秒間のレート</strong>を表示する。<code>fec-histogram</code> は <a href="../../glossary/#term-sai">SAI</a> Bin 値を可視化する詳細サブコマンド。</p>
 <h3 id="show-interfaces-autoneg-status-link-training-status-fec-status"><code>show interfaces autoneg status</code> / <code>link-training status</code> / <code>fec status</code><a class="headerlink" href="#show-interfaces-autoneg-status-link-training-status-fec-status" title="Permanent link">&para;</a></h3>
 <p>各々 <code>intfutil -c autoneg</code> / <code>-c link_training</code> / <code>-c fec</code> を起動。フィールドは <code>oper</code> <code>admin</code> の組合せで集約表示される。</p>
 <h3 id="show-interfaces-switchport-config-switchport-status"><code>show interfaces switchport config</code> / <code>switchport status</code><a class="headerlink" href="#show-interfaces-switchport-config-switchport-status" title="Permanent link">&para;</a></h3>
-<p><code>config</code> は <code>PORT</code> の <code>mode</code> (<code>access</code> / <code>trunk</code> / <code>routed</code>) と untagged-VLAN を、<code>status</code> はランタイム状態 (oper VLAN メンバシップ) を表示。</p>
+<p><code>config</code> は <code>PORT</code> の <code>mode</code> (<code>access</code> / <code>trunk</code> / <code>routed</code>) と untagged-<a href="../../glossary/#term-vlan">VLAN</a> を、<code>status</code> はランタイム状態 (oper VLAN メンバシップ) を表示。</p>
 <h3 id="show-interfaces-dhcp-mitigation-rate-intf"><code>show interfaces dhcp-mitigation-rate [&lt;intf&gt;]</code><a class="headerlink" href="#show-interfaces-dhcp-mitigation-rate-intf" title="Permanent link">&para;</a></h3>
 <p><code>PORT|&lt;intf&gt;</code> の <code>dhcp_rate_limit</code> フィールドを表示。</p>
 <h3 id="show-interfaces-fast-linkup-status-intf"><code>show interfaces fast-linkup status [&lt;intf&gt;]</code><a class="headerlink" href="#show-interfaces-fast-linkup-status-intf" title="Permanent link">&para;</a></h3>
@@ -24391,7 +24391,7 @@
 <h3 id="show-interfaces-phy-signal-intf-phy-serdes-intf"><code>show interfaces phy-signal &lt;intf&gt;</code> / <code>phy-serdes &lt;intf&gt;</code><a class="headerlink" href="#show-interfaces-phy-signal-intf-phy-serdes-intf" title="Permanent link">&para;</a></h3>
 <p><code>PHY</code> 関連 STATE_DB エントリ（<code>TRANSCEIVER_DOM_SENSOR</code>, <code>PORT_TX_FIR</code>, <code>PORT_RX_FIR</code> 等）を読み出し可視化。プラットフォーム実装依存。</p>
 <h3 id="show-interfaces-portchannel"><code>show interfaces portchannel</code><a class="headerlink" href="#show-interfaces-portchannel" title="Permanent link">&para;</a></h3>
-<p><code>show/interfaces/portchannel.py</code> 配下の <code>teamshow</code> ラッパで、<code>PORTCHANNEL_MEMBER</code> 各ポートの teamd ランタイム状態（runner, link, slave 状態）を表示する。</p>
+<p><code>show/interfaces/portchannel.py</code> 配下の <code>teamshow</code> ラッパで、<code>PORTCHANNEL_MEMBER</code> 各ポートの <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> ランタイム状態（runner, link, slave 状態）を表示する。</p>
 <h2 id="_4">オプション・共通仕様<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>-n|--namespace</code> ... multi-ASIC 専用。<code>asic0</code> / <code>asic1</code> などを指定して該当 namespace のみ出力</li>
@@ -24503,6 +24503,8 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>eeprom<span class="w"> </span>Ethernet0
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ae1451afbe05 -->
 
 <div class="footnote">
 <hr />

@@ -23539,8 +23539,8 @@
 
 
 <h1 id="l2-vlan-lag-mc-lag">L2 / VLAN / LAG / MC-LAG<a class="headerlink" href="#l2-vlan-lag-mc-lag" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC を L2 switch として読むときに最初に迷う「VLAN、VLAN interface、switchport、sub-port、LAG、MC-LAG はどの順番で理解すればよいか」を整理する入口です。</p>
-<p>既存ページは HLD、CLI、CONFIG_DB、YANG 参照が別々に並んでいます。ここでは、設計者や運用者が実際に持つ質問の順に、L2 forwarding の基本単位、VLAN と L3 SVI の境界、PortChannel と MC-LAG の責務、FDB / STP / storm control の運用確認、OpenConfig や VOQ との接点を読み直します。</p>
+<p>この章は、SONiC を L2 switch として読むときに最初に迷う「<a href="../../reference/glossary/#term-vlan">VLAN</a>、VLAN interface、switchport、sub-port、<a href="../../reference/glossary/#term-lag">LAG</a>、MC-LAG はどの順番で理解すればよいか」を整理する入口です。</p>
+<p>既存ページは <a href="../../reference/glossary/#term-hld">HLD</a>、CLI、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>、<a href="../../reference/glossary/#term-yang">YANG</a> 参照が別々に並んでいます。ここでは、設計者や運用者が実際に持つ質問の順に、L2 forwarding の基本単位、VLAN と L3 SVI の境界、<a href="../../reference/glossary/#term-portchannel">PortChannel</a> と MC-LAG の責務、<a href="../../reference/glossary/#term-fdb">FDB</a> / STP / storm control の運用確認、OpenConfig や <a href="../../reference/glossary/#term-voq">VOQ</a> との接点を読み直します。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>物理ポートを L2 access / trunk として使う場合、どの CONFIG_DB テーブルが中心になるのか。</li>
@@ -23553,11 +23553,11 @@
 <h2 id="_2">読み進め方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><a href="concept/">概念</a>: VLAN、VLAN interface、sub-port、LAG、MC-LAG の違い。</li>
-<li><a href="architecture/">アーキテクチャ</a>: CONFIG_DB から manager daemon、APPL_DB、orchagent、SAI へ流れる経路。</li>
+<li><a href="architecture/">アーキテクチャ</a>: CONFIG_DB から manager daemon、<a href="../../reference/glossary/#term-appl_db">APPL_DB</a>、<a href="../../reference/glossary/#term-orchagent">orchagent</a>、<a href="../../reference/glossary/#term-sai">SAI</a> へ流れる経路。</li>
 <li><a href="setup/">設定</a>: VLAN / PortChannel / interface / sub-port / TPID の代表パターン。</li>
 <li><a href="operations/">運用</a>: <code>show vlan</code>、<code>mclagdctl</code>、FDB、storm control、link damping の確認順。</li>
 <li><a href="advanced/">発展トピック</a>: OpenConfig、distributed VOQ LAG、Wake-on-LAN、他章との境界。</li>
-<li><a href="internals/">内部実装</a>: VlanMgr / PortChannelMgr / IntfMgr / FdbOrch の責務分担と APPL_DB / STATE_DB の整合を実装側から見る。</li>
+<li><a href="internals/">内部実装</a>: VlanMgr / PortChannelMgr / IntfMgr / FdbOrch の責務分担と APPL_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> の整合を実装側から見る。</li>
 </ol>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23585,6 +23585,7 @@
 <li><a href="../08-qos-buffer/">QoS / Buffer / PFC / Watermark</a></li>
 <li><a href="../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: c0a5c230acb4 -->
 
 
 

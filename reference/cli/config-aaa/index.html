@@ -23990,8 +23990,8 @@
 
 <h1 id="config-aaa-tacacs-radius">config aaa / tacacs / radius サブコマンド<a class="headerlink" href="#config-aaa-tacacs-radius" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>AAA (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。<strong><code>aaa</code>・<code>tacacs</code>・<code>radius</code> の 3 つは独立した click グループ</strong>で、<code>config/main.py</code> がそれぞれを <code>config.add_command(aaa.aaa)</code> <code>config.add_command(aaa.tacacs)</code> <code>config.add_command(aaa.radius)</code> の形で <code>config</code> 直下に登録する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。すべて <code>config/aaa.py</code> に同居している。</p>
-<p>操作対象は CONFIG_DB の <code>AAA</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> / <code>RADIUS</code> / <code>RADIUS_SERVER</code> テーブル。値の追加には <code>add_table_kv</code> (= <code>mod_entry</code>)、削除には <code>del_table_key</code> を使う。<code>set_entry</code> は <code>ValidatedConfigDBConnector</code> 経由で YANG 検証を伴う。</p>
+<p><a href="../../glossary/#term-aaa">AAA</a> (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。<strong><code>aaa</code>・<code>tacacs</code>・<code>radius</code> の 3 つは独立した click グループ</strong>で、<code>config/main.py</code> がそれぞれを <code>config.add_command(aaa.aaa)</code> <code>config.add_command(aaa.tacacs)</code> <code>config.add_command(aaa.radius)</code> の形で <code>config</code> 直下に登録する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。すべて <code>config/aaa.py</code> に同居している。</p>
+<p>操作対象は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>AAA</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> / <code>RADIUS</code> / <code>RADIUS_SERVER</code> テーブル。値の追加には <code>add_table_kv</code> (= <code>mod_entry</code>)、削除には <code>del_table_key</code> を使う。<code>set_entry</code> は <code>ValidatedConfigDBConnector</code> 経由で <a href="../../glossary/#term-yang">YANG</a> 検証を伴う。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="config-aaa"><code>config aaa ...</code><a class="headerlink" href="#config-aaa" title="Permanent link">&para;</a></h3>
 <table>
@@ -24285,6 +24285,8 @@ excerpt: |
 <li><a href="../../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ec4ea08af950 -->
 
 <div class="footnote">
 <hr />

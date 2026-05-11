@@ -23950,14 +23950,14 @@
 </div>
 <h1 id="voq-chassis-everflow-recycle-port-rewrite">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）<a class="headerlink" href="#voq-chassis-everflow-recycle-port-rewrite" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design">Everflow</a> は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。<strong>通常スイッチ</strong> では <code>mirrororch</code> が <code>routeorch</code> / <code>neighorch</code> に問い合わせ、出力 IF と DST MAC を決定し、SAI <code>create_mirror_session</code> を呼ぶ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design">Everflow</a> は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。<strong>通常スイッチ</strong> では <code>mirrororch</code> が <code>routeorch</code> / <code>neighorch</code> に問い合わせ、出力 IF と DST MAC を決定し、<a href="../../reference/glossary/#term-sai">SAI</a> <code>create_mirror_session</code> を呼ぶ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>VoQ Chassis では構造が大きく異なる。複数 LC にまたがる中で、<strong>ミラー送信元と宛先が別 LC</strong> という構成が普通に発生する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>各 FSI（line card 上の SONiC instance）からは「他 LC のポートは <code>SYSTEM_PORT</code> としてのみ見える」</li>
 <li>パケットの egress rewrite は宛先 LC の egress ASIC で行う</li>
 <li>そのままでは <code>SAI_MIRROR_SESSION_ATTR_MONITOR_PORT</code> に他 LC のポートを指定できない</li>
 </ul>
-<p>本 HLD はこの問題を <strong>「ingress LC の段階で完全に GRE rewrite し、ingress ASIC の recycle port から再注入する」</strong> 方式で解く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC を 2 段通すことで、最終 LC への配送を underlay の switch fabric に任せる。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> はこの問題を <strong>「ingress LC の段階で完全に GRE rewrite し、ingress ASIC の recycle port から再注入する」</strong> 方式で解く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC を 2 段通すことで、最終 LC への配送を underlay の switch fabric に任せる。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">問題の所在<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23981,7 +23981,7 @@
 <li><code>mirrororch</code> は普段どおり destination IP → routeorch / neighorch で解決</li>
 <li><code>neighorch</code> が「remote neighbor の場合、interface alias まで返せる」ように拡張</li>
 <li><code>mirrororch</code> は remote neighbor だと判定したら <strong>その remote IF の SYSTEM_PORT</strong> を MONITOR_PORT として SAI に渡す</li>
-<li>SAI が裏で「recycle port から流す + 再注入時は neighbor の DST MAC」を仕込む。FDB も SAI 側で適切に設定</li>
+<li>SAI が裏で「recycle port から流す + 再注入時は neighbor の DST MAC」を仕込む。<a href="../../reference/glossary/#term-fdb">FDB</a> も SAI 側で適切に設定</li>
 </ul>
 <p>つまり SONiC 側の変更は最小で、ASIC ベンダーの SAI 実装に責任が寄る。</p>
 <p>「destination port が同 LC（local）の場合は recycle するメリットが無いので <strong>local では recycle しない</strong>」のが推奨<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24028,7 +24028,7 @@
 <tr>
 <td>LB（複数 nexthop）</td>
 <td>不可</td>
-<td>可（routing なので ECMP 効く）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>可（routing なので <a href="../../reference/glossary/#term-ecmp">ECMP</a> 効く）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -24100,7 +24100,7 @@ reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得�
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>VoQ chassis 固有 CLI は提案されていない。<code>config mirror_session</code> / <code>show mirror_session</code> 等の既存 CLI を流用する想定。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD で言及されていない。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># LC0 で everflow セッションを作成（destination は LC1 のポートに到達する IP）</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>Everflow1<span class="w"> </span><span class="m">10</span>.0.0.10<span class="w"> </span><span class="m">10</span>.0.0.11<span class="w"> </span>0x88be<span class="w"> </span>0x6<span class="w"> </span><span class="m">0</span>
@@ -24150,6 +24150,8 @@ reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得�
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 74c72b83304f -->
 
 <div class="footnote">
 <hr />

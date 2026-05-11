@@ -23802,7 +23802,7 @@
 
 <h1 id="mux_cable">MUX_CABLE テーブル<a class="headerlink" href="#mux_cable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Dual-ToR (active-active / active-standby) 構成で各 server-facing port に紐付く mux cable の状態と接続先サーバ情報を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>linkmgrd</code> (<code>docker-mux</code>) と <code>orchagent</code> の <code>MuxOrch</code> が CONFIG_DB を購読する。</p>
+<p>Dual-ToR (active-active / active-standby) 構成で各 server-facing port に紐付く mux cable の状態と接続先サーバ情報を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>linkmgrd</code> (<code>docker-mux</code>) と <code>orchagent</code> の <code>MuxOrch</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23842,13 +23842,13 @@
 <td><code>prober_type</code></td>
 <td>enum <code>hardware</code>/<code>software</code></td>
 <td><code>software</code></td>
-<td>linkmgrd の ICMP prober モード</td>
+<td><a href="../../glossary/#term-linkmgrd">linkmgrd</a> の ICMP prober モード</td>
 </tr>
 <tr>
 <td><code>neighbor_mode</code></td>
 <td>enum <code>prefix-route</code>/<code>host-route</code></td>
 <td><code>host-route</code></td>
-<td>MUX neighbor 経路モード</td>
+<td><a href="../../glossary/#term-mux">MUX</a> neighbor 経路モード</td>
 </tr>
 <tr>
 <td><code>server_ipv4</code></td>
@@ -23884,14 +23884,14 @@
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>linkmgrd</code> (<code>docker-mux</code>): ICMP prober を駆動して <code>state</code> を更新、<code>MUX_CABLE_TABLE</code> (APPL_DB) と <code>STATE_DB</code> 反映</li>
-<li><code>orchagent</code> の <code>MuxOrch</code>: SAI tunnel encap / route programming で active/standby 切替</li>
+<li><code>linkmgrd</code> (<code>docker-mux</code>): ICMP prober を駆動して <code>state</code> を更新、<code>MUX_CABLE_TABLE</code> (<a href="../../glossary/#term-appl_db">APPL_DB</a>) と <code>STATE_DB</code> 反映</li>
+<li><code>orchagent</code> の <code>MuxOrch</code>: <a href="../../glossary/#term-sai">SAI</a> tunnel encap / route programming で active/standby 切替</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>PEER_SWITCH</code>、<code>TUNNEL</code> (DualToR の MuxTunnel0)、<code>PORT</code></li>
 <li>関連 CLI: <code>config muxcable mode/active/standby/auto</code>、<code>show muxcable</code></li>
-<li>関連 YANG: <code>sonic-mux-cable</code>、<code>sonic-tunnel</code>、<code>sonic-peer-switch</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mux-cable</code>、<code>sonic-tunnel</code>、<code>sonic-peer-switch</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23930,6 +23930,8 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show<span class="w"> </span>mux<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: d02a52a92b03 -->
 
 <div class="footnote">
 <hr />

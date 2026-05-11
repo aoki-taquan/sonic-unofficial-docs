@@ -23959,17 +23959,17 @@
 <h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>vrf_name</code> / <code>peer_group_name</code> はそれぞれ leafref。存在しない peer-group 名はバリデーション失敗</li>
-<li>key の <code>peer_group_name</code> leafref は <code>[vrf_name=current()/../vrf_name]</code> のスコープ式で同一 VRF に縛られる</li>
+<li>key の <code>peer_group_name</code> leafref は <code>[vrf_name=current()/../vrf_name]</code> のスコープ式で同一 <a href="../../glossary/#term-vrf">VRF</a> に縛られる</li>
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>frr-mgmt-framework</code>: FRR (bgpd) の <code>address-family ... / neighbor PG ...</code> 配下コマンドへ変換</li>
+<li><code>frr-mgmt-framework</code>: <a href="../../glossary/#term-frr">FRR</a> (bgpd) の <code>address-family ... / neighbor PG ...</code> 配下コマンドへ変換</li>
 <li><code>bgpcfgd</code> テンプレ系: 主に neighbor 単位処理が中心で、AF 別設定はテンプレ展開で間接反映</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <a href="../bgp-peer-group/"><code>BGP_PEER_GROUP</code></a>、<a href="../bgp-neighbor-af/"><code>BGP_NEIGHBOR_AF</code></a>、<code>PREFIX_LIST</code>、<code>ROUTE_MAP</code></li>
-<li>関連 YANG: <code>sonic-bgp-peergroup</code>、<code>sonic-bgp-common</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../bgp-peer-group/"><code>BGP_PEER_GROUP</code></a>、<a href="../bgp-neighbor-af/"><code>BGP_NEIGHBOR_AF</code></a>、<code>PREFIX_LIST</code>、<code>ROUTE_MAP</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-peergroup</code>、<code>sonic-bgp-common</code></li>
 <li>関連 CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23992,7 +23992,7 @@
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>peer-group を作成した直後に AF 設定を行わず、neighbor が activate されない (アドレスファミリ未投入)。</li>
-<li><code>max_prefix_limit</code> を運用ピーク以下に設定して BGP セッションが reset する。</li>
+<li><code>max_prefix_limit</code> を運用ピーク以下に設定して <a href="../../glossary/#term-bgp">BGP</a> セッションが reset する。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_PEER_GROUP_AF|*&#39;</span>
@@ -24000,6 +24000,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show running-config bgpd&quot;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 07040282b44e -->
 
 <div class="footnote">
 <hr />

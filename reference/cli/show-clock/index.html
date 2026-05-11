@@ -23568,7 +23568,7 @@
 <p><code>--verbose</code> フラグは click グループ本体に付いており、付けると実行コマンド文字列を stderr に echo する。</p>
 <h3 id="show-clock-timezones"><code>show clock timezones</code><a class="headerlink" href="#show-clock-timezones" title="Permanent link">&para;</a></h3>
 <p><code>timedatectl list-timezones</code> を起動。<code>systemd-timesyncd</code> / <code>systemd-timedated</code> が提供する IANA タイムゾーン名リスト（<code>Asia/Tokyo</code> <code>America/New_York</code> 等）を逐次出力する。</p>
-<p>このコマンドは <strong>読み取り専用</strong>で、CONFIG_DB には触らない。実際にタイムゾーンを設定するには <code>sudo config clock timezone &lt;tz&gt;</code> を使う（CONFIG_DB の <code>DEVICE_METADATA|localhost</code> に <code>timezone</code> キーを書き込み、hostcfgd が <code>timedatectl set-timezone</code> を起動する仕組み）。</p>
+<p>このコマンドは <strong>読み取り専用</strong>で、<a href="../../glossary/#term-config_db">CONFIG_DB</a> には触らない。実際にタイムゾーンを設定するには <code>sudo config clock timezone &lt;tz&gt;</code> を使う（CONFIG_DB の <code>DEVICE_METADATA|localhost</code> に <code>timezone</code> キーを書き込み、<a href="../../glossary/#term-hostcfgd">hostcfgd</a> が <code>timedatectl set-timezone</code> を起動する仕組み）。</p>
 <h2 id="config_db">CONFIG_DB との接点<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23593,6 +23593,8 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: a31aab569e22 -->
+
 <div class="footnote">
 <hr />
 <ol>

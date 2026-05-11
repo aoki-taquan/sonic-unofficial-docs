@@ -24008,8 +24008,8 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SWSS / SAI / Redis レイヤの「設定」は、機能 CLI のように <code>config bgp</code> で投入できる対象ではなく、SONiC の起動構成そのものを決めるファイル群です。具体的には Redis instance のレイアウト、Multi-ASIC namespace、FEATURE による daemon 起動制御、event-driven な config reload、container health probe の 5 つで、いずれも <code>/etc/sonic/</code> 配下のファイルと CONFIG_DB の <code>FEATURE</code> テーブルで制御されます。</p>
-<p>本ページでは「単一 ASIC」「COUNTERS_DB の Redis 分割」「Multi-ASIC / VOQ chassis」「FEATURE と config reload 遅延」「container health probe」の 5 シナリオで、ファイル例 + CLI + 確認手順をまとめます。</p>
+<p>SWSS / <a href="../../../reference/glossary/#term-sai">SAI</a> / <a href="../../../reference/glossary/#term-redis">Redis</a> レイヤの「設定」は、機能 CLI のように <code>config bgp</code> で投入できる対象ではなく、SONiC の起動構成そのものを決めるファイル群です。具体的には Redis instance のレイアウト、Multi-ASIC namespace、FEATURE による daemon 起動制御、event-driven な config reload、container health probe の 5 つで、いずれも <code>/etc/sonic/</code> 配下のファイルと <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>FEATURE</code> テーブルで制御されます。</p>
+<p>本ページでは「単一 ASIC」「<a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> の Redis 分割」「Multi-ASIC / <a href="../../../reference/glossary/#term-voq">VOQ</a> chassis」「FEATURE と config reload 遅延」「container health probe」の 5 シナリオで、ファイル例 + CLI + 確認手順をまとめます。</p>
 <h2 id="_2">設定対象ファイルとテーブル一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24189,7 +24189,7 @@
 </span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>show<span class="w"> </span>feature<span class="w"> </span>autorestart
 </span></code></pre></div>
 <h3 id="config-reload-delayed-container">config reload と delayed container<a class="headerlink" href="#config-reload-delayed-container" title="Permanent link">&para;</a></h3>
-<p><code>delayed: True</code> の container は、PortInitDone を待ってから起動されます。これは BGP などが「ASIC 上の port がまだない」状態で route を流し始めることを避ける設計です。詳細は <a href="../../../management/config-reload-enhancement/">config reload の event-driven 化</a> を読んでください。</p>
+<p><code>delayed: True</code> の container は、PortInitDone を待ってから起動されます。これは <a href="../../../reference/glossary/#term-bgp">BGP</a> などが「ASIC 上の port がまだない」状態で route を流し始めることを避ける設計です。詳細は <a href="../../../management/config-reload-enhancement/">config reload の event-driven 化</a> を読んでください。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># config reload を投げる</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
@@ -24250,7 +24250,7 @@
 </tr>
 <tr>
 <td>delayed container が起動しない</td>
-<td>PortInitDone が来ていない / portmgrd 異常</td>
+<td>PortInitDone が来ていない / <a href="../../../reference/glossary/#term-portmgrd">portmgrd</a> 異常</td>
 <td><code>redis-cli -n 6 KEYS 'PORT_TABLE*'</code>、<code>journalctl -u portmgrd</code>、<code>show interfaces status</code> で port が UP か</td>
 </tr>
 <tr>
@@ -24259,7 +24259,7 @@
 <td>image を最新化、または <code>monit</code> 経由の判定にフォールバック</td>
 </tr>
 <tr>
-<td>Multi-ASIC で APPL_DB の更新が片側 ASIC にしか反映されない</td>
+<td>Multi-ASIC で <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の更新が片側 ASIC にしか反映されない</td>
 <td>書き手が namespace を指定せず host Redis を更新</td>
 <td><code>swsscommon.SonicV2Connector(namespace='asic0')</code> を使う、scripts は <code>-n asic&lt;N&gt;</code> フラグを通す</td>
 </tr>
@@ -24300,6 +24300,7 @@
 <li><a href="../operations/">SWSS / SAI / Redis の運用</a></li>
 <li><a href="../internals/">SWSS / SAI / Redis の internals</a></li>
 </ul>
+<!-- glossary-links-injected: b2d3aa50236f -->
 
 
 

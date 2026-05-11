@@ -23730,9 +23730,9 @@
 </div>
 <h1 id="asic-sdk-health-event-sai-notification-state_db-action">ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）<a class="headerlink" href="#asic-sdk-health-event-sai-notification-state_db-action" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを <strong>SAI の health event 通知</strong> として上に上げ、SONiC が運用フックに変換するパス<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。狙い:</p>
+<p>ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを <strong><a href="../../reference/glossary/#term-sai">SAI</a> の health event 通知</strong> として上に上げ、SONiC が運用フックに変換するパス<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。狙い:</p>
 <ul>
-<li>従来 platform-specific ログに埋もれていた重要イベントを <strong>共通スキーマで STATE_DB に出す</strong></li>
+<li>従来 platform-specific ログに埋もれていた重要イベントを <strong>共通スキーマで <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に出す</strong></li>
 <li>syslog / show / telemetry のいずれからも一貫した形で観測可能にする</li>
 <li>重要度ごとに <strong>shutdown / log-only / ignore</strong> の運用ポリシーを設定できる</li>
 </ul>
@@ -23746,7 +23746,7 @@
     STATE --&gt; SHOW[show asic-sdk-health-event]
     STATE --&gt; TEL[gNMI telemetry]
     CFG[CONFIG_DB\nSUPPRESS_ASIC_SDK_HEALTH_EVENT] --&gt; ORCH</code></pre>
-<p>イベントスキーマ（HLD 概念）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>イベントスキーマ（<a href="../../reference/glossary/#term-hld">HLD</a> 概念）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>severity</strong>: fatal / warning / notice</li>
 <li><strong>category</strong>: ASIC firmware / SDK / link / packet / temperature / memory ...</li>
@@ -23811,7 +23811,7 @@
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>イベントが出ない → vendor SAI が notification を register しているか、orchagent ログを確認</li>
+<li>イベントが出ない → vendor SAI が notification を register しているか、<a href="../../reference/glossary/#term-orchagent">orchagent</a> ログを確認</li>
 <li><code>show</code> で何も出ない → STATE_DB <code>ASIC_SDK_HEALTH_EVENT_TABLE</code> を <code>redis-cli</code> で直接確認</li>
 <li>抑制が効かない → <code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> の key 名と category 名のスペル確認</li>
 </ul>
@@ -23824,6 +23824,8 @@
 - show asic-sdk-health-event / config asic-sdk-health-event CLI の sonic-utilities 取り込み確認
 - system health / dump-on-sai-failure / telemetry との統合経路の現行実装確認
 -->
+
+<!-- glossary-links-injected: 4811545374b1 -->
 
 <div class="footnote">
 <hr />

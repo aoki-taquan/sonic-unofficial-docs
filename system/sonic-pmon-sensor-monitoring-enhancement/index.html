@@ -23877,7 +23877,7 @@
 </div>
 <h1 id="sensormonpmon-voltage-current">SensorMon（PMON 内の voltage / current センサ監視）<a class="headerlink" href="#sensormonpmon-voltage-current" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ボード上には電圧コントローラ / 電流センサ / 高度センサ等、温度以外の <strong>環境センサ</strong> が多数ある。Linux の <code>lm-sensors</code> / <code>hwmon</code> でも一部読めるが、HLD は次の限界を指摘<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>ボード上には電圧コントローラ / 電流センサ / 高度センサ等、温度以外の <strong>環境センサ</strong> が多数ある。Linux の <code>lm-sensors</code> / <code>hwmon</code> でも一部読めるが、<a href="../../reference/glossary/#term-hld">HLD</a> は次の限界を指摘<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>hwmon が対応していないデバイスは見えない</li>
 <li>内蔵 monitoring が無い simple device の <strong>alarm</strong> が上がらない</li>
@@ -23923,7 +23923,7 @@
 <h3 id="system-health">system health との統合<a class="headerlink" href="#system-health" title="Permanent link">&para;</a></h3>
 <p><code>SensorMon</code> のアラームは <strong>system health</strong> 集約に乗る<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。複数センサの状態が aggregator で 1 つの「ヘルス」として表示できる。</p>
 <h3 id="entity-mib">Entity MIB 連携<a class="headerlink" href="#entity-mib" title="Permanent link">&para;</a></h3>
-<p>新規センサ群は <strong>Entity MIB / Entity Sensor MIB</strong> にも晒される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより SNMP 経由のモニタリングシステムから、温度と同じインタフェースで電圧・電流が見える。</p>
+<p>新規センサ群は <strong>Entity MIB / Entity Sensor MIB</strong> にも晒される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより <a href="../../reference/glossary/#term-snmp">SNMP</a> 経由のモニタリングシステムから、温度と同じインタフェースで電圧・電流が見える。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/pmon/pmon-sensormon.md#L34-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23953,7 +23953,7 @@ reasoning: SensorMon を新設する根本動機の根拠。
 <p>「将来 sensor 種別を増やす framework」を提供することが要件<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。voltage / current は最初の対象。altitude などはこの枠組みに同種で乗せる前提。</p>
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし（HLD では明示的な CONFIG_DB 利用無し）。しきい値は platform API 提供。</p>
+<p>該当なし（HLD では明示的な <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 利用無し）。しきい値は platform API 提供。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>CLI は HLD で「provided to display the sensor devices, their measurements, threshold values and if they are reporting an alarm」と書かれるのみ<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体名（<code>show platform voltage</code> 等）は HLD では確定していないので列挙しない。</p>
 <h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
@@ -23995,6 +23995,8 @@ reasoning: SensorMon を新設する根本動機の根拠。
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 hour ago&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;voltage|current.*alarm&quot;</span>
 </span></code></pre></div>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: a6c84020c43e -->
+
 <div class="footnote">
 <hr />
 <ol>

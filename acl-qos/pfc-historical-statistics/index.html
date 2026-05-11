@@ -23872,7 +23872,7 @@
 </div>
 <h1 id="pfc-pfcwd-lua-estimate-history-cli">PFC 履歴統計（PFCWD lua スクリプトによる estimate と <code>--history</code> CLI）<a class="headerlink" href="#pfc-pfcwd-lua-estimate-history-cli" title="Permanent link">&para;</a></h1>
 <h2 id="_1">これは何か（一行で）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>PFC pause を <strong>受けていた累積時間 / 遷移回数 / 直近 pause 時刻</strong> を PFCWD の lua ポーリングから推定して <code>COUNTERS_DB</code> に書き、<code>show pfc counters --history</code> で表示する Broadcom 限定機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-pfc">PFC</a> pause を <strong>受けていた累積時間 / 遷移回数 / 直近 pause 時刻</strong> を PFCWD の lua ポーリングから推定して <code>COUNTERS_DB</code> に書き、<code>show pfc counters --history</code> で表示する Broadcom 限定機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">どんなときに使うか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li>「<code>SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US</code> を ASIC が直接出せない」プラットフォームで、過去の pause 履歴を知りたい</li>
@@ -23907,7 +23907,7 @@
 </tr>
 </tbody>
 </table>
-<p>同等値が SAI で直接出るならそちらを優先する。</p>
+<p>同等値が <a href="../../reference/glossary/#term-sai">SAI</a> で直接出るならそちらを優先する。</p>
 <h2 id="_4">推定アルゴリズム<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>ポーリング周期ごとに 3 つの状態を見て増分を決める<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -23987,7 +23987,7 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  Ethernet0      PFC4                     6               1,328,012                  425,181  03/25/2025, 17:22:37.982800
 </span></code></pre></div>
 <h3 id="yang">YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に記述なし。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> に記述なし。</p>
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Broadcom 限定</strong>。他プラットフォームでは lua スクリプトの追加実装が必要<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -24000,7 +24000,7 @@
 <ul>
 <li><strong>PFCWD ストーム検出</strong>: 同じ lua に乗るが検出ロジックは不変</li>
 <li><strong><code>SAI_QUEUE_ATTR_PAUSE_STATUS</code> / <code>SAI_PORT_STAT_PFC_*_ON2OFF_RX_PKTS</code></strong>: SAI で出ていれば estimate せず直読</li>
-<li><strong>CRM / counter polling</strong>: 通常の flex counter と同じ syncd ポーリングに依存</li>
+<li><strong><a href="../../reference/glossary/#term-crm">CRM</a> / counter polling</strong>: 通常の flex counter と同じ <a href="../../reference/glossary/#term-syncd">syncd</a> ポーリングに依存</li>
 </ul>
 <h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24025,6 +24025,8 @@
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4efefd8fbfe5 -->
 
 <div class="footnote">
 <hr />

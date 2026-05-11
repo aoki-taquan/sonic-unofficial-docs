@@ -23684,11 +23684,11 @@
 </div>
 <h1 id="voq-sonicdistributed-voq-chassis-system-port-fabric">VoQ SONiC（distributed VoQ chassis / system-port / fabric）<a class="headerlink" href="#voq-sonicdistributed-voq-chassis-system-port-fabric" title="Permanent link">&para;</a></h1>
 <h2 id="_1">何のための設計か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>複数の NPU（line card）を fabric card で繋ぎ、外側からは「1 台のスイッチ」に見える <strong>分散 VoQ chassis</strong> を SONiC で動かす設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。要点:</p>
+<p>複数の <a href="../../reference/glossary/#term-npu">NPU</a>（line card）を fabric card で繋ぎ、外側からは「1 台のスイッチ」に見える <strong>分散 VoQ chassis</strong> を SONiC で動かす設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。要点:</p>
 <ul>
 <li><strong>Virtual Output Queue (VoQ)</strong>: 入力側 NPU が、出力側 NPU の各 port / class に対する仮想キューを持つ。HoL ブロッキングを避け、輻輳判定を fabric を跨いで行う</li>
 <li><strong>system-port</strong>: chassis 全体で一意な論理 port 識別子。各 NPU の物理 port が system-port にマップされる</li>
-<li><strong>distributed control plane</strong>: BGP / FRR は複数 NPU 上で協調する。supervisor と fabric が連動</li>
+<li><strong>distributed control plane</strong>: <a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-frr">FRR</a> は複数 NPU 上で協調する。supervisor と fabric が連動</li>
 </ul>
 <h2 id="_2">どんな構造か<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23709,7 +23709,7 @@
 <li><strong><code>DEVICE_METADATA|localhost.switch_type=voq</code></strong>: chassis-wide で VoQ モードを示す</li>
 <li><strong><code>SYSTEM_PORT</code></strong>: chassis 内すべての port の論理マップ。<code>switch_id</code> / <code>core_index</code> / <code>core_port_index</code> / <code>speed</code> 等</li>
 <li><strong><code>VOQ_INBAND_INTERFACE</code></strong>: chassis 内 NPU 間制御 plane 通信用 inband interface</li>
-<li><strong>fabric port</strong>: NPU↔fabric 接続を表す port。CRM / link state / counter は専用扱い</li>
+<li><strong>fabric port</strong>: NPU↔fabric 接続を表す port。<a href="../../reference/glossary/#term-crm">CRM</a> / link state / counter は専用扱い</li>
 <li><strong>chassis-wide BGP</strong>: line card ごとに ASN / loopback を分けず、chassis として 1 つの BGP speaker（または multi-speaker 連携）</li>
 </ul>
 <h2 id="cli">設定 / CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
@@ -23776,9 +23776,9 @@
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>対応 ASIC が限定的</strong>: VoQ をサポートする NPU / fabric chip 上でのみ動く</li>
-<li><strong>single-asic 前提機能との非互換</strong>: 一部の機能（VLAN、特定 ACL）は VoQ 上で挙動差・未対応あり</li>
+<li><strong>single-asic 前提機能との非互換</strong>: 一部の機能（<a href="../../reference/glossary/#term-vlan">VLAN</a>、特定 <a href="../../reference/glossary/#term-acl">ACL</a>）は VoQ 上で挙動差・未対応あり</li>
 <li><strong>show 単位の曖昧さ</strong>: <code>show interfaces counters</code> で port / system-port / fabric のどれを指すか文脈依存</li>
-<li><strong>HLD は包括設計のみ</strong>: バッファ計算、scheduler、warmboot、congestion の詳細は派生 HLD 参照</li>
+<li><strong><a href="../../reference/glossary/#term-hld">HLD</a> は包括設計のみ</strong>: バッファ計算、scheduler、warmboot、congestion の詳細は派生 HLD 参照</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23807,6 +23807,8 @@
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8202771bf345 -->
 
 <div class="footnote">
 <hr />

@@ -23973,7 +23973,7 @@
 <h1 id="flexcounter-queuepg-map-watermark">flexcounter の queue/PG map 生成と watermark 有効化の整合<a class="headerlink" href="#flexcounter-queuepg-map-watermark" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC の flex counter には <strong>queue counter / PG-drop counter / watermark counter (queue / PG / buffer-pool)</strong> が並列に存在する。これらは <code>counterpoll</code> CLI で個別に enable / disable される。一方、各 counter は <strong><code>COUNTERS_DB.COUNTERS_QUEUE_*_MAP</code></strong> や <strong><code>COUNTERS_DB.COUNTERS_PG_*_MAP</code></strong> といった「OID とポート / queue index / PG index の対応マップ」を必要とする。</p>
-<p>本 HLD は <strong>「watermark を有効化したのに queue map が生成されない」</strong> などの整合性バグを直すための修正設計を定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>「watermark を有効化したのに queue map が生成されない」</strong> などの整合性バグを直すための修正設計を定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>問題の整理（修正前の挙動）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>queue map は <strong>queue counter polling enable のときだけ</strong> 生成される</li>
@@ -24204,7 +24204,7 @@
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>PortsOrch</code></strong>: map 生成と stat 登録の主体。本 HLD で関数群が分離される</li>
-<li><strong><code>flexcounter</code> (orchagent 内 / syncd 内)</strong>: counter polling 本体</li>
+<li><strong><code>flexcounter</code> (<a href="../../reference/glossary/#term-orchagent">orchagent</a> 内 / <a href="../../reference/glossary/#term-syncd">syncd</a> 内)</strong>: counter polling 本体</li>
 <li><strong><code>counterpoll</code> CLI</strong>: ユーザ操作の起点</li>
 <li><strong><code>BufferOrch</code> / buffer pool watermark</strong>: watermark enable 時に同時に生成される group の 1 つ</li>
 <li><strong>port の dynamic add</strong>: watermark enable 状態での新規 port 追加経路に依存</li>
@@ -24230,6 +24230,8 @@
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: af011099fbeb -->
 
 <div class="footnote">
 <hr />

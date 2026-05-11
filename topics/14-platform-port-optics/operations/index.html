@@ -23908,7 +23908,7 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ここでは、装置 health と optics に関連する確認順序を、運用シナリオ別に整理します。各 daemon の詳細は元 HLD を参照してください。</p>
+<p>ここでは、装置 health と optics に関連する確認順序を、運用シナリオ別に整理します。各 daemon の詳細は元 <a href="../../../reference/glossary/#term-hld">HLD</a> を参照してください。</p>
 <h2 id="daemon">どの daemon がどこを見ているか<a class="headerlink" href="#daemon" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   subgraph pmon[pmon container]
@@ -23926,7 +23926,7 @@
   SS --&gt; SDB
   SE --&gt; SDB
   SDB --&gt; CLI[show platform / SNMP / Redfish]</code></pre>
-<p><code>show platform</code> 系コマンドは基本的に STATE_DB を経由するため、daemon が値を更新できていないと CLI も空に見えます。最初に確認するのは daemon の up/down です。</p>
+<p><code>show platform</code> 系コマンドは基本的に <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> を経由するため、daemon が値を更新できていないと CLI も空に見えます。最初に確認するのは daemon の up/down です。</p>
 <h3 id="daemon_1">daemon の起動確認<a class="headerlink" href="#daemon_1" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ docker exec pmon supervisorctl status
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>xcvrd                            RUNNING   pid 42, uptime 5 days, 02:13:41
@@ -24056,7 +24056,7 @@
 <li><a href="../../../platform/pcieinfo-design/">pcieinfo design</a>: <code>pcieutil</code> / <code>pcied</code> の旧設計。</li>
 <li><a href="../../../system/sonic-pcie-monitoring-services-hld/">SONiC PCIe monitoring services HLD</a>: PCIe 経路の健全性監視。</li>
 </ul>
-<p>PCIe error は ASIC との通信不能や syncd 落ちにつながるため、syslog と STATE_DB を併せて確認します。</p>
+<p>PCIe error は ASIC との通信不能や <a href="../../../reference/glossary/#term-syncd">syncd</a> 落ちにつながるため、syslog と STATE_DB を併せて確認します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ show platform pcieinfo -c
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>PCIe Device Checking All Test
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>PCI Device:  ASIC 0000:03:00.0 ........ Passed
@@ -24224,6 +24224,7 @@
 <li><a href="../../../system/sonic-storage-monitoring-daemon-design/">storage monitoring daemon design</a></li>
 <li><a href="../../../system/sonic-pcie-monitoring-services-hld/">SONiC PCIe monitoring services HLD</a></li>
 </ul>
+<!-- glossary-links-injected: a1e3b64175ec -->
 
 
 

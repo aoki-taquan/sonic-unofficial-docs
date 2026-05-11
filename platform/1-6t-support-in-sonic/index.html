@@ -23996,13 +23996,13 @@
 </div>
 <h1 id="16t-ethernet-200g-serdes-sff-8024-xcvrd-portsorch">1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）<a class="headerlink" href="#16t-ethernet-200g-serdes-sff-8024-xcvrd-portsorch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>IEEE P802.3dj が定める <strong>200 / 400 / 800 Gb/s と 1.6 Tb/s</strong> のインターフェース定義を SONiC に取り込むための変更点を列挙した HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本質は <strong>lane あたり 200G PAM4（GBd 106.25）</strong> という新しい SerDes レートを足元のコードに通すこと。</p>
+<p>IEEE P802.3dj が定める <strong>200 / 400 / 800 Gb/s と 1.6 Tb/s</strong> のインターフェース定義を SONiC に取り込むための変更点を列挙した <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本質は <strong>lane あたり 200G PAM4（GBd 106.25）</strong> という新しい SerDes レートを足元のコードに通すこと。</p>
 <p>主要変更点（4 リポジトリ横断）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>SFF-8024</strong>: 新しい host electrical / MMF / SMF interface ID の追加</li>
 <li><strong>sonic-platform-daemons / xcvrd</strong>: <code>1.6T</code> スピード認識</li>
-<li><strong>sonic-utilities</strong>: <code>show interfaces status</code> / <code>config interface speed</code> の表示・受理</li>
-<li><strong>sonic-swss / orchagent</strong>: PortsOrch の最大スピード上限と FLR 計算（lane speed 200000 → SerDes 212.5e9）</li>
+<li><strong><a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a></strong>: <code>show interfaces status</code> / <code>config interface speed</code> の表示・受理</li>
+<li><strong><a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> / <a href="../../reference/glossary/#term-orchagent">orchagent</a></strong>: PortsOrch の最大スピード上限と FLR 計算（lane speed 200000 → SerDes 212.5e9）</li>
 </ol>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="sff-8024-id">SFF-8024 の新 ID<a class="headerlink" href="#sff-8024-id" title="Permanent link">&para;</a></h3>
@@ -24167,7 +24167,7 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="o">-</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">maxPortSpeed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">800000</span><span class="p">;</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="o">+</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">maxPortSpeed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1600000</span><span class="p">;</span>
 </span></code></pre></div>
-<p>CONFIG_DB の <code>PORT.speed</code> 値検証で 1600000 を許容するための変更。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PORT.speed</code> 値検証で 1600000 を許容するための変更。</p>
 <h4 id="flr-port_rateslua">FLR 計算 (<code>port_rates.lua</code>)<a class="headerlink" href="#flr-port_rateslua" title="Permanent link">&para;</a></h4>
 <p>レーン速度 → SerDes クロックのテーブルに <strong>200000 → 212.5e9</strong> を追加<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-lua highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">-- orchagent/port_rates.lua</span>
@@ -24275,9 +24275,9 @@ reasoning: PortsOrch maxPortSpeed 引き上げと port_rates.lua 200G レーン�
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存 800G 関連の入り口</strong>: PortsOrch / xcvrd / port_rates.lua の同じパスに追加するため、800G 既存機能の regression に注意</li>
-<li><strong>CONFIG_DB validation</strong>: <code>sonic-port</code> YANG / <code>port_config.ini</code> などで speed 値の上限が別箇所に出ている場合、それぞれ更新が必要</li>
+<li><strong>CONFIG_DB validation</strong>: <code>sonic-port</code> <a href="../../reference/glossary/#term-yang">YANG</a> / <code>port_config.ini</code> などで speed 値の上限が別箇所に出ている場合、それぞれ更新が必要</li>
 <li><strong>CMIS / xcvrd 上の transceiver 種別判定</strong>: SFF-8024 ID の新規追加は xcvrd の transceiver 情報パーサにも波及</li>
-<li><strong>link FLR 系の機能（DPB / fec mode 設定）</strong>: lane 200000 のレートが他箇所の lane speed テーブルにも必要</li>
+<li><strong>link FLR 系の機能（<a href="../../reference/glossary/#term-dpb">DPB</a> / fec mode 設定）</strong>: lane 200000 のレートが他箇所の lane speed テーブルにも必要</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24301,6 +24301,8 @@ reasoning: PortsOrch maxPortSpeed 引き上げと port_rates.lua 200G レーン�
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c31ca8ad0f8a -->
 
 <div class="footnote">
 <hr />

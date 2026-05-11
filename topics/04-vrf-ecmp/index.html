@@ -23539,8 +23539,8 @@
 
 
 <h1 id="vrf-ecmp-rib-fib">VRF / ECMP / RIB-FIB パイプライン<a class="headerlink" href="#vrf-ecmp-rib-fib" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種類を選ぶ」という順番で読み直す入口です。</p>
-<p>既存ページは VRF、static route、RIF counter、ECMP 拡張などの HLD 単位で分かれています。この章では、運用者や実装を追う読者が実際に持つ質問の順に並べ替え、詳細なスキーマやコード裏取りは各ページの関連リンクへ譲ります。</p>
+<p>この章は、SONiC の L3 転送を「<a href="../../reference/glossary/#term-vrf">VRF</a> と interface を作る」「route が <a href="../../reference/glossary/#term-frr">FRR</a> から APP_DB に来る」「<a href="../../reference/glossary/#term-orchagent">orchagent</a> が <a href="../../reference/glossary/#term-rif">RIF</a> / next hop / route object を ASIC に作る」「<a href="../../reference/glossary/#term-ecmp">ECMP</a> の種類を選ぶ」という順番で読み直す入口です。</p>
+<p>既存ページは VRF、static route、RIF counter、ECMP 拡張などの <a href="../../reference/glossary/#term-hld">HLD</a> 単位で分かれています。この章では、運用者や実装を追う読者が実際に持つ質問の順に並べ替え、詳細なスキーマやコード裏取りは各ページの関連リンクへ譲ります。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VRF、interface、static route、next hop group はどの順番で理解すればよいか。</li>
@@ -23552,8 +23552,8 @@
 <h2 id="_2">読む順番<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><a href="concept/">概念</a>: VRF、RIF、static route、IPv6 link-local、management VRF を L3 の読み順として整理する。</li>
-<li><a href="architecture/">アーキテクチャ</a>: FRR から <code>ROUTE_TABLE</code>、<code>NEXT_HOP_GROUP_TABLE</code>、RouteOrch、SAI route object までの流れを追う。</li>
-<li><a href="setup/">設定</a>: <code>config vrf</code>、<code>config route</code>、CONFIG_DB、YANG を使った VRF 付き route の最小例を扱う。</li>
+<li><a href="architecture/">アーキテクチャ</a>: FRR から <code>ROUTE_TABLE</code>、<code>NEXT_HOP_GROUP_TABLE</code>、RouteOrch、<a href="../../reference/glossary/#term-sai">SAI</a> route object までの流れを追う。</li>
+<li><a href="setup/">設定</a>: <code>config vrf</code>、<code>config route</code>、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>、<a href="../../reference/glossary/#term-yang">YANG</a> を使った VRF 付き route の最小例を扱う。</li>
 <li><a href="operations/">運用</a>: route / FIB / interface / RIF counter / route flow counter の確認順をまとめる。</li>
 <li><a href="ecmp/">ECMP family</a>: ECMP、WCMP、FG ECMP、Ordered ECMP、Generic Hash、CBF の選び方を比較する。</li>
 <li><a href="advanced/">発展トピック</a>: VRRP、SAG、TSA、他章への橋渡しを整理する。</li>
@@ -23579,6 +23579,7 @@
 <li><a href="../12-multi-asic-voq/">Multi-ASIC / VOQ Chassis</a></li>
 <li><a href="../16-nat-dhcp-dns/">NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
+<!-- glossary-links-injected: 17a32ea74970 -->
 
 
 

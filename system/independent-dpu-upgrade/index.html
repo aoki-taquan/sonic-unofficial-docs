@@ -23718,7 +23718,7 @@
 </div>
 <h1 id="smart-switch-dpu-gnoi">Smart Switch: DPU 独立アップグレード（gNOI 経路）<a class="headerlink" href="#smart-switch-dpu-gnoi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch では NPU 1 台に複数 DPU が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を <strong>NPU に offload</strong> している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は <strong>gNOI API 駆動で 1 台ずつ DPU を独立アップグレード</strong> する手順を定義し、ネットワーク・他 DPU・NPU への影響を最小化する。前提として <strong>DPU と NPU の SONiC Host Services / GNMI が健全</strong> であること（不応答 DPU の復旧用途ではない）。</p>
+<p><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> では <a href="../../reference/glossary/#term-npu">NPU</a> 1 台に複数 <a href="../../reference/glossary/#term-dpu">DPU</a> が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を <strong>NPU に offload</strong> している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong><a href="../../reference/glossary/#term-gnoi">gNOI</a> API 駆動で 1 台ずつ DPU を独立アップグレード</strong> する手順を定義し、ネットワーク・他 DPU・NPU への影響を最小化する。前提として <strong>DPU と NPU の SONiC Host Services / GNMI が健全</strong> であること（不応答 DPU の復旧用途ではない）。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23823,13 +23823,13 @@ reasoning: gNOI API 系列と各 phase の根拠。
 <li>DPU / NPU の SONiC Host Services / GNMI が <strong>健全な状態</strong> が前提</li>
 <li>提案段階（v0.1 Initial）。<code>Containerz</code> 系 gNOI 拡張は upstream で進行中</li>
 <li>互換性チェックは client 責任</li>
-<li>DPU graceful shutdown HLD（同 SmartSwitch 系）と STATE_DB の race を考慮する必要</li>
+<li>DPU graceful shutdown HLD（同 SmartSwitch 系）と <a href="../../reference/glossary/#term-state_db">STATE_DB</a> の race を考慮する必要</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>DPU graceful shutdown</strong>: 同 STATE_DB <code>CHASSIS_MODULE_INFO_TABLE</code> に書き込む可能性</li>
 <li><strong>smartswitch HA / hamgrd</strong>: HA scope の状態は upgrade 中も維持されるべき</li>
-<li><strong>gNMI / sonic-telemetry</strong>: GNMI/GNOI Splitter 経由のため依存</li>
+<li><strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> / sonic-telemetry</strong>: GNMI/GNOI Splitter 経由のため依存</li>
 <li><strong>Offloader / Containerz</strong>: NPU 側 container 制御の標準 API</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -23848,6 +23848,8 @@ reasoning: gNOI API 系列と各 phase の根拠。
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0f6974a3283c -->
 
 <div class="footnote">
 <hr />

@@ -23806,7 +23806,7 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ここでは、port 設定と platform 関連設定を、CLI / CONFIG_DB / YANG のどれから入るかという観点で整理します。全オプションは個別リファレンスに任せ、この章では入口の対応関係を示します。</p>
+<p>ここでは、port 設定と platform 関連設定を、CLI / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-yang">YANG</a> のどれから入るかという観点で整理します。全オプションは個別リファレンスに任せ、この章では入口の対応関係を示します。</p>
 <h2 id="_2">入口の対応<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23862,7 +23862,7 @@
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># breakout</span>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>config<span class="w"> </span>interface<span class="w"> </span>breakout<span class="w"> </span>Ethernet0<span class="w"> </span><span class="s2">&quot;4x25G&quot;</span>
 </span></code></pre></div>
-<p>speed や FEC を変更すると、buffer profile や ACL bind が影響を受ける場合があります。QoS / ACL 章とあわせて読んでください。</p>
+<p>speed や FEC を変更すると、buffer profile や <a href="../../../reference/glossary/#term-acl">ACL</a> bind が影響を受ける場合があります。<a href="../../../reference/glossary/#term-qos">QoS</a> / ACL 章とあわせて読んでください。</p>
 <h2 id="1-100g-4x25g">設定シナリオ 1: 100G ポートを 4x25G にブレイクアウト<a class="headerlink" href="#1-100g-4x25g" title="Permanent link">&para;</a></h2>
 <p>新しい光モジュールを差してブレイクアウト構成に切り替える場合、CLI 1 本では完結せず、breakout → speed → FEC → admin の順で投入します。<code>Ethernet0</code> を <code>4x25G</code> に分解する例:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 現状確認</span>
@@ -23899,7 +23899,7 @@
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Ethernet1    66           25G      9100   rs     etp1b    routed  up      up       SFP28       N/A
 </span></code></pre></div>
 <h2 id="2-speed-fec">設定シナリオ 2: 既存ポートの speed と FEC の切替<a class="headerlink" href="#2-speed-fec" title="Permanent link">&para;</a></h2>
-<p>光モジュール交換に伴い 100G → 400G に上げる、ないし FEC を <code>rs</code> から <code>fc</code> に切り替える運用です。port が UP のままだと SAI 側で reject される実装があるため、必ず一旦 admin down にします。</p>
+<p>光モジュール交換に伴い 100G → 400G に上げる、ないし FEC を <code>rs</code> から <code>fc</code> に切り替える運用です。port が UP のままだと <a href="../../../reference/glossary/#term-sai">SAI</a> 側で reject される実装があるため、必ず一旦 admin down にします。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>shutdown<span class="w"> </span>Ethernet8
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>speed<span class="w">    </span>Ethernet8<span class="w"> </span><span class="m">400000</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>fec<span class="w">      </span>Ethernet8<span class="w"> </span>rs
@@ -23988,7 +23988,7 @@
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>        tx1power:     0.5 dBm
 </span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>        tx1bias:     7.5 mA
 </span></code></pre></div>
-<p>各値の Warning / Alarm 閾値は EEPROM の A0/A2 page から <code>xcvrd</code> が読み、<code>STATE_DB:TRANSCEIVER_STATUS_FLAG_*</code> に立てます。<code>COUNTERS_DB</code> に直接落ちないことに注意。SNMP / telemetry で監視する場合は <code>xcvrd</code> の <code>TRANSCEIVER_DOM_FLAG_TABLE</code> を subscribe します。</p>
+<p>各値の Warning / Alarm 閾値は EEPROM の A0/A2 page から <code>xcvrd</code> が読み、<code>STATE_DB:TRANSCEIVER_STATUS_FLAG_*</code> に立てます。<code>COUNTERS_DB</code> に直接落ちないことに注意。<a href="../../../reference/glossary/#term-snmp">SNMP</a> / telemetry で監視する場合は <code>xcvrd</code> の <code>TRANSCEIVER_DOM_FLAG_TABLE</code> を subscribe します。</p>
 <h2 id="5-media_settingsjson-per-port-preemphasis">設定シナリオ 5: media_settings.json による per-port preemphasis<a class="headerlink" href="#5-media_settingsjson-per-port-preemphasis" title="Permanent link">&para;</a></h2>
 <p>ASIC の SerDes preemphasis / 振幅は default では <code>port_config.ini</code> の lane に紐づくテンプレートが適用されますが、特定の光モジュール vendor / part-number の組合せだけ調整したいときは <code>/usr/share/sonic/device/&lt;platform&gt;/&lt;hwsku&gt;/media_settings.json</code> を編集します。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
@@ -24003,11 +24003,11 @@
 </span></code></pre></div>
 <p>編集後 <code>systemctl restart xcvrd</code> で再ロードされ、次回 link up 時から反映されます。<code>docker exec xcvrd cat /var/log/xcvrd.log</code> で <code>media_settings applied</code> のログを確認します。</p>
 <h2 id="platform-capability">Platform capability ファイル<a class="headerlink" href="#platform-capability" title="Permanent link">&para;</a></h2>
-<p>ASIC や platform が「何ができるか」を宣言する capability ファイルは、port 設定や機能の可否を実行前に判別するために使われます。詳細は <a href="../../../platform/platform-capability-file-enhancement/">platform capability file enhancement</a> を参照してください。capability に書かれていない機能を設定で要求した場合、orchagent / SAI 層で reject されます。</p>
+<p>ASIC や platform が「何ができるか」を宣言する capability ファイルは、port 設定や機能の可否を実行前に判別するために使われます。詳細は <a href="../../../platform/platform-capability-file-enhancement/">platform capability file enhancement</a> を参照してください。capability に書かれていない機能を設定で要求した場合、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> / SAI 層で reject されます。</p>
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <code>config interface</code>、<code>config interface breakout</code>、<code>config interface speed/fec/mtu/autoneg</code>、<code>config platform firmware</code>、<code>show interfaces status</code>、<code>show interfaces transceiver</code>、<code>show platform inventory</code>、<code>show platform firmware status</code></li>
-<li>CONFIG_DB: <code>PORT</code>、<code>BREAKOUT_CFG</code>、<code>PORT_TABLE</code>（APPL_DB）、<code>TRANSCEIVER_INFO</code>（STATE_DB）、<code>TRANSCEIVER_DOM_SENSOR</code>（STATE_DB）、<code>DEVICE_METADATA</code>、<code>CHASSIS_INFO</code></li>
+<li>CONFIG_DB: <code>PORT</code>、<code>BREAKOUT_CFG</code>、<code>PORT_TABLE</code>（<a href="../../../reference/glossary/#term-appl_db">APPL_DB</a>）、<code>TRANSCEIVER_INFO</code>（<a href="../../../reference/glossary/#term-state_db">STATE_DB</a>）、<code>TRANSCEIVER_DOM_SENSOR</code>（STATE_DB）、<code>DEVICE_METADATA</code>、<code>CHASSIS_INFO</code></li>
 <li>YANG: <a href="../../../reference/yang/sonic-port/"><code>sonic-port</code></a>、<code>sonic-portchannel</code>、<code>sonic-device-metadata</code></li>
 <li>platform 実装ファイル: <code>platform.json</code>、<code>port_config.ini</code>、<code>media_settings.json</code>、<code>platform_components.json</code>、<code>hwsku.json</code></li>
 </ul>
@@ -24021,6 +24021,7 @@
 <li><a href="../../../platform/sonic-fw-utility/">SONiC fw-utility</a></li>
 <li><a href="../../../platform/platform-capability-file-enhancement/">platform capability file enhancement</a></li>
 </ul>
+<!-- glossary-links-injected: dde81be76b4f -->
 
 
 

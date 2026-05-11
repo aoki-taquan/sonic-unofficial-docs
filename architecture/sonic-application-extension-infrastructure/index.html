@@ -23805,7 +23805,7 @@
 </table>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>manifest 検査の限界</strong>: <code>min-sonic-version</code> / <code>depends</code> で表せない暗黙依存（kernel module、SAI 拡張等）は捕まえられない</li>
+<li><strong>manifest 検査の限界</strong>: <code>min-sonic-version</code> / <code>depends</code> で表せない暗黙依存（kernel module、<a href="../../reference/glossary/#term-sai">SAI</a> 拡張等）は捕まえられない</li>
 <li><strong>warm reboot 対応</strong>: package 側の対応が必要。非対応 package は warm reboot でリセット</li>
 <li><strong>CLI plugin 衝突</strong>: 同じ <code>config &lt;subcommand&gt;</code> を複数 package が登録すると挙動不定</li>
 <li><strong>資源管理</strong>: cgroup / メモリ / CPU 上限はコンテナ起動オプションでしか制御できない</li>
@@ -23828,6 +23828,8 @@
 <li><a href="../../topics/19-build-packaging/operations/">Topic 19 Build/Packaging - operations</a></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: f9445b5b4106 -->
+
 <div class="footnote">
 <hr />
 <ol>

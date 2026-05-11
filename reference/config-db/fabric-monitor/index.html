@@ -23611,7 +23611,7 @@
 
 <h1 id="fabric_monitor">FABRIC_MONITOR テーブル<a class="headerlink" href="#fabric_monitor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>FABRIC_MONITOR</code> テーブルは VOQ chassis のファブリックリンク監視 (<code>FABRIC_PORT</code> の自動 isolate/include) 用パラメータを CONFIG_DB に保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。単一エントリ <code>FABRIC_MONITOR_DATA</code> を持ち、CRC エラー閾値や検出/復旧ポーリング数を定義する。</p>
+<p><code>FABRIC_MONITOR</code> テーブルは <a href="../../glossary/#term-voq">VOQ</a> chassis のファブリックリンク監視 (<code>FABRIC_PORT</code> の自動 isolate/include) 用パラメータを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。単一エントリ <code>FABRIC_MONITOR_DATA</code> を持ち、CRC エラー閾値や検出/復旧ポーリング数を定義する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23631,7 +23631,7 @@
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FABRIC_MONITOR|FABRIC_MONITOR_DATA
 </span></code></pre></div>
-<p>YANG では <code>container FABRIC_MONITOR_DATA</code> の直下にスカラー leaf が並ぶ単一インスタンス構造。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> では <code>container FABRIC_MONITOR_DATA</code> の直下にスカラー leaf が並ぶ単一インスタンス構造。</p>
 <h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23696,7 +23696,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ファブリックモニタ daemon（プラットフォーム / orchagent の FabricPortOrch 拡張）</li>
+<li>ファブリックモニタ daemon（プラットフォーム / <a href="../../glossary/#term-orchagent">orchagent</a> の FabricPortOrch 拡張）</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23736,6 +23736,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>fabric<span class="w"> </span>isolation
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: aa7ef688df3b -->
 
 <div class="footnote">
 <hr />

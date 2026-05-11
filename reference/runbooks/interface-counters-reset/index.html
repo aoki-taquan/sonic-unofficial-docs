@@ -23731,14 +23731,14 @@
 <ul>
 <li>観測中 counter が 0 にリセットされ trend グラフが切れる</li>
 <li>別 admin が clear した形跡なし</li>
-<li>syncd / orchagent 再起動の直後に発生</li>
+<li><a href="../../glossary/#term-syncd">syncd</a> / <a href="../../glossary/#term-orchagent">orchagent</a> 再起動の直後に発生</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><code>sonic-clear counters</code> の意図しない実行</strong>: cron / Ansible / 監視スクリプト</li>
 <li><strong>portstat の clear ファイル (<code>/tmp/portstat-*.cnt</code>) が削除された</strong>: <code>/tmp</code> cleanup</li>
 <li><strong>syncd 再起動で ASIC counter 自体リセット</strong></li>
-<li><strong>container 再起動で COUNTERS_DB が初期化</strong>: redis ephemeral</li>
+<li><strong>container 再起動で <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> が初期化</strong>: redis ephemeral</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-clear">1. 直近の clear 実行<a class="headerlink" href="#1-clear" title="Permanent link">&para;</a></h3>
@@ -23760,7 +23760,7 @@
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>監視は <code>COUNTERS_DB</code> の raw 値を直接 poll（portstat 差分 cache に依存しない）</li>
-<li>gNMI / telemetry で counters subscribe する方式に切り替え</li>
+<li><a href="../../glossary/#term-gnmi">gNMI</a> / telemetry で counters subscribe する方式に切り替え</li>
 <li>portstat 用 cache を別場所へ: 環境変数 <code>PORTSTAT_CACHE_FILE</code> を設定（実装次第）</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23770,14 +23770,16 @@
 <li><a href="../telemetry-dialout-not-sending/">telemetry-dialout-not-sending.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 033180826ac9 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-utilities @ 39732bceb — scripts/portstat&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — scripts/portstat&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ 4305596 — orchagent/flexcounterorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — orchagent/flexcounterorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

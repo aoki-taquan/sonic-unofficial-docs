@@ -23774,7 +23774,7 @@
 </div>
 <h1 id="nat-in-sonicnatsyncd-natorch-iptables-sai">NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）<a class="headerlink" href="#nat-in-sonicnatsyncd-natorch-iptables-sai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は <strong>Linux kernel の conntrack/iptables を真実源</strong> として、ハードウェア NAT エンジン（SAI NAT API）にエントリを同期する 2 段構成を採る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設計上の役割分担:</p>
+<p>SONiC は <strong>Linux kernel の conntrack/iptables を真実源</strong> として、ハードウェア <a href="../../reference/glossary/#term-nat">NAT</a> エンジン（<a href="../../reference/glossary/#term-sai">SAI</a> NAT API）にエントリを同期する 2 段構成を採る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設計上の役割分担:</p>
 <ul>
 <li><strong><code>natmgrd</code></strong>: <code>CONFIG_DB</code> の static / dynamic NAT 設定を読み iptables ルールに変換</li>
 <li><strong>kernel</strong>: iptables / conntrack で NAT 動作と translation を生成</li>
@@ -23795,7 +23795,7 @@
 <ul>
 <li><strong>Static NAT (1:1)</strong>: 内部 IP ↔ 外部 IP の固定対応</li>
 <li><strong>Static NAPT (1:1 with port)</strong>: 内部 IP+port ↔ 外部 IP+port の固定対応</li>
-<li><strong>Dynamic NAT</strong>: NAT_POOL から外部 IP をリースし、ACL / NAT_BINDINGS で対象トラフィックを定義</li>
+<li><strong>Dynamic NAT</strong>: NAT_POOL から外部 IP をリースし、<a href="../../reference/glossary/#term-acl">ACL</a> / NAT_BINDINGS で対象トラフィックを定義</li>
 <li><strong>Dynamic NAPT (PAT)</strong>: 多対一の port 多重化</li>
 <li><strong>Twice NAT</strong>: source / destination 両方の書き換え</li>
 </ul>
@@ -23887,13 +23887,13 @@
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>conntrack/iptables を真実源とする</strong> ため、kernel 側で翻訳されたフローしか ASIC に流れない。host を経由しない fast-path 用途には向かない</li>
-<li>ハードウェアサイズ（NAT entry 数）は ASIC 依存。CRM (<code>Critical Resource Monitoring</code>) で監視する想定</li>
-<li>IPv6 NAT（NAT66 / NAT64）は本 HLD の主対象外</li>
+<li>ハードウェアサイズ（NAT entry 数）は ASIC 依存。<a href="../../reference/glossary/#term-crm">CRM</a> (<code>Critical Resource Monitoring</code>) で監視する想定</li>
+<li>IPv6 NAT（NAT66 / NAT64）は本 <a href="../../reference/glossary/#term-hld">HLD</a> の主対象外</li>
 <li>ALG（FTP 等の payload 書き換え）は kernel 側に依存</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VRF / interface zone 設定</strong>: zone を間違えると一切翻訳されない</li>
+<li><strong><a href="../../reference/glossary/#term-vrf">VRF</a> / interface zone 設定</strong>: zone を間違えると一切翻訳されない</li>
 <li><strong>ACL / mirror</strong>: ACL マッチ条件と NAT の評価順序を意識する</li>
 <li><strong>CRM</strong>: NAT entry 上限とアラーム閾値を運用で監視</li>
 <li><strong>conntrack timeout</strong>: kernel の TCP/UDP idle timeout に追従して ASIC からも eviction される</li>
@@ -23902,7 +23902,7 @@
 <ul>
 <li>翻訳が起こらない → zone 設定、<code>show nat translations</code>、kernel <code>conntrack -L</code> を確認</li>
 <li>ASIC が full → CRM <code>nat_entry</code> / <code>napt_entry</code> で残量を確認、aging timeout 短縮を検討</li>
-<li>counters が 0 → NatOrch の SAI 設定エラー、syncd ログ確認</li>
+<li>counters が 0 → NatOrch の SAI 設定エラー、<a href="../../reference/glossary/#term-syncd">syncd</a> ログ確認</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
@@ -23920,6 +23920,8 @@
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1bfe3dfac583 -->
 
 <div class="footnote">
 <hr />

@@ -23757,10 +23757,10 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>TCP keepalive / NAT timeout</strong>: 中間機器（LB / NAT / firewall）のセッション TTL が telemetry の heartbeat 間隔より短い</li>
+<li><strong>TCP keepalive / <a href="../../glossary/#term-nat">NAT</a> timeout</strong>: 中間機器（LB / NAT / firewall）のセッション TTL が telemetry の heartbeat 間隔より短い</li>
 <li><strong>TLS handshake failure / 証明書期限切れ</strong>: re-handshake 時に失敗してセッション drop</li>
 <li><strong>server 側 goroutine が CPU bound</strong>: 多数の path を低 interval で subscribe して queue が溢れる</li>
-<li><strong>REDIS subscriber が遅延</strong>: <code>COUNTERS_DB</code> の更新頻度に gNMI publisher が追いつかない</li>
+<li><strong>REDIS subscriber が遅延</strong>: <code>COUNTERS_DB</code> の更新頻度に <a href="../../glossary/#term-gnmi">gNMI</a> publisher が追いつかない</li>
 <li><strong>path syntax 不正で server が close する</strong>: 一部 yang model が未対応で internal error 返却</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23808,6 +23808,8 @@
 <li><a href="../../../topics/10-gnmi-openconfig/operations/">../../topics/10-gnmi-openconfig/operations.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 0856be05524a -->
+
 <div class="footnote">
 <hr />
 <ol>

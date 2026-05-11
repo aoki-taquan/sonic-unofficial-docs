@@ -23862,7 +23862,7 @@
 </div>
 <h1 id="ingress-discards-21-drop-counter">ingress discards テスト計画（21 ケースで drop counter を検証）<a class="headerlink" href="#ingress-discards-21-drop-counter" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DUT が <strong>特定の不正パケット</strong> を ingress で drop し、対応する drop counter が正しく増えるかを検証する sonic-mgmt テストプラン<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Ethernet / IP / ACL の各層の drop reason を 21 ケースで網羅する。</p>
+<p>DUT が <strong>特定の不正パケット</strong> を ingress で drop し、対応する drop counter が正しく増えるかを検証する <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> テストプラン<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Ethernet / IP / <a href="../../reference/glossary/#term-acl">ACL</a> の各層の drop reason を 21 ケースで網羅する。</p>
 <blockquote>
 <p>注: 制御プレーン traffic（VM 由来）は本テスト前に <strong>無効化</strong> することが前提<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。drop されるパケットの <strong>destination IP は routable</strong> にしておき、「routing で出ていく」のではなく「discard されている」ことを確実にする。</p>
 </blockquote>
@@ -23935,7 +23935,7 @@
 <li>（陰性ケース）counter が増えない / 別 counter が増えないことを確認</li>
 </ol>
 <h3 id="counter_1">ベンダ間 counter 集約の差異<a class="headerlink" href="#counter_1" title="Permanent link">&para;</a></h3>
-<p>HLD で明記されている注意点<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> で明記されている注意点<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <blockquote>
 <p>different vendors can have different drop counters calculation, for example L2 and L3 drop counters can be combined and L2 drop counter will be increased for all ingress discards.</p>
 </blockquote>
@@ -23963,7 +23963,7 @@ reasoning: ベンダ依存の counter 集約方式（合算 vs 分離）の根�
 
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。テストプランで CONFIG_DB スキーマ拡張は無い。</p>
+<p>該当なし。テストプランで <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマ拡張は無い。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23979,7 +23979,7 @@ reasoning: ベンダ依存の counter 集約方式（合算 vs 分離）の根�
 </tr>
 <tr>
 <td><code>counterpoll rif enable</code></td>
-<td>RIF counter group ON</td>
+<td><a href="../../reference/glossary/#term-rif">RIF</a> counter group ON</td>
 </tr>
 <tr>
 <td><code>portstat -j</code></td>
@@ -24014,17 +24014,17 @@ reasoning: ベンダ依存の counter 集約方式（合算 vs 分離）の根�
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VM trafic 無効化が前提</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BGP keepalive 等が走っていると counter が汚れる</li>
+<li><strong>VM trafic 無効化が前提</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-bgp">BGP</a> keepalive 等が走っていると counter が汚れる</li>
 <li>destination IP は <strong>routable</strong> であることを確認した上で injection（routing で出ていかない / かつ discard 経路に乗る）</li>
 <li>ベンダ間で L2/L3 counter 合算挙動が異なるため、合否判定は per-vendor のロジックを必要とする</li>
-<li>21 ケース中、SAI 属性 / CONFIG_DB の特定 attribute によっては <strong>deprecated</strong> されたものがあれば注意</li>
+<li>21 ケース中、<a href="../../reference/glossary/#term-sai">SAI</a> 属性 / CONFIG_DB の特定 attribute によっては <strong>deprecated</strong> されたものがあれば注意</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>debug counters / trap flow counter</strong>: 同じ drop reason を別 counter で見ることがある。本テストは port / RIF / ACL の sentinel counter を見る</li>
-<li><strong>CoPP</strong>: control plane traffic を OFF にする際に CoPP の挙動を意識</li>
+<li><strong><a href="../../reference/glossary/#term-copp">CoPP</a></strong>: control plane traffic を OFF にする際に CoPP の挙動を意識</li>
 <li><strong>ACL</strong>: ケース 20 のみ ACL に依存。ACL がデフォルトで入っている前提</li>
-<li><strong>port breakout / VLAN config</strong>: ケース 2 (VLAN TAG) は VLAN 設定に強く依存</li>
+<li><strong>port breakout / <a href="../../reference/glossary/#term-vlan">VLAN</a> config</strong>: ケース 2 (VLAN TAG) は VLAN 設定に強く依存</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># counter が enable になっているか</span>
@@ -24049,6 +24049,8 @@ reasoning: ベンダ依存の counter 集約方式（合算 vs 分離）の根�
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5a655f5b35d2 -->
 
 <div class="footnote">
 <hr />

@@ -23661,7 +23661,7 @@
 
 <h1 id="mux_linkmgr">MUX_LINKMGR テーブル<a class="headerlink" href="#mux_linkmgr" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DualToR (Active-Standby) 構成で <code>linkmgrd</code> の動作パラメータを CONFIG_DB に保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ICMP ハートビート間隔やオシレーションの設定、ログレベル、サービス管理動作を 4 つのシングルトン container (<code>LINK_PROBER</code> / <code>TIMED_OSCILLATION</code> / <code>MUXLOGGER</code> / <code>SERVICE_MGMT</code>) に分けて持つ。</p>
+<p>DualToR (Active-Standby) 構成で <code>linkmgrd</code> の動作パラメータを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ICMP ハートビート間隔やオシレーションの設定、ログレベル、サービス管理動作を 4 つのシングルトン container (<code>LINK_PROBER</code> / <code>TIMED_OSCILLATION</code> / <code>MUXLOGGER</code> / <code>SERVICE_MGMT</code>) に分けて持つ。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23726,7 +23726,7 @@
 <td>uint32</td>
 <td>なし</td>
 <td>-</td>
-<td>ICMP ハートビート停止タイマ (現状未使用と YANG コメント)</td>
+<td>ICMP ハートビート停止タイマ (現状未使用と <a href="../../glossary/#term-yang">YANG</a> コメント)</td>
 </tr>
 <tr>
 <td><code>use_well_known_mac</code></td>
@@ -23789,7 +23789,7 @@
 <tr>
 <td><code>log_verbosity</code></td>
 <td>enum <code>trace</code>/<code>debug</code>/<code>info</code>/<code>error</code>/<code>fatal</code></td>
-<td>linkmgrd ログレベル</td>
+<td><a href="../../glossary/#term-linkmgrd">linkmgrd</a> ログレベル</td>
 </tr>
 </tbody>
 </table>
@@ -23858,6 +23858,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>mux<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 7bd19c5684ed -->
 
 <div class="footnote">
 <hr />

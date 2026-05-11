@@ -23584,7 +23584,7 @@
 <h1 id="warm_restart">WARM_RESTART テーブル<a class="headerlink" href="#warm_restart" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>ホットフィックスやソフトウェアアップグレード時に<strong>データプレーンを落とさず</strong>コントロールプレーンを再起動するためのモジュール別 warm-restart 設定を持つテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。モジュール (<code>bgp</code>/<code>teamd</code>/<code>swss</code>/<code>system</code>) ごとに enable 状態と各種タイマを保持する。</p>
-<p><code>warmboot-finalizer</code> / 各プロセス (<code>bgpd</code>, <code>teamd</code>, <code>orchagent</code>, <code>neighsyncd</code> 等) が起動時に CONFIG_DB から読み出し、再収束の待ち時間を決める。</p>
+<p><code>warmboot-finalizer</code> / 各プロセス (<code>bgpd</code>, <code>teamd</code>, <code>orchagent</code>, <code>neighsyncd</code> 等) が起動時に <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読み出し、再収束の待ち時間を決める。</p>
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>WARM_RESTART|&lt;module&gt;
 </span></code></pre></div>
@@ -23612,7 +23612,7 @@
 <td><code>bgp_eoiu</code></td>
 <td>boolean</td>
 <td>module=bgp のみ</td>
-<td>BGP End-of-Initial-Update シグナルの有効化</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> End-of-Initial-Update シグナルの有効化</td>
 </tr>
 <tr>
 <td><code>bgp_timer</code></td>
@@ -23623,14 +23623,14 @@
 <tr>
 <td><code>teamsyncd_timer</code></td>
 <td>uint16 (1..3600)</td>
-<td>module=teamd のみ</td>
+<td>module=<a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> のみ</td>
 <td><code>teamsyncd</code> の再同期猶予 [秒]</td>
 </tr>
 <tr>
 <td><code>neighsyncd_timer</code></td>
 <td>uint16 (1..9999)</td>
 <td>module=swss のみ</td>
-<td><code>neighsyncd</code> の ARP/NDP 再収束タイマ [秒]</td>
+<td><code>neighsyncd</code> の <a href="../../glossary/#term-arp">ARP</a>/<a href="../../glossary/#term-ndp">NDP</a> 再収束タイマ [秒]</td>
 </tr>
 </tbody>
 </table>
@@ -23638,12 +23638,12 @@
 <h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>各タイマには <code>must</code> 句でモジュールとの整合性チェックがかかる（例: <code>bgp_timer</code> は <code>module = 'bgp'</code> でないと許可されない）。</li>
-<li>タイマ範囲を外れる値は YANG validation 段で拒否される。</li>
+<li>タイマ範囲を外れる値は <a href="../../glossary/#term-yang">YANG</a> validation 段で拒否される。</li>
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>bgpcfgd</code>: <code>bgp_timer</code> / <code>bgp_eoiu</code> を vtysh の <code>bgp graceful-restart</code> 系設定に変換</li>
-<li><code>teamd</code> (LACP): <code>teamsyncd_timer</code> を読み、LAG 再収束タイムアウトとして使用</li>
+<li><code>teamd</code> (<a href="../../glossary/#term-lacp">LACP</a>): <code>teamsyncd_timer</code> を読み、<a href="../../glossary/#term-lag">LAG</a> 再収束タイムアウトとして使用</li>
 <li><code>orchagent</code> / <code>neighsyncd</code> / <code>fpmsyncd</code>: <code>neighsyncd_timer</code> を ARP/route の reconciliation 待ちに使用</li>
 <li><code>warmboot-finalizer.sh</code>: <code>WARM_RESTART_TABLE</code> 状態を見ながら最終的に dataplane を unfreeze</li>
 </ul>
@@ -23681,6 +23681,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>warm_restart<span class="w"> </span>state
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3dac597a98ae -->
 
 <div class="footnote">
 <hr />

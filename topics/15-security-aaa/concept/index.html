@@ -23884,7 +23884,7 @@
 
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と SONiC 固有のデーモン（<code>hostcfgd</code>、<code>macsecmgr</code>、SAI）に薄く重なって実装されています。最初に「どの層のどの問題を解いているか」を分類しておくと、個別 HLD を読む順番が決まります。</p>
+<p>SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と SONiC 固有のデーモン（<code>hostcfgd</code>、<code>macsecmgr</code>、<a href="../../../reference/glossary/#term-sai">SAI</a>）に薄く重なって実装されています。最初に「どの層のどの問題を解いているか」を分類しておくと、個別 <a href="../../../reference/glossary/#term-hld">HLD</a> を読む順番が決まります。</p>
 <h2 id="_2">三層のセキュリティ境界<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23899,7 +23899,7 @@
 <tr>
 <td>Control plane</td>
 <td>誰がスイッチを操作できるか</td>
-<td>AAA、TACACS+、RADIUS、LDAP、local user、SSH、serial console、banner、password policy</td>
+<td><a href="../../../reference/glossary/#term-aaa">AAA</a>、TACACS+、RADIUS、LDAP、local user、SSH、serial console、banner、password policy</td>
 <td>PAM / NSS、<code>hostcfgd</code>、<code>config-db</code></td>
 </tr>
 <tr>
@@ -23933,7 +23933,7 @@
 <p>OpenSSL FIPS、secure boot、secure upgrade、container hardening は、いずれも「コードや鍵が改ざんされていないか」を担保する仕組みです。それぞれ独立した HLD があり、本章では <a href="../advanced/">発展トピック</a> でまとめて扱います。SAI POST は MACsec 系の起動時健全性チェックで、<a href="../../../switching/sonic-sai-post-support-for-macsec/">SAI POST support for MACsec</a> を参照します。</p>
 <h2 id="_4">章の境界<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>管理プレーン向け CoPP（Control Plane Policing）は本章ではなく <a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> で扱います。本章は「誰が触れるか」の認証面、CoPP 章は「触ってよいパケットの帯域」の制御面と切り分けます。</li>
+<li>管理プレーン向け <a href="../../../reference/glossary/#term-copp">CoPP</a>（Control Plane Policing）は本章ではなく <a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> で扱います。本章は「誰が触れるか」の認証面、CoPP 章は「触ってよいパケットの帯域」の制御面と切り分けます。</li>
 <li>secure upgrade はライフサイクル全体の <a href="../../11-reboot/">Reboot / Upgrade / Lifecycle</a> と重複しますが、本章では「信頼チェーン」の観点に限定し、warm/fast/SONiC-To-SONiC の手順は 11 章に委ねます。</li>
 </ul>
 <h2 id="_5">まず読み手の質問に答える<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23972,7 +23972,7 @@
     HOSTCFG --&gt; PAM
     PAM --&gt; SUDO
     CFG --&gt; MACSEC --&gt; SAIM</code></pre>
-<p>入口は概ね CONFIG_DB と OS 設定ファイルで、出口は PAM スタック、<code>/etc/ssh/sshd_config</code>、<code>wpa_supplicant.conf</code>、SAI MACsec object です。</p>
+<p>入口は概ね <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> と OS 設定ファイルで、出口は PAM スタック、<code>/etc/ssh/sshd_config</code>、<code>wpa_supplicant.conf</code>、SAI MACsec object です。</p>
 <h3 id="_8">用語の最短整理<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>AAA</strong>: Authentication（誰か）/ Authorization（何をできるか）/ Accounting（何をしたか）</li>
@@ -24027,7 +24027,7 @@
 </tr>
 <tr>
 <td><a href="../../10-gnmi-openconfig/">GNMI / OpenConfig</a></td>
-<td>gNMI 側 client 認証は TLS + cert 中心で、本章の PAM とは独立した認証経路</td>
+<td><a href="../../../reference/glossary/#term-gnmi">gNMI</a> 側 client 認証は TLS + cert 中心で、本章の PAM とは独立した認証経路</td>
 </tr>
 <tr>
 <td><a href="../../11-reboot/">Reboot / Lifecycle</a></td>
@@ -24039,7 +24039,7 @@
 </tr>
 <tr>
 <td>Linux 一般の hardening（kernel / sysctl）</td>
-<td>SONiC では SAI / orchagent のセキュリティが上に乗るためここで補強する</td>
+<td>SONiC では SAI / <a href="../../../reference/glossary/#term-orchagent">orchagent</a> のセキュリティが上に乗るためここで補強する</td>
 </tr>
 </tbody>
 </table>
@@ -24056,6 +24056,7 @@
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 </ul>
+<!-- glossary-links-injected: c88ef50a2df3 -->
 
 
 

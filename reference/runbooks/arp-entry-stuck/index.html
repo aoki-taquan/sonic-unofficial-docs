@@ -23674,8 +23674,8 @@
 <li><strong>対向 host の MAC アドレス変更 (NIC 交換 / VM migration)</strong> が GARP を送らず、kernel が STALE のまま retain</li>
 <li><strong><code>gc_stale_time</code> / <code>base_reachable_time</code> が長い</strong> — Linux 既定で 30 秒程度だが、tuning で 1 時間になっているケース</li>
 <li><strong><code>neighsyncd</code> が停止 / lag</strong> — <code>swss</code> container 内の <code>supervisorctl status</code> で確認</li>
-<li><strong>APPL_DB → ASIC_DB の sync 遅延</strong> — <code>appdb-asicdb-sync-lag.md</code> 参照</li>
-<li><strong>VLAN/MAC table の inconsistency</strong> — fdb の port が古く、ARP は更新されても転送が誤る</li>
+<li><strong><a href="../../glossary/#term-appl_db">APPL_DB</a> → <a href="../../glossary/#term-asic_db">ASIC_DB</a> の sync 遅延</strong> — <code>appdb-asicdb-sync-lag.md</code> 参照</li>
+<li><strong><a href="../../glossary/#term-vlan">VLAN</a>/MAC table の inconsistency</strong> — fdb の port が古く、<a href="../../glossary/#term-arp">ARP</a> は更新されても転送が誤る</li>
 <li><strong>proxy_arp 有効化による偽の応答</strong> — 別 host が応答を返している</li>
 </ol>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
@@ -23684,6 +23684,7 @@
 <li><a href="../routing-loop-detected/">routing-loop-detected.md</a></li>
 <li><a href="../../cli/show-arp/">../cli/show-arp.md</a></li>
 </ul>
+<!-- glossary-links-injected: 6d8c847ef6bb -->
 
 
 

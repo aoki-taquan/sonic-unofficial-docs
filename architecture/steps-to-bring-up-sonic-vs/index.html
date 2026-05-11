@@ -23840,7 +23840,7 @@
 </div>
 <h1 id="sonic-vs-libvirt">SONiC-VS のビルドと libvirt 起動手順<a class="headerlink" href="#sonic-vs-libvirt" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC-VS（Virtual Switch）は ASIC を SAI VS バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。本ドキュメントは <a href="https://github.com/sonic-net/SONiC/blob/master/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md"><code>doc/test/Bring-up_Sonic-VS_on_Cloud_top.md</code></a> を基にした手順サマリである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC-VS（Virtual Switch）は ASIC を <a href="../../reference/glossary/#term-sai">SAI</a> VS バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。本ドキュメントは <a href="https://github.com/sonic-net/SONiC/blob/master/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md"><code>doc/test/Bring-up_Sonic-VS_on_Cloud_top.md</code></a> を基にした手順サマリである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><a href="../sonic-on-gns3-vm/">GNS3 経路</a> は GUI 中心、本ページは <strong>CLI で libvirt を直接叩く</strong> 経路。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23902,7 +23902,7 @@
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>telnet<span class="w"> </span>localhost<span class="w"> </span><span class="m">7000</span>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># user: admin / pass: YourPaSsWoRd</span>
 </span></code></pre></div>
-<p><code>virsh create</code> は <strong>persistent ではない</strong> 起動。再起動後に消える。永続化したい場合は <code>virsh define</code> を使う<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（HLD には記載なし）。</p>
+<p><code>virsh create</code> は <strong>persistent ではない</strong> 起動。再起動後に消える。永続化したい場合は <code>virsh define</code> を使う<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（<a href="../../reference/glossary/#term-hld">HLD</a> には記載なし）。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md#L86-L129 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23943,7 +23943,7 @@ reasoning: 起動コマンドとデフォルト認証情報の根拠。
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>kvm-ok</code> でエラー: BIOS の VT-x / AMD-V を有効化、または nested virtualization が許可されているかを確認。</li>
-<li><code>virsh create</code> で permission denied: <code>libvirt-sock</code> の ACL（前述の setfacl）と libvirt 起動状態を確認<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>virsh create</code> で permission denied: <code>libvirt-sock</code> の <a href="../../reference/glossary/#term-acl">ACL</a>（前述の setfacl）と libvirt 起動状態を確認<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>telnet localhost 7000</code> が拒否: <code>sonic1-vs.xml</code> の serial port 設定を確認。port 番号は VM ごとに違うことがある。</li>
 <li>ログイン拒否: パスワード <code>YourPaSsWoRd</code> の大文字小文字を厳密に。新しいビルドでは別パスワードのことがある。</li>
 </ul>
@@ -23954,6 +23954,8 @@ reasoning: 起動コマンドとデフォルト認証情報の根拠。
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f09f0f2ecd9e -->
 
 <div class="footnote">
 <hr />

@@ -23880,7 +23880,7 @@
 
 <h1 id="pfc_wd">PFC_WD テーブル<a class="headerlink" href="#pfc_wd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>PFC Watchdog の設定テーブル。port ごとに <code>detection_time</code> / <code>restoration_time</code> / <code>action</code> を持ち、PFC pause storm を検出して指定アクションを取る。<code>GLOBAL</code> という特別キーでシステム全体のポーリング間隔を設定する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>pfcwd</code> ツール / <code>pfcwdorch</code> (orchagent) が購読する。</p>
+<p><a href="../../glossary/#term-pfc-watchdog">PFC Watchdog</a> の設定テーブル。port ごとに <code>detection_time</code> / <code>restoration_time</code> / <code>action</code> を持ち、<a href="../../glossary/#term-pfc">PFC</a> pause storm を検出して指定アクションを取る。<code>GLOBAL</code> という特別キーでシステム全体のポーリング間隔を設定する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>pfcwd</code> ツール / <code>pfcwdorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が購読する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23965,14 +23965,14 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> の <code>PfcWdOrch</code>: SAI で per-queue counter polling とアクション実装</li>
+<li><code>orchagent</code> の <code>PfcWdOrch</code>: <a href="../../glossary/#term-sai">SAI</a> で per-queue counter polling とアクション実装</li>
 <li><code>pfcwd</code> CLI: 起動 / 停止 / 統計</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORT</code>、<code>PORT_QOS_MAP</code> (PFC enable bitmap)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORT</code>、<code>PORT_QOS_MAP</code> (PFC enable bitmap)</li>
 <li>関連 CLI: <code>pfcwd start/stop/show_config/counter_poll</code></li>
-<li>関連 YANG: <code>sonic-pfcwd</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-pfcwd</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24010,6 +24010,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>pfcwd<span class="w"> </span>stats
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 27fb7a00cfd8 -->
 
 <div class="footnote">
 <hr />

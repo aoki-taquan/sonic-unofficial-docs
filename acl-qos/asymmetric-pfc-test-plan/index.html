@@ -23962,7 +23962,7 @@
 </div>
 <h1 id="asymmetric-pfc-ptf-sonic-mgmt-fixtures">Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）<a class="headerlink" href="#asymmetric-pfc-ptf-sonic-mgmt-fixtures" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Asymmetric PFC は SONiC 機能だが、本ドキュメントはその <strong>機能テスト計画</strong> を扱う。既存の PTF テスト（<code>sonic-mgmt/ansible/roles/test/files/saitests/pfc_asym.py</code>）を再構成し、<code>sonic-mgmt</code> の pytest fixtures から呼び出して、SONiC DUT と Fanout 上の PFC パケットジェネレータ (<code>pfc_gen.py</code>) を組み合わせて検証する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Asymmetric <a href="../../reference/glossary/#term-pfc">PFC</a> は SONiC 機能だが、本ドキュメントはその <strong>機能テスト計画</strong> を扱う。既存の PTF テスト（<code>sonic-mgmt/ansible/roles/test/files/saitests/pfc_asym.py</code>）を再構成し、<code>sonic-mgmt</code> の pytest fixtures から呼び出して、SONiC DUT と Fanout 上の PFC パケットジェネレータ (<code>pfc_gen.py</code>) を組み合わせて検証する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>対象テストベッド: <strong>T0-x</strong> 系列（全 T0 構成）。SONiC DUT は <strong>RPC image</strong> が必須<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">テスト構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23975,7 +23975,7 @@
 <p><code>pfc_asym.py</code> には以下の改修が必要<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>送信速度向上</strong>: <code>threading.Thread</code> を <code>multiprocessing.Process</code> に置換（GIL 回避）。L83 周辺。</li>
-<li><strong>ARP responder 設定生成の冗長削除</strong>: L56 のループで毎回ファイル生成しているのを 1 回だけにする。</li>
+<li><strong><a href="../../reference/glossary/#term-arp">ARP</a> responder 設定生成の冗長削除</strong>: L56 のループで毎回ファイル生成しているのを 1 回だけにする。</li>
 </ol>
 <h3 id="pytest-test-suite">新規 pytest test suite<a class="headerlink" href="#pytest-test-suite" title="Permanent link">&para;</a></h3>
 <p><code>tests/pfc_asym/pfc_asym.py</code> を新規追加<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。グローバル定数:</p>
@@ -24065,10 +24065,10 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>sonic-mgmt/tests
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>pytest<span class="w"> </span>pfc_asym/pfc_asym.py<span class="w"> </span>--topology<span class="o">=</span>t0
 </span></code></pre></div>
-<p>具体的な引数は sonic-mgmt の標準 testbed パラメタに従う。</p>
+<p>具体的な引数は <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> の標準 testbed パラメタに従う。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>T0 トポロジ専用</strong>: HLD は T0-x 系列を対象としており、T1 等の他トポロジは別途検討が必要<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>T0 トポロジ専用</strong>: <a href="../../reference/glossary/#term-hld">HLD</a> は T0-x 系列を対象としており、T1 等の他トポロジは別途検討が必要<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>RPC image 必須</strong>: 通常リリースイメージでは動作しない<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>Fanout 構成依存</strong>: Mellanox / Arista それぞれの Fanout で <code>pfc_gen.py</code> 配備手順が違う。新ベンダ Fanout では拡張作業が必要。</li>
 </ul>
@@ -24086,8 +24086,8 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 </ul>
 <h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Asymmetric PFC mode set: <code>sonic-swss/orchagent/portsorch.cpp</code> L2519-L2573 <code>setPortPfcAsym()</code>（<code>SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE</code> を <code>SEPARATE</code>/<code>COMBINED</code> で SAI に書き込む）</li>
-<li>CONFIG_DB.PORT.pfc_asym パース＆適用: 同 <code>portsorch.cpp</code> L5407-L5434（mode の妥当性チェックと <code>setPortPfcAsym()</code> 呼び出し、unsupported 時のスキップログ）</li>
+<li>Asymmetric PFC mode set: <code>sonic-swss/orchagent/portsorch.cpp</code> L2519-L2573 <code>setPortPfcAsym()</code>（<code>SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE</code> を <code>SEPARATE</code>/<code>COMBINED</code> で <a href="../../reference/glossary/#term-sai">SAI</a> に書き込む）</li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>.PORT.pfc_asym パース＆適用: 同 <code>portsorch.cpp</code> L5407-L5434（mode の妥当性チェックと <code>setPortPfcAsym()</code> 呼び出し、unsupported 時のスキップログ）</li>
 <li>初期 attribute セット: 同 <code>portsorch.cpp</code> L1347-L1361（<code>SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL</code> への XOFF 値書き込み）</li>
 <li>Port 構造体: <code>sonic-swss/orchagent/port/portcnt.h</code> L89 <code>pfc_asym</code> メンバ</li>
 </ul>
@@ -24101,6 +24101,8 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e2888922ac14 -->
 
 <div class="footnote">
 <hr />

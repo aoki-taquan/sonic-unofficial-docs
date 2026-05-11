@@ -23797,7 +23797,7 @@
 <h1 id="health-checkk8s-readiness-probe">コンテナ health-check（k8s readiness probe）<a class="headerlink" href="#health-checkk8s-readiness-probe" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC の k8s 連携では、コンテナそのものが起動しているかどうかは <code>kubelet</code> が把握しているが、<strong>コンテナ内の supervisor 配下サービスが本当に正常か</strong> は外から見えない。<code>docker ps</code> で running でも、内部の <code>swss</code> が落ちっぱなしという状況がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>この HLD は <strong>k8s の readiness probe を使ってコンテナ内サービスの健全性を外部に見せる</strong> ための仕組みを定義している。アップグレード時の post-check で readiness probe の終了コードを参照し、healthy なら次に進み、unhealthy ならタイムアウトまで再試行→fallback、という運用に乗せる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>この <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>k8s の readiness probe を使ってコンテナ内サービスの健全性を外部に見せる</strong> ための仕組みを定義している。アップグレード時の post-check で readiness probe の終了コードを参照し、healthy なら次に進み、unhealthy ならタイムアウトまで再試行→fallback、という運用に乗せる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="probe">probe の選択<a class="headerlink" href="#probe" title="Permanent link">&para;</a></h3>
 <p>k8s が提供する 3 種類のプローブ（liveness / readiness / startup）の中で、<strong>readiness probe</strong> を採用する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -23888,7 +23888,7 @@ reasoning: スクリプトのパスと二段階チェック構成の根拠。
 <!-- evidence-rendered:end -->
 
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>このページの機能はコンテナ内の固定パススクリプトと k8s 設定で完結する。CONFIG_DB / CLI のエンドユーザ向けインターフェースは HLD では定義されていない。</p>
+<p>このページの機能はコンテナ内の固定パススクリプトと k8s 設定で完結する。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI のエンドユーザ向けインターフェースは HLD では定義されていない。</p>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>該当エントリは HLD 内で定義されていない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
@@ -23913,6 +23913,8 @@ reasoning: スクリプトのパスと二段階チェック構成の根拠。
 <li><code>start.sh</code> が exit していない: supervisor の他サービスが起動失敗している可能性。<code>supervisorctl status</code> と <code>/var/log/supervisor/</code> を確認。</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: c5a6ce567024 -->
+
 <div class="footnote">
 <hr />
 <ol>

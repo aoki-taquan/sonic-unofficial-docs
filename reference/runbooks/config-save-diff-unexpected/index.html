@@ -23735,7 +23735,7 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>default 値の auto-fill</strong>: minigraph / hostcfgd が起動時に default を埋める</li>
+<li><strong>default 値の auto-fill</strong>: minigraph / <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が起動時に default を埋める</li>
 <li><strong>runtime-only key の永続化</strong>: <code>BUFFER_PG</code> 等 dynamic computed が save に乗る</li>
 <li><strong>multi-asic の <code>config save</code> で namespace 不整合</strong></li>
 <li><strong>手動で <code>sonic-db-cli SET</code> した値が runtime のみ反映</strong></li>
@@ -23763,7 +23763,7 @@
 <ul>
 <li>一旦 <code>sudo config save -y</code> を再実行して安定化</li>
 <li>multi-asic: <code>sudo config save -y</code> （新しい multi-asic 対応版で各 namespace 同時 save）</li>
-<li>runtime のみで良い key は CONFIG_DB から削除し save し直す: <code>sudo sonic-db-cli CONFIG_DB del "&lt;key&gt;"</code></li>
+<li>runtime のみで良い key は <a href="../../glossary/#term-config_db">CONFIG_DB</a> から削除し save し直す: <code>sudo sonic-db-cli CONFIG_DB del "&lt;key&gt;"</code></li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23772,14 +23772,16 @@
 <li><a href="../multi-asic-namespace/">multi-asic-namespace.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 21eb656ce66c -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-utilities @ 39732bceb — config save&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config save&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss-common @ 4305596 — configdb get/set&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss-common">sonic-swss-common</a> @ 4305596 — configdb get/set&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

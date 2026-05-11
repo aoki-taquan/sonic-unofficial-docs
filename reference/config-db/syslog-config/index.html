@@ -23611,7 +23611,7 @@
 
 <h1 id="syslog_config">SYSLOG_CONFIG テーブル<a class="headerlink" href="#syslog_config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ホスト全体の rsyslog グローバル設定を CONFIG_DB に保持するシングルトンテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> (<code>sonic-host-services</code> 内 <code>syslog</code> ハンドラ) が <code>/etc/rsyslog.conf</code> および各 docker の rsyslog テンプレに反映する。</p>
+<p>ホスト全体の rsyslog グローバル設定を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持するシングルトンテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> (<code>sonic-host-services</code> 内 <code>syslog</code> ハンドラ) が <code>/etc/rsyslog.conf</code> および各 docker の rsyslog テンプレに反映する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23674,7 +23674,7 @@
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>welf_firewall_name</code> は <code>must "(../format != 'standard')"</code> で WELF 形式時にのみ意味を持つ</li>
-<li>container 名 <code>SYSLOG_CONFIG</code>、内部 container 名 <code>GLOBAL</code> (YANG コメントには <code>SYSLOG_CONFIG_LIST</code> と書かれているが、実体は container)<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>container 名 <code>SYSLOG_CONFIG</code>、内部 container 名 <code>GLOBAL</code> (<a href="../../glossary/#term-yang">YANG</a> コメントには <code>SYSLOG_CONFIG_LIST</code> と書かれているが、実体は container)<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23718,6 +23718,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>syslog
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->
 
 <div class="footnote">
 <hr />

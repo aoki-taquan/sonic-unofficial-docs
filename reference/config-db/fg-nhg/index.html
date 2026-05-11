@@ -23846,7 +23846,7 @@
 
 <h1 id="fg_nhg">FG_NHG テーブル<a class="headerlink" href="#fg_nhg" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Fine-Grained ECMP (FG ECMP) の next-hop group 定義。プレフィックスやネクストホップ単位で、固定サイズのハッシュバケットを使ったフロー安定化 ECMP を提供する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>FgNhgOrch</code> が CONFIG_DB を購読する。</p>
+<p>Fine-Grained <a href="../../glossary/#term-ecmp">ECMP</a> (FG ECMP) の next-hop group 定義。プレフィックスやネクストホップ単位で、固定サイズのハッシュバケットを使ったフロー安定化 ECMP を提供する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>FgNhgOrch</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23967,12 +23967,12 @@
 </ul>
 <h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> の <code>FgNhgOrch</code>: SAI で固定サイズの NEXT_HOP_GROUP を生成し、メンバ追加/削除でハッシュバケット位置を維持</li>
+<li><code>orchagent</code> の <code>FgNhgOrch</code>: <a href="../../glossary/#term-sai">SAI</a> で固定サイズの NEXT_HOP_GROUP を生成し、メンバ追加/削除でハッシュバケット位置を維持</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>PORT</code>、<code>PORTCHANNEL</code></li>
-<li>関連 YANG: <code>sonic-fine-grained-ecmp</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-fine-grained-ecmp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24003,6 +24003,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>fgnhg<span class="w"> </span>active-hops
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3786ca270902 -->
 
 <div class="footnote">
 <hr />

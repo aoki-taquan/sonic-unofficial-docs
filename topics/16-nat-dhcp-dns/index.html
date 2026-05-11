@@ -23539,7 +23539,7 @@
 
 
 <h1 id="nat-dhcp-relay-time-dns-services">NAT / DHCP Relay / Time-DNS Services<a class="headerlink" href="#nat-dhcp-relay-time-dns-services" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり NAT、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や terminal server のような測定・補助サービスをまとめて読むための入口です。これらは BGP や ACL のように data plane の主役ではありませんが、ToR / management スイッチを「使える装置」にするための薄い層であり、container と daemon の境界、management VRF との関係を把握しないと運用で迷います。</p>
+<p>この章は、SONiC が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり <a href="../../reference/glossary/#term-nat">NAT</a>、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や terminal server のような測定・補助サービスをまとめて読むための入口です。これらは <a href="../../reference/glossary/#term-bgp">BGP</a> や <a href="../../reference/glossary/#term-acl">ACL</a> のように data plane の主役ではありませんが、ToR / management スイッチを「使える装置」にするための薄い層であり、container と daemon の境界、management <a href="../../reference/glossary/#term-vrf">VRF</a> との関係を把握しないと運用で迷います。</p>
 <p>NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP relay は L2/L3 broadcast を upstream へ橋渡しする agent、DHCP server は kea を内蔵してポート単位で leases を払い出す機能、time / DNS は OS レイヤ寄りの設定で management VRF 越しに通信する、というように責務がはっきり分かれます。章内のページでは、まずこれらを「どの container / daemon が処理するか」で並べ直します。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23553,10 +23553,10 @@
 <ol>
 <li><a href="concept/">概念</a>: edge service の範囲と、NAT / DHCP relay / DHCP server / time-DNS の責務分担。</li>
 <li><a href="architecture/">アーキテクチャ</a>: <code>docker-nat</code>、<code>docker-dhcp-relay</code>、<code>docker-dhcp-server</code>、kea、chrony と packet flow。</li>
-<li><a href="setup/">設定</a>: NAT、DHCP relay、DHCP server の CONFIG_DB / CLI / YANG リファレンス。</li>
+<li><a href="setup/">設定</a>: NAT、DHCP relay、DHCP server の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> リファレンス。</li>
 <li><a href="operations/">運用</a>: counter、DoS 緩和、service health の確認順序。</li>
 <li><a href="advanced/">発展トピック</a>: NTP / chrony 移行、static DNS、TWAMP Light、terminal server udev。</li>
-<li><a href="internals/">内部実装</a>: natsyncd / natorch / dhcp_relayd / kea-dhcp / chrony の責務分担と CONFIG_DB / APPL_DB / SAI への変換を実装側から見る。</li>
+<li><a href="internals/">内部実装</a>: natsyncd / natorch / dhcp_relayd / kea-dhcp / chrony の責務分担と CONFIG_DB / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-sai">SAI</a> への変換を実装側から見る。</li>
 </ol>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23582,6 +23582,7 @@
 <li><a href="../06-l2-vlan-lag/">L2 / VLAN / LAG / MC-LAG</a></li>
 <li><a href="../15-security-aaa/">Security / AAA / FIPS / Hardening</a></li>
 </ul>
+<!-- glossary-links-injected: d6b580496e1f -->
 
 
 

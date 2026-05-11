@@ -23752,14 +23752,14 @@
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>config save -y</code> 後の再起動で設定が古いまま戻る</li>
-<li><code>config reload -y</code> を打っても CLI が処理しない / 完了しても CONFIG_DB に乗らない</li>
-<li><code>config load_minigraph</code> で minigraph.xml から再構成しても期待設定にならない</li>
+<li><code>config reload -y</code> を打っても CLI が処理しない / 完了しても <a href="../../glossary/#term-config_db">CONFIG_DB</a> に乗らない</li>
+<li><code>config load_minigraph</code> で <a href="../../glossary/#term-minigraph.xml">minigraph.xml</a> から再構成しても期待設定にならない</li>
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><code>/etc/sonic/config_db.json</code> の権限 / オーナーが root 以外で書き込み失敗</strong></li>
 <li><strong>multi-asic 環境で host 側だけ save し、<code>config_db&lt;N&gt;.json</code> が更新されていない</strong></li>
-<li><strong>YANG / sonic-cfggen 検証で reject されたが ユーザが気付いていない</strong></li>
+<li><strong><a href="../../glossary/#term-yang">YANG</a> / <a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a> 検証で reject されたが ユーザが気付いていない</strong></li>
 <li><strong>db_migrator のバージョン不整合</strong>: ファイル format version と SONiC ビルドの期待バージョン不一致</li>
 <li><strong>minigraph.xml を編集したのに <code>load_minigraph</code> を打たず <code>reload</code> だけしている</strong></li>
 </ol>
@@ -23820,11 +23820,13 @@
 <li><a href="../../cli/sonic-cfggen/">../cli/sonic-cfggen.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 9a543bc5900d -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-utilities @ 39732bceb — <code>config/main.py</code>, <code>scripts/db_migrator.py</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>config/main.py</code>, <code>scripts/db_migrator.py</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

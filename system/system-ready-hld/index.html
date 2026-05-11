@@ -23721,7 +23721,7 @@
 </div>
 <h1 id="system-ready">System Ready<a class="headerlink" href="#system-ready" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の起動は <strong>非同期</strong>。systemd の service が <code>active</code> でも、その内部の SWSS 系 daemon が CONFIG_DB を消化して ASIC に届くまで時間が掛かる。「<strong>システムが本当に traffic を受けられる状態か</strong>」を一発で判定する仕組みがなく、Monit 系の 1 分 poll では遅延・粒度が不足<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の起動は <strong>非同期</strong>。systemd の service が <code>active</code> でも、その内部の SWSS 系 daemon が <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を消化して ASIC に届くまで時間が掛かる。「<strong>システムが本当に traffic を受けられる状態か</strong>」を一発で判定する仕組みがなく、Monit 系の 1 分 poll では遅延・粒度が不足<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>System Ready は Python 製 daemon <strong><code>sysmonitor</code></strong> を追加し<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>全 essential host service の up を <strong>event-driven</strong> で検出</li>
@@ -23752,7 +23752,7 @@
 <tbody>
 <tr>
 <td><code>CONFIG_DB.FEATURE\|&lt;name&gt;.check_up_status</code></td>
-<td><code>true</code> で system ready 判定対象（新規 leaf。YANG <code>sonic-feature</code> 拡張）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>true</code> で system ready 判定対象（新規 leaf。<a href="../../reference/glossary/#term-yang">YANG</a> <code>sonic-feature</code> 拡張）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><code>STATE_DB.FEATURE\|&lt;name&gt;.up_status</code></td>
@@ -23801,13 +23801,13 @@
 </span></code></pre></div>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>HLD Rev 0.4 で日付欄空欄</li>
+<li><a href="../../reference/glossary/#term-hld">HLD</a> Rev 0.4 で日付欄空欄</li>
 <li>ready 判定は <strong>App 自己申告に依存</strong>。app バグで <code>up_status</code> を書かないと永遠に ready にならない</li>
 <li>timeout 絶対値は HLD 固定なく実装/運用側に委ねる</li>
 <li>warm-boot 中の ready 判定は別扱い（warm-boot 完了の意味と微妙に異なる）</li>
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>systemd / Monit（完全置換ではなく ready 判定だけ sysmonitor が担う）/ system-health フレームワーク / <code>FEATURE</code> 表（<code>check_up_status</code> 追加）/ fastboot・warmboot / TACACS / AAA / SNMP の boot 順。</p>
+<p>systemd / Monit（完全置換ではなく ready 判定だけ sysmonitor が担う）/ system-health フレームワーク / <code>FEATURE</code> 表（<code>check_up_status</code> 追加）/ fastboot・warmboot / TACACS / <a href="../../reference/glossary/#term-aaa">AAA</a> / <a href="../../reference/glossary/#term-snmp">SNMP</a> の boot 順。</p>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>system-health<span class="w"> </span>sysready-status<span class="w"> </span>detail
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># fail_reason を見て該当 feature を追跡</span>
@@ -23831,6 +23831,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2116e7472e8b -->
 
 <div class="footnote">
 <hr />

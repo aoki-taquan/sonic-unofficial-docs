@@ -23784,7 +23784,7 @@
 
 
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>VOQ chassis 固有の機能は、BGP・LAG・Everflow・TSA・warm reboot のような既存機能領域ごとに別 HLD として書かれています。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹します。</p>
+<p><a href="../../../reference/glossary/#term-voq">VOQ</a> chassis 固有の機能は、<a href="../../../reference/glossary/#term-bgp">BGP</a>・<a href="../../../reference/glossary/#term-lag">LAG</a>・Everflow・TSA・warm reboot のような既存機能領域ごとに別 <a href="../../../reference/glossary/#term-hld">HLD</a> として書かれています。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹します。</p>
 <h2 id="voq-chassis-bgp">VOQ Chassis での BGP<a class="headerlink" href="#voq-chassis-bgp" title="Permanent link">&para;</a></h2>
 <p><code>bgp-setup-for-voq-chassis</code> は、VOQ chassis 上の BGP セッション設計を扱います。要点:</p>
 <ul>
@@ -23802,7 +23802,7 @@
 <ul>
 <li>LAG メンバーは複数 line card の system port にまたがれる。</li>
 <li>hash 結果に応じて egress system port が選ばれ、ingress 側 VOQ が宛先を切り替える。</li>
-<li>LACP は line card 側の teamd が動かし、chassis 全体としての membership は Chassis DB と協調する。</li>
+<li><a href="../../../reference/glossary/#term-lacp">LACP</a> は line card 側の <a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> が動かし、chassis 全体としての membership は Chassis DB と協調する。</li>
 </ul>
 <p>L2 / LAG の章本文は <a href="../../06-l2-vlan-lag/">06 L2 / VLAN / LAG</a> を参照し、VOQ 視点では「メンバーが line card 跨ぎになる可能性」「fabric を経由する hash 分散」を押さえます。</p>
 <ul>
@@ -23814,7 +23814,7 @@
 <ul>
 <li>mirror 元と mirror 宛先（collector）が別 line card にいる場合、cell スイッチングで fabric を経由する。</li>
 <li>ingress mirror と egress mirror は line card ごとに発生する。</li>
-<li>ACL bind 先や session 識別は ASIC namespace 単位で持つが、collector resolution は chassis 全体で一意。</li>
+<li><a href="../../../reference/glossary/#term-acl">ACL</a> bind 先や session 識別は ASIC namespace 単位で持つが、collector resolution は chassis 全体で一意。</li>
 </ul>
 <p>mirror / ACL の章本文は <a href="../../07-acl-copp-mirror/">07 ACL / CoPP / Mirror</a> を参照し、VOQ 視点では「mirror traffic も fabric を流れる」「per-line-card session が増える」点を押さえます。</p>
 <ul>
@@ -23836,7 +23836,7 @@
 <h2 id="multi-asic-warm-reboot">Multi-ASIC Warm Reboot<a class="headerlink" href="#multi-asic-warm-reboot" title="Permanent link">&para;</a></h2>
 <p><code>multi-asic-warm-reboot</code> は、Multi-ASIC SONiC の warm reboot 設計を扱います。VOQ chassis では line card 単位 / chassis 単位の両方が議論されます。</p>
 <ul>
-<li>各 ASIC namespace の syncd / orchagent / bgpd は ASIC ごとに warm restart する。</li>
+<li>各 ASIC namespace の <a href="../../../reference/glossary/#term-syncd">syncd</a> / <a href="../../../reference/glossary/#term-orchagent">orchagent</a> / bgpd は ASIC ごとに warm restart する。</li>
 <li>supervisor 側は Chassis DB を温存したまま再起動する。</li>
 <li>line card 単独 warm reboot 中、他 line card と fabric の状態を維持する。</li>
 </ul>
@@ -23850,8 +23850,8 @@
 <h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Fabric link telemetry</strong>: VOQ chassis では fabric link 自体が監視対象。<code>FABRIC_PORT_TABLE</code> の counter / error / link state を telemetry agent から export し、cell drop の兆候を早期検出する。</li>
-<li><strong>VOQ scheduling と credit loop</strong>: ingress VOQ が egress credit を受けて送出する仕組みで、credit return が遅延すると HOL blocking が出る。SAI 側 <code>SAI_QUEUE_ATTR_PFC_DLR_INIT_TYPE</code> などで dead-lock 検出と復旧を行う。</li>
-<li><strong>Chassis DB の scale</strong>: line card / port / nexthop が増えると Chassis DB の Redis サイズが伸びる。memory pressure と replication 遅延が運用課題になる。</li>
+<li><strong>VOQ scheduling と credit loop</strong>: ingress VOQ が egress credit を受けて送出する仕組みで、credit return が遅延すると HOL blocking が出る。<a href="../../../reference/glossary/#term-sai">SAI</a> 側 <code>SAI_QUEUE_ATTR_PFC_DLR_INIT_TYPE</code> などで dead-lock 検出と復旧を行う。</li>
+<li><strong>Chassis DB の scale</strong>: line card / port / nexthop が増えると Chassis DB の <a href="../../../reference/glossary/#term-redis">Redis</a> サイズが伸びる。memory pressure と replication 遅延が運用課題になる。</li>
 <li><strong>packet trim (truncate)</strong>: drop されるパケットの header だけ collector に送って visibility を確保する手法。chassis 級 drop 解析で有効。</li>
 <li><strong>Multi-ASIC host のテスト</strong>: VS テストで multi-ASIC を再現する場合 (<a href="../../21-lab-vs-developer/">21 Lab</a>)、namespace ごとの sonic-vs を立ち上げる手順がある。</li>
 </ul>
@@ -23866,11 +23866,11 @@
 <ul>
 <li>VOQ chassis の disaggregated software model (Supervisor と Line card の独立バージョン) が中長期テーマ。</li>
 <li>Multi-ASIC 単一 host (pizza box の multi-ASIC switch) と分散 chassis を同じ orchestration で扱う統一が進行中。</li>
-<li>DASH / SmartSwitch 構成と VOQ chassis を組合せる構成 (<a href="../../13-dash-smartswitch/">13 DASH</a>) の議論が早期段階で進む。</li>
+<li><a href="../../../reference/glossary/#term-dash">DASH</a> / <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> 構成と VOQ chassis を組合せる構成 (<a href="../../13-dash-smartswitch/">13 DASH</a>) の議論が早期段階で進む。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://1.ieee802.org/dcb/">IEEE 802.1Qcz</a> — Congestion Isolation (fabric 内 PFC のヒント)</li>
+<li><a href="https://1.ieee802.org/dcb/">IEEE 802.1Qcz</a> — Congestion Isolation (fabric 内 <a href="../../../reference/glossary/#term-pfc">PFC</a> のヒント)</li>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc7567">RFC 7567</a> — AQM (VOQ credit と組合せ参考)</li>
 <li>VOQ アーキテクチャは商用 ASIC ベンダー仕様書に依存し、IETF/IEEE 標準は限定的。</li>
 </ul>
@@ -23878,8 +23878,9 @@
 <ul>
 <li><code>sonic-buildimage</code> で <code>chassis_db</code> / <code>database-chassis</code> 関連の修正が継続。replication 安定性とスキーマ拡張が主軸。</li>
 <li><code>sonic-swss</code> の <code>vrforch</code> / <code>routeorch</code> / <code>lagorch</code> で system port / system LAG 周りの race fix が散発的に入る。</li>
-<li>VOQ chassis のテスト基盤 (sonic-mgmt) で multi-DUT scenario の coverage 拡張 PR が定期的にある。</li>
+<li>VOQ chassis のテスト基盤 (<a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>) で multi-DUT scenario の coverage 拡張 PR が定期的にある。</li>
 </ul>
+<!-- glossary-links-injected: 841aa1b3e937 -->
 
 
 

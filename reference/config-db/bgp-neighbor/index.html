@@ -23846,9 +23846,9 @@
 
 <h1 id="bgp_neighbor">BGP_NEIGHBOR テーブル<a class="headerlink" href="#bgp_neighbor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BGP 隣接 (peer) を CONFIG_DB で定義するテーブル。<code>bgpcfgd</code> (テンプレ展開) または <code>frr-mgmt-framework</code> (DEVICE_METADATA の <code>frr_mgmt_framework_config = true</code> のとき) が読み出し、FRR (<code>bgpd</code>) に反映する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。テーブル定義は 2 形態に分かれる:</p>
+<p><a href="../../glossary/#term-bgp">BGP</a> 隣接 (peer) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> で定義するテーブル。<code>bgpcfgd</code> (テンプレ展開) または <code>frr-mgmt-framework</code> (DEVICE_METADATA の <code>frr_mgmt_framework_config = true</code> のとき) が読み出し、<a href="../../glossary/#term-frr">FRR</a> (<code>bgpd</code>) に反映する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。テーブル定義は 2 形態に分かれる:</p>
 <ul>
-<li><code>BGP_NEIGHBOR_TEMPLATE_LIST</code> (key: <code>neighbor</code>): bgpcfgd テンプレ用の単純形式</li>
+<li><code>BGP_NEIGHBOR_TEMPLATE_LIST</code> (key: <code>neighbor</code>): <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> テンプレ用の単純形式</li>
 <li><code>BGP_NEIGHBOR_LIST</code> (key: <code>vrf_name</code>, <code>neighbor</code>): generic 形式。<code>frr_mgmt_framework_config = true</code> のときに使われる</li>
 </ul>
 <!-- cdb-mermaid -->
@@ -23962,7 +23962,7 @@
 <tr>
 <td><code>bfd</code></td>
 <td>boolean</td>
-<td>BFD multihop / BFD enable</td>
+<td><a href="../../glossary/#term-bfd">BFD</a> multihop / BFD enable</td>
 </tr>
 <tr>
 <td><code>peer_port</code></td>
@@ -23992,7 +23992,7 @@
 </ul>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>BGP_NEIGHBOR_TEMPLATE_LIST</code> の <code>asn</code> は 1 以上（YANG <code>must</code> で refine）</li>
+<li><code>BGP_NEIGHBOR_TEMPLATE_LIST</code> の <code>asn</code> は 1 以上（<a href="../../glossary/#term-yang">YANG</a> <code>must</code> で refine）</li>
 <li>一部 leaf に <code>must</code> 経由のクロス参照（<code>BGP_GLOBALS.vrf_name</code>、<code>BGP_PEER_GROUP</code>）がある</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -24047,6 +24047,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp neighbor 10.0.0.1&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f65b6ed8bf8a -->
 
 <div class="footnote">
 <hr />

@@ -23652,7 +23652,7 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。各機能章で <code>*Orch</code>、<code>*syncd</code>、<code>*mgrd</code> のように出てくる名前は、この絵のどこに座るかで役割が決まる。</p>
+<p>SONiC の内部実装を 1 枚で押さえるなら、左から CLI / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / 制御プレーン daemon、中央に <a href="../../../reference/glossary/#term-redis">Redis</a> DB 群、右に <a href="../../../reference/glossary/#term-syncd">syncd</a> と <a href="../../../reference/glossary/#term-sai">SAI</a>/ASIC を置く絵になる。各機能章で <code>*Orch</code>、<code>*syncd</code>、<code>*mgrd</code> のように出てくる名前は、この絵のどこに座るかで役割が決まる。</p>
 <pre class="mermaid"><code>flowchart LR
     subgraph IN[設定・制御の入口]
       CLI[CLI / sonic-cfggen]
@@ -23700,13 +23700,13 @@
     SD --&gt; STDB
     SD --&gt; CTRDB</code></pre>
 <h2 id="db">DB ごとの責務<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
-<p><code>CONFIG_DB</code> は永続化された設定の唯一の source of truth である。<code>APPL_DB</code> は制御プレーンが「ASIC にこうしたい」と書く intent の場で、各機能の <code>*_TABLE</code> がここに置かれる。<code>STATE_DB</code> は実際の状態と監視ヒントで、syncd や各 daemon が書き込む。<code>COUNTERS_DB</code> は ASIC から取得した counter の集計先で、flexcounter 群が更新する。<code>ASIC_DB</code> は SAI object を Redis 表現に落としたもので、orchagent が書き、syncd が読む。<code>ERROR_DB</code> は SAI 失敗を APP 側に伝えるためのチャネルである。</p>
+<p><code>CONFIG_DB</code> は永続化された設定の唯一の source of truth である。<code>APPL_DB</code> は制御プレーンが「ASIC にこうしたい」と書く intent の場で、各機能の <code>*_TABLE</code> がここに置かれる。<code>STATE_DB</code> は実際の状態と監視ヒントで、syncd や各 daemon が書き込む。<code>COUNTERS_DB</code> は ASIC から取得した counter の集計先で、flexcounter 群が更新する。<code>ASIC_DB</code> は SAI object を Redis 表現に落としたもので、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が書き、syncd が読む。<code>ERROR_DB</code> は SAI 失敗を APP 側に伝えるためのチャネルである。</p>
 <p>スキーマの一次ソースは <a href="../../../internals/swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a> を読む。</p>
 <h2 id="producerstatetable">ProducerStateTable と非同期化<a class="headerlink" href="#producerstatetable" title="Permanent link">&para;</a></h2>
-<p>APPL_DB と ASIC_DB は、書き手と読み手が別プロセスに分かれる。Redis に直に SET するのではなく、ProducerStateTable / ConsumerStateTable を介して「key の変更通知」を queue として渡す。これにより読み手側は変更分だけを取り出して処理できる。ZMQ ベースに置き換える設計は <a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a> を読む。</p>
+<p><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> と <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> は、書き手と読み手が別プロセスに分かれる。Redis に直に SET するのではなく、<a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / <a href="../../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a> を介して「key の変更通知」を queue として渡す。これにより読み手側は変更分だけを取り出して処理できる。ZMQ ベースに置き換える設計は <a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a> を読む。</p>
 <p>ASIC_DB 側は sairedis が非同期に消費し、SAI 呼び出しに変換する。SAI 呼び出しの結果は完了通知や ERROR_DB を介して orchagent に戻る。これが「orchagent が ASIC_DB に書いたら、すぐ ASIC に入っているとは限らない」根拠である。</p>
 <h2 id="syncd-sai">syncd と SAI の境界<a class="headerlink" href="#syncd-sai" title="Permanent link">&para;</a></h2>
-<p>syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 失敗は syncd で観測され、<code>handleSaiSetStatus</code>/<code>handleSaiCreateStatus</code> 系の virtual で処理される。fatal なものは crash、recoverable なものは ERROR_DB / STATE_DB 経由で上位に通知する設計である。詳細は <a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング</a> と <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework</a> を読む。</p>
+<p>syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 失敗は syncd で観測され、<code>handleSaiSetStatus</code>/<code>handleSaiCreateStatus</code> 系の virtual で処理される。fatal なものは crash、recoverable なものは ERROR_DB / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> 経由で上位に通知する設計である。詳細は <a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング</a> と <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework</a> を読む。</p>
 <h2 id="_2">機能章はこの絵のどこを使うか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23718,11 +23718,11 @@
 <tbody>
 <tr>
 <td><a href="../../02-bgp/">BGP</a></td>
-<td>FRR → fpmsyncd → APPL_DB（ROUTE_TABLE/NHG）→ RouteOrch → ASIC_DB</td>
+<td><a href="../../../reference/glossary/#term-frr">FRR</a> → <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → APPL_DB（<a href="../../../reference/glossary/#term-route_table">ROUTE_TABLE</a>/NHG）→ RouteOrch → ASIC_DB</td>
 </tr>
 <tr>
 <td><a href="../../06-l2-vlan-lag/">L2 VLAN LAG</a></td>
-<td>CONFIG_DB → vlanmgrd/portmgrd → APPL_DB → PortsOrch/VlanOrch → ASIC_DB</td>
+<td><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> → <a href="../../../reference/glossary/#term-vlanmgrd">vlanmgrd</a>/<a href="../../../reference/glossary/#term-portmgrd">portmgrd</a> → APPL_DB → PortsOrch/VlanOrch → ASIC_DB</td>
 </tr>
 <tr>
 <td><a href="../../07-acl-copp-mirror/">ACL CoPP Mirror</a></td>
@@ -23743,6 +23743,7 @@
 <li><a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a></li>
 <li><a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a></li>
 </ul>
+<!-- glossary-links-injected: 2bb5520a87fa -->
 
 
 

@@ -23751,14 +23751,14 @@
 </div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>VLAN 配下のクライアントが DHCP DISCOVER を出すが OFFER を受け取れない</li>
+<li><a href="../../glossary/#term-vlan">VLAN</a> 配下のクライアントが DHCP DISCOVER を出すが OFFER を受け取れない</li>
 <li><code>show dhcp_relay ipv4 helper</code> には正しい helper IP が見えるが pcap で外向き relay フレームが出ていない</li>
 <li>反対に relay forward は出るが、server からの reply が戻ってこない</li>
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>VLAN_INTERFACE に IP が振られていない</strong>: relay agent の <code>giaddr</code> が 0.0.0.0 になり server 側で破棄</li>
-<li><strong>helper サーバへの L3 到達性なし</strong> (route / firewall / VRF 不一致)</li>
+<li><strong>helper サーバへの L3 到達性なし</strong> (route / firewall / <a href="../../glossary/#term-vrf">VRF</a> 不一致)</li>
 <li><strong>helper IP の登録漏れ / typo</strong>: <code>DHCP_RELAY|Vlan100</code> の <code>dhcpv4_servers</code> が空</li>
 <li><strong><code>dhcp_relay</code> コンテナが起動していない</strong>: <code>show feature status</code> で disabled</li>
 <li><strong>option 82 (circuit/remote-id) の挿入仕様が server と不一致</strong> → server が DISCOVER を黙って drop</li>
@@ -23818,6 +23818,8 @@
 <li><a href="../../config-db/dhcpv4-relay/">../config-db/dhcpv4-relay.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 7693efbae10f -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23825,7 +23827,7 @@
 <p>sonic-net/sonic-dhcp-relay @ 7316417 — relay.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — config vlan dhcp_relay&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config vlan dhcp_relay&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

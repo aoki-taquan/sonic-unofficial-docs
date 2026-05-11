@@ -23932,7 +23932,7 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>AAA と管理面ポリシーは「動いている間は気付かれない」種類の機能のため、運用上は事故の予防と回復の手順が中心になります。ここでは password、default credential、reset、フォールバック確認の四つを順に扱います。</p>
+<p><a href="../../../reference/glossary/#term-aaa">AAA</a> と管理面ポリシーは「動いている間は気付かれない」種類の機能のため、運用上は事故の予防と回復の手順が中心になります。ここでは password、default credential、reset、フォールバック確認の四つを順に扱います。</p>
 <h2 id="_2">現状確認の入口<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ show aaa
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>AAA authentication login         : tacacs+,local
@@ -23990,7 +23990,7 @@
 </span></code></pre></div>
 <p>ロックされたユーザーの解除は <code>sudo faillock --user &lt;name&gt; --reset</code> です。<code>chage -E -1</code> で account expiration を解除できます。本番作業前に手元のシリアル経由で local user に入れることを必ず確認してから外部 AAA を切替えます。</p>
 <h2 id="default-credential-management">Default credential management<a class="headerlink" href="#default-credential-management" title="Permanent link">&para;</a></h2>
-<p>工場出荷時の <code>admin/YourPaSsWoRd</code> のような初期パスワードは、初回ログイン時に強制的に変更させる仕組みが <a href="../../../management/default-credential-management-for-california-sb-327-conformance/">default credential management</a> で導入されています。California SB-327 をはじめとする規制対応が主目的で、初期 image のリプレース運用や ZTP からの初回起動時に必ず通る経路です。</p>
+<p>工場出荷時の <code>admin/YourPaSsWoRd</code> のような初期パスワードは、初回ログイン時に強制的に変更させる仕組みが <a href="../../../management/default-credential-management-for-california-sb-327-conformance/">default credential management</a> で導入されています。California SB-327 をはじめとする規制対応が主目的で、初期 image のリプレース運用や <a href="../../../reference/glossary/#term-ztp">ZTP</a> からの初回起動時に必ず通る経路です。</p>
 <h3 id="_3">初回ログインの典型シーケンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$ ssh admin@new-switch
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@new-switch&#39;s password:
@@ -24028,7 +24028,7 @@
 <li><code>sshd</code> のログ（<code>journalctl -u ssh</code>）で接続拒否か認証失敗かを切り分ける。</li>
 <li>PAM 経路を疑う場合、<code>/etc/pam.d/sshd</code> 等が <code>hostcfgd</code> 出力どおりかを比較する。</li>
 <li>NSS 経路を疑う場合、<code>getent passwd &lt;user&gt;</code> でバックエンドの解決状況を確認する。</li>
-<li>TACACS+ 経路は <code>/etc/tacplus_*</code> の中身と、サーバー到達性（management VRF 経由含む）を確認する。</li>
+<li>TACACS+ 経路は <code>/etc/tacplus_*</code> の中身と、サーバー到達性（management <a href="../../../reference/glossary/#term-vrf">VRF</a> 経由含む）を確認する。</li>
 <li>ロックアウトが疑われる場合は <code>pam_faillock</code> の状態と、シリアル経由の local ログインの可否を確認する。</li>
 </ol>
 <h3 id="_8">典型ログとその意味<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
@@ -24066,7 +24066,7 @@
 <tr>
 <td>PAM 実体</td>
 <td><code>/etc/pam.d/sshd</code>, <code>/etc/pam.d/common-auth</code></td>
-<td>hostcfgd が <code>/usr/share/sonic/templates/</code> から展開</td>
+<td><a href="../../../reference/glossary/#term-hostcfgd">hostcfgd</a> が <code>/usr/share/sonic/templates/</code> から展開</td>
 </tr>
 <tr>
 <td>NSS 実体</td>
@@ -24145,7 +24145,7 @@
 </tr>
 <tr>
 <td>default credential 変更</td>
-<td><code>/var/log/syslog</code> (<code>first-login</code>), CONFIG_DB の <code>DEFAULT_USER</code> flag</td>
+<td><code>/var/log/syslog</code> (<code>first-login</code>), <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>DEFAULT_USER</code> flag</td>
 </tr>
 <tr>
 <td>AAA 設定変更</td>
@@ -24158,11 +24158,12 @@
 <ol>
 <li><strong>TACACS+ shared key を間違えて全員ロックアウト</strong> — 必ず 2 セッション体制、または <code>aaa fallback=True</code> を維持した状態で投入する。</li>
 <li><strong><code>config save</code> 前の reload で AAA 設定が消滅</strong> — 緊急時の rollback を意図して <code>config reload</code> するも、save 前の変更はそのまま消える。事前 backup を <code>config_db.json.bak</code> で取る。</li>
-<li><strong>管理 IF の ACL で SSH を遮断</strong> — ACL 変更後にすぐ確認しないと、別アクセス手段が無い遠隔機で詰む。</li>
+<li><strong>管理 IF の <a href="../../../reference/glossary/#term-acl">ACL</a> で SSH を遮断</strong> — ACL 変更後にすぐ確認しないと、別アクセス手段が無い遠隔機で詰む。</li>
 <li><strong>password expiration の一斉到達</strong> — 全機を同日にプロビジョニングすると同日に expire する。<code>chage -d</code> でずらす運用が必要。</li>
 <li><strong>シリアル経由でも入れない設定（root login 完全禁止 + local user lock）</strong> — 1 つは緊急用 local user を残しておく。</li>
 </ol>
 <p>データプレーンの暗号や platform 信頼チェーンの運用は <a href="../internals/">内部実装</a> と <a href="../advanced/">発展トピック</a> で扱います。management plane の到達性確認は <a href="../../09-telemetry-snmp/operations/">Telemetry / SNMP の運用</a> も合わせて参照してください。</p>
+<!-- glossary-links-injected: bf8806c6923e -->
 
 
 

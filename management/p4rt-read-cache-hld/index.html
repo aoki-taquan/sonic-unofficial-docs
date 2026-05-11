@@ -23863,7 +23863,7 @@
 <h1 id="p4rt-app-read-pi-table_entry_cache_">P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）<a class="headerlink" href="#p4rt-app-read-pi-table_entry_cache_" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>P4 Runtime (P4RT) サーバはコントローラから 3 種の操作（Stream / Write / Read）を受ける。SONiC の P4RT App は <strong>1 リクエスト同時実行</strong> モデルで動くため、Read が遅いと Write を含む他リクエストが詰まる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>実測では 16,000 フローの Read で <strong>約 1.30s</strong> を要し、その大半（1.28s）が AppDb (Redis) の <code>HGETALL</code> を 16,000 回叩く時間で消える。さらに Redis の生データを Platform Independent (PI) 形式へ変換する処理にも一定時間がかかる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>実測では 16,000 フローの Read で <strong>約 1.30s</strong> を要し、その大半（1.28s）が AppDb (<a href="../../reference/glossary/#term-redis">Redis</a>) の <code>HGETALL</code> を 16,000 回叩く時間で消える。さらに Redis の生データを Platform Independent (PI) 形式へ変換する処理にも一定時間がかかる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は P4RT App プロセス内に <strong>PI 形式そのままを保持するキャッシュ</strong> を持たせ、Read 時には Redis にアクセスせずキャッシュから直接返す。実測では同等のフロー数で Read が <strong>40ms</strong>（約 40 倍高速化）に短縮される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">キャッシュ実体<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23918,7 +23918,7 @@
 <h3 id="read">Read<a class="headerlink" href="#read" title="Permanent link">&para;</a></h3>
 <p>Read リクエストは Redis を見ずキャッシュを直接走査して返す。これにより <code>KEYS P4RT_TABLE:*</code> + <code>HGETALL</code> ループの O(N) Redis 往復が消える<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="appdb">キャッシュと AppDb の同期検証<a class="headerlink" href="#appdb" title="Permanent link">&para;</a></h3>
-<p>P4Orch は P4 エントリを <strong>独自に書き換えない</strong> 想定なので、定常的なポーリングは不要<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ただし「2 つの Source of Truth」が原理的に存在するため、HLD は明示的に <strong>検証ロジック</strong> を組み込むと述べる<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>P4Orch は P4 エントリを <strong>独自に書き換えない</strong> 想定なので、定常的なポーリングは不要<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ただし「2 つの Source of Truth」が原理的に存在するため、<a href="../../reference/glossary/#term-hld">HLD</a> は明示的に <strong>検証ロジック</strong> を組み込むと述べる<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>Redis の全 <code>P4RT_TABLE</code> エントリを読む</li>
 <li>各エントリを PI 形式に変換</li>
@@ -23973,7 +23973,7 @@ reasoning: Write 連動更新ルールと検証ロジックの根拠。
 </tr>
 <tr>
 <td>Exp.3 (cache 有り)</td>
-<td>22,152 フロー（VRF 64, RIF 64, Neighbor 512, Nexthop 512, IPv4 10000, IPv6 10000, WCMP 1000×2）</td>
+<td>22,152 フロー（<a href="../../reference/glossary/#term-vrf">VRF</a> 64, <a href="../../reference/glossary/#term-rif">RIF</a> 64, Neighbor 512, Nexthop 512, IPv4 10000, IPv6 10000, WCMP 1000×2）</td>
 <td><strong>40ms</strong></td>
 </tr>
 </tbody>
@@ -24028,14 +24028,14 @@ reasoning: Write 連動更新ルールと検証ロジックの根拠。
 <p>数十万エントリ規模でも MB オーダの追加メモリで済む見積。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
-<p>本機能はプロセス内最適化であり、CONFIG_DB / CLI / YANG への外部表面は持たない。設定項目は HLD 上では言及されていない（オン/オフのフラグや検証頻度の設定有無は実装依存）。</p>
+<p>本機能はプロセス内最適化であり、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> への外部表面は持たない。設定項目は HLD 上では言及されていない（オン/オフのフラグや検証頻度の設定有無は実装依存）。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>該当なし（コードビルド時の機能）。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>2 つの Source of Truth リスク</strong>: cache と AppDb がずれる可能性は構造上ゼロにできない。HLD は検証ロジックでの突合を必須としている<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>Warm boot は未対応</strong>: 現時点で P4RT App が warm boot 未対応のため、再起動でキャッシュは消える。前述の事前充填策は将来の対応案<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>メモリ消費</strong>: PI 形式の保持で常駐メモリが増える。HLD の見積では数十万エントリで数 MB だが、ACL 等で大規模化するとさらに増える。</li>
+<li><strong>メモリ消費</strong>: PI 形式の保持で常駐メモリが増える。HLD の見積では数十万エントリで数 MB だが、<a href="../../reference/glossary/#term-acl">ACL</a> 等で大規模化するとさらに増える。</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24056,6 +24056,8 @@ reasoning: Write 連動更新ルールと検証ロジックの根拠。
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f235cb0ee2df -->
 
 <div class="footnote">
 <hr />

@@ -23824,7 +23824,7 @@
 
 <h1 id="scheduler">SCHEDULER テーブル<a class="headerlink" href="#scheduler" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>キュー / ポートに適用するスケジューラ（DWRR / WRR / STRICT）と dual-rate token bucket policer (CIR / PIR / CBS / PBS) のプロファイルを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が SAI scheduler を生成、<code>QUEUE.scheduler</code> から leafref で参照される。</p>
+<p>キュー / ポートに適用するスケジューラ（DWRR / WRR / STRICT）と dual-rate token bucket policer (CIR / PIR / CBS / PBS) のプロファイルを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> scheduler を生成、<code>QUEUE.scheduler</code> から leafref で参照される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23932,9 +23932,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>QUEUE</code>、<code>PORT_QOS_MAP</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>QUEUE</code>、<code>PORT_QOS_MAP</code></li>
 <li>関連 CLI: なし</li>
-<li>関連 YANG: <code>sonic-scheduler</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-scheduler</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23970,6 +23970,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>queue<span class="w"> </span>counters
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: bbcc78132807 -->
 
 <div class="footnote">
 <hr />

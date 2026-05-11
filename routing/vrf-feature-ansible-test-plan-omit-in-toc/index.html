@@ -23762,7 +23762,7 @@
 </div>
 <h1 id="vrf-ansible-t0-bgpaclloopbackwarm-reboot-e2e">VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）<a class="headerlink" href="#vrf-ansible-t0-bgpaclloopbackwarm-reboot-e2e" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>vrf-vs-test-plan</code> が SwSS 内部の DB 反映を見るのに対し、本プランは <strong>実 SONiC スイッチ上で VRF 機能を E2E 検証</strong> する。<code>t0</code> トポロジ前提で、PortChannel / VLAN を 2 つの VRF (<code>Vrf1</code> / <code>Vrf2</code>) に分け、neighbor / route 学習、ACL redirect、loopback、warm-reboot を網羅する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>vrf-vs-test-plan</code> が SwSS 内部の DB 反映を見るのに対し、本プランは <strong>実 SONiC スイッチ上で <a href="../../reference/glossary/#term-vrf">VRF</a> 機能を E2E 検証</strong> する。<code>t0</code> トポロジ前提で、<a href="../../reference/glossary/#term-portchannel">PortChannel</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a> を 2 つの VRF (<code>Vrf1</code> / <code>Vrf2</code>) に分け、neighbor / route 学習、<a href="../../reference/glossary/#term-acl">ACL</a> redirect、loopback、warm-reboot を網羅する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="topology-vrf">Topology / VRF 配置例<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#topology-vrf" title="Permanent link">&para;</a></h3>
 <table>
@@ -23869,20 +23869,20 @@
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>t0</code> トポロジ前提</li>
-<li>TODO（HLD 末尾）: <code>fallback_lookup</code> 属性、VRF 間 route leak、everflow VRF 対応、ssh 等 application の VRF 対応 は <strong>本プラン範囲外</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>TODO（<a href="../../reference/glossary/#term-hld">HLD</a> 末尾）: <code>fallback_lookup</code> 属性、VRF 間 route leak、everflow VRF 対応、ssh 等 application の VRF 対応 は <strong>本プラン範囲外</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>1000 VRF テストは生成時間 / メモリの観点で実機制約を受ける可能性あり</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>FRR (zebra/bgpd)</strong>: VRF 別ルーティングテーブルの中核</li>
+<li><strong><a href="../../reference/glossary/#term-frr">FRR</a> (<a href="../../reference/glossary/#term-zebra">zebra</a>/bgpd)</strong>: VRF 別ルーティングテーブルの中核</li>
 <li><strong>ACL redirect</strong>: <code>redirect:&lt;ip&gt;@&lt;intf&gt;</code> action の VRF 跨ぎ振る舞い</li>
 <li><strong>warm-reboot</strong>: system + swss warm の双方で連続トラフィックを保証</li>
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
-<p>本ページは sonic-mgmt 配下の Ansible テストプラン記述で、対象実装側 (SONiC NOS) の確認ポイント:</p>
+<p>本ページは <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> 配下の Ansible テストプラン記述で、対象実装側 (SONiC NOS) の確認ポイント:</p>
 <ul>
-<li><code>sonic-swss/cfgmgr/vrfmgr.cpp:12-26</code> で <code>VRF_TABLE_START 1001</code> / <code>VRF_TABLE_END 5097</code> / <code>MGMT_VRF_TABLE_ID 6000</code> を持ち、<code>m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)</code> / <code>m_appVxlanVrfTableProducer(appDb, APP_VXLAN_VRF_TABLE_NAME)</code> / <code>m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)</code> / <code>m_stateVrfObjectTable(stateDb, STATE_VRF_OBJECT_TABLE_NAME)</code> を open。テストプランが要求する <code>config vrf</code> → CONFIG_DB → vrfmgrd → APPL_DB / Linux kernel の流路は cfgmgr に実装済み。</li>
+<li><code>sonic-swss/cfgmgr/vrfmgr.cpp:12-26</code> で <code>VRF_TABLE_START 1001</code> / <code>VRF_TABLE_END 5097</code> / <code>MGMT_VRF_TABLE_ID 6000</code> を持ち、<code>m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)</code> / <code>m_appVxlanVrfTableProducer(appDb, APP_VXLAN_VRF_TABLE_NAME)</code> / <code>m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)</code> / <code>m_stateVrfObjectTable(stateDb, STATE_VRF_OBJECT_TABLE_NAME)</code> を open。テストプランが要求する <code>config vrf</code> → <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> → <a href="../../reference/glossary/#term-vrfmgrd">vrfmgrd</a> → <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / Linux kernel の流路は cfgmgr に実装済み。</li>
 <li>4096 VRF（VRF_TABLE_START=1001, END=5097）のレンジが定義されており、HLD/プランの「1000 VRF スケール」記述と整合。</li>
 </ul>
 <p>テストプラン自体は記述で、現行 master の vrfmgrd 実装と整合。<code>code-verified</code> に昇格。</p>
@@ -23892,6 +23892,8 @@
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3ad5f2c8e7bc -->
 
 <div class="footnote">
 <hr />

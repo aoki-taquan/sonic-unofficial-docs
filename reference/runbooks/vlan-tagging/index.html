@@ -23758,10 +23758,10 @@
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><code>add</code> 時に <code>-u</code> (untagged) フラグの付け忘れ / 余計</strong>: デフォルトは tagged 動作</li>
-<li><strong>既存の Untagged VLAN 多重設定</strong>: ポートが既に別 VLAN の untagged member であるため新規 untagged 追加に失敗（silently fallback）</li>
+<li><strong>既存の Untagged <a href="../../glossary/#term-vlan">VLAN</a> 多重設定</strong>: ポートが既に別 VLAN の untagged member であるため新規 untagged 追加に失敗（silently fallback）</li>
 <li><strong>VLAN_MEMBER の <code>tagging_mode</code> が <code>priority_tagged</code> になっている</strong>: 0 priority tag 付与で意図と違う動作</li>
 <li><strong>対向側がトランクではなく access ポート</strong>: 自機側が tagged 送出しても対向で drop / strip</li>
-<li><strong>PortChannel メンバーに対する add 操作</strong>: 物理ポートではなく LAG 名で追加する必要がある</li>
+<li><strong><a href="../../glossary/#term-portchannel">PortChannel</a> メンバーに対する add 操作</strong>: 物理ポートではなく <a href="../../glossary/#term-lag">LAG</a> 名で追加する必要がある</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-config_db">1. CONFIG_DB の確認<a class="headerlink" href="#1-config_db" title="Permanent link">&para;</a></h3>
@@ -23769,15 +23769,15 @@
 </span></code></pre></div>
 <ul>
 <li>期待値: <code>{"tagging_mode": "tagged"}</code> または <code>"untagged"</code></li>
-<li>異常: <code>tagging_mode</code> が存在しない → vlanmgrd が member を取り込んでいない</li>
+<li>異常: <code>tagging_mode</code> が存在しない → <a href="../../glossary/#term-vlanmgrd">vlanmgrd</a> が member を取り込んでいない</li>
 </ul>
 <h3 id="2-appl_db-asic_db">2. APPL_DB / ASIC_DB への伝搬確認<a class="headerlink" href="#2-appl_db-asic_db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;VLAN_MEMBER_TABLE:Vlan100:Ethernet8&quot;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
 <ul>
-<li>期待: APPL_DB / ASIC_DB の双方に対応する key が存在</li>
-<li>異常: CONFIG_DB のみ → <code>docker logs swss 2&gt;&amp;1 | grep -i vlanmgr</code> で例外を確認</li>
+<li>期待: <a href="../../glossary/#term-appl_db">APPL_DB</a> / <a href="../../glossary/#term-asic_db">ASIC_DB</a> の双方に対応する key が存在</li>
+<li>異常: <a href="../../glossary/#term-config_db">CONFIG_DB</a> のみ → <code>docker logs swss 2&gt;&amp;1 | grep -i vlanmgr</code> で例外を確認</li>
 </ul>
 <h3 id="3-vlan-untagged-member">3. 同一ポートの他 VLAN untagged member 検索<a class="headerlink" href="#3-vlan-untagged-member" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;VLAN_MEMBER|*|Ethernet8&quot;</span>
@@ -23816,7 +23816,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span>-u<span class="w"> </span><span class="m">100</span><span class="w"> </span>Ethernet8
 </span></code></pre></div>
 <ul>
-<li>swss / syncd の整合が崩れた疑いがあれば: <code>sudo config save -y &amp;&amp; sudo systemctl restart swss</code></li>
+<li>swss / <a href="../../glossary/#term-syncd">syncd</a> の整合が崩れた疑いがあれば: <code>sudo config save -y &amp;&amp; sudo systemctl restart swss</code></li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23827,14 +23827,16 @@
 <li><a href="../../config-db/vlan-member/">../config-db/vlan-member.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 0e99457f44c0 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ 4305596 — vlanmgrd&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — vlanmgrd&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — config vlan member&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config vlan member&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

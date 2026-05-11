@@ -23885,13 +23885,13 @@
 <h1 id="srv6-vpnl3vpn-over-srv6-srv6-policy">SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）<a class="headerlink" href="#srv6-vpnl3vpn-over-srv6-srv6-policy" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読者が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>SONiC で <strong>SRv6 L3VPN を BGP-VPN AF と組み合わせて動かす</strong> ための data 構造はどこにあるか</li>
-<li><strong>APPL_DB の新規/拡張テーブル</strong>（<code>SRV6_POLICY_TABLE</code> / <code>ROUTE_TABLE.vpn_sid</code> / <code>SRV6_MY_SID_TABLE</code>）は何のために存在するか</li>
-<li><strong>SAI / SWSS / SONiC / FRR</strong> のどこをいじっているのか</li>
-<li><strong>既知の workaround</strong>（zebra が MY_SID を netlink で渡さない問題）と、どんな構成で本機能が動くのか</li>
+<li>SONiC で <strong><a href="../../reference/glossary/#term-srv6">SRv6</a> L3VPN を <a href="../../reference/glossary/#term-bgp">BGP</a>-VPN AF と組み合わせて動かす</strong> ための data 構造はどこにあるか</li>
+<li><strong><a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の新規/拡張テーブル</strong>（<code>SRV6_POLICY_TABLE</code> / <code>ROUTE_TABLE.vpn_sid</code> / <code>SRV6_MY_SID_TABLE</code>）は何のために存在するか</li>
+<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> / SWSS / SONiC / <a href="../../reference/glossary/#term-frr">FRR</a></strong> のどこをいじっているのか</li>
+<li><strong>既知の workaround</strong>（<a href="../../reference/glossary/#term-zebra">zebra</a> が MY_SID を netlink で渡さない問題）と、どんな構成で本機能が動くのか</li>
 </ul>
 <h2 id="1">1. 全体像と適用シナリオ<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>Alibaba がエッジルータ用ホワイトボックス SONiC で運用している実機ベースの提案 HLD。FRR 8.4+ を前提に、<strong>SRv6 を network programming framework</strong> として VPN 識別と policy ベース steering を実装する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Alibaba がエッジルータ用ホワイトボックス SONiC で運用している実機ベースの提案 <a href="../../reference/glossary/#term-hld">HLD</a>。FRR 8.4+ を前提に、<strong>SRv6 を network programming framework</strong> として VPN 識別と policy ベース steering を実装する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     BGP[FRR BGP\n L3VPN over SRv6] --&gt;|route + vpn_sid| FPM[fpmsyncd]
     FPM --&gt; APP[(APPL_DB ROUTE_TABLE\n vpn_sid / policy)]
@@ -23904,12 +23904,12 @@
     SO --&gt; SAI[(SAI: SRv6 VPN APIs)]</code></pre>
 <p>変更領域:</p>
 <ul>
-<li><strong>FRR</strong>: VRF route leak / BGP advertise delay / conditional advertisement / SRv6 Policy</li>
+<li><strong>FRR</strong>: <a href="../../reference/glossary/#term-vrf">VRF</a> route leak / BGP advertise delay / conditional advertisement / SRv6 Policy</li>
 <li><strong>SAI</strong>: SRv6 VPN 用 SAI（Cisco 提案の SAI 拡張）</li>
 <li><strong>SWSS / SONiC</strong>: 新規 <code>SRV6_POLICY_TABLE</code>、<code>ROUTE_TABLE.vpn_sid</code> / <code>policy</code> フィールド、<code>SRv6Orch</code> / <code>RouteOrch</code> 拡張</li>
 </ul>
 <h2 id="2-appl_db">2. APPL_DB スキーマ<a class="headerlink" href="#2-appl_db" title="Permanent link">&para;</a></h2>
-<p>新規・拡張のみを列挙。CONFIG_DB / SONiC CLI / YANG は本 HLD では追加されない（FRR / コントローラから APPL_DB に直接書く）。</p>
+<p>新規・拡張のみを列挙。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / SONiC CLI / <a href="../../reference/glossary/#term-yang">YANG</a> は本 HLD では追加されない（FRR / コントローラから APPL_DB に直接書く）。</p>
 <h3 id="srv6_policy_table">SRV6_POLICY_TABLE（新規）<a class="headerlink" href="#srv6_policy_table" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SRV6_POLICY_TABLE|&lt;policy_name&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    segment = comma-list of SRV6_SID_LIST.key
@@ -23939,7 +23939,7 @@
 <h3 id="prefix-agg_id-encap-mapper">Prefix AGG_ID による encap mapper<a class="headerlink" href="#prefix-agg_id-encap-mapper" title="Permanent link">&para;</a></h3>
 <p>SRv6 VPN ルート追加時、<code>SRv6Orch</code> は <code>vpn_sid</code> 付き BGP NH 用の SRv6 トンネルを必要に応じて作成し、<strong>encap mapper</strong> で参照する。Mapper のキーは <strong>Prefix AGG_ID</strong> で、同一 NH を共有する複数 VPN ルートで encap 情報を集約する。これにより VPN prefix 数に対する SAI オブジェクト数を抑える。</p>
 <h3 id="anycast-my_sid-nexthop-id">Anycast MY_SID と nexthop id<a class="headerlink" href="#anycast-my_sid-nexthop-id" title="Permanent link">&para;</a></h3>
-<p>Alibaba 運用では <strong>anycast routes を MY_SID として使う</strong> ことで BGP NH 収束時のアウトを抑える。FRR zebra は <code>SRV6_MY_SID</code> をカーネルに直接書くため、netlink 経由で fpmsyncd に流れない既知問題があり、本 HLD で workaround を導入している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>End.X</code> action の nexthop id 処理も <code>srv6orch</code> に追加。</p>
+<p>Alibaba 運用では <strong>anycast routes を MY_SID として使う</strong> ことで BGP NH 収束時のアウトを抑える。FRR zebra は <code>SRV6_MY_SID</code> をカーネルに直接書くため、netlink 経由で <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> に流れない既知問題があり、本 HLD で workaround を導入している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>End.X</code> action の nexthop id 処理も <code>srv6orch</code> に追加。</p>
 <h3 id="segment-list">Segment list 最適化<a class="headerlink" href="#segment-list" title="Permanent link">&para;</a></h3>
 <p>セグメントリスト先頭 SID が MY_SID（action=End.X）に一致するとき、<code>SAI_SRV6_SIDLIST_ATTR_NEXT_HOP_ID</code> を設定し、<code>SAI_SRV6_SIDLIST_ATTR_SEGMENT_LIST</code> から先頭 SID を除外する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="4">4. 設定例<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
@@ -23964,7 +23964,7 @@
 </ul>
 <h2 id="6">6. 干渉する機能<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>SRv6 Static Configuration HLD</strong>: CONFIG_DB の <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を bgpcfgd 経由で投入する別経路。本ページの BGP 学習経路と組み合わせて使う</li>
+<li><strong>SRv6 Static Configuration HLD</strong>: CONFIG_DB の <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を <a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> 経由で投入する別経路。本ページの BGP 学習経路と組み合わせて使う</li>
 <li><strong>VRF / VRF leaking</strong>: FRR の VRF route leak が前提</li>
 <li><strong>BGP PIC</strong>: FRR 側 PIC が無いときの workaround として anycast MY_SID を使う、と HLD で記述あり<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
@@ -23986,6 +23986,8 @@
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 053f95bd27bf -->
 
 <div class="footnote">
 <hr />

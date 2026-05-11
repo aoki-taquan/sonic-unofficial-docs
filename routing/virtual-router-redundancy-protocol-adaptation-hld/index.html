@@ -23906,21 +23906,21 @@
 </div>
 <h1 id="vrrpfrr-vrrpd-vrrpv2v3-uplink-tracking">VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）<a class="headerlink" href="#vrrpfrr-vrrpd-vrrpv2v3-uplink-tracking" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VRRP (RFC 5798) は <strong>複数ルータが 1 つの仮想ルータ (VIP + VMAC) を演じ</strong>、Master 障害時に Backup が自動引き継ぐ L3 冗長プロトコル。FRR には <code>vrrpd</code> 実装があり、本 HLD はそれを SONiC に取り込む方法を定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>VRRP (RFC 5798) は <strong>複数ルータが 1 つの仮想ルータ (VIP + VMAC) を演じ</strong>、Master 障害時に Backup が自動引き継ぐ L3 冗長プロトコル。<a href="../../reference/glossary/#term-frr">FRR</a> には <code>vrrpd</code> 実装があり、本 <a href="../../reference/glossary/#term-hld">HLD</a> はそれを SONiC に取り込む方法を定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主な要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>VRRPv2 (IPv4) / VRRPv3 (IPv4, IPv6)</strong></li>
-<li>Ethernet / VLAN / sub-interface / PortChannel 上で動作</li>
+<li>Ethernet / <a href="../../reference/glossary/#term-vlan">VLAN</a> / sub-interface / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> 上で動作</li>
 <li>interface あたり複数 instance（VRID 違い）</li>
 <li>priority / preempt 設定可能</li>
 <li><strong>uplink interface tracking</strong>（uplink down で priority 降下）</li>
-<li><strong>non-default VRF</strong> で動作</li>
+<li><strong>non-default <a href="../../reference/glossary/#term-vrf">VRF</a></strong> で動作</li>
 </ol>
 <h2 id="_2">どう動くか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンテナ配置<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p><code>vrrpd</code> は <strong>VRRP container</strong>（FRR 系 daemon 同居）または <strong>BGP container</strong> 同居の設計が選択肢<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。最終案は Rev 0.2 で固まる傾向、実装側で要確認。</p>
+<p><code>vrrpd</code> は <strong>VRRP container</strong>（FRR 系 daemon 同居）または <strong><a href="../../reference/glossary/#term-bgp">BGP</a> container</strong> 同居の設計が選択肢<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。最終案は Rev 0.2 で固まる傾向、実装側で要確認。</p>
 <h3 id="copp-trap">CoPP trap<a class="headerlink" href="#copp-trap" title="Permanent link">&para;</a></h3>
-<p>VRRP advertisement は multicast 224.0.0.18 (IPv4) / ff02::12 (IPv6)。これを CPU に punt するため <strong>CoPP trap</strong> が必要<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>vrrp</code> (IPv4)、<code>vrrp6</code> (IPv6)。</p>
+<p>VRRP advertisement は multicast 224.0.0.18 (IPv4) / ff02::12 (IPv6)。これを CPU に punt するため <strong><a href="../../reference/glossary/#term-copp">CoPP</a> trap</strong> が必要<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>vrrp</code> (IPv4)、<code>vrrp6</code> (IPv6)。</p>
 <h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VRRP|&lt;interface&gt;|&lt;vrid&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  vip          = &quot;&lt;v4 prefix&gt;,...&quot;
@@ -24042,9 +24042,9 @@ reasoning: 要件 (v2/v3, IF 種別, uplink tracking, VRF) の根拠。
 <ul>
 <li><strong>FRR / BGP</strong>: 同/別 container かで起動順影響</li>
 <li><strong>CoPP</strong>: <code>vrrp</code> / <code>vrrp6</code> trap 必須</li>
-<li><strong>portmgrd / VlanMgrd</strong>: interface state 変化に追従</li>
-<li><strong>MCLAG / dual-ToR</strong>: VMAC の MAC 学習との相互作用</li>
-<li><strong>gNMI / openconfig-vrrp</strong>: 標準モデルへの mapping は本 HLD では未詳述</li>
+<li><strong><a href="../../reference/glossary/#term-portmgrd">portmgrd</a> / VlanMgrd</strong>: interface state 変化に追従</li>
+<li><strong><a href="../../reference/glossary/#term-mclag">MCLAG</a> / dual-ToR</strong>: VMAC の MAC 学習との相互作用</li>
+<li><strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> / openconfig-vrrp</strong>: 標準モデルへの mapping は本 HLD では未詳述</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>vrrp
@@ -24062,6 +24062,8 @@ reasoning: 要件 (v2/v3, IF 種別, uplink tracking, VRF) の根拠。
 <li><a href="../bgp-router-id-explicitly-configured/">bgp-router-id-explicitly-configured</a></li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 461c54e12955 -->
+
 <div class="footnote">
 <hr />
 <ol>

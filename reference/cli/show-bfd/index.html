@@ -23628,7 +23628,7 @@
 
 <h1 id="show-bfd">show bfd サブコマンド<a class="headerlink" href="#show-bfd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show bfd</code> は BFD (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は <strong>STATE_DB</strong> の <code>BFD_SESSION_TABLE|&lt;vrf&gt;|&lt;interface&gt;|&lt;peer&gt;</code> であり、CONFIG_DB ではない<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BFD セッションは BGP や static route との連動で動的に生成・破棄されるため、状態は STATE_DB のみが正となる。</p>
+<p><code>show bfd</code> は <a href="../../glossary/#term-bfd">BFD</a> (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は <strong><a href="../../glossary/#term-state_db">STATE_DB</a></strong> の <code>BFD_SESSION_TABLE|&lt;vrf&gt;|&lt;interface&gt;|&lt;peer&gt;</code> であり、<a href="../../glossary/#term-config_db">CONFIG_DB</a> ではない<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BFD セッションは <a href="../../glossary/#term-bgp">BGP</a> や static route との連動で動的に生成・破棄されるため、状態は STATE_DB のみが正となる。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23706,7 +23706,7 @@ excerpt: |
 <li><code>&lt;peer_ip&gt;</code> ... 必須。表示対象 BFD peer の IP アドレス</li>
 </ul>
 <p><strong>動作</strong>:
-<code>BFD_SESSION_TABLE|*|&lt;peer_ip&gt;</code> でフィルタリングして該当セッションのみ表示。同じ peer に対して複数 VRF / interface のセッションが存在し得るため、複数行が返ることがある。該当セッションが無ければ <code>No BFD sessions found for peer IP &lt;peer_ip&gt;</code>。</p>
+<code>BFD_SESSION_TABLE|*|&lt;peer_ip&gt;</code> でフィルタリングして該当セッションのみ表示。同じ peer に対して複数 <a href="../../glossary/#term-vrf">VRF</a> / interface のセッションが存在し得るため、複数行が返ることがある。該当セッションが無ければ <code>No BFD sessions found for peer IP &lt;peer_ip&gt;</code>。</p>
 <h2 id="state_db">関連する STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23772,6 +23772,8 @@ excerpt: |
 <li><a href="../show-bgp/">reference/CLI: show bgp</a></li>
 <li><a href="../show-ip/">reference/CLI: show ip</a></li>
 </ul>
+<!-- glossary-links-injected: ad3b2006b1d9 -->
+
 <div class="footnote">
 <hr />
 <ol>

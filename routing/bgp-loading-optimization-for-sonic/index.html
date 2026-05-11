@@ -23762,13 +23762,13 @@
 </div>
 <h1 id="bgp-loading-optimizationfpmsyncd-flush-orchagent-ring-buffer-async-sairedis">BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）<a class="headerlink" href="#bgp-loading-optimizationfpmsyncd-flush-orchagent-ring-buffer-async-sairedis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>2M routes 級の BGP loading を end-to-end で 50% 高速化することを狙った最適化 HLD（2023-2024）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。次の 3 ステップを最適化する。</p>
+<p>2M routes 級の <a href="../../reference/glossary/#term-bgp">BGP</a> loading を end-to-end で 50% 高速化することを狙った最適化 <a href="../../reference/glossary/#term-hld">HLD</a>（2023-2024）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。次の 3 ステップを最適化する。</p>
 <ol>
-<li><strong>fpmsyncd</strong>: redis pipeline の flush 頻度・サイズ・PUBLISH 命令を見直す</li>
-<li><strong>orchagent</strong>: 単スレッド（pops / addToSync / drain）→ アシスタントスレッドと ring buffer による pipelining</li>
+<li><strong><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a></strong>: redis pipeline の flush 頻度・サイズ・PUBLISH 命令を見直す</li>
+<li><strong><a href="../../reference/glossary/#term-orchagent">orchagent</a></strong>: 単スレッド（pops / addToSync / drain）→ アシスタントスレッドと ring buffer による pipelining</li>
 <li><strong>sairedis</strong>: 同期 API → 非同期 API 経路と orchagent 側の <code>ResponseThread</code></li>
 </ol>
-<p>ASIC / SAI 自体の最適化はスコープ外。</p>
+<p>ASIC / <a href="../../reference/glossary/#term-sai">SAI</a> 自体の最適化はスコープ外。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="step-1-fpmsyncd-pipeline">Step 1: fpmsyncd の pipeline 改修<a class="headerlink" href="#step-1-fpmsyncd-pipeline" title="Permanent link">&para;</a></h3>
 <table>
@@ -23809,7 +23809,7 @@
 <li>lambda は「データ + そのデータに対する処理」をまとめてキャプチャするため、消費スレッドはそのまま invoke すれば良い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="step-3-sairedis-async">Step 3: sairedis の async 化<a class="headerlink" href="#step-3-sairedis-async" title="Permanent link">&para;</a></h3>
-<p><code>sairedis</code> の同期 API は、ASIC_DB 書き込み後 syncd 応答を待つため orchagent 側の processing が止まる。新たに <strong><code>ResponseThread</code></strong> を orchagent に追加し、async 経路で発行 → 応答だけ別スレッドで受ける構成<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>sairedis</code> の同期 API は、<a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> 書き込み後 <a href="../../reference/glossary/#term-syncd">syncd</a> 応答を待つため orchagent 側の processing が止まる。新たに <strong><code>ResponseThread</code></strong> を orchagent に追加し、async 経路で発行 → 応答だけ別スレッドで受ける構成<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>sequenceDiagram
     participant O as orchagent main
     participant R as ResponseThread
@@ -23849,7 +23849,7 @@ reasoning: pipeline size 50k と 500ms timer、PUBLISH 1 回化の根拠。
 <!-- evidence-rendered:end -->
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>HLD で新規 CONFIG_DB / CLI の言及は無い（性能側のチューニングのみ）。pipeline サイズ等は build 時定数で組み込まれる想定。</p>
+<p>HLD で新規 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI の言及は無い（性能側のチューニングのみ）。pipeline サイズ等は build 時定数で組み込まれる想定。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>2M routes 級の最適化を主眼。少規模では効果が出にくい・むしろ 500ms 遅延 timer の影響あり</li>
@@ -23860,7 +23860,7 @@ reasoning: pipeline size 50k と 500ms timer、PUBLISH 1 回化の根拠。
 <ul>
 <li><strong><code>fpmsyncd</code> NextHop Group 拡張</strong>: 同じ pipeline 経路を共有。NHG 経路でも PUBLISH 削減は有効</li>
 <li><strong>warm reboot</strong>: <code>ResponseThread</code> と warm restart の order 保証は HLD 内で別述</li>
-<li><strong>ACL / VLAN / FDB orch</strong>: ring buffer は orch 共通基盤に乗るため広範囲に影響</li>
+<li><strong><a href="../../reference/glossary/#term-acl">ACL</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-fdb">FDB</a> orch</strong>: ring buffer は orch 共通基盤に乗るため広範囲に影響</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23876,6 +23876,8 @@ reasoning: pipeline size 50k と 500ms timer、PUBLISH 1 回化の根拠。
 - warm restart 経路での async / ring buffer の order 保証実装確認
 - 2M routes ベンチの実測値 vs HLD 主張 50% 高速化の検証
 -->
+
+<!-- glossary-links-injected: ef8c5688ad31 -->
 
 <div class="footnote">
 <hr />

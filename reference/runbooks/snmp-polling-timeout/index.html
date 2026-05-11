@@ -23757,8 +23757,8 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong><code>sonic_ax_impl</code> の hang</strong>: COUNTERS_DB poll で blocking</li>
-<li><strong>ACL / management interface で SNMP port (161/udp) が遮断</strong></li>
+<li><strong><code>sonic_ax_impl</code> の hang</strong>: <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> poll で blocking</li>
+<li><strong><a href="../../glossary/#term-acl">ACL</a> / management interface で <a href="../../glossary/#term-snmp">SNMP</a> port (161/udp) が遮断</strong></li>
 <li><strong>community / SNMPv3 認証ミス</strong>: net-snmp 側で reject</li>
 <li><strong>大規模 port 数 (256+) でテーブル取得が遅い</strong></li>
 <li><strong>snmp container の CPU 飽和</strong></li>
@@ -23797,6 +23797,8 @@
 <li><a href="../telemetry-dialout-not-sending/">telemetry-dialout-not-sending.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 2bcfb6360cc4 -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23804,7 +23806,7 @@
 <p>sonic-net/sonic-snmpagent @ 4305596 — ax_impl&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-buildimage @ 4305596 — docker-snmp config&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> @ 4305596 — docker-snmp config&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

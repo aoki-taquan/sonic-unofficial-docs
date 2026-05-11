@@ -23784,7 +23784,7 @@
 
 
 <h1 id="gnoi">gNOI 連携と他章との境界<a class="headerlink" href="#gnoi" title="Permanent link">&para;</a></h1>
-<p>DASH / SmartSwitch は単独で完結する機能ではなく、管理面 (gNMI / gNOI)、Multi-ASIC / VOQ、Platform 章と境界を持ちます。ここでは「どこから先は別の章が主」かを整理します。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a> / <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> は単独で完結する機能ではなく、管理面 (<a href="../../../reference/glossary/#term-gnmi">gNMI</a> / <a href="../../../reference/glossary/#term-gnoi">gNOI</a>)、Multi-ASIC / <a href="../../../reference/glossary/#term-voq">VOQ</a>、Platform 章と境界を持ちます。ここでは「どこから先は別の章が主」かを整理します。</p>
 <h2 id="gnoi_1">gNOI 系との関係<a class="headerlink" href="#gnoi_1" title="Permanent link">&para;</a></h2>
 <p>SmartSwitch の reboot / shutdown / upgrade は、SONiC の gNOI 実装をそのまま使います。</p>
 <table>
@@ -23797,11 +23797,11 @@
 <tbody>
 <tr>
 <td><code>gnoi.system.Reboot</code></td>
-<td>DPU 個別 reboot、graceful shutdown のトリガ</td>
+<td><a href="../../../reference/glossary/#term-dpu">DPU</a> 個別 reboot、graceful shutdown のトリガ</td>
 </tr>
 <tr>
 <td><code>gnoi.system.Time</code> 等 system API</td>
-<td>NPU / DPU の管理共通基盤</td>
+<td><a href="../../../reference/glossary/#term-npu">NPU</a> / DPU の管理共通基盤</td>
 </tr>
 <tr>
 <td><code>gnoi.os.Install</code> / <code>Activate</code> 等</td>
@@ -23847,14 +23847,14 @@
 <h2 id="platform">Platform 章との境界<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h2>
 <p>DPU の PCIe / midplane / 電源 / リセットといった物理層は Platform 章 (PMON / sensor / firmware) と重なります。本章では運用フローの中で必要な範囲のみ触れ、ハードウェア抽象や <code>platform.json</code> の詳細は Platform 章に委ねます。</p>
 <h2 id="telemetry-counter">telemetry / counter<a class="headerlink" href="#telemetry-counter" title="Permanent link">&para;</a></h2>
-<p><code>DashCounter</code> による per-ENI / per-flow counter や、metering の集約は DASH HLD で定義されますが、外部への配送経路は <strong>telemetry / streaming telemetry の共通基盤</strong> を使います。export 設定・gNMI subscribe・ストリーミング先のスケーリングは管理章の範囲です。本章は「counter がどこに溜まるか」までを扱い、export 設計は管理章に渡します。</p>
+<p><code>DashCounter</code> による per-<a href="../../../reference/glossary/#term-eni">ENI</a> / per-flow counter や、metering の集約は DASH <a href="../../../reference/glossary/#term-hld">HLD</a> で定義されますが、外部への配送経路は <strong>telemetry / streaming telemetry の共通基盤</strong> を使います。export 設定・gNMI subscribe・ストリーミング先のスケーリングは管理章の範囲です。本章は「counter がどこに溜まるか」までを扱い、export 設計は管理章に渡します。</p>
 <h2 id="_1">まとめ: どの章へ次に進むか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>gNMI / gNOI / streaming telemetry の詳細を知りたい → 管理章</li>
 <li>Multi-ASIC / VOQ Chassis の DB 分離を知りたい → Multi-ASIC / VOQ 章</li>
 <li>DPU の物理 / PMON / firmware を知りたい → Platform 章</li>
-<li>ACL 全体（ENI_REDIRECT 以外の通常 ACL）を知りたい → <a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror 章</a></li>
-<li>VxLAN / EVPN underlay を知りたい → <a href="../../03-vxlan-evpn/">VXLAN EVPN 章</a></li>
+<li><a href="../../../reference/glossary/#term-acl">ACL</a> 全体（ENI_REDIRECT 以外の通常 ACL）を知りたい → <a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror 章</a></li>
+<li>VxLAN / <a href="../../../reference/glossary/#term-evpn">EVPN</a> underlay を知りたい → <a href="../../03-vxlan-evpn/">VXLAN EVPN 章</a></li>
 </ul>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23866,7 +23866,7 @@
 </ul>
 <h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>DASH ENI scale</strong>: 単一 DPU あたり数万〜数十万 ENI を扱うため、flow table / connection tracking / metering の memory 設計が要点。SAI DASH API の <code>SAI_OBJECT_TYPE_ENI</code> と pipeline 構造が論点。</li>
+<li><strong>DASH ENI scale</strong>: 単一 DPU あたり数万〜数十万 ENI を扱うため、flow table / connection tracking / metering の memory 設計が要点。<a href="../../../reference/glossary/#term-sai">SAI</a> DASH API の <code>SAI_OBJECT_TYPE_ENI</code> と pipeline 構造が論点。</li>
 <li><strong>flow HA / connection sync</strong>: ENI ごとの flow state を peer DPU と同期する HA 設計。SmartSwitch HA HLD で議論。</li>
 <li><strong>gNMI による DASH 設定 push</strong>: 大量 ENI を controller から流し込む使い方で、gRPC streaming と batch update の最適化が必要。</li>
 <li><strong>DPU の P4 pipeline 拡張</strong>: DASH pipeline 自体は P4 に近い形で書かれ、新規 service (ELB、stateful FW など) の追加が pipeline 拡張で行われる。</li>
@@ -23875,9 +23875,9 @@
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>DPU と NPU の独立 reboot 順序</strong>: DPU 単独 reboot 中の flow 切替を peer DPU が引き受けるための graceful shutdown 手順が必須。順序を間違えると connection drop が発生する。</li>
-<li><strong>per-DPU Redis のメモリ消費</strong>: ENI scale が大きいと per-DPU redis が膨らむ。<code>SDN_APPL_DB</code> の TTL / eviction を SDN controller 側でも考慮。</li>
+<li><strong>per-DPU <a href="../../../reference/glossary/#term-redis">Redis</a> のメモリ消費</strong>: ENI scale が大きいと per-DPU redis が膨らむ。<code>SDN_APPL_DB</code> の TTL / eviction を SDN controller 側でも考慮。</li>
 <li><strong>DASH counter export の遅延</strong>: per-flow counter は数が多く、export pipeline で遅延が出やすい。<code>DashCounter</code> の aggregation 粒度を controller 側で調整する。</li>
-<li><strong>VNET tunnel との競合</strong>: ENI redirect が VNET tunnel nexthop と組合せる場合、優先度を ACL priority で明示しないと意図と異なる経路に乗る。</li>
+<li><strong><a href="../../../reference/glossary/#term-vnet">VNET</a> tunnel との競合</strong>: ENI redirect が VNET tunnel nexthop と組合せる場合、優先度を ACL priority で明示しないと意図と異なる経路に乗る。</li>
 </ul>
 <h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23889,7 +23889,7 @@
 <ul>
 <li><a href="https://p4.org/specs/">P4 Language Specification</a> — DASH pipeline の表現</li>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc8174">RFC 8174</a> — keyword 規約 (DASH HLD で参照)</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc5575">RFC 5575</a> — BGP Flow Spec (DASH ACL の参考モデル)</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc5575">RFC 5575</a> — <a href="../../../reference/glossary/#term-bgp">BGP</a> Flow Spec (DASH ACL の参考モデル)</li>
 <li><a href="https://github.com/opencomputeproject/SAI">SAI DASH proposal</a> — Open Compute Project SAI repo</li>
 </ul>
 <h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
@@ -23898,6 +23898,7 @@
 <li><code>sonic-buildimage</code> の SmartSwitch 関連 PR が活発で、independent DPU upgrade、graceful shutdown、reboot 順序、health monitoring など分野が広がる。</li>
 <li>DASH P4 reference implementation (DASH repo) と SONiC sai 実装の bridging が継続して進む。</li>
 </ul>
+<!-- glossary-links-injected: ca666ecaafdc -->
 
 
 

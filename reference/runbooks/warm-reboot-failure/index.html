@@ -23753,13 +23753,13 @@
 <ul>
 <li><code>warm-reboot</code> 実行後に Data plane の通信が想定（&lt; 1s）を超えて 30s 〜 数分断する</li>
 <li><code>warm-reboot</code> 自体が途中で abort して通常の <code>reboot</code> にフォールバックする</li>
-<li>再起動後に SAI object が再生成され、FDB / ARP / Route が全部 relearn になっている</li>
+<li>再起動後に <a href="../../glossary/#term-sai">SAI</a> object が再生成され、<a href="../../glossary/#term-fdb">FDB</a> / <a href="../../glossary/#term-arp">ARP</a> / Route が全部 relearn になっている</li>
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong><code>WARM_RESTART</code> テーブルで該当機能が enable されていない</strong> (bgp / teamd / swss / syncd / nat 等)</li>
-<li><strong>BGP graceful restart の対向側未対応 / capability 未交換</strong>: GR helper として動作するために対向 peer も GR 対応が必要</li>
-<li><strong>dataplane object 量が大きすぎて reconciliation が間に合わない</strong> (Route 数十万件 + ACL 大量) → restore_count に至らずタイムアウト</li>
+<li><strong><code>WARM_RESTART</code> テーブルで該当機能が enable されていない</strong> (bgp / <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / swss / <a href="../../glossary/#term-syncd">syncd</a> / nat 等)</li>
+<li><strong><a href="../../glossary/#term-bgp">BGP</a> graceful restart の対向側未対応 / capability 未交換</strong>: GR helper として動作するために対向 peer も GR 対応が必要</li>
+<li><strong>dataplane object 量が大きすぎて reconciliation が間に合わない</strong> (Route 数十万件 + <a href="../../glossary/#term-acl">ACL</a> 大量) → restore_count に至らずタイムアウト</li>
 <li><strong><code>pre-shutdown</code> のチェックで pending operation あり</strong> (<code>COUNTERS_DB</code> の queue / port が busy)</li>
 <li><strong>platform / SAI が warm boot 非対応</strong> (Mellanox/Broadcom SDK バージョン依存)</li>
 </ol>
@@ -23813,14 +23813,16 @@
 <li><a href="../../cli/reboot-fast-warm/">../cli/reboot-fast-warm.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 2c3c04148df7 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-utilities @ 39732bceb — <code>scripts/warm-reboot</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>scripts/warm-reboot</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ 4305596 — warm_restart helper&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — warm_restart helper&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

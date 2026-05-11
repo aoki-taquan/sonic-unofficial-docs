@@ -23840,7 +23840,7 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>BGP の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら CONFIG_DB、外部 controller から投入するなら YANG/OpenConfig を見る。重要なのは、最終的に FRR に入る設定と CONFIG_DB の状態を分離しないことである。</p>
+<p><a href="../../../reference/glossary/#term-bgp">BGP</a> の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a>、外部 controller から投入するなら <a href="../../../reference/glossary/#term-yang">YANG</a>/OpenConfig を見る。重要なのは、最終的に <a href="../../../reference/glossary/#term-frr">FRR</a> に入る設定と CONFIG_DB の状態を分離しないことである。</p>
 <h2 id="_2">どの入口を使うか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23862,7 +23862,7 @@
 <td><code>BGP_GLOBALS</code>、<code>BGP_NEIGHBOR</code>、<code>BGP_PEER_GROUP</code></td>
 </tr>
 <tr>
-<td>gNMI/REST/OpenConfig を使う</td>
+<td><a href="../../../reference/glossary/#term-gnmi">gNMI</a>/REST/OpenConfig を使う</td>
 <td>YANG/Management Framework</td>
 <td><code>sonic-bgp-*</code>、<code>sonic-route-map</code></td>
 </tr>
@@ -23876,7 +23876,7 @@
 <h2 id="_3">最小構成で考える<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>BGP 設定を読むときは、次の順番で追うとよい。</p>
 <ol>
-<li><code>BGP_GLOBALS</code> で VRF 単位の router-id、ASN、global option を確認する。</li>
+<li><code>BGP_GLOBALS</code> で <a href="../../../reference/glossary/#term-vrf">VRF</a> 単位の router-id、ASN、global option を確認する。</li>
 <li><code>BGP_NEIGHBOR</code> または <code>BGP_PEER_GROUP</code> で peer の ASN、peer group 所属、timer、password などを確認する。</li>
 <li><code>BGP_NEIGHBOR_AF</code> または <code>BGP_PEER_GROUP_AF</code> で address family ごとの activate、route-map、prefix-limit などを見る。</li>
 <li>policy は <code>ROUTE_MAP</code>、<code>PREFIX_LIST</code>、<code>PREFIX_SET</code> を別に確認する。</li>
@@ -24012,7 +24012,7 @@
 </span></code></pre></div>
 <p><code>as_set</code> は集約に含まれる AS_PATH を merge する。<code>summary_only</code> は contributing route を広告しない。BBR 連動の挙動は別ページで扱う。</p>
 <h2 id="aggregate-address-bbr">aggregate address と BBR 連動<a class="headerlink" href="#aggregate-address-bbr" title="Permanent link">&para;</a></h2>
-<p>aggregate address は単に FRR に summary を入れるだけではなく、BBR awareness や prefix-list 連携を含む設計がある。CONFIG_DB では <code>BGP_AGGREGATE_ADDRESS</code> を使い、bgpcfgd が FRR 設定へ反映する。細かいスキーマと挙動は <a href="../../../routing/bgp-route-aggregation-with-bbr-awareness/">BBR 連動の BGP ルート集約</a> を参照する。</p>
+<p>aggregate address は単に FRR に summary を入れるだけではなく、BBR awareness や prefix-list 連携を含む設計がある。CONFIG_DB では <code>BGP_AGGREGATE_ADDRESS</code> を使い、<a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> が FRR 設定へ反映する。細かいスキーマと挙動は <a href="../../../routing/bgp-route-aggregation-with-bbr-awareness/">BBR 連動の BGP ルート集約</a> を参照する。</p>
 <h2 id="openconfigmanagement-framework">OpenConfig/Management Framework を使う場合<a class="headerlink" href="#openconfigmanagement-framework" title="Permanent link">&para;</a></h2>
 <p>OpenConfig BGP 経由で広い範囲を扱う場合、<code>frrcfgd</code> が有効かどうかが前提になる。<code>frrcfgd</code> は CONFIG_DB 差分から FRR vty コマンドを生成する設計で、state/statistics は必要時に FRR から取得する。従来の template ベース運用と混ぜる場合は、同じ設定対象を vtysh 直叩き、CONFIG_DB、OpenConfig の複数入口で更新しない。</p>
 <h2 id="_4">よくある設定エラーと対処<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -24032,8 +24032,8 @@
 </tr>
 <tr>
 <td><code>State/PfxRcd</code> が <code>Active</code> のまま</td>
-<td>TCP 179 が片道 ACL で drop / route-map で reject</td>
-<td><code>show ip route &lt;peer&gt;</code> と CoPP / data ACL を確認</td>
+<td>TCP 179 が片道 <a href="../../../reference/glossary/#term-acl">ACL</a> で drop / route-map で reject</td>
+<td><code>show ip route &lt;peer&gt;</code> と <a href="../../../reference/glossary/#term-copp">CoPP</a> / data ACL を確認</td>
 </tr>
 <tr>
 <td><code>Connect</code> で止まる</td>
@@ -24105,6 +24105,7 @@
 <li><a href="../../../routing/bgp-route-aggregation-with-bbr-awareness/">BBR 連動の BGP ルート集約</a></li>
 <li><a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR-BGP Unified Mgmt Framework</a></li>
 </ul>
+<!-- glossary-links-injected: 25d631d5e5c9 -->
 
 
 

@@ -23881,7 +23881,7 @@
 <p>設計の要点:</p>
 <ul>
 <li><strong>静的情報</strong>（type, vendor, S/N, model, cable type 等）は plug 時に 1 回だけ更新</li>
-<li><strong>DOM センサ値</strong>（temperature, voltage, rx/tx power, bias）は <strong>約 60s 周期で polling</strong>（HLD 段階では tentative）</li>
+<li><strong>DOM センサ値</strong>（temperature, voltage, rx/tx power, bias）は <strong>約 60s 周期で polling</strong>（<a href="../../reference/glossary/#term-hld">HLD</a> 段階では tentative）</li>
 <li>transceiver error event は bitmap で 1 つにまとまる（旧 7 種値とは互換）。EEPROM 読み取り不能時は <strong>DOM 更新を停止し、static info は保持</strong> する</li>
 <li>port config 変更（speed / lane mapping）にも追随<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
@@ -24025,7 +24025,7 @@ reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 <ul>
 <li><strong>Port auto FEC / Port link training</strong>: speed / lane と DOM フィールド構成の対応</li>
 <li><strong>CMIS LPO 拡張デバッグレジスタ</strong>: VDM / advertise byte に伴う TRANSCEIVER_INFO / DOM 拡張</li>
-<li><strong>SNMP transceiver-mib</strong>: TRANSCEIVER_DOM_SENSOR を SNMP MIB に橋渡しする別 HLD あり</li>
+<li><strong><a href="../../reference/glossary/#term-snmp">SNMP</a> transceiver-mib</strong>: TRANSCEIVER_DOM_SENSOR を SNMP MIB に橋渡しする別 HLD あり</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24056,6 +24056,8 @@ reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1d579f83f1e2 -->
 
 <div class="footnote">
 <hr />

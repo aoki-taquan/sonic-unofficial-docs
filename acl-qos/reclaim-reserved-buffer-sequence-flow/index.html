@@ -23885,11 +23885,11 @@
 <h1 id="reclaim-reserved-buffer">未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス<a class="headerlink" href="#reclaim-reserved-buffer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC のバッファ管理は <strong>buffer pool / profile / PG / queue</strong> で構成され、各ポートに priority group (PG) と queue ごとの <strong>予約バッファ（reserved + headroom）</strong> が確保される。minigraph で neighbor が宣言されない <strong>INACTIVE PORT</strong> の分まで予約すると ASIC の有限リソースを浪費する。</p>
-<p>本 HLD は <strong>「INACTIVE / admin-down ポートの予約を zero buffer profile で 0 化する」</strong> 3 系統のフローを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>「INACTIVE / admin-down ポートの予約を zero buffer profile で 0 化する」</strong> 3 系統のフローを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>deploy フロー</strong>: <code>config load-minigraph</code> 起動時に INACTIVE ポートへ zero profile 投入</li>
 <li><strong>normal フロー</strong>: 動的 admin-down 時に lossless PG を削除（traditional buffer model）</li>
-<li><strong>dynamic buffer フロー</strong>: shutdown 時に zero pool / profile を APPL_DB に挿入し、PG / queue / profile_list を全て zero へ寄せる</li>
+<li><strong>dynamic buffer フロー</strong>: shutdown 時に zero pool / profile を <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に挿入し、PG / queue / profile_list を全て zero へ寄せる</li>
 </ol>
 <h2 id="1-deploy-config-load-minigraph">1. deploy フロー（<code>config load-minigraph</code>）<a class="headerlink" href="#1-deploy-config-load-minigraph" title="Permanent link">&para;</a></h2>
 <p><code>sonic-cfggen</code> が minigraph を読み、neighbor 有無で <strong>ACTIVE / INACTIVE</strong> に分類、SKU + topology に応じた buffer template を render する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -23915,7 +23915,7 @@
 <li>zero profile 生成は INACTIVE 集合が非空のときのみ</li>
 </ul>
 <h2 id="2-normal-traditional-buffer-model-admin-down">2. normal フロー（traditional buffer model, admin-down 時）<a class="headerlink" href="#2-normal-traditional-buffer-model-admin-down" title="Permanent link">&para;</a></h2>
-<p>cable length / speed / admin-status を起点に <strong><code>buffer manager</code></strong> が反応、必要なら profile を生成 → <code>BUFFER_PG</code> 更新 → <strong><code>BufferOrch</code></strong> が SAI に反映<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>cable length / speed / admin-status を起点に <strong><code>buffer manager</code></strong> が反応、必要なら profile を生成 → <code>BUFFER_PG</code> 更新 → <strong><code>BufferOrch</code></strong> が <a href="../../reference/glossary/#term-sai">SAI</a> に反映<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>sequenceDiagram
     participant DB as CONFIG_DB
     participant BM as buffer manager
@@ -23993,7 +23993,7 @@
 </thead>
 <tbody>
 <tr>
-<td>CONFIG_DB</td>
+<td><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a></td>
 <td><code>BUFFER_POOL</code> / <code>BUFFER_PROFILE</code></td>
 <td>zero pool / profile もここに挿入される</td>
 </tr>
@@ -24008,7 +24008,7 @@
 <td>port 側 profile リスト</td>
 </tr>
 <tr>
-<td>STATE_DB</td>
+<td><a href="../../reference/glossary/#term-state_db">STATE_DB</a></td>
 <td><code>BUFFER_MAX_PARAM_TABLE</code></td>
 <td>port の最大 queue / PG / headroom</td>
 </tr>
@@ -24034,7 +24034,7 @@
 <li><code>BufferOrch</code>: SAI 反映。set / create / remove の整合を担当</li>
 <li><code>portsorch</code>: dynamic buffer 前段で <code>BUFFER_MAX_PARAM_TABLE</code> を構築</li>
 <li><code>sonic-cfggen</code> + buffer template (Jinja): deploy フローの zero profile 生成元</li>
-<li>lossless / lossy queue 構成: PFC / headroom と密結合（zero 適用で PFC 設定が失われないこと）</li>
+<li>lossless / lossy queue 構成: <a href="../../reference/glossary/#term-pfc">PFC</a> / headroom と密結合（zero 適用で PFC 設定が失われないこと）</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BUFFER_PG|*&#39;</span><span class="w">         </span><span class="c1"># INACTIVE port に zero profile が当たっているか</span>
@@ -24047,7 +24047,7 @@
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/08-qos-buffer/concept/">08-qos-buffer/concept</a>: QoS / buffer の全体像</li>
+<li><a href="../../topics/08-qos-buffer/concept/">08-qos-buffer/concept</a>: <a href="../../reference/glossary/#term-qos">QoS</a> / buffer の全体像</li>
 <li><a href="../../topics/08-qos-buffer/internals/">08-qos-buffer/internals</a>: buffermgrd / BufferOrch / dynamic buffer</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -24057,6 +24057,8 @@
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4e2c45f685fb -->
 
 <div class="footnote">
 <hr />

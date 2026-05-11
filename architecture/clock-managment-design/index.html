@@ -23884,7 +23884,7 @@
 </div>
 <h1 id="clock-config-clock-datetimezone-device_metadatatimezone">Clock 設定（<code>config clock date/timezone</code>, <code>DEVICE_METADATA.timezone</code>）<a class="headerlink" href="#clock-config-clock-datetimezone-device_metadatatimezone" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のシステム時刻 / タイムゾーン操作を <strong><code>timedatectl</code> の薄いラッパー</strong> として CLI 化する HLD。<code>config clock timezone &lt;tz&gt;</code> / <code>config clock date &lt;YYYY-MM-DD&gt; &lt;HH:MM:SS&gt;</code> を導入し、timezone のみ CONFIG_DB に永続化する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。日付時刻自体は CONFIG_DB に保存しない（再起動を跨ぐ意味が薄いため）。</p>
+<p>SONiC のシステム時刻 / タイムゾーン操作を <strong><code>timedatectl</code> の薄いラッパー</strong> として CLI 化する <a href="../../reference/glossary/#term-hld">HLD</a>。<code>config clock timezone &lt;tz&gt;</code> / <code>config clock date &lt;YYYY-MM-DD&gt; &lt;HH:MM:SS&gt;</code> を導入し、timezone のみ <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に永続化する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。日付時刻自体は CONFIG_DB に保存しない（再起動を跨ぐ意味が薄いため）。</p>
 <p>NTP との関係は明確に切られている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>NTP 有効時: <strong><code>config clock date</code> は拒否</strong>（時刻を NTP が司るため）</li>
@@ -23943,7 +23943,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    timezone : string  # 例: &quot;Etc/UTC&quot;（default）, &quot;Asia/Kolkata&quot;
 </span></code></pre></div>
 <p>時刻自体は保存しない<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。timezone のみ永続化することで再起動・config reload 時の整合を保つ。</p>
-<p>YANG（<code>sonic-device_metadata</code>）に対する追加<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a>（<code>sonic-device_metadata</code>）に対する追加<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-yang highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">container</span><span class="w"> </span><span class="nv">sonic-device_metadata</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="k">container</span><span class="w"> </span><span class="nv">DEVICE_METADATA</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">container</span><span class="w"> </span><span class="nv">localhost</span><span class="w"> </span><span class="p">{</span>
@@ -24045,6 +24045,8 @@ reasoning: 「NTP 有効時に timezone は OK / date は拒否」という分�
 - NTP 状態判定ロジック (timedatectl status / systemctl is-active)
 - rsyslog 再起動の自動化フロー
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 <div class="footnote">
 <hr />

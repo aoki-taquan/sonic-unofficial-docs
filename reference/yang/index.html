@@ -23571,12 +23571,12 @@
 
 
 <h1 id="yang">YANG リファレンス<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h1>
-<p><code>sonic-yang-models</code> (sonic-buildimage repo の <code>src/sonic-yang-models/yang-models/</code>) に同梱される SONiC YANG モデルのリファレンス。</p>
+<p><code>sonic-yang-models</code> (<a href="../glossary/#term-sonic-buildimage">sonic-buildimage</a> repo の <code>src/sonic-yang-models/yang-models/</code>) に同梱される SONiC <a href="../glossary/#term-yang">YANG</a> モデルのリファレンス。</p>
 <h2 id="sonic-yang">SONiC YANG の位置付け<a class="headerlink" href="#sonic-yang" title="Permanent link">&para;</a></h2>
-<p>SONiC の YANG モデルは <strong>CONFIG_DB スキーマの正本</strong>として機能する。具体的には:</p>
+<p>SONiC の YANG モデルは <strong><a href="../glossary/#term-config_db">CONFIG_DB</a> スキーマの正本</strong>として機能する。具体的には:</p>
 <ul>
 <li><strong>CLI 経由 (<code>config</code> / <code>sonic-cfggen</code> / minigraph)</strong> で書き込まれた CONFIG_DB の値は、<code>sonic-yang-mgmt</code> (<code>sonic-buildimage/src/sonic-yang-mgmt/</code>) によって YANG モデルに対してバリデーションされる</li>
-<li><strong>gNMI / REST 経由</strong>の管理アクセスは <code>sonic-mgmt-common</code> の <strong>translib / transformer</strong> レイヤを通る。translib は OpenConfig / IETF YANG をクライアント向けに公開し、transformer がそれを SONiC 内部の <code>sonic-*</code> YANG（= CONFIG_DB スキーマ）に変換する</li>
+<li><strong><a href="../glossary/#term-gnmi">gNMI</a> / REST 経由</strong>の管理アクセスは <code>sonic-mgmt-common</code> の <strong>translib / transformer</strong> レイヤを通る。translib は OpenConfig / IETF YANG をクライアント向けに公開し、transformer がそれを SONiC 内部の <code>sonic-*</code> YANG（= CONFIG_DB スキーマ）に変換する</li>
 <li>一部のテーブルは YANG が無いか中途半端な状態。新規テーブルは原則 YANG 必須だが、歴史的経緯で未追従のものもある</li>
 </ul>
 <p>つまり「SONiC YANG ＝ CONFIG_DB の型定義 + 整合性制約」と理解して良い。CONFIG_DB リファレンス（<code>docs/reference/config-db/</code>）と相互参照する。</p>
@@ -23618,7 +23618,7 @@
 <li><a href="sonic-vxlan/">sonic-vxlan</a></li>
 </ul>
 <h3 id="acl-qos">ACL / QoS / バッファ<a class="headerlink" href="#acl-qos" title="Permanent link">&para;</a></h3>
-<p>注: SONiC YANG には現状 <code>sonic-acl</code> モジュールは存在しない（CONFIG_DB 側の <code>ACL_TABLE</code> / <code>ACL_RULE</code> はある）。代わりに COPP / mirror / PFC watchdog をここに置く。</p>
+<p>注: SONiC YANG には現状 <code>sonic-acl</code> モジュールは存在しない（CONFIG_DB 側の <code>ACL_TABLE</code> / <code>ACL_RULE</code> はある）。代わりに COPP / mirror / <a href="../glossary/#term-pfc">PFC</a> watchdog をここに置く。</p>
 <ul>
 <li><a href="sonic-copp/">sonic-copp</a></li>
 <li><a href="sonic-mirror-session/">sonic-mirror-session</a></li>
@@ -23667,6 +23667,8 @@
 <li><a href="../../topics/22-reference-index/">Topics: リファレンス横断索引</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6396c716f97e -->
 
 
 

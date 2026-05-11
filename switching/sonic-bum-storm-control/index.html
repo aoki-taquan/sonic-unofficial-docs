@@ -23728,12 +23728,12 @@
 </div>
 <h1 id="bum">BUM ストームコントロール<a class="headerlink" href="#bum" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BUM（Broadcast / Unknown-unicast / unknown-Multicast）ストームは L2 ドメインを劣化させる典型的障害。本機能は <strong>物理ポート単位で 3 タイプを個別に kbps レート制限</strong> し、SAI policer をポート入力段に紐付ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>BUM（Broadcast / Unknown-unicast / unknown-Multicast）ストームは L2 ドメインを劣化させる典型的障害。本機能は <strong>物理ポート単位で 3 タイプを個別に kbps レート制限</strong> し、<a href="../../reference/glossary/#term-sai">SAI</a> policer をポート入力段に紐付ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>レンジ 0 kbps 〜 100 Gbps（10^8 kbps）</li>
-<li>物理ポート専用（VLAN / PortChannel には直接設定不可、メンバ port で設定）</li>
+<li>物理ポート専用（<a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> には直接設定不可、メンバ port で設定）</li>
 <li>超過分は単純ドロップ</li>
-<li>統計（hit / drop 数）は本 HLD のスコープ外</li>
+<li>統計（hit / drop 数）は本 <a href="../../reference/glossary/#term-hld">HLD</a> のスコープ外</li>
 </ul>
 <h2 id="_2">アーキテクチャ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23794,7 +23794,7 @@
 </table>
 <p><code>storm</code> モードのため CBS / EBS / PBS は使わない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="warm-boot">Warm boot<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB に永続化、system warm boot および SWSS Docker warm boot を跨いで継続することが要件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に永続化、system warm boot および SWSS Docker warm boot を跨いで継続することが要件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="config_db-cli">CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23832,8 +23832,8 @@
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>VLAN / PortChannel: メンバ物理ポートで設定。LAG ハッシュ前の入力段で計測されるため独立に効く</li>
-<li>PolicerOrch: ACL ポリサーと同じ Orch だが、ストーム制御は内部命名規則 <code>&lt;intf&gt;_&lt;storm_type&gt;</code> で別管理</li>
+<li>VLAN / PortChannel: メンバ物理ポートで設定。<a href="../../reference/glossary/#term-lag">LAG</a> ハッシュ前の入力段で計測されるため独立に効く</li>
+<li>PolicerOrch: <a href="../../reference/glossary/#term-acl">ACL</a> ポリサーと同じ Orch だが、ストーム制御は内部命名規則 <code>&lt;intf&gt;_&lt;storm_type&gt;</code> で別管理</li>
 <li>Warm boot: PolicerOrch が CONFIG_DB 再読み込みで SAI 再投入</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23847,7 +23847,7 @@
 <ul>
 <li><a href="../../topics/06-l2-vlan-lag/">06-l2-vlan-lag</a>: L2 フラッディング全般</li>
 <li><a href="../../topics/07-acl-copp-mirror/">07-acl-copp-mirror</a>: policer / レート制御の文脈</li>
-<li><a href="../../topics/08-qos-buffer/">08-qos-buffer</a>: policer / QoS との関係</li>
+<li><a href="../../topics/08-qos-buffer/">08-qos-buffer</a>: policer / <a href="../../reference/glossary/#term-qos">QoS</a> との関係</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -23856,6 +23856,8 @@
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 450bde84609d -->
 
 <div class="footnote">
 <hr />

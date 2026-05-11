@@ -23685,9 +23685,9 @@
 
 <h1 id="dash">DASH 関連<a class="headerlink" href="#dash" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>DASH (Disaggregated APIs for SONiC Hosts)</strong> は、SONiC NPU と DPU / SmartNIC を疎結合に連携させ、ステートフルな L4 NAT / ACL / フローテーブル処理を DPU 側にオフロードするアーキテクチャです。クラウド事業者の大規模 VNET ゲートウェイをコモディティ DPU でスケールさせる目的で生まれ、いまは SmartSwitch のフロー処理プレーン基盤としても採用されています。</p>
+<p><strong><a href="../../reference/glossary/#term-dash">DASH</a> (Disaggregated APIs for SONiC Hosts)</strong> は、SONiC <a href="../../reference/glossary/#term-npu">NPU</a> と <a href="../../reference/glossary/#term-dpu">DPU</a> / SmartNIC を疎結合に連携させ、ステートフルな L4 <a href="../../reference/glossary/#term-nat">NAT</a> / <a href="../../reference/glossary/#term-acl">ACL</a> / フローテーブル処理を DPU 側にオフロードするアーキテクチャです。クラウド事業者の大規模 <a href="../../reference/glossary/#term-vnet">VNET</a> ゲートウェイをコモディティ DPU でスケールさせる目的で生まれ、いまは <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> のフロー処理プレーン基盤としても採用されています。</p>
 <p>このカテゴリは、area の壁を越えて DASH に関わる SONiC 側のページを横断で見られるようにします。具体的には <strong>DASH 全体アーキテクチャ</strong>（DPU / NPU の役割分担と Disaggregated API の定義）・<strong>DASH ACL の拡張</strong>（<code>DASH_PREFIX_TAG_TABLE</code> などのタグベース ACL）・<strong>仮想 DPU 環境</strong>（BMv2 ベースのソフト DPU を sonic-vs に統合して機能検証する SONiC-DASH KVM）が中心です。</p>
-<p>DASH は実装が <code>sonic-dash-api</code> / <code>dash-pipeline</code> / <code>swss-common</code> に分散しているため、本カテゴリの 3 ページだけでは全容を掴みにくい構成です。SmartSwitch（NPU と DPU の組み合わせ）や VNET（オーバーレイのデータプレーン）、SAI 拡張（capability 問い合わせ）と合わせて参照してください。</p>
+<p>DASH は実装が <code>sonic-dash-api</code> / <code>dash-pipeline</code> / <code>swss-common</code> に分散しているため、本カテゴリの 3 ページだけでは全容を掴みにくい構成です。SmartSwitch（NPU と DPU の組み合わせ）や VNET（オーバーレイのデータプレーン）、<a href="../../reference/glossary/#term-sai">SAI</a> 拡張（capability 問い合わせ）と合わせて参照してください。</p>
 <p>主要キーワード: <code>DASH</code>, <code>DPU</code>, <code>ACL</code>, <code>SONiC-DASH</code>, <code>BMv2</code>, <code>DPU_APPL_DB</code></p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="overlay">overlay / アーキテクチャ<a class="headerlink" href="#overlay" title="Permanent link">&para;</a></h3>
@@ -23725,6 +23725,8 @@
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 04c551f6cce9 -->
 
 
 

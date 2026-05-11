@@ -23770,15 +23770,15 @@
 <ol>
 <li><strong>shutdown→kexec→bootup の各段階で誰が何をするか</strong>（順序）</li>
 <li><strong><code>SONIC_BOOT_TYPE</code> の値とその意味</strong>（warm / fast / fastfast / express）</li>
-<li><strong>SAI に求める warm shutdown / warm recovery の API 契約</strong></li>
+<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> に求める warm shutdown / warm recovery の API 契約</strong></li>
 <li><strong>fast-reboot や Warmboot Manager との関係</strong></li>
-<li><strong>データプレーン断や orchagent compare が止まる場合の見どころ</strong></li>
+<li><strong>データプレーン断や <a href="../../reference/glossary/#term-orchagent">orchagent</a> compare が止まる場合の見どころ</strong></li>
 </ol>
 <h2 id="1-hld">1. 何の HLD か<a class="headerlink" href="#1-hld" title="Permanent link">&para;</a></h2>
 <p>全 SONiC コンテナを協調 shutdown → kexec で kernel 入れ替え → 再起動後に control plane state を復元、データプレーンを乱さない <strong>warmboot の枠組み</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。fast-reboot スクリプト基盤を再利用し、<code>SONIC_BOOT_TYPE</code> カーネル引数で挙動を分岐する。</p>
 <ul>
 <li><strong>kernel argument</strong>: <code>SONIC_BOOT_TYPE=[fast-reboot|warm|cold]</code>。fast / warm 二重指定不可。<code>fast-reboot</code> 表記を互換のため許容、将来 <code>fast</code> 簡素化を計画<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>永続化先</strong>: <code>/host/warmboot/dump.rdb</code>（Redis 全体）+ <code>/host/warmboot/sai-warmboot.bin</code>（SAI state）</li>
+<li><strong>永続化先</strong>: <code>/host/warmboot/dump.rdb</code>（<a href="../../reference/glossary/#term-redis">Redis</a> 全体）+ <code>/host/warmboot/sai-warmboot.bin</code>（SAI state）</li>
 <li><strong>fast-reboot との関係</strong>: スクリプトは symlink 兼用、名前で分岐</li>
 </ul>
 <p>機能一覧的なまとめは <a href="../sonic-warm-reboot/"><code>sonic-warm-reboot.md</code></a>、運用比較は <a href="../../topics/11-reboot/">11-reboot</a>。</p>
@@ -23793,10 +23793,10 @@
 <p>ポイント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>bgp</strong>: graceful restart 有効化</li>
-<li><strong>teamd</strong>: 最終的な valid update を peer に出し 90s 確保</li>
+<li><strong><a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a></strong>: 最終的な valid update を peer に出し 90s 確保</li>
 <li><strong>swss</strong>: MAC learning / aging 無効化、orchagent freeze、<code>WARM_RESTART_TABLE:system</code> フラグ</li>
 <li>Redis ダンプは AOF / RDB の <code>dump.rdb</code>（旧版の per-DB json は廃止）</li>
-<li><strong>syncd</strong>: warm shutdown で SAI に <code>/host/warmboot/sai-warmboot.bin</code> を書かせる</li>
+<li><strong><a href="../../reference/glossary/#term-syncd">syncd</a></strong>: warm shutdown で SAI に <code>/host/warmboot/sai-warmboot.bin</code> を書かせる</li>
 </ul>
 <h3 id="sai-warm-shutdown">SAI: warm shutdown 期待値<a class="headerlink" href="#sai-warm-shutdown" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23850,7 +23850,7 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 <li><code>SONIC_BOOT_TYPE</code> 表記揺れ（<code>fast-reboot</code> vs <code>fast</code>）は将来変わる可能性</li>
 <li><strong>fast-reboot</strong>: 同基盤・同 kernel arg を共有</li>
 <li><strong>Warmboot Manager</strong>: 後発の shutdown orchestrator、共存設計</li>
-<li><strong>BGP graceful restart / teamd 90s timer</strong>: control plane downtime &lt;90s に必須</li>
+<li><strong><a href="../../reference/glossary/#term-bgp">BGP</a> graceful restart / teamd 90s timer</strong>: control plane downtime &lt;90s に必須</li>
 </ul>
 <h2 id="6">6. トラブルシューティング<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23869,6 +23869,8 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 <li><a href="../../topics/11-reboot/">Topics: Reboot / Upgrade / Lifecycle</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 446a7059dd14 -->
 
 <div class="footnote">
 <hr />

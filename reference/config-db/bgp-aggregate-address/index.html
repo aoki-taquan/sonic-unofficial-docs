@@ -23780,7 +23780,7 @@
 
 <h1 id="bgp_aggregate_address">BGP_AGGREGATE_ADDRESS テーブル<a class="headerlink" href="#bgp_aggregate_address" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BGP aggregate-address (集約広告) の設定テーブル。<code>frr-mgmt-framework</code> または <code>bgpcfgd</code> テンプレ経路で <code>aggregate-address &lt;prefix&gt; [summary-only] [as-set] ...</code> に変換される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../glossary/#term-bgp">BGP</a> aggregate-address (集約広告) の設定テーブル。<code>frr-mgmt-framework</code> または <code>bgpcfgd</code> テンプレ経路で <code>aggregate-address &lt;prefix&gt; [summary-only] [as-set] ...</code> に変換される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="admonition note">
 <p class="admonition-title">VRF スコープ</p>
 <p>YANG 定義のキーは <code>aggregate-address</code> のみで VRF スコープが取れない。MR 由来の初期実装で、BGP_GLOBALS の default VRF に対する集約として扱われる前提。複数 VRF 対応については HLD / 実装と整合性検証が要 (本ページは YANG 定義のみを根拠とする)。</p>
@@ -23846,13 +23846,13 @@
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>frr-mgmt-framework</code>: CONFIG_DB → FRR <code>aggregate-address</code> コマンド</li>
+<li><code>frr-mgmt-framework</code>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <a href="../../glossary/#term-frr">FRR</a> <code>aggregate-address</code> コマンド</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>、<code>PREFIX_SET</code></li>
 <li>関連 CLI: <code>vtysh -c "show ip bgp aggregate"</code></li>
-<li>関連 YANG: <code>sonic-bgp-aggregate-address</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-aggregate-address</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23880,6 +23880,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp ipv4 unicast&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->
 
 <div class="footnote">
 <hr />

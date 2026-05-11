@@ -24142,7 +24142,7 @@
 </tr>
 <tr>
 <td><code>-d &lt;DPU&gt;</code></td>
-<td>smart switch の特定 DPU module 名を指定して DPU だけ reboot</td>
+<td>smart switch の特定 <a href="../../glossary/#term-dpu">DPU</a> module 名を指定して DPU だけ reboot</td>
 </tr>
 <tr>
 <td><code>-p</code></td>
@@ -24159,10 +24159,10 @@
 <li><code>reboot_pre_check</code> … <code>/host</code> の書込みテスト、platform pre-check、<code>sonic-installer verify-next-image</code>。</li>
 <li><code>check_conflict_boot_in_fw_update</code> … FW auto update が他種 reboot に予約済みでないことを確認。</li>
 <li><code>linecard_reboot_notify_supervisor</code> … chassis のラインカードの場合、CHASSIS_STATE_DB に <code>reboot=expected</code> を書いてスーパーバイザに通知。</li>
-<li><code>stop_sonic_services</code> … DualToR なら <code>mux</code> を停止、syncd を <code>syncd_request_shutdown --cold</code> でクリーンシャットダウン、PMon を停止。</li>
+<li><code>stop_sonic_services</code> … DualToR なら <code>mux</code> を停止、<a href="../../glossary/#term-syncd">syncd</a> を <code>syncd_request_shutdown --cold</code> でクリーンシャットダウン、PMon を停止。</li>
 <li>platform-specific <code>platform_reboot</code> を <code>exec</code> する。存在しない場合は <code>/sbin/reboot</code>、それでもダメなら <code>echo b &gt; /proc/sysrq-trigger</code>。</li>
 </ol>
-<p><code>reboot</code> は <strong>データプレーン断絶を伴う通常の電源再投入</strong>。BGP / LACP セッションも一旦落ちる。</p>
+<p><code>reboot</code> は <strong>データプレーン断絶を伴う通常の電源再投入</strong>。<a href="../../glossary/#term-bgp">BGP</a> / <a href="../../glossary/#term-lacp">LACP</a> セッションも一旦落ちる。</p>
 <h2 id="fast-reboot"><code>fast-reboot</code><a class="headerlink" href="#fast-reboot" title="Permanent link">&para;</a></h2>
 <h3 id="_5">用法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c &lt;ip_list&gt;] [-s] [-D] [-u] [-n|-N] [-m &lt;asic_list&gt;]
@@ -24249,10 +24249,10 @@
 <p>オプションは <code>fast-reboot</code> と共通。warm-specific な制御 (<code>-m</code> での ASIC スキップ、<code>-N</code> での peer 検査強化など) も同じ getopts で受け付ける。</p>
 <h3 id="warm-reboot_1">warm-reboot で増える動作<a class="headerlink" href="#warm-reboot_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>initialize_pre_shutdown</code> … syncd / orchagent に warm-shutdown 準備を要求。</li>
+<li><code>initialize_pre_shutdown</code> … syncd / <a href="../../glossary/#term-orchagent">orchagent</a> に warm-shutdown 準備を要求。</li>
 <li><code>request_pre_shutdown</code> + <code>wait_for_pre_shutdown_complete_or_fail</code> … pre-shutdown ACK を 待つ。</li>
-<li><code>setup_control_plane_assistant</code> … <code>-c</code> で指定された外部 CPA に対して ARP/ND を打ち、データ平面のスチール先 (黒穴) を作って fail-open を防ぐ。</li>
-<li><code>backup_database</code> … STATE_DB / APPL_DB のスナップショット保存 (warm boot 時の差分 reconcile 用)。</li>
+<li><code>setup_control_plane_assistant</code> … <code>-c</code> で指定された外部 CPA に対して <a href="../../glossary/#term-arp">ARP</a>/ND を打ち、データ平面のスチール先 (黒穴) を作って fail-open を防ぐ。</li>
+<li><code>backup_database</code> … <a href="../../glossary/#term-state_db">STATE_DB</a> / <a href="../../glossary/#term-appl_db">APPL_DB</a> のスナップショット保存 (warm boot 時の差分 reconcile 用)。</li>
 <li>失敗時 <code>clear_boot</code> で <code>kexec -u -a</code> を呼んで kexec slot を解放し、CPA も撤去する。</li>
 </ul>
 <h2 id="_7">終了コード<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24292,7 +24292,7 @@
 </table>
 <h2 id="_8">注意<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>warm-reboot</code> で BGP セッションを保持するには <strong>GR (Graceful Restart) が peer 側で有効</strong> なことが前提。</li>
+<li><code>warm-reboot</code> で BGP セッションを保持するには <strong>GR (<a href="../../glossary/#term-graceful-restart">Graceful Restart</a>) が peer 側で有効</strong> なことが前提。</li>
 <li><code>fast-reboot</code> / <code>warm-reboot</code> は <strong>data plane traffic loss</strong> をゼロにするものではない。SONiC 標準実装でも数秒〜数百ミリ秒の packet drop は出る。<code>-c</code> の CPA 構成と GR をきちんと組まないと L3 セッションが切れる。</li>
 <li>chassis (multi-asic + supervisor + linecard) では <code>reboot</code> が CHASSIS_STATE_DB に通知を出すため、ラインカード単独 reboot とシステム全体 reboot で挙動が変わる。</li>
 </ul>
@@ -24344,7 +24344,7 @@
 </ul>
 <h3 id="_17">よくある落とし穴<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
-<li>warm-reboot 中に CONFIG_DB を変更すると整合が崩れて再起動失敗する。</li>
+<li>warm-reboot 中に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を変更すると整合が崩れて再起動失敗する。</li>
 <li>fast-reboot は kernel まで再起動するため通信断は数十秒発生する。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -24353,6 +24353,8 @@
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>warm-reboot<span class="w"> </span>-b<span class="w"> </span>-0
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4be05789576d -->
 
 <div class="footnote">
 <hr />

@@ -24057,7 +24057,7 @@
     C[rules/profiles/$PROFILE.mk\nコミット済プロファイル] --&gt;|PROFILE 指定時| M
     M --&gt; BUILD[make all]</code></pre>
 <h3 id="configuser"><code>config.user</code> との違い<a class="headerlink" href="#configuser" title="Permanent link">&para;</a></h3>
-<p>HLD は <code>rules/config.user</code> との明確な使い分けを示している<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> は <code>rules/config.user</code> との明確な使い分けを示している<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -24128,7 +24128,7 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <p>つまり「ビルドの portable / self-contained 化」が動機。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。本機能は <strong>ビルド時の Makefile 機構</strong> であり、ランタイムの CONFIG_DB は触らない。</p>
+<p>該当なし。本機能は <strong>ビルド時の Makefile 機構</strong> であり、ランタイムの <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> は触らない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当なし。</p>
 <h3 id="_6">ビルド時の使い方<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
@@ -24154,7 +24154,7 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <ul>
 <li><strong>既存の <code>make ENABLE_*=y all</code> 形</strong> : そのまま動く。<code>PROFILE</code> を併用しても、make の変数解決ルールに従う。</li>
 <li><strong>secure upgrade 系（<code>SECURE_UPGRADE_*</code>）</strong>: HLD の例で挙げられる典型ユースケース。署名証明書とビルドフラグを 1 ファイルにまとめておけるのが直接の旨味<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ZTP（<code>ENABLE_ZTP</code>, <code>USERNAME</code>, <code>PASSWORD</code> 等）</strong> : 同様にプロファイル化しやすい代表例<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><a href="../../reference/glossary/#term-ztp">ZTP</a>（<code>ENABLE_ZTP</code>, <code>USERNAME</code>, <code>PASSWORD</code> 等）</strong> : 同様にプロファイル化しやすい代表例<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>CI/CD パイプライン</strong>: CI 側で個別フラグを並べていた箇所をプロファイル指定に置き換えられる。手元ビルドとの <strong>再現性</strong> が揃うのが効果。</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
@@ -24211,6 +24211,8 @@ reasoning: 取り込み順位と後方互換性の根拠。
 - sonic-buildimage/Makefile.work:155 include rules/config; :156 -include rules/config.user のみで profiles/$(PROFILE).mk を取り込むロジックは未実装
 - 結論: HLD は提案段階で master に未マージ
 -->
+
+<!-- glossary-links-injected: 5f2e4324e3ff -->
 
 <div class="footnote">
 <hr />

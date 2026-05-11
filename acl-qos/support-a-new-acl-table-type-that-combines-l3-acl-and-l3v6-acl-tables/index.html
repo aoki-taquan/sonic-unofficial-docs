@@ -23740,8 +23740,8 @@
 </div>
 <h1 id="l3v4v6-acl-v4-v6-1-sai-acl">L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）<a class="headerlink" href="#l3v4v6-acl-v4-v6-1-sai-acl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来 SONiC は IPv4 用 <code>L3</code> と IPv6 用 <code>L3V6</code> を <strong>別々の SAI ACL テーブル</strong> として作成していた。多くの ASIC では同一 TCAM テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <strong>新規組み込みテーブル型 <code>L3V4V6</code></strong> を導入し、この最適化を operator が選択的に有効化できるようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>MIRROR</code> / <code>MIRRORV6</code> で過去に行ったコンパイル時マージ最適化（Option-A）と異なり、ユーザに見える ACL テーブルが 1 つで済む点が利点。</p>
+<p>従来 SONiC は IPv4 用 <code>L3</code> と IPv6 用 <code>L3V6</code> を <strong>別々の <a href="../../reference/glossary/#term-sai">SAI</a> <a href="../../reference/glossary/#term-acl">ACL</a> テーブル</strong> として作成していた。多くの ASIC では同一 TCAM テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>新規組み込みテーブル型 <code>L3V4V6</code></strong> を導入し、この最適化を operator が選択的に有効化できるようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>MIRROR</code> / <code>MIRRORV6</code> で過去に行ったコンパイル時マージ最適化（Option-A）と異なり、ユーザに見える ACL テーブルが 1 つで済む点が利点。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">検討された選択肢<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
@@ -23779,7 +23779,7 @@
 <li><code>IP_PROTOCOL</code> / <code>NEXT_HEADER</code></li>
 <li><code>L4_SRC_PORT</code> / <code>L4_DST_PORT</code> / <code>TCP_FLAGS</code></li>
 </ul>
-<p>action: <code>PACKET_ACTION</code> / <code>REDIRECT_ACTION</code>（egress では <code>REDIRECT</code> 非対応な ASIC では <code>PACKET_ACTION</code> のみ）。bind: Port / LAG。</p>
+<p>action: <code>PACKET_ACTION</code> / <code>REDIRECT_ACTION</code>（egress では <code>REDIRECT</code> 非対応な ASIC では <code>PACKET_ACTION</code> のみ）。bind: Port / <a href="../../reference/glossary/#term-lag">LAG</a>。</p>
 <p>ACL ルールには <strong><code>IP_TYPE</code> または <code>ETHER_TYPE</code> を含めることを推奨</strong>。Phase 2 で非対応 ASIC 上で内部的に v4 用 / v6 用の 2 枚に振り分ける際の判定キーになる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="phase-1-phase-2">Phase 1 / Phase 2<a class="headerlink" href="#phase-1-phase-2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
@@ -23788,7 +23788,7 @@
   O -- no Phase 1 --&gt; E[orchagent syslog ERROR&lt;br&gt;テーブル作成失敗]
   O -- no Phase 2 --&gt; SP[内部で 2 SAI ACL tables&lt;br&gt;v4/v6 で分割]
   SP --&gt; U2[ユーザには 1 テーブルとして見える]</code></pre>
-<p>現状は <strong>Phase 1 のみ実装</strong> され、非対応 ASIC では orchagent が syslog にエラーを出してテーブル作成を断る<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>現状は <strong>Phase 1 のみ実装</strong> され、非対応 ASIC では <a href="../../reference/glossary/#term-orchagent">orchagent</a> が syslog にエラーを出してテーブル作成を断る<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="state_db-capability"><code>STATE_DB</code> capability 公開<a class="headerlink" href="#state_db-capability" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>hgetall &quot;ACL_STAGE_CAPABILITY_TABLE|INGRESS&quot;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  ...
@@ -23855,6 +23855,8 @@ reasoning: orchagent 側エントリポイントと STATE_DB capability キー�
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 65e3d37d723f -->
 
 <div class="footnote">
 <hr />

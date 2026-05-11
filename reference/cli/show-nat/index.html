@@ -23968,8 +23968,8 @@
 
 <h1 id="show-nat">show nat サブコマンド<a class="headerlink" href="#show-nat" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show nat</code> は SONiC の NAT 機能の <strong>動的な変換テーブル</strong> および <strong>静的な設定</strong> を表示する CLI で、<code>show/nat.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>実装は薄く、<code>natshow</code> / <code>natconfig</code> という C/Python の補助バイナリを <code>clicommon.run_command(...)</code> で呼び出すだけのラッパー。<code>natshow</code> は ASIC_DB / COUNTERS_DB を参照し、<code>natconfig</code> は CONFIG_DB を整形して出すように分業されている。</p>
+<p><code>show nat</code> は SONiC の <a href="../../glossary/#term-nat">NAT</a> 機能の <strong>動的な変換テーブル</strong> および <strong>静的な設定</strong> を表示する CLI で、<code>show/nat.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>実装は薄く、<code>natshow</code> / <code>natconfig</code> という C/Python の補助バイナリを <code>clicommon.run_command(...)</code> で呼び出すだけのラッパー。<code>natshow</code> は <a href="../../glossary/#term-asic_db">ASIC_DB</a> / <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> を参照し、<code>natconfig</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を整形して出すように分業されている。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24080,7 +24080,7 @@
 </table>
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>natshow</code> <code>natconfig</code> の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は <code>--json</code> 等の互換オプションは無いので、現状はラフな text 出力のパース、または STATE_DB / CONFIG_DB を直接読むしかない。</li>
+<li><code>natshow</code> <code>natconfig</code> の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は <code>--json</code> 等の互換オプションは無いので、現状はラフな text 出力のパース、または <a href="../../glossary/#term-state_db">STATE_DB</a> / CONFIG_DB を直接読むしかない。</li>
 <li><code>show nat translations</code> は <strong>NAT が実際にハード offload されている前提</strong>。<code>config nat feature disable</code> 状態では空表示になる。</li>
 </ul>
 <!-- ref-triangle:start -->
@@ -24157,6 +24157,8 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>nat<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 59e493d94ec9 -->
 
 <div class="footnote">
 <hr />

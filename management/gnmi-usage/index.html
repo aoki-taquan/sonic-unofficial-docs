@@ -23884,7 +23884,7 @@
 </div>
 <h1 id="gnmi-gnmi_get-gnmi_set-gnmi_cli">gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）<a class="headerlink" href="#gnmi-gnmi_get-gnmi_set-gnmi_cli" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の telemetry コンテナには <strong>3 つの gNMI クライアントツール</strong> が <code>/usr/bin</code> に同梱されており、運用検証や疎通確認に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC の telemetry コンテナには <strong>3 つの <a href="../../reference/glossary/#term-gnmi">gNMI</a> クライアントツール</strong> が <code>/usr/bin</code> に同梱されており、運用検証や疎通確認に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>gnmi_get</code>: 単一または複数パスの取得（<code>Get</code> RPC）</li>
 <li><code>gnmi_set</code>: <code>update</code> / <code>replace</code> / <code>delete</code> 操作（<code>Set</code> RPC）</li>
@@ -23893,8 +23893,8 @@
 <p>これらは upstream の <a href="https://github.com/google/gnxi">google/gnxi</a> と <a href="https://github.com/openconfig/gnmi">openconfig/gnmi</a> のツールに、SONiC 用の追加機能を載せた <strong>patched 版</strong> である。パッチは <code>sonic-gnmi/patches/</code> で管理される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ターゲットモデルとして以下を <code>-xpath_target</code> で切り替えられる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>OC-YANG</code>: OpenConfig YANG モデル</li>
-<li><code>SONIC-YANG</code>: SONiC 独自 YANG（CONFIG_DB を YANG で抽象化したもの）</li>
+<li><code>OC-YANG</code>: OpenConfig <a href="../../reference/glossary/#term-yang">YANG</a> モデル</li>
+<li><code>SONIC-YANG</code>: SONiC 独自 YANG（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を YANG で抽象化したもの）</li>
 <li>非 YANG: <code>CONFIG_DB</code> / <code>COUNTERS_DB</code> などの <strong>redis DB を直接</strong> 参照するモード（YANG なしの raw アクセス）</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23986,7 +23986,7 @@
 <ul>
 <li><strong>gNMI Master Arbitration</strong>: <code>gnmi_set</code> を使う場合、サーバが Master Arbitration を有効化していると <code>MasterArbitration</code> 拡張なしの <code>Set</code> は <code>PermissionDenied</code> で落ちる</li>
 <li><strong>gNMI 認証 / RBAC</strong>: <code>-username</code> / <code>-password</code> のロールに応じて <code>Set</code> 権限が制限される</li>
-<li><strong>CONFIG_DB / COUNTERS_DB の sonic-mgmt-common 経由アクセス</strong>: <code>-xpath_target SONIC-YANG</code> を使うと sonic-mgmt-common の transformer 経路を経由する</li>
+<li><strong>CONFIG_DB / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> の <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common 経由アクセス</strong>: <code>-xpath_target SONIC-YANG</code> を使うと sonic-mgmt-common の transformer 経路を経由する</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24009,6 +24009,8 @@
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c3f4e76fa339 -->
 
 <div class="footnote">
 <hr />

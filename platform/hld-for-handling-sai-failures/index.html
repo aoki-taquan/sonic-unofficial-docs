@@ -23974,10 +23974,10 @@
 </div>
 <h1 id="sai-handlesaistatus-virtual-error_db">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）<a class="headerlink" href="#sai-handlesaistatus-virtual-error_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>orchagent</code> は APPL_DB 経由で受けた要求を SAI コール列に展開して syncd / SAI に投げる。SAI が失敗を返した場合の振る舞いはこれまで Orch ごとに散発的に書かれており、<strong>統一された失敗ハンドリング枠組みが無かった</strong>。本 HLD はその枠組みとして次の 2 点を導入する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>orchagent</code> は <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> 経由で受けた要求を <a href="../../reference/glossary/#term-sai">SAI</a> コール列に展開して <a href="../../reference/glossary/#term-syncd">syncd</a> / SAI に投げる。SAI が失敗を返した場合の振る舞いはこれまで Orch ごとに散発的に書かれており、<strong>統一された失敗ハンドリング枠組みが無かった</strong>。本 <a href="../../reference/glossary/#term-hld">HLD</a> はその枠組みとして次の 2 点を導入する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong><code>Orch</code> 基底クラスに 4 つの virtual 関数</strong> (<code>handleSaiCreate/Set/Remove/Get Status</code>) を追加し、Create/Set/Remove/Get それぞれで失敗時動作を共通化／個別化する</li>
-<li><strong><code>ERROR_DB</code></strong> を新設し、orchagent で解決できない失敗を上位（fpmsyncd 等）にエスカレーションする経路を作る</li>
+<li><strong><code>ERROR_DB</code></strong> を新設し、<a href="../../reference/glossary/#term-orchagent">orchagent</a> で解決できない失敗を上位（<a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 等）にエスカレーションする経路を作る</li>
 </ol>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">失敗ハンドリング全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -24022,7 +24022,7 @@
 <tr>
 <td><code>task_failed</code></td>
 <td>crash しない、retry しない、orchagent は走り続けるが ERROR_DB に上げる</td>
-<td>不正な ACL、IP 衝突、HW permanent error</td>
+<td>不正な <a href="../../reference/glossary/#term-acl">ACL</a>、IP 衝突、HW permanent error</td>
 </tr>
 <tr>
 <td><code>task_need_retry</code></td>
@@ -24122,7 +24122,7 @@ reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシュー
 <p>ERROR_DB は <strong>上位プロセスが消費して削除する</strong> 前提で設計される。fpmsyncd 等が処理ロジックを実装すれば ERROR_DB は溜まり続けない。ただし HLD は <strong>「現時点で上位プロセスはこれを消費するロジックを持っていないため、別途追加が必要」</strong> と明記している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
-<p>外部設定表面は無い。すべて orchagent 内部 + ERROR_DB（Redis）に閉じる。</p>
+<p>外部設定表面は無い。すべて orchagent 内部 + ERROR_DB（<a href="../../reference/glossary/#term-redis">Redis</a>）に閉じる。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>HLD 自体が未完</strong>: 「Other SAI statuses」「SAI API 別」「Orch 別」の対応表が <code>TODO</code> で空。実装は段階的に進む見込み<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -24167,7 +24167,7 @@ reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシュー
 <li>orchagent 側で SAI 失敗時に <code>ERROR_DB.ERROR_APPL_*</code> へ HSET</li>
 <li>fpmsyncd / その他上位プロセスが ERROR_DB を subscribe</li>
 <li>上位プロセスがハンドリング後に <code>DEL</code> で除去</li>
-<li><strong>読者への影響</strong>: 個別 Orch が SAI 失敗を検出した場合、現状は <code>SWSS_LOG_ERROR</code> でログを出して <code>task_need_retry</code> / <code>task_failed</code> / <code>exit(EXIT_FAILURE)</code> のいずれかに分岐するのみ。fpmsyncd 等上位プロセスへの構造化エスカレーション経路は無く、上位は <strong>ログ監視か APPL_DB / ASIC_DB の状態差から失敗を間接推定</strong> するしかない。route install エラーに限れば後発の <strong>BGP Suppress FIB Pending</strong>（<code>dplane_fpm_nl</code> + RTM_F_OFFLOAD 経路）が代替経路を提供する。</li>
+<li><strong>読者への影響</strong>: 個別 Orch が SAI 失敗を検出した場合、現状は <code>SWSS_LOG_ERROR</code> でログを出して <code>task_need_retry</code> / <code>task_failed</code> / <code>exit(EXIT_FAILURE)</code> のいずれかに分岐するのみ。fpmsyncd 等上位プロセスへの構造化エスカレーション経路は無く、上位は <strong>ログ監視か APPL_DB / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> の状態差から失敗を間接推定</strong> するしかない。route install エラーに限れば後発の <strong><a href="../../reference/glossary/#term-bgp">BGP</a> Suppress FIB Pending</strong>（<code>dplane_fpm_nl</code> + RTM_F_OFFLOAD 経路）が代替経路を提供する。</li>
 <li><strong>回避策</strong>:</li>
 <li>SAI 失敗を運用監視で拾うなら <code>/var/log/syslog</code> の <code>SAI_STATUS_*</code> 文字列を集約する。</li>
 <li>BGP 経路の install 失敗に限れば BGP Suppress FIB Pending 機能を有効化する（<a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md</a> 参照）。</li>
@@ -24195,9 +24195,11 @@ reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシュー
 </blockquote>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
-<li>[GitHub Issue / PR の関連リンクは未確認] — <code>handleSai*Status</code> virtual / ERROR_DB ハンドリングは sonic-swss orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。CRM (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。</li>
+<li>[GitHub Issue / PR の関連リンクは未確認] — <code>handleSai*Status</code> virtual / ERROR_DB ハンドリングは <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。<a href="../../reference/glossary/#term-crm">CRM</a> (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: c0d7064c3cb2 -->
+
 <div class="footnote">
 <hr />
 <ol>

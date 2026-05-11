@@ -23611,8 +23611,8 @@
 
 <h1 id="dot1p_to_tc_map">DOT1P_TO_TC_MAP テーブル<a class="headerlink" href="#dot1p_to_tc_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>DOT1P_TO_TC_MAP</code> テーブルは IEEE 802.1p Priority Code Point (PCP, 0-7) を SONiC の Traffic Class へマップするテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。QoS 入口分類で使われ、<code>PORT_QOS_MAP.dot1p_to_tc_map</code> から参照される。<code>qosorch</code> (sonic-swss) が CONFIG_DB を読み、SAI の <code>SAI_QOS_MAP_TYPE_DOT1P_TO_TC</code> オブジェクトを生成する。</p>
-<p>YANG は親 <code>DOT1P_TO_TC_MAP_LIST</code>（key: <code>name</code>）と、その下の inner list <code>DOT1P_TO_TC_MAP</code>（key: <code>dot1p</code>）の 2 段構造。</p>
+<p><code>DOT1P_TO_TC_MAP</code> テーブルは IEEE 802.1p Priority Code Point (PCP, 0-7) を SONiC の Traffic Class へマップするテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-qos">QoS</a> 入口分類で使われ、<code>PORT_QOS_MAP.dot1p_to_tc_map</code> から参照される。<code>qosorch</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み、<a href="../../glossary/#term-sai">SAI</a> の <code>SAI_QOS_MAP_TYPE_DOT1P_TO_TC</code> オブジェクトを生成する。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> は親 <code>DOT1P_TO_TC_MAP_LIST</code>（key: <code>name</code>）と、その下の inner list <code>DOT1P_TO_TC_MAP</code>（key: <code>dot1p</code>）の 2 段構造。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23716,6 +23716,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>qos<span class="w"> </span>map<span class="w"> </span>dot1p-tc
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 7e2c6e652020 -->
 
 <div class="footnote">
 <hr />

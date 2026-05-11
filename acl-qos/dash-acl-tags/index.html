@@ -23840,7 +23840,7 @@
 </div>
 <h1 id="dash-acl-dash_prefix_tag_table-dash_acl_rule_table">DASH ACL タグ（<code>DASH_PREFIX_TAG_TABLE</code> と <code>DASH_ACL_RULE_TABLE</code> 拡張）<a class="headerlink" href="#dash-acl-dash_prefix_tag_table-dash_acl_rule_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DASH (Disaggregated APIs for SONiC Hosts) の ACL では、<strong>サービスタグ</strong> が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。タグメンバが変わってもタグ自体の更新だけで済み、これを参照する ACL ルールは無変更でよい。プレフィックスを各ルールに複製する必要が無くなり、メモリ効率も上がる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-dash">DASH</a> (Disaggregated APIs for SONiC Hosts) の <a href="../../reference/glossary/#term-acl">ACL</a> では、<strong>サービスタグ</strong> が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。タグメンバが変わってもタグ自体の更新だけで済み、これを参照する ACL ルールは無変更でよい。プレフィックスを各ルールに複製する必要が無くなり、メモリ効率も上がる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>実装は <strong>2 段階</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -23852,18 +23852,18 @@
 <tbody>
 <tr>
 <td>Stage 1</td>
-<td><strong>SWSS 内のソフト展開のみ</strong>。ルール作成時にタグをプレフィックス列に展開（SAI 変更なし）</td>
+<td><strong>SWSS 内のソフト展開のみ</strong>。ルール作成時にタグをプレフィックス列に展開（<a href="../../reference/glossary/#term-sai">SAI</a> 変更なし）</td>
 </tr>
 <tr>
 <td>Stage 2</td>
-<td><strong>SAI API 経由でタグを ASIC へ</strong>（本 HLD 対象外）</td>
+<td><strong>SAI API 経由でタグを ASIC へ</strong>（本 <a href="../../reference/glossary/#term-hld">HLD</a> 対象外）</td>
 </tr>
 </tbody>
 </table>
 <p>本 HLD は <strong>Stage 1</strong> を定義する。</p>
 <p>要件 (Stage 1)<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>orchagent で ACL タグ設定をサポート</li>
+<li><a href="../../reference/glossary/#term-orchagent">orchagent</a> で ACL タグ設定をサポート</li>
 <li>1 プレフィックスは <strong>複数タグに所属可</strong></li>
 <li>タグからプレフィックス追加 / 削除は <strong>いつでも</strong></li>
 <li>ルール生成時に <strong>タグ → プレフィックス列に展開</strong></li>
@@ -23905,7 +23905,7 @@
     C --&gt;|yes| RT[retry / 削除保留]
     C --&gt;|no| D[タグ削除]</code></pre>
 <ul>
-<li><strong>update tag (prefix_list 変更)</strong>: 影響を受けるルールが <strong>ENI に bind 済 group</strong> に属するなら「コピー → 新 group bind → 旧 group 削除」、未 bind なら <strong>in-place 更新</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</li>
+<li><strong>update tag (prefix_list 変更)</strong>: 影響を受けるルールが <strong><a href="../../reference/glossary/#term-eni">ENI</a> に bind 済 group</strong> に属するなら「コピー → 新 group bind → 旧 group 削除」、未 bind なら <strong>in-place 更新</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</li>
 </ul>
 <pre class="mermaid"><code>flowchart TD
     U[DASH_PREFIX_TAG update] --&gt; A[影響 ACL group 列挙]
@@ -23963,7 +23963,7 @@
 </tr>
 </tbody>
 </table>
-<p>CLI / YANG 拡張・<code>CONFIG_DB</code> 変更は <strong>無し</strong>。コントローラが APP_DB に直接書き込む設計<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CLI / <a href="../../reference/glossary/#term-yang">YANG</a> 拡張・<code>CONFIG_DB</code> 変更は <strong>無し</strong>。コントローラが APP_DB に直接書き込む設計<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DASH_PREFIX_TAG_TABLE:Tag1  ip_version=ipv4  prefix_list=1.1.1.0/24,1.1.2.0/24
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    priority=1 action=allow terminating=false
@@ -23972,7 +23972,7 @@
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Stage 1 は SAI 不使用</strong>。ASIC からはタグの存在は見えない</li>
-<li><strong>warm / fast reboot 未サポート</strong>（DPU SONiC 自体が未対応）</li>
+<li><strong>warm / fast reboot 未サポート</strong>（<a href="../../reference/glossary/#term-dpu">DPU</a> SONiC 自体が未対応）</li>
 <li><strong>ENI bind 済 group のルール削除 / 更新は不可</strong>。タグ更新は group コピー方式</li>
 <li><strong>同種 tag と prefix の併用不可</strong>（<code>src_tag + src_addr</code> 等）</li>
 <li>未存在 tag 参照は <strong>retry 延期</strong>。controller は投入順序を意識</li>
@@ -23996,7 +23996,7 @@
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/13-dash-smartswitch/concept/">13-dash-smartswitch/concept</a>: DASH / SmartSwitch の全体像</li>
+<li><a href="../../topics/13-dash-smartswitch/concept/">13-dash-smartswitch/concept</a>: DASH / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> の全体像</li>
 <li><a href="../../topics/07-acl-copp-mirror/concept/">07-acl-copp-mirror/concept</a>: ACL と DASH ACL の置き場所</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
@@ -24007,6 +24007,8 @@
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e226b2d44a27 -->
 
 <div class="footnote">
 <hr />

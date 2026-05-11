@@ -23607,7 +23607,7 @@
 <li>import: <code>ietf-inet-types</code>, <code>sonic-types</code>, <code>sonic-vrf</code>, <code>sonic-vnet</code></li>
 <li>top container: <code>sonic-bgp-peerrange</code></li>
 </ul>
-<p>SONIC BGP Peer Range YANG。 BGP dynamic neighbor (listen range) 設定を VRF/VNET 別、 およびテンプレートとして保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONIC <a href="../../glossary/#term-bgp">BGP</a> Peer Range <a href="../../glossary/#term-yang">YANG</a>。 BGP dynamic neighbor (listen range) 設定を <a href="../../glossary/#term-vrf">VRF</a>/<a href="../../glossary/#term-vnet">VNET</a> 別、 およびテンプレートとして保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23765,8 +23765,8 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>BGP_PEER_RANGE</code></li>
-<li>CLI: なし（<code>bgpcfgd</code> が config_db.json から読み取り FRR <code>bgp listen range</code> に反映）</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_PEER_RANGE</code></li>
+<li>CLI: なし（<code>bgpcfgd</code> が <a href="../../glossary/#term-config_db.json">config_db.json</a> から読み取り <a href="../../glossary/#term-frr">FRR</a> <code>bgp listen range</code> に反映）</li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23780,7 +23780,7 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BGP dynamic neighbor 用 prefix range 設定。<code>BGP_PEER_RANGE</code> テーブルが bgpcfgd で FRR <code>bgp listen range</code> に変換される。</li>
+<li>BGP dynamic neighbor 用 prefix range 設定。<code>BGP_PEER_RANGE</code> テーブルが <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> で FRR <code>bgp listen range</code> に変換される。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23793,6 +23793,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 33a73c58d240 -->
+
 <div class="footnote">
 <hr />
 <ol>

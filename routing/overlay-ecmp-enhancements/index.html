@@ -23828,12 +23828,12 @@
 </div>
 <h1 id="overlay-ecmp-primarysecondarybfd">Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張<a class="headerlink" href="#overlay-ecmp-primarysecondarybfd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜこの拡張が必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>「Overlay ECMP with BFD monitoring」HLD（<code>SONiC/doc/vxlan/Overlay ECMP with BFD.md</code>）の <strong>後付け拡張</strong> で、VxLAN VNET ルートに 4 種の機能を追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>「Overlay <a href="../../reference/glossary/#term-ecmp">ECMP</a> with <a href="../../reference/glossary/#term-bfd">BFD</a> monitoring」<a href="../../reference/glossary/#term-hld">HLD</a>（<code>SONiC/doc/vxlan/Overlay ECMP with BFD.md</code>）の <strong>後付け拡張</strong> で、VxLAN <a href="../../reference/glossary/#term-vnet">VNET</a> ルートに 4 種の機能を追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>Primary / Secondary エンドポイント</strong> の自動切替（プライマリ全滅時のみセカンダリ使用）</li>
 <li><strong>カスタム監視</strong> 委譲（BFD 非対応 VTEP 向け、外部プロセスで生存確認）</li>
 <li><strong>per-route BFD Tx/Rx 間隔</strong> と <strong>directly-connected</strong> ネクストホップサポート</li>
-<li><strong><code>pinned_state</code></strong>: コントローラからの BFD 状態オーバーライド（SmartSwitch HA 連携）</li>
+<li><strong><code>pinned_state</code></strong>: コントローラからの BFD 状態オーバーライド（<a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> HA 連携）</li>
 </ol>
 <h2 id="_2">スキーマ拡張<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-vnet">CONFIG_DB <code>VNET</code><a class="headerlink" href="#config_db-vnet" title="Permanent link">&para;</a></h3>
@@ -23853,7 +23853,7 @@
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>pinned_state             = none|up|down   ; BFD 状態 override
 </span></code></pre></div>
 <h3 id="appl_db-state_db-vnet_monitor_table">APPL_DB / STATE_DB <code>VNET_MONITOR_TABLE</code>（新規）<a class="headerlink" href="#appl_db-state_db-vnet_monitor_table" title="Permanent link">&para;</a></h3>
-<p><code>monitoring=custom</code> の場合、VnetOrch が APPL_DB に endpoint 情報（<code>packet_type=vxlan</code> / <code>interval</code> / <code>multiplier</code> / <code>overlay_dmac</code>）を書き、カスタム監視モジュールは STATE_DB 側に <code>state=up/down</code> を返す。</p>
+<p><code>monitoring=custom</code> の場合、VnetOrch が <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に endpoint 情報（<code>packet_type=vxlan</code> / <code>interval</code> / <code>multiplier</code> / <code>overlay_dmac</code>）を書き、カスタム監視モジュールは <a href="../../reference/glossary/#term-state_db">STATE_DB</a> 側に <code>state=up/down</code> を返す。</p>
 <h2 id="primarysecondary">Primary/Secondary 切替ルール<a class="headerlink" href="#primarysecondary" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>stateDiagram-v2
     [*] --&gt; Primary
@@ -23882,7 +23882,7 @@
 <h2 id="per-route-bfd-directly-connected-pinned_state">per-route BFD / directly-connected / pinned_state<a class="headerlink" href="#per-route-bfd-directly-connected-pinned_state" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>tx/rx_monitor_timer</code> 変更時は BFD セッションを <strong>一旦削除して再作成</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>check_directly_connected=true</code> の場合、ARP で直接接続を確認し、直接接続なら <strong>通常 ECMP</strong> で実装。primary 集合 / secondary 集合は <strong>混在不可</strong>（全員 direct or 全員非 direct）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>check_directly_connected=true</code> の場合、<a href="../../reference/glossary/#term-arp">ARP</a> で直接接続を確認し、直接接続なら <strong>通常 ECMP</strong> で実装。primary 集合 / secondary 集合は <strong>混在不可</strong>（全員 direct or 全員非 direct）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>pinned_state</code> = <code>none</code> / <code>up</code> / <code>down</code>。SmartSwitch HA で planned maintenance や誤検知抑止に使用。詳細は <a href="https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/smart-switch-ha-hld.md#641-pinning-bfd-probe">SmartSwitch HA HLD §6.4.1</a></li>
 </ul>
 <h2 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -23906,7 +23906,7 @@
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>BfdOrch</strong>: per-route タイマ更新で BFD 再生成、<code>pinned_state</code> 非固定時はフラップしうる</li>
-<li><strong>BGP <code>ADVERTISE_NETWORK_TABLE</code></strong>: <code>adv_prefix</code> 経路は NH 消失で広報停止まで連動</li>
+<li><strong><a href="../../reference/glossary/#term-bgp">BGP</a> <code>ADVERTISE_NETWORK_TABLE</code></strong>: <code>adv_prefix</code> 経路は NH 消失で広報停止まで連動</li>
 <li><strong>SmartSwitch HA</strong>: <code>pinned_state</code> / <code>check_directly_connected</code> は hamgrd 操作前提</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -23920,7 +23920,7 @@
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/03-vxlan-evpn/">03-vxlan-evpn</a>: VxLAN / EVPN / VNET 経路</li>
+<li><a href="../../topics/03-vxlan-evpn/">03-vxlan-evpn</a>: VxLAN / <a href="../../reference/glossary/#term-evpn">EVPN</a> / VNET 経路</li>
 <li><a href="../../topics/05-dual-tor/">05-dual-tor</a>: SmartSwitch HA と BFD 連携</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -23930,6 +23930,8 @@
 <li><a href="../../topics/03-vxlan-evpn/">Topics: VXLAN / EVPN / VNET オーバーレイ</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6c853f6b2538 -->
 
 <div class="footnote">
 <hr />

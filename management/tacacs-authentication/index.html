@@ -23999,7 +23999,7 @@
   HC --&gt; NSWITCH[/etc/nsswitch.conf]
   SSH[SSH / Console] --&gt; PAMLIB[PAM]
   PAMLIB --&gt; PAM --&gt; TAC[(TACACS+ server)]</code></pre>
-<p>CONFIG_DB を真実の相とし、<code>hostcfgd</code> の AAA モジュールが PAM/NSS 設定ファイルを書き換える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を真実の相とし、<code>hostcfgd</code> の <a href="../../reference/glossary/#term-aaa">AAA</a> モジュールが PAM/NSS 設定ファイルを書き換える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="common-auth-sonic">なぜ <code>common-auth-sonic</code> を分離するか<a class="headerlink" href="#common-auth-sonic" title="Permanent link">&para;</a></h2>
 <p>既存 <code>/etc/pam.d/common-auth</code> を直接編集すると cron など他サブシステムに波及する。SONiC は <strong>専用ファイル <code>common-auth-sonic</code></strong> を作り、SSH / login だけがこれを参照するよう差し替える<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="nss_tacplus">なぜ <code>nss_tacplus</code> が必要か<a class="headerlink" href="#nss_tacplus" title="Permanent link">&para;</a></h2>
@@ -24096,7 +24096,7 @@
 <ul>
 <li><strong>root はローカルのみ</strong>（要件として明示）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>pam_tacplus</code> 上流に <code>source_ip</code> 未取込、SONiC 独自パッチで対応<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>本 HLD は <strong>認証</strong> に限定。authorization / accounting は別設計</li>
+<li>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>認証</strong> に限定。authorization / accounting は別設計</li>
 <li>ホームディレクトリ自動作成、ディスク逼迫時の挙動は未規定</li>
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -24125,6 +24125,8 @@
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a9c18564f33f -->
 
 <div class="footnote">
 <hr />

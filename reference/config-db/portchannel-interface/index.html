@@ -23824,7 +23824,7 @@
 
 <h1 id="portchannel_interface">PORTCHANNEL_INTERFACE テーブル<a class="headerlink" href="#portchannel_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。同一 PORTCHANNEL 名で <code>PORTCHANNEL_INTERFACE_LIST</code> (属性ロウ) と <code>PORTCHANNEL_INTERFACE_IPPREFIX_LIST</code> (IP プレフィクス) の二系統に分かれる。</p>
+<p>PORTCHANNEL を L3 IF として扱うときの設定（<a href="../../glossary/#term-vrf">VRF</a> binding、IP アサイン、MAC、loopback action 等）を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。同一 PORTCHANNEL 名で <code>PORTCHANNEL_INTERFACE_LIST</code> (属性ロウ) と <code>PORTCHANNEL_INTERFACE_IPPREFIX_LIST</code> (IP プレフィクス) の二系統に分かれる。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23865,7 +23865,7 @@
 <td>leafref <code>PORTCHANNEL.name</code></td>
 <td>✅</td>
 <td>-</td>
-<td>LAG 名</td>
+<td><a href="../../glossary/#term-lag">LAG</a> 名</td>
 </tr>
 <tr>
 <td><code>vrf_name</code></td>
@@ -23886,14 +23886,14 @@
 <td>uint8 (0..3)</td>
 <td>-</td>
 <td><code>0</code></td>
-<td>NAT zone</td>
+<td><a href="../../glossary/#term-nat">NAT</a> zone</td>
 </tr>
 <tr>
 <td><code>mpls</code></td>
 <td>enum <code>enable</code>/<code>disable</code></td>
 <td>-</td>
 <td>-</td>
-<td>MPLS routing</td>
+<td><a href="../../glossary/#term-mpls">MPLS</a> routing</td>
 </tr>
 <tr>
 <td><code>ipv6_use_link_local_only</code></td>
@@ -23939,14 +23939,14 @@
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>intfmgrd</code>: <code>vrf_name</code> / <code>mac_addr</code> / <code>mpls</code> / <code>ipv6_use_link_local_only</code> を Linux カーネルに反映</li>
-<li><code>orchagent</code> <code>IntfsOrch</code>: SAI ルータインタフェースを生成</li>
+<li><code>orchagent</code> <code>IntfsOrch</code>: <a href="../../glossary/#term-sai">SAI</a> ルータインタフェースを生成</li>
 <li><code>nat_zone</code>: <code>natmgrd</code> が利用</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORTCHANNEL</code>、<code>VRF</code>、<code>PORTCHANNEL_MEMBER</code></li>
-<li>関連 CLI: <code>config interface ip add/remove</code>（PortChannel に対しても適用）</li>
-<li>関連 YANG: <code>sonic-portchannel</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORTCHANNEL</code>、<code>VRF</code>、<code>PORTCHANNEL_MEMBER</code></li>
+<li>関連 CLI: <code>config interface ip add/remove</code>（<a href="../../glossary/#term-portchannel">PortChannel</a> に対しても適用）</li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-portchannel</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23981,6 +23981,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 73a5cc24f249 -->
 
 <div class="footnote">
 <hr />

@@ -23906,15 +23906,15 @@
 
 
 <h1 id="vxlan-vnet-evpn">VXLAN / VNET / EVPN の概要<a class="headerlink" href="#vxlan-vnet-evpn" title="Permanent link">&para;</a></h1>
-<p>SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。VXLAN は data plane の encapsulation、VNET は SONiC 内部の設定オブジェクト、EVPN はその上に乗る control plane です。</p>
+<p>SONiC の overlay 周りは、「<a href="../../../reference/glossary/#term-vxlan">VXLAN</a>」「<a href="../../../reference/glossary/#term-vnet">VNET</a>」「<a href="../../../reference/glossary/#term-evpn">EVPN</a>」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。VXLAN は data plane の encapsulation、VNET は SONiC 内部の設定オブジェクト、EVPN はその上に乗る control plane です。</p>
 <h2 id="sonic-overlay">SONiC overlay は何の問題を解決するか<a class="headerlink" href="#sonic-overlay" title="Permanent link">&para;</a></h2>
 <p>データセンタや CSP は、物理ネットワークの上に <strong>テナントごとの仮想ネットワーク</strong> を載せたい、L3 fabric の上で <strong>L2 が必要なホストを越境させたい</strong>、という要件を抱えます。SONiC overlay はこれを以下の道具で解きます。</p>
 <ul>
 <li><strong>VXLAN</strong>: L2 / L3 トラフィックを UDP/IP に encapsulate して L3 fabric 上を運ぶ。</li>
-<li><strong>VNET</strong>: SONiC が tenant / VRF / VNI を 1 つのオブジェクトとして扱うための設定単位。controller 直書きにも EVPN 学習にも使える。</li>
-<li><strong>EVPN</strong>: BGP の AFI として MAC / IP / prefix の到達情報を配り、VXLAN tunnel を自動的に張る。</li>
+<li><strong>VNET</strong>: SONiC が tenant / <a href="../../../reference/glossary/#term-vrf">VRF</a> / VNI を 1 つのオブジェクトとして扱うための設定単位。controller 直書きにも EVPN 学習にも使える。</li>
+<li><strong>EVPN</strong>: <a href="../../../reference/glossary/#term-bgp">BGP</a> の AFI として MAC / IP / prefix の到達情報を配り、VXLAN tunnel を自動的に張る。</li>
 </ul>
-<p>「VXLAN を有効化する」と言うとき、実際には VTEP を作るだけの場合、VLAN-VNI を作る場合、VNET route を作る場合、EVPN で経路を受ける場合があります。最初にどの層を触っているかを分けると、設定の迷子になりにくくなります。</p>
+<p>「VXLAN を有効化する」と言うとき、実際には VTEP を作るだけの場合、<a href="../../../reference/glossary/#term-vlan">VLAN</a>-VNI を作る場合、VNET route を作る場合、EVPN で経路を受ける場合があります。最初にどの層を触っているかを分けると、設定の迷子になりにくくなります。</p>
 <h2 id="sonic">SONiC の中での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23926,15 +23926,15 @@
 <tbody>
 <tr>
 <td>Management plane</td>
-<td><code>config vxlan</code>, <code>config vnet</code>, FRR vty, <code>VXLAN_*</code> / <code>VNET_*</code> CONFIG_DB</td>
+<td><code>config vxlan</code>, <code>config vnet</code>, <a href="../../../reference/glossary/#term-frr">FRR</a> vty, <code>VXLAN_*</code> / <code>VNET_*</code> <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a></td>
 </tr>
 <tr>
 <td>Control plane</td>
-<td>FRR bgpd (l2vpn evpn AFI)、vxlanmgrd、VNetOrch、VNetRouteOrch</td>
+<td>FRR bgpd (l2vpn evpn AFI)、<a href="../../../reference/glossary/#term-vxlanmgrd">vxlanmgrd</a>、VNetOrch、VNetRouteOrch</td>
 </tr>
 <tr>
 <td>Data plane</td>
-<td>orchagent (TunnelOrch / VxlanTunnelOrch)、syncd、SAI tunnel / bridge-port</td>
+<td><a href="../../../reference/glossary/#term-orchagent">orchagent</a> (TunnelOrch / VxlanTunnelOrch)、<a href="../../../reference/glossary/#term-syncd">syncd</a>、<a href="../../../reference/glossary/#term-sai">SAI</a> tunnel / bridge-port</td>
 </tr>
 </tbody>
 </table>
@@ -24028,18 +24028,18 @@
 <tbody>
 <tr>
 <td>NVGRE</td>
-<td>encapsulation が GRE + VSID。SONiC NVGRE HLD は decap 受信側中心で、EVPN control plane を持たない</td>
+<td>encapsulation が GRE + VSID。SONiC NVGRE <a href="../../../reference/glossary/#term-hld">HLD</a> は decap 受信側中心で、EVPN control plane を持たない</td>
 </tr>
 <tr>
 <td>Subnet decap</td>
-<td>VLAN subnet 宛 IPinIP を T0 が decap して Netscan へ戻す platform 機能。tenant overlay ではない</td>
+<td>VLAN subnet 宛 <a href="../../../reference/glossary/#term-ipinip">IPinIP</a> を T0 が decap して Netscan へ戻す platform 機能。tenant overlay ではない</td>
 </tr>
 <tr>
 <td>GENEVE</td>
 <td>SONiC では encapsulation 対象として一般には扱っていない</td>
 </tr>
 <tr>
-<td>MPLS L3VPN</td>
+<td><a href="../../../reference/glossary/#term-mpls">MPLS</a> L3VPN</td>
 <td>control plane に BGP-VPNv4/v6、data plane に MPLS label を使う。SONiC では限定的</td>
 </tr>
 <tr>
@@ -24093,7 +24093,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>vxlanmgrd</code> は CONFIG_DB と Linux netlink を仲立ちし、<code>VNetOrch</code> / <code>VxlanTunnelOrch</code> / <code>TunnelDecapOrch</code> が SAI tunnel / bridge port を作ります。EVPN を使う構成では FRR 側で受けた Type-2 / Type-5 が APPL_DB / VNET_ROUTE_TUNNEL に降りてきます。</p>
+<p><code>vxlanmgrd</code> は CONFIG_DB と Linux netlink を仲立ちし、<code>VNetOrch</code> / <code>VxlanTunnelOrch</code> / <code>TunnelDecapOrch</code> が SAI tunnel / bridge port を作ります。EVPN を使う構成では FRR 側で受けた Type-2 / Type-5 が <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / VNET_ROUTE_TUNNEL に降りてきます。</p>
 <h2 id="evpn-vnet">EVPN と VNET 直書きのデータパスは同じ<a class="headerlink" href="#evpn-vnet" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   subgraph Control_Plane
@@ -24104,7 +24104,7 @@
   APPL --&gt; Orch[VxlanTunnelOrch /&lt;br/&gt;VNetOrch /&lt;br/&gt;VNetRouteOrch]
   Orch --&gt; ASIC[(ASIC_DB)]
   ASIC --&gt; SAI[SAI tunnel / bridge-port]</code></pre>
-<p>control plane は EVPN（FRR 経路）か controller 直書きの 2 系統に分かれますが、SAI tunnel / bridge port を作る orchagent 側はほぼ共通です。問題切り分けでは「EVPN セッションは張れているか」「VNET object は CONFIG_DB に居るか」「APPL_DB の TUNNEL/VNET_ROUTE まで来ているか」「ASIC_DB に tunnel object が居るか」を順に追います。</p>
+<p>control plane は EVPN（FRR 経路）か controller 直書きの 2 系統に分かれますが、SAI tunnel / bridge port を作る orchagent 側はほぼ共通です。問題切り分けでは「EVPN セッションは張れているか」「VNET object は CONFIG_DB に居るか」「APPL_DB の TUNNEL/VNET_ROUTE まで来ているか」「<a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に tunnel object が居るか」を順に追います。</p>
 <h2 id="evpn-type-sonic">EVPN Type と SONiC 側の受け口<a class="headerlink" href="#evpn-type-sonic" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24118,7 +24118,7 @@
 <tr>
 <td>Type-2</td>
 <td>MAC / MAC+IP 到達性</td>
-<td>bridge-port / FDB / NEIGH / VNET_ROUTE_TUNNEL（L2 端末向け）</td>
+<td>bridge-port / <a href="../../../reference/glossary/#term-fdb">FDB</a> / NEIGH / VNET_ROUTE_TUNNEL（L2 端末向け）</td>
 </tr>
 <tr>
 <td>Type-3</td>
@@ -24134,7 +24134,7 @@
 </table>
 <p>Type-2 が来ても bridge-port が作られていない場合は <strong>vlan-vni map</strong> が抜けていることが多く、Type-5 が来ても VNET_ROUTE_TUNNEL に乗らない場合は <strong>VRF-VNI map</strong> や <code>nvo</code> の設定漏れが原因になりがちです。</p>
 <h2 id="smartswitch-dash-vnet">SmartSwitch / DASH の VNET との関係<a class="headerlink" href="#smartswitch-dash-vnet" title="Permanent link">&para;</a></h2>
-<p>DASH / SmartSwitch の SDN data path は VNET スキーマを再利用し、ENI 単位の policy（ACL / mapping）と組み合わせて DPU 上に展開します。EVPN を介さず controller が VNET_ROUTE 系を直書きする使い方は、SmartSwitch ENI と相性が良い構成です。詳細は <a href="../../13-dash-smartswitch/concept/">13 章 DASH / SmartSwitch</a> を参照してください。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a> / <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> の SDN data path は VNET スキーマを再利用し、<a href="../../../reference/glossary/#term-eni">ENI</a> 単位の policy（<a href="../../../reference/glossary/#term-acl">ACL</a> / mapping）と組み合わせて <a href="../../../reference/glossary/#term-dpu">DPU</a> 上に展開します。EVPN を介さず controller が VNET_ROUTE 系を直書きする使い方は、SmartSwitch ENI と相性が良い構成です。詳細は <a href="../../13-dash-smartswitch/concept/">13 章 DASH / SmartSwitch</a> を参照してください。</p>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../overlay/vxlan-sonic/">VXLAN / VNet 全体設計</a></li>
@@ -24152,6 +24152,7 @@
 <li><a href="../../02-bgp/">BGP と FRR 制御プレーン</a></li>
 <li><a href="../../04-vrf-ecmp/">VRF / ECMP / RIB-FIB パイプライン</a></li>
 </ul>
+<!-- glossary-links-injected: 63ba01f3c414 -->
 
 
 

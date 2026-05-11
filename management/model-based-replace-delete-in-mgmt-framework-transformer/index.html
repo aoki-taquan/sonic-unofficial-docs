@@ -23753,17 +23753,17 @@
 <ul>
 <li>既存 PUT/DELETE の何が「自然じゃない」のか</li>
 <li>「model 由来の自然な replace/delete」とは具体的にどんな挙動か</li>
-<li>payload と YANG hierarchy traversal の <strong>2 段階処理</strong> はどう協調するか</li>
+<li>payload と <a href="../../reference/glossary/#term-yang">YANG</a> hierarchy traversal の <strong>2 段階処理</strong> はどう協調するか</li>
 <li>新しい <code>validate-xfmr</code> annotation は何のためで、旧 <code>get-validate</code> とどう違うか</li>
 <li>defaults と DELETE が組み合わさったときの罠</li>
 </ul>
 <h2 id="_2">なぜ拡張が必要か<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>SONiC の Management Framework Transformer は <strong>YANG（OpenConfig 等）↔ 内部 ABNF / CONFIG_DB</strong> を変換するコンポーネント。これまで RESTCONF の <strong>PUT/REPLACE と DELETE は YANG 階層の任意深さで正しく動かない</strong> 問題があった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC の Management Framework Transformer は <strong>YANG（OpenConfig 等）↔ 内部 ABNF / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a></strong> を変換するコンポーネント。これまで RESTCONF の <strong>PUT/REPLACE と DELETE は YANG 階層の任意深さで正しく動かない</strong> 問題があった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>PUT</code>: payload に無い兄弟ノードを残してしまう（純粋な replace ではない）</li>
 <li><code>DELETE</code>: target だけ削除し、配下を残す</li>
 </ul>
-<p>本 HLD はこれを <strong>任意深さで</strong> 自然に動くようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> はこれを <strong>任意深さで</strong> 自然に動くようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>PUT 完了後</strong>: GET で取れるのは <strong>payload + defaults のみ</strong>（同階層の他データは消える）</li>
 <li><strong>DELETE 完了後</strong>: GET で配下も含めて空になる</li>
@@ -23828,7 +23828,7 @@
 <ul>
 <li><strong>CVL</strong>（Config Validation Library）: 既存通り呼ばれる</li>
 <li><strong>subtree / post-transformer callback</strong>: アプリ実装次第でカバー範囲が変わる</li>
-<li><strong>gNMI / RESTCONF</strong>: PUT / DELETE セマンティクス変更の影響先</li>
+<li><strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> / RESTCONF</strong>: PUT / DELETE セマンティクス変更の影響先</li>
 <li><strong>OpenConfig YANG models</strong>: 主対象 / <strong>SONiC YANG</strong>: future</li>
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -23843,6 +23843,8 @@
 <li><a href="../sonic-gnmi-server-interface-design/">HLD: SONiC gNMI Server インタフェース設計</a></li>
 <li><a href="../sonic-management-framework/">HLD: SONiC Management Framework</a></li>
 </ul>
+<!-- glossary-links-injected: ef91cb130632 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23757,7 +23757,7 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong><code>network</code> / redistribute 文の不足</strong>: FRR で <code>network 1.1.1.0/24</code> または <code>redistribute connected</code> が無い</li>
+<li><strong><code>network</code> / redistribute 文の不足</strong>: <a href="../../glossary/#term-frr">FRR</a> で <code>network 1.1.1.0/24</code> または <code>redistribute connected</code> が無い</li>
 <li><strong>outbound route-map で deny</strong>: <code>route-map RM_OUT permit</code> の match で外れる</li>
 <li><strong>prefix-list で除外</strong>: <code>ip prefix-list PL_OUT</code> の sequence で deny</li>
 <li><strong>next-hop self / community 設定不適</strong>: iBGP で next-hop が peer から到達不能</li>
@@ -23789,7 +23789,7 @@
 </span></code></pre></div>
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>network</code> 文追加: <code>vtysh -c "conf t" -c "router bgp &lt;ASN&gt;" -c "network 1.1.1.0/24"</code> → CONFIG_DB 側にも反映</li>
+<li><code>network</code> 文追加: <code>vtysh -c "conf t" -c "router bgp &lt;ASN&gt;" -c "network 1.1.1.0/24"</code> → <a href="../../glossary/#term-config_db">CONFIG_DB</a> 側にも反映</li>
 <li>route-map 修正: <code>route-map RM_OUT permit 100</code> を追加、または既存の deny を緩める</li>
 <li>iBGP 経路で next-hop 問題: <code>neighbor &lt;peer&gt; next-hop-self</code></li>
 </ul>
@@ -23800,6 +23800,8 @@
 <li><a href="../../config-db/route-map/">../config-db/route-map.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 035b99b8e325 -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23807,7 +23809,7 @@
 <p>sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ 4305596 — fpmsyncd で zebra → APP_DB 反映&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> で <a href="../../glossary/#term-zebra">zebra</a> → APP_DB 反映&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -23528,7 +23528,7 @@
 
 
 <h1 id="build-packaging-application-extension">Build / Packaging / Application Extension<a class="headerlink" href="#build-packaging-application-extension" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC を「どう作って配るか」と「外部アプリケーションをどう持ち込むか」を、開発者と運用者が同じ地図で読むための入口である。既存ページは build 改善 HLD、Debian cadence、image versioning、application extension（SPM）、ARM、container hardening、feature quality の各 HLD に分散しているが、ビルド成果物が ASIC に届くまでの導線で読み直すと位置関係がはっきりする。</p>
+<p>この章は、SONiC を「どう作って配るか」と「外部アプリケーションをどう持ち込むか」を、開発者と運用者が同じ地図で読むための入口である。既存ページは build 改善 <a href="../../reference/glossary/#term-hld">HLD</a>、Debian cadence、image versioning、application extension（SPM）、ARM、container hardening、feature quality の各 HLD に分散しているが、ビルド成果物が ASIC に届くまでの導線で読み直すと位置関係がはっきりする。</p>
 <p>主な問いは次の 4 つ。</p>
 <ul>
 <li>SONiC の build system、build profile、RFS split build はそれぞれ何の遅さや煩雑さを減らすのか。</li>
@@ -23542,7 +23542,7 @@
 <li><a href="architecture/">アーキテクチャ</a>: build artifact が ONIE installer になるまでの流れと RFS split を追う。</li>
 <li><a href="operations/">設定 / 運用</a>: SPM・application extension・package manager の lifecycle を運用面から見る。</li>
 <li><a href="advanced/">発展トピック</a>: ARM、container hardening、feature quality を、リリース品質の導線として読む。</li>
-<li><a href="internals/">内部実装</a>: sonic-buildimage の Makefile / docker 階層、slave container、<code>rules/</code> / <code>dockers/</code> の責務分担、Application Extension マニフェストの解釈を実装側から見る。</li>
+<li><a href="internals/">内部実装</a>: <a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> の Makefile / docker 階層、slave container、<code>rules/</code> / <code>dockers/</code> の責務分担、Application Extension マニフェストの解釈を実装側から見る。</li>
 </ol>
 <h2 id="_2">統合した既存ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>この章は architecture / system / management / categories の build・package 系ページ 13 件を横断している。各サブページ末尾の「関連ページ」から原文の HLD と裏取りステータスへ辿れる。</p>
@@ -23563,6 +23563,7 @@
 <li><a href="../18-p4-pins/">P4 / PINS / Programmable Pipeline</a></li>
 <li><a href="../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: 3b8cb233052f -->
 
 
 

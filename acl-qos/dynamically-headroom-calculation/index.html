@@ -23793,7 +23793,7 @@
 <p><code>buffermgrd</code> の dynamic クラス主要パスを <code>sonic-swss/cfgmgr/buffermgrdyn.cpp</code> で確認: <code>default_dynamic_th</code> の <code>LOSSLESS_TRAFFIC_PATTERN</code> 読込 (L148-L153)、dynamic pool size 計算ループ (L676-L782)、<code>dynamic_calculated</code> profile 管理 (L1297, L1429-L1483)、shared headroom pool による dynamic profile 更新 (L1609-L1681)、PG 適用ガード (L1737-L1757)。vendor 提供 Lua plugin / <code>asic_table.json</code> 自体は vendor binary 配布相当のため非確認。</p>
 </div>
 <h1 id="dynamic-headroom-calculationbuffer_model-dynamic">Dynamic Headroom Calculation（buffer_model = dynamic）<a class="headerlink" href="#dynamic-headroom-calculationbuffer_model-dynamic" title="Permanent link">&para;</a></h1>
-<p>PFC headroom（lossless 用 PG の <code>xon</code> / <code>xoff</code> / <code>size</code>）を <strong><code>pg_profile_lookup.ini</code> のテーブル lookup ではなく式から動的計算</strong> するモード。読み手の関心は「<strong>traditional から何が変わるのか</strong>」「<strong>何が再計算の trigger なのか</strong>」「<strong>vendor 依存をどう吸収しているのか</strong>」の 3 点。順に答える。</p>
+<p><a href="../../reference/glossary/#term-pfc">PFC</a> headroom（lossless 用 PG の <code>xon</code> / <code>xoff</code> / <code>size</code>）を <strong><code>pg_profile_lookup.ini</code> のテーブル lookup ではなく式から動的計算</strong> するモード。読み手の関心は「<strong>traditional から何が変わるのか</strong>」「<strong>何が再計算の trigger なのか</strong>」「<strong>vendor 依存をどう吸収しているのか</strong>」の 3 点。順に答える。</p>
 <h2 id="traditional">traditional から何が変わるのか<a class="headerlink" href="#traditional" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23816,7 +23816,7 @@
 </tr>
 <tr>
 <td>静的 → 動的 変換</td>
-<td>なし（CONFIG_DB → APPL_DB 素通し）</td>
+<td>なし（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> → <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> 素通し）</td>
 <td><code>BufferManager</code> が CONFIG_DB → APPL_DB で動的計算</td>
 </tr>
 <tr>
@@ -23922,7 +23922,7 @@
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>PORT_PERIPHERAL_TABLE|&lt;port&gt;: peripheral = &lt;model&gt;
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>BUFFER_MAX_PARAM:           （SAI から取得した max headroom など）
 </span></code></pre></div>
-<p>SAI 側は新 port attribute <code>SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE</code> を読んで legality check に使う<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-sai">SAI</a> 側は新 port attribute <code>SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE</code> を読んで legality check に使う<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="buffer-model-vs-shared-headroom-pool">buffer model の違い（独立 vs shared headroom pool）<a class="headerlink" href="#buffer-model-vs-shared-headroom-pool" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24042,6 +24042,8 @@ reasoning: 入力 → 再計算 → APPL_DB の流れと CONFIG_DB / APPL_DB / S
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ccd0ef97afd6 -->
 
 <div class="footnote">
 <hr />

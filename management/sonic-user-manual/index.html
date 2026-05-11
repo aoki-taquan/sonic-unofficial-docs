@@ -23655,7 +23655,7 @@
 </div>
 <h1 id="sonic-user-manual-sonic-cli">SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像<a class="headerlink" href="#sonic-user-manual-sonic-cli" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。このページでは、HLD やリファレンスとマニュアルの <strong>役割境界</strong> を明確にし、利用者が次に読むべき場所を案内する。</p>
+<p>SONiC のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。このページでは、<a href="../../reference/glossary/#term-hld">HLD</a> やリファレンスとマニュアルの <strong>役割境界</strong> を明確にし、利用者が次に読むべき場所を案内する。</p>
 <table>
 <thead>
 <tr>
@@ -23672,12 +23672,12 @@
 </tr>
 <tr>
 <td>HLD</td>
-<td>設計意図・内部 daemon 構成・SAI 期待値</td>
+<td>設計意図・内部 daemon 構成・<a href="../../reference/glossary/#term-sai">SAI</a> 期待値</td>
 <td>architecture / area 別ページ</td>
 </tr>
 <tr>
 <td>Reference</td>
-<td>機械抽出した CLI ツリー / YANG / CONFIG_DB</td>
+<td>機械抽出した CLI ツリー / <a href="../../reference/glossary/#term-yang">YANG</a> / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a></td>
 <td><code>docs/reference/...</code></td>
 </tr>
 </tbody>
@@ -23692,7 +23692,7 @@
     KLISH --&gt; MF[mgmt-framework]
     MF --&gt; CDB</code></pre>
 <ul>
-<li><strong><code>show</code> / <code>config</code> 系</strong>（<code>sonic-utilities</code>）: Python click + 直接 Redis 操作。歴史が長く、機能カバレッジが広い</li>
+<li><strong><code>show</code> / <code>config</code> 系</strong>（<code>sonic-utilities</code>）: Python click + 直接 <a href="../../reference/glossary/#term-redis">Redis</a> 操作。歴史が長く、機能カバレッジが広い</li>
 <li><strong><code>sonic-cli</code> (KLISH)</strong>: モデル駆動。openconfig YANG への 1:1 マッピングが厚い</li>
 </ul>
 <p>User Manual は両者の併用前提で書かれており、機能によって主に使う系統が異なる。</p>
@@ -23718,7 +23718,7 @@
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Management Framework</strong>: KLISH CLI を成立させる土台。同 area の別ページ参照</li>
-<li><strong>GCU / JSON patch ordering</strong>: 大規模変更を <code>config reload</code> ではなく <code>apply-patch</code> で行うパスがあるため、運用に影響</li>
+<li><strong><a href="../../reference/glossary/#term-gcu">GCU</a> / JSON patch ordering</strong>: 大規模変更を <code>config reload</code> ではなく <code>apply-patch</code> で行うパスがあるため、運用に影響</li>
 <li><strong>Application Extension</strong>: install した拡張がそれぞれ独自の <code>config</code> / <code>show</code> サブコマンドを足す</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23743,6 +23743,8 @@
 <li><a href="../../topics/01-overview/">Topics: SONiC 全体像と設定基盤</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1103f073f6d0 -->
 
 <div class="footnote">
 <hr />

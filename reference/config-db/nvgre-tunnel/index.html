@@ -23622,7 +23622,7 @@
 
 <h1 id="nvgre_tunnel-nvgre_tunnel_map">NVGRE_TUNNEL / NVGRE_TUNNEL_MAP テーブル<a class="headerlink" href="#nvgre_tunnel-nvgre_tunnel_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>NVGRE (Network Virtualization using GRE, RFC 7637) のトンネル端点と VLAN ↔ VSID マップを CONFIG_DB に保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>vxlanorch</code> 系（NVGRE は VXLAN orch と一部実装を共有）が SAI 経由でカプセル化/デカプセル化を構成する。</p>
+<p>NVGRE (Network Virtualization using GRE, RFC 7637) のトンネル端点と <a href="../../glossary/#term-vlan">VLAN</a> ↔ VSID マップを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>vxlanorch</code> 系（NVGRE は <a href="../../glossary/#term-vxlan">VXLAN</a> orch と一部実装を共有）が <a href="../../glossary/#term-sai">SAI</a> 経由でカプセル化/デカプセル化を構成する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23714,7 +23714,7 @@
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>VLAN</code>、<code>VXLAN_TUNNEL</code>（並存可能）</li>
-<li>関連 YANG: <code>sonic-nvgre-tunnel</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-nvgre-tunnel</code></li>
 <li>関連 CLI: <code>config nvgre</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23750,6 +23750,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3424113d928a -->
 
 <div class="footnote">
 <hr />

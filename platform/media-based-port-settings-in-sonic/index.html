@@ -23828,7 +23828,7 @@
 </div>
 <h1 id="media-based-port-settingsmedia_settingsjson-serdes">Media-based Port Settings（media_settings.json による SerDes プロファイル）<a class="headerlink" href="#media-based-port-settingsmedia_settingsjson-serdes" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>vendor / media type / cable length ごとに <strong>異なる SerDes 設定</strong>（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、<strong><code>media_settings.json</code></strong> を vendor が提供し xcvrd 経由で APPL_DB → PortsOrch → SAI に橋渡しする仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため <strong>opt-in</strong>。</p>
+<p>vendor / media type / cable length ごとに <strong>異なる SerDes 設定</strong>（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、<strong><code>media_settings.json</code></strong> を vendor が提供し xcvrd 経由で <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> → PortsOrch → <a href="../../reference/glossary/#term-sai">SAI</a> に橋渡しする仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため <strong>opt-in</strong>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">データフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23839,7 +23839,7 @@
   APP --&gt; PORTS[PortsOrch]
   PORTS --&gt; SAI[SAI port_set_attribute /&lt;br/&gt;SAI_PORT_SERDES_*]
   SAI --&gt; HW[(ASIC SerDes)]</code></pre>
-<p>xcvrd が media insert event で <strong>(media key, vendor key, lane)</strong> を構成し、<code>media_settings.json</code> を検索 → 一致した key/value を APPL_DB の <code>PORT_TABLE:&lt;port&gt;</code> に書き込む<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。PortsOrch が SAI 属性に変換して syncd 経由で HW に program。</p>
+<p>xcvrd が media insert event で <strong>(media key, vendor key, lane)</strong> を構成し、<code>media_settings.json</code> を検索 → 一致した key/value を APPL_DB の <code>PORT_TABLE:&lt;port&gt;</code> に書き込む<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。PortsOrch が SAI 属性に変換して <a href="../../reference/glossary/#term-syncd">syncd</a> 経由で HW に program。</p>
 <h3 id="file">File の所在と必要性<a class="headerlink" href="#file" title="Permanent link">&para;</a></h3>
 <ul>
 <li>パス: <code>device/&lt;vendor-name&gt;/&lt;ONIE_PLATFORM_STRING&gt;/media_settings.json</code></li>
@@ -23942,7 +23942,7 @@ reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順
 <!-- evidence-rendered:end -->
 
 <h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
-<p>CLI / CONFIG_DB / YANG への追加は無し<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>media_settings.json</code> は image build 時に platform tree に同梱される静的 file。</p>
+<p>CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> への追加は無し<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>media_settings.json</code> は image build 時に platform tree に同梱される静的 file。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>media_settings.json</code> が無ければ機能しない（opt-in）</li>
@@ -23952,7 +23952,7 @@ reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>xcvrd</strong>（platform monitor / pmon enhancement HLD と密接連携）</li>
+<li><strong>xcvrd</strong>（platform monitor / pmon enhancement <a href="../../reference/glossary/#term-hld">HLD</a> と密接連携）</li>
 <li><strong>PortsOrch</strong>（<code>SAI_PORT_SERDES_*</code> 属性 set）</li>
 <li><strong>Dynamic Port Breakout</strong>: 通常 reboot シーケンス相当として処理</li>
 <li><strong>gearbox / port-link-training</strong>: 同じく serdes 系設定との潜在競合</li>
@@ -23979,6 +23979,8 @@ reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5e92b35b3616 -->
 
 <div class="footnote">
 <hr />

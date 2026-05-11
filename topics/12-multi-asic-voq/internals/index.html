@@ -23762,7 +23762,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent / syncd インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。論理スイッチ単位の Redis インスタンスと、シャーシ全体で共有する Redis インスタンスを混同しないことが重要です。</p>
+<p>Multi-ASIC / <a href="../../../reference/glossary/#term-voq">VOQ</a> chassis の内部実装は「namespace で分けられた <a href="../../../reference/glossary/#term-redis">Redis</a> / <a href="../../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../../reference/glossary/#term-syncd">syncd</a> インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。論理スイッチ単位の Redis インスタンスと、シャーシ全体で共有する Redis インスタンスを混同しないことが重要です。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TB
   subgraph ns0[asic0 namespace]
@@ -23820,7 +23820,7 @@
 <tr>
 <td><code>VoqOrch</code> / <code>SystemPortOrch</code></td>
 <td><code>SystemNeighOrch</code>、<code>SystemLagOrch</code> 等</td>
-<td>system port を chassis 全体で広報、neighbor / LAG を chassis 規模で同期</td>
+<td>system port を chassis 全体で広報、neighbor / <a href="../../../reference/glossary/#term-lag">LAG</a> を chassis 規模で同期</td>
 </tr>
 <tr>
 <td><code>chassisd</code> / <code>chassis_db</code></td>
@@ -23829,8 +23829,8 @@
 </tr>
 <tr>
 <td><code>bgpcfgd</code> per-asic</td>
-<td>per-namespace FRR</td>
-<td>各 ASIC が独自の BGP プロセスを持つ</td>
+<td>per-namespace <a href="../../../reference/glossary/#term-frr">FRR</a></td>
+<td>各 ASIC が独自の <a href="../../../reference/glossary/#term-bgp">BGP</a> プロセスを持つ</td>
 </tr>
 </tbody>
 </table>
@@ -23862,7 +23862,7 @@
 </tr>
 </tbody>
 </table>
-<p>Multi-ASIC（pizza-box の packet mode 含む）では <code>SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_NPU</code> のままで、ASIC ごとに独立した SAI switch object を作る点が VOQ と違います。</p>
+<p>Multi-ASIC（pizza-box の packet mode 含む）では <code>SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_NPU</code> のままで、ASIC ごとに独立した <a href="../../../reference/glossary/#term-sai">SAI</a> switch object を作る点が VOQ と違います。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Per-ASIC namespace:
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  APPL_DB / CONFIG_DB / ASIC_DB / STATE_DB / COUNTERS_DB
@@ -23887,8 +23887,8 @@
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>chassis_db への接続切断は ASIC 間の neighbor / system port 情報の同期を止め、データプレーンの forwarding は維持しつつ control plane は段階的に古い状態を信用する設計です。長時間の切断は警告のみで自動 reboot にはなりません。</li>
-<li>VOQ chassis では、各 ASIC の <code>CONFIG_DB</code> を<strong>共通設定として一括反映</strong>する仕組みが limited で、運用者は per-asic の config_db.json + chassis 全体 minigraph の二段管理になります。</li>
-<li>Multi-ASIC pizza-box（VOQ ではなく packet mode の multi-NPU）は LAG / VLAN が ASIC を跨げないため、サブインタフェース化や PE-CE モデルで運用されます。</li>
+<li>VOQ chassis では、各 ASIC の <code>CONFIG_DB</code> を<strong>共通設定として一括反映</strong>する仕組みが limited で、運用者は per-asic の <a href="../../../reference/glossary/#term-config_db.json">config_db.json</a> + chassis 全体 minigraph の二段管理になります。</li>
+<li>Multi-ASIC pizza-box（VOQ ではなく packet mode の multi-<a href="../../../reference/glossary/#term-npu">NPU</a>）は LAG / <a href="../../../reference/glossary/#term-vlan">VLAN</a> が ASIC を跨げないため、サブインタフェース化や PE-CE モデルで運用されます。</li>
 <li>BGP は per-asic で独立した FRR process が走り、internal BGP（iBGP）で ASIC 間を結ぶ構成が一般的。external BGP の view を一つにする abstraction は SONiC master にはありません。</li>
 <li><code>show</code> 系 CLI は <code>--namespace</code> を取らない場合に host namespace から各 namespace に exec する構造で、多 ASIC では出力が長くなり、collect 時にエラーが部分的に出ても全体が成功扱いになる落とし穴があります。</li>
 </ul>
@@ -23978,7 +23978,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>minigraph.xml</code> の <code>&lt;BGPSessions&gt;</code> セクションで internal session が定義され、<code>bgpcfgd</code> per-namespace が反映します。abstraction が必要な運用では Route Reflector を SUP 上に立てる構成が <code>BGP setup for VOQ chassis</code> HLD に書かれています。</p>
+<p><code>minigraph.xml</code> の <code>&lt;BGPSessions&gt;</code> セクションで internal session が定義され、<code>bgpcfgd</code> per-namespace が反映します。abstraction が必要な運用では Route Reflector を SUP 上に立てる構成が <code>BGP setup for VOQ chassis</code> <a href="../../../reference/glossary/#term-hld">HLD</a> に書かれています。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/voq-sonic/">VOQ SONiC</a></li>
@@ -23989,6 +23989,7 @@
 <li><a href="../../../internals/aggregate-voq-counters-in-sonic/">Aggregate VOQ counters in SONiC</a></li>
 <li><a href="../../../routing/bgp-setup-for-voq-chassis/">BGP setup for VOQ chassis</a></li>
 </ul>
+<!-- glossary-links-injected: 9b407a291b41 -->
 
 
 

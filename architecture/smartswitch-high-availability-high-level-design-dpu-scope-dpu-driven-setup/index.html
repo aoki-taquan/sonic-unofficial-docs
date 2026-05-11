@@ -23996,7 +23996,7 @@
 </div>
 <h1 id="smartswitch-ha-dpu-scope-dpu-driven">SmartSwitch HA - DPU-Scope-DPU-Driven 構成<a class="headerlink" href="#smartswitch-ha-dpu-scope-dpu-driven" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch の HA はもともと <strong>ENI-Scope-NPU-Driven</strong>（NPU 上の <code>hamgrd</code> が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD はその拡張として <strong>DPU-Scope-DPU-Driven</strong> という別形態を定義する。</p>
+<p><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> の HA はもともと <strong><a href="../../reference/glossary/#term-eni">ENI</a>-Scope-<a href="../../reference/glossary/#term-npu">NPU</a>-Driven</strong>（NPU 上の <code>hamgrd</code> が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> はその拡張として <strong><a href="../../reference/glossary/#term-dpu">DPU</a>-Scope-DPU-Driven</strong> という別形態を定義する。</p>
 <p>主 HLD との差分の本質は 4 軸<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -24036,13 +24036,13 @@
 <ul>
 <li>各 DPU pair に対して <strong>HA scope ごとの専用 VIP</strong> を割当</li>
 <li>すべての DPU の VIP を SmartSwitch 全体で 1 つの VIP range（subnet）として広告</li>
-<li>NPU は <strong>destination VIP に対する route で振り分け</strong>（ENI-Scope のような VIP + inner MAC の ACL マッチは不要）</li>
+<li>NPU は <strong>destination VIP に対する route で振り分け</strong>（ENI-Scope のような VIP + inner MAC の <a href="../../reference/glossary/#term-acl">ACL</a> マッチは不要）</li>
 </ul>
 <p>これにより NPU 上の forwarding entry 数が DPU 数オーダーに抑えられる。</p>
 <h3 id="liveness-probe">Liveness probe（生存確認）<a class="headerlink" href="#liveness-probe" title="Permanent link">&para;</a></h3>
 <p>主 HLD で定義される 2 種が両方使われる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <h4 id="card-level-npu-to-dpu-bfd-probe">Card level NPU-to-DPU BFD probe<a class="headerlink" href="#card-level-npu-to-dpu-bfd-probe" title="Permanent link">&para;</a></h4>
-<p>NPU が IPv4/IPv6 両方で両 DPU を BFD で叩く。DPU は active/standby に関わらず BFD に応答する。BFD は <strong>NPU 側の forwarding 先選択にのみ</strong> 使い、DPU 内の failover trigger には使わない。</p>
+<p>NPU が IPv4/IPv6 両方で両 DPU を <a href="../../reference/glossary/#term-bfd">BFD</a> で叩く。DPU は active/standby に関わらず BFD に応答する。BFD は <strong>NPU 側の forwarding 先選択にのみ</strong> 使い、DPU 内の failover trigger には使わない。</p>
 <p><code>HA set</code> の <code>preferred DPU</code> 設定との組合せで next hop が決まる:</p>
 <table>
 <thead>
@@ -24157,7 +24157,7 @@
 <p>bulk sync は flow table を揃えるが、<strong>ENI / policy が同期されている保証はない</strong>。これを橋渡しするのが role activation<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>DPU は bulk sync 完了後 <code>PendingActive/StandbyActivation</code> に入る（BFD 応答せず traffic 流れない）</li>
-<li>DPU は <strong>HA scope に対して SAI notification</strong> を発行 → <code>hamgrd</code> 経由で SDN コントローラに role activation request が伝わる</li>
+<li>DPU は <strong>HA scope に対して <a href="../../reference/glossary/#term-sai">SAI</a> notification</strong> を発行 → <code>hamgrd</code> 経由で SDN コントローラに role activation request が伝わる</li>
 <li>SDN コントローラが両カードの policy が同一であることを確認した上で <strong>承認</strong></li>
 <li>DPU が承認を受信して <code>Active</code> / <code>Standby</code> / <code>Standalone</code> に遷移</li>
 </ol>
@@ -24198,7 +24198,7 @@
 <p>両 DPU が互いに到達不能と判断して両方が <code>Standalone</code> 化すると split-brain。HLD は SDN が観測して片方を Dead に降格させる手順を要求する。再 pair 時は <code>Connecting</code> から再開し、role activation を経て復帰する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD は CONFIG_DB ではなく <strong>DASH SDN config 経由</strong>（<code>HA_SET</code>, <code>HA_SCOPE</code>）でモデル化される。具体的なテーブル名は本 HLD だけでは確定できないため列挙しない。</p>
+<p>HLD は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> ではなく <strong><a href="../../reference/glossary/#term-dash">DASH</a> SDN config 経由</strong>（<code>HA_SET</code>, <code>HA_SCOPE</code>）でモデル化される。具体的なテーブル名は本 HLD だけでは確定できないため列挙しない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当なし。SDN コントローラからの programming が前提で、CLI は HLD に明示されていない。</p>
 <h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
@@ -24244,6 +24244,8 @@
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2d313c43ee0f -->
 
 <div class="footnote">
 <hr />

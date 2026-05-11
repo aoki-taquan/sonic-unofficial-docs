@@ -23834,7 +23834,7 @@
 <p>運用では次の順に見ます。</p>
 <ol>
 <li><a href="../../../reference/cli/show-feature/">show feature</a> で状態、設定、自動再起動を確認する。</li>
-<li><code>config feature</code> で変更する場合、対象 feature が必須 service か、遅延起動対象か、Multi-ASIC / DPU scope を持つか確認する。</li>
+<li><code>config feature</code> で変更する場合、対象 feature が必須 service か、遅延起動対象か、Multi-ASIC / <a href="../../../reference/glossary/#term-dpu">DPU</a> scope を持つか確認する。</li>
 <li>永続化が必要なら <code>config save</code> の要否を運用ルールに従って確認する。</li>
 <li>service 起動に失敗した場合は <code>hostcfgd</code>、systemd unit、feature container のログを見る。</li>
 </ol>
@@ -23842,7 +23842,7 @@
 <p><a href="../../../reference/config-db/system-defaults/">SYSTEM_DEFAULTS</a> は、従来 <code>DEVICE_METADATA</code> に溜まりがちだった「SONiC の既定挙動フラグ」を切り出すためのテーブルです。<a href="../../../switching/control-sonic-behaviors-with-system-defaults-table/">System Defaults HLD</a> では、ビルド時既定値、minigraph、ランタイム書き込みの優先関係と、consumer が起動時または購読で取り込む考え方が示されています。</p>
 <p><code>SYSTEM_DEFAULTS</code> は名前の通り「既定値」です。ある機能の現在状態を直接操作するテーブルではなく、起動時や reload 時の振る舞いを変える入口として扱います。変更前には、そのフラグが即時反映されるのか、service restart / reload / reboot が必要なのかを個別ページで確認してください。</p>
 <h2 id="reload-restart">reload と restart の影響を読む<a class="headerlink" href="#reload-restart" title="Permanent link">&para;</a></h2>
-<p><code>config reload</code> は、設定ファイルの再ロードと service restart を伴う大きな操作です。一方で、feature の enable / disable は <code>hostcfgd</code> と systemd unit 操作で局所的に完結する場合があります。GCU / <code>replace</code> はその中間で、差分だけを当てつつ必要な service だけを検証・再起動する設計です。</p>
+<p><code>config reload</code> は、設定ファイルの再ロードと service restart を伴う大きな操作です。一方で、feature の enable / disable は <code>hostcfgd</code> と systemd unit 操作で局所的に完結する場合があります。<a href="../../../reference/glossary/#term-gcu">GCU</a> / <code>replace</code> はその中間で、差分だけを当てつつ必要な service だけを検証・再起動する設計です。</p>
 <table>
 <thead>
 <tr>
@@ -23859,8 +23859,8 @@
 </tr>
 <tr>
 <td><code>config apply-patch</code></td>
-<td>patch が触る CONFIG_DB テーブル</td>
-<td>YANG validation、checkpoint、rollback</td>
+<td>patch が触る <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> テーブル</td>
+<td><a href="../../../reference/glossary/#term-yang">YANG</a> validation、checkpoint、rollback</td>
 </tr>
 <tr>
 <td><code>config replace</code></td>
@@ -23883,7 +23883,7 @@
 <p><a href="../../../architecture/reset-factory-design/">reset-factory</a> は、設定 corruption からの復旧や機材再利用前のサニタイズに使う強い操作です。<code>default</code>、<code>keep-basic</code>、<code>keep-all-config</code>、<code>only-config</code> のモードで、config、ログ・ファイル、ユーザをどこまで残すかが変わります。</p>
 <p>日常の切り戻しには、まず GCU checkpoint / rollback、保存済み <code>config_db.json</code>、<code>config reload</code> を検討します。<code>reset-factory</code> は「設定基盤を初期状態へ戻す」操作であり、ログやユーザまで消すモードがあるため、障害解析中に安易に実行しない方がよい入口です。</p>
 <h2 id="show-feature">show feature の出力サンプル<a class="headerlink" href="#show-feature" title="Permanent link">&para;</a></h2>
-<p>実装上、<code>show feature status</code> は CONFIG_DB の <code>FEATURE</code> テーブルと STATE_DB の <code>FEATURE|&lt;name&gt;</code> を結合して表示します。標準構成では次の通り、<code>State</code>、<code>AutoRestart</code>、<code>SetOwner</code> の 3 カラムが出ます。</p>
+<p>実装上、<code>show feature status</code> は CONFIG_DB の <code>FEATURE</code> テーブルと <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の <code>FEATURE|&lt;name&gt;</code> を結合して表示します。標準構成では次の通り、<code>State</code>、<code>AutoRestart</code>、<code>SetOwner</code> の 3 カラムが出ます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Feature     State           AutoRestart     SetOwner
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>----------  --------------  --------------  ----------
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>bgp         enabled         enabled         local
@@ -23963,7 +23963,7 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Stopped BGP container.
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>bgp.service: Scheduled restart job, restart counter is at 5.
 </span></code></pre></div>
-<p><code>docker logs bgp</code> で container 側の zebra/bgpd 立ち上げに失敗している場合は別途 BGP 章を参照します。</p>
+<p><code>docker logs bgp</code> で container 側の <a href="../../../reference/glossary/#term-zebra">zebra</a>/bgpd 立ち上げに失敗している場合は別途 <a href="../../../reference/glossary/#term-bgp">BGP</a> 章を参照します。</p>
 <h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24036,10 +24036,10 @@
 </ul>
 <h2 id="_5">横断参照<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BGP service が起動しない場合: <a href="../../02-bgp/operations/">BGP 章 運用</a> の neighbor / orchagent 切り分け。</li>
-<li>VXLAN / VNET 関連 service の前提: <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a>。</li>
-<li>L2 service（teamd、swss）の連動失敗: <a href="../../06-l2-vlan-lag/operations/">L2 章 運用</a>。</li>
-<li>Dual-ToR 構成での feature 順序（mux、linkmgrd、telemetry）: <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
+<li>BGP service が起動しない場合: <a href="../../02-bgp/operations/">BGP 章 運用</a> の neighbor / <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 切り分け。</li>
+<li><a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a> 関連 service の前提: <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a>。</li>
+<li>L2 service（<a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>、swss）の連動失敗: <a href="../../06-l2-vlan-lag/operations/">L2 章 運用</a>。</li>
+<li>Dual-ToR 構成での feature 順序（mux、<a href="../../../reference/glossary/#term-linkmgrd">linkmgrd</a>、telemetry）: <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
 </ul>
 <h2 id="show">追加の show 出力例<a class="headerlink" href="#show" title="Permanent link">&para;</a></h2>
 <p><code>show feature config</code> は CONFIG_DB の <code>FEATURE</code> テーブルだけを抜粋表示し、起動時挙動を確認できます。</p>
@@ -24072,6 +24072,7 @@
 <li><a href="../../../switching/control-sonic-behaviors-with-system-defaults-table/">SYSTEM_DEFAULTS HLD</a></li>
 <li><a href="../../../architecture/reset-factory-design/">reset-factory</a></li>
 </ul>
+<!-- glossary-links-injected: c7663e102d50 -->
 
 
 

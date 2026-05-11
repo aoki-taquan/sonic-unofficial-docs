@@ -23828,7 +23828,7 @@
 </div>
 <h1 id="bmpbgp-monitoring-protocol-bmp_state_db">BMP（BGP Monitoring Protocol / BMP_STATE_DB）<a class="headerlink" href="#bmpbgp-monitoring-protocol-bmp_state_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の Redis ROUTE_TABLE には neighbor / nexthop しかなく、BGP の deeper view（capabilities、graceful_restart、AS path、in/out RIB、prefix counts など）が見えづらい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は <strong>OpenBMP を fork した <code>openbmpd</code></strong> を新 container（bmp）に同梱し、<strong>FRR bgpd → BMP（RFC 7854）→ openbmpd → Redis BMP_STATE_DB</strong> の経路で BGP 情報を構造化保存する設計。BGP listener は <strong>gNMI streaming "on change" subscription</strong> で取れるようになる。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-redis">Redis</a> <a href="../../reference/glossary/#term-route_table">ROUTE_TABLE</a> には neighbor / nexthop しかなく、<a href="../../reference/glossary/#term-bgp">BGP</a> の deeper view（capabilities、graceful_restart、AS path、in/out RIB、prefix counts など）が見えづらい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>OpenBMP を fork した <code>openbmpd</code></strong> を新 container（bmp）に同梱し、<strong><a href="../../reference/glossary/#term-frr">FRR</a> bgpd → BMP（RFC 7854）→ openbmpd → Redis BMP_STATE_DB</strong> の経路で BGP 情報を構造化保存する設計。BGP listener は <strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> streaming "on change" subscription</strong> で取れるようになる。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23840,7 +23840,7 @@
   BMPD --&gt; BSDB[(BMP_STATE_DB&lt;br/&gt;per-ASIC)]
   BSDB -- gNMI on-change --&gt; CTRL[External controller]</code></pre>
 <ul>
-<li><code>bmp</code> container には <strong>2 daemon</strong>: <code>bmpcfgd</code>（CONFIG_DB を監視し table の enable/disable を openbmpd に伝える）と <strong><code>openbmpd</code></strong>（FRR から BMP セッションを accept し、関連 BGP table を Redis に書く）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>bmp</code> container には <strong>2 daemon</strong>: <code>bmpcfgd</code>（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を監視し table の enable/disable を openbmpd に伝える）と <strong><code>openbmpd</code></strong>（FRR から BMP セッションを accept し、関連 BGP table を Redis に書く）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>bgpd</code> 側は v7.2 以降で <strong><code>-M bmp</code> モジュール</strong>として bmp 機能を有効化</li>
 </ul>
 <h3 id="frr">FRR 側の有効化<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
@@ -23854,7 +23854,7 @@
 </span></code></pre></div>
 <p><code>bgpd</code> 起動オプション: <code>/usr/lib/frr/bgpd -A 127.0.0.1 -M bmp</code></p>
 <h3 id="redis-bmp_state_db">Redis: BMP_STATE_DB<a class="headerlink" href="#redis-bmp_state_db" title="Permanent link">&para;</a></h3>
-<p>専用 Redis instance を立て <strong>既存 STATE_DB に I/O 負担をかけない</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。multi-ASIC では ASIC index 単位に bmp container と DB が並ぶ。</p>
+<p>専用 Redis instance を立て <strong>既存 <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に I/O 負担をかけない</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。multi-ASIC では ASIC index 単位に bmp container と DB が並ぶ。</p>
 <p>主要テーブル:</p>
 <table>
 <thead>
@@ -23951,6 +23951,8 @@ reasoning: bmp container 構成と 2 daemon の役割の根拠。
 - Delay-removal アルゴリズムの実装確認 (DEL- prefix と timestamp 管理)
 - gNMI heartbeat (PR #1563) の取り込み状況確認
 -->
+
+<!-- glossary-links-injected: 4f41ac4825dc -->
 
 <div class="footnote">
 <hr />

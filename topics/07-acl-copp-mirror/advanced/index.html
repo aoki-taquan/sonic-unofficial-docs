@@ -23784,22 +23784,22 @@
 
 
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>このページは、ACL / CoPP / mirror の基本線から少し外れるが、同じ「分類、保護、観測、rate limit」の考え方で読める機能への案内です。通常運用の入口は前ページまでで足りることが多く、ここでは境界だけを整理します。</p>
+<p>このページは、<a href="../../../reference/glossary/#term-acl">ACL</a> / <a href="../../../reference/glossary/#term-copp">CoPP</a> / mirror の基本線から少し外れるが、同じ「分類、保護、観測、rate limit」の考え方で読める機能への案内です。通常運用の入口は前ページまでで足りることが多く、ここでは境界だけを整理します。</p>
 <h2 id="copp-manager-redesign">CoPP Manager Redesign<a class="headerlink" href="#copp-manager-redesign" title="Permanent link">&para;</a></h2>
 <p>CoPP Manager 再設計は、<code>COPP_TRAP</code> と <code>FEATURE</code> の整合性を見直し、feature が disabled または存在しない場合は trap を install しない、ただし <code>always_enabled=true</code> の trap は常に install する、というルールに整理します。</p>
-<p>これは ACL rule の priority 問題ではなく、CPU bound trap をいつ hostif trap として作るかの問題です。BGP、ARP、LACP、UDLD、IP2ME などの trap が feature 状態とどう連動するかを読むときに参照します。</p>
+<p>これは ACL rule の priority 問題ではなく、CPU bound trap をいつ hostif trap として作るかの問題です。<a href="../../../reference/glossary/#term-bgp">BGP</a>、<a href="../../../reference/glossary/#term-arp">ARP</a>、<a href="../../../reference/glossary/#term-lacp">LACP</a>、UDLD、IP2ME などの trap が feature 状態とどう連動するかを読むときに参照します。</p>
 <h2 id="copp-neighbor-miss-capability">CoPP Neighbor Miss と Capability<a class="headerlink" href="#copp-neighbor-miss-capability" title="Permanent link">&para;</a></h2>
-<p>Neighbor miss trap は、ARP / ND 解決前の IP packet が CPU に集中して他の control plane traffic を巻き込む問題を避けるため、<code>SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS</code> を個別 policer に分離する拡張です。同時に、SAI enum capability query でサポート trap 一覧を STATE_DB に公開し、未対応 trap の install 失敗を可視化します。</p>
+<p>Neighbor miss trap は、ARP / ND 解決前の IP packet が CPU に集中して他の control plane traffic を巻き込む問題を避けるため、<code>SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS</code> を個別 policer に分離する拡張です。同時に、<a href="../../../reference/glossary/#term-sai">SAI</a> enum capability query でサポート trap 一覧を <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に公開し、未対応 trap の install 失敗を可視化します。</p>
 <p>CoPP のトラブルシュートでは、<code>show copp configuration</code> で trap が hardware に入っているかを見る入口になります。</p>
 <h2 id="dash-acl-tags">DASH ACL Tags<a class="headerlink" href="#dash-acl-tags" title="Permanent link">&para;</a></h2>
-<p>DASH ACL tags は、DASH の ACL rule でサービスを IP prefix 群として扱うための仕組みです。通常 ACL の <code>ACL_TABLE</code> / <code>ACL_RULE</code> ではなく、<code>DASH_PREFIX_TAG_TABLE</code> と <code>DASH_ACL_RULE_TABLE</code> の拡張として読みます。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a> ACL tags は、DASH の ACL rule でサービスを IP prefix 群として扱うための仕組みです。通常 ACL の <code>ACL_TABLE</code> / <code>ACL_RULE</code> ではなく、<code>DASH_PREFIX_TAG_TABLE</code> と <code>DASH_ACL_RULE_TABLE</code> の拡張として読みます。</p>
 <p>通常 ACL との共通点は、match 対象を抽象化し、rule 生成時に展開することです。違いは、DASH pipeline と APP_DB schema が別系統であり、SONiC の data plane ACL 設定と同じ運用コマンドでは扱わないことです。</p>
 <h2 id="port-access-control">Port Access Control<a class="headerlink" href="#port-access-control" title="Permanent link">&para;</a></h2>
-<p>PAC は 802.1x / MAB / RADIUS によるポート単位の認証です。認証結果に応じて MAC、VLAN、learning mode、host trap を制御するため、ACL に似た「許可 / 不許可」の話に見えますが、主体は authentication manager、hostapd、mabd、RADIUS です。</p>
-<p>ACL 章では、物理ポート単位の access 制御であり、LAG / VLAN への ACL bind とは別の設計として位置付けます。</p>
+<p>PAC は 802.1x / MAB / RADIUS によるポート単位の認証です。認証結果に応じて MAC、<a href="../../../reference/glossary/#term-vlan">VLAN</a>、learning mode、host trap を制御するため、ACL に似た「許可 / 不許可」の話に見えますが、主体は authentication manager、hostapd、mabd、RADIUS です。</p>
+<p>ACL 章では、物理ポート単位の access 制御であり、<a href="../../../reference/glossary/#term-lag">LAG</a> / VLAN への ACL bind とは別の設計として位置付けます。</p>
 <h2 id="dhcp-dos">DHCP DoS 緩和<a class="headerlink" href="#dhcp-dos" title="Permanent link">&para;</a></h2>
 <p>DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単一ポートの flood が他ポートの正規 DHCP を巻き込む問題を、ポート単位の Linux TC rate limit で局所化する設計です。</p>
-<p>ただし既存ページでは discrepancy-found とされており、データ層や CLI は取り込まれている一方、HLD が要求する <code>portmgrd</code> の TC 投入ロジックや CoPP 側の完全な置き換えは未確認です。設計参考として扱い、実装判断では現行コードと platform 動作を確認します。</p>
+<p>ただし既存ページでは discrepancy-found とされており、データ層や CLI は取り込まれている一方、<a href="../../../reference/glossary/#term-hld">HLD</a> が要求する <code>portmgrd</code> の TC 投入ロジックや CoPP 側の完全な置き換えは未確認です。設計参考として扱い、実装判断では現行コードと platform 動作を確認します。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../acl-qos/copp-manager-redesign-test-plan/">CoPP Manager 再設計テストプラン</a></li>
@@ -23811,7 +23811,7 @@
 <h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ERSPAN Type-II / Type-III</strong>: 通常 SPAN/Everflow に加え、GRE 経由で remote collector に届ける ERSPAN は SAI mirror session の <code>SAI_MIRROR_SESSION_ATTR_TYPE</code> で表現する。Type-III は timestamp と probabilistic sampling をサポートする。</li>
-<li><strong>ACL counters の telemetry export</strong>: <code>COUNTERS_DB</code> から ACL rule 単位のヒット数を gNMI / streaming telemetry で出す構成。Top talker / DoS 検出に直結する。</li>
+<li><strong>ACL counters の telemetry export</strong>: <code>COUNTERS_DB</code> から ACL rule 単位のヒット数を <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / streaming telemetry で出す構成。Top talker / DoS 検出に直結する。</li>
 <li><strong>TCAM 共有 (ACL group sharing)</strong>: 同じ ACL を複数 port に bind するとき、ASIC TCAM を group 共有でケチる。SAI side で <code>SAI_ACL_TABLE_GROUP</code> の MULTIPLE binding が要件。</li>
 <li><strong>Egress ACL の counter visibility</strong>: ingress ACL counter は読みやすいが egress ACL counter は ASIC によって粒度が異なる。<code>show acl rule</code> で counter が更新されない場合は SAI 側 attribute サポートを確認する。</li>
 <li><strong>CoPP trap 別 policer の動的調整</strong>: 障害対応中に特定 trap (例えば LACPDU storm) の policer を一時的に上げる運用がある。<code>COPP_GROUP</code> / <code>COPP_TRAP</code> で per-feature に切り替える。</li>
@@ -23819,15 +23819,15 @@
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ACL update 中の transient match miss</strong>: rule replace 時に一瞬 hit しない瞬間がある。<code>atomic update</code> を ASIC がサポートするなら priority 違いで shadow rule を先入れし、後で旧 rule を消す。</li>
-<li><strong>mirror session の TTL / source MAC</strong>: ERSPAN の outer header はデフォルトで encap した装置の MAC / IP を使う。collector 側 NAT / FW が想定外の send 元を弾く例があるので outer header を明示する。</li>
+<li><strong>mirror session の TTL / source MAC</strong>: ERSPAN の outer header はデフォルトで encap した装置の MAC / IP を使う。collector 側 <a href="../../../reference/glossary/#term-nat">NAT</a> / FW が想定外の send 元を弾く例があるので outer header を明示する。</li>
 <li><strong>CoPP の Linux 側 hostif との二重バケット</strong>: SAI policer と Linux netdev queue の両方が rate limit を持つ。CPU 到達後にも drop されることがあるので、<code>ethtool -S Ethernet*</code> で host queue drop を確認する。</li>
-<li><strong>DASH ACL tag と data plane ACL の混同</strong>: 名前は似るが pipeline が別。DASH pipeline 上で動くため <code>iptables</code> や CONFIG_DB <code>ACL_RULE</code> で代用できない。</li>
+<li><strong>DASH ACL tag と data plane ACL の混同</strong>: 名前は似るが pipeline が別。DASH pipeline 上で動くため <code>iptables</code> や <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> <code>ACL_RULE</code> で代用できない。</li>
 </ul>
 <h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>gNOI <code>gnoi.system.SetPackage</code> や <code>gnoi.os.Activate</code> と組み合わせた dynamic ACL push 提案がある (集中 controller からの policy 更新)。</li>
+<li><a href="../../../reference/glossary/#term-gnoi">gNOI</a> <code>gnoi.system.SetPackage</code> や <code>gnoi.os.Activate</code> と組み合わせた dynamic ACL push 提案がある (集中 controller からの policy 更新)。</li>
 <li>ACL の P4 表現 (<a href="../../18-p4-pins/">18 P4/PINS</a>) は中長期テーマで、SDN controller が P4 table 経由で ACL を流し込む。</li>
-<li>CoPP の YANG モデル整備 (<code>sonic-copp.yang</code>) が進めば、設定検証と <code>gnmi Set</code> 経由の運用が安定する。</li>
+<li>CoPP の <a href="../../../reference/glossary/#term-yang">YANG</a> モデル整備 (<code>sonic-copp.yang</code>) が進めば、設定検証と <code>gnmi Set</code> 経由の運用が安定する。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23841,8 +23841,9 @@
 <ul>
 <li><code>sonic-swss</code> の <code>aclorch</code> / <code>coppmgr</code> / <code>copporch</code> で trap capability 公開、policer attribute 動的更新、ACL counter race 修正の PR が継続。</li>
 <li>DASH ACL tags は <code>sonic-dash-api</code> (proto) の更新で flow rule 表現が拡張されており、controller 側との binding が変化しやすい。</li>
-<li>802.1X / MAB 関連は hostapd の SONiC docker 統合と RADIUS attribute 拡張の PR が散発的にあり、AAA 章 (<a href="../../15-security-aaa/">15</a>) と相互に影響する。</li>
+<li>802.1X / MAB 関連は hostapd の SONiC docker 統合と RADIUS attribute 拡張の PR が散発的にあり、<a href="../../../reference/glossary/#term-aaa">AAA</a> 章 (<a href="../../15-security-aaa/">15</a>) と相互に影響する。</li>
 </ul>
+<!-- glossary-links-injected: 1195a59bed42 -->
 
 
 

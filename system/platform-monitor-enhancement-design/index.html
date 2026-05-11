@@ -23740,7 +23740,7 @@
 </div>
 <h1 id="pmon-psufansyseeprom-state_db">pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）<a class="headerlink" href="#pmon-psufansyseeprom-state_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>pmon</code> container には既に <code>ledd</code>（LED）/ <code>xcvrd</code>（SFP）の daemon があるが、<strong>PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは platform plugin を直接叩く</strong> ため遅く、container 跨ぎでデータ重複も発生していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は <strong>PSU / FAN 用 daemon を新設して周期収集 → STATE_DB</strong>、misc syseeprom 系は <strong>boot 時 1 回 dump → STATE_DB</strong> とし、CLI / SNMP は <strong>DB のみを read</strong> する集約方針への移行を提案する。直接アクセスは pmon container 内に閉じ込める。</p>
+<p><code>pmon</code> container には既に <code>ledd</code>（LED）/ <code>xcvrd</code>（SFP）の daemon があるが、<strong>PSU / FAN / chassis / syseeprom データへの CLI / <a href="../../reference/glossary/#term-snmp">SNMP</a> アクセスは platform plugin を直接叩く</strong> ため遅く、container 跨ぎでデータ重複も発生していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>PSU / FAN 用 daemon を新設して周期収集 → <a href="../../reference/glossary/#term-state_db">STATE_DB</a></strong>、misc syseeprom 系は <strong>boot 時 1 回 dump → STATE_DB</strong> とし、CLI / SNMP は <strong>DB のみを read</strong> する集約方針への移行を提案する。直接アクセスは pmon container 内に閉じ込める。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="daemon">Daemon 構成<a class="headerlink" href="#daemon" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23767,7 +23767,7 @@
 <ul>
 <li>起動時に <strong>constant data</strong>（serial, manufacturer, model 等）を 1 回読み込み STATE_DB に書く</li>
 <li>以降は <strong>periodic loop</strong>（PSU/FAN/xcvr の variable 値）で温度・電圧・回転数・status を更新</li>
-<li><strong>set 操作</strong>（status LED 色, fan speed 等）は CONFIG_DB 変更を subscribe してハンドラから platform API 呼出<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>set 操作</strong>（status LED 色, fan speed 等）は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 変更を subscribe してハンドラから platform API 呼出<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="misc-one-shot-task">Misc one-shot task<a class="headerlink" href="#misc-one-shot-task" title="Permanent link">&para;</a></h3>
 <p>boot up 時に platform hwsku / ASIC 名 / reboot cause / syseeprom decode（model / serial / base MAC / manufacture date / vendor ext 等）をまとめて取得し STATE_DB に書く。<strong>1 回限りで exit</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -23842,6 +23842,8 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 - show platform fanstatus / psustatus / temperature が STATE_DB 直読みになっているか確認
 - ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認
 -->
+
+<!-- glossary-links-injected: 8b787f87bebc -->
 
 <div class="footnote">
 <hr />

@@ -23828,7 +23828,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ここでは SRv6 / MPLS / Path Tracing の主要 daemon・ファイル・SAI 属性のうち、設計を理解する上で欠かせない部分を集約します。コード位置は元 HLD ページに紐付いており、verifier が裏取り済みです。</p>
+<p>ここでは <a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing の主要 daemon・ファイル・<a href="../../../reference/glossary/#term-sai">SAI</a> 属性のうち、設計を理解する上で欠かせない部分を集約します。コード位置は元 <a href="../../../reference/glossary/#term-hld">HLD</a> ページに紐付いており、verifier が裏取り済みです。</p>
 <h2 id="srv6orch">srv6orch の構造<a class="headerlink" href="#srv6orch" title="Permanent link">&para;</a></h2>
 <p><code>sonic-swss/orchagent/srv6orch.cpp</code> / <code>srv6orch.h</code> が中核です。</p>
 <ul>
@@ -23841,9 +23841,9 @@
 <h2 id="bgpcfgd-srv6mgr">bgpcfgd の SRv6Mgr<a class="headerlink" href="#bgpcfgd-srv6mgr" title="Permanent link">&para;</a></h2>
 <p>Static SID / Locator は <code>src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py</code> の <code>SRv6Mgr</code> が処理します。</p>
 <ul>
-<li><code>locators_set_handler</code> / <code>sids_set_handler</code> が CONFIG_DB の subscribe ハンドラ。</li>
+<li><code>locators_set_handler</code> / <code>sids_set_handler</code> が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の subscribe ハンドラ。</li>
 <li>locator 不在のまま SID が来ても、<code>SRV6_MY_LOCATORS</code> を subscribe して deferred 解決する経路を持ちます。</li>
-<li>最終的に <code>vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid {} locator {} behavior {} vrf {}"</code> を発行して FRR に流し込みます。</li>
+<li>最終的に <code>vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid {} locator {} behavior {} vrf {}"</code> を発行して <a href="../../../reference/glossary/#term-frr">FRR</a> に流し込みます。</li>
 </ul>
 <p><code>frrcfgd</code> 側では <code>SRV6_MY_LOCATORS</code> を <code>zebra</code>、<code>SRV6_MY_SIDS</code> を <code>mgmtd</code> に向けるターゲット daemon 設定があります。CONFIG_DB → FRR の中継経路が二重化されているわけではなく、各テーブルで担当 daemon が異なる構造です。</p>
 <h2 id="mpls">MPLS データパス<a class="headerlink" href="#mpls" title="Permanent link">&para;</a></h2>
@@ -23851,11 +23851,11 @@
 <ul>
 <li><code>APP_LABEL_ROUTE_TABLE_NAME</code> を <code>ProducerStateTable</code> として開きます。</li>
 <li><code>AF_MPLS</code> の netlink route を受け取り、<code>RTA_NEWDST</code> から MPLS NH label stack、<code>LWTUNNEL_ENCAP_MPLS</code> から encap label を取り出して APP_DB に書きます。</li>
-<li>APP_DB の <code>LABEL_ROUTE_TABLE</code> を orchagent 側が消費し、SAI <code>INSEG_ENTRY</code> を bulk で programming します。</li>
+<li>APP_DB の <code>LABEL_ROUTE_TABLE</code> を <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 側が消費し、SAI <code>INSEG_ENTRY</code> を bulk で programming します。</li>
 </ul>
-<p>per-RIF の MPLS 有効化（<code>INTERFACE.&lt;intf&gt;.mpls = enable</code>）は <code>intfmgrd</code> / <code>IntfMgr</code> が SAI の RIF 属性として渡し、ASIC が MPLS フレームを受理するかどうかを切り替えます。</p>
+<p>per-<a href="../../../reference/glossary/#term-rif">RIF</a> の MPLS 有効化（<code>INTERFACE.&lt;intf&gt;.mpls = enable</code>）は <code>intfmgrd</code> / <code>IntfMgr</code> が SAI の RIF 属性として渡し、ASIC が MPLS フレームを受理するかどうかを切り替えます。</p>
 <h2 id="qos">QoS との接続<a class="headerlink" href="#qos" title="Permanent link">&para;</a></h2>
-<p><code>sonic-swss/orchagent/qosorch.cpp</code> の <code>m_qos_handler_map</code> に <code>CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME</code> が登録され、<code>mpls_tc_to_tc_field_name</code> が <code>PORT_QOS_MAP</code> のフィールド名として参照されます。ハンドラは <code>QosOrch::handleMplsTcToTcTable</code> です。DSCP / TC / PG マップと同じ枠組みで MPLS TC が扱われるため、QoS 側の運用知識がそのまま使えます。</p>
+<p><code>sonic-swss/orchagent/qosorch.cpp</code> の <code>m_qos_handler_map</code> に <code>CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME</code> が登録され、<code>mpls_tc_to_tc_field_name</code> が <code>PORT_QOS_MAP</code> のフィールド名として参照されます。ハンドラは <code>QosOrch::handleMplsTcToTcTable</code> です。DSCP / TC / PG マップと同じ枠組みで MPLS TC が扱われるため、<a href="../../../reference/glossary/#term-qos">QoS</a> 側の運用知識がそのまま使えます。</p>
 <h2 id="path-tracing-sai">Path Tracing の SAI 属性<a class="headerlink" href="#path-tracing-sai" title="Permanent link">&para;</a></h2>
 <p>Path Tracing Midpoint は SAI 側で port 属性として実装されています。</p>
 <ul>
@@ -23967,8 +23967,8 @@
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ZMQ は使わない。</li>
-<li>bgpcfgd ↔ FRR は <strong>vtysh execve</strong>（プロセス起動）で config を流し込む経路。Redis pub/sub も間接的にしか使われない。</li>
-<li>fpmsyncd は FPM netlink を受け、ProducerStateTable で LABEL_ROUTE_TABLE に書く。</li>
+<li><a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> ↔ FRR は <strong>vtysh execve</strong>（プロセス起動）で config を流し込む経路。<a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub も間接的にしか使われない。</li>
+<li><a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> は <a href="../../../reference/glossary/#term-fpm">FPM</a> netlink を受け、<a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> で LABEL_ROUTE_TABLE に書く。</li>
 </ul>
 <h2 id="_2">既知の実装上の制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23989,6 +23989,7 @@
 <li><a href="../../../routing/mpls-for-sonic-high-level-design-document/">MPLS HLD</a></li>
 <li><a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
 </ul>
+<!-- glossary-links-injected: ffe3152ef683 -->
 
 
 

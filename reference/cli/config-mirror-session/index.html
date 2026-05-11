@@ -23700,7 +23700,7 @@
 
 <h1 id="config-mirror_session">config mirror_session サブコマンド<a class="headerlink" href="#config-mirror_session" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config mirror_session</code> はポートミラー / ERSPAN セッションを CONFIG_DB の <code>MIRROR_SESSION</code> テーブルに登録・削除する。タイプは 2 種類:</p>
+<p><code>config mirror_session</code> はポートミラー / ERSPAN セッションを <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>MIRROR_SESSION</code> テーブルに登録・削除する。タイプは 2 種類:</p>
 <ul>
 <li><strong>ERSPAN</strong> ... GRE カプセル化して remote analyzer に転送</li>
 <li><strong>SPAN</strong> ... 同一スイッチ内の特定ポートに複製出力</li>
@@ -23873,7 +23873,7 @@ excerpt: |
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-mirror-session/"><code>sonic-mirror-session</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-mirror-session/"><code>sonic-mirror-session</code></a></li>
 <li>CONFIG_DB: <a href="../../config-db/mirror-session/"><code>MIRROR_SESSION</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -23901,7 +23901,7 @@ excerpt: |
 <h3 id="_12">典型的な利用シーン<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>障害解析 / セキュリティ用途で ERSPAN / SPAN セッションを設定する。</li>
-<li>EVERFLOW ACL とセットでミラー先を変える。</li>
+<li>EVERFLOW <a href="../../glossary/#term-acl">ACL</a> とセットでミラー先を変える。</li>
 </ul>
 <h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23920,6 +23920,8 @@ excerpt: |
 <li><a href="../config-acl/">reference/CLI: config acl</a></li>
 <li><a href="../show-acl/">reference/CLI: show acl</a></li>
 </ul>
+<!-- glossary-links-injected: 1a8357632541 -->
+
 <div class="footnote">
 <hr />
 <ol>

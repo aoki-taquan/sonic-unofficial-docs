@@ -24069,7 +24069,7 @@
 </div>
 <h1 id="error-handling-frameworkerror_db-sai-app">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）<a class="headerlink" href="#error-handling-frameworkerror_db-sai-app" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来 syncd は SAI CREATE/SET 失敗を一律 fatal 扱いし orchagent に shutdown を要求していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これを廃し、<strong>ERROR_DB 経由で app（特に BGP）に失敗を通知する</strong> 汎用フレームワークが提案された。BGP は <code>ROUTE_TABLE</code> 失敗を受け取り、announce 済み route を withdraw する等のリカバリを app 側で実施できる。framework 自体は <strong>報告のみ</strong>で retry/rollback は行わない。</p>
+<p>従来 <a href="../../reference/glossary/#term-syncd">syncd</a> は <a href="../../reference/glossary/#term-sai">SAI</a> CREATE/SET 失敗を一律 fatal 扱いし <a href="../../reference/glossary/#term-orchagent">orchagent</a> に shutdown を要求していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これを廃し、<strong>ERROR_DB 経由で app（特に <a href="../../reference/glossary/#term-bgp">BGP</a>）に失敗を通知する</strong> 汎用フレームワークが提案された。BGP は <code>ROUTE_TABLE</code> 失敗を受け取り、announce 済み route を withdraw する等のリカバリを app 側で実施できる。framework 自体は <strong>報告のみ</strong>で retry/rollback は行わない。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネントとデータフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -24250,7 +24250,7 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>OrchAgent (RouteOrch / NeighOrch)</strong>: ERROR_DB の producer</li>
-<li><strong>fpmsyncd / bgpcfgd</strong>: route 失敗の receiver 候補</li>
+<li><strong><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / <a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a></strong>: route 失敗の receiver 候補</li>
 <li><strong>debug-framework</strong>: 同時期の framework と機能境界が曖昧（debug は dump 中心、本 framework は failure 通知）</li>
 </ul>
 <h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24258,7 +24258,7 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>取り込み済み</strong>:</li>
-<li><code>sonic-swss-common/common/status_code_util.h:11-</code> で <code>SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED</code> 等の enum 群が定義されている。HLD の <code>SWSS_RC_*</code> 体系の最低限は libswsscommon 側に入った。</li>
+<li><code>sonic-swss-common/common/status_code_util.h:11-</code> で <code>SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED</code> 等の enum 群が定義されている。<a href="../../reference/glossary/#term-hld">HLD</a> の <code>SWSS_RC_*</code> 体系の最低限は libswsscommon 側に入った。</li>
 <li><strong>未取り込み</strong>:</li>
 <li><code>ERROR_DB</code> / <code>ERROR_ROUTE_TABLE</code> / <code>ERROR_NEIGH_TABLE</code> のテーブル名 define は <code>sonic-swss-common/common/schema.h</code> に<strong>存在しない</strong>（<code>grep -n "ERROR_DB\|ERROR_ROUTE_TABLE" schema.h</code> 0 件。<code>lagid.h:16</code> の <code>LAG_ID_ALLOCATOR_ERROR_DB_ERROR</code> は別物の戻り値定数）。</li>
 <li><code>sonic-swss/orchagent/</code> 配下に <code>ErrorListener</code> / <code>ErrorReporter</code> クラスは未定義。RouteOrch / NeighOrch の SAI 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。</li>
@@ -24275,7 +24275,7 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>SAI 失敗の発見</strong>: syslog の <code>SAI_STATUS_*</code> を grep するか、<code>swssloglevel -l NOTICE -c &lt;orch&gt;</code> で OrchAgent のログを上げる。<code>ASIC_DB</code> の <code>ERROR</code> 状態を <code>redis-cli -n 1 keys</code> で覗くしかない。</li>
-<li><strong>RIB/FIB 乖離検知</strong>: <code>show ip route</code> と <code>show ip fib</code> の突合スクリプトを別途運用ツール側で実装。FRR の <code>show bgp ipv4 unicast detail</code> と <code>sonic-cli show ip route</code> を突合する。</li>
+<li><strong>RIB/FIB 乖離検知</strong>: <code>show ip route</code> と <code>show ip fib</code> の突合スクリプトを別途運用ツール側で実装。<a href="../../reference/glossary/#term-frr">FRR</a> の <code>show bgp ipv4 unicast detail</code> と <code>sonic-cli show ip route</code> を突合する。</li>
 <li>上流取り込みを望む場合は HLD 自体を現行 master 構造（<code>Producer/ConsumerStateTable</code>、<code>status_code_util.h</code> の enum 活用）に合わせて再ドラフトする必要がある。本ページの記述は仕様参考扱い。</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -24353,10 +24353,12 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
 <li>本 HLD（2019-05 v0.1）の実装着手 PR は <strong>見つからない</strong>。<code>SWSS_RC_*</code> enum を導入した PR (<code>sonic-swss-common</code> 経由) のみが部分採用の痕跡。</li>
-<li>代替の retry/recovery 機構は CRM (Critical Resource Monitor: <code>sonic-swss/orchagent/crmorch.cpp</code>) で部分的にカバーされており、こちらは production で稼働中。<code>show crm resources</code> / <code>CRM_TABLE</code> 経由でリソース閾値監視が可能。HLD ベースではなく CRM ベースで運用設計する方が現実的。</li>
+<li>代替の retry/recovery 機構は <a href="../../reference/glossary/#term-crm">CRM</a> (Critical Resource Monitor: <code>sonic-swss/orchagent/crmorch.cpp</code>) で部分的にカバーされており、こちらは production で稼働中。<code>show crm resources</code> / <code>CRM_TABLE</code> 経由でリソース閾値監視が可能。HLD ベースではなく CRM ベースで運用設計する方が現実的。</li>
 </ul>
 <h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
+<!-- glossary-links-injected: b264acb6675e -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23818,8 +23818,8 @@
 </div>
 <h1 id="p4orchpins-p4runtime-orchagent">P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）<a class="headerlink" href="#p4orchpins-p4runtime-orchagent" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>PINS (P4 Integrated Network Stack) は SONiC を <strong>P4 / P4Runtime で遠隔制御</strong> する。中核の <strong><code>P4Orch</code></strong> は <code>APPL_DB.P4RT</code> テーブルを購読し、SAI 呼び出しに変換して ASIC_DB に書く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>通常 orchagent との差異<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-pins">PINS</a> (P4 Integrated Network Stack) は SONiC を <strong>P4 / P4Runtime で遠隔制御</strong> する。中核の <strong><code>P4Orch</code></strong> は <code>APPL_DB.P4RT</code> テーブルを購読し、<a href="../../reference/glossary/#term-sai">SAI</a> 呼び出しに変換して <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> に書く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>通常 <a href="../../reference/glossary/#term-orchagent">orchagent</a> との差異<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23870,7 +23870,7 @@
 </tr>
 <tr>
 <td><code>FIXED_WCMP_GROUP_TABLE</code></td>
-<td>Next Hop Group + Member</td>
+<td><a href="../../reference/glossary/#term-next-hop-group">Next Hop Group</a> + Member</td>
 </tr>
 <tr>
 <td><code>FIXED_IPV4_TABLE</code> / <code>FIXED_IPV6_TABLE</code></td>
@@ -23878,7 +23878,7 @@
 </tr>
 <tr>
 <td><code>ACL_*</code></td>
-<td>ACL Table / Rule</td>
+<td><a href="../../reference/glossary/#term-acl">ACL</a> Table / Rule</td>
 </tr>
 </tbody>
 </table>
@@ -23903,7 +23903,7 @@
     PO-&gt;&gt;PO: RouteManager.drain
     PO-&gt;&gt;PO: AclTableManager.drain
     PO-&gt;&gt;PO: AclRuleManager.drain</code></pre>
-<p>HLD 当初 (2021-11) の 7 Manager は <strong>RouterInterface / Neighbor / Nexthop / Wcmp / Route / AclTable / AclRule</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。drain 順は依存（neighbor は router interface 依存、route は nexthop 依存）。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> 当初 (2021-11) の 7 Manager は <strong>RouterInterface / Neighbor / Nexthop / Wcmp / Route / AclTable / AclRule</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。drain 順は依存（neighbor は router interface 依存、route は nexthop 依存）。</p>
 <p>各 Manager の drain は <strong>SET/DEL 判別 → deserialize+validate → ローカル map 参照で create/modify 判別 → sairedis 経由で SAI 呼び出し</strong> という共通パターン。ローカル map は <code>key=P4RT object id</code> で create/modify を判定する。</p>
 <h2 id="centralized-mapper">Centralized Mapper<a class="headerlink" href="#centralized-mapper" title="Permanent link">&para;</a></h2>
 <p>manager 横断で持つ共有情報<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23943,12 +23943,12 @@
 <p>P4Orch は <strong>既存 orch の public method / グローバルポインタ</strong> で SONiC object を参照する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>PortsOrch</code>: port 情報 + 参照カウント</li>
-<li><code>VrfOrch</code>: VRF + 参照カウント（<code>RouterInterfaceManager</code> から）</li>
+<li><code>VrfOrch</code>: <a href="../../reference/glossary/#term-vrf">VRF</a> + 参照カウント（<code>RouterInterfaceManager</code> から）</li>
 <li><code>CrmOrch</code>: SAI create/delete 時のリソースカウント更新</li>
 </ul>
 <p>逆に他 orch は <strong>P4Orch の public method 経由でしか P4RT object に触れない</strong>（資源分離）。</p>
 <h2 id="application">Application 応答経路<a class="headerlink" href="#application" title="Permanent link">&para;</a></h2>
-<p>P4 SDN は「programming 完了を controller に返す」要件があるため、orchagent ↔ syncd を <strong>synchronous mode</strong> にし、SAI 戻り値を <code>APPL_STATE_DB</code> の通知チャネルで返す<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>P4 SDN は「programming 完了を controller に返す」要件があるため、orchagent ↔ <a href="../../reference/glossary/#term-syncd">syncd</a> を <strong>synchronous mode</strong> にし、SAI 戻り値を <code>APPL_STATE_DB</code> の通知チャネルで返す<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <pre class="mermaid"><code>sequenceDiagram
     participant Ctrl as P4 controller
     participant P4RT
@@ -23966,7 +23966,7 @@
     P4RT--&gt;&gt;Ctrl: result</code></pre>
 <p>詳細は <code>appl_state_db_response_path_hld.md</code> 参照<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">設定<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>CLI / CONFIG_DB / YANG / SAI への変更は <strong>無し</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定は P4Runtime controller 経由。確認は:</p>
+<p>CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> / SAI への変更は <strong>無し</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定は P4Runtime controller 経由。確認は:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>orchagent
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FIXED_*_TABLE*&#39;</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;*&#39;</span>
@@ -23989,7 +23989,7 @@
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>P4 request が反映されない → APPL_DB の P4RT entry、<code>APPL_STATE_DB</code> のエラーレスポンス</li>
+<li>P4 request が反映されない → <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の P4RT entry、<code>APPL_STATE_DB</code> のエラーレスポンス</li>
 <li>依存エラーが多い → Controller 投入順序（router_interface → neighbor → nexthop → route）</li>
 <li>restart 後に消える → 仕様。Controller が再投入</li>
 <li>ref_count 異常 → Centralized Mapper の値を debug log で確認、CrmOrch カウンタも対照</li>
@@ -24006,6 +24006,8 @@
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5c794d9f4a5c -->
 
 <div class="footnote">
 <hr />

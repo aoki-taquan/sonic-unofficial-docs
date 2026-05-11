@@ -23818,8 +23818,8 @@
 </div>
 <h1 id="voq-chassis-supervisor-aggregate">VOQ カウンタ集約（chassis supervisor からの aggregate 表示）<a class="headerlink" href="#voq-chassis-supervisor-aggregate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>distributed VOQ アーキテクチャでは、ある <strong>出力 VOQ</strong> に対応する VOQ が <strong>システム内のすべての ASIC</strong> に存在する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各 ASIC の VOQ stats は独立した FSI に乗っており、ユーザは見たい 1 ポートのキュー深度や drop を把握するために <strong>ASIC 単位の出力を手で足し合わせる</strong> 必要があった。</p>
-<p>この HLD は chassis 系のシステムにおいて <strong>supervisor から各 linecard / ASIC の Redis に直接接続</strong> し、<code>show queue counters --voq</code> で <strong>VOQ 単位に sum を取った aggregate ビュー</strong> を返せるようにする変更を定義している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。アーキテクチャ自体は変えず、Redis を midplane IP 経由でも待ち受けさせる「アクセス経路の追加」と、それを使う CLI 改修だけで構成される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>distributed <a href="../../reference/glossary/#term-voq">VOQ</a> アーキテクチャでは、ある <strong>出力 VOQ</strong> に対応する VOQ が <strong>システム内のすべての ASIC</strong> に存在する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各 ASIC の VOQ stats は独立した FSI に乗っており、ユーザは見たい 1 ポートのキュー深度や drop を把握するために <strong>ASIC 単位の出力を手で足し合わせる</strong> 必要があった。</p>
+<p>この <a href="../../reference/glossary/#term-hld">HLD</a> は chassis 系のシステムにおいて <strong>supervisor から各 linecard / ASIC の <a href="../../reference/glossary/#term-redis">Redis</a> に直接接続</strong> し、<code>show queue counters --voq</code> で <strong>VOQ 単位に sum を取った aggregate ビュー</strong> を返せるようにする変更を定義している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。アーキテクチャ自体は変えず、Redis を midplane IP 経由でも待ち受けさせる「アクセス経路の追加」と、それを使う CLI 改修だけで構成される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">既存の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>multi-ASIC system（fixed もしくは linecard）では、各 namespace に対応する Redis インスタンスは <strong>docker network 上の non-loopback IP に bind</strong> されており、loopback IP でないため Redis は <strong>unprotected mode</strong> で起動している<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより同一機内の他コンテナから接続できる構造になっているが、<strong>chassis supervisor からは届かない</strong>。</p>
@@ -23979,6 +23979,8 @@ reasoning: midplane IP に Redis を公開してから supervisor の queuestat 
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 82f91cfcd8af -->
 
 <div class="footnote">
 <hr />

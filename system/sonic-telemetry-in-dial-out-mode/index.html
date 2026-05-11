@@ -23818,7 +23818,7 @@
 </div>
 <h1 id="gnmi-dial-out-dialout_client_cli-gnmidialoutpublish">gNMI dial-out モード（<code>dialout_client_cli</code> + <code>gNMIDialOut.Publish</code>）<a class="headerlink" href="#gnmi-dial-out-dialout_client_cli-gnmidialoutpublish" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>通常の gNMI subscribe は <strong>collector → device</strong> の方向で接続するが、ファイアウォール / NAT 越しや stateless collector の場面では device 側から発信したい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は SONiC を <strong>dial-out クライアント</strong>にし、収集側で動く <code>gNMIDialOut</code> サービスへ telemetry を push する。</p>
+<p>通常の <a href="../../reference/glossary/#term-gnmi">gNMI</a> subscribe は <strong>collector → device</strong> の方向で接続するが、ファイアウォール / <a href="../../reference/glossary/#term-nat">NAT</a> 越しや stateless collector の場面では device 側から発信したい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は SONiC を <strong>dial-out クライアント</strong>にし、収集側で動く <code>gNMIDialOut</code> サービスへ telemetry を push する。</p>
 <p>dialout / dialin の両モードは同じ telemetry コンテナで提供される。DB client が redis から取得、non-DB client は redis 外データを返す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">サービス定義<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23967,7 +23967,7 @@
 <ul>
 <li><code>unidirectional=true</code> 既定のため <code>PublishResponse</code> を使う場合は明示設定</li>
 <li><code>DestinationGroup</code> 内のフェイルオーバは順序付き。両方落ちると retry_interval 後に再試行</li>
-<li>認証は HLD では明示されていない（dialout は通常 TLS で行う）。詳細は telemetry コンテナ側設定に従う</li>
+<li>認証は <a href="../../reference/glossary/#term-hld">HLD</a> では明示されていない（dialout は通常 TLS で行う）。詳細は telemetry コンテナ側設定に従う</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23976,6 +23976,8 @@
 <li><strong>OpenConfig telemetry</strong>: 設定スキーマの参照モデル</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 1642bcc520bc -->
+
 <div class="footnote">
 <hr />
 <ol>

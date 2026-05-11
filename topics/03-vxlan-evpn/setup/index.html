@@ -23840,7 +23840,7 @@
 
 
 <h1 id="overlay">Overlay 設定<a class="headerlink" href="#overlay" title="Permanent link">&para;</a></h1>
-<p>Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。</p>
+<p>Overlay の設定は、最初に「L2 <a href="../../../reference/glossary/#term-vlan">VLAN</a>-VNI を作るのか」「<a href="../../../reference/glossary/#term-vnet">VNET</a> route を作るのか」「<a href="../../../reference/glossary/#term-evpn">EVPN</a> の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> tunnel が先に必要です。</p>
 <h2 id="_1">最小構成の順番<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Underlay IP reachability を作る。</li>
@@ -23848,7 +23848,7 @@
 <li>L2 overlay なら <code>VXLAN_TUNNEL_MAP</code> で VLAN と VNI を対応させる。</li>
 <li>L3 / tenant overlay なら <code>VNET</code> を作り、VNI と VXLAN tunnel を対応させる。</li>
 <li>remote prefix は <code>VNET_ROUTE_TUNNEL</code> または controller / EVPN 経由で入れる。</li>
-<li>EVPN を使う場合は <code>VXLAN_EVPN_NVO</code> と FRR BGP-EVPN 側の設定を揃える。</li>
+<li>EVPN を使う場合は <code>VXLAN_EVPN_NVO</code> と <a href="../../../reference/glossary/#term-frr">FRR</a> <a href="../../../reference/glossary/#term-bgp">BGP</a>-EVPN 側の設定を揃える。</li>
 </ol>
 <h2 id="cli">CLI 入口<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <p><code>config vxlan</code> は VTEP、EVPN NVO、VLAN-VNI map を扱います。</p>
@@ -23931,7 +23931,7 @@
 </span></code></pre></div>
 <p><code>destination ip</code> 列は EVPN モードでは空欄になります (動的学習)。EVPN BGP neighbor 確認は <code>show bgp l2vpn evpn summary</code> で別経路です。</p>
 <h2 id="2-vnet-controller-driven-overlay">典型シナリオ 2: VNET (controller driven overlay) を設定する<a class="headerlink" href="#2-vnet-controller-driven-overlay" title="Permanent link">&para;</a></h2>
-<p>DASH 系や Mellanox SmartNIC 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が <code>VNET_ROUTE_TUNNEL</code> を直接 APPL_DB / CONFIG_DB に書きます。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a> 系や Mellanox SmartNIC 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が <code>VNET_ROUTE_TUNNEL</code> を直接 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に書きます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">10</span>.1.0.1
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vnet<span class="w"> </span>add<span class="w"> </span>Vnet1000<span class="w"> </span><span class="m">1000</span><span class="w"> </span>vtep1
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vnet<span class="w"> </span>add-route<span class="w"> </span>Vnet1000<span class="w"> </span><span class="m">192</span>.0.2.10/32<span class="w"> </span><span class="m">203</span>.0.113.10<span class="w"> </span>--vni<span class="w"> </span><span class="m">1000</span><span class="w"> </span><span class="se">\</span>
@@ -23961,7 +23961,7 @@
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>show<span class="w"> </span>vnet<span class="w"> </span>endpoint
 </span></code></pre></div>
 <h2 id="3-ipinip-decap-dual-tor">典型シナリオ 3: IPinIP decap を Dual-ToR 用に設定する<a class="headerlink" href="#3-ipinip-decap-dual-tor" title="Permanent link">&para;</a></h2>
-<p><code>TUNNEL</code> テーブルは IPinIP decap term を表現します。Dual-ToR の standby → active 折り返しに使われる構成例:</p>
+<p><code>TUNNEL</code> テーブルは <a href="../../../reference/glossary/#term-ipinip">IPinIP</a> decap term を表現します。Dual-ToR の standby → active 折り返しに使われる構成例:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">&quot;TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">&quot;MuxTunnel0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -23976,7 +23976,7 @@
 </span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>TUNNEL_DECAP_TABLE</code> は APPL_DB に書かれる ephemeral state で、CONFIG_DB から書く対象ではありません。orchagent が <code>TUNNEL</code> を見て APPL_DB に派生する流れです。</p>
+<p><code>TUNNEL_DECAP_TABLE</code> は APPL_DB に書かれる ephemeral state で、CONFIG_DB から書く対象ではありません。<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が <code>TUNNEL</code> を見て APPL_DB に派生する流れです。</p>
 <h2 id="config_db-appl_db">CONFIG_DB / APPL_DB の見方<a class="headerlink" href="#config_db-appl_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24019,11 +24019,11 @@
 </tr>
 </tbody>
 </table>
-<p>Reference の <code>config-db</code> ページは、CLI で触る table と orchagent が見る table の違いを確認する場所です。特に <code>TUNNEL_DECAP_TABLE</code> は CONFIG_DB ではなく APPL_DB / STATE_DB の table なので、直接設定ファイルへ書く対象ではありません。</p>
+<p>Reference の <code>config-db</code> ページは、CLI で触る table と orchagent が見る table の違いを確認する場所です。特に <code>TUNNEL_DECAP_TABLE</code> は CONFIG_DB ではなく APPL_DB / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の table なので、直接設定ファイルへ書く対象ではありません。</p>
 <h2 id="evpn-nvo-frr">EVPN NVO と FRR の境界<a class="headerlink" href="#evpn-nvo-frr" title="Permanent link">&para;</a></h2>
-<p><code>VXLAN_EVPN_NVO</code> は EVPN NVO インスタンスと source VTEP を結びます。ただし、BGP neighbor、address-family l2vpn evpn、route-target、VRF などの control plane 設定は FRR 側の領域です。SONiC 側で VXLAN tunnel と map が存在していても、FRR EVPN が Type-2 / Type-5 を交換していなければ remote MAC / prefix は学習されません。</p>
+<p><code>VXLAN_EVPN_NVO</code> は EVPN NVO インスタンスと source VTEP を結びます。ただし、BGP neighbor、address-family l2vpn evpn、route-target、<a href="../../../reference/glossary/#term-vrf">VRF</a> などの control plane 設定は FRR 側の領域です。SONiC 側で VXLAN tunnel と map が存在していても、FRR EVPN が Type-2 / Type-5 を交換していなければ remote MAC / prefix は学習されません。</p>
 <h2 id="pbh-inner-hash">PBH inner hash<a class="headerlink" href="#pbh-inner-hash" title="Permanent link">&para;</a></h2>
-<p>VXLAN / NVGRE の外側 header だけで ECMP / LAG hash すると、複数 flow が同じ tunnel endpoint へ偏ることがあります。Policy Based Hashing は ACL match した encapsulated packet に対して inner 5-tuple ベースの hash を適用する機能です。設定単位は <code>PBH_TABLE</code>、<code>PBH_RULE</code>、<code>PBH_HASH</code>、<code>PBH_HASH_FIELD</code> で、VXLAN/VNET そのものの設定とは別です。</p>
+<p>VXLAN / NVGRE の外側 header だけで <a href="../../../reference/glossary/#term-ecmp">ECMP</a> / <a href="../../../reference/glossary/#term-lag">LAG</a> hash すると、複数 flow が同じ tunnel endpoint へ偏ることがあります。Policy Based Hashing は <a href="../../../reference/glossary/#term-acl">ACL</a> match した encapsulated packet に対して inner 5-tuple ベースの hash を適用する機能です。設定単位は <code>PBH_TABLE</code>、<code>PBH_RULE</code>、<code>PBH_HASH</code>、<code>PBH_HASH_FIELD</code> で、VXLAN/VNET そのものの設定とは別です。</p>
 <h2 id="_2">よくある設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><code>sonic-utilities/config/vxlan.py</code> の <code>ctx.fail()</code> から抜粋した実エラーメッセージ:</p>
 <table>
@@ -24102,6 +24102,7 @@
 <li><a href="../../../reference/yang/sonic-vnet/">sonic-vnet YANG</a></li>
 <li><a href="../../../architecture/sonic-policy-based-hashing/">Policy Based Hashing</a></li>
 </ul>
+<!-- glossary-links-injected: 9f6c46bc52cb -->
 
 
 

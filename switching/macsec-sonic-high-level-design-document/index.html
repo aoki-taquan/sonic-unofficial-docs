@@ -23808,9 +23808,9 @@
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li>SONiC で MACsec を有効化すると <strong>どのコンポーネントが動く</strong> のか？</li>
-<li><strong>CONFIG_DB に何を入れれば</strong> 暗号化が始まるのか？</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に何を入れれば</strong> 暗号化が始まるのか？</li>
 <li>MKA（キー交換）は誰がやるのか？ なぜ <strong><code>wpa_supplicant</code> 拡張版</strong> が必要なのか？</li>
-<li><strong>PFC</strong> や <strong>ACL</strong> との相互作用は？</li>
+<li><strong><a href="../../reference/glossary/#term-pfc">PFC</a></strong> や <strong><a href="../../reference/glossary/#term-acl">ACL</a></strong> との相互作用は？</li>
 <li><strong>トラブル時</strong> に最初に見るべきログ / DB は？</li>
 </ol>
 <h2 id="1">1. 何が動くか（コンポーネント）<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
@@ -23826,8 +23826,8 @@
 <ul>
 <li><strong>MACsec Mgr</strong>: CONFIG_DB を読み <code>wpa_supplicant</code> を起動・制御</li>
 <li><strong>wpa_supplicant（SONiC 拡張）</strong>: MKA（Key Agreement）の peer を確立し、SAK（Secure Association Key）を生成</li>
-<li><strong>SONiC plugin</strong>: wpa_supplicant のイベント（SAK install/remove）を APPL_DB に書く</li>
-<li><strong>MACsec Orch</strong>: APPL_DB を購読し SAI MACsec API を呼ぶ</li>
+<li><strong>SONiC plugin</strong>: wpa_supplicant のイベント（SAK install/remove）を <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に書く</li>
+<li><strong>MACsec Orch</strong>: APPL_DB を購読し <a href="../../reference/glossary/#term-sai">SAI</a> MACsec API を呼ぶ</li>
 <li><strong>ASIC（SAI MACsec）</strong>: 実際の暗号化・復号</li>
 </ul>
 <h2 id="2-config_db-cli">2. 設定（CONFIG_DB と CLI）<a class="headerlink" href="#2-config_db-cli" title="Permanent link">&para;</a></h2>
@@ -23862,7 +23862,7 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show<span class="w"> </span>macsec<span class="w"> </span>Ethernet0
 </span></code></pre></div>
 <h2 id="3-mka-wpa_supplicant">3. MKA キー管理（wpa_supplicant 拡張）<a class="headerlink" href="#3-mka-wpa_supplicant" title="Permanent link">&para;</a></h2>
-<p>SONiC は <code>wpa_supplicant</code> を MKA エンドポイントとして使う。HLD 時点で <strong>upstream に無い拡張</strong> を施している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC は <code>wpa_supplicant</code> を MKA エンドポイントとして使う。<a href="../../reference/glossary/#term-hld">HLD</a> 時点で <strong>upstream に無い拡張</strong> を施している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>XPN サポート</strong>（GCM-AES-XPN-128/256）</li>
 <li><strong>Proactive SAK refresh</strong>（タイマや PN 余命でリキー）</li>
@@ -23878,7 +23878,7 @@
 <li><code>MACSEC_SA</code>（SAK / AN ∈ 0..3 / 入次パケット番号）</li>
 </ul>
 <p>Flex Counter で SA × Direction 単位の ingress/egress count、replay drops、IC drops を polling。</p>
-<p>APPL_DB / STATE_DB 形式:</p>
+<p>APPL_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> 形式:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>APPL_DB:MACSEC_PORT_TABLE:&lt;ifname&gt;
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>APPL_DB:MACSEC_EGRESS_SC_TABLE:&lt;ifname&gt;:&lt;sci&gt;       ; Egress 1 SC
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>APPL_DB:MACSEC_INGRESS_SC_TABLE:&lt;ifname&gt;:&lt;sci&gt;      ; Ingress 複数 SC
@@ -23904,8 +23904,8 @@
 <td>PFC バイパス + MACsec フロー用 ACL_ENTRY を MACsec Orch が暗黙に作成</td>
 </tr>
 <tr>
-<td><strong>FlexCounter</strong></td>
-<td>SA 単位 counter polling で COUNTERS_DB に大量 entry</td>
+<td><strong><a href="../../reference/glossary/#term-flexcounter">FlexCounter</a></strong></td>
+<td>SA 単位 counter polling で <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に大量 entry</td>
 </tr>
 <tr>
 <td><strong>Warm reboot</strong></td>
@@ -23941,7 +23941,7 @@
 <li>HLD は 60KB 超。詳細フロー（Init / Create SC / Create SA / Disable SA / Deinit Port）は HLD §4 参照</li>
 <li>SAI MACsec オブジェクトはプラットフォーム依存。Virtual MACsec SAI は HLD §3.4.5</li>
 <li><code>wpa_supplicant</code> 側に SONiC 拡張パッチが必要。upstream バージョン互換に注意</li>
-<li>YANG モデル名は HLD では未明示（実装側で追加予定の <code>sonic-macsec</code> 系を想定）</li>
+<li><a href="../../reference/glossary/#term-yang">YANG</a> モデル名は HLD では未明示（実装側で追加予定の <code>sonic-macsec</code> 系を想定）</li>
 </ul>
 <h2 id="_4">関連トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23955,6 +23955,8 @@
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b3479c2e563c -->
 
 <div class="footnote">
 <hr />

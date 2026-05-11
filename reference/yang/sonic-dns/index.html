@@ -23629,7 +23629,7 @@
 <li>import: <code>ietf-inet-types</code></li>
 <li>top container: <code>sonic-dns</code></li>
 </ul>
-<p>Domain Name System (DNS) resolver configuration YANG module for SONiC OS.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Domain Name System (DNS) resolver configuration <a href="../../glossary/#term-yang">YANG</a> module for SONiC OS.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23767,7 +23767,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>DNS_NAMESERVER</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>DNS_NAMESERVER</code></li>
 <li>CONFIG_DB: <code>DNS_OPTIONS</code></li>
 <li>CLI: <code>config dns</code></li>
 </ul>
@@ -23784,11 +23784,11 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>DNS resolver / domain 設定。<code>DNS_NAMESERVER|&lt;ip&gt;</code> を hostcfgd が <code>/etc/resolv.conf</code> に書く。</li>
+<li>DNS resolver / domain 設定。<code>DNS_NAMESERVER|&lt;ip&gt;</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が <code>/etc/resolv.conf</code> に書く。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>VRF (mgmt) 環境で <code>mgmt-vrf</code> 上の DNS とグローバル DNS の優先順序が hostcfgd の reload 順序で変わる。</li>
+<li><a href="../../glossary/#term-vrf">VRF</a> (mgmt) 環境で <code>mgmt-vrf</code> 上の DNS とグローバル DNS の優先順序が hostcfgd の reload 順序で変わる。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DNS_NAMESERVER|*&#39;</span>
@@ -23803,6 +23803,8 @@
 <li><a href="../../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0072c8c44112 -->
 
 <div class="footnote">
 <hr />

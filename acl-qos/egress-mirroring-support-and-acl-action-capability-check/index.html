@@ -23906,11 +23906,11 @@
 </div>
 <h1 id="acl-egress-mirror-sai-action-capability">ACL の egress mirror 対応と SAI ベース action capability 問い合わせ<a class="headerlink" href="#acl-egress-mirror-sai-action-capability" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ACL は <strong>ASIC ごとに ingress / egress stage で使えるアクションが異なる</strong>。当初 SONiC は ACL_RULE スキーマで stage を区別せず、設定が ASIC で受理されるかは試行錯誤に依存していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は 2 点を入れる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-acl">ACL</a> は <strong>ASIC ごとに ingress / egress stage で使えるアクションが異なる</strong>。当初 SONiC は ACL_RULE スキーマで stage を区別せず、設定が ASIC で受理されるかは試行錯誤に依存していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は 2 点を入れる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>ACL_RULE に mirror を ingress/egress 別に書ける拡張</strong>（<code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code>、後方互換のため <code>MIRROR_ACTION</code> も残す）</li>
-<li><strong>orchagent 起動時に SAI から ACL action capability を問い合わせ</strong>、<code>STATE_DB.SWITCH_CAPABILITY</code> に公開。producer が投入前に validate</li>
+<li><strong><a href="../../reference/glossary/#term-orchagent">orchagent</a> 起動時に <a href="../../reference/glossary/#term-sai">SAI</a> から ACL action capability を問い合わせ</strong>、<code>STATE_DB.SWITCH_CAPABILITY</code> に公開。producer が投入前に validate</li>
 </ol>
 <h2 id="1-egress-mirror">1. egress mirror サポート<a class="headerlink" href="#1-egress-mirror" title="Permanent link">&para;</a></h2>
 <p>SAI には mirror action が <code>SAI_ACL_ACTION_TYPE_MIRROR_INGRESS</code> / <code>MIRROR_EGRESS</code> の 2 種類あるが、旧 SONiC は <code>MIRROR_ACTION</code> 1 種類のみで「ingress テーブルに egress mirror」のような組合せを表現できなかった<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24016,7 +24016,7 @@
 <p>vslib は <code>SAI_SWITCH_ATTR_ACL_STAGE_{INGRESS,EGRESS}</code> をサポートし、<strong>「全 action を supported として返す」</strong> 案を採用（device 別 emulation は保守性が悪い）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。VS テスト追加:</p>
 <ul>
 <li>ingress / egress テーブル × ingress / egress mirror ルールの全組合せ作成検査</li>
-<li><code>setReadOnlyAttribute</code> で <code>SAI_SWITCH_ATTR_ACL_STAGE_*</code> を上書き → orchagent 再起動 → 未対応 action ルールが ASIC_DB に出ないこと</li>
+<li><code>setReadOnlyAttribute</code> で <code>SAI_SWITCH_ATTR_ACL_STAGE_*</code> を上書き → orchagent 再起動 → 未対応 action ルールが <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> に出ないこと</li>
 </ul>
 <h2 id="_2">設定<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -24029,12 +24029,12 @@
 </thead>
 <tbody>
 <tr>
-<td>CONFIG_DB</td>
+<td><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a></td>
 <td><code>ACL_RULE</code></td>
 <td><code>MIRROR_{INGRESS,EGRESS}_ACTION</code> / <code>REDIRECT_ACTION</code> を新キーとして受理</td>
 </tr>
 <tr>
-<td>STATE_DB</td>
+<td><a href="../../reference/glossary/#term-state_db">STATE_DB</a></td>
 <td><code>SWITCH_CAPABILITY\|switch</code></td>
 <td><code>ACL_ACTIONS\|&lt;stage&gt;</code> / <code>ACL_ACTION\|&lt;action&gt;</code> を起動時に書込</td>
 </tr>
@@ -24056,7 +24056,7 @@
 <ul>
 <li>AclOrch / AclRuleMirror、acl-loader</li>
 <li>mirror session 種別（ingress / egress）と ACL stage の整合</li>
-<li><code>SWITCH_CAPABILITY</code> のキー namespace（CRM / port capability 等と衝突しないキー命名）</li>
+<li><code>SWITCH_CAPABILITY</code> のキー namespace（<a href="../../reference/glossary/#term-crm">CRM</a> / port capability 等と衝突しないキー命名）</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;SWITCH_CAPABILITY|switch&quot;</span><span class="w">   </span><span class="c1"># stage 別 action リスト</span>
@@ -24075,7 +24075,7 @@
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/07-acl-copp-mirror/concept/">07-acl-copp-mirror/concept</a>: ACL / CoPP / Mirror の境界</li>
+<li><a href="../../topics/07-acl-copp-mirror/concept/">07-acl-copp-mirror/concept</a>: ACL / <a href="../../reference/glossary/#term-copp">CoPP</a> / Mirror の境界</li>
 <li><a href="../../topics/07-acl-copp-mirror/internals/">07-acl-copp-mirror/internals</a>: AclOrch と SAI capability</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24085,6 +24085,8 @@
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f6b1500402fc -->
 
 <div class="footnote">
 <hr />

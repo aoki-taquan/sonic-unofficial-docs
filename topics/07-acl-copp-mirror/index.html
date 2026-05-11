@@ -23539,15 +23539,15 @@
 
 
 <h1 id="acl-copp-mirror-packet-action">ACL / CoPP / Mirror / Packet Action<a class="headerlink" href="#acl-copp-mirror-packet-action" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC で「パケットを分類して、通す、落とす、CPU に送る、複製する、数える」という機能群をまとめて読むための入口です。既存ページは ACL、CoPP、mirror、drop counter、packet trimming などの HLD 単位に分かれているため、ここでは運用者や設計者の質問順に並べ直します。</p>
-<p>ACL は data plane の分類器、CoPP は control plane へ punt されるパケットの保護、mirror は観測用コピー、counter は設定が本当に効いているかを確かめる計測面です。これらは別機能に見えますが、SONiC 内部では <code>ACL_TABLE</code> / <code>ACL_RULE</code>、SAI ACL action、policer、hostif trap、flex counter といった共通部品でつながっています。</p>
+<p>この章は、SONiC で「パケットを分類して、通す、落とす、CPU に送る、複製する、数える」という機能群をまとめて読むための入口です。既存ページは <a href="../../reference/glossary/#term-acl">ACL</a>、<a href="../../reference/glossary/#term-copp">CoPP</a>、mirror、drop counter、packet trimming などの <a href="../../reference/glossary/#term-hld">HLD</a> 単位に分かれているため、ここでは運用者や設計者の質問順に並べ直します。</p>
+<p>ACL は data plane の分類器、CoPP は control plane へ punt されるパケットの保護、mirror は観測用コピー、counter は設定が本当に効いているかを確かめる計測面です。これらは別機能に見えますが、SONiC 内部では <code>ACL_TABLE</code> / <code>ACL_RULE</code>、<a href="../../reference/glossary/#term-sai">SAI</a> ACL action、policer、hostif trap、flex counter といった共通部品でつながっています。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ACL table type、match、action、counter はどの階層で理解するのか。</li>
 <li>CoPP、policer、trap、mirror は ACL とどこで交わり、どこから別物なのか。</li>
 <li><code>show acl</code>、<code>aclshow</code>、trap flow counter、drop counter は運用でどう使い分けるのか。</li>
 <li>egress mirror、outer DSCP 書換、packet trimming のような ASIC 依存 action はどう確認するのか。</li>
-<li>DASH ACL、PAC、DHCP DoS 緩和は通常 ACL と同じ章で読むべきか。</li>
+<li><a href="../../reference/glossary/#term-dash">DASH</a> ACL、PAC、DHCP DoS 緩和は通常 ACL と同じ章で読むべきか。</li>
 </ul>
 <h2 id="_2">読み進め方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
@@ -23582,6 +23582,7 @@
 <li><a href="../15-security-aaa/">Security / AAA / FIPS / Hardening</a></li>
 <li><a href="../06-l2-vlan-lag/">L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
+<!-- glossary-links-injected: f551dc9c3d84 -->
 
 
 

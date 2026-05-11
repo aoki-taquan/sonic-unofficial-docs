@@ -23652,7 +23652,7 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ビルド成果物が ONIE installer に収まり、ターゲット機材で立ち上がるまでの流れを、source から image までの順で追う。各ステップに対応する HLD・コードリンクは末尾に集約している。</p>
+<p>ビルド成果物が ONIE installer に収まり、ターゲット機材で立ち上がるまでの流れを、source から image までの順で追う。各ステップに対応する <a href="../../../reference/glossary/#term-hld">HLD</a>・コードリンクは末尾に集約している。</p>
 <h2 id="build-artifact-flow">Build artifact flow<a class="headerlink" href="#build-artifact-flow" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   src[sonic-buildimage&lt;br/&gt;sources / submodules] --&gt; slave[sonic-slave-&amp;lt;dist&amp;gt;&lt;br/&gt;build container]
@@ -23676,7 +23676,7 @@
 <p>Base OS のリリース cadence と、その上に乗る docker image / package のバージョニングは別レイヤで管理されている。</p>
 <ul>
 <li>Base OS の更新リズムと旧版の廃止予定は <a href="../../../system/sonic-debian-upgrade-cadence/">Debian upgrade cadence</a> を見る。<code>Makefile</code> の <code>NOSTRETCH</code> / <code>NOBUSTER</code> / <code>NOBULLSEYE</code> / <code>NOBOOKWORM</code> / <code>NOTRIXIE</code> フラグで build 系統を切り替える形が実装と一致している。</li>
-<li>配布される docker 群と Base OS の互換性は semver でラベル付けする。基準は <strong>Redis DB スキーマ</strong> に置く方針で、<code>manifest.py</code> / <code>constraint.py</code> に実装がある。詳しくは <a href="../../../system/sonic-os-sonic-docker-images-versioning/">OS / docker semver</a> を参照する。</li>
+<li>配布される docker 群と Base OS の互換性は semver でラベル付けする。基準は <strong><a href="../../../reference/glossary/#term-redis">Redis</a> DB スキーマ</strong> に置く方針で、<code>manifest.py</code> / <code>constraint.py</code> に実装がある。詳しくは <a href="../../../system/sonic-os-sonic-docker-images-versioning/">OS / docker semver</a> を参照する。</li>
 <li>ディスク書き込み量（log、tmpfs、container 経由の I/O）の分析は <a href="../../../system/analysis-of-disk-writers-in-sonic-devices/">Disk writers analysis</a> を読む。SSD 寿命の観点で base image / docker 設計に直接効く。</li>
 </ul>
 <h2 id="application-extension">Application Extension の入る位置<a class="headerlink" href="#application-extension" title="Permanent link">&para;</a></h2>
@@ -23692,6 +23692,7 @@
 <li><a href="../../../architecture/sonic-application-extension-infrastructure/">Application Extension Infrastructure</a></li>
 <li><a href="../../../architecture/sonic-arm-architecture-support/">ARM architecture support</a></li>
 </ul>
+<!-- glossary-links-injected: da7e5aaf4d2c -->
 
 
 

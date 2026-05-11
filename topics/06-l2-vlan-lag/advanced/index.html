@@ -23762,18 +23762,18 @@
 
 
 <h1 id="l2">L2 発展トピック<a class="headerlink" href="#l2" title="Permanent link">&para;</a></h1>
-<p>このページは、通常の VLAN / PortChannel / MC-LAG 設計から一歩外れる話題の入口です。OpenConfig は管理 API 章、distributed VOQ LAG は VOQ 章、Wake-on-LAN は運用ツールとしても読む対象です。</p>
+<p>このページは、通常の <a href="../../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../../reference/glossary/#term-portchannel">PortChannel</a> / MC-<a href="../../../reference/glossary/#term-lag">LAG</a> 設計から一歩外れる話題の入口です。OpenConfig は管理 API 章、distributed <a href="../../../reference/glossary/#term-voq">VOQ</a> LAG は VOQ 章、Wake-on-LAN は運用ツールとしても読む対象です。</p>
 <h2 id="openconfig-vlan-portchannel">OpenConfig VLAN / PortChannel<a class="headerlink" href="#openconfig-vlan-portchannel" title="Permanent link">&para;</a></h2>
-<p>SONiC 独自 CLI / CONFIG_DB ではなく、REST / gNMI で OpenConfig YANG モデルを使う場合は、transformer が OpenConfig tree と SONiC の既存 CONFIG_DB を対応付けます。</p>
+<p>SONiC 独自 CLI / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> ではなく、REST / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> で OpenConfig <a href="../../../reference/glossary/#term-yang">YANG</a> モデルを使う場合は、transformer が OpenConfig tree と SONiC の既存 CONFIG_DB を対応付けます。</p>
 <p>PortChannel では <code>openconfig-interfaces</code> と <code>openconfig-if-aggregate</code> を使い、Ethernet 側の <code>aggregate-id</code> で member を表現し、PortChannel 側の <code>aggregation/config/min-links</code> で集約条件を表現します。</p>
 <p>VLAN では <code>openconfig-vlan</code> の <code>switched-vlan</code> と <code>routed-vlan</code> を使います。<code>switched-vlan</code> は access / trunk と VLAN member、<code>routed-vlan</code> は VLAN interface の IP 設定に対応します。CONFIG_DB の <code>VLAN</code> / <code>VLAN_MEMBER</code> / <code>VLAN_INTERFACE</code> はそのまま使われ、スキーマ自体を増やす設計ではありません。</p>
 <h2 id="distributed-voq-lag">Distributed VOQ LAG<a class="headerlink" href="#distributed-voq-lag" title="Permanent link">&para;</a></h2>
 <p>分散 VOQ シャシでは、各 ASIC が独立した SONiC インスタンスとして動作し、ASIC 間共有情報を <code>CHASSIS_APP_DB</code> に載せます。LAG は全 ASIC から一貫して見える必要があるため、<code>SYSTEM_LAG_TABLE</code> と <code>SYSTEM_LAG_MEMBER_TABLE</code> で system-wide な LAG 情報を共有します。</p>
-<p>重要な制約は、メンバが複数 ASIC を跨ぐ LAG はサポートしないことです。各 ASIC のローカル LAG は通常どおり <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> で設定され、他 ASIC から見える remote LAG は swss / syncd 側で扱われます。</p>
+<p>重要な制約は、メンバが複数 ASIC を跨ぐ LAG はサポートしないことです。各 ASIC のローカル LAG は通常どおり <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> で設定され、他 ASIC から見える remote LAG は swss / <a href="../../../reference/glossary/#term-syncd">syncd</a> 側で扱われます。</p>
 <p>通常の L2 章では「PortChannel の作り方」までを扱い、VOQ 章では「system_lag_id、CHASSIS_APP_DB、remote LAG programming」を扱う、と分けて読むのが自然です。</p>
 <h2 id="wake-on-lan">Wake-on-LAN<a class="headerlink" href="#wake-on-lan" title="Permanent link">&para;</a></h2>
 <p>Wake-on-LAN は L2 frame または UDP payload で Magic Packet を送る機能です。VLAN / LAG の forwarding 設計そのものではありませんが、スイッチを Magic Packet の送信元として使うため、L2 到達性やブロードキャストの扱いと関係します。</p>
-<p>現行ページでは HLD と実装の差分があり、CLI は Rust 実装、gNOI service は取り込み未確認と整理されています。運用ツールとして使う場合は、対象 NIC の WoL 受信設定、送信方式、ブロードキャスト / ルーティング境界を別途確認します。</p>
+<p>現行ページでは <a href="../../../reference/glossary/#term-hld">HLD</a> と実装の差分があり、CLI は Rust 実装、<a href="../../../reference/glossary/#term-gnoi">gNOI</a> service は取り込み未確認と整理されています。運用ツールとして使う場合は、対象 NIC の WoL 受信設定、送信方式、ブロードキャスト / ルーティング境界を別途確認します。</p>
 <h2 id="_1">他章との境界<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23815,11 +23815,11 @@
 </ul>
 <h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>LACP fast rate と sub-second 切替</strong>: <code>LACP_RATE</code> を fast にすると 1 秒間隔で PDU を送る。LAG メンバ障害の検出を 1 秒未満で行いたい場合、BFD micro-BFD (RFC 7130) を LAG メンバごとに張る選択肢もある。</li>
-<li><strong>MAC learning rate limiting / FDB aging</strong>: 大規模 L2 (Dual-ToR + 大量 VM) では MAC 学習 burst が ASIC FDB を埋める。<code>FDB_AGING_TIME</code> と <code>MAC_LEARN_LIMIT</code> の設計が運用に効く。</li>
+<li><strong><a href="../../../reference/glossary/#term-lacp">LACP</a> fast rate と sub-second 切替</strong>: <code>LACP_RATE</code> を fast にすると 1 秒間隔で PDU を送る。LAG メンバ障害の検出を 1 秒未満で行いたい場合、<a href="../../../reference/glossary/#term-bfd">BFD</a> micro-BFD (RFC 7130) を LAG メンバごとに張る選択肢もある。</li>
+<li><strong>MAC learning rate limiting / <a href="../../../reference/glossary/#term-fdb">FDB</a> aging</strong>: 大規模 L2 (Dual-ToR + 大量 VM) では MAC 学習 burst が ASIC FDB を埋める。<code>FDB_AGING_TIME</code> と <code>MAC_LEARN_LIMIT</code> の設計が運用に効く。</li>
 <li><strong>PVST / RPVST との互換</strong>: SONiC は STP/RSTP を実装するが、ベンダー混在環境では PVST/RPVST との BPDU 互換性で詰まる例がある。MST に寄せるのが安全策。</li>
 <li><strong>Storm Control の per-VLAN 化</strong>: <code>STORM_CONTROL</code> は通常 port 単位だが、VLAN 単位で broadcast/multicast/unknown unicast を別々に絞る拡張提案がある。</li>
-<li><strong>PortChannel min-links と graceful drain</strong>: メンバ link を保守で外すとき、min-links を下回ると LAG 全体がダウンする。<code>config portchannel member del</code> の手順と上流 BGP の drain を組み合わせる。</li>
+<li><strong>PortChannel min-links と graceful drain</strong>: メンバ link を保守で外すとき、min-links を下回ると LAG 全体がダウンする。<code>config portchannel member del</code> の手順と上流 <a href="../../../reference/glossary/#term-bgp">BGP</a> の drain を組み合わせる。</li>
 </ul>
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23831,7 +23831,7 @@
 <h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>OpenConfig による L2 設定は段階的に追加されており、<code>openconfig-network-instance</code> ベースの L2 bridge モデルへの収束が長期テーマ。</li>
-<li>LACP の hardware offload (high-availability platform 向け) は ASIC 依存だが、SAI 拡張提案がある。</li>
+<li>LACP の hardware offload (high-availability platform 向け) は ASIC 依存だが、<a href="../../../reference/glossary/#term-sai">SAI</a> 拡張提案がある。</li>
 <li>distributed LAG (複数 ASIC 跨ぎ member) は VOQ chassis では制約付きで、将来的に system-wide LAG への拡張が議論される。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
@@ -23840,14 +23840,15 @@
 <li><a href="https://1.ieee802.org/tsn/">IEEE 802.1Q</a> — VLAN tagging</li>
 <li><a href="https://1.ieee802.org/spanning-tree/">IEEE 802.1D / 802.1w / 802.1s</a> — STP / RSTP / MST</li>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc7130">RFC 7130</a> — Micro-BFD for LAG</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc7432">RFC 7432</a> — EVPN multihoming は MC-LAG の代替</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7432">RFC 7432</a> — <a href="../../../reference/glossary/#term-evpn">EVPN</a> multihoming は MC-LAG の代替</li>
 </ul>
 <h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-swss</code> の <code>portsorch</code> / <code>lagorch</code> で min-links と member 増減時の race 修正 PR が継続。</li>
 <li><code>teamd</code> カスタマイズ層と Linux upstream <code>libteam</code> のバージョン差で LACP debug ログのフォーマットがずれる事例があり、PR でフォーマット安定化が進む。</li>
-<li>OpenConfig transformer (sonic-mgmt-common) で VLAN / PortChannel の YANG 対応拡張が定期的に入る。設定変換の境界が拡張されるごとに <code>show running-configuration</code> の出力が変わる。</li>
+<li>OpenConfig transformer (<a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common) で VLAN / PortChannel の YANG 対応拡張が定期的に入る。設定変換の境界が拡張されるごとに <code>show running-configuration</code> の出力が変わる。</li>
 </ul>
+<!-- glossary-links-injected: 9caf06a8d97f -->
 
 
 

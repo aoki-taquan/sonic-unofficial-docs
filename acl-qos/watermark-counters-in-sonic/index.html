@@ -23773,7 +23773,7 @@
 <h1 id="watermark-pg-queue">バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）<a class="headerlink" href="#watermark-pg-queue" title="Permanent link">&para;</a></h1>
 <p>読み手の関心は「<strong>何を watermark として記録するのか</strong>」「<strong>telemetry / 手動 / 永続の 3 系統がなぜ要るのか</strong>」「<strong>clear を打つと何が起きるのか</strong>」の 3 点に集約される。順に答える。</p>
 <h2 id="watermark">何を watermark として記録するのか<a class="headerlink" href="#watermark" title="Permanent link">&para;</a></h2>
-<p>対象 SAI カウンタは 3 つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>対象 <a href="../../reference/glossary/#term-sai">SAI</a> カウンタは 3 つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -23796,7 +23796,7 @@
 </tr>
 </tbody>
 </table>
-<p>これらを Flex Counter が <strong>既定 1 秒間隔で <code>STATS_MODE_READ_AND_CLEAR</code></strong> で取り、ハードウェア側も同時にクリアする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新規拡張として syncd の FC 設定スキーマに <code>STATS_MODE</code> 行が追加される。</p>
+<p>これらを Flex Counter が <strong>既定 1 秒間隔で <code>STATS_MODE_READ_AND_CLEAR</code></strong> で取り、ハードウェア側も同時にクリアする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新規拡張として <a href="../../reference/glossary/#term-syncd">syncd</a> の FC 設定スキーマに <code>STATS_MODE</code> 行が追加される。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&quot;POLL_INTERVAL&quot;  -&gt; &quot;1000&quot;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>&quot;STATS_MODE&quot;     -&gt; &quot;STATS_MODE_READ_AND_CLEAR&quot;
 </span></code></pre></div>
@@ -23878,7 +23878,7 @@
 <h2 id="watermarkorch"><code>watermarkorch</code> の責務<a class="headerlink" href="#watermarkorch" title="Permanent link">&para;</a></h2>
 <p>3 点だけ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li><code>WATERMARK_TABLE</code>（CONFIG_DB）の subscribe</li>
+<li><code>WATERMARK_TABLE</code>（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>）の subscribe</li>
 <li><code>PERIODIC_WATERMARKS</code> を <code>TELEMETRY_INTERVAL</code> ごとに 0 化（<strong>新値は現行タイマー満了時にのみ反映</strong>）</li>
 <li><code>CLEAR_WATERMARK</code> 通知の受信処理</li>
 </ol>
@@ -23933,7 +23933,7 @@ reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根�
 <tbody>
 <tr>
 <td><code>WATERMARK_TABLE</code></td>
-<td><code>TELEMETRY_INTERVAL</code>（HLD では <code>TELEMETRY_PERIOD</code> 表記あり）</td>
+<td><code>TELEMETRY_INTERVAL</code>（<a href="../../reference/glossary/#term-hld">HLD</a> では <code>TELEMETRY_PERIOD</code> 表記あり）</td>
 <td>streaming telemetry の周期クリア間隔</td>
 </tr>
 </tbody>
@@ -23983,7 +23983,7 @@ reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根�
 </span></code></pre></div>
 <h2 id="_1">干渉する機能<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>PFC watchdog</strong>: 同じ FC 系を使うためポーリング負荷の競合に留意（HLD の Open Question）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-pfc">PFC</a> watchdog</strong>: 同じ FC 系を使うためポーリング負荷の競合に留意（HLD の Open Question）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong><code>STATS_MODE_READ_AND_CLEAR</code></strong>: 非対応 SAI 実装では意図どおりに動かない</li>
 <li><strong><code>clear</code> の即時 0 観測</strong>: トラフィック停止状態でしか純粋な 0 は得られない</li>
 <li><strong><code>TELEMETRY_INTERVAL</code> の遅延反映</strong>: 現行タイマー満了まで新値は効かない</li>
@@ -24012,6 +24012,8 @@ reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根�
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3f79bdf7d31b -->
 
 <div class="footnote">
 <hr />

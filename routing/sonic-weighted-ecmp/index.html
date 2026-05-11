@@ -23863,14 +23863,14 @@
 <h1 id="weighted-ecmpwcmp">Weighted ECMP（WCMP）<a class="headerlink" href="#weighted-ecmpwcmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>通常 ECMP では何が問題で、なぜリンク帯域に応じた重み付けが要るのか</li>
+<li>通常 <a href="../../reference/glossary/#term-ecmp">ECMP</a> では何が問題で、なぜリンク帯域に応じた重み付けが要るのか</li>
 <li>WCMP の重みは何で運ばれ、どこで NHG member weight に変換されるか</li>
-<li>SONiC 側で増えるのは CONFIG_DB のどのキーか、SWSS/SAI に変更があるか</li>
-<li>EVPN Type-5 や warm-boot の扱い</li>
+<li>SONiC 側で増えるのは <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> のどのキーか、SWSS/<a href="../../reference/glossary/#term-sai">SAI</a> に変更があるか</li>
+<li><a href="../../reference/glossary/#term-evpn">EVPN</a> Type-5 や warm-boot の扱い</li>
 </ul>
 <h2 id="ecmp">なぜ通常 ECMP では足りないか<a class="headerlink" href="#ecmp" title="Permanent link">&para;</a></h2>
-<p>各 ToR-Spine リンクが部分故障した際、通常 ECMP は <strong>生存リンクの容量差を反映できず</strong> 均等分散して輻輳する。<strong>WCMP</strong> は <strong>BGP link bandwidth 拡張コミュニティ</strong> で各 path の利用可能帯域を運び、FRR / Zebra が 1〜255 に正規化した weight で NHG member を作る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD のスコープは <strong>L3 用途のみ</strong>。EVPN Type-5 は <strong>Out of scope</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SWSS / SAI は既に NHG member weight をサポートしているので <strong>SWSS OA は変更不要</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>各 ToR-Spine リンクが部分故障した際、通常 ECMP は <strong>生存リンクの容量差を反映できず</strong> 均等分散して輻輳する。<strong>WCMP</strong> は <strong><a href="../../reference/glossary/#term-bgp">BGP</a> link bandwidth 拡張コミュニティ</strong> で各 path の利用可能帯域を運び、<a href="../../reference/glossary/#term-frr">FRR</a> / Zebra が 1〜255 に正規化した weight で NHG member を作る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> のスコープは <strong>L3 用途のみ</strong>。EVPN Type-5 は <strong>Out of scope</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SWSS / SAI は既に NHG member weight をサポートしているので <strong>SWSS OA は変更不要</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   TOR[ToR&lt;br/&gt;route-map: set extcommunity bandwidth] -- BGP advertise --&gt; SP[Spine]
@@ -23884,7 +23884,7 @@
 <ul>
 <li>入口 ToR が <code>route-map</code> で <code>set extcommunity bandwidth num-multipaths</code> を付与<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>受信 BGP は default で <strong>link bandwidth ext community を weight に変換</strong>。一部 path が community を持たないと <strong>通常 ECMP に fallback</strong></li>
-<li>Zebra が NHG 再計算 → fpmsyncd → Route OA → SAI</li>
+<li>Zebra が NHG 再計算 → <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → Route OA → SAI</li>
 </ul>
 <h3 id="weight">Weight 正規化<a class="headerlink" href="#weight" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23967,6 +23967,8 @@
 <li><a href="../../topics/04-vrf-ecmp/">Topics: VRF / ECMP / RIB-FIB パイプライン</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 29ef3e805678 -->
 
 <div class="footnote">
 <hr />

@@ -23731,7 +23731,7 @@
 <li>import: <code>ietf-inet-types</code>, <code>ietf-yang-types</code>, <code>sonic-types</code>, <code>sonic-port</code>, <code>sonic-portchannel</code>, <code>sonic-vrf</code>, <code>sonic-mirror-session</code>, <code>sonic-interface</code>, <code>sonic-vnet</code></li>
 <li>top container: <code>sonic-vlan</code></li>
 </ul>
-<p>VLAN yang Module for SONiC OS<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p><a href="../../glossary/#term-vlan">VLAN</a> yang Module for SONiC OS<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23820,7 +23820,7 @@
 <td><code>leafref</code></td>
 <td></td>
 <td></td>
-<td>/vrf:sonic-vrf/vrf:VRF/vrf:VRF_LIST/vrf:name</td>
+<td>/vrf:sonic-vrf/vrf:<a href="../../glossary/#term-vrf">VRF</a>/vrf:VRF_LIST/vrf:name</td>
 <td>VRF instance this VLAN interface belongs to</td>
 </tr>
 <tr>
@@ -23829,7 +23829,7 @@
 <td><code>leafref</code></td>
 <td></td>
 <td></td>
-<td>/svnet:sonic-vnet/svnet:VNET/svnet:VNET_LIST/svnet:name</td>
+<td>/svnet:sonic-vnet/svnet:<a href="../../glossary/#term-vnet">VNET</a>/svnet:VNET_LIST/svnet:name</td>
 <td>Reference to the name of a VNET in sonic-vnet model</td>
 </tr>
 <tr>
@@ -23839,7 +23839,7 @@
 <td></td>
 <td>0</td>
 <td>range 0..3</td>
-<td>NAT Zone for the vlan interface</td>
+<td><a href="../../glossary/#term-nat">NAT</a> Zone for the vlan interface</td>
 </tr>
 <tr>
 <td><code>mpls</code></td>
@@ -23848,7 +23848,7 @@
 <td></td>
 <td></td>
 <td>enable, disable</td>
-<td>Enable/disable MPLS routing for the vlan interface</td>
+<td>Enable/disable <a href="../../glossary/#term-mpls">MPLS</a> routing for the vlan interface</td>
 </tr>
 <tr>
 <td><code>grat_arp</code></td>
@@ -23857,7 +23857,7 @@
 <td></td>
 <td></td>
 <td>pattern <code>enabled|disabled</code></td>
-<td>Enable or disable gratuitous ARP on the VLAN interface</td>
+<td>Enable or disable gratuitous <a href="../../glossary/#term-arp">ARP</a> on the VLAN interface</td>
 </tr>
 <tr>
 <td><code>proxy_arp</code></td>
@@ -24064,7 +24064,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>VLAN</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VLAN</code></li>
 <li>CONFIG_DB: <code>VLAN_INTERFACE</code></li>
 <li>CONFIG_DB: <code>VLAN_MEMBER</code></li>
 <li>CLI: <code>config vlan</code></li>
@@ -24085,6 +24085,8 @@
 <li><a href="../../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e65c0c2c3d25 -->
 
 <div class="footnote">
 <hr />

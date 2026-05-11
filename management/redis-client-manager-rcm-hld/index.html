@@ -23784,7 +23784,7 @@
 </div>
 <h1 id="redis-client-managerrcm-connection-pool-transactional-client">Redis Client Manager（RCM: connection pool / transactional client）<a class="headerlink" href="#redis-client-managerrcm-connection-pool-transactional-client" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>sonic-mgmt-common</code> の translib（gNMI GET/SET/SUBSCRIBE 処理）は内部で <strong>大量の Redis client</strong> を作成し、Redis TCP/Unix socket に負荷をかけていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Google 提案（2024-09 v0.1）の RCM は、go-redis の <strong>connection pool</strong> をフル活用しつつ transactional 操作（MULTI / EXEC / PSUBSCRIBE 等）も扱える 4 関数を新設して <strong>全部この経路に集約</strong> する設計。</p>
+<p><code>sonic-mgmt-common</code> の translib（<a href="../../reference/glossary/#term-gnmi">gNMI</a> GET/SET/SUBSCRIBE 処理）は内部で <strong>大量の <a href="../../reference/glossary/#term-redis">Redis</a> client</strong> を作成し、Redis TCP/Unix socket に負荷をかけていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Google 提案（2024-09 v0.1）の RCM は、go-redis の <strong>connection pool</strong> をフル活用しつつ transactional 操作（MULTI / EXEC / PSUBSCRIBE 等）も扱える 4 関数を新設して <strong>全部この経路に集約</strong> する設計。</p>
 <p>ポイント:</p>
 <ul>
 <li>pool 付き共有 client は <strong>DBNum ごとに 1 個 init で作成し再利用</strong>。pool size 上限 20</li>
@@ -23879,7 +23879,7 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 <!-- evidence-rendered:end -->
 
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>ユーザに公開される CONFIG_DB / CLI は無い。<code>sonic-mgmt-common</code> 内部 API。</p>
+<p>ユーザに公開される <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI は無い。<code>sonic-mgmt-common</code> 内部 API。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>共有 client は <strong>transactional 不可</strong></li>
@@ -23914,7 +23914,9 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 <li><code>CloseRedisClient(rc)</code> 呼び出し: <code>.cache/sonic-sources/sonic-mgmt-common/translib/db/db_redis_opts.go</code> L202、<code>translib/db/db.go</code> L472 / L481 / L515 / L529 / L587</li>
 <li>redis options / pool 設定: <code>db_redis_opts.go</code> の <code>setGoRedisOpts</code> / <code>adjustRedisOpts</code> / <code>initializeRedisOpts</code> / <code>_DBRedisOptsConfig.reconfigure / handleReconfigureSignal / readFromDB / parseRedisOptsConfig</code>（L66-L213）が pool size / read/write timeout / reconfigure 経路を実装</li>
 </ul>
-<p>HLD が示す「pool 化と中央集権 close」の主要意図はコードに反映済み。<code>RedisClient</code> / <code>TransactionalRedisClient</code> / <code>TransactionalRedisClientWithOpts</code> の正確な API シグネチャは複数ファイルに散らばっているが、共有 client + transactional client の二系統 + close API という設計は現行コードと一致する。<code>code-verified</code> に昇格。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> が示す「pool 化と中央集権 close」の主要意図はコードに反映済み。<code>RedisClient</code> / <code>TransactionalRedisClient</code> / <code>TransactionalRedisClientWithOpts</code> の正確な API シグネチャは複数ファイルに散らばっているが、共有 client + transactional client の二系統 + close API という設計は現行コードと一致する。<code>code-verified</code> に昇格。</p>
+<!-- glossary-links-injected: 43011ad1abe5 -->
+
 <div class="footnote">
 <hr />
 <ol>

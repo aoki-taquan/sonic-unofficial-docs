@@ -23952,7 +23952,7 @@
 </div>
 <h1 id="gnmi-master-arbitrationelection-id-setrequest">gNMI Master Arbitration（election ID と SetRequest 拡張）<a class="headerlink" href="#gnmi-master-arbitrationelection-id-setrequest" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>gNMI Master Arbitration は <strong>複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、<code>Set</code> RPC を出せるのは唯一のマスタだけにする</strong> ための調停機構である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-gnmi">gNMI</a> Master Arbitration は <strong>複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、<code>Set</code> RPC を出せるのは唯一のマスタだけにする</strong> ための調停機構である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>仕様は openconfig 側の <a href="https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-master-arbitration.md">gnmi-master-arbitration</a> に準じ、SONiC では <code>sonic-gnmi</code> の telemetry サーバ側に組み込む形で実装する。コアは以下のシンプルなルールである<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>各クライアントは <strong>128-bit の単調増加 election ID (EID)</strong> を保持する</li>
@@ -23960,7 +23960,7 @@
 <li>ターゲット（gNMI server）は <strong>過去に見た中で最大の EID</strong> を保存し、それ未満／未指定の <code>Set</code> を <code>PermissionDenied</code> で拒否する</li>
 <li><code>Get</code> などの read RPC には影響しない<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<p>SONiC では既定で <strong>オフ</strong>。コマンドラインフラグ <code>--with-master-arbitration</code> が指定された時のみ有効で、SWSS / syncd / SAI には変更を加えない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC では既定で <strong>オフ</strong>。コマンドラインフラグ <code>--with-master-arbitration</code> が指定された時のみ有効で、SWSS / <a href="../../reference/glossary/#term-syncd">syncd</a> / <a href="../../reference/glossary/#term-sai">SAI</a> には変更を加えない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -23980,7 +23980,7 @@
     Note right of SV: Master Arbitration は Set のみ対象
     SV--&gt;&gt;C1: OK</code></pre>
 <h3 id="protobuf">protobuf 拡張<a class="headerlink" href="#protobuf" title="Permanent link">&para;</a></h3>
-<p><code>MasterArbitration</code> は gNMI の汎用拡張領域に乗る。HLD は <code>gnmi_ext.proto</code> の <code>Extension</code> の <code>oneof ext</code> の 1 つとして定義する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>MasterArbitration</code> は gNMI の汎用拡張領域に乗る。<a href="../../reference/glossary/#term-hld">HLD</a> は <code>gnmi_ext.proto</code> の <code>Extension</code> の <code>oneof ext</code> の 1 つとして定義する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-proto highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">message</span><span class="w"> </span><span class="nc">MasterArbitration</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="n">Role</span><span class="w"> </span><span class="na">role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="n">Uint128</span><span class="w"> </span><span class="na">election_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
@@ -24081,11 +24081,11 @@ reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 
 </tr>
 </tbody>
 </table>
-<p>ただし HLD 本文側では起動方法として <strong><code>--with-master-arbitration</code> コマンドラインフラグ</strong> を採用している。CONFIG_DB スキーマと CLI フラグのどちらが最終採用されたかは HLD 内で整合していないため、現行 master 実装で要確認。</p>
+<p>ただし HLD 本文側では起動方法として <strong><code>--with-master-arbitration</code> コマンドラインフラグ</strong> を採用している。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマと CLI フラグのどちらが最終採用されたかは HLD 内で整合していないため、現行 master 実装で要確認。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当する CLI コマンドは HLD では未定義。telemetry コンテナ起動時のフラグでの制御を想定している<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない（CLI/YANG model Enhancements が "N/A"）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD で言及されていない（CLI/YANG model Enhancements が "N/A"）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="hld">設定例（HLD 記述ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># telemetry / gnmi コンテナ起動時にフラグを足す形（実装依存）</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># 例: telemetry コンテナの supervisord/argv に --with-master-arbitration を追加</span>
@@ -24164,6 +24164,8 @@ reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 
 - HLD は 2023 年 v0.1 Initial で 2 年超経過、現行 master との乖離可能性
 - openconfig 上流仕様 (gnmi-master-arbitration.md) との差分有無
 -->
+
+<!-- glossary-links-injected: edc6102d5d8f -->
 
 <div class="footnote">
 <hr />

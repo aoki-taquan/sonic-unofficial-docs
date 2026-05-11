@@ -23824,7 +23824,7 @@
 
 <h1 id="queue">QUEUE テーブル<a class="headerlink" href="#queue" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ポートの egress queue ごとに <code>SCHEDULER</code> (WRR/DWRR/STRICT) と <code>WRED_PROFILE</code> を割り当てる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が SAI queue scheduler / WRED を設定する。VOQ シャーシでは <code>QUEUE_LIST</code> ではなく <code>VOQ_QUEUE_LIST</code> を使う。</p>
+<p>ポートの egress queue ごとに <code>SCHEDULER</code> (WRR/DWRR/STRICT) と <code>WRED_PROFILE</code> を割り当てる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> queue scheduler / <a href="../../glossary/#term-wred">WRED</a> を設定する。<a href="../../glossary/#term-voq">VOQ</a> シャーシでは <code>QUEUE_LIST</code> ではなく <code>VOQ_QUEUE_LIST</code> を使う。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23942,9 +23942,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>SCHEDULER</code>、<code>WRED_PROFILE</code>、<code>PORT</code>、<code>BUFFER_QUEUE</code>、<code>TC_TO_QUEUE_MAP</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>SCHEDULER</code>、<code>WRED_PROFILE</code>、<code>PORT</code>、<code>BUFFER_QUEUE</code>、<code>TC_TO_QUEUE_MAP</code></li>
 <li>関連 CLI: なし（<code>config_db.json</code> ロード）</li>
-<li>関連 YANG: <code>sonic-queue</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-queue</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23972,13 +23972,15 @@
 </ul>
 <h3 id="_8">よくある誤設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li>PFC 対応 queue に <code>wred_profile</code> を当てて ECN を有効にしないと、輻輳時に PFC が連続発火する。</li>
+<li><a href="../../glossary/#term-pfc">PFC</a> 対応 queue に <code>wred_profile</code> を当てて ECN を有効にしないと、輻輳時に PFC が連続発火する。</li>
 </ul>
 <h3 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;QUEUE|Ethernet0|*&#39;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>queue<span class="w"> </span>counters
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 74fd06c02dcc -->
 
 <div class="footnote">
 <hr />

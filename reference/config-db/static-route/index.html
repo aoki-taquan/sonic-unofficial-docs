@@ -23600,7 +23600,7 @@
 
 <h1 id="static_route">STATIC_ROUTE テーブル<a class="headerlink" href="#static_route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>STATIC_ROUTE</code> は静的経路を CONFIG_DB に保持するテーブル。YANG では template 形式 (<code>STATIC_ROUTE|&lt;prefix&gt;</code>) と VRF-aware 形式 (<code>STATIC_ROUTE|&lt;vrf_name&gt;|&lt;prefix&gt;</code>) の 2 つの list が定義されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。nexthop、出力 interface、BGP への advertise、BFD、administrative distance、nexthop VRF、blackhole 指定を扱う。テーブル名の実装側定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>STATIC_ROUTE</code> は静的経路を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持するテーブル。<a href="../../glossary/#term-yang">YANG</a> では template 形式 (<code>STATIC_ROUTE|&lt;prefix&gt;</code>) と <a href="../../glossary/#term-vrf">VRF</a>-aware 形式 (<code>STATIC_ROUTE|&lt;vrf_name&gt;|&lt;prefix&gt;</code>) の 2 つの list が定義されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。nexthop、出力 interface、<a href="../../glossary/#term-bgp">BGP</a> への advertise、<a href="../../glossary/#term-bfd">BFD</a>、administrative distance、nexthop VRF、blackhole 指定を扱う。テーブル名の実装側定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23688,9 +23688,9 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>staticd</code> / <code>zebra</code> (FRR): SONiC の設定生成パスを通じて static route を FRR に反映する。</li>
+<li><code>staticd</code> / <code>zebra</code> (<a href="../../glossary/#term-frr">FRR</a>): SONiC の設定生成パスを通じて static route を FRR に反映する。</li>
 <li><code>bgpcfgd</code> / routing config パス: <code>advertise</code> が有効な static route を BGP 広告対象として扱う。</li>
-<li><code>orchagent</code> / route orch: kernel / FRR から APPL_DB 経由で転送経路を SAI route へ反映する。</li>
+<li><code>orchagent</code> / route orch: kernel / FRR から <a href="../../glossary/#term-appl_db">APPL_DB</a> 経由で転送経路を <a href="../../glossary/#term-sai">SAI</a> route へ反映する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23713,7 +23713,7 @@
 <h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>STATIC_ROUTE|&lt;vrf&gt;|&lt;prefix&gt;</code> (例 <code>STATIC_ROUTE|default|10.0.0.0/24</code>)。</li>
-<li><code>nexthop</code>: カンマ区切り（ECMP 可）。</li>
+<li><code>nexthop</code>: カンマ区切り（<a href="../../glossary/#term-ecmp">ECMP</a> 可）。</li>
 <li><code>distance</code>: 1（規定）。</li>
 <li><code>ifname</code>: 出力 IF（直接接続経路向け）。</li>
 </ul>
@@ -23728,6 +23728,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 442d405f5e26 -->
 
 <div class="footnote">
 <hr />

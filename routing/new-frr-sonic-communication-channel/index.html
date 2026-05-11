@@ -23740,8 +23740,8 @@
 </div>
 <h1 id="frr-sonic-dplane_fpm_sonic">新 FRR-SONiC 通信チャネル（<code>dplane_fpm_sonic</code> モジュール）<a class="headerlink" href="#frr-sonic-dplane_fpm_sonic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の routing は <strong>FRR</strong> に依存し、<code>zebra</code> daemon が経路を計算して内蔵 FPM (Forwarding Plane Manager) モジュール <code>dplane_fpm_nl</code> が <strong>Netlink で SONiC に push</strong>、<code>fpmsyncd</code> が受けて <code>APPL_DB</code> に書く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>問題は <code>dplane_fpm_nl</code> が <strong>kernel への Netlink をそのままコピー</strong> することだ。kernel data model にしか属性が無いので、SONiC 固有属性は表現できない。例えば SRv6 SID では SONiC は <code>block_len</code> / <code>node_len</code> / <code>func_len</code> / <code>arg_len</code> が要るが、<code>dplane_fpm_nl</code> の Netlink にはそれを乗せる枠が無い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の routing は <strong><a href="../../reference/glossary/#term-frr">FRR</a></strong> に依存し、<code>zebra</code> daemon が経路を計算して内蔵 <a href="../../reference/glossary/#term-fpm">FPM</a> (Forwarding Plane Manager) モジュール <code>dplane_fpm_nl</code> が <strong><a href="../../reference/glossary/#term-netlink">Netlink</a> で SONiC に push</strong>、<code>fpmsyncd</code> が受けて <code>APPL_DB</code> に書く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>問題は <code>dplane_fpm_nl</code> が <strong>kernel への Netlink をそのままコピー</strong> することだ。kernel data model にしか属性が無いので、SONiC 固有属性は表現できない。例えば <a href="../../reference/glossary/#term-srv6">SRv6</a> SID では SONiC は <code>block_len</code> / <code>node_len</code> / <code>func_len</code> / <code>arg_len</code> が要るが、<code>dplane_fpm_nl</code> の Netlink にはそれを乗せる枠が無い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>graph LR
     FRR[FRR zebra] --&gt;|kernel 用 Netlink| KE[Kernel data model]
     FRR -.-&gt;|属性不足| SE[SONiC data model&lt;br/&gt;+ block/node/func/arg len]</code></pre>
@@ -23753,7 +23753,7 @@
 <li>SONiC コミュニティが必要に応じ <strong>SONiC 固有 Netlink TLV</strong> を追加</li>
 <li>FRR upstream の改造を不要にする</li>
 </ul>
-<p>配置: <code>sonic-buildimage/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c</code>。ビルドは <code>build-dplane-fpm-sonic-module.patch</code> が FRR zebra Makefile を改修して <code>.so</code> を install する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>配置: <code>sonic-buildimage/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c</code>。ビルドは <code>build-dplane-fpm-sonic-module.patch</code> が FRR <a href="../../reference/glossary/#term-zebra">zebra</a> Makefile を改修して <code>.so</code> を install する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">起動オプション切替<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p><code>supervisor.conf.j2</code> で zebra の <code>-M</code> を <code>dplane_fpm_nl</code> → <code>dplane_fpm_sonic</code> に置換<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>command=/usr/lib/frr/zebra -A 127.0.0.1 -s 90000000 -M dplane_fpm_sonic -M snmp --asic-offload=notify_on_offload
@@ -23787,9 +23787,9 @@
     ZB-&gt;&gt;DFS: SRv6 SID 経路情報
     DFS-&gt;&gt;FS: RTM_NEWSRV6LOCALSID (SONiC TLV 付加)
     FS-&gt;&gt;APP: SID entry 書き込み</code></pre>
-<p>参考 PR: <code>sonic-buildimage#18715</code>（モジュール + patch + supervisor）、<code>sonic-swss#3123</code>（fpmsyncd 拡張）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>参考 PR: <code>sonic-buildimage#18715</code>（モジュール + patch + supervisor）、<code>sonic-swss#3123</code>（<a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 拡張）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB / CLI / YANG <strong>変更なし</strong>。zebra 起動 option と <code>fpmsyncd</code> 挙動が透過的に切り替わるインフラ刷新で、ユーザ操作は不要。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> <strong>変更なし</strong>。zebra 起動 option と <code>fpmsyncd</code> 挙動が透過的に切り替わるインフラ刷新で、ユーザ操作は不要。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>zebra<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;dplane_fpm_[a-z_]*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># → dplane_fpm_sonic</span>
 </span></code></pre></div>
@@ -23805,7 +23805,7 @@
 <ul>
 <li><strong><code>zebra</code> 起動 (<code>supervisor.conf.j2</code>)</strong>: <code>-M</code> で <code>dplane_fpm_sonic</code> 選択</li>
 <li><strong><code>fpmsyncd</code></strong>: 受理側ハンドラ</li>
-<li><strong><code>SRV6_MY_SID_TABLE</code> (APPL_DB)</strong>: SRv6 SID 書き込み先</li>
+<li><strong><code>SRV6_MY_SID_TABLE</code> (<a href="../../reference/glossary/#term-appl_db">APPL_DB</a>)</strong>: SRv6 SID 書き込み先</li>
 <li><strong>FRR upstream</strong>: 互換維持の責務</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -23828,6 +23828,8 @@
 - sonic-swss/fpmsyncd の onSrv6LocalSidMsg() callback と RTM_NEWSRV6LOCALSID メッセージ受理実装確認 (PR #3123)
 - APPL_DB.SRV6_MY_SID_TABLE スキーマ取り込み確認
 -->
+
+<!-- glossary-links-injected: 45d35cd4cb64 -->
 
 <div class="footnote">
 <hr />

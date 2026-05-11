@@ -23607,7 +23607,7 @@
 <li>import: なし</li>
 <li>top container: <code>sonic-mgmt_vrf</code></li>
 </ul>
-<p>マネジメント VRF (mgmt traffic を data-plane と分離する VRF) のグローバル有効/無効を保持する YANG モジュール<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>マネジメント <a href="../../glossary/#term-vrf">VRF</a> (mgmt traffic を data-plane と分離する VRF) のグローバル有効/無効を保持する <a href="../../glossary/#term-yang">YANG</a> モジュール<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23664,7 +23664,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>MGMT_VRF_CONFIG|vrf_global</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>MGMT_VRF_CONFIG|vrf_global</code></li>
 <li>CLI: <code>config vrf add mgmt</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23680,7 +23680,7 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>management VRF 制御。<code>MGMT_VRF_CONFIG|vrf_global</code> を hostcfgd が iproute2 + iptables に反映。</li>
+<li>management VRF 制御。<code>MGMT_VRF_CONFIG|vrf_global</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が iproute2 + iptables に反映。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23693,6 +23693,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 0072c8c44112 -->
+
 <div class="footnote">
 <hr />
 <ol>

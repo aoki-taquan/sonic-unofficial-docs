@@ -23740,13 +23740,13 @@
 
 
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。</p>
+<p>この章の基本経路を押さえた後は、VoQ、<a href="../../../reference/glossary/#term-bfd">BFD</a>、<a href="../../../reference/glossary/#term-evpn">EVPN</a> の順に読むと <a href="../../../reference/glossary/#term-bgp">BGP</a> が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。</p>
 <h2 id="voq-bgp">VoQ シャーシの BGP<a class="headerlink" href="#voq-bgp" title="Permanent link">&para;</a></h2>
-<p>VoQ シャーシでは、iBGP full mesh、addpath、multipath-relax、再帰解決など、単体 ToR より BGP 設定の前提が増える。ECMP 整合性を保つための設定が重要で、minigraph や CONFIG_DB スキーマ拡張も関わる。詳細は <a href="../../../routing/bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成</a> を参照する。</p>
+<p>VoQ シャーシでは、iBGP full mesh、addpath、multipath-relax、再帰解決など、単体 ToR より BGP 設定の前提が増える。<a href="../../../reference/glossary/#term-ecmp">ECMP</a> 整合性を保つための設定が重要で、minigraph や <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマ拡張も関わる。詳細は <a href="../../../routing/bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成</a> を参照する。</p>
 <h2 id="bfd-for-bgp">BFD for BGP<a class="headerlink" href="#bfd-for-bgp" title="Permanent link">&para;</a></h2>
 <p>BFD は BGP の keepalive より速く failure を検出するための補助である。BGP セッション向け BFD hardware offload では、bfdsyncd、local discriminator、remote 情報、IPv6 link-local、scale/default 値が論点になる。BGP PIC の検出契機としても BFD は重要である。詳細は <a href="../../../routing/bfd-hw-offload-for-bgp-session/">BGP セッション向け BFD ハードウェアオフロード</a> を参照する。</p>
 <h2 id="evpnvxlan">EVPN/VXLAN への接続<a class="headerlink" href="#evpnvxlan" title="Permanent link">&para;</a></h2>
-<p>EVPN/VXLAN では FRR BGP-EVPN が Type-2/Type-5 route を扱い、VTEP、VRF、VXLAN tunnel、symmetric IRB とつながる。underlay の BGP と overlay の BGP-EVPN を混同しないことが重要である。この章で扱った FRR、route-map、VRF、経路反映の考え方は EVPN 章の前提になる。詳細は <a href="../../../routing/evpn-vxlan-hld/">EVPN VXLAN</a> を参照する。</p>
+<p>EVPN/<a href="../../../reference/glossary/#term-vxlan">VXLAN</a> では <a href="../../../reference/glossary/#term-frr">FRR</a> BGP-EVPN が Type-2/Type-5 route を扱い、VTEP、<a href="../../../reference/glossary/#term-vrf">VRF</a>、VXLAN tunnel、symmetric IRB とつながる。underlay の BGP と overlay の BGP-EVPN を混同しないことが重要である。この章で扱った FRR、route-map、VRF、経路反映の考え方は EVPN 章の前提になる。詳細は <a href="../../../routing/evpn-vxlan-hld/">EVPN VXLAN</a> を参照する。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成</a></li>
@@ -23754,13 +23754,13 @@
 <li><a href="../../../routing/evpn-vxlan-hld/">EVPN VXLAN</a></li>
 </ul>
 <h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>基本の peer/policy 設定を超えた領域では、SONiC は FRR の機能を Redis スキーマ経由で順次取り込んでいる。代表的なものを挙げる。</p>
+<p>基本の peer/policy 設定を超えた領域では、SONiC は FRR の機能を <a href="../../../reference/glossary/#term-redis">Redis</a> スキーマ経由で順次取り込んでいる。代表的なものを挙げる。</p>
 <ul>
 <li><strong>BGP Suppress FIB Pending</strong>: FIB 未投入の prefix を peer に広告しないことで、ASIC が経路を持っていない状態で advertise してトラフィックブラックホールになるのを防ぐ。SONiC では <code>bgpcfgd</code> テンプレートと FRR の <code>bgp suppress-fib-pending</code> を組み合わせる。</li>
-<li><strong>BGP PIC (Prefix Independent Convergence) Core/Edge</strong>: edge link 障害時の収束を nexthop group レベルで行い、prefix 数に依存しない切替を実現する。SONiC では nexthop group 構造 (<code>NEXT_HOP_GROUP_TABLE</code>) と orchagent の対応で表現される。</li>
+<li><strong>BGP PIC (Prefix Independent Convergence) Core/Edge</strong>: edge link 障害時の収束を nexthop group レベルで行い、prefix 数に依存しない切替を実現する。SONiC では nexthop group 構造 (<code>NEXT_HOP_GROUP_TABLE</code>) と <a href="../../../reference/glossary/#term-orchagent">orchagent</a> の対応で表現される。</li>
 <li><strong>BMP (BGP Monitoring Protocol, RFC 7854)</strong>: FRR の <code>bmpd</code> を Redis 経由で利用し、Adj-RIB-In / Adj-RIB-Out を外部 collector に流す。複数 station への並走 export を SONiC schema が <code>BGP_BMP</code> で表現する。</li>
-<li><strong>Dynamic Neighbor / Listen Range</strong>: 大規模 ToR で peer 数を事前列挙したくない場合に有効。bgpcfgd で <code>BGP_PEER_RANGE</code> を組み立てる流れがある。</li>
-<li><strong>大規模経路ロード最適化</strong>: <code>bgp-loading-optimization</code> HLD が、起動直後の peer 受信を加速するための queue tuning と <code>bgpd</code> の起動引数を扱う。経路投入のスループットが warm/cold reboot の収束時間を支配する。</li>
+<li><strong>Dynamic Neighbor / Listen Range</strong>: 大規模 ToR で peer 数を事前列挙したくない場合に有効。<a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> で <code>BGP_PEER_RANGE</code> を組み立てる流れがある。</li>
+<li><strong>大規模経路ロード最適化</strong>: <code>bgp-loading-optimization</code> <a href="../../../reference/glossary/#term-hld">HLD</a> が、起動直後の peer 受信を加速するための queue tuning と <code>bgpd</code> の起動引数を扱う。経路投入のスループットが warm/cold reboot の収束時間を支配する。</li>
 </ul>
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23771,8 +23771,8 @@
 </ul>
 <h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>FRR と SONiC の通信チャネルは長らく zebra FPM (<code>fpmsyncd</code>) 経由だが、<code>frr-zebra-dplane-sonic</code> の議論が継続しており、SAI に近い形での経路 push が将来テーマになっている。</li>
-<li>IETF SR-MPLS / SRv6 の FRR 対応が進むなかで、SONiC 側の <code>srv6orch</code> と BGP signaling の統合は <a href="../../17-srv6-mpls/">17 SRv6 / MPLS</a> の発展トピックと交差する。</li>
+<li>FRR と SONiC の通信チャネルは長らく <a href="../../../reference/glossary/#term-zebra">zebra</a> <a href="../../../reference/glossary/#term-fpm">FPM</a> (<code>fpmsyncd</code>) 経由だが、<code>frr-zebra-dplane-sonic</code> の議論が継続しており、<a href="../../../reference/glossary/#term-sai">SAI</a> に近い形での経路 push が将来テーマになっている。</li>
+<li>IETF SR-<a href="../../../reference/glossary/#term-mpls">MPLS</a> / <a href="../../../reference/glossary/#term-srv6">SRv6</a> の FRR 対応が進むなかで、SONiC 側の <code>srv6orch</code> と BGP signaling の統合は <a href="../../17-srv6-mpls/">17 SRv6 / MPLS</a> の発展トピックと交差する。</li>
 <li>BMP の Local-RIB / Loc-RIB monitoring (RFC 9069) は FRR 側で順次入っており、SONiC schema 拡張が見込まれる。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
@@ -23786,10 +23786,11 @@
 </ul>
 <h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
 <ul>
-<li>sonic-buildimage の <code>dockers/docker-fpm-frr</code> 配下では FRR バージョン更新と graceful restart 周りの修正が継続している。FRR バージョンを上げる PR は warm reboot の影響範囲が広いので CI matrix を確認する。</li>
-<li><code>sonic-bgpcfgd</code> (sonic-swss-common 配下) で BGP テンプレートの YANG 化が進んでおり、<code>sonic-bgp-*</code> の YANG モジュールに合わせて Jinja2 が縮小される傾向。</li>
+<li><a href="../../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> の <code>dockers/docker-fpm-frr</code> 配下では FRR バージョン更新と graceful restart 周りの修正が継続している。FRR バージョンを上げる PR は warm reboot の影響範囲が広いので CI matrix を確認する。</li>
+<li><code>sonic-bgpcfgd</code> (<a href="../../../reference/glossary/#term-sonic-swss-common">sonic-swss-common</a> 配下) で BGP テンプレートの <a href="../../../reference/glossary/#term-yang">YANG</a> 化が進んでおり、<code>sonic-bgp-*</code> の YANG モジュールに合わせて Jinja2 が縮小される傾向。</li>
 <li>大規模経路下の起動時間短縮を狙った PR が <code>bgp-loading-optimization</code> 関連で複数 merge されており、<code>zebra</code> の FPM queue サイズや <code>bgpd</code> の <code>bgp listen limit</code> チューニングが議題になりやすい。</li>
 </ul>
+<!-- glossary-links-injected: 8214fd17dd58 -->
 
 
 

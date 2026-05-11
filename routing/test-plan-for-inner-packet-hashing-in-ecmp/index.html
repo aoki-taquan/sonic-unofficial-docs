@@ -23696,7 +23696,7 @@
 </div>
 <h1 id="ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple">ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）<a class="headerlink" href="#ecmp-inner-packet-hashing-pbh-vxlannvgre-5-tuple" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ECMP nexthop の選択を <strong>outer ヘッダではなく inner パケットの 5-tuple</strong>（src/dst IP、L4 port、IP proto）でハッシュさせる動作を T0 上で検証するテスト<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dynamic Policy Based Hashing (PBH) を使って ECMP ハッシュキーを上書きし、4 種の outer (IPv4/IPv6 × VxLAN/NVGRE) × 2 種の inner (IPv4/IPv6) を網羅する。</p>
+<p><a href="../../reference/glossary/#term-ecmp">ECMP</a> nexthop の選択を <strong>outer ヘッダではなく inner パケットの 5-tuple</strong>（src/dst IP、L4 port、IP proto）でハッシュさせる動作を T0 上で検証するテスト<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dynamic Policy Based Hashing (PBH) を使って ECMP ハッシュキーを上書きし、4 種の outer (IPv4/IPv6 × VxLAN/NVGRE) × 2 種の inner (IPv4/IPv6) を網羅する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="pbh">PBH 構成<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#pbh" title="Permanent link">&para;</a></h3>
 <table>
@@ -23709,7 +23709,7 @@
 <tbody>
 <tr>
 <td>PBH table</td>
-<td>T0 トポロジの <strong>VLAN 内 PTF ポート</strong>を bind（Up かつ非 LAG）</td>
+<td>T0 トポロジの <strong><a href="../../reference/glossary/#term-vlan">VLAN</a> 内 PTF ポート</strong>を bind（Up かつ非 <a href="../../reference/glossary/#term-lag">LAG</a>）</td>
 </tr>
 <tr>
 <td>hash field</td>
@@ -23753,6 +23753,8 @@
 <li><strong>warm-boot</strong>: トラフィック継続テストの対象</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: f2f1ca683636 -->
+
 <div class="footnote">
 <hr />
 <ol>

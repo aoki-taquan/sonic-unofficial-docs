@@ -23824,7 +23824,7 @@
 
 <h1 id="ntp-global">NTP テーブル (global)<a class="headerlink" href="#ntp-global" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>NTP クライアントのグローバル設定を保持するシングルトン的テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。YANG 上は <code>sonic-ntp.yang</code> の <code>container NTP</code> 配下 <code>container global</code> として定義され、CONFIG_DB 上は <code>NTP|global</code> の単一エントリで現れる。サーバ単位の設定は別テーブル <a href="../ntp-server/"><code>NTP_SERVER</code></a>、鍵は <a href="../ntp-server/"><code>NTP_KEY</code></a> で管理される。</p>
+<p>NTP クライアントのグローバル設定を保持するシングルトン的テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-yang">YANG</a> 上は <code>sonic-ntp.yang</code> の <code>container NTP</code> 配下 <code>container global</code> として定義され、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 上は <code>NTP|global</code> の単一エントリで現れる。サーバ単位の設定は別テーブル <a href="../ntp-server/"><code>NTP_SERVER</code></a>、鍵は <a href="../ntp-server/"><code>NTP_KEY</code></a> で管理される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23862,7 +23862,7 @@
 <td><code>vrf</code></td>
 <td>string <code>mgmt</code> / <code>default</code></td>
 <td>-</td>
-<td>NTP が動作する VRF。<code>mgmt</code> 指定時は <code>MGMT_VRF_CONFIG/vrf_global/mgmtVrfEnabled = true</code> の <code>must</code> 制約あり</td>
+<td>NTP が動作する <a href="../../glossary/#term-vrf">VRF</a>。<code>mgmt</code> 指定時は <code>MGMT_VRF_CONFIG/vrf_global/mgmtVrfEnabled = true</code> の <code>must</code> 制約あり</td>
 </tr>
 <tr>
 <td><code>authentication</code></td>
@@ -23939,6 +23939,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ntp
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->
 
 <div class="footnote">
 <hr />

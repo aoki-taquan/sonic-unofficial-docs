@@ -23752,11 +23752,11 @@
 </div>
 <h1 id="snmp-ipv6-src-ip-snmp_agent_address_config">SNMP IPv6 応答の SRC IP 不整合と <code>SNMP_AGENT_ADDRESS_CONFIG</code> による回避<a class="headerlink" href="#snmp-ipv6-src-ip-snmp_agent_address_config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">どんな問題か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC 単一 ASIC 機の <strong>SNMP over IPv6 がタイムアウトする</strong> バグの設計修正<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC 単一 ASIC 機の <strong><a href="../../reference/glossary/#term-snmp">SNMP</a> over IPv6 がタイムアウトする</strong> バグの設計修正<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <ol>
 <li>SNMP request が <code>SRC=fc00::72</code>、<code>DST=Loopback IPv6 fc00:1::32</code> で到着</li>
 <li><code>snmpd</code> (IPv6 socket <code>[::]:161</code>) が受理 → response 生成</li>
-<li>kernel が <code>ip -6 route get fc00::72</code> で best path を探し、<strong><code>src=fc00::71</code>（PortChannel IP）</strong> を選ぶ</li>
+<li>kernel が <code>ip -6 route get fc00::72</code> で best path を探し、<strong><code>src=fc00::71</code>（<a href="../../reference/glossary/#term-portchannel">PortChannel</a> IP）</strong> を選ぶ</li>
 <li>クライアントは「DST と異なる SRC」で受信し、request-id がマッチせず timeout</li>
 </ol>
 <pre class="mermaid"><code>sequenceDiagram
@@ -23830,7 +23830,7 @@
 <li><strong>単一 ASIC 機向け修正</strong>（multi-ASIC は元から発症しない）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>config_db.json</code> 直ロード時は <code>SNMP_AGENT_ADDRESS_CONFIG</code> 自動投入なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>Loopback / Management の <strong>どちらを bind するかはオペレータ責任</strong></li>
-<li>本質的修正は net-snmp 側で <code>IPV6_PKTINFO</code> を使う対応だが、本 HLD は <strong>回避策</strong></li>
+<li>本質的修正は net-snmp 側で <code>IPV6_PKTINFO</code> を使う対応だが、本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>回避策</strong></li>
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23850,6 +23850,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">09-telemetry-snmp</a>: SNMP / telemetry 全般</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: aebe7530a6f6 -->
+
 <div class="footnote">
 <hr />
 <ol>

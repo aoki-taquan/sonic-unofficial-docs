@@ -23753,11 +23753,11 @@
 <ul>
 <li><code>show dash eni &lt;eni&gt;</code> で <code>oper_status=down</code> または <code>admin_state=down</code></li>
 <li><code>DASH_ENI_TABLE:STATE_DB</code> の counter が更新されない</li>
-<li>VM → DPU → outside の VNET 通信が無応答</li>
+<li>VM → <a href="../../glossary/#term-dpu">DPU</a> → outside の <a href="../../glossary/#term-vnet">VNET</a> 通信が無応答</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>MAC / underlay_ip 不整合</strong>: ENI の <code>mac_address</code> / <code>underlay_ip</code> が SmartSwitch の物理構成と合っていない</li>
+<li><strong>MAC / underlay_ip 不整合</strong>: <a href="../../glossary/#term-eni">ENI</a> の <code>mac_address</code> / <code>underlay_ip</code> が <a href="../../glossary/#term-smartswitch">SmartSwitch</a> の物理構成と合っていない</li>
 <li><strong>依存リソース未作成</strong>: <code>DASH_VNET</code> / <code>DASH_APPLIANCE</code> が ENI より後に作られた / 削除された</li>
 <li><strong>DPU 側 dataplane 異常</strong>: DPU 内 ASIC programming が失敗</li>
 <li><strong>License / capability mismatch</strong>: model がサポートしない ENI count</li>
@@ -23788,7 +23788,7 @@
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>依存欠如: 先に <code>DASH_APPLIANCE</code> → <code>DASH_VNET</code> → <code>DASH_ENI_TABLE</code> の順に投入</li>
-<li>MAC / IP 不整合: controller 側 inventory と突合、CONFIG_DB を <code>redis-cli hset</code> で修正（<strong>ロールバック</strong>: 退避値で hset 戻し）</li>
+<li>MAC / IP 不整合: controller 側 inventory と突合、<a href="../../glossary/#term-config_db">CONFIG_DB</a> を <code>redis-cli hset</code> で修正（<strong>ロールバック</strong>: 退避値で hset 戻し）</li>
 <li>DPU dataplane 異常: SmartSwitch の DPU を graceful shutdown → 再起動（<a href="../smartswitch-dpu-graceful-shutdown-failure/">smartswitch-dpu-graceful-shutdown-failure.md</a> を参照）</li>
 <li>容量超過: ENI 数を削減、ベンダ提供の max_eni を確認</li>
 </ul>
@@ -23799,6 +23799,8 @@
 <li><a href="../../../topics/13-dash-smartswitch/concept/">../../topics/13-dash-smartswitch/concept.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 61b0dc200b41 -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23806,7 +23808,7 @@
 <p>sonic-net/sonic-dash-api @ master — dash_eni.proto&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ master — dashorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ master — dashorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

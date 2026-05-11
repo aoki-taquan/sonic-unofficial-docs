@@ -23622,7 +23622,7 @@
 
 <h1 id="voq_inband_interface">VOQ_INBAND_INTERFACE テーブル<a class="headerlink" href="#voq_inband_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>VOQ_INBAND_INTERFACE</code> テーブルは VOQ chassis におけるラインカード間のインバンド通信用論理インターフェース (<code>Ethernet-IB&lt;n&gt;</code>) を CONFIG_DB に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BGP internal-neighbor などのコントロールプレーン通信に使われる。テーブルは 2 段構造:</p>
+<p><code>VOQ_INBAND_INTERFACE</code> テーブルは <a href="../../glossary/#term-voq">VOQ</a> chassis におけるラインカード間のインバンド通信用論理インターフェース (<code>Ethernet-IB&lt;n&gt;</code>) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-bgp">BGP</a> internal-neighbor などのコントロールプレーン通信に使われる。テーブルは 2 段構造:</p>
 <ul>
 <li><code>VOQ_INBAND_INTERFACE_LIST</code> (key: name)</li>
 <li><code>VOQ_INBAND_INTERFACE_IPPREFIX_LIST</code> (key: name, ip-prefix)</li>
@@ -23701,13 +23701,13 @@
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>intfmgrd</code> / <code>intfsyncd</code> (sonic-swss)</li>
+<li><code>intfmgrd</code> / <code>intfsyncd</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>)</li>
 <li><code>bgpcfgd</code> / <code>bgpd</code> — BGP internal neighbor のソース interface として使う場合</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>SYSTEM_PORT</code>、<code>BGP_INTERNAL_NEIGHBOR</code>、<code>BGP_VOQ_CHASSIS_NEIGHBOR</code>、<code>CHASSIS_MODULE</code></li>
-<li>関連 YANG: <code>sonic-voq-inband-interface</code>、<code>sonic-bgp-internal-neighbor</code>、<code>sonic-bgp-voq-chassis-neighbor</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-voq-inband-interface</code>、<code>sonic-bgp-internal-neighbor</code>、<code>sonic-bgp-voq-chassis-neighbor</code></li>
 <li>関連 CLI: <code>config interface</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23742,6 +23742,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>ip<span class="w"> </span>interface<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Ethernet-IB
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 5542a4a1928e -->
 
 <div class="footnote">
 <hr />

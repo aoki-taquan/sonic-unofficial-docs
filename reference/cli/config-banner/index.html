@@ -23589,7 +23589,7 @@
 
 <h1 id="config-banner">config banner サブコマンド<a class="headerlink" href="#config-banner" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config banner</code> はシステムバナー（ログイン前/後メッセージ、MOTD）を CONFIG_DB の <code>BANNER_MESSAGE|global</code> テーブルに書き込む CLI グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC では hostcfgd 系がこのテーブル変更を監視し、<code>/etc/issue.net</code> / <code>/etc/motd</code> などを再生成する。</p>
+<p><code>config banner</code> はシステムバナー（ログイン前/後メッセージ、MOTD）を <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>BANNER_MESSAGE|global</code> テーブルに書き込む CLI グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC では <a href="../../glossary/#term-hostcfgd">hostcfgd</a> 系がこのテーブル変更を監視し、<code>/etc/issue.net</code> / <code>/etc/motd</code> などを再生成する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23709,6 +23709,8 @@ excerpt: |
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: a31aab569e22 -->
+
 <div class="footnote">
 <hr />
 <ol>

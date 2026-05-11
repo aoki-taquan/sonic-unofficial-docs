@@ -23644,8 +23644,8 @@
 <tbody>
 <tr>
 <td>SONiC-VS (libvirt / KVM)</td>
-<td>単体 SONiC NOS（SAI VS + 全 docker）</td>
-<td>HLD 検証、PR 自動テスト、CLI / CONFIG_DB 動作確認</td>
+<td>単体 SONiC NOS（<a href="../../../reference/glossary/#term-sai">SAI</a> VS + 全 docker）</td>
+<td><a href="../../../reference/glossary/#term-hld">HLD</a> 検証、PR 自動テスト、CLI / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> 動作確認</td>
 <td><a href="../../../architecture/steps-to-bring-up-sonic-vs/">SONiC-VS のビルドと libvirt 起動手順</a></td>
 </tr>
 <tr>
@@ -23661,16 +23661,16 @@
 <td><a href="../../../architecture/alpine-high-level-design/">Alpine 仮想 SONiC</a></td>
 </tr>
 <tr>
-<td>DASH SONiC KVM</td>
-<td>DPU / DASH appliance を BMv2 で代替</td>
-<td>DASH HLD・ENI ルール検証</td>
+<td><a href="../../../reference/glossary/#term-dash">DASH</a> SONiC KVM</td>
+<td><a href="../../../reference/glossary/#term-dpu">DPU</a> / DASH appliance を BMv2 で代替</td>
+<td>DASH HLD・<a href="../../../reference/glossary/#term-eni">ENI</a> ルール検証</td>
 <td><a href="../../../overlay/dash-sonic-kvm/">DASH SONiC KVM</a></td>
 </tr>
 </tbody>
 </table>
 <p>それぞれ前提が異なります。SONiC-VS と GNS3 は同じ <code>sonic-vs.img</code> を使う関係で、SONiC-VS で動くものは GNS3 でも動きます。ALViS / KNE は Alpine ベースで軽量化されており、機能セットが SONiC-VS と完全には一致しないため、対応する HLD で対象範囲を確認します。</p>
 <h2 id="sonic-vs">SONiC-VS の構造<a class="headerlink" href="#sonic-vs" title="Permanent link">&para;</a></h2>
-<p>SONiC-VS は実機イメージから ASIC・platform 部品を VS 化したもので、内部は実機と同じ docker 群（swss、syncd、bgp、teamd、snmp、telemetry など）が動きます。違いは syncd の SAI backend が SAI VS で、SAI 操作が Linux netdev / bridge に変換される点です。</p>
+<p>SONiC-VS は実機イメージから ASIC・platform 部品を VS 化したもので、内部は実機と同じ docker 群（swss、<a href="../../../reference/glossary/#term-syncd">syncd</a>、bgp、<a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>、snmp、telemetry など）が動きます。違いは syncd の SAI backend が SAI VS で、SAI 操作が Linux netdev / bridge に変換される点です。</p>
 <p>bring-up 手順、libvirt 定義、image の作成方法は <a href="../../../architecture/steps-to-bring-up-sonic-vs/">SONiC-VS のビルドと libvirt 起動手順</a> を読みます。CONFIG_DB の投入、minigraph、CLI 操作は実機と同じ流れになります。</p>
 <h2 id="gns3-kne-kvm">GNS3 / KNE / KVM の位置付け<a class="headerlink" href="#gns3-kne-kvm" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23686,6 +23686,7 @@
 <li><a href="../../../management/portable-console-device-design/">Portable console device design</a>: 携帯型 console 機材としての位置付け。</li>
 </ul>
 <p>これらは仮想 lab では出てこないため、実機投入や DC への持ち込みフェーズでだけ読み返します。</p>
+<!-- glossary-links-injected: 5e6ce4a3e9c1 -->
 
 
 

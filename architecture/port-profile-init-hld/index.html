@@ -23784,7 +23784,7 @@
 </div>
 <h1 id="port-profile-initsai-bulk-port-api-fast-boot">Port Profile Init（SAI bulk port API による fast-boot 高速化）<a class="headerlink" href="#port-profile-initsai-bulk-port-api-fast-boot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来の port 構成は SAI profile から事前作成 → PortsOrch が CONFIG_DB と比較し不一致 port を <strong>個別に削除→再作成</strong> する 2 phase。port 数だけ SAI/SDK 呼び出しが発生し fast-boot の 30 秒制約を圧迫していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAI 側に <strong>bulk object API</strong>（<code>create_ports</code> / <code>remove_ports</code> / <code>set_ports_attribute</code> / <code>get_ports_attribute</code>）が追加された<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>ことを受け、PortsOrch を bulk 対応に拡張して呼び出し回数を削減する設計。CLI / DB schema / YANG / warm reboot は不変で、PortsOrch のみが変わる。</p>
+<p>従来の port 構成は <a href="../../reference/glossary/#term-sai">SAI</a> profile から事前作成 → PortsOrch が <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> と比較し不一致 port を <strong>個別に削除→再作成</strong> する 2 phase。port 数だけ SAI/SDK 呼び出しが発生し fast-boot の 30 秒制約を圧迫していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAI 側に <strong>bulk object API</strong>（<code>create_ports</code> / <code>remove_ports</code> / <code>set_ports_attribute</code> / <code>get_ports_attribute</code>）が追加された<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>ことを受け、PortsOrch を bulk 対応に拡張して呼び出し回数を削減する設計。CLI / DB schema / <a href="../../reference/glossary/#term-yang">YANG</a> / warm reboot は不変で、PortsOrch のみが変わる。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="bulk">Bulk サポート判定<a class="headerlink" href="#bulk" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
@@ -23796,7 +23796,7 @@
     Q2 --&gt;|No| BULK[Bulk flow]</code></pre>
 <p>vendor SAI が空 list 呼び出しに対して <code>SAI_STATUS_NOT_IMPLEMENTED</code> / <code>SAI_STATUS_NOT_SUPPORTED</code> を返さないことが条件として要請される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="syncd">syncd 側のフラグ<a class="headerlink" href="#syncd" title="Permanent link">&para;</a></h3>
-<p>bulk API を実際に使うには syncd 起動時に <strong><code>-l</code> / <code>--enableBulk</code></strong> が必要<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。指定しないと SAI bulk 呼び出しが内部で個別呼び出しに展開され、時間短縮効果が無くなる。各 vendor は <code>config_syncd_vendor</code> 関数（<code>syncd_init_common.sh</code>）で当該フラグを設定する。<strong>route / vlan / port 等 全 bulk 系がこのフラグ単一でまとめて on/off される</strong> 点に注意。</p>
+<p>bulk API を実際に使うには <a href="../../reference/glossary/#term-syncd">syncd</a> 起動時に <strong><code>-l</code> / <code>--enableBulk</code></strong> が必要<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。指定しないと SAI bulk 呼び出しが内部で個別呼び出しに展開され、時間短縮効果が無くなる。各 vendor は <code>config_syncd_vendor</code> 関数（<code>syncd_init_common.sh</code>）で当該フラグを設定する。<strong>route / vlan / port 等 全 bulk 系がこのフラグ単一でまとめて on/off される</strong> 点に注意。</p>
 <h3 id="doporttask">新フロー (doPortTask)<a class="headerlink" href="#doporttask" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
     participant CFG as CONFIG_DB PORT
@@ -23821,7 +23821,7 @@
 <li>set_attribute の bulk 失敗は <strong>その属性だけ無視</strong>（従来挙動踏襲）</li>
 </ul>
 <h3 id="legacy-flowfallback">Legacy flow（fallback）<a class="headerlink" href="#legacy-flowfallback" title="Permanent link">&para;</a></h3>
-<p>bulk 非対応 vendor では従来通り、個別 <code>create_port</code> / <code>remove_port</code> / <code>set_port_attribute</code> を port ごとに発行する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Multi-ASIC は ASIC ごとに swss / Redis が独立しているため bulk 判定も ASIC 単位で行われる。</p>
+<p>bulk 非対応 vendor では従来通り、個別 <code>create_port</code> / <code>remove_port</code> / <code>set_port_attribute</code> を port ごとに発行する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Multi-ASIC は ASIC ごとに swss / <a href="../../reference/glossary/#term-redis">Redis</a> が独立しているため bulk 判定も ASIC 単位で行われる。</p>
 <h3 id="sai-api">SAI API（参考）<a class="headerlink" href="#sai-api" title="Permanent link">&para;</a></h3>
 <div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="nf">create_ports</span><span class="p">(</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w"> </span><span class="n">switch_id</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">object_count</span><span class="p">,</span>
@@ -23855,7 +23855,7 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 <!-- evidence-rendered:end -->
 
 <h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
-<p>本 HLD では <strong>変更なし</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。port table スキーマ・user 体験は同一で、内部の SAI 呼び出し方式だけ切替わる。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> では <strong>変更なし</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。port table スキーマ・user 体験は同一で、内部の SAI 呼び出し方式だけ切替わる。</p>
 <h2 id="warm-boot-fast-boot">Warm boot / Fast boot<a class="headerlink" href="#warm-boot-fast-boot" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Warm reboot</strong>: HW がすでに configured な状態で本 flow に入らないため影響なし<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -23895,6 +23895,8 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bb6970f11536 -->
 
 <div class="footnote">
 <hr />

@@ -23884,11 +23884,11 @@
 </div>
 <h1 id="sub-port-interfacedot1q-encap-vrf-rif">Sub-port Interface（dot1q encap / VRF RIF / 命名規則）<a class="headerlink" href="#sub-port-interfacedot1q-encap-vrf-rif" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>物理 port または PortChannel に <strong><code>.&lt;vlan-id&gt;</code> 付きの 802.1Q encap sub-interface</strong> を作成し、VRF binding した L3 router interface（RIF）として使う設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>物理 port または <a href="../../reference/glossary/#term-portchannel">PortChannel</a> に <strong><code>.&lt;vlan-id&gt;</code> 付きの 802.1Q encap sub-interface</strong> を作成し、<a href="../../reference/glossary/#term-vrf">VRF</a> binding した L3 router interface（<a href="../../reference/glossary/#term-rif">RIF</a>）として使う設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>スコープ:</p>
 <ul>
 <li>物理 port または PortChannel 上の sub-port を <strong>VRF RIF</strong> として使う（一般的な L3 用途）</li>
-<li>L3 forwarding / BGP / VRRP / static / ACL redirect / counter 等の通常 L3 機能をサポート</li>
+<li>L3 forwarding / <a href="../../reference/glossary/#term-bgp">BGP</a> / VRRP / static / <a href="../../reference/glossary/#term-acl">ACL</a> redirect / counter 等の通常 L3 機能をサポート</li>
 </ul>
 <p>スコープ外:</p>
 <ul>
@@ -23915,7 +23915,7 @@
 <tr>
 <td><code>PortChannel100</code></td>
 <td><code>Po100.20</code></td>
-<td>LAG 上</td>
+<td><a href="../../reference/glossary/#term-lag">LAG</a> 上</td>
 </tr>
 </tbody>
 </table>
@@ -23941,7 +23941,7 @@
 </span></code></pre></div>
 <p><code>subif = &lt;Eth|Po&gt;&lt;parent-id&gt;.&lt;vlan-id&gt;</code> で表現。IP は別キーで紐付ける<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="sai">SAI<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p>SAI Router Interface に <strong>port + vlan</strong> の組合せで 1 つの RIF を作成<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-sai">SAI</a> Router Interface に <strong>port + vlan</strong> の組合せで 1 つの RIF を作成<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -23971,9 +23971,9 @@
 <h3 id="linux">Linux 連携<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h3>
 <p>intfsmgrd は kernel host 側に <strong>vlan device</strong>（<code>ip link add link Ethernet0 name Eth0.10 type vlan id 10</code>）を作る。route / neighbor は通常通り netlink 経由で APPDB に流れる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="runtime-admin-status-mtu">Runtime admin status / MTU<a class="headerlink" href="#runtime-admin-status-mtu" title="Permanent link">&para;</a></h3>
-<p>サブセットの SAI 属性のみ runtime 変更可（admin status, MTU）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。VLAN id 変更は不可（削除→再作成）。</p>
+<p>サブセットの SAI 属性のみ runtime 変更可（admin status, MTU）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-vlan">VLAN</a> id 変更は不可（削除→再作成）。</p>
 <h3 id="warm-reboot">Warm reboot<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB persist + intfsmgrd の再 sync で復旧。SAI 側 OID は再生成、Linux host vlan device は kept<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> persist + intfsmgrd の再 sync で復旧。SAI 側 OID は再生成、Linux host vlan device は kept<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/subport/sonic-sub-port-intf-hld.md#L67-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24030,7 +24030,7 @@ reasoning: 物理 port / PortChannel + VRF RIF というスコープ限定の根
 <li>MTU 連携: 同 L407-L446 <code>updateSubIntfMtu()</code> / <code>setHostSubIntfMtu()</code></li>
 <li>admin status 連携: 同 L464-L532 <code>updateSubIntfAdminStatus()</code> / <code>setHostSubIntfAdminStatus()</code></li>
 <li>STATE 管理: 同 L542 <code>setSubIntfStateOk()</code>, L557 <code>removeSubIntfState()</code></li>
-<li>orchagent 側: <code>sonic-swss/orchagent/intfsorch.cpp</code> / <code>portsorch.cpp</code> も sub-port (<code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code>) を取り込み済み</li>
+<li><a href="../../reference/glossary/#term-orchagent">orchagent</a> 側: <code>sonic-swss/orchagent/intfsorch.cpp</code> / <code>portsorch.cpp</code> も sub-port (<code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code>) を取り込み済み</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
@@ -24048,6 +24048,8 @@ reasoning: 物理 port / PortChannel + VRF RIF というスコープ限定の根
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f9ab983695cb -->
 
 <div class="footnote">
 <hr />

@@ -23718,11 +23718,11 @@
 </div>
 <h1 id="smartswitch-pmonnpu-pmon-dpu">SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）<a class="headerlink" href="#smartswitch-pmonnpu-pmon-dpu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>「SmartSwitch」は <strong>同一筐体内に Network ASIC（NPU）と DPU（Data Processing Unit）を持つ platform</strong>。pmon HLD は <strong>NPU 側で動く <code>pmon</code> daemon が、複数 DPU の health / inventory / firmware を観測する</strong> 拡張<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>を扱う。</p>
+<p>「<a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a>」は <strong>同一筐体内に Network ASIC（<a href="../../reference/glossary/#term-npu">NPU</a>）と <a href="../../reference/glossary/#term-dpu">DPU</a>（Data Processing Unit）を持つ platform</strong>。pmon <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>NPU 側で動く <code>pmon</code> daemon が、複数 DPU の health / inventory / firmware を観測する</strong> 拡張<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>を扱う。</p>
 <p>主目的:</p>
 <ul>
 <li>DPU を chassis-module の延長として <strong><code>show platform</code></strong> 系で一貫表示する</li>
-<li>DPU の電源状態・温度・FW version・boot 状況を NPU 側 STATE_DB に集約</li>
+<li>DPU の電源状態・温度・FW version・boot 状況を NPU 側 <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に集約</li>
 <li>DPU graceful shutdown / reboot 等の制御 hook を pmon 経由で発火可能にする</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23739,8 +23739,8 @@
 <li><strong><code>Chassis.get_module_list()</code> 拡張</strong>: DPU を Module subclass として返す</li>
 <li><strong>DPU Module API</strong>: <code>get_oper_status</code> / <code>reboot</code> / <code>set_admin_state</code> / <code>get_firmware_version</code> / <code>get_temperature_info</code> 等</li>
 <li><strong>STATE_DB</strong>: <code>DPU_STATE</code> / <code>CHASSIS_MODULE_TABLE</code> に DPU ごとの up/down、reboot reason、boot progress</li>
-<li><strong>CONFIG_DB</strong>: <code>DPU</code> テーブルで admin state / management IP / role を保持</li>
-<li><strong>inband mgmt</strong>: NPU↔DPU 間は専用の管理 link / Ethernet を介する想定。SAI と分離</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a></strong>: <code>DPU</code> テーブルで admin state / management IP / role を保持</li>
+<li><strong>inband mgmt</strong>: NPU↔DPU 間は専用の管理 link / Ethernet を介する想定。<a href="../../reference/glossary/#term-sai">SAI</a> と分離</li>
 </ul>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-state_db">関連する CONFIG_DB / STATE_DB<a class="headerlink" href="#config_db-state_db" title="Permanent link">&para;</a></h3>
@@ -23832,6 +23832,8 @@
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d344f8b88dd9 -->
 
 <div class="footnote">
 <hr />

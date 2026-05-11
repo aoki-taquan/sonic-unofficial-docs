@@ -23630,7 +23630,7 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>PINS の data path は「コントローラ → P4RT App → APPL_DB → P4Orch → SAI → ASIC」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。ここでは controller から orchagent までの流れを通しで掴むための地図を作ります。各コンポーネントの細部は既存 HLD ページに移譲します。</p>
+<p><a href="../../../reference/glossary/#term-pins">PINS</a> の data path は「コントローラ → P4RT App → <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> → P4Orch → <a href="../../../reference/glossary/#term-sai">SAI</a> → ASIC」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。ここでは controller から <a href="../../../reference/glossary/#term-orchagent">orchagent</a> までの流れを通しで掴むための地図を作ります。各コンポーネントの細部は既存 <a href="../../../reference/glossary/#term-hld">HLD</a> ページに移譲します。</p>
 <h2 id="controller-asic">controller から ASIC までの流れ<a class="headerlink" href="#controller-asic" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     Ctrl[SDN Controller] -- "gRPC port 9559&lt;br/&gt;P4Runtime v1.3.0" --&gt; P4RT[p4rt-app Docker]
@@ -23648,13 +23648,13 @@
 <li><strong>APPL_STATE_DB</strong> は同期書き込みの結果をコントローラに返すための専用 DB（<code>APPL_STATE_DB=14</code>）です。</li>
 </ul>
 <h2 id="read-entity_cache_">Read 経路と entity_cache_<a class="headerlink" href="#read-entity_cache_" title="Permanent link">&para;</a></h2>
-<p>Read は AppDb (Redis) を毎回叩くと 16,000 フローで約 1.3 秒かかるため、PI 形式そのままを保持する <strong>entity_cache_</strong>（HLD では <code>table_entry_cache_</code>）を p4rt-app プロセス内に持ち、Read はキャッシュから直接返します。実測で約 40 倍（1.3s → 40ms）高速化します。Write の INSERT / MODIFY / DELETE はキャッシュも同時更新し、<code>VerifyState()</code> がキャッシュと AppDb の整合を確認します。詳細は <a href="../../../management/p4rt-read-cache-hld/">Read キャッシュ HLD</a> を参照してください。</p>
+<p>Read は AppDb (<a href="../../../reference/glossary/#term-redis">Redis</a>) を毎回叩くと 16,000 フローで約 1.3 秒かかるため、PI 形式そのままを保持する <strong>entity_cache_</strong>（HLD では <code>table_entry_cache_</code>）を p4rt-app プロセス内に持ち、Read はキャッシュから直接返します。実測で約 40 倍（1.3s → 40ms）高速化します。Write の INSERT / MODIFY / DELETE はキャッシュも同時更新し、<code>VerifyState()</code> がキャッシュと AppDb の整合を確認します。詳細は <a href="../../../management/p4rt-read-cache-hld/">Read キャッシュ HLD</a> を参照してください。</p>
 <h2 id="packetio">PacketIO の経路<a class="headerlink" href="#packetio" title="Permanent link">&para;</a></h2>
 <p>PacketIO は CPU と controller の間にもう一系統のチャネルを足します。</p>
 <ul>
-<li><strong>Receive</strong>: controller が install した punt flow にマッチしたパケットだけが、CoPP の <code>genetlink_name</code> / <code>genetlink_mcgrp_name</code> を持つ trap group 経由で generic netlink に流れ、p4rt-app が受信して controller に転送します。<code>copporch</code> の <code>createGenetlinkHostIf()</code> が SAI hostif を作成する経路です。</li>
+<li><strong>Receive</strong>: controller が install した punt flow にマッチしたパケットだけが、<a href="../../../reference/glossary/#term-copp">CoPP</a> の <code>genetlink_name</code> / <code>genetlink_mcgrp_name</code> を持つ trap group 経由で generic netlink に流れ、p4rt-app が受信して controller に転送します。<code>copporch</code> の <code>createGenetlinkHostIf()</code> が SAI hostif を作成する経路です。</li>
 <li><strong>Transmit (Direct)</strong>: 送信先 port が決まっているケースで、対応する netdev のソケットへ書きます。</li>
-<li><strong>Transmit (Send to Ingress)</strong>: ASIC の ingress pipeline に再注入し、ECMP / WCMP / queue を ASIC に判定させます。<code>PortsOrch::addSendToIngressHostIf()</code> が <code>APP_SEND_TO_INGRESS_PORT_TABLE_NAME</code> 経由で <code>SAI_HOSTIF_TYPE_NETDEV</code> 属性の hostif を作成します。</li>
+<li><strong>Transmit (Send to Ingress)</strong>: ASIC の ingress pipeline に再注入し、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> / WCMP / queue を ASIC に判定させます。<code>PortsOrch::addSendToIngressHostIf()</code> が <code>APP_SEND_TO_INGRESS_PORT_TABLE_NAME</code> 経由で <code>SAI_HOSTIF_TYPE_NETDEV</code> 属性の hostif を作成します。</li>
 </ul>
 <p>詳細は <a href="../../../management/packetio/">PacketIO HLD</a> と <a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a> を参照してください。</p>
 <h2 id="db">DB の整理<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
@@ -23685,6 +23685,7 @@
 </tbody>
 </table>
 <p><code>P4RT_TABLE</code> の具体 schema や DB layout の追加点は <a href="../../../management/pins-hld/">PINS HLD</a> を参照してください。</p>
+<!-- glossary-links-injected: 96695e77e194 -->
 
 
 

@@ -23730,15 +23730,15 @@
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>syslog に <code>SAI_STATUS_TABLE_FULL</code> / <code>SAI_STATUS_INSUFFICIENT_RESOURCES</code></li>
-<li>新規 BGP route が <code>Inactive</code> のまま</li>
+<li>新規 <a href="../../glossary/#term-bgp">BGP</a> route が <code>Inactive</code> のまま</li>
 <li><code>crm show resources</code> で <code>used / available</code> 比が 95%+</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>route prefix の過剰投入</strong>: peer から default + specific の二重広告</li>
-<li><strong>next-hop group の枯渇</strong>: ECMP メンバー組み合わせが爆発</li>
-<li><strong>FDB age out 不足</strong>: aging 0 で MAC が滞留</li>
-<li><strong>ACL TCAM 競合</strong>: 同 stage の table が ACL リソースを奪い合う</li>
+<li><strong>next-hop group の枯渇</strong>: <a href="../../glossary/#term-ecmp">ECMP</a> メンバー組み合わせが爆発</li>
+<li><strong><a href="../../glossary/#term-fdb">FDB</a> age out 不足</strong>: aging 0 で MAC が滞留</li>
+<li><strong><a href="../../glossary/#term-acl">ACL</a> TCAM 競合</strong>: 同 stage の table が ACL リソースを奪い合う</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-crm">1. CRM<a class="headerlink" href="#1-crm" title="Permanent link">&para;</a></h3>
@@ -23772,14 +23772,16 @@
 <li><a href="../acl-rule-no-hit/">acl-rule-no-hit.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 4d8e499d7d85 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-orchagent">orchagent</a>/crmorch.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-sairedis @ 4305596 — syncd/Syncd.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-sairedis">sonic-sairedis</a> @ 4305596 — <a href="../../glossary/#term-syncd">syncd</a>/Syncd.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

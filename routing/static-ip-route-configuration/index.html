@@ -23884,7 +23884,7 @@
 </div>
 <h1 id="static-ip-route-static_route-frrcfgd-frr">Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）<a class="headerlink" href="#static-ip-route-static_route-frrcfgd-frr" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CLI / REST / gNMI から <strong>non-management な static route</strong> を SONiC 管理フレームワーク経由で投入する設計。CONFIG_DB の <code>STATIC_ROUTE</code> テーブルに書き込み、<code>frrcfgd</code> がそれを vtysh 経由で FRR に流し込む形を取る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。VRF 間の route leak（<code>nexthop-vrf</code>）と blackhole route も同じテーブルで表現する。</p>
+<p>CLI / REST / <a href="../../reference/glossary/#term-gnmi">gNMI</a> から <strong>non-management な static route</strong> を SONiC 管理フレームワーク経由で投入する設計。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>STATIC_ROUTE</code> テーブルに書き込み、<code>frrcfgd</code> がそれを vtysh 経由で <a href="../../reference/glossary/#term-frr">FRR</a> に流し込む形を取る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-vrf">VRF</a> 間の route leak（<code>nexthop-vrf</code>）と blackhole route も同じテーブルで表現する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">モジュール構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23917,7 +23917,7 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>blackhole = false,    true
 </span></code></pre></div>
 <h3 id="neigh_resolve_tableappl_db">NEIGH_RESOLVE_TABLE（APPL_DB）<a class="headerlink" href="#neigh_resolve_tableappl_db" title="Permanent link">&para;</a></h3>
-<p>next-hop が ARP/ND 未解決の場合、orchagent の router/neighbor モジュールが APPL_DB の <code>NEIGH_RESOLVE_TABLE</code> に書き、<code>nbrmgrd</code> が解決を起こす<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>next-hop が <a href="../../reference/glossary/#term-arp">ARP</a>/ND 未解決の場合、<a href="../../reference/glossary/#term-orchagent">orchagent</a> の router/neighbor モジュールが <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>NEIGH_RESOLVE_TABLE</code> に書き、<code>nbrmgrd</code> が解決を起こす<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="vrf">VRF 間の挙動<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h3>
 <p>インタフェースが他 VRF に移動すると、その IF を ifname に持つ静的経路は <strong>inactive</strong> になる（vtysh の running-config と CONFIG_DB の <code>STATIC_ROUTE</code> には残る）。元の VRF に戻れば再アクティブ化する。stale エントリの掃除はユーザ責任<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="yang">YANG マッピング<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
@@ -23992,13 +23992,13 @@
 <li>next-hop の AF は prefix と同じである必要がある（IPv4 prefix に IPv6 next-hop は不可）。</li>
 <li>インタフェース VRF 移動時の inactive 経路の自動 cleanup は無し（ユーザ責任）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>nexthop</code> / <code>ifname</code> / <code>distance</code> / <code>nexthop-vrf</code> / <code>blackhole</code> のリスト長は同一インデックスで対応関係を持つため、揃える必要がある。</li>
-<li>Warm boot 時の静的経路保持は HLD で要件として明記されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>Warm boot 時の静的経路保持は <a href="../../reference/glossary/#term-hld">HLD</a> で要件として明記されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>frrcfgd / FRR staticd</strong>: 本機能の出力先。FRR 側で <code>staticd</code> daemon が動いている必要がある。</li>
 <li><strong>VRF</strong>: route leak 機能はターゲット VRF が事前定義されている必要がある。</li>
-<li><strong>fpmsyncd / RouteOrch</strong>: 投入された静的経路は FRR を経由して通常の RIB 経路として APPL_DB に流れる。orchagent / SAI 側の特別処理は不要。</li>
+<li><strong><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / RouteOrch</strong>: 投入された静的経路は FRR を経由して通常の RIB 経路として APPL_DB に流れる。orchagent / <a href="../../reference/glossary/#term-sai">SAI</a> 側の特別処理は不要。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24013,6 +24013,8 @@
 <li><a href="../../topics/04-vrf-ecmp/">Topics: VRF / ECMP / RIB-FIB パイプライン</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 33284a13dfdc -->
 
 <div class="footnote">
 <hr />

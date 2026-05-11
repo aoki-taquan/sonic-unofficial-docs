@@ -23841,7 +23841,7 @@
 <h1 id="ttyusb-symlink-udev-rules">ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計<a class="headerlink" href="#ttyusb-symlink-udev-rules" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>ターミナルサーバ機能を持つ SONiC 装置はフロントパネルに複数のシリアルポートを持ち、内部で <strong>USB hub + USB-to-UART (例: cp210x) チップ</strong> を介して <code>/dev/ttyUSB&lt;N&gt;</code> に枚挙される。標準では <code>ttyUSB0</code>〜<code>ttyUSB(n-1)</code> という順序付けだが、<strong>1 つのポートが故障すると枚挙が詰まり</strong> <code>ttyUSB0</code> 以降の number と front-panel 番号の対応が崩れる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <strong>udev rules で安定した symlink</strong> を生成し、front-panel 番号と <code>/dev/Mytty-&lt;N&gt;</code> 名の <strong>物理的な対応を固定</strong> する設計を示す。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>udev rules で安定した symlink</strong> を生成し、front-panel 番号と <code>/dev/Mytty-&lt;N&gt;</code> 名の <strong>物理的な対応を固定</strong> する設計を示す。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="udev-rules">udev rules 概観<a class="headerlink" href="#udev-rules" title="Permanent link">&para;</a></h3>
 <p>udev は <strong>マッチ</strong> と <strong>アクション</strong> で構成される。例<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -24002,6 +24002,8 @@
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 167700005048 -->
 
 <div class="footnote">
 <hr />

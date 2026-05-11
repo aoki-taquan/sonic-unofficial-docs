@@ -23688,7 +23688,7 @@
 </div>
 <h1 id="sonic-bmc-platform-management-monitoringpmon-bmc">SONiC BMC Platform Management &amp; Monitoring（pmon ↔ BMC 連携）<a class="headerlink" href="#sonic-bmc-platform-management-monitoringpmon-bmc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>「BMC 付き SONiC platform」では、PSU・fan・温度センサ・電圧などの <strong>physical inventory が BMC（OpenBMC 等）配下</strong> にあり、CPU 直結ではない<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD は <strong>NPU 上の SONiC pmon と BMC の通信レイヤを抽象化</strong> して、<code>Chassis</code> / <code>Psu</code> / <code>Fan</code> / <code>Thermal</code> プラットフォーム API がどの BMC コールに展開されるかを決める設計を扱う。</p>
+<p>「BMC 付き SONiC platform」では、PSU・fan・温度センサ・電圧などの <strong>physical inventory が BMC（OpenBMC 等）配下</strong> にあり、CPU 直結ではない<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-hld">HLD</a> は <strong><a href="../../reference/glossary/#term-npu">NPU</a> 上の SONiC pmon と BMC の通信レイヤを抽象化</strong> して、<code>Chassis</code> / <code>Psu</code> / <code>Fan</code> / <code>Thermal</code> プラットフォーム API がどの BMC コールに展開されるかを決める設計を扱う。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     PMON[NPU 側 pmon] --&gt; PA[sonic-platform-common\nplatform plugin]
@@ -23737,7 +23737,7 @@
 </tr>
 </tbody>
 </table>
-<p>直接の CONFIG_DB スキーマは新設せず、既存の platform monitor 設計に乗せる想定。</p>
+<p>直接の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマは新設せず、既存の platform monitor 設計に乗せる想定。</p>
 <h2 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23774,10 +23774,10 @@
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>smartswitch-pmon</strong>: NPU+DPU+BMC 構成での DPU 状態取得</li>
+<li><strong>smartswitch-pmon</strong>: NPU+<a href="../../reference/glossary/#term-dpu">DPU</a>+BMC 構成での DPU 状態取得</li>
 <li><strong>transceiver / sensor monitoring</strong>: 同 area 別 HLD と pmon ループを共有</li>
 <li><strong>system health monitor</strong>: BMC 由来 critical event を吸収するパス</li>
-<li><strong>IP address assignment</strong>: BMC への通信は management VRF や別 NIC 経由になることが多い</li>
+<li><strong>IP address assignment</strong>: BMC への通信は management <a href="../../reference/glossary/#term-vrf">VRF</a> や別 NIC 経由になることが多い</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23801,6 +23801,8 @@
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 48ebde1d0ff1 -->
 
 <div class="footnote">
 <hr />

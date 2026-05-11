@@ -23818,7 +23818,7 @@
 </div>
 <h1 id="redis-database_configjson-db">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）<a class="headerlink" href="#redis-database_configjson-db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来の SONiC は <strong>単一の Redis インスタンス</strong> に APPL_DB / ASIC_DB / CONFIG_DB / STATE_DB 等をすべて載せていた。短時間に大量の書き込み（数百万ルート学習等）が発生すると <strong>この 1 インスタンスがホットスポット</strong> になる。HLD の実測では Redis を 2 インスタンスに分割して負荷を分散するだけで <strong>20〜30% の性能改善</strong> が得られた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>従来の SONiC は <strong>単一の <a href="../../reference/glossary/#term-redis">Redis</a> インスタンス</strong> に <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> 等をすべて載せていた。短時間に大量の書き込み（数百万ルート学習等）が発生すると <strong>この 1 インスタンスがホットスポット</strong> になる。<a href="../../reference/glossary/#term-hld">HLD</a> の実測では Redis を 2 インスタンスに分割して負荷を分散するだけで <strong>20〜30% の性能改善</strong> が得られた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>ユーザが <code>database_config.json</code> で Redis インスタンス数と DB の割当を任意定義できる</strong> ようにする</li>
@@ -23937,7 +23937,7 @@ reasoning: 2 インスタンス分割の実測効果の根拠。
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis</a></strong>: 本 HLD の上位拡張。NPU 別 namespace で本 JSON フォーマットを <strong>複数枚</strong> 持つ構造になる。</li>
+<li><strong><a href="../support-redis-databases-in-multiple-namespaces/">Multi-namespace Redis</a></strong>: 本 HLD の上位拡張。<a href="../../reference/glossary/#term-npu">NPU</a> 別 namespace で本 JSON フォーマットを <strong>複数枚</strong> 持つ構造になる。</li>
 <li><strong><code>ping_pong_db_insts</code></strong>: 起動シーケンスで全 redis の生存確認に使う健全性チェッカ。</li>
 <li><strong><code>/etc/sonic/old_config</code></strong> バックアップ経路: イメージ更新時の <code>/etc/sonic/</code> バックアップ・リストアを通る。<code>database_config.json</code> もユーザ配置なら同じ経路で保全<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
@@ -23948,6 +23948,8 @@ reasoning: 2 インスタンス分割の実測効果の根拠。
 <li><code>ping_pong_db_insts</code> が fail: redis の <code>unix_socket_path</code> パーミッション、port 重複を確認。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 97b2a564f840 -->
+
 <div class="footnote">
 <hr />
 <ol>

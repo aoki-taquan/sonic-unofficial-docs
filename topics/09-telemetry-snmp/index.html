@@ -23539,12 +23539,12 @@
 
 
 <h1 id="telemetry-snmp-observability">Telemetry / SNMP / Observability<a class="headerlink" href="#telemetry-snmp-observability" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。counters、CRM、SNMP、gNMI telemetry、sFlow、DTel、syslog、techsupport、kdump など複数の経路があり、HLD は別ページに散らばっています。ここでは運用者と設計者の質問順に並べ直し、既存ページへの入口にします。</p>
+<p>この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。counters、<a href="../../reference/glossary/#term-crm">CRM</a>、<a href="../../reference/glossary/#term-snmp">SNMP</a>、<a href="../../reference/glossary/#term-gnmi">gNMI</a> telemetry、sFlow、DTel、syslog、techsupport、kdump など複数の経路があり、<a href="../../reference/glossary/#term-hld">HLD</a> は別ページに散らばっています。ここでは運用者と設計者の質問順に並べ直し、既存ページへの入口にします。</p>
 <p>観測手段は「現在値を polling で読む」「変化点を push で受ける」「障害時に dump を取る」の 3 系統に整理できます。SNMP は古典的な polling、gNMI telemetry は push 型 streaming、syslog / event / techsupport は障害発生時の証跡です。この区分けが分かると、どこを設定し、どこを見れば良いかが定まります。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>状態を見るとき、counter、telemetry、SNMP、techsupport のどれを使い分けるか。</li>
-<li>FlexCounter、CRM、DTel、sFlow、watermark は何が違い、どの粒度で出るか。</li>
+<li><a href="../../reference/glossary/#term-flexcounter">FlexCounter</a>、CRM、DTel、sFlow、watermark は何が違い、どの粒度で出るか。</li>
 <li>system health、logging、kdump、dump utility は障害調査でどう連携するか。</li>
 <li>SNMP MIB と gNMI telemetry は同じ情報を別経路で出しているのか。</li>
 <li>auto-techsupport と event-driven techsupport は何が変わったのか。</li>
@@ -23555,7 +23555,7 @@
 <li><a href="architecture/">アーキテクチャ</a>: FlexCounter / CRM / telemetry / SNMP のデータ収集経路。</li>
 <li><a href="setup/">設定</a>: SNMP、sFlow、syslog、telemetry、auto-techsupport の最小設定。</li>
 <li><a href="operations/">運用</a>: <code>show techsupport</code>、<code>show system-health</code>、counter、kdump の調査順。</li>
-<li><a href="internals/">内部実装</a>: syncd / flex counter group、telemetry agent、SNMP subagent。</li>
+<li><a href="internals/">内部実装</a>: <a href="../../reference/glossary/#term-syncd">syncd</a> / flex counter group、telemetry agent、SNMP subagent。</li>
 <li><a href="advanced/">発展トピック</a>: DTel、sFlow、Entity MIB、process / memory stats、reboot cause。</li>
 </ol>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23582,6 +23582,7 @@
 <li><a href="../14-platform-port-optics/">Platform / Port / Optics / PHY</a></li>
 <li><a href="../15-security-aaa/">Security / AAA / FIPS / Hardening</a></li>
 </ul>
+<!-- glossary-links-injected: 9f060dca9b0d -->
 
 
 

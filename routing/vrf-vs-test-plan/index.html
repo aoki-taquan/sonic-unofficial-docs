@@ -23740,20 +23740,20 @@
 </div>
 <h1 id="vrf-vs-vrfmgrd-intfmgrd-orchagent-app_db-asic_db-kernel">VRF VS テストプラン（<code>vrfmgrd</code> / <code>intfmgrd</code> / <code>Orchagent</code> → APP_DB / ASIC_DB / kernel）<a class="headerlink" href="#vrf-vs-vrfmgrd-intfmgrd-orchagent-app_db-asic_db-kernel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VRF（Virtual Routing and Forwarding）の SwSS パスを <strong>VS テストフレームワーク</strong>で機械的に検証する。観点は<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-vrf">VRF</a>（Virtual Routing and Forwarding）の SwSS パスを <strong>VS テストフレームワーク</strong>で機械的に検証する。観点は<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>vrfmgrd</code> が CONFIG_DB の VRF 設定を APP_DB と Linux kernel に正しく反映するか</li>
-<li>Orchagent が APP_DB を読んで ASIC_DB に VIRTUAL_ROUTER オブジェクトを作るか</li>
-<li>L3 インタフェース（physical port / LAG / VLAN / loopback）への VRF bind および IPv4/IPv6 アドレス設定の伝播</li>
+<li><code>vrfmgrd</code> が <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の VRF 設定を APP_DB と Linux kernel に正しく反映するか</li>
+<li>Orchagent が APP_DB を読んで <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> に VIRTUAL_ROUTER オブジェクトを作るか</li>
+<li>L3 インタフェース（physical port / <a href="../../reference/glossary/#term-lag">LAG</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a> / loopback）への VRF bind および IPv4/IPv6 アドレス設定の伝播</li>
 <li>neighbor entry / route entry の VRF 別管理と隔離</li>
-<li>ACL redirect の VRF 別 nexthop 指定</li>
-<li>vrfmgrd warm-reboot 横断で kernel・ASIC_DB が保たれること</li>
+<li><a href="../../reference/glossary/#term-acl">ACL</a> redirect の VRF 別 nexthop 指定</li>
+<li><a href="../../reference/glossary/#term-vrfmgrd">vrfmgrd</a> warm-reboot 横断で kernel・ASIC_DB が保たれること</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">スコープ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>VS テスト = SwSS / orchagent 等の CONFIG_DB → APP_DB → ASIC_DB / kernel 動作のみ</strong></li>
-<li>FRR と SAI 観点（route 学習・SAI 属性詳細）は別の ansible pytest 系でカバー</li>
+<li><strong>VS テスト = SwSS / <a href="../../reference/glossary/#term-orchagent">orchagent</a> 等の CONFIG_DB → APP_DB → ASIC_DB / kernel 動作のみ</strong></li>
+<li><a href="../../reference/glossary/#term-frr">FRR</a> と <a href="../../reference/glossary/#term-sai">SAI</a> 観点（route 学習・SAI 属性詳細）は別の ansible pytest 系でカバー</li>
 </ul>
 <h3 id="53">テスト 53 項目の構造<a class="headerlink" href="#53" title="Permanent link">&para;</a></h3>
 <table>
@@ -23772,7 +23772,7 @@
 </tr>
 <tr>
 <td>L3 インタフェース汎用</td>
-<td>intfmgrd の APP_DB 反映、kernel 同期、Orchagent → ASIC_DB</td>
+<td><a href="../../reference/glossary/#term-intfmgrd">intfmgrd</a> の APP_DB 反映、kernel 同期、Orchagent → ASIC_DB</td>
 <td>7-9</td>
 </tr>
 <tr>
@@ -23782,7 +23782,7 @@
 </tr>
 <tr>
 <td>LAG IF + IPv4/v6 + VRF</td>
-<td>PortChannel 同上</td>
+<td><a href="../../reference/glossary/#term-portchannel">PortChannel</a> 同上</td>
 <td>17-22</td>
 </tr>
 <tr>
@@ -23797,12 +23797,12 @@
 </tr>
 <tr>
 <td>Neighbor</td>
-<td>neighsyncd / Orchagent 経由の v4/v6 neighbor、異 VRF 同 IP</td>
+<td><a href="../../reference/glossary/#term-neighsyncd">neighsyncd</a> / Orchagent 経由の v4/v6 neighbor、異 VRF 同 IP</td>
 <td>34-38</td>
 </tr>
 <tr>
 <td>Route</td>
-<td>fpmsyncd → APP_DB → Orchagent → ASIC_DB の v4/v6 route、VRF 跨ぎ nexthop</td>
+<td><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → APP_DB → Orchagent → ASIC_DB の v4/v6 route、VRF 跨ぎ nexthop</td>
 <td>39-49</td>
 </tr>
 <tr>
@@ -23886,23 +23886,25 @@
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>FRR (zebra)</strong>: route 学習側。本テストでは fpmsyncd 経由の APP_DB エントリで間接確認</li>
+<li><strong>FRR (<a href="../../reference/glossary/#term-zebra">zebra</a>)</strong>: route 学習側。本テストでは fpmsyncd 経由の APP_DB エントリで間接確認</li>
 <li><strong>warm-reboot</strong>: vrfmgrd 単独 warm restart シナリオあり</li>
 <li><strong>ACL redirect</strong>: VRF 跨ぎ nexthop 指定の確認に組み込み</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>sonic-swss/cfgmgr/vrfmgr.cpp</code> に <code>VrfMgr</code> クラスが存在し、<code>m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)</code> (line 22) で CONFIG_DB → APP_DB 転送、<code>m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)</code> / <code>m_stateVrfObjectTable(...)</code> で STATE_DB 反映、<code>for (uint32_t i = VRF_TABLE_START; i &lt; VRF_TABLE_END; i++)</code> (line 28) で VRF table ID プール初期化、<code>/* Get existing VRFs from Linux */</code> のコメント以下で warm-restart 横断の Linux VRF 同期。</li>
+<li><code>sonic-swss/cfgmgr/vrfmgr.cpp</code> に <code>VrfMgr</code> クラスが存在し、<code>m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)</code> (line 22) で CONFIG_DB → APP_DB 転送、<code>m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)</code> / <code>m_stateVrfObjectTable(...)</code> で <a href="../../reference/glossary/#term-state_db">STATE_DB</a> 反映、<code>for (uint32_t i = VRF_TABLE_START; i &lt; VRF_TABLE_END; i++)</code> (line 28) で VRF table ID プール初期化、<code>/* Get existing VRFs from Linux */</code> のコメント以下で warm-restart 横断の Linux VRF 同期。</li>
 <li>VS テストフレームワーク (<code>sonic-swss/tests/</code>) には VRF 関連の virtual switch テストがあり、本プランの観点（vrfmgrd → APP_DB → ASIC_DB / kernel）はテストインフラとして実在。</li>
 </ul>
-<p>実装と HLD/プランは整合。<code>code-verified</code> に昇格。</p>
+<p>実装と <a href="../../reference/glossary/#term-hld">HLD</a>/プランは整合。<code>code-verified</code> に昇格。</p>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b804bcd55f6a -->
 
 <div class="footnote">
 <hr />

@@ -23818,9 +23818,9 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SRv6 / MPLS / Path Tracing の設定は、いずれも CONFIG_DB のテーブルに置けば最小構成が組めます。CLI ラッパは限定的で、<code>config interface mpls</code> や <code>config interface pt-interface-id</code> のような per-feature コマンドが中心です。ここでは「最小限の有効化」と「reference のどこに正規定義があるか」を並べます。</p>
+<p><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing の設定は、いずれも <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> のテーブルに置けば最小構成が組めます。CLI ラッパは限定的で、<code>config interface mpls</code> や <code>config interface pt-interface-id</code> のような per-feature コマンドが中心です。ここでは「最小限の有効化」と「reference のどこに正規定義があるか」を並べます。</p>
 <h2 id="srv6-static-sid-locator">SRv6 Static SID / Locator<a class="headerlink" href="#srv6-static-sid-locator" title="Permanent link">&para;</a></h2>
-<p>FRR の SRv6 制御プレーンは master 時点で限定的なため、Static SID / Locator を CONFIG_DB に直接書く構成が現実的です。<code>SRV6_MY_LOCATORS</code> と <code>SRV6_MY_SIDS</code> は <code>sonic-srv6</code> YANG に定義され、<code>bgpcfgd</code> の <code>SRv6Mgr</code> が <code>vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid ... locator ... behavior ... vrf ..."</code> の形で FRR に流し込みます。</p>
+<p><a href="../../../reference/glossary/#term-frr">FRR</a> の SRv6 制御プレーンは master 時点で限定的なため、Static SID / Locator を CONFIG_DB に直接書く構成が現実的です。<code>SRV6_MY_LOCATORS</code> と <code>SRV6_MY_SIDS</code> は <code>sonic-srv6</code> <a href="../../../reference/glossary/#term-yang">YANG</a> に定義され、<code>bgpcfgd</code> の <code>SRv6Mgr</code> が <code>vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid ... locator ... behavior ... vrf ..."</code> の形で FRR に流し込みます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SRV6_MY_LOCATORS|&lt;locator_name&gt;:
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  prefix = &lt;ipv6_prefix&gt;
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  block_len = 40
@@ -23835,7 +23835,7 @@
 </span></code></pre></div>
 <p><code>SRv6Mgr</code> は locator 不在のまま SID が来た場合に <code>SRV6_MY_LOCATORS</code> を subscribe して deferred 解決する経路を持つため、locator と SID の投入順序を厳密にそろえる必要はありません。</p>
 <h2 id="srv6-base">SRv6 base スキーマ<a class="headerlink" href="#srv6-base" title="Permanent link">&para;</a></h2>
-<p>base HLD では Static SID とは別に、<code>srv6orch</code> が直接消費する次のテーブルが定義されています。</p>
+<p>base <a href="../../../reference/glossary/#term-hld">HLD</a> では Static SID とは別に、<code>srv6orch</code> が直接消費する次のテーブルが定義されています。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SRV6_SID_LIST|&lt;segment_name&gt;:
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  path = [&lt;sid&gt;, &lt;sid&gt;, ...]
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -23858,7 +23858,7 @@
 </span></code></pre></div>
 <p><code>adj</code> は L3 隣接が必要な behavior（<code>uA</code> / <code>End.X</code> / <code>uDX4</code> / <code>uDX6</code> / <code>End.DX4</code> / <code>End.DX6</code>）のみで意味を持ちます。投入時に Neighbor 未解決でも srv6orch の pending queue が後から flush するため、運用上の neighbor タイミングをそろえる必要はありません（<a href="../architecture/">アーキテクチャ</a> を参照）。</p>
 <h2 id="mpls">MPLS の有効化<a class="headerlink" href="#mpls" title="Permanent link">&para;</a></h2>
-<p>MPLS は <strong>per-RIF で明示的に enable</strong> が前提です。<code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> の <code>mpls</code> フィールドを <code>enable</code> に設定します。</p>
+<p>MPLS は <strong>per-<a href="../../../reference/glossary/#term-rif">RIF</a> で明示的に enable</strong> が前提です。<code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> の <code>mpls</code> フィールドを <code>enable</code> に設定します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>INTERFACE|Ethernet0:
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  mpls = enable
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
@@ -23883,7 +23883,7 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  pt_interface_id        = 1234
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  pt_timestamp_template  = template_3
 </span></code></pre></div>
-<p><code>pt_interface_id</code> は MCD に刻まれる interface 識別、<code>pt_timestamp_template</code> は timestamp のビット切り出し方（例: <code>12_19</code> 系テンプレート）を決めます。SAI 側で対応する属性は <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> と <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> です。</p>
+<p><code>pt_interface_id</code> は MCD に刻まれる interface 識別、<code>pt_timestamp_template</code> は timestamp のビット切り出し方（例: <code>12_19</code> 系テンプレート）を決めます。<a href="../../../reference/glossary/#term-sai">SAI</a> 側で対応する属性は <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> と <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> です。</p>
 <p>PT Source / Sink / Regional Collector は SONiC 外側で構築するため、SONiC 単体としては Midpoint 設定だけで完結します。</p>
 <h2 id="1-vrf-vrf01-srv6-enddt46-sid">設定シナリオ 1: VRF "Vrf01" 向け SRv6 End.DT46 SID の最小投入<a class="headerlink" href="#1-vrf-vrf01-srv6-enddt46-sid" title="Permanent link">&para;</a></h2>
 <p><code>fcbb:bbbb::/48</code> を locator として、<code>fcbb:bbbb:1::/64</code> を <code>Vrf01</code> 向けの <code>End.DT46</code> SID として宣言します。<code>sonic-cfggen</code> 経由か <code>redis-cli</code> 直叩きで CONFIG_DB に書きます。</p>
@@ -23976,7 +23976,7 @@
 </tr>
 <tr>
 <td><code>End.DT46</code> SID で trafic が drop される</td>
-<td><code>vrf</code> 指定の typo、または VRF が未作成</td>
+<td><code>vrf</code> 指定の typo、または <a href="../../../reference/glossary/#term-vrf">VRF</a> が未作成</td>
 <td><code>show vrf</code>、<code>sonic-db-cli CONFIG_DB HGETALL VRF\|Vrf01</code> を確認</td>
 </tr>
 <tr>
@@ -24012,7 +24012,7 @@
 <ul>
 <li>CLI: <code>config interface mpls</code>、<code>show mpls interface</code>、<code>config interface pt-interface-id</code>、<code>config interface pt-timestamp-template</code>、<code>show interface path-tracing</code>、<code>vtysh -c "show segment-routing srv6 ..."</code></li>
 <li>CONFIG_DB: <code>SRV6_MY_LOCATORS</code>、<code>SRV6_MY_SIDS</code>、<code>SRV6_SID_LIST</code>、<code>SRV6_MY_SID_TABLE</code>、<code>SRV6_POLICY</code>、<code>SRV6_STEER</code>、<code>INTERFACE.mpls</code>、<code>VLAN_INTERFACE.mpls</code>、<code>PORTCHANNEL_INTERFACE.mpls</code>、<code>MPLS_TC_TO_TC_MAP</code>、<code>PORT_QOS_MAP</code>、<code>PORT</code>（PT 用フィールド）</li>
-<li>APPL_DB / ASIC_DB: <code>LABEL_ROUTE_TABLE</code>、<code>SRV6_*</code> 系、<code>SAI_OBJECT_TYPE_INSEG_ENTRY</code>、<code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code>、<code>SAI_PORT_ATTR_PATH_TRACING_*</code></li>
+<li><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a>: <code>LABEL_ROUTE_TABLE</code>、<code>SRV6_*</code> 系、<code>SAI_OBJECT_TYPE_INSEG_ENTRY</code>、<code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code>、<code>SAI_PORT_ATTR_PATH_TRACING_*</code></li>
 <li>YANG: <a href="../../../reference/yang/sonic-route-common/"><code>sonic-route-common</code></a>、<code>sonic-srv6</code>、<code>sonic-interface</code>、<code>sonic-port-qos-map</code></li>
 <li>HLD: <a href="../../../routing/static-configuration-of-srv6-in-sonic-hld/">SRv6 静的設定 HLD</a>、<a href="../../../routing/segment-routing-over-ipv6-srv6-hld/">SRv6 over IPv6 HLD</a>、<a href="../../../routing/mpls-for-sonic-high-level-design-document/">MPLS HLD</a>、<a href="../../../routing/mpls-tc-to-tc-map/">MPLS TC → TC map</a>、<a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
 </ul>
@@ -24024,6 +24024,7 @@
 <li><a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
 <li><a href="../../../reference/yang/sonic-route-common/">sonic-route-common YANG</a></li>
 </ul>
+<!-- glossary-links-injected: c74e6bbc20f3 -->
 
 
 

@@ -23884,10 +23884,10 @@
 </div>
 <h1 id="dhcpv6-dhcp-relay-docker-dhcrelay-6">DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）<a class="headerlink" href="#dhcpv6-dhcp-relay-docker-dhcrelay-6" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の DHCPv4 リレーは <code>dhcp-relay</code> docker 内の <code>isc-dhcp</code> ベースの <code>dhcrelay</code> プロセスで実装されている。本 HLD は <strong>同じ <code>dhcp-relay</code> docker に IPv6 用の <code>dhcrelay -6</code> を並走させる</strong> 形で DHCPv6 リレー機能を追加する設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の DHCPv4 リレーは <code>dhcp-relay</code> docker 内の <code>isc-dhcp</code> ベースの <code>dhcrelay</code> プロセスで実装されている。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>同じ <code>dhcp-relay</code> docker に IPv6 用の <code>dhcrelay -6</code> を並走させる</strong> 形で DHCPv6 リレー機能を追加する設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主な機能要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>下流（VLAN 側）から上流への DHCPv6 パケットの中継。</li>
+<li>下流（<a href="../../reference/glossary/#term-vlan">VLAN</a> 側）から上流への DHCPv6 パケットの中継。</li>
 <li><code>dhcp-relay</code> コンテナ内に <strong>IPv4 とは別プロセス</strong> として動かす。</li>
 <li>上流の <strong>複数の unicast / multicast 宛先</strong> へのリレーをサポート。</li>
 </ul>
@@ -23895,7 +23895,7 @@
 <h3 id="_3">構成と前提<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>下流（downstream）は VLAN インターフェース。<strong>Global IPv6 アドレスがその interface に設定されていること</strong> が前提<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>DHCPv6 のリレー機能を有効にすると、<strong>CoPP マネージャから DHCPv6 trap を有効化</strong> する。逆に無効化したら trap も外す。両者は連動する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>DHCPv6 のリレー機能を有効にすると、<strong><a href="../../reference/glossary/#term-copp">CoPP</a> マネージャから DHCPv6 trap を有効化</strong> する。逆に無効化したら trap も外す。両者は連動する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>dhcp-relay</code> コンテナの依存は IPv4 と同じく <strong><code>isc-dhcp</code></strong> プロジェクト。<code>dhcrelay</code> バイナリの <code>-6</code> オプションを使う<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -23966,7 +23966,7 @@
 <h3 id="dhcp-monitor">DHCP Monitor<a class="headerlink" href="#dhcp-monitor" title="Permanent link">&para;</a></h3>
 <p>既存の DHCP Monitor が <strong>DHCPv6 対応に拡張</strong> される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的な拡張点（監視するメッセージタイプの増加、メトリクス命名の方針など）は HLD には詳細記述がない。</p>
 <h3 id="_6">初期化フロー<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p>HLD には init フロー図（<code>init.svg</code>）が貼られているが文章での詳細はない。一般的な依存関係として、CONFIG_DB の VLAN にエントリが入った段階で <code>dhcp-relay</code> コンテナが起動 / 再起動して <code>dhcrelay -6</code> プロセスを立てる、という流れになる。</p>
+<p>HLD には init フロー図（<code>init.svg</code>）が貼られているが文章での詳細はない。一般的な依存関係として、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の VLAN にエントリが入った段階で <code>dhcp-relay</code> コンテナが起動 / 再起動して <code>dhcrelay -6</code> プロセスを立てる、という流れになる。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md#L62-L82 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24083,6 +24083,8 @@ reasoning: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8edad9eaadfa -->
 
 <div class="footnote">
 <hr />

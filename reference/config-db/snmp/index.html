@@ -23639,7 +23639,7 @@
 
 <h1 id="snmp">SNMP テーブル<a class="headerlink" href="#snmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SNMP エージェント (<code>snmpd</code> in <code>docker-snmp</code>) のシステム情報 (Contact / Location) を保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>docker-snmp</code> 内の起動スクリプトと <code>hostcfgd</code> の SNMP ハンドラが CONFIG_DB を読み、<code>/etc/snmp/snmpd.conf</code> のテンプレ展開で <code>sysContact</code> / <code>sysLocation</code> 行に反映される。</p>
+<p><a href="../../glossary/#term-snmp">SNMP</a> エージェント (<code>snmpd</code> in <code>docker-snmp</code>) のシステム情報 (Contact / Location) を保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>docker-snmp</code> 内の起動スクリプトと <code>hostcfgd</code> の SNMP ハンドラが <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み、<code>/etc/snmp/snmpd.conf</code> のテンプレ展開で <code>sysContact</code> / <code>sysLocation</code> 行に反映される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23706,7 +23706,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>SNMP_COMMUNITY</code> (v1/v2c), <code>SNMP_USER</code> (v3), <a href="../snmp-agent-address-config/"><code>SNMP_AGENT_ADDRESS_CONFIG</code></a></li>
 <li>関連 CLI: <code>config snmp contact { add | modify | del }</code> / <code>config snmp location { add | modify | del }</code></li>
-<li>関連 YANG: <code>sonic-snmp</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-snmp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23738,6 +23738,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>snmp<span class="w"> </span>community
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: c344938db88f -->
 
 <div class="footnote">
 <hr />

@@ -24034,7 +24034,7 @@
 
 <h1 id="config-nat">config nat サブコマンド<a class="headerlink" href="#config-nat" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config nat</code> は SONiC の NAT44 (NAT / NAPT) 機能の CONFIG_DB を直接操作する CLI で、<code>config/nat.py</code> の <code>@click.group('nat')</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>add</code> / <code>remove</code> / <code>set</code> / <code>reset</code> の 4 つのサブグループに分かれ、static エントリ・dynamic pool / binding・interface zone・タイムアウト・feature on/off を扱う。NAT データプレーン本体は orchagent 配下の <code>natorch</code> が SAI 経由でハードに書き込むが、CLI 層は CONFIG_DB を更新するだけで、NAT 機能が無効ならそもそも変更がデータプレーンに伝わらない点に注意。</p>
+<p><code>config nat</code> は SONiC の NAT44 (NAT / NAPT) 機能の <a href="../../glossary/#term-config_db">CONFIG_DB</a> を直接操作する CLI で、<code>config/nat.py</code> の <code>@click.group('nat')</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>add</code> / <code>remove</code> / <code>set</code> / <code>reset</code> の 4 つのサブグループに分かれ、static エントリ・dynamic pool / binding・interface zone・タイムアウト・feature on/off を扱う。NAT データプレーン本体は <a href="../../glossary/#term-orchagent">orchagent</a> 配下の <code>natorch</code> が <a href="../../glossary/#term-sai">SAI</a> 経由でハードに書き込むが、CLI 層は CONFIG_DB を更新するだけで、NAT 機能が無効ならそもそも変更がデータプレーンに伝わらない点に注意。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24046,7 +24046,7 @@
 <tbody>
 <tr>
 <td><code>config nat add static basic &lt;global_ip&gt; &lt;local_ip&gt; [-nat_type] [-twice_nat_id]</code></td>
-<td>1:1 static NAT エントリ追加</td>
+<td>1:1 static <a href="../../glossary/#term-nat">NAT</a> エントリ追加</td>
 </tr>
 <tr>
 <td><code>config nat add static tcp &lt;gip&gt; &lt;gport&gt; &lt;lip&gt; &lt;lport&gt; [-nat_type] [-twice_nat_id]</code></td>
@@ -24157,7 +24157,7 @@ excerpt: |
 <h3 id="config-nat-add-binding-binding_name-pool_name-acl_name"><code>config nat add binding &lt;binding_name&gt; &lt;pool_name&gt; [&lt;acl_name&gt;]</code><a class="headerlink" href="#config-nat-add-binding-binding_name-pool_name-acl_name" title="Permanent link">&para;</a></h3>
 <p><code>NAT_BINDINGS|&lt;binding_name&gt;</code> に <code>{nat_pool, access_list, nat_type, twice_nat_id}</code> を書く。pool が存在しない場合や、別の binding に同じ pool が既に紐付いていればエラー<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="config-nat-add-interface-if_name-nat_zone-0-3"><code>config nat add interface &lt;if_name&gt; -nat_zone &lt;0-3&gt;</code><a class="headerlink" href="#config-nat-add-interface-if_name-nat_zone-0-3" title="Permanent link">&para;</a></h3>
-<p><code>nat_interface_name_is_valid</code> でインタフェース種別 (Ethernet / PortChannel / Vlan / Loopback) と CONFIG_DB の存在を確認したうえで、当該テーブル (<code>PORT</code> / <code>PORTCHANNEL</code> / <code>VLAN</code> / <code>LOOPBACK_INTERFACE</code>) に <code>nat_zone</code> フィールドをマージする。テーブル名は interface ごとに切り替わり、<code>NAT_ZONE</code> という独立テーブルが作られるわけではない。</p>
+<p><code>nat_interface_name_is_valid</code> でインタフェース種別 (Ethernet / <a href="../../glossary/#term-portchannel">PortChannel</a> / Vlan / Loopback) と CONFIG_DB の存在を確認したうえで、当該テーブル (<code>PORT</code> / <code>PORTCHANNEL</code> / <code>VLAN</code> / <code>LOOPBACK_INTERFACE</code>) に <code>nat_zone</code> フィールドをマージする。テーブル名は interface ごとに切り替わり、<code>NAT_ZONE</code> という独立テーブルが作られるわけではない。</p>
 <h3 id="config-nat-feature-enable-disable"><code>config nat feature enable</code> / <code>disable</code><a class="headerlink" href="#config-nat-feature-enable-disable" title="Permanent link">&para;</a></h3>
 <p><code>NAT_GLOBAL|Values</code> の <code>admin_mode</code> を <code>enabled</code> / <code>disabled</code> に書き換える。これが <code>disabled</code> のままでは他の NAT 設定もデータプレーンに反映されない。</p>
 <h3 id="config-nat-set-timeouttcp-timeoutudp-timeout-seconds-reset"><code>config nat set timeout|tcp-timeout|udp-timeout &lt;seconds&gt;</code> / <code>reset ...</code><a class="headerlink" href="#config-nat-set-timeouttcp-timeoutudp-timeout-seconds-reset" title="Permanent link">&para;</a></h3>
@@ -24293,6 +24293,8 @@ excerpt: |
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>nat<span class="w"> </span>statistics
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 2d91ef9e4a0f -->
 
 <div class="footnote">
 <hr />

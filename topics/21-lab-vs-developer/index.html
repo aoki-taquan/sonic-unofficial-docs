@@ -23539,13 +23539,13 @@
 
 
 <h1 id="lab-virtual-sonic-developer-entry">Lab / Virtual SONiC / Developer Entry<a class="headerlink" href="#lab-virtual-sonic-developer-entry" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC を「実機を触らずに、あるいは小さな lab で」評価・開発・検証するための入口を整理する章です。SONiC-VS、GNS3 VM、ALViS / KNE、DASH SONiC KVM、PTF ベースのテスト計画は、それぞれ別の HLD として書かれているため、ここでは目的別にどれを使うかを並べ直します。</p>
+<p>この章は、SONiC を「実機を触らずに、あるいは小さな lab で」評価・開発・検証するための入口を整理する章です。SONiC-VS、GNS3 VM、ALViS / KNE、<a href="../../reference/glossary/#term-dash">DASH</a> SONiC KVM、PTF ベースのテスト計画は、それぞれ別の <a href="../../reference/glossary/#term-hld">HLD</a> として書かれているため、ここでは目的別にどれを使うかを並べ直します。</p>
 <p>仮想環境は実機の代替ではなく、設計と CI を回すための再現可能な箱です。ASIC・optics・PHY・thermal・PSU といった物理依存は仮想化されないため、virtual lab で何が確認でき、何が確認できないのかをはじめに区別しておきます。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>SONiC-VS、GNS3、ALViS / KNE はどの目的で使い分けるか。</li>
 <li>evaluator / beginner / developer / operator guide は読み物章にどう接続するか。</li>
-<li>DIP=SIP PTF、VRF VS test、test plan 系ページはどこから参照するか。</li>
+<li>DIP=SIP PTF、<a href="../../reference/glossary/#term-vrf">VRF</a> VS test、test plan 系ページはどこから参照するか。</li>
 <li>virtual lab で再現しづらい platform / optics / ASIC 依存はどう明示するか。</li>
 <li>物理 lab に必要な console / terminal server / udev はどこで読むか。</li>
 </ul>
@@ -23581,6 +23581,7 @@
 <li><a href="../18-p4-pins/">P4 / PINS / Programmable Pipeline</a></li>
 <li><a href="../22-reference-index/">リファレンス横断索引</a></li>
 </ul>
+<!-- glossary-links-injected: 7c4042e7632a -->
 
 
 

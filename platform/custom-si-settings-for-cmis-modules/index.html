@@ -23911,7 +23911,7 @@
 <ul>
 <li>ファイル無しなら何もしない（既定挙動と互換）</li>
 <li>CMIS 非対応モジュールは対象外</li>
-<li>CONFIG_DB / CLI / YANG / SAI API いずれにも変更なし<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> / <a href="../../reference/glossary/#term-sai">SAI</a> API いずれにも変更なし<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>warm/fast boot にも影響なし<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <p>対象パラメータ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -24037,7 +24037,7 @@
 <h3 id="_3">キャッシュと差分上書きの理由<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>xcvrd は <strong>EC=0 で動いている既存の active SI 値をまずキャッシュ</strong> し、新値（一部分のみ）を被せる。staged set に「新値だけ」書くと <strong>未指定値が 0 で上書き</strong> されてしまうため、必ず差分マージが必要<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="lane-speed-txinputadaptiveeq">Lane speed と TxInputAdaptiveEq 無効化<a class="headerlink" href="#lane-speed-txinputadaptiveeq" title="Permanent link">&para;</a></h3>
-<p>TX EQ は <strong>AdaptiveInputEqEnableTx を全 lane disable</strong> にしてから FixedInputEqTargetTx を書く必要がある（CMIS 仕様）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD は「<code>TxInputEqFixedManualControlSupported</code> がモジュール側で立っている時のみ TX SI を投入」と明記。</p>
+<p>TX EQ は <strong>AdaptiveInputEqEnableTx を全 lane disable</strong> にしてから FixedInputEqTargetTx を書く必要がある（CMIS 仕様）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-hld">HLD</a> は「<code>TxInputEqFixedManualControlSupported</code> がモジュール側で立っている時のみ TX SI を投入」と明記。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/sfp-cmis/CMIS-custom-SI-settings.md#L218-L246 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24083,7 +24083,7 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 <ul>
 <li><strong>既存 CMIS state machine</strong>: AP_CONFIG → DP_INIT の間に挟まる形。失敗時は <strong>CMIS reinit を強制</strong> する経路あり</li>
 <li><strong>Adaptive TX EQ</strong>: TX SI を投入する場合は ON/OFF を切り替える。リンク立ち上げ時間に影響</li>
-<li><strong>fec / port speed 変更時の DPB</strong>: 同じ CMIS state machine 経路。lane speed が変わると検索キーが変わるため再評価が必要</li>
+<li><strong>fec / port speed 変更時の <a href="../../reference/glossary/#term-dpb">DPB</a></strong>: 同じ CMIS state machine 経路。lane speed が変わると検索キーが変わるため再評価が必要</li>
 <li><strong>transceiver hot insertion</strong>: モジュール変更ごとに評価し直し</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -24109,6 +24109,8 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0b3617cc2a1d -->
 
 <div class="footnote">
 <hr />

@@ -23828,7 +23828,7 @@
 </div>
 <h1 id="sonic-arm-armhf-arm64-platform_arch-qemu-static">SONiC の ARM (armhf / arm64) ビルドサポート（<code>PLATFORM_ARCH</code> と qemu-static）<a class="headerlink" href="#sonic-arm-armhf-arm64-platform_arch-qemu-static" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer が AMD64 をハードコードしていた。本 HLD は <strong>ARM32 (armhf) / ARM64 サポート</strong> のため変更対象を整理する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer が AMD64 をハードコードしていた。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>ARM32 (armhf) / ARM64 サポート</strong> のため変更対象を整理する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>変更対象: <code>sonic-slave</code>（ビルド環境 docker）、<code>dockers/</code>（base / ptf 等）、<code>rules/</code> / <code>Makefile</code> / build script、<code>apt</code> repo list、ONIE image / installer。</p>
 <h2 id="_2">ビルド時オプション<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><code>make configure</code> 時に <code>PLATFORM</code> と <code>PLATFORM_ARCH</code>（or <code>SONIC_ARCH</code>）を指定<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23994,6 +23994,8 @@
 <li><a href="../../topics/14-platform-port-optics/concept/">14-platform-port-optics/concept</a>: platform レイアウトと vendor 連携</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 167700005048 -->
+
 <div class="footnote">
 <hr />
 <ol>

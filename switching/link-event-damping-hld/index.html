@@ -24071,11 +24071,11 @@
 <h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>取り込み済み（SwSS）</strong>: <code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> L3736-L3760（<code>setPortLinkEventDampingAlgorithm</code> / <code>setPortLinkEventDampingAlgoAiedConfig</code>）、<code>orchagent/portsorch.cpp</code> L4939-L4941（差分検出）、<code>orchagent/port/porthlpr.cpp</code> L24, L133, L899-L900, L1345-L1373（<code>PortConfig</code> への 6 フィールドのパース）。</li>
-<li><strong>取り込み済み（YANG）</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang</code> に <code>link_event_damping_algorithm</code> 系 leaf あり。</li>
+<li><strong>取り込み済み（<a href="../../reference/glossary/#term-yang">YANG</a>）</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang</code> に <code>link_event_damping_algorithm</code> 系 leaf あり。</li>
 <li><strong>未取り込み</strong>: <code>sonic-utilities/config/main.py</code> および周辺に <code>link_event_damping_algorithm</code> の CLI ハンドラは無し（grep で <code>link_event_damping</code> のヒットは <code>sonic-swss</code> 配下のみ）。</li>
 </ul>
 <h3 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
-<p>HLD は <code>config interface link_event_damping_algorithm &lt;if&gt; aied &lt;max_suppress&gt; &lt;decay_half&gt; &lt;suppress_thr&gt; &lt;reuse_thr&gt; &lt;flap_penalty&gt;</code> の click サブコマンド追加と、<code>config interface link_event_damping_algorithm &lt;if&gt; disabled</code> を要求している。<code>sonic-utilities</code> 側の取り込みが無いため、ユーザ経路は <strong>CONFIG_DB の直接編集（<code>sonic-db-cli</code> / <code>redis-cli</code>）</strong> または <code>config_db.json</code> への記述のみ。一方 SwSS 側は <code>PORT</code> テーブルからフィールドを読み取り、SAI redis 属性 <code>SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM</code> と <code>SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG</code> に変換するパスは完成している。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> は <code>config interface link_event_damping_algorithm &lt;if&gt; aied &lt;max_suppress&gt; &lt;decay_half&gt; &lt;suppress_thr&gt; &lt;reuse_thr&gt; &lt;flap_penalty&gt;</code> の click サブコマンド追加と、<code>config interface link_event_damping_algorithm &lt;if&gt; disabled</code> を要求している。<code>sonic-utilities</code> 側の取り込みが無いため、ユーザ経路は <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の直接編集（<code>sonic-db-cli</code> / <code>redis-cli</code>）</strong> または <code>config_db.json</code> への記述のみ。一方 SwSS 側は <code>PORT</code> テーブルからフィールドを読み取り、<a href="../../reference/glossary/#term-sai">SAI</a> redis 属性 <code>SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM</code> と <code>SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG</code> に変換するパスは完成している。</p>
 <h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
 <p>HLD どおりに <code>sudo config interface link_event_damping_algorithm Ethernet0 aied 40 30 1500 1300 1000</code> を打つと <code>Error: No such command "link_event_damping_algorithm".</code> で失敗する。ドキュメント主導で運用する読者が CLI 経由で機能を有効化できず、SAI 属性まで届かない。</p>
 <h3 id="4">4. 回避策<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
@@ -24094,7 +24094,7 @@
 <li>SyncD intercept 経路の完成度については追加トラッキング Issue 未確認。</li>
 </ul>
 <h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → ASIC_DB → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの <strong>下流負荷</strong> を引き起こす<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの <strong>下流負荷</strong> を引き起こす<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は <strong>インタフェース単位で link up / down イベントを抑制（damping）</strong> する仕組みを SONiC に追加する。多くの NOS で標準的な慣習で、SONiC では SyncD で intercept する形で実装される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">動作仕様<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="syncd-intercept">配置（SyncD で intercept）<a class="headerlink" href="#syncd-intercept" title="Permanent link">&para;</a></h3>
@@ -24305,7 +24305,7 @@ reasoning: SAIREDIS で port 単位の damping 設定を伝搬する API の根�
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>WCMP / ECMP 系</strong>: 本機能の主要恩恵元。post-damping だけが PortsOrch → ルーティング層に届く。</li>
+<li><strong>WCMP / <a href="../../reference/glossary/#term-ecmp">ECMP</a> 系</strong>: 本機能の主要恩恵元。post-damping だけが PortsOrch → ルーティング層に届く。</li>
 <li><strong>PortsOrch / hostif</strong>: OA が <code>SAI_HOSTIF_ATTR_OPER_STATUS</code> で netdev oper-state を post-damping に揃える<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。netdev 状態を見る他コードパスにも影響。</li>
 <li><strong>port flap counter / 既存 stats</strong>: pre / post damping を別カウンタで持つので分析時に区別が必要<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>Warm/Fast boot</strong>: HLD 内に Warmboot 影響セクションあり（本ページでは省略、原文参照）。</li>
@@ -24323,6 +24323,8 @@ reasoning: SAIREDIS で port 単位の damping 設定を伝搬する API の根�
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bbeca8ace23b -->
 
 <div class="footnote">
 <hr />

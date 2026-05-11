@@ -23966,7 +23966,7 @@
 </div>
 <h1 id="voq-fsissi-chassis-db-redis_chassis">VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）<a class="headerlink" href="#voq-fsissi-chassis-db-redis_chassis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が <strong>内部ファブリック</strong> で繋がれた 1 つの論理ルータとして動く。本 HLD は SONiC を「ラインカード × N」+「スーパバイザ × 1」の <strong>分散 SONiC インスタンス</strong> として動かすための骨格設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が <strong>内部ファブリック</strong> で繋がれた 1 つの論理ルータとして動く。本 <a href="../../reference/glossary/#term-hld">HLD</a> は SONiC を「ラインカード × N」+「スーパバイザ × 1」の <strong>分散 SONiC インスタンス</strong> として動かすための骨格設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主要登場人物<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -23988,7 +23988,7 @@
 <td>スーパバイザ上の SONiC OS。FSI 群と内部ファブリックを管理</td>
 </tr>
 <tr>
-<td>ASIC / NPU</td>
+<td>ASIC / <a href="../../reference/glossary/#term-npu">NPU</a></td>
 <td>Forwarding ASIC</td>
 <td>実パケット転送</td>
 </tr>
@@ -23999,7 +23999,7 @@
 </tr>
 </tbody>
 </table>
-<p>スコープは <strong>SONiC 側の骨格のみ</strong>（物理ポート表現と Chassis DB）。LAG / 内部制御プレーン / データプレーンの具体は別 HLD に譲る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。シャーシ前提だが「VoQ 構成なら他のフォームファクタにも拡張可能」と明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スコープは <strong>SONiC 側の骨格のみ</strong>（物理ポート表現と Chassis DB）。<a href="../../reference/glossary/#term-lag">LAG</a> / 内部制御プレーン / データプレーンの具体は別 HLD に譲る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。シャーシ前提だが「VoQ 構成なら他のフォームファクタにも拡張可能」と明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">基本要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
@@ -24023,7 +24023,7 @@
     L2[Local Redis] -.-&gt; RC
     O2[Orchagent / etc]
   end</code></pre>
-<p>全システム共通状態は SSI 上の <strong><code>redis_chassis</code></strong> に乗る。各 FSI はローカル Redis に加えて <code>redis_chassis</code> にもつなぎ、<code>CHASSIS_APP_DB</code>（id=8）にアクセスする<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>全システム共通状態は SSI 上の <strong><code>redis_chassis</code></strong> に乗る。各 FSI はローカル <a href="../../reference/glossary/#term-redis">Redis</a> に加えて <code>redis_chassis</code> にもつなぎ、<code>CHASSIS_APP_DB</code>（id=8）にアクセスする<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="chassisdbconf"><code>chassisdb.conf</code> による起動制御<a class="headerlink" href="#chassisdbconf" title="Permanent link">&para;</a></h4>
 <p><code>/usr/share/sonic/device/&lt;platform&gt;/chassisdb.conf</code><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <p>SSI 側:</p>
@@ -24175,10 +24175,10 @@ reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠�
 
 <h3 id="hld-4">将来課題（HLD §4）<a class="headerlink" href="#hld-4" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Dynamic system ports</strong>: 走行中の FSI 追加 / SKU 変更カードへの差し替え。SAI に <code>create_port</code> / <code>remove_port</code> のサポートが必要<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>Dynamic system ports</strong>: 走行中の FSI 追加 / SKU 変更カードへの差し替え。<a href="../../reference/glossary/#term-sai">SAI</a> に <code>create_port</code> / <code>remove_port</code> のサポートが必要<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>Dual supervisor</strong>:</li>
-<li>Warm standby: スタンバイ SSI は OS 起動だけ。切替時に再ブート相当の処理。OrchAgent / syncd を一旦止めて Redis アドレスを切替えて再接続<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>Hot standby: スタンバイ SSI も Chassis DB を mirror で保持。Live sync + 再接続時に SAI ASIC_DB と整合をとる必要<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Warm standby: スタンバイ SSI は OS 起動だけ。切替時に再ブート相当の処理。OrchAgent / <a href="../../reference/glossary/#term-syncd">syncd</a> を一旦止めて Redis アドレスを切替えて再接続<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Hot standby: スタンバイ SSI も Chassis DB を mirror で保持。Live sync + 再接続時に SAI <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> と整合をとる必要<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
@@ -24205,7 +24205,7 @@ reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠�
 <li><strong><code>syncd</code> / <code>swss</code> の Multi-ASIC 動作</strong>: 既存の multi-ASIC パターンの拡張。FSI 内の ASIC ごとに <code>syncd</code> / <code>swss</code> が立つ。</li>
 <li><strong>iBGP メッシュ（<a href="../../routing/bgp-setup-for-voq-chassis/">BGP for VoQ Chassis</a>）</strong>: 内部 FSI 間の制御プレーンとして iBGP を張る前提。本 HLD はその物理基盤を提供する。</li>
 <li><strong>Single-ASIC VoQ</strong>: chassisdb.conf の有無を <code>is_voq_chassis()</code> の判定キーに流用する派生機能<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（<a href="../../platform/single-asic-voq-fixed-system-sonic/">Single-ASIC VoQ</a> 参照）。</li>
-<li><strong>dual-tor / SmartSwitch</strong>: 似た概念だが本 HLD のスコープ外。Chassis DB は混同しないこと。</li>
+<li><strong>dual-tor / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong>: 似た概念だが本 HLD のスコープ外。Chassis DB は混同しないこと。</li>
 </ul>
 <h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24220,6 +24220,8 @@ reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠�
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f0d5c7142479 -->
 
 <div class="footnote">
 <hr />

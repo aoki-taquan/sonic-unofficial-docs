@@ -23881,12 +23881,12 @@
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>frr-mgmt-framework</code>: ルーティングポリシ管理（<code>DEVICE_METADATA.frr_mgmt_framework_config = true</code> 環境）</li>
-<li>一部 sonic-mgmt-common transformer がここから FRR vtysh コマンドへ変換</li>
+<li>一部 <a href="../../glossary/#term-sonic-mgmt">sonic-mgmt</a>-common transformer がここから <a href="../../glossary/#term-frr">FRR</a> vtysh コマンドへ変換</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PREFIX_LIST</code> / <code>PREFIX_NOSEQ_LIST</code>、<a href="../community-set/"><code>COMMUNITY_SET</code></a>、<a href="../as-path-set/"><code>AS_PATH_SET</code></a>、<code>ROUTE_MAP</code></li>
-<li>関連 YANG: <code>sonic-routing-policy-sets</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PREFIX_LIST</code> / <code>PREFIX_NOSEQ_LIST</code>、<a href="../community-set/"><code>COMMUNITY_SET</code></a>、<a href="../as-path-set/"><code>AS_PATH_SET</code></a>、<code>ROUTE_MAP</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-routing-policy-sets</code></li>
 <li>関連 CLI: なし（<code>config_db.json</code> 投入。FRR 側の <code>ip prefix-list</code> 等に最終的に変換される）</li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23914,6 +23914,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip prefix-list&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f7bde22b7495 -->
 
 <div class="footnote">
 <hr />

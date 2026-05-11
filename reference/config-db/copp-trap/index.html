@@ -23824,7 +23824,7 @@
 
 <h1 id="copp_trap">COPP_TRAP テーブル<a class="headerlink" href="#copp_trap" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CoPP の trap エントリを定義し、SAI hostif trap ID 群を <code>COPP_GROUP</code> に束ねる。各 trap は <code>trap_ids</code> フィールドにカンマ区切り識別子 (<code>bgp</code>、<code>lldp</code>、<code>arp_req</code> など) を列挙し、<code>trap_group</code> で <code>COPP_GROUP</code> に紐付ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>coppmgr</code> が両テーブルを結合し APPL_DB の <code>COPP_TABLE</code> に書く。</p>
+<p><a href="../../glossary/#term-copp">CoPP</a> の trap エントリを定義し、<a href="../../glossary/#term-sai">SAI</a> hostif trap ID 群を <code>COPP_GROUP</code> に束ねる。各 trap は <code>trap_ids</code> フィールドにカンマ区切り識別子 (<code>bgp</code>、<code>lldp</code>、<code>arp_req</code> など) を列挙し、<code>trap_group</code> で <code>COPP_GROUP</code> に紐付ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>coppmgr</code> が両テーブルを結合し <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>COPP_TABLE</code> に書く。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23883,19 +23883,19 @@
 </table>
 <h2 id="_4">動作上の注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>always_enabled = true</code> のエントリ (例: BGP / LLDP のシステム必須 trap) はユーザの <code>config feature state</code> 操作と独立にインストールされる</li>
+<li><code>always_enabled = true</code> のエントリ (例: <a href="../../glossary/#term-bgp">BGP</a> / <a href="../../glossary/#term-lldp">LLDP</a> のシステム必須 trap) はユーザの <code>config feature state</code> 操作と独立にインストールされる</li>
 <li>既定の <code>COPP_TRAP</code> 群は <code>dockers/docker-orchagent/copp_cfg.j2</code> および <code>files/image_config/copp/copp_cfg.j2</code> 由来でビルド時に生成される</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>coppmgr</code>: CONFIG_DB → APPL_DB <code>COPP_TABLE</code></li>
+<li><code>coppmgr</code>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> → APPL_DB <code>COPP_TABLE</code></li>
 <li><code>orchagent</code> <code>CoppOrch</code>: SAI HOSTIF_TRAP オブジェクト生成</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>COPP_GROUP</code>、<code>FEATURE</code></li>
 <li>関連 CLI: <code>config copp</code>、<code>show copp</code></li>
-<li>関連 YANG: <code>sonic-copp</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-copp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23932,6 +23932,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>copp<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: b7c287e329de -->
 
 <div class="footnote">
 <hr />

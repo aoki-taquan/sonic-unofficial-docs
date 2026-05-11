@@ -23740,8 +23740,8 @@
 </div>
 <h1 id="warm-reboot-lacp-retry-count">Warm-reboot 中の LACP retry count 拡張<a class="headerlink" href="#warm-reboot-lacp-retry-count" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>LACP の long rate は 30 秒間隔、3 回連続未受信で LAG Down → 実効タイムアウト <strong>90 秒</strong>。SONiC の warm-reboot はコントロールプレーン断が最大 ~90 秒で、わずかな揺らぎで LAG が落ちる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は LACP を <strong>SONiC 独自に拡張</strong> し、retry count を一時的に上げる:</p>
+<p><a href="../../reference/glossary/#term-lacp">LACP</a> の long rate は 30 秒間隔、3 回連続未受信で <a href="../../reference/glossary/#term-lag">LAG</a> Down → 実効タイムアウト <strong>90 秒</strong>。SONiC の warm-reboot はコントロールプレーン断が最大 ~90 秒で、わずかな揺らぎで LAG が落ちる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は LACP を <strong>SONiC 独自に拡張</strong> し、retry count を一時的に上げる:</p>
 <ul>
 <li>LACP version を <strong><code>0xf1</code></strong> に上げ、新規 TLV <code>Actor Retry Count (0x80)</code> / <code>Partner Retry Count (0x81)</code> を追加</li>
 <li>warm-reboot 直前に retry を 5 に上げて peer に通知、復帰後に <code>0x01</code> PDU で 3 に戻す</li>
@@ -23807,7 +23807,7 @@
     end</code></pre>
 <h3 id="feature-test-2">Feature test の 2 段階<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#feature-test-2" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>LLDP</strong>: peer の system description に "SONiC" が含まれるか</li>
+<li><strong><a href="../../reference/glossary/#term-lldp">LLDP</a></strong>: peer の system description に "SONiC" が含まれるか</li>
 <li><strong>0xf1 ping</strong>: Python スクリプトで <code>0xf1</code> PDU を投げ、有効な <code>0xf1</code> 応答を確認</li>
 </ol>
 <p>非対応 peer に <code>0xf1</code> を送ると LAG が落ちうるため、事前テストが必須。</p>
@@ -23839,7 +23839,7 @@
 <li>retry は <code>3〜10</code>。それ以上不可</li>
 <li><strong>設定は永続化されない</strong>（再起動で 3 に戻る）</li>
 <li>IEEE 標準準拠機器との相互運用は想定外</li>
-<li>SAI / ASIC 側変更は不要<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（teamd / libteam パッチのみ）</li>
+<li><a href="../../reference/glossary/#term-sai">SAI</a> / ASIC 側変更は不要<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（<a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / libteam パッチのみ）</li>
 </ul>
 <h2 id="_3">干渉する機能<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23867,6 +23867,8 @@
 <li><code>sonic-net/sonic-buildimage</code> #13453 (teamd / libteam)</li>
 <li><code>sonic-net/sonic-mgmt</code> #8152 (テスト)</li>
 </ul>
+<!-- glossary-links-injected: 25d6debf2bd2 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23528,11 +23528,11 @@
 
 
 <h1 id="gnmi-gnoi-openconfig-yang">gNMI / gNOI / OpenConfig / YANG<a class="headerlink" href="#gnmi-gnoi-openconfig-yang" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC の「モデル駆動管理」を、リクエストが入る入口から ConfigDB に到達するまでの順で読み直すための入口である。既存ページは HLD 単位で書かれており、Translib、Transformer、gNMI server、gNOI service が別の文書に分かれている。運用者・開発者が最初に知りたい境界は、どのプロトコル/モデルが何を直接いじっているか、という一点に集約される。</p>
+<p>この章は、SONiC の「モデル駆動管理」を、リクエストが入る入口から ConfigDB に到達するまでの順で読み直すための入口である。既存ページは <a href="../../reference/glossary/#term-hld">HLD</a> 単位で書かれており、Translib、Transformer、<a href="../../reference/glossary/#term-gnmi">gNMI</a> server、<a href="../../reference/glossary/#term-gnoi">gNOI</a> service が別の文書に分かれている。運用者・開発者が最初に知りたい境界は、どのプロトコル/モデルが何を直接いじっているか、という一点に集約される。</p>
 <p>主な問いは次の 4 つ。</p>
 <ul>
-<li>REST / gNMI / Translib / Transformer はどの層で CONFIG_DB に到達するのか。</li>
-<li>OpenConfig YANG と SONiC native YANG はいつ使い分けるのか。</li>
+<li>REST / gNMI / Translib / Transformer はどの層で <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に到達するのか。</li>
+<li>OpenConfig <a href="../../reference/glossary/#term-yang">YANG</a> と SONiC native YANG はいつ使い分けるのか。</li>
 <li>gNOI System / OS / File / Healthz は SONiC のどの service を呼んでいるのか。</li>
 <li>gNSI、master arbitration、save-on-set、dial-out subscription は運用上どこで効くのか。</li>
 </ul>
@@ -23540,11 +23540,11 @@
 <ol>
 <li><a href="concept/">概要</a>: Management Framework の全体像、gNMI / REST / CLI の位置付け、OpenConfig と SONiC YANG の使い分けを整理する。</li>
 <li><a href="architecture/">アーキテクチャ</a>: gNMI server から Translib、Transformer、YANG validation、CONFIG_DB までの request flow を mermaid で追う。</li>
-<li><a href="setup/">設定</a>: gNMI Get / Set / Subscribe、OpenConfig interface / VLAN / PortChannel / BGP の典型例。</li>
+<li><a href="setup/">設定</a>: gNMI Get / Set / Subscribe、OpenConfig interface / <a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> / <a href="../../reference/glossary/#term-bgp">BGP</a> の典型例。</li>
 <li><a href="operations/">運用</a>: master arbitration、save-on-set、dial-out telemetry、subscription の競合制御と永続化。</li>
 <li><a href="gnoi-gnsi/">gNOI / gNSI</a>: System、OS、File、Factory Reset、Healthz、gNSI の API と SONiC service の対応表。</li>
 <li><a href="yang-reference/">YANG リファレンス</a>: 機能章別の YANG モジュール参照表。</li>
-<li><a href="internals/">内部実装</a>: gNMI server / Translib / Transformer / sonic-mgmt-common の責務分担と、YANG → ABNF/CONFIG_DB 変換を実装側から見る。</li>
+<li><a href="internals/">内部実装</a>: gNMI server / Translib / Transformer / <a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common の責務分担と、YANG → ABNF/CONFIG_DB 変換を実装側から見る。</li>
 <li><a href="advanced/">発展トピック</a>: dial-out telemetry、master arbitration、gNSI、save-on-set、他章との境界。</li>
 </ol>
 <h2 id="_2">統合した既存ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23565,6 +23565,7 @@
 <li><a href="../15-security-aaa/">Security / AAA / FIPS / Hardening</a></li>
 <li><a href="../22-reference-index/">リファレンス横断索引</a></li>
 </ul>
+<!-- glossary-links-injected: fe633285d204 -->
 
 
 

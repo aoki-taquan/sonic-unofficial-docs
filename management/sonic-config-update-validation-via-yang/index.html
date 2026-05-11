@@ -23918,8 +23918,8 @@
 </div>
 <h1 id="yang-configdb-gcu-configdbconnector">YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）<a class="headerlink" href="#yang-configdb-gcu-configdbconnector" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC では従来、<code>config &lt;feature&gt;</code> 系 CLI が ConfigDB に書き込む前のフィールド検証を <strong>Python のハードコード（ad-hoc）と YANG モデルの両方</strong> で重複定義していた。同じ制約を 2 箇所で書くと乖離が起きやすく、保守コストが高い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本プロジェクトはその二重管理を解消し、<strong>既存の YANG モデルを単一の Source of Truth</strong> として ConfigDB 更新時に再利用する。具体的には Generic Config Updater (GCU) を介した JSON patch 検証を <code>ConfigDBConnector.set_entry()</code> のデコレータとして注入する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC では従来、<code>config &lt;feature&gt;</code> 系 CLI が ConfigDB に書き込む前のフィールド検証を <strong>Python のハードコード（ad-hoc）と <a href="../../reference/glossary/#term-yang">YANG</a> モデルの両方</strong> で重複定義していた。同じ制約を 2 箇所で書くと乖離が起きやすく、保守コストが高い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本プロジェクトはその二重管理を解消し、<strong>既存の YANG モデルを単一の Source of Truth</strong> として ConfigDB 更新時に再利用する。具体的には Generic Config Updater (<a href="../../reference/glossary/#term-gcu">GCU</a>) を介した JSON patch 検証を <code>ConfigDBConnector.set_entry()</code> のデコレータとして注入する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="2-vs">既存の 2 ステップ vs 新方式<a class="headerlink" href="#2-vs" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23947,13 +23947,13 @@
 </ul>
 <h3 id="phase-1">スコープ（Phase 1）<a class="headerlink" href="#phase-1" title="Permanent link">&para;</a></h3>
 <h4 id="pythonsonic-utilitiesconfig">Python（<code>sonic-utilities/config/</code>）<a class="headerlink" href="#pythonsonic-utilitiesconfig" title="Permanent link">&para;</a></h4>
-<p><code>config &lt;feature&gt;</code> 系 CLI のうち、HLD で列挙されているもの<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>config &lt;feature&gt;</code> 系 CLI のうち、<a href="../../reference/glossary/#term-hld">HLD</a> で列挙されているもの<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <blockquote>
-<p>AAA / ACL / BGP / Console / DHCP Relay / Drop Counter / Dynamic Buffer Management / ECN / Feature / Interface / Interface Naming Mode / Interface Vrf Binding / IPv6 Link Local / Kubernetes / Linux Kernel Dump / Loopback Interfaces / VRF / Management VRF / Mirroring / Muxcable / NAT / NTP / NVGRE / PBH / Platform Component Firmware / PortChannel / QoS / sFlow / SNMP / Subinterfaces / Syslog / VLAN / Warm Restart / Watermark / ZTP</p>
+<p><a href="../../reference/glossary/#term-aaa">AAA</a> / <a href="../../reference/glossary/#term-acl">ACL</a> / <a href="../../reference/glossary/#term-bgp">BGP</a> / Console / <a href="../../reference/glossary/#term-dhcp-relay">DHCP Relay</a> / Drop Counter / Dynamic Buffer Management / ECN / Feature / Interface / Interface Naming Mode / Interface Vrf Binding / IPv6 Link Local / Kubernetes / Linux Kernel Dump / Loopback Interfaces / <a href="../../reference/glossary/#term-vrf">VRF</a> / Management VRF / Mirroring / Muxcable / <a href="../../reference/glossary/#term-nat">NAT</a> / NTP / NVGRE / PBH / Platform Component Firmware / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> / <a href="../../reference/glossary/#term-qos">QoS</a> / sFlow / <a href="../../reference/glossary/#term-snmp">SNMP</a> / Subinterfaces / Syslog / <a href="../../reference/glossary/#term-vlan">VLAN</a> / Warm Restart / Watermark / <a href="../../reference/glossary/#term-ztp">ZTP</a></p>
 </blockquote>
 <p>加えて ACL rules（incremental update / delete）、<code>pfc</code>、<code>crm</code>、<code>mclag</code>、<code>counterpoll</code>、および以下のスクリプト: <code>configlet</code> / <code>db_migrator</code> / <code>dropconfig</code> / <code>mellanox_buffer_migrator</code> / <code>neighbor_advertisor</code> / <code>null_route_helper</code> / <code>hostcfgd</code>。</p>
 <h4 id="c">C++<a class="headerlink" href="#c" title="Permanent link">&para;</a></h4>
-<p><code>buffermgrd</code> のみ。Python から呼ぶ手段として HLD は 3 案を挙げ、<strong>D-Bus GCU API</strong> を本プロジェクトの推奨手段としている（gNMI プロジェクトが既に採用中）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>buffermgrd</code> のみ。Python から呼ぶ手段として HLD は 3 案を挙げ、<strong>D-Bus GCU API</strong> を本プロジェクトの推奨手段としている（<a href="../../reference/glossary/#term-gnmi">gNMI</a> プロジェクトが既に採用中）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="yang">不足 YANG への対応<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>ad-hoc 検証で行われていたが YANG に未反映の制約は、<strong>YANG infra でカバー可能なものは GitHub issue を立てて YANG を埋めていく</strong>。YANG 側で表現できないチェックのみ ad-hoc 検証を残す<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>移行期間中は ad-hoc を残し、フラグで切替可能とする。安定後に非性能要件箇所から ad-hoc を削除する設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -23983,7 +23983,7 @@
 <p>CLI 用途では許容範囲だが、warm/fast reboot のような <strong>性能要件のあるパス</strong> は ad-hoc 検証を維持する方針が明記されている<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">検証スキップ機構<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>GCU 検証バグでフィールドが不当にブロックされて運用停止に追い込まれる事故を避けるため、無効化フラグが用意される<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>CONFIG_DB:</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;DEVICE_METADATA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;localhost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;yang_config_validation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;disable&quot;</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">}</span>
@@ -24079,6 +24079,8 @@ reasoning: 緊急時の検証バイパスフラグの根拠。
 <li>バイパスが効かない: <code>DEVICE_METADATA.localhost.yang_config_validation</code> の値を直接 redis で確認。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: a0345c62ade3 -->
+
 <div class="footnote">
 <hr />
 <ol>

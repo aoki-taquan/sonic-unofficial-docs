@@ -23640,7 +23640,7 @@
 <li>import: <code>ietf-inet-types</code>, <code>sonic-types</code></li>
 <li>top container: <code>sonic-flex_counter</code></li>
 </ul>
-<p><code>syncd</code> の Flex Counter Manager が ASIC SAI カウンタをポーリングする際の有効/無効・ポーリング間隔・delay 起動を制御する YANG モジュール<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。カウンタ種別ごとに 1 つのコンテナを持ち、全コンテナで共通の <code>FLEX_COUNTER_STATUS</code> / <code>FLEX_COUNTER_DELAY_STATUS</code> / <code>POLL_INTERVAL</code> パターン（一部は <code>POLL_INTERVAL</code> を持たない）が繰り返される。加えてルート単位フローカウンタ用の <code>FLOW_COUNTER_ROUTE_PATTERN</code> を別コンテナで定義する。</p>
+<p><code>syncd</code> の Flex Counter Manager が ASIC <a href="../../glossary/#term-sai">SAI</a> カウンタをポーリングする際の有効/無効・ポーリング間隔・delay 起動を制御する <a href="../../glossary/#term-yang">YANG</a> モジュール<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。カウンタ種別ごとに 1 つのコンテナを持ち、全コンテナで共通の <code>FLEX_COUNTER_STATUS</code> / <code>FLEX_COUNTER_DELAY_STATUS</code> / <code>POLL_INTERVAL</code> パターン（一部は <code>POLL_INTERVAL</code> を持たない）が繰り返される。加えてルート単位フローカウンタ用の <code>FLOW_COUNTER_ROUTE_PATTERN</code> を別コンテナで定義する。</p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23695,7 +23695,7 @@
 </tr>
 <tr>
 <td><code>ENI</code></td>
-<td>DASH ENI 統計</td>
+<td><a href="../../glossary/#term-dash">DASH</a> <a href="../../glossary/#term-eni">ENI</a> 統計</td>
 <td>○</td>
 </tr>
 <tr>
@@ -23710,7 +23710,7 @@
 </tr>
 <tr>
 <td><code>PFCWD</code></td>
-<td>PFC Watchdog</td>
+<td><a href="../../glossary/#term-pfc-watchdog">PFC Watchdog</a></td>
 <td>○</td>
 </tr>
 <tr>
@@ -23760,12 +23760,12 @@
 </tr>
 <tr>
 <td><code>RIF_RATES</code></td>
-<td>RIF レート計算</td>
+<td><a href="../../glossary/#term-rif">RIF</a> レート計算</td>
 <td>○</td>
 </tr>
 <tr>
 <td><code>ACL</code></td>
-<td>ACL 統計</td>
+<td><a href="../../glossary/#term-acl">ACL</a> 統計</td>
 <td>×</td>
 </tr>
 <tr>
@@ -23785,7 +23785,7 @@
 </tr>
 <tr>
 <td><code>WRED_ECN_QUEUE</code></td>
-<td>WRED/ECN キュー統計</td>
+<td><a href="../../glossary/#term-wred">WRED</a>/ECN キュー統計</td>
 <td>○</td>
 </tr>
 <tr>
@@ -23795,7 +23795,7 @@
 </tr>
 <tr>
 <td><code>SRV6</code></td>
-<td>SRv6 統計</td>
+<td><a href="../../glossary/#term-srv6">SRv6</a> 統計</td>
 <td>○</td>
 </tr>
 <tr>
@@ -23865,7 +23865,7 @@
 </tbody>
 </table>
 <h2 id="flow_counter_route_pattern"><code>FLOW_COUNTER_ROUTE_PATTERN</code><a class="headerlink" href="#flow_counter_route_pattern" title="Permanent link">&para;</a></h2>
-<p>ルート単位のフローカウンタを動的に紐付けるためのプレフィックスパターン。デフォルト VRF 用 <code>FLOW_COUNTER_ROUTE_PATTERN_LIST</code> と VRF/VNET スコープ用 <code>FLOW_COUNTER_ROUTE_PATTERN_VRF_LIST</code> の 2 リストを持つ。<code>vrf_name</code> は leafref ではなく文字列（VNET 名も受け入れる、orchagent が後で解決する）。</p>
+<p>ルート単位のフローカウンタを動的に紐付けるためのプレフィックスパターン。デフォルト <a href="../../glossary/#term-vrf">VRF</a> 用 <code>FLOW_COUNTER_ROUTE_PATTERN_LIST</code> と VRF/<a href="../../glossary/#term-vnet">VNET</a> スコープ用 <code>FLOW_COUNTER_ROUTE_PATTERN_VRF_LIST</code> の 2 リストを持つ。<code>vrf_name</code> は leafref ではなく文字列（VNET 名も受け入れる、<a href="../../glossary/#term-orchagent">orchagent</a> が後で解決する）。</p>
 <table>
 <thead>
 <tr>
@@ -23906,7 +23906,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>FLEX_COUNTER_TABLE|&lt;GROUP&gt;</code>, <code>FLOW_COUNTER_ROUTE_PATTERN</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>FLEX_COUNTER_TABLE|&lt;GROUP&gt;</code>, <code>FLOW_COUNTER_ROUTE_PATTERN</code></li>
 <li>CLI: <code>counterpoll &lt;group&gt; {enable|disable|interval &lt;ms&gt;}</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23926,7 +23926,7 @@
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>POLL_INTERVAL</code> を極端に小さく (&lt; 1000ms) すると syncd CPU が張り付き、orchagent の他処理が遅延する。</li>
+<li><code>POLL_INTERVAL</code> を極端に小さく (&lt; 1000ms) すると <a href="../../glossary/#term-syncd">syncd</a> CPU が張り付き、orchagent の他処理が遅延する。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FLEX_COUNTER_TABLE|*&#39;</span>
@@ -23935,6 +23935,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: d2ce881d0d90 -->
+
 <div class="footnote">
 <hr />
 <ol>

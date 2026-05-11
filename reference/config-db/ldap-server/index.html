@@ -23824,7 +23824,7 @@
 
 <h1 id="ldap_server">LDAP_SERVER テーブル<a class="headerlink" href="#ldap_server" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>LDAP 認証サーバの一覧と global LDAP クライアント設定。<code>hostcfgd</code> が CONFIG_DB を購読し、<code>/etc/nslcd.conf</code> を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。最大 8 サーバまで登録可能。</p>
+<p>LDAP 認証サーバの一覧と global LDAP クライアント設定。<code>hostcfgd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<code>/etc/nslcd.conf</code> を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。最大 8 サーバまで登録可能。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23924,7 +23924,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>AAA</code> (login source 順序), <code>TACPLUS_SERVER</code>, <code>RADIUS_SERVER</code></li>
 <li>関連 CLI: <code>config aaa authentication login</code>、<code>config ldap</code></li>
-<li>関連 YANG: <code>sonic-system-ldap</code>、<code>sonic-system-aaa</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-system-ldap</code>、<code>sonic-system-aaa</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23963,6 +23963,8 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/nslcd.conf
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->
 
 <div class="footnote">
 <hr />

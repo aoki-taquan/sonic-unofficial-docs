@@ -23824,7 +23824,7 @@
 
 <h1 id="peer_switch">PEER_SWITCH テーブル<a class="headerlink" href="#peer_switch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC Dual-ToR (Active-Standby) 構成における peer ToR の識別情報を保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>TUNNEL_LIST.src_ip</code> が <code>PEER_SWITCH_LIST.address_ipv4</code> への leafref として参照する。エントリは Dual-ToR 構成上、<strong>最大 1 つ</strong> (YANG <code>max-elements 1</code>)。</p>
+<p>SONiC Dual-ToR (Active-Standby) 構成における peer ToR の識別情報を保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>TUNNEL_LIST.src_ip</code> が <code>PEER_SWITCH_LIST.address_ipv4</code> への leafref として参照する。エントリは Dual-ToR 構成上、<strong>最大 1 つ</strong> (<a href="../../glossary/#term-yang">YANG</a> <code>max-elements 1</code>)。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23872,11 +23872,11 @@
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>tunnelmgrd</code> / <code>mux-cable</code> 系デーモン: peer 情報を読み出して MUX_CABLE / TUNNEL の整合に利用</li>
-<li>単独で SAI へ反映するわけではない（メタデータ用テーブル）</li>
+<li>単独で <a href="../../glossary/#term-sai">SAI</a> へ反映するわけではない（メタデータ用テーブル）</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <a href="../tunnel/"><code>TUNNEL</code></a>、<code>MUX_CABLE</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../tunnel/"><code>TUNNEL</code></a>、<code>MUX_CABLE</code></li>
 <li>関連 YANG: <code>sonic-peer-switch</code>、<code>sonic-tunnel</code></li>
 <li>関連 CLI: なし（<code>config_db.json</code> で投入）</li>
 </ul>
@@ -23905,13 +23905,15 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Dual-ToR で peer hostname の表記揺れがあると linkmgrd が peer を発見できない。</li>
+<li>Dual-ToR で peer hostname の表記揺れがあると <a href="../../glossary/#term-linkmgrd">linkmgrd</a> が peer を発見できない。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PEER_SWITCH|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>mux<span class="w"> </span>status
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9f1ccfb50fcc -->
 
 <div class="footnote">
 <hr />

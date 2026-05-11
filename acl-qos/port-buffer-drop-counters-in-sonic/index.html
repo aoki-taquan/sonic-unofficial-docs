@@ -23727,11 +23727,11 @@
 <p><code>sonic-swss/orchagent/portsorch.h</code> L31 で <code>PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP="PORT_BUFFER_DROP_STAT"</code>、<code>portsorch.cpp</code> L88 で <code>PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS=60000</code>、<code>sonic-utilities/counterpoll/main.py</code> L146-178 で <code>click.IntRange(30000, 300000)</code> バリデーション (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="port_buffer_drop-fc-group">ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）<a class="headerlink" href="#port_buffer_drop-fc-group" title="Permanent link">&para;</a></h1>
-<p>ポート単位の SAI バッファドロップカウンタは「<strong>なぜ専用 FC グループにしたか</strong>」「<strong>何を取るのか</strong>」「<strong>CLI でどう操作するか</strong>」の 3 点が分かれば全体像はつかめる。順に答える。</p>
+<p>ポート単位の <a href="../../reference/glossary/#term-sai">SAI</a> バッファドロップカウンタは「<strong>なぜ専用 FC グループにしたか</strong>」「<strong>何を取るのか</strong>」「<strong>CLI でどう操作するか</strong>」の 3 点が分かれば全体像はつかめる。順に答える。</p>
 <h2 id="fc">なぜ専用 FC グループに分けたのか<a class="headerlink" href="#fc" title="Permanent link">&para;</a></h2>
 <p>過去に普通の <code>PORT_STAT</code> と同じ FC グループに混ぜて 1 秒間隔でポーリングしたところ、性能影響と衝突を起こし master から外された経緯がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <blockquote>
-<p>"These counters are causing widespread issues in the master branch, so we're backing them out for now to be revisited in a later PR. They will likely need to be polled separately from the other counters, and on a longer interval, to avoid performance issues and conflicts." — sonic-swss PR 1308</p>
+<p>"These counters are causing widespread issues in the master branch, so we're backing them out for now to be revisited in a later PR. They will likely need to be polled separately from the other counters, and on a longer interval, to avoid performance issues and conflicts." — <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> PR 1308</p>
 </blockquote>
 <p>そこで <strong>専用 FC グループ <code>PORT_BUFFER_DROP</code> を新設し、既定 60 秒</strong> というゆったりした間隔で取る設計に切り替えた。CLI でも短すぎる interval を弾くバリデーションを入れている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_1">何を取るのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -23759,7 +23759,7 @@
     FC1 --&gt; CDB[(COUNTERS_DB)]
     SAI --&gt; FC2[PORT_BUFFER_DROP FC group&lt;br/&gt;60000ms]
     FC2 --&gt; CDB</code></pre>
-<p>既存 <code>PORT_STAT</code> から本 2 カウンタを切り出して別 FC グループにするだけ。保管先は同じ COUNTERS_DB。</p>
+<p>既存 <code>PORT_STAT</code> から本 2 カウンタを切り出して別 FC グループにするだけ。保管先は同じ <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a>。</p>
 <h2 id="cli">CLI でどう操作するか<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <p><code>counterpoll show</code> の出力に <code>PORT_BUFFER_DROP</code> 行が追加される（既定 60000ms / enable）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span><span class="nb">enable</span>
@@ -23840,11 +23840,11 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 <li><strong><code>PORT_STAT</code> FC group</strong>: 元々まとまっていた drop 系が分離。<code>PORT_STAT</code> を 1s のまま運用しても drop 系は 60s 側で安全</li>
 <li><strong><code>show interfaces counters</code></strong>: <code>COUNTERS_DB</code> 経由で読むため、disable 時は値が固まる</li>
 <li><strong>マイクロバースト解析</strong>: サブ秒精度が要るなら watermark / テレメトリ系を併用</li>
-<li><strong>WRED 統計</strong>: WRED 由来の早期ドロップを区別したいなら WRED 統計側を使う</li>
+<li><strong><a href="../../reference/glossary/#term-wred">WRED</a> 統計</strong>: WRED 由来の早期ドロップを区別したいなら WRED 統計側を使う</li>
 </ul>
 <h2 id="_4">トラブルシューティング<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>PORT_BUFFER_DROP</code> 行が出ない: sonic-utilities が未取り込み。<code>FLEX_COUNTER_TABLE|PORT_BUFFER_DROP</code> を redis で確認</li>
+<li><code>PORT_BUFFER_DROP</code> 行が出ない: <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> が未取り込み。<code>FLEX_COUNTER_TABLE|PORT_BUFFER_DROP</code> を redis で確認</li>
 <li><code>interval 1000</code> で error: 仕様。30000〜300000 を指定</li>
 <li>drop count が 0 のまま: <code>counterpoll show</code> で enable 状態か確認</li>
 <li>値が桁違いに少ない: interval が長いため瞬間ドロップは積み上がりにくい。観測時の dt を考慮</li>
@@ -23865,6 +23865,8 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f5fa3ea70fda -->
 
 <div class="footnote">
 <hr />

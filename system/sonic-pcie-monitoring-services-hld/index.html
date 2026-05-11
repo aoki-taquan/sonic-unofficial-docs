@@ -23677,7 +23677,7 @@
 </div>
 <h1 id="pcie-monitoring-servicespcied-pcieinfo-lnksta-aer">PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）<a class="headerlink" href="#pcie-monitoring-servicespcied-pcieinfo-lnksta-aer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要なのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>スイッチの ASIC / NPU / 周辺デバイスは <strong>PCIe バス越しに CPU と接続</strong> されている。PCIe が enumerate されない / リンク速度が劣化している / AER で訂正不能エラーが出ている、といった異常は <strong>データプレーン全体の死に直結</strong> する。<code>pcied</code> はこれらを pmon 系 daemon として監視し STATE_DB へ反映する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スイッチの ASIC / <a href="../../reference/glossary/#term-npu">NPU</a> / 周辺デバイスは <strong>PCIe バス越しに CPU と接続</strong> されている。PCIe が enumerate されない / リンク速度が劣化している / AER で訂正不能エラーが出ている、といった異常は <strong>データプレーン全体の死に直結</strong> する。<code>pcied</code> はこれらを pmon 系 daemon として監視し <a href="../../reference/glossary/#term-state_db">STATE_DB</a> へ反映する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ねらい:</p>
 <ul>
 <li>起動時に <strong>存在すべきデバイスがすべて見えているか</strong> を platform manifest と照合</li>
@@ -23767,6 +23767,8 @@
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 42adc551fd3f -->
 
 <div class="footnote">
 <hr />

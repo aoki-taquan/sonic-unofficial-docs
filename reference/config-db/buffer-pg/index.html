@@ -23802,7 +23802,7 @@
 
 <h1 id="buffer_pg">BUFFER_PG テーブル<a class="headerlink" href="#buffer_pg" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。lossless トラフィックの xon/xoff 閾値、PFC 動作の根本となる設定。<code>buffermgrd</code> が APPL_DB に転送、<code>orchagent</code> <code>BufferOrch</code> が SAI ingress PG buffer profile を設定する。</p>
+<p>ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。lossless トラフィックの xon/xoff 閾値、<a href="../../glossary/#term-pfc">PFC</a> 動作の根本となる設定。<code>buffermgrd</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> に転送、<code>orchagent</code> <code>BufferOrch</code> が <a href="../../glossary/#term-sai">SAI</a> ingress PG buffer profile を設定する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23867,9 +23867,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BUFFER_PROFILE</code>、<code>BUFFER_POOL</code>、<code>PORT</code>、<code>PFC_WD</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BUFFER_PROFILE</code>、<code>BUFFER_POOL</code>、<code>PORT</code>、<code>PFC_WD</code></li>
 <li>関連 CLI: なし（<code>config_db.json</code> でロード）</li>
-<li>関連 YANG: <code>sonic-buffer-pg</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-buffer-pg</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23903,6 +23903,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>buffer<span class="w"> </span>pg
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: faaeb5caf487 -->
 
 <div class="footnote">
 <hr />

@@ -23784,7 +23784,7 @@
 </div>
 <h1 id="bulk-countersai_bulk_object_get_stats-chunk-size">Bulk Counter（sai_bulk_object_get_stats / chunk size）<a class="headerlink" href="#bulk-countersai_bulk_object_get_stats-chunk-size" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SAI に追加された <strong>bulk stats API</strong>（<code>sai_bulk_object_get_stats</code> / <code>sai_bulk_object_clear_stats</code>、SAI PR #1352）を SONiC の Flex Counter framework が活用するための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。port / queue / pg / RIF 等の counter 取得が 1 オブジェクト 1 SAI call から <strong>bulk 1 call</strong> になり、polling 性能が改善する。Phase 1 は <strong>syncd 内部の改造のみ</strong>で、CLI / swss 側の変更なし。</p>
+<p><a href="../../reference/glossary/#term-sai">SAI</a> に追加された <strong>bulk stats API</strong>（<code>sai_bulk_object_get_stats</code> / <code>sai_bulk_object_clear_stats</code>、SAI PR #1352）を SONiC の Flex Counter framework が活用するための設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。port / queue / pg / <a href="../../reference/glossary/#term-rif">RIF</a> 等の counter 取得が 1 オブジェクト 1 SAI call から <strong>bulk 1 call</strong> になり、polling 性能が改善する。Phase 1 は <strong><a href="../../reference/glossary/#term-syncd">syncd</a> 内部の改造のみ</strong>で、CLI / swss 側の変更なし。</p>
 <p>v0.2（2024-12, Stephen Sun）で <strong>bulk chunk size の指定</strong>（ports を細分化して polling 周期を分散）と <strong>正確な polling 時刻の COUNTER_DB 添付</strong> が追加<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23832,7 +23832,7 @@
 <ul>
 <li>counter group 全体の chunk size 指定 + counter ID prefix ごとの chunk size 個別指定が可能</li>
 <li>例: 「<code>IF_OUT_QLEN</code> は全 port まとめて 1 bulk」「他 port stat は <strong>32 port ごと bulk</strong>」と分ける</li>
-<li>目的: PFC watchdog のような時間敏感な polling が、巨大 bulk と vendor SDK の critical section を取り合って遅延するのを防ぐ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>目的: <a href="../../reference/glossary/#term-pfc">PFC</a> watchdog のような時間敏感な polling が、巨大 bulk と vendor SDK の critical section を取り合って遅延するのを防ぐ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="timestampv02">正確な timestamp（v0.2）<a class="headerlink" href="#timestampv02" title="Permanent link">&para;</a></h3>
 <p>これまで Lua plugin（PFC WD 等）側で時刻を取っていたが、polling と Lua 実行の間に gap がある。<strong>sairedis 内で polling 直後に時刻取得し COUNTER_DB に push</strong> する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -23860,18 +23860,18 @@ reasoning: 採用判定ルールと fallback の根拠。
 <!-- evidence-rendered:end -->
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>CLI / CONFIG_DB の <strong>新規追加なし</strong>（Phase 1）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FLEX_COUNTER_TABLE 既存スキーマの <code>STATS_MODE</code> から bulk mode を導出するのみ。</p>
+<p>CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <strong>新規追加なし</strong>（Phase 1）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FLEX_COUNTER_TABLE 既存スキーマの <code>STATS_MODE</code> から bulk mode を導出するのみ。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>vendor SAI が bulk 未対応の object type は従来通り</li>
-<li>bulk chunk size 指定の文法は HLD 提案ベース、master 取り込み時に変わる可能性</li>
+<li>bulk chunk size 指定の文法は <a href="../../reference/glossary/#term-hld">HLD</a> 提案ベース、master 取り込み時に変わる可能性</li>
 <li>timestamp 添付は対応 counter group 限定（PFC WD など時間敏感なものから）</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>PFC Watchdog</strong>: 時間敏感、chunk 細分化と timestamp の主要動機</li>
+<li><strong><a href="../../reference/glossary/#term-pfc-watchdog">PFC Watchdog</a></strong>: 時間敏感、chunk 細分化と timestamp の主要動機</li>
 <li><strong>Trap Flow Counter / Route Flow Counter</strong>: bulk 対応で polling 周期短縮の恩恵</li>
-<li><strong>CRM</strong>: counter polling とは別系列だが、リソース監視の負荷分散と関連</li>
+<li><strong><a href="../../reference/glossary/#term-crm">CRM</a></strong>: counter polling とは別系列だが、リソース監視の負荷分散と関連</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23894,6 +23894,8 @@ reasoning: 採用判定ルールと fallback の根拠。
 - vendor 別 bulk capability の現状（Mellanox / Broadcom / Cisco）
 - fallback 経路の単体テスト存在確認
 -->
+
+<!-- glossary-links-injected: 38f2af204989 -->
 
 <div class="footnote">
 <hr />

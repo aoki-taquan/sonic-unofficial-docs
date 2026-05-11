@@ -23922,9 +23922,9 @@
 <ul>
 <li><strong><code>hsflowd</code></strong>: Host sFlow daemon（OSS）。実際に collector へ datagram を送る user-space プロセス</li>
 <li><strong><code>sflowmgrd</code></strong>: SONiC 側の管理 daemon。<code>CONFIG_DB</code> の <code>SFLOW</code> / <code>SFLOW_SESSION</code> / <code>SFLOW_COLLECTOR</code> を読んで <code>hsflowd</code> の設定ファイル / <code>STATE_DB</code> を更新</li>
-<li><strong>SAI sample-packet API</strong>: ASIC 側の sampling 設定。<code>SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE</code> を port に紐づけて per-port sampling-rate を駆動</li>
+<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> sample-packet API</strong>: ASIC 側の sampling 設定。<code>SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE</code> を port に紐づけて per-port sampling-rate を駆動</li>
 </ul>
-<p><code>SflowOrch</code> が sflowmgrd の指示を受けて syncd 経由で SAI に設定を流す。</p>
+<p><code>SflowOrch</code> が sflowmgrd の指示を受けて <a href="../../reference/glossary/#term-syncd">syncd</a> 経由で SAI に設定を流す。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     CFG[CONFIG_DB\nSFLOW / SFLOW_SESSION / SFLOW_COLLECTOR] --&gt; SMD[sflowmgrd]
@@ -23943,7 +23943,7 @@
 <li><code>agent_id</code> は collector が flow を識別するための論理 IP。明示しない場合は <code>Loopback0</code> 等から自動選択</li>
 </ul>
 <h2 id="sample_rate">sample_rate 既定値<a class="headerlink" href="#sample_rate" title="Permanent link">&para;</a></h2>
-<p>HLD と実装は揃って <code>(ifSpeed / 1e6)</code> を既定値とする（<code>SflowMgr::findSamplingRate()</code> は <code>oper_speed</code> 文字列を Mbps 単位でそのまま返す）:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> と実装は揃って <code>(ifSpeed / 1e6)</code> を既定値とする（<code>SflowMgr::findSamplingRate()</code> は <code>oper_speed</code> 文字列を Mbps 単位でそのまま返す）:</p>
 <ul>
 <li>1G   → 1000</li>
 <li>10G  → 10000</li>
@@ -24051,7 +24051,7 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>collector は <strong>2 件まで</strong>（HLD 制限）</li>
-<li>VRF 内 collector は <code>collector_vrf</code> 指定が必要（<code>default</code> / <code>mgmt</code> / 任意 VRF）</li>
+<li><a href="../../reference/glossary/#term-vrf">VRF</a> 内 collector は <code>collector_vrf</code> 指定が必要（<code>default</code> / <code>mgmt</code> / 任意 VRF）</li>
 <li>sampling は ingress 方向のみ（egress sampling は別 HLD で扱う場合あり）</li>
 <li>ASIC が sample-packet API をサポートしない platform では機能しない</li>
 </ul>
@@ -24060,7 +24060,7 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 <li><strong>port speed 変更</strong>: 自動 sample-rate 算出があるため、speed change 時に <code>sflowmgrd</code> が再計算する設計</li>
 <li><strong>VRF</strong>: collector 到達経路を VRF 指定する。<code>mgmt</code> VRF と data VRF を意識する必要あり</li>
 <li><strong>counter polling</strong>: <code>polling_interval</code> で counters を集める。0 で polling 無効</li>
-<li><strong>EverFlow / mirror</strong>: 別系統の packet capture。ACL action と SAI sampling は独立</li>
+<li><strong>EverFlow / mirror</strong>: 別系統の packet capture。<a href="../../reference/glossary/#term-acl">ACL</a> action と SAI sampling は独立</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24073,7 +24073,7 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 <h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>取り込み済み（一致）</strong>:</li>
-<li><code>sonic-swss/cfgmgr/sflowmgr.cpp:103-212, 280, 353</code> で <code>SflowMgr</code> が CONFIG_DB / STATE_DB を購読し、APP_DB に sample_rate を書く経路。</li>
+<li><code>sonic-swss/cfgmgr/sflowmgr.cpp:103-212, 280, 353</code> で <code>SflowMgr</code> が <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> を購読し、APP_DB に sample_rate を書く経路。</li>
 <li><code>sonic-swss/orchagent/sfloworch.cpp:120, 164, 227</code> で <code>SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE</code> を SAI に投入。</li>
 <li><code>sonic-buildimage/files/build_templates/sflow.service.j2</code>、<code>sonic-yang-models/yang-models/sonic-sflow.yang</code>、<code>sonic-utilities/config/main.py</code> の <code>config sflow</code> は実装済。</li>
 <li><strong>実装と HLD の不一致（既定 sample_rate）</strong>:</li>
@@ -24103,7 +24103,7 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/20327">sonic-buildimage #20327: Sflow configurations cannot be removed with SONiC CLI commands (open)</a> — CLI からの設定削除の不整合。HLD と現行 sflowmgrd 実装の運用面ギャップとして既知。</li>
-<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/16607">sonic-buildimage #16607: [sflow] Remove the ENABLE_SFLOW_DROPMON flag (merged)</a> — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/16607">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #16607: [sflow] Remove the ENABLE_SFLOW_DROPMON flag (merged)</a> — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
@@ -24121,6 +24121,8 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7c7826dedf86 -->
 
 <div class="footnote">
 <hr />

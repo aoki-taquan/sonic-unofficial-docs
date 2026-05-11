@@ -23986,8 +23986,8 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>仮想 lab / 開発環境の bring-up は、SONiC NOS そのものの設定ではなく「環境を組む → image を取る → topology を配線する → CONFIG_DB を流し込む」の前段に集中します。本ページでは代表的な 3 シナリオ (単一 SONiC-VS、containerlab マルチノード、DASH/DPU 評価) で、ファイル例 + コマンド列 + 確認手順を示し、よくある詰まりどころと対処をまとめます。</p>
-<p>実機運用時の CLI / CONFIG_DB / YANG の使い方は本章の他のページや機能章本文 (<a href="../../02-bgp/operations/">BGP の運用</a> など) と同一なので、bring-up 後はそちらに合流してください。</p>
+<p>仮想 lab / 開発環境の bring-up は、SONiC NOS そのものの設定ではなく「環境を組む → image を取る → topology を配線する → <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を流し込む」の前段に集中します。本ページでは代表的な 3 シナリオ (単一 SONiC-VS、containerlab マルチノード、<a href="../../../reference/glossary/#term-dash">DASH</a>/<a href="../../../reference/glossary/#term-dpu">DPU</a> 評価) で、ファイル例 + コマンド列 + 確認手順を示し、よくある詰まりどころと対処をまとめます。</p>
+<p>実機運用時の CLI / CONFIG_DB / <a href="../../../reference/glossary/#term-yang">YANG</a> の使い方は本章の他のページや機能章本文 (<a href="../../02-bgp/operations/">BGP の運用</a> など) と同一なので、bring-up 後はそちらに合流してください。</p>
 <h2 id="_2">どこから始めるか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24075,7 +24075,7 @@
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
 </span></code></pre></div>
 <h2 id="2-containerlab-sonic">シナリオ 2: containerlab で複数台 SONiC を配線<a class="headerlink" href="#2-containerlab-sonic" title="Permanent link">&para;</a></h2>
-<p>BGP / EVPN-VXLAN / MCLAG など複数台が必要な lab 構成です。containerlab 例:</p>
+<p><a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a>-<a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-mclag">MCLAG</a> など複数台が必要な lab 構成です。containerlab 例:</p>
 <h3 id="topologyyml">topology.yml<a class="headerlink" href="#topologyyml" title="Permanent link">&para;</a></h3>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sonic-evpn-fabric</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
@@ -24205,7 +24205,7 @@
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>show<span class="w"> </span>console
 </span></code></pre></div>
 <h2 id="sonic-vs">SONiC-VS 固有の差分<a class="headerlink" href="#sonic-vs" title="Permanent link">&para;</a></h2>
-<p>VS では SAI が仮想実装のため、以下は実機と振る舞いが違います:</p>
+<p>VS では <a href="../../../reference/glossary/#term-sai">SAI</a> が仮想実装のため、以下は実機と振る舞いが違います:</p>
 <table>
 <thead>
 <tr>
@@ -24231,12 +24231,12 @@
 <td>dummy 値 (show platform で固定)</td>
 </tr>
 <tr>
-<td>QoS / scheduling</td>
+<td><a href="../../../reference/glossary/#term-qos">QoS</a> / scheduling</td>
 <td>ASIC scheduler 実動作</td>
 <td>機能 enabled として通るが drop pattern は再現しない</td>
 </tr>
 <tr>
-<td>LAG hash</td>
+<td><a href="../../../reference/glossary/#term-lag">LAG</a> hash</td>
 <td>ASIC ハッシュ実装</td>
 <td>Linux bonding driver</td>
 </tr>
@@ -24275,7 +24275,7 @@
 </tr>
 <tr>
 <td><code>config load_minigraph</code> が失敗</td>
-<td>minigraph.xml と HwSku 不整合</td>
+<td><a href="../../../reference/glossary/#term-minigraph.xml">minigraph.xml</a> と <a href="../../../reference/glossary/#term-hwsku">HwSku</a> 不整合</td>
 <td><code>/usr/share/sonic/device/x86_64-kvm_x86_64-r0/Force10-S6000/</code> 配下の HwSku を確認、<code>sonic-cfggen -m -d</code> で minigraph パース確認</td>
 </tr>
 <tr>
@@ -24284,7 +24284,7 @@
 <td><code>make -j$(nproc) target/sonic-vs.img.gz 2&gt;&amp;1 \| tee build.log</code>、<code>rules/config</code> の include flag を確認</td>
 </tr>
 <tr>
-<td>DASH の ENI を投入したが ASIC_DB に object が出ない</td>
+<td>DASH の <a href="../../../reference/glossary/#term-eni">ENI</a> を投入したが <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に object が出ない</td>
 <td>DASH SAI 未実装 image、ENI key の MAC 表記揺れ</td>
 <td>DASH 対応 image (<code>docker-sonic-vs-dash</code>) を使う、MAC を大文字無区切り 12 桁に統一</td>
 </tr>
@@ -24301,7 +24301,7 @@
 </tbody>
 </table>
 <h2 id="test-plan-configuration">test plan に出てくる configuration<a class="headerlink" href="#test-plan-configuration" title="Permanent link">&para;</a></h2>
-<p>CI / test plan に出てくる configuration (VRF VS test、ACL ingress/egress test など) は、本章の他ページや機能章本文の CONFIG_DB スキーマに従います。test plan は「どの設定をどう投入し、どう検証するか」の合意であり、初期投入の手順書ではありません。読む順序は <strong>機能章 → test plan</strong> です。</p>
+<p>CI / test plan に出てくる configuration (<a href="../../../reference/glossary/#term-vrf">VRF</a> VS test、<a href="../../../reference/glossary/#term-acl">ACL</a> ingress/egress test など) は、本章の他ページや機能章本文の CONFIG_DB スキーマに従います。test plan は「どの設定をどう投入し、どう検証するか」の合意であり、初期投入の手順書ではありません。読む順序は <strong>機能章 → test plan</strong> です。</p>
 <p>代表的な参照:</p>
 <ul>
 <li><code>sonic-mgmt/tests/&lt;feature&gt;/test_*.py</code> の <code>setup_config</code> fixture</li>
@@ -24320,6 +24320,7 @@
 <li><a href="../concept/">Lab vs Developer の概要</a></li>
 <li><a href="../operations/">Lab vs Developer の運用</a></li>
 </ul>
+<!-- glossary-links-injected: 428094596659 -->
 
 
 

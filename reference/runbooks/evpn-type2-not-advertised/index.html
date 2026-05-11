@@ -23753,13 +23753,13 @@
 <ul>
 <li><code>show bgp l2vpn evpn</code> で local MAC が出ない</li>
 <li>対向 VTEP に Type-2 が届かない（受信側で <code>show bgp l2vpn evpn route type macip</code> が空）</li>
-<li>VLAN-to-VNI mapping は設定済みだが overlay 通信できない</li>
+<li><a href="../../glossary/#term-vlan">VLAN</a>-to-VNI mapping は設定済みだが overlay 通信できない</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong><code>advertise-all-vni</code> 未設定</strong>: FRR の <code>address-family l2vpn evpn</code> で <code>advertise-all-vni</code> がない</li>
+<li><strong><code>advertise-all-vni</code> 未設定</strong>: <a href="../../glossary/#term-frr">FRR</a> の <code>address-family l2vpn evpn</code> で <code>advertise-all-vni</code> がない</li>
 <li><strong>VLAN-VNI mapping 欠落</strong>: <code>VXLAN_TUNNEL_MAP</code> が未作成 / VNI 重複</li>
-<li><strong>FDB が学習されていない</strong>: 対象 MAC が <code>show mac</code> に出ない</li>
+<li><strong><a href="../../glossary/#term-fdb">FDB</a> が学習されていない</strong>: 対象 MAC が <code>show mac</code> に出ない</li>
 <li><strong>route-target import/export 不整合</strong></li>
 <li><strong><code>type-2 prefix</code> の filter / route-map で drop</strong></li>
 </ol>
@@ -23803,6 +23803,8 @@
 <li><a href="../../config-db/vxlan-tunnel/">../config-db/vxlan-tunnel.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: cd052884780b -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -23810,7 +23812,7 @@
 <p>sonic-net/sonic-frr @ master — bgp_evpn.c&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ master — vxlanorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ master — vxlanorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

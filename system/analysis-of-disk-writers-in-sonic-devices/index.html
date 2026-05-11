@@ -23781,7 +23781,7 @@
 </tr>
 <tr>
 <td><strong>vtysh</strong></td>
-<td>BGP <code>~/.history_frr</code> への history 連続書き</td>
+<td><a href="../../reference/glossary/#term-bgp">BGP</a> <code>~/.history_frr</code> への history 連続書き</td>
 <td style="text-align: right;">28%</td>
 </tr>
 <tr>
@@ -23966,7 +23966,7 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>bgpmon (sonic-bgpcfgd)</strong>: vtysh history 抑止の対象</li>
+<li><strong>bgpmon (sonic-<a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a>)</strong>: vtysh history 抑止の対象</li>
 <li><strong>swss <code>supervisor-proc-exit-listener</code></strong>: log path 変更</li>
 <li><strong>monit / logrotate</strong>: state file 配置</li>
 <li><strong>OverlayFS</strong>: kernel worker による xattr 書込み（OS image 設計の根幹）</li>
@@ -23981,6 +23981,8 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 - jbd2 無効化を採用しない方針の確認 (現行 master で journaling は有効維持か)
 - 計測再現性 (新しい SKU での確認、recent OS バージョンでの再測)
 -->
+
+<!-- glossary-links-injected: 76f50f4814f9 -->
 
 <div class="footnote">
 <hr />

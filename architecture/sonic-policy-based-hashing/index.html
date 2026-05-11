@@ -23818,11 +23818,11 @@
 </div>
 <h1 id="policy-based-hashingpbh-nvgre-vxlan-inner-5-tuple">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）<a class="headerlink" href="#policy-based-hashingpbh-nvgre-vxlan-inner-5-tuple" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>NVGRE / VxLAN のような encapsulated トラフィックでは、ECMP / LAG ハッシュが outer ヘッダだけを見ると <strong>flow が偏る</strong>。PBH は <strong>ACL でマッチする packet について fine-grained hash を上書きし、inner 5-tuple（IP proto, L4 src/dst port, IPv4/IPv6 src/dst）でハッシュさせる</strong> 機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Nazarii Hnydyn（2021）作。</p>
+<p>NVGRE / VxLAN のような encapsulated トラフィックでは、<a href="../../reference/glossary/#term-ecmp">ECMP</a> / <a href="../../reference/glossary/#term-lag">LAG</a> ハッシュが outer ヘッダだけを見ると <strong>flow が偏る</strong>。PBH は <strong><a href="../../reference/glossary/#term-acl">ACL</a> でマッチする packet について fine-grained hash を上書きし、inner 5-tuple（IP proto, L4 src/dst port, IPv4/IPv6 src/dst）でハッシュさせる</strong> 機能<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Nazarii Hnydyn（2021）作。</p>
 <p>スコープ:</p>
 <ul>
 <li>In: NVGRE / VxLAN inner 5-tuple ベースの PBH</li>
-<li>Out: PBH FG hash リソースの CRM 監視<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Out: PBH FG hash リソースの <a href="../../reference/glossary/#term-crm">CRM</a> 監視<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="components">Components<a class="headerlink" href="#components" title="Permanent link">&para;</a></h3>
@@ -23863,7 +23863,7 @@
     A -- field 値のみ更新 --&gt; SET[SAI set / del]</code></pre>
 <p>key（hash 構成）の変更は in-place できず、PBH rule を削除→再作成する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。field の値だけなら in-place（v0.3 で追加された PBH update flow）。</p>
 <h3 id="warm-fast-boot">Warm / Fast boot<a class="headerlink" href="#warm-fast-boot" title="Permanent link">&para;</a></h3>
-<p>PBH は CONFIG_DB に persist。warm/fast boot 越しに継続。SAI 側 hash オブジェクト OID は再生成される。</p>
+<p>PBH は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に persist。warm/fast boot 越しに継続。<a href="../../reference/glossary/#term-sai">SAI</a> 側 hash オブジェクト OID は再生成される。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/pbh/pbh-design.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23903,7 +23903,7 @@ reasoning: スコープと field-only 更新（v0.3）の根拠。
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ACL Orch / AclOrch</strong>: PBH rule は ACL rule に紐付くため AclOrch との連携が必須</li>
-<li><strong>Dynamic Port Breakout (DPB)</strong>: PBH_TABLE.interface_list に含まれる port が breakout で再生成されると PBH 再 bind が必要</li>
+<li><strong>Dynamic Port Breakout (<a href="../../reference/glossary/#term-dpb">DPB</a>)</strong>: PBH_TABLE.interface_list に含まれる port が breakout で再生成されると PBH 再 bind が必要</li>
 <li><strong>CRM</strong>: 現状監視外（追加検討）</li>
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -23929,6 +23929,8 @@ reasoning: スコープと field-only 更新（v0.3）の根拠。
 - v0.3 (2021-11) で追加された field set/del modification flow の取り込み確認
 - CRM の PBH FG hash 監視（out of scope）の補完ステータス確認
 -->
+
+<!-- glossary-links-injected: a95185444a35 -->
 
 <div class="footnote">
 <hr />

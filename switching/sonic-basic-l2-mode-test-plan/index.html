@@ -23667,13 +23667,13 @@
 </div>
 <h1 id="sonic-basic-l2-fdb-vlan-snmp">SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）<a class="headerlink" href="#sonic-basic-l2-fdb-vlan-snmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC を <strong>basic L2 switch</strong> として構成した場合の最小機能を T0 トポロジで検証する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。範囲は意図的に絞られており、L3 / BGP / ACL は対象外。L2 モードの構成手順は <a href="https://github.com/sonic-net/SONiC/wiki/L2-Switch-mode#3-generate-a-configuration-for-l2-switch-mode">SONiC wiki: L2-Switch-mode</a> に従う。</p>
+<p>SONiC を <strong>basic L2 switch</strong> として構成した場合の最小機能を T0 トポロジで検証する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。範囲は意図的に絞られており、L3 / <a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-acl">ACL</a> は対象外。L2 モードの構成手順は <a href="https://github.com/sonic-net/SONiC/wiki/L2-Switch-mode#3-generate-a-configuration-for-l2-switch-mode">SONiC wiki: L2-Switch-mode</a> に従う。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">設定生成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-cfggen<span class="w"> </span>-H<span class="w"> </span>-p<span class="w"> </span>-k<span class="w"> </span><span class="nv">$HWSKU</span><span class="w"> </span>--preset<span class="w"> </span>l2
 </span></code></pre></div>
 <ul>
-<li><code>-H</code> で MAC を埋め込み、<code>-k</code>/<code>-p</code> で port_config.ini を渡す<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>-H</code> で MAC を埋め込み、<code>-k</code>/<code>-p</code> で <a href="../../reference/glossary/#term-port-config-ini">port_config.ini</a> を渡す<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>全ポートが admin-up + Vlan 1000 の untagged member になる構成</li>
 </ul>
 <h3 id="_4">テストケース<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
@@ -23682,7 +23682,7 @@
 <tr>
 <th>#</th>
 <th>項目</th>
-<th>sonic-mgmt パス</th>
+<th><a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> パス</th>
 <th>期待</th>
 </tr>
 </thead>
@@ -23691,23 +23691,23 @@
 <td>1</td>
 <td>sanity</td>
 <td><code>tests/common/sanity_check.py</code></td>
-<td>orchagent / syncd 起動、リンク Up</td>
+<td><a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-syncd">syncd</a> 起動、リンク Up</td>
 </tr>
 <tr>
 <td>2</td>
-<td>FDB</td>
+<td><a href="../../reference/glossary/#term-fdb">FDB</a></td>
 <td><code>tests/fdb/test_fdb.py</code></td>
 <td>全ポートで MAC 学習</td>
 </tr>
 <tr>
 <td>3</td>
-<td>VLAN + ARP + PING</td>
-<td><code>tests/vlan/test_vlan.py</code>（一部要修正: PortChannel 想定箇所）</td>
+<td><a href="../../reference/glossary/#term-vlan">VLAN</a> + <a href="../../reference/glossary/#term-arp">ARP</a> + PING</td>
+<td><code>tests/vlan/test_vlan.py</code>（一部要修正: <a href="../../reference/glossary/#term-portchannel">PortChannel</a> 想定箇所）</td>
 <td>Vlan IF への IP 設定後、ARP / ping 成立</td>
 </tr>
 <tr>
 <td>4</td>
-<td>SNMP</td>
+<td><a href="../../reference/glossary/#term-snmp">SNMP</a></td>
 <td><code>tests/snmp/test_snmp_interfaces.py</code> / <code>test_snmp_cpu.py</code> / <code>test_snmp_psu.py</code></td>
 <td>Walk 成功（MAC / IF / CPU / PSU 取得）</td>
 </tr>
@@ -23738,6 +23738,8 @@
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e750be044737 -->
 
 <div class="footnote">
 <hr />

@@ -23758,10 +23758,10 @@
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>internal port-channel が片側だけ UP</strong>: backend portchannel の片側が member 0 のまま</li>
-<li><strong><code>asic.conf</code> / <code>topology.conf</code> の不一致</strong>: namespace 数と CONFIG_DB の <code>asic_id</code> 不整合</li>
+<li><strong><code>asic.conf</code> / <code>topology.conf</code> の不一致</strong>: namespace 数と <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>asic_id</code> 不整合</li>
 <li><strong>internal route の漏れ</strong>: <code>BGP_INTERNAL_NEIGHBOR</code> が片側のみ</li>
 <li><strong>inband interface 未設定</strong> (<code>VOQ_INBAND_INTERFACE</code> 関連)</li>
-<li><strong>swss / syncd コンテナがいずれかの namespace で異常終了</strong></li>
+<li><strong>swss / <a href="../../glossary/#term-syncd">syncd</a> コンテナがいずれかの namespace で異常終了</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-namespace-feature">1. namespace 一覧と feature 状態<a class="headerlink" href="#1-namespace-feature" title="Permanent link">&para;</a></h3>
@@ -23790,7 +23790,7 @@
 </span></code></pre></div>
 <ul>
 <li>期待: backend portchannel が UP、internal iBGP Established</li>
-<li>異常: backend portchannel down → 物理リンク / LACP の問題（<a href="../fec-errors/">fec-errors.md</a>）</li>
+<li>異常: backend portchannel down → 物理リンク / <a href="../../glossary/#term-lacp">LACP</a> の問題（<a href="../fec-errors/">fec-errors.md</a>）</li>
 </ul>
 <h3 id="4-namespace">4. 各 namespace のコンテナ生存<a class="headerlink" href="#4-namespace" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.Names}}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
@@ -23818,14 +23818,16 @@
 <li><a href="../../../internals/support-redis-databases-in-multiple-namespaces/">../../internals/support-redis-databases-in-multiple-namespaces.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 5c57366500bc -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-utilities @ 39732bceb — <code>multi_asic.py</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — <code>multi_asic.py</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ 4305596 — orchdaemon の namespace 認識&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — orchdaemon の namespace 認識&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

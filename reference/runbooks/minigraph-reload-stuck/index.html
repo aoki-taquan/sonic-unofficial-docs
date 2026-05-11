@@ -23757,11 +23757,11 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>minigraph.xml 構文エラー</strong>: 解析失敗で <code>sonic-cfggen</code> が exception</li>
+<li><strong><a href="../../glossary/#term-minigraph.xml">minigraph.xml</a> 構文エラー</strong>: 解析失敗で <code>sonic-cfggen</code> が exception</li>
 <li><strong>hwsku / platform 不整合</strong>: minigraph 内 hwsku が <code>/usr/share/sonic/device/&lt;platform&gt;/</code> に存在しない</li>
-<li><strong>portmap (port_config.ini) との port 数不一致</strong></li>
-<li><strong><code>hostcfgd</code> が CONFIG_DB 待ちで block</strong>: 依存サービスが起動順を待っている</li>
-<li><strong>swss / syncd が初期化中に SAI エラー</strong></li>
+<li><strong>portmap (<a href="../../glossary/#term-port-config-ini">port_config.ini</a>) との port 数不一致</strong></li>
+<li><strong><code>hostcfgd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> 待ちで block</strong>: 依存サービスが起動順を待っている</li>
+<li><strong>swss / <a href="../../glossary/#term-syncd">syncd</a> が初期化中に <a href="../../glossary/#term-sai">SAI</a> エラー</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-minigraph">1. minigraph 構文<a class="headerlink" href="#1-minigraph" title="Permanent link">&para;</a></h3>
@@ -23798,14 +23798,16 @@
 <li><a href="../config-save-load/">config-save-load.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 8772b091b635 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-utilities @ 39732bceb — config/main.py&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config/main.py&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-buildimage @ 4305596 — sonic-config-engine/minigraph.py&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> @ 4305596 — sonic-config-engine/minigraph.py&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

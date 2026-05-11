@@ -23889,7 +23889,7 @@
 </div>
 <h1 id="libsairedis-api-idempotencewarm-restart-oid-duplicate">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）<a class="headerlink" href="#libsairedis-api-idempotencewarm-restart-oid-duplicate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>orchagent と syncd の間にある <strong>libsairedis API</strong> の <code>create</code> / <code>set</code> / <code>remove</code> / <code>get</code> を <strong>idempotent</strong> にし、orchagent が warm restart 後に同じ呼出を繰り返しても data plane に影響を与えない設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>get</code> は無害なので重複可、それ以外は libsairedis 内のキャッシュで重複を吸収して syncd まで降ろさない。</p>
+<p><a href="../../reference/glossary/#term-orchagent">orchagent</a> と <a href="../../reference/glossary/#term-syncd">syncd</a> の間にある <strong>libsairedis API</strong> の <code>create</code> / <code>set</code> / <code>remove</code> / <code>get</code> を <strong>idempotent</strong> にし、orchagent が warm restart 後に同じ呼出を繰り返しても data plane に影響を与えない設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>get</code> は無害なので重複可、それ以外は libsairedis 内のキャッシュで重複を吸収して syncd まで降ろさない。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="5">5 種のキャッシュ<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
 <p>すべて redis の <code>RESTORE_DB</code>（DB 7）に置く<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23923,7 +23923,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>g_objectOwner</code> はアプリ識別子。同一 attributes だが意味が異なるケース（例: underlay loopback RIF と overlay loopback RIF が同 VR を参照）を別 OID にする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>g_objectOwner</code> はアプリ識別子。同一 attributes だが意味が異なるケース（例: underlay loopback <a href="../../reference/glossary/#term-rif">RIF</a> と overlay loopback RIF が同 VR を参照）を別 OID にする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="create">create フロー<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
   CR[orchagent create] --&gt; LS[libsairedis]
@@ -23968,23 +23968,23 @@
 <ul>
 <li>設計は <strong>draft レベル</strong>。同じ目的の別実装案（syncd view comparison）と競合</li>
 <li><code>ATTR2OID_*</code> のキー長が長くなる（attributes 全列挙）</li>
-<li>Redis 単一インスタンスでは route flapping 等で律速の可能性</li>
+<li><a href="../../reference/glossary/#term-redis">Redis</a> 単一インスタンスでは route flapping 等で律速の可能性</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>syncd view comparison</strong>: 同じ問題を syncd 側で解く別案。どちらかを採用する設計選択</li>
 <li><strong>warm reboot</strong>: 本機能の主目的</li>
-<li><strong>counter 系</strong>: 別 redis instance 化の議論で COUNTERS_DB が引合に出る</li>
+<li><strong>counter 系</strong>: 別 redis instance 化の議論で <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> が引合に出る</li>
 </ul>
 <h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>未取り込み</strong>: <code>sonic-net/sonic-sairedis</code> の lib/ 配下（<code>ClientSai.cpp</code>, <code>RedisChannel.cpp</code>, <code>Recorder.cpp</code> 等）と syncd 配下を grep しても <code>ATTR2OID_</code>, <code>OID2ATTR_</code>, <code>DEFAULT_OID2ATTR_</code>, <code>DEFAULT_OBJ_</code>, <code>RESTORE_DB</code>（DB 番号 7）に対応するキー定義は <strong>見当たらない</strong>。<code>idempoten</code> の文字列ヒットも 0。</li>
-<li>現行 master の warm restart 経路は <strong>syncd 側の view comparison</strong>（<code>syncd/AsicView.cpp</code> / <code>syncd/BestCandidateFinder.cpp</code> / <code>syncd/HardReiniter.cpp</code>）で重複 OID 発行を抑止しており、HLD が示す「libsairedis 内 prefix scheme」ではない。</li>
+<li>現行 master の warm restart 経路は <strong>syncd 側の view comparison</strong>（<code>syncd/AsicView.cpp</code> / <code>syncd/BestCandidateFinder.cpp</code> / <code>syncd/HardReiniter.cpp</code>）で重複 OID 発行を抑止しており、<a href="../../reference/glossary/#term-hld">HLD</a> が示す「libsairedis 内 prefix scheme」ではない。</li>
 </ul>
 <h3 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
-<p>HLD は libsairedis 内に以下のキー空間を用意して redis に保存し、warm restart 後の重複 SAI 呼び出しを libsairedis 層で握りつぶす設計を提案している:</p>
+<p>HLD は libsairedis 内に以下のキー空間を用意して redis に保存し、warm restart 後の重複 <a href="../../reference/glossary/#term-sai">SAI</a> 呼び出しを libsairedis 層で握りつぶす設計を提案している:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEFAULT_ATTR2OID_&lt;serialized attrs&gt;  → &lt;oid&gt;
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>DEFAULT_OID2ATTR_&lt;oid&gt;               → {attr: value, ...}
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ATTR2OID_&lt;serialized attrs&gt;          → &lt;oid&gt;
@@ -24002,9 +24002,11 @@
 </ul>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
-<li>[GitHub Issue / PR の関連リンクは未確認] — warm restart 用 OID キャッシュ / duplicate 抑止は sonic-sairedis 内部リファクタとして散発的に取り込まれており、HLD と直接紐づくトラッキング Issue / PR は確認できず。</li>
+<li>[GitHub Issue / PR の関連リンクは未確認] — warm restart 用 OID キャッシュ / duplicate 抑止は <a href="../../reference/glossary/#term-sonic-sairedis">sonic-sairedis</a> 内部リファクタとして散発的に取り込まれており、HLD と直接紐づくトラッキング Issue / PR は確認できず。</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 32f24cf9f75a -->
+
 <div class="footnote">
 <hr />
 <ol>

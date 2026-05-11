@@ -23885,12 +23885,12 @@ HLD §「DPU SONiC KVM image with dataplane will be released at the next stage�
 </div>
 <h1 id="dash-sonic-kvmbmv2-dpu">DASH SONiC KVM（BMv2 ベース仮想 DPU）<a class="headerlink" href="#dash-sonic-kvmbmv2-dpu" title="Permanent link">&para;</a></h1>
 <h2 id="_1">何のための機能か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>物理 <a href="../../reference/glossary/#term-dpu">DPU</a> を持たずに <a href="../../reference/glossary/#term-dash">DASH</a>（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>POC / 開発</strong>: 物理 HW なしで DASH のコントロール・データプレーンを開発・テスト</li>
 <li><strong>CI</strong>: <code>sonic-buildimage</code> / <code>sonic-swss</code> の Azure Pipelines に DASH を組み込む</li>
 </ol>
-<p>データプレーンは <strong>BMv2 (P4 simple_switch)</strong> を中核に、フロー作成・resimulation 等で BMv2 が苦手な部分を <strong>VPP</strong> で補強。SAI 互換は <code>dashsai</code>（remote shim サーバ + クライアント）が担う。</p>
+<p>データプレーンは <strong>BMv2 (P4 simple_switch)</strong> を中核に、フロー作成・resimulation 等で BMv2 が苦手な部分を <strong>VPP</strong> で補強。<a href="../../reference/glossary/#term-sai">SAI</a> 互換は <code>dashsai</code>（remote shim サーバ + クライアント）が担う。</p>
 <h2 id="_2">どう動くか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">モジュール構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
@@ -23946,21 +23946,21 @@ HLD §「DPU SONiC KVM image with dataplane will be released at the next stage�
 <tbody>
 <tr>
 <td><code>Ethernet0..</code></td>
-<td>system port（BGP/LLDP 等プロトコル用）</td>
+<td>system port（<a href="../../reference/glossary/#term-bgp">BGP</a>/<a href="../../reference/glossary/#term-lldp">LLDP</a> 等プロトコル用）</td>
 </tr>
 <tr>
 <td><code>eth1, eth2..</code></td>
 <td>line port。KVM 実 IF。Ethernet と 1 対 1 対応</td>
 </tr>
 <tr>
-<td>CPU port (DPDK)</td>
+<td>CPU port (<a href="../../reference/glossary/#term-dpdk">DPDK</a>)</td>
 <td>Dataplane APP 用。BMv2 ↔ CPU パス</td>
 </tr>
 </tbody>
 </table>
 <h3 id="_5">動作モード<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>DPU モード</strong>: 物理 SmartSwitch と同様、外部 NPU が <code>eth-midplane</code> 経由で GNMI Set</li>
+<li><strong>DPU モード</strong>: 物理 <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> と同様、外部 <a href="../../reference/glossary/#term-npu">NPU</a> が <code>eth-midplane</code> 経由で GNMI Set</li>
 <li><strong>Single device モード</strong>: KVM 内 GNMI に直接接続し SWSS へローカル forward</li>
 </ul>
 <h3 id="_6">データプレーン経路<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
@@ -24040,10 +24040,10 @@ reasoning: BMv2 単体では足りないので VPP + saidash で補い、SAIRedi
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>--value<span class="w"> </span>$/root/update1<span class="w"> </span>$/root/update2
 </span></code></pre></div>
 <h2 id="_9">設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>KVM 自体には追加 CONFIG_DB スキーマ・CLI・YANG は無い。物理 DPU と同じ DASH テーブル（<code>DASH_VNET_TABLE</code>, <code>DASH_APPLIANCE_TABLE</code> 等）を APP_DB / CONFIG_DB に投入する。testbed 操作は <code>testbed-cli.sh</code>（sonic-mgmt）。</p>
+<p>KVM 自体には追加 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマ・CLI・<a href="../../reference/glossary/#term-yang">YANG</a> は無い。物理 DPU と同じ DASH テーブル（<code>DASH_VNET_TABLE</code>, <code>DASH_APPLIANCE_TABLE</code> 等）を APP_DB / CONFIG_DB に投入する。testbed 操作は <code>testbed-cli.sh</code>（<a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>）。</p>
 <h2 id="_10">制限事項<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>データプレーン付き DPU SONiC KVM image は HLD 時点で未公開</strong>（通常 <code>sonic-vs.img.gz</code> のみ）。</li>
+<li><strong>データプレーン付き DPU SONiC KVM image は <a href="../../reference/glossary/#term-hld">HLD</a> 時点で未公開</strong>（通常 <code>sonic-vs.img.gz</code> のみ）。</li>
 <li><code>dashsai</code> 未対応 SAI API（<code>DTEL</code> 等）は <strong>mock 実装</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>gnmi_cli_py</code> が Python 2 依存。</li>
 <li><strong>DPU + VPP NPU testbed (HLD §5.2) は TBD</strong>。</li>
@@ -24053,7 +24053,7 @@ reasoning: BMv2 単体では足りないので VPP + saidash で補い、SAIRedi
 <li><strong>物理 SmartSwitch</strong>: SWSS / GNMI / APP_DB が互換のため、テスト共通化可能。</li>
 <li><strong>sonic-mgmt</strong>: <code>vms-kvm-dpu</code> トポロジ・cEOS image・SSH 鍵が前提。</li>
 <li><strong>CI</strong>: BMv2 / VPP の build 時間が CI 全体に影響。</li>
-<li><strong>DASH 系 HLD（VNet, ENI Forwarding 等）</strong>: 本 KVM はそれらの検証実装。</li>
+<li><strong>DASH 系 HLD（VNet, <a href="../../reference/glossary/#term-eni">ENI</a> Forwarding 等）</strong>: 本 KVM はそれらの検証実装。</li>
 </ul>
 <h2 id="_12">トラブルシューティング<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24064,7 +24064,7 @@ reasoning: BMv2 単体では足りないので VPP + saidash で補い、SAIRedi
 </ul>
 <h2 id="_13">関連トピック<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/10-gnmi-openconfig/">Topics: GNMI / OpenConfig</a> — gNMI 経由の DASH 設定</li>
+<li><a href="../../topics/10-gnmi-openconfig/">Topics: GNMI / OpenConfig</a> — <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由の DASH 設定</li>
 <li><a href="../sonic-dash-hld/">sonic-dash-hld</a> — DASH の全体像</li>
 </ul>
 <h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
@@ -24075,6 +24075,8 @@ reasoning: BMv2 単体では足りないので VPP + saidash で補い、SAIRedi
 <li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7d682f06bb41 -->
 
 <div class="footnote">
 <hr />

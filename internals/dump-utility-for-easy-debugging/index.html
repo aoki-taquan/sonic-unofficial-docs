@@ -23750,7 +23750,7 @@
 </div>
 <h1 id="dump-state-utility"><code>dump state</code> utility<a class="headerlink" href="#dump-state-utility" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の機能は <strong>複数 DB</strong>（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。設定が orchagent → SAI → ASIC まで伝播したかを見るには各 DB を個別に grep する必要があり、属人化していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の機能は <strong>複数 DB</strong>（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> / 設定 JSON）に状態が分散する。設定が <a href="../../reference/glossary/#term-orchagent">orchagent</a> → <a href="../../reference/glossary/#term-sai">SAI</a> → ASIC まで伝播したかを見るには各 DB を個別に grep する必要があり、属人化していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>dump state &lt;module&gt; &lt;id&gt;</code> は、モジュール毎に「どの DB のどのキーを取れば良いか」を <strong>プラグイン定義</strong> で持ち、DB 横断で 1 view に集約する。</p>
 <h2 id="_2">コマンド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dump state &lt;module&gt; &lt;identifier&gt; [options]
@@ -23834,7 +23834,7 @@
   COID --&gt; TOID[ACL_TABLE OID]
   TOID --&gt; TGM[ACL_TABLE_GROUP_MEMBER]
   TGM --&gt; TG[ACL_TABLE_GROUP]</code></pre>
-<p>ACL は <strong>rule が 1 件以上ある時のみ</strong> ASIC 側に出る性質を反映し、<code>ACL_COUNTER_RULE_MAP</code> 経由で逆引きする<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-acl">ACL</a> は <strong>rule が 1 件以上ある時のみ</strong> ASIC 側に出る性質を反映し、<code>ACL_COUNTER_RULE_MAP</code> 経由で逆引きする<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="techsupport">techsupport 統合<a class="headerlink" href="#techsupport" title="Permanent link">&para;</a></h2>
 <p><code>Executor</code> 継承の全モジュールの <code>dump state &lt;m&gt; all -k</code> 出力が <strong>techsupport に自動収録</strong> される<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。multi-asic では <code>port.asic0</code> のように namespace suffix が付く:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>dump/unified_view_dump/
@@ -23871,6 +23871,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3c16455a710d -->
 
 <div class="footnote">
 <hr />

@@ -23882,11 +23882,11 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>ここでは SONiC の <strong>config 永続化と全体差し替え</strong> の中核となる以下の 5 コマンドをまとめる:</p>
 <ul>
-<li><code>config save</code> ... 現 CONFIG_DB を JSON ファイルに dump</li>
+<li><code>config save</code> ... 現 <a href="../../glossary/#term-config_db">CONFIG_DB</a> を JSON ファイルに dump</li>
 <li><code>config load</code> ... ファイルを CONFIG_DB に書く (既存の状態を保持しつつ merge)</li>
 <li><code>config reload</code> ... CONFIG_DB をクリアしてからファイルを再ロード (services 再起動含む)</li>
 <li><code>config replace</code> ... 現在の config と target config の <strong>差分のみ</strong> を当てる minimum-disruption replace</li>
-<li><code>config qos reload</code> ... QoS 関連 (buffer / scheduler / queue / wred 等) を再生成</li>
+<li><code>config qos reload</code> ... <a href="../../glossary/#term-qos">QoS</a> 関連 (buffer / scheduler / queue / wred 等) を再生成</li>
 </ul>
 <p>すべて <code>config/main.py</code> 内 (<code>@config.command()</code> 直付け) で定義される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">各コマンドの詳細<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23922,7 +23922,7 @@ multi-asic 環境では <code>num_asic + 1</code> 個のファイル (host + nam
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    [-v|--verbose]
 </span></code></pre></div>
 <p><strong>動作</strong>:
-target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の CONFIG_DB との <strong>JSON Patch (RFC 6902) を計算</strong>して適用する。同じテーブル間で差分が無ければ touch しないため、ACL は変わらないが BGP だけ変えるといった部分更新でも DHCP services は再起動されない<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。<code>replace</code> 系は <code>apply-patch</code> / <code>rollback</code> と同じ generic_config_updater 機構の上に乗る。</p>
+target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の CONFIG_DB との <strong>JSON Patch (RFC 6902) を計算</strong>して適用する。同じテーブル間で差分が無ければ touch しないため、<a href="../../glossary/#term-acl">ACL</a> は変わらないが <a href="../../glossary/#term-bgp">BGP</a> だけ変えるといった部分更新でも DHCP services は再起動されない<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。<code>replace</code> 系は <code>apply-patch</code> / <code>rollback</code> と同じ generic_config_updater 機構の上に乗る。</p>
 <p>target file には <strong>完全な config 全体</strong> を渡す必要がある (<code>**WARNING** The target config file should be the whole config, not just the part intended to be updated.</code>)。</p>
 <h3 id="config-qos-reload-ports-list-no-dynamic-buffer-no-delay-dry_run-file-json-data-json-verbose"><code>config qos reload [--ports &lt;list&gt;] [--no-dynamic-buffer] [--no-delay] [--dry_run &lt;file&gt;] [--json-data &lt;json&gt;] [--verbose]</code><a class="headerlink" href="#config-qos-reload-ports-list-no-dynamic-buffer-no-delay-dry_run-file-json-data-json-verbose" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
@@ -23958,7 +23958,7 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 <ul>
 <li><code>config save</code> → ファイルを sort して書き戻すため、手書き JSON を <code>save</code> 経由で経由させると <strong>キー順が変わる</strong>。<code>git diff</code> で純粋な差分を見たい場合は注意。</li>
 <li><code>config reload</code> は <strong>CONFIG_DB を完全に置き換える</strong>。<code>config save</code> していない一時的な設定変更は失われる。</li>
-<li><code>config replace</code> の <code>--format SONICYANG</code> 指定時は YANG モデルバリデーションが有効で、不適合な値は <code>--ignore-non-yang-tables</code> 等で個別に逃がす必要がある。</li>
+<li><code>config replace</code> の <code>--format SONICYANG</code> 指定時は <a href="../../glossary/#term-yang">YANG</a> モデルバリデーションが有効で、不適合な値は <code>--ignore-non-yang-tables</code> 等で個別に逃がす必要がある。</li>
 <li><code>config load</code> は merge なので、<strong>削除した設定は CONFIG_DB に残る</strong>。クリーンな状態にしたいなら必ず <code>config reload</code> を使う。</li>
 </ul>
 <!-- cli-mermaid -->
@@ -23990,12 +23990,12 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 <h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="_8">典型的な利用シーン<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Mgmt VRF / Mgmt interface / Mgmt route のまとめて設定。</li>
+<li>Mgmt <a href="../../glossary/#term-vrf">VRF</a> / Mgmt interface / Mgmt route のまとめて設定。</li>
 <li>out-of-band 監視ネット切替時の安全な再設定。</li>
 </ul>
 <h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Mgmt VRF を有効化すると SSH/SNMP/NTP も VRF コンテキストへ切り替わる。</li>
+<li>Mgmt VRF を有効化すると SSH/<a href="../../glossary/#term-snmp">SNMP</a>/NTP も VRF コンテキストへ切り替わる。</li>
 <li>Mgmt route を消すと自分の SSH が切れる可能性。console 経由で作業する。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -24004,6 +24004,8 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ip<span class="w"> </span>-4<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>vrf<span class="w"> </span>mgmt
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ea618b0f5027 -->
 
 <div class="footnote">
 <hr />

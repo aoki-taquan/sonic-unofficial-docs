@@ -23784,7 +23784,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>gNMI / OpenConfig の内部実装は、<code>telemetry</code> コンテナの中に gNMI server があり、translib / sonic-mgmt-common 経由で YANG → CONFIG_DB / APPL_DB / STATE_DB に変換するという縦の流れを押さえると整理できます。GET / SET / SUBSCRIBE で経路がそれぞれ違うのが特徴です。</p>
+<p><a href="../../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig の内部実装は、<code>telemetry</code> コンテナの中に gNMI server があり、translib / <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common 経由で <a href="../../../reference/glossary/#term-yang">YANG</a> → <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に変換するという縦の流れを押さえると整理できます。GET / SET / SUBSCRIBE で経路がそれぞれ違うのが特徴です。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   CLIENT[gNMI client] --&gt;|gRPC TLS| GNMI[telemetry / gnmi server&lt;br/&gt;sonic-gnmi]
@@ -23809,12 +23809,12 @@
 <tr>
 <td><code>telemetry</code> container</td>
 <td><code>sonic-gnmi</code>（旧 <code>sonic-telemetry</code>）/ <code>gnmi_server</code></td>
-<td>gNMI / gNOI / gNSI gRPC server。TLS / mTLS 終端</td>
+<td>gNMI / <a href="../../../reference/glossary/#term-gnoi">gNOI</a> / gNSI gRPC server。TLS / mTLS 終端</td>
 </tr>
 <tr>
 <td><code>translib</code> (<code>sonic-mgmt-common/translib/</code>)</td>
 <td><code>translib.go</code>、<code>transformer/</code></td>
-<td>YANG path ↔ Redis テーブルの双方向変換、ocyang バインドを使う</td>
+<td>YANG path ↔ <a href="../../../reference/glossary/#term-redis">Redis</a> テーブルの双方向変換、ocyang バインドを使う</td>
 </tr>
 <tr>
 <td><code>transformer</code></td>
@@ -23844,13 +23844,13 @@
 </tbody>
 </table>
 <h2 id="sai">SAI 属性使用<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
-<p>gNMI server は SAI 属性を直接触りません。代わりに <code>COUNTERS_DB</code> の counter（port / queue / PG / buffer pool）、<code>STATE_DB</code> の運用状態を<strong>読み取り側</strong>として参照します。SAI 属性は <code>flexcounter</code> が裏で populate しています（→ 08 章 / 20 章）。</p>
+<p>gNMI server は <a href="../../../reference/glossary/#term-sai">SAI</a> 属性を直接触りません。代わりに <code>COUNTERS_DB</code> の counter（port / queue / PG / buffer pool）、<code>STATE_DB</code> の運用状態を<strong>読み取り側</strong>として参照します。SAI 属性は <code>flexcounter</code> が裏で populate しています（→ 08 章 / 20 章）。</p>
 <p>書き込み側で gNMI SET から SAI に到達する経路は:</p>
 <ol>
 <li><code>gnmi SET</code> → translib transformer → <code>CONFIG_DB</code></li>
 <li><code>CONFIG_DB</code> 変更 → <code>*mgrd</code> / <code>orchagent</code> → SAI</li>
 </ol>
-<p>であり、gNMI server から直接 ASIC_DB を叩く経路はありません。</p>
+<p>であり、gNMI server から直接 <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> を叩く経路はありません。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gNMI Path                                Redis target
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>/sonic-port:sonic-port/PORT/...     ─&gt;  CONFIG_DB:PORT
@@ -23863,7 +23863,7 @@
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub の使用<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Redis keyspace notifications</strong>（<code>__keyspace@*__</code>）を gNMI server が subscribe して on_change を出します。</li>
-<li><strong>ZMQ</strong>: GNMIGet / GNMISet の一部経路で、orchagent との直結 RPC を行う実装が追加されました（<code>gnmi-native-write</code> 系の HLD）。これにより CONFIG_DB を経由しない write が一部のテーブルで可能です。</li>
+<li><strong>ZMQ</strong>: GNMIGet / GNMISet の一部経路で、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> との直結 RPC を行う実装が追加されました（<code>gnmi-native-write</code> 系の <a href="../../../reference/glossary/#term-hld">HLD</a>）。これにより CONFIG_DB を経由しない write が一部のテーブルで可能です。</li>
 <li><strong>dial-out</strong>: collector への gRPC push（poll/on_change の結果）。</li>
 <li>gNOI の <code>Reboot</code> / <code>Ping</code> 等は <strong>host service</strong>（<code>sonic-host-service</code>）に DBus / Unix socket で投げ、root 権限の操作はコンテナ外で行います。</li>
 </ul>
@@ -23913,7 +23913,7 @@
 <ul>
 <li><strong>subscribe sample interval</strong> の下限は flexcounter polling と整合させるのが安全で、port counter は 10s、queue / PG は 10s、buffer pool は 60s が標準です。100ms 等は無意味（同じ値を返す）です。</li>
 <li><strong>GET の最大サブツリー深さ</strong>には実質制限が無く、<code>/interfaces</code> 全体を 1 度に取ると数千 OID の Redis 読み出しが直列で走り、数秒〜数十秒かかります。client 側でリスト要素を絞るのが定石です。</li>
-<li><strong>dial-out</strong> は collector への gRPC で QoS / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告があります。<code>TELEMETRY_CLIENT</code> の <code>queue_size</code> で抑えます。</li>
+<li><strong>dial-out</strong> は collector への gRPC で <a href="../../../reference/glossary/#term-qos">QoS</a> / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告があります。<code>TELEMETRY_CLIENT</code> の <code>queue_size</code> で抑えます。</li>
 </ul>
 <h2 id="translib-transformer">translib transformer の責務分担<a class="headerlink" href="#translib-transformer" title="Permanent link">&para;</a></h2>
 <p><code>translib/transformer/</code> 配下の per-module ファイル（<code>xfmr_&lt;module&gt;.go</code>）は、OpenConfig YANG path を SONiC YANG path に変換する mapping を提供します。</p>
@@ -23977,7 +23977,7 @@
 <tr>
 <td>対象</td>
 <td>全テーブル</td>
-<td>DASH 等の opt-in テーブルのみ</td>
+<td><a href="../../../reference/glossary/#term-dash">DASH</a> 等の opt-in テーブルのみ</td>
 </tr>
 </tbody>
 </table>
@@ -23990,6 +23990,7 @@
 <li><a href="../gnoi-gnsi/">gNOI / gNSI</a></li>
 <li><a href="../yang-reference/">YANG リファレンス</a></li>
 </ul>
+<!-- glossary-links-injected: cb52a7361215 -->
 
 
 

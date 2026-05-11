@@ -23802,7 +23802,7 @@
 
 <h1 id="mgmt_vrf_config">MGMT_VRF_CONFIG テーブル<a class="headerlink" href="#mgmt_vrf_config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>管理 VRF（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> が監視し、有効化されると Linux カーネル側に <code>mgmt</code> という名前の VRF を作成し、management port (<code>eth0</code>) を所属させる。</p>
+<p>管理 <a href="../../glossary/#term-vrf">VRF</a>（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> が監視し、有効化されると Linux カーネル側に <code>mgmt</code> という名前の VRF を作成し、management port (<code>eth0</code>) を所属させる。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23849,8 +23849,8 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <a href="../ntp-global/"><code>NTP</code></a>、<code>MGMT_INTERFACE</code>、<code>MGMT_PORT</code>、<code>SNMP_AGENT_ADDRESS_CONFIG</code></li>
-<li>関連 YANG: <code>sonic-mgmt_vrf</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../ntp-global/"><code>NTP</code></a>、<code>MGMT_INTERFACE</code>、<code>MGMT_PORT</code>、<code>SNMP_AGENT_ADDRESS_CONFIG</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mgmt_vrf</code></li>
 <li>関連 CLI: <code>config vrf add mgmt</code> / <code>config vrf del mgmt</code>（CLI ヘルパが本フィールドを書き換える）</li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23872,13 +23872,15 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>mgmt VRF を有効化したのに NTP/SNMP/SYSLOG 側で vrf 指定を忘れて疎通しない。</li>
+<li>mgmt VRF を有効化したのに NTP/<a href="../../glossary/#term-snmp">SNMP</a>/SYSLOG 側で vrf 指定を忘れて疎通しない。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MGMT_VRF_CONFIG|vrf_global&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>mgmt-vrf
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 60a02696c221 -->
 
 <div class="footnote">
 <hr />

@@ -23906,8 +23906,8 @@
 </div>
 <h1 id="trap-flow-counterhost-if-trap-generic-counter">Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）<a class="headerlink" href="#trap-flow-counterhost-if-trap-generic-counter" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ホストインタフェース trap（CoPP で ASIC から CPU へ punt されるパケット種別。BGP / LLDP / ARP / DHCP 等）について、<strong>trap ID ごとの packet / byte / PPS</strong> を計測する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デバッグ・トラブルシュート・性能解析が目的で、CoPP の policer 監視や予期しない CPU bound traffic の発見に使う。</p>
-<p>実装は SAI <strong>Generic Counter</strong>（<a href="https://github.com/opencomputeproject/SAI/blob/master/doc/SAI-Proposal-Generic-Counters.md">SAI-Proposal-Generic-Counters.md</a>）を流用し、SONiC 既存の <strong>Flex Counter</strong> infrastructure に新グループを足す形で乗せる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ホストインタフェース trap（<a href="../../reference/glossary/#term-copp">CoPP</a> で ASIC から CPU へ punt されるパケット種別。<a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-lldp">LLDP</a> / <a href="../../reference/glossary/#term-arp">ARP</a> / DHCP 等）について、<strong>trap ID ごとの packet / byte / PPS</strong> を計測する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デバッグ・トラブルシュート・性能解析が目的で、CoPP の policer 監視や予期しない CPU bound traffic の発見に使う。</p>
+<p>実装は <a href="../../reference/glossary/#term-sai">SAI</a> <strong>Generic Counter</strong>（<a href="https://github.com/opencomputeproject/SAI/blob/master/doc/SAI-Proposal-Generic-Counters.md">SAI-Proposal-Generic-Counters.md</a>）を流用し、SONiC 既存の <strong>Flex Counter</strong> infrastructure に新グループを足す形で乗せる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント間の流れ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23928,7 +23928,7 @@
 <h3 id="_4">設計の中核<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ol>
 <li><strong>Generic Counter で実装</strong>: trap ごとに <code>SAI_OBJECT_TYPE_COUNTER</code> を 1 つ確保し、<code>hostif_trap</code> に bind する。<code>SAI_PORT_STAT_*</code> 系のような専用 stat ID は使わず、汎用 counter object を使い回す<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>新 Flex Counter group <code>HOSTIF_TRAP_FLOW_COUNTER</code></strong>（CONFIG_DB 上のキーは <code>FLOW_CNT_TRAP</code>）。<code>counterpoll</code> CLI で group の status / interval を制御</li>
+<li><strong>新 Flex Counter group <code>HOSTIF_TRAP_FLOW_COUNTER</code></strong>（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 上のキーは <code>FLOW_CNT_TRAP</code>）。<code>counterpoll</code> CLI で group の status / interval を制御</li>
 <li><strong>per-trap でなく group 単位 ON/OFF</strong>。group が enable になると、登録済の <strong>すべての</strong> trap に counter が一括 bind される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>trap の動的登録 / 解除に追従</strong>: trap が新しく register されたとき、group が enable なら自動で counter を確保 / bind する。trap が外されれば counter も release<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>multi-ASIC 対応</strong>: Flex Counter インフラがそのまま multi-ASIC を扱う</li>
@@ -23939,13 +23939,13 @@
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  POLL_INTERVAL       = &lt;ms&gt;
 </span></code></pre></div>
 <h3 id="copp_table-copp_trap">COPP_TABLE / COPP_TRAP との関係<a class="headerlink" href="#copp_table-copp_trap" title="Permanent link">&para;</a></h3>
-<p>CoPP は <code>CFG_COPP_TRAP_TABLE</code>（CONFIG_DB）→ <code>COPP_TABLE</code>（APPL_DB）の流れで Copp Orch まで運ばれる。Trap Flow Counter は <strong>既存の CoPP コードパスに後付け</strong> する形で、Copp Orch の create / remove path にフックを差し込む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>CoPP は <code>CFG_COPP_TRAP_TABLE</code>（CONFIG_DB）→ <code>COPP_TABLE</code>（<a href="../../reference/glossary/#term-appl_db">APPL_DB</a>）の流れで Copp Orch まで運ばれる。Trap Flow Counter は <strong>既存の CoPP コードパスに後付け</strong> する形で、Copp Orch の create / remove path にフックを差し込む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>trap create 時:</li>
 <li><code>Flow Counter Handler::createGenericCounter()</code></li>
 <li><code>bind</code> host_if_trap ↔ counter（SAI Host Interface API）</li>
 <li><code>FlexCounterManager</code> 経由で <code>FLEX_COUNTER_TABLE</code> に COUNTER OID と attribute list を登録</li>
-<li><code>COUNTERS_TRAP_NAME_MAP</code>（COUNTERS_DB）に <code>&lt;trap_name&gt;:&lt;counter_oid&gt;</code> を保存</li>
+<li><code>COUNTERS_TRAP_NAME_MAP</code>（<a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a>）に <code>&lt;trap_name&gt;:&lt;counter_oid&gt;</code> を保存</li>
 <li>trap remove 時は逆順</li>
 </ul>
 <h3 id="counter-group-enable">Counter group が後から enable になった場合<a class="headerlink" href="#counter-group-enable" title="Permanent link">&para;</a></h3>
@@ -23978,7 +23978,7 @@ reasoning: group enable/disable の Hook 名と CONFIG キー (FLOW_CNT_TRAP) �
 <!-- evidence-rendered:end -->
 
 <h3 id="syncd">syncd 側の収集<a class="headerlink" href="#syncd" title="Permanent link">&para;</a></h3>
-<p>syncd 内 FlexCounter スレッドが poll 間隔で:</p>
+<p><a href="../../reference/glossary/#term-syncd">syncd</a> 内 <a href="../../reference/glossary/#term-flexcounter">FlexCounter</a> スレッドが poll 間隔で:</p>
 <ul>
 <li><code>m_flowCounterIdsMap[&lt;counter_oid&gt;]</code> を見て supported stat ID を SAI に問い合わせ</li>
 <li><code>COUNTERS_DB</code> に書き込む（既存 flex counter と同じ流れ）</li>
@@ -24009,7 +24009,7 @@ reasoning: group enable/disable の Hook 名と CONFIG キー (FLOW_CNT_TRAP) �
 </tr>
 </tbody>
 </table>
-<p><code>COUNTERS_TRAP_NAME_MAP</code>（COUNTERS_DB）と <code>HOSTIF_TRAP_FLOW_COUNTER</code> 系 entry（FLEX_COUNTER_DB）はランタイムで生成される。</p>
+<p><code>COUNTERS_TRAP_NAME_MAP</code>（COUNTERS_DB）と <code>HOSTIF_TRAP_FLOW_COUNTER</code> 系 entry（<a href="../../reference/glossary/#term-flex_counter_db">FLEX_COUNTER_DB</a>）はランタイムで生成される。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24034,7 +24034,7 @@ reasoning: group enable/disable の Hook 名と CONFIG キー (FLOW_CNT_TRAP) �
 </tbody>
 </table>
 <blockquote>
-<p>注: HLD 文中で具体名は「new CLI command (<code>show flowcnt trap stats</code>)」とのみ言及。<code>counterpoll</code> のサブコマンド表記は再構成側の推測を含む。</p>
+<p>注: <a href="../../reference/glossary/#term-hld">HLD</a> 文中で具体名は「new CLI command (<code>show flowcnt trap stats</code>)」とのみ言及。<code>counterpoll</code> のサブコマンド表記は再構成側の推測を含む。</p>
 </blockquote>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>counterpoll<span class="w"> </span>flowcnt-trap<span class="w"> </span><span class="nb">enable</span>
@@ -24074,6 +24074,8 @@ reasoning: group enable/disable の Hook 名と CONFIG キー (FLOW_CNT_TRAP) �
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0d3c1956e387 -->
 
 <div class="footnote">
 <hr />

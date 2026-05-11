@@ -23622,7 +23622,7 @@
 
 <h1 id="lldp-lldp_port">LLDP / LLDP_PORT テーブル<a class="headerlink" href="#lldp-lldp_port" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>LLDP</code> テーブルはシステム全体の LLDP 設定 (<code>GLOBAL</code> キー) を、<code>LLDP_PORT</code> テーブルはポート単位の LLDP 有効化 / モードを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp-syncd</code> および <code>docker-lldp</code> 内の <code>lldpd</code> が CONFIG_DB を読み出して動作する。</p>
+<p><code>LLDP</code> テーブルはシステム全体の <a href="../../glossary/#term-lldp">LLDP</a> 設定 (<code>GLOBAL</code> キー) を、<code>LLDP_PORT</code> テーブルはポート単位の LLDP 有効化 / モードを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp-syncd</code> および <code>docker-lldp</code> 内の <code>lldpd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み出して動作する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23639,7 +23639,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>LLDP|GLOBAL
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>LLDP_PORT|&lt;ifname&gt;
 </span></code></pre></div>
-<p><code>LLDP</code> テーブルは <code>GLOBAL</code> 単一エントリ（YANG では <code>container GLOBAL</code> 直下のスカラー leaf 群）。<code>LLDP_PORT</code> は <code>PORT</code> への leafref をキーに持つリスト。</p>
+<p><code>LLDP</code> テーブルは <code>GLOBAL</code> 単一エントリ（<a href="../../glossary/#term-yang">YANG</a> では <code>container GLOBAL</code> 直下のスカラー leaf 群）。<code>LLDP_PORT</code> は <code>PORT</code> への leafref をキーに持つリスト。</p>
 <table>
 <thead>
 <tr>
@@ -23751,11 +23751,11 @@
 <h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>hello_time</code> 5..254 秒、<code>multiplier</code> 1..10（hold time = hello × multiplier）</li>
-<li><code>LLDP_PORT.ifname</code> は <code>PORT</code> への leafref（VLAN / PortChannel 等は対象外）</li>
+<li><code>LLDP_PORT.ifname</code> は <code>PORT</code> への leafref（<a href="../../glossary/#term-vlan">VLAN</a> / <a href="../../glossary/#term-portchannel">PortChannel</a> 等は対象外）</li>
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>lldp-syncd</code> (<code>docker-lldp</code>) — <code>lldpd</code> 設定生成、STATE_DB への neighbor 反映</li>
+<li><code>lldp-syncd</code> (<code>docker-lldp</code>) — <code>lldpd</code> 設定生成、<a href="../../glossary/#term-state_db">STATE_DB</a> への neighbor 反映</li>
 <li><code>lldpd</code> (open-lldp フォーク)</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -23795,6 +23795,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>lldp<span class="w"> </span>table
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4f72b3e79b97 -->
 
 <div class="footnote">
 <hr />

@@ -24018,8 +24018,8 @@
 </div>
 <h1 id="fpmsyncd-nexthop-group-dplane_fpm_nl-nexthop_group_table">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）<a class="headerlink" href="#fpmsyncd-nexthop-group-dplane_fpm_nl-nexthop_group_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>FRR <code>zebra</code> は dplane_fpm_nl プラグインで Linux kernel の <strong>NextHop Group (NHG) netlink</strong> メッセージ（<code>RTM_NEWNEXTHOP</code> / <code>RTM_DELNEXTHOP</code>）を FPM へ流せる。本拡張はそれを <code>fpmsyncd</code> で受け、<code>APPL_DB.NEXTHOP_GROUP_TABLE</code> に NHG エンティティとして書き、<code>ROUTE_TABLE</code> 側は <strong><code>nexthop_group</code> フィールドで NHG を参照</strong> する形に変える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>狙いは BGP PIC（Prefix-Independent Convergence）と recursive route 対応。多数 prefix が同一 NH 集合を共有する SP/DC のスケール条件下で、route 1 件あたりの payload を縮小し、<code>orchagent</code>・SAI への流量を減らす。</p>
+<p><a href="../../reference/glossary/#term-frr">FRR</a> <code>zebra</code> は dplane_fpm_nl プラグインで Linux kernel の <strong>NextHop Group (NHG) netlink</strong> メッセージ（<code>RTM_NEWNEXTHOP</code> / <code>RTM_DELNEXTHOP</code>）を <a href="../../reference/glossary/#term-fpm">FPM</a> へ流せる。本拡張はそれを <code>fpmsyncd</code> で受け、<code>APPL_DB.NEXTHOP_GROUP_TABLE</code> に NHG エンティティとして書き、<code>ROUTE_TABLE</code> 側は <strong><code>nexthop_group</code> フィールドで NHG を参照</strong> する形に変える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>狙いは <a href="../../reference/glossary/#term-bgp">BGP</a> PIC（Prefix-Independent Convergence）と recursive route 対応。多数 prefix が同一 NH 集合を共有する SP/DC のスケール条件下で、route 1 件あたりの payload を縮小し、<code>orchagent</code>・<a href="../../reference/glossary/#term-sai">SAI</a> への流量を減らす。</p>
 <p>本機能は <strong>デフォルト無効</strong>。<code>DEVICE_METADATA.localhost.fpm_use_nexthop_groups = "enabled"</code> で起動時に切り替える設計<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="high-level">High Level<a class="headerlink" href="#high-level" title="Permanent link">&para;</a></h3>
@@ -24049,16 +24049,16 @@
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  nexthop_group = &quot;&lt;id&gt;&quot;
 </span></code></pre></div>
 <h3 id="nhgorch">NhgOrch の拡張<a class="headerlink" href="#nhgorch" title="Permanent link">&para;</a></h3>
-<p>既存 NhgOrch は CONFIG_DB / APPL_DB の手動 NHG 用だったが、本拡張で <code>APPL_DB.NEXTHOP_GROUP_TABLE</code> の動的更新（FRR 由来）を受け、member の add/del を SAI NHG member の差分更新で実施する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>既存 NhgOrch は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の手動 NHG 用だったが、本拡張で <code>APPL_DB.NEXTHOP_GROUP_TABLE</code> の動的更新（FRR 由来）を受け、member の add/del を SAI NHG member の差分更新で実施する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">有効化条件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>DEVICE_METADATA.localhost.fpm_use_nexthop_groups = enabled</code> を CONFIG_DB に書く</li>
-<li>bgpd / zebra 起動時に <code>fpm use-nexthop-groups</code> を vty に流す（FRR 設定テンプレート側で生成）</li>
+<li>bgpd / <a href="../../reference/glossary/#term-zebra">zebra</a> 起動時に <code>fpm use-nexthop-groups</code> を vty に流す（FRR 設定テンプレート側で生成）</li>
 <li><code>dplane_fpm_nl</code> プラグインが必須（202305 以降は default）</li>
 </ul>
 <p>ランタイム切替は <strong>未対応</strong>。再起動が必要<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="warm-boot-fast-boot">Warm boot / Fast boot<a class="headerlink" href="#warm-boot-fast-boot" title="Permanent link">&para;</a></h3>
-<p>HLD では「現状の warm reboot ロジックで NHG エントリの restore は明示対応していない、open issue」と書かれている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>NEXTHOP_GROUP_TABLE</code> の永続化と再注入が要 follow-up。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> では「現状の warm reboot ロジックで NHG エントリの restore は明示対応していない、open issue」と書かれている<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>NEXTHOP_GROUP_TABLE</code> の永続化と再注入が要 follow-up。</p>
 <h3 id="libnl">libnl 依存<a class="headerlink" href="#libnl" title="Permanent link">&para;</a></h3>
 <p>NHG 用 attribute (<code>RTA_NH_ID</code>, <code>RTM_NEWNEXTHOP</code> family) は新しめの libnl が必要。HLD は upstream libnl への patch 取り込み状況を open item として挙げる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
@@ -24092,7 +24092,7 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  fpm_use_nexthop_groups = enabled | disabled   # default disabled
 </span></code></pre></div>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD 内で専用 <code>config</code> CLI の言及は無い（CONFIG_DB 直接編集または config_db.json 経由）。</p>
+<p>HLD 内で専用 <code>config</code> CLI の言及は無い（CONFIG_DB 直接編集または <a href="../../reference/glossary/#term-config_db.json">config_db.json</a> 経由）。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ランタイム切替不可（要 BGP container 再起動）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -24102,7 +24102,7 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Fine-Grained ECMP / Ordered NHG</strong>: 同じ ROUTE_TABLE / NHG パスを使う。同時利用時の優先関係は HLD で確定していない</li>
+<li><strong>Fine-Grained <a href="../../reference/glossary/#term-ecmp">ECMP</a> / Ordered NHG</strong>: 同じ <a href="../../reference/glossary/#term-route_table">ROUTE_TABLE</a> / NHG パスを使う。同時利用時の優先関係は HLD で確定していない</li>
 <li><strong>routeorch / NhgOrch</strong>: <code>nexthop_group</code> 参照型 ROUTE_TABLE エントリの解決ロジックを共有</li>
 <li><strong>BGP PIC / Recursive routes</strong>: 本拡張が前提条件</li>
 </ul>
@@ -24176,15 +24176,17 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 </span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config zebra&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;fpm use-next-hop-groups\|nexthop kernel&quot;</span>
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
-<p><code>fpm use-next-hop-groups</code> が <code>running-config</code> に出ていれば成功。<code>NEXTHOP_GROUP_TABLE:*</code> キーが見えれば fpmsyncd 経路も生きている。</p>
+<p><code>fpm use-next-hop-groups</code> が <code>running-config</code> に出ていれば成功。<code>NEXTHOP_GROUP_TABLE:*</code> キーが見えれば <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 経路も生きている。</p>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/16762">sonic-buildimage #16762: [fpmsyncd] Fpmsyncd Next Hop Table Enhancement (merged)</a> — <code>zebra.conf.j2</code> への NHG 切替フラグ導入。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/16762">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #16762: [fpmsyncd] Fpmsyncd Next Hop Table Enhancement (merged)</a> — <code>zebra.conf.j2</code> への NHG 切替フラグ導入。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/23500">sonic-buildimage #23500: [frr] update next hop group support by metadata value with disabled as the default value (merged, 202511)</a> — default を <code>disabled</code> に固定する change。デフォルトでは NHG が <strong>無効</strong> な点に注意。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/16941">sonic-buildimage #16941: [action][PR:16747] fix default zebra config not inserted into empty zebra.conf (merged)</a> — 関連の zebra.conf 生成バグ修正。</li>
 </ul>
 <h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
+<!-- glossary-links-injected: 60508bd384e0 -->
+
 <div class="footnote">
 <hr />
 <ol>

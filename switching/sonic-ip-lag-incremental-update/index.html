@@ -23794,7 +23794,7 @@
 </div>
 <h1 id="ip-lag-mtu-incremental-update">IP / LAG / MTU の Incremental Update<a class="headerlink" href="#ip-lag-mtu-incremental-update" title="Permanent link">&para;</a></h1>
 <h2 id="1-1">なぜ「1 テーブル 1 マネージャ」なのか<a class="headerlink" href="#1-1" title="Permanent link">&para;</a></h2>
-<p>SONiC の初期実装は port / IP / LAG を <code>/etc/network/interfaces</code> や <code>/etc/teamd/</code> の <strong>静的ファイル</strong> に書き出していた。再起動なしの設定変更ができず運用上厳しい。本 HLD は構成変更を <strong>CONFIG_DB から incremental に流す</strong> モデルを定め、原則を <strong>theorem</strong> として明文化する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC の初期実装は port / IP / <a href="../../reference/glossary/#term-lag">LAG</a> を <code>/etc/network/interfaces</code> や <code>/etc/teamd/</code> の <strong>静的ファイル</strong> に書き出していた。再起動なしの設定変更ができず運用上厳しい。本 <a href="../../reference/glossary/#term-hld">HLD</a> は構成変更を <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から incremental に流す</strong> モデルを定め、原則を <strong>theorem</strong> として明文化する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <blockquote>
 <p>"Each configuration table can have one and only one manager daemon associated with it."</p>
 </blockquote>
@@ -23815,7 +23815,7 @@
 <td><code>portmgrd</code></td>
 </tr>
 <tr>
-<td>IP（port / portchannel / VLAN）</td>
+<td>IP（port / portchannel / <a href="../../reference/glossary/#term-vlan">VLAN</a>）</td>
 <td><code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>VLAN_INTERFACE</code></td>
 <td><code>intfmgrd</code></td>
 </tr>
@@ -23840,10 +23840,10 @@
     TMGR -.listen.-&gt; STATEDB</code></pre>
 <p>主な挙動<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>intfmgrd</code> / <code>teammgrd</code> は <strong>STATE_DB を listen</strong> して依存解決（portchannel 生成 / member netdev 出現を待つ）</li>
+<li><code>intfmgrd</code> / <code>teammgrd</code> は <strong><a href="../../reference/glossary/#term-state_db">STATE_DB</a> を listen</strong> して依存解決（portchannel 生成 / member netdev 出現を待つ）</li>
 <li><code>teammgrd</code> は <strong>LAG から外れた port の admin/MTU を元に戻す</strong> 責務も持つ</li>
 <li><code>portsyncd</code> / <code>teamsyncd</code> は netdev 検知で <code>state=ok</code> を STATE_DB に書くだけ</li>
-<li><code>orchagent</code> は LAG MTU → 全 member MTU、port/LAG MTU → RIF MTU を追従</li>
+<li><code>orchagent</code> は LAG MTU → 全 member MTU、port/LAG MTU → <a href="../../reference/glossary/#term-rif">RIF</a> MTU を追従</li>
 </ul>
 <h2 id="phase">Phase 別ゴール<a class="headerlink" href="#phase" title="Permanent link">&para;</a></h2>
 <table>
@@ -23860,15 +23860,15 @@
 </tr>
 <tr>
 <td>1</td>
-<td>フロントパネル / teamd の静的設定を排除。CLI で port up/down、IP 追加削除、MTU、LAG 作成削除、member 追加削除が incremental に可能。<strong><code>docker swss</code> 再起動</strong> で状態復元</td>
+<td>フロントパネル / <a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> の静的設定を排除。CLI で port up/down、IP 追加削除、MTU、LAG 作成削除、member 追加削除が incremental に可能。<strong><code>docker swss</code> 再起動</strong> で状態復元</td>
 </tr>
 <tr>
 <td>2</td>
-<td>loopback も portmgrd 管理へ。<strong><code>docker teamd</code> 再起動</strong> で LAG 全再構築（一旦削除 → 作り直し）</td>
+<td>loopback も <a href="../../reference/glossary/#term-portmgrd">portmgrd</a> 管理へ。<strong><code>docker teamd</code> 再起動</strong> で LAG 全再構築（一旦削除 → 作り直し）</td>
 </tr>
 </tbody>
 </table>
-<p>Phase 2 は IPv6 neighbor 削除や SAI 問題で Phase 1 から切り出された経緯<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Phase 2 は IPv6 neighbor 削除や <a href="../../reference/glossary/#term-sai">SAI</a> 問題で Phase 1 から切り出された経緯<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="conflicting">サポートしない conflicting 操作<a class="headerlink" href="#conflicting" title="Permanent link">&para;</a></h2>
 <p>ユーザに手順分割を要求する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -23945,7 +23945,7 @@
 <li>HLD は 2018 年時点。Phase 2 の現行実装範囲は別途裏取り対象</li>
 </ul>
 <h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>旧 <code>/etc/network/interfaces</code> 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（orchagent が追従）/ LACP <code>fall_back</code> / <code>min_links</code>。</p>
+<p>旧 <code>/etc/network/interfaces</code> 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（<a href="../../reference/glossary/#term-orchagent">orchagent</a> が追従）/ <a href="../../reference/glossary/#term-lacp">LACP</a> <code>fall_back</code> / <code>min_links</code>。</p>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>LAG member の MTU が変わらない → portchannel 側で MTU を変更（member 単独は無効）</li>
@@ -23972,6 +23972,8 @@
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c3ce919a1b54 -->
 
 <div class="footnote">
 <hr />

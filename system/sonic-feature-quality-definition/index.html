@@ -23691,7 +23691,7 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC コミュニティが新機能を contribute する際の <strong>品質レベル定義</strong> <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。3 段階:</p>
 <ul>
-<li><strong>Alpha</strong>: 設計と最低限のテストはあるが、SAI / 平台 vendor API がまだ無い段階</li>
+<li><strong>Alpha</strong>: 設計と最低限のテストはあるが、<a href="../../reference/glossary/#term-sai">SAI</a> / 平台 vendor API がまだ無い段階</li>
 <li><strong>Beta</strong>: 1 vendor 以上で SAI / 平台 API が利用可能、テスト計画はレビュー済みで一部実装</li>
 <li><strong>GA (General Availability)</strong>: テスト計画が sign-off + フル実装</li>
 </ul>
@@ -23714,10 +23714,10 @@
 <td>必須</td>
 </tr>
 <tr>
-<td><code>enabled/disabled</code> を CONFIG_DB で制御</td>
+<td><code>enabled/disabled</code> を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> で制御</td>
 <td><strong>disabled</strong> 既定</td>
 <td><strong>disabled</strong> 既定</td>
-<td>HLD で求める場合のみ enabled 既定</td>
+<td><a href="../../reference/glossary/#term-hld">HLD</a> で求める場合のみ enabled 既定</td>
 </tr>
 <tr>
 <td>投入先</td>
@@ -23739,7 +23739,7 @@
 </tr>
 <tr>
 <td>既存機能への degradation</td>
-<td>無し（sonic-mgmt 全体 pass）</td>
+<td>無し（<a href="../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> 全体 pass）</td>
 <td>無し</td>
 <td>無し</td>
 </tr>
@@ -23802,6 +23802,8 @@
 <li><strong>CONFIG_DB feature flag</strong>: ほぼ全機能が <code>FEATURE</code> テーブルや個別 enable で制御される設計を要求</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 72e7c14fa9b9 -->
+
 <div class="footnote">
 <hr />
 <ol>

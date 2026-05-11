@@ -23841,7 +23841,7 @@
 <h1 id="memorystatsd-memory_statistics">メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）<a class="headerlink" href="#memorystatsd-memory_statistics" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>OS レベルの <strong>メモリ使用量（total / used / free / available / cached / shared / buffers）</strong> を SONiC ネイティブで定期サンプリングし、CLI から履歴クエリできるようにする機能。サードパーティ監視ツールへの依存を減らす目的<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>新規デーモン <code>memorystatsd</code> がデータを収集し、圧縮ログとして保持する。<code>hostcfgd</code> が CONFIG_DB の設定変化を監視して SIGHUP で再ロードする。<strong>デフォルトは無効</strong>（リソース節約のため）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>新規デーモン <code>memorystatsd</code> がデータを収集し、圧縮ログとして保持する。<code>hostcfgd</code> が <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の設定変化を監視して SIGHUP で再ロードする。<strong>デフォルトは無効</strong>（リソース節約のため）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">構成要素<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23853,7 +23853,7 @@
     SHOW --&gt; CDB</code></pre>
 <ul>
 <li><strong>memorystatsd</strong>: psutil でメモリ統計を取り、ログに書く。<code>SIGHUP</code> で設定再読込、<code>SIGTERM</code> で graceful shutdown。</li>
-<li><strong>hostcfgd</strong>: CONFIG_DB の <code>MEMORY_STATISTICS</code> テーブル変更を購読し、デーモンに <code>SIGHUP</code> を送る。</li>
+<li><strong><a href="../../reference/glossary/#term-hostcfgd">hostcfgd</a></strong>: CONFIG_DB の <code>MEMORY_STATISTICS</code> テーブル変更を購読し、デーモンに <code>SIGHUP</code> を送る。</li>
 <li><strong>再起動時の挙動</strong>: クラッシュや再起動時は <strong>設定ファイルの default に戻る</strong>。runtime に CONFIG_DB から反映された値は永続化されない（次回起動では再度 hostcfgd が同期する）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h3 id="_4">サンプリングと保持<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
@@ -23949,7 +23949,7 @@
 <ul>
 <li><code>memorystatsd</code> は再起動時に必ず default 設定に戻り、その後 hostcfgd 経由で CONFIG_DB の値を SIGHUP で適用する設計。<code>enabled</code> が CONFIG_DB で <code>true</code> でも、デーモン起動直後は無効状態を経由する。</li>
 <li>メモリメトリクスは <strong>OS レベルの全体値</strong> のみで、個別プロセス・コンテナ単位の統計は対象外（Future Work で言及）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li>アラート / 閾値通知は HLD では Future Work として明記。</li>
+<li>アラート / 閾値通知は <a href="../../reference/glossary/#term-hld">HLD</a> では Future Work として明記。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23970,6 +23970,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: efdba57a44d3 -->
 
 <div class="footnote">
 <hr />

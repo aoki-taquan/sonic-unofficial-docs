@@ -23550,19 +23550,19 @@
 
 
 <h1 id="sonic">SONiC 全体像と設定基盤<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC を読むときに最初に混乱しやすい「設定はどこから入るのか」「Redis DB は何を分担するのか」「変更はどこまで安全に戻せるのか」を、HLD 単位ではなく読者の質問順に並べ直した入口です。</p>
-<p>対象読者は、SONiC の全体像を先に掴みたい初学者、設定変更の影響範囲を確認したい運用者、CONFIG_DB / YANG / daemon の責務境界を把握したい開発者です。個別コマンドやテーブルの完全な仕様は既存の reference / area ページへ譲り、この章では「どこを読めば判断できるか」を明確にします。</p>
+<p>この章は、SONiC を読むときに最初に混乱しやすい「設定はどこから入るのか」「<a href="../../reference/glossary/#term-redis">Redis</a> DB は何を分担するのか」「変更はどこまで安全に戻せるのか」を、<a href="../../reference/glossary/#term-hld">HLD</a> 単位ではなく読者の質問順に並べ直した入口です。</p>
+<p>対象読者は、SONiC の全体像を先に掴みたい初学者、設定変更の影響範囲を確認したい運用者、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> / daemon の責務境界を把握したい開発者です。個別コマンドやテーブルの完全な仕様は既存の reference / area ページへ譲り、この章では「どこを読めば判断できるか」を明確にします。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>SONiC の設定は CLI、<code>config_db.json</code>、YANG、GCU、gNMI のどれを入口に読むべきか。</li>
+<li>SONiC の設定は CLI、<code>config_db.json</code>、YANG、<a href="../../reference/glossary/#term-gcu">GCU</a>、<a href="../../reference/glossary/#term-gnmi">gNMI</a> のどれを入口に読むべきか。</li>
 <li><code>CONFIG_DB</code>、<code>APPL_DB</code>、<code>STATE_DB</code>、<code>ASIC_DB</code> はどの章の前提知識になるか。</li>
-<li><code>config reload</code>、<code>config replace</code>、<code>config apply-patch</code>、rollback、ZTP、factory reset はどう使い分けるか。</li>
+<li><code>config reload</code>、<code>config replace</code>、<code>config apply-patch</code>、rollback、<a href="../../reference/glossary/#term-ztp">ZTP</a>、factory reset はどう使い分けるか。</li>
 <li>既存の <code>guides/</code>、<code>categories/</code>、<code>reference/</code>、area 別 HLD ページは読み物章からどう辿るか。</li>
 </ul>
 <h2 id="_2">サブページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="concept/">概念と読み始め方</a>: 読者別の最短導線、CLI / ConfigDB / YANG / GCU の役割、既存 guides / categories の使い方。</li>
-<li><a href="architecture/">設定データフロー</a>: <code>CONFIG_DB</code> から daemon、<code>APPL_DB</code>、orchagent、SAI へ流れる全体像。</li>
+<li><a href="architecture/">設定データフロー</a>: <code>CONFIG_DB</code> から daemon、<code>APPL_DB</code>、<a href="../../reference/glossary/#term-orchagent">orchagent</a>、<a href="../../reference/glossary/#term-sai">SAI</a> へ流れる全体像。</li>
 <li><a href="configuration/">設定変更の選び方</a>: <code>config save/load/reload/replace</code>、GCU、JSON Patch、<code>sonic-cfggen</code> の使い分け。</li>
 <li><a href="operations/">運用入口</a>: feature enable、system defaults、config reload、factory reset、基本的な切り戻し判断。</li>
 <li><a href="internals/">内部実装</a>: first boot / migration、複数 Redis、Multi-ASIC namespace、管理 API 側 Redis client の見方。</li>
@@ -23591,6 +23591,7 @@
 <li><a href="../11-reboot/">Reboot / Upgrade / Lifecycle</a></li>
 <li><a href="../21-lab-vs-developer/">Lab / Virtual SONiC / Developer Entry</a></li>
 </ul>
+<!-- glossary-links-injected: 99ff3d378f44 -->
 
 
 

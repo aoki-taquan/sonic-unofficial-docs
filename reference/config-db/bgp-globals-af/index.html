@@ -23639,7 +23639,7 @@
 
 <h1 id="bgp_globals_af">BGP_GLOBALS_AF テーブル<a class="headerlink" href="#bgp_globals_af" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>BGP_GLOBALS_AF</code> は <code>BGP_GLOBALS</code> の VRF ごとに、address-family / subsequent address-family 単位の BGP 設定を保持する CONFIG_DB テーブル。multipath、VRF import、route download filter、distance、route flap dampening、EVPN/VXLAN 関連フラグを扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。派生テーブルとして、aggregate-address を定義する <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> と、network statement を定義する <code>BGP_GLOBALS_AF_NETWORK</code> がある。実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>BGP_GLOBALS_AF</code> は <code>BGP_GLOBALS</code> の <a href="../../glossary/#term-vrf">VRF</a> ごとに、address-family / subsequent address-family 単位の <a href="../../glossary/#term-bgp">BGP</a> 設定を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。multipath、VRF import、route download filter、distance、route flap dampening、<a href="../../glossary/#term-evpn">EVPN</a>/<a href="../../glossary/#term-vxlan">VXLAN</a> 関連フラグを扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。派生テーブルとして、aggregate-address を定義する <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> と、network statement を定義する <code>BGP_GLOBALS_AF_NETWORK</code> がある。実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23842,7 +23842,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>bgpcfgd</code>: CONFIG_DB の BGP global AF 設定を FRR address-family 設定へ変換する。</li>
+<li><code>bgpcfgd</code>: CONFIG_DB の BGP global AF 設定を <a href="../../glossary/#term-frr">FRR</a> address-family 設定へ変換する。</li>
 <li><code>frr-mgmt-framework</code>: <code>DEVICE_METADATA.frr_mgmt_framework_config = true</code> のときに generic BGP model として処理する。</li>
 <li><code>bgpd</code> (FRR): vtysh / mgmt framework 経由で最終的な AF 設定を保持する。</li>
 </ul>
@@ -23850,7 +23850,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>、<code>BGP_NEIGHBOR_AF</code>、<code>BGP_PEER_GROUP_AF</code>、<code>ROUTE_MAP_SET</code>、<code>VRF</code></li>
 <li>関連 CLI: <code>config bgp</code></li>
-<li>関連 YANG: <code>sonic-bgp-global</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-global</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23867,7 +23867,7 @@
 <h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>BGP_GLOBALS_AF|&lt;vrf&gt;|&lt;af&gt;</code> (af = <code>ipv4_unicast</code> / <code>ipv6_unicast</code> / <code>l2vpn_evpn</code> 等)`。</li>
-<li><code>max_ebgp_paths</code> / <code>max_ibgp_paths</code>: 64（ECMP 上限）。<code>network_import_check</code>: <code>true</code>。</li>
+<li><code>max_ebgp_paths</code> / <code>max_ibgp_paths</code>: 64（<a href="../../glossary/#term-ecmp">ECMP</a> 上限）。<code>network_import_check</code>: <code>true</code>。</li>
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23878,6 +23878,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp l2vpn evpn summary&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a2e09729dbfd -->
 
 <div class="footnote">
 <hr />

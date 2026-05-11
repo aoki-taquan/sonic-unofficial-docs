@@ -23802,7 +23802,7 @@
 
 <h1 id="bgp_neighbor_af">BGP_NEIGHBOR_AF テーブル<a class="headerlink" href="#bgp_neighbor_af" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>BGP_NEIGHBOR</code> の <strong>アドレスファミリ別</strong> 設定を持つテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-bgp-neighbor.yang</code> の <code>BGP_NEIGHBOR_AF</code> コンテナに定義され、<code>sonic-bgp-common.yang</code> の <code>grouping sonic-bgp-cmn-af</code> を <code>uses</code>。<code>frr-mgmt-framework</code> 経路で FRR (<code>bgpd</code>) の <code>address-family ... / neighbor &lt;addr&gt; ...</code> 配下コマンドに変換される。</p>
+<p><code>BGP_NEIGHBOR</code> の <strong>アドレスファミリ別</strong> 設定を持つテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-bgp-neighbor.yang</code> の <code>BGP_NEIGHBOR_AF</code> コンテナに定義され、<code>sonic-bgp-common.yang</code> の <code>grouping sonic-bgp-cmn-af</code> を <code>uses</code>。<code>frr-mgmt-framework</code> 経路で <a href="../../glossary/#term-frr">FRR</a> (<code>bgpd</code>) の <code>address-family ... / neighbor &lt;addr&gt; ...</code> 配下コマンドに変換される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23843,7 +23843,7 @@
 <p>完全な型・既定値は <code>sonic-bgp-common.yang</code> の <code>grouping sonic-bgp-cmn-af</code> を参照（<code>docs/reference/config-db/bgp-peer-group-af.md</code> のフィールド表が同一）。</p>
 <h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>neighbor</code> の leafref は <code>[vrf_name=current()/../vrf_name]</code> で同一 VRF の隣接に限定される</li>
+<li><code>neighbor</code> の leafref は <code>[vrf_name=current()/../vrf_name]</code> で同一 <a href="../../glossary/#term-vrf">VRF</a> の隣接に限定される</li>
 <li><code>vrf_name</code> は <code>BGP_GLOBALS</code> に存在することが前提</li>
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -23853,8 +23853,8 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <a href="../bgp-neighbor/"><code>BGP_NEIGHBOR</code></a>、<a href="../bgp-peer-group-af/"><code>BGP_PEER_GROUP_AF</code></a>、<code>PREFIX_LIST</code>、<code>ROUTE_MAP</code></li>
-<li>関連 YANG: <code>sonic-bgp-neighbor</code>、<code>sonic-bgp-common</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../bgp-neighbor/"><code>BGP_NEIGHBOR</code></a>、<a href="../bgp-peer-group-af/"><code>BGP_PEER_GROUP_AF</code></a>、<code>PREFIX_LIST</code>、<code>ROUTE_MAP</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-neighbor</code>、<code>sonic-bgp-common</code></li>
 <li>関連 CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23883,6 +23883,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp neighbor &lt;ip&gt;&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9753c9509bfa -->
 
 <div class="footnote">
 <hr />

@@ -24108,7 +24108,7 @@
 </div>
 <h1 id="l3-scaling-performance-kernel-arp-gc-sairedis-bulk-fpmsyncd-show-arp">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / <code>show arp</code>）<a class="headerlink" href="#l3-scaling-performance-kernel-arp-gc-sairedis-bulk-fpmsyncd-show-arp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC 201908 リリース時に行われた <strong>L3 のスケール拡大と性能改善</strong> をまとめた HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。スケールでは <strong>ARP/ND エントリ数</strong> と <strong>route 数 / ECMP 構成</strong> を引き上げ、性能では <strong>route programming 時間</strong> と <strong>show コマンド応答時間</strong> を短縮する。CLI / CONFIG_DB / YANG への新規追加は <strong>無し</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC 201908 リリース時に行われた <strong>L3 のスケール拡大と性能改善</strong> をまとめた <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。スケールでは <strong><a href="../../reference/glossary/#term-arp">ARP</a>/ND エントリ数</strong> と <strong>route 数 / <a href="../../reference/glossary/#term-ecmp">ECMP</a> 構成</strong> を引き上げ、性能では <strong>route programming 時間</strong> と <strong>show コマンド応答時間</strong> を短縮する。CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> への新規追加は <strong>無し</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>スケール目標<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -24224,7 +24224,7 @@
 </tbody>
 </table>
 <h4 id="21-sairedis-bulk-route-api">2.1 sairedis bulk route API の利用<a class="headerlink" href="#21-sairedis-bulk-route-api" title="Permanent link">&para;</a></h4>
-<p>旧: <code>RouteOrch</code> は 1 経路ごとに sairedis API を呼ぶ。Redis pipelining でいくらかバルク化はされるが <strong>1 経路 = 1 Redis message</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>旧: <code>RouteOrch</code> は 1 経路ごとに sairedis API を呼ぶ。<a href="../../reference/glossary/#term-redis">Redis</a> pipelining でいくらかバルク化はされるが <strong>1 経路 = 1 Redis message</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>新: <strong>sairedis の bulk API</strong> を使う:</p>
 <ul>
 <li><code>RouteOrch</code> は 64 件まとめて bulk API に渡す</li>
@@ -24248,14 +24248,14 @@
     end</code></pre>
 <h4 id="22-fpmsyncd">2.2 <code>fpmsyncd</code> の最適化<a class="headerlink" href="#22-fpmsyncd" title="Permanent link">&para;</a></h4>
 <p>旧: 各経路の処理で <strong><code>rt_table</code> 属性から master device 名を kernel から取得</strong> する。これは VNET_ROUTE_TABLE 判定のため<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>問題: VNET が無い環境でも lookup が <strong>常に失敗 → cache 更新を毎経路で行う</strong>。これが route 投入を遅くする。</p>
+<p>問題: <a href="../../reference/glossary/#term-vnet">VNET</a> が無い環境でも lookup が <strong>常に失敗 → cache 更新を毎経路で行う</strong>。これが route 投入を遅くする。</p>
 <p>修正: <strong><code>route.rt_table == 0</code>（global routing table）</strong> なら lookup を <strong>skip</strong>。10k 経路の APP_DB 投入が <strong>7-8s → 4-5s</strong> に短縮<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="23-sairedis-json">2.3 sairedis 内 JSON ライブラリ更新<a class="headerlink" href="#23-sairedis-json" title="Permanent link">&para;</a></h4>
 <p><code>nlohmann/json</code> ライブラリの <strong>v2.0 → v3.6</strong> への更新で <code>dump()</code> 系最適化を取り込む<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="_3">期待効果<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
 <p>上記合算で <strong>route programming 時間 30% 削減</strong> を目標<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="3-show-arp-show-ndp">3. <code>show arp</code> / <code>show ndp</code> の高速化<a class="headerlink" href="#3-show-arp-show-ndp" title="Permanent link">&para;</a></h3>
-<p>旧: VLAN L3 interface 上の ARP の <strong>outgoing interface を求めるため FDB 全件を fetch</strong>。エントリが大量だと show が秒〜分単位かかる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>旧: <a href="../../reference/glossary/#term-vlan">VLAN</a> L3 interface 上の ARP の <strong>outgoing interface を求めるため <a href="../../reference/glossary/#term-fdb">FDB</a> 全件を fetch</strong>。エントリが大量だと show が秒〜分単位かかる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>修正: 該当 ARP/ND <strong>特定エントリだけの FDB lookup</strong> に変更。CLI スクリプト側の改修。</p>
 <pre class="mermaid"><code>flowchart LR
     OLD[show arp 旧] --&gt;|FDB 全件取得| F1[1 entry 解決]
@@ -24297,10 +24297,10 @@
 </span></code></pre></div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>HLD は 2019 年改訂</strong>。kernel sysctl 値や CoPP 値は <strong>その後の SONiC で更に調整</strong> されている可能性<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>HLD は 2019 年改訂</strong>。kernel sysctl 値や <a href="../../reference/glossary/#term-copp">CoPP</a> 値は <strong>その後の SONiC で更に調整</strong> されている可能性<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>gc_thresh3</code> を上げると <strong>kernel メモリ使用量</strong> が増える。低スペック CPU 機では注意</li>
 <li>CoPP の ARP/ND 上限を 8000 pps に上げると <strong>CPU 負荷増</strong>。他の trap との合算で CPU 飽和に注意</li>
-<li>sairedis bulk API は <strong>ASIC 側 bulk 未対応の場合 syncd 内で逐次処理</strong> されるため、改善幅は Redis message 削減分に留まる</li>
+<li>sairedis bulk API は <strong>ASIC 側 bulk 未対応の場合 <a href="../../reference/glossary/#term-syncd">syncd</a> 内で逐次処理</strong> されるため、改善幅は Redis message 削減分に留まる</li>
 <li><code>RouteOrch</code> の 1 秒 timer flush は <strong>大量経路投入時のみ効果</strong>。少量更新では遅延がむしろ増える可能性</li>
 <li><code>fpmsyncd</code> の VNET 判定スキップは <strong>VNET 利用時の挙動変更ではない</strong>（<code>rt_table != 0</code> の経路には従来通り lookup）</li>
 <li>HLD は AS7712 (Tomahawk) で測定。他 ASIC では <strong>異なる timing</strong> になる</li>
@@ -24449,6 +24449,8 @@
 </ul>
 <h4 id="_13">検証日<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
+<!-- glossary-links-injected: 7570ef7216f8 -->
+
 <div class="footnote">
 <hr />
 <ol>

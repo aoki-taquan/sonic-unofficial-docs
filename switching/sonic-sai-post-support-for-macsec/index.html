@@ -23906,7 +23906,7 @@
 </div>
 <h1 id="fips-macsec-sai-postfips_macsec_post_table">FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）<a class="headerlink" href="#fips-macsec-sai-postfips_macsec_post_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>FIPS 140-3 準拠を維持するには、暗号機構（MACsec ハードウェアエンジンを含む）が <strong>動作開始前に Pre-Operational Self-Test (POST)</strong> を通っていなければならない。本 HLD は SONiC で MACsec の POST を SAI 経由でトリガし、その結果を <code>STATE_DB.FIPS_MACSEC_POST_TABLE</code> に公開、<code>MACSecMgr</code> が POST pass を確認してから MACsec 設定を流す設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>FIPS 140-3 準拠を維持するには、暗号機構（MACsec ハードウェアエンジンを含む）が <strong>動作開始前に Pre-Operational Self-Test (POST)</strong> を通っていなければならない。本 <a href="../../reference/glossary/#term-hld">HLD</a> は SONiC で MACsec の POST を <a href="../../reference/glossary/#term-sai">SAI</a> 経由でトリガし、その結果を <code>STATE_DB.FIPS_MACSEC_POST_TABLE</code> に公開、<code>MACSecMgr</code> が POST pass を確認してから MACsec 設定を流す設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>設計上の要件は次の 4 点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>ASIC / SAI 実装の差異を吸収するため、POST は <strong>SAI switch init 段</strong> または <strong>SAI MACsec init 段</strong> のいずれでも有効化できること</li>
@@ -23928,7 +23928,7 @@
 <ul>
 <li>POST 結果は <code>STATE_DB.FIPS_MACSEC_POST_TABLE</code> 1 つに集約</li>
 <li><code>Orchagent</code> は SAI switch 作成時に POST capability を問い合わせ、対応箇所で POST を有効化</li>
-<li><code>MACSecMgr</code> は STATE_DB を見て POST pass を確認するまで MACsec 設定を処理しない（FIPS 準拠の核）</li>
+<li><code>MACSecMgr</code> は <a href="../../reference/glossary/#term-state_db">STATE_DB</a> を見て POST pass を確認するまで MACsec 設定を処理しない（FIPS 準拠の核）</li>
 </ul>
 <h3 id="state_db">STATE_DB スキーマ<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FIPS_MACSEC_POST_TABLE
@@ -24032,7 +24032,7 @@
     else status=fail / in-progress / disabled
         MM-&gt;&gt;MM: 設定を保留 or drop
     end</code></pre>
-<p><code>MACSecMgr</code> は <code>macsec</code> コンテナで動作し、CONFIG_DB を購読する従来のロールに <strong>POST 状態の事前チェック</strong> を足す形で拡張される<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これが FIPS 準拠の最終ガード。</p>
+<p><code>MACSecMgr</code> は <code>macsec</code> コンテナで動作し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を購読する従来のロールに <strong>POST 状態の事前チェック</strong> を足す形で拡張される<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これが FIPS 準拠の最終ガード。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/fips/SONiC-SAI-POST.md#L97-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24062,7 +24062,7 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>専用 CLI は HLD で言及されていない（FIPS 有効化に既存の <code>sonic-installer set-fips</code> を使う）。MACsec POST 状態は <code>redis-cli</code> 等で <code>STATE_DB.FIPS_MACSEC_POST_TABLE|sai</code> を直接読む形になる。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 YANG モジュールは HLD で言及されていない。</p>
+<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD で言及されていない。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>POST 機能は <strong>SAI 実装が POST capability を持っていることが前提</strong>。POST capability が switch / MACsec のどちらにも無い ASIC では FIPS 有効時に <code>status=fail</code> 固定になる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -24098,6 +24098,8 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: fae4babedf51 -->
 
 <div class="footnote">
 <hr />

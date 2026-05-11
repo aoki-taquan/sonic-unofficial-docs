@@ -23848,7 +23848,7 @@
 <li><strong>ルートが期待どおりに選ばれない</strong> ときに見る場所は？</li>
 </ol>
 <h2 id="1-mstp">1. なぜ MSTP か<a class="headerlink" href="#1-mstp" title="Permanent link">&para;</a></h2>
-<p>IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し <strong>「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」</strong> のが特徴。VLAN 数が多くても MSTI 数だけの STP インスタンスで済むためスケールに有利<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し <strong>「<a href="../../reference/glossary/#term-vlan">VLAN</a> 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」</strong> のが特徴。VLAN 数が多くても MSTI 数だけの STP インスタンスで済むためスケールに有利<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     CLI[config spanning-tree] --&gt; CDB[(CONFIG_DB STP / STP_MST*)]
     CDB --&gt; SM[stpmgrd]
@@ -23856,7 +23856,7 @@
     ADB --&gt; STPD[stpd in stp container]
     STPD --&gt; SO[STP Orch]
     SO --&gt;|SAI_STP_*| ASIC[(ASIC)]</code></pre>
-<p><code>stp</code> コンテナで <code>stpd</code> が走り、<code>stpmgrd</code> が CONFIG_DB ↔ APPL_DB を橋渡しする。</p>
+<p><code>stp</code> コンテナで <code>stpd</code> が走り、<code>stpmgrd</code> が <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> ↔ <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> を橋渡しする。</p>
 <h2 id="2-config_db-cli">2. 設定（CONFIG_DB と CLI）<a class="headerlink" href="#2-config_db-cli" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>STP|GLOBAL
@@ -23919,7 +23919,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>spanning-tree<span class="w"> </span>mst<span class="w"> </span>instance<span class="w"> </span><span class="m">1</span><span class="w"> </span>priority<span class="w"> </span><span class="m">4096</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>show<span class="w"> </span>spanning-tree<span class="w"> </span>mst<span class="w"> </span>instance<span class="w"> </span><span class="m">1</span>
 </span></code></pre></div>
-<p>詳細サブコマンド（Disabled Commands、<code>show spanning-tree counters</code> 系）は HLD の対応節を参照。</p>
+<p>詳細サブコマンド（Disabled Commands、<code>show spanning-tree counters</code> 系）は <a href="../../reference/glossary/#term-hld">HLD</a> の対応節を参照。</p>
 <h2 id="3-mst-region">3. MST Region<a class="headerlink" href="#3-mst-region" title="Permanent link">&para;</a></h2>
 <p>MST Region は次が <strong>完全一致</strong> するスイッチの集合<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -23944,14 +23944,14 @@
 <p><code>mode</code> を rstp / pvst から mst へ切り替える際、stpd は内部状態を破棄して MSTP モードで再起動する。<strong>瞬間的に L2 トポロジが揺れる</strong> 可能性あり<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="sai">SAI<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <ul>
-<li>CIST が SAI の default STP オブジェクト</li>
+<li>CIST が <a href="../../reference/glossary/#term-sai">SAI</a> の default STP オブジェクト</li>
 <li>各 MSTI は追加の <code>SAI_STP_OBJECT_ID</code> インスタンス</li>
 <li>Port × MSTI ごとに <code>SAI_STP_PORT_ATTR_STATE</code> を operate</li>
 </ul>
 <p>MSTI 数の上限は <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> に依存。</p>
 <h2 id="5">5. 他機能との干渉<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VLAN / Port-Channel / FDB</strong>: MSTP の Port State 変化（Forwarding ↔ Discarding）に応じて FDB 学習・転送が変化</li>
+<li><strong>VLAN / Port-Channel / <a href="../../reference/glossary/#term-fdb">FDB</a></strong>: MSTP の Port State 変化（Forwarding ↔ Discarding）に応じて FDB 学習・転送が変化</li>
 <li><strong>PVST / RSTP</strong>: 同じ <code>STP|GLOBAL.mode</code> を共有するため同時動作不可</li>
 <li><strong>BPDU Guard / Root Guard / Edge Port</strong>: 共通の <code>STP_PORT</code> 経由で MSTP でも有効</li>
 </ul>
@@ -23997,6 +23997,8 @@
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a28a0493d074 -->
 
 <div class="footnote">
 <hr />

@@ -23896,8 +23896,8 @@
 </div>
 <h1 id="mux-dual-tor">プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）<a class="headerlink" href="#mux-dual-tor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサーバ向けネイバエントリを <strong>追加・削除</strong> する必要があり、ネイバ数が多い ToR では切替時の処理量と SAI コール回数が線形に増えていく<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は SAI ネイバ作成時に <strong>暗黙のホストルート生成を抑止</strong>（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code>）し、その代わりに <code>/32</code>（IPv4）または <code>/128</code>（IPv6）の <strong>明示的なプレフィックスルート</strong> を作成する。Mux 状態遷移時はネイバエントリ自体は触らず、プレフィックスルートの <strong>ネクストホップだけを直接ネイバ↔IPinIP トンネルで切り替える</strong>。これにより <code>O(neighbor 数)</code> の add/remove が 1 ルートの nexthop 更新に集約され、切替が大幅に軽量化される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサーバ向けネイバエントリを <strong>追加・削除</strong> する必要があり、ネイバ数が多い ToR では切替時の処理量と <a href="../../reference/glossary/#term-sai">SAI</a> コール回数が線形に増えていく<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は SAI ネイバ作成時に <strong>暗黙のホストルート生成を抑止</strong>（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code>）し、その代わりに <code>/32</code>（IPv4）または <code>/128</code>（IPv6）の <strong>明示的なプレフィックスルート</strong> を作成する。Mux 状態遷移時はネイバエントリ自体は触らず、プレフィックスルートの <strong>ネクストホップだけを直接ネイバ↔<a href="../../reference/glossary/#term-ipinip">IPinIP</a> トンネルで切り替える</strong>。これにより <code>O(neighbor 数)</code> の add/remove が 1 ルートの nexthop 更新に集約され、切替が大幅に軽量化される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="vs">従来方式 vs プレフィックスルート方式<a class="headerlink" href="#vs" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
@@ -23926,7 +23926,7 @@
 <p>mux ポートに動的指定された場合のために、<code>MuxOrch</code> から既存ネイバを mux ネイバへ昇格する API も提供される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="muxorch">MuxOrch<a class="headerlink" href="#muxorch" title="Permanent link">&para;</a></h4>
 <p>新たに「プレフィックスルート用 neighbor handler」を追加し、ポート単位の <code>neighbor_mode</code> で従来 handler と切り替える。これにより同一スイッチ上で host_route と prefix_route の <strong>共存</strong> を許す<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>linkmgrd の状態通知に応じて<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> の状態通知に応じて<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -24051,13 +24051,13 @@ reasoning: NO_HOST_ROUTE 属性とプレフィックスルート差し替えに�
 <ul>
 <li><strong>ASIC capability 必須</strong>: <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code> を実装しない ASIC では使えず、host_route にフォールバックする<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>mode 動的変更不可</strong>: 一度作成された mux ネイバの mode を実行時に切り替えることはサポートされない<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>Warm reboot 対応は TBD</strong>: HLD は warm reboot サポートを「TBD」と明記しており未確定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>Warm reboot 対応は TBD</strong>: <a href="../../reference/glossary/#term-hld">HLD</a> は warm reboot サポートを「TBD」と明記しており未確定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>linkmgrd</code> / <code>MuxOrch</code> の状態機械</strong>: 状態遷移は従来どおり linkmgrd → MuxOrch だが、SAI 操作の中身が neighbor add/remove から route attribute set に置き換わる。</li>
 <li><strong>IPinIP トンネル</strong>: standby 時の tunnel nexthop は既存 IPinIP 機構を再利用する。tunnel terminator 側に変更はない。</li>
-<li><strong>暗黙ホストルート挙動の差</strong>: 他機能（例: ARP/ND 学習に紐づくホストルート期待）が暗黙ホストルートに依存している場合、mux ポートでは prefix route で代替されるため挙動を確認する必要がある。</li>
+<li><strong>暗黙ホストルート挙動の差</strong>: 他機能（例: <a href="../../reference/glossary/#term-arp">ARP</a>/ND 学習に紐づくホストルート期待）が暗黙ホストルートに依存している場合、mux ポートでは prefix route で代替されるため挙動を確認する必要がある。</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24072,6 +24072,8 @@ reasoning: NO_HOST_ROUTE 属性とプレフィックスルート差し替えに�
 <li><a href="../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2f9f3ecb28d2 -->
 
 <div class="footnote">
 <hr />

@@ -23938,7 +23938,7 @@
 <li>設定変更 → <code>sonic-mgmt</code> 経由</li>
 <li>sysdump 取得 → <code>sonic-mgmt</code> 経由</li>
 </ul>
-<p>CLI 直接の規定は本 HLD には無い<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CLI 直接の規定は本 <a href="../../reference/glossary/#term-hld">HLD</a> には無い<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/logging/Logging_and_sysdump_arch_spec.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23964,7 +23964,7 @@ reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
-<p>本 HLD では具体的な CONFIG_DB / CLI / YANG スキーマを規定していない。実装側で別途決まる前提。実機の SONiC では <code>show techsupport</code> / <code>generate_dump</code> 系コマンドが Per daemon / Per platform フックを呼ぶ実装が存在するが、本 HLD はそのレイヤを定義するだけ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD では具体的な <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> スキーマを規定していない。実装側で別途決まる前提。実機の SONiC では <code>show techsupport</code> / <code>generate_dump</code> 系コマンドが Per daemon / Per platform フックを呼ぶ実装が存在するが、本 HLD はそのレイヤを定義するだけ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>要件仕様レベル</strong>: 具体実装は本 HLD では決まらない。<code>libswss-common</code> ベースの共通 API、<code>sonic-mgmt</code> 経由のデプロイ前提だけが固い<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -23990,6 +23990,8 @@ reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 <div class="footnote">
 <hr />

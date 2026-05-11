@@ -23806,15 +23806,15 @@
 
 
 <h1 id="overlay">Overlay 運用<a class="headerlink" href="#overlay" title="Permanent link">&para;</a></h1>
-<p>Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS / hash の順に見ると無駄が少なくなります。VXLAN の外側パケットが届かない問題と、EVPN / VNET route が入らない問題は、最初から分けて扱います。</p>
+<p>Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、<a href="../../../reference/glossary/#term-qos">QoS</a> / hash の順に見ると無駄が少なくなります。<a href="../../../reference/glossary/#term-vxlan">VXLAN</a> の外側パケットが届かない問題と、<a href="../../../reference/glossary/#term-evpn">EVPN</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a> route が入らない問題は、最初から分けて扱います。</p>
 <h2 id="_1">確認順<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Underlay で remote VTEP IP に到達できるか。</li>
 <li><code>VXLAN_TUNNEL</code> と <code>VXLAN_TUNNEL_MAP</code> / <code>VNET</code> が想定どおり DB に入っているか。</li>
-<li>EVPN 利用時は BGP-EVPN session、VNI、Type-2 / Type-5 の受信状態を見る。</li>
-<li>VNET route 利用時は <code>VNET_ROUTE_TUNNEL_TABLE</code>、endpoint、monitoring、BFD state を見る。</li>
-<li>ASIC 側で tunnel object、tunnel nexthop、NHG member、route / FDB が作られているかを確認する。</li>
-<li>負荷分散や loss が問題なら DSCP remap、PBH inner hash、ECMP / ARS の影響を切り分ける。</li>
+<li>EVPN 利用時は <a href="../../../reference/glossary/#term-bgp">BGP</a>-EVPN session、VNI、Type-2 / Type-5 の受信状態を見る。</li>
+<li>VNET route 利用時は <code>VNET_ROUTE_TUNNEL_TABLE</code>、endpoint、monitoring、<a href="../../../reference/glossary/#term-bfd">BFD</a> state を見る。</li>
+<li>ASIC 側で tunnel object、tunnel nexthop、NHG member、route / <a href="../../../reference/glossary/#term-fdb">FDB</a> が作られているかを確認する。</li>
+<li>負荷分散や loss が問題なら DSCP remap、PBH inner hash、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> / ARS の影響を切り分ける。</li>
 </ol>
 <h2 id="overlay-ecmp-bfd">Overlay ECMP と BFD<a class="headerlink" href="#overlay-ecmp-bfd" title="Permanent link">&para;</a></h2>
 <p>Overlay ECMP は、1 prefix に複数 tunnel endpoint を持たせ、VnetOrch が tunnel nexthop group を作る仕組みです。BFD monitoring 付きでは、<code>endpoint_monitor</code> に対応する BFD state が Down になると、その endpoint は NHG から外れます。</p>
@@ -23827,14 +23827,14 @@
   State -- down --&gt; Remove[Member removed]
   State -- pinned up/down --&gt; Override[Controller override]</code></pre>
 <h2 id="dscp-remap">DSCP remap<a class="headerlink" href="#dscp-remap" title="Permanent link">&para;</a></h2>
-<p>Tunnel traffic の DSCP remap は、特に Dual-ToR の bounce-back 経路で PFC deadlock を避けるための QoS 機能です。VXLAN/VNET そのものの到達性ではなく、tunnel encap / decap 時の DSCP、TC、PG、Queue の対応を変えます。</p>
-<p>切り分けでは、<code>TUNNEL</code> / <code>TUNNEL_DECAP_TABLE</code> に QoS map が紐付いているか、<code>dscp_mode</code> が想定どおりか、ASIC_DB に <code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code> / <code>DECAP_QOS_*</code> が入っているかを確認します。</p>
+<p>Tunnel traffic の DSCP remap は、特に Dual-ToR の bounce-back 経路で <a href="../../../reference/glossary/#term-pfc">PFC</a> deadlock を避けるための QoS 機能です。VXLAN/VNET そのものの到達性ではなく、tunnel encap / decap 時の DSCP、TC、PG、Queue の対応を変えます。</p>
+<p>切り分けでは、<code>TUNNEL</code> / <code>TUNNEL_DECAP_TABLE</code> に QoS map が紐付いているか、<code>dscp_mode</code> が想定どおりか、<a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に <code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code> / <code>DECAP_QOS_*</code> が入っているかを確認します。</p>
 <h2 id="inner-packet-hashing">Inner packet hashing<a class="headerlink" href="#inner-packet-hashing" title="Permanent link">&para;</a></h2>
 <p>Encapsulated traffic の ECMP 偏りを見るときは、outer 5-tuple で hash しているのか、inner 5-tuple で hash しているのかを確認します。PBH の inner hash テストでは、VXLAN/NVGRE の outer を変えても inner が同じなら同一 nexthop に寄ること、inner を変えれば複数 nexthop に分散することを確認します。</p>
 <h2 id="local-ars">Local ARS との境界<a class="headerlink" href="#local-ars" title="Permanent link">&para;</a></h2>
-<p>Local ARS は ECMP の next-hop 選択を static hash ではなく queue depth や port utilization で動的に変える発展機能です。既存ページでは現行 master で SWSS / YANG / CLI への取り込み未完了の可能性が示されているため、VXLAN/VNET の通常運用手順として前提にしない方が安全です。設計比較や将来機能として読む位置づけです。</p>
+<p>Local ARS は ECMP の next-hop 選択を static hash ではなく queue depth や port utilization で動的に変える発展機能です。既存ページでは現行 master で SWSS / <a href="../../../reference/glossary/#term-yang">YANG</a> / CLI への取り込み未完了の可能性が示されているため、VXLAN/VNET の通常運用手順として前提にしない方が安全です。設計比較や将来機能として読む位置づけです。</p>
 <h2 id="show-vxlan">show vxlan の出力サンプル<a class="headerlink" href="#show-vxlan" title="Permanent link">&para;</a></h2>
-<p><code>show vxlan tunnel</code> は CONFIG_DB の <code>VXLAN_TUNNEL</code> と STATE_DB / APPL_DB の oper 状態を結合します。EVPN 由来の場合 <code>Creation Source = EVPN</code>、static 設定なら <code>CLI</code> 等が出ます。</p>
+<p><code>show vxlan tunnel</code> は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>VXLAN_TUNNEL</code> と <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の oper 状態を結合します。EVPN 由来の場合 <code>Creation Source = EVPN</code>、static 設定なら <code>CLI</code> 等が出ます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>+---------+-------------+-------------------+--------------+
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>| SIP     | DIP         | Creation Source   | OperStatus   |
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>+=========+=============+===================+==============+
@@ -23846,7 +23846,7 @@
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>+---------+-------------+-------------------+--------------+
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Total count : 3
 </span></code></pre></div>
-<p><code>show vxlan vlanvnimap</code> は VLAN と VNI の対応を表示します。</p>
+<p><code>show vxlan vlanvnimap</code> は <a href="../../../reference/glossary/#term-vlan">VLAN</a> と VNI の対応を表示します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>+---------+-------+
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>| VLAN    |   VNI |
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>+=========+=======+
@@ -23876,7 +23876,7 @@
 <tbody>
 <tr>
 <td><code>show vxlan tunnel</code> で <code>OperStatus=oper_down</code></td>
-<td>underlay 到達性なし、SIP/DIP 不一致、SAI tunnel 未作成</td>
+<td>underlay 到達性なし、SIP/DIP 不一致、<a href="../../../reference/glossary/#term-sai">SAI</a> tunnel 未作成</td>
 <td><code>ping &lt;remote VTEP&gt;</code>、<code>show ip route &lt;remote&gt;</code>、ASIC_DB の tunnel object 有無</td>
 </tr>
 <tr>
@@ -23886,7 +23886,7 @@
 </tr>
 <tr>
 <td>FDB に MAC が入らない</td>
-<td>Type-2 受信なし、または vxlanmgrd 反映失敗</td>
+<td>Type-2 受信なし、または <a href="../../../reference/glossary/#term-vxlanmgrd">vxlanmgrd</a> 反映失敗</td>
 <td><code>show mac</code>、<code>vtysh -c "show evpn mac vni &lt;id&gt;"</code></td>
 </tr>
 <tr>
@@ -23912,7 +23912,7 @@
 </tbody>
 </table>
 <h2 id="_3">典型的なログサンプル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>vxlanorch / VnetOrch / FRR EVPN 関連の代表ログ:</p>
+<p>vxlanorch / VnetOrch / <a href="../../../reference/glossary/#term-frr">FRR</a> EVPN 関連の代表ログ:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vxlanmgrd: VxlanTunnel &#39;tunnel_v4&#39; was added
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>vxlanmgrd: Tunnel Decap term entry added for tunnel: tunnel_v4 src_ip: 25.25.25.25
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>orchagent: :- create: Can&#39;t create a tunnel object
@@ -23971,7 +23971,7 @@
 <td><code>vtysh -c "show evpn next-hops vni all"</code></td>
 </tr>
 <tr>
-<td>EVPN VRF route</td>
+<td>EVPN <a href="../../../reference/glossary/#term-vrf">VRF</a> route</td>
 <td><code>vtysh -c "show bgp l2vpn evpn route"</code></td>
 </tr>
 <tr>
@@ -24020,6 +24020,7 @@
 <li><a href="../../../architecture/sonic-policy-based-hashing/">Policy Based Hashing</a></li>
 <li><a href="../../../routing/local-ars-hld/">Local ARS</a></li>
 </ul>
+<!-- glossary-links-injected: a80c59f067fa -->
 
 
 

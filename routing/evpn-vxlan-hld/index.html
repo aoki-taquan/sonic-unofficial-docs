@@ -23845,14 +23845,14 @@
 <h1 id="evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）<a class="headerlink" href="#evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読者が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>EVPN VXLAN の <strong>control plane / data plane の分業</strong> はどうなっているか</li>
+<li><a href="../../reference/glossary/#term-evpn">EVPN</a> <a href="../../reference/glossary/#term-vxlan">VXLAN</a> の <strong>control plane / data plane の分業</strong> はどうなっているか</li>
 <li><strong>Type-2 / Type-3 / Type-5</strong> をどう使い分けるか</li>
-<li><strong>CONFIG_DB のテーブルと CLI</strong> で最小限の設定をどう書くか</li>
-<li>実装と HLD が食い違っているのは具体的にどこか（<code>EVPN_NVO</code> vs <code>VXLAN_EVPN_NVO</code> ほか）</li>
-<li>multihoming や MC-LAG とどう干渉するか</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> のテーブルと CLI</strong> で最小限の設定をどう書くか</li>
+<li>実装と <a href="../../reference/glossary/#term-hld">HLD</a> が食い違っているのは具体的にどこか（<code>EVPN_NVO</code> vs <code>VXLAN_EVPN_NVO</code> ほか）</li>
+<li>multihoming や MC-<a href="../../reference/glossary/#term-lag">LAG</a> とどう干渉するか</li>
 </ul>
 <h2 id="1">1. 役割分担と全体像<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>EVPN は <strong>MAC / IP の到達情報を BGP で広告</strong> し、VXLAN は <strong>L2 over L3 のデータプレーン</strong> として traffic を運ぶ。SONiC は FRR の BGP-EVPN を control plane、SAI VXLAN を data plane に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>EVPN は <strong>MAC / IP の到達情報を <a href="../../reference/glossary/#term-bgp">BGP</a> で広告</strong> し、VXLAN は <strong>L2 over L3 のデータプレーン</strong> として traffic を運ぶ。SONiC は <a href="../../reference/glossary/#term-frr">FRR</a> の BGP-EVPN を control plane、<a href="../../reference/glossary/#term-sai">SAI</a> VXLAN を data plane に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     HOST1[Host A\nMAC/IP] --- LEAF1[Leaf 1\nVTEP loopback]
     HOST2[Host B] --- LEAF2[Leaf 2\nVTEP loopback]
@@ -23896,7 +23896,7 @@
 <p>主要 CONFIG_DB<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong><code>VXLAN_TUNNEL|&lt;name&gt;</code></strong>: source IP（自身の VTEP loopback）を持つトンネル</li>
-<li><strong><code>VXLAN_TUNNEL_MAP|&lt;tunnel&gt;|&lt;map&gt;</code></strong>: VLAN ↔ VNI、VRF ↔ VNI のマッピング</li>
+<li><strong><code>VXLAN_TUNNEL_MAP|&lt;tunnel&gt;|&lt;map&gt;</code></strong>: <a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ VNI、<a href="../../reference/glossary/#term-vrf">VRF</a> ↔ VNI のマッピング</li>
 <li><strong><code>VXLAN_EVPN_NVO|&lt;nvo&gt;</code></strong>: NVO 対象 tunnel 指定（HLD の <code>EVPN_NVO</code> は略記。後述の差分参照）</li>
 <li><strong><code>VRF</code></strong>: L3 VNI 用 VRF</li>
 <li><strong><code>VLAN</code></strong>: L2 VNI と紐づく VLAN</li>
@@ -23965,15 +23965,15 @@
 <h3 id="43-frr-bgp-evpn-frrconf">4.3 FRR BGP-EVPN 連携は frr.conf テンプレート経由<a class="headerlink" href="#43-frr-bgp-evpn-frrconf" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>HLD 記述</strong>: FRR の BGP-EVPN は frr.conf / template 経由</li>
-<li><strong>実装位置</strong>: <code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code>、および <code>sonic-frr/bgpd/bgp_evpn.c</code>。Type-5/Type-2 受け取りは fpmsyncd 経由 netlink + 専用 FPM channel</li>
+<li><strong>実装位置</strong>: <code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code>、および <code>sonic-frr/bgpd/bgp_evpn.c</code>。Type-5/Type-2 受け取りは <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 経由 netlink + 専用 <a href="../../reference/glossary/#term-fpm">FPM</a> channel</li>
 <li><strong>読者への影響</strong>: SONiC CLI だけで EVPN 設定が完結すると誤解しやすい</li>
 <li><strong>回避</strong>: 実運用では <code>frr.conf</code> template 差し替え、または <code>vtysh</code> で <code>address-family l2vpn evpn</code> を直接設定する</li>
 </ul>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="https://github.com/sonic-net/sonic-swss/issues/2181">sonic-swss #2181: Missing ARP and ND Suppression implementation (open)</a> — EVPN VXLAN HLD が前提とする ARP/ND suppression が未実装である旨の long-open issue。</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/issues/2181">sonic-swss #2181: Missing ARP and ND Suppression implementation (open)</a> — EVPN VXLAN HLD が前提とする <a href="../../reference/glossary/#term-arp">ARP</a>/ND suppression が未実装である旨の long-open issue。</li>
 <li><a href="https://github.com/sonic-net/sonic-swss/issues/3384">sonic-swss #3384: NEIGH_TABLE not populated with VXLAN routes (closed)</a> — Type-2 neighbor 学習の不整合事例。</li>
-<li><a href="https://github.com/sonic-net/sonic-swss/pull/4262">sonic-swss #4262: [EVPN-MH] Add EVPN VXLAN Multihoming feature support (open)</a> — EVPN multihoming 大型 PR。基本 EVPN HLD の機能セット完成度を高める。</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/4262">[sonic-swss](../reference/glossary.md#term-sonic-swss) #4262: [[EVPN-MH](../reference/glossary.md#term-evpn-mh)] Add EVPN VXLAN Multihoming feature support (open)</a> — EVPN multihoming 大型 PR。基本 EVPN HLD の機能セット完成度を高める。</li>
 </ul>
 <h2 id="5">5. 制限事項<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24017,6 +24017,8 @@
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f55535219856 -->
 
 <div class="footnote">
 <hr />

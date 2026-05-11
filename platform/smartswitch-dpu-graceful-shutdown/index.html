@@ -23940,7 +23940,7 @@
 </div>
 <h1 id="smart-switch-dpu-graceful-shutdowngnoi_reboot_daemon-halt">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）<a class="headerlink" href="#smart-switch-dpu-graceful-shutdowngnoi_reboot_daemon-halt" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch では DPU の graceful reboot に続き <strong>graceful shutdown</strong> をサポートする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。"reboot の前半" に見えるが、CLI 起動経路、コードパス、PMON container の制限（<code>docker</code> / <code>bash</code> / <code>hostexec</code> 不可）から実装が分離される。chassisd が NPU 側で動き、各 DPU には gNOI Reboot RPC (<code>HALT</code>) を発行する <code>gnoi_reboot_daemon.py</code> 経由で並列に shutdown を投げる構成。</p>
+<p><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> では <a href="../../reference/glossary/#term-dpu">DPU</a> の graceful reboot に続き <strong>graceful shutdown</strong> をサポートする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。"reboot の前半" に見えるが、CLI 起動経路、コードパス、PMON container の制限（<code>docker</code> / <code>bash</code> / <code>hostexec</code> 不可）から実装が分離される。chassisd が <a href="../../reference/glossary/#term-npu">NPU</a> 側で動き、各 DPU には <a href="../../reference/glossary/#term-gnoi">gNOI</a> Reboot RPC (<code>HALT</code>) を発行する <code>gnoi_reboot_daemon.py</code> 経由で並列に shutdown を投げる構成。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23961,7 +23961,7 @@
 <li>ユーザが <code>config chassis module shutdown DPUx</code> を発行</li>
 <li><code>chassisd</code> → <code>module_base.set_admin_state(down)</code> を呼出</li>
 <li><code>module_base.py</code> は <strong>DEVICE_METADATA の <code>subtype="SmartSwitch"</code> かつ <code>switch_type != dpu</code></strong> を確認。条件成立で <code>graceful_shutdown_handler()</code> 経路へ。それ以外は通常の <code>module.set_admin_state(down)</code></li>
-<li><code>graceful_shutdown_handler()</code> が STATE_DB の <code>CHASSIS_MODULE_INFO_TABLE|DPUx</code> に <code>state_transition_in_progress=True</code>, <code>transition_type=shutdown</code> を書き込む</li>
+<li><code>graceful_shutdown_handler()</code> が <a href="../../reference/glossary/#term-state_db">STATE_DB</a> の <code>CHASSIS_MODULE_INFO_TABLE|DPUx</code> に <code>state_transition_in_progress=True</code>, <code>transition_type=shutdown</code> を書き込む</li>
 <li><code>gnoi_reboot_daemon</code> は変化を検出し DPUx の sysmgr に <strong>gNOI Reboot RPC <code>HALT</code></strong> を送る。sysmgr は DBUS で <code>reboot -p</code> を発行</li>
 <li>daemon が <code>gnoi_client -rpc RebootStatus</code> で polling</li>
 <li>DPU が kernel shutdown 完了後、daemon が <code>state_transition_in_progress=False</code> に戻す（タイムアウト時は失敗結果を書く）</li>
@@ -24020,7 +24020,7 @@
 </table>
 <h3 id="race-condition">並列実行と race condition<a class="headerlink" href="#race-condition" title="Permanent link">&para;</a></h3>
 <p>複数 DPU の graceful shutdown は並列に実行される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>module_base.py</code> と <code>smartswitch_reboot_helper</code> が同 module の <code>state_transition_in_progress</code> に書き込みを競った場合、<strong>先に True に書いた側が勝つ</strong>。負け側は失敗扱いで再投を要求される。</p>
-<p>主要シナリオ（HLD 抜粋）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>主要シナリオ（<a href="../../reference/glossary/#term-hld">HLD</a> 抜粋）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -24082,7 +24082,7 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <code>config chassis module shutdown DPUx</code>（既存 chassis CLI 流用）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>CONFIG_DB は本 HLD では追加なし。STATE_DB の <code>CHASSIS_MODULE_INFO_TABLE</code> のフィールドが拡張される</li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> は本 HLD では追加なし。STATE_DB の <code>CHASSIS_MODULE_INFO_TABLE</code> のフィールドが拡張される</li>
 </ul>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24096,7 +24096,7 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <li><strong>Smart Switch Reboot (<code>smartswitch_reboot_helper</code>)</strong>: 同じ STATE_DB フィールドで race</li>
 <li><strong>smartswitch-pmon HLD</strong>: chassisd / pmon の親設計</li>
 <li><strong>Independent DPU Upgrade</strong>: shutdown 経路を再利用する可能性</li>
-<li><strong>gNOI / gNMI</strong>: HALT を含む reboot RPC の依存</li>
+<li><strong>gNOI / <a href="../../reference/glossary/#term-gnmi">gNMI</a></strong>: HALT を含む reboot RPC の依存</li>
 </ul>
 <h2 id="_6">実装との乖離<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
@@ -24138,8 +24138,8 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <ul>
 <li><strong>HLD 記述</strong>: 新フィールドを <code>sonic-chassis-module.yang</code> に追加する想定。</li>
 <li><strong>実装位置</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-chassis-module.yang</code> に <code>transition_in_progress</code> / <code>gnoi_halt_in_progress</code> フィールドの取り込みは確認できない。</li>
-<li><strong>読者への影響</strong>: ConfigMgmt / GNMI 経由でこれらフィールドへアクセスしようとしても YANG model 経由では到達できず、<code>sonic-db-cli</code> 等 raw アクセスのみが手段になる。</li>
-<li><strong>回避策</strong>: フィールドは Redis 直叩き（<code>redis-cli -n 6</code> / <code>sonic-db-cli STATE_DB</code>）で扱う。</li>
+<li><strong>読者への影響</strong>: ConfigMgmt / GNMI 経由でこれらフィールドへアクセスしようとしても <a href="../../reference/glossary/#term-yang">YANG</a> model 経由では到達できず、<code>sonic-db-cli</code> 等 raw アクセスのみが手段になる。</li>
+<li><strong>回避策</strong>: フィールドは <a href="../../reference/glossary/#term-redis">Redis</a> 直叩き（<code>redis-cli -n 6</code> / <code>sonic-db-cli STATE_DB</code>）で扱う。</li>
 </ul>
 <h3 id="4-hld-v01-2025-12-initial-proposal-master">4. HLD は v0.1 (2025-12) Initial Proposal で master 取り込み未確認<a class="headerlink" href="#4-hld-v01-2025-12-initial-proposal-master" title="Permanent link">&para;</a></h3>
 <ul>
@@ -24186,6 +24186,8 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 898f4197cacb -->
 
 <div class="footnote">
 <hr />

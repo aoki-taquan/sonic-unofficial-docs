@@ -23950,7 +23950,7 @@
 
 
 <h1 id="dual-tor">Dual-ToR の考え方<a class="headerlink" href="#dual-tor" title="Permanent link">&para;</a></h1>
-<p>Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続する」ための構成です。MC-LAG とよく混同されますが、Dual-ToR は <strong>クラウド事業者の大規模 ToR 冗長を念頭に置いた SONiC 固有の構成</strong> で、特殊なケーブル / NIC とそれを制御する SONiC daemon を組み合わせている点が異なります。</p>
+<p>Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続する」ための構成です。MC-<a href="../../../reference/glossary/#term-lag">LAG</a> とよく混同されますが、Dual-ToR は <strong>クラウド事業者の大規模 ToR 冗長を念頭に置いた SONiC 固有の構成</strong> で、特殊なケーブル / NIC とそれを制御する SONiC daemon を組み合わせている点が異なります。</p>
 <h2 id="dual-tor_1">Dual-ToR は何の問題を解決するか<a class="headerlink" href="#dual-tor_1" title="Permanent link">&para;</a></h2>
 <p>データセンタ ToR の冗長化要件は次のとおりです。</p>
 <ul>
@@ -23971,15 +23971,15 @@
 <tbody>
 <tr>
 <td>Management plane</td>
-<td><code>MUX_CABLE</code> CONFIG_DB、<code>config muxcable</code>、ycabled (Active-Standby)</td>
+<td><code>MUX_CABLE</code> <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a>、<code>config muxcable</code>、ycabled (Active-Standby)</td>
 </tr>
 <tr>
 <td>Control plane</td>
-<td>linkmgrd、MuxOrch、icmp_responder、SoC との gRPC channel (Active-Active)</td>
+<td><a href="../../../reference/glossary/#term-linkmgrd">linkmgrd</a>、MuxOrch、icmp_responder、SoC との gRPC channel (Active-Active)</td>
 </tr>
 <tr>
 <td>Data plane</td>
-<td>MuxTunnel (IPinIP)、neighbor / route nexthop の active/standby 切替、SAI tunnel</td>
+<td>MuxTunnel (<a href="../../../reference/glossary/#term-ipinip">IPinIP</a>)、neighbor / route nexthop の active/standby 切替、<a href="../../../reference/glossary/#term-sai">SAI</a> tunnel</td>
 </tr>
 </tbody>
 </table>
@@ -24110,14 +24110,14 @@
 <tbody>
 <tr>
 <td>MC-LAG</td>
-<td>2 台の ToR を 1 つの LAG として見せる。サーバ NIC 側は標準 LACP。Dual-ToR より物理層の特殊要件が小さい</td>
+<td>2 台の ToR を 1 つの LAG として見せる。サーバ NIC 側は標準 <a href="../../../reference/glossary/#term-lacp">LACP</a>。Dual-ToR より物理層の特殊要件が小さい</td>
 </tr>
 <tr>
 <td>VRRP / FHRP</td>
 <td>gateway IP の冗長化が目的。物理リンクの選び替えはしない</td>
 </tr>
 <tr>
-<td>BGP ECMP unnumbered</td>
+<td><a href="../../../reference/glossary/#term-bgp">BGP</a> <a href="../../../reference/glossary/#term-ecmp">ECMP</a> unnumbered</td>
 <td>Spine - Leaf に向く設計。サーバ - ToR の冗長化には別の仕組みが要る</td>
 </tr>
 <tr>
@@ -24158,12 +24158,12 @@
 </tr>
 <tr>
 <td><code>TUNNEL</code> / <code>TUNNEL_DECAP_TABLE</code></td>
-<td>CONFIG_DB / APPL_DB</td>
+<td>CONFIG_DB / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a></td>
 <td>MuxTunnel の IPinIP 設定</td>
 </tr>
 <tr>
 <td><code>HW_MUX_CABLE_TABLE</code></td>
-<td>STATE_DB</td>
+<td><a href="../../../reference/glossary/#term-state_db">STATE_DB</a></td>
 <td>ycabled が見る physical mux 方向</td>
 </tr>
 <tr>
@@ -24198,7 +24198,7 @@
     ORCH-&gt;&gt;SDB: MUX_CABLE_COMMAND_TABLE で ycabled へ</code></pre>
 <p>Active-Standby ではこの SDB を経由した制御が中心で、Active-Active では同様の構図で gRPC client が SoC との forwarding state を扱います。</p>
 <h2 id="prefix-based-mux-neighbor">prefix-based mux neighbor の意味<a class="headerlink" href="#prefix-based-mux-neighbor" title="Permanent link">&para;</a></h2>
-<p>Active-Standby では、サーバ側 neighbor を残したまま <strong><code>/32</code> / <code>/128</code> route の nexthop だけ</strong> を切り替える方式（prefix-based mux neighbor）が使われます。理由は、neighbor を削除すると ARP/ND の再解決が必要になり、切替時間が伸びるからです。詳細は <a href="../../../routing/prefix-based-mux-neighbors/">Prefix-based mux neighbors</a> を参照してください。</p>
+<p>Active-Standby では、サーバ側 neighbor を残したまま <strong><code>/32</code> / <code>/128</code> route の nexthop だけ</strong> を切り替える方式（prefix-based mux neighbor）が使われます。理由は、neighbor を削除すると <a href="../../../reference/glossary/#term-arp">ARP</a>/ND の再解決が必要になり、切替時間が伸びるからです。詳細は <a href="../../../routing/prefix-based-mux-neighbors/">Prefix-based mux neighbors</a> を参照してください。</p>
 <h2 id="_8">ループ回避と境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   Spine[Spine] --&gt; ToR1[ToR1 active]
@@ -24223,6 +24223,7 @@
 <li><a href="../../06-l2-vlan-lag/">L2 / VLAN / LAG / MC-LAG</a></li>
 <li><a href="../../04-vrf-ecmp/">VRF / ECMP / RIB-FIB パイプライン</a></li>
 </ul>
+<!-- glossary-links-injected: 9c6c8acabd8d -->
 
 
 

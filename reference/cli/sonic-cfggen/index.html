@@ -23771,7 +23771,7 @@
 <p><code>sonic-cfggen</code> は <strong>SONiC 設定生成エンジンの汎用 CLI</strong>。click ベースの <code>config</code> / <code>show</code> とは別系統で、<code>argparse</code> で定義された引数を取る Python スクリプト。<code>sonic-buildimage/src/sonic-config-engine/</code> に置かれ、SONiC イメージ内では <code>/usr/local/bin/sonic-cfggen</code> として動く。</p>
 <p>主な役割は以下の 4 つ:</p>
 <ol>
-<li><strong>データ収集</strong>: minigraph (XML) / device-description / hwsku 設定 / yang JSON / 任意 YAML / 任意 JSON / CONFIG_DB / 平面オプションを 1 つの dict にマージ</li>
+<li><strong>データ収集</strong>: minigraph (XML) / device-description / hwsku 設定 / yang JSON / 任意 YAML / 任意 JSON / <a href="../../glossary/#term-config_db">CONFIG_DB</a> / 平面オプションを 1 つの dict にマージ</li>
 <li><strong>テンプレートレンダリング</strong>: jinja2 テンプレートを上記 dict を context として描画</li>
 <li><strong>値の取り出し</strong>: jinja2 式 (<code>-v</code>) で任意の値を文字列または JSON で出力</li>
 <li><strong>CONFIG_DB 書き込み</strong>: <code>--write-to-db</code> で集約 dict を CONFIG_DB に直接書く</li>
@@ -23792,11 +23792,11 @@
 <tbody>
 <tr>
 <td><code>-m, --minigraph [&lt;file&gt;]</code></td>
-<td>minigraph.xml をパース。引数省略時は <code>/etc/sonic/minigraph.xml</code></td>
+<td><a href="../../glossary/#term-minigraph.xml">minigraph.xml</a> をパース。引数省略時は <code>/etc/sonic/minigraph.xml</code></td>
 </tr>
 <tr>
 <td><code>-Y, --yang [&lt;file&gt;]</code></td>
-<td>YANG JSON から CONFIG_DB JSON を生成。省略時は <code>/etc/sonic/config_yang.json</code>。Python3 のみ</td>
+<td><a href="../../glossary/#term-yang">YANG</a> JSON から CONFIG_DB JSON を生成。省略時は <code>/etc/sonic/config_yang.json</code>。Python3 のみ</td>
 </tr>
 <tr>
 <td><code>-M, --device-description &lt;file&gt;</code></td>
@@ -23843,7 +23843,7 @@
 </tr>
 <tr>
 <td><code>-s, --redis-unix-sock-file &lt;sock&gt;</code></td>
-<td>redis unix sock のパス（CONFIG_DB / STATE_DB 接続先切替）</td>
+<td>redis unix sock のパス（CONFIG_DB / <a href="../../glossary/#term-state_db">STATE_DB</a> 接続先切替）</td>
 </tr>
 <tr>
 <td><code>-p, --port-config &lt;file&gt;</code></td>
@@ -23914,7 +23914,7 @@
 <ol>
 <li><code>device_info.get_platform()</code> でプラットフォーム文字列取得、必要なら <code>bmc_data</code> を <code>DEVICE_METADATA.bmc</code> に取り込む。</li>
 <li><code>redis_unix_sock_file</code> を <code>db_kwargs</code> に保持。</li>
-<li><code>--hwsku</code> 指定時は <code>get_path_to_port_config_file(hwsku, asic_id)</code> から port_config.ini を解決し <code>PORT</code> を集める。breakout 情報があれば <code>BREAKOUT_CFG</code> も。</li>
+<li><code>--hwsku</code> 指定時は <code>get_path_to_port_config_file(hwsku, asic_id)</code> から <a href="../../glossary/#term-port-config-ini">port_config.ini</a> を解決し <code>PORT</code> を集める。breakout 情報があれば <code>BREAKOUT_CFG</code> も。</li>
 <li><code>_process_json(args, data)</code> で <code>--json</code> 指定の各ファイルをマージ。</li>
 <li><code>--yang</code> 指定なら <code>SonicYangCfgDbGenerator</code> で yang → config_db json 変換。</li>
 <li><code>--minigraph</code> 指定なら <code>parse_xml</code> で minigraph をパースして dict に展開。</li>
@@ -23934,7 +23934,7 @@
 </thead>
 <tbody>
 <tr>
-<td>minigraph + jinja2 で BGP 設定生成</td>
+<td>minigraph + jinja2 で <a href="../../glossary/#term-bgp">BGP</a> 設定生成</td>
 <td><code>sonic-cfggen -m -t /usr/share/template/bgpd.conf.j2</code></td>
 </tr>
 <tr>
@@ -23974,6 +23974,8 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 41f564526bd6 -->
+
 <div class="footnote">
 <hr />
 <ol>

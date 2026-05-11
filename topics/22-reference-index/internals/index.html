@@ -23762,7 +23762,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。</p>
+<p>22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-yang">YANG</a> の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。</p>
 <h2 id="cli-config_db-asic">データフロー（CLI → CONFIG_DB → ASIC）<a class="headerlink" href="#cli-config_db-asic" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   USER["&lt;b&gt;oper / script&lt;/b&gt;"]:::user
@@ -23808,7 +23808,7 @@
 <tr>
 <td><code>sonic-mgmt-common</code> (translib)</td>
 <td>go</td>
-<td>YANG ↔ Redis テーブル変換、gNMI / RESTCONF の core</td>
+<td>YANG ↔ <a href="../../../reference/glossary/#term-redis">Redis</a> テーブル変換、<a href="../../../reference/glossary/#term-gnmi">gNMI</a> / RESTCONF の core</td>
 </tr>
 <tr>
 <td><code>sonic-yang-models</code></td>
@@ -23828,12 +23828,12 @@
 <tr>
 <td><code>*mgrd</code> group</td>
 <td><code>cfgmgr/*</code></td>
-<td>CONFIG_DB → kernel + APPL_DB</td>
+<td>CONFIG_DB → kernel + <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a></td>
 </tr>
 <tr>
 <td><code>*Orch</code> group</td>
 <td><code>orchagent/*</code></td>
-<td>APPL_DB → SAI</td>
+<td>APPL_DB → <a href="../../../reference/glossary/#term-sai">SAI</a></td>
 </tr>
 </tbody>
 </table>
@@ -23866,7 +23866,7 @@
 <tr>
 <td><code>sonic-bgp-neighbor</code></td>
 <td><code>BGP_NEIGHBOR</code>、<code>BGP_PEER_RANGE</code></td>
-<td>bgpcfgd</td>
+<td><a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a></td>
 </tr>
 <tr>
 <td><code>sonic-acl</code></td>
@@ -23902,7 +23902,7 @@
 <tbody>
 <tr>
 <td><code>config vlan add/del</code></td>
-<td>CONFIG_DB:VLAN</td>
+<td>CONFIG_DB:<a href="../../../reference/glossary/#term-vlan">VLAN</a></td>
 </tr>
 <tr>
 <td><code>config interface ip add</code></td>
@@ -23918,15 +23918,15 @@
 </tr>
 <tr>
 <td><code>show interfaces counters</code></td>
-<td>COUNTERS_DB:COUNTERS:<oid></td>
+<td><a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a>:COUNTERS:<oid></td>
 </tr>
 <tr>
 <td><code>show ip route</code></td>
-<td>APPL_DB / FRR vtysh 経由</td>
+<td>APPL_DB / <a href="../../../reference/glossary/#term-frr">FRR</a> vtysh 経由</td>
 </tr>
 <tr>
 <td><code>show platform</code></td>
-<td>STATE_DB:PLATFORM_*、CHASSIS_STATE_DB（chassis のとき）</td>
+<td><a href="../../../reference/glossary/#term-state_db">STATE_DB</a>:PLATFORM_*、CHASSIS_STATE_DB（chassis のとき）</td>
 </tr>
 <tr>
 <td><code>show warm-restart</code></td>
@@ -23960,12 +23960,12 @@
 <td>03</td>
 </tr>
 <tr>
-<td>ACL</td>
+<td><a href="../../../reference/glossary/#term-acl">ACL</a></td>
 <td><code>ACL_TABLE</code>、<code>ACL_ENTRY</code>、<code>ACL_COUNTER</code>、<code>POLICER</code></td>
 <td>07</td>
 </tr>
 <tr>
-<td>QoS / buffer</td>
+<td><a href="../../../reference/glossary/#term-qos">QoS</a> / buffer</td>
 <td><code>BUFFER_POOL</code>、<code>BUFFER_PROFILE</code>、<code>QUEUE</code>、<code>SCHEDULER</code></td>
 <td>08</td>
 </tr>
@@ -23975,12 +23975,12 @@
 <td>14 / 15</td>
 </tr>
 <tr>
-<td>NAT</td>
+<td><a href="../../../reference/glossary/#term-nat">NAT</a></td>
 <td><code>NAT_ENTRY</code></td>
 <td>16</td>
 </tr>
 <tr>
-<td>SRv6 / MPLS</td>
+<td><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a></td>
 <td><code>MY_SID_ENTRY</code>、<code>INSEG_ENTRY</code></td>
 <td>17</td>
 </tr>
@@ -23999,35 +23999,35 @@
 <tr>
 <td>Redis pub/sub (<code>__keyspace@N__:*</code>)</td>
 <td>CONFIG_DB / APPL_DB / STATE_DB 変更通知</td>
-<td>gNMI on_change、ConsumerStateTable</td>
+<td>gNMI on_change、<a href="../../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a></td>
 </tr>
 <tr>
 <td>Redis pub/sub (notification channel)</td>
-<td>ASIC_DB のイベント通知</td>
-<td>FDB notification、port state change</td>
+<td><a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> のイベント通知</td>
+<td><a href="../../../reference/glossary/#term-fdb">FDB</a> notification、port state change</td>
 </tr>
 <tr>
 <td>ZMQ</td>
-<td>orchagent への大量 push 経路</td>
+<td><a href="../../../reference/glossary/#term-orchagent">orchagent</a> への大量 push 経路</td>
 <td>VNET_ROUTE_TUNNEL_TABLE（→ 03 章）</td>
 </tr>
 <tr>
 <td>ZMQ</td>
-<td>DASH SDN push</td>
+<td><a href="../../../reference/glossary/#term-dash">DASH</a> SDN push</td>
 <td>DASH controller → SWBUS（→ 13 章）</td>
 </tr>
 <tr>
 <td>Unix DBus / socket</td>
 <td>host service 呼び出し</td>
-<td>gNOI Reboot（→ 10 章）</td>
+<td><a href="../../../reference/glossary/#term-gnoi">gNOI</a> Reboot（→ 10 章）</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>リファレンス索引は <strong>HLD に書かれている範囲を中心</strong>にしており、ベンダー実装由来の SAI 拡張属性（<code>SAI_OBJECT_TYPE_*_EXTENSION</code>）は網羅していません。実装で必要になったら 22 章 quality-gaps に追記する運用です。</li>
+<li>リファレンス索引は <strong><a href="../../../reference/glossary/#term-hld">HLD</a> に書かれている範囲を中心</strong>にしており、ベンダー実装由来の SAI 拡張属性（<code>SAI_OBJECT_TYPE_*_EXTENSION</code>）は網羅していません。実装で必要になったら 22 章 quality-gaps に追記する運用です。</li>
 <li>YANG / CONFIG_DB / CLI の三者は一対一ではない（同じ機能を複数 CLI が触る、別 CLI が同じテーブルを上書きする等）。書き込み順序による race は 22 章索引では追えないので、各機能章 internals.md を当たる必要があります。</li>
-<li>gNMI / sonic-mgmt-common を経由する書き込みは、<code>*mgrd</code> / <code>*Orch</code> の処理を待たずに完了応答を返すため、即時の SAI 反映を確認したい場合は別途 STATE_DB 上の対応 key を polling する設計になります。</li>
+<li>gNMI / <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common を経由する書き込みは、<code>*mgrd</code> / <code>*Orch</code> の処理を待たずに完了応答を返すため、即時の SAI 反映を確認したい場合は別途 STATE_DB 上の対応 key を polling する設計になります。</li>
 </ul>
 <h2 id="_4">索引生成パイプライン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p><code>meta/index/*.json</code> は SONiC ソースリポを <code>.cache/sonic-sources/</code> 配下に shallow clone し、Indexer が走査して生成します。</p>
@@ -24073,6 +24073,7 @@
 <li><a href="../quality-gaps/">Quality gaps</a></li>
 <li><a href="../../20-swss-sai-redis/internals/">20 章 swss / sai / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: 1cbd3e5a6262 -->
 
 
 

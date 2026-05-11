@@ -23824,7 +23824,7 @@
 
 <h1 id="mirror_session">MIRROR_SESSION テーブル<a class="headerlink" href="#mirror_session" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ポートミラーリング (SPAN / ERSPAN) セッションを CONFIG_DB で定義するテーブル。<code>MirrorOrch</code> が CONFIG_DB を購読し、SAI MIRROR_SESSION オブジェクトに変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ERSPAN では outer GRE/IP ヘッダ用パラメータ (src_ip / dst_ip / dscp / ttl / gre_type) を伴い、SPAN では <code>dst_port</code> (ローカル物理ポートまたは <code>CPU</code>) を指定する。</p>
+<p>ポートミラーリング (SPAN / ERSPAN) セッションを <a href="../../glossary/#term-config_db">CONFIG_DB</a> で定義するテーブル。<code>MirrorOrch</code> が CONFIG_DB を購読し、<a href="../../glossary/#term-sai">SAI</a> MIRROR_SESSION オブジェクトに変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ERSPAN では outer GRE/IP ヘッダ用パラメータ (src_ip / dst_ip / dscp / ttl / gre_type) を伴い、SPAN では <code>dst_port</code> (ローカル物理ポートまたは <code>CPU</code>) を指定する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23943,13 +23943,13 @@
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>swss</code> 内の <code>orchagent</code> (<code>MirrorOrch</code>)</li>
-<li>関連 STATE_DB: <code>MIRROR_SESSION_TABLE</code> にセッションのアクティブ状態が反映される</li>
+<li>関連 <a href="../../glossary/#term-state_db">STATE_DB</a>: <code>MIRROR_SESSION_TABLE</code> にセッションのアクティブ状態が反映される</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>POLICER</code>、<code>PORT</code>、<code>PORTCHANNEL</code></li>
 <li>関連 CLI: <code>config mirror_session add/remove</code></li>
-<li>関連 YANG: <code>sonic-mirror-session</code>、<code>sonic-policer</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mirror-session</code>、<code>sonic-policer</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23989,6 +23989,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>mirror_session
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: adfb05b6fe02 -->
 
 <div class="footnote">
 <hr />

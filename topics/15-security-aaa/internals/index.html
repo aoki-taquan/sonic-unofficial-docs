@@ -23784,14 +23784,14 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の SAI POST を扱います。control plane の AAA 系は <a href="../architecture/">アーキテクチャ</a> で完結しており、本ページではリンクの暗号と完全性に話を限定します。</p>
+<p>ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の <a href="../../../reference/glossary/#term-sai">SAI</a> POST を扱います。control plane の <a href="../../../reference/glossary/#term-aaa">AAA</a> 系は <a href="../architecture/">アーキテクチャ</a> で完結しており、本ページではリンクの暗号と完全性に話を限定します。</p>
 <h2 id="macsec-control-data-plane">MACsec の control / data plane 境界<a class="headerlink" href="#macsec-control-data-plane" title="Permanent link">&para;</a></h2>
 <p>MACsec はリンク単位の L2 暗号化規格で、SONiC では大きく二つの世界に分けて実装されています。</p>
 <ul>
 <li>Control plane: MKA（MACsec Key Agreement）と SAK 配布。ホスト側の <code>wpa_supplicant</code> ベースのプロセスが担当し、<code>macsecmgr</code> が <code>CONFIG_DB</code> と仲介します。</li>
 <li>Data plane: SAI MACsec object（SC、SA、フィルタ）と、ASIC または Gearbox PHY 上の暗号エンジン。</li>
 </ul>
-<p>全体設計と既存ページの呼び出し方は <a href="../../../switching/macsec-sonic-high-level-design-document/">MACsec HLD</a> に集約されています。CONFIG_DB から SAI までのデータフロー、cipher suite、replay protection の取り扱いはこの HLD を起点に読み進めます。</p>
+<p>全体設計と既存ページの呼び出し方は <a href="../../../switching/macsec-sonic-high-level-design-document/">MACsec HLD</a> に集約されています。<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> から SAI までのデータフロー、cipher suite、replay protection の取り扱いはこの <a href="../../../reference/glossary/#term-hld">HLD</a> を起点に読み進めます。</p>
 <pre class="mermaid"><code>flowchart LR
   CFG[(CONFIG_DB MACSEC_*)] --&gt; MGR[macsecmgr]
   MGR --&gt; MKA[wpa_supplicant MKA]
@@ -23800,11 +23800,11 @@
   SAI --&gt; ASIC[ASIC or Gearbox PHY]
   MKA -. SAK install .-&gt; ORCH</code></pre>
 <h2 id="gearbox-port-backend">Gearbox port での backend 選択<a class="headerlink" href="#gearbox-port-backend" title="Permanent link">&para;</a></h2>
-<p>NPU 側と Gearbox PHY 側のどちらに MACsec engine を寄せるかは、プラットフォームごとに異なります。SONiC は両方を抽象化するため、決定的に backend を選ぶ仕組みが <a href="../../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/">deterministic MACsec backend selection for gearbox ports HLD</a> で導入されています。設定の意図が「NPU で暗号する」「PHY で暗号する」のどちらなのかが、運用時の counter 配置や trouble shooting の起点を決めます。</p>
+<p><a href="../../../reference/glossary/#term-npu">NPU</a> 側と Gearbox PHY 側のどちらに MACsec engine を寄せるかは、プラットフォームごとに異なります。SONiC は両方を抽象化するため、決定的に backend を選ぶ仕組みが <a href="../../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports/">deterministic MACsec backend selection for gearbox ports HLD</a> で導入されています。設定の意図が「NPU で暗号する」「PHY で暗号する」のどちらなのかが、運用時の counter 配置や trouble shooting の起点を決めます。</p>
 <h2 id="sai-post">SAI POST<a class="headerlink" href="#sai-post" title="Permanent link">&para;</a></h2>
 <p>起動時に MACsec engine が正しく動作するかを確認する Power-On Self Test は、<a href="../../../switching/sonic-sai-post-support-for-macsec/">SAI POST support for MACsec</a> で扱われます。MACsec を有効化したリンクで「鍵は配布されたのに通信が落ちる」という症状を切り分ける際、SAI POST の結果は最初に当たる材料です。本機能はプラットフォーム実装依存が大きいため、ベンダーの SAI ドライバ側のサポート状況を必ず確認します。</p>
 <h2 id="control-plane">control plane との接続点<a class="headerlink" href="#control-plane" title="Permanent link">&para;</a></h2>
-<p>MACsec の有効化は AAA や SSH のような login 系ポリシーとは独立に運用しますが、鍵のローテーションや障害時の bypass ポリシーは管理面 ACL や CoPP の設計と組み合わせて考えるべきです。CoPP の枠組みは <a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> を参照してください。</p>
+<p>MACsec の有効化は AAA や SSH のような login 系ポリシーとは独立に運用しますが、鍵のローテーションや障害時の bypass ポリシーは管理面 <a href="../../../reference/glossary/#term-acl">ACL</a> や <a href="../../../reference/glossary/#term-copp">CoPP</a> の設計と組み合わせて考えるべきです。CoPP の枠組みは <a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> を参照してください。</p>
 <p>platform 側の信頼チェーン（OpenSSL FIPS、secure boot、secure upgrade）は <a href="../advanced/">発展トピック</a> で扱います。</p>
 <h2 id="aaa-management-security">データフロー（AAA / management security 側）<a class="headerlink" href="#aaa-management-security" title="Permanent link">&para;</a></h2>
 <p>MACsec 以外の AAA（TACACS+ / RADIUS / PAM / NSS / SSH）の制御パスも合わせて整理します。</p>
@@ -23836,7 +23836,7 @@
 <tr>
 <td><code>MACsecOrch</code> (<code>orchagent/macsecorch.cpp</code>)</td>
 <td><code>MACsecOrch::doTask</code></td>
-<td>APPL_DB から SAI MACsec object に展開</td>
+<td><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> から SAI MACsec object に展開</td>
 </tr>
 <tr>
 <td><code>wpa_supplicant</code> (MKA mode)</td>
@@ -23850,7 +23850,7 @@
 </tr>
 <tr>
 <td><code>mgmt-framework</code></td>
-<td>YANG / REST</td>
+<td><a href="../../../reference/glossary/#term-yang">YANG</a> / REST</td>
 <td>management plane 認証統合</td>
 </tr>
 </tbody>
@@ -23910,13 +23910,13 @@
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ZMQ は使わない。</li>
-<li><code>wpa_supplicant</code> と <code>macsecmgr</code> は Unix socket（wpa_ctrl）で通信。Redis 経由ではない。</li>
+<li><code>wpa_supplicant</code> と <code>macsecmgr</code> は Unix socket（wpa_ctrl）で通信。<a href="../../../reference/glossary/#term-redis">Redis</a> 経由ではない。</li>
 <li>AAA 認証（PAM → TACACS+/RADIUS）は同期 RPC で、Redis を経由しない。</li>
 </ul>
 <h2 id="_2">既知の実装上の制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li>MACsec SAK の rekey 頻度（key lifetime）は wpa_supplicant の設定で、頻度を上げすぎると ASIC 側で <code>SA install</code> が間に合わず短時間 drop が発生する。</li>
-<li><code>MACSEC_SA_ATTR_SAK</code> の wrap キーは平文で SAI まで渡る設計のため、syncd / SAI のメモリ保護が信頼境界。コア dump に鍵が出るリスクは HLD 範囲。</li>
+<li><code>MACSEC_SA_ATTR_SAK</code> の wrap キーは平文で SAI まで渡る設計のため、<a href="../../../reference/glossary/#term-syncd">syncd</a> / SAI のメモリ保護が信頼境界。コア dump に鍵が出るリスクは HLD 範囲。</li>
 <li>Gearbox backend 選択は装置依存で、deterministic 選択 HLD があっても全ベンダ実装が揃っているとは限らない。</li>
 <li>SAI POST は MACsec engine の起動確認のみで、運用中の rekey 失敗や cipher suite mismatch は捕捉しない。</li>
 <li>TACACS+ の <code>command</code> authorization は host CLI 経由のみで、<code>gnmi</code> / REST API 経路では別途 RBAC 設定が必要。</li>
@@ -23934,6 +23934,7 @@
   TACACS --&gt;|authz| TACAUTHZ[command authorization]
   TACAUTHZ --&gt; AUDIT[(STATE_DB / journald)]</code></pre>
 <p>順序と authz policy は <code>CONFIG_DB:AAA</code> テーブルから <code>hostcfgd</code> が <code>/etc/pam.d/common-auth-sonic</code> 等を render することで反映されます。<code>gnmi</code> や REST API の認証は PAM を経由しない別経路（gNSI authz、token-based）であり、TACACS+ の <code>command</code> authorization は host CLI のみに効きます。</p>
+<!-- glossary-links-injected: 4cd22b04b1d1 -->
 
 
 

@@ -23707,9 +23707,9 @@
 
 <h1 id="sai">SAI 拡張属性追加系<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>SAI (Switch Abstraction Interface)</strong> は OCP が定義する ASIC 抽象 API で、SONiC は <code>libsairedis</code> + <code>syncd</code> を経由して SAI を叩き、<code>orchagent</code> がアプリケーション層との橋渡しをします。SAI は version ごとに新しい属性 / API が追加されるため、SONiC 側でも <strong>capability 問い合わせ</strong>（<code>sai_query_attribute_enum_values_capability</code> / <code>sai_query_stats_capability</code> / <code>sai_query_api_version</code>）や <strong>失敗時のハンドリング</strong>（<code>handleSai*Status</code> / <code>ERROR_DB</code> / dump 取得）が独立した HLD として整備されています。</p>
-<p>このカテゴリは、SAI そのものを横断するページを集めます。<strong>capability 問い合わせ系</strong>（ACL action / counter capability / API version check）・<strong>failure handling</strong>（dump-on-failure・virtual handleSaiStatus）・<strong>SAI POST</strong>（MACsec FIPS）・<strong>Generic SAI Extension の CRM</strong>・<strong>SAI bulk API 系</strong>（Port Profile Init / Auto FEC）が中心です。</p>
-<p>SAI 拡張の HLD は <code>sonic-net/SONiC</code> の <code>doc/</code> 配下に多く、対応する実装が swss / sairedis / syncd / sonic-platform-common にまたがります。たとえば <code>egress mirroring + action capability check</code> は <code>aclorch</code> が SAI capability を見てフォールバックする実装で、<code>sai_query_stats_capability</code> は <code>counter caps</code> を <code>CounterCheck</code> 系から呼びます。</p>
+<p><strong><a href="../../reference/glossary/#term-sai">SAI</a> (Switch Abstraction Interface)</strong> は OCP が定義する ASIC 抽象 API で、SONiC は <code>libsairedis</code> + <code>syncd</code> を経由して SAI を叩き、<code>orchagent</code> がアプリケーション層との橋渡しをします。SAI は version ごとに新しい属性 / API が追加されるため、SONiC 側でも <strong>capability 問い合わせ</strong>（<code>sai_query_attribute_enum_values_capability</code> / <code>sai_query_stats_capability</code> / <code>sai_query_api_version</code>）や <strong>失敗時のハンドリング</strong>（<code>handleSai*Status</code> / <code>ERROR_DB</code> / dump 取得）が独立した <a href="../../reference/glossary/#term-hld">HLD</a> として整備されています。</p>
+<p>このカテゴリは、SAI そのものを横断するページを集めます。<strong>capability 問い合わせ系</strong>（<a href="../../reference/glossary/#term-acl">ACL</a> action / counter capability / API version check）・<strong>failure handling</strong>（dump-on-failure・virtual handleSaiStatus）・<strong>SAI POST</strong>（MACsec FIPS）・<strong>Generic SAI Extension の <a href="../../reference/glossary/#term-crm">CRM</a></strong>・<strong>SAI bulk API 系</strong>（Port Profile Init / Auto FEC）が中心です。</p>
+<p>SAI 拡張の HLD は <code>sonic-net/SONiC</code> の <code>doc/</code> 配下に多く、対応する実装が swss / sairedis / <a href="../../reference/glossary/#term-syncd">syncd</a> / sonic-platform-common にまたがります。たとえば <code>egress mirroring + action capability check</code> は <code>aclorch</code> が SAI capability を見てフォールバックする実装で、<code>sai_query_stats_capability</code> は <code>counter caps</code> を <code>CounterCheck</code> 系から呼びます。</p>
 <p>主要キーワード: <code>SAI</code>, <code>attribute</code>, <code>capability</code>, <code>API</code>, <code>failure handling</code>, <code>POST</code>, <code>CRM</code></p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="capability-api-version">capability / API version<a class="headerlink" href="#capability-api-version" title="Permanent link">&para;</a></h3>
@@ -23742,7 +23742,7 @@
 </ol>
 <h2 id="topics">関連 Topics 章<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/20-swss-sai-redis/">Topics 20: SWSS / SAI / Redis</a> — SWSS / SAI / Redis を段階的に学ぶ章</li>
+<li><a href="../../topics/20-swss-sai-redis/">Topics 20: SWSS / SAI / Redis</a> — SWSS / SAI / <a href="../../reference/glossary/#term-redis">Redis</a> を段階的に学ぶ章</li>
 <li><a href="../../topics/14-platform-port-optics/">Topics 14: Platform / Port / Optics</a> — SAI ポート属性の前提</li>
 </ul>
 <h2 id="verification">verification ステータス注意点<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
@@ -23762,6 +23762,8 @@
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f1fdf27b05bc -->
 
 
 

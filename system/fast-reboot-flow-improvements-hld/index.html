@@ -23828,10 +23828,10 @@
 </div>
 <h1 id="fast-reboot-flow-improvementsfinalizer-reconciliation">Fast-reboot Flow Improvements（finalizer / reconciliation）<a class="headerlink" href="#fast-reboot-flow-improvementsfinalizer-reconciliation" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC fast-reboot を「<strong>dataplane downtime &lt; 30s, control plane &lt; 90s</strong>」に収めるための既存フロー改善 HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。中身は次の 2 軸:</p>
+<p>SONiC fast-reboot を「<strong>dataplane downtime &lt; 30s, control plane &lt; 90s</strong>」に収めるための既存フロー改善 <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。中身は次の 2 軸:</p>
 <ol>
 <li><strong>fast-reboot の終了を示す flag を導入</strong>（warmboot-finalizer を流用）。これにより flex counter 有効化など「init 完了後に走らせたい処理」を遅延起動できる</li>
-<li><strong>異 NOS（vendor 製 → SONiC）からの ISSU でも fast-reboot を完遂</strong>。dump file（default gateway / neighbor / FDB）が SONiC スキーマで提供されれば SONiC→SONiC と同等。提供なしでも slow path で復旧可（ただし downtime 増）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>異 NOS（vendor 製 → SONiC）からの ISSU でも fast-reboot を完遂</strong>。dump file（default gateway / neighbor / <a href="../../reference/glossary/#term-fdb">FDB</a>）が SONiC スキーマで提供されれば SONiC→SONiC と同等。提供なしでも slow path で復旧可（ただし downtime 増）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ol>
 <p>実測（202111 + Nvidia SN2700）: dump あり 28.07s / なし 25.11s と HLD 内に記載<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23848,13 +23848,13 @@
     FIN --&gt; FLAG[Redis から warm-boot/fast-boot flag を除去]
     FIN --&gt; POST[後続初期化\nflex counter enable 等]</code></pre>
 <h3 id="syncd-init-view-apply-view">syncd: INIT view → APPLY view<a class="headerlink" href="#syncd-init-view-apply-view" title="Permanent link">&para;</a></h3>
-<p>syncd は再起動時に <strong>INIT view</strong>（再構成しようとする ASIC 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより不要な up-down が発生しない。</p>
+<p><a href="../../reference/glossary/#term-syncd">syncd</a> は再起動時に <strong>INIT view</strong>（再構成しようとする ASIC 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより不要な up-down が発生しない。</p>
 <h3 id="neighsyncd-restore_neighborspy">neighsyncd: restore_neighbors.py<a class="headerlink" href="#neighsyncd-restore_neighborspy" title="Permanent link">&para;</a></h3>
-<p>旧 image 終了直前に保存した既知 neighbor 一覧に対し、起動後に ARP/NDP を打って現実の MAC / 状態を取り戻す<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これがないと neighbor は learning 待ちで slow。</p>
+<p>旧 image 終了直前に保存した既知 neighbor 一覧に対し、起動後に <a href="../../reference/glossary/#term-arp">ARP</a>/<a href="../../reference/glossary/#term-ndp">NDP</a> を打って現実の MAC / 状態を取り戻す<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これがないと neighbor は learning 待ちで slow。</p>
 <h3 id="fpmsyncd-route">fpmsyncd: route 復元<a class="headerlink" href="#fpmsyncd-route" title="Permanent link">&para;</a></h3>
-<p>旧 APPDB の <code>ROUTE_TABLE</code> をそのまま温存し、bgpd 起動完了後に diff を流し込む。fpmsyncd は新規 zebra と同期。</p>
+<p>旧 APPDB の <code>ROUTE_TABLE</code> をそのまま温存し、bgpd 起動完了後に diff を流し込む。<a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> は新規 <a href="../../reference/glossary/#term-zebra">zebra</a> と同期。</p>
 <h3 id="reboot-finalizer">Reboot finalizer<a class="headerlink" href="#reboot-finalizer" title="Permanent link">&para;</a></h3>
-<p><code>finalize-warmboot.sh</code> を fast-reboot 兼用にして、終了 flag を Redis から外すタイミングを統一。これを起点に <code>enable_counters.py</code> などの後続スクリプトが走る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>finalize-warmboot.sh</code> を fast-reboot 兼用にして、終了 flag を <a href="../../reference/glossary/#term-redis">Redis</a> から外すタイミングを統一。これを起点に <code>enable_counters.py</code> などの後続スクリプトが走る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md#L40-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23892,7 +23892,7 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <ul>
 <li><strong>system-wide warmboot</strong>: 同じスクリプト基盤と finalizer を共有</li>
 <li><strong>flex counter / enable_counters.py</strong>: finalizer flag 待ちで起動</li>
-<li><strong>SAI Application Extension Infrastructure</strong>: HLD 末尾に integration 章あり<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-sai">SAI</a> Application Extension Infrastructure</strong>: HLD 末尾に integration 章あり<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23923,6 +23923,8 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <li><a href="../../topics/11-reboot/">Topics: Reboot / Upgrade / Lifecycle</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2d5a5a93f3a3 -->
 
 <div class="footnote">
 <hr />

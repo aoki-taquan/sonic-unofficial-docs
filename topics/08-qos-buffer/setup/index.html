@@ -23718,20 +23718,20 @@
 
 
 <h1 id="qos-buffer">QoS / Buffer の設定<a class="headerlink" href="#qos-buffer" title="Permanent link">&para;</a></h1>
-<p>設定は「pool / profile を作る → port に classification を当てる → queue に scheduler / WRED を当てる → 必要なら PFC / PFCWD を有効化」の順で組むのが筋が良いです。テンプレートは多くのプラットフォームで <code>buffers.json.j2</code> / <code>qos.json.j2</code> として配布されていて、まずはそれを読み、必要なところだけ patch するのが現実解です。</p>
+<p>設定は「pool / profile を作る → port に classification を当てる → queue に scheduler / <a href="../../../reference/glossary/#term-wred">WRED</a> を当てる → 必要なら <a href="../../../reference/glossary/#term-pfc">PFC</a> / PFCWD を有効化」の順で組むのが筋が良いです。テンプレートは多くのプラットフォームで <code>buffers.json.j2</code> / <code>qos.json.j2</code> として配布されていて、まずはそれを読み、必要なところだけ patch するのが現実解です。</p>
 <h2 id="cli">CLI から触れる範囲<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/config-buffer/"><code>config buffer</code></a> — buffer pool / profile / PG / queue の追加・削除と、shared headroom などの switch 全体属性。</li>
 <li><a href="../../../reference/cli/config-qos/"><code>config qos</code></a> — <code>qos reload</code> で <code>/etc/sonic/qos.json</code> の再展開、<code>qos clear</code>、map 系の操作。</li>
 <li><a href="../../../reference/cli/config-pfcwd/"><code>config pfcwd</code></a> — PFCWD の start/stop/interval/action とポーリング設定。</li>
 </ul>
-<p>CONFIG_DB を直接編集する場合は次のテーブル群です。</p>
+<p><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を直接編集する場合は次のテーブル群です。</p>
 <table>
 <thead>
 <tr>
 <th>目的</th>
 <th>テーブル</th>
-<th>YANG</th>
+<th><a href="../../../reference/glossary/#term-yang">YANG</a></th>
 </tr>
 </thead>
 <tbody>
@@ -23924,7 +23924,7 @@
 </span></code></pre></div>
 <p><code>--no-dynamic-buffer</code> を付けるとテンプレ依存の dynamic buffer calculator (<code>buffermgrd</code>) を起動しません。手で BUFFER 系を細かく調整しているスイッチでは付けておくと、起動時の自動再計算で踏まれるのを防げます。</p>
 <h2 id="yang-gnmi">YANG / gNMI から触る場合<a class="headerlink" href="#yang-gnmi" title="Permanent link">&para;</a></h2>
-<p>OpenConfig には QoS 系もありますが、SONiC の native YANG では上表の <code>sonic-*</code> YANG が一次情報です。gNMI から <code>BUFFER_PROFILE</code> / <code>QUEUE</code> / <code>SCHEDULER</code> を操作するときは map 整合（参照される profile が存在するか）を YANG validation が見ているので、profile 削除前に PG / queue の参照を外す手順を踏みます。</p>
+<p>OpenConfig には <a href="../../../reference/glossary/#term-qos">QoS</a> 系もありますが、SONiC の native YANG では上表の <code>sonic-*</code> YANG が一次情報です。<a href="../../../reference/glossary/#term-gnmi">gNMI</a> から <code>BUFFER_PROFILE</code> / <code>QUEUE</code> / <code>SCHEDULER</code> を操作するときは map 整合（参照される profile が存在するか）を YANG validation が見ているので、profile 削除前に PG / queue の参照を外す手順を踏みます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>gnmi_set<span class="w"> </span>--replace<span class="o">=</span><span class="s1">&#39;/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST[name=q_lossy_profile]:::JSON_IETF:::@/tmp/q_lossy_profile.json&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-insecure
 </span></code></pre></div>
@@ -23982,6 +23982,7 @@
 <li>YANG: <a href="../../../reference/yang/sonic-buffer-pool/">sonic-buffer-pool</a> / <a href="../../../reference/yang/sonic-buffer-profile/">sonic-buffer-profile</a> / <a href="../../../reference/yang/sonic-pfcwd/">sonic-pfcwd</a></li>
 <li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a></li>
 </ul>
+<!-- glossary-links-injected: d51fadc7323f -->
 
 
 

@@ -23864,15 +23864,15 @@
 
 <h1 id="config_db-orchagent">CONFIG_DB ↔ orchagent クラス対応表<a class="headerlink" href="#config_db-orchagent" title="Permanent link">&para;</a></h1>
 <h2 id="_1">このページの目的<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の <strong>CONFIG_DB テーブル</strong> が「誰によって読まれるか」を一望できる早見表。
-個別テーブルページ (<code>reference/config-db/&lt;table&gt;.md</code>) は <strong>書く側 (CLI / YANG / 値の意味)</strong> に焦点を当てているのに対し、本ページは <strong>読む側 (subscribe 先 Orch / *mgrd / SAI 経路)</strong> をまとめる。</p>
+<p>SONiC の <strong><a href="../glossary/#term-config_db">CONFIG_DB</a> テーブル</strong> が「誰によって読まれるか」を一望できる早見表。
+個別テーブルページ (<code>reference/config-db/&lt;table&gt;.md</code>) は <strong>書く側 (CLI / <a href="../glossary/#term-yang">YANG</a> / 値の意味)</strong> に焦点を当てているのに対し、本ページは <strong>読む側 (subscribe 先 Orch / *mgrd / <a href="../glossary/#term-sai">SAI</a> 経路)</strong> をまとめる。</p>
 <p>経路は大きく 2 種類ある。</p>
 <ol>
-<li><strong>CONFIG_DB → cfgmgr (intfmgrd / portmgrd / vlanmgrd / teammgrd …) → APPL_DB → orchagent → SAI</strong></li>
+<li><strong>CONFIG_DB → cfgmgr (<a href="../glossary/#term-intfmgrd">intfmgrd</a> / <a href="../glossary/#term-portmgrd">portmgrd</a> / <a href="../glossary/#term-vlanmgrd">vlanmgrd</a> / teammgrd …) → <a href="../glossary/#term-appl_db">APPL_DB</a> → <a href="../glossary/#term-orchagent">orchagent</a> → SAI</strong></li>
 <li>cfgmgr は CONFIG_DB の生値を APPL_DB の運用用テーブル形式に変換し、orchagent が APPL_DB を購読して SAI を叩く</li>
-<li>インターフェース系・LAG・VLAN・FDB・Tunnel など大半のデータパス系</li>
+<li>インターフェース系・<a href="../glossary/#term-lag">LAG</a>・<a href="../glossary/#term-vlan">VLAN</a>・<a href="../glossary/#term-fdb">FDB</a>・Tunnel など大半のデータパス系</li>
 <li><strong>CONFIG_DB を orchagent が直接 subscribe → SAI</strong></li>
-<li>QoS / Buffer (一部) / ACL / Policer / Mirror / Mux / Dtel / Pbh / DebugCounter / Mlag / TWAMP / Hft 等、APPL_DB 化が省略される系統</li>
+<li><a href="../glossary/#term-qos">QoS</a> / Buffer (一部) / <a href="../glossary/#term-acl">ACL</a> / Policer / Mirror / Mux / Dtel / Pbh / DebugCounter / Mlag / TWAMP / Hft 等、APPL_DB 化が省略される系統</li>
 </ol>
 <p>下表は <code>orchdaemon.cpp</code> の Orch 構築コードと、<code>cfgmgr/*.cpp</code> の <code>TableConnector</code> 登録から逆引きしたもの。</p>
 <p>凡例:</p>
@@ -23967,7 +23967,7 @@
 </tr>
 <tr>
 <td><code>GEARBOX</code></td>
-<td><code>xcvrd</code> / portsyncd</td>
+<td><code>xcvrd</code> / <a href="../glossary/#term-portsyncd">portsyncd</a></td>
 <td>(state)</td>
 <td><code>sai_phy_api</code> (外部 PHY)</td>
 </tr>
@@ -24083,7 +24083,7 @@
 <tbody>
 <tr>
 <td><code>STATIC_ROUTE</code></td>
-<td><code>fpmsyncd</code> (FRR 経由) → <code>RouteOrch</code> (<code>APP_ROUTE_TABLE</code>)</td>
+<td><code>fpmsyncd</code> (<a href="../glossary/#term-frr">FRR</a> 経由) → <code>RouteOrch</code> (<code>APP_ROUTE_TABLE</code>)</td>
 <td>✓</td>
 <td><code>sai_route_api</code></td>
 </tr>
@@ -24200,7 +24200,7 @@
 <td><code>VXLAN_EVPN_NVO</code></td>
 <td><code>vxlanmgrd</code> / <code>vrfmgrd</code> → <code>EvpnNvoOrch</code></td>
 <td>✓ (<code>APP_VXLAN_EVPN_NVO_TABLE</code>)</td>
-<td>(EVPN 制御面)</td>
+<td>(<a href="../glossary/#term-evpn">EVPN</a> 制御面)</td>
 </tr>
 <tr>
 <td><code>VNET</code></td>
@@ -24552,7 +24552,7 @@
 <td><code>PFC_WD_TABLE</code></td>
 <td><code>PfcWdSwOrch</code> (直接 CFG)</td>
 <td>—</td>
-<td><code>sai_acl_api</code> + <code>sai_queue_api</code> (PFC WD)</td>
+<td><code>sai_acl_api</code> + <code>sai_queue_api</code> (<a href="../glossary/#term-pfc">PFC</a> WD)</td>
 </tr>
 </tbody>
 </table>
@@ -24654,7 +24654,7 @@
 <tr>
 <td><code>BFD_SESSION</code> (app-only)</td>
 <td><code>BfdOrch</code> (<code>APP_BFD_SESSION_TABLE</code>)</td>
-<td>(FRR/BFD)</td>
+<td>(FRR/<a href="../glossary/#term-bfd">BFD</a>)</td>
 <td><code>sai_bfd_api</code></td>
 </tr>
 <tr>
@@ -24763,7 +24763,7 @@
 </tbody>
 </table>
 <h2 id="dash-smartswitch-dpu-side-orchagent">DASH / SmartSwitch (DPU-side orchagent)<a class="headerlink" href="#dash-smartswitch-dpu-side-orchagent" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB → APPL_DB → orchagent と同じ構造を <strong>DPU 専用 Redis</strong> 上で持つ。テーブル名は <code>DASH_*</code>。</p>
+<p>CONFIG_DB → APPL_DB → orchagent と同じ構造を <strong><a href="../glossary/#term-dpu">DPU</a> 専用 <a href="../glossary/#term-redis">Redis</a></strong> 上で持つ。テーブル名は <code>DASH_*</code>。</p>
 <table>
 <thead>
 <tr>
@@ -24845,7 +24845,7 @@
 </tr>
 <tr>
 <td><code>DASH_ENI_FORWARD_TABLE</code></td>
-<td><code>DashEniFwdOrch</code> (NPU 側 orchagent)</td>
+<td><code>DashEniFwdOrch</code> (<a href="../glossary/#term-npu">NPU</a> 側 orchagent)</td>
 <td><code>sai_acl_api</code> (forward)</td>
 </tr>
 <tr>
@@ -25218,9 +25218,9 @@
   syncd --&gt; sai[SAI]
   sai --&gt; asic[ASIC]</code></pre>
 <ul>
-<li>「<code>*mgrd</code> → APPL_DB → orchagent」: ポート/インターフェース/VLAN/LAG/Tunnel/Buffer/sFlow/Macsec/CoPP/NAT/STP/Fabric</li>
-<li>「orchagent が CONFIG_DB を直接 subscribe」: QoS/ACL/Policer/Mirror/Mux/Pbh/Dtel/DebugCounter/Mlag/Crm/Twamp/PfcWd/FgNhg/FlexCounter/HFTel/NvgreTunnel/Switch(一部)</li>
-<li>「FRR / kernel daemon が中継」: BGP/OSPF/Static route(<code>fpmsyncd</code>)、VRRP、NTP、Mgmt VRF、DHCP</li>
+<li>「<code>*mgrd</code> → APPL_DB → orchagent」: ポート/インターフェース/VLAN/LAG/Tunnel/Buffer/sFlow/Macsec/<a href="../glossary/#term-copp">CoPP</a>/<a href="../glossary/#term-nat">NAT</a>/STP/Fabric</li>
+<li>「orchagent が CONFIG_DB を直接 subscribe」: QoS/ACL/Policer/Mirror/Mux/Pbh/Dtel/DebugCounter/Mlag/Crm/Twamp/PfcWd/FgNhg/<a href="../glossary/#term-flexcounter">FlexCounter</a>/HFTel/NvgreTunnel/Switch(一部)</li>
+<li>「FRR / kernel daemon が中継」: <a href="../glossary/#term-bgp">BGP</a>/OSPF/Static route(<code>fpmsyncd</code>)、VRRP、NTP、Mgmt <a href="../glossary/#term-vrf">VRF</a>、DHCP</li>
 </ul>
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -25237,6 +25237,7 @@
 <li><a href="https://github.com/sonic-net/sonic-swss/tree/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr"><code>sonic-swss/cfgmgr/</code></a> (各 <code>*mgrd.cpp</code>)</li>
 <li><a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h"><code>sonic-swss-common/common/schema.h</code></a></li>
 </ul>
+<!-- glossary-links-injected: a118e8b048d0 -->
 
 
 

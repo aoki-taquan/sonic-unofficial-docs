@@ -23802,7 +23802,7 @@
 
 <h1 id="vxlan_tunnel_map">VXLAN_TUNNEL_MAP テーブル<a class="headerlink" href="#vxlan_tunnel_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VXLAN tunnel に対し、ローカル VLAN と VNI (VXLAN Network Identifier) のマッピングを与える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>VxlanTunnelMapOrch</code> がこのテーブルを購読し、SAI tunnel-map (<code>SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI</code> / <code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID</code>) のエントリを生成する。</p>
+<p><a href="../../glossary/#term-vxlan">VXLAN</a> tunnel に対し、ローカル <a href="../../glossary/#term-vlan">VLAN</a> と VNI (VXLAN Network Identifier) のマッピングを与える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>VxlanTunnelMapOrch</code> がこのテーブルを購読し、<a href="../../glossary/#term-sai">SAI</a> tunnel-map (<code>SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI</code> / <code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID</code>) のエントリを生成する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23866,13 +23866,13 @@
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>orchagent</code> <code>VxlanTunnelMapOrch</code>: SAI tunnel-map エントリ生成</li>
-<li>EVPN フローでは <code>VxlanMgr</code> がここから VLAN-VNI を引き、type-2/3 経路と紐付ける</li>
+<li><a href="../../glossary/#term-evpn">EVPN</a> フローでは <code>VxlanMgr</code> がここから VLAN-VNI を引き、type-2/3 経路と紐付ける</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>VXLAN_TUNNEL</code>、<code>VLAN</code>、<code>VLAN_INTERFACE</code>、<code>VNET</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VXLAN_TUNNEL</code>、<code>VLAN</code>、<code>VLAN_INTERFACE</code>、<code>VNET</code></li>
 <li>関連 CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a> (<code>map add</code> / <code>map del</code>)</li>
-<li>関連 YANG: <code>sonic-vxlan</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vxlan</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23901,13 +23901,15 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>VLAN 未作成のまま VNI map を入れると orchagent が pending、トンネルが半開状態。</li>
+<li>VLAN 未作成のまま VNI map を入れると <a href="../../glossary/#term-orchagent">orchagent</a> が pending、トンネルが半開状態。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VXLAN_TUNNEL_MAP|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>vlanvnimap
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4bb5ab6e6a64 -->
 
 <div class="footnote">
 <hr />

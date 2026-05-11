@@ -23802,7 +23802,7 @@
 
 <h1 id="portchannel_member">PORTCHANNEL_MEMBER テーブル<a class="headerlink" href="#portchannel_member" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>PORTCHANNEL とその物理メンバ PORT の対応を保持する。<code>teammgrd</code> がこの関係を読み、teamd の <code>enslave</code> 操作を実行する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>PORTCHANNEL とその物理メンバ PORT の対応を保持する。<code>teammgrd</code> がこの関係を読み、<a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> の <code>enslave</code> 操作を実行する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23857,13 +23857,13 @@
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>teammgrd</code>: メンバの追加・削除を teamd に伝達</li>
-<li><code>orchagent</code> <code>LagOrch</code>: SAI LAG member を生成・削除</li>
+<li><code>orchagent</code> <code>LagOrch</code>: <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-lag">LAG</a> member を生成・削除</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORTCHANNEL</code>、<code>PORT</code>、<code>VLAN_MEMBER</code> (PORTCHANNEL_MEMBER に登録された port は VLAN_MEMBER に登録不可、<code>must</code> 制約は VLAN 側)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORTCHANNEL</code>、<code>PORT</code>、<code>VLAN_MEMBER</code> (PORTCHANNEL_MEMBER に登録された port は VLAN_MEMBER に登録不可、<code>must</code> 制約は VLAN 側)</li>
 <li>関連 CLI: <code>config portchannel member add/del</code></li>
-<li>関連 YANG: <code>sonic-portchannel</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-portchannel</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23891,7 +23891,7 @@
 </ul>
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li>VLAN_MEMBER に同じ Ethernet が残ったまま PORTCHANNEL_MEMBER に追加すると orchagent エラー。</li>
+<li>VLAN_MEMBER に同じ Ethernet が残ったまま PORTCHANNEL_MEMBER に追加すると <a href="../../glossary/#term-orchagent">orchagent</a> エラー。</li>
 <li>L3 IP を持つポートを LAG メンバに入れると INTERFACE 側が孤立。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
@@ -23899,6 +23899,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ad8e612d9a21 -->
 
 <div class="footnote">
 <hr />

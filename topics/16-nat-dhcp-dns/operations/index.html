@@ -23886,7 +23886,7 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>NAT / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと ASIC ハードウェアパスの両方を含むため、調査時はまず「どの daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。</p>
+<p><a href="../../../reference/glossary/#term-nat">NAT</a> / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと ASIC ハードウェアパスの両方を含むため、調査時はまず「どの daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。</p>
 <h2 id="_2">サービス全体の入口<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ docker ps --format &#39;table {{.Names}}\t{{.Status}}&#39; | grep -E &#39;nat|dhcp&#39;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker-nat               Up 5 days
@@ -23898,13 +23898,13 @@
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>dhcp_relay        enabled        enabled         enabled       N/A
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>dhcp_server       enabled        enabled         enabled       N/A
 </span></code></pre></div>
-<p><code>Status</code> が <code>Restarting</code> を繰り返す container は config 不整合（CONFIG_DB 側の参照テーブル欠落、テンプレート展開失敗）か、kernel 側の前提モジュール（<code>nf_conntrack</code>, <code>nf_nat</code>）未ロードの可能性があります。<code>docker logs --tail 200 docker-nat</code> を先に見ます。</p>
+<p><code>Status</code> が <code>Restarting</code> を繰り返す container は config 不整合（<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> 側の参照テーブル欠落、テンプレート展開失敗）か、kernel 側の前提モジュール（<code>nf_conntrack</code>, <code>nf_nat</code>）未ロードの可能性があります。<code>docker logs --tail 200 docker-nat</code> を先に見ます。</p>
 <h2 id="nat">NAT の確認順序<a class="headerlink" href="#nat" title="Permanent link">&para;</a></h2>
 <ol>
 <li><code>show nat config global</code> / <code>show nat config bindings</code> で feature と設定が CONFIG_DB に入っているか。</li>
-<li><code>show nat translations</code> で iptables 側（natmgrd / natsyncd 経路）の動的・静的エントリ。</li>
+<li><code>show nat translations</code> で iptables 側（<a href="../../../reference/glossary/#term-natmgrd-natsyncd">natmgrd</a> / natsyncd 経路）の動的・静的エントリ。</li>
 <li><code>show nat statistics</code> で hit counter。0 ヒットなら、route lookup と NAT zone の inside / outside 設定を疑います。</li>
-<li>ASIC オフロードを確認するときは <code>sai_dump</code> / <code>SAI_OBJECT_TYPE_NAT_ENTRY</code> 数を syncd 側で見ます。</li>
+<li>ASIC オフロードを確認するときは <code>sai_dump</code> / <code>SAI_OBJECT_TYPE_NAT_ENTRY</code> 数を <a href="../../../reference/glossary/#term-syncd">syncd</a> 側で見ます。</li>
 <li>natsyncd が conntrack を拾えない場合は <code>docker-nat</code> の <code>natsyncd</code> ログと kernel <code>nf_conntrack</code> の counter を確認します。</li>
 </ol>
 <p>CLI は <a href="../../../reference/cli/show-nat/">show nat ページ</a> に詳細があります。</p>
@@ -23942,7 +23942,7 @@
 <p><code>Dynamic NAT Entries=0</code> で長期間張り付くのは、inside zone がきちんと設定されていない、または route lookup で outside zone に出ていないケースが多いです。<code>show nat zones</code> で zone と interface のひも付けを確認します。ASIC オフロード状態は <code>syncd</code> 側で <code>redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_NAT_ENTRY:*' | wc -l</code> で件数を見ます。</p>
 <h2 id="dhcp-relay">DHCP relay の確認順序<a class="headerlink" href="#dhcp-relay" title="Permanent link">&para;</a></h2>
 <ol>
-<li><code>show dhcp_relay</code> / <code>show vlan brief</code> で VLAN ごとの upstream server が登録されているか。</li>
+<li><code>show dhcp_relay</code> / <code>show vlan brief</code> で <a href="../../../reference/glossary/#term-vlan">VLAN</a> ごとの upstream server が登録されているか。</li>
 <li><code>show dhcp_relay ipv4 counter Vlan&lt;N&gt;</code> / <code>show dhcp_relay ipv6 counters Vlan&lt;N&gt;</code> で per-interface counter が増えるか。RX/TX、direction、message type で切り分けできます。詳細は <a href="../../../routing/dhcp-relay-per-interface-counter/">per-interface counter ページ</a> を参照してください。</li>
 <li>counter が 0 のときは <code>docker-dhcp-relay</code> 内の <code>supervisorctl status</code> で <code>dhcrelay-Vlan&lt;N&gt;</code> / <code>dhcpmon-Vlan&lt;N&gt;</code> / <code>dhcp6relay</code> が <code>RUNNING</code> か確認します。</li>
 <li>v6 で reply が戻らないときは Option 79 / RFC 6939（<code>dhcpv6_option|rfc6939_support</code>）の設定と、dual-ToR の場合は loopback アドレス利用を確認します。</li>
@@ -23998,7 +23998,7 @@
 </span></code></pre></div>
 <p><code>lease4-get-all</code> で結果が空のときは、kea-dhcp4 が起動失敗しているか、設定生成の <code>dhcpservd</code> が <code>CONFIG_DB</code> を読めていない可能性があります。</p>
 <h2 id="dhcp-dos">DHCP DoS 緩和の確認<a class="headerlink" href="#dhcp-dos" title="Permanent link">&para;</a></h2>
-<p>ポートごとの <code>dhcp_rate_limit</code> は CONFIG_DB の <code>PORT</code> に書き込まれます。ただし master では portmgrd の tc 投入実装が未取り込みで、<code>tc qdisc show dev &lt;port&gt;</code> で確認しても rate limiter は入っていない可能性が高いです。CoPP 側の <code>dhcp_relay</code> trap は従来通り残っているため、システム全体での DHCP rate 制限はそちらで効きます。詳細は <a href="../../../acl-qos/dhcp-dos-mitigation-in-sonic/">DHCP DoS 緩和ページ</a> を参照してください。</p>
+<p>ポートごとの <code>dhcp_rate_limit</code> は CONFIG_DB の <code>PORT</code> に書き込まれます。ただし master では <a href="../../../reference/glossary/#term-portmgrd">portmgrd</a> の tc 投入実装が未取り込みで、<code>tc qdisc show dev &lt;port&gt;</code> で確認しても rate limiter は入っていない可能性が高いです。<a href="../../../reference/glossary/#term-copp">CoPP</a> 側の <code>dhcp_relay</code> trap は従来通り残っているため、システム全体での DHCP rate 制限はそちらで効きます。詳細は <a href="../../../acl-qos/dhcp-dos-mitigation-in-sonic/">DHCP DoS 緩和ページ</a> を参照してください。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ redis-cli -n 4 hget &#39;PORT|Ethernet0&#39; dhcp_rate_limit
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>&quot;300&quot;
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
@@ -24049,7 +24049,7 @@
 <tr>
 <td><code>dhcrelay: forward_packet: bad bootp packet</code></td>
 <td>malformed DHCP packet 受信</td>
-<td>source MAC / port を ACL でブロック</td>
+<td>source MAC / port を <a href="../../../reference/glossary/#term-acl">ACL</a> でブロック</td>
 </tr>
 <tr>
 <td><code>dhcp6relay: drop packet: option 79 missing</code></td>
@@ -24182,6 +24182,7 @@
 <li><a href="../../../architecture/dhcpv4-relay-agent/">DHCPv4 Relay Agent</a></li>
 <li><a href="../../../architecture/dhcpv6-relay-agent/">DHCPv6 Relay Agent</a></li>
 </ul>
+<!-- glossary-links-injected: 6c3f4b3a3498 -->
 
 
 

@@ -23902,7 +23902,7 @@
 
 <h1 id="config-vrf">config vrf サブコマンド<a class="headerlink" href="#config-vrf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config vrf</code> は VRF (Virtual Routing and Forwarding) インスタンスの作成・削除と、L3 VNI マッピング（VXLAN EVPN 用）を提供する。<code>config/main.py</code> 内に二重定義があり、上段（L6569）の <code>vrf</code> グループは古い定義で実際の <code>config</code> 直下に登録されているのは後段（L7673）の <code>@config.group(cls=clicommon.AbbreviationGroup, name='vrf')</code>。CONFIG_DB の <code>VRF</code> テーブルに対する add/del と、<code>MGMT_VRF_CONFIG</code> に対する管理 VRF の有効化を扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config vrf</code> は <a href="../../glossary/#term-vrf">VRF</a> (Virtual Routing and Forwarding) インスタンスの作成・削除と、L3 VNI マッピング（<a href="../../glossary/#term-vxlan">VXLAN</a> <a href="../../glossary/#term-evpn">EVPN</a> 用）を提供する。<code>config/main.py</code> 内に二重定義があり、上段（L6569）の <code>vrf</code> グループは古い定義で実際の <code>config</code> 直下に登録されているのは後段（L7673）の <code>@config.group(cls=clicommon.AbbreviationGroup, name='vrf')</code>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>VRF</code> テーブルに対する add/del と、<code>MGMT_VRF_CONFIG</code> に対する管理 VRF の有効化を扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ManagementVRF (<code>mgmt</code> / <code>management</code>) は通常データプレーン用の <code>Vrf&lt;name&gt;</code> とは扱いが異なり、<code>vrf_add_management_vrf</code> / <code>vrf_delete_management_vrf</code> が <code>MGMT_VRF_CONFIG</code> を直接操作する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -23987,7 +23987,7 @@ excerpt: |
 <ul>
 <li>対象 VRF が <code>VRF</code> テーブルにあること</li>
 <li><code>vni</code> が数値かつ <code>clicommon.vni_id_is_valid</code> (1 - 16777215)</li>
-<li><code>VXLAN_TUNNEL_MAP</code> テーブル内に同じ VNI を持つ VLAN-VNI マップが既に存在していること（先に作成しておくこと）</li>
+<li><code>VXLAN_TUNNEL_MAP</code> テーブル内に同じ VNI を持つ <a href="../../glossary/#term-vlan">VLAN</a>-VNI マップが既に存在していること（先に作成しておくこと）</li>
 <li>同じ VNI が他の VRF に既に割り当てられていないこと</li>
 </ul>
 <p>すべて満たしたら <code>mod_entry('VRF', vrfname, {"vni": vni})</code> で <code>VRF|&lt;vrf&gt;</code> の <code>vni</code> フィールドを更新する。</p>
@@ -24099,6 +24099,8 @@ excerpt: |
 <li><a href="../../config-db/mgmt-vrf-config/">CONFIG_DB: MGMT_VRF_CONFIG</a></li>
 <li><a href="../../yang/sonic-vrf/">YANG: sonic-vrf</a></li>
 </ul>
+<!-- glossary-links-injected: e9411ffbc438 -->
+
 <div class="footnote">
 <hr />
 <ol>

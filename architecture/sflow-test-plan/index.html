@@ -23789,7 +23789,7 @@
 </div>
 <h1 id="sflow-hsflowd-2-collector-sampling-rate-agent-id-counter-polling">sFlow テストプラン（<code>hsflowd</code> + 2 collector / sampling rate / agent-id / counter polling）<a class="headerlink" href="#sflow-hsflowd-2-collector-sampling-rate-agent-id-counter-polling" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>T0 上で SONiC sFlow 機能を機能検証するテスト<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。4 PortChannel から各 1 ポートを sFlow 有効化、Vlan1000 の 2 ポートを使って PTF docker の collector へ繋ぐ構成。<code>sflowtool</code> を PTF docker にインストールし、counter sampling と flow sampling の出力をテキストに落として parse する。</p>
+<p>T0 上で SONiC sFlow 機能を機能検証するテスト<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。4 <a href="../../reference/glossary/#term-portchannel">PortChannel</a> から各 1 ポートを sFlow 有効化、Vlan1000 の 2 ポートを使って PTF docker の collector へ繋ぐ構成。<code>sflowtool</code> を PTF docker にインストールし、counter sampling と flow sampling の出力をテキストに落として parse する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="6">6 つのテスト項目<a class="headerlink" href="#6" title="Permanent link">&para;</a></h3>
 <table>
@@ -23891,7 +23891,7 @@
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>hsflowd</code> ホストデーモン</strong>: <code>SFLOW*</code> テーブルを実装する中核</li>
-<li><strong>CONFIG_DB / sonic-utilities</strong>: テスト対象 CLI が依存</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a></strong>: テスト対象 CLI が依存</li>
 <li><strong>fast/warm-reboot</strong>: 永続化テストが対象</li>
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23901,6 +23901,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 88356dc40f25 -->
 
 <div class="footnote">
 <hr />

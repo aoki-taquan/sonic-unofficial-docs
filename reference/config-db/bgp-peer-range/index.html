@@ -23611,10 +23611,10 @@
 
 <h1 id="bgp_peer_range">BGP_PEER_RANGE テーブル<a class="headerlink" href="#bgp_peer_range" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>BGP_PEER_RANGE</code> テーブルは BGP の dynamic neighbor 用 listen-range / peer-range を CONFIG_DB に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code> テンプレが <code>bgpd</code> の <code>bgp listen range &lt;prefix&gt; peer-group &lt;name&gt;</code> 相当を生成するための入力。</p>
+<p><code>BGP_PEER_RANGE</code> テーブルは <a href="../../glossary/#term-bgp">BGP</a> の dynamic neighbor 用 listen-range / peer-range を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code> テンプレが <code>bgpd</code> の <code>bgp listen range &lt;prefix&gt; peer-group &lt;name&gt;</code> 相当を生成するための入力。</p>
 <p>定義は 2 list:</p>
 <ul>
-<li><code>BGP_PEER_RANGE_LIST</code> (vrf_name, peer_range_name): VRF または VNET 別の peer range</li>
+<li><code>BGP_PEER_RANGE_LIST</code> (vrf_name, peer_range_name): <a href="../../glossary/#term-vrf">VRF</a> または <a href="../../glossary/#term-vnet">VNET</a> 別の peer range</li>
 <li><code>BGP_PEER_RANGE_TEMPLATE_LIST</code> (peer_range_name): テンプレベース</li>
 </ul>
 <!-- cdb-mermaid -->
@@ -23699,7 +23699,7 @@
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>、<code>VRF</code>、<code>VNET</code>、<code>BGP_PEER_GROUP</code></li>
-<li>関連 YANG: <code>sonic-bgp-peerrange</code>、<code>sonic-vrf</code>、<code>sonic-vnet</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-peerrange</code>、<code>sonic-vrf</code>、<code>sonic-vnet</code></li>
 <li>関連 CLI: <code>config bgp</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23733,6 +23733,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp listen range&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0b428f8adcd6 -->
 
 <div class="footnote">
 <hr />

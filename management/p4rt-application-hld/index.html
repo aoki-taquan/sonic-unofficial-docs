@@ -23996,8 +23996,8 @@
 </div>
 <h1 id="p4rt-pins-grpc-port-9559">P4RT アプリケーション（PINS の gRPC サービス、port 9559）<a class="headerlink" href="#p4rt-pins-grpc-port-9559" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>P4RT アプリケーションは PINS（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、<strong><a href="https://p4lang.github.io/p4runtime/spec/v1.3.0/P4Runtime-Spec.html">P4Runtime v1.3.0</a> を実装する gRPC サービス</strong>として TCP port <strong>9559</strong> で動く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SDN コントローラはこの gRPC を経由して P4 forwarding pipeline configuration（P4Info）と P4 テーブルエントリを SONiC に流し込み、SAI パイプラインを操作する。</p>
-<p>P4RT アプリケーションは独自 Docker コンテナで稼働し、受け取った Platform Independent (PI) 形式の P4RT メッセージを APPL_DB の <code>P4RT_TABLE</code> 系エントリに翻訳する。下流の <code>P4Orch</code> が APPL_DB を購読して SAI 経由で ASIC に書き込む<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>P4RT アプリケーションは <a href="../../reference/glossary/#term-pins">PINS</a>（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、<strong><a href="https://p4lang.github.io/p4runtime/spec/v1.3.0/P4Runtime-Spec.html">P4Runtime v1.3.0</a> を実装する gRPC サービス</strong>として TCP port <strong>9559</strong> で動く<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SDN コントローラはこの gRPC を経由して P4 forwarding pipeline configuration（P4Info）と P4 テーブルエントリを SONiC に流し込み、<a href="../../reference/glossary/#term-sai">SAI</a> パイプラインを操作する。</p>
+<p>P4RT アプリケーションは独自 Docker コンテナで稼働し、受け取った Platform Independent (PI) 形式の P4RT メッセージを <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>P4RT_TABLE</code> 系エントリに翻訳する。下流の <code>P4Orch</code> が APPL_DB を購読して SAI 経由で ASIC に書き込む<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -24023,7 +24023,7 @@
 </ul>
 <p>検証通過後、設定可能な情報は APPL_DB に書かれる。下層から失敗が返れば config を reject する。</p>
 <h3 id="acl-sai_action-sai_field">ACL テーブル定義（@sai_action / @sai_field）<a class="headerlink" href="#acl-sai_action-sai_field" title="Permanent link">&para;</a></h3>
-<p>ACL のような設定可能部はハードウェア依存（リソース・ステージ制約）で P4 段では検証しきれない。P4 program 内で <strong><code>@sai_action</code> / <code>@sai_field</code> アノテーション</strong> を使って SAI の対応を明示し、P4Info push 時に P4RT App が APPL_DB の <strong><code>P4RT:DEFINITION</code></strong> に翻訳して書き出す。OA 層がこれを読んで SAI に反映を試み、結果を P4RT App に返す<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-acl">ACL</a> のような設定可能部はハードウェア依存（リソース・ステージ制約）で P4 段では検証しきれない。P4 program 内で <strong><code>@sai_action</code> / <code>@sai_field</code> アノテーション</strong> を使って SAI の対応を明示し、P4Info push 時に P4RT App が APPL_DB の <strong><code>P4RT:DEFINITION</code></strong> に翻訳して書き出す。OA 層がこれを読んで SAI に反映を試み、結果を P4RT App に返す<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>例<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>@sai_action(SAI_PACKET_ACTION_FORWARD)
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>action forward() {
@@ -24040,7 +24040,7 @@
 </span></code></pre></div>
 <h3 id="write-read">Write / Read の流れ<a class="headerlink" href="#write-read" title="Permanent link">&para;</a></h3>
 <p>PI 形式の Write リクエスト（INSERT / MODIFY / DELETE）は <strong>primary 接続</strong> からのみ受付。P4RT App が APPL_DB の P4RT スキーマに変換して投入し、<code>P4Orch</code> が SAI に反映する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>Read は primary/backup 双方から可能。Read 性能の最適化は別 HLD（<a href="../p4rt-read-cache-hld/">P4RT Read Cache</a>）で扱う。</p>
+<p>Read は primary/backup 双方から可能。Read 性能の最適化は別 <a href="../../reference/glossary/#term-hld">HLD</a>（<a href="../p4rt-read-cache-hld/">P4RT Read Cache</a>）で扱う。</p>
 <h3 id="wcmp-hashing">WCMP / Hashing<a class="headerlink" href="#wcmp-hashing" title="Permanent link">&para;</a></h3>
 <p>WCMP は 2 段構成<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -24049,7 +24049,7 @@
 </ul>
 <h3 id="response-pathappl_state_db">Response path（APPL_STATE_DB）<a class="headerlink" href="#response-pathappl_state_db" title="Permanent link">&para;</a></h3>
 <p><code>syncd</code> は同期動作、OrchAgent はハードウェア結果を <strong>別の通知チャネル</strong> で P4RT App に返す。成功時は <strong><code>APPL_STATE_DB</code></strong> に成功エントリを書き、失敗時は P4RT App が APPL_DB の対応エントリを <strong>元の値に戻す</strong>（rollback）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>これは既存 STATE_DB のような「定常状態の公開」とは違い、<strong>アプリケーションレベルの応答チャネル</strong> という新しい抽象である。</p>
+<p>これは既存 <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のような「定常状態の公開」とは違い、<strong>アプリケーションレベルの応答チャネル</strong> という新しい抽象である。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/pins/p4rt_app_hld.md#L152-L156 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24077,7 +24077,7 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <p>P4RT App は APPL_DB に新規テーブル群を書き出す。スキーマ詳細は <strong>P4RT DB Schema HLD</strong>（別ドキュメント）に分離されている<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本ページでは <code>P4RT_TABLE</code>（テーブルエントリ）と <code>P4RT:DEFINITION</code>（ACL テーブル等の定義）の存在を押さえる。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>P4RT 起動時に CONFIG_DB から <code>P4RT</code> テーブルを読む。設定変更時はコンテナの再起動が必要<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>P4RT 起動時に <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から <code>P4RT</code> テーブルを読む。設定変更時はコンテナの再起動が必要<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">&quot;P4RT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;certs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;server_crt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/keys/server_cert.lnk&quot;</span><span class="p">,</span>
@@ -24095,7 +24095,7 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は config_db.json 直接編集または gNMI 経由を想定<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は <a href="../../reference/glossary/#term-config_db.json">config_db.json</a> 直接編集または <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由を想定<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>設定変更で再起動必須</strong>: <code>P4RT</code> テーブルの変更後は P4RT コンテナを再起動しないと反映されない<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -24118,7 +24118,7 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <h2 id="_8">実装との乖離<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
 <ul>
-<li><strong>HashOrch は独立コンポーネントではない</strong>: HLD は OrchAgent に「<code>HashOrch</code> を新規追加し、P4Info から渡されたハッシュフィールド/アルゴリズムを <code>SWITCH_TABLE</code> の SAI ハッシュ属性に書く」と記載しているが、現行 master では独立した <code>HashOrch</code> クラスは存在しない。代わりに既存の <code>SwitchOrch</code> が <code>CFG_SWITCH_HASH_TABLE_NAME</code> を消費し、<code>sonic-swss/orchagent/switch/switch_helper.cpp:24-</code> の <code>SWITCH_HASH_FIELD_*</code> ↔ <code>SAI_NATIVE_HASH_FIELD_*</code> マップを通じて SAI 属性を設定する (<code>orchagent/switchorch.cpp:1507</code>、<code>orchdaemon.cpp:199</code>)。HLD の論理（P4RT App → orchagent → SAI hash 属性）は同等だが、責務が <code>HashOrch</code> ではなく <code>SwitchOrch</code> 側にある。</li>
+<li><strong>HashOrch は独立コンポーネントではない</strong>: HLD は OrchAgent に「<code>HashOrch</code> を新規追加し、P4Info から渡されたハッシュフィールド/アルゴリズムを <code>SWITCH_TABLE</code> の SAI ハッシュ属性に書く」と記載しているが、現行 master では独立した <code>HashOrch</code> クラスは存在しない。代わりに既存の <code>SwitchOrch</code> が <code>CFG_SWITCH_HASH_TABLE_NAME</code> を消費し、<code>sonic-swss/orchagent/switch/switch_helper.cpp:24-</code> の <code>SWITCH_HASH_FIELD_*</code> ↔ <code>SAI_NATIVE_HASH_FIELD_*</code> マップを通じて SAI 属性を設定する (<code>orchagent/switchorch.cpp:1507</code>、<code>orchdaemon.cpp:199</code>)。HLD の論理（P4RT App → <a href="../../reference/glossary/#term-orchagent">orchagent</a> → SAI hash 属性）は同等だが、責務が <code>HashOrch</code> ではなく <code>SwitchOrch</code> 側にある。</li>
 </ul>
 <p>主要な合致点:</p>
 <ul>
@@ -24164,6 +24164,8 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f369e75e8733 -->
 
 <div class="footnote">
 <hr />

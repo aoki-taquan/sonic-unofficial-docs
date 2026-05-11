@@ -23902,7 +23902,7 @@
 <li><a href="../../../architecture/sag-high-level-design-for-sonic/">SAG（Static Anycast Gateway）for SONiC</a><br />
   monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>2026-05 時点で <strong>SAG コード / YANG / CLI は community master に取り込まれておらず、HLD 提案段階</strong>。</p>
+<p>2026-05 時点で <strong>SAG コード / <a href="../../glossary/#term-yang">YANG</a> / CLI は community master に取り込まれておらず、HLD 提案段階</strong>。</p>
 <ul>
 <li><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
   monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
@@ -23944,7 +23944,7 @@
 <li><a href="../../../management/portable-console-device-design/">Portable Console Device 設計（USB ベンダー console デバイスの抽象化）</a><br />
   monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / CONFIG_DB スキーマのいずれにも入っていない。</p>
+<p>2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / <a href="../../glossary/#term-config_db">CONFIG_DB</a> スキーマのいずれにも入っていない。</p>
 <ul>
 <li><a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）</a><br />
   monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
@@ -23981,7 +23981,7 @@
 <li><a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a><br />
   monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>2026-05-09 時点の現行 master を裏取り。本機能の <strong>コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み</strong>だが、<strong>HLD で示唆された動的設定 CLI（<code>counterpoll port flr-interval-factor</code>）は未実装</strong>であり、poll 周期は lua スクリプト内のハードコード値に固定されている。</p>
+<p>2026-05-09 時点の現行 master を裏取り。本機能の <strong>コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み</strong>だが、<strong><a href="../../glossary/#term-hld">HLD</a> で示唆された動的設定 CLI（<code>counterpoll port flr-interval-factor</code>）は未実装</strong>であり、poll 周期は lua スクリプト内のハードコード値に固定されている。</p>
 <ul>
 <li><a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a><br />
   monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
@@ -24110,7 +24110,7 @@
 <li><a href="../../../system/reset-local-users-passwords-during-init-hld/">ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）</a><br />
   monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
+<p>per-page queue で既出の通り、<a href="../../glossary/#term-hld">HLD</a> が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
 <h2 id="_1">監査基準の取り扱い<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>本ページ群（<code>verification: discrepancy-found</code> のページ）は、「機能としては完結していなくても、代わりに HLD と実装の差分を整理して読み手に渡す」ことを目的としています。品質監査 (<code>meta/quality-audit-*.md</code>) における <strong>軸 6 (完結性)</strong> は、本ページ群では「乖離説明の整理度」（monitor タグ妥当性 / 「実装との乖離」セクションの構造化 / 裏取り evidence / 読み手への next-action）に読み替えて評価します。詳細は <code>meta/templates/SCHEMA.md</code> の 「<code>discrepancy-found</code> ページの軸 6 評価基準」セクション、および <code>meta/quality-audit-guide.md</code> を参照してください。</p>
 

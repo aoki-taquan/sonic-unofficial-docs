@@ -23631,19 +23631,19 @@
 <li>サブグループの <strong>概要</strong>（何を制御するか / どのデーモンを操作するか）</li>
 <li><strong>コマンド一覧表</strong>（コマンド + 用途）</li>
 <li>各コマンドの <strong>用法 / 引数 / オプション / 動作</strong></li>
-<li>関連する <strong>CONFIG_DB テーブル</strong>（コマンド実装中の DB 書き込みから抽出）</li>
+<li>関連する <strong><a href="../glossary/#term-config_db">CONFIG_DB</a> テーブル</strong>（コマンド実装中の DB 書き込みから抽出）</li>
 <li>一次情報の脚注</li>
 </ul>
 <h2 id="index">主要サブグループ index（順次追加予定）<a class="headerlink" href="#index" title="Permanent link">&para;</a></h2>
 <p>サブグループ単位の個別ページは <code>docs/reference/cli/&lt;group&gt;-&lt;subgroup&gt;.md</code> の slug で並ぶ。awesome-pages プラグインがファイル名順で自動的に nav に組み込むため、新規ページを追加してもこの index を都度更新する必要はない。</p>
 <h3 id="config">config 系<a class="headerlink" href="#config" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>config bgp</code> ... BGP shutdown / startup / remove / autonomous-system</li>
-<li><code>config interface</code> ... 物理ポート・SubInterface のステート / 速度 / FEC / IP / VRF</li>
-<li><code>config vlan</code> ... VLAN 作成、メンバ追加、DHCP relay</li>
-<li><code>config portchannel</code> ... LAG (LACP) 作成・メンバ追加</li>
-<li><code>config acl</code> ... ACL テーブル更新・ルール削除</li>
-<li><code>config vxlan</code> ... VTEP / EVPN / VLAN-VNI マッピング</li>
+<li><code>config bgp</code> ... <a href="../glossary/#term-bgp">BGP</a> shutdown / startup / remove / autonomous-system</li>
+<li><code>config interface</code> ... 物理ポート・SubInterface のステート / 速度 / FEC / IP / <a href="../glossary/#term-vrf">VRF</a></li>
+<li><code>config vlan</code> ... <a href="../glossary/#term-vlan">VLAN</a> 作成、メンバ追加、DHCP relay</li>
+<li><code>config portchannel</code> ... <a href="../glossary/#term-lag">LAG</a> (<a href="../glossary/#term-lacp">LACP</a>) 作成・メンバ追加</li>
+<li><code>config acl</code> ... <a href="../glossary/#term-acl">ACL</a> テーブル更新・ルール削除</li>
+<li><code>config vxlan</code> ... VTEP / <a href="../glossary/#term-evpn">EVPN</a> / VLAN-VNI マッピング</li>
 </ul>
 <h3 id="show">show 系<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23655,7 +23655,7 @@
 </ul>
 <h3 id="clear">clear 系<a class="headerlink" href="#clear" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>clear</code> ... ARP / NDP / counters / FDB / BGP セッション等</li>
+<li><code>clear</code> ... <a href="../glossary/#term-arp">ARP</a> / <a href="../glossary/#term-ndp">NDP</a> / counters / <a href="../glossary/#term-fdb">FDB</a> / BGP セッション等</li>
 </ul>
 <h2 id="_3">全体的な仕様メモ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="click">click の構造<a class="headerlink" href="#click" title="Permanent link">&para;</a></h3>
@@ -23680,6 +23680,8 @@
 <li><a href="../../topics/22-reference-index/">Topics: リファレンス横断索引</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a68494c3c083 -->
 
 <div class="footnote">
 <hr />

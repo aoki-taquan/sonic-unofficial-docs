@@ -23550,15 +23550,15 @@
 
 
 <h1 id="platform-port-optics-phy">Platform / Port / Optics / PHY<a class="headerlink" href="#platform-port-optics-phy" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。port、optics、FEC、auto-neg、Gearbox、MDIO、thermal、PSU、BMC、PCIe、SSD は別 HLD に分かれていますが、運用者から見ると「ポートが上がる／光モジュールが認識される／装置全体が健全である」という 1 本のシナリオに連なります。</p>
+<p>この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。port、optics、FEC、auto-neg、Gearbox、MDIO、thermal、PSU、BMC、PCIe、SSD は別 <a href="../../reference/glossary/#term-hld">HLD</a> に分かれていますが、運用者から見ると「ポートが上がる／光モジュールが認識される／装置全体が健全である」という 1 本のシナリオに連なります。</p>
 <p>既存ページは platform / architecture / system / management の各 area に散らばっています。ここでは HLD の境界ではなく、port lifecycle と platform health monitoring の 2 軸に並べ直し、詳細は元ページへ誘導します。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>PORT</code> テーブル、<code>port_config.ini</code>、dynamic breakout、auto-neg、FEC はどう関係するのか。</li>
 <li>CMIS / C-CMIS / SFP EEPROM / Gearbox / MDIO はそれぞれどの層の話か。</li>
 <li>thermal、PSU、BMC、PCIe、storage health は platform 章でどう束ねるのか。</li>
-<li>port add / delete、breakout、speed 変更は buffer / QoS / ACL 章とどこで噛み合うのか。</li>
-<li>装置メトリクスは pmon / S3IP / Redfish / SNMP のどの経路で出るのか。</li>
+<li>port add / delete、breakout、speed 変更は buffer / <a href="../../reference/glossary/#term-qos">QoS</a> / <a href="../../reference/glossary/#term-acl">ACL</a> 章とどこで噛み合うのか。</li>
+<li>装置メトリクスは pmon / S3IP / Redfish / <a href="../../reference/glossary/#term-snmp">SNMP</a> のどの経路で出るのか。</li>
 </ul>
 <h2 id="_2">読み進め方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
@@ -23598,6 +23598,7 @@
 <li><a href="../11-reboot/">Reboot / Upgrade / Lifecycle</a></li>
 <li><a href="../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: cacbed1e1322 -->
 
 
 

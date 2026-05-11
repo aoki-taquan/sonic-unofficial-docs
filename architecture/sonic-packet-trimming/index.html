@@ -23884,11 +23884,11 @@
 </div>
 <h1 id="packet-trimmingsymmetric-asymmetric-dscp-acl-disable">Packet Trimming（symmetric / asymmetric DSCP / ACL disable）<a class="headerlink" href="#packet-trimmingsymmetric-asymmetric-dscp-acl-disable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Packet Trimming（PT）はバッファ枯渇で <strong>drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（受信側）に届ける</strong> SAI 機能。受信側 NIC が再送依頼を高速に出せるため、congestion 復帰が早い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Nazarii Hnydyn、2024-11 初版。</p>
+<p>Packet Trimming（PT）はバッファ枯渇で <strong>drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（受信側）に届ける</strong> <a href="../../reference/glossary/#term-sai">SAI</a> 機能。受信側 NIC が再送依頼を高速に出せるため、congestion 復帰が早い<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Nazarii Hnydyn、2024-11 初版。</p>
 <p>スコープ:</p>
 <ul>
 <li>global PT 設定 + per-buffer-profile での enable/disable</li>
-<li>ACL の <strong>disable trimming action</strong> で fine-grained 除外（v0.1 から）</li>
+<li><a href="../../reference/glossary/#term-acl">ACL</a> の <strong>disable trimming action</strong> で fine-grained 除外（v0.1 から）</li>
 <li>v0.2: <strong>Asymmetric DSCP</strong>（trim 後 packet に異なる DSCP を打つ）</li>
 <li>v0.3: <strong>Drop counters</strong>（trim 数の可視化）</li>
 </ul>
@@ -23995,7 +23995,7 @@ reasoning: スコープと per-buffer + ACL disable の根拠。
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Buffer / PFC</strong>: profile ごとに trim を切り替える設計のため、PFC lossless profile では disable が定石</li>
+<li><strong>Buffer / <a href="../../reference/glossary/#term-pfc">PFC</a></strong>: profile ごとに trim を切り替える設計のため、PFC lossless profile では disable が定石</li>
 <li><strong>ACL</strong>: <code>DISABLE_TRIMMING</code> を使う rule は AclOrch / capabilities と整合が必要</li>
 <li><strong>Flex Counter</strong>: drop counter を polling</li>
 </ul>
@@ -24013,7 +24013,7 @@ reasoning: スコープと per-buffer + ACL disable の根拠。
 <li>capability チェック＆エラーログ: 同 L1083, L1093-L1260 全体（<code>Switch trimming configuration is not supported: skipping ...</code> ほか）</li>
 </ul>
 <blockquote>
-<p>BufferOrch 側の per-profile trimming と ACL <code>DISABLE_TRIMMING</code> action、<code>SWITCH_TRIMMING_CAPABILITY</code> の STATE_DB 公開は別バッチで深掘り予定。</p>
+<p>BufferOrch 側の per-profile trimming と ACL <code>DISABLE_TRIMMING</code> action、<code>SWITCH_TRIMMING_CAPABILITY</code> の <a href="../../reference/glossary/#term-state_db">STATE_DB</a> 公開は別バッチで深掘り予定。</p>
 </blockquote>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
@@ -24031,6 +24031,8 @@ reasoning: スコープと per-buffer + ACL disable の根拠。
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d3de20f7e1ff -->
 
 <div class="footnote">
 <hr />

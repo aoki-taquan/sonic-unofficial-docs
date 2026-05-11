@@ -23964,7 +23964,7 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から見るか、line card から見るか、ASIC namespace から見るか。ここでは典型的な確認順を整理します。</p>
+<p>Multi-ASIC / <a href="../../../reference/glossary/#term-voq">VOQ</a> chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から見るか、line card から見るか、ASIC namespace から見るか。ここでは典型的な確認順を整理します。</p>
 <h2 id="_2">どこから見るかの判定<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23988,7 +23988,7 @@
 </tr>
 <tr>
 <td>VOQ counter（ingress 側 per-system-port queue）</td>
-<td>line card の COUNTERS_DB を aggregate</td>
+<td>line card の <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> を aggregate</td>
 </tr>
 <tr>
 <td>chassis 全体の system port、line card 状態</td>
@@ -24016,7 +24016,7 @@
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>LINE-CARD1|asic1|Ethernet0                512          2      0          1     400G
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>...
 </span></code></pre></div>
-<p><code>Oper-Status</code> が <code>Offline</code> のまま戻らない line card は、まず supervisor <code>/var/log/syslog</code> の <code>chassisd</code> / <code>chassis_db_init</code> のエラーを追います。<code>Online (boot)</code> で長時間止まる場合は line card 側 <code>bgpd</code>/<code>swss</code> 起動が SAI 初期化で詰まっている可能性があり、line card にログインして <code>docker ps</code> と <code>journalctl -u swss@asic0</code> を見ます。</p>
+<p><code>Oper-Status</code> が <code>Offline</code> のまま戻らない line card は、まず supervisor <code>/var/log/syslog</code> の <code>chassisd</code> / <code>chassis_db_init</code> のエラーを追います。<code>Online (boot)</code> で長時間止まる場合は line card 側 <code>bgpd</code>/<code>swss</code> 起動が <a href="../../../reference/glossary/#term-sai">SAI</a> 初期化で詰まっている可能性があり、line card にログインして <code>docker ps</code> と <code>journalctl -u swss@asic0</code> を見ます。</p>
 <h3 id="line-card-show">line card からの典型 show 出力<a class="headerlink" href="#line-card-show" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@lc0:~$ show interfaces status --namespace asic0 | head -5
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Interface       Lanes        Speed   MTU  FEC   Alias    Vlan    Oper    Admin    Type
@@ -24032,7 +24032,7 @@
 </span></code></pre></div>
 <p><code>--namespace</code> 省略時は line card 上の全 ASIC namespace を集約してくれますが、特定 ASIC の問題を切り分けるときは <code>--namespace asicN</code> で個別に当たります。</p>
 <h2 id="aggregate-voq-counter">Aggregate VOQ Counter<a class="headerlink" href="#aggregate-voq-counter" title="Permanent link">&para;</a></h2>
-<p><code>aggregate-voq-counters-in-sonic</code> HLD は、VOQ counter が ASIC namespace ごとに分散している問題を解決します。VOQ は ingress 側で egress system port ごとに存在するため、「ある egress system port の輻輳」を知りたいときに、全 ingress line card の COUNTERS_DB を横断する必要があります。</p>
+<p><code>aggregate-voq-counters-in-sonic</code> <a href="../../../reference/glossary/#term-hld">HLD</a> は、VOQ counter が ASIC namespace ごとに分散している問題を解決します。VOQ は ingress 側で egress system port ごとに存在するため、「ある egress system port の輻輳」を知りたいときに、全 ingress line card の COUNTERS_DB を横断する必要があります。</p>
 <p>集約は以下の流れで行います。</p>
 <ol>
 <li>各 line card の COUNTERS_DB が persys-port VOQ counter を持つ。</li>
@@ -24094,7 +24094,7 @@
 <li>chassis subsystem 要件として、line card 抜き差し、PSU、fan tray、fabric card の hotswap 検出が PMON 経由で <code>STATE_DB</code> および Chassis DB に反映されます。</li>
 </ul>
 <h2 id="entity-mib-entity-sensor-mib">Entity MIB / Entity Sensor MIB<a class="headerlink" href="#entity-mib-entity-sensor-mib" title="Permanent link">&para;</a></h2>
-<p><code>sonic-entity-mib-and-entity-sensor-mib-extension</code> は、chassis を含む物理コンポーネントツリーを SNMP で公開するための entityPhysical / entitySensor 拡張を定義します。</p>
+<p><code>sonic-entity-mib-and-entity-sensor-mib-extension</code> は、chassis を含む物理コンポーネントツリーを <a href="../../../reference/glossary/#term-snmp">SNMP</a> で公開するための entityPhysical / entitySensor 拡張を定義します。</p>
 <ul>
 <li>chassis -&gt; linecard -&gt; ASIC -&gt; port のような階層を <code>entPhysicalTable</code> で表現します。</li>
 <li>thermal / voltage / current / fan speed を <code>entSensorTable</code> 系で提供します。</li>
@@ -24129,7 +24129,7 @@
 <p>問題タイプ別の入口の例:</p>
 <ol>
 <li><strong>特定の egress port で drop が見える</strong>: line card 側 <code>show interfaces counters</code> で drop 種別を確認し、ingress 側全 line card の VOQ counter を aggregate で確認、fabric port の link monitoring を見る。</li>
-<li><strong>route が片方向しか上がっていない</strong>: line card ごとの BGP namespace で neighbor 状態確認、Chassis DB の system port presence、<code>show ip route --namespace</code> で各 ASIC namespace を順に見る。</li>
+<li><strong>route が片方向しか上がっていない</strong>: line card ごとの <a href="../../../reference/glossary/#term-bgp">BGP</a> namespace で neighbor 状態確認、Chassis DB の system port presence、<code>show ip route --namespace</code> で各 ASIC namespace を順に見る。</li>
 <li><strong>新しい line card が立ち上がらない</strong>: supervisor PMON で module 検出ログ、Chassis DB の line card 登録、line card 起動ログ（sub_role / hwsku 取得失敗を検索）。</li>
 <li><strong>fabric link error</strong>: supervisor PMON で fabric card 状態、<code>show fabric</code> 系コマンド、line card 側 fabric port counter。</li>
 </ol>
@@ -24262,6 +24262,7 @@
 <li><a href="../../../system/platform-monitor-requirement-for-chassis-subsystem/">PMON for Chassis Subsystem</a></li>
 <li><a href="../../../system/sonic-entity-mib-and-entity-sensor-mib-extension/">Entity MIB / Entity Sensor MIB 拡張</a></li>
 </ul>
+<!-- glossary-links-injected: 0ae9a48e5601 -->
 
 
 

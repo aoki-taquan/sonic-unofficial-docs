@@ -23874,7 +23874,7 @@
 </div>
 <h1 id="bgp-router-id-device_metadatabgp_router_id">BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）<a class="headerlink" href="#bgp-router-id-device_metadatabgp_router_id" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の BGP は長らく <strong>Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う</strong> 設計になっていた。具体的には単一 ASIC では <code>Loopback0</code>、マルチ ASIC では <code>Loopback4096</code> の IPv4 アドレスをそのまま使用する。さらに <code>bgpcfgd</code> 側にも「<code>Loopback0</code> の IPv4 が存在しなければ BGP ピアを追加しない」という強い依存があり、Loopback アドレスを使わない構成や、BGP router-id とインタフェースアドレスを分離したい運用では制約となっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-bgp">BGP</a> は長らく <strong>Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う</strong> 設計になっていた。具体的には単一 ASIC では <code>Loopback0</code>、マルチ ASIC では <code>Loopback4096</code> の IPv4 アドレスをそのまま使用する。さらに <code>bgpcfgd</code> 側にも「<code>Loopback0</code> の IPv4 が存在しなければ BGP ピアを追加しない」という強い依存があり、Loopback アドレスを使わない構成や、BGP router-id とインタフェースアドレスを分離したい運用では制約となっていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は <code>CONFIG_DB.DEVICE_METADATA|localhost</code> に <code>bgp_router_id</code> フィールドを追加し、<strong>ユーザが任意の IPv4 を BGP router-id として明示指定できる</strong> ようにする。同時に、<code>bgp_router_id</code> が設定されている場合に限り、単一 ASIC 系の BGP ピア追加から <code>Loopback0</code> IPv4 への強い依存を切り離す。<code>bgp_router_id</code> を設定しない場合、振る舞いは従来と完全に同一である。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">既存挙動（変更前）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23911,7 +23911,7 @@
 <tr>
 <td><code>bgp_router_id</code> 設定なし</td>
 <td>Loopback0/4096 IPv4 を採用</td>
-<td>router-id 未指定（FRR デフォルト動作。zebra 未起動時は 0.0.0.0）</td>
+<td>router-id 未指定（<a href="../../reference/glossary/#term-frr">FRR</a> デフォルト動作。<a href="../../reference/glossary/#term-zebra">zebra</a> 未起動時は 0.0.0.0）</td>
 </tr>
 </tbody>
 </table>
@@ -23977,7 +23977,7 @@ reasoning: 「bgp_router_id があれば常にそれを使う」「未設定時�
     BE_LB4 --&gt;|Yes| BE_I[iBGP ピア追加]
     BE_LB4 --&gt;|No| ABORT2[iBGP 追加中断]
     BE_CHK --&gt;|No| ABORT</code></pre>
-<p>注意点として、<strong>iBGP ピア追加は依然として <code>Loopback4096</code> IPv4 を必須</strong> とする。HLD は内部ピアの追加ロジックは今回の変更対象外と明記している<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>注意点として、<strong>iBGP ピア追加は依然として <code>Loopback4096</code> IPv4 を必須</strong> とする。<a href="../../reference/glossary/#term-hld">HLD</a> は内部ピアの追加ロジックは今回の変更対象外と明記している<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="asic">動作シーケンス（単一 ASIC、新ロジック）<a class="headerlink" href="#asic" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
     participant CDB as CONFIG_DB
@@ -24027,7 +24027,7 @@ reasoning: 「bgp_router_id があれば常にそれを使う」「未設定時�
 </span></code></pre></div>
 <p>マルチ ASIC では各 ASIC の <code>config_db</code> に同じキーで書き込む必要がある。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD には専用の <code>config</code> / <code>show</code> CLI 追加は記載されていない。<code>config_db.json</code> 直接編集または既存の汎用 CONFIG_DB 操作経路（<code>sonic-cfggen</code> / gNMI 等）から設定する想定。</p>
+<p>HLD には専用の <code>config</code> / <code>show</code> CLI 追加は記載されていない。<code>config_db.json</code> 直接編集または既存の汎用 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 操作経路（<code>sonic-cfggen</code> / <a href="../../reference/glossary/#term-gnmi">gNMI</a> 等）から設定する想定。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p><code>sonic-device_metadata</code> モジュールに <code>bgp_router_id</code> リーフ（<code>inet:ipv4-address</code> 型）が追加される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">module</span><span class="w"> </span><span class="nv">sonic-device_metadata</span><span class="w"> </span><span class="p">{</span>
@@ -24055,7 +24055,7 @@ reasoning: 「bgp_router_id があれば常にそれを使う」「未設定時�
 <ul>
 <li><strong>Loopback0 / Loopback4096</strong>: 引き続き iBGP ピア追加（マルチ ASIC）の必須条件として <code>Loopback4096</code> IPv4 が要求される。<code>bgp_router_id</code> を設定しても iBGP の依存は解消されない。</li>
 <li><strong>FRR の router-id 自動選択</strong>: <code>bgp_router_id</code> も Loopback も無い場合、FRR は最大 IP アドレスを router-id に選ぶ。zebra 未起動時は <code>0.0.0.0</code> が選ばれる旨が HLD に明記されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ネットワーク全体で一意でないと BGP セッションが確立できない。</li>
-<li><strong>bgpcfgd</strong>: ピア追加判定が <code>bgp_router_id</code> の有無を見るように拡張される。</li>
+<li><strong><a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a></strong>: ピア追加判定が <code>bgp_router_id</code> の有無を見るように拡張される。</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24064,6 +24064,8 @@ reasoning: 「bgp_router_id があれば常にそれを使う」「未設定時�
 <li>マルチ ASIC で iBGP のみ上がらない場合、対応 ASIC の <code>Loopback4096</code> IPv4 設定を確認する。<code>bgp_router_id</code> では iBGP 依存は解消されない。</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 2e36dfd7f559 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23806,7 +23806,7 @@
 <p><code>TUNNEL_DECAP_TABLE</code> は CONFIG_DB ではなく <strong>APPL_DB / STATE_DB</strong> のテーブルであり、<code>sonic-yang-models</code> には対応モジュールが存在しない。本ページは <code>schema.h</code> のテーブル名定数と <code>tunneldecaporch.cpp</code> の実装からフィールドを起こしたもの。CONFIG_DB に同名テーブルを直接書くことは想定されていない。</p>
 </div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>tunneldecaporch</code> が消費する <strong>アプリケーション層テーブル</strong>。CONFIG_DB の <a href="../tunnel/"><code>TUNNEL</code></a> を <code>tunnelmgrd</code> が APPL_DB に投影する形で生成され、SAI tunnel/tunnel-term オブジェクトに反映される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。STATE_DB にも同名のミラーがある。</p>
+<p><code>tunneldecaporch</code> が消費する <strong>アプリケーション層テーブル</strong>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <a href="../tunnel/"><code>TUNNEL</code></a> を <code>tunnelmgrd</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> に投影する形で生成され、<a href="../../glossary/#term-sai">SAI</a> tunnel/tunnel-term オブジェクトに反映される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-state_db">STATE_DB</a> にも同名のミラーがある。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23905,13 +23905,13 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>tunneldecaporch</code> (orchagent): SAI tunnel / tunnel-term オブジェクト作成</li>
+<li><code>tunneldecaporch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>): SAI tunnel / tunnel-term オブジェクト作成</li>
 <li><code>STATE_DB</code> 側はモニタリング用ミラー</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <a href="../tunnel/"><code>TUNNEL</code></a>（CONFIG_DB 側のソース）</li>
-<li>関連 YANG: なし</li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: なし</li>
 <li>関連 CLI: なし（テーブルは内部）</li>
 </ul>
 <!-- ref-triangle:start -->
@@ -23938,6 +23938,8 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;TUNNEL_DECAP_TABLE|*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: e3a65a1701e9 -->
 
 <div class="footnote">
 <hr />

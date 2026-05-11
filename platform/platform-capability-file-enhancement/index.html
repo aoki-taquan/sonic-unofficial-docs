@@ -23841,7 +23841,7 @@
 <h1 id="platformjson-capabilities-led-fan-speed-controllable">platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）<a class="headerlink" href="#platformjson-capabilities-led-fan-speed-controllable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>スイッチ機器のプラットフォーム部品（fan, PSU, status LED, thermal 等）は、機種ごとに <strong>制御可能性と取りうる値の範囲</strong> が異なる。たとえば<strong>ステータス LED の色</strong>は機種により <code>off/amber/green</code> だったり <code>red/green</code> だったり、<strong>fan speed</strong> には推奨される <code>minimum/maximum</code> の範囲があったり、<strong>PSU の LED は NOS から触れない</strong>（BMC 専管）こともある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>SONiC は従来 <code>platform.json</code> を <strong>コンポーネント構造（fan / PSU / thermal の所在）と dynamic port breakout のためのインタフェース情報</strong> に使ってきたが、各属性の <strong>「能力情報（capability）」を上位アプリへ渡す手段が無かった</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は <code>platform.json</code> に <strong><code>capabilities</code> フィールド</strong> を追加して、この情報を取り出せるようにする拡張を定義する。</p>
+<p>SONiC は従来 <code>platform.json</code> を <strong>コンポーネント構造（fan / PSU / thermal の所在）と dynamic port breakout のためのインタフェース情報</strong> に使ってきたが、各属性の <strong>「能力情報（capability）」を上位アプリへ渡す手段が無かった</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <code>platform.json</code> に <strong><code>capabilities</code> フィールド</strong> を追加して、この情報を取り出せるようにする拡張を定義する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="platformjson">現状の <code>platform.json</code> の役割<a class="headerlink" href="#platformjson" title="Permanent link">&para;</a></h3>
 <p>HLD 当時の用途<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -23986,12 +23986,12 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 </ul>
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは無い。<code>platform.json</code> は <strong>CONFIG_DB の上流</strong> にあるベンダ提供静的ファイルであり、ランタイムで Redis に乗るデータではない。</p>
+<p>該当エントリは無い。<code>platform.json</code> は <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の上流</strong> にあるベンダ提供静的ファイルであり、ランタイムで <a href="../../reference/glossary/#term-redis">Redis</a> に乗るデータではない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当 CLI は HLD 内では定義されていない。<code>show platform *</code> 系のコマンドや <code>config platform *</code> 系が capability を参照することは想定されるが、本 HLD では具体的な CLI 拡張に踏み込んでいない。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>controllable</code> の <strong>既定値が <code>true</code></strong>。記述が無いプラットフォームでは「制御可能」と仮定して上位アプリが動く。<strong>実機が制御できない属性に書くと SAI / プラットフォームドライバ側でエラー</strong>になる可能性がある<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>controllable</code> の <strong>既定値が <code>true</code></strong>。記述が無いプラットフォームでは「制御可能」と仮定して上位アプリが動く。<strong>実機が制御できない属性に書くと <a href="../../reference/glossary/#term-sai">SAI</a> / プラットフォームドライバ側でエラー</strong>になる可能性がある<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>colors</code> / <code>minimum</code> / <code>maximum</code> の <strong>未指定時の挙動が HLD で明文化されていない</strong>。後方互換のため任意値を許容する方向と思われるが、実装で確認が必要。</li>
 <li>単位（fan speed の <code>%</code> か <code>RPM</code> か）が HLD 内で明示されていない。サンプルの <code>40-100</code> は % と読める。</li>
 <li><code>capabilities</code> フィールドはあくまで <strong>メタデータ</strong>。NOS が <code>controllable=false</code> を尊重しないコード経路があれば抜け穴になる。</li>
@@ -24018,6 +24018,8 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: efdb904808b0 -->
 
 <div class="footnote">
 <hr />

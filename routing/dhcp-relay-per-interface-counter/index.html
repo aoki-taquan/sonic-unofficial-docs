@@ -23850,10 +23850,10 @@
 </div>
 <h1 id="dhcp-relay-per-interface-counterdhcpmon-counters_db">DHCP Relay per-interface counter（<code>dhcpmon</code> マルチスレッド + COUNTERS_DB 永続化）<a class="headerlink" href="#dhcp-relay-per-interface-counterdhcpmon-counters_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>旧設計の DHCPv4 counter は <code>dhcpmon</code> のプロセスメモリ内で <strong>VLAN/PortChannel 粒度のみ</strong> を持ち、ユーザは syslog からしか可視化できなかった。DHCPv6 は <code>dhcp6relay</code> プロセスに counter ロジックが同居し、relay 機能と相互影響していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>旧設計の DHCPv4 counter は <code>dhcpmon</code> のプロセスメモリ内で <strong><a href="../../reference/glossary/#term-vlan">VLAN</a>/<a href="../../reference/glossary/#term-portchannel">PortChannel</a> 粒度のみ</strong> を持ち、ユーザは syslog からしか可視化できなかった。DHCPv6 は <code>dhcp6relay</code> プロセスに counter ロジックが同居し、relay 機能と相互影響していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>DHCPv4 / DHCPv6 ともに <strong>物理 / LAG / VLAN</strong> 粒度の TX/RX counter を持つ</li>
+<li>DHCPv4 / DHCPv6 ともに <strong>物理 / <a href="../../reference/glossary/#term-lag">LAG</a> / VLAN</strong> 粒度の TX/RX counter を持つ</li>
 <li>counter を <strong><code>COUNTERS_DB</code></strong> に永続化（プロセスメモリだけでは不可視）</li>
 <li>DHCPv6 counter を <code>dhcp6relay</code> から <strong><code>dhcpmon</code></strong> に移動し、relay と分離</li>
 <li><code>show</code> / <code>sonic-clear</code> CLI を提供</li>
@@ -24014,6 +24014,8 @@
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8f3f485ba900 -->
 
 <div class="footnote">
 <hr />

@@ -23768,11 +23768,11 @@
 <li><strong>NHG 階層</strong>（service / underlay）の絵</li>
 <li><strong>FAST DOWNLOAD / SLOW DOWNLOAD</strong> とは具体的に何の経路か</li>
 <li>SONiC の <strong>どのファイル</strong> に hierarchical NHG が入っているか</li>
-<li>何ができないか（hitless 要件、HW resource、HLD と実装の差）</li>
+<li>何ができないか（hitless 要件、HW resource、<a href="../../reference/glossary/#term-hld">HLD</a> と実装の差）</li>
 </ul>
 <h2 id="1-pic">1. なぜ PIC が必要か<a class="headerlink" href="#1-pic" title="Permanent link">&para;</a></h2>
-<p>BGP overlay の数百万 route 規模で <strong>影響を受けた N prefix を 1 件ずつ再プログラムする</strong> とパケットロスが膨らむ。<strong>PIC は収束コストを prefix 数 N に依存させず</strong>、ECMP / primary-backup multipath を多段の <strong>level of indirection (NHG)</strong> で共有することで一定時間に抑える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>IETF <code>draft-ietf-rtgwg-bgp-pic</code> を SONiC で実装するアーキテクチャ。本 HLD は protocol-independent（EVPN / MPLS / SRv6 のどれでも同じ枠組み）。</p>
+<p><a href="../../reference/glossary/#term-bgp">BGP</a> overlay の数百万 route 規模で <strong>影響を受けた N prefix を 1 件ずつ再プログラムする</strong> とパケットロスが膨らむ。<strong>PIC は収束コストを prefix 数 N に依存させず</strong>、<a href="../../reference/glossary/#term-ecmp">ECMP</a> / primary-backup multipath を多段の <strong>level of indirection (NHG)</strong> で共有することで一定時間に抑える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>IETF <code>draft-ietf-rtgwg-bgp-pic</code> を SONiC で実装するアーキテクチャ。本 HLD は protocol-independent（<a href="../../reference/glossary/#term-evpn">EVPN</a> / <a href="../../reference/glossary/#term-mpls">MPLS</a> / <a href="../../reference/glossary/#term-srv6">SRv6</a> のどれでも同じ枠組み）。</p>
 <h2 id="2-3">2. 3 形態と発火条件<a class="headerlink" href="#2-3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23787,7 +23787,7 @@
 <tr>
 <td><strong>PIC Core</strong></td>
 <td>underlay (IGP) 内部の故障</td>
-<td>local intf down / BFD</td>
+<td>local intf down / <a href="../../reference/glossary/#term-bfd">BFD</a></td>
 <td>NHG 更新だけで全 prefix 影響</td>
 </tr>
 <tr>
@@ -23797,7 +23797,7 @@
 <td>別 PE への切替を NHG レベルで</td>
 </tr>
 <tr>
-<td><strong>PIC Local (FRR)</strong></td>
+<td><strong>PIC Local (<a href="../../reference/glossary/#term-frr">FRR</a>)</strong></td>
 <td>local 接続 link 故障</td>
 <td>local intf down / BFD</td>
 <td>egress 側 backup path に切替、ingress 通知までの繋ぎ</td>
@@ -23842,7 +23842,7 @@
 </tr>
 <tr>
 <td><strong>SLOW DOWNLOAD</strong></td>
-<td>control plane (zebra/bgpd) の本来の収束結果を反映。route 個別更新</td>
+<td>control plane (<a href="../../reference/glossary/#term-zebra">zebra</a>/bgpd) の本来の収束結果を反映。route 個別更新</td>
 </tr>
 </tbody>
 </table>
@@ -23866,7 +23866,7 @@
     ZB-&gt;&gt;ZB: control plane reconverge
     ZB-&gt;&gt;FPM: NHG / route 更新
     FPM-&gt;&gt;OA: SLOW DOWNLOAD</code></pre>
-<p>0-5 ステップで <strong>HW 1 update を完了</strong>、6 以降が SLOW（kernel netlink → zebra → bgpd → fpmsyncd → ASIC_DB の通常経路）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>0-5 ステップで <strong>HW 1 update を完了</strong>、6 以降が SLOW（kernel netlink → zebra → bgpd → <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> の通常経路）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="5">5. 実装の所在（裏取り）<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-swss/orchagent/nhgorch.h:50</code> <code>class NextHopGroup</code>、<code>:86</code> <code>isRecursive()</code>、<code>:88</code> <code>setRecursive()</code>、<code>m_is_recursive</code> メンバ</li>
@@ -23875,7 +23875,7 @@
 </ul>
 <p>HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は <strong>コードに literal では存在しない</strong> が、warm-restart の早期/通常区別として実装される。</p>
 <h2 id="6-cli-config_db-yang">6. CLI / CONFIG_DB / YANG<a class="headerlink" href="#6-cli-config_db-yang" title="Permanent link">&para;</a></h2>
-<p>本 HLD は <strong>アーキテクチャ文書</strong> で個別 CLI / CONFIG_DB / YANG の定義はない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的設定は zebra の <code>nexthop-group</code> 設定や BGP <code>bestpath</code> 系で表現される（HLD 未明記）。</p>
+<p>本 HLD は <strong>アーキテクチャ文書</strong> で個別 CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> の定義はない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的設定は zebra の <code>nexthop-group</code> 設定や BGP <code>bestpath</code> 系で表現される（HLD 未明記）。</p>
 <h2 id="7">7. 制限事項<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ECMP HW resource は限られるため、<strong>NHG 利用は multipath 成立時に限定</strong></li>
@@ -23885,8 +23885,8 @@
 </ul>
 <h2 id="8">8. 干渉する機能<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>FRR zebra / bgpd</strong>: NHG (<code>nexthop-group</code>) の生成と FPM 連携</li>
-<li><strong>fpmsyncd / orchagent (nhgorch)</strong>: APPL_DB → ASIC_DB の NHG 経路</li>
+<li><strong>FRR zebra / bgpd</strong>: NHG (<code>nexthop-group</code>) の生成と <a href="../../reference/glossary/#term-fpm">FPM</a> 連携</li>
+<li><strong>fpmsyncd / <a href="../../reference/glossary/#term-orchagent">orchagent</a> (nhgorch)</strong>: <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> → ASIC_DB の NHG 経路</li>
 <li><strong>BFD</strong>: 高速検出</li>
 <li><strong>EVPN / MPLS / SRv6</strong>: overlay service の付加（PIC は protocol-independent）</li>
 <li><strong><code>sonic-weighted-ecmp</code> / <code>local-ars-hld</code></strong>: NHG を共有する隣接機能</li>
@@ -23911,6 +23911,8 @@
 - FRR zebra の nexthop-group 機能と FPM への伝搬経路確認
 - single ↔ NHG hitless transition のテスト存在確認
 -->
+
+<!-- glossary-links-injected: 9d861f4dd46a -->
 
 <div class="footnote">
 <hr />

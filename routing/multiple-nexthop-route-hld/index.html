@@ -23785,7 +23785,7 @@
 <h1 id="dual-tor-mux-multi-nexthop-route-muxorchupdateroute">dual-tor mux 跨ぎの multi-nexthop route ループ回避（<code>MuxOrch::updateRoute</code>）<a class="headerlink" href="#dual-tor-mux-multi-nexthop-route-muxorchupdateroute" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>Gemini active-standby サーバ環境では <strong>1 経路に複数の next-hop neighbor</strong> が指定され、それぞれが <strong>異なる Ethernet ポート (= 異なる mux)</strong> に居る場合、片方の port が UT0 で active、もう片方が LT0 で active という非対称が起きる。すなわち <strong>同一 ToR 内で 1 つは active neighbor、もう 1 つは standby neighbor</strong> という構成になる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>このとき ECMP の半分が standby 側 nexthop に当たり、<strong>peer ToR の tunnel</strong> に流れ、peer ToR でも ECMP で半分が元 ToR に戻り、無限ループ（実質パケロス）が起きる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>このとき <a href="../../reference/glossary/#term-ecmp">ECMP</a> の半分が standby 側 nexthop に当たり、<strong>peer ToR の tunnel</strong> に流れ、peer ToR でも ECMP で半分が元 ToR に戻り、無限ループ（実質パケロス）が起きる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Neighbor 192.168.0.100 on Ethernet0 (Active on this ToR, Standby on peer)
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Neighbor 192.168.0.101 on Ethernet4 (Standby on this ToR, Active on peer)
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Route   11.11.11.0/24  nexthops 192.168.0.100, 192.168.0.101
@@ -23878,7 +23878,7 @@
     MO-&gt;&gt;ASIC: route -&gt; active NH (or tunnel)</code></pre>
 <p><code>MuxOrch</code> は <code>linkmgrd</code> 由来の state 変化通知でも <strong>影響を受ける全 route について <code>updateRoute()</code> を再評価</strong> する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB / CLI / YANG <strong>変更なし</strong>。dual-tor の既存設定 (<code>MUX_CABLE</code> / <code>cable_type=active-standby</code> 等) のまま、orchagent 内部挙動だけ変わる。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> <strong>変更なし</strong>。dual-tor の既存設定 (<code>MUX_CABLE</code> / <code>cable_type=active-standby</code> 等) のまま、<a href="../../reference/glossary/#term-orchagent">orchagent</a> 内部挙動だけ変わる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24*&#39;</span>
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23899,10 +23899,10 @@
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>経路ループ → ASIC_DB で nexthop が単一に絞られているか、<code>MuxOrch</code> ログで <code>updateRoute()</code> 呼び出し確認</li>
+<li>経路ループ → <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> で nexthop が単一に絞られているか、<code>MuxOrch</code> ログで <code>updateRoute()</code> 呼び出し確認</li>
 <li>nexthop が <strong>常に tunnel</strong> → <code>show muxcable status</code> で active/standby 確認</li>
 <li>nexthop group のまま → <code>is_mux_nexthop()</code> が false。<code>mux_nexthop_tb_</code> 登録確認</li>
-<li>ECMP したい → 本 HLD は <strong>mux nexthop ECMP を許容しない</strong> 設計</li>
+<li>ECMP したい → 本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>mux nexthop ECMP を許容しない</strong> 設計</li>
 </ul>
 <h2 id="_8">関連トピック<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23926,6 +23926,8 @@
 <li><a href="../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c099de103a59 -->
 
 <div class="footnote">
 <hr />

@@ -23600,8 +23600,8 @@
 
 <h1 id="subnet_decap">SUBNET_DECAP テーブル<a class="headerlink" href="#subnet_decap" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>IPinIP トンネルの <strong>サブネット単位の decapsulation ルール</strong> を定義する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>TUNNEL_DECAP_TABLE</code> が個別の outer IP を起点とした decap を扱うのに対し、<code>SUBNET_DECAP</code> は <strong>outer source IP がプレフィックス内に該当する場合に decap を行う</strong> という、より広範な一致条件を表す。SmartSwitch / DASH や DualToR 系のシナリオで、ToR 配下のサーバ群から発した IPinIP encapsulated トラフィックを decap するために導入された。</p>
-<p>YANG リビジョン 2024-12-19 で追加された比較的新しいテーブル。</p>
+<p><a href="../../glossary/#term-ipinip">IPinIP</a> トンネルの <strong>サブネット単位の decapsulation ルール</strong> を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>TUNNEL_DECAP_TABLE</code> が個別の outer IP を起点とした decap を扱うのに対し、<code>SUBNET_DECAP</code> は <strong>outer source IP がプレフィックス内に該当する場合に decap を行う</strong> という、より広範な一致条件を表す。<a href="../../glossary/#term-smartswitch">SmartSwitch</a> / <a href="../../glossary/#term-dash">DASH</a> や DualToR 系のシナリオで、ToR 配下のサーバ群から発した IPinIP encapsulated トラフィックを decap するために導入された。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> リビジョン 2024-12-19 で追加された比較的新しいテーブル。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23675,7 +23675,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>swss</code> の tunnel-decap オーチェストレータが <code>SUBNET_DECAP</code> を読み、SAI の tunnel term entry を生成する（subnet ベースの match）。</li>
+<li><code>swss</code> の tunnel-decap オーチェストレータが <code>SUBNET_DECAP</code> を読み、<a href="../../glossary/#term-sai">SAI</a> の tunnel term entry を生成する（subnet ベースの match）。</li>
 <li>DualToR / DASH のサブシステムが補助的に参照する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -23708,6 +23708,8 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;SUBNET_DECAP|*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: de257f859a08 -->
 
 <div class="footnote">
 <hr />

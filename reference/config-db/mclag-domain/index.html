@@ -23622,11 +23622,11 @@
 
 <h1 id="mclag_domain-mclag_interface-mclag_unique_ip">MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル<a class="headerlink" href="#mclag_domain-mclag_interface-mclag_unique_ip" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>MC-LAG (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を CONFIG_DB に保持する 3 テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>iccpd</code> (<code>docker-iccpd</code>) がこれらを購読し、ICCP セッションと MC-LAG メンバー LAG の同期を制御する。</p>
+<p>MC-<a href="../../glossary/#term-lag">LAG</a> (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持する 3 テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>iccpd</code> (<code>docker-iccpd</code>) がこれらを購読し、ICCP セッションと MC-LAG メンバー LAG の同期を制御する。</p>
 <ul>
 <li><code>MCLAG_DOMAIN</code> — 1 ドメインの基本パラメータ（最大 1 エントリ）</li>
-<li><code>MCLAG_INTERFACE</code> — ドメインに紐づく MC-LAG メンバー PortChannel</li>
-<li><code>MCLAG_UNIQUE_IP</code> — MC-LAG ピア間で VLAN インターフェースに <strong>異なる IP</strong> を持たせる対象 VLAN</li>
+<li><code>MCLAG_INTERFACE</code> — ドメインに紐づく MC-LAG メンバー <a href="../../glossary/#term-portchannel">PortChannel</a></li>
+<li><code>MCLAG_UNIQUE_IP</code> — MC-LAG ピア間で <a href="../../glossary/#term-vlan">VLAN</a> インターフェースに <strong>異なる IP</strong> を持たせる対象 VLAN</li>
 </ul>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -23748,7 +23748,7 @@
 </tbody>
 </table>
 <p><strong>must 制約</strong>: <code>MCLAG_DOMAIN_LIST</code> が少なくとも 1 つ存在すること</p>
-<p>YANG コメントによれば、本来 <code>MCLAG_UNIQUE_IP.if_name</code> は <code>VLAN.name</code> への leafref にしたいが libyang back-links の制約で plain string になっている。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> コメントによれば、本来 <code>MCLAG_UNIQUE_IP.if_name</code> は <code>VLAN.name</code> への leafref にしたいが libyang back-links の制約で plain string になっている。</p>
 <h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>iccpd</code> (<code>docker-iccpd</code>) — MC-LAG 制御プレーン</li>
@@ -23786,7 +23786,7 @@
 </ul>
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>mclag_system_mac</code> を両 ToR で別値にすると LACP system-id が異なり MC-LAG が組まれない。</li>
+<li><code>mclag_system_mac</code> を両 ToR で別値にすると <a href="../../glossary/#term-lacp">LACP</a> system-id が異なり MC-LAG が組まれない。</li>
 <li><code>peer_link</code> を VLAN trunk にしないと peer 間の MAC 同期が動かない。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
@@ -23795,6 +23795,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>mclag<span class="w"> </span>brief
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3bd44109ce5a -->
 
 <div class="footnote">
 <hr />

@@ -23959,11 +23959,11 @@
 </tr>
 <tr>
 <td>2 Freeze + Quiescence</td>
-<td>Applications（teamd / BGP / P4RT 等）と Infrastructure（orchagent / syncd / xcvrd）の <strong>freeze</strong> を統一通知（Redis 経由）。失敗時は <strong>unfreeze</strong> で巻き戻す。<code>Quiescence Timer</code> で完了を保証</td>
+<td>Applications（<a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / <a href="../../reference/glossary/#term-bgp">BGP</a> / P4RT 等）と Infrastructure（<a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-syncd">syncd</a> / xcvrd）の <strong>freeze</strong> を統一通知（<a href="../../reference/glossary/#term-redis">Redis</a> 経由）。失敗時は <strong>unfreeze</strong> で巻き戻す。<code>Quiescence Timer</code> で完了を保証</td>
 </tr>
 <tr>
 <td>3 Checkpointing</td>
-<td>各コンポーネントが state を save。orchagent は SAI、syncd は ASIC view 等</td>
+<td>各コンポーネントが state を save。orchagent は <a href="../../reference/glossary/#term-sai">SAI</a>、syncd は ASIC view 等</td>
 </tr>
 <tr>
 <td>4 Reboot 実行</td>
@@ -23972,7 +23972,7 @@
 </tbody>
 </table>
 <h3 id="component-warmboot-states">Component Warmboot States<a class="headerlink" href="#component-warmboot-states" title="Permanent link">&para;</a></h3>
-<p>各コンポーネントが warmboot を進める上での状態を <code>STATE_DB</code> に統一表現する（HLD では具体スキーマは別節）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより Warmboot Manager は polling で進捗を把握する。</p>
+<p>各コンポーネントが warmboot を進める上での状態を <code>STATE_DB</code> に統一表現する（<a href="../../reference/glossary/#term-hld">HLD</a> では具体スキーマは別節）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これにより Warmboot Manager は polling で進捗を把握する。</p>
 <h3 id="race-condition">Race condition の扱い<a class="headerlink" href="#race-condition" title="Permanent link">&para;</a></h3>
 <p>freeze 中に late event（例: 直前の port flap / route flap）が来た場合の race を HLD は別節で議論<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。基本方針は「checkpointing 後の event は次回反映」。</p>
 <h3 id="critical-container">各 critical container の対応<a class="headerlink" href="#critical-container" title="Permanent link">&para;</a></h3>
@@ -23994,7 +23994,7 @@
 </tr>
 <tr>
 <td>Teamd</td>
-<td>LACP graceful shutdown のタイミングを Warmboot Manager が決定</td>
+<td><a href="../../reference/glossary/#term-lacp">LACP</a> graceful shutdown のタイミングを Warmboot Manager が決定</td>
 </tr>
 <tr>
 <td>Transceiver Daemon</td>
@@ -24030,7 +24030,7 @@ reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 <!-- evidence-rendered:end -->
 
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>HLD で具体の CLI / CONFIG_DB は提示されていない。実装時に専用設定が入る可能性あり。</p>
+<p>HLD で具体の CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> は提示されていない。実装時に専用設定が入る可能性あり。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>warm-bootup は対象外</strong>（既存の上りフロー再利用）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -24123,6 +24123,8 @@ reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 </ul>
 <h4 id="_10">検証日<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
+<!-- glossary-links-injected: 34c2dd9af927 -->
+
 <div class="footnote">
 <hr />
 <ol>

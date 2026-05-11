@@ -23740,7 +23740,7 @@
 </div>
 <h1 id="cbf">クラスベース転送 (CBF)<a class="headerlink" href="#cbf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>同じ宛先に対して <strong>Forwarding Class (FC) ごとに異なるパス</strong> を取らせる traffic engineering。FC は Traffic Class（QoS キュー）とは別概念で、入力時に DSCP / MPLS EXP から決まる "どのパスを通すか" のラベル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>同じ宛先に対して <strong>Forwarding Class (FC) ごとに異なるパス</strong> を取らせる traffic engineering。FC は Traffic Class（<a href="../../reference/glossary/#term-qos">QoS</a> キュー）とは別概念で、入力時に DSCP / <a href="../../reference/glossary/#term-mpls">MPLS</a> EXP から決まる "どのパスを通すか" のラベル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>典型例は「foreground は最短路、background は長尺路」のように分離転送する設計。QoS キューでバックグラウンドを絞ると帯域が消えてしまう問題を、CBF は別パスで回避する。実装は OpenCompute <a href="https://github.com/opencomputeproject/SAI/pull/1193">SAI #1193</a> の <code>SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED</code> と NHG 入れ子モデルを前提とする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">処理フロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23809,12 +23809,12 @@
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  ROUTE_TABLE.nexthop_group       (通常 NHG または CBF NHG キー)
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  LABEL_ROUTE_TABLE.nexthop_group
 </span></code></pre></div>
-<p>CLI は <strong>意図的に追加されない</strong>（HLD §3.6）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config_db.json</code> 直編集または gNMI 経由で設定する。</p>
+<p>CLI は <strong>意図的に追加されない</strong>（<a href="../../reference/glossary/#term-hld">HLD</a> §3.6）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config_db.json</code> 直編集または <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由で設定する。</p>
 <h2 id="orchestration">Orchestration<a class="headerlink" href="#orchestration" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>共通 NHG エージェント</strong>: 通常 NHG / CBF NHG 双方を扱い、RouteOrch から同 API で参照可能</li>
 <li><strong>NHG map エージェント</strong>: <code>FC_TO_NHG_INDEX_MAP_TABLE</code> → <code>SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP</code>。capability 不足時は task をキュー残し</li>
-<li>子 NHG が <strong>暫定 (temporary)</strong> 状態のとき SAI ID が後で変わるので、CBF NHG 側で監視し確定したら <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID</code> を差し替え</li>
+<li>子 NHG が <strong>暫定 (temporary)</strong> 状態のとき <a href="../../reference/glossary/#term-sai">SAI</a> ID が後で変わるので、CBF NHG 側で監視し確定したら <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID</code> を差し替え</li>
 <li>更新時は <code>INDEX</code> が CREATE_ONLY のため <strong>全メンバを remove → add で再構築</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23825,7 +23825,7 @@
 </span></code></pre></div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>fpmsyncd 非対応</strong>: 標準版は使えず、改造 fpmsyncd または APP_DB 直書きが必要<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 非対応</strong>: 標準版は使えず、改造 fpmsyncd または APP_DB 直書きが必要<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>NEXT_HOP_GROUP_TABLE</code> と <code>CLASS_BASED_NEXT_HOP_GROUP_TABLE</code> でキー衝突時は <strong>非 CBF 側優先</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>CLI 無し</strong>: 監視・デバッグは redis / <code>saidump</code> 依存</li>
 <li><strong>依存 SAI #1193</strong>: 古い SAI ヘッダではビルド不可</li>
@@ -23844,11 +23844,13 @@
 <p>特定 FC でドロップする場合は <code>FC_TO_NHG_INDEX_MAP_TABLE</code> のカバー範囲と子 NHG の存在を確認。</p>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/04-vrf-ecmp/advanced/">04-vrf-ecmp/advanced</a>: ECMP / NHG 全般</li>
+<li><a href="../../topics/04-vrf-ecmp/advanced/">04-vrf-ecmp/advanced</a>: <a href="../../reference/glossary/#term-ecmp">ECMP</a> / NHG 全般</li>
 <li><a href="../../topics/08-qos-buffer/concept/">08-qos-buffer/concept</a>: DSCP マップと FC / TC の違い</li>
 <li><a href="../../topics/17-srv6-mpls/advanced/">17-srv6-mpls/advanced</a>: MPLS EXP との連携</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 76b5994c62b3 -->
+
 <div class="footnote">
 <hr />
 <ol>

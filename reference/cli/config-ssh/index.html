@@ -23567,7 +23567,7 @@
 
 <h1 id="config-ssh">config ssh サブコマンド<a class="headerlink" href="#config-ssh" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config ssh</code> は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の <code>SSH_SERVER|POLICIES</code> に書き込む CLI グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実 sshd への反映は <code>hostcfgd</code> 系の設定再生成パスを通じて行われる。</p>
+<p><code>config ssh</code> は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>SSH_SERVER|POLICIES</code> に書き込む CLI グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実 sshd への反映は <code>hostcfgd</code> 系の設定再生成パスを通じて行われる。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23652,7 +23652,7 @@ CONFIG_DB の <code>SSH_SERVER|POLICIES</code> テーブルに <code>max_session
 </table>
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>反映には sshd 再ロードが必要。SONiC では hostcfgd が CONFIG_DB の変更を監視して <code>/etc/ssh/sshd_config</code> を再生成する。</li>
+<li>反映には sshd 再ロードが必要。SONiC では <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が CONFIG_DB の変更を監視して <code>/etc/ssh/sshd_config</code> を再生成する。</li>
 <li>同名の <code>config serial_console inactivity-timeout</code> という別ファミリがあり、こちらは <code>SERIAL_CONSOLE|POLICIES</code> テーブルへ書く。</li>
 </ul>
 <!-- cli-mermaid -->
@@ -23680,6 +23680,8 @@ CONFIG_DB の <code>SSH_SERVER|POLICIES</code> テーブルに <code>max_session
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: a31aab569e22 -->
+
 <div class="footnote">
 <hr />
 <ol>

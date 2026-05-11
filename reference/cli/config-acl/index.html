@@ -23990,8 +23990,8 @@
 
 <h1 id="config-acl">config acl サブコマンド<a class="headerlink" href="#config-acl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config acl</code> は ACL テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（<code>acl-loader</code> 起動）を提供する。<strong>個別 ACL ルールを CLI フラグで追加するインタフェースは無い</strong>。ルールは JSON ファイルに記述して <code>config acl update full|incremental</code> で投入する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ACL の実体は <code>aclorch</code>（swss）が <code>ACL_TABLE</code> / <code>ACL_RULE</code> を APPL_DB → ASIC_DB へ反映する。<code>config acl</code> は CONFIG_DB の <code>ACL_TABLE</code> のみ直接書き換え、ルール側は外部ツール <code>acl-loader</code> が CONFIG_DB と直接対話する。</p>
+<p><code>config acl</code> は <a href="../../glossary/#term-acl">ACL</a> テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（<code>acl-loader</code> 起動）を提供する。<strong>個別 ACL ルールを CLI フラグで追加するインタフェースは無い</strong>。ルールは JSON ファイルに記述して <code>config acl update full|incremental</code> で投入する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ACL の実体は <code>aclorch</code>（swss）が <code>ACL_TABLE</code> / <code>ACL_RULE</code> を <a href="../../glossary/#term-appl_db">APPL_DB</a> → <a href="../../glossary/#term-asic_db">ASIC_DB</a> へ反映する。<code>config acl</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>ACL_TABLE</code> のみ直接書き換え、ルール側は外部ツール <code>acl-loader</code> が CONFIG_DB と直接対話する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24031,7 +24031,7 @@
 <p><strong>引数</strong>:</p>
 <ul>
 <li><code>&lt;table_name&gt;</code> ... <code>ACL_TABLE</code> のキー</li>
-<li><code>&lt;table_type&gt;</code> ... ACL タイプ（<code>L3</code>, <code>L3V6</code>, <code>MIRROR</code>, <code>MIRRORV6</code>, <code>MIRROR_DSCP</code>, <code>CTRLPLANE</code> 等）。実装は文字列をそのまま <code>type</code> フィールドに格納するため、SAI で実装されているタイプであれば任意</li>
+<li><code>&lt;table_type&gt;</code> ... ACL タイプ（<code>L3</code>, <code>L3V6</code>, <code>MIRROR</code>, <code>MIRRORV6</code>, <code>MIRROR_DSCP</code>, <code>CTRLPLANE</code> 等）。実装は文字列をそのまま <code>type</code> フィールドに格納するため、<a href="../../glossary/#term-sai">SAI</a> で実装されているタイプであれば任意</li>
 </ul>
 <p><strong>オプション</strong>:</p>
 <ul>
@@ -24070,7 +24070,7 @@
 <p><strong>バインド先解決の仕様</strong> (<code>parse_acl_table_info</code>):</p>
 <ol>
 <li><code>get_acl_bound_ports</code>: <code>PORT</code> テーブル全件 + <code>PORTCHANNEL_MEMBER</code> の portchannel 名（メンバ単独ポートは除外）を有効候補として取得</li>
-<li><code>expand_vlan_ports</code>: 引数中に VLAN 名があれば、そのメンバ Ethernet/PortChannel に展開</li>
+<li><code>expand_vlan_ports</code>: 引数中に <a href="../../glossary/#term-vlan">VLAN</a> 名があれば、そのメンバ Ethernet/<a href="../../glossary/#term-portchannel">PortChannel</a> に展開</li>
 <li>展開後に上記候補に含まれない名前があればエラー</li>
 </ol>
 <!-- evidence:
@@ -24143,7 +24143,7 @@ excerpt: |
 <h3 id="_7">典型的な利用シーン<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
 <li>EVERFLOW / 自前 ACL_TABLE の作成と rule の追加・更新。</li>
-<li>TACACS / SNMP の制御プレーン保護 (CTRLPLANE ACL)。</li>
+<li>TACACS / <a href="../../glossary/#term-snmp">SNMP</a> の制御プレーン保護 (CTRLPLANE ACL)。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
@@ -24209,6 +24209,8 @@ excerpt: |
 <li><a href="../../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ad637fdc1d57 -->
 
 <div class="footnote">
 <hr />

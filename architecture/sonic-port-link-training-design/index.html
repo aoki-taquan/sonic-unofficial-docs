@@ -23836,7 +23836,7 @@
 <li>LT が trained にならない時の見方</li>
 </ul>
 <h2 id="_2">結論<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>LT は CR/KR 系で送受信が <strong>動的に FIR の等化係数を擦り合わせる</strong> IEEE 802.3 clause 72/93 のプロトコル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC は既存 SAI 属性 + <code>SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE</code>（per-port 能力）を使って on/off と状態取得を CONFIG_DB / STATE_DB に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。</p>
+<p>LT は CR/KR 系で送受信が <strong>動的に FIR の等化係数を擦り合わせる</strong> IEEE 802.3 clause 72/93 のプロトコル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC は既存 <a href="../../reference/glossary/#term-sai">SAI</a> 属性 + <code>SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE</code>（per-port 能力）を使って on/off と状態取得を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。</p>
 <h2 id="_3">動作仕様<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="sai">SAI 属性<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <table>
@@ -23870,7 +23870,7 @@
 </tr>
 </tbody>
 </table>
-<p>ベンダ SAI 要件: 未対応属性アクセスはエラー返却で swss/syncd を crash させない、デフォルトは disabled<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ベンダ SAI 要件: 未対応属性アクセスはエラー返却で swss/<a href="../../reference/glossary/#term-syncd">syncd</a> を crash させない、デフォルトは disabled<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">スキーマ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB: PORT|&lt;port&gt;  link_training = &quot;on&quot;|&quot;off&quot;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>APPL_DB:   PORT_TABLE   link_training を伝搬
@@ -23987,7 +23987,7 @@ reasoning: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Ethernet32   not trained        on      down    up
 </span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>HLD の <code>Limitations</code> は <code>N/A</code> のみ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実運用上:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> の <code>Limitations</code> は <code>N/A</code> のみ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実運用上:</p>
 <ul>
 <li>対象 media は CR / KR backplane / SFP copper が主。すべての media で動くわけではない</li>
 <li>LT 対応は per-port。<code>m_port_cap_lt=false</code> の port は要求が実行されない</li>
@@ -24022,6 +24022,8 @@ reasoning: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 03fb69fa3601 -->
 
 <div class="footnote">
 <hr />

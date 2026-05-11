@@ -24086,7 +24086,7 @@
 </div>
 <h1 id="gnsicertz-authz-pathz-credentialz-rotate">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル<a class="headerlink" href="#gnsicertz-authz-pathz-credentialz-rotate" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>gNSI（gRPC Network Security Interface）は、ネットワーク機器の <strong>セキュリティクレデンシャルを gRPC 経由で安全にローテーションする</strong> ためのマイクロサービス群である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC では gNMI/UMF サーバ（<code>sonic-gnmi</code>）と <code>sonic-mgmt-common</code> に組み込み、対応する OpenConfig YANG モデルを公開する設計<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>gNSI（gRPC Network Security Interface）は、ネットワーク機器の <strong>セキュリティクレデンシャルを gRPC 経由で安全にローテーションする</strong> ためのマイクロサービス群である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC では <a href="../../reference/glossary/#term-gnmi">gNMI</a>/UMF サーバ（<code>sonic-gnmi</code>）と <code>sonic-mgmt-common</code> に組み込み、対応する OpenConfig <a href="../../reference/glossary/#term-yang">YANG</a> モデルを公開する設計<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主要 4 サービス<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -24146,7 +24146,7 @@
 <li>Authentication Policy</li>
 </ul>
 <h4 id="profile">Profile<a class="headerlink" href="#profile" title="Permanent link">&para;</a></h4>
-<p>PKI 群を <strong>SSL profile</strong> 単位で束ねる。デフォルトは <code>gnxi</code> プロファイル（gNMI / gNOI / gNSI 自身が使う）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>PKI 群を <strong>SSL profile</strong> 単位で束ねる。デフォルトは <code>gnxi</code> プロファイル（gNMI / <a href="../../reference/glossary/#term-gnoi">gNOI</a> / gNSI 自身が使う）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -24261,7 +24261,7 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <!-- evidence-rendered:end -->
 
 <h3 id="gnmi-sonic-gnmi">gNMI / sonic-gnmi 側のフラグ追加<a class="headerlink" href="#gnmi-sonic-gnmi" title="Permanent link">&para;</a></h3>
-<p>HLD は gNMI server に以下のフラグを追加する想定<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> は gNMI server に以下のフラグを追加する想定<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -24299,7 +24299,7 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <p>state の保管先として <strong><code>STATE_DB</code></strong> にプロファイルの freshness / state を入れる（OpenConfig gNSI モデル準拠）<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB スキーマの追加は HLD 上「None」<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。状態は STATE_DB のみ。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマの追加は HLD 上「None」<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。状態は <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のみ。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当する CLI は HLD で言及無し。<code>gnoi_client</code> 系のような専用 CLI は HLD 内で未定義。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
@@ -24385,6 +24385,8 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 - HLD は 2023-11 v0.1 で 2 年超 Initial、現行 master との大幅乖離リスク
 - openconfig-gnsi-* YANG モデルの sonic-mgmt-common 取り込み状況
 -->
+
+<!-- glossary-links-injected: bd7e9f303d6c -->
 
 <div class="footnote">
 <hr />

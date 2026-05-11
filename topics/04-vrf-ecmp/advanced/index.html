@@ -23762,15 +23762,15 @@
 
 
 <h1 id="_1">発展トピックへの橋渡し<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>VRF / RIF / route / NHG の読み方を押さえると、周辺機能の設計意図が追いやすくなります。このページでは、章 04 から次に読む候補を整理します。</p>
+<p><a href="../../../reference/glossary/#term-vrf">VRF</a> / <a href="../../../reference/glossary/#term-rif">RIF</a> / route / NHG の読み方を押さえると、周辺機能の設計意図が追いやすくなります。このページでは、章 04 から次に読む候補を整理します。</p>
 <h2 id="vrrp-interface-vrf">VRRP は interface と VRF の冗長化<a class="headerlink" href="#vrrp-interface-vrf" title="Permanent link">&para;</a></h2>
-<p>VRRP は、複数ルータが 1 つの仮想 router address を共有し、Master 障害時に Backup が引き継ぐ L3 冗長プロトコルです。SONiC では Ethernet、VLAN、sub-interface、PortChannel、non-default VRF が関係します。</p>
-<p>この章の前提で見るなら、VRRP は「どの L3 interface / VRF 上で VIP と VMAC を扱うか」「FRR vrrpd と CONFIG_DB がどう連携するか」の機能です。詳細は <a href="../../../routing/virtual-router-redundancy-protocol-adaptation-hld/">VRRP</a> を参照してください。</p>
+<p>VRRP は、複数ルータが 1 つの仮想 router address を共有し、Master 障害時に Backup が引き継ぐ L3 冗長プロトコルです。SONiC では Ethernet、<a href="../../../reference/glossary/#term-vlan">VLAN</a>、sub-interface、<a href="../../../reference/glossary/#term-portchannel">PortChannel</a>、non-default VRF が関係します。</p>
+<p>この章の前提で見るなら、VRRP は「どの L3 interface / VRF 上で VIP と VMAC を扱うか」「<a href="../../../reference/glossary/#term-frr">FRR</a> vrrpd と <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> がどう連携するか」の機能です。詳細は <a href="../../../routing/virtual-router-redundancy-protocol-adaptation-hld/">VRRP</a> を参照してください。</p>
 <h2 id="sag-vlan-rif-gateway-mac">SAG は VLAN RIF の gateway MAC を揃える<a class="headerlink" href="#sag-vlan-rif-gateway-mac" title="Permanent link">&para;</a></h2>
-<p>Static Anycast Gateway は、EVPN/VXLAN fabric などで複数 leaf が同じ default gateway IP / MAC を提供するための仕組みです。L3 interface と RIF の MAC、IPv6 link-local の me-route 更新が関係します。</p>
+<p>Static Anycast Gateway は、<a href="../../../reference/glossary/#term-evpn">EVPN</a>/<a href="../../../reference/glossary/#term-vxlan">VXLAN</a> fabric などで複数 leaf が同じ default gateway IP / MAC を提供するための仕組みです。L3 interface と RIF の MAC、IPv6 link-local の me-route 更新が関係します。</p>
 <p>現行ページでは community master への取り込み状況に discrepancy があるため、利用前提ではなく設計理解として読みます。詳細は <a href="../../../architecture/sag-high-level-design-for-sonic/">SAG for SONiC</a> を参照してください。</p>
 <h2 id="tsa-traffic">TSA は経路広告を止めて traffic を逃がす<a class="headerlink" href="#tsa-traffic" title="Permanent link">&para;</a></h2>
-<p>TSA は Traffic-Shift Away のための運用機能で、BGP に route policy を適用して対象装置へ traffic が来ないようにします。FIB pipeline そのものではなく、RIB に入る前の制御プレーン運用に近い機能です。</p>
+<p>TSA は Traffic-Shift Away のための運用機能で、<a href="../../../reference/glossary/#term-bgp">BGP</a> に route policy を適用して対象装置へ traffic が来ないようにします。FIB pipeline そのものではなく、RIB に入る前の制御プレーン運用に近い機能です。</p>
 <p>VoQ Chassis では Supervisor と Line Card の TSA 状態同期が課題になります。詳細は <a href="../../../routing/reliable-tsa/">Reliable TSA</a> を参照してください。</p>
 <h2 id="_2">他章との境界<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -23786,11 +23786,11 @@
 <td>BGP と FRR 制御プレーン</td>
 </tr>
 <tr>
-<td>EVPN / VNET / Overlay ECMP</td>
+<td>EVPN / <a href="../../../reference/glossary/#term-vnet">VNET</a> / Overlay <a href="../../../reference/glossary/#term-ecmp">ECMP</a></td>
 <td>VXLAN / EVPN / VNET</td>
 </tr>
 <tr>
-<td>SRv6 / MPLS</td>
+<td><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a></td>
 <td>Segment Routing / MPLS</td>
 </tr>
 <tr>
@@ -23812,23 +23812,23 @@
 <h2 id="_4">発展トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>VRF / NHG / route の基本動作を超えた領域では、scale 改善と障害収束の最適化が主題になる。</p>
 <ul>
-<li><strong>NHG (Next Hop Group) スケール拡張</strong>: ECMP/WCMP の path 数を増やすほど SAI / ASIC のリソースを食う。SONiC では NHG を route 間で共有して resource 消費を抑えるが、shared NHG の更新中に flap が出ないよう orchagent が swap 戦略を持つ。</li>
+<li><strong>NHG (<a href="../../../reference/glossary/#term-next-hop-group">Next Hop Group</a>) スケール拡張</strong>: ECMP/WCMP の path 数を増やすほど <a href="../../../reference/glossary/#term-sai">SAI</a> / ASIC のリソースを食う。SONiC では NHG を route 間で共有して resource 消費を抑えるが、shared NHG の更新中に flap が出ないよう <a href="../../../reference/glossary/#term-orchagent">orchagent</a> が swap 戦略を持つ。</li>
 <li><strong>WCMP (Weighted ECMP)</strong>: SAI の <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code> を使い、capacity の異なる link でも均等に近づける配分が可能。SONiC では特定 ASIC でのみ実用に乗っている段階。</li>
 <li><strong>VRF leaking</strong>: 同一 SONiC 内で複数 VRF 間に route を leak する設計。FRR の <code>import vrf</code> 設定と SONiC の <code>VRF</code> テーブルの組み合わせで実現。route-target で leak 範囲を絞る。</li>
-<li><strong>管理用 VRF (mgmt VRF)</strong>: <code>MGMT_VRF_CONFIG</code> で management 経路と data plane 経路を完全分離。telemetry / NTP / DNS / SNMP の <code>bind-to-vrf</code> を確認する。</li>
+<li><strong>管理用 VRF (mgmt VRF)</strong>: <code>MGMT_VRF_CONFIG</code> で management 経路と data plane 経路を完全分離。telemetry / NTP / DNS / <a href="../../../reference/glossary/#term-snmp">SNMP</a> の <code>bind-to-vrf</code> を確認する。</li>
 <li><strong>SAG / VRRP の組み合わせ</strong>: SAG が default gateway 系の MAC を fabric 全体で揃える一方、VRRP は per-segment で master/backup を切り替える。両者は競合しうるので、deployment 単位で片方に寄せる。</li>
 </ul>
 <h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VRF 削除時の RIF cleanup race</strong>: VRF を削除する直前まで他 orch が RIF を使っていると、APPL_DB / ASIC_DB に残骸が残る。手順としては「VRF 上の interface を先に外す」「BGP/static route を flush する」「最後に VRF を消す」を厳守する。</li>
+<li><strong>VRF 削除時の RIF cleanup race</strong>: VRF を削除する直前まで他 orch が RIF を使っていると、<a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に残骸が残る。手順としては「VRF 上の interface を先に外す」「BGP/static route を flush する」「最後に VRF を消す」を厳守する。</li>
 <li><strong>NHG resize 中の transient loss</strong>: shared NHG を更新する瞬間に短い loss が発生しうる。重要 prefix では <code>bgp suppress-fib-pending</code> と PIC を組み合わせる。</li>
 <li><strong>mgmt VRF と DNS resolver</strong>: glibc resolver の bind 先 source IP を mgmt VRF に固定する設定が抜けると DNS が data VRF に漏れる。<code>resolv.conf</code> と <code>ip vrf exec</code> を併用する。</li>
 <li><strong>VRRPv3 IPv6 の link-local 衝突</strong>: VMAC を変更すると IPv6 link-local が再生成されない実装があり、ND が古い MAC を返す。<code>ip -6 neigh flush</code> 系で起こしなおす。</li>
 </ul>
 <h2 id="_6">将来計画 / ロードマップ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ECMP fast reroute と PIC の協調は継続テーマ。<code>bgp-pic</code> HLD と <code>nexthop-group-fast-failover</code> 系の提案が交差する。</li>
-<li>SAG の community master 取り込みは段階的で、ベンダー fork 側で先行する状況。SONiC main 側の YANG / orch 整備の進捗を <code>architecture/sag-high-level-design-for-sonic</code> の "Future Work" で追う。</li>
+<li>ECMP fast reroute と PIC の協調は継続テーマ。<code>bgp-pic</code> <a href="../../../reference/glossary/#term-hld">HLD</a> と <code>nexthop-group-fast-failover</code> 系の提案が交差する。</li>
+<li>SAG の community master 取り込みは段階的で、ベンダー fork 側で先行する状況。SONiC main 側の <a href="../../../reference/glossary/#term-yang">YANG</a> / orch 整備の進捗を <code>architecture/sag-high-level-design-for-sonic</code> の "Future Work" で追う。</li>
 <li>VRF レベルの metrics (per-VRF route count / drop / nexthop unreachable) は telemetry 章 (<a href="../../09-telemetry-snmp/">09</a>, <a href="../../10-gnmi-openconfig/">10</a>) の OpenConfig schema 拡張に依存する。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
@@ -23845,6 +23845,7 @@
 <li>FRR の VRF leaking 周りは IPv6 source address selection と <code>set src</code> のバグ修正が時折入る。SONiC 側は FRR バージョン更新でこれを取り込む。</li>
 <li>mgmt VRF を前提とした <code>host-system</code> 系 daemon (chrony, snmpd, gnmi server) の bind 設定改善 PR が散発的にあり、deployment ガイドラインの変化につながる。</li>
 </ul>
+<!-- glossary-links-injected: 0e4b2dbde8e1 -->
 
 
 

@@ -24090,7 +24090,7 @@
 
 <h1 id="config-vxlan">config vxlan サブコマンド<a class="headerlink" href="#config-vxlan" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config vxlan</code> は VXLAN VTEP (<code>VXLAN_TUNNEL</code>)、EVPN NVO (<code>VXLAN_EVPN_NVO</code>)、および VLAN-VNI マッピング (<code>VXLAN_TUNNEL_MAP</code>) を管理する。<code>config/vxlan.py</code> に分離されており、<code>config/main.py</code> 末尾の <code>config.add_command(vxlan.vxlan)</code> で登録される構造<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config vxlan</code> は <a href="../../glossary/#term-vxlan">VXLAN</a> VTEP (<code>VXLAN_TUNNEL</code>)、<a href="../../glossary/#term-evpn">EVPN</a> NVO (<code>VXLAN_EVPN_NVO</code>)、および <a href="../../glossary/#term-vlan">VLAN</a>-VNI マッピング (<code>VXLAN_TUNNEL_MAP</code>) を管理する。<code>config/vxlan.py</code> に分離されており、<code>config/main.py</code> 末尾の <code>config.add_command(vxlan.vxlan)</code> で登録される構造<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>VTEP <strong>1 デバイスにつき 1 つだけ</strong>しか作れない（<code>vxlan add</code> 時に既存件数 &gt; 0 でエラー）。EVPN NVO も 1 つだけ。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -24199,7 +24199,7 @@ excerpt: |
 <h3 id="config-vxlan-map-del-vxlan_name-vlan_id-vni"><code>config vxlan map del &lt;vxlan_name&gt; &lt;vlan_id&gt; &lt;vni&gt;</code><a class="headerlink" href="#config-vxlan-map-del-vxlan_name-vlan_id-vni" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:</p>
 <ul>
-<li><code>&lt;vni&gt;</code> が <code>VRF</code> テーブルから参照されていればエラー（先に VRF VNI 関連付けを外す必要あり）</li>
+<li><code>&lt;vni&gt;</code> が <code>VRF</code> テーブルから参照されていればエラー（先に <a href="../../glossary/#term-vrf">VRF</a> VNI 関連付けを外す必要あり）</li>
 <li>key を <strong>2 つのフォーマットで削除</strong>を試みる: <code>map_&lt;vni&gt;_&lt;vlan_id&gt;</code> および <code>map_&lt;vni&gt;_Vlan&lt;vlan_id&gt;</code>（実装上は両方とも <code>set_entry(..., None)</code> で安全側）</li>
 </ul>
 <h3 id="config-vxlan-map_range-add-vxlan_name-vlan_start-vlan_end-vni_start"><code>config vxlan map_range add &lt;vxlan_name&gt; &lt;vlan_start&gt; &lt;vlan_end&gt; &lt;vni_start&gt;</code><a class="headerlink" href="#config-vxlan-map_range-add-vxlan_name-vlan_start-vlan_end-vni_start" title="Permanent link">&para;</a></h3>
@@ -24272,7 +24272,7 @@ excerpt: |
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/vxlan-tunnel/"><code>VXLAN_TUNNEL</code></a> / <a href="../../config-db/vxlan-evpn-nvo/"><code>VXLAN_EVPN_NVO</code></a> / <a href="../../config-db/vxlan-tunnel-map/"><code>VXLAN_TUNNEL_MAP</code></a> / <a href="../../config-db/vlan/"><code>VLAN</code></a> / <a href="../../config-db/vnet/"><code>VNET</code></a> / <a href="../../config-db/vrf/"><code>VRF</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/vxlan-tunnel/"><code>VXLAN_TUNNEL</code></a> / <a href="../../config-db/vxlan-evpn-nvo/"><code>VXLAN_EVPN_NVO</code></a> / <a href="../../config-db/vxlan-tunnel-map/"><code>VXLAN_TUNNEL_MAP</code></a> / <a href="../../config-db/vlan/"><code>VLAN</code></a> / <a href="../../config-db/vnet/"><code>VNET</code></a> / <a href="../../config-db/vrf/"><code>VRF</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -24299,12 +24299,12 @@ excerpt: |
 <h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>VxLAN tunnel 作成、VLAN-VNI map、EVPN VNI 紐付け。</li>
-<li>VNET (asymmetric IRB) のセットアップ起点。</li>
+<li><a href="../../glossary/#term-vnet">VNET</a> (asymmetric IRB) のセットアップ起点。</li>
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
-<li>source IP に Loopback を指定しないと FRR/EVPN 経路が広告されない。</li>
-<li><code>config vxlan map add</code> の VNI は uint24 上限。<code>vlan</code> を消す前に map を外さないと残骸が STATE_DB に残る。</li>
+<li>source IP に Loopback を指定しないと <a href="../../glossary/#term-frr">FRR</a>/EVPN 経路が広告されない。</li>
+<li><code>config vxlan map add</code> の VNI は uint24 上限。<code>vlan</code> を消す前に map を外さないと残骸が <a href="../../glossary/#term-state_db">STATE_DB</a> に残る。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
@@ -24321,6 +24321,8 @@ excerpt: |
 <li><a href="../../config-db/vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 <li><a href="../../yang/sonic-vxlan/">YANG: sonic-vxlan</a></li>
 </ul>
+<!-- glossary-links-injected: 4459c49968d1 -->
+
 <div class="footnote">
 <hr />
 <ol>

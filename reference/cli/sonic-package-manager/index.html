@@ -24046,7 +24046,7 @@
 <h3 id="sonic-package-manager-reset-name"><code>sonic-package-manager reset &lt;name&gt;</code><a class="headerlink" href="#sonic-package-manager-reset-name" title="Permanent link">&para;</a></h3>
 <p>DB の <code>default-reference</code> で示された version に再インストールする。manifest カスタマイズも捨てる。</p>
 <h3 id="sonic-package-manager-uninstall-name-keep-config"><code>sonic-package-manager uninstall &lt;name&gt; [--keep-config]</code><a class="headerlink" href="#sonic-package-manager-uninstall-name-keep-config" title="Permanent link">&para;</a></h3>
-<p>Package の docker image / systemd unit / 関連リソースを削除。<code>--keep-config</code> で <code>FEATURE</code> 等の CONFIG_DB エントリは残す。</p>
+<p>Package の docker image / systemd unit / 関連リソースを削除。<code>--keep-config</code> で <code>FEATURE</code> 等の <a href="../../glossary/#term-config_db">CONFIG_DB</a> エントリは残す。</p>
 <h3 id="sonic-package-manager-migrate-database"><code>sonic-package-manager migrate &lt;database&gt;</code><a class="headerlink" href="#sonic-package-manager-migrate-database" title="Permanent link">&para;</a></h3>
 <p>旧バージョンや別 DB ファイル (<code>PackageDatabase.from_file(database)</code>) から package 状態を一括移行する。<code>sonic-installer install</code> 時の <code>--skip-package-migration</code> を渡さない経路で内部的にも呼ばれる。</p>
 <h2 id="db">DB / ファイル構成<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
@@ -24109,6 +24109,8 @@
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>docker<span class="w"> </span>ps
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />

@@ -23784,7 +23784,7 @@
 </div>
 <h1 id="npu-mdio-gbsyncd-docker">NPU MDIO アクセスと gbsyncd 単一 docker 化<a class="headerlink" href="#npu-mdio-gbsyncd-docker" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>外部 PHY (gearbox) を制御するために gbsyncd は <strong>PAI library</strong> を使う。PHY が接続される MDIO バスは platform により異なり、(a) FPGA/CPLD ベースで Linux kernel driver + sysfs 経由のもの と (b) <strong>switch NPU の MDIO bus</strong> で SAI 経由でアクセスするもの の 2 系統がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後者では syncd と gbsyncd の <strong>プロセス間通信（IPC）</strong> が必要になる。本 HLD は (i) NPU MDIO 経由のアクセスを Unix socket IPC で実現し、(ii) PAI library と MDIO access library を <strong>runtime ロード</strong> することで <strong>単一 gbsyncd docker</strong> で全 platform を扱えるようにする設計。</p>
+<p>外部 PHY (gearbox) を制御するために gbsyncd は <strong>PAI library</strong> を使う。PHY が接続される MDIO バスは platform により異なり、(a) FPGA/CPLD ベースで Linux kernel driver + sysfs 経由のもの と (b) <strong>switch <a href="../../reference/glossary/#term-npu">NPU</a> の MDIO bus</strong> で <a href="../../reference/glossary/#term-sai">SAI</a> 経由でアクセスするもの の 2 系統がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後者では syncd と gbsyncd の <strong>プロセス間通信（IPC）</strong> が必要になる。本 <a href="../../reference/glossary/#term-hld">HLD</a> は (i) NPU MDIO 経由のアクセスを Unix socket IPC で実現し、(ii) PAI library と MDIO access library を <strong>runtime ロード</strong> することで <strong>単一 gbsyncd docker</strong> で全 platform を扱えるようにする設計。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23807,7 +23807,7 @@
   MS --&gt; NPU</code></pre>
 <h3 id="ipc">IPC<a class="headerlink" href="#ipc" title="Permanent link">&para;</a></h3>
 <ul>
-<li>IPC は Unix domain socket、syncd 側に <strong>MdioIpcServer</strong> クラスが新設され、独立スレッドで listen/accept/read/reply を行う<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>IPC は Unix domain socket、<a href="../../reference/glossary/#term-syncd">syncd</a> 側に <strong>MdioIpcServer</strong> クラスが新設され、独立スレッドで listen/accept/read/reply を行う<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>gbsyncd 側は <strong>MDIO IPC client</strong> を<strong>動的ライブラリ</strong>として実装。kernel sysfs ベース platform では同じ抽象の sysfs MDIO アクセス lib を選べる</li>
 <li>IPC 速度は <strong>PHY firmware download が現実的時間で完了する</strong> ことが要件</li>
 <li>デバッグでは IPC 部分を <code>socat</code> 等で simulate 可能</li>
@@ -23950,6 +23950,8 @@ reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 45f90d834d39 -->
 
 <div class="footnote">
 <hr />

@@ -23906,7 +23906,7 @@
 </div>
 <h1 id="ip-rif-dropforward">IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）<a class="headerlink" href="#ip-rif-dropforward" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ルータが受信したパケットをルーティングテーブルに従って転送した結果、<strong>同じ RIF (Router Interface) から出ていく</strong> ケースが発生することがある。例: スパイン側にデフォルト経路を持っているリーフで、サーバから来たトラフィックが何らかの設定ミスでスパインに転送されず、同じインタフェースに出戻る、いわゆる <em>ASIC ループバック</em> / <em>bounce</em> 現象。SAI のデフォルト挙動はそのまま <strong>forward</strong> で、これによってループや帯域の浪費が起こり得る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ルータが受信したパケットをルーティングテーブルに従って転送した結果、<strong>同じ <a href="../../reference/glossary/#term-rif">RIF</a> (Router Interface) から出ていく</strong> ケースが発生することがある。例: スパイン側にデフォルト経路を持っているリーフで、サーバから来たトラフィックが何らかの設定ミスでスパインに転送されず、同じインタフェースに出戻る、いわゆる <em>ASIC ループバック</em> / <em>bounce</em> 現象。<a href="../../reference/glossary/#term-sai">SAI</a> のデフォルト挙動はそのまま <strong>forward</strong> で、これによってループや帯域の浪費が起こり得る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は IP インタフェース単位で <strong><code>drop</code> / <code>forward</code></strong> を選択できるようにし、<code>drop</code> 設定時は ASIC レベルで出戻りパケットをハードウェアドロップする。<code>drop</code> でドロップされたパケットは <strong>RIF カウンタの <code>TX_ERR</code></strong> に計上される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定を持たない既存インタフェースは従来どおり SAI 既定の <code>forward</code> で振る舞う。</p>
 <p>サポート対象インタフェース<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -23923,7 +23923,7 @@
     MGR --&gt; ADB[(APP_DB\nINTF_TABLE)]
     ADB --&gt;|subscribe| ORCH[intfsorch]
     ORCH --&gt;|set_router_interface_attribute\nLOOPBACK_PACKET_ACTION| SAI[SAI / NPU]</code></pre>
-<p><code>intfmgrd</code> は CONFIG_DB の各 L3 インタフェーステーブルを購読し、<code>loopback_action</code> を含む属性集合を APP_DB の <code>INTF_TABLE</code> に転記する。<code>intfsorch</code> が <code>INTF_TABLE</code> を購読して SAI 属性を設定する設計で、これは既存 IP インタフェース管理経路の延長である<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>intfmgrd</code> は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の各 L3 インタフェーステーブルを購読し、<code>loopback_action</code> を含む属性集合を APP_DB の <code>INTF_TABLE</code> に転記する。<code>intfsorch</code> が <code>INTF_TABLE</code> を購読して SAI 属性を設定する設計で、これは既存 IP インタフェース管理経路の延長である<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="sai">SAI 属性<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">_sai_router_interface_attr_t</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="cm">/* @default SAI_PACKET_ACTION_FORWARD */</span>
@@ -24112,18 +24112,20 @@ reasoning: ドロップ計上先が TX_ERR である根拠。
 <ul>
 <li><strong>RIF カウンタ (<code>router-interface-counters-in-sonic</code>)</strong>: ループバックアクションによる drop は <code>TX_ERR</code> (具体的には <code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS</code>) に出る。これは ASIC で観測される他の egress エラーと混在するため、原因特定には別途注意が必要。</li>
 <li><strong>subinterface</strong>: VLAN_SUB_INTERFACE 上にも設定可能。ただし subinterface はそもそも親 Ethernet ポートと VLAN tag の組合せで定義されるため、ループバック判定の解釈が ASIC 実装に依存する可能性。</li>
-<li><strong>dual-ToR / mux</strong>: 物理的にはサーバ向けの兼用ポートで、対向 ToR との bounce 経路と loopback action がどう作用するかは HLD 範囲外。</li>
+<li><strong>dual-ToR / mux</strong>: 物理的にはサーバ向けの兼用ポートで、対向 ToR との bounce 経路と loopback action がどう作用するかは <a href="../../reference/glossary/#term-hld">HLD</a> 範囲外。</li>
 <li><strong>アップグレード/ダウングレード</strong>: 設定が未定義のインタフェースは <code>forward</code> で従来挙動。アップグレード後に意図的に <code>drop</code> を設定するときは、トラフィック影響を本番投入前に確認する。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>drop</code> を設定したのに通り抜ける: <code>redis-cli -n 4 hgetall 'INTERFACE|EthernetN'</code> で <code>loopback_action</code> が入っているか、APP_DB の <code>INTF_TABLE</code> まで反映されているか、<code>ASIC_DB</code> の <code>SAI_OBJECT_TYPE_ROUTER_INTERFACE</code> 属性に <code>LOOPBACK_PACKET_ACTION=DROP</code> が出ているかを順に確認する。</li>
 <li>期待しない drop が起きている: <code>show interfaces counters rif</code> の <code>TX_ERR</code> を観測。<code>drop</code> 設定したインタフェースで増えている / いないかでトポロジ問題か判断できる。</li>
-<li>L2 ポートに設定して拒否される: 対象を L3 にする (<code>config interface ip add ...</code>) か、subinterface / VLAN にする。</li>
+<li>L2 ポートに設定して拒否される: 対象を L3 にする (<code>config interface ip add ...</code>) か、subinterface / <a href="../../reference/glossary/#term-vlan">VLAN</a> にする。</li>
 <li>設定が再起動で消える: <code>config save</code> 漏れ。CONFIG_DB は永続化していないと cold/fast boot で揮発する。</li>
 <li>SAI 側未対応: ベンダー SAI 実装で <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code> をサポートしていないと <code>set_router_interface_attribute</code> が失敗する。<code>syslog</code> の SWSS / SAI ログを確認。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: b4f4dca39760 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23652,7 +23652,7 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ACL の中心は <code>AclOrch</code> です。設定は CONFIG_DB から入り、APPL_DB を経由して <code>AclOrch</code> が SAI ACL table、entry、counter に変換します。運用上の見え方は <code>show acl</code> や <code>aclshow</code> ですが、失敗や capability は STATE_DB / COUNTERS_DB 側にも分かれます。</p>
+<p><a href="../../../reference/glossary/#term-acl">ACL</a> の中心は <code>AclOrch</code> です。設定は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> から入り、<a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> を経由して <code>AclOrch</code> が <a href="../../../reference/glossary/#term-sai">SAI</a> ACL table、entry、counter に変換します。運用上の見え方は <code>show acl</code> や <code>aclshow</code> ですが、失敗や capability は <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> 側にも分かれます。</p>
 <h2 id="table-rule-counter">Table / Rule / Counter の流れ<a class="headerlink" href="#table-rule-counter" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TB
   CFGT[(CONFIG_DB&lt;br&gt;ACL_TABLE)] --&gt; APP[(APPL_DB&lt;br&gt;ACL_TABLE_TABLE)]
@@ -23668,13 +23668,13 @@
   AO --&gt; ST[(STATE_DB&lt;br&gt;ACL_TABLE_TABLE&lt;br&gt;ACL_RULE_TABLE)]</code></pre>
 <p>table は bind 先と stage を決め、rule は priority と action を決め、counter は rule hit を後から読めるようにします。<code>ACL_TABLE_TYPE</code> を使うと、組み込み type ではなくユーザ定義の match / action / bind point セットを <code>ACL_TABLE.type</code> から参照できます。</p>
 <h2 id="type-type">組み込み Type と拡張 Type<a class="headerlink" href="#type-type" title="Permanent link">&para;</a></h2>
-<p>古い ACL は <code>L3</code>、<code>L3V6</code>、<code>MIRROR</code> などを <code>AclOrch</code> 内部の組み込み type として持ちます。新しい要求が増えると orchagent 改修と TCAM 消費が増えるため、ユーザ定義 table type では <code>ACL_TABLE_TYPE</code> に match、action、bind point を宣言します。</p>
+<p>古い ACL は <code>L3</code>、<code>L3V6</code>、<code>MIRROR</code> などを <code>AclOrch</code> 内部の組み込み type として持ちます。新しい要求が増えると <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 改修と TCAM 消費が増えるため、ユーザ定義 table type では <code>ACL_TABLE_TYPE</code> に match、action、bind point を宣言します。</p>
 <p>一方、<code>MIRROR</code> / <code>MIRRORV6</code> のように特別な内部処理が必要な type は組み込みに残ります。<code>L3V4V6</code> も組み込み type で、IPv4 と IPv6 rule を 1 つの SAI ACL table に同居させ、ASIC が対応する場合に TCAM 消費を抑える狙いがあります。</p>
 <h2 id="flex-counter">Flex Counter 化<a class="headerlink" href="#flex-counter" title="Permanent link">&para;</a></h2>
-<p>ACL counter は rule ごとの packet / byte count を持ちます。以前は orchagent が固定周期で polling する設計でしたが、rule 数が増えると orchagent main loop を圧迫します。ACL flex counter 化により、polling は syncd 側の flex counter infrastructure に寄せられ、<code>COUNTERS_ACL_COUNTER_RULE_MAP</code> で rule 名から counter OID を引けるようになります。</p>
+<p>ACL counter は rule ごとの packet / byte count を持ちます。以前は orchagent が固定周期で polling する設計でしたが、rule 数が増えると orchagent main loop を圧迫します。ACL flex counter 化により、polling は <a href="../../../reference/glossary/#term-syncd">syncd</a> 側の flex counter infrastructure に寄せられ、<code>COUNTERS_ACL_COUNTER_RULE_MAP</code> で rule 名から counter OID を引けるようになります。</p>
 <p>運用者にとっての意味は、<code>counterpoll acl</code> の状態と interval が counter 表示の鮮度に影響することです。ACL 設定だけを見ていても counter が更新されない場合、flex counter 側を確認します。</p>
 <h2 id="copp-trap-trap-flow-counter">CoPP Trap と Trap Flow Counter<a class="headerlink" href="#copp-trap-trap-flow-counter" title="Permanent link">&para;</a></h2>
-<p>CoPP は <code>COPP_TRAP</code> と <code>COPP_GROUP</code> を組み合わせ、trap ID 群を CPU queue / policer に割り当てます。Trap flow counter は hostif trap ごとに generic counter を bind し、trap 種別単位の packet / byte / PPS を観測します。</p>
+<p><a href="../../../reference/glossary/#term-copp">CoPP</a> は <code>COPP_TRAP</code> と <code>COPP_GROUP</code> を組み合わせ、trap ID 群を CPU queue / policer に割り当てます。Trap flow counter は hostif trap ごとに generic counter を bind し、trap 種別単位の packet / byte / PPS を観測します。</p>
 <pre class="mermaid"><code>flowchart LR
   CT[(CONFIG_DB&lt;br&gt;COPP_TRAP)] --&gt; CM[CoppMgr]
   CG[(CONFIG_DB&lt;br&gt;COPP_GROUP)] --&gt; CM
@@ -23694,6 +23694,7 @@
 <li><a href="../../../acl-qos/acl-flex-counters-support/">ACL カウンタの flex counter 化</a></li>
 <li><a href="../../../architecture/sonic-trap-flow-counter-design/">Trap Flow Counter</a></li>
 </ul>
+<!-- glossary-links-injected: fe65670c8aa9 -->
 
 
 

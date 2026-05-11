@@ -23850,15 +23850,15 @@
 
 
 <h1 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを Redis 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。</p>
+<p>SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを <a href="../../../reference/glossary/#term-redis">Redis</a> 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。</p>
 <h2 id="_2">この章は何のためにあるか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>機能章（BGP / ACL / VRF / VXLAN など）を読み進めると、必ず次の用語に出会う: <code>CONFIG_DB</code>、<code>APPL_DB</code>、<code>STATE_DB</code>、<code>COUNTERS_DB</code>、<code>ASIC_DB</code>、<code>ERROR_DB</code>、<code>orchagent</code>、<code>sub-Orch</code>、<code>syncd</code>、<code>sairedis</code>、<code>SAI</code>、<code>ProducerStateTable</code>、<code>bulk counter</code>。これらを <strong>どの章でも同じ意味で使えるように一度地ならしする</strong> のが本章の目的である。</p>
+<p>機能章（<a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-acl">ACL</a> / <a href="../../../reference/glossary/#term-vrf">VRF</a> / <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> など）を読み進めると、必ず次の用語に出会う: <code>CONFIG_DB</code>、<code>APPL_DB</code>、<code>STATE_DB</code>、<code>COUNTERS_DB</code>、<code>ASIC_DB</code>、<code>ERROR_DB</code>、<code>orchagent</code>、<code>sub-Orch</code>、<code>syncd</code>、<code>sairedis</code>、<code>SAI</code>、<code>ProducerStateTable</code>、<code>bulk counter</code>。これらを <strong>どの章でも同じ意味で使えるように一度地ならしする</strong> のが本章の目的である。</p>
 <p>具体的には、読み手の以下の疑問に章全体で答える。</p>
 <ol>
 <li>なぜ DB がこれほど多いのか（CONFIG / APPL / STATE / ASIC / ERROR / COUNTERS の理由）</li>
-<li>APPL_DB と CONFIG_DB はどう違うのか（CONFIG_DB に直接書いてはいけないのか）</li>
-<li>orchagent と syncd の責務はどこで切れるのか</li>
-<li>SAI の失敗（attribute not supported、status returned）はどう報告されるのか</li>
+<li><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> と <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> はどう違うのか（CONFIG_DB に直接書いてはいけないのか）</li>
+<li><a href="../../../reference/glossary/#term-orchagent">orchagent</a> と <a href="../../../reference/glossary/#term-syncd">syncd</a> の責務はどこで切れるのか</li>
+<li><a href="../../../reference/glossary/#term-sai">SAI</a> の失敗（attribute not supported、status returned）はどう報告されるのか</li>
 <li>counter / debug / dump の話が他の章に出てきたとき、どの仕組みを呼んでいるのか</li>
 </ol>
 <h2 id="_3">何を解決するか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23882,7 +23882,7 @@
   SAI -. counter .-&gt; COUNT[(COUNTERS_DB)]
   SYNCD -- 失敗 --&gt; ERR[(ERROR_DB)]
   ERR --&gt; ORCH</code></pre>
-<p>機能章で「APPL_DB に書く」「STATE_DB を見て確認」と書かれていたら、必ずこの図のどこかの矢印を辿っているはずである。本章はこの図を、機能を持たない素の地図として扱う。</p>
+<p>機能章で「APPL_DB に書く」「<a href="../../../reference/glossary/#term-state_db">STATE_DB</a> を見て確認」と書かれていたら、必ずこの図のどこかの矢印を辿っているはずである。本章はこの図を、機能を持たない素の地図として扱う。</p>
 <h2 id="_4">用語の整理<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23899,12 +23899,12 @@
 <td><code>database_config.json</code> で定義</td>
 </tr>
 <tr>
-<td>ProducerStateTable</td>
+<td><a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a></td>
 <td>書き手用の async API</td>
 <td>APPL_DB の追記に使う</td>
 </tr>
 <tr>
-<td>ConsumerStateTable</td>
+<td><a href="../../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a></td>
 <td>読み手用の async API</td>
 <td>orchagent の sub-Orch が購読</td>
 </tr>
@@ -23920,7 +23920,7 @@
 </tr>
 <tr>
 <td>sairedis</td>
-<td>SAI 呼び出しを Redis ASIC_DB 経由で記録／再生するライブラリ</td>
+<td>SAI 呼び出しを Redis <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> 経由で記録／再生するライブラリ</td>
 <td>orchagent ↔ syncd 間の本体</td>
 </tr>
 <tr>
@@ -24030,11 +24030,11 @@
 </tr>
 </tbody>
 </table>
-<p>機能章で個別に出てきた話を「内部実装側の共通テーマ」に揃え直すための章である。スキーマの全カラム表や CLI の細則は <a href="../../../reference/"><code>docs/reference/</code></a> が引き受け、個別 HLD は <code>docs/internals/</code> / <code>docs/architecture/</code> / <code>docs/platform/</code> / <code>docs/system/</code> 配下に残す。</p>
+<p>機能章で個別に出てきた話を「内部実装側の共通テーマ」に揃え直すための章である。スキーマの全カラム表や CLI の細則は <a href="../../../reference/"><code>docs/reference/</code></a> が引き受け、個別 <a href="../../../reference/glossary/#term-hld">HLD</a> は <code>docs/internals/</code> / <code>docs/architecture/</code> / <code>docs/platform/</code> / <code>docs/system/</code> 配下に残す。</p>
 <h2 id="_9">機能章との重複を避けるための切り分け<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>機能章は「特定機能を運用するためにどの DB を見て、どの daemon を疑うか」を読み手の目的順で書く。この章は「DB と daemon そのものがどう設計されているか」を書く。</p>
 <ul>
-<li>例: BGP route が ASIC に入るまでの経路は <a href="../../02-bgp/architecture/">BGP アーキテクチャ</a> で読む。一方、ROUTE_TABLE 全般がどう APPL_DB と ASIC_DB に流れるか、ProducerStateTable とは何か、view switching とは何か、はここで読む。</li>
+<li>例: BGP route が ASIC に入るまでの経路は <a href="../../02-bgp/architecture/">BGP アーキテクチャ</a> で読む。一方、<a href="../../../reference/glossary/#term-route_table">ROUTE_TABLE</a> 全般がどう APPL_DB と ASIC_DB に流れるか、ProducerStateTable とは何か、view switching とは何か、はここで読む。</li>
 <li>例: ACL の SAI 呼び出し失敗を切り分けるときは <a href="../../07-acl-copp-mirror/operations/">ACL 運用</a> で読む。一方、SAI 失敗そのものの ERROR_DB / handleSai*Status 設計はここで読む。</li>
 </ul>
 <h2 id="db">DB の責務（早見表）<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
@@ -24051,13 +24051,13 @@
 <tr>
 <td><code>CONFIG_DB</code></td>
 <td>永続化された設定</td>
-<td>CLI、gNMI、Mgmt Framework、bgpcfgd</td>
+<td>CLI、<a href="../../../reference/glossary/#term-gnmi">gNMI</a>、Mgmt Framework、<a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a></td>
 <td>各 *cfgd、orchagent、起動スクリプト</td>
 </tr>
 <tr>
 <td><code>APPL_DB</code></td>
 <td>制御プレーンが望む状態（intent）</td>
-<td>bgpcfgd、fpmsyncd、portsyncd、teamsyncd、各 *mgrd</td>
+<td>bgpcfgd、<a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a>、<a href="../../../reference/glossary/#term-portsyncd">portsyncd</a>、teamsyncd、各 *mgrd</td>
 <td>orchagent の各 sub-Orch</td>
 </tr>
 <tr>
@@ -24115,6 +24115,7 @@
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 </ul>
+<!-- glossary-links-injected: 22f1eb196c54 -->
 
 
 

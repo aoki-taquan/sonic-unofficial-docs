@@ -23611,7 +23611,7 @@
 
 <h1 id="ntp_key">NTP_KEY テーブル<a class="headerlink" href="#ntp_key" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>NTP 認証 (symmetric key) で使用する鍵を CONFIG_DB に蓄積するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>ntp-config.service</code> (<code>/usr/share/sonic/templates/ntp.keys.j2</code> テンプレ展開) が CONFIG_DB を読み出し、chrony / ntpd の keyfile (<code>/etc/chrony/chrony.keys</code> 等) を生成する。<code>NTP_SERVER_LIST.key</code> から leafref で参照される。</p>
+<p>NTP 認証 (symmetric key) で使用する鍵を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に蓄積するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>ntp-config.service</code> (<code>/usr/share/sonic/templates/ntp.keys.j2</code> テンプレ展開) が CONFIG_DB を読み出し、chrony / ntpd の keyfile (<code>/etc/chrony/chrony.keys</code> 等) を生成する。<code>NTP_SERVER_LIST.key</code> から leafref で参照される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23680,7 +23680,7 @@
 <ul>
 <li>関連 CONFIG_DB: <a href="../ntp-global/"><code>NTP</code></a>, <a href="../ntp-server/"><code>NTP_SERVER</code></a></li>
 <li>関連 CLI: <code>config ntp add key &lt;id&gt; --type ... --value ...</code> / <code>config ntp authentication enable</code></li>
-<li>関連 YANG: <code>sonic-ntp</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-ntp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23713,6 +23713,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ntp
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->
 
 <div class="footnote">
 <hr />

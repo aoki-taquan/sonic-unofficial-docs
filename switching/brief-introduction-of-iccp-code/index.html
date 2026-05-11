@@ -23972,8 +23972,8 @@
 </div>
 <h1 id="iccpd-mc-lag-mlacp-fsm">ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）<a class="headerlink" href="#iccpd-mc-lag-mlacp-fsm" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の MC-LAG（Multi-Chassis LAG）は専用デーモン <strong>ICCPd</strong>（ICCP daemon、<code>docker-iccp</code> コンテナ内）で実装されている。ICCPd は IETF <a href="https://www.rfc-editor.org/rfc/rfc7275">RFC 7275</a> の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>このページは ICCPd ソースコードのファイル別役割を、HLD のコード解説ドキュメントから再構成した <strong>読み手のためのコードマップ</strong> である。実装を追う際の入口に使う。</p>
+<p>SONiC の MC-<a href="../../reference/glossary/#term-lag">LAG</a>（Multi-Chassis LAG）は専用デーモン <strong>ICCPd</strong>（ICCP daemon、<code>docker-iccp</code> コンテナ内）で実装されている。ICCPd は IETF <a href="https://www.rfc-editor.org/rfc/rfc7275">RFC 7275</a> の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>このページは ICCPd ソースコードのファイル別役割を、<a href="../../reference/glossary/#term-hld">HLD</a> のコード解説ドキュメントから再構成した <strong>読み手のためのコードマップ</strong> である。実装を追う際の入口に使う。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
@@ -24058,7 +24058,7 @@
     EXCHANGE --&gt; INIT: peer 切断</code></pre>
 <ul>
 <li><strong>INIT</strong>: ピア未接続</li>
-<li><strong>STAGE1</strong>: ピア接続確立直後。最初に ARP / MAC を同期。standby 側は active へ sync request を投げる。active が受けると全情報を standby へ同期</li>
+<li><strong>STAGE1</strong>: ピア接続確立直後。最初に <a href="../../reference/glossary/#term-arp">ARP</a> / MAC を同期。standby 側は active へ sync request を投げる。active が受けると全情報を standby へ同期</li>
 <li><strong>STAGE2</strong>: active 側が standby へ sync request を投げ、standby が応答すると active へ全同期</li>
 <li><strong>EXCHANGE</strong>: 定常状態。<code>mlacp_exchange_handler()</code> が動く</li>
 </ul>
@@ -24069,7 +24069,7 @@
     ICCPCONF --&gt; CMD[iccp_cmd.c]
     CMD --&gt; SYS[ICCPd 内部構造]
     CLI2[iccp_cli.c\ndomain-id / local-ip / peer-ip /\npeer-link / mclag-interface] --&gt; SYS</code></pre>
-<p>ICCPd 起動時、CONFIG_DB から <code>iccpd.j2</code> テンプレートを通じて <code>/etc/iccpd/iccpd.conf</code> を生成し、<code>iccp_cmd.c</code> がそれを読む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>system-id</code> は <code>localhost.mac</code>（DEVICE_METADATA 配下）を使う <strong>グローバル設定</strong> であり、CLI で変えるものではない。</p>
+<p>ICCPd 起動時、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から <code>iccpd.j2</code> テンプレートを通じて <code>/etc/iccpd/iccpd.conf</code> を生成し、<code>iccp_cmd.c</code> がそれを読む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>system-id</code> は <code>localhost.mac</code>（DEVICE_METADATA 配下）を使う <strong>グローバル設定</strong> であり、CLI で変えるものではない。</p>
 <h3 id="cli">CLI / 表示経路<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mclagdctl -i &lt;MC-LAG-id&gt; dump arp
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>   │
@@ -24120,7 +24120,7 @@
 <li>ピアの local-IP / peer-IP がローカル設定と一致するか（不一致なら接続拒否）</li>
 <li>MC-LAG portchannel のモード（L2 / L3）が両ピアで揃っているか</li>
 <li>L3 構成なら IP アドレスが一致するか</li>
-<li>VLAN メンバなら同じ VLAN に属しているか</li>
+<li><a href="../../reference/glossary/#term-vlan">VLAN</a> メンバなら同じ VLAN に属しているか</li>
 </ul>
 <h3 id="mlacp">MLACP 同期コンテンツ<a class="headerlink" href="#mlacp" title="Permanent link">&para;</a></h3>
 <p><code>mlacp_sync_prepare.c</code>（送信側）/ <code>mlacp_sync_update.c</code>（受信側）が以下を交換する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24158,7 +24158,7 @@
 </tr>
 <tr>
 <td>peer-link 情報</td>
-<td>種別（VLAN / VXLAN）と VXLAN 名</td>
+<td>種別（VLAN / <a href="../../reference/glossary/#term-vxlan">VXLAN</a>）と VXLAN 名</td>
 </tr>
 <tr>
 <td>Warm reboot 情報</td>
@@ -24227,7 +24227,7 @@ reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 </table>
 <p><code>config mclag ...</code> 等のユーザ向け CLI は本ドキュメントの守備範囲外（MC-LAG HLD 側）。</p>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>本ドキュメントでは YANG モジュールに言及していない。</p>
+<p>本ドキュメントでは <a href="../../reference/glossary/#term-yang">YANG</a> モジュールに言及していない。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>本ドキュメントは ICCPd の <strong>コード概略を解説</strong> したもので、CLI / CONFIG_DB / 運用手順を完全に網羅するものではない</li>
@@ -24267,6 +24267,8 @@ reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b8de3bf6fffa -->
 
 <div class="footnote">
 <hr />

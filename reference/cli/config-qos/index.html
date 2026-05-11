@@ -23633,7 +23633,7 @@
 
 <h1 id="config-qos">config qos サブコマンド<a class="headerlink" href="#config-qos" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config qos</code> は QoS と buffer 関連テンプレートを再生成して CONFIG_DB に反映する CLI グループ。<code>clear</code> は既存 QoS 設定を削除し、<code>reload</code> は platform/HWSKU の <code>qos.json.j2</code> と <code>buffers*.json.j2</code> を <code>sonic-cfggen</code> で展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config qos</code> は <a href="../../glossary/#term-qos">QoS</a> と buffer 関連テンプレートを再生成して <a href="../../glossary/#term-config_db">CONFIG_DB</a> に反映する CLI グループ。<code>clear</code> は既存 QoS 設定を削除し、<code>reload</code> は platform/HWSKU の <code>qos.json.j2</code> と <code>buffers*.json.j2</code> を <code>sonic-cfggen</code> で展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23763,8 +23763,8 @@
 <h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <h3 id="_11">典型的な利用シーン<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li>QoS プロファイルの再ロード、TC マップ・スケジューラ・WRED の更新。</li>
-<li>DSCP / dot1p / PFC priority の対応付け確認。</li>
+<li>QoS プロファイルの再ロード、TC マップ・スケジューラ・<a href="../../glossary/#term-wred">WRED</a> の更新。</li>
+<li>DSCP / dot1p / <a href="../../glossary/#term-pfc">PFC</a> priority の対応付け確認。</li>
 </ul>
 <h3 id="_12">よくある落とし穴<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23777,6 +23777,8 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>queue<span class="w"> </span>counters
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 87f89dd63737 -->
 
 <div class="footnote">
 <hr />

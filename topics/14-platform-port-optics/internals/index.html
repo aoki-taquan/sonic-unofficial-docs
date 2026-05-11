@@ -23860,11 +23860,11 @@
   PYP --&gt;|sysfs / i2c / ioctl| HW[HW]
   PYP --&gt; S3[S3IP sysfs]
   PYP --&gt; BMC[BMC / Redfish]</code></pre>
-<p>SAI 側はベンダー SDK が、<code>sonic_platform</code> プラグイン側は装置依存の sysfs / i2c アクセスが担当します。BMC を持つ装置では sensor / FRU / chassis 情報が BMC 経由で取得されます。</p>
+<p><a href="../../../reference/glossary/#term-sai">SAI</a> 側はベンダー SDK が、<code>sonic_platform</code> プラグイン側は装置依存の sysfs / i2c アクセスが担当します。BMC を持つ装置では sensor / FRU / chassis 情報が BMC 経由で取得されます。</p>
 <h2 id="media-based-port-settings">Media-based port settings<a class="headerlink" href="#media-based-port-settings" title="Permanent link">&para;</a></h2>
 <p>光モジュールやケーブル種別 (media) に応じて、port の serdes 設定 (pre-emphasis、main、post-emphasis など) を切り替える仕組みが <a href="../../../platform/media-based-port-settings-in-sonic/">media-based port settings in SONiC</a> にまとまっています。誤った SI ではリンクが上がらない、または BER が高くなるため、optics 交換と組み合わせて変更されることが多い領域です。</p>
 <h2 id="gearbox">Gearbox<a class="headerlink" href="#gearbox" title="Permanent link">&para;</a></h2>
-<p>NPU と optics の間に PHY (Gearbox) を挟む装置では、SAI 経由で Gearbox 側もプログラムされます。動的に Gearbox の SI を調整する設計は <a href="../../../platform/sonic-dynamic-gearbox-tuning-design-plan/">SONiC dynamic Gearbox tuning design plan</a> を参照してください。</p>
+<p><a href="../../../reference/glossary/#term-npu">NPU</a> と optics の間に PHY (Gearbox) を挟む装置では、SAI 経由で Gearbox 側もプログラムされます。動的に Gearbox の SI を調整する設計は <a href="../../../platform/sonic-dynamic-gearbox-tuning-design-plan/">SONiC dynamic Gearbox tuning design plan</a> を参照してください。</p>
 <h2 id="mdio-gbsyncd">MDIO アクセスと gbsyncd<a class="headerlink" href="#mdio-gbsyncd" title="Permanent link">&para;</a></h2>
 <p>NPU 経由で PHY を読み書きする MDIO の取り扱いは、<code>gbsyncd</code> コンテナの拡張で実現されています。設計は <a href="../../../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld/">NPU MDIO access support and gbsyncd docker enhancement HLD</a> にまとまっています。Gearbox を持つ装置のデバッグや register dump はこの経路です。</p>
 <h2 id="lpo-debug-registers">LPO debug registers<a class="headerlink" href="#lpo-debug-registers" title="Permanent link">&para;</a></h2>
@@ -23917,12 +23917,12 @@
 <tr>
 <td><code>portsyncd</code></td>
 <td>netlink listener</td>
-<td>kernel link state を APPL_DB へ</td>
+<td>kernel link state を <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> へ</td>
 </tr>
 <tr>
 <td><code>xcvrd</code> (<code>sonic-platform-daemons/sonic-xcvrd/</code>)</td>
 <td><code>xcvrd.py</code></td>
-<td>transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を STATE_DB に書く</td>
+<td>transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に書く</td>
 </tr>
 <tr>
 <td><code>thermalctld</code></td>
@@ -23936,7 +23936,7 @@
 </tr>
 <tr>
 <td><code>gbsyncd</code></td>
-<td>Gearbox 用 syncd</td>
+<td>Gearbox 用 <a href="../../../reference/glossary/#term-syncd">syncd</a></td>
 <td>NPU 経由の PHY MDIO</td>
 </tr>
 <tr>
@@ -23993,7 +23993,7 @@
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ZMQ は使わない。</li>
-<li><code>xcvrd</code> は sonic_platform plugin を直接呼び、結果を Redis に push。</li>
+<li><code>xcvrd</code> は sonic_platform plugin を直接呼び、結果を <a href="../../../reference/glossary/#term-redis">Redis</a> に push。</li>
 <li>PMON 系 daemon は <code>supervisord</code> で管理され、互いに Redis 経由でしか通信しない。</li>
 <li>BMC 経路を持つ場合、<code>pmon</code> 配下の daemon が REST/Redfish を直接呼び、結果を STATE_DB に統一形式で書く。</li>
 </ul>
@@ -24001,8 +24001,8 @@
 <ul>
 <li><code>xcvrd</code> の EEPROM polling 周期は default 60s 程度で、optics の即時 plug/unplug 検知は GPIO interrupt 経路（あれば）を <code>xcvrd</code> の event API で取り込む実装に依存する。これがベンダ plugin で未実装だと polling 周期分の遅延が出る。</li>
 <li>media_settings の SI は port speed × media の組み合わせで <code>media_settings.json</code> に static に書く設計で、新規 optic 投入時にファイル更新と config reload が必要。</li>
-<li>Gearbox SI 動的調整は <code>gbsyncd</code> の HLD では将来的な拡張で、master ではまだ static 適用のみのケースが多い（discrepancy として記録される）。</li>
-<li>breakout（4×25G ↔ 100G 等）時の sequence は <code>PortsOrch</code> が <code>removePort</code> → <code>createPort</code> を行うため、kernel netdev が瞬間的に消える。LACP / LLDP / route が影響を受ける。</li>
+<li>Gearbox SI 動的調整は <code>gbsyncd</code> の <a href="../../../reference/glossary/#term-hld">HLD</a> では将来的な拡張で、master ではまだ static 適用のみのケースが多い（discrepancy として記録される）。</li>
+<li>breakout（4×25G ↔ 100G 等）時の sequence は <code>PortsOrch</code> が <code>removePort</code> → <code>createPort</code> を行うため、kernel netdev が瞬間的に消える。<a href="../../../reference/glossary/#term-lacp">LACP</a> / <a href="../../../reference/glossary/#term-lldp">LLDP</a> / route が影響を受ける。</li>
 <li>S3IP sysfs を使わないレガシー platform plugin では sysfs パスがベンダ独自で、共通 CLI（<code>show platform fan</code> 等）の出力に差が出る。</li>
 <li>BMC 経由運用では、host OS の sensor 値が BMC の cache に律速され、host OS の <code>pmon</code> 周期と BMC polling 周期がずれて oscillation することがある。</li>
 </ul>
@@ -24017,6 +24017,7 @@
 <li><a href="../../../platform/support-bmc-flows-in-sonic/">support BMC flows in SONiC</a></li>
 <li><a href="../../../system/sonic-bmc-platform-management-monitoring/">SONiC BMC platform management monitoring</a></li>
 </ul>
+<!-- glossary-links-injected: 34e33b94bfc4 -->
 
 
 

@@ -23718,12 +23718,12 @@
 </div>
 <h1 id="sonic-management-frameworkrest-gnmi-translib-transformer">SONiC Management Framework（REST / gNMI / Translib / Transformer）<a class="headerlink" href="#sonic-management-frameworkrest-gnmi-translib-transformer" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>sonic-mgmt-framework</code> は外部 API（REST / gNMI / CLI）と内部 CONFIG_DB / 各種 daemon 間の <strong>モデル翻訳層</strong> を担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。中核は次の 4 つ:</p>
+<p><code>sonic-mgmt-framework</code> は外部 API（REST / <a href="../../reference/glossary/#term-gnmi">gNMI</a> / CLI）と内部 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / 各種 daemon 間の <strong>モデル翻訳層</strong> を担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。中核は次の 4 つ:</p>
 <ul>
 <li><strong>北側 API server</strong>: REST (OpenAPI)、gNMI（gRPC）、CLI（KLISH）からの要求を受ける</li>
-<li><strong>Translib</strong>: YANG モデル（openconfig / IETF / sonic-*）と内部表現の間の汎用変換ライブラリ</li>
+<li><strong>Translib</strong>: <a href="../../reference/glossary/#term-yang">YANG</a> モデル（openconfig / IETF / sonic-*）と内部表現の間の汎用変換ライブラリ</li>
 <li><strong>Transformer</strong>: モデル間（openconfig YANG ↔ sonic YANG / CONFIG_DB）の写像を per-module に実装</li>
-<li><strong>App-DB Layer</strong>: CONFIG_DB / APPL_DB / STATE_DB へ Redis 経由で読み書き</li>
+<li><strong>App-DB Layer</strong>: CONFIG_DB / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> へ <a href="../../reference/glossary/#term-redis">Redis</a> 経由で読み書き</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -23745,7 +23745,7 @@
 <li><strong>Transformer は二種</strong>: app-specific（openconfig ↔ sonic）と sonic-yang only（schema-driven）</li>
 <li><strong>gNMI subscription</strong>: STATE_DB の更新を SAMPLE / ON_CHANGE で stream（別ページ「gNMI Subscription for YANG Data」を参照）</li>
 <li><strong>mgmt-framework container</strong>: REST / Translib / Transformer / KLISH を 1 コンテナに同居させる構成</li>
-<li><strong>認証/認可</strong>: TLS + client cert、TACACS+/RADIUS/LDAP は AAA 改善 HLD に従う</li>
+<li><strong>認証/認可</strong>: TLS + client cert、TACACS+/RADIUS/LDAP は <a href="../../reference/glossary/#term-aaa">AAA</a> 改善 <a href="../../reference/glossary/#term-hld">HLD</a> に従う</li>
 </ul>
 <h2 id="_3">主要なフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
@@ -23775,7 +23775,7 @@
 <ul>
 <li><strong>YANG モデルが定義されていない機能は API 化できない</strong>: 機能側で sonic-* YANG を追加する必要がある</li>
 <li><strong>transformer は per-module 実装</strong>: openconfig 側の新モジュール対応は手作業のコストが高い</li>
-<li><strong>ロールバック / 部分失敗</strong>: GCU / JSON Patch ordering の HLD（同 architecture area）と組み合わせて初めて transactional になる</li>
+<li><strong>ロールバック / 部分失敗</strong>: <a href="../../reference/glossary/#term-gcu">GCU</a> / JSON Patch ordering の HLD（同 architecture area）と組み合わせて初めて transactional になる</li>
 <li><strong>大規模 GET の性能</strong>: tree 全体取得はオブジェクト変換コストが高く、<code>fields=</code> 限定や paginate 推奨</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -23807,6 +23807,8 @@
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8b4906c6c628 -->
 
 <div class="footnote">
 <hr />

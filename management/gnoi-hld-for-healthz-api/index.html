@@ -23862,9 +23862,9 @@
 </div>
 <h1 id="gnoi-healthz-apiget-acknowledge-artifact-dbus-host-service">gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）<a class="headerlink" href="#gnoi-healthz-apiget-acknowledge-artifact-dbus-host-service" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>gNOI Healthz は <strong>コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を gRPC 経由で取得する</strong> ためのサービスである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。OpenConfig の <code>components</code> モデルと連携し、telemetry で「unhealthy」を検知したコンポーネントの追加調査を行う想定。</p>
-<p>SONiC では既存の gNMI/UMF サーバ（telemetry コンテナ、TCP 9339）に gNOI Healthz をマウントし、バックエンドの artifact 収集は <strong>SONiC Host Service</strong> の <code>debug_info</code> モジュールに DBUS 経由で委譲する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は OpenConfig <a href="https://github.com/openconfig/gnoi/blob/main/healthz/healthz.proto"><code>Healthz</code> proto</a> のうち以下 3 つの RPC を <strong>初期サポート対象</strong> と定める<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-gnoi">gNOI</a> Healthz は <strong>コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を gRPC 経由で取得する</strong> ためのサービスである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。OpenConfig の <code>components</code> モデルと連携し、telemetry で「unhealthy」を検知したコンポーネントの追加調査を行う想定。</p>
+<p>SONiC では既存の <a href="../../reference/glossary/#term-gnmi">gNMI</a>/UMF サーバ（telemetry コンテナ、TCP 9339）に gNOI Healthz をマウントし、バックエンドの artifact 収集は <strong>SONiC Host Service</strong> の <code>debug_info</code> モジュールに DBUS 経由で委譲する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は OpenConfig <a href="https://github.com/openconfig/gnoi/blob/main/healthz/healthz.proto"><code>Healthz</code> proto</a> のうち以下 3 つの RPC を <strong>初期サポート対象</strong> と定める<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>Get</code>: 指定 path のヘルス event 一覧（<code>ComponentStatus</code>）を返す</li>
 <li><code>Artifact</code>: event に紐付いた artifact ファイル/proto を <strong>stream</strong> で返す</li>
@@ -23997,7 +23997,7 @@ reasoning: collect → poll → ready の DBUS 経路と persistent_storage フ�
 <p>ベンダ固有のヘルス情報は <code>Any</code> に詰める想定で、フォーマットは vendor 任せ<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>専用 CONFIG_DB スキーマは無い。telemetry の認証認可（<code>TELEMETRY</code> 等）と RBAC 設定を再利用する。</p>
+<p>専用 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマは無い。telemetry の認証認可（<code>TELEMETRY</code> 等）と RBAC 設定を再利用する。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24022,7 +24022,7 @@ reasoning: collect → poll → ready の DBUS 経路と persistent_storage フ�
 </tbody>
 </table>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>OpenConfig <code>components</code> モデルが対応する想定。SONiC YANG 拡張は HLD で言及無し。</p>
+<p>OpenConfig <code>components</code> モデルが対応する想定。SONiC <a href="../../reference/glossary/#term-yang">YANG</a> 拡張は HLD で言及無し。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># all-info の health event 取得</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gnoi_client<span class="w"> </span>healthz<span class="w"> </span>get<span class="w"> </span><span class="se">\</span>
@@ -24065,6 +24065,8 @@ reasoning: collect → poll → ready の DBUS 経路と persistent_storage フ�
 - artifact GC ポリシーの現行実装
 - HLD 2025-06 v0.1 と現行 master の差分有無
 -->
+
+<!-- glossary-links-injected: c671e32e187d -->
 
 <div class="footnote">
 <hr />

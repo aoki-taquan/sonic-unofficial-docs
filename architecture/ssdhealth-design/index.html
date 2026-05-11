@@ -24109,7 +24109,7 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、<strong>ストレージの寿命と健全性を運用者が把握できる</strong> 必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は基本機能として <strong><code>show platform ssdhealth</code></strong> という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。</p>
 <p>実装は <code>sonic-utilities</code> 側のスクリプト + <code>sonic-platform-common</code> 側の <strong>抽象クラス <code>SsdBase</code></strong> + 各ベンダ実装の <strong><code>SsdUtil</code> プラグイン</strong> の三層構成。汎用情報は <code>smartctl</code>（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の <code>iSmart</code>、StorFly/Virtium の <code>SmartCmd</code> 等）から拾う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>オプションで pmon に常駐する <code>ssdmond</code> デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（HLD では Optional 扱い）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>オプションで pmon に常駐する <code>ssdmond</code> デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（<a href="../../reference/glossary/#term-hld">HLD</a> では Optional 扱い）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show platform ssdhealth [verbose|vendor]
@@ -24249,7 +24249,7 @@
 <ul>
 <li>周期的に <code>get_health()</code> を呼び出す。</li>
 <li>値が <strong>クリティカルしきい値を割った時にアラート</strong> を上げる。</li>
-<li>HLD では「Open Questions」で「Daemon and monitoring?」「SNMP needed?」が未確定として残されている<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>HLD では「Open Questions」で「Daemon and monitoring?」「<a href="../../reference/glossary/#term-snmp">SNMP</a> needed?」が未確定として残されている<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <!-- evidence:
 source: sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -24410,6 +24410,8 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1d579f83f1e2 -->
 
 <div class="footnote">
 <hr />

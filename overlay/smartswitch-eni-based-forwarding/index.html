@@ -23918,10 +23918,10 @@
 </div>
 <h1 id="smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl">SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）<a class="headerlink" href="#smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a>（<a href="../../reference/glossary/#term-npu">NPU</a> + 複数 <a href="../../reference/glossary/#term-dpu">DPU</a>）で NPU↔DPU の転送モデルは 2 案<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>VIP ベース</strong>: コントローラが DPU ごとに VIP を払い出す。実装単純だが DPU ごとに VIP を消費しコスト高。</li>
-<li><strong>ENI ベース転送（本 HLD）</strong>: ホストは <strong>スイッチ単位の VIP のみ</strong> を使い、NPU 上で ENI 単位の ACL ルールで local / remote DPU にリダイレクト。</li>
+<li><strong><a href="../../reference/glossary/#term-eni">ENI</a> ベース転送（本 <a href="../../reference/glossary/#term-hld">HLD</a>）</strong>: ホストは <strong>スイッチ単位の VIP のみ</strong> を使い、NPU 上で ENI 単位の <a href="../../reference/glossary/#term-acl">ACL</a> ルールで local / remote DPU にリダイレクト。</li>
 </ol>
 <p>ENI ベースは VIP 消費を 1 cluster 単位まで削減でき、ENI を SmartSwitch を跨いで配置できる柔軟性も得られる。</p>
 <h2 id="_2">どう動くか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23954,7 +23954,7 @@
 <tbody>
 <tr>
 <td>Phase 1（本 HLD）</td>
-<td><code>HaMgrd</code> が <code>DASH_ENI_FORWARD_TABLE</code> を書き、orchagent が <strong>primary endpoint のみ</strong> ACL 化。Tunnel Termination ルールも生成。BFD 未使用</td>
+<td><code>HaMgrd</code> が <code>DASH_ENI_FORWARD_TABLE</code> を書き、<a href="../../reference/glossary/#term-orchagent">orchagent</a> が <strong>primary endpoint のみ</strong> ACL 化。Tunnel Termination ルールも生成。<a href="../../reference/glossary/#term-bfd">BFD</a> 未使用</td>
 </tr>
 <tr>
 <td>Phase 2</td>
@@ -24012,7 +24012,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>&quot;&lt;remote PA&gt;@&lt;tunnel_name&gt;,&lt;vni&gt;&quot;
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>例: &quot;2.2.2.1@tunnel_name,100&quot;
 </span></code></pre></div>
-<p><code>AclOrch</code> が <code>VxLanTunnOrch</code> から tunnel NH OID を解決して SAI に下ろせる。</p>
+<p><code>AclOrch</code> が <code>VxLanTunnOrch</code> から tunnel NH OID を解決して <a href="../../reference/glossary/#term-sai">SAI</a> に下ろせる。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/smart-switch/high-availability/eni-based-forwarding.md#L182-L211 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24069,10 +24069,10 @@ reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ル�
 </tbody>
 </table>
 <h3 id="cli-yang">CLI / YANG<a class="headerlink" href="#cli-yang" title="Permanent link">&para;</a></h3>
-<p>専用 CLI・YANG は HLD では言及なし。</p>
+<p>専用 CLI・<a href="../../reference/glossary/#term-yang">YANG</a> は HLD では言及なし。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>対象は <strong>FNIC のみ</strong>。それ以外の DASH シナリオはスコープ外。</li>
+<li>対象は <strong>FNIC のみ</strong>。それ以外の <a href="../../reference/glossary/#term-dash">DASH</a> シナリオはスコープ外。</li>
 <li><code>VIP_TABLE</code> は一時テーブル扱い。最終形未確定<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>Phase 1 は BFD 連動なし。card レベル故障の検知遅延あり。</li>
 <li>Warm boot / Fast boot に追加処理なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -24105,6 +24105,8 @@ reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ル�
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2fed06be3cf8 -->
 
 <div class="footnote">
 <hr />

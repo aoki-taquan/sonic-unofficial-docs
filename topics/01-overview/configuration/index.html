@@ -23703,7 +23703,7 @@
 <tr>
 <td>全体 config の差分だけ当てる</td>
 <td><code>config replace</code></td>
-<td>target config との差分を JSON Patch 化し、GCU 経由で適用する</td>
+<td>target config との差分を JSON Patch 化し、<a href="../../../reference/glossary/#term-gcu">GCU</a> 経由で適用する</td>
 </tr>
 <tr>
 <td>増分変更を明示的に当てる</td>
@@ -23713,7 +23713,7 @@
 <tr>
 <td>DB dump やテンプレート生成をする</td>
 <td><code>sonic-cfggen</code></td>
-<td>CONFIG_DB、minigraph、YANG JSON、Jinja2 を扱う汎用エンジン</td>
+<td><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a>、minigraph、<a href="../../../reference/glossary/#term-yang">YANG</a> JSON、Jinja2 を扱う汎用エンジン</td>
 </tr>
 </tbody>
 </table>
@@ -23728,7 +23728,7 @@
   APPLY --&gt; OK{success?}
   OK --&gt;|yes| SAVE[必要なら config save]
   OK --&gt;|no| RB[auto rollback / config rollback]</code></pre>
-<p>GCU を使う典型例は、VLAN / ACL / BGP など複数テーブルにまたがる変更を、依存順序を壊さずに入れたい場合です。特に dynamic port breakout のように <code>PORT</code>、<code>VLAN_MEMBER</code>、<code>ACL_TABLE</code> などの参照関係が絡む変更では、<a href="../../../management/json-patch-ordering-using-yang-models/">JSON Patch ordering</a> の考え方が効きます。</p>
+<p>GCU を使う典型例は、<a href="../../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../../reference/glossary/#term-acl">ACL</a> / <a href="../../../reference/glossary/#term-bgp">BGP</a> など複数テーブルにまたがる変更を、依存順序を壊さずに入れたい場合です。特に dynamic port breakout のように <code>PORT</code>、<code>VLAN_MEMBER</code>、<code>ACL_TABLE</code> などの参照関係が絡む変更では、<a href="../../../management/json-patch-ordering-using-yang-models/">JSON Patch ordering</a> の考え方が効きます。</p>
 <h2 id="json-patch-jsonchange">JSON Patch と JsonChange の違い<a class="headerlink" href="#json-patch-jsonchange" title="Permanent link">&para;</a></h2>
 <p>JSON Patch はユーザが投入する操作列です。一方、内部の JsonChange は「最終状態へ近づけるために、同時に適用してよい変更単位」です。<a href="../../../architecture/json-change-application/">JSON Change Application</a> は、table 単位の書き込み、必要な service restart、反映確認、最終 diff 検証を担当します。つまり、ユーザは JSON Patch を書き、GCU がそれを安全な適用単位へ分割・整列し、applier が DB と service に反映します。</p>
 <h2 id="config-reload">config reload を使うとき<a class="headerlink" href="#config-reload" title="Permanent link">&para;</a></h2>
@@ -23744,6 +23744,7 @@
 <li><a href="../../../reference/cli/config-mgmt-trio/">config save / load / reload / replace / qos reload</a></li>
 <li><a href="../../../reference/cli/sonic-cfggen/">sonic-cfggen コマンド</a></li>
 </ul>
+<!-- glossary-links-injected: c20582729222 -->
 
 
 

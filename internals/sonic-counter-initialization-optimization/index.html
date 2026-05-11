@@ -23831,11 +23831,11 @@
 <ul>
 <li>なぜ counter 初期化に分単位の時間がかかっていたのか</li>
 <li>何を「1 個ずつ」から「まとめて」に変えたのか</li>
-<li>sub orchagent 側で何を意識する必要があるか</li>
+<li>sub <a href="../../reference/glossary/#term-orchagent">orchagent</a> 側で何を意識する必要があるか</li>
 <li>旧来の <code>batch_mode</code> 引数は実装でどうなっているのか</li>
 </ul>
 <h2 id="_2">なぜ初期化が遅いか（旧フローの問題）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>SONiC の counter は <strong>counter group</strong>（port / port-drop / PG-drop / queue / watermark / RIF 等）単位で flex counter が管理する。各 group は初期化時、object ごとに <strong><code>sai_bulk_object_get_stats</code></strong> を 1 件で呼び「この SAI object で bulk polling できるか」を確認していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の counter は <strong>counter group</strong>（port / port-drop / PG-drop / queue / watermark / <a href="../../reference/glossary/#term-rif">RIF</a> 等）単位で flex counter が管理する。各 group は初期化時、object ごとに <strong><code>sai_bulk_object_get_stats</code></strong> を 1 件で呼び「この <a href="../../reference/glossary/#term-sai">SAI</a> object で bulk polling できるか」を確認していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>port 数が多い系（例: 257 ports）では port あたり 3 PG + 8 queue + 1 port = 12 object、これに counter group 数が掛かるため呼び出し回数が爆発する。確認完了までは orchagent が port up 通知を捌けず <strong>ブロックする</strong>。ベンチマークでは初期化時間の <strong>98% がベンダ SAI 内</strong> で消費されていた<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">何を変えるか（新フロー）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>「object を 1 つずつ確認」を <strong>「同型 object をまとめて 1 回確認 → 失敗時のみ個別 fallback」</strong> に変える。</p>
@@ -23929,7 +23929,7 @@
 <p>ユーザインタフェース変更は <strong>無し</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新規 SAI API も無し（既存 <code>sai_bulk_object_get_stats</code> を流用）。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>runtime polling の最適化はスコープ外</strong>。本 HLD は初期化のみ<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>runtime polling の最適化はスコープ外</strong>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は初期化のみ<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>集合呼び出し失敗時は object 数だけ個別 fallback が発生 → unsupported 混入で効果減</li>
 <li>queue 系 uc / mc 分割でテストも分割対応</li>
 <li>Warm boot / Fast boot への影響は無し<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -23959,6 +23959,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 14c16f9ace85 -->
 
 <div class="footnote">
 <hr />

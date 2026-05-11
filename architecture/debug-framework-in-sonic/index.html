@@ -23990,7 +23990,7 @@
 </div>
 <h1 id="debug-framework-dump-assert">Debug Framework（コンポーネント dump 登録 / assert 拡張）<a class="headerlink" href="#debug-framework-dump-assert" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC コンポーネント（特に OrchAgent モジュール）が <strong>内部状態のスナップショットダンプ</strong> を登録し、CLI / assert / 重大ログから一斉トリガできる仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Redis チャネル経由でトリガを配り、SwSS 共有ライブラリの <code>SWSS_DEBUG_PRINT</code> マクロで出力先（syslog / per-component log）と post-action（compress-rotate / upload）を一元管理する。あわせて assert マクロを拡張して類型化された debug 情報収集を可能にする。</p>
+<p>SONiC コンポーネント（特に OrchAgent モジュール）が <strong>内部状態のスナップショットダンプ</strong> を登録し、CLI / assert / 重大ログから一斉トリガできる仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-redis">Redis</a> チャネル経由でトリガを配り、SwSS 共有ライブラリの <code>SWSS_DEBUG_PRINT</code> マクロで出力先（syslog / per-component log）と post-action（compress-rotate / upload）を一元管理する。あわせて assert マクロを拡張して類型化された debug 情報収集を可能にする。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -24025,7 +24025,7 @@
 <tbody>
 <tr>
 <td><code>linkWithFramework</code></td>
-<td>Selectable + 受信スレッド + APPL_DB sub を作成、callback 起動</td>
+<td>Selectable + 受信スレッド + <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> sub を作成、callback 起動</td>
 <td>DumpInfoFunc 登録のみ</td>
 </tr>
 <tr>
@@ -24079,13 +24079,13 @@
 </tr>
 </tbody>
 </table>
-<p>OrchAgent 例（HLD 抜粋）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>OrchAgent 例（<a href="../../reference/glossary/#term-hld">HLD</a> 抜粋）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show debug routeorch routes -v VrfRED -p 100.100.4.0/24
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show debug routeorch nhgrp
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show debug neighorch nhops
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show debug neighorch neigh
 </span></code></pre></div>
-<p>出力にはプレフィックス、ネクストホップ、SAI OID、ECMP グループ ref count などを含む（ASIC OID と app 構造体ポインタの紐付け確認に使う設計）。</p>
+<p>出力にはプレフィックス、ネクストホップ、<a href="../../reference/glossary/#term-sai">SAI</a> OID、<a href="../../reference/glossary/#term-ecmp">ECMP</a> グループ ref count などを含む（ASIC OID と app 構造体ポインタの紐付け確認に使う設計）。</p>
 <h3 id="configuration-defaults">Configuration Defaults<a class="headerlink" href="#configuration-defaults" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24181,7 +24181,7 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 <!-- evidence-rendered:end -->
 
 <h2 id="tech-support">tech-support 拡張・補助スクリプト<a class="headerlink" href="#tech-support" title="Permanent link">&para;</a></h2>
-<p><code>show techsupport</code> は本 HLD の延長で <strong>STATE_DB dump、ASIC 固有 dump、critical log の persistent log 切り出し</strong> を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。さらに次のヘルパーが付随する:</p>
+<p><code>show techsupport</code> は本 HLD の延長で <strong><a href="../../reference/glossary/#term-state_db">STATE_DB</a> dump、ASIC 固有 dump、critical log の persistent log 切り出し</strong> を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。さらに次のヘルパーが付随する:</p>
 <ul>
 <li>"headline" 系の summary 印字スクリプト</li>
 <li>収集情報の upload を非破壊的に行う helper</li>
@@ -24237,7 +24237,7 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 </blockquote>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="https://github.com/sonic-net/sonic-utilities/pull/1669">sonic-utilities #1669: [debug dump util] Techsupport addition (merged)</a> — <code>debug dump</code> ユーティリティ自体の取り込み PR。HLD の「コンポーネント dump 登録 / assert 拡張」のうち、<code>show techsupport</code> 連携部分はここに収束した。</li>
+<li><a href="https://github.com/sonic-net/sonic-utilities/pull/1669">[sonic-utilities](../reference/glossary.md#term-sonic-utilities) #1669: [debug dump util] Techsupport addition (merged)</a> — <code>debug dump</code> ユーティリティ自体の取り込み PR。HLD の「コンポーネント dump 登録 / assert 拡張」のうち、<code>show techsupport</code> 連携部分はここに収束した。</li>
 <li>HLD が想定した汎用 assert 拡張・自動 dump 登録機構の包括的トラッキング Issue は <strong>未確認</strong>。実装は機能ごとの個別 PR に分散している。</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -24254,6 +24254,8 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 - show debug / show interfaces pktdrop CLI の sonic-utilities 取り込み確認
 - 2019-07 v0.3 から 6 年以上経過しており現行実装との乖離可能性 高
 -->
+
+<!-- glossary-links-injected: ab467fd16eb5 -->
 
 <div class="footnote">
 <hr />

@@ -23740,9 +23740,9 @@
 
 
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>評価・初学を超えて、CI / 大規模 lab / DPU 検証まで踏み込むときに開く話題を集めます。基本的にはここのリンク先 HLD を直接読むのが早く、本ページは「どれを開くか」のしおりです。</p>
+<p>評価・初学を超えて、CI / 大規模 lab / <a href="../../../reference/glossary/#term-dpu">DPU</a> 検証まで踏み込むときに開く話題を集めます。基本的にはここのリンク先 <a href="../../../reference/glossary/#term-hld">HLD</a> を直接読むのが早く、本ページは「どれを開くか」のしおりです。</p>
 <h2 id="dash-sonic-kvm">DASH SONiC KVM<a class="headerlink" href="#dash-sonic-kvm" title="Permanent link">&para;</a></h2>
-<p>DASH（Disaggregated API for SONiC Hosts）の DPU 検証を実機 SmartSwitch なしで行うための環境です。データプレーンは BMv2、control plane は SONiC 側、というハイブリッド構成で、ENI / ACL / metering といった DASH HLD の核を仮想で踏むことができます。詳細は <a href="../../../overlay/dash-sonic-kvm/">DASH SONiC KVM</a> を参照します。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a>（Disaggregated API for SONiC Hosts）の DPU 検証を実機 <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> なしで行うための環境です。データプレーンは BMv2、control plane は SONiC 側、というハイブリッド構成で、<a href="../../../reference/glossary/#term-eni">ENI</a> / <a href="../../../reference/glossary/#term-acl">ACL</a> / metering といった DASH HLD の核を仮想で踏むことができます。詳細は <a href="../../../overlay/dash-sonic-kvm/">DASH SONiC KVM</a> を参照します。</p>
 <p>DASH 章本文の機能仕様と組で読むのが前提で、DPU の HW 機能（offload 性能、PPS など）はこの環境では測れません。</p>
 <h2 id="alvis-kne-ci">ALViS / KNE と CI 連携<a class="headerlink" href="#alvis-kne-ci" title="Permanent link">&para;</a></h2>
 <p>ALViS / KNE は、多数ノードを軽量にデプロイしたい場合の選択肢です。CI で <code>n</code> 台の SONiC を立てる、KNE で他 NOS と混在 topology を組む、Pod 単位で個別 reload するなどの運用が想定されています。設計と制約は <a href="../../../architecture/alpine-high-level-design/">Alpine 仮想 SONiC</a> を読みます。</p>
@@ -23764,8 +23764,8 @@
 <td>実機 + 対象 optics</td>
 </tr>
 <tr>
-<td>buffer / PFC / watermark / queue</td>
-<td>SAI VS の capability 範囲外</td>
+<td>buffer / <a href="../../../reference/glossary/#term-pfc">PFC</a> / watermark / queue</td>
+<td><a href="../../../reference/glossary/#term-sai">SAI</a> VS の capability 範囲外</td>
 <td>ASIC 実機、または ASIC simulator</td>
 </tr>
 <tr>
@@ -23774,7 +23774,7 @@
 <td>実機 platform</td>
 </tr>
 <tr>
-<td>HW offload を伴う mux / EVPN encap / DASH 高速 path</td>
+<td>HW offload を伴う mux / <a href="../../../reference/glossary/#term-evpn">EVPN</a> encap / DASH 高速 path</td>
 <td>data plane が Linux / BMv2</td>
 <td>対応 ASIC / DPU</td>
 </tr>
@@ -23801,11 +23801,11 @@
 <p>CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非公式ドキュメントの対象外です。upstream SONiC repo の <code>.github</code> と <code>azure-pipelines.yml</code> が一次資料になります。</p>
 <h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Multi-DUT topology in sonic-mgmt</strong>: 複数 DUT を仮想で組み、Dual-ToR / MC-LAG / Chassis シナリオを CI で回す。ansible inventory と PTF docker を組合せる。</li>
+<li><strong>Multi-DUT topology in <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a></strong>: 複数 DUT を仮想で組み、Dual-ToR / MC-<a href="../../../reference/glossary/#term-lag">LAG</a> / Chassis シナリオを CI で回す。ansible inventory と PTF docker を組合せる。</li>
 <li><strong>kvm 仮想 SONiC chassis</strong>: 仮想 supervisor + 仮想 line card 構成を kvm 上で動かす。chassis_db の挙動を VS で検証できる。</li>
-<li><strong>ptf-py3 と scapy 拡張</strong>: data plane 検証で複雑 packet を生成。Path Tracing、SRv6、VXLAN、EVPN などで重宝。</li>
+<li><strong>ptf-py3 と scapy 拡張</strong>: data plane 検証で複雑 packet を生成。Path Tracing、<a href="../../../reference/glossary/#term-srv6">SRv6</a>、<a href="../../../reference/glossary/#term-vxlan">VXLAN</a>、EVPN などで重宝。</li>
 <li><strong>Code coverage と gcov</strong>: SONiC binary を gcov-enabled で build し、CI 経路で coverage を集計する取り組み。orch の race condition 検出に役立つ。</li>
-<li><strong>fuzz testing</strong>: gNMI / gNOI server や CLI parser に対する fuzz テスト。security 章 (<a href="../../15-security-aaa/">15</a>) と相互参照。</li>
+<li><strong>fuzz testing</strong>: <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / <a href="../../../reference/glossary/#term-gnoi">gNOI</a> server や CLI parser に対する fuzz テスト。security 章 (<a href="../../15-security-aaa/">15</a>) と相互参照。</li>
 </ul>
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23835,6 +23835,7 @@
 <li>KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。</li>
 <li>CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。</li>
 </ul>
+<!-- glossary-links-injected: f4f1f9bb2387 -->
 
 
 

@@ -23828,13 +23828,13 @@
 
 
 <h1 id="l2">L2 運用確認<a class="headerlink" href="#l2" title="Permanent link">&para;</a></h1>
-<p>L2 障害は「VLAN に入っていない」「LAG が期待通り up していない」「MAC 学習が古い」「MC-LAG peer と状態がずれている」「BUM traffic や link flap が制御面を壊している」に分けると追いやすくなります。</p>
+<p>L2 障害は「<a href="../../../reference/glossary/#term-vlan">VLAN</a> に入っていない」「<a href="../../../reference/glossary/#term-lag">LAG</a> が期待通り up していない」「MAC 学習が古い」「MC-LAG peer と状態がずれている」「BUM traffic や link flap が制御面を壊している」に分けると追いやすくなります。</p>
 <h2 id="vlan">VLAN の状態を見る<a class="headerlink" href="#vlan" title="Permanent link">&para;</a></h2>
 <p>まず VLAN と member の見え方を確認します。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>vlan<span class="w"> </span>config
 </span></code></pre></div>
-<p><code>show vlan brief</code> は VLAN ID、IP Address、Ports、Port Tagging、Proxy ARP を一覧します。<code>show vlan config</code> は 1 行 1 member で VLAN と member port を展開します。multi-ASIC 環境では namespace 指定の有無に注意します。</p>
+<p><code>show vlan brief</code> は VLAN ID、IP Address、Ports、Port Tagging、Proxy <a href="../../../reference/glossary/#term-arp">ARP</a> を一覧します。<code>show vlan config</code> は 1 行 1 member で VLAN と member port を展開します。multi-ASIC 環境では namespace 指定の有無に注意します。</p>
 <p>見るべき点は次の順です。</p>
 <table>
 <thead>
@@ -23850,7 +23850,7 @@
 </tr>
 <tr>
 <td>member がいるか</td>
-<td><code>VLAN_MEMBER</code> に port / PortChannel が入っているか</td>
+<td><code>VLAN_MEMBER</code> に port / <a href="../../../reference/glossary/#term-portchannel">PortChannel</a> が入っているか</td>
 </tr>
 <tr>
 <td>tagged / untagged が期待通りか</td>
@@ -23863,7 +23863,7 @@
 </tbody>
 </table>
 <h2 id="lag">LAG の状態を見る<a class="headerlink" href="#lag" title="Permanent link">&para;</a></h2>
-<p>PortChannel の設定は <code>config portchannel</code> と CONFIG_DB の <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> が入口です。運用時は LACP、member の admin / oper、<code>min_links</code> の条件、VLAN member への参加有無を分けて確認します。</p>
+<p>PortChannel の設定は <code>config portchannel</code> と <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> が入口です。運用時は <a href="../../../reference/glossary/#term-lacp">LACP</a>、member の admin / oper、<code>min_links</code> の条件、VLAN member への参加有無を分けて確認します。</p>
 <p>削除や変更が失敗する場合は、PortChannel が VLAN member、L3 interface、DHCP relay 対象、または member を残した状態ではないかを先に確認します。</p>
 <h2 id="mc-lag">MC-LAG の状態を見る<a class="headerlink" href="#mc-lag" title="Permanent link">&para;</a></h2>
 <p>SONiC では <code>show mclag</code> という Click サブコマンドではなく、実体は <code>mclagdctl</code> です。</p>
@@ -23889,7 +23889,7 @@
 <tbody>
 <tr>
 <td>VLAN member 変更後に古い MAC が残る</td>
-<td>FDB flush の対象と static / dynamic の違い</td>
+<td><a href="../../../reference/glossary/#term-fdb">FDB</a> flush の対象と static / dynamic の違い</td>
 </tr>
 <tr>
 <td>PortChannel down 後に誤転送する</td>
@@ -23914,7 +23914,7 @@
 </span></code></pre></div>
 <p>制限は物理ポートに対して設定します。VLAN や PortChannel interface に直接設定する機能として読まないことが重要です。</p>
 <h2 id="link-flap">Link flap を抑える<a class="headerlink" href="#link-flap" title="Permanent link">&para;</a></h2>
-<p>Link event damping は、ポート up/down が短時間に繰り返される場合に、SyncD 側でイベント通知を抑制する設計です。現行ページでは swss 側の実装は確認されている一方、HLD に書かれた CLI は未実装とされています。</p>
+<p>Link event damping は、ポート up/down が短時間に繰り返される場合に、SyncD 側でイベント通知を抑制する設計です。現行ページでは swss 側の実装は確認されている一方、<a href="../../../reference/glossary/#term-hld">HLD</a> に書かれた CLI は未実装とされています。</p>
 <p>運用手順としては、まず通常の interface state と transceiver / cable 健全性を確認し、damping を使う場合は <a href="../../../switching/link-event-damping-hld/">リンクイベントダンピング</a> の実装との乖離を確認してください。</p>
 <h2 id="show-vlan-show-interfaces">show vlan / show interfaces の出力サンプル<a class="headerlink" href="#show-vlan-show-interfaces" title="Permanent link">&para;</a></h2>
 <p><code>show vlan brief</code> は CONFIG_DB の <code>VLAN</code>、<code>VLAN_MEMBER</code>、<code>VLAN_INTERFACE</code> を結合したテーブル表示です。</p>
@@ -24117,8 +24117,8 @@
 <ul>
 <li>VLAN_INTERFACE で出す SVI が L3 で動かない: <a href="../../04-vrf-ecmp/operations/">VRF / ECMP 章 運用</a>。</li>
 <li>MC-LAG over Dual-ToR / Active-Active 構成: <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
-<li>VLAN ↔ VNI 紐付けや EVPN 由来 FDB の差分: <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a>。</li>
-<li>teamd / swss が起動しない場合の前提: <a href="../../01-overview/operations/">運用入口</a> の feature / hostcfgd セクション。</li>
+<li>VLAN ↔ VNI 紐付けや <a href="../../../reference/glossary/#term-evpn">EVPN</a> 由来 FDB の差分: <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a>。</li>
+<li><a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / swss が起動しない場合の前提: <a href="../../01-overview/operations/">運用入口</a> の feature / <a href="../../../reference/glossary/#term-hostcfgd">hostcfgd</a> セクション。</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24128,6 +24128,7 @@
 <li><a href="../../../switching/link-event-damping-hld/">リンクイベントダンピング</a></li>
 <li><a href="../../../switching/mclag-enhancements/">MCLAG Enhancements</a></li>
 </ul>
+<!-- glossary-links-injected: 133c93c6ce9a -->
 
 
 

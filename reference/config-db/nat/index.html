@@ -23650,7 +23650,7 @@
 
 <h1 id="nat_global-nat_pool">NAT_GLOBAL / NAT_POOL テーブル<a class="headerlink" href="#nat_global-nat_pool" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>NAT_GLOBAL</code> は NAT feature の admin mode と timeout を保持するグローバル設定、<code>NAT_POOL</code> は dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。同じ YANG モジュールには <code>NAT_BINDINGS</code>、<code>STATIC_NAT</code>、<code>STATIC_NAPT</code> も定義される。<code>schema.h</code> では APPL_DB 側に <code>NAT_GLOBAL_TABLE</code> と pool 系 table の定数がある<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>NAT_GLOBAL</code> は <a href="../../glossary/#term-nat">NAT</a> feature の admin mode と timeout を保持するグローバル設定、<code>NAT_POOL</code> は dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。同じ <a href="../../glossary/#term-yang">YANG</a> モジュールには <code>NAT_BINDINGS</code>、<code>STATIC_NAT</code>、<code>STATIC_NAPT</code> も定義される。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側に <code>NAT_GLOBAL_TABLE</code> と pool 系 table の定数がある<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23780,7 +23780,7 @@
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>natmgrd</code>: CONFIG_DB の NAT 設定を読み、APPL_DB NAT table 群へ反映する。</li>
-<li><code>orchagent</code> / <code>NatOrch</code>: APPL_DB の NAT global / pool / binding / static entry を消費し、SAI NAT object や kernel / ASIC 設定へ反映する。</li>
+<li><code>orchagent</code> / <code>NatOrch</code>: APPL_DB の NAT global / pool / binding / static entry を消費し、<a href="../../glossary/#term-sai">SAI</a> NAT object や kernel / ASIC 設定へ反映する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23822,6 +23822,8 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>nat<span class="w"> </span>translations
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 871223ce15ad -->
 
 <div class="footnote">
 <hr />

@@ -23729,14 +23729,14 @@
 <h1 id="gnoi-fileremove-factoryresetstart">gNOI File.Remove と FactoryReset.Start<a class="headerlink" href="#gnoi-fileremove-factoryresetstart" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>gNOI とは何で、なぜ gNMI と同じポートで受けるのか</li>
+<li><a href="../../reference/glossary/#term-gnoi">gNOI</a> とは何で、なぜ <a href="../../reference/glossary/#term-gnmi">gNMI</a> と同じポートで受けるのか</li>
 <li>なぜ container（telemetry）の中で実行せず <strong>DBUS で host</strong> に投げる必要があるのか</li>
 <li><code>File.Remove</code> は何を消せて、何を消せないのか（path traversal は防げているか）</li>
 <li><code>FactoryReset.Start</code> の <strong>3 フラグ</strong>（<code>factory_os</code> / <code>zero_fill</code> / <code>retain_certs</code>）は何を意味するか</li>
 <li>同時実行の抑制とエラー時の挙動</li>
 </ul>
 <h2 id="_2">なぜこの拡張が必要か<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>gNOI（gRPC Network Operations Interface）は CLI 代替として <strong>gRPC で運用コマンドを実行</strong> する仕様で、protobuf は <a href="https://github.com/openconfig/gnoi">openconfig/gnoi</a> にある。SONiC では gNMI/telemetry サーバ（UMF）が gNOI も <strong>同じ TCP 9339</strong> で受け、認証認可後にバックエンドへ振り分ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は以下 2 つの RPC を実装<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>gNOI（gRPC Network Operations Interface）は CLI 代替として <strong>gRPC で運用コマンドを実行</strong> する仕様で、protobuf は <a href="https://github.com/openconfig/gnoi">openconfig/gnoi</a> にある。SONiC では gNMI/telemetry サーバ（UMF）が gNOI も <strong>同じ TCP 9339</strong> で受け、認証認可後にバックエンドへ振り分ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は以下 2 つの RPC を実装<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>gnoi.file.File.Remove</code>: target ファイル削除（<strong>現状は <code>config_db.json</code> 限定</strong>）</li>
 <li><code>gnoi.factory_reset.FactoryReset.Start</code>: 工場出荷状態に戻す</li>
@@ -23832,7 +23832,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gnoi_client<span class="w"> </span>file<span class="w"> </span>remove<span class="w"> </span>--remote_file<span class="w"> </span>/etc/sonic/config_db.json
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gnoi_client<span class="w"> </span>factory_reset<span class="w"> </span>start<span class="w"> </span>--factory_os<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--zero_fill<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--retain_certs<span class="o">=</span><span class="nb">true</span>
 </span></code></pre></div>
-<p>専用 CONFIG_DB / YANG は無く、gNMI 認証認可・証明書配置などの既存 telemetry 経路を再利用する。SAI / Warmboot / Fastboot への影響なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>専用 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> は無く、gNMI 認証認可・証明書配置などの既存 telemetry 経路を再利用する。<a href="../../reference/glossary/#term-sai">SAI</a> / Warmboot / Fastboot への影響なし<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>File.Remove</code> は <strong><code>/etc/sonic/config_db.json</code> 限定</strong></li>
@@ -23863,6 +23863,8 @@
 <li><a href="../gnoi-hld-for-healthz-api/">HLD: gNOI healthz API</a></li>
 <li><a href="../sonic-gnmi-server-interface-design/">HLD: SONiC gNMI Server インタフェース設計</a></li>
 </ul>
+<!-- glossary-links-injected: b4b6b56d361a -->
+
 <div class="footnote">
 <hr />
 <ol>

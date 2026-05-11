@@ -23901,7 +23901,7 @@
 <li>Debian / Python パッケージ コンパイル — 比較的速い</li>
 <li><strong>Docker イメージビルド</strong> — 遅い（特に複数ユーザ並列時）</li>
 </ol>
-<p>本 HLD は主に第 2 段階に焦点を当て、4 つの最適化を提案する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は主に第 2 段階に焦点を当て、4 つの最適化を提案する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>Dockerfile の <strong><code>COPY</code> / <code>RUN</code> をマージしてレイヤ数を削減</strong></li>
 <li>Docker 18.09 + <strong>BuildKit</strong> の有効化</li>
@@ -23911,7 +23911,7 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="1-dockerfile">最適化 1: Dockerfile のレイヤ数削減<a class="headerlink" href="#1-dockerfile" title="Permanent link">&para;</a></h3>
 <p>各 <code>COPY</code> / <code>RUN</code> 行は新しい Docker レイヤを生成する。<code>--no-cache --squash</code> で最終出力を 1 レイヤに潰しているため、<strong>ビルド中の細かいレイヤ分割は無意味なコスト</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><strong>Before</strong>: 各 deb パッケージごとに 1 行ずつ <code>COPY</code> / <code>RUN</code>（SNMP docker で 52 ステップ）</p>
+<p><strong>Before</strong>: 各 deb パッケージごとに 1 行ずつ <code>COPY</code> / <code>RUN</code>（<a href="../../reference/glossary/#term-snmp">SNMP</a> docker で 52 ステップ）</p>
 <div class="language-Dockerfile highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">COPY</span><span class="w"> </span>debs/libnl-3-200_3.2.27-2_amd64.deb<span class="w"> </span>/debs/
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">COPY</span><span class="w"> </span>debs/libsnmp-base_5.7.3+dfsg-1.5_all.deb<span class="w"> </span>/debs/
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>...
@@ -24123,6 +24123,8 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 - SONIC_USE_DOCKER_BUILDKIT フラグ自体は grep 0 件 -> HLD で提案された名前ではなく素の DOCKER_BUILDKIT 環境変数で運用
 - sonic-buildimage/rules/sairedis.mk に SAIREDIS_DPKG_TARGET=binary-syncd の指定なし; slave.mk:879 $(if $($*_DPKG_TARGET),...) 汎用機構経由
 -->
+
+<!-- glossary-links-injected: 1d579f83f1e2 -->
 
 <div class="footnote">
 <hr />

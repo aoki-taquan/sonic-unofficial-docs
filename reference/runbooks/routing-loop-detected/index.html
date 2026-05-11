@@ -23757,7 +23757,7 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>static route と BGP 経路の競合</strong>: 自身を next-hop に向ける static</li>
+<li><strong>static route と <a href="../../glossary/#term-bgp">BGP</a> 経路の競合</strong>: 自身を next-hop に向ける static</li>
 <li><strong>default route の相互広告</strong>: ToR ↔ Leaf 双方が default を交換</li>
 <li><strong>redistribute connected + summary-only が一致しない</strong>: 集約経路で自分の subnet が抜ける</li>
 <li><strong>BGP の next-hop unchanged 設定誤り</strong></li>
@@ -23773,7 +23773,7 @@
 </span></code></pre></div>
 <ul>
 <li>期待: 1 つの best 経路</li>
-<li>異常: 自身に戻る next-hop / 不適切な ECMP メンバー</li>
+<li>異常: 自身に戻る next-hop / 不適切な <a href="../../glossary/#term-ecmp">ECMP</a> メンバー</li>
 </ul>
 <h3 id="3-static-route">3. static route 確認<a class="headerlink" href="#3-static-route" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;STATIC_ROUTE|*&quot;</span>
@@ -23799,14 +23799,16 @@
 <li><a href="../../../topics/04-vrf-ecmp/concept/">../../topics/04-vrf-ecmp/concept.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 118ad94be6a7 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-frr @ 799f47f — zebra/zebra_rib.c&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/sonic-frr @ 799f47f — <a href="../../glossary/#term-zebra">zebra</a>/zebra_rib.c&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ 4305596 — routeorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — routeorch.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

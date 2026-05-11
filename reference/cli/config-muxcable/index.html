@@ -24057,7 +24057,7 @@
 <h1 id="config-muxcable">config muxcable サブコマンド<a class="headerlink" href="#config-muxcable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>config muxcable</code> は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。グループは <code>config/muxcable.py</code> の <code>@click.group(name='muxcable')</code> で定義される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>CLI が触る先は CONFIG_DB の <code>MUX_CABLE</code> テーブルだけでなく、xcvrd / linkmgrd を介した非同期コマンド・レスポンスチャネル (APPL_DB / STATE_DB の <code>XCVRD_*_CMD</code> / <code>_RSP</code> 系テーブル) を多用する。<code>update_and_get_response_for_xcvr_cmd</code> がそのプロトコルの実装で、CMD テーブルに job を書き、RSP テーブルを timeout 付きで poll する作りになっている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p>CLI が触る先は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>MUX_CABLE</code> テーブルだけでなく、xcvrd / <a href="../../glossary/#term-linkmgrd">linkmgrd</a> を介した非同期コマンド・レスポンスチャネル (<a href="../../glossary/#term-appl_db">APPL_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>XCVRD_*_CMD</code> / <code>_RSP</code> 系テーブル) を多用する。<code>update_and_get_response_for_xcvr_cmd</code> がそのプロトコルの実装で、CMD テーブルに job を書き、RSP テーブルを timeout 付きで poll する作りになっている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_2">コマンド一覧 (主要)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24147,7 +24147,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config muxcable mode {active|auto|manual|standby|detach} &lt;port_name|all&gt; [--json]
 </span></code></pre></div>
 <p><strong>動作</strong>:
-<code>MUX_CABLE</code> テーブルから対象ポートの STATE_DB エントリを引いて遷移可能性を判断し、<code>MUX_CABLE|&lt;port&gt;</code> の <code>state</code> フィールドを書き換える。<code>port = "all"</code> の場合は <code>MUX_CABLE</code> に登録されている全ポートを順に処理する。<code>detach</code> は MUX 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は <code>--json</code> で JSON、無指定で表形式。</p>
+<code>MUX_CABLE</code> テーブルから対象ポートの STATE_DB エントリを引いて遷移可能性を判断し、<code>MUX_CABLE|&lt;port&gt;</code> の <code>state</code> フィールドを書き換える。<code>port = "all"</code> の場合は <code>MUX_CABLE</code> に登録されている全ポートを順に処理する。<code>detach</code> は <a href="../../glossary/#term-mux">MUX</a> 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は <code>--json</code> で JSON、無指定で表形式。</p>
 <h3 id="config-muxcable-probertype-hardwaresoftware-port"><code>config muxcable probertype &lt;hardware|software&gt; &lt;port&gt;</code><a class="headerlink" href="#config-muxcable-probertype-hardwaresoftware-port" title="Permanent link">&para;</a></h3>
 <p><code>MUX_LINKMGR</code> テーブル相当 (<code>prober_type</code> フィールド) を更新する。<code>update_configdb_prober_type</code> ヘルパが該当ポートの設定を merge する。</p>
 <h3 id="config-muxcable-prbs-enable-port-target-mode_value-lane_mask-prbs_direction"><code>config muxcable prbs enable &lt;port&gt; &lt;target&gt; &lt;mode_value&gt; &lt;lane_mask&gt; [&lt;prbs_direction&gt;]</code><a class="headerlink" href="#config-muxcable-prbs-enable-port-target-mode_value-lane_mask-prbs_direction" title="Permanent link">&para;</a></h3>
@@ -24264,6 +24264,8 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>muxcable<span class="w"> </span>hwmode<span class="w"> </span>state
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 23e2562f0d36 -->
 
 <div class="footnote">
 <hr />

@@ -23740,7 +23740,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。</p>
+<p>設定基盤の内部実装は、起動時に設定をどう作るか、<a href="../../../reference/glossary/#term-redis">Redis</a> をどう配置するか、Multi-ASIC で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。</p>
 <h2 id="first-boot-migration">first boot と migration<a class="headerlink" href="#first-boot-migration" title="Permanent link">&para;</a></h2>
 <p><a href="../../../system/sonic-configuration-setup-service/">config-setup</a> は、first boot で startup config が無い場合の factory default 生成、firmware upgrade 時の backup / restore / migration、Config DB 外の設定ファイルの扱いを集約するサービスです。</p>
 <pre class="mermaid"><code>flowchart TB
@@ -23753,7 +23753,7 @@
   MIG --&gt; LOAD
   KEEP --&gt; LOAD
   LOAD --&gt; SONIC[start SONiC services]</code></pre>
-<p>ZTP が動く環境では、first boot の factory default 生成と外部 provisioning の責務がぶつからないように読む必要があります。upgrade では、古い <code>config_db.json</code> を新版の schema に合わせる migration が重要です。</p>
+<p><a href="../../../reference/glossary/#term-ztp">ZTP</a> が動く環境では、first boot の factory default 生成と外部 provisioning の責務がぶつからないように読む必要があります。upgrade では、古い <code>config_db.json</code> を新版の schema に合わせる migration が重要です。</p>
 <h2 id="redis">Redis インスタンスを分ける理由<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
 <p>単一 Redis に <code>APPL_DB</code>、<code>ASIC_DB</code>、<code>CONFIG_DB</code>、<code>STATE_DB</code>、<code>COUNTERS_DB</code> などを載せると、大量 route や counter 更新で hot spot になります。<a href="../../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンス</a> の設計は、<code>database_config.json</code> の <code>INSTANCES</code> と <code>DATABASES</code> で DB 名から Redis インスタンスを引けるようにし、負荷を分散するものです。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
@@ -23764,9 +23764,9 @@
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>この設定は CONFIG_DB テーブルではなく、database service の起動設定です。変更時は database service の再起動や downgrade 互換性を考慮します。</p>
+<p>この設定は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> テーブルではなく、database service の起動設定です。変更時は database service の再起動や downgrade 互換性を考慮します。</p>
 <h2 id="multi-asic-namespace-db">Multi-ASIC namespace の DB<a class="headerlink" href="#multi-asic-namespace-db" title="Permanent link">&para;</a></h2>
-<p><a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis</a> は、host global namespace と <code>asic0</code>、<code>asic1</code> などの NPU namespace を分けます。各 namespace は独自の <code>database_config.json</code> を持ち、host 側の <code>database_global.json</code> が全体の目録になります。</p>
+<p><a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis</a> は、host global namespace と <code>asic0</code>、<code>asic1</code> などの <a href="../../../reference/glossary/#term-npu">NPU</a> namespace を分けます。各 namespace は独自の <code>database_config.json</code> を持ち、host 側の <code>database_global.json</code> が全体の目録になります。</p>
 <table>
 <thead>
 <tr>
@@ -23784,7 +23784,7 @@
 <tr>
 <td>per-ASIC namespace</td>
 <td>その ASIC の <code>APPL_DB</code>、<code>ASIC_DB</code>、<code>COUNTERS_DB</code>、<code>STATE_DB</code></td>
-<td>port、route、counter、orchagent 切り分け</td>
+<td>port、route、counter、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> 切り分け</td>
 </tr>
 <tr>
 <td><code>database_global.json</code></td>
@@ -23816,7 +23816,7 @@
 <td><code>APPL_DB</code> と <code>swss-schema</code></td>
 </tr>
 <tr>
-<td>syncd / SAI 近辺で止まる</td>
+<td><a href="../../../reference/glossary/#term-syncd">syncd</a> / <a href="../../../reference/glossary/#term-sai">SAI</a> 近辺で止まる</td>
 <td><code>ASIC_DB</code>、syncd log、SAI failure handling 章</td>
 </tr>
 <tr>
@@ -23872,12 +23872,12 @@
 <tr>
 <td>cfgmgr 層</td>
 <td><code>vlanmgrd</code>、<code>intfmgrd</code>、<code>teammgrd</code>、<code>natmgr</code>、<code>buffermgrd</code>、<code>vrfmgrd</code></td>
-<td>CONFIG_DB → kernel + APPL_DB</td>
+<td>CONFIG_DB → kernel + <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a></td>
 </tr>
 <tr>
 <td>sync 層</td>
 <td><code>portsyncd</code>、<code>fdbsyncd</code>、<code>teamsyncd</code>、<code>natsyncd</code>、<code>fpmsyncd</code></td>
-<td>kernel / FRR の netlink/FPM を APPL_DB へ</td>
+<td>kernel / <a href="../../../reference/glossary/#term-frr">FRR</a> の netlink/<a href="../../../reference/glossary/#term-fpm">FPM</a> を APPL_DB へ</td>
 </tr>
 <tr>
 <td>orchagent 内 Orch</td>
@@ -23887,7 +23887,7 @@
 <tr>
 <td>syncd 層</td>
 <td><code>syncd</code>、<code>sairedis</code>、<code>SAIRedis ASIC view</code></td>
-<td>ASIC_DB ↔ SAI library ↔ ASIC SDK</td>
+<td><a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> ↔ SAI library ↔ ASIC SDK</td>
 </tr>
 <tr>
 <td>host services</td>
@@ -23896,7 +23896,7 @@
 </tr>
 <tr>
 <td>管理面</td>
-<td><code>telemetry</code>（gNMI/gNOI）、<code>snmpd</code>、<code>rest-server</code>、<code>mgmt-framework</code></td>
+<td><code>telemetry</code>（<a href="../../../reference/glossary/#term-gnmi">gNMI</a>/<a href="../../../reference/glossary/#term-gnoi">gNOI</a>）、<code>snmpd</code>、<code>rest-server</code>、<code>mgmt-framework</code></td>
 <td>北向き API</td>
 </tr>
 </tbody>
@@ -23916,11 +23916,11 @@
 </tr>
 <tr>
 <td><code>_NOTIFY:asic_state</code> 等の notification channel</td>
-<td>ASIC_DB 上の FDB / port state 等のイベント</td>
+<td>ASIC_DB 上の <a href="../../../reference/glossary/#term-fdb">FDB</a> / port state 等のイベント</td>
 </tr>
 <tr>
 <td>ZMQ producer/consumer</td>
-<td>大量書き込み（VNET route、DASH SDN）で APPL_DB を経由しない直行路</td>
+<td>大量書き込み（<a href="../../../reference/glossary/#term-vnet">VNET</a> route、<a href="../../../reference/glossary/#term-dash">DASH</a> SDN）で APPL_DB を経由しない直行路</td>
 </tr>
 </tbody>
 </table>
@@ -23929,7 +23929,7 @@
 <ul>
 <li><strong>Redis の単一スレッド</strong>：全テーブルが redis-server の単一スレッドに直列化されるため、高 QPS 時には Redis 自体が bottleneck になりやすいです。複数インスタンス化はこのため。</li>
 <li><strong>CONFIG_DB ↔ APPL_DB の二段構造</strong>：CLI から CONFIG_DB に書いた直後に APPL_DB に同名 key が無い場合がある（<code>*mgrd</code> 経由のため）。SET 直後の STATE/APPL 確認は polling が必要。</li>
-<li><strong>ASIC_DB の write は async</strong>：sairedis の async mode により、ASIC_DB に書いた直後の SAI 反映確認は notification channel か COUNTERS_DB 経由でしか観測できない。</li>
+<li><strong>ASIC_DB の write は async</strong>：sairedis の async mode により、ASIC_DB に書いた直後の SAI 反映確認は notification channel か <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> 経由でしか観測できない。</li>
 <li><strong>Multi-ASIC は namespace で分離</strong>：同名 DB が複数ある。<code>-n asicX</code> を忘れた CLI は host 側の DB を読むだけで silent に成功する事故が多発する。</li>
 </ul>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23939,6 +23939,7 @@
 <li><a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis</a></li>
 <li><a href="../../20-swss-sai-redis/internals/">20 章 SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: d858f0f97b13 -->
 
 
 

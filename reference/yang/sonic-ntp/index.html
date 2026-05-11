@@ -23831,7 +23831,7 @@
 <li>import: <code>ietf-inet-types</code>, <code>sonic-port</code>, <code>sonic-mgmt_vrf</code>, <code>sonic-portchannel</code>, <code>sonic-loopback-interface</code>, <code>sonic-mgmt_port</code>, <code>sonic-types</code></li>
 <li>top container: <code>sonic-ntp</code></li>
 </ul>
-<p>Network Time Protocol (NTP) client configuration YANG module for SONiC OS.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Network Time Protocol (NTP) client configuration <a href="../../glossary/#term-yang">YANG</a> module for SONiC OS.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23910,7 +23910,7 @@
 <td></td>
 <td></td>
 <td>pattern <code>mgmt|default</code></td>
-<td>NTP can be enabled only in one VRF at a time. In this revision, it is either default VRF or Management VRF.</td>
+<td>NTP can be enabled only in one <a href="../../glossary/#term-vrf">VRF</a> at a time. In this revision, it is either default VRF or Management VRF.</td>
 </tr>
 <tr>
 <td><code>authentication</code></td>
@@ -24068,7 +24068,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>NTP</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>NTP</code></li>
 <li>CONFIG_DB: <code>NTP_SERVER</code></li>
 <li>CONFIG_DB: <code>NTP_KEY</code></li>
 <li>CLI: <code>config ntp</code></li>
@@ -24086,7 +24086,7 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>NTP / chrony 設定。<code>NTP_SERVER|&lt;host&gt;</code> / <code>NTP|global</code> を hostcfgd が chrony.conf に反映。</li>
+<li>NTP / chrony 設定。<code>NTP_SERVER|&lt;host&gt;</code> / <code>NTP|global</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が chrony.conf に反映。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
@@ -24105,6 +24105,8 @@
 <li><a href="../../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0072c8c44112 -->
 
 <div class="footnote">
 <hr />

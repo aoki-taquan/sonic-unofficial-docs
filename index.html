@@ -23676,10 +23676,10 @@
 <p class="admonition-title">最新の品質状態</p>
 <ul>
 <li><strong>code-verified ページ</strong>: 578 件（HLD と実コードを照合済み）</li>
-<li><strong>runbook-verified ページ</strong>: 20 件（Runbook 専用。実運用で症状再現性が確認済み）</li>
+<li><strong>runbook-verified ページ</strong>: 27 件（Runbook 専用。実運用で症状再現性が確認済み）</li>
 <li><strong>discrepancy-found ページ</strong>: 46 件（HLD と実装の乖離を明示）</li>
-<li><strong>監査平均評価</strong>: round 16 集計中（<code>meta/quality-audit-16.md</code>）</li>
-<li><strong>hld-only ページ</strong>: 7 件（裏取り待ち）</li>
+<li><strong>監査平均評価</strong>: round 18 集計中（<code>meta/quality-audit-18.md</code>）</li>
+<li>すべての本文ページが <code>hld-only</code> を脱却し、<code>code-verified</code> または <code>discrepancy-found</code> に到達済み</li>
 </ul>
 </div>
 <!-- quality-banner-end -->
@@ -23733,17 +23733,17 @@
 <p>目的に応じて、既存ページを読む順番をまとめたガイドです。</p>
 <ul>
 <li><a href="guides/beginner/">初学者向け</a>: SONiC の全体像、設定モデル、仮想環境での導入を順に把握したい読者向け。</li>
-<li><a href="guides/operator/">運用者向け</a>: 日々の確認、設定変更、障害調査、CONFIG_DB の意味確認を素早く引きたい読者向け。</li>
-<li><a href="guides/developer/">開発者向け</a>: HLD、YANG、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追いたい読者向け。</li>
+<li><a href="guides/operator/">運用者向け</a>: 日々の確認、設定変更、障害調査、<a href="reference/glossary/#term-config_db">CONFIG_DB</a> の意味確認を素早く引きたい読者向け。</li>
+<li><a href="guides/developer/">開発者向け</a>: <a href="reference/glossary/#term-hld">HLD</a>、<a href="reference/glossary/#term-yang">YANG</a>、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追いたい読者向け。</li>
 <li><a href="guides/evaluator/">評価者向け</a>: ラボで SONiC を起動し、基本設定と状態確認まで一連の流れを辿りたい読者向け。</li>
 </ul>
 <h2 id="sonic_1">SONiC とは<a class="headerlink" href="#sonic_1" title="Permanent link">&para;</a></h2>
 <p>SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベースのオープンソースなネットワーク OS（NOS）です。Microsoft と Open Compute Project（OCP）によって開発され、現在は Linux Foundation 配下のオープンソースプロジェクトとして運営されています。</p>
 <p>主要な構成要素:</p>
 <ul>
-<li><strong>SAI (Switch Abstraction Interface)</strong>: ASIC ベンダーを抽象化する標準 API</li>
-<li><strong>コンテナ化されたマイクロサービス群</strong>: BGP（FRR）、LLDP、SNMP、PMON など機能ごとに Docker コンテナで分離</li>
-<li><strong>Redis を中央データベースとした状態管理</strong>: CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB など</li>
+<li><strong><a href="reference/glossary/#term-sai">SAI</a> (Switch Abstraction Interface)</strong>: ASIC ベンダーを抽象化する標準 API</li>
+<li><strong>コンテナ化されたマイクロサービス群</strong>: <a href="reference/glossary/#term-bgp">BGP</a>（<a href="reference/glossary/#term-frr">FRR</a>）、<a href="reference/glossary/#term-lldp">LLDP</a>、<a href="reference/glossary/#term-snmp">SNMP</a>、PMON など機能ごとに Docker コンテナで分離</li>
+<li><strong><a href="reference/glossary/#term-redis">Redis</a> を中央データベースとした状態管理</strong>: CONFIG_DB / <a href="reference/glossary/#term-appl_db">APPL_DB</a> / <a href="reference/glossary/#term-state_db">STATE_DB</a> / <a href="reference/glossary/#term-asic_db">ASIC_DB</a> など</li>
 </ul>
 <h2 id="_3">このドキュメントの方針<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23791,6 +23791,7 @@
 <p>各ページの裏取りステータスは <a href="_meta/coverage/">カバレッジ</a> / <a href="reference/verification/discrepancy-index/">実装との乖離</a> で一覧できます。</p>
 <h2 id="_8">ライセンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>本ドキュメントの内容は、特に断りのない限り <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> のもとで提供されます。</p>
+<!-- glossary-links-injected: d0c50357f26c -->
 
 
 

@@ -24332,7 +24332,7 @@
 
 <h1 id="config-interface">config interface サブコマンド<a class="headerlink" href="#config-interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config interface</code> は物理ポート（<code>PORT</code>）・PortChannel・SubInterface・Loopback の <strong>state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID</strong> などをまとめて制御するサブグループ。IP アドレスや VRF 紐付け、IPv6 機能の有無、VRRP 設定、PFC / Storm-Control / Buffer / Transceiver もここから入る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config interface</code> は物理ポート（<code>PORT</code>）・<a href="../../glossary/#term-portchannel">PortChannel</a>・SubInterface・Loopback の <strong>state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID</strong> などをまとめて制御するサブグループ。IP アドレスや <a href="../../glossary/#term-vrf">VRF</a> 紐付け、IPv6 機能の有無、VRRP 設定、<a href="../../glossary/#term-pfc">PFC</a> / Storm-Control / Buffer / Transceiver もここから入る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>@config.group(...)</code> 直下で <code>--namespace</code>/<code>-n</code> を <strong>multi-ASIC のときだけ required</strong>として受け取り、<code>ConfigDBConnector(namespace=...)</code> を <code>ctx.obj['config_db']</code> に格納する仕組み。配下の各コマンドはこの connector を使って <code>PORT</code> 等を mod する。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># config/main.py L5080-L5092</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nd">@config</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="n">clicommon</span><span class="o">.</span><span class="n">AbbreviationGroup</span><span class="p">)</span>
@@ -24447,7 +24447,7 @@
 </tr>
 <tr>
 <td><code>config interface mpls</code></td>
-<td>MPLS 有効化 (<code>add</code> / <code>remove</code>)</td>
+<td><a href="../../glossary/#term-mpls">MPLS</a> 有効化 (<code>add</code> / <code>remove</code>)</td>
 </tr>
 <tr>
 <td><code>config interface buffer</code></td>
@@ -24523,7 +24523,7 @@ excerpt: |
 
 <h3 id="config-interface-speed-interface_name-speed"><code>config interface speed &lt;interface_name&gt; &lt;speed&gt;</code><a class="headerlink" href="#config-interface-speed-interface_name-speed" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-コマンド本体は CONFIG_DB を直接書かず、外部ツール <code>portconfig -p &lt;intf&gt; -s &lt;speed&gt;</code> を <code>subprocess</code> 起動する。<code>portconfig</code> 内部で <code>PORT</code> テーブルの <code>speed</code> フィールドが更新される。multi-ASIC 時は <code>-n &lt;namespace&gt;</code> が <code>portconfig</code> にも転送される。<code>-v|--verbose</code> で <code>-vv</code> を付与。</p>
+コマンド本体は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を直接書かず、外部ツール <code>portconfig -p &lt;intf&gt; -s &lt;speed&gt;</code> を <code>subprocess</code> 起動する。<code>portconfig</code> 内部で <code>PORT</code> テーブルの <code>speed</code> フィールドが更新される。multi-ASIC 時は <code>-n &lt;namespace&gt;</code> が <code>portconfig</code> にも転送される。<code>-v|--verbose</code> で <code>-vv</code> を付与。</p>
 <h3 id="config-interface-link-training-autoneg-advertised-speeds-type-advertised-types-mtu-tpid-fec"><code>config interface link-training</code> / <code>autoneg</code> / <code>advertised-speeds</code> / <code>type</code> / <code>advertised-types</code> / <code>mtu</code> / <code>tpid</code> / <code>fec</code><a class="headerlink" href="#config-interface-link-training-autoneg-advertised-speeds-type-advertised-types-mtu-tpid-fec" title="Permanent link">&para;</a></h3>
 <p>すべて <code>portconfig</code> 経由。フラグの違いだけ:</p>
 <table>
@@ -24617,7 +24617,7 @@ excerpt: |
 <h3 id="config-interface-ipv6-enable-use-link-local-only-interface-disable-use-link-local-only-interface"><code>config interface ipv6 enable use-link-local-only &lt;interface&gt;</code> / <code>disable use-link-local-only &lt;interface&gt;</code><a class="headerlink" href="#config-interface-ipv6-enable-use-link-local-only-interface-disable-use-link-local-only-interface" title="Permanent link">&para;</a></h3>
 <p>該当インタフェイスの IP テーブルに <code>ipv6_use_link_local_only</code> フィールドを <code>enable</code> / <code>disable</code> で書き込む。</p>
 <h3 id="config-interface-mpls-add-interface-remove-interface"><code>config interface mpls add &lt;interface&gt;</code> / <code>remove &lt;interface&gt;</code><a class="headerlink" href="#config-interface-mpls-add-interface-remove-interface" title="Permanent link">&para;</a></h3>
-<p>該当インタフェイス IP テーブルの <code>mpls</code> フィールドを <code>enable</code> / <code>disable</code> で書き込み、<code>intfmgrd</code> (sonic-swss/cfgmgr/intfmgr.cpp) が L3 MPLS を有効化する。</p>
+<p>該当インタフェイス IP テーブルの <code>mpls</code> フィールドを <code>enable</code> / <code>disable</code> で書き込み、<code>intfmgrd</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>/cfgmgr/intfmgr.cpp) が L3 MPLS を有効化する。</p>
 <h3 id="config-interface-buffer-priority-group-lossless-addremoveset"><code>config interface buffer priority-group lossless add/remove/set</code> 等<a class="headerlink" href="#config-interface-buffer-priority-group-lossless-addremoveset" title="Permanent link">&para;</a></h3>
 <p><code>BUFFER_PG</code> テーブルを操作し、ロスレス priority-group のバッファプロファイルをアサイン。</p>
 <h3 id="config-interface-transceiver-lpmode-interface-onoff"><code>config interface transceiver lpmode &lt;interface&gt; &lt;on|off&gt;</code><a class="headerlink" href="#config-interface-transceiver-lpmode-interface-onoff" title="Permanent link">&para;</a></h3>
@@ -24629,7 +24629,7 @@ excerpt: |
 <h3 id="config-interface-pfc-asymmetric-intf-onoff-priority-intf-prio-onoff"><code>config interface pfc asymmetric &lt;intf&gt; &lt;on|off&gt;</code> / <code>priority &lt;intf&gt; &lt;prio&gt; &lt;on|off&gt;</code><a class="headerlink" href="#config-interface-pfc-asymmetric-intf-onoff-priority-intf-prio-onoff" title="Permanent link">&para;</a></h3>
 <p><code>PORT</code> の <code>pfc_asym</code> および <code>pfc_enable</code> フィールドを更新する。</p>
 <h3 id="config-interface-dhcp-mitigation-rate-adddel-interface-rate"><code>config interface dhcp-mitigation-rate add/del &lt;interface&gt; &lt;rate&gt;</code><a class="headerlink" href="#config-interface-dhcp-mitigation-rate-adddel-interface-rate" title="Permanent link">&para;</a></h3>
-<p><code>PORT</code> テーブルの <code>dhcp_rate_limit</code> フィールドに kpps を書き込む。dhcprelayd が ingress rate-limiter として SAI に反映する。</p>
+<p><code>PORT</code> テーブルの <code>dhcp_rate_limit</code> フィールドに kpps を書き込む。dhcprelayd が ingress rate-limiter として <a href="../../glossary/#term-sai">SAI</a> に反映する。</p>
 <h3 id="config-interface-enable-disable-sample-rate-sample-direction"><code>config interface enable / disable / sample-rate / sample-direction</code><a class="headerlink" href="#config-interface-enable-disable-sample-rate-sample-direction" title="Permanent link">&para;</a></h3>
 <p>sFlow 関連。<code>SFLOW_SESSION</code> テーブルにポート単位エントリを更新する。</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
@@ -24711,8 +24711,8 @@ excerpt: |
 </ul>
 <h3 id="_10">よくある落とし穴<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>config interface speed</code> は対応 speed を超えると syncd でエラー。<code>show interfaces capabilities</code> で事前確認。</li>
-<li><code>config interface shutdown</code> は admin_status を down にするだけで、サブインタフェース・LAG メンバには独立に適用が必要。</li>
+<li><code>config interface speed</code> は対応 speed を超えると <a href="../../glossary/#term-syncd">syncd</a> でエラー。<code>show interfaces capabilities</code> で事前確認。</li>
+<li><code>config interface shutdown</code> は admin_status を down にするだけで、サブインタフェース・<a href="../../glossary/#term-lag">LAG</a> メンバには独立に適用が必要。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
@@ -24784,6 +24784,8 @@ excerpt: |
 <li><a href="../../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bb400b8b9471 -->
 
 <div class="footnote">
 <hr />

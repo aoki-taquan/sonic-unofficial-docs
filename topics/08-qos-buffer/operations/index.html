@@ -23774,7 +23774,7 @@
 
 
 <h1 id="qos-buffer">QoS / Buffer の運用<a class="headerlink" href="#qos-buffer" title="Permanent link">&para;</a></h1>
-<p>「アプリが詰まる」「PFC で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理します。</p>
+<p>「アプリが詰まる」「<a href="../../../reference/glossary/#term-pfc">PFC</a> で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理します。</p>
 <h2 id="4">まず叩く 4 コマンド<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23828,7 +23828,7 @@
 <li><code>show interfaces counters</code> で port 全体の drop を確認。</li>
 <li><code>show queue counters</code> で egress 側 queue の drop が立っているか。立っていればその queue を持つ flow（DSCP / TC）を <a href="../../../reference/config-db/dscp-to-tc-map/"><code>DSCP_TO_TC_MAP</code></a> と <a href="../../../reference/config-db/tc-to-queue-map/"><code>TC_TO_QUEUE_MAP</code></a> から逆引き。</li>
 <li>立っていなければ ingress 側を疑い、<a href="../../../acl-qos/port-buffer-drop-counters-in-sonic/">port buffer drop counters</a> の系列カウンタ（<code>SAI_PORT_STAT_IN_DROPPED_PKTS</code> 系 / <code>SAI_PORT_STAT_PFC_*_RX_PKTS</code> など）を <code>portstat -j</code> 系で取り、ingress PG drop かどうかを切り分け。</li>
-<li>WRED / ECN が動いている経路なら <a href="../../../acl-qos/wred-and-ecn-statistics/">WRED and ECN statistics</a> のカウンタで、drop と mark の比率を見る。</li>
+<li><a href="../../../reference/glossary/#term-wred">WRED</a> / ECN が動いている経路なら <a href="../../../acl-qos/wred-and-ecn-statistics/">WRED and ECN statistics</a> のカウンタで、drop と mark の比率を見る。</li>
 </ol>
 <p>切り分けは「どの DB に何が出ているか」を意識すると速いです:</p>
 <table>
@@ -23946,7 +23946,7 @@
 </span></code></pre></div>
 <p><code>headroom</code> 系の watermark が 0 でない PG が、lossless で xoff を消費した瞬間値です。常時 0 ではないが小さい、なら設計範囲内です。0 から急に大きな値になっているなら burst の発生時刻を syslog と照合します。</p>
 <h2 id="telemetry-counter">telemetry / counter の収集間隔<a class="headerlink" href="#telemetry-counter" title="Permanent link">&para;</a></h2>
-<p>FlexCounter のポーリング間隔は CONFIG_DB の <code>FLEX_COUNTER_TABLE</code> で変えられます。queue / PG / pool / PFCWD ごとに独立しているので、短くしたいものだけ短くすれば SAI 側の負荷も抑えられます。観測値の単位や意味は <a href="../../../acl-qos/watermark-counters-in-sonic/">watermark counters in SONiC</a> の表が一次資料です。</p>
+<p><a href="../../../reference/glossary/#term-flexcounter">FlexCounter</a> のポーリング間隔は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>FLEX_COUNTER_TABLE</code> で変えられます。queue / PG / pool / PFCWD ごとに独立しているので、短くしたいものだけ短くすれば <a href="../../../reference/glossary/#term-sai">SAI</a> 側の負荷も抑えられます。観測値の単位や意味は <a href="../../../acl-qos/watermark-counters-in-sonic/">watermark counters in SONiC</a> の表が一次資料です。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ counterpoll show
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Type                     Interval (in ms)    Status
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>-----------------------  ------------------  --------
@@ -23991,7 +23991,7 @@
 <tr>
 <td>設定したのに反映されない</td>
 <td><code>redis-cli -n 4 hgetall BUFFER_PROFILE\|...</code></td>
-<td>CONFIG_DB と STATE_DB</td>
+<td>CONFIG_DB と <a href="../../../reference/glossary/#term-state_db">STATE_DB</a></td>
 </tr>
 <tr>
 <td>port 削除直後の幽霊 watermark</td>
@@ -24003,10 +24003,11 @@
 <h2 id="_3">関連章<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>章 <a href="../../07-acl-copp-mirror/operations/">07 ACL / CoPP / mirror</a> — drop の入口の切り分け</li>
-<li>章 <a href="../../09-telemetry-snmp/operations/">09 telemetry / SNMP / observability</a> — counter を gNMI で取る</li>
-<li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — QoS / Buffer の宣言的設定</li>
+<li>章 <a href="../../09-telemetry-snmp/operations/">09 telemetry / SNMP / observability</a> — counter を <a href="../../../reference/glossary/#term-gnmi">gNMI</a> で取る</li>
+<li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — <a href="../../../reference/glossary/#term-qos">QoS</a> / Buffer の宣言的設定</li>
 <li><a href="../../../reference/config-db/buffer-pool/">Buffer Pool / Profile スキーマ</a></li>
 </ul>
+<!-- glossary-links-injected: c27ed40a8e10 -->
 
 
 

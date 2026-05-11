@@ -23852,10 +23852,10 @@
 </div>
 <h1 id="l2-forwarding">L2 Forwarding 強化<a class="headerlink" href="#l2-forwarding" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ拡張するのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する HLD<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する <a href="../../reference/glossary/#term-hld">HLD</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li><strong>per-port / per-VLAN / per-(port,VLAN) FDB flush</strong> （port down / VLAN 抜去 / STP topo change 時）</li>
-<li><strong>MAC move event</strong> の SAI / orchagent 対応</li>
+<li><strong>per-port / per-<a href="../../reference/glossary/#term-vlan">VLAN</a> / per-(port,VLAN) <a href="../../reference/glossary/#term-fdb">FDB</a> flush</strong> （port down / VLAN 抜去 / STP topo change 時）</li>
+<li><strong>MAC move event</strong> の <a href="../../reference/glossary/#term-sai">SAI</a> / <a href="../../reference/glossary/#term-orchagent">orchagent</a> 対応</li>
 <li><strong>FDB aging time の CLI 設定</strong>（既定 600 秒、0〜1,000,000 秒）</li>
 <li><strong>Static FDB の CLI 設定</strong></li>
 <li><strong><code>sonic-clear fdb</code> 拡張</strong>（port / VLAN 指定）</li>
@@ -23921,7 +23921,7 @@
 <li>VLAN range bulk 中の途中失敗 rollback は HLD 上明示なし</li>
 </ul>
 <h2 id="_3">干渉する機能<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p><code>FdbOrch</code>（主体）/ <code>SwitchOrch</code>（aging）/ <code>VlanMgr</code> / <code>VlanOrch</code> / STP / teamd・Portchannel（down 時 flush）/ warm boot / sonic-utilities</p>
+<p><code>FdbOrch</code>（主体）/ <code>SwitchOrch</code>（aging）/ <code>VlanMgr</code> / <code>VlanOrch</code> / STP / <a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>・Portchannel（down 時 flush）/ warm boot / <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a></p>
 <h2 id="_4">実装との乖離<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>実コード裏取りで判明（verified at: 2026-05-09）:</p>
 <h3 id="1-config-mac-config-vlan-range-cli">1. <code>config mac</code> / <code>config vlan range</code> CLI 未取り込み<a class="headerlink" href="#1-config-mac-config-vlan-range-cli" title="Permanent link">&para;</a></h3>
@@ -23970,6 +23970,8 @@
 <li><a href="../../topics/06-l2-vlan-lag/">Topics: L2 / VLAN / LAG / MC-LAG</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 621fc85fd285 -->
 
 <div class="footnote">
 <hr />

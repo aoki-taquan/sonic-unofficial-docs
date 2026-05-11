@@ -23862,8 +23862,8 @@
 </div>
 <h1 id="generic-sai-extension-crmcrm_ext_table">Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）<a class="headerlink" href="#generic-sai-extension-crmcrm_ext_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CRM（Critical Resource Monitoring）は SONiC で <strong>ASIC リソースの利用状況</strong> を COUNTERS_DB に publish する仕組みで、ACL / FDB / IP route / nexthop など主要リソースに対しては既に実装されている。</p>
-<p>本 HLD は <strong>Generic SAI Extension（汎用拡張）テーブル</strong> に対しても CRM をサポートするための設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Generic SAI Extension は <strong><code>SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE</code></strong> という抽象を介して、P4 由来の追加テーブル（例: <code>EXT_VIPV4_TABLE</code> など）を SAI 経由でハードに降ろすための機構。これらは標準 SAI オブジェクトの列に載っていないため、CRM の resource type も新しく作る必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-crm">CRM</a>（Critical Resource Monitoring）は SONiC で <strong>ASIC リソースの利用状況</strong> を <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に publish する仕組みで、<a href="../../reference/glossary/#term-acl">ACL</a> / <a href="../../reference/glossary/#term-fdb">FDB</a> / IP route / nexthop など主要リソースに対しては既に実装されている。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>Generic <a href="../../reference/glossary/#term-sai">SAI</a> Extension（汎用拡張）テーブル</strong> に対しても CRM をサポートするための設計を定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Generic SAI Extension は <strong><code>SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE</code></strong> という抽象を介して、P4 由来の追加テーブル（例: <code>EXT_VIPV4_TABLE</code> など）を SAI 経由でハードに降ろすための機構。これらは標準 SAI オブジェクトの列に載っていないため、CRM の resource type も新しく作る必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>スコープは「<strong>used / available の COUNTERS_DB への publish と既存 CRM の watermark チェックの活用</strong>」のみ。新たなユーザ向け設定パラメータは追加しない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="resource-type">新しい resource type<a class="headerlink" href="#resource-type" title="Permanent link">&para;</a></h3>
@@ -23977,7 +23977,7 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当する CONFIG_DB エントリは無い。CRM 側の既存設定（<code>CRM</code> テーブルの polling interval や watermark threshold）が新 resource type にも効く前提<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>該当する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリは無い。CRM 側の既存設定（<code>CRM</code> テーブルの polling interval や watermark threshold）が新 resource type にも効く前提<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>既存 CRM CLI（<code>crm config polling interval</code>, <code>crm config thresholds *</code>, <code>crm show resources</code> 等）が再利用される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD では新規 CLI は追加されない。</p>
 <h3 id="_4">確認方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
@@ -23985,7 +23985,7 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;*EXT_TABLE_STATS*&#39;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>HGETALL<span class="w"> </span>CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE
 </span></code></pre></div>
-<p><code>crm show resources</code> 系のサブコマンドが extension table を扱えるかどうかは sonic-utilities の実装に依存する（裏取り課題）。</p>
+<p><code>crm show resources</code> 系のサブコマンドが extension table を扱えるかどうかは <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> の実装に依存する（裏取り課題）。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>スコープが <strong>used / available の publish</strong> に限定される。<strong>extension table 専用の追加設定（個別の閾値など）は提供しない</strong><sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -23998,14 +23998,14 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 <li><strong>CrmOrch（既存）</strong>: 新 resource type の登録だけが追加の変更。polling / watermark check の枠組みはそのまま使える<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>P4Orch (extension table manager)</strong>: used カウンタの増減を呼ぶ責任を負う。新規 extension table を追加した際にも本機構に追従する必要がある<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong><code>SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE</code></strong>: SAI 拡張の根幹オブジェクト。available 取得経路として <code>OBJECT_NAME</code> 属性が利用される<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>テレメトリ / dial-out</strong>: COUNTERS_DB の <code>CRM:EXT_TABLE_STATS:*</code> がそのままテレメトリ系の購読対象になりうる。命名規則 <code>EXT_TABLE_STATS</code> を前提にした gNMI path 等の設計とリンクしうる。</li>
+<li><strong>テレメトリ / dial-out</strong>: COUNTERS_DB の <code>CRM:EXT_TABLE_STATS:*</code> がそのままテレメトリ系の購読対象になりうる。命名規則 <code>EXT_TABLE_STATS</code> を前提にした <a href="../../reference/glossary/#term-gnmi">gNMI</a> path 等の設計とリンクしうる。</li>
 <li><strong>ACL / FDB 等の既存 CRM</strong>: 同じ enum 機構の延長線上にある。新規追加が他リソースに副作用を与えない構造（<code>m_resourcesMap</code> の独立エントリ）<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>CRM:EXT_TABLE_STATS:*</code> キーが redis に出ない: P4Orch 側で extension table エントリが 1 件も登録されていない、または CrmOrch のポーリングがまだ走っていない可能性。<code>crm config polling interval</code> の値を確認<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>available</code> が 0 のまま: SAI 実装が <code>sai_object_type_get_availability(GENERIC_PROGRAMMABLE, OBJECT_NAME)</code> を実装していない可能性<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>syncd</code> のログに該当エラーが出ているか確認。</li>
-<li><code>used</code> の値が実体とずれる: P4Orch の <code>inc/dec</code> 呼び出しが add/del の成功パスから外れている可能性。orchagent ログで該当 entry の操作結果を追う<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>used</code> の値が実体とずれる: P4Orch の <code>inc/dec</code> 呼び出しが add/del の成功パスから外れている可能性。<a href="../../reference/glossary/#term-orchagent">orchagent</a> ログで該当 entry の操作結果を追う<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>watermark アラートが上がらない: 既存 CRM の閾値設定（<code>crm config thresholds</code>）を本テーブル用にも適用しているか確認。HLD は <strong>既存設定の継承</strong> を前提にしている<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -24021,6 +24021,8 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7546137af680 -->
 
 <div class="footnote">
 <hr />

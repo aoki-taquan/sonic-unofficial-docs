@@ -23784,7 +23784,7 @@
 <tr>
 <td><code>db_migrator</code> (<code>fast-reboot-dump.py</code> ではなく <code>db_migrator.py</code>)</td>
 <td>python</td>
-<td>CONFIG_DB の schema migration（古い key を新形式へ）</td>
+<td><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の schema migration（古い key を新形式へ）</td>
 </tr>
 <tr>
 <td><code>swss</code> warm-restart</td>
@@ -23794,17 +23794,17 @@
 <tr>
 <td><code>syncd</code> warm-restart</td>
 <td><code>syncd/syncd.cpp</code> の WARM モード</td>
-<td>ASIC 状態は触らず、<code>ASIC_DB</code> の view と SAI obj を再同期</td>
+<td>ASIC 状態は触らず、<code>ASIC_DB</code> の view と <a href="../../../reference/glossary/#term-sai">SAI</a> obj を再同期</td>
 </tr>
 <tr>
 <td><code>bgp</code> warm-restart</td>
-<td>FRR (<code>bgpd</code> の graceful restart)</td>
+<td><a href="../../../reference/glossary/#term-frr">FRR</a> (<code>bgpd</code> の graceful restart)</td>
 <td>helper / restarter で advertise を維持</td>
 </tr>
 <tr>
 <td><code>teamd</code> warm-restart</td>
-<td>teamd graceful</td>
-<td>LACP セッションを切らずに保持</td>
+<td><a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> graceful</td>
+<td><a href="../../../reference/glossary/#term-lacp">LACP</a> セッションを切らずに保持</td>
 </tr>
 </tbody>
 </table>
@@ -23828,17 +23828,17 @@
 </ul>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>warm-restart の進捗通知は <strong>STATE_DB の通常 key + Redis pub/sub</strong> で実装され、ZMQ は使いません。</li>
+<li>warm-restart の進捗通知は <strong><a href="../../../reference/glossary/#term-state_db">STATE_DB</a> の通常 key + <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub</strong> で実装され、ZMQ は使いません。</li>
 <li><code>warmboot-finalizer</code> は <code>STATE_DB:WARM_RESTART_TABLE|*</code> を subscribe して全件 reconciled を検知します。</li>
-<li>BGP は FRR 内で graceful restart の制御を行い、SONiC 側は <code>WARM_RESTART_TABLE|bgp</code> の状態だけを更新します。</li>
+<li><a href="../../../reference/glossary/#term-bgp">BGP</a> は FRR 内で graceful restart の制御を行い、SONiC 側は <code>WARM_RESTART_TABLE|bgp</code> の状態だけを更新します。</li>
 </ul>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>warm-reboot は ASIC の SDK が warm boot をサポートしている前提</strong>で、Edgecore / NVIDIA Mellanox / Broadcom SAI で動作する一方、新しい SoC 上の port speed 変化や FW upgrade を含む変更は warm でカバーできません。fast-reboot にフォールバックする選択肢を運用で持つ必要があります。</li>
 <li><code>db_migrator</code> の migration は前進方向のみで、新版 → 旧版の downgrade migration は基本サポートされません（image rollback 時は startup config を別途準備する運用です）。</li>
-<li>warmboot 中の <strong><code>CONFIG_DB</code> への書き込み禁止</strong>は厳密で、<code>gnmi SET</code> や <code>config</code> CLI が走ると orchagent 復元中に整合性が崩れます。warm-reboot 中の write は管理側でブロックしてください。</li>
+<li>warmboot 中の <strong><code>CONFIG_DB</code> への書き込み禁止</strong>は厳密で、<code>gnmi SET</code> や <code>config</code> CLI が走ると <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 復元中に整合性が崩れます。warm-reboot 中の write は管理側でブロックしてください。</li>
 <li><code>fast-reboot</code> は data plane が ~30s 切れる前提で設計されており、warm-reboot より要求 SAI 機能が少なく対応 ASIC が広い一方、BGP の収束待ちが入ります。</li>
-<li>ONIE / image install 系（<code>sonic-installer</code>）は SONiC の docker image を持ち回るためサイズが大きく、<code>/host</code> パーティションの空き容量が問題になりやすいです。HLD の <code>image dir 構造</code>を運用で意識する必要があります。</li>
+<li>ONIE / image install 系（<code>sonic-installer</code>）は SONiC の docker image を持ち回るためサイズが大きく、<code>/host</code> パーティションの空き容量が問題になりやすいです。<a href="../../../reference/glossary/#term-hld">HLD</a> の <code>image dir 構造</code>を運用で意識する必要があります。</li>
 </ul>
 <h2 id="fast-reboot">fast-reboot タイムライン<a class="headerlink" href="#fast-reboot" title="Permanent link">&para;</a></h2>
 <p>fast-reboot は data plane が一時的に切れる前提で、warm-reboot より要求 SAI 機能が少ない代わりに以下の順序で進みます。</p>
@@ -23855,7 +23855,7 @@
   K-&gt;&gt;SWSS: start (warm-start framework reuses saved state)
   SWSS-&gt;&gt;BGP: notify warm-restart
   BGP-&gt;&gt;BGP: graceful restart (re-establish peers)</code></pre>
-<p><code>scripts/fast-reboot-dump.py</code> が ASIC/FDB の dump を取り、<code>/host/fast-reboot/</code> に保存します。新 image 起動後の <code>fast-reboot-finalizer</code> が dump と比較して route / neighbor の差分を打ち消します。</p>
+<p><code>scripts/fast-reboot-dump.py</code> が ASIC/<a href="../../../reference/glossary/#term-fdb">FDB</a> の dump を取り、<code>/host/fast-reboot/</code> に保存します。新 image 起動後の <code>fast-reboot-finalizer</code> が dump と比較して route / neighbor の差分を打ち消します。</p>
 <h2 id="sonic-installer">sonic-installer の内部<a class="headerlink" href="#sonic-installer" title="Permanent link">&para;</a></h2>
 <p><code>sonic-installer</code> は <code>/host/image-&lt;version&gt;/</code> 配下に新 image を展開する CLI です。</p>
 <ul>
@@ -23876,6 +23876,7 @@
 <li><a href="../../../system/sonic-configuration-setup-service/">Config setup</a></li>
 <li><a href="../upgrade/">SONiC upgrade</a></li>
 </ul>
+<!-- glossary-links-injected: f2120391923d -->
 
 
 

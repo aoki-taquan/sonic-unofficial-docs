@@ -23927,7 +23927,7 @@
 </div>
 <h1 id="frr-sysctl">FRR 用 sysctl チューニングのデフォルト<a class="headerlink" href="#frr-sysctl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の制御プレーンでは FRR を使ってルーティングプロトコル（BGP / OSPF / 等）を回す。Linux カーネルの sysctl は <strong>forwarding 有効化、ARP 挙動、neighbor GC、ルート / IGMP / MLD のスケール上限など</strong> を細かく制御でき、FRR の挙動を大きく左右する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の制御プレーンでは <a href="../../reference/glossary/#term-frr">FRR</a> を使ってルーティングプロトコル（<a href="../../reference/glossary/#term-bgp">BGP</a> / OSPF / 等）を回す。Linux カーネルの sysctl は <strong>forwarding 有効化、<a href="../../reference/glossary/#term-arp">ARP</a> 挙動、neighbor GC、ルート / IGMP / MLD のスケール上限など</strong> を細かく制御でき、FRR の挙動を大きく左右する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>このページは sonic-frr 同梱の <code>doc/user/Useful_Sysctl_Settings.md</code> が示す <strong>「論理的なデフォルト set」</strong> を整理したもの。BGP unnumbered や OSPF を素直に動かすのに有用な値が並ぶ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <blockquote>
 <p>注意: これは <strong>FRR 上流の推奨値</strong>。SONiC のリリースイメージが同じ値を採用しているかは別途確認が必要。本ページの値を直接 <code>/etc/sysctl.d/99frr_defaults.conf</code> に流し込むなら、SONiC 既定値との差分を意識する必要がある。</p>
@@ -23995,11 +23995,11 @@
 <h3 id="ecmp-neighbor">ECMP の neighbor 利用<a class="headerlink" href="#ecmp-neighbor" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>net.ipv4.fib_multipath_use_neigh = 1
 </span></code></pre></div>
-<p>multipath ECMP の nexthop 選択に <strong>neighbor 情報を使う</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>multipath <a href="../../reference/glossary/#term-ecmp">ECMP</a> の nexthop 選択に <strong>neighbor 情報を使う</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="vrf-tcp">VRF と TCP<a class="headerlink" href="#vrf-tcp" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>net.ipv4.tcp_l3mdev_accept = 1
 </span></code></pre></div>
-<p>VRF（L3 master device）に bind されていない app からも、VRF 上の TCP 接続を受けられるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC で management VRF を使う場合などに有用。</p>
+<p><a href="../../reference/glossary/#term-vrf">VRF</a>（L3 master device）に bind されていない app からも、VRF 上の TCP 接続を受けられるようにする<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC で management VRF を使う場合などに有用。</p>
 <h3 id="_4">適用方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>ファイルとして <code>/etc/sysctl.d/99frr_defaults.conf</code> に配置し、再起動するか以下で即時反映する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sysctl<span class="w"> </span>-p<span class="w"> </span>/etc/sysctl.d/99frr_defaults.conf
@@ -24040,7 +24040,7 @@ reasoning: 推奨デフォルト群の出典・キー名の根拠。
 
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。sysctl は Linux カーネルの設定で、SONiC の CONFIG_DB は通らない。</p>
+<p>該当なし。sysctl は Linux カーネルの設定で、SONiC の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> は通らない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当なし。SONiC の <code>config</code> 系から sysctl を直接編集する CLI は無い。Linux 標準の <code>sysctl</code> / <code>/etc/sysctl.d/</code> を使う。</p>
 <h3 id="_6">確認方法<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
@@ -24076,6 +24076,8 @@ reasoning: 推奨デフォルト群の出典・キー名の根拠。
 <li>mgmt VRF 上のアプリで bind 失敗: <code>tcp_l3mdev_accept=1</code> の有無を確認<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 3ded3a99de10 -->
+
 <div class="footnote">
 <hr />
 <ol>

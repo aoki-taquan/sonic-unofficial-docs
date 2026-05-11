@@ -23780,7 +23780,7 @@
 
 <h1 id="kubernetes_master">KUBERNETES_MASTER テーブル<a class="headerlink" href="#kubernetes_master" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。SONiC の K8s 統合 (Smart Switch でも参照される DPU 管理経路の一部) でコンテナ化された feature を K8s から起動するために使われる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。SONiC の K8s 統合 (Smart Switch でも参照される <a href="../../glossary/#term-dpu">DPU</a> 管理経路の一部) でコンテナ化された feature を K8s から起動するために使われる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23836,14 +23836,14 @@
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>ctrmgrd</code> (<code>docker-config-engine</code>): CONFIG_DB を購読し、対象 feature の K8s モード切替・kubelet 設定を実施</li>
+<li><code>ctrmgrd</code> (<code>docker-config-engine</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、対象 feature の K8s モード切替・kubelet 設定を実施</li>
 <li><code>FEATURE</code> テーブルの <code>set_owner = kube</code> を持つコンテナが K8s からデプロイされる</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>FEATURE</code> (<code>set_owner</code>、<code>state</code>、<code>auto_restart</code>)</li>
 <li>関連 CLI: <code>config kubernetes server ip/port/disable</code>、<code>show kubernetes</code></li>
-<li>関連 YANG: <code>sonic-kubernetes_master</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-kubernetes_master</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23871,6 +23871,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>kube<span class="w"> </span>server<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: c8088b9a65fe -->
 
 <div class="footnote">
 <hr />

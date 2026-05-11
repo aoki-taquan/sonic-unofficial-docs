@@ -23818,7 +23818,7 @@
 </div>
 <h1 id="rif">ルータインタフェース (RIF) カウンタ<a class="headerlink" href="#rif" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC のポート単位カウンタ（<code>portstat</code> 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される <strong>ルータインタフェース (RIF)</strong> 単位の入出力統計は別経路で取得する必要がある。RIF とは物理ポート上の Router Port、VLAN インタフェース、ポートチャネル上の L3 サブインタフェースなど、SAI が <code>sai_router_interface</code> オブジェクトとして扱うものを指す。</p>
+<p>SONiC のポート単位カウンタ（<code>portstat</code> 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される <strong>ルータインタフェース (<a href="../../reference/glossary/#term-rif">RIF</a>)</strong> 単位の入出力統計は別経路で取得する必要がある。RIF とは物理ポート上の Router Port、<a href="../../reference/glossary/#term-vlan">VLAN</a> インタフェース、ポートチャネル上の L3 サブインタフェースなど、<a href="../../reference/glossary/#term-sai">SAI</a> が <code>sai_router_interface</code> オブジェクトとして扱うものを指す。</p>
 <p>本機能は SAI の <code>SAI_ROUTER_INTERFACE_STAT_*</code> カウンタを <strong>flex counter で定期取得</strong> し、<code>COUNTERS_DB</code> に集約したうえで、<code>show interfaces counters rif</code> CLI から RX/TX のパケット・バイト・エラーを表示できるようにするものである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">データ経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -23892,7 +23892,7 @@
 </tr>
 <tr>
 <td><code>COUNTERS_RIF_TYPE_MAP</code></td>
-<td>RIF OID ↔ 種別（LAG / Vlan 等）</td>
+<td>RIF OID ↔ 種別（<a href="../../reference/glossary/#term-lag">LAG</a> / Vlan 等）</td>
 </tr>
 </tbody>
 </table>
@@ -23927,7 +23927,7 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 <!-- evidence-rendered:end -->
 
 <h3 id="telemetry">Telemetry 経由の参照<a class="headerlink" href="#telemetry" title="Permanent link">&para;</a></h3>
-<p><code>sonic-telemetry</code> 経由でも参照できる。スキーマ直叩きでは VID をキーとするため、HLD は <strong>virtual path</strong> 経由の参照を推奨している<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>sonic-telemetry</code> 経由でも参照できる。スキーマ直叩きでは VID をキーとするため、<a href="../../reference/glossary/#term-hld">HLD</a> は <strong>virtual path</strong> 経由の参照を推奨している<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -23956,7 +23956,7 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 </table>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には専用の CONFIG_DB エントリは記載されていない。flex counter のインターバル変更等は既存の <code>FLEX_COUNTER_TABLE</code> 経路で行うと推測されるが本 HLD のスコープ外（実装裏取りが必要）。</p>
+<p>HLD には専用の <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリは記載されていない。flex counter のインターバル変更等は既存の <code>FLEX_COUNTER_TABLE</code> 経路で行うと推測されるが本 HLD のスコープ外（実装裏取りが必要）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24003,7 +24003,7 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>portstat</strong>: 別系統。<code>SAI_PORT_STAT_*</code> カウンタを使い、L2 視点のドロップやエラーを返す。RIF カウンタはあくまで L3 視点であり、両者を合算した値ではない。</li>
-<li><strong><code>Port_illegal_packets_drop_design</code> (Interface MIB)</strong>: SNMP 側では RIF カウンタは独立エントリではなく、対応する物理ポートの Interface MIB に <strong>集約</strong> されて返る。RIF カウンタが MIB と CLI で独立しているのは仕様上正しい。</li>
+<li><strong><code>Port_illegal_packets_drop_design</code> (Interface MIB)</strong>: <a href="../../reference/glossary/#term-snmp">SNMP</a> 側では RIF カウンタは独立エントリではなく、対応する物理ポートの Interface MIB に <strong>集約</strong> されて返る。RIF カウンタが MIB と CLI で独立しているのは仕様上正しい。</li>
 <li><strong>flex counter インターバル</strong>: ポートカウンタと同じ既定 1 秒。負荷増を懸念する場合はインターバルを長くする運用が考えられる。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -24019,6 +24019,8 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 21d98f8b47d2 -->
 
 <div class="footnote">
 <hr />

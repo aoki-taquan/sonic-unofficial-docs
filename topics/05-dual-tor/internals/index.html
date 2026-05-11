@@ -23847,10 +23847,10 @@
 <p>Active-Active では mux 方向ではなく、リンクごとの forwarding state が中心になります。<code>linkmgrd</code> は admin forwarding state を設定し、NIC 側は operational forwarding state として実際に転送できるかを判断します。</p>
 <h2 id="muxorch"><code>MuxOrch</code> が避ける障害<a class="headerlink" href="#muxorch" title="Permanent link">&para;</a></h2>
 <p><code>MuxOrch</code> の仕事は、mux state を ASIC の転送状態に落とすことです。Active-Standby で standby 側にサーバ宛パケットが来た場合、直接サーバへ出すのではなく MuxTunnel へ向ける必要があります。</p>
-<p>prefix-based neighbor は、この切替を軽くするための方式です。neighbor entry を作り直さず、サーバ IP の <code>/32</code> または <code>/128</code> route の nexthop だけを直接 neighbor と tunnel の間で切り替えます。大量の neighbor を持つ ToR で、状態遷移時の SAI 操作を減らすための設計です。</p>
-<p>multi-nexthop route のループ回避も同じ文脈です。1 つの route が複数 nexthop を持ち、その一部が active、一部が standby になると、ECMP の一部が tunnel へ入り、peer ToR 側でまた戻ってくる可能性があります。このため <code>MuxOrch</code> は active nexthop がある場合は単一 nexthop に絞り、全て standby なら tunnel を選ぶ、という動きをします。</p>
+<p>prefix-based neighbor は、この切替を軽くするための方式です。neighbor entry を作り直さず、サーバ IP の <code>/32</code> または <code>/128</code> route の nexthop だけを直接 neighbor と tunnel の間で切り替えます。大量の neighbor を持つ ToR で、状態遷移時の <a href="../../../reference/glossary/#term-sai">SAI</a> 操作を減らすための設計です。</p>
+<p>multi-nexthop route のループ回避も同じ文脈です。1 つの route が複数 nexthop を持ち、その一部が active、一部が standby になると、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> の一部が tunnel へ入り、peer ToR 側でまた戻ってくる可能性があります。このため <code>MuxOrch</code> は active nexthop がある場合は単一 nexthop に絞り、全て standby なら tunnel を選ぶ、という動きをします。</p>
 <h2 id="default-route">default route 連動の意味<a class="headerlink" href="#default-route" title="Permanent link">&para;</a></h2>
-<p>サーバ側リンクが正常でも、ToR から上流への default route が消えていると、その ToR を active にしても上りがブラックホールになります。default route 連動は、orchagent が STATE_DB に公開する default route 状態を <code>linkmgrd</code> が読み、default route が無い側を standby 寄りに倒すための仕組みです。</p>
+<p>サーバ側リンクが正常でも、ToR から上流への default route が消えていると、その ToR を active にしても上りがブラックホールになります。default route 連動は、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に公開する default route 状態を <code>linkmgrd</code> が読み、default route が無い側を standby 寄りに倒すための仕組みです。</p>
 <p>重要なのは、これは mux state machine に新しい障害源を足しているというより、「default route が無い間は heartbeat を止める」ことで既存の不健全判定に乗せる設計だという点です。manual mode では自動切替しない、両 ToR で default route を失っても揺れ続けない、という性質を守るために状態キャッシュも必要になります。</p>
 <h2 id="grpc-client">gRPC client はどこに入るか<a class="headerlink" href="#grpc-client" title="Permanent link">&para;</a></h2>
 <p>Active-Active では、ToR から SoC NIC へ forwarding state を問い合わせたり設定したりします。この経路が gRPC client です。<code>ycabled</code> 側から proto 生成された stub を使って SoC の service を呼び、channel state や応答を DB に反映します。</p>
@@ -23883,7 +23883,7 @@
 <tr>
 <td><code>MuxCableOrch</code></td>
 <td><code>MuxCableOrch::updateMuxState</code></td>
-<td>APPL_DB の <code>MUX_CABLE_TABLE</code> を読み、tunnel route の付け替え</td>
+<td><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>MUX_CABLE_TABLE</code> を読み、tunnel route の付け替え</td>
 </tr>
 <tr>
 <td><code>TunnelDecapOrch</code></td>
@@ -23943,13 +23943,13 @@
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Dual-ToR は <strong>Redis pub/sub のみ</strong>で ZMQ は使われていません。</li>
-<li>linkmgrd は <code>STATE_DB:MUX_CABLE_TABLE</code> を SubscriberStateTable で監視。</li>
+<li>Dual-ToR は <strong><a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub のみ</strong>で ZMQ は使われていません。</li>
+<li><a href="../../../reference/glossary/#term-linkmgrd">linkmgrd</a> は <code>STATE_DB:MUX_CABLE_TABLE</code> を SubscriberStateTable で監視。</li>
 <li>Active-Active gRPC は SoC NIC と TLS 上で双方向 stream。 SONiC コンテナ内の <code>linkmgrd</code> プロセス自体が gRPC client。</li>
 </ul>
 <h2 id="_2">既知の実装上の制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>linkmgrd</code> の状態機械は <strong>per-port</strong>で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。HLD では individual port basis 設計。</li>
+<li><code>linkmgrd</code> の状態機械は <strong>per-port</strong>で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。<a href="../../../reference/glossary/#term-hld">HLD</a> では individual port basis 設計。</li>
 <li><code>MuxOrch</code> は active → standby 切替時に neighbor を<strong>削除 → tunnel nexthop へ再作成</strong>する path を取るため、ASIC で neighbor を作り直すコストが大きい場合の path として prefix-based mux neighbors が導入された。</li>
 <li>Active-Active で SoC NIC が応答しない場合、<code>linkmgrd</code> 側は admin forwarding state を変えても operational state が追従しないため、observability が不十分という指摘が PR レビューで複数挙がっている。</li>
 <li>gRPC channel が切断中は <code>linkmgrd</code> が default の "active" 想定で進む傾向があり、両 ToR で active になる split-brain 風の状態を運用で監視する必要がある。</li>
@@ -23997,6 +23997,7 @@
 <li><a href="../../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR</a></li>
 <li><a href="../../../overlay/active-active-dual-tor/">Active-Active Dual ToR</a></li>
 </ul>
+<!-- glossary-links-injected: cf9db24b8f55 -->
 
 
 

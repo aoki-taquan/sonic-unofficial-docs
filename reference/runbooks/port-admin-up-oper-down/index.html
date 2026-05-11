@@ -23670,9 +23670,9 @@
 <ol>
 <li><strong>Transceiver 未挿入 / EEPROM 異常</strong> — <code>sfputil show presence</code> が <code>Not present</code></li>
 <li><strong>speed / FEC / autoneg の不一致</strong> — 25G で FEC 設定が片側 RS、片側 none など</li>
-<li><strong>portsorch が CONFIG_DB を APPL_DB に反映できていない</strong> — <code>swss</code> container の異常</li>
+<li><strong>portsorch が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を <a href="../../glossary/#term-appl_db">APPL_DB</a> に反映できていない</strong> — <code>swss</code> container の異常</li>
 <li><strong>lane / serdes 設定の platform.json バグ</strong> — port-breakout 後の設定残り</li>
-<li><strong>SAI driver / FW のリンクトレーニング失敗</strong> — <code>syncd</code> ログに <code>link training failed</code></li>
+<li><strong><a href="../../glossary/#term-sai">SAI</a> driver / FW のリンクトレーニング失敗</strong> — <code>syncd</code> ログに <code>link training failed</code></li>
 <li><strong>kernel netdev は up だが ASIC 側で down</strong> — host-side のみ up となる multi-asic 構成の罠</li>
 </ol>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
@@ -23683,6 +23683,7 @@
 <li><a href="../interface-mtu-mismatch/">interface-mtu-mismatch.md</a></li>
 <li><a href="../../cli/show-interfaces/">../cli/show-interfaces.md</a></li>
 </ul>
+<!-- glossary-links-injected: 3c23d919b483 -->
 
 
 

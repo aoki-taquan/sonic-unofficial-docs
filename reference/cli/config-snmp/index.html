@@ -24112,10 +24112,10 @@
 
 <h1 id="config-snmp-snmpagentaddress-snmptrap">config snmp / snmpagentaddress / snmptrap サブコマンド<a class="headerlink" href="#config-snmp-snmpagentaddress-snmptrap" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SNMP 関連の CLI は <strong>3 つの独立したトップレベルグループ</strong> に分かれている: <code>config snmp</code>、<code>config snmpagentaddress</code>、<code>config snmptrap</code>。すべて <code>config/main.py</code> 内に直接定義されており、<code>snmpd.conf</code> を再生成するために各操作後に <code>systemctl restart snmp</code> が走る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../glossary/#term-snmp">SNMP</a> 関連の CLI は <strong>3 つの独立したトップレベルグループ</strong> に分かれている: <code>config snmp</code>、<code>config snmpagentaddress</code>、<code>config snmptrap</code>。すべて <code>config/main.py</code> 内に直接定義されており、<code>snmpd.conf</code> を再生成するために各操作後に <code>systemctl restart snmp</code> が走る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <ul>
 <li><code>config snmp ...</code> ... <code>SNMP</code> / <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> テーブルへの contact / location / community / user 操作</li>
-<li><code>config snmpagentaddress ...</code> ... snmpd の bind IP:Port:VRF を <code>SNMP_AGENT_ADDRESS_CONFIG</code> に登録</li>
+<li><code>config snmpagentaddress ...</code> ... snmpd の bind IP:Port:<a href="../../glossary/#term-vrf">VRF</a> を <code>SNMP_AGENT_ADDRESS_CONFIG</code> に登録</li>
 <li><code>config snmptrap ...</code> ... v1/v2/v3 の trap 送信先を <code>SNMP_TRAP_CONFIG</code> に登録</li>
 </ul>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -24320,7 +24320,7 @@ excerpt: |
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/snmp/"><code>SNMP</code></a> / <a href="../../config-db/snmp/"><code>SNMP_COMMUNITY</code></a> / <a href="../../config-db/snmp/"><code>SNMP_USER</code></a> / <a href="../../config-db/snmp-agent-address-config/"><code>SNMP_AGENT_ADDRESS_CONFIG</code></a> / <a href="../../config-db/snmp/"><code>SNMP_TRAP_CONFIG</code></a> / <a href="../../config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/snmp/"><code>SNMP</code></a> / <a href="../../config-db/snmp/"><code>SNMP_COMMUNITY</code></a> / <a href="../../config-db/snmp/"><code>SNMP_USER</code></a> / <a href="../../config-db/snmp-agent-address-config/"><code>SNMP_AGENT_ADDRESS_CONFIG</code></a> / <a href="../../config-db/snmp/"><code>SNMP_TRAP_CONFIG</code></a> / <a href="../../config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -24389,7 +24389,7 @@ excerpt: |
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
-<li>ACL で SNMP ポート (UDP 161) を許可していないと外から見えない（CTRLPLANE ACL）。</li>
+<li><a href="../../glossary/#term-acl">ACL</a> で SNMP ポート (UDP 161) を許可していないと外から見えない（CTRLPLANE ACL）。</li>
 <li><code>config snmp community add</code> の type は <code>RO</code> / <code>RW</code>。RW を不用意に開けない。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -24398,6 +24398,8 @@ excerpt: |
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>snmp
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ded79a787b44 -->
 
 <div class="footnote">
 <hr />

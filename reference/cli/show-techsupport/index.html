@@ -23790,7 +23790,7 @@
 
 <h1 id="show-techsupport">show techsupport コマンド<a class="headerlink" href="#show-techsupport" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show techsupport</code> は障害解析用の <strong>techsupport ダンプ</strong> を生成する。実態は <code>sudo generate_dump -v ...</code> のラッパで、システム情報・ログ・config・SAI/syncd データなどを 1 つの <code>tar.gz</code> にまとめる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>generate_dump</code> 自体は <code>sonic-utilities/scripts/generate_dump</code> 内のシェルスクリプトで、Linux 標準コマンドや <code>dump</code>、<code>debug dump</code>、<code>fwutil</code> などを順に呼んで結果を集約する。</p>
+<p><code>show techsupport</code> は障害解析用の <strong>techsupport ダンプ</strong> を生成する。実態は <code>sudo generate_dump -v ...</code> のラッパで、システム情報・ログ・config・<a href="../../glossary/#term-sai">SAI</a>/<a href="../../glossary/#term-syncd">syncd</a> データなどを 1 つの <code>tar.gz</code> にまとめる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>generate_dump</code> 自体は <code>sonic-utilities/scripts/generate_dump</code> 内のシェルスクリプトで、Linux 標準コマンドや <code>dump</code>、<code>debug dump</code>、<code>fwutil</code> などを順に呼んで結果を集約する。</p>
 <p><code>show techsupport</code> の click 関数自体は <code>show/main.py</code> の <code>cli.command()</code> で 1 つだけ。ダンプの中身を制御する各種フラグはすべて <code>generate_dump</code> のフラグへ変換される。</p>
 <h2 id="_2">用法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show techsupport [--since &lt;date&gt;] [-g|--global-timeout MIN] [-c|--cmd-timeout MIN]
@@ -23943,6 +23943,8 @@ excerpt: |
 <li><a href="../../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6ee6deac630a -->
 
 <div class="footnote">
 <hr />

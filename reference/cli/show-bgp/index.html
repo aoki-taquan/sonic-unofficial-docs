@@ -24146,9 +24146,9 @@
 
 <h1 id="show-bgp-show-ip-bgp-show-ipv6-bgp">show bgp / show ip bgp / show ipv6 bgp サブコマンド<a class="headerlink" href="#show-bgp-show-ip-bgp-show-ipv6-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BGP 状態表示用の CLI は <strong>3 系統に分かれている</strong>:</p>
+<p><a href="../../glossary/#term-bgp">BGP</a> 状態表示用の CLI は <strong>3 系統に分かれている</strong>:</p>
 <ol>
-<li><code>show bgp ...</code> ... CONFIG_DB の <code>BGP_DEVICE_GLOBAL</code> / <code>BGP_AGGREGATE_ADDRESS</code> を <code>show/bgp_cli.py</code> が直接 dump（FRR を経由しない）。</li>
+<li><code>show bgp ...</code> ... <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>BGP_DEVICE_GLOBAL</code> / <code>BGP_AGGREGATE_ADDRESS</code> を <code>show/bgp_cli.py</code> が直接 dump（<a href="../../glossary/#term-frr">FRR</a> を経由しない）。</li>
 <li><code>show ip bgp ...</code> / <code>show ipv6 bgp ...</code> ... <code>show/bgp_frr_v4.py</code> / <code>bgp_frr_v6.py</code> が <code>vtysh -c "show ip bgp ..."</code> を内部実行して FRR の出力を整形。</li>
 <li><code>show running-configuration bgp</code> ... <code>show/main.py</code> が <code>vtysh -c "show running-config"</code> を実行（別ページ「show running-config」を参照）。</li>
 </ol>
@@ -24165,7 +24165,7 @@
 <tbody>
 <tr>
 <td><code>show bgp device-global [-j\|--json]</code></td>
-<td>TSA / W-ECMP の現在状態を CONFIG_DB から表示</td>
+<td>TSA / W-<a href="../../glossary/#term-ecmp">ECMP</a> の現在状態を CONFIG_DB から表示</td>
 </tr>
 <tr>
 <td><code>show bgp aggregate-address ipv4 [-j\|--json]</code></td>
@@ -24204,7 +24204,7 @@
 </tr>
 <tr>
 <td><code>show ip bgp vrf &lt;vrf&gt; summary</code> / <code>neighbors ...</code> / <code>network ...</code></td>
-<td>VRF 配下の BGP 情報（パラメータは default VRF と同じ）</td>
+<td><a href="../../glossary/#term-vrf">VRF</a> 配下の BGP 情報（パラメータは default VRF と同じ）</td>
 </tr>
 <tr>
 <td><code>show ipv6 bgp summary / neighbors / network / vrf ...</code></td>
@@ -24364,6 +24364,8 @@ excerpt: |
 <li><a href="../config-bgp/">CLI: config bgp</a></li>
 <li><a href="../../config-db/bgp-neighbor/">CONFIG_DB: BGP_NEIGHBOR</a></li>
 </ul>
+<!-- glossary-links-injected: 498fa165fc57 -->
+
 <div class="footnote">
 <hr />
 <ol>

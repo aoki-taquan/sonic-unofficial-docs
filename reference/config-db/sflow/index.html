@@ -23846,7 +23846,7 @@
 
 <h1 id="sflow">SFLOW テーブル<a class="headerlink" href="#sflow" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>sFlow サンプリングのグローバル設定 / per-port セッション設定 / コレクタ宛先を定義する 3 つの container を含む。<code>hsflowd</code> (sflowd container) と <code>sflowmgrd</code> が CONFIG_DB を購読する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>sFlow サンプリングのグローバル設定 / per-port セッション設定 / コレクタ宛先を定義する 3 つの container を含む。<code>hsflowd</code> (sflowd container) と <code>sflowmgrd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23970,7 +23970,7 @@
 <td>string <code>mgmt</code>/<code>default</code></td>
 <td>-</td>
 <td>no</td>
-<td>コレクタへ到達する VRF</td>
+<td>コレクタへ到達する <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 </tbody>
 </table>
@@ -23984,7 +23984,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>PORT</code>、<code>PORTCHANNEL</code>、<code>MGMT_PORT</code>、<code>MGMT_VRF_CONFIG</code></li>
 <li>関連 CLI: <code>config sflow enable/disable/polling-interval/agent-id/collector/interface</code></li>
-<li>関連 YANG: <code>sonic-sflow</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-sflow</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24021,6 +24021,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>sflow
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->
 
 <div class="footnote">
 <hr />

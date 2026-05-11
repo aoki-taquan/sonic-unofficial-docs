@@ -24046,7 +24046,7 @@
 
 <h1 id="config-mclag">config mclag サブコマンド<a class="headerlink" href="#config-mclag" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config mclag</code> は MCLAG (Multi-Chassis LAG) ドメイン・メンバ PortChannel・Vlan インタフェース単位の unique IP を CONFIG_DB に書き込む CLI で、<code>config/mclag.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB の更新先テーブルは <code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code> の 3 つで、ICCPd (<code>iccpd</code> コンテナ) がこれを購読して MCLAG ピアリングを起動する。</p>
+<p><code>config mclag</code> は <a href="../../glossary/#term-mclag">MCLAG</a> (Multi-Chassis <a href="../../glossary/#term-lag">LAG</a>) ドメイン・メンバ <a href="../../glossary/#term-portchannel">PortChannel</a>・Vlan インタフェース単位の unique IP を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込む CLI で、<code>config/mclag.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB の更新先テーブルは <code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code> の 3 つで、ICCPd (<code>iccpd</code> コンテナ) がこれを購読して MCLAG ピアリングを起動する。</p>
 <p><code>MCLAG_DOMAIN</code> は <strong>デバイス内に 1 つしか持てない</strong> (既存 domain がある状態で別 ID を <code>add</code> するとエラー)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -24112,7 +24112,7 @@
 <h3 id="config-mclag-member-del-domain_id-portchannels"><code>config mclag member del &lt;domain_id&gt; &lt;portchannels&gt;</code><a class="headerlink" href="#config-mclag-member-del-domain_id-portchannels" title="Permanent link">&para;</a></h3>
 <p><code>MCLAG_INTERFACE|&lt;domain_id&gt;|&lt;portchannel&gt;</code> を削除。バリデーションは name 形式のみ。</p>
 <h3 id="config-mclag-unique-ip-add-interface_names"><code>config mclag unique-ip add &lt;interface_names&gt;</code><a class="headerlink" href="#config-mclag-unique-ip-add-interface_names" title="Permanent link">&para;</a></h3>
-<p><code>&lt;interface_names&gt;</code> はカンマ区切り、<code>Vlan</code> プレフィクス必須。事前に該当 Vlan インタフェースに <strong>VRF も IP も付いていないこと</strong> を検査し、付いていれば「先に外して再設定せよ」とエラーで返す。OK なら <code>MCLAG_UNIQUE_IP|&lt;vlan&gt;</code> に <code>{unique_ip: enable}</code> を書く。</p>
+<p><code>&lt;interface_names&gt;</code> はカンマ区切り、<code>Vlan</code> プレフィクス必須。事前に該当 Vlan インタフェースに <strong><a href="../../glossary/#term-vrf">VRF</a> も IP も付いていないこと</strong> を検査し、付いていれば「先に外して再設定せよ」とエラーで返す。OK なら <code>MCLAG_UNIQUE_IP|&lt;vlan&gt;</code> に <code>{unique_ip: enable}</code> を書く。</p>
 <h3 id="config-mclag-unique-ip-del-interface_names"><code>config mclag unique-ip del &lt;interface_names&gt;</code><a class="headerlink" href="#config-mclag-unique-ip-del-interface_names" title="Permanent link">&para;</a></h3>
 <p><code>unique-ip add</code> と対称的な制約検査を行ったうえで <code>MCLAG_UNIQUE_IP|&lt;vlan&gt;</code> を削除する。</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
@@ -24204,7 +24204,7 @@
 <h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>両端で system_mac を一致させないと LAG メンバが flap し続ける。</li>
-<li>keepalive VLAN を tagged で通すと一部 NIC で MTU 差により断続するため、専用 L3 リンク推奨。</li>
+<li>keepalive <a href="../../glossary/#term-vlan">VLAN</a> を tagged で通すと一部 NIC で MTU 差により断続するため、専用 L3 リンク推奨。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>mclag<span class="w"> </span>brief
@@ -24212,6 +24212,8 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>mclagdctl<span class="w"> </span>-i<span class="w"> </span><span class="m">1000</span><span class="w"> </span>dump<span class="w"> </span>state
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 2141742a9664 -->
 
 <div class="footnote">
 <hr />

@@ -23561,20 +23561,20 @@
 
 
 <h1 id="gnmi-openconfig">gNMI / OpenConfig の発展トピック<a class="headerlink" href="#gnmi-openconfig" title="Permanent link">&para;</a></h1>
-<p>gNMI / gNOI / Translib / Transformer の基本パスを押さえた後は、telemetry の規模拡張、認証境界 (gNSI)、新しい RPC への対応が次の論点になる。</p>
+<p><a href="../../../reference/glossary/#term-gnmi">gNMI</a> / <a href="../../../reference/glossary/#term-gnoi">gNOI</a> / Translib / Transformer の基本パスを押さえた後は、telemetry の規模拡張、認証境界 (gNSI)、新しい RPC への対応が次の論点になる。</p>
 <h2 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>gNMI dial-out (publish to collector)</strong>: 通常の gNMI Subscribe は server-driven だが、規模が増えると collector 側で多数の subscription を維持するコストが高い。dial-out では target 側から collector に push する構成で、scale 上有利。<code>telemetry</code> docker と外部 collector の組合せが議題。</li>
 <li><strong>OpenConfig wildcard subscribe</strong>: <code>/interfaces/interface[name=*]/state/counters</code> のような wildcard query で per-port stream を一括取得する用途。Sample interval と server CPU 負荷のトレードオフがある。</li>
 <li><strong>gNOI による OS upgrade</strong>: <code>gnoi.os.Install</code> / <code>Activate</code> で SONiC イメージを集中投入する運用。warm/fast reboot との組み合わせで in-service upgrade を実現する。</li>
 <li><strong>gNSI による証明書 / authz の管理</strong>: <code>gnsi.certz</code> / <code>gnsi.authz</code> で gNMI の TLS 証明書と RBAC ポリシーを動的に更新する。controller 側で証明書ローテーションを行うと SONiC 側はサービス停止なしで更新できる。</li>
-<li><strong>Transformer の自前 callback 追加</strong>: 既存 OpenConfig path に対応する CONFIG_DB が無いとき、Go callback (transformer/xfmr) を書いて変換ルールを足す。プラグイン的に拡張できる。</li>
-<li><strong>SAI Redis streaming (低レベル)</strong>: gNMI 経由ではなく、<code>COUNTERS_DB</code> を直接 streaming する場合の挙動。debug 用途で <code>redis-cli psubscribe</code> でリアルタイム counter を見る。</li>
+<li><strong>Transformer の自前 callback 追加</strong>: 既存 OpenConfig path に対応する <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> が無いとき、Go callback (transformer/xfmr) を書いて変換ルールを足す。プラグイン的に拡張できる。</li>
+<li><strong><a href="../../../reference/glossary/#term-sai">SAI</a> <a href="../../../reference/glossary/#term-redis">Redis</a> streaming (低レベル)</strong>: gNMI 経由ではなく、<code>COUNTERS_DB</code> を直接 streaming する場合の挙動。debug 用途で <code>redis-cli psubscribe</code> でリアルタイム counter を見る。</li>
 </ul>
 <h2 id="_2">既知の制約と回避方法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>subscription scale limit</strong>: target あたりの concurrent stream 数には実用上の上限があり、過剰登録で telemetry docker が CPU 100% になる例がある。collector を複数にして load を分割する。</li>
-<li><strong>OpenConfig path と SONiC schema のミスマッチ</strong>: SONiC 固有機能 (Dual-ToR mux、warm-reboot state) は OpenConfig path に対応が無く、<code>sonic-mgmt-common</code> の vendor-augmented YANG で表現される。</li>
+<li><strong>OpenConfig path と SONiC schema のミスマッチ</strong>: SONiC 固有機能 (Dual-ToR mux、warm-reboot state) は OpenConfig path に対応が無く、<code>sonic-mgmt-common</code> の vendor-augmented <a href="../../../reference/glossary/#term-yang">YANG</a> で表現される。</li>
 <li><strong>gNMI Set の atomicity</strong>: 単一 SetRequest 内の複数 update は SONiC 側で完全 atomic とは限らない。CONFIG_DB の partial commit で transient 状態が見える可能性。</li>
 <li><strong>証明書回転中の reconnect</strong>: controller が証明書を更新した後、client 側 dial を一度切る必要がある場合がある。gNSI による hot swap が対応していれば回避可能。</li>
 </ul>
@@ -23582,7 +23582,7 @@
 <ul>
 <li>gNxI suite (gNMI / gNOI / gNSI / gRIBI) は OpenConfig コミュニティで継続拡張中。SONiC 側は <code>sonic-gnmi</code> の依存ライブラリ更新で取り込む。</li>
 <li>gRIBI を経由した RIB 直接注入が議論されており、controller 側で経路を直接 push する用途で SDN ベース fabric の管理が変わる可能性。</li>
-<li>OpenConfig の network-instance / VRF モデルの SONiC 対応は段階的で、未対応 path には vendor augment が並走する。</li>
+<li>OpenConfig の network-instance / <a href="../../../reference/glossary/#term-vrf">VRF</a> モデルの SONiC 対応は段階的で、未対応 path には vendor augment が並走する。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23596,7 +23596,7 @@
 <h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-gnmi</code> repo で gNSI authz と certz 取り込み、TLS 認証経路のリファクタが継続。</li>
-<li><code>sonic-mgmt-common</code> (Translib / Transformer) で OpenConfig path カバレッジ拡張 PR が頻繁。Routing / BGP / VRF / QoS の path 追加が主軸。</li>
+<li><code>sonic-mgmt-common</code> (Translib / Transformer) で OpenConfig path カバレッジ拡張 PR が頻繁。Routing / <a href="../../../reference/glossary/#term-bgp">BGP</a> / VRF / <a href="../../../reference/glossary/#term-qos">QoS</a> の path 追加が主軸。</li>
 <li>Telemetry docker の memory footprint 改善と subscription scale 上限緩和の PR が継続。collector 側 (gnmic、gnxi) も community 主導でツール成熟が進む。</li>
 </ul>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -23605,6 +23605,7 @@
 <li><a href="../../11-reboot/">11 Reboot / Upgrade</a> — gNOI OS upgrade と組み合わせる前提</li>
 <li><a href="../../15-security-aaa/">15 Security / AAA</a> — gNSI authz / certz の境界</li>
 </ul>
+<!-- glossary-links-injected: 26de038ce9ec -->
 
 
 

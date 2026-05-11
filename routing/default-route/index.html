@@ -24037,7 +24037,7 @@
 <li>有効なデフォルトルートあり: <code>state:ok</code></li>
 <li>有効なデフォルトルートなし: <code>state:na</code></li>
 </ul>
-<p><code>linkmgrd</code> はこの STATE_DB エントリを購読し、変化を mux 状態機械にフィードする。HLD 時点では実装は <strong>IPv4 のみを実効的に使用</strong> するが、通知ハンドラ自体は IPv4 / IPv6 の両エントリに対応した形で定義することが要件として明記されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>linkmgrd</code> はこの <a href="../../reference/glossary/#term-state_db">STATE_DB</a> エントリを購読し、変化を mux 状態機械にフィードする。<a href="../../reference/glossary/#term-hld">HLD</a> 時点では実装は <strong>IPv4 のみを実効的に使用</strong> するが、通知ハンドラ自体は IPv4 / IPv6 の両エントリに対応した形で定義することが要件として明記されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     Kernel[Linux ルーティングテーブル] --&gt;|default route 監視| ORCH[orchagent]
     ORCH --&gt;|state:ok / state:na| SDB[(STATE_DB)]
@@ -24128,7 +24128,7 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
     end</code></pre>
 <h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には CONFIG_DB エントリの記述はない。状態の購読対象は <code>STATE_DB</code> 側であり、CONFIG_DB を介した有効化スイッチは定義されていない（オン/オフは下記のコマンドラインオプション経由）。</p>
+<p>HLD には <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリの記述はない。状態の購読対象は <code>STATE_DB</code> 側であり、CONFIG_DB を介した有効化スイッチは定義されていない（オン/オフは下記のコマンドラインオプション経由）。</p>
 <h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <p>HLD には <code>show</code> / <code>config</code> 系の SONiC CLI への追加は記載されていない。本機能は <code>linkmgrd</code> プロセスのコマンドラインオプションでのみ制御される。</p>
 <table>
@@ -24141,7 +24141,7 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <tbody>
 <tr>
 <td><code>--default_route</code> (<code>-d</code>)</td>
-<td>linkmgrd でデフォルトルート連動を有効化する</td>
+<td><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> でデフォルトルート連動を有効化する</td>
 </tr>
 </tbody>
 </table>
@@ -24167,7 +24167,7 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-linkmgrd/src/MuxManager.cpp:104</code> の <code>void MuxManager::initialize(bool enable_feature_measurement, bool enable_feature_default_route)</code> と続く <code>mMuxConfig.enableDefaultRouteFeature(enable_feature_default_route)</code> (line 121) で、デフォルトルート連動機能が <strong>起動引数によるオプトイン</strong> として実装されていることを確認。<code>MuxManager.h:298,302</code> のヘッダコメントにも「shutdowns link prober &amp; avoid switching active when default route is missing」と機能の主旨が明記。</li>
-<li><code>sonic-swss/orchagent/routeorch.cpp:127</code> で <code>m_stateDefaultRouteTb = unique_ptr&lt;swss::Table&gt;(new Table(m_stateDb.get(), STATE_ROUTE_TABLE_NAME))</code> として STATE_DB 上の ROUTE state テーブルを open しており、orchagent がデフォルトルート状態を STATE_DB に書く経路が実装済み。</li>
+<li><code>sonic-swss/orchagent/routeorch.cpp:127</code> で <code>m_stateDefaultRouteTb = unique_ptr&lt;swss::Table&gt;(new Table(m_stateDb.get(), STATE_ROUTE_TABLE_NAME))</code> として STATE_DB 上の ROUTE state テーブルを open しており、<a href="../../reference/glossary/#term-orchagent">orchagent</a> がデフォルトルート状態を STATE_DB に書く経路が実装済み。</li>
 </ul>
 <p>HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd が購読してオプトインで mux 健全性に反映）は実装と整合。<code>code-verified</code> に昇格。</p>
 <!-- topics-back-ref -->
@@ -24176,6 +24176,8 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <li><a href="../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e95f91b51175 -->
 
 <div class="footnote">
 <hr />

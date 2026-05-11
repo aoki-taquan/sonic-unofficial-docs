@@ -23808,7 +23808,7 @@
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>旧 <code>FlexCounter</code> クラスの何が問題で、なぜリファクタが要るのか</li>
-<li>SAI 統計型がバラバラなのに、どうやってテンプレ化したのか</li>
+<li><a href="../../reference/glossary/#term-sai">SAI</a> 統計型がバラバラなのに、どうやってテンプレ化したのか</li>
 <li>公開 API は変わるのか</li>
 <li>新しい counter type を追加する手数はどう減るのか</li>
 </ul>
@@ -23828,7 +23828,7 @@
 <td><code>m_portCounterIdsMap</code>, <code>m_queueCounterIdsMap</code> ...</td>
 </tr>
 <tr>
-<td>Plugins（Redis Lua の SHA）</td>
+<td>Plugins（<a href="../../reference/glossary/#term-redis">Redis</a> Lua の SHA）</td>
 <td><code>m_portPlugins</code>, <code>m_queuePlugins</code> ...</td>
 </tr>
 <tr>
@@ -23970,13 +23970,13 @@
 </tbody>
 </table>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB / CLI / YANG への影響は HLD 上 <strong>N/A</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>FLEX_COUNTER_TABLE</code> スキーマは不変、syncd 内部実装のみ変更。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / <a href="../../reference/glossary/#term-yang">YANG</a> への影響は <a href="../../reference/glossary/#term-hld">HLD</a> 上 <strong>N/A</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>FLEX_COUNTER_TABLE</code> スキーマは不変、<a href="../../reference/glossary/#term-syncd">syncd</a> 内部実装のみ変更。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>HLD は <code>Restrictions/Limitations</code> を <strong>N/A</strong> と明記<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。事実上の前提として C++ テンプレートと SFINAE / <code>if constexpr</code> を多用するため C++17 以降相当のコンパイラが必要（HLD には言及なし）。</p>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>FlexCounterManager</code></strong>: 呼出し側として変更不要。<code>FlexCounter::addCounter</code> の signature と意味は維持</li>
-<li><strong>既存 Lua plugin (Watermark / RATES / WRED 等)</strong>: SHA 登録経路と <code>runPlugins</code> 挙動は同等、Lua 側は不変</li>
+<li><strong>既存 Lua plugin (Watermark / RATES / <a href="../../reference/glossary/#term-wred">WRED</a> 等)</strong>: SHA 登録経路と <code>runPlugins</code> 挙動は同等、Lua 側は不変</li>
 <li><strong>warmboot / fastboot</strong>: HLD は影響 N/A。public interface 不変が前提<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>新規 SAI 統計の追加</strong>: 拡張容易性が向上</li>
 </ul>
@@ -23997,6 +23997,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 78e7206f4df2 -->
 
 <div class="footnote">
 <hr />

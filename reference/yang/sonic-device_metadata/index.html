@@ -23809,7 +23809,7 @@
 <li>import: <code>ietf-yang-types</code>, <code>ietf-inet-types</code>, <code>sonic-types</code></li>
 <li>top container: <code>sonic-device_metadata</code></li>
 </ul>
-<p>DEVICE_METADATA YANG Module for SONiC OS<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>DEVICE_METADATA <a href="../../glossary/#term-yang">YANG</a> Module for SONiC OS<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23916,7 +23916,7 @@
 <td></td>
 <td></td>
 <td>length 1..16</td>
-<td>asic_id is unique identifier of the asic used by SAI for initialization.</td>
+<td>asic_id is unique identifier of the asic used by <a href="../../glossary/#term-sai">SAI</a> for initialization.</td>
 </tr>
 <tr>
 <td><code>default_bgp_status</code></td>
@@ -23925,7 +23925,7 @@
 <td></td>
 <td>up</td>
 <td>up, down</td>
-<td>Default BGP daemon operational state on startup.</td>
+<td>Default <a href="../../glossary/#term-bgp">BGP</a> daemon operational state on startup.</td>
 </tr>
 <tr>
 <td><code>docker_routing_config_mode</code></td>
@@ -23934,7 +23934,7 @@
 <td></td>
 <td>unified</td>
 <td>pattern <code>separated|unified|split|split-unified</code></td>
-<td>This leaf allows different configuration modes for FRR: - separated: FRR config generated from ConfigDB, each FRR daemon has its own config file - unified: FRR config generated from ConfigDB, singl...</td>
+<td>This leaf allows different configuration modes for <a href="../../glossary/#term-frr">FRR</a>: - separated: FRR config generated from ConfigDB, each FRR daemon has its own config file - unified: FRR config generated from ConfigDB, singl...</td>
 </tr>
 <tr>
 <td><code>hostname</code></td>
@@ -23970,7 +23970,7 @@
 <td></td>
 <td>disable</td>
 <td>disable, enable</td>
-<td>Default PFC watchdog operational state on startup.</td>
+<td>Default <a href="../../glossary/#term-pfc">PFC</a> watchdog operational state on startup.</td>
 </tr>
 <tr>
 <td><code>bgp_asn</code></td>
@@ -24015,7 +24015,7 @@
 <td></td>
 <td>false</td>
 <td></td>
-<td>FRR configurations are handled by sonic-frr-mgmt-framework module when set to true, otherwise, sonic-bgpcfgd handles the FRR configurations based on the predefined templates.</td>
+<td>FRR configurations are handled by sonic-frr-mgmt-framework module when set to true, otherwise, sonic-<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> handles the FRR configurations based on the predefined templates.</td>
 </tr>
 <tr>
 <td><code>synchronous_mode</code></td>
@@ -24024,7 +24024,7 @@
 <td></td>
 <td>enable</td>
 <td>enable, disable</td>
-<td>Enable or disable ASIC synchronous mode for orchagent.</td>
+<td>Enable or disable ASIC synchronous mode for <a href="../../glossary/#term-orchagent">orchagent</a>.</td>
 </tr>
 <tr>
 <td><code>yang_config_validation</code></td>
@@ -24105,7 +24105,7 @@
 <td></td>
 <td></td>
 <td>pattern <code>DualToR|SmartSwitch|Supervisor|UpstreamLC|DownstreamLC</code></td>
-<td>Device subtype for specialized topology roles (e.g., DualToR, SmartSwitch).</td>
+<td>Device subtype for specialized topology roles (e.g., DualToR, <a href="../../glossary/#term-smartswitch">SmartSwitch</a>).</td>
 </tr>
 <tr>
 <td><code>peer_switch</code></td>
@@ -24150,7 +24150,7 @@
 <td></td>
 <td></td>
 <td>pattern <code>chassis-packet|fabric|npu|voq|dpu|dummy-sup</code></td>
-<td>Type of switch. Default is NPU, on a VOQ switch voq is used for a regular switching device while fabric is used for a fabric device. chassis-packet is used for chassis in packet mode.</td>
+<td>Type of switch. Default is <a href="../../glossary/#term-npu">NPU</a>, on a <a href="../../glossary/#term-voq">VOQ</a> switch voq is used for a regular switching device while fabric is used for a fabric device. chassis-packet is used for chassis in packet mode.</td>
 </tr>
 <tr>
 <td><code>max_cores</code></td>
@@ -24312,7 +24312,7 @@
 <td></td>
 <td>true</td>
 <td></td>
-<td>Enable ZMQ feature on APPL_DB DASH tables.</td>
+<td>Enable ZMQ feature on <a href="../../glossary/#term-appl_db">APPL_DB</a> <a href="../../glossary/#term-dash">DASH</a> tables.</td>
 </tr>
 <tr>
 <td><code>orch_northbond_route_zmq_enabled</code></td>
@@ -24407,7 +24407,7 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>DEVICE_METADATA</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>DEVICE_METADATA</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24425,7 +24425,7 @@
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>hwsku</code> / <code>platform</code> を runtime で書き換えると swss / syncd の起動 SKU 判定が破綻する。<code>config save</code> 後の再起動で整合させる。</li>
+<li><code>hwsku</code> / <code>platform</code> を runtime で書き換えると swss / <a href="../../glossary/#term-syncd">syncd</a> の起動 SKU 判定が破綻する。<code>config save</code> 後の再起動で整合させる。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span>
@@ -24434,6 +24434,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: dd592ea5ffb8 -->
+
 <div class="footnote">
 <hr />
 <ol>

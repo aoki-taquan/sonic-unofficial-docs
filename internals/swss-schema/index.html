@@ -23862,8 +23862,8 @@
 </div>
 <h1 id="swss-schemaappl_db-state_db">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）<a class="headerlink" href="#swss-schemaappl_db-state_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の APPL_DB / STATE_DB に存在する主要テーブルを、<strong>RFC 5234 ABNF 構文</strong> で機械可読に定義する <code>sonic-swss</code> リポジトリ内の参照ドキュメント<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。orchagent / <em>syncd / </em>mgrd 系プロセス間で受け渡されるテーブルの正規定義として、サブシステムを跨いで参照される。</p>
-<p>開発者・Verifier はこのファイルを APPL_DB / STATE_DB スキーマの一次情報として扱う。CONFIG_DB スキーマは別途 <code>sonic-buildimage/src/sonic-yang-models/</code> 配下の YANG モデルが正規。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に存在する主要テーブルを、<strong>RFC 5234 ABNF 構文</strong> で機械可読に定義する <code>sonic-swss</code> リポジトリ内の参照ドキュメント<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-orchagent">orchagent</a> / <em><a href="../../reference/glossary/#term-syncd">syncd</a> / </em>mgrd 系プロセス間で受け渡されるテーブルの正規定義として、サブシステムを跨いで参照される。</p>
+<p>開発者・Verifier はこのファイルを APPL_DB / STATE_DB スキーマの一次情報として扱う。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマは別途 <code>sonic-buildimage/src/sonic-yang-models/</code> 配下の <a href="../../reference/glossary/#term-yang">YANG</a> モデルが正規。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">共通トークン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>name                    = 1*DIGIT/1*ALPHA
@@ -23873,27 +23873,27 @@
 <h3 id="appl_db">主要 APPL_DB テーブル（抜粋）<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
 <p>ファイル冒頭から並ぶ代表テーブル：</p>
 <ul>
-<li><strong><code>PORT_TABLE</code></strong>: 物理ポート（CPU / loopback は除外）。<code>admin_status</code> / <code>oper_status</code> / <code>lanes</code> / <code>mac</code> / <code>alias</code> / <code>speed</code> / <code>mtu</code> / <code>fec</code> / <code>autoneg</code> / <code>preemphasis</code> / FEC・SerDes 用 hex リスト / Path Tracing 用フィールド / QoS マッピング reference 等<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>PORT_TABLE</code></strong>: 物理ポート（CPU / loopback は除外）。<code>admin_status</code> / <code>oper_status</code> / <code>lanes</code> / <code>mac</code> / <code>alias</code> / <code>speed</code> / <code>mtu</code> / <code>fec</code> / <code>autoneg</code> / <code>preemphasis</code> / FEC・SerDes 用 hex リスト / Path Tracing 用フィールド / <a href="../../reference/glossary/#term-qos">QoS</a> マッピング reference 等<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong><code>INTF_TABLE</code></strong>: 論理ネットワークインタフェース。<code>&lt;ifname&gt;:&lt;IPprefix&gt;</code> 形式キー、<code>scope</code> (global/local)、<code>if_mtu</code>、<code>family</code>。</li>
-<li><strong><code>VLAN_TABLE</code> / <code>VLAN_MEMBER_TABLE</code></strong>: VLAN 定義とメンバ。</li>
+<li><strong><code>VLAN_TABLE</code> / <code>VLAN_MEMBER_TABLE</code></strong>: <a href="../../reference/glossary/#term-vlan">VLAN</a> 定義とメンバ。</li>
 <li><strong><code>LAG_TABLE</code> / <code>LAG_MEMBER_TABLE</code></strong>: Port-Channel 定義とメンバ。</li>
-<li><strong><code>ROUTE_TABLE</code></strong>: 経路。<code>nexthop</code> / <code>intf</code> / <code>vni_label</code> / <code>router_mac</code> / <code>blackhole</code> / SRv6 関連 (<code>segment</code> / <code>seg_src</code> / <code>vpn_sid</code> / <code>policy</code>)。</li>
-<li><strong><code>NEIGH_TABLE</code></strong>: ARP/ND エントリ。<code>&lt;ifname&gt;:&lt;ip&gt;</code> キー。</li>
-<li><strong><code>FDB_TABLE</code></strong>: L2 FDB エントリ。</li>
+<li><strong><code>ROUTE_TABLE</code></strong>: 経路。<code>nexthop</code> / <code>intf</code> / <code>vni_label</code> / <code>router_mac</code> / <code>blackhole</code> / <a href="../../reference/glossary/#term-srv6">SRv6</a> 関連 (<code>segment</code> / <code>seg_src</code> / <code>vpn_sid</code> / <code>policy</code>)。</li>
+<li><strong><code>NEIGH_TABLE</code></strong>: <a href="../../reference/glossary/#term-arp">ARP</a>/ND エントリ。<code>&lt;ifname&gt;:&lt;ip&gt;</code> キー。</li>
+<li><strong><code>FDB_TABLE</code></strong>: L2 <a href="../../reference/glossary/#term-fdb">FDB</a> エントリ。</li>
 <li><strong><code>MIRROR_SESSION_TABLE</code></strong>: ミラーリングセッション。</li>
-<li><strong><code>ACL_TABLE</code> / <code>ACL_RULE_TABLE</code></strong>: ACL の APPL_DB 投影。</li>
+<li><strong><code>ACL_TABLE</code> / <code>ACL_RULE_TABLE</code></strong>: <a href="../../reference/glossary/#term-acl">ACL</a> の APPL_DB 投影。</li>
 <li><strong><code>COPP_TABLE</code></strong>: control-plane policer。</li>
-<li><strong><code>BFD_SESSION_TABLE</code></strong>: BFD セッション。</li>
-<li><strong><code>VNET_ROUTE_TUNNEL_TABLE</code> / <code>VXLAN_TUNNEL_TABLE</code></strong>: VxLAN / VNET。</li>
+<li><strong><code>BFD_SESSION_TABLE</code></strong>: <a href="../../reference/glossary/#term-bfd">BFD</a> セッション。</li>
+<li><strong><code>VNET_ROUTE_TUNNEL_TABLE</code> / <code>VXLAN_TUNNEL_TABLE</code></strong>: VxLAN / <a href="../../reference/glossary/#term-vnet">VNET</a>。</li>
 <li><strong><code>SRV6_*</code></strong>: SRv6 関連（SID list、my_sid、policy）。</li>
 </ul>
 <h3 id="state_db">主要 STATE_DB テーブル<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>PORT_TABLE</code> (STATE_DB)</strong>: oper 状態のうち SAI/syncd 由来分。</li>
+<li><strong><code>PORT_TABLE</code> (STATE_DB)</strong>: oper 状態のうち <a href="../../reference/glossary/#term-sai">SAI</a>/syncd 由来分。</li>
 <li><strong><code>NEIGH_STATE_TABLE</code> / <code>INTERFACE_TABLE</code></strong>: oper 状態。</li>
 <li><strong><code>BFD_SESSION_TABLE</code> (STATE_DB)</strong>: BFD の oper state（<code>Up</code> / <code>Down</code>）。</li>
 <li><strong><code>WARM_RESTART_TABLE</code></strong>: warm restart 各サブシステムの restart_count 等。</li>
-<li><strong><code>ADVERTISE_NETWORK_TABLE</code></strong>: BGP に向けた広報 hint。</li>
+<li><strong><code>ADVERTISE_NETWORK_TABLE</code></strong>: <a href="../../reference/glossary/#term-bgp">BGP</a> に向けた広報 hint。</li>
 <li><strong><code>*_CAPABILITIES</code></strong>: 各機能の capability 公開（mirror / hash / debug counter 等）。</li>
 </ul>
 <h3 id="abnf">ABNF 例<a class="headerlink" href="#abnf" title="Permanent link">&para;</a></h3>
@@ -23926,7 +23926,7 @@
 <ul>
 <li><strong>生きたドキュメント</strong>であるため、master が更新されるたびにフィールドが追加・変更される。本ページに列挙した内容は執筆時点（commit <code>4305596145e57e15e4c6a1a3902c0bc6c44a09c5</code>）のスナップショット。</li>
 <li>ABNF 表記はあくまで <strong>人間とパーサ向けの参考形式</strong> で、orchagent 等の実装はこのファイルを直接読まない。実装側の <code>swss-common/schema.h</code> が定数定義の正規ソース。</li>
-<li>全テーブルを網羅的にここで再掲はしない（54KB のうちの中心テーブルのみピックアップ）。<strong>完全な定義は HLD <code>sonic-net/sonic-swss/doc/swss-schema.md</code> を参照。</strong></li>
+<li>全テーブルを網羅的にここで再掲はしない（54KB のうちの中心テーブルのみピックアップ）。<strong>完全な定義は <a href="../../reference/glossary/#term-hld">HLD</a> <code>sonic-net/sonic-swss/doc/swss-schema.md</code> を参照。</strong></li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23936,18 +23936,20 @@
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>期待する APPL_DB エントリが無い → CONFIG_DB → APPL_DB の投影を担う <code>*mgrd</code>（intfmgrd / vlanmgrd / portmgrd 等）の状態を確認。</li>
+<li>期待する APPL_DB エントリが無い → CONFIG_DB → APPL_DB の投影を担う <code>*mgrd</code>（<a href="../../reference/glossary/#term-intfmgrd">intfmgrd</a> / <a href="../../reference/glossary/#term-vlanmgrd">vlanmgrd</a> / <a href="../../reference/glossary/#term-portmgrd">portmgrd</a> 等）の状態を確認。</li>
 <li>フィールド名が違って見える → <code>swss-schema.md</code> と <code>swss-common/schema.h</code> の <strong>両方</strong> を見て、どちらが最新かを確認する。</li>
-<li>自分のページが参照する APPL_DB スキーマが本書と食い違う → 直近の sonic-swss master コミットの <code>doc/swss-schema.md</code> で再確認するのが望ましい。</li>
+<li>自分のページが参照する APPL_DB スキーマが本書と食い違う → 直近の <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> master コミットの <code>doc/swss-schema.md</code> で再確認するのが望ましい。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
 <p>実コードと突合し本ページが指す <code>sonic-swss/doc/swss-schema.md</code> 内の主要 APPL_DB テーブル群が現行 master に実在することを確認:</p>
 <ul>
 <li><code>sonic-swss/doc/swss-schema.md</code> には <code>### PORT_TABLE</code> / <code>### INTF_TABLE</code> / <code>### VLAN_TABLE</code> / <code>### LAG_TABLE</code> / <code>### ROUTE_TABLE</code> / <code>### NEXTHOP_GROUP_TABLE</code> / <code>### CLASS_BASED_NEXT_HOP_GROUP_TABLE</code> / <code>### FC_TO_NHG_INDEX_MAP_TABLE</code> / <code>### NEIGH_TABLE</code> / <code>### SRV6_SID_LIST_TABLE</code> / <code>### SRV6_MY_SID_TABLE</code> / <code>### FDB_TABLE</code> / <code>### QUEUE_TABLE</code> 等のセクションが定義されており、本ページが主張する「ABNF による APPL_DB / STATE_DB 中心スキーマの集約」と一致。</li>
-<li><code>APP_NEXTHOP_GROUP_TABLE_NAME</code> は <code>sonic-swss/fpmsyncd/routesync.cpp:157</code> で実際に ProducerStateTable として open されており、HLD と実装の双方が NEXTHOP_GROUP_TABLE を APPL_DB の正規エントリとして扱っている裏取り。</li>
+<li><code>APP_NEXTHOP_GROUP_TABLE_NAME</code> は <code>sonic-swss/fpmsyncd/routesync.cpp:157</code> で実際に <a href="../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> として open されており、HLD と実装の双方が NEXTHOP_GROUP_TABLE を APPL_DB の正規エントリとして扱っている裏取り。</li>
 </ul>
 <p>本ページは個別テーブルへの入口として位置付けられたリファレンスで、実テーブル詳細はリンク先の生きた HLD を参照する旨を冒頭で明示しており、参照ドキュメントとしての記述は実体と整合する。</p>
+<!-- glossary-links-injected: fdde38aa50b9 -->
+
 <div class="footnote">
 <hr />
 <ol>

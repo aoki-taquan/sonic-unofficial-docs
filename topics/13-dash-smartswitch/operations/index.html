@@ -23932,7 +23932,7 @@
 
 
 <h1 id="ha-pmon-reboot-upgrade">HA / PMON / reboot / upgrade の運用<a class="headerlink" href="#ha-pmon-reboot-upgrade" title="Permanent link">&para;</a></h1>
-<p>SmartSwitch の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。NPU / DPU で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。</p>
+<p><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。<a href="../../../reference/glossary/#term-npu">NPU</a> / <a href="../../../reference/glossary/#term-dpu">DPU</a> で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。</p>
 <h2 id="_1">全体状態の入口<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>最初に NPU 側で全 DPU の存在と up/down を一覧します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@smartswitch:~$ show chassis modules status
@@ -23953,7 +23953,7 @@
 </span></code></pre></div>
 <p><code>midplane-status: False</code> は最も多い「DPU が動かない」事象の入口で、原因は (a) DPU 側 SONiC が boot 途中、(b) midplane DHCP が走っていない、(c) PCI detach 中、のいずれかです。<code>docker ps | grep redisdpu</code> と NPU 側 <code>redis-cli -h redisdpu2 ping</code> を続けて叩いて、DPU 側 redis 到達性まで踏み込みます。</p>
 <h2 id="ha-dpu-scope-dpu-driven">HA: DPU-scope, DPU-driven 構成<a class="headerlink" href="#ha-dpu-scope-dpu-driven" title="Permanent link">&para;</a></h2>
-<p>DASH-on-SmartSwitch の HA は <strong>DPU 単位のペア（DPU-scope）</strong> で組み、フェイルオーバー判定は <strong>DPU 側のセッション状態を主入力（DPU-driven）</strong> とするのが基本形です。NPU 側 HAMgrD は外側の actor として、DPU ペアの組み合わせ・global state・peer リンクの健全性を管理します。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a>-on-SmartSwitch の HA は <strong>DPU 単位のペア（DPU-scope）</strong> で組み、フェイルオーバー判定は <strong>DPU 側のセッション状態を主入力（DPU-driven）</strong> とするのが基本形です。NPU 側 HAMgrD は外側の actor として、DPU ペアの組み合わせ・global state・peer リンクの健全性を管理します。</p>
 <p>運用時に押さえる流れは次の通りです。</p>
 <ol>
 <li>コントローラが HA セット / HA グループを設定する。</li>
@@ -23991,7 +23991,7 @@
 </span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>2026-05-10T03:21:11.500 WARN hamgrd[hasetA]: bulk sync timeout, retrying
 </span></code></pre></div>
 <p><code>ha_role</code> が両側 <code>active</code> のままなら split-brain、両側 <code>standby</code> なら controller / peer link 障害です。<code>STATE_DB</code> の <code>DPU_STATE</code> も併せて確認します。</p>
-<p>DPU 側にログインして見るときは <code>redis-cli -h redisdpu0 -n 6</code> で DPU 側 APPL_DB に直接アタッチします（<code>docker exec -it database bash</code> 経由）。</p>
+<p>DPU 側にログインして見るときは <code>redis-cli -h redisdpu0 -n 6</code> で DPU 側 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に直接アタッチします（<code>docker exec -it database bash</code> 経由）。</p>
 <h3 id="ha-db">HA 障害ドメインの DB 対応表<a class="headerlink" href="#ha-db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24018,7 +24018,7 @@
 <td><code>DASH_HA_SCOPE_STATE_TABLE</code></td>
 </tr>
 <tr>
-<td>ENI 単位 state</td>
+<td><a href="../../../reference/glossary/#term-eni">ENI</a> 単位 state</td>
 <td>DPU <code>STATE_DB</code></td>
 <td><code>DASH_ENI_STATE_TABLE</code></td>
 </tr>
@@ -24079,7 +24079,7 @@
 <tr>
 <td>全 DPU reboot</td>
 <td>全 DPU（NPU 維持）</td>
-<td>DPU ごとに gNOI HALT → PCI detach → 個別 reboot</td>
+<td>DPU ごとに <a href="../../../reference/glossary/#term-gnoi">gNOI</a> HALT → PCI detach → 個別 reboot</td>
 </tr>
 <tr>
 <td>個別 DPU reboot</td>
@@ -24142,7 +24142,7 @@
 <tr>
 <td>DPU 個別がトラフィックを処理しない</td>
 <td>NPU 側 <code>show platform</code> / PMON、midplane link、<code>redisdpuN</code> 接続</td>
-<td>DPU 側 <code>DashOrch</code> / SAI 状態、HAMgrD のセッション state</td>
+<td>DPU 側 <code>DashOrch</code> / <a href="../../../reference/glossary/#term-sai">SAI</a> 状態、HAMgrD のセッション state</td>
 </tr>
 <tr>
 <td>HA フェイルオーバーしない</td>
@@ -24150,7 +24150,7 @@
 <td>peer link、DPU 側 <code>DashHaFlowOrch</code> の sync 状況</td>
 </tr>
 <tr>
-<td>ACL が効かない</td>
+<td><a href="../../../reference/glossary/#term-acl">ACL</a> が効かない</td>
 <td>NPU 側 <code>ENI_REDIRECT</code> ACL、<code>DashEniFwdOrch</code></td>
 <td>DPU 側 <code>DASH_ACL_GROUP</code> / <code>DASH_ACL_RULE</code> 反映</td>
 </tr>
@@ -24193,7 +24193,7 @@
 </tr>
 <tr>
 <td><code>swssdpu&lt;N&gt;: orchagent died</code></td>
-<td>DPU 側 orchagent クラッシュ</td>
+<td>DPU 側 <a href="../../../reference/glossary/#term-orchagent">orchagent</a> クラッシュ</td>
 <td>core dump 確認、DPU 単独 reboot</td>
 </tr>
 </tbody>
@@ -24241,6 +24241,7 @@
 <li><a href="../../../platform/smartswitch-dpu-graceful-shutdown/">DPU Graceful Shutdown</a></li>
 <li><a href="../../../system/independent-dpu-upgrade/">DPU 独立アップグレード</a></li>
 </ul>
+<!-- glossary-links-injected: 302d7ca006cb -->
 
 
 

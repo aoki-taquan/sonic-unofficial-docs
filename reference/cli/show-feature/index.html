@@ -23859,7 +23859,7 @@
 <h1 id="show-feature">show feature サブコマンド<a class="headerlink" href="#show-feature" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>show feature</code> グループは SONiC の <strong>feature</strong> (= 個別 docker コンテナ単位の機能) の現在状態と設定値を表示する。実装は <code>show/feature.py</code> の <code>@click.group(name='feature')</code><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>CONFIG_DB の <code>FEATURE</code> テーブル (Writer 側は <code>config/feature.py</code>) と STATE_DB の <code>FEATURE|&lt;name&gt;</code> を組み合わせて表示する。STATE_DB のキーは <code>hostcfgd</code> / <code>featured</code> が container 起動状況を逐次書き込む側。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FEATURE</code> テーブル (Writer 側は <code>config/feature.py</code>) と <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>FEATURE|&lt;name&gt;</code> を組み合わせて表示する。STATE_DB のキーは <code>hostcfgd</code> / <code>featured</code> が container 起動状況を逐次書き込む側。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23970,6 +23970,8 @@ CONFIG_DB の <code>FEATURE</code> テーブル全件を <code>natsorted</code> 
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>pmon           enabled   enabled        up
 </span></code></pre></div>
 <!-- /usage-example -->
+
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

@@ -23758,7 +23758,7 @@
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><code>FLEX_COUNTER_TABLE|ACL</code> / <code>FLEX_COUNTER_TABLE|RIF</code> が disable</strong></li>
-<li><strong>ACL rule が ASIC に install されていない</strong>: orchagent エラーで install 失敗</li>
+<li><strong><a href="../../glossary/#term-acl">ACL</a> rule が ASIC に install されていない</strong>: <a href="../../glossary/#term-orchagent">orchagent</a> エラーで install 失敗</li>
 <li><strong>rule の match 条件にトラフィックが該当していない</strong> (DSCP / src_ip / in_port のミスマッチ)</li>
 <li><strong>rule 優先度 (<code>PRIORITY</code>) が他 rule に隠されている</strong>: 先に match した別 rule に取られている</li>
 <li><strong>stage / type 不一致</strong>: L3 rule を <code>INGRESS_L2</code> テーブルに入れている</li>
@@ -23801,7 +23801,7 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;COUNTERS:oid:&lt;RIF OID&gt;&quot;</span>
 </span></code></pre></div>
 <ul>
-<li>期待: 各 VLAN / portchannel L3 interface に対応する OID あり、increment あり</li>
+<li>期待: 各 <a href="../../glossary/#term-vlan">VLAN</a> / portchannel L3 interface に対応する OID あり、increment あり</li>
 </ul>
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23819,14 +23819,16 @@
 <li><a href="../../config-db/acl-rule/">../config-db/acl-rule.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 7e711c4007df -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/sonic-swss @ 4305596 — aclorch / intfsorch&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — aclorch / intfsorch&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ 39732bceb — acl_loader / aclshow&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — acl_loader / aclshow&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

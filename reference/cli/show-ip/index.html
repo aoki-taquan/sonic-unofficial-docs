@@ -24134,7 +24134,7 @@
 
 <h1 id="show-ip">show ip サブコマンド<a class="headerlink" href="#show-ip" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show ip</code> は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、BGP 関連表示を集約する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BGP 系は <strong>routing-stack の選択結果に応じて動的にロード</strong>される（FRR / Quagga / supervisor 環境）。</p>
+<p><code>show ip</code> は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、<a href="../../glossary/#term-bgp">BGP</a> 関連表示を集約する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BGP 系は <strong>routing-stack の選択結果に応じて動的にロード</strong>される（<a href="../../glossary/#term-frr">FRR</a> / Quagga / supervisor 環境）。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># show/main.py L1567-L1581</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">if</span> <span class="n">routing_stack</span> <span class="o">==</span> <span class="s2">&quot;frr&quot;</span><span class="p">:</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">.bgp_frr_v4</span><span class="w"> </span><span class="kn">import</span> <span class="n">bgp</span>
@@ -24193,7 +24193,7 @@
 </tr>
 <tr>
 <td><code>show ip bgp vrf &lt;vrf&gt; summary/neighbors/network</code></td>
-<td>VRF スコープの BGP 表示</td>
+<td><a href="../../glossary/#term-vrf">VRF</a> スコープの BGP 表示</td>
 </tr>
 </tbody>
 </table>
@@ -24242,7 +24242,7 @@ excerpt: |
 <h3 id="show-ip-prefix-list-name"><code>show ip prefix-list [&lt;name&gt;]</code><a class="headerlink" href="#show-ip-prefix-list-name" title="Permanent link">&para;</a></h3>
 <p><code>vtysh -c 'show ip prefix-list [&lt;name&gt;]'</code> を起動するだけのラッパ。</p>
 <h3 id="show-ip-protocol"><code>show ip protocol</code><a class="headerlink" href="#show-ip-protocol" title="Permanent link">&para;</a></h3>
-<p><code>vtysh -c 'show ip protocol'</code>。FRR の各プロトコル（zebra / bgp / static 等）有効状態 summary。</p>
+<p><code>vtysh -c 'show ip protocol'</code>。FRR の各プロトコル（<a href="../../glossary/#term-zebra">zebra</a> / bgp / static 等）有効状態 summary。</p>
 <h3 id="show-ip-fib-ipaddress"><code>show ip fib [&lt;ipaddress&gt;]</code><a class="headerlink" href="#show-ip-fib-ipaddress" title="Permanent link">&para;</a></h3>
 <p><code>fibshow -4 [-ip &lt;ipaddress&gt;]</code> を起動。実 FIB（kernel + ASIC sync 済みエントリ）を表示する。</p>
 <h3 id="show-ip-bgp-summary"><code>show ip bgp summary</code><a class="headerlink" href="#show-ip-bgp-summary" title="Permanent link">&para;</a></h3>
@@ -24256,7 +24256,7 @@ FRR <code>vtysh -c 'show bgp ipv4 summary'</code> 風のコマンドを <code>su
 <code>&lt;ipaddress&gt;</code> プレフィックスについて RIB に存在する経路と属性を表示。<code>&lt;info_type&gt;</code> は <code>bestpath</code> / <code>multipath</code> / <code>longer-prefixes</code> 等の vtysh 直系オプション。</p>
 <h3 id="show-ip-bgp-aggregate-address"><code>show ip bgp aggregate-address</code><a class="headerlink" href="#show-ip-bgp-aggregate-address" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-CONFIG_DB の <code>BGP_AGGREGATE_ADDRESS</code> テーブルを直接読み出し、各エントリの prefix・bbr-required・summary-only・as-set・prefix-list を表示する。</p>
+<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>BGP_AGGREGATE_ADDRESS</code> テーブルを直接読み出し、各エントリの prefix・bbr-required・summary-only・as-set・prefix-list を表示する。</p>
 <h3 id="show-ip-bgp-vrf-vrf-summaryneighborsnetwork"><code>show ip bgp vrf &lt;vrf&gt; summary/neighbors/network ...</code><a class="headerlink" href="#show-ip-bgp-vrf-vrf-summaryneighborsnetwork" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
 <code>&lt;vrf&gt;</code> を vtysh の <code>bgp vrf &lt;name&gt;</code> ファミリに変換して上記 helper を呼ぶ。<code>default</code> / <code>Vrf*</code> を指定可能。</p>
@@ -24288,7 +24288,7 @@ CONFIG_DB の <code>BGP_AGGREGATE_ADDRESS</code> テーブルを直接読み出�
 <td><code>route</code> / <code>prefix-list</code> / <code>protocol</code> / <code>bgp ...</code></td>
 </tr>
 <tr>
-<td>Linux FIB + APPL_DB sync (<code>fibshow</code>)</td>
+<td>Linux FIB + <a href="../../glossary/#term-appl_db">APPL_DB</a> sync (<code>fibshow</code>)</td>
 <td><code>fib</code></td>
 </tr>
 </tbody>
@@ -24362,6 +24362,8 @@ CONFIG_DB の <code>BGP_AGGREGATE_ADDRESS</code> テーブルを直接読み出�
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 63ea0bb417b1 -->
 
 <div class="footnote">
 <hr />

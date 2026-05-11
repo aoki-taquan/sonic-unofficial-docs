@@ -23763,18 +23763,18 @@
 <h1 id="ciscobgp4mib-state_db">CiscoBgp4MIB の STATE_DB 経由化<a class="headerlink" href="#ciscobgp4mib-state_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>なぜマルチ ASIC で従来の SNMP→vtyソケット 直結方式が破綻するのか</li>
-<li>新方式（<code>bgpmon</code> + STATE_DB）はどこで動き、どう負荷を抑えているか</li>
+<li>なぜマルチ ASIC で従来の <a href="../../reference/glossary/#term-snmp">SNMP</a>→vtyソケット 直結方式が破綻するのか</li>
+<li>新方式（<code>bgpmon</code> + <a href="../../reference/glossary/#term-state_db">STATE_DB</a>）はどこで動き、どう負荷を抑えているか</li>
 <li>スキーマ（<code>NEIGH_STATE_TABLE</code>）に何が入るのか</li>
 <li>旧 Bgp4MIB（<code>1.3.6.1.2.1.15</code>）はマルチ ASIC で動くのか</li>
 </ul>
 <h2 id="_2">旧方式が抱えた問題<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>CiscoBgp4MIB（OID <code>1.3.6.1.4.1.9.9.187</code>）は従来、<code>snmp_ax_impl</code> が <strong>bgpd の vty ソケットに直結</strong> し <code>show</code> をパースしていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。マルチ ASIC では BGP コンテナが ASIC ごとに別 network namespace で動くため、host 側エージェントから N 個のソケットを束ねる必要があり破綻する。</p>
+<p>CiscoBgp4MIB（OID <code>1.3.6.1.4.1.9.9.187</code>）は従来、<code>snmp_ax_impl</code> が <strong>bgpd の vty ソケットに直結</strong> し <code>show</code> をパースしていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。マルチ ASIC では <a href="../../reference/glossary/#term-bgp">BGP</a> コンテナが ASIC ごとに別 network namespace で動くため、host 側エージェントから N 個のソケットを束ねる必要があり破綻する。</p>
 <pre class="mermaid"><code>flowchart LR
     SNMPD[snmpd] --&gt; AX[snmp_ax_impl]
     AX --&gt;|vty socket| BGPD[bgpd in BGP docker]
     AX --&gt; RDB[(redis: 各種 MIB)]</code></pre>
-<p>HLD では「namespace の eth0 に bgpd TCP listen」「<code>/var/run/bgpd.vty</code> を host から参照」の 2 案を検討したが、いずれも N 本ソケット問題と listen アドレス変更が必要で見送り<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> では「namespace の eth0 に bgpd TCP listen」「<code>/var/run/bgpd.vty</code> を host から参照」の 2 案を検討したが、いずれも N 本ソケット問題と listen アドレス変更が必要で見送り<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="state_db">新方式（STATE_DB 経由）<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
 <p><strong><code>bgpmon</code></strong> を各 BGP コンテナ（≒ ASIC ごとに 1 インスタンス）に置き、<code>STATE_DB.NEIGH_STATE_TABLE</code> に neighbor state を書く。<code>snmp_ax_impl</code> は STATE_DB を読むだけ。シングル ASIC とマルチ ASIC が共通化される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
@@ -23833,7 +23833,7 @@
 </ul>
 <p><code>bgpd</code> への TCP / Unix ソケット接続は廃止される（返す MIB 値は不変）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="cli">設定 / CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
-<p>新規 CONFIG_DB スキーマも CLI も<strong>提案されていない</strong>。<code>bgpmon</code> は BGP コンテナの supervisor で起動し、ユーザ設定は不要。検証は既存 <code>snmpwalk</code>:</p>
+<p>新規 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマも CLI も<strong>提案されていない</strong>。<code>bgpmon</code> は BGP コンテナの supervisor で起動し、ユーザ設定は不要。検証は既存 <code>snmpwalk</code>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>snmpwalk -v2c -c &lt;community&gt; 127.0.0.1 iso.3.6.1.4.1.9.9.187
 </span></code></pre></div>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23846,7 +23846,7 @@
 <ul>
 <li><strong>マルチ ASIC SNMP</strong>: 既存の namespace redis 集約機構の延長</li>
 <li><strong>frr / bgpd ログ設定</strong>: bgpmon が <code>frr.log</code> の mtime をトリガに使う</li>
-<li><strong>telemetry / gNMI</strong>: <code>NEIGH_STATE_TABLE</code> は SNMP 以外からも参照できる汎用 table</li>
+<li><strong>telemetry / <a href="../../reference/glossary/#term-gnmi">gNMI</a></strong>: <code>NEIGH_STATE_TABLE</code> は SNMP 以外からも参照できる汎用 table</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23861,6 +23861,8 @@
 <li><a href="../../topics/02-bgp/operations/">02 BGP / operations</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 148c5064300b -->
+
 <div class="footnote">
 <hr />
 <ol>

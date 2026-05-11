@@ -23940,8 +23940,8 @@
 </div>
 <h1 id="dscp-tc-dual-tor-pfc">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）<a class="headerlink" href="#dscp-tc-dual-tor-pfc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Dual-ToR（Active / Standby）でサーバ側輻輳が起きると <strong>upper / lower 両 ToR に PFC pause が同時に伝搬</strong> する。Standby ToR は南向きトラフィックを <strong>同じキューでバウンスバック</strong> して T1 経由で Active ToR に送るため、T1 ↔ ToR 間で pause が固着する <strong>PFC デッドロック</strong> が起きる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は tunnel encap 時に <strong>キュー / DSCP を別系統に書き換え</strong>、decap 時にポート単位マップを <strong>AZURE_TUNNEL</strong> で上書きして TC / PG を再設定し、バウンスバック経路と通常経路を別キューに分離する。<code>202012</code> / <code>202205</code> を最初のターゲットとし、SAI 新規 tunnel 属性が前提<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Dual-ToR（Active / Standby）でサーバ側輻輳が起きると <strong>upper / lower 両 ToR に <a href="../../reference/glossary/#term-pfc">PFC</a> pause が同時に伝搬</strong> する。Standby ToR は南向きトラフィックを <strong>同じキューでバウンスバック</strong> して T1 経由で Active ToR に送るため、T1 ↔ ToR 間で pause が固着する <strong>PFC デッドロック</strong> が起きる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は tunnel encap 時に <strong>キュー / DSCP を別系統に書き換え</strong>、decap 時にポート単位マップを <strong>AZURE_TUNNEL</strong> で上書きして TC / PG を再設定し、バウンスバック経路と通常経路を別キューに分離する。<code>202012</code> / <code>202205</code> を最初のターゲットとし、<a href="../../reference/glossary/#term-sai">SAI</a> 新規 tunnel 属性が前提<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">どう動くか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">バウンスバックの経路分離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23949,7 +23949,7 @@
     StandbyToR --&gt;|encap MuxTunnel&lt;br/&gt;outer DSCP=2, Q2| T1b[T1]
     T1b --&gt;|TC2, PG2| ActiveToR
     ActiveToR --&gt;|decap; inner DSCP=3 維持&lt;br/&gt;AZURE_TUNNEL → TC3, PG2| Server</code></pre>
-<p>Standby が受けた南向きパケットは MuxTunnel (IPinIP) で対向 Active ToR に encap される。元の TC/Queue をそのまま使うと往復が同一キューで連結し pause が解けない。HLD は <strong>encap 側で DSCP/Queue を書き換え</strong>、<strong>decap 側でポート単位 TC/PG を上書き</strong> する 2 段で経路を分ける。</p>
+<p>Standby が受けた南向きパケットは MuxTunnel (<a href="../../reference/glossary/#term-ipinip">IPinIP</a>) で対向 Active ToR に encap される。元の TC/Queue をそのまま使うと往復が同一キューで連結し pause が解けない。<a href="../../reference/glossary/#term-hld">HLD</a> は <strong>encap 側で DSCP/Queue を書き換え</strong>、<strong>decap 側でポート単位 TC/PG を上書き</strong> する 2 段で経路を分ける。</p>
 <h3 id="qos-azure_tunnel">追加 QoS マップ（AZURE_TUNNEL 系）<a class="headerlink" href="#qos-azure_tunnel" title="Permanent link">&para;</a></h3>
 <p>Dual-ToR 限定 (<code>DEVICE_METADATA['localhost']['subtype'] = 'DualToR'</code>) で <code>qos_config.j2</code> がレンダリングする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
@@ -24049,7 +24049,7 @@
 </tr>
 </tbody>
 </table>
-<p>orchagent: <code>tunneldecaporch</code> が DECAP 側、<code>muxorch::create_tunnel</code> が ENCAP 側を投入する。</p>
+<p><a href="../../reference/glossary/#term-orchagent">orchagent</a>: <code>tunneldecaporch</code> が DECAP 側、<code>muxorch::create_tunnel</code> が ENCAP 側を投入する。</p>
 <h3 id="_4">終端オブジェクトの分離<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p><code>MuxTunnel</code> と通常 IPinIP が同じ Loopback (<code>10.1.0.32</code>) を <code>dst_ip</code> として共有すると、decap terminator が衝突して追加属性を片方だけに付与できない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -24157,7 +24157,7 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 </tbody>
 </table>
 <h3 id="cli-yang">CLI / YANG<a class="headerlink" href="#cli-yang" title="Permanent link">&para;</a></h3>
-<p>CLI 追加は HLD 上なし。設定は <code>qos_config.j2</code> 経由で生成され <code>db_migrator</code> が旧構成から派生する。YANG は <code>sonic-tc-dscp</code>（新設）と <code>sonic-port-qos-map</code>（フィールド追加）。</p>
+<p>CLI 追加は HLD 上なし。設定は <code>qos_config.j2</code> 経由で生成され <code>db_migrator</code> が旧構成から派生する。<a href="../../reference/glossary/#term-yang">YANG</a> は <code>sonic-tc-dscp</code>（新設）と <code>sonic-port-qos-map</code>（フィールド追加）。</p>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>MuxTunnel</strong>: 本機能の主対象。terminator が <code>P2P</code> に分離。</li>
@@ -24167,7 +24167,7 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>バウンスバックでも pause 伝搬: <code>MuxTunnel0</code> の encap マップが ASIC_DB (<code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code>) に反映されているか。</li>
+<li>バウンスバックでも pause 伝搬: <code>MuxTunnel0</code> の encap マップが <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> (<code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code>) に反映されているか。</li>
 <li>decap 後 TC が想定外: <code>dscp_mode=pipe</code> か（<code>uniform</code> だと outer が inner に被さって <code>AZURE_TUNNEL</code> の効きが見えない）。</li>
 <li>PFCWD 対象キューがずれる: <code>db_migrator</code> で <code>pfcwd_sw_enable</code> が生成されたか、または手動投入を確認。</li>
 <li>terminator 競合: MuxTunnel と通常 IPinIP の両方を立てている場合、orchagent が P2P / P2MP に分離しているか。</li>
@@ -24175,10 +24175,10 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 <h2 id="_8">実装との乖離<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>verified at: 2026-05-09。</p>
 <ul>
-<li><strong>PFCWD フィールド名</strong>: HLD <code>pfc_wd_sw_enable</code> に対し、master 実装は <code>pfcwd_sw_enable</code>（アンダースコア位置違い）。<code>sonic-utilities/scripts/db_migrator.py:1186-1193</code> で <code>pfc_enable</code> から派生。CONFIG_DB / YANG (<code>sonic-port-qos-map</code>) も実装名を正とする。</li>
+<li><strong>PFCWD フィールド名</strong>: HLD <code>pfc_wd_sw_enable</code> に対し、master 実装は <code>pfcwd_sw_enable</code>（アンダースコア位置違い）。<code>sonic-utilities/scripts/db_migrator.py:1186-1193</code> で <code>pfc_enable</code> から派生。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / YANG (<code>sonic-port-qos-map</code>) も実装名を正とする。</li>
 <li><code>tunneldecaporch.cpp:834,1084</code>（<code>DECAP_QOS_*</code>）、<code>muxorch.cpp:259,2347</code>（<code>SAI_TUNNEL_PEER_MODE_P2P</code>）、<code>qos_config.j2:441</code>（Dual-ToR 限定 <code>AZURE_TUNNEL</code> 出力）は HLD どおり実装。</li>
 </ul>
-<p><strong>影響</strong>: HLD 表記そのままで config_db.json テンプレートを書くと YANG validation で弾かれるか orchagent が無視する。upgrade 環境では <code>db_migrator.py</code> 最新版を走らせ <code>pfcwd_sw_enable</code> が生成されているか確認する。</p>
+<p><strong>影響</strong>: HLD 表記そのままで <a href="../../reference/glossary/#term-config_db.json">config_db.json</a> テンプレートを書くと YANG validation で弾かれるか orchagent が無視する。upgrade 環境では <code>db_migrator.py</code> 最新版を走らせ <code>pfcwd_sw_enable</code> が生成されているか確認する。</p>
 <p><strong>確認コマンド</strong>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT_QOS_MAP|*&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>k<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$k</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;pfc(wd)?_sw_enable&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
@@ -24204,6 +24204,8 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 <li><a href="../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4a6c1db4c93d -->
 
 <div class="footnote">
 <hr />

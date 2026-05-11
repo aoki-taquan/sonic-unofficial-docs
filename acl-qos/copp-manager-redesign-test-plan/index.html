@@ -23830,7 +23830,7 @@
 </div>
 <h1 id="copp-manager-feature-always_enabled">CoPP Manager 再設計テストプラン（feature テーブル整合性 + <code>always_enabled</code>）<a class="headerlink" href="#copp-manager-feature-always_enabled" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>CoppMgr</code> は CONFIG_DB の <code>COPP_TRAP</code> と <code>FEATURE</code> を観測し、各 trap (BGP / ARP / LACP / UDLD / IP2ME 等) を SAI hostif trap として <strong>install / uninstall</strong> する。旧設計では「<code>FEATURE</code> に entry が無い → デフォルトで install する」フォールバックを持っていたため、sflow のように <strong>entry が削除された feature の trap が install されたままになる</strong> バグが発生していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>CoppMgr</code> は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>COPP_TRAP</code> と <code>FEATURE</code> を観測し、各 trap (<a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-arp">ARP</a> / <a href="../../reference/glossary/#term-lacp">LACP</a> / UDLD / IP2ME 等) を <a href="../../reference/glossary/#term-sai">SAI</a> hostif trap として <strong>install / uninstall</strong> する。旧設計では「<code>FEATURE</code> に entry が無い → デフォルトで install する」フォールバックを持っていたため、sflow のように <strong>entry が削除された feature の trap が install されたままになる</strong> バグが発生していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>再設計では以下のルールに整理し、本テストプランはその振る舞いを ptf32 / ptf64 / t1 / t2 トポロジで検証する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>feature が disabled 又は <code>FEATURE</code> に存在しない → install しない</li>
@@ -24002,6 +24002,8 @@ reasoning: HLD 本文 4 ルールをそのまま判定フローに転写
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6f615bbdf47b -->
 
 <div class="footnote">
 <hr />

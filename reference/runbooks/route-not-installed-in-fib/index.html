@@ -23679,12 +23679,12 @@
 </span></code></pre></div>
 <h2 id="_4">よくある原因<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Nexthop が unresolved</strong> — ARP が無く、zebra が FIB に入れない</li>
-<li><strong>fpmsyncd と zebra の FPM socket 断</strong> — FRR の FPM が disable / socket reconnect ループ</li>
+<li><strong>Nexthop が unresolved</strong> — <a href="../../glossary/#term-arp">ARP</a> が無く、<a href="../../glossary/#term-zebra">zebra</a> が FIB に入れない</li>
+<li><strong><a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> と zebra の <a href="../../glossary/#term-fpm">FPM</a> socket 断</strong> — <a href="../../glossary/#term-frr">FRR</a> の FPM が disable / socket reconnect ループ</li>
 <li><strong>routeorch の bulk pending</strong> — ASIC への書き込みが queue 滞留中</li>
-<li><strong>CRM route / nexthop 枯渇</strong> — <code>crm show resources</code> で <code>used == max</code></li>
+<li><strong><a href="../../glossary/#term-crm">CRM</a> route / nexthop 枯渇</strong> — <code>crm show resources</code> で <code>used == max</code></li>
 <li><strong>ASIC FIB table full</strong> — <code>sai-table-full.md</code> 参照</li>
-<li><strong>同一 prefix を別 source が上書き</strong> — static route と BGP route の admin distance</li>
+<li><strong>同一 prefix を別 source が上書き</strong> — static route と <a href="../../glossary/#term-bgp">BGP</a> route の admin distance</li>
 <li><strong>Blackhole / Null route</strong> — <code>null0</code> が選択されていて意図せず DROP</li>
 </ol>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
@@ -23695,6 +23695,7 @@
 <li><a href="../swss-orchagent-busy-loop/">swss-orchagent-busy-loop.md</a></li>
 <li><a href="../arp-entry-stuck/">arp-entry-stuck.md</a></li>
 </ul>
+<!-- glossary-links-injected: f3660992dee9 -->
 
 
 

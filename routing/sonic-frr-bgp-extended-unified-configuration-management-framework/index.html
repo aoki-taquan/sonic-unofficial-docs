@@ -23862,8 +23862,8 @@
 </div>
 <h1 id="frr-bgp-unified-mgmt-frameworkfrrcfgd-openconfig-bgp">FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）<a class="headerlink" href="#frr-bgp-unified-mgmt-frameworkfrrcfgd-openconfig-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC Management Framework（REST / gNMI / IS-CLI）から <strong>OpenConfig BGP</strong> モデル経由で FRR-BGP を一気通貫に扱えるようにする設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code>（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の <strong><code>frrcfgd</code></strong> daemon が CONFIG_DB の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。</p>
-<p>切り替えは <code>DEVICE_METADATA.localhost.frr_mgmt_framework_config = "true"</code> で行う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。default は <code>false</code>（従来 bgpcfgd）。state / statistics の get は FRR から on-demand 取得するため warm boot 影響なし。</p>
+<p>SONiC Management Framework（REST / <a href="../../reference/glossary/#term-gnmi">gNMI</a> / IS-CLI）から <strong>OpenConfig <a href="../../reference/glossary/#term-bgp">BGP</a></strong> モデル経由で <a href="../../reference/glossary/#term-frr">FRR</a>-BGP を一気通貫に扱えるようにする設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code>（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の <strong><code>frrcfgd</code></strong> daemon が <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。</p>
+<p>切り替えは <code>DEVICE_METADATA.localhost.frr_mgmt_framework_config = "true"</code> で行う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。default は <code>false</code>（従来 <a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a>）。state / statistics の get は FRR から on-demand 取得するため warm boot 影響なし。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23879,7 +23879,7 @@
 <tr>
 <th>項目</th>
 <th>bgpcfgd（既存）</th>
-<th>frrcfgd（本 HLD）</th>
+<th>frrcfgd（本 <a href="../../reference/glossary/#term-hld">HLD</a>）</th>
 </tr>
 </thead>
 <tbody>
@@ -23901,7 +23901,7 @@
 <tr>
 <td>機能網羅</td>
 <td>template が対応するもの限定</td>
-<td>フル BGP（neighbor / peer-group / prefix-list / route-map / policy / VRF）</td>
+<td>フル BGP（neighbor / peer-group / prefix-list / route-map / policy / <a href="../../reference/glossary/#term-vrf">VRF</a>）</td>
 </tr>
 <tr>
 <td>場所</td>
@@ -23912,8 +23912,8 @@
 </table>
 <h3 id="management-framework">Management Framework 側<a class="headerlink" href="#management-framework" title="Permanent link">&para;</a></h3>
 <ul>
-<li>OpenConfig BGP YANG → SONiC YANG（ABNF）への annotation</li>
-<li>transformer methods（Go）が syntactic / semantic 検証 + Redis 書き込み</li>
+<li>OpenConfig BGP <a href="../../reference/glossary/#term-yang">YANG</a> → SONiC YANG（ABNF）への annotation</li>
+<li>transformer methods（Go）が syntactic / semantic 検証 + <a href="../../reference/glossary/#term-redis">Redis</a> 書き込み</li>
 <li>Marshalling は <strong>YGOT</strong>、CAS（Check-And-Set）transaction で書く（lock / rollback なし）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="config_db">CONFIG_DB スキーマ（拡張部）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -23929,7 +23929,7 @@
 </span></code></pre></div>
 <p>VRF キーが各 BGP テーブルの最上位に来る点（<code>&lt;vrf&gt;|...</code>）が、frrcfgd が VRF aware であることの帰結<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="state-statistics">State / Statistics の取得<a class="headerlink" href="#state-statistics" title="Permanent link">&para;</a></h3>
-<p><code>frrcfgd</code> は state / counters は持たず、Management Framework から要求が来たら <strong>FRR vtysh の <code>show ... json</code> を直接叩いて返す</strong>。COUNTERS_DB / STATE_DB に永続化しないため warm boot 復元の必要なし<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>frrcfgd</code> は state / counters は持たず、Management Framework から要求が来たら <strong>FRR vtysh の <code>show ... json</code> を直接叩いて返す</strong>。<a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に永続化しないため warm boot 復元の必要なし<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md#L96-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24005,6 +24005,8 @@ reasoning: bgpcfgd / frrcfgd の切替フィールドと warm boot スコープ�
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 21c54538406e -->
 
 <div class="footnote">
 <hr />

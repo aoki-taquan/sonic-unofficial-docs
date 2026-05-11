@@ -23730,14 +23730,14 @@
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>なぜ <code>sonic-telemetry</code> の Get 専用では不十分で、Set RPC を足したのか</li>
-<li>gNMI path の <strong>origin / target</strong> がどう DB / YANG を切り替えるか</li>
+<li><a href="../../reference/glossary/#term-gnmi">gNMI</a> path の <strong>origin / target</strong> がどう DB / <a href="../../reference/glossary/#term-yang">YANG</a> を切り替えるか</li>
 <li>1 SetRequest の <strong>トランザクション境界</strong> と ロールバック範囲はどこまでか</li>
 <li>gNMI <code>delete / update / replace</code> がどう <strong>JsonPatch</strong> に翻訳されるか</li>
 <li>container 内 gNMI から host で動く <code>config apply-patch</code> / <code>config reload</code> をどう呼ぶか</li>
 </ul>
 <h2 id="_2">なぜ拡張が必要か<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p><code>sonic-restapi</code> は case-by-case な API で汎用性が無く、<code>sonic-telemetry</code> は <strong>読み取り (gRPC) 専用</strong> だった。本 HLD は <code>sonic-telemetry</code> 同コンテナに gNMI <strong>Set / Get / Capabilities</strong> を実装し、CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB を <strong>DB schema または SONiC YANG schema</strong> で読み書き可能にする。将来 <code>sonic-restapi</code> を gNMI に置き換える計画<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>Phase 1: Set/Get/Capabilities、増分・全更新、CONFIG_DB schema 入力でも <strong>YANG 検証必須</strong>、VNET route の大量投入、multi-ASIC、bulk、TLS 相互認証。Phase 2 で TACACS+ 認可と gNOI 経由アップグレード<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>sonic-restapi</code> は case-by-case な API で汎用性が無く、<code>sonic-telemetry</code> は <strong>読み取り (gRPC) 専用</strong> だった。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <code>sonic-telemetry</code> 同コンテナに gNMI <strong>Set / Get / Capabilities</strong> を実装し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> を <strong>DB schema または SONiC YANG schema</strong> で読み書き可能にする。将来 <code>sonic-restapi</code> を gNMI に置き換える計画<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>Phase 1: Set/Get/Capabilities、増分・全更新、CONFIG_DB schema 入力でも <strong>YANG 検証必須</strong>、<a href="../../reference/glossary/#term-vnet">VNET</a> route の大量投入、multi-ASIC、bulk、TLS 相互認証。Phase 2 で TACACS+ 認可と <a href="../../reference/glossary/#term-gnoi">gNOI</a> 経由アップグレード<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="path-origin-target">path の origin と target でスキーマを切替<a class="headerlink" href="#path-origin-target" title="Permanent link">&para;</a></h2>
 <p>origin で <strong>スキーマ</strong>、<code>elem[0]</code> で <strong>DB</strong>、<code>elem[1]</code> で <strong>インスタンス</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -23854,7 +23854,7 @@
 <li><strong>generic_config_updater</strong>: 増分 Set の中核</li>
 <li><strong>sonic-config-engine</strong>: 全更新の中核</li>
 <li><strong>sonic-restapi</strong>: gNMI で置換予定</li>
-<li><strong>TACACS+</strong>: Phase 2 で AAA 連携</li>
+<li><strong>TACACS+</strong>: Phase 2 で <a href="../../reference/glossary/#term-aaa">AAA</a> 連携</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -23863,6 +23863,8 @@
 <li><a href="../model-based-replace-delete-in-mgmt-framework-transformer/">HLD: Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE</a></li>
 <li><a href="../json-patch-ordering-using-yang-models/">HLD: JSON patch ordering using YANG models</a></li>
 </ul>
+<!-- glossary-links-injected: f0f2a1d6c824 -->
+
 <div class="footnote">
 <hr />
 <ol>

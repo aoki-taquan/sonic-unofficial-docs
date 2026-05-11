@@ -23862,12 +23862,12 @@
 </div>
 <h1 id="gnmi-save-on-setset-configdb">gNMI Save-On-Set（Set ごとの ConfigDB 永続化）<a class="headerlink" href="#gnmi-save-on-setset-configdb" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の gNMI 実装は、<code>gNMI.Set()</code> で受け取った設定変更を <strong>メモリ上の <code>CONFIG_DB</code></strong> にしか反映しない。リブートを跨いで設定を残すには別途 <code>config save</code> 等を実行する必要があり、自動化された外部コントローラ（NMS / SDN コントローラ）の運用では「Set したのにリブートで消えた」という事故が起きやすい。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-gnmi">gNMI</a> 実装は、<code>gNMI.Set()</code> で受け取った設定変更を <strong>メモリ上の <code>CONFIG_DB</code></strong> にしか反映しない。リブートを跨いで設定を残すには別途 <code>config save</code> 等を実行する必要があり、自動化された外部コントローラ（NMS / SDN コントローラ）の運用では「Set したのにリブートで消えた」という事故が起きやすい。</p>
 <p>Save-On-Set は <strong><code>gNMI.Set()</code> の各呼び出しの末尾で ConfigDB をファイルに保存する</strong> 機能を <code>sonic-gnmi</code> に追加するもの。後方互換のため <strong>既定では無効</strong> で、<code>telemetry</code> バイナリのコマンドラインフラグ <code>--with-save-on-set</code> で有効化する。永続化操作自体は telemetry コンテナ内では完結できないため、<strong>ホスト側 (<code>sonic-host-services</code>) の DBUS 経由</strong> で実行される設計になっている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">スコープと前提<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li>対象は <code>sonic-gnmi</code> のみ。SAI / SWSS / Syncd / アーキテクチャ全体には変更を入れない。</li>
+<li>対象は <code>sonic-gnmi</code> のみ。<a href="../../reference/glossary/#term-sai">SAI</a> / SWSS / Syncd / アーキテクチャ全体には変更を入れない。</li>
 <li>既存の運用フィールド機器を壊さないよう、本機能は <strong>デフォルト OFF</strong>。</li>
 <li>起動時の <code>TELEMETRY|gnmi|save_on_set</code> を <code>telemetry.sh</code> が読んで <code>telemetry</code> バイナリへ引数として渡す。<strong>値の変更は telemetry の再起動でのみ反映</strong> される。</li>
 </ul>
@@ -23892,7 +23892,7 @@
 <li><strong>関数ポインタによる切り替え</strong>: フラグの読み取りはプロセス起動時のみ。実行時は <code>gnmi.SaveOnSet</code> という関数ポインタが呼ばれるだけで、有効/無効はこのポインタの差し替えで表現する。</li>
 </ol>
 <h3 id="hld">実装スケッチ（HLD 抜粋）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
-<p>HLD は Go の擬似コードで実装方針を示している。要点は <strong>フラグで関数ポインタを差し替える</strong> という単純な構造である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> は Go の擬似コードで実装方針を示している。要点は <strong>フラグで関数ポインタを差し替える</strong> という単純な構造である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <div class="language-go highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// 起動時のフラグ読み取り</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">var</span><span class="w"> </span><span class="p">(</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nx">withSaveOnSet</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">flag</span><span class="p">.</span><span class="nx">Bool</span><span class="p">(</span><span class="s">&quot;with-save-on-set&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enables save-on-set.&quot;</span><span class="p">)</span>
@@ -23993,7 +23993,7 @@ reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出し�
 <td>変更なし</td>
 </tr>
 <tr>
-<td>CLI / YANG</td>
+<td>CLI / <a href="../../reference/glossary/#term-yang">YANG</a></td>
 <td>変更なし</td>
 </tr>
 <tr>
@@ -24028,7 +24028,7 @@ reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出し�
 </table>
 <p><code>TELEMETRY|gnmi|save_on_set</code> のフィールド名・取り得る値の正確な仕様は HLD 内では <code>save_on_set</code> という参照のみで詳細未記載。実装裏取りで補完する。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD は CLI / YANG の変更を <strong>明示的に拒否</strong> している（"No changes to CLI or YANG"）。設定は CONFIG_DB を直接書き換えるか、既存の telemetry 設定経路で行う前提。</p>
+<p>HLD は CLI / YANG の変更を <strong>明示的に拒否</strong> している（"No changes to CLI or YANG"）。設定は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を直接書き換えるか、既存の telemetry 設定経路で行う前提。</p>
 <h3 id="_9">設定例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 有効化（CONFIG_DB を書き換えてから telemetry 再起動）</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{&quot;TELEMETRY&quot;: {&quot;gnmi&quot;: {&quot;save_on_set&quot;: &quot;true&quot;}}}&#39;</span><span class="w"> </span>--write-to-db
@@ -24055,10 +24055,12 @@ reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出し�
 <p><code>sonic-gnmi</code> の telemetry エントリポイントと Set ハンドラに Save-On-Set 実装を確認した。</p>
 <ul>
 <li>CLI フラグ <code>--with-save-on-set</code>: <code>.cache/sonic-sources/sonic-gnmi/telemetry/telemetry.go</code> L63 (<code>WithSaveOnSet *bool</code>) / L189 (<code>fs.Bool("with-save-on-set", false, ...)</code>) / L583-L584 で <code>s.SaveStartupConfig = gnmi.SaveOnSetEnabled</code> を結線</li>
-<li><code>SaveOnSetEnabled()</code> 本体: <code>.cache/sonic-sources/sonic-gnmi/gnmi_server/server.go</code> L1051 以降。<code>ssc.NewDbusClient()</code> を作成し、<code>sc.ConfigSave("/etc/sonic/config_db.json")</code> で <strong>ホスト側 DBUS 経由で ConfigDB を /etc/sonic/config_db.json に保存</strong> する</li>
+<li><code>SaveOnSetEnabled()</code> 本体: <code>.cache/sonic-sources/sonic-gnmi/gnmi_server/server.go</code> L1051 以降。<code>ssc.NewDbusClient()</code> を作成し、<code>sc.ConfigSave("/etc/sonic/config_db.json")</code> で <strong>ホスト側 DBUS 経由で ConfigDB を /etc/sonic/<a href="../../reference/glossary/#term-config_db.json">config_db.json</a> に保存</strong> する</li>
 <li><code>saveOnSetDisabled()</code> (L1068) で既定 (no-op) を実装</li>
 </ul>
 <p>HLD の「Set ごとに ConfigDB を JSON に永続化、コンテナ内では完結せず host DBUS 経由」「既定は disabled、<code>--with-save-on-set</code> で有効化」が実コードと厳密に一致。<code>code-verified</code> に昇格。</p>
+<!-- glossary-links-injected: 36c0149d5a9b -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23528,7 +23528,7 @@
 
 
 <h1 id="swss-sai-redis">SWSS / SAI / Redis 内部実装<a class="headerlink" href="#swss-sai-redis" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC の機能章を読み解くときに何度も出てくる「Redis DB」「orchagent」「syncd」「SAI」の関係を、機能横断の内部実装としてまとめ直すための入口である。各機能章（BGP、L2、ACL、VRF など）では Redis DB と daemon の名前が前提のように出てくるが、その共通の地図はここに置く。</p>
+<p>この章は、SONiC の機能章を読み解くときに何度も出てくる「<a href="../../reference/glossary/#term-redis">Redis</a> DB」「<a href="../../reference/glossary/#term-orchagent">orchagent</a>」「<a href="../../reference/glossary/#term-syncd">syncd</a>」「<a href="../../reference/glossary/#term-sai">SAI</a>」の関係を、機能横断の内部実装としてまとめ直すための入口である。各機能章（<a href="../../reference/glossary/#term-bgp">BGP</a>、L2、<a href="../../reference/glossary/#term-acl">ACL</a>、<a href="../../reference/glossary/#term-vrf">VRF</a> など）では Redis DB と daemon の名前が前提のように出てくるが、その共通の地図はここに置く。</p>
 <p>主な問いは次の 4 つ。</p>
 <ul>
 <li><code>CONFIG_DB</code>、<code>APPL_DB</code>、<code>STATE_DB</code>、<code>COUNTERS_DB</code>、<code>ASIC_DB</code> はどの daemon が読み書きし、どこで境界を持つのか。</li>
@@ -23539,14 +23539,14 @@
 <h2 id="_1">読む順番<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li><a href="concept/">概要</a>: 内部実装章の読み方と、機能章との重複を避けるためのスコープを定義する。</li>
-<li><a href="architecture/">アーキテクチャ</a>: Redis DB、ProducerStateTable、orchagent、syncd、SAI の関係を一枚図で押さえる。</li>
+<li><a href="architecture/">アーキテクチャ</a>: Redis DB、<a href="../../reference/glossary/#term-producerstatetable">ProducerStateTable</a>、orchagent、syncd、SAI の関係を一枚図で押さえる。</li>
 <li><a href="setup/">設定</a>: 内部実装側の設定面（database_config.json、multi-namespace、FEATURE delay 等）を扱う。</li>
 <li><a href="operations/">運用</a>: SAI 失敗時の見方、ERROR_DB、dump、health-check、system ready など運用観点を扱う。</li>
-<li><a href="internals/">内部実装</a>: SAI API version、stats capability、CRM 拡張、bulk/flex counter、debug framework、dump utility を比較する。</li>
+<li><a href="internals/">内部実装</a>: SAI API version、stats capability、<a href="../../reference/glossary/#term-crm">CRM</a> 拡張、bulk/flex counter、debug framework、dump utility を比較する。</li>
 <li><a href="advanced/">発展トピック</a>: app health、system ready、FEATURE delayed、warm reboot の view switching など起動・再構成系を扱う。</li>
 </ol>
 <h2 id="_2">統合した既存ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>この章は internals / architecture / platform / system 配下の HLD 派生ページを横断する。スキーマや SAI 呼び出しの詳細は各サブページ末尾の「関連ページ」から、機能固有の話は当該機能章（<a href="../02-bgp/">BGP</a>、<a href="../06-l2-vlan-lag/">L2 VLAN LAG</a>、<a href="../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> など）から参照する。</p>
+<p>この章は internals / architecture / platform / system 配下の <a href="../../reference/glossary/#term-hld">HLD</a> 派生ページを横断する。スキーマや SAI 呼び出しの詳細は各サブページ末尾の「関連ページ」から、機能固有の話は当該機能章（<a href="../02-bgp/">BGP</a>、<a href="../06-l2-vlan-lag/">L2 VLAN LAG</a>、<a href="../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> など）から参照する。</p>
 <!-- xref-related-chapters -->
 <h2 id="_3">関連する章<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p><strong>前提として読むべき章</strong></p>
@@ -23567,6 +23567,7 @@
 <li><a href="../18-p4-pins/">P4 / PINS / Programmable Pipeline</a></li>
 <li><a href="../22-reference-index/">リファレンス横断索引</a></li>
 </ul>
+<!-- glossary-links-injected: 91256395cb11 -->
 
 
 

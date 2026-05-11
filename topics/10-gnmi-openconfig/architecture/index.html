@@ -23674,7 +23674,7 @@
 
 
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>gNMI / REST のリクエストが CONFIG_DB に到達するまでの経路は、入口の transport が違っても中間層 (Translib / Transformer) で合流する。ここでは「どの daemon を通り、どの YANG model がいつ validation するか」を追う。</p>
+<p><a href="../../../reference/glossary/#term-gnmi">gNMI</a> / REST のリクエストが <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に到達するまでの経路は、入口の transport が違っても中間層 (Translib / Transformer) で合流する。ここでは「どの daemon を通り、どの <a href="../../../reference/glossary/#term-yang">YANG</a> model がいつ validation するか」を追う。</p>
 <h2 id="_2">全体フロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>graph TD
   C1[gRPC client] --&gt; G[gNMI server]
@@ -23690,12 +23690,12 @@
   SWSS --&gt; SAI[syncd / SAI]
   CDB -.subscribe.-&gt; G
   APPL[(APPL_DB / STATE_DB / COUNTERS_DB)] -.telemetry.-&gt; G</code></pre>
-<p>REST と gNMI server は同じ telemetry container で動き、Translib 経由で OpenConfig / SONiC YANG をどちらも扱う。Subscribe (gNMI streaming) は CONFIG_DB だけでなく APPL_DB / STATE_DB / COUNTERS_DB も対象になる。</p>
+<p>REST と gNMI server は同じ telemetry container で動き、Translib 経由で OpenConfig / SONiC YANG をどちらも扱う。Subscribe (gNMI streaming) は CONFIG_DB だけでなく <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> も対象になる。</p>
 <p>詳細な server 内部設計は <a href="../../../management/sonic-gnmi-server-interface-design/">gNMI server interface design</a> と <a href="../../../management/sonic-management-framework/">Management Framework 全体像</a> を参照する。</p>
 <h2 id="translib-transformer">Translib と Transformer の責務<a class="headerlink" href="#translib-transformer" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Translib</strong>: 上位 API。Get / Set / Subscribe を YANG パス単位で受け付け、リクエストを Transformer に渡して内部表現に直す。OpenConfig パスと SONiC YANG パスの両方を受ける。</li>
-<li><strong>Transformer</strong>: YANG ノードと CONFIG_DB テーブル/カラムの対応規則を持ち、片方向ではなく Get と Set 両方に効く双方向の写像を行う。複雑な依存 (たとえば VLAN member と LAG の整合) は Transformer のロジックで吸収する。</li>
+<li><strong>Transformer</strong>: YANG ノードと CONFIG_DB テーブル/カラムの対応規則を持ち、片方向ではなく Get と Set 両方に効く双方向の写像を行う。複雑な依存 (たとえば <a href="../../../reference/glossary/#term-vlan">VLAN</a> member と <a href="../../../reference/glossary/#term-lag">LAG</a> の整合) は Transformer のロジックで吸収する。</li>
 </ul>
 <p>OpenConfig replace / delete を CONFIG_DB に正しく落とすために、Transformer は単なるフィールド変換ではなく<strong>モデル意味論を保つ replace / delete</strong> を実装する。挙動の詳細は <a href="../../../management/model-based-replace-delete-in-mgmt-framework-transformer/">Model-based replace/delete in Mgmt Framework Transformer</a> にまとまっている。</p>
 <h2 id="yang-validation">YANG validation はいつ走るか<a class="headerlink" href="#yang-validation" title="Permanent link">&para;</a></h2>
@@ -23704,9 +23704,9 @@
 <li><strong>入口時点</strong>: Translib が受け取った時点で構文と単純な制約 (range、enum、leafref の参照先存在) をチェックする。</li>
 <li><strong>CONFIG_DB 書き込み前</strong>: 依存関係を含めた制約 (must / when 式、cross-table leafref、機能間整合) を YANG モデルで検証する。</li>
 </ol>
-<p>GCU (Generic Config Update) や JSON patch でも同じ validator を通る設計のため、入口が違っても同じ違反は同じエラーで弾かれる。validator の設計と限界は <a href="../../../management/sonic-config-update-validation-via-yang/">SONiC config update validation via YANG</a> を参照する。</p>
+<p><a href="../../../reference/glossary/#term-gcu">GCU</a> (Generic Config Update) や JSON patch でも同じ validator を通る設計のため、入口が違っても同じ違反は同じエラーで弾かれる。validator の設計と限界は <a href="../../../management/sonic-config-update-validation-via-yang/">SONiC config update validation via YANG</a> を参照する。</p>
 <h2 id="subscribe-telemetry">Subscribe / Telemetry の経路<a class="headerlink" href="#subscribe-telemetry" title="Permanent link">&para;</a></h2>
-<p>Subscribe (ON_CHANGE / SAMPLE / TARGET_DEFINED) は gNMI server が CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB の Redis keyspace notification を購読し、YANG path に変換して streaming する形になる。FRR の経路を YANG で stream する仕組みは <a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a> で BGP RIB を例に説明される。</p>
+<p>Subscribe (ON_CHANGE / SAMPLE / TARGET_DEFINED) は gNMI server が CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB の <a href="../../../reference/glossary/#term-redis">Redis</a> keyspace notification を購読し、YANG path に変換して streaming する形になる。<a href="../../../reference/glossary/#term-frr">FRR</a> の経路を YANG で stream する仕組みは <a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a> で <a href="../../../reference/glossary/#term-bgp">BGP</a> RIB を例に説明される。</p>
 <p>Dial-out モード (switch から collector へ push する向き) は telemetry container 内の別の経路で動作する。dial-in と dial-out の TLS / 認証境界が違う点に注意する。詳細は <a href="../operations/">運用</a> と <a href="../../../system/sonic-telemetry-in-dial-out-mode/">dial-out mode</a> を参照する。</p>
 <h2 id="cli-yang">CLI 自動生成と YANG モデル<a class="headerlink" href="#cli-yang" title="Permanent link">&para;</a></h2>
 <p>KLISH を入口にする SONiC CLI は YANG モデルから生成される。これは「CLI と gNMI の操作整合」を保つだけでなく、SONiC への CLI 追加コストを減らす目的を持つ。生成ツールの構成は <a href="../../../management/sonic-cli-auto-generation-tool/">CLI auto-generation tool</a> を参照する。</p>
@@ -23720,6 +23720,7 @@
 <li><a href="../../../management/sonic-cli-auto-generation-tool/">SONiC CLI auto-generation tool</a></li>
 <li><a href="../../../routing/gnmi-subscription-for-yang-data/">gNMI subscription for YANG data</a></li>
 </ul>
+<!-- glossary-links-injected: 443d203c59c1 -->
 
 
 

@@ -23539,8 +23539,8 @@
 
 
 <h1 id="vxlan-evpn-vnet">VXLAN / EVPN / VNET オーバーレイ<a class="headerlink" href="#vxlan-evpn-vnet" title="Permanent link">&para;</a></h1>
-<p>この章は、SONiC の overlay を「VXLAN tunnel を作る」「VNET と VRF/VNI を対応させる」「EVPN やコントローラから経路を入れる」「運用中に ECMP、BFD、QoS を確認する」という読者の順番で読み直す入口です。</p>
-<p>既存ページは VXLAN、EVPN、VNET、NVGRE、IPinIP decap、Overlay ECMP などの HLD 単位に分かれています。この章では、それらを 1 つの overlay データプレーンとして見たときの責務境界を先に整理し、詳細なフィールドや実装裏取りは area / reference ページへ誘導します。</p>
+<p>この章は、SONiC の overlay を「<a href="../../reference/glossary/#term-vxlan">VXLAN</a> tunnel を作る」「<a href="../../reference/glossary/#term-vnet">VNET</a> と <a href="../../reference/glossary/#term-vrf">VRF</a>/VNI を対応させる」「<a href="../../reference/glossary/#term-evpn">EVPN</a> やコントローラから経路を入れる」「運用中に <a href="../../reference/glossary/#term-ecmp">ECMP</a>、<a href="../../reference/glossary/#term-bfd">BFD</a>、<a href="../../reference/glossary/#term-qos">QoS</a> を確認する」という読者の順番で読み直す入口です。</p>
+<p>既存ページは VXLAN、EVPN、VNET、NVGRE、<a href="../../reference/glossary/#term-ipinip">IPinIP</a> decap、Overlay ECMP などの <a href="../../reference/glossary/#term-hld">HLD</a> 単位に分かれています。この章では、それらを 1 つの overlay データプレーンとして見たときの責務境界を先に整理し、詳細なフィールドや実装裏取りは area / reference ページへ誘導します。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VXLAN、VNET、EVPN は同じ機能なのか、どこで役割が分かれるのか。</li>
@@ -23552,10 +23552,10 @@
 <h2 id="_2">読む順番<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><a href="concept/">概要</a>: VXLAN / VNET / EVPN / NVGRE / subnet decap の用語と境界を整理する。</li>
-<li><a href="architecture/">アーキテクチャ</a>: VxlanTunnelOrch、VnetOrch、FRR EVPN、SAI tunnel object の流れを追う。</li>
+<li><a href="architecture/">アーキテクチャ</a>: VxlanTunnelOrch、VnetOrch、<a href="../../reference/glossary/#term-frr">FRR</a> EVPN、<a href="../../reference/glossary/#term-sai">SAI</a> tunnel object の流れを追う。</li>
 <li><a href="setup/">設定</a>: VXLAN tunnel、VNET、EVPN NVO、VNET route、tunnel decap、PBH inner hash の入口を選ぶ。</li>
 <li><a href="operations/">運用</a>: Overlay ECMP、BFD monitoring、DSCP remap、inner hash の確認順を扱う。</li>
-<li><a href="advanced/">発展トピック</a>: EVPN multihoming、DASH / SmartSwitch、NVGRE、subnet decap との境界を確認する。</li>
+<li><a href="advanced/">発展トピック</a>: EVPN multihoming、<a href="../../reference/glossary/#term-dash">DASH</a> / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a>、NVGRE、subnet decap との境界を確認する。</li>
 <li><a href="internals/">内部実装</a>: VxlanTunnelOrch / VnetOrch のオブジェクト整合と、FRR EVPN との状態同期を実装側から見る。</li>
 </ol>
 <h2 id="_3">統合した既存ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23578,6 +23578,7 @@
 <li><a href="../06-l2-vlan-lag/">L2 / VLAN / LAG / MC-LAG</a></li>
 <li><a href="../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: 21d7ff6ee0d7 -->
 
 
 

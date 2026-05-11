@@ -23828,7 +23828,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>BGP の内部実装トピックは、同じ「BGP の改善」でも狙っている問題が違う。大量 route 投入を速くするもの、障害時の収束を速くするもの、FIB 未導入 route の advertise を止めるもの、peer 変更を再起動なしで扱うものに分けて読む。</p>
+<p><a href="../../../reference/glossary/#term-bgp">BGP</a> の内部実装トピックは、同じ「BGP の改善」でも狙っている問題が違う。大量 route 投入を速くするもの、障害時の収束を速くするもの、FIB 未導入 route の advertise を止めるもの、peer 変更を再起動なしで扱うものに分けて読む。</p>
 <h2 id="_2">改善機能の比較<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23842,32 +23842,32 @@
 <tbody>
 <tr>
 <td>BGP Loading Optimization</td>
-<td>2M routes 級投入時の fpmsyncd/orchagent/sairedis 処理遅延</td>
+<td>2M routes 級投入時の <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a>/<a href="../../../reference/glossary/#term-orchagent">orchagent</a>/sairedis 処理遅延</td>
 <td>fpmsyncd、orchagent、sairedis</td>
-<td>新規 CLI/CONFIG_DB なし</td>
+<td>新規 CLI/<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> なし</td>
 </tr>
 <tr>
 <td>BGP PIC</td>
 <td>障害時に prefix 数 N に比例して再プログラムする遅さ</td>
-<td>FRR、NhgOrch、ASIC NHG</td>
-<td>HLD は architecture 中心</td>
+<td><a href="../../../reference/glossary/#term-frr">FRR</a>、NhgOrch、ASIC NHG</td>
+<td><a href="../../../reference/glossary/#term-hld">HLD</a> は architecture 中心</td>
 </tr>
 <tr>
 <td>Suppress FIB Pending</td>
 <td>ASIC 未導入 route を先に advertise して traffic loop を起こす問題</td>
-<td>bgpd、zebra、fpmsyncd、orchagent</td>
+<td>bgpd、<a href="../../../reference/glossary/#term-zebra">zebra</a>、fpmsyncd、orchagent</td>
 <td><code>DEVICE_METADATA</code></td>
 </tr>
 <tr>
 <td>BGP aggregate with BBR awareness</td>
 <td>集約 route と BBR/prefix-list の連動</td>
-<td>bgpcfgd、FRR</td>
+<td><a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a>、FRR</td>
 <td><code>BGP_AGGREGATE_ADDRESS</code></td>
 </tr>
 <tr>
 <td>dynamic peer modification</td>
 <td>dynamic peer range の追加/削除を再起動なしで扱う</td>
-<td>bgpcfgd、FRR templates、STATE_DB</td>
+<td>bgpcfgd、FRR templates、<a href="../../../reference/glossary/#term-state_db">STATE_DB</a></td>
 <td><code>BGP_PEER_RANGE</code> など</td>
 </tr>
 </tbody>
@@ -23924,7 +23924,7 @@
 <tr>
 <td><code>zebra</code> (FRR)</td>
 <td><code>frr/zebra/</code> + <code>zebra_fpm.c</code></td>
-<td>RIB 管理、kernel route 反映、FPM 経由で fpmsyncd へ送信</td>
+<td>RIB 管理、kernel route 反映、<a href="../../../reference/glossary/#term-fpm">FPM</a> 経由で fpmsyncd へ送信</td>
 </tr>
 <tr>
 <td><code>bgpcfgd</code> (<code>src/sonic-bgpcfgd/</code>)</td>
@@ -23934,12 +23934,12 @@
 <tr>
 <td><code>fpmsyncd</code> (<code>fpmsyncd/fpmsyncd.cpp</code>)</td>
 <td><code>FpmLink::processFpmMessage</code>、<code>RouteSync</code></td>
-<td>FPM netlink を APPL_DB の ROUTE_TABLE に流す。Loading Optimization の Redis pipeline 入口</td>
+<td>FPM netlink を <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> の <a href="../../../reference/glossary/#term-route_table">ROUTE_TABLE</a> に流す。Loading Optimization の <a href="../../../reference/glossary/#term-redis">Redis</a> pipeline 入口</td>
 </tr>
 <tr>
 <td><code>RouteOrch</code> (<code>orchagent/routeorch.cpp</code>)</td>
 <td><code>RouteOrch::doTask</code>、<code>addRoute</code></td>
-<td>ROUTE_TABLE から SAI route entry を生成。ring buffer + assistant thread で大量 route を処理</td>
+<td>ROUTE_TABLE から <a href="../../../reference/glossary/#term-sai">SAI</a> route entry を生成。ring buffer + assistant thread で大量 route を処理</td>
 </tr>
 <tr>
 <td><code>NhgOrch</code> / <code>CbfNhgOrch</code> (<code>orchagent/nhgorch.cpp</code>)</td>
@@ -23972,7 +23972,7 @@
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER</code></td>
-<td><code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code>（PIC で BFD down 時に動的更新）、<code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID</code></td>
+<td><code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code>（PIC で <a href="../../../reference/glossary/#term-bfd">BFD</a> down 時に動的更新）、<code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID</code></td>
 </tr>
 </tbody>
 </table>
@@ -23992,7 +23992,7 @@
 <p><code>bgpcfgd</code> は CONFIG_DB の更新を subscribe するときに <code>BGP_PEER_RANGE</code> 単位で diff を取り、FRR vtysh に<strong>追加/削除コマンド単位</strong>で投入するため、frr.conf 全体を再書き出しせずに済みます。</p>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BGP 系で <strong>ZMQ は使われません</strong>。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と ProducerStateTable です。</li>
+<li>BGP 系で <strong>ZMQ は使われません</strong>。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> です。</li>
 <li>Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（<code>gRingBuffer</code>）+ assistant thread で大量 route 投入の throughput を上げます（→ 04 章参照）。</li>
 <li><code>bgpd</code> は <code>fpm</code> socket（TCP localhost:2620）で zebra と通信し、Redis を介しません。</li>
 </ul>
@@ -24001,13 +24001,13 @@
 <h2 id="pic">障害収束と PIC<a class="headerlink" href="#pic" title="Permanent link">&para;</a></h2>
 <p>BGP PIC は、prefix ごとに route を更新するのではなく、共有 nexthop group を更新して多くの prefix をまとめて切り替える発想である。FAST DOWNLOAD は NHG の hardware update、SLOW DOWNLOAD は制御プレーンの通常収束と捉えると読みやすい。NextHop Group 分離や階層 NHG の理解が前提になる。詳細は <a href="../../../routing/bgp-prefix-independent-convergence-architecture-document/">BGP PIC</a> を参照する。</p>
 <h2 id="fib-pending-advertise">FIB pending と advertise 抑止<a class="headerlink" href="#fib-pending-advertise" title="Permanent link">&para;</a></h2>
-<p>Suppress FIB Pending は、route が FRR で best になっても ASIC へ入るまで peer に advertise しないための仕組みである。再起動直後や CRM/SAI エラーで FIB が遅れる場面では、control plane の到達性と data plane の到達性が一時的にずれる。これを FRR の <code>bgp suppress-fib-pending</code> と SONiC 側 offload feedback で縮める。</p>
+<p>Suppress FIB Pending は、route が FRR で best になっても ASIC へ入るまで peer に advertise しないための仕組みである。再起動直後や <a href="../../../reference/glossary/#term-crm">CRM</a>/SAI エラーで FIB が遅れる場面では、control plane の到達性と data plane の到達性が一時的にずれる。これを FRR の <code>bgp suppress-fib-pending</code> と SONiC 側 offload feedback で縮める。</p>
 <p>注意点は、これは「route install 失敗を完全に解決する」機能ではないこと。一度 install された後に dataplane から消えた route を自動 withdraw する範囲には制約がある。</p>
 <h2 id="dynamic-peer">dynamic peer はどこが動的か<a class="headerlink" href="#dynamic-peer" title="Permanent link">&para;</a></h2>
 <p>dynamic peer modification は、peer range や dynamic peer の変更時に FRR container 全体を大きく揺らさず、bgpcfgd が追加/削除用 template を使って反映する設計である。STATE_DB の <code>BGP_PEER_CONFIGURED_TABLE</code> により、どの dynamic peer が構成済みかを管理する。頻繁に peer が増減する fabric では、設定反映の粒度と既存 session への影響を確認する。</p>
 <h2 id="_4">既知の実装上の制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Suppress FIB Pending</strong> は ASIC からの <code>offloaded</code> フィードバックが前提で、ベンダ syncd が <code>STATE_DB.ROUTE_TABLE.offloaded</code> を更新しない場合は永続的に suppress 状態のままになります。FRR の <code>show bgp suppress-fib-pending</code> で詰まった prefix を確認する必要があります。</li>
+<li><strong>Suppress FIB Pending</strong> は ASIC からの <code>offloaded</code> フィードバックが前提で、ベンダ <a href="../../../reference/glossary/#term-syncd">syncd</a> が <code>STATE_DB.ROUTE_TABLE.offloaded</code> を更新しない場合は永続的に suppress 状態のままになります。FRR の <code>show bgp suppress-fib-pending</code> で詰まった prefix を確認する必要があります。</li>
 <li><strong>BGP PIC</strong> は ASIC 側で <code>NEXT_HOP_GROUP_MEMBER</code> の weight 動的更新がサポートされている前提です。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ません。</li>
 <li><strong>bgpcfgd の jinja2 template</strong> は SONiC 標準 <code>bgpd.main.conf.j2</code> 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがあります。</li>
 <li><strong>graceful restart / warm restart</strong> は FRR 側で実装されていますが、SONiC の warm-reboot framework (<code>WARM_RESTART_TABLE|bgp</code>) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の <code>WARM_RESTART</code> で十分に確保する必要があります（→ 11 章）。</li>
@@ -24065,6 +24065,7 @@
 <li><a href="../../../routing/bgp-route-aggregation-with-bbr-awareness/">BBR 連動の BGP ルート集約</a></li>
 <li><a href="../../../routing/bgpcfgd-dynamic-peer-modification-support/">bgpcfgd の dynamic BGP peer 動的変更</a></li>
 </ul>
+<!-- glossary-links-injected: 7f118797c352 -->
 
 
 

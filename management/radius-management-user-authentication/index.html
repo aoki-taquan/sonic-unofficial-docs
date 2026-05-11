@@ -23869,7 +23869,7 @@
 <li>RADIUS パケットの <strong>source IP 設定</strong> が可能（NAS-IP-Address）</li>
 <li>多サーバ + <strong>priority</strong> + 自動 failover。passphrase 不一致は "unreachable" 扱いで次サーバへ</li>
 <li>最大 <strong>8 サーバ</strong></li>
-<li><code>source-interface</code> / <code>NAS-IP-Address</code> / Management VRF 対応</li>
+<li><code>source-interface</code> / <code>NAS-IP-Address</code> / Management <a href="../../reference/glossary/#term-vrf">VRF</a> 対応</li>
 <li><code>many_to_one</code> フラグ（同一 RADIUS user → 単一 local アカウントへ多対一マッピング）</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -23886,11 +23886,11 @@
 <h3 id="mapping-users">Mapping Users<a class="headerlink" href="#mapping-users" title="Permanent link">&para;</a></h3>
 <p>3 つの mapping モード<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li><strong>個別 local account</strong>: 各 RADIUS user に local UID を作成（HLD 既定）</li>
+<li><strong>個別 local account</strong>: 各 RADIUS user に local UID を作成（<a href="../../reference/glossary/#term-hld">HLD</a> 既定）</li>
 <li><strong><code>many_to_one</code></strong>: RADIUS user を単一 local account に集約（共有アカウントの簡易運用）</li>
 <li><strong>Unconfirmed Users</strong>: 認証は通ったが local account がまだないユーザの暫定状態（priority lookup 中など）</li>
 </ol>
-<p><code>many_to_one=y</code> のときは AAA Improvements HLD が指摘する <code>remote_user</code> 共有問題と同等の副作用がある（ホームディレクトリ共有・auditd 不能）。</p>
+<p><code>many_to_one=y</code> のときは <a href="../../reference/glossary/#term-aaa">AAA</a> Improvements HLD が指摘する <code>remote_user</code> 共有問題と同等の副作用がある（ホームディレクトリ共有・auditd 不能）。</p>
 <h3 id="user-privilege-table">User Privilege Table<a class="headerlink" href="#user-privilege-table" title="Permanent link">&para;</a></h3>
 <p>RADIUS Accept に含まれる privilege（admin / operator / user 等）を Linux group / role にマッピングする table を持つ<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC が認識する複数 privilege 値は別表で定義。</p>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -23936,7 +23936,7 @@
     P--&gt;&gt;SD: success/fail</code></pre>
 <p>passphrase 不一致時に "unreachable" として次に進むのは、運用ミスでも認証停止しないための仕様<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="warm-boot">Warm boot<a class="headerlink" href="#warm-boot" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB が persist しているので RADIUS 設定は warm boot 越しに継続。ただしランタイムで <code>nsswitch.conf</code> を書き換える方式に伴う問題（<strong>AAA Improvements HLD</strong> が指摘）を内包する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> が persist しているので RADIUS 設定は warm boot 越しに継続。ただしランタイムで <code>nsswitch.conf</code> を書き換える方式に伴う問題（<strong>AAA Improvements HLD</strong> が指摘）を内包する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/aaa/radius_authentication.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -24047,6 +24047,8 @@ reasoning: 多サーバ priority + 8 上限 + passphrase 不一致を unreachabl
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1efb6dec9331 -->
 
 <div class="footnote">
 <hr />

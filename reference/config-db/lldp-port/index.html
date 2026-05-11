@@ -23611,7 +23611,7 @@
 
 <h1 id="lldp_port">LLDP_PORT テーブル<a class="headerlink" href="#lldp_port" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>LLDP_PORT</code> は <strong>ポート単位の LLDP 設定</strong> を保持する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp</code> (lldpd / lldpmgrd) コンテナが CONFIG_DB から読み、各物理ポートで LLDP を有効化するか、また RX / TX どちらのモードで動かすかを決める。</p>
+<p><code>LLDP_PORT</code> は <strong>ポート単位の <a href="../../glossary/#term-lldp">LLDP</a> 設定</strong> を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp</code> (lldpd / lldpmgrd) コンテナが CONFIG_DB から読み、各物理ポートで LLDP を有効化するか、また RX / TX どちらのモードで動かすかを決める。</p>
 <p><code>LLDP</code> (グローバル) テーブルが <code>hello_time</code> / <code>multiplier</code> / <code>system_name</code> / <code>system_description</code> 等のシャーシ全体の設定を持つのに対し、本テーブルはポート単位の上書き設定。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -23677,7 +23677,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>LLDP</code> (グローバル設定), <code>PORT</code>, <code>DEVICE_NEIGHBOR</code> (静的隣接)</li>
 <li>関連 CLI: <code>config lldp interface enable/disable</code>, <code>show lldp neighbors</code>, <code>show lldp table</code></li>
-<li>関連 YANG: <code>sonic-lldp</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-lldp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23709,6 +23709,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>lldp<span class="w"> </span>table
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: e5ca7b6a3d0f -->
 
 <div class="footnote">
 <hr />

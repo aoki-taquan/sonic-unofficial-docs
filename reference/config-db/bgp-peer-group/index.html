@@ -23802,7 +23802,7 @@
 
 <h1 id="bgp_peer_group">BGP_PEER_GROUP テーブル<a class="headerlink" href="#bgp_peer_group" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BGP peer-group の VRF スコープでの定義テーブル。<code>BGP_NEIGHBOR_LIST.peer_group_name</code> から参照される。<code>sonic-bgp-cmn</code> grouping を <code>uses</code> し、<code>BGP_NEIGHBOR</code> と同じ共通フィールドを持つ。<code>frr-mgmt-framework</code> (<code>DEVICE_METADATA.frr_mgmt_framework_config = true</code>) が CONFIG_DB を購読する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../glossary/#term-bgp">BGP</a> peer-group の <a href="../../glossary/#term-vrf">VRF</a> スコープでの定義テーブル。<code>BGP_NEIGHBOR_LIST.peer_group_name</code> から参照される。<code>sonic-bgp-cmn</code> grouping を <code>uses</code> し、<code>BGP_NEIGHBOR</code> と同じ共通フィールドを持つ。<code>frr-mgmt-framework</code> (<code>DEVICE_METADATA.frr_mgmt_framework_config = true</code>) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23828,14 +23828,14 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>frr-mgmt-framework</code>: CONFIG_DB → FRR <code>peer-group</code> コマンド</li>
+<li><code>frr-mgmt-framework</code>: CONFIG_DB → <a href="../../glossary/#term-frr">FRR</a> <code>peer-group</code> コマンド</li>
 <li><code>bgpcfgd</code>: テンプレ経路で peer-group を展開</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>BGP_NEIGHBOR</code>、<code>BGP_GLOBALS</code>、<code>BGP_PEER_GROUP_AF</code>、<code>BGP_GLOBALS_LISTEN_PREFIX</code></li>
 <li>関連 CLI: <code>config bgp</code> (peer-group 関連サブコマンド)</li>
-<li>関連 YANG: <code>sonic-bgp-peergroup</code>、<code>sonic-bgp-common</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-peergroup</code>、<code>sonic-bgp-common</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23864,6 +23864,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp peer-group&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 07040282b44e -->
 
 <div class="footnote">
 <hr />

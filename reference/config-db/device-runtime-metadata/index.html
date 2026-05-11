@@ -23600,7 +23600,7 @@
 
 <h1 id="device_runtime_metadata">DEVICE_RUNTIME_METADATA テーブル<a class="headerlink" href="#device_runtime_metadata" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB に永続化されない、起動時に計算で組み立てられる <strong>仮想テーブル</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic_py_common.device_info.get_device_runtime_metadata()</code> が hwsku / chassis / port-config 情報から生成し、<code>sonic-cfggen</code> の Jinja 環境に投入される。<code>FEATURE.has_per_asic_scope</code> などのテンプレ条件式から <code>DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']</code> のように参照される。CONFIG_DB ファイルには通常永続化されない。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> に永続化されない、起動時に計算で組み立てられる <strong>仮想テーブル</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic_py_common.device_info.get_device_runtime_metadata()</code> が hwsku / chassis / port-config 情報から生成し、<code>sonic-cfggen</code> の Jinja 環境に投入される。<code>FEATURE.has_per_asic_scope</code> などのテンプレ条件式から <code>DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']</code> のように参照される。CONFIG_DB ファイルには通常永続化されない。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23659,7 +23659,7 @@
 <p>(<code>init_cfg.json.j2</code> の <code>FEATURE</code> テーブル展開で使用)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_4">注意点<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG モジュールは存在しない (<code>sonic-yang-models/yang-models/</code> 配下にスキーマなし)</li>
+<li><a href="../../glossary/#term-yang">YANG</a> モジュールは存在しない (<code>sonic-yang-models/yang-models/</code> 配下にスキーマなし)</li>
 <li>CONFIG_DB の永続テーブルではなく、<code>sonic-cfggen</code> 実行時にのみ存在するメモリ上の名前空間</li>
 <li>ベンダー / hwsku によりキーの有無が変わる (chassis でない箱では <code>CHASSIS_METADATA</code> キー自体が存在しない)</li>
 </ul>
@@ -23694,6 +23694,8 @@
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-cfggen<span class="w"> </span>-d<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;DEVICE_RUNTIME_METADATA[&#39;ETHERNET_PORTS_PRESENT&#39;]&quot;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->
 
 <div class="footnote">
 <hr />

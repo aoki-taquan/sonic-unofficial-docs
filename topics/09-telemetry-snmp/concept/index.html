@@ -23832,38 +23832,38 @@
 <h2 id="telemetry-snmp">Telemetry / SNMP 機能は何を解決するか<a class="headerlink" href="#telemetry-snmp" title="Permanent link">&para;</a></h2>
 <p>スイッチが「動いている」「壊れている」「過負荷になりかけている」を、人とシステムに伝える経路を提供するのがこの章のサブシステム群です。具体的には、次のような質問に対する受け皿を、目的別に複数並べているのが SONiC の作りになっています。</p>
 <ul>
-<li>いまこの瞬間のポート利用率を 5 秒に 1 回 NMS に push してほしい (gNMI Subscribe SAMPLE)</li>
-<li>BGP セッションが落ちたら同じ秒のうちにイベントを受けたい (gNMI ON_CHANGE / syslog)</li>
-<li>月次レポート用に既存の NMS スタックから IF-MIB を歩いて集めたい (SNMP)</li>
+<li>いまこの瞬間のポート利用率を 5 秒に 1 回 NMS に push してほしい (<a href="../../../reference/glossary/#term-gnmi">gNMI</a> Subscribe SAMPLE)</li>
+<li><a href="../../../reference/glossary/#term-bgp">BGP</a> セッションが落ちたら同じ秒のうちにイベントを受けたい (gNMI ON_CHANGE / syslog)</li>
+<li>月次レポート用に既存の NMS スタックから IF-MIB を歩いて集めたい (<a href="../../../reference/glossary/#term-snmp">SNMP</a>)</li>
 <li>顧客トラフィックの一部をミラー先 collector に流して可視化したい (sFlow / DTel)</li>
 <li>「あの時間帯に何が起きていたか」を後追いするための包括 snapshot がほしい (<code>show techsupport</code>、core dump、kdump)</li>
-<li>ASIC リソース（route、ACL entry、neighbor 等）が枯渇する前に検知したい (CRM)</li>
+<li>ASIC リソース（route、<a href="../../../reference/glossary/#term-acl">ACL</a> entry、neighbor 等）が枯渇する前に検知したい (<a href="../../../reference/glossary/#term-crm">CRM</a>)</li>
 </ul>
 <p>ここで重要なのは、これらが<strong>同じ「ポート counter」を扱っていても、入口とプロトコル、データ更新タイミングが全部違う</strong>ということです。読む側はまず「何を答える経路か」で分類すると混乱しません。</p>
 <h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
 <p>Telemetry / SNMP 系は基本的に <strong>management plane</strong> に属しますが、データ供給源は control / data plane の両方に深く食い込みます。</p>
 <ul>
 <li><strong>Management plane (経路の主役)</strong>: <code>snmp</code> コンテナ、<code>telemetry</code> / <code>gnmi</code> コンテナ、<code>hsflowd</code>、<code>syslog-ng</code>、<code>auto-techsupport</code> などの daemon が外部とのプロトコル端点を担います。</li>
-<li><strong>Control plane (供給源の一部)</strong>: BGP / LLDP / LACP などの daemon が syslog や STATE_DB に状態を流し、それを上記 daemon が拾います。</li>
-<li><strong>Data plane (供給源の主体)</strong>: FlexCounter / DTel / sFlow agent が ASIC / SAI から counter / sample を引き、COUNTERS_DB に蓄積するか、ASIC から直接 wire に出します。</li>
+<li><strong>Control plane (供給源の一部)</strong>: BGP / <a href="../../../reference/glossary/#term-lldp">LLDP</a> / <a href="../../../reference/glossary/#term-lacp">LACP</a> などの daemon が syslog や <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に状態を流し、それを上記 daemon が拾います。</li>
+<li><strong>Data plane (供給源の主体)</strong>: <a href="../../../reference/glossary/#term-flexcounter">FlexCounter</a> / DTel / sFlow agent が ASIC / <a href="../../../reference/glossary/#term-sai">SAI</a> から counter / sample を引き、<a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> に蓄積するか、ASIC から直接 wire に出します。</li>
 </ul>
 <p>経路 (transport) と供給源 (data path) が独立しているのが SONiC の observability の設計思想で、新しい counter を増やすときは「SAI で取れるか → flex counter group に入れるか → DB に乗せるか → どの transport で出すか」を順に決めます。</p>
 <h2 id="_2">用語の定義<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>SNMP</strong>: UDP 161/162 で <code>snmpd</code> が受け、SONiC subagent (<code>snmp-agent</code> / <code>sonic_ax_impl</code>) が AgentX 経由で Redis を MIB 表現に変換します。polling 専用、pull 型。</li>
-<li><strong>gNMI</strong>: gRPC 上で YANG path を Get / Set / Subscribe する Google の管理プロトコル。SONiC では <code>telemetry</code> コンテナの <code>gnmi-server</code> が実装。</li>
-<li><strong>gNOI / gNSI</strong>: gNMI と同じ gRPC スタック上で「操作系 (gNOI: reboot / file / OS install / cert install)」と「セキュリティ系 (gNSI: authz / pathz / credential)」を扱う仕様。</li>
-<li><strong>FlexCounter</strong>: syncd の counter polling 機構。port、queue、PG、ACL、route flow、trap flow など複数 group を別 interval で polling し、<code>COUNTERS_DB</code> に書きます。</li>
+<li><strong>SNMP</strong>: UDP 161/162 で <code>snmpd</code> が受け、SONiC subagent (<code>snmp-agent</code> / <code>sonic_ax_impl</code>) が AgentX 経由で <a href="../../../reference/glossary/#term-redis">Redis</a> を MIB 表現に変換します。polling 専用、pull 型。</li>
+<li><strong>gNMI</strong>: gRPC 上で <a href="../../../reference/glossary/#term-yang">YANG</a> path を Get / Set / Subscribe する Google の管理プロトコル。SONiC では <code>telemetry</code> コンテナの <code>gnmi-server</code> が実装。</li>
+<li><strong><a href="../../../reference/glossary/#term-gnoi">gNOI</a> / gNSI</strong>: gNMI と同じ gRPC スタック上で「操作系 (gNOI: reboot / file / OS install / cert install)」と「セキュリティ系 (gNSI: authz / pathz / credential)」を扱う仕様。</li>
+<li><strong>FlexCounter</strong>: <a href="../../../reference/glossary/#term-syncd">syncd</a> の counter polling 機構。port、queue、PG、ACL、route flow、trap flow など複数 group を別 interval で polling し、<code>COUNTERS_DB</code> に書きます。</li>
 <li><strong>CRM (Critical Resource Monitoring)</strong>: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。STATE_DB と syslog に通知。</li>
 <li><strong>sFlow</strong>: パケットサンプリング + interface counter を <code>sFlow datagram</code> として外部 collector に UDP 送信するプロトコル。SONiC では <code>hsflowd</code> が担当。</li>
-<li><strong>DTel (Data plane Telemetry)</strong>: INT (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。</li>
+<li><strong>DTel (Data plane Telemetry)</strong>: <a href="../../../reference/glossary/#term-int">INT</a> (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。</li>
 <li><strong>Syslog / Event</strong>: テキストログと構造化イベント。<code>syslog-ng</code> で集約し、外部 collector に転送。</li>
 <li><strong>Techsupport</strong>: <code>show techsupport</code> が作る tarball。CLI 出力、Redis dump、syslog、journal、core などをまとめる。</li>
-<li><strong>Dump utility</strong>: <code>sonic-dump</code> がオブジェクト単位（PORT / VLAN / ACL_TABLE...）で全 DB と関連 CLI を構造化収集するツール。</li>
+<li><strong>Dump utility</strong>: <code>sonic-dump</code> がオブジェクト単位（PORT / <a href="../../../reference/glossary/#term-vlan">VLAN</a> / ACL_TABLE...）で全 DB と関連 CLI を構造化収集するツール。</li>
 </ul>
 <h2 id="3">3 つの観測経路<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Polling 系</strong>: SNMP、<code>show</code> コマンド、CLI 経由の counter 読み取り。スナップショットを欲しいときに使います。値は Redis（COUNTERS_DB / STATE_DB / APPL_DB）か直接 SAI / Linux に取りに行きます。</li>
+<li><strong>Polling 系</strong>: SNMP、<code>show</code> コマンド、CLI 経由の counter 読み取り。スナップショットを欲しいときに使います。値は Redis（COUNTERS_DB / STATE_DB / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a>）か直接 SAI / Linux に取りに行きます。</li>
 <li><strong>Streaming 系</strong>: gNMI telemetry、sFlow、DTel。ON_CHANGE か SAMPLE の subscribe を受けて push します。短い間隔で大量の集めるなら polling より向きます。</li>
 <li><strong>証跡系</strong>: syslog、event、core dump、kdump、auto-techsupport。障害が起きた瞬間の状態を残し、後から <code>show techsupport</code> の tarball や dump utility で取り出します。</li>
 </ul>
@@ -23881,11 +23881,11 @@
 <p>CRM は ACL / route / neighbor / nexthop など ASIC 資源の使用量を STATE_DB に publish する固有の経路です。SAI generic counter 拡張版は CRM 自身の polling 負荷を別 group の flex counter に逃がしますが、読み手から見れば「資源の上限と消費」を答える機能という位置付けは変わりません。</p>
 <h2 id="flexcounter-crm-dtel-sflow-watermark">FlexCounter / CRM / DTel / sFlow / watermark の棲み分け<a class="headerlink" href="#flexcounter-crm-dtel-sflow-watermark" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>FlexCounter</strong>: orchagent ではなく syncd の flex counter infra で各種 counter（port、queue、PG、ACL、route flow、trap flow など）を定期 polling し、COUNTERS_DB に書きます。<code>COUNTERS:</code> table の供給元です。</li>
+<li><strong>FlexCounter</strong>: <a href="../../../reference/glossary/#term-orchagent">orchagent</a> ではなく syncd の flex counter infra で各種 counter（port、queue、PG、ACL、route flow、trap flow など）を定期 polling し、COUNTERS_DB に書きます。<code>COUNTERS:</code> table の供給元です。</li>
 <li><strong>CRM</strong>: ACL entry、route、neighbor、nexthop group などの ASIC resource 使用量と閾値超過を監視し、STATE_DB と syslog に出します。FlexCounter の counter とは別目的です。</li>
 <li><strong>DTel</strong>: Inband Network Telemetry を ASIC が直接 export するもので、SONiC からは設定パスのみ通り、データは外部 collector へ流れます。</li>
 <li><strong>sFlow</strong>: hsflowd がサンプリングと counter を psample / kernel から取り、外部 collector に sFlow datagram を送ります。</li>
-<li><strong>Watermark</strong>: queue / PG / buffer の高水位を ASIC が保持し、SONiC が定期 snapshot します。詳細は QoS 章で扱います。</li>
+<li><strong>Watermark</strong>: queue / PG / buffer の高水位を ASIC が保持し、SONiC が定期 snapshot します。詳細は <a href="../../../reference/glossary/#term-qos">QoS</a> 章で扱います。</li>
 </ul>
 <h2 id="snmp-gnmi-telemetry">SNMP と gNMI telemetry は同じか<a class="headerlink" href="#snmp-gnmi-telemetry" title="Permanent link">&para;</a></h2>
 <p>両者は経路が独立しています。SNMP は snmpd と SONiC subagent (<code>snmp-agent</code>) が MIB をマップし、gNMI telemetry は <code>telemetry</code> / <code>gnmi</code> コンテナが Redis path を YANG / OpenConfig schema で publish します。MIB と YANG の両方に含まれる情報は重複しますが、Entity MIB のように MIB 側でしか出ない統計、telemetry-agent 拡張のように gNMI 側で先に増える統計があるため、運用上は完全互換ではありません。</p>
@@ -23976,6 +23976,7 @@
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
+<!-- glossary-links-injected: bcf0ee3d3334 -->
 
 
 

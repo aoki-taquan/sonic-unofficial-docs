@@ -23692,7 +23692,7 @@
 
 <h1 id="_1">リファレンス<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p><code>docs/reference/</code> は SONiC NOS (community master) を運用 / 検証する際に <strong>辞書として直接引く</strong> 情報を集める章である。Topics 章 (<code>docs/topics/</code>) が「読み物」として導線を提供するのに対し、本章は <strong>コマンド名 / テーブル名 / モジュール名 / 症状</strong> から逆引きする使い方を想定している。</p>
-<p>各 reference ページは原則 <code>verification: code-verified</code> で、<code>.cache/sonic-sources/</code> に shallow clone した master の固定 commit を一次情報として持つ。HLD 由来の推測は本文に明示する。</p>
+<p>各 reference ページは原則 <code>verification: code-verified</code> で、<code>.cache/sonic-sources/</code> に shallow clone した master の固定 commit を一次情報として持つ。<a href="glossary/#term-hld">HLD</a> 由来の推測は本文に明示する。</p>
 <h2 id="_2">サブセクションの入口<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23709,19 +23709,19 @@
 <td><code>config-*</code> / <code>show-*</code> / <code>clear</code> / <code>debug-*</code> / <code>sonic-installer</code> / <code>sonic-cfggen</code> 等の <code>sonic-utilities</code> ベースのコマンドツリー</td>
 </tr>
 <tr>
-<td><strong>CONFIG_DB</strong></td>
+<td><strong><a href="glossary/#term-config_db">CONFIG_DB</a></strong></td>
 <td><a href="config-db/">config-db/index.md</a></td>
-<td>Redis DB 4 (CONFIG_DB) のテーブル定義。orchagent / *mgrd 各 daemon が subscribe するスキーマ</td>
+<td><a href="glossary/#term-redis">Redis</a> DB 4 (CONFIG_DB) のテーブル定義。<a href="glossary/#term-orchagent">orchagent</a> / *mgrd 各 daemon が subscribe するスキーマ</td>
 </tr>
 <tr>
-<td><strong>YANG</strong></td>
+<td><strong><a href="glossary/#term-yang">YANG</a></strong></td>
 <td><a href="yang/">yang/index.md</a></td>
 <td><code>sonic-yang-models</code> の native SONiC YANG モジュール。CONFIG_DB の正本</td>
 </tr>
 <tr>
 <td><strong>Runbooks</strong></td>
 <td><a href="runbooks/">runbooks/index.md</a></td>
-<td>症状逆引きの運用ハンドブック (BGP down, PFC bandwidth, warm-reboot 失敗 等)</td>
+<td>症状逆引きの運用ハンドブック (<a href="glossary/#term-bgp">BGP</a> down, <a href="glossary/#term-pfc">PFC</a> bandwidth, warm-reboot 失敗 等)</td>
 </tr>
 <tr>
 <td><strong>Verification</strong></td>
@@ -23744,7 +23744,7 @@
 <td>未着手。現状は本文中で都度説明</td>
 </tr>
 <tr>
-<td><code>sai-attributes/</code> (SAI 属性表)</td>
+<td><code>sai-attributes/</code> (<a href="glossary/#term-sai">SAI</a> 属性表)</td>
 <td>未着手。今後 <code>meta/index/sai.json</code> から生成予定</td>
 </tr>
 <tr>
@@ -23847,7 +23847,7 @@
 <td><code>sonic-*</code> native YANG モジュール</td>
 <td style="text-align: right;">~110</td>
 <td style="text-align: right;">84</td>
-<td>smartswitch / DASH 系の一部、ベンダー特化モジュールが残</td>
+<td>smartswitch / <a href="glossary/#term-dash">DASH</a> 系の一部、ベンダー特化モジュールが残</td>
 </tr>
 </tbody>
 </table>
@@ -23993,6 +23993,8 @@
 <li><a href="../topics/22-reference-index/">Topics: リファレンス横断索引</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1f7c67d9cefa -->
 
 
 

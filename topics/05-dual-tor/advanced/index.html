@@ -23740,7 +23740,7 @@
 
 
 <h1 id="dual-tor">Dual-ToR の発展トピック<a class="headerlink" href="#dual-tor" title="Permanent link">&para;</a></h1>
-<p>Dual-ToR は mux state だけで閉じた機能ではありません。standby ToR から peer ToR へ tunnel で戻す経路、DHCPv6 relay の送信元、CoPP、QoS、PFC watchdog など、周辺機能が Dual-ToR 前提の分岐を持ちます。</p>
+<p>Dual-ToR は mux state だけで閉じた機能ではありません。standby ToR から peer ToR へ tunnel で戻す経路、DHCPv6 relay の送信元、<a href="../../../reference/glossary/#term-copp">CoPP</a>、<a href="../../../reference/glossary/#term-qos">QoS</a>、<a href="../../../reference/glossary/#term-pfc">PFC</a> watchdog など、周辺機能が Dual-ToR 前提の分岐を持ちます。</p>
 <p>このページでは、章の本筋から外れるものの、Dual-ToR を設計・運用するときに境界を理解しておきたい 2 つの機能を扱います。</p>
 <h2 id="tunnel-dscp-remap">tunnel DSCP remap<a class="headerlink" href="#tunnel-dscp-remap" title="Permanent link">&para;</a></h2>
 <p>Active-Standby では、standby ToR が受けたサーバ宛トラフィックを MuxTunnel で active ToR へ戻します。この「バウンスバック」経路が通常トラフィックと同じ queue / priority group を使うと、PFC pause が T1 と ToR の間で固着し、デッドロックを起こす可能性があります。</p>
@@ -23770,7 +23770,7 @@
 </table>
 <p>この話は Dual-ToR の tunnel 経路がきっかけですが、詳細は QoS / PFC の設計に深く入ります。この章では「standby から peer へ戻す tunnel が QoS map を変えることがある」と覚えておけば十分です。</p>
 <h2 id="dhcpv6-dual-tor-loopback">DHCPv6 dual ToR loopback<a class="headerlink" href="#dhcpv6-dual-tor-loopback" title="Permanent link">&para;</a></h2>
-<p>DHCPv6 relay では、client の link-layer address を Option 79 として relay-forward に入れることが重要です。Dual-ToR ではさらに、relay-forward の送信元を VLAN SVI ではなく loopback IP に固定するモードが関係します。</p>
+<p>DHCPv6 relay では、client の link-layer address を Option 79 として relay-forward に入れることが重要です。Dual-ToR ではさらに、relay-forward の送信元を <a href="../../../reference/glossary/#term-vlan">VLAN</a> SVI ではなく loopback IP に固定するモードが関係します。</p>
 <p>Active-Standby では、active ToR が relay-forward を送った後、応答が standby 側に届くような経路が発生し得ます。VLAN SVI を送信元にすると、どちらの ToR 宛の応答なのかが曖昧になります。loopback IP を送信元にすると、peer ToR は loopback 宛 IP を見て相手 ToR へ転送できます。</p>
 <p>設定・確認の入口は DHCPv6 relay 側です。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>dhcp6relay<span class="w"> </span>option79<span class="w"> </span><span class="nb">enable</span>
@@ -23800,14 +23800,14 @@
 <td>DHCPv6 relay、CoPP、RADV</td>
 </tr>
 <tr>
-<td>BFD</td>
-<td>上流到達性や BGP 障害検出が mux 判断に影響する点</td>
+<td><a href="../../../reference/glossary/#term-bfd">BFD</a></td>
+<td>上流到達性や <a href="../../../reference/glossary/#term-bgp">BGP</a> 障害検出が mux 判断に影響する点</td>
 <td>Routing / BGP / BFD</td>
 </tr>
 <tr>
 <td>ICMP offload</td>
 <td>link prober の高速化</td>
-<td>Platform / SAI offload</td>
+<td>Platform / <a href="../../../reference/glossary/#term-sai">SAI</a> offload</td>
 </tr>
 </tbody>
 </table>
@@ -23819,38 +23819,39 @@
 <h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ICMP / link prober の hardware offload</strong>: link prober は通常ソフトウェアで ICMP echo を送るが、ASIC offload を使うと sub-second の障害検出が可能になる。<code>linkmgrd</code> と SAI の検出加速機能の組合せを利用する。</li>
-<li><strong>Soft Dual-ToR / Active-Active mux</strong>: Active-Standby から、両 ToR が同時に転送する Active-Active モデルへの拡張提案が継続している。ARP / ND の処理、ECMP の対称性、ECMP hash の双方向一致が論点。</li>
+<li><strong>Soft Dual-ToR / Active-Active mux</strong>: Active-Standby から、両 ToR が同時に転送する Active-Active モデルへの拡張提案が継続している。<a href="../../../reference/glossary/#term-arp">ARP</a> / ND の処理、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> の対称性、ECMP hash の双方向一致が論点。</li>
 <li><strong>per-VLAN mux state</strong>: 単一 server に複数 VLAN がある場合、VLAN ごとに異なる active ToR を選ぶ拡張。トラフィックを業務単位で振り分ける運用シナリオで役立つ。</li>
 <li><strong>gRPC ベース peer state 同期</strong>: 旧来の <code>app_db</code> 直書きから、明示的な peer 通信プロトコルへの移行が進む。<code>linkmgrd</code> のロジック分離と integration test が改善される方向。</li>
 <li><strong>mux split-brain protection</strong>: peer 連絡不能時に両 ToR が active を主張するのを避けるため、追加判定（uplink BGP 状態、BFD、ICMP）を組み合わせる。</li>
 </ul>
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>mux toggle 中の transient packet loss</strong>: linkmgrd が state を変える瞬間に ARP / FDB の整合が遅れることがある。<code>config mux mode auto &lt;port&gt;</code> を試したあと、<code>show mux status</code> で両 ToR の見えが揃っているかを確認する。</li>
+<li><strong>mux toggle 中の transient packet loss</strong>: <a href="../../../reference/glossary/#term-linkmgrd">linkmgrd</a> が state を変える瞬間に ARP / <a href="../../../reference/glossary/#term-fdb">FDB</a> の整合が遅れることがある。<code>config mux mode auto &lt;port&gt;</code> を試したあと、<code>show mux status</code> で両 ToR の見えが揃っているかを確認する。</li>
 <li><strong>CoPP の icmp rate limiting</strong>: 大規模 link prober は icmp 受信を増やす。CoPP の bucket を <code>linkmgrd</code> 想定の rate に合わせないと、prober 自身を drop する。</li>
 <li><strong>PFC deadlock のリスク</strong>: standby tunnel の outer DSCP を通常データと同じ TC に乗せると、PFC pause が peer ToR まで波及してリングを作る。tunnel DSCP remap で必ず別 PG / queue に逃がす。</li>
 <li><strong>DHCPv6 relay の loopback source 設定漏れ</strong>: <code>use-loopback-address</code> を片側 ToR だけ有効にすると応答が落ちる。両 ToR で揃える運用ガイドが必要。</li>
 </ul>
 <h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Active-Active モデルが進めば、mux state は ToR 間で対称となり、<code>MUX_CABLE</code> schema や <code>linkmgrd</code> の判定が刷新される。HLD では <code>dual-tor-active-active</code> 系の提案が議論段階。</li>
+<li>Active-Active モデルが進めば、mux state は ToR 間で対称となり、<code>MUX_CABLE</code> schema や <code>linkmgrd</code> の判定が刷新される。<a href="../../../reference/glossary/#term-hld">HLD</a> では <code>dual-tor-active-active</code> 系の提案が議論段階。</li>
 <li>BFD / BGP unnumbered と link prober の責務統合は中長期テーマで、redundant signaling の冗長性をどう保つかが論点。</li>
-<li>SmartSwitch の DPU と Dual-ToR が組み合わさる構成 (<a href="../../13-dash-smartswitch/">13 DASH</a>) では、ENI と mux state の同期方式が future work。</li>
+<li><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> の <a href="../../../reference/glossary/#term-dpu">DPU</a> と Dual-ToR が組み合わさる構成 (<a href="../../13-dash-smartswitch/">13 DASH</a>) では、<a href="../../../reference/glossary/#term-eni">ENI</a> と mux state の同期方式が future work。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc3046">RFC 3046</a> — DHCP Relay Agent Information Option</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc3046">RFC 3046</a> — <a href="../../../reference/glossary/#term-dhcp-relay">DHCP Relay</a> Agent Information Option</li>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc6422">RFC 6422</a> — DHCPv6 Relay-Supplied Options</li>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc5798">RFC 5798</a> — VRRPv3 (Active/Standby の参考モデル)</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc7348">RFC 7348</a> — VXLAN (tunnel DSCP の outer header 解釈)</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7348">RFC 7348</a> — <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> (tunnel DSCP の outer header 解釈)</li>
 <li><a href="https://1.ieee802.org/dcb/">IEEE 802.1Qbb</a> — Priority-based Flow Control</li>
 </ul>
 <h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-linkmgrd</code> 配下では state machine のリファクタリングと test カバレッジ拡張が継続。ログのフォーマット改善 PR が運用負荷を下げる方向で進んでいる。</li>
 <li>DHCPv6 relay agent のループバック source、Option 79、counter export 周辺が community PR で議題に上がる頻度が高い。</li>
-<li>DASH / SmartSwitch との接続を見据え、mux state を外部 controller (NSM / SDN) と同期するインタフェース提案が散見される。</li>
+<li><a href="../../../reference/glossary/#term-dash">DASH</a> / SmartSwitch との接続を見据え、mux state を外部 controller (NSM / SDN) と同期するインタフェース提案が散見される。</li>
 </ul>
+<!-- glossary-links-injected: 76b7df4b6b16 -->
 
 
 

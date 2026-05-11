@@ -23755,15 +23755,15 @@
 </div>
 <h1 id="swss-docker-warm-restartstate-restore-consistency-sync-up">SWSS docker warm restart（state restore / consistency / sync up）<a class="headerlink" href="#swss-docker-warm-restartstate-restore-consistency-sync-up" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SWSS container（orchagent + 周辺 syncd 連携）を再起動・上げ替える際にデータプレーンを乱さないため、<strong>control plane state を complete に復元 → 復元中に流れた変動を sync up する</strong> 仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SWSS container（<a href="../../reference/glossary/#term-orchagent">orchagent</a> + 周辺 <a href="../../reference/glossary/#term-syncd">syncd</a> 連携）を再起動・上げ替える際にデータプレーンを乱さないため、<strong>control plane state を complete に復元 → 復元中に流れた変動を sync up する</strong> 仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>state は複数ソースから来る:</p>
 <ul>
-<li><code>CONFIG_DB</code> + <code>port_config.ini</code> / <code>pg_lookup.ini</code>: ポート / VLAN / interface / buffer / QoS / CRM / PFC WD / ACL の基本情報</li>
-<li>Linux kernel: portsyncd / intfsyncd / neighsyncd が netlink から拾う</li>
-<li>teamd: LAG state（teamsyncd）</li>
-<li>bgp / fpmsyncd: ROUTE_TABLE</li>
+<li><code>CONFIG_DB</code> + <code>port_config.ini</code> / <code>pg_lookup.ini</code>: ポート / <a href="../../reference/glossary/#term-vlan">VLAN</a> / interface / buffer / <a href="../../reference/glossary/#term-qos">QoS</a> / <a href="../../reference/glossary/#term-crm">CRM</a> / <a href="../../reference/glossary/#term-pfc">PFC</a> WD / <a href="../../reference/glossary/#term-acl">ACL</a> の基本情報</li>
+<li>Linux kernel: <a href="../../reference/glossary/#term-portsyncd">portsyncd</a> / <a href="../../reference/glossary/#term-intfsyncd">intfsyncd</a> / <a href="../../reference/glossary/#term-neighsyncd">neighsyncd</a> が netlink から拾う</li>
+<li><a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>: <a href="../../reference/glossary/#term-lag">LAG</a> state（teamsyncd）</li>
+<li>bgp / <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a>: <a href="../../reference/glossary/#term-route_table">ROUTE_TABLE</a></li>
 <li>json: COPP / Tunnel / Mirror</li>
-<li>syncd: FDB / port state（ASIC 由来）</li>
+<li>syncd: <a href="../../reference/glossary/#term-fdb">FDB</a> / port state（ASIC 由来）</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="restore">Restore: 各データの復元元<a class="headerlink" href="#restore" title="Permanent link">&para;</a></h3>
@@ -23780,12 +23780,12 @@
 <td>port config + Linux <code>RTM_GETLINK</code> dump（APPDB から直接ではない）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
-<td>ARP / LAG / route</td>
+<td><a href="../../reference/glossary/#term-arp">ARP</a> / LAG / route</td>
 <td>APPDB から orchagent が直接復元</td>
 </tr>
 <tr>
 <td>QoS / Buffer / CRM / PFC WD / ACL</td>
-<td>CONFIG_DB から起動時に再読込</td>
+<td><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から起動時に再読込</td>
 </tr>
 <tr>
 <td>COPP / Tunnel / Mirror</td>
@@ -23797,7 +23797,7 @@
 </tr>
 <tr>
 <td>Switch default OID</td>
-<td>SAI <code>get</code> で syncd から取得</td>
+<td><a href="../../reference/glossary/#term-sai">SAI</a> <code>get</code> で syncd から取得</td>
 </tr>
 </tbody>
 </table>
@@ -23825,7 +23825,7 @@
 <p><code>config warm_restart enable swss</code> 系を CLI で叩いて <code>WARM_RESTART</code> テーブルを enable。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>CONFIG_DB は restart window 中に変えない</strong>前提（HLD 明記）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>CONFIG_DB は restart window 中に変えない</strong>前提（<a href="../../reference/glossary/#term-hld">HLD</a> 明記）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>STATE_DB</code> flush の是非は HLD 内で open issue</li>
 <li>swss に依存する他 docker（systemd 上）の扱いも open issue</li>
 </ul>
@@ -23833,7 +23833,7 @@
 <ul>
 <li><strong>system-wide warmboot</strong>: SWSS warm restart は単 container 版、system-wide はその上位</li>
 <li><strong>PFC / FDB / route / ARP</strong>: 各 sync up ロジックが個別に実装される</li>
-<li><strong>ProducerStateTable / ConsumerStateTable</strong>: 改修の影響が共通基盤に及ぶ</li>
+<li><strong><a href="../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / <a href="../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a></strong>: 改修の影響が共通基盤に及ぶ</li>
 </ul>
 <h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23849,6 +23849,8 @@
 - 失敗時 cold restart 自動 fallback の現行実装確認
 - 古い HLD（priority=high）のため Warmboot Manager との置換確認
 -->
+
+<!-- glossary-links-injected: 28bb2aad52a3 -->
 
 <div class="footnote">
 <hr />

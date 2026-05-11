@@ -23607,7 +23607,7 @@
 <li>import: <code>ietf-inet-types</code>, <code>sonic-bgp-common</code></li>
 <li>top container: <code>sonic-bgp-monitor</code></li>
 </ul>
-<p><code>bgpcfgd</code> が扱う BGP monitor peer 設定。 BMP / monitoring collector 用の擬似ピアを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>bgpcfgd</code> が扱う <a href="../../glossary/#term-bgp">BGP</a> monitor peer 設定。 BMP / monitoring collector 用の擬似ピアを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23744,8 +23744,8 @@
 </ul>
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>BGP_MONITORS</code></li>
-<li>CLI: なし（<code>bgpcfgd</code> が config_db.json から読み取り FRR 設定に反映）</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_MONITORS</code></li>
+<li>CLI: なし（<code>bgpcfgd</code> が <a href="../../glossary/#term-config_db.json">config_db.json</a> から読み取り <a href="../../glossary/#term-frr">FRR</a> 設定に反映）</li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23759,7 +23759,7 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BMP / BGP モニタリング neighbor 設定。<code>BGP_MONITORS</code> テーブルが bgpcfgd 経由で FRR に流し込まれる。</li>
+<li>BMP / BGP モニタリング neighbor 設定。<code>BGP_MONITORS</code> テーブルが <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> 経由で FRR に流し込まれる。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
@@ -23772,6 +23772,8 @@
 <!-- /ops-hint -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 332ab906917a -->
+
 <div class="footnote">
 <hr />
 <ol>

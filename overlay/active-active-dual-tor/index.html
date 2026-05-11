@@ -24052,9 +24052,9 @@
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li>active-standby と何が違うのか？ <strong>なぜ「両方 active」が可能</strong> なのか？</li>
-<li>両 ToR が同じ VLAN IP / MAC を出して <strong>NIC はどうトラフィックを分けている</strong> のか？</li>
+<li>両 ToR が同じ <a href="../../reference/glossary/#term-vlan">VLAN</a> IP / MAC を出して <strong>NIC はどうトラフィックを分けている</strong> のか？</li>
 <li>cable 制御が y-cable I2C ではなく <strong>gRPC</strong> になったのはなぜか？</li>
-<li><strong>linkmgrd の状態判定</strong> は active-standby とどう違うのか？</li>
+<li><strong><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> の状態判定</strong> は active-standby とどう違うのか？</li>
 <li><strong>prefix-based neighbor architecture</strong> とは何で、何が嬉しいのか？</li>
 <li><strong>両 ToR が standby に落ちる</strong> ような縮退時に何が起きるか？</li>
 <li>設定とトラブルシュートで最低限見るものは？</li>
@@ -24104,7 +24104,7 @@
     UT0 ---|100G DAC| NIC[Server NIC&lt;br/&gt;200G に見える]
     LT0 ---|100G DAC| NIC
     NIC --- HOST[Server Host]</code></pre>
-<p>T1 から見ると 2 つの ECMP next hop が存在する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>T1 から見ると 2 つの <a href="../../reference/glossary/#term-ecmp">ECMP</a> next hop が存在する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2-nic">2. NIC 側の役割（パケット振り分け）<a class="headerlink" href="#2-nic" title="Permanent link">&para;</a></h2>
 <p>NIC は同一 IP / MAC を 2 リンクで受け、northbound は <strong>5-tuple で 2 リンクに分散</strong> する。一部パケットは <strong>両リンクへ複製</strong> が必要<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -24116,7 +24116,7 @@
 </thead>
 <tbody>
 <tr>
-<td>ARP / IPv6 RS / NS / NA (133/135/136)</td>
+<td><a href="../../reference/glossary/#term-arp">ARP</a> / IPv6 RS / NS / NA (133/135/136)</td>
 <td><strong>両ポート複製</strong></td>
 </tr>
 <tr>
@@ -24242,7 +24242,7 @@
 </table>
 <p><strong>default route 監視</strong>: T1 への default route が消えると northbound パケロスが起きるため、linkmgrd は default route 消失中は ICMP probing を停止し unhealthy を fake する（無効化可）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="5-prefix-based-neighbor-architecture">5. prefix-based neighbor architecture<a class="headerlink" href="#5-prefix-based-neighbor-architecture" title="Permanent link">&para;</a></h2>
-<p>active-standby の旧設計では SAI neighbor + nexthop で <strong>暗黙 host route (/32 or /128)</strong> が SDK 内に作られ、active/standby 切替で neighbor を add/remove していた。これを変更<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>active-standby の旧設計では <a href="../../reference/glossary/#term-sai">SAI</a> neighbor + nexthop で <strong>暗黙 host route (/32 or /128)</strong> が SDK 内に作られ、active/standby 切替で neighbor を add/remove していた。これを変更<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>neighbor entry は <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code> で作る（<strong>暗黙 host route なし</strong>）</li>
 <li>別途 <code>server_ip/32</code> (or <code>/128</code>) <strong>prefix route</strong> を明示的に作る</li>
@@ -24262,14 +24262,14 @@
       S4 --&gt; S5[Server]
     end</code></pre>
 <p>利点: <strong>stability + 性能</strong> 改善、<strong>mux toggle latency が短い</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>MuxCfgOrch</code> が <code>MUX_CABLE</code> を読み、<code>TunnelOrch</code> が <code>MUX_TUNNEL</code> を購読して IPinIP tunnel を作成し、<code>MuxOrch</code> が prefix route の next hop を更新する。</p>
+<p><code>MuxCfgOrch</code> が <code>MUX_CABLE</code> を読み、<code>TunnelOrch</code> が <code>MUX_TUNNEL</code> を購読して <a href="../../reference/glossary/#term-ipinip">IPinIP</a> tunnel を作成し、<code>MuxOrch</code> が prefix route の next hop を更新する。</p>
 <h2 id="6">6. 縮退ケース<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <h3 id="tor-standby">両 ToR が standby<a class="headerlink" href="#tor-standby" title="Permanent link">&para;</a></h3>
 <p>両 ToR が standby になると <strong>gRPC traffic も tunnel 経由</strong> で投げられ blackhole する。<code>MuxOrch</code> は <strong>neighbor が NIC IP の場合 Tunnelmgrd 通知を skip</strong> し、kernel route を tunnel 化しない。standby 中でも <strong>gRPC 制御プレーン traffic は local で送出</strong> され NIC に到達する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="bgp-update-delay">BGP update delay<a class="headerlink" href="#bgp-update-delay" title="Permanent link">&para;</a></h3>
-<p>BGP セッション確立直後、T0 が default route を学習する前に T1 から traffic が降りる時期がある。standby T0 は tunnel 経由で peer に投げるが、default route が無いと tunnel 経路自体が解決できず blackhole する。対策として <strong>BGP update delay 10 秒</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-bgp">BGP</a> セッション確立直後、T0 が default route を学習する前に T1 から traffic が降りる時期がある。standby T0 は tunnel 経由で peer に投げるが、default route が無いと tunnel 経路自体が解決できず blackhole する。対策として <strong>BGP update delay 10 秒</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="ingress-drop-acl-skip">ingress drop ACL の skip<a class="headerlink" href="#ingress-drop-acl-skip" title="Permanent link">&para;</a></h3>
-<p>active-standby では standby 移行時に MuxOrch が ingress drop ACL を貼っていたが、NIC 側の admin state 切替が gRPC で完了する前に upstream traffic が drop される間隙が問題。active-active では <strong>standby 切替時の ingress drop ACL を貼らない</strong>（best effort forwarding）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>active-standby では standby 移行時に MuxOrch が ingress drop <a href="../../reference/glossary/#term-acl">ACL</a> を貼っていたが、NIC 側の admin state 切替が gRPC で完了する前に upstream traffic が drop される間隙が問題。active-active では <strong>standby 切替時の ingress drop ACL を貼らない</strong>（best effort forwarding）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="grpc-unreachable">gRPC unreachable<a class="headerlink" href="#grpc-unreachable" title="Permanent link">&para;</a></h3>
 <p>forwarding は止めず、定期的に gRPC server health を確認しつつ admin state を再同期<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="7-cli">7. 設定と CLI<a class="headerlink" href="#7-cli" title="Permanent link">&para;</a></h2>
@@ -24403,7 +24403,7 @@
 </table>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>warm reboot</strong> は HLD で TBD</li>
+<li><strong>warm reboot</strong> は <a href="../../reference/glossary/#term-hld">HLD</a> で TBD</li>
 <li>gRPC server / ToR の認証は HLD で詳細未定</li>
 <li>両 ToR standby 時の tunneled control plane traffic は NIC IP 局所送出に依存</li>
 <li>BGP update delay 10 秒は active-active 専用。session 確立後 routing convergence が遅延</li>
@@ -24414,7 +24414,7 @@
 <ul>
 <li><strong>linkmgrd active-active state machine</strong>: <code>sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}</code> および <code>src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}</code> が active-standby と並列に存在。<code>PeerActiveState</code> / <code>PeerUnknownState</code> / <code>PeerWaitState</code> も <code>src/link_prober/</code> に追加されており、self / peer 独立判定が実装されている。</li>
 <li><strong>MuxOrch の active-active 分岐</strong>: <code>sonic-swss/orchagent/muxorch.cpp:2233</code> で <code>cable_type_str == "active-active"</code> 判定。prefix-based neighbor の SAI 属性（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code>）と prefix route の組合せは muxorch / neighorch 内で扱う。</li>
-<li><strong>新規 APP_DB / STATE_DB テーブル</strong>: <code>sonic-swss-common/common/schema.h</code> に <code>APP_FORWARDING_STATE_COMMAND_TABLE_NAME</code> (145行)、<code>APP_FORWARDING_STATE_RESPONSE_TABLE_NAME</code> (146行)、<code>APP_PEER_HW_FORWARDING_STATE_TABLE_NAME</code> (149行)、<code>STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME</code> (465行) が定義済み。</li>
+<li><strong>新規 APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> テーブル</strong>: <code>sonic-swss-common/common/schema.h</code> に <code>APP_FORWARDING_STATE_COMMAND_TABLE_NAME</code> (145行)、<code>APP_FORWARDING_STATE_RESPONSE_TABLE_NAME</code> (146行)、<code>APP_PEER_HW_FORWARDING_STATE_TABLE_NAME</code> (149行)、<code>STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME</code> (465行) が定義済み。</li>
 <li><strong><code>config mux mode detach</code></strong>: <code>sonic-utilities/config/muxcable.py:351</code> で <code>click.Choice(["active","auto","manual","standby","detach"])</code> として <code>detach</code> を受け付ける。</li>
 </ul>
 <h2 id="_6">関連トピック<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -24438,6 +24438,8 @@
 <li><a href="../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ca7c1453b3b7 -->
 
 <div class="footnote">
 <hr />

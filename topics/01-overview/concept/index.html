@@ -23840,14 +23840,14 @@
 
 
 <h1 id="_1">概念と読み始め方<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。SONiC は、Linux distribution、複数の daemon、複数の Redis DB、ASIC vendor 固有の syncd、FRR のような外部 OSS、そして CLI / gNMI / RESTCONF / config_db.json といった複数の入口を組み合わせた NOS です。それぞれが独立した HLD を持つため、最初から HLD を順に読むと「設定 1 つを変えるためのコンテキスト」を組み立てるのに時間がかかります。</p>
+<p>この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。SONiC は、Linux distribution、複数の daemon、複数の <a href="../../../reference/glossary/#term-redis">Redis</a> DB、ASIC vendor 固有の <a href="../../../reference/glossary/#term-syncd">syncd</a>、<a href="../../../reference/glossary/#term-frr">FRR</a> のような外部 OSS、そして CLI / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / RESTCONF / <a href="../../../reference/glossary/#term-config_db.json">config_db.json</a> といった複数の入口を組み合わせた NOS です。それぞれが独立した <a href="../../../reference/glossary/#term-hld">HLD</a> を持つため、最初から HLD を順に読むと「設定 1 つを変えるためのコンテキスト」を組み立てるのに時間がかかります。</p>
 <p>このページでは、まず読み手が抱きやすい疑問を順に解いていきます。</p>
 <h2 id="sonic">SONiC とは何か / 何の問題を解決するか<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
-<p>SONiC は、ホワイトボックススイッチ上で BGP、L2、ACL、QoS、Telemetry といった一般的なネットワーク機能を提供する Linux ベースの NOS です。中心となる発想は次の 3 つです。</p>
+<p>SONiC は、ホワイトボックススイッチ上で <a href="../../../reference/glossary/#term-bgp">BGP</a>、L2、<a href="../../../reference/glossary/#term-acl">ACL</a>、<a href="../../../reference/glossary/#term-qos">QoS</a>、Telemetry といった一般的なネットワーク機能を提供する Linux ベースの NOS です。中心となる発想は次の 3 つです。</p>
 <ul>
-<li><strong>ASIC を vendor 非依存に扱う</strong>: ベンダー固有の SDK ではなく SAI (Switch Abstraction Interface) を介して ASIC を操作する。</li>
+<li><strong>ASIC を vendor 非依存に扱う</strong>: ベンダー固有の SDK ではなく <a href="../../../reference/glossary/#term-sai">SAI</a> (Switch Abstraction Interface) を介して ASIC を操作する。</li>
 <li><strong>状態を Redis DB に集約する</strong>: 設定、APP 層からの依頼、観測状態、ASIC への投影をすべて DB エントリで表現する。これにより、観測 / 監視 / 自動化が DB 単位で標準化できる。</li>
-<li><strong>機能を docker container に分離する</strong>: BGP、teamd、LLDP、syncd などを別 container にして、再起動・upgrade 単位を分ける。</li>
+<li><strong>機能を docker container に分離する</strong>: BGP、<a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>、<a href="../../../reference/glossary/#term-lldp">LLDP</a>、syncd などを別 container にして、再起動・upgrade 単位を分ける。</li>
 </ul>
 <p>SONiC が解いているのは「複数 vendor のスイッチを 1 つの NOS で扱いたい」「ネットワークの状態を Linux 流のテキスト + DB で扱いたい」「機能ごとに upgrade したい」という運用課題です。</p>
 <h2 id="sonic_1">SONiC の中での「設定」の位置<a class="headerlink" href="#sonic_1" title="Permanent link">&para;</a></h2>
@@ -23863,12 +23863,12 @@
 <tbody>
 <tr>
 <td>Management plane</td>
-<td>CLI、gNMI、RESTCONF、ZTP、<code>config_db.json</code></td>
+<td>CLI、gNMI、RESTCONF、<a href="../../../reference/glossary/#term-ztp">ZTP</a>、<code>config_db.json</code></td>
 <td>中心トピック</td>
 </tr>
 <tr>
 <td>Control plane</td>
-<td>bgpd / teamd / linkmgrd / orchagent</td>
+<td>bgpd / teamd / <a href="../../../reference/glossary/#term-linkmgrd">linkmgrd</a> / <a href="../../../reference/glossary/#term-orchagent">orchagent</a></td>
 <td>DB 経由でどう触るかの観点で扱う</td>
 </tr>
 <tr>
@@ -23878,7 +23878,7 @@
 </tr>
 </tbody>
 </table>
-<p>設定変更の話は management plane と control plane の境界、つまり「人間/コントローラの意図 → CONFIG_DB → daemon → ASIC」の経路を読むことが中心になります。</p>
+<p>設定変更の話は management plane と control plane の境界、つまり「人間/コントローラの意図 → <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> → daemon → ASIC」の経路を読むことが中心になります。</p>
 <h2 id="_2">最初に押さえる用語<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23893,15 +23893,15 @@
 <td>運用者 / コントローラの「意図」を保持する Redis DB。永続化対象は <code>config_db.json</code></td>
 </tr>
 <tr>
-<td>APPL_DB</td>
+<td><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a></td>
 <td>各 <code>*mgrd</code> が orchagent に渡す「依頼」を保持する DB</td>
 </tr>
 <tr>
-<td>STATE_DB</td>
-<td>SONiC daemon が観測した状態（link 状態、neighbor、PFC counter など）</td>
+<td><a href="../../../reference/glossary/#term-state_db">STATE_DB</a></td>
+<td>SONiC daemon が観測した状態（link 状態、neighbor、<a href="../../../reference/glossary/#term-pfc">PFC</a> counter など）</td>
 </tr>
 <tr>
-<td>ASIC_DB</td>
+<td><a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a></td>
 <td>syncd / SAI に投影された ASIC object</td>
 </tr>
 <tr>
@@ -23917,8 +23917,8 @@
 <td>CONFIG_DB をその機能ドメインの APPL_DB / Linux 設定に翻訳する daemon 群</td>
 </tr>
 <tr>
-<td>GCU (Generic Config Updater)</td>
-<td><code>config apply-patch</code> / <code>replace</code> の中身。YANG validation 付きの差分適用</td>
+<td><a href="../../../reference/glossary/#term-gcu">GCU</a> (Generic Config Updater)</td>
+<td><code>config apply-patch</code> / <code>replace</code> の中身。<a href="../../../reference/glossary/#term-yang">YANG</a> validation 付きの差分適用</td>
 </tr>
 <tr>
 <td>Management Framework</td>
@@ -23978,7 +23978,7 @@
   ADB --&gt; OA[orchagent]
   OA --&gt; ASIC[(ASIC_DB)]
   ASIC --&gt; SYNC[syncd]</code></pre>
-<p>CLI を 1 行打っただけのように見えますが、内部では CONFIG_DB → FRR → FPM → APPL_DB → ASIC_DB と複数のホップを経由します。問題切り分けはこのホップのどこで止まったかで決まります。</p>
+<p>CLI を 1 行打っただけのように見えますが、内部では CONFIG_DB → FRR → <a href="../../../reference/glossary/#term-fpm">FPM</a> → APPL_DB → ASIC_DB と複数のホップを経由します。問題切り分けはこのホップのどこで止まったかで決まります。</p>
 <h3 id="2-golden-config">シーン 2: 「Golden config をまるごと適用する」<a class="headerlink" href="#2-golden-config" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   GC[golden_config.json] --&gt;|config reload| CDB[(CONFIG_DB)]
@@ -24101,6 +24101,7 @@
 <!-- xref-prereq -->
 <h2 id="_9">この章の前提知識<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>この章は SONiC ドキュメント全体の入口に位置するため、特段の前提章はない。<code>docs/topics/index.md</code> の読み進め方マップを参照すること。</p>
+<!-- glossary-links-injected: 9dc8d00bbbb1 -->
 
 
 

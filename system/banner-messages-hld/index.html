@@ -23867,7 +23867,7 @@
 </div>
 <h1 id="login-motd-logout">バナーメッセージ（login / motd / logout）<a class="headerlink" href="#login-motd-logout" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>業務スイッチには、ログイン前後やログアウト時に <strong>法的注意文・運用情報・MOTD</strong> を表示する要件が頻繁にある。SONiC 既定の Debian バナー（<code>Debian GNU/Linux 11</code>）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は <strong>CONFIG_DB → hostcfgd → banner-config systemd サービス → Linux ファイル</strong> という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>業務スイッチには、ログイン前後やログアウト時に <strong>法的注意文・運用情報・MOTD</strong> を表示する要件が頻繁にある。SONiC 既定の Debian バナー（<code>Debian GNU/Linux 11</code>）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は <strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> → <a href="../../reference/glossary/#term-hostcfgd">hostcfgd</a> → banner-config systemd サービス → Linux ファイル</strong> という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -24049,7 +24049,7 @@ reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前�
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>YANG 既定値: <code>state=disabled</code>, <code>login=Debian GNU/Linux 11</code>, <code>motd=</code> SONiC ASCII art (HLD 中の長文), <code>logout=""</code>.</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a> 既定値: <code>state=disabled</code>, <code>login=Debian GNU/Linux 11</code>, <code>motd=</code> SONiC ASCII art (<a href="../../reference/glossary/#term-hld">HLD</a> 中の長文), <code>logout=""</code>.</p>
 <h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>banner<span class="w"> </span>state<span class="w"> </span>enabled
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>banner<span class="w"> </span>login<span class="w"> </span><span class="s2">&quot;Authorized access only. All activity is monitored.&quot;</span>
@@ -24062,7 +24062,7 @@ reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前�
 <h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>/etc/issue</code> / <code>/etc/motd</code></strong>: 他の systemd サービスや Debian メンテナンスでこれらのファイルを再生成すると、<code>banner-config</code> の出力と競合する。基本的には <code>banner-config</code> が後勝ちで上書きする想定。</li>
-<li><strong><code>hostcfgd</code></strong>: 既存の他テーブル監視（NTP / SNMP / TACACS 等）と同居する。BANNER_MESSAGE 更新が他のサービス再起動を誘発しない設計になっている前提。</li>
+<li><strong><code>hostcfgd</code></strong>: 既存の他テーブル監視（NTP / <a href="../../reference/glossary/#term-snmp">SNMP</a> / TACACS 等）と同居する。BANNER_MESSAGE 更新が他のサービス再起動を誘発しない設計になっている前提。</li>
 <li><strong>SSH (<code>sshd</code>)</strong>: <code>/etc/issue.net</code> の変更は次回接続から反映される。既存セッションには影響しない。</li>
 </ul>
 <h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
@@ -24080,6 +24080,8 @@ reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前�
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9f97d965cf27 -->
 
 <div class="footnote">
 <hr />

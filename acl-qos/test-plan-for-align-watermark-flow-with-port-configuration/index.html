@@ -23941,7 +23941,7 @@ reasoning: 本テストの整合性判定基準を直接表化
 <li>すべての counterpoll を disable して config save → reload</li>
 <li>queue / watermark / pg-drop のいずれか 1 つを enable</li>
 <li>その counter group が <code>FLEX_COUNTER_DB</code> に出現</li>
-<li>関連する COUNTERS_DB マップが作成</li>
+<li>関連する <a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a> マップが作成</li>
 <li>他種別の counter / マップが存在しないこと</li>
 </ol>
 <h3 id="counterpoll">全 counterpoll 有効化シーケンス<a class="headerlink" href="#counterpoll" title="Permanent link">&para;</a></h3>
@@ -23977,7 +23977,7 @@ reasoning: 本テストの整合性判定基準を直接表化
 </tbody>
 </table>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p><code>FLEX_COUNTER_TABLE</code> の各 group entry。本テストでは CONFIG_DB の参照は限定的で、主に <code>FLEX_COUNTER_DB</code> (DB 5) と <code>COUNTERS_DB</code> (DB 2) を対象にする。</p>
+<p><code>FLEX_COUNTER_TABLE</code> の各 group entry。本テストでは <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の参照は限定的で、主に <code>FLEX_COUNTER_DB</code> (DB 5) と <code>COUNTERS_DB</code> (DB 2) を対象にする。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ポートバッファ設定がないと、queue / pg-drop のマップそのものが作成されないため、テスト前提として buffer 設定が必要<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -23995,6 +23995,8 @@ reasoning: 本テストの整合性判定基準を直接表化
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2fb486a7acc8 -->
 
 <div class="footnote">
 <hr />

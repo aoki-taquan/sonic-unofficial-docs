@@ -23952,8 +23952,8 @@
 </div>
 <h1 id="tacacs-passkey-key_encrypt-master-key-etccipher_pass">TACACS+ passkey 暗号化（<code>key_encrypt</code> + master key <code>/etc/cipher_pass</code>）<a class="headerlink" href="#tacacs-passkey-key_encrypt-master-key-etccipher_pass" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>TACACS+ は SONiC のリモート認証で広く使われるが、<strong>TACACS+ passkey は CONFIG_DB に平文で保存</strong> されてきた。<code>config_db.json</code> の流出やバックアップファイルからの漏洩がリスクである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は CONFIG_DB 上の passkey を <strong>OpenSSL（base64 エンコード）で暗号化保存</strong> し、PAM 設定ファイル書き込み直前に <code>hostcfgd</code> が <strong>マスタキー（<code>/etc/cipher_pass</code>、root 専用）</strong> を使って復号する経路を導入する。<code>config_db.json</code> 単体では passkey を取り出せなくなり、デバイス間で同じ <code>config_db.json</code> を流用しても問題が起きないように、共通インフラとして TACACS / RADIUS / LDAP で再利用可能にする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>TACACS+ は SONiC のリモート認証で広く使われるが、<strong>TACACS+ passkey は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に平文で保存</strong> されてきた。<code>config_db.json</code> の流出やバックアップファイルからの漏洩がリスクである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は CONFIG_DB 上の passkey を <strong>OpenSSL（base64 エンコード）で暗号化保存</strong> し、PAM 設定ファイル書き込み直前に <code>hostcfgd</code> が <strong>マスタキー（<code>/etc/cipher_pass</code>、root 専用）</strong> を使って復号する経路を導入する。<code>config_db.json</code> 単体では passkey を取り出せなくなり、デバイス間で同じ <code>config_db.json</code> を流用しても問題が起きないように、共通インフラとして TACACS / RADIUS / LDAP で再利用可能にする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -24119,7 +24119,7 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 </tbody>
 </table>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-system-tacacs</code> 系 YANG モジュールに対し、HLD は次の変更を提案<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>sonic-system-tacacs</code> 系 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールに対し、HLD は次の変更を提案<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>既存 <code>passkey</code> リーフの <strong>長さ上限を 256 に拡張</strong></li>
 <li>新規 <code>key_encrypt</code> リーフを追加</li>
@@ -24145,7 +24145,7 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 </ul>
 <h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>hostcfgd</code></strong>: TACACS 以外（RADIUS / LDAP）の AAA 設定 PAM 反映と同じ層に手が入る。共通インフラ化と整合させる必要あり<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><code>hostcfgd</code></strong>: TACACS 以外（RADIUS / LDAP）の <a href="../../reference/glossary/#term-aaa">AAA</a> 設定 PAM 反映と同じ層に手が入る。共通インフラ化と整合させる必要あり<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong><code>config save</code> / <code>config_db.json</code> の他デバイスへのコピー</strong>: 暗号化 passkey は鍵が同一でないと復号できない。<code>/etc/cipher_pass</code> を複製しないと他デバイスで動かない（または暗号化を無効にしてから差し替え）</li>
 <li><strong><code>show tacacs</code></strong>: passkey フィールド削除に伴い、表示と既存スクリプトの parser に影響</li>
 <li><strong>YANG validator</strong>: <code>passkey</code> の長さ拡張で 64 文字や 128 文字を上限としている YANG / scripts に影響</li>
@@ -24190,7 +24190,7 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <tr>
 <td><code>hostcfgd</code> で <code>key_encrypt=true</code> を見て復号 → PAM へ</td>
 <td>必須</td>
-<td>❌ <strong>未実装</strong>（hostcfgd 配下に該当する復号処理が無い）</td>
+<td>❌ <strong>未実装</strong>（<a href="../../reference/glossary/#term-hostcfgd">hostcfgd</a> 配下に該当する復号処理が無い）</td>
 </tr>
 <tr>
 <td><code>show tacacs</code> から passkey 削除</td>
@@ -24254,6 +24254,8 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5491cc477cce -->
 
 <div class="footnote">
 <hr />

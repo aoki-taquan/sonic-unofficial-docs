@@ -23868,7 +23868,7 @@
 
 <h1 id="acl_rule">ACL_RULE テーブル<a class="headerlink" href="#acl_rule" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>ACL_TABLE</code> 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、DSCP 上書き、DTel 等) を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>AclOrch</code> が <code>ACL_TABLE</code> 配下のルールを SAI ACL entry として展開する。</p>
+<p><code>ACL_TABLE</code> 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、DSCP 上書き、DTel 等) を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>AclOrch</code> が <code>ACL_TABLE</code> 配下のルールを <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-acl">ACL</a> entry として展開する。</p>
 <div class="admonition warning">
 <p class="admonition-title">YANG 未定義</p>
 <p><code>ACL_RULE</code> テーブルは YANG モジュールで未定義。スキーマの正本は <code>sonic-swss/orchagent/aclorch.{h,cpp}</code>。</p>
@@ -23988,7 +23988,7 @@
 </tr>
 <tr>
 <td><code>BTH_OPCODE</code> / <code>AETH_SYNDROME</code></td>
-<td>RoCE 用</td>
+<td><a href="../../glossary/#term-roce">RoCE</a> 用</td>
 </tr>
 <tr>
 <td><code>TUNNEL_TERM</code></td>
@@ -24019,7 +24019,7 @@
 </tr>
 <tr>
 <td><code>DO_NOT_NAT_ACTION</code></td>
-<td>NAT バイパス</td>
+<td><a href="../../glossary/#term-nat">NAT</a> バイパス</td>
 </tr>
 <tr>
 <td><code>DISABLE_TRIM_ACTION</code></td>
@@ -24060,9 +24060,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>ACL_TABLE</code>、<code>MIRROR_SESSION</code>、<code>POLICER</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>ACL_TABLE</code>、<code>MIRROR_SESSION</code>、<code>POLICER</code></li>
 <li>関連 CLI: <a href="../../cli/config-acl/"><code>config acl</code></a></li>
-<li>関連 YANG: なし</li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: なし</li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -24107,6 +24107,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>aclshow<span class="w"> </span>-a<span class="w"> </span>-t<span class="w"> </span>EVERFLOW
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6e0f82e1634 -->
 
 <div class="footnote">
 <hr />

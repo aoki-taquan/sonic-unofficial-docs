@@ -23896,7 +23896,7 @@
 </div>
 <h1 id="reboot-cause-state_db">Reboot-cause 履歴の STATE_DB / テレメトリ公開<a class="headerlink" href="#reboot-cause-state_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は STATE_DB にも反映する仕組み。<code>show reboot-cause</code> の最新表示に加えて <code>show reboot-cause history</code> で過去最大 10 エントリを表示できるようにする。テレメトリエージェント経由でも履歴を購読可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は <a href="../../reference/glossary/#term-state_db">STATE_DB</a> にも反映する仕組み。<code>show reboot-cause</code> の最新表示に加えて <code>show reboot-cause history</code> で過去最大 10 エントリを表示できるようにする。テレメトリエージェント経由でも履歴を購読可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">起動時シーケンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -23947,10 +23947,10 @@
 </span></code></pre></div>
 <p><code>show reboot-cause</code> は従来どおり <code>previous-reboot-cause.json</code>（symlink）から最新分を表示する。<code>history</code> は STATE_DB から複数件を取る。</p>
 <h3 id="telemetry">Telemetry 公開<a class="headerlink" href="#telemetry" title="Permanent link">&para;</a></h3>
-<p>STATE_DB の <code>REBOOT_CAUSE|*</code> キーをテレメトリエージェントが標準の STATE_DB 公開経路で公開する。新規 path 設計や proto 定義は HLD には記述なし。</p>
+<p>STATE_DB の <code>REBOOT_CAUSE|*</code> キーをテレメトリエージェントが標準の STATE_DB 公開経路で公開する。新規 path 設計や proto 定義は <a href="../../reference/glossary/#term-hld">HLD</a> には記述なし。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD には CONFIG_DB エントリの記述は無い。</p>
+<p>HLD には <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> エントリの記述は無い。</p>
 <h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23971,7 +23971,7 @@
 </tbody>
 </table>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG モデルの記述は無い。</p>
+<p>HLD に <a href="../../reference/glossary/#term-yang">YANG</a> モデルの記述は無い。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>確認のみ：</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ls<span class="w"> </span>/host/reboot-cause/history/
@@ -24003,6 +24003,8 @@
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4e4b0dab1086 -->
 
 <div class="footnote">
 <hr />

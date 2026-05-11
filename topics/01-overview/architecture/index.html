@@ -23652,7 +23652,7 @@
 
 
 <h1 id="_1">設定データフロー<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>SONiC の設定を読むときは、まず <code>CONFIG_DB</code> を起点にします。<code>CONFIG_DB</code> はユーザや controller が投入した意図を保持し、各 daemon がそれを購読して自分の担当する実行状態へ変換します。代表的には、<code>*mgrd</code> が <code>CONFIG_DB</code> を読み、<code>APPL_DB</code> に orchagent 向けのテーブルを作り、orchagent が <code>ASIC_DB</code> 経由で syncd / SAI へ渡します。</p>
+<p>SONiC の設定を読むときは、まず <code>CONFIG_DB</code> を起点にします。<code>CONFIG_DB</code> はユーザや controller が投入した意図を保持し、各 daemon がそれを購読して自分の担当する実行状態へ変換します。代表的には、<code>*mgrd</code> が <code>CONFIG_DB</code> を読み、<code>APPL_DB</code> に <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 向けのテーブルを作り、orchagent が <code>ASIC_DB</code> 経由で <a href="../../../reference/glossary/#term-syncd">syncd</a> / <a href="../../../reference/glossary/#term-sai">SAI</a> へ渡します。</p>
 <h2 id="config_db">CONFIG_DB はどの情報を持つか<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <p><code>CONFIG_DB</code> は単なる key-value ではなく、テーブルごとに用途が分かれます。装置全体の根本設定は <a href="../../../reference/config-db/device-metadata/">DEVICE_METADATA</a>、機能 docker の制御は <a href="../../../reference/config-db/feature/">FEATURE</a> が代表です。</p>
 <table>
@@ -23666,7 +23666,7 @@
 <tbody>
 <tr>
 <td><code>DEVICE_METADATA|localhost</code></td>
-<td>hostname、platform、BGP ASN、buffer model、switch type など装置単位の前提を確認する</td>
+<td>hostname、platform、<a href="../../../reference/glossary/#term-bgp">BGP</a> ASN、buffer model、switch type など装置単位の前提を確認する</td>
 <td><code>bgpcfgd</code>、orchagent、<code>hostcfgd</code></td>
 </tr>
 <tr>
@@ -23676,12 +23676,12 @@
 </tr>
 <tr>
 <td>機能別テーブル</td>
-<td>VLAN、BGP、ACL、QoS など各機能の設定を見る</td>
+<td><a href="../../../reference/glossary/#term-vlan">VLAN</a>、BGP、<a href="../../../reference/glossary/#term-acl">ACL</a>、<a href="../../../reference/glossary/#term-qos">QoS</a> など各機能の設定を見る</td>
 <td>各 <code>*mgrd</code> / <code>*cfgd</code></td>
 </tr>
 </tbody>
 </table>
-<p><code>DEVICE_METADATA</code> は多くの章の前提条件です。BGP、Multi-ASIC、Dual-ToR、SmartSwitch、buffer、DHCP server などの挙動がここから分岐するため、機能ページで謎の既定値が出てきたら最初に確認してください。</p>
+<p><code>DEVICE_METADATA</code> は多くの章の前提条件です。BGP、Multi-ASIC、Dual-ToR、<a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a>、buffer、DHCP server などの挙動がここから分岐するため、機能ページで謎の既定値が出てきたら最初に確認してください。</p>
 <h2 id="appl_db-state_db-asic_db">APPL_DB / STATE_DB / ASIC_DB の読み方<a class="headerlink" href="#appl_db-state_db-asic_db" title="Permanent link">&para;</a></h2>
 <p><a href="../../../internals/swss-schema/">swss-schema</a> は <code>APPL_DB</code> と <code>STATE_DB</code> の中心スキーマをまとめる参照ページです。<code>APPL_DB</code> は orchagent に対する依頼、<code>STATE_DB</code> は SONiC 内部の状態共有、<code>ASIC_DB</code> は syncd に渡す ASIC 操作に近い層です。</p>
 <pre class="mermaid"><code>flowchart TB
@@ -23717,9 +23717,9 @@
   SYNC --&gt; SDB</code></pre>
 <p>この流れで重要なのは、<code>CONFIG_DB</code> に正しい値があっても、<code>APPL_DB</code> や <code>ASIC_DB</code> まで届いていなければデータプレーンには反映されないことです。障害切り分けでは「設定値」「manager の投影」「orchagent の処理」「syncd / SAI の処理」を順番に見ると原因を分けやすくなります。</p>
 <h2 id="redis">Redis 以外のトランスポート<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
-<p>通常の ProducerStateTable / ConsumerStateTable は Redis を使いますが、低レイテンシ用途では <a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable</a> の設計があります。ZMQ 版は既存 API 形状を保ちつつ、Redis 書き込みを optional にできます。性能は上がりますが、DB に痕跡を残さない構成では観測性が落ちるため、トラブルシュート時には対象機能が Redis 経由か ZMQ 経由かを確認します。</p>
+<p>通常の <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / <a href="../../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a> は <a href="../../../reference/glossary/#term-redis">Redis</a> を使いますが、低レイテンシ用途では <a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable</a> の設計があります。ZMQ 版は既存 API 形状を保ちつつ、Redis 書き込みを optional にできます。性能は上がりますが、DB に痕跡を残さない構成では観測性が落ちるため、トラブルシュート時には対象機能が Redis 経由か ZMQ 経由かを確認します。</p>
 <h2 id="api-redis">管理 API 側の Redis 接続<a class="headerlink" href="#api-redis" title="Permanent link">&para;</a></h2>
-<p>REST / gNMI / Management Framework 側では Redis client の作り方自体が性能と安定性に影響します。<a href="../../../management/redis-client-manager-rcm-hld/">Redis Client Manager</a> は、Go 実装の translib 周辺で DBNum ごとの共有 connection pool と transactional client を分ける設計です。設定データフローそのものではありませんが、自動化 controller から大量の Set / Get が来る環境では、管理 API 側の接続管理もボトルネックになります。</p>
+<p>REST / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / Management Framework 側では Redis client の作り方自体が性能と安定性に影響します。<a href="../../../management/redis-client-manager-rcm-hld/">Redis Client Manager</a> は、Go 実装の translib 周辺で DBNum ごとの共有 connection pool と transactional client を分ける設計です。設定データフローそのものではありませんが、自動化 controller から大量の Set / Get が来る環境では、管理 API 側の接続管理もボトルネックになります。</p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../internals/swss-schema/">swss-schema</a></li>
@@ -23728,6 +23728,7 @@
 <li><a href="../../../reference/config-db/device-metadata/">DEVICE_METADATA テーブル</a></li>
 <li><a href="../../../reference/config-db/feature/">FEATURE テーブル</a></li>
 </ul>
+<!-- glossary-links-injected: f61af9b56853 -->
 
 
 

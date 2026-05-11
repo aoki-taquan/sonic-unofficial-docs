@@ -23906,13 +23906,13 @@
 
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく 4 群に分けて読むと混乱しません。L3 forwarding 章で扱う routing そのものとは別の層であり、共通点は「container 単位で隔離された daemon が CONFIG_DB を読んで OS パッケージや iptables を駆動する」点にあります。</p>
+<p>「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく 4 群に分けて読むと混乱しません。L3 forwarding 章で扱う routing そのものとは別の層であり、共通点は「container 単位で隔離された daemon が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を読んで OS パッケージや iptables を駆動する」点にあります。</p>
 <h2 id="4">4 つの責務<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>NAT: data plane でのアドレス書換。<code>docker-nat</code> の <code>natmgrd</code> / <code>natsyncd</code> が CONFIG_DB を読み、Linux iptables の conntrack エントリと SAI NAT 属性を同期します。SONiC では iptables ↔ SAI の二重管理がポイントです。</li>
-<li>DHCP relay: client broadcast を upstream server へ unicast 中継する agent。<code>docker-dhcp-relay</code> 内の ISC 由来 <code>dhcrelay</code> を VLAN 単位で起動し、<code>dhcpmon</code> が監視と counter を持ちます。v4 と v6 で別プロセスです。</li>
+<li><a href="../../../reference/glossary/#term-nat">NAT</a>: data plane でのアドレス書換。<code>docker-nat</code> の <code>natmgrd</code> / <code>natsyncd</code> が CONFIG_DB を読み、Linux iptables の conntrack エントリと <a href="../../../reference/glossary/#term-sai">SAI</a> NAT 属性を同期します。SONiC では iptables ↔ SAI の二重管理がポイントです。</li>
+<li>DHCP relay: client broadcast を upstream server へ unicast 中継する agent。<code>docker-dhcp-relay</code> 内の ISC 由来 <code>dhcrelay</code> を <a href="../../../reference/glossary/#term-vlan">VLAN</a> 単位で起動し、<code>dhcpmon</code> が監視と counter を持ちます。v4 と v6 で別プロセスです。</li>
 <li>DHCP server: kea ベースのポートベース server。<code>docker-dhcp-server</code> の <code>dhcpservd</code> が CONFIG_DB の <code>DHCP_SERVER_IPV4*</code> を読んで <code>kea-dhcp4.conf</code> を生成し、relay 側と Option 82 で連携します。</li>
-<li>Time / DNS: chrony（旧 ntpd）と静的 resolv.conf。OS レイヤの daemon が management VRF 内で外向き通信します。CONFIG_DB の <code>NTP_*</code> / <code>DNS_NAMESERVER</code> から生成される設定ファイルが入口です。</li>
+<li>Time / DNS: chrony（旧 ntpd）と静的 resolv.conf。OS レイヤの daemon が management <a href="../../../reference/glossary/#term-vrf">VRF</a> 内で外向き通信します。CONFIG_DB の <code>NTP_*</code> / <code>DNS_NAMESERVER</code> から生成される設定ファイルが入口です。</li>
 </ul>
 <h2 id="nat-routing">NAT と routing の境界<a class="headerlink" href="#nat-routing" title="Permanent link">&para;</a></h2>
 <p>NAT は routing decision の後に動く data plane 機能ですが、NAT entry そのものは <code>NatOrch</code> 経由で SAI のオブジェクトとして ASIC にも乗ります。Linux 側の conntrack も走らせる二段構成で、CPU 経由のパケットは iptables、ASIC をハードウェアパスで通るフローは SAI NAT エントリで処理されます。route lookup と NAT lookup の関係は L3 forwarding 章ではなくこの章で扱います。</p>
@@ -23937,7 +23937,7 @@
 <h2 id="time-dns-management-vrf">Time / DNS が management VRF を必要とする理由<a class="headerlink" href="#time-dns-management-vrf" title="Permanent link">&para;</a></h2>
 <p>SONiC では front-panel port は data VRF（default や user VRF）にあり、外向き management 通信は通常 management VRF（<code>mgmt</code>）から出ます。chrony / resolved / static resolv.conf 系はこの VRF を経由する必要があり、<code>NTP|global</code> の <code>vrf</code> フィールドや <code>MGMT_VRF_CONFIG</code> の設定が前提になります。VRF を意識しない設定だと「装置から ping は通るのに ntp が同期しない」事象になります。</p>
 <h2 id="twamp-light-terminal-server">TWAMP Light と terminal server の置き場所<a class="headerlink" href="#twamp-light-terminal-server" title="Permanent link">&para;</a></h2>
-<p>TWAMP Light（RFC 5357）は data plane の測定プロトコルで、本来は QoS / observability 寄りですが、サービス系として「control 接続を持たない軽量サービス」枠でこの章の発展トピックに置きます。terminal server は udev rules で <code>/dev/ttyUSB*</code> を安定 symlink にする platform 寄りの話で、management 装置として SONiC を使うときの周辺機能です。</p>
+<p>TWAMP Light（RFC 5357）は data plane の測定プロトコルで、本来は <a href="../../../reference/glossary/#term-qos">QoS</a> / observability 寄りですが、サービス系として「control 接続を持たない軽量サービス」枠でこの章の発展トピックに置きます。terminal server は udev rules で <code>/dev/ttyUSB*</code> を安定 symlink にする platform 寄りの話で、management 装置として SONiC を使うときの周辺機能です。</p>
 <h2 id="_2">まず読み手の質問に答える<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">この章はそもそも何をまとめているか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>「Edge / management services」は <strong>forwarding ではないが ToR / management スイッチの上に必ず乗る付帯サービス</strong> の集合です。NAT・DHCP relay・DHCP server・NTP・DNS が中心で、共通点は次の 3 つです。</p>
@@ -23956,7 +23956,7 @@
 <li>装置の時刻が揃わないと log と TLS 検証が壊れる → chrony + management VRF</li>
 <li>DNS 名前解決を ToR から打ちたいが out-of-band で出したい → static resolv.conf + mgmt VRF</li>
 </ul>
-<p>これらは個別 HLD としてバラバラに見えても、運用ではセットで設計されます。</p>
+<p>これらは個別 <a href="../../../reference/glossary/#term-hld">HLD</a> としてバラバラに見えても、運用ではセットで設計されます。</p>
 <h3 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
     subgraph CFG[(CONFIG_DB)]
@@ -23997,7 +23997,7 @@
 <h3 id="_5">用語の最短整理<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong><code>natmgrd</code></strong>: CONFIG_DB の <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <code>NAT_POOL</code> / <code>NAT_BINDINGS</code> / <code>NAT_GLOBAL</code> を読んで iptables と APP_DB に展開する</li>
-<li><strong><code>natsyncd</code></strong>: conntrack エントリを観測し APP_DB と STATE_DB に同期する</li>
+<li><strong><code>natsyncd</code></strong>: conntrack エントリを観測し APP_DB と <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に同期する</li>
 <li><strong>SAI NAT object</strong>: ASIC 側 NAT エントリ。fast path に乗せるためのもの</li>
 <li><strong><code>dhcrelay</code></strong>: ISC dhcp 由来。VLAN 1 本に 1 process が標準</li>
 <li><strong><code>dhcpmon</code></strong>: relay のヘルスとパケット counter を取る別 process。<code>COUNTERS_DB</code> に書く</li>
@@ -24059,7 +24059,7 @@
 </tr>
 <tr>
 <td><a href="../../13-dash-smartswitch/">DASH / SmartSwitch</a></td>
-<td>DASH NAT は overlay tenant 単位の NAT で、本章の管理 / edge NAT とはスケール感が違う</td>
+<td><a href="../../../reference/glossary/#term-dash">DASH</a> NAT は overlay tenant 単位の NAT で、本章の管理 / edge NAT とはスケール感が違う</td>
 </tr>
 </tbody>
 </table>
@@ -24085,6 +24085,7 @@
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../04-vrf-ecmp/">VRF / ECMP / RIB-FIB パイプライン</a></li>
 </ul>
+<!-- glossary-links-injected: a5e4127f0b55 -->
 
 
 

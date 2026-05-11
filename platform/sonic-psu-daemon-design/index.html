@@ -23762,7 +23762,7 @@
 </div>
 <h1 id="psudpsu-power-threshold">psud（PSU 監視デーモン / power threshold ヒステリシス）<a class="headerlink" href="#psudpsu-power-threshold" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>psud</code> は <strong>PSU の物理状態と電力指標を周期収集し STATE_DB に書く platform monitor 系 daemon</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。supervisord が <code>psud</code> を起動。3 秒ループで platform API（fallback で plugin）を呼び、PSU の present / power_good / 電圧 / 電流 / 電力 / 温度 / 各種閾値を取得して <code>PSU_INFO</code> table を更新する。電圧範囲超過 / 温度過熱 / 電源喪失 / PSU 抜去 / <strong>power critical threshold 超過</strong> に対し PSU LED 色変更と syslog 発報を行う。<code>power threshold</code> チェックは v0.4 で追加され、ヒステリシス付き 2 段閾値 (<code>warning-suppress</code>, <code>critical</code>) で alarm flapping を抑止する。</p>
+<p><code>psud</code> は <strong>PSU の物理状態と電力指標を周期収集し <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に書く platform monitor 系 daemon</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。supervisord が <code>psud</code> を起動。3 秒ループで platform API（fallback で plugin）を呼び、PSU の present / power_good / 電圧 / 電流 / 電力 / 温度 / 各種閾値を取得して <code>PSU_INFO</code> table を更新する。電圧範囲超過 / 温度過熱 / 電源喪失 / PSU 抜去 / <strong>power critical threshold 超過</strong> に対し PSU LED 色変更と syslog 発報を行う。<code>power threshold</code> チェックは v0.4 で追加され、ヒステリシス付き 2 段閾値 (<code>warning-suppress</code>, <code>critical</code>) で alarm flapping を抑止する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">主要ループ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23832,7 +23832,7 @@
 </tr>
 </tbody>
 </table>
-<p>PSU 数自体は別途 <code>chassis_info</code> テーブルに格納（pmon-enhancement HLD と整合）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>PSU 数自体は別途 <code>chassis_info</code> テーブルに格納（pmon-enhancement <a href="../../reference/glossary/#term-hld">HLD</a> と整合）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">イベント定義<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23965,6 +23965,8 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 10394a5e95a8 -->
 
 <div class="footnote">
 <hr />

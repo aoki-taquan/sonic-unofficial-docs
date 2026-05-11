@@ -23862,14 +23862,14 @@
 </div>
 <h1 id="reliable-tsavoq-chassis-tsa-chassis_app_db">Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）<a class="headerlink" href="#reliable-tsavoq-chassis-tsa-chassis_app_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>TSA（Traffic-Shift Away）は SONiC ルータをトラフィック対象から外すための運用機能で、BGP に対して <strong>「ネイバへ経路を広告しない」Route Policy</strong> を適用する。新規導入時のヘルスチェックや、稼働中ルータのメンテナンス前に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>TSA（Traffic-Shift Away）は SONiC ルータをトラフィック対象から外すための運用機能で、<a href="../../reference/glossary/#term-bgp">BGP</a> に対して <strong>「ネイバへ経路を広告しない」Route Policy</strong> を適用する。新規導入時のヘルスチェックや、稼働中ルータのメンテナンス前に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>VoQ Chassis（Supervisor + 複数 Line Card で 1 つの論理ルータを構成）では、従来の TSA 実装が次のように動いていた<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>LC 上で <code>TSA</code> / <code>TSB</code> を打つと LC の <code>CONFIG_DB</code> を更新 → <code>bgpcfgd</code> が反映</li>
 <li>Supervisor 上で <code>TSA</code> / <code>TSB</code> を打つと Supervisor が <strong>各 LC へ SSH</strong> で同コマンドを順次発行</li>
 </ol>
 <p>この方式は「LC への SSH 直列発行」という前提のため、(a) 末尾 LC への遅延、(b) ハング LC は永久に TSA がかからない、(c) Supervisor 側コマンドが LC 側の TSA 設定を書き換えてしまうので <strong>LC ごとに異なる TSA 状態を維持できない</strong>、という問題があった<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は <strong><code>CHASSIS_APP_DB</code> に Supervisor の TSA 状態を 1 つ持たせ、各 LC asic の <code>bgpcfgd</code> がそれを subscribe する</strong> 設計に切り替える。SSH 配布をやめ、Supervisor / LC それぞれで独立に <code>tsa_enabled</code> を持ち、運用上の TSA 状態は両者の OR で決まる。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong><code>CHASSIS_APP_DB</code> に Supervisor の TSA 状態を 1 つ持たせ、各 LC asic の <code>bgpcfgd</code> がそれを subscribe する</strong> 設計に切り替える。SSH 配布をやめ、Supervisor / LC それぞれで独立に <code>tsa_enabled</code> を持ち、運用上の TSA 状態は両者の OR で決まる。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">旧方式と新方式の比較<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
@@ -23958,7 +23958,7 @@
 </table>
 <p>ポイント:</p>
 <ul>
-<li>LC ごとの <code>startup_tsa_tsb</code> サービスは廃止しない。LC のローカル CONFIG_DB を従来どおり更新するが、最終的な TSA 状態は OR で決まる</li>
+<li>LC ごとの <code>startup_tsa_tsb</code> サービスは廃止しない。LC のローカル <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を従来どおり更新するが、最終的な TSA 状態は OR で決まる</li>
 <li>Supervisor の <code>tsa_enabled</code> も <code>config_db.json</code> に保存され、Supervisor 再起動を跨いで永続化する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="supervisor-lc">Supervisor → LC への伝搬シーケンス<a class="headerlink" href="#supervisor-lc" title="Permanent link">&para;</a></h3>
@@ -24088,6 +24088,8 @@ reasoning: 「CHASSIS_APP_DB 追加 + bgpcfgd 双方参照」という本設計�
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3824fa3eb22e -->
 
 <div class="footnote">
 <hr />

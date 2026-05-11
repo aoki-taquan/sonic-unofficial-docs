@@ -23684,9 +23684,9 @@
 </div>
 <h1 id="bbr-bgp">BBR 連動の BGP ルート集約<a class="headerlink" href="#bbr-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は従来 CONFIG_DB / CLI で集約広告（<code>aggregate-address</code>）を設定できず、FRR を直接編集する必要があった。さらに <strong>BBR (Bounce Back Routing) が無効</strong> な状態で集約だけ入れると、contributing route 不到達によるパケットドロップが起こる。本機能は CONFIG_DB に <code>BGP_AGGREGATE_ADDRESS</code> を新設し、<strong>BBR 状態に応じて集約広告を条件付きで生成</strong> する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。状態は STATE_DB に <code>active</code> / <code>inactive</code> で反映される。</p>
+<p>SONiC は従来 <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI で集約広告（<code>aggregate-address</code>）を設定できず、<a href="../../reference/glossary/#term-frr">FRR</a> を直接編集する必要があった。さらに <strong>BBR (Bounce Back Routing) が無効</strong> な状態で集約だけ入れると、contributing route 不到達によるパケットドロップが起こる。本機能は CONFIG_DB に <code>BGP_AGGREGATE_ADDRESS</code> を新設し、<strong>BBR 状態に応じて集約広告を条件付きで生成</strong> する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。状態は <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に <code>active</code> / <code>inactive</code> で反映される。</p>
 <h2 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
-<p>新規 YANG <code>sonic-bgp-aggregate-address</code> (rev 2024-07-17) <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>新規 <a href="../../reference/glossary/#term-yang">YANG</a> <code>sonic-bgp-aggregate-address</code> (rev 2024-07-17) <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23776,10 +23776,12 @@
 </span></code></pre></div>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/02-bgp/advanced/">02-bgp/advanced</a>: BGP advanced / BBR / 集約広告</li>
-<li><a href="../../topics/02-bgp/internals/">02-bgp/internals</a>: bgpcfgd と FRR の接続</li>
+<li><a href="../../topics/02-bgp/advanced/">02-bgp/advanced</a>: <a href="../../reference/glossary/#term-bgp">BGP</a> advanced / BBR / 集約広告</li>
+<li><a href="../../topics/02-bgp/internals/">02-bgp/internals</a>: <a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> と FRR の接続</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: bb11c45ee9f5 -->
+
 <div class="footnote">
 <hr />
 <ol>

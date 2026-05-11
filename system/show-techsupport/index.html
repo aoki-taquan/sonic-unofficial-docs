@@ -23862,12 +23862,12 @@
 </div>
 <h1 id="management-framework-show-techsupportrestgnmiietf-since">Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）<a class="headerlink" href="#management-framework-show-techsupportrestgnmiietf-since" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show techsupport</code> は SONiC のサブシステム横断の診断情報をひとつの <strong>tarball</strong> に集める既存ツール（sonic-utilities 由来）。本 HLD はそれを Management Framework（gNMI / REST / NETCONF などの統一管理層）経由でも起動できるようにし、<strong><code>--since</code></strong> オプションで採取ログの開始時刻を絞り込める CLI を上乗せする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>show techsupport</code> は SONiC のサブシステム横断の診断情報をひとつの <strong>tarball</strong> に集める既存ツール（<a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> 由来）。本 <a href="../../reference/glossary/#term-hld">HLD</a> はそれを Management Framework（<a href="../../reference/glossary/#term-gnmi">gNMI</a> / REST / NETCONF などの統一管理層）経由でも起動できるようにし、<strong><code>--since</code></strong> オプションで採取ログの開始時刻を絞り込める CLI を上乗せする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>要点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>採取ロジック自体は変えない（既存ツール）</li>
 <li>上に Management Framework のフロント（REST API / gNMI 等）を被せる</li>
-<li><code>--since</code> は <strong>IETF YANG date-time 形式</strong> に縛る（<code>yyyy-MM-ddTHH:mm:ssZ</code> 等）</li>
+<li><code>--since</code> は <strong>IETF <a href="../../reference/glossary/#term-yang">YANG</a> date-time 形式</strong> に縛る（<code>yyyy-MM-ddTHH:mm:ssZ</code> 等）</li>
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -24009,6 +24009,8 @@ reasoning: --since の IETF date-time 形式制約と sonic-hostservices 依存�
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 12cde428ecc3 -->
 
 <div class="footnote">
 <hr />

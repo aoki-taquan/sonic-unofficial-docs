@@ -23700,11 +23700,11 @@
 </span></code></pre></div>
 <h2 id="_4">よくある原因<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>BGP flap による大量 route churn</strong> — routeorch が <code>SAI_STATUS_ITEM_NOT_FOUND</code> retry でループ</li>
-<li><strong>ACL rule 大量挿入で ASIC table full</strong> — aclorch が同一エラーを retry し続ける（<code>sai-table-full.md</code> 参照）</li>
-<li><strong>CRM / sai resource 枯渇</strong> — <code>crm-threshold-exceeded.md</code> 参照</li>
+<li><strong><a href="../../glossary/#term-bgp">BGP</a> flap による大量 route churn</strong> — routeorch が <code>SAI_STATUS_ITEM_NOT_FOUND</code> retry でループ</li>
+<li><strong><a href="../../glossary/#term-acl">ACL</a> rule 大量挿入で ASIC table full</strong> — aclorch が同一エラーを retry し続ける（<code>sai-table-full.md</code> 参照）</li>
+<li><strong><a href="../../glossary/#term-crm">CRM</a> / sai resource 枯渇</strong> — <code>crm-threshold-exceeded.md</code> 参照</li>
 <li><strong>依存関係解決の循環</strong> — port / vlan / neigh の add 順序が逆で <code>SAI_STATUS_OBJECT_IN_USE</code></li>
-<li><strong>syncd レスポンス遅延</strong> — orchagent は応答待ちで spin（厳密にはブロックだが top では busy に見える）</li>
+<li><strong><a href="../../glossary/#term-syncd">syncd</a> レスポンス遅延</strong> — <a href="../../glossary/#term-orchagent">orchagent</a> は応答待ちで spin（厳密にはブロックだが top では busy に見える）</li>
 <li><strong>flex-counter の polling 頻度過剰</strong> — <code>flex-counter-stuck.md</code> 参照</li>
 </ol>
 <h2 id="_5">対処<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -23720,6 +23720,7 @@
 <li><a href="../flex-counter-stuck/">flex-counter-stuck.md</a></li>
 <li><a href="../appdb-asicdb-sync-lag/">appdb-asicdb-sync-lag.md</a></li>
 </ul>
+<!-- glossary-links-injected: 3e73c8d3cd18 -->
 
 
 

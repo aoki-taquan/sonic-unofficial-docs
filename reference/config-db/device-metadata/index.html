@@ -23824,7 +23824,7 @@
 
 <h1 id="device_metadata">DEVICE_METADATA テーブル<a class="headerlink" href="#device_metadata" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>装置全体のメタ情報を保持する CONFIG_DB テーブル。hostname、ベース MAC、BGP ASN、ハードウェア SKU、プラットフォーム、デバイス役割 (<code>type</code>)、サブタイプ (<code>DualToR</code> / <code>SmartSwitch</code> 等)、deployment ID、buffer model（dynamic / traditional）、synchronous mode、YANG 検証の有効化、syslog / FRR 関連スイッチなど、SONiC の起動時挙動を決める根本設定を 1 行 (<code>localhost</code>) にまとめる。<code>bmc</code> キーは BMC 接続情報を別ロウで持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>装置全体のメタ情報を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。hostname、ベース MAC、<a href="../../glossary/#term-bgp">BGP</a> ASN、ハードウェア SKU、プラットフォーム、デバイス役割 (<code>type</code>)、サブタイプ (<code>DualToR</code> / <code>SmartSwitch</code> 等)、deployment ID、buffer model（dynamic / traditional）、synchronous mode、<a href="../../glossary/#term-yang">YANG</a> 検証の有効化、syslog / <a href="../../glossary/#term-frr">FRR</a> 関連スイッチなど、SONiC の起動時挙動を決める根本設定を 1 行 (<code>localhost</code>) にまとめる。<code>bmc</code> キーは BMC 接続情報を別ロウで持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>各 Orch / daemon は起動時に <code>DEVICE_METADATA|localhost</code> を読み出す。<code>bgpcfgd</code> は <code>bgp_asn</code> と <code>frr_mgmt_framework_config</code> を、<code>orchagent</code> は <code>synchronous_mode</code> と <code>async_swss_rec</code>、<code>buffer_model</code> を、<code>hostcfgd</code> は <code>hostname</code> と <code>timezone</code> を、それぞれ依存リソースの初期化に用いる。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -23866,7 +23866,7 @@
 <td><code>asic_id</code></td>
 <td>string (1..16)</td>
 <td>-</td>
-<td>SAI 初期化に使う ASIC 識別子</td>
+<td><a href="../../glossary/#term-sai">SAI</a> 初期化に使う ASIC 識別子</td>
 </tr>
 <tr>
 <td><code>default_bgp_status</code></td>
@@ -23902,7 +23902,7 @@
 <td><code>default_pfcwd_status</code></td>
 <td>enum <code>disable</code>/<code>enable</code></td>
 <td><code>disable</code></td>
-<td>起動時の PFC watchdog 既定状態</td>
+<td>起動時の <a href="../../glossary/#term-pfc">PFC</a> watchdog 既定状態</td>
 </tr>
 <tr>
 <td><code>bgp_asn</code></td>
@@ -23938,7 +23938,7 @@
 <td><code>synchronous_mode</code></td>
 <td>enum <code>enable</code>/<code>disable</code></td>
 <td><code>enable</code></td>
-<td>orchagent ASIC 同期モード</td>
+<td><a href="../../glossary/#term-orchagent">orchagent</a> ASIC 同期モード</td>
 </tr>
 <tr>
 <td><code>yang_config_validation</code></td>
@@ -24130,7 +24130,7 @@
 <td><code>orch_northbond_dash_zmq_enabled</code></td>
 <td>boolean</td>
 <td><code>true</code></td>
-<td>APPL_DB DASH テーブル ZMQ</td>
+<td><a href="../../glossary/#term-appl_db">APPL_DB</a> <a href="../../glossary/#term-dash">DASH</a> テーブル ZMQ</td>
 </tr>
 <tr>
 <td><code>orch_northbond_route_zmq_enabled</code></td>
@@ -24208,7 +24208,7 @@
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>suppress-fib-pending = enabled</code> のとき <code>synchronous_mode = enable</code> が必須（YANG <code>must</code>）</li>
-<li><code>subtype = DualToR</code> のときは <code>peer_switch</code> の指定が運用上必要（HLD 由来、YANG では強制されない）</li>
+<li><code>subtype = DualToR</code> のときは <code>peer_switch</code> の指定が運用上必要（<a href="../../glossary/#term-hld">HLD</a> 由来、YANG では強制されない）</li>
 <li><code>type</code> は enum パターンに合致する文字列のみ受理</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB テーブル / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -24262,14 +24262,16 @@ reasoning: フィールド一覧と型・デフォルト・enum 値はこのモ�
 </ul>
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>hwsku</code> を実機と異なる値にすると sonic-buildimage 起動時に platform plugin が読み込まれず orchagent が起動しない。</li>
-<li><code>type</code> を誤ると generic_config_updater のチェックや MC-LAG の role 判定で誤動作。</li>
+<li><code>hwsku</code> を実機と異なる値にすると <a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> 起動時に platform plugin が読み込まれず orchagent が起動しない。</li>
+<li><code>type</code> を誤ると generic_config_updater のチェックや MC-<a href="../../glossary/#term-lag">LAG</a> の role 判定で誤動作。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0a77174b97b9 -->
 
 <div class="footnote">
 <hr />

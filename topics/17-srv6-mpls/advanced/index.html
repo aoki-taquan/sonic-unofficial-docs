@@ -23806,15 +23806,15 @@
 
 
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>base 機能の上で広がる SRv6 / MPLS / Path Tracing 関連のトピックを、他章へのリンクと一緒にまとめます。</p>
+<p>base 機能の上で広がる <a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing 関連のトピックを、他章へのリンクと一緒にまとめます。</p>
 <h2 id="evpn-bgp">EVPN / BGP との接続<a class="headerlink" href="#evpn-bgp" title="Permanent link">&para;</a></h2>
-<p>SRv6 と EVPN-VXLAN は「IPv6 underlay の上で L2/L3 サービスを運ぶ」点で目的が重なる領域があります。SONiC では現状、EVPN は VXLAN encap が中心で、SRv6 を underlay にする実装は HLD レベルでも限定的です。BGP 系の SRv6 family（BGP-LU / SR-MPLS / SRv6 L3VPN）を扱う場合は、FRR の SRv6 制御プレーン側の対応状況を最初に確認します。</p>
+<p>SRv6 と <a href="../../../reference/glossary/#term-evpn">EVPN</a>-<a href="../../../reference/glossary/#term-vxlan">VXLAN</a> は「IPv6 underlay の上で L2/L3 サービスを運ぶ」点で目的が重なる領域があります。SONiC では現状、EVPN は VXLAN encap が中心で、SRv6 を underlay にする実装は <a href="../../../reference/glossary/#term-hld">HLD</a> レベルでも限定的です。<a href="../../../reference/glossary/#term-bgp">BGP</a> 系の SRv6 family（BGP-LU / SR-MPLS / SRv6 L3VPN）を扱う場合は、<a href="../../../reference/glossary/#term-frr">FRR</a> の SRv6 制御プレーン側の対応状況を最初に確認します。</p>
 <ul>
 <li>L3VPN over SRv6 を運用するには、FRR で SRv6 L3VPN family を有効化し、SONiC 側で <code>srv6orch</code> の VPN 経路（<code>srv6_prefix_agg_id_table_</code>、<code>vpn_sid</code>）が programming されることを確認します（<a href="../internals/">内部実装</a> を参照）。</li>
 <li>EVPN-VXLAN の章は <a href="../../03-vxlan-evpn/">03 VXLAN-EVPN</a> を参照してください。EVPN over SRv6 を試す場合の本章との接点は、VPN SID の運用と EVPN type-5 route の対応関係です。</li>
 </ul>
 <h2 id="frr-srv6">FRR の SRv6 統一管理<a class="headerlink" href="#frr-srv6" title="Permanent link">&para;</a></h2>
-<p><code>sonic-frr-bgp-extended-unified-configuration-management-framework.md</code> で議論されている統一管理フレームワークは、bgpcfgd / frrcfgd の handler 群を再整理し、SRv6 / MPLS / EVPN を含む BGP 拡張の設定面を統一する方向にあります。Static SID は <code>SRv6Mgr</code> の vtysh 経由ですが、将来的に動的 SRv6（FRR の <code>segment-routing srv6</code> 設定の自動化）も同じ枠組みに乗ることが想定されます。</p>
+<p><code>sonic-frr-bgp-extended-unified-configuration-management-framework.md</code> で議論されている統一管理フレームワークは、<a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> / frrcfgd の handler 群を再整理し、SRv6 / MPLS / EVPN を含む BGP 拡張の設定面を統一する方向にあります。Static SID は <code>SRv6Mgr</code> の vtysh 経由ですが、将来的に動的 SRv6（FRR の <code>segment-routing srv6</code> 設定の自動化）も同じ枠組みに乗ることが想定されます。</p>
 <h2 id="srv6-base-hld-phase">SRv6 base HLD の後続 phase<a class="headerlink" href="#srv6-base-hld-phase" title="Permanent link">&para;</a></h2>
 <p>SRv6 base HLD は Phase 1 として <code>END</code> / <code>END.DT46</code> / <code>H.Encaps.Red</code> を実装し、後続として次の項目が予定されています。</p>
 <ul>
@@ -23826,16 +23826,16 @@
 <li>anycast SID</li>
 <li>MySID counter</li>
 </ul>
-<p>これらは段階的に <code>srv6orch</code> と SAI に追加されるため、運用設計時には「自社が依存する behavior が現在の master にあるか」をコード位置（<a href="../internals/">内部実装</a>）で確認します。</p>
+<p>これらは段階的に <code>srv6orch</code> と <a href="../../../reference/glossary/#term-sai">SAI</a> に追加されるため、運用設計時には「自社が依存する behavior が現在の master にあるか」をコード位置（<a href="../internals/">内部実装</a>）で確認します。</p>
 <h2 id="mpls">MPLS の動的シグナリング<a class="headerlink" href="#mpls" title="Permanent link">&para;</a></h2>
-<p>LDP / RSVP-TE / SR-MPLS のような動的シグナリングは、master 時点では FRR 側機能に依存します。SONiC 側は <code>LABEL_ROUTE_TABLE</code> の入口を <code>fpmsyncd</code> 経由で持つため、FRR がどのプロトコルで LSP を立てても APP_DB → orchagent → SAI の道は同じです。これは「SONiC 側のデータパスを変えずに、制御プレーンを段階的に増やす」設計です。</p>
+<p>LDP / RSVP-TE / SR-MPLS のような動的シグナリングは、master 時点では FRR 側機能に依存します。SONiC 側は <code>LABEL_ROUTE_TABLE</code> の入口を <code>fpmsyncd</code> 経由で持つため、FRR がどのプロトコルで LSP を立てても APP_DB → <a href="../../../reference/glossary/#term-orchagent">orchagent</a> → SAI の道は同じです。これは「SONiC 側のデータパスを変えずに、制御プレーンを段階的に増やす」設計です。</p>
 <h2 id="path-tracing-telemetry">Path Tracing と Telemetry<a class="headerlink" href="#path-tracing-telemetry" title="Permanent link">&para;</a></h2>
-<p>Path Tracing Midpoint は MCD を HbH-PT に書くだけで、収集側は Regional Collector / TimeSeries DB を SONiC 外側で構築します。SONiC の Telemetry / gNMI 章（管理章）で扱う streaming telemetry とは目的が異なりますが、観測データの集約という点で連動させる設計余地があります。</p>
+<p>Path Tracing Midpoint は MCD を HbH-PT に書くだけで、収集側は Regional Collector / TimeSeries DB を SONiC 外側で構築します。SONiC の Telemetry / <a href="../../../reference/glossary/#term-gnmi">gNMI</a> 章（管理章）で扱う streaming telemetry とは目的が異なりますが、観測データの集約という点で連動させる設計余地があります。</p>
 <h2 id="_2">関連章<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../02-bgp/">02 BGP</a>: FRR / BGP 拡張、SRv6 family の制御プレーン。</li>
 <li><a href="../../03-vxlan-evpn/">03 VXLAN-EVPN</a>: EVPN / overlay との接続。</li>
-<li><a href="../../04-vrf-ecmp/">04 VRF / ECMP</a>: VPN / VRF の一般構造。</li>
+<li><a href="../../04-vrf-ecmp/">04 VRF / ECMP</a>: VPN / <a href="../../../reference/glossary/#term-vrf">VRF</a> の一般構造。</li>
 </ul>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23850,7 +23850,7 @@
 <li><strong>TI-LFA (Topology-Independent Loop-Free Alternates)</strong>: SR ベースで FRR (Fast Reroute) を実現する手法。SONiC で実装するには FRR 側と SAI 側双方の対応が必要。</li>
 <li><strong>SRv6 OAM (RFC 9259)</strong>: SRv6 経路の OAM probing。ping / traceroute の拡張で end-to-end SID path を検証する。</li>
 <li><strong>L3VPN over SRv6 (draft-ietf-bess-srv6-services)</strong>: BGP VPN family を SRv6 underlay で運ぶ。FRR の <code>address-family ipv4 vpn</code> + SRv6 locator 設定がドライバ。</li>
-<li><strong>flow label entropy</strong>: SRv6 outer IPv6 の flow label を inner 5-tuple から生成し、ECMP hash entropy を維持する。</li>
+<li><strong>flow label entropy</strong>: SRv6 outer IPv6 の flow label を inner 5-tuple から生成し、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> hash entropy を維持する。</li>
 </ul>
 <h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23878,10 +23878,11 @@
 </ul>
 <h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>sonic-swss</code> の <code>srv6orch</code> で SID table、locator、MY_SID 拡張の PR が継続。FRR との fpmsyncd 整合も並行。</li>
+<li><code>sonic-swss</code> の <code>srv6orch</code> で SID table、locator、MY_SID 拡張の PR が継続。FRR との <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 整合も並行。</li>
 <li>FRR upstream で SRv6 関連の PR が活発で、SONiC FRR バージョン更新と同期して機能が増える。</li>
 <li>Path Tracing midpoint の SAI extension が議論段階。実装は限定的だが HLD で expectation が示されている。</li>
 </ul>
+<!-- glossary-links-injected: 7c1ab6e0d97f -->
 
 
 

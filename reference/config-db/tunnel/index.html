@@ -23802,7 +23802,7 @@
 
 <h1 id="tunnel">TUNNEL テーブル<a class="headerlink" href="#tunnel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC Dual-ToR (Active-Standby) 構成で、ToR スイッチ間に張る IPinIP トンネルを定義するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>tunnelmgrd</code> が CONFIG_DB の本テーブルを購読し、APPL_DB <code>TUNNEL_DECAP_TABLE</code> を生成。<code>tunneldecaporch</code> (orchagent) が SAI tunnel オブジェクトを作成する。</p>
+<p>SONiC Dual-ToR (Active-Standby) 構成で、ToR スイッチ間に張る <a href="../../glossary/#term-ipinip">IPinIP</a> トンネルを定義するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>tunnelmgrd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の本テーブルを購読し、<a href="../../glossary/#term-appl_db">APPL_DB</a> <code>TUNNEL_DECAP_TABLE</code> を生成。<code>tunneldecaporch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が <a href="../../glossary/#term-sai">SAI</a> tunnel オブジェクトを作成する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23825,7 +23825,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>TUNNEL|&lt;mux_tunnel&gt;
 </span></code></pre></div>
 <ul>
-<li><code>&lt;mux_tunnel&gt;</code>: <code>MuxTunnel&lt;n&gt;</code> の文字列パターン（YANG <code>pattern "MuxTunnel[0-9]+"</code>）</li>
+<li><code>&lt;mux_tunnel&gt;</code>: <code>MuxTunnel&lt;n&gt;</code> の文字列パターン（<a href="../../glossary/#term-yang">YANG</a> <code>pattern "MuxTunnel[0-9]+"</code>）</li>
 </ul>
 <h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
@@ -23936,6 +23936,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>tunnel
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 1f724ed8975d -->
 
 <div class="footnote">
 <hr />

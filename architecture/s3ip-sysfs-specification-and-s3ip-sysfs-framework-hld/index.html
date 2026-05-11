@@ -24005,9 +24005,9 @@ reasoning: vendor driver の install/uninstall に追従して /sys/s3ip/ 配下
 </ul>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。本機能は <strong>kernel / sysfs 層</strong> で完結し、CONFIG_DB は使わない。</p>
+<p>該当なし。本機能は <strong>kernel / sysfs 層</strong> で完結し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> は使わない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>該当なし。<strong>ファイルシステム経由の参照</strong> が直接のインタフェースであり、HLD 内に CLI 提案は無い。</p>
+<p>該当なし。<strong>ファイルシステム経由の参照</strong> が直接のインタフェースであり、<a href="../../reference/glossary/#term-hld">HLD</a> 内に CLI 提案は無い。</p>
 <h3 id="vendor-init">設定例（vendor 側 init コード抜粋）<a class="headerlink" href="#vendor-init" title="Permanent link">&para;</a></h3>
 <div class="language-c highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">s3ip_sysfs_watchdog_drivers_s</span><span class="w"> </span><span class="n">drivers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="p">.</span><span class="n">get_watchdog_identify</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">demo_get_watchdog_identify</span><span class="p">,</span>
@@ -24061,6 +24061,8 @@ reasoning: vendor driver の install/uninstall に追従して /sys/s3ip/ 配下
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c5a6ce567024 -->
 
 <div class="footnote">
 <hr />

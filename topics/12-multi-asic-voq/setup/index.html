@@ -23828,16 +23828,16 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>Multi-ASIC / VOQ chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」の 2 点です。</p>
+<p>Multi-ASIC / <a href="../../../reference/glossary/#term-voq">VOQ</a> chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」の 2 点です。</p>
 <h2 id="asic-namespace-config_db">ASIC namespace と CONFIG_DB の見取り図<a class="headerlink" href="#asic-namespace-config_db" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   GC[Golden Config&lt;br&gt;config_db.json single file] --&gt; SP[Split per namespace]
   SP --&gt; H[(host CONFIG_DB&lt;br&gt;management / DEVICE_METADATA)]
   SP --&gt; A0[(asic0 CONFIG_DB&lt;br&gt;PORT / BGP / VLAN)]
   SP --&gt; A1[(asic1 CONFIG_DB&lt;br&gt;PORT / BGP / VLAN)]</code></pre>
-<p>host namespace は管理面（hostname、<code>MGMT_INTERFACE</code>、<code>SNMP</code>、<code>DEVICE_METADATA.localhost</code>）を持ち、ASIC namespace は port、VLAN、BGP、interface など実データプレーンを構成する table を持ちます。CLI 引数の <code>--namespace</code> は ASIC 側を指す概念で、host CONFIG_DB は名前空間引数なしでアクセスします。</p>
+<p>host namespace は管理面（hostname、<code>MGMT_INTERFACE</code>、<code>SNMP</code>、<code>DEVICE_METADATA.localhost</code>）を持ち、ASIC namespace は port、<a href="../../../reference/glossary/#term-vlan">VLAN</a>、<a href="../../../reference/glossary/#term-bgp">BGP</a>、interface など実データプレーンを構成する table を持ちます。CLI 引数の <code>--namespace</code> は ASIC 側を指す概念で、host <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> は名前空間引数なしでアクセスします。</p>
 <h2 id="single-json-configuration">Single JSON Configuration<a class="headerlink" href="#single-json-configuration" title="Permanent link">&para;</a></h2>
-<p><code>multi-asic-single-json-configuration-design</code> HLD は、複数 namespace 用に分かれた <code>config_db.json</code> を 1 ファイルに統合する形式を定義します。トップレベルに <code>localhost</code> (host) と <code>asic0</code>, <code>asic1</code>, ... のキーを持つ構造で、<code>config load</code>/<code>config reload</code> がそれぞれの namespace の Redis に分配します。</p>
+<p><code>multi-asic-single-json-configuration-design</code> <a href="../../../reference/glossary/#term-hld">HLD</a> は、複数 namespace 用に分かれた <code>config_db.json</code> を 1 ファイルに統合する形式を定義します。トップレベルに <code>localhost</code> (host) と <code>asic0</code>, <code>asic1</code>, ... のキーを持つ構造で、<code>config load</code>/<code>config reload</code> がそれぞれの namespace の <a href="../../../reference/glossary/#term-redis">Redis</a> に分配します。</p>
 <p>これにより Golden Config を 1 枚で管理でき、<code>sonic-cfggen</code> 経由で minigraph や Jinja テンプレからの生成も namespace 別に行わずに済みます。逆に、namespace ごとの個別ファイルを管理する従来形式も後方互換で残っているため、運用方針として「single JSON に寄せる」かどうかは事前に決めておく必要があります。</p>
 <h2 id="asicconf-num_asic">asic.conf と num_asic<a class="headerlink" href="#asicconf-num_asic" title="Permanent link">&para;</a></h2>
 <p>ハードウェア側の事実、つまり「この box に何個の ASIC があるか」は <code>/usr/share/sonic/device/&lt;platform&gt;/asic.conf</code> の <code>NUM_ASIC=</code> で宣言されます。これは Golden Config 読み込みより前に確定する情報で、<code>hwsku.json</code> などのデータがどの namespace に対応するかを SONiC 起動スクリプトが決めるための入力です。</p>
@@ -23848,7 +23848,7 @@
 <li><code>chassis_hostname</code>: chassis 全体の名前（supervisor からも参照）。</li>
 <li><code>sub_role</code>: line card / supervisor の区別。</li>
 </ul>
-<p>これらは orchagent が VOQ orchestrator を有効化するか、Chassis DB に接続するか、自分が supervisor として動くかを決めるための識別子です。</p>
+<p>これらは <a href="../../../reference/glossary/#term-orchagent">orchagent</a> が VOQ orchestrator を有効化するか、Chassis DB に接続するか、自分が supervisor として動くかを決めるための識別子です。</p>
 <h2 id="chassis-db-inband-configuration">Chassis DB と Inband Configuration<a class="headerlink" href="#chassis-db-inband-configuration" title="Permanent link">&para;</a></h2>
 <p>Chassis DB は supervisor 上の Redis なので、各 line card は supervisor まで到達できる必要があります。<code>db-design-for-multi-asic-scenarios</code> HLD では、Chassis DB 用の inband network、ソケットパス、namespace 跨ぎの DB ID 割り当てなどが定義されます。</p>
 <p>設計上は Chassis DB 経由でやりとりするのは「全 system port のリスト」「line card / fabric card の up/down」「neighbor 情報の chassis 内同期」など、各 line card が自律的に動くために必要な共通知識のみで、データプレーンの per-flow state は持ちません。</p>
@@ -23859,7 +23859,7 @@
 <p>1 ASIC pizza-box ながら VOQ アーキテクチャを使うシステムは、以下の点で通常の pizza-box 設定と異なります。</p>
 <ul>
 <li><code>switch_type = voq</code> を <code>DEVICE_METADATA.localhost</code> に付ける。</li>
-<li>system port table を自分自身の port から生成する（Chassis DB は持たないが、SAI system port object は作る）。</li>
+<li>system port table を自分自身の port から生成する（Chassis DB は持たないが、<a href="../../../reference/glossary/#term-sai">SAI</a> system port object は作る）。</li>
 <li>VOQ counter、scheduler 設定は通常の pizza-box と異なる counter naming を持つ。</li>
 </ul>
 <p>通常運用では pizza-box と同じ感覚で扱えますが、CLI の <code>show queue</code> 系で system port 由来の出力が混じる点だけ注意します。</p>
@@ -24046,6 +24046,7 @@
 <li><a href="../../../platform/single-asic-voq-fixed-system-sonic/">Single-ASIC VOQ Fixed System</a></li>
 <li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a> / <a href="../advanced/">advanced</a></li>
 </ul>
+<!-- glossary-links-injected: 05d8b676f155 -->
 
 
 

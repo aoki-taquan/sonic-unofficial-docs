@@ -23934,7 +23934,7 @@
 
 <h1 id="show-muxcable">show muxcable サブコマンド<a class="headerlink" href="#show-muxcable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show muxcable</code> は Dual-ToR Y-Cable の運用情報を確認する CLI で、<code>show/muxcable.py</code> の <code>@click.group(name='muxcable')</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config muxcable</code> 同様、xcvrd / linkmgrd への async RPC (CMD/RSP テーブル) を多用するコマンドが多く、CONFIG_DB / STATE_DB の単純な dump ではない。</p>
+<p><code>show muxcable</code> は Dual-ToR Y-Cable の運用情報を確認する CLI で、<code>show/muxcable.py</code> の <code>@click.group(name='muxcable')</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>config muxcable</code> 同様、xcvrd / <a href="../../glossary/#term-linkmgrd">linkmgrd</a> への async RPC (CMD/RSP テーブル) を多用するコマンドが多く、<a href="../../glossary/#term-config_db">CONFIG_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> の単純な dump ではない。</p>
 <p>ほぼすべてのサブコマンドが <code>--json</code> で機械可読出力に切替できる。</p>
 <h2 id="_2">コマンド一覧 (主要)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -23951,7 +23951,7 @@
 </tr>
 <tr>
 <td><code>show muxcable config [&lt;port&gt;] [--json]</code></td>
-<td>CONFIG_DB の MUX 設定一覧</td>
+<td>CONFIG_DB の <a href="../../glossary/#term-mux">MUX</a> 設定一覧</td>
 </tr>
 <tr>
 <td><code>show muxcable berinfo &lt;port&gt; &lt;target&gt; [--json]</code></td>
@@ -24047,7 +24047,7 @@
 <h3 id="show-muxcable-hwmode-muxdirection-port-switchmode-port"><code>show muxcable hwmode muxdirection [&lt;port&gt;]</code> / <code>switchmode [&lt;port&gt;]</code><a class="headerlink" href="#show-muxcable-hwmode-muxdirection-port-switchmode-port" title="Permanent link">&para;</a></h3>
 <p>xcvrd 経由で Y-Cable の HW state を直接読む。CONFIG_DB の <code>MUX_CABLE.state</code> (<code>config muxcable mode</code> で書き換える論理状態) と一致しない場合があり、整合性検証用。</p>
 <h3 id="show-muxcable-grpc-muxdirection-port"><code>show muxcable grpc muxdirection [&lt;port&gt;]</code><a class="headerlink" href="#show-muxcable-grpc-muxdirection-port" title="Permanent link">&para;</a></h3>
-<p>gNMI 経由で server (NIC) 側からキャッシュされた状態を読む経路。Active-Active トポロジで使う。</p>
+<p><a href="../../glossary/#term-gnmi">gNMI</a> 経由で server (NIC) 側からキャッシュされた状態を読む経路。Active-Active トポロジで使う。</p>
 <h2 id="config_db-state_db">関連する CONFIG_DB / STATE_DB<a class="headerlink" href="#config_db-state_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24134,6 +24134,8 @@
 <li><a href="../../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: eab46fcbaad8 -->
 
 <div class="footnote">
 <hr />

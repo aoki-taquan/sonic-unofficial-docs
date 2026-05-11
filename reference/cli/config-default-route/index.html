@@ -23602,7 +23602,7 @@
 <tr>
 <td>データプレーン側のスタティックルート</td>
 <td><code>config route add prefix 0.0.0.0/0 nexthop &lt;ip&gt;</code></td>
-<td>CONFIG_DB <code>STATIC_ROUTE</code></td>
+<td><a href="../../glossary/#term-config_db">CONFIG_DB</a> <code>STATIC_ROUTE</code></td>
 </tr>
 <tr>
 <td>管理 NIC (<code>eth0</code>) の default gateway</td>
@@ -23610,8 +23610,8 @@
 <td>CONFIG_DB <code>MGMT_INTERFACE</code></td>
 </tr>
 <tr>
-<td>BGP で受ける default route</td>
-<td>FRR vtysh / <code>config bgp</code> 配下</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> で受ける default route</td>
+<td><a href="../../glossary/#term-frr">FRR</a> vtysh / <code>config bgp</code> 配下</td>
 <td>CONFIG_DB（一部）+ FRR config</td>
 </tr>
 </tbody>
@@ -23643,7 +23643,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  distance:     &quot;0&quot;
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  blackhole:    &quot;false&quot;
 </span></code></pre></div>
-<p>VRF 付きの場合のキーは <code>STATIC_ROUTE|Vrf-Red|0.0.0.0/0</code>。</p>
+<p><a href="../../glossary/#term-vrf">VRF</a> 付きの場合のキーは <code>STATIC_ROUTE|Vrf-Red|0.0.0.0/0</code>。</p>
 <h2 id="2-nic">パターン 2: 管理 NIC のデフォルトゲートウェイ<a class="headerlink" href="#2-nic" title="Permanent link">&para;</a></h2>
 <p>eth0 (mgmt) のデフォルトゲートウェイは <code>MGMT_INTERFACE</code> テーブルの <code>gwaddr</code> フィールドで設定する。<code>config mgmt-interface</code> 系コマンドまたは <code>config_db.json</code> 直編集で扱う。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>MGMT_INTERFACE|eth0|10.0.0.0/24
@@ -23653,7 +23653,7 @@
 <h2 id="3-bgp">パターン 3: BGP 経由<a class="headerlink" href="#3-bgp" title="Permanent link">&para;</a></h2>
 <p>業務トラフィック向けのデフォルトルートは大抵 BGP で受ける。CLI 単独で設定する場合は <code>config bgp</code> 系（<code>config-bgp.md</code> 参照）または <code>vtysh</code> で <code>neighbor X default-originate</code> / <code>default-information originate</code> を使う。</p>
 <h2 id="static_route">STATIC_ROUTE の更新ロジック（補足）<a class="headerlink" href="#static_route" title="Permanent link">&para;</a></h2>
-<p><code>config route add</code> が同じ prefix で複数回呼ばれた場合、<code>config/main.py</code> の <code>add_route()</code> は <strong>既存エントリの値カラムに <code>,</code> 区切りで追記</strong>する形で複数 nexthop を蓄積する仕様<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デフォルトルートに複数 ECMP nexthop を載せたい場合は、その分だけコマンドを繰り返すか 1 度のコマンドで <code>nexthop 10.0.0.1 nexthop 10.0.0.2</code> の形で書く。</p>
+<p><code>config route add</code> が同じ prefix で複数回呼ばれた場合、<code>config/main.py</code> の <code>add_route()</code> は <strong>既存エントリの値カラムに <code>,</code> 区切りで追記</strong>する形で複数 nexthop を蓄積する仕様<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デフォルトルートに複数 <a href="../../glossary/#term-ecmp">ECMP</a> nexthop を載せたい場合は、その分だけコマンドを繰り返すか 1 度のコマンドで <code>nexthop 10.0.0.1 nexthop 10.0.0.2</code> の形で書く。</p>
 <p>削除は <code>config route del prefix 0.0.0.0/0 ...</code> で対象 nexthop を指定する。</p>
 <!-- cli-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -23679,7 +23679,7 @@
 
 <h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-static-route/"><code>sonic-static-route</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-static-route/"><code>sonic-static-route</code></a></li>
 <li>CONFIG_DB: <a href="../../config-db/static-route/"><code>STATIC_ROUTE</code></a> / <a href="../../config-db/mgmt-interface/"><code>MGMT_INTERFACE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -23702,6 +23702,8 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route 0.0.0.0/0&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 35efc0f6df25 -->
 
 <div class="footnote">
 <hr />

@@ -23928,7 +23928,7 @@
 </div>
 <h1 id="smartswitch-reboot-npu-dpu-gnoi-halt-pci-detach-reboot">SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）<a class="headerlink" href="#smartswitch-reboot-npu-dpu-gnoi-halt-pci-detach-reboot" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は <strong>PCIe</strong> で NPU 側 CPU に接続される（front panel は NPU のみ）。各 DPU は内部管理 IP を持ち Redis / ZMQ / gNMI を提供する。本 HLD は次の 3 通りの <strong>cold-reboot</strong> 順序を定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> は <a href="../../reference/glossary/#term-npu">NPU</a> 1 個 + 複数 <a href="../../reference/glossary/#term-dpu">DPU</a> から成り、DPU は <strong>PCIe</strong> で NPU 側 CPU に接続される（front panel は NPU のみ）。各 DPU は内部管理 IP を持ち <a href="../../reference/glossary/#term-redis">Redis</a> / ZMQ / <a href="../../reference/glossary/#term-gnmi">gNMI</a> を提供する。本 <a href="../../reference/glossary/#term-hld">HLD</a> は次の 3 通りの <strong>cold-reboot</strong> 順序を定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li><strong>DPU 単独 reboot</strong>（特定の DPU だけ再起動）</li>
 <li><strong>SmartSwitch 全体 reboot</strong>（NPU + 全 DPU）</li>
@@ -23940,7 +23940,7 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">前提<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li>NPU 上で <strong>gNOI client</strong>、各 DPU 上で <strong>gNOI server</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>NPU 上で <strong><a href="../../reference/glossary/#term-gnoi">gNOI</a> client</strong>、各 DPU 上で <strong>gNOI server</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>NPU と DPU 間は内部管理 IP（midplane bridge）で通信</li>
 <li>NPU / DPU の SONiC host service は graceful shutdown を行う</li>
 </ul>
@@ -24044,7 +24044,7 @@ reasoning: gNOI HALT/RebootStatus フローと PCI detach/reattach の vendor AP
 <p>DPU stuck の場合、vendor reboot API が <strong>cold boot / power cycle</strong> にフォールバックして強制復旧<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。失敗は全件 log 出力が義務。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当なし。本機能はランタイムの reboot 制御で、CONFIG_DB は持たない。</p>
+<p>該当なし。本機能はランタイムの reboot 制御で、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> は持たない。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p><code>reboot</code> コマンドの拡張。具体形は実装側で確認。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
@@ -24059,7 +24059,7 @@ reasoning: gNOI HALT/RebootStatus フローと PCI detach/reattach の vendor AP
 <li><strong>warm-reboot は scope 外 / 非対応</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>vendor API（<code>pci_detach</code> / <code>pci_reattach</code> / <code>dpu_reboot</code>）が無いと sysfs フォールバックが必須</li>
 <li>DPU stuck からの復旧は vendor の power cycle 機構に依存（実装差あり）</li>
-<li>DPU の reboot 中は対応 ENI への traffic は止まる（HA を組んでいなければ）</li>
+<li>DPU の reboot 中は対応 <a href="../../reference/glossary/#term-eni">ENI</a> への traffic は止まる（HA を組んでいなければ）</li>
 <li>HLD は 2024-05 〜 11 で改訂中。詳細フローは HLD <code>doc/smart-switch/reboot/reboot-hld.md</code> を参照</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -24091,6 +24091,8 @@ reasoning: gNOI HALT/RebootStatus フローと PCI detach/reattach の vendor AP
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 70472401098e -->
 
 <div class="footnote">
 <hr />

@@ -23975,7 +23975,7 @@
 <h1 id="system_defaults-sonic">SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約<a class="headerlink" href="#system_defaults-sonic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が <code>CONFIG_DB</code> の <code>DEVICE_METADATA|localhost</code> に蓄積されてきた。<code>default_bgp_status</code>, <code>default_pfcwd_status</code>, <code>synchronous_mode</code>, <code>dhcp_server</code> などである。フラグが増えるにつれて <code>DEVICE_METADATA</code> が肥大化し、本来「デバイスのメタデータ」とは性格の異なるフラグが混在する状況が生じた。</p>
-<p>本 HLD は、これらのフラグを <strong>新規テーブル <code>SYSTEM_DEFAULTS</code></strong> に切り出し、初期値設定・更新・購読を一元化することを提案している。<code>DEVICE_METADATA</code> 内の該当フィールドは <code>db_migrator.py</code> で <code>SYSTEM_DEFAULTS</code> に移行され、<code>sonic-device_metadata.yang</code> の該当エントリは新たな YANG モデルへ切り出される。</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は、これらのフラグを <strong>新規テーブル <code>SYSTEM_DEFAULTS</code></strong> に切り出し、初期値設定・更新・購読を一元化することを提案している。<code>DEVICE_METADATA</code> 内の該当フィールドは <code>db_migrator.py</code> で <code>SYSTEM_DEFAULTS</code> に移行され、<code>sonic-device_metadata.yang</code> の該当エントリは新たな <a href="../../reference/glossary/#term-yang">YANG</a> モデルへ切り出される。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">スコープ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>本 HLD のスコープは <code>SYSTEM_DEFAULTS</code> テーブルの <strong>設計</strong> に限定される。具体的には DB スキーマ、初期値の供給経路、ランタイムでの更新方法、コンシューマ側の取り込み方法、そして移行と必要なコード改修を扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24184,9 +24184,11 @@ reasoning: スキーマ定義（キー一意性・status の自由度・custom_f
 <ul>
 <li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang</code> が master に存在し、<code>container SYSTEM_DEFAULTS</code> 下に <code>list SYSTEM_DEFAULTS_LIST { key "name"; leaf name; leaf status; }</code> を定義。HLD の「キー = <code>feature_name</code>、必須フィールド = <code>status</code>」というスキーマと完全一致。</li>
 <li><code>sonic-buildimage/src/sonic-yang-models/tests/yang_model_tests/tests/system_defaults.json</code> / <code>tests_config/system_defaults.json</code> / <code>sample_config_db.json</code> にテストデータが整備され、<code>SYSTEM_DEFAULTS</code> テーブルが正式に sonic-yang-models で配信されていることを裏取り。</li>
-<li><code>sonic-utilities</code> 配下も含めて当該 YANG が <code>SYSTEM_DEFAULTS</code> を CONFIG_DB スキーマとして公開する経路が成立している。</li>
+<li><code>sonic-utilities</code> 配下も含めて当該 YANG が <code>SYSTEM_DEFAULTS</code> を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマとして公開する経路が成立している。</li>
 </ul>
 <p>HLD と実装は一致。<code>code-verified</code> に昇格。</p>
+<!-- glossary-links-injected: 20dbc11976b6 -->
+
 <div class="footnote">
 <hr />
 <ol>

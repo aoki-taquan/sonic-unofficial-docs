@@ -23612,7 +23612,7 @@
 <h1 id="port_storm_control">PORT_STORM_CONTROL テーブル<a class="headerlink" href="#port_storm_control" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>物理ポートで BUM (broadcast / unknown-unicast / unknown-multicast) トラフィックのレート制限 (storm control) を設定するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
-3 種類のトラフィックに対して個別にレートを指定でき、<code>orchagent</code> が SAI <code>SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID</code> 系で SAI policer を作って attach する。</p>
+3 種類のトラフィックに対して個別にレートを指定でき、<code>orchagent</code> が <a href="../../glossary/#term-sai">SAI</a> <code>SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID</code> 系で SAI policer を作って attach する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23631,7 +23631,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PORT_STORM_CONTROL|&lt;ifname&gt;|&lt;storm_type&gt;
 </span></code></pre></div>
 <ul>
-<li><code>&lt;ifname&gt;</code>: <code>PORT.name</code> への leafref (物理ポートのみ。LAG / VLAN は非対応)</li>
+<li><code>&lt;ifname&gt;</code>: <code>PORT.name</code> への leafref (物理ポートのみ。<a href="../../glossary/#term-lag">LAG</a> / <a href="../../glossary/#term-vlan">VLAN</a> は非対応)</li>
 <li><code>&lt;storm_type&gt;</code>: <code>broadcast</code> / <code>unknown-unicast</code> / <code>unknown-multicast</code> のいずれか</li>
 </ul>
 <h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -23663,9 +23663,9 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORT</code>, <code>POLICER</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORT</code>, <code>POLICER</code></li>
 <li>関連 CLI: <code>config interface storm-control &lt;type&gt; &lt;ifname&gt; &lt;kbps&gt;</code></li>
-<li>関連 YANG: <code>sonic-storm-control</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-storm-control</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23697,6 +23697,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>storm-control<span class="w"> </span>all
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: b27e55924bf2 -->
 
 <div class="footnote">
 <hr />

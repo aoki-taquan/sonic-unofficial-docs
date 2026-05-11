@@ -24018,7 +24018,7 @@
 </div>
 <h1 id="liquidcoolingbase-thermalctld-system-health-gnmi">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）<a class="headerlink" href="#liquidcoolingbase-thermalctld-system-health-gnmi" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。本機能は液冷漏洩を検出するセンサを監視し、漏洩発生時に SONiC が <strong>即時</strong> アラート（syslog + STATE_DB + gNMI event）を出すパイプラインを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。本機能は液冷漏洩を検出するセンサを監視し、漏洩発生時に SONiC が <strong>即時</strong> アラート（syslog + <a href="../../reference/glossary/#term-state_db">STATE_DB</a> + <a href="../../reference/glossary/#term-gnmi">gNMI</a> event）を出すパイプラインを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>要件<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>漏洩検出センサを監視し、検知時にアラートを出す</li>
@@ -24127,7 +24127,7 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-yang">関連する CONFIG_DB / YANG<a class="headerlink" href="#config_db-yang" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB の追加は無い。<code>pmon_daemon_control.json</code> の起動設定で機能を gate する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の追加は無い。<code>pmon_daemon_control.json</code> の起動設定で機能を gate する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>新規 <code>show platform leakage status</code><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Name              Leak
@@ -24153,7 +24153,7 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 <p>液冷非対応プラットフォームでは <strong>このフィールド自体を入れない</strong>（または <code>enable_liquid_cooling: false</code>）。<code>thermalctld</code> 起動時に Updater スレッドを生成しないため、追加オーバーヘッドはゼロ<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>0.5 秒 polling</strong>: メインスレッドの 1 分とは別系統。0.5 秒は HLD のデフォルトだが、CPU/IPC 負荷の問題があれば調整可。</li>
+<li><strong>0.5 秒 polling</strong>: メインスレッドの 1 分とは別系統。0.5 秒は <a href="../../reference/glossary/#term-hld">HLD</a> のデフォルトだが、CPU/IPC 負荷の問題があれば調整可。</li>
 <li><strong>Per-sensor name 管理がプラットフォーム責任</strong>: 漏洩位置特定のため複数センサ前提。<code>name</code> の命名規則は HLD で規定なし。</li>
 <li><strong>STATE_DB と gNMI イベントの二重経路</strong>: STATE_DB を監視する system-health からのイベント発行であり、<code>thermalctld</code> 直接の gNMI 発行ではない。state-db 更新が遅延するとイベントも遅延する。</li>
 </ul>
@@ -24180,7 +24180,7 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 </span></code></pre></div></li>
 <li>L547: <code>self.sensor_table = swsscommon.Table(state_db, LiquidCoolingUpdater.LIQUID_COOLING_INFO_TABLE_NAME)</code> で実際に <code>LIQUID_COOLING_INFO</code> を書く。</li>
 <li><strong>差分の中身</strong>: HLD 図には <code>LIQUID_COOLING_DEVICE</code> と書かれているが、実コードは <code>LIQUID_COOLING_INFO</code>。さらに HLD には無い <code>SYSTEM_LEAK_STATUS</code> (<code>L548</code>)、<code>LEAK_PROFILE</code>（<code>L551</code>）等の補助テーブルも追加されている。</li>
-<li><strong>読者への影響</strong>: HLD の名前で <code>redis-cli -n 6 keys 'LIQUID_COOLING_DEVICE*'</code> を実行しても結果が出ず、漏洩状態を Redis 経由で参照できないと誤解する。system-health 側の hardware_checker も <code>LIQUID_COOLING_INFO</code> を見る前提で書かれているため、HLD の名前で独自スクリプトを書くと連動しない。</li>
+<li><strong>読者への影響</strong>: HLD の名前で <code>redis-cli -n 6 keys 'LIQUID_COOLING_DEVICE*'</code> を実行しても結果が出ず、漏洩状態を <a href="../../reference/glossary/#term-redis">Redis</a> 経由で参照できないと誤解する。system-health 側の hardware_checker も <code>LIQUID_COOLING_INFO</code> を見る前提で書かれているため、HLD の名前で独自スクリプトを書くと連動しない。</li>
 <li><strong>回避策</strong>:</li>
 <li>状態確認: <code>redis-cli -n 6 keys 'LIQUID_COOLING_INFO*'</code> および <code>redis-cli -n 6 keys 'SYSTEM_LEAK_STATUS*'</code>、<code>redis-cli -n 6 keys 'LEAK_PROFILE*'</code> を使う。</li>
 <li>スクリプト連携: <code>LIQUID_COOLING_INFO</code> を subscribe キーとして使う。HLD の名前はリネームされた旧称と考えて読み替える。</li>
@@ -24232,6 +24232,8 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f5299aff9050 -->
 
 <div class="footnote">
 <hr />

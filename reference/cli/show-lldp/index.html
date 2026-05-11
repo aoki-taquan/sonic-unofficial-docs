@@ -23667,7 +23667,7 @@
 
 <h1 id="show-lldp">show lldp サブコマンド<a class="headerlink" href="#show-lldp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show lldp</code> は LLDP (Link Layer Discovery Protocol) 隣接情報を表示するグループ。実体は <code>lldpd</code> プロセスが収集した隣接情報を、SONiC 同梱の <code>lldpshow</code> スクリプト経由でフォーマットして出力する薄いラッパである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB は触らず、<code>run_command(['sudo', 'lldpshow', ...])</code> を呼ぶだけ。</p>
+<p><code>show lldp</code> は <a href="../../glossary/#term-lldp">LLDP</a> (Link Layer Discovery Protocol) 隣接情報を表示するグループ。実体は <code>lldpd</code> プロセスが収集した隣接情報を、SONiC 同梱の <code>lldpshow</code> スクリプト経由でフォーマットして出力する薄いラッパである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> は触らず、<code>run_command(['sudo', 'lldpshow', ...])</code> を呼ぶだけ。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -23807,6 +23807,8 @@ excerpt: |
 <li><a href="../show-interfaces/">reference/CLI: show interfaces</a></li>
 <li><a href="../show-ip/">reference/CLI: show ip</a></li>
 </ul>
+<!-- glossary-links-injected: 4808f1ebafcd -->
+
 <div class="footnote">
 <hr />
 <ol>

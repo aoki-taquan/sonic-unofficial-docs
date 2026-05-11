@@ -23728,8 +23728,8 @@
 </div>
 <h1 id="overlay-ecmp-with-bfd-monitoring">Overlay ECMP with BFD monitoring<a class="headerlink" href="#overlay-ecmp-with-bfd-monitoring" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VxLAN VNet 経路 (<code>VNET_ROUTE_TUNNEL_TABLE</code>) に <strong>複数 endpoint を ECMP で並べ、各 endpoint の生存性を BFD で確認</strong> し、Down メンバを NHG から外したい。SDN コントローラから REST / gNMI で投入された経路を VnetOrch が処理する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><strong>監視対象 (<code>endpoint_monitor</code>)</strong> と <strong>実トンネル送信先 (<code>endpoint</code>)</strong> を分離できるのが特徴で、共通 monitoring IP への multi-hop BFD で生存確認できる。健全な経路は <code>ADVERTISE_NETWORK_TABLE</code> 経由で BGP に広報される。</p>
+<p>VxLAN VNet 経路 (<code>VNET_ROUTE_TUNNEL_TABLE</code>) に <strong>複数 endpoint を <a href="../../reference/glossary/#term-ecmp">ECMP</a> で並べ、各 endpoint の生存性を <a href="../../reference/glossary/#term-bfd">BFD</a> で確認</strong> し、Down メンバを NHG から外したい。SDN コントローラから REST / <a href="../../reference/glossary/#term-gnmi">gNMI</a> で投入された経路を VnetOrch が処理する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><strong>監視対象 (<code>endpoint_monitor</code>)</strong> と <strong>実トンネル送信先 (<code>endpoint</code>)</strong> を分離できるのが特徴で、共通 monitoring IP への multi-hop BFD で生存確認できる。健全な経路は <code>ADVERTISE_NETWORK_TABLE</code> 経由で <a href="../../reference/glossary/#term-bgp">BGP</a> に広報される。</p>
 <h2 id="_2">全体フロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     APP[VNET_ROUTE_TUNNEL_TABLE] --&gt; VO[VnetOrch]
@@ -23744,7 +23744,7 @@
 <li>同一 endpoint set/NHG があれば再利用、<code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code> で重み付け</li>
 <li>各 endpoint の monitoring IP へ multi-hop BFD セッション（既存があれば共有）</li>
 <li>BFD Down メンバは NHG から外す</li>
-<li>アクティブメンバが 1 つ以上あれば <code>ADVERTISE_NETWORK_TABLE</code> に書き出し → bgpcfgd → BGP 広報</li>
+<li>アクティブメンバが 1 つ以上あれば <code>ADVERTISE_NETWORK_TABLE</code> に書き出し → <a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> → BGP 広報</li>
 </ol>
 <h2 id="_3">スキーマ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB:
@@ -23783,7 +23783,7 @@
 </tr>
 </tbody>
 </table>
-<p>必須 SAI 属性: 既存 TUNNEL API + BFD HW offload + <code>SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC</code> / <code>_PORT</code><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>必須 <a href="../../reference/glossary/#term-sai">SAI</a> 属性: 既存 TUNNEL API + BFD HW offload + <code>SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC</code> / <code>_PORT</code><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s1">  &quot;VXLAN_TUNNEL&quot;: {&quot;tunnel_v4&quot;: {&quot;src_ip&quot;: &quot;10.1.0.32&quot;}},</span>
@@ -23806,7 +23806,7 @@
 <ul>
 <li><strong>VnetOrch / TunnelOrch</strong>: 「ECMP 複数 endpoint」「BFD state 連動」を既存実装に追加</li>
 <li><strong>BfdOrch / BFD HW offload</strong>: 大量 multi-hop BFD（4k）を扱う前提</li>
-<li><strong>bgpcfgd / FRR</strong>: <code>network</code> 広告と community 付与</li>
+<li><strong>bgpcfgd / <a href="../../reference/glossary/#term-frr">FRR</a></strong>: <code>network</code> 広告と community 付与</li>
 <li><strong>後継 <a href="../overlay-ecmp-enhancements/">Overlay ECMP Enhancements</a></strong>: primary/secondary / custom monitoring / per-route BFD timer / <code>pinned_state</code> を追加</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -23827,6 +23827,8 @@
 <li><a href="../../topics/03-vxlan-evpn/">Topics: VXLAN / EVPN / VNET オーバーレイ</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 308b4b9e8a33 -->
 
 <div class="footnote">
 <hr />

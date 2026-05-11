@@ -23762,7 +23762,7 @@
 
 
 <h1 id="npu-dpu-db-eni">NPU-DPU DB と ENI ベース転送の内部構造<a class="headerlink" href="#npu-dpu-db-eni" title="Permanent link">&para;</a></h1>
-<p>DASH / SmartSwitch を実装視点で読むときは、「設定がコントローラから DPU の SAI に届くまで」と「データプレーンが NPU 上の ACL でどう振り分けられるか」を分けて追うと理解しやすくなります。ここでは DB レイヤ、ENI ベース転送、DASH ACL タグ、HA の actor 関係を順に見ていきます。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a> / <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> を実装視点で読むときは、「設定がコントローラから <a href="../../../reference/glossary/#term-dpu">DPU</a> の <a href="../../../reference/glossary/#term-sai">SAI</a> に届くまで」と「データプレーンが <a href="../../../reference/glossary/#term-npu">NPU</a> 上の <a href="../../../reference/glossary/#term-acl">ACL</a> でどう振り分けられるか」を分けて追うと理解しやすくなります。ここでは DB レイヤ、<a href="../../../reference/glossary/#term-eni">ENI</a> ベース転送、DASH ACL タグ、HA の actor 関係を順に見ていきます。</p>
 <h2 id="npu-dpu-overlay-db">NPU 上の DPU overlay DB<a class="headerlink" href="#npu-dpu-overlay-db" title="Permanent link">&para;</a></h2>
 <p>NPU 上には DPU 数だけ独立した <code>database</code> container（<code>redisdpu0</code> / <code>redisdpu1</code> …）が立ち上がります。各々は別 TCP port / 別 unix socket / 別 <code>redis-server</code> プロセスです。DPU は自分専用の redis を NPU 上で参照し、<code>APPL_DB</code> / <code>CONFIG_DB</code> / <code>STATE_DB</code> などを通常通り使います。</p>
 <pre class="mermaid"><code>flowchart LR
@@ -23795,9 +23795,9 @@
 <h2 id="dash">DASH オブジェクトの流れ<a class="headerlink" href="#dash" title="Permanent link">&para;</a></h2>
 <p>コントローラからの設定は次のように流れます。</p>
 <ol>
-<li>コントローラが NPU 側 gNMI / <code>swssconfig</code> に <code>DASH_VNET</code> / <code>DASH_ENI</code> / <code>DASH_ROUTE</code> / <code>DASH_ACL_GROUP</code> / <code>DASH_PREFIX_TAG_TABLE</code> 等を入れる。</li>
-<li>対象 DPU 向けに NPU の <code>redisdpuN</code> に書き込まれる（あるいは DPU 側 orchagent がここを購読する）。</li>
-<li>DPU 側 <code>DashOrch</code> 系が APPL_DB を読み、SAI へ落とす。</li>
+<li>コントローラが NPU 側 <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / <code>swssconfig</code> に <code>DASH_VNET</code> / <code>DASH_ENI</code> / <code>DASH_ROUTE</code> / <code>DASH_ACL_GROUP</code> / <code>DASH_PREFIX_TAG_TABLE</code> 等を入れる。</li>
+<li>対象 DPU 向けに NPU の <code>redisdpuN</code> に書き込まれる（あるいは DPU 側 <a href="../../../reference/glossary/#term-orchagent">orchagent</a> がここを購読する）。</li>
+<li>DPU 側 <code>DashOrch</code> 系が <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> を読み、SAI へ落とす。</li>
 </ol>
 <p>主要 orchagent は次の通りです。</p>
 <table>
@@ -23844,7 +23844,7 @@
 <p>ACL の基本優先度は <code>EniAclRule::BASE_PRIORITY = 9996</code> で、ローカル ENI 向けと tunnel 終端向けで <code>BASE_PRIORITY + type</code> により 9996 / 9997 を生成します。これにより 1 つの VIP（スイッチ単位）で受けたパケットを、ENI 単位の宛先解決でローカル DPU またはリモート DPU の tunnel へ振り分けられます。</p>
 <p>詳細は <a href="../../../overlay/smartswitch-eni-based-forwarding/">SmartSwitch ENI Based Forwarding</a> を参照してください。</p>
 <h2 id="dash-acl">DASH ACL タグ<a class="headerlink" href="#dash-acl" title="Permanent link">&para;</a></h2>
-<p>DASH ACL は「サービスタグ = プレフィックス群」という抽象を持ち、<code>DASH_PREFIX_TAG_TABLE</code> でタグを定義し、ACL ルール側から参照できます。Stage 1（現行）は SWSS 側でタグをルール生成時にプレフィックス列に展開するソフトウェア実装で、SAI 変更はありません。Stage 2 として SAI API でタグを直接扱う計画は HLD 範囲外です。</p>
+<p>DASH ACL は「サービスタグ = プレフィックス群」という抽象を持ち、<code>DASH_PREFIX_TAG_TABLE</code> でタグを定義し、ACL ルール側から参照できます。Stage 1（現行）は SWSS 側でタグをルール生成時にプレフィックス列に展開するソフトウェア実装で、SAI 変更はありません。Stage 2 として SAI API でタグを直接扱う計画は <a href="../../../reference/glossary/#term-hld">HLD</a> 範囲外です。</p>
 <p>タグの利点は次の通りです。</p>
 <ul>
 <li>メンバ追加 / 削除時に ACL ルールの書き換えが不要</li>
@@ -23857,7 +23857,7 @@
 <ul>
 <li>DPU ごとに「自 DPU の HA state」「peer DPU との同期」を持つ</li>
 <li>物理 / 論理障害を検知し、active / standby 切替を駆動する</li>
-<li>DPU 側 <code>DashHaOrch</code> と APPL_DB / STATE_DB を介して連携する</li>
+<li>DPU 側 <code>DashHaOrch</code> と APPL_DB / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> を介して連携する</li>
 <li>HA グループや HA セット（DPU ペア / フロー）を管理する</li>
 </ul>
 <p>データプレーンの flow sync は DPU 側 <code>DashHaFlowOrch</code> が持ち、HAMgrD が制御メッセージを発行する分業です。NPU 側 / DPU 側で actor を分けるのは、NPU が複数 DPU をまとめて見やすい一方、DPU 側はフロー状態を SAI に近い場所で扱う必要があるためです。HAMgrD は実装上 <code>discrepancy-found</code> 扱いの点があるため、<a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">HAMgrD ページ</a> で個別差分を確認してください。</p>
@@ -23897,7 +23897,7 @@
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_INBOUND_ROUTING_ENTRY</code></td>
-<td>inbound 側の VNI / VNET 解決</td>
+<td>inbound 側の VNI / <a href="../../../reference/glossary/#term-vnet">VNET</a> 解決</td>
 </tr>
 <tr>
 <td><code>SAI_OBJECT_TYPE_DASH_ACL_GROUP</code> / <code>DASH_ACL_RULE</code></td>
@@ -23932,7 +23932,7 @@
 </span></code></pre></div>
 <h2 id="zmq-swbus-redis-pubsub">ZMQ / SWBUS / Redis pub/sub<a class="headerlink" href="#zmq-swbus-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>DASH は <strong>ZMQ + SWBUS</strong> を多用します。NPU ↔ DPU 間の制御パスは SONiC 標準の Redis pub/sub ではなく、SWBUS (<code>sonic-swbus</code> based。<code>gnmi-native-write</code> と並び ZMQ producer/consumer を使う) でメッセージを配送します。これは大量の DASH route / ENI / flow を Redis を介さず直接 orchagent に流すためです。</li>
+<li>DASH は <strong>ZMQ + SWBUS</strong> を多用します。NPU ↔ DPU 間の制御パスは SONiC 標準の <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub ではなく、SWBUS (<code>sonic-swbus</code> based。<code>gnmi-native-write</code> と並び ZMQ producer/consumer を使う) でメッセージを配送します。これは大量の DASH route / ENI / flow を Redis を介さず直接 orchagent に流すためです。</li>
 <li>HA flow sync は DPU 間の専用 channel（DASH-HA dataplane channel）で行い、Redis を経由しません。</li>
 <li>通常の DASH 設定（ENI / VNET / route）は SWBUS → 各 DPU の APPL_DB に書かれ、<code>DashOrch</code> 系が SubscriberStateTable で読み取ります。</li>
 </ul>
@@ -23953,6 +23953,7 @@
 <li><a href="../../../acl-qos/dash-acl-tags/">DASH ACL タグ</a></li>
 <li><a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HAMgrD 設計</a></li>
 </ul>
+<!-- glossary-links-injected: 1c002d86094a -->
 
 
 

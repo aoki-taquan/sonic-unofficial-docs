@@ -24218,10 +24218,10 @@
 <p><code>sonic-installer upgrade_docker</code> で SWSS docker をデータプレーンに影響を与えずアップグレードするために必要な変更点を、開発当時の作業メモとしてまとめたもの<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CLI 動作例と関連リポジトリへの diff リンクが主な内容で、以下の 5 領域の実装変更を扱う。</p>
 <ol>
 <li>SWSS warm restart の有効化スイッチ（<code>config warm_restart enable swss</code>）</li>
-<li><code>swss</code> と <code>syncd</code> サービスの分離 + warm start での CONFIG_DB 取り扱い</li>
+<li><code>swss</code> と <code>syncd</code> サービスの分離 + warm start での <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 取り扱い</li>
 <li><code>swss-flushdb</code> スクリプトの追加</li>
-<li>SWSS データ復元（idempotent な orchagent 動作）</li>
-<li>Redis client の <code>hmset</code> / <code>hgetallordered</code> 追加と libsairedis の Redis API 冪等性サポート</li>
+<li>SWSS データ復元（idempotent な <a href="../../reference/glossary/#term-orchagent">orchagent</a> 動作）</li>
+<li><a href="../../reference/glossary/#term-redis">Redis</a> client の <code>hmset</code> / <code>hgetallordered</code> 追加と libsairedis の Redis API 冪等性サポート</li>
 </ol>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="cli">CLI 例<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
@@ -24256,11 +24256,11 @@
     C --&gt; D[4. swss データ復元 idempotent]
     D --&gt; E[5. RedisClient hmset/hgetallordered\n + libsairedis 冪等性]</code></pre>
 <h4 id="1-swss-syncd">1. swss / syncd の分離<a class="headerlink" href="#1-swss-syncd" title="Permanent link">&para;</a></h4>
-<p>warm restart 対象は <strong>swss コンテナのみ</strong>。syncd は別サービスとして残し、CONFIG_DB の起動順や warm start シーケンスで両者を分けて扱う必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>warm restart 対象は <strong>swss コンテナのみ</strong>。<a href="../../reference/glossary/#term-syncd">syncd</a> は別サービスとして残し、CONFIG_DB の起動順や warm start シーケンスで両者を分けて扱う必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="2-swss-flushdb">2. swss-flushdb<a class="headerlink" href="#2-swss-flushdb" title="Permanent link">&para;</a></h4>
-<p>旧 swss コンテナが落ちる前に APPL_DB / STATE_DB の特定エントリをクリーンに保つためのスクリプト。</p>
+<p>旧 swss コンテナが落ちる前に <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> の特定エントリをクリーンに保つためのスクリプト。</p>
 <h4 id="3-idempotent-orchagent">3. データ復元（idempotent orchagent）<a class="headerlink" href="#3-idempotent-orchagent" title="Permanent link">&para;</a></h4>
-<p>新 swss コンテナが起動すると、APPL_DB に残っている既存エントリと SAI 側の既存オブジェクトを突き合わせ、<strong>同じプログラムを再実行しても副作用を起こさない</strong>（idempotent）動作をする必要がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>新 swss コンテナが起動すると、APPL_DB に残っている既存エントリと <a href="../../reference/glossary/#term-sai">SAI</a> 側の既存オブジェクトを突き合わせ、<strong>同じプログラムを再実行しても副作用を起こさない</strong>（idempotent）動作をする必要がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="4-redis">4. Redis ライブラリ拡張<a class="headerlink" href="#4-redis" title="Permanent link">&para;</a></h4>
 <p><code>hmset</code> と <code>hgetallordered</code> を <code>RedisClient</code> に追加。順序付き hash 取得は復元時の決定論的な再生に必要。</p>
 <h4 id="5-libsairedis-redis-api">5. libsairedis の Redis API 冪等性<a class="headerlink" href="#5-libsairedis-redis-api" title="Permanent link">&para;</a></h4>
@@ -24309,7 +24309,7 @@
 </tbody>
 </table>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>HLD に YANG モデルの記述は無い。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> に <a href="../../reference/glossary/#term-yang">YANG</a> モデルの記述は無い。</p>
 <h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>swss
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>warm_restart
@@ -24325,7 +24325,7 @@
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>syncd warm restart</strong>: 別途 <code>sonic-buildimage</code> 側の syncd warm restart 設計を参照する必要がある。</li>
-<li><strong>teamd warm restart</strong>: <code>WARM_RESTART teamd</code> フラグで別管理。</li>
+<li><strong><a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> warm restart</strong>: <code>WARM_RESTART teamd</code> フラグで別管理。</li>
 <li><strong>System warm restart (kernel)</strong>: <code>WARM_RESTART system</code> フラグで別管理。</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24414,6 +24414,8 @@
 </ul>
 <h4 id="_12">検証日<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
+<!-- glossary-links-injected: 580e0024e364 -->
+
 <div class="footnote">
 <hr />
 <ol>

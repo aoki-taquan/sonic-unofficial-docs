@@ -23911,8 +23911,8 @@
 </div>
 <h1 id="mpls-tc-tc-mapmpls-qos-classification">MPLS TC → TC map（MPLS パケットの QoS classification）<a class="headerlink" href="#mpls-tc-tc-mapmpls-qos-classification" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の QoS は DSCP / DOT1P / TC の各値間でマップを定義し、CONFIG_DB の <code>*_TO_*_MAP</code> テーブルとポート毎の <code>PORT_QOS_MAP</code> を介して SAI に降ろす設計を取っている。本 HLD は <strong>MPLS パケットの TC（Traffic Class、旧称 EXP、RFC 5462）</strong> から内部 TC へのマップを既存 QoS フローに追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>これにより、<strong>MPLS でトンネル化されたトラフィックに対しても通常の QoS 機構が適用</strong> できるようになる。SAI 自体は既に <code>SAI_QOS_MAP_MPLS_EXP_TO_TC</code> をサポートしており、本 HLD の作業は <strong>SONiC スタック側の対応（CONFIG_DB スキーマ → orchagent → CLI）</strong> が中心<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-qos">QoS</a> は DSCP / DOT1P / TC の各値間でマップを定義し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>*_TO_*_MAP</code> テーブルとポート毎の <code>PORT_QOS_MAP</code> を介して <a href="../../reference/glossary/#term-sai">SAI</a> に降ろす設計を取っている。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong><a href="../../reference/glossary/#term-mpls">MPLS</a> パケットの TC（Traffic Class、旧称 EXP、RFC 5462）</strong> から内部 TC へのマップを既存 QoS フローに追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>これにより、<strong>MPLS でトンネル化されたトラフィックに対しても通常の QoS 機構が適用</strong> できるようになる。SAI 自体は既に <code>SAI_QOS_MAP_MPLS_EXP_TO_TC</code> をサポートしており、本 HLD の作業は <strong>SONiC スタック側の対応（CONFIG_DB スキーマ → <a href="../../reference/glossary/#term-orchagent">orchagent</a> → CLI）</strong> が中心<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <blockquote>
 <p>名称について: HLD 0.2 で <strong>「MPLS EXP」を「MPLS TC」に統一</strong>（RFC 5462 準拠）されている<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 </blockquote>
@@ -24070,7 +24070,7 @@ reasoning: 新テーブルのスキーマと PORT_QOS_MAP への field 追加・
 </ul>
 <p>加えて HLD 上の留意点:</p>
 <ul>
-<li><strong>YANG model</strong>: HLD 上は CLI / YANG 双方の拡張に言及されているが、<strong>直接の YANG モジュール変更の詳細は本 HLD では未定義</strong>。</li>
+<li><strong><a href="../../reference/glossary/#term-yang">YANG</a> model</strong>: HLD 上は CLI / YANG 双方の拡張に言及されているが、<strong>直接の YANG モジュール変更の詳細は本 HLD では未定義</strong>。</li>
 <li>warm boot / fast boot / scalability への影響は <strong>無し</strong> と HLD は明言<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -24095,6 +24095,8 @@ reasoning: 新テーブルのスキーマと PORT_QOS_MAP への field 追加・
 <li><a href="../../topics/17-srv6-mpls/">Topics: SRv6 / MPLS / Path Tracing</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 47919f2738a1 -->
 
 <div class="footnote">
 <hr />

@@ -23863,17 +23863,17 @@
 <h1 id="voq-bgp">VoQ シャーシでの BGP 構成<a class="headerlink" href="#voq-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>なぜ VoQ シャーシは普通の BGP 設定では駄目で、ASIC 間で <strong>ECMP 集合が同一</strong> である必要があるのか</li>
+<li>なぜ VoQ シャーシは普通の <a href="../../reference/glossary/#term-bgp">BGP</a> 設定では駄目で、ASIC 間で <strong><a href="../../reference/glossary/#term-ecmp">ECMP</a> 集合が同一</strong> である必要があるのか</li>
 <li>そのために必要な 4 つの設定は何か（特に <code>bgp bestpath peer-type multipath-relax</code> の役割）</li>
-<li>どの CONFIG_DB テーブルと minigraph 要素で「VoQ 内部 iBGP ピア」を表現するか</li>
+<li>どの <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> テーブルと minigraph 要素で「VoQ 内部 iBGP ピア」を表現するか</li>
 <li><code>bgp shutdown all</code> 等の運用 CLI は内部ピアを扱うのか</li>
 </ul>
 <h2 id="asic-ecmp">なぜ ASIC 間 ECMP 整合性が要るか<a class="headerlink" href="#asic-ecmp" title="Permanent link">&para;</a></h2>
 <p>VoQ（Virtual Output Queue）シャーシは複数 ASIC を 1 論理ルータに束ねる。転送決定は <strong>入口 ASIC で 1 回だけ</strong> 行われ、その後はファブリック経由で出口へ運ばれる。そのためある宛先の <strong>ECMP nexthop 集合が ASIC ごとに異なる</strong> と、入口 ASIC ごとにロードバランスがブレる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD はそれを防ぐ 3 つの仕組みを定義する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>本 <a href="../../reference/glossary/#term-hld">HLD</a> はそれを防ぐ 3 つの仕組みを定義する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>ASIC 間で <strong>iBGP フルメッシュ</strong> を張り、<code>addpath-tx-all-paths</code> で全 eBGP 学習経路を交換</li>
-<li>新規 FRR コマンド <code>bgp bestpath peer-type multipath-relax</code> で eBGP/iBGP 混在 ECMP を許す</li>
+<li>新規 <a href="../../reference/glossary/#term-frr">FRR</a> コマンド <code>bgp bestpath peer-type multipath-relax</code> で eBGP/iBGP 混在 ECMP を許す</li>
 <li><code>BGP_VOQ_CHASSIS_NEIGHBOR</code> テーブルと <code>bgpcfgd</code> の <code>voq_chassis</code> テンプレートで生成</li>
 </ol>
 <pre class="mermaid"><code>flowchart LR
@@ -23885,7 +23885,7 @@
   R1[(R1)] ---|eBGP| A1
   R2[(R2)] ---|eBGP| A2
   R4[(R4)] ---|eBGP| A3</code></pre>
-<p>全 ASIC は <strong>同一 AS</strong>。1 セッションで IPv4/IPv6 両ファミリを運ぶが IPv6 ユニキャストは別途 activate が要る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。iBGP nexthop の再帰解決は VOQ HLD の inband recycle port / グローバル neighbor テーブルが前提<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>全 ASIC は <strong>同一 AS</strong>。1 セッションで IPv4/IPv6 両ファミリを運ぶが IPv6 ユニキャストは別途 activate が要る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。iBGP nexthop の再帰解決は <a href="../../reference/glossary/#term-voq">VOQ</a> HLD の inband recycle port / グローバル neighbor テーブルが前提<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="ecmp-4">ECMP 整合性のための 4 設定<a class="headerlink" href="#ecmp-4" title="Permanent link">&para;</a></h2>
 <p><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <table>
@@ -23930,7 +23930,7 @@
   CHK --&gt;|No| DEF[従来通り connected 必須]</code></pre>
 <p>eBGP ピア自身が再帰解決を要する nexthop を送ってきた場合は <strong>invalid 扱いで ECMP に入らない</strong>（RIB→FIB の再帰解決は最初の validity 判定には影響しない）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="config_db-minigraph">CONFIG_DB / minigraph 拡張<a class="headerlink" href="#config_db-minigraph" title="Permanent link">&para;</a></h2>
-<p><code>BGP_VOQ_CHASSIS_NEIGHBOR</code> を新設。スキーマは <code>BGP_NEIGHBOR</code> と同一で、<strong>bgpcfgd で別テンプレート（<code>voq_chassis</code>）を引くためのフラグ</strong> の役割<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>voq_chassis</code> テンプレートは上記 4 設定を集約した peer-group を定義する。</p>
+<p><code>BGP_VOQ_CHASSIS_NEIGHBOR</code> を新設。スキーマは <code>BGP_NEIGHBOR</code> と同一で、<strong><a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> で別テンプレート（<code>voq_chassis</code>）を引くためのフラグ</strong> の役割<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>voq_chassis</code> テンプレートは上記 4 設定を集約した peer-group を定義する。</p>
 <p>minigraph→CONFIG_DB 変換は <code>BGPSession</code> 要素の <code>&lt;VoQChassisInternal&gt;true&lt;/VoQChassisInternal&gt;</code> を読み、該当ピアを <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> に振り分ける<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;BGPSession&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&lt;StartRouter&gt;</span>OCPSCH0104001MS<span class="nt">&lt;/StartRouter&gt;</span>
@@ -24037,6 +24037,8 @@
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0a0d068c456d -->
 
 <div class="footnote">
 <hr />

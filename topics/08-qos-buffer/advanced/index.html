@@ -23561,7 +23561,7 @@
 
 
 <h1 id="qos-buffer">QoS / Buffer の発展トピック<a class="headerlink" href="#qos-buffer" title="Permanent link">&para;</a></h1>
-<p>QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）を押さえた後は、PFC の運用整合性と buffer pool の設計が次の論点になる。本ページでは、章本文で扱った機能の延長と、他章 (Dual-ToR / 02 BGP / VOQ) との境界を整理する。</p>
+<p><a href="../../../reference/glossary/#term-qos">QoS</a> / Buffer / <a href="../../../reference/glossary/#term-pfc">PFC</a> の基本（scheduler、queue map、PG、watermark）を押さえた後は、PFC の運用整合性と buffer pool の設計が次の論点になる。本ページでは、章本文で扱った機能の延長と、他章 (Dual-ToR / 02 <a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-voq">VOQ</a>) との境界を整理する。</p>
 <h2 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Asymmetric PFC</strong>: 上流と下流で PFC enable bitmap を非対称に運用するモデル。lossless TC を一方向だけ pause 対象とする使い方で、<code>PORT_QOS_MAP|&lt;port&gt;.pfc_to_queue_map</code> と peer ToR の設定整合が要点。</li>
@@ -23569,19 +23569,19 @@
 <li><strong>PFC watchdog の per-queue 詳細化</strong>: storm 検出窓 / restore 窓を queue ごとにチューニングし、不要な polling load を減らす。<code>PFC_WD_TABLE</code> のパラメータ調整。</li>
 <li><strong>Tunnel DSCP remap</strong>: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は <a href="../../05-dual-tor/advanced/">05 Dual-ToR</a> と相互参照。</li>
 <li><strong>Headroom pool</strong>: PFC pause 受信中に必要な headroom buffer を共有 pool で確保する設計。port shutdown 時に headroom が解放される動作の理解が必要。</li>
-<li><strong>WRED / ECN の細分化</strong>: green / yellow / red の閾値別ドロップ確率と、ECN-marking 閾値を queue ごとに調整。CSE 系 telemetry と組み合わせて congestion 兆候を捕捉する。</li>
+<li><strong><a href="../../../reference/glossary/#term-wred">WRED</a> / ECN の細分化</strong>: green / yellow / red の閾値別ドロップ確率と、ECN-marking 閾値を queue ごとに調整。CSE 系 telemetry と組み合わせて congestion 兆候を捕捉する。</li>
 <li><strong>Watermark の align-with-port-config</strong>: port admin down 時に watermark を 0 に clear する整合性改善で、運用 dashboard の誤検知を減らす。</li>
 </ul>
 <h2 id="_2">既知の制約と回避方法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>buffer profile の手書きと auto 計算の混在</strong>: 一部 SKU で <code>pg_lossless_*_profile.json</code> を手書き、別 SKU で動的計算を使うと、deployment yaml が SKU ごとに分岐する。SKU 単位で auto / manual を統一する。</li>
 <li><strong>PFC storm 中の watermark 異常値</strong>: storm で queue depth が暴れると watermark API の peak が過大になる。<code>sonic-clear queue watermark</code> を保守時に発行して baseline を取り直す。</li>
-<li><strong>scheduler weight と shaper の同時設定</strong>: <code>SCHEDULER</code> の <code>weight</code> と <code>pir/cir</code> を両方設定すると ASIC によって解釈が違う。WFQ + shaping の組合せは platform docs と SAI sample で必ず確認する。</li>
+<li><strong>scheduler weight と shaper の同時設定</strong>: <code>SCHEDULER</code> の <code>weight</code> と <code>pir/cir</code> を両方設定すると ASIC によって解釈が違う。WFQ + shaping の組合せは platform docs と <a href="../../../reference/glossary/#term-sai">SAI</a> sample で必ず確認する。</li>
 <li><strong>ECN-only deployment</strong>: PFC を無効にして ECN だけで lossless を狙う構成は、congestion 検出が遅れて queue が膨らむと drop に至る。host TCP stack の DCTCP 設定とセットで運用する。</li>
 </ul>
 <h2 id="_3">将来計画 / ロードマップ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>align-watermark-flow-with-port-configuration</code> HLD が port lifecycle と watermark の整合を扱い、これを起点に counter の reset 周りが整理される方向。</li>
+<li><code>align-watermark-flow-with-port-configuration</code> <a href="../../../reference/glossary/#term-hld">HLD</a> が port lifecycle と watermark の整合を扱い、これを起点に counter の reset 周りが整理される方向。</li>
 <li>Dynamic buffer model の telemetry 統合が長期テーマで、buffer pool の utilization を OpenConfig schema で export する話が継続。</li>
 <li>SAI 側で <code>SAI_BUFFER_POOL_ATTR_XOFF_SIZE</code> や per-queue headroom counter の attribute が拡張されており、SONiC 側 schema 追随が見込まれる。</li>
 </ul>
@@ -23608,6 +23608,7 @@
 <li><a href="../../../acl-qos/watermark-counters-in-sonic/">Watermark Counters</a></li>
 <li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">Tunnel DSCP remap</a></li>
 </ul>
+<!-- glossary-links-injected: 277aae7cf41e -->
 
 
 

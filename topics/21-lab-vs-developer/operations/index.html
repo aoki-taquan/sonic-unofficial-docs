@@ -23857,8 +23857,8 @@
 <h3 id="_2">評価者<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li>仮想 lab を 1 つ立て、<a href="../../../guides/evaluator/">評価者向けガイド</a> を起点に章をめくる。</li>
-<li>必要なら GNS3 で 2〜3 台つなぎ、BGP / VLAN / L3 / VRF の章を試す。</li>
-<li>ASIC 依存の挙動（buffer、PFC、watermark、optics）は VS では再現しないため、評価対象から外すか、対応 HW での検証に切り替える。</li>
+<li>必要なら GNS3 で 2〜3 台つなぎ、<a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-vlan">VLAN</a> / L3 / <a href="../../../reference/glossary/#term-vrf">VRF</a> の章を試す。</li>
+<li>ASIC 依存の挙動（buffer、<a href="../../../reference/glossary/#term-pfc">PFC</a>、watermark、optics）は VS では再現しないため、評価対象から外すか、対応 HW での検証に切り替える。</li>
 <li>毎回 image を作り直すのが手間なら、<code>docker save</code> で SONiC-VS image を tar で保存して再 import すると 1 分以内で復旧できる。</li>
 </ul>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>host$ docker save docker-sonic-vs:latest | gzip &gt; sonic-vs.tar.gz
@@ -23866,9 +23866,9 @@
 </span></code></pre></div>
 <h3 id="_3">初学者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li>SONiC-VS 1 台で <code>docker ps</code>、Redis、orchagent、syncd を見る。</li>
+<li>SONiC-VS 1 台で <code>docker ps</code>、<a href="../../../reference/glossary/#term-redis">Redis</a>、<a href="../../../reference/glossary/#term-orchagent">orchagent</a>、<a href="../../../reference/glossary/#term-syncd">syncd</a> を見る。</li>
 <li><a href="../../../guides/beginner/">初学者向けガイド</a> から章本文の概念ページに進む。</li>
-<li>CONFIG_DB と CLI を写経しながら、章本文の設定ページを開く。</li>
+<li><a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> と CLI を写経しながら、章本文の設定ページを開く。</li>
 </ul>
 <p>最初に触ると概観が掴める典型コマンド:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ docker ps
@@ -23878,7 +23878,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>admin@sonic:~$ docker exec swss supervisorctl status
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>admin@sonic:~$ docker exec syncd supervisorctl status
 </span></code></pre></div>
-<p><code>config interface ip add Ethernet0 10.0.0.1/24</code> のような操作のあと、CONFIG_DB → APPL_DB → ASIC_DB へどう伝わったかを <code>redis-cli -n {4,0,1}</code> で覗くと SONiC の流れ全体が体感できる。</p>
+<p><code>config interface ip add Ethernet0 10.0.0.1/24</code> のような操作のあと、CONFIG_DB → <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> → <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> へどう伝わったかを <code>redis-cli -n {4,0,1}</code> で覗くと SONiC の流れ全体が体感できる。</p>
 <h3 id="_4">運用者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>実機を触る前に SONiC-VS で CLI / CONFIG_DB の手応えを確認する。</li>
@@ -23892,9 +23892,9 @@
 </span></code></pre></div>
 <h3 id="_5">開発者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../../guides/developer/">開発者向けガイド</a> で build / test / HLD 起票の流れを押さえる。</li>
+<li><a href="../../../guides/developer/">開発者向けガイド</a> で build / test / <a href="../../../reference/glossary/#term-hld">HLD</a> 起票の流れを押さえる。</li>
 <li>VS で再現可能な範囲は VS で完結させ、CI（test plan ページ）に乗せる。</li>
-<li>ASIC 依存の改修は HW lab を別途確保し、SAI / syncd / platform 章と組で読む。</li>
+<li>ASIC 依存の改修は HW lab を別途確保し、<a href="../../../reference/glossary/#term-sai">SAI</a> / syncd / platform 章と組で読む。</li>
 <li>VS 内の orchagent / syncd は gdb / strace でアタッチ可能。</li>
 </ul>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ docker exec -it swss bash
@@ -23937,7 +23937,7 @@
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>host$ cd ../../../sonic-mgmt/tests
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>host$ ./run_tests.sh -n vms-kvm-t0 -t bgp/test_bgp_fact.py
 </span></code></pre></div>
-<p>詳細な topology / inventory / testbed の組み立ては sonic-mgmt リポジトリの README（testbed セクション）を参照します。</p>
+<p>詳細な topology / inventory / testbed の組み立ては <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> リポジトリの README（testbed セクション）を参照します。</p>
 <h2 id="lab">lab で起きがちな異常と対処<a class="headerlink" href="#lab" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -24028,6 +24028,7 @@
 <li><a href="../../02-bgp/">BGP 章</a> / <a href="../../06-l2-vlan-lag/">VLAN・LAG 章</a>（VS で最初に試すと感覚が掴める）</li>
 <li>本章 <a href="../setup/">設定</a>（lab の物理 / 仮想セットアップ）</li>
 </ul>
+<!-- glossary-links-injected: 83449633a7b6 -->
 
 
 

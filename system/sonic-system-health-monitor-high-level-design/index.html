@@ -23775,7 +23775,7 @@
 <li><strong>Monit を使わない経路は何のためにあるか</strong></li>
 </ol>
 <h2 id="1">1. 何を集約しているか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>SONiC の <strong>「system は健全か」</strong> を一元判定する monitor<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。3 系統を STATE_DB に集約し、<code>show system-health</code> / syslog / system status LED に出す。</p>
+<p>SONiC の <strong>「system は健全か」</strong> を一元判定する monitor<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。3 系統を <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に集約し、<code>show system-health</code> / syslog / system status LED に出す。</p>
 <pre class="mermaid"><code>flowchart LR
     FEAT[(CONFIG_DB.FEATURE)] --&gt; H[healthd]
     DOCKER[docker ps] --&gt; H
@@ -23881,6 +23881,8 @@ reasoning: critical service / process 判定の根拠。
 <li><a href="../../topics/09-telemetry-snmp/">09-telemetry-snmp</a>: STATE_DB SYSTEM_HEALTH_INFO の telemetry 経路</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 6981be1a469d -->
+
 <div class="footnote">
 <hr />
 <ol>

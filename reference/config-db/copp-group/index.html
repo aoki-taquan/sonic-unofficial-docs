@@ -23824,7 +23824,7 @@
 
 <h1 id="copp_group">COPP_GROUP テーブル<a class="headerlink" href="#copp_group" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CPU 宛トラフィックをレート制限する Control Plane Policing (CoPP) のグループ定義。各グループに CPU 受信キューと埋め込み policer (sr_TCM / tr_TCM / storm) を持ち、<code>COPP_TRAP</code> の <code>trap_group</code> から参照される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>copp.json</code> テンプレ → <code>coppmgr</code> → APPL_DB → <code>orchagent</code> (<code>CoppOrch</code>) → SAI HOSTIF_TRAP_GROUP / POLICER の流れで反映される。</p>
+<p>CPU 宛トラフィックをレート制限する Control Plane Policing (<a href="../../glossary/#term-copp">CoPP</a>) のグループ定義。各グループに CPU 受信キューと埋め込み policer (sr_TCM / tr_TCM / storm) を持ち、<code>COPP_TRAP</code> の <code>trap_group</code> から参照される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>copp.json</code> テンプレ → <code>coppmgr</code> → <a href="../../glossary/#term-appl_db">APPL_DB</a> → <code>orchagent</code> (<code>CoppOrch</code>) → <a href="../../glossary/#term-sai">SAI</a> HOSTIF_TRAP_GROUP / POLICER の流れで反映される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -23946,14 +23946,14 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>coppmgr</code> (<code>docker-swss</code> 内): CONFIG_DB の <code>COPP_GROUP</code> / <code>COPP_TRAP</code> を結合し APPL_DB <code>COPP_TABLE</code> に書き込む</li>
+<li><code>coppmgr</code> (<code>docker-swss</code> 内): <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>COPP_GROUP</code> / <code>COPP_TRAP</code> を結合し APPL_DB <code>COPP_TABLE</code> に書き込む</li>
 <li><code>orchagent</code> の <code>CoppOrch</code>: SAI hostif trap group / policer を生成</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>COPP_TRAP</code></li>
 <li>関連 CLI: <code>config copp</code>、<code>show copp</code></li>
-<li>関連 YANG: <code>sonic-copp</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-copp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -23983,13 +23983,15 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>cir</code> を過小に設定すると BGP keepalive がドロップされて peer が落ちる。</li>
+<li><code>cir</code> を過小に設定すると <a href="../../glossary/#term-bgp">BGP</a> keepalive がドロップされて peer が落ちる。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_GROUP|queue4_group1&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>copp<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a67fed022497 -->
 
 <div class="footnote">
 <hr />

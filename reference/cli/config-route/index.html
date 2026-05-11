@@ -23880,7 +23880,7 @@
 
 <h1 id="config-route-static-route">config route サブコマンド（static route）<a class="headerlink" href="#config-route-static-route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config route</code> は CONFIG_DB の <code>STATIC_ROUTE</code> テーブルに対する static route の add / del を行う。FRR の Zebra に対しては <code>bgpcfgd</code> 経由で反映される（CLI は CONFIG_DB のみを書く）。コマンドは <code>cli_sroute_to_config</code> という共通パーサで CLI トークンを解析し、<code>STATIC_ROUTE</code> テーブルのキー (<code>vrf|prefix</code> または <code>prefix</code>) と value 辞書 (<code>nexthop</code> / <code>nexthop-vrf</code> / <code>ifname</code> / <code>distance</code> / <code>blackhole</code>) に展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config route</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>STATIC_ROUTE</code> テーブルに対する static route の add / del を行う。<a href="../../glossary/#term-frr">FRR</a> の Zebra に対しては <code>bgpcfgd</code> 経由で反映される（CLI は CONFIG_DB のみを書く）。コマンドは <code>cli_sroute_to_config</code> という共通パーサで CLI トークンを解析し、<code>STATIC_ROUTE</code> テーブルのキー (<code>vrf|prefix</code> または <code>prefix</code>) と value 辞書 (<code>nexthop</code> / <code>nexthop-vrf</code> / <code>ifname</code> / <code>distance</code> / <code>blackhole</code>) に展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>multi-ASIC 対応として <code>-n / --namespace</code> を持ち、対象 namespace の CONFIG_DB に書く。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -23909,8 +23909,8 @@
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>       nexthop [vrf &lt;vrf_name&gt;] &lt;A.B.C.D&gt; dev &lt;dev_name&gt;
 </span></code></pre></div>
 <ul>
-<li><code>vrf</code> の省略は <code>default</code> VRF を意味する。</li>
-<li>ECMP は <strong><code>,</code> 区切り</strong> で複数の nexthop / ifname を 1 文字列に並べることで表現する（CLI 1 回の呼び出しで複数 nexthop を入れる）。</li>
+<li><code>vrf</code> の省略は <code>default</code> <a href="../../glossary/#term-vrf">VRF</a> を意味する。</li>
+<li><a href="../../glossary/#term-ecmp">ECMP</a> は <strong><code>,</code> 区切り</strong> で複数の nexthop / ifname を 1 文字列に並べることで表現する（CLI 1 回の呼び出しで複数 nexthop を入れる）。</li>
 <li><code>dev null</code> を渡すと <code>blackhole=true</code> の経路として登録される（discard route）。</li>
 </ul>
 <h2 id="_4">各コマンドの詳細<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -24039,7 +24039,7 @@ excerpt: |
 </ul>
 <h3 id="_11">よくある落とし穴<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>config route add</code> は CONFIG_DB の STATIC_ROUTE に書く。FRR の zebra に渡るまで 1〜2 秒遅延あり。</li>
+<li><code>config route add</code> は CONFIG_DB の STATIC_ROUTE に書く。FRR の <a href="../../glossary/#term-zebra">zebra</a> に渡るまで 1〜2 秒遅延あり。</li>
 <li>nexthop が unreachable な route は kernel route table に出ない。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -24048,6 +24048,8 @@ excerpt: |
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route static&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 7581dd9b8477 -->
 
 <div class="footnote">
 <hr />

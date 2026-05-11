@@ -23729,10 +23729,10 @@
 <h1 id="management-vrf-201911-release-l3mdev-cgroups">Management VRF 設計（201911 release / l3mdev + cgroups）<a class="headerlink" href="#management-vrf-201911-release-l3mdev-cgroups" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読者が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>mgmt VRF を有効化すると <strong>eth0 と front panel のトラフィックは具体的にどう分かれる</strong> のか</li>
-<li><strong>アプリ（ssh / ping / TACACS+ / NTP / SNMP / DHCP）</strong> を mgmt 経由で動かすには何が必要か</li>
-<li><strong>CONFIG_DB のキー</strong> と <strong>CLI</strong> はどう触ればいいか</li>
-<li><strong>201911 と現行 master の差分</strong>（HLD と実装の乖離）はどこか</li>
+<li>mgmt <a href="../../reference/glossary/#term-vrf">VRF</a> を有効化すると <strong>eth0 と front panel のトラフィックは具体的にどう分かれる</strong> のか</li>
+<li><strong>アプリ（ssh / ping / TACACS+ / NTP / <a href="../../reference/glossary/#term-snmp">SNMP</a> / DHCP）</strong> を mgmt 経由で動かすには何が必要か</li>
+<li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> のキー</strong> と <strong>CLI</strong> はどう触ればいいか</li>
+<li><strong>201911 と現行 master の差分</strong>（<a href="../../reference/glossary/#term-hld">HLD</a> と実装の乖離）はどこか</li>
 <li>落とし穴・トラブルシュートの定石</li>
 </ul>
 <h2 id="1">1. トラフィック分離の挙動<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
@@ -23880,6 +23880,8 @@
 <li>関連 HLD: <a href="../sonic-vrf-support-design-spec-draft/">SONiC VRF Support Design Spec</a></li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 3b086e661688 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -23594,7 +23594,7 @@
 
 <h1 id="radius">RADIUS テーブル<a class="headerlink" href="#radius" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>RADIUS クライアントのグローバル設定を保持するシングルトンテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> の AAA ハンドラが読み、PAM (<code>/etc/pam.d/common-auth</code>) と NSS、<code>/etc/pam_radius_auth.conf</code> を生成する。サーバ固有の設定は <code>RADIUS_SERVER</code> 側にある。</p>
+<p>RADIUS クライアントのグローバル設定を保持するシングルトンテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> の <a href="../../glossary/#term-aaa">AAA</a> ハンドラが読み、PAM (<code>/etc/pam.d/common-auth</code>) と NSS、<code>/etc/pam_radius_auth.conf</code> を生成する。サーバ固有の設定は <code>RADIUS_SERVER</code> 側にある。</p>
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>RADIUS|global
 </span></code></pre></div>
@@ -23662,12 +23662,12 @@
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>hostcfgd</code> (<code>sonic-host-services</code> の AAA ハンドラ): CONFIG_DB → PAM / nsswitch / pam_radius 設定の再生成</li>
+<li><code>hostcfgd</code> (<code>sonic-host-services</code> の AAA ハンドラ): <a href="../../glossary/#term-config_db">CONFIG_DB</a> → PAM / nsswitch / pam_radius 設定の再生成</li>
 <li><code>AAA.authentication.login</code> が <code>radius</code> を含むとき、PAM 経由でログイン認証時に参照される</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>RADIUS_SERVER</code> (※サーバごとのエントリ、YANG: <code>sonic-system-radius</code> の同名 list), <a href="../aaa/"><code>AAA</code></a></li>
+<li>関連 CONFIG_DB: <code>RADIUS_SERVER</code> (※サーバごとのエントリ、<a href="../../glossary/#term-yang">YANG</a>: <code>sonic-system-radius</code> の同名 list), <a href="../aaa/"><code>AAA</code></a></li>
 <li>関連 CLI: <code>config radius { passkey | timeout | retransmit | authtype | nasip | sourceip | statistics }</code></li>
 <li>関連 YANG: <code>sonic-system-radius</code></li>
 </ul>
@@ -23701,6 +23701,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>radius
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ec4ea08af950 -->
 
 <div class="footnote">
 <hr />
