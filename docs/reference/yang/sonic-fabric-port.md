@@ -26,6 +26,22 @@ related:
 
 VOQ chassis におけるラインカード間ファブリックリンクの port 設定を保持する。隔離状態、 alias、 lanes、強制 unisolate 状態などを定義する[^1]。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-fabric-port"]
+  C1[("CONFIG_DB<br/>FABRIC_PORT")]
+  Y --> C1
+  D1["fabricmgrd"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

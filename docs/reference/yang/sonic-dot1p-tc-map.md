@@ -26,6 +26,22 @@ related:
 
 802.1p (PCP) ビットからトラフィッククラス (TC) へのマップを名前付きで保持する。ingress 側で `PORT_QOS_MAP` から参照される[^1]。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-dot1p-tc-map"]
+  C1[("CONFIG_DB<br/>DOT1P_TO_TC_MAP")]
+  Y --> C1
+  D1["QosOrch"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

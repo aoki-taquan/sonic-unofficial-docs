@@ -26,6 +26,25 @@ related:
 
 Segment Routing over IPv6 (SRv6) configuration for SONiC.[^1]
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-srv6"]
+  C1[("CONFIG_DB<br/>SRV6_MY_LOCATORS")]
+  Y --> C1
+  D1["Srv6Orch"]
+  C1 --> D1
+  C2[("CONFIG_DB<br/>SRV6_MY_SIDS")]
+  Y --> C2
+  C2 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

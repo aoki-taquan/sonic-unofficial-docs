@@ -26,6 +26,22 @@ related:
 
 ECMP および LAG パケットハッシングに使用するフィールドとアルゴリズムをグローバルに指定する YANG モジュール[^1]。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-hash"]
+  C1[("CONFIG_DB<br/>SWITCH_HASH")]
+  Y --> C1
+  D1["SwitchOrch"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

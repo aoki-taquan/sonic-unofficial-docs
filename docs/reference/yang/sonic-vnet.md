@@ -26,6 +26,29 @@ related:
 
 Virtual Network (VNET) configuration for overlay networking using VxLAN tunnels[^1]
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-vnet"]
+  C1[("CONFIG_DB<br/>VNET")]
+  Y --> C1
+  D1["vrfmgrd"]
+  C1 --> D1
+  C2[("CONFIG_DB<br/>VNET_ROUTE")]
+  Y --> C2
+  D2["VNetCfgRouteOrch"]
+  C2 --> D2
+  C3[("CONFIG_DB<br/>VNET_ROUTE_TUNNEL")]
+  Y --> C3
+  C3 --> D2
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```
