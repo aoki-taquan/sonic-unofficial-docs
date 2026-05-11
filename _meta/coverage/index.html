@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/_meta/discrepancies/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/_meta/coverage/">
       
       
-        <link rel="prev" href="../coverage/">
+        <link rel="prev" href="../..">
       
       
-        <link rel="next" href="../../acl-qos/">
+        <link rel="next" href="../discrepancies/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>実装との乖離 - SONiC 非公式ドキュメント</title>
+        <title>カバレッジ - SONiC 非公式ドキュメント</title>
       
     
     
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              実装との乖離
+              カバレッジ
             
           </span>
         </div>
@@ -21185,10 +21185,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#acl-qos" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        acl-qos
+        全体合計
       
     </span>
   </a>
@@ -21196,87 +21196,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#area" class="md-nav__link">
     <span class="md-ellipsis">
       
-        architecture
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#internals" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        internals
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#management" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        management
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#overlay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        overlay
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#platform" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        platform
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#routing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        routing
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#switching" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        switching
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#system" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        system
+        area 別マトリクス
       
     </span>
   </a>
@@ -21300,7 +21223,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/_meta/discrepancies.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/_meta/coverage.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -21308,228 +21231,221 @@
   
 
 
-<h1 id="_1">実装との乖離<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>このページは、HLD と現行 master 実装の突き合わせで <code>verification: discrepancy-found</code> が付いたページの一覧です。
-HLD は設計意図や背景を理解する資料として有用ですが、現行 SONiC の挙動・CLI・CONFIG_DB / STATE_DB スキーマ・実装パスと一致しない場合があります。</p>
-<p>読み手は HLD だけを根拠にせず、各ページの「実装との乖離」や冒頭の裏取りステータスを確認し、必要に応じて実コードでも裏取りすることを推奨します。</p>
-<h2 id="acl-qos">acl-qos<a class="headerlink" href="#acl-qos" title="Permanent link">&para;</a></h2>
+<h1 id="_1">カバレッジ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>このページは <code>docs/**/*.md</code> の frontmatter <code>verification</code> フィールドを集計したものです。<code>meta/scripts/gen_coverage.py</code> で自動生成されます。</p>
+<p>各状態の意味は次のとおりです。</p>
 <ul>
-<li>
-<p><a href="../../acl-qos/dhcp-dos-mitigation-in-sonic/">DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）</a><br />
-  area: <code>acl-qos</code> / last_verified: <code>2026-05-09</code><br />
-<code>dhcp_rate_limit</code> の YANG / CLI / db migrator は取り込み済みだが、HLD が要求する <code>portmgrd</code> / <code>portmgr</code> の <code>tc qdisc</code> / <code>tc filter</code> 投入ロジックは未取り込み。CoPP の DHCP trap 制限も残っている。</p>
-</li>
-<li>
-<p><a href="../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">ポートの動的 add / del（zero-port 起動と post-init 操作）</a><br />
-  area: <code>acl-qos</code> / last_verified: <code>2026-05-09</code><br />
-  zero-port 起動や per-port flex counter は取り込み済みだが、ポート削除時の buffer cfg per-port reference counter PR は未マージ。依存設定が残るポート削除を HLD どおり防御できない。</p>
-</li>
+<li><strong>code-verified</strong>: HLD と現行 master 実装を突き合わせて整合が取れているページ</li>
+<li><strong>discrepancy-found</strong>: 実装と HLD の間に乖離が確認されたページ（<a href="../discrepancies/">一覧</a>）</li>
+<li><strong>issue-confirmed</strong>: GitHub issue / PR で裏取り済みだが実コード突き合わせ未完了のページ</li>
+<li><strong>hld-only</strong>: HLD のみを根拠にしたページ（読み手は鵜呑みにせず実コード確認推奨）</li>
+<li><strong>meta</strong>: プロジェクト運用のメタページ（このページや discrepancies など）</li>
+<li><strong>stub</strong>: 雛形のみ・frontmatter 未設定のページ</li>
 </ul>
-<h2 id="architecture">architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<ul>
-<li>
-<p><a href="../../architecture/build-profiles/">ビルドプロファイル（rules/profiles/*.mk）</a><br />
-  area: <code>architecture</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の <code>rules/profiles/</code> と <code>PROFILE</code> 変数による Makefile 取り込みは現行 master に存在しない。<code>Makefile.work</code> は <code>rules/config</code> と <code>rules/config.user</code> のみを読む。</p>
-</li>
-<li>
-<p><a href="../../architecture/debug-framework-in-sonic/">Debug Framework（コンポーネント dump 登録 / assert 拡張）</a><br />
-  area: <code>architecture</code> / last_verified: <code>2026-05-09</code><br />
-<code>Debugframework</code> クラス、<code>linkWithFramework</code> API、<code>SWSS_DEBUG_PRINT*</code> マクロ、対応 CLI は未取り込み。残骸コードは <code>#ifdef DEBUG_FRAMEWORK</code> 配下にあるが、master ビルドでは有効化されていない。</p>
-</li>
-<li>
-<p><a href="../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a><br />
-  area: <code>architecture</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の独立 PTF スクリプト <code>dip_sip.py</code> は削除済みで、現行は <code>sonic-mgmt/tests/ipfwd/test_dip_sip.py</code> の pytest 構成へ移行している。</p>
-</li>
-<li>
-<p><a href="../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a><br />
-  area: <code>architecture</code> / last_verified: <code>2026-05-09</code><br />
-<code>SWSS_RC_*</code> の error code 体系は採用済みだが、<code>ERROR_DB</code> / <code>ERROR_ROUTE_TABLE</code> / <code>ERROR_NEIGH_TABLE</code>、<code>ErrorListener</code> / <code>ErrorReporter</code>、関連 CLI は未実装。</p>
-</li>
-<li>
-<p><a href="../../architecture/sag-high-level-design-for-sonic/">SAG（Static Anycast Gateway）for SONiC</a><br />
-  area: <code>architecture</code> / last_verified: <code>2026-05-09</code><br />
-<code>src/sonic-sag</code>、<code>sonic-static-anycast-gateway.yang</code>、<code>SAG</code> テーブル、<code>IntfMgr</code> / <code>IntfsOrch</code> 拡張、<code>config static-anycast-gateway</code> CLI は community master に統合されていない。</p>
-</li>
-<li>
-<p><a href="../../architecture/sflow-high-level-design/">sFlow（hsflowd / sflowmgrd / SAI sample-packet）</a><br />
-  area: <code>architecture</code> / last_verified: <code>2026-05-10</code><br />
-  実装経路は概ね存在するが、本ページが書いていた sample_rate 既定値が HLD / 実装と異なる。実装は <code>oper_speed</code> Mbps をそのまま sample_rate として返す。</p>
-</li>
-<li>
-<p><a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）</a><br />
-  area: <code>architecture</code> / last_verified: <code>2026-05-09</code><br />
-  DASH HA 関連 table 定義の一部は存在するが、<code>hamgrd</code> バイナリ、<code>DASH_HA_DPU_STATE</code> / <code>DASH_HA_VDPU_STATE</code>、<code>swbus</code> 実装は見当たらない。</p>
-</li>
-<li>
-<p><a href="../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
-  area: <code>architecture</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の <code>scripts/ssdhealth</code> や <code>sonic_ssd/ssd_base.py</code> は現行構成と異なる。実装は <code>ssdutil/</code> と <code>sonic_storage/</code> 配下へ再構成され、pmon <code>ssdmond</code> も未取り込み。</p>
-</li>
-</ul>
-<h2 id="internals">internals<a class="headerlink" href="#internals" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）</a><br />
-  area: <code>internals</code> / last_verified: <code>2026-05-09</code><br />
-  HLD 提案の ARP / ND <code>gc_thresh</code> 値と CoPP ARP / ND 8000 pps は採用されていない。一方、<code>RouteOrch</code> bulk route API と <code>fpmsyncd</code> の table 0 時 master lookup skip は実装済み。</li>
-</ul>
-<h2 id="management">management<a class="headerlink" href="#management" title="Permanent link">&para;</a></h2>
-<ul>
-<li>
-<p><a href="../../management/gnmi-master-arbitration-hld/">gNMI Master Arbitration（election ID と SetRequest 拡張）</a><br />
-  area: <code>management</code> / last_verified: <code>2026-05-09</code><br />
-  HLD は default role 以外を無視すると書くが、実装は <code>Role</code> 指定を <code>Unimplemented</code> で拒否する。CONFIG_DB 駆動の <code>master_arbitration_enabled</code> もなく、起動フラグで有効化する。</p>
-</li>
-<li>
-<p><a href="../../management/gnsi-hld/">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル</a><br />
-  area: <code>management</code> / last_verified: <code>2026-05-09</code><br />
-  Authz / Certz / Pathz は実装されているが、Credentialz の gNMI server handler は未取り込み。HLD の flag 名や STATE_DB profile state の記述も現行実装とずれる。</p>
-</li>
-<li>
-<p><a href="../../management/p4rt-application-hld/">P4RT アプリケーション（PINS の gRPC サービス、port 9559）</a><br />
-  area: <code>management</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の独立 <code>HashOrch</code> は存在せず、hash 設定は既存 <code>SwitchOrch</code> が担う。P4RT コンテナ、APP_P4RT table、<code>P4Orch</code> など主要経路は実装済み。</p>
-</li>
-<li>
-<p><a href="../../management/portable-console-device-design/">Portable Console Device 設計（USB ベンダー console デバイスの抽象化）</a><br />
-  area: <code>management</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の <code>sonic_console/&lt;vendor&gt;/console_&lt;model&gt;.py</code> 階層、<code>PortableConsoleDeviceBase</code>、<code>factory.py</code> は存在しない。<code>CONSOLE_SWITCH</code> 系の別機能はあるが、本 HLD の抽象化は未実装。</p>
-</li>
-<li>
-<p><a href="../../management/sonic-yang-model-guidelines/">SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）</a><br />
-  area: <code>management</code> / last_verified: <code>2026-05-09</code><br />
-<code>sonic-{feature}.yang</code> 命名は広く使われているが、ガイドライン記載の <code>map-list</code> / <code>key-delim</code> 拡張は本リポの <code>sonic-extension</code> には存在しない。<code>error-app-tag</code> の付与も限定的。</p>
-</li>
-<li>
-<p><a href="../../management/tacacs-passkey-encryption/">TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）</a><br />
-  area: <code>management</code> / last_verified: <code>2026-05-09</code><br />
-  YANG と共通暗号 API は存在するが、<code>config tacacs passkey --encrypt</code> CLI と <code>hostcfgd</code> の復号取り込みが未実装。master key の実体も HLD の <code>/etc/cipher_pass</code> ではなく <code>/etc/cipher_pass.json</code>。</p>
-</li>
-</ul>
-<h2 id="overlay">overlay<a class="headerlink" href="#overlay" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../overlay/dscp-remapping-for-tunnel-traffic/">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）</a><br />
-  area: <code>overlay</code> / last_verified: <code>2026-05-09</code><br />
-  HLD は PFCWD フィールドを <code>pfc_wd_sw_enable</code> と書くが、現行実装は <code>pfcwd_sw_enable</code>。tunnel decap QoS map や Dual-ToR 限定出力は HLD どおり実装済み。</li>
-</ul>
-<h2 id="platform">platform<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h2>
-<ul>
-<li>
-<p><a href="../../platform/dump-on-sai-failure/">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）</a><br />
-  area: <code>platform</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の汎用 dump スクリプト名 <code>/usr/bin/syncd_dump.sh</code> は現行では <code>/usr/bin/sai_failure_dump.sh</code>。通知 enum や dump 出力先などの主要挙動は一致する。</p>
-</li>
-<li>
-<p><a href="../../platform/fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a><br />
-  area: <code>platform</code> / last_verified: <code>2026-05-09</code><br />
-<code>port_flr.lua</code> と表示側カラムは実装済みだが、HLD の <code>counterpoll port flr-interval-factor</code> CLI / <code>FLR_INTERVAL_FACTOR</code> 動的設定は未取り込み。lua 側の固定値のみが使われる。</p>
-</li>
-<li>
-<p><a href="../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a><br />
-  area: <code>platform</code> / last_verified: <code>2026-05-09</code><br />
-<code>handleSai*Status</code> は <code>Orch</code> base の virtual 関数ではなく <code>saihelper</code> の free function。<code>ERROR_DB</code> / <code>ERROR_APPL_*</code> も実装されておらず、失敗エスカレーション経路は HLD と異なる。</p>
-</li>
-<li>
-<p><a href="../../platform/liquid-cooling-leakage-detection-in-sonic/">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）</a><br />
-  area: <code>platform</code> / last_verified: <code>2026-05-09</code><br />
-<code>LeakageSensorBase</code> や <code>LiquidCoolingUpdater</code> は存在するが、STATE_DB テーブル名は HLD の <code>LIQUID_COOLING_DEVICE</code> ではなく <code>LIQUID_COOLING_INFO</code>。</p>
-</li>
-<li>
-<p><a href="../../platform/smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a><br />
-  area: <code>platform</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の独立 <code>gnoi_reboot_daemon.py</code> は未取り込み。実装は <code>chassisd</code> が <code>module.set_admin_state_gracefully</code> を直接呼び、STATE_DB フラグ名も HLD と異なる。</p>
-</li>
-<li>
-<p><a href="../../platform/sonic-port-naming-convention-change/">SONiC ポート命名規則の変更案（et[sX]pY[abcd]）</a><br />
-  area: <code>platform</code> / last_verified: <code>2026-05-09</code><br />
-  device tree の <code>port_config.ini</code> は引き続き <code>EthernetN</code> key と <code>alias</code> 列を使う。<code>etsXpY[abcd]</code> / <code>ets&lt;X&gt;p&lt;Y&gt;</code> 命名は master に取り込まれていない。</p>
-</li>
-</ul>
-<h2 id="routing">routing<a class="headerlink" href="#routing" title="Permanent link">&para;</a></h2>
-<ul>
-<li>
-<p><a href="../../routing/bfd-hw-offload-for-bgp-session/">BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）</a><br />
-  area: <code>routing</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の <code>bfdsyncd</code> プロセスと <code>FEATURE.bgp.bfd_hw_offload</code> は未取り込み。<code>BfdOrch</code> の SAI session set はあるが、remote 属性 get と STATE_DB 反映は未実装。</p>
-</li>
-<li>
-<p><a href="../../routing/bgp-route-install-error-handling/">BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）</a><br />
-  area: <code>routing</code> / last_verified: <code>2026-05-09</code><br />
-<code>ERROR_ROUTE_TABLE</code> / <code>BGP_ERROR_CFG_TABLE</code> / <code>config bgp error-handling</code> は未実装。後発の BGP Suppress FIB Pending に置き換えられ、<code>bgp suppress-fib-pending</code> が使われる。</p>
-</li>
-<li>
-<p><a href="../../routing/evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）</a><br />
-  area: <code>routing</code> / last_verified: <code>2026-05-10</code><br />
-  ページは巨大 HLD の中核に絞った要約で、現行実装との詳細な差分確認は未完了。EVPN multihoming は別ページに分離されているため、参照範囲に注意が必要。</p>
-</li>
-<li>
-<p><a href="../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming（ESI / DF election / split-horizon）</a><br />
-  area: <code>routing</code> / last_verified: <code>2026-05-10</code><br />
-  ページは EVPN MH の中核概念に絞った要約で、現行実装との詳細な差分確認は未完了。基本 EVPN VXLAN とは別 HLD として扱う必要がある。</p>
-</li>
-<li>
-<p><a href="../../routing/local-ars-hld/">Local ARS（Adaptive Routing &amp; Switching の local 完結版）</a><br />
-  area: <code>routing</code> / last_verified: <code>2026-05-10</code><br />
-<code>ArsOrch</code>、<code>sonic-ars.yang</code> / <code>ARS_PROFILE</code>、<code>config ars</code> / <code>show ars</code> は確認できない。SAI 側 API は見えるが、SONiC SWSS / YANG / utilities への機能取り込みは未完了。</p>
-</li>
-</ul>
-<h2 id="switching">switching<a class="headerlink" href="#switching" title="Permanent link">&para;</a></h2>
-<ul>
-<li>
-<p><a href="../../switching/layer-2-forwarding-enhancements/">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）</a><br />
-  area: <code>switching</code> / last_verified: <code>2026-05-09</code><br />
-<code>FdbOrch</code> 側の MAC move / static MAC 保留 / flush / aging time 反映は実装済みだが、HLD の <code>config mac</code> と <code>config vlan range</code> 系 CLI は未取り込み。</p>
-</li>
-<li>
-<p><a href="../../switching/link-event-damping-hld/">リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）</a><br />
-  area: <code>switching</code> / last_verified: <code>2026-05-09</code><br />
-  SwSS 側の port 属性受理はあるが、HLD の <code>config interface link_event_damping_algorithm</code> CLI は <code>sonic-utilities</code> / <code>sonic-buildimage</code> に未取り込み。</p>
-</li>
-<li>
-<p><a href="../../switching/switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a><br />
-  area: <code>switching</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の <code>config interface mode</code>、<code>show vlan brief</code>、<code>show interface status</code>、routed mode 連携は未取り込み。既存 VLAN CLI / <code>show interfaces status</code> / L3 化手順とはコマンド体系が異なる。</p>
-</li>
-<li>
-<p><a href="../../switching/wake-on-lan-in-sonic/">Wake-on-LAN（wol CLI と SonicWolService gNOI）</a><br />
-  area: <code>switching</code> / last_verified: <code>2026-05-09</code><br />
-  HLD は Python CLI と gNOI service を想定するが、現行 <code>wol</code> CLI は Rust 実装。<code>SonicWolService</code> / <code>WolRequest</code> proto や gNOI 経路は未確認または未取り込み。</p>
-</li>
-</ul>
-<h2 id="system">system<a class="headerlink" href="#system" title="Permanent link">&para;</a></h2>
-<ul>
-<li>
-<p><a href="../../system/hld-secure-boot/">SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）</a><br />
-  area: <code>system</code> / last_verified: <code>2026-05-10</code><br />
-  署名スクリプトは HLD の <code>.py</code> ではなく bash、build flag は <code>SB_BUILD</code> ではなく <code>SECURE_UPGRADE_MODE</code> / <code>SECURE_UPGRADE_DEV_SIGNING_KEY</code>。boot chain の考え方は概ね一致する。</p>
-</li>
-<li>
-<p><a href="../../system/sonic-fips-deployment/">SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）</a><br />
-  area: <code>system</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の FIPS table と <code>config fips</code> / <code>show fips status</code> / hostcfgd 経路は未取り込み。現行は <code>/proc/sys/crypto/fips_enabled</code> や <code>openssl fipsinstall</code> など OS / OpenSSL 側の状態確認が中心。</p>
-</li>
-<li>
-<p><a href="../../system/sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a><br />
-  area: <code>system</code> / last_verified: <code>2026-05-09</code><br />
-  HLD の <code>ATTR2OID_*</code> / <code>OID2ATTR_*</code> / <code>RESTORE_DB</code> などは <code>sonic-sairedis</code> master に存在しない。現行 warm restart の同等機能は syncd の view comparison が担う。</p>
-</li>
-<li>
-<p><a href="../../system/sonic-network-time-protocol-ntp-client-configuration/">SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）</a><br />
-  area: <code>system</code> / last_verified: <code>2026-05-10</code><br />
-  HLD は <code>ntpd</code> 時代の設計で、現行 SONiC は <code>chrony</code> へ移行済み。template / service / CLI の前提が大きく変わっている。</p>
-</li>
-<li>
-<p><a href="../../system/sonic-python-logger-enhancement/">SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）</a><br />
-  area: <code>system</code> / last_verified: <code>2026-05-09</code><br />
-  runtime log level と <code>require_manual_refresh</code> 経路は実装済みだが、HLD が要求する <code>SysLogger</code> singleton 化は未実装。実装は <code>logging.getLogger(name)</code> と handler 重複除去で対応している。</p>
-</li>
-<li>
-<p><a href="../../system/swss-docker-warm-restart-code-reference/">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）</a><br />
-  area: <code>system</code> / last_verified: <code>2026-05-10</code><br />
-  HLD 自体が一時的な開発メモで、<code>swss-flushdb</code> や <code>hgetallordered</code> など現行 master に見当たらない記述がある。Warm Restart 理解には正式 HLD ベースのページを参照すべき。</p>
-</li>
-</ul>
+<h2 id="_2">全体合計<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>全 <strong>657</strong> ページ。</p>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th style="text-align: right;">件数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>code-verified</td>
+<td style="text-align: right;">401</td>
+</tr>
+<tr>
+<td>discrepancy-found</td>
+<td style="text-align: right;">39</td>
+</tr>
+<tr>
+<td>issue-confirmed</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>hld-only</td>
+<td style="text-align: right;">42</td>
+</tr>
+<tr>
+<td>meta</td>
+<td style="text-align: right;">164</td>
+</tr>
+<tr>
+<td>stub</td>
+<td style="text-align: right;">11</td>
+</tr>
+</tbody>
+</table>
+<h2 id="area">area 別マトリクス<a class="headerlink" href="#area" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>area</th>
+<th style="text-align: right;">code-verified</th>
+<th style="text-align: right;">discrepancy-found</th>
+<th style="text-align: right;">issue-confirmed</th>
+<th style="text-align: right;">hld-only</th>
+<th style="text-align: right;">meta</th>
+<th style="text-align: right;">stub</th>
+<th style="text-align: right;">合計</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_meta</code></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td><code>_root</code></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td><code>acl-qos</code></td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">32</td>
+</tr>
+<tr>
+<td><code>architecture</code></td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">42</td>
+</tr>
+<tr>
+<td><code>categories</code></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr>
+<td><code>guides</code></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td><code>internals</code></td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr>
+<td><code>management</code></td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
+</tr>
+<tr>
+<td><code>overlay</code></td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">44</td>
+</tr>
+<tr>
+<td><code>reference</code></td>
+<td style="text-align: right;">163</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">167</td>
+</tr>
+<tr>
+<td><code>routing</code></td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52</td>
+</tr>
+<tr>
+<td><code>switching</code></td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr>
+<td><code>system</code></td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">72</td>
+</tr>
+<tr>
+<td><code>topics</code></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">143</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">143</td>
+</tr>
+</tbody>
+</table>
+<p>推移情報（時系列）は本ページでは扱いません。スナップショットのみ。</p>
 
 
 
