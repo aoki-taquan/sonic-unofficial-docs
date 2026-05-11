@@ -19,11 +19,11 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **833** ページ。
+全 **848** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 596 |
+| code-verified | 611 |
 | discrepancy-found | 46 |
 | issue-confirmed | 0 |
 | hld-only | 0 |
@@ -44,7 +44,7 @@ last_verified: 2026-05-11
 | `management` | 35 | 8 | 0 | 0 | 0 | 1 | 44 |
 | `overlay` | 8 | 1 | 0 | 0 | 0 | 1 | 10 |
 | `platform` | 36 | 7 | 0 | 0 | 0 | 1 | 44 |
-| `reference` | 323 | 0 | 0 | 0 | 4 | 1 | 328 |
+| `reference` | 338 | 0 | 0 | 0 | 4 | 1 | 343 |
 | `routing` | 45 | 6 | 0 | 0 | 0 | 1 | 52 |
 | `switching` | 15 | 4 | 0 | 0 | 0 | 1 | 20 |
 | `system` | 61 | 9 | 0 | 0 | 1 | 1 | 72 |
