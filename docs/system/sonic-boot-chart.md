@@ -206,6 +206,12 @@ sudo sonic-bootchart show
 - SVG が生成されているのに古いまま → `/run/log/bootchart-*.svg` の timestamp、最新 boot の SVG が tmpfs に存在するか
 - 設定を変えても反映されない → `config` 後に **必ず reboot** が必要、`/etc/systemd/bootchart.conf` の現在値を直接確認
 
+## 関連リファレンス
+
+- CLI: [show version](../reference/cli/show-version.md) / [show uptime](../reference/cli/show-uptime.md) / [show services](../reference/cli/show-services.md) / [reboot-fast-warm](../reference/cli/reboot-fast-warm.md)
+- 関連 HLD: [kdump](kdump.md) / [Debian upgrade cadence](sonic-debian-upgrade-cadence.md) / [analysis of disk writers](analysis-of-disk-writers-in-sonic-devices.md)
+- Topic: [Reboot / Upgrade](../topics/11-reboot/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/profiling/sonic_bootchart.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

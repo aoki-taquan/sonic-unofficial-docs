@@ -88,6 +88,11 @@ flowchart LR
 - 値が古い → daemon ループ周期、I/O 負荷、device の応答時間
 - critical 通知が来ない → system health monitor の subscribe 経路を確認
 
+## 関連リファレンス
+
+- CLI: [show platform](../reference/cli/show-platform.md) / [show system-health](../reference/cli/show-system-health.md) / [show techsupport](../reference/cli/show-techsupport.md)
+- 関連 HLD: [System Health Monitor](sonic-system-health-monitor-high-level-design.md) / [analysis of disk writers](analysis-of-disk-writers-in-sonic-devices.md) / [pcieinfo design](../platform/pcieinfo-design.md) / [PSU daemon](../platform/sonic-psu-daemon-design.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/storagemond/storagemond-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

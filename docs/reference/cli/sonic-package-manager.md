@@ -145,7 +145,11 @@ flowchart LR
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show feature](show-feature.md) / [show services](show-services.md) / [show version](show-version.md)
+- 関連 [HLD](../../reference/glossary.md#term-hld): [SONiC Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [FEATURE](../config-db/feature.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-feature](../yang/sonic-feature.md)
+- Topic: [ビルド / パッケージング](../../topics/19-build-packaging/index.md)
 
 <!-- ref-triangle:end -->
 
@@ -180,4 +184,4 @@ docker ps
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 20dbc11976b6 -->

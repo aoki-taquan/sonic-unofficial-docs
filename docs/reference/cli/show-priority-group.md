@@ -57,7 +57,10 @@ show priority-group watermark shared [--namespace <ns>|all] [--json]
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show buffer](show-buffer.md) / [show buffer-pool](show-buffer-pool.md) / [show queue](show-queue.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [BUFFER_PG](../config-db/buffer-pg.md) / [BUFFER_POOL](../config-db/buffer-pool.md) / [PFC_PRIORITY_TO_PRIORITY_GROUP_MAP](../config-db/pfc-priority-to-priority-group-map.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-buffer-pg](../yang/sonic-buffer-pg.md) / [sonic-buffer-pool](../yang/sonic-buffer-pool.md)
+- Topic: [QoS / Buffer](../../topics/08-qos-buffer/index.md)
 
 <!-- ref-triangle:end -->
 
@@ -109,3 +112,5 @@ show priority-group persistent-watermark headroom
 show buffer profile
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

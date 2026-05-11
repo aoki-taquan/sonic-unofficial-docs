@@ -144,8 +144,15 @@ v0.2 で "Check service status without monit" が追加[^1]。Monit が使えな
 - [14-platform-port-optics](../topics/14-platform-port-optics/index.md): PMON / thermalctld / psud から周辺デバイス情報を取る経路
 - [09-telemetry-snmp](../topics/09-telemetry-snmp/index.md): STATE_DB SYSTEM_HEALTH_INFO の telemetry 経路
 
+## 関連リファレンス
+
+- CLI: [show system-health](../reference/cli/show-system-health.md) / [show services](../reference/cli/show-services.md) / [show techsupport](../reference/cli/show-techsupport.md) / [show feature](../reference/cli/show-feature.md)
+- [CONFIG_DB](../reference/glossary.md#term-config_db): [FEATURE](../reference/config-db/feature.md) / [AUTO_TECHSUPPORT_FEATURE](../reference/config-db/auto-techsupport-feature.md)
+- [YANG](../reference/glossary.md#term-yang): [sonic-feature](../reference/yang/sonic-feature.md)
+- 関連 [HLD](../reference/glossary.md#term-hld): [event-driven techsupport invocation](event-driven-techsupport-invocation-coredump-mgmt.md) / [storage monitoring daemon](sonic-storage-monitoring-daemon-design.md) / [platform monitor enhancement](platform-monitor-enhancement-design.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/system_health_monitoring/system-health-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 20dbc11976b6 -->

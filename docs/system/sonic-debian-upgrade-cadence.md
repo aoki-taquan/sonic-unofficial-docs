@@ -141,6 +141,11 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 - [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
 - [CLI: sonic-installer](../reference/cli/sonic-installer.md)
 - [HLD: build-system-improvements](../architecture/build-system-improvements.md)
+- [HLD: rfs-split-build-improvements](../architecture/rfs-split-build-improvements-hld.md)
+- [HLD: sonic-package-manager (Application Extension)](../architecture/sonic-application-extension-infrastructure.md)
+- [CLI: sonic-package-manager](../reference/cli/sonic-package-manager.md)
+- [Topic: Build / Packaging](../topics/19-build-packaging/index.md)
+- [Topic: Reboot / Upgrade](../topics/11-reboot/index.md)
 
 ## 引用元
 

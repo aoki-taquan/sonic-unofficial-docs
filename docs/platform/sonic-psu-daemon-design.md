@@ -194,4 +194,9 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 
 <!-- /topics-back-ref -->
 
+## 関連リファレンス
+
+- CLI: [show platform](../reference/cli/show-platform.md) / [show environment](../reference/cli/show-environment.md) / [show system-health](../reference/cli/show-system-health.md)
+- 関連 HLD: [storage monitoring daemon](../system/sonic-storage-monitoring-daemon-design.md) / [platform monitor enhancement](../system/platform-monitor-enhancement-design.md) / [pcieinfo design](pcieinfo-design.md) / [System Health Monitor](../system/sonic-system-health-monitor-high-level-design.md)
+
 <!-- glossary-links-injected: 10394a5e95a8 -->

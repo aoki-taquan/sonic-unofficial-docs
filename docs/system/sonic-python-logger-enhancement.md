@@ -195,7 +195,7 @@ LOGGER|<component>
 
 ### 関連する YANG
 
-HLD 自体は YANG 言及なし。`LOGGER` テーブルは `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-logger.yang` の `container LOGGER` で取り込まれており、`require_manual_refresh` leaf も定義済。syslog 系設定は `sonic-syslog.yang` を参照。
+HLD 自体は [YANG](../reference/glossary.md#term-yang) 言及なし。`LOGGER` テーブルは `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-logger.yang` の `container LOGGER` で取り込まれており、`require_manual_refresh` leaf も定義済。syslog 系設定は `sonic-syslog.yang` を参照。
 
 ## 制限事項
 
@@ -297,4 +297,4 @@ HLD 自体は YANG 言及なし。`LOGGER` テーブルは `sonic-buildimage/src
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: d5320e852f7a -->
