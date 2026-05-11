@@ -99,3 +99,26 @@ YANG `max-elements 2` 制約により最大 2 トンネルまで（実装的に 
 - [CLI: config vxlan](../cli/config-vxlan.md)
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](vxlan-tunnel-map.md)
 - [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VXLAN_TUNNEL|<name>`。
+- `src_ip`: 自 Loopback IP（VTEP）。
+- `dst_ip`: P2P トンネル先（EVPN 動的の場合は省略）。
+
+### よくある誤設定
+
+- `src_ip` を物理 IF に置くとリンクダウンで VTEP が消える。Loopback0 を使う。
+- EVPN 構成で `dst_ip` を静的指定すると EVPN type-3 と競合する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'VXLAN_TUNNEL|tunnel1'
+show vxlan tunnel
+show vxlan remotevtep
+```
+<!-- /ops-hint -->

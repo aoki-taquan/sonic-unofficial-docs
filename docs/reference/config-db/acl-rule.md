@@ -141,3 +141,27 @@ ACL_RULE|<table_name>|<rule_name>
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `ACL_RULE|<table-name>|<rule-name>`。
+- `priority`: 0..65535（大きいほど優先）。9999 等の値を運用で使う。
+- `packet_action`: `FORWARD` / `DROP` / `REDIRECT:<nh>`。
+- match: `src_ip` / `dst_ip` / `l4_src_port` / `ip_protocol` 等。
+
+### よくある誤設定
+
+- 同じ `priority` を複数 rule で使うと適用順が ASIC 依存で予測不能。
+- `SRC_IP` を V6 テーブルに入れると無視され、rule が hit せず原因不明になる。`SRC_IPV6` を使う。
+- `packet_action: REDIRECT:` の nexthop 解決が失敗すると rule が install されない（syslog 確認）。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'ACL_RULE|EVERFLOW|*'
+aclshow -a -t EVERFLOW
+```
+<!-- /ops-hint -->

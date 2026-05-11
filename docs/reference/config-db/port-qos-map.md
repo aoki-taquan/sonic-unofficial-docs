@@ -102,3 +102,24 @@ PORT_QOS_MAP|<PORT.name>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PORT_QOS_MAP|<port>`。
+- `dscp_to_tc_map`、`tc_to_queue_map`、`tc_to_pg_map`、`pfc_to_queue_map`、`pfc_enable: 3,4`。
+
+### よくある誤設定
+
+- `pfc_enable` で指定した priority と `BUFFER_PG` の lossless 範囲が不一致だと PFC が機能しない。
+- map 名を `AZURE` 以外に変えると初期 SKU 設定との整合が崩れる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
+show qos map
+```
+<!-- /ops-hint -->

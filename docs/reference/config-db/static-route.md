@@ -99,3 +99,27 @@ STATIC_ROUTE|<vrf_name>|<prefix>
 
 [^1]: YANG 定義: `sonic-static-route.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-static-route.yang>
 [^2]: テーブル名定数参照: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `STATIC_ROUTE|<vrf>|<prefix>` (例 `STATIC_ROUTE|default|10.0.0.0/24`)。
+- `nexthop`: カンマ区切り（ECMP 可）。
+- `distance`: 1（規定）。
+- `ifname`: 出力 IF（直接接続経路向け）。
+
+### よくある誤設定
+
+- `nexthop` の IP が到達不可だと FRR が経路を選択せず、`show ip route` で表示されない。
+- BGP 学習経路と同じ prefix を static で入れると AD 値次第で意図しない切り替わり。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'STATIC_ROUTE|*'
+show ip route static
+vtysh -c 'show ip route'
+```
+<!-- /ops-hint -->

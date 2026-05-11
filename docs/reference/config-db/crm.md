@@ -104,3 +104,26 @@ CRM|Config
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `CRM|Config`。
+- `acl_table_threshold_type`: `percentage` / `used` / `free`。
+- `*_high_threshold` / `*_low_threshold`: 70 / 60 など。
+- `polling_interval`: 300（秒）。
+
+### よくある誤設定
+
+- 閾値を 100% に近く設定すると alert が遅れ、ACL 追加で SAI エラーが先に起きる。70%/80% 程度で運用するのが定石。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'CRM|Config'
+crm show summary
+crm show resources all
+```
+<!-- /ops-hint -->

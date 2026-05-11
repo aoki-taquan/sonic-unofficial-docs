@@ -69,3 +69,26 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-mgmt_interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MGMT_INTERFACE|eth0|<ip/prefix>`。
+- `gwaddr`: management default gateway。
+- `forced_mgmt_routes`: 強制 mgmt 経由ルート。
+
+### よくある誤設定
+
+- `gwaddr` を持たないと mgmt-vrf 内に default route が無く、リモート access 不能。
+- data-plane の default route と衝突しないよう `MGMT_VRF_CONFIG` で隔離する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'MGMT_INTERFACE|*'
+show management_interface address
+ip -4 route show vrf mgmt
+```
+<!-- /ops-hint -->

@@ -99,3 +99,26 @@ BUFFER_POOL|<name>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BUFFER_POOL|<pool-name>` (`ingress_lossless_pool` / `egress_lossless_pool` / `egress_lossy_pool` 等)。
+- `size`: ASIC 別の SDK 値（例 100G TOR で `12766208`）。
+- `type`: `ingress` / `egress`。
+- `mode`: `dynamic` / `static`。
+
+### よくある誤設定
+
+- `size` を ASIC 上限超過で入れると bufferorch が `SAI_STATUS_NO_MEMORY` を返し、すべての buffer 設定が止まる。
+- `mode: dynamic` を ASIC 未対応のまま使うと PFC で head-of-line を起こす。`traditional` プラットフォームでは `static`。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BUFFER_POOL|ingress_lossless_pool'
+show buffer pool
+```
+<!-- /ops-hint -->

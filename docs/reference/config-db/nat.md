@@ -123,3 +123,24 @@ NAT_BINDINGS|<name>
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `NAT_GLOBAL|Values`、`STATIC_NAT|<ip>`、`NAT_POOL|<name>` 等。
+- `admin_mode: enabled`、`nat_timeout: 600`、`nat_tcp_timeout: 86400`。
+
+### よくある誤設定
+
+- `admin_mode` を enabled にせず static_nat だけ入れても NAT は動作しない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'NAT_GLOBAL|Values'
+show nat config
+show nat translations
+```
+<!-- /ops-hint -->

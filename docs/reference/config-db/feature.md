@@ -86,3 +86,26 @@ FEATURE|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-feature.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-feature.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `FEATURE|<feature-name>` (例 `bgp`, `lldp`, `snmp`, `telemetry`)。
+- `state`: `enabled` / `disabled` / `always_enabled`。
+- `auto_restart`: `enabled`。
+- `high_mem_alert`: `disabled`。
+
+### よくある誤設定
+
+- `state: disabled` で必須コンテナ（`swss` 等）を止めると orchagent ごと止まる。
+- `auto_restart: disabled` で crash すると手動再起動が必要。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'FEATURE|*'
+show feature status
+```
+<!-- /ops-hint -->

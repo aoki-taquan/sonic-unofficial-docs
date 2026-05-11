@@ -91,3 +91,25 @@ NTP_SERVER|<server_address>
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `NTP_SERVER|<ip-or-hostname>`。
+- `iburst`: `on`（初期同期高速化）。
+- `association_type`: `server`。
+
+### よくある誤設定
+
+- 1 つだけサーバ登録すると障害時に時刻が drift。3 つ以上推奨。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'NTP_SERVER|*'
+show ntp
+chronyc sources
+```
+<!-- /ops-hint -->

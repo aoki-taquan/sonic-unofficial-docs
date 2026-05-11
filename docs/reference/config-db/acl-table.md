@@ -131,3 +131,29 @@ ACL_TABLE|<table_name>
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `ACL_TABLE|<table-name>`。
+- `type`: `L3` / `L3V6` / `MIRROR` / `MIRRORV6` / `CTRLPLANE` / `MCLAG` 等。
+- `stage`: `INGRESS` / `EGRESS`。
+- `ports`: `["Ethernet0", "PortChannel0001"]` のように紐付け対象を列挙。
+- `policy_desc`: 運用識別用。
+
+### よくある誤設定
+
+- `type` と紐付けポートの能力（V4/V6/MIRROR）が不一致だと aclorch が SAI でテーブルを作らない。
+- `stage: EGRESS` を ASIC が未サポートなのに指定すると syslog にエラー、何も適用されない。
+- `ports` を空にすると ACL_RULE は CONFIG_DB に入っても hardware に降りない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'ACL_TABLE|EVERFLOW'
+show acl table
+aclshow -a
+```
+<!-- /ops-hint -->

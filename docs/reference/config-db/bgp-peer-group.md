@@ -85,3 +85,24 @@ BGP_PEER_GROUP|<vrf_name>|<peer_group_name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-peergroup.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_PEER_GROUP|<vrf>|<peer-group-name>`。
+- `asn`: 対向 AS（同 peer-group 内で統一）。
+- `admin_status`: `up`。
+
+### よくある誤設定
+
+- peer-group の `asn` と個別 neighbor の `asn` がズレると FRR が neighbor を peer-group に紐付けない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_PEER_GROUP|*'
+vtysh -c 'show bgp peer-group'
+```
+<!-- /ops-hint -->

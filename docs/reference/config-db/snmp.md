@@ -80,3 +80,23 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 
 ## 関連ページ
 - [CONFIG_DB: SNMP_AGENT_ADDRESS_CONFIG](snmp-agent-address-config.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SNMP|<community>` / `SNMP|LOCATION` / `SNMP|CONTACT`。
+- `SNMP_COMMUNITY|<name>` の `TYPE: RO`。
+
+### よくある誤設定
+
+- community 名を default の `public` のまま運用すると外部から read 可能。本番では変更。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SNMP*'
+show snmp community
+```
+<!-- /ops-hint -->

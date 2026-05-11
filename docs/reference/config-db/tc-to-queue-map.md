@@ -84,3 +84,23 @@ TC_TO_QUEUE_MAP|<name>|<tc>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `TC_TO_QUEUE_MAP|<name>` (例 `AZURE`)。
+- 値: `0:0`, `1:1`, `3:3`, `4:4` 等。
+
+### よくある誤設定
+
+- TC→queue を 0..7 範囲外に書くと SAI が拒否し、マップ全体が install されない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'TC_TO_QUEUE_MAP|AZURE'
+show qos map tc-queue
+```
+<!-- /ops-hint -->

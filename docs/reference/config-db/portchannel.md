@@ -99,3 +99,29 @@ PORTCHANNEL|<name>
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PORTCHANNEL|PortChannel0001`。
+- `admin_status`: `up`。
+- `mtu`: 9100。
+- `min_links`: 1〜2（メンバ 4 本構成で `2` 等）。
+- `lacp_key`: `auto` または明示数値。
+
+### よくある誤設定
+
+- `min_links` をメンバ総数以上にすると LAG が常時 down。
+- `fallback: true` を未設定で対向が LACP 未対応だと PortChannel が永遠に down。
+- メンバ間で `speed`/`mtu` を揃えないと teamd が LAG を組まない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'PORTCHANNEL|PortChannel0001'
+show interfaces portchannel
+teamdctl PortChannel0001 state
+```
+<!-- /ops-hint -->

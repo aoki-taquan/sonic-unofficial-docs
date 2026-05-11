@@ -88,3 +88,26 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PFC_WD|GLOBAL` と `PFC_WD|<port>`。
+- `POLL_INTERVAL`: 200 (ms)。
+- port 行: `action: drop`、`detection_time: 200`、`restoration_time: 200`。
+
+### よくある誤設定
+
+- `action: forward` のまま PFC storm を放置すると HOL ブロック。`drop` 推奨。
+- `detection_time` を小さすぎる値にすると正常 PFC でも誤検知。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PFC_WD|*'
+show pfcwd config
+show pfcwd stats
+```
+<!-- /ops-hint -->

@@ -99,3 +99,24 @@ TUNNEL|<mux_tunnel>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-tunnel.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang>; orchagent 側パース: `tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `TUNNEL|<tunnel-name>`。
+- `tunnel_type`: `IPINIP` 等。
+- `src_ip` / `dst_ip`、`encap_ecn_mode`、`ttl_mode`。
+
+### よくある誤設定
+
+- dual-ToR で `tunnel_type` を両 ToR で揃えないと MUX_CABLE 経由のトラフィックが片方向 drop。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'TUNNEL|*'
+show tunnel
+```
+<!-- /ops-hint -->

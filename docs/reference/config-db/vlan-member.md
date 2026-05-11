@@ -105,3 +105,24 @@ VLAN_MEMBER|<vlan_name>|<port>
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VLAN_MEMBER|Vlan100|Ethernet0`。
+- `tagging_mode`: `tagged` / `untagged` / `priority_tagged`。
+
+### よくある誤設定
+
+- `tagging_mode: untagged` を 1 ポート上の複数 VLAN に重複指定すると先勝ちで残りが silently 反映されない。
+- PortChannel メンバを VLAN_MEMBER に直付けすると L2 が壊れる。LAG 親 (`PortChannelN`) を入れる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'VLAN_MEMBER|Vlan100|Ethernet0'
+show vlan brief
+```
+<!-- /ops-hint -->

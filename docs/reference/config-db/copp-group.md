@@ -103,3 +103,25 @@ COPP_GROUP|<name>
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `COPP_GROUP|<group-name>` (`queue4_group1` 等)。
+- `queue`: CPU queue 番号。
+- `cir`: 例 `6000` (pps)。
+- `trap_action`: `trap` / `forward` / `copy` / `drop`。
+
+### よくある誤設定
+
+- `cir` を過小に設定すると BGP keepalive がドロップされて peer が落ちる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'COPP_GROUP|queue4_group1'
+show copp config
+```
+<!-- /ops-hint -->

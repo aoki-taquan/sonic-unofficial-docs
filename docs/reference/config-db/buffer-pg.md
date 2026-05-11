@@ -89,3 +89,23 @@ BUFFER_PG|<port>|<pg_num>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BUFFER_PG|<port>|<pg-range>` (例 `BUFFER_PG|Ethernet0|3-4`)。
+- `profile`: `pg_lossless_100000_5m_profile` 等。
+
+### よくある誤設定
+
+- PFC 対象 PG (`3-4`) に `lossy` profile を当てると PFC が機能しない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BUFFER_PG|Ethernet0|*'
+show buffer pg
+```
+<!-- /ops-hint -->

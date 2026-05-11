@@ -121,3 +121,28 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 
 [^1]: YANG 定義: `sonic-vnet.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VNET|Vnet_<name>`。
+- `vxlan_tunnel`: 紐付ける `VXLAN_TUNNEL` 名。
+- `vni`: L3 VNI。
+- `peer_list`: peer VNet 名（マルチサイト）。
+- `scope`: `default` / `evpn`。
+
+### よくある誤設定
+
+- `vxlan_tunnel` が `VXLAN_TUNNEL` に未存在だと VNet が active にならない。
+- `vni` を同一 device 内で重複させると orchagent が後勝ちで上書きし silent に壊れる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'VNET|Vnet_1000'
+show vnet brief
+show vnet routes all
+```
+<!-- /ops-hint -->

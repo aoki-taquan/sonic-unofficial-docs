@@ -87,3 +87,25 @@ SYSLOG_SERVER|<server_address>
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SYSLOG_SERVER|<ip>`。
+- `source`: `Loopback0` 等。
+- `vrf`: `default` / `mgmt`。
+- `port`: 514。
+
+### よくある誤設定
+
+- `vrf: mgmt` で `source` を data-plane IP にすると syslog が出ない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SYSLOG_SERVER|*'
+show syslog
+```
+<!-- /ops-hint -->

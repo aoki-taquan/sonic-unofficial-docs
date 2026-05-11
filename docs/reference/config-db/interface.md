@@ -113,3 +113,24 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `INTERFACE|EthernetN` (L3 enable 行) と `INTERFACE|EthernetN|<ip/prefix>` (IP 行)。
+- `vrf_name`: `Vrfdefault` か `Vrf<name>`。
+
+### よくある誤設定
+
+- VLAN メンバになっているポートを `INTERFACE` で L3 化すると orchagent が拒否する。VLAN_MEMBER から外してから。
+- IPv6 link-local だけ欲しい場合でも L3 enable 行が必要。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'INTERFACE|Ethernet0*'
+show ip interfaces
+```
+<!-- /ops-hint -->

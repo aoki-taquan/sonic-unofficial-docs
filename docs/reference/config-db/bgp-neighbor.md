@@ -122,3 +122,30 @@ BGP_NEIGHBOR|<vrf_name>|<neighbor>       # generic 形式
 - [CLI: config bgp](../cli/config-bgp.md)
 - [CLI: show bgp](../cli/show-bgp.md)
 - [YANG: sonic-bgp-neighbor](../yang/sonic-bgp-neighbor.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_NEIGHBOR|<neighbor-ip>` (frr 系) または `BGP_NEIGHBOR|<vrf>|<neighbor-ip>`。
+- `asn`: 対向 AS 番号（4-byte ASN 可）。
+- `local_addr`: 自身の IP。
+- `admin_status`: `up`。
+- `holdtime`: 180、`keepalive`: 60（標準）。
+- `name`: 対向ホスト名（運用識別用）。
+
+### よくある誤設定
+
+- `local_addr` を未設定 or 誤ったインタフェース IP にすると update-source が解決できず neighbor 確立せず。
+- `asn` を string で入れても通るが、4-byte ASN を `65000.1` 形式で書くと bgpcfgd がパースに失敗する版がある。10 進で書く。
+- iBGP で `local_addr` を物理 IF ではなく Loopback0 にしないと片側 down で BGP が落ちる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BGP_NEIGHBOR|10.0.0.1'
+show ip bgp summary
+vtysh -c 'show bgp neighbor 10.0.0.1'
+```
+<!-- /ops-hint -->

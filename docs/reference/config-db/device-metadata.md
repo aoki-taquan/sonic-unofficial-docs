@@ -160,3 +160,25 @@ excerpt: |
   }
 reasoning: フィールド一覧と型・デフォルト・enum 値はこのモジュールの leaf 宣言から抽出
 -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DEVICE_METADATA|localhost`。
+- `hostname`、`hwsku`、`platform`、`mac`、`type` (`ToRRouter`/`LeafRouter`/`SpineRouter`)。
+- `bgp_asn`、`default_bgp_status: up`、`default_pfcwd_status: enable`。
+
+### よくある誤設定
+
+- `hwsku` を実機と異なる値にすると sonic-buildimage 起動時に platform plugin が読み込まれず orchagent が起動しない。
+- `type` を誤ると generic_config_updater のチェックや MC-LAG の role 判定で誤動作。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'DEVICE_METADATA|localhost'
+show platform summary
+```
+<!-- /ops-hint -->

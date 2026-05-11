@@ -115,3 +115,27 @@ YANG コメントによれば、本来 `MCLAG_UNIQUE_IP.if_name` は `VLAN.name`
 ## 関連ページ
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
 - [CONFIG_DB: VLAN](vlan.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MCLAG_DOMAIN|<domain-id>` (1..4095)。
+- `source_ip` / `peer_ip`: keepalive 用 IP（Loopback 推奨）。
+- `peer_link`: `PortChannel0001` 等の ICL/peer-link。
+- `mclag_system_mac`: 両 ToR で同一 MAC。
+
+### よくある誤設定
+
+- `mclag_system_mac` を両 ToR で別値にすると LACP system-id が異なり MC-LAG が組まれない。
+- `peer_link` を VLAN trunk にしないと peer 間の MAC 同期が動かない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'MCLAG_DOMAIN|1'
+mclagdctl -i 1 dump state
+show mclag brief
+```
+<!-- /ops-hint -->
