@@ -7,3 +7,4 @@ nav:
   - operations.md
   - internals.md
   - upgrade.md
+  - advanced.md

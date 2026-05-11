@@ -54,6 +54,9 @@ jobs:
       - name: Report citation-deficient pages (informational)
         run: python3 meta/scripts/check_citation_quality.py --check
 
+      - name: Check .pages awesome-pages integrity
+        run: python3 meta/scripts/check_pages_integrity.py --check
+
       - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4

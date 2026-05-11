@@ -1,0 +1,8 @@
+{
+  "_comment": "Exceptions for meta/scripts/check_pages_integrity.py. Keys use POSIX paths from repo root. 'missing' = nav entry intentionally absent (e.g. legacy alias). 'orphans' = .md file present but intentionally hidden from awesome-pages. 'duplicates' = intentional double-listing.",
+  "missing": [],
+  "orphans": [
+    "docs/404.md"
+  ],
+  "duplicates": []
+}
