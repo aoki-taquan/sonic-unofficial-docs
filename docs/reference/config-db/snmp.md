@@ -1,0 +1,72 @@
+---
+title: SNMP テーブル
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-snmp.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db:
+    - SNMP
+    - SNMP_COMMUNITY
+    - SNMP_USER
+    - SNMP_AGENT_ADDRESS_CONFIG
+  cli:
+    - config snmp
+  yang:
+    - sonic-snmp
+---
+
+# SNMP テーブル
+
+## 概要
+
+SNMP エージェント (`snmpd` in `docker-snmp`) のシステム情報 (Contact / Location) を保持するテーブル[^1]。`docker-snmp` 内の起動スクリプトと `hostcfgd` の SNMP ハンドラが CONFIG_DB を読み、`/etc/snmp/snmpd.conf` のテンプレ展開で `sysContact` / `sysLocation` 行に反映される。
+
+## key 構造
+
+```
+SNMP|CONTACT
+SNMP|LOCATION
+```
+
+container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCATION`)。各 container にフィールド 1 つだけ。
+
+## フィールド
+
+### `SNMP|CONTACT`
+
+| フィールド | 型 | 説明 |
+|-----------|----|------|
+| `Contact` | string (1..255 chars, 改行不可) | SNMP `sysContact` |
+
+### `SNMP|LOCATION`
+
+| フィールド | 型 | 説明 |
+|-----------|----|------|
+| `Location` | string (1..255 chars, 改行不可) | SNMP `sysLocation` |
+
+## 制約
+
+- 双方の leaf は `length "1..255"` かつ `pattern '[^\n]+'` (改行禁止)
+- container 名は `SNMP`、内部 container 名は `CONTACT` / `LOCATION`、フィールド名は **大文字** (`Contact`/`Location`)[^1]
+
+## 購読者
+
+- `docker-snmp` の `snmpd` 起動テンプレ: CONFIG_DB → `/etc/snmp/snmpd.conf`
+- `hostcfgd` の SNMP ハンドラ (`sonic-host-services`)
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 CONFIG_DB: `SNMP_COMMUNITY` (v1/v2c), `SNMP_USER` (v3), [`SNMP_AGENT_ADDRESS_CONFIG`](snmp-agent-address-config.md)
+- 関連 CLI: `config snmp contact { add | modify | del }` / `config snmp location { add | modify | del }`
+- 関連 YANG: `sonic-snmp`
+
+## 引用元
+
+[^1]: `src/sonic-yang-models/yang-models/sonic-snmp.yang` (container `SNMP` / `CONTACT` / `LOCATION`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang>
+
+## 関連ページ
+- [CONFIG_DB: SNMP_AGENT_ADDRESS_CONFIG](snmp-agent-address-config.md)
