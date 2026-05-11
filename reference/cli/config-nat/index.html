@@ -17495,6 +17495,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -23869,6 +23880,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -24103,6 +24125,34 @@ excerpt: |
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>NAT feature enabled.
 </span></code></pre></div>
 <!-- /usage-example -->
+
+<!-- cli-mermaid -->
+<h3 id="_10">データフロー (自動生成)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["config nat"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
+  CDB0[("CONFIG_DB&lt;br/&gt;STATIC_NAT")]
+  SC --&gt; CDB0
+  DM0["natmgrd"]
+  CDB0 --&gt; DM0
+  CDB1[("CONFIG_DB&lt;br/&gt;STATIC_NAPT")]
+  SC --&gt; CDB1
+  DM1["natmgrd"]
+  CDB1 --&gt; DM1
+  CDB2[("CONFIG_DB&lt;br/&gt;NAT_POOL")]
+  SC --&gt; CDB2
+  DM2["natmgrd"]
+  CDB2 --&gt; DM2
+  CDB3[("CONFIG_DB&lt;br/&gt;NAT_BINDINGS")]
+  SC --&gt; CDB3
+  DM3["natmgrd"]
+  CDB3 --&gt; DM3</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
 
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

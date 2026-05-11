@@ -17353,10 +17353,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="関連する CONFIG_DB">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -17367,7 +17384,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -17378,7 +17395,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -17390,7 +17407,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -17401,7 +17418,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -17412,7 +17429,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -23811,10 +23828,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="関連する CONFIG_DB">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23825,7 +23859,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23836,7 +23870,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -23848,7 +23882,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -23859,7 +23893,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -23870,7 +23904,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -24012,22 +24046,42 @@
 </tr>
 </tbody>
 </table>
+<!-- cli-mermaid -->
+<h3 id="_4">データフロー (自動生成)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["config mclag"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
+  CDB0[("CONFIG_DB&lt;br/&gt;MCLAG_DOMAIN")]
+  SC --&gt; CDB0
+  DM0["MlagOrch"]
+  CDB0 --&gt; DM0
+  CDB1[("CONFIG_DB&lt;br/&gt;MCLAG_INTERFACE")]
+  SC --&gt; CDB1
+  DM1["MlagOrch"]
+  CDB1 --&gt; DM1</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/mclag-domain/"><code>MCLAG_DOMAIN</code></a> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- usage-example -->
-<h2 id="_6">実行例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="_7">典型的な使い方<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h2 id="_7">実行例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型的な使い方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 例 1: MCLAG domain と peer-link を構成</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>mclag<span class="w"> </span>add<span class="w"> </span><span class="m">4095</span><span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span><span class="m">10</span>.0.0.2<span class="w"> </span>PortChannel0001
 </span></code></pre></div>
-<h3 id="_8">よくある引数の組み合わせ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_9">よくある引数の組み合わせ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># MCLAG メンバー (LAG) を追加</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>mclag<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">4095</span><span class="w"> </span>PortChannel0002
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -24035,7 +24089,7 @@
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>mclag<span class="w"> </span>unique-ip<span class="w"> </span>add<span class="w"> </span>Vlan100
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>mclag<span class="w"> </span>session-timeout<span class="w"> </span><span class="m">4095</span><span class="w"> </span><span class="m">30</span>
 </span></code></pre></div>
-<h3 id="_9">期待される出力 (抜粋)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">期待される出力 (抜粋)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>MCLAG domain 4095 added.
 </span></code></pre></div>
 <!-- /usage-example -->

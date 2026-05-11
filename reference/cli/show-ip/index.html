@@ -17845,10 +17845,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="関連する CONFIG_DB / 一次情報">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -17859,7 +17876,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -17870,7 +17887,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -17882,7 +17899,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -17893,7 +17910,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -17904,7 +17921,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -23899,10 +23916,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="関連する CONFIG_DB / 一次情報">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23913,7 +23947,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23924,7 +23958,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -23936,7 +23970,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -23947,7 +23981,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -23958,7 +23992,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -24142,28 +24176,46 @@ CONFIG_DB の <code>BGP_AGGREGATE_ADDRESS</code> テーブルを直接読み出�
 </tr>
 </tbody>
 </table>
+<!-- cli-mermaid -->
+<h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["show ip"]
+  CDB0[("CONFIG_DB&lt;br/&gt;INTERFACE")]
+  CDB0 --&gt; CLI
+  CDB1[("CONFIG_DB&lt;br/&gt;VLAN_INTERFACE")]
+  CDB1 --&gt; CLI
+  CDB2[("CONFIG_DB&lt;br/&gt;PORTCHANNEL_INTERFACE")]
+  CDB2 --&gt; CLI
+  CDB3[("CONFIG_DB&lt;br/&gt;VLAN_SUB_INTERFACE")]
+  CDB3 --&gt; CLI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/interface/"><code>INTERFACE</code></a> / <a href="../../config-db/vlan-interface/"><code>VLAN_INTERFACE</code></a> / <a href="../../config-db/portchannel-interface/"><code>PORTCHANNEL_INTERFACE</code></a> / <a href="../../config-db/vlan-sub-interface/"><code>VLAN_SUB_INTERFACE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- usage-example -->
-<h2 id="_7">実行例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型的な使い方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_8">実行例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型的な使い方<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 例 1: ルーティングテーブル全件</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route
 </span></code></pre></div>
-<h3 id="_9">よくある引数の組み合わせ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">よくある引数の組み合わせ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span><span class="m">10</span>.0.0.0/24
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>vrf<span class="w"> </span>Vrf_Red
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
 </span></code></pre></div>
-<h3 id="_10">期待される出力 (抜粋)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">期待される出力 (抜粋)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Codes: K - kernel route, C - connected, S - static, R - RIP,
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>       T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,

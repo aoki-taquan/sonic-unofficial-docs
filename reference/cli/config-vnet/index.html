@@ -23496,13 +23496,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23513,7 +23524,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23596,15 +23607,39 @@
 <p><code>VNET_ROUTE_TUNNEL|&lt;vnet_name&gt;|&lt;prefix&gt;</code> に endpoint, vni, mac address, monitoring/profile 系の属性を書き込む。対象 VNET が無い場合はエラー。</p>
 <h3 id="config-vnet-del-route"><code>config vnet del-route</code><a class="headerlink" href="#config-vnet-del-route" title="Permanent link">&para;</a></h3>
 <p><code>&lt;prefix&gt;</code> 指定時は該当 route だけを削除する。省略時は対象 VNET に紐づく route をまとめて削除する。</p>
+<!-- cli-mermaid -->
+<h3 id="_4">データフロー (自動生成)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["config vnet"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
+  CDB0[("CONFIG_DB&lt;br/&gt;VNET")]
+  SC --&gt; CDB0
+  DM0["vrfmgrd"]
+  CDB0 --&gt; DM0
+  CDB1[("CONFIG_DB&lt;br/&gt;VNET_ROUTE_TUNNEL")]
+  SC --&gt; CDB1
+  DM1["VNetCfgRouteOrch"]
+  CDB1 --&gt; DM1
+  CDB2[("CONFIG_DB&lt;br/&gt;VNET_ROUTE")]
+  SC --&gt; CDB2
+  DM2["VNetCfgRouteOrch"]
+  CDB2 --&gt; DM2</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/vnet/"><code>VNET</code></a> / <a href="../../config-db/vnet/"><code>VNET_ROUTE_TUNNEL</code></a> / <a href="../../config-db/vnet/"><code>VNET_ROUTE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

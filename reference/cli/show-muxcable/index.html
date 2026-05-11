@@ -17915,6 +17915,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -23869,6 +23880,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -24091,6 +24113,20 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet4    standby   HEALTHY
 </span></code></pre></div>
 <!-- /usage-example -->
+
+<!-- cli-mermaid -->
+<h3 id="_11">データフロー (自動生成)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["show muxcable"]
+  CDB0[("CONFIG_DB&lt;br/&gt;MUX_CABLE")]
+  CDB0 --&gt; CLI
+  CDB1[("CONFIG_DB&lt;br/&gt;MUX_LINKMGR")]
+  CDB1 --&gt; CLI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
 
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

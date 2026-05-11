@@ -17600,10 +17600,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="制約">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -17614,7 +17631,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -17625,7 +17642,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -17637,7 +17654,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -17648,7 +17665,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -17659,7 +17676,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -17675,7 +17692,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23756,10 +23773,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="制約">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23770,7 +23804,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23781,7 +23815,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -23793,7 +23827,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -23804,7 +23838,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -23815,7 +23849,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -23831,7 +23865,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23985,35 +24019,59 @@ excerpt: |
 <li>ManagementVRF と Data VRF は内部の格納先テーブルが異なるが、CLI 上では同じ <code>config vrf add</code> で透過に扱える。</li>
 <li><code>del</code> は IP・SYSLOG・DHCPv4 relay から参照されている VRF を拒否する（依存解消が先）。</li>
 </ul>
+<!-- cli-mermaid -->
+<h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["config vrf"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
+  CDB0[("CONFIG_DB&lt;br/&gt;VRF")]
+  SC --&gt; CDB0
+  DM0["vrfmgrd"]
+  CDB0 --&gt; DM0
+  CDB1[("CONFIG_DB&lt;br/&gt;MGMT_VRF_CONFIG")]
+  SC --&gt; CDB1
+  DM1["vrfmgrd"]
+  CDB1 --&gt; DM1
+  CDB2[("CONFIG_DB&lt;br/&gt;VXLAN_TUNNEL_MAP")]
+  SC --&gt; CDB2
+  DM2["vxlanmgrd"]
+  CDB2 --&gt; DM2</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/vrf/"><code>VRF</code></a> / <a href="../../config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code></a> / <a href="../../config-db/vxlan-tunnel-map/"><code>VXLAN_TUNNEL_MAP</code></a> / <a href="../../config-db/syslog-server/"><code>SYSLOG_SERVER</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- usage-example -->
-<h2 id="_7">実行例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型的な使い方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_8">実行例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型的な使い方<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 例 1: VRF を作成しインターフェースをバインド</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vrf<span class="w"> </span>add<span class="w"> </span>Vrf_Red
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>vrf<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>Ethernet0<span class="w"> </span>Vrf_Red
 </span></code></pre></div>
-<h3 id="_9">よくある引数の組み合わせ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">よくある引数の組み合わせ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># VRF 削除</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vrf<span class="w"> </span>del<span class="w"> </span>Vrf_Red
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Management VRF を有効化</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>vrf<span class="w"> </span>add<span class="w"> </span>mgmt
 </span></code></pre></div>
-<h3 id="_10">期待される出力 (抜粋)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">期待される出力 (抜粋)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>VRF Vrf_Red added.
 </span></code></pre></div>
 <!-- /usage-example -->
 
-<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/sonic-vrf-support-design-spec-draft/">HLD: VRF サポート</a></li>
 <li><a href="../../config-db/vrf/">CONFIG_DB: VRF</a></li>

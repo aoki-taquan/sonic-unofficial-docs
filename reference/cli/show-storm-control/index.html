@@ -23488,10 +23488,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="関連する CONFIG_DB">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23502,7 +23519,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23610,15 +23627,27 @@ excerpt: |
 </tbody>
 </table>
 <p><code>storm_type</code> は <code>broadcast</code> / <code>unknown-multicast</code> / <code>unknown-unicast</code> の 3 種。</p>
+<!-- cli-mermaid -->
+<h3 id="_4">データフロー (自動生成)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["show storm-control"]
+  CDB0[("CONFIG_DB&lt;br/&gt;PORT_STORM_CONTROL")]
+  CDB0 --&gt; CLI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/port-storm-control/"><code>PORT_STORM_CONTROL</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -17249,6 +17249,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -23825,6 +23836,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -24026,6 +24048,26 @@ excerpt: |
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Successfully loaded ACL rules from /etc/sonic/acl_rules.json
 </span></code></pre></div>
 <!-- /usage-example -->
+
+<!-- cli-mermaid -->
+<h3 id="_11">データフロー (自動生成)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["config acl"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
+  CDB0[("CONFIG_DB&lt;br/&gt;ACL_TABLE")]
+  SC --&gt; CDB0
+  DM0["AclOrch"]
+  CDB0 --&gt; DM0
+  CDB1[("CONFIG_DB&lt;br/&gt;ACL_RULE")]
+  SC --&gt; CDB1
+  DM1["AclOrch"]
+  CDB1 --&gt; DM1</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
 
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

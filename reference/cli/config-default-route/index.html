@@ -23471,10 +23471,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="STATIC_ROUTE の更新ロジック（補足）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23485,7 +23502,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23588,16 +23605,32 @@
 <h2 id="static_route">STATIC_ROUTE の更新ロジック（補足）<a class="headerlink" href="#static_route" title="Permanent link">&para;</a></h2>
 <p><code>config route add</code> が同じ prefix で複数回呼ばれた場合、<code>config/main.py</code> の <code>add_route()</code> は <strong>既存エントリの値カラムに <code>,</code> 区切りで追記</strong>する形で複数 nexthop を蓄積する仕様<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。デフォルトルートに複数 ECMP nexthop を載せたい場合は、その分だけコマンドを繰り返すか 1 度のコマンドで <code>nexthop 10.0.0.1 nexthop 10.0.0.2</code> の形で書く。</p>
 <p>削除は <code>config route del prefix 0.0.0.0/0 ...</code> で対象 nexthop を指定する。</p>
+<!-- cli-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["config route add"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
+  CDB0[("CONFIG_DB&lt;br/&gt;STATIC_ROUTE")]
+  SC --&gt; CDB0
+  DM0["fpmsyncd"]
+  CDB0 --&gt; DM0</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_2">関連リファレンス<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-static-route/"><code>sonic-static-route</code></a></li>
 <li>CONFIG_DB: <a href="../../config-db/static-route/"><code>STATIC_ROUTE</code></a> / <a href="../../config-db/mgmt-interface/"><code>MGMT_INTERFACE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

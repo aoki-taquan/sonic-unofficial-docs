@@ -23521,10 +23521,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="multi-ASIC スコープ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23535,7 +23552,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23546,7 +23563,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -23558,7 +23575,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -23569,7 +23586,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -23580,7 +23597,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -23596,7 +23613,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23757,34 +23774,50 @@ excerpt: |
 <li><code>src_port</code> は <strong>該当ポートのある namespace にのみ</strong> 書く（front-panel でなければ fail）</li>
 <li>SPAN は <code>dst_port</code> の namespace を判定し、そこにのみ書く</li>
 </ul>
+<!-- cli-mermaid -->
+<h3 id="_4">データフロー (自動生成)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["config mirror_session"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
+  CDB0[("CONFIG_DB&lt;br/&gt;MIRROR_SESSION")]
+  SC --&gt; CDB0
+  DM0["MirrorOrch"]
+  CDB0 --&gt; DM0</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-mirror-session/"><code>sonic-mirror-session</code></a></li>
 <li>CONFIG_DB: <a href="../../config-db/mirror-session/"><code>MIRROR_SESSION</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- usage-example -->
-<h2 id="_6">実行例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="_7">典型的な使い方<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h2 id="_7">実行例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型的な使い方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 例 1: ERSPAN mirror session を作成</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>mirror1<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span><span class="m">10</span>.0.0.50<span class="w"> </span>0x88be<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">100</span>
 </span></code></pre></div>
-<h3 id="_8">よくある引数の組み合わせ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_9">よくある引数の組み合わせ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># SPAN (ローカル mirror)</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>span1<span class="w"> </span>--type<span class="w"> </span>span<span class="w"> </span>--dst-port<span class="w"> </span>Ethernet24<span class="w"> </span>--source<span class="w"> </span>Ethernet0<span class="w"> </span>--direction<span class="w"> </span>rx
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>remove<span class="w"> </span>mirror1
 </span></code></pre></div>
-<h3 id="_9">期待される出力 (抜粋)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">期待される出力 (抜粋)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Mirror session mirror1 added.
 </span></code></pre></div>
 <!-- /usage-example -->
 
-<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../config-acl/">reference/CLI: config acl</a></li>
 <li><a href="../show-acl/">reference/CLI: show acl</a></li>

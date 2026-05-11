@@ -17672,10 +17672,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="注意点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -17686,7 +17703,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -17697,7 +17714,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -17709,7 +17726,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -17720,7 +17737,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -17731,7 +17748,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -17747,7 +17764,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23844,10 +23861,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="注意点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23858,7 +23892,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23869,7 +23903,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -23881,7 +23915,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -23892,7 +23926,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -23903,7 +23937,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -23919,7 +23953,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -24092,33 +24126,61 @@ excerpt: |
 <li>VTEP / NVO は <strong>デバイス 1 つあたり 1 つ限定</strong></li>
 <li><code>map_range del</code> は VRF 紐付けがある VNI のみ削除する仕様で、削除されない行があっても警告は print のみ。完全削除には <code>map del</code> を使う</li>
 </ul>
+<!-- cli-mermaid -->
+<h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["config vxlan"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
+  CDB0[("CONFIG_DB&lt;br/&gt;VXLAN_TUNNEL")]
+  SC --&gt; CDB0
+  DM0["vxlanmgrd"]
+  CDB0 --&gt; DM0
+  CDB1[("CONFIG_DB&lt;br/&gt;VXLAN_EVPN_NVO")]
+  SC --&gt; CDB1
+  DM1["vxlanmgrd"]
+  CDB1 --&gt; DM1
+  CDB2[("CONFIG_DB&lt;br/&gt;VXLAN_TUNNEL_MAP")]
+  SC --&gt; CDB2
+  DM2["vxlanmgrd"]
+  CDB2 --&gt; DM2
+  CDB3[("CONFIG_DB&lt;br/&gt;VLAN")]
+  SC --&gt; CDB3
+  DM3["vlanmgrd"]
+  CDB3 --&gt; DM3</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/vxlan-tunnel/"><code>VXLAN_TUNNEL</code></a> / <a href="../../config-db/vxlan-evpn-nvo/"><code>VXLAN_EVPN_NVO</code></a> / <a href="../../config-db/vxlan-tunnel-map/"><code>VXLAN_TUNNEL_MAP</code></a> / <a href="../../config-db/vlan/"><code>VLAN</code></a> / <a href="../../config-db/vnet/"><code>VNET</code></a> / <a href="../../config-db/vrf/"><code>VRF</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- usage-example -->
-<h2 id="_7">実行例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型的な使い方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_8">実行例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型的な使い方<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 例 1: VxLAN tunnel と EVPN map を構成</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">10</span>.0.0.1
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>map<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">10100</span>
 </span></code></pre></div>
-<h3 id="_9">よくある引数の組み合わせ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">よくある引数の組み合わせ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>evpn_nvo<span class="w"> </span>add<span class="w"> </span>nvo1<span class="w"> </span>vtep1
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>map_range<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="m">10100</span><span class="w"> </span><span class="m">10200</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>remove<span class="w"> </span>vtep1
 </span></code></pre></div>
-<h3 id="_10">期待される出力 (抜粋)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">期待される出力 (抜粋)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>VxLAN tunnel vtep1 added.
 </span></code></pre></div>
 <!-- /usage-example -->
 
-<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../overlay/vxlan-sonic/">HLD: VXLAN / VNet 全体設計</a></li>
 <li><a href="../../../routing/evpn-vxlan-hld/">HLD: EVPN VXLAN</a></li>

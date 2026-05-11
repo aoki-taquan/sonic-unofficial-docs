@@ -23534,6 +23534,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23631,6 +23681,23 @@
 <li><a href="../port/">CONFIG_DB: PORT</a></li>
 <li><a href="../policer/">CONFIG_DB: POLICER</a></li>
 </ul>
+<!-- ops-hint -->
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>key 形式: <code>PORT_STORM_CONTROL|&lt;Ethernet&gt;|&lt;traffic-type&gt;</code> (broadcast/unknown-unicast/unknown-multicast)`。</li>
+<li><code>kbps</code>: 帯域上限。サーバ向けは 1000〜10000kbps、uplink は無効化することが多い。</li>
+</ul>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li>uplink にも storm-control を当てて BUM トラフィックを誤遮断する。</li>
+</ul>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT_STORM_CONTROL|*&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>storm-control<span class="w"> </span>all
+</span></code></pre></div>
+<!-- /ops-hint -->
+
 <div class="footnote">
 <hr />
 <ol>
