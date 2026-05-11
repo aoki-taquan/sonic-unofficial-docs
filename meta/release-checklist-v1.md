@@ -8,6 +8,8 @@ last_verified: 2026-05-11
 
 監査 round 5 / 6 で「β 公開可、v1.0 未到達」と判定された状態から、正式版 (v1.0) として公開アナウンスできる状態に到達するためのチェック項目を整理する。
 
+**2026-05-11 時点: v1.0 リリース候補 (RC) に到達。** 自動化可能な全項目を達成済み。残ブロッカは「6. ユーザー手動マター」の 2 項目のみ。
+
 ステータスは以下の表記:
 
 - `[x]` 達成済み
@@ -31,20 +33,20 @@ last_verified: 2026-05-11
 | # | 項目 | 状態 | 備考 |
 |---|------|------|------|
 | 6 | 本文ページの `verification: hld-only` が 0 件 | [x] | 残 2 件は `topics/22-reference-index/*.md` で hld-only という文字列を含むだけのメタページ。frontmatter としては全本文ページが脱却済み |
-| 7 | `code-verified` 件数 | [x] | 545 件 |
+| 7 | `code-verified` 件数 | [x] | 597 件（581+ 達成済み） |
 | 8 | `discrepancy-found` 件数 | [x] | 48 件 |
-| 9 | 監査平均が 4.95+ 維持 | [x] | round 6: 4.978 / 5.0 |
-| 10 | 監査 round 7 の実施 | [ ] | v1.0 昇格条件の一つ。本 PR の対象外 |
-| 11 | HLD area 残 ~70 件の翻訳調再構成 | [ ] | イテ 3 回分の Writer 投入が必要 |
+| 9 | 監査平均が 4.95+ 維持 | [x] | round 6: 4.978 / 5.0、round 7: 9.65/10、round 8: **9.74/10** |
+| 10 | 監査 round 7 / 8 の実施 | [x] | round 7 (PR #951)、round 8 (PR #963) を実施済み |
+| 11 | HLD area 残 ~70 件の翻訳調再構成 | [x] | イテ E〜J で再構成完了。`hld-only` 本文ページは 0 件 |
 
 ## 3. リファレンスカバー率
 
 | # | 項目 | 状態 | 件数 |
 |---|------|------|------|
-| 12 | CLI Reference | [x] | 63 ページ |
-| 13 | CONFIG_DB Reference | [x] | 110 ページ |
-| 14 | YANG Reference | [x] | 70 ページ |
-| 15 | Runbooks | [x] | 31 ページ |
+| 12 | CLI Reference | [x] | 73 ページ |
+| 13 | CONFIG_DB Reference | [x] | 122 ページ |
+| 14 | YANG Reference | [x] | 85 ページ |
+| 15 | Runbooks | [x] | 46 ページ |
 | 16 | discrepancy-index 自動生成 (`gen_discrepancy_index.py`) | [x] | `docs/reference/verification/discrepancy-index.md` |
 
 ## 4. ナビゲーション・横断
@@ -62,7 +64,7 @@ last_verified: 2026-05-11
 | 20 | `README.md` に公開状態 (β/v1.0) と品質メトリクス記載 | [x] | 本 PR で「公開状態」セクションを追記 |
 | 21 | `CONTRIBUTING.md` 整備 | [x] | 既存 |
 | 22 | `CLAUDE.md` 整備 | [x] | 永続指示 |
-| 23 | LICENSE ファイル | [ ] | README で CC BY 4.0 と明記。リポジトリトップに `LICENSE` ファイルを置くと一層分かりやすい (任意) |
+| 23 | LICENSE ファイル | [x] | PR #952 で `LICENSE` / `LICENSE.ja` をリポジトリトップに追加済み |
 | 24 | フィードバック導線 (Issues / Discussions) | [x] | README + `meta/feedback.md` + `.github/ISSUE_TEMPLATE/feedback.yml` |
 | 25 | `mkdocs.yml` の `site_url` | [x] | `https://aoki-taquan.github.io/sonic-unofficial-docs/` |
 | 26 | `mkdocs.yml` の `copyright` (CC BY 4.0) | [x] | 本 PR で追加 |
@@ -79,25 +81,27 @@ last_verified: 2026-05-11
 
 ## 7. v1.0 昇格条件サマリ
 
-round 6 の指摘を踏まえると、v1.0 昇格に必要な残作業は以下:
+2026-05-11 時点で、本チェックリスト 1〜5 のうち自動化可能な項目はすべて `[x]`。残るは **6. ユーザー手動マター** の 2 項目のみ:
 
-1. **HLD area 残 ~70 件の再構成** (Writer バッチ #12 以降、イテ 3 回程度)
-2. **監査 round 7 で平均 4.95+ 維持**
-3. **GitHub Pages の Source 設定 (ユーザー手動)**
-4. **(任意) LICENSE ファイルの追加** — 現状 README に CC BY 4.0 と明記済みなので機能上は問題なし
+1. **GitHub Pages の Source 設定** (`gh-pages` branch を Pages の Source として有効化)
+2. **リリースタグ `v1.0.0` の打鍵とアナウンス**
 
-本 PR で「インフラ系」「メタ系」のチェック項目はほぼ全て埋め、残るのは品質再構成 (1) と監査 (2) と人手作業 (3) のみ。
+この 2 項目はリポジトリオーナーのみが実施可能であり、本リポジトリの自動パイプライン (Indexer / Writer / Reviewer / Merger / Verifier) の範囲外。
 
-## 8. 次のイテレーションでやること
+## 8. 次のイテレーション（v1.0 後）
 
-- [ ] Writer バッチ #12 を起動: HLD area 残 ~70 件の翻訳調撲滅。`isolation: worktree` で 5〜10 並走
-- [ ] 監査 round 7 を sampling で実施 (15〜20 件)
-- [ ] `gen_index_banner.py` の作成 (`docs/index.md` の `!!! success "最新の品質状態"` バナーを自動更新)
-- [ ] ユーザーに GitHub Pages の Source 設定を依頼 (`meta/github-pages-setup.md` を共有)
+v1.0 リリース後の `1.x` マイナーで予定している品質改善:
+
+- [ ] 監査 round 9 を sampling で実施 (15〜20 件、10 段階評価)
+- [ ] HLD で更にスタブ気味のページの再構成（generic-name / `introduction-N` / `revision` 等）
+- [ ] CLI / CONFIG_DB / YANG Reference の追加カバー
+- [ ] discrepancy ページの上流 PR への寄与 (PR を立てるところまでは AI、merge は人手)
 
 ## 関連ドキュメント
 
+- [CHANGELOG](../CHANGELOG.md)
+- [監査 round 8](./quality-audit-8.md)
+- [監査 round 7](./quality-audit-7.md)
 - [監査 round 6](./quality-audit-6.md)
-- [監査 round 5](./quality-audit-5.md)
 - [GitHub Pages 設定手順](./github-pages-setup.md)
 - [フィードバック処理方針](./feedback.md)

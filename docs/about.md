@@ -40,15 +40,16 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 | `meta` | プロジェクト運営に関するメタページ（本ページなど） |
 | `stub` | 執筆途中のスタブ（β 段階では極力残さない） |
 
-品質指標（2026-05-11 時点）:
+品質指標（2026-05-11 時点、**v1.0 リリース候補**）:
 
-- 総ページ数: 779
-- `code-verified` ページ: 545
+- 総ページ数: 833
+- `code-verified` ページ: 597（581+ 達成済み）
 - `discrepancy-found` ページ: 48
 - `hld-only` 本文ページ: 0
-- 監査平均評価 (round 6): 4.978 / 5.0
+- 監査平均評価 (round 8、10 段階): **9.74 / 10.0**
+- CLI Reference: 73 ページ / CONFIG_DB Reference: 122 ページ / YANG Reference: 85 ページ / Runbooks: 46 ページ
 
-最新の品質状態とロードマップは [`meta/release-checklist-v1.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/release-checklist-v1.md) を参照してください。
+公開ステータスは **v1.0 RC**（残ブロッカはユーザー手動 2 件のみ）。最新の品質状態とロードマップは [`CHANGELOG`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/CHANGELOG.md) と [`meta/release-checklist-v1.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/release-checklist-v1.md) を参照してください。
 
 ## ライセンス
 
