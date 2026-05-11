@@ -2,6 +2,7 @@
 title: リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
 area: switching
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

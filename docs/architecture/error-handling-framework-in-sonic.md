@@ -2,6 +2,7 @@
 title: Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
 area: architecture
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

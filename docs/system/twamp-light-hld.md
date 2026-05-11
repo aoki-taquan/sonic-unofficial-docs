@@ -2,6 +2,7 @@
 title: TWAMP Light（Session-Sender / Session-Reflector）
 area: system
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

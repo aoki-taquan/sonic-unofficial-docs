@@ -2,6 +2,7 @@
 title: SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
 area: system
 verification: discrepancy-found
+monitor: evolved_beyond_hld
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

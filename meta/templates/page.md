@@ -2,6 +2,7 @@
 title: <ページタイトル>
 area: <routing | switching | overlay | acl-qos | system | management | platform | architecture | internals | reference>
 verification: hld-only        # hld-only | issue-confirmed | code-verified | discrepancy-found
+# monitor: not_implemented    # discrepancy-found のとき必須: not_implemented | evolved_beyond_hld | partially_implemented | deprecated
 last_verified: YYYY-MM-DD
 sources:
   - repo: sonic-net/SONiC

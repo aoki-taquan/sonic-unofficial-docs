@@ -2,6 +2,7 @@
 title: 拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
 area: platform
 verification: discrepancy-found
+monitor: not_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

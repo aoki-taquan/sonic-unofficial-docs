@@ -7,6 +7,8 @@ Checks:
   c) verification == discrepancy-found -> body contains a "実装との乖離" section
   d) last_verified matches YYYY-MM-DD
   e) title non-empty, area is a known enum
+  f) monitor in {not_implemented, evolved_beyond_hld, partially_implemented, deprecated};
+     verification == discrepancy-found -> monitor field must be present
 
 Output: meta/frontmatter-lint-report.md
 Exit code: 1 if any violations, else 0.
@@ -33,6 +35,9 @@ VALID_AREAS = {
     "management", "platform", "architecture", "internals", "reference",
 }
 VERIFICATIONS_REQUIRING_SOURCES = {"hld-only", "code-verified", "discrepancy-found"}
+VALID_MONITORS = {
+    "not_implemented", "evolved_beyond_hld", "partially_implemented", "deprecated",
+}
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n(.*)\Z", re.DOTALL)
 
@@ -123,6 +128,15 @@ def lint_file(path: Path) -> list[str]:
     if verification == "discrepancy-found":
         if "実装との乖離" not in body and "実装からの乖離" not in body:
             violations.append("c: discrepancy-found page missing '実装との乖離' section")
+
+    # f) monitor enum check and presence requirement for discrepancy-found
+    monitor = fm.get("monitor")
+    if monitor is not None and str(monitor).strip():
+        m = str(monitor).strip()
+        if m not in VALID_MONITORS:
+            violations.append(f"f: monitor '{m}' not in valid enum")
+    elif verification == "discrepancy-found":
+        violations.append("f: discrepancy-found page missing 'monitor' field")
 
     return violations
 

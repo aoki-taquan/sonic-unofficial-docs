@@ -2,6 +2,7 @@
 title: EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）
 area: routing
 verification: discrepancy-found
+monitor: evolved_beyond_hld
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC

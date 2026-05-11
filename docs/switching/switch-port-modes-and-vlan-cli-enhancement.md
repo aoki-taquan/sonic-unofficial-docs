@@ -2,6 +2,7 @@
 title: Switchport モード（access / trunk / routed）と VLAN CLI 拡張
 area: switching
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

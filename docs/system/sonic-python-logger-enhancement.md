@@ -2,6 +2,7 @@
 title: SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
 area: system
 verification: discrepancy-found
+monitor: evolved_beyond_hld
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

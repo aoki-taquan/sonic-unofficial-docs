@@ -2,6 +2,7 @@
 title: libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
 area: system
 verification: discrepancy-found
+monitor: deprecated
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

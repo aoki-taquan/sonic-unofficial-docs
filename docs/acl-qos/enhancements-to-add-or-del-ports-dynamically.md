@@ -2,6 +2,7 @@
 title: ポートの動的 add / del（zero-port 起動と post-init 操作）
 area: acl-qos
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

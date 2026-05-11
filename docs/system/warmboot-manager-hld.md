@@ -2,6 +2,7 @@
 title: Warmboot Manager（shutdown orchestration / reconciliation 統一）
 area: system
 verification: discrepancy-found
+monitor: not_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
