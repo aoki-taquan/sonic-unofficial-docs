@@ -26109,14 +26109,14 @@
 <li><strong>略称</strong>: BGP (Border Gateway Protocol)</li>
 <li><strong>日本語訳</strong>: BGP</li>
 <li><strong>説明</strong>: ルーティングプロトコル (RFC 4271)。SONiC では FRR の <code>bgpd</code> を使用し、<code>fpmsyncd</code> 経由でカーネル経由 APPL_DB へ反映する。</li>
-<li><strong>関連</strong>: <a href="../topic/bgp.md">BGP トピック</a>、<a href="#frr">FRR</a>、<a href="#fpmsyncd">fpmsyncd</a></li>
+<li><strong>関連</strong>: <a href="../../topics/02-bgp/">BGP トピック</a>、<a href="#frr">FRR</a>、<a href="#fpmsyncd">fpmsyncd</a></li>
 </ul>
 <h3 id="bgpcfgd">bgpcfgd<a class="headerlink" href="#bgpcfgd" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>略称</strong>: bgpcfgd</li>
 <li><strong>日本語訳</strong>: BGP 設定デーモン</li>
 <li><strong>説明</strong>: CONFIG_DB の BGP 関連テーブル変更を購読し、FRR (<code>vtysh</code>) に流し込む Python デーモン (<code>sonic-buildimage/dockers/docker-fpm-frr/bgpcfgd</code>)。</li>
-<li><strong>関連</strong>: <a href="../topic/bgp.md">BGP トピック</a></li>
+<li><strong>関連</strong>: <a href="../../topics/02-bgp/">BGP トピック</a></li>
 </ul>
 <h3 id="buffer-model">Buffer Model<a class="headerlink" href="#buffer-model" title="Permanent link">&para;</a></h3>
 <ul>
@@ -26157,7 +26157,7 @@
 <li><strong>略称</strong>: CoPP (Control Plane Policing)</li>
 <li><strong>日本語訳</strong>: 制御プレーンポリシング</li>
 <li><strong>説明</strong>: 制御プレーン宛トラフィックをトラップして CPU に転送する SAI Hostif Trap 機能。SONiC では <code>copp_cfg.json</code> と <code>copporch</code> で制御。</li>
-<li><strong>関連</strong>: <a href="../topic/07-acl-copp-mirror.md">ACL/CoPP/Mirror トピック</a></li>
+<li><strong>関連</strong>: <a href="../../topics/07-acl-copp-mirror/">ACL/CoPP/Mirror トピック</a></li>
 </ul>
 <h3 id="countersyncd">CounterSyncd<a class="headerlink" href="#countersyncd" title="Permanent link">&para;</a></h3>
 <ul>
@@ -26198,7 +26198,7 @@
 <li><strong>略称</strong>: ECMP (Equal-Cost Multi-Path)</li>
 <li><strong>日本語訳</strong>: 等コストマルチパス</li>
 <li><strong>説明</strong>: 同コストの複数経路に対しハッシュベースでフローを分散する機能。SONiC では SAI Next Hop Group で実装。</li>
-<li><strong>関連</strong>: <a href="../topic/vrf-ecmp.md">VRF/ECMP トピック</a></li>
+<li><strong>関連</strong>: <a href="../../topics/04-vrf-ecmp/">VRF/ECMP トピック</a></li>
 </ul>
 <h3 id="eni">ENI<a class="headerlink" href="#eni" title="Permanent link">&para;</a></h3>
 <ul>
@@ -26212,7 +26212,7 @@
 <li><strong>略称</strong>: EVPN (Ethernet VPN)</li>
 <li><strong>日本語訳</strong>: EVPN</li>
 <li><strong>説明</strong>: BGP EVPN (RFC 7432) を用いた L2/L3 オーバーレイ制御プレーン。SONiC では FRR <code>bgpd</code> で実装。</li>
-<li><strong>関連</strong>: <a href="../topic/vxlan-evpn-vnet.md">VXLAN EVPN VNET トピック</a></li>
+<li><strong>関連</strong>: <a href="../../topics/03-vxlan-evpn/">VXLAN EVPN VNET トピック</a></li>
 </ul>
 <h2 id="f">F<a class="headerlink" href="#f" title="Permanent link">&para;</a></h2>
 <h3 id="fdb">FDB<a class="headerlink" href="#fdb" title="Permanent link">&para;</a></h3>
@@ -26244,14 +26244,14 @@
 <li><strong>略称</strong>: fpmsyncd</li>
 <li><strong>日本語訳</strong>: FPM 同期デーモン</li>
 <li><strong>説明</strong>: FRR <code>zebra</code> からの FPM メッセージを受信し、APPL_DB の <code>ROUTE_TABLE</code> / <code>LABEL_ROUTE_TABLE</code> に書き込む SwSS コンポーネント。</li>
-<li><strong>関連</strong>: <a href="#frr">FRR</a>、<a href="../topic/bgp.md">BGP トピック</a></li>
+<li><strong>関連</strong>: <a href="#frr">FRR</a>、<a href="../../topics/02-bgp/">BGP トピック</a></li>
 </ul>
 <h3 id="frr">FRR<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>略称</strong>: FRR (FRRouting)</li>
 <li><strong>日本語訳</strong>: FRRouting</li>
 <li><strong>説明</strong>: SONiC が採用するルーティングスタック。<code>bgpd</code> / <code>zebra</code> / <code>staticd</code> 等を含む。<code>docker-fpm-frr</code> コンテナ内で動く。</li>
-<li><strong>関連</strong>: <a href="../topic/bgp.md">BGP トピック</a></li>
+<li><strong>関連</strong>: <a href="../../topics/02-bgp/">BGP トピック</a></li>
 </ul>
 <h2 id="g">G<a class="headerlink" href="#g" title="Permanent link">&para;</a></h2>
 <h3 id="gnmi">gNMI<a class="headerlink" href="#gnmi" title="Permanent link">&para;</a></h3>
@@ -26298,7 +26298,7 @@
 <li><strong>略称</strong>: LACP (Link Aggregation Control Protocol)</li>
 <li><strong>日本語訳</strong>: LACP</li>
 <li><strong>説明</strong>: IEEE 802.1AX のリンク集約プロトコル。SONiC では <code>teamd</code> (libteam) で実装。</li>
-<li><strong>関連</strong>: <a href="../topic/l2-vlan-lag.md">L2/VLAN/LAG トピック</a></li>
+<li><strong>関連</strong>: <a href="../../topics/06-l2-vlan-lag/">L2/VLAN/LAG トピック</a></li>
 </ul>
 <h3 id="lag">LAG<a class="headerlink" href="#lag" title="Permanent link">&para;</a></h3>
 <ul>
@@ -26540,14 +26540,14 @@
 <li><strong>略称</strong>: VNET (Virtual Network)</li>
 <li><strong>日本語訳</strong>: VNET</li>
 <li><strong>説明</strong>: SONiC オーバーレイ / DASH 双方で使われるテナント仮想ネットワーク概念。CONFIG_DB の <code>VNET</code> テーブルで定義。</li>
-<li><strong>関連</strong>: <a href="../topic/vxlan-evpn-vnet.md">VXLAN EVPN VNET トピック</a></li>
+<li><strong>関連</strong>: <a href="../../topics/03-vxlan-evpn/">VXLAN EVPN VNET トピック</a></li>
 </ul>
 <h3 id="vrf">VRF<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>略称</strong>: VRF (Virtual Routing and Forwarding)</li>
 <li><strong>日本語訳</strong>: VRF</li>
 <li><strong>説明</strong>: ルーティングテーブル分離機構。Linux VRF デバイスと SAI Virtual Router の双方で実現。</li>
-<li><strong>関連</strong>: <a href="../topic/vrf-ecmp.md">VRF/ECMP トピック</a></li>
+<li><strong>関連</strong>: <a href="../../topics/04-vrf-ecmp/">VRF/ECMP トピック</a></li>
 </ul>
 <h3 id="vrfmgrd">vrfmgrd<a class="headerlink" href="#vrfmgrd" title="Permanent link">&para;</a></h3>
 <ul>
