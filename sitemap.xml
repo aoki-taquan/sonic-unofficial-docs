@@ -193,6 +193,22 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/error-handling-framework-in-sonic-concepts/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/error-handling-framework-in-sonic-internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/error-handling-framework-in-sonic-limitations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/error-handling-framework-in-sonic-operations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/error-handling-framework-in-sonic/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -414,6 +430,22 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/dump-utility-for-easy-debugging/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/l3-scaling-and-performance-enhancements-concepts/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/l3-scaling-and-performance-enhancements-internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/l3-scaling-and-performance-enhancements-limitations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/l3-scaling-and-performance-enhancements-operations/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -742,6 +774,22 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/fabric-port-support-on-sonic/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/fec-flr-support-in-sonic-concepts/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/fec-flr-support-in-sonic-internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/fec-flr-support-in-sonic-limitations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/fec-flr-support-in-sonic-operations/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
