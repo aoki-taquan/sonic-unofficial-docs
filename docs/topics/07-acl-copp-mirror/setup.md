@@ -6,6 +6,7 @@ last_verified: 2026-05-10
 sources:
   - docs/reference/cli/config-acl.md
   - docs/reference/cli/show-acl.md
+  - docs/reference/cli/config-mirror-session.md
   - docs/reference/config-db/acl-table.md
   - docs/reference/config-db/acl-rule.md
   - docs/reference/config-db/policer.md
@@ -76,10 +77,217 @@ CoPP は `COPP_TRAP` が trap ID 群を定義し、`COPP_GROUP` が CPU queue �
 
 YANG の正本は `sonic-copp` で、`COPP_GROUP` と `COPP_TRAP` の tree、leaf、leafref を確認できます。mirror session の YANG は `sonic-mirror-session` で、ERSPAN / SPAN の必須条件や `POLICER` への leafref を確認できます。
 
+## 典型シナリオ 1: 上位 uplink で source IP filter ACL を入れる
+
+「上位 spine から特定 prefix (10.0.0.0/8) しか受け取らない」というケース。
+
+### CLI と JSON
+
+```bash
+# 1. ingress ACL table を作る
+sudo config acl add table UPLINK_FILTER L3 -p PortChannel10,PortChannel20 -s ingress
+```
+
+rule JSON (`/tmp/uplink_filter.json`):
+
+```json
+{
+  "ACL_RULE": {
+    "UPLINK_FILTER|ALLOW_10_8": {
+      "PRIORITY": "9999",
+      "SRC_IP": "10.0.0.0/8",
+      "PACKET_ACTION": "FORWARD"
+    },
+    "UPLINK_FILTER|DENY_ANY": {
+      "PRIORITY": "1",
+      "SRC_IP": "0.0.0.0/0",
+      "PACKET_ACTION": "DROP"
+    }
+  }
+}
+```
+
+投入:
+
+```bash
+sudo acl-loader update incremental /tmp/uplink_filter.json
+```
+
+CONFIG_DB の表現:
+
+```json
+{
+  "ACL_TABLE": {
+    "UPLINK_FILTER": {
+      "type": "L3",
+      "stage": "ingress",
+      "ports@": "PortChannel10,PortChannel20",
+      "policy_desc": "uplink prefix filter"
+    }
+  },
+  "ACL_RULE": {
+    "UPLINK_FILTER|ALLOW_10_8": {
+      "PRIORITY": "9999",
+      "SRC_IP": "10.0.0.0/8",
+      "PACKET_ACTION": "FORWARD"
+    },
+    "UPLINK_FILTER|DENY_ANY": {
+      "PRIORITY": "1",
+      "SRC_IP": "0.0.0.0/0",
+      "PACKET_ACTION": "DROP"
+    }
+  }
+}
+```
+
+`ports@` の末尾の `@` は ConfigDB の list 型表記です。CLI 経由なら自動付与されます。
+
+### 確認
+
+```bash
+show acl table UPLINK_FILTER
+show acl rule UPLINK_FILTER
+```
+
+`show acl table` の典型出力:
+
+```text
+Name            Type    Binding             Description           Stage
+--------------  ------  ------------------  --------------------  -------
+UPLINK_FILTER   L3      PortChannel10       uplink prefix filter  ingress
+                        PortChannel20
+```
+
+`show acl rule UPLINK_FILTER`:
+
+```text
+Table          Rule          Priority    Action    Match
+-------------  ------------  ----------  --------  -------------------
+UPLINK_FILTER  ALLOW_10_8    9999        FORWARD   SRC_IP: 10.0.0.0/8
+UPLINK_FILTER  DENY_ANY      1           DROP      SRC_IP: 0.0.0.0/0
+```
+
+`show acl rule` の counter 列 (`Packets`/`Bytes`) は `aclshow` を使うと数値で見えます。
+
+## 典型シナリオ 2: ERSPAN mirror session を ACL から起動する
+
+特定 TCP flag が立った flow だけを collector に飛ばす。
+
+```json
+{
+  "MIRROR_SESSION": {
+    "investig8": {
+      "src_ip": "10.1.0.1",
+      "dst_ip": "10.99.0.10",
+      "gre_type": "0x88be",
+      "dscp": "8",
+      "ttl": "64",
+      "queue": "0"
+    }
+  },
+  "ACL_TABLE": {
+    "MIRROR_ACL": {
+      "type": "MIRROR",
+      "stage": "ingress",
+      "ports@": "Ethernet0"
+    }
+  },
+  "ACL_RULE": {
+    "MIRROR_ACL|TCP_SYN": {
+      "PRIORITY": "9000",
+      "IP_PROTOCOL": "6",
+      "TCP_FLAGS": "0x02/0x02",
+      "MIRROR_INGRESS_ACTION": "investig8"
+    }
+  }
+}
+```
+
+確認:
+
+```bash
+show mirror_session
+```
+
+```text
+ERSPAN Sessions
+Name        Status    SRC IP     DST IP       GRE     DSCP    TTL    Queue
+----------  --------  ---------  -----------  ------  ------  -----  ------
+investig8   active    10.1.0.1   10.99.0.10   0x88be  8       64     0
+```
+
+`Status: error` の場合は dst_ip への route 未到達か、underlay reachability の問題。
+
+## 典型シナリオ 3: BGP control-plane traffic の CoPP rate を上げる
+
+default の BGP CoPP rate を引き上げて、フラップ復旧時の neighbor 再収束を速くする。
+
+```json
+{
+  "COPP_GROUP": {
+    "queue4_group2": {
+      "queue": "4",
+      "trap_action": "trap",
+      "trap_priority": "4",
+      "cbs": "6000",
+      "cir": "6000"
+    }
+  },
+  "COPP_TRAP": {
+    "bgp": {
+      "trap_ids": "bgp,bgpv6",
+      "trap_group": "queue4_group2"
+    }
+  }
+}
+```
+
+確認:
+
+```bash
+show copp -t bgp
+show copp config
+```
+
+`COPP_TRAP.trap_ids` の値は `coppmgr` が認識する hostif trap 名のリストです (`arp,bgp,bgpv6,dhcp,...`)。誤った trap 名は無視されるため、`docker logs swss` で `Unknown trap id` を確認できます。
+
+## sonic-cfggen で投入する場合
+
+```bash
+sonic-cfggen -a "$(cat copp_patch.json)" --write-to-db
+config save -y
+```
+
+`acl-loader` 経由でない `config_db.json` 直接書き換えは reboot しないと swss が認識しません。runtime 反映には `acl-loader update incremental` を使う方が安全です。
+
+## よくある設定エラーと対処
+
+`sonic-utilities/acl_loader/main.py` の `AclLoaderException` から抜粋:
+
+| エラーメッセージ | 原因 | 対処 |
+|---|---|---|
+| `Table <name> does not exist` | rule の table 名が table 未作成 | 先に `config acl add table` |
+| `Session <name> does not exist` | mirror action から未存在 session を参照 | 先に MIRROR_SESSION を作成 |
+| `Invalid input file <path>` | JSON の構文 / schema 不正 | jq で構文を確認 |
+| `Unknown rule action <action> in table <t>, rule <r>` | action 名 typo | reference の action 一覧を確認 |
+| `Rule action <action> is not supported in table <t>, rule <r>` | table type と action 不整合 (例: L3 table に mirror action) | table type を `MIRROR` 系に変更 |
+| `Mirroring session does not exist` | mirror action 参照先 不在 | 先に session 作成 |
+| `Invalid mirror stage passed <stage>` | stage 値 typo | `ingress` / `egress` のいずれか |
+| `IP_PROTOCOL=<n> is not TCP, but TCP flags were provided` | protocol 不一致 | `IP_PROTOCOL=6` か TCP_FLAGS 削除 |
+| `IP_PROTOCOL=<n> is not ICMP, but ICMP fields were provided` | protocol 不一致 | `IP_PROTOCOL=1` か ICMP field 削除 |
+| `IP_PROTOCOL=<n> is not ICMPV6, but ICMPV6 fields were provided` | protocol 不一致 | `IP_PROTOCOL=58` か ICMPV6 field 削除 |
+| `VLAN ID <n> is out of bounds (0, 4096)` | match の VLAN_ID 範囲外 | 1〜4094 に修正 |
+| `ICMP type/code <n> is out of bounds [0, 255]` | match の ICMP 値範囲外 | 0〜255 に修正 |
+| `l2:ethertype must be provided for rule in table type L3V4V6` | dual family table で ethertype 必須 | `ETHER_TYPE` を追加 |
+| `ethertype=<n> is neither ETHERTYPE_IPV4 nor ETHERTYPE_IPV6 for IP rule` | ethertype 値が IPv4/IPv6 外 | `0x0800` または `0x86dd` を指定 |
+
+action / match 制約は ASIC capability に依存する部分があるため、SAI レイヤで弾かれた場合は `swss` syslog に `SAI_STATUS_NOT_SUPPORTED` が出ます。
+
 ## 関連ページ
 
 - [config acl サブコマンド](../../reference/cli/config-acl.md)
 - [show acl サブコマンド](../../reference/cli/show-acl.md)
+- [config mirror_session サブコマンド](../../reference/cli/config-mirror-session.md)
 - [ACL_TABLE テーブル](../../reference/config-db/acl-table.md)
 - [ACL_RULE テーブル](../../reference/config-db/acl-rule.md)
 - [POLICER テーブル](../../reference/config-db/policer.md)
