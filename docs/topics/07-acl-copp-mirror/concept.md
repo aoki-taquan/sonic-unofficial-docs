@@ -11,13 +11,73 @@ sources:
 
 # 概念
 
-ACL は「どのパケットに、どの action を適用するか」を表す仕組みです。SONiC では `ACL_TABLE` が適用段、bind 先、table type を決め、`ACL_RULE` が priority、match、action を決めます。まず table type を読むと、その後の設定や運用で迷いにくくなります。
+ACL（Access Control List）と CoPP（Control Plane Policing）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、**それぞれが解いている問題は別** です。最初にこの 3 つを分けて理解しておかないと、`ACL_TABLE` / `COPP_TRAP` / `MIRROR_SESSION` の使い分けで迷うことになります。
+
+## この 3 機能は何を解決するか
+
+| 機能 | 解いている問題 |
+| --- | --- |
+| ACL | data plane に流れるパケットを **classify して、許可 / 拒否 / リダイレクト / カウント / ミラー / DSCP 書き換え** などの action を当てる |
+| CoPP | ASIC から CPU へ punt される **control plane traffic（BGP / LLDP / ARP / DHCP 等）を policer で守る** |
+| Mirror | 観測したいトラフィックを **指定先（local port / GRE encap / ERSPAN）へコピー** する |
+
+つまり ACL は「data plane の流量制御 + 分類」、CoPP は「CPU 行きトラフィックの DDoS 防御」、Mirror は「観測 / トラブルシュート用のコピー」が主目的です。3 つは独立した機能ですが、SAI 上では policer / counter / ACL entry など部品を共有します。
+
+## SONiC の中での位置
+
+| 軸 | 担当 |
+| --- | --- |
+| Management plane | `config acl`, `acl-loader`, CoPP の `copp_cfg.j2`, `MIRROR_SESSION` CONFIG_DB |
+| Control plane | aclmgrd, AclOrch, CoppOrch, MirrorOrch |
+| Data plane | SAI ACL table / entry, SAI policer, SAI mirror session, hostif trap |
+
+ACL / CoPP / Mirror はいずれも **ASIC の限られたリソース（TCAM、policer、mirror engine）を取り合う** ため、運用上は容量 / 優先度の設計が中心になります。
+
+## 最初に押さえる用語
+
+| 用語 | 意味 |
+| --- | --- |
+| `ACL_TABLE` | ACL の適用段、bind 先、type（L3 / L3V6 / MIRROR / CTRLPLANE / DROP / EGR_SET_DSCP 等）を決める |
+| `ACL_RULE` | priority、match field、action を持つ個別ルール |
+| Stage | `ingress` / `egress`。bind 先（PORT / LAG / VLAN / SWITCH）と組み合わさる |
+| Table type | L3 / MIRROR / CTRLPLANE などの分類。利用可能な match / action / bind point が決まる |
+| `COPP_TRAP` / `COPP_GROUP` | CPU に punt する trap 種別と policer の組 |
+| Hostif trap | SAI 上の "CPU 行きにする" 設定。BGP / ARP / LLDP / DHCP / IP2ME など |
+| `MIRROR_SESSION` | mirror 先（dst IP / GRE type / queue 等）の定義 |
+| ERSPAN | encapsulated RSPAN。GRE で remote 先へ mirror パケットを送る方式 |
+| acl-loader | JSON 形式の ACL 定義を CONFIG_DB に流し込むツール |
 
 ## Table Type が決めること
 
 `L3`、`L3V6`、`L3V4V6` は通常の IP ACL、`MIRROR` / `MIRRORV6` は mirror 用、`CTRLPLANE` は CoPP 系、`DROP` は drop 用の最適化、`EGR_SET_DSCP` は egress DSCP 書換のように、type は単なるラベルではありません。type ごとに利用できる match field、action、bind point、stage が変わります。
 
 同じ `ACL_RULE` でも、`PACKET_ACTION=DROP` を使うのか、`MIRROR_INGRESS_ACTION` を使うのか、`POLICER` を参照するのかは table type と stage の組み合わせに依存します。設定を読むときは、個々の rule からではなく、先に所属 table を確認します。
+
+## 典型的な使用シーン
+
+### シーン 1: 入口 ACL で DDoS をドロップ + ミラーで観測
+
+```mermaid
+flowchart LR
+  Pkt[受信パケット] --> Cls{ACL_TABLE<br/>type=L3<br/>stage=ingress}
+  Cls -->|match: 攻撃 src| Drop[PACKET_ACTION=DROP<br/>+ counter]
+  Cls -->|match: 観測対象| Mir[MIRROR_INGRESS_ACTION]
+  Mir --> Sess[MIRROR_SESSION<br/>ERSPAN to collector]
+  Cls -->|miss| Fwd[通常 forward]
+```
+
+### シーン 2: BGP / LLDP が CPU で詰まらないようにする CoPP
+
+```mermaid
+flowchart LR
+  ASIC[ASIC ingress] -->|hostif trap: BGP| Tg[COPP_TRAP: bgp]
+  ASIC -->|hostif trap: LLDP| Tg2[COPP_TRAP: lldp]
+  Tg --> Gr[COPP_GROUP: control<br/>policer 5kpps]
+  Tg2 --> Gr
+  Gr --> CPU[CPU queue]
+```
+
+`COPP_TRAP` で「どの trap を CPU に上げるか」、`COPP_GROUP` で「どの policer / CPU queue に乗せるか」を決めます。policer を緩めすぎると CPU 飽和、厳しすぎると BGP keepalive がドロップして session が落ちます。
 
 ## ACL / CoPP / Mirror の境界
 
@@ -44,6 +104,23 @@ ACL counter は「この rule に何パケット hit したか」に答えます
 ## P4 / DASH ACL の置き場所
 
 DASH ACL は通常の `ACL_TABLE` / `ACL_RULE` と同じ名前空間ではなく、DASH 用 APP_DB テーブルと DASH orch の流れで扱われます。この章では「ACL と似た分類・action 概念を持つ派生領域」として位置付け、詳細は発展トピックから辿ります。
+
+## 似た / 混同しやすい機能との違い
+
+| 比較対象 | 違い |
+| --- | --- |
+| ACL (data plane) vs CoPP | ACL はどのポートから来た data も分類、CoPP は CPU 行きだけを守る |
+| ACL の mirror action vs `MIRROR_SESSION` | 前者は ACL rule の action として 1 つの session を参照、後者は session そのものの定義 |
+| Mirror vs sFlow | Mirror は full-packet コピー、sFlow は sampling + UDP 送信 |
+| Drop counter vs ACL counter | 前者は ASIC の drop reason、後者は ACL rule の hit。重なるが粒度と意味が違う |
+| TCAM ACL vs DASH ACL | 前者は SAI ACL table、後者は DASH orchestration による policy table |
+
+## 読み終わったあとにできるようになること
+
+- ACL / CoPP / Mirror の責務を 1 行で説明できる。
+- ACL rule を読むときに、所属 `ACL_TABLE` の type と stage を先に確認する習慣がつく。
+- CPU 負荷の問題を「CoPP policer が緩い / 厳しすぎ / 該当 trap が落ちている」のどれかに切り分けられる。
+- パケットキャプチャ / 観測の要件を、ACL mirror action と `MIRROR_SESSION` のどちらで実現するか選べる。
 
 ## 関連ページ
 
