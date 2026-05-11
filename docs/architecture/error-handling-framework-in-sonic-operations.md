@@ -1,0 +1,92 @@
+---
+title: Error Handling Framework 設定・運用（show / clear error-database / ERROR_DB スキーマ）
+description: "Error Handling Framework HLD の CLI / ERROR_DB スキーマ。`show error-database` / `sonic-clear error-database` の使い方（HLD 提案、現行 master 未実装）、ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE のフィールド、イベント遷移表をまとめる。"
+area: architecture
+verification: discrepancy-found
+last_verified: 2026-05-11
+page_kind: split-child
+monitor: partially_implemented
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/error-handling/error_handling_design_spec.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli:
+    - show error-database
+    - sonic-clear error-database
+  yang: []
+---
+
+# Error Handling Framework 設定・運用
+
+このページは [Error Handling Framework（概要ハブ）](error-handling-framework-in-sonic.md) の派生で、**CLI / ERROR_DB スキーマ / イベント遷移** に絞る。概念は [error-handling-framework-in-sonic-concepts.md](error-handling-framework-in-sonic-concepts.md)、内部実装は [error-handling-framework-in-sonic-internals.md](error-handling-framework-in-sonic-internals.md)、制限事項と乖離は [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md) を参照。
+
+!!! warning "現行 master では未実装"
+    本ページに記載した CLI / ERROR_DB は **HLD 提案** であり、現行 master では `show error-database` / `sonic-clear error-database` ともに未実装。代替手段は [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md) を参照。
+
+## 1. ERROR_DB スキーマ（HLD 提案）
+
+### ERROR_ROUTE_TABLE
+
+```
+ERROR_ROUTE_TABLE|<prefix>
+  operation = CREATE | SET | DELETE
+  nexthop   = <ip>[, <ip>...]
+  intf      = <ifindex csv>
+  rc        = <SWSS_RC_*>
+```
+
+### ERROR_NEIGH_TABLE
+
+```
+ERROR_NEIGH_TABLE|(INTF_TABLE|VLAN_INTF_TABLE|LAG_INTF_TABLE).name|<prefix>
+  operation = CREATE | SET | DELETE
+  neigh     = <mac>
+  family    = IPv4 | IPv6
+  rc        = <SWSS_RC_*>
+```
+
+`rc` は SWSS_RC_FULL（TABLE_FULL）など SWSS code を文字列で持つ想定。
+
+## 2. イベント遷移
+
+| 直前 | 今回 | framework 動作 |
+|------|------|----------------|
+| Create failure | Update failure | エントリ更新 + 通知 |
+| Create failure | Delete failure | エントリ削除 + 通知 |
+| Create failure | Update success | エントリ削除 + 通知 |
+| Create success | Delete failure | エントリ追加 + 通知 |
+| Delete failure | Create success | エントリ削除 + 通知 |
+
+正常完了系はデフォルトで ERROR_DB に書かない。`ERR_NOTIFY_POSITIVE_ACK` 指定時のみ通知[^1]。
+
+## 3. CLI
+
+| Command | 用途 |
+|---------|------|
+| `show error-database [TableName]` | 現在の失敗エントリ表示 |
+| `sonic-clear error-database [TableName]` | エントリ全削除（OrchAgent は同期削除のみ実施し app 通知はしない）|
+
+```
+Router# show error-database route
+Route             Nexthop                Operation  Failure
+2.2.2.0/24        10.10.10.2             Create     TABLE FULL
+192.168.10.12/24  12.12.10.2,11.11.11.2  Update     PARAM
+```
+
+## 4. Warm boot / scalability
+
+- ERROR_DB は **warm boot 越しに永続化されない**[^1]
+- scalability への直接影響は無いと記述
+
+## 関連ページ
+
+- [Error Handling Framework（概要ハブ）](error-handling-framework-in-sonic.md)
+- [error-handling-framework-in-sonic-concepts.md](error-handling-framework-in-sonic-concepts.md)
+- [error-handling-framework-in-sonic-internals.md](error-handling-framework-in-sonic-internals.md)
+- [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md)
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/error-handling/error_handling_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

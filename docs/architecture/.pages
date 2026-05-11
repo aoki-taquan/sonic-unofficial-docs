@@ -40,6 +40,10 @@ nav:
   - 1-udev-rules-design-for-terminal-server.md
   - debug-framework-in-sonic.md
   - error-handling-framework-in-sonic.md
+  - error-handling-framework-in-sonic-concepts.md
+  - error-handling-framework-in-sonic-operations.md
+  - error-handling-framework-in-sonic-internals.md
+  - error-handling-framework-in-sonic-limitations.md
   - s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md
   - sonic-bulk-counter-design.md
   - sonic-trap-flow-counter-design.md

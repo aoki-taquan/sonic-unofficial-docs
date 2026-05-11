@@ -13,6 +13,10 @@ nav:
   - everflow-support-on-voq-chassis.md
   - fabric-port-support-on-sonic.md
   - fec-flr-support-in-sonic.md
+  - fec-flr-support-in-sonic-concepts.md
+  - fec-flr-support-in-sonic-operations.md
+  - fec-flr-support-in-sonic-internals.md
+  - fec-flr-support-in-sonic-limitations.md
   - media-based-port-settings-in-sonic.md
   - recirculation-port-support-on-voq-chassis.md
   - sonic-port-fec-ber.md

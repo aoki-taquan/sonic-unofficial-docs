@@ -12,4 +12,8 @@ nav:
   - sonic-flexcounter-refactor.md
   - dump-utility-for-easy-debugging.md
   - l3-scaling-and-performance-enhancements.md
+  - l3-scaling-and-performance-enhancements-concepts.md
+  - l3-scaling-and-performance-enhancements-operations.md
+  - l3-scaling-and-performance-enhancements-internals.md
+  - l3-scaling-and-performance-enhancements-limitations.md
   - why-need-health-check.md

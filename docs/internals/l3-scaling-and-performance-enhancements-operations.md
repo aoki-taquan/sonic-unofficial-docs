@@ -1,0 +1,112 @@
+---
+title: L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）
+description: "L3 Scaling と Performance 強化 HLD の設定・確認手順。kernel ARP/ND gc_thresh の sysctl 適用方法、COPP_TABLE での ARP/ND CoPP 上限の見直し、show arp / show ndp の応答短縮確認、bulk route programming の動作確認方法をまとめる。"
+area: internals
+verification: discrepancy-found
+last_verified: 2026-05-11
+page_kind: split-child
+monitor: partially_implemented
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - COPP_TABLE
+  cli:
+    - show arp
+    - show ndp
+  yang: []
+---
+
+# L3 Scaling と Performance 強化 設定・運用
+
+このページは [L3 Scaling と Performance 強化（概要ハブ）](l3-scaling-and-performance-enhancements.md) の派生で、**設定 / CLI / 確認手順** に絞る。概念は [l3-scaling-and-performance-enhancements-concepts.md](l3-scaling-and-performance-enhancements-concepts.md)、内部実装は [l3-scaling-and-performance-enhancements-internals.md](l3-scaling-and-performance-enhancements-internals.md)、制限事項と乖離は [l3-scaling-and-performance-enhancements-limitations.md](l3-scaling-and-performance-enhancements-limitations.md) を参照。
+
+## 1. CLI / CONFIG_DB / YANG
+
+新規 CLI / CONFIG_DB / YANG なし[^1]。設定は **kernel sysctl** と **`COPP_TABLE`** 値、CLI 改修（`show arp` 高速化）に閉じる。
+
+## 2. 関連する CONFIG_DB
+
+| Table | フィールド | 用途 |
+|-------|----------|------|
+| `COPP_TABLE` | ARP/ND group の `cir` / `cbs` | 600 → 8000 pps（HLD 提案。現行 master は 600 のまま）|
+| (`/etc/sysctl.d/...`) | `net.ipv4.neigh.default.gc_thresh1/2/3` 等 | kernel ARP cache（HLD 提案値と現行 default は乖離）|
+
+## 3. HLD 提案 vs 現行 default
+
+| パラメータ | 提案 (IPv4) | 提案 (IPv6) | 現行 default (v4/v6 共通) |
+|-----------|------------|------------|--------|
+| `gc_thresh1` | 16000 | 8000 | 1024 |
+| `gc_thresh2` | 32000 | 16000 | 2048 |
+| `gc_thresh3` | 48000 | 32000 | 4096 |
+| CoPP ARP/ND `cir` | 8000 pps | 8000 pps | 600 pps |
+
+HLD 値で運用したい場合は **自前で sysctl 上書きと CoPP 上書き** が必要（後述）。
+
+## 4. ARP/ND スケールを上げる sysctl 上書き
+
+恒久化（image rebuild 不要）:
+
+```bash
+sudo tee /etc/sysctl.d/99-arp-scale.conf <<EOF
+net.ipv4.neigh.default.gc_thresh1=8192
+net.ipv4.neigh.default.gc_thresh2=16384
+net.ipv4.neigh.default.gc_thresh3=32768
+net.ipv6.neigh.default.gc_thresh1=4096
+net.ipv6.neigh.default.gc_thresh2=8192
+net.ipv6.neigh.default.gc_thresh3=16384
+EOF
+sudo sysctl --system
+```
+
+確認:
+
+```bash
+cat /proc/sys/net/ipv4/neigh/default/gc_thresh3
+cat /proc/sys/net/ipv6/neigh/default/gc_thresh3
+dmesg | grep -i "neighbour\|arp_cache" | tail
+```
+
+## 5. CoPP ARP/ND 上限の上書き
+
+runtime（再起動で揮発、`config_reload` でも copp_cfg.j2 由来の 600 に戻る）:
+
+```bash
+sonic-db-cli CONFIG_DB hset 'COPP_GROUP|queue4_group2' cir 8000 cbs 8000
+```
+
+恒久化するには `sonic-buildimage/files/image_config/copp/copp_cfg.j2` の `queue4_group2` の `cir`/`cbs` を編集してリビルド。
+
+## 6. show 系応答短縮の確認
+
+```bash
+time show arp
+time show ndp
+```
+
+旧版（VLAN L3 上 ARP の outgoing IF 解決で FDB 全件 fetch）では entry が大量だと秒〜分単位。新版は個別 FDB lookup でほぼ即時に近い応答[^1]。
+
+## 7. bulk route programming の動作確認
+
+```bash
+# RouteOrch のログ詳細化
+swssloglevel -l INFO -c routeorch
+
+# sairedis.rec で bulk を確認
+sudo grep -i "bulk" /var/log/swss/sairedis.rec | tail
+```
+
+`gRouteBulker(sai_route_api, gMaxBulkSize)` 経由で 64 件単位の bulk が走る[^1]。1 秒 timer flush で蓄積を吐き出す。
+
+## 関連ページ
+
+- [L3 Scaling と Performance 強化（概要ハブ）](l3-scaling-and-performance-enhancements.md)
+- [l3-scaling-and-performance-enhancements-concepts.md](l3-scaling-and-performance-enhancements-concepts.md)
+- [l3-scaling-and-performance-enhancements-internals.md](l3-scaling-and-performance-enhancements-internals.md)
+- [l3-scaling-and-performance-enhancements-limitations.md](l3-scaling-and-performance-enhancements-limitations.md)
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

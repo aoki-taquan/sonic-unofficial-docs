@@ -1,0 +1,94 @@
+---
+title: Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）
+description: "Error Handling Framework HLD の内部実装。OrchAgent が SAI 失敗を ASIC_DB notification channel 経由で受け取り ERROR_DB へ producer として書き込む経路、ErrorListener の register API と pub/sub 受信、SAI 失敗から SWSS_RC への翻訳点を解説する。"
+area: architecture
+verification: discrepancy-found
+last_verified: 2026-05-11
+page_kind: split-child
+monitor: partially_implemented
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/error-handling/error_handling_design_spec.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang: []
+---
+
+# Error Handling Framework 内部実装
+
+このページは [Error Handling Framework（概要ハブ）](error-handling-framework-in-sonic.md) の派生で、**producer / consumer 内部実装** に絞る。概念は [error-handling-framework-in-sonic-concepts.md](error-handling-framework-in-sonic-concepts.md)、CLI / スキーマは [error-handling-framework-in-sonic-operations.md](error-handling-framework-in-sonic-operations.md)、制限事項と乖離は [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md) を参照。
+
+## 1. Producer（OrchAgent）
+
+OrchAgent が **唯一の ERROR_DB producer** として位置づけられる[^1]:
+
+1. SAI 呼び出し失敗を **ASIC_DB の notification channel** 経由で syncd から受領
+2. SAI status → SWSS_RC のマッピングテーブルで翻訳
+3. 対象 table 名（`ROUTE_TABLE` / `NEIGH_TABLE` 等）と key を引いて ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE のキーを生成
+4. ERROR_DB に SET し、pub/sub channel に publish
+
+これにより syncd 内では fatal にせず継続し、エラー詳細を上位（OrchAgent → app）に伝える経路を確保する。
+
+## 2. Consumer（ErrorListener）
+
+App は `ErrorListener` を作って `Select` ループに addSelectable する[^1]:
+
+```cpp
+ErrorListener fpmErrorListener(APP_ROUTE_TABLE_NAME,
+    (ERR_NOTIFY_FAIL | ERR_NOTIFY_POSITIVE_ACK));
+Select s;
+s.addSelectable(&fpmErrorListener);
+```
+
+register の引数:
+
+- **table 名** — `APP_ROUTE_TABLE_NAME` など監視対象
+- **通知種別** — `ERR_NOTIFY_FAIL` / `ERR_NOTIFY_POSITIVE_ACK` のビット OR
+- **opcode フィルタ**（任意）— CREATE / DELETE / UPDATE
+
+複数 table を監視する場合は `ErrorListener` を複数 instance 生成。
+
+## 3. SAI 失敗 → SWSS_RC 翻訳
+
+OrchAgent 内部に SAI status → SWSS_RC のマップを持つ[^1]:
+
+```text
+SAI_STATUS_TABLE_FULL          → SWSS_RC_FULL
+SAI_STATUS_OBJECT_IN_USE       → SWSS_RC_IN_USE
+SAI_STATUS_INVALID_PARAMETER   → SWSS_RC_INVALID_PARAM
+SAI_STATUS_NOT_SUPPORTED       → SWSS_RC_UNAVAIL
+SAI_STATUS_ITEM_NOT_FOUND      → SWSS_RC_NOT_FOUND
+SAI_STATUS_NO_MEMORY           → SWSS_RC_NO_MEMORY
+SAI_STATUS_ITEM_ALREADY_EXISTS → SWSS_RC_EXISTS
+```
+
+app は `rc` フィールドだけ見ればよく、SAI ヘッダ依存が消える。
+
+## 4. Order 保証
+
+通知は **single notification channel** を経由するため、同一 entry の create→delete→create のような連続イベントが順序通りに app に届く設計[^1]。複数 channel を使ってしまうと race が起きるため、設計上 1 つに集約される。
+
+## 5. 現行 master 実装ファイル位置
+
+| コンポーネント | 状態 | ファイル |
+|---------------|------|---------|
+| `SWSS_RC_*` enum | ✓ 取り込み済み | `sonic-swss-common/common/status_code_util.h:11-25` |
+| `ERROR_DB` table 名 define | ⚠️ 未実装 | `sonic-swss-common/common/schema.h` に `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` のシンボル無し |
+| `ErrorListener` / `ErrorReporter` | ⚠️ 未実装 | `sonic-swss/orchagent/` 配下に該当クラス無し |
+| `show error-database` CLI | ⚠️ 未実装 | `sonic-utilities/` に該当無し |
+| 代替: CRM | ✓ production 稼働中 | `sonic-swss/orchagent/crmorch.cpp`、`show crm resources` |
+
+行番号付きの確認結果と grep 結果は [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md) を参照。
+
+## 関連ページ
+
+- [Error Handling Framework（概要ハブ）](error-handling-framework-in-sonic.md)
+- [error-handling-framework-in-sonic-concepts.md](error-handling-framework-in-sonic-concepts.md)
+- [error-handling-framework-in-sonic-operations.md](error-handling-framework-in-sonic-operations.md)
+- [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md)
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/error-handling/error_handling_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
