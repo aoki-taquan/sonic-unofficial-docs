@@ -15,6 +15,69 @@ PINS は SONiC 上に P4RT サービスを追加することで、外部の SDN 
 
 CLI / CONFIG_DB の reference 整備が PINS では他機能より薄いため (後述の「現時点で不足している reference」節を参照)、本ページの CONFIG_DB スキーマは HLD と既存実装（`sonic-buildimage/dockers/docker-sonic-p4rt`、`sonic-pins/`）から推定したものを示します。実機では必ず `redis-cli HGETALL` で実際のキーを確認してから運用に組み込んでください。
 
+## このページの読み方: PINS は controller-driven 系
+
+PINS は「運用者が `config p4rt ...` で 1 ルートずつ ACL / route / nexthop を入れる」プロダクトではありません。**人手で CLI を打つのは P4RT 自体の起動 / 証明書配備 / feature toggle あたりまで**で、データプレーンの設定 (route, ACL, nexthop, mirror, VRF など) は基本的に外部の **P4 controller** が P4Runtime gRPC で直接 ASIC に書き込みます。本ページの CLI / `redis-cli` 例は「P4RT を立ち上げる側」と「障害時の状態確認」を中心に据え、データプレーンの flow 投入は controller 側の責務であることを念頭に読んでください。
+
+代表的な設定経路は次の通りです。
+
+| 経路 | 用途 | 投入先 |
+|---|---|---|
+| P4 controller (P4Runtime gRPC) | 本番。ForwardingPipelineConfig + Write RPC で flow を大量投入 | `p4rt-app` 経由で `APPL_DB:P4RT_TABLE` → SAI |
+| gNMI (`/openconfig-interfaces:interfaces` 等) | port / VRF / interface の基盤側 | `CONFIG_DB` 各種 |
+| `config feature state p4rt enabled` / `redis-cli` | 初期セットアップ、証明書配置、コンテナ起動 | `CONFIG_DB:FEATURE`、`CONFIG_DB:P4RT` |
+| `config route` 等の通常 SONiC CLI | **PINS と併用するモードでは原則使わない**（P4 controller の所有権と競合） | — |
+
+典型的な投入フローは次の形になります。
+
+```
+P4 Controller
+  └─ SetForwardingPipelineConfig (P4Info + p4_device_config)
+       └─ p4rt-app (P4Runtime server on SONiC)
+            └─ APPL_DB:P4RT_TABLE
+                 └─ p4orch
+                      └─ SAI (ACL, route, nexthop, mirror, ...)
+                           └─ ASIC
+
+  └─ Write RPC (TableEntry / PacketOut)
+       └─ p4rt-app
+            └─ (PacketOut の場合) genetlink (psample) → kernel → send_to_ingress hostif → ASIC
+            └─ (TableEntry の場合) APPL_DB → SAI → ASIC
+                                    ↑
+                                 反映エラーは StreamMessageResponse / WriteResponse で controller に返る
+```
+
+確認も「controller 側で Read RPC を叩いて ForwardingPipelineConfig と TableEntry を取得する」が一次手段で、`show` CLI は副次的です (そもそも PINS 専用 `show` CLI はほぼ未整備)。エラーは **gRPC status code (`INVALID_ARGUMENT`, `UNAUTHENTICATED`, `RESOURCE_EXHAUSTED`, `FAILED_PRECONDITION` 等) と P4Runtime のメッセージ単位エラー** で controller に通知されます。
+
+## controller-driven 系のエラー対処
+
+PINS で controller 側が出すエラーは、層ごとに切り分けると見通しが良くなります。
+
+| 層 | 代表的な症状 (gRPC status) | 一次切り分け |
+|---|---|---|
+| トランスポート | `UNAVAILABLE`、`DEADLINE_EXCEEDED` | `ss -lntp \| grep 9559`、`docker ps \| grep p4rt`、ファイアウォール / ACL |
+| 認証 | `UNAUTHENTICATED`、`PERMISSION_DENIED` | mTLS の CA chain、`server_cert` / `client_auth`、証明書期限 |
+| 仲裁 | `ALREADY_EXISTS` / master 切替後の `PERMISSION_DENIED` | controller の `election_id`、`p4rt-app` ログの "Master arbitration" |
+| パイプライン | `INVALID_ARGUMENT` on `SetForwardingPipelineConfig` | P4Info と SAI capability 不整合、`--p4info` ログ |
+| フロー書込 | `WriteResponse` 内の per-entry `INVALID_ARGUMENT` / `RESOURCE_EXHAUSTED` | テーブル / アクションが SKU でサポートされているか、テーブル容量 |
+| PacketIO | PacketIn が来ない、PacketOut が ASIC に届かない | CoPP trap install、`psample` genl、`send_to_ingress` netdev |
+
+```bash
+# controller 視点に近い確認 (NPU 上で代替)
+docker logs p4rt 2>&1 | tail -100
+redis-cli -n 0 KEYS 'P4RT_TABLE*' | head
+redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_ACL_ENTRY:*' | wc -l
+
+# 反映失敗の SAI status
+grep -E 'SAI_STATUS_(NOT_SUPPORTED|FAILURE|TABLE_FULL)' /var/log/swss/sairedis.rec | tail
+
+# PacketIO 経路 (kernel 側の genetlink)
+ip link show send_to_ingress
+sudo tcpdump -i psample -n -c 5
+```
+
+CLI で「読むだけ」したいときは `show feature status p4rt` / `docker logs p4rt` / `redis-cli -n 0 HGETALL P4RT_TABLE:...` が中心で、`config` 系は **P4 controller の所有権と競合させない**ことが鉄則です。controller が管理しているテーブルに `config route add` や `config acl add` で書き込むと、controller 側の reconciliation で上書きされたり、逆に SONiC 側の view と SAI の view が乖離します。
+
 ## 全体フロー
 
 ```

@@ -17,7 +17,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     Route Pattern Orch / `CounterType::ROUTE_MATCH` の実装存在、`FLOW_COUNTER_ROUTE_PATTERN` の sonic-buildimage 取り込み、`config flowcnt-route` の sonic-utilities 取り込みは未確認。
 
 # Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）

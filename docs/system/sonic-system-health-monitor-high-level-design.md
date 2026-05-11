@@ -16,7 +16,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     `healthd`（system health monitor 本体）の現行 master 取り込み、`system_health_monitoring_config.json` のスキーマ、external_checkers の出力フォーマット、`/etc/supervisor/critical_processes` の運用実態は未裏取り。
 
 # System Health Monitor（critical service / Monit / peripheral）

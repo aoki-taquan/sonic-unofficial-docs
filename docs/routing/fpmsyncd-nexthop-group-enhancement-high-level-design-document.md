@@ -140,7 +140,7 @@ HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集また�
 - Fine-Grained / Ordered NHG との共存時の優先順位の実装挙動確認
 -->
 
-## 裏取りメモ (batch 30, 2026-05-11) — discrepancy-found
+## 実装との乖離（裏取りメモ (batch 30, 2026-05-11) — discrepancy-found）
 
 `sonic-swss/fpmsyncd/routesync.cpp` と `sonic-swss/fpmsyncd/routesync.h` を確認。HLD のコア部分は master に取り込み済み:
 

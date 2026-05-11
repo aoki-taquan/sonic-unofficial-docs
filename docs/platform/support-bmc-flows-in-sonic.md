@@ -18,7 +18,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     `sonic-platform-common` への `RedfishClient` / `ComponentBMC` 追加、`bmc.json` 読み込みと `DEVICE_METADATA|bmc` 書き込み、`interfaces.j2` での `usb0` static 設定生成、`generate-dump` への BMC dump 取得追加、`show platform bmc` 系 CLI の `sonic-utilities` 取り込みは実コードでの裏取り未済。
 
 # BMC / Redfish 統合（platform_common `RedfishClient` + `show platform bmc`）

@@ -183,7 +183,7 @@ DASH_ROUTE_GROUP_TABLE:{group_id}
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-## 裏取りメモ（Verifier batch 29）
+## 実装との乖離（裏取りメモ（Verifier batch 29））
 
 HLD が要件として掲げる以下の構成要素を現行 master の `sonic-gnmi` に確認できなかった。
 

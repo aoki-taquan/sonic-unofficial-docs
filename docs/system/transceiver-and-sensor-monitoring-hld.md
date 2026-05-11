@@ -16,7 +16,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     `xcvrd` の現行構造、`TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_STATUS` テーブルの現行スキーマ（CMIS 拡張で多数フィールド追加）、polling interval 60s の妥当性は未確認。
 
 # Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）

@@ -1,5 +1,5 @@
 ---
-title: Port Access Control（PAC: 802.1x / MAB / RADIUS）
+title: "Port Access Control（PAC: 802.1x / MAB / RADIUS）"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11

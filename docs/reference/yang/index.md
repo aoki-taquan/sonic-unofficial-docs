@@ -54,6 +54,7 @@ SONiC の YANG モデルは **CONFIG_DB スキーマの正本**として機能�
 - [sonic-route-common](sonic-route-common.md)
 - [sonic-route-map](sonic-route-map.md)
 - [sonic-vrf](sonic-vrf.md)
+- [sonic-srv6](sonic-srv6.md)
 
 ### L2 / ポート
 
@@ -83,6 +84,9 @@ SONiC の YANG モデルは **CONFIG_DB スキーマの正本**として機能�
 - [sonic-scheduler](sonic-scheduler.md)
 - [sonic-dscp-tc-map](sonic-dscp-tc-map.md)
 - [sonic-tc-queue-map](sonic-tc-queue-map.md)
+- [sonic-tc-priority-group-map](sonic-tc-priority-group-map.md)
+- [sonic-pfc-priority-queue-map](sonic-pfc-priority-queue-map.md)
+- [sonic-pfc-priority-priority-group-map](sonic-pfc-priority-priority-group-map.md)
 
 ### システム
 
@@ -90,7 +94,18 @@ SONiC の YANG モデルは **CONFIG_DB スキーマの正本**として機能�
 - [sonic-device_metadata](sonic-device_metadata.md)
 - [sonic-syslog](sonic-syslog.md)
 - [sonic-system-aaa](sonic-system-aaa.md)
+- [sonic-system-tacacs](sonic-system-tacacs.md)
+- [sonic-system-radius](sonic-system-radius.md)
+- [sonic-system-ldap](sonic-system-ldap.md)
 - [sonic-ntp](sonic-ntp.md)
+- [sonic-snmp](sonic-snmp.md)
+- [sonic-sflow](sonic-sflow.md)
+- [sonic-banner](sonic-banner.md)
+- [sonic-ssh-server](sonic-ssh-server.md)
+- [sonic-passw-hardening](sonic-passw-hardening.md)
+- [sonic-fips](sonic-fips.md)
+- [sonic-kdump](sonic-kdump.md)
+- [sonic-versions](sonic-versions.md)
 
 ## ナビゲーション運用
 

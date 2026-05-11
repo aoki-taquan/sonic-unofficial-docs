@@ -19,7 +19,7 @@ related:
     - sonic-vrf
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     本テストプランは Virtual Switch (VS) 上で `vrfmgrd` / `intfmgrd` / `Orchagent` が CONFIG_DB → APP_DB → ASIC_DB / Linux kernel に正しく VRF 設定を流すことを検証する設計記述。FRR / SAI 観点は別の ansible テストでカバー。
 
 # VRF VS テストプラン（`vrfmgrd` / `intfmgrd` / `Orchagent` → APP_DB / ASIC_DB / kernel）

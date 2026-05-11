@@ -20,7 +20,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     本テストプランの設計記述。`hostcfgd` による PAM (`/etc/pam.d/common-auth-sonic`) 生成、`config tacacs` CLI、failthrough オプション、loopback source IP の挙動の現行 master 実装は未裏取り。
 
 # TACACS+ 認証テストプラン（`pam_tacplus` + ssh login）

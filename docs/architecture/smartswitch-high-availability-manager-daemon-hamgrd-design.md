@@ -1,5 +1,5 @@
 ---
-title: SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
+title: "SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）"
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
