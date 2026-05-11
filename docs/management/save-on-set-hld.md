@@ -213,3 +213,19 @@ sudo systemctl restart telemetry
 HLD の「Set ごとに ConfigDB を JSON に永続化、コンテナ内では完結せず host DBUS 経由」「既定は disabled、`--with-save-on-set` で有効化」が実コードと厳密に一致。`code-verified` に昇格。
 
 <!-- glossary-links-injected: 36c0149d5a9b -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CONFIG_DB
+
+- [TELEMETRY](../reference/config-db/telemetry.md)
+
+### 関連 Runbook
+
+- [config-save-diff-unexpected](../reference/runbooks/config-save-diff-unexpected.md)
+- [config-db-persistence-failure](../reference/runbooks/config-db-persistence-failure.md)
+
+<!-- /ops-entry -->

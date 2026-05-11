@@ -142,3 +142,15 @@ sequenceDiagram
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 8b4906c6c628 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 YANG
+
+- `openconfig`
+- `sonic-*`
+
+<!-- /ops-entry -->

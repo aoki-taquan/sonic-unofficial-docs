@@ -210,3 +210,18 @@ sudo config console-switch model simulator
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 20dbc11976b6 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CONFIG_DB
+
+- `CONSOLE_SWITCH`
+
+### 関連 YANG
+
+- `sonic-console`
+
+<!-- /ops-entry -->

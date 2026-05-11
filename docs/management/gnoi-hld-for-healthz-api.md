@@ -229,3 +229,14 @@ gnoi_client healthz acknowledge \
 -->
 
 <!-- glossary-links-injected: c671e32e187d -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `gnoi_client`
+
+<!-- /ops-entry -->

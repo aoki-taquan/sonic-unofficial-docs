@@ -138,3 +138,14 @@ P4Orch は **同一 ASIC table への複数 writer（RouteOrch 等）** を扱�
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: b59b552ea208 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 Runbook
+
+- [pins-grpc-unresponsive](../reference/runbooks/pins-grpc-unresponsive.md)
+
+<!-- /ops-entry -->

@@ -198,3 +198,26 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 800751a0842d -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config interface ip add`
+
+### 関連 CONFIG_DB
+
+- [VLAN_INTERFACE](../reference/config-db/vlan-interface.md)
+
+### 関連 YANG
+
+- [sonic-vlan](../reference/yang/sonic-vlan.md)
+
+### 関連 Runbook
+
+- [dhcp-relay](../reference/runbooks/dhcp-relay.md)
+
+<!-- /ops-entry -->

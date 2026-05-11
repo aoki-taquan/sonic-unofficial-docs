@@ -148,3 +148,19 @@ CONFIG_DB の Set 成功は `/etc/sonic/config_db.json` に永続化、APPL_DB �
 - [HLD: JSON patch ordering using YANG models](json-patch-ordering-using-yang-models.md)
 
 <!-- glossary-links-injected: f0f2a1d6c824 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config apply-patch`
+- `config reload`
+
+### 関連 Runbook
+
+- [gnmi-subscribe-disconnect](../reference/runbooks/gnmi-subscribe-disconnect.md)
+
+<!-- /ops-entry -->

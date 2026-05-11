@@ -261,3 +261,24 @@ gnmi_set -insecure -username admin -password sonicadmin \
 -->
 
 <!-- glossary-links-injected: 34da0d5f7679 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CONFIG_DB
+
+- [PORT](../reference/config-db/port.md)
+- [INTERFACE](../reference/config-db/interface.md)
+
+### 関連 YANG
+
+- `openconfig-interfaces`
+- `openconfig-if-ethernet`
+- `openconfig-if-ip`
+- `openconfig-if-aggregate`
+- [sonic-port](../reference/yang/sonic-port.md)
+- [sonic-interface](../reference/yang/sonic-interface.md)
+
+<!-- /ops-entry -->

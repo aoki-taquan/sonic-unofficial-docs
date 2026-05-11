@@ -121,3 +121,14 @@ docker ps | grep my-extension
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extension-guide.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- glossary-links-injected: 20dbc11976b6 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- [`sonic-package-manager`](../reference/cli/sonic-package-manager.md)
+
+<!-- /ops-entry -->

@@ -213,3 +213,22 @@ sudo config portchannel add PortChannel04    # ad-hoc 検証だけが走る
 [^1]: `sonic-net/SONiC` `doc/config_yang_validation/config_db_yang_validation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- glossary-links-injected: a0345c62ade3 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config yang_config_validation`
+
+### 関連 CONFIG_DB
+
+- [DEVICE_METADATA](../reference/config-db/device-metadata.md)
+
+### 関連 Runbook
+
+- [config-save-diff-unexpected](../reference/runbooks/config-save-diff-unexpected.md)
+
+<!-- /ops-entry -->

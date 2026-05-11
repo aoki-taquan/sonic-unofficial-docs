@@ -172,3 +172,23 @@ flowchart LR
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 9bd150521228 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- [`config aaa`](../reference/cli/config-aaa.md)
+- `config tacacs`
+- [`show aaa`](../reference/cli/show-aaa.md)
+- `show tacacs`
+
+### 関連 CONFIG_DB
+
+- `TACPLUS`
+- [TACPLUS_SERVER](../reference/config-db/tacplus-server.md)
+- [AAA](../reference/config-db/aaa.md)
+
+<!-- /ops-entry -->

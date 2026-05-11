@@ -204,3 +204,23 @@ show tacacs
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: a9c18564f33f -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config aaa authentication`
+- `config tacacs`
+- [`show aaa`](../reference/cli/show-aaa.md)
+- `show tacacs`
+
+### 関連 CONFIG_DB
+
+- [AAA](../reference/config-db/aaa.md)
+- `TACPLUS`
+- [TACPLUS_SERVER](../reference/config-db/tacplus-server.md)
+
+<!-- /ops-entry -->

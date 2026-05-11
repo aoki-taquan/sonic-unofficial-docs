@@ -209,3 +209,26 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: c4cccaa7fc71 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config console`
+- `show line`
+- `clear line`
+- `consutil`
+
+### 関連 CONFIG_DB
+
+- `CONSOLE_SWITCH`
+- [CONSOLE_PORT](../reference/config-db/console-port.md)
+
+### 関連 YANG
+
+- `sonic-console`
+
+<!-- /ops-entry -->

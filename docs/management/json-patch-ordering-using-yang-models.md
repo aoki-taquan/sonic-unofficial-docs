@@ -198,3 +198,22 @@ reasoning: create-only 拡張のセマンティクスを直接引用
 [^1]: [sonic-net/SONiC doc/config-generic-update-rollback/Json_Patch_Ordering_using_YANG_Models_Design.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/config-generic-update-rollback/Json_Patch_Ordering_using_YANG_Models_Design.md)
 
 <!-- glossary-links-injected: 8038cebfeb87 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config apply-patch`
+
+### 関連 YANG
+
+- `sonic-extension`
+
+### 関連 Runbook
+
+- [config-save-diff-unexpected](../reference/runbooks/config-save-diff-unexpected.md)
+
+<!-- /ops-entry -->
