@@ -1,8 +1,8 @@
 ---
 title: Fast-reboot Flow Improvements（finalizer / reconciliation）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md
@@ -108,3 +108,13 @@ dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC�
 - vendor NOS → SONiC ISSU dump 仕様の文書化状況確認
 - HLD 実測値（28s/25s）の現行マスターでの再現性確認
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+fast-reboot Flow Improvements の中核 (`warmboot-finalizer` の fast-reboot 兼用) は master に存在。
+
+- `warmboot-finalizer.service`: `.cache/sonic-sources/sonic-buildimage/files/image_config/warmboot-finalizer/warmboot-finalizer.service`
+- `finalize-warmboot.sh`: 同ディレクトリ。fast-reboot / warm-reboot 共通の reconciliation を行うシェルで、`sonic-db-cli STATE_DB` で各 component の `WARM_RESTART_TABLE` を監視して `reconcile` 完了を待つ
+- `restore_neighbors.py` 相当の neighbor 復元: `sonic-buildimage/files/image_config/` 配下に `restore_neighbors` 系スクリプトが存在（fast-reboot 経路の dataplane downtime 削減のために neighbor を ARP/ND の前に復元）
+
+HLD が掲げる「fast-reboot / warm-reboot で finalizer を共通化し、各 orch から WARM_RESTART_TABLE で reconcile 完了を通知する」構造は現行 master で稼働しているため `code-verified` に昇格。

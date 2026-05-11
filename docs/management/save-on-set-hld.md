@@ -1,8 +1,8 @@
 ---
 title: gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
 area: management
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/mgmt/gnmi/save_on_set.md
@@ -171,3 +171,13 @@ sudo systemctl restart telemetry
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/save_on_set.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+## 裏取りメモ（Verifier batch 29）
+
+`sonic-gnmi` の telemetry エントリポイントと Set ハンドラに Save-On-Set 実装を確認した。
+
+- CLI フラグ `--with-save-on-set`: `.cache/sonic-sources/sonic-gnmi/telemetry/telemetry.go` L63 (`WithSaveOnSet *bool`) / L189 (`fs.Bool("with-save-on-set", false, ...)`) / L583-L584 で `s.SaveStartupConfig = gnmi.SaveOnSetEnabled` を結線
+- `SaveOnSetEnabled()` 本体: `.cache/sonic-sources/sonic-gnmi/gnmi_server/server.go` L1051 以降。`ssc.NewDbusClient()` を作成し、`sc.ConfigSave("/etc/sonic/config_db.json")` で **ホスト側 DBUS 経由で ConfigDB を /etc/sonic/config_db.json に保存** する
+- `saveOnSetDisabled()` (L1068) で既定 (no-op) を実装
+
+HLD の「Set ごとに ConfigDB を JSON に永続化、コンテナ内では完結せず host DBUS 経由」「既定は disabled、`--with-save-on-set` で有効化」が実コードと厳密に一致。`code-verified` に昇格。

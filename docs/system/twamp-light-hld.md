@@ -1,8 +1,8 @@
 ---
 title: TWAMP Light（Session-Sender / Session-Reflector）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/TWAMP/SONiC-TWAMP-Ligth-HLD.md
@@ -147,3 +147,14 @@ session は warm/fast boot 越しに **保持しない**（再起動で再 creat
 - COUNTERS_DB TWAMP counter polling の現行 sonic-buildimage flex counter 取り込み確認
 - ASIC vendor 別 TWAMP offload 対応状況（capability 判定の網羅性）
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+per-page queue で既出の通り部分実装。再走査結果:
+
+- `twamporch` 実装: `.cache/sonic-sources/sonic-swss/orchagent/twamporch.{cpp,h}` 存在。`SAI_TWAMP_*` 属性 / `NotificationTwampSessionEvent` を扱う Session-Sender / Reflector の orch は master に取り込み済み
+- swss テスト: `.cache/sonic-sources/sonic-swss/tests/test_twamp.py`、`tests/mock_tests/twamporch_ut.cpp`、`tests/dvslib/dvs_twamp.py`
+- 一方、`sonic-buildimage/src/sonic-yang-models/yang-models/` に **`sonic-twamp-light.yang` が存在しない**
+- `sonic-utilities/config/` / `show/` 配下に **`twamp-light` CLI が存在しない**
+
+HLD が示すスタック全体のうち orch/SAI 層のみ取り込み済みで、YANG と CLI が未取り込み。`discrepancy-found` を維持。

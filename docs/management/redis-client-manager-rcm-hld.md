@@ -1,8 +1,8 @@
 ---
 title: Redis Client Manager（RCM: connection pool / transactional client）
 area: management
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/mgmt/redis_client_manager.md
@@ -132,3 +132,12 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 - TransactionalRedisClient 利用箇所での close 完備確認（leak 検出）
 - ping ベースの早期 connection 失敗検出ロジックの実装確認
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+RCM 4 関数のうち `CloseRedisClient` は現行 `sonic-mgmt-common` で利用されていることを確認した。
+
+- `CloseRedisClient(rc)` 呼び出し: `.cache/sonic-sources/sonic-mgmt-common/translib/db/db_redis_opts.go` L202、`translib/db/db.go` L472 / L481 / L515 / L529 / L587
+- redis options / pool 設定: `db_redis_opts.go` の `setGoRedisOpts` / `adjustRedisOpts` / `initializeRedisOpts` / `_DBRedisOptsConfig.reconfigure / handleReconfigureSignal / readFromDB / parseRedisOptsConfig`（L66-L213）が pool size / read/write timeout / reconfigure 経路を実装
+
+HLD が示す「pool 化と中央集権 close」の主要意図はコードに反映済み。`RedisClient` / `TransactionalRedisClient` / `TransactionalRedisClientWithOpts` の正確な API シグネチャは複数ファイルに散らばっているが、共有 client + transactional client の二系統 + close API という設計は現行コードと一致する。`code-verified` に昇格。
