@@ -172,6 +172,19 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は c
 - `sonic-swss/orchagent/p4orch/p4orch.h:46` に `class P4Orch : public ZmqOrch`、`p4orch_util.cpp` に `APP_P4RT_*_TABLE_NAME` の sub-table 定義群
 - `sonic-swss/orchagent/p4orch/ext_tables_manager.cpp:723` で `APP_P4RT_TABLE_NAME` 経由のレスポンス publish
 
+**差分の中身**: HLD は新規クラス `HashOrch` を **OrchAgent に追加**し、P4Info 由来の hash 設定を専任で扱うと示唆していた。実際には既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を購読し、`SWITCH_HASH_FIELD_*` → `SAI_NATIVE_HASH_FIELD_*` の対応表 (`switch_helper.cpp:24-`) で SAI 属性に変換するという、より既存設計に寄せた実装に着地した。
+
+**読者への影響**:
+
+- アーキ図に `HashOrch` を書き起こすと **存在しない box** になる。レビュー時に「HashOrch のソースはどこか」と質問された場合、`SwitchOrch` を案内する必要がある。
+- P4RT App から hash 設定を反映させる経路は HLD と論理的には同じ（P4RT App → CONFIG_DB → orchagent → SAI hash 属性）だが、debug 時に attach するクラス名が違う。
+- P4Info 由来の hash 設定が反映されない場合のトラブルシュート先は `SwitchOrch::doTask` 系（`switchorch.cpp:1507` 付近）。
+
+**回避策 / 対応方法**:
+
+- 設計ドキュメントを書く際は HashOrch ではなく **SwitchOrch のハッシュ責務** として記述する。
+- ハッシュフィールド名の対応は `switch_helper.cpp:24-` のテーブルを正として参照。新規フィールド追加時はこのマップに対応エントリを足す必要がある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/p4rt_app_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

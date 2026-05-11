@@ -206,6 +206,18 @@ show ndp
 
 `gc_thresh` と CoPP ARP/ND が HLD 提案値を採用していない理由は、その後の運用で **kernel メモリ消費**と **CPU 負荷** が問題になったためと思われる（本文「制限事項」で警告済みのトレードオフ）。本ページで挙げているスケール目標値（IPv4 ARP 32k 等）は **kernel cache 上限としては届かない設定**になっている点に注意。
 
+**読者への影響**:
+
+- HLD の数値（IPv4 ARP 32k / IPv6 16k 等）を期待してスケール試験を組むと、**現行 default 値（v4 上限 2048〜4096、v6 同様）で先に gc が走り、想定スケールに到達できない**。`dmesg` に `neighbour: arp_cache: neighbor table overflow!` が出る。
+- CoPP ARP/ND が 600 pps のままなので、**大規模 L2 sweep / fast reroute 時に ARP/ND 学習が間に合わない** 場合がある。HLD で謳う 8000 pps での収束時間を期待してはいけない。
+- 一方、`RouteOrch` の bulk + 1 秒 timer flush と `fpmsyncd` の master device lookup スキップは取り込み済みで、**経路投入レイテンシ自体は HLD どおりの改善**が得られる。
+
+**回避策 / 対応方法**:
+
+- ARP/ND テーブルを 32k/16k スケールで動かしたい場合は、`/etc/sysctl.d/` 配下に独自ファイル（例: `99-arp-scale.conf`）を bake して `net.ipv4.neigh.default.gc_thresh3 = 65536` 等を上書き。次回 image build から有効。
+- CoPP の ARP/ND 上限を上げる場合は `sonic-buildimage/files/image_config/copp/copp_cfg.j2` の `queue4_group2` の `cir`/`cbs` を編集してリビルド。COPP_TABLE を runtime で書き換える経路もあるが、`copp_cfg.j2` ベースの設定が再 apply されると上書きされる。
+- スケール試験設計時は、HLD の提案値ではなく **現行 default 値** を前提に見積もりを立てる。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

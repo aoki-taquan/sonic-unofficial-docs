@@ -207,6 +207,17 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 
 主要な合致点として、`sonic-gnmi/gnmi_server/server.go:1310-1351` の `ReqFromMasterEnabledMA`（extension 走査・末尾 MA 採用・128-bit EID 比較・揮発の `masterEID`・`PermissionDenied` 返却）、`server.go:1070` の `Set` 内での認証前 `ReqFromMaster` 呼び出し、`telemetry/telemetry.go:62,188` の `--with-master-arbitration` フラグは HLD どおり実装されていることを確認した。
 
+**読者への影響**:
+
+- HLD どおり「Role を無視して default として扱う」と思ってクライアントを実装すると、Role を載せた瞬間 `Unimplemented` で `Set` が落ちる。**現行実装では Role 拡張は付けてはいけない**。
+- CONFIG_DB から `TELEMETRY|gnmi:master_arbitration_enabled` を書いて runtime で ON/OFF する経路は未実装。**機能を有効にするには telemetry の起動オプションを書き換えてプロセス再起動が必要**で、サービス無停止の有効化はできない。
+
+**回避策 / 対応方法**:
+
+- クライアント側は `MasterArbitration` 拡張に Role フィールドを付けず、`ElectionId` のみで送る実装にする。
+- 機能を有効化したい場合は `/etc/sonic/telemetry/` 系の設定または systemd unit を変更し、`--with-master-arbitration` を付与した状態で telemetry を再起動する。動的切替が必要な場合は上流に CONFIG_DB 駆動の有効化パスを PR する必要がある。
+- マルチ ASIC 構成では `masterEID` がプロセスごとに揮発するため、ASIC ごとに別 telemetry が立つ場合はコントローラ側で各 ASIC への `Set` ごとに EID を主張し直す。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/master_arbitration.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

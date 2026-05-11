@@ -208,6 +208,20 @@ TACPLUS global passkey configured Yes
 
 YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json` 永続化スクリプト）は揃っているが、**運用フローの中核である CLI と hostcfgd 取り込みが未完了**であり、現状ユーザは `--encrypt` 経路で TACACS+ passkey を保護できない。HLD は `/etc/cipher_pass` と表記しているが実装上の正は `/etc/cipher_pass.json`。
 
+**差分の中身**: master key ファイル名が `/etc/cipher_pass` → `/etc/cipher_pass.json` に変更され、暗号化ペイロードを JSON 構造で格納する設計に進化している。HLD の文字列ベース表記は古い。一方、CLI（`config tacacs passkey ... --encrypt`）と hostcfgd 側の復号ロジックは **`sonic-utilities/config/aaa.py` L248-256 で平文書き込みのまま**であり、`key_encrypt=true` を CONFIG_DB に手動で書いても hostcfgd が復号する経路がないため PAM 認証が失敗する。
+
+**読者への影響**:
+
+- HLD どおりに `sudo config tacacs passkey <secret> --encrypt` を打っても **`--encrypt` フラグは認識されず**、`Usage` エラーまたは secret がそのまま平文で CONFIG_DB に書かれる（YANG validator で弾かれない場合もある）。
+- `TACPLUS|global` の `key_encrypt=true` を手で書くと、hostcfgd 側で復号されずに **暗号化文字列がそのまま TACACS server に送信される** ため、認証が落ちる。
+- `config save` で吐く JSON に平文 passkey が残るため、ファイル流出時の機密性に注意が必要。HLD が解消しようとした問題は **そのまま残っている**。
+
+**回避策 / 対応方法**:
+
+- 現状は `--encrypt` を使わず、`/etc/sonic/config_db.json` のパーミッション（root:root, 0644 → 0600 に絞る等）と config save の管理権限で機密性を担保する運用が現実的。
+- master key インフラを使った暗号化を試したい場合は、`security_cipher.py` の `encrypt`/`decrypt` API を直接呼んで passkey を加工し、独自スクリプトで hostcfgd の代わりに `/etc/pam.d/common-auth-sonic` に注入する独自経路を組む必要がある（保守性は低い）。
+- 上流の CLI / hostcfgd 取り込み PR を待つのが本筋。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

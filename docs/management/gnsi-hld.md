@@ -227,6 +227,18 @@ gnsi_client credentialz rotate-account \
 
 主要な合致点として、`sonic-gnmi/gnmi_server/gnsi_authz.go` (GNSIAuthzServer / Probe / Get / Rotate)、`gnsi_certz.go` (GNSICertzServer)、`gnsi_pathz.go` (GNSIPathzServer)、および `sonic-host-services/host_modules/gnsi_console.py` (`MOD_NAME = 'gnsi_console'`)、`ssh_mgmt.py` (`MOD_NAME = 'ssh_mgmt'`) は HLD どおり実装されている。
 
+**読者への影響**:
+
+- **Credentialz の SSH 鍵 / パスワード rotate を gNSI 経由で要求しても、現状はサーバハンドラが無いため `Unimplemented` で失敗する**。dbus client 側のコードは準備されているが、gNMI server からのディスパッチ経路が未配線。
+- HLD どおりに `EnableAuthzPolicy` / `EnablePathzPolicy` という flag 名で telemetry 設定を書こうとすると認識されない。**正しいフィールド名は `AuthzPolicy` / `PathzPolicy`（boolean）と `AuthzPolicyFile` / `PathzPolicyFile`（path）**。
+- STATE_DB から gNSI profile 状態を query するスクリプトを書くと **常に空** が返る（profile 状態は gNMI プロセスのメモリ内保持）。
+
+**回避策 / 対応方法**:
+
+- Credentialz が必要な場合は、現状 `ssh_mgmt` host service（dbus 経由）を直接叩くか、`/etc/ssh/sshd_config` / `authorized_keys` をホスト側スクリプトで管理する。gNSI 経由は上流の handler 実装待ち。
+- Authz / Pathz / CRL を有効化する設定は、telemetry config 構造体の `AuthzPolicy = true` / `AuthzPolicyFile = "/path/to/policy.json"` / `PathzPolicy = true` / `PathzPolicyFile = "..."` / `CertCRLConfig = "..."` を設定する。HLD の flag 名表記には引きずられない。
+- gNSI profile state を観測したい場合は、gNMI Probe / Get RPC を直接叩いて handler の戻り値を見る。STATE_DB 経由は機能しない。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
