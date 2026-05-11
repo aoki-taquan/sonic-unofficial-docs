@@ -14,6 +14,61 @@ sources:
 
 SmartSwitch / DASH の設定は「DPU の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の 3 つに分けて考えると見通しが良くなります。
 
+## このページの読み方: DASH は controller-driven 系
+
+DASH / SmartSwitch は「運用者が CLI を叩いて 1 件ずつ ENI / VNET / Route を投入する」プロダクトではありません。**人手で `config dash ...` のような CLI を打つことはほぼ無く**、外部の DASH appliance controller（典型的には Microsoft Azure SDN のような大規模 SDN コントローラ）が gNMI / gRPC で `DASH_*` テーブルを送り込みます。本ページの CLI 例は「コントローラ無しで開発・検証する際のショートカット」「障害時の確認手段」として読んでください。
+
+代表的な設定経路は次の通りです。
+
+| 経路 | 用途 | 投入先 |
+|---|---|---|
+| DASH appliance controller (gNMI / gRPC) | 本番。ENI / VNET / Route / ACL を大量 push | `APPL_DB` の `DASH_*_TABLE`（NPU 側 gNMI server 経由） |
+| `swssconfig` で JSON 流し込み | lab / CI、controller 不在時のスモークテスト | `APPL_DB` の `DASH_*_TABLE`（直接） |
+| `redis-cli` / `sonic-db-cli` 手打ち | 障害切り分け、1 件だけ試す | 同上 |
+| `config dash ...` CLI | **基本存在しない**。show 系は一部あり | — |
+
+典型的な投入フローは次の形になります。
+
+```
+DASH Controller
+  └─ gNMI Set (version_id 付き)
+       └─ NPU 側 gNMI server
+            └─ APPL_DB:DASH_*_TABLE
+                 └─ dashorch (NPU)
+                      └─ DPU redisdpuN / dashha (DPU 側)
+                           └─ SAI (DASH SAI)
+                                └─ DPU データプレーン (実 ASIC または BMv2)
+                                     ↑ 反映完了
+                                APPL_STATE_DB に version_id を書く
+                                     └─ gNMI server が subscribe で controller へ返す
+```
+
+確認も「controller 側で gNMI subscribe してフィードバックを受ける」が一次手段で、`show` CLI は副次的です。エラーも基本は **gRPC status code / APPL_STATE_DB の version mismatch** という形で controller に通知されます。後半の「設定エラーと対処」節で CLI 側の症状と合わせて整理しています。
+
+## controller-driven 系のエラー対処
+
+CLI を打たない運用では、エラーは大きく分けて次の 3 層で出ます。
+
+| 層 | 代表的な症状 | 一次切り分け |
+|---|---|---|
+| gRPC / gNMI トランスポート | `UNAVAILABLE`、`UNAUTHENTICATED`、`DEADLINE_EXCEEDED` | NPU 側 gNMI server の起動 (`show feature status gnmi`)、TLS 証明書、ファイアウォール |
+| スキーマ / バリデーション | gNMI `SetResponse` で `INVALID_ARGUMENT`、`NOT_FOUND` | path が `/sonic-db:APPL_DB/DASH_*` の規約通りか、YANG 定義との突き合わせ |
+| 反映遅延 / 不一致 | `version_id` が `APPL_STATE_DB` に降りない、controller subscribe が古い version で stuck | `dashorch` ログ、`sairedis.rec` の SAI status、DPU 側 `database-dpu.service` 生死 |
+
+```bash
+# controller 視点で「どの version まで適用済みか」を見る (NPU 上で代替確認)
+sonic-db-cli APPL_STATE_DB HGETALL 'DASH_ENI_TABLE:F4939FEFC47E'
+
+# gNMI server の現状
+show feature status gnmi
+docker logs gnmi 2>&1 | tail -50
+
+# SAI レベルの戻り値 (反映失敗時に NOT_SUPPORTED / FAILURE が見える)
+grep -E 'SAI_STATUS_(NOT_SUPPORTED|FAILURE)' /var/log/swss/sairedis.rec | tail
+```
+
+CLI で確認だけしたいときは、後述の `show chassis modules status` / `show platform dpu-status` / `sonic-db-cli` 系を使います。これらは「controller の代わりに状態を書く」用途ではなく、あくまで read-only な health check に留めてください。
+
 ## 全体像
 
 SmartSwitch を立ち上げて DASH を回すまでに必要な操作は次の 5 ステップに整理できます。
