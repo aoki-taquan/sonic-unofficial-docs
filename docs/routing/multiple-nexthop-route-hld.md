@@ -18,13 +18,11 @@ related:
 
 # dual-tor mux 跨ぎの multi-nexthop route ループ回避（`MuxOrch::updateRoute`）
 
-## 概要
+## なぜ必要か
 
-Gemini active-standby サーバ環境では、**1 経路に複数の next-hop neighbor** が指定されるシナリオが存在する。それぞれの neighbor が **異なる Ethernet ポート (= 異なる mux)** に居る場合、片方の port が UT0 で active、もう片方が LT0 で active といった状況が起きる。すなわち **同一 ToR 内で 1 つは active neighbor、もう 1 つは standby neighbor** という非対称が発生する[^1]。
+Gemini active-standby サーバ環境では **1 経路に複数の next-hop neighbor** が指定され、それぞれが **異なる Ethernet ポート (= 異なる mux)** に居る場合、片方の port が UT0 で active、もう片方が LT0 で active という非対称が起きる。すなわち **同一 ToR 内で 1 つは active neighbor、もう 1 つは standby neighbor** という構成になる[^1]。
 
-このとき ECMP の半分のパケットが standby 側 nexthop に当たり、**peer ToR への tunnel** に流れ、peer ToR で再び ECMP で半分が元 ToR に戻り無限ループ（実質的にはわずかなパケロス）が起きる[^1]。
-
-本 HLD は **MuxOrch に `updateRoute()` を追加** し、route の next-hop が複数あるとき **active が 1 つでもあればその 1 つに絞る** ロジックで ECMP を抑制する。
+このとき ECMP の半分が standby 側 nexthop に当たり、**peer ToR の tunnel** に流れ、peer ToR でも ECMP で半分が元 ToR に戻り、無限ループ（実質パケロス）が起きる[^1]。
 
 ```text
 Neighbor 192.168.0.100 on Ethernet0 (Active on this ToR, Standby on peer)
@@ -34,11 +32,11 @@ Route   11.11.11.0/24  nexthops 192.168.0.100, 192.168.0.101
                                 ここで standby を含む ECMP がループ原因
 ```
 
-## 動作仕様
+## どう動くか
 
 ### `updateRoute()` のロジック
 
-`MuxOrch` に `updateRoute(Route R1)` を追加[^1]:
+`MuxOrch` に `updateRoute(Route R1)` を追加し、route の next-hop が複数ある場合 **active が 1 つでもあればその 1 つに絞る**[^1]:
 
 ```c++
 UpdateRoute(Route R1) {
@@ -56,26 +54,13 @@ UpdateRoute(Route R1) {
 }
 ```
 
-つまり次の優先順位で 1 つだけを ASIC に置く[^1]:
+優先順位[^1]:
 
 | 状態 | 動作 |
 |------|------|
-| nexthop が 1 つ | no-op（既存挙動を維持） |
-| nexthop 複数 + active が 1 つ以上 | **最初に見つかった active を sole nexthop に設定** |
-| nexthop 複数 + 全 standby | **tunnel を sole nexthop に設定**（peer ToR へ encap） |
-
-### ECMP group の事前削除
-
-既存の ECMP next-hop group が ASIC に programming 済みの場合、`updateRoute()` は先に `RouteOrch` に削除を依頼する[^1]:
-
-```c++
-if (gRouteOrch->hasNextHopGroup(nextHops)) {
-    NextHopGroupKey nhg_key(nextHops);
-    gRouteOrch->removeNextHopGroup(nhg_key);
-}
-```
-
-これで「ECMP のエントリ」を「単一 nexthop のエントリ」へ振り替える。
+| nexthop 1 つ | no-op |
+| nexthop 複数 + active 1 個以上 | **最初に見つかった active を sole nexthop** |
+| nexthop 複数 + 全 standby | **tunnel を sole nexthop**（peer ToR へ encap） |
 
 ```mermaid
 flowchart TD
@@ -86,23 +71,22 @@ flowchart TD
     L --> A{active?}
     A -->|yes| S1[set sole nexthop = NH]
     S1 --> X[return]
-    A -->|no, 続行| L
+    A -->|no| L
     L --> AE{全 standby?}
     AE -->|yes| TN[set sole nexthop = tunnel]
 ```
 
 ### `RouteOrch` 側の補強
 
-`updateRoute()` が機能するためには **`m_nextHops` (Route → NextHop 群のキャッシュ)** に mux neighbor が **個別に展開** されている必要がある。既存実装では nexthop group は `m_nextHops` に個別 next-hop として入らず、`updateRoute()` が状態遷移時にループできない[^1]。
+`updateRoute()` が機能するには `m_nextHops` (Route → NextHop 群キャッシュ) に mux neighbor が **個別展開** されている必要がある。既存実装では group 内 next-hop は個別エントリにならず、state 遷移時にループできない[^1]。
 
-`routeorch.cpp` に **`nextHops.is_mux_nexthop()` の判定** を追加して、mux neighbor から成る group を解凍する[^1]:
+`routeorch.cpp` に `nextHops.is_mux_nexthop()` 判定を追加し、mux neighbor から成る group を解凍する[^1]:
 
 ```c++
 if (ctx.nhg_index.empty() && nextHops.getSize() == 1 &&
     !nextHops.is_overlay_nexthop() && !nextHops.is_srv6_nexthop() ||
     nextHops.is_mux_nexthop())
 {
-    RouteKey r_key = { vrf_id, ipPrefix };
     for (auto it : nextHops.getNextHops()) {
         if (!it.ip_address.isZero())
             addNextHopRoute(it, r_key);
@@ -110,11 +94,11 @@ if (ctx.nhg_index.empty() && nextHops.getSize() == 1 &&
 }
 ```
 
-`is_mux_nexthop()` は `NextHopGroupKey` のメソッドで、**group 内のいずれかの NH が mux neighbor なら true** を返す[^1]。設計上の前提として **「group の neighbor は ALL mux か NONE mux」** とし、混在は想定しない。
+`is_mux_nexthop()` は `NextHopGroupKey` のメソッドで、group 内のいずれかが mux neighbor なら true。**「group の neighbor は ALL mux か NONE mux」** という前提で、混在は想定しない[^1]。
 
 ### `MuxOrch::containsNextHop()`
 
-mux neighbor かを判定するため、`MuxOrch` に[^1]:
+mux neighbor 判定のため `MuxOrch` に追加[^1]:
 
 ```c++
 bool MuxOrch::containsNextHop(NextHopKey nh) {
@@ -122,11 +106,7 @@ bool MuxOrch::containsNextHop(NextHopKey nh) {
 }
 ```
 
-`is_mux_nexthop()` から呼ばれる。
-
-### シナリオ
-
-#### 経路追加時
+### 駆動経路
 
 ```mermaid
 sequenceDiagram
@@ -143,47 +123,45 @@ sequenceDiagram
     MO->>ASIC: route -> active NH (or tunnel)
 ```
 
-#### nexthop neighbor 追加時 / mux 状態遷移時
-
-`MuxOrch` は `linkmgrd` 由来の state 変化通知を受けたとき **影響を受ける route 全部に対して `updateRoute()` を再評価**[^1]。これで active/standby が動的に切り替わるたびに sole nexthop が更新される。
+`MuxOrch` は `linkmgrd` 由来の state 変化通知でも **影響を受ける全 route について `updateRoute()` を再評価** する[^1]。
 
 ## 設定
 
-### CONFIG_DB / CLI / YANG
-
-本 HLD は **CONFIG_DB / CLI / YANG への変更を伴わない**。dual-tor の既存設定（`MUX_CABLE` / `cable_type=active-standby` 等）と既存の routing 投入に対し、orchagent 内部の挙動を変えるだけ。
-
-### 設定例
-
-特別な操作はない。dual-tor 構成であれば自動的に新ロジックが効く。確認は ASIC_DB:
+CONFIG_DB / CLI / YANG **変更なし**。dual-tor の既存設定 (`MUX_CABLE` / `cable_type=active-standby` 等) のまま、orchagent 内部挙動だけ変わる。
 
 ```bash
-# dst=11.11.11.0/24 に対する nexthop が単一かを確認
 sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24*'
 ```
 
 ## 制限事項
 
-- **ECMP は実質的に無効化** される。`updateRoute()` は active が複数あっても **最初の 1 つだけ** を選ぶため、帯域は ECMP の 1/N に縮退する[^1]
-- **同一 nexthop group 内に mux と非 mux の混在は不可**[^1]。混在 group は本 HLD の対象外
-- 全 nexthop が standby になった場合は **tunnel route** にフォールバック。peer ToR が active であることに依存
-- `updateRoute()` は次回呼び出しまで状態が固定されるため、active fallback の選択は **「最初に見つかった active」** で決まる。負荷分散の意味は持たない
-- `m_nextHops` のキャッシュ整合性が崩れると古い NH に traffic が流れる risk
+- **ECMP は実質的に無効化**。active が複数あっても **最初の 1 つだけ** を選び、帯域は ECMP の 1/N に縮退[^1]
+- **同一 group 内に mux と非 mux の混在は不可**[^1]
+- 全 nexthop standby 時は **tunnel route** にフォールバック、peer ToR active 前提
+- active fallback は **「最初に見つかった active」** で固定、負荷分散の意味なし
+- `m_nextHops` キャッシュ整合性が崩れると古い NH に traffic が流れる risk
 
 ## 干渉する機能
 
-- **`MuxOrch`**: `updateRoute()` を新設。既存の neighbor / tunnel ハンドリングと密結合
-- **`RouteOrch`**: `is_mux_nexthop()` 判定で `m_nextHops` に NH を個別展開
+- **`MuxOrch`**: `updateRoute()` を新設、neighbor / tunnel と密結合
+- **`RouteOrch`**: `is_mux_nexthop()` 判定で個別展開
 - **`linkmgrd` 状態通知**: state 遷移ごとに `updateRoute()` を駆動
-- **`TunnelOrch`**: 全 standby 時の tunnel nexthop の供給元
-- **既存 ECMP 経路**: dual-tor mux 環境では実質無効化される副作用
+- **`TunnelOrch`**: 全 standby 時の tunnel nexthop 供給
+- **既存 ECMP 経路**: dual-tor mux 環境では実質無効化
 
 ## トラブルシューティング
 
-- 同 prefix の経路がループする → ASIC_DB で nexthop が単一に絞られているか確認、`MuxOrch` ログで `updateRoute()` が呼ばれているか確認
-- nexthop が **常に tunnel** になる → 当該 mux ports の active/standby 状態を `show muxcable status` で確認
-- nexthop group のままになる → `is_mux_nexthop()` 判定が false を返している可能性。`mux_nexthop_tb_` への登録が完了しているか確認
-- ECMP したい → 本 HLD は **mux nexthop に対し ECMP を許容しない** 設計のため、根本的に dual-tor 跨ぎ ECMP は不可
+- 経路ループ → ASIC_DB で nexthop が単一に絞られているか、`MuxOrch` ログで `updateRoute()` 呼び出し確認
+- nexthop が **常に tunnel** → `show muxcable status` で active/standby 確認
+- nexthop group のまま → `is_mux_nexthop()` が false。`mux_nexthop_tb_` 登録確認
+- ECMP したい → 本 HLD は **mux nexthop ECMP を許容しない** 設計
+
+## 関連トピック
+
+- [Topics: Dual-ToR](../topics/05-dual-tor/index.md) — active-standby と mux の全体像
+- [Topics: VRF / ECMP](../topics/04-vrf-ecmp/index.md) — ECMP と next-hop group の文脈
+- [prefix-based-mux-neighbors](prefix-based-mux-neighbors.md)
+- [overlay-ecmp-enhancements](overlay-ecmp-enhancements.md)
 
 ## 引用元
 

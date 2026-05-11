@@ -16,72 +16,65 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    現行 master で実装済みを確認。`sonic-swss/orchagent/nhgorch.h:117` で `NhgOrch` クラス（`NhgOrchCommon<NextHopGroup>` 派生）、`sonic-swss-common/common/schema.h:56` で `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME`（CBF 拡張）、`sonic-swss/orchagent/routeorch.cpp:771` で `ROUTE_TABLE.nexthop_group` フィールドのパース、`routeorch.cpp:807-815` での `nexthop_group` と `ips/aliases` 排他検証を確認（verified at: 2026-05-09）。
+    `sonic-swss/orchagent/nhgorch.h:117` で `NhgOrch`、`sonic-swss-common/common/schema.h:56` で `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME`、`sonic-swss/orchagent/routeorch.cpp:771` で `ROUTE_TABLE.nexthop_group` パース、`routeorch.cpp:807-815` で `nexthop_group` と `ips/aliases` の排他検証を確認 (verified at: 2026-05-09)。
 
 # NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
 
-## 概要
+## なぜ必要か
 
-従来の SONiC では、`APP_DB.ROUTE_TABLE` の各エントリにネクストホップ情報（`nexthop` / `ifname`）を **直接埋め込んで** いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートごとに同一情報を APP_DB に書き、`orchagent` 側でも毎ルート分パースする必要があり、メモリと処理時間の双方が重い[^1]。
+従来の SONiC は `APP_DB.ROUTE_TABLE` 各エントリにネクストホップ情報 (`nexthop` / `ifname`) を **直接埋め込んで** いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートで同一情報を APP_DB に書き orchagent でパースするため、メモリと処理時間が二重に重い[^1]。
 
-本機能は **APP_DB 側で「ネクストホップ群」を独立したテーブルに切り出し**、ルートはそのキー参照を持つだけにする。新たに `NEXT_HOP_GROUP_TABLE` を導入し、`ROUTE_TABLE` エントリには `nexthop_group` フィールドを追加してそのキーを参照させる。多数のルートが同じ群を共有する場合、APP_DB の総容量と orchagent の処理量が大幅に削減される[^1]。
+本機能は **APP_DB 側でネクストホップ群を独立テーブルに切り出し**、ルートはそのキー参照だけを持つ形に変える。
 
-## 動作仕様
+## どう動くか
 
 ### スキーマ変更（APP_DB）
 
-新規追加される `NEXT_HOP_GROUP_TABLE`[^1]:
+新規 `NEXT_HOP_GROUP_TABLE`[^1]:
 
 ```
 NEXT_HOP_GROUP_TABLE
   key     = NEXT_HOP_GROUP_TABLE:<arbitrary string>
-  nexthop = *prefix       ; カンマ区切りの IP（空ならゲートウェイなし）
-  ifname  = *PORT_TABLE.key ; カンマ区切りのインタフェース
+  nexthop = *prefix       ; カンマ区切り IP（空ならゲートウェイなし）
+  ifname  = *PORT_TABLE.key
 ```
 
-`ROUTE_TABLE` には次のフィールドが **追加** される（既存フィールドは残す）[^1]:
+`ROUTE_TABLE` に `nexthop_group` フィールドを追加（既存フィールドは残す）[^1]:
 
 ```
 ROUTE_TABLE
   key            = ROUTE_TABLE:<prefix>
-  nexthop        = *prefix
-  ifname         = *PORT_TABLE.key
-  blackhole      = BIT
   nexthop_group  = NEXT_HOP_GROUP_TABLE:key   ; 新規。指定時は nexthop/ifname の代替
 ```
 
-ネクストホップ群のキーは **アプリケーションが任意に決める** 文字列であり、ランダムでも算術的でも構わない。HLD は命名規則を規定しない[^1]。
+キーはアプリ任意の文字列で HLD は命名規則を規定しない。
 
 !!! note "競合ルール"
-    `nexthop_group` と従来の `nexthop`/`ifname` の **両方** を持つ ROUTE_TABLE エントリは無視される（HLD 明記）[^1]。
+    `nexthop_group` と従来の `nexthop`/`ifname` を **両方** 持つエントリは無視される[^1]。
 
-### orchagent 側の処理
+### orchagent 側
 
-新たな `NhgOrch` 系の orchestration agent が `NEXT_HOP_GROUP_TABLE` を受ける。群のメンバ数で分岐する[^1]:
+新 `NhgOrch` が `NEXT_HOP_GROUP_TABLE` を受け、メンバ数で分岐する[^1]:
 
 ```mermaid
 flowchart TD
   IN[NEXT_HOP_GROUP_TABLE update] --> N{member 数}
-  N -->|1| SINGLE[NeighOrch から SAI ID 取得\n→ 群の SAI ID として使用]
-  N -->|>1| MULTI[ASIC_DB に next_hop_group 作成\nメンバを next_hop_group_member として追加]
+  N -->|1| SINGLE[NeighOrch から SAI ID 取得<br/>→ 群の SAI ID として使用]
+  N -->|>1| MULTI[ASIC_DB に next_hop_group 作成<br/>メンバを member として追加]
   SINGLE --> MAP[APP_DB key ↔ SAI ID マップ更新]
   MULTI --> MAP
   MAP --> RT[RouteOrch が参照解決]
 ```
 
-ルート側は次のように振る舞う[^1]:
+ルート側 `RouteOrch` は `nexthop_group` フィールドを見て `NhgOrch` に SAI OID を問い合わせる。群未到着なら pending リストへ。ハード上限で群作成不能なら **1 メンバ暫定使用** に縮退し、ルートは「暫定形式」通知を受けて pending を維持する[^1]。
 
-- `RouteOrch` が `nexthop_group` フィールドを見て `NhgOrch` に SAI OID を問い合わせる。
-- 群がまだ ASIC_DB に存在しなければルートは pending リストに残り、後続サイクルで再試行される。
-- ハードウェア限界で群を作成できない場合、**1 メンバを暫定使用** する縮退モードに入り、ルート側にも「暫定形式」と通知される。ルートは群が正規形になるまで pending を保ち続ける[^1]。
+### 参照カウント
 
-### 削除・参照カウント
+群は参照ルートが残っている間は削除されない。`NhgOrch` が参照カウントを保持する。`orchagent` 再起動時は ROUTE_TABLE 更新で回復する[^1]。
 
-群は参照しているルートが残っているうちは削除されない。`NhgOrch` は群の **参照カウント** を保持する[^1]。`orchagent` が再起動した場合、未更新のルートは ASIC_DB に書けない過渡状態になるが、ROUTE_TABLE が更新されれば回復する。
+### 既存 RouteOrch 群との非干渉
 
-### 既存 RouteOrch 内ネクストホップ群との非干渉
-
-`RouteOrch` が暗黙に管理してきた既存のネクストホップ群（メンバ集合をキーとする）と、新 `NhgOrch` が管理する群（任意キー）は **同一メンバでも別物として ASIC_DB に書かれる**。HLD は「全ルートを旧形式か新形式のいずれかに統一する想定」と明記している[^1]。Fine grained ECMP 用の群は影響を受けない。
+`RouteOrch` 暗黙管理の既存群（メンバ集合キー）と新 `NhgOrch` 群（任意キー）は **同一メンバでも別物として ASIC_DB に書かれる**。HLD は「全ルートを旧か新のいずれかに統一」想定[^1]。Fine grained ECMP 群は影響を受けない。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/ip/next_hop_group_hld.md#L106-L137 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -89,24 +82,14 @@ excerpt: |
   A new orchestration agent will be written to handle the new NEXT_HOP_GROUP_TABLE in APP_DB.
   ... If the group has a single next hop, the next hop group orchagent will simply get the SAI identifier...
   ... If a next hop group cannot be programmed because the data plane limit has been reached, one next hop will be picked to be temporarily used for that group.
-reasoning: 単一/複数メンバの分岐、暫定モード、参照カウントの設計根拠。
+reasoning: 単一/複数メンバ分岐・暫定モード・参照カウントの設計根拠。
 -->
 
 ## 設定
 
-### 関連する CONFIG_DB
-
-このページの機能は **APP_DB** スキーマ拡張であり、ユーザ向け CONFIG_DB は変更されない。`NEXT_HOP_GROUP_TABLE` および `ROUTE_TABLE.nexthop_group` を APP_DB に書き込むのは外部のルーティングアプリケーション（カスタム fpmsyncd 等）。
-
-### 関連する CLI
-
-`show ip route` / `show ipv6 route` は **出力フォーマット不変** が要件として規定されている[^1]。CLI 側は `ROUTE_TABLE.nexthop_group` を解決して従来と同じネクストホップ表示を行う。
-
-新規 CLI コマンドは HLD では追加されない。
+APP_DB スキーマ拡張のため **CONFIG_DB / CLI 変更なし**。書き込むのは外部ルーティングアプリ（カスタム fpmsyncd 等）。`show ip route` / `show ipv6 route` は **出力フォーマット不変** が要件で、CLI 側が `nexthop_group` を解決する[^1]。
 
 ### 設定例
-
-ルーティングアプリケーションが APP_DB に直接書き込む形になる:
 
 ```
 NEXT_HOP_GROUP_TABLE:NHG1
@@ -119,22 +102,28 @@ ROUTE_TABLE:10.100.0.0/24
 
 ## 制限事項
 
-- **fpmsyncd 非対応**: 標準 fpmsyncd は本機能を使うように更新されない。利用するには改造版 fpmsyncd を用意するか、APP_DB に直接書き込むアプリケーションが必要[^1]。
-- **`nexthop_group` と `nexthop`/`ifname` の併記は無視** される（前述）。
-- **既存形式との混在不可（実質）**: 旧 RouteOrch 群と新 NhgOrch 群は ASIC_DB 上で別オブジェクトとして並走するため、両形式の混在は ASIC リソースを二重消費する。
-- **Warm upgrade 未対応**: 既存アプリは本機能を使わないため warm upgrade は対象外。将来採用するアプリが現れたら別 enhancement で対応する想定[^1]。
+- **fpmsyncd 非対応**: 標準 fpmsyncd は本機能を使わない。改造版か APP_DB 直接書き込みアプリが必要[^1]
+- `nexthop_group` と `nexthop`/`ifname` の併記は無視
+- **旧形式との混在不可（実質）**: 旧群と新群は ASIC_DB で別オブジェクト並走となりリソース二重消費
+- **Warm upgrade 未対応**: 既存アプリは本機能を使わないため対象外。将来採用アプリ時に別 enhancement で対応想定[^1]
 
 ## 干渉する機能
 
-- **Fine grained ECMP**: 既存 fine grained next hop group orchagent の群は本変更で挙動が変わらない[^1]。
-- **Warm boot**: ルートと群の対応関係を維持する責務は **アプリケーション側** にある。アプリは群キーを再起動跨ぎで安定させるか、起動時に APP_DB から復元する必要がある[^1]。
-- **Fast reboot / BGP graceful restart**: 影響なし（BGP アプリが APP_DB に何を書くかの選択肢が増えるだけ）。
+- **Fine grained ECMP**: 既存 fine grained 群は挙動不変[^1]
+- **Warm boot**: ルート-群対応の維持責務は **アプリ側**。群キーを再起動跨ぎで安定化するか APP_DB から復元すること[^1]
+- **Fast reboot / BGP graceful restart**: 影響なし
 
 ## トラブルシューティング
 
-- ルートが ASIC_DB に書かれない場合、`NEXT_HOP_GROUP_TABLE` に対応するキーが存在するか確認する。群が未到着なら RouteOrch の pending に積まれる。
-- ASIC のネクストホップ群リソース枯渇時は群が暫定 1 メンバ形式で書かれる。`asic-db` の `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` 数を確認する。
-- `show ip route` の出力が群参照のまま残っていないか（実装側の解決バグの兆候）を確認する。
+- ルートが ASIC_DB に書かれない → `NEXT_HOP_GROUP_TABLE` に対応キーがあるか確認
+- ネクストホップ群リソース枯渇 → 暫定 1 メンバ形式になる。`asic-db` の `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` 数確認
+- `show ip route` が群参照のまま残る → CLI 解決バグ兆候
+
+## 関連トピック
+
+- [Topics: VRF / ECMP](../topics/04-vrf-ecmp/index.md) — next-hop group / ECMP の全体像
+- [fpmsyncd-nexthop-group-enhancement-high-level-design-document](fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)
+- [sonic-weighted-ecmp](sonic-weighted-ecmp.md)
 
 ## 引用元
 
