@@ -1188,7 +1188,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [WRED / ECN 統計（per-queue / per-port、capability ベース）](../acl-qos/wred-and-ecn-statistics.md) (36)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (11)
 - [頻出 SAI 属性早見表](sai-attributes.md) (7)
-- [QoS / Buffer の発展トピック](../topics/08-qos-buffer/advanced.md) (6)
+- [QoS / Buffer の発展トピック](../topics/08-qos-buffer/advanced.md) (7)
 - [QoS / Buffer の運用](../topics/08-qos-buffer/operations.md) (6)
 
 ### [ENI](#term-eni)
@@ -1205,7 +1205,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (45)
 - [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../routing/evpn-vxlan-multihoming.md) (33)
 - [サイトマップ](../_meta/sitemap.md) (32)
-- [Overlay 設定](../topics/03-vxlan-evpn/setup.md) (20)
+- [Overlay 発展トピック](../topics/03-vxlan-evpn/advanced.md) (23)
 
 ### [EVPN-MH](#term-evpn-mh)
 
@@ -1364,8 +1364,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (9)
 - [VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）](../routing/vrf-vs-test-plan.md) (5)
 - [IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）](../switching/sonic-ip-lag-incremental-update.md) (5)
+- [サイトマップ](../_meta/sitemap.md) (4)
 - [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (4)
-- [サイトマップ](../_meta/sitemap.md) (3)
 
 ### [intfsyncd](#term-intfsyncd)
 
@@ -1514,7 +1514,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [orchagent](#term-orchagent)
 
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (25)
-- [サイトマップ](../_meta/sitemap.md) (21)
+- [サイトマップ](../_meta/sitemap.md) (22)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (19)
 - [運用](../topics/20-swss-sai-redis/operations.md) (18)
 - [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (17)
@@ -1563,8 +1563,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [サイトマップ](../_meta/sitemap.md) (20)
 - [設定](../topics/18-p4-pins/setup.md) (17)
+- [発展トピック](../topics/18-p4-pins/advanced.md) (16)
 - [概念](../topics/18-p4-pins/concept.md) (15)
-- [発展トピック](../topics/18-p4-pins/advanced.md) (11)
 - [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (9)
 
 ### [ProducerStateTable](#term-producerstatetable)
@@ -1677,8 +1677,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [sonic-mgmt](#term-sonic-mgmt)
 
+- [サイトマップ](../_meta/sitemap.md) (16)
 - [sonic-mgmt_interface YANG](yang/sonic-mgmt_interface.md) (16)
-- [サイトマップ](../_meta/sitemap.md) (15)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (15)
 - [sonic-mgmt_port YANG](yang/sonic-mgmt_port.md) (15)
 - [SONiC Logging & System Dumps（要件レベル仕様）](../system/sonic-logging-system-dumps-arch-spec.md) (11)
@@ -1750,7 +1750,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [syncd](#term-syncd)
 
 - [NPU MDIO アクセスと gbsyncd 単一 docker 化](../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md) (38)
-- [サイトマップ](../_meta/sitemap.md) (34)
+- [サイトマップ](../_meta/sitemap.md) (35)
 - [運用](../topics/20-swss-sai-redis/operations.md) (33)
 - [内部実装](../topics/20-swss-sai-redis/internals.md) (30)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../platform/dump-on-sai-failure.md) (26)
@@ -1830,8 +1830,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [vrfmgrd](#term-vrfmgrd)
 
 - [VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）](../routing/vrf-vs-test-plan.md) (10)
+- [サイトマップ](../_meta/sitemap.md) (6)
 - [VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）](../routing/sonic-vrf-support-design-spec-draft.md) (6)
-- [サイトマップ](../_meta/sitemap.md) (5)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (5)
 - [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (4)
 
