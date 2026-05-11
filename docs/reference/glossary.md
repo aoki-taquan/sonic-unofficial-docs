@@ -45,6 +45,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: Linux カーネルの XDP を用いた高速パケットソケット。SONiC では一部の DPU / vs プラットフォームで NPU バイパス用途に利用される。
 - **関連**: [DPDK](#term-dpdk)
 
+### AQM {#term-aqm}
+
+- **略称**: AQM (Active Queue Management)
+- **日本語訳**: 能動的キュー管理
+- **説明**: 輻輳発生前にキュー長を制御してパケットを早期にドロップ／マーキングするキュー管理の総称。SONiC では WRED / ECN が代表的な AQM 実装で、`qosorch` 経由で SAI Queue / Scheduler に設定される。
+- **関連**: [WRED](#term-wred)、[ECN](#term-ecn)、[QoS](#term-qos)
+
 ### APPL_DB {#term-appl_db}
 
 - **略称**: APPL_DB
@@ -66,6 +73,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: Redis DB ID 1。`syncd` が SAI オブジェクトの状態を反映する DB。SAI オブジェクト ID をキーに、属性のシリアライズ済み表現を保持する。
 - **関連**: [SAI](#sai)、[syncd](#syncd)
 
+### ASIC SDK {#term-asic-sdk}
+
+- **略称**: ASIC SDK
+- **日本語訳**: ASIC ソフトウェア開発キット
+- **説明**: スイッチ ASIC ベンダーが提供する低レベル C ライブラリ群。SAI 実装 (`libsai*.so`) が SDK を呼び出して ASIC を制御する。SONiC では `syncd` コンテナにベンダー SDK と SAI shim をパッケージし、ハードウェア依存性を局所化する。
+- **関連**: [SAI](#term-sai)、[syncd](#term-syncd)
+
 ### AsterNOS {#term-asternos}
 
 - **略称**: AsterNOS
@@ -80,6 +94,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: 双方向フォワーディング検出
 - **説明**: 高速な対向疎通検出プロトコル (RFC 5880)。SONiC では `bfdorch` / `bfd_offload` 等で扱う。
 - **関連**: [BFD HLD ページ群](../routing/index.md)
+
+### BFM {#term-bfm}
+
+- **略称**: BFM (Buffer Flow Model / Buffer Function Model)
+- **日本語訳**: バッファ機能モデル
+- **説明**: スイッチ ASIC 内のバッファ／キュー振る舞いを抽象化したモデル。SONiC では `bufferorch` / `BUFFER_PROFILE` を介して MMU の Ingress/Egress バッファプールやしきい値を構成し、ベンダー SAI 実装が ASIC 固有 BFM にマップする。
+- **関連**: [Buffer Model](#term-buffer-model)、[MMU](#term-mmu)
 
 ### BGP {#term-bgp}
 
@@ -101,6 +122,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: バッファモデル
 - **説明**: SONiC の QoS バッファ管理モデル。`traditional` と `dynamic` の 2 種類があり、`BUFFER_POOL` / `BUFFER_PROFILE` / `BUFFER_PG` 等で構成される。
 - **関連**: [QoS / Buffer](../acl-qos/index.md)
+
+### Buffer Pool {#term-buffer-pool}
+
+- **略称**: Buffer Pool
+- **日本語訳**: バッファプール
+- **説明**: MMU 内で確保される共有バッファ領域の単位。SONiC では Ingress / Egress 方向ごとに `BUFFER_POOL` テーブルでサイズと閾値を定義し、`BUFFER_PROFILE` から参照される。Dynamic Buffer Model では `buffermgrd` がポート速度や PG 設定に応じて動的に再配分する。
+- **関連**: [Buffer Model](#term-buffer-model)、[MMU](#term-mmu)、[Headroom](#term-headroom)
 
 ## C
 
@@ -207,6 +235,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: 同コストの複数経路に対しハッシュベースでフローを分散する機能。SONiC では SAI Next Hop Group で実装。
 - **関連**: [VRF/ECMP トピック](../topics/04-vrf-ecmp/index.md)
 
+### ECN {#term-ecn}
+
+- **略称**: ECN (Explicit Congestion Notification)
+- **日本語訳**: 明示的輻輳通知
+- **説明**: IP ヘッダの ECN ビット (RFC 3168) で輻輳をエンドホストに伝えるマーキング機構。SONiC では `WRED_PROFILE` の `ecn` フィールドで有効化し、SAI Queue / WRED に反映される。DCTCP / DCQCN (RoCEv2) の前提となる。
+- **関連**: [WRED](#term-wred)、[AQM](#term-aqm)、[RoCE](#term-roce)
+
+### Egress Queue {#term-egress-queue}
+
+- **略称**: Egress Queue
+- **日本語訳**: 送信キュー
+- **説明**: 各物理ポートの送信側に存在する優先度別キュー (通常 8 本)。SAI Queue オブジェクトとしてモデル化され、`QUEUE` テーブルでスケジューラ / WRED プロファイルが結び付けられる。COUNTERS_DB に PG / queue 単位の統計が定期収集される。
+- **関連**: [Per-port Queue](#term-per-port-queue)、[QoS](#term-qos)、[Buffer Pool](#term-buffer-pool)
+
 ### ENI {#term-eni}
 
 - **略称**: ENI (Elastic Network Interface)
@@ -261,6 +303,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: FlexCounter
 - **日本語訳**: 柔軟カウンタ
 - **説明**: `syncd` 内でポーリング対象 SAI オブジェクト群を動的に管理し、COUNTERS_DB に書き込む仕組み。
+
+### FPGA {#term-fpga}
+
+- **略称**: FPGA (Field Programmable Gate Array)
+- **日本語訳**: フィールドプログラマブルゲートアレイ
+- **説明**: 再構成可能な論理回路デバイス。一部 SONiC 対応プラットフォームでは光モジュール制御 / Retimer / リファレンス NIC のデータパスに FPGA が搭載され、`pmon` 配下のプラットフォームドライバが SysFS / I2C 経由で制御する。
+- **関連**: [NPU](#term-npu)、[NIC ASIC](#term-nic-asic)
 
 ### FPM {#term-fpm}
 
@@ -318,6 +367,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: 高位設計書
 - **説明**: SONiC の機能設計ドキュメント。`sonic-net/SONiC` リポの `doc/` 配下に集約される。本ドキュメントは HLD を再構成して書かれている。
 
+### Headroom {#term-headroom}
+
+- **略称**: Headroom
+- **日本語訳**: ヘッドルーム
+- **説明**: PFC 動作時に「PAUSE 送信から相手側送信停止が効くまでの間に到着するパケット」を吸収するために確保される予備バッファ領域。SONiC では `BUFFER_PG` の `xon` / `xoff` / `size` で構成され、Dynamic Buffer Model では `buffermgrd` がリンク速度・ケーブル長から自動計算する。
+- **関連**: [PFC](#term-pfc)、[Buffer Pool](#term-buffer-pool)、[Buffer Model](#term-buffer-model)
+
 ### hostcfgd {#term-hostcfgd}
 
 - **略称**: hostcfgd
@@ -333,11 +389,32 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ## I
 
+### IFA {#term-ifa}
+
+- **略称**: IFA (In-band Flow Analyzer)
+- **日本語訳**: インバンドフローアナライザ
+- **説明**: パケットヘッダにフロー解析用メタデータを挿入する INT 系プロトコル (IETF draft-kumar-ippm-ifa)。SONiC では一部 ASIC ベンダーが SAI 拡張で対応し、TAM のテレメトリ手法の 1 つとして扱われる。
+- **関連**: [INT](#term-int)、[TAM](#term-tam)
+
 ### INT {#term-int}
 
 - **略称**: INT (In-band Network Telemetry)
 - **日本語訳**: インバンドネットワークテレメトリ
 - **説明**: データパケットにテレメトリメタデータを埋め込む計測手法 (P4.org 仕様)。SONiC では TAM / DASH / PINS の一部で扱われる。
+
+### INT-XD {#term-int-xd}
+
+- **略称**: INT-XD (INT eXport Data)
+- **日本語訳**: INT エクスポートデータモード
+- **説明**: INT 仕様におけるモードの 1 つで、パケットには変更を加えずスイッチがテレメトリ情報を別途コレクタへエクスポートする方式 (INT-MD / INT-MX と並ぶモード)。SONiC では TAM IFA / Postcard 系実装の根拠仕様として参照される。
+- **関連**: [INT](#term-int)、[IFA](#term-ifa)、[TAM](#term-tam)
+
+### Ingress Port Group {#term-ingress-port-group}
+
+- **略称**: PG (Priority Group)
+- **日本語訳**: 入力プライオリティグループ
+- **説明**: 各物理ポート受信側で優先度ごとに割り当てられるバッファ管理単位 (通常 8 個)。SONiC では `BUFFER_PG` テーブルでサイズ / xon / xoff / プロファイルを設定し、PFC のヘッドルーム計算と直結する。COUNTERS_DB に PG ドロップ統計が記録される。
+- **関連**: [PFC](#term-pfc)、[Headroom](#term-headroom)、[Buffer Pool](#term-buffer-pool)
 - **関連**: [TAM](#term-tam)、[PINS](#term-pins)
 
 ### intfmgrd {#term-intfmgrd}
@@ -397,6 +474,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ## M
 
+### MAC Table {#term-mac-table}
+
+- **略称**: MAC Table
+- **日本語訳**: MAC アドレステーブル
+- **説明**: スイッチ ASIC が L2 学習結果を保持するハードウェアテーブル。SONiC では FDB と同義で、SAI FDB エントリ経由で書き込まれ COUNTERS_DB / `show mac` 等で参照できる。サイズ上限は CRM の `fdb_entry` で監視される。
+- **関連**: [FDB](#term-fdb)、[CRM](#term-crm)、[TCAM](#term-tcam)
+
 ### MPLS {#term-mpls}
 
 - **略称**: MPLS (Multiprotocol Label Switching)
@@ -410,11 +494,25 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: MCLAG
 - **説明**: 2 台の物理装置で共有 LAG を提供する機能。SONiC では `iccpd` 経由で同期。
 
+### Microburst {#term-microburst}
+
+- **略称**: Microburst
+- **日本語訳**: マイクロバースト
+- **説明**: ミリ秒未満の極短時間に発生する瞬時の輻輳バースト。秒平均では検出できないため、SONiC では FlexCounter / TAM / watermark (`WATERMARK` テーブル) によるバッファ占有率の高頻度サンプリングや、PFC / ECN マーキング統計で観測する。
+- **関連**: [PFC](#term-pfc)、[Buffer Pool](#term-buffer-pool)、[FlexCounter](#term-flexcounter)
+
 ### minigraph.xml {#term-minigraph.xml}
 
 - **略称**: minigraph
 - **日本語訳**: ミニグラフ
 - **説明**: Microsoft 由来のトポロジ記述 XML。`sonic-cfggen -m` で CONFIG_DB に変換される起動時設定ソース。
+
+### MMU {#term-mmu}
+
+- **略称**: MMU (Memory Management Unit)
+- **日本語訳**: ASIC メモリ管理ユニット
+- **説明**: スイッチ ASIC 内のパケットバッファ管理ブロック。Ingress / Egress バッファプール、PG / Queue 単位の閾値、admission control を担当する。SONiC では `bufferorch` が SAI Buffer Pool / Profile API を通じて MMU を構成する。
+- **関連**: [Buffer Pool](#term-buffer-pool)、[Buffer Model](#term-buffer-model)、[BFM](#term-bfm)
 
 ### MUX {#term-mux}
 
@@ -462,6 +560,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: IPv6 のリンクローカル隣接探索プロトコル (RFC 4861)。SONiC では Linux カーネルが処理し、`neighsyncd` 経由で APPL_DB の `NEIGH_TABLE` に反映される。
 - **関連**: [ARP](#term-arp)、[neighsyncd](#term-neighsyncd)
 
+### NIC ASIC {#term-nic-asic}
+
+- **略称**: NIC ASIC
+- **日本語訳**: NIC ASIC
+- **説明**: サーバ／DPU 上の高機能 NIC を構成する ASIC。SmartSwitch / DASH 構成では NIC ASIC 側で ENI / 暗号化 / フローオフロードを処理する。SONiC では DPU 側インスタンスが SAI で NIC ASIC を抽象化する。
+- **関連**: [DPU](#term-dpu)、[SmartNIC](#term-smartnic)、[SAI](#term-sai)
+
+### NPL {#term-npl}
+
+- **略称**: NPL (Network Programming Language)
+- **日本語訳**: ネットワークプログラミング言語
+- **説明**: Broadcom 系プログラマブル ASIC (Trident4 等) 向けの高位記述言語。P4 と類似のデータプレーン記述用 DSL で、ASIC SDK / SAI 実装の下回りでパイプライン定義に用いられる。
+- **関連**: [P4-Runtime](#term-p4-runtime)、[ASIC SDK](#term-asic-sdk)
+
 ### NPU {#term-npu}
 
 - **略称**: NPU (Network Processing Unit)
@@ -490,6 +602,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: pfcwd
 - **日本語訳**: PFC ウォッチドッグ
 - **説明**: PFC でデッドロックしているキューを検出して一時的にドレインする仕組み。
+
+### Per-port Queue {#term-per-port-queue}
+
+- **略称**: Per-port Queue
+- **日本語訳**: ポート単位キュー
+- **説明**: 各物理ポートごとに割り当てられた送信キュー集合 (通常 8 本)。SONiC では `QUEUE|<port>|<index>` 形式で CONFIG_DB / APPL_DB に表現され、`SCHEDULER` / `WRED_PROFILE` がポート単位で適用される。VOQ アーキテクチャの ASIC ではキュー粒度がさらに細分化される。
+- **関連**: [Egress Queue](#term-egress-queue)、[VOQ](#term-voq)、[QoS](#term-qos)
 
 ### portmgrd {#term-portmgrd}
 
@@ -545,6 +664,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: QoS
 - **説明**: `TC_TO_QUEUE_MAP` / `DSCP_TO_TC_MAP` / `SCHEDULER` 等で構成される SONiC のキューイング・スケジューリング・マーキング機構。
 
+### QSGMII {#term-qsgmii}
+
+- **略称**: QSGMII (Quad Serial Gigabit Media Independent Interface)
+- **日本語訳**: QSGMII
+- **説明**: 1 本の SerDes レーンに 4 ポート分の 1G イーサネットを多重化する SGMII の拡張規格。SONiC では管理ポートや低速フロントパネルポートを持つ一部プラットフォームの `port_config.ini` / `platform.json` で speed/lanes 設定に現れる。
+- **関連**: [SerDes](#term-serdes)、[port_config.ini](#term-port-config-ini)
+
 ## R
 
 ### RoCE {#term-roce}
@@ -581,6 +707,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: 旧来の運用監視プロトコル (RFC 3416)。SONiC では `docker-snmp` 内で Net-SNMP + `sonic_ax_impl` AgentX サブエージェントが Redis から MIB を提供する。
 - **関連**: [Tech Support](#term-tech-support)
 
+### SRAM {#term-sram}
+
+- **略称**: SRAM (Static Random Access Memory)
+- **日本語訳**: 静的 RAM
+- **説明**: スイッチ ASIC 内蔵の高速メモリ。MAC テーブル・LPM ルートテーブル・カウンタ等の格納に使われる。TCAM とは異なり exact-match 索引が中心。SONiC では資源使用量が CRM 経由で `fdb_entry` / `ipv4_route` / `ipv6_route` 等として可視化される。
+- **関連**: [TCAM](#term-tcam)、[CRM](#term-crm)、[MAC Table](#term-mac-table)
+
 ### SRv6 {#term-srv6}
 
 - **略称**: SRv6 (Segment Routing over IPv6)
@@ -594,6 +727,27 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: スイッチ抽象化インターフェース
 - **説明**: SONiC とベンダー ASIC の境界となる C API。OCP 標準化。`sonic-sairedis` がプロセス境界でラップ。
 - **関連**: [SAI Reference](./index.md)
+
+### SerDes {#term-serdes}
+
+- **略称**: SerDes (Serializer/Deserializer)
+- **日本語訳**: SerDes
+- **説明**: 高速シリアルレーンと並列バスを変換する ASIC 内ブロック。レーン速度 (例: 56G PAM4 / 112G PAM4) によりフロントパネルポート速度が決まる。SONiC では `port_config.ini` / `platform.json` の lanes 設定と、ベンダー固有 `media_settings.json` / Tx FIR チューニングが SerDes パラメータを供給する。
+- **関連**: [port_config.ini](#term-port-config-ini)、[QSGMII](#term-qsgmii)
+
+### sFlow Agent {#term-sflow-agent}
+
+- **略称**: sFlow Agent
+- **日本語訳**: sFlow エージェント
+- **説明**: スイッチ上でサンプリングしたパケットとカウンタを sFlow Collector に送出するプロセス。SONiC では `docker-sflow` 内の `hsflowd` が CONFIG_DB の `SFLOW` / `SFLOW_SESSION` を読み、SAI Samplepacket オブジェクト経由で ASIC サンプリングを構成する。
+- **関連**: [sFlow Collector](#term-sflow-collector)、[TAM](#term-tam)
+
+### sFlow Collector {#term-sflow-collector}
+
+- **略称**: sFlow Collector
+- **日本語訳**: sFlow コレクタ
+- **説明**: 複数スイッチの sFlow Agent から sFlow データグラム (RFC 3176) を受信する外部ホスト。SONiC では `SFLOW_COLLECTOR` テーブルで IP / UDP ポート / VRF を指定する。
+- **関連**: [sFlow Agent](#term-sflow-agent)
 
 ### sonic-buildimage {#term-sonic-buildimage}
 
@@ -645,6 +799,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: SAI 呼び出しを Thrift RPC で外部に公開するテスト用バイナリ (`sonic-sairedis/saiserver`)。`PTF` ベースの SAI 単体試験で利用される。`docker-saiserver` で配布。
 - **関連**: [SAI](#term-sai)、[VS](#term-vs)
 
+### SmartNIC {#term-smartnic}
+
+- **略称**: SmartNIC
+- **日本語訳**: SmartNIC
+- **説明**: プログラマブルなデータパス／オフロード機能を持つ高機能 NIC の総称。Dual-ToR の MUX 機構や DASH の DPU 側など、SONiC の周辺アーキテクチャで参照される。
+- **関連**: [DPU](#term-dpu)、[NIC ASIC](#term-nic-asic)、[MUX](#term-mux)
+
 ### SmartSwitch {#term-smartswitch}
 
 - **略称**: SmartSwitch
@@ -677,6 +838,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: TAM
 - **説明**: SAI TAM API (`SAI_OBJECT_TYPE_TAM*`) を用いた帯域内テレメトリ機能群。INT / IFA / Drop monitor / Postcard 等を扱う。SONiC では `TAM_*` CONFIG_DB テーブルと TAM オーチが提供される。
 - **関連**: [INT](#term-int)
+
+### TCAM {#term-tcam}
+
+- **略称**: TCAM (Ternary Content Addressable Memory)
+- **日本語訳**: 三値連想メモリ
+- **説明**: ワイルドカード付きパケット分類を 1 サイクルで実行できる特殊メモリ。ACL ルール / LPM ルート / PBR / Mirror セッションのマッチ部に使われ、容量が ASIC の上限要因となりやすい。SONiC では CRM が ACL TCAM 使用量を `acl_table` / `acl_group` / `acl_entry` などとして監視する。
+- **関連**: [ACL](#term-acl)、[CRM](#term-crm)、[SRAM](#term-sram)
 
 ### Tech Support {#term-tech-support}
 
@@ -841,6 +1009,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）](../acl-qos/acl-flex-counters-support.md) (58)
 - [内部実装](../topics/07-acl-copp-mirror/internals.md) (57)
 
+### [AQM](#term-aqm)
+
+- [QoS / Buffer の発展トピック](../topics/08-qos-buffer/advanced.md) (1)
+- [発展トピック](../topics/12-multi-asic-voq/advanced.md) (1)
+
 ### [APPL_DB](#term-appl_db)
 
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (26)
@@ -864,6 +1037,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [概念と読み始め方](../topics/01-overview/concept.md) (9)
 - [内部実装](../topics/01-overview/internals.md) (9)
 - [概要](../topics/20-swss-sai-redis/concept.md) (9)
+
+### [ASIC SDK](#term-asic-sdk)
+
+- [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show](../internals/l3-scaling-and-performance-enhancements.md) (1)
+- [P4Runtime PacketIO（generic netlink + send_to_ingress）](../management/packetio.md) (1)
+- [ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）](../platform/handle-asic-sdk-health-event.md) (1)
+- [ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）](../system/asic-thermal-monitoring-high-level-design.md) (1)
+- [Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）](../system/critical-resource-monitoring-in-sonic.md) (1)
 
 ### [AsterNOS](#term-asternos)
 
@@ -893,6 +1074,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (16)
 - [bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）](../routing/bgpcfgd-dynamic-peer-modification-support.md) (13)
 - [概要](../topics/02-bgp/concept.md) (12)
+
+### [Buffer Pool](#term-buffer-pool)
+
+- [sonic-buffer-pool YANG](yang/sonic-buffer-pool.md) (6)
+- [sai_query_stats_capability による Counter Capability 一括取得](../platform/query-stats-capability-new-sai-api-indroduction.md) (2)
+- [ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）](../acl-qos/port-buffer-drop-counters-in-sonic.md) (1)
+- [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (1)
+- [QoS / Buffer の運用](../topics/08-qos-buffer/operations.md) (1)
 
 ### [CONFIG_DB](#term-config_db)
 
@@ -994,6 +1183,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (23)
 - [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../routing/bgp-setup-for-voq-chassis.md) (16)
 
+### [ECN](#term-ecn)
+
+- [WRED / ECN 統計（per-queue / per-port、capability ベース）](../acl-qos/wred-and-ecn-statistics.md) (36)
+- [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (11)
+- [頻出 SAI 属性早見表](sai-attributes.md) (7)
+- [QoS / Buffer の発展トピック](../topics/08-qos-buffer/advanced.md) (6)
+- [QoS / Buffer の運用](../topics/08-qos-buffer/operations.md) (6)
+
 ### [ENI](#term-eni)
 
 - [SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）](../overlay/smartswitch-eni-based-forwarding.md) (38)
@@ -1053,6 +1250,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sai_query_stats_capability による Counter Capability 一括取得](../platform/query-stats-capability-new-sai-api-indroduction.md) (9)
 - [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](../platform/fec-flr-support-in-sonic.md) (8)
 - [内部実装](../topics/09-telemetry-snmp/internals.md) (8)
+
+### [FPGA](#term-fpga)
+
+- [gRPC client（active-active DualToR / ycabled ↔ SoC 連携）](../management/design-doc.md) (3)
+- [S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）](../platform/s3ip-sysfs-specification.md) (2)
+- [fwutil（platform component firmware の install / update / show）](../platform/sonic-fw-utility.md) (2)
+- [設定](../topics/14-platform-port-optics/setup.md) (2)
+- [サイトマップ](../_meta/sitemap.md) (1)
 
 ### [FPM](#term-fpm)
 
@@ -1118,6 +1323,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (30)
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (28)
 
+### [Headroom](#term-headroom)
+
+- [サイトマップ](../_meta/sitemap.md) (2)
+- [Dynamic Headroom Calculation（buffer_model = dynamic）](../acl-qos/dynamically-headroom-calculation.md) (2)
+- [ACL & QoS](../acl-qos/index.md) (2)
+- [変更履歴](../_meta/changelog.md) (1)
+- [QoS / Buffer の発展トピック](../topics/08-qos-buffer/advanced.md) (1)
+
 ### [hostcfgd](#term-hostcfgd)
 
 - [TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）](../management/tacacs-passkey-encryption.md) (31)
@@ -1129,6 +1342,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [HwSku](#term-hwsku)
 
 - [設定](../topics/21-lab-vs-developer/setup.md) (2)
+
+### [IFA](#term-ifa)
+
+- [config vrf サブコマンド](cli/config-vrf.md) (2)
+- [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (1)
+- [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](../platform/fec-flr-support-in-sonic-operations.md) (1)
+- [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](../platform/fec-flr-support-in-sonic.md) (1)
+- [Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）](../platform/sonic-port-fec-ber.md) (1)
 
 ### [INT](#term-int)
 
@@ -1222,6 +1443,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](../switching/control-sonic-behaviors-with-system-defaults-table.md) (5)
 - [sonic-cfggen コマンド](cli/sonic-cfggen.md) (4)
 - [SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像](../management/sonic-user-manual.md) (3)
+
+### [MMU](#term-mmu)
+
+- [sonic-route-map YANG](yang/sonic-route-map.md) (24)
+- [COMMUNITY_SET テーブル](config-db/community-set.md) (10)
+- [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) (9)
+- [sonic-snmp YANG](yang/sonic-snmp.md) (9)
+- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (9)
 
 ### [MUX](#term-mux)
 
@@ -1418,6 +1647,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (42)
 - [QoS / Buffer の内部実装](../topics/08-qos-buffer/internals.md) (42)
 
+### [SerDes](#term-serdes)
+
+- [1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）](../platform/1-6t-support-in-sonic.md) (6)
+- [Media-based Port Settings（media_settings.json による SerDes プロファイル）](../platform/media-based-port-settings-in-sonic.md) (6)
+- [サイトマップ](../_meta/sitemap.md) (5)
+- [プラットフォーム](../platform/index.md) (2)
+- [頻出 SAI 属性早見表](sai-attributes.md) (2)
+
+### [sFlow Agent](#term-sflow-agent)
+
+- [設定](../topics/09-telemetry-snmp/setup.md) (1)
+
 ### [sonic-buildimage](#term-sonic-buildimage)
 
 - [サイトマップ](../_meta/sitemap.md) (16)
@@ -1474,6 +1715,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）](../management/tacacs-passkey-encryption.md) (10)
 - [SAG（Static Anycast Gateway）for SONiC](../architecture/sag-high-level-design-for-sonic.md) (9)
 
+### [SmartNIC](#term-smartnic)
+
+- [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (4)
+- [DASH 関連](../categories/dash.md) (1)
+- [横断カテゴリ](../categories/index.md) (1)
+- [SmartSwitch 関連](../categories/smartswitch.md) (1)
+- [Overlay 設定](../topics/03-vxlan-evpn/setup.md) (1)
+
 ### [SmartSwitch](#term-smartswitch)
 
 - [サイトマップ](../_meta/sitemap.md) (43)
@@ -1513,6 +1762,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [運用](../topics/17-srv6-mpls/operations.md) (2)
 - [PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）](../acl-qos/pfc-historical-statistics.md) (1)
 - [頻出 SAI 属性早見表](sai-attributes.md) (1)
+
+### [TCAM](#term-tcam)
+
+- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (4)
+- [ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）](../acl-qos/acl-in-sonic.md) (3)
+- [概念](../topics/07-acl-copp-mirror/concept.md) (3)
+- [L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）](../acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md) (2)
+- [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](../overlay/vnet-local-endpoint-forwarding.md) (2)
 
 ### [tunnelmgrd](#term-tunnelmgrd)
 
