@@ -63,6 +63,9 @@ jobs:
       - name: Report link-density outliers (informational)
         run: python3 meta/scripts/check_link_density.py --check
 
+      - name: Report discrepancy pages with empty related.yang (informational)
+        run: python3 meta/scripts/check_discrepancy_related.py --report meta/discrepancy-related-yang-report.md || true
+
       - name: Check topics chapter "next-reads" drift (informational)
         run: python3 meta/scripts/gen_next_reads.py --check || true
 
@@ -74,6 +77,7 @@ jobs:
           path: |
             meta/frontmatter-lint-report.md
             meta/frontmatter-lint-report-v2.md
+            meta/discrepancy-related-yang-report.md
           if-no-files-found: ignore
 
   quality-banner:
