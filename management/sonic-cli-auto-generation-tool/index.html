@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-cli-yang-click-plugin" class="md-skip">
+        <a href="#sonic-cli" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -14943,7 +14943,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -14954,19 +14954,30 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        なぜ自動生成が要るか
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yang-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG → CLI の生成ルール
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="YANG → CLI の生成ルール">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#hyphen-separated" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体像
+        命名: hyphen-separated
       
     </span>
   </a>
@@ -14974,22 +14985,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#container-leaf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        生成ルール
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="生成ルール">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. ハイフン区切りの命名
+        container 階層 → サブコマンド + leaf → 引数
       
     </span>
   </a>
@@ -14997,10 +14996,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-container-leaf" class="md-nav__link">
+  <a href="#list-adddelupdateleaf-list-adddelclear" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. container 階層 → サブコマンド + leaf → 引数
+        list → add/del/update、leaf-list → add/del/clear
       
     </span>
   </a>
@@ -15008,81 +15007,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-list-adddelupdate" class="md-nav__link">
+  <a href="#grouping-uses-description-help" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. list → add/del/update
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-leaf-list-adddelclear" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. leaf-list → add/del/clear + カンマ区切り
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-grouping-uses" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. grouping / uses
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6-description-help" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. description → --help
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#workflow-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Workflow（生成 CLI の動作）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-package-manager" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        sonic-package-manager 連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-cli-gen" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        独立コマンド sonic-cli-gen
+        grouping / uses と description → --help
       
     </span>
   </a>
@@ -15095,7 +15023,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        生成 CLI の実行フロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-package-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-package-manager 連携
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-cli-gen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        独立コマンド sonic-cli-gen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -15106,7 +15067,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -15117,10 +15078,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -22771,7 +22743,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -22782,19 +22754,30 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        なぜ自動生成が要るか
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yang-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG → CLI の生成ルール
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="YANG → CLI の生成ルール">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#hyphen-separated" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体像
+        命名: hyphen-separated
       
     </span>
   </a>
@@ -22802,22 +22785,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#container-leaf" class="md-nav__link">
     <span class="md-ellipsis">
       
-        生成ルール
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="生成ルール">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. ハイフン区切りの命名
+        container 階層 → サブコマンド + leaf → 引数
       
     </span>
   </a>
@@ -22825,10 +22796,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-container-leaf" class="md-nav__link">
+  <a href="#list-adddelupdateleaf-list-adddelclear" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. container 階層 → サブコマンド + leaf → 引数
+        list → add/del/update、leaf-list → add/del/clear
       
     </span>
   </a>
@@ -22836,81 +22807,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-list-adddelupdate" class="md-nav__link">
+  <a href="#grouping-uses-description-help" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. list → add/del/update
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-leaf-list-adddelclear" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. leaf-list → add/del/clear + カンマ区切り
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-grouping-uses" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. grouping / uses
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6-description-help" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. description → --help
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#workflow-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Workflow（生成 CLI の動作）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-package-manager" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        sonic-package-manager 連携
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-cli-gen" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        独立コマンド sonic-cli-gen
+        grouping / uses と description → --help
       
     </span>
   </a>
@@ -22923,7 +22823,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        生成 CLI の実行フロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-package-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-package-manager 連携
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-cli-gen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        独立コマンド sonic-cli-gen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -22934,7 +22867,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -22945,10 +22878,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -22982,69 +22926,62 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-utilities/sonic_cli_gen/main.py</code> L8 で <code>sonic-cli-gen</code> ロガー、<code>sonic-utilities/sonic_cli_gen/generator.py</code> L9 / L32 で <code>templates_path = '/usr/share/sonic/templates/sonic-cli-gen/'</code> Jinja2 ディレクトリを確認。<code>sonic-utilities/setup.py</code> L236 で <code>'sonic-cli-gen = sonic_cli_gen.main:cli'</code> エントリポイント、<code>sonic-utilities/sonic-utilities-data/templates/sonic-cli-gen/</code> でテンプレ群を確認。生成済み plugin として <code>sonic-utilities/show/plugins/sonic-trimming.py</code> / <code>sonic-hash.py</code> / <code>pbh.py</code> 冒頭コメント "auto-generated by using 'sonic-cli-gen' utility" を確認（verified at: 2026-05-09）。HLD は 2021 Phase 1 だが当該ツールは現行 master に取り込み済み。</p>
+<p><code>sonic-utilities/sonic_cli_gen/main.py</code> L8 で <code>sonic-cli-gen</code> ロガー、<code>sonic-utilities/sonic_cli_gen/generator.py</code> L9 / L32 で <code>templates_path = '/usr/share/sonic/templates/sonic-cli-gen/'</code> Jinja2 ディレクトリ確認。<code>sonic-utilities/setup.py</code> L236 で <code>'sonic-cli-gen = sonic_cli_gen.main:cli'</code> エントリポイント、<code>sonic-utilities/sonic-utilities-data/templates/sonic-cli-gen/</code> でテンプレ群を確認。生成済 plugin <code>sonic-utilities/show/plugins/sonic-trimming.py</code> / <code>sonic-hash.py</code> / <code>pbh.py</code> の冒頭コメント "auto-generated by using 'sonic-cli-gen' utility" を確認。HLD は 2021 Phase 1 だが当該ツールは現行 master に取り込み済み。</p>
 </div>
-<h1 id="sonic-cli-yang-click-plugin">SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）<a class="headerlink" href="#sonic-cli-yang-click-plugin" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC Application Extension (SAE) として 3rd party 機能を <strong>追加 docker</strong> で持ち込む際、CLI を都度書く工数を減らすため、<strong>YANG モデルから <code>show</code> / <code>config</code> の click plugin を自動生成</strong> するユーティリティ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。生成 CLI は <code>sonic-utilities</code> の plugin 機構経由でロードされ、CONFIG DB スキーマと整合する形になる。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h1 id="sonic-cli">SONiC CLI 自動生成ツール<a class="headerlink" href="#sonic-cli" title="Permanent link">&para;</a></h1>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>どんなとき CLI 自動生成が嬉しいのか（手書きと比べて何が省ける？）</li>
+<li>YANG の <strong>container / list / leaf-list / grouping</strong> がそれぞれどう CLI に化けるか</li>
+<li>生成された CLI が実行時にやっていること（特に YANG validation）</li>
+<li><code>sonic-package-manager</code> の <code>manifest.json</code> でどう ON/OFF するか</li>
+<li>開発手元で <code>sonic-cli-gen</code> を叩いて確認する手順</li>
+</ul>
+<h2 id="_2">なぜ自動生成が要るか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>SONiC Application Extension (SAE) として 3rd party 機能を <strong>追加 docker</strong> で持ち込む際に、CLI を都度書く工数を減らすため、<strong>YANG モデルから <code>show</code> / <code>config</code> click plugin を自動生成</strong> するユーティリティ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。生成 CLI は <code>sonic-utilities</code> の plugin 機構経由でロードされ、CONFIG_DB スキーマと整合した形になる。手書きより <strong>YANG 型・enum・range・mandatory 違反が早期検知</strong> される利点もある。</p>
 <pre class="mermaid"><code>flowchart LR
   YM[sonic-&lt;feat&gt;.yang&lt;br&gt;SONiC YANG Guidelines 準拠] --&gt; GEN[sonic-cli-gen]
   GEN --&gt; P1[/usr/local/lib/.../config/plugins/auto/&lt;feat&gt;_yang.py/]
   GEN --&gt; P2[/usr/local/lib/.../show/plugins/auto/&lt;feat&gt;_yang.py/]
   P1 --&gt; SU[sonic-utilities config]
   P2 --&gt; SU2[sonic-utilities show]</code></pre>
-<p><code>config</code> / <code>show</code> は <code>pkgutil.iter_modules</code> で <code>plugins/auto</code> 名前空間配下の plugin を走査・ロードする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_4">生成ルール<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<h4 id="1">1. ハイフン区切りの命名<a class="headerlink" href="#1" title="Permanent link">&para;</a></h4>
-<p>YANG <code>module</code> 名 / <code>container</code> 名は <strong><code>hyphen-separated</code></strong> に変換<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>config</code> / <code>show</code> は <code>pkgutil.iter_modules</code> で <code>plugins/auto</code> 名前空間配下を走査・ロードする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="yang-cli">YANG → CLI の生成ルール<a class="headerlink" href="#yang-cli" title="Permanent link">&para;</a></h2>
+<h3 id="hyphen-separated">命名: <code>hyphen-separated</code><a class="headerlink" href="#hyphen-separated" title="Permanent link">&para;</a></h3>
+<p>YANG <code>module</code> / <code>container</code> 名はハイフン区切りに変換<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>container DEVICE_METADATA → device-metadata
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>leaf default_bgp_status   → --default-bgp-status
 </span></code></pre></div>
-<h4 id="2-container-leaf">2. container 階層 → サブコマンド + leaf → 引数<a class="headerlink" href="#2-container-leaf" title="Permanent link">&para;</a></h4>
-<p><code>container</code> ごとにサブコマンドが切られ、内側の <code>leaf</code> は引数になる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="container-leaf">container 階層 → サブコマンド + leaf → 引数<a class="headerlink" href="#container-leaf" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>device-metadata<span class="w"> </span>localhost<span class="w"> </span>hwsku<span class="w"> </span><span class="s2">&quot;ACS-MSN2100&quot;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>device-metadata<span class="w"> </span>localhost<span class="w"> </span>default-bgp-status<span class="w"> </span>up
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config<span class="w"> </span>device-metadata<span class="w"> </span>localhost<span class="w"> </span>hostname<span class="w"> </span><span class="s2">&quot;r-sonic-switch&quot;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config<span class="w"> </span>device-metadata<span class="w"> </span>localhost<span class="w"> </span>platform<span class="w"> </span><span class="s2">&quot;x86_64-mlnx_msn2100-r0&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>show<span class="w"> </span>device-metadata<span class="w"> </span>localhost
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>HWSKU<span class="w">        </span>DEFAULT<span class="w"> </span>BGP<span class="w"> </span>STATUS<span class="w">  </span>HOSTNAME<span class="w">        </span>PLATFORM
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>ACS-MSN2100<span class="w">  </span>UP<span class="w">                  </span>r-sonic-switch<span class="w">  </span>x86_64-mlnx_msn2100-r0
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>device-metadata<span class="w"> </span>localhost
 </span></code></pre></div>
-<h4 id="3-list-adddelupdate">3. list → <code>add/del/update</code><a class="headerlink" href="#3-list-adddelupdate" title="Permanent link">&para;</a></h4>
-<p><code>list</code> には <strong>位置引数 = key</strong>、leaf は <code>--key value</code> で渡す<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="list-adddelupdateleaf-list-adddelclear">list → <code>add/del/update</code>、leaf-list → <code>add/del/clear</code><a class="headerlink" href="#list-adddelupdateleaf-list-adddelclear" title="Permanent link">&para;</a></h3>
+<p><code>list</code> は <strong>位置引数 = key</strong>、leaf は <code>--key value</code><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span>Vlan11<span class="w"> </span>--vlanid<span class="w"> </span><span class="m">11</span><span class="w"> </span>--mtu<span class="w"> </span><span class="m">128</span><span class="w"> </span>--admin-status<span class="w"> </span>up
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>vlan<span class="w"> </span>update<span class="w"> </span>Vlan11<span class="w"> </span>--vlanid<span class="w"> </span><span class="m">12</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>config<span class="w"> </span>vlan<span class="w"> </span>del<span class="w"> </span>Vlan11
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span>Vlan11<span class="w"> </span>--vlanid<span class="w"> </span><span class="m">11</span><span class="w"> </span>--dhcp-servers<span class="w"> </span><span class="s2">&quot;192.168.0.10,11.12.13.14&quot;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp-servers<span class="w"> </span>add<span class="w">   </span>Vlan11<span class="w"> </span><span class="m">10</span>.10.10.10
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp-servers<span class="w"> </span>del<span class="w">   </span>Vlan11<span class="w"> </span><span class="m">10</span>.10.10.10
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp-servers<span class="w"> </span>clear<span class="w"> </span>Vlan11
 </span></code></pre></div>
-<p>container 内に list が複数あれば list 名でサブコマンドを切る<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>vlan-interface<span class="w"> </span>vlan-interface-list<span class="w"> </span>add<span class="w"> </span>...
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>vlan-interface<span class="w"> </span>vlan-interface-ipprefix-list<span class="w"> </span>add<span class="w"> </span>...
-</span></code></pre></div>
-<h4 id="4-leaf-list-adddelclear">4. leaf-list → <code>add/del/clear</code> + カンマ区切り<a class="headerlink" href="#4-leaf-list-adddelclear" title="Permanent link">&para;</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span>Vlan11<span class="w"> </span>--vlanid<span class="w"> </span><span class="m">11</span><span class="w"> </span>--dhcp-servers<span class="w"> </span><span class="s2">&quot;192.168.0.10,11.12.13.14&quot;</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp-servers<span class="w"> </span>add<span class="w">   </span>Vlan11<span class="w"> </span><span class="m">10</span>.10.10.10
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp-servers<span class="w"> </span>del<span class="w">   </span>Vlan11<span class="w"> </span><span class="m">10</span>.10.10.10
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp-servers<span class="w"> </span>clear<span class="w"> </span>Vlan11
-</span></code></pre></div>
-<h4 id="5-grouping-uses">5. <code>grouping</code> / <code>uses</code><a class="headerlink" href="#5-grouping-uses" title="Permanent link">&para;</a></h4>
-<p><code>grouping</code> は <strong>module 直下のみ</strong> 許可（container 内ネストは禁止）。他モジュールのものは <code>import</code> で取り込む。<code>uses</code> で展開された leaf もそのまま展開先 list の引数になる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config<span class="w"> </span>feature-a<span class="w"> </span>add<span class="w"> </span>Linux<span class="w"> </span>--address<span class="w"> </span><span class="s2">&quot;10.10.10.10&quot;</span><span class="w"> </span>--port<span class="w"> </span><span class="m">1024</span>
-</span></code></pre></div>
-<h4 id="6-description-help">6. <code>description</code> → <code>--help</code><a class="headerlink" href="#6-description-help" title="Permanent link">&para;</a></h4>
-<p>YANG の <code>description</code> 文字列がそのまま <code>--help</code> に出る。<code>mandatory true;</code> の leaf は <code>--help</code> で <code>[mandatory]</code> 表示<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="workflow-cli">Workflow（生成 CLI の動作）<a class="headerlink" href="#workflow-cli" title="Permanent link">&para;</a></h3>
+<p>container 内に list が複数あれば list 名でサブコマンドを切る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="grouping-uses-description-help"><code>grouping</code> / <code>uses</code> と <code>description</code> → <code>--help</code><a class="headerlink" href="#grouping-uses-description-help" title="Permanent link">&para;</a></h3>
+<p><code>grouping</code> は <strong>module 直下のみ</strong> 許可（container 内ネスト禁止）。他モジュールのものは <code>import</code> で取り込む。<code>uses</code> で展開された leaf もそのまま展開先 list の引数になる。</p>
+<p>YANG <code>description</code> 文字列が <code>--help</code> に出る。<code>mandatory true;</code> の leaf は <code>--help</code> で <code>[mandatory]</code> 表示<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="cli">生成 CLI の実行フロー<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
   U[ユーザ: config feature-a ...] --&gt; CMD[auto-generated plugin]
-  CMD --&gt; JSON[適用予定 config の JSON 化]
+  CMD --&gt; JSON[適用予定 config を JSON 化]
   JSON --&gt; Y[YANG library で validate]
   Y --&gt;|OK| CDB[(CONFIG_DB に書込)]
   Y --&gt;|NG| ERR[エラーを返す]</code></pre>
-<p>YANG library が validation を担うため、ヒトが Python を書くより <strong>型・enum・range・mandatory 違反が早期検知</strong> される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="sonic-package-manager">sonic-package-manager 連携<a class="headerlink" href="#sonic-package-manager" title="Permanent link">&para;</a></h3>
-<p><code>manifest.json</code>:</p>
+<p>YANG library が validation を担うため、ヒトが Python を書くより <strong>型・enum・range・mandatory 違反が早期検知</strong> される<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="sonic-package-manager">sonic-package-manager 連携<a class="headerlink" href="#sonic-package-manager" title="Permanent link">&para;</a></h2>
+<p><code>manifest.json</code> の <code>cli</code> セクション<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23067,7 +23004,7 @@
 <tr>
 <td><code>/cli/auto-generate-config-source-yang-modules</code></td>
 <td>list[str]</td>
-<td>適用対象を絞る場合の module 名リスト</td>
+<td>対象 module 限定</td>
 </tr>
 <tr>
 <td><code>/cli/auto-generate-show-source-yang-modules</code></td>
@@ -23081,33 +23018,40 @@
 </tr>
 </tbody>
 </table>
-<p>YANG モデルは Application Extension docker 内に置き、docker label <code>com.azure.sonic.yang-module.sonic-&lt;name&gt;</code> で参照される<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-package-manager</code> は package install / upgrade フックで CLI 自動生成を駆動する。</p>
-<h3 id="sonic-cli-gen">独立コマンド <code>sonic-cli-gen</code><a class="headerlink" href="#sonic-cli-gen" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sonic-cli-gen<span class="w"> </span>generate<span class="w"> </span>config<span class="w"> </span>sonic-acl
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># → /usr/local/lib/python3.x/dist-packages/config/plugins/auto/sonic-acl_yang.py 生成</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sonic-cli-gen<span class="w"> </span>remove<span class="w">   </span>config<span class="w"> </span>sonic-acl
+<p>YANG モデルは Application Extension docker 内に置き、docker label <code>com.azure.sonic.yang-module.sonic-&lt;name&gt;</code> で参照される。<code>sonic-package-manager</code> が package install / upgrade 時に CLI 自動生成を駆動する。</p>
+<h2 id="sonic-cli-gen">独立コマンド <code>sonic-cli-gen</code><a class="headerlink" href="#sonic-cli-gen" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-cli-gen<span class="w"> </span>generate<span class="w"> </span>config<span class="w"> </span>sonic-acl
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># → /usr/local/lib/python3.x/dist-packages/config/plugins/auto/sonic-acl_yang.py 生成</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-cli-gen<span class="w"> </span>remove<span class="w">   </span>config<span class="w"> </span>sonic-acl
 </span></code></pre></div>
-<p><code>/usr/local/yang-models/</code> に置いた YANG が対象。HLD が動作確認した既存 YANG リスト（<code>sonic-acl</code>, <code>sonic-vlan</code>, <code>sonic-port</code> 等）あり<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p><code>/usr/local/yang-models/</code> に置いた YANG が対象。HLD には動作確認済 YANG リスト（<code>sonic-acl</code>, <code>sonic-vlan</code>, <code>sonic-port</code> 等）あり<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Application Extension の YANG は <strong><code>module</code> / <code>container</code> 名の衝突禁止</strong>。既存 sonic-yang-models と同じ <code>module</code> 名は不可、衝突時は CLI 生成エラー<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>Phase 1 は <strong>CONFIG_DB のみ</strong>。Phase 2 で他 DB と <code>sonic-clear</code> 自動生成を予定<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>update</code> サブコマンドは生成されるが YANG 制約で実行不可なケースあり（バリデータがエラーを返す）</li>
-<li><code>grouping</code> の場所制約（module 直下のみ）</li>
+<li>Application Extension の YANG は <strong><code>module</code> / <code>container</code> 名衝突禁止</strong>。既存 sonic-yang-models と同 <code>module</code> 名は不可</li>
+<li>Phase 1 は <strong>CONFIG_DB のみ</strong>。Phase 2 で他 DB と <code>sonic-clear</code> 自動生成を予定</li>
+<li><code>update</code> は生成されるが YANG 制約で実行不可なケースあり</li>
+<li><code>grouping</code> は module 直下限定</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>sonic-package-manager</strong>: SAE 取り込み時のメインエントリ</li>
-<li><strong>手書き CLI plugin</strong>: <code>manifest.json</code> の <code>*-cli-plugin</code> で共存可能。例えば config だけ自動生成・show は手書き</li>
-<li><strong>YANG 検証</strong>: 生成 CLI は実行時に YANG validation を通す。CVL / mgmt-framework と同じ YANG 集合に依存</li>
+<li><strong>手書き CLI plugin</strong>: <code>manifest.json</code> で共存可能（config は自動・show は手書き等）</li>
+<li><strong>YANG 検証</strong>: 生成 CLI は実行時に validation を通す。CVL / mgmt-framework と同じ YANG 集合に依存</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/10-gnmi-openconfig/">Topic: gNMI / OpenConfig</a></li>
+<li><a href="../sonic-yang-model-guidelines/">HLD: SONiC YANG model guidelines</a></li>
+<li><a href="../sonic-management-framework/">HLD: SONiC Management Framework</a></li>
+<li><a href="../sonic-application-extension-guide/">HLD: SONiC Application Extension Guide</a></li>
+</ul>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/cli_auto_generation/cli_auto_generation.md">sonic-net/SONiC doc/cli_auto_generation/cli_auto_generation.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/cli_auto_generation/cli_auto_generation.md">sonic-net/SONiC doc/cli_auto_generation/cli_auto_generation.md @ 49bab5b</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

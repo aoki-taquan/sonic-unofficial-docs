@@ -15411,7 +15411,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        何のための仕組みか
       
     </span>
   </a>
@@ -15422,19 +15422,19 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        どう構成するか
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+    <nav class="md-nav" aria-label="どう構成するか">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#fabric-asic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fabric ASIC のホスト容器構成
+        Fabric ASIC のコンテナ
       
     </span>
   </a>
@@ -15442,43 +15442,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#device_metadata-switch_type" class="md-nav__link">
+  <a href="#device_metadata-identify" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DEVICE_METADATA の switch_type
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fabric-state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fabric ポート / リンクの状態 - STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Counter
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fabric-link-rev-3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fabric link 監視（Rev 3 系で大幅に進化）
+        DEVICE_METADATA で identify
       
     </span>
   </a>
@@ -15496,11 +15463,39 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#hotswap" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state_db-counter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hotswap 対応
+        何が見えるか（STATE_DB / counter）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="何が見えるか（STATE_DB / counter）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fabric_port_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FABRIC_PORT_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fabric-sai-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fabric 専用 SAI counter
       
     </span>
   </a>
@@ -15509,61 +15504,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rev-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        どう監視するか（Rev 3 以降）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="どう監視するか（Rev 3 以降）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hotswap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hotswap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定と CLI
+      
+    </span>
+  </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -15574,7 +15558,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -15585,7 +15569,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15596,7 +15580,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22782,7 +22777,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        何のための仕組みか
       
     </span>
   </a>
@@ -22793,19 +22788,19 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        どう構成するか
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+    <nav class="md-nav" aria-label="どう構成するか">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#fabric-asic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fabric ASIC のホスト容器構成
+        Fabric ASIC のコンテナ
       
     </span>
   </a>
@@ -22813,43 +22808,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#device_metadata-switch_type" class="md-nav__link">
+  <a href="#device_metadata-identify" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DEVICE_METADATA の switch_type
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fabric-state_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fabric ポート / リンクの状態 - STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Counter
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fabric-link-rev-3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fabric link 監視（Rev 3 系で大幅に進化）
+        DEVICE_METADATA で identify
       
     </span>
   </a>
@@ -22867,11 +22829,39 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#hotswap" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state_db-counter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hotswap 対応
+        何が見えるか（STATE_DB / counter）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="何が見えるか（STATE_DB / counter）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fabric_port_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FABRIC_PORT_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fabric-sai-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fabric 専用 SAI counter
       
     </span>
   </a>
@@ -22880,61 +22870,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rev-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        どう監視するか（Rev 3 以降）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="どう監視するか（Rev 3 以降）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hotswap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hotswap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定と CLI
+      
+    </span>
+  </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -22945,7 +22924,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -22956,7 +22935,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -22967,7 +22946,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23004,85 +22994,70 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p>実装裏取り済み（下記コード位置）。switch_type=fabric: sonic-yang-models/yang-models/sonic-port.yang:75 / APP_FABRIC_PORT_TABLE_NAME: sonic-swss-common/common/schema.h:40, 549 / FabricPortsOrch: sonic-swss/orchagent/fabricportsorch.{cpp,h} / show fabric: sonic-utilities/show/fabric.py + scripts/fabricstat + config/fabric.py で確認。</p>
+<p>実装裏取り済み。<code>switch_type=fabric</code>: <code>sonic-yang-models/yang-models/sonic-port.yang:75</code> / <code>APP_FABRIC_PORT_TABLE_NAME</code>: <code>sonic-swss-common/common/schema.h:40,549</code> / <code>FabricPortsOrch</code>: <code>sonic-swss/orchagent/fabricportsorch.{cpp,h}</code> / <code>show fabric</code>: <code>sonic-utilities/show/fabric.py</code> + <code>scripts/fabricstat</code> + <code>config/fabric.py</code>。</p>
 </div>
 <h1 id="voq-fabric-fabric-asic-link-monitoring">VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）<a class="headerlink" href="#voq-fabric-fabric-asic-link-monitoring" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VOQ シャーシ（Virtual Output Queue を持つマルチカード分散シャーシ）は <strong>forwarding ASIC</strong>（front panel port を持つ NPU）を <strong>fabric ASIC</strong>（cell ベースの内部 fabric）で相互接続する構成を取る。本 HLD は SONiC が <strong>fabric ASIC を forwarding ASIC と同等の syncd / sairedis 構成で管理</strong> する方法と、fabric link 監視・統計収集の枠組みを定める<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_1">何のための仕組みか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>VOQ シャーシは <strong>forwarding ASIC</strong>（front panel を持つ NPU）を <strong>fabric ASIC</strong>（cell ベースの内部 fabric）で相互接続する。本 HLD は <strong>fabric ASIC を forwarding ASIC と同様に syncd / sairedis で管理</strong>し、fabric link の状態監視・統計収集・自動 isolation を行う枠組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <blockquote>
-<p>詳細は HLD <code>doc/voq/fabric.md</code> および <code>doc/voq/architecture.md</code> を参照。本ページはアーキテクチャ要点に絞る。</p>
+<p>詳細は HLD <code>doc/voq/fabric.md</code> および <code>doc/voq/architecture.md</code> を参照。</p>
 </blockquote>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="fabric-asic">Fabric ASIC のホスト容器構成<a class="headerlink" href="#fabric-asic" title="Permanent link">&para;</a></h3>
-<p>forwarding ASIC と同じく、fabric ASIC ごとに次の container を立てる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>database</code></li>
-<li><code>swss</code></li>
-<li><code>syncd</code></li>
-</ul>
-<p>ただし fabric ASIC に front panel port は無いため、<strong><code>lldp</code> / <code>teamd</code> / <code>bgp</code> 等のコンテナは disable</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SSI（Supervisor SONiC Instance）から chassis 内の fabric ASIC を一括管理する。</p>
-<h3 id="device_metadata-switch_type"><code>DEVICE_METADATA</code> の <code>switch_type</code><a class="headerlink" href="#device_metadata-switch_type" title="Permanent link">&para;</a></h3>
-<p>fabric ASIC を識別するために CONFIG_DB に<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_2">どう構成するか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="fabric-asic">Fabric ASIC のコンテナ<a class="headerlink" href="#fabric-asic" title="Permanent link">&para;</a></h3>
+<p>forwarding ASIC と同じく fabric ASIC ごとに <code>database</code> / <code>swss</code> / <code>syncd</code> を立てる。front panel が無いので <code>lldp</code> / <code>teamd</code> / <code>bgp</code> は disable。SSI（Supervisor SONiC Instance）から chassis 内の fabric ASIC を一括管理する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="device_metadata-identify"><code>DEVICE_METADATA</code> で identify<a class="headerlink" href="#device_metadata-identify" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DEVICE_METADATA|localhost
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  switch_type = &quot;fabric&quot;
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  switch_id   = &lt;一意の番号&gt;
 </span></code></pre></div>
-<blockquote>
-<p>SAI VOQ 仕様の <strong>推奨</strong>: fabric ASIC の <code>switch_id</code> は forwarding ASIC のものと <strong>重複させない</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-</blockquote>
-<h3 id="fabric-state_db">Fabric ポート / リンクの状態 - STATE_DB<a class="headerlink" href="#fabric-state_db" title="Permanent link">&para;</a></h3>
-<p>fabric port は <strong>chip 上の fabric port 番号</strong> で識別される。状態は周期 poll で <code>STATE_DB FABRIC_PORT_TABLE</code> に保存<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>STATE_DB:FABRIC_PORT_TABLE:&lt;fabric_port_name&gt;
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  lane    = &lt;number&gt;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  status  = &quot;up&quot; | &quot;down&quot;
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  # up なら remote peer の switch_id / fabric port も保持
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  # down なら reason (CRC / misaligned 等)
-</span></code></pre></div>
-<h3 id="counter">Counter<a class="headerlink" href="#counter" title="Permanent link">&para;</a></h3>
-<p>forwarding 用の port counter とは別に、fabric port 専用の SAI counter を収集する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>SAI_PORT_STAT_IF_IN_OCTETS
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>SAI_PORT_STAT_IF_IN_ERRORS
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>SAI_PORT_STAT_IF_IN_FABRIC_DATA_UNITS
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>SAI_PORT_STAT_IF_IN_FEC_SYMBOL_ERRORS
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>SAI_PORT_STAT_IF_OUT_OCTETS
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>SAI_PORT_STAT_IF_OUT_FABRIC_DATA_UNITS
-</span></code></pre></div>
-<p>「<strong>cell</strong>」（fabric data unit）という単位が物理 packet と異なる粒度で計測されるのが特徴。</p>
-<h3 id="fabric-link-rev-3">Fabric link 監視（Rev 3 系で大幅に進化）<a class="headerlink" href="#fabric-link-rev-3" title="Permanent link">&para;</a></h3>
-<p>Rev 3 以降、fabric link 単位で <strong>エラー率しきい値による自動 isolation</strong> が追加された<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>通常運用中、<code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES</code> 等を周期チェック</li>
-<li>一定しきい値超過 → リンクを論理的に isolate（fabric から外す）</li>
-<li>リンクダウン時は更にダウン理由（CRC / misaligned）を STATE_DB に表記</li>
-<li>Rev 3.6 で <strong>persistent link flap</strong> 検出が追加: short up/down を繰り返すリンクも自動 isolate</li>
-</ul>
+<p>SAI VOQ 仕様の推奨: fabric ASIC の <code>switch_id</code> は forwarding ASIC と重複させない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  subgraph LC0[Line Card 0 / NPU0]
+  subgraph LC0[Line Card 0]
     F0[forwarding ASIC&lt;br/&gt;front-panel ports]
-    SY0[syncd]
   end
-  subgraph LC1[Line Card 1 / NPU1]
+  subgraph LC1[Line Card 1]
     F1[forwarding ASIC]
-    SY1[syncd]
   end
-  subgraph FAB[Fabric Card / Fabric ASIC]
+  subgraph FAB[Fabric Card]
     FA[fabric ASIC&lt;br/&gt;fabric ports only]
-    SYF[syncd-fabric]
   end
   subgraph SSI[Supervisor SONiC Instance]
-    DBC[database-fabric containers]
-    SS[swss-fabric containers]
+    SS[swss-fabric / syncd-fabric]
     FMG[fabric link monitor]
   end
   F0 ---|cells| FA
   F1 ---|cells| FA
-  SYF -.SAI.-&gt; FA
-  SS -- ASIC_DB --&gt; SYF
-  DBC -- STATE_DB.FABRIC_PORT_TABLE --&gt; FMG
+  SS -- ASIC_DB --&gt; FA
+  SS -- STATE_DB.FABRIC_PORT_TABLE --&gt; FMG
   FMG --&gt;|threshold 超過| ISOLATE[link isolate]</code></pre>
+<h2 id="state_db-counter">何が見えるか（STATE_DB / counter）<a class="headerlink" href="#state_db-counter" title="Permanent link">&para;</a></h2>
+<h3 id="fabric_port_table"><code>FABRIC_PORT_TABLE</code><a class="headerlink" href="#fabric_port_table" title="Permanent link">&para;</a></h3>
+<p>fabric port は chip 上の fabric port 番号で識別。周期 poll で書き込まれる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>STATE_DB:FABRIC_PORT_TABLE:&lt;fabric_port_name&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  lane    = &lt;number&gt;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  status  = &quot;up&quot; | &quot;down&quot;
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  # up なら remote peer の switch_id / fabric port を保持
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  # down なら reason (CRC / misaligned 等)
+</span></code></pre></div>
+<h3 id="fabric-sai-counter">Fabric 専用 SAI counter<a class="headerlink" href="#fabric-sai-counter" title="Permanent link">&para;</a></h3>
+<p>forwarding 用 port counter とは別に<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>SAI_PORT_STAT_IF_IN_OCTETS / IN_ERRORS / IN_FABRIC_DATA_UNITS
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>SAI_PORT_STAT_IF_IN_FEC_{CORRECTABLE,NOT_CORRECTABLE,SYMBOL}_ERRORS
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>SAI_PORT_STAT_IF_OUT_OCTETS / OUT_FABRIC_DATA_UNITS
+</span></code></pre></div>
+<p>「<strong>cell</strong>（fabric data unit）」が物理 packet と別粒度で計測される。</p>
+<h2 id="rev-3">どう監視するか（Rev 3 以降）<a class="headerlink" href="#rev-3" title="Permanent link">&para;</a></h2>
+<p>Rev 3 以降、fabric link 単位で <strong>エラー率しきい値による自動 isolation</strong> が追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><code>IN_FEC_NOT_CORRECTABLE_FRAMES</code> 等を周期チェック</li>
+<li>しきい値超過 → リンクを論理的に isolate（fabric から外す）</li>
+<li>リンクダウン時はダウン理由（CRC / misaligned）も STATE_DB に表記</li>
+<li>Rev 3.6 で <strong>persistent link flap</strong> 検出が追加（short up/down 繰り返しも isolate）</li>
+</ul>
+<p>しきい値の具体値・判定窓は HLD で完全固定されておらず、実装側のチューニング余地あり。</p>
+<h3 id="hotswap">Hotswap<a class="headerlink" href="#hotswap" title="Permanent link">&para;</a></h3>
+<p>Rev 1.1 で hotswap handling が明記<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。fabric / line card の活線挿抜で fabric ASIC コンテナが動的に start/stop される。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/voq/fabric.md#L33-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -23091,10 +23066,7 @@ excerpt: |
 reasoning: 継続的に改訂されている fabric link 監視機能の設計実績の根拠。
 -->
 
-<h3 id="hotswap">Hotswap 対応<a class="headerlink" href="#hotswap" title="Permanent link">&para;</a></h3>
-<p>Rev 1.1 で hotswap handling が明記<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: fabric card の活線挿抜 / line card の入れ替えに伴って fabric ASIC の container が動的に start/stop される。</p>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h2 id="cli">設定と CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -23112,8 +23084,6 @@ reasoning: 継続的に改訂されている fabric link 監視機能の設計�
 </tbody>
 </table>
 <p><code>STATE_DB FABRIC_PORT_TABLE</code> はランタイム生成。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>HLD で改訂されている系統<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23132,53 +23102,44 @@ reasoning: 継続的に改訂されている fabric link 監視機能の設計�
 </tr>
 <tr>
 <td><code>clear fabric counters</code></td>
-<td>fabric counter のクリア</td>
+<td>counter クリア</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># fabric ASIC を持つカードでの DEVICE_METADATA</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config-fabric-asic<span class="w"> </span>--switch-id<span class="w"> </span><span class="m">100</span><span class="w"> </span>--type<span class="w"> </span>fabric
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 状態確認</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>show<span class="w"> </span>fabric<span class="w"> </span>port<span class="w"> </span>status
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>show<span class="w"> </span>fabric<span class="w"> </span>counters<span class="w"> </span>port
-</span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>本 HLD は <strong>VOQ chassis 構成専用</strong>。pizza-box の単一 ASIC スイッチには無関係</li>
-<li>fabric ASIC は front-panel を持たないため LLDP / BGP 等のプロトコル系コンテナは disable 強制</li>
-<li>Fabric link 監視のしきい値設計（具体的な閾値・判定窓）は HLD 文書中で完全には固定されておらず、実装側のチューニング余地あり</li>
-<li>HLD は大きい（25KB+ で改訂多数）。詳細フローや edge case は HLD <code>doc/voq/fabric.md</code> を参照</li>
+<li>VOQ chassis 構成専用。pizza-box には無関係</li>
+<li>fabric ASIC は front-panel を持たないため LLDP / BGP 等は disable 強制</li>
+<li>自動 isolation のしきい値設計は HLD で完全固定されていない</li>
+<li>HLD は 25KB+ で改訂多数。フローや edge case は本文を参照</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>VOQ chassis architecture</strong>（<code>doc/voq/architecture.md</code>）: 本 HLD の前提</li>
-<li><strong>multi-ASIC HLD</strong>: container グルーピング機構を共有</li>
-<li><strong>SSI（Supervisor SONiC Instance）</strong>: 制御平面はここに集約される。fabric ASIC の swss/syncd は SSI 上に立つ</li>
-<li><strong>port counter / show interfaces counters 系</strong>: forwarding ASIC 側の port counter とは独立。混同しないよう CLI が分離されている</li>
-<li><strong>warm-boot / fast-boot</strong>: fabric link が一時的に down する間の cell loss / VOQ 制御は HLD でカバーされている範囲</li>
+<li><strong>multi-ASIC</strong>: container グルーピング機構を共有</li>
+<li><strong>SSI</strong>: 制御平面はここに集約。fabric ASIC の swss/syncd は SSI 上</li>
+<li><strong>port counter / show interfaces counters</strong>: forwarding 側と独立。CLI が分離されている</li>
+<li><strong>warm-boot / fast-boot</strong>: fabric link 一時 down 時の cell loss / VOQ 制御は HLD でカバー</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># fabric port の状態</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>fabric<span class="w"> </span>port<span class="w"> </span>status
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># 物理的にどの link が down か / 理由</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;FABRIC_PORT_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;FABRIC_PORT_TABLE:Fabric0&quot;</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># counter の急増 (FEC_NOT_CORRECTABLE_FRAMES が増えていないか)</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>show<span class="w"> </span>fabric<span class="w"> </span>counters<span class="w"> </span>port
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1"># 自動 isolate されたか</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss-fabric0<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>isolate
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>fabric<span class="w"> </span>port<span class="w"> </span>status
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;FABRIC_PORT_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;FABRIC_PORT_TABLE:Fabric0&quot;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>show<span class="w"> </span>fabric<span class="w"> </span>counters<span class="w"> </span>port<span class="w">                          </span><span class="c1"># FEC_NOT_CORRECTABLE が増えていないか</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss-fabric0<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>isolate<span class="w">    </span><span class="c1"># 自動 isolate されたか</span>
 </span></code></pre></div>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/12-multi-asic-voq/architecture/">Topics 12 Multi-ASIC / VOQ - architecture</a></li>
+<li><a href="../../topics/12-multi-asic-voq/internals/">Topics 12 Multi-ASIC / VOQ - internals</a></li>
+<li>関連 HLD: <a href="../voq-sonic/">VOQ SONiC</a> / <a href="../recirculation-port-support-on-voq-chassis/">Recirculation port (VOQ chassis)</a> / <a href="../everflow-support-on-voq-chassis/">Everflow on VOQ chassis</a></li>
+</ul>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/voq/fabric.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/voq/fabric.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

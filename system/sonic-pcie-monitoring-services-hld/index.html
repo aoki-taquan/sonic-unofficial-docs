@@ -13355,7 +13355,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        なぜ必要なのか
       
     </span>
   </a>
@@ -13366,7 +13366,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        どう動くのか
       
     </span>
   </a>
@@ -13374,21 +13374,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
+  <a href="#state_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CLI
+        STATE_DB / CLI
       
     </span>
   </a>
@@ -13422,6 +13411,17 @@
     <span class="md-ellipsis">
       
         トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
       
     </span>
   </a>
@@ -22671,7 +22671,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        なぜ必要なのか
       
     </span>
   </a>
@@ -22682,7 +22682,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        どう動くのか
       
     </span>
   </a>
@@ -22690,21 +22690,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#state_db" class="md-nav__link">
+  <a href="#state_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 STATE_DB
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CLI
+        STATE_DB / CLI
       
     </span>
   </a>
@@ -22738,6 +22727,17 @@
     <span class="md-ellipsis">
       
         トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
       
     </span>
   </a>
@@ -22780,55 +22780,50 @@
   
 
 
-<div class="admonition warning">
+<div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p>pcied / pcieinfo の現行 sonic-platform-daemons 実装状況、AER 取得経路は未確認。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 注記（2026-05-10）</p>
-<p>実コード裏取り: <code>sonic-platform-daemons/sonic-pcied/scripts/pcied</code> に PCIe monitoring daemon 実装、<code>pytest.ini</code> / <code>setup.py</code> でパッケージング。STATE_DB の <code>PCIE_DEVICE</code> 系テーブルへの書き込みは pcied の本体ロジックで確認できる。</p>
+<p><code>sonic-platform-daemons/sonic-pcied/scripts/pcied</code> に PCIe monitoring daemon 実装、STATE_DB の <code>PCIE_DEVICE</code> 系テーブル書き込みを pcied 本体ロジックで確認（verified at: 2026-05-10）。</p>
 </div>
 <h1 id="pcie-monitoring-servicespcied-pcieinfo-lnksta-aer">PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）<a class="headerlink" href="#pcie-monitoring-servicespcied-pcieinfo-lnksta-aer" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>pcied</code> は <strong>ASIC / NPU や peripheral が PCIe バス上に期待通り存在し、リンクが正しく確立しているか</strong> を監視する pmon 系 daemon<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CPU マザー上の PCIe デバイス inventory・現在の link speed/width・AER（Advanced Error Reporting）を STATE_DB に出す。</p>
-<p>主目的:</p>
+<h2 id="_1">なぜ必要なのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>スイッチの ASIC / NPU / 周辺デバイスは <strong>PCIe バス越しに CPU と接続</strong> されている。PCIe が enumerate されない / リンク速度が劣化している / AER で訂正不能エラーが出ている、といった異常は <strong>データプレーン全体の死に直結</strong> する。<code>pcied</code> はこれらを pmon 系 daemon として監視し STATE_DB へ反映する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ねらい:</p>
 <ul>
-<li>起動時に <strong>存在すべきデバイスがすべて見えているか</strong> を確認（platform 別 manifest と照合）</li>
-<li>リンク速度劣化（Gen4 で繋がるはずが Gen2 等）の検知</li>
-<li>AER による correctable / fatal error の集計と通知</li>
-<li><code>show platform pcieinfo</code> 等で運用者が状態を簡易確認できるようにする</li>
+<li>起動時に <strong>存在すべきデバイスがすべて見えているか</strong> を platform manifest と照合</li>
+<li><strong>リンク速度劣化</strong>（Gen4 想定が Gen2 等）の検知</li>
+<li><strong>AER</strong>（Advanced Error Reporting）の correctable / non-fatal / fatal 集計</li>
+<li><code>show platform pcieinfo</code> で運用者が状態確認可能</li>
 </ul>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">どう動くのか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    PD[pcied] --&gt; PLAT[platform plugin\n(/usr/share/sonic/device/&lt;plat&gt;/pcie.yaml)]
+    PD[pcied] --&gt; PLAT[/usr/share/sonic/device/&amp;lt;plat&amp;gt;/pcie.yaml]
     PD --&gt; SYSFS[/sys/bus/pci/devices/...]
-    SYSFS --&gt; PD
     PD --&gt; AER[/sys/.../aer_dev_*]
-    PD --&gt; STATE[STATE_DB\nPCIE_DEVICE / PCIE_DETACH / PCIE_AER]
+    PD --&gt; STATE[STATE_DB&lt;br/&gt;PCIE_DEVICE / PCIE_DETACH / PCIE_AER]
     SHOW[show platform pcieinfo] --&gt; STATE</code></pre>
 <p>主な観測項目<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>device list</strong> と manifest との一致（vendor/device id、function、bus）</li>
-<li><strong>link state</strong>（current speed / max speed / current width / max width）</li>
-<li><strong>AER</strong>: correctable error count、non-fatal、fatal</li>
-<li><strong>detach</strong>: 期待デバイスが消失しているケースの検知</li>
+<li><strong>device list</strong> と manifest 一致（vendor / device id、function、bus）</li>
+<li><strong>link state</strong>（current/max の speed / width）</li>
+<li><strong>AER</strong>: correctable / non-fatal / fatal カウンタ</li>
+<li><strong>detach</strong>: 期待デバイスの消失</li>
 </ul>
-<h2 id="state_db">関連 STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
+<h2 id="state_db-cli">STATE_DB / CLI<a class="headerlink" href="#state_db-cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Table</th>
-<th>説明</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>PCIE_DEVICE</code></td>
-<td>観測された device リスト</td>
+<td>観測された device</td>
 </tr>
 <tr>
 <td><code>PCIE_DETACH</code></td>
-<td>期待されていたが消失している device</td>
+<td>期待 device の消失</td>
 </tr>
 <tr>
 <td><code>PCIE_AER</code></td>
@@ -22836,7 +22831,6 @@
 </tr>
 </tbody>
 </table>
-<h2 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -22847,43 +22841,35 @@
 <tbody>
 <tr>
 <td><code>show platform pcieinfo</code></td>
-<td>期待 device との照合と現在状態</td>
+<td>manifest 照合と現在状態</td>
 </tr>
 <tr>
 <td><code>show platform pcieinfo -c</code></td>
-<td>詳細（capability）情報</td>
+<td>capability 詳細</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>manifest が無いと差分が判定できない</strong>: <code>pcie.yaml</code> の整備が前提</li>
-<li><strong>AER の有効化</strong>: kernel cmdline / BIOS で AER を有効にしておかないとカウンタが進まない</li>
-<li><strong>hot-plug</strong>: 通常 SONiC のスイッチング platform で使う場面は少ない</li>
-<li><strong>NUMA / lane swap</strong>: BIOS 段階の挙動は本機構の対象外</li>
+<li><strong><code>pcie.yaml</code> manifest が無いと差分判定不可</strong>。platform 整備前提</li>
+<li><strong>AER 有効化</strong> には kernel cmdline / BIOS の設定が必要</li>
+<li>通常スイッチ platform で hot-plug は想定外</li>
+<li>NUMA / lane swap など BIOS 段階の挙動は対象外</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>system health monitor</strong>: PCIe AER fatal を critical に昇格させる経路</li>
-<li><strong>pcieinfo-design</strong>: 既存の pcieinfo CLI / 機能との関係（同 area / platform 周辺）</li>
-<li><strong>show techsupport</strong>: PCIe 状態を含めた dump</li>
-</ul>
+<p>system health monitor（PCIe AER fatal を critical へ昇格） / pcieinfo 既存 CLI / <code>show techsupport</code>（PCIe 状態を含めた dump）。</p>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show platform pcieinfo</code> で device 不足 → manifest と実装の差、kernel ログの enumeration エラー</li>
-<li>link speed 劣化 → cable / connector / 仕様、<code>lnkSta</code> の current vs max を比較</li>
-<li>AER カウンタ増加 → <code>dmesg</code> の <code>pcieport</code> メッセージ、device 側 firmware</li>
+<li>device 不足 → manifest と実装差、kernel enumeration エラー</li>
+<li>link speed 劣化 → cable / connector、<code>lnkSta</code> current vs max を比較</li>
+<li>AER カウンタ増加 → <code>dmesg</code> の <code>pcieport</code> メッセージ、device firmware</li>
+</ul>
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/14-platform-port-optics/">14-platform-port-optics</a>: pmon 全体像</li>
+<li><a href="../../topics/11-reboot/">11-reboot</a>: boot 時の PCIe enumerate</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- pcied daemon の現行 sonic-platform-daemons 取り込みと systemd 起動経路の確認
-- platform 別 pcie.yaml manifest の現行整備状況確認
-- STATE_DB PCIE_DEVICE / PCIE_DETACH / PCIE_AER スキーマの現行値確認
-- show platform pcieinfo CLI の sonic-utilities 取り込み確認
-- AER 取得の現行実装（sysfs 直 / aer_inject の使用有無）の確認
-- system health monitor / show techsupport との連携確認
--->
-
 <div class="footnote">
 <hr />
 <ol>
