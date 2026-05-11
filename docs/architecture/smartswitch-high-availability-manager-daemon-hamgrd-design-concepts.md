@@ -5,7 +5,7 @@ description: HAMgrD の概念。NPU 側 actor model、vDPU 抽象、HA Set / HA 
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: not_implemented
+monitor: partially_implemented
 page_kind: split-child
 sources:
 - repo: sonic-net/SONiC
@@ -84,7 +84,7 @@ vDPU actor が物理 DPU actor に register、DPU actor が状態変化を vDPU 
 
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
-    `hamgrd` バイナリは community master に未取り込み（`grep -ri hamgrd .cache/sonic-sources/sonic-swss/` でコメントのみヒット）。actor framework / vDPU 抽象 / swbus も実装されていない。本ページの概念記述は HLD v0.1 (2025-02) を元にした **将来仕様の参考** であり、現行 community master で「動かす」ことは不可能。詳細は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) を参照。
+    schema 層（HA Set / HA Scope の APP/CFG/STATE table 名）は一部のみ先行採用済み（部分実装）。一方で `hamgrd` バイナリは community master に未取り込み（`grep -ri hamgrd .cache/sonic-sources/sonic-swss/` でコメントのみヒット）。actor framework / vDPU 抽象 / swbus も実装されていない。本ページの概念記述は HLD v0.1 (2025-02) を元にした **将来仕様の参考** であり、現行 community master で「動かす」ことは不可能。詳細は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) を参照。
 <!-- /diff-admonition -->
 
 ## 関連ページ

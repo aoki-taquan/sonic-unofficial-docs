@@ -5,7 +5,7 @@ description: 'SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携） —
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: not_implemented
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
