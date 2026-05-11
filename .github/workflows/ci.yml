@@ -63,3 +63,27 @@ jobs:
 
       - name: Check docs/index.md quality banner is up to date
         run: python3 meta/scripts/gen_index_banner.py --check
+
+  discrepancy-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check docs/reference/verification/discrepancy-index.md is up to date
+        run: python3 meta/scripts/gen_discrepancy_index.py --check
+
+  coverage-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check docs/_meta/coverage.md is up to date
+        run: python3 meta/scripts/gen_coverage.py --check
