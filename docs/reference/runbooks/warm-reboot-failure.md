@@ -1,0 +1,103 @@
+---
+title: Warm Reboot が失敗 / 通信断が長引く
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: scripts/warm-reboot
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-swss
+    path: orchagent/warm_restart.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-frr
+    path: bgpd/bgp_routemap.c
+    ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
+related:
+  config_db: [WARM_RESTART, BGP_DEVICE_GLOBAL, DEVICE_METADATA]
+  cli: [warm-reboot, config warm_restart enable, show warm_restart]
+  yang: []
+---
+
+# Runbook: Warm Reboot が失敗 / 通信断が長引く
+
+## 症状
+
+- `warm-reboot` 実行後に Data plane の通信が想定（< 1s）を超えて 30s 〜 数分断する
+- `warm-reboot` 自体が途中で abort して通常の `reboot` にフォールバックする
+- 再起動後に SAI object が再生成され、FDB / ARP / Route が全部 relearn になっている
+
+## 想定原因
+
+1. **`WARM_RESTART` テーブルで該当機能が enable されていない** (bgp / teamd / swss / syncd / nat 等)
+2. **BGP graceful restart の対向側未対応 / capability 未交換**: GR helper として動作するために対向 peer も GR 対応が必要
+3. **dataplane object 量が大きすぎて reconciliation が間に合わない** (Route 数十万件 + ACL 大量) → restore_count に至らずタイムアウト
+4. **`pre-shutdown` のチェックで pending operation あり** (`COUNTERS_DB` の queue / port が busy)
+5. **platform / SAI が warm boot 非対応** (Mellanox/Broadcom SDK バージョン依存)
+
+## 切り分け手順
+
+### 1. Warm Restart の enable 状態
+
+```bash
+show warm_restart config
+sonic-db-cli CONFIG_DB hgetall "WARM_RESTART|swss"
+sonic-db-cli CONFIG_DB hgetall "WARM_RESTART|bgp"
+sonic-db-cli CONFIG_DB hgetall "WARM_RESTART|teamd"
+```
+
+- 期待: 該当 module が `enable: true`
+- 異常: 設定漏れ → `config warm_restart enable <module>` で投入
+
+### 2. Warm Restart 状態の前後比較
+
+```bash
+show warm_restart state
+sonic-db-cli STATE_DB hgetall "WARM_RESTART_TABLE|orchagent"
+sonic-db-cli STATE_DB hgetall "WARM_RESTART_TABLE|bgp"
+```
+
+- 期待: `state: reconciled` まで到達
+- 異常: `restored` で stuck / `disabled` → reconciliation のロジック失敗
+
+### 3. BGP GR capability 確認
+
+```bash
+docker exec bgp vtysh -c "show bgp neighbor <peer> | include Graceful"
+```
+
+- 期待: `Graceful restart: advertised and received`
+- 異常: `received only` などで非対称 → 対向が helper 動作できない
+
+### 4. 失敗ログ
+
+```bash
+sudo grep -iE "warm|reconcil" /var/log/syslog | tail -200
+docker logs swss 2>&1 | grep -iE "warm|reconcil"
+docker logs bgp 2>&1 | grep -iE "warm|graceful"
+```
+
+### 5. プラットフォーム対応の確認
+
+```bash
+sudo cat /usr/share/sonic/device/*/*/platform_asic | head
+sudo grep -i SAI_KEY_WARM_BOOT /usr/share/sonic/hwsku/*/sai.profile 2>/dev/null
+```
+
+## 対処方法
+
+- 不足 module の enable: `config warm_restart enable swss`, `bgp`, `teamd`, `nat`, `dhcp_relay` を順に
+- 大量経路で reconciliation がタイムアウトする場合: `WARM_RESTART|<module>` の `bgp_timer` / `neighsyncd_timer` / `fpmsyncd_timer` 等を拡張
+- BGP 側で `bgp graceful-restart` を双方で有効化
+- それでも warm boot が断続する場合: `fast-reboot` （control plane reset / data plane preserved）にフォールバックする運用へ変更
+
+## 関連ページ
+
+- [../../topics/11-reboot/operations.md](../../topics/11-reboot/operations.md)
+- [../../topics/11-reboot/concept.md](../../topics/11-reboot/concept.md)
+- [../cli/reboot-fast-warm.md](../cli/reboot-fast-warm.md)
+
+## 引用元
+
+[^1]: sonic-net/sonic-utilities @ 39732bceb — `scripts/warm-reboot`
+[^2]: sonic-net/sonic-swss @ 4305596 — warm_restart helper
