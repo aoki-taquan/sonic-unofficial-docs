@@ -63,14 +63,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: BGP (Border Gateway Protocol)
 - **日本語訳**: BGP
 - **説明**: ルーティングプロトコル (RFC 4271)。SONiC では FRR の `bgpd` を使用し、`fpmsyncd` 経由でカーネル経由 APPL_DB へ反映する。
-- **関連**: [BGP トピック](../topic/bgp.md)、[FRR](#frr)、[fpmsyncd](#fpmsyncd)
+- **関連**: [BGP トピック](../topics/02-bgp/index.md)、[FRR](#frr)、[fpmsyncd](#fpmsyncd)
 
 ### bgpcfgd
 
 - **略称**: bgpcfgd
 - **日本語訳**: BGP 設定デーモン
 - **説明**: CONFIG_DB の BGP 関連テーブル変更を購読し、FRR (`vtysh`) に流し込む Python デーモン (`sonic-buildimage/dockers/docker-fpm-frr/bgpcfgd`)。
-- **関連**: [BGP トピック](../topic/bgp.md)
+- **関連**: [BGP トピック](../topics/02-bgp/index.md)
 
 ### Buffer Model
 
@@ -112,7 +112,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: CoPP (Control Plane Policing)
 - **日本語訳**: 制御プレーンポリシング
 - **説明**: 制御プレーン宛トラフィックをトラップして CPU に転送する SAI Hostif Trap 機能。SONiC では `copp_cfg.json` と `copporch` で制御。
-- **関連**: [ACL/CoPP/Mirror トピック](../topic/07-acl-copp-mirror.md)
+- **関連**: [ACL/CoPP/Mirror トピック](../topics/07-acl-copp-mirror/index.md)
 
 ### CounterSyncd
 
@@ -155,7 +155,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: ECMP (Equal-Cost Multi-Path)
 - **日本語訳**: 等コストマルチパス
 - **説明**: 同コストの複数経路に対しハッシュベースでフローを分散する機能。SONiC では SAI Next Hop Group で実装。
-- **関連**: [VRF/ECMP トピック](../topic/vrf-ecmp.md)
+- **関連**: [VRF/ECMP トピック](../topics/04-vrf-ecmp/index.md)
 
 ### ENI
 
@@ -169,7 +169,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: EVPN (Ethernet VPN)
 - **日本語訳**: EVPN
 - **説明**: BGP EVPN (RFC 7432) を用いた L2/L3 オーバーレイ制御プレーン。SONiC では FRR `bgpd` で実装。
-- **関連**: [VXLAN EVPN VNET トピック](../topic/vxlan-evpn-vnet.md)
+- **関連**: [VXLAN EVPN VNET トピック](../topics/03-vxlan-evpn/index.md)
 
 ## F
 
@@ -202,14 +202,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: fpmsyncd
 - **日本語訳**: FPM 同期デーモン
 - **説明**: FRR `zebra` からの FPM メッセージを受信し、APPL_DB の `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` に書き込む SwSS コンポーネント。
-- **関連**: [FRR](#frr)、[BGP トピック](../topic/bgp.md)
+- **関連**: [FRR](#frr)、[BGP トピック](../topics/02-bgp/index.md)
 
 ### FRR
 
 - **略称**: FRR (FRRouting)
 - **日本語訳**: FRRouting
 - **説明**: SONiC が採用するルーティングスタック。`bgpd` / `zebra` / `staticd` 等を含む。`docker-fpm-frr` コンテナ内で動く。
-- **関連**: [BGP トピック](../topic/bgp.md)
+- **関連**: [BGP トピック](../topics/02-bgp/index.md)
 
 ## G
 
@@ -260,7 +260,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: LACP (Link Aggregation Control Protocol)
 - **日本語訳**: LACP
 - **説明**: IEEE 802.1AX のリンク集約プロトコル。SONiC では `teamd` (libteam) で実装。
-- **関連**: [L2/VLAN/LAG トピック](../topic/l2-vlan-lag.md)
+- **関連**: [L2/VLAN/LAG トピック](../topics/06-l2-vlan-lag/index.md)
 
 ### LAG
 
@@ -511,14 +511,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: VNET (Virtual Network)
 - **日本語訳**: VNET
 - **説明**: SONiC オーバーレイ / DASH 双方で使われるテナント仮想ネットワーク概念。CONFIG_DB の `VNET` テーブルで定義。
-- **関連**: [VXLAN EVPN VNET トピック](../topic/vxlan-evpn-vnet.md)
+- **関連**: [VXLAN EVPN VNET トピック](../topics/03-vxlan-evpn/index.md)
 
 ### VRF
 
 - **略称**: VRF (Virtual Routing and Forwarding)
 - **日本語訳**: VRF
 - **説明**: ルーティングテーブル分離機構。Linux VRF デバイスと SAI Virtual Router の双方で実現。
-- **関連**: [VRF/ECMP トピック](../topic/vrf-ecmp.md)
+- **関連**: [VRF/ECMP トピック](../topics/04-vrf-ecmp/index.md)
 
 ### vrfmgrd
 
