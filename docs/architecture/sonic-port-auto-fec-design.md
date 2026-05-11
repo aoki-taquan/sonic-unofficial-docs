@@ -176,4 +176,11 @@ PORT|<if>:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 96667c52d98d -->
+## 関連リファレンス
+
+- CLI: [show interfaces](../reference/cli/show-interfaces.md) / [config interface](../reference/cli/config-interface.md) / [show platform](../reference/cli/show-platform.md)
+- CONFIG_DB: [PORT](../reference/config-db/port.md)
+- [YANG](../reference/glossary.md#term-yang): [sonic-port](../reference/yang/sonic-port.md)
+- 関連 [HLD](../reference/glossary.md#term-hld): [CMIS module management](../management/enhancement-of-cmis-module-management.md) / [pcieinfo design](../platform/pcieinfo-design.md)
+
+<!-- glossary-links-injected: 26ca9e81c971 -->

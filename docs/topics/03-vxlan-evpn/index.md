@@ -87,7 +87,7 @@ related:
 | setup | ✅ 完成 (240 行) | meta |
 | operations | ✅ 完成 (167 行) | meta |
 | internals | ✅ 完成 (130 行) | meta |
-| advanced | ⚠️ プレースホルダ (75 行) | meta |
+| advanced | ✅ 完成 (100 行) | meta |
 
 <!-- /chapter-progress -->
 

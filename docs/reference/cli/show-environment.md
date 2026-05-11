@@ -77,10 +77,15 @@ flowchart LR
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show platform](show-platform.md) / [show system-health](show-system-health.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-device_metadata](../yang/sonic-device_metadata.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [DEVICE_METADATA](../config-db/device-metadata.md)
+- Topic: [プラットフォーム / ポート / 光モジュール](../../topics/14-platform-port-optics/index.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
 [^1]: `environment` コマンドの実装は `show/main.py` L1756-L1761。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1756>
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

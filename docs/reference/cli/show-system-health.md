@@ -143,7 +143,9 @@ excerpt: |
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show services](show-services.md) / [show techsupport](show-techsupport.md) / [show feature](show-feature.md) / [show platform](show-platform.md)
+- 関連 [HLD](../../reference/glossary.md#term-hld): [SONiC System Health Monitor HLD](../../system/sonic-system-health-monitor-high-level-design.md) / [event-driven techsupport](../../system/event-driven-techsupport-invocation-coredump-mgmt.md)
+- Topic: [プラットフォーム / ポート / 光モジュール](../../topics/14-platform-port-optics/index.md) / [リブート / アップグレード](../../topics/11-reboot/index.md)
 
 <!-- ref-triangle:end -->
 
@@ -198,4 +200,4 @@ show platform fan
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: cce0edbb8271 -->
+<!-- glossary-links-injected: 167700005048 -->

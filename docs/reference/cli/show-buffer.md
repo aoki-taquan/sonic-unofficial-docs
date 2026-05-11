@@ -56,7 +56,10 @@ mmuconfig -l [-n <namespace>] [-vv]
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show buffer-pool](show-buffer-pool.md) / [show priority-group](show-priority-group.md) / [show queue](show-queue.md) / [config buffer](config-buffer.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [BUFFER_POOL](../config-db/buffer-pool.md) / [BUFFER_PROFILE](../config-db/buffer-profile.md) / [BUFFER_PG](../config-db/buffer-pg.md) / [BUFFER_QUEUE](../config-db/buffer-queue.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-buffer-pool](../yang/sonic-buffer-pool.md) / [sonic-buffer-profile](../yang/sonic-buffer-profile.md)
+- Topic: [QoS / Buffer](../../topics/08-qos-buffer/index.md)
 
 <!-- ref-triangle:end -->
 
@@ -108,3 +111,5 @@ show buffer profile
 show runningconfiguration | grep -i buffer
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

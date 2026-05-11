@@ -20,6 +20,17 @@ related:
 
 順次拡充中。詳細な章設計は `meta/topics-plan-feature.md` を参照。
 
+主要章へのリンク:
+
+- Foundation: [01 Overview](01-overview/index.md) / [20 SWSS / SAI / Redis](20-swss-sai-redis/index.md)
+- L3: [02 BGP](02-bgp/index.md) / [03 VXLAN / EVPN](03-vxlan-evpn/index.md) / [04 VRF / ECMP](04-vrf-ecmp/index.md)
+- L2: [05 Dual-ToR](05-dual-tor/index.md) / [06 L2 / VLAN / LAG](06-l2-vlan-lag/index.md)
+- Policy: [07 ACL / CoPP / Mirror](07-acl-copp-mirror/index.md) / [08 QoS / Buffer](08-qos-buffer/index.md)
+- Observe: [09 Telemetry / SNMP](09-telemetry-snmp/index.md) / [10 gNMI / OpenConfig](10-gnmi-openconfig/index.md)
+- Lifecycle: [11 Reboot](11-reboot/index.md) / [19 Build / Packaging](19-build-packaging/index.md) / [21 Lab / VS](21-lab-vs-developer/index.md)
+- Extension: [12 Multi-ASIC / VOQ](12-multi-asic-voq/index.md) / [13 DASH / SmartSwitch](13-dash-smartswitch/index.md) / [17 SRv6 / MPLS](17-srv6-mpls/index.md) / [18 P4 / PINS](18-p4-pins/index.md)
+- Periphery: [14 Platform / Optics](14-platform-port-optics/index.md) / [15 Security / AAA](15-security-aaa/index.md) / [16 NAT / DHCP / DNS](16-nat-dhcp-dns/index.md) / [22 Reference Index](22-reference-index/index.md)
+
 ## 読み進め方マップ
 
 22 章の依存関係を、カテゴリ別の色分けと **前提 (実線)** / **派生・補完 (点線)** の 2 種類のエッジで示す。読み方の指針は次のとおり。

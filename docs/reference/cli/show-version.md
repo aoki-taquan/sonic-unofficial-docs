@@ -85,7 +85,10 @@ flowchart LR
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show uptime](show-uptime.md) / [show platform](show-platform.md) / [show services](show-services.md) / [show system-health](show-system-health.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-versions](../yang/sonic-versions.md) / [sonic-device_metadata](../yang/sonic-device_metadata.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [DEVICE_METADATA](../config-db/device-metadata.md)
+- Topic: [プラットフォーム / ポート / 光モジュール](../../topics/14-platform-port-optics/index.md) / [リブート / アップグレード](../../topics/11-reboot/index.md)
 
 <!-- ref-triangle:end -->
 
@@ -122,3 +125,5 @@ HwSKU: Celestica-DX010-C32
 ASIC: broadcom
 ```
 <!-- /usage-example -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->
