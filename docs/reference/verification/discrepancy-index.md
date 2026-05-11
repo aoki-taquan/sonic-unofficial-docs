@@ -165,7 +165,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../../platform/dump-on-sai-failure.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
-  - **HLD**: 汎用 dump 起点スクリプトを `/usr/bin/syncd_dump.sh` と表記。 - **現行 master**: `sonic-sairedis/syncd/Syncd.cpp` L45 / `tests.cpp` L46 の `#define SAI_FAILURE_DUMP_SCRIPT "/usr/bin/sai_failure_dump.sh"`、`sonic-sairedis/syncd/scripts/sai_failure_dump.sh` L8/L10/L12 で確認したとおり、汎用スクリプトは **`/usr/bin/sai_failure_dump.sh`** にリネームされている。`SAI_MAX_FAILURE_DUMPS=10` の既定値、`/var/log/sai_failure_dump/` 出力先、`platform_sy…
+  **読者への影響**:
 
 - [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../../platform/sonic-port-naming-convention-change.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
@@ -269,7 +269,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [TWAMP Light（Session-Sender / Session-Reflector）](../../system/twamp-light-hld.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
   
-  per-page queue で既出の通り部分実装。再走査結果:
+  **読者への影響**:
 
 - [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
