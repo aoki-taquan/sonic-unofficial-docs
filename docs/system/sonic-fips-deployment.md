@@ -199,6 +199,61 @@ sonic-db-cli STATE_DB hgetall 'FIPS_STAT|state'
 - enforce mode 切替が反映されない → warm/fast-reboot を実施したか、kernel cmdline を `cat /proc/cmdline` で確認
 - upgrade 後に enforce が外れた → 旧 image で `enforce=true` だったか、新 image の default が `disabled` だったかを確認
 
+## 実装との乖離
+
+2026-05-11 時点の現行 master を裏取り。
+
+### 1. ファイル + 行番号
+
+- **取り込み済み**: `sonic-net/sonic-host-services` `scripts/hostcfgd` L100-L103（`FIPS_CONFIG_FILE='/etc/sonic/fips.json'`, `OPENSSL_FIPS_CONFIG_FILE='/etc/fips/fips_enable'`, `DEFAULT_FIPS_RESTART_SERVICES=['ssh','telemetry.service','restapi']`）、`scripts/hostcfgd` L1756-L1809（`FipsCfg` ハンドラ、`FIPS|global` table イベント受信 → flag file 書き出し → 関連サービス再起動）、`scripts/hostcfgd` L1792（`STATE_DB` への書き込み）、`tests/hostcfgd/hostcfgd_fips_test.py`（pytest）。
+- **HLD と差分あり**:
+    - flag file パスは **`/etc/fips/fips_enable`**（HLD は `/etc/fips/fips_enabled` と表記。語尾の `d` の有無）。
+    - STATE_DB のキーは **`FIPS_STATS|state`**（HLD は `FIPS_STAT|state` と単数形で書く）。
+
+### 2. 差分の中身
+
+| 項目 | HLD 表記 | 現行実装（`scripts/hostcfgd`） |
+|---|---|---|
+| flag file パス | `/etc/fips/fips_enabled` | `/etc/fips/fips_enable`（L102） |
+| STATE_DB key | `FIPS_STAT\|state` | `FIPS_STATS\|state`（L1792） |
+| 再起動サービス | sshd / telemetry / restapi | `['ssh', 'telemetry.service', 'restapi']`（L103） |
+
+`scripts/hostcfgd` L1796-L1809:
+
+```python
+cur_fips_enabled = '0'
+if os.path.exists(OPENSSL_FIPS_CONFIG_FILE):
+    with open(OPENSSL_FIPS_CONFIG_FILE) as f:
+        cur_fips_enabled = f.read().strip()
+
+expected_fips_enabled = '0'
+if <FIPS enable in cfg>:
+    expected_fips_enabled = '1'
+
+if cur_fips_enabled != expected_fips_enabled:
+    os.makedirs(os.path.dirname(OPENSSL_FIPS_CONFIG_FILE), exist_ok=True)
+    with open(OPENSSL_FIPS_CONFIG_FILE, 'w') as f:
+        f.write(expected_fips_enabled)
+```
+
+### 3. 読者への影響
+
+HLD のとおり `cat /etc/fips/fips_enabled` を確認するとファイルが存在せず混乱する。同様に `sonic-db-cli STATE_DB hgetall 'FIPS_STAT|state'` は空で返り、デプロイ確認が失敗する。
+
+### 4. 回避策
+
+正しいパス / キーで確認する:
+
+```bash
+# flag file
+cat /etc/fips/fips_enable                 # 0 or 1
+
+# STATE_DB
+sonic-db-cli STATE_DB hgetall 'FIPS_STATS|state'
+```
+
+`config_db.json` の table 名は HLD どおり `FIPS|global` で問題なし（`hostcfgd` のハンドラがそれを subscribe）。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

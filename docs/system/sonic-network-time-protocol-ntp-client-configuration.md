@@ -100,6 +100,41 @@ show ntp
 - 時刻が大きくずれる → 起動直後のステップ調整有無、`tinker step` 等の設定
 - 認証エラー → key id と鍵値が一致しているか、daemon 種別による hash アルゴリズム差
 
+## 実装との乖離
+
+2026-05-11 時点の現行 master を裏取り。
+
+### 1. ファイル + 行番号
+
+- **取り込み済み（chrony への移行が完了）**: `sonic-net/sonic-buildimage` `files/image_config/chrony/chrony.conf.j2`, `files/image_config/chrony/chrony.keys.j2`, `files/image_config/chrony/chrony-config.sh`, `files/image_config/chrony/chronyd-starter.sh`、`src/sonic-config-engine/tests/chrony.conf.j2`, `src/sonic-config-engine/tests/chrony.keys.j2`、`sonic-net/sonic-utilities` `tests/chrony.conf`。
+- **未取り込み（ntpd 系）**: `ntp.conf.j2` / `ntpd.service` の参照は **既に削除済み**。`sonic-buildimage` に `ntp` 関連の旧設定ファイルは残っていない。
+- **HLD と差分あり**: 本 HLD（`doc/ntp/ntp-design.md`）は **ntpd 前提** で書かれており、現行 master は **chrony 一本化** に置き換わっている。並列 HLD `doc/ntp/migration-to-chrony.md` が事実上の権威となる。
+
+### 2. 差分の中身
+
+| 項目 | HLD（ntp-design.md） | 現行 master |
+|---|---|---|
+| daemon | ntpd | chrony (`chronyd`) |
+| 設定生成 | `ntp.conf.j2` を hostcfgd が render | `chrony.conf.j2` を `chrony-config.sh` + jinja で render（`files/image_config/chrony/`） |
+| 起動 | `service ntp restart` | `chronyd-starter.sh` 経由 |
+| TLS / NTS | ntpd は未対応 | chrony は **NTS 対応**（`chrony.conf` ディレクティブで設定可） |
+| 認証 hash | MD5 / SHA1 中心 | chrony は SHA256 / SHA384 等もサポート |
+| CLI 表面 | `config ntp add/del`, `show ntp` | 同名 CLI を維持しつつ内部で chrony 制御 |
+
+### 3. 読者への影響
+
+- HLD どおりに `service ntp status` や `ntpq -p` を期待しても **存在しない**（`chronyc sources` が代替）。
+- `/etc/ntp.conf` を編集しても効かない。設定は `/etc/chrony/chrony.conf`（jinja 生成）。
+- 認証鍵やキー形式が ntpd と異なる（chrony は `keyfile` ディレクティブ）。
+- `show ntp` の出力フォーマットも chrony 由来のものに変わっている。
+
+### 4. 回避策
+
+- 状態確認は `chronyc sources` / `chronyc tracking` を使う。
+- 設定変更は `config ntp add/del/source-interface` / `show ntp` を維持しつつ、内部の差分は `/etc/chrony/chrony.conf` を確認。
+- NTS / 認証を使う場合は chrony のディレクティブを参照し、本 HLD ではなく `doc/ntp/migration-to-chrony.md` を参照する。
+- mgmt VRF 経路は chrony 側で `bindcmdaddress` / `bindaddress` を mgmt VRF 内に固定する設定が必要（`chrony-config.sh` の VRF 分岐を参照）。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ntp/ntp-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
