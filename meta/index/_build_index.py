@@ -68,6 +68,41 @@ EXCLUDED_NAMES = {"README.md", "readme.md", "Readme.md", "CONTRIBUTING.md",
 
 DOC_DIRS = ("doc", "docs", "Documentation")
 
+# Noise slugs derived from generic HLD H2 section names. Any backlog /
+# page slug matching this pattern is a structural fragment, not a feature
+# page, and should be skipped at backlog-generation time.
+NOISE_SLUG_RE = re.compile(
+    r"^("
+    r"introduction"
+    r"|overview"
+    r"|summary"
+    r"|abstract"
+    r"|background"
+    r"|scope"
+    r"|references"
+    r"|appendix"
+    r"|revision"
+    r"|requirements"
+    r"|definitions"
+    r"|definitions-abbreviations"
+    r"|abbreviations"
+    r"|terminology"
+    r"|table-of-contents"
+    r"|toc"
+    r"|conclusion"
+    r"|feature-name"
+    r"|hld-name"
+    r")(-\d+)?$"
+)
+
+
+def is_noise_slug(slug: str) -> bool:
+    """Return True if `slug` is a generic HLD section fragment that
+    should be filtered out from indexes and backlogs."""
+    if not slug:
+        return True
+    return bool(NOISE_SLUG_RE.match(slug.strip().lower()))
+
 AREA_KEYWORDS = [
     ("routing", ["bgp", "ospf", "isis", "route", "frr", "vrf", "static-route",
                  "rip", "fpm", "ecmp", "bfd", "nexthop", "prefix-list", "routemap",
