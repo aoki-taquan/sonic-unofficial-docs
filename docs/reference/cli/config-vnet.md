@@ -103,3 +103,25 @@ flowchart LR
 [^1]: `config vnet` グループ定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10057>
 
 [^2]: VNET 名検証は `vnet_name_is_valid()`。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L467>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- DASH / T1 SmartSwitch 向けに VNET (VRF + VxLAN) を作成する。
+- VNET route / VNET neighbor の追加メンテ。
+
+### よくある落とし穴
+
+- VNET に紐付ける VxLAN tunnel が未作成だと CONFIG_DB に入っても `vnetorch` が起動できない。
+- guid / scope を変えると既存 route が無効化される。
+
+### 関連する show / debug
+
+```bash
+show vnet brief
+show vnet routes all
+show vnet endpoint
+```
+<!-- /ops-hint -->

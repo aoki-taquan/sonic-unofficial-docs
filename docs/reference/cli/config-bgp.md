@@ -332,6 +332,28 @@ Starting up BGP session with neighbor 10.0.0.1 .....
 ```
 <!-- /usage-example -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- メンテナンス前に対象隣接を `shutdown`、終了後 `startup` する運用。
+- TSA (Traffic-Shift-Away) で機器全体の外向き advertise を一括停止する。
+
+### よくある落とし穴
+
+- `config bgp shutdown neighbor` は FRR には即反映だが CONFIG_DB 上は `admin_status` が変わるのみ。`config save` を忘れると再起動で戻る。
+- TSA は AS-Path prepend で実現するため、対向側の bestpath ロジック次第では退避が遅延する。
+
+### 関連する show / debug
+
+```bash
+show ip bgp summary
+show runningconfiguration bgp
+show bgp device-global
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [CONFIG_DB: BGP_GLOBALS](../config-db/bgp-globals.md)

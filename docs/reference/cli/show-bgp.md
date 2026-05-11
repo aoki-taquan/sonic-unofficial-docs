@@ -210,6 +210,28 @@ Neighbor        V     AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/P
 ```
 <!-- /usage-example -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- BGP セッションが UP しているか、prefix 学習数が想定どおりかをオペ監視で確認する。
+- 障害切り分け時に隣接ステータス・received-routes・advertised-routes を順に追う。
+
+### よくある落とし穴
+
+- `show ip bgp summary` は default VRF のみで、VRF 設定がある場合は `show ip bgp vrf <name> summary` を使う。
+- multi-ASIC 機種では `-n asic0` などで namespace を明示しないと一部 ASIC の状態が見えない。
+
+### 関連する show / debug
+
+```bash
+show ip bgp summary
+show ip bgp neighbors 10.0.0.1
+show ip bgp network 10.0.0.0/24
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [CLI: config bgp](config-bgp.md)

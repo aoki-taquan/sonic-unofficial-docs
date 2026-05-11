@@ -103,3 +103,25 @@ Address         MacAddress         Iface         Vlan
 Total number of entries 2
 ```
 <!-- /usage-example -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- L3 隣接の MAC 解決状況、aging 状態の確認。
+- MC-LAG / VRRP 構成での ARP 同期検証。
+
+### よくある落とし穴
+
+- `show arp` は default VRF。VRF 内 ARP は `show arp -V <vrf>` または `ip neigh show vrf <vrf>`。
+- STATE_DB の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。
+
+### 関連する show / debug
+
+```bash
+show arp
+ip neigh show
+sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
+```
+<!-- /ops-hint -->

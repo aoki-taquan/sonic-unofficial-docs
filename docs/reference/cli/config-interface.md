@@ -271,6 +271,28 @@ if clicommon.get_interface_naming_mode() == "alias":
 
 [^1]: `interface` グループ定義は `config/main.py` L5080-L5092。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L5080>
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- ポートの speed / MTU / FEC / admin 変更、IP アドレス付与。
+- breakout 後の子ポートに対する初期化作業の起点。
+
+### よくある落とし穴
+
+- `config interface speed` は対応 speed を超えると syncd でエラー。`show interfaces capabilities` で事前確認。
+- `config interface shutdown` は admin_status を down にするだけで、サブインタフェース・LAG メンバには独立に適用が必要。
+
+### 関連する show / debug
+
+```bash
+show interfaces status
+show interfaces description
+show runningconfiguration interfaces
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
 - [CONFIG_DB: PORT](../config-db/port.md)

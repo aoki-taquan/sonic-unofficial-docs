@@ -146,3 +146,25 @@ flowchart LR
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- NAT translation / statistics / zone 設定の確認。
+- セッションテーブル枯渇の傾向監視。
+
+### よくある落とし穴
+
+- `show nat translations` は ASIC 上限を超えた分は表示されない。
+- `show nat statistics` は永続値ではなく、container 再起動でリセット。
+
+### 関連する show / debug
+
+```bash
+show nat translations
+show nat statistics
+show nat config
+```
+<!-- /ops-hint -->

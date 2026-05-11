@@ -175,3 +175,25 @@ CONFIG_DB ではなく **STATE_DB の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを n
 [^1]: `cli` グループ全体は `clear/main.py` で定義。`AliasedGroup` の自動補完と `aliases.ini` 読み込みは L39-L75。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/clear/main.py>
 
 [^2]: `fdb port` / `fdb vlan` は L610-L624 でコメントアウト。コメントには「sonic-clear fdb port and sonic-clear fdb vlan will be added later」とある。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/clear/main.py#L610>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- counters / ARP / FDB / BGP セッションの状態をリセットする。
+- 障害解析前のベースラインクリア。
+
+### よくある落とし穴
+
+- `sonic-clear counters` は累積カウンタを 0 にするのみで、`persistent-watermark` は別コマンド。
+- `sonic-clear fdb all` を本番で打つと一時的に L2 通信が flood に切替わる。
+
+### 関連する show / debug
+
+```bash
+show interfaces counters
+show arp
+show mac
+```
+<!-- /ops-hint -->

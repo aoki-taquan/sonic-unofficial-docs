@@ -156,3 +156,25 @@ sudo config mclag session-timeout 4095 30
 MCLAG domain 4095 added.
 ```
 <!-- /usage-example -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- MC-LAG ドメイン作成、ピアリンク・peer IP・keepalive 設定。
+- Unique IP / system MAC の同期設定。
+
+### よくある落とし穴
+
+- 両端で system_mac を一致させないと LAG メンバが flap し続ける。
+- keepalive VLAN を tagged で通すと一部 NIC で MTU 差により断続するため、専用 L3 リンク推奨。
+
+### 関連する show / debug
+
+```bash
+show mclag brief
+show mclag config
+mclagdctl -i 1000 dump state
+```
+<!-- /ops-hint -->

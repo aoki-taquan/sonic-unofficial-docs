@@ -138,6 +138,28 @@ excerpt: |
 
 [^1]: `acl` グループ定義は `config/main.py` L7979-L7982。`add table` / `remove table` / `update full|incremental` の 4 コマンドのみで、個別ルール CRUD は `acl-loader` に委譲される設計。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7975>
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- EVERFLOW / 自前 ACL_TABLE の作成と rule の追加・更新。
+- TACACS / SNMP の制御プレーン保護 (CTRLPLANE ACL)。
+
+### よくある落とし穴
+
+- `config acl add table` で stage を間違えると aclorch が SAI でテーブルを作れず syslog にエラー。
+- `ports` を空にすると CONFIG_DB には載るが ASIC には降りない。
+
+### 関連する show / debug
+
+```bash
+show acl table
+show acl rule
+aclshow -a
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [HLD: ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
 - [CONFIG_DB: ACL_TABLE](../config-db/acl-table.md)

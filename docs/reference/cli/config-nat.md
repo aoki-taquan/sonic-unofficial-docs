@@ -211,3 +211,25 @@ flowchart LR
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- Static NAT / NAPT / Pool ベース dynamic NAT のセットアップ。
+- NAT zone を境界インタフェースに割り当てる。
+
+### よくある落とし穴
+
+- ASIC の NAT capability を超えると追加 entry がドロップされる。`show nat statistics` で hardware 反映を確認。
+- `nat zone` を変更すると flow がリセットされ既存 connection が切断される。
+
+### 関連する show / debug
+
+```bash
+show nat config
+show nat translations
+show nat statistics
+```
+<!-- /ops-hint -->

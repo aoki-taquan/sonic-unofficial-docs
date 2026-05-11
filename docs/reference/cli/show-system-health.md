@@ -157,3 +157,25 @@ excerpt: |
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- fan / PSU / temperature / container health の集約確認。
+- NMS 連携前のしきい値確認。
+
+### よくある落とし穴
+
+- system-health monitor list には `Ignored` 項目が含まれる。production では誤検知の温床。
+- syshealth daemon が落ちると `show system-health summary` も止まる。
+
+### 関連する show / debug
+
+```bash
+show system-health summary
+show system-health monitor-list
+show platform fan
+```
+<!-- /ops-hint -->

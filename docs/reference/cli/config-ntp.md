@@ -162,5 +162,27 @@ Restarting ntp-config service...
 ```
 <!-- /usage-example -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- NTP server 追加・削除、VRF (mgmt) 越し設定。
+- 時刻同期失敗の調査前段。
+
+### よくある落とし穴
+
+- mgmt VRF を使う環境で `config ntp add` に VRF オプションを忘れると到達できない。
+- chronyc / ntpq の出力差で「同期済み」判定がズレる。
+
+### 関連する show / debug
+
+```bash
+show ntp
+chronyc tracking
+chronyc sources
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [YANG: sonic-ntp](../yang/sonic-ntp.md)

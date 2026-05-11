@@ -231,3 +231,25 @@ flowchart LR
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- LAG 新設、メンバ追加、`min-links` / `fallback` / `lacp_key` の設定。
+- MC-LAG 配下の LAG 設定の前段。
+
+### よくある落とし穴
+
+- LAG メンバ追加前にメンバポートに IP が付いていると teamd が拒否する。`config interface ip remove` を先に。
+- `fallback` を有効にした LAG は LACPDU が来なくても active member 1 本で UP するため、誤接続を検出しにくい。
+
+### 関連する show / debug
+
+```bash
+show interfaces portchannel
+teamdctl PortChannel0001 state
+show runningconfiguration | grep -i portchannel
+```
+<!-- /ops-hint -->

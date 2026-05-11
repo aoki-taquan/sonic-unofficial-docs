@@ -108,3 +108,25 @@ show queue persistent-watermark multicast
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- ポート別 queue 占有・dropped packets の確認。
+- WRED / ECN マークの効果検証。
+
+### よくある落とし穴
+
+- counter は累積。`sonic-clear queuecounters` でリセットして観測する。
+- voq / fabric queue は通常の queue counter とは別系統で表示される。
+
+### 関連する show / debug
+
+```bash
+show queue counters
+show queue watermark unicast
+show queue persistent-watermark
+```
+<!-- /ops-hint -->

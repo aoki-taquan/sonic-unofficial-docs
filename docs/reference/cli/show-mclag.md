@@ -141,3 +141,25 @@ flowchart LR
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- MC-LAG のピアリンク・keepalive・メンバ LAG の同期状態を確認する。
+- ARP/ND/MAC の同期 (mclag syncd) が想定どおり動いているかを判定する。
+
+### よくある落とし穴
+
+- `show mclag brief` は mclagdctl 経由で取得するため iccpd が落ちていると応答しない。
+- system MAC が両端で異なると LAG メンバが flap する。`show mclag config` で必ず確認。
+
+### 関連する show / debug
+
+```bash
+show mclag brief
+show mclag interface
+mclagdctl -i 1000 dump state
+```
+<!-- /ops-hint -->

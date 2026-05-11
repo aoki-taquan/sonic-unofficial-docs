@@ -873,8 +873,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (74)
 - [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (66)
 - [頻出 SAI 属性早見表](sai-attributes.md) (20)
+- [show bfd サブコマンド](cli/show-bfd.md) (19)
 - [Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）](../routing/overlay-ecmp-with-bfd-monitoring.md) (18)
-- [Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張](../routing/overlay-ecmp-enhancements.md) (17)
 
 ### [BGP](#term-bgp)
 
@@ -894,8 +894,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [CONFIG_DB](#term-config_db)
 
+- [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (23)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (22)
-- [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (21)
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (20)
 - [リファレンス](index.md) (20)
 - [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (19)
@@ -1171,7 +1171,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）](../switching/increasing-lacp-pdu-timeout-during-warm-reboot.md) (10)
 - [PortChannel メンバーで LACP が確立しない](runbooks/portchannel-lacp-not-established.md) (9)
 - [Reboot 運用と障害調査](../topics/11-reboot/operations.md) (9)
-- [config portchannel サブコマンド](cli/config-portchannel.md) (7)
+- [config portchannel サブコマンド](cli/config-portchannel.md) (8)
 
 ### [LAG](#term-lag)
 
@@ -1179,7 +1179,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-mclag YANG](yang/sonic-mclag.md) (60)
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (50)
 - [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../switching/mclag-enhancements.md) (33)
-- [ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）](../platform/sonictpidsettinghld1.md) (31)
+- [config mclag サブコマンド](cli/config-mclag.md) (32)
 
 ### [linkmgrd](#term-linkmgrd)
 
@@ -1194,7 +1194,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-lldp YANG](yang/sonic-lldp.md) (27)
 - [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (18)
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (13)
-- [show lldp サブコマンド](cli/show-lldp.md) (6)
+- [show lldp サブコマンド](cli/show-lldp.md) (7)
 - [LLDP 隣接が頻繁に up/down する](runbooks/lldp-neighbor-flapping.md) (6)
 
 ### [MPLS](#term-mpls)
@@ -1235,7 +1235,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [内部実装](../topics/16-nat-dhcp-dns/internals.md) (58)
 - [NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）](../architecture/nat-in-sonic.md) (44)
 - [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (44)
-- [config nat サブコマンド](cli/config-nat.md) (37)
+- [config nat サブコマンド](cli/config-nat.md) (41)
 
 ### [natmgrd / natsyncd](#term-natmgrd-natsyncd)
 
@@ -1353,7 +1353,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [QoS](#term-qos)
 
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (14)
-- [config qos サブコマンド](cli/config-qos.md) (9)
+- [config qos サブコマンド](cli/config-qos.md) (10)
 - [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (8)
 - [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (7)
 - [Dual-ToR の発展トピック](../topics/05-dual-tor/advanced.md) (7)
@@ -1394,7 +1394,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-snmp YANG](yang/sonic-snmp.md) (67)
 - [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (58)
-- [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) (42)
+- [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) (43)
 - [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (32)
 - [MIB / SNMP 関連](../categories/mib-snmp.md) (26)
 
@@ -1426,9 +1426,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-cfggen コマンド](cli/sonic-cfggen.md) (12)
 - [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (7)
+- [DEVICE_RUNTIME_METADATA テーブル](config-db/device-runtime-metadata.md) (6)
 - [設定変更の選び方](../topics/01-overview/configuration.md) (6)
 - [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (5)
-- [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](../switching/control-sonic-behaviors-with-system-defaults-table.md) (5)
 
 ### [sonic-mgmt](#term-sonic-mgmt)
 
@@ -1524,7 +1524,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [発展トピック](../topics/12-multi-asic-voq/advanced.md) (25)
 - [VOQ カウンタ集約（chassis supervisor からの aggregate 表示）](../internals/aggregate-voq-counters-in-sonic.md) (24)
 - [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (18)
-- [内部実装](../topics/12-multi-asic-voq/internals.md) (17)
+- [VOQ_INBAND_INTERFACE テーブル](config-db/voq-inband-interface.md) (18)
 
 ### [VS](#term-vs)
 
@@ -1538,9 +1538,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-vlan YANG](yang/sonic-vlan.md) (111)
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (55)
+- [config vlan サブコマンド](cli/config-vlan.md) (54)
 - [sonic-spanning-tree YANG](yang/sonic-spanning-tree.md) (54)
 - [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (51)
-- [config vlan サブコマンド](cli/config-vlan.md) (50)
 
 ### [vlanmgrd](#term-vlanmgrd)
 
@@ -1556,7 +1556,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (47)
 - [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (40)
 - [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../overlay/vxlan-sonic.md) (26)
-- [内部実装](../topics/03-vxlan-evpn/internals.md) (22)
+- [config vnet サブコマンド](cli/config-vnet.md) (25)
 
 ### [VRF](#term-vrf)
 

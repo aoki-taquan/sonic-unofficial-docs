@@ -130,3 +130,24 @@ Package の docker image / systemd unit / 関連リソースを削除。`--keep-
 ## 引用元
 
 [^1]: `get_package_status` は `sonic_package_manager/main.py` L134-L142。`built_in` 属性で Built-In 判定。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/sonic_package_manager/main.py#L134>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- サードパーティ container パッケージのインストール・有効化。
+
+### よくある落とし穴
+
+- 依存する SONiC core バージョンを満たさないパッケージは install 時に拒否される。
+- package を remove する前に feature を disable しないと container が残骸として残る。
+
+### 関連する show / debug
+
+```bash
+sudo sonic-package-manager list
+show feature status
+docker ps
+```
+<!-- /ops-hint -->

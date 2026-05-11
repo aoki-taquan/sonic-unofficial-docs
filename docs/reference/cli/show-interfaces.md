@@ -218,3 +218,25 @@ show interfaces description
   Ethernet4  29,30,31,32        100G   9100     rs   etp2     trunk      up       up
 ```
 <!-- /usage-example -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- ポートの admin/oper 状態、speed、MTU、FEC を一覧確認する。
+- counters / errors を定期取得して link flap や CRC エラーを検出する。
+
+### よくある落とし穴
+
+- `show interfaces counters` は累積値。差分は `sonic-clear counters` でリセットしてから観測する。
+- PortChannel メンバの speed は `show interfaces status` に出ても LAG 自体の speed は別系統。
+
+### 関連する show / debug
+
+```bash
+show interfaces status
+show interfaces counters -i Ethernet0
+show interfaces transceiver eeprom Ethernet0
+```
+<!-- /ops-hint -->

@@ -236,6 +236,28 @@ Mirror session mirror1 added.
 ```
 <!-- /usage-example -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- 障害解析 / セキュリティ用途で ERSPAN / SPAN セッションを設定する。
+- EVERFLOW ACL とセットでミラー先を変える。
+
+### よくある落とし穴
+
+- ERSPAN の src IP / dst IP が ASIC で到達不能だとセッションが INACTIVE のまま。
+- GRE / ERSPAN type を機種が非サポートだと syslog にだけエラー、CLI は成功表示。
+
+### 関連する show / debug
+
+```bash
+show mirror_session
+show acl table | grep MIRROR
+show acl rule | grep MIRROR
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 
 - [reference/CLI: config acl](config-acl.md)

@@ -140,6 +140,28 @@ Ethernet4    leaf02          Ethernet1/1     BR            to-spine01
 ```
 <!-- /usage-example -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- 対向機器（リーフ/スパイン）の特定とケーブル接続検証。
+- neighbor の System Name / Port ID を取って配線記録と突合する。
+
+### よくある落とし穴
+
+- `show lldp table` の Remote Port が `ifname` か `ifalias` かは対向次第。両方確認する。
+- Mgmt port には LLDP が出ないことが多い（lldp 設定が `Ethernet*` のみのため）。
+
+### 関連する show / debug
+
+```bash
+show lldp table
+show lldp neighbors Ethernet0
+docker exec lldp lldpcli show neighbors
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 
 - [reference/CLI: show interfaces](show-interfaces.md)
