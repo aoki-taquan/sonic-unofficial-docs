@@ -73,3 +73,23 @@ BREAKOUT_CFG|<port>
 
 ## 関連ページ
 - [CONFIG_DB: PORT](port.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BREAKOUT_CFG|<Ethernet>`。
+- `brkout_mode`: `4x25G[10G]` 等。プラットフォーム platform.json と整合させる。
+
+### よくある誤設定
+
+- breakout 変更後に `config reload` を忘れて Port table と SAI 状態が乖離する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BREAKOUT_CFG|*'
+show interfaces breakout
+```
+<!-- /ops-hint -->

@@ -69,3 +69,23 @@ EXTENDED_COMMUNITY_SET|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `COMMUNITY_SET|<name>`。
+- `set_type`: `standard` / `expanded`。`match_action`: `any` / `all`。`community_member`: CSV。
+
+### よくある誤設定
+
+- `expanded` で正規表現を書いたのに `standard` 指定のままで全件 reject される。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'COMMUNITY_SET|*'
+vtysh -c 'show bgp community-list'
+```
+<!-- /ops-hint -->

@@ -95,3 +95,23 @@ inner list で定義される各エントリ:
 
 ## 関連ページ
 - [CONFIG_DB: DSCP_TO_TC_MAP](dscp-to-tc-map.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DOT1P_TO_TC_MAP|<map-name>`。
+- `0`-`7` の dot1p 値→ TC 値。COS6/7 を TC3 などコントロールトラフィック用に分離する設計が一般的。
+
+### よくある誤設定
+
+- PORT_QOS_MAP から参照されていないとマップを定義しても有効化されない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DOT1P_TO_TC_MAP|*'
+show qos map dot1p-tc
+```
+<!-- /ops-hint -->

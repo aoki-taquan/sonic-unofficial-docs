@@ -79,3 +79,23 @@ TELEMETRY|gnmi         # gNMI サーバオプション
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `TELEMETRY|<key>` (`gnmi`, `certs` 等)`。
+- `port`: `8080`/`50051`、`client_auth`: `true`、`log_level`: `2`。
+
+### よくある誤設定
+
+- client_auth=true なのに CA bundle 設定漏れで gNMI client が TLS handshake に失敗する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'TELEMETRY|*'
+systemctl status telemetry
+```
+<!-- /ops-hint -->

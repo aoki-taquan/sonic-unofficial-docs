@@ -70,3 +70,23 @@ CONSOLE_SWITCH|console_mgmt
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `CONSOLE_PORT|<line>`。
+- `baud_rate`: `9600`、`flow_control`: `0`、`remote_device`: 接続先名。
+
+### よくある誤設定
+
+- console switch ライセンス / consutil パッケージが入っていない環境で設定だけ入れても接続不能。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'CONSOLE_PORT|*'
+show console
+```
+<!-- /ops-hint -->

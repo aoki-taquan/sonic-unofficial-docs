@@ -73,3 +73,22 @@ SUBNET_DECAP|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-subnet-decap.yang` (revision 2024-12-19). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-subnet-decap.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SUBNET_DECAP|<vrf>`。
+- `status`: `enable`、`src_ip`/`dst_ip`: T1 ToR ペアの管理サブネット。
+
+### よくある誤設定
+
+- VxLAN decap ルールと subnet decap の優先順位を誤解して期待した decap が起きない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
+```
+<!-- /ops-hint -->

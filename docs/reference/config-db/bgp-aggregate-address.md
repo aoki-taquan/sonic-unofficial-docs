@@ -68,3 +68,23 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-aggregate-address.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf>|<af>|<prefix>`。
+- `as_set`: `false`、`summary_only`: `true`（詳細経路を抑制して集約のみ広告）。
+
+### よくある誤設定
+
+- `summary_only=true` のまま contributing route が無い状態で参照経路を期待しても集約広告されない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF_AGGREGATE_ADDR|*'
+vtysh -c 'show bgp ipv4 unicast'
+```
+<!-- /ops-hint -->

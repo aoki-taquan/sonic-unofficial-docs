@@ -98,3 +98,23 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 ## 引用元
 
 [^1]: YANG 定義: `sonic-debug-counter.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-debug-counter.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DEBUG_COUNTER|<name>`。
+- `type`: `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` / `SWITCH_INGRESS_DROPS` 等。`reasons`: drop reason の CSV。
+
+### よくある誤設定
+
+- プラットフォーム SAI が未対応の reason を指定すると CrmOrch がエラーを出してカウンタが作られない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DEBUG_COUNTER|*'
+show dropcounters configuration
+```
+<!-- /ops-hint -->

@@ -76,3 +76,23 @@ MACSEC_PROFILE|<name>
 
 ## 関連ページ
 - [CONFIG_DB: PORT](port.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MACSEC_PROFILE|<profile-name>`。
+- `cipher_suite`: `GCM-AES-XPN-256`、`priority`: 64、`policy`: `security`、`rekey_period`: `0`（手動）。
+
+### よくある誤設定
+
+- 鍵 (`primary_cak`/`fallback_cak`) を 16/32B 以外で入れると MKA セッションが上がらない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'MACSEC_PROFILE|*'
+show macsec
+```
+<!-- /ops-hint -->

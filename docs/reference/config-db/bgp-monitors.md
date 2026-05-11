@@ -80,3 +80,23 @@ BGP_MONITORS|<addr>
 
 ## 関連ページ
 - [CONFIG_DB: BGP_NEIGHBOR](bgp-neighbor.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_MONITORS|<ip>`。
+- `asn`: 監視先 AS。`admin_status`: `up`。`name`: 識別名。
+
+### よくある誤設定
+
+- BGP monitor を普通の neighbor と混同して route policy を当ててしまうと、本番経路に副作用が出る。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_MONITORS|*'
+vtysh -c 'show bgp summary'
+```
+<!-- /ops-hint -->

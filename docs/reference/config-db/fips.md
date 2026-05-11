@@ -62,3 +62,23 @@ FIPS|global
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `FIPS|global`。
+- `enable`: `false`（既定）。FIPS 認証イメージのみで `true` を許容。
+
+### よくある誤設定
+
+- 通常イメージで `enable=true` にすると一部 crypto モジュールが起動しない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'FIPS|global'
+show fips status
+```
+<!-- /ops-hint -->

@@ -67,3 +67,23 @@ PREFIX_LIST|<prefix_type>|<ip-prefix>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-prefix-list.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-prefix-list.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PREFIX_LIST|<name>|<seq>`。
+- `action`: `permit` / `deny`、`prefix`: CIDR、`ge`/`le`: 長さレンジ。
+
+### よくある誤設定
+
+- 末尾の暗黙 deny を忘れて意図しない prefix まで通してしまう。明示的に `deny any` を入れるのが安全。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PREFIX_LIST|*'
+vtysh -c 'show ip prefix-list'
+```
+<!-- /ops-hint -->

@@ -84,3 +84,24 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `AUTO_TECHSUPPORT|GLOBAL`。
+- `state`: `enabled`。
+- `rate_limit_interval`: `180` 秒。`max_techsupport_limit`: `10`%。
+
+### よくある誤設定
+
+- `max_core_limit` を 0 にすると core 自動収集が抑制され障害解析が困難になる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'AUTO_TECHSUPPORT|GLOBAL'
+show auto-techsupport global
+```
+<!-- /ops-hint -->

@@ -85,3 +85,23 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 ## 関連ページ
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: POLICER](policer.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PORT_STORM_CONTROL|<Ethernet>|<traffic-type>` (broadcast/unknown-unicast/unknown-multicast)`。
+- `kbps`: 帯域上限。サーバ向けは 1000〜10000kbps、uplink は無効化することが多い。
+
+### よくある誤設定
+
+- uplink にも storm-control を当てて BUM トラフィックを誤遮断する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PORT_STORM_CONTROL|*'
+show storm-control all
+```
+<!-- /ops-hint -->

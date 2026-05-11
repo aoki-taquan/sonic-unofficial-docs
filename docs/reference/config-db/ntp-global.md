@@ -81,3 +81,23 @@ NTP|global
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `NTP|global`。
+- `vrf`: `default` または `mgmt`。`src_intf`: `eth0` または `Loopback0`。
+
+### よくある誤設定
+
+- vrf=mgmt なのに src_intf を front-panel 側に向けて NTP パケットが out 抜けする。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'NTP|global'
+show ntp
+```
+<!-- /ops-hint -->
