@@ -18188,10 +18188,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="注意">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -18202,7 +18219,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23751,10 +23768,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="注意">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23765,7 +23799,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23948,15 +23982,29 @@
 <li><code>debug</code> の効果は <strong>プロセス再起動で消える</strong>。永続化したい場合は FRR 側 (<code>/etc/frr/frr.conf</code> 内 <code>debug ...</code> 行) に書く運用となる。</li>
 <li>Quagga ブランチ (legacy) のコマンド集合は FRR ブランチと部分的に異なる (<code>debug bgp filters</code> / <code>fsm</code> などは Quagga のみ)。<code>vtysh -c 'show version'</code> で判定するため、現役 SONiC では FRR 経路のみが効く。</li>
 </ul>
+<!-- cli-mermaid -->
+<h3 id="_5">データフロー (手動作成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["debug / undebug"]
+  DT["vtysh / frr / 各 daemon CLI&lt;br/&gt;(syslog レベル設定)"]
+  SVC["zebra / bgpd / ospfd / pim / 他"]
+  CLI --&gt; DT
+  DT --&gt; SVC</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>debug 系 (CLI → vtysh/daemon CLI → 各 daemon) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>(関連リンクなし)</li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: dbd756d1e010 -->
 
 <div class="footnote">

@@ -17993,6 +17993,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -23913,6 +23924,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -24137,6 +24159,20 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ASIC: broadcom
 </span></code></pre></div>
 <!-- /usage-example -->
+
+<!-- cli-mermaid -->
+<h3 id="_10">データフロー (手動作成)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["show platform"]
+  PA["platform_api / chassis API"]
+  ST[("STATE_DB&lt;br/&gt;PSU_INFO / FAN_INFO / TEMP_INFO 等")]
+  CLI --&gt; PA
+  ST --&gt; CLI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>show 系 (CLI ← platform_api / STATE_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。</p>
+</div>
+<!-- /cli-mermaid -->
 
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

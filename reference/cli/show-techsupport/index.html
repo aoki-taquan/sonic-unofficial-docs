@@ -18022,6 +18022,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -23747,6 +23758,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -23936,6 +23958,26 @@ excerpt: |
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Tar file: /var/dump/sonic_dump_&lt;host&gt;_&lt;timestamp&gt;.tar.gz
 </span></code></pre></div>
 <!-- /usage-example -->
+
+<!-- cli-mermaid -->
+<h3 id="_13">データフロー (手動作成)<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["show techsupport"]
+  GD["sudo generate_dump -v"]
+  LOG["/var/log / syslog / docker logs"]
+  CFG["config_db.json / running config"]
+  SAI["SAI dump / syncd state"]
+  TAR["techsupport-*.tar.gz"]
+  CLI --&gt; GD
+  GD --&gt; LOG
+  GD --&gt; CFG
+  GD --&gt; SAI
+  GD --&gt; TAR</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>techsupport (CLI → generate_dump → tar.gz) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。</p>
+</div>
+<!-- /cli-mermaid -->
 
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

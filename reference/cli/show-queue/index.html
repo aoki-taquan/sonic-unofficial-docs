@@ -23540,6 +23540,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -23557,7 +23568,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23569,7 +23580,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な利用シーン
@@ -23580,7 +23591,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある落とし穴
@@ -23721,6 +23732,20 @@
 </span></code></pre></div>
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+<h3 id="_9">データフロー (手動作成)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["show queue (counters / wred / watermark)"]
+  UT["queuestat / wredstat / watermarkstat"]
+  CNT[("COUNTERS_DB&lt;br/&gt;QUEUE_STAT / WRED_STAT&lt;br/&gt;USER_WATERMARK_QUEUE")]
+  CLI --&gt; UT
+  CNT --&gt; UT</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>show 系 (CLI → *stat ← COUNTERS_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23729,13 +23754,13 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型的な利用シーン<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型的な利用シーン<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>ポート別 queue 占有・dropped packets の確認。</li>
 <li>WRED / ECN マークの効果検証。</li>
 </ul>
-<h3 id="_11">よくある落とし穴<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある落とし穴<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>counter は累積。<code>sonic-clear queuecounters</code> でリセットして観測する。</li>
 <li>voq / fabric queue は通常の queue counter とは別系統で表示される。</li>

@@ -18324,6 +18324,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -18341,7 +18352,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -18353,7 +18364,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な利用シーン
@@ -18364,7 +18375,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある落とし穴
@@ -24009,6 +24020,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (手動作成)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -24026,7 +24048,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24038,7 +24060,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な利用シーン
@@ -24049,7 +24071,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある落とし穴
@@ -24328,6 +24350,22 @@
 </span></code></pre></div>
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+<h3 id="_15">データフロー (手動作成)<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["reboot / fast-reboot / warm-reboot"]
+  SH["bash スクリプト&lt;br/&gt;(scripts/reboot 系)"]
+  WR[("STATE_DB&lt;br/&gt;WARM_RESTART hint")]
+  KD["kexec / systemctl reboot"]
+  CLI --&gt; SH
+  SH --&gt; WR
+  SH --&gt; KD</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>再起動系 (CLI → スクリプト → STATE_DB / kexec) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24336,13 +24374,13 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_15">運用ヒント<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
-<h3 id="_16">典型的な利用シーン<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h2 id="_16">運用ヒント<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h3 id="_17">典型的な利用シーン<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
 <li>メンテナンスでのソフト再起動（fast / warm）の選択。</li>
 <li>warm-restart 有効時のサービス継続再起動。</li>
 </ul>
-<h3 id="_17">よくある落とし穴<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_18">よくある落とし穴<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <ul>
 <li>warm-reboot 中に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を変更すると整合が崩れて再起動失敗する。</li>
 <li>fast-reboot は kernel まで再起動するため通信断は数十秒発生する。</li>
