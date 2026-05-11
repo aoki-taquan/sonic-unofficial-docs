@@ -2,5 +2,6 @@ title: メタ
 hide: true
 nav:
   - coverage.md
+  - sitemap.md
   - changelog.md
   - discrepancies.md
