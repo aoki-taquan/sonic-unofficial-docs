@@ -2337,6 +2337,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/03-vxlan-evpn/operations/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -2362,6 +2366,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/ecmp/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/internals/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -2410,6 +2418,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/concept/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/06-l2-vlan-lag/internals/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -2517,6 +2529,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/operations/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -2538,6 +2554,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/11-reboot/concept/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/11-reboot/internals/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -2566,6 +2586,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/12-multi-asic-voq/concept/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/12-multi-asic-voq/internals/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -2673,6 +2697,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/16-nat-dhcp-dns/internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/16-nat-dhcp-dns/operations/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -2753,6 +2781,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/19-build-packaging/internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/19-build-packaging/operations/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -2826,6 +2858,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/22-reference-index/config-db-index/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/22-reference-index/internals/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
