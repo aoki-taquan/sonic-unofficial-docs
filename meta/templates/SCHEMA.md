@@ -58,6 +58,23 @@
 
 `verification` が `discrepancy-found` 以外（`hld-only` / `code-verified` 等）でも、将来 monitor タグを再利用する余地はあるが現状は optional 扱い。
 
+## `discrepancy-found` ページの軸 6 評価基準
+
+品質監査 (`meta/quality-audit-*.md`) では各ページを 6 軸 5 点満点で評価しているが、その **軸 6 (完結性)** は通常ページ向けの基準（本文ボリューム / 機能の網羅性 / ops-hint や troubleshooting の有無）で測ると `discrepancy-found` ページが構造的に天井 4 点に張り付く（実装が未着手 / 進化済みのため「機能としての完結」を書きようがない）。
+
+`discrepancy-found` ページは「機能としては完結していなくても、代わりに HLD と実装の差分を整理して読み手に渡す」ことが本来の役目である。したがって軸 6 は **「乖離説明の構造的整理が出来ているか」** に読み替える。具体的には以下の 4 サブ項目で評価する。
+
+| サブ項目 | 5 点満点判定基準 |
+|---------|-----------------|
+| (a) monitor タグ妥当性 | frontmatter の `monitor:` が `not_implemented` / `evolved_beyond_hld` / `partially_implemented` / `deprecated` のいずれかで、本文の乖離パターンと整合している |
+| (b) 「実装との乖離」セクションの構造化 | HLD 側の主張 / 現行 master の状態 / 差分のインパクトの 3 点が分けて記述されている（箇条書き / 表 / 段落いずれの形式でも可） |
+| (c) 裏取り evidence | 「実装が存在しない」「別名で実装されている」等の判定根拠が grep 結果 / commit SHA / 該当ファイル行範囲付きの evidence コメントで埋め込まれている |
+| (d) 読み手への next-action | 「現行 master ではこの設定経路は使えない」「実機運用では Y を参照」など、HLD と実装が乖離した状況下での読み手の次の一手が明示されている |
+
+4 サブ項目すべて満たせば軸 6 = 5 点。1 つでも欠ければ 4 点以下に減点する。通常ページの「機能としての完結性」では評価しない。
+
+監査ロール (`meta/prompts/reviewer.md`、`meta/quality-audit-*.md` 起票時) は本セクションを参照して `discrepancy-found` ページの軸 6 評価を行うこと。詳細な運用ルールは `meta/quality-audit-guide.md` を参照。
+
 ## 引用ルール
 
 - ページ末に **「引用元」セクション必須**。frontmatter `sources` と本文中の脚注を統合する
