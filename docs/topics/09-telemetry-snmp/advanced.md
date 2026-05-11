@@ -66,3 +66,39 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - [Process / docker stats を telemetry に](../../system/process-and-docker-stats-availability-via-telemetry-agent.md)
 - [Memory statistics 機能](../../system/memory-statistics-feature-in-sonic.md)
 - [Reboot cause を telemetry に](../../system/reboot-cause-information-via-telemetry-agent.md)
+
+## 発展トピック
+
+- **IPFIX / sFlow v5 統合**: 既存 sFlow に加え、IPFIX (RFC 7011) 出力を望むユースケースが増えており、export pipeline を統一する提案がある。
+- **DTel report の sampling**: 全 flow を export すると collector が飽和するため、watchlist と sampling rate の組合せで scale を制御する。queue / latency event のみ extract する mode も検討対象。
+- **OTel (OpenTelemetry) との橋渡し**: SONiC counter / log を OTel collector へ流す community 提案がある。observability stack の統合が進めば、SNMP polling の比重が下がる。
+- **YANG-modeled SNMP**: legacy `snmp.yml` を YANG モデル経由で生成し、SNMP 設定も gNMI Set で扱える流れ。`sonic-snmp.yang` の拡充が前提。
+- **High-frequency counter streaming**: per-port / per-queue counters を 100ms 級で stream する用途。`telemetry` docker の CPU 影響と subscription 上限が論点。
+
+## 既知の制約と回避方法
+
+- **DTel platform 依存**: 全 ASIC が同じ event type を出すわけではなく、INT report header の format も platform 別。Production 投入前に対応 SAI attribute を確認する。
+- **sFlow sampling rate の現実値**: 設定値どおりにサンプリングされない ASIC があり、`SAI_SAMPLEPACKET_TYPE` の制約で 1/N が丸められることがある。実測 sampling rate を `show sflow` と collector 側で照合する。
+- **SNMP polling と gNMI streaming の重複コスト**: 同じ counter を SNMP polling と gNMI subscribe で両取りすると、Redis 負荷と control CPU が二重になる。一方に寄せる方針を決める。
+- **Entity MIB の sensor 命名揺れ**: platform daemon が `STATE_DB` に出す sensor 名が SKU 別で異なり、SNMP polling の dashboard で名前不一致になる事例。命名規約を SKU 横断で揃える運用ガイドが必要。
+
+## 将来計画 / ロードマップ
+
+- DTel の report format 標準化 (IFA / INT-MD) と SONiC 対応の追従。
+- Telemetry agent からの structured logging export と OTel 連携。
+- SNMP からの段階的退役は community 課題で、レガシー監視ツールとの併走期間設計が論点。
+
+## 関連 RFC / 仕様書
+
+- [RFC 7011](https://datatracker.ietf.org/doc/html/rfc7011) — IPFIX
+- [RFC 7012](https://datatracker.ietf.org/doc/html/rfc7012) — IPFIX Information Model
+- [RFC 3176](https://datatracker.ietf.org/doc/html/rfc3176) — sFlow v5
+- [RFC 4133](https://datatracker.ietf.org/doc/html/rfc4133) — Entity MIB v3
+- [RFC 3433](https://datatracker.ietf.org/doc/html/rfc3433) — Entity Sensor MIB
+- [In-band Network Telemetry (INT) spec](https://github.com/p4lang/p4-applications/blob/master/docs/INT_latest.pdf)
+
+## upstream 開発の最新動向
+
+- `sonic-buildimage` の telemetry agent 拡張 PR が頻繁に入る（reboot cause、memory stats、process stats など）。
+- `sonic-snmpagent` で transceiver / entity / sensor 対応の拡張、SNMP v3 関連修正が継続。
+- DTel / sFlow の test plan が更新され、ASIC capability matrix が PR で明確化される傾向。

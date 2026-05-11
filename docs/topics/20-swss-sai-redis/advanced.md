@@ -42,3 +42,38 @@ warm reboot では、再起動前の状態と再起動後の意図の差分だ�
 - [FEATURE テーブルによるオプショナル機能の有効/無効制御](../../system/sonic-optional-feature-control-enhancement.md)
 - [ProducerStateTable の view switching（warm reboot 用の差分適用）](../../switching/view-switching-in-producerstatetable.md)
 - [コンテナ health-check（k8s readiness probe）](../../internals/why-need-health-check.md)
+
+## 発展トピック
+
+- **SAI Redis pipe / batch**: SAI Redis (`libsairedis`) は orchagent からの SAI call を pipe batch で syncd に渡す。大量更新時の bulk API が性能を支配する。
+- **ASIC_DB の sharding**: 単一 Redis インスタンスに全 SAI object が乗ると memory が膨れる。namespace 分割や Redis cluster 化が議題。
+- **オフライン構成検証**: `swss-cli` や `sonic-cfggen` で生成した CONFIG_DB をオフラインで YANG 検証してから流し込むパス。
+- **CONFIG_DB と APPL_DB の責務再整理**: SET-then-DEL の transient を避けるため、orch 側で diff-based reconciliation が拡張されつつある。
+- **eventd / publish-subscribe**: state 変化 event の structured stream。telemetry / fault management の前提基盤。
+
+## 既知の制約と回避方法
+
+- **`config reload` の重さ**: 大量 schema reload で daemon 全体が再起動レベルの負荷になる。`config reload --no-service` のような部分 reload と PortInitDone を組合せる。
+- **warm reboot 中の view switching 失敗**: 一部 orch が view switching に対応していないと、その object だけ全削除→全追加になる。対象 orch の WARM_BOOT capability 一覧を確認する。
+- **redis OOM risk**: ASIC_DB / COUNTERS_DB の scale が大きいと memory swap が発生。`maxmemory-policy` を `noeviction` にしないと counter が消える。
+- **FEATURE state の race**: container 起動と FEATURE state 更新が非同期で、依存先を先に起動してしまう例がある。`delayed` と `auto_restart` を組み合わせる。
+
+## 将来計画 / ロードマップ
+
+- `system ready` HLD の最終形に向けて、closest UP status の整理と sysmonitor の集約ロジックが拡張中。
+- ProducerStateTable view switching の対応 orch 拡大。
+- Redis 7.x / Valkey への移行検討。
+- SAI bulk API の利用範囲拡大による update スループット改善。
+
+## 関連 RFC / 仕様書
+
+- SAI / SWSS / Redis 層は IETF / IEEE 標準とは独立し、OCP コミュニティの SAI specification が中心。
+- [Redis Protocol](https://redis.io/docs/reference/protocol-spec/) — RESP プロトコル
+- [OCP SAI specification](https://github.com/opencomputeproject/SAI)
+
+## upstream 開発の最新動向
+
+- `sonic-swss-common` で `ProducerStateTable` view switching 対応 orch 拡大の PR が継続。
+- `sonic-sairedis` で bulk API 拡張と syncd の事前計算最適化 PR が散発。
+- `system-health` / `sysmonitor` で closest UP status の event 集約ロジック改善が議題化。
+- Redis 6.2 → 7.x への対応検討と、複数 Redis instance での scale 改善議論が続く。

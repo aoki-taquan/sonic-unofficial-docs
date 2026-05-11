@@ -59,3 +59,41 @@ Path Tracing Midpoint は MCD を HbH-PT に書くだけで、収集側は Regio
 - [SRv6 VPN](../../routing/srv6-vpn-hld.md)
 - [EVPN-VXLAN HLD](../../routing/evpn-vxlan-hld.md)
 - [FRR BGP 統一管理フレームワーク](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
+
+## 発展トピック
+
+- **uSID (Micro SID)**: 単一 128-bit SID に複数の short SID を carry する圧縮方式 (`uSID`)。SRH の depth を抑えて ASIC リソースを節約する。
+- **TI-LFA (Topology-Independent Loop-Free Alternates)**: SR ベースで FRR (Fast Reroute) を実現する手法。SONiC で実装するには FRR 側と SAI 側双方の対応が必要。
+- **SRv6 OAM (RFC 9259)**: SRv6 経路の OAM probing。ping / traceroute の拡張で end-to-end SID path を検証する。
+- **L3VPN over SRv6 (draft-ietf-bess-srv6-services)**: BGP VPN family を SRv6 underlay で運ぶ。FRR の `address-family ipv4 vpn` + SRv6 locator 設定がドライバ。
+- **flow label entropy**: SRv6 outer IPv6 の flow label を inner 5-tuple から生成し、ECMP hash entropy を維持する。
+
+## 既知の制約と回避方法
+
+- **`H.Encaps` 未実装での制限**: reduced 版のみ動く段階では、特定 vendor の interop で SRH が違う形になる。peer 側の SRH format を必ず確認する。
+- **MPLS LDP の SONiC 直接サポート不足**: SONiC は MPLS data plane を持つが、LDP の運用例は少ない。SR-MPLS / BGP-LU 経由のシグナリングが現実的。
+- **SRv6 SID 数 vs ASIC capacity**: SID encode capability と processing depth が ASIC で違う。`SAI_OBJECT_TYPE_MY_SID_ENTRY` の capacity を必ず確認。
+- **SRv6 と MPLS 共存**: 同一 router で SRv6 と MPLS を同時に扱うとき、orch 側のリソース取り合いが起こる。設計を分離するのが安全。
+
+## 将来計画 / ロードマップ
+
+- `segment-routing-over-ipv6-srv6-hld` の Phase 2 以降が継続テーマ。HMAC、sBFD、Binding SID、Adj SID が段階的に対応予定。
+- FRR 側で SRv6 control plane の拡張が継続。SONiC は FRR バージョン更新で取り込む。
+- Path Tracing の集約パスと SONiC telemetry 統合の議論が future work。
+
+## 関連 RFC / 仕様書
+
+- [RFC 8754](https://datatracker.ietf.org/doc/html/rfc8754) — IPv6 Segment Routing Header (SRH)
+- [RFC 8986](https://datatracker.ietf.org/doc/html/rfc8986) — SRv6 Network Programming
+- [RFC 9252](https://datatracker.ietf.org/doc/html/rfc9252) — BGP Overlay Services Based on SRv6
+- [RFC 9259](https://datatracker.ietf.org/doc/html/rfc9259) — OAM for SRv6
+- [RFC 5036](https://datatracker.ietf.org/doc/html/rfc5036) — LDP
+- [RFC 3209](https://datatracker.ietf.org/doc/html/rfc3209) — RSVP-TE
+- [RFC 8660](https://datatracker.ietf.org/doc/html/rfc8660) — SR-MPLS
+- [Path Tracing draft (draft-filsfils-spring-path-tracing)](https://datatracker.ietf.org/doc/draft-filsfils-spring-path-tracing/)
+
+## upstream 開発の最新動向
+
+- `sonic-swss` の `srv6orch` で SID table、locator、MY_SID 拡張の PR が継続。FRR との fpmsyncd 整合も並行。
+- FRR upstream で SRv6 関連の PR が活発で、SONiC FRR バージョン更新と同期して機能が増える。
+- Path Tracing midpoint の SAI extension が議論段階。実装は限定的だが HLD で expectation が示されている。

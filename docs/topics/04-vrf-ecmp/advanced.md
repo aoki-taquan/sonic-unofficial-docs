@@ -46,3 +46,40 @@ VoQ Chassis では Supervisor と Line Card の TSA 状態同期が課題にな�
 - [VRRP](../../routing/virtual-router-redundancy-protocol-adaptation-hld.md)
 - [SAG for SONiC](../../architecture/sag-high-level-design-for-sonic.md)
 - [Reliable TSA](../../routing/reliable-tsa.md)
+
+## 発展トピック
+
+VRF / NHG / route の基本動作を超えた領域では、scale 改善と障害収束の最適化が主題になる。
+
+- **NHG (Next Hop Group) スケール拡張**: ECMP/WCMP の path 数を増やすほど SAI / ASIC のリソースを食う。SONiC では NHG を route 間で共有して resource 消費を抑えるが、shared NHG の更新中に flap が出ないよう orchagent が swap 戦略を持つ。
+- **WCMP (Weighted ECMP)**: SAI の `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT` を使い、capacity の異なる link でも均等に近づける配分が可能。SONiC では特定 ASIC でのみ実用に乗っている段階。
+- **VRF leaking**: 同一 SONiC 内で複数 VRF 間に route を leak する設計。FRR の `import vrf` 設定と SONiC の `VRF` テーブルの組み合わせで実現。route-target で leak 範囲を絞る。
+- **管理用 VRF (mgmt VRF)**: `MGMT_VRF_CONFIG` で management 経路と data plane 経路を完全分離。telemetry / NTP / DNS / SNMP の `bind-to-vrf` を確認する。
+- **SAG / VRRP の組み合わせ**: SAG が default gateway 系の MAC を fabric 全体で揃える一方、VRRP は per-segment で master/backup を切り替える。両者は競合しうるので、deployment 単位で片方に寄せる。
+
+## 既知の制約と回避方法
+
+- **VRF 削除時の RIF cleanup race**: VRF を削除する直前まで他 orch が RIF を使っていると、APPL_DB / ASIC_DB に残骸が残る。手順としては「VRF 上の interface を先に外す」「BGP/static route を flush する」「最後に VRF を消す」を厳守する。
+- **NHG resize 中の transient loss**: shared NHG を更新する瞬間に短い loss が発生しうる。重要 prefix では `bgp suppress-fib-pending` と PIC を組み合わせる。
+- **mgmt VRF と DNS resolver**: glibc resolver の bind 先 source IP を mgmt VRF に固定する設定が抜けると DNS が data VRF に漏れる。`resolv.conf` と `ip vrf exec` を併用する。
+- **VRRPv3 IPv6 の link-local 衝突**: VMAC を変更すると IPv6 link-local が再生成されない実装があり、ND が古い MAC を返す。`ip -6 neigh flush` 系で起こしなおす。
+
+## 将来計画 / ロードマップ
+
+- ECMP fast reroute と PIC の協調は継続テーマ。`bgp-pic` HLD と `nexthop-group-fast-failover` 系の提案が交差する。
+- SAG の community master 取り込みは段階的で、ベンダー fork 側で先行する状況。SONiC main 側の YANG / orch 整備の進捗を `architecture/sag-high-level-design-for-sonic` の "Future Work" で追う。
+- VRF レベルの metrics (per-VRF route count / drop / nexthop unreachable) は telemetry 章 ([09](../09-telemetry-snmp/index.md), [10](../10-gnmi-openconfig/index.md)) の OpenConfig schema 拡張に依存する。
+
+## 関連 RFC / 仕様書
+
+- [RFC 4364](https://datatracker.ietf.org/doc/html/rfc4364) — BGP/MPLS IP VPNs (VRF モデルの源流)
+- [RFC 5798](https://datatracker.ietf.org/doc/html/rfc5798) — VRRPv3
+- [RFC 7432](https://datatracker.ietf.org/doc/html/rfc7432) — EVPN (VRF leak の overlay 版)
+- [RFC 2992](https://datatracker.ietf.org/doc/html/rfc2992) — ECMP hashing 議論
+- [RFC 7196](https://datatracker.ietf.org/doc/html/rfc7196) — IS-IS Routing for Anycast (SAG 概念の参考)
+
+## upstream 開発の最新動向
+
+- `sonic-swss` の `vrforch` / `routeorch` で NHG 共有の最適化と memory 削減 PR が継続的に入っている。
+- FRR の VRF leaking 周りは IPv6 source address selection と `set src` のバグ修正が時折入る。SONiC 側は FRR バージョン更新でこれを取り込む。
+- mgmt VRF を前提とした `host-system` 系 daemon (chrony, snmpd, gnmi server) の bind 設定改善 PR が散発的にあり、deployment ガイドラインの変化につながる。

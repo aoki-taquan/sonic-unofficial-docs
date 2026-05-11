@@ -46,3 +46,40 @@ Subnet decap は VXLAN overlay ではなく、VLAN subnet 宛の IPinIP decap �
 - [VNET の Local Endpoint Forwarding](../../overlay/vnet-local-endpoint-forwarding.md)
 - [NVGRE トンネル](../../overlay/nvgre-tunnel-in-sonic.md)
 - [VLAN Subnet Decap](../../platform/subnet-decapsulation-with-sonic.md)
+
+## 発展トピック
+
+- **Overlay ECMP with BFD monitoring**: VNET tunnel nexthop に BFD を貼ることで、underlay の障害を検出して nexthop group から外す。`overlay-ecmp-with-bfd-monitoring` HLD と `overlay-ecmp-enhancements` で扱う。VNET の規模が大きいときに収束時間を支配する要素になる。
+- **EVPN Type-5 (IP Prefix Route)**: tenant VRF の prefix を route target 経由で配る方法。Type-2 ベースの MAC/IP モデルと、Type-5 ベースの prefix モデルが共存するときの優先度を意識する。
+- **DSCP remapping for tunnel traffic**: outer DSCP を VNET 単位で書き換える機能。`overlay/dscp-remapping-for-tunnel-traffic` で扱われ、QoS 章 ([08 QoS](../08-qos-buffer/index.md)) の DSCP-to-TC マップと組み合わさる。
+- **Symmetric IRB**: ingress / egress 双方で L3VNI を経由する設計。FRR 側設定と SONiC schema 双方で `VXLAN_TUNNEL_MAP` に L3 mapping を入れる。
+- **VXLAN counters / drop visibility**: `COUNTERS_DB` に tunnel ごとの ingress/egress カウンタが入る。tunnel drop の切り分けは ASIC SAI 側のカウンタも併用する。
+
+## 既知の制約と回避方法
+
+- **EVPN multihoming (Type-1/Type-4) の SONiC 対応**: master でも YANG / orch / SAI 全層が揃っているかは ASIC 依存。production 投入前に `EVPN_ETHERNET_SEGMENT` の有無、FRR `evpn mh es` の動作、SAI の split horizon サポートを個別に確認する。
+- **inner hashing が不十分なケース**: VXLAN inner header の 5-tuple がハッシュに入らない ASIC では、ECMP / LAG の偏りが出る。SAI hash setting (`SAI_SWITCH_ATTR_LAG_HASH_*`) と platform docs を照合する。
+- **NVGRE と VXLAN の同居**: 同じ port での同時受信は ASIC によっては未対応。`nvgreorch` の HLD は decap 中心で、encap シナリオは限定されている。
+- **Subnet decap を VNET の障害切り分けに使わない**: 名前が似ているが目的が違う。`SUBNET_DECAP` は VLAN subnet 宛 IPinIP の自動 decap で、VNET overlay とは別経路。
+
+## 将来計画 / ロードマップ
+
+- `evpn-vxlan-hld` には Type-2 MAC mobility、ARP suppression、ND suppression、Type-5 集約などの拡張が "Future Work" として継続議論されている。
+- DASH / SmartSwitch との接続で、VNET tunnel nexthop と ENI redirect の責務分担が再整理されつつある。[13 DASH / SmartSwitch](../13-dash-smartswitch/index.md) の advanced と相互参照。
+- IPv6 overlay (VXLAN over IPv6 underlay) のサポート拡大が議題。
+
+## 関連 RFC / 仕様書
+
+- [RFC 7348](https://datatracker.ietf.org/doc/html/rfc7348) — VXLAN
+- [RFC 7432](https://datatracker.ietf.org/doc/html/rfc7432) — BGP MPLS-Based Ethernet VPN
+- [RFC 8365](https://datatracker.ietf.org/doc/html/rfc8365) — EVPN over VXLAN/NVGRE
+- [RFC 9135](https://datatracker.ietf.org/doc/html/rfc9135) — Integrated Routing and Bridging in EVPN
+- [RFC 9136](https://datatracker.ietf.org/doc/html/rfc9136) — IP Prefix Advertisement in EVPN
+- [RFC 7637](https://datatracker.ietf.org/doc/html/rfc7637) — NVGRE
+- [RFC 8926](https://datatracker.ietf.org/doc/html/rfc8926) — Geneve (将来 overlay 候補として参照)
+
+## upstream 開発の最新動向
+
+- FRR 側の EVPN 機能拡張に追従して `bgpcfgd` の Jinja2 と YANG モジュールが更新されることが多い。EVPN MH の SONiC 対応は段階的で、PR 単位で SAI 側依存を確認する必要がある。
+- `sonic-swss` 配下の `vnetorch` / `vxlanorch` は tunnel nexthop group の扱いに関する PR が継続しており、scale 改善と memory 削減が主軸。
+- SmartSwitch / DASH 関連で `vnet-local-endpoint-forwarding` のような近接最適化 HLD が追加されており、VNET の用途が DC overlay から DASH service へ広がっている。
