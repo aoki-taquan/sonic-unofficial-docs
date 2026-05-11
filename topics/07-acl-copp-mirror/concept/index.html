@@ -2758,6 +2758,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        問題を切り分けるための流れ図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         読み終わったあとにできるようになること
       
     </span>
@@ -2810,7 +2821,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -2821,7 +2832,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -21433,6 +21444,10 @@
     
       
         
+          
+        
+      
+        
       
     
     
@@ -21450,8 +21465,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
         
           
-          <label class="md-nav__link" for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/verification/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -21465,8 +21481,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_14_5">
@@ -21478,6 +21500,8 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -23478,6 +23502,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        問題を切り分けるための流れ図
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         読み終わったあとにできるようになること
       
     </span>
@@ -23530,7 +23565,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23541,7 +23576,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -23739,7 +23774,21 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_5">読み終わったあとにできるようになること<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">問題を切り分けるための流れ図<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>「ドロップしている / CPU が高い / ミラーが届かない」のいずれの症状でも、まず ACL / CoPP / Mirror のどれが関与する事象かを切り分けてから節を選ぶと迷子にならない。</p>
+<pre class="mermaid"><code>flowchart TD
+  Q[症状] --&gt; A{パケットが落ちている?}
+  A --&gt;|Yes| A1{ASIC の drop reason は?}
+  A1 --&gt;|ACL_DROP / ACL_ANY| A2[setup.md: ACL_TABLE type / ACL_RULE の priority と match]
+  A1 --&gt;|L2/L3 不正 / TTL など| A3[internals.md: SAI drop reason と debug-counter]
+  A --&gt;|No| B{CPU 使用率が高い・control plane が不安定?}
+  B --&gt;|Yes| B1[operations.md: COPP_TRAP / COPP_GROUP の policer と CPU queue]
+  B --&gt;|No| C{ミラーが想定先に届かない?}
+  C --&gt;|Yes| C1[architecture.md: MIRROR_SESSION の type と SAI capability] --&gt; C2[internals.md: ERSPAN / GRE outer / queue 属性の伝搬]
+  C --&gt;|No| D{特定 rule が hit していない?}
+  D --&gt;|Yes| D1[operations.md: FLEX_COUNTER_TABLE.ACL / TRAP_FLOW_COUNTER で観測]</code></pre>
+<p>3 機能が独立に見えても、<code>POLICER</code> と counter は ACL / CoPP の両方から参照される。流れ図で <code>setup</code> → <code>internals</code> のように節をまたぐときは、共有部品（policer / counter / SAI capability）を経由する点に注意。</p>
+<h2 id="_6">読み終わったあとにできるようになること<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ACL / CoPP / Mirror の責務を 1 行で説明できる。</li>
 <li>ACL rule を読むときに、所属 <code>ACL_TABLE</code> の type と stage を先に確認する習慣がつく。</li>
@@ -23822,7 +23871,7 @@
 </tbody>
 </table>
 <p>ERSPAN は GRE outer / DSCP / queue / TTL の各属性が SAI mirror session attr にそのまま伝搬します。複数 ACL ルールから同一 session を参照すると mirror engine が共有されるため、TCAM 消費は ACL 側のみで mirror engine 側は 1 リソースとして使えます。</p>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../acl-qos/acl-in-sonic/">ACL in SONiC</a></li>
 <li><a href="../../../acl-qos/acl-support-in-sonic/">ACL の基本設計</a></li>
@@ -23832,7 +23881,7 @@
 <li><a href="../../../acl-qos/dash-acl-tags/">DASH ACL タグ</a></li>
 </ul>
 <!-- xref-prereq -->
-<h2 id="_7">この章の前提知識<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">この章の前提知識<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>この章を読み進める前に、次の章を押さえておくと迷子になりにくい。</p>
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>

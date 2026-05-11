@@ -21339,6 +21339,10 @@
     
       
         
+          
+        
+      
+        
       
     
     
@@ -21356,8 +21360,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
         
           
-          <label class="md-nav__link" for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/verification/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -21371,8 +21376,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_14_5">
@@ -21384,6 +21395,8 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -23392,17 +23405,31 @@
 <p>22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。</p>
 <h2 id="cli-config_db-asic">データフロー（CLI → CONFIG_DB → ASIC）<a class="headerlink" href="#cli-config_db-asic" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  USER[oper / script] --&gt; CLICK[sonic-utilities&lt;br/&gt;click CLI]
-  CLICK --&gt; CONFIG[config_db / mgmt_framework]
-  CLICK --&gt;|swssconfig 直書きは限定的| APPL
-  CONFIG --&gt; CFG[(CONFIG_DB)]
-  CFG --&gt; CFGMGR[*mgrd&lt;br/&gt;vlanmgr/intfmgr/natmgr/...]
-  CFGMGR --&gt; APPL[(APPL_DB)]
-  APPL --&gt; ORCH[orchagent / *orch]
-  ORCH --&gt; SAI[syncd → SAI]
-  SAI --&gt; ASIC[(ASIC)]
-  YANG[sonic-yang-models] -.validate.-&gt; CFG
-  GNMI[gNMI / translib] -.write/read.-&gt; CFG</code></pre>
+  USER["&lt;b&gt;oper / script&lt;/b&gt;"]:::user
+  CLICK["&lt;b&gt;sonic-utilities&lt;/b&gt;&lt;br/&gt;(click CLI)"]:::cli
+  GNMI["&lt;b&gt;gNMI / translib&lt;/b&gt;"]:::cli
+  YANG["&lt;b&gt;sonic-yang-models&lt;/b&gt;&lt;br/&gt;(schema)"]:::schema
+
+  CFG[("&lt;b&gt;CONFIG_DB&lt;/b&gt;")]:::db
+  APPL[("&lt;b&gt;APPL_DB&lt;/b&gt;")]:::db
+  CFGMGR["&lt;b&gt;*mgrd&lt;/b&gt;&lt;br/&gt;vlanmgr / intfmgr / natmgr"]:::proc
+  ORCH["&lt;b&gt;orchagent / *Orch&lt;/b&gt;"]:::proc
+  SAI["syncd + SAI"]:::proc
+  ASIC[("&lt;b&gt;ASIC&lt;/b&gt;")]:::hw
+
+  USER --&gt; CLICK
+  CLICK ==&gt; CFG
+  CLICK -. swssconfig 限定 .-&gt; APPL
+  GNMI ==&gt; CFG
+  YANG -. validate .-&gt; CFG
+  CFG ==&gt; CFGMGR ==&gt; APPL ==&gt; ORCH ==&gt; SAI ==&gt; ASIC
+
+  classDef user fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef cli fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef schema fill:#e8d5f0,stroke:#4b0082,stroke-width:1.5px,color:#000;
+  classDef db fill:#d4edda,stroke:#155724,stroke-width:2px,color:#000;
+  classDef proc fill:#ffe0b2,stroke:#8a4b00,stroke-width:1.5px,color:#000;
+  classDef hw fill:#fde2e4,stroke:#a83279,stroke-width:2px,color:#000;</code></pre>
 <h2 id="_2">主要コンポーネントの責務<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

@@ -21125,6 +21125,10 @@
     
       
         
+          
+        
+      
+        
       
     
     
@@ -21145,8 +21149,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
         
           
-          <label class="md-nav__link" for="__nav_14_5" id="__nav_14_5_label" tabindex="">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../verification/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -21160,8 +21165,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_14_5">
@@ -21173,6 +21184,8 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -23112,6 +23125,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#redis-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        redis-cli での観測
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23213,12 +23237,30 @@
 <li>CONFIG_DB: <code>BGP_BBR|all</code></li>
 <li>CLI: <code>config bgp bbr</code></li>
 </ul>
+<h2 id="redis-cli">redis-cli での観測<a class="headerlink" href="#redis-cli" title="Permanent link">&para;</a></h2>
+<p>YANG の <code>enum</code>（<code>enabled</code> / <code>disabled</code>）と <code>default</code> の挙動は、実機では CONFIG_DB の <code>BGP_BBR</code> キーを直接覗くと素早く突き合わせできる。設定値・FRR への反映状況を 1 セッションで確認する定型は以下。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 1. 現在の CONFIG_DB 値（YANG leaf &quot;status&quot; に相当）</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BGP_BBR|all&#39;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># 期待: 1) &quot;status&quot;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1">#       2) &quot;enabled&quot;   (または &quot;disabled&quot;)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># 2. キーが未作成のときは default(enabled) 扱い</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_BBR|*&#39;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># 3. 設定変更と即時反映確認</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;BGP_BBR|all&#39;</span><span class="w"> </span>status<span class="w"> </span>enabled
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w">  </span><span class="s1">&#39;BGP_BBR|all&#39;</span><span class="w"> </span>status
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># 4. bgpcfgd が FRR へ反映した結果（aggregate-address の suppress-map / advertise-map）</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config bgpd&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;aggregate-address|bbr&#39;</span>
+</span></code></pre></div>
+<p><code>status=enabled</code> のとき、<code>BGP_AGGREGATE_ADDRESS</code> の BBR 連動ロジック（<code>suppress-map</code> の動的切替）が <code>bgpcfgd</code> の Jinja テンプレートで生成される。<code>disabled</code> に切り替えても <code>aggregate-address</code> 設定自体は残るため、FRR 側の <code>running-config</code> 差分で「BBR 機能のみが OFF」を確認するのがポイント。</p>
 <!-- ref-triangle:start -->
 
 <h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <code>BGP_BBR</code></li>
-<li>CLI: <code>config bgp bbr</code></li>
+<li>CLI: <a href="../../cli/config-bgp/"><code>config bgp bbr</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 

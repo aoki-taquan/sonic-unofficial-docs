@@ -21361,6 +21361,10 @@
     
       
         
+          
+        
+      
+        
       
     
     
@@ -21378,8 +21382,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
         
           
-          <label class="md-nav__link" for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/verification/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -21393,8 +21398,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_14_5">
@@ -21406,6 +21417,8 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -23468,17 +23481,37 @@
 <h2 id="roce">典型シーン: RoCE クラスタでバッファが溢れかける夕方<a class="headerlink" href="#roce" title="Permanent link">&para;</a></h2>
 <p>GPU クラスタの allreduce が走り始めて、ToR 1 台の特定 uplink で TC3 (lossless) のキュー深さが急上昇する場面を想像してください。設定が揃っているとき、SONiC とハードウェアの間ではこう動きます。</p>
 <pre class="mermaid"><code>flowchart LR
-  IN[ingress packet&lt;br&gt;DSCP=26] --&gt; M1[DSCP_TO_TC_MAP&lt;br&gt;TC=3]
-  M1 --&gt; M2[TC_TO_PG_MAP&lt;br&gt;PG=3]
-  M2 --&gt; PGBUF[ingress PG buffer&lt;br&gt;xoff 接近]
-  PGBUF --&gt;|xoff 到達| PFC[PFC frame 送出&lt;br&gt;upstream に PAUSE]
-  PGBUF --&gt; M3[TC_TO_QUEUE_MAP&lt;br&gt;Q=3]
-  M3 --&gt; QBUF[egress queue buffer]
-  QBUF --&gt; WRED[WRED / ECN&lt;br&gt;平均深さで mark]
-  WRED --&gt; SCH[SCHEDULER&lt;br&gt;strict / DWRR]
-  SCH --&gt; OUT[出力]
-  PFC -.可観測.-&gt; CNT[(COUNTERS_DB&lt;br&gt;PFC_RX/TX)]
-  QBUF -.観測.-&gt; WM[(WATERMARK&lt;br&gt;queue peak)]</code></pre>
+  IN["&lt;b&gt;ingress packet&lt;/b&gt;&lt;br/&gt;DSCP=26"]:::pkt
+  subgraph INGRESS["Ingress (受信)"]
+    direction TB
+    M1["DSCP_TO_TC_MAP&lt;br/&gt;→ TC=3"]:::map
+    M2["TC_TO_PG_MAP&lt;br/&gt;→ PG=3"]:::map
+    PGBUF["&lt;b&gt;PG buffer&lt;/b&gt;&lt;br/&gt;xoff 接近"]:::buf
+    PFC["&lt;b&gt;PFC frame&lt;/b&gt;&lt;br/&gt;upstream に PAUSE"]:::alert
+  end
+  subgraph EGRESS["Egress (送信)"]
+    direction TB
+    M3["TC_TO_QUEUE_MAP&lt;br/&gt;→ Q=3"]:::map
+    QBUF["&lt;b&gt;queue buffer&lt;/b&gt;"]:::buf
+    WRED["WRED / ECN mark"]:::policy
+    SCH["SCHEDULER&lt;br/&gt;strict / DWRR"]:::policy
+  end
+  OUT["&lt;b&gt;出力&lt;/b&gt;"]:::pkt
+  CNT[("COUNTERS_DB&lt;br/&gt;PFC_RX/TX")]:::obs
+  WM[("WATERMARK&lt;br/&gt;queue peak")]:::obs
+
+  IN --&gt; M1 --&gt; M2 --&gt; PGBUF
+  PGBUF ==&gt;|xoff 到達| PFC
+  PGBUF --&gt; M3 --&gt; QBUF --&gt; WRED --&gt; SCH --&gt; OUT
+  PFC -.観測.-&gt; CNT
+  QBUF -.観測.-&gt; WM
+
+  classDef pkt fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef map fill:#e2e3e5,stroke:#41464b,color:#000;
+  classDef buf fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef alert fill:#f8d7da,stroke:#721c24,stroke-width:2px,color:#000;
+  classDef policy fill:#d4edda,stroke:#155724,color:#000;
+  classDef obs fill:#e8d5f0,stroke:#4b0082,color:#000;</code></pre>
 <p>このとき運用者が見るのは大体次の 3 つです。</p>
 <ul>
 <li><code>show priority-group watermark</code> で PG のピーク占有を確認し、xoff にどれだけ近付いたか</li>

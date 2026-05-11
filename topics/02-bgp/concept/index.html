@@ -1468,7 +1468,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        この章での読み方
+        問題を切り分けるための流れ図
       
     </span>
   </a>
@@ -1477,6 +1477,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章での読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         読み終わったあとにできるようになること
@@ -1520,7 +1531,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         大量経路 / 高速収束で押さえる機能
@@ -1531,7 +1542,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -1542,7 +1553,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -21444,6 +21455,10 @@
     
       
         
+          
+        
+      
+        
       
     
     
@@ -21461,8 +21476,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
         
           
-          <label class="md-nav__link" for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/verification/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -21476,8 +21492,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_14_5">
@@ -21489,6 +21511,8 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -23489,7 +23513,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        この章での読み方
+        問題を切り分けるための流れ図
       
     </span>
   </a>
@@ -23498,6 +23522,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章での読み方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         読み終わったあとにできるようになること
@@ -23541,7 +23576,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         大量経路 / 高速収束で押さえる機能
@@ -23552,7 +23587,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23563,7 +23598,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -23786,9 +23821,22 @@
 </tbody>
 </table>
 <p><code>show ip route</code> は FRR 側を見ているのか SONiC 側を見ているのかが混ざりやすい点に注意します。確実な切り分けは「FRR の vty」と「Redis の APPL_DB / ASIC_DB」を別個に確認することです。</p>
-<h2 id="_6">この章での読み方<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">問題を切り分けるための流れ図<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>「BGP がおかしい」と感じたとき、どの章のどの節を先に読むかを決めるための地図。SONiC の BGP は <strong>設定経路（CONFIG_DB → FRR）</strong> と <strong>学習経路（FRR → FPM → APPL_DB → ASIC_DB）</strong> の 2 方向にまたがるため、症状から逆引きで節境界をまたぐ。</p>
+<pre class="mermaid"><code>flowchart TD
+  Q[症状: BGP がおかしい] --&gt; A{neighbor が up しない?}
+  A --&gt;|Yes| A1[setup.md: BGP_NEIGHBOR / BGP_PEER_RANGE / router-id]
+  A --&gt;|No| B{経路を受信しているが ASIC に入らない?}
+  B --&gt;|Yes| B1[architecture.md: FPM 経路] --&gt; B2[operations.md: APPL_DB.ROUTE_TABLE / ASIC_DB の中間状態確認]
+  B --&gt;|No| C{特定 prefix が advertise されない?}
+  C --&gt;|Yes| C1[internals.md: suppress-fib-pending / aggregate-address / BBR]
+  C --&gt;|No| D{収束が遅い・大量経路で詰まる?}
+  D --&gt;|Yes| D1[internals.md: PIC / next-hop-group 共有 / dplane_fpm_sonic]
+  D --&gt;|No| E[operations.md: counter / show 入口で観測の出発点を決める]</code></pre>
+<p>この流れ図で行き先が分かったら、各節へジャンプ。<code>internals.md</code> は複数 HLD を「同じ問題群」として比較表で並べてあるため、節をまたがず 1 ページで読める。</p>
+<h2 id="_7">この章での読み方<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>BGP の設定問題は <a href="../setup/">設定</a> へ進みます。経路が ASIC に入らない、advertise が遅れる問題は <a href="../architecture/">アーキテクチャ</a> と <a href="../operations/">運用</a> を先に読みます。大量経路、障害収束、FIB pending、dynamic peer のように実装差分が大きい機能は <a href="../internals/">内部実装</a> で比較します。</p>
-<h2 id="_7">読み終わったあとにできるようになること<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">読み終わったあとにできるようになること<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>「BGP の問題」を、CONFIG_DB / FRR / FPM / APPL_DB / ASIC_DB のどこで起きているか切り分けられる。</li>
 <li><code>bgpcfgd</code> と <code>frrcfgd</code> の使い分けと、それを決める metadata を把握できる。</li>
@@ -23877,7 +23925,7 @@
 </tbody>
 </table>
 <p>特に <strong>大量経路 + 障害収束</strong> の場面では、「BGP は受け取ったが FPM が詰まって APPL_DB に来ていない」「APPL_DB には入ったが orchagent が SAI へ書き切れていない」のような中間状態が観測されます。</p>
-<h2 id="_8">大量経路 / 高速収束で押さえる機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">大量経路 / 高速収束で押さえる機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>DC 規模では <strong>route scale が秒間数万 update</strong> に達することがあり、収束時間を延ばす主な要因は FRR ↔ SONiC 境界です。SONiC 側で確認すべき機能は次のとおりです。</p>
 <ul>
 <li><strong>BGP suppress-fib-pending</strong>: ASIC FIB に入っていない経路の advertise を抑止し、ブラックホールを避ける（<a href="../../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">詳細</a>）</li>
@@ -23885,7 +23933,7 @@
 <li><strong>next-hop group の共有</strong>: 同一 nexthop を持つ経路の group 化で ASIC への書込み量を削減（<a href="../../../routing/multiple-nexthop-route-hld/">Multiple Nexthop Route</a>）</li>
 <li><strong>prefix-independent convergence (PIC)</strong>: backup nexthop の事前 program による収束時間短縮（<a href="../../../routing/bgp-prefix-independent-convergence-architecture-document/">PIC architecture</a>）</li>
 </ul>
-<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/bgp-router-id-explicitly-configured/">BGP router-id を明示的に設定する</a></li>
 <li><a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR-BGP Unified Mgmt Framework</a></li>
@@ -23894,7 +23942,7 @@
 <li><a href="../../../routing/bgp-prefix-independent-convergence-architecture-document/">PIC architecture</a></li>
 </ul>
 <!-- xref-prereq -->
-<h2 id="_10">この章の前提知識<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">この章の前提知識<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <p>この章を読み進める前に、次の章を押さえておくと迷子になりにくい。</p>
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>

@@ -21350,6 +21350,10 @@
     
       
         
+          
+        
+      
+        
       
     
     
@@ -21367,8 +21371,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
         
           
-          <label class="md-nav__link" for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/verification/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -21382,8 +21387,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_14_5">
@@ -21395,6 +21406,8 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -23414,15 +23427,35 @@
 <p>ここでは platform 層の信頼チェーンと container hardening を扱います。OpenSSL FIPS、secure boot、secure upgrade、container hardening は、それぞれ独立した HLD として整備されており、本ページは「どの順で読み、どこで交わるか」を示すための導線です。</p>
 <h2 id="_2">信頼チェーンの全体像<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  BIOS[UEFI / BIOS] --&gt; SHIM[shim]
-  SHIM --&gt; GRUB[GRUB]
-  GRUB --&gt; KERNEL[kernel + initrd]
-  KERNEL --&gt; DOCKER[dockerd]
-  DOCKER --&gt; CONT[SONiC containers]
-  KERNEL --&gt; SSL[OpenSSL FIPS provider]
+  subgraph BOOT["起動時の信頼チェーン (secure boot)"]
+    direction LR
+    BIOS["&lt;b&gt;UEFI / BIOS&lt;/b&gt;"]:::hw
+    SHIM["shim"]:::boot
+    GRUB["GRUB"]:::boot
+    KERNEL["&lt;b&gt;kernel + initrd&lt;/b&gt;"]:::boot
+  end
+
+  subgraph RUNTIME["実行時 (container hardening + FIPS)"]
+    direction TB
+    DOCKER["dockerd"]:::rt
+    CONT["&lt;b&gt;SONiC containers&lt;/b&gt;&lt;br/&gt;(cap-drop / hardening)"]:::rt
+    SSL["&lt;b&gt;OpenSSL FIPS provider&lt;/b&gt;&lt;br/&gt;(140-3)"]:::crypto
+  end
+
+  UPGRADE["&lt;b&gt;secure upgrade&lt;/b&gt;&lt;br/&gt;image 署名検証"]:::upg
+
+  BIOS --&gt; SHIM --&gt; GRUB --&gt; KERNEL
+  KERNEL --&gt; DOCKER --&gt; CONT
+  KERNEL --&gt; SSL
   CONT --&gt; SSL
-  UPGRADE[secure upgrade] -. verifies .-&gt; KERNEL
-  UPGRADE -. verifies .-&gt; CONT</code></pre>
+  UPGRADE -. 検証 .-&gt; KERNEL
+  UPGRADE -. 検証 .-&gt; CONT
+
+  classDef hw fill:#e2e3e5,stroke:#41464b,stroke-width:2px,color:#000;
+  classDef boot fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef rt fill:#d4edda,stroke:#155724,stroke-width:1.5px,color:#000;
+  classDef crypto fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef upg fill:#fde2e4,stroke:#a83279,stroke-width:2px,color:#000;</code></pre>
 <p>secure boot は起動時の真正性、OpenSSL FIPS は実行時の暗号モジュールの認証、secure upgrade は image 更新時の真正性、container hardening は実行時の attack surface 縮小に対応します。</p>
 <h2 id="openssl-fips-140-3">OpenSSL FIPS 140-3<a class="headerlink" href="#openssl-fips-140-3" title="Permanent link">&para;</a></h2>
 <p>OpenSSL FIPS は、暗号モジュールが FIPS 140-3 の要件を満たして動作することを保証する仕組みです。SONiC では FIPS provider の有効化と、FIPS モード時に許可されるアルゴリズム集合の制約が <a href="../../../system/sonic-openssl-fips-140-3-hld/">OpenSSL FIPS 140-3 HLD</a> に整理されています。</p>

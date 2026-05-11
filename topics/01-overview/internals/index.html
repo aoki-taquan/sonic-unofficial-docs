@@ -21328,6 +21328,10 @@
     
       
         
+          
+        
+      
+        
       
     
     
@@ -21345,8 +21349,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
         
           
-          <label class="md-nav__link" for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/verification/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -21360,8 +21365,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_14_5">
@@ -21373,6 +21384,8 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -23455,19 +23468,37 @@
 <h2 id="sonic">SONiC 全体のデータフロー<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
 <p>01 章の overview として、SONiC の典型的な「設定 → SAI → ASIC」の流れを一枚で示します。</p>
 <pre class="mermaid"><code>flowchart LR
-  CLI[CLI / gNMI / minigraph] --&gt; CFG[(CONFIG_DB)]
-  CFG --&gt; MGR[*mgrd&lt;br/&gt;cfgmgr]
-  MGR --&gt; KERNEL[Linux kernel&lt;br/&gt;netlink]
-  MGR --&gt; APPL[(APPL_DB)]
-  KERNEL --&gt; SYNCD_NL[*syncd daemons&lt;br/&gt;portsyncd/fdbsyncd/...]
-  SYNCD_NL --&gt; APPL
-  APPL --&gt; ORCH[orchagent&lt;br/&gt;per-feature Orch]
-  ORCH --&gt; ASIC[(ASIC_DB)]
-  ASIC --&gt; SYNCD[syncd] --&gt; SAI[SAI lib] --&gt; CHIP[(ASIC)]
-  ORCH --&gt; STATE[(STATE_DB)]
-  SYNCD --&gt; COUNT[(COUNTERS_DB)]
-  STATE --&gt; GNMI[gNMI / SNMP / CLI]
-  COUNT --&gt; GNMI</code></pre>
+  CLI["&lt;b&gt;北向き入口&lt;/b&gt;&lt;br/&gt;CLI / gNMI / minigraph"]:::north
+  CFG[("&lt;b&gt;CONFIG_DB&lt;/b&gt;")]:::db
+  MGR["&lt;b&gt;*mgrd&lt;/b&gt;&lt;br/&gt;(cfgmgr 層)"]:::proc
+  KERNEL["Linux kernel&lt;br/&gt;netlink / FPM"]:::kernel
+  APPL[("&lt;b&gt;APPL_DB&lt;/b&gt;")]:::db
+  ORCH["&lt;b&gt;orchagent&lt;/b&gt;&lt;br/&gt;per-feature Orch"]:::proc
+  ASIC[("&lt;b&gt;ASIC_DB&lt;/b&gt;")]:::db
+  SYNCD["syncd + SAI lib"]:::proc
+  CHIP[("&lt;b&gt;ASIC&lt;/b&gt;")]:::hw
+  STATE[("&lt;b&gt;STATE_DB&lt;/b&gt;")]:::db
+  COUNT[("&lt;b&gt;COUNTERS_DB&lt;/b&gt;")]:::db
+  GNMI["&lt;b&gt;北向き出口&lt;/b&gt;&lt;br/&gt;gNMI / SNMP / CLI"]:::north
+
+  CLI --&gt; CFG
+  CFG --&gt; MGR
+  MGR --&gt; KERNEL
+  MGR --&gt; APPL
+  KERNEL -. netlink sync .-&gt; APPL
+  APPL --&gt; ORCH
+  ORCH --&gt; ASIC
+  ASIC --&gt; SYNCD --&gt; CHIP
+  ORCH --&gt; STATE
+  SYNCD --&gt; COUNT
+  STATE --&gt; GNMI
+  COUNT --&gt; GNMI
+
+  classDef north fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef db fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef proc fill:#d4edda,stroke:#155724,stroke-width:1.5px,color:#000;
+  classDef kernel fill:#e2e3e5,stroke:#41464b,stroke-width:1px,color:#000;
+  classDef hw fill:#fde2e4,stroke:#a83279,stroke-width:2px,color:#000;</code></pre>
 <h2 id="orch-daemon">主要 Orch / daemon の責務（一覧）<a class="headerlink" href="#orch-daemon" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

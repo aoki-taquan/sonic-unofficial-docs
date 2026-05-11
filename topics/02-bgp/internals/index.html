@@ -21372,6 +21372,10 @@
     
       
         
+          
+        
+      
+        
       
     
     
@@ -21389,8 +21393,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_5" >
         
           
-          <label class="md-nav__link" for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/verification/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -21404,8 +21409,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14_5" id="__nav_14_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_14_5">
@@ -21417,6 +21428,8 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -23501,17 +23514,38 @@
 </table>
 <h2 id="_3">データフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  BGPD[bgpd / FRR] --&gt;|FPM netlink| ZEBRA[zebra]
-  ZEBRA --&gt;|FPM RTM_NEWROUTE| FPMSYNCD[fpmsyncd]
-  FPMSYNCD --&gt; APPL[(APPL_DB&lt;br/&gt;ROUTE_TABLE)]
-  APPL --&gt; ROUTEORCH[RouteOrch&lt;br/&gt;+ NhgOrch]
-  ROUTEORCH --&gt; ASIC[(ASIC_DB&lt;br/&gt;ROUTE_ENTRY / NHG)]
-  STATE[(STATE_DB&lt;br/&gt;ROUTE_TABLE.offloaded)] &lt;--&gt;|offload feedback| ROUTEORCH
-  STATE --&gt;|suppress-fib-pending| BGPD
-  CFG[(CONFIG_DB&lt;br/&gt;BGP_NEIGHBOR / BGP_PEER_RANGE / BGP_AGGREGATE_ADDRESS)] --&gt; BGPCFGD[bgpcfgd]
-  BGPCFGD --&gt;|jinja2 template| FRRCFG[frr.conf]
-  FRRCFG --&gt; BGPD
-  STATECFG[(STATE_DB&lt;br/&gt;BGP_PEER_CONFIGURED_TABLE)] &lt;--&gt; BGPCFGD</code></pre>
+  subgraph CTRL["制御面 (FRR)"]
+    direction TB
+    BGPD["&lt;b&gt;bgpd&lt;/b&gt;&lt;br/&gt;FRR BGP"]:::frr
+    ZEBRA["&lt;b&gt;zebra&lt;/b&gt;&lt;br/&gt;RIB / FPM 送出"]:::frr
+  end
+
+  subgraph SONIC["SONiC 層"]
+    direction TB
+    BGPCFGD["&lt;b&gt;bgpcfgd&lt;/b&gt;&lt;br/&gt;jinja2 → frr.conf"]:::proc
+    FPMSYNCD["&lt;b&gt;fpmsyncd&lt;/b&gt;&lt;br/&gt;FPM → APPL_DB"]:::proc
+    ROUTEORCH["&lt;b&gt;RouteOrch + NhgOrch&lt;/b&gt;&lt;br/&gt;APPL → ASIC"]:::proc
+  end
+
+  CFG[("&lt;b&gt;CONFIG_DB&lt;/b&gt;&lt;br/&gt;BGP_NEIGHBOR&lt;br/&gt;BGP_PEER_RANGE&lt;br/&gt;BGP_AGGREGATE_ADDRESS")]:::db
+  APPL[("&lt;b&gt;APPL_DB&lt;/b&gt;&lt;br/&gt;ROUTE_TABLE")]:::db
+  STATE[("&lt;b&gt;STATE_DB&lt;/b&gt;&lt;br/&gt;ROUTE_TABLE.offloaded&lt;br/&gt;BGP_PEER_CONFIGURED")]:::db
+  ASIC[("&lt;b&gt;ASIC_DB&lt;/b&gt;&lt;br/&gt;ROUTE_ENTRY / NHG")]:::db
+
+  CFG ==&gt; BGPCFGD
+  BGPCFGD --&gt;|frr.conf| BGPD
+  BGPCFGD &lt;--&gt; STATE
+  BGPD --&gt;|FPM netlink| ZEBRA
+  ZEBRA --&gt;|RTM_NEWROUTE| FPMSYNCD
+  FPMSYNCD ==&gt; APPL
+  APPL ==&gt; ROUTEORCH
+  ROUTEORCH ==&gt; ASIC
+  ROUTEORCH &lt;--&gt;|offloaded| STATE
+  STATE -.-&gt;|suppress-fib-pending| BGPD
+
+  classDef frr fill:#fde2e4,stroke:#a83279,stroke-width:2px,color:#000;
+  classDef proc fill:#d4edda,stroke:#155724,stroke-width:1.5px,color:#000;
+  classDef db fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;</code></pre>
 <h2 id="orch-daemon">主要 Orch / daemon の責務<a class="headerlink" href="#orch-daemon" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
