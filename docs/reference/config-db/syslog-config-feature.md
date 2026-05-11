@@ -73,3 +73,25 @@ SYSLOG_CONFIG_FEATURE|<service>
 ## 関連ページ
 - [CONFIG_DB: SYSLOG_CONFIG](syslog-config.md)
 - [CONFIG_DB: FEATURE](feature.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SYSLOG_CONFIG_FEATURE|<service>` (例 `SYSLOG_CONFIG_FEATURE|swss`)。
+- `rate_limit_interval`: 5〜30 秒、`rate_limit_burst`: 数百〜数千。
+
+### よくある誤設定
+
+- `FEATURE` テーブルに未登録の docker 名を指定して leafref エラー。
+- `rate_limit_burst=0` を意図せず設定し、すべての syslog がドロップされる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SYSLOG_CONFIG_FEATURE|*'
+show syslog rate-limit-container
+docker exec swss cat /etc/rsyslog.d/*.conf
+```
+<!-- /ops-hint -->

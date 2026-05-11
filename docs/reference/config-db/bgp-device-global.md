@@ -88,3 +88,26 @@ BGP_DEVICE_GLOBAL|CONFED
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-device-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key: `BGP_DEVICE_GLOBAL|STATE` / `BGP_DEVICE_GLOBAL|CONFED`。
+- `STATE`: `tsa_enabled=false` / `wcmp_enabled=false` / `idf_isolation_state=unisolated` が通常運用。
+- TSA メンテ時のみ `tsa_enabled=true`。
+
+### よくある誤設定
+
+- TSA を有効にしたまま戻し忘れて外部広告が長時間停止する。
+- `wcmp_enabled=true` を W-ECMP 非対応のプラットフォームで設定し、効果が出ず混乱する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BGP_DEVICE_GLOBAL|STATE'
+TSA -s   # TSA 状態確認
+vtysh -c "show running-config bgpd" | grep -i ecmp
+```
+<!-- /ops-hint -->

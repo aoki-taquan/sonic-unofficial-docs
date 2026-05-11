@@ -94,3 +94,25 @@ MAP_PFC_PRIORITY_TO_QUEUE|<name>|<pfc_priority>
 ## 関連ページ
 - [CONFIG_DB: PFC_PRIORITY_TO_PRIORITY_GROUP_MAP](pfc-priority-to-priority-group-map.md)
 - [CONFIG_DB: PORT_QOS_MAP](port-qos-map.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MAP_PFC_PRIORITY_TO_QUEUE|<name>` (例 `MAP_PFC_PRIORITY_TO_QUEUE|AZURE`)。
+- 典型マップ: PFC priority 3 → queue 3、4 → 4 (ロスレスキュー)。
+
+### よくある誤設定
+
+- PFC priority と queue の対応が `TC_TO_QUEUE_MAP` などと整合しておらず、PFC pause が想定外の queue に作用する。
+- 範囲外 (0..7 以外) の値を入れて YANG validation で reject される。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'MAP_PFC_PRIORITY_TO_QUEUE|AZURE'
+sonic-db-cli CONFIG_DB hget 'PORT_QOS_MAP|Ethernet0' pfc_to_queue_map
+show queue counters
+```
+<!-- /ops-hint -->

@@ -87,3 +87,25 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 ## 関連ページ
 - [CONFIG_DB: TELEMETRY](telemetry.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `TELEMETRY_CLIENT|Global` / `TELEMETRY_CLIENT|Subscription|<n>` / `TELEMETRY_CLIENT|DestinationGroup|<n>`。
+- `encoding=JSON_IETF`、`report_type=stream`、`report_interval=5000` (ms)。
+
+### よくある誤設定
+
+- `dst_addr` に IPv6 リテラルを入れて pattern で reject される (`ipv4-port` typedef のみ)。
+- `Subscription` の `dst_group` が `DestinationGroup` のいずれの `name` にも一致せず must 制約で失敗。
+- `paths` を空にして購読が成立しない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'TELEMETRY_CLIENT|*'
+docker logs gnmi | grep -i dial-out
+```
+<!-- /ops-hint -->

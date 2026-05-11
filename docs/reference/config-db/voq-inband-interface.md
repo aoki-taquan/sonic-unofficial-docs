@@ -97,3 +97,25 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 
 ## 関連ページ
 - [CONFIG_DB: INTERFACE](interface.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VOQ_INBAND_INTERFACE|<name>` (例 `VOQ_INBAND_INTERFACE|Ethernet-IB0`)、`VOQ_INBAND_INTERFACE|<name>|<ip-prefix>`。
+- `inband_type=port` が一般的。
+
+### よくある誤設定
+
+- `name` が `Ethernet-IB<n>` パターンに一致しない命名で YANG validation エラー。
+- VOQ chassis 以外の単体スイッチで設定して効果が無い (VOQ 専用)。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'VOQ_INBAND_INTERFACE|*'
+show interfaces status Ethernet-IB0
+show ip interface | grep Ethernet-IB
+```
+<!-- /ops-hint -->

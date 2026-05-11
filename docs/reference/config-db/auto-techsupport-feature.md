@@ -75,3 +75,26 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 - [CONFIG_DB: AUTO_TECHSUPPORT](auto-techsupport.md)
 - [CONFIG_DB: FEATURE](feature.md)
 - [HLD: Event-Driven Tech-Support & CoreDump Mgmt](../../system/event-driven-techsupport-invocation-coredump-mgmt.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `AUTO_TECHSUPPORT_FEATURE|<feature>` (例 `AUTO_TECHSUPPORT_FEATURE|swss`)。
+- `state`: `enabled` / `disabled`、`rate_limit_interval`: `600` 秒程度が一般的。
+- `available_mem_threshold`: デフォルト `10.0` (%)。
+
+### よくある誤設定
+
+- 存在しない `<feature>` 名を指定 (FEATURE テーブルに無い docker 名)。techsupport が起動しない。
+- `rate_limit_interval=0` を意図せず設定し、core dump 連発で techsupport が暴走する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'AUTO_TECHSUPPORT_FEATURE|*'
+show auto-techsupport feature
+ls -lh /var/dump/
+```
+<!-- /ops-hint -->
