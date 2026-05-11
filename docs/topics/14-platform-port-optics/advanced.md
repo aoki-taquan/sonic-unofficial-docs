@@ -1,13 +1,34 @@
 ---
 title: 発展トピック
-description: "発展トピック — ここでは、port / platform 章の中でも比較的新しい、または運用上の影響が大きい設計を 3 つ取り上げます。詳細は元 HLD に従い、本章では「ほかの章と何が変わるか」に絞ります。"
+description: 発展トピック — ここでは、port / platform 章の中でも比較的新しい、または運用上の影響が大きい設計を 3 つ取り上げます。詳細は元
+  HLD に従い、本章では「ほかの章と何が変わるか」に絞ります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/platform/1-6t-support-in-sonic.md
-  - docs/platform/sonic-port-naming-convention-change.md
-  - docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
+- docs/platform/1-6t-support-in-sonic.md
+- docs/platform/sonic-port-naming-convention-change.md
+- docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
+related:
+  cli:
+  - show acl
+  - config snmp
+  - config qos
+  - config acl
+  - config vlan
+  - show vlan
+  config_db:
+  - PORT
+  - VLAN
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - ACL_RULE
+  - ACL_TABLE
+  - VLAN_SUB_INTERFACE
+  yang:
+  - sonic-snmp
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # 発展トピック

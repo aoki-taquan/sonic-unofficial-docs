@@ -1,19 +1,39 @@
 ---
 title: 設定
-description: "設定 — 監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の show 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。"
+description: 設定 — 監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の
+  show 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-snmp.md
-  - docs/reference/cli/config-sflow.md
-  - docs/reference/cli/config-syslog.md
-  - docs/reference/config-db/sflow.md
-  - docs/reference/config-db/syslog-server.md
-  - docs/reference/config-db/telemetry.md
-  - docs/reference/config-db/auto-techsupport.md
-  - docs/reference/yang/sonic-syslog.md
-  - docs/system/snmp-migration-from-snmp-yml-to-configdb.md
+- docs/reference/cli/config-snmp.md
+- docs/reference/cli/config-sflow.md
+- docs/reference/cli/config-syslog.md
+- docs/reference/config-db/sflow.md
+- docs/reference/config-db/syslog-server.md
+- docs/reference/config-db/telemetry.md
+- docs/reference/config-db/auto-techsupport.md
+- docs/reference/yang/sonic-syslog.md
+- docs/system/snmp-migration-from-snmp-yml-to-configdb.md
+related:
+  cli:
+  - config sflow
+  - config snmp
+  - config syslog
+  - show techsupport
+  - config vrf
+  config_db:
+  - SNMP
+  - VRF
+  - SYSLOG_SERVER
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SFLOW
+  - SFLOW_SESSION
+  - SFLOW_COLLECTOR
+  yang:
+  - sonic-syslog
+  - sonic-snmp
+  - sonic-vrf
 ---
 
 # 設定

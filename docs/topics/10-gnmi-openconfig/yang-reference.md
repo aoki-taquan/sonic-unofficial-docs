@@ -1,10 +1,36 @@
 ---
 title: YANG リファレンス
-description: "YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引である。SONiC native YANG のページは docs/reference/yang/*.md に並んでおり、CONFIG_DB のテーブルスキーマと 1:1 対応する。"
+description: YANG リファレンス — このページは、機能章 (本書の章 01〜21) から YANG モジュールを逆引きするための索引である。SONiC
+  native YANG のページは docs/reference/yang/*.md に並んでおり、CONFIG_DB のテーブルスキーマと 1:1 対応する。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - show pfc
+  - config aaa
+  - show aaa
+  - config vlan
+  - show vlan
+  - config vnet
+  - show nat
+  config_db:
+  - VNET
+  - VLAN
+  - VRF
+  - SNMP
+  - AAA
+  - NAT
+  - PFC_WD
+  yang:
+  - sonic-feature
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-route-map
+  - sonic-route-common
 ---
 
 # YANG リファレンス

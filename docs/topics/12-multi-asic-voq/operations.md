@@ -1,14 +1,40 @@
 ---
 title: 運用
-description: "運用 — Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から見るか、line card から見るか、ASIC namespace から見るか。ここでは典型的な確認順を整理します。"
+description: 運用 — Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor
+  から見るか、line card から見るか、ASIC namespace から見るか。ここでは典型的な確認順を整理します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/internals/aggregate-voq-counters-in-sonic.md
-  - docs/system/platform-monitor-design-for-multi-asic-platforms.md
-  - docs/system/platform-monitor-requirement-for-chassis-subsystem.md
-  - docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
+- docs/internals/aggregate-voq-counters-in-sonic.md
+- docs/system/platform-monitor-design-for-multi-asic-platforms.md
+- docs/system/platform-monitor-requirement-for-chassis-subsystem.md
+- docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
+related:
+  cli:
+  - show queue
+  - show platform
+  - show interfaces
+  - show ip
+  - clear
+  - config bgp
+  - show bgp
+  config_db:
+  - SNMP
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 運用

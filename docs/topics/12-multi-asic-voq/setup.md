@@ -1,14 +1,40 @@
 ---
 title: 設定
-description: "設定 — Multi-ASIC / VOQ chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」…"
+description: 設定 — Multi-ASIC / VOQ chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden
+  Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」…
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/platform/multi-asic-single-json-configuration-design.md
-  - docs/platform/db-design-for-multi-asic-scenarios.md
-  - docs/platform/automatic-module-provisioning-for-chassis.md
-  - docs/platform/single-asic-voq-fixed-system-sonic.md
+- docs/platform/multi-asic-single-json-configuration-design.md
+- docs/platform/db-design-for-multi-asic-scenarios.md
+- docs/platform/automatic-module-provisioning-for-chassis.md
+- docs/platform/single-asic-voq-fixed-system-sonic.md
+related:
+  cli:
+  - show queue
+  - show platform
+  - show interfaces
+  - config bgp
+  - show bgp
+  - config vlan
+  - show vlan
+  config_db:
+  - VLAN
+  - MGMT_INTERFACE
+  - SNMP
+  - DEVICE_METADATA
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 設定

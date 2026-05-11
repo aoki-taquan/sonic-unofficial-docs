@@ -1,14 +1,36 @@
 ---
 title: 発展トピック
-description: "発展トピック — base 機能の上で広がる SRv6 / MPLS / Path Tracing 関連のトピックを、他章へのリンクと一緒にまとめます。"
+description: 発展トピック — base 機能の上で広がる SRv6 / MPLS / Path Tracing 関連のトピックを、他章へのリンクと一緒にまとめます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/segment-routing-over-ipv6-srv6-hld.md
-  - docs/routing/srv6-vpn-hld.md
-  - docs/routing/evpn-vxlan-hld.md
-  - docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md
+- docs/routing/segment-routing-over-ipv6-srv6-hld.md
+- docs/routing/srv6-vpn-hld.md
+- docs/routing/evpn-vxlan-hld.md
+- docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config vrf
+  - config vxlan
+  config_db:
+  - VRF
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-srv6
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # 発展トピック

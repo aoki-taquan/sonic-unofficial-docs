@@ -1,23 +1,49 @@
 ---
 title: 概念
-description: "概念 — Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。"
+description: 概念 — Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC
+  を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/platform/1-sonic-on-multi-asic-platforms.md
-  - docs/platform/voq-sonic.md
-  - docs/categories/multi-asic.md
-  - docs/platform/fabric-port-support-on-sonic.md
-  - docs/platform/recirculation-port-support-on-voq-chassis.md
-  - docs/platform/single-asic-voq-fixed-system-sonic.md
+- docs/platform/1-sonic-on-multi-asic-platforms.md
+- docs/platform/voq-sonic.md
+- docs/categories/multi-asic.md
+- docs/platform/fabric-port-support-on-sonic.md
+- docs/platform/recirculation-port-support-on-voq-chassis.md
+- docs/platform/single-asic-voq-fixed-system-sonic.md
 keywords:
-  - Multi-ASIC
-  - VOQ
-  - chassis
-  - 概念
-  - namespace per ASIC
-  - supervisor
+- Multi-ASIC
+- VOQ
+- chassis
+- 概念
+- namespace per ASIC
+- supervisor
+related:
+  cli:
+  - show interfaces
+  - show mclag
+  - config mclag
+  - config bgp
+  - show bgp
+  - config vrf
+  - config qos
+  config_db:
+  - VRF
+  - VOQ_INBAND_INTERFACE
+  - MCLAG_DOMAIN
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  yang:
+  - sonic-mclag
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # 概念

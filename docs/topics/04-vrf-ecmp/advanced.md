@@ -1,13 +1,39 @@
 ---
 title: 発展トピックへの橋渡し
-description: "発展トピックへの橋渡し — VRF / RIF / route / NHG の読み方を押さえると、周辺機能の設計意図が追いやすくなります。このページでは、章 04 から次に読む候補を整理します。"
+description: 発展トピックへの橋渡し — VRF / RIF / route / NHG の読み方を押さえると、周辺機能の設計意図が追いやすくなります。このページでは、章
+  04 から次に読む候補を整理します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/virtual-router-redundancy-protocol-adaptation-hld.md
-  - docs/architecture/sag-high-level-design-for-sonic.md
-  - docs/routing/reliable-tsa.md
+- docs/routing/virtual-router-redundancy-protocol-adaptation-hld.md
+- docs/architecture/sag-high-level-design-for-sonic.md
+- docs/routing/reliable-tsa.md
+related:
+  cli:
+  - config vlan
+  - show vlan
+  - config vnet
+  - config snmp
+  - config portchannel
+  - config bgp
+  - show bgp
+  config_db:
+  - VRF
+  - VLAN
+  - VNET
+  - SNMP
+  - MGMT_VRF_CONFIG
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-vnet
+  - sonic-snmp
+  - sonic-portchannel
+  - sonic-srv6
+  - sonic-bgp-monitor
 ---
 
 # 発展トピックへの橋渡し

@@ -1,17 +1,35 @@
 ---
 title: BGP PIC（Prefix Independent Convergence / NHG 階層）
-description: "BGP PIC（Prefix Independent Convergence / NHG 階層） — BGP overlay の数百万 route 規模で 影響を受けた N prefix を 1 件ずつ再プログラムする とパケットロスが膨らむ。"
+description: BGP PIC（Prefix Independent Convergence / NHG 階層） — BGP overlay の数百万 route
+  規模で 影響を受けた N prefix を 1 件ずつ再プログラムする とパケットロスが膨らむ。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pic/bgp_pic_arch_doc.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pic/bgp_pic_arch_doc.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  - BGP_NEIGHBOR
+  cli:
+  - config bgp
+  - show bgp
+  - show bfd
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

@@ -1,18 +1,40 @@
 ---
 title: 設定
-description: "設定 — この章の機能は CLI と CONFIG_DB の二系統から設定でき、それぞれ YANG モデルで形式化されています。各リファレンスページの内容はそちら側を正にし、ここでは「どこを最初に編集するか」と「どの順で組み合わせるか」だけ示します。"
+description: 設定 — この章の機能は CLI と CONFIG_DB の二系統から設定でき、それぞれ YANG モデルで形式化されています。各リファレンスページの内容はそちら側を正にし、ここでは「どこを最初に編集するか」と「どの順で組み合わせるか」だけ示します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-nat.md
-  - docs/reference/cli/show-nat.md
-  - docs/reference/cli/config-dhcp-relay.md
-  - docs/reference/config-db/nat.md
-  - docs/reference/config-db/dhcpv4-relay.md
-  - docs/reference/config-db/dhcp-server-ipv4.md
-  - docs/reference/yang/sonic-nat.md
-  - docs/reference/yang/sonic-dhcp-server.md
+- docs/reference/cli/config-nat.md
+- docs/reference/cli/show-nat.md
+- docs/reference/cli/config-dhcp-relay.md
+- docs/reference/config-db/nat.md
+- docs/reference/config-db/dhcpv4-relay.md
+- docs/reference/config-db/dhcp-server-ipv4.md
+- docs/reference/yang/sonic-nat.md
+- docs/reference/yang/sonic-dhcp-server.md
+related:
+  cli:
+  - config nat
+  - config interface
+  - show nat
+  - config vlan
+  - config acl
+  - show interfaces
+  - show ip
+  config_db:
+  - VLAN_INTERFACE
+  - NAT
+  - VLAN
+  - DHCP_RELAY
+  - DHCP_SERVER_IPV4
+  - ACL_RULE
+  - ACL_TABLE
+  yang:
+  - sonic-nat
+  - sonic-dhcp-server
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # 設定

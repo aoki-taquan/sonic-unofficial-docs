@@ -1,17 +1,35 @@
 ---
 title: ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
-description: "ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張） — SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。"
+description: ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張） — SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと
+  L2 ポート単位のカウンタのみを対象としていた。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port-illegal-packets/Port_illegal_packets_drop_design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port-illegal-packets/Port_illegal_packets_drop_design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - SNMP
+  - VLAN
+  - INTERFACE
+  - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  cli:
+  - config interface
+  - config snmp
+  - config vlan
+  - show vlan
+  yang:
+  - sonic-interface
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-snmp
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 <!-- topics-tip -->

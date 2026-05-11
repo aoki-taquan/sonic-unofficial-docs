@@ -1,17 +1,26 @@
 ---
 title: ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
-description: "ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離） — 本 HLD は主に第 2 段階に焦点を当て、4 つの最適化を提案する:"
+description: 'ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離） — 本 HLD
+  は主に第 2 段階に焦点を当て、4 つの最適化を提案する:'
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-build-system/build_system_improvements.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-build-system/build_system_improvements.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_TRAP_CONFIG
+  - MGMT_VRF_CONFIG
+  cli:
+  - config snmp
+  yang:
+  - sonic-snmp
 ---
 
 <!-- topics-tip -->

@@ -1,17 +1,39 @@
 ---
 title: swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）
-description: "swss-schema（APPL_DB / STATE_DB の中心スキーマ参照） — SONiC の APPL_DB / STATE_DB に存在する主要テーブルを、RFC 5234 ABNF 構文 で機械可読に定義する sonic-swss リポジトリ内の参照ドキュメント。"
+description: swss-schema（APPL_DB / STATE_DB の中心スキーマ参照） — SONiC の APPL_DB / STATE_DB
+  に存在する主要テーブルを、RFC 5234 ABNF 構文 で機械可読に定義する sonic-swss リポジトリ内の参照ドキュメント。
 area: internals
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-swss
-    path: doc/swss-schema.md
-    ref: 4305596145e57e15e4c6a1a3902c0bc6c44a09c5
+- repo: sonic-net/sonic-swss
+  path: doc/swss-schema.md
+  ref: 4305596145e57e15e4c6a1a3902c0bc6c44a09c5
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VLAN
+  - VNET
+  - ACL_TABLE
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - ACL_RULE
+  cli:
+  - config vlan
+  - show vlan
+  - config vnet
+  - show bfd
+  - show arp
+  - show acl
+  - config acl
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-vnet
+  - sonic-srv6
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

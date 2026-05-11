@@ -1,13 +1,29 @@
 ---
 title: 内部実装
-description: "内部実装 — ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを確認する必要があります。"
+description: 内部実装 — ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI
+  capability と orchagent の実装が揃っているかを確認する必要があります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/egress-mirroring-support-and-acl-action-capability-check.md
-  - docs/acl-qos/egress-outer-dscp-change-table.md
-  - docs/architecture/sonic-packet-trimming.md
+- docs/acl-qos/egress-mirroring-support-and-acl-action-capability-check.md
+- docs/acl-qos/egress-outer-dscp-change-table.md
+- docs/architecture/sonic-packet-trimming.md
+related:
+  cli:
+  - config qos
+  - show acl
+  - config acl
+  config_db:
+  - MIRROR_SESSION
+  - SWITCH_TRIMMING
+  - QUEUE
+  - COPP_GROUP
+  - COPP_TRAP
+  - ACL_RULE
+  - ACL_TABLE
+  yang:
+  - sonic-copp
 ---
 
 # 内部実装

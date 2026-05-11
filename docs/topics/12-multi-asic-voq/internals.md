@@ -1,10 +1,33 @@
 ---
 title: 内部実装
-description: "内部実装 — Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent / syncd インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。"
+description: 内部実装 — Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent
+  / syncd インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config vlan
+  - show vlan
+  config_db:
+  - VLAN
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 内部実装

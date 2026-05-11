@@ -1,17 +1,39 @@
 ---
 title: BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
-description: "BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis） — 2M routes 級の BGP loading を end-to-end で 50% 高速化することを狙った最適化 HLD（2023-2024）。"
+description: BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async
+  sairedis） — 2M routes 級の BGP loading を end-to-end で 50% 高速化することを狙った最適化 HLD（2023-2024）。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bgp_loading_optimization/bgp-loading-optimization-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bgp_loading_optimization/bgp-loading-optimization-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VLAN
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  cli:
+  - config bgp
+  - show bgp
+  - config buffer
+  - show buffer
+  - show buffer pool
+  - show acl
+  - config acl
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

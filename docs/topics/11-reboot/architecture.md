@@ -1,15 +1,35 @@
 ---
 title: Warm path の内部構造
-description: "Warm path の内部構造 — warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新状態の差分」を安全に吸収することです。"
+description: Warm path の内部構造 — warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新状態の差分」を安全に吸収することです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/switching/view-switching-in-producerstatetable.md
-  - docs/system/sonic-libsairedis-api-idempotence-support.md
-  - docs/system/system-wide-warmboot.md
-  - docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md
-  - docs/system/sonic-warm-reboot.md
+- docs/switching/view-switching-in-producerstatetable.md
+- docs/system/sonic-libsairedis-api-idempotence-support.md
+- docs/system/system-wide-warmboot.md
+- docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md
+- docs/system/sonic-warm-reboot.md
+related:
+  cli:
+  - config bgp
+  - show bgp
+  config_db:
+  - WARM_RESTART
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-warm-restart
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # Warm path の内部構造

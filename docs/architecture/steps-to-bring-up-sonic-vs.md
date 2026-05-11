@@ -1,16 +1,21 @@
 ---
 title: SONiC-VS のビルドと libvirt 起動手順
-description: "SONiC-VS のビルドと libvirt 起動手順 — SONiC-VS（Virtual Switch）は ASIC を SAI VS バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。"
+description: SONiC-VS のビルドと libvirt 起動手順 — SONiC-VS（Virtual Switch）は ASIC を SAI VS
+  バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/test/Bring-up_Sonic-VS_on_Cloud_top.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/test/Bring-up_Sonic-VS_on_Cloud_top.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - ACL_RULE
+  - ACL_TABLE
+  cli:
+  - show acl
+  - config acl
   yang: []
 ---
 

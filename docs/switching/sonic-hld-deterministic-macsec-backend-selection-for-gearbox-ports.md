@@ -1,17 +1,20 @@
 ---
 title: Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
-description: "Gearbox PHY ごとの MACsec backend 決定（macsec_supported） — 外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 SAI（gbsyncd）の switch_id に紐づいて管理されている。"
+description: Gearbox PHY ごとの MACsec backend 決定（macsec_supported） — 外部 PHY / Gearbox
+  を持つプラットフォームでは、ポートが PHY 側 SAI（gbsyncd）の switch_id に紐づいて管理されている。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/macsec-gearbox/macsec_backend_gearbox.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/macsec-gearbox/macsec_backend_gearbox.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - MACSEC_PROFILE
   cli: []
-  yang: []
+  yang:
+  - sonic-macsec
 ---
 
 <!-- topics-tip -->

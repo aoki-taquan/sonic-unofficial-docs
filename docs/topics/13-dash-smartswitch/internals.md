@@ -1,15 +1,30 @@
 ---
 title: NPU-DPU DB と ENI ベース転送の内部構造
-description: "NPU-DPU DB と ENI ベース転送の内部構造 — DASH / SmartSwitch を実装視点で読むときは、「設定がコントローラから DPU の SAI に届くまで」と「データプレーンが NPU 上の ACL でどう振り分けられるか」を分けて追うと理解しやすくなります。"
+description: NPU-DPU DB と ENI ベース転送の内部構造 — DASH / SmartSwitch を実装視点で読むときは、「設定がコントローラから
+  DPU の SAI に届くまで」と「データプレーンが NPU 上の ACL でどう振り分けられるか」を分けて追うと理解しやすくなります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/architecture/smart-switch-database-design.md
-  - docs/overlay/sonic-dash-hld.md
-  - docs/overlay/smartswitch-eni-based-forwarding.md
-  - docs/acl-qos/dash-acl-tags.md
-  - docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md
+- docs/architecture/smart-switch-database-design.md
+- docs/overlay/sonic-dash-hld.md
+- docs/overlay/smartswitch-eni-based-forwarding.md
+- docs/acl-qos/dash-acl-tags.md
+- docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md
+related:
+  cli:
+  - config vnet
+  - show acl
+  - config acl
+  config_db:
+  - VNET
+  - FEATURE
+  - ACL_RULE
+  - ACL_TABLE
+  - VNET_ROUTE_TUNNEL
+  - VNET_ROUTE
+  yang:
+  - sonic-vnet
 ---
 
 # NPU-DPU DB と ENI ベース転送の内部構造

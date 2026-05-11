@@ -1,10 +1,33 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — gNMI / REST のリクエストが CONFIG_DB に到達するまでの経路は、入口の transport が違っても中間層 (Translib / Transformer) で合流する。"
+description: アーキテクチャ — gNMI / REST のリクエストが CONFIG_DB に到達するまでの経路は、入口の transport が違っても中間層
+  (Translib / Transformer) で合流する。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config vlan
+  - show vlan
+  config_db:
+  - VLAN
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # アーキテクチャ

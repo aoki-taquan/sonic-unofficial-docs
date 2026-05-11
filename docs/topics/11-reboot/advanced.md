@@ -1,15 +1,37 @@
 ---
 title: Reboot / Upgrade の発展トピック
-description: "Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「express reboot」、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。"
+description: Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「express
+  reboot」、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources:
-  - docs/system/sonic-warm-reboot.md
-  - docs/system/fast-reboot-flow-improvements-hld.md
-  - docs/system/sonic-express-reboot-hld-spec.md
-  - docs/system/system-wide-warmboot.md
-  - docs/system/multi-asic-warm-reboot.md
+- docs/system/sonic-warm-reboot.md
+- docs/system/fast-reboot-flow-improvements-hld.md
+- docs/system/sonic-express-reboot-hld-spec.md
+- docs/system/system-wide-warmboot.md
+- docs/system/multi-asic-warm-reboot.md
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - show bfd
+  config_db:
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  - BGP_NEIGHBOR
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # Reboot / Upgrade の発展トピック

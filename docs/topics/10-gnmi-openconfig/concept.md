@@ -1,18 +1,43 @@
 ---
 title: 概要
-description: "概要 — SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。"
+description: 概要 — SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer
+  という共通の中間層を通って ConfigDB へ到達するように作られている。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
 keywords:
-  - gNMI
-  - OpenConfig
-  - YANG
-  - 概念
-  - northbound
-  - schema
-  - gnxi
+- gNMI
+- OpenConfig
+- YANG
+- 概念
+- northbound
+- schema
+- gnxi
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config snmp
+  - config portchannel
+  - config vlan
+  - show vlan
+  config_db:
+  - SNMP
+  - VLAN
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  yang:
+  - sonic-port
+  - sonic-vlan
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
 ---
 
 # 概要

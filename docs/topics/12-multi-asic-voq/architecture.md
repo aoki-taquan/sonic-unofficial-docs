@@ -1,16 +1,28 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — ここでは「supervisor の Chassis DB」「各 ASIC namespace の Redis」「fabric を介した distributed forwarding」がどう組み合わさって 1 つの論理スイッチに見えるかを、データの流れ順に並べます。"
+description: アーキテクチャ — ここでは「supervisor の Chassis DB」「各 ASIC namespace の Redis」「fabric
+  を介した distributed forwarding」がどう組み合わさって 1 つの論理スイッチに見えるかを、データの流れ順に並べます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md
-  - docs/platform/voq-sonic.md
-  - docs/platform/fabric-port-support-on-sonic.md
-  - docs/platform/recirculation-port-support-on-voq-chassis.md
-  - docs/internals/support-redis-databases-in-multiple-namespaces.md
-  - docs/platform/db-design-for-multi-asic-scenarios.md
+- docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md
+- docs/platform/voq-sonic.md
+- docs/platform/fabric-port-support-on-sonic.md
+- docs/platform/recirculation-port-support-on-voq-chassis.md
+- docs/internals/support-redis-databases-in-multiple-namespaces.md
+- docs/platform/db-design-for-multi-asic-scenarios.md
+related:
+  cli:
+  - show acl
+  - config acl
+  config_db:
+  - PORT
+  - VOQ_INBAND_INTERFACE
+  - ACL_RULE
+  - ACL_TABLE
+  yang:
+  - sonic-srv6
 ---
 
 # アーキテクチャ

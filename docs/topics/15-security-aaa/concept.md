@@ -1,21 +1,37 @@
 ---
 title: 概念
-description: "概念 — SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と SONiC 固有のデーモン（hostcfgd、macsecmgr、SAI）に薄く重なって実装されています。"
+description: 概念 — SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と
+  SONiC 固有のデーモン（hostcfgd、macsecmgr、SAI）に薄く重なって実装されています。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/management/aaa-improvements.md
-  - docs/architecture/pw-hardening-design.md
-  - docs/system/sonic-container-hardening.md
+- docs/management/aaa-improvements.md
+- docs/architecture/pw-hardening-design.md
+- docs/system/sonic-container-hardening.md
 keywords:
-  - Security
+- Security
+- AAA
+- 概念
+- 認証認可
+- FIPS
+- ハードニング
+- TACACS
+related:
+  cli:
+  - config interface
+  - config aaa
+  - show aaa
+  config_db:
   - AAA
-  - 概念
-  - 認証認可
-  - FIPS
-  - ハードニング
-  - TACACS
+  - COPP_GROUP
+  - COPP_TRAP
+  - PORT
+  - PORTCHANNEL
+  - VLAN_SUB_INTERFACE
+  - LOOPBACK_INTERFACE
+  yang:
+  - sonic-copp
 ---
 
 # 概念

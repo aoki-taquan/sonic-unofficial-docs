@@ -1,15 +1,23 @@
 ---
 title: ECMP Family
-description: "ECMP Family — ECMP は「複数 next hop に分散する」だけなら単純ですが、SONiC には用途に応じて複数の拡張があります。まず通常 ECMP を基準にし、重み、bucket 安定性、順序、hash 入力、traffic class による path 選択を別々の問題として分けます。"
+description: ECMP Family — ECMP は「複数 next hop に分散する」だけなら単純ですが、SONiC には用途に応じて複数の拡張があります。まず通常
+  ECMP を基準にし、重み、bucket 安定性、順序、hash 入力、traffic class による path 選択を別々の問題として分けます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/sonic-fine-grained-ecmp.md
-  - docs/routing/sonic-weighted-ecmp.md
-  - docs/routing/high-level-design-document.md
-  - docs/architecture/sonic-generic-hash.md
-  - docs/routing/class-based-forwarding-enhancement.md
+- docs/routing/sonic-fine-grained-ecmp.md
+- docs/routing/sonic-weighted-ecmp.md
+- docs/routing/high-level-design-document.md
+- docs/architecture/sonic-generic-hash.md
+- docs/routing/class-based-forwarding-enhancement.md
+related:
+  cli: []
+  config_db:
+  - FG_NHG
+  - SWITCH_HASH
+  yang:
+  - sonic-fine-grained-ecmp
 ---
 
 # ECMP Family

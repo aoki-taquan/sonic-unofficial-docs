@@ -1,12 +1,37 @@
 ---
 title: Dual-ToR の発展トピック
-description: "Dual-ToR の発展トピック — Dual-ToR は mux state だけで閉じた機能ではありません。"
+description: Dual-ToR の発展トピック — Dual-ToR は mux state だけで閉じた機能ではありません。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/overlay/dscp-remapping-for-tunnel-traffic.md
-  - docs/architecture/dhcpv6-relay-agent.md
+- docs/overlay/dscp-remapping-for-tunnel-traffic.md
+- docs/architecture/dhcpv6-relay-agent.md
+related:
+  cli:
+  - clear
+  - config vxlan
+  - config bgp
+  - show bgp
+  - show pfc
+  - show bfd
+  - show arp
+  config_db:
+  - VLAN
+  - DSCP_TO_TC_MAP
+  - TC_TO_QUEUE_MAP
+  - MUX_CABLE
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - VXLAN_EVPN_NVO
+  yang:
+  - sonic-vxlan
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # Dual-ToR の発展トピック

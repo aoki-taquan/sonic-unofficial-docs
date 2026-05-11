@@ -1,21 +1,44 @@
 ---
 title: 設定
-description: "設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。"
+description: 設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table
+  の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-acl.md
-  - docs/reference/cli/show-acl.md
-  - docs/reference/cli/config-mirror-session.md
-  - docs/reference/config-db/acl-table.md
-  - docs/reference/config-db/acl-rule.md
-  - docs/reference/config-db/policer.md
-  - docs/reference/config-db/mirror-session.md
-  - docs/reference/config-db/copp-group.md
-  - docs/reference/config-db/copp-trap.md
-  - docs/reference/yang/sonic-copp.md
-  - docs/reference/yang/sonic-mirror-session.md
+- docs/reference/cli/config-acl.md
+- docs/reference/cli/show-acl.md
+- docs/reference/cli/config-mirror-session.md
+- docs/reference/config-db/acl-table.md
+- docs/reference/config-db/acl-rule.md
+- docs/reference/config-db/policer.md
+- docs/reference/config-db/mirror-session.md
+- docs/reference/config-db/copp-group.md
+- docs/reference/config-db/copp-trap.md
+- docs/reference/yang/sonic-copp.md
+- docs/reference/yang/sonic-mirror-session.md
+related:
+  cli:
+  - show acl
+  - config acl
+  - config bgp
+  - show bgp
+  config_db:
+  - COPP_GROUP
+  - POLICER
+  - COPP_TRAP
+  - MIRROR_SESSION
+  - ACL_RULE
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  yang:
+  - sonic-copp
+  - sonic-mirror-session
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
 ---
 
 # 設定

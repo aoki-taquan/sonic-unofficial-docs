@@ -1,20 +1,45 @@
 ---
 title: QoS / Buffer の運用
-description: "QoS / Buffer の運用 — 「アプリが詰まる」「PFC で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理します。"
+description: QoS / Buffer の運用 — 「アプリが詰まる」「PFC で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/show-buffer.md
-  - docs/reference/cli/show-queue.md
-  - docs/reference/cli/show-pfc.md
-  - docs/reference/cli/show-priority-group.md
-  - docs/acl-qos/port-buffer-drop-counters-in-sonic.md
-  - docs/acl-qos/watermark-counters-in-sonic.md
-  - docs/acl-qos/pfc-historical-statistics.md
-  - docs/acl-qos/wred-and-ecn-statistics.md
-  - docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
-  - docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md
+- docs/reference/cli/show-buffer.md
+- docs/reference/cli/show-queue.md
+- docs/reference/cli/show-pfc.md
+- docs/reference/cli/show-priority-group.md
+- docs/acl-qos/port-buffer-drop-counters-in-sonic.md
+- docs/acl-qos/watermark-counters-in-sonic.md
+- docs/acl-qos/pfc-historical-statistics.md
+- docs/acl-qos/wred-and-ecn-statistics.md
+- docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
+- docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md
+related:
+  cli:
+  - show queue
+  - show buffer pool
+  - show pfc
+  - show buffer
+  - show interfaces
+  - config qos
+  - config buffer
+  config_db:
+  - DSCP_TO_TC_MAP
+  - TC_TO_QUEUE_MAP
+  - BUFFER_PROFILE
+  - BUFFER_POOL
+  - FLEX_COUNTER_TABLE
+  - WRED_PROFILE
+  - BUFFER_QUEUE
+  yang:
+  - sonic-buffer-queue
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-buffer-pg
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-wred-profile
 ---
 
 # QoS / Buffer の運用

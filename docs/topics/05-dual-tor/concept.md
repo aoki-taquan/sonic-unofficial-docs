@@ -1,20 +1,42 @@
 ---
 title: Dual-ToR の考え方
-description: "Dual-ToR の考え方 — Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続する」ための構成です。"
+description: Dual-ToR の考え方 — Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続する」ための構成です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/overlay/active-active-dual-tor.md
-  - docs/overlay/active-standby-dual-tor.md
-  - docs/categories/dual-tor.md
+- docs/overlay/active-active-dual-tor.md
+- docs/overlay/active-standby-dual-tor.md
+- docs/categories/dual-tor.md
 keywords:
-  - Dual-ToR
-  - 概念
-  - ToR冗長
-  - Mux state
-  - server NIC bonding
-  - ハーフリンク
+- Dual-ToR
+- 概念
+- ToR冗長
+- Mux state
+- server NIC bonding
+- ハーフリンク
+related:
+  cli:
+  - config muxcable
+  - config bgp
+  - show bgp
+  - show arp
+  config_db:
+  - MUX_CABLE
+  - MUX_LINKMGR
+  - TUNNEL
+  - TUNNEL_DECAP_TABLE
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # Dual-ToR の考え方

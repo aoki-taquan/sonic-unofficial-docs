@@ -1,23 +1,49 @@
 ---
 title: VXLAN / VNET / EVPN の概要
-description: "VXLAN / VNET / EVPN の概要 — SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。"
+description: VXLAN / VNET / EVPN の概要 — SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という
+  3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/overlay/vxlan-sonic.md
-  - docs/routing/evpn-vxlan-hld.md
-  - docs/overlay/nvgre-tunnel-in-sonic.md
-  - docs/platform/subnet-decapsulation-with-sonic.md
+- docs/overlay/vxlan-sonic.md
+- docs/routing/evpn-vxlan-hld.md
+- docs/overlay/nvgre-tunnel-in-sonic.md
+- docs/platform/subnet-decapsulation-with-sonic.md
 keywords:
-  - VXLAN
-  - EVPN
+- VXLAN
+- EVPN
+- VNET
+- 概念
+- overlay
+- L2VPN
+- MAC-VRF
+- IP-VRF
+related:
+  cli:
+  - config vxlan
+  - config vnet
+  - config vlan
+  - show vlan
+  - show acl
+  - config acl
+  - config bgp
+  config_db:
   - VNET
-  - 概念
-  - overlay
-  - L2VPN
-  - MAC-VRF
-  - IP-VRF
+  - VXLAN_TUNNEL_MAP
+  - VXLAN_EVPN_NVO
+  - VXLAN_TUNNEL
+  - VRF
+  - VLAN
+  - VLAN_SUB_INTERFACE
+  yang:
+  - sonic-vxlan
+  - sonic-vnet
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
 ---
 
 # VXLAN / VNET / EVPN の概要

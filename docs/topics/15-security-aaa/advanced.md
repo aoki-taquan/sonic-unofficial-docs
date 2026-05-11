@@ -1,15 +1,27 @@
 ---
 title: 発展トピック
-description: "発展トピック — ここでは platform 層の信頼チェーンと container hardening を扱います。"
+description: 発展トピック — ここでは platform 層の信頼チェーンと container hardening を扱います。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/sonic-openssl-fips-140-3-hld.md
-  - docs/system/sonic-fips-deployment.md
-  - docs/system/hld-secure-boot.md
-  - docs/system/secure-upgrade.md
-  - docs/system/sonic-container-hardening.md
+- docs/system/sonic-openssl-fips-140-3-hld.md
+- docs/system/sonic-fips-deployment.md
+- docs/system/hld-secure-boot.md
+- docs/system/secure-upgrade.md
+- docs/system/sonic-container-hardening.md
+related:
+  cli:
+  - config aaa
+  - show aaa
+  config_db:
+  - AAA
+  - MACSEC_PROFILE
+  - TACPLUS
+  - TACPLUS_SERVER
+  - RADIUS
+  - RADIUS_SERVER
+  yang: []
 ---
 
 # 発展トピック

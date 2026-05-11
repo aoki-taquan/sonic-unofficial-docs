@@ -1,13 +1,35 @@
 ---
 title: Reboot / warm restart の設定
-description: "Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service warm restart を許可するのかです。"
+description: Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service
+  warm restart を許可するのかです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/reboot-fast-warm.md
-  - docs/reference/cli/config-warm_restart.md
-  - docs/system/reboot-support-blockingmode-in-sonic.md
+- docs/reference/cli/reboot-fast-warm.md
+- docs/reference/cli/config-warm_restart.md
+- docs/system/reboot-support-blockingmode-in-sonic.md
+related:
+  cli:
+  - show ip
+  - show bgp
+  - config bgp
+  config_db:
+  - FEATURE
+  - WARM_RESTART
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  yang:
+  - sonic-warm-restart
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # Reboot / warm restart の設定

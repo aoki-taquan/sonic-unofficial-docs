@@ -1,16 +1,23 @@
 ---
 title: Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE
-description: "Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE — SONiC の Management Framework Transformer は YANG（OpenConfig 等）↔ 内部 ABNF / CONFIG_DB を変換するコンポーネント。"
+description: Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE — SONiC
+  の Management Framework Transformer は YANG（OpenConfig 等）↔ 内部 ABNF / CONFIG_DB を変換するコンポーネント。
 area: management
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/Management_Framework_Transformer_Component_Support_For_Model_based_Replace_And_Delete.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/Management_Framework_Transformer_Component_Support_For_Model_based_Replace_And_Delete.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - MGMT_INTERFACE
+  - MGMT_VRF_CONFIG
+  - MGMT_PORT
+  - DEVICE_METADATA
+  cli:
+  - config mgmt trio
+  - show mgmt vrf
   yang: []
 ---
 

@@ -1,22 +1,43 @@
 ---
 title: Reboot family の選び方
-description: "Reboot family の選び方 — SONiC の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判断しやすくなります。通常の cold reboot は最も単純で、OS と container をすべて落として再起動します。"
+description: Reboot family の選び方 — SONiC の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判断しやすくなります。通常の
+  cold reboot は最も単純で、OS と container をすべて落として再起動します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/sonic-warm-reboot.md
-  - docs/system/fast-reboot-flow-improvements-hld.md
-  - docs/system/sonic-express-reboot-hld-spec.md
-  - docs/categories/reboot.md
-  - docs/reference/cli/reboot-fast-warm.md
+- docs/system/sonic-warm-reboot.md
+- docs/system/fast-reboot-flow-improvements-hld.md
+- docs/system/sonic-express-reboot-hld-spec.md
+- docs/categories/reboot.md
+- docs/reference/cli/reboot-fast-warm.md
 keywords:
-  - Reboot
-  - 概念
-  - warm/fast/cold
-  - 選び方
-  - image lifecycle
-  - アップグレード
+- Reboot
+- 概念
+- warm/fast/cold
+- 選び方
+- image lifecycle
+- アップグレード
+related:
+  cli:
+  - config bgp
+  - show bgp
+  config_db:
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  - BGP_NEIGHBOR
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # Reboot family の選び方

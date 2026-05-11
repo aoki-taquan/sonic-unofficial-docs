@@ -1,15 +1,18 @@
 ---
 title: flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
-description: "flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） — SONiC の counter は counter group（port / port-drop / PG-drop / queue / watermark / RIF 等）単位で flex…"
+description: flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） — SONiC
+  の counter は counter group（port / port-drop / PG-drop / queue / watermark / RIF 等）単位で
+  flex…
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/flex_counter/optimize-counter-initialization.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/flex_counter/optimize-counter-initialization.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - FLEX_COUNTER_TABLE
   cli: []
   yang: []
 ---

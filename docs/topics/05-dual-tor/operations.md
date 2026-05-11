@@ -1,18 +1,44 @@
 ---
 title: Dual-ToR の運用
-description: "Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP prober、Y-cable / SoC 制御、default route、MuxOrch の route programming が別々に壊れ得るためです。"
+description: Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP
+  prober、Y-cable / SoC 制御、default route、MuxOrch の route programming が別々に壊れ得るためです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/show-muxcable.md
-  - docs/reference/cli/config-muxcable.md
-  - docs/platform/icmp-hardware-offload.md
-  - docs/routing/bfd-hw-offload.md
-  - docs/routing/bfd-hw-offload-for-bgp-session.md
-  - docs/routing/default-route.md
-  - docs/routing/prefix-based-mux-neighbors.md
-  - docs/routing/multiple-nexthop-route-hld.md
+- docs/reference/cli/show-muxcable.md
+- docs/reference/cli/config-muxcable.md
+- docs/platform/icmp-hardware-offload.md
+- docs/routing/bfd-hw-offload.md
+- docs/routing/bfd-hw-offload-for-bgp-session.md
+- docs/routing/default-route.md
+- docs/routing/prefix-based-mux-neighbors.md
+- docs/routing/multiple-nexthop-route-hld.md
+related:
+  cli:
+  - show muxcable
+  - config muxcable
+  - show interfaces
+  - show ip
+  - clear
+  - show feature
+  - show bfd
+  config_db:
+  - MUX_LINKMGR
+  - VLAN
+  - MUX_CABLE
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # Dual-ToR の運用

@@ -1,17 +1,36 @@
 ---
 title: SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
-description: "SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） — uSID（micro-SID）は IETF Compressed SRv6 Segment List Encoding と SRv6 uSID instructions で定義される、SRv6 SID を 16 bit などに圧縮 する…"
+description: SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） — uSID（micro-SID）は IETF Compressed
+  SRv6 Segment List Encoding と SRv6 uSID instructions で定義される、SRv6 SID を 16 bit などに圧縮
+  する…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/srv6/SRv6_uSID.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/srv6/SRv6_uSID.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VRF
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  cli:
+  - config bgp
+  - show bgp
+  - config vrf
+  yang:
+  - sonic-srv6
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 <!-- topics-tip -->

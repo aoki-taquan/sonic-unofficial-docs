@@ -1,10 +1,31 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — BGP route が転送可能になるまでの主経路は、FRR 内の bgpd/zebra から FPM 経由で fpmsyncd に渡り、APPL_DB、orchagent、syncd、SAI/ASIC へ進む。設定反映の経路と、学習 route の転送面反映の経路を分けて見ることが重要である。"
+description: アーキテクチャ — BGP route が転送可能になるまでの主経路は、FRR 内の bgpd/zebra から FPM 経由で fpmsyncd
+  に渡り、APPL_DB、orchagent、syncd、SAI/ASIC へ進む。設定反映の経路と、学習 route の転送面反映の経路を分けて見ることが重要である。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - config bgp
+  - show bgp
+  config_db:
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  - BGP_NEIGHBOR
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # アーキテクチャ

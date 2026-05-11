@@ -1,16 +1,25 @@
 ---
 title: Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）
-description: "Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig） — Multi-ASIC SONiC（複数 NPU を持つデバイス）では、各 NPU を Linux network namespace で隔離し、その中で swss / syncd / data…"
+description: Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig） — Multi-ASIC
+  SONiC（複数 NPU を持つデバイス）では、各 NPU を Linux network namespace で隔離し、その中で swss / syncd /
+  data…
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/database/multi_namespace_db_instances.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/database/multi_namespace_db_instances.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - AAA
+  - TACPLUS
+  - TACPLUS_SERVER
+  - RADIUS
+  - RADIUS_SERVER
+  cli:
+  - config aaa
+  - show aaa
   yang: []
 ---
 

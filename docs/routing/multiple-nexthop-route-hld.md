@@ -1,17 +1,32 @@
 ---
 title: dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
-description: "dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） — Gemini active-standby サーバ環境では 1 経路に複数の next-hop neighbor が指定され、それぞれが 異なる Ethernet ポート (= 異なる…"
+description: dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） — Gemini
+  active-standby サーバ環境では 1 経路に複数の next-hop neighbor が指定され、それぞれが 異なる Ethernet ポート (=
+  異なる…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/multiple_nexthop_route_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dualtor/multiple_nexthop_route_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - MUX_CABLE
+  - MUX_LINKMGR
+  - ROUTE_MAP
+  - STATIC_ROUTE
+  - VRF
+  - PORTCHANNEL
+  - VLAN_INTERFACE
+  cli:
+  - show muxcable
+  - show route map
+  - config route
+  yang:
+  - sonic-mux-cable
+  - sonic-route-common
+  - sonic-route-map
 ---
 
 <!-- topics-tip -->

@@ -1,14 +1,40 @@
 ---
 title: L2 発展トピック
-description: "L2 発展トピック — このページは、通常の VLAN / PortChannel / MC-LAG 設計から一歩外れる話題の入口です。OpenConfig は管理 API 章、distributed VOQ LAG は VOQ 章、Wake-on-LAN は運用ツールとしても読む対象です。"
+description: L2 発展トピック — このページは、通常の VLAN / PortChannel / MC-LAG 設計から一歩外れる話題の入口です。OpenConfig
+  は管理 API 章、distributed VOQ LAG は VOQ 章、Wake-on-LAN は運用ツールとしても読む対象です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/switching/openconfig-support-for-portchannel-aggregate-interface.md
-  - docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md
-  - docs/switching/lag-on-distributed-voq-system.md
-  - docs/switching/wake-on-lan-in-sonic.md
+- docs/switching/openconfig-support-for-portchannel-aggregate-interface.md
+- docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md
+- docs/switching/lag-on-distributed-voq-system.md
+- docs/switching/wake-on-lan-in-sonic.md
+related:
+  cli:
+  - config portchannel
+  - show interfaces
+  - config bgp
+  - show bgp
+  - show bfd
+  - config vlan
+  - show vlan
+  config_db:
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - PORTCHANNEL
+  - PORTCHANNEL_MEMBER
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # L2 発展トピック

@@ -1,14 +1,28 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — ACL の中心は AclOrch です。設定は CONFIG_DB から入り、APPL_DB を経由して AclOrch が SAI ACL table、entry、counter に変換します。"
+description: アーキテクチャ — ACL の中心は AclOrch です。設定は CONFIG_DB から入り、APPL_DB を経由して AclOrch
+  が SAI ACL table、entry、counter に変換します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/acl-user-defined-table-type-support.md
-  - docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md
-  - docs/acl-qos/acl-flex-counters-support.md
-  - docs/architecture/sonic-trap-flow-counter-design.md
+- docs/acl-qos/acl-user-defined-table-type-support.md
+- docs/acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md
+- docs/acl-qos/acl-flex-counters-support.md
+- docs/architecture/sonic-trap-flow-counter-design.md
+related:
+  cli:
+  - show acl
+  - show flowcnt
+  - config acl
+  config_db:
+  - COPP_TRAP
+  - COPP_GROUP
+  - ACL_RULE
+  - ACL_TABLE
+  - FLOW_COUNTER_ROUTE_PATTERN
+  yang:
+  - sonic-copp
 ---
 
 # アーキテクチャ

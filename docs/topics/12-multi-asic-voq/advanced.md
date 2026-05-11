@@ -1,15 +1,39 @@
 ---
 title: 発展トピック
-description: "発展トピック — VOQ chassis 固有の機能は、BGP・LAG・Everflow・TSA・warm reboot のような既存機能領域ごとに別 HLD として書かれています。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹します。"
+description: 発展トピック — VOQ chassis 固有の機能は、BGP・LAG・Everflow・TSA・warm reboot のような既存機能領域ごとに別
+  HLD として書かれています。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/bgp-setup-for-voq-chassis.md
-  - docs/switching/lag-on-distributed-voq-system.md
-  - docs/platform/everflow-support-on-voq-chassis.md
-  - docs/routing/reliable-tsa.md
-  - docs/system/multi-asic-warm-reboot.md
+- docs/routing/bgp-setup-for-voq-chassis.md
+- docs/switching/lag-on-distributed-voq-system.md
+- docs/platform/everflow-support-on-voq-chassis.md
+- docs/routing/reliable-tsa.md
+- docs/system/multi-asic-warm-reboot.md
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - show pfc
+  - show acl
+  - config acl
+  config_db:
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  - BGP_NEIGHBOR
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 発展トピック

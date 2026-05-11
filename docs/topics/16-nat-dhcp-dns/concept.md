@@ -1,22 +1,44 @@
 ---
 title: 概念
-description: "概念 — 「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく 4 群に分けて読むと混乱しません。"
+description: 概念 — 「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC
+  では大きく 4 群に分けて読むと混乱しません。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/architecture/nat-in-sonic.md
-  - docs/architecture/dhcpv4-relay-agent.md
-  - docs/architecture/dhcpv6-relay-agent.md
-  - docs/routing/dhcp-relay-for-ipv6-hld.md
-  - docs/management/ipv4-port-based-dhcp-server-in-sonic.md
+- docs/architecture/nat-in-sonic.md
+- docs/architecture/dhcpv4-relay-agent.md
+- docs/architecture/dhcpv6-relay-agent.md
+- docs/routing/dhcp-relay-for-ipv6-hld.md
+- docs/management/ipv4-port-based-dhcp-server-in-sonic.md
 keywords:
+- NAT
+- DHCP Relay
+- DNS
+- 概念
+- address translation
+- relay agent
+related:
+  cli:
+  - show nat
+  - config nat
+  - config vrf
+  - config qos
+  - config vlan
+  - show vlan
+  config_db:
   - NAT
-  - DHCP Relay
-  - DNS
-  - 概念
-  - address translation
-  - relay agent
+  - VLAN
+  - VRF
+  - MGMT_VRF_CONFIG
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  yang:
+  - sonic-nat
+  - sonic-vrf
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # 概念

@@ -1,13 +1,30 @@
 ---
 title: 内部実装
-description: "内部実装 — ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の SAI POST を扱います。control plane の AAA 系は アーキテクチャ で完結しており、本ページではリンクの暗号と完全性に話を限定します。"
+description: 内部実装 — ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の
+  SAI POST を扱います。control plane の AAA 系は アーキテクチャ で完結しており、本ページではリンクの暗号と完全性に話を限定します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/switching/macsec-sonic-high-level-design-document.md
-  - docs/switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md
-  - docs/switching/sonic-sai-post-support-for-macsec.md
+- docs/switching/macsec-sonic-high-level-design-document.md
+- docs/switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md
+- docs/switching/sonic-sai-post-support-for-macsec.md
+related:
+  cli:
+  - config aaa
+  - show aaa
+  - show acl
+  - config acl
+  config_db:
+  - AAA
+  - RADIUS
+  - COPP_GROUP
+  - COPP_TRAP
+  - ACL_RULE
+  - ACL_TABLE
+  - TACPLUS
+  yang:
+  - sonic-copp
 ---
 
 # 内部実装

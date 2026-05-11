@@ -1,10 +1,33 @@
 ---
 title: gNMI / OpenConfig の発展トピック
-description: "gNMI / OpenConfig の発展トピック — gNMI / gNOI / Translib / Transformer の基本パスを押さえた後は、telemetry の規模拡張、認証境界 (gNSI)、新しい RPC への対応が次の論点になる。"
+description: gNMI / OpenConfig の発展トピック — gNMI / gNOI / Translib / Transformer の基本パスを押さえた後は、telemetry
+  の規模拡張、認証境界 (gNSI)、新しい RPC への対応が次の論点になる。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config vrf
+  - config qos
+  config_db:
+  - VRF
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # gNMI / OpenConfig の発展トピック

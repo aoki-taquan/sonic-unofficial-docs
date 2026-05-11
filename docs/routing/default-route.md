@@ -1,17 +1,31 @@
 ---
 title: linkmgrd のデフォルトルート連動（DualToR mux 制御）
-description: "linkmgrd のデフォルトルート連動（DualToR mux 制御） — DualToR 構成では 2 台の ToR が active / standby または active-active の役割で同一サーバ群を収容する。"
+description: linkmgrd のデフォルトルート連動（DualToR mux 制御） — DualToR 構成では 2 台の ToR が active
+  / standby または active-active の役割で同一サーバ群を収容する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-linkmgrd
-    path: doc/default_route.md
-    ref: 65f563308c689e3225fdf3fc249a132350e9879b
+- repo: sonic-net/sonic-linkmgrd
+  path: doc/default_route.md
+  ref: 65f563308c689e3225fdf3fc249a132350e9879b
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - MUX_LINKMGR
+  - MUX_CABLE
+  - DEFAULT_LOSSLESS_BUFFER_PARAMETER
+  - ROUTE_MAP
+  - STATIC_ROUTE
+  - MGMT_INTERFACE
+  - VRF
+  cli:
+  - config default route
+  - show route map
+  - config route
+  yang:
+  - sonic-mux-cable
+  - sonic-route-common
+  - sonic-route-map
 ---
 
 <!-- topics-tip -->

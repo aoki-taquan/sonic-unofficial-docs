@@ -1,23 +1,46 @@
 ---
 title: DASH と SmartSwitch の考え方
-description: "DASH と SmartSwitch の考え方 — DASH と SmartSwitch は混同されやすい言葉ですが、別レイヤのものです。"
+description: DASH と SmartSwitch の考え方 — DASH と SmartSwitch は混同されやすい言葉ですが、別レイヤのものです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/overlay/sonic-dash-hld.md
-  - docs/overlay/smartswitch-eni-based-forwarding.md
-  - docs/architecture/smart-switch-database-design.md
-  - docs/categories/dash.md
-  - docs/categories/smartswitch.md
+- docs/overlay/sonic-dash-hld.md
+- docs/overlay/smartswitch-eni-based-forwarding.md
+- docs/architecture/smart-switch-database-design.md
+- docs/categories/dash.md
+- docs/categories/smartswitch.md
 keywords:
-  - DASH
-  - SmartSwitch
-  - 概念
-  - DPU
-  - appliance model
-  - ENI
-  - オフロード
+- DASH
+- SmartSwitch
+- 概念
+- DPU
+- appliance model
+- ENI
+- オフロード
+related:
+  cli:
+  - config vnet
+  - show acl
+  - config acl
+  - config bgp
+  - show bgp
+  config_db:
+  - VNET
+  - FEATURE
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-vnet
+  - sonic-srv6
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
 ---
 
 # DASH と SmartSwitch の考え方

@@ -1,16 +1,42 @@
 ---
 title: 運用
-description: "運用 — ACL / CoPP / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。CONFIG_DB に見えていることと、実際に hardware に作られていることは同じではありません。"
+description: 運用 — ACL / CoPP / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。CONFIG_DB
+  に見えていることと、実際に hardware に作られていることは同じではありません。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/enhancements-on-show-acl-commands.md
-  - docs/acl-qos/sonic-port-mirroring-hld.md
-  - docs/acl-qos/everflow-test-plan.md
-  - docs/acl-qos/configurable-drop-counters-in-sonic.md
-  - docs/acl-qos/sonic-test-ingress-discards-hld.md
-  - docs/architecture/port-illegal-packets-drop-design.md
+- docs/acl-qos/enhancements-on-show-acl-commands.md
+- docs/acl-qos/sonic-port-mirroring-hld.md
+- docs/acl-qos/everflow-test-plan.md
+- docs/acl-qos/configurable-drop-counters-in-sonic.md
+- docs/acl-qos/sonic-test-ingress-discards-hld.md
+- docs/architecture/port-illegal-packets-drop-design.md
+related:
+  cli:
+  - show acl
+  - show flowcnt
+  - show interfaces
+  - show ip
+  - show arp
+  - config bgp
+  - show bgp
+  config_db:
+  - COPP_TRAP
+  - VLAN
+  - SNMP
+  - MIRROR_SESSION
+  - COPP_GROUP
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 運用

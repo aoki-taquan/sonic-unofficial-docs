@@ -1,15 +1,40 @@
 ---
 title: 発展トピック
-description: "発展トピック — このページは、ACL / CoPP / mirror の基本線から少し外れるが、同じ「分類、保護、観測、rate limit」の考え方で読める機能への案内です。通常運用の入口は前ページまでで足りることが多く、ここでは境界だけを整理します。"
+description: 発展トピック — このページは、ACL / CoPP / mirror の基本線から少し外れるが、同じ「分類、保護、観測、rate limit」の考え方で読める機能への案内です。通常運用の入口は前ページまでで足りることが多く、ここでは境界だけを整理します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/copp-manager-redesign-test-plan.md
-  - docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md
-  - docs/acl-qos/dash-acl-tags.md
-  - docs/acl-qos/port-access-control-in-sonic.md
-  - docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
+- docs/acl-qos/copp-manager-redesign-test-plan.md
+- docs/acl-qos/copp-neighbor-miss-trap-and-enhancements.md
+- docs/acl-qos/dash-acl-tags.md
+- docs/acl-qos/port-access-control-in-sonic.md
+- docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
+related:
+  cli:
+  - show acl
+  - show nat
+  - config nat
+  - config bgp
+  - show bgp
+  - show arp
+  - config aaa
+  config_db:
+  - COPP_TRAP
+  - ACL_RULE
+  - VLAN
+  - NAT
+  - AAA
+  - FEATURE
+  - ACL_TABLE
+  yang:
+  - sonic-copp
+  - sonic-nat
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
 ---
 
 # 発展トピック

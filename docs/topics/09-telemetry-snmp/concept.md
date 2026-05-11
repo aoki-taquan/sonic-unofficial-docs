@@ -1,22 +1,48 @@
 ---
 title: 概念
-description: "概念 — SONiC の observability は、用途ごとに別のサブシステムが担当します。読み解くときは「いま何が起きているか」「変化点をどう受け取るか」「障害時に何を残すか」の 3 つに分けると迷いません。"
+description: 概念 — SONiC の observability は、用途ごとに別のサブシステムが担当します。読み解くときは「いま何が起きているか」「変化点をどう受け取るか」「障害時に何を残すか」の
+  3 つに分けると迷いません。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/sonic-logging-system-dumps-arch-spec.md
-  - docs/system/show-techsupport.md
-  - docs/internals/dump-utility-for-easy-debugging.md
-  - docs/system/system-ready-hld.md
+- docs/system/sonic-logging-system-dumps-arch-spec.md
+- docs/system/show-techsupport.md
+- docs/internals/dump-utility-for-easy-debugging.md
+- docs/system/system-ready-hld.md
 keywords:
-  - Telemetry
+- Telemetry
+- SNMP
+- 概念
+- 可観測性
+- streaming telemetry
+- metrics
+- 監視
+related:
+  cli:
+  - show techsupport
+  - show interfaces
+  - show bgp
+  - show lldp
+  - config vlan
+  - show vlan
+  - config snmp
+  config_db:
+  - CRM
   - SNMP
-  - 概念
-  - 可観測性
-  - streaming telemetry
-  - metrics
-  - 監視
+  - LLDP
+  - VLAN
+  - LLDP_PORT
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
+  yang:
+  - sonic-lldp
+  - sonic-crm
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-snmp
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
 ---
 
 # 概念

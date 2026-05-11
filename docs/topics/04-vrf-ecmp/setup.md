@@ -1,21 +1,47 @@
 ---
 title: VRF と Static Route の設定
-description: "VRF と Static Route の設定 — 設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは CONFIG_DB、外部管理システムが検証する型は YANG です。このページでは VRF 付き L3 設定の最小単位をその順で整理します。"
+description: VRF と Static Route の設定 — 設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは CONFIG_DB、外部管理システムが検証する型は
+  YANG です。このページでは VRF 付き L3 設定の最小単位をその順で整理します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-vrf.md
-  - docs/reference/cli/config-route.md
-  - docs/reference/config-db/vrf.md
-  - docs/reference/config-db/interface.md
-  - docs/reference/config-db/loopback-interface.md
-  - docs/reference/config-db/static-route.md
-  - docs/reference/config-db/fg-nhg.md
-  - docs/reference/yang/sonic-vrf.md
-  - docs/reference/yang/sonic-interface.md
-  - docs/reference/yang/sonic-static-route.md
-  - docs/reference/yang/sonic-route-common.md
+- docs/reference/cli/config-vrf.md
+- docs/reference/cli/config-route.md
+- docs/reference/config-db/vrf.md
+- docs/reference/config-db/interface.md
+- docs/reference/config-db/loopback-interface.md
+- docs/reference/config-db/static-route.md
+- docs/reference/config-db/fg-nhg.md
+- docs/reference/yang/sonic-vrf.md
+- docs/reference/yang/sonic-interface.md
+- docs/reference/yang/sonic-static-route.md
+- docs/reference/yang/sonic-route-common.md
+related:
+  cli:
+  - config route
+  - config vrf
+  - config interface
+  - show ip
+  - show interfaces
+  - config portchannel
+  - show route map
+  config_db:
+  - VRF
+  - VLAN
+  - LOOPBACK_INTERFACE
+  - FG_NHG
+  - STATIC_ROUTE
+  - ROUTE_MAP
+  - BGP_PEER_GROUP_AF
+  yang:
+  - sonic-static-route
+  - sonic-vrf
+  - sonic-interface
+  - sonic-route-common
+  - sonic-route-map
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
 ---
 
 # VRF と Static Route の設定

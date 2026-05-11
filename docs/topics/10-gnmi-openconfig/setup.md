@@ -1,15 +1,40 @@
 ---
 title: 設定
-description: "設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。"
+description: 設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC
+  native のどちらで指定するかを最初に決める。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/management/gnmi-usage.md
-  - docs/management/openconfig-support-for-ethernet-interfaces.md
-  - docs/management/sonic-yang-model-guidelines.md
-  - docs/management/model-based-replace-delete-in-mgmt-framework-transformer.md
-  - docs/reference/config-db/telemetry.md
+- docs/management/gnmi-usage.md
+- docs/management/openconfig-support-for-ethernet-interfaces.md
+- docs/management/sonic-yang-model-guidelines.md
+- docs/management/model-based-replace-delete-in-mgmt-framework-transformer.md
+- docs/reference/config-db/telemetry.md
+related:
+  cli:
+  - show ip
+  - config bgp
+  - show bgp
+  - config portchannel
+  - config vlan
+  - show vlan
+  config_db:
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - PORTCHANNEL
+  - PORTCHANNEL_MEMBER
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  yang:
+  - sonic-bgp-neighbor
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # 設定

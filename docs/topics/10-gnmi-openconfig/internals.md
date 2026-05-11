@@ -1,10 +1,24 @@
 ---
 title: 内部実装
-description: "内部実装 — gNMI / OpenConfig の内部実装は、telemetry コンテナの中に gNMI server があり、translib / sonic-mgmt-common 経由で YANG → CONFIG_DB / APPL_DB / STATE_DB に変換するという縦の流れを押さえると整理でき…"
+description: 内部実装 — gNMI / OpenConfig の内部実装は、telemetry コンテナの中に gNMI server があり、translib
+  / sonic-mgmt-common 経由で YANG → CONFIG_DB / APPL_DB / STATE_DB に変換するという縦の流れを押さえると整理でき…
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - config qos
+  config_db:
+  - TELEMETRY_CLIENT
+  - DEVICE_METADATA
+  - TELEMETRY
+  - PORT
+  - VRF
+  - BGP_NEIGHBOR
+  - ACL_TABLE
+  yang:
+  - sonic-port
 ---
 
 # 内部実装

@@ -1,22 +1,25 @@
 ---
 title: Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）
-description: "Active-Standby Dual ToR の内部実装。linkmgrd の合成 state machine 遷移表、TunnelOrch / MuxOrch / FdbOrch の責務分担、neighbor / proxy ARP / NDP / GARP の特殊扱い、y-cable I2C 経由 switchover シーケンスを扱う。"
+description: Active-Standby Dual ToR の内部実装。linkmgrd の合成 state machine 遷移表、TunnelOrch
+  / MuxOrch / FdbOrch の責務分担、neighbor / proxy ARP / NDP / GARP の特殊扱い、y-cable I2C 経由
+  switchover シーケンスを扱う。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/dualtor_active_standby_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-  - repo: sonic-net/sonic-linkmgrd
-    path: src/link_manager/LinkManagerStateMachineActiveStandby.cpp
-    ref: 65f563308c689e3225fdf3fc249a132350e9879b
-  - repo: sonic-net/sonic-swss
-    path: orchagent/muxorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/SONiC
+  path: doc/dualtor/dualtor_active_standby_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-linkmgrd
+  path: src/link_manager/LinkManagerStateMachineActiveStandby.cpp
+  ref: 65f563308c689e3225fdf3fc249a132350e9879b
+- repo: sonic-net/sonic-swss
+  path: orchagent/muxorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: []
+  config_db:
+  - PEER_SWITCH
   cli: []
   yang: []
 ---

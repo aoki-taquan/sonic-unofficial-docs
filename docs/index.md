@@ -17,7 +17,7 @@ verification: meta
     - **code-verified ページ**: 578 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
     - **discrepancy-found ページ**: 50 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 19 集計中（`meta/quality-audit-19.md`）
+    - **監査平均評価**: round 20 集計中（`meta/quality-audit-20.md`）
     - **hld-only ページ**: 8 件（裏取り待ち）
 <!-- quality-banner-end -->
 

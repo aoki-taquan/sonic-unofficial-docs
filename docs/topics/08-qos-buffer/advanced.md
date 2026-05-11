@@ -1,15 +1,41 @@
 ---
 title: QoS / Buffer の発展トピック
-description: "QoS / Buffer の発展トピック — QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）を押さえた後は、PFC の運用整合性と buffer pool の設計が次の論点になる。"
+description: QoS / Buffer の発展トピック — QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）を押さえた後は、PFC
+  の運用整合性と buffer pool の設計が次の論点になる。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources:
-  - docs/acl-qos/sonic-qos-scheduler-and-shaping.md
-  - docs/acl-qos/wred-and-ecn-statistics.md
-  - docs/acl-qos/asymmetric-pfc-test-plan.md
-  - docs/acl-qos/watermark-counters-in-sonic.md
-  - docs/overlay/dscp-remapping-for-tunnel-traffic.md
+- docs/acl-qos/sonic-qos-scheduler-and-shaping.md
+- docs/acl-qos/wred-and-ecn-statistics.md
+- docs/acl-qos/asymmetric-pfc-test-plan.md
+- docs/acl-qos/watermark-counters-in-sonic.md
+- docs/overlay/dscp-remapping-for-tunnel-traffic.md
+related:
+  cli:
+  - clear
+  - config qos
+  - config buffer
+  - show buffer
+  - show buffer pool
+  - config bgp
+  - show bgp
+  config_db:
+  - BUFFER_POOL
+  - BUFFER_PROFILE
+  - SCHEDULER
+  - BUFFER_QUEUE
+  - BUFFER_PORT_EGRESS_PROFILE_LIST
+  - BUFFER_PG
+  - BUFFER_PORT_INGRESS_PROFILE_LIST
+  yang:
+  - sonic-buffer-queue
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-buffer-pg
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
 ---
 
 # QoS / Buffer の発展トピック

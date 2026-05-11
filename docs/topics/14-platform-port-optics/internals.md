@@ -1,18 +1,28 @@
 ---
 title: 内部実装
-description: "内部実装 — ここでは、port / optics / PHY を「ベンダー実装の境界」から見直します。SONiC core と platform driver の責任分担、Gearbox 接続、sysfs / BMC 経由の管理を 1 枚にして読みます。"
+description: 内部実装 — ここでは、port / optics / PHY を「ベンダー実装の境界」から見直します。SONiC core と platform
+  driver の責任分担、Gearbox 接続、sysfs / BMC 経由の管理を 1 枚にして読みます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/platform/media-based-port-settings-in-sonic.md
-  - docs/platform/sonic-dynamic-gearbox-tuning-design-plan.md
-  - docs/platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md
-  - docs/platform/enhanced-lpo-debug-registers-hld.md
-  - docs/platform/s3ip-sysfs-specification.md
-  - docs/architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md
-  - docs/platform/support-bmc-flows-in-sonic.md
-  - docs/system/sonic-bmc-platform-management-monitoring.md
+- docs/platform/media-based-port-settings-in-sonic.md
+- docs/platform/sonic-dynamic-gearbox-tuning-design-plan.md
+- docs/platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md
+- docs/platform/enhanced-lpo-debug-registers-hld.md
+- docs/platform/s3ip-sysfs-specification.md
+- docs/architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md
+- docs/platform/support-bmc-flows-in-sonic.md
+- docs/system/sonic-bmc-platform-management-monitoring.md
+related:
+  cli:
+  - show platform
+  - show lldp
+  config_db:
+  - LLDP
+  - LLDP_PORT
+  yang:
+  - sonic-lldp
 ---
 
 # 内部実装

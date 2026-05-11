@@ -1,18 +1,34 @@
 ---
 title: DIP=SIP PTF 検証テスト
-description: "DIP=SIP PTF 検証テスト — 「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを SONiC スイッチが正しくルーティングできるかを PTF (Packet Test Framework) で検証 するテストの設計。"
+description: DIP=SIP PTF 検証テスト — 「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを
+  SONiC スイッチが正しくルーティングできるかを PTF (Packet Test Framework) で検証 するテストの設計。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dip-sip/DIP=SIP_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dip-sip/DIP=SIP_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - LLDP
+  - VLAN
+  - LLDP_PORT
+  - ACL_RULE
+  - ACL_TABLE
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
+  cli:
+  - show lldp
+  - show acl
+  - config acl
+  - config vlan
+  - show vlan
+  yang:
+  - sonic-lldp
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 <!-- topics-tip -->

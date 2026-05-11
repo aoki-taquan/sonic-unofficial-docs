@@ -1,20 +1,43 @@
 ---
 title: 概要
-description: "概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか が見えづらいことです。"
+description: 概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか
+  が見えづらいことです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
 keywords:
-  - BGP
-  - FRR
-  - concept
-  - 概念
-  - neighbor
-  - address-family
-  - policy
-  - leaf-spine
-  - ECMP
+- BGP
+- FRR
+- concept
+- 概念
+- neighbor
+- address-family
+- policy
+- leaf-spine
+- ECMP
+related:
+  cli:
+  - show ip
+  - show bgp
+  - config bgp
+  - config vxlan
+  config_db:
+  - BGP_NEIGHBOR
+  - BGP_PEER_RANGE
+  - BGP_ALLOWED_PREFIXES
+  - PREFIX_LIST
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 概要

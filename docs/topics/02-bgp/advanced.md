@@ -1,10 +1,34 @@
 ---
 title: 発展トピック
-description: "発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。"
+description: 発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも
+  BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - show bgp
+  - show bfd
+  - config bgp
+  - config vrf
+  - config vxlan
+  config_db:
+  - VRF
+  - BGP_PEER_RANGE
+  - BGP_NEIGHBOR
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  yang:
+  - sonic-srv6
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # 発展トピック
