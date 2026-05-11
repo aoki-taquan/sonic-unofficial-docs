@@ -5,7 +5,7 @@ verification: code-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-swss
-    path: orchagent/vlanmgr.cpp
+    path: cfgmgr/vlanmgr.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-utilities
     path: config/vlan.py

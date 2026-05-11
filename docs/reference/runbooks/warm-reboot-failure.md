@@ -8,7 +8,7 @@ sources:
     path: scripts/warm-reboot
     ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
   - repo: sonic-net/sonic-swss
-    path: orchagent/warm_restart.cpp
+    path: warmrestart/warmRestartHelper.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-frr
     path: bgpd/bgp_routemap.c

@@ -5,7 +5,7 @@ verification: code-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-dhcp-relay
-    path: src/relay.cpp
+    path: dhcp6relay/src/relay.cpp
     ref: 7316417034fee6a6c6002490362c9bc75eeafde1
   - repo: sonic-net/sonic-utilities
     path: config/main.py

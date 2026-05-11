@@ -5,7 +5,7 @@ verification: code-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-swss
-    path: orchagent/nat/natorch.cpp
+    path: orchagent/natorch.cpp
     ref: master
   - repo: sonic-net/sonic-swss
     path: natsyncd/natsyncd.cpp
