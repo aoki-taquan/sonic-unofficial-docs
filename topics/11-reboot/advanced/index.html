@@ -3895,7 +3895,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        発展トピック
+        ハンドオフ
       
     </span>
   </a>
@@ -3906,7 +3906,29 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の制約と回避方法
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#express-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Express reboot の内部設計
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graceful-drain-tsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        graceful drain &amp; TSA 連携
       
     </span>
   </a>
@@ -3915,6 +3937,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         将来計画 / ロードマップ
@@ -3947,7 +3980,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28688,7 +28754,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        発展トピック
+        ハンドオフ
       
     </span>
   </a>
@@ -28699,7 +28765,29 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の制約と回避方法
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#express-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Express reboot の内部設計
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graceful-drain-tsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        graceful drain &amp; TSA 連携
       
     </span>
   </a>
@@ -28708,6 +28796,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         将来計画 / ロードマップ
@@ -28740,7 +28839,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28777,7 +28909,13 @@
 
 <h1 id="reboot-upgrade">Reboot / Upgrade の発展トピック<a class="headerlink" href="#reboot-upgrade" title="Permanent link">&para;</a></h1>
 <p>warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「express reboot」、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。</p>
-<h2 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="_1">ハンドオフ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> と、area HLD の <a href="../../../system/sonic-warm-reboot/">sonic-warm-reboot</a>, <a href="../../../system/fast-reboot-flow-improvements-hld/">fast-reboot-flow-improvements-hld</a>, <a href="../../../system/sonic-express-reboot-hld-spec/">sonic-express-reboot-hld-spec</a> で完結する。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>warm-reboot</code> / <code>fast-reboot</code> / <code>reboot</code> 系コマンド、<a href="../../../reference/config-db/">reference/config_db/WARM_RESTART</a> に集約されている。</li>
+<li><strong>本ページ</strong>は、基本 reboot を押さえた読者に対し、express reboot, chassis 級同期, gNOI 経由 upgrade などの発展領域だけを扱う。</li>
+</ul>
+<h2 id="_2">発展トピック<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Express reboot</strong>: warm reboot のさらに先にある「ASIC を温存したまま OS だけ swap する」設計。<code>fast-reboot-flow-improvements</code> と <code>express-reboot</code> <a href="../../../reference/glossary/#term-hld">HLD</a> を組み合わせて、<a href="../../../reference/glossary/#term-sai">SAI</a> 状態の export / import と <a href="../../../reference/glossary/#term-syncd">syncd</a> の handover を最小ダウンタイムで行う。</li>
 <li><strong>System-wide warm reboot</strong>: 単一 SONiC instance ではなく、複数 ASIC / chassis 全体を 1 回の手順で warm reboot する。<code>multi-asic-warm-reboot</code> と組み合わせて line card 順序や Supervisor のロールを設計する。</li>
@@ -28786,14 +28924,20 @@
 <li><strong>Warm reboot 中の orch 状態</strong>: warm-restart 対応 daemon (bgpd, <a href="../../../reference/glossary/#term-swssconfig">swssconfig</a>, syncd, <a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>, lldpd 等) の <code>WARM_RESTART_TABLE</code> ステートマシン。reconciliation timeout の管理が要点。</li>
 <li><strong>2-stage reboot</strong>: kernel kexec → SONiC 初期化 → 経路収束、を時系列で計測し、各 stage の wall clock を切り分けると改善ポイントが見える。</li>
 </ul>
-<h2 id="_2">既知の制約と回避方法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="express-reboot">Express reboot の内部設計<a class="headerlink" href="#express-reboot" title="Permanent link">&para;</a></h2>
+<p>Express reboot は warm reboot の延長で、SAI 状態と data plane を保持したまま control plane だけ swap する。鍵となるのは (1) <code>syncd</code> の SAI object handle dump と新 image の <code>syncd</code> での再 attach、(2) <code>orchagent</code> の internal cache を <code>APPL_STATE_DB</code> 経由でリビルド、(3) <code>bgpd</code> の GR/LLGR による経路再学習を上位 plane 側でブロックしない、という 3 つの同期点。期待ダウンタイムは &lt; 1 秒 (data plane forward 停止時間) であり、warm reboot (数秒〜十数秒) より大幅に短い。</p>
+<p>実装の依存は ASIC SDK 側の <code>sai_switch_attribute_t::SAI_SWITCH_ATTR_FAST_API_ENABLE</code> と、SDK が持つ shared memory hand-off API。これに対応していない platform では express reboot は不可。</p>
+<h2 id="graceful-drain-tsa">graceful drain &amp; TSA 連携<a class="headerlink" href="#graceful-drain-tsa" title="Permanent link">&para;</a></h2>
+<p>reboot 前に BGP / BFD を drain する手順は <code>reliable-tsa</code> (Traffic Shift Away) HLD で形式化されている。<code>config bgp shutdown all</code> だけでは ECMP から外れるまでに peer 側の hold timer 切れを待つため、<code>graceful-shutdown</code> community (RFC 8326) を付与して即時 deprefer させる流れが推奨される。drain 後の reboot で transient を最小化できる。</p>
+<p>逆に reboot 後の <code>reliable-tso</code> (Traffic Shift Over) は、forwarding が確立してから順に peer に announce 再開する。SONiC では <code>BGP_DEVICE_GLOBAL.tsa_enabled</code> を切り替えるだけで template 経由で route-map 適用される設計。</p>
+<h2 id="_3">既知の制約と回避方法<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Warm reboot 中の経路 stale</strong>: BGP graceful restart が機能しないと FIB が古いまま残り、収束後にループや誤転送が起こる。<a href="../../../reference/glossary/#term-frr">FRR</a> 側 GR / LLGR 設定と peer 側互換を必ず確認する。</li>
 <li><strong>Fast reboot で counter リセット</strong>: fast reboot は ASIC reset を伴うため、<code>COUNTERS_DB</code> の累積値が 0 に戻る。telemetry collector 側で counter rollover として誤検出する事例がある。</li>
 <li><strong>Express reboot の platform 依存</strong>: SAI capability に依存し、対応 ASIC が限られる。実機サポート状況を <code>sonic-platform</code> 配下の sai profile / platform docs と照合する。</li>
 <li><strong>Multi-ASIC reboot の順序</strong>: Supervisor → Line card の順を間違えると Chassis DB の整合が崩れる。<code>config chassis modules shutdown</code> / <code>startup</code> の順序を厳守する。</li>
 </ul>
-<h2 id="_3">将来計画 / ロードマップ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">将来計画 / ロードマップ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Express reboot の community 対応拡大と SAI attribute 標準化が継続テーマ。</li>
 <li>gNOI / gNSI 経由の upgrade orchestration が enterprise 運用で標準化方向。手動手順の自動化と監査トレースの統合が論点。</li>
@@ -28813,7 +28957,38 @@
 <li><code>sonic-swss</code> の orch 群で warm restart reconciliation のタイムアウトと race condition 修正 PR が定期的に入る。</li>
 <li>DASH / <a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> 関連で DPU 独立 reboot のサポート議論が進行中。NPU 側 reboot との同期がどこまで required かは scenario ごとに分岐。</li>
 </ul>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">トラブルシュート観点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>warm reboot 後に経路が一部欠落するときは、<code>WARM_RESTART_TABLE|&lt;daemon&gt;</code> の <code>state</code> が <code>reconciled</code> まで到達したかを確認する。<code>bgp</code> daemon が <code>restored</code> 止まりだと FRR の GR 受信側で遅延しているサイン。</li>
+<li>syncd handover で失敗する場合、<code>/var/log/syslog</code> の <code>syncd: brcm_sai</code>/<code>mlnx_sai</code> 等 SAI vendor log と、<code>syncd.sh</code> の elapsed time を点検する。<code>config save</code> 前 / 後の <code>CONFIG_DB.json</code> 差分も復旧時に役立つ。</li>
+<li>gNOI Install/Activate の失敗時は <code>sonic-installer list</code> で image slot を確認し、必要なら <code>sonic-installer set-default &lt;prev&gt;</code> で前 image に戻して <code>reboot</code>。</li>
+</ul>
+<h2 id="_6">検証パスとラボ要件<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>VS lab で warm reboot を再現するときは、<code>docker exec swss supervisorctl restart all</code> ではなく <code>sonic-installer</code> 経由の本物 warm reboot path を <code>pretest_warm_reboot.sh</code> で実行する。orchagent reconciliation 動作が VS でも観察可能。</li>
+<li>chassis 級は <code>sonic-mgmt</code> の <code>chassis_reboot</code> test suite が CHASSIS_APP_DB の <code>module_state</code> 遷移を assertion している。</li>
+</ul>
+<h2 id="_7">関連ページ (追補)<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../system/independent-dpu-upgrade/">Independent DPU upgrade</a></li>
+<li><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot cause information via telemetry agent</a></li>
+<li><a href="../../../system/reboot-support-blockingmode-in-sonic/">Reboot support blocking mode</a></li>
+<li><a href="../../../system/secure-upgrade/">Secure upgrade</a></li>
+<li><a href="../../../system/smart-switch-reboot-high-level-design/">Smart switch reboot HLD</a></li>
+<li><a href="../../../system/sonic-debian-upgrade-cadence/">SONiC Debian upgrade cadence</a></li>
+<li><a href="../../../system/what-are-the-development-phases-and-scope-for-warm-reboot/">What are the development phases and scope for warm reboot</a></li>
+<li><a href="../../../system/multi-asic-warm-reboot/">Multi-ASIC warm reboot</a></li>
+<li><a href="../../../system/system-wide-warmboot/">System-wide warm boot</a></li>
+<li><a href="../../../system/sonic-express-reboot-hld-spec/">SONiC express reboot HLD spec</a></li>
+<li><a href="../../../system/fast-reboot-flow-improvements-hld/">Fast reboot flow improvements HLD</a></li>
+<li><a href="../../../system/sonic-warm-reboot/">SONiC warm reboot</a></li>
+<li><a href="../../12-multi-asic-voq/">12 Multi-ASIC / VOQ: chassis 級 reboot 順序</a></li>
+<li><a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig: gNOI OS service との連携</a></li>
+<li><a href="../../13-dash-smartswitch/">13 DASH / SmartSwitch: DPU 独立 reboot との同期</a></li>
+<li><a href="../../02-bgp/">02 BGP: graceful restart / LLGR と warm reboot の整合</a></li>
+<li><a href="../../15-security-aaa/">15 Security / AAA: secure upgrade と signed image</a></li>
+</ul>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/sonic-warm-reboot/">SONiC warm reboot</a></li>
 <li><a href="../../../system/fast-reboot-flow-improvements-hld/">Fast reboot flow improvements</a></li>

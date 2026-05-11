@@ -3031,7 +3031,29 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        発展トピック
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buffer-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動的 buffer model の運用詳細
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pfc-watchdog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PFC watchdog のチューニング
       
     </span>
   </a>
@@ -3042,7 +3064,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の制約と回避方法
+        発展トピック
       
     </span>
   </a>
@@ -3051,6 +3073,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         将来計画 / ロードマップ
@@ -3083,7 +3116,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28688,7 +28754,29 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        発展トピック
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buffer-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動的 buffer model の運用詳細
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pfc-watchdog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PFC watchdog のチューニング
       
     </span>
   </a>
@@ -28699,7 +28787,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の制約と回避方法
+        発展トピック
       
     </span>
   </a>
@@ -28708,6 +28796,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         将来計画 / ロードマップ
@@ -28740,7 +28839,40 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28777,7 +28909,18 @@
 
 <h1 id="qos-buffer">QoS / Buffer の発展トピック<a class="headerlink" href="#qos-buffer" title="Permanent link">&para;</a></h1>
 <p><a href="../../../reference/glossary/#term-qos">QoS</a> / Buffer / <a href="../../../reference/glossary/#term-pfc">PFC</a> の基本（scheduler、queue map、PG、watermark）を押さえた後は、PFC の運用整合性と buffer pool の設計が次の論点になる。本ページでは、章本文で扱った機能の延長と、他章 (Dual-ToR / 02 <a href="../../../reference/glossary/#term-bgp">BGP</a> / <a href="../../../reference/glossary/#term-voq">VOQ</a>) との境界を整理する。</p>
-<h2 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="_1">ハンドオフ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> と area HLD <a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">sonic-qos-scheduler-and-shaping</a>, <a href="../../../acl-qos/watermark-counters-in-sonic/">watermark-counters-in-sonic</a> に集約されている。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config qos</code> / <code>config buffer</code> / <code>show buffer pool</code> 系、<a href="../../../reference/config-db/">reference/config_db/BUFFER_*</a>, <code>SCHEDULER</code>, <code>PORT_QOS_MAP</code> に集約されている。</li>
+<li><strong>本ページ</strong>は、scheduler / buffer の基本パスを押さえた読者に対し、Asymmetric PFC, 動的 buffer model, PFC watchdog のチューニング、headroom pool 設計などの発展領域だけを扱う。</li>
+</ul>
+<h2 id="buffer-model">動的 buffer model の運用詳細<a class="headerlink" href="#buffer-model" title="Permanent link">&para;</a></h2>
+<p>動的 buffer model (<code>buffermgrd</code> が dynamic) では、<code>BUFFER_PROFILE</code> を手書きせず alpha (dynamic threshold) と pool size のみ指定する。alpha は ASIC の <code>SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH</code> に直接マップされ、共有 pool 残量に応じて per-PG/queue の使用上限が自動調整される。alpha = 1/8 を基準に、congestion 多めの ToR では alpha を大きくして burst 吸収を優先し、tail-drop 厳しめの構成では小さくする。</p>
+<p>ポートアップ / ダウン時には <code>buffermgrd</code> が <code>BUFFER_PG</code>, <code>BUFFER_QUEUE</code> を再計算し、<code>speed</code>, <code>cable-length</code> の変化を <code>pg_lossless_&lt;speed&gt;_&lt;cable&gt;_profile</code> という profile キーで参照する。pg-headroom 計算式は <code>headroom = 2 * (delay * BW + MTU)</code> ベース。手動上書きは原則しない。</p>
+<h2 id="pfc-watchdog">PFC watchdog のチューニング<a class="headerlink" href="#pfc-watchdog" title="Permanent link">&para;</a></h2>
+<p><code>PFC_WD_TABLE|GLOBAL</code> の <code>POLL_INTERVAL</code> と <code>DETECTION_TIME</code> / <code>RESTORATION_TIME</code> は per-queue 単位で個別に上書き可能 (<code>PFC_WD_TABLE|&lt;port&gt;</code>)。短すぎる detection (100ms) は legitimate な burst を storm と誤検知し、長すぎる (1s 超) と head-of-line block が広がる。fabric 規模が大きいほど、detection を 200ms, restoration を 200ms 程度に揃え、storm 確定後は <code>forward</code> ではなく <code>drop</code> action にして局所封じ込め、を推奨する。</p>
+<h2 id="_2">発展トピック<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Asymmetric PFC</strong>: 上流と下流で PFC enable bitmap を非対称に運用するモデル。lossless TC を一方向だけ pause 対象とする使い方で、<code>PORT_QOS_MAP|&lt;port&gt;.pfc_to_queue_map</code> と peer ToR の設定整合が要点。</li>
 <li><strong>動的 buffer model</strong>: 旧来の static buffer profile から、<code>BUFFER_POOL</code> の thresholds と alpha (dynamic threshold) を ASIC レベルで決める動的モデルへの移行。<code>buffermgrd</code> が <code>BUFFER_PROFILE</code> を auto 計算する。</li>
@@ -28787,14 +28930,14 @@
 <li><strong><a href="../../../reference/glossary/#term-wred">WRED</a> / ECN の細分化</strong>: green / yellow / red の閾値別ドロップ確率と、ECN-marking 閾値を queue ごとに調整。CSE 系 telemetry と組み合わせて congestion 兆候を捕捉する。</li>
 <li><strong>Watermark の align-with-port-config</strong>: port admin down 時に watermark を 0 に clear する整合性改善で、運用 dashboard の誤検知を減らす。</li>
 </ul>
-<h2 id="_2">既知の制約と回避方法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">既知の制約と回避方法<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>buffer profile の手書きと auto 計算の混在</strong>: 一部 SKU で <code>pg_lossless_*_profile.json</code> を手書き、別 SKU で動的計算を使うと、deployment yaml が SKU ごとに分岐する。SKU 単位で auto / manual を統一する。</li>
 <li><strong>PFC storm 中の watermark 異常値</strong>: storm で queue depth が暴れると watermark API の peak が過大になる。<code>sonic-clear queue watermark</code> を保守時に発行して baseline を取り直す。</li>
 <li><strong>scheduler weight と shaper の同時設定</strong>: <code>SCHEDULER</code> の <code>weight</code> と <code>pir/cir</code> を両方設定すると ASIC によって解釈が違う。WFQ + shaping の組合せは platform docs と <a href="../../../reference/glossary/#term-sai">SAI</a> sample で必ず確認する。</li>
 <li><strong>ECN-only deployment</strong>: PFC を無効にして ECN だけで lossless を狙う構成は、congestion 検出が遅れて queue が膨らむと drop に至る。host TCP stack の DCTCP 設定とセットで運用する。</li>
 </ul>
-<h2 id="_3">将来計画 / ロードマップ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">将来計画 / ロードマップ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>align-watermark-flow-with-port-configuration</code> <a href="../../../reference/glossary/#term-hld">HLD</a> が port lifecycle と watermark の整合を扱い、これを起点に counter の reset 周りが整理される方向。</li>
 <li>Dynamic buffer model の telemetry 統合が長期テーマで、buffer pool の utilization を OpenConfig schema で export する話が継続。</li>
@@ -28815,7 +28958,39 @@
 <li><code>sonic-swss</code> の <code>qosorch</code> で WRED profile attribute 更新と PFC watchdog の storm detection 改善 PR が定期的に入る。</li>
 <li>Streaming telemetry 側 (<a href="../../10-gnmi-openconfig/">10 gNMI</a>) で <code>COUNTERS_DB</code> の watermark / queue / PG 数値を export する設定例が拡張中。</li>
 </ul>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">トラブルシュート観点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>lossless TC で drop が出る場合、(1) <code>BUFFER_PG</code> の headroom が不足、(2) PFC watchdog の <code>forward</code> action で storm を素通りさせている、(3) peer 側で PFC を送出していない、の 3 つを順に切り分ける。<code>show pfc counters</code> で peer から PFC frame を受信しているかを確認。</li>
+<li>buffer pool exhaust は <code>sonic-clear watermark queue</code> + <code>sonic-clear watermark pg</code> で baseline を取り直し、<code>show buffer pool</code> の <code>XOFF used</code> を観察する。</li>
+<li>WRED が機能しない場合、<code>SCHEDULER</code> の <code>type</code> が <code>WRR</code>/<code>DWRR</code> であり、queue に WRED profile が bind されていることを <code>QUEUE</code> table で確認する。<code>WRED_PROFILE</code> の <code>ecn</code> 設定 (<code>ecn_all</code>, <code>ecn_none</code>) も要点。</li>
+</ul>
+<h2 id="_6">検証パスとラボ要件<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>PFC end-to-end の検証は <code>sonic-mgmt</code> の <code>qos/test_qos_sai.py</code> で行う。SAI 側 attribute と Redis 設定の整合確認が含まれる。</li>
+<li>動的 buffer model の alpha チューニングは、合成 burst (microburst injector) を流して <code>BUFFER_POOL_WATERMARK_STAT_COUNTER</code> の peak を観察する手順が標準。</li>
+</ul>
+<h2 id="_7">関連ページ (追補)<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../acl-qos/asymmetric-pfc-test-plan/">Asymmetric PFC test plan</a></li>
+<li><a href="../../../acl-qos/dynamically-headroom-calculation/">Dynamically headroom calculation</a></li>
+<li><a href="../../../acl-qos/align-watermark-flow-with-port-configuration-hld/">Align watermark flow with port configuration HLD</a></li>
+<li><a href="../../../acl-qos/egress-outer-dscp-change-table/">Egress outer DSCP change table</a></li>
+<li><a href="../../../acl-qos/wred-and-ecn-statistics/">WRED and ECN statistics</a></li>
+<li><a href="../../../acl-qos/watermark-counters-in-sonic/">Watermark counters in SONiC</a></li>
+<li><a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">SONiC QoS scheduler and shaping</a></li>
+<li><a href="../../../acl-qos/configurable-drop-counters-in-sonic/">Configurable drop counters in SONiC</a></li>
+<li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">DSCP remapping for tunnel traffic</a></li>
+<li><a href="../../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture/">Distributed forwarding in a VOQ architecture</a></li>
+<li><a href="../../../acl-qos/dash-acl-tags/">DASH ACL tags</a></li>
+<li><a href="../../05-dual-tor/advanced/">05 Dual-ToR: tunnel decap と DSCP の組合せ</a></li>
+<li><a href="../../12-multi-asic-voq/">12 Multi-ASIC / VOQ: chassis 全体の buffer 設計</a></li>
+<li><a href="../../09-telemetry-snmp/">09 Telemetry / SNMP: watermark / drop telemetry の配信</a></li>
+<li><a href="../../07-acl-copp-mirror/">07 ACL / CoPP / Mirror: ACL action と PFC/QoS の交差</a></li>
+<li><a href="../../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/">Egress mirroring support and ACL action capability check</a></li>
+<li><a href="../../../acl-qos/enhancements-on-show-acl-commands/">Enhancements on show acl commands</a></li>
+<li><a href="../../../acl-qos/everflow-test-plan/">Everflow test plan (mirror counter 観点)</a></li>
+</ul>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">SONiC QoS Scheduler and Shaping</a></li>
 <li><a href="../../../acl-qos/wred-and-ecn-statistics/">WRED と ECN の統計</a></li>
