@@ -1,0 +1,108 @@
+---
+title: config ntp サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db:
+    - NTP_SERVER
+  cli:
+    - config ntp
+  yang:
+    - sonic-ntp
+---
+
+# config ntp サブコマンド
+
+## 概要
+
+`config ntp` は NTP サーバ（chrony で動作）の追加・削除を行う CLI グループ。CONFIG_DB の `NTP_SERVER` テーブルを直接書き換え、`chrony` サービスを再起動する[^1]。
+
+SONiC では NTP daemon として `chrony` を採用しており、`config ntp` で `NTP_SERVER` テーブルを書くと `chrony.conf` テンプレートが再生成され、`systemctl restart chrony` で反映される。
+
+## コマンド一覧
+
+| コマンド | 用途 |
+|---------|------|
+| `config ntp add <ntp_ip_address> [options]` | NTP サーバ追加 |
+| `config ntp del <ntp_ip_address>` | NTP サーバ削除 |
+
+## 各コマンドの詳細
+
+### `config ntp add <ntp_ip_address> [options]`
+
+**用法**:
+
+```
+config ntp add <ntp_ip_address>
+    [--association-type server|pool]
+    [--iburst]
+    [--version <int>]
+```
+
+**引数**:
+
+- `<ntp_ip_address>` ... NTP サーバの IP アドレス。`--association-type server` (デフォルト) の場合は `clicommon.is_ipaddress` で IP 検証。`pool` の場合は FQDN を許容する。
+
+**オプション**:
+
+- `--association-type {server,pool}` ... デフォルト `server`。`pool` 指定時は chrony の `pool` ディレクティブで構成される。
+- `--iburst` ... 起動直後の高頻度同期を有効化（`iburst on`）。
+- `--version <int>` ... NTP プロトコルバージョン指定。
+
+**動作**:
+
+1. `ADHOC_VALIDATION` が真のとき、IP 検証を実施 (`association_type != "pool"` の場合)
+2. 既存 `NTP_SERVER` テーブルを取得し、同 IP が既存なら `NTP server <ip> is already configured` で no-op return
+3. options を辞書化（version / association_type / iburst）し、`db.set_entry('NTP_SERVER', <ip>, opts)` で CONFIG_DB に書く
+4. `systemctl restart chrony` を実行。失敗時は `ctx.fail`
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L8982-L9016 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @ntp.command('add')
+  def add_ntp_server(ctx, ntp_ip_address, association_type, iburst, version):
+      if ADHOC_VALIDATION:
+          if not clicommon.is_ipaddress(ntp_ip_address) and association_type != "pool":
+              ctx.fail('Invalid IP address')
+      ...
+      db.set_entry('NTP_SERVER', ntp_ip_address, ntp_server_options)
+      ...
+      clicommon.run_command(['systemctl', 'restart', 'chrony'], display_cmd=False)
+-->
+
+### `config ntp del <ntp_ip_address>`
+
+**用法**:
+
+```
+config ntp del <ntp_ip_address>
+```
+
+**動作**:
+
+1. 既存 `NTP_SERVER` テーブルを取得、未登録 IP なら `NTP server <ip> is not configured.` でエラー終了
+2. `db.set_entry('NTP_SERVER', <ip>, None)` で entry を削除
+3. `systemctl restart chrony` を実行
+
+## 関連する CONFIG_DB
+
+| テーブル | キー | フィールド |
+|----------|------|------------|
+| `NTP_SERVER` | `<ip_or_fqdn>` | `version`, `association_type`, `iburst` |
+
+## 注意
+
+- 既存 IP に再度 `add` してもオプションは更新されない（早期 return する）。オプション変更は一度 `del` してから再 `add` する。
+- chrony 再起動が伴うため、SSH や BGP 等が NTP に依存している場合は短時間のタイムスタンプ揺らぎがありうる。
+
+## 引用元
+
+[^1]: `config ntp` グループ定義は `config/main.py` L8968-L9037。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8968>
+
+## 関連ページ
+- [YANG: sonic-ntp](../yang/sonic-ntp.md)

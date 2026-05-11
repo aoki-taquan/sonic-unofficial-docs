@@ -1,0 +1,88 @@
+---
+title: config ssh サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db:
+    - SSH_SERVER
+  cli:
+    - config ssh
+  yang: []
+---
+
+# config ssh サブコマンド
+
+## 概要
+
+`config ssh` は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の `SSH_SERVER|POLICIES` に書き込む CLI グループ[^1]。実 sshd への反映は `hostcfgd` 系の設定再生成パスを通じて行われる。
+
+## コマンド一覧
+
+| コマンド | 用途 |
+|---------|------|
+| `config ssh inactivity-timeout <timeout>` | 無操作タイムアウト（分）を設定 |
+| `config ssh max-sessions <max-sessions>` | 最大同時セッション数を設定 |
+
+## 各コマンドの詳細
+
+### `config ssh inactivity-timeout <timeout>`
+
+**用法**:
+
+```
+config ssh inactivity-timeout <timeout>
+```
+
+**引数**:
+
+- `<timeout>` ... `0` 〜 `35000` の整数。`0` で無効化（`click.IntRange(0, 35000)`）
+
+**動作**:
+CONFIG_DB の `SSH_SERVER|POLICIES` テーブルに `inactivity_timeout` フィールドを `mod_entry` で書き込む[^2]。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L9979-L9988 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @ssh.command('inactivity-timeout')
+  @click.argument('inactivity_timeout', type=click.IntRange(0, 35000))
+  def inactivity_timeout_ssh(inactivity_timeout):
+      config_db.mod_entry("SSH_SERVER", 'POLICIES',
+                          {'inactivity_timeout': inactivity_timeout})
+-->
+
+### `config ssh max-sessions <max-sessions>`
+
+**用法**:
+
+```
+config ssh max-sessions <max-sessions>
+```
+
+**引数**:
+
+- `<max-sessions>` ... `0` 〜 `100` の整数（`click.IntRange(0, 100)`）
+
+**動作**:
+CONFIG_DB の `SSH_SERVER|POLICIES` テーブルに `max_sessions` フィールドを書き込む。
+
+## 関連する CONFIG_DB
+
+| テーブル | キー | フィールド |
+|----------|------|------------|
+| `SSH_SERVER` | `POLICIES` | `inactivity_timeout`, `max_sessions` |
+
+## 注意
+
+- 反映には sshd 再ロードが必要。SONiC では hostcfgd が CONFIG_DB の変更を監視して `/etc/ssh/sshd_config` を再生成する。
+- 同名の `config serial_console inactivity-timeout` という別ファミリがあり、こちらは `SERIAL_CONSOLE|POLICIES` テーブルへ書く。
+
+## 引用元
+
+[^1]: `config ssh` グループ定義は `config/main.py` L9970-L10000。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9970>
+
+[^2]: 書き込みは `ConfigDBConnector().mod_entry("SSH_SERVER", "POLICIES", ...)` で行う。
