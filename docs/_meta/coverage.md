@@ -20,22 +20,22 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **835** ページ。
+全 **847** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 597 |
+| code-verified | 598 |
 | discrepancy-found | 46 |
 | issue-confirmed | 0 |
-| hld-only | 0 |
-| meta | 182 |
-| stub | 10 |
+| hld-only | 7 |
+| meta | 187 |
+| stub | 9 |
 
 ## area 別マトリクス
 
 | area | code-verified | discrepancy-found | issue-confirmed | hld-only | meta | stub | 合計 |
 |------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-| `_meta` | 0 | 0 | 0 | 0 | 2 | 0 | 2 |
+| `_meta` | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
 | `_root` | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
 | `acl-qos` | 29 | 2 | 0 | 0 | 0 | 1 | 32 |
 | `architecture` | 33 | 8 | 0 | 0 | 0 | 1 | 42 |
@@ -45,7 +45,7 @@ last_verified: 2026-05-11
 | `management` | 35 | 8 | 0 | 0 | 0 | 1 | 44 |
 | `overlay` | 8 | 1 | 0 | 0 | 0 | 1 | 10 |
 | `platform` | 36 | 7 | 0 | 0 | 0 | 1 | 44 |
-| `reference` | 324 | 0 | 0 | 0 | 5 | 1 | 330 |
+| `reference` | 325 | 0 | 0 | 7 | 9 | 0 | 341 |
 | `routing` | 45 | 6 | 0 | 0 | 0 | 1 | 52 |
 | `switching` | 15 | 4 | 0 | 0 | 0 | 1 | 20 |
 | `system` | 61 | 9 | 0 | 0 | 1 | 1 | 72 |
