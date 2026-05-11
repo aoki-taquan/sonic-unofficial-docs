@@ -16847,6 +16847,8 @@
       
         
       
+        
+      
     
     
     
@@ -21238,6 +21240,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/sai-attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    頻出 SAI 属性早見表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21260,7 +21290,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21282,14 +21312,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21453,7 +21483,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_9" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21475,14 +21505,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_9" id="__nav_14_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23170,6 +23200,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#referenceindexmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reference/index.md との分担
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23240,13 +23281,21 @@
 
 <h1 id="_1">リファレンス横断索引<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>この章は、<code>docs/reference/</code> 配下に集めた CLI / CONFIG_DB / YANG の辞書ページと、Phase B で新設された機能章 (<code>docs/topics/</code>) との間を行き来するための索引である。機能章は読み物として運用導線を提供し、reference は辞書として「テーブル名」「コマンド名」「モジュール名」から逆引きできる。両者は別物だが、本来は両方向にリンクされていることが望ましい。</p>
-<p><code>docs/reference/</code> 配下の現状は以下の通り (2026-05-10 時点)。</p>
+<p><code>docs/reference/</code> 配下の現状は以下の通り (2026-05-11 時点)。最新の機械集計は <a href="../../reference/#coverage">reference/index.md のカバー率表</a> を参照する (本ページの数字は読み物中の参考値)。</p>
 <ul>
-<li>CLI ページ: 48 件 (<code>config-*</code> / <code>show-*</code> / <code>debug-*</code> / <code>clear</code> / <code>reboot-fast-warm</code> / <code>sonic-*</code> ツール)</li>
-<li>CONFIG_DB ページ: 76 件 (table family ごと)</li>
-<li>YANG ページ: 39 件 (<code>sonic-*</code> モジュールごと)</li>
+<li>CLI ページ: 72 件 (<code>config-*</code> / <code>show-*</code> / <code>debug-*</code> / <code>clear</code> / <code>reboot-fast-warm</code> / <code>sonic-*</code> ツール)</li>
+<li>CONFIG_DB ページ: 121 件 (table family ごと)</li>
+<li>YANG ページ: 84 件 (<code>sonic-*</code> モジュールごと)</li>
+<li>Runbooks: 45 件 (症状逆引き)</li>
+<li>Verification: 1 件 (<code>discrepancy-index</code>)</li>
 </ul>
 <p>この章では、これらを「機能章のどこから引かれるか」「逆に辞書からどの章へ戻るか」の対応表で並べ直す。既存 reference ページの本文と frontmatter は変更しない。</p>
+<h2 id="referenceindexmd">reference/index.md との分担<a class="headerlink" href="#referenceindexmd" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>早見リンク集 (機能 → CLI / CONFIG_DB / YANG / Runbook の主要ページ)</strong> は <a href="../../reference/#quickref">reference/index.md</a> が canonical。</li>
+<li><strong>章番号別の詳細表 (Phase B topics 章のどこから何が引かれるか)</strong> は本章の <a href="cli-index/">cli-index</a> / <a href="config-db-index/">config-db-index</a> / <a href="yang-index/">yang-index</a> が canonical。</li>
+<li>統計 (カバー率 / verification 内訳) は reference/index.md が canonical。本章は数値を引用するのみ。</li>
+</ul>
 <h2 id="_2">想定読み手の質問<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI / CONFIG_DB / YANG の辞書ページは機能章からどう探すか。</li>
