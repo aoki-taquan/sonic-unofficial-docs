@@ -286,10 +286,3 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
-
-<!-- topics-back-ref -->
-## 関連 Topics
-
-- [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)
-
-<!-- /topics-back-ref -->
