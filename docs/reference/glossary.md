@@ -22,6 +22,27 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ## A
 
+### AAA {#term-aaa}
+
+- **略称**: AAA (Authentication, Authorization, Accounting)
+- **日本語訳**: AAA
+- **説明**: SONiC の管理プレーン認証認可機能。CONFIG_DB の `AAA` / `TACPLUS` / `RADIUS` テーブルを `hostcfgd` が購読し、`/etc/pam.d/` や `/etc/nsswitch.conf` を生成する。
+- **関連**: [hostcfgd](#term-hostcfgd)
+
+### ACL {#term-acl}
+
+- **略称**: ACL (Access Control List)
+- **日本語訳**: アクセス制御リスト
+- **説明**: パケット分類・許可/拒否・ミラー/カウンタ等を行う機能。SONiC では `aclorch` が CONFIG_DB の `ACL_TABLE` / `ACL_RULE` を SAI ACL に変換する。
+- **関連**: [ACL/CoPP/Mirror トピック](../topics/07-acl-copp-mirror/index.md)
+
+### AF_XDP {#term-af-xdp}
+
+- **略称**: AF_XDP (Address Family eXpress Data Path)
+- **日本語訳**: AF_XDP
+- **説明**: Linux カーネルの XDP を用いた高速パケットソケット。SONiC では一部の DPU / vs プラットフォームで NPU バイパス用途に利用される。
+- **関連**: [DPDK](#term-dpdk)
+
 ### APPL_DB {#term-appl_db}
 
 - **略称**: APPL_DB
@@ -81,6 +102,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ## C
 
+### Cold Reboot {#term-cold-reboot}
+
+- **略称**: Cold Reboot
+- **日本語訳**: コールドリブート
+- **説明**: 通常の OS 再起動 (`reboot`)。ASIC を含むハードウェア全体が初期化されるためトラフィック断が最も大きい。`fast-reboot` / `warm-reboot` と対比される。
+- **関連**: [Fast Reboot](#term-fast-reboot)、[Warm Reboot](#term-warm-reboot)
+
 ### CONFIG_DB {#term-config_db}
 
 - **略称**: CONFIG_DB
@@ -126,6 +154,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: 重要リソース監視
 - **説明**: SAI オブジェクト数（ACL エントリ数、FDB 数、ルート数等）の上限と利用率を監視する機能。`crmorch` が担当。
 
+### ConsumerStateTable {#term-consumerstatetable}
+
+- **略称**: ConsumerStateTable
+- **日本語訳**: コンシューマ状態テーブル
+- **説明**: `sonic-swss-common` が提供する Redis 上のキー値ストリームを消費する C++ クラス。orchagent や `*mgrd` が APPL_DB / CONFIG_DB の変更通知を購読する基盤。対となる ProducerStateTable と組で使う。
+- **関連**: [ProducerStateTable](#term-producerstatetable)、[sonic-swss-common](#term-sonic-swss-common)
+
 ## D
 
 ### DASH {#term-dash}
@@ -147,6 +182,19 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: データ処理ユニット
 - **説明**: SmartSwitch の各ライン上に搭載される SoC。SONiC は NPU 側と DPU 側でそれぞれインスタンスを動かす。
 - **関連**: [SmartSwitch](#smartswitch)
+
+### DPB {#term-dpb}
+
+- **略称**: DPB (Dynamic Port Breakout)
+- **日本語訳**: 動的ポート分割
+- **説明**: 1 物理ポートを複数論理ポート (例: 100G×1 → 25G×4) に動的に再構成する機能。`portmgrd` / SAI Port API で実装され、CLI `config interface breakout` で操作する。
+- **関連**: [portmgrd](#term-portmgrd)、[port_config.ini](#term-port-config-ini)
+
+### DPDK {#term-dpdk}
+
+- **略称**: DPDK (Data Plane Development Kit)
+- **日本語訳**: DPDK
+- **説明**: ユーザ空間で動作する高速パケット処理ライブラリ。SONiC では `sonic-pmd` 系プラットフォームや一部 DPU 実装で利用され、syncd / SAI 実装の下回りで使われることがある。
 
 ## E
 
@@ -171,7 +219,21 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: BGP EVPN (RFC 7432) を用いた L2/L3 オーバーレイ制御プレーン。SONiC では FRR `bgpd` で実装。
 - **関連**: [VXLAN EVPN VNET トピック](../topics/03-vxlan-evpn/index.md)
 
+### EVPN-MH {#term-evpn-mh}
+
+- **略称**: EVPN-MH (EVPN Multi-Homing)
+- **日本語訳**: EVPN マルチホーミング
+- **説明**: 1 つの CE を複数 PE に冗長接続する EVPN 拡張 (RFC 7432 Section 5)。Ethernet Segment (ES) / DF election / split-horizon label 等を用い、MCLAG の代替手段として FRR で実装される。
+- **関連**: [EVPN](#term-evpn)、[MCLAG](#term-mclag)
+
 ## F
+
+### Fast Reboot {#term-fast-reboot}
+
+- **略称**: Fast Reboot
+- **日本語訳**: ファストリブート
+- **説明**: SONiC のホストプロセスとカーネルのみ再起動し、データプレーン (ASIC) を温存する再起動方式。`fast-reboot` スクリプトでトリガし、`kexec` を用いて秒オーダで制御プレーンを復旧する。
+- **関連**: [Warm Reboot](#term-warm-reboot)、[Cold Reboot](#term-cold-reboot)
 
 ### FDB {#term-fdb}
 
@@ -184,6 +246,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: fdbsyncd
 - **日本語訳**: FDB 同期デーモン
 - **説明**: Linux カーネルブリッジの FDB エントリと APPL_DB の `FDB_TABLE` を同期する SwSS コンポーネント。
+
+### FLEX_COUNTER_DB {#term-flex_counter_db}
+
+- **略称**: FLEX_COUNTER_DB
+- **日本語訳**: FlexCounter 設定 DB
+- **説明**: Redis DB ID 5。`FLEX_COUNTER_GROUP_TABLE` / `FLEX_COUNTER_TABLE` を保持し、`syncd` 内 FlexCounter にポーリング対象とインターバルを指示する制御用 DB。
+- **関連**: [FlexCounter](#term-flexcounter)、[COUNTERS_DB](#term-counters_db)
 
 ### FlexCounter {#term-flexcounter}
 
@@ -225,6 +294,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: 汎用設定更新
 - **説明**: JSON Patch (RFC 6902) を CONFIG_DB に適用する仕組み。`sonic-utilities` の `config apply-patch` で利用。
 
+### gNOI {#term-gnoi}
+
+- **略称**: gNOI (gRPC Network Operations Interface)
+- **日本語訳**: gNOI
+- **説明**: gRPC ベースの運用操作プロトコル (File / OS / FactoryReset / Cert 等の RPC)。SONiC では `sonic-gnmi` コンテナの一部として実装され、`gnoi.system.Reboot` 等が提供される。
+- **関連**: [gNMI](#term-gnmi)
+
+### Graceful Restart {#term-graceful-restart}
+
+- **略称**: GR (Graceful Restart)
+- **日本語訳**: グレースフルリスタート
+- **説明**: ルーティングプロセス再起動時に隣接にルートを保持してもらう機能 (RFC 4724 / 4781 等)。SONiC では FRR の GR と Warm Reboot の連携でデータ転送無停止を実現。
+- **関連**: [Warm Reboot](#term-warm-reboot)、[FRR](#term-frr)
+
 ## H
 
 ### HLD {#term-hld}
@@ -239,7 +322,21 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: ホスト設定デーモン
 - **説明**: CONFIG_DB の `AAA` / `TACPLUS` / `NTP` / `FEATURE` 等を購読し、Linux ホスト側の設定ファイル (`/etc/`) と `systemctl` を操作するデーモン。
 
+### HwSku {#term-hwsku}
+
+- **略称**: HwSku (Hardware SKU)
+- **日本語訳**: ハードウェア SKU
+- **説明**: 同一プラットフォーム上のポートマップ・速度プロファイルのバリアントを示す識別子。`/usr/share/sonic/device/<platform>/<hwsku>/` 配下に `port_config.ini` / `hwsku.json` / SAI プロファイル等が置かれる。
+- **関連**: [port_config.ini](#term-port-config-ini)
+
 ## I
+
+### INT {#term-int}
+
+- **略称**: INT (In-band Network Telemetry)
+- **日本語訳**: インバンドネットワークテレメトリ
+- **説明**: データパケットにテレメトリメタデータを埋め込む計測手法 (P4.org 仕様)。SONiC では TAM / DASH / PINS の一部で扱われる。
+- **関連**: [TAM](#term-tam)、[PINS](#term-pins)
 
 ### intfmgrd {#term-intfmgrd}
 
@@ -253,7 +350,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: インターフェース同期
 - **説明**: Netlink からインターフェース状態を読み APPL_DB に反映する SwSS デーモン（プロジェクトにより役割が `portmgrd` 等に分割）。
 
+### IPinIP {#term-ipinip}
+
+- **略称**: IPinIP (IP-in-IP encapsulation)
+- **日本語訳**: IPinIP トンネル
+- **説明**: IP パケットを別の IP ヘッダでカプセル化する手法 (RFC 2003)。SONiC では Dual-ToR の active-standby 構成で standby ToR から active ToR にトラフィックを流すために使われる。
+- **関連**: [MUX](#term-mux)、[linkmgrd](#term-linkmgrd)
+
 ## L
+
+### LOGLEVEL_DB {#term-loglevel_db}
+
+- **略称**: LOGLEVEL_DB
+- **日本語訳**: ログレベル DB
+- **説明**: Redis DB ID 3。`*orch` / `*mgrd` 等の SwSS コンポーネントのログレベルを動的制御するための DB。近年は CONFIG_DB の `LOGGER` テーブルに移行が進んでいる。
+- **関連**: [Redis](#term-redis)
+
 
 ### LACP {#term-lacp}
 
@@ -282,6 +394,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: 隣接装置発見プロトコル (IEEE 802.1AB)。SONiC は `lldpd` を `docker-lldp` で動かす。
 
 ## M
+
+### MPLS {#term-mpls}
+
+- **略称**: MPLS (Multiprotocol Label Switching)
+- **日本語訳**: MPLS
+- **説明**: ラベルスイッチング転送方式 (RFC 3031)。SONiC では FRR の MPLS / Segment Routing 機能経由で `LABEL_ROUTE_TABLE` (APPL_DB) を使い `RouteOrch` が SAI MPLS API に橋渡しする。
+- **関連**: [SRv6](#term-srv6)、[fpmsyncd](#term-fpmsyncd)
 
 ### MCLAG {#term-mclag}
 
@@ -327,6 +446,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: Netlink
 - **説明**: Linux カーネルとユーザ空間間の通信ソケット。SONiC では FRR / `*syncd` が広く利用。
 
+### Next Hop Group {#term-next-hop-group}
+
+- **略称**: Next Hop Group / NHG
+- **日本語訳**: ネクストホップグループ
+- **説明**: ECMP / Weighted ECMP 用に複数 next hop を束ねた SAI オブジェクト (`SAI_OBJECT_TYPE_NEXT_HOP_GROUP`)。`RouteOrch` / `NhgOrch` が生成し、route エントリから参照される。
+- **関連**: [ECMP](#term-ecmp)
+
+### NDP {#term-ndp}
+
+- **略称**: NDP (Neighbor Discovery Protocol)
+- **日本語訳**: 近隣探索プロトコル
+- **説明**: IPv6 のリンクローカル隣接探索プロトコル (RFC 4861)。SONiC では Linux カーネルが処理し、`neighsyncd` 経由で APPL_DB の `NEIGH_TABLE` に反映される。
+- **関連**: [ARP](#term-arp)、[neighsyncd](#term-neighsyncd)
+
 ### NPU {#term-npu}
 
 - **略称**: NPU (Network Processing Unit)
@@ -368,6 +501,34 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: ポート同期デーモン
 - **説明**: `port_config.ini` / `platform.json` を読み込み、初期 PORT エントリを APPL_DB に登録する SwSS デーモン。
 
+### port_config.ini {#term-port-config-ini}
+
+- **略称**: port_config.ini
+- **日本語訳**: ポート設定 INI
+- **説明**: HwSku ディレクトリ配下に置かれるポートマップ定義ファイル。物理ポート名・lane 番号・速度・alias・index 等を記述し、起動時 `portsyncd` が読み込んで PORT エントリを生成する。近年は `platform.json` / `hwsku.json` への移行が進行中。
+- **関連**: [HwSku](#term-hwsku)、[portsyncd](#term-portsyncd)
+
+### PINS {#term-pins}
+
+- **略称**: PINS (P4 Integrated Network Stack)
+- **日本語訳**: PINS
+- **説明**: P4-Runtime と gNMI/gNOI を用いて SONiC を制御する Google 主導の SDN スタック。`p4rt` コンテナ・`P4RT_TABLE` を介して既存 SwSS パイプラインと併存する。
+- **関連**: [P4-Runtime](#term-p4-runtime)、[gNMI](#term-gnmi)
+
+### P4-Runtime {#term-p4-runtime}
+
+- **略称**: P4-Runtime
+- **日本語訳**: P4-Runtime
+- **説明**: P4 パイプラインを gRPC で制御するコントロールプレーン API (p4.org)。SONiC では PINS が `p4rt` サーバを実装し、`P4RT_TABLE` 経由で `orchagent` と連携する。
+- **関連**: [PINS](#term-pins)
+
+### ProducerStateTable {#term-producerstatetable}
+
+- **略称**: ProducerStateTable
+- **日本語訳**: プロデューサ状態テーブル
+- **説明**: `sonic-swss-common` が提供する Redis 上のキー値ストリームに書き込む C++ クラス。`*mgrd` / `fpmsyncd` 等が APPL_DB に通知する基盤。対となる ConsumerStateTable と組で使う。
+- **関連**: [ConsumerStateTable](#term-consumerstatetable)、[sonic-swss-common](#term-sonic-swss-common)
+
 ### PortChannel {#term-portchannel}
 
 - **略称**: PortChannel
@@ -383,6 +544,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: `TC_TO_QUEUE_MAP` / `DSCP_TO_TC_MAP` / `SCHEDULER` 等で構成される SONiC のキューイング・スケジューリング・マーキング機構。
 
 ## R
+
+### RoCE {#term-roce}
+
+- **略称**: RoCE (RDMA over Converged Ethernet)
+- **日本語訳**: RoCE
+- **説明**: イーサネット上で RDMA を実現するプロトコル (RoCEv2 は UDP/4791)。SONiC ではロスレス転送のため PFC + ECN + 動的バッファプロファイルを組み合わせて運用される。
+- **関連**: [PFC](#term-pfc)、[QoS](#term-qos)
 
 ### Redis {#term-redis}
 
@@ -403,6 +571,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: APPL_DB 上のルート受け皿。`fpmsyncd` が書き、`RouteOrch` が購読して SAI Route Entry に変換する。
 
 ## S
+
+### SNMP {#term-snmp}
+
+- **略称**: SNMP (Simple Network Management Protocol)
+- **日本語訳**: SNMP
+- **説明**: 旧来の運用監視プロトコル (RFC 3416)。SONiC では `docker-snmp` 内で Net-SNMP + `sonic_ax_impl` AgentX サブエージェントが Redis から MIB を提供する。
+- **関連**: [Tech Support](#term-tech-support)
+
+### SRv6 {#term-srv6}
+
+- **略称**: SRv6 (Segment Routing over IPv6)
+- **日本語訳**: SRv6
+- **説明**: IPv6 拡張ヘッダ (SRH) でセグメントリストを運ぶ Segment Routing 方式 (RFC 8754 等)。SONiC では FRR と SwSS の `SRV6_*` テーブル群 + `Srv6Orch` で実装される。
+- **関連**: [MPLS](#term-mpls)
 
 ### SAI {#term-sai}
 
@@ -454,6 +636,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: `config` / `show` / `sonic-installer` 等の Python CLI が置かれるリポ。
 - **関連**: [CLI Reference](./cli/index.md)
 
+### saiserver {#term-saiserver}
+
+- **略称**: saiserver
+- **日本語訳**: SAI サーバ
+- **説明**: SAI 呼び出しを Thrift RPC で外部に公開するテスト用バイナリ (`sonic-sairedis/saiserver`)。`PTF` ベースの SAI 単体試験で利用される。`docker-saiserver` で配布。
+- **関連**: [SAI](#term-sai)、[VS](#term-vs)
+
 ### SmartSwitch {#term-smartswitch}
 
 - **略称**: SmartSwitch
@@ -480,6 +669,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ## T
 
+### TAM {#term-tam}
+
+- **略称**: TAM (Telemetry and Monitoring)
+- **日本語訳**: TAM
+- **説明**: SAI TAM API (`SAI_OBJECT_TYPE_TAM*`) を用いた帯域内テレメトリ機能群。INT / IFA / Drop monitor / Postcard 等を扱う。SONiC では `TAM_*` CONFIG_DB テーブルと TAM オーチが提供される。
+- **関連**: [INT](#term-int)
+
+### Tech Support {#term-tech-support}
+
+- **略称**: Tech Support / `show techsupport`
+- **日本語訳**: テックサポートダンプ
+- **説明**: 障害解析用にログ・設定・状態を一括収集するアーカイブ機能。`generate_dump` スクリプトで `/var/dump/sonic_dump_*.tar.gz` を生成し、Redis 全 DB ・syslog ・FRR `vtysh` 出力等を含める。
+- **関連**: [sonic-utilities](#term-sonic-utilities)
+
 ### teamd / teamsyncd / teammgrd {#term-teamd-teamsyncd-teammgrd}
 
 - **略称**: teamd / teamsyncd / teammgrd
@@ -493,6 +696,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: CONFIG_DB の `TUNNEL` / `MUX_TUNNEL` 等を購読し APPL_DB に変換する SwSS デーモン。
 
 ## V
+
+### VOQ {#term-voq}
+
+- **略称**: VOQ (Virtual Output Queue)
+- **日本語訳**: 仮想出力キュー
+- **説明**: 各入力ポートが出力ポートごとに独立キューを持つスイッチング方式。Head-of-Line ブロッキングを回避する。SONiC では分散シャーシ (VoQ Chassis) で `CHASSIS_APP_DB` / global system port 管理と組で扱われる。
+- **関連**: [BGP](#term-bgp)
+
+### VS {#term-vs}
+
+- **略称**: VS (Virtual Switch)
+- **日本語訳**: 仮想スイッチ
+- **説明**: SAI VS バックエンドを用いた SONiC のソフトウェアスイッチ実装 (`docker-sonic-vs`)。CI 上の機能試験・KVM ベースの開発環境 (`sonic-mgmt-vs`) で利用される。
+- **関連**: [saiserver](#term-saiserver)、[sonic-mgmt](#term-sonic-mgmt)
 
 ### VLAN {#term-vlan}
 
@@ -539,6 +756,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: CONFIG_DB の `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` 等を購読し APPL_DB に流し、Linux 側 VXLAN デバイスも作成。
 
 ## W
+
+### Warm Reboot {#term-warm-reboot}
+
+- **略称**: Warm Reboot
+- **日本語訳**: ウォームリブート
+- **説明**: SONiC のホスト OS / コンテナを再起動しつつ ASIC のデータプレーン状態を温存する手法。FRR Graceful Restart や `syncd` の WARM_BOOT モードを併用し、転送無瞬断 (sub-second) を目標とする。
+- **関連**: [Fast Reboot](#term-fast-reboot)、[Cold Reboot](#term-cold-reboot)、[Graceful Restart](#term-graceful-restart)
 
 ### WRED {#term-wred}
 
@@ -598,6 +822,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 <!-- glossary-xref -->
 
 本ページの各用語が、ドキュメント内のどのページで言及されているかをまとめた逆引き索引です（言及回数の多い順に最大 5 ページ）。`gen_glossary_xref.py` により自動生成されます。
+
+### [AAA](#term-aaa)
+
+- [sonic-system-aaa YANG](yang/sonic-system-aaa.md) (21)
+- [運用](../topics/15-security-aaa/operations.md) (19)
+- [config aaa / tacacs / radius サブコマンド](cli/config-aaa.md) (15)
+- [概念](../topics/15-security-aaa/concept.md) (14)
+- [設定](../topics/15-security-aaa/setup.md) (14)
+
+### [ACL](#term-acl)
+
+- [概念](../topics/07-acl-copp-mirror/concept.md) (65)
+- [ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）](../acl-qos/acl-support-in-sonic.md) (60)
+- [ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）](../acl-qos/acl-flex-counters-support.md) (58)
+- [内部実装](../topics/07-acl-copp-mirror/internals.md) (57)
+- [頻出 SAI 属性早見表](sai-attributes.md) (54)
 
 ### [APPL_DB](#term-appl_db)
 
@@ -700,6 +940,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [概念](../topics/09-telemetry-snmp/concept.md) (14)
 - [sonic-crm YANG](yang/sonic-crm.md) (11)
 
+### [ConsumerStateTable](#term-consumerstatetable)
+
+- [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (11)
+- [ProducerStateTable の view switching（warm reboot 用の差分適用）](../switching/view-switching-in-producerstatetable.md) (4)
+- [SWSS docker warm restart（state restore / consistency / sync up）](../system/sonic-swss-docker-warm-restart.md) (4)
+- [設定データフロー](../topics/01-overview/architecture.md) (3)
+- [アーキテクチャ](../topics/20-swss-sai-redis/architecture.md) (3)
+
 ### [DASH](#term-dash)
 
 - [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md) (69)
@@ -723,6 +971,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (69)
 - [SmartSwitch HA - DPU-Scope-DPU-Driven 構成](../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md) (67)
 - [DPU の IP 割当・gNMI 連携・KVM 検証](../topics/13-dash-smartswitch/setup.md) (66)
+
+### [DPB](#term-dpb)
+
+- [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (5)
+- [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (2)
+- [Port Profile Init（SAI bulk port API による fast-boot 高速化）](../architecture/port-profile-init-hld.md) (1)
+- [Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）](../architecture/sonic-policy-based-hashing.md) (1)
+- [1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）](../platform/1-6t-support-in-sonic.md) (1)
+
+### [DPDK](#term-dpdk)
+
+- [DASH SONiC KVM（BMv2 ベース仮想 DPU）](../overlay/dash-sonic-kvm.md) (2)
 
 ### [ECMP](#term-ecmp)
 
@@ -748,6 +1008,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Overlay 設定](../topics/03-vxlan-evpn/setup.md) (20)
 - [Overlay 運用](../topics/03-vxlan-evpn/operations.md) (19)
 
+### [EVPN-MH](#term-evpn-mh)
+
+- [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../routing/evpn-vxlan-multihoming.md) (9)
+- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (1)
+- [Overlay 発展トピック](../topics/03-vxlan-evpn/advanced.md) (1)
+- [内部実装](../topics/06-l2-vlan-lag/internals.md) (1)
+
+### [Fast Reboot](#term-fast-reboot)
+
+- [Warm-Reboot / Fast-Reboot 関連](../categories/reboot.md) (2)
+- [Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）](../system/sonic-express-reboot-hld-spec.md) (1)
+
 ### [FDB](#term-fdb)
 
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (37)
@@ -763,6 +1035,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [L2 運用確認](../topics/06-l2-vlan-lag/operations.md) (2)
 - [内部実装](../topics/20-swss-sai-redis/internals.md) (2)
 - [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../routing/evpn-vxlan-multihoming.md) (1)
+
+### [FLEX_COUNTER_DB](#term-flex_counter_db)
+
+- [flexcounter の queue/PG map 生成と watermark 有効化の整合](../acl-qos/align-watermark-flow-with-port-configuration-hld.md) (4)
+- [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](../platform/fec-flr-support-in-sonic.md) (4)
+- [counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン](../acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md) (3)
+- [Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）](../architecture/sonic-trap-flow-counter-design.md) (2)
+- [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](../internals/support-multiple-user-defined-redis-database-instances.md) (2)
 
 ### [FlexCounter](#term-flexcounter)
 
@@ -812,6 +1092,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (4)
 - [SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）](../management/sonic-gnmi-server-interface-design.md) (4)
 
+### [gNOI](#term-gnoi)
+
+- [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (17)
+- [gNOI / gNSI](../topics/10-gnmi-openconfig/gnoi-gnsi.md) (17)
+- [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (16)
+- [Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）](../platform/smartswitch-dpu-graceful-shutdown.md) (15)
+- [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (15)
+
+### [Graceful Restart](#term-graceful-restart)
+
+- [Reboot 運用と障害調査](../topics/11-reboot/operations.md) (5)
+- [BGP Graceful Restart のネゴシエーションに失敗する](runbooks/bgp-graceful-restart-failure.md) (3)
+- [Reboot / Upgrade の発展トピック](../topics/11-reboot/advanced.md) (2)
+- [Reboot family の選び方](../topics/11-reboot/concept.md) (2)
+- [reboot / fast-reboot / warm-reboot コマンド](cli/reboot-fast-warm.md) (1)
+
 ### [HLD](#term-hld)
 
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (53)
@@ -828,6 +1124,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [運用入口](../topics/01-overview/operations.md) (9)
 - [パスワード強化（password hardening / aging / complexity / history）](../architecture/pw-hardening-design.md) (8)
 
+### [HwSku](#term-hwsku)
+
+- [設定](../topics/21-lab-vs-developer/setup.md) (2)
+
+### [INT](#term-int)
+
+- [sonic-vlan YANG](yang/sonic-vlan.md) (44)
+- [sonic-interface YANG](yang/sonic-interface.md) (39)
+- [sonic-vlan-sub-interface YANG](yang/sonic-vlan-sub-interface.md) (36)
+- [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (35)
+- [sonic-portchannel YANG](yang/sonic-portchannel.md) (30)
+
 ### [intfmgrd](#term-intfmgrd)
 
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (8)
@@ -840,6 +1148,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [VOQ_INBAND_INTERFACE テーブル](config-db/voq-inband-interface.md) (1)
 - [SWSS docker warm restart（state restore / consistency / sync up）](../system/sonic-swss-docker-warm-restart.md) (1)
+
+### [IPinIP](#term-ipinip)
+
+- [Dual-ToR の考え方](../topics/05-dual-tor/concept.md) (9)
+- [VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）](../platform/subnet-decapsulation-with-sonic.md) (8)
+- [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (5)
+- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (5)
+- [プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）](../routing/prefix-based-mux-neighbors.md) (5)
+
+### [LOGLEVEL_DB](#term-loglevel_db)
+
+- [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (22)
+- [Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）](../internals/support-redis-databases-in-multiple-namespaces.md) (2)
+- [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](../internals/support-multiple-user-defined-redis-database-instances.md) (1)
+- [システム](../system/index.md) (1)
+- [概要](../topics/20-swss-sai-redis/concept.md) (1)
 
 ### [LACP](#term-lacp)
 
@@ -872,6 +1196,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (10)
 - [show lldp サブコマンド](cli/show-lldp.md) (6)
 - [LLDP 隣接が頻繁に up/down する](runbooks/lldp-neighbor-flapping.md) (6)
+
+### [MPLS](#term-mpls)
+
+- [概念](../topics/17-srv6-mpls/concept.md) (51)
+- [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (40)
+- [SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）](../routing/mpls-for-sonic-high-level-design-document.md) (37)
+- [内部実装](../topics/17-srv6-mpls/internals.md) (25)
+- [設定](../topics/17-srv6-mpls/setup.md) (23)
 
 ### [MCLAG](#term-mclag)
 
@@ -924,6 +1256,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [BGP / EVPN 関連](../categories/bgp-evpn.md) (1)
 - [アーキテクチャ](../topics/02-bgp/architecture.md) (1)
 
+### [Next Hop Group](#term-next-hop-group)
+
+- [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (5)
+- [P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）](../internals/p4-orchagent.md) (1)
+- [発展トピックへの橋渡し](../topics/04-vrf-ecmp/advanced.md) (1)
+
+### [NDP](#term-ndp)
+
+- [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../routing/sonic-usid.md) (20)
+- [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](../overlay/vnet-local-endpoint-forwarding.md) (8)
+- [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (3)
+- [clear (sonic-clear) コマンド](cli/clear.md) (3)
+- [Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）](../system/dataplane-telemetry-in-sonic.md) (2)
+
 ### [NPU](#term-npu)
 
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (43)
@@ -972,6 +1318,30 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）](../platform/recirculation-port-support-on-voq-chassis.md) (5)
 - [概要](../topics/14-platform-port-optics/concept.md) (3)
 
+### [port_config.ini](#term-port-config-ini)
+
+- [port_config.ini パーサ統合（portconfig.py 一元化）](../architecture/sonic-port-configuration-refactor-design.md) (17)
+- [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../platform/sonic-port-naming-convention-change.md) (14)
+- [PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）](../system/platform-monitor-design-for-multi-asic-platforms.md) (8)
+- [VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）](../platform/recirculation-port-support-on-voq-chassis.md) (6)
+- [概要](../topics/14-platform-port-optics/concept.md) (4)
+
+### [PINS](#term-pins)
+
+- [設定](../topics/18-p4-pins/setup.md) (17)
+- [概念](../topics/18-p4-pins/concept.md) (15)
+- [発展トピック](../topics/18-p4-pins/advanced.md) (11)
+- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (8)
+- [PINS（P4 Integrated Network Stack / SDN 制御 SONiC）](../management/pins-hld.md) (7)
+
+### [ProducerStateTable](#term-producerstatetable)
+
+- [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (11)
+- [発展トピック](../topics/20-swss-sai-redis/advanced.md) (6)
+- [アーキテクチャ](../topics/20-swss-sai-redis/architecture.md) (6)
+- [ProducerStateTable の view switching（warm reboot 用の差分適用）](../switching/view-switching-in-producerstatetable.md) (5)
+- [概要](../topics/20-swss-sai-redis/concept.md) (5)
+
 ### [PortChannel](#term-portchannel)
 
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (32)
@@ -987,6 +1357,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (8)
 - [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (7)
 - [Dual-ToR の発展トピック](../topics/05-dual-tor/advanced.md) (7)
+
+### [RoCE](#term-roce)
+
+- [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (3)
+- [QoS / Buffer の設定](../topics/08-qos-buffer/setup.md) (3)
+- [ACL_RULE テーブル](config-db/acl-rule.md) (1)
+- [PFC で帯域が出ない / Buffer overflow](runbooks/pfc-bandwidth.md) (1)
+- [Reboot family の選び方](../topics/11-reboot/concept.md) (1)
 
 ### [Redis](#term-redis)
 
@@ -1011,6 +1389,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [内部実装](../topics/04-vrf-ecmp/internals.md) (10)
 - [内部実装](../topics/02-bgp/internals.md) (8)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (8)
+
+### [SNMP](#term-snmp)
+
+- [sonic-snmp YANG](yang/sonic-snmp.md) (67)
+- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (57)
+- [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) (41)
+- [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (32)
+- [MIB / SNMP 関連](../categories/mib-snmp.md) (26)
+
+### [SRv6](#term-srv6)
+
+- [概念](../topics/17-srv6-mpls/concept.md) (47)
+- [発展トピック](../topics/17-srv6-mpls/advanced.md) (32)
+- [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (28)
+- [SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）](../routing/srv6-sid-l3adj.md) (18)
+- [SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）](../routing/static-configuration-of-srv6-in-sonic-hld.md) (18)
 
 ### [SAI](#term-sai)
 
@@ -1108,6 +1502,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../platform/dump-on-sai-failure.md) (25)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (23)
 
+### [TAM](#term-tam)
+
+- [Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）](../routing/path-tracing-midpoint.md) (3)
+- [内部実装](../topics/17-srv6-mpls/internals.md) (3)
+- [運用](../topics/17-srv6-mpls/operations.md) (2)
+- [PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）](../acl-qos/pfc-historical-statistics.md) (1)
+- [頻出 SAI 属性早見表](sai-attributes.md) (1)
+
 ### [tunnelmgrd](#term-tunnelmgrd)
 
 - [TUNNEL テーブル](config-db/tunnel.md) (3)
@@ -1115,6 +1517,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [TUNNEL_DECAP_TABLE (APPL_DB)](config-db/tunnel-decap-table.md) (2)
 - [PEER_SWITCH テーブル](config-db/peer-switch.md) (1)
 - [sonic-tunnel YANG](yang/sonic-tunnel.md) (1)
+
+### [VOQ](#term-voq)
+
+- [概念](../topics/12-multi-asic-voq/concept.md) (37)
+- [発展トピック](../topics/12-multi-asic-voq/advanced.md) (25)
+- [VOQ カウンタ集約（chassis supervisor からの aggregate 表示）](../internals/aggregate-voq-counters-in-sonic.md) (23)
+- [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (18)
+- [内部実装](../topics/12-multi-asic-voq/internals.md) (17)
+
+### [VS](#term-vs)
+
+- [内部実装](../topics/21-lab-vs-developer/internals.md) (40)
+- [概念](../topics/21-lab-vs-developer/concept.md) (26)
+- [運用](../topics/21-lab-vs-developer/operations.md) (16)
+- [アーキテクチャ](../topics/21-lab-vs-developer/architecture.md) (14)
+- [設定](../topics/21-lab-vs-developer/setup.md) (14)
 
 ### [VLAN](#term-vlan)
 
@@ -1171,6 +1589,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (2)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (2)
 - [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (1)
+
+### [Warm Reboot](#term-warm-reboot)
+
+- [Warm-Reboot / Fast-Reboot 関連](../categories/reboot.md) (3)
+- [Warm path の内部構造](../topics/11-reboot/architecture.md) (3)
+- [変更履歴](../_meta/changelog.md) (2)
+- [システム](../system/index.md) (2)
+- [Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）](../system/sonic-express-reboot-hld-spec.md) (2)
 
 ### [WRED](#term-wred)
 
