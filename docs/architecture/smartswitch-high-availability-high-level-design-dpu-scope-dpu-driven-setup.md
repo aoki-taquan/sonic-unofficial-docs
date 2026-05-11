@@ -1,16 +1,18 @@
 ---
 title: SmartSwitch HA - DPU-Scope-DPU-Driven 構成
-description: "SmartSwitch HA - DPU-Scope-DPU-Driven 構成 — SmartSwitch の HA はもともと ENI-Scope-NPU-Driven（NPU 上の hamgrd が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた。"
+description: SmartSwitch HA - DPU-Scope-DPU-Driven 構成 — SmartSwitch の HA はもともと ENI-Scope-NPU-Driven（NPU
+  上の hamgrd が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
-  cli: []
+  cli:
+  - show bfd
   yang: []
 ---
 
