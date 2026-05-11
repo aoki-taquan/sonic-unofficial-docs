@@ -26,11 +26,55 @@ reboot 運用で重要なのは、実行前に peer と platform の前提を揃
 
 [Reboot-cause 履歴の STATE_DB / テレメトリ公開](../../system/reboot-cause-information-via-telemetry-agent.md) は、起動時に cause を判定し、STATE_DB と telemetry へ公開する流れを説明しています。
 
+```text
+admin@sonic:~$ show reboot-cause
+User issued 'warm-reboot' command [User: admin, Time: Mon May 10 11:00:01 UTC 2026]
+
+admin@sonic:~$ show reboot-cause history
+Name                 Cause       Time                            User    Comment
+-------------------  ----------  ------------------------------  ------  -------
+2026_05_10_11_00_01  warm-reboot Mon May 10 11:00:01 UTC 2026    admin   N/A
+2026_05_09_03_22_45  Kernel Panic Sun May  9 03:22:45 UTC 2026   N/A     N/A
+2026_05_08_19_10_00  Power Loss  Sat May  8 19:10:00 UTC 2026    N/A     N/A
+```
+
+`Kernel Panic` / `Watchdog` / `Power Loss` / `Hardware - reason` のいずれかが出ている場合は計画外で、`/host/reboot-cause/` 配下のテキストファイルと vmcore (kdump 有効時) を一次資料として保全します。
+
+```bash
+ls /host/reboot-cause/
+cat /host/reboot-cause/reboot-cause.txt
+cat /host/reboot-cause/previous-reboot-cause.json
+```
+
 ## LACP と peer 側の時間
 
 warm reboot では自装置だけでなく peer 側の待ち時間が結果を左右します。LAG peer が短い timeout で partner を落とすと、data plane を維持しても bundle が崩れます。[Warm-reboot 中の LACP retry count 拡張](../../switching/increasing-lacp-pdu-timeout-during-warm-reboot.md) は、LACP PDU の拡張により warm reboot 中の retry count を増やす設計です。
 
 BGP も同様に Graceful Restart と timer が前提です。warm reboot を有効化しても、peer が GR を許容しなければ L3 adjacency は維持されません。
+
+```text
+sw01# show bgp neighbors 10.0.0.1 graceful-restart
+BGP neighbor is 10.0.0.1
+  Local GR Mode : Helper*
+  Remote GR Mode: Restart
+  R bit: True
+  Configured Restart Time(sec): 240
+  Received Restart Time(sec): 240
+  ...
+```
+
+`Remote GR Mode` が `Disable` の peer は warm reboot 中に session を落とす可能性が高いので、対象から外すか peer 側設定を変えます。
+
+```text
+admin@sonic:~$ show warm_restart config
+name        enable    timer_name             timer_duration
+----------  --------  ---------------------  --------------
+swss        true                             -
+bgp         true      bgp_timer              180
+teamd       true      teamsyncd_timer         30
+```
+
+LACP の retry 拡張は teamd 側のオプション化されており、warm reboot 中だけ retry を増やします。同 HLD のシーケンス図と CONFIG_DB の `WARM_RESTART_TABLE` を併せて読みます。
 
 ## multi-ASIC warm reboot
 
@@ -43,6 +87,78 @@ multi-ASIC では、namespace ごとに service、DB、ASIC が分かれます�
 Warmboot Manager は、複数 component の shutdown orchestration と reconciliation を統一する設計です。4 phase の shutdown orchestration、component state、race condition の扱いを確認する入口は [Warmboot Manager](../../system/warmboot-manager-hld.md) です。
 
 SWSS docker warm restart は service lifecycle の代表例です。restore、pre/post validation、sync up、失敗時 fallback を順に見ます。仕様は [SWSS docker warm restart](../../system/sonic-swss-docker-warm-restart.md)、開発時の実装メモは [SWSS docker の Warm Restart 実装メモ](../../system/swss-docker-warm-restart-code-reference.md) に分かれています。
+
+### Warm reboot 実行ログの例
+
+```text
+admin@sonic:~$ sudo warm-reboot
+Starting warm-reboot...
+Stopping bgp service...
+Pre-shutdown BGP ... [OK]
+Saving config to /etc/sonic/config_db.json
+Backing up Redis to /host/warmboot/redis_db.json
+Stopping syncd service ... [OK]
+Stopping swss service ... [OK]
+SAI warm shutdown ... [OK]
+Rebooting...
+```
+
+起動後の reconciliation 完了は次で確認します。
+
+```text
+admin@sonic:~$ show warm_restart state
+name              restore_count  state
+----------------  -------------  ----------
+neighsyncd                    1  reconciled
+bgp                           1  reconciled
+teamsyncd                     1  reconciled
+fdbsyncd                      1  reconciled
+natsyncd                      1  reconciled
+```
+
+`reconciled` 以外（`restored`, `init`, `disabled`）の component が残る場合、その component の syslog を見ます。`reconciled` まで届かないと EOIU (End-of-Initial-Update) が出ず、後続の clean up が走らないため、route や neighbor の幽霊が残ることがあります。
+
+```text
+May 10 11:01:08 sw01 INFO swss#bgpcfgd: BGP reached reconciled state
+May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
+```
+
+## reboot 種別の使い分け早見表
+
+| 種別 | data plane | control plane | 想定停止時間 | 主用途 |
+|------|------------|---------------|--------------|--------|
+| `reboot` (cold) | 完全停止 | 完全停止 | 分単位 | image 更新、kernel 更新 |
+| `fast-reboot` | 完全停止 (短時間) | 完全停止 | 30s〜 | image 更新で warm 不可なとき |
+| `warm-reboot` | 維持 | 短時間停止 | 数秒 (data plane 影響なし) | minor update / patch |
+| `config reload -y` | 維持 | swss 系のみ再起動 | 数秒 | 設定全面適用 |
+| `systemctl restart bgp` | 維持 | 該当サービスのみ | サブ秒〜数秒 | サービス単位 |
+
+## 対応コマンド早見表
+
+| 症状 | コマンド | 補足 |
+|------|---------|------|
+| 突然 reboot した | `show reboot-cause history` | `/host/reboot-cause/` も保全 |
+| warm-reboot 後 BGP が落ちた | `show bgp neighbors X graceful-restart` | peer 側 GR 設定 |
+| warm-reboot 後 LAG が崩れた | `show interfaces portchannel` + teamd log | LACP retry 拡張 / peer timeout |
+| reconciliation が終わらない | `show warm_restart state` | 該当 component の syslog |
+| ASIC namespace だけ再起動したい | `warm-reboot -m <namespace>` | multi-ASIC HLD 参照 |
+| panic を保全したい | `show kdump status` | 章 [09](../09-telemetry-snmp/operations.md) |
+
+## CONFIG_DB / STATE_DB 関連 key
+
+| 項目 | DB | Key |
+|------|-----|-----|
+| warm-restart enable | `CONFIG_DB` | `WARM_RESTART\|<service>` |
+| warm-restart timer | `CONFIG_DB` | `WARM_RESTART\|<service>` (timer field) |
+| 各 component の state | `STATE_DB` | `WARM_RESTART_TABLE\|<key>` |
+| reboot-cause 履歴 | `STATE_DB` | `REBOOT_CAUSE\|<timestamp>` |
+| 直近 cause (file) | n/a | `/host/reboot-cause/reboot-cause.txt` |
+
+## 関連章
+
+- 章 [09 telemetry / SNMP / observability](../09-telemetry-snmp/operations.md) — techsupport / kdump / system-health
+- 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — save-on-set と再起動を跨ぐ永続化
+- 章 [02 BGP](../02-bgp/operations.md) — BGP Graceful Restart の運用
 
 ## 関連ページ
 
