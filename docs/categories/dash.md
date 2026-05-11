@@ -1,9 +1,14 @@
 ---
 title: DASH 関連
-description: "DASH 関連 — このカテゴリは、area の壁を越えて DASH に関わる SONiC 側のページを横断で見られるようにします。"
+description: DASH 関連 — このカテゴリは、area の壁を越えて DASH に関わる SONiC 側のページを横断で見られるようにします。
 area: categories
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # DASH 関連

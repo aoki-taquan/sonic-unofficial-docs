@@ -1,9 +1,16 @@
 ---
 title: 古い裏取りページ
-description: "古い裏取りページ — last_verified が一定期間以上更新されていないページを一覧する。Verifier 再裏取りのトリガに用いる。"
+description: 古い裏取りページ — last_verified が一定期間以上更新されていないページを一覧する。Verifier 再裏取りのトリガに用いる。
 verification: meta
 last_verified: 2026-05-11
-tags: [verification, stale]
+tags:
+- verification
+- stale
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # 古い裏取りページ

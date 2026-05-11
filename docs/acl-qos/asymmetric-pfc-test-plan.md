@@ -1,17 +1,35 @@
 ---
 title: Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
-description: "Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその 機能テスト計画 を扱う。"
+description: Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC
+  機能だが、本ドキュメントはその 機能テスト計画 を扱う。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pfc_asym/PFC_Asymmetric_Test_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pfc_asym/PFC_Asymmetric_Test_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - PFC_WD
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - MGMT_INTERFACE
+  - MGMT_VRF_CONFIG
+  - MGMT_PORT
+  - BUFFER_POOL
+  - BUFFER_PROFILE
+  cli:
+  - show arp
+  - show pfc
+  - config mgmt trio
+  - show mgmt vrf
+  yang:
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfcwd
+  - sonic-buffer-pool
+  - sonic-buffer-profile
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

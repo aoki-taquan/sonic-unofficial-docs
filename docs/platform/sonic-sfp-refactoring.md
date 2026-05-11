@@ -1,17 +1,19 @@
 ---
 title: SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
-description: "SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別） — SONiC の SFP 関連 platform API は PI（Platform Independent）と PD（Platform Dependent）が混在しており、vendor が SfpBase 派生で両方を実装する…"
+description: SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別） — SONiC の SFP 関連 platform
+  API は PI（Platform Independent）と PD（Platform Dependent）が混在しており、vendor が SfpBase 派生で両方を実装する…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sfp-refactor/sfp-refactor.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sfp-refactor/sfp-refactor.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 <!-- topics-tip -->

@@ -1,17 +1,20 @@
 ---
 title: NPU MDIO アクセスと gbsyncd 単一 docker 化
-description: "NPU MDIO アクセスと gbsyncd 単一 docker 化 — 外部 PHY (gearbox) を制御するために gbsyncd は PAI library を使う。"
+description: NPU MDIO アクセスと gbsyncd 単一 docker 化 — 外部 PHY (gearbox) を制御するために gbsyncd
+  は PAI library を使う。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/gearbox/gearbox_mdio-HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/gearbox/gearbox_mdio-HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

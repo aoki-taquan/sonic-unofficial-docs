@@ -1,9 +1,15 @@
 ---
 title: BGP / EVPN 関連
-description: "BGP / EVPN 関連 — SONiC のルーティングは FRRouting (FRR) を中心に構築されており、その大部分が BGP / EVPN-VXLAN / VNET の運用に関わります。"
+description: BGP / EVPN 関連 — SONiC のルーティングは FRRouting (FRR) を中心に構築されており、その大部分が BGP
+  / EVPN-VXLAN / VNET の運用に関わります。
 area: categories
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # BGP / EVPN 関連

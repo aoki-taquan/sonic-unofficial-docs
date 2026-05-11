@@ -1,9 +1,15 @@
 ---
 title: Multi-ASIC / VOQ chassis 関連
-description: "Multi-ASIC / VOQ chassis 関連 — このカテゴリは Multi-ASIC と VOQ chassis に関わるページを area 横断でまとめます。"
+description: Multi-ASIC / VOQ chassis 関連 — このカテゴリは Multi-ASIC と VOQ chassis に関わるページを
+  area 横断でまとめます。
 area: categories
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # Multi-ASIC / VOQ chassis 関連

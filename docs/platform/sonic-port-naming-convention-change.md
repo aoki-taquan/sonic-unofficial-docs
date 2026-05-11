@@ -1,18 +1,36 @@
 ---
 title: SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
-description: "SONiC ポート命名規則の変更案（et[sX]pY[abcd]） — SONiC は伝統的に Ethernet0 / Ethernet4 / ... のような Ethernet プレフィクス + ASIC レーン番号 をポート名に使ってきた。"
+description: SONiC ポート命名規則の変更案（et[sX]pY[abcd]） — SONiC は伝統的に Ethernet0 / Ethernet4
+  / ... のような Ethernet プレフィクス + ASIC レーン番号 をポート名に使ってきた。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: not_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-port-name/sonic-port-name.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-port-name/sonic-port-name.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - SNMP
+  - LLDP
+  - PORT
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL
+  - PORT_STORM_CONTROL
+  cli:
+  - show interfaces
+  - config snmp
+  - config portchannel
+  - show lldp
+  - show snmpagentaddress
+  yang:
+  - sonic-port
+  - sonic-snmp
+  - sonic-portchannel
+  - sonic-port-qos-map
+  - sonic-lldp
 ---
 
 <!-- topics-tip -->

@@ -1,11 +1,16 @@
 ---
 title: 変更履歴
-description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
+description: 変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。
 verification: meta
 last_verified: 2026-05-11
 tags:
-  - changelog
-  - meta
+- changelog
+- meta
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # 変更履歴

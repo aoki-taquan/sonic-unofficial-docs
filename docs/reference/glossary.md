@@ -5,13 +5,14 @@ area: reference
 verification: meta
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: README.md
-    ref: master
+- repo: sonic-net/SONiC
+  path: README.md
+  ref: master
 related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 # 用語集 (Glossary)

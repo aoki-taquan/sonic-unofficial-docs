@@ -1,9 +1,15 @@
 ---
 title: SmartSwitch 関連
-description: "SmartSwitch 関連 — このカテゴリでは、SmartSwitch を横断するページを NPU 側設計（CONFIG_DB / APPL_DB の DPU overlay と HA actor）・DPU 管理（IP 割当・gNMI フィードバック・独立アップグレード・graceful shutdown）・EN…"
+description: SmartSwitch 関連 — このカテゴリでは、SmartSwitch を横断するページを NPU 側設計（CONFIG_DB / APPL_DB
+  の DPU overlay と HA actor）・DPU 管理（IP 割当・gNMI フィードバック・独立アップグレード・graceful shutdown）・EN…
 area: categories
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # SmartSwitch 関連

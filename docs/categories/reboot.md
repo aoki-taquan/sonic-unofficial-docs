@@ -1,9 +1,15 @@
 ---
 title: Warm-Reboot / Fast-Reboot 関連
-description: "Warm-Reboot / Fast-Reboot 関連 — このカテゴリは、warm/fast reboot に関わるページを area 横断でまとめます。"
+description: Warm-Reboot / Fast-Reboot 関連 — このカテゴリは、warm/fast reboot に関わるページを area
+  横断でまとめます。
 area: categories
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # Warm-Reboot / Fast-Reboot 関連

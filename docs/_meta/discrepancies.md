@@ -1,8 +1,13 @@
 ---
 title: 実装との乖離（移動済み）
-description: "実装との乖離（移動済み） — このページは リファレンス → 裏取り → discrepancy-index に移動しました。"
+description: 実装との乖離（移動済み） — このページは リファレンス → 裏取り → discrepancy-index に移動しました。
 verification: meta
 last_verified: 2026-05-11
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # 実装との乖離（移動済み）
