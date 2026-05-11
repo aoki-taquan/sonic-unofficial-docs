@@ -60,6 +60,9 @@ jobs:
       - name: Report broken intra-doc links (informational)
         run: python3 meta/scripts/check_broken_links.py --check
 
+      - name: Report link-density outliers (informational)
+        run: python3 meta/scripts/check_link_density.py --check
+
       - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4
