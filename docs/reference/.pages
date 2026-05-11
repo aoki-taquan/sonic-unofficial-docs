@@ -4,5 +4,6 @@ nav:
   - cli
   - config-db
   - yang
+  - glossary.md
   - verification
   - runbooks
