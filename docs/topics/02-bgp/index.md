@@ -4,6 +4,17 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+keywords:
+  - BGP
+  - FRR
+  - bgpcfgd
+  - frrcfgd
+  - fpmsyncd
+  - ピアリング
+  - ルーティング
+  - ASN
+  - EBGP unnumbered
+  - route-map
 ---
 
 # BGP と FRR 制御プレーン

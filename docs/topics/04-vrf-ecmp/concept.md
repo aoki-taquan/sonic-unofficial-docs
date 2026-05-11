@@ -8,6 +8,14 @@ sources:
   - docs/routing/static-ip-route-configuration.md
   - docs/routing/ipv6-link-local-enhancements.md
   - docs/routing/sonic-management-vrf-design-document-201911-release.md
+keywords:
+  - VRF
+  - L3
+  - 概念
+  - ルーティングテーブル
+  - namespace
+  - ip rule
+  - 管理VRF
 ---
 
 # L3 基盤と VRF

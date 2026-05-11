@@ -4,6 +4,16 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+keywords:
+  - SWSS
+  - SAI
+  - Redis
+  - orchagent
+  - syncd
+  - APPL_DB
+  - ASIC_DB
+  - STATE_DB
+  - 内部実装
 ---
 
 # SWSS / SAI / Redis 内部実装

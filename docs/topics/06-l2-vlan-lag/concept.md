@@ -13,6 +13,15 @@ sources:
   - docs/reference/config-db/port.md
   - docs/reference/config-db/portchannel.md
   - docs/architecture/sonic-sub-port-interface-high-level-design.md
+keywords:
+  - L2
+  - VLAN
+  - LAG
+  - 概念
+  - bridge
+  - port channel
+  - MC-LAG
+  - STP
 ---
 
 # L2 機能の考え方

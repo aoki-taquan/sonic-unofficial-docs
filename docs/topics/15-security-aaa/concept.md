@@ -7,6 +7,14 @@ sources:
   - docs/management/aaa-improvements.md
   - docs/architecture/pw-hardening-design.md
   - docs/system/sonic-container-hardening.md
+keywords:
+  - Security
+  - AAA
+  - 概念
+  - 認証認可
+  - FIPS
+  - ハードニング
+  - TACACS
 ---
 
 # 概念

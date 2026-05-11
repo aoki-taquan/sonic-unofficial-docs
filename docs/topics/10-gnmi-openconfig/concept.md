@@ -4,6 +4,14 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+keywords:
+  - gNMI
+  - OpenConfig
+  - YANG
+  - 概念
+  - northbound
+  - schema
+  - gnxi
 ---
 
 # 概要

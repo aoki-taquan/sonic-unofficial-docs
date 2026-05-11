@@ -9,6 +9,14 @@ sources:
   - docs/architecture/smart-switch-database-design.md
   - docs/categories/dash.md
   - docs/categories/smartswitch.md
+keywords:
+  - DASH
+  - SmartSwitch
+  - 概念
+  - DPU
+  - appliance model
+  - ENI
+  - オフロード
 ---
 
 # DASH と SmartSwitch の考え方

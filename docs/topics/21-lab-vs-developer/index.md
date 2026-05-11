@@ -22,6 +22,16 @@ sources:
   - docs/system/dataplane-telemetry-test-plan.md
   - docs/platform/thermal-control-test-plan.md
   - docs/architecture/dip-sip-ptf-validation-high-level-design.md
+keywords:
+  - Lab
+  - Virtual SONiC
+  - VS
+  - developer
+  - sonic-mgmt
+  - vlab
+  - testbed
+  - 開発環境
+  - GNS3
 ---
 
 # Lab / Virtual SONiC / Developer Entry

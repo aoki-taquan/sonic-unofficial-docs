@@ -4,6 +4,16 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+keywords:
+  - BGP
+  - FRR
+  - concept
+  - 概念
+  - neighbor
+  - address-family
+  - policy
+  - leaf-spine
+  - ECMP
 ---
 
 # 概要

@@ -10,6 +10,16 @@ sources:
   - docs/guides/evaluator.md
   - docs/management/sonic-user-manual.md
   - docs/management/sonic-nos-configuration-methods.md
+keywords:
+  - SONiC overview
+  - 全体像
+  - CONFIG_DB
+  - Redis
+  - YANG
+  - 設定基盤
+  - アーキテクチャ
+  - config reload
+  - warm reboot
 ---
 
 # SONiC 全体像と設定基盤

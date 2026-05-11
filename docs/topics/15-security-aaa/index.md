@@ -29,6 +29,17 @@ sources:
   - docs/system/sonic-fips-deployment.md
   - docs/system/hld-secure-boot.md
   - docs/system/secure-upgrade.md
+keywords:
+  - Security
+  - AAA
+  - TACACS+
+  - RADIUS
+  - FIPS
+  - hardening
+  - 認証
+  - 認可
+  - auditd
+  - SSH
 ---
 
 # Security / AAA / FIPS / Hardening

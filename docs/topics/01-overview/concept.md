@@ -12,6 +12,16 @@ sources:
   - docs/categories/index.md
   - docs/management/sonic-user-manual.md
   - docs/management/sonic-nos-configuration-methods.md
+keywords:
+  - SONiC
+  - 概念
+  - 読み始め
+  - swss
+  - syncd
+  - SAI
+  - コンテナ構成
+  - 設定フロー
+  - Redis DB
 ---
 
 # 概念と読み始め方

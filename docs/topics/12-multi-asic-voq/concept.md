@@ -10,6 +10,13 @@ sources:
   - docs/platform/fabric-port-support-on-sonic.md
   - docs/platform/recirculation-port-support-on-voq-chassis.md
   - docs/platform/single-asic-voq-fixed-system-sonic.md
+keywords:
+  - Multi-ASIC
+  - VOQ
+  - chassis
+  - 概念
+  - namespace per ASIC
+  - supervisor
 ---
 
 # 概念

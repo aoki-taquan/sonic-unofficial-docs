@@ -45,6 +45,17 @@ sources:
   - docs/reference/yang/sonic-port-qos-map.md
   - docs/reference/yang/sonic-tc-queue-map.md
   - docs/routing/mpls-tc-to-tc-map.md
+keywords:
+  - QoS
+  - Buffer
+  - PFC
+  - Watermark
+  - scheduler
+  - WRED
+  - ECN
+  - queue
+  - PG
+  - lossless
 ---
 
 # QoS / Buffer / PFC / Watermark

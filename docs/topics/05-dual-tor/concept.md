@@ -7,6 +7,13 @@ sources:
   - docs/overlay/active-active-dual-tor.md
   - docs/overlay/active-standby-dual-tor.md
   - docs/categories/dual-tor.md
+keywords:
+  - Dual-ToR
+  - 概念
+  - ToR冗長
+  - Mux state
+  - server NIC bonding
+  - ハーフリンク
 ---
 
 # Dual-ToR の考え方

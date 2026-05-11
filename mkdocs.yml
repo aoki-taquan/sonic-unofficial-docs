@@ -76,6 +76,9 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 plugins:
+  # mkdocs-material 9.x の search プラグインは lunr index を内蔵で
+  # ビルド時に生成する。旧 mkdocs 純正の `prebuild_index` 相当は
+  # material/search では deprecated（常時有効）なので明示指定はしない。
   - search:
       lang: ja
       separator: '[\s\-、。・]+'

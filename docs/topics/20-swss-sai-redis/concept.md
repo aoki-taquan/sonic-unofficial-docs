@@ -4,6 +4,14 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+keywords:
+  - SWSS
+  - SAI
+  - Redis
+  - 概要
+  - orchagent
+  - syncd
+  - ProducerStateTable
 ---
 
 # 概要

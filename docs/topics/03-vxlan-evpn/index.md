@@ -11,6 +11,17 @@ sources:
   - docs/routing/overlay-ecmp-with-bfd-monitoring.md
   - docs/routing/overlay-ecmp-enhancements.md
   - docs/overlay/dscp-remapping-for-tunnel-traffic.md
+keywords:
+  - VXLAN
+  - EVPN
+  - VNET
+  - オーバーレイ
+  - VNI
+  - type-2
+  - type-5
+  - VTEP
+  - tunnel
+  - overlay
 ---
 
 # VXLAN / EVPN / VNET オーバーレイ

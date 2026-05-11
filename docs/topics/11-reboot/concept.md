@@ -9,6 +9,13 @@ sources:
   - docs/system/sonic-express-reboot-hld-spec.md
   - docs/categories/reboot.md
   - docs/reference/cli/reboot-fast-warm.md
+keywords:
+  - Reboot
+  - 概念
+  - warm/fast/cold
+  - 選び方
+  - image lifecycle
+  - アップグレード
 ---
 
 # Reboot family の選び方
