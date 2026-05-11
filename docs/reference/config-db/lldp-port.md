@@ -34,7 +34,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>LLDP_PORT")]
-  DM["lldp-syncd"]
+  DM["lldpmgrd"]
   CDB --> DM
 ```
 

@@ -28,7 +28,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SYSTEM_DEFAULTS")]
-  DM["hostcfgd"]
+  DM["db_migrator"]
   CDB --> DM
 ```
 
