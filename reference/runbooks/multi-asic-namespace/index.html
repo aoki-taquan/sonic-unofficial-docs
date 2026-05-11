@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-multi-asic-namespace">Runbook: Multi-ASIC で namespace 間通信できない<a class="headerlink" href="#runbook-multi-asic-namespace" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>systemctl restart swss@N</code> は当該 ASIC namespace の forwarding を 10～30 秒中断する。<code>config reload -y -f</code> は <strong>全 namespace を一度に再構成</strong> するため chassis 全体が数分間 down する（cold reboot に近い）。実行前に各 namespace の <code>config_db.json</code> を <code>for ns in asic0 asic1 host; do sudo cp /etc/sonic/$ns/config_db.json /etc/sonic/$ns/config_db.json.bak.$(date +%s); done</code> で backup（host は <code>/etc/sonic/config_db.json</code>）。<code>config reload -y -f</code> は最後の手段とし、まずは個別 namespace <code>systemctl restart swss@&lt;n&gt;</code> から試す。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VoQ Chassis / multi-ASIC platform で内部 fabric link は UP しているが iBGP が立たない</li>

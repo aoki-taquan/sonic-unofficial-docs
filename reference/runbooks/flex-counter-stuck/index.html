@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-counter-flex_counter">Runbook: counter が更新されない (FLEX_COUNTER)<a class="headerlink" href="#runbook-counter-flex_counter" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>systemctl restart swss</code> は data plane を 30 秒～数分中断する重操作のため最後の手段。まずは <code>counterpoll &lt;group&gt; disable &amp;&amp; counterpoll &lt;group&gt; enable</code> の group 単位 toggle で対処を試みる（これは counter polling thread のみ再生成、forwarding は無影響）。実行前に <code>redis-cli -n 4 HGETALL FLEX_COUNTER_TABLE &gt; /tmp/fc.bak.$(date +%s)</code> で polling 設定 backup、<code>counterpoll show &gt; /tmp/fc.show.bak</code>。誤って disable した group は <code>counterpoll &lt;group&gt; enable</code> で即時復旧。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>show interfaces counters</code> の数字が固まる / 増加が止まる</li>

@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-pfc-buffer-overflow">Runbook: PFC で帯域が出ない / Buffer overflow<a class="headerlink" href="#runbook-pfc-buffer-overflow" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>pfcwd stop</code> / <code>pfcwd start</code> および <code>BUFFER_*</code> テーブル変更は lossless queue の watchdog action を一旦解除するため、PFC storm が再発すると HoL blocking で全 priority に影響が波及する可能性がある。実行前に <code>redis-cli -n 4 --rdb /tmp/cfgdb.bak.$(date +%s).rdb</code> で CONFIG_DB の snapshot を取り、buffer profile 変更時は <code>sonic-cfggen -d -v "BUFFER_PROFILE"</code> で現値を保存。誤設定時は backup から該当テーブルのみ <code>redis-cli -n 4 HMSET ...</code> で戻すか、<code>config reload -y</code> で全体ロールバック。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>RoCE / lossless トラフィックでスループットが想定の数 % にとどまる</li>

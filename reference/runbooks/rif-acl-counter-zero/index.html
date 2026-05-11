@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-rif-acl-counter-0">Runbook: RIF / ACL counter が 0 のまま<a class="headerlink" href="#runbook-rif-acl-counter-0" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>aclshow -c</code> (clear) や <code>counterpoll acl disable &amp;&amp; counterpoll acl enable</code> は統計のみで forwarding には影響しない。一方 <code>config load &lt;file&gt;</code> / <code>acl-loader update full</code> で ACL rule を再投入すると、<strong>rule 入れ替え瞬間に該当 ACL table が一時的に空</strong> になり、deny rule が消える時間窓が発生する。実行前に <code>aclshow -a &gt; /tmp/aclshow.bak.$(date +%s)</code> と該当 ACL rule の JSON を <code>sonic-cfggen -d --var-json "ACL_RULE" &gt; /tmp/acl_rule.bak.json</code> で退避。誤った rule 投入時は <code>acl-loader update full</code> で退避 JSON を戻して即時復旧。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>トラフィックは流れているのに <code>aclshow -a</code> が全 rule 0 のまま</li>

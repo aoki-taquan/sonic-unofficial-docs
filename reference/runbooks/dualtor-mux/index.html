@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-dual-tor-mux">Runbook: Dual-ToR mux が切り替わらない<a class="headerlink" href="#runbook-dual-tor-mux" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>docker restart mux</code> / <code>config reload -y</code> は <strong>対向 ToR の状態確認なしに mux state を再評価する</strong> ため、両 ToR で同時実施すると両側 standby となり server 通信が完全断する。必ず片側 ToR の linkmgrd / mux state が <code>active</code> 確定後にもう一方を操作すること。実行前に <code>show muxcable status -j &gt; /tmp/mux.bak.$(date +%s).json</code> で現状 dump、<code>sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)</code>。誤って両側 standby になった場合は <code>config muxcable mode active &lt;port&gt;</code> でいずれかを強制 active に。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>config muxcable mode active &lt;port&gt;</code> 実行後に <code>show muxcable status</code> の state が <code>unknown</code> / <code>standby</code> のまま</li>

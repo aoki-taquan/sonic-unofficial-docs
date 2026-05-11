@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-sai-failure-syncd">Runbook: SAI failure / syncd リスタート多発<a class="headerlink" href="#runbook-sai-failure-syncd" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>systemctl restart swss</code> は syncd 連動再起動を伴い、<strong>ASIC を一度再初期化</strong> するため data plane が 30 秒～数分中断する（cold restart 相当）。warm_restart が enable でも syncd crash 直後は再生成必須。実行前に <code>sudo cp -r /var/log/syncd* /tmp/syncd.bak.$(date +%s)/</code> で crash log を退避し、<code>show techsupport</code> を取得して原因解析用 evidence を残す。問題が ASIC ハード障害の場合は再起動しても改善せず、platform vendor の RMA フロー（chassis 全交換）が必要。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>syncd</code> コンテナが <code>Exited (134)</code> / <code>Aborted (core dumped)</code> で再起動を繰り返す</li>

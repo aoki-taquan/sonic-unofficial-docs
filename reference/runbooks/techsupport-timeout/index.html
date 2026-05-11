@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-show-techsupport-timeout">Runbook: show techsupport が timeout する<a class="headerlink" href="#runbook-show-techsupport-timeout" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>show techsupport</code> は CPU と I/O を大量消費し、コアな control plane プロセス（orchagent / bgpd / syncd）を一時的に block する可能性がある。実行前に <code>df -h /var/dump</code> で空き容量を確認（最低 2 GB 推奨）、<code>/var/core</code> の旧 core file は別途退避。<code>AUTO_TECHSUPPORT</code> の <code>rate_limit_interval</code> を一時的に伸ばす場合は元値を <code>redis-cli -n 4 HGETALL "AUTO_TECHSUPPORT|GLOBAL" &gt; /tmp/at.bak</code> で保存し、終了後に戻す。途中中断したい場合は <code>Ctrl+C</code> ではなく別 session から <code>sudo pkill -f generate_dump</code> で停止（partial dump は <code>/var/dump/</code> に残る）。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>show techsupport</code> 実行が長時間（&gt; 30 分）終わらない</li>

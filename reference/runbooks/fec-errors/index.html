@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-fec">Runbook: FEC エラーが多発する<a class="headerlink" href="#runbook-fec" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>config interface fec</code> / <code>config interface speed</code> で FEC mode や speed を変更すると当該ポートが down → 再 up し、リンク学習に数秒～数十秒かかる。LAG メンバーや ECMP path の最後の 1 本でないことを確認し、対向側と FEC モード・speed を必ず揃えてから一致タイミングで変更する。誤設定でリンクが上がらなくなった場合は <code>config interface fec &lt;if&gt; &lt;旧モード&gt;</code> で即時戻す（CONFIG_DB のみの変更で再起動は不要）。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>show interfaces counters errors</code> で <code>RX_ERR</code> / <code>SYMBOL_ERR</code> が継続的に増加</li>

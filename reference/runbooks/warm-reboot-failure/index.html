@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-warm-reboot">Runbook: Warm Reboot が失敗 / 通信断が長引く<a class="headerlink" href="#runbook-warm-reboot" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>warm-reboot</code> 自体が失敗すると cold reboot にフォールバックし、data plane が数十秒～数分中断する（ASIC 再初期化 + neighbor relearn）。実行前に: (1) <code>sudo show warm_restart config</code> で warm_restart enable を確認、(2) <code>sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.warmreboot.$(date +%s)</code> で backup、(3) <code>bgp</code> neighbor 側 で graceful-restart helper が有効か対向と合意、(4) ECMP redundancy がある状態で 1 ToR ずつ実施。失敗時は <code>fast-reboot</code> / 通常 <code>reboot</code> での復旧、または backup 戻し + <code>config reload -y</code>。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>warm-reboot</code> 実行後に Data plane の通信が想定（&lt; 1s）を超えて 30s 〜 数分断する</li>

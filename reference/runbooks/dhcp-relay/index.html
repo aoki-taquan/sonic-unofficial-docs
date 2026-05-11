@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-dhcp-relay-ip">Runbook: DHCP Relay で IP が払い出されない<a class="headerlink" href="#runbook-dhcp-relay-ip" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>systemctl restart dhcp_relay</code> / <code>docker restart dhcp_relay</code> は当該 VLAN の新規 DHCP 取得を 5～15 秒中断する（既存リースには影響しないが、リース更新タイミングのクライアントは再 DISCOVER に落ちる）。helper 変更時は <code>sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)</code> で backup、誤設定時は backup を戻して <code>config reload -y</code> でロールバック。<code>sonic-clear dhcp_relay ipv4 counters</code> は統計のみで通信に影響しない。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VLAN 配下のクライアントが DHCP DISCOVER を出すが OFFER を受け取れない</li>

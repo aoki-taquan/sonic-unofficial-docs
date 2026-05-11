@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-feature">Runbook: コンテナが起動しない (FEATURE)<a class="headerlink" href="#runbook-feature" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>config feature state &lt;feature&gt; disabled</code> → <code>enabled</code> の toggle は当該機能（bgp / teamd / lldp 等）を 5～15 秒中断する。<strong><code>bgp</code> / <code>swss</code> / <code>syncd</code> を disabled にすると data plane / control plane が落ちる</strong> ため絶対に redundant ToR がない状態で実施しない。実行前に <code>sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)</code> で backup、<code>show feature status &gt; /tmp/feature.bak</code> で現状保存。誤って必須 feature を disable してしまった場合は <code>config feature state &lt;feature&gt; enabled</code> で即時復旧、それで戻らなければ backup を戻して <code>config reload -y</code>。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>show feature status</code> で対象 feature が <code>enabled</code> だが state が <code>failed</code> / <code>exited</code></li>

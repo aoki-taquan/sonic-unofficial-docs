@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-smartswitch-dpu">Runbook: SmartSwitch DPU が応答しない<a class="headerlink" href="#runbook-smartswitch-dpu" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>config chassis modules shutdown DPU&lt;n&gt;</code> / <code>startup</code> および <code>systemctl restart pmon</code> は当該 DPU 上の DASH ENI / packet pipeline を 30 秒～数分中断する（DPU host OS の再起動を含むベンダーもある）。実行前に対象 DPU の <code>show dash eni &gt; /tmp/eni.bak.$(date +%s)</code> で ENI 一覧を退避、<code>sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)</code> で host 設定 backup。Active flow がある DPU を停止する場合は ECMP redundancy か peer DPU に明示的に flow drain してから実施。DPU が完全に応答不能で graceful shutdown が効かない場合は最後の手段として <code>config chassis modules shutdown DPU&lt;n&gt; -f</code> で強制断する（運用中 flow は drop）。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>show chassis modules status</code> で DPU の state が <code>Offline</code> / <code>Empty</code> のまま</li>

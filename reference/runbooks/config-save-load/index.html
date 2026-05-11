@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-config_db-save-load">Runbook: CONFIG_DB save / load が反映されない<a class="headerlink" href="#runbook-config_db-save-load" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>config reload -y</code> / <code>config load_minigraph -y</code> は <strong>全 swss / syncd / bgp を再起動</strong> し、data plane が 30 秒～数分中断する（cold restart 相当）。実行前に必ず多段 backup を取る: (1) <code>sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)</code>、(2) <code>redis-cli -n 4 --rdb /tmp/cfgdb.rdb.bak.$(date +%s)</code>、(3) multi-asic は各 namespace 分も同様に。<code>db_migrator.py</code> は schema version を変更するため、失敗時は backup から <code>cp</code> で戻して <code>systemctl restart database</code> 後 <code>config reload -y</code> で復旧。Minigraph 投入時は <code>/etc/sonic/minigraph.xml</code> も同様に backup。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>config save -y</code> 後の再起動で設定が古いまま戻る</li>

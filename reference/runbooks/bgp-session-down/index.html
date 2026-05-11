@@ -22779,6 +22779,10 @@
 
 
 <h1 id="runbook-bgp-up">Runbook: BGP セッションが UP しない<a class="headerlink" href="#runbook-bgp-up" title="Permanent link">&para;</a></h1>
+<div class="admonition danger">
+<p class="admonition-title">実行前提</p>
+<p><code>systemctl restart bgp</code> / <code>config reload -y</code> は FRR の全 neighbor を一旦切り、再収束まで数十秒～数分の経路断が発生する。実行前に <code>sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)</code> でロールバック用 backup を取り、ECMP メンバーがいる場合は本機を <code>config bgp shutdown all</code> で graceful drain してから対処すること。問題が悪化した場合は backup を <code>cp</code> で戻して <code>config reload -y</code> で復旧する。</p>
+</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>show ip bgp summary</code> で対向の State が <code>Active</code> / <code>Connect</code> / <code>Idle (Admin)</code> のままになる</li>
