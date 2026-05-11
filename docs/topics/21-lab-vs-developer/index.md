@@ -91,6 +91,38 @@ related:
 - [評価者向けガイド](../../guides/evaluator.md)
 - [運用者向けガイド](../../guides/operator.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: 概念](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../../architecture/sonic-bulk-counter-design.md)
+- [SWSS docker warm restart（state restore / consistency / sync up）](../../system/sonic-swss-docker-warm-restart.md)
+- [Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）](../../system/dataplane-telemetry-in-sonic.md)
+- [Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）](../../architecture/sonic-trap-flow-counter-design.md)
+- [FRR 用 sysctl チューニングのデフォルト](../../system/useful-sysctl-settings.md)
+- [SONiC Disk I/O 削減（writer 分析と tmpfs 化）](../../system/analysis-of-disk-writers-in-sonic-devices.md)
+- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
+
+**関連トラブルシュート 5 件**
+
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [PFC で帯域が出ない / Buffer overflow](../../reference/runbooks/pfc-bandwidth.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

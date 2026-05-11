@@ -110,6 +110,38 @@ related:
 - [Dump utility](../../internals/dump-utility-for-easy-debugging.md)
 - [System ready](../../system/system-ready-hld.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: 概念](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [SNMP 設定の snmp.yml → CONFIG_DB 移行](../../system/snmp-migration-from-snmp-yml-to-configdb.md)
+- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../../system/sonic-snmp-table-schema-proposal.md)
+- [telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT）](../../system/sonic-telemetry-in-dial-out-mode-2.md)
+- [ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）](../../system/asic-thermal-monitoring-high-level-design.md)
+- [pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）](../../system/platform-monitor-enhancement-design.md)
+- [SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）](../../system/snmp-transceiver-monitoring-testbed-test-plan.md)
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
+
+**関連トラブルシュート 5 件**
+
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [show interfaces counters が突然リセットされる](../../reference/runbooks/interface-counters-reset.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [SNMP polling が timeout する](../../reference/runbooks/snmp-polling-timeout.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

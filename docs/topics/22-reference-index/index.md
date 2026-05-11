@@ -85,6 +85,34 @@ related:
 - [YANG リファレンス](../../reference/yang/index.md)
 - [Discrepancy index](../../reference/verification/discrepancy-index.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: リファレンス設計の考え方](concept.md)
+- [内部実装](internals.md)
+
+**関連する HLD 7 件**
+
+- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
+- [Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）](../../management/send-to-ingress-hld.md)
+- [FRR 用 sysctl チューニングのデフォルト](../../system/useful-sysctl-settings.md)
+- [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)
+- [SONiC Disk I/O 削減（writer 分析と tmpfs 化）](../../system/analysis-of-disk-writers-in-sonic-devices.md)
+- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
+
+**関連トラブルシュート 5 件**
+
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [Multi-ASIC で namespace 間通信できない](../../reference/runbooks/multi-asic-namespace.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

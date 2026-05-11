@@ -67,6 +67,38 @@ related:
 
 この章は internals / architecture / platform / system 配下の [HLD](../../reference/glossary.md#term-hld) 派生ページを横断する。スキーマや SAI 呼び出しの詳細は各サブページ末尾の「関連ページ」から、機能固有の話は当該機能章（[BGP](../02-bgp/index.md)、[L2 VLAN LAG](../06-l2-vlan-lag/index.md)、[ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) など）から参照する。
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
+- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
+- [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)
+- [Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）](../../architecture/sonic-trap-flow-counter-design.md)
+- [swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）](../../internals/swss-schema.md)
+- [dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）](../../internals/dump-utility-for-easy-debugging.md)
+- [P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）](../../internals/p4-orchagent.md)
+
+**関連トラブルシュート 5 件**
+
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

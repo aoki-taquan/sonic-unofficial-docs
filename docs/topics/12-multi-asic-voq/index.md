@@ -93,6 +93,38 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 - [VOQ SONiC](../../platform/voq-sonic.md)
 - [Multi-ASIC カテゴリ](../../categories/multi-asic.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: 概念](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）](../../platform/single-asic-voq-fixed-system-sonic.md)
+- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
+- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
+- [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)
+- [Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）](../../architecture/sonic-trap-flow-counter-design.md)
+- [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)
+- [VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）](../../platform/fabric-port-support-on-sonic.md)
+
+**関連トラブルシュート 5 件**
+
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

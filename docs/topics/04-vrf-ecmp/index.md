@@ -76,6 +76,37 @@ related:
 
 この章は routing / architecture / internals / reference の既存ページ 32 件を横断しています。個別コマンド、テーブル、YANG、HLD の詳細は各サブページ末尾の「関連ページ」から参照してください。
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: L3 基盤と VRF](concept.md)
+- [アーキテクチャ: RIB-FIB と Route Object 生成](architecture.md)
+- [設定: VRF と Static Route の設定](setup.md)
+- [運用: Route / Interface / Counter の確認](operations.md)
+- [内部実装](internals.md)
+- [発展トピック: 発展トピックへの橋渡し](advanced.md)
+
+**関連する HLD 7 件**
+
+- [NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md)
+- [BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）](../../routing/bgp-loading-optimization-for-sonic.md)
+- [SONiC における FRR upgrade の手順とパッチ管理](../../routing/detailed-steps-to-upgrade-frr-in-sonic.md)
+- [IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）](../../routing/ipv6-link-local-enhancements.md)
+- [Fine Grained ECMP（FG_NHG / fgnhgorch）](../../routing/sonic-fine-grained-ecmp.md)
+- [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../../routing/sonic-usid.md)
+- [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../../routing/srv6-vpn-hld.md)
+
+**関連トラブルシュート 5 件**
+
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+
+<!-- /next-reads -->
 
 <!-- xref-related-chapters -->
 ## 関連する章

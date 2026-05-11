@@ -83,6 +83,37 @@ related:
 - [SONiC User Manual の位置づけ](../../management/sonic-user-manual.md)
 - [SONiC NOS の設定手段一覧](../../management/sonic-nos-configuration-methods.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: 概念と読み始め方](concept.md)
+- [アーキテクチャ: 設定データフロー](architecture.md)
+- [設定: 設定変更の選び方](configuration.md)
+- [運用: 運用入口](operations.md)
+- [内部実装](internals.md)
+
+**関連する HLD 7 件**
+
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
+- [Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）](../../system/what-are-the-development-phases-and-scope-for-warm-reboot.md)
+- [SONiC Disk I/O 削減（writer 分析と tmpfs 化）](../../system/analysis-of-disk-writers-in-sonic-devices.md)
+- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
+- [System-wide Warmboot（going down / up path / SAI 期待値）](../../system/system-wide-warmboot.md)
+- [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)
+- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
+
+**関連トラブルシュート 5 件**
+
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

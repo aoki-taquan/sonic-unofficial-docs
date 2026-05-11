@@ -108,6 +108,38 @@ related:
 - [CONFIG_DB: VLAN](../../reference/config-db/vlan.md)
 - [CONFIG_DB: PORTCHANNEL](../../reference/config-db/portchannel.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: L2 機能の考え方](concept.md)
+- [アーキテクチャ: L2 のアーキテクチャ](architecture.md)
+- [設定: L2 設定パターン](setup.md)
+- [運用: L2 運用確認](operations.md)
+- [内部実装](internals.md)
+- [発展トピック: L2 発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）](../../switching/sonic-basic-l2-mode-test-plan.md)
+- [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../../switching/mclag-enhancements.md)
+- [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../../switching/brief-introduction-of-iccp-code.md)
+- [PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）](../../switching/openconfig-support-for-portchannel-aggregate-interface.md)
+- [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](../../switching/add-support-for-vlan-interface-using-openconfig-yang.md)
+- [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../../switching/layer-2-forwarding-enhancements.md)
+- [IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）](../../switching/sonic-ip-lag-incremental-update.md)
+
+**関連トラブルシュート 5 件**
+
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [Multi-ASIC で namespace 間通信できない](../../reference/runbooks/multi-asic-namespace.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

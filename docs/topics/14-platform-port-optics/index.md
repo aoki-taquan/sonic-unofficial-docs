@@ -119,6 +119,38 @@ related:
 - [show platform](../../reference/cli/show-platform.md)
 - [config interface](../../reference/cli/config-interface.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../../platform/sonic-port-naming-convention-change.md)
+- [VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）](../../platform/fabric-port-support-on-sonic.md)
+- [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](../../platform/fec-flr-support-in-sonic-operations.md)
+- [新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）](../../platform/global-platform-specific-psuutil-class-instance.md)
+- [FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）](../../platform/fec-flr-support-in-sonic-limitations.md)
+- [Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）](../../platform/multi-asic-single-json-configuration-design.md)
+- [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../../platform/db-design-for-multi-asic-scenarios.md)
+
+**関連トラブルシュート 5 件**
+
+- [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
+- [minigraph 適用後に reload が完了しない / 起動が固まる](../../reference/runbooks/minigraph-reload-stuck.md)
+- [Multi-ASIC で namespace 間通信できない](../../reference/runbooks/multi-asic-namespace.md)
+- [counter が更新されない (FLEX_COUNTER)](../../reference/runbooks/flex-counter-stuck.md)
+- [show interfaces counters が突然リセットされる](../../reference/runbooks/interface-counters-reset.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 
