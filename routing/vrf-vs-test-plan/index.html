@@ -8290,6 +8290,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21448,6 +21459,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21630,6 +21652,12 @@
 <li><strong>ACL redirect</strong>: VRF 跨ぎ nexthop 指定の確認に組み込み</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-swss/cfgmgr/vrfmgr.cpp</code> に <code>VrfMgr</code> クラスが存在し、<code>m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)</code> (line 22) で CONFIG_DB → APP_DB 転送、<code>m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)</code> / <code>m_stateVrfObjectTable(...)</code> で STATE_DB 反映、<code>for (uint32_t i = VRF_TABLE_START; i &lt; VRF_TABLE_END; i++)</code> (line 28) で VRF table ID プール初期化、<code>/* Get existing VRFs from Linux */</code> のコメント以下で warm-restart 横断の Linux VRF 同期。</li>
+<li>VS テストフレームワーク (<code>sonic-swss/tests/</code>) には VRF 関連の virtual switch テストがあり、本プランの観点（vrfmgrd → APP_DB → ASIC_DB / kernel）はテストインフラとして実在。</li>
+</ul>
+<p>実装と HLD/プランは整合。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

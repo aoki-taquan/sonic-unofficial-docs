@@ -16420,6 +16420,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21592,6 +21603,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21702,6 +21724,13 @@
 <li>自分のページが参照する APPL_DB スキーマが本書と食い違う → 直近の sonic-swss master コミットの <code>doc/swss-schema.md</code> で再確認するのが望ましい。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<p>実コードと突合し本ページが指す <code>sonic-swss/doc/swss-schema.md</code> 内の主要 APPL_DB テーブル群が現行 master に実在することを確認:</p>
+<ul>
+<li><code>sonic-swss/doc/swss-schema.md</code> には <code>### PORT_TABLE</code> / <code>### INTF_TABLE</code> / <code>### VLAN_TABLE</code> / <code>### LAG_TABLE</code> / <code>### ROUTE_TABLE</code> / <code>### NEXTHOP_GROUP_TABLE</code> / <code>### CLASS_BASED_NEXT_HOP_GROUP_TABLE</code> / <code>### FC_TO_NHG_INDEX_MAP_TABLE</code> / <code>### NEIGH_TABLE</code> / <code>### SRV6_SID_LIST_TABLE</code> / <code>### SRV6_MY_SID_TABLE</code> / <code>### FDB_TABLE</code> / <code>### QUEUE_TABLE</code> 等のセクションが定義されており、本ページが主張する「ABNF による APPL_DB / STATE_DB 中心スキーマの集約」と一致。</li>
+<li><code>APP_NEXTHOP_GROUP_TABLE_NAME</code> は <code>sonic-swss/fpmsyncd/routesync.cpp:157</code> で実際に ProducerStateTable として open されており、HLD と実装の双方が NEXTHOP_GROUP_TABLE を APPL_DB の正規エントリとして扱っている裏取り。</li>
+</ul>
+<p>本ページは個別テーブルへの入口として位置付けられたリファレンスで、実テーブル詳細はリンク先の生きた HLD を参照する旨を冒頭で明示しており、参照ドキュメントとしての記述は実体と整合する。</p>
 <div class="footnote">
 <hr />
 <ol>

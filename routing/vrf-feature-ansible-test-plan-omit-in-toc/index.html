@@ -8273,6 +8273,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21470,6 +21481,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21618,6 +21640,13 @@
 <li><strong>warm-reboot</strong>: system + swss warm の双方で連続トラフィックを保証</li>
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<p>本ページは sonic-mgmt 配下の Ansible テストプラン記述で、対象実装側 (SONiC NOS) の確認ポイント:</p>
+<ul>
+<li><code>sonic-swss/cfgmgr/vrfmgr.cpp:12-26</code> で <code>VRF_TABLE_START 1001</code> / <code>VRF_TABLE_END 5097</code> / <code>MGMT_VRF_TABLE_ID 6000</code> を持ち、<code>m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)</code> / <code>m_appVxlanVrfTableProducer(appDb, APP_VXLAN_VRF_TABLE_NAME)</code> / <code>m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)</code> / <code>m_stateVrfObjectTable(stateDb, STATE_VRF_OBJECT_TABLE_NAME)</code> を open。テストプランが要求する <code>config vrf</code> → CONFIG_DB → vrfmgrd → APPL_DB / Linux kernel の流路は cfgmgr に実装済み。</li>
+<li>4096 VRF（VRF_TABLE_START=1001, END=5097）のレンジが定義されており、HLD/プランの「1000 VRF スケール」記述と整合。</li>
+</ul>
+<p>テストプラン自体は記述で、現行 master の vrfmgrd 実装と整合。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

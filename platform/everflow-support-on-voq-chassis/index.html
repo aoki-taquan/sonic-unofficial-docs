@@ -15319,6 +15319,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21658,6 +21669,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21860,6 +21882,14 @@ reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得�
 - HLD の TBD 節（テスト・future work）の現状
 -->
 
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<p><code>sonic-swss/orchagent/mirrororch.cpp</code> を確認したところ、HLD が提示する VoQ Chassis 上の ERSPAN ミラー特化処理が実装されている:</p>
+<ul>
+<li><code>if ((gMySwitchType == "voq") &amp;&amp; (session.type == MIRROR_SESSION_ERSPAN))</code> の分岐が複数箇所 (例 <code>mirrororch.cpp:592, 609, 1037, 1153, 1192, 1313</code>) に存在し、VoQ 専用パスが切られている。</li>
+<li><code>mirrororch.cpp:960</code> のコメント <code>// Set monitor port to recirc port in voq switch.</code> と続く <code>if (gMySwitchType == "voq")</code> 分岐が、HLD の主張する <strong>recycle (recirc) port 経由の rewrite</strong> を裏取り。<code>mirrororch.cpp:1036</code> で「voq + ERSPAN の場合は dst MAC を router mac で代入」とあり、これは HLD の「ingress LC ASIC が GRE rewrite を完了させてから recycle ポートから再注入」フローの一部に対応。</li>
+<li><code>neighorch.cpp</code> の <code>voqSyncAddNeigh</code> / <code>voq_encap_index</code> (<code>neighorch.h:32, 160, 164</code>) は VoQ 系 neighbor の SYSTEM_PORT encap 管理を担っており、ミラー先 neighbor 解決が VoQ chassis 向けに拡張済みである裏取り。</li>
+</ul>
+<p>HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC で rewrite) のうち、master が採用したのは Option 1 系 (recycle port + ingress 完結 rewrite) と判定。本ページの記述は実装と整合。</p>
 <div class="footnote">
 <hr />
 <ol>

@@ -9554,6 +9554,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21680,6 +21691,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21976,6 +21998,14 @@ reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 - Warm-reboot シグナル経路 (SIGUSR1) の現行実装
 -->
 
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<p><code>sonic-buildimage/src/iccpd/src/</code> を確認したところ、HLD が説明するファイル群が現行 master に実在することを裏取り:</p>
+<ul>
+<li><code>app_csm.c</code> / <code>iccp_cli.c</code> / <code>iccp_cmd.c</code> / <code>iccp_cmd_show.c</code> / <code>iccp_consistency_check.c</code> / <code>iccp_csm.c</code> / <code>iccp_ifm.c</code> / <code>iccp_main.c</code> / <code>iccp_netlink.c</code> / <code>logger.c</code> / <code>mlacp_fsm.c</code> / <code>mlacp_link_handler.c</code> / <code>mlacp_sync_prepare.c</code> / <code>mlacp_sync_update.c</code> / <code>port.c</code> / <code>scheduler.c</code> / <code>system.c</code> の 17 ファイル（HLD と同じ構成）。</li>
+<li>追加で <code>cmd_option.c</code> / <code>mclagdctl/</code> サブディレクトリ / <code>openbsd_tree.c</code> が master に存在し、HLD には未記載の補助ファイル。<code>mclagdctl</code> CLI も <code>mclagdctl/</code> 配下に同梱されており、関連 CLI 欄と整合。</li>
+<li>HLD の章番号と src ファイル名はほぼ 1:1 で対応。FSM 関数名（<code>app_csm_transit</code>、<code>mlacp_fsm_transit</code>）も HLD 記載どおり。</li>
+</ul>
+<p>ICCPd 内部構成マップは現行 master と整合。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

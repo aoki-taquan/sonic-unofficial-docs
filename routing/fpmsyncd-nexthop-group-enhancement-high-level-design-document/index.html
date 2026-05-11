@@ -8418,6 +8418,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11-discrepancy-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11) — discrepancy-found
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21592,6 +21603,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11-discrepancy-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11) — discrepancy-found
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21711,6 +21733,19 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 - Fine-Grained / Ordered NHG との共存時の優先順位の実装挙動確認
 -->
 
+<h2 id="batch-30-2026-05-11-discrepancy-found">裏取りメモ (batch 30, 2026-05-11) — discrepancy-found<a class="headerlink" href="#batch-30-2026-05-11-discrepancy-found" title="Permanent link">&para;</a></h2>
+<p><code>sonic-swss/fpmsyncd/routesync.cpp</code> と <code>sonic-swss/fpmsyncd/routesync.h</code> を確認。HLD のコア部分は master に取り込み済み:</p>
+<ul>
+<li><code>RouteSync::onNextHopMsg(struct nlmsghdr *h, int len)</code> (<code>routesync.cpp:2309</code>) で <code>RTM_NEWNEXTHOP</code> / <code>RTM_DELNEXTHOP</code> を処理。</li>
+<li><code>routesync.h:291</code> で <code>ProducerStateTable m_nexthop_groupTable;</code> を持ち、<code>routesync.cpp:157</code> で <code>APP_NEXTHOP_GROUP_TABLE_NAME</code> を open。</li>
+<li><code>routesync.cpp:3370</code> の <code>m_nexthop_groupTable.del(key)</code>、<code>routesync.cpp:1011,1031,1851,1882,1884</code> 等で <code>ROUTE_TABLE</code> 側の <code>nexthop_group</code> フィールド書込を実装。</li>
+</ul>
+<p>ただし <strong>HLD と本文が前提とする有効化 key が実装と一致しない</strong>:</p>
+<ul>
+<li>本ページは <code>DEVICE_METADATA.localhost.fpm_use_nexthop_groups = "enabled"</code> を要求すると記述しているが、現行 <code>sonic-buildimage/dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2:18-29</code> を見ると <strong><code>DEVICE_METADATA.localhost.nexthop_group == 'enabled'</code></strong> が <code>fpm use-next-hop-groups</code> のトリガになっている。さらに <code>zebra.conf.j2:9-16</code> には別途 <code>DEVICE_METADATA.localhost.zebra_nexthop</code> で <code>zebra nexthop kernel enable</code> の有無を制御する仕組みがある。</li>
+<li>すなわち実装 key 名は <code>nexthop_group</code> / <code>zebra_nexthop</code> の 2 つに分かれており、本文の <code>fpm_use_nexthop_groups</code> という単一キー名は <strong>HLD 段階の表記がそのまま残った乖離</strong>。本文の CONFIG_DB スニペットおよび設定例は将来 Writer に戻して key 名を実装に揃える必要がある。</li>
+</ul>
+<p>実装の存在自体は確認できたが key 名の不整合があるため <code>discrepancy-found</code> のまま据え置き。</p>
 <div class="footnote">
 <hr />
 <ol>

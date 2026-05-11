@@ -15611,6 +15611,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21514,6 +21525,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21672,6 +21694,15 @@
 <li><strong>swssconfig</strong>: warm-reboot 後の選択的書込</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<p><code>sonic-swss/orchagent/tunneldecaporch.cpp</code> を確認:</p>
+<ul>
+<li><code>CFG_SUBNET_DECAP_TABLE_NAME</code> を SubscriberStateTable として登録するロジックが <code>tunneldecaporch.cpp:39, 48, 69</code> に存在。</li>
+<li><code>TUNNEL_TERM_TYPE_MP2MP</code> の文字列マッピングと SAI 対応が <code>tunneldecaporch.cpp:345, 446, 451, 461, 474, 504, 934, 936, 948, 965, 1546</code> に実装され、<code>MP2MP</code> term の SAI 設定 (<code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP</code>) や src/dst IP mask の制御も含まれる。</li>
+<li><code>is_subnet_decap_term</code> フラグで「subnet decap tunnel に紐づく term は MP2MP のみ許容」のバリデーション (line 446-453) が入っており、HLD の「<code>IPINIP_SUBNET</code> / <code>IPINIP_V6_SUBNET</code> 自動生成は MP2MP 形式」と整合。</li>
+<li><code>sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2</code> / <code>swssconfig.sh</code> と <code>sonic-config-engine/tests/sample_output/py3/ipinip_subnet_decap_enable.json</code> に subnet decap 用の自動生成テンプレート / サンプルが存在し、warm-reboot 対応の swssconfig 経路も裏取り。</li>
+</ul>
+<p>HLD と実装は一致。<code>SUBNET_DECAP</code> table、<code>MP2MP</code> term、自動生成された <code>IPINIP_SUBNET</code> / <code>IPINIP_V6_SUBNET</code> tunnel いずれも master に取り込み済み。</p>
 <div class="footnote">
 <hr />
 <ol>

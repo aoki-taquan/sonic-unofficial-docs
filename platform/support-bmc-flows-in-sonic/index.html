@@ -15521,6 +15521,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21670,6 +21681,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21954,6 +21976,14 @@
 - 202605 branch の platform common API 統合フェーズ（phase 2）の進捗確認
 -->
 
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-platform-common/sonic_platform_base/redfish_client.py</code> に <code>RedfishClient</code> クラスが存在（cURL ラッパで Redfish API を叩く、<code>REDFISH_URI_FW_INVENTORY = '/redfish/v1/UpdateService/FirmwareInventory'</code> を定数で持つ）。HLD 提案の RedfishClient は master に取り込み済み。</li>
+<li>同階層に <code>bmc_base.py</code> (<code>ComponentBMC</code> / <code>BmcBase</code> の基底) と <code>tests/redfish_client_test.py</code> / <code>bmc_base_test.py</code> が同梱。</li>
+<li><code>sonic-utilities/show/platform.py:75-110</code> に <code>def bmc()</code> / <code>def bmc_summary()</code> の Click グループが定義されており、<code>chassis.get_bmc().get_eeprom() / get_version()</code> を呼び出して <code>show platform bmc summary</code> を実装している。HLD 提示の CLI が sonic-utilities に取り込み済み。</li>
+<li><code>sonic-utilities/scripts/generate_dump</code> に BMC dump 取り込み経路が存在し、<code>show techsupport</code> 統合の裏取り。</li>
+</ul>
+<p>実装と HLD は一致。<code>code-verified</code> に昇格可。</p>
 <div class="footnote">
 <hr />
 <ol>

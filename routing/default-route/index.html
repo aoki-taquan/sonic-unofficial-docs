@@ -8462,6 +8462,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21736,6 +21747,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21888,6 +21910,12 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <li>本機能のオン/オフは <code>linkmgrd</code> 起動引数で決まる。サービスユニットの引数を確認すること。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-linkmgrd/src/MuxManager.cpp:104</code> の <code>void MuxManager::initialize(bool enable_feature_measurement, bool enable_feature_default_route)</code> と続く <code>mMuxConfig.enableDefaultRouteFeature(enable_feature_default_route)</code> (line 121) で、デフォルトルート連動機能が <strong>起動引数によるオプトイン</strong> として実装されていることを確認。<code>MuxManager.h:298,302</code> のヘッダコメントにも「shutdowns link prober &amp; avoid switching active when default route is missing」と機能の主旨が明記。</li>
+<li><code>sonic-swss/orchagent/routeorch.cpp:127</code> で <code>m_stateDefaultRouteTb = unique_ptr&lt;swss::Table&gt;(new Table(m_stateDb.get(), STATE_ROUTE_TABLE_NAME))</code> として STATE_DB 上の ROUTE state テーブルを open しており、orchagent がデフォルトルート状態を STATE_DB に書く経路が実装済み。</li>
+</ul>
+<p>HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd が購読してオプトインで mux 健全性に反映）は実装と整合。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

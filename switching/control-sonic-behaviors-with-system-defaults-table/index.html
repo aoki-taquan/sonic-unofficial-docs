@@ -9874,6 +9874,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21704,6 +21715,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21927,6 +21949,13 @@ reasoning: スキーマ定義（キー一意性・status の自由度・custom_f
 <li><code>init_cfg.json</code> で書いた値が反映されない場合、<code>config_db.json</code> 側に同名フラグがあると <strong><code>config_db.json</code> が勝つ</strong>（ロード順による）。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang</code> が master に存在し、<code>container SYSTEM_DEFAULTS</code> 下に <code>list SYSTEM_DEFAULTS_LIST { key "name"; leaf name; leaf status; }</code> を定義。HLD の「キー = <code>feature_name</code>、必須フィールド = <code>status</code>」というスキーマと完全一致。</li>
+<li><code>sonic-buildimage/src/sonic-yang-models/tests/yang_model_tests/tests/system_defaults.json</code> / <code>tests_config/system_defaults.json</code> / <code>sample_config_db.json</code> にテストデータが整備され、<code>SYSTEM_DEFAULTS</code> テーブルが正式に sonic-yang-models で配信されていることを裏取り。</li>
+<li><code>sonic-utilities</code> 配下も含めて当該 YANG が <code>SYSTEM_DEFAULTS</code> を CONFIG_DB スキーマとして公開する経路が成立している。</li>
+</ul>
+<p>HLD と実装は一致。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

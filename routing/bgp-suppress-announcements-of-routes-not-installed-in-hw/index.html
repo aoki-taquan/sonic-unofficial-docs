@@ -8060,6 +8060,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21548,6 +21559,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21669,6 +21691,13 @@ reasoning: dplane_fpm_nl 移行が機能の前提条件である根拠。
 - MPLS / VNET routes 対象外の現行 fpmsyncd 側のフィルタ実装確認
 -->
 
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:107</code> に <code>bgp suppress-fib-pending</code> 行が条件付きで挿入されており、FRR への機能有効化フックが実装済み。</li>
+<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang:242</code> に <code>leaf suppress-fib-pending</code> が定義されており、<code>DEVICE_METADATA.localhost.suppress-fib-pending</code> で ON/OFF を切替可能。</li>
+<li><code>sonic-swss/fpmsyncd/routesync.h:19-22</code> で <code>RTM_F_OFFLOAD</code> の define、<code>routesync.cpp:3115</code> で <code>rtm-&gt;rtm_flags |= RTM_F_OFFLOAD</code> を発行する zebra 応答ロジックが実装されている。fpmsyncd は <code>dplane_fpm_nl</code> 経由で zebra に offload 応答を返すフィードバックループの一端を担う。</li>
+</ul>
+<p>HLD と実装は一致。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

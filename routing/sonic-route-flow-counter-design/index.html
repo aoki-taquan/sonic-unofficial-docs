@@ -8564,6 +8564,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21548,6 +21559,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21690,6 +21712,13 @@ reasoning: Route Flow Counter が既存 Flex Counter / Generic Counter 上の薄
 - max_match_count 超過時の選定アルゴリズム（reboot 後の不一致）の実装挙動確認
 -->
 
+<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp</code> に <code>FlowCounterRouteOrch</code> クラスが完全実装されている（コンストラクタ line 28、<code>doTask(Consumer&amp;)</code> / <code>doTask(SelectableTimer&amp;)</code> line 55/99、<code>initRouteFlowCounterCapability()</code> line 166、<code>generateRouteFlowStats()</code> / <code>clearRouteFlowStats()</code> / <code>addRoutePattern()</code> / <code>removeRoutePattern()</code> / <code>onAddMiscRouteEntry()</code> / <code>onAddVR()</code> / <code>bindFlowCounter()</code> / <code>removeRouteFlowCounter()</code> / <code>pendingUpdateFlexDb()</code> 等。Route Pattern Orch が master に存在。</li>
+<li><code>sonic-utilities/config/flow_counters.py:4-90</code> で <code>from flow_counter_util.route import FLOW_COUNTER_ROUTE_PATTERN_TABLE</code> を import し、<code>@click.group('flowcnt-route')</code> でグループ定義、<code>cfgdb.mod_entry(FLOW_COUNTER_ROUTE_PATTERN_TABLE, ...)</code> / <code>cfgdb.set_entry(...)</code> で CRUD を実装。</li>
+<li><code>sonic-utilities/show/flow_counters.py:30-53</code> で <code>def flowcnt_route()</code> の show 側グループも実装済み。</li>
+</ul>
+<p><code>FLOW_COUNTER_ROUTE_PATTERN</code> テーブル / Route Pattern Orch / <code>config flowcnt-route</code> CLI のいずれも HLD どおり master に取り込み済み。<code>code-verified</code> に昇格。</p>
 <div class="footnote">
 <hr />
 <ol>

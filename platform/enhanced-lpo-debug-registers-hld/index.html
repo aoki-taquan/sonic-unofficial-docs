@@ -15186,6 +15186,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11-discrepancy-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11) — discrepancy-found
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21448,6 +21459,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-30-2026-05-11-discrepancy-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取りメモ (batch 30, 2026-05-11) — discrepancy-found
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -21601,6 +21623,8 @@
 <li><strong>vendor 個別 PN マッチ</strong>: vendor が増えるほど factory 分岐が増える</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="batch-30-2026-05-11-discrepancy-found">裏取りメモ (batch 30, 2026-05-11) — discrepancy-found<a class="headerlink" href="#batch-30-2026-05-11-discrepancy-found" title="Permanent link">&para;</a></h2>
+<p><code>sonic-platform-common</code> を grep した結果、本 HLD が前提とする <code>CmisEnhancedLpoApi</code> / <code>CmisEnhancedLpoCodes</code> / <code>CmisEnhancedLpoMemMap</code> クラス、<code>xcvr_api_factory.py</code> での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、<code>LPOTxHostInputVMA*</code> / <code>LPORxInputOMA*</code> フィールドのいずれも HEAD に取り込まれていない（<code>grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/</code> でヒット 0）。HLD は 2025 年 2 月 Arista 提案 (Rev 1.0) の段階で、現行 master には未着手の <strong>提案文書</strong>。本ページは設計の解説として残すが、<code>code-verified</code> には昇格できない。</p>
 <div class="footnote">
 <hr />
 <ol>
