@@ -18,7 +18,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
+!!! success "裏取りステータス: Code-verified / 古い HLD"
     本 HLD は 2019-2020 年（Rev 0.12）の RADIUS authentication 設計。後発の AAA Improvements HLD で多重 role・remote_user 共有・nsswitch.conf 動的変更などの根本問題が指摘されている。`priority=high`。
 
 # RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）

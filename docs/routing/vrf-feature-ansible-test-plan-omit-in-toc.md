@@ -22,7 +22,7 @@ related:
     - sonic-vrf
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     本テストプランは sonic-mgmt 上の `test_vrf.py` 設計記述。`config vrf` / `config interface vrf bind` CLI、`frr.conf.j2` の VRF テンプレート、`acl-loader` の `redirect:<ip>@<intf>` action、1000 VRF スケールテストの現行挙動は未裏取り。
 
 # VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）

@@ -1,5 +1,5 @@
 ---
-title: Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
+title: "Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11

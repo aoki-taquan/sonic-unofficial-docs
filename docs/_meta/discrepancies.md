@@ -1,5 +1,6 @@
 ---
 title: 実装との乖離
+verification: meta
 ---
 
 # 実装との乖離

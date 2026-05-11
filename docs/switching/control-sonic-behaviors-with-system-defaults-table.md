@@ -15,7 +15,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     このページは公式 HLD のみを根拠に書かれている。`db_migrator.py` / `minigraph.py` / `sonic-cfggen` 等の実装による裏取りは未済。
 
 # SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約

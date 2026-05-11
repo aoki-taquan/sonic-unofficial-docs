@@ -117,7 +117,7 @@ enabled
 
 [^1]: [sonic-net/SONiC doc/password-reset/SONiC_local_users_password_reset_hld.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/password-reset/SONiC_local_users_password_reset_hld.md)
 
-## 裏取りメモ（Verifier batch 29）
+## 実装との乖離（裏取りメモ（Verifier batch 29））
 
 per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
 

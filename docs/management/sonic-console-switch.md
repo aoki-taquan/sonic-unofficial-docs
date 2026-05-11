@@ -164,7 +164,7 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 - USB serial 挿抜時の TTY 番号安定化機構の現行実装確認
 -->
 
-## 裏取りメモ（Verifier batch 29）
+## 実装との乖離（裏取りメモ（Verifier batch 29））
 
 per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:
 

@@ -14,7 +14,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     `dplane_fpm_nl` 移行、`RTM_F_OFFLOAD` 通知、`fpmsyncd` の応答チャネル、consistency monitoring script の現行 master 取り込みは未裏取り。
 
 # BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）

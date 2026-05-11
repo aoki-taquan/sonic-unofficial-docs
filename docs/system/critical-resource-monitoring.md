@@ -13,7 +13,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     このページは公式 HLD（要件定義文書）のみを根拠に書かれている。`orchagent` の CRM 実装、CLI (`crm show`)、CONFIG_DB の `CRM` テーブル等の実装裏取りは未済。
 
 # クリティカルリソースモニタリング (CRM) 要件

@@ -13,7 +13,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / リファレンス文書"
+!!! success "裏取りステータス: Code-verified / リファレンス文書"
     本ファイルは sonic-swss リポジトリ内の **生きたスキーマ参照ドキュメント** で、APPL_DB / STATE_DB の中心テーブルの ABNF 定義を集約している。本ページは概観のみで、最新の各テーブル詳細は [sonic-swss/doc/swss-schema.md](https://github.com/sonic-net/sonic-swss/blob/master/doc/swss-schema.md) を参照することを推奨する。54KB 超のため要点のみ抜粋。
 
 # swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）

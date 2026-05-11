@@ -18,7 +18,7 @@ related:
     - sonic-syslog
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     `rsyslog-config` service の現行 master 取り込み、SYSLOG_SERVER / SYSLOG_CONFIG の YANG schema、`config syslog` CLI、IP_FREEBIND 設定の rsyslog template 反映は未確認。
 
 # Syslog Source IP（SSIP / rsyslog omfwd / VRF / IP_FREEBIND）

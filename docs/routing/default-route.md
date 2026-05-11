@@ -13,7 +13,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     このページは公式 HLD のみを根拠に書かれている。`sonic-linkmgrd` の実コード（`LinkProberStateMachine` / `MuxStateMachine` 等）での裏取りは未済。
 
 # linkmgrd のデフォルトルート連動（DualToR mux 制御）

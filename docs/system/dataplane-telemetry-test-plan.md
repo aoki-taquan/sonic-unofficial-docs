@@ -14,7 +14,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     DTel feature は Barefoot 系 ASIC 主体。`SAI_OBJECT_TYPE_DTEL_*` の community SAI 取り込み状況、`DTEL_*` テーブルの CONFIG_DB スキーマ、sonic-mgmt 配下 DTel テストの現行カバレッジは未裏取り。
 
 # Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）
