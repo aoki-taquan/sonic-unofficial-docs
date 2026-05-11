@@ -24296,7 +24296,7 @@
 <p>2026-05 時点で <strong>schema 層（HA Set / HA Scope の table 名）は先行採用済みだが、hamgrd バイナリ・actor framework・swbus・VDPU / DPU_STATE は未取り込み</strong>。HLD の半分弱までが master に入っている部分実装状態。</p>
 <ul>
 <li><a href="../../../architecture/sflow-high-level-design/">sFlow（hsflowd / sflowmgrd / SAI sample-packet）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-10</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05 時点で本機能の <strong>全体取り込みは完了している</strong> が、HLD 文書中の「sample_rate の既定値テーブル」だけが実装と不一致である。</p>
 <ul>
@@ -24406,17 +24406,17 @@
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
 <li><a href="../../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming（ESI / DF election / split-horizon）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-10</code></li>
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない</strong>。</p>
 <ul>
 <li>
 <p><a href="../../../routing/evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-10</code></p>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
 <p><a href="../../../routing/local-ars-hld/">Local ARS（Adaptive Routing &amp; Switching の local 完結版）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-10</code></p>
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了</strong>。</p>
@@ -24428,7 +24428,7 @@
 <h3 id="switching">switching<a class="headerlink" href="#switching" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../switching/layer-2-forwarding-enhancements/">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）</a><br />
-  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>実コード裏取りで判明（verified at: 2026-05-09）:</p>
 <ul>
@@ -24484,7 +24484,7 @@
 <p>per-page queue で既出の通り提案 HLD は未採用。再走査でも:</p>
 <ul>
 <li><a href="../../../system/sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a><br />
-  monitor: <code>deprecated</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>deprecated</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
