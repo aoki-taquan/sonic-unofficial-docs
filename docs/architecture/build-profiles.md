@@ -164,6 +164,38 @@ HLD で明示の制限事項は無い。実運用上の留意点としては:
 - 値が `rules/config` で上書きされる: 優先順位は `config < config.user < profiles/$PROFILE.mk`。プロファイルで指定したのに効いていない場合は、コマンドラインの個別指定や make の override 挙動を疑う。
 - ビルド再現性が取れない: `rules/config.user` がコミット外で残っていないか確認。プロファイル運用に統一する場合は `config.user` を空にしてプロファイルだけで賄う。
 
+## 実装との乖離
+
+2026-05 時点で本機能は **HLD は提案されたが master にコードが入っていない**、純粋な未実装状態である。
+
+### 1. どこで乖離が確認されたか
+
+- `sonic-buildimage/rules/profiles/` ディレクトリが存在しない（`ls .cache/sonic-sources/sonic-buildimage/rules/` で `config` 系 mk のみで `profiles/` サブディレクトリは無し）。
+- `sonic-buildimage/Makefile.work:150-156` に該当する include はわずか:
+  ```make
+  rules/config.user:
+  ...
+  include rules/config
+  -include rules/config.user
+  ```
+  HLD が要求する `-include rules/profiles/$(PROFILE).mk` の行は **存在しない**。
+- 結果として `PROFILE=foo` を渡しても make は `$(PROFILE)` を解釈する箇所が無く、フラグは一切読み込まれない。
+
+### 2. HLD と実装の差分の中身
+
+HLD は「`rules/config` < `rules/config.user` < `rules/profiles/$(PROFILE).mk`」の 3 段優先順位を定義しているが、master では下 2 段までしか実装されておらず、**3 段目（プロファイル）が丸ごと欠落**している。プロファイル機構そのものが存在しない。
+
+### 3. 読者への影響
+
+- `make PROFILE=secure-upgrade all` のような呼び出しは何のエラーも出さずに **既定ビルドと同じ結果** を返す。HLD の前提で CI を組むと「フラグが効かないのにビルドは成功する」最悪のサイレント失敗が起きる。
+- ベンダーの secure upgrade / ZTP プリセットを `rules/profiles/*.mk` で配布する想定だった場合、配布手段そのものが master に無いので別途上流提案が要る。
+
+### 4. 回避策 / 対応方法
+
+- **HLD と同等の効果を得る暫定回避策**: ビルド前に `cp rules/profiles/foo.mk rules/config.user` する仕組みを wrapper script / CI ジョブで実装し、`config.user` を「実質プロファイル」として運用する。`config.user` は gitignore 対象なので CI でのみ生成すれば衝突しない。
+- **複数フラグを並べる従来形に倒す**: `make ENABLE_FOO=y ENABLE_BAR=y all` をそのまま CI に書き、可読性は CI ファイル側で補う。
+- 上流取り込みを推進する場合は `sonic-buildimage` 側に `Makefile.work` の 1 行 patch (`-include rules/profiles/$(PROFILE).mk`) + `rules/profiles/` ディレクトリ追加の PR を出すのが最小コスト。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/Build-Profiles.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

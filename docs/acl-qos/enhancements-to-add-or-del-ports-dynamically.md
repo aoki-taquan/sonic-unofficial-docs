@@ -217,11 +217,32 @@ redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
 
 ## 実装との乖離
 
-2026-05-09 時点の現行 master を裏取り。
+2026-05 時点の `.cache/sonic-sources/` master を裏取り。
 
-- **取り込み済み**: `sonic-swss/portsyncd` の zero-port 対応 (#1808 MERGED)、`portsorch` の per-port flex counter 動的 add/del (#2019 MERGED)、`sonic-buildimage/dockers/docker-lldp/lldpmgrd:129-130,46-198` の `netdev_oper_status` チェックと `pending_cmds` 管理。
-- **未取り込み**: `sonic-swss` PR #2022 (port buffer cfg per-port reference counter) は **CLOSED で未マージ**。HLD で「ref-count > 0 のポート削除拒否」の核となる防御策が現行 master に存在しない。削除時 race の防御は HLD 設計通り動かず、ユーザは依存設定の事前削除順序を厳格に守る必要がある。
-- buffermgrd の加入時 race（APP_DB に port 存在チェック）の取り込み状況は未検証。
+### 1. どこで乖離が確認されたか
+
+- **取り込み済み**:
+  - `sonic-swss/portsyncd/portsyncd.cpp:122-176` の `PortInitDone` / `notifyPortConfigDone` シグナル経路、および zero-port 対応（PR #1808 MERGED）。
+  - `sonic-swss/orchagent/portsorch` 側の per-port flex counter 動的 add/del（PR #2019 MERGED）。
+  - `sonic-buildimage/dockers/docker-lldp/lldpmgrd:46-198` の `netdev_oper_status` チェック + `pending_cmds` 管理。
+- **未取り込み**: `sonic-swss` PR #2022（port buffer cfg per-port reference counter）は **CLOSED で未マージ**。`grep -rn "addBufferRefCount\|m_portBufferRef" sonic-swss/orchagent/` も 0 件で、HLD が「ref-count > 0 のポート削除拒否」と書いた防御コードは存在しない。
+- buffermgrd 加入時 race（APP_DB の port 存在チェック）の取り込み有無も schema / code 上では未確認。
+
+### 2. HLD と実装の差分の中身
+
+HLD は port 削除時の race を「ref counter による orchagent 側の自動拒否」で守ると述べていたが、現行 master ではこの拒否ロジックがそもそも存在しない。**port 削除の race セーフ性は HLD 側が想定した形では成立しておらず**、設計どおりの安全性は無い。zero-port 起動と per-port counter 動的化のみが先行採用された状態。
+
+### 3. 読者への影響
+
+- ACL / VLAN / LAG / buffer PG が残ったまま `del PORT|EthernetX` を実行すると、orchagent が SAI レベルで遅延参照エラーや leak を起こす。ログには大量の `SAI_STATUS_OBJECT_IN_USE` 等が出うる。
+- 「HLD には ref counter があるからその順で消せばよい」と読んで運用設計すると、実装側がそれを守ってくれないので事故が起きる。
+- zero-port 起動は HLD 自身が「未テスト」と明記しており、production 投入前検証が必須。
+
+### 4. 回避策 / 対応方法
+
+- **port を削除する前に必ず**: 関連 `ACL_TABLE` の `ports` から外す → `VLAN_MEMBER` から外す → `PORTCHANNEL_MEMBER` から外す → `BUFFER_PG` / `BUFFER_QUEUE` / `QUEUE` / `PORT_QOS_MAP` の当該ポート行を削除、の手順を運用 runbook 化する。
+- 自動化する場合、削除前に `redis-cli -n 4 keys '*|<port>*'` で残依存を列挙して 0 件になることを確認する pre-check を入れる。
+- ref counter の上流取り込みが必要な場合、新たな PR を `sonic-swss` 側に提案する（既存 #2022 のリベース）必要がある。
 
 ## 引用元
 
