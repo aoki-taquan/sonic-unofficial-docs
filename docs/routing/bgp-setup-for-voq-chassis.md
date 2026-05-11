@@ -19,34 +19,32 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    現行 master で実装済みを確認。`sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/{instance,policies,peer-group}.conf.j2` の voq_chassis テンプレート、`instance.conf.j2:5` で `bgp bestpath peer-type multipath-relax`、`bgpd.main.conf.j2:61,63,141,159,170,176,198` で `voq_chassis` 変数による分岐、`sonic-buildimage/src/sonic-config-engine/minigraph.py:2277` で `BGP_VOQ_CHASSIS_NEIGHBOR` テーブル生成を確認（verified at: 2026-05-09）。
+    `docker-fpm-frr/frr/bgpd/templates/voq_chassis/{instance,policies,peer-group}.conf.j2` の voq_chassis テンプレート、`instance.conf.j2:5` で `bgp bestpath peer-type multipath-relax`、`bgpd.main.conf.j2:61,63,141,159,170,176,198` で `voq_chassis` 変数分岐、`sonic-config-engine/minigraph.py:2277` で `BGP_VOQ_CHASSIS_NEIGHBOR` テーブル生成を確認 (verified at: 2026-05-09)。
 
-# VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
+# VoQ シャーシでの BGP 構成
 
-## 概要
+## 読み手が知りたいこと
 
-VoQ（Virtual Output Queue）シャーシは複数 ASIC インスタンスから構成される単一論理ルータである。トラフィックは入口 ASIC で **一度だけ** 転送決定が行われ、その後はファブリック経由で出口 ASIC に運ばれる。したがって、ある宛先に対する ECMP ネクストホップ集合が **どの ASIC インスタンスでも同一でなければ**、入口 ASIC ごとにロードバランス挙動がブレてしまう[^1]。
+- なぜ VoQ シャーシは普通の BGP 設定では駄目で、ASIC 間で **ECMP 集合が同一** である必要があるのか
+- そのために必要な 4 つの設定は何か（特に `bgp bestpath peer-type multipath-relax` の役割）
+- どの CONFIG_DB テーブルと minigraph 要素で「VoQ 内部 iBGP ピア」を表現するか
+- `bgp shutdown all` 等の運用 CLI は内部ピアを扱うのか
 
-本 HLD は VoQ シャーシ内で「同じプレフィックスに対して同じ ECMP 集合が選ばれる」ことを保証する BGP 構成を定義する。具体的には次の 3 点である[^1]:
+## なぜ ASIC 間 ECMP 整合性が要るか
 
-1. ASIC インスタンス間で **iBGP フルメッシュ** を張り、`addpath-tx-all-paths` で eBGP 学習経路を全て交換する
-2. FRR に新規追加する `bgp bestpath peer-type multipath-relax` で eBGP/iBGP 混在の ECMP 群を許す
-3. CONFIG_DB に `BGP_VOQ_CHASSIS_NEIGHBOR` テーブルを新設し、`bgpcfgd` の `voq_chassis` テンプレートで FRR コンフィグを生成する
+VoQ（Virtual Output Queue）シャーシは複数 ASIC を 1 論理ルータに束ねる。転送決定は **入口 ASIC で 1 回だけ** 行われ、その後はファブリック経由で出口へ運ばれる。そのためある宛先の **ECMP nexthop 集合が ASIC ごとに異なる** と、入口 ASIC ごとにロードバランスがブレる[^1]。
 
-## 動作仕様
+本 HLD はそれを防ぐ 3 つの仕組みを定義する[^1]:
 
-### iBGP フルメッシュとアドレスファミリ
-
-全 ASIC インスタンスは **同一 AS** に所属する。各インスタンスは外部の eBGP ピアから経路を学習し、それを iBGP メッシュ経由で他インスタンスに広告する。1 セッションで IPv4/IPv6 両ファミリを運ぶが、IPv6 ユニキャストは別途 activate する必要がある[^1]。
+1. ASIC 間で **iBGP フルメッシュ** を張り、`addpath-tx-all-paths` で全 eBGP 学習経路を交換
+2. 新規 FRR コマンド `bgp bestpath peer-type multipath-relax` で eBGP/iBGP 混在 ECMP を許す
+3. `BGP_VOQ_CHASSIS_NEIGHBOR` テーブルと `bgpcfgd` の `voq_chassis` テンプレートで生成
 
 ```mermaid
 flowchart LR
   subgraph Chassis
-    A1[ASIC1]
-    A2[ASIC2]
-    A3[ASIC3]
-    A1 ---|iBGP| A2
-    A2 ---|iBGP| A3
+    A1[ASIC1] ---|iBGP| A2[ASIC2]
+    A2 ---|iBGP| A3[ASIC3]
     A1 ---|iBGP| A3
   end
   R1[(R1)] ---|eBGP| A1
@@ -54,58 +52,43 @@ flowchart LR
   R4[(R4)] ---|eBGP| A3
 ```
 
-iBGP の再帰ネクストホップ解決は VoQ シャーシのグローバル neighbor テーブル由来のホストルートに依存する。詳細は VOQ HLD（`doc/voq/voq_hld.md`）の Inband recycle port 節を参照[^1]。
+全 ASIC は **同一 AS**。1 セッションで IPv4/IPv6 両ファミリを運ぶが IPv6 ユニキャストは別途 activate が要る[^1]。iBGP nexthop の再帰解決は VOQ HLD の inband recycle port / グローバル neighbor テーブルが前提[^1]。
 
-### ECMP 整合性のための 4 つの設定
+## ECMP 整合性のための 4 設定
 
-各 ASIC インスタンスで **同じ ECMP 集合** が形成されるよう、HLD は次の挙動を要求する[^1]:
+[^1]
 
 | 設定 | 目的 | FRR コマンド |
 |------|------|-------------|
-| `addpath-tx-all-paths` | eBGP 学習経路を全て iBGP に流す | `neighbor <peer> addpath-tx-all-paths` |
-| 混在 ECMP 許可 | eBGP/iBGP path で同一 ECMP 群を作る | `bgp bestpath peer-type multipath-relax`（**新規追加**） |
-| 再帰解決の選択的有効化 | 混在 ECMP 群の iBGP nexthop を FIB に書く | 上記の副作用として自動有効化 |
-| `maximum-paths ibgp` を eBGP と一致 | ASIC 間で ECMP 群サイズを揃える | `maximum-paths ibgp <n>`（`maximum-paths <n>` と同じ値）|
+| `addpath-tx-all-paths` | 全 eBGP 学習経路を iBGP に流す | `neighbor <peer> addpath-tx-all-paths` |
+| 混在 ECMP 許可 | eBGP/iBGP 混在で ECMP 群を作る | `bgp bestpath peer-type multipath-relax`（新規）|
+| 再帰解決の選択的 ON | 混在 ECMP の iBGP nexthop を FIB に書く | 上記の副作用として自動 |
+| `maximum-paths ibgp` を eBGP と一致 | ASIC 間で ECMP サイズを揃える | `maximum-paths ibgp <n>` |
 
-#### なぜ multipath-relax が必要か
+### なぜ multipath-relax が要るか
 
-通常の BGP 最良経路アルゴリズム（RFC 4271 §9.1.2.2 d）では eBGP が iBGP より優先される。たとえば R1 と R4 から eBGP で、R2 から iBGP（他 ASIC 経由）で同等コスト経路を学習した場合、デフォルトでは ASIC1 は `{R1,R4}`、ASIC2 は `{R2}`、ASIC3 は `{R1,R2,R4}` となり ECMP 集合が一致しない[^1]。
+通常 BGP best-path（RFC 4271 §9.1.2.2 d）では eBGP が iBGP より優先される。R1/R4 から eBGP、R2 から iBGP（他 ASIC 経由）で同等コスト学習した場合、デフォルトでは ASIC1=`{R1,R4}`、ASIC2=`{R2}`、ASIC3=`{R1,R2,R4}` と ECMP 集合が割れる[^1]。
 
-新規導入される `bgp bestpath peer-type multipath-relax` は、最良経路の選択順序自体は変えず（eBGP が依然 best）、**ECMP 群への組み込み** で peer type 差を無視する。これにより全 ASIC で `{R1,R2,R4}` の同一集合が形成される。
+`bgp bestpath peer-type multipath-relax` は **最良経路の選択順序自体は変えず**（eBGP が依然 best）、**ECMP 群への組み込み** で peer type 差を無視する。これにより全 ASIC で `{R1,R2,R4}` が一致する。
 
 ### 再帰解決の取り扱い
 
-混在 ECMP 群が RIB に乗ると、BGP は通常「best path が eBGP（かつ ebgp-multihop でない）なら、RIB の nexthop を FIB に書く時に再帰解決を許さない」というデフォルト挙動を取る。これだと iBGP 学習 nexthop は connected 経由でないため FIB から落とされ、VoQ 整合性が崩れる[^1]。
-
-グローバルの `bgp disable-ebgp-connected-route-check` は副作用が大きいため使わない。代わりに HLD は **`bgp bestpath peer-type multipath-relax` 設定時に限り、iBGP nexthop が ECMP 群に含まれる場合だけ RIB→FIB の再帰解決を再有効化** する FRR 改修を提案している[^1]。
+混在 ECMP 群が RIB に乗ると、BGP は通常「best path が eBGP なら RIB nexthop の再帰解決を許さない」を取り、iBGP 学習 nexthop が FIB から落ちて整合性が崩れる[^1]。グローバルの `bgp disable-ebgp-connected-route-check` は副作用が大きい。代わりに HLD は **`multipath-relax` 設定時に限り、iBGP nexthop が ECMP に含まれる場合だけ RIB→FIB の再帰解決を再有効化** する FRR 改修を提案[^1]。
 
 ```mermaid
 flowchart TD
-  RIB[BGP RIB に混在 ECMP 群] --> CHK{iBGP nexthop 含む?}
-  CHK -->|Yes| REC[再帰解決 ON\n→ FIB に全 nexthop 書く]
+  RIB[混在 ECMP 群] --> CHK{iBGP nexthop 含む?}
+  CHK -->|Yes| REC[再帰解決 ON<br/>FIB に全 NH]
   CHK -->|No| DEF[従来通り connected 必須]
 ```
 
-なお eBGP ピア自身が再帰解決を要する nexthop を送ってきた場合、その path は **invalid 扱いで ECMP 群に入らない**。RIB 段の再帰解決有効化は FIB 段の話であり、最初の nexthop validity 判定には影響しない[^1]。
+eBGP ピア自身が再帰解決を要する nexthop を送ってきた場合は **invalid 扱いで ECMP に入らない**（RIB→FIB の再帰解決は最初の validity 判定には影響しない）[^1]。
 
-<!-- evidence:
-source: sonic-net/SONiC/doc/voq/bgp_voq_chassis.md#L98-L146 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  - Enable "additional-path send all" for each chassis iBGP peer.
-  - Allow BGP to form ECMP groups with paths learned from both eBGP and iBGP peers.
-  ... when "bgp bestpath peer-type multipath-relax" is configured, recursive resolution will be reenabled for nexthops in the RIB if an iBGP-learned nexthop is included in the group.
-reasoning: 4 つの設定要件と再帰解決の選択的有効化ロジックの根拠。
--->
+## CONFIG_DB / minigraph 拡張
 
-### CONFIG_DB スキーマ拡張
+`BGP_VOQ_CHASSIS_NEIGHBOR` を新設。スキーマは `BGP_NEIGHBOR` と同一で、**bgpcfgd で別テンプレート（`voq_chassis`）を引くためのフラグ** の役割[^1]。`voq_chassis` テンプレートは上記 4 設定を集約した peer-group を定義する。
 
-既存の BGP 系テーブルは `BGP_NEIGHBOR` / `BGP_MONITORS` / `BGP_PEER_RANGE` の 3 種。本 HLD は **`BGP_VOQ_CHASSIS_NEIGHBOR`** を追加する[^1]。スキーマは `BGP_NEIGHBOR` と同一だが、`bgpcfgd` 側で別テンプレート（`voq_chassis`）を引くためのフラグの役割を持つ。
-
-`bgpcfgd` の `voq_chassis` テンプレートは新たな peer-group を定義し、上記 4 設定をその peer-group に集約する。`general` テンプレートに if-分岐を追加する案より自然であると HLD は説明している[^1]。
-
-### Minigraph 拡張
-
-minigraph→CONFIG_DB 変換スクリプト（`sonic-config-engine`）は `BGPSession` 要素に新規オプション `<VoQChassisInternal>true</VoQChassisInternal>` を読み、該当ピアを `BGP_VOQ_CHASSIS_NEIGHBOR` に振り分ける[^1]:
+minigraph→CONFIG_DB 変換は `BGPSession` 要素の `<VoQChassisInternal>true</VoQChassisInternal>` を読み、該当ピアを `BGP_VOQ_CHASSIS_NEIGHBOR` に振り分ける[^1]:
 
 ```xml
 <BGPSession>
@@ -117,18 +100,18 @@ minigraph→CONFIG_DB 変換スクリプト（`sonic-config-engine`）は `BGPSe
 </BGPSession>
 ```
 
-### CLI
+## CLI（internal/external の扱い）
 
-multi-asic 環境では既存 CLI が internal/external ピアを区別する。VoQ シャーシでは **`BGP_VOQ_CHASSIS_NEIGHBOR` のピアを internal として分類する**[^1]:
+VoQ シャーシでは `BGP_VOQ_CHASSIS_NEIGHBOR` のピアを **internal** として分類[^1]:
 
-| CLI | 既存挙動 | VoQ シャーシでの挙動 |
-|-----|---------|----------------------|
-| `bgp shutdown all` | external eBGP のみ shut | 同左（VoQ internal は除外） |
-| `bgp startup all`  | external eBGP のみ起動 | 同左 |
+| CLI | 既存挙動 | VoQ での挙動 |
+|-----|---------|-----------|
+| `bgp shutdown all` | external eBGP のみ shut | 同左（internal 除外）|
+| `bgp startup all` | external eBGP のみ起動 | 同左 |
 | `show ip(v6) bgp summary` | display=frontend で internal 非表示 | 同左 |
-| `bgp remove neighbor` | 内外どちらも指定可 | 内部実装で `BGP_VOQ_CHASSIS_NEIGHBOR` も参照 |
+| `bgp remove neighbor` | 内外指定可 | 実装内部で `BGP_VOQ_CHASSIS_NEIGHBOR` も参照 |
 
-これらコマンドに **`-d all` で internal を含める** オプションが追加される[^1]。
+`-d all` で internal を含めるオプションが追加される[^1]。
 
 ## 設定
 
@@ -136,10 +119,10 @@ multi-asic 環境では既存 CLI が internal/external ピアを区別する。
 
 | Table | 説明 |
 |-------|------|
-| `BGP_VOQ_CHASSIS_NEIGHBOR` | VoQ シャーシ内 iBGP メッシュのピア。スキーマは `BGP_NEIGHBOR` と同一 |
-| `BGP_NEIGHBOR` | 既存の外部 eBGP ピア（変更なし） |
+| `BGP_VOQ_CHASSIS_NEIGHBOR` | VoQ 内 iBGP ピア（スキーマは `BGP_NEIGHBOR` と同一）|
+| `BGP_NEIGHBOR` | 外部 eBGP ピア（変更なし）|
 
-### 設定例（FRR コンフィグ生成結果）
+### FRR 設定生成例
 
 ```
 neighbor 10.10.1.17 remote-as <chassis-as>
@@ -155,22 +138,28 @@ exit-address-family
 
 ## 制限事項
 
-- **新規 FRR コマンド**: `bgp bestpath peer-type multipath-relax` は本 HLD で FRR 上流に提案される設定であり、SONiC 同梱 FRR への取り込み状況は要裏取り。
-- **AS_PATH prepending 禁止**: ASIC 間 iBGP では eBGP 学習経路を **AS_PATH を変えずに** 渡す必要がある。prepending を入れると ECMP が形成されない[^1]。
-- **ルートモニタの扱い**: 既存の iBGP route monitor を使う場合、各 ASIC インスタンスとそれぞれピアリングする必要がある。1 ASIC とだけピアすると他 ASIC の経路が見えない[^1]。
-- **過剰経路の subset**: 学習した等コスト経路数が `maximum-paths` を超える場合、各 ASIC が異なる subset を選びうる。HLD はこれを許容している[^1]。
+- **新規 FRR コマンド** `bgp bestpath peer-type multipath-relax` の SONiC 同梱 FRR への取り込み状況は要追跡
+- **AS_PATH prepending 禁止**: ASIC 間 iBGP では eBGP 学習を AS_PATH 不変で渡す必要あり[^1]
+- **ルートモニタ**: 既存 iBGP route monitor は全 ASIC とピアリングする必要がある（1 ASIC だけだと他 ASIC の経路が見えない）[^1]
+- **過剰経路の subset**: 等コスト経路数が `maximum-paths` を超えると ASIC ごとに異なる subset を選びうる。HLD はこれを許容[^1]
 
 ## 干渉する機能
 
-- **`maximum-paths` の対称設定**: eBGP 側 `maximum-paths` と iBGP 側 `maximum-paths ibgp` を **必ず同一値** にすること。非対称だと混在 ECMP 群サイズが入口 ASIC で異なる結果になる[^1]。
-- **VOQ HLD のホストルート**: iBGP 学習 nexthop の再帰解決はグローバル neighbor テーブル由来のホストルートに依存する。VOQ HLD 側の inband recycle port 構成が前提[^1]。
-- **`bgp disable-ebgp-connected-route-check`**: グローバル設定としては使わない方針。本機能の per-route ロジックで代替する[^1]。
+- **`maximum-paths` の対称設定**: eBGP 側と `maximum-paths ibgp` を **必ず同値**[^1]
+- **VOQ HLD の inband recycle port**: iBGP nexthop の再帰解決のためグローバル neighbor テーブル由来ホストルートに依存[^1]
+- **`bgp disable-ebgp-connected-route-check`**: グローバル設定としては使わない方針[^1]
 
 ## トラブルシューティング
 
-- ASIC 間で ECMP 集合が一致しない: 各 ASIC で `show bgp ipv4 unicast <prefix>` を比較。`addpath-tx-all-paths` が iBGP ピアで有効か、`maximum-paths ibgp` が一致しているか確認。
-- iBGP nexthop が FIB に出ない: `show ip route <prefix>` で nexthop が `inactive` になっていないか。`bgp bestpath peer-type multipath-relax` 設定の有無を確認。
-- minigraph→CONFIG_DB 変換で内部ピアが `BGP_NEIGHBOR` に入る: `<VoQChassisInternal>` 要素の有無、`sonic-config-engine` のバージョンを確認。
+- ASIC 間で ECMP が割れる → 各 ASIC で `show bgp ipv4 unicast <prefix>` を比較。`addpath-tx-all-paths` と `maximum-paths ibgp` を確認
+- iBGP nexthop が FIB に出ない → `show ip route <prefix>` の `inactive` を確認。`bgp bestpath peer-type multipath-relax` 設定の有無
+- 内部ピアが `BGP_NEIGHBOR` に入る → `<VoQChassisInternal>` 要素と `sonic-config-engine` バージョン
+
+## 関連 Topic
+
+- [12 Multi-ASIC / VoQ / architecture](../topics/12-multi-asic-voq/architecture.md)
+- [12 Multi-ASIC / VoQ / internals](../topics/12-multi-asic-voq/internals.md)
+- [02 BGP / advanced](../topics/02-bgp/advanced.md)
 
 ## 引用元
 
