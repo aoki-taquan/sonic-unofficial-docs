@@ -837,11 +837,19 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-banner/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-bgp/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-buffer/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-clock/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -877,6 +885,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-ntp/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-pfcwd/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -902,6 +914,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-snmp/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-ssh/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1018,6 +1034,18 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-running-config/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-snmpagentaddress/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-snmptrap/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-storm-control/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>

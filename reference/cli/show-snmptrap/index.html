@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-pfcwd/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-snmptrap/">
       
       
-        <link rel="prev" href="../config-ntp/">
+        <link rel="prev" href="../show-snmpagentaddress/">
       
       
-        <link rel="next" href="../config-platform-firmware/">
+        <link rel="next" href="../show-storm-control/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>config pfcwd サブコマンド - SONiC 非公式ドキュメント</title>
+        <title>show snmptrap サブコマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-pfcwd" class="md-skip">
+        <a href="#show-snmptrap" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config pfcwd サブコマンド
+              show snmptrap サブコマンド
             
           </span>
         </div>
@@ -21228,43 +21228,26 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        各コマンドの詳細
+        詳細
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="各コマンドの詳細">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config-pfcwd-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config pfcwd start
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        その他の設定
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CONFIG_DB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         注意
@@ -21275,7 +21258,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -21302,7 +21285,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-pfcwd.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/show-snmptrap.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -21310,9 +21293,9 @@
   
 
 
-<h1 id="config-pfcwd">config pfcwd サブコマンド<a class="headerlink" href="#config-pfcwd" title="Permanent link">&para;</a></h1>
+<h1 id="show-snmptrap">show snmptrap サブコマンド<a class="headerlink" href="#show-snmptrap" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config pfcwd</code> は PFC watchdog の設定操作を <code>pfcwd</code> 実行ファイルへ委譲するラッパー。Click 側で範囲・選択肢を検証し、実際の CONFIG_DB 更新や daemon 連携は <code>pfcwd</code> 側が担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>show snmptrap</code> は SNMP Trap 送信先サーバの設定を表示する CLI グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB の <code>SNMP_TRAP_CONFIG</code> テーブルから登録された v1/v2/v3 Trap receiver を読み、整形して出力する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -21323,66 +21306,70 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config pfcwd start [options] &lt;ports&gt;... &lt;detection-time&gt;</code></td>
-<td>port 群で PFC watchdog を開始</td>
-</tr>
-<tr>
-<td><code>config pfcwd stop</code></td>
-<td>PFC watchdog を停止</td>
-</tr>
-<tr>
-<td><code>config pfcwd interval &lt;poll_interval&gt;</code></td>
-<td>counter polling 間隔を設定</td>
-</tr>
-<tr>
-<td><code>config pfcwd counter_poll enable\|disable</code></td>
-<td>counter polling を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd big_red_switch enable\|disable</code></td>
-<td>BIG_RED_SWITCH mode を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd pfc_stat_history enable\|disable [ports]...</code></td>
-<td>historical statistics を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd start_default</code></td>
-<td>default 設定で PFC watchdog を開始</td>
+<td><code>show snmptrap</code></td>
+<td>SNMP Trap 送信先設定の表示</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config-pfcwd-start"><code>config pfcwd start</code><a class="headerlink" href="#config-pfcwd-start" title="Permanent link">&para;</a></h3>
+<h2 id="_3">詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config pfcwd start [--action drop|forward|alert]
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                   [--restoration-time &lt;100-60000&gt;]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                   [--pfc-stat-history]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                   [--verbose]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                   &lt;ports&gt;... &lt;detection-time&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show snmptrap
 </span></code></pre></div>
-<p><code>&lt;detection-time&gt;</code> は 100-5000 ms。<code>--restoration-time</code> は 100-60000 ms。<code>ports</code> には個別 port または <code>all</code> を渡す想定で、CLI は <code>pfcwd start ...</code> を組み立てて実行する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h3 id="_4">その他の設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><strong>動作</strong>:</p>
+<ol>
+<li>CONFIG_DB に接続し、<code>get_table('SNMP_TRAP_CONFIG')</code> でテーブルを取得</li>
+<li>テーブルの key（<code>v1TrapDest</code> / <code>v2TrapDest</code> / <code>v3TrapDest</code>）から SNMP バージョン番号を決定</li>
+<li>各エントリの <code>DestIp</code>, <code>DestPort</code>, <code>vrf</code>, <code>Community</code> を読み出し、tabulate で出力</li>
+</ol>
+<p>表示ヘッダ:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Version | TrapReceiverIP | Port | VRF | Community
+</span></code></pre></div>
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/main.py#L606-L624 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @cli.group('snmptrap', invoke_without_command=True)
+  def snmptrap(ctx):
+      config_db = ConfigDBConnector()
+      config_db.connect()
+      traptable = config_db.get_table('SNMP_TRAP_CONFIG')
+      header = ['Version', 'TrapReceiverIP', 'Port', 'VRF', 'Community']
+      body = []
+      for row in traptable:
+          if row == "v1TrapDest":   ver=1
+          elif row == "v2TrapDest": ver=2
+          else:                     ver=3
+          body.append([ver, traptable[row]['DestIp'], traptable[row]['DestPort'],
+                       traptable[row]['vrf'], traptable[row]['Community']])
+-->
+
+<h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー</th>
+<th>フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SNMP_TRAP_CONFIG</code></td>
+<td><code>v1TrapDest</code> / <code>v2TrapDest</code> / <code>v3TrapDest</code></td>
+<td><code>DestIp</code>, <code>DestPort</code>, <code>vrf</code>, <code>Community</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>stop</code> は <code>pfcwd stop</code> を実行する。</li>
-<li><code>interval &lt;poll_interval&gt;</code> は 100-1000 ms の範囲を Click で検証し、<code>pfcwd interval &lt;poll_interval&gt;</code> を実行する。</li>
-<li><code>counter_poll</code>, <code>big_red_switch</code>, <code>pfc_stat_history</code> は <code>enable</code> / <code>disable</code> のみ受け付ける。</li>
-<li><code>start_default</code> は <code>pfcwd start_default</code> を実行する。</li>
+<li>key は SNMP バージョンを文字列で表現する固定値 (<code>v1TrapDest</code>, <code>v2TrapDest</code>, <code>v3TrapDest</code>)。各バージョンにつき 1 エントリしか保持できない構造になっている。</li>
+<li>v3 では <code>Community</code> フィールドは SNMPv3 ユーザ名/コンテキストとは別の意味で運用されるため、実環境では空文字や placeholder の場合がある。</li>
 </ul>
-<h2 id="_5">注意<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li>このページで扱う <code>config pfcwd</code> は wrapper であり、DB table 名や永続化の詳細は <code>pfcwd</code> 側の実装に依存する。</li>
-<li><code>show pfcwd config</code> / <code>show pfcwd stats</code> も同じ <code>pfcwd</code> 実行ファイルへ委譲される。</li>
-</ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>config pfcwd</code> グループと各 command は <code>config/main.py</code> の PFC watchdog セクションで定義される。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p><code>start</code> は Click の range/choice 検証後、<code>pfcwd start</code> に引数を渡す。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>show snmptrap</code> グループ定義は <code>show/main.py</code> L603-L624。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L603">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L603</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

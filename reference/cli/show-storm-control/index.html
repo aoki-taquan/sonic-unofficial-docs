@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/config-pfcwd/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/cli/show-storm-control/">
       
       
-        <link rel="prev" href="../config-ntp/">
+        <link rel="prev" href="../show-snmptrap/">
       
       
-        <link rel="next" href="../config-platform-firmware/">
+        <link rel="next" href="../show-system-health/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>config pfcwd サブコマンド - SONiC 非公式ドキュメント</title>
+        <title>show storm-control サブコマンド - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#config-pfcwd" class="md-skip">
+        <a href="#show-storm-control" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config pfcwd サブコマンド
+              show storm-control サブコマンド
             
           </span>
         </div>
@@ -21237,10 +21237,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#config-pfcwd-start" class="md-nav__link">
+  <a href="#show-storm-control-default" class="md-nav__link">
     <span class="md-ellipsis">
       
-        config pfcwd start
+        show storm-control (default)
       
     </span>
   </a>
@@ -21248,10 +21248,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#show-storm-control-interface-interface" class="md-nav__link">
     <span class="md-ellipsis">
       
-        その他の設定
+        show storm-control interface &lt;interface&gt;
       
     </span>
   </a>
@@ -21264,10 +21264,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        注意
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -21275,7 +21275,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -21302,7 +21302,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/config-pfcwd.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/cli/show-storm-control.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -21310,9 +21310,10 @@
   
 
 
-<h1 id="config-pfcwd">config pfcwd サブコマンド<a class="headerlink" href="#config-pfcwd" title="Permanent link">&para;</a></h1>
+<h1 id="show-storm-control">show storm-control サブコマンド<a class="headerlink" href="#show-storm-control" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config pfcwd</code> は PFC watchdog の設定操作を <code>pfcwd</code> 実行ファイルへ委譲するラッパー。Click 側で範囲・選択肢を検証し、実際の CONFIG_DB 更新や daemon 連携は <code>pfcwd</code> 側が担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>show storm-control</code> は Storm Control（ブロードキャスト/マルチキャスト/不明ユニキャスト過剰トラフィックの抑制機能）の設定を表示する CLI グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CONFIG_DB の <code>PORT_STORM_CONTROL</code> テーブルに格納される <code>(&lt;interface&gt;, &lt;storm_type&gt;)</code> キーの設定を読み取り、tabulate で整形して出力する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -21323,66 +21324,74 @@
 </thead>
 <tbody>
 <tr>
-<td><code>config pfcwd start [options] &lt;ports&gt;... &lt;detection-time&gt;</code></td>
-<td>port 群で PFC watchdog を開始</td>
+<td><code>show storm-control [-n &lt;namespace&gt;] [-d &lt;display&gt;]</code></td>
+<td>全インターフェースの storm-control 設定を表示</td>
 </tr>
 <tr>
-<td><code>config pfcwd stop</code></td>
-<td>PFC watchdog を停止</td>
-</tr>
-<tr>
-<td><code>config pfcwd interval &lt;poll_interval&gt;</code></td>
-<td>counter polling 間隔を設定</td>
-</tr>
-<tr>
-<td><code>config pfcwd counter_poll enable\|disable</code></td>
-<td>counter polling を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd big_red_switch enable\|disable</code></td>
-<td>BIG_RED_SWITCH mode を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd pfc_stat_history enable\|disable [ports]...</code></td>
-<td>historical statistics を有効/無効化</td>
-</tr>
-<tr>
-<td><code>config pfcwd start_default</code></td>
-<td>default 設定で PFC watchdog を開始</td>
+<td><code>show storm-control interface &lt;interface&gt;</code></td>
+<td>指定インターフェースの storm-control 設定を表示</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config-pfcwd-start"><code>config pfcwd start</code><a class="headerlink" href="#config-pfcwd-start" title="Permanent link">&para;</a></h3>
+<h3 id="show-storm-control-default"><code>show storm-control</code> (default)<a class="headerlink" href="#show-storm-control-default" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config pfcwd start [--action drop|forward|alert]
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                   [--restoration-time &lt;100-60000&gt;]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                   [--pfc-stat-history]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                   [--verbose]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                   &lt;ports&gt;... &lt;detection-time&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show storm-control [-n|--namespace &lt;namespace&gt;] [-d|--display &lt;all|frontend&gt;]
 </span></code></pre></div>
-<p><code>&lt;detection-time&gt;</code> は 100-5000 ms。<code>--restoration-time</code> は 100-60000 ms。<code>ports</code> には個別 port または <code>all</code> を渡す想定で、CLI は <code>pfcwd start ...</code> を組み立てて実行する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h3 id="_4">その他の設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p><strong>動作</strong>:
+サブコマンド未指定時:</p>
 <ul>
-<li><code>stop</code> は <code>pfcwd stop</code> を実行する。</li>
-<li><code>interval &lt;poll_interval&gt;</code> は 100-1000 ms の範囲を Click で検証し、<code>pfcwd interval &lt;poll_interval&gt;</code> を実行する。</li>
-<li><code>counter_poll</code>, <code>big_red_switch</code>, <code>pfc_stat_history</code> は <code>enable</code> / <code>disable</code> のみ受け付ける。</li>
-<li><code>start_default</code> は <code>pfcwd start_default</code> を実行する。</li>
+<li><code>--namespace</code> 省略時: <code>display_storm_all()</code> を実行し、全 PORT_STORM_CONTROL エントリを表示</li>
+<li><code>--namespace</code> 指定時: <code>multi_asic.multi_asic_get_ip_intf_from_ns(namespace)</code> で取得した interface ごとに <code>get_storm_interface(intf, body)</code> を呼び、tabulate で <code>grid</code> 表示する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<h2 id="_5">注意<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li>このページで扱う <code>config pfcwd</code> は wrapper であり、DB table 名や永続化の詳細は <code>pfcwd</code> 側の実装に依存する。</li>
-<li><code>show pfcwd config</code> / <code>show pfcwd stats</code> も同じ <code>pfcwd</code> 実行ファイルへ委譲される。</li>
-</ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>表示ヘッダ: <code>Interface Name | Storm Type | Rate (kbps)</code></p>
+<h3 id="show-storm-control-interface-interface"><code>show storm-control interface &lt;interface&gt;</code><a class="headerlink" href="#show-storm-control-interface-interface" title="Permanent link">&para;</a></h3>
+<p><strong>用法</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show storm-control interface &lt;interface&gt;
+</span></code></pre></div>
+<p><strong>動作</strong>:
+multi-ASIC 環境では parent context から取得した <code>namespace</code> が有効か検証 (<code>multi_asic.get_namespace_list()</code> に含まれるか) し、不一致なら <code>-n/--namespace option required ...</code> でエラー終了。検証通過後 <code>display_storm_interface(interface)</code> を呼び出して該当 interface の全 storm type エントリを表示する。</p>
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/main.py#L499-L533 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @cli.group('storm-control', invoke_without_command=True)
+  def storm_control(ctx, namespace, display):
+      header = ['Interface Name', 'Storm Type', 'Rate (kbps)']
+      ...
+  @storm_control.command('interface')
+  def interface(ctx, interface):
+      namespace = ctx.parent.params.get('namespace')
+      if multi_asic.is_multi_asic() and namespace not in multi_asic.get_namespace_list():
+          ctx.fail('-n/--namespace option required. ...')
+-->
+
+<h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー</th>
+<th>フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT_STORM_CONTROL</code></td>
+<td><code>&lt;interface&gt;\|&lt;storm_type&gt;</code></td>
+<td><code>kbps</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>storm_type</code> は <code>broadcast</code> / <code>unknown-multicast</code> / <code>unknown-unicast</code> の 3 種。</p>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>config pfcwd</code> グループと各 command は <code>config/main.py</code> の PFC watchdog セクションで定義される。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>show storm-control</code> グループ定義は <code>show/main.py</code> L499-L533。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L499">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L499</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>start</code> は Click の range/choice 検証後、<code>pfcwd start</code> に引数を渡す。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>display_storm_all</code> / <code>display_storm_interface</code> は同じ <code>show/main.py</code> 上部のヘルパ関数。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
