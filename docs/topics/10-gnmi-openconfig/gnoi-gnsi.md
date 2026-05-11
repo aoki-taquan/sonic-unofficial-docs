@@ -7,11 +7,14 @@ verification: meta
 last_verified: 2026-05-10
 sources: []
 related:
-  cli: []
+  cli:
+  - config warm_restart
   config_db:
   - TELEMETRY
   - GNMI
-  yang: []
+  yang:
+  - sonic-gnmi
+  - sonic-telemetry
 ---
 
 # gNOI / gNSI

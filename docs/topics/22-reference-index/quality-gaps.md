@@ -5,12 +5,15 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 related:
-  cli: []
+  cli:
+  - show techsupport
   config_db:
   - DPU
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE
-  yang: []
+  yang:
+  - sonic-chassis-module
+  - sonic-smart-switch
 ---
 
 # 品質と gap

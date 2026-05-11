@@ -7,10 +7,12 @@ verification: meta
 last_verified: 2026-05-10
 sources: []
 related:
-  cli: []
-  config_db: []
-  yang: []
-  _no_related: true
+  cli:
+  - config feature
+  config_db:
+  - FEATURE
+  yang:
+  - sonic-feature
 ---
 
 # 発展トピック

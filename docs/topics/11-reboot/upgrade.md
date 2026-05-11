@@ -12,13 +12,18 @@ sources:
 - docs/system/sonic-os-sonic-docker-images-versioning.md
 - docs/system/independent-dpu-upgrade.md
 related:
-  cli: []
+  cli:
+  - config warm_restart
+  - config platform firmware
   config_db:
   - DPU
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE
   - DPUS
-  yang: []
+  yang:
+  - sonic-warm-restart
+  - sonic-chassis-module
+  - sonic-smart-switch
 ---
 
 # Upgrade lifecycle
