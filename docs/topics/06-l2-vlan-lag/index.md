@@ -108,6 +108,19 @@ related:
 - [CONFIG_DB: VLAN](../../reference/config-db/vlan.md)
 - [CONFIG_DB: PORTCHANNEL](../../reference/config-db/portchannel.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (129 行) | meta |
+| setup | ✅ 完成 (272 行) | meta |
+| operations | ✅ 完成 (202 行) | meta |
+| internals | ✅ 完成 (128 行) | meta |
+| advanced | ⚠️ プレースホルダ (79 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

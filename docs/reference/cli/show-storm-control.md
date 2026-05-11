@@ -1,19 +1,21 @@
 ---
 title: show storm-control サブコマンド
-description: "show storm-control サブコマンド — show storm-control は Storm Control（ブロードキャスト/マルチキャスト/不明ユニキャスト過剰トラフィックの抑制機能）の設定を表示する CLI グループ。"
+description: show storm-control サブコマンド — show storm-control は Storm Control（ブロードキャスト/マルチキャスト/不明ユニキャスト過剰トラフィックの抑制機能）の設定を表示する
+  CLI グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - PORT_STORM_CONTROL
+  - PORT_STORM_CONTROL
   cli:
-    - show storm-control
-  yang: []
+  - show storm-control
+  yang:
+  - sonic-storm-control
 ---
 
 # show storm-control サブコマンド

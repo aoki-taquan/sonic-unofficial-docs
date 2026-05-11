@@ -1,24 +1,26 @@
 ---
 title: show nat サブコマンド
-description: "show nat サブコマンド — show nat は SONiC の NAT 機能の 動的な変換テーブル および 静的な設定 を表示する CLI で、show/nat.py の @click.group() がエントリポイントとなる。"
+description: show nat サブコマンド — show nat は SONiC の NAT 機能の 動的な変換テーブル および 静的な設定 を表示する
+  CLI で、show/nat.py の @click.group() がエントリポイントとなる。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/nat.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/nat.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - STATIC_NAT
-    - STATIC_NAPT
-    - NAT_POOL
-    - NAT_BINDINGS
-    - NAT_GLOBAL
+  - STATIC_NAT
+  - STATIC_NAPT
+  - NAT_POOL
+  - NAT_BINDINGS
+  - NAT_GLOBAL
   cli:
-    - show nat
-    - config nat
-  yang: []
+  - show nat
+  - config nat
+  yang:
+  - sonic-nat
 ---
 
 # show nat サブコマンド

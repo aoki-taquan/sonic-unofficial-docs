@@ -1,20 +1,22 @@
 ---
 title: config acl サブコマンド
-description: "config acl サブコマンド — config acl は ACL テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（acl-loader 起動）を提供する。個別 ACL ルールを CLI フラグで追加するインタフェースは無い。"
+description: config acl サブコマンド — config acl は ACL テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（acl-loader
+  起動）を提供する。個別 ACL ルールを CLI フラグで追加するインタフェースは無い。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - ACL_TABLE
-    - ACL_RULE
+  - ACL_TABLE
+  - ACL_RULE
   cli:
-    - config acl
-  yang: []
+  - config acl
+  yang:
+  - sonic-routing-policy-sets
 ---
 
 # config acl サブコマンド

@@ -88,6 +88,19 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 - [SONiC-DASH アーキテクチャ概観](../../overlay/sonic-dash-hld.md)
 - [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (169 行) | meta |
+| setup | ✅ 完成 (268 行) | meta |
+| operations | ✅ 完成 (236 行) | meta |
+| internals | ✅ 完成 (155 行) | meta |
+| advanced | ⚠️ プレースホルダ (89 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

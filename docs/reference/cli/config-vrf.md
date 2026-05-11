@@ -1,23 +1,25 @@
 ---
 title: config vrf サブコマンド
-description: "config vrf サブコマンド — config vrf は VRF (Virtual Routing and Forwarding) インスタンスの作成・削除と、L3 VNI マッピング（VXLAN EVPN 用）を提供する。"
+description: config vrf サブコマンド — config vrf は VRF (Virtual Routing and Forwarding)
+  インスタンスの作成・削除と、L3 VNI マッピング（VXLAN EVPN 用）を提供する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - VRF
-    - MGMT_VRF_CONFIG
-    - VXLAN_TUNNEL_MAP
-    - SYSLOG_SERVER
+  - VRF
+  - MGMT_VRF_CONFIG
+  - VXLAN_TUNNEL_MAP
+  - SYSLOG_SERVER
   cli:
-    - config vrf
-    - config interface vrf
-  yang: []
+  - config vrf
+  - config interface vrf
+  yang:
+  - sonic-vrf
 ---
 
 # config vrf サブコマンド

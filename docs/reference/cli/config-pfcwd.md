@@ -1,19 +1,21 @@
 ---
 title: config pfcwd サブコマンド
-description: "config pfcwd サブコマンド — config pfcwd は PFC watchdog の設定操作を pfcwd 実行ファイルへ委譲するラッパー。Click 側で範囲・選択肢を検証し、実際の CONFIG_DB 更新や daemon 連携は pfcwd 側が担う。"
+description: config pfcwd サブコマンド — config pfcwd は PFC watchdog の設定操作を pfcwd 実行ファイルへ委譲するラッパー。Click
+  側で範囲・選択肢を検証し、実際の CONFIG_DB 更新や daemon 連携は pfcwd 側が担う。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - config pfcwd
-    - pfcwd
-  yang: []
+  - config pfcwd
+  - pfcwd
+  yang:
+  - sonic-pfcwd
 ---
 
 # config pfcwd サブコマンド

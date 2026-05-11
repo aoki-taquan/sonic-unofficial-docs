@@ -1,26 +1,28 @@
 ---
 title: config snmp / snmpagentaddress / snmptrap サブコマンド
-description: "config snmp / snmpagentaddress / snmptrap サブコマンド — SNMP 関連の CLI は 3 つの独立したトップレベルグループ に分かれている: config snmp、config snmpagentaddress、config snmptrap。"
+description: 'config snmp / snmpagentaddress / snmptrap サブコマンド — SNMP 関連の CLI は 3
+  つの独立したトップレベルグループ に分かれている: config snmp、config snmpagentaddress、config snmptrap。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - SNMP
-    - SNMP_COMMUNITY
-    - SNMP_USER
-    - SNMP_AGENT_ADDRESS_CONFIG
-    - SNMP_TRAP_CONFIG
-    - MGMT_VRF_CONFIG
+  - SNMP
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_TRAP_CONFIG
+  - MGMT_VRF_CONFIG
   cli:
-    - config snmp
-    - config snmpagentaddress
-    - config snmptrap
-  yang: []
+  - config snmp
+  - config snmpagentaddress
+  - config snmptrap
+  yang:
+  - sonic-snmp
 ---
 
 # config snmp / snmpagentaddress / snmptrap サブコマンド

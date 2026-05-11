@@ -1,21 +1,26 @@
 ---
 title: config buffer サブコマンド
-description: "config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB の BUFFER_PROFILE を追加・更新する CLI グループ。"
+description: config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB
+  の BUFFER_PROFILE を追加・更新する CLI グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - BUFFER_PROFILE
-    - BUFFER_POOL
-    - DEFAULT_LOSSLESS_BUFFER_PARAMETER
+  - BUFFER_PROFILE
+  - BUFFER_POOL
+  - DEFAULT_LOSSLESS_BUFFER_PARAMETER
   cli:
-    - config buffer
-  yang: []
+  - config buffer
+  yang:
+  - sonic-buffer-pool
+  - sonic-buffer-profile
+  - sonic-buffer-pg
+  - sonic-buffer-queue
 ---
 
 # config buffer サブコマンド

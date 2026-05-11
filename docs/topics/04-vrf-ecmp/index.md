@@ -76,6 +76,19 @@ related:
 
 この章は routing / architecture / internals / reference の既存ページ 32 件を横断しています。個別コマンド、テーブル、YANG、HLD の詳細は各サブページ末尾の「関連ページ」から参照してください。
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (180 行) | meta |
+| setup | ✅ 完成 (264 行) | meta |
+| operations | ✅ 完成 (188 行) | meta |
+| internals | ✅ 完成 (128 行) | meta |
+| advanced | ⚠️ プレースホルダ (77 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

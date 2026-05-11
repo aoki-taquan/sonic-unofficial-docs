@@ -1,22 +1,24 @@
 ---
 title: config syslog サブコマンド
-description: "config syslog サブコマンド — config syslog は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を CONFIG_DB に書き込む CLI で、config/syslog.py の @click.group()…"
+description: config syslog サブコマンド — config syslog は SONiC ホストおよび feature コンテナの syslog
+  設定 (リモート送信先 / レート制限 / ログレベル) を CONFIG_DB に書き込む CLI で、config/syslog.py の @click.group()…
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/syslog.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/syslog.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - SYSLOG_SERVER
-    - SYSLOG_CONFIG
-    - SYSLOG_CONFIG_FEATURE
-    - LOGGER
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
+  - LOGGER
   cli:
-    - config syslog
-  yang: []
+  - config syslog
+  yang:
+  - sonic-syslog
 ---
 
 # config syslog サブコマンド

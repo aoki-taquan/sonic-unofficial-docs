@@ -1,22 +1,24 @@
 ---
 title: sonic-package-manager コマンド
-description: "sonic-package-manager コマンド — sonic-package-manager（短縮 spm）は SONiC が拡張機能を コンテナ化された 'package' として動的に追加・削除・アップグレードするための CLI。"
+description: sonic-package-manager コマンド — sonic-package-manager（短縮 spm）は SONiC が拡張機能を
+  コンテナ化された 'package' として動的に追加・削除・アップグレードするための CLI。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: sonic_package_manager/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: sonic_package_manager/manager.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: sonic_package_manager/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: sonic_package_manager/manager.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - sonic-package-manager
-    - spm
-  yang: []
+  - sonic-package-manager
+  - spm
+  yang:
+  - sonic-feature
 ---
 
 # sonic-package-manager コマンド

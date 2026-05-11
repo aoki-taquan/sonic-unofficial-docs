@@ -87,6 +87,19 @@ related:
 - [Active-Active Dual ToR](../../overlay/active-active-dual-tor.md)
 - [MUX_CABLE テーブル](../../reference/config-db/mux-cable.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (188 行) | meta |
+| setup | ✅ 完成 (244 行) | meta |
+| operations | ✅ 完成 (195 行) | meta |
+| internals | ✅ 完成 (122 行) | meta |
+| advanced | ⚠️ プレースホルダ (90 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

@@ -1,30 +1,36 @@
 ---
 title: config interface サブコマンド
-description: "config interface サブコマンド — config interface は物理ポート（PORT）・PortChannel・SubInterface・Loopback の state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID…"
+description: config interface サブコマンド — config interface は物理ポート（PORT）・PortChannel・SubInterface・Loopback
+  の state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID…
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - PORT
-    - PORTCHANNEL
-    - VLAN_SUB_INTERFACE
-    - LOOPBACK_INTERFACE
-    - INTERFACE
-    - PORTCHANNEL_INTERFACE
-    - VLAN_INTERFACE
-    - MGMT_INTERFACE
-    - BUFFER_PG
-    - BUFFER_QUEUE
-    - PORT_STORM_CONTROL
-    - VRF
+  - PORT
+  - PORTCHANNEL
+  - VLAN_SUB_INTERFACE
+  - LOOPBACK_INTERFACE
+  - INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - VLAN_INTERFACE
+  - MGMT_INTERFACE
+  - BUFFER_PG
+  - BUFFER_QUEUE
+  - PORT_STORM_CONTROL
+  - VRF
   cli:
-    - config interface
-  yang: []
+  - config interface
+  yang:
+  - sonic-interface
+  - sonic-port
+  - sonic-portchannel
+  - sonic-loopback-interface
+  - sonic-vlan-sub-interface
 ---
 
 # config interface サブコマンド

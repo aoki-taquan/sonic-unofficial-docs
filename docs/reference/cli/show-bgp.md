@@ -1,31 +1,35 @@
 ---
 title: show bgp / show ip bgp / show ipv6 bgp サブコマンド
-description: "show bgp / show ip bgp / show ipv6 bgp サブコマンド — show bgp グループは show/main.py 末尾で cli.add_command(bgp_cli.BGP) の形で登録されるため、cli.json の機械抽出には現れない。"
+description: show bgp / show ip bgp / show ipv6 bgp サブコマンド — show bgp グループは show/main.py
+  末尾で cli.add_command(bgp_cli.BGP) の形で登録されるため、cli.json の機械抽出には現れない。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/bgp_cli.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/bgp_frr_v4.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/bgp_frr_v6.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/bgp_cli.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/bgp_frr_v4.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/bgp_frr_v6.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - BGP_DEVICE_GLOBAL
-    - BGP_AGGREGATE_ADDRESS
+  - BGP_DEVICE_GLOBAL
+  - BGP_AGGREGATE_ADDRESS
   cli:
-    - show bgp
-    - show ip bgp
-    - show ipv6 bgp
-  yang: []
+  - show bgp
+  - show ip bgp
+  - show ipv6 bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
 ---
 
 # show bgp / show ip bgp / show ipv6 bgp サブコマンド

@@ -1,23 +1,25 @@
 ---
 title: show ndp サブコマンド
-description: "show ndp サブコマンド — show ndp は IPv6 の Neighbor Discovery テーブルを表示する click コマンド。show arp と対称な実装で、内部では scripts/nbrshow を -6 付きで起動する。"
+description: show ndp サブコマンド — show ndp は IPv6 の Neighbor Discovery テーブルを表示する click
+  コマンド。show arp と対称な実装で、内部では scripts/nbrshow を -6 付きで起動する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: scripts/nbrshow
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/nbrshow
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show ndp
-    - show ipv6 neighbors
-    - clear ndp
-  yang: []
+  - show ndp
+  - show ipv6 neighbors
+  - clear ndp
+  yang:
+  - sonic-neigh
 ---
 
 # show ndp サブコマンド

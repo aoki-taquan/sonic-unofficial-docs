@@ -1,23 +1,25 @@
 ---
 title: show flowcnt-trap / flowcnt-route サブコマンド
-description: "show flowcnt-trap / flowcnt-route サブコマンド — show flowcnt-trap と show flowcnt-route は フローカウンタ 機能の表示コマンド。"
+description: show flowcnt-trap / flowcnt-route サブコマンド — show flowcnt-trap と show flowcnt-route
+  は フローカウンタ 機能の表示コマンド。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/flow_counters.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/flow_counters.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - FLOW_COUNTER_ROUTE_PATTERN
+  - FLOW_COUNTER_ROUTE_PATTERN
   cli:
-    - show flowcnt-trap
-    - show flowcnt-route
-  yang: []
+  - show flowcnt-trap
+  - show flowcnt-route
+  yang:
+  - sonic-flex_counter
 ---
 
 # show flowcnt-trap / flowcnt-route サブコマンド

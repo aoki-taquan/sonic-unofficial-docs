@@ -81,6 +81,19 @@ PINS の中心は 4 点です。コントローラと話す **P4RT App**（gRPC 
 - [P4Runtime PacketIO（generic netlink + send_to_ingress）](../../management/packetio.md)
 - [Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）](../../management/send-to-ingress-hld.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (142 行) | meta |
+| setup | ✅ 完成 (288 行) | meta |
+| operations | ✅ 完成 (180 行) | meta |
+| internals | ✅ 完成 (134 行) | meta |
+| advanced | ⚠️ プレースホルダ (72 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

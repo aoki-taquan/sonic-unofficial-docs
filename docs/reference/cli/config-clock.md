@@ -1,19 +1,21 @@
 ---
 title: config clock サブコマンド
-description: "config clock サブコマンド — config clock はシステムのタイムゾーンと日時を設定する CLI グループ。"
+description: config clock サブコマンド — config clock はシステムのタイムゾーンと日時を設定する CLI グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - DEVICE_METADATA
+  - DEVICE_METADATA
   cli:
-    - config clock
-  yang: []
+  - config clock
+  yang:
+  - sonic-device_metadata
+  - sonic-ntp
 ---
 
 # config clock サブコマンド

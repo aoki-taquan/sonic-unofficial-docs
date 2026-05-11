@@ -1,23 +1,27 @@
 ---
 title: config save / load / reload / replace / qos reload
-description: "config save / load / reload / replace / qos reload — ここでは SONiC の config 永続化と全体差し替え の中核となる以下の 5 コマンドをまとめる:"
+description: 'config save / load / reload / replace / qos reload — ここでは SONiC の config
+  永続化と全体差し替え の中核となる以下の 5 コマンドをまとめる:'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - DEVICE_METADATA
+  - DEVICE_METADATA
   cli:
-    - config save
-    - config load
-    - config reload
-    - config replace
-    - config qos reload
-  yang: []
+  - config save
+  - config load
+  - config reload
+  - config replace
+  - config qos reload
+  yang:
+  - sonic-mgmt_interface
+  - sonic-mgmt_port
+  - sonic-mgmt_vrf
 ---
 
 # config save / load / reload / replace / qos reload

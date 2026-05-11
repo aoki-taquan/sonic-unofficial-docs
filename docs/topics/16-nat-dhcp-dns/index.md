@@ -98,6 +98,19 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md)
 - [ポートベース IPv4 DHCP Server](../../management/ipv4-port-based-dhcp-server-in-sonic.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (187 行) | meta |
+| setup | ✅ 完成 (225 行) | meta |
+| operations | ✅ 完成 (215 行) | meta |
+| internals | ✅ 完成 (127 行) | meta |
+| advanced | ⚠️ プレースホルダ (90 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

@@ -1,18 +1,20 @@
 ---
 title: sonic-cfggen コマンド
-description: "sonic-cfggen コマンド — sonic-cfggen は SONiC 設定生成エンジンの汎用 CLI。click ベースの config / show とは別系統で、argparse で定義された引数を取る Python スクリプト。"
+description: sonic-cfggen コマンド — sonic-cfggen は SONiC 設定生成エンジンの汎用 CLI。click ベースの config
+  / show とは別系統で、argparse で定義された引数を取る Python スクリプト。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-config-engine/sonic-cfggen
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-config-engine/sonic-cfggen
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: []
   cli:
-    - sonic-cfggen
-  yang: []
+  - sonic-cfggen
+  yang:
+  - sonic-device_metadata
 ---
 
 # sonic-cfggen コマンド

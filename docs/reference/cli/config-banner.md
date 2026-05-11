@@ -1,19 +1,21 @@
 ---
 title: config banner サブコマンド
-description: "config banner サブコマンド — config banner はシステムバナー（ログイン前/後メッセージ、MOTD）を CONFIG_DB の BANNER_MESSAGE|global テーブルに書き込む CLI グループ。"
+description: config banner サブコマンド — config banner はシステムバナー（ログイン前/後メッセージ、MOTD）を CONFIG_DB
+  の BANNER_MESSAGE|global テーブルに書き込む CLI グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - BANNER_MESSAGE
+  - BANNER_MESSAGE
   cli:
-    - config banner
-  yang: []
+  - config banner
+  yang:
+  - sonic-banner
 ---
 
 # config banner サブコマンド

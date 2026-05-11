@@ -118,6 +118,19 @@ related:
 - 上流章 [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) — packet classification と action の前段。
 - 下流章 [Telemetry / SNMP / Observability](../../topics/index.md) — counter / watermark の収集ルート。
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (173 行) | meta |
+| setup | ✅ 完成 (217 行) | meta |
+| operations | ✅ 完成 (183 行) | meta |
+| internals | ✅ 完成 (139 行) | meta |
+| advanced | ⚠️ プレースホルダ (52 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

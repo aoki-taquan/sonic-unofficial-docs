@@ -69,6 +69,19 @@ related:
 
 この章は management の HLD 派生ページ 14 件、system の telemetry 関連 2 件、switching の OpenConfig 関連 2 件、routing の subscription 関連 2 件、categories の入口 1 件、reference の YANG 参照を横断している。細部のスキーマ・操作・実装裏取りは各サブページ末尾の「関連ページ」から参照する。
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (140 行) | meta |
+| setup | ✅ 完成 (208 行) | meta |
+| operations | ✅ 完成 (170 行) | meta |
+| internals | ✅ 完成 (126 行) | meta |
+| advanced | ⚠️ プレースホルダ (49 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

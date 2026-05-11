@@ -1,21 +1,23 @@
 ---
 title: show vlan サブコマンド
-description: "show vlan サブコマンド — show vlan は VLAN とそのメンバーポート、L3 SVI 状態（IP アドレス・proxy_arp）を 2 種類の表で表示する。"
+description: show vlan サブコマンド — show vlan は VLAN とそのメンバーポート、L3 SVI 状態（IP アドレス・proxy_arp）を
+  2 種類の表で表示する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/vlan.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/vlan.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - VLAN
-    - VLAN_INTERFACE
-    - VLAN_MEMBER
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
   cli:
-    - show vlan
-  yang: []
+  - show vlan
+  yang:
+  - sonic-vlan
 ---
 
 # show vlan サブコマンド

@@ -1,20 +1,23 @@
 ---
 title: show clock サブコマンド
-description: "show clock サブコマンド — show clock は システム日時の表示と、利用可能なタイムゾーン一覧の表示を提供する click グループ。invoke_without_command=True で宣言されており、サブコマンド省略時はそのままグループ本体が date コマンドを起動する。"
+description: show clock サブコマンド — show clock は システム日時の表示と、利用可能なタイムゾーン一覧の表示を提供する click
+  グループ。invoke_without_command=True で宣言されており、サブコマンド省略時はそのままグループ本体が date コマンドを起動する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show clock
-    - show clock timezones
-    - config clock
-  yang: []
+  - show clock
+  - show clock timezones
+  - config clock
+  yang:
+  - sonic-device_metadata
+  - sonic-ntp
 ---
 
 # show clock サブコマンド

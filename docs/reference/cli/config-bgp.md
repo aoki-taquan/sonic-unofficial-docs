@@ -1,27 +1,33 @@
 ---
 title: config bgp サブコマンド
-description: "config bgp サブコマンド — config bgp は BGP セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-ECMP、および aggregate-address (集約広告) の操作を提供する。"
+description: config bgp サブコマンド — config bgp は BGP セッションの管理（shutdown / startup / 設定削除）と、device-global
+  の TSA / W-ECMP、および aggregate-address (集約広告) の操作を提供する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: config/bgp_cli.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: utilities_common/bgp.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/bgp_cli.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: utilities_common/bgp.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - BGP_NEIGHBOR
-    - BGP_DEVICE_GLOBAL
-    - BGP_AGGREGATE_ADDRESS
+  - BGP_NEIGHBOR
+  - BGP_DEVICE_GLOBAL
+  - BGP_AGGREGATE_ADDRESS
   cli:
-    - config bgp
-  yang: []
+  - config bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-device-global
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-peergroup
 ---
 
 # config bgp サブコマンド
