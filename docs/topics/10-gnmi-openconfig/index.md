@@ -29,3 +29,21 @@ sources: []
 ## 統合した既存ページ
 
 この章は management の HLD 派生ページ 14 件、system の telemetry 関連 2 件、switching の OpenConfig 関連 2 件、routing の subscription 関連 2 件、categories の入口 1 件、reference の YANG 参照を横断している。細部のスキーマ・操作・実装裏取りは各サブページ末尾の「関連ページ」から参照する。
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+
+**派生で読むべき章**
+
+- [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
+
+**補完的に読む章**
+
+- [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
+- [リファレンス横断索引](../22-reference-index/index.md)
+

@@ -78,3 +78,23 @@ sources:
 - [Dynamic headroom calculation](../../acl-qos/dynamically-headroom-calculation.md)
 - 上流章 [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) — packet classification と action の前段。
 - 下流章 [Telemetry / SNMP / Observability](../../topics/index.md) — counter / watermark の収集ルート。
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+
+**派生で読むべき章**
+
+- [ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md)
+
+**補完的に読む章**
+
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
+- [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
+

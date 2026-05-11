@@ -64,3 +64,21 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 - [AAA improvements](../../management/aaa-improvements.md)
 - [Password hardening 設計](../../architecture/pw-hardening-design.md)
 - [Container hardening](../../system/sonic-container-hardening.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+
+**派生で読むべき章**
+
+- [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
+
+**補完的に読む章**
+
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [NAT / DHCP Relay / Time-DNS Services](../16-nat-dhcp-dns/index.md)
+- [Build / Packaging / Application Extension](../19-build-packaging/index.md)
+

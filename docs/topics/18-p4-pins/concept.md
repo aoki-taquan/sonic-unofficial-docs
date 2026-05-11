@@ -138,3 +138,13 @@ PINS は SONiC の動作モードを切り替えるものではなく、**コン
 - [P4Orch HLD](../../internals/p4-orchagent.md)
 - [PacketIO HLD](../../management/packetio.md)
 - [Send to Ingress HLD](../../management/send-to-ingress-hld.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+- [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
+

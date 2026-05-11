@@ -151,3 +151,13 @@ sequenceDiagram
 - [Fabric Port Support](../../platform/fabric-port-support-on-sonic.md)
 - [Recirculation Port on VOQ Chassis](../../platform/recirculation-port-support-on-voq-chassis.md)
 - [Single-ASIC VOQ Fixed System](../../platform/single-asic-voq-fixed-system-sonic.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+- [BGP と FRR 制御プレーン](../02-bgp/index.md)
+

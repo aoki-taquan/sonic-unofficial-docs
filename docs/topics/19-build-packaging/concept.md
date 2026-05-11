@@ -137,3 +137,12 @@ build profile は「フラグ一式の再現性」、RFS split は「直列ル�
 - [Build profiles](../../architecture/build-profiles.md)
 - [RFS Split build](../../architecture/rfs-split-build-improvements-hld.md)
 - [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
+

@@ -139,3 +139,12 @@ flowchart TB
 - [show techsupport](../../system/show-techsupport.md)
 - [Dump utility](../../internals/dump-utility-for-easy-debugging.md)
 - [System ready](../../system/system-ready-hld.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

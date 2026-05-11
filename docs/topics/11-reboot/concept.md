@@ -140,3 +140,12 @@ warm reboot と「container restart + warm restart 機能」は混同しやす�
 - [Fast-reboot Flow Improvements](../../system/fast-reboot-flow-improvements-hld.md)
 - [Express Reboot](../../system/sonic-express-reboot-hld-spec.md)
 - [reboot / fast-reboot / warm-reboot コマンド](../../reference/cli/reboot-fast-warm.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

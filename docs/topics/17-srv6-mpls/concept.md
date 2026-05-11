@@ -284,3 +284,13 @@ sequenceDiagram
 - [SRv6 uSID](../../routing/sonic-usid.md)
 - [SONiC の MPLS 基盤](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [BGP と FRR 制御プレーン](../02-bgp/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+

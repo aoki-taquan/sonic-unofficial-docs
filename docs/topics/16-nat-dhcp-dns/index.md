@@ -59,3 +59,22 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [DHCPv4 Relay Agent](../../architecture/dhcpv4-relay-agent.md)
 - [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md)
 - [ポートベース IPv4 DHCP Server](../../management/ipv4-port-based-dhcp-server-in-sonic.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+
+**派生で読むべき章**
+
+- [Dual-ToR と Mux 制御](../05-dual-tor/index.md)
+
+**補完的に読む章**
+
+- [ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md)
+- [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
+- [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
+

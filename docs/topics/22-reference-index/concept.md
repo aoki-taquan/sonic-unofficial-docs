@@ -52,3 +52,11 @@ Phase 6 で `verification: hld-only` のページを 0 件にし、すべて `co
 - [CLI 横断索引](cli-index.md)
 - [CONFIG_DB 横断索引](config-db-index.md)
 - [YANG 横断索引](yang-index.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+

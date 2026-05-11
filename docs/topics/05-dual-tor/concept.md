@@ -132,3 +132,13 @@ flowchart TB
 - [Active-Standby Dual ToR](../../overlay/active-standby-dual-tor.md)
 - [Active-Active Dual ToR](../../overlay/active-active-dual-tor.md)
 - [Dual-ToR 関連](../../categories/dual-tor.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+

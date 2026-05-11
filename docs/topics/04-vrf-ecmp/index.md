@@ -38,3 +38,23 @@ sources:
 
 この章は routing / architecture / internals / reference の既存ページ 32 件を横断しています。個別コマンド、テーブル、YANG、HLD の詳細は各サブページ末尾の「関連ページ」から参照してください。
 
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+
+**派生で読むべき章**
+
+- [BGP と FRR 制御プレーン](../02-bgp/index.md)
+- [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
+- [SRv6 / MPLS / Path Tracing](../17-srv6-mpls/index.md)
+
+**補完的に読む章**
+
+- [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
+- [NAT / DHCP Relay / Time-DNS Services](../16-nat-dhcp-dns/index.md)
+

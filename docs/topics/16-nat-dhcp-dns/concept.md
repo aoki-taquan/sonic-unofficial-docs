@@ -187,3 +187,12 @@ sequenceDiagram
 - [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md)
 - [DHCPv6 リレー](../../routing/dhcp-relay-for-ipv6-hld.md)
 - [ポートベース IPv4 DHCP Server](../../management/ipv4-port-based-dhcp-server-in-sonic.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+

@@ -43,3 +43,22 @@ sources:
 - [reboot / fast-reboot / warm-reboot コマンド](../../reference/cli/reboot-fast-warm.md)
 - [config warm_restart サブコマンド](../../reference/cli/config-warm_restart.md)
 - [sonic-installer コマンド](../../reference/cli/sonic-installer.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+
+**派生で読むべき章**
+
+- [Build / Packaging / Application Extension](../19-build-packaging/index.md)
+
+**補完的に読む章**
+
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
+- [DASH と SmartSwitch](../13-dash-smartswitch/index.md)
+

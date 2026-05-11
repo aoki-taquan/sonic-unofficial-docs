@@ -39,3 +39,17 @@ last_verified: 2026-05-10
 - [CONFIG_DB リファレンス](../../reference/config-db/index.md)
 - [YANG リファレンス](../../reference/yang/index.md)
 - [Discrepancy index](../../reference/verification/discrepancy-index.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+
+**補完的に読む章**
+
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+- [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
+- [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
+

@@ -49,3 +49,23 @@ sources:
 - [Active-Standby Dual ToR](../../overlay/active-standby-dual-tor.md)
 - [Active-Active Dual ToR](../../overlay/active-active-dual-tor.md)
 - [MUX_CABLE テーブル](../../reference/config-db/mux-cable.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+
+**派生で読むべき章**
+
+- [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
+
+**補完的に読む章**
+
+- [ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md)
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
+

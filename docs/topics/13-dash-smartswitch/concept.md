@@ -168,3 +168,13 @@ sequenceDiagram
 - [SmartSwitch ENI Based Forwarding](../../overlay/smartswitch-eni-based-forwarding.md)
 - [DASH 関連カテゴリ](../../categories/dash.md)
 - [SmartSwitch 関連カテゴリ](../../categories/smartswitch.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

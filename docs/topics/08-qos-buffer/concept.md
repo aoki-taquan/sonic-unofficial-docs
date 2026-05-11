@@ -161,3 +161,13 @@ QoS / Buffer は他のサブシステムと領域が重なって見えがちで�
 - WRED / ECN の green / yellow / red 閾値設計が、`SCHEDULER` の strict / DWRR と一緒に設計されないと意味が薄いことが分かる
 
 このあと細部を追うなら、テーブル定義は [BUFFER_PROFILE 仕様](../../reference/config-db/buffer-profile.md) と [QUEUE 仕様](../../reference/config-db/queue.md)、運用は [setup.md](setup.md) と [operations.md](operations.md) に進みます。
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+
