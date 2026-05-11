@@ -84,7 +84,7 @@ module: sonic-buffer-pool
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BUFFER_POOL`](../config-db/buffer-pool.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BUFFER_POOL`](../config-db/buffer-pool.md)
 
 <!-- ref-triangle:end -->
 

@@ -31,7 +31,7 @@ related:
 ## 想定原因
 
 1. **`add` 時に `-u` (untagged) フラグの付け忘れ / 余計**: デフォルトは tagged 動作
-2. **既存の Untagged [VLAN](../../reference/glossary.md#term-vlan) 多重設定**: ポートが既に別 VLAN の untagged member であるため新規 untagged 追加に失敗（silently fallback）
+2. **既存の Untagged [VLAN](../../reference/glossary.md#term-vlan) 多重設定**: ポートが既に別 [VLAN](../../reference/glossary.md#term-vlan) の untagged member であるため新規 untagged 追加に失敗（silently fallback）
 3. **VLAN_MEMBER の `tagging_mode` が `priority_tagged` になっている**: 0 priority tag 付与で意図と違う動作
 4. **対向側がトランクではなく access ポート**: 自機側が tagged 送出しても対向で drop / strip
 5. **[PortChannel](../../reference/glossary.md#term-portchannel) メンバーに対する add 操作**: 物理ポートではなく [LAG](../../reference/glossary.md#term-lag) 名で追加する必要がある
@@ -89,7 +89,7 @@ ip -d link show Ethernet8
 ```
 
 - 期待: `Vlan100` master、`PVID Egress Untagged` がセットされる
-- 異常: PVID 設定がない → vlanmgrd の反映漏れ。`config save` → swss コンテナ restart
+- 異常: PVID 設定がない → [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) の反映漏れ。`config save` → swss コンテナ restart
 
 ### 5. キャプチャで実フレーム確認
 
@@ -126,7 +126,7 @@ config vlan member add -u 100 Ethernet8
 
 ## 引用元
 
-[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — vlanmgrd
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [vlanmgrd](../../reference/glossary.md#term-vlanmgrd)
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config vlan member
 
-<!-- glossary-links-injected: 0e99457f44c0 -->
+<!-- glossary-links-injected: f57fec79b708 -->

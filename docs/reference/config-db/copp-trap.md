@@ -55,7 +55,7 @@ COPP_TRAP|<name>
 | フィールド | 型 | 必須 | 既定 | 説明 |
 |-----------|----|------|------|------|
 | `trap_ids` | string | yes | - | カンマ区切り trap 識別子。例: `bgp,bgpv6` |
-| `trap_group` | leafref `COPP_GROUP.name` | no | - | 適用する CoPP group |
+| `trap_group` | leafref `COPP_GROUP.name` | no | - | 適用する [CoPP](../../reference/glossary.md#term-copp) group |
 | `always_enabled` | boolean | no | - | true なら feature の有効/無効に関わらず常時インストール |
 
 ## 動作上の注意
@@ -65,12 +65,12 @@ COPP_TRAP|<name>
 
 ## 購読者
 
-- `coppmgr`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → APPL_DB `COPP_TABLE`
-- `orchagent` `CoppOrch`: SAI HOSTIF_TRAP オブジェクト生成
+- `coppmgr`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) `COPP_TABLE`
+- `orchagent` `CoppOrch`: [SAI](../../reference/glossary.md#term-sai) HOSTIF_TRAP オブジェクト生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `COPP_GROUP`、`FEATURE`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `COPP_GROUP`、`FEATURE`
 - 関連 CLI: `config copp`、`show copp`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-copp`
 
@@ -78,14 +78,14 @@ COPP_TRAP|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-copp`](../yang/sonic-copp.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-copp`](../yang/sonic-copp.md)
 - CLI: `config copp`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-copp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-copp.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-copp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-copp.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -116,4 +116,4 @@ show copp config
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b7c287e329de -->
+<!-- glossary-links-injected: 7a3847939b09 -->

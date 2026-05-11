@@ -25,7 +25,7 @@ related:
 ## 概要
 
 [ECMP](../../reference/glossary.md#term-ecmp) / [LAG](../../reference/glossary.md#term-lag) ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル[^1]。
-`orchagent` が [CONFIG_DB](../../reference/glossary.md#term-config_db) から読んで [SAI](../../reference/glossary.md#term-sai) `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*` / `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*` 系属性として SAI に push する。
+`orchagent` が [CONFIG_DB](../../reference/glossary.md#term-config_db) から読んで [SAI](../../reference/glossary.md#term-sai) `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*` / `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*` 系属性として [SAI](../../reference/glossary.md#term-sai) に push する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -55,10 +55,10 @@ SWITCH_HASH|GLOBAL
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `ecmp_hash` | leaf-list of `hash-field` enum | ECMP パケットを分散させるためのハッシュフィールド集合 |
-| `lag_hash`  | leaf-list of `hash-field` enum | LAG メンバ間分散用のハッシュフィールド集合 |
-| `ecmp_hash_algorithm` | `hash-algorithm` enum | ECMP に使うハッシュアルゴリズム (CRC / XOR / Random / CRC_32LO 等、`sonic-types`) |
-| `lag_hash_algorithm` | `hash-algorithm` enum | LAG に使うハッシュアルゴリズム |
+| `ecmp_hash` | leaf-list of `hash-field` enum | [ECMP](../../reference/glossary.md#term-ecmp) パケットを分散させるためのハッシュフィールド集合 |
+| `lag_hash`  | leaf-list of `hash-field` enum | [LAG](../../reference/glossary.md#term-lag) メンバ間分散用のハッシュフィールド集合 |
+| `ecmp_hash_algorithm` | `hash-algorithm` enum | [ECMP](../../reference/glossary.md#term-ecmp) に使うハッシュアルゴリズム (CRC / XOR / Random / CRC_32LO 等、`sonic-types`) |
+| `lag_hash_algorithm` | `hash-algorithm` enum | [LAG](../../reference/glossary.md#term-lag) に使うハッシュアルゴリズム |
 
 `hash-field` enum (`sonic-hash.yang`):
 
@@ -73,14 +73,14 @@ SWITCH_HASH|GLOBAL
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CLI: `config switch-hash global ecmp` / `config switch-hash global lag`
-- 関連 YANG: `sonic-hash`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-hash`
 - 関連: `FG_NHG`（fine-grained ECMP）, `PORT.lag_hash` 等の per-port ハッシュは別経路
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-hash`](../yang/sonic-hash.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-hash`](../yang/sonic-hash.md)
 - CLI: `config switch-hash`
 
 <!-- ref-triangle:end -->
@@ -112,4 +112,4 @@ show switch-hash global
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a4763c04a26b -->
+<!-- glossary-links-injected: 37a4890848e2 -->

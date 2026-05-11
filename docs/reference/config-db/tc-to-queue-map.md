@@ -58,7 +58,7 @@ TC_TO_QUEUE_MAP|<name>|<tc>
 
 ## 購読者
 
-- `qosorch`: SAI [QoS](../../reference/glossary.md#term-qos) map 生成
+- `qosorch`: [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map 生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -70,13 +70,13 @@ TC_TO_QUEUE_MAP|<name>|<tc>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-tc-queue-map`](../yang/sonic-tc-queue-map.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-tc-queue-map`](../yang/sonic-tc-queue-map.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-tc-queue-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-tc-queue-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -95,7 +95,7 @@ TC_TO_QUEUE_MAP|<name>|<tc>
 
 ### よくある誤設定
 
-- TC→queue を 0..7 範囲外に書くと SAI が拒否し、マップ全体が install されない。
+- TC→queue を 0..7 範囲外に書くと [SAI](../../reference/glossary.md#term-sai) が拒否し、マップ全体が install されない。
 
 ### 確認コマンド
 
@@ -105,4 +105,4 @@ show qos map tc-queue
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 75132586f6c7 -->
+<!-- glossary-links-injected: 16a5b728a75a -->

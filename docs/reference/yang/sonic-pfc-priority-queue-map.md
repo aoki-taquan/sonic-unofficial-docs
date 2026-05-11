@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-pfc-priority-queue-map`
 
-PFC_PRIORITY_TO_QUEUE_MAP yang Module for SONiC OS. PFC 優先度 (0-7) を egress queue index にマッピングする。[^1]
+PFC_PRIORITY_TO_QUEUE_MAP yang Module for SONiC OS. [PFC](../../reference/glossary.md#term-pfc) 優先度 (0-7) を egress queue index にマッピングする。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -60,7 +60,7 @@ module: sonic-pfc-priority-queue-map
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-pfc-priority-queue-map/MAP_PFC_PRIORITY_TO_QUEUE/MAP_PFC_PRIORITY_TO_QUEUE_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})`, length 1..32 | Name of the [PFC](../../reference/glossary.md#term-pfc) priority to queue map. |
-| `pfc_priority` | `.../MAP_PFC_PRIORITY_TO_QUEUE/pfc_priority` | `string` | yes |  | pattern `[0-7]?` | PFC priority value (0-7). |
+| `pfc_priority` | `.../MAP_PFC_PRIORITY_TO_QUEUE/pfc_priority` | `string` | yes |  | pattern `[0-7]?` | [PFC](../../reference/glossary.md#term-pfc) priority value (0-7). |
 | `qindex` | `.../MAP_PFC_PRIORITY_TO_QUEUE/qindex` | `string` |  |  | pattern `[0-7]?` | Target egress queue index (0-7). |
 
 ## leafref / 依存
@@ -80,7 +80,7 @@ module: sonic-pfc-priority-queue-map
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MAP_PFC_PRIORITY_TO_QUEUE`](../config-db/map-pfc-priority-to-queue.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MAP_PFC_PRIORITY_TO_QUEUE`](../config-db/map-pfc-priority-to-queue.md)
 
 <!-- ref-triangle:end -->
 
@@ -88,4 +88,4 @@ module: sonic-pfc-priority-queue-map
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pfc-priority-queue-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 97e8f7840821 -->
+<!-- glossary-links-injected: 6e0dbc41d9f1 -->

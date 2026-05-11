@@ -100,9 +100,9 @@ module: sonic-nat
 | `container` | `sonic-nat` |  |  |
 | `container` | `sonic-nat/STATIC_NAPT` |  | Static NAPT entries mapping global IP/port to local IP/port |
 | `list` | `sonic-nat/STATIC_NAPT/STATIC_NAPT_LIST` | `global_ip ip_protocol global_l4_port` |  |
-| `container` | `sonic-nat/STATIC_NAT` |  | Static NAT entries mapping global IP to local IP |
+| `container` | `sonic-nat/STATIC_NAT` |  | Static [NAT](../../reference/glossary.md#term-nat) entries mapping global IP to local IP |
 | `list` | `sonic-nat/STATIC_NAT/STATIC_NAT_LIST` | `global_ip` |  |
-| `container` | `sonic-nat/NAT_GLOBAL` |  | Global NAT settings including admin mode and timeouts |
+| `container` | `sonic-nat/NAT_GLOBAL` |  | Global [NAT](../../reference/glossary.md#term-nat) settings including admin mode and timeouts |
 | `container` | `sonic-nat/NAT_GLOBAL/Values` |  | Global NAT parameter values |
 | `container` | `sonic-nat/NAT_POOL` |  | NAT address pools defining IP and port ranges for dynamic NAT |
 | `list` | `sonic-nat/NAT_POOL/NAT_POOL_LIST` | `name` |  |
@@ -147,8 +147,8 @@ module: sonic-nat
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `STATIC_NAPT`
-- CONFIG_DB: `STATIC_NAT`
-- CONFIG_DB: `NAT_GLOBAL`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `STATIC_NAT`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `NAT_GLOBAL`
 - CONFIG_DB: `NAT_POOL`
 - CONFIG_DB: `NAT_BINDINGS`
 - CLI: `config nat`
@@ -192,4 +192,4 @@ show nat translations
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2cc996c5bd0a -->
+<!-- glossary-links-injected: 0a2da183a336 -->

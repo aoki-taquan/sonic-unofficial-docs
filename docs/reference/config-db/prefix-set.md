@@ -78,19 +78,19 @@ PREFIX_SET|<name>
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PREFIX_LIST` / `PREFIX_NOSEQ_LIST`、[`COMMUNITY_SET`](./community-set.md)、[`AS_PATH_SET`](./as-path-set.md)、`ROUTE_MAP`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-routing-policy-sets`
-- 関連 CLI: なし（`config_db.json` 投入。FRR 側の `ip prefix-list` 等に最終的に変換される）
+- 関連 CLI: なし（`config_db.json` 投入。[FRR](../../reference/glossary.md#term-frr) 側の `ip prefix-list` 等に最終的に変換される）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-routing-policy-sets`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-routing-policy-sets`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -102,7 +102,7 @@ PREFIX_SET|<name>
 
 ### よくある誤設定
 
-- IPv6 entry を IPv4 set に混在させて FRR が syntax エラーで読み込めない。
+- IPv6 entry を IPv4 set に混在させて [FRR](../../reference/glossary.md#term-frr) が syntax エラーで読み込めない。
 
 ### 確認コマンド
 
@@ -112,4 +112,4 @@ vtysh -c 'show ip prefix-list'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f7bde22b7495 -->
+<!-- glossary-links-injected: 5e2adc70a663 -->

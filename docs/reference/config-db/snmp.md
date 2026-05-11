@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-[SNMP](../../reference/glossary.md#term-snmp) エージェント (`snmpd` in `docker-snmp`) のシステム情報 (Contact / Location) を保持するテーブル[^1]。`docker-snmp` 内の起動スクリプトと `hostcfgd` の SNMP ハンドラが [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、`/etc/snmp/snmpd.conf` のテンプレ展開で `sysContact` / `sysLocation` 行に反映される。
+[SNMP](../../reference/glossary.md#term-snmp) エージェント (`snmpd` in `docker-snmp`) のシステム情報 (Contact / Location) を保持するテーブル[^1]。`docker-snmp` 内の起動スクリプトと `hostcfgd` の [SNMP](../../reference/glossary.md#term-snmp) ハンドラが [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、`/etc/snmp/snmpd.conf` のテンプレ展開で `sysContact` / `sysLocation` 行に反映される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -55,7 +55,7 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `Contact` | string (1..255 chars, 改行不可) | SNMP `sysContact` |
+| `Contact` | string (1..255 chars, 改行不可) | [SNMP](../../reference/glossary.md#term-snmp) `sysContact` |
 
 ### `SNMP|LOCATION`
 
@@ -70,12 +70,12 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 
 ## 購読者
 
-- `docker-snmp` の `snmpd` 起動テンプレ: CONFIG_DB → `/etc/snmp/snmpd.conf`
+- `docker-snmp` の `snmpd` 起動テンプレ: [CONFIG_DB](../../reference/glossary.md#term-config_db) → `/etc/snmp/snmpd.conf`
 - `hostcfgd` の SNMP ハンドラ (`sonic-host-services`)
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `SNMP_COMMUNITY` (v1/v2c), `SNMP_USER` (v3), [`SNMP_AGENT_ADDRESS_CONFIG`](snmp-agent-address-config.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `SNMP_COMMUNITY` (v1/v2c), `SNMP_USER` (v3), [`SNMP_AGENT_ADDRESS_CONFIG`](snmp-agent-address-config.md)
 - 関連 CLI: `config snmp contact { add | modify | del }` / `config snmp location { add | modify | del }`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-snmp`
 
@@ -83,7 +83,7 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 
 ## 関連リファレンス
 
-- YANG: [`sonic-snmp`](../yang/sonic-snmp.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-snmp`](../yang/sonic-snmp.md)
 - CLI: [`config snmp`](../cli/config-snmp.md)
 
 <!-- ref-triangle:end -->
@@ -115,4 +115,4 @@ show snmp community
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c344938db88f -->
+<!-- glossary-links-injected: 1d5df4cb0a92 -->

@@ -60,7 +60,7 @@ NEIGH_TABLE|<intf>|<ip>
     family : IPv4 | IPv6
 ```
 
-`VXLAN_TUNNEL` に `src_ip` 必須、`dst_ip` は P2P 用にオプション。`VXLAN_TUNNEL_MAP` で VLAN ↔ VNI を関連付ける[^1]。
+`VXLAN_TUNNEL` に `src_ip` 必須、`dst_ip` は P2P 用にオプション。`VXLAN_TUNNEL_MAP` で [VLAN](../reference/glossary.md#term-vlan) ↔ VNI を関連付ける[^1]。
 
 ## 2. APP_DB スキーマ
 
@@ -93,10 +93,10 @@ VNET_TABLE:<vnet>
 | `config vxlan <name> vlan <vid> vni <vni>` | VLAN ↔ VNI |
 | `config vxlan <name> src_if <intf>` | VTEP の source IF |
 | `config vxlan <name> vlan <vid> flood vtep <ip,...>` | HER 用 flood list |
-| `show vxlan <name>` | VXLAN tunnel 情報 |
+| `show vxlan <name>` | [VXLAN](../reference/glossary.md#term-vxlan) tunnel 情報 |
 | `show mac vxlan <name> <vni>` | VNI 別 learned MAC |
 
-VNet ピアリングの CLI は無く、CONFIG_DB を直接編集する想定[^1]。
+VNet ピアリングの CLI は無く、[CONFIG_DB](../reference/glossary.md#term-config_db) を直接編集する想定[^1]。
 
 ## 4. 設定例（VNet ピアリング）
 
@@ -129,11 +129,11 @@ APP_DB に `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を投入してベア�
 | VTEP が上がらない | `VXLAN_TUNNEL.src_ip` が実在 IF（Loopback 等）の IP か |
 | L2 VXLAN で MAC が伝搬しない | `VXLAN_FDB_TABLE`（APP_DB）に `remote_vtep` |
 | L3 VXLAN で経路が乗らない | `VNET_ROUTE_TUNNEL_TABLE.endpoint` が remote VTEP IP と一致 |
-| VRF が SAI に作られない | `VrfMgrD` の STATE_DB 更新が間に合っているか |
+| [VRF](../reference/glossary.md#term-vrf) が [SAI](../reference/glossary.md#term-sai) に作られない | `VrfMgrD` の [STATE_DB](../reference/glossary.md#term-state_db) 更新が間に合っているか |
 
 ## 関連ページ
 
-- [VXLAN / VNet 全体設計（概要ハブ）](vxlan-sonic.md) — 元 HLD ページ
+- [VXLAN / VNet 全体設計（概要ハブ）](vxlan-sonic.md) — 元 [HLD](../reference/glossary.md#term-hld) ページ
 - [vxlan-sonic-concepts.md](vxlan-sonic-concepts.md) — 概念・用語
 - [vxlan-sonic-internals.md](vxlan-sonic-internals.md) — Orch 内部実装
 - [vxlan-sonic-limitations.md](vxlan-sonic-limitations.md) — 制限事項
@@ -144,3 +144,5 @@ APP_DB に `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を投入してベア�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: f111235af114 -->

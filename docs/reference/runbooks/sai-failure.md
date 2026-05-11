@@ -31,7 +31,7 @@ related:
 ## 想定原因
 
 1. **[CRM](../../reference/glossary.md#term-crm) (Critical Resource Monitor) で table 枯渇**: [FDB](../../reference/glossary.md#term-fdb) / ROUTE / NEXTHOP / [ACL](../../reference/glossary.md#term-acl) のいずれかが ASIC 容量を超過
-2. **[SAI](../../reference/glossary.md#term-sai) 属性の未対応**: SDK バージョンが古く、orchagent が新属性を打って失敗
+2. **[SAI](../../reference/glossary.md#term-sai) 属性の未対応**: SDK バージョンが古く、[orchagent](../../reference/glossary.md#term-orchagent) が新属性を打って失敗
 3. **同名 object の重複作成 / 削除順序ミス**: 古い参照を残したまま親 object を削除
 4. **メモリ / shared memory 不足**: redis / [syncd](../../reference/glossary.md#term-syncd) が OOM kill
 5. **HW 側の障害**: ASIC reset、PCIe link down、Fabric link error
@@ -79,7 +79,7 @@ crm show thresholds all
 docker logs swss 2>&1 | grep -iE "SAI_STATUS|sai_api|sai_create|sai_remove" | tail -100
 ```
 
-- `SAI_STATUS_TABLE_FULL` → CRM 枯渇
+- `SAI_STATUS_TABLE_FULL` → [CRM](../../reference/glossary.md#term-crm) 枯渇
 - `SAI_STATUS_NOT_SUPPORTED` → SDK 非対応属性
 - `SAI_STATUS_INVALID_OBJECT_ID` → object 削除順序の問題
 
@@ -102,8 +102,8 @@ dmesg | grep -i -E "oom|kill" | tail
 
 ## 対処方法
 
-- CRM 枯渇: 容量設計を見直す（FDB aging を短く、ACL の `match_in_ports` を集約、route summarization）
-- syncd / swss の単発復旧: `sudo systemctl restart swss` → syncd も連動再起動
+- [CRM](../../reference/glossary.md#term-crm) 枯渇: 容量設計を見直す（[FDB](../../reference/glossary.md#term-fdb) aging を短く、[ACL](../../reference/glossary.md#term-acl) の `match_in_ports` を集約、route summarization）
+- [syncd](../../reference/glossary.md#term-syncd) / swss の単発復旧: `sudo systemctl restart swss` → [syncd](../../reference/glossary.md#term-syncd) も連動再起動
 - 重大障害（PCIe 等）の疑い時: techsupport を取得して保守問い合わせ
 - SDK のバグの場合: 該当 image にバックポートされた fix を持つ build に更新
 
@@ -116,6 +116,6 @@ dmesg | grep -i -E "oom|kill" | tail
 ## 引用元
 
 [^1]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ 88bc51a — syncd 本体
-[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — orchagent
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)
 
-<!-- glossary-links-injected: 39cba99ab9f2 -->
+<!-- glossary-links-injected: 00adaba8804d -->

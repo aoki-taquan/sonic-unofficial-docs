@@ -66,13 +66,13 @@ FIPS|global
 
 ## 関連リファレンス
 
-- YANG: [`sonic-fips`](../yang/sonic-fips.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-fips`](../yang/sonic-fips.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-fips.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fips.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-fips.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fips.yang>
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
@@ -97,4 +97,4 @@ show fips status
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

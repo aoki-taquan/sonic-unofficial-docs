@@ -35,7 +35,7 @@ related:
 [BGP](../../reference/glossary.md#term-bgp) 状態表示用の CLI は **3 系統に分かれている**:
 
 1. `show bgp ...` ... [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_DEVICE_GLOBAL` / `BGP_AGGREGATE_ADDRESS` を `show/bgp_cli.py` が直接 dump（[FRR](../../reference/glossary.md#term-frr) を経由しない）。
-2. `show ip bgp ...` / `show ipv6 bgp ...` ... `show/bgp_frr_v4.py` / `bgp_frr_v6.py` が `vtysh -c "show ip bgp ..."` を内部実行して FRR の出力を整形。
+2. `show ip bgp ...` / `show ipv6 bgp ...` ... `show/bgp_frr_v4.py` / `bgp_frr_v6.py` が `vtysh -c "show ip bgp ..."` を内部実行して [FRR](../../reference/glossary.md#term-frr) の出力を整形。
 3. `show running-configuration bgp` ... `show/main.py` が `vtysh -c "show running-config"` を実行（別ページ「show running-config」を参照）。
 
 `show bgp` グループは `show/main.py` 末尾で `cli.add_command(bgp_cli.BGP)` の形で登録される[^1]ため、cli.json の機械抽出には現れない。本ページではこの隠れたサブグループを含めて整理する。
@@ -46,7 +46,7 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `show bgp device-global [-j\|--json]` | TSA / W-[ECMP](../../reference/glossary.md#term-ecmp) の現在状態を CONFIG_DB から表示 |
+| `show bgp device-global [-j\|--json]` | TSA / W-[ECMP](../../reference/glossary.md#term-ecmp) の現在状態を [CONFIG_DB](../../reference/glossary.md#term-config_db) から表示 |
 | `show bgp aggregate-address ipv4 [-j\|--json]` | IPv4 集約 prefix の設定一覧 |
 | `show bgp aggregate-address ipv6 [-j\|--json]` | IPv6 集約 prefix の設定一覧 |
 
@@ -54,18 +54,18 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `show ip bgp summary [-n NS] [--display NS_OR_ALL]` | IPv4 BGP セッションサマリ |
+| `show ip bgp summary [-n NS] [--display NS_OR_ALL]` | IPv4 [BGP](../../reference/glossary.md#term-bgp) セッションサマリ |
 | `show ip bgp neighbors [<ipaddress>] [routes\|advertised-routes\|received-routes] [-n NS]` | 隣接情報 |
 | `show ip bgp network [<ip\|prefix>] [bestpath\|json\|longer-prefixes\|multipath] [-n NS]` | RIB の prefix lookup |
 | `show ip bgp aggregate-address` | bgp_cli の IPv4 aggregate 表示への shim |
-| `show ip bgp vrf <vrf> summary` / `neighbors ...` / `network ...` | [VRF](../../reference/glossary.md#term-vrf) 配下の BGP 情報（パラメータは default VRF と同じ） |
+| `show ip bgp vrf <vrf> summary` / `neighbors ...` / `network ...` | [VRF](../../reference/glossary.md#term-vrf) 配下の [BGP](../../reference/glossary.md#term-bgp) 情報（パラメータは default [VRF](../../reference/glossary.md#term-vrf) と同じ） |
 | `show ipv6 bgp summary / neighbors / network / vrf ... ` | IPv6 版（IPv4 と同等の subcommand 体系） |
 
 ## 各コマンドの詳細
 
 ### `show bgp device-global [-j]`
 
-`db.cfgdb.get_table(BGP_DEVICE_GLOBAL)['STATE']` を読み、`tsa_enabled` / `wcmp_enabled` を `to_str` で `Yes/No` 形式に変換して表示する。`--json` で `{"tsa": ..., "w-ecmp": ...}` の dict 出力。CONFIG_DB に未設定なら `No configuration is present in CONFIG DB` と表示して exit 0[^2]。
+`db.cfgdb.get_table(BGP_DEVICE_GLOBAL)['STATE']` を読み、`tsa_enabled` / `wcmp_enabled` を `to_str` で `Yes/No` 形式に変換して表示する。`--json` で `{"tsa": ..., "w-ecmp": ...}` の dict 出力。[CONFIG_DB](../../reference/glossary.md#term-config_db) に未設定なら `No configuration is present in CONFIG DB` と表示して exit 0[^2]。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/bgp_cli.py#L57-L130 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -106,7 +106,7 @@ excerpt: |
 
 ### `show ip bgp neighbors [<ipaddress>] [<info_type>]`
 
-内部で `vtysh -c "show ip bgp vrf default neighbor [<ip> [routes|advertised-routes|received-routes]]"` を組み立てて FRR コンテナ内で実行する。引数の `<info_type>` は `<ipaddress>` を指定したときのみ意味を持つ。
+内部で `vtysh -c "show ip bgp vrf default neighbor [<ip> [routes|advertised-routes|received-routes]]"` を組み立てて [FRR](../../reference/glossary.md#term-frr) コンテナ内で実行する。引数の `<info_type>` は `<ipaddress>` を指定したときのみ意味を持つ。
 
 `<ipaddress>` を指定すると `bgp_util.get_namespace_for_bgp_neighbor` が当該 IP を持つ namespace を逆引きし、`-n` の値と矛盾していれば警告して **実 namespace を優先** する。
 
@@ -116,7 +116,7 @@ excerpt: |
 
 ### `show ip bgp vrf <vrf> {summary|neighbors|network}`
 
-`vrf` を click context の親 group から取り出し、ヘルパに `vrf=<name>` を渡して default と同じパスを通す。VNet 名も VRF として扱う。
+`vrf` を click context の親 group から取り出し、ヘルパに `vrf=<name>` を渡して default と同じパスを通す。VNet 名も [VRF](../../reference/glossary.md#term-vrf) として扱う。
 
 ### IPv6 (`show ipv6 bgp ...`)
 
@@ -237,4 +237,4 @@ show ip bgp network 10.0.0.0/24
 - [CLI: config bgp](config-bgp.md)
 - [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
 
-<!-- glossary-links-injected: 498fa165fc57 -->
+<!-- glossary-links-injected: 8ae95ab15728 -->

@@ -54,7 +54,7 @@ BGP_PEER_RANGE_TEMPLATE|<peer_range_name>        # template
 
 | キー | 型 | 説明 |
 |------|----|------|
-| `vrf_name` | union (leafref to `VRF.name` または `VNET.name`) | 所属 VRF または VNET |
+| `vrf_name` | union (leafref to `VRF.name` または `VNET.name`) | 所属 [VRF](../../reference/glossary.md#term-vrf) または [VNET](../../reference/glossary.md#term-vnet) |
 | `peer_range_name` | string | peer range の一意名 |
 
 ## フィールド
@@ -78,7 +78,7 @@ BGP_PEER_RANGE_TEMPLATE|<peer_range_name>        # template
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_GLOBALS`、`VRF`、`VNET`、`BGP_PEER_GROUP`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`、`VRF`、`VNET`、`BGP_PEER_GROUP`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-peerrange`、`sonic-vrf`、`sonic-vnet`
 - 関連 CLI: `config bgp`
 
@@ -86,14 +86,14 @@ BGP_PEER_RANGE_TEMPLATE|<peer_range_name>        # template
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-peerrange`](../yang/sonic-bgp-peerrange.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-peerrange`](../yang/sonic-bgp-peerrange.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-peerrange.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peerrange.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-peerrange.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peerrange.yang>
 
 ## 関連ページ
 - [CONFIG_DB: BGP_NEIGHBOR](bgp-neighbor.md)
@@ -119,4 +119,4 @@ vtysh -c 'show bgp listen range'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0b428f8adcd6 -->
+<!-- glossary-links-injected: 9543a3643673 -->

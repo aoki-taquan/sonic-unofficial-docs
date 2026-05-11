@@ -49,7 +49,7 @@ flowchart LR
 DOT1P_TO_TC_MAP|<name>             # マップ全体（hash で dot1p→tc の dict）
 ```
 
-CONFIG_DB 上は `DOT1P_TO_TC_MAP|<name>` の単一ハッシュで `dot1p` → `tc` の対応を保持する（一般的な SONiC QoS map と同形式）。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) 上は `DOT1P_TO_TC_MAP|<name>` の単一ハッシュで `dot1p` → `tc` の対応を保持する（一般的な SONiC [QoS](../../reference/glossary.md#term-qos) map と同形式）。
 
 | キー | 型 | 説明 |
 |------|----|------|
@@ -71,20 +71,20 @@ inner list で定義される各エントリ:
 
 ## 購読者
 
-- `qosorch` (sonic-swss) — SAI QoS Map オブジェクト生成
+- `qosorch` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)) — [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) Map オブジェクト生成
 - `PORT_QOS_MAP` の `dot1p_to_tc_map` leaf から参照
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT_QOS_MAP`、`DSCP_TO_TC_MAP`、`TC_TO_QUEUE_MAP`
-- 関連 YANG: `sonic-dot1p-tc-map`、`sonic-port-qos-map`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT_QOS_MAP`、`DSCP_TO_TC_MAP`、`TC_TO_QUEUE_MAP`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-dot1p-tc-map`、`sonic-port-qos-map`
 - 関連 CLI: `config qos`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-dot1p-tc-map`](../yang/sonic-dot1p-tc-map.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-dot1p-tc-map`](../yang/sonic-dot1p-tc-map.md)
 - CLI: [`config qos`](../cli/config-qos.md)
 
 <!-- ref-triangle:end -->
@@ -116,4 +116,4 @@ show qos map dot1p-tc
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7e2c6e652020 -->
+<!-- glossary-links-injected: 05824a330e9e -->

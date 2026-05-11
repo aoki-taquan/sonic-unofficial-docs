@@ -30,7 +30,7 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **stage / type の不一致**: `INGRESS` ACL を outbound に bind 等
+1. **stage / type の不一致**: `INGRESS` [ACL](../../reference/glossary.md#term-acl) を outbound に bind 等
 2. **bind 先 interface 誤り**: PORT ではなく PORTCHANNEL に bind すべき場面
 3. **rule priority の競合**: 上位 priority に permit があり、対象が先に抜ける
 4. **`PACKET_ACTION` の typo**: `FORWARD` / `DROP` の大小区別
@@ -103,4 +103,4 @@ crm show resources acl-table acl-group
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/aclorch.cpp
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — acl_loader
 
-<!-- glossary-links-injected: 91f6af3178af -->
+<!-- glossary-links-injected: 1f2da1437d5b -->

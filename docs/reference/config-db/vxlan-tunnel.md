@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-[VXLAN](../../reference/glossary.md#term-vxlan) VTEP (Virtual Tunnel End Point) を定義するテーブル。source / destination IP と decap TTL モードを保持する[^1]。`orchagent` の `VxlanOrch` / `VxlanTunnelOrch` が [SAI](../../reference/glossary.md#term-sai) VXLAN tunnel と SAI tunnel termination を生成する。[EVPN](../../reference/glossary.md#term-evpn) ベースのオーバーレイでは destination は省略され、`VXLAN_EVPN_NVO` で NVO がバインドされる。
+[VXLAN](../../reference/glossary.md#term-vxlan) VTEP (Virtual Tunnel End Point) を定義するテーブル。source / destination IP と decap TTL モードを保持する[^1]。`orchagent` の `VxlanOrch` / `VxlanTunnelOrch` が [SAI](../../reference/glossary.md#term-sai) [VXLAN](../../reference/glossary.md#term-vxlan) tunnel と [SAI](../../reference/glossary.md#term-sai) tunnel termination を生成する。[EVPN](../../reference/glossary.md#term-evpn) ベースのオーバーレイでは destination は省略され、`VXLAN_EVPN_NVO` で NVO がバインドされる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -51,7 +51,7 @@ flowchart LR
 VXLAN_TUNNEL|<name>
 ```
 
-[YANG](../../reference/glossary.md#term-yang) `max-elements 2` 制約により最大 2 トンネルまで（実装的に EVPN 用 1 + 静的 1 を想定）。
+[YANG](../../reference/glossary.md#term-yang) `max-elements 2` 制約により最大 2 トンネルまで（実装的に [EVPN](../../reference/glossary.md#term-evpn) 用 1 + 静的 1 を想定）。
 
 ## フィールド一覧
 
@@ -67,25 +67,25 @@ VXLAN_TUNNEL|<name>
 - `VXLAN_TUNNEL_MAP` (key: `name`, `mapname`): [VLAN](../../reference/glossary.md#term-vlan) ↔ VNI マッピング
     - `vlan` (string `Vlan<id>`, mandatory)
     - `vni` (`vnid_type`, mandatory)
-- `VXLAN_EVPN_NVO` (key: `name`, max-elements 1): EVPN NVO インスタンス
+- `VXLAN_EVPN_NVO` (key: `name`, max-elements 1): [EVPN](../../reference/glossary.md#term-evpn) NVO インスタンス
     - `source_vtep` (leafref `VXLAN_TUNNEL.name`, mandatory)
 
 ## 購読者
 
-- `orchagent` `VxlanTunnelOrch` / `VxlanTunnelMapOrch` / `EvpnNvoOrch`: SAI tunnel / tunnel-map / NVO を生成
+- `orchagent` `VxlanTunnelOrch` / `VxlanTunnelMapOrch` / `EvpnNvoOrch`: [SAI](../../reference/glossary.md#term-sai) tunnel / tunnel-map / NVO を生成
 - `bgpcfgd` (EVPN type-2 / type-3 advertise との連携)
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VXLAN_TUNNEL_MAP`、`VXLAN_EVPN_NVO`、`VLAN`、`VNET`、`VLAN_INTERFACE`
 - 関連 CLI: [`config vxlan`](../cli/config-vxlan.md)
-- 関連 YANG: `sonic-vxlan`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vxlan`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-vxlan`](../yang/sonic-vxlan.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-vxlan`](../yang/sonic-vxlan.md)
 - CLI: [`config vxlan`](../cli/config-vxlan.md)
 
 <!-- ref-triangle:end -->
@@ -123,4 +123,4 @@ show vxlan remotevtep
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 936f7984210e -->
+<!-- glossary-links-injected: f45d7ede5f79 -->

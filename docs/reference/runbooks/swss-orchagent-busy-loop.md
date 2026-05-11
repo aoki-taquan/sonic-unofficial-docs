@@ -82,11 +82,11 @@ sonic-db-cli COUNTERS_DB dbsize
 
 ## 対処
 
-- 一時的に **`config bgp shutdown all`** で route churn を止め、orchagent が収束するか確認
-- ACL / route の bulk delete を試す前に `config save -y` で backup
+- 一時的に **`config bgp shutdown all`** で route churn を止め、[orchagent](../../reference/glossary.md#term-orchagent) が収束するか確認
+- [ACL](../../reference/glossary.md#term-acl) / route の bulk delete を試す前に `config save -y` で backup
 - 最終手段として `docker restart swss`（中断発生）→ warm-restart 設定がある場合のみ無瞬断に近い
 
-`Orch::doTask` は ConsumerStateTable から取り出した変更を 1 件ずつ ASIC へ適用し、SAI が失敗を返したエントリは `m_toSync` に残して次回ループで再試行する設計のため、解消不能なエラーが入ると CPU を使い切る[^1]。
+`Orch::doTask` は [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) から取り出した変更を 1 件ずつ ASIC へ適用し、[SAI](../../reference/glossary.md#term-sai) が失敗を返したエントリは `m_toSync` に残して次回ループで再試行する設計のため、解消不能なエラーが入ると CPU を使い切る[^1]。
 
 [^1]: `sonic-net/sonic-swss` `orchagent/orch.cpp::Orch::doTask` および `orchagent/orchdaemon.cpp` のメインループ実装。`SAI_STATUS_*` エラーは consumer 側で再キューイングされ、根本原因が解決するまで指数バックオフ無しで retry される。
 
@@ -97,4 +97,4 @@ sonic-db-cli COUNTERS_DB dbsize
 - [flex-counter-stuck.md](flex-counter-stuck.md)
 - [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md)
 
-<!-- glossary-links-injected: 3e73c8d3cd18 -->
+<!-- glossary-links-injected: 76c8c3f52726 -->

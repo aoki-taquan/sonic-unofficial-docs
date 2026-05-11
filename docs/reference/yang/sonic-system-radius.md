@@ -115,7 +115,7 @@ module: sonic-system-radius
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`RADIUS`](../config-db/radius.md) / [`RADIUS_SERVER`](../config-db/radius.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`RADIUS`](../config-db/radius.md) / [`RADIUS_SERVER`](../config-db/radius.md)
 - CLI: `config radius`
 
 <!-- ref-triangle:end -->
@@ -124,4 +124,4 @@ module: sonic-system-radius
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-radius.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: 896d391185a9 -->

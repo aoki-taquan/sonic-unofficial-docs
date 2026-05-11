@@ -86,12 +86,12 @@ key の `port` は `PORT.name` または `'all'` (全ポート既定)。
 
 ## 購読者
 
-- `sflowmgrd` (`docker-sflow`): CONFIG_DB → `hsflowd` 設定生成
+- `sflowmgrd` (`docker-sflow`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → `hsflowd` 設定生成
 - `hsflowd`: sampling / counter export 実体
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT`、`PORTCHANNEL`、`MGMT_PORT`、`MGMT_VRF_CONFIG`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT`、`PORTCHANNEL`、`MGMT_PORT`、`MGMT_VRF_CONFIG`
 - 関連 CLI: `config sflow enable/disable/polling-interval/agent-id/collector/interface`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-sflow`
 
@@ -99,14 +99,14 @@ key の `port` は `PORT.name` または `'all'` (全ポート既定)。
 
 ## 関連リファレンス
 
-- YANG: [`sonic-sflow`](../yang/sonic-sflow.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-sflow`](../yang/sonic-sflow.md)
 - CLI: [`config sflow`](../cli/config-sflow.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-sflow.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-sflow.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -137,4 +137,4 @@ show sflow
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: 32758c44ab11 -->

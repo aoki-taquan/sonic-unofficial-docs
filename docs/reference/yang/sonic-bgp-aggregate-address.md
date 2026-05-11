@@ -62,8 +62,8 @@ module: sonic-bgp-aggregate-address
 | 種別 | パス | key | 説明 |
 |------|------|-----|------|
 | `container` | `sonic-bgp-aggregate-address` |  |  |
-| `container` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS` |  | BGP aggregate address configuration for summarizing prefixes. |
-| `list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST` | `aggregate-address` | Each entry defines a BGP aggregate address and its advertisement options. |
+| `container` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS` |  | [BGP](../../reference/glossary.md#term-bgp) aggregate address configuration for summarizing prefixes. |
+| `list` | `sonic-bgp-aggregate-address/BGP_AGGREGATE_ADDRESS/BGP_AGGREGATE_ADDRESS_LIST` | `aggregate-address` | Each entry defines a [BGP](../../reference/glossary.md#term-bgp) aggregate address and its advertisement options. |
 
 ## leaf 一覧
 
@@ -93,7 +93,7 @@ module: sonic-bgp-aggregate-address
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BGP_AGGREGATE_ADDRESS`](../config-db/bgp-aggregate-address.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BGP_AGGREGATE_ADDRESS`](../config-db/bgp-aggregate-address.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
@@ -121,4 +121,4 @@ vtysh -c 'show ip bgp summary'
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 1cacb3304d71 -->
+<!-- glossary-links-injected: 23dcc9b38d9f -->

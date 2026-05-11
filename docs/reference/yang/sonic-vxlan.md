@@ -75,15 +75,15 @@ module: sonic-vxlan
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/name` | `string` | yes |  |  | VXLAN tunnel name. |
+| `name` | `sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/name` | `string` | yes |  |  | [VXLAN](../../reference/glossary.md#term-vxlan) tunnel name. |
 | `src_ip` | `sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/src_ip` | `inet:ip-address` |  |  |  | Source VTEP IP address for tunnel origination. |
 | `dst_ip` | `sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/dst_ip` | `inet:ip-address` |  |  |  | Destination VTEP IP address for point-to-point tunnels. |
 | `ttl_mode` | `sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/ttl_mode` | `string` |  |  | pattern `uniform|pipe` | Decap TTL mode |
-| `name` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/name` | `leafref` | yes |  | /svxlan:sonic-vxlan/svxlan:VXLAN_TUNNEL/svxlan:VXLAN_TUNNEL_LIST/svxlan:name | Reference to the parent VXLAN tunnel. |
+| `name` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/name` | `leafref` | yes |  | /svxlan:sonic-vxlan/svxlan:VXLAN_TUNNEL/svxlan:VXLAN_TUNNEL_LIST/svxlan:name | Reference to the parent [VXLAN](../../reference/glossary.md#term-vxlan) tunnel. |
 | `mapname` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/mapname` | `string` | yes |  |  | Name of the [VLAN](../../reference/glossary.md#term-vlan)-to-VNI mapping entry. |
-| `vlan` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/vlan` | `string` | yes |  | pattern `Vlan([0-9]{1,3}|[1-3][0-9]{3}|[4][0][0-8][0-9]|[4][0][9][...` | VLAN associated with this mapping. |
-| `vni` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/vni` | `stypes:vnid_type` | yes |  |  | VXLAN Network Identifier mapped to the VLAN. |
-| `name` | `sonic-vxlan/VXLAN_EVPN_NVO/VXLAN_EVPN_NVO_LIST/name` | `string` | yes |  |  | EVPN NVO instance name. |
+| `vlan` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/vlan` | `string` | yes |  | pattern `Vlan([0-9]{1,3}|[1-3][0-9]{3}|[4][0][0-8][0-9]|[4][0][9][...` | [VLAN](../../reference/glossary.md#term-vlan) associated with this mapping. |
+| `vni` | `sonic-vxlan/VXLAN_TUNNEL_MAP/VXLAN_TUNNEL_MAP_LIST/vni` | `stypes:vnid_type` | yes |  |  | VXLAN Network Identifier mapped to the [VLAN](../../reference/glossary.md#term-vlan). |
+| `name` | `sonic-vxlan/VXLAN_EVPN_NVO/VXLAN_EVPN_NVO_LIST/name` | `string` | yes |  |  | [EVPN](../../reference/glossary.md#term-evpn) NVO instance name. |
 | `source_vtep` | `sonic-vxlan/VXLAN_EVPN_NVO/VXLAN_EVPN_NVO_LIST/source_vtep` | `leafref` | yes |  | /svxlan:sonic-vxlan/svxlan:VXLAN_TUNNEL/svxlan:VXLAN_TUNNEL_LIST/svxlan:name | Reference to the VXLAN tunnel used as the source VTEP. |
 
 ## leafref / 依存
@@ -98,8 +98,8 @@ module: sonic-vxlan
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `VXLAN_TUNNEL`
-- CONFIG_DB: `VXLAN_TUNNEL_MAP`
-- CONFIG_DB: `VXLAN_EVPN_NVO`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VXLAN_TUNNEL_MAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VXLAN_EVPN_NVO`
 - CLI: `config vxlan`
 
 <!-- ref-triangle:start -->
@@ -115,4 +115,4 @@ module: sonic-vxlan
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vxlan.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: fb9ac39b72cb -->
+<!-- glossary-links-injected: 2f5303d1f3e5 -->

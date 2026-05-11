@@ -22,9 +22,9 @@ related:
 
 ## 概要
 
-`BREAKOUT_CFG` テーブルは Dynamic Port Breakout ([DPB](../../reference/glossary.md#term-dpb)) における親ポートと現在の breakout モードを保持する[^1]。子ポートは breakout モードに応じて `PORT` テーブルに自動展開される。`config-engine` / DPB ロジックが書き込み、`PORT` テーブルや [SAI](../../reference/glossary.md#term-sai) 側で port splitting が反映される。
+`BREAKOUT_CFG` テーブルは Dynamic Port Breakout ([DPB](../../reference/glossary.md#term-dpb)) における親ポートと現在の breakout モードを保持する[^1]。子ポートは breakout モードに応じて `PORT` テーブルに自動展開される。`config-engine` / [DPB](../../reference/glossary.md#term-dpb) ロジックが書き込み、`PORT` テーブルや [SAI](../../reference/glossary.md#term-sai) 側で port splitting が反映される。
 
-`port` leaf は `PORT` への leafref ではなく **plain string**。DPB 中は親ポートが `PORT` から消えるタイミングがあり、leafref で参照すると不整合になるため意図的に外してある（[YANG](../../reference/glossary.md#term-yang) 内コメントに明記）。
+`port` leaf は `PORT` への leafref ではなく **plain string**。[DPB](../../reference/glossary.md#term-dpb) 中は親ポートが `PORT` から消えるタイミングがあり、leafref で参照すると不整合になるため意図的に外してある（[YANG](../../reference/glossary.md#term-yang) 内コメントに明記）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -71,14 +71,14 @@ BREAKOUT_CFG|<port>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT`、`platform.json`
-- 関連 YANG: `sonic-breakout_cfg`、`sonic-port`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-breakout_cfg`、`sonic-port`
 - 関連 CLI: `config interface breakout`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-breakout_cfg`](../yang/sonic-breakout_cfg.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-breakout_cfg`](../yang/sonic-breakout_cfg.md)
 - CLI: [`config interface breakout`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
@@ -100,7 +100,7 @@ BREAKOUT_CFG|<port>
 
 ### よくある誤設定
 
-- breakout 変更後に `config reload` を忘れて Port table と SAI 状態が乖離する。
+- breakout 変更後に `config reload` を忘れて Port table と [SAI](../../reference/glossary.md#term-sai) 状態が乖離する。
 
 ### 確認コマンド
 
@@ -110,4 +110,4 @@ show interfaces breakout
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d90ec8e9fade -->
+<!-- glossary-links-injected: 17ab2ab6ed91 -->

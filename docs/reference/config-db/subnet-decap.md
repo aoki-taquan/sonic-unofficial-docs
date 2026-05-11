@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-[IPinIP](../../reference/glossary.md#term-ipinip) トンネルの **サブネット単位の decapsulation ルール** を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`TUNNEL_DECAP_TABLE` が個別の outer IP を起点とした decap を扱うのに対し、`SUBNET_DECAP` は **outer source IP がプレフィックス内に該当する場合に decap を行う** という、より広範な一致条件を表す。[SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DASH](../../reference/glossary.md#term-dash) や DualToR 系のシナリオで、ToR 配下のサーバ群から発した IPinIP encapsulated トラフィックを decap するために導入された。
+[IPinIP](../../reference/glossary.md#term-ipinip) トンネルの **サブネット単位の decapsulation ルール** を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`TUNNEL_DECAP_TABLE` が個別の outer IP を起点とした decap を扱うのに対し、`SUBNET_DECAP` は **outer source IP がプレフィックス内に該当する場合に decap を行う** という、より広範な一致条件を表す。[SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DASH](../../reference/glossary.md#term-dash) や DualToR 系のシナリオで、ToR 配下のサーバ群から発した [IPinIP](../../reference/glossary.md#term-ipinip) encapsulated トラフィックを decap するために導入された。
 
 [YANG](../../reference/glossary.md#term-yang) リビジョン 2024-12-19 で追加された比較的新しいテーブル。
 
@@ -68,19 +68,19 @@ SUBNET_DECAP|<name>
 
 ## 制約
 
-- `src_ip` / `src_ip_v6` は YANG で `mandatory true`。片方だけの設定は validation で拒否される。
+- `src_ip` / `src_ip_v6` は [YANG](../../reference/glossary.md#term-yang) で `mandatory true`。片方だけの設定は validation で拒否される。
 - `status = enable` でない限りデータプレーンには反映されない。
 
 ## 購読者
 
 - `swss` の tunnel-decap オーチェストレータが `SUBNET_DECAP` を読み、[SAI](../../reference/glossary.md#term-sai) の tunnel term entry を生成する（subnet ベースの match）。
-- DualToR / DASH のサブシステムが補助的に参照する。
+- DualToR / [DASH](../../reference/glossary.md#term-dash) のサブシステムが補助的に参照する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `TUNNEL_DECAP_TABLE` (個別 IP の decap)、`MUX_CABLE` (DualToR)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `TUNNEL_DECAP_TABLE` (個別 IP の decap)、`MUX_CABLE` (DualToR)
 - 関連 CLI: 現状 dedicated CLI コマンドは無く `sonic-cfggen` / `config load` 経由で投入することが多い
-- 関連 YANG: `sonic-subnet-decap`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-subnet-decap`
 
 <!-- ref-triangle:start -->
 
@@ -113,4 +113,4 @@ sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: de257f859a08 -->
+<!-- glossary-links-injected: 5bccf4824bce -->

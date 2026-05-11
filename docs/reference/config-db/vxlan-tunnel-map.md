@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-[VXLAN](../../reference/glossary.md#term-vxlan) tunnel に対し、ローカル [VLAN](../../reference/glossary.md#term-vlan) と VNI (VXLAN Network Identifier) のマッピングを与える[^1]。`orchagent` の `VxlanTunnelMapOrch` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) tunnel-map (`SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI` / `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID`) のエントリを生成する。
+[VXLAN](../../reference/glossary.md#term-vxlan) tunnel に対し、ローカル [VLAN](../../reference/glossary.md#term-vlan) と VNI ([VXLAN](../../reference/glossary.md#term-vxlan) Network Identifier) のマッピングを与える[^1]。`orchagent` の `VxlanTunnelMapOrch` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) tunnel-map (`SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI` / `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID`) のエントリを生成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -59,15 +59,15 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 |-----------|----|------|------|
 | `name` (key) | leafref `VXLAN_TUNNEL.name` | ✅ | 親トンネル |
 | `mapname` (key) | string | ✅ | マッピング名（任意ラベル） |
-| `vlan` | string `Vlan<id>` (パターン) | ✅ | 対応 VLAN |
+| `vlan` | string `Vlan<id>` (パターン) | ✅ | 対応 [VLAN](../../reference/glossary.md#term-vlan) |
 | `vni` | `vnid_type` (uint32 0..2^24-1) | ✅ | VNI |
 
 備考: `vlan` 本来は `VLAN.name` への leafref が望ましいが、libyang の back-link 問題により暫定的に文字列パターン化されている (`sonic-vxlan.yang` のコメント参照)。
 
 ## 購読者
 
-- `orchagent` `VxlanTunnelMapOrch`: SAI tunnel-map エントリ生成
-- [EVPN](../../reference/glossary.md#term-evpn) フローでは `VxlanMgr` がここから VLAN-VNI を引き、type-2/3 経路と紐付ける
+- `orchagent` `VxlanTunnelMapOrch`: [SAI](../../reference/glossary.md#term-sai) tunnel-map エントリ生成
+- [EVPN](../../reference/glossary.md#term-evpn) フローでは `VxlanMgr` がここから [VLAN](../../reference/glossary.md#term-vlan)-VNI を引き、type-2/3 経路と紐付ける
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -79,14 +79,14 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-vxlan`](../yang/sonic-vxlan.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-vxlan`](../yang/sonic-vxlan.md)
 - CLI: [`config vxlan`](../cli/config-vxlan.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-vxlan.yang` 内 `VXLAN_TUNNEL_MAP`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang#L66>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-vxlan.yang` 内 `VXLAN_TUNNEL_MAP`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang#L66>
 
 ## 関連ページ
 - [HLD: VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
@@ -115,4 +115,4 @@ show vxlan vlanvnimap
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4bb5ab6e6a64 -->
+<!-- glossary-links-injected: 7111763d84c2 -->

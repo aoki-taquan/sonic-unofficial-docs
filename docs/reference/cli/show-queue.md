@@ -26,7 +26,7 @@ related:
 | コマンド | 用途 |
 |---------|------|
 | `show queue counters [INTERFACE_NAME] [options]` | queue counters を表示 |
-| `show queue wredcounters [INTERFACE_NAME] [options]` | WRED counters を表示 |
+| `show queue wredcounters [INTERFACE_NAME] [options]` | [WRED](../../reference/glossary.md#term-wred) counters を表示 |
 | `show queue watermark unicast [options]` | unicast queue user watermark |
 | `show queue watermark multicast [options]` | multicast queue user watermark |
 | `show queue watermark all [options]` | 全 queue user watermark |
@@ -131,7 +131,7 @@ flowchart LR
 ### 典型的な利用シーン
 
 - ポート別 queue 占有・dropped packets の確認。
-- WRED / ECN マークの効果検証。
+- [WRED](../../reference/glossary.md#term-wred) / ECN マークの効果検証。
 
 ### よくある落とし穴
 
@@ -147,4 +147,4 @@ show queue persistent-watermark
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0d61b44aa6d3 -->
+<!-- glossary-links-injected: bda56a5a95c2 -->

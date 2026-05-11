@@ -114,18 +114,18 @@ module: sonic-device_metadata
 | `hwsku` | `sonic-device_metadata/DEVICE_METADATA/localhost/hwsku` | `stypes:hwsku` |  |  |  | Hardware SKU identifier defining port layout and capabilities. |
 | `asic_id` | `sonic-device_metadata/DEVICE_METADATA/localhost/asic_id` | `string` |  |  | length 1..16 | asic_id is unique identifier of the asic used by [SAI](../../reference/glossary.md#term-sai) for initialization. |
 | `default_bgp_status` | `sonic-device_metadata/DEVICE_METADATA/localhost/default_bgp_status` | `enumeration` |  | up | up, down | Default [BGP](../../reference/glossary.md#term-bgp) daemon operational state on startup. |
-| `docker_routing_config_mode` | `sonic-device_metadata/DEVICE_METADATA/localhost/docker_routing_config_mode` | `string` |  | unified | pattern `separated|unified|split|split-unified` | This leaf allows different configuration modes for [FRR](../../reference/glossary.md#term-frr): - separated: FRR config generated from ConfigDB, each FRR daemon has its own config file - unified: FRR config generated from ConfigDB, singl... |
+| `docker_routing_config_mode` | `sonic-device_metadata/DEVICE_METADATA/localhost/docker_routing_config_mode` | `string` |  | unified | pattern `separated|unified|split|split-unified` | This leaf allows different configuration modes for [FRR](../../reference/glossary.md#term-frr): - separated: [FRR](../../reference/glossary.md#term-frr) config generated from ConfigDB, each [FRR](../../reference/glossary.md#term-frr) daemon has its own config file - unified: FRR config generated from ConfigDB, singl... |
 | `hostname` | `sonic-device_metadata/DEVICE_METADATA/localhost/hostname` | `stypes:hostname` |  |  |  | System hostname for the device. |
 | `platform` | `sonic-device_metadata/DEVICE_METADATA/localhost/platform` | `string` |  |  | length 1..255 | Platform identifier (vendor and model). |
 | `mac` | `sonic-device_metadata/DEVICE_METADATA/localhost/mac` | `yang:mac-address` |  |  |  | System base MAC address. |
 | `default_pfcwd_status` | `sonic-device_metadata/DEVICE_METADATA/localhost/default_pfcwd_status` | `enumeration` |  | disable | disable, enable | Default [PFC](../../reference/glossary.md#term-pfc) watchdog operational state on startup. |
-| `bgp_asn` | `sonic-device_metadata/DEVICE_METADATA/localhost/bgp_asn` | `inet:as-number` |  |  |  | BGP autonomous system number for the device. |
+| `bgp_asn` | `sonic-device_metadata/DEVICE_METADATA/localhost/bgp_asn` | `inet:as-number` |  |  |  | [BGP](../../reference/glossary.md#term-bgp) autonomous system number for the device. |
 | `deployment_id` | `sonic-device_metadata/DEVICE_METADATA/localhost/deployment_id` | `uint32` |  |  |  | Deployment identifier for grouping devices in the same network segment. |
 | `type` | `sonic-device_metadata/DEVICE_METADATA/localhost/type` | `string` |  |  | pattern `ToRRouter|LeafRouter|SpineChassisFrontendRouter|ChassisBa...` | Device role type (e.g., ToRRouter, LeafRouter, SpineRouter). |
 | `buffer_model` | `sonic-device_metadata/DEVICE_METADATA/localhost/buffer_model` | `string` |  |  | pattern `dynamic|traditional` | This leaf is added for dynamic buffer calculation. The dynamic model represents the model in which the buffer configurations, like the headroom sizes and buffer pool sizes, are dynamically calculat... |
 | `frr_mgmt_framework_config` | `sonic-device_metadata/DEVICE_METADATA/localhost/frr_mgmt_framework_config` | `boolean` |  | false |  | FRR configurations are handled by sonic-frr-mgmt-framework module when set to true, otherwise, sonic-[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) handles the FRR configurations based on the predefined templates. |
 | `synchronous_mode` | `sonic-device_metadata/DEVICE_METADATA/localhost/synchronous_mode` | `enumeration` |  | enable | enable, disable | Enable or disable ASIC synchronous mode for [orchagent](../../reference/glossary.md#term-orchagent). |
-| `yang_config_validation` | `sonic-device_metadata/DEVICE_METADATA/localhost/yang_config_validation` | `stypes:mode-status` |  | disable |  | Enable or disable YANG model validation for configuration changes. |
+| `yang_config_validation` | `sonic-device_metadata/DEVICE_METADATA/localhost/yang_config_validation` | `stypes:mode-status` |  | disable |  | Enable or disable [YANG](../../reference/glossary.md#term-yang) model validation for configuration changes. |
 | `cloudtype` | `sonic-device_metadata/DEVICE_METADATA/localhost/cloudtype` | `string` |  |  |  | Cloud environment type where the device is deployed. |
 | `region` | `sonic-device_metadata/DEVICE_METADATA/localhost/region` | `string` |  |  |  | Geographic region where the device is deployed. |
 | `sub_role` | `sonic-device_metadata/DEVICE_METADATA/localhost/sub_role` | `string` |  |  |  | sub_role indicates if ASIC is FrontEnd or BackEnd. |
@@ -142,8 +142,8 @@ module: sonic-device_metadata
 | `max_cores` | `sonic-device_metadata/DEVICE_METADATA/localhost/max_cores` | `uint8` |  |  |  | Maximum number of cores in a VoQ Switch (chassis). |
 | `dhcp_server` | `sonic-device_metadata/DEVICE_METADATA/localhost/dhcp_server` | `stypes:admin_mode` |  |  |  | Indicate whether enable the embedded DHCP server. |
 | `bgp_adv_lo_prefix_as_128` | `sonic-device_metadata/DEVICE_METADATA/localhost/bgp_adv_lo_prefix_as_128` | `boolean` |  |  |  | Advertise Loopback0 interface IPv6 /128 subnet address as it is with set to true. By default SONiC advertises /128 subnet prefix in Loopback0 as /64 subnet route |
-| `suppress-fib-pending` | `sonic-device_metadata/DEVICE_METADATA/localhost/suppress-fib-pending` | `enumeration` |  | disabled | enabled, disabled | Enable BGP suppress FIB pending feature. BGP will wait for route FIB installation before announcing routes |
-| `async_swss_rec` | `sonic-device_metadata/DEVICE_METADATA/localhost/async_swss_rec` | `enumeration` |  | disabled | enabled, disabled | Enable asynchronous swss.rec recording in orchagent. |
+| `suppress-fib-pending` | `sonic-device_metadata/DEVICE_METADATA/localhost/suppress-fib-pending` | `enumeration` |  | disabled | enabled, disabled | Enable [BGP](../../reference/glossary.md#term-bgp) suppress FIB pending feature. BGP will wait for route FIB installation before announcing routes |
+| `async_swss_rec` | `sonic-device_metadata/DEVICE_METADATA/localhost/async_swss_rec` | `enumeration` |  | disabled | enabled, disabled | Enable asynchronous swss.rec recording in [orchagent](../../reference/glossary.md#term-orchagent). |
 | `rack_mgmt_map` | `sonic-device_metadata/DEVICE_METADATA/localhost/rack_mgmt_map` | `string` |  |  | length 0..128 | Information of rack mgmt map. |
 | `timezone` | `sonic-device_metadata/DEVICE_METADATA/localhost/timezone` | `stypes:timezone-name-type` |  | UTC | length 1..255 | The TZ database name to use for the system, such as 'Europe/Stockholm'. |
 | `create_only_config_db_buffers` | `sonic-device_metadata/DEVICE_METADATA/localhost/create_only_config_db_buffers` | `boolean` |  |  |  | If this attribute exists and is equal to true - the buffers will be created according to the config_db configuration (for example BUFFER_QUEUE\|* table), otherwise the maximum available buffers (wh... |
@@ -157,7 +157,7 @@ module: sonic-device_metadata
 | `t2_group_asns` | `sonic-device_metadata/DEVICE_METADATA/localhost/t2_group_asns` | `inet:as-number` |  |  |  | ASNs inner same group |
 | `anchor_route_source` | `sonic-device_metadata/DEVICE_METADATA/localhost/anchor_route_source` | `string` |  |  |  | Set source of anchor route |
 | `orch_northbond_dash_zmq_enabled` | `sonic-device_metadata/DEVICE_METADATA/localhost/orch_northbond_dash_zmq_enabled` | `boolean` |  | true |  | Enable ZMQ feature on [APPL_DB](../../reference/glossary.md#term-appl_db) [DASH](../../reference/glossary.md#term-dash) tables. |
-| `orch_northbond_route_zmq_enabled` | `sonic-device_metadata/DEVICE_METADATA/localhost/orch_northbond_route_zmq_enabled` | `boolean` |  | false |  | Enable ZMQ feature on APPL_DB ROUTE tables. |
+| `orch_northbond_route_zmq_enabled` | `sonic-device_metadata/DEVICE_METADATA/localhost/orch_northbond_route_zmq_enabled` | `boolean` |  | false |  | Enable ZMQ feature on [APPL_DB](../../reference/glossary.md#term-appl_db) ROUTE tables. |
 | `syslog_with_osversion` | `sonic-device_metadata/DEVICE_METADATA/localhost/syslog_with_osversion` | `boolean` |  | false |  | Enable syslog with OS version feature. |
 | `syslog_counter` | `sonic-device_metadata/DEVICE_METADATA/localhost/syslog_counter` | `boolean` |  | false |  | Enable syslog counter feature. |
 | `has_sonic_dhcpv4_relay` | `sonic-device_metadata/DEVICE_METADATA/localhost/has_sonic_dhcpv4_relay` | `stypes:boolean_type` |  | false |  | This configuration controls the dhcpv4 relay process |
@@ -183,7 +183,7 @@ module: sonic-device_metadata
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`DEVICE_METADATA`](../config-db/device-metadata.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_METADATA`](../config-db/device-metadata.md)
 
 <!-- ref-triangle:end -->
 
@@ -210,4 +210,4 @@ show version
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-device_metadata.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: dd592ea5ffb8 -->
+<!-- glossary-links-injected: 16700aa2a8c1 -->

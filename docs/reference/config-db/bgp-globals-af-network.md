@@ -55,42 +55,42 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `vrf_name` (key) | leafref → `BGP_GLOBALS.vrf_name` | 所属 VRF |
+| `vrf_name` (key) | leafref → `BGP_GLOBALS.vrf_name` | 所属 [VRF](../../reference/glossary.md#term-vrf) |
 | `afi_safi` (key) | string | アドレスファミリ |
 | `ip_prefix` (key) | inet:ip-prefix | 広告するネットワーク |
 | `policy` | leafref → `ROUTE_MAP_SET.name` | 属性を加工する route-map |
-| `backdoor` | boolean | backdoor ルートとして指定 (RFC 1771 / FRR 拡張) |
+| `backdoor` | boolean | backdoor ルートとして指定 (RFC 1771 / [FRR](../../reference/glossary.md#term-frr) 拡張) |
 
 ## 制約
 
 - 3 つのキーで一意。
-- 対応する VRF の BGP インスタンスが先に必要 (leafref)。
-- `network` で広告するためには、**実際にそのプレフィックスが RIB (ルーティングテーブル) に存在する** ことが BGP の動作上の前提（`BGP_GLOBALS.network_import_check = true` の場合）。
+- 対応する [VRF](../../reference/glossary.md#term-vrf) の [BGP](../../reference/glossary.md#term-bgp) インスタンスが先に必要 (leafref)。
+- `network` で広告するためには、**実際にそのプレフィックスが RIB (ルーティングテーブル) に存在する** ことが [BGP](../../reference/glossary.md#term-bgp) の動作上の前提（`BGP_GLOBALS.network_import_check = true` の場合）。
 - `backdoor` は IGP と BGP の同一プレフィックスで IGP を優先させたいときに使う。
 
 ## 購読者
 
 - `frr-mgmt-framework`: vtysh の `network <prefix> [route-map <name>] [backdoor]` コマンドに変換
-- `bgpd` (FRR): network 経由で BGP UPDATE に該当プレフィックスを注入
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): network 経由で BGP UPDATE に該当プレフィックスを注入
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_GLOBALS`, `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_AGGREGATE_ADDR`, `ROUTE_MAP_SET`, `STATIC_ROUTE`
-- 関連 CLI: vtysh の `network <prefix>` (`frr-mgmt-framework` 経路では CONFIG_DB 投入)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`, `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_AGGREGATE_ADDR`, `ROUTE_MAP_SET`, `STATIC_ROUTE`
+- 関連 CLI: vtysh の `network <prefix>` (`frr-mgmt-framework` 経路では [CONFIG_DB](../../reference/glossary.md#term-config_db) 投入)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-global`](../yang/sonic-bgp-global.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-global`](../yang/sonic-bgp-global.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-global.yang` (`BGP_GLOBALS_AF_NETWORK` container). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-global.yang` (`BGP_GLOBALS_AF_NETWORK` container). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang>
 
 ## 関連ページ
 - [CONFIG_DB: BGP_GLOBALS_AF](bgp-globals-af.md)
@@ -118,4 +118,4 @@ vtysh -c "show ip bgp"
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 07040282b44e -->
+<!-- glossary-links-injected: fcbe746ecf8b -->

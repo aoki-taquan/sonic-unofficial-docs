@@ -42,13 +42,13 @@ related:
 
 `timedatectl list-timezones` を起動。`systemd-timesyncd` / `systemd-timedated` が提供する IANA タイムゾーン名リスト（`Asia/Tokyo` `America/New_York` 等）を逐次出力する。
 
-このコマンドは **読み取り専用**で、[CONFIG_DB](../../reference/glossary.md#term-config_db) には触らない。実際にタイムゾーンを設定するには `sudo config clock timezone <tz>` を使う（CONFIG_DB の `DEVICE_METADATA|localhost` に `timezone` キーを書き込み、[hostcfgd](../../reference/glossary.md#term-hostcfgd) が `timedatectl set-timezone` を起動する仕組み）。
+このコマンドは **読み取り専用**で、[CONFIG_DB](../../reference/glossary.md#term-config_db) には触らない。実際にタイムゾーンを設定するには `sudo config clock timezone <tz>` を使う（[CONFIG_DB](../../reference/glossary.md#term-config_db) の `DEVICE_METADATA|localhost` に `timezone` キーを書き込み、[hostcfgd](../../reference/glossary.md#term-hostcfgd) が `timedatectl set-timezone` を起動する仕組み）。
 
 ## CONFIG_DB との接点
 
 | テーブル | 操作 |
 |---|---|
-| なし（read-only） | `show clock` は CONFIG_DB を読まない |
+| なし（read-only） | `show clock` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を読まない |
 
 <!-- cli-mermaid -->
 ### データフロー (手動作成)
@@ -78,4 +78,4 @@ flowchart LR
 
 [^1]: `clock` グループの定義は `show/main.py` L2222-L2238。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2222>
 
-<!-- glossary-links-injected: a31aab569e22 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

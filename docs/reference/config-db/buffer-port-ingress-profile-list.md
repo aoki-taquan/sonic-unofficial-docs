@@ -63,7 +63,7 @@ BUFFER_PORT_INGRESS_PROFILE_LIST|<port>
 | `port` (key) | leafref → `PORT.name` | 対象ポート |
 | `profile_list` | leaf-list of leafref → `BUFFER_PROFILE.name` (ordered-by user) | ポートにバインドする ingress バッファプロファイル名の順序付きリスト |
 
-`profile_list` は **`ordered-by user`** で設定順を保持する。CONFIG_DB では `","` 区切りの文字列として保存される慣習。
+`profile_list` は **`ordered-by user`** で設定順を保持する。[CONFIG_DB](../../reference/glossary.md#term-config_db) では `","` 区切りの文字列として保存される慣習。
 
 ## 制約
 
@@ -72,8 +72,8 @@ BUFFER_PORT_INGRESS_PROFILE_LIST|<port>
 
 ## 購読者
 
-- `buffermgrd` (`docker-swss`): CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) の `BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE`
-- `orchagent` (BufferOrch): APPL_DB → SAI の port ingress buffer profile list 設定
+- `buffermgrd` (`docker-swss`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) の `BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE`
+- `orchagent` (BufferOrch): [APPL_DB](../../reference/glossary.md#term-appl_db) → [SAI](../../reference/glossary.md#term-sai) の port ingress buffer profile list 設定
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -85,14 +85,14 @@ BUFFER_PORT_INGRESS_PROFILE_LIST|<port>
 
 ## 関連リファレンス
 
-- YANG: `sonic-buffer-port-ingress-profile-list`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-port-ingress-profile-list`
 - CLI: [`config buffer`](../cli/config-buffer.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-buffer-port-ingress-profile-list.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-ingress-profile-list.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-buffer-port-ingress-profile-list.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-ingress-profile-list.yang>
 
 ## 関連ページ
 - [CONFIG_DB: BUFFER_PROFILE](buffer-profile.md)
@@ -122,4 +122,4 @@ show buffer pool
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c6905fe6b44a -->
+<!-- glossary-links-injected: 021ae16e7b9c -->

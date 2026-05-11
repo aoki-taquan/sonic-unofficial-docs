@@ -100,7 +100,7 @@ module: sonic-copp
 | `red_action` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/red_action` | `stypes:policer_packet_action` |  | forward |  | Action for packets classified as red by the policer. |
 | `name` | `sonic-copp/COPP_TRAP/COPP_TRAP_LIST/name` | `string` | yes |  |  | Control plane policing trap name |
 | `trap_ids` | `sonic-copp/COPP_TRAP/COPP_TRAP_LIST/trap_ids` | `string` | yes |  |  | Comma-separated list of trap identifiers bound to this entry. |
-| `trap_group` | `sonic-copp/COPP_TRAP/COPP_TRAP_LIST/trap_group` | `leafref` |  |  | /sonic-copp/COPP_GROUP/COPP_GROUP_LIST/name | Reference to the CoPP group that polices these traps. |
+| `trap_group` | `sonic-copp/COPP_TRAP/COPP_TRAP_LIST/trap_group` | `leafref` |  |  | /sonic-copp/COPP_GROUP/COPP_GROUP_LIST/name | Reference to the [CoPP](../../reference/glossary.md#term-copp) group that polices these traps. |
 | `always_enabled` | `sonic-copp/COPP_TRAP/COPP_TRAP_LIST/always_enabled` | `boolean` |  |  |  | When true, the trap is always installed regardless of feature enablement. |
 
 ## leafref / 依存
@@ -114,13 +114,13 @@ module: sonic-copp
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `COPP_GROUP`
-- CONFIG_DB: `COPP_TRAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `COPP_TRAP`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`COPP_GROUP`](../config-db/copp-group.md) / [`COPP_TRAP`](../config-db/copp-trap.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`COPP_GROUP`](../config-db/copp-group.md) / [`COPP_TRAP`](../config-db/copp-trap.md)
 
 <!-- ref-triangle:end -->
 
@@ -133,7 +133,7 @@ module: sonic-copp
 
 ### よくある落とし穴
 
-- `trap_ids` leaf-list の値は SAI trap 名と一致が必要。typo すると [orchagent](../../reference/glossary.md#term-orchagent) が trap 全体を skip する。
+- `trap_ids` leaf-list の値は [SAI](../../reference/glossary.md#term-sai) trap 名と一致が必要。typo すると [orchagent](../../reference/glossary.md#term-orchagent) が trap 全体を skip する。
 
 ### 関連する config / show コマンド
 
@@ -155,4 +155,4 @@ show copp config
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 83cdf6db76b7 -->
+<!-- glossary-links-injected: 0114aba323af -->

@@ -84,7 +84,7 @@ portstat -c
 ## 対処方法
 
 - 両端を揃える: `sudo config interface mtu Ethernet0 9100` を双方で実行
-- VLAN / PortChannel: `sudo config interface mtu Vlan100 9100`
+- [VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel): `sudo config interface mtu Vlan100 9100`
 - 保存: `sudo config save -y`
 
 ## 関連ページ
@@ -98,4 +98,4 @@ portstat -c
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — portsorch.cpp の MTU 反映
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config interface mtu
 
-<!-- glossary-links-injected: 58e771fab653 -->
+<!-- glossary-links-injected: 828d4abcffb6 -->

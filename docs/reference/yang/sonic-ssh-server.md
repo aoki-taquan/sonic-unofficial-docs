@@ -93,7 +93,7 @@ module: sonic-ssh-server
 
 ## 関連リファレンス
 
-- CONFIG_DB: `SSH_SERVER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SSH_SERVER`
 - CLI: [`config ssh`](../cli/config-ssh.md)
 
 <!-- ref-triangle:end -->
@@ -102,4 +102,4 @@ module: sonic-ssh-server
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-ssh-server.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -64,20 +64,20 @@ DEVICE_NEIGHBOR|<peer_name>
 
 ## 購読者
 
-- `lldpmgrd`: 期待 neighbor として LLDP の判定に利用
+- `lldpmgrd`: 期待 neighbor として [LLDP](../../reference/glossary.md#term-lldp) の判定に利用
 - minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): `minigraph.xml` から生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md)、`PORT`
-- 関連 YANG: `sonic-device_neighbor`、`sonic-device_neighbor_metadata`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-device_neighbor`、`sonic-device_neighbor_metadata`
 - 関連 CLI: なし（minigraph または `config_db.json` 経由で投入）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-device_neighbor`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-device_neighbor`
 
 <!-- ref-triangle:end -->
 
@@ -106,4 +106,4 @@ show lldp neighbors
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 429c29da8627 -->
+<!-- glossary-links-injected: 86469dbd1da9 -->

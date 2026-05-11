@@ -78,7 +78,7 @@ module: sonic-route-common
 
 ## 関連 CONFIG_DB / CLI
 
-- 関連 CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) は本ページからは未リンク（CONFIG_DB のテーブル名は本モジュールの top-level container と一致するのが通例）
+- 関連 CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) は本ページからは未リンク（[CONFIG_DB](../../reference/glossary.md#term-config_db) のテーブル名は本モジュールの top-level container と一致するのが通例）
 
 <!-- ref-triangle:start -->
 
@@ -100,4 +100,4 @@ module: sonic-route-common
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: 896d391185a9 -->

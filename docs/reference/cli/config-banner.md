@@ -46,7 +46,7 @@ config banner state {enabled|disabled}
 - `state` ... `enabled` / `disabled` のいずれか（`click.Choice`）
 
 **動作**:
-CONFIG_DB の `BANNER_MESSAGE|global` の `state` フィールドを更新[^2]。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `BANNER_MESSAGE|global` の `state` フィールドを更新[^2]。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L10012-L10020 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -100,7 +100,7 @@ excerpt: |
 
 ## 注意
 
-- `state` が `disabled` の場合、`login` / `logout` / `motd` の文字列が設定されていても表示されない（hostcfgd 側のテンプレート分岐）。
+- `state` が `disabled` の場合、`login` / `logout` / `motd` の文字列が設定されていても表示されない（[hostcfgd](../../reference/glossary.md#term-hostcfgd) 側のテンプレート分岐）。
 - `<message>` は単一文字列の click argument のため、複数語のメッセージは引用符でくくる必要がある。
 
 <!-- cli-mermaid -->
@@ -125,7 +125,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BANNER_MESSAGE`](../config-db/banner-message.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BANNER_MESSAGE`](../config-db/banner-message.md)
 
 <!-- ref-triangle:end -->
 
@@ -135,4 +135,4 @@ flowchart LR
 
 [^2]: テーブル名は `swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME` 定数経由で取得される（= `"BANNER_MESSAGE"`）。
 
-<!-- glossary-links-injected: a31aab569e22 -->
+<!-- glossary-links-injected: 1b9a4e23d40f -->

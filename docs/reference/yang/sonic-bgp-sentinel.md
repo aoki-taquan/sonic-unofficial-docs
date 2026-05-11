@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-bgp-sentinel`
 
-SONiC [BGP](../../reference/glossary.md#term-bgp) Sentinel 機能の [YANG](../../reference/glossary.md#term-yang) モデル。ToR 配下の特定 IP 範囲に対する Sentinel BGP セッション設定[^1]。
+SONiC [BGP](../../reference/glossary.md#term-bgp) Sentinel 機能の [YANG](../../reference/glossary.md#term-yang) モデル。ToR 配下の特定 IP 範囲に対する Sentinel [BGP](../../reference/glossary.md#term-bgp) セッション設定[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -59,7 +59,7 @@ module: sonic-bgp-sentinel
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `sentinel_name` | `sonic-bgp-sentinel/BGP_SENTINELS/BGP_SENTINELS_LIST/sentinel_name` | `string` | yes |  |  | BGP Sentinel 名（リストキー） |
+| `sentinel_name` | `sonic-bgp-sentinel/BGP_SENTINELS/BGP_SENTINELS_LIST/sentinel_name` | `string` | yes |  |  | [BGP](../../reference/glossary.md#term-bgp) Sentinel 名（リストキー） |
 | `name` | `sonic-bgp-sentinel/BGP_SENTINELS/BGP_SENTINELS_LIST/name` | `string` |  |  | must `current() = sentinel_name` | BGP Sentinel 名（`sentinel_name` と一致必須） |
 | `src_address` | `sonic-bgp-sentinel/BGP_SENTINELS/BGP_SENTINELS_LIST/src_address` | `inet:ip-address` |  |  |  | 接続に使うソースアドレス |
 | `ip_range` | `sonic-bgp-sentinel/BGP_SENTINELS/BGP_SENTINELS_LIST/ip_range` | `leaf-list stypes:sonic-ip-prefix` |  |  | ordered-by user | 受け入れるアドレスレンジ |
@@ -75,13 +75,13 @@ module: sonic-bgp-sentinel
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_SENTINELS|<sentinel_name>`
-- CLI: なし（CONFIG_DB 直接設定）
+- CLI: なし（[CONFIG_DB](../../reference/glossary.md#term-config_db) 直接設定）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: `BGP_SENTINELS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_SENTINELS`
 
 <!-- ref-triangle:end -->
 
@@ -108,4 +108,4 @@ show runningconfiguration bgp
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-sentinel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 71acbaef9290 -->
+<!-- glossary-links-injected: ed0e3d8580f8 -->

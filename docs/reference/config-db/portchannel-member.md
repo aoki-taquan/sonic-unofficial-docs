@@ -64,7 +64,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 ## 購読者
 
-- `teammgrd`: メンバの追加・削除を teamd に伝達
+- `teammgrd`: メンバの追加・削除を [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) に伝達
 - `orchagent` `LagOrch`: [SAI](../../reference/glossary.md#term-sai) [LAG](../../reference/glossary.md#term-lag) member を生成・削除
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -77,14 +77,14 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-portchannel`](../yang/sonic-portchannel.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-portchannel`](../yang/sonic-portchannel.md)
 - CLI: [`config portchannel member`](../cli/config-portchannel.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-portchannel.yang` 内 `PORTCHANNEL_MEMBER`。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-portchannel.yang` 内 `PORTCHANNEL_MEMBER`。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -104,7 +104,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 ### よくある誤設定
 
 - VLAN_MEMBER に同じ Ethernet が残ったまま PORTCHANNEL_MEMBER に追加すると [orchagent](../../reference/glossary.md#term-orchagent) エラー。
-- L3 IP を持つポートを LAG メンバに入れると INTERFACE 側が孤立。
+- L3 IP を持つポートを [LAG](../../reference/glossary.md#term-lag) メンバに入れると INTERFACE 側が孤立。
 
 ### 確認コマンド
 
@@ -114,4 +114,4 @@ show interfaces portchannel
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ad8e612d9a21 -->
+<!-- glossary-links-injected: 38b4c0ae7d80 -->

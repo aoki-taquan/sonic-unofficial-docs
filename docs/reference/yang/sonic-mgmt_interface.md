@@ -62,7 +62,7 @@ module: sonic-mgmt_interface
 | `name` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/name` | `leafref` | yes |  | `/mgmtprt:sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/name` | 対象マネジメントポート名（`eth0` 等） |
 | `ip_prefix` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/ip_prefix` | `stypes:sonic-ip-prefix` | yes |  | must: `gwaddr` と family が一致 | マネジメントインタフェース IP/プレフィックス |
 | `gwaddr` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/gwaddr` | `inet:ip-address` |  |  | must: `ip_prefix` と family が一致 | デフォルトゲートウェイアドレス |
-| `forced_mgmt_routes` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/forced_mgmt_routes` | `leaf-list union(sonic-ip-prefix, ip-address)` |  |  | ordered-by user | デフォルト [VRF](../../reference/glossary.md#term-vrf) または management VRF に追加する強制ルート（`interfaces.j2` で展開） |
+| `forced_mgmt_routes` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/forced_mgmt_routes` | `leaf-list union(sonic-ip-prefix, ip-address)` |  |  | ordered-by user | デフォルト [VRF](../../reference/glossary.md#term-vrf) または management [VRF](../../reference/glossary.md#term-vrf) に追加する強制ルート（`interfaces.j2` で展開） |
 
 ## leafref / 依存
 
@@ -81,7 +81,7 @@ module: sonic-mgmt_interface
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MGMT_INTERFACE`](../config-db/mgmt-interface.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MGMT_INTERFACE`](../config-db/mgmt-interface.md)
 - CLI: [`config interface ip`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
@@ -109,4 +109,4 @@ show management_interface address
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 0072c8c44112 -->
+<!-- glossary-links-injected: 84c52960aadd -->

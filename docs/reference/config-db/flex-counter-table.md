@@ -67,7 +67,7 @@ FLEX_COUNTER_TABLE|<group>
 | `BUFFER_POOL_WATERMARK` | バッファプール watermark |
 | `DEBUG_COUNTER` | drop reason 等のデバッグカウンタ |
 | `ENI` | [DASH](../../reference/glossary.md#term-dash) [ENI](../../reference/glossary.md#term-eni) カウンタ |
-| `DASH_METER` / `HA_SET` | DASH 関連 |
+| `DASH_METER` / `HA_SET` | [DASH](../../reference/glossary.md#term-dash) 関連 |
 | `PFCWD` | [PFC](../../reference/glossary.md#term-pfc) watchdog |
 | `PG_DROP` / `PG_WATERMARK` | priority group ドロップ / watermark |
 | `PORT` / `PORT_RATES` / `PORT_BUFFER_DROP` / `PORT_PHY_ATTR` | ポート系 |
@@ -85,25 +85,25 @@ FLEX_COUNTER_TABLE|<group>
 
 - `FLOW_COUNTER_ROUTE_PATTERN` (key: `ip_prefix`): default [VRF](../../reference/glossary.md#term-vrf) のルートフロー対象パターン
     - `max_match_count` (uint32, 1..50): バインドする最大ルート数
-- `FLOW_COUNTER_ROUTE_PATTERN` の VRF 版 list (key: `vrf_name`, `ip_prefix`): VRF / [VNET](../../reference/glossary.md#term-vnet) 名スコープ
+- `FLOW_COUNTER_ROUTE_PATTERN` の [VRF](../../reference/glossary.md#term-vrf) 版 list (key: `vrf_name`, `ip_prefix`): [VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) 名スコープ
 
 ## 購読者
 
-- `syncd` の `FlexCounter`: SAI bulk counter API スケジュール
-- `FlexCounterOrch` (orchagent 内)
+- `syncd` の `FlexCounter`: [SAI](../../reference/glossary.md#term-sai) bulk counter API スケジュール
+- `FlexCounterOrch` ([orchagent](../../reference/glossary.md#term-orchagent) 内)
 - `pfcwd`、`watermarkmgr` 等のカウンタ依存モジュール
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLOW_COUNTER_ROUTE_PATTERN`、`COUNTERS_DB`（実カウンタ値の読み出し先）
 - 関連 CLI: `counterpoll <group> enable/disable`、`counterpoll <group> interval <ms>`
-- 関連 YANG: `sonic-flex_counter`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-flex_counter`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-flex_counter`](../yang/sonic-flex_counter.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-flex_counter`](../yang/sonic-flex_counter.md)
 - CLI: `counterpoll`
 
 <!-- ref-triangle:end -->
@@ -139,4 +139,4 @@ counterpoll show
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 2925fe8ca9ca -->
+<!-- glossary-links-injected: 6ca28e02d7fb -->

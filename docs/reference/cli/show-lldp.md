@@ -25,8 +25,8 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `show lldp neighbors [<interfacename>]` | LLDP 隣接の詳細表示（デフォルト） |
-| `show lldp table` | LLDP 隣接の一覧表表示 |
+| `show lldp neighbors [<interfacename>]` | [LLDP](../../reference/glossary.md#term-lldp) 隣接の詳細表示（デフォルト） |
+| `show lldp table` | [LLDP](../../reference/glossary.md#term-lldp) 隣接の一覧表表示 |
 
 ## 各コマンドの詳細
 
@@ -182,4 +182,4 @@ docker exec lldp lldpcli show neighbors
 - [reference/CLI: show interfaces](show-interfaces.md)
 - [reference/CLI: show ip](show-ip.md)
 
-<!-- glossary-links-injected: 4808f1ebafcd -->
+<!-- glossary-links-injected: 0124332555fc -->

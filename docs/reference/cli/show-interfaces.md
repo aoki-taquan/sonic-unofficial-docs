@@ -88,7 +88,7 @@ related:
 
 ### `show interfaces neighbor expected`
 
-CONFIG_DB の `DEVICE_NEIGHBOR` テーブルを直接表示。lldpd が起動する前にケーブル配線が想定通りかを確認するのに使う。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `DEVICE_NEIGHBOR` テーブルを直接表示。lldpd が起動する前にケーブル配線が想定通りかを確認するのに使う。
 
 ### `show interfaces transceiver` 配下
 
@@ -102,7 +102,7 @@ CONFIG_DB の `DEVICE_NEIGHBOR` テーブルを直接表示。lldpd が起動す
 | `error-status [<intf>]` | xcvrd が検出したエラー |
 | `status [<intf>]` | 全般ステータス |
 
-実装は `xcvrd` が STATE_DB に書き込む `TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_STATUS` 等を読み出す。
+実装は `xcvrd` が [STATE_DB](../../reference/glossary.md#term-state_db) に書き込む `TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_STATUS` 等を読み出す。
 
 ### `show interfaces counters [<group>]`
 
@@ -122,7 +122,7 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 
 ### `show interfaces switchport config` / `switchport status`
 
-`config` は `PORT` の `mode` (`access` / `trunk` / `routed`) と untagged-[VLAN](../../reference/glossary.md#term-vlan) を、`status` はランタイム状態 (oper VLAN メンバシップ) を表示。
+`config` は `PORT` の `mode` (`access` / `trunk` / `routed`) と untagged-[VLAN](../../reference/glossary.md#term-vlan) を、`status` はランタイム状態 (oper [VLAN](../../reference/glossary.md#term-vlan) メンバシップ) を表示。
 
 ### `show interfaces dhcp-mitigation-rate [<intf>]`
 
@@ -134,7 +134,7 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 
 ### `show interfaces phy-signal <intf>` / `phy-serdes <intf>`
 
-`PHY` 関連 STATE_DB エントリ（`TRANSCEIVER_DOM_SENSOR`, `PORT_TX_FIR`, `PORT_RX_FIR` 等）を読み出し可視化。プラットフォーム実装依存。
+`PHY` 関連 [STATE_DB](../../reference/glossary.md#term-state_db) エントリ（`TRANSCEIVER_DOM_SENSOR`, `PORT_TX_FIR`, `PORT_RX_FIR` 等）を読み出し可視化。プラットフォーム実装依存。
 
 ### `show interfaces portchannel`
 
@@ -150,12 +150,12 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 
 | 種類 | テーブル | 表示するコマンド |
 |------|----------|------------------|
-| CONFIG_DB | `PORT` | `status` / `description` / `dhcp-mitigation-rate` / `switchport` |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) | `PORT` | `status` / `description` / `dhcp-mitigation-rate` / `switchport` |
 | CONFIG_DB | `PORTCHANNEL`, `PORTCHANNEL_MEMBER` | `portchannel` |
 | CONFIG_DB | `BREAKOUT_CFG` | `breakout` |
 | CONFIG_DB | `DEVICE_NEIGHBOR` | `neighbor expected` |
 | STATE_DB | `PORT_TABLE`, `TRANSCEIVER_INFO`, `TRANSCEIVER_DOM_SENSOR`, `TRANSCEIVER_STATUS`, `SWITCH_CAPABILITY` | `transceiver *`, `fast-linkup status`, `phy-*` |
-| COUNTERS_DB | `COUNTERS:*` | `counters` (via portstat) |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS:*` | `counters` (via portstat) |
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -230,7 +230,7 @@ show interfaces description
 ### よくある落とし穴
 
 - `show interfaces counters` は累積値。差分は `sonic-clear counters` でリセットしてから観測する。
-- PortChannel メンバの speed は `show interfaces status` に出ても LAG 自体の speed は別系統。
+- [PortChannel](../../reference/glossary.md#term-portchannel) メンバの speed は `show interfaces status` に出ても [LAG](../../reference/glossary.md#term-lag) 自体の speed は別系統。
 
 ### 関連する show / debug
 
@@ -241,4 +241,4 @@ show interfaces transceiver eeprom Ethernet0
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ae1451afbe05 -->
+<!-- glossary-links-injected: a38a035a0c6a -->

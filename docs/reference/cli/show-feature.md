@@ -26,7 +26,7 @@ related:
 
 `show feature` グループは SONiC の **feature** (= 個別 docker コンテナ単位の機能) の現在状態と設定値を表示する。実装は `show/feature.py` の `@click.group(name='feature')`[^1]。
 
-[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブル (Writer 側は `config/feature.py`) と [STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE|<name>` を組み合わせて表示する。STATE_DB のキーは `hostcfgd` / `featured` が container 起動状況を逐次書き込む側。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブル (Writer 側は `config/feature.py`) と [STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE|<name>` を組み合わせて表示する。[STATE_DB](../../reference/glossary.md#term-state_db) のキーは `hostcfgd` / `featured` が container 起動状況を逐次書き込む側。
 
 ## コマンド一覧
 
@@ -41,9 +41,9 @@ related:
 ### `show feature status [<feature_name>]`
 
 **動作**:
-CONFIG_DB の `FEATURE` テーブル全件を `natsorted` で並べ、各 feature について STATE_DB の `FEATURE|<name>` を取得して merge する。表示列は以下の組み合わせのうち、データに存在するフィールドのみ自動選別される (空文字列がデフォルト)[^2]:
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブル全件を `natsorted` で並べ、各 feature について [STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE|<name>` を取得して merge する。表示列は以下の組み合わせのうち、データに存在するフィールドのみ自動選別される (空文字列がデフォルト)[^2]:
 
-- `State` ... `state` (CONFIG_DB)。`enabled` / `disabled` / `always_enabled`。
+- `State` ... `state` ([CONFIG_DB](../../reference/glossary.md#term-config_db))。`enabled` / `disabled` / `always_enabled`。
 - `AutoRestart` ... `auto_restart`。
 - `SystemState` ... STATE_DB から。systemd 視点の状態 (`up` / `down`)。
 - `UpdateTime` ... STATE_DB の更新時刻。
@@ -135,4 +135,4 @@ pmon           enabled   enabled        up
 ```
 <!-- /usage-example -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: f158364c3005 -->

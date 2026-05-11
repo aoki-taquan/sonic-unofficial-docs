@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`BGP_GLOBALS_AF` は `BGP_GLOBALS` の [VRF](../../reference/glossary.md#term-vrf) ごとに、address-family / subsequent address-family 単位の [BGP](../../reference/glossary.md#term-bgp) 設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。multipath、VRF import、route download filter、distance、route flap dampening、[EVPN](../../reference/glossary.md#term-evpn)/[VXLAN](../../reference/glossary.md#term-vxlan) 関連フラグを扱う[^1]。派生テーブルとして、aggregate-address を定義する `BGP_GLOBALS_AF_AGGREGATE_ADDR` と、network statement を定義する `BGP_GLOBALS_AF_NETWORK` がある。実装側のテーブル名定数は `schema.h` も参照する[^2]。
+`BGP_GLOBALS_AF` は `BGP_GLOBALS` の [VRF](../../reference/glossary.md#term-vrf) ごとに、address-family / subsequent address-family 単位の [BGP](../../reference/glossary.md#term-bgp) 設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。multipath、[VRF](../../reference/glossary.md#term-vrf) import、route download filter、distance、route flap dampening、[EVPN](../../reference/glossary.md#term-evpn)/[VXLAN](../../reference/glossary.md#term-vxlan) 関連フラグを扱う[^1]。派生テーブルとして、aggregate-address を定義する `BGP_GLOBALS_AF_AGGREGATE_ADDR` と、network statement を定義する `BGP_GLOBALS_AF_NETWORK` がある。実装側のテーブル名定数は `schema.h` も参照する[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -60,7 +60,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 |-----------|----|--------|------|
 | `max_ebgp_paths` | uint16 1..256 | `1` | eBGP multipath 最大数 |
 | `max_ibgp_paths` | uint16 1..256 | `1` | iBGP multipath 最大数 |
-| `import_vrf` | `default` or leafref `BGP_GLOBALS.vrf_name` | - | route import 元 VRF |
+| `import_vrf` | `default` or leafref `BGP_GLOBALS.vrf_name` | - | route import 元 [VRF](../../reference/glossary.md#term-vrf) |
 | `import_vrf_route_map` | leafref `ROUTE_MAP_SET.name` | - | VRF import 時の route filter |
 | `route_download_filter` | leafref `ROUTE_MAP_SET.name` | - | FIB download を絞る table-map |
 | `ebgp_route_distance` | uint8 1..255 | - | eBGP route distance |
@@ -102,13 +102,13 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 ## 購読者
 
-- `bgpcfgd`: CONFIG_DB の BGP global AF 設定を [FRR](../../reference/glossary.md#term-frr) address-family 設定へ変換する。
-- `frr-mgmt-framework`: `DEVICE_METADATA.frr_mgmt_framework_config = true` のときに generic BGP model として処理する。
-- `bgpd` (FRR): vtysh / mgmt framework 経由で最終的な AF 設定を保持する。
+- `bgpcfgd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) の [BGP](../../reference/glossary.md#term-bgp) global AF 設定を [FRR](../../reference/glossary.md#term-frr) address-family 設定へ変換する。
+- `frr-mgmt-framework`: `DEVICE_METADATA.frr_mgmt_framework_config = true` のときに generic [BGP](../../reference/glossary.md#term-bgp) model として処理する。
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): vtysh / mgmt framework 経由で最終的な AF 設定を保持する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_GLOBALS`、`BGP_NEIGHBOR_AF`、`BGP_PEER_GROUP_AF`、`ROUTE_MAP_SET`、`VRF`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`、`BGP_NEIGHBOR_AF`、`BGP_PEER_GROUP_AF`、`ROUTE_MAP_SET`、`VRF`
 - 関連 CLI: `config bgp`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
@@ -116,14 +116,14 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-global`](../yang/sonic-bgp-global.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-global`](../yang/sonic-bgp-global.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang>
 [^2]: テーブル名定数参照: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 
 <!-- ops-hint -->
@@ -146,4 +146,4 @@ vtysh -c 'show bgp l2vpn evpn summary'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a2e09729dbfd -->
+<!-- glossary-links-injected: 803f36c2634d -->

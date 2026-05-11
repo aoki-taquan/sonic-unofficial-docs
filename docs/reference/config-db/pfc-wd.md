@@ -59,7 +59,7 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 | `action` | enum `drop`/`forward`/`alert` | - | storm 検出時の動作 |
 | `detection_time` | uint32 | 100..5000 ms | pause storm 検出時間 |
 | `restoration_time` | uint32 | 100..60000 ms | 通常運転復帰までの遅延 |
-| `pfc_stat_history` | string `enable`/`disable` | - | PFC 履歴統計の取得トグル |
+| `pfc_stat_history` | string `enable`/`disable` | - | [PFC](../../reference/glossary.md#term-pfc) 履歴統計の取得トグル |
 
 `detection_time` / `restoration_time` は `GLOBAL` の `POLL_INTERVAL` 以上でなければならない (`must`)。
 
@@ -67,7 +67,7 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 
 | フィールド | 型 | 範囲 | 説明 |
 |-----------|----|------|------|
-| `POLL_INTERVAL` | uint32 | 100..1000 ms | システム共通の PFC WD ポーリング間隔 |
+| `POLL_INTERVAL` | uint32 | 100..1000 ms | システム共通の [PFC](../../reference/glossary.md#term-pfc) WD ポーリング間隔 |
 
 ## 制約
 
@@ -89,14 +89,14 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 
 ## 関連リファレンス
 
-- YANG: [`sonic-pfcwd`](../yang/sonic-pfcwd.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-pfcwd`](../yang/sonic-pfcwd.md)
 - CLI: `pfcwd`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-pfcwd.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pfcwd.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-pfcwd.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pfcwd.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -128,4 +128,4 @@ show pfcwd stats
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 27fb7a00cfd8 -->
+<!-- glossary-links-injected: 62798bcc4162 -->

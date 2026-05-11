@@ -73,9 +73,9 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 
 ## 購読者
 
-- `intfmgrd`: Linux dummy IF / IP / VRF binding を生成
-- `orchagent` `IntfsOrch`: SAI ルータ IF
-- `bgpcfgd`: `Loopback0` IPv4 を BGP `bgp router-id` の既定値として参照（`DEVICE_METADATA.bgp_router_id` 未設定時）
+- `intfmgrd`: Linux dummy IF / IP / [VRF](../../reference/glossary.md#term-vrf) binding を生成
+- `orchagent` `IntfsOrch`: [SAI](../../reference/glossary.md#term-sai) ルータ IF
+- `bgpcfgd`: `Loopback0` IPv4 を [BGP](../../reference/glossary.md#term-bgp) `bgp router-id` の既定値として参照（`DEVICE_METADATA.bgp_router_id` 未設定時）
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -87,14 +87,14 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 
 ## 関連リファレンス
 
-- YANG: [`sonic-loopback-interface`](../yang/sonic-loopback-interface.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-loopback-interface`](../yang/sonic-loopback-interface.md)
 - CLI: `config loopback`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-loopback-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-loopback-interface.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-loopback-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-loopback-interface.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -102,7 +102,7 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 ### 典型値
 
 - key 形式: `LOOPBACK_INTERFACE|Loopback0` (L3 enable 行) と `LOOPBACK_INTERFACE|Loopback0|<ip/prefix>`。
-- `Loopback0` は BGP router-id / VTEP src として標準利用。
+- `Loopback0` は [BGP](../../reference/glossary.md#term-bgp) router-id / VTEP src として標準利用。
 
 ### よくある誤設定
 
@@ -116,4 +116,4 @@ show ip interfaces | grep Loopback
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 29ce8582b809 -->
+<!-- glossary-links-injected: b5270404647a -->

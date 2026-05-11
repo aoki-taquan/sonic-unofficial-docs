@@ -97,7 +97,7 @@ module: sonic-tunnel
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`TUNNEL`](../config-db/tunnel.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TUNNEL`](../config-db/tunnel.md)
 
 <!-- ref-triangle:end -->
 
@@ -105,4 +105,4 @@ module: sonic-tunnel
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 3b3f7a595239 -->
+<!-- glossary-links-injected: 896d391185a9 -->

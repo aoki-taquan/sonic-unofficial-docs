@@ -52,11 +52,11 @@ AAA|<type>
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `type` | enum `authentication`/`authorization`/`accounting` | - | AAA 機能種別 (key) |
+| `type` | enum `authentication`/`authorization`/`accounting` | - | [AAA](../../reference/glossary.md#term-aaa) 機能種別 (key) |
 | `login` | string (カンマ区切り; `ldap`/`tacacs+`/`local`/`radius`/`default`) | `local` | 試行順序リスト |
 | `failthrough` | boolean | `False` | true: あるメソッドが失敗したら次のメソッドに継続 |
 | `fallback` | boolean | `False` | true: 全リモートメソッド失敗時に `local` にフォールバック |
-| `debug` | boolean | `False` | AAA デバッグログを有効化 |
+| `debug` | boolean | `False` | [AAA](../../reference/glossary.md#term-aaa) デバッグログを有効化 |
 | `trace` | boolean | `False` | AAA プロトコルパケットトレースを有効化 |
 
 ## 制約
@@ -66,12 +66,12 @@ AAA|<type>
 
 ## 購読者
 
-- `hostcfgd` (`sonic-host-services` の AAA ハンドラ): CONFIG_DB → PAM / nsswitch / sshd 再生成
+- `hostcfgd` (`sonic-host-services` の AAA ハンドラ): [CONFIG_DB](../../reference/glossary.md#term-config_db) → PAM / nsswitch / sshd 再生成
 - `pam_tacplus` / `pam_radius` / `pam_ldap` / `pam_unix`: PAM 経由で実際の認証を実行
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`TACPLUS_SERVER`](tacplus-server.md), [`RADIUS`](radius.md), [`LDAP_SERVER`](ldap-server.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TACPLUS_SERVER`](tacplus-server.md), [`RADIUS`](radius.md), [`LDAP_SERVER`](ldap-server.md)
 - 関連 CLI: `config aaa authentication { login | failthrough | fallback | debug | trace }`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-aaa`
 
@@ -79,7 +79,7 @@ AAA|<type>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-system-aaa`](../yang/sonic-system-aaa.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-system-aaa`](../yang/sonic-system-aaa.md)
 - CLI: [`config aaa`](../cli/config-aaa.md)
 
 <!-- ref-triangle:end -->
@@ -113,4 +113,4 @@ show aaa
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ec4ea08af950 -->
+<!-- glossary-links-injected: 8d5a139c8eba -->

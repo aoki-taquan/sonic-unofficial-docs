@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-管理 [VRF](../../reference/glossary.md#term-vrf)（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル[^1]。`hostcfgd` が監視し、有効化されると Linux カーネル側に `mgmt` という名前の VRF を作成し、management port (`eth0`) を所属させる。
+管理 [VRF](../../reference/glossary.md#term-vrf)（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル[^1]。`hostcfgd` が監視し、有効化されると Linux カーネル側に `mgmt` という名前の [VRF](../../reference/glossary.md#term-vrf) を作成し、management port (`eth0`) を所属させる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -51,7 +51,7 @@ container 構造のため key は固定文字列 `vrf_global`。
 
 | フィールド | 型 | 既定値 | 説明 |
 |-----------|----|--------|------|
-| `mgmtVrfEnabled` | boolean | `false` | 管理 VRF を有効化するか |
+| `mgmtVrfEnabled` | boolean | `false` | 管理 [VRF](../../reference/glossary.md#term-vrf) を有効化するか |
 
 ## 制約
 
@@ -72,14 +72,14 @@ container 構造のため key は固定文字列 `vrf_global`。
 
 ## 関連リファレンス
 
-- YANG: [`sonic-mgmt_vrf`](../yang/sonic-mgmt_vrf.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-mgmt_vrf`](../yang/sonic-mgmt_vrf.md)
 - CLI: [`config vrf`](../cli/config-vrf.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-mgmt_vrf.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-mgmt_vrf.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -101,4 +101,4 @@ show mgmt-vrf
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 60a02696c221 -->
+<!-- glossary-links-injected: ca16c59f26d9 -->

@@ -21,13 +21,13 @@ related:
 
 ## 概要
 
-`show mgmt-vrf` は管理 [VRF](../../reference/glossary.md#term-vrf) (`mgmt`) の有効・無効状態、Linux 上の VRF デバイス情報、ルーティングテーブルを表示する。`invoke_without_command=True` の Click group として実装されており、サブコマンドを指定しなくても本体ロジックが動く特殊な構造になっている[^1]。
+`show mgmt-vrf` は管理 [VRF](../../reference/glossary.md#term-vrf) (`mgmt`) の有効・無効状態、Linux 上の [VRF](../../reference/glossary.md#term-vrf) デバイス情報、ルーティングテーブルを表示する。`invoke_without_command=True` の Click group として実装されており、サブコマンドを指定しなくても本体ロジックが動く特殊な構造になっている[^1]。
 
 ## コマンド一覧
 
 | コマンド | 用途 |
 |---------|------|
-| `show mgmt-vrf` | 管理 VRF の状態 + `ip link show` を表示 |
+| `show mgmt-vrf` | 管理 [VRF](../../reference/glossary.md#term-vrf) の状態 + `ip link show` を表示 |
 | `show mgmt-vrf routes` | 管理 VRF のルーティングテーブル (table 6000) を表示 |
 
 ## 各コマンドの詳細
@@ -120,7 +120,7 @@ flowchart LR
 ## 関連リファレンス
 
 - [YANG](../../reference/glossary.md#term-yang): `sonic-mgmt-vrf`
-- CONFIG_DB: [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
 
 <!-- ref-triangle:end -->
 
@@ -133,4 +133,4 @@ flowchart LR
 - [CONFIG_DB: MGMT_VRF_CONFIG](../config-db/mgmt-vrf-config.md)
 - [reference/CLI: show ip](show-ip.md)
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: daea650a90b0 -->

@@ -68,13 +68,13 @@ LOSSLESS_TRAFFIC_PATTERN|<name>
 
 ## 関連リファレンス
 
-- YANG: `sonic-lossless-traffic-pattern`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-lossless-traffic-pattern`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-lossless-traffic-pattern.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lossless-traffic-pattern.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-lossless-traffic-pattern.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lossless-traffic-pattern.yang>
 
 ## 関連ページ
 - [CONFIG_DB: DEFAULT_LOSSLESS_BUFFER_PARAMETER](default-lossless-buffer-parameter.md)
@@ -102,4 +102,4 @@ show buffer profile
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 83863764844d -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

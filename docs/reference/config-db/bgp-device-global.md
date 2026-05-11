@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-スイッチ全体（[VRF](../../reference/glossary.md#term-vrf) 横断）の [BGP](../../reference/glossary.md#term-bgp) 動作スイッチを保持する。`BGP_GLOBALS` が VRF 単位なのに対し、`BGP_DEVICE_GLOBAL` は装置全体スコープ。TSA (Traffic-Shift-Away)、W-[ECMP](../../reference/glossary.md#term-ecmp) (BGP link-bandwidth ベース重み付き ECMP)、IDF (Inter-DC Fabric) 隔離状態、confederation の代表設定を持つ[^1]。
+スイッチ全体（[VRF](../../reference/glossary.md#term-vrf) 横断）の [BGP](../../reference/glossary.md#term-bgp) 動作スイッチを保持する。`BGP_GLOBALS` が [VRF](../../reference/glossary.md#term-vrf) 単位なのに対し、`BGP_DEVICE_GLOBAL` は装置全体スコープ。TSA (Traffic-Shift-Away)、W-[ECMP](../../reference/glossary.md#term-ecmp) ([BGP](../../reference/glossary.md#term-bgp) link-bandwidth ベース重み付き [ECMP](../../reference/glossary.md#term-ecmp))、IDF (Inter-DC Fabric) 隔離状態、confederation の代表設定を持つ[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -54,7 +54,7 @@ BGP_DEVICE_GLOBAL|CONFED
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
 | `tsa_enabled` | boolean | `false` | true で外部隣接へ経路広告を停止 (TSA) |
-| `wcmp_enabled` | boolean | `false` | BGP link-bandwidth W-ECMP 有効化 |
+| `wcmp_enabled` | boolean | `false` | [BGP](../../reference/glossary.md#term-bgp) link-bandwidth W-[ECMP](../../reference/glossary.md#term-ecmp) 有効化 |
 | `idf_isolation_state` | enum `isolated_no_export` / `isolated_withdraw_all` / `unisolated` | `unisolated` | IDF 隔離状態 |
 
 ## CONFED のフィールド
@@ -80,14 +80,14 @@ BGP_DEVICE_GLOBAL|CONFED
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-device-global`](../yang/sonic-bgp-device-global.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-device-global`](../yang/sonic-bgp-device-global.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-device-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-device-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -112,4 +112,4 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: aeea2bd728de -->
+<!-- glossary-links-injected: 029bff240b1b -->

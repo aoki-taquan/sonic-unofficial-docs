@@ -65,8 +65,8 @@ module: sonic-vlan-sub-interface
 | 種別 | パス | key | 説明 |
 |------|------|-----|------|
 | `container` | `sonic-vlan-sub-interface` |  |  |
-| `container` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE` |  | VLAN sub-interface configuration table for dot1q encapsulated sub-ports |
-| `list` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST` | `name` | Configuration entry for a VLAN sub-interface including VLAN encapsulation and [VRF](../../reference/glossary.md#term-vrf) binding |
+| `container` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE` |  | [VLAN](../../reference/glossary.md#term-vlan) sub-interface configuration table for dot1q encapsulated sub-ports |
+| `list` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST` | `name` | Configuration entry for a [VLAN](../../reference/glossary.md#term-vlan) sub-interface including VLAN encapsulation and [VRF](../../reference/glossary.md#term-vrf) binding |
 | `list` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_IPPREFIX_LIST` | `name ip-prefix` | IP address prefix assignment for a VLAN sub-interface |
 
 ## leaf 一覧
@@ -75,8 +75,8 @@ module: sonic-vlan-sub-interface
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/name` | `string` | yes |  | pattern `(\w+)\.([1-9][0-9]{0,2}\|[1-3][0-9]{3}\|[4][0][0-8][0-9]\|[4][0][9][0-4])` | Sub-interface name in the format ParentInterface.VlanID (e.g. Ethernet0.100 or Eth0.100) |
 | `admin_status` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/admin_status` | `stypes:admin_status` |  |  |  | Administrative state of the VLAN sub-interface |
-| `vrf_name` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:VRF/vrf:VRF_LIST/vrf:name | VRF instance to which this sub-interface is bound |
-| `vnet_name` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | Reference to the name of a VNET in sonic-vnet model |
+| `vrf_name` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | [VRF](../../reference/glossary.md#term-vrf) instance to which this sub-interface is bound |
+| `vnet_name` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | Reference to the name of a [VNET](../../reference/glossary.md#term-vnet) in sonic-vnet model |
 | `loopback_action` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/loopback_action` | `stypes:loopback_action` |  |  |  | Packet action when a packet ingress and gets routed on the same IP interface |
 | `vlan` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/vlan` | `uint16` |  |  | range `1..4094` | 802.1Q VLAN ID for encapsulation on this sub-interface |
 | `name` | `sonic-vlan-sub-interface/VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_IPPREFIX_LIST/name` | `leafref` | yes |  | ../../VLAN_SUB_INTERFACE_LIST/name | Reference to the parent VLAN sub-interface |
@@ -102,7 +102,7 @@ module: sonic-vlan-sub-interface
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md)
 - CLI: `config subinterface` / `show subinterfaces`
 
 <!-- ref-triangle:end -->
@@ -118,4 +118,4 @@ module: sonic-vlan-sub-interface
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4a09d82fb5a4 -->
+<!-- glossary-links-injected: f65240e06e25 -->

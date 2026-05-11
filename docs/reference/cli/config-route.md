@@ -25,9 +25,9 @@ related:
 
 ## 概要
 
-`config route` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `STATIC_ROUTE` テーブルに対する static route の add / del を行う。[FRR](../../reference/glossary.md#term-frr) の Zebra に対しては `bgpcfgd` 経由で反映される（CLI は CONFIG_DB のみを書く）。コマンドは `cli_sroute_to_config` という共通パーサで CLI トークンを解析し、`STATIC_ROUTE` テーブルのキー (`vrf|prefix` または `prefix`) と value 辞書 (`nexthop` / `nexthop-vrf` / `ifname` / `distance` / `blackhole`) に展開する[^1]。
+`config route` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `STATIC_ROUTE` テーブルに対する static route の add / del を行う。[FRR](../../reference/glossary.md#term-frr) の Zebra に対しては `bgpcfgd` 経由で反映される（CLI は [CONFIG_DB](../../reference/glossary.md#term-config_db) のみを書く）。コマンドは `cli_sroute_to_config` という共通パーサで CLI トークンを解析し、`STATIC_ROUTE` テーブルのキー (`vrf|prefix` または `prefix`) と value 辞書 (`nexthop` / `nexthop-vrf` / `ifname` / `distance` / `blackhole`) に展開する[^1]。
 
-multi-ASIC 対応として `-n / --namespace` を持ち、対象 namespace の CONFIG_DB に書く。
+multi-ASIC 対応として `-n / --namespace` を持ち、対象 namespace の [CONFIG_DB](../../reference/glossary.md#term-config_db) に書く。
 
 ## コマンド一覧
 
@@ -62,7 +62,7 @@ prefix [vrf <vrf_name>] <A.B.C.D/M>
 3. nexthop が `,` 区切り複数の場合、`distance` / `blackhole` も同じ要素数に揃えてカラム化する。`distance` が省略されたら `'0'`、`blackhole` は `ifname=='null'` を見て `'true'` / `'false'` を埋める。
 4. 既存エントリがある場合は **値を merge** して `set_entry` で書く（同じ prefix への追加 nexthop は既存に対して append される）。
 
-書き込み先: `STATIC_ROUTE|<vrf>|<prefix>` または `STATIC_ROUTE|<prefix>`（VRF 指定なし）。
+書き込み先: `STATIC_ROUTE|<vrf>|<prefix>` または `STATIC_ROUTE|<prefix>`（[VRF](../../reference/glossary.md#term-vrf) 指定なし）。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L7812-L7889 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -99,7 +99,7 @@ excerpt: |
 
 1. `cli_sroute_to_config(strict_nh=False)` で同じ語句を解析（`nexthop` の省略可）。
 2. `nexthop` も `ifname` も指定されない場合は **エントリ全削除**（`set_entry(..., None)`）。
-3. 指定された場合は既存エントリの ECMP nexthop リストから当該 tuple を `index` で探して 1 件抜き、残りを再書き込みする。残ゼロなら全削除。
+3. 指定された場合は既存エントリの [ECMP](../../reference/glossary.md#term-ecmp) nexthop リストから当該 tuple を `index` で探して 1 件抜き、残りを再書き込みする。残ゼロなら全削除。
 4. 一度に 1 nexthop しか削除できない（`,` 区切り複数を渡すと `Only one nexthop can be deleted at a time` でエラー）。
 
 ## 関連する CONFIG_DB
@@ -113,11 +113,11 @@ excerpt: |
 ## multi-ASIC
 
 - `-n / --namespace` 必須（multi-ASIC 環境）。
-- 各 namespace の CONFIG_DB に対して個別に書く。FRR への反映は namespace 内の `bgpcfgd` が担当する。
+- 各 namespace の CONFIG_DB に対して個別に書く。[FRR](../../reference/glossary.md#term-frr) への反映は namespace 内の `bgpcfgd` が担当する。
 
 ## 制限・癖
 
-- ECMP の表現は **CLI 1 行に `,` 区切りで詰め込む** 方式で、設定ファイル系統からは扱いにくい。
+- [ECMP](../../reference/glossary.md#term-ecmp) の表現は **CLI 1 行に `,` 区切りで詰め込む** 方式で、設定ファイル系統からは扱いにくい。
 - `dev null` 経路は `blackhole=true` として登録される。
 - `distance`（admin distance）は CLI 引数として直接は受けない。コードは `,0` をデフォルトで埋めるため、現状 CLI からは distance のカスタマイズは不可。
 
@@ -161,7 +161,7 @@ flowchart LR
 
 ## 引用元
 
-[^1]: `cli_sroute_to_config` の実装は `config/main.py` L1395-L1481。`prefix` / `nexthop` キーを基準に分割し、IP / VRF / interface の存在を検証する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1395>
+[^1]: `cli_sroute_to_config` の実装は `config/main.py` L1395-L1481。`prefix` / `nexthop` キーを基準に分割し、IP / [VRF](../../reference/glossary.md#term-vrf) / interface の存在を検証する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1395>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -172,7 +172,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- `config route add` は CONFIG_DB の STATIC_ROUTE に書く。FRR の [zebra](../../reference/glossary.md#term-zebra) に渡るまで 1〜2 秒遅延あり。
+- `config route add` は CONFIG_DB の STATIC_ROUTE に書く。[FRR](../../reference/glossary.md#term-frr) の [zebra](../../reference/glossary.md#term-zebra) に渡るまで 1〜2 秒遅延あり。
 - nexthop が unreachable な route は kernel route table に出ない。
 
 ### 関連する show / debug
@@ -184,4 +184,4 @@ vtysh -c 'show ip route static'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7581dd9b8477 -->
+<!-- glossary-links-injected: fd604cf789eb -->

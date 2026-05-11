@@ -19,13 +19,13 @@ related:
 
 ## 概要
 
-`show mac` は [FDB](../../reference/glossary.md#term-fdb) (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は `fdbshow` スクリプトの薄いラッパで、CLI 側はオプションを `fdbshow` の引数に machine-translate するだけ[^1]。`invoke_without_command="true"` の Click group なので、サブコマンドなしで呼ぶと FDB を、`aging-time` を指定すると別系統 ([APPL_DB](../../reference/glossary.md#term-appl_db)) を読みに行く。
+`show mac` は [FDB](../../reference/glossary.md#term-fdb) (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は `fdbshow` スクリプトの薄いラッパで、CLI 側はオプションを `fdbshow` の引数に machine-translate するだけ[^1]。`invoke_without_command="true"` の Click group なので、サブコマンドなしで呼ぶと [FDB](../../reference/glossary.md#term-fdb) を、`aging-time` を指定すると別系統 ([APPL_DB](../../reference/glossary.md#term-appl_db)) を読みに行く。
 
 ## コマンド一覧
 
 | コマンド | 用途 |
 |---------|------|
-| `show mac [options]` | FDB エントリの表示 |
+| `show mac [options]` | [FDB](../../reference/glossary.md#term-fdb) エントリの表示 |
 | `show mac aging-time` | スイッチの FDB エージング時間（秒） |
 
 ## 各コマンドの詳細
@@ -109,7 +109,7 @@ show mac aging-time
 ```
 
 **動作**:
-**FDB 表示とは別系統** で、`SonicV2Connector` 経由で **APPL_DB** の `SWITCH_TABLE*` を列挙し、各キーから `fdb_aging_time` を取得して表示する[^2]。設定されていなければ `Aging time not configured for the switch` を出力。
+**FDB 表示とは別系統** で、`SonicV2Connector` 経由で **[APPL_DB](../../reference/glossary.md#term-appl_db)** の `SWITCH_TABLE*` を列挙し、各キーから `fdb_aging_time` を取得して表示する[^2]。設定されていなければ `Aging time not configured for the switch` を出力。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/main.py#L1245-L1262 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -148,7 +148,7 @@ excerpt: |
 
 ## 補足
 
-- `fdbshow` 自体は APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [STATE_DB](../../reference/glossary.md#term-state_db) を読み合わせて FDB を組み立てる。[CONFIG_DB](../../reference/glossary.md#term-config_db) は使わない
+- `fdbshow` 自体は [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [STATE_DB](../../reference/glossary.md#term-state_db) を読み合わせて FDB を組み立てる。[CONFIG_DB](../../reference/glossary.md#term-config_db) は使わない
 - aging time の **設定** は `config mac aging_time <seconds>` 等が存在する場合に行う（本ページは表示系のみ）
 
 <!-- cli-mermaid -->
@@ -213,4 +213,4 @@ show mac count
 - [reference/CLI: show vlan](show-vlan.md)
 - [reference/CLI: show interfaces](show-interfaces.md)
 
-<!-- glossary-links-injected: b36cf35fd34f -->
+<!-- glossary-links-injected: a6254d2db350 -->

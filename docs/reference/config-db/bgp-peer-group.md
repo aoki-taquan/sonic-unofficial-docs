@@ -64,12 +64,12 @@ BGP_PEER_GROUP|<vrf_name>|<peer_group_name>
 
 ## 購読者
 
-- `frr-mgmt-framework`: CONFIG_DB → [FRR](../../reference/glossary.md#term-frr) `peer-group` コマンド
+- `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → [FRR](../../reference/glossary.md#term-frr) `peer-group` コマンド
 - `bgpcfgd`: テンプレ経路で peer-group を展開
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_NEIGHBOR`、`BGP_GLOBALS`、`BGP_PEER_GROUP_AF`、`BGP_GLOBALS_LISTEN_PREFIX`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_NEIGHBOR`、`BGP_GLOBALS`、`BGP_PEER_GROUP_AF`、`BGP_GLOBALS_LISTEN_PREFIX`
 - 関連 CLI: `config bgp` (peer-group 関連サブコマンド)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-peergroup`、`sonic-bgp-common`
 
@@ -77,14 +77,14 @@ BGP_PEER_GROUP|<vrf_name>|<peer_group_name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-peergroup`](../yang/sonic-bgp-peergroup.md) / `sonic-bgp-common`
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-peergroup`](../yang/sonic-bgp-peergroup.md) / `sonic-bgp-common`
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-peergroup.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-peergroup.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -97,7 +97,7 @@ BGP_PEER_GROUP|<vrf_name>|<peer_group_name>
 
 ### よくある誤設定
 
-- peer-group の `asn` と個別 neighbor の `asn` がズレると FRR が neighbor を peer-group に紐付けない。
+- peer-group の `asn` と個別 neighbor の `asn` がズレると [FRR](../../reference/glossary.md#term-frr) が neighbor を peer-group に紐付けない。
 
 ### 確認コマンド
 
@@ -107,4 +107,4 @@ vtysh -c 'show bgp peer-group'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 07040282b44e -->
+<!-- glossary-links-injected: d4d0b1f9b453 -->

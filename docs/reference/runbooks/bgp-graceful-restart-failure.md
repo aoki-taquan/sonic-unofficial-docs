@@ -67,12 +67,12 @@ docker exec bgp vtysh -c "show bgp ipv4 unicast" | grep -i stale | head
 1. **片側でしか graceful-restart が有効化されていない** — `bgp graceful-restart` が router bgp 配下に無い
 2. **Restart Time が短すぎる** — bgpd 再起動が完了する前に対向が stale path を破棄
 3. **GR-Notification capability の非互換** — RFC 8538 対応版とそれ以前で挙動が異なる
-4. **[BFD](../../reference/glossary.md#term-bfd) と併用時の即 down** — BFD が即 session down を通知するため GR をスキップする
+4. **[BFD](../../reference/glossary.md#term-bfd) と併用時の即 down** — [BFD](../../reference/glossary.md#term-bfd) が即 session down を通知するため GR をスキップする
 5. **TCP セッションが MD5 / MSS で再確立できない** — control plane の再ハンドシェイクが失敗
 
-GR capability の交換は BGP OPEN メッセージ中の Capability Optional Parameter で行われ、FRR は `bgpd/bgp_open.c` でエンコード/デコードする[^1]。
+GR capability の交換は [BGP](../../reference/glossary.md#term-bgp) OPEN メッセージ中の Capability Optional Parameter で行われ、[FRR](../../reference/glossary.md#term-frr) は `bgpd/bgp_open.c` でエンコード/デコードする[^1]。
 
-[^1]: `sonic-net/sonic-frr` `bgpd/bgp_open.c` における Graceful Restart capability (Type 64) のパース。Restart Time / Flags / AFI-SAFI の対称性が両端で合っていなければ GR は片側だけ "advertised" 表示となり実際には機能しない。
+[^1]: `sonic-net/sonic-frr` `bgpd/bgp_open.c` における [Graceful Restart](../../reference/glossary.md#term-graceful-restart) capability (Type 64) のパース。Restart Time / Flags / AFI-SAFI の対称性が両端で合っていなければ GR は片側だけ "advertised" 表示となり実際には機能しない。
 
 ## 関連 reference / topics
 

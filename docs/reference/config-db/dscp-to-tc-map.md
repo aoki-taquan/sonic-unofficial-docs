@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-DSCP 値 (0..63) を Traffic Class へマップする ingress [QoS](../../reference/glossary.md#term-qos) 分類定義[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) QoS map (`SAI_QOS_MAP_TYPE_DSCP_TO_TC`) を生成し、ポートにバインドする (`PORT_QOS_MAP.dscp_to_tc_map`)。
+DSCP 値 (0..63) を Traffic Class へマップする ingress [QoS](../../reference/glossary.md#term-qos) 分類定義[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map (`SAI_QOS_MAP_TYPE_DSCP_TO_TC`) を生成し、ポートにバインドする (`PORT_QOS_MAP.dscp_to_tc_map`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -59,20 +59,20 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 
 ## 購読者
 
-- `qosorch`: SAI QoS map 生成
+- `qosorch`: [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map 生成
 - `bufferorch` 経由でポート PG への影響あり
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT_QOS_MAP`、`TC_TO_QUEUE_MAP`、`TC_TO_PRIORITY_GROUP_MAP`
 - 関連 CLI: なし
-- 関連 YANG: `sonic-dscp-tc-map`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-dscp-tc-map`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-dscp-tc-map`](../yang/sonic-dscp-tc-map.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-dscp-tc-map`](../yang/sonic-dscp-tc-map.md)
 
 <!-- ref-triangle:end -->
 
@@ -107,4 +107,4 @@ show qos map dscp-tc
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 863a6fa10ec3 -->
+<!-- glossary-links-injected: 1024efc8dead -->

@@ -83,7 +83,7 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:$(sonic-db-cli COUNTERS_DB hget COUNT
 ```
 
 - 期待: 数値が更新されている（前後で diff あり）
-- 異常: 値固定 → syncd の counter スレッド停止
+- 異常: 値固定 → [syncd](../../reference/glossary.md#term-syncd) の counter スレッド停止
 
 ### 4. syncd CPU と log
 
@@ -102,7 +102,7 @@ docker logs swss 2>&1 | grep -iE "flexcounter|FLEX_COUNTER" | tail -50
 
 - counter 有効化: `counterpoll port enable` / `counterpoll queue enable` / `counterpoll pfcwd enable`
 - interval 調整: `counterpoll port interval 1000`
-- 救命的 reset: `sudo systemctl restart swss`（syncd / counter thread も再生成）
+- 救命的 reset: `sudo systemctl restart swss`（[syncd](../../reference/glossary.md#term-syncd) / counter thread も再生成）
 - 個別 group のみ問題なら、`config save -y` 後に group を disable → enable
 
 ## 関連ページ
@@ -116,4 +116,4 @@ docker logs swss 2>&1 | grep -iE "flexcounter|FLEX_COUNTER" | tail -50
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — flexcounterorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — counterpoll CLI
 
-<!-- glossary-links-injected: ce96ade25a61 -->
+<!-- glossary-links-injected: 85508c73d0d3 -->

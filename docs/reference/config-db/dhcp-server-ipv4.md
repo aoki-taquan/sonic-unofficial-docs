@@ -45,7 +45,7 @@ flowchart LR
 DHCP_SERVER_IPV4|<name>
 ```
 
-`<name>` は VLAN 名 (`Vlan<id>`) または [SmartSwitch](../../reference/glossary.md#term-smartswitch) の bridge 参照 (`MID_PLANE_BRIDGE.GLOBAL.bridge`) の union。
+`<name>` は [VLAN](../../reference/glossary.md#term-vlan) 名 (`Vlan<id>`) または [SmartSwitch](../../reference/glossary.md#term-smartswitch) の bridge 参照 (`MID_PLANE_BRIDGE.GLOBAL.bridge`) の union。
 
 ## フィールド一覧
 
@@ -77,13 +77,13 @@ DHCP_SERVER_IPV4|<name>
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`VLAN_INTERFACE`、`DEVICE_METADATA` (`dhcp_server`)、`DHCP_RELAY` 系
 - 関連 CLI: `config dhcp_server ipv4 add/del/range/port`
-- 関連 YANG: `sonic-dhcp-server-ipv4`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-dhcp-server-ipv4`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-dhcp-server-ipv4`](../yang/sonic-dhcp-server.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-dhcp-server-ipv4`](../yang/sonic-dhcp-server.md)
 - CLI: `config dhcp_server`
 
 <!-- ref-triangle:end -->
@@ -109,7 +109,7 @@ DHCP_SERVER_IPV4|<name>
 
 ### よくある誤設定
 
-- VLAN に紐付けず DHCP_SERVER_IPV4_PORT エントリも無いと DISCOVER が応答されない。
+- [VLAN](../../reference/glossary.md#term-vlan) に紐付けず DHCP_SERVER_IPV4_PORT エントリも無いと DISCOVER が応答されない。
 
 ### 確認コマンド
 
@@ -119,4 +119,4 @@ show dhcp_server ipv4 info
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 998984a93e58 -->
+<!-- glossary-links-injected: 3d133254de43 -->

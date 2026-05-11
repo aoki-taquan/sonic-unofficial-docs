@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) と ECN マーキングの設定プロファイルを定義する。`QUEUE` テーブルの `wred_profile` から名前で参照される[^1]。[orchagent](../../reference/glossary.md#term-orchagent) の `QosOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) WRED オブジェクトに変換する。
+Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) と ECN マーキングの設定プロファイルを定義する。`QUEUE` テーブルの `wred_profile` から名前で参照される[^1]。[orchagent](../../reference/glossary.md#term-orchagent) の `QosOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) [WRED](../../reference/glossary.md#term-wred) オブジェクトに変換する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -52,7 +52,7 @@ WRED_PROFILE|<name>
 
 | フィールド | 型 | 既定 | 説明 |
 |-----------|----|------|------|
-| `green_min_threshold` / `yellow_min_threshold` / `red_min_threshold` | uint64 (bytes) | - | カラー別の WRED 開始閾値 |
+| `green_min_threshold` / `yellow_min_threshold` / `red_min_threshold` | uint64 (bytes) | - | カラー別の [WRED](../../reference/glossary.md#term-wred) 開始閾値 |
 | `green_max_threshold` / `yellow_max_threshold` / `red_max_threshold` | uint64 (bytes) | - | カラー別の最大閾値 (この値で全 drop) |
 | `green_drop_probability` / `yellow_drop_probability` / `red_drop_probability` | uint64 (0..100) | 100 | 最大 drop 確率 [%] |
 | `wred_green_enable` / `wred_yellow_enable` / `wred_red_enable` | boolean | false | カラー別 WRED 有効化 |
@@ -65,11 +65,11 @@ WRED_PROFILE|<name>
 
 ## 購読者
 
-- `orchagent` (`QosOrch`): CONFIG_DB → SAI WRED → `QUEUE` への bind
+- `orchagent` (`QosOrch`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → [SAI](../../reference/glossary.md#term-sai) WRED → `QUEUE` への bind
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `QUEUE`、`SCHEDULER`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `QUEUE`、`SCHEDULER`
 - 関連 CLI: `config qos clear`、テンプレート起点の生成 (`buffers.json.j2`)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-wred-profile`
 
@@ -77,14 +77,14 @@ WRED_PROFILE|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-wred-profile`](../yang/sonic-wred-profile.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-wred-profile`](../yang/sonic-wred-profile.md)
 - CLI: [`config qos`](../cli/config-qos.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-wred-profile.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-wred-profile.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -104,7 +104,7 @@ WRED_PROFILE|<name>
 
 ### よくある誤設定
 
-- min > max に設定すると SAI がエラーを返し、profile が hardware に下りない。
+- min > max に設定すると [SAI](../../reference/glossary.md#term-sai) がエラーを返し、profile が hardware に下りない。
 
 ### 確認コマンド
 
@@ -114,4 +114,4 @@ show wred
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c7fb233bdfb1 -->
+<!-- glossary-links-injected: 7c1942297ce7 -->

@@ -67,7 +67,7 @@ SYSLOG_CONFIG_FEATURE|<service>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`SYSLOG_CONFIG`](syslog-config.md), [`FEATURE`](feature.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SYSLOG_CONFIG`](syslog-config.md), [`FEATURE`](feature.md)
 - 関連 CLI: `config syslog rate-limit-container <service>`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-syslog`
 
@@ -75,7 +75,7 @@ SYSLOG_CONFIG_FEATURE|<service>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-syslog`](../yang/sonic-syslog.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-syslog`](../yang/sonic-syslog.md)
 - CLI: [`config syslog`](../cli/config-syslog.md)
 
 <!-- ref-triangle:end -->

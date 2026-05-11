@@ -135,10 +135,10 @@ module: sonic-bgp-peergroup
 | `local_asn` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/local_asn` | `uint32` |  |  | range 1..4294967295 | Local AS number |
 | `name` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/name` | `string` |  |  |  | Peer description |
 | `asn` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/asn` | `uint32` |  |  | range 1..4294967295 | Peer AS number |
-| `peer_type` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/peer_type` | `bgp_peer_type` |  |  |  | BGP peer type internal/external |
+| `peer_type` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/peer_type` | `bgp_peer_type` |  |  |  | [BGP](../../reference/glossary.md#term-bgp) peer type internal/external |
 | `ebgp_multihop` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/ebgp_multihop` | `boolean` |  |  |  | Enable eBGP multihop to allow peering with non-directly-connected external neighbors. |
 | `ebgp_multihop_ttl` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/ebgp_multihop_ttl` | `uint8` |  |  | range 1..255 | Maximum number of hops for eBGP multihop sessions. |
-| `auth_password` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/auth_password` | `string` |  |  |  | MD5 authentication password for the BGP session. |
+| `auth_password` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/auth_password` | `string` |  |  |  | MD5 authentication password for the [BGP](../../reference/glossary.md#term-bgp) session. |
 | `keepalive` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/keepalive` | `uint16` |  |  |  | BGP keepalive interval in seconds. |
 | `holdtime` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/holdtime` | `uint16` |  |  |  | BGP hold time in seconds; session is reset if no keepalive is received within this period. |
 | `conn_retry` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/conn_retry` | `uint16` |  |  | range 1..65535 | BGP connect retry timer in seconds. |
@@ -151,7 +151,7 @@ module: sonic-bgp-peergroup
 | `solo_peer` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/solo_peer` | `boolean` |  |  |  | Place this peer in its own update group to prevent route sharing with other peers. |
 | `ttl_security_hops` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/ttl_security_hops` | `uint8` |  |  | range 1..254 | Maximum number of hops expected for the BGP TTL security mechanism (GTSM). |
 | `bfd` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/bfd` | `boolean` |  |  |  | Enable Bidirectional Forwarding Detection ([BFD](../../reference/glossary.md#term-bfd)) for rapid link failure detection on this peer. |
-| `bfd_check_ctrl_plane_failure` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/bfd_check_ctrl_plane_failure` | `boolean` |  |  |  | Trigger BGP session reset when a BFD control plane failure is detected. |
+| `bfd_check_ctrl_plane_failure` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/bfd_check_ctrl_plane_failure` | `boolean` |  |  |  | Trigger BGP session reset when a [BFD](../../reference/glossary.md#term-bfd) control plane failure is detected. |
 | `capability_dynamic` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/capability_dynamic` | `boolean` |  |  |  | Advertise dynamic capability |
 | `dont_negotiate_capability` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/dont_negotiate_capability` | `boolean` |  |  |  | Do not perform capability negotiation |
 | `enforce_multihop` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/enforce_multihop` | `boolean` |  |  |  | Enforce EBGP neighbors perform multihop |
@@ -162,7 +162,7 @@ module: sonic-bgp-peergroup
 | `admin_status` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/admin_status` | `stypes:admin_status` |  |  |  | Administrative status to enable or disable this BGP peer. |
 | `local_as_no_prepend` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/local_as_no_prepend` | `boolean` |  |  |  | Do not prepend the local AS number to updates received from eBGP peers. |
 | `local_as_replace_as` | `sonic-bgp-peergroup/BGP_PEER_GROUP/BGP_PEER_GROUP_LIST/local_as_replace_as` | `boolean` |  |  |  | Replace the real AS number with the local AS number in outbound updates. |
-| `vrf_name` | `sonic-bgp-peergroup/BGP_PEER_GROUP_AF/BGP_PEER_GROUP_AF_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/VRF name |
+| `vrf_name` | `sonic-bgp-peergroup/BGP_PEER_GROUP_AF/BGP_PEER_GROUP_AF_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/[VRF](../../reference/glossary.md#term-vrf) name |
 | `peer_group_name` | `sonic-bgp-peergroup/BGP_PEER_GROUP_AF/BGP_PEER_GROUP_AF_LIST/peer_group_name` | `leafref` | yes |  | ../../../BGP_PEER_GROUP/BGP_PEER_GROUP_LIST[vrf_name=current()/../vrf_name]/peer_group_name | Peer group name |
 | `afi_safi` | `sonic-bgp-peergroup/BGP_PEER_GROUP_AF/BGP_PEER_GROUP_AF_LIST/afi_safi` | `string` |  |  |  | Address family |
 | `admin_status` | `sonic-bgp-peergroup/BGP_PEER_GROUP_AF/BGP_PEER_GROUP_AF_LIST/admin_status` | `stypes:admin_status` |  |  |  | Indicates address family active/inactive status |
@@ -198,7 +198,7 @@ module: sonic-bgp-peergroup
 | `allow_as_origin` | `sonic-bgp-peergroup/BGP_PEER_GROUP_AF/BGP_PEER_GROUP_AF_LIST/allow_as_origin` | `boolean` |  |  |  | Accept routes that originated from the local AS. |
 | `cap_orf` | `sonic-bgp-peergroup/BGP_PEER_GROUP_AF/BGP_PEER_GROUP_AF_LIST/cap_orf` | `sonic_bgp_orf` |  |  |  | Outbound Route Filtering (ORF) prefix-list capability to negotiate with this neighbor. |
 | `route_server_client` | `sonic-bgp-peergroup/BGP_PEER_GROUP_AF/BGP_PEER_GROUP_AF_LIST/route_server_client` | `boolean` |  |  |  | Configure this neighbor as a route server client, disabling attribute modification. |
-| `vrf_name` | `sonic-bgp-peergroup/BGP_GLOBALS_LISTEN_PREFIX/BGP_GLOBALS_LISTEN_PREFIX_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/VRF name |
+| `vrf_name` | `sonic-bgp-peergroup/BGP_GLOBALS_LISTEN_PREFIX/BGP_GLOBALS_LISTEN_PREFIX_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/[VRF](../../reference/glossary.md#term-vrf) name |
 | `ip_prefix` | `sonic-bgp-peergroup/BGP_GLOBALS_LISTEN_PREFIX/BGP_GLOBALS_LISTEN_PREFIX_LIST/ip_prefix` | `inet:ip-prefix` | yes |  |  | Configure BGP dynamic neighbors listen range |
 | `peer_group` | `sonic-bgp-peergroup/BGP_GLOBALS_LISTEN_PREFIX/BGP_GLOBALS_LISTEN_PREFIX_LIST/peer_group` | `leafref` |  |  | ../../../BGP_PEER_GROUP/BGP_PEER_GROUP_LIST[vrf_name=current()/../vrf_name]/peer_group_name | Peer group name |
 
@@ -225,14 +225,14 @@ module: sonic-bgp-peergroup
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_PEER_GROUP`
-- CONFIG_DB: `BGP_PEER_GROUP_AF`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_PEER_GROUP_AF`
 - CLI: `config bgp`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BGP_PEER_GROUP`](../config-db/bgp-peer-group.md) / [`BGP_PEER_GROUP_AF`](../config-db/bgp-peer-group-af.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BGP_PEER_GROUP`](../config-db/bgp-peer-group.md) / [`BGP_PEER_GROUP_AF`](../config-db/bgp-peer-group-af.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
@@ -260,4 +260,4 @@ vtysh -c 'show bgp peer-group'
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 5cfccd293bbb -->
+<!-- glossary-links-injected: a2784352b309 -->

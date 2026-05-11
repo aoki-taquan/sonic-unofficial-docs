@@ -179,7 +179,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: `FLOW_COUNTER_ROUTE_PATTERN`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLOW_COUNTER_ROUTE_PATTERN`
 
 <!-- ref-triangle:end -->
 
@@ -196,4 +196,4 @@ flowchart LR
 - [reference/CLI: show interfaces](show-interfaces.md)
 - [reference/CLI: show route-map](show-route-map.md)
 
-<!-- glossary-links-injected: 35bf215a8536 -->
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -33,12 +33,12 @@ related:
 
 ### 取り込み済み
 
-- `sonic-swss-common/common/status_code_util.h:11-` で `SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED` 等の enum 群が定義されている。HLD の `SWSS_RC_*` 体系の最低限は libswsscommon 側に入った。
+- `sonic-swss-common/common/status_code_util.h:11-` で `SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED` 等の enum 群が定義されている。[HLD](../reference/glossary.md#term-hld) の `SWSS_RC_*` 体系の最低限は libswsscommon 側に入った。
 
 ### 未取り込み
 
 - `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` のテーブル名 define は `sonic-swss-common/common/schema.h` に **存在しない**（`grep -n "ERROR_DB\|ERROR_ROUTE_TABLE" schema.h` 0 件。`lagid.h:16` の `LAG_ID_ALLOCATOR_ERROR_DB_ERROR` は別物の戻り値定数）。
-- `sonic-swss/orchagent/` 配下に `ErrorListener` / `ErrorReporter` クラスは未定義。RouteOrch / NeighOrch の SAI 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。
+- `sonic-swss/orchagent/` 配下に `ErrorListener` / `ErrorReporter` クラスは未定義。RouteOrch / NeighOrch の [SAI](../reference/glossary.md#term-sai) 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。
 - `sonic-utilities/` に `show error-database` / `sonic-clear error-database` CLI が無い。
 
 ## 3. 行番号付きエビデンス
@@ -77,7 +77,7 @@ $ grep -rn "error-database\|error_database" .cache/sonic-sources/sonic-utilities
 
 ## 4. 読者への影響
 
-- BGP が経路追加を要求し、ASIC FIB がそれを `SAI_STATUS_TABLE_FULL` で reject した場合、fpmsyncd / bgpd は **失敗を知らない**ため、`show ip route` には経路が見えるが `show ip fib` には無い、というサイレントな乖離が発生する。
+- [BGP](../reference/glossary.md#term-bgp) が経路追加を要求し、ASIC FIB がそれを `SAI_STATUS_TABLE_FULL` で reject した場合、[fpmsyncd](../reference/glossary.md#term-fpmsyncd) / bgpd は **失敗を知らない**ため、`show ip route` には経路が見えるが `show ip fib` には無い、というサイレントな乖離が発生する。
 - HLD 通りに `show error-database` を期待する自動化スクリプトは即座に失敗する。
 - retry / rollback ロジックが実装されないため、ASIC リソース不足（TCAM full 等）の状態は手動介入が必要。
 - 一時的回避として OrchAgent のログを syslog で grep する以外に体系的な検知手段が無い。
@@ -110,7 +110,7 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*' | wc -l   # RIB �
 
 本 HLD の実装着手 PR は **見つからない**。`SWSS_RC_*` enum を導入した PR (`sonic-swss-common` 経由) のみが部分採用の痕跡。
 
-代替の retry/recovery 機構は CRM (Critical Resource Monitor: `sonic-swss/orchagent/crmorch.cpp`) で部分的にカバーされており、こちらは production で稼働中。`show crm resources` / `CRM_TABLE` 経由でリソース閾値監視が可能。HLD ベースではなく **CRM ベースで運用設計する方が現実的**。
+代替の retry/recovery 機構は [CRM](../reference/glossary.md#term-crm) (Critical Resource Monitor: `sonic-swss/orchagent/crmorch.cpp`) で部分的にカバーされており、こちらは production で稼働中。`show crm resources` / `CRM_TABLE` 経由でリソース閾値監視が可能。HLD ベースではなく **CRM ベースで運用設計する方が現実的**。
 
 ## 関連ページ
 
@@ -136,3 +136,5 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*' | wc -l   # RIB �
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 9b9babc63251 -->

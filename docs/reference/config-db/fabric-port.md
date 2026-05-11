@@ -73,7 +73,7 @@ FABRIC_PORT|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `FABRIC_MONITOR`、`SYSTEM_PORT`、`CHASSIS_MODULE`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FABRIC_MONITOR`、`SYSTEM_PORT`、`CHASSIS_MODULE`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-fabric-port`、`sonic-fabric-monitor`
 - 関連 CLI: `config fabric`、`show fabric`
 
@@ -81,17 +81,17 @@ FABRIC_PORT|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-fabric-port`](../yang/sonic-fabric-port.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-fabric-port`](../yang/sonic-fabric-port.md)
 - CLI: `config fabric`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-fabric-port.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fabric-port.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-fabric-port.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fabric-port.yang>
 
 ## 関連ページ
-- 関連 CONFIG_DB ページ: `FABRIC_MONITOR`（本バッチで追加）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db) ページ: `FABRIC_MONITOR`（本バッチで追加）
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -103,7 +103,7 @@ FABRIC_PORT|<name>
 
 ### よくある誤設定
 
-- isolate_status=True のままにすると VOQ chassis 内で fabric リンクが trunk から外れたまま戻らない。
+- isolate_status=True のままにすると [VOQ](../../reference/glossary.md#term-voq) chassis 内で fabric リンクが trunk から外れたまま戻らない。
 
 ### 確認コマンド
 
@@ -113,4 +113,4 @@ show fabric counters port
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d9fa2505af9c -->
+<!-- glossary-links-injected: e6a80f23a9fa -->

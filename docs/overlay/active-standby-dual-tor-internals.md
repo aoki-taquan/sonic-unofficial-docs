@@ -26,7 +26,7 @@ related:
 
 # Active-Standby Dual ToR 内部実装
 
-このページは [Active-Standby Dual ToR（概要ハブ）](active-standby-dual-tor.md) の派生ページで、**state machine / orchagent / neighbor 取扱い / I2C スイッチオーバ** の内部実装に絞って整理する。概念は [active-standby-dual-tor-concepts.md](active-standby-dual-tor-concepts.md)、設定は [active-standby-dual-tor-operations.md](active-standby-dual-tor-operations.md)、制限事項は [active-standby-dual-tor-limitations.md](active-standby-dual-tor-limitations.md) を参照。
+このページは [Active-Standby Dual ToR（概要ハブ）](active-standby-dual-tor.md) の派生ページで、**state machine / [orchagent](../reference/glossary.md#term-orchagent) / neighbor 取扱い / I2C スイッチオーバ** の内部実装に絞って整理する。概念は [active-standby-dual-tor-concepts.md](active-standby-dual-tor-concepts.md)、設定は [active-standby-dual-tor-operations.md](active-standby-dual-tor-operations.md)、制限事項は [active-standby-dual-tor-limitations.md](active-standby-dual-tor-limitations.md) を参照。
 
 ## 1. LinkManager 状態遷移表
 
@@ -56,27 +56,27 @@ active → unknown 遷移時は `linkprober_suspend_timer` で一時的に heart
 
 `CONFIG_DB.TUNNEL` の `MUX_TUNNEL` entry を購読し[^1]:
 
-- IPinIP tunnel object 作成（`tunnel_type=IPINIP`、`dst_ip=Loopback0`、`dscp_mode=uniform`、`encap_ecn_mode=standard`、`ecn_mode=copy_from_outer`、`ttl_mode=pipe`）
+- [IPinIP](../reference/glossary.md#term-ipinip) tunnel object 作成（`tunnel_type=IPINIP`、`dst_ip=Loopback0`、`dscp_mode=uniform`、`encap_ecn_mode=standard`、`ecn_mode=copy_from_outer`、`ttl_mode=pipe`）
 - decap entry / tunnel termination 作成
 - `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` を MuxOrch の next hop として供給
 
 ## 3. MuxOrch
 
-linkmgrd の状態変化を購読し[^1]:
+[linkmgrd](../reference/glossary.md#term-linkmgrd) の状態変化を購読し[^1]:
 
 1. tunnel route 追加 / 削除
-2. **standby port での ingress drop ACL** 追加 / 削除
+2. **standby port での ingress drop [ACL](../reference/glossary.md#term-acl)** 追加 / 削除
 3. neighbor entry の取り扱い（後述）
 
-HLD は neighbor 取扱い 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）を比較するが最終採用案を明示していない。**現行 master は「neighbor + standalone tunnel route」併用案** を採用（`sonic-swss/orchagent/muxorch.cpp:2444-2460` の `createStandaloneTunnelRoute()` / `removeStandaloneTunnelRoute()`）。
+[HLD](../reference/glossary.md#term-hld) は neighbor 取扱い 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）を比較するが最終採用案を明示していない。**現行 master は「neighbor + standalone tunnel route」併用案** を採用（`sonic-swss/orchagent/muxorch.cpp:2444-2460` の `createStandaloneTunnelRoute()` / `removeStandaloneTunnelRoute()`）。
 
 ### Rollback 動作
 
-orchagent が遷移失敗した場合[^1]: 元状態に rollback → APP_DB に新状態 → ycabled が STATE_DB に書き戻し → orchagent が STATE_DB に `unknown` を書く → linkmgrd が再判定。orchagent は state 変化に対して **idempotent** であること。
+orchagent が遷移失敗した場合[^1]: 元状態に rollback → APP_DB に新状態 → ycabled が [STATE_DB](../reference/glossary.md#term-state_db) に書き戻し → orchagent が STATE_DB に `unknown` を書く → linkmgrd が再判定。orchagent は state 変化に対して **idempotent** であること。
 
 ## 4. neighbor の特殊扱い
 
-standby ToR では ARP request が drop されるため、通常の neighbor 学習が成立しない。次の仕掛けを併用する[^1]:
+standby ToR では [ARP](../reference/glossary.md#term-arp) request が drop されるため、通常の neighbor 学習が成立しない。次の仕掛けを併用する[^1]:
 
 ### Proxy ARP（IPv4）
 
@@ -112,7 +112,7 @@ IPv6 は `accept_untracked_na=1` を kernel に backport して unsolicited NA �
 
 ## 5. y-cable I2C 障害（ycabled）
 
-旧 `xcvrd` を `ycabled` に改名[^1]。`APP_DB.HW_MUX_CABLE` を購読し I2C 経由で MUX を toggle する。`i2c_retry_count` 回失敗で `MUX_FAIL` を `STATE_DB.HW_MUX_CABLE_TABLE` に書く。報告状態: `MUX_XCVRD_ACTIVE` / `MUX_XCVRD_STANDBY` / `MUX_XCVRD_FAIL`。
+旧 `xcvrd` を `ycabled` に改名[^1]。`APP_DB.HW_MUX_CABLE` を購読し I2C 経由で [MUX](../reference/glossary.md#term-mux) を toggle する。`i2c_retry_count` 回失敗で `MUX_FAIL` を `STATE_DB.HW_MUX_CABLE_TABLE` に書く。報告状態: `MUX_XCVRD_ACTIVE` / `MUX_XCVRD_STANDBY` / `MUX_XCVRD_FAIL`。
 
 ### switchover シーケンス（standby → active）
 
@@ -159,3 +159,5 @@ sequenceDiagram
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/dualtor_active_standby_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 3dc47e5d23ad -->

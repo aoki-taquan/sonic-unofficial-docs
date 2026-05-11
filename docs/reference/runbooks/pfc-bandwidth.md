@@ -36,7 +36,7 @@ related:
 
 1. **[PFC](../../reference/glossary.md#term-pfc) enabled priority と PORT_QOS_MAP の DSCP→TC マッピング不一致** → 想定の queue に乗っていない
 2. **buffer profile / pool sizing 不足**: `BUFFER_POOL|ingress_lossless_pool` の `size` がトラフィック量に対して過小
-3. **対向側で PFC pause を生成し続け、PFC storm に陥っている**: PFC WD が queue を強制 disable
+3. **対向側で [PFC](../../reference/glossary.md#term-pfc) pause を生成し続け、[PFC](../../reference/glossary.md#term-pfc) storm に陥っている**: PFC WD が queue を強制 disable
 4. **headroom 計算が cable length と一致していない** (`CABLE_LENGTH` テーブル誤設定)
 5. **MMU 共有プールの先頭飽和**: 他 priority のトラフィックが共有プールを食い潰し、lossless 用 reserved が確保できない
 
@@ -127,4 +127,4 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bufferorch / pfcwdorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — pfcwd CLI
 
-<!-- glossary-links-injected: 700a048ebcfc -->
+<!-- glossary-links-injected: 7cb1f9e73b9e -->

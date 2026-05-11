@@ -64,8 +64,8 @@ ROUTE_MAP|<name>|<stmt_name>
 | `match_src_vrf` | union (`default`/leafref `VRF.name`) | source [VRF](../../reference/glossary.md#term-vrf) match |
 | `match_neighbor` | leaf-list union | IP / interface match |
 | `match_tag` | leaf-list uint32 | tag match |
-| `match_med` / `match_origin` / `match_local_pref` | numeric / string / uint32 | BGP attribute match |
-| `match_community` | leafref `COMMUNITY_SET.name` | BGP community match |
+| `match_med` / `match_origin` / `match_local_pref` | numeric / string / uint32 | [BGP](../../reference/glossary.md#term-bgp) attribute match |
+| `match_community` | leafref `COMMUNITY_SET.name` | [BGP](../../reference/glossary.md#term-bgp) community match |
 | `match_ext_community` | leafref `EXTENDED_COMMUNITY_SET.name` | extended community match |
 | `match_as_path` | leafref `AS_PATH_SET.name` | AS-path match |
 | `call_route_map` | leafref `ROUTE_MAP_SET.name` | 別の route-map 呼出し |
@@ -85,12 +85,12 @@ ROUTE_MAP|<name>|<stmt_name>
 
 ## 購読者
 
-- `frr-mgmt-framework`: CONFIG_DB → `vtysh route-map` コマンド
+- `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → `vtysh route-map` コマンド
 - `bgpcfgd` (テンプレ経路): 簡易な BGP テンプレ展開時に間接利用
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `ROUTE_MAP_SET` (名前一覧)、`PREFIX_SET`、`COMMUNITY_SET`、`AS_PATH_SET`、`BGP_NEIGHBOR_AF`、`BGP_PEER_GROUP_AF`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `ROUTE_MAP_SET` (名前一覧)、`PREFIX_SET`、`COMMUNITY_SET`、`AS_PATH_SET`、`BGP_NEIGHBOR_AF`、`BGP_PEER_GROUP_AF`
 - 関連 CLI: `config route_map`、`vtysh -c "show route-map"`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-route-map`、`sonic-routing-policy-sets`
 
@@ -98,14 +98,14 @@ ROUTE_MAP|<name>|<stmt_name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-route-map`](../yang/sonic-route-map.md) / `sonic-routing-policy-sets`
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-route-map`](../yang/sonic-route-map.md) / `sonic-routing-policy-sets`
 - CLI: [`config route_map`](../cli/config-route.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-route-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-route-map.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-route-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-route-map.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -127,4 +127,4 @@ vtysh -c 'show route-map'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 07040282b44e -->
+<!-- glossary-links-injected: 4b960f6e2623 -->

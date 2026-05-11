@@ -87,7 +87,7 @@ module: sonic-mgmt_port
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MGMT_PORT`](../config-db/mgmt-port.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MGMT_PORT`](../config-db/mgmt-port.md)
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
@@ -115,4 +115,4 @@ show management_interface
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 896d391185a9 -->

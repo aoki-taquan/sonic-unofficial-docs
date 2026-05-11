@@ -51,13 +51,13 @@ flowchart LR
 BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>]
 ```
 
-- `<deployment>` は固定文字列 `DEPLOYMENT_ID` (YANG `pattern "DEPLOYMENT_ID"`)
+- `<deployment>` は固定文字列 `DEPLOYMENT_ID` ([YANG](../../reference/glossary.md#term-yang) `pattern "DEPLOYMENT_ID"`)
 - `<id>` は uint32 の deployment id
 - `<neighbor>` は固定文字列 `NEIGHBOR_TYPE` (`pattern "NEIGHBOR_TYPE"`)
 - `<neighbor_type>` は任意の neighbor タイプ名
 - `<community>` は community 文字列
 
-> パターンが固定文字列に見えるが、これは bgpcfgd テンプレ側で `DEPLOYMENT_ID` / `NEIGHBOR_TYPE` という文字列キーをそのまま使う構造になっているため。`<id>` などの可変部分で deployment を区別する。
+> パターンが固定文字列に見えるが、これは [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレ側で `DEPLOYMENT_ID` / `NEIGHBOR_TYPE` という文字列キーをそのまま使う構造になっているため。`<id>` などの可変部分で deployment を区別する。
 
 ## フィールド（共通）
 
@@ -73,20 +73,20 @@ BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>
 
 ## 制約
 
-- `<deployment>` キーは固定パターン `DEPLOYMENT_ID` / `NEIGHBOR_TYPE` に縛られるため、CONFIG_DB に書き込む際は必ずこのリテラルを使う。
+- `<deployment>` キーは固定パターン `DEPLOYMENT_ID` / `NEIGHBOR_TYPE` に縛られるため、[CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む際は必ずこのリテラルを使う。
 - prefix の `le` / `ge` 修飾子は IPv4 では 0..32、IPv6 では 0..128 の範囲のみ許可。
 - 4 種類の list は同じ container 配下にあるが、key の組合せが異なるので区別される。
 
 ## 購読者
 
 - `bgpcfgd` (`docker-fpm-frr`): deployment id ごとに `BGP_ALLOWED_PREFIXES_*` を読み、Jinja テンプレで `ip prefix-list` / `route-map` 文を vtysh に流す
-- `bgpd` (FRR): 生成された prefix-list / route-map を [BGP](../../reference/glossary.md#term-bgp) neighbor / peer-group に適用
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): 生成された prefix-list / route-map を [BGP](../../reference/glossary.md#term-bgp) neighbor / peer-group に適用
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_NEIGHBOR`, `BGP_PEER_GROUP`, `ROUTE_MAP_SET`, `DEVICE_METADATA` (`deployment_id`)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_NEIGHBOR`, `BGP_PEER_GROUP`, `ROUTE_MAP_SET`, `DEVICE_METADATA` (`deployment_id`)
 - 関連 CLI: 専用 CLI なし。`sonic-cfggen` / minigraph 経由で投入されるのが通常
-- 関連 YANG: `sonic-bgp-allowed-prefix`, `sonic-routing-policy-sets`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-allowed-prefix`, `sonic-routing-policy-sets`
 
 <!-- ref-triangle:start -->
 
@@ -110,7 +110,7 @@ BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>
 
 ### よくある誤設定
 
-- prefix-list 名と表記揺れがあると FRR 側に反映されず広告フィルタが効かない。
+- prefix-list 名と表記揺れがあると [FRR](../../reference/glossary.md#term-frr) 側に反映されず広告フィルタが効かない。
 
 ### 確認コマンド
 
@@ -120,4 +120,4 @@ vtysh -c 'show running-config bgp'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0a371cf7e1da -->
+<!-- glossary-links-injected: 43ff039eae38 -->

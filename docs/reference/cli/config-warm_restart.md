@@ -39,7 +39,7 @@ related:
 
 ### enable / disable
 
-`<module>` を省略すると `system`。`module != system` の場合は CONFIG_DB `FEATURE` テーブルに存在する feature 名だけを受け付ける。namespace 指定が無い場合、single-ASIC では default namespace、multi-ASIC では default + ASIC namespace 群に反映する[^2]。
+`<module>` を省略すると `system`。`module != system` の場合は [CONFIG_DB](../../reference/glossary.md#term-config_db) `FEATURE` テーブルに存在する feature 名だけを受け付ける。namespace 指定が無い場合、single-ASIC では default namespace、multi-ASIC では default + ASIC namespace 群に反映する[^2]。
 
 ### timer 系
 
@@ -52,13 +52,13 @@ related:
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`WARM_RESTART`](../config-db/warm-restart.md) / [`FEATURE`](../config-db/feature.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`WARM_RESTART`](../config-db/warm-restart.md) / [`FEATURE`](../config-db/feature.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: `config warm_restart` グループは CONFIG_DB と STATE_DB connector を namespace ごとに初期化する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940>
+[^1]: `config warm_restart` グループは CONFIG_DB と [STATE_DB](../../reference/glossary.md#term-state_db) connector を namespace ごとに初期化する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940>
 
 [^2]: `enable` / `disable` は `WARM_RESTART_ENABLE_TABLE|<module>` の `enable` フィールドを書き込む。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3973>
 
@@ -96,7 +96,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- BGP / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / swss / [syncd](../../reference/glossary.md#term-syncd) の warm-restart 有効化と timer 調整。
+- [BGP](../../reference/glossary.md#term-bgp) / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / swss / [syncd](../../reference/glossary.md#term-syncd) の warm-restart 有効化と timer 調整。
 - ソフト再起動前の安全弁としての有効化。
 
 ### よくある落とし穴
@@ -113,4 +113,4 @@ sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4836d1c1f005 -->
+<!-- glossary-links-injected: 2659d47ccbe6 -->

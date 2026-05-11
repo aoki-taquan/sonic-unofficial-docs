@@ -95,7 +95,7 @@ module: sonic-feature
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`FEATURE`](../config-db/feature.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`FEATURE`](../config-db/feature.md)
 - CLI: `config feature`
 
 <!-- ref-triangle:end -->
@@ -109,7 +109,7 @@ module: sonic-feature
 
 ### よくある落とし穴
 
-- `state` を `disabled` に変更すると docker 停止のみで CONFIG_DB の関連エントリは残る。意図せず再有効化時に古い設定が復活する。
+- `state` を `disabled` に変更すると docker 停止のみで [CONFIG_DB](../../reference/glossary.md#term-config_db) の関連エントリは残る。意図せず再有効化時に古い設定が復活する。
 
 ### 関連する config / show コマンド
 
@@ -123,4 +123,4 @@ show feature status
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-feature.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: d883a9fa01e9 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

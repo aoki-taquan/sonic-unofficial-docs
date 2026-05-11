@@ -30,7 +30,7 @@ SONiC の `debug` および `undebug` コマンドは、`config` / `show` とは
 
 対象は主に **[FRR](../../reference/glossary.md#term-frr) ([BGP](../../reference/glossary.md#term-bgp) / [zebra](../../reference/glossary.md#term-zebra))** と **STP (`stpctl`)** の動的デバッグスイッチで、いずれも実体は `vtysh` または `stpctl` のラッパー。[CONFIG_DB](../../reference/glossary.md#term-config_db) は触らず、対象プロセスの runtime ログレベルや trace を切り替えるだけ。`undebug` は `debug` のミラーで、各 `debug ...` コマンドに対応する `no debug ...` を vtysh に投げる。
 
-`debug.main` は **import 時に `sudo vtysh -c 'show version'` を実行して FRR か Quagga かを判定**し、コマンドツリーを動的に切り替える点が特徴的[^2]。本ドキュメントでは現役の FRR ブランチを中心に記述する。
+`debug.main` は **import 時に `sudo vtysh -c 'show version'` を実行して [FRR](../../reference/glossary.md#term-frr) か Quagga かを判定**し、コマンドツリーを動的に切り替える点が特徴的[^2]。本ドキュメントでは現役の [FRR](../../reference/glossary.md#term-frr) ブランチを中心に記述する。
 
 ## コマンド一覧
 
@@ -134,4 +134,4 @@ flowchart LR
 
 [^3]: prefix バリデーション (`debug/main.py` L30 + L60-L63 etc.)。
 
-<!-- glossary-links-injected: dbd756d1e010 -->
+<!-- glossary-links-injected: 31afda1b3222 -->

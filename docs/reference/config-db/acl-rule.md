@@ -107,7 +107,7 @@ ACL_RULE|<table_name>|<rule_name>
 
 ## 購読者
 
-- `orchagent` `AclOrch`: SAI ACL entry を生成
+- `orchagent` `AclOrch`: [SAI](../../reference/glossary.md#term-sai) [ACL](../../reference/glossary.md#term-acl) entry を生成
 - `mirrororch`: `MIRROR_*_ACTION` 経由で連動
 - `copporch`: `CTRLPLANE` 種別の `ACL_TABLE` 配下のルールに連動
 
@@ -166,4 +166,4 @@ aclshow -a -t EVERFLOW
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6e0f82e1634 -->
+<!-- glossary-links-injected: bf720d5ccd5d -->

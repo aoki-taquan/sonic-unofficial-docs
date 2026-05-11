@@ -75,7 +75,7 @@ SWITCH_TRIMMING|GLOBAL
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-trimming.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-trimming.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-trimming.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-trimming.yang>
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
@@ -92,7 +92,7 @@ SWITCH_TRIMMING|GLOBAL
 ### よくある誤設定
 
 - `dscp_value=from-tc` と `queue_index=dynamic` を同時指定して導出元が曖昧になる。
-- packet trimming 非対応 ASIC に投入して SAI でエラーになる。
+- packet trimming 非対応 ASIC に投入して [SAI](../../reference/glossary.md#term-sai) でエラーになる。
 
 ### 確認コマンド
 

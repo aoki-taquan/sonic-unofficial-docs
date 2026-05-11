@@ -54,7 +54,7 @@ show aaa
    }
    ```
 
-3. CONFIG_DB 側に `authentication` / `authorization` / `accounting` 各 row があれば、それで上記辞書を `update()` で上書き。
+3. [CONFIG_DB](../../reference/glossary.md#term-config_db) 側に `authentication` / `authorization` / `accounting` 各 row があれば、それで上記辞書を `update()` で上書き。
 4. `AAA <function> <key> <value>` の形式で 1 行ずつ `click.echo()` する。
 
 例:
@@ -66,7 +66,7 @@ AAA authorization login tacacs+
 AAA accounting login tacacs+
 ```
 
-CONFIG_DB に該当キーが無ければ `(default)` 表記のまま出る（実装上、上書きされなかった項目に対しては default 文字列がそのまま残る）。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) に該当キーが無ければ `(default)` 表記のまま出る（実装上、上書きされなかった項目に対しては default 文字列がそのまま残る）。
 
 ## CONFIG_DB との接点
 
@@ -113,7 +113,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- `local` を fallback に含めないと AAA server 不達時に全員ログインできなくなる。
+- `local` を fallback に含めないと [AAA](../../reference/glossary.md#term-aaa) server 不達時に全員ログインできなくなる。
 - TACACS+ 共有鍵が syslog に出力されてしまう古いビルドあり。
 
 ### 関連する show / debug
@@ -125,4 +125,4 @@ show radius
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ec4ea08af950 -->
+<!-- glossary-links-injected: 5b719dba66a4 -->

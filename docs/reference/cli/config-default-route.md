@@ -29,8 +29,8 @@ SONiC には `config default-route` という独立した click コマンドは 
 | 目的 | 使うコマンド | 書き込み先 |
 |---|---|---|
 | データプレーン側のスタティックルート | `config route add prefix 0.0.0.0/0 nexthop <ip>` | [CONFIG_DB](../../reference/glossary.md#term-config_db) `STATIC_ROUTE` |
-| 管理 NIC (`eth0`) の default gateway | `config mgmt-interface add` 系 + `MGMT_INTERFACE` の gwaddr | CONFIG_DB `MGMT_INTERFACE` |
-| [BGP](../../reference/glossary.md#term-bgp) で受ける default route | [FRR](../../reference/glossary.md#term-frr) vtysh / `config bgp` 配下 | CONFIG_DB（一部）+ FRR config |
+| 管理 NIC (`eth0`) の default gateway | `config mgmt-interface add` 系 + `MGMT_INTERFACE` の gwaddr | [CONFIG_DB](../../reference/glossary.md#term-config_db) `MGMT_INTERFACE` |
+| [BGP](../../reference/glossary.md#term-bgp) で受ける default route | [FRR](../../reference/glossary.md#term-frr) vtysh / `config bgp` 配下 | [CONFIG_DB](../../reference/glossary.md#term-config_db)（一部）+ [FRR](../../reference/glossary.md#term-frr) config |
 
 本ページは前 2 つの「CLI で書き込めるデフォルトルート」のパターンを整理する。`config route` 全体の仕様は [config route サブコマンド（static route）](config-route.md) を参照。
 
@@ -79,11 +79,11 @@ MGMT_INTERFACE|eth0|10.0.0.0/24
   gwaddr: 10.0.0.1
 ```
 
-このゲートウェイは管理 VRF（有効時）または default VRF の routing table に `default via 10.0.0.1 dev eth0` として注入される。**データプレーン側の default route と分離する**点に注意。
+このゲートウェイは管理 [VRF](../../reference/glossary.md#term-vrf)（有効時）または default [VRF](../../reference/glossary.md#term-vrf) の routing table に `default via 10.0.0.1 dev eth0` として注入される。**データプレーン側の default route と分離する**点に注意。
 
 ## パターン 3: BGP 経由
 
-業務トラフィック向けのデフォルトルートは大抵 BGP で受ける。CLI 単独で設定する場合は `config bgp` 系（`config-bgp.md` 参照）または `vtysh` で `neighbor X default-originate` / `default-information originate` を使う。
+業務トラフィック向けのデフォルトルートは大抵 [BGP](../../reference/glossary.md#term-bgp) で受ける。CLI 単独で設定する場合は `config bgp` 系（`config-bgp.md` 参照）または `vtysh` で `neighbor X default-originate` / `default-information originate` を使う。
 
 ## STATIC_ROUTE の更新ロジック（補足）
 
@@ -135,7 +135,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- BGP / OSPF からの default route と static default route が共存すると AD で挙動が変わる。
+- [BGP](../../reference/glossary.md#term-bgp) / OSPF からの default route と static default route が共存すると AD で挙動が変わる。
 - VRF 指定を忘れると default VRF に入り、想定外の経路漏れになる。
 
 ### 関連する show / debug
@@ -147,4 +147,4 @@ vtysh -c 'show ip route 0.0.0.0/0'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 35efc0f6df25 -->
+<!-- glossary-links-injected: eb2ea0d223db -->

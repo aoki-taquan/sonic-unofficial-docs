@@ -91,7 +91,7 @@ sudo logrotate -d /etc/logrotate.conf 2>&1 | head -50
 ## 対処方法
 
 - ログレベル正常化: `sonic-db-cli CONFIG_DB hset "LOGGER|<comp>" LOGLEVEL NOTICE`（**ロールバック**: 元の LOGLEVEL を控えて hset で戻す）
-- FRR debug 解除: `vtysh -c "no debug bgp updates"`
+- [FRR](../../reference/glossary.md#term-frr) debug 解除: `vtysh -c "no debug bgp updates"`
 - 古い dump 削除: `sudo find /var/dump/ -name "sonic_dump_*.tar.gz" -mtime +14 -print` で確認後、**退避済みであることを確認してから** `-delete`
 - core dump: `sudo find /var/core/ -mtime +14 -print` で確認、退避後に削除
 - logrotate 強化: `/etc/logrotate.d/rsyslog` で `rotate` / `size` / `compress` を調整
@@ -104,6 +104,6 @@ sudo logrotate -d /etc/logrotate.conf 2>&1 | head -50
 ## 引用元
 
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — generate_dump
-[^2]: sonic-net/sonic-utilities @ master — show/main.py
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — show/main.py
 
-<!-- glossary-links-injected: fb213a7a73e6 -->
+<!-- glossary-links-injected: 3887c0ea65db -->

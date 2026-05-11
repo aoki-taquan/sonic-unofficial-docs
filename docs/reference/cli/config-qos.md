@@ -25,13 +25,13 @@ related:
 
 ## 概要
 
-`config qos` は [QoS](../../reference/glossary.md#term-qos) と buffer 関連テンプレートを再生成して [CONFIG_DB](../../reference/glossary.md#term-config_db) に反映する CLI グループ。`clear` は既存 QoS 設定を削除し、`reload` は platform/HWSKU の `qos.json.j2` と `buffers*.json.j2` を `sonic-cfggen` で展開する[^1]。
+`config qos` は [QoS](../../reference/glossary.md#term-qos) と buffer 関連テンプレートを再生成して [CONFIG_DB](../../reference/glossary.md#term-config_db) に反映する CLI グループ。`clear` は既存 [QoS](../../reference/glossary.md#term-qos) 設定を削除し、`reload` は platform/HWSKU の `qos.json.j2` と `buffers*.json.j2` を `sonic-cfggen` で展開する[^1]。
 
 ## コマンド一覧
 
 | コマンド | 用途 |
 |---------|------|
-| `config qos clear [--verbose]` | QoS 設定を削除 |
+| `config qos clear [--verbose]` | [QoS](../../reference/glossary.md#term-qos) 設定を削除 |
 | `config qos reload [options]` | QoS/buffer 設定をテンプレートから再投入 |
 
 ## `config qos reload`
@@ -50,7 +50,7 @@ config qos reload [--ports <port[,port...]>]
 
 `--ports` がない場合、既存 QoS を clear してから HWSKU 配下の template を展開する。Mellanox/Barefoot で `--no-dynamic-buffer` が無い場合は `buffers_dynamic.json.j2` を使い、`DEVICE_METADATA|localhost` の `buffer_model` を `dynamic` に更新する。そうでない場合は `buffers.json.j2` を使い、対応 ASIC では `traditional` に更新する[^3]。
 
-`--dry_run` を指定すると CONFIG_DB に書かず、展開後 JSON をファイルへ出力する。
+`--dry_run` を指定すると [CONFIG_DB](../../reference/glossary.md#term-config_db) に書かず、展開後 JSON をファイルへ出力する。
 
 ## 関連する CONFIG_DB
 
@@ -66,7 +66,7 @@ config qos reload [--ports <port[,port...]>]
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`PORT_QOS_MAP`](../config-db/port-qos-map.md) / [`BUFFER_PORT_INGRESS_PROFILE_LIST`](../config-db/buffer-port-ingress-profile-list.md) / [`BUFFER_PORT_EGRESS_PROFILE_LIST`](../config-db/buffer-port-egress-profile-list.md) / [`BUFFER_PG`](../config-db/buffer-pg.md) / [`BUFFER_QUEUE`](../config-db/buffer-queue.md) / [`DEVICE_METADATA`](../config-db/device-metadata.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`PORT_QOS_MAP`](../config-db/port-qos-map.md) / [`BUFFER_PORT_INGRESS_PROFILE_LIST`](../config-db/buffer-port-ingress-profile-list.md) / [`BUFFER_PORT_EGRESS_PROFILE_LIST`](../config-db/buffer-port-egress-profile-list.md) / [`BUFFER_PG`](../config-db/buffer-pg.md) / [`BUFFER_QUEUE`](../config-db/buffer-queue.md) / [`DEVICE_METADATA`](../config-db/device-metadata.md)
 
 <!-- ref-triangle:end -->
 
@@ -166,4 +166,4 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 87f89dd63737 -->
+<!-- glossary-links-injected: 5026cb7f9a38 -->

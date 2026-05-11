@@ -46,19 +46,19 @@ flowchart LR
 DHCPV4_RELAY|<name>
 ```
 
-`<name>` は `Vlan<id>` 形式（VLAN 名）。
+`<name>` は `Vlan<id>` 形式（[VLAN](../../reference/glossary.md#term-vlan) 名）。
 
 ## フィールド一覧
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `name` (key) | string `Vlan<id>` | ✅ | - | VLAN 名 |
+| `name` (key) | string `Vlan<id>` | ✅ | - | [VLAN](../../reference/glossary.md#term-vlan) 名 |
 | `dhcpv4_servers` | leaf-list ipv4-address (min 1) | ✅ | - | リレー先 DHCPv4 サーバ |
-| `server_vrf` | leafref `VRF.name` | - | - | サーバ側 VRF。設定時は `link_selection`、`server_id_override`、`vrf_selection` が `enable` 必須 (`must`) |
+| `server_vrf` | leafref `VRF.name` | - | - | サーバ側 [VRF](../../reference/glossary.md#term-vrf)。設定時は `link_selection`、`server_id_override`、`vrf_selection` が `enable` 必須 (`must`) |
 | `source_interface` | union (PORT / PORTCHANNEL / VLAN / LOOPBACK) | - | - | リレーパケットの source IP を決める IF |
 | `link_selection` | `mode-status` | - | `disable` | RFC 3527 Link selection sub-option |
 | `server_id_override` | `mode-status` | - | `disable` | RFC 5107 server-id override |
-| `vrf_selection` | `mode-status` | - | `disable` | RFC 6607 VRF selection |
+| `vrf_selection` | `mode-status` | - | `disable` | RFC 6607 [VRF](../../reference/glossary.md#term-vrf) selection |
 | その他 | - | - | - | （詳細は [YANG](../../reference/glossary.md#term-yang) 直参照） |
 
 ## 制約 (must)
@@ -75,13 +75,13 @@ DHCPV4_RELAY|<name>
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`VLAN_INTERFACE`、`VRF`、`LOOPBACK_INTERFACE`、`DEVICE_METADATA` (`has_sonic_dhcpv4_relay`)
 - 関連 CLI: `config dhcp_relay ipv4 add/del`
-- 関連 YANG: `sonic-dhcpv4-relay`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-dhcpv4-relay`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-dhcpv4-relay`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-dhcpv4-relay`
 - CLI: [`config dhcp_relay`](../cli/config-dhcp-relay.md)
 
 <!-- ref-triangle:end -->
@@ -117,4 +117,4 @@ show dhcprelay_helper ipv4
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: cbb901eb2b24 -->
+<!-- glossary-links-injected: 46a21a7d2d5c -->

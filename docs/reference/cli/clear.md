@@ -143,7 +143,7 @@ sonic-clear (= clear)
 
 ### `sonic-clear asic-sdk-health-event [-n <namespace>]`
 
-CONFIG_DB ではなく **[STATE_DB](../../reference/glossary.md#term-state_db) の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを namespace ごとに delete** する。multi-ASIC 時に `-n` 指定で対象 namespace のみ。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく **[STATE_DB](../../reference/glossary.md#term-state_db) の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを namespace ごとに delete** する。multi-ASIC 時に `-n` 指定で対象 namespace のみ。
 
 ### `sonic-clear spanning-tree`
 
@@ -151,16 +151,16 @@ CONFIG_DB ではなく **[STATE_DB](../../reference/glossary.md#term-state_db) �
 
 ## ip / ipv6 サブグループ
 
-`cli.add_command(arp)` と `ip.add_command(arp)` の **両方**が呼ばれており、`sonic-clear arp` と `sonic-clear ip arp` がエイリアス的に同じ機能を提供する（NDP も同様）。[BGP](../../reference/glossary.md#term-bgp) セッションリセット系は `routing_stack` の値に応じて `clear/bgp_quagga_v4.py` または `clear/bgp_frr_v6.py` 等が動的に `ip.add_command(bgp)` / `ipv6.add_command(bgp)` を実行する。
+`cli.add_command(arp)` と `ip.add_command(arp)` の **両方**が呼ばれており、`sonic-clear arp` と `sonic-clear ip arp` がエイリアス的に同じ機能を提供する（[NDP](../../reference/glossary.md#term-ndp) も同様）。[BGP](../../reference/glossary.md#term-bgp) セッションリセット系は `routing_stack` の値に応じて `clear/bgp_quagga_v4.py` または `clear/bgp_frr_v6.py` 等が動的に `ip.add_command(bgp)` / `ipv6.add_command(bgp)` を実行する。
 
 ## STATE_DB / CONFIG_DB との接点
 
 | テーブル | 操作 | 操作するコマンド |
 |----------|------|------------------|
-| STATE_DB `ASIC_SDK_HEALTH_EVENT_TABLE*` | delete | `asic-sdk-health-event` |
-| 各 COUNTERS_DB スナップショット | 外部ツール経由 | `counters` 系全般 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) `ASIC_SDK_HEALTH_EVENT_TABLE*` | delete | `asic-sdk-health-event` |
+| 各 [COUNTERS_DB](../../reference/glossary.md#term-counters_db) スナップショット | 外部ツール経由 | `counters` 系全般 |
 
-それ以外のコマンドは **kernel neighbor table** や **[SAI](../../reference/glossary.md#term-sai) 経由の SDK 状態** を操作するもので CONFIG_DB は触らない。
+それ以外のコマンドは **kernel neighbor table** や **[SAI](../../reference/glossary.md#term-sai) 経由の SDK 状態** を操作するもので [CONFIG_DB](../../reference/glossary.md#term-config_db) は触らない。
 
 <!-- cli-mermaid -->
 ### データフロー (手動作成)
@@ -199,7 +199,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- counters / ARP / FDB / BGP セッションの状態をリセットする。
+- counters / [ARP](../../reference/glossary.md#term-arp) / [FDB](../../reference/glossary.md#term-fdb) / [BGP](../../reference/glossary.md#term-bgp) セッションの状態をリセットする。
 - 障害解析前のベースラインクリア。
 
 ### よくある落とし穴
@@ -216,4 +216,4 @@ show mac
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 14dca49aeb7d -->
+<!-- glossary-links-injected: cd64f6828d1b -->

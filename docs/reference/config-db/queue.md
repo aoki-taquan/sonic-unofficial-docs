@@ -43,12 +43,12 @@ flowchart LR
 
 ## key 構造
 
-非 VOQ:
+非 [VOQ](../../reference/glossary.md#term-voq):
 ```
 QUEUE|<ifname>|<qindex>
 ```
 
-VOQ chassis:
+[VOQ](../../reference/glossary.md#term-voq) chassis:
 ```
 QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 ```
@@ -62,7 +62,7 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 | `ifname` (key) | leafref `PORT.name` または `CPU` | ✅ | IF 名 |
 | `qindex` (key) | string | ✅ | Q-index または範囲 |
 | `scheduler` | leafref `SCHEDULER.name` | - | スケジューラ参照 |
-| `wred_profile` | leafref `WRED_PROFILE.name` | - | WRED プロファイル参照 |
+| `wred_profile` | leafref `WRED_PROFILE.name` | - | [WRED](../../reference/glossary.md#term-wred) プロファイル参照 |
 
 `when` 条件: `switch_type` が `voq` でないか未指定。
 
@@ -75,13 +75,13 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 | `ifname` (key) | string (1..128) | ✅ | IF 名 |
 | `qindex` (key) | string | ✅ | Q-index |
 | `scheduler` | leafref `SCHEDULER.name` | - | スケジューラ |
-| `wred_profile` | leafref `WRED_PROFILE.name` | - | WRED プロファイル |
+| `wred_profile` | leafref `WRED_PROFILE.name` | - | [WRED](../../reference/glossary.md#term-wred) プロファイル |
 
 `when` 条件: `switch_type = voq`。
 
 ## 購読者
 
-- `qosorch`: SAI queue scheduler / WRED を生成
+- `qosorch`: [SAI](../../reference/glossary.md#term-sai) queue scheduler / WRED を生成
 - `bufferorch` と協調
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -94,13 +94,13 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-queue`](../yang/sonic-queue.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-queue`](../yang/sonic-queue.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-queue.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-queue.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -120,7 +120,7 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 
 ### よくある誤設定
 
-- [PFC](../../reference/glossary.md#term-pfc) 対応 queue に `wred_profile` を当てて ECN を有効にしないと、輻輳時に PFC が連続発火する。
+- [PFC](../../reference/glossary.md#term-pfc) 対応 queue に `wred_profile` を当てて ECN を有効にしないと、輻輳時に [PFC](../../reference/glossary.md#term-pfc) が連続発火する。
 
 ### 確認コマンド
 
@@ -130,4 +130,4 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 74fd06c02dcc -->
+<!-- glossary-links-injected: 2ae60ae29e92 -->

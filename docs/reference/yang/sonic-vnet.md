@@ -107,7 +107,7 @@ module: sonic-vnet
 | `advertise_prefix` | `sonic-vnet/VNET/VNET_LIST/advertise_prefix` | `boolean` |  |  |  | Flag to enable advertisement of route prefixes belonging to the Vnet. |
 | `overlay_dmac` | `sonic-vnet/VNET/VNET_LIST/overlay_dmac` | `yang:mac-address` |  |  |  | Overlay Dest MAC address to be used by Vnet ping. |
 | `src_mac` | `sonic-vnet/VNET/VNET_LIST/src_mac` | `yang:mac-address` |  |  |  | source mac address for the Vnet |
-| `vnet_name` | `sonic-vnet/VNET_ROUTE/VNET_ROUTE_LIST/vnet_name` | `leafref` | yes |  | /svnet:sonic-vnet/svnet:VNET/svnet:VNET_LIST/svnet:name | VNET name |
+| `vnet_name` | `sonic-vnet/VNET_ROUTE/VNET_ROUTE_LIST/vnet_name` | `leafref` | yes |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | [VNET](../../reference/glossary.md#term-vnet) name |
 | `prefix` | `sonic-vnet/VNET_ROUTE/VNET_ROUTE_LIST/prefix` | `stypes:sonic-ip4-prefix` | yes |  |  | IPv4 prefix in CIDR format |
 | `nexthop` | `sonic-vnet/VNET_ROUTE/VNET_ROUTE_LIST/nexthop` | `stypes:ipv4-address-list` | yes |  |  | Nexthop IP addresses |
 | `ifname` | `sonic-vnet/VNET_ROUTE/VNET_ROUTE_LIST/ifname` | `string` | yes |  |  | Interface names |
@@ -132,8 +132,8 @@ module: sonic-vnet
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `VNET`
-- CONFIG_DB: `VNET_ROUTE`
-- CONFIG_DB: `VNET_ROUTE_TUNNEL`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VNET_ROUTE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VNET_ROUTE_TUNNEL`
 - CLI: `config vnet`
 
 <!-- ref-triangle:start -->
@@ -149,4 +149,4 @@ module: sonic-vnet
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vnet.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 1f42b84fd2f9 -->
+<!-- glossary-links-injected: 2acdb695c264 -->

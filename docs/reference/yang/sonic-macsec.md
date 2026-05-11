@@ -97,7 +97,7 @@ module: sonic-macsec
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MACSEC_PROFILE`](../config-db/macsec-profile.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MACSEC_PROFILE`](../config-db/macsec-profile.md)
 - CLI: `config macsec`
 
 <!-- ref-triangle:end -->
@@ -125,4 +125,4 @@ show macsec
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-macsec.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 896d391185a9 -->

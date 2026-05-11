@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`LLDP` テーブルはシステム全体の [LLDP](../../reference/glossary.md#term-lldp) 設定 (`GLOBAL` キー) を、`LLDP_PORT` テーブルはポート単位の LLDP 有効化 / モードを保持する[^1]。`lldp-syncd` および `docker-lldp` 内の `lldpd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み出して動作する。
+`LLDP` テーブルはシステム全体の [LLDP](../../reference/glossary.md#term-lldp) 設定 (`GLOBAL` キー) を、`LLDP_PORT` テーブルはポート単位の [LLDP](../../reference/glossary.md#term-lldp) 有効化 / モードを保持する[^1]。`lldp-syncd` および `docker-lldp` 内の `lldpd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み出して動作する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -63,7 +63,7 @@ LLDP_PORT|<ifname>
 | `system_description` | string | — | システム説明 |
 | `supp_mgmt_address_tlv` | boolean | false | Management Address TLV 送信抑制 |
 | `supp_system_capabilities_tlv` | boolean | false | System Capabilities TLV 送信抑制 |
-| `enabled` | boolean (grouping `lldp_mode_config`) | true | LLDP 有効化 |
+| `enabled` | boolean (grouping `lldp_mode_config`) | true | [LLDP](../../reference/glossary.md#term-lldp) 有効化 |
 | `mode` | enum `RECEIVE` / `TRANSMIT` | — | RX/TX モード |
 
 ## フィールド (`LLDP_PORT|<ifname>`)
@@ -87,15 +87,15 @@ grouping `lldp_mode_config` を `uses`:
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT`、`DEVICE_NEIGHBOR`、`DEVICE_NEIGHBOR_METADATA`
-- 関連 YANG: `sonic-lldp`、`sonic-port`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT`、`DEVICE_NEIGHBOR`、`DEVICE_NEIGHBOR_METADATA`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-lldp`、`sonic-port`
 - 関連 CLI: `config lldp`、`show lldp`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-lldp`](../yang/sonic-lldp.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-lldp`](../yang/sonic-lldp.md)
 - CLI: `config lldp`
 
 <!-- ref-triangle:end -->
@@ -128,4 +128,4 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4f72b3e79b97 -->
+<!-- glossary-links-injected: 9d2a20a8f03b -->

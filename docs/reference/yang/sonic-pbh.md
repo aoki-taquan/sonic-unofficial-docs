@@ -140,8 +140,8 @@ module: sonic-pbh
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PBH_HASH_FIELD`
-- CONFIG_DB: `PBH_HASH`
-- CONFIG_DB: `PBH_RULE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PBH_HASH`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PBH_RULE`
 - CONFIG_DB: `PBH_TABLE`
 - CLI: なし
 
@@ -162,7 +162,7 @@ module: sonic-pbh
 
 ### よくある落とし穴
 
-- `hash_field_list` leafref の順序が異なると別エントリ扱いになり、SAI 側で hash 計算結果が変わる。
+- `hash_field_list` leafref の順序が異なると別エントリ扱いになり、[SAI](../../reference/glossary.md#term-sai) 側で hash 計算結果が変わる。
 
 ### 関連する config / show コマンド
 
@@ -176,4 +176,4 @@ show pbh statistics
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pbh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: bbcc78132807 -->
+<!-- glossary-links-injected: a26ef253c175 -->

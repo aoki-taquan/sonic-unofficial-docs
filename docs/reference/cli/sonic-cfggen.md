@@ -26,7 +26,7 @@ related:
 1. **データ収集**: minigraph (XML) / device-description / hwsku 設定 / yang JSON / 任意 YAML / 任意 JSON / [CONFIG_DB](../../reference/glossary.md#term-config_db) / 平面オプションを 1 つの dict にマージ
 2. **テンプレートレンダリング**: jinja2 テンプレートを上記 dict を context として描画
 3. **値の取り出し**: jinja2 式 (`-v`) で任意の値を文字列または JSON で出力
-4. **CONFIG_DB 書き込み**: `--write-to-db` で集約 dict を CONFIG_DB に直接書く
+4. **[CONFIG_DB](../../reference/glossary.md#term-config_db) 書き込み**: `--write-to-db` で集約 dict を [CONFIG_DB](../../reference/glossary.md#term-config_db) に直接書く
 
 `config` / `show` 系 CLI の多くがこのコマンドを `subprocess` で呼び出して、`--var-json <TABLE>` で個別テーブルだけ JSON 出力する用途で使っている[^1]。
 
@@ -142,4 +142,4 @@ flowchart LR
 
 [^1]: 例: `show runningconfiguration ports` は `sonic-cfggen -d --var-json PORT [--key NAME]` を呼ぶ（`show/main.py` L1868）。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1868>
 
-<!-- glossary-links-injected: 41f564526bd6 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

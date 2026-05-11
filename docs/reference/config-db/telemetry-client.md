@@ -79,11 +79,11 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 ## 購読者
 
-- `docker-sonic-gnmi` (旧 `telemetry` コンテナ) の dial-out クライアント: CONFIG_DB → gRPC dial-out 接続を確立
+- `docker-sonic-gnmi` (旧 `telemetry` コンテナ) の dial-out クライアント: [CONFIG_DB](../../reference/glossary.md#term-config_db) → gRPC dial-out 接続を確立
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`TELEMETRY`](telemetry.md) (dial-in 側設定)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TELEMETRY`](telemetry.md) (dial-in 側設定)
 - CLI: 標準 CLI ラッパなし。CONFIG_DB / init_cfg.json で直接設定
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry_client`
 
@@ -91,7 +91,7 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 ## 関連リファレンス
 
-- YANG: `sonic-telemetry_client`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry_client`
 
 <!-- ref-triangle:end -->
 
@@ -124,4 +124,4 @@ docker logs gnmi | grep -i dial-out
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 4b3b3fd0739b -->

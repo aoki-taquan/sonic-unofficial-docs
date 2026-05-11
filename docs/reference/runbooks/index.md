@@ -49,14 +49,14 @@ related:
 | 14 | [CONFIG_DB](../../reference/glossary.md#term-config_db) save / load が反映されない | [config-save-load.md](config-save-load.md) |
 | 15 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) が応答しない | [smartswitch-dpu-unresponsive.md](smartswitch-dpu-unresponsive.md) |
 | 16 | Telemetry が送信されない ([gNMI](../../reference/glossary.md#term-gnmi) dial-out) | [telemetry-dialout-not-sending.md](telemetry-dialout-not-sending.md) |
-| 17 | gNMI Subscribe が頻繁に切れる | [gnmi-subscribe-disconnect.md](gnmi-subscribe-disconnect.md) |
+| 17 | [gNMI](../../reference/glossary.md#term-gnmi) Subscribe が頻繁に切れる | [gnmi-subscribe-disconnect.md](gnmi-subscribe-disconnect.md) |
 | 18 | Y-cable firmware 更新が失敗する | [ycable-firmware-update-failure.md](ycable-firmware-update-failure.md) |
 | 19 | [PINS](../../reference/glossary.md#term-pins) gRPC (P4Runtime) が応答しない | [pins-grpc-unresponsive.md](pins-grpc-unresponsive.md) |
-| 20 | [CRM](../../reference/glossary.md#term-crm) threshold 越え (route / nexthop / [FDB](../../reference/glossary.md#term-fdb) / ACL) | [crm-threshold-exceeded.md](crm-threshold-exceeded.md) |
+| 20 | [CRM](../../reference/glossary.md#term-crm) threshold 越え (route / nexthop / [FDB](../../reference/glossary.md#term-fdb) / [ACL](../../reference/glossary.md#term-acl)) | [crm-threshold-exceeded.md](crm-threshold-exceeded.md) |
 | 21 | ASIC link が UP しない (autoneg / FEC / speed) | [asic-link-autoneg-mismatch.md](asic-link-autoneg-mismatch.md) |
 | 22 | MACsec MKA セッションが確立しない | [macsec-mka-not-established.md](macsec-mka-not-established.md) |
 | 23 | [DASH](../../reference/glossary.md#term-dash) [ENI](../../reference/glossary.md#term-eni) が落ちる | [dash-eni-down.md](dash-eni-down.md) |
-| 24 | SmartSwitch DPU graceful shutdown 失敗 | [smartswitch-dpu-graceful-shutdown-failure.md](smartswitch-dpu-graceful-shutdown-failure.md) |
+| 24 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) graceful shutdown 失敗 | [smartswitch-dpu-graceful-shutdown-failure.md](smartswitch-dpu-graceful-shutdown-failure.md) |
 | 25 | APP_DB → [ASIC_DB](../../reference/glossary.md#term-asic_db) の反映遅延 | [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md) |
 | 26 | SNMPv3 user 認証失敗 | [snmpv3-auth-failure.md](snmpv3-auth-failure.md) |
 | 27 | [NAT](../../reference/glossary.md#term-nat) translation が漏れる | [nat-translation-miss.md](nat-translation-miss.md) |
@@ -65,17 +65,17 @@ related:
 | 30 | show techsupport の size 肥大化対策 | [techsupport-size-bloat.md](techsupport-size-bloat.md) |
 | 31 | [PortChannel](../../reference/glossary.md#term-portchannel) メンバーで [LACP](../../reference/glossary.md#term-lacp) が確立しない | [portchannel-lacp-not-established.md](portchannel-lacp-not-established.md) |
 | 32 | [SNMP](../../reference/glossary.md#term-snmp) polling が timeout する | [snmp-polling-timeout.md](snmp-polling-timeout.md) |
-| 33 | BGP route が広告されない | [bgp-route-not-advertised.md](bgp-route-not-advertised.md) |
-| 34 | ACL ルールが効かない / counter が増えない | [acl-rule-no-hit.md](acl-rule-no-hit.md) |
+| 33 | [BGP](../../reference/glossary.md#term-bgp) route が広告されない | [bgp-route-not-advertised.md](bgp-route-not-advertised.md) |
+| 34 | [ACL](../../reference/glossary.md#term-acl) ルールが効かない / counter が増えない | [acl-rule-no-hit.md](acl-rule-no-hit.md) |
 | 35 | Interface MTU mismatch によるドロップ | [interface-mtu-mismatch.md](interface-mtu-mismatch.md) |
 | 36 | Routing loop が発生している | [routing-loop-detected.md](routing-loop-detected.md) |
 | 37 | minigraph 適用後に reload が固まる | [minigraph-reload-stuck.md](minigraph-reload-stuck.md) |
 | 38 | T0/T1 リンクが flap し続ける | [link-flapping.md](link-flapping.md) |
-| 39 | CONFIG_DB の永続化が失敗する | [config-db-persistence-failure.md](config-db-persistence-failure.md) |
+| 39 | [CONFIG_DB](../../reference/glossary.md#term-config_db) の永続化が失敗する | [config-db-persistence-failure.md](config-db-persistence-failure.md) |
 | 40 | コンテナ memory limit 超過 / OOM kill | [container-memory-limit-exceeded.md](container-memory-limit-exceeded.md) |
 | 41 | config save 後に予期しない diff が出る | [config-save-diff-unexpected.md](config-save-diff-unexpected.md) |
-| 42 | SAI table full (route / nexthop / FDB) | [sai-table-full.md](sai-table-full.md) |
-| 43 | SmartSwitch DPU image install 失敗 | [smartswitch-dpu-image-install-failure.md](smartswitch-dpu-image-install-failure.md) |
+| 42 | [SAI](../../reference/glossary.md#term-sai) table full (route / nexthop / [FDB](../../reference/glossary.md#term-fdb)) | [sai-table-full.md](sai-table-full.md) |
+| 43 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) image install 失敗 | [smartswitch-dpu-image-install-failure.md](smartswitch-dpu-image-install-failure.md) |
 | 44 | show platform fan / psu 異常値 | [platform-fan-psu-anomaly.md](platform-fan-psu-anomaly.md) |
 | 45 | show interfaces counters が突然リセット | [interface-counters-reset.md](interface-counters-reset.md) |
 
@@ -89,6 +89,6 @@ related:
 ## 引用元
 
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb（`show/`, `scripts/` 配下の各種ツール）
-[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596（[orchagent](../../reference/glossary.md#term-orchagent), syncd 連携）
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596（[orchagent](../../reference/glossary.md#term-orchagent), [syncd](../../reference/glossary.md#term-syncd) 連携）
 
-<!-- glossary-links-injected: 46f1dbcad950 -->
+<!-- glossary-links-injected: f57a6379559d -->

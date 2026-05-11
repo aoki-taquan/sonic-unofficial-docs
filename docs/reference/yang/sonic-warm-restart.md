@@ -60,9 +60,9 @@ module: sonic-warm-restart
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `module` | `sonic-warm-restart/WARM_RESTART/WARM_RESTART_LIST/module` | `module-name` | yes |  | system, bgp, [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd), swss, syncd, natsyncd, etc. | Name of the module |
-| `bgp_eoiu` | `sonic-warm-restart/WARM_RESTART/WARM_RESTART_LIST/bgp_eoiu` | `boolean` |  | false |  | BGP End-of-Initial Update (EOIU) signal enable/disable |
-| `bgp_timer` | `sonic-warm-restart/WARM_RESTART/WARM_RESTART_LIST/bgp_timer` | `uint16` |  |  | range 1..3600 | BGP graceful restart timer (seconds) |
+| `module` | `sonic-warm-restart/WARM_RESTART/WARM_RESTART_LIST/module` | `module-name` | yes |  | system, bgp, [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd), swss, [syncd](../../reference/glossary.md#term-syncd), natsyncd, etc. | Name of the module |
+| `bgp_eoiu` | `sonic-warm-restart/WARM_RESTART/WARM_RESTART_LIST/bgp_eoiu` | `boolean` |  | false |  | [BGP](../../reference/glossary.md#term-bgp) End-of-Initial Update (EOIU) signal enable/disable |
+| `bgp_timer` | `sonic-warm-restart/WARM_RESTART/WARM_RESTART_LIST/bgp_timer` | `uint16` |  |  | range 1..3600 | [BGP](../../reference/glossary.md#term-bgp) graceful restart timer (seconds) |
 | `teamsyncd_timer` | `sonic-warm-restart/WARM_RESTART/WARM_RESTART_LIST/teamsyncd_timer` | `uint16` |  |  | range 1..3600 | teamsyncd warm restart timer (seconds) |
 | `neighsyncd_timer` | `sonic-warm-restart/WARM_RESTART/WARM_RESTART_LIST/neighsyncd_timer` | `uint16` |  |  | range 1..9999 | [neighsyncd](../../reference/glossary.md#term-neighsyncd) warm restart timer (seconds) |
 
@@ -83,7 +83,7 @@ module: sonic-warm-restart
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`WARM_RESTART`](../config-db/warm-restart.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`WARM_RESTART`](../config-db/warm-restart.md)
 - CLI: [`config warm_restart`](../cli/config-warm_restart.md)
 
 <!-- ref-triangle:end -->
@@ -92,4 +92,4 @@ module: sonic-warm-restart
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-warm-restart.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: acba13d26a22 -->
+<!-- glossary-links-injected: b59d29bb94ae -->

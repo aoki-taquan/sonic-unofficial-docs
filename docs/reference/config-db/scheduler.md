@@ -69,7 +69,7 @@ SCHEDULER|<name>
 
 ## 購読者
 
-- `qosorch`: SAI scheduler を生成
+- `qosorch`: [SAI](../../reference/glossary.md#term-sai) scheduler を生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -81,13 +81,13 @@ SCHEDULER|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-scheduler`](../yang/sonic-scheduler.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-scheduler`](../yang/sonic-scheduler.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-scheduler.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-scheduler.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-scheduler.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-scheduler.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -118,4 +118,4 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: bbcc78132807 -->
+<!-- glossary-links-injected: 812c93439b0b -->

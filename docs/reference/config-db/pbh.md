@@ -89,20 +89,20 @@ PBH_HASH_FIELD|<hash_field_name>
 
 ## 購読者
 
-- `sonic-utilities/scripts/pbh`（CLI 側スクリプト）: CONFIG_DB の PBH table / rule / hash / hash-field を読み取り、ユーザ向け CLI を提供する（独立した `pbhmgrd` プロセスは master には存在しない）。
-- `orchagent` の `PbhOrch` (`sonic-swss/orchagent/pbhorch.cpp`): CONFIG_DB の PBH 設定を直接 subscribe して [SAI](../../reference/glossary.md#term-sai) hash / [ACL](../../reference/glossary.md#term-acl) 相当のオブジェクトへ反映する。
+- `sonic-utilities/scripts/pbh`（CLI 側スクリプト）: [CONFIG_DB](../../reference/glossary.md#term-config_db) の PBH table / rule / hash / hash-field を読み取り、ユーザ向け CLI を提供する（独立した `pbhmgrd` プロセスは master には存在しない）。
+- `orchagent` の `PbhOrch` (`sonic-swss/orchagent/pbhorch.cpp`): [CONFIG_DB](../../reference/glossary.md#term-config_db) の PBH 設定を直接 subscribe して [SAI](../../reference/glossary.md#term-sai) hash / [ACL](../../reference/glossary.md#term-acl) 相当のオブジェクトへ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `PBH_HASH`、`PBH_HASH_FIELD`、`PORT`、`PORTCHANNEL`
 - 関連 CLI: `config pbh`
-- 関連 YANG: `sonic-pbh`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pbh`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-pbh`](../yang/sonic-pbh.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-pbh`](../yang/sonic-pbh.md)
 - CLI: `config pbh`
 
 <!-- ref-triangle:end -->
@@ -137,4 +137,4 @@ show pbh statistics
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: df88c1264148 -->
+<!-- glossary-links-injected: 32758c44ab11 -->

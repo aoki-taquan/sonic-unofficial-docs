@@ -18,7 +18,7 @@ related:
 
 # FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）
 
-このページは [FEC FLR Support in SONiC（概要ハブ）](fec-flr-support-in-sonic.md) の派生ページで、**概念・指標・公式** に絞って整理する。CONFIG_DB / CLI / 確認手順は [fec-flr-support-in-sonic-operations.md](fec-flr-support-in-sonic-operations.md)、`port_flr.lua` プラグインと FlexCounterOrch の内部実装は [fec-flr-support-in-sonic-internals.md](fec-flr-support-in-sonic-internals.md)、制限事項は [fec-flr-support-in-sonic-limitations.md](fec-flr-support-in-sonic-limitations.md) を参照。
+このページは [FEC FLR Support in SONiC（概要ハブ）](fec-flr-support-in-sonic.md) の派生ページで、**概念・指標・公式** に絞って整理する。[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / 確認手順は [fec-flr-support-in-sonic-operations.md](fec-flr-support-in-sonic-operations.md)、`port_flr.lua` プラグインと FlexCounterOrch の内部実装は [fec-flr-support-in-sonic-internals.md](fec-flr-support-in-sonic-internals.md)、制限事項は [fec-flr-support-in-sonic-limitations.md](fec-flr-support-in-sonic-limitations.md) を参照。
 
 ## 1. FLR の定義
 
@@ -50,7 +50,7 @@ RS-544: MFC = 8
 
 ## 3. interleaving factor X
 
-X は **複数 codeword を時間軸で交織し、バーストエラーを 1 codeword に集中させない** ための係数。port speed × lane 数で決まる固定テーブルが HLD に示されている[^1]:
+X は **複数 codeword を時間軸で交織し、バーストエラーを 1 codeword に集中させない** ための係数。port speed × lane 数で決まる固定テーブルが [HLD](../reference/glossary.md#term-hld) に示されている[^1]:
 
 | Speed | Lanes | X |
 |-------|-------|---|
@@ -63,7 +63,7 @@ X は **複数 codeword を時間軸で交織し、バーストエラーを 1 co
 | 100G  | 2 | 2 |
 | 100G  | 1 | 1 or 2 (autoneg) |
 
-理想的には SAI 属性で取得したいが新 SAI 属性が無いため、当面は表で代替する設計[^1]。
+理想的には [SAI](../reference/glossary.md#term-sai) 属性で取得したいが新 SAI 属性が無いため、当面は表で代替する設計[^1]。
 
 ## 4. Observed FLR と Predicted FLR
 
@@ -108,3 +108,5 @@ interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 5440b86e15ed -->

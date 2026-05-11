@@ -24,7 +24,7 @@ related:
 
 OrchAgent が **唯一の ERROR_DB producer** として位置づけられる[^1]:
 
-1. SAI 呼び出し失敗を **ASIC_DB の notification channel** 経由で syncd から受領
+1. [SAI](../reference/glossary.md#term-sai) 呼び出し失敗を **[ASIC_DB](../reference/glossary.md#term-asic_db) の notification channel** 経由で [syncd](../reference/glossary.md#term-syncd) から受領
 2. SAI status → SWSS_RC のマッピングテーブルで翻訳
 3. 対象 table 名（`ROUTE_TABLE` / `NEIGH_TABLE` 等）と key を引いて ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE のキーを生成
 4. ERROR_DB に SET し、pub/sub channel に publish
@@ -78,7 +78,7 @@ app は `rc` フィールドだけ見ればよく、SAI ヘッダ依存が消え
 | `ERROR_DB` table 名 define | ⚠️ 未実装 | `sonic-swss-common/common/schema.h` に `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` のシンボル無し |
 | `ErrorListener` / `ErrorReporter` | ⚠️ 未実装 | `sonic-swss/orchagent/` 配下に該当クラス無し |
 | `show error-database` CLI | ⚠️ 未実装 | `sonic-utilities/` に該当無し |
-| 代替: CRM | ✓ production 稼働中 | `sonic-swss/orchagent/crmorch.cpp`、`show crm resources` |
+| 代替: [CRM](../reference/glossary.md#term-crm) | ✓ production 稼働中 | `sonic-swss/orchagent/crmorch.cpp`、`show crm resources` |
 
 行番号付きの確認結果と grep 結果は [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md) を参照。
 
@@ -106,3 +106,5 @@ app は `rc` フィールドだけ見ればよく、SAI ヘッダ依存が消え
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 562a036f4d4a -->

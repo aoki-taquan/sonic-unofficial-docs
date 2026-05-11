@@ -79,7 +79,7 @@ module: sonic-tc-priority-group-map
 
 ## 関連リファレンス
 
-- CONFIG_DB: `TC_TO_PRIORITY_GROUP_MAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `TC_TO_PRIORITY_GROUP_MAP`
 
 <!-- ref-triangle:end -->
 

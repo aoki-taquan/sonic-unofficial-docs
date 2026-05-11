@@ -24,11 +24,11 @@ related:
 
 ## 概要
 
-MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する 3 テーブル[^1]。`iccpd` (`docker-iccpd`) がこれらを購読し、ICCP セッションと MC-LAG メンバー LAG の同期を制御する。
+MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する 3 テーブル[^1]。`iccpd` (`docker-iccpd`) がこれらを購読し、ICCP セッションと MC-[LAG](../../reference/glossary.md#term-lag) メンバー [LAG](../../reference/glossary.md#term-lag) の同期を制御する。
 
 - `MCLAG_DOMAIN` — 1 ドメインの基本パラメータ（最大 1 エントリ）
 - `MCLAG_INTERFACE` — ドメインに紐づく MC-LAG メンバー [PortChannel](../../reference/glossary.md#term-portchannel)
-- `MCLAG_UNIQUE_IP` — MC-LAG ピア間で [VLAN](../../reference/glossary.md#term-vlan) インターフェースに **異なる IP** を持たせる対象 VLAN
+- `MCLAG_UNIQUE_IP` — MC-LAG ピア間で [VLAN](../../reference/glossary.md#term-vlan) インターフェースに **異なる IP** を持たせる対象 [VLAN](../../reference/glossary.md#term-vlan)
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -81,7 +81,7 @@ MCLAG_UNIQUE_IP|<if_name>
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `if_name` (key) | string パターン `Vlan<id>` | unique-ip を許可する VLAN インターフェース名 |
+| `if_name` (key) | string パターン `Vlan<id>` | unique-ip を許可する [VLAN](../../reference/glossary.md#term-vlan) インターフェース名 |
 | `unique_ip` | enum `enable` | 有効化フラグ（無効時はエントリ削除） |
 
 **must 制約**: `MCLAG_DOMAIN_LIST` が少なくとも 1 つ存在すること
@@ -91,19 +91,19 @@ MCLAG_UNIQUE_IP|<if_name>
 ## 購読者
 
 - `iccpd` (`docker-iccpd`) — MC-LAG 制御プレーン
-- 間接的に `teamd` (PortChannel のメンバー同期)
+- 間接的に `teamd` ([PortChannel](../../reference/glossary.md#term-portchannel) のメンバー同期)
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORTCHANNEL`、`PORTCHANNEL_MEMBER`、`VLAN`、`VLAN_INTERFACE`、`PORT`
-- 関連 YANG: `sonic-mclag`、`sonic-portchannel`、`sonic-port`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL`、`PORTCHANNEL_MEMBER`、`VLAN`、`VLAN_INTERFACE`、`PORT`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mclag`、`sonic-portchannel`、`sonic-port`
 - 関連 CLI: `config mclag`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-mclag`](../yang/sonic-mclag.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-mclag`](../yang/sonic-mclag.md)
 - CLI: [`config mclag`](../cli/config-mclag.md)
 
 <!-- ref-triangle:end -->
@@ -140,4 +140,4 @@ show mclag brief
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3bd44109ce5a -->
+<!-- glossary-links-injected: f50d4e92baed -->

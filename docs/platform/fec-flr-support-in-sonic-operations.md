@@ -22,13 +22,13 @@ related:
 
 # FEC FLR 設定・運用
 
-このページは [FEC FLR Support in SONiC（概要ハブ）](fec-flr-support-in-sonic.md) の派生で、**CONFIG_DB / CLI / 確認手順** に絞る。概念・公式は [fec-flr-support-in-sonic-concepts.md](fec-flr-support-in-sonic-concepts.md)、内部実装は [fec-flr-support-in-sonic-internals.md](fec-flr-support-in-sonic-internals.md)、制限事項は [fec-flr-support-in-sonic-limitations.md](fec-flr-support-in-sonic-limitations.md) を参照。
+このページは [FEC FLR Support in SONiC（概要ハブ）](fec-flr-support-in-sonic.md) の派生で、**[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / 確認手順** に絞る。概念・公式は [fec-flr-support-in-sonic-concepts.md](fec-flr-support-in-sonic-concepts.md)、内部実装は [fec-flr-support-in-sonic-internals.md](fec-flr-support-in-sonic-internals.md)、制限事項は [fec-flr-support-in-sonic-limitations.md](fec-flr-support-in-sonic-limitations.md) を参照。
 
 ## 1. 関連する CONFIG_DB
 
 | Table | Key | フィールド |
 |-------|-----|-----------|
-| `FLEX_COUNTER_TABLE` | `PORT` | `FLR_INTERVAL_FACTOR`（HLD 提案。FlexCounterOrch が CONFIG_DB → FLEX_COUNTER_DB に伝搬する想定）[^1] |
+| `FLEX_COUNTER_TABLE` | `PORT` | `FLR_INTERVAL_FACTOR`（[HLD](../reference/glossary.md#term-hld) 提案。FlexCounterOrch が CONFIG_DB → [FLEX_COUNTER_DB](../reference/glossary.md#term-flex_counter_db) に伝搬する想定）[^1] |
 
 > 実装では `FLR_INTERVAL_FACTOR` は CLI / CONFIG_DB 経由で動的に変更できない（[limitations](fec-flr-support-in-sonic-limitations.md) 参照）。lua 側のハードコード値 `120` が使われる。
 
@@ -111,3 +111,5 @@ redis-cli -n 2 hgetall 'RATES:oid:0x1000000000123'
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 7c43e59d3b8e -->

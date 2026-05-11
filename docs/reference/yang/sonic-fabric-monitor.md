@@ -85,7 +85,7 @@ module: sonic-fabric-monitor
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`FABRIC_MONITOR`](../config-db/fabric-monitor.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`FABRIC_MONITOR`](../config-db/fabric-monitor.md)
 - CLI: `config fabric monitor`
 
 <!-- ref-triangle:end -->

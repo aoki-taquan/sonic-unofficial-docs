@@ -22,7 +22,7 @@ related:
 
 ## 1. HLD レベルの制限事項
 
-- 必要な SAI counter（`SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si` 等）が **未サポートの interface は `N/A`** 表示[^1]
+- 必要な [SAI](../reference/glossary.md#term-sai) counter（`SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si` 等）が **未サポートの interface は `N/A`** 表示[^1]
 - 非ゼロ bin が 2 個未満で回帰できない場合は `FLR(P) = 0`[^1]
 - interleaving factor X は **port speed × lane 数の固定テーブル** で代替。新 SAI 属性が追加されればそちらに置換予定[^1]
 - 100G × 1 lane の場合 X は **autonegotiated**（1 or 2）。誤った X を使うと FLR が 2 倍ずれる[^1]
@@ -31,7 +31,7 @@ related:
 
 ## 2. 実装との乖離（2026-05-09 / 05-11 裏取り）
 
-| 項目 | HLD | 現行 master | 結果 |
+| 項目 | [HLD](../reference/glossary.md#term-hld) | 現行 master | 結果 |
 |------|-----|------|------|
 | `port_flr.lua` の swss 取り込み | 必須 | `sonic-swss/orchagent/port_flr.lua` L1-460 に存在。`FEC_FLR` / `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` を RATES テーブルへ書く実装あり | ✓ 実装済み |
 | `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16` の利用 | 必須 | `sonic-swss/crates/countersyncd/src/sai/saiport.rs` L766-782 で S0〜S16 を列挙、L1144- で文字列マッピング | ✓ 実装済み |
@@ -45,7 +45,7 @@ related:
 
 ## 3. 読者への影響
 
-- 高頻度に FLR を見たい場合（例: 30 秒周期）、CONFIG_DB / CLI で周期を縮められない。
+- 高頻度に FLR を見たい場合（例: 30 秒周期）、[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI で周期を縮められない。
 - 計算ロジック（`BIN_FILTER_VALUE` 等）の調整は **lua スクリプトを直接書き換えてビルドし直す** しか手段が無い。
 - 一方、コア機能（FLR / FLR_PREDICTED の計算と表示）は最初から使えるので、観測自体には支障なし。
 
@@ -85,3 +85,5 @@ related:
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 5440b86e15ed -->

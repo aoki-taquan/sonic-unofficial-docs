@@ -60,7 +60,7 @@ sonic-db-cli STATE_DB hgetall "HW_MUX_CABLE_TABLE|Ethernet4"
 ```
 
 - 期待: `state: active` (admin side) / `linkmgrd` view と HW view が一致
-- 異常: `linkmgrd: standby`, `hw: active` などの不一致 → linkmgrd が peer と整合できていない
+- 異常: `linkmgrd: standby`, `hw: active` などの不一致 → [linkmgrd](../../reference/glossary.md#term-linkmgrd) が peer と整合できていない
 
 ### 2. linkmgrd / muxcabled / xcvrd
 
@@ -98,7 +98,7 @@ show muxcable cableinfo
 ## 対処方法
 
 - 一時的に手動切替: `sudo config muxcable mode standby <port>` → 再度 `active`
-- linkmgrd を再起動: `sudo docker restart mux`（または platform 別 service）
+- [linkmgrd](../../reference/glossary.md#term-linkmgrd) を再起動: `sudo docker restart mux`（または platform 別 service）
 - LinkProber heartbeat 経路を Loopback0 で確認・修正
 - 不整合の根本対策として `config reload -y` で全テーブル再注入
 - firmware up-to-date 化 (`config muxcable firmware download/activate`)
@@ -116,4 +116,4 @@ show muxcable cableinfo
 [^1]: sonic-net/sonic-linkmgrd @ 65f5633 — LinkManagerStateMachine
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — muxorch
 
-<!-- glossary-links-injected: eac8b54205e6 -->
+<!-- glossary-links-injected: 269bb3f69ef2 -->

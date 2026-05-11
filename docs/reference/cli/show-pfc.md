@@ -20,13 +20,13 @@ related:
 
 ## 概要
 
-`show pfc` は [PFC](../../reference/glossary.md#term-pfc) counter と PFC priority mapping を表示する CLI グループ。`show pfcwd` は同じ領域の watchdog 表示 wrapper で、`pfcwd show ...` に委譲する[^1]。
+`show pfc` は [PFC](../../reference/glossary.md#term-pfc) counter と [PFC](../../reference/glossary.md#term-pfc) priority mapping を表示する CLI グループ。`show pfcwd` は同じ領域の watchdog 表示 wrapper で、`pfcwd show ...` に委譲する[^1]。
 
 ## コマンド一覧
 
 | コマンド | 用途 |
 |---------|------|
-| `show pfc counters [options]` | PFC counters を表示 |
+| `show pfc counters [options]` | [PFC](../../reference/glossary.md#term-pfc) counters を表示 |
 | `show pfc priority [options]` | PFC priority 設定を表示 |
 | `show pfc asymmetric [options]` | asymmetric PFC 設定を表示 |
 | `show pfcwd config [-d true|false]` | PFC watchdog config を表示 |
@@ -127,4 +127,4 @@ show pfcwd stats
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a09c09b48079 -->
+<!-- glossary-links-injected: 7cb1f9e73b9e -->

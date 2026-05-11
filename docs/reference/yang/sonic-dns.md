@@ -90,14 +90,14 @@ module: sonic-dns
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `DNS_NAMESERVER`
-- CONFIG_DB: `DNS_OPTIONS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DNS_OPTIONS`
 - CLI: `config dns`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: `DNS_NAMESERVER` / `DNS_OPTIONS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DNS_NAMESERVER` / `DNS_OPTIONS`
 - CLI: `config dns`
 
 <!-- ref-triangle:end -->
@@ -111,7 +111,7 @@ module: sonic-dns
 
 ### よくある落とし穴
 
-- [VRF](../../reference/glossary.md#term-vrf) (mgmt) 環境で `mgmt-vrf` 上の DNS とグローバル DNS の優先順序が hostcfgd の reload 順序で変わる。
+- [VRF](../../reference/glossary.md#term-vrf) (mgmt) 環境で `mgmt-vrf` 上の DNS とグローバル DNS の優先順序が [hostcfgd](../../reference/glossary.md#term-hostcfgd) の reload 順序で変わる。
 
 ### 関連する config / show コマンド
 
@@ -132,4 +132,4 @@ show dns nameserver
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0072c8c44112 -->
+<!-- glossary-links-injected: 1b9a4e23d40f -->

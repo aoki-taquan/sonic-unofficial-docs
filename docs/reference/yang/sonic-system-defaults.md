@@ -76,7 +76,7 @@ module: sonic-system-defaults
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SYSTEM_DEFAULTS`](../config-db/system-defaults.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SYSTEM_DEFAULTS`](../config-db/system-defaults.md)
 
 <!-- ref-triangle:end -->
 
@@ -84,4 +84,4 @@ module: sonic-system-defaults
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-defaults.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -32,7 +32,7 @@ related:
 
 `config vlan` は [VLAN](../../reference/glossary.md#term-vlan) の作成・削除、メンバ追加・削除、Proxy-[ARP](../../reference/glossary.md#term-arp) のオン／オフを担当する。`config/vlan.py` に実装が分離されており、`config/main.py` 末尾の `config.add_command(vlan.vlan)` で登録される構造[^1]。
 
-新規 VLAN 作成時は `VLAN` テーブルだけでなく **`DHCP_RELAY` テーブルにも空エントリを書き込む**仕様。これは `dhcp_relay` の対象 VLAN が `VLAN` テーブルではなく `DHCP_RELAY` テーブルから引かれるための互換的な設計。
+新規 [VLAN](../../reference/glossary.md#term-vlan) 作成時は `VLAN` テーブルだけでなく **`DHCP_RELAY` テーブルにも空エントリを書き込む**仕様。これは `dhcp_relay` の対象 [VLAN](../../reference/glossary.md#term-vlan) が `VLAN` テーブルではなく `DHCP_RELAY` テーブルから引かれるための互換的な設計。
 
 ## コマンド一覧
 
@@ -40,7 +40,7 @@ related:
 |---------|------|
 | `config vlan add <vid>` | VLAN を作成 |
 | `config vlan del <vid>` | VLAN を削除 |
-| `config vlan proxy_arp <vid> <enabled\|disabled>` | VLAN_INTERFACE の proxy ARP を切替 |
+| `config vlan proxy_arp <vid> <enabled\|disabled>` | VLAN_INTERFACE の proxy [ARP](../../reference/glossary.md#term-arp) を切替 |
 | `config vlan member add <vid> <port>` | VLAN にポートをメンバ追加 |
 | `config vlan member del <vid> <port>` | VLAN メンバを削除 |
 
@@ -252,4 +252,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d992aca97f65 -->
+<!-- glossary-links-injected: a90586777d5a -->

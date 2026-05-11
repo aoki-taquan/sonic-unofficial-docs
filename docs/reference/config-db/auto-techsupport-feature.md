@@ -68,15 +68,15 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`AUTO_TECHSUPPORT`](auto-techsupport.md), [`FEATURE`](feature.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`AUTO_TECHSUPPORT`](auto-techsupport.md), [`FEATURE`](feature.md)
 - 関連 CLI: `config auto-techsupport-feature update <feature> --state ... --rate-limit-interval ...`
-- 関連 YANG: `sonic-auto_techsupport`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-auto_techsupport`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-auto_techsupport`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-auto_techsupport`
 - CLI: `config auto-techsupport-feature`
 
 <!-- ref-triangle:end -->
@@ -113,4 +113,4 @@ ls -lh /var/dump/
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 48d5f456ebb6 -->
