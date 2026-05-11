@@ -16,7 +16,7 @@ verification: meta
 !!! success "最新の品質状態"
     - **code-verified ページ**: 598 件（HLD と実コードを照合済み）
     - **discrepancy-found ページ**: 46 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 12 集計中（`meta/quality-audit-12.md`）
+    - **監査平均評価**: round 14 集計中（`meta/quality-audit-14.md`）
     - **hld-only ページ**: 7 件（裏取り待ち）
 <!-- quality-banner-end -->
 

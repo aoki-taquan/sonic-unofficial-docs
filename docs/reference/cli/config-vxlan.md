@@ -143,6 +143,32 @@ excerpt: |
 
 [^2]: `map_range del` の VRF 紐付けスキップは L353-L355。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vxlan.py#L353>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: VxLAN tunnel と EVPN map を構成
+sudo config vxlan add vtep1 10.0.0.1
+sudo config vxlan map add vtep1 100 10100
+```
+
+### よくある引数の組み合わせ
+
+```bash
+sudo config vxlan evpn_nvo add nvo1 vtep1
+sudo config vxlan map_range add vtep1 100 200 10100 10200
+sudo config vxlan remove vtep1
+```
+
+### 期待される出力 (抜粋)
+
+```
+VxLAN tunnel vtep1 added.
+```
+<!-- /usage-example -->
+
 ## 関連ページ
 - [HLD: VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
 - [HLD: EVPN VXLAN](../../routing/evpn-vxlan-hld.md)

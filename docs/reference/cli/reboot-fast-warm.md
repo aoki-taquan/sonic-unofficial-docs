@@ -154,6 +154,38 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 
 [^5]: warm 専用の補助関数 `initialize_pre_shutdown` / `request_pre_shutdown` / `wait_for_pre_shutdown_complete_or_fail` (`scripts/fast-reboot` L385-L449)。
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: 通常 reboot
+sudo reboot
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# Fast-reboot（control-plane のみ短時間ダウン）
+sudo fast-reboot
+
+# Warm-reboot（データプレーン無停止再起動）
+sudo warm-reboot
+
+# 再起動前に warm restart モードを有効化（必要なら）
+sudo config warm_restart enable
+```
+
+### 期待される出力 (抜粋)
+
+```
+Stopping bgp ...
+Backing up database ...
+Warm reboot ...
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

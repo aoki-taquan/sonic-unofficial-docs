@@ -108,6 +108,34 @@ excerpt: |
 
 [^1]: `show techsupport` 実装は `show/main.py` L1780-L1814。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1780>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: techsupport bundle を採取
+sudo show techsupport
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# 直近 1 時間分のログのみ、tarball サイズを抑える
+sudo show techsupport --since "1 hour ago"
+
+# 詳細 (BGP/Memory/Routing 等の追加診断)
+sudo show techsupport --allow-process-stop --verbose
+```
+
+### 期待される出力 (抜粋)
+
+```
+Collecting all the data ......
+Tar file: /var/dump/sonic_dump_<host>_<timestamp>.tar.gz
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

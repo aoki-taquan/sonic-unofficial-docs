@@ -128,6 +128,35 @@ excerpt: |
 
 [^3]: `add binding` は `config/nat.py` L778-L842。pool 存在チェックと twice_nat_id 整合検査を含む。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/nat.py#L778>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: NAT 機能を有効化し static エントリを追加
+sudo config nat feature enable
+sudo config nat add static basic 10.0.0.1 192.168.1.1
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# zone 設定
+sudo config nat add interface Ethernet0 -nat_zone 1
+
+# pool / binding (dynamic NAT)
+sudo config nat add pool MyPool 10.0.0.10-10.0.0.20
+sudo config nat add binding MyBinding MyPool
+```
+
+### 期待される出力 (抜粋)
+
+```
+NAT feature enabled.
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

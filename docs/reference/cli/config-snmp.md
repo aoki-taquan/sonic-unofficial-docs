@@ -151,6 +151,35 @@ excerpt: |
 
 [^2]: `add_contact` は `CONTACT` キーが既存なら `Use sudo config snmp contact modify instead` で sys.exit(1)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4471>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: SNMPv2 community 追加
+sudo config snmp community add public RO
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# location / contact メタ情報
+sudo config snmp location add "Tokyo DC1 Rack-A12"
+sudo config snmp contact add netops netops@example.com
+
+# SNMPv3 user 追加
+sudo config snmp user add snmpadmin priv RW AES MD5 authpass privpass
+```
+
+### 期待される出力 (抜粋)
+
+```
+SNMP community public added to configuration
+Restarting SNMP service...
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

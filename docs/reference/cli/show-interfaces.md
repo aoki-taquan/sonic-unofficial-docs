@@ -170,3 +170,33 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 [^1]: `interfaces` グループ定義は `show/interfaces/__init__.py` L61-L64。`show/main.py` L316 で `cli.add_command(interfaces.interfaces)` 登録。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/interfaces/__init__.py>
 
 [^2]: `breakout` の JSON 出力ロジックは `show/interfaces/__init__.py` L200-L259。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/interfaces/__init__.py#L200>
+
+
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: インターフェース状態サマリ
+show interfaces status
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show interfaces counters
+show interfaces counters rif
+show interfaces transceiver eeprom Ethernet0
+show interfaces description
+```
+
+### 期待される出力 (抜粋)
+
+```
+  Interface            Lanes    Speed    MTU    FEC    Alias    Vlan    Oper    Admin
+-----------  ---------------  -------  -----  -----  -------  ------  ------  -------
+  Ethernet0  25,26,27,28        100G   9100     rs   etp1     trunk      up       up
+  Ethernet4  29,30,31,32        100G   9100     rs   etp2     trunk      up       up
+```
+<!-- /usage-example -->

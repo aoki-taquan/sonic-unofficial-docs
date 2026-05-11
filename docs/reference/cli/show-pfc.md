@@ -57,6 +57,32 @@ related:
 
 [^2]: `show pfcwd` の `config` / `stats` wrapper。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L724>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: PFC 状態と統計
+show pfc counters
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show pfc priority
+show pfc asymmetric
+```
+
+### 期待される出力 (抜粋)
+
+```
+       Port    PFC0    PFC1    PFC2    PFC3    PFC4    PFC5    PFC6    PFC7
+-----------  ------  ------  ------  ------  ------  ------  ------  ------
+  Ethernet0       0       0       0    1234       0       0       0       0
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

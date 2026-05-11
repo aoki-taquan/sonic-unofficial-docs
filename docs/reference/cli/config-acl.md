@@ -125,6 +125,34 @@ excerpt: |
 - [CONFIG_DB: ACL_RULE](../config-db/acl-rule.md)
 - [CLI: show acl](show-acl.md)
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: ACL テーブルを作成しルールをロード
+sudo config acl add table DATA_ACL L3 -p Ethernet0,Ethernet4 -s ingress
+sudo config acl update full /etc/sonic/acl_rules.json
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# 増分更新
+sudo config acl update incremental /etc/sonic/acl_rules_delta.json
+
+# CtrlPlane ACL（SNMP/SSH 保護）
+sudo config acl add table SNMP_ACL CTRLPLANE -s ingress --services SNMP
+```
+
+### 期待される出力 (抜粋)
+
+```
+Successfully loaded ACL rules from /etc/sonic/acl_rules.json
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

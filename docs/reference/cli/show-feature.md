@@ -89,3 +89,34 @@ CONFIG_DB の `FEATURE` テーブルから state / auto_restart / set_owner / no
 [^2]: `feature_status` 実装 (`show/feature.py` L40-L89)。
 
 [^3]: `_negate_bool_str` (`show/feature.py` L92-L98) と `feature_config` (`show/feature.py` L109-L145)。
+
+
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: feature の状態と auto-restart 設定
+show feature status
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show feature autorestart
+show feature config
+```
+
+### 期待される出力 (抜粋)
+
+```
+Feature        State     AutoRestart    SystemState
+-------------  --------  -------------  -------------
+bgp            enabled   enabled        up
+swss           enabled   enabled        up
+syncd          enabled   enabled        up
+teamd          enabled   enabled        up
+pmon           enabled   enabled        up
+```
+<!-- /usage-example -->

@@ -108,6 +108,34 @@ gNMI 経由で server (NIC) 側からキャッシュされた状態を読む経�
 
 [^2]: `config` サブコマンドの実装は `show/muxcable.py` L837-L970。Active-Active / Active-Standby の場合分けは `create_active_active_mux_direction_result` / `create_active_standby_mux_direction_result` (同 L1353-L1387)。
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: mux 状態サマリ
+show muxcable status
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show muxcable config
+show muxcable hwmode muxdirection
+show muxcable firmware version Ethernet0
+```
+
+### 期待される出力 (抜粋)
+
+```
+PORT         STATUS    HEALTH
+-----------  --------  --------
+Ethernet0    active    HEALTHY
+Ethernet4    standby   HEALTHY
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

@@ -110,6 +110,35 @@ excerpt: |
 - [CLI: config vlan](config-vlan.md)
 - [CONFIG_DB: VLAN](../config-db/vlan.md)
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: VLAN と member のサマリ表示
+show vlan brief
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show vlan config
+show vlan dhcp-relay
+```
+
+### 期待される出力 (抜粋)
+
+```
++-----------+-----------------+-----------------+----------------+-------------+
+|   VLAN ID | IP Address      | Ports           | Port Tagging   | Proxy ARP   |
++===========+=================+=================+================+=============+
+|       100 | 10.0.0.1/24     | Ethernet0       | tagged         | disabled    |
+|           |                 | Ethernet4       | untagged       |             |
++-----------+-----------------+-----------------+----------------+-------------+
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

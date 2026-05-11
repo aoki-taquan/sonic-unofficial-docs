@@ -115,6 +115,33 @@ linkmgrd を経由せず xcvrd 経由で **直接 Y-Cable の HW state を切り
 
 [^3]: `prbs.enable` (`config/muxcable.py` L597-L644)。
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: Dual-ToR の mux を active 側に切替
+sudo config muxcable mode active Ethernet0
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# 全ポート auto モードへ
+sudo config muxcable mode auto all
+
+# Mux hwmode 切替
+sudo config muxcable hwmode state active Ethernet0
+```
+
+### 期待される出力 (抜粋)
+
+```
+Success in toggling port Ethernet0 to active
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

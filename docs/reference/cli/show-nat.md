@@ -89,6 +89,37 @@ related:
 
 [^1]: `nat` グループは `show/nat.py` L9-L12。`config/nat.py` 側は CONFIG_DB を書き、`show/nat.py` は別 binary 経由で読むという分担。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/nat.py#L9>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: 現在の NAT translations
+show nat translations
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show nat statistics
+show nat config static
+show nat config bindings
+```
+
+### 期待される出力 (抜粋)
+
+```
+Static NAT Entries  ............ 1
+Dynamic NAT Entries ............ 0
+Total NAT Entries   ............ 1
+
+Protocol  Source       Destination   Translated Source  Translated Destination
+--------  -----------  ------------  -----------------  -----------------------
+all       10.0.0.1     ---           192.168.1.1        ---
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

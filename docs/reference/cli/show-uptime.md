@@ -64,3 +64,27 @@ def uptime(verbose):
 ## 引用元
 
 [^1]: `uptime` コマンドの実装は `show/main.py` L2211-L2216。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2211>
+
+
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: uptime 表示
+show uptime
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show uptime
+```
+
+### 期待される出力 (抜粋)
+
+```
+ 10:42:31 up 5 days,  3:21,  1 user,  load average: 0.21, 0.18, 0.15
+```
+<!-- /usage-example -->

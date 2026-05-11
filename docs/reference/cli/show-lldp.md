@@ -89,6 +89,34 @@ show lldp table [--verbose]
 
 [^2]: alias 変換は SONiC の interface naming mode によって行われる。設定は `MGMT_INTERFACE` などとは別の環境変数経由。
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: LLDP 隣接サマリ
+show lldp table
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show lldp neighbors
+show lldp neighbors Ethernet0
+```
+
+### 期待される出力 (抜粋)
+
+```
+Capability codes: (R) Router, (B) Bridge, (O) Other
+LocalPort    RemoteDevice    RemotePortID    Capability    RemotePortDescr
+-----------  --------------  --------------  ------------  -----------------
+Ethernet0    leaf01          Ethernet1/1     BR            to-spine01
+Ethernet4    leaf02          Ethernet1/1     BR            to-spine01
+```
+<!-- /usage-example -->
+
 ## 関連ページ
 
 - [reference/CLI: show interfaces](show-interfaces.md)

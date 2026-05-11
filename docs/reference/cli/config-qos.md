@@ -78,6 +78,35 @@ config qos reload [--ports <port[,port...]>]
 
 [^3]: `reload()` 内の buffer template 選択と `DEVICE_METADATA` 更新。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3666>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: QoS 設定の再ロード（platform 既定 template を再適用）
+sudo config qos reload
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# 既存設定をクリアして再ロード
+sudo config qos clear
+sudo config qos reload --no-dynamic-buffer
+
+# 特定ポートだけ再適用
+sudo config qos reload --ports Ethernet0,Ethernet4
+```
+
+### 期待される出力 (抜粋)
+
+```
+Running command: /usr/local/bin/sonic-cfggen ...
+QoS reload completed.
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

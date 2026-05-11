@@ -117,6 +117,34 @@ excerpt: |
 
 [^2]: APPL_DB の `SWITCH_TABLE` は orchagent が書き込む。`fdb_aging_time` は秒単位。
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: MAC アドレステーブル
+show mac
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show mac -v 100
+show mac -p Ethernet0
+show mac count
+```
+
+### 期待される出力 (抜粋)
+
+```
+  No.    Vlan  MacAddress         Port           Type
+-----  ------  -----------------  -------------  ---------
+    1     100  00:11:22:33:44:55  Ethernet0      Dynamic
+    2     100  00:11:22:33:44:66  Ethernet4      Dynamic
+```
+<!-- /usage-example -->
+
 ## 関連ページ
 
 - [reference/CLI: show vlan](show-vlan.md)

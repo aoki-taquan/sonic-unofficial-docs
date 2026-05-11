@@ -120,6 +120,34 @@ excerpt: |
 
 [^2]: VRF 名のバリデータ `isInterfaceNameValid` と `IFACE_NAME_MAX_LEN` は `config/main.py` 上部のヘルパで定義される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: VRF を作成しインターフェースをバインド
+sudo config vrf add Vrf_Red
+sudo config interface vrf bind Ethernet0 Vrf_Red
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# VRF 削除
+sudo config vrf del Vrf_Red
+
+# Management VRF を有効化
+sudo config vrf add mgmt
+```
+
+### 期待される出力 (抜粋)
+
+```
+VRF Vrf_Red added.
+```
+<!-- /usage-example -->
+
 ## 関連ページ
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
 - [CONFIG_DB: VRF](../config-db/vrf.md)

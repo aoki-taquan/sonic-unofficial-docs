@@ -216,6 +216,33 @@ excerpt: |
 
 [^4]: prefix-list 名のバリデータは `validate_prefix_list_name` (`config/bgp_cli.py` L215-L226)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/bgp_cli.py#L215>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: 特定隣接の BGP セッションをシャットダウン
+sudo config bgp shutdown neighbor 10.0.0.1
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# 集約 prefix を summary-only で広告
+sudo config bgp aggregate-address add 10.0.0.0/16 --summary-only
+
+# Traffic-Shift-Away を有効化（メンテナンス前に外向きトラフィックを退避）
+sudo config bgp device-global tsa enabled
+```
+
+### 期待される出力 (抜粋)
+
+```
+Starting up BGP session with neighbor 10.0.0.1 .....
+```
+<!-- /usage-example -->
+
 ## 関連ページ
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [CONFIG_DB: BGP_GLOBALS](../config-db/bgp-globals.md)

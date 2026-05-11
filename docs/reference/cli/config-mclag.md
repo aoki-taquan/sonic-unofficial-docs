@@ -105,3 +105,32 @@ related:
 [^3]: `del_mclag_domain` (`config/mclag.py` L167-L200)。
 
 [^4]: `mclag_ka_session_dep_check` (`config/mclag.py` L25-L34)。
+
+
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: MCLAG domain と peer-link を構成
+sudo config mclag add 4095 10.0.0.1 10.0.0.2 PortChannel0001
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# MCLAG メンバー (LAG) を追加
+sudo config mclag member add 4095 PortChannel0002
+
+# unique-ip と session-timeout
+sudo config mclag unique-ip add Vlan100
+sudo config mclag session-timeout 4095 30
+```
+
+### 期待される出力 (抜粋)
+
+```
+MCLAG domain 4095 added.
+```
+<!-- /usage-example -->

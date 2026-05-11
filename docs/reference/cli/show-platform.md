@@ -116,6 +116,35 @@ CONFIG_DB は触らず、`/host/machine.conf` 由来の environment variables �
 
 [^1]: `platform` グループ全体は `show/platform.py` で定義。`show/main.py` L321 で `cli.add_command(platform.platform)` 登録。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/platform.py>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: プラットフォーム概要
+show platform summary
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show platform syseeprom
+show platform psustatus
+show platform fan
+show platform temperature
+show platform ssdhealth
+```
+
+### 期待される出力 (抜粋)
+
+```
+Platform: x86_64-cel_seastone-r0
+HwSKU: Celestica-DX010-C32
+ASIC: broadcom
+```
+<!-- /usage-example -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
