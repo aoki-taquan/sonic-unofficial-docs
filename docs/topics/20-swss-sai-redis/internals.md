@@ -1,0 +1,69 @@
+---
+title: 内部実装
+area: topics
+verification: meta
+last_verified: 2026-05-10
+sources: []
+---
+
+# 内部実装
+
+ここでは「SAI / syncd 層の整合性」「counter 系の性能改善」「debug / dump 基盤」を、改善が狙っている問題で比較する。機能章で「flex counter が…」「bulk counter が…」「CRM が…」と単発で出てきた話を、内部実装側で並べると棲み分けが見える。
+
+## SAI / syncd 整合性の三本柱
+
+| 機能 | 改善する問題 | 主な層 | 設定面 |
+| --- | --- | --- | --- |
+| SAI API バージョン検査 | runtime SAI と build SAI のヘッダ不整合 | syncd / build | ビルド時 + `sai_query_api_version` |
+| sai_query_stats_capability | counter のサポート差を起動ごとに探る | syncd / flexcounter | API 拡張のみ |
+| Generic SAI Extension CRM | ベンダ拡張テーブルの resource 監視 | orchagent / CRM | `CRM_EXT_TABLE` |
+
+### SAI API バージョン整合
+
+SONiC のビルドは `libsai` のヘッダに依存する。同じ syncd バイナリが古い libsai と新しいヘッダで組まれた状態で動くと、関数ポインタや enum 値のずれが silent な誤動作になりやすい。`sai_query_api_version` を起動時に呼び、ビルド時記録と突き合わせて mismatch を検知する設計が入っている。詳細は [SAI API バージョン整合チェック](../../platform/sai-api-version-check.md) を読む。
+
+### stats capability の動的問い合わせ
+
+counter のサポートはベンダ・ASIC・SAI バージョンで違う。すべての counter を試して失敗を拾うのは非効率なので、`sai_query_stats_capability` でサポートされる counter id 群を一括取得し、flexcounter の対象集合を起動時に決める設計である。詳細は [sai_query_stats_capability による Counter Capability 一括取得](../../platform/query-stats-capability-new-sai-api-indroduction.md) を読む。
+
+### CRM の拡張テーブル
+
+CRM はもともと SONiC 知識のあるリソース（route、neighbor、nexthop、ACL 等）を監視する。ベンダ拡張のテーブルが増えると、これに同じ仕組みで乗せたい。`CRM_EXT_TABLE` を `STATE_DB` 系に置き、ベンダから渡される resource キーを汎用に扱う設計が入っている。詳細は [Generic SAI Extension テーブルの CRM](../../system/generic-sai-extension-critical-resource-monitoring-crm.md) を読む。
+
+## counter の改善
+
+| 機能 | 改善する問題 | 主な層 | 設定面 |
+| --- | --- | --- | --- |
+| Bulk Counter | port 数 N に比例した個別 SAI 呼び出しの遅さ | syncd / sairedis | chunk size のみ |
+| FlexCounter Refactor | counter group 増加に伴うコード重複と性能ばらつき | syncd / flexcounter | 既存 API 維持 |
+| Counter 初期化最適化 | 起動直後の counter 一斉登録による spike | syncd / flexcounter | 既存 API 維持 |
+
+Bulk Counter は `sai_bulk_object_get_stats` により、1 回の SAI 呼び出しで複数 object の counter を取得し、chunk size を運用条件で調整する設計である。詳細は [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../../architecture/sonic-bulk-counter-design.md) を読む。
+
+FlexCounter Refactor は、port、queue、PG、buffer pool、ACL のように counter group ごとに肥大化していた個別実装を、`CounterContext` テンプレートに揃え直すリファクタである。詳細は [FlexCounter リファクタ（CounterContext テンプレート化）](../../internals/sonic-flexcounter-refactor.md) を読む。
+
+Counter 初期化最適化は、`pending_sai_objects` に登録 object を一時集約してから `bulk_get_stats` で初期化する設計で、起動直後のレイテンシ spike を抑える。詳細は [flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）](../../internals/sonic-counter-initialization-optimization.md) を読む。
+
+## debug / dump の二系統
+
+「テクサポ採取のため」と「能動的な調査のため」で、debug / dump は性格が違う。
+
+| 機能 | 何を集めるか | 起点 |
+| --- | --- | --- |
+| Debug Framework | コンポーネント単位で登録された内部状態 dump、assert 拡張 | `show techsupport` / 障害時 |
+| dump utility | モジュール（port、vrf 等）に紐づく複数 DB の key 集合 | オペレータの能動調査 |
+| SAI failure dump | syncd の SAI 失敗時に SAI/ASIC_DB を snapshot | SAI 失敗の自動採取 |
+
+Debug Framework と dump utility はオペレータ目線、SAI failure dump はベンダ調査目線で読むと整理しやすい。
+
+## 関連ページ
+
+- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../../platform/sai-api-version-check.md)
+- [sai_query_stats_capability による Counter Capability 一括取得](../../platform/query-stats-capability-new-sai-api-indroduction.md)
+- [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../../system/generic-sai-extension-critical-resource-monitoring-crm.md)
+- [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../../architecture/sonic-bulk-counter-design.md)
+- [FlexCounter リファクタ（CounterContext テンプレート化）](../../internals/sonic-flexcounter-refactor.md)
+- [flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）](../../internals/sonic-counter-initialization-optimization.md)
+- [Debug Framework（コンポーネント dump 登録 / assert 拡張）](../../architecture/debug-framework-in-sonic.md)
+- [dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）](../../internals/dump-utility-for-easy-debugging.md)
+- [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../../platform/dump-on-sai-failure.md)
