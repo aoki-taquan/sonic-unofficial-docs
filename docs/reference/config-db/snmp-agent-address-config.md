@@ -61,7 +61,7 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 ## 関連リファレンス
 
 - YANG: [`sonic-snmp`](../yang/sonic-snmp.md)
-- CLI: `config snmp agentaddress`
+- CLI: [`config snmp agentaddress`](../cli/config-snmp.md)
 
 <!-- ref-triangle:end -->
 

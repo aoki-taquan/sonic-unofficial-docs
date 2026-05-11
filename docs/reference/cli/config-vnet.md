@@ -67,7 +67,7 @@ config vnet add <vnet_name> <vni> <vxlan_tunnel>
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VNET`](../config-db/vnet.md) / `VNET_ROUTE_TUNNEL` / `VNET_ROUTE`
+- CONFIG_DB: [`VNET`](../config-db/vnet.md) / [`VNET_ROUTE_TUNNEL`](../config-db/vnet.md) / [`VNET_ROUTE`](../config-db/vnet.md)
 
 <!-- ref-triangle:end -->
 

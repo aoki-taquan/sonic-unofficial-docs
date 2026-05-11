@@ -84,7 +84,7 @@ ROUTE_MAP|<name>|<stmt_name>
 ## 関連リファレンス
 
 - YANG: [`sonic-route-map`](../yang/sonic-route-map.md) / `sonic-routing-policy-sets`
-- CLI: `config route_map`
+- CLI: [`config route_map`](../cli/config-route.md)
 
 <!-- ref-triangle:end -->
 

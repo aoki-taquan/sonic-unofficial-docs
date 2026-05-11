@@ -61,7 +61,7 @@ module: sonic-breakout_cfg
 ## 関連リファレンス
 
 - CONFIG_DB: [`BREAKOUT_CFG`](../config-db/breakout-cfg.md)
-- CLI: `config interface breakout`
+- CLI: [`config interface breakout`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
 

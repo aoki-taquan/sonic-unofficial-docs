@@ -128,7 +128,7 @@ module: sonic-nat
 
 ## 関連リファレンス
 
-- CONFIG_DB: `STATIC_NAPT` / `STATIC_NAT` / `NAT_GLOBAL` / `NAT_POOL` / `NAT_BINDINGS`
+- CONFIG_DB: `STATIC_NAPT` / `STATIC_NAT` / [`NAT_GLOBAL`](../config-db/nat.md) / [`NAT_POOL`](../config-db/nat.md) / [`NAT_BINDINGS`](../config-db/nat.md)
 - CLI: [`config nat`](../cli/config-nat.md)
 
 <!-- ref-triangle:end -->

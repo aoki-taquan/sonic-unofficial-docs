@@ -61,8 +61,8 @@ BREAKOUT_CFG|<port>
 
 ## 関連リファレンス
 
-- YANG: `sonic-breakout_cfg`
-- CLI: `config interface breakout`
+- YANG: [`sonic-breakout_cfg`](../yang/sonic-breakout_cfg.md)
+- CLI: [`config interface breakout`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
 

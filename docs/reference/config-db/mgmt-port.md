@@ -58,7 +58,7 @@ MGMT_PORT|<name>
 
 ## 関連リファレンス
 
-- YANG: `sonic-mgmt_port`
+- YANG: [`sonic-mgmt_port`](../yang/sonic-mgmt_port.md)
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->

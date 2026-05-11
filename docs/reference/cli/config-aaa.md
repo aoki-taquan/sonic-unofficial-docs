@@ -160,7 +160,7 @@ excerpt: |
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`AAA`](../config-db/aaa.md) / `TACPLUS` / [`TACPLUS_SERVER`](../config-db/tacplus-server.md) / [`RADIUS`](../config-db/radius.md) / `RADIUS_SERVER`
+- CONFIG_DB: [`AAA`](../config-db/aaa.md) / `TACPLUS` / [`TACPLUS_SERVER`](../config-db/tacplus-server.md) / [`RADIUS`](../config-db/radius.md) / [`RADIUS_SERVER`](../config-db/radius.md)
 
 <!-- ref-triangle:end -->
 

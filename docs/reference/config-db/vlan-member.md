@@ -64,7 +64,7 @@ VLAN_MEMBER|<vlan_name>|<port>
 ## 関連リファレンス
 
 - YANG: [`sonic-vlan`](../yang/sonic-vlan.md)
-- CLI: `config vlan member`
+- CLI: [`config vlan member`](../cli/config-vlan.md)
 
 <!-- ref-triangle:end -->
 

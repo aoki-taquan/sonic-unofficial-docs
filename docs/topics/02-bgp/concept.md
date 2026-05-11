@@ -116,6 +116,25 @@ FRR upgrade は単なるパッケージ更新ではありません。SONiC で�
 
 `show ip route` は FRR 側を見ているのか SONiC 側を見ているのかが混ざりやすい点に注意します。確実な切り分けは「FRR の vty」と「Redis の APPL_DB / ASIC_DB」を別個に確認することです。
 
+## 問題を切り分けるための流れ図
+
+「BGP がおかしい」と感じたとき、どの章のどの節を先に読むかを決めるための地図。SONiC の BGP は **設定経路（CONFIG_DB → FRR）** と **学習経路（FRR → FPM → APPL_DB → ASIC_DB）** の 2 方向にまたがるため、症状から逆引きで節境界をまたぐ。
+
+```mermaid
+flowchart TD
+  Q[症状: BGP がおかしい] --> A{neighbor が up しない?}
+  A -->|Yes| A1[setup.md: BGP_NEIGHBOR / BGP_PEER_RANGE / router-id]
+  A -->|No| B{経路を受信しているが ASIC に入らない?}
+  B -->|Yes| B1[architecture.md: FPM 経路] --> B2[operations.md: APPL_DB.ROUTE_TABLE / ASIC_DB の中間状態確認]
+  B -->|No| C{特定 prefix が advertise されない?}
+  C -->|Yes| C1[internals.md: suppress-fib-pending / aggregate-address / BBR]
+  C -->|No| D{収束が遅い・大量経路で詰まる?}
+  D -->|Yes| D1[internals.md: PIC / next-hop-group 共有 / dplane_fpm_sonic]
+  D -->|No| E[operations.md: counter / show 入口で観測の出発点を決める]
+```
+
+この流れ図で行き先が分かったら、各節へジャンプ。`internals.md` は複数 HLD を「同じ問題群」として比較表で並べてあるため、節をまたがず 1 ページで読める。
+
 ## この章での読み方
 
 BGP の設定問題は [設定](setup.md) へ進みます。経路が ASIC に入らない、advertise が遅れる問題は [アーキテクチャ](architecture.md) と [運用](operations.md) を先に読みます。大量経路、障害収束、FIB pending、dynamic peer のように実装差分が大きい機能は [内部実装](internals.md) で比較します。
