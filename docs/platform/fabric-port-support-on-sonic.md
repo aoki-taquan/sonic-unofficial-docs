@@ -18,31 +18,23 @@ related:
 ---
 
 !!! success "裏取りステータス: code-verified"
-    実装裏取り済み（下記コード位置）。switch_type=fabric: sonic-yang-models/yang-models/sonic-port.yang:75 / APP_FABRIC_PORT_TABLE_NAME: sonic-swss-common/common/schema.h:40, 549 / FabricPortsOrch: sonic-swss/orchagent/fabricportsorch.{cpp,h} / show fabric: sonic-utilities/show/fabric.py + scripts/fabricstat + config/fabric.py で確認。
+    実装裏取り済み。`switch_type=fabric`: `sonic-yang-models/yang-models/sonic-port.yang:75` / `APP_FABRIC_PORT_TABLE_NAME`: `sonic-swss-common/common/schema.h:40,549` / `FabricPortsOrch`: `sonic-swss/orchagent/fabricportsorch.{cpp,h}` / `show fabric`: `sonic-utilities/show/fabric.py` + `scripts/fabricstat` + `config/fabric.py`。
 
 # VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
 
-## 概要
+## 何のための仕組みか
 
-VOQ シャーシ（Virtual Output Queue を持つマルチカード分散シャーシ）は **forwarding ASIC**（front panel port を持つ NPU）を **fabric ASIC**（cell ベースの内部 fabric）で相互接続する構成を取る。本 HLD は SONiC が **fabric ASIC を forwarding ASIC と同等の syncd / sairedis 構成で管理** する方法と、fabric link 監視・統計収集の枠組みを定める[^1]。
+VOQ シャーシは **forwarding ASIC**（front panel を持つ NPU）を **fabric ASIC**（cell ベースの内部 fabric）で相互接続する。本 HLD は **fabric ASIC を forwarding ASIC と同様に syncd / sairedis で管理**し、fabric link の状態監視・統計収集・自動 isolation を行う枠組み[^1]。
 
-> 詳細は HLD `doc/voq/fabric.md` および `doc/voq/architecture.md` を参照。本ページはアーキテクチャ要点に絞る。
+> 詳細は HLD `doc/voq/fabric.md` および `doc/voq/architecture.md` を参照。
 
-## 動作仕様
+## どう構成するか
 
-### Fabric ASIC のホスト容器構成
+### Fabric ASIC のコンテナ
 
-forwarding ASIC と同じく、fabric ASIC ごとに次の container を立てる[^1]:
+forwarding ASIC と同じく fabric ASIC ごとに `database` / `swss` / `syncd` を立てる。front panel が無いので `lldp` / `teamd` / `bgp` は disable。SSI（Supervisor SONiC Instance）から chassis 内の fabric ASIC を一括管理する[^1]。
 
-- `database`
-- `swss`
-- `syncd`
-
-ただし fabric ASIC に front panel port は無いため、**`lldp` / `teamd` / `bgp` 等のコンテナは disable**[^1]。SSI（Supervisor SONiC Instance）から chassis 内の fabric ASIC を一括管理する。
-
-### `DEVICE_METADATA` の `switch_type`
-
-fabric ASIC を識別するために CONFIG_DB に[^1]:
+### `DEVICE_METADATA` で identify
 
 ```
 DEVICE_METADATA|localhost
@@ -50,74 +42,72 @@ DEVICE_METADATA|localhost
   switch_id   = <一意の番号>
 ```
 
-> SAI VOQ 仕様の **推奨**: fabric ASIC の `switch_id` は forwarding ASIC のものと **重複させない**[^1]。
-
-### Fabric ポート / リンクの状態 - STATE_DB
-
-fabric port は **chip 上の fabric port 番号** で識別される。状態は周期 poll で `STATE_DB FABRIC_PORT_TABLE` に保存[^1]:
-
-```
-STATE_DB:FABRIC_PORT_TABLE:<fabric_port_name>
-  lane    = <number>
-  status  = "up" | "down"
-  # up なら remote peer の switch_id / fabric port も保持
-  # down なら reason (CRC / misaligned 等)
-```
-
-### Counter
-
-forwarding 用の port counter とは別に、fabric port 専用の SAI counter を収集する[^1]:
-
-```
-SAI_PORT_STAT_IF_IN_OCTETS
-SAI_PORT_STAT_IF_IN_ERRORS
-SAI_PORT_STAT_IF_IN_FABRIC_DATA_UNITS
-SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES
-SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES
-SAI_PORT_STAT_IF_IN_FEC_SYMBOL_ERRORS
-SAI_PORT_STAT_IF_OUT_OCTETS
-SAI_PORT_STAT_IF_OUT_FABRIC_DATA_UNITS
-```
-
-「**cell**」（fabric data unit）という単位が物理 packet と異なる粒度で計測されるのが特徴。
-
-### Fabric link 監視（Rev 3 系で大幅に進化）
-
-Rev 3 以降、fabric link 単位で **エラー率しきい値による自動 isolation** が追加された[^1]:
-
-- 通常運用中、`SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES` 等を周期チェック
-- 一定しきい値超過 → リンクを論理的に isolate（fabric から外す）
-- リンクダウン時は更にダウン理由（CRC / misaligned）を STATE_DB に表記
-- Rev 3.6 で **persistent link flap** 検出が追加: short up/down を繰り返すリンクも自動 isolate
+SAI VOQ 仕様の推奨: fabric ASIC の `switch_id` は forwarding ASIC と重複させない[^1]。
 
 ### 全体構造
 
 ```mermaid
 flowchart LR
-  subgraph LC0[Line Card 0 / NPU0]
+  subgraph LC0[Line Card 0]
     F0[forwarding ASIC<br/>front-panel ports]
-    SY0[syncd]
   end
-  subgraph LC1[Line Card 1 / NPU1]
+  subgraph LC1[Line Card 1]
     F1[forwarding ASIC]
-    SY1[syncd]
   end
-  subgraph FAB[Fabric Card / Fabric ASIC]
+  subgraph FAB[Fabric Card]
     FA[fabric ASIC<br/>fabric ports only]
-    SYF[syncd-fabric]
   end
   subgraph SSI[Supervisor SONiC Instance]
-    DBC[database-fabric containers]
-    SS[swss-fabric containers]
+    SS[swss-fabric / syncd-fabric]
     FMG[fabric link monitor]
   end
   F0 ---|cells| FA
   F1 ---|cells| FA
-  SYF -.SAI.-> FA
-  SS -- ASIC_DB --> SYF
-  DBC -- STATE_DB.FABRIC_PORT_TABLE --> FMG
+  SS -- ASIC_DB --> FA
+  SS -- STATE_DB.FABRIC_PORT_TABLE --> FMG
   FMG -->|threshold 超過| ISOLATE[link isolate]
 ```
+
+## 何が見えるか（STATE_DB / counter）
+
+### `FABRIC_PORT_TABLE`
+
+fabric port は chip 上の fabric port 番号で識別。周期 poll で書き込まれる[^1]:
+
+```
+STATE_DB:FABRIC_PORT_TABLE:<fabric_port_name>
+  lane    = <number>
+  status  = "up" | "down"
+  # up なら remote peer の switch_id / fabric port を保持
+  # down なら reason (CRC / misaligned 等)
+```
+
+### Fabric 専用 SAI counter
+
+forwarding 用 port counter とは別に[^1]:
+
+```
+SAI_PORT_STAT_IF_IN_OCTETS / IN_ERRORS / IN_FABRIC_DATA_UNITS
+SAI_PORT_STAT_IF_IN_FEC_{CORRECTABLE,NOT_CORRECTABLE,SYMBOL}_ERRORS
+SAI_PORT_STAT_IF_OUT_OCTETS / OUT_FABRIC_DATA_UNITS
+```
+
+「**cell**（fabric data unit）」が物理 packet と別粒度で計測される。
+
+## どう監視するか（Rev 3 以降）
+
+Rev 3 以降、fabric link 単位で **エラー率しきい値による自動 isolation** が追加[^1]:
+
+- `IN_FEC_NOT_CORRECTABLE_FRAMES` 等を周期チェック
+- しきい値超過 → リンクを論理的に isolate（fabric から外す）
+- リンクダウン時はダウン理由（CRC / misaligned）も STATE_DB に表記
+- Rev 3.6 で **persistent link flap** 検出が追加（short up/down 繰り返しも isolate）
+
+しきい値の具体値・判定窓は HLD で完全固定されておらず、実装側のチューニング余地あり。
+
+### Hotswap
+
+Rev 1.1 で hotswap handling が明記[^1]。fabric / line card の活線挿抜で fabric ASIC コンテナが動的に start/stop される。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/voq/fabric.md#L33-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -127,13 +117,7 @@ excerpt: |
 reasoning: 継続的に改訂されている fabric link 監視機能の設計実績の根拠。
 -->
 
-### Hotswap 対応
-
-Rev 1.1 で hotswap handling が明記[^1]: fabric card の活線挿抜 / line card の入れ替えに伴って fabric ASIC の container が動的に start/stop される。
-
-## 設定
-
-### 関連する CONFIG_DB
+## 設定と CLI
 
 | Table | Key | フィールド |
 |-------|-----|------------|
@@ -141,58 +125,42 @@ Rev 1.1 で hotswap handling が明記[^1]: fabric card の活線挿抜 / line c
 
 `STATE_DB FABRIC_PORT_TABLE` はランタイム生成。
 
-### 関連する CLI
-
-HLD で改訂されている系統[^1]:
-
 | Command | 用途 |
 |---------|------|
 | `show fabric counters [port \| queue \| reachability]` | fabric port 統計 |
 | `show fabric port status` | fabric port 状態（up/down/peer 情報）|
-| `clear fabric counters` | fabric counter のクリア |
-
-### 設定例
-
-```bash
-# fabric ASIC を持つカードでの DEVICE_METADATA
-config-fabric-asic --switch-id 100 --type fabric
-
-# 状態確認
-show fabric port status
-show fabric counters port
-```
+| `clear fabric counters` | counter クリア |
 
 ## 制限事項
 
-- 本 HLD は **VOQ chassis 構成専用**。pizza-box の単一 ASIC スイッチには無関係
-- fabric ASIC は front-panel を持たないため LLDP / BGP 等のプロトコル系コンテナは disable 強制
-- Fabric link 監視のしきい値設計（具体的な閾値・判定窓）は HLD 文書中で完全には固定されておらず、実装側のチューニング余地あり
-- HLD は大きい（25KB+ で改訂多数）。詳細フローや edge case は HLD `doc/voq/fabric.md` を参照
+- VOQ chassis 構成専用。pizza-box には無関係
+- fabric ASIC は front-panel を持たないため LLDP / BGP 等は disable 強制
+- 自動 isolation のしきい値設計は HLD で完全固定されていない
+- HLD は 25KB+ で改訂多数。フローや edge case は本文を参照
 
 ## 干渉する機能
 
 - **VOQ chassis architecture**（`doc/voq/architecture.md`）: 本 HLD の前提
-- **multi-ASIC HLD**: container グルーピング機構を共有
-- **SSI（Supervisor SONiC Instance）**: 制御平面はここに集約される。fabric ASIC の swss/syncd は SSI 上に立つ
-- **port counter / show interfaces counters 系**: forwarding ASIC 側の port counter とは独立。混同しないよう CLI が分離されている
-- **warm-boot / fast-boot**: fabric link が一時的に down する間の cell loss / VOQ 制御は HLD でカバーされている範囲
+- **multi-ASIC**: container グルーピング機構を共有
+- **SSI**: 制御平面はここに集約。fabric ASIC の swss/syncd は SSI 上
+- **port counter / show interfaces counters**: forwarding 側と独立。CLI が分離されている
+- **warm-boot / fast-boot**: fabric link 一時 down 時の cell loss / VOQ 制御は HLD でカバー
 
 ## トラブルシューティング
 
 ```bash
-# fabric port の状態
 show fabric port status
-
-# 物理的にどの link が down か / 理由
 redis-cli -n 6 KEYS "FABRIC_PORT_TABLE:*" | head
 redis-cli -n 6 HGETALL "FABRIC_PORT_TABLE:Fabric0"
-
-# counter の急増 (FEC_NOT_CORRECTABLE_FRAMES が増えていないか)
-show fabric counters port
-
-# 自動 isolate されたか
-docker logs swss-fabric0 2>&1 | grep -i isolate
+show fabric counters port                          # FEC_NOT_CORRECTABLE が増えていないか
+docker logs swss-fabric0 2>&1 | grep -i isolate    # 自動 isolate されたか
 ```
+
+## 関連 Topics
+
+- [Topics 12 Multi-ASIC / VOQ - architecture](../topics/12-multi-asic-voq/architecture.md)
+- [Topics 12 Multi-ASIC / VOQ - internals](../topics/12-multi-asic-voq/internals.md)
+- 関連 HLD: [VOQ SONiC](voq-sonic.md) / [Recirculation port (VOQ chassis)](recirculation-port-support-on-voq-chassis.md) / [Everflow on VOQ chassis](everflow-support-on-voq-chassis.md)
 
 ## 引用元
 
