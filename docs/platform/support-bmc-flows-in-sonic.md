@@ -220,4 +220,17 @@ sudo show techsupport     # BMC dump 自動同梱
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show platform bmc summary` CLI リファレンス](../reference/cli/show-platform.md)
+- [`show platform bmc eeprom` CLI リファレンス](../reference/cli/show-platform.md)
+- [`show platform firmware status` CLI リファレンス](../reference/cli/show-platform.md)
+- [`config platform firmware install` CLI リファレンス](../reference/cli/config-platform-firmware.md)
+- [`show platform` CLI リファレンス](../reference/cli/show-platform.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 896d391185a9 -->

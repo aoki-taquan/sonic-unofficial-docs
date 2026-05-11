@@ -285,4 +285,17 @@ config rate smoothing_interval port 5    # EMA N=5
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`clear counters` CLI リファレンス](../reference/cli/clear-counters.md)
+- [`FLEX_COUNTER_TABLE` CONFIG_DB スキーマ](../reference/config-db/flex-counter-table.md)
+- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
+- [`PORT_STORM_CONTROL` CONFIG_DB スキーマ](../reference/config-db/port-storm-control.md)
+- [`PORT_QOS_MAP` CONFIG_DB スキーマ](../reference/config-db/port-qos-map.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 9cdd945b9162 -->

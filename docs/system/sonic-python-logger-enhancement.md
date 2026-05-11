@@ -19,7 +19,9 @@ related:
   cli:
   - config syslog level
   - config syslog
-  yang: []
+  yang:
+  - sonic-logger
+  - sonic-syslog
 ---
 
 !!! danger "裏取りステータス: Discrepancy-found（singleton 化は未実装）"
@@ -193,7 +195,7 @@ LOGGER|<component>
 
 ### 関連する YANG
 
-該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない。
+HLD 自体は YANG 言及なし。`LOGGER` テーブルは `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-logger.yang` の `container LOGGER` で取り込まれており、`require_manual_refresh` leaf も定義済。syslog 系設定は `sonic-syslog.yang` を参照。
 
 ## 制限事項
 

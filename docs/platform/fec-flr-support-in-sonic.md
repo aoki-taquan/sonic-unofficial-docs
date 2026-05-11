@@ -355,4 +355,17 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show interfaces counters fec-stats` CLI リファレンス](../reference/cli/show-interfaces.md)
+- [`show interfaces` CLI リファレンス](../reference/cli/show-interfaces.md)
+- [`FLEX_COUNTER_TABLE` CONFIG_DB スキーマ](../reference/config-db/flex-counter-table.md)
+- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
+- [`PORT_STORM_CONTROL` CONFIG_DB スキーマ](../reference/config-db/port-storm-control.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 14f8bd377123 -->

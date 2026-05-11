@@ -269,4 +269,17 @@ show icmp sessions
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show acl` CLI リファレンス](../reference/cli/show-acl.md)
+- [`config acl` CLI リファレンス](../reference/cli/config-acl.md)
+- [`MUX_LINKMGR` CONFIG_DB スキーマ](../reference/config-db/mux-linkmgr.md)
+- [`MUX_CABLE` CONFIG_DB スキーマ](../reference/config-db/mux-cable.md)
+- [`ACL_RULE` CONFIG_DB スキーマ](../reference/config-db/acl-rule.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 712ec0192f02 -->

@@ -224,4 +224,15 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show platform` CLI リファレンス](../reference/cli/show-platform.md)
+- [`CRM` CONFIG_DB スキーマ](../reference/config-db/crm.md)
+- [`sonic-crm` YANG モジュール](../reference/yang/sonic-crm.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: efdb904808b0 -->

@@ -21,7 +21,8 @@ related:
   - TELEMETRY
   cli:
   - config chassis module shutdown
-  yang: []
+  yang:
+  - sonic-chassis-module
 ---
 
 <!-- topics-tip -->

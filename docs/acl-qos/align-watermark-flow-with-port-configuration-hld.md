@@ -269,4 +269,17 @@ counterpoll watermark enable
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show queue` CLI リファレンス](../reference/cli/show-queue.md)
+- [`FLEX_COUNTER_TABLE` CONFIG_DB スキーマ](../reference/config-db/flex-counter-table.md)
+- [`QUEUE` CONFIG_DB スキーマ](../reference/config-db/queue.md)
+- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
+- [`MAP_PFC_PRIORITY_TO_QUEUE` CONFIG_DB スキーマ](../reference/config-db/map-pfc-priority-to-queue.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: af011099fbeb -->

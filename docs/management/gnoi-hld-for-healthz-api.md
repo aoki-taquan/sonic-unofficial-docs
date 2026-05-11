@@ -234,6 +234,17 @@ gnoi_client healthz acknowledge \
 - HLD 2025-06 v0.1 と現行 master の差分有無
 -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`TELEMETRY` CONFIG_DB スキーマ](../reference/config-db/telemetry.md)
+- [management カテゴリ目次](index.md)
+- [用語集 (Glossary)](../reference/glossary.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: c671e32e187d -->
 
 <!-- ops-entry -->

@@ -241,4 +241,17 @@ Supervisor で全体 TSA、LC2 だけ独立に TSB:
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config bgp` CLI リファレンス](../reference/cli/config-bgp.md)
+- [`show bgp` CLI リファレンス](../reference/cli/show-bgp.md)
+- [`BGP_DEVICE_GLOBAL` CONFIG_DB スキーマ](../reference/config-db/bgp-device-global.md)
+- [`VOQ_INBAND_INTERFACE` CONFIG_DB スキーマ](../reference/config-db/voq-inband-interface.md)
+- [`BGP_NEIGHBOR` CONFIG_DB スキーマ](../reference/config-db/bgp-neighbor.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 3824fa3eb22e -->

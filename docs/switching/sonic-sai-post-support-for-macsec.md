@@ -240,4 +240,17 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`FIPS` CONFIG_DB スキーマ](../reference/config-db/fips.md)
+- [`MACSEC_PROFILE` CONFIG_DB スキーマ](../reference/config-db/macsec-profile.md)
+- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
+- [`CRM` CONFIG_DB スキーマ](../reference/config-db/crm.md)
+- [`sonic-fips` YANG モジュール](../reference/yang/sonic-fips.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: fae4babedf51 -->

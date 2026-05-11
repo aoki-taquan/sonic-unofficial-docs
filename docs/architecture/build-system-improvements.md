@@ -248,4 +248,17 @@ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 - sonic-buildimage/rules/sairedis.mk に SAIREDIS_DPKG_TARGET=binary-syncd の指定なし; slave.mk:879 $(if $($*_DPKG_TARGET),...) 汎用機構経由
 -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config snmp` CLI リファレンス](../reference/cli/config-snmp.md)
+- [`SNMP` CONFIG_DB スキーマ](../reference/config-db/snmp.md)
+- [`SNMP_AGENT_ADDRESS_CONFIG` CONFIG_DB スキーマ](../reference/config-db/snmp-agent-address-config.md)
+- [`MGMT_VRF_CONFIG` CONFIG_DB スキーマ](../reference/config-db/mgmt-vrf-config.md)
+- [`sonic-snmp` YANG モジュール](../reference/yang/sonic-snmp.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 1d579f83f1e2 -->

@@ -1087,9 +1087,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [サイトマップ](../_meta/sitemap.md) (78)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (24)
+- [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (23)
 - [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (23)
 - [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (21)
-- [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (20)
 
 ### [config_db.json](#term-config_db.json)
 
@@ -1152,8 +1152,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (6)
 - [変更履歴](../_meta/changelog.md) (2)
 - [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (2)
-- [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../acl-qos/dhcp-dos-mitigation-in-sonic.md) (1)
-- [ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計](../architecture/1-udev-rules-design-for-terminal-server.md) (1)
+- [Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) (2)
+- [NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md) (2)
 
 ### [DPU](#term-dpu)
 
@@ -1355,8 +1355,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-vlan YANG](yang/sonic-vlan.md) (44)
 - [sonic-interface YANG](yang/sonic-interface.md) (42)
+- [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (38)
 - [sonic-vlan-sub-interface YANG](yang/sonic-vlan-sub-interface.md) (36)
-- [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (35)
 - [config interface サブコマンド](cli/config-interface.md) (30)
 
 ### [intfmgrd](#term-intfmgrd)
@@ -1565,7 +1565,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [設定](../topics/18-p4-pins/setup.md) (17)
 - [概念](../topics/18-p4-pins/concept.md) (15)
 - [発展トピック](../topics/18-p4-pins/advanced.md) (11)
-- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (8)
+- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (9)
 
 ### [ProducerStateTable](#term-producerstatetable)
 
@@ -1589,7 +1589,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (14)
 - [config qos サブコマンド](cli/config-qos.md) (10)
 - [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (8)
-- [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (7)
+- [QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md) (8)
 
 ### [RoCE](#term-roce)
 
@@ -1750,7 +1750,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [syncd](#term-syncd)
 
 - [NPU MDIO アクセスと gbsyncd 単一 docker 化](../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md) (38)
-- [サイトマップ](../_meta/sitemap.md) (33)
+- [サイトマップ](../_meta/sitemap.md) (34)
 - [運用](../topics/20-swss-sai-redis/operations.md) (33)
 - [内部実装](../topics/20-swss-sai-redis/internals.md) (30)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../platform/dump-on-sai-failure.md) (26)

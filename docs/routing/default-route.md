@@ -240,4 +240,17 @@ HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書�
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config default route` CLI リファレンス](../reference/cli/config-default-route.md)
+- [`show route map` CLI リファレンス](../reference/cli/show-route-map.md)
+- [`config route` CLI リファレンス](../reference/cli/config-route.md)
+- [`MUX_LINKMGR` CONFIG_DB スキーマ](../reference/config-db/mux-linkmgr.md)
+- [`MUX_CABLE` CONFIG_DB スキーマ](../reference/config-db/mux-cable.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: e95f91b51175 -->

@@ -256,4 +256,17 @@ sudo reset-factory keep-basic
 - gNOI FactoryReset との関係
 -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config aaa` CLI リファレンス](../reference/cli/config-aaa.md)
+- [`show aaa` CLI リファレンス](../reference/cli/show-aaa.md)
+- [`AAA` CONFIG_DB スキーマ](../reference/config-db/aaa.md)
+- [`MGMT_PORT` CONFIG_DB スキーマ](../reference/config-db/mgmt-port.md)
+- [`MGMT_INTERFACE` CONFIG_DB スキーマ](../reference/config-db/mgmt-interface.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 04127c73f090 -->

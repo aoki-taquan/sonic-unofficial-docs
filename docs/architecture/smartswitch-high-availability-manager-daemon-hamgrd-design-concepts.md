@@ -21,6 +21,7 @@ related:
   cli:
   - show bfd
   yang: []
+  _no_yang: true
 ---
 
 # SmartSwitch HA HAMgrD 概念

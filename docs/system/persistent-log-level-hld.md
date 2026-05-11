@@ -239,4 +239,14 @@ swssloglevel -d
 
 [^1]: `sonic-net/SONiC` `doc/logging/persistent_logger/persistent_loglevel.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [system カテゴリ目次](index.md)
+- [用語集 (Glossary)](../reference/glossary.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: d59e75d0b079 -->
