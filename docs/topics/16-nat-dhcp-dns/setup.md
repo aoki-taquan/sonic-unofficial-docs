@@ -51,7 +51,71 @@ per-interface counter / Option 82 は CLI / CONFIG_DB レベルでは特別な�
 
 CLI は `config dhcp_server ipv4 ...` / `show dhcp_server ipv4 ...` で、CONFIG_DB スキーマは [DHCP_SERVER_IPV4 群](../../reference/config-db/dhcp-server-ipv4.md)、YANG は [sonic-dhcp-server](../../reference/yang/sonic-dhcp-server.md) にあります。
 
-## 典型構成: ToR の relay + 集中 server
+## 設定シナリオ 1: 静的 NAT で内部サーバを公開
+
+`inside` インターフェース配下の `10.10.0.5:80` を、`outside` の `203.0.113.10:80` で公開する例。
+
+```bash
+# NAT を有効化
+sudo config nat feature enable
+
+# inside / outside zone を割り当て
+sudo config interface ip add Vlan10 10.10.0.1/24
+sudo config interface nat add inside  Vlan10
+sudo config interface ip add Ethernet48 203.0.113.10/30
+sudo config interface nat add outside Ethernet48
+
+# 静的 NAPT
+sudo config nat add static tcp 10.10.0.5 80 203.0.113.10 80
+```
+
+CONFIG_DB はおおよそ次の形になります。
+
+```json
+{
+    "NAT_GLOBAL": {"Values": {"admin_mode": "enabled", "nat_timeout": "600", "nat_tcp_timeout": "86400", "nat_udp_timeout": "300"}},
+    "NAT_ZONE": {
+        "Vlan10":    {"nat_zone": "1"},
+        "Ethernet48":{"nat_zone": "0"}
+    },
+    "STATIC_NAPT": {
+        "203.0.113.10|TCP|80": {"local_ip": "10.10.0.5", "local_port": "80"}
+    }
+}
+```
+
+確認:
+
+```bash
+show nat config static
+show nat translations
+show nat statistics
+```
+
+`show nat translations` の典型出力:
+
+```
+Protocol    Source            Destination        Translated Source    Translated Destination
+----------  ----------------  -----------------  -------------------  -----------------------
+tcp         198.51.100.4:53245  203.0.113.10:80   198.51.100.4:53245   10.10.0.5:80
+```
+
+## 設定シナリオ 2: 動的 NAT プール + ACL マッチ
+
+`10.10.0.0/24` の発信トラフィックを `203.0.113.32-203.0.113.47` でマスカレード。
+
+```bash
+sudo config nat add pool POOL1 203.0.113.32-203.0.113.47
+sudo config acl add table NAT_ACL L3 -p Ethernet48
+sudo config acl rule create NAT_ACL R10 --src-ip 10.10.0.0/24 --action FORWARD
+sudo config nat add binding BIND1 --pool POOL1 --acl-name NAT_ACL --nat-type dnat
+```
+
+`NAT_POOL` / `NAT_BINDINGS` テーブルに反映され、`natsyncd` が conntrack を作成して `APPL_DB:NAT_TABLE` 経由で SAI へ流します。
+
+## 設定シナリオ 3: ToR の DHCP relay と giaddr 固定
+
+
 
 VLAN 10 / 20 を持つ ToR で、外部 DHCP server に中継する最小構成は次の通りです。
 
@@ -62,7 +126,25 @@ config vlan dhcp_relay add 20 10.0.0.1
 
 書き込まれる CONFIG_DB は `DHCP_RELAY|Vlan10` / `Vlan20` で、`dhcp_servers: ["10.0.0.1"]` です。v6 を併用するなら `dhcpv6_servers` を別途追加します。secondary subnet を運用する場合は VLAN_INTERFACE 側で `secondary: "true"` の付与を忘れずに。
 
-## 典型構成: ToR ローカル DHCP server
+確認:
+
+```bash
+show dhcp_relay ipv4 interfaces
+show dhcp_relay ipv4 statistics
+```
+
+`show dhcp_relay ipv4 interfaces` 例:
+
+```
+Interface    DHCP Helper Address
+-----------  ---------------------
+Vlan10       10.0.0.1
+Vlan20       10.0.0.1
+```
+
+`show dhcp_relay ipv4 statistics` で `bootp_request_sent_to_server` / `bootp_reply_sent_to_client` のカウンタが進むことを確認します。giaddr を secondary IP に固定したい場合は `VLAN_INTERFACE|Vlan10|10.10.99.1/32` を `secondary: "true"` で追加し、`dhcrelay` の `-pg` でその IP が選ばれるようにします。
+
+## 設定シナリオ 4: ToR ローカル DHCP server
 
 `docker-dhcp-server` を有効化し、VLAN 10 で pool を払い出す例の輪郭は次の通りです。
 
@@ -74,6 +156,75 @@ config dhcp_server ipv4 ip bind Vlan10 Ethernet4 --range pool1
 ```
 
 各サブコマンドの正確な引数は [config dhcp_server CLI](../../reference/cli/config-dhcp-relay.md) と各 [DHCP_SERVER_IPV4 系 CONFIG_DB ページ](../../reference/config-db/dhcp-server-ipv4.md) を参照してください。relay は同 VLAN で kea へ向くよう自動的に dhcprelayd が config を書き換えます。
+
+CONFIG_DB は次のようになります。
+
+```json
+{
+    "FEATURE": {"dhcp_server": {"state": "enabled"}},
+    "DHCP_SERVER_IPV4": {
+        "Vlan10": {"gateway": "10.10.0.1", "lease_time": "86400", "mode": "PORT", "netmask": "255.255.0.0", "state": "enabled"}
+    },
+    "DHCP_SERVER_IPV4_RANGE": {
+        "pool1": {"range": "10.10.0.100,10.10.0.200"}
+    },
+    "DHCP_SERVER_IPV4_PORT": {
+        "Vlan10|Ethernet4": {"ranges@": "pool1"}
+    }
+}
+```
+
+確認:
+
+```bash
+show dhcp_server ipv4 info
+show dhcp_server ipv4 lease
+```
+
+`show dhcp_server ipv4 lease` 出力例:
+
+```
+VLAN       MAC                IP             Lease Start          Lease End
+---------  -----------------  -------------  -------------------  -------------------
+Vlan10     52:54:00:aa:bb:cc  10.10.0.100    2026-05-11 09:12:30  2026-05-12 09:12:30
+```
+
+## 設定エラーと対処
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| `show nat translations` が空のまま | inside / outside zone が貼られていない | `show interfaces nat-zone`、各 interface に対して `config interface nat add inside/outside` |
+| 静的 NAT 投入後も `conntrack -L` に出ない | NAT_GLOBAL の `admin_mode` が `disabled` | `config nat feature enable` で `admin_mode: enabled` を確認 |
+| 動的 NAT のプールが枯渇 | プール範囲不足 / aging が長い | `nat_timeout` を短く、または `NAT_POOL` の range を拡張 |
+| relay 経由で DISCOVER が server に届かない | giaddr が `0.0.0.0` のまま / VLAN_INTERFACE が L3 化されていない | `show ip interfaces` で VLAN の IP を確認、`docker logs dhcp_relay` を確認 |
+| local DHCP server がリースを払い出さない | `DHCP_SERVER_IPV4_PORT` の `ranges@` がレンジ名と不一致 | レンジ名のスペル、`Vlan10|<port>` の port が実存することを確認 |
+| Option 82 が付かない | relay version が古い / `vlan_dhcp_relay` 系の `enable_option_82` が false | `redis-cli HGET DHCP_RELAY|Vlan10 enable_option_82` を確認 |
+
+## 設定シナリオ 5: VLAN 単位の DNS resolver 配布
+
+DHCP server / relay の Option 6（DNS server）と Option 15（domain name）を VLAN 単位で配布します。relay の場合は upstream server 側で設定しますが、local server を使うときは `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS` で書きます。
+
+```json
+{
+    "DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS": {
+        "dns": {"id": "6", "type": "ip-list", "value": "10.10.0.2,10.10.0.3"},
+        "domain": {"id": "15", "type": "string", "value": "corp.example.com"}
+    },
+    "DHCP_SERVER_IPV4": {
+        "Vlan10": {"customized_options@": "dns,domain", "gateway":"10.10.0.1","lease_time":"86400","mode":"PORT","netmask":"255.255.0.0","state":"enabled"}
+    }
+}
+```
+
+クライアント側で `cat /etc/resolv.conf` に `10.10.0.2` / `10.10.0.3` と `search corp.example.com` が降りてくれば成功です。
+
+## 関連リファレンス
+
+- CLI: `config nat`、`show nat`、`config interface nat`、`config vlan dhcp_relay`、`config dhcp_server ipv4`、`show dhcp_relay ipv4`、`show dhcp_server ipv4`
+- CONFIG_DB: `NAT_GLOBAL`、`NAT_ZONE`、`STATIC_NAT`、`STATIC_NAPT`、`NAT_POOL`、`NAT_BINDINGS`、`DHCP_RELAY`、`DHCP_SERVER_IPV4`、`DHCP_SERVER_IPV4_RANGE`、`DHCP_SERVER_IPV4_PORT`、`DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS`、`VLAN_INTERFACE`（secondary giaddr 用）
+- APPL_DB: `NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`
+- COUNTERS_DB: NAT / DHCP relay の per-entry / per-interface counter
+- YANG: [`sonic-nat`](../../reference/yang/sonic-nat.md)、[`sonic-dhcp-server`](../../reference/yang/sonic-dhcp-server.md)、`sonic-dhcpv4-relay`
 
 ## 関連ページ
 

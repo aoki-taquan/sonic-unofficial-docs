@@ -51,6 +51,107 @@ config interface breakout Ethernet0 "4x25G"
 
 speed や FEC を変更すると、buffer profile や ACL bind が影響を受ける場合があります。QoS / ACL 章とあわせて読んでください。
 
+## 設定シナリオ 1: 100G ポートを 4x25G にブレイクアウト
+
+新しい光モジュールを差してブレイクアウト構成に切り替える場合、CLI 1 本では完結せず、breakout → speed → FEC → admin の順で投入します。`Ethernet0` を `4x25G` に分解する例:
+
+```bash
+# 現状確認
+show interfaces breakout current-mode Ethernet0
+show interfaces status Ethernet0
+
+# breakout
+sudo config interface breakout Ethernet0 "4x25G[10G]" -f -y
+
+# 子ポートの起動と FEC
+for p in Ethernet0 Ethernet1 Ethernet2 Ethernet3; do
+    sudo config interface speed $p 25000
+    sudo config interface fec   $p rs
+    sudo config interface startup $p
+done
+```
+
+CONFIG_DB の差分（ブレイクアウト直後）はおおよそ次の形になります。
+
+```json
+{
+    "PORT": {
+        "Ethernet0": {"lanes": "65", "speed": "25000", "fec": "rs", "admin_status": "up", "mtu": "9100", "alias": "etp1a"},
+        "Ethernet1": {"lanes": "66", "speed": "25000", "fec": "rs", "admin_status": "up", "mtu": "9100", "alias": "etp1b"},
+        "Ethernet2": {"lanes": "67", "speed": "25000", "fec": "rs", "admin_status": "up", "mtu": "9100", "alias": "etp1c"},
+        "Ethernet3": {"lanes": "68", "speed": "25000", "fec": "rs", "admin_status": "up", "mtu": "9100", "alias": "etp1d"}
+    },
+    "BREAKOUT_CFG": {
+        "Ethernet0": {"brkout_mode": "4x25G[10G]"}
+    }
+}
+```
+
+確認は `show interfaces status` / `show interfaces transceiver eeprom` です。
+
+```
+Interface    Lanes        Speed    MTU    FEC    Alias    Vlan    Oper    Admin    Type        Asym PFC
+-----------  -----------  -------  -----  -----  -------  ------  ------  -------  ----------  ----------
+Ethernet0    65           25G      9100   rs     etp1a    routed  up      up       SFP28       N/A
+Ethernet1    66           25G      9100   rs     etp1b    routed  up      up       SFP28       N/A
+```
+
+## 設定シナリオ 2: 既存ポートの speed と FEC の切替
+
+光モジュール交換に伴い 100G → 400G に上げる、ないし FEC を `rs` から `fc` に切り替える運用です。port が UP のままだと SAI 側で reject される実装があるため、必ず一旦 admin down にします。
+
+```bash
+sudo config interface shutdown Ethernet8
+sudo config interface speed    Ethernet8 400000
+sudo config interface fec      Ethernet8 rs
+sudo config interface mtu      Ethernet8 9100
+sudo config interface startup  Ethernet8
+
+show interfaces counters errors Ethernet8
+```
+
+期待されるエラーカウンタは基本ゼロ近傍です。FEC を変えた直後は `RX_ERR` や `SYMBOL_ERR` が一時的に増えることがあるため、`watch -n 1 show interfaces counters Ethernet8` で 10〜30 秒の収束を待ちます。
+
+## 設定シナリオ 3: platform firmware のステージング更新
+
+`fw-util` は装置上で BIOS / CPLD / FPGA / SSD / optics を統一して扱います。本番投入前に「DUT 上に新 firmware を仕込み、次回 cold reboot で適用する」というステージング運用が典型です。
+
+```bash
+# 現状
+show platform firmware status
+
+# 取得
+sudo config platform firmware install chassis component BIOS fw /tmp/bios-2.0.bin --yes
+
+# 次回 cold reboot で適用するように予約
+sudo config platform firmware update chassis component BIOS fw policy next
+
+# 適用は cold reboot 後
+sudo reboot
+```
+
+`show platform firmware status` の典型出力:
+
+```
+Chassis    Module    Component    Version       Description
+---------  --------  -----------  ------------  --------------------
+Chassis1   N/A       BIOS         1.5.0         BIOS firmware
+Chassis1   N/A       CPLD1        12            CPLD firmware
+Chassis1   N/A       SSD          2024.1        Internal SSD
+```
+
+更新後の expected version とコンポーネントの一覧は platform 実装の `platform_components.json` に列挙され、`fw-util` はこの JSON に書かれた component しか触らないため、想定外のデバイスを誤って flash することはありません。
+
+## 設定エラーと対処
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| `config interface breakout` が `Not supported on this platform` で失敗 | `platform.json` / capability に該当 mode が無い | `show platform inventory` と `platform.json` の `breakout_modes` を確認、ベンダー提供版を入手 |
+| `config interface speed 400000` が `SAI_STATUS_INVALID_ATTR_VALUE_0` でログに残る | ASIC は対応していても SerDes / FEC 組合せが NG | `port_config.ini` / `media_settings.json` で許可された組合せを確認 |
+| 子ポートが Oper down のまま | 対向側のブレイクアウトモード不一致、または FEC 不一致 | 対向の `show int status` と FEC をそろえる |
+| `show int transceiver eeprom` が空 | SFP I2C エラー / `xcvrd` 未起動 | `docker logs pmon`、`xcvrd` のステータスを確認 |
+| `fw-util` が `policy next` 後も適用されない | warm reboot を使った / power cycle が必要な component | component の reboot 要件を `platform_components.json` で確認、`cold reboot` で再試行 |
+
 ## Platform firmware
 
 `config platform firmware` 系コマンドは、装置内の各種 firmware (BIOS、CPLD、FPGA、SSD、optics) の表示・アップデート・スケジュール管理を扱います。
@@ -60,9 +161,56 @@ speed や FEC を変更すると、buffer profile や ACL bind が影響を受�
 
 CLI から呼ばれる `fw-util` は、`platform.json` と platform 実装が公開する component に依存して動きます。
 
+## 設定シナリオ 4: 光モジュール DOM の常時モニタリング
+
+`xcvrd` は SFP / QSFP の Digital Optical Monitoring (DOM) 値を `STATE_DB:TRANSCEIVER_DOM_SENSOR|<port>` に書き続けます。アラート閾値を CLI で設定する場合:
+
+```bash
+sudo config interface transceiver dom Ethernet0 enable
+show interfaces transceiver dom Ethernet0
+```
+
+`show interfaces transceiver dom` 出力例:
+
+```
+Ethernet0:
+        temperature: 43.5C
+        voltage:     3.31V
+        rx1power:    -2.1 dBm
+        tx1power:     0.5 dBm
+        tx1bias:     7.5 mA
+```
+
+各値の Warning / Alarm 閾値は EEPROM の A0/A2 page から `xcvrd` が読み、`STATE_DB:TRANSCEIVER_STATUS_FLAG_*` に立てます。`COUNTERS_DB` に直接落ちないことに注意。SNMP / telemetry で監視する場合は `xcvrd` の `TRANSCEIVER_DOM_FLAG_TABLE` を subscribe します。
+
+## 設定シナリオ 5: media_settings.json による per-port preemphasis
+
+ASIC の SerDes preemphasis / 振幅は default では `port_config.ini` の lane に紐づくテンプレートが適用されますが、特定の光モジュール vendor / part-number の組合せだけ調整したいときは `/usr/share/sonic/device/<platform>/<hwsku>/media_settings.json` を編集します。
+
+```json
+{
+  "GLOBAL_MEDIA_SETTINGS": {
+    "0-31": {
+      "QSFP28-100GBASE-CR4-1M": {
+        "preemphasis": {"lane0":"0x12345678","lane1":"0x12345678","lane2":"0x12345678","lane3":"0x12345678"}
+      }
+    }
+  }
+}
+```
+
+編集後 `systemctl restart xcvrd` で再ロードされ、次回 link up 時から反映されます。`docker exec xcvrd cat /var/log/xcvrd.log` で `media_settings applied` のログを確認します。
+
 ## Platform capability ファイル
 
 ASIC や platform が「何ができるか」を宣言する capability ファイルは、port 設定や機能の可否を実行前に判別するために使われます。詳細は [platform capability file enhancement](../../platform/platform-capability-file-enhancement.md) を参照してください。capability に書かれていない機能を設定で要求した場合、orchagent / SAI 層で reject されます。
+
+## 関連リファレンス
+
+- CLI: `config interface`、`config interface breakout`、`config interface speed/fec/mtu/autoneg`、`config platform firmware`、`show interfaces status`、`show interfaces transceiver`、`show platform inventory`、`show platform firmware status`
+- CONFIG_DB: `PORT`、`BREAKOUT_CFG`、`PORT_TABLE`（APPL_DB）、`TRANSCEIVER_INFO`（STATE_DB）、`TRANSCEIVER_DOM_SENSOR`（STATE_DB）、`DEVICE_METADATA`、`CHASSIS_INFO`
+- YANG: [`sonic-port`](../../reference/yang/sonic-port.md)、`sonic-portchannel`、`sonic-device-metadata`
+- platform 実装ファイル: `platform.json`、`port_config.ini`、`media_settings.json`、`platform_components.json`、`hwsku.json`
 
 ## 関連ページ
 
