@@ -1,21 +1,46 @@
 ---
 title: SWSS / SAI / Redis 内部実装
-description: "SWSS / SAI / Redis 内部実装 — この章は、SONiC の機能章を読み解くときに何度も出てくる「Redis DB」「orchagent」「syncd」「SAI」の関係を、機能横断の内部実装としてまとめ直すための入口である。"
+description: SWSS / SAI / Redis 内部実装 — この章は、SONiC の機能章を読み解くときに何度も出てくる「Redis DB」「orchagent」「syncd」「SAI」の関係を、機能横断の内部実装としてまとめ直すための入口である。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources: []
 keywords:
-  - SWSS
-  - SAI
-  - Redis
-  - orchagent
-  - syncd
-  - APPL_DB
-  - ASIC_DB
-  - STATE_DB
-  - 内部実装
+- SWSS
+- SAI
+- Redis
+- orchagent
+- syncd
+- APPL_DB
+- ASIC_DB
+- STATE_DB
+- 内部実装
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config acl
+  - show acl
+  - config vrf
+  - show techsupport
+  - config vnet
+  config_db:
+  - BGP_GLOBALS
+  - BGP_NEIGHBOR
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
+  - CRM
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-bgp-bbr
+  - sonic-bgp-device-global
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peerrange
+  - sonic-crm
+  - sonic-bgp-monitor
 ---
 
 # SWSS / SAI / Redis 内部実装

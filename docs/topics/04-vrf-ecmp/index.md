@@ -1,26 +1,51 @@
 ---
 title: VRF / ECMP / RIB-FIB パイプライン
-description: "VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…"
+description: VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/routing/sonic-vrf-support-design-spec-draft.md
-  - docs/routing/static-ip-route-configuration.md
-  - docs/routing/routing-and-next-hop-table-enhancement.md
-  - docs/routing/sonic-fine-grained-ecmp.md
-  - docs/routing/sonic-weighted-ecmp.md
+- docs/routing/sonic-vrf-support-design-spec-draft.md
+- docs/routing/static-ip-route-configuration.md
+- docs/routing/routing-and-next-hop-table-enhancement.md
+- docs/routing/sonic-fine-grained-ecmp.md
+- docs/routing/sonic-weighted-ecmp.md
 keywords:
+- VRF
+- ECMP
+- RIB
+- FIB
+- L3
+- マルチパス
+- next-hop
+- default VRF
+- 管理VRF
+related:
+  cli:
+  - config vrf
+  - config bgp
+  - config interface
+  - config route
+  - show bgp
+  - show ip
+  - show vlan
+  config_db:
   - VRF
-  - ECMP
-  - RIB
-  - FIB
-  - L3
-  - マルチパス
-  - next-hop
-  - default VRF
-  - 管理VRF
+  - BGP_PEER_GROUP_AF
+  - LOOPBACK_INTERFACE
+  - VLAN
+  - VLAN_INTERFACE
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-global
+  - sonic-bgp-peerrange
+  - sonic-fine-grained-ecmp
+  - sonic-route-common
+  - sonic-route-map
 ---
 
 # VRF / ECMP / RIB-FIB パイプライン

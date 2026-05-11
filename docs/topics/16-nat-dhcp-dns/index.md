@@ -1,46 +1,71 @@
 ---
 title: NAT / DHCP Relay / Time-DNS Services
-description: "NAT / DHCP Relay / Time-DNS Services — この章は、SONiC が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり NAT、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や…"
+description: NAT / DHCP Relay / Time-DNS Services — この章は、SONiC が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり NAT、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や…
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/architecture/nat-in-sonic.md
-  - docs/architecture/dhcpv4-relay-agent.md
-  - docs/architecture/dhcpv6-relay-agent.md
-  - docs/routing/dhcp-relay-for-ipv6-hld.md
-  - docs/routing/dhcp-relay-per-interface-counter.md
-  - docs/management/ipv4-port-based-dhcp-server-in-sonic.md
-  - docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md
-  - docs/reference/cli/config-nat.md
-  - docs/reference/cli/show-nat.md
-  - docs/reference/cli/config-dhcp-relay.md
-  - docs/reference/config-db/nat.md
-  - docs/reference/config-db/dhcpv4-relay.md
-  - docs/reference/config-db/dhcp-server-ipv4.md
-  - docs/reference/yang/sonic-nat.md
-  - docs/reference/yang/sonic-dhcp-server.md
-  - docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
-  - docs/system/sonic-network-time-protocol-ntp-client-configuration.md
-  - docs/system/sonic-migration-to-chrony.md
-  - docs/system/static-dns-configuration.md
-  - docs/reference/config-db/ntp-global.md
-  - docs/reference/config-db/ntp-server.md
-  - docs/reference/yang/sonic-ntp.md
-  - docs/reference/yang/sonic-dns.md
-  - docs/system/twamp-light-hld.md
-  - docs/architecture/1-udev-rules-design-for-terminal-server.md
+- docs/architecture/nat-in-sonic.md
+- docs/architecture/dhcpv4-relay-agent.md
+- docs/architecture/dhcpv6-relay-agent.md
+- docs/routing/dhcp-relay-for-ipv6-hld.md
+- docs/routing/dhcp-relay-per-interface-counter.md
+- docs/management/ipv4-port-based-dhcp-server-in-sonic.md
+- docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md
+- docs/reference/cli/config-nat.md
+- docs/reference/cli/show-nat.md
+- docs/reference/cli/config-dhcp-relay.md
+- docs/reference/config-db/nat.md
+- docs/reference/config-db/dhcpv4-relay.md
+- docs/reference/config-db/dhcp-server-ipv4.md
+- docs/reference/yang/sonic-nat.md
+- docs/reference/yang/sonic-dhcp-server.md
+- docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
+- docs/system/sonic-network-time-protocol-ntp-client-configuration.md
+- docs/system/sonic-migration-to-chrony.md
+- docs/system/static-dns-configuration.md
+- docs/reference/config-db/ntp-global.md
+- docs/reference/config-db/ntp-server.md
+- docs/reference/yang/sonic-ntp.md
+- docs/reference/yang/sonic-dns.md
+- docs/system/twamp-light-hld.md
+- docs/architecture/1-udev-rules-design-for-terminal-server.md
 keywords:
+- NAT
+- DHCP Relay
+- DNS
+- NTP
+- Time service
+- dhcrelay
+- natsyncd
+- natmgrd
+- サービス
+related:
+  cli:
+  - config nat
+  - show nat
+  - config acl
+  - config interface
+  - config qos
+  - config vlan
+  - config vrf
+  config_db:
   - NAT
-  - DHCP Relay
-  - DNS
-  - NTP
-  - Time service
-  - dhcrelay
-  - natsyncd
-  - natmgrd
-  - サービス
+  - VLAN
+  - COPP_GROUP
+  - COPP_TRAP
+  - ACL_RULE
+  - DHCP_SERVER_IPV4
+  - FEATURE
+  yang:
+  - sonic-nat
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-copp
+  - sonic-dhcp-server
+  - sonic-vrf
+  - sonic-dns
 ---
 
 # NAT / DHCP Relay / Time-DNS Services

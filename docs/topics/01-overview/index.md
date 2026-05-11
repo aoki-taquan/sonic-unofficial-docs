@@ -1,27 +1,52 @@
 ---
 title: SONiC 全体像と設定基盤
-description: "SONiC 全体像と設定基盤 — この章は、SONiC を読むときに最初に混乱しやすい「設定はどこから入るのか」「Redis DB は何を分担するのか」「変更はどこまで安全に戻せるのか」を、HLD 単位ではなく読者の質問順に並べ直した入口です。"
+description: SONiC 全体像と設定基盤 — この章は、SONiC を読むときに最初に混乱しやすい「設定はどこから入るのか」「Redis DB は何を分担するのか」「変更はどこまで安全に戻せるのか」を、HLD 単位ではなく読者の質問順に並べ直した入口です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/guides/beginner.md
-  - docs/guides/operator.md
-  - docs/guides/developer.md
-  - docs/guides/evaluator.md
-  - docs/management/sonic-user-manual.md
-  - docs/management/sonic-nos-configuration-methods.md
+- docs/guides/beginner.md
+- docs/guides/operator.md
+- docs/guides/developer.md
+- docs/guides/evaluator.md
+- docs/management/sonic-user-manual.md
+- docs/management/sonic-nos-configuration-methods.md
 keywords:
-  - SONiC overview
-  - 全体像
-  - CONFIG_DB
-  - Redis
-  - YANG
-  - 設定基盤
-  - アーキテクチャ
-  - config reload
-  - warm reboot
+- SONiC overview
+- 全体像
+- CONFIG_DB
+- Redis
+- YANG
+- 設定基盤
+- アーキテクチャ
+- config reload
+- warm reboot
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config acl
+  - show acl
+  - config qos
+  - config vlan
+  - config vnet
+  config_db:
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_GLOBALS_AF_NETWORK
+  - ACL_TABLE
+  - DEVICE_METADATA
+  - FEATURE
+  - VLAN
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-bbr
+  - sonic-bgp-sentinel
 ---
 
 # SONiC 全体像と設定基盤

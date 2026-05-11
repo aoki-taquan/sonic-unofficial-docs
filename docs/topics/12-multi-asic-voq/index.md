@@ -1,41 +1,66 @@
 ---
 title: Multi-ASIC / VOQ Chassis
-description: "Multi-ASIC / VOQ Chassis — この章は、SONiC が「1 つの NOS インスタンスで複数 ASIC を、または複数 line card を 1 つの論理スイッチとして見せる」ための仕組みをまとめて読むための入口です。"
+description: Multi-ASIC / VOQ Chassis — この章は、SONiC が「1 つの NOS インスタンスで複数 ASIC を、または複数 line card を 1 つの論理スイッチとして見せる」ための仕組みをまとめて読むための入口です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/platform/1-sonic-on-multi-asic-platforms.md
-  - docs/platform/voq-sonic.md
-  - docs/categories/multi-asic.md
-  - docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md
-  - docs/platform/fabric-port-support-on-sonic.md
-  - docs/platform/recirculation-port-support-on-voq-chassis.md
-  - docs/internals/support-redis-databases-in-multiple-namespaces.md
-  - docs/platform/multi-asic-single-json-configuration-design.md
-  - docs/platform/db-design-for-multi-asic-scenarios.md
-  - docs/platform/automatic-module-provisioning-for-chassis.md
-  - docs/platform/single-asic-voq-fixed-system-sonic.md
-  - docs/internals/aggregate-voq-counters-in-sonic.md
-  - docs/system/platform-monitor-design-for-multi-asic-platforms.md
-  - docs/system/platform-monitor-requirement-for-chassis-subsystem.md
-  - docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
-  - docs/routing/bgp-setup-for-voq-chassis.md
-  - docs/switching/lag-on-distributed-voq-system.md
-  - docs/platform/everflow-support-on-voq-chassis.md
-  - docs/routing/reliable-tsa.md
-  - docs/system/multi-asic-warm-reboot.md
+- docs/platform/1-sonic-on-multi-asic-platforms.md
+- docs/platform/voq-sonic.md
+- docs/categories/multi-asic.md
+- docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md
+- docs/platform/fabric-port-support-on-sonic.md
+- docs/platform/recirculation-port-support-on-voq-chassis.md
+- docs/internals/support-redis-databases-in-multiple-namespaces.md
+- docs/platform/multi-asic-single-json-configuration-design.md
+- docs/platform/db-design-for-multi-asic-scenarios.md
+- docs/platform/automatic-module-provisioning-for-chassis.md
+- docs/platform/single-asic-voq-fixed-system-sonic.md
+- docs/internals/aggregate-voq-counters-in-sonic.md
+- docs/system/platform-monitor-design-for-multi-asic-platforms.md
+- docs/system/platform-monitor-requirement-for-chassis-subsystem.md
+- docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
+- docs/routing/bgp-setup-for-voq-chassis.md
+- docs/switching/lag-on-distributed-voq-system.md
+- docs/platform/everflow-support-on-voq-chassis.md
+- docs/routing/reliable-tsa.md
+- docs/system/multi-asic-warm-reboot.md
 keywords:
-  - Multi-ASIC
-  - VOQ
-  - chassis
-  - voq fabric
-  - namespace
-  - linecard
-  - supervisor
-  - 分散ルーティング
-  - マルチASIC
+- Multi-ASIC
+- VOQ
+- chassis
+- voq fabric
+- namespace
+- linecard
+- supervisor
+- 分散ルーティング
+- マルチASIC
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - show interfaces
+  - config acl
+  - config vlan
+  - show acl
+  - show platform
+  config_db:
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_PEER_GROUP_AF
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_NEIGHBOR_AF
+  - BGP_PEER_GROUP
+  - SNMP
+  yang:
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-bbr
+  - sonic-bgp-global
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-sentinel
 ---
 
 # Multi-ASIC / VOQ Chassis

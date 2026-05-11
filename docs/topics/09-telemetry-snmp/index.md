@@ -1,58 +1,83 @@
 ---
 title: Telemetry / SNMP / Observability
-description: "Telemetry / SNMP / Observability — この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。"
+description: Telemetry / SNMP / Observability — この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/system/sonic-logging-system-dumps-arch-spec.md
-  - docs/system/show-techsupport.md
-  - docs/internals/dump-utility-for-easy-debugging.md
-  - docs/system/system-ready-hld.md
-  - docs/internals/sonic-flexcounter-refactor.md
-  - docs/internals/sonic-counter-initialization-optimization.md
-  - docs/system/critical-resource-monitoring.md
-  - docs/system/critical-resource-monitoring-in-sonic.md
-  - docs/system/generic-sai-extension-critical-resource-monitoring-crm.md
-  - docs/reference/config-db/crm.md
-  - docs/reference/config-db/flex-counter-table.md
-  - docs/reference/cli/config-snmp.md
-  - docs/reference/cli/config-sflow.md
-  - docs/reference/cli/config-syslog.md
-  - docs/reference/config-db/sflow.md
-  - docs/reference/config-db/syslog-server.md
-  - docs/reference/config-db/telemetry.md
-  - docs/reference/config-db/auto-techsupport.md
-  - docs/reference/yang/sonic-syslog.md
-  - docs/reference/cli/show-system-health.md
-  - docs/reference/cli/show-techsupport.md
-  - docs/reference/cli/show-platform.md
-  - docs/system/event-driven-techsupport-invocation-coredump-mgmt.md
-  - docs/system/dump-sfp-eeprom-page-data-in-show-techsupport-command.md
-  - docs/system/kdump.md
-  - docs/system/kdump-remote-ssh.md
-  - docs/system/dataplane-telemetry-in-sonic.md
-  - docs/system/dataplane-telemetry-test-plan.md
-  - docs/architecture/sflow-high-level-design.md
-  - docs/architecture/sflow-test-plan.md
-  - docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
-  - docs/system/snmp-migration-from-snmp-yml-to-configdb.md
-  - docs/system/snmp-transceiver-monitoring-testbed-test-plan.md
-  - docs/system/process-and-docker-stats-availability-via-telemetry-agent.md
-  - docs/system/memory-statistics-feature-in-sonic.md
-  - docs/system/reboot-cause-information-via-telemetry-agent.md
-  - docs/internals/byte-packet-rates-port-utilization-in-sonic.md
+- docs/system/sonic-logging-system-dumps-arch-spec.md
+- docs/system/show-techsupport.md
+- docs/internals/dump-utility-for-easy-debugging.md
+- docs/system/system-ready-hld.md
+- docs/internals/sonic-flexcounter-refactor.md
+- docs/internals/sonic-counter-initialization-optimization.md
+- docs/system/critical-resource-monitoring.md
+- docs/system/critical-resource-monitoring-in-sonic.md
+- docs/system/generic-sai-extension-critical-resource-monitoring-crm.md
+- docs/reference/config-db/crm.md
+- docs/reference/config-db/flex-counter-table.md
+- docs/reference/cli/config-snmp.md
+- docs/reference/cli/config-sflow.md
+- docs/reference/cli/config-syslog.md
+- docs/reference/config-db/sflow.md
+- docs/reference/config-db/syslog-server.md
+- docs/reference/config-db/telemetry.md
+- docs/reference/config-db/auto-techsupport.md
+- docs/reference/yang/sonic-syslog.md
+- docs/reference/cli/show-system-health.md
+- docs/reference/cli/show-techsupport.md
+- docs/reference/cli/show-platform.md
+- docs/system/event-driven-techsupport-invocation-coredump-mgmt.md
+- docs/system/dump-sfp-eeprom-page-data-in-show-techsupport-command.md
+- docs/system/kdump.md
+- docs/system/kdump-remote-ssh.md
+- docs/system/dataplane-telemetry-in-sonic.md
+- docs/system/dataplane-telemetry-test-plan.md
+- docs/architecture/sflow-high-level-design.md
+- docs/architecture/sflow-test-plan.md
+- docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
+- docs/system/snmp-migration-from-snmp-yml-to-configdb.md
+- docs/system/snmp-transceiver-monitoring-testbed-test-plan.md
+- docs/system/process-and-docker-stats-availability-via-telemetry-agent.md
+- docs/system/memory-statistics-feature-in-sonic.md
+- docs/system/reboot-cause-information-via-telemetry-agent.md
+- docs/internals/byte-packet-rates-port-utilization-in-sonic.md
 keywords:
-  - Telemetry
+- Telemetry
+- SNMP
+- Observability
+- gNMI streaming
+- syslog
+- counters
+- snmpd
+- telemetry container
+- 監視
+related:
+  cli:
+  - config snmp
+  - show techsupport
+  - show interfaces
+  - show acl
+  - show lldp
+  - config acl
+  - config kdump
+  config_db:
   - SNMP
-  - Observability
-  - gNMI streaming
-  - syslog
-  - counters
-  - snmpd
-  - telemetry container
-  - 監視
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SYSLOG_SERVER
+  - CRM
+  - LLDP
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  yang:
+  - sonic-snmp
+  - sonic-crm
+  - sonic-lldp
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-copp
+  - sonic-syslog
 ---
 
 # Telemetry / SNMP / Observability

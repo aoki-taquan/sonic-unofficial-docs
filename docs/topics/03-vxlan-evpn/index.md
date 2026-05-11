@@ -1,29 +1,54 @@
 ---
 title: VXLAN / EVPN / VNET オーバーレイ
-description: "VXLAN / EVPN / VNET オーバーレイ — この章は、SONiC の overlay を「VXLAN tunnel を作る」「VNET と VRF/VNI を対応させる」「EVPN やコントローラから経路を入れる」「運用中に ECMP、BFD、QoS を確認する」という読者の順番で読み直す入口です。"
+description: VXLAN / EVPN / VNET オーバーレイ — この章は、SONiC の overlay を「VXLAN tunnel を作る」「VNET と VRF/VNI を対応させる」「EVPN やコントローラから経路を入れる」「運用中に ECMP、BFD、QoS を確認する」という読者の順番で読み直す入口です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/overlay/vxlan-sonic.md
-  - docs/routing/evpn-vxlan-hld.md
-  - docs/overlay/nvgre-tunnel-in-sonic.md
-  - docs/platform/subnet-decapsulation-with-sonic.md
-  - docs/routing/overlay-ecmp-with-bfd-monitoring.md
-  - docs/routing/overlay-ecmp-enhancements.md
-  - docs/overlay/dscp-remapping-for-tunnel-traffic.md
+- docs/overlay/vxlan-sonic.md
+- docs/routing/evpn-vxlan-hld.md
+- docs/overlay/nvgre-tunnel-in-sonic.md
+- docs/platform/subnet-decapsulation-with-sonic.md
+- docs/routing/overlay-ecmp-with-bfd-monitoring.md
+- docs/routing/overlay-ecmp-enhancements.md
+- docs/overlay/dscp-remapping-for-tunnel-traffic.md
 keywords:
-  - VXLAN
-  - EVPN
+- VXLAN
+- EVPN
+- VNET
+- オーバーレイ
+- VNI
+- type-2
+- type-5
+- VTEP
+- tunnel
+- overlay
+related:
+  cli:
+  - config vnet
+  - config bgp
+  - config vlan
+  - show bfd
+  - show bgp
+  - config vxlan
+  - show arp
+  config_db:
+  - VLAN
   - VNET
-  - オーバーレイ
-  - VNI
-  - type-2
-  - type-5
-  - VTEP
-  - tunnel
-  - overlay
+  - VXLAN_TUNNEL_MAP
+  - VRF
+  - VXLAN_TUNNEL
+  - TUNNEL_DECAP_TABLE
+  - VXLAN_EVPN_NVO
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-vnet
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # VXLAN / EVPN / VNET オーバーレイ
