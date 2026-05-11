@@ -3,8 +3,8 @@ title: SONiC Port Mirroring（SPAN / ERSPAN）
 description: SONiC Port Mirroring（SPAN / ERSPAN） — SONiC の port mirroring 拡張。Port
   / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する。
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
 - repo: sonic-net/SONiC
   path: doc/port-mirroring/SONiC_Port_Mirroring_HLD.md
