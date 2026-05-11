@@ -2,7 +2,7 @@
 title: orchagent が CPU 100% で詰まる
 description: "Runbook: swss/orchagent が busy loop に陥り、新規設定変更が反映されなくなる場合の切り分け"
 area: reference
-verification: hld-only
+verification: runbook-verified
 last_verified: 2026-05-11
 tags: [runbook, swss, orchagent, performance]
 sources:
