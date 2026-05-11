@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#voq-bgp-ibgp-addpath-multipath-relax" class="md-skip">
+        <a href="#voq-bgp" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -8151,7 +8151,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -8159,22 +8159,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#asic-ecmp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        なぜ ASIC 間 ECMP 整合性が要るか
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecmp-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP 整合性のための 4 設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ECMP 整合性のための 4 設定">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ibgp" class="md-nav__link">
+  <a href="#multipath-relax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        iBGP フルメッシュとアドレスファミリ
+        なぜ multipath-relax が要るか
       
     </span>
   </a>
@@ -8182,22 +8193,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ecmp-4" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ECMP 整合性のための 4 つの設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="ECMP 整合性のための 4 つの設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#multipath-relax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        なぜ multipath-relax が必要か
+        再帰解決の取り扱い
       
     </span>
   </a>
@@ -8208,23 +8207,46 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#config_db-minigraph" class="md-nav__link">
     <span class="md-ellipsis">
       
-        再帰解決の取り扱い
+        CONFIG_DB / minigraph 拡張
       
     </span>
   </a>
   
 </li>
+      
+        <li class="md-nav__item">
+  <a href="#cliinternalexternal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI（internal/external の扱い）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB スキーマ拡張
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -8232,21 +8254,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#minigraph" class="md-nav__link">
+  <a href="#frr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Minigraph 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
+        FRR 設定生成例
       
     </span>
   </a>
@@ -8262,45 +8273,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#frr" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（FRR コンフィグ生成結果）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -8309,7 +8281,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -8320,7 +8292,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -8331,7 +8303,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#topic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22777,7 +22760,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -22785,22 +22768,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#asic-ecmp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        なぜ ASIC 間 ECMP 整合性が要るか
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecmp-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP 整合性のための 4 設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ECMP 整合性のための 4 設定">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ibgp" class="md-nav__link">
+  <a href="#multipath-relax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        iBGP フルメッシュとアドレスファミリ
+        なぜ multipath-relax が要るか
       
     </span>
   </a>
@@ -22808,22 +22802,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ecmp-4" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ECMP 整合性のための 4 つの設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="ECMP 整合性のための 4 つの設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#multipath-relax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        なぜ multipath-relax が必要か
+        再帰解決の取り扱い
       
     </span>
   </a>
@@ -22834,23 +22816,46 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#config_db-minigraph" class="md-nav__link">
     <span class="md-ellipsis">
       
-        再帰解決の取り扱い
+        CONFIG_DB / minigraph 拡張
       
     </span>
   </a>
   
 </li>
+      
+        <li class="md-nav__item">
+  <a href="#cliinternalexternal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI（internal/external の扱い）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="設定">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB スキーマ拡張
+        関連する CONFIG_DB
       
     </span>
   </a>
@@ -22858,21 +22863,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#minigraph" class="md-nav__link">
+  <a href="#frr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Minigraph 拡張
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
+        FRR 設定生成例
       
     </span>
   </a>
@@ -22888,45 +22882,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#frr" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（FRR コンフィグ生成結果）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -22935,7 +22890,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -22946,7 +22901,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -22957,7 +22912,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#topic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22994,35 +22960,36 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>現行 master で実装済みを確認。<code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/{instance,policies,peer-group}.conf.j2</code> の voq_chassis テンプレート、<code>instance.conf.j2:5</code> で <code>bgp bestpath peer-type multipath-relax</code>、<code>bgpd.main.conf.j2:61,63,141,159,170,176,198</code> で <code>voq_chassis</code> 変数による分岐、<code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2277</code> で <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> テーブル生成を確認（verified at: 2026-05-09）。</p>
+<p><code>docker-fpm-frr/frr/bgpd/templates/voq_chassis/{instance,policies,peer-group}.conf.j2</code> の voq_chassis テンプレート、<code>instance.conf.j2:5</code> で <code>bgp bestpath peer-type multipath-relax</code>、<code>bgpd.main.conf.j2:61,63,141,159,170,176,198</code> で <code>voq_chassis</code> 変数分岐、<code>sonic-config-engine/minigraph.py:2277</code> で <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> テーブル生成を確認 (verified at: 2026-05-09)。</p>
 </div>
-<h1 id="voq-bgp-ibgp-addpath-multipath-relax">VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）<a class="headerlink" href="#voq-bgp-ibgp-addpath-multipath-relax" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>VoQ（Virtual Output Queue）シャーシは複数 ASIC インスタンスから構成される単一論理ルータである。トラフィックは入口 ASIC で <strong>一度だけ</strong> 転送決定が行われ、その後はファブリック経由で出口 ASIC に運ばれる。したがって、ある宛先に対する ECMP ネクストホップ集合が <strong>どの ASIC インスタンスでも同一でなければ</strong>、入口 ASIC ごとにロードバランス挙動がブレてしまう<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本 HLD は VoQ シャーシ内で「同じプレフィックスに対して同じ ECMP 集合が選ばれる」ことを保証する BGP 構成を定義する。具体的には次の 3 点である<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h1 id="voq-bgp">VoQ シャーシでの BGP 構成<a class="headerlink" href="#voq-bgp" title="Permanent link">&para;</a></h1>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>なぜ VoQ シャーシは普通の BGP 設定では駄目で、ASIC 間で <strong>ECMP 集合が同一</strong> である必要があるのか</li>
+<li>そのために必要な 4 つの設定は何か（特に <code>bgp bestpath peer-type multipath-relax</code> の役割）</li>
+<li>どの CONFIG_DB テーブルと minigraph 要素で「VoQ 内部 iBGP ピア」を表現するか</li>
+<li><code>bgp shutdown all</code> 等の運用 CLI は内部ピアを扱うのか</li>
+</ul>
+<h2 id="asic-ecmp">なぜ ASIC 間 ECMP 整合性が要るか<a class="headerlink" href="#asic-ecmp" title="Permanent link">&para;</a></h2>
+<p>VoQ（Virtual Output Queue）シャーシは複数 ASIC を 1 論理ルータに束ねる。転送決定は <strong>入口 ASIC で 1 回だけ</strong> 行われ、その後はファブリック経由で出口へ運ばれる。そのためある宛先の <strong>ECMP nexthop 集合が ASIC ごとに異なる</strong> と、入口 ASIC ごとにロードバランスがブレる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD はそれを防ぐ 3 つの仕組みを定義する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li>ASIC インスタンス間で <strong>iBGP フルメッシュ</strong> を張り、<code>addpath-tx-all-paths</code> で eBGP 学習経路を全て交換する</li>
-<li>FRR に新規追加する <code>bgp bestpath peer-type multipath-relax</code> で eBGP/iBGP 混在の ECMP 群を許す</li>
-<li>CONFIG_DB に <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> テーブルを新設し、<code>bgpcfgd</code> の <code>voq_chassis</code> テンプレートで FRR コンフィグを生成する</li>
+<li>ASIC 間で <strong>iBGP フルメッシュ</strong> を張り、<code>addpath-tx-all-paths</code> で全 eBGP 学習経路を交換</li>
+<li>新規 FRR コマンド <code>bgp bestpath peer-type multipath-relax</code> で eBGP/iBGP 混在 ECMP を許す</li>
+<li><code>BGP_VOQ_CHASSIS_NEIGHBOR</code> テーブルと <code>bgpcfgd</code> の <code>voq_chassis</code> テンプレートで生成</li>
 </ol>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="ibgp">iBGP フルメッシュとアドレスファミリ<a class="headerlink" href="#ibgp" title="Permanent link">&para;</a></h3>
-<p>全 ASIC インスタンスは <strong>同一 AS</strong> に所属する。各インスタンスは外部の eBGP ピアから経路を学習し、それを iBGP メッシュ経由で他インスタンスに広告する。1 セッションで IPv4/IPv6 両ファミリを運ぶが、IPv6 ユニキャストは別途 activate する必要がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
   subgraph Chassis
-    A1[ASIC1]
-    A2[ASIC2]
-    A3[ASIC3]
-    A1 ---|iBGP| A2
-    A2 ---|iBGP| A3
+    A1[ASIC1] ---|iBGP| A2[ASIC2]
+    A2 ---|iBGP| A3[ASIC3]
     A1 ---|iBGP| A3
   end
   R1[(R1)] ---|eBGP| A1
   R2[(R2)] ---|eBGP| A2
   R4[(R4)] ---|eBGP| A3</code></pre>
-<p>iBGP の再帰ネクストホップ解決は VoQ シャーシのグローバル neighbor テーブル由来のホストルートに依存する。詳細は VOQ HLD（<code>doc/voq/voq_hld.md</code>）の Inband recycle port 節を参照<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="ecmp-4">ECMP 整合性のための 4 つの設定<a class="headerlink" href="#ecmp-4" title="Permanent link">&para;</a></h3>
-<p>各 ASIC インスタンスで <strong>同じ ECMP 集合</strong> が形成されるよう、HLD は次の挙動を要求する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>全 ASIC は <strong>同一 AS</strong>。1 セッションで IPv4/IPv6 両ファミリを運ぶが IPv6 ユニキャストは別途 activate が要る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。iBGP nexthop の再帰解決は VOQ HLD の inband recycle port / グローバル neighbor テーブルが前提<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="ecmp-4">ECMP 整合性のための 4 設定<a class="headerlink" href="#ecmp-4" title="Permanent link">&para;</a></h2>
+<p><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <table>
 <thead>
 <tr>
@@ -23034,51 +23001,39 @@
 <tbody>
 <tr>
 <td><code>addpath-tx-all-paths</code></td>
-<td>eBGP 学習経路を全て iBGP に流す</td>
+<td>全 eBGP 学習経路を iBGP に流す</td>
 <td><code>neighbor &lt;peer&gt; addpath-tx-all-paths</code></td>
 </tr>
 <tr>
 <td>混在 ECMP 許可</td>
-<td>eBGP/iBGP path で同一 ECMP 群を作る</td>
-<td><code>bgp bestpath peer-type multipath-relax</code>（<strong>新規追加</strong>）</td>
+<td>eBGP/iBGP 混在で ECMP 群を作る</td>
+<td><code>bgp bestpath peer-type multipath-relax</code>（新規）</td>
 </tr>
 <tr>
-<td>再帰解決の選択的有効化</td>
-<td>混在 ECMP 群の iBGP nexthop を FIB に書く</td>
-<td>上記の副作用として自動有効化</td>
+<td>再帰解決の選択的 ON</td>
+<td>混在 ECMP の iBGP nexthop を FIB に書く</td>
+<td>上記の副作用として自動</td>
 </tr>
 <tr>
 <td><code>maximum-paths ibgp</code> を eBGP と一致</td>
-<td>ASIC 間で ECMP 群サイズを揃える</td>
-<td><code>maximum-paths ibgp &lt;n&gt;</code>（<code>maximum-paths &lt;n&gt;</code> と同じ値）</td>
+<td>ASIC 間で ECMP サイズを揃える</td>
+<td><code>maximum-paths ibgp &lt;n&gt;</code></td>
 </tr>
 </tbody>
 </table>
-<h4 id="multipath-relax">なぜ multipath-relax が必要か<a class="headerlink" href="#multipath-relax" title="Permanent link">&para;</a></h4>
-<p>通常の BGP 最良経路アルゴリズム（RFC 4271 §9.1.2.2 d）では eBGP が iBGP より優先される。たとえば R1 と R4 から eBGP で、R2 から iBGP（他 ASIC 経由）で同等コスト経路を学習した場合、デフォルトでは ASIC1 は <code>{R1,R4}</code>、ASIC2 は <code>{R2}</code>、ASIC3 は <code>{R1,R2,R4}</code> となり ECMP 集合が一致しない<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>新規導入される <code>bgp bestpath peer-type multipath-relax</code> は、最良経路の選択順序自体は変えず（eBGP が依然 best）、<strong>ECMP 群への組み込み</strong> で peer type 差を無視する。これにより全 ASIC で <code>{R1,R2,R4}</code> の同一集合が形成される。</p>
-<h3 id="_3">再帰解決の取り扱い<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>混在 ECMP 群が RIB に乗ると、BGP は通常「best path が eBGP（かつ ebgp-multihop でない）なら、RIB の nexthop を FIB に書く時に再帰解決を許さない」というデフォルト挙動を取る。これだと iBGP 学習 nexthop は connected 経由でないため FIB から落とされ、VoQ 整合性が崩れる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>グローバルの <code>bgp disable-ebgp-connected-route-check</code> は副作用が大きいため使わない。代わりに HLD は <strong><code>bgp bestpath peer-type multipath-relax</code> 設定時に限り、iBGP nexthop が ECMP 群に含まれる場合だけ RIB→FIB の再帰解決を再有効化</strong> する FRR 改修を提案している<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="multipath-relax">なぜ multipath-relax が要るか<a class="headerlink" href="#multipath-relax" title="Permanent link">&para;</a></h3>
+<p>通常 BGP best-path（RFC 4271 §9.1.2.2 d）では eBGP が iBGP より優先される。R1/R4 から eBGP、R2 から iBGP（他 ASIC 経由）で同等コスト学習した場合、デフォルトでは ASIC1=<code>{R1,R4}</code>、ASIC2=<code>{R2}</code>、ASIC3=<code>{R1,R2,R4}</code> と ECMP 集合が割れる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>bgp bestpath peer-type multipath-relax</code> は <strong>最良経路の選択順序自体は変えず</strong>（eBGP が依然 best）、<strong>ECMP 群への組み込み</strong> で peer type 差を無視する。これにより全 ASIC で <code>{R1,R2,R4}</code> が一致する。</p>
+<h3 id="_2">再帰解決の取り扱い<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>混在 ECMP 群が RIB に乗ると、BGP は通常「best path が eBGP なら RIB nexthop の再帰解決を許さない」を取り、iBGP 学習 nexthop が FIB から落ちて整合性が崩れる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。グローバルの <code>bgp disable-ebgp-connected-route-check</code> は副作用が大きい。代わりに HLD は <strong><code>multipath-relax</code> 設定時に限り、iBGP nexthop が ECMP に含まれる場合だけ RIB→FIB の再帰解決を再有効化</strong> する FRR 改修を提案<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart TD
-  RIB[BGP RIB に混在 ECMP 群] --&gt; CHK{iBGP nexthop 含む?}
-  CHK --&gt;|Yes| REC[再帰解決 ON\n→ FIB に全 nexthop 書く]
+  RIB[混在 ECMP 群] --&gt; CHK{iBGP nexthop 含む?}
+  CHK --&gt;|Yes| REC[再帰解決 ON&lt;br/&gt;FIB に全 NH]
   CHK --&gt;|No| DEF[従来通り connected 必須]</code></pre>
-<p>なお eBGP ピア自身が再帰解決を要する nexthop を送ってきた場合、その path は <strong>invalid 扱いで ECMP 群に入らない</strong>。RIB 段の再帰解決有効化は FIB 段の話であり、最初の nexthop validity 判定には影響しない<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/voq/bgp_voq_chassis.md#L98-L146 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  - Enable "additional-path send all" for each chassis iBGP peer.
-  - Allow BGP to form ECMP groups with paths learned from both eBGP and iBGP peers.
-  ... when "bgp bestpath peer-type multipath-relax" is configured, recursive resolution will be reenabled for nexthops in the RIB if an iBGP-learned nexthop is included in the group.
-reasoning: 4 つの設定要件と再帰解決の選択的有効化ロジックの根拠。
--->
-
-<h3 id="config_db">CONFIG_DB スキーマ拡張<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>既存の BGP 系テーブルは <code>BGP_NEIGHBOR</code> / <code>BGP_MONITORS</code> / <code>BGP_PEER_RANGE</code> の 3 種。本 HLD は <strong><code>BGP_VOQ_CHASSIS_NEIGHBOR</code></strong> を追加する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。スキーマは <code>BGP_NEIGHBOR</code> と同一だが、<code>bgpcfgd</code> 側で別テンプレート（<code>voq_chassis</code>）を引くためのフラグの役割を持つ。</p>
-<p><code>bgpcfgd</code> の <code>voq_chassis</code> テンプレートは新たな peer-group を定義し、上記 4 設定をその peer-group に集約する。<code>general</code> テンプレートに if-分岐を追加する案より自然であると HLD は説明している<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="minigraph">Minigraph 拡張<a class="headerlink" href="#minigraph" title="Permanent link">&para;</a></h3>
-<p>minigraph→CONFIG_DB 変換スクリプト（<code>sonic-config-engine</code>）は <code>BGPSession</code> 要素に新規オプション <code>&lt;VoQChassisInternal&gt;true&lt;/VoQChassisInternal&gt;</code> を読み、該当ピアを <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> に振り分ける<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>eBGP ピア自身が再帰解決を要する nexthop を送ってきた場合は <strong>invalid 扱いで ECMP に入らない</strong>（RIB→FIB の再帰解決は最初の validity 判定には影響しない）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="config_db-minigraph">CONFIG_DB / minigraph 拡張<a class="headerlink" href="#config_db-minigraph" title="Permanent link">&para;</a></h2>
+<p><code>BGP_VOQ_CHASSIS_NEIGHBOR</code> を新設。スキーマは <code>BGP_NEIGHBOR</code> と同一で、<strong>bgpcfgd で別テンプレート（<code>voq_chassis</code>）を引くためのフラグ</strong> の役割<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>voq_chassis</code> テンプレートは上記 4 設定を集約した peer-group を定義する。</p>
+<p>minigraph→CONFIG_DB 変換は <code>BGPSession</code> 要素の <code>&lt;VoQChassisInternal&gt;true&lt;/VoQChassisInternal&gt;</code> を読み、該当ピアを <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> に振り分ける<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;BGPSession&gt;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&lt;StartRouter&gt;</span>OCPSCH0104001MS<span class="nt">&lt;/StartRouter&gt;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&lt;StartPeer&gt;</span>10.10.1.18<span class="nt">&lt;/StartPeer&gt;</span>
@@ -23087,21 +23042,21 @@ reasoning: 4 つの設定要件と再帰解決の選択的有効化ロジック�
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&lt;VoQChassisInternal&gt;</span>true<span class="nt">&lt;/VoQChassisInternal&gt;</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nt">&lt;/BGPSession&gt;</span>
 </span></code></pre></div>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>multi-asic 環境では既存 CLI が internal/external ピアを区別する。VoQ シャーシでは <strong><code>BGP_VOQ_CHASSIS_NEIGHBOR</code> のピアを internal として分類する</strong><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="cliinternalexternal">CLI（internal/external の扱い）<a class="headerlink" href="#cliinternalexternal" title="Permanent link">&para;</a></h2>
+<p>VoQ シャーシでは <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> のピアを <strong>internal</strong> として分類<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
 <th>CLI</th>
 <th>既存挙動</th>
-<th>VoQ シャーシでの挙動</th>
+<th>VoQ での挙動</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>bgp shutdown all</code></td>
 <td>external eBGP のみ shut</td>
-<td>同左（VoQ internal は除外）</td>
+<td>同左（internal 除外）</td>
 </tr>
 <tr>
 <td><code>bgp startup all</code></td>
@@ -23115,14 +23070,14 @@ reasoning: 4 つの設定要件と再帰解決の選択的有効化ロジック�
 </tr>
 <tr>
 <td><code>bgp remove neighbor</code></td>
-<td>内外どちらも指定可</td>
-<td>内部実装で <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> も参照</td>
+<td>内外指定可</td>
+<td>実装内部で <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> も参照</td>
 </tr>
 </tbody>
 </table>
-<p>これらコマンドに <strong><code>-d all</code> で internal を含める</strong> オプションが追加される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<p><code>-d all</code> で internal を含めるオプションが追加される<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -23133,15 +23088,15 @@ reasoning: 4 つの設定要件と再帰解決の選択的有効化ロジック�
 <tbody>
 <tr>
 <td><code>BGP_VOQ_CHASSIS_NEIGHBOR</code></td>
-<td>VoQ シャーシ内 iBGP メッシュのピア。スキーマは <code>BGP_NEIGHBOR</code> と同一</td>
+<td>VoQ 内 iBGP ピア（スキーマは <code>BGP_NEIGHBOR</code> と同一）</td>
 </tr>
 <tr>
 <td><code>BGP_NEIGHBOR</code></td>
-<td>既存の外部 eBGP ピア（変更なし）</td>
+<td>外部 eBGP ピア（変更なし）</td>
 </tr>
 </tbody>
 </table>
-<h3 id="frr">設定例（FRR コンフィグ生成結果）<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
+<h3 id="frr">FRR 設定生成例<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>neighbor 10.10.1.17 remote-as &lt;chassis-as&gt;
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>neighbor 10.10.1.17 peer-group VOQ_CHASSIS_PG
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>!
@@ -23152,31 +23107,37 @@ reasoning: 4 つの設定要件と再帰解決の選択的有効化ロジック�
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a> bgp bestpath peer-type multipath-relax
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>exit-address-family
 </span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>新規 FRR コマンド</strong>: <code>bgp bestpath peer-type multipath-relax</code> は本 HLD で FRR 上流に提案される設定であり、SONiC 同梱 FRR への取り込み状況は要裏取り。</li>
-<li><strong>AS_PATH prepending 禁止</strong>: ASIC 間 iBGP では eBGP 学習経路を <strong>AS_PATH を変えずに</strong> 渡す必要がある。prepending を入れると ECMP が形成されない<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ルートモニタの扱い</strong>: 既存の iBGP route monitor を使う場合、各 ASIC インスタンスとそれぞれピアリングする必要がある。1 ASIC とだけピアすると他 ASIC の経路が見えない<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>過剰経路の subset</strong>: 学習した等コスト経路数が <code>maximum-paths</code> を超える場合、各 ASIC が異なる subset を選びうる。HLD はこれを許容している<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>新規 FRR コマンド</strong> <code>bgp bestpath peer-type multipath-relax</code> の SONiC 同梱 FRR への取り込み状況は要追跡</li>
+<li><strong>AS_PATH prepending 禁止</strong>: ASIC 間 iBGP では eBGP 学習を AS_PATH 不変で渡す必要あり<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>ルートモニタ</strong>: 既存 iBGP route monitor は全 ASIC とピアリングする必要がある（1 ASIC だけだと他 ASIC の経路が見えない）<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>過剰経路の subset</strong>: 等コスト経路数が <code>maximum-paths</code> を超えると ASIC ごとに異なる subset を選びうる。HLD はこれを許容<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>maximum-paths</code> の対称設定</strong>: eBGP 側 <code>maximum-paths</code> と iBGP 側 <code>maximum-paths ibgp</code> を <strong>必ず同一値</strong> にすること。非対称だと混在 ECMP 群サイズが入口 ASIC で異なる結果になる<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>VOQ HLD のホストルート</strong>: iBGP 学習 nexthop の再帰解決はグローバル neighbor テーブル由来のホストルートに依存する。VOQ HLD 側の inband recycle port 構成が前提<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>bgp disable-ebgp-connected-route-check</code></strong>: グローバル設定としては使わない方針。本機能の per-route ロジックで代替する<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>maximum-paths</code> の対称設定</strong>: eBGP 側と <code>maximum-paths ibgp</code> を <strong>必ず同値</strong><sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>VOQ HLD の inband recycle port</strong>: iBGP nexthop の再帰解決のためグローバル neighbor テーブル由来ホストルートに依存<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><code>bgp disable-ebgp-connected-route-check</code></strong>: グローバル設定としては使わない方針<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ASIC 間で ECMP 集合が一致しない: 各 ASIC で <code>show bgp ipv4 unicast &lt;prefix&gt;</code> を比較。<code>addpath-tx-all-paths</code> が iBGP ピアで有効か、<code>maximum-paths ibgp</code> が一致しているか確認。</li>
-<li>iBGP nexthop が FIB に出ない: <code>show ip route &lt;prefix&gt;</code> で nexthop が <code>inactive</code> になっていないか。<code>bgp bestpath peer-type multipath-relax</code> 設定の有無を確認。</li>
-<li>minigraph→CONFIG_DB 変換で内部ピアが <code>BGP_NEIGHBOR</code> に入る: <code>&lt;VoQChassisInternal&gt;</code> 要素の有無、<code>sonic-config-engine</code> のバージョンを確認。</li>
+<li>ASIC 間で ECMP が割れる → 各 ASIC で <code>show bgp ipv4 unicast &lt;prefix&gt;</code> を比較。<code>addpath-tx-all-paths</code> と <code>maximum-paths ibgp</code> を確認</li>
+<li>iBGP nexthop が FIB に出ない → <code>show ip route &lt;prefix&gt;</code> の <code>inactive</code> を確認。<code>bgp bestpath peer-type multipath-relax</code> 設定の有無</li>
+<li>内部ピアが <code>BGP_NEIGHBOR</code> に入る → <code>&lt;VoQChassisInternal&gt;</code> 要素と <code>sonic-config-engine</code> バージョン</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="topic">関連 Topic<a class="headerlink" href="#topic" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/12-multi-asic-voq/architecture/">12 Multi-ASIC / VoQ / architecture</a></li>
+<li><a href="../../topics/12-multi-asic-voq/internals/">12 Multi-ASIC / VoQ / internals</a></li>
+<li><a href="../../topics/02-bgp/advanced/">02 BGP / advanced</a></li>
+</ul>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/voq/bgp_voq_chassis.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/voq/bgp_voq_chassis.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

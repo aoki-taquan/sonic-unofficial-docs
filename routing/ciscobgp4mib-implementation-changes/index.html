@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ciscobgp4mib-state_db-bgpmon-neigh_state_table" class="md-skip">
+        <a href="#ciscobgp4mib-state_db" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -8263,7 +8263,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -8274,41 +8274,30 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#vty" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧設計（VTY ソケット直結）
+        旧方式が抱えた問題
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新設計（STATE_DB 経由）
+        新方式（STATE_DB 経由）
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="新方式（STATE_DB 経由）">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#bgpmon" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bgpmon のポーリング設計
+        bgpmon の負荷抑制
       
     </span>
   </a>
@@ -8330,7 +8319,7 @@
   <a href="#snmp_ax_impl" class="md-nav__link">
     <span class="md-ellipsis">
       
-        snmp_ax_impl の挙動
+        snmp_ax_impl 側
       
     </span>
   </a>
@@ -8339,61 +8328,22 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定 / CLI
+      
+    </span>
+  </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -8404,7 +8354,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -8415,7 +8365,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -8426,7 +8376,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#topic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22760,7 +22721,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -22771,41 +22732,30 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#vty" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        旧設計（VTY ソケット直結）
+        旧方式が抱えた問題
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        新設計（STATE_DB 経由）
+        新方式（STATE_DB 経由）
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="新方式（STATE_DB 経由）">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#bgpmon" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bgpmon のポーリング設計
+        bgpmon の負荷抑制
       
     </span>
   </a>
@@ -22827,7 +22777,7 @@
   <a href="#snmp_ax_impl" class="md-nav__link">
     <span class="md-ellipsis">
       
-        snmp_ax_impl の挙動
+        snmp_ax_impl 側
       
     </span>
   </a>
@@ -22836,61 +22786,22 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定 / CLI
+      
+    </span>
+  </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -22901,7 +22812,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -22912,7 +22823,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -22923,7 +22834,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#topic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22960,87 +22882,66 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py</code> L15-17 で 15 秒ポーリングと <code>/var/log/frr/frr.log</code> mtime 監視、L51/131-179/203 で <code>STATE_DB.NEIGH_STATE_TABLE|&lt;peer_ip&gt;</code> への <code>state</code> フィールド書き込みを確認。supervisord 登録は <code>sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2</code> L198-199 (<code>/usr/local/bin/bgpmon</code>) を確認。読み手側は <code>sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py</code> L22/L30 で <code>Namespace.init_namespace_dbs()</code> + <code>STATE_DB.NEIGH_STATE_TABLE|*</code> を全 namespace から束ねる実装 (verified at: 2026-05-09)。</p>
+<p><code>bgpcfgd/bgpmon/bgpmon.py</code> L15-17 で 15 秒ポーリング + <code>/var/log/frr/frr.log</code> mtime 監視、L51/131-179/203 で <code>STATE_DB.NEIGH_STATE_TABLE|&lt;peer_ip&gt;</code> への <code>state</code> 書き込み。supervisord 登録は <code>docker-fpm-frr/frr/supervisord/supervisord.conf.j2</code> L198-199。読み手は <code>sonic-snmpagent/.../cisco/bgp4.py</code> L22/L30 で <code>Namespace.init_namespace_dbs()</code> + 全 namespace の <code>NEIGH_STATE_TABLE|*</code> を束ねる実装 (verified at: 2026-05-09)。</p>
 </div>
-<h1 id="ciscobgp4mib-state_db-bgpmon-neigh_state_table">CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）<a class="headerlink" href="#ciscobgp4mib-state_db-bgpmon-neigh_state_table" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は SNMP の CiscoBgp4MIB（OID <code>1.3.6.1.4.1.9.9.187</code>）で BGP ネイバ情報を返す。従来実装では <code>snmp_ax_impl</code>（SNMP サブエージェント）が <strong>bgpd の VTY ソケットに直接接続</strong> して <code>show</code> 結果をパースしていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。マルチ ASIC 構成では BGP コンテナが ASIC ごとに別 network namespace で動くため、この方式は「サブエージェントが N 個のソケットを束ねる」必要があり破綻する。</p>
-<p>本 HLD は、<strong><code>bgpmon</code> という新規デーモンを各 BGP コンテナに置き、<code>STATE_DB.NEIGH_STATE_TABLE</code> に BGP ネイバ状態を書く</strong> 設計に切り替える。<code>snmp_ax_impl</code> は STATE_DB を読むだけになり、シングル ASIC・マルチ ASIC を共通化する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="vty">旧設計（VTY ソケット直結）<a class="headerlink" href="#vty" title="Permanent link">&para;</a></h3>
+<h1 id="ciscobgp4mib-state_db">CiscoBgp4MIB の STATE_DB 経由化<a class="headerlink" href="#ciscobgp4mib-state_db" title="Permanent link">&para;</a></h1>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>なぜマルチ ASIC で従来の SNMP→vtyソケット 直結方式が破綻するのか</li>
+<li>新方式（<code>bgpmon</code> + STATE_DB）はどこで動き、どう負荷を抑えているか</li>
+<li>スキーマ（<code>NEIGH_STATE_TABLE</code>）に何が入るのか</li>
+<li>旧 Bgp4MIB（<code>1.3.6.1.2.1.15</code>）はマルチ ASIC で動くのか</li>
+</ul>
+<h2 id="_2">旧方式が抱えた問題<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>CiscoBgp4MIB（OID <code>1.3.6.1.4.1.9.9.187</code>）は従来、<code>snmp_ax_impl</code> が <strong>bgpd の vty ソケットに直結</strong> し <code>show</code> をパースしていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。マルチ ASIC では BGP コンテナが ASIC ごとに別 network namespace で動くため、host 側エージェントから N 個のソケットを束ねる必要があり破綻する。</p>
 <pre class="mermaid"><code>flowchart LR
     SNMPD[snmpd] --&gt; AX[snmp_ax_impl]
-    AX --&gt;|TCP/Unix vty socket| BGPD[bgpd in BGP docker]
-    AX --&gt; RDB[(redis: 各種 MIB データ)]</code></pre>
-<p>シングル ASIC では <code>localhost:2605</code> 等の VTY ソケットで完結する。マルチ ASIC では BGP コンテナが namespace 内に居るため、host 上の <code>snmp_ax_impl</code> から <strong>N 個の namespace に対し N 本のソケット</strong> を張る必要がある。HLD では 2 つの素朴な拡張案が議論されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>各 namespace の <code>eth0</code>（docker0 ブリッジ側）IP に bgpd が TCP listen する案</li>
-<li>各 BGP コンテナの <code>/var/run/bgpd.vty</code> Unix socket を host から参照する案</li>
-</ul>
-<p>どちらも N 本ソケット問題と「BGP docker 側の listen アドレス変更」が必要で見送りとなる。</p>
-<h3 id="state_db">新設計（STATE_DB 経由）<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+    AX --&gt;|vty socket| BGPD[bgpd in BGP docker]
+    AX --&gt; RDB[(redis: 各種 MIB)]</code></pre>
+<p>HLD では「namespace の eth0 に bgpd TCP listen」「<code>/var/run/bgpd.vty</code> を host から参照」の 2 案を検討したが、いずれも N 本ソケット問題と listen アドレス変更が必要で見送り<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="state_db">新方式（STATE_DB 経由）<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
+<p><strong><code>bgpmon</code></strong> を各 BGP コンテナ（≒ ASIC ごとに 1 インスタンス）に置き、<code>STATE_DB.NEIGH_STATE_TABLE</code> に neighbor state を書く。<code>snmp_ax_impl</code> は STATE_DB を読むだけ。シングル ASIC とマルチ ASIC が共通化される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     subgraph host
       SNMP[snmpd / snmp_ax_impl]
     end
     subgraph asic0[BGP docker (asic0)]
-      BGPD0[bgpd] --&gt; LOG0[/var/log/frr/frr.log]
-      BGPMON0[bgpmon] --&gt;|show bgp summary json| BGPD0
-      BGPMON0 --&gt;|HSET| STATE0[(STATE_DB ns0\nNEIGH_STATE_TABLE)]
+      BGPMON0[bgpmon] --&gt;|show bgp summary json| BGPD0[bgpd]
+      BGPD0 --&gt; LOG0[/var/log/frr/frr.log]
+      BGPMON0 --&gt;|HSET| ST0[(STATE_DB ns0)]
     end
     subgraph asic1[BGP docker (asic1)]
-      BGPD1[bgpd]
-      BGPMON1[bgpmon] --&gt; STATE1[(STATE_DB ns1\nNEIGH_STATE_TABLE)]
+      BGPMON1[bgpmon] --&gt; ST1[(STATE_DB ns1)]
     end
-    SNMP --&gt; STATE0
-    SNMP --&gt; STATE1</code></pre>
-<p>要点:</p>
-<ul>
-<li><code>bgpmon</code> は BGP コンテナ内（≒ ASIC ごとに 1 インスタンス）で動く</li>
-<li><code>snmp_ax_impl</code> は STATE_DB を読むだけ。ソケット経路を完全に廃止</li>
-<li>同じ仕組みは telemetry など他の subscriber も再利用できる<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="bgpmon">bgpmon のポーリング設計<a class="headerlink" href="#bgpmon" title="Permanent link">&para;</a></h3>
-<p><code>bgpmon</code> は次の流れで動作する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+    SNMP --&gt; ST0
+    SNMP --&gt; ST1</code></pre>
+<p>同じ table は telemetry など他 subscriber も再利用できる汎用設計<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="bgpmon">bgpmon の負荷抑制<a class="headerlink" href="#bgpmon" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
     participant LOG as /var/log/frr/frr.log
     participant MON as bgpmon
     participant BGPD as bgpd (vty)
     participant ST as STATE_DB
-    loop 15s 毎
+    loop 15 秒毎
         MON-&gt;&gt;LOG: mtime 取得
-        alt mtime 変化なし
-            MON-&gt;&gt;MON: スキップ（BGP 動きなしと判定）
-        else mtime 変化あり
+        alt 変化なし
+            MON-&gt;&gt;MON: スキップ
+        else 変化あり
             MON-&gt;&gt;BGPD: show bgp summary json
-            BGPD--&gt;&gt;MON: ネイバ一覧 + state
-            MON-&gt;&gt;MON: 内部キャッシュとの差分判定
-            alt 差分あり
+            BGPD--&gt;&gt;MON: neighbor + state
+            MON-&gt;&gt;MON: 内部キャッシュ diff
+            alt diff あり
                 MON-&gt;&gt;ST: NEIGH_STATE_TABLE 更新
-            end
-            alt ネイバ削除
-                MON-&gt;&gt;ST: 該当エントリ削除
             end
         end
     end</code></pre>
-<p>ポイント:</p>
+<p>3 段最適化<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>15 秒間隔のポーリングだが、<code>/var/log/frr/frr.log</code> の mtime を見て <strong>動きが無いときは vty も叩かない</strong></li>
-<li>内部キャッシュと比較し変化のあったエントリのみ STATE_DB に書く（不要書き込みを抑制）</li>
-<li>設定からネイバが削除された場合、対応する STATE_DB エントリも掃除する</li>
+<li>15 秒ポーリング</li>
+<li><code>frr.log</code> の <strong>mtime ガード</strong>（動きが無いときは vty を叩かない）</li>
+<li>内部キャッシュとの <strong>差分検出</strong>（不要書き込みを抑制）</li>
 </ul>
-<p>定常状態では「BGP の動きがないので何もしない」になる設計である<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/snmp/snmp_ciscobgp4mib.md#L35-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  This is the new daemon that runs inside of each BGP docker.  It will periodically (every 15 seconds)
-  check if there are any BGP activities by examining the modified timestamp of "/var/log/frr/frr.log"
-  ...
-  In order to prevent unnecessary update to the State DB, a copy of each neighbor state is also cached
-  and used to check for delta changes from each newly pulled neighbor state.
-reasoning: 15 秒ポーリング・差分検出・ログ mtime ガードという 3 段の最適化の根拠。
--->
-
+<p>定常状態では「BGP の動きがないので何もしない」になる。</p>
 <h3 id="neigh_state_table">NEIGH_STATE_TABLE スキーマ<a class="headerlink" href="#neigh_state_table" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>NEIGH_STATE_TABLE {
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    &quot;&lt;neigh_ip&gt;&quot; {
@@ -23048,56 +22949,47 @@ reasoning: 15 秒ポーリング・差分検出・ログ mtime ガードとい�
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    }
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>}
 </span></code></pre></div>
-<p>CiscoBgp4MIB が必要とする情報は <strong>「ネイバ IP」と「BGP state」だけ</strong> という前提でスキーマが切られている<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。将来 SNMP 以外の subscriber が他の属性を必要とする場合、別 PR で項目追加する想定。</p>
-<h3 id="snmp_ax_impl">snmp_ax_impl の挙動<a class="headerlink" href="#snmp_ax_impl" title="Permanent link">&para;</a></h3>
-<p>新方式では <code>snmp_ax_impl</code> は次のように振る舞う:</p>
+<p>CiscoBgp4MIB が必要とする「neighbor IP + state」だけを切り出した最小スキーマ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。他属性を要する subscriber が出たら別 PR で追加する想定。</p>
+<h3 id="snmp_ax_impl">snmp_ax_impl 側<a class="headerlink" href="#snmp_ax_impl" title="Permanent link">&para;</a></h3>
 <ul>
 <li>シングル ASIC: 自身の STATE_DB の <code>NEIGH_STATE_TABLE</code> を読む</li>
-<li>マルチ ASIC: 全 namespace の STATE_DB から <code>NEIGH_STATE_TABLE</code> を読み合算する。namespace 横断接続は既存の SNMP マルチ ASIC 対応の延長</li>
+<li>マルチ ASIC: 全 namespace の STATE_DB から合算（既存 SNMP マルチ ASIC 対応の延長）</li>
 </ul>
-<p><code>bgpd</code> への TCP / Unix ソケット接続は廃止される。シングル ASIC 構成の挙動も実体的に変わる（ただし返す MIB 値は変わらない）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>HLD では新規 CONFIG_DB スキーマは提案されていない。<code>bgpmon</code> は BGP コンテナの起動 supervisor で立ち上げる前提で、ユーザ設定は不要。</p>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>専用 CLI は HLD で提案されていない。検証は引き続き標準的な <code>snmpwalk</code> を使う:</p>
+<p><code>bgpd</code> への TCP / Unix ソケット接続は廃止される（返す MIB 値は不変）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="cli">設定 / CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<p>新規 CONFIG_DB スキーマも CLI も<strong>提案されていない</strong>。<code>bgpmon</code> は BGP コンテナの supervisor で起動し、ユーザ設定は不要。検証は既存 <code>snmpwalk</code>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>snmpwalk -v2c -c &lt;community&gt; 127.0.0.1 iso.3.6.1.4.1.9.9.187
 </span></code></pre></div>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当する YANG モジュールは HLD では言及されていない。</p>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Bgp4MIB（OID <code>1.3.6.1.2.1.15</code>）はマルチ ASIC で未サポート</strong>。SONiC の Bgp4MIB は snmpd の subagent 機構（<code>bgpd</code> を直接 subagent にする）で実装されており、マルチ ASIC では複数 bgpd を束ねられない<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD では <code>bgpmon</code> を拡張して将来対応する旨が future work として書かれている</li>
-<li>15 秒ポーリングのため、ネイバ状態変化が STATE_DB / SNMP に反映されるまで最大 15 秒の遅延が起き得る</li>
-<li><code>frr.log</code> の mtime に依存するため、ログレベルを極端に下げる・ログを別系統に飛ばす運用に変更すると、活動検知が誤って「変化なし」と判定される可能性がある</li>
+<li><strong>Bgp4MIB（OID <code>1.3.6.1.2.1.15</code>）はマルチ ASIC で未サポート</strong>。snmpd の subagent 機構で実装されており複数 bgpd を束ねられない。HLD では <code>bgpmon</code> 拡張で対応する future work が記載<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>15 秒ポーリングのため neighbor 状態遷移の SNMP 反映に最大 15 秒の遅延</li>
+<li><code>frr.log</code> の mtime に依存するため、ログを <code>syslog</code> 専用に切り替えると活動検知が誤って「変化なし」に倒れる可能性</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>マルチ ASIC SNMP</strong>: 既に <code>snmp_ax_impl</code> がマルチ namespace の redis を集約する仕組みを持つ。本機能はその延長線上で <code>STATE_DB</code> を集約する</li>
-<li><strong>frr / bgpd ログ設定</strong>: bgpmon は <code>/var/log/frr/frr.log</code> の mtime をトリガに使うため、ログパスを変更する設定変更（<code>syslog</code> のみへ切替等）と相互作用する</li>
-<li><strong>telemetry / gNMI</strong>: <code>NEIGH_STATE_TABLE</code> は SNMP 以外からも参照できる汎用テーブルとして設計されている</li>
+<li><strong>マルチ ASIC SNMP</strong>: 既存の namespace redis 集約機構の延長</li>
+<li><strong>frr / bgpd ログ設定</strong>: bgpmon が <code>frr.log</code> の mtime をトリガに使う</li>
+<li><strong>telemetry / gNMI</strong>: <code>NEIGH_STATE_TABLE</code> は SNMP 以外からも参照できる汎用 table</li>
 </ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>snmpwalk</code> で BGP ネイバが返らない場合、まず <code>redis-cli -n 6</code> 等で当該 namespace の <code>STATE_DB.NEIGH_STATE_TABLE</code> を確認</li>
-<li>状態が <code>Idle</code> のまま動かない場合、<code>bgpmon</code> プロセスが各 BGP コンテナで動作しているか supervisor / <code>ps</code> で確認</li>
-<li>値が古い場合、<code>frr.log</code> の mtime が更新されているかを確認。ログが flush されていないと bgpmon は <code>show bgp summary json</code> を呼ばない</li>
+<li><code>snmpwalk</code> で neighbor が返らない → <code>redis-cli -n 6</code> 等で当該 namespace の <code>STATE_DB.NEIGH_STATE_TABLE</code> を確認</li>
+<li>値が <code>Idle</code> のまま → 各 BGP コンテナで <code>bgpmon</code> が走っているか <code>supervisorctl</code> / <code>ps</code></li>
+<li>値が古い → <code>frr.log</code> の mtime 更新を確認（flush されていないと bgpmon が vty を叩かない）</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- bgpmon が現行 master の sonic-buildimage / sonic-frr-mgmt-framework に存在するか
-- STATE_DB.NEIGH_STATE_TABLE の最終スキーマ (キー名・State 値の文字列)
-- snmp_ax_impl が NEIGH_STATE_TABLE を参照する形に書き換えられているか
-- 15 秒ポーリングの最終値（コード上の実装値）
-- マルチ ASIC で全 namespace の STATE_DB を束ねる経路
-- Bgp4MIB のマルチ ASIC 対応（future work）の進捗
--->
-
+<h2 id="topic">関連 Topic<a class="headerlink" href="#topic" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/09-telemetry-snmp/architecture/">09 Telemetry / SNMP / architecture</a></li>
+<li><a href="../../topics/09-telemetry-snmp/internals/">09 Telemetry / SNMP / internals</a></li>
+<li><a href="../../topics/02-bgp/operations/">02 BGP / operations</a></li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/snmp/snmp_ciscobgp4mib.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/snmp/snmp_ciscobgp4mib.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

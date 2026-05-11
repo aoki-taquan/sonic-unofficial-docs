@@ -11288,10 +11288,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#copp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ CoPP 全体ではダメなのか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        何を投入すれば効くのか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tc の中身
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-yang-db_migrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / YANG / db_migrator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
       
     </span>
   </a>
@@ -11302,170 +11346,15 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        スコープ外
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体アーキテクチャ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tc 投入の中身
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        監視デーモン
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        シーケンス（追加 / 削除）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db-db-migrator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB / DB Migrator
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warmfast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm/Fast boot
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離
@@ -11477,10 +11366,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. どこで乖離が確認されたか
+        取り込み済み
       
     </span>
   </a>
@@ -11488,10 +11377,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-hld" class="md-nav__link">
+  <a href="#hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. HLD と実装の差分の中身
+        未取り込み（HLD との乖離）
       
     </span>
   </a>
@@ -11499,10 +11388,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. 読者への影響
+        読者への影響
       
     </span>
   </a>
@@ -11510,21 +11399,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. 回避策 / 対応方法
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        監査 round 2 追補（2026-05-11）
+        回避策
       
     </span>
   </a>
@@ -11533,6 +11411,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
   
 </li>
       
@@ -22840,10 +22762,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#copp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ CoPP 全体ではダメなのか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        何を投入すれば効くのか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tc の中身
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-yang-db_migrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / YANG / db_migrator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する CLI
       
     </span>
   </a>
@@ -22854,170 +22820,15 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        スコープ外
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体アーキテクチャ
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        tc 投入の中身
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        監視デーモン
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        シーケンス（追加 / 削除）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db-db-migrator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB / DB Migrator
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#warmfast-boot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Warm/Fast boot
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離
@@ -23029,10 +22840,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. どこで乖離が確認されたか
+        取り込み済み
       
     </span>
   </a>
@@ -23040,10 +22851,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-hld" class="md-nav__link">
+  <a href="#hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. HLD と実装の差分の中身
+        未取り込み（HLD との乖離）
       
     </span>
   </a>
@@ -23051,10 +22862,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. 読者への影響
+        読者への影響
       
     </span>
   </a>
@@ -23062,21 +22873,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. 回避策 / 対応方法
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        監査 round 2 追補（2026-05-11）
+        回避策
       
     </span>
   </a>
@@ -23085,6 +22885,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
   
 </li>
       
@@ -23125,99 +22969,51 @@
 
 
 <div class="admonition danger">
-<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
-<p><code>dhcp_rate_limit</code> の <strong>データ層</strong> （<code>sonic-yang-models/yang-models/sonic-port.yang</code> L106、<code>sonic-utilities/scripts/db_migrator.py</code> L514-524 で既存ポートに既定値 300 を挿入、<code>sonic-utilities/config/main.py</code> L5948-6002 と <code>utilities_common/cli.py</code> L846 の CLI）は取り込み済み。一方、HLD が要求する <strong>portmgrd / portmgr の <code>tc qdisc</code> / <code>tc filter</code> 投入ロジック</strong> は <code>sonic-swss/cfgmgr/</code> で未取り込み（grep ヒット 0）。<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> には依然 <code>dhcp_relay: trap_ids="dhcp,dhcpv6"</code> が <code>queue4_group3</code> に残っており、HLD が前提とする「CoPP のシステム全体 DHCP 制限削除」は実施されていない。本ページは仕様参考扱い（verified at: 2026-05-09）。</p>
+<p class="admonition-title">裏取りステータス: Discrepancy-found（部分実装）</p>
+<p><code>dhcp_rate_limit</code> の <strong>データ層 + CLI</strong> は取り込み済み（<code>sonic-yang-models/yang-models/sonic-port.yang</code> L106、<code>sonic-utilities/scripts/db_migrator.py</code> L514-524 で既定 300 を migration、<code>sonic-utilities/config/main.py</code> L5948-6002）。一方、HLD が要求する <strong>portmgrd の <code>tc qdisc</code> / <code>tc filter</code> 投入ロジック</strong> は <code>sonic-swss/cfgmgr/</code> に未取り込み（grep ヒット 0）。<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> に <code>dhcp_relay: trap_ids="dhcp,dhcpv6"</code> が残り、HLD が前提とする「CoPP 全体 DHCP 制限の削除」も未実施。仕様参考扱い（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="dhcp-dos-dhcp-linux-tc">DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）<a class="headerlink" href="#dhcp-dos-dhcp-linux-tc" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DHCP DoS 攻撃は、攻撃者が偽装 MAC で大量の DHCP DISCOVER パケットを送出し、DHCP サーバの CPU / メモリ / アドレス処理を消耗させて正規クライアントへの応答を妨げる手口である。SONiC の従来挙動では <strong>CoPP のデフォルトで DHCP を 300 packets/sec のシステム全体レート</strong> に絞っているが、システム全体で共有しているため、単一ポートからの flood が同 VLAN の正規クライアントの DISCOVER までドロップさせてしまう<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は <strong>ポート単位</strong> での DHCP レート制限に切り替え、被害ドメインを攻撃ポートのみに局所化する。SAI / ASIC のオフロードではなく <strong>Linux Traffic Control (tc) の ingress qdisc + filter</strong> をホスト側で使う設計で、<code>portmgrd</code> が CONFIG_DB の <code>dhcp_rate_limit</code> を読み取り、対応する <code>tc</code> コマンドをカーネルに投入する。SAI API の追加・変更は無い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>スコープは <strong>DHCP DoS のみ</strong>。DHCP Starvation 攻撃の緩和（DHCP Snooping）は将来作業として明記されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体アーキテクチャ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>「なぜ CoPP 全体ではダメか」「何を投入すれば効くのか」「いま master でどこまで効くのか」が読み手の最大の関心。順に答える。<strong>結論を先に</strong>: 仕様は揃ったが portmgrd の TC 投入が未実装なので、CLI で値を入れても効かない（後述「実装との乖離」を参照）。</p>
+<h2 id="copp">なぜ CoPP 全体ではダメなのか<a class="headerlink" href="#copp" title="Permanent link">&para;</a></h2>
+<p>SONiC の従来挙動は <strong>CoPP で DHCP をシステム全体 300 pps に絞る</strong>。攻撃者が偽装 MAC で大量 DISCOVER を送ると、その共有上限を使い切り、同 VLAN の正規クライアントの DISCOVER までドロップされる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。被害ドメインを局所化するため <strong>ポート単位</strong> に切り替える必要がある。</p>
+<h2 id="_1">何を投入すれば効くのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>SAI / ASIC オフロードではなく <strong>Linux Traffic Control (tc) の ingress qdisc + filter</strong> をホスト側で使う。<code>portmgrd</code> が <code>PORT.dhcp_rate_limit</code> を subscribe し、対応する <code>tc</code> コマンドをカーネルに投入する。SAI API の追加・変更は無い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
-    User[CLI\nconfig interface dhcp-mitigation-rate] --&gt; CDB[(CONFIG_DB\nPORT.dhcp_rate_limit)]
-    CDB --&gt;|subscribe| PORTMGR[portmgrd\n(SwSS container)]
-    PORTMGR --&gt;|tc qdisc / filter add| KERN[Linux Kernel\ntc ingress]
-    KERN --&gt;|UDP/67 を policer\nで rate-limit| ASIC[ASIC へ転送]
-    DAEMON[ドロップ監視デーモン] -.-&gt;|tc qdisc -s 監視| KERN
-    DAEMON --&gt; LOG[ログファイル\n(運用者向けアラート)]</code></pre>
-<p>CoPP 側のシステム全体 DHCP レート制限（300 pps）は <strong>削除</strong> され、DHCP パケットは ASIC を通って ホストカーネルの <code>tc</code> まで届くようになる。そこで TC filter が DHCP DISCOVER を識別し、ポート単位の policer で超過分をドロップする<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="tc"><code>tc</code> 投入の中身<a class="headerlink" href="#tc" title="Permanent link">&para;</a></h3>
-<p>ポートに対して <code>dhcp_rate_limit</code> を有効化するときに <code>portmgrd</code> は次の 3 段を実行する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1. ingress qdisc を当該インタフェースに作る</span>
+    CLI[config interface&lt;br/&gt;dhcp-mitigation-rate] --&gt; CDB[(CONFIG_DB&lt;br/&gt;PORT.dhcp_rate_limit)]
+    CDB --&gt;|subscribe| PORTMGR[portmgrd]
+    PORTMGR --&gt;|tc qdisc / filter add| KERN[Linux tc ingress]
+    KERN --&gt;|UDP/67 policer| ASIC[ASIC へ転送]
+    DAEMON[ドロップ監視デーモン] -.-&gt;|tc qdisc -s| KERN
+    DAEMON --&gt; LOG[ログ]</code></pre>
+<p>CoPP 側の DHCP 全体制限（300 pps）は <strong>削除</strong> され、DHCP は ASIC を通って host の <code>tc</code> まで届く前提<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="tc"><code>tc</code> の中身<a class="headerlink" href="#tc" title="Permanent link">&para;</a></h2>
+<p><code>portmgrd</code> が有効化時に発行する 3 段<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1. ingress qdisc</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>tc<span class="w"> </span>qdisc<span class="w"> </span>add<span class="w"> </span>dev<span class="w"> </span>&lt;interface&gt;<span class="w"> </span>handle<span class="w"> </span>ffff:<span class="w"> </span>ingress
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 2. UDP / 宛先ポート 67 にマッチする filter + policer を追加</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 2. UDP / dport 67 にマッチする policer 付き filter</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>tc<span class="w"> </span>filter<span class="w"> </span>add<span class="w"> </span>dev<span class="w"> </span>&lt;interface&gt;<span class="w"> </span>protocol<span class="w"> </span>ip<span class="w"> </span>parent<span class="w"> </span>ffff:<span class="w"> </span>prio<span class="w"> </span><span class="m">1</span><span class="w"> </span>u32<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">     </span>match<span class="w"> </span>ip<span class="w"> </span>protocol<span class="w"> </span><span class="m">17</span><span class="w"> </span>0xff<span class="w"> </span>match<span class="w"> </span>ip<span class="w"> </span>dport<span class="w"> </span><span class="m">67</span><span class="w"> </span>0xffff<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">     </span>police<span class="w"> </span>rate<span class="w"> </span>&lt;byte-rate&gt;<span class="w"> </span>burst<span class="w"> </span>&lt;byte-rate&gt;<span class="w"> </span>conform-exceed<span class="w"> </span>drop
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 3. 状態確認</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 3. 確認</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>sudo<span class="w"> </span>tc<span class="w"> </span>-s<span class="w"> </span>qdisc<span class="w"> </span>show<span class="w"> </span>dev<span class="w"> </span>&lt;interface&gt;<span class="w"> </span>handle<span class="w"> </span>ffff:
 </span></code></pre></div>
-<p>CONFIG_DB に書く値は <strong>packets per second</strong>。<code>tc</code> は bytes per second しか受けないため、SONiC 側で <strong>1 DHCP DISCOVER = 406 バイト</strong> という前提でバイトレートに換算する旨が HLD に明記されている<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>CONFIG_DB の値は <strong>pps</strong>。<code>tc</code> は bps しか受けないので <strong>1 DHCP DISCOVER = 406 バイト</strong> で換算<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>別途 <strong>ドロップ監視デーモン</strong> が全ポートの <code>tc qdisc</code> ドロップ数を周期的に確認し、増加でログに警告を書く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="config_db-yang-db_migrator">CONFIG_DB / YANG / db_migrator<a class="headerlink" href="#config_db-yang-db_migrator" title="Permanent link">&para;</a></h2>
+<p><code>PORT.dhcp_rate_limit</code> を追加。既存ポートは <code>db_migrator</code> が既定 300 を埋める<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;dhcp_rate_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;300&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</span></code></pre></div>
+<p>YANG: <code>uint32 { range 0..8000; }</code><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/Dhcp_Mitigation/DHCP Mitigation.md#L148-L151 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
   Since traffic control(TC) only supports rates in the form of bytes per second, this value is multiplied by 406 (number of bytes that make up a DHCP discover packet).
-  Upon running this command, an ingress queuing discipline is created on the specified port via traffic control(TC). Next, a traffic control(TC) filter is added to filter DHCP discover packets on protocol 17 (UDP) and destination port 67 ...
 reasoning: pps→bps 換算と TC コマンドフローの根拠。
 -->
 
-<h3 id="_4">監視デーモン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>HLD は別途 <strong>カスタムのドロップ監視デーモン</strong> を導入すると述べている。全ポートの <code>tc qdisc</code> のドロップ数を周期的に確認し、増加を検出した時点でログファイルに警告を書き出す。運用者はこのログを混雑 / 攻撃のヒントとして使う想定である<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_5">シーケンス（追加 / 削除）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>sequenceDiagram
-    participant U as user
-    participant CFG as CONFIG_DB
-    participant P as portmgrd
-    participant TC as Linux tc
-    U-&gt;&gt;CFG: PORT|EthernetX.dhcp_rate_limit = 1000
-    CFG--&gt;&gt;P: notify
-    P-&gt;&gt;TC: tc qdisc add (ingress)
-    P-&gt;&gt;TC: tc filter add (UDP/67 police rate=1000*406 B/s drop)
-    Note over P,TC: 後で削除
-    U-&gt;&gt;CFG: hdel PORT|EthernetX dhcp_rate_limit
-    CFG--&gt;&gt;P: notify
-    P-&gt;&gt;TC: tc filter del / tc qdisc del</code></pre>
-<h3 id="config_db-db-migrator">CONFIG_DB / DB Migrator<a class="headerlink" href="#config_db-db-migrator" title="Permanent link">&para;</a></h3>
-<p><code>PORT</code> テーブルに <code>dhcp_rate_limit</code> フィールドを追加する。<strong>後方互換のため、既存ポートには <code>db_migrator</code> が既定 <code>300</code> を埋める</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;admin_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fortyGigE0/0&quot;</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="nt">&quot;lanes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;25,26,27,28&quot;</span><span class="p">,</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="nt">&quot;mtu&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9100&quot;</span><span class="p">,</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="nt">&quot;speed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;40000&quot;</span><span class="p">,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="nt">&quot;dhcp_rate_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;300&quot;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>YANG では <code>uint32 { range 0..8000; }</code> の leaf として定義される<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。範囲上限 8000 pps は明文ルールで、<code>tc</code> 側の policer に渡される最大値の目安となる。</p>
-<h3 id="warmfast-boot">Warm/Fast boot<a class="headerlink" href="#warmfast-boot" title="Permanent link">&para;</a></h3>
-<p>既存の warm boot / fast boot 機能には <strong>影響を与えない</strong> と HLD は明記している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>PORT</code></td>
-<td><code>Ethernet*</code></td>
-<td><code>dhcp_rate_limit</code></td>
-<td>DHCP DISCOVER の許容 pps（YANG 範囲 0〜8000）。0 は実質無効化想定だが HLD で明記されていない</td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<h2 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -23228,100 +23024,96 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 <tbody>
 <tr>
 <td><code>config interface dhcp-mitigation-rate add &lt;port&gt; &lt;pps&gt;</code></td>
-<td>当該ポートに DHCP レート制限を設定</td>
+<td>設定</td>
 </tr>
 <tr>
 <td><code>config interface dhcp-mitigation-rate delete &lt;port&gt; &lt;pps&gt;</code></td>
-<td>設定を削除</td>
+<td>削除</td>
 </tr>
 <tr>
 <td><code>show interface dhcp-mitigation-rate</code></td>
-<td>現在のレート制限一覧</td>
+<td>一覧</td>
 </tr>
 </tbody>
 </table>
-<p>CLI 仕様の細かいルール<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>CLI ルール<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>pps</code> は正の整数（0 は無効）。</li>
-<li>同じポートに複数の dhcp-mitigation-rate を載せることは不可。先に既存を削除してから新規追加する必要がある。</li>
-<li>削除時に <code>pps</code> 引数を渡す（CLI 表記ゆれ。実装側 add/delete どちらも <code>pps</code> 必須として記述されている）。</li>
+<li><code>pps</code> は正の整数（0 は無効）</li>
+<li>同ポートに複数 rate は不可。先に delete して add し直す</li>
 </ul>
-<h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p><code>sonic-port</code> 系モデルに leaf <code>dhcp_rate_limit</code> を追加<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">dhcp_rate_limit</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">description</span><span class="w"> </span><span class="s2">&quot;DHCP rate limit (packets per second)&quot;</span><span class="p">;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="k">range</span><span class="w"> </span><span class="nv">0..8000</span><span class="p">;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+<h2 id="_2">スコープ外<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>DHCP Starvation</strong> の緩和（DHCP Snooping）は将来作業<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>warm boot / fast boot には影響を与えない<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h2 id="_3">実装との乖離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>2026-05 時点で <code>.cache/sonic-sources/</code> を裏取りした結果、本機能は <strong>データ層 + CLI のみ取り込み済み、肝心の TC 投入経路が未実装</strong> な部分実装状態。</p>
+<h3 id="_4">取り込み済み<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:106</code> の <code>leaf dhcp_rate_limit</code> (<code>uint32 range 0..8000</code>)</li>
+<li><code>sonic-utilities/scripts/db_migrator.py:514-524</code> の <code>migrate_config_db_port_table_for_dhcp_rate_limit</code>（既存ポートに既定 300 埋め）</li>
+<li><code>sonic-utilities/config/main.py:5908-5990</code> の <code>config interface dhcp-mitigation-rate add/del</code></li>
+</ul>
+<h3 id="hld">未取り込み（HLD との乖離）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sonic-swss/cfgmgr/</code> に <code>dhcp_rate_limit</code> を subscribe する portmgrd ロジック <strong>不存在</strong>（<code>grep -rn dhcp_rate_limit sonic-swss/cfgmgr/</code> 0 件）。<code>tc qdisc add ... ingress</code> / <code>tc filter add ... police rate ...</code> を発行するコードなし</li>
+<li><code>sonic-buildimage/files/image_config/copp/copp_cfg.j2:109-110</code> に <code>"dhcp_relay": { "trap_ids": "dhcp,dhcpv6" ... }</code> が残っており、CoPP 全体 DHCP 制限の撤去も <strong>未実施</strong></li>
+</ul>
+<h3 id="_5">読者への影響<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>config interface dhcp-mitigation-rate add Ethernet0 1000</code> を入れても <strong>ポート単位レート制限は効かない</strong>。<code>tc -s qdisc show dev Ethernet0 handle ffff:</code> で ingress qdisc は出てこない</li>
+<li>攻撃ポートからの flood は依然 CoPP の 300 pps に集約され、同 VLAN の正規 DISCOVER までドロップされる従来挙動</li>
+<li>DB migrator により既存ポートに <code>dhcp_rate_limit=300</code> が勝手に埋まる副作用は発生（<code>show runningconfiguration</code> に出る）</li>
+</ul>
+<h3 id="_6">回避策<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD の効果を得たい場合</strong>: 外部スクリプトで <code>tc qdisc add ... ingress</code> + <code>tc filter add ... police rate=&lt;pps*406&gt;bps</code> を投入。一括投入例:</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">for</span><span class="w"> </span>p<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT|Ethernet*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/PORT|//&#39;</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nv">r</span><span class="o">=</span><span class="k">$(</span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;PORT|</span><span class="nv">$p</span><span class="s2">&quot;</span><span class="w"> </span>dhcp_rate_limit<span class="k">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$r</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$r</span><span class="s2">&quot;</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>tc<span class="w"> </span>qdisc<span class="w"> </span>add<span class="w"> </span>dev<span class="w"> </span><span class="nv">$p</span><span class="w"> </span>handle<span class="w"> </span>ffff:<span class="w"> </span>ingress<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span>tc<span class="w"> </span>filter<span class="w"> </span>add<span class="w"> </span>dev<span class="w"> </span><span class="nv">$p</span><span class="w"> </span>protocol<span class="w"> </span>ip<span class="w"> </span>parent<span class="w"> </span>ffff:<span class="w"> </span>prio<span class="w"> </span><span class="m">1</span><span class="w"> </span>u32<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span>match<span class="w"> </span>ip<span class="w"> </span>protocol<span class="w"> </span><span class="m">17</span><span class="w"> </span>0xff<span class="w"> </span>match<span class="w"> </span>ip<span class="w"> </span>dport<span class="w"> </span><span class="m">67</span><span class="w"> </span>0xffff<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span>police<span class="w"> </span>rate<span class="w"> </span><span class="k">$((</span><span class="nv">r</span><span class="o">*</span><span class="m">406</span><span class="k">))</span>bps<span class="w"> </span>burst<span class="w"> </span><span class="k">$((</span><span class="nv">r</span><span class="o">*</span><span class="m">406</span><span class="k">))</span>b<span class="w"> </span>conform-exceed<span class="w"> </span>drop
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">done</span>
 </span></code></pre></div>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Ethernet0 に 1000 pps で DHCP レート制限を設定</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>interface<span class="w"> </span>dhcp-mitigation-rate<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">1000</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 確認</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>show<span class="w"> </span>interface<span class="w"> </span>dhcp-mitigation-rate
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 削除</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>config<span class="w"> </span>interface<span class="w"> </span>dhcp-mitigation-rate<span class="w"> </span>delete<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">1000</span>
-</span></code></pre></div>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>CoPP</strong>: 従来の <strong>CoPP 上のシステム全体 DHCP 制限 (既定 300 pps) は削除される</strong>。CoPP に依存していた他の DHCP 関連経路（DHCP リレー等）への影響は HLD では明記されておらず、別途確認が必要。</li>
-<li><strong>portmgrd</strong>: ポート作成 / 削除のタイミングと TC qdisc / filter のライフサイクルが噛み合うことが前提。動的にポートが消える系（hot-removable サブインタフェース等）との相性は HLD 範囲外。</li>
-<li><strong>DHCP Starvation</strong>: 本 HLD では未対応。将来「DHCP Snooping」で対処すると明記。</li>
-<li><strong>ドロップ監視デーモン</strong>: 既存の <code>dropmon</code> / <code>flexcounter</code> とは別の独立デーモン。ログファイル経由でアラートを出す。</li>
-</ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li>設定したレート制限が効かない場合: <code>tc -s qdisc show dev &lt;intf&gt; handle ffff:</code> で ingress qdisc が存在し、policer の statistics が増加していることを確認する。CONFIG_DB に値があっても <code>portmgrd</code> が当該ポートで TC 投入に失敗していると効かない。</li>
-<li>正規クライアントまでドロップされる場合: <code>dhcp_rate_limit</code> の値が小さすぎる可能性。サーバ側のリース更新タイミングで瞬間的にバーストするケースを考慮した値設定が必要。</li>
-<li>システム全体で DHCP が通らない場合: 本 HLD 適用後 CoPP の DHCP 制限が削除されているはずだが、CoPP 側ルールが残っていると ASIC で先に絞られる可能性がある。</li>
-<li>値変更が反映されない場合: 同ポートに既存の rate がある状態で新たに add しようとすると CLI が拒否する仕様。先に delete してから add する。</li>
-</ul>
-<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p>2026-05 時点で <code>.cache/sonic-sources/</code> の master を裏取りした結果、本機能は <strong>データ層 + CLI のみが取り込み済みで、肝心の TC qdisc / filter 投入経路が未実装</strong> な部分実装状態である。</p>
-<h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>取り込み済み</strong>:</li>
-<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:106</code> で <code>leaf dhcp_rate_limit</code> が定義されている（<code>uint32 range 0..8000</code>）。</li>
-<li><code>sonic-utilities/scripts/db_migrator.py:514-524</code> (<code>migrate_config_db_port_table_for_dhcp_rate_limit</code>) が既存ポートに既定値 <code>300</code> を埋め、<code>db_migrator.py:1142</code> から呼ばれる。</li>
-<li><code>sonic-utilities/config/main.py:5908-5990</code> に <code>config interface dhcp-mitigation-rate add/del</code> の CLI ハンドラが存在し、<code>PORT</code> テーブルへ <code>dhcp_rate_limit</code> を mod_entry する。</li>
-<li><strong>未取り込み（HLD との乖離）</strong>:</li>
-<li><code>sonic-swss/cfgmgr/</code> 配下に <code>dhcp_rate_limit</code> を subscribe する portmgrd ロジックが<strong>存在しない</strong>（<code>grep -rn dhcp_rate_limit sonic-swss/cfgmgr/</code> 0 件）。<code>tc qdisc add ... ingress</code> / <code>tc filter add ... police rate ...</code> を発行するコードも見つからない。</li>
-<li><code>sonic-buildimage/files/image_config/copp/copp_cfg.j2:109-110</code> には依然として <code>"dhcp_relay": { "trap_ids": "dhcp,dhcpv6" ... }</code> が残っており、HLD が前提とする「CoPP 上のシステム全体 DHCP 制限の削除」も実施されていない。</li>
-</ul>
-<h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
-<p>HLD は「CONFIG_DB に書いた値が portmgrd 経由で Linux TC の policer に展開され、CoPP のシステム全体 DHCP 制限と置き換えられる」と述べているが、現行 master では <strong>CONFIG_DB に値を書き込めるだけで、カーネル側に何も投入されない</strong>。CoPP も従来どおりシステム全体で 300 pps に絞っている。HLD のうち「データモデル / CLI / migration」だけが先行採用された格好で、データプレーン側は HLD 通りに動かない。</p>
-<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>config interface dhcp-mitigation-rate add Ethernet0 1000</code> を投入しても <strong>ポート単位のレート制限は効かない</strong>。<code>tc -s qdisc show dev Ethernet0 handle ffff:</code> をしても ingress qdisc は存在しない。</li>
-<li>攻撃ポートからの flood は、依然として CoPP の 300 pps システム全体制限に集約され、同 VLAN の正規 DISCOVER までドロップされる従来挙動になる。HLD のセキュリティ価値は得られない。</li>
-<li>DB migrator により既存ポートに <code>dhcp_rate_limit=300</code> が<strong>勝手に</strong>埋まる副作用だけは発生する（運用上の害は無いが、<code>show runningconfiguration</code> 等に値が現れることに注意）。</li>
-</ul>
-<h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>HLD の効果を得たい場合</strong>: 当面は外部スクリプト（systemd unit など）で <code>tc qdisc add dev &lt;if&gt; handle ffff: ingress</code> + <code>tc filter add ... protocol 17 ... dport 67 ... police rate ...</code> を投入して回避する。バイトレート換算は HLD の <code>pps * 406 B</code> 規約に従う。</li>
-<li><strong>CoPP 側を維持する場合</strong>: 既定の CoPP DHCP 300 pps が依然有効なので、上記スクリプトを入れない限りは <strong>HLD 前の動作のまま</strong> で運用される。CLI 上の値は飾りである旨を運用ドキュメントに明記しておくとよい。</li>
-<li>上流の取り込みを待つ場合は <code>sonic-swss</code> 側で portmgrd の TC 投入実装と、<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> からの <code>dhcp_relay</code> trap_id 削除の双方が入るのを確認する必要がある。</li>
-</ul>
-<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
-<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
-<ul>
-<li><strong>portmgrd の TC 投入経路</strong> が <code>sonic-swss/cfgmgr/</code> に未追加で、CONFIG_DB の <code>dhcp_rate_limit</code> を消費するコードは round 2 でも 0 件のまま (<code>grep -rn dhcp_rate_limit .cache/sonic-sources/sonic-swss/cfgmgr/</code> ヒット 0)。</li>
-<li><code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> の <code>dhcp_relay</code> trap 設定が依然システム全体 300 pps に絞っており、HLD 前提の「CoPP 全体制限の撤去」が完了していない。</li>
-<li>関連 PR: <code>sonic-utilities</code> の <code>dhcp-mitigation-rate</code> CLI 取り込み (<code>config: add interface dhcp-mitigation-rate add/del</code>) は 2023 年に merge 済みだが、対となる swss 側 PR (portmgrd の TC 投入) は 2026-05 時点で未提出。</li>
-<li><strong>追加回避策コマンド</strong>: 全ポート一括で TC を投入する起動スクリプト例 — <code>for p in $(redis-cli -n 4 keys 'PORT|Ethernet*' | sed 's/PORT|//'); do r=$(redis-cli -n 4 hget PORT\|$p dhcp_rate_limit); [ -n "$r" ] &amp;&amp; [ "$r" -gt 0 ] &amp;&amp; tc qdisc add dev $p handle ffff: ingress 2&gt;/dev/null &amp;&amp; tc filter add dev $p protocol ip parent ffff: prio 1 u32 match ip protocol 17 0xff match ip dport 67 0xffff police rate $((r*406))bps burst $((r*406))b conform-exceed drop; done</code></li>
+<li><strong>CoPP 維持で運用する場合</strong>: 既定の CoPP 300 pps が依然有効。CLI 上の値は飾りである旨を運用ドキュメントに明記</li>
+<li>上流取り込み待ち: <code>sonic-swss</code> の portmgrd TC 投入 PR と <code>copp_cfg.j2</code> からの <code>dhcp_relay</code> trap 削除の双方が必要</li>
 </ul>
 <blockquote>
-<p>分類: <code>monitor: not_implemented</code> — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。</p>
+<p>分類: <code>monitor: not_implemented</code></p>
 </blockquote>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>CoPP</strong>: 従来の DHCP 全体制限 (300 pps) を削除する前提。リレー等への影響は HLD では明記なし、要確認</li>
+<li><strong>portmgrd</strong>: ポート lifecycle と TC qdisc/filter のライフサイクルが噛み合うこと</li>
+<li><strong>DHCP Starvation</strong>: 本 HLD 対象外（将来 DHCP Snooping で対処）</li>
+<li><strong>ドロップ監視デーモン</strong>: 既存 <code>dropmon</code> / <code>flexcounter</code> とは別の独立デーモン</li>
+</ul>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>設定が効かない: <code>tc -s qdisc show dev &lt;intf&gt; handle ffff:</code> で ingress qdisc と policer の statistics を確認。今は <strong>portmgrd 自体が未取り込みなので一切効かない</strong></li>
+<li>正規クライアントまでドロップ: <code>dhcp_rate_limit</code> が小さすぎる可能性。リース更新時のバーストを考慮</li>
+<li>値変更が反映されない: 同ポートに既存 rate があると add が拒否される仕様。先に delete</li>
+</ul>
+<h2 id="_9">関連トピック<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror</a></li>
+<li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP / DNS</a></li>
+</ul>
+<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../copp-manager-redesign-test-plan/">CoPP Manager Redesign Test Plan</a></li>
+<li><a href="../copp-neighbor-miss-trap-and-enhancements/">CoPP Neighbor Miss Trap and Enhancements</a></li>
+</ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/Dhcp_Mitigation/DHCP Mitigation.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/Dhcp_Mitigation/DHCP Mitigation.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

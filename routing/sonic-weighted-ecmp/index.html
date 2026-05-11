@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#weighted-ecmpwcmp-bgp-link-bandwidth-ext-community" class="md-skip">
+        <a href="#weighted-ecmpwcmp" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -8711,7 +8711,18 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ通常 ECMP では足りないか
       
     </span>
   </a>
@@ -8722,85 +8733,19 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        データフロー
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+    <nav class="md-nav" aria-label="データフロー">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dataflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dataflow
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#frr-l3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FRR 設定 (L3)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#frr-evpn-type-5l2vpn-evpn" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FRR 設定 (EVPN Type-5、L2VPN evpn)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuration-daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration daemon
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#weight" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Weight の正規化
+        Weight 正規化
       
     </span>
   </a>
@@ -8809,6 +8754,67 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR 設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FRR 設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#l3ipv4-unicast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L3（ipv4 unicast）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evpn-type-5scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN Type-5（参考、scope 外）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB と bgpcfgd
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
   
 </li>
       
@@ -8846,7 +8852,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#topic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22732,7 +22760,18 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ通常 ECMP では足りないか
       
     </span>
   </a>
@@ -22743,85 +22782,19 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        データフロー
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+    <nav class="md-nav" aria-label="データフロー">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dataflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dataflow
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#frr-l3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FRR 設定 (L3)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#frr-evpn-type-5l2vpn-evpn" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FRR 設定 (EVPN Type-5、L2VPN evpn)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuration-daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration daemon
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#weight" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Weight の正規化
+        Weight 正規化
       
     </span>
   </a>
@@ -22830,6 +22803,67 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR 設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FRR 設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#l3ipv4-unicast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L3（ipv4 unicast）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evpn-type-5scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN Type-5（参考、scope 外）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB と bgpcfgd
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
   
 </li>
       
@@ -22867,7 +22901,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#topic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22904,64 +22960,71 @@
 
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py</code> で <code>wcmp_template = ... bgpd/wcmp/bgpd.wcmp.conf.j2</code>、<code>wcmp_enabled</code> キー処理、<code>configure_wcmp(data)</code> を master で確認。<code>docker-fpm-frr/frr/bgpd/wcmp/</code> テンプレートディレクトリも存在。</p>
+<p><code>bgpcfgd/managers_device_global.py</code> で <code>wcmp_template = ... bgpd/wcmp/bgpd.wcmp.conf.j2</code>、<code>wcmp_enabled</code> キー処理、<code>configure_wcmp(data)</code> を master で確認。<code>docker-fpm-frr/frr/bgpd/wcmp/</code> テンプレートディレクトリも存在。</p>
 </div>
-<h1 id="weighted-ecmpwcmp-bgp-link-bandwidth-ext-community">Weighted ECMP（WCMP / BGP link-bandwidth ext community）<a class="headerlink" href="#weighted-ecmpwcmp-bgp-link-bandwidth-ext-community" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>各 ToR-Spine リンクが部分故障した際、ECMP は <strong>生存 link の容量差を反映できない</strong> ため均等分散して輻輳を起こす。<strong>Weighted ECMP (WCMP, W-ECMP, UCMP)</strong> は <strong>BGP link bandwidth 拡張コミュニティ</strong> で各 path の利用可能帯域を運び、FRR / Zebra が 1〜255 に正規化した weight で NHG member を作る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC 側 SWSS / SAI は既に NHG member weight をサポートしているので、本 HLD は <strong>FRR を WCMP モードで動かすための CLI / CONFIG_DB / templates</strong> の整備が中心。L3 用途を <strong>In scope</strong>、EVPN Type-5 は <strong>Out of scope</strong>。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="dataflow">Dataflow<a class="headerlink" href="#dataflow" title="Permanent link">&para;</a></h3>
+<h1 id="weighted-ecmpwcmp">Weighted ECMP（WCMP）<a class="headerlink" href="#weighted-ecmpwcmp" title="Permanent link">&para;</a></h1>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>通常 ECMP では何が問題で、なぜリンク帯域に応じた重み付けが要るのか</li>
+<li>WCMP の重みは何で運ばれ、どこで NHG member weight に変換されるか</li>
+<li>SONiC 側で増えるのは CONFIG_DB のどのキーか、SWSS/SAI に変更があるか</li>
+<li>EVPN Type-5 や warm-boot の扱い</li>
+</ul>
+<h2 id="ecmp">なぜ通常 ECMP では足りないか<a class="headerlink" href="#ecmp" title="Permanent link">&para;</a></h2>
+<p>各 ToR-Spine リンクが部分故障した際、通常 ECMP は <strong>生存リンクの容量差を反映できず</strong> 均等分散して輻輳する。<strong>WCMP</strong> は <strong>BGP link bandwidth 拡張コミュニティ</strong> で各 path の利用可能帯域を運び、FRR / Zebra が 1〜255 に正規化した weight で NHG member を作る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本 HLD のスコープは <strong>L3 用途のみ</strong>。EVPN Type-5 は <strong>Out of scope</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SWSS / SAI は既に NHG member weight をサポートしているので <strong>SWSS OA は変更不要</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  TOR[ToR (server側)&lt;br/&gt;route-map wcmp-map&lt;br/&gt;set extcommunity bandwidth num-multipaths] -- BGP advertise --&gt; SP[Spine]
+  TOR[ToR&lt;br/&gt;route-map: set extcommunity bandwidth] -- BGP advertise --&gt; SP[Spine]
   SP --&gt; RTOR[Remote ToR]
   RTOR -. link 故障 .- SP
   SP -- updated bandwidth --&gt; ZEBRA[FRR / Zebra]
-  ZEBRA --&gt; NHG[NHG member weights&lt;br/&gt;(normalized 1-255)]
+  ZEBRA --&gt; NHG[NHG member weights&lt;br/&gt;1-255]
   NHG --&gt; FPM[fpmsyncd]
   FPM --&gt; RO[Route OA / orchagent]
-  RO --&gt; SD[syncd]
-  SD --&gt; SAI[SAI: NHG member weight]</code></pre>
+  RO --&gt; SD[syncd] --&gt; SAI[SAI NHG member weight]</code></pre>
 <ul>
-<li>入口 ToR（anycast / ECMP server 側）が <code>route-map wcmp-map permit 100</code> で <code>set extcommunity bandwidth num-multipaths</code> を付与<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>受信 BGP は default 動作で <strong>link bandwidth ext community を weight に変換</strong>。一部 path が community 不持ちなら <strong>通常 ECMP に fallback</strong></li>
-<li>Zebra が NHG を再計算 → fpmsyncd → orchagent (Route OA) → SAI</li>
+<li>入口 ToR が <code>route-map</code> で <code>set extcommunity bandwidth num-multipaths</code> を付与<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>受信 BGP は default で <strong>link bandwidth ext community を weight に変換</strong>。一部 path が community を持たないと <strong>通常 ECMP に fallback</strong></li>
+<li>Zebra が NHG 再計算 → fpmsyncd → Route OA → SAI</li>
 </ul>
-<h3 id="frr-l3">FRR 設定 (L3)<a class="headerlink" href="#frr-l3" title="Permanent link">&para;</a></h3>
+<h3 id="weight">Weight 正規化<a class="headerlink" href="#weight" title="Permanent link">&para;</a></h3>
+<ul>
+<li>各 NHG 内で <code>bw / total_bw</code> 比を <strong>1..255</strong> に正規化<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>全 0 / 同一値は通常 ECMP と等価</li>
+<li>multipath の一部に bandwidth コミュニティ無し → <strong>全体 ECMP fallback</strong></li>
+</ul>
+<h2 id="frr">FRR 設定<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h2>
+<h3 id="l3ipv4-unicast">L3（ipv4 unicast）<a class="headerlink" href="#l3ipv4-unicast" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>route-map wcmp-map permit 100
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  set extcommunity bandwidth num-multipaths
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>exit
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>router bgp 65100
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  ...
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  address-family ipv4 unicast
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    neighbor SPINE route-map wcmp-map out
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    neighbor SPINE activate
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  exit-address-family
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>end
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  address-family ipv4 unicast
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    neighbor SPINE route-map wcmp-map out
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    neighbor SPINE activate
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  exit-address-family
 </span></code></pre></div>
-<h3 id="frr-evpn-type-5l2vpn-evpn">FRR 設定 (EVPN Type-5、L2VPN evpn)<a class="headerlink" href="#frr-evpn-type-5l2vpn-evpn" title="Permanent link">&para;</a></h3>
+<h3 id="evpn-type-5scope">EVPN Type-5（参考、scope 外）<a class="headerlink" href="#evpn-type-5scope" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>address-family l2vpn evpn
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  advertise ipv4 unicast route-map wcmp-map
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  neighbor SPINE activate
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>exit-address-family
 </span></code></pre></div>
-<p>EVPN は <code>docker_routing_config_mode</code> が <code>split</code> / <code>split-unified</code> のときのみ有効<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>EVPN 経路は <code>docker_routing_config_mode</code> が <code>split</code> / <code>split-unified</code> のときのみ有効<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="config_db-bgpcfgd">CONFIG_DB と bgpcfgd<a class="headerlink" href="#config_db-bgpcfgd" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>BGP_DEVICE_GLOBAL|STATE:
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  wcmp_enabled = &quot;true&quot; | &quot;false&quot;
 </span></code></pre></div>
-<p>initial config（<code>init_cfg.json.j2</code>）で <strong>default <code>false</code></strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="configuration-daemon">Configuration daemon<a class="headerlink" href="#configuration-daemon" title="Permanent link">&para;</a></h3>
-<p><code>DeviceGlobalCfgMgr</code> クラスに <code>set_wcmp</code> API を追加。CONFIG_DB の <code>BGP_DEVICE_GLOBAL|STATE</code> 変更を受けて jinja2 template <code>bgpd.wcmp.conf.j2</code>（<code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/wcmp/</code>）を反映する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-jinja highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="x">! template: bgpd/wcmp/bgpd.wcmp.conf.j2</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="cp">{%</span>- <span class="k">if</span> <span class="nv">wcmp_enabled</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span> <span class="cp">%}</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="x">  set extcommunity bandwidth num-multipaths</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="cp">{%</span>- <span class="k">else</span> <span class="cp">%}</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="x">  no set extcommunity bandwidth</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="cp">{%</span>- <span class="k">endif</span> <span class="cp">%}</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="x">! end of template</span>
+<p>初期 config（<code>init_cfg.json.j2</code>）で <strong>default <code>false</code></strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>DeviceGlobalCfgMgr</code> に <code>set_wcmp</code> API を追加。<code>BGP_DEVICE_GLOBAL|STATE</code> 変更で jinja2 テンプレ <code>bgpd.wcmp.conf.j2</code>（<code>docker-fpm-frr/frr/bgpd/wcmp/</code>）を反映<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-jinja highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cp">{%</span>- <span class="k">if</span> <span class="nv">wcmp_enabled</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span> <span class="cp">%}</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="x">  set extcommunity bandwidth num-multipaths</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="cp">{%</span>- <span class="k">else</span> <span class="cp">%}</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="x">  no set extcommunity bandwidth</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="cp">{%</span>- <span class="k">endif</span> <span class="cp">%}</span>
 </span></code></pre></div>
-<p><strong>SWSS OA は変更不要</strong>: NHG member weight は既存仕様で通る<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（<a href="https://github.com/sonic-net/SONiC/pull/738">WCMP SWSS HLD #738</a>）。</p>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<h2 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config bgp device-global wcmp &lt;enabled|disabled&gt;
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show bgp device-global [-j|--json]
 </span></code></pre></div>
@@ -22970,55 +23033,41 @@
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>---------  --------
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Disabled   Enabled
 </span></code></pre></div>
-<h3 id="weight">Weight の正規化<a class="headerlink" href="#weight" title="Permanent link">&para;</a></h3>
-<ul>
-<li>各 NHG 内で <code>bw / total_bw</code> 比を <strong>1..255</strong> に正規化<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>すべて 0 / 同一値の場合は通常 ECMP と等価</li>
-<li>multipath の一部に bandwidth コミュニティが無い場合は <strong>全体 ECMP fallback</strong></li>
-</ul>
-<!-- evidence:
-source: sonic-net/SONiC/doc/wcmp/wcmp-design.md#L211-L223 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  FRR converts the incoming BGP link bandwidth extended community values into proportionated weight
-  among the ecmp members in such a way that the cumulative value of individual weights is normalized to 255
-  ... NH weights on routes are reported to fpmsyncd and further via Redis DB to Route OA
-reasoning: 1-255 正規化と fpmsyncd 経由で SAI に下る経路の根拠。
--->
-
 <h2 id="warm-fast-boot">Warm / Fast boot<a class="headerlink" href="#warm-fast-boot" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB の <code>wcmp_enabled</code> を再読込して FRR を再起動 / reload する想定</li>
-<li>詳細は本 HLD では別途扱われていない<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>wcmp_enabled</code> を再読込し FRR を reload する想定</li>
+<li>詳細は本 HLD では別途扱われていない<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>EVPN Type-5 は scope 外</strong>（本 HLD では将来）</li>
+<li><strong>EVPN Type-5 は scope 外</strong>（将来）</li>
 <li>一部 multipath が link-bandwidth コミュニティを持たないと ECMP fallback</li>
-<li>normalize の精度は 8bit (1-255) 内なので極端な比は表現できない</li>
-<li>ASIC によっては NHG member weight の resource 制約あり（HLD には未明記、SWSS HLD 側参照）</li>
+<li>正規化精度は 8bit (1-255) なので極端な比は表現不能</li>
+<li>ASIC によっては NHG member weight に resource 制約あり（HLD 未明記、SWSS HLD #738 参照）</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>BGP PIC</strong>: NHG を共有</li>
-<li><strong>EVPN over L2VPN</strong>: 将来 scope の Type-5</li>
-<li><strong><code>local-ars-hld</code></strong> 等の他 multipath 系: weight 計算ロジックは独立</li>
-<li><strong>fpmsyncd / Route OA</strong>: 既存 NHG member weight の経路を流用</li>
+<li><strong>EVPN over L2VPN</strong>: 将来 scope（Type-5）</li>
+<li><strong>local-ars-hld</strong> 等の multipath: weight 計算は独立</li>
+<li><strong>fpmsyncd / Route OA</strong>: 既存の NHG member weight 経路を流用</li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- DeviceGlobalCfgMgr.set_wcmp の sonic-buildimage / sonic-bgpcfgd 取り込み確認
-- bgpd.wcmp.conf.j2 (docker-fpm-frr/frr/bgpd/wcmp) の存在確認
-- BGP_DEVICE_GLOBAL|STATE wcmp_enabled の sonic-yang-models 反映確認
-- init_cfg.json.j2 デフォルト wcmp_enabled=false 確認
-- FRR 側の link-bandwidth ext community → NHG weight 1-255 正規化動作の検証
-- show bgp device-global / config bgp device-global wcmp の sonic-utilities 取り込み確認
--->
-
+<h2 id="topic">関連 Topic<a class="headerlink" href="#topic" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/04-vrf-ecmp/ecmp/">04 VRF &amp; ECMP / ecmp</a></li>
+<li><a href="../../topics/04-vrf-ecmp/advanced/">04 VRF &amp; ECMP / advanced</a></li>
+<li><a href="../../topics/02-bgp/advanced/">02 BGP / advanced</a></li>
+</ul>
+<h2 id="_5">参考<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/sonic-net/SONiC/pull/738">WCMP SWSS HLD #738</a></li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/wcmp/wcmp-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/wcmp/wcmp-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
