@@ -26,6 +26,22 @@ related:
 
 OOB マネジメントインタフェース（`eth0` 等）の IP アドレス・デフォルトゲートウェイ・強制ルートを定義する YANG モジュール[^1]。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-mgmt_interface"]
+  C1[("CONFIG_DB<br/>MGMT_INTERFACE")]
+  Y --> C1
+  D1["mgmt-framework"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

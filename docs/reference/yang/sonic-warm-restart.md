@@ -26,6 +26,22 @@ related:
 
 Warm restart configuration per module for hitless software upgrades[^1]。BGP EOIU 信号と各 syncd 系のタイマーをモジュール別に保持する。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-warm-restart"]
+  C1[("CONFIG_DB<br/>WARM_RESTART")]
+  Y --> C1
+  D1["warmrestart"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

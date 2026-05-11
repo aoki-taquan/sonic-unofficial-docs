@@ -26,6 +26,31 @@ related:
 
 Simple Network Management Protocol (SNMP) agent configuration YANG module for SONiC OS.[^1]
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-snmp"]
+  C1[("CONFIG_DB<br/>SNMP")]
+  Y --> C1
+  D1["snmp-config"]
+  C1 --> D1
+  C2[("CONFIG_DB<br/>SNMP_COMMUNITY")]
+  Y --> C2
+  C2 --> D1
+  C3[("CONFIG_DB<br/>SNMP_USER")]
+  Y --> C3
+  C3 --> D1
+  C4[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
+  Y --> C4
+  C4 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

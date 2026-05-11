@@ -56,7 +56,7 @@ def parse_map() -> dict[str, str]:
 
 
 def extract_daemon(subscriber: str) -> Optional[str]:
-    m = re.search(r"`([A-Za-z][A-Za-z0-9_]*)`", subscriber)
+    m = re.search(r"`([A-Za-z][A-Za-z0-9_\-]*)`", subscriber)
     if m:
         return m.group(1)
     m = re.search(r"([A-Z][A-Za-z0-9]*Orch)", subscriber)

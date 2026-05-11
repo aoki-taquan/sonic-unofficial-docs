@@ -26,6 +26,22 @@ related:
 
 BREAKOUT_CFG YANG Module for SONiC OS。動的ポート分割 (port breakout) 設定を親ポート単位で保持する[^1]。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-breakout_cfg"]
+  C1[("CONFIG_DB<br/>BREAKOUT_CFG")]
+  Y --> C1
+  D1["xcvrd"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

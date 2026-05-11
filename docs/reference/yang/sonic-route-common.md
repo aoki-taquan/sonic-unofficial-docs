@@ -26,6 +26,22 @@ related:
 
 SONIC ROUTE common YANG[^1]
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-route-common"]
+  C1[("CONFIG_DB<br/>ROUTE_REDISTRIBUTE")]
+  Y --> C1
+  D1["bgpcfgd"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。`ROUTE_REDISTRIBUTE` は FRR の `redistribute` ステートメントを `bgpcfgd` 経由で投入する。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```
