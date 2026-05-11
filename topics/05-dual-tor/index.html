@@ -28578,6 +28578,17 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        次に読むべき記事
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連する章
       
     </span>
@@ -28635,8 +28646,38 @@
 <li><a href="../../overlay/active-active-dual-tor/">Active-Active Dual ToR</a></li>
 <li><a href="../../reference/config-db/mux-cable/">MUX_CABLE テーブル</a></li>
 </ul>
+<!-- next-reads -->
+<h2 id="_4">次に読むべき記事<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p><strong>この章を読み進める順</strong></p>
+<ul>
+<li><a href="concept/">概要: Dual-ToR の考え方</a></li>
+<li><a href="setup/">設定: Dual-ToR の設定</a></li>
+<li><a href="operations/">運用: Dual-ToR の運用</a></li>
+<li><a href="internals/">内部実装: Mux 制御の内部構造</a></li>
+<li><a href="advanced/">発展トピック: Dual-ToR の発展トピック</a></li>
+</ul>
+<p><strong>関連する HLD 7 件</strong></p>
+<ul>
+<li><a href="../../overlay/active-active-dual-tor/">Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）</a></li>
+<li><a href="../../overlay/dash-sonic-kvm/">DASH SONiC KVM（BMv2 ベース仮想 DPU）</a></li>
+<li><a href="../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）</a></li>
+<li><a href="../../overlay/active-standby-dual-tor-internals/">Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）</a></li>
+<li><a href="../../overlay/active-standby-dual-tor-operations/">Active-Standby Dual ToR 設定と運用（CONFIG_DB / CLI / トラブルシューティング）</a></li>
+<li><a href="../../overlay/active-standby-dual-tor-limitations/">Active-Standby Dual ToR 制限事項と既知の課題</a></li>
+<li><a href="../../overlay/active-standby-dual-tor-concepts/">Active-Standby Dual ToR 概念（構成と要件）</a></li>
+</ul>
+<p><strong>関連トラブルシュート 5 件</strong></p>
+<ul>
+<li><a href="../../reference/runbooks/techsupport-size-bloat/">show techsupport の出力サイズが肥大化する</a></li>
+<li><a href="../../reference/runbooks/swss-orchagent-busy-loop/">orchagent が CPU 100% で詰まる</a></li>
+<li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APP_DB → ASIC_DB の反映が遅延・停止する</a></li>
+<li><a href="../../reference/runbooks/route-not-installed-in-fib/">経路は RIB にあるが FIB / ASIC に降りない</a></li>
+<li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a></li>
+</ul>
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
-<h2 id="_4">関連する章<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連する章<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p><strong>前提として読むべき章</strong></p>
 <ul>
 <li><a href="../01-overview/">SONiC 全体像と設定基盤</a></li>

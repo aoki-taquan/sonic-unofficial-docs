@@ -28567,6 +28567,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        次に読むべき記事
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連する章
       
     </span>
@@ -28619,8 +28630,39 @@
 </ol>
 <h2 id="_2">統合した既存ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>この章は routing の HLD 派生ページ 20 件と reference ページ 19 件を横断している。細部のスキーマ、CLI、実装裏取りは各サブページ末尾の「関連ページ」から参照する。</p>
+<!-- next-reads -->
+<h2 id="_3">次に読むべき記事<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><strong>この章を読み進める順</strong></p>
+<ul>
+<li><a href="concept/">概要</a></li>
+<li><a href="architecture/">アーキテクチャ</a></li>
+<li><a href="setup/">設定</a></li>
+<li><a href="operations/">運用</a></li>
+<li><a href="internals/">内部実装</a></li>
+<li><a href="advanced/">発展トピック</a></li>
+</ul>
+<p><strong>関連する HLD 7 件</strong></p>
+<ul>
+<li><a href="../../routing/bgp-prefix-independent-convergence-architecture-document/">BGP PIC（Prefix Independent Convergence / NHG 階層）</a></li>
+<li><a href="../../routing/bgpcfgd-dynamic-peer-modification-support/">bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）</a></li>
+<li><a href="../../routing/detailed-steps-to-upgrade-frr-in-sonic/">SONiC における FRR upgrade の手順とパッチ管理</a></li>
+<li><a href="../../routing/bfd-hw-offload-for-bgp-session/">BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）</a></li>
+<li><a href="../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）</a></li>
+<li><a href="../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）</a></li>
+<li><a href="../../routing/routing-and-next-hop-table-enhancement/">NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離</a></li>
+</ul>
+<p><strong>関連トラブルシュート 5 件</strong></p>
+<ul>
+<li><a href="../../reference/runbooks/techsupport-size-bloat/">show techsupport の出力サイズが肥大化する</a></li>
+<li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APP_DB → ASIC_DB の反映が遅延・停止する</a></li>
+<li><a href="../../reference/runbooks/swss-orchagent-busy-loop/">orchagent が CPU 100% で詰まる</a></li>
+<li><a href="../../reference/runbooks/route-not-installed-in-fib/">経路は RIB にあるが FIB / ASIC に降りない</a></li>
+<li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a></li>
+</ul>
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
-<h2 id="_3">関連する章<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連する章<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p><strong>前提として読むべき章</strong></p>
 <ul>
 <li><a href="../01-overview/">SONiC 全体像と設定基盤</a></li>

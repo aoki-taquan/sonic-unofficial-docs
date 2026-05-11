@@ -28578,6 +28578,17 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        次に読むべき記事
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連する章
       
     </span>
@@ -28636,8 +28647,38 @@
 <li><a href="../../overlay/sonic-dash-hld/">SONiC-DASH アーキテクチャ概観</a></li>
 <li><a href="../../architecture/smart-switch-database-design/">Smart Switch のデータベース構成</a></li>
 </ul>
+<!-- next-reads -->
+<h2 id="_4">次に読むべき記事<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p><strong>この章を読み進める順</strong></p>
+<ul>
+<li><a href="concept/">概要: DASH と SmartSwitch の考え方</a></li>
+<li><a href="setup/">設定: DPU の IP 割当・gNMI 連携・KVM 検証</a></li>
+<li><a href="operations/">運用: HA / PMON / reboot / upgrade の運用</a></li>
+<li><a href="internals/">内部実装: NPU-DPU DB と ENI ベース転送の内部構造</a></li>
+<li><a href="advanced/">発展トピック: gNOI 連携と他章との境界</a></li>
+</ul>
+<p><strong>関連する HLD 7 件</strong></p>
+<ul>
+<li><a href="../../overlay/dash-sonic-kvm/">DASH SONiC KVM（BMv2 ベース仮想 DPU）</a></li>
+<li><a href="../../platform/single-asic-voq-fixed-system-sonic/">単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）</a></li>
+<li><a href="../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a></li>
+<li><a href="../../overlay/smartswitch-eni-based-forwarding/">SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）</a></li>
+<li><a href="../../overlay/sonic-dash-hld/">SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観</a></li>
+<li><a href="../../platform/icmp-hardware-offload/">ICMP Hardware Offload（DualToR link prober の NPU 化）</a></li>
+<li><a href="../../overlay/vxlan-sonic-concepts/">VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）</a></li>
+</ul>
+<p><strong>関連トラブルシュート 5 件</strong></p>
+<ul>
+<li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APP_DB → ASIC_DB の反映が遅延・停止する</a></li>
+<li><a href="../../reference/runbooks/swss-orchagent-busy-loop/">orchagent が CPU 100% で詰まる</a></li>
+<li><a href="../../reference/runbooks/techsupport-size-bloat/">show techsupport の出力サイズが肥大化する</a></li>
+<li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a></li>
+<li><a href="../../reference/runbooks/route-not-installed-in-fib/">経路は RIB にあるが FIB / ASIC に降りない</a></li>
+</ul>
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
-<h2 id="_4">関連する章<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連する章<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p><strong>前提として読むべき章</strong></p>
 <ul>
 <li><a href="../01-overview/">SONiC 全体像と設定基盤</a></li>

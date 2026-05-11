@@ -28567,6 +28567,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        次に読むべき記事
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連する章
       
     </span>
@@ -28621,8 +28632,39 @@
 </ol>
 <h2 id="_2">統合した既存ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>この章は management の HLD 派生ページ 14 件、system の telemetry 関連 2 件、switching の OpenConfig 関連 2 件、routing の subscription 関連 2 件、categories の入口 1 件、reference の YANG 参照を横断している。細部のスキーマ・操作・実装裏取りは各サブページ末尾の「関連ページ」から参照する。</p>
+<!-- next-reads -->
+<h2 id="_3">次に読むべき記事<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><strong>この章を読み進める順</strong></p>
+<ul>
+<li><a href="concept/">概要</a></li>
+<li><a href="architecture/">アーキテクチャ</a></li>
+<li><a href="setup/">設定</a></li>
+<li><a href="operations/">運用</a></li>
+<li><a href="internals/">内部実装</a></li>
+<li><a href="advanced/">発展トピック: gNMI / OpenConfig の発展トピック</a></li>
+</ul>
+<p><strong>関連する HLD 7 件</strong></p>
+<ul>
+<li><a href="../../management/sonic-nos-configuration-methods/">SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）</a></li>
+<li><a href="../../management/sonic-config-update-validation-via-yang/">YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）</a></li>
+<li><a href="../../management/openconfig-support-for-ethernet-interfaces/">OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）</a></li>
+<li><a href="../../management/sonic-gnmi-server-interface-design/">SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）</a></li>
+<li><a href="../../management/gnmi-usage/">gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）</a></li>
+<li><a href="../../management/gnoi-hld-for-healthz-api/">gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）</a></li>
+<li><a href="../../management/json-patch-ordering-using-yang-models/">JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）</a></li>
+</ul>
+<p><strong>関連トラブルシュート 5 件</strong></p>
+<ul>
+<li><a href="../../reference/runbooks/techsupport-size-bloat/">show techsupport の出力サイズが肥大化する</a></li>
+<li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APP_DB → ASIC_DB の反映が遅延・停止する</a></li>
+<li><a href="../../reference/runbooks/swss-orchagent-busy-loop/">orchagent が CPU 100% で詰まる</a></li>
+<li><a href="../../reference/runbooks/route-not-installed-in-fib/">経路は RIB にあるが FIB / ASIC に降りない</a></li>
+<li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a></li>
+</ul>
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
-<h2 id="_3">関連する章<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連する章<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p><strong>前提として読むべき章</strong></p>
 <ul>
 <li><a href="../01-overview/">SONiC 全体像と設定基盤</a></li>

@@ -28578,6 +28578,17 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        次に読むべき記事
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連する章
       
     </span>
@@ -28640,8 +28651,39 @@
 <li>上流章 <a href="../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> — packet classification と action の前段。</li>
 <li>下流章 <a href="../">Telemetry / SNMP / Observability</a> — counter / watermark の収集ルート。</li>
 </ul>
+<!-- next-reads -->
+<h2 id="_4">次に読むべき記事<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p><strong>この章を読み進める順</strong></p>
+<ul>
+<li><a href="concept/">概要: QoS / Buffer の概念地図</a></li>
+<li><a href="architecture/">アーキテクチャ: QoS / Buffer のアーキテクチャ</a></li>
+<li><a href="setup/">設定: QoS / Buffer の設定</a></li>
+<li><a href="operations/">運用: QoS / Buffer の運用</a></li>
+<li><a href="internals/">内部実装: QoS / Buffer の内部実装</a></li>
+<li><a href="advanced/">発展トピック: QoS / Buffer の発展トピック</a></li>
+</ul>
+<p><strong>関連する HLD 7 件</strong></p>
+<ul>
+<li><a href="../../acl-qos/dynamically-headroom-calculation/">Dynamic Headroom Calculation（buffer_model = dynamic）</a></li>
+<li><a href="../../acl-qos/asymmetric-pfc-test-plan/">Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）</a></li>
+<li><a href="../../acl-qos/reclaim-reserved-buffer-sequence-flow/">未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス</a></li>
+<li><a href="../../acl-qos/reclaim-reserved-buffer/">Reclaim Reserved Buffer（admin-down ポートの zero_profile）</a></li>
+<li><a href="../../acl-qos/watermark-counters-in-sonic/">バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）</a></li>
+<li><a href="../../acl-qos/configurable-drop-counters-in-sonic/">設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）</a></li>
+<li><a href="../../acl-qos/enhancements-on-show-acl-commands/">show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）</a></li>
+</ul>
+<p><strong>関連トラブルシュート 5 件</strong></p>
+<ul>
+<li><a href="../../reference/runbooks/pfc-bandwidth/">PFC で帯域が出ない / Buffer overflow</a></li>
+<li><a href="../../reference/runbooks/flex-counter-stuck/">counter が更新されない (FLEX_COUNTER)</a></li>
+<li><a href="../../reference/runbooks/route-not-installed-in-fib/">経路は RIB にあるが FIB / ASIC に降りない</a></li>
+<li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APP_DB → ASIC_DB の反映が遅延・停止する</a></li>
+<li><a href="../../reference/runbooks/arp-entry-stuck/">ARP / Neighbor エントリが古い IP-MAC を保持し続ける</a></li>
+</ul>
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
-<h2 id="_4">関連する章<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連する章<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p><strong>前提として読むべき章</strong></p>
 <ul>
 <li><a href="../01-overview/">SONiC 全体像と設定基盤</a></li>
