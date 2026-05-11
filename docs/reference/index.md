@@ -1,160 +1,181 @@
 ---
 title: リファレンス
-verification: stub
+verification: meta
+last_verified: 2026-05-11
 ---
 
 # リファレンス
-CLI、CONFIG_DB、YANG を機械抽出ベースで整理する参照章。
-## この章の読み方
-この章は運用中に直接引く参照情報を集める。CLI、CONFIG_DB、YANG の 3 系統を起点に、HLD ページから参照される実装上の名前を確認する。
-## 検証状況
-- ページ数: 135
-- 分布: Code-verified: 135
 
-## ページ一覧
+`docs/reference/` は SONiC NOS (community master) を運用 / 検証する際に **辞書として直接引く** 情報を集める章である。Topics 章 (`docs/topics/`) が「読み物」として導線を提供するのに対し、本章は **コマンド名 / テーブル名 / モジュール名 / 症状** から逆引きする使い方を想定している。
 
-| ページ | 検証 |
+各 reference ページは原則 `verification: code-verified` で、`.cache/sonic-sources/` に shallow clone した master の固定 commit を一次情報として持つ。HLD 由来の推測は本文に明示する。
+
+## サブセクションの入口
+
+| カテゴリ | 入口 | 役割 |
+|---|---|---|
+| **CLI** | [cli/index.md](cli/index.md) | `config-*` / `show-*` / `clear` / `debug-*` / `sonic-installer` / `sonic-cfggen` 等の `sonic-utilities` ベースのコマンドツリー |
+| **CONFIG_DB** | [config-db/index.md](config-db/index.md) | Redis DB 4 (CONFIG_DB) のテーブル定義。orchagent / *mgrd 各 daemon が subscribe するスキーマ |
+| **YANG** | [yang/index.md](yang/index.md) | `sonic-yang-models` の native SONiC YANG モジュール。CONFIG_DB の正本 |
+| **Runbooks** | [runbooks/index.md](runbooks/index.md) | 症状逆引きの運用ハンドブック (BGP down, PFC bandwidth, warm-reboot 失敗 等) |
+| **Verification** | [verification/index.md](verification/index.md) | 裏取り運用方針と [discrepancy-index](verification/discrepancy-index.md) (HLD と実装の乖離一覧) |
+
+### 将来追加予定 (未着手)
+
+| カテゴリ | 状態 |
 |---|---|
-| **CLI** |  |
-| [clear (sonic-clear) コマンド](cli/clear.md) | Code-verified |
-| [config aaa / tacacs / radius サブコマンド](cli/config-aaa.md) | Code-verified |
-| [config acl サブコマンド](cli/config-acl.md) | Code-verified |
-| [config bgp サブコマンド](cli/config-bgp.md) | Code-verified |
-| [config dhcp_relay / dhcpv4_relay サブコマンド](cli/config-dhcp-relay.md) | Code-verified |
-| [config interface サブコマンド](cli/config-interface.md) | Code-verified |
-| [config kdump サブコマンド](cli/config-kdump.md) | Code-verified |
-| [config mclag サブコマンド](cli/config-mclag.md) | Code-verified |
-| [config muxcable サブコマンド](cli/config-muxcable.md) | Code-verified |
-| [config nat サブコマンド](cli/config-nat.md) | Code-verified |
-| [config portchannel サブコマンド](cli/config-portchannel.md) | Code-verified |
-| [config route サブコマンド（static route）](cli/config-route.md) | Code-verified |
-| [config save / load / reload / replace / qos reload](cli/config-mgmt-trio.md) | Code-verified |
-| [config sflow サブコマンド](cli/config-sflow.md) | Code-verified |
-| [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) | Code-verified |
-| [config syslog サブコマンド](cli/config-syslog.md) | Code-verified |
-| [config vlan サブコマンド](cli/config-vlan.md) | Code-verified |
-| [config vrf サブコマンド](cli/config-vrf.md) | Code-verified |
-| [config vxlan サブコマンド](cli/config-vxlan.md) | Code-verified |
-| [debug / undebug コマンド群](cli/debug-group.md) | Code-verified |
-| [reboot / fast-reboot / warm-reboot コマンド](cli/reboot-fast-warm.md) | Code-verified |
-| [show acl サブコマンド](cli/show-acl.md) | Code-verified |
-| [show bgp / show ip bgp / show ipv6 bgp サブコマンド](cli/show-bgp.md) | Code-verified |
-| [show feature サブコマンド](cli/show-feature.md) | Code-verified |
-| [show interfaces サブコマンド](cli/show-interfaces.md) | Code-verified |
-| [show ip サブコマンド](cli/show-ip.md) | Code-verified |
-| [show mclag (mclagdctl) コマンド](cli/show-mclag.md) | Code-verified |
-| [show muxcable サブコマンド](cli/show-muxcable.md) | Code-verified |
-| [show nat サブコマンド](cli/show-nat.md) | Code-verified |
-| [show platform サブコマンド](cli/show-platform.md) | Code-verified |
-| [show route-map コマンド](cli/show-route-map.md) | Code-verified |
-| [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) | Code-verified |
-| [show system-health サブコマンド](cli/show-system-health.md) | Code-verified |
-| [show techsupport コマンド](cli/show-techsupport.md) | Code-verified |
-| [show vlan サブコマンド](cli/show-vlan.md) | Code-verified |
-| [sonic-cfggen コマンド](cli/sonic-cfggen.md) | Code-verified |
-| [sonic-installer コマンド](cli/sonic-installer.md) | Code-verified |
-| [sonic-package-manager コマンド](cli/sonic-package-manager.md) | Code-verified |
-| **CONFIG_DB** |  |
-| [ACL_RULE テーブル](config-db/acl-rule.md) | Code-verified |
-| [ACL_TABLE テーブル](config-db/acl-table.md) | Code-verified |
-| [AS_PATH_SET テーブル](config-db/as-path-set.md) | Code-verified |
-| [AUTO_TECHSUPPORT テーブル](config-db/auto-techsupport.md) | Code-verified |
-| [BGP_AGGREGATE_ADDRESS テーブル](config-db/bgp-aggregate-address.md) | Code-verified |
-| [BGP_DEVICE_GLOBAL テーブル](config-db/bgp-device-global.md) | Code-verified |
-| [BGP_GLOBALS テーブル](config-db/bgp-globals.md) | Code-verified |
-| [BGP_NEIGHBOR テーブル](config-db/bgp-neighbor.md) | Code-verified |
-| [BGP_NEIGHBOR_AF テーブル](config-db/bgp-neighbor-af.md) | Code-verified |
-| [BGP_PEER_GROUP テーブル](config-db/bgp-peer-group.md) | Code-verified |
-| [BGP_PEER_GROUP_AF テーブル](config-db/bgp-peer-group-af.md) | Code-verified |
-| [BUFFER_PG テーブル](config-db/buffer-pg.md) | Code-verified |
-| [BUFFER_POOL テーブル](config-db/buffer-pool.md) | Code-verified |
-| [BUFFER_PROFILE テーブル](config-db/buffer-profile.md) | Code-verified |
-| [BUFFER_QUEUE テーブル](config-db/buffer-queue.md) | Code-verified |
-| [COMMUNITY_SET テーブル](config-db/community-set.md) | Code-verified |
-| [COPP_GROUP テーブル](config-db/copp-group.md) | Code-verified |
-| [COPP_TRAP テーブル](config-db/copp-trap.md) | Code-verified |
-| [CRM テーブル](config-db/crm.md) | Code-verified |
-| [DEBUG_COUNTER テーブル](config-db/debug-counter.md) | Code-verified |
-| [DEVICE_METADATA テーブル](config-db/device-metadata.md) | Code-verified |
-| [DEVICE_NEIGHBOR テーブル](config-db/device-neighbor.md) | Code-verified |
-| [DEVICE_NEIGHBOR_METADATA テーブル](config-db/device-neighbor-metadata.md) | Code-verified |
-| [DHCPV4_RELAY テーブル](config-db/dhcpv4-relay.md) | Code-verified |
-| [DHCP_SERVER_IPV4 テーブル](config-db/dhcp-server-ipv4.md) | Code-verified |
-| [DSCP_TO_TC_MAP テーブル](config-db/dscp-to-tc-map.md) | Code-verified |
-| [FEATURE テーブル](config-db/feature.md) | Code-verified |
-| [FG_NHG テーブル](config-db/fg-nhg.md) | Code-verified |
-| [FLEX_COUNTER_TABLE テーブル](config-db/flex-counter-table.md) | Code-verified |
-| [INTERFACE テーブル](config-db/interface.md) | Code-verified |
-| [KDUMP テーブル](config-db/kdump.md) | Code-verified |
-| [KUBERNETES_MASTER テーブル](config-db/kubernetes-master.md) | Code-verified |
-| [LDAP_SERVER テーブル](config-db/ldap-server.md) | Code-verified |
-| [LOOPBACK_INTERFACE テーブル](config-db/loopback-interface.md) | Code-verified |
-| [MGMT_INTERFACE テーブル](config-db/mgmt-interface.md) | Code-verified |
-| [MGMT_PORT テーブル](config-db/mgmt-port.md) | Code-verified |
-| [MGMT_VRF_CONFIG テーブル](config-db/mgmt-vrf-config.md) | Code-verified |
-| [MIRROR_SESSION テーブル](config-db/mirror-session.md) | Code-verified |
-| [MUX_CABLE テーブル](config-db/mux-cable.md) | Code-verified |
-| [NTP テーブル (global)](config-db/ntp-global.md) | Code-verified |
-| [NTP_SERVER テーブル](config-db/ntp-server.md) | Code-verified |
-| [PEER_SWITCH テーブル](config-db/peer-switch.md) | Code-verified |
-| [PFC_WD テーブル](config-db/pfc-wd.md) | Code-verified |
-| [POLICER テーブル](config-db/policer.md) | Code-verified |
-| [PORT テーブル](config-db/port.md) | Code-verified |
-| [PORTCHANNEL テーブル](config-db/portchannel.md) | Code-verified |
-| [PORTCHANNEL_INTERFACE テーブル](config-db/portchannel-interface.md) | Code-verified |
-| [PORTCHANNEL_MEMBER テーブル](config-db/portchannel-member.md) | Code-verified |
-| [PREFIX_LIST テーブル (BGP)](config-db/prefix-list.md) | Code-verified |
-| [PREFIX_SET テーブル](config-db/prefix-set.md) | Code-verified |
-| [QUEUE テーブル](config-db/queue.md) | Code-verified |
-| [ROUTE_MAP テーブル](config-db/route-map.md) | Code-verified |
-| [SCHEDULER テーブル](config-db/scheduler.md) | Code-verified |
-| [SFLOW テーブル](config-db/sflow.md) | Code-verified |
-| [SYSLOG_SERVER テーブル](config-db/syslog-server.md) | Code-verified |
-| [SYSTEM_DEFAULTS テーブル](config-db/system-defaults.md) | Code-verified |
-| [TACPLUS_SERVER テーブル](config-db/tacplus-server.md) | Code-verified |
-| [TC_TO_QUEUE_MAP テーブル](config-db/tc-to-queue-map.md) | Code-verified |
-| [TELEMETRY テーブル](config-db/telemetry.md) | Code-verified |
-| [TUNNEL テーブル](config-db/tunnel.md) | Code-verified |
-| [TUNNEL_DECAP_TABLE (APPL_DB)](config-db/tunnel-decap-table.md) | Code-verified |
-| [VLAN テーブル](config-db/vlan.md) | Code-verified |
-| [VLAN_INTERFACE テーブル](config-db/vlan-interface.md) | Code-verified |
-| [VLAN_MEMBER テーブル](config-db/vlan-member.md) | Code-verified |
-| [VRF テーブル](config-db/vrf.md) | Code-verified |
-| [VXLAN_TUNNEL テーブル](config-db/vxlan-tunnel.md) | Code-verified |
-| [VXLAN_TUNNEL_MAP テーブル](config-db/vxlan-tunnel-map.md) | Code-verified |
-| [WRED_PROFILE テーブル](config-db/wred-profile.md) | Code-verified |
-| **YANG** |  |
-| [sonic-bgp-global YANG](yang/sonic-bgp-global.md) | Code-verified |
-| [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) | Code-verified |
-| [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) | Code-verified |
-| [sonic-buffer-pg YANG](yang/sonic-buffer-pg.md) | Code-verified |
-| [sonic-buffer-pool YANG](yang/sonic-buffer-pool.md) | Code-verified |
-| [sonic-buffer-profile YANG](yang/sonic-buffer-profile.md) | Code-verified |
-| [sonic-buffer-queue YANG](yang/sonic-buffer-queue.md) | Code-verified |
-| [sonic-copp YANG](yang/sonic-copp.md) | Code-verified |
-| [sonic-device_metadata YANG](yang/sonic-device_metadata.md) | Code-verified |
-| [sonic-dscp-tc-map YANG](yang/sonic-dscp-tc-map.md) | Code-verified |
-| [sonic-feature YANG](yang/sonic-feature.md) | Code-verified |
-| [sonic-interface YANG](yang/sonic-interface.md) | Code-verified |
-| [sonic-loopback-interface YANG](yang/sonic-loopback-interface.md) | Code-verified |
-| [sonic-mclag YANG](yang/sonic-mclag.md) | Code-verified |
-| [sonic-mirror-session YANG](yang/sonic-mirror-session.md) | Code-verified |
-| [sonic-ntp YANG](yang/sonic-ntp.md) | Code-verified |
-| [sonic-pfcwd YANG](yang/sonic-pfcwd.md) | Code-verified |
-| [sonic-port YANG](yang/sonic-port.md) | Code-verified |
-| [sonic-portchannel YANG](yang/sonic-portchannel.md) | Code-verified |
-| [sonic-queue YANG](yang/sonic-queue.md) | Code-verified |
-| [sonic-route-common YANG](yang/sonic-route-common.md) | Code-verified |
-| [sonic-route-map YANG](yang/sonic-route-map.md) | Code-verified |
-| [sonic-scheduler YANG](yang/sonic-scheduler.md) | Code-verified |
-| [sonic-syslog YANG](yang/sonic-syslog.md) | Code-verified |
-| [sonic-system-aaa YANG](yang/sonic-system-aaa.md) | Code-verified |
-| [sonic-tc-queue-map YANG](yang/sonic-tc-queue-map.md) | Code-verified |
-| [sonic-vlan YANG](yang/sonic-vlan.md) | Code-verified |
-| [sonic-vrf YANG](yang/sonic-vrf.md) | Code-verified |
-| [sonic-vxlan YANG](yang/sonic-vxlan.md) | Code-verified |
+| `glossary/` (用語集) | 未着手。現状は本文中で都度説明 |
+| `sai-attributes/` (SAI 属性表) | 未着手。今後 `meta/index/sai.json` から生成予定 |
+| `config-db-orch-map/` (テーブル ↔ Orch マッピング) | 未着手。現状は CONFIG_DB ページ本文に分散 |
+
+これらの placeholder は backlog (`meta/backlog/reference/`) で追跡する。
+
+## カバー率 (機械集計, 2026-05-11) {#coverage}
+
+`docs/reference/<sub>/*.md` を直接数えた件数。`verification` 内訳は frontmatter の `verification:` キーから抽出した。
+
+| カテゴリ | 総ページ | code-verified | hld-only | discrepancy-found | meta |
+|---|---:|---:|---:|---:|---:|
+| CLI | 72 | 72 | 0 | 0 | 1 (index) |
+| CONFIG_DB | 121 | 121 | 0 | 0 | 1 (index) |
+| YANG | 84 | 84 | 0 | 0 | 1 (index) |
+| Runbooks | 45 | 45 | 0 | 0 | 1 (index) |
+| Verification | 1 | 0 | 0 | 0 | 2 (index + discrepancy-index) |
+| **合計** | **323** | **322** | **0** | **0** | **6** |
+
+discrepancy-found 自体は reference 内ではなく `docs/topics/` 配下に分布する。全 **46** ページ。[discrepancy-index](verification/discrepancy-index.md) から area 別 / monitor 別に逆引きできる。
+
+### 元リポジトリのカバー率参考値
+
+`meta/index/*.json` で棚卸ししたカウントに対する本プロジェクトの reference ページ数 (網羅率はおおよその目安)。
+
+| カテゴリ | 元リポの総数 | 本プロジェクト | 備考 |
+|---|---:|---:|---|
+| `sonic-utilities` click グループ | ~85 | 72 | 主要グループは網羅、低使用頻度の dropcounters / vrouter 等が残 |
+| `sonic-yang-models` の CONFIG_DB テーブル | ~160 | 121 | 派生・廃止テーブルを除いた主要分は網羅 |
+| `sonic-*` native YANG モジュール | ~110 | 84 | smartswitch / DASH 系の一部、ベンダー特化モジュールが残 |
+
+未カバー分は `meta/backlog/reference/` で追跡しており、Reference 拡張バッチで段階的に消化する。
+
+## よく引かれる項目 (早見リンク集) {#quickref}
+
+主要機能ごとの CLI / CONFIG_DB / YANG / Runbook を 1 行に並べる。HLD への入口は Topics 章を参照する。
+
+### BGP / Routing
+
+- CLI: [config bgp](cli/config-bgp.md) / [show bgp](cli/show-bgp.md) / [show ip](cli/show-ip.md) / [show route-map](cli/show-route-map.md)
+- CONFIG_DB: [BGP_GLOBALS](config-db/bgp-globals.md) / [BGP_NEIGHBOR](config-db/bgp-neighbor.md) / [BGP_PEER_GROUP](config-db/bgp-peer-group.md) / [ROUTE_MAP](config-db/route-map.md) / [PREFIX_SET](config-db/prefix-set.md)
+- YANG: [sonic-bgp-global](yang/sonic-bgp-global.md) / [sonic-bgp-neighbor](yang/sonic-bgp-neighbor.md) / [sonic-route-map](yang/sonic-route-map.md)
+- Runbook: [bgp-session-down](runbooks/bgp-session-down.md) / [bgp-route-not-advertised](runbooks/bgp-route-not-advertised.md)
+- Topic: [02 BGP と FRR 制御プレーン](../topics/02-bgp/index.md)
+
+### VLAN / L2 / LAG / MC-LAG
+
+- CLI: [config vlan](cli/config-vlan.md) / [show vlan](cli/show-vlan.md) / [config portchannel](cli/config-portchannel.md) / [config mclag](cli/config-mclag.md) / [show mclag](cli/show-mclag.md)
+- CONFIG_DB: [VLAN](config-db/vlan.md) / [VLAN_MEMBER](config-db/vlan-member.md) / [VLAN_INTERFACE](config-db/vlan-interface.md) / [PORTCHANNEL](config-db/portchannel.md) / [PORTCHANNEL_MEMBER](config-db/portchannel-member.md) / [PEER_SWITCH](config-db/peer-switch.md)
+- YANG: [sonic-vlan](yang/sonic-vlan.md) / [sonic-portchannel](yang/sonic-portchannel.md) / [sonic-mclag](yang/sonic-mclag.md)
+- Runbook: [vlan-tagging](runbooks/vlan-tagging.md) / [portchannel-lacp-not-established](runbooks/portchannel-lacp-not-established.md) / [mclag-sync-failure](runbooks/mclag-sync-failure.md)
+- Topic: [06 L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+### VXLAN / EVPN / VNET
+
+- CLI: [config vxlan](cli/config-vxlan.md) / [config vnet](cli/config-vnet.md)
+- CONFIG_DB: [VXLAN_TUNNEL](config-db/vxlan-tunnel.md) / [VXLAN_TUNNEL_MAP](config-db/vxlan-tunnel-map.md) / [TUNNEL](config-db/tunnel.md) / [TUNNEL_DECAP_TABLE](config-db/tunnel-decap-table.md)
+- YANG: [sonic-vxlan](yang/sonic-vxlan.md)
+- Runbook: [evpn-type2-not-advertised](runbooks/evpn-type2-not-advertised.md)
+- Topic: [03 VXLAN / EVPN / VNET](../topics/03-vxlan-evpn/index.md)
+
+### VRF / ECMP / RIB-FIB
+
+- CLI: [config vrf](cli/config-vrf.md) / [config route](cli/config-route.md) / [show ip](cli/show-ip.md)
+- CONFIG_DB: [VRF](config-db/vrf.md) / [FG_NHG](config-db/fg-nhg.md) / [INTERFACE](config-db/interface.md) / [LOOPBACK_INTERFACE](config-db/loopback-interface.md)
+- YANG: [sonic-vrf](yang/sonic-vrf.md) / [sonic-route-common](yang/sonic-route-common.md)
+- Runbook: [routing-loop-detected](runbooks/routing-loop-detected.md)
+- Topic: [04 VRF / ECMP / RIB-FIB](../topics/04-vrf-ecmp/index.md)
+
+### ACL / CoPP / Mirror
+
+- CLI: [config acl](cli/config-acl.md) / [show acl](cli/show-acl.md) / [config mirror-session](cli/config-mirror-session.md)
+- CONFIG_DB: [ACL_TABLE](config-db/acl-table.md) / [ACL_RULE](config-db/acl-rule.md) / [COPP_TRAP](config-db/copp-trap.md) / [COPP_GROUP](config-db/copp-group.md) / [MIRROR_SESSION](config-db/mirror-session.md) / [POLICER](config-db/policer.md)
+- YANG: [sonic-copp](yang/sonic-copp.md) / [sonic-mirror-session](yang/sonic-mirror-session.md)
+- Runbook: [acl-rule-no-hit](runbooks/acl-rule-no-hit.md) / [rif-acl-counter-zero](runbooks/rif-acl-counter-zero.md)
+- Topic: [07 ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
+
+### QoS / Buffer / PFC
+
+- CLI: [config qos](cli/config-qos.md) / [config buffer](cli/config-buffer.md) / [show buffer](cli/show-buffer.md) / [config pfcwd](cli/config-pfcwd.md) / [show pfc](cli/show-pfc.md) / [show priority-group](cli/show-priority-group.md) / [show queue](cli/show-queue.md)
+- CONFIG_DB: [BUFFER_POOL](config-db/buffer-pool.md) / [BUFFER_PROFILE](config-db/buffer-profile.md) / [BUFFER_PG](config-db/buffer-pg.md) / [BUFFER_QUEUE](config-db/buffer-queue.md) / [QUEUE](config-db/queue.md) / [SCHEDULER](config-db/scheduler.md) / [WRED_PROFILE](config-db/wred-profile.md) / [DSCP_TO_TC_MAP](config-db/dscp-to-tc-map.md) / [TC_TO_QUEUE_MAP](config-db/tc-to-queue-map.md) / [PFC_WD](config-db/pfc-wd.md)
+- YANG: [sonic-buffer-pool](yang/sonic-buffer-pool.md) / [sonic-buffer-profile](yang/sonic-buffer-profile.md) / [sonic-buffer-pg](yang/sonic-buffer-pg.md) / [sonic-buffer-queue](yang/sonic-buffer-queue.md) / [sonic-queue](yang/sonic-queue.md) / [sonic-scheduler](yang/sonic-scheduler.md) / [sonic-pfcwd](yang/sonic-pfcwd.md) / [sonic-dscp-tc-map](yang/sonic-dscp-tc-map.md) / [sonic-tc-queue-map](yang/sonic-tc-queue-map.md)
+- Runbook: [pfc-bandwidth](runbooks/pfc-bandwidth.md)
+
+### Dual-ToR / Mux
+
+- CLI: [config muxcable](cli/config-muxcable.md) / [show muxcable](cli/show-muxcable.md)
+- CONFIG_DB: [MUX_CABLE](config-db/mux-cable.md) / [PEER_SWITCH](config-db/peer-switch.md) / [TUNNEL_DECAP_TABLE](config-db/tunnel-decap-table.md)
+- Runbook: [dualtor-mux](runbooks/dualtor-mux.md) / [ycable-firmware-update-failure](runbooks/ycable-firmware-update-failure.md)
+- Topic: [05 Dual-ToR / Mux](../topics/05-dual-tor/index.md)
+
+### Platform / Port / Optics
+
+- CLI: [show platform](cli/show-platform.md) / [config platform firmware](cli/config-platform-firmware.md) / [show interfaces](cli/show-interfaces.md) / [show environment](cli/show-environment.md) / [show flowcnt](cli/show-flowcnt.md)
+- CONFIG_DB: [PORT](config-db/port.md) / [DEVICE_METADATA](config-db/device-metadata.md) / [DEVICE_NEIGHBOR](config-db/device-neighbor.md)
+- YANG: [sonic-port](yang/sonic-port.md) / [sonic-device_metadata](yang/sonic-device_metadata.md) / [sonic-interface](yang/sonic-interface.md)
+- Runbook: [asic-link-autoneg-mismatch](runbooks/asic-link-autoneg-mismatch.md) / [fec-errors](runbooks/fec-errors.md) / [link-flapping](runbooks/link-flapping.md) / [interface-mtu-mismatch](runbooks/interface-mtu-mismatch.md) / [platform-fan-psu-anomaly](runbooks/platform-fan-psu-anomaly.md)
+
+### Reboot / Warm-restart / Lifecycle
+
+- CLI: [reboot / fast / warm](cli/reboot-fast-warm.md) / [config warm_restart](cli/config-warm_restart.md) / [config kdump](cli/config-kdump.md) / [sonic-installer](cli/sonic-installer.md) / [sonic-package-manager](cli/sonic-package-manager.md)
+- CONFIG_DB: [KDUMP](config-db/kdump.md) / [FEATURE](config-db/feature.md)
+- Runbook: [warm-reboot-failure](runbooks/warm-reboot-failure.md) / [container-not-starting](runbooks/container-not-starting.md) / [container-memory-limit-exceeded](runbooks/container-memory-limit-exceeded.md) / [minigraph-reload-stuck](runbooks/minigraph-reload-stuck.md)
+- Topic: [11 Reboot / Warm-restart](../topics/11-reboot/index.md)
+
+### SAI / SWSS / ASIC_DB
+
+- CONFIG_DB: [FLEX_COUNTER_TABLE](config-db/flex-counter-table.md) / [DEBUG_COUNTER](config-db/debug-counter.md) / [CRM](config-db/crm.md)
+- Runbook: [appdb-asicdb-sync-lag](runbooks/appdb-asicdb-sync-lag.md) / [sai-failure](runbooks/sai-failure.md) / [sai-table-full](runbooks/sai-table-full.md) / [crm-threshold-exceeded](runbooks/crm-threshold-exceeded.md) / [flex-counter-stuck](runbooks/flex-counter-stuck.md) / [interface-counters-reset](runbooks/interface-counters-reset.md)
+- Topic: [20 SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
+
+### Management / gNMI / SNMP / Telemetry
+
+- CLI: [config snmp](cli/config-snmp.md) / [show snmpagentaddress](cli/show-snmpagentaddress.md) / [show snmptrap](cli/show-snmptrap.md) / [config sflow](cli/config-sflow.md) / [config syslog](cli/config-syslog.md) / [show techsupport](cli/show-techsupport.md)
+- CONFIG_DB: [TELEMETRY](config-db/telemetry.md) / [SFLOW](config-db/sflow.md) / [SYSLOG_SERVER](config-db/syslog-server.md) / [AUTO_TECHSUPPORT](config-db/auto-techsupport.md) / [KUBERNETES_MASTER](config-db/kubernetes-master.md)
+- YANG: [sonic-syslog](yang/sonic-syslog.md) / [sonic-system-aaa](yang/sonic-system-aaa.md) / [sonic-feature](yang/sonic-feature.md)
+- Runbook: [gnmi-subscribe-disconnect](runbooks/gnmi-subscribe-disconnect.md) / [telemetry-dialout-not-sending](runbooks/telemetry-dialout-not-sending.md) / [snmp-polling-timeout](runbooks/snmp-polling-timeout.md) / [snmpv3-auth-failure](runbooks/snmpv3-auth-failure.md) / [techsupport-size-bloat](runbooks/techsupport-size-bloat.md) / [techsupport-timeout](runbooks/techsupport-timeout.md)
+- Topic: [10 gNMI / OpenConfig / YANG](../topics/10-gnmi-openconfig/index.md)
+
+### NAT / DHCP / Time / DNS
+
+- CLI: [config nat](cli/config-nat.md) / [show nat](cli/show-nat.md) / [config dhcp-relay](cli/config-dhcp-relay.md) / [config ntp](cli/config-ntp.md) / [show clock](cli/show-clock.md)
+- CONFIG_DB: [DHCPV4_RELAY](config-db/dhcpv4-relay.md) / [DHCP_SERVER_IPV4](config-db/dhcp-server-ipv4.md) / [NTP (global)](config-db/ntp-global.md) / [NTP_SERVER](config-db/ntp-server.md)
+- YANG: [sonic-ntp](yang/sonic-ntp.md)
+- Runbook: [dhcp-relay](runbooks/dhcp-relay.md) / [nat-translation-miss](runbooks/nat-translation-miss.md)
+
+### Security / AAA
+
+- CLI: [config aaa / tacacs / radius](cli/config-aaa.md) / [show aaa](cli/show-aaa.md) / [config ssh](cli/config-ssh.md)
+- CONFIG_DB: [TACPLUS_SERVER](config-db/tacplus-server.md) / [LDAP_SERVER](config-db/ldap-server.md) / [MGMT_INTERFACE](config-db/mgmt-interface.md) / [MGMT_VRF_CONFIG](config-db/mgmt-vrf-config.md)
+- YANG: [sonic-system-aaa](yang/sonic-system-aaa.md)
+- Runbook: [snmpv3-auth-failure](runbooks/snmpv3-auth-failure.md)
+
+### SmartSwitch / DASH
+
+- Runbook: [dash-eni-down](runbooks/dash-eni-down.md) / [smartswitch-dpu-unresponsive](runbooks/smartswitch-dpu-unresponsive.md) / [smartswitch-dpu-image-install-failure](runbooks/smartswitch-dpu-image-install-failure.md) / [smartswitch-dpu-graceful-shutdown-failure](runbooks/smartswitch-dpu-graceful-shutdown-failure.md)
+
+## reference vs topics の役割分担
+
+| 軸 | `docs/reference/` | `docs/topics/` |
+|---|---|---|
+| 読み方 | 辞書 (名前から逆引き) | 読み物 (機能から導線) |
+| 粒度 | 1 コマンド / 1 テーブル / 1 モジュール = 1 ページ | 1 機能 = `setup / operations / deep-dive` の章 |
+| frontmatter | `verification: code-verified` 中心 | `code-verified` / `discrepancy-found` / `hld-only` 混在 |
+| 主な参照元 | Topics 章末「関連 reference」と Runbook 内コマンド/テーブル名 | Runbook の「関連ページ」、HLD 由来の設計議論 |
+
+詳細な相互ナビゲーションは [Topics: リファレンス横断索引](../topics/22-reference-index/index.md) を参照。本ページ「よく引かれる項目」が **早見表 (canonical) **、Topics 22 章の `cli-index` / `config-db-index` / `yang-index` は **章構造ごとの詳細表 (canonical) ** として役割を分担する。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: リファレンス横断索引](../topics/22-reference-index/index.md)
+- [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
+- [Topics: SWSS / SAI / Redis 内部実装](../topics/20-swss-sai-redis/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
