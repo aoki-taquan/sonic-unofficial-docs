@@ -1,5 +1,6 @@
 ---
 title: ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+description: "ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO） — スイッチ上の温度センサのうち 外部（オンボード） は既存ドライバで読めるが、ASIC 内部センサは ASIC SDK 経由でしか読めない。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
     - show platform temperature
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/switchorch.h:12-14, 170-179` で `ASIC_SENSORS_POLLER_*` 定数と `m_asicSensorsTable / m_sensorsPollerTimer / m_sensorsPollerEnabled` メンバ、`sonic-swss-common/common/schema.h:138` で `ASIC_TEMPERATURE_INFO_TABLE_NAME`、`switchorch.cpp:154,173,402,408,425-436` で `SelectableTimer` 実装と `ASIC_SENSORS` 動的反映を確認（verified at: 2026-05-09）。

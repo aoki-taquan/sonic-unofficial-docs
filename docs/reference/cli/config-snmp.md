@@ -1,5 +1,6 @@
 ---
 title: config snmp / snmpagentaddress / snmptrap サブコマンド
+description: "config snmp / snmpagentaddress / snmptrap サブコマンド — SNMP 関連の CLI は 3 つの独立したトップレベルグループ に分かれている: config snmp、config snmpagentaddress、config snmptrap。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -149,3 +150,10 @@ excerpt: |
 [^1]: `config snmp` 系の各コマンドが `clicommon.run_command(['systemctl', 'restart', 'snmp.service'], ...)` を呼ぶ。`config/main.py` L4399-L4403, L4427-L4431 など。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4399>
 
 [^2]: `add_contact` は `CONTACT` キーが既存なら `Use sudo config snmp contact modify instead` で sys.exit(1)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4471>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

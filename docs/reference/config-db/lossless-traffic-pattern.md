@@ -1,5 +1,6 @@
 ---
 title: LOSSLESS_TRAFFIC_PATTERN テーブル
+description: "LOSSLESS_TRAFFIC_PATTERN テーブル — ロスレスフロー (PFC で守るフロー) のトラフィックパターンを記述する設定テーブル。 ヘッドルームサイズの動的計算 (buffermgrd の dynamic-buffer モード) において、平均パケットサイズや小パケット比率を入力として使う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

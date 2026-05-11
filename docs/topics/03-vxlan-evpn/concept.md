@@ -1,5 +1,6 @@
 ---
 title: VXLAN / VNET / EVPN の概要
+description: "VXLAN / VNET / EVPN の概要 — SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

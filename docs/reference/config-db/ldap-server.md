@@ -1,5 +1,6 @@
 ---
 title: LDAP_SERVER テーブル
+description: "LDAP_SERVER テーブル — LDAP 認証サーバの一覧と global LDAP クライアント設定。hostcfgd が CONFIG_DB を購読し、/etc/nslcd.conf を生成する。最大 8 サーバまで登録可能。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -73,3 +74,10 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 ## 引用元
 
 [^1]: YANG 定義: `sonic-system-ldap.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-ldap.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

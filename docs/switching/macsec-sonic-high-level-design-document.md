@@ -1,5 +1,6 @@
 ---
 title: MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）
+description: "MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI） — IEEE 802.1AE / 802.1X-2010 準拠の Layer 2 暗号化 を実装する設計。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
     - show macsec
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（基本構成のみ）"
     現行 master の `sonic-swss/orchagent/macsecorch.cpp` で `PAUSE_ETHER_TYPE 0x8808`、`PFC_MODE_BYPASS` を確認（PFC バイパス ACL の実装）。`macsecmgr` / `macsecorch` モジュール、`docker-macsec/etc/wpa_supplicant.conf` も存在。XPN / proactive SAK refresh / 可変 max-SA の wpa_supplicant 拡張は別パッチ系列で取り込まれている。詳細は元 HLD 参照（verified at: 2026-05-09）。
@@ -158,3 +164,10 @@ APPL_DB:MACSEC_INGRESS_SA_TABLE:<ifname>:<sci>:<an>
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/macsec/MACsec_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

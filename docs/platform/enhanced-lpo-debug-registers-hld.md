@@ -1,5 +1,6 @@
 ---
 title: 拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
+description: "拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開） — LPO (Linear Pluggable Optic) は DSP を持たない optic。"
 area: platform
 verification: discrepancy-found
 monitor: not_implemented
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: HLD-only"
     HLD は 2025 年 2 月 (Rev 1.0) Arista 提案。`CmisEnhancedLpoApi` クラスと `xcvr_api_factory.py` の vendor 分岐、`TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_DOM_THRESHOLD` / `TRANSCEIVER_DOM_FLAG*` への新キー追加の現行実装は未裏取り。
@@ -118,3 +124,10 @@ elif vendor_name == 'Arista' and re.match(ARISTA_ENHANCED_LPO, vendor_pn):
 #### 関連 GitHub Issue / PR
 
 - [GitHub Issue / PR の関連リンクは未確認] — LPO 拡張デバッグレジスタ (VMA / OMA per-lane) の Redis 公開は xcvrd / platform daemon 系の機能拡張 PR で散発的に追加されており、HLD 全体を束ねる上流 Issue は確認できず。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

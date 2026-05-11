@@ -1,5 +1,6 @@
 ---
 title: CRM threshold 越え (route / nexthop / FDB / ACL)
+description: "Runbook: CRM (Critical Resource Monitor) で threshold 越えアラートが出る — : sonic-net/sonic-swss @ master — crmorch.cpp : sonic-net/sonic-utilities @ master — crm/main.…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

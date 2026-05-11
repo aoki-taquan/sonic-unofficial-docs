@@ -1,5 +1,6 @@
 ---
 title: pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）
+description: "pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較） — SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が 本来あるべきトポロジ から欠落していないかを検査するためのツール群を追加する HLD。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
     - pcieutil
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-platform-common/sonic_platform_base/sonic_pcie/` に `pcie_base.py`（抽象 `PcieBase`）と `pcie_common.py`（共通実装）を確認。`sonic-platform-daemons/sonic-pcied/` に PCIe 監視デーモン（pcied）も存在。本ページの設計（pcie.yaml をリファレンスとした PCIe デバイス検査と `pcie_generate` で yaml 自動生成）は実装に取り込み済み。HLD は改訂日付が無く Open Questions のまま終わっているが、実コードは安定している。
@@ -175,3 +181,10 @@ show platform pcieinfo -c
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pcie-mon/pcieinfo_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

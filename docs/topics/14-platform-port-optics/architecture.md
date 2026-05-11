@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — ここでは、ポート 1 本がリンクアップに至るまでに通る要素を、SONiC 内部のコンポーネント単位で並べ直します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

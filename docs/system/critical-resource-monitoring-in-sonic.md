@@ -1,5 +1,6 @@
 ---
 title: Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）
+description: "Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視） — ASIC 側の各種リソース（route 表、neighbor、ACL counter、FDB、NAT 等）は ハードウェアサイズで上限がある。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -101,3 +102,10 @@ generic SAI extension CRM（新 resource 追加枠組み） / system health moni
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/crm/Critical-Resource-Monitoring-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

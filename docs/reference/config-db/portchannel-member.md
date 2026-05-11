@@ -1,5 +1,6 @@
 ---
 title: PORTCHANNEL_MEMBER テーブル
+description: "PORTCHANNEL_MEMBER テーブル — PORTCHANNEL とその物理メンバ PORT の対応を保持する。teammgrd がこの関係を読み、teamd の enslave 操作を実行する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -64,3 +65,10 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-portchannel.yang` 内 `PORTCHANNEL_MEMBER`。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

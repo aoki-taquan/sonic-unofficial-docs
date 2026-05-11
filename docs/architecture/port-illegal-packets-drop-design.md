@@ -1,5 +1,6 @@
 ---
 title: ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
+description: "ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張） — SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `sonic-snmpagent` で RIF カウンタを L2 カウンタへ集約する経路を実装で確認した。`sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py` L34-L38 に `RIF_DROPS_AGGR_MAP` が定義され、`SAI_PORT_STAT_IF_IN_OCTETS` 等を `SAI_ROUTER_INTERFACE_STAT_IN_OCTETS` 系へマップ。`rfc1213.py` L341-L346 で `rif_port_map` / `port_rif_map` を構築し、L427-L440 で `sai_lag_rif_id` を参照して `self.rif_counters[...]` から `counter_value` に加算する集約処理を確認。
@@ -138,3 +144,10 @@ snmpwalk -v2c -c <community> <switch> ifInErrors
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-illegal-packets/Port_illegal_packets_drop_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — ACL の中心は AclOrch です。設定は CONFIG_DB から入り、APPL_DB を経由して AclOrch が SAI ACL table、entry、counter に変換します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

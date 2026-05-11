@@ -1,5 +1,6 @@
 ---
 title: SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像
+description: "SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像 — SONiC のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド。このページでは、HLD やリファレンスとマニュアルの 役割境界 を明確にし、利用者が次に読むべき場所を案内する。"
 area: management
 verification: code-verified
 last_verified: 2026-05-10
@@ -101,3 +102,5 @@ flowchart LR
 ## 関連 Topics
 
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
+
+<!-- /topics-back-ref -->

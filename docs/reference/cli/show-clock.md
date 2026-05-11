@@ -1,5 +1,6 @@
 ---
 title: show clock サブコマンド
+description: "show clock サブコマンド — show clock は システム日時の表示と、利用可能なタイムゾーン一覧の表示を提供する click グループ。invoke_without_command=True で宣言されており、サブコマンド省略時はそのままグループ本体が date コマンドを起動する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

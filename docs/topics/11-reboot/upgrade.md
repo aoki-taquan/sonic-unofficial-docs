@@ -1,5 +1,6 @@
 ---
 title: Upgrade lifecycle
+description: "Upgrade lifecycle — upgrade は reboot と同じではありません。upgrade は「どの image / package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

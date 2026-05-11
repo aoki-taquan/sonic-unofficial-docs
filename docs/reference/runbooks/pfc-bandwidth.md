@@ -1,5 +1,6 @@
 ---
 title: PFC で帯域が出ない / Buffer overflow
+description: "Runbook: PFC で帯域が出ない / Buffer overflow — : sonic-net/sonic-swss @ 4305596 — bufferorch / pfcwdorch : sonic-net/sonic-utilities @ 39732bceb — pfcwd CLI"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

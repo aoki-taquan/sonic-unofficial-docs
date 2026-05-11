@@ -1,5 +1,6 @@
 ---
 title: CONFIG_DB の永続化が失敗する
+description: "Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 39732bceb — config save 実装 : sonic-net/sonic-swss-common @ 4305596 — configdb.cpp"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

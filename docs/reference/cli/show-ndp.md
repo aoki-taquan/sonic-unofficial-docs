@@ -1,5 +1,6 @@
 ---
 title: show ndp サブコマンド
+description: "show ndp サブコマンド — show ndp は IPv6 の Neighbor Discovery テーブルを表示する click コマンド。show arp と対称な実装で、内部では scripts/nbrshow を -6 付きで起動する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

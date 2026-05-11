@@ -1,5 +1,6 @@
 ---
 title: 運用者向けガイド
+description: "運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。"
 area: guides
 verification: meta
 last_verified: 2026-05-10
@@ -45,3 +46,5 @@ last_verified: 2026-05-10
 
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

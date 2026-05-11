@@ -1,5 +1,6 @@
 ---
 title: SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
+description: "SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約 — SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が CONFIG_DB の DEVICE_METADATA|localhost に蓄積されてきた。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-11
@@ -14,6 +15,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     このページは公式 HLD のみを根拠に書かれている。`db_migrator.py` / `minigraph.py` / `sonic-cfggen` 等の実装による裏取りは未済。

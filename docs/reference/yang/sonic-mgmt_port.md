@@ -1,5 +1,6 @@
 ---
 title: sonic-mgmt_port YANG
+description: "sonic-mgmt_port YANG — OOB マネジメントポート（eth0 等）の物理パラメータ（速度・MTU・admin status）を保持する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

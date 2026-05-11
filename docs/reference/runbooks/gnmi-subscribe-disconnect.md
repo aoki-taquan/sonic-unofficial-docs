@@ -1,5 +1,6 @@
 ---
 title: gNMI Subscribe セッションが切れる
+description: "Runbook: gNMI Subscribe が頻繁に切断される — : sonic-net/sonic-gnmi @ master — client_subscribe.go : sonic-net/sonic-gnmi @ master — db_client.go"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

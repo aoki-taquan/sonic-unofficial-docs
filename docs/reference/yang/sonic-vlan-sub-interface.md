@@ -1,5 +1,6 @@
 ---
 title: sonic-vlan-sub-interface YANG
+description: "sonic-vlan-sub-interface YANG — VLAN sub-interface configuration for dot1q encapsulated sub-ports on physical or PortChannel interfaces"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
@@ -93,3 +94,10 @@ module: sonic-vlan-sub-interface
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

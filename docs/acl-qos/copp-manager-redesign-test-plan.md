@@ -1,5 +1,6 @@
 ---
 title: CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）
+description: "CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled） — CoppMgr は CONFIG_DB の COPP_TRAP と FEATURE を観測し、各 trap (BGP / ARP / LACP / UDLD / IP2ME 等) を SAI host…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
     - config load
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（基本構成のみ）"
     現行 master の `sonic-swss/cfgmgr/coppmgr.cpp` に `always_enabled` フラグ判定 (line 88, 365)、CFG_FEATURE_TABLE 監視 (line 300)、trap 状態保持と差分処理 (543-619) を確認。`sonic-utilities/tests/copp_test.py`、`sonic-swss/tests/mock_tests/copp_ut.cpp` のテストハーネスも存在。Test plan の主要 4 ルールは coppmgr.cpp で網羅されている（verified at: 2026-05-09）。
@@ -126,3 +132,10 @@ reasoning: HLD 本文 4 ルールをそのまま判定フローに転写
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/copp/Copp_Manager_Redesign_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/copp/Copp_Manager_Redesign_test_plan.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

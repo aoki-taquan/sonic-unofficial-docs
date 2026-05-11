@@ -1,5 +1,6 @@
 ---
 title: VLAN メンバーを追加してもタグが付かない
+description: "Runbook: VLAN メンバーを追加してもタグが付かない — : sonic-net/sonic-swss @ 4305596 — vlanmgrd : sonic-net/sonic-utilities @ 39732bceb — config vlan member"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

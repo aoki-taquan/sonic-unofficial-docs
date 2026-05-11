@@ -1,5 +1,6 @@
 ---
 title: Reclaim Reserved Buffer（admin-down ポートの zero_profile）
+description: "Reclaim Reserved Buffer（admin-down ポートの zero_profile） — Mellanox プラットフォームで顕著な「admin-down ポートにも default で reserved buffer が割り当てられ、shared pool が圧迫される」問題に対し、zero_…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
@@ -18,6 +19,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `zero_profile` 機構は `sonic-swss/cfgmgr/buffermgrdyn.cpp` L232-L260 のドキュメントコメントブロックで全体設計 (zero buffer pools / profiles, `pgs_to_apply_zero_profile`, `ingress_zero_profile`, `queues_to_apply_zero_profile`, `egress_zero_profile`, `zero_profile_name`) が記述され、L245-L275 で実装ロジックが取り込まれていることを確認（既存 verifier の `reclaim-reserved-buffer-sequence-flow` キューでも同位置を裏取り済み）。`buffermgrd -z zero_profiles.json` 起動オプションは `buffermgrd.cpp` L26 / L98-L121 で確認。
@@ -148,3 +154,5 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 ## 関連 Topics
 
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

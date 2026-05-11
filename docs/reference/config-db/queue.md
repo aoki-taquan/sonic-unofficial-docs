@@ -1,5 +1,6 @@
 ---
 title: QUEUE テーブル
+description: "QUEUE テーブル — ポートの egress queue ごとに SCHEDULER (WRR/DWRR/STRICT) と WRED_PROFILE を割り当てる。qosorch が SAI queue scheduler / WRED を設定する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -84,3 +85,10 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-queue.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

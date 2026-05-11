@@ -1,5 +1,6 @@
 ---
 title: Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
+description: "Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS） — SONiC のテレメトリエージェント（gNMI / gNOI ストリーミング）から プロセス毎の CPU/メモリ使用量 および docker コンテナ毎のリソース消費 を購読できるようにする…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（一部位置に乖離）"
     現行 master で実装済みを確認。デーモンは `sonic-host-services/scripts/procdockerstatsd`（HLD では `sonic-buildimage/files/image_config` 配下と記載されていたが、実際は sonic-host-services リポジトリに移管）。`procdockerstatsd:138` で `top_processes = sorted_processes[:1024]`、`procdockerstatsd:174` で `STATE_DB` の `PROCESS_STATS|*` 全削除、`procdockerstatsd:234-236` で `DOCKER_STATS|LastUpdateTime` / `PROCESS_STATS|LastUpdateTime` 更新、`procdockerstatsd:240-241` で `time.sleep(120)`（2 分周期）を確認（verified at: 2026-05-09）。
@@ -132,3 +138,10 @@ gnmic -a <switch>:8080 subscribe \
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/system-telemetry/process-docker-stats.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

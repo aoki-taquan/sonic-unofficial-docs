@@ -1,5 +1,6 @@
 ---
 title: DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+description: "DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化） — 旧設計の DHCPv4 counter は dhcpmon のプロセスメモリ内で VLAN/PortChannel 粒度のみ を持ち、ユーザは syslog からしか可視化できな…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -17,6 +18,11 @@ related:
     - sonic-clear dhcp_relay
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-buildimage/src/dhcpmon/` で dhcpmon 実装を確認。`sonic-buildimage/dockers/docker-dhcp-relay/cli/show/plugins/show_dhcp_relay.py` で `show dhcp_relay ipv4/ipv6 counter` CLI、`cli/clear/plugins/clear_dhcp_relay.py` で sonic-clear、`cli-plugin-tests/test_show_dhcpmon_counters.py` / `test_clear_dhcp_relay.py` で UT を確認（verified 2026-05-09）。`sonic-dhcp-relay/dhcp4relay` / `dhcp6relay` で relay daemon 本体を確認。
@@ -162,3 +168,10 @@ sonic-clear dhcp_relay ipv6 counters [--dir TX|RX] [--type <type>] [<vlan>]
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/dhcp_relay/DHCP-per-interface-counter.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_relay/DHCP-per-interface-counter.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

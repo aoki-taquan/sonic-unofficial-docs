@@ -1,5 +1,6 @@
 ---
 title: show priority-group サブコマンド
+description: "show priority-group サブコマンド — show priority-group は priority group (PG) の watermark と drop counter を表示する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
@@ -60,3 +61,10 @@ show priority-group watermark shared [--namespace <ns>|all] [--json]
 ## 引用元
 
 [^1]: `show priority-group` グループと配下 command。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1003>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: VNET / VNET_ROUTE テーブル
+description: "VNET / VNET_ROUTE テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

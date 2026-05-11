@@ -1,5 +1,6 @@
 ---
 title: CLI 横断索引
+description: "CLI 横断索引 — docs/reference/cli/ 配下の 48 ページを、Phase B の機能章でどこから引かれるかで並べ直した索引である。各 CLI ページは config- / show- / debug-* のグループごとに分かれており、本ページではこれを機能章ごとに束ね直す。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

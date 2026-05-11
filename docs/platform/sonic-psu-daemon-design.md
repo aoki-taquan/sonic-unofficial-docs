@@ -1,5 +1,6 @@
 ---
 title: psud（PSU 監視デーモン / power threshold ヒステリシス）
+description: "psud（PSU 監視デーモン / power threshold ヒステリシス） — psud は PSU の物理状態と電力指標を周期収集し STATE_DB に書く platform monitor 系 daemon。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
     - psuutil
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     `sonic-platform-daemons/sonic-psud/scripts/psud` で `PSU_INFO_UPDATE_PERIOD_SECS = 3`、`PSU_INFO_POWER_OVERLOAD = 'power_overload'`、`PSU_INFO_POWER_WARNING_SUPPRESS_THRESHOLD` / `PSU_INFO_POWER_CRITICAL_THRESHOLD` の定数と判定ロジックが確認できた。`sonic-platform-common/sonic_platform_base/psu_base.py` の `get_psu_power_warning_suppress_threshold` / `get_psu_power_critical_threshold` / `get_input_voltage` / `get_input_current` 抽象 API も実在。`sonic-utilities/scripts/psushow` で `power_overload` を読み取り `WARNING` / `OK` を表示。
@@ -159,3 +165,10 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 - show platform psustatus の WARNING ステータス表示の sonic-utilities 取り込み確認
 - psuutil 出力での threshold 列追加の確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

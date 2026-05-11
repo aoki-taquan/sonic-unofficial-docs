@@ -1,5 +1,6 @@
 ---
 title: show system-health サブコマンド
+description: "show system-health サブコマンド — show system-health は system-health デーモン（HealthCheckerManager）が保持するシステム状態（サービス・ハードウェア・ファイルシステムなど）と、SmartSwitch 構成での DPU 状態、システムが boo…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -126,3 +127,10 @@ excerpt: |
 [^1]: `cli.add_command(system_health.system_health)` は `show/main.py` L329。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L329>
 
 [^2]: 整形は `display_system_health_summary` (`show/system_health.py` L44-L74)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/system_health.py#L44>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

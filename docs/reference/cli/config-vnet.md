@@ -1,5 +1,6 @@
 ---
 title: config vnet サブコマンド
+description: "config vnet サブコマンド — config vnet は overlay VNET と VNET route を CONFIG_DB に作成・削除する CLI グループ。multi-ASIC では --namespace で対象 namespace を選択できる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: Route / Interface / Counter の確認
+description: "Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

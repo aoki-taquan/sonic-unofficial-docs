@@ -1,5 +1,6 @@
 ---
 title: Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）
+description: "Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server） — DASH SmartSwitch では NPU と各 DPU が PCIe ベースの control plane interface (netdev) で繋がる。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/files/image_config/midplane-network/` 配下に `bridge-midplane.netdev` / `bridge-midplane.network` / `dummy-midplane.network` / `define-npu-specific-netdevs.sh` を確認。`DHCP_SERVER_IPV4` / `DHCP_SERVER_IPV4_PORT` テーブルは `src/sonic-yang-models/doc/Configuration.md`、`src/sonic-config-engine/config_samples.py`、`src/sonic-dhcp-utilities/` で参照されている。Smart Switch midplane bridge / DHCP server 経路は master 取り込み済み。
@@ -164,3 +170,10 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 - DPU PCIe netdev 名 dpu<N> の vendor init での確立方法と整合確認
 - DHCP server container (sonic-net/SONiC#1282) の master 取り込み確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

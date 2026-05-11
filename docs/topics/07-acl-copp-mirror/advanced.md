@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — このページは、ACL / CoPP / mirror の基本線から少し外れるが、同じ「分類、保護、観測、rate limit」の考え方で読める機能への案内です。通常運用の入口は前ページまでで足りることが多く、ここでは境界だけを整理します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

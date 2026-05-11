@@ -1,5 +1,6 @@
 ---
 title: ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
+description: "ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離） — 本 HLD は主に第 2 段階に焦点を当て、4 つの最適化を提案する:"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 19 章: Build / Packaging / Debian](../topics/19-build-packaging/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified（部分実装）"
     HLD は Debian Stretch 時代の文書だが、`sonic-buildimage/dockers/dockerfile-macros.j2` の `install_debian_packages` / `install_python_wheels` / `copy_files` マクロは現存。BuildKit は `SONIC_USE_DOCKER_BUILDKIT` フラグとしては未取り込みで、CI / `scripts/collect_docker_version_files.sh` で `DOCKER_BUILDKIT=1` を直接設定する形になっている (`.azure-pipelines/template-variables.yml` ではむしろ `DOCKER_BUILDKIT: 0` 既定)。`SAIREDIS_DPKG_TARGET=binary-syncd` 個別の指定は現行 `rules/sairedis.mk` には残っておらず、`slave.mk:879 $(if $($*_DPKG_TARGET),...)` の汎用機構に統合されている。dh `--parallel` 関連は debian/rules 側で patch 済み。

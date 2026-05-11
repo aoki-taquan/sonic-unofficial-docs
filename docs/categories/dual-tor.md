@@ -1,5 +1,6 @@
 ---
 title: Dual-ToR 関連
+description: "Dual-ToR 関連 — このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。"
 area: categories
 verification: meta
 last_verified: 2026-05-10
@@ -75,3 +76,5 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 ## 関連 Topics
 
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

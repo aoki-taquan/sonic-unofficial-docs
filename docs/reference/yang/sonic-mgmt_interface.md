@@ -1,5 +1,6 @@
 ---
 title: sonic-mgmt_interface YANG
+description: "sonic-mgmt_interface YANG — OOB マネジメントインタフェース（eth0 等）の IP アドレス・デフォルトゲートウェイ・強制ルートを定義する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

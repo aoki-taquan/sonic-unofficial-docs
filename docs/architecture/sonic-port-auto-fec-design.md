@@ -1,5 +1,6 @@
 ---
 title: Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）
+description: "Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto） — ポートの autoneg と FEC モードの組み合わせの挙動を決定論的にする ための設計。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11
@@ -16,6 +17,11 @@ related:
   yang:
     - sonic-port
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` の portsorch 取り込みを確認: `sonic-swss/orchagent/portsorch.cpp` L991 (capability query), L1325, L2369, L10479, L10556（FEC override 適用 + コメント `FEC override will take effect only when autoneg is enabled`）。FEC=auto と autoneg の関係チェックは L5334-L5336 (`Autoneg must be enabled for port fec mode auto to work`) で実装済み。
@@ -143,3 +149,10 @@ PORT|<if>:
 - 旧 image からの upgrade 時の後方互換挙動の実装確認
 - vendor SAI（Mellanox/Broadcom/Cisco）の override 属性対応状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

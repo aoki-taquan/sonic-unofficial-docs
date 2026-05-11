@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — BGP の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら CONFIG_DB、外部 controller から投入するなら YANG/OpenConfig を見る。重要なのは、最終的に FRR に入る設定と CONFIG_DB の状態を分離しないことである。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

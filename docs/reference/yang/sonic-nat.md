@@ -1,5 +1,6 @@
 ---
 title: sonic-nat YANG
+description: "sonic-nat YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-nat.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
@@ -136,3 +137,10 @@ module: sonic-nat
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nat.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

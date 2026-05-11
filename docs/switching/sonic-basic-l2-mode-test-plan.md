@@ -1,5 +1,6 @@
 ---
 title: SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）
+description: "SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証） — SONiC を basic L2 switch として構成した場合の最小機能を T0 トポロジで検証する。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -65,3 +66,10 @@ sonic-cfggen -H -p -k $HWSKU --preset l2
 - 同 `tests/test_j2files.py` l.308, 379 で `--preset l2` 引数のテスト
 - sonic-mgmt fdb / vlan / snmp テストカバレッジは別 repo (本 cache 未取得) で未裏取り
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

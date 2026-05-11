@@ -1,5 +1,6 @@
 ---
 title: MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）
+description: "MCLAG Enhancements — MCLAG（Multi-Chassis LAG）は 2 台が 互いに peer となり、下流ホストから 1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する:"
 area: switching
 verification: code-verified
 last_verified: 2026-05-10
@@ -17,6 +18,11 @@ related:
     - show mclag
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     iccpd: `sonic-buildimage/src/iccpd` / mclagsyncd: `sonic-swss/mclagsyncd/mclagsyncd.cpp` / schema: `APP_MCLAG_FDB_TABLE_NAME`, `APP_ISOLATION_GROUP_TABLE_NAME`, `CFG_MCLAG_TABLE_NAME` (`MCLAG_DOMAIN`), `CFG_MCLAG_INTF_TABLE_NAME` (`MCLAG_INTERFACE`): `sonic-swss-common/common/schema.h:118,119,378,379` / `sonic-mclag.yang` で確認。
@@ -146,3 +152,5 @@ redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:1"
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

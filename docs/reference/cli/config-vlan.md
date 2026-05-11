@@ -1,5 +1,6 @@
 ---
 title: config vlan サブコマンド
+description: "config vlan サブコマンド — config vlan は VLAN の作成・削除、メンバ追加・削除、Proxy-ARP のオン／オフを担当する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -141,3 +142,10 @@ config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]
 - [CONFIG_DB: VLAN](../config-db/vlan.md)
 - [CONFIG_DB: VLAN_MEMBER](../config-db/vlan-member.md)
 - [YANG: sonic-vlan](../yang/sonic-vlan.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

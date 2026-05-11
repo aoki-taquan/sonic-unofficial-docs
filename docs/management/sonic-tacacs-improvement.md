@@ -1,5 +1,6 @@
 ---
 title: TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
+description: "TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus） — TACACS+ Authentication（既存）の上に コマンド単位の authorization と accounting を追加する HLD:"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -20,6 +21,11 @@ related:
   yang:
     - sonic-system-aaa
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-buildimage/files/build/versions-public/host-image/versions-deb-trixie` L6 で `audisp-tacplus==1.0.2`、L280 で `libtac2==1.4.1-1`、`files/build/versions-public/default/versions-git` L4 で `audisp-tacplus.git` の SHA を確認。各 `sonic-slave-{buster,bullseye,trixie,jessie}/Dockerfile.j2` に `# For audisp-tacplus` セクションがあり、ビルドスレーブ側に取り込み済み。`files/build_templates/sonic_debian_extension.j2` L318 で `libtac2_*.deb` をホストイメージにインストール。`sonic-utilities/config/aaa.py` L157-175 で `aaa authorization` / `aaa accounting` CLI を確認（verified at: 2026-05-09）。
@@ -158,3 +164,10 @@ Bad responses: 1
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/aaa/TACACS+ Design.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/aaa/TACACS%2B%20Design.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

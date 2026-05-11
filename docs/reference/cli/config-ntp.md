@@ -1,5 +1,6 @@
 ---
 title: config ntp サブコマンド
+description: "config ntp サブコマンド — config ntp は NTP サーバ（chrony で動作）の追加・削除を行う CLI グループ。CONFIG_DB の NTP_SERVER テーブルを直接書き換え、chrony サービスを再起動する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: gRPC client（active-active DualToR / ycabled ↔ SoC 連携）
+description: "gRPC client（active-active DualToR / ycabled ↔ SoC 連携） — DualToR の active-active 構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で forwarding state が動的に切り替わる。"
 area: management
 verification: code-verified
 last_verified: 2026-05-10
@@ -191,3 +192,10 @@ docker logs pmon 2>&1 | grep -i grpc
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/grpc_client/design_doc.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

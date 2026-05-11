@@ -1,5 +1,6 @@
 ---
 title: libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
+description: "libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） — orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent にし、orc…"
 area: system
 verification: discrepancy-found
 monitor: deprecated

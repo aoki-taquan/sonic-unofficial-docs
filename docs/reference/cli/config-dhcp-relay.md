@@ -1,5 +1,6 @@
 ---
 title: config dhcp_relay / dhcpv4_relay サブコマンド
+description: "config dhcp_relay / dhcpv4_relay サブコマンド — config dhcp_relay および config dhcpv4_relay グループは、sonic-buildimage 側の docker-dhcp-relay コンテナの CLI plugin (cli/config/pl…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -131,3 +132,10 @@ IPv4 helper と対称、`VLAN|Vlan<vid>` の `dhcpv6_servers` リストを更新
 [^2]: `check_sonic_dhcpv4_relay_flag` (同 plugin L16-L20)。`FEATURE|localhost` の `has_sonic_dhcpv4_relay` を見て、未対応なら `dhcpv4_relay` 系コマンドはエラー終了する。
 
 [^3]: `restart_dhcp_relay_service` (同 plugin L51-L62) が `systemctl restart dhcp_relay.service` を呼ぶ。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

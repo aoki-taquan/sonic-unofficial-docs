@@ -1,5 +1,6 @@
 ---
 title: S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）
+description: "S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開） — S3IP (Switch State 系の sysfs 仕様) は、platform hardware（温度・電圧・電流・FAN・PSU・xcvr・FPGA・CPLD・watchdog・slot・syseeprom・LED）…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/platform/s3ip-sysfs/` 直下に kernel module フレームワーク (`s3ip_sysfs_frame/`: `cpld_sysfs.c`, `temp_sensor_sysfs.c`, `vol_sensor_sysfs.c`, `curr_sensor_sysfs.c`, `fan_sysfs.c`, `psu_sysfs.c`, `transceiver_sysfs.c`, `sysled_sysfs.c`, `slot_sysfs.c`, `watchdog_sysfs.c`, `fpga_sysfs.c`, `switch.c`)、リファレンス driver (`demo_driver/`)、Makefile、init スクリプト (`scripts/s3ip-sysfs.service`, `s3ip_load.py`, `s3ip_sysfs_conf.json`) を確認。PDDF 経由でも `pddf_s3ip.py` が `/sys_switch/temp_sensor` 等を作成する。S3IP 仕様の `/sys_switch/` ツリー設計は SONiC 側に取り込み済み。
@@ -115,3 +121,10 @@ reasoning: 仕様の path 規約と permission 表記の根拠。
 - modular / Smart Switch slot への namespace 拡張の整合確認
 - 仕様文書の数値型 (millidegree / mV / mA / RPM) と SONiC platform API の単位整合確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

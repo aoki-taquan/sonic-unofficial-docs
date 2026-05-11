@@ -1,5 +1,6 @@
 ---
 title: Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）
+description: "Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式） — show techsupport は SONiC のサブシステム横断の診断情報をひとつの tarball に集める既存ツール（sonic-utilities 由来）。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -13,6 +14,11 @@ related:
     - show techsupport
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     YANG モデル `sonic-mgmt-common/models/yang/sonic/sonic-show-techsupport.yang` に `rpc sonic-show-techsupport-info` が定義され、annotations `sonic-showtech-annot.yang` で transformer に紐付け済み。tarball 採取本体は `sonic-utilities/scripts/generate_dump` (techsupport_cleanup.py / bmc_techsupport.py が呼ぶ) で従来どおり。`sonic-buildimage` には `sonic-auto_techsupport.yang` も存在。RPC 起動経路は HLD どおり実装。
@@ -165,3 +171,5 @@ ls -lh /var/dump/sonic_dump_*.tar.gz
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
+description: "DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張） — DASH (Disaggregated APIs for SONiC Hosts) の ACL では、サービスタグ が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（Stage 1 のみ）"
     `sonic-swss-common/common/schema.h` L183 で `APP_DASH_PREFIX_TAG_TABLE_NAME = "DASH_PREFIX_TAG_TABLE"` を確認。`sonic-swss/orchagent/dash/dashaclorch.cpp` L111-112 で `APP_DASH_PREFIX_TAG_TABLE_NAME` の SET/DEL を `taskUpdateDashPrefixTag` / `taskRemoveDashPrefixTag` が処理、L283-310 で tag CRUD ハンドラを確認。`tests/dash/test_dash_acl.py` L186-194/L511 で `PrefixTag` proto による tag CRUD テストを確認（verified at: 2026-05-09）。Stage 2（SAI API でタグを ASIC へ）は本 HLD の対象外。
@@ -183,3 +189,11 @@ sonic-db-cli APPL_DB keys 'DASH_ACL_RULE_TABLE:*'
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dash/dash-acl-tags/dash-acl-tags.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

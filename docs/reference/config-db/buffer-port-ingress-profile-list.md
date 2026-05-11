@@ -1,5 +1,6 @@
 ---
 title: BUFFER_PORT_INGRESS_PROFILE_LIST テーブル
+description: "BUFFER_PORT_INGRESS_PROFILE_LIST テーブル — ingress 方向の BUFFER_PG (priority-group ごとのバッファ) と並ぶ別系統で、こちらはポート全体としての ingress プロファイル群の集約。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

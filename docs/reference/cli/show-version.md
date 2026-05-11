@@ -1,5 +1,6 @@
 ---
 title: show version サブコマンド
+description: "show version サブコマンド — show version は SONiC のビルド情報、プラットフォーム情報、シャーシ情報、稼働時間、現在時刻、および docker イメージ一覧をまとめて出力する。実装は show/main.py:version()。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: ProducerStateTable の view switching（warm reboot 用の差分適用）
+description: "ProducerStateTable view switching — warm reboot では、各 daemon が 新しい状態を一気に作って consumer に届ける 必要がある。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-swss-common/common/producerstatetable.h` `create_temp_view()` / `apply_temp_view()` / `m_tempViewActive` / `m_tempViewState`、`producerstatetable.cpp` の set/del 分岐と差分計算 (L324-479) を確認（verified at: 2026-05-09）。

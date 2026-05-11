@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — 仮想 lab / 開発環境の bring-up は、SONiC NOS そのものの設定ではなく「環境を組む → image を取る → topology を配線する → CONFIG_DB を流し込む」の前段に集中します。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

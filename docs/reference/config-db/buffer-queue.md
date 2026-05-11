@@ -1,5 +1,6 @@
 ---
 title: BUFFER_QUEUE テーブル
+description: "BUFFER_QUEUE テーブル — ポートの egress queue ごとにバッファプロファイルを割り当てる。non-VOQ 用と VOQ シャーシ用で list が分かれる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -81,3 +82,10 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-buffer-queue.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-queue.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: Wake-on-LAN（wol CLI と SonicWolService gNOI）
+description: "Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。"
 area: switching
 verification: discrepancy-found
 monitor: evolved_beyond_hld
@@ -14,6 +15,11 @@ related:
     - wol
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! danger "裏取りステータス: discrepancy-found"
     HLD と現行 master 実装に齟齬がある。
@@ -209,3 +215,10 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/wol/Wake-on-LAN-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

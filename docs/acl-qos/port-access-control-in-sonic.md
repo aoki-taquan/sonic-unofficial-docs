@@ -1,5 +1,6 @@
 ---
 title: "Port Access Control（PAC: 802.1x / MAB / RADIUS）"
+description: "Port Access Control（PAC: 802.1x / MAB / RADIUS） — 物理ポート単位の クライアント認証 （IEEE 802.1x + MAB）を SONiC に持ち込む機能。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
@@ -20,6 +21,11 @@ related:
     - show authentication
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `sonic-buildimage/src/sonic-pac/` 配下に PAC のコンポーネント (`authmgr`, `mab`, `mabmgr`, `hostapdmgr`, `pacmgr`, `paccfg`, `pacoper`, `fpinfra`, `json_lib`) が取り込み済みであることを確認。`hostapdmgr.cpp` L43-L46 で `CFG_PAC_PORT_CONFIG_TABLE` / `CFG_PAC_HOSTAPD_GLOBAL_CONFIG_TABLE` / `RADIUS_SERVER` / `RADIUS` 4 テーブルを subscribe する経路を確認。SAI Bridge port learning モード変更詳細・host interface trap の詳細は sai_redis / vendor SAI スコープのため別途。
@@ -184,3 +190,10 @@ CLI 文法は HLD ベース。実装は v0.2 / v0.3 で見直されているた�
 - EAPoL / MAB 用 host interface trap の SAI / CoPP 設定取り込み確認
 - 動的 VLAN 割当（RADIUS Tunnel attributes）の VLAN orch 連携確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

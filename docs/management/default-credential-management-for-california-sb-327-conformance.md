@@ -1,5 +1,6 @@
 ---
 title: 既定パスワードの初回ログイン強制変更（California SB-327 準拠）
+description: "既定パスワードの初回ログイン強制変更（California SB-327 準拠） — California SB-327 は IoT 機器の既定パスワード使用を制限する州法であり、初回ログイン時にユーザに強制でパスワード変更させる ことが代表的な準拠手段である。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/rules/config` に `CHANGE_DEFAULT_PASSWORD ?= n` のオプション、`build_debian.sh` に `[[ "$CHANGE_DEFAULT_PASSWORD" == "y" ]]` 分岐と `password_expire="$( ... && echo true || echo false )"` の export 処理を確認。`Makefile.work` / `slave.mk` でも flag を伝搬。HLD で要求された build flag の sonic-buildimage 取り込みは master で確認できた。
@@ -161,3 +167,10 @@ CHANGE_DEFAULT_PASSWORD=true make target/sonic.bin
 - /etc/passwd 走査で login shell = /bin/bash / /bin/sh ユーザのみ対象とする実装確認
 - image upgrade で 1st boot 扱いとなる仕組み（marker file 等）の現行確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

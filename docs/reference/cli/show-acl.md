@@ -1,5 +1,6 @@
 ---
 title: show acl サブコマンド
+description: "show acl サブコマンド — show acl は ACL テーブルとルールの一覧表示専用サブグループ。実装は acl-loader show ... の薄いラッパで、CONFIG_DB の読み出しは acl-loader 側が行う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -76,3 +77,10 @@ related:
 - [CLI: config acl](config-acl.md)
 - [CONFIG_DB: ACL_TABLE](../config-db/acl-table.md)
 - [CONFIG_DB: ACL_RULE](../config-db/acl-rule.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

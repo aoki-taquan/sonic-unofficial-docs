@@ -1,5 +1,6 @@
 ---
 title: sonic-breakout_cfg YANG
+description: "sonic-breakout_cfg YANG — BREAKOUT_CFG YANG Module for SONiC OS。動的ポート分割 (port breakout) 設定を親ポート単位で保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

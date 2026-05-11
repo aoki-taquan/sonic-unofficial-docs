@@ -1,5 +1,6 @@
 ---
 title: show flowcnt-trap / flowcnt-route サブコマンド
+description: "show flowcnt-trap / flowcnt-route サブコマンド — show flowcnt-trap と show flowcnt-route は フローカウンタ 機能の表示コマンド。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

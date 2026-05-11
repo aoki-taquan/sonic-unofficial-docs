@@ -1,5 +1,6 @@
 ---
 title: PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）
+description: "PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担） — Multi-ASIC SONiC では、システム共通の DB が host 上の \"global database\" container に居て、ASIC 毎の DB は 各 ASIC names…"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。namespace 引数: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:1285 (DaemonBase) + sonic-xcvrd/xcvrd/xcvrd_utilities/port_event_helper.py:52-86 (namespaces 引数 + daemon_base.db_connect(namespace=ns)) で確認。
@@ -161,3 +167,10 @@ docker exec pmon supervisorctl status
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon_multiasic_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

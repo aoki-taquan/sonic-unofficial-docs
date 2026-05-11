@@ -1,5 +1,6 @@
 ---
 title: DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
+description: "DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary） — VLAN に 複数のサブネット を載せたい運用は珍しくない。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -15,6 +16,11 @@ related:
   yang:
     - sonic-vlan
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-buildimage/src/isc-dhcp/patch/0015-option-to-set-primary-address-in-interface.patch` で dhcrelay の `-pg` オプション実装パッチを確認。`sonic-buildimage/dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2` L27-28 で `VLAN_INTERFACE | get_primary_addr` を回して primary IPv4 のみ `-pg <gateway>` 引数を組み立てる Jinja を確認。`get_primary_addr` フィルタは `sonic-buildimage/src/sonic-config-engine/sonic-cfggen` L168 で定義（secondary を除外して primary のみ返す）、L302 で env.filters に登録。`sonic-utilities/config/main.py` L5680 で `--secondary/-s` フラグ、L5794-L5806 で VLAN_INTERFACE への `secondary: "true"` 書き込みを確認（verified at: 2026-05-09）。
@@ -163,3 +169,10 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/DHCPv4_Gateway/DHCPv4_gateway.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

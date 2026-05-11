@@ -1,5 +1,6 @@
 ---
 title: バナーメッセージ（login / motd / logout）
+description: "バナーメッセージ（login / motd / logout） — 業務スイッチには、ログイン前後やログアウト時に 法的注意文・運用情報・MOTD を表示する要件が頻繁にある。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,6 +20,11 @@ related:
   yang:
     - sonic-banner
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     verifier-batch-18 で確認:
@@ -187,3 +193,10 @@ show banner
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/banner/banner_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: LLDP / LLDP_PORT テーブル
+description: "LLDP / LLDP_PORT テーブル — LLDP テーブルはシステム全体の LLDP 設定 (GLOBAL キー) を、LLDP_PORT テーブルはポート単位の LLDP 有効化 / モードを保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

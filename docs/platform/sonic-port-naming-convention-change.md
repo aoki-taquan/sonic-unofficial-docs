@@ -1,5 +1,6 @@
 ---
 title: SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+description: "SONiC ポート命名規則の変更案（et[sX]pY[abcd]） — SONiC は伝統的に Ethernet0 / Ethernet4 / ... のような Ethernet プレフィクス + ASIC レーン番号 をポート名に使ってきた。"
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! danger "裏取りステータス: discrepancy-found（提案は不採用）"
     verifier-batch-18 で確認:
@@ -213,3 +219,10 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 - PortChannel 命名の最終決定
 - breakout (a/b/c/d) と CONFIG_DB.PORT のキーの整合
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

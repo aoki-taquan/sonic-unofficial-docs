@@ -1,5 +1,6 @@
 ---
 title: FIPS テーブル
+description: "FIPS テーブル — FIPS 140-3 準拠の暗号モジュールを使うかどうかを管理するテーブル。 OpenSSL の FIPS provider 切り替えや、SSH / TLS の暗号スイート絞り込みに使う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

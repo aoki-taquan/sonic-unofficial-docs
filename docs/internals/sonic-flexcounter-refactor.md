@@ -1,5 +1,6 @@
 ---
 title: FlexCounter リファクタ（CounterContext テンプレート化）
+description: "FlexCounter リファクタ（CounterContext テンプレート化） — syncd の FlexCounter は port / queue / buffer pool / priority group など 多数の統計・属性タイプ を扱う巨大クラス。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     `sonic-sairedis/syncd/FlexCounter.h:43-` に `class BaseCounterContext`、`std::map<std::string, std::shared_ptr<BaseCounterContext>> m_counterContext;` (L223) を確認。`FlexCounter.cpp:1664-` に `template ... class AttrContext : public CounterContext<AttrType>`、派生 `PortPhyAttrContext` (L1769) / `PortPhySerdesAttrContext` (L2204) を確認。`getCounterContext` / `createCounterContext` / `removeCounterContext` / `hasCounterContext` の API も `FlexCounter.h:162-172` に存在し、HLD PoC が master 取り込み済みであることを確認。
@@ -161,3 +167,10 @@ HLD は `Restrictions/Limitations` を **N/A** と明記[^1]。事実上の前�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/flex_counter/flex_counter_refactor.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

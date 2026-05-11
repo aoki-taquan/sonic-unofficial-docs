@@ -1,5 +1,6 @@
 ---
 title: show buffer_pool / headroom-pool サブコマンド
+description: "show buffer_pool / headroom-pool サブコマンド — show buffer_pool および show headroom-pool は QoS バッファプール / ヘッドルームプールの watermark 統計 を表示するためのコマンドグループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

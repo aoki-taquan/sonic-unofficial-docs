@@ -1,5 +1,6 @@
 ---
 title: VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）
+description: "VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking） — VRRP (RFC 5798) は 複数ルータが 1 つの仮想ルータ (VIP + VMAC) を演じ、Master 障害時に Backup が自動引き継ぐ L3 冗長プロトコル。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10
@@ -18,6 +19,11 @@ related:
   yang:
     - sonic-vrrp
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     FRR vrrpd: sonic-frr/ にモジュール存在。`sonic-swss-common/common/schema.h:109,380,381` で `CFG_VRRP_TABLE` / `CFG_VRRP6_TABLE` / `APP_VRRP_TABLE_NAME`、`sonic-utilities/config/main.py:6853-6868` / `show/main.py:1278-1313` で CLI、`sonic-mgmt-common/models/yang/openconfig-if-ip.yang:678-716` で `ip-vrrp-tracking` を確認。

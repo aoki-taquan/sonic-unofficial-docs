@@ -1,5 +1,6 @@
 ---
 title: SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
+description: "SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避 — SONiC 単一 ASIC 機の SNMP over IPv6 がタイムアウトする バグの設計修正。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
     - config snmpagentaddress
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2:27-33` で `SNMP_AGENT_ADDRESS_CONFIG` をループ → `agentAddress` 出力、未設定時は `:32-33` で `udp:161` / `udp6:161` フォールバック。`sonic-config-engine/minigraph.py:2310-2324` で minigraph 解析時に Management IP / Loopback IP から `SNMP_AGENT_ADDRESS_CONFIG` を自動生成（verified at: 2026-05-09）。

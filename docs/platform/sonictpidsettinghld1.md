@@ -1,5 +1,6 @@
 ---
 title: ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
+description: "ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8） — TPID（Tag Protocol Identifier）は VLAN tag を識別する Ethernet frame 内の 16-bit 値。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
@@ -16,6 +17,11 @@ related:
     - show interface tpid
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-swss/orchagent/switchorch.cpp` で `sai_query_attribute_capability(... SAI_PORT_ATTR_TPID ...)` と `SAI_LAG_ATTR_TPID` の capability query が実装され、`SWITCH_CAPABILITY_TABLE_PORT_TPID_CAPABLE` / `LAG_TPID_CAPABLE` を STATE_DB に書き込み済み (`switchorch.h`)。`portsorch.cpp` で `SAI_PORT_ATTR_TPID` / `SAI_LAG_ATTR_TPID` の `set_*_attribute` を発行。CLI は `sonic-utilities/config/main.py` の `def tpid()` (line 5614) と `show/interfaces/__init__.py` の `def tpid()` (line 175) で実装。HLD どおりに community 取り込み済み。
@@ -199,3 +205,10 @@ redis-cli -n 1 HGETALL "ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>" | grep TPID
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/tpid/SonicTPIDSettingHLD1.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

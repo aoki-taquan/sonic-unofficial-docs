@@ -1,5 +1,6 @@
 ---
 title: ACL_TABLE テーブル
+description: "ACL_TABLE テーブル — ACL コンテナ（適用ポイント / 種別 / 段 (ingress/egress)）を定義する CONFIG_DB テーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -103,3 +104,10 @@ ACL_TABLE|<table_name>
 - [CLI: config acl](../cli/config-acl.md)
 - [CLI: show acl](../cli/show-acl.md)
 - [CONFIG_DB: ACL_RULE](acl-rule.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

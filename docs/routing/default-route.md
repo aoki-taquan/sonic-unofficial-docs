@@ -1,5 +1,6 @@
 ---
 title: linkmgrd のデフォルトルート連動（DualToR mux 制御）
+description: "linkmgrd のデフォルトルート連動（DualToR mux 制御） — DualToR 構成では 2 台の ToR が active / standby または active-active の役割で同一サーバ群を収容する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-11
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     このページは公式 HLD のみを根拠に書かれている。`sonic-linkmgrd` の実コード（`LinkProberStateMachine` / `MuxStateMachine` 等）での裏取りは未済。
@@ -185,3 +191,10 @@ linkmgrd --default_route
 - `sonic-swss/orchagent/routeorch.cpp:127` で `m_stateDefaultRouteTb = unique_ptr<swss::Table>(new Table(m_stateDb.get(), STATE_ROUTE_TABLE_NAME))` として STATE_DB 上の ROUTE state テーブルを open しており、orchagent がデフォルトルート状態を STATE_DB に書く経路が実装済み。
 
 HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd が購読してオプトインで mux 健全性に反映）は実装と整合。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

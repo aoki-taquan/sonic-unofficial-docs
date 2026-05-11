@@ -1,5 +1,6 @@
 ---
 title: Warmboot Manager（shutdown orchestration / reconciliation 統一）
+description: "Warmboot Manager（shutdown orchestration / reconciliation 統一） — 既存の warm-boot 仕組み（fast-reboot script + finalize-warmboot.sh）を補完する新 daemon Warmboot Manager。"
 area: system
 verification: discrepancy-found
 monitor: not_implemented

@@ -1,5 +1,6 @@
 ---
 title: sonic-dot1p-tc-map YANG
+description: "sonic-dot1p-tc-map YANG — 802.1p (PCP) ビットからトラフィッククラス (TC) へのマップを名前付きで保持する。ingress 側で PORT_QOS_MAP から参照される。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

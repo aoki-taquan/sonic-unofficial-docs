@@ -1,5 +1,6 @@
 ---
 title: RIB-FIB と Route Object 生成
+description: "RIB-FIB と Route Object 生成 — SONiC の L3 pipeline は、FRR が持つ RIB と、orchagent / syncd / ASIC が持つ FIB を分けて読むと理解しやすくなります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

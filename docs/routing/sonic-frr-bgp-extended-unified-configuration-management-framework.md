@@ -1,5 +1,6 @@
 ---
 title: FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）
+description: "FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP） — SONiC Management Framework（REST / gNMI / IS-CLI）から OpenConfig BGP モデル経由で FRR-BGP を一気通貫に扱えるようにする設計。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,6 +20,11 @@ related:
     - sonic-bgp
     - openconfig-bgp
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` 本体、`rules/sonic-frr-mgmt-framework.{mk,dep}` ビルドルールを確認。`sonic-buildimage/dockers/docker-fpm-frr/docker_init.sh:68` で `MGMT_FRAMEWORK_CONFIG=$(echo $FRR_VARS | jq -r '.frr_mgmt_framework_config')` の分岐により bgpcfgd / frrcfgd を切替えている。YANG は `sonic-bgp-{global,neighbor,peergroup,common,...}.yang` 群が community sonic-yang-models に存在。`bgpcfgd` と `frrcfgd` の併用は `frr_mgmt_framework_config` キーで一元的に制御される構成。HLD と整合。
@@ -143,3 +149,10 @@ DEVICE_METADATA|localhost:
 - [CONFIG_DB: BGP_GLOBALS](../reference/config-db/bgp-globals.md)
 - [CONFIG_DB: BGP_NEIGHBOR](../reference/config-db/bgp-neighbor.md)
 - [YANG: sonic-bgp-neighbor](../reference/yang/sonic-bgp-neighbor.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

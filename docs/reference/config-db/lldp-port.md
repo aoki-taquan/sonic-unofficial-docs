@@ -1,5 +1,6 @@
 ---
 title: LLDP_PORT テーブル
+description: "LLDP_PORT テーブル — LLDP_PORT は ポート単位の LLDP 設定 を保持する CONFIG_DB テーブル。lldp (lldpd / lldpmgrd) コンテナが CONFIG_DB から読み、各物理ポートで LLDP を有効化するか、また RX / TX どちらのモードで動かすかを決める。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

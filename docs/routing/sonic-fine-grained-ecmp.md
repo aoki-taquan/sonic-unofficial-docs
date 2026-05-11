@@ -1,5 +1,6 @@
 ---
 title: Fine Grained ECMP（FG_NHG / fgnhgorch）
+description: "Fine Grained ECMP（FG_NHG / fgnhgorch） — 通常 ECMP は next-hop が増減するたびに hash redistribution が全 flow に波及 する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -18,6 +19,11 @@ related:
     - show fgnhg active-hops
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: `sonic-swss/orchagent/fgnhgorch.{cpp,h}` の現行実装、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang`（`match_mode` に `prefix-based` を含む Rev 1.5 後の追加分も収容）、`sonic-sairedis/vslib/SwitchStateBase.cpp:4165` の `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` capability 列挙を確認し HLD と整合。
@@ -173,3 +179,10 @@ reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原�
 - prefix-based モード（Rev 1.5, 2024 追加）の master 取り込み確認
 - fast-reboot dump への FG_ROUTE_TABLE 含有確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
+
+<!-- /topics-back-ref -->

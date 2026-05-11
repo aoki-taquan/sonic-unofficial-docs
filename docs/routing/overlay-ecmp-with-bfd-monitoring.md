@@ -1,5 +1,6 @@
 ---
 title: Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）
+description: "Overlay ECMP with BFD monitoring — VxLAN VNet 経路 (VNET_ROUTE_TUNNEL_TABLE) に 複数 endpoint を ECMP で並べ、各 endpoint の生存性を BFD で確認 し、Down メンバを NHG から外したい。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -15,6 +16,11 @@ related:
     - show vnet routes all
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 03 章: VXLAN / EVPN とオーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/vnetorch.cpp` で `STATE_ADVERTISE_NETWORK_TABLE_NAME` 管理、`sonic-swss-common/common/schema.h` で `APP_BGP_PROFILE_TABLE_NAME`、`sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py` `RouteMapMgr` を確認（verified at: 2026-05-09）。
@@ -120,3 +126,10 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER:*' | wc -l
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Overlay ECMP with BFD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
+
+<!-- /topics-back-ref -->

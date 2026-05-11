@@ -1,5 +1,6 @@
 ---
 title: MACSEC_PROFILE テーブル
+description: "MACSEC_PROFILE テーブル — IEEE 802.1AE MACsec のセキュリティプロファイルを定義するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — SRv6 / MPLS / Path Tracing の設定は、いずれも CONFIG_DB のテーブルに置けば最小構成が組めます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

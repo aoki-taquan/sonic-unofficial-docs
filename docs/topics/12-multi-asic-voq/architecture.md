@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — ここでは「supervisor の Chassis DB」「各 ASIC namespace の Redis」「fabric を介した distributed forwarding」がどう組み合わさって 1 つの論理スイッチに見えるかを、データの流れ順に並べます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

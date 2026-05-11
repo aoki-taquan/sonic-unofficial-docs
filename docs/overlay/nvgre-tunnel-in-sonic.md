@@ -1,5 +1,6 @@
 ---
 title: NVGRE トンネル（nvgreorch / decap mapper）
+description: "NVGRE トンネル（nvgreorch / decap mapper） — NVGRE (Network Virtualization using Generic Routing Encapsulation) は L3 上に多数の仮想 L2 セグメントを張る方式。"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,6 +20,11 @@ related:
   yang:
     - sonic-nvgre-tunnel
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 03 章: VXLAN / EVPN とオーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     verifier-batch-18 で確認: `sonic-swss/orchagent/orchdaemon.cpp:361-` で `NvgreTunnelOrch` / `NvgreTunnelMapOrch` を生成、`sonic-swss/orchagent/nvgreorch.{cpp,h}` 実体、`sonic-utilities/config/plugins/nvgre_tunnel.py` の自動生成 CLI を確認。
@@ -183,3 +189,10 @@ show nvgre-tunnel-map
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/nvgre_tunnel/nvgre_tunnel.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
+
+<!-- /topics-back-ref -->

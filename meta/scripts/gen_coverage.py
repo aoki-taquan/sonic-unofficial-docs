@@ -78,6 +78,7 @@ def render(matrix: dict[str, dict[str, int]]) -> str:
     lines: list[str] = []
     lines.append("---")
     lines.append("title: カバレッジ")
+    lines.append('description: "カバレッジ — このページは docs/**/*.md の frontmatter verification フィールドを集計したものです。meta/scripts/gen_coverage.py で自動生成されます。"')
     lines.append("verification: meta")
     lines.append("last_verified: 2026-05-11")
     lines.append("---")

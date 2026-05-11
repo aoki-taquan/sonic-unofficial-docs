@@ -1,5 +1,6 @@
 ---
 title: OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）
+description: "OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1） — FIPS 140-3 認定済みの cryptographic module だけを使うよう SONiC を組み立てるための HLD。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -139,3 +140,10 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 - Golang BoringSSL + RedHat patch の sonic-buildimage 同梱確認
 - OpenSSH FIPS patch (CentOS 由来) の取り込み確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

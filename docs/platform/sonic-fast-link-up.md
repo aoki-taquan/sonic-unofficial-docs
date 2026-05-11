@@ -1,5 +1,6 @@
 ---
 title: SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
+description: "SONiC Fast Link-Up — 100G 以上の高速 Ethernet（特に PAM4）では link training (EQ) 自体が秒オーダーかかる。リンクフラップごとにフル EQ を回すと数秒〜10 秒の収束遅延になる。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,6 +20,11 @@ related:
   yang:
     - sonic-fast-linkup
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `switchorch.cpp:2094-2271`（`setFastLinkupCapability` / `doCfgSwitchFastLinkupTableTask`）、`portsorch.h:300`（`setPortFastLinkupEnabled`）、SAI `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]` / `_GUARD_TIMEOUT[_RANGE]` / `_BER_THRESHOLD`、`sonic-utilities/show/main.py:2933` / `config/main.py:5095` の `switch-fast-linkup` CLI を確認済み (verified at: 2026-05-09)。
@@ -187,3 +193,10 @@ show interfaces fast-linkup status
 
 - [Topic: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
 - [Topic: L2 VLAN LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

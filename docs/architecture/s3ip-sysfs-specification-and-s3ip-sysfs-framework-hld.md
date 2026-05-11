@@ -1,5 +1,6 @@
 ---
 title: S3IP sysfs（/sys_switch 統一ハードウェアアクセス層）
+description: "S3IP sysfs（/sys_switch 統一ハードウェアアクセス層） — SONiC は ASIC こそ共通でも PSU / FAN / 温度センサ / sysled / トランシーバ等、周辺ハードウェア はベンダ・機種ごとに大きく異なる。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-buildimage/platform/s3ip-sysfs/` に host package source があり (`build.sh` / `debian/` / `s3ip_sysfs_frame/{cpld,fan,psu,sysled,...}_sysfs.c` / `scripts/s3ip-sysfs.service`)、`/sys_switch/` 仕様準拠ドライバが取り込まれている。Tencent (`platform/broadcom/sonic-platform-modules-tencent/tcs9400/s3ip_config`) と Micas (`...modules-micas/m2-w6940-64oc/s3ip_sysfs_cfg`) の 2 拠点プラットフォームで利用中。HLD どおり kernel/sysfs 層完結で CONFIG_DB は使わない。
@@ -220,3 +226,10 @@ journalctl -u s3ip-sysfs.service
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/s3ip_sysfs/s3ip_sysfs_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

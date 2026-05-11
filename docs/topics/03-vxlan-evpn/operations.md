@@ -1,5 +1,6 @@
 ---
 title: Overlay 運用
+description: "Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS / hash の順に見ると無駄が少なくなります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

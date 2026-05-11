@@ -1,5 +1,6 @@
 ---
 title: config sflow サブコマンド
+description: "config sflow サブコマンド — config sflow は sFlow のグローバル制御（admin / polling-interval / sample-direction / agent-id）と、インターフェイス単位のサンプル設定、最大 2 件のコレクタ登録を扱う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -122,3 +123,10 @@ interface 用 sample-direction。グローバルと同じ `tx/both` の egress c
 [^3]: egress capability チェック関数は `is_port_egress_sflow_supported`（L9126-L9131）。
 
 [^4]: コレクタ件数チェックは L9354 `len(collector_tbl) == 2` で 2 件固定。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9354>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — ACL / CoPP / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。CONFIG_DB に見えていることと、実際に hardware に作られていることは同じではありません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

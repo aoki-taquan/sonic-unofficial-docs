@@ -1,5 +1,6 @@
 ---
 title: ingress discards テスト計画（21 ケースで drop counter を検証）
+description: "ingress discards テスト計画（21 ケースで drop counter を検証） — DUT が 特定の不正パケット を ingress で drop し、対応する drop counter が正しく増えるかを検証する sonic-mgmt テストプラン。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-10
@@ -18,6 +19,11 @@ related:
     - sonic-clear rifcounters
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified（test plan）"
     HLD 21 ケース表と CLI チェック方法（`portstat -j` / `intfstat -j` / `aclshow -a`）、`counterpoll port|rif enable` を `sonic-utilities/scripts/{portstat,intfstat,aclshow}` および HLD 本文で確認。SAI debug counter のベンダ実装差や L2/L3 drop counter の合算挙動は ASIC 依存のため本ページでは触れない。
@@ -172,3 +178,10 @@ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:*" | head
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

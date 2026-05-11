@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — この章の機能は CLI と CONFIG_DB の二系統から設定でき、それぞれ YANG モデルで形式化されています。各リファレンスページの内容はそちら側を正にし、ここでは「どこを最初に編集するか」と「どの順で組み合わせるか」だけ示します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

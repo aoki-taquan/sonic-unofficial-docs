@@ -1,5 +1,6 @@
 ---
 title: NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
+description: "NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI） — SONiC は Linux kernel の conntrack/iptables を真実源 として、ハードウェア NAT エンジン（SAI NAT API）にエントリを同期する 2 段構成を採る。設計上の役割分担:"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
@@ -21,6 +22,11 @@ related:
   yang:
     - sonic-nat
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。natmgrd: sonic-swss/cfgmgr/natmgrd.cpp + natmgr.cpp / natsyncd: sonic-swss/natsyncd/natsyncd.cpp / NatOrch: sonic-swss/orchagent/natorch.cpp で確認。docker-nat: sonic-buildimage/dockers/docker-nat 取り込み済み。CONFIG_DB STATIC_NAT / NAT_POOL / NAT_BINDINGS / NAT_ZONE: sonic-yang-models sonic-nat.yang で確認。config nat / show nat: sonic-utilities/config/nat.py 取り込み済み。
@@ -136,3 +142,5 @@ config nat add static basic 10.0.0.1 100.64.1.1
 ## 関連 Topics
 
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

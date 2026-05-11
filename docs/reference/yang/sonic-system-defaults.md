@@ -1,5 +1,6 @@
 ---
 title: sonic-system-defaults YANG
+description: "sonic-system-defaults YANG — System-wide default feature settings YANG module for SONiC OS。プラットフォーム/イメージレベルでオプション機能のデフォルト admin 状態を表す SYSTEM_DEFAULTS テーブルを保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

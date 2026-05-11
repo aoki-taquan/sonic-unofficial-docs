@@ -1,5 +1,6 @@
 ---
 title: RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）
+description: "RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority） — SONiC 管理ユーザの SSH / console ログインを RADIUS で認証する仕組み。"
 area: management
 verification: code-verified
 last_verified: 2026-05-11
@@ -17,6 +18,11 @@ related:
     - config radius
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified / 古い HLD"
     本 HLD は 2019-2020 年（Rev 0.12）の RADIUS authentication 設計。後発の AAA Improvements HLD で多重 role・remote_user 共有・nsswitch.conf 動的変更などの根本問題が指摘されている。`priority=high`。
@@ -186,3 +192,10 @@ RADIUS authentication の PAM/NSS 実装の現行 master 取り込みを `hostcf
 - multi server priority / passkey / auth_type / timeout は AaaCfg の RADIUS 部に存在
 
 HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh login → PAM → RADIUS、user lookup → NSS → radius_nss）は実装と一致。後発 AAA Improvements HLD で指摘された多重 role 共有問題は別途残課題で、本ページ自体の主張は実装に追随しているため `code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

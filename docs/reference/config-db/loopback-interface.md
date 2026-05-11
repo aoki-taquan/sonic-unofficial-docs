@@ -1,5 +1,6 @@
 ---
 title: LOOPBACK_INTERFACE テーブル
+description: "LOOPBACK_INTERFACE テーブル — ルータ ID やサービス IP として使う仮想ループバック IF を定義する。Loopback0 は通常 BGP の router-id / source として使われる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

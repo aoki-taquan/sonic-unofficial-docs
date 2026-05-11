@@ -1,5 +1,6 @@
 ---
 title: バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
+description: "バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡） — 読み手の関心は「何を watermark として記録するのか」「telemetry / 手動 / 永続の 3 系統がなぜ要るのか」「clear を打つと何が起きるのか」の 3 点に集約される。順に答える。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -21,6 +22,11 @@ related:
     - config watermark telemetry interval
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（キー名は TELEMETRY_INTERVAL）"
     `sonic-swss/orchagent/watermarkorch.{h,cpp}` で `WatermarkOrch` 実装、`DEFAULT_TELEMETRY_INTERVAL=120` (cpp L9)、`CFG_WATERMARK_TABLE.TELEMETRY_INTERVAL` キー処理 (cpp L97) を確認。Lua plugin `watermark_bufferpool.lua` / `watermark_pg.lua` / `watermark_queue.lua` あり。`STATS_MODE_READ_AND_CLEAR` は `bufferorch.cpp` L334 / `portsorch.cpp` L868/L874 で利用。**HLD の `TELEMETRY_PERIOD` 表記は実装では `TELEMETRY_INTERVAL`** (verified at: 2026-05-09)。
@@ -173,3 +179,5 @@ Ethernet0           0  1092     0   380     0     0     0     0
 ## 関連 Topics
 
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

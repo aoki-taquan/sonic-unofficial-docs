@@ -1,5 +1,6 @@
 ---
 title: kdump（kexec ベース kernel crash dump / makedumpfile）
+description: "kdump（kexec ベース kernel crash dump / makedumpfile） — Linux kernel の kexec を使い、kernel panic 直後に 予約された別メモリ領域に展開済みの capture kernel を起動して crash dump を /var/crash//…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
   yang:
     - sonic-kdump
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-utilities/config/kdump.py` を master で確認、`sonic-buildimage/build_debian.sh` で `kdump` 関連処理も確認、`sonic-buildimage/files/image_config/kdump/kdump-tools` も存在。HLD 当時の主要要素は master 取り込み済み。
@@ -141,3 +147,10 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 ## 関連ページ
 - [CLI: config kdump](../reference/cli/config-kdump.md)
 - [CONFIG_DB: KDUMP](../reference/config-db/kdump.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

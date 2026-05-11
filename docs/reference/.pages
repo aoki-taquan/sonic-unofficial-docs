@@ -3,6 +3,8 @@ nav:
   - index.md
   - cli
   - config-db
+  - config-db-orch-map.md
   - yang
+  - glossary.md
   - verification
   - runbooks

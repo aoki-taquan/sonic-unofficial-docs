@@ -1,5 +1,6 @@
 ---
 title: プラットフォーム
+description: "プラットフォーム — SAI、PMON、センサー、トランシーバ、プラットフォーム API、シャーシ機能を扱う章。"
 verification: stub
 ---
 

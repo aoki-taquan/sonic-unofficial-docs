@@ -1,5 +1,6 @@
 ---
 title: DASH SONiC KVM（BMv2 ベース仮想 DPU）
+description: "DASH SONiC KVM（BMv2 ベース仮想 DPU） — 物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ:"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-sairedis` `configure.ac:49-50` / `debian/rules:40-41` で `--with-dashsai` / `dashsai` build profile を確認。BMv2 は `sonic-slave-trixie/Dockerfile.j2:583`, `sonic-slave-bullseye/Dockerfile.j2:438,622`, `docker-syncd-vs` / `docker-gbsyncd-vs` / `docker-ptf` versions-deb で `p4lang-bmv2==1.15.0-9` を確認。`vms-kvm-dpu` トポロジは HLD L117-118 / L132 で `testbed-cli.sh` コマンドを確認（verified at: 2026-05-09）。
@@ -184,3 +190,11 @@ KVM 自体には追加 CONFIG_DB スキーマ・CLI・YANG は無い。物理 DP
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dash/dash-sonic-kvm.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

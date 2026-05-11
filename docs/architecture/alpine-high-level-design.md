@@ -1,5 +1,6 @@
 ---
 title: Alpine 仮想 SONiC（ALViS / KNE デプロイ）
+description: "Alpine 仮想 SONiC（ALViS / KNE デプロイ） — ALPINE は Google が提案した SONiC のスイッチスタックシミュレーションフレームワーク。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 19 章: Build / Packaging / Debian](../topics/19-build-packaging/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified（部分）"
     `sonic-buildimage` master に `platform/alpinevs` サブモジュール（`url=https://github.com/sonic-net/sonic-alpine/`、`.gitmodules`）と `.azure-pipelines/azure-pipelines-build-alpinevs.yml` が登録され、`build_image.sh` で `TARGET_MACHINE=alpinevs` が分岐される。一方、`libsai-grpc` 等の syncd 連携実体は `sonic-alpine` 配下に集約されており本リポジトリ単体では追跡できない（submodule のため）。`alpinevs-init` サービスや `hwsku=alpine_vs` の記述は HLD 由来であり、buildimage 単体では確認できない。
@@ -147,3 +153,10 @@ VM は qemu で `-m 32768`（32GB RAM）`-smp 12`（12 vCPU）で起動する[^1
 - KNE alpine node type 取り込みの upstream openconfig/kne 状況確認 → 別 repo
 - v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認 → buildimage 側は採用済
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

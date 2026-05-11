@@ -1,5 +1,6 @@
 ---
 title: ZMQ ProducerStateTable / ConsumerStateTable 設計
+description: "ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶ。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp}` を確認。`ZmqProducerStateTable : public ProducerStateTable` と `ZmqClient&` メンバ、コンストラクタ既定 `dbPersistence = true` (Producer) / `false` (Consumer)、フラグに応じた DB 書き込み分岐を確認。Python は `pyext/swsscommon.i` L296-346 で `ZmqProducerStateTable` director 化と `zmqWait` ヘルパを確認 (verified at: 2026-05-09)。

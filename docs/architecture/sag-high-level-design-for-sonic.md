@@ -1,5 +1,6 @@
 ---
 title: SAG（Static Anycast Gateway）for SONiC
+description: "SAG（Static Anycast Gateway）for SONiC — EVPN/VxLAN ファブリックで全 leaf が 同一 IP / MAC をデフォルトゲートウェイ として応答するための仕組み。"
 area: architecture
 verification: discrepancy-found
 monitor: not_implemented

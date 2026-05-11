@@ -1,5 +1,6 @@
 ---
 title: QoS / Buffer のアーキテクチャ
+description: "QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、そしてどの daemon が橋渡しをしているかをまとめます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

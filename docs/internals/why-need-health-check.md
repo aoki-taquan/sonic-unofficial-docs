@@ -1,5 +1,6 @@
 ---
 title: コンテナ health-check（k8s readiness probe）
+description: "コンテナ health-check（k8s readiness probe） — SONiC の k8s 連携では、コンテナそのものが起動しているかどうかは kubelet が把握しているが、コンテナ内の supervisor 配下サービスが本当に正常か は外から見えない。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/readiness_probe.sh` を master で確認。各コンテナへの readiness probe 投入は ctrmgrd 経由で実装。

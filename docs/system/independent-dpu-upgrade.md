@@ -1,5 +1,6 @@
 ---
 title: "Smart Switch: DPU 独立アップグレード（gNOI 経路）"
+description: "Smart Switch: DPU 独立アップグレード（gNOI 経路） — SmartSwitch では NPU 1 台に複数 DPU が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を NPU に offload している。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     sonic-gnmi master で DPU Proxy（GNMI/GNOI Splitter）が `pkg/interceptors/dpuproxy/proxy.go` に実装済み（`ForwardToDPU` / `HandleLocally`）。Containerz gNOI は `gnmi_server/gnoi_containerz.go` および `gnoi_client/containerz/` に、`System.SetPackage` 等は `pkg/gnoi/system/system.go` / `gnmi_server/gnoi_system.go` に実装。HLD で言及されている主要ハンドラ群は master に取り込み済み。
@@ -121,3 +127,10 @@ reasoning: gNOI API 系列と各 phase の根拠。
 - v0.1 (2025-01) Initial Proposal、master への取り込み・採否未確認
 - DPU graceful shutdown / HA との race condition の整合確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

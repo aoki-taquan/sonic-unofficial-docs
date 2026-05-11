@@ -1,5 +1,6 @@
 ---
 title: YANG 横断索引
+description: "YANG 横断索引 — docs/reference/yang/ 配下の 39 モジュールを、Phase B の機能章ごとに並べ直した索引である。SONiC の YANG は概ね sonic-.yang の命名で CONFIG_DB の table family に 1 対 1 ないし 1 対多で対応している。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

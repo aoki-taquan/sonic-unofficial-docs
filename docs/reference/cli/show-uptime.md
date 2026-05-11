@@ -1,5 +1,6 @@
 ---
 title: show uptime サブコマンド
+description: "show uptime サブコマンド — show uptime は システムの稼働時間を uptime -p で「pretty 形式」で表示する click コマンド。出力例: up 3 weeks, 2 days, 4 hours, 15 minutes。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: 1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+description: "1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch） — IEEE P802.3dj が定める 200 / 400 / 800 Gb/s と 1.6 Tb/s のインターフェース定義を SONiC に取り込むための変更点を列挙した HLD。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
   yang:
     - sonic-port
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: 主要 4 リポジトリへの取り込みを確認。`sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/common.py:201` `get_interface_speed` で `'1.6T' in ifname → 1600000` 分岐、`sonic-swss/orchagent/port/porthlpr.cpp:32` `static const std::uint32_t maxPortSpeed = 1600000;`、`sonic-swss/orchagent/port_rates.lua:110` `serdes = 212.5e+9`、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:102,133` で `range 1..1600000`、`sonic-swss/orchagent/port_flr.lua:78` で `['1600000_8'] = 4` まで実装済み。HLD と整合。inner FEC / link training 等の検討点はオープンのまま。
@@ -206,3 +212,10 @@ show interfaces status | grep Ethernet0
 - sonic-port YANG の speed 制約 1600000 受理確認
 - SFF-8024 新 ID (30/31/87/88/128/129/130/131 等) の sonic-platform-common 取り込み
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

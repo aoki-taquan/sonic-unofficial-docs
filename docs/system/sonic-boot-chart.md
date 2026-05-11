@@ -1,5 +1,6 @@
 ---
 title: SONiC Boot Chart（systemd-bootchart 統合）
+description: "SONiC Boot Chart（systemd-bootchart 統合） — SONiC は モジュール構成 で、各機能はスクリプト・ユーティリティ・daemon・docker container として実装される。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
     - sonic-bootchart
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     verifier-batch-18 で確認:

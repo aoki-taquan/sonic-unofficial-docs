@@ -1,5 +1,6 @@
 ---
 title: Multi-ASIC / VOQ chassis 関連
+description: "Multi-ASIC / VOQ chassis 関連 — このカテゴリは Multi-ASIC と VOQ chassis に関わるページを area 横断でまとめます。"
 area: categories
 verification: meta
 last_verified: 2026-05-10
@@ -83,3 +84,5 @@ VOQ シャシでは **CHASSIS_APP_DB** が新しい広域 DB として登場し�
 ## 関連 Topics
 
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

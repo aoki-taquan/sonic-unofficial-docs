@@ -1,5 +1,6 @@
 ---
 title: Mux 制御の内部構造
+description: "Mux 制御の内部構造 — Dual-ToR の制御は 1 つの daemon だけでは完結しません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: 概要
+description: "概要 — SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

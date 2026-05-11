@@ -1,5 +1,6 @@
 ---
 title: Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
+description: "Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor） — active-active は 両 ToR が常時トラフィックを処理する 設計。"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
@@ -33,6 +34,11 @@ related:
     - config mux mode
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 05 章: Dual ToR / MUX / アクティブ冗長](../topics/05-dual-tor/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-linkmgrd` に active-active 専用の state machine 一式 (`src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}`、`src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}`) が存在し、`MuxOrch` は `cable_type == "active-active"`（`muxorch.cpp:2233`）で active-active 系処理を分岐する。新規 APP_DB / STATE_DB テーブル（`FORWARDING_STATE_COMMAND` / `FORWARDING_STATE_RESPONSE` / `HW_FORWARDING_STATE_PEER` / `HW_MUX_CABLE_TABLE_PEER`）は `sonic-swss-common/common/schema.h:145-149,465` に登録済み。`config mux mode detach` も `sonic-utilities/config/muxcable.py:351` の `click.Choice` に追加済み。warm reboot 対応は HLD 上 TBD のままで本ページの裏取り範囲外。
@@ -270,3 +276,5 @@ Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:4
 ## 関連 Topics
 
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

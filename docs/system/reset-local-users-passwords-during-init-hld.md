@@ -1,5 +1,6 @@
 ---
 title: ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
+description: "ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service） — Boot 時に long reset button (>=15 秒押下) が検知されたら、非デフォルトユーザを削除しデフォルトユーザのパスワードを工場出…"
 area: system
 verification: discrepancy-found
 monitor: partially_implemented
@@ -17,6 +18,11 @@ related:
   yang:
     - sonic-local-users-passwords-reset
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: HLD-only"
     HLD は 2024 年 1〜2 月版 (Rev 2.1)。`reset-local-users-passwords.service`、`sonic-platform-common` の `LocalUsersConfigurationResetBase`、各 vendor 実装、`/etc/sonic/default_users.json` のフォーマット、`ENABLE_LOCAL_USERS_PASSWORDS_RESET` ビルドフラグの現行 master 取り込みは未裏取り。
@@ -131,3 +137,10 @@ per-page queue で既出の通り、HLD が定義する専用機構は未取り�
 #### 関連 GitHub Issue / PR
 
 - [GitHub Issue / PR の関連リンクは未確認] — `reset-local-users-passwords.service` と long reset button トリガの取り込みは個別 image_config PR で進行しているが、HLD と直接紐づくトラッキング Issue は確認できず（検索結果 #24867 は無関係な doc refactor link issue）。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

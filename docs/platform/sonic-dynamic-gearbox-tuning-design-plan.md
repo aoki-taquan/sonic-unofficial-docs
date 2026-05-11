@@ -1,5 +1,6 @@
 ---
 title: Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
+description: "Gearbox 動的チューニング（gb_line_ / gb_system_ in media_settings.json） — Gearbox は ASIC 内部レーンとフロントポート速度を変換する 外付け PHY（例: ASIC 4×10G → フロント 1×40G）。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。gearbox: sonic-swss/orchagent/portsorch.cpp の m_gearboxTable / m_gearboxEnabled 経路 + tests/mock_tests/portsorch_ut.cpp:1711-1721 (gb_line_pre1..3, gb_line_main, gb_line_post1..3, gb_system_*) で 7 種 attr を確認。
@@ -174,3 +180,10 @@ jq '.MEDIA_SETTINGS' /usr/share/sonic/device/$PLATFORM/media_settings.json | hea
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/media-settings/Dynamic-gearbox-tuning.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

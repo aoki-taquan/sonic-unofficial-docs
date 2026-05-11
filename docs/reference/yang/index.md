@@ -1,5 +1,6 @@
 ---
 title: YANG リファレンス
+description: "YANG リファレンス — sonic-yang-models (sonic-buildimage repo の src/sonic-yang-models/yang-models/) に同梱される SONiC YANG モデルのリファレンス。"
 area: reference
 verification: meta
 last_verified: 2026-05-09
@@ -120,3 +121,5 @@ SONiC の YANG モデルは **CONFIG_DB スキーマの正本**として機能�
 ## 関連 Topics
 
 - [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)
+
+<!-- /topics-back-ref -->

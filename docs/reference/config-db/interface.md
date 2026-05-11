@@ -1,5 +1,6 @@
 ---
 title: INTERFACE テーブル
+description: "INTERFACE テーブル — 物理 Ethernet ポート (PORT) を L3 IF として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local モード、MAC を持つ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -85,3 +86,10 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 - [CLI: config interface](../cli/config-interface.md)
 - [CONFIG_DB: PORT](port.md)
 - [YANG: sonic-interface](../yang/sonic-interface.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

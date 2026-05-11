@@ -1,5 +1,6 @@
 ---
 title: ASIC link が UP しない (autoneg / FEC / speed mismatch)
+description: "Runbook: ASIC port が UP しない (autoneg / speed / FEC 不整合) — : sonic-net/sonic-swss @ master — portsorch.cpp : sonic-net/sonic-platform-daemons @ master — xcvrd.py"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: PORT_STORM_CONTROL テーブル
+description: "PORT_STORM_CONTROL テーブル — 物理ポートで BUM (broadcast / unknown-unicast / unknown-multicast) トラフィックのレート制限 (storm control) を設定するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

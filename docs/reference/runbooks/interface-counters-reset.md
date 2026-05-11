@@ -1,5 +1,6 @@
 ---
 title: show interfaces counters が突然リセットされる
+description: "Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities @ 39732bceb — scripts/portstat : sonic-net/sonic-swss @ 4305596 — orchagent/flexcoun…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

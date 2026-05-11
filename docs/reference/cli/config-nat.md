@@ -1,5 +1,6 @@
 ---
 title: config nat サブコマンド
+description: "config nat サブコマンド — config nat は SONiC の NAT44 (NAT / NAPT) 機能の CONFIG_DB を直接操作する CLI で、config/nat.py の @click.group('nat') がエントリポイントとなる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -126,3 +127,10 @@ excerpt: |
 [^2]: 重複検査は `isOverlappingWithAnyDynamicEntry` / `isIpOverlappingWithAnyStaticEntry` (`config/nat.py` L59-L127)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/nat.py#L59>
 
 [^3]: `add binding` は `config/nat.py` L778-L842。pool 存在チェックと twice_nat_id 整合検査を含む。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/nat.py#L778>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

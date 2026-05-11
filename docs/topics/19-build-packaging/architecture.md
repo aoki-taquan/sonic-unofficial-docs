@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — ビルド成果物が ONIE installer に収まり、ターゲット機材で立ち上がるまでの流れを、source から image までの順で追う。各ステップに対応する HLD・コードリンクは末尾に集約している。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

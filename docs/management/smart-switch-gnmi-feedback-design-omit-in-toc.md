@@ -1,5 +1,6 @@
 ---
 title: SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
+description: "SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が NPU 上の gNMI サーバ を介して各 DPU を設定する。"
 area: management
 verification: discrepancy-found
 monitor: not_implemented
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: HLD-only"
     HLD は Rev 0.1 のみで日付未記載。`gnmi-server` の SmartSwitch 拡張、DPU APPL_STATE_DB スキーマ、ZMQ 経由の swss 連携実装は要裏取り。
@@ -198,3 +204,10 @@ HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合�
 #### 関連 GitHub Issue / PR
 
 - [GitHub Issue / PR の関連リンクは未確認] — SmartSwitch DPU 側 APPL_STATE_DB と version_id フィードバック機構は SmartSwitch 全体の HA / gNMI 改修 PR 群に取り込まれており、本 HLD 単独のトラッキング Issue / PR は確認できず。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）
+description: "VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証） — vrf-vs-test-plan が SwSS 内部の DB 反映を見るのに対し、本プランは 実 SONiC スイッチ上で VRF 機能を E2E 検証 する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-11
@@ -21,6 +22,11 @@ related:
   yang:
     - sonic-vrf
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     本テストプランは sonic-mgmt 上の `test_vrf.py` 設計記述。`config vrf` / `config interface vrf bind` CLI、`frr.conf.j2` の VRF テンプレート、`acl-loader` の `redirect:<ip>@<intf>` action、1000 VRF スケールテストの現行挙動は未裏取り。
@@ -113,3 +119,10 @@ VRF 跨ぎリダイレクトでは **outgoing interface も明示** が必要[^1
 - 4096 VRF（VRF_TABLE_START=1001, END=5097）のレンジが定義されており、HLD/プランの「1000 VRF スケール」記述と整合。
 
 テストプラン自体は記述で、現行 master の vrfmgrd 実装と整合。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

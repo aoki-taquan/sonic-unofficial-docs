@@ -1,5 +1,6 @@
 ---
 title: SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）
+description: "SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） — SONiC の SRv6 サポートは別 HLD（srv6_hld.md）で定義済みだが、cross-connect 系 behavior（uA / End.X / uDX4 / uDX6…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/srv6orch.h:189` で `createUpdateMysidEntry(my_sid_string, vrf, adj, end_action)`、`:277` で `m_pendingSRv6MySIDEntries: map<NextHopKey, set<tuple<...>>>` を確認。`srv6orch.cpp:1227-1259` で Neighbor 確定時の pending 解決、`:1341/:1533/:1541` で未解決時の queue 投入、`:1544` で `SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` を SAI に渡す経路を確認（verified at: 2026-05-09）。
@@ -110,3 +116,10 @@ sonic-db-cli ASIC_DB keys '*MY_SID*'                  # ASIC に降りている�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/srv6/srv6_sid_l3adj.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

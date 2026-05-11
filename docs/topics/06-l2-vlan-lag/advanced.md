@@ -1,5 +1,6 @@
 ---
 title: L2 発展トピック
+description: "L2 発展トピック — このページは、通常の VLAN / PortChannel / MC-LAG 設計から一歩外れる話題の入口です。OpenConfig は管理 API 章、distributed VOQ LAG は VOQ 章、Wake-on-LAN は運用ツールとしても読む対象です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

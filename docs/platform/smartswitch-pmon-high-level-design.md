@@ -1,5 +1,6 @@
 ---
 title: SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）
+description: "SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界） — 「SmartSwitch」は 同一筐体内に Network ASIC（NPU）と DPU（Data Processing Unit）を持つ platform。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
@@ -19,6 +20,11 @@ related:
     - sonic-platform
     - sonic-chassis
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     DPU 監視ループは `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` および `tests/test_dpu_chassisd.py`、Module/DPU API は `sonic-platform-common/sonic_platform_base/module_base.py`（`get_dpu_id` ほか）、CLI は `sonic-utilities/show/chassis_modules.py`・`sonic-utilities/config/chassis_modules.py`（`show chassis-modules` / `config chassis modules startup`）で確認済み。
@@ -106,3 +112,10 @@ flowchart LR
 - inband mgmt link 未到達時の cached state / liveness 判定ロジックの現行実装確認
 - DPU graceful shutdown / smart-switch HA / independent DPU upgrade との実装連携確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

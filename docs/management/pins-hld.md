@@ -1,5 +1,6 @@
 ---
 title: PINS（P4 Integrated Network Stack / SDN 制御 SONiC）
+description: "PINS（P4 Integrated Network Stack） — PINS は P4Runtime ベースの SDN 制御 interface を SONiC に opt-in で追加するプロジェクト。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified（部分）"
     `sonic-swss/orchagent/p4orch/`（`p4orch.cpp` / `p4orch.h` ほか）と `sonic-buildimage/dockers/docker-sonic-p4rt/`（`p4rt.sh`, `p4rt_vars.j2`, `p4rt.service.j2`）、`rules/p4rt.{mk,dep}` 確認。`sonic-swss-common/common/schema.h` で `APPL_STATE_DB=14` / `DPU_APPL_STATE_DB=16` 定義。`send_to_ingress` netdev は HLD（`SONiC/doc/pins/Packet_io.md`）には設計されているが本リポ群の host config / kernel には現れず、vendor SAI / P4Runtime app 側で扱われる前提。`saip4ext.h` は OCP SAI submodule 側のため本リポでは未展開。
@@ -117,3 +123,5 @@ P4Orch は **同一 ASIC table への複数 writer（RouteOrch 等）** を扱�
 ## 関連 Topics
 
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
+
+<!-- /topics-back-ref -->

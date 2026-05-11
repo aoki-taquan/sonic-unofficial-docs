@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — このページは、基本の observability 経路（CLI / counter / SNMP / gNMI / techsupport）から外れる、専門観測機能と最近の telemetry 拡張をまとめます。設計判断に直結する局面以外は深追い不要です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

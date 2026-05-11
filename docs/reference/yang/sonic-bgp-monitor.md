@@ -1,5 +1,6 @@
 ---
 title: sonic-bgp-monitor YANG
+description: "sonic-bgp-monitor YANG — bgpcfgd が扱う BGP monitor peer 設定。 BMP / monitoring collector 用の擬似ピアを定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

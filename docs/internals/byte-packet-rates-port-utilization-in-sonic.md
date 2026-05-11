@@ -1,5 +1,6 @@
 ---
 title: バイト/パケットレートとポート使用率（RATES テーブル + EMA）
+description: "バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等のレート列は、長らく CLI 側でカウンタの差分を計算する 方式で実装されていた。問題は次の通り:"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -18,6 +19,11 @@ related:
     - intfstat
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/portsorch.h` L30 (`PORT_RATE_COUNTER_FLEX_COUNTER_GROUP`) と `intfsorch.h` L20 (`RIF_RATE_COUNTER_FLEX_COUNTER_GROUP`)、Lua プラグイン `port_rates.lua` / `rif_rates.lua` / `trap_rates.lua` / `tunnel_rates.lua`（`Makefile.am` L20-32）、`flexcounterorch.cpp` L73/L83 で `PORT_RATES` / `RIF_RATES` の counterpoll キー登録を確認。`sonic-utilities/config/main.py` L9586 `smoothing_interval` CLI が `RATES:PORT` / `RATES:RIF` / `RATES:TRAP` を `COUNTERS_DB` に書き込み、`alpha = 2/(N+1)` で EMA 係数を計算 (verified at: 2026-05-09)。
@@ -234,3 +240,10 @@ config rate smoothing_interval port 5    # EMA N=5
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/rates-and-utilization/Rates_and_utilization_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

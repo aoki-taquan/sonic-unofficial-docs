@@ -1,5 +1,6 @@
 ---
 title: Packet Trimming（symmetric / asymmetric DSCP / ACL disable）
+description: "Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — Packet Trimming（PT）はバッファ枯渇で drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（…"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11
@@ -18,6 +19,11 @@ related:
   yang:
     - sonic-switch-trimming
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `SwitchOrch` の packet trimming 取り込みを `sonic-swss/orchagent/switchorch.cpp` L1004-L1260 で確認。`SAI_SWITCH_ATTR_PACKET_TRIM_SIZE` (L1004), `_DSCP_RESOLUTION_MODE` (L1015), `_DSCP_VALUE` (L1026), `_TC_VALUE` (L1037), `_QUEUE_RESOLUTION_MODE` (L1048), `_QUEUE_INDEX` (L1059) を SAI に書き込む 6 経路を確認。capability エラーハンドリングと symmetric DSCP モード時の TC skip ロジック (L1190 `Skip setting switch trimming TC value for symmetric DSCP mode`) も実装済み。BufferOrch / ACL `DISABLE_TRIMMING` 側は別バッチで深堀予定。
@@ -166,3 +172,10 @@ show switch-trimming counters
 - v0.2 Asymmetric DSCP / v0.3 Drop counter の現行 master 取り込み確認
 - vendor 別 PT capability（Mellanox/Broadcom 等）と STATE_DB capability 公開確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: DIP=SIP PTF 検証テスト
+description: "DIP=SIP PTF 検証テスト — 「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを SONiC スイッチが正しくルーティングできるかを PTF (Packet Test Framework) で検証 するテストの設計。"
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 21 章: Lab / SONiC-VS / 開発者](../topics/21-lab-vs-developer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! danger "裏取りステータス: discrepancy-found（pytest 移行）"
     HLD で提案されている独立 PTF スクリプト `ansible/roles/test/files/ptftests/dip_sip.py` は **既に削除済**。代わりに `sonic-mgmt/tests/ipfwd/test_dip_sip.py` (pytest) に移行されており、`ansible/roles/test/tasks/dip_sip.yml` は `pytest_runner.yml` を呼ぶラッパに縮約されている (114 byte)。`vars/testcases.yml` は実在 (11721 byte)。HLD のテスト本体記述は **現行コードと構造が異なる** ため、test_dip_sip.py 側の最新仕様に追従する必要あり。
@@ -253,3 +259,10 @@ ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest te
 - ansible/roles/test/vars/testcases.yml は size 11721 byte で実在
 -->
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

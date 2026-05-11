@@ -1,5 +1,6 @@
 ---
 title: sonic-sflow YANG
+description: "sonic-sflow YANG — SFLOW yang Module for SONiC OS. sFlow サンプリングコレクタとセッションを定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

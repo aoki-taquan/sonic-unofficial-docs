@@ -1,5 +1,6 @@
 ---
 title: SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
+description: "SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） — uSID（micro-SID）は IETF Compressed SRv6 Segment List Encoding と SRv6 uSID instructions で定義される、SRv6 SID を 16 bit などに圧縮 する…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/srv6orch.cpp` L41-62 の `end_behavior_map` に `un / ua / udt4 / udt6 / udt46 / udx4 / udx6` 等が登録され、`SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN`・`UA`・`UDT*`・`UDX*` を参照していることを確認。L1369-1410 で behavior 別の VRF / nexthop バリデーションも分岐済み（verified at: 2026-05-09）。FRR 系 SRv6 制御プレーンは引き続き本 HLD のスコープ外。
@@ -168,3 +174,10 @@ uDT46（VRF にデキャプ）:
 - FRR の SRv6 制御プレーン対応の進捗（HLD 後の状況）
 - locator パースの 16:8:8:8 デフォルトが現行コードでも有効か
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

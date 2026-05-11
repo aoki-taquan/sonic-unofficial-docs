@@ -1,5 +1,6 @@
 ---
 title: DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
+description: "DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース） — 「なぜ CoPP 全体ではダメか」「何を投入すれば効くのか」「いま master でどこまで効くのか」が読み手の最大の関心。"
 area: acl-qos
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -17,6 +18,11 @@ related:
   yang:
     - sonic-port
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! danger "裏取りステータス: Discrepancy-found（部分実装）"
     `dhcp_rate_limit` の **データ層 + CLI** は取り込み済み（`sonic-yang-models/yang-models/sonic-port.yang` L106、`sonic-utilities/scripts/db_migrator.py` L514-524 で既定 300 を migration、`sonic-utilities/config/main.py` L5948-6002）。一方、HLD が要求する **portmgrd の `tc qdisc` / `tc filter` 投入ロジック** は `sonic-swss/cfgmgr/` に未取り込み（grep ヒット 0）。`sonic-buildimage/files/image_config/copp/copp_cfg.j2` に `dhcp_relay: trap_ids="dhcp,dhcpv6"` が残り、HLD が前提とする「CoPP 全体 DHCP 制限の削除」も未実施。仕様参考扱い（verified at: 2026-05-09）。
@@ -173,3 +179,11 @@ CLI ルール[^1]:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/Dhcp_Mitigation/DHCP Mitigation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: CLI リファレンス
+description: "CLI リファレンス — SONiC の運用 CLI は sonic-utilities リポジトリの click ベースのコマンドツリーで定義される。"
 area: reference
 verification: meta
 last_verified: 2026-05-09
@@ -108,3 +109,5 @@ config.add_command(vxlan.vxlan)
 ## 関連 Topics
 
 - [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)
+
+<!-- /topics-back-ref -->

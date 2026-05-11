@@ -1,0 +1,276 @@
+# SONiC 用語 → 日本語訳マッピング (v1.2 多言語化用)
+#
+# このファイルは docs/reference/glossary.md と対応する機械可読版で、
+# 将来的にページ生成時の自動置換 / ツールチップ / 多言語ビルドに利用する。
+#
+# キー: 英語の用語またはコンポーネント名 (大文字小文字は原典準拠)
+# 値:
+#   ja:   日本語訳 (短いラベル)
+#   kind: term | daemon | db | protocol | component | repo | concept | tool | acronym
+#   desc: 1 行の補足説明 (省略可)
+#
+# 詳細は docs/reference/glossary.md を参照。
+
+version: 1
+generated_for_schema: v1.2-i18n
+source: docs/reference/glossary.md
+
+terms:
+  APPL_DB:
+    ja: アプリケーション DB
+    kind: db
+    desc: SwSS が購読する Redis DB (DB ID 0)。望ましいアプリ状態を表現。
+  ARP:
+    ja: ARP
+    kind: protocol
+    desc: IPv4 → MAC 解決プロトコル。
+  ASIC_DB:
+    ja: ASIC DB
+    kind: db
+    desc: SAI オブジェクト状態が書かれる Redis DB (DB ID 1)。
+  AsterNOS:
+    ja: AsterNOS
+    kind: term
+    desc: Asterfusion 製ベンダー版 SONiC。本ドキュメントのスコープ外。
+  BFD:
+    ja: 双方向フォワーディング検出
+    kind: protocol
+  BGP:
+    ja: BGP
+    kind: protocol
+  bgpcfgd:
+    ja: BGP 設定デーモン
+    kind: daemon
+  Buffer Model:
+    ja: バッファモデル
+    kind: concept
+  CONFIG_DB:
+    ja: 設定 DB
+    kind: db
+    desc: 正規設定保持先の Redis DB (DB ID 4)。
+  config_db.json:
+    ja: 設定 DB スナップショット
+    kind: tool
+  config-setup:
+    ja: 設定セットアップ
+    kind: tool
+  COUNTERS_DB:
+    ja: カウンタ DB
+    kind: db
+  CoPP:
+    ja: 制御プレーンポリシング
+    kind: concept
+  CounterSyncd:
+    ja: カウンタ同期
+    kind: component
+  CRM:
+    ja: 重要リソース監視
+    kind: component
+  DASH:
+    ja: DASH
+    kind: component
+  DHCP Relay:
+    ja: DHCP リレー
+    kind: component
+  DPU:
+    ja: データ処理ユニット
+    kind: term
+  ECMP:
+    ja: 等コストマルチパス
+    kind: concept
+  ENI:
+    ja: ENI
+    kind: concept
+    desc: DASH の仮想 NIC 概念。
+  EVPN:
+    ja: EVPN
+    kind: protocol
+  FDB:
+    ja: MAC 学習テーブル
+    kind: concept
+  fdbsyncd:
+    ja: FDB 同期デーモン
+    kind: daemon
+  FlexCounter:
+    ja: 柔軟カウンタ
+    kind: component
+  FPM:
+    ja: 転送プレーンマネージャ
+    kind: protocol
+  fpmsyncd:
+    ja: FPM 同期デーモン
+    kind: daemon
+  FRR:
+    ja: FRRouting
+    kind: component
+  gNMI:
+    ja: gNMI
+    kind: protocol
+  GCU:
+    ja: 汎用設定更新
+    kind: tool
+  HLD:
+    ja: 高位設計書
+    kind: term
+  hostcfgd:
+    ja: ホスト設定デーモン
+    kind: daemon
+  intfmgrd:
+    ja: インターフェース設定マネージャ
+    kind: daemon
+  intfsyncd:
+    ja: インターフェース同期
+    kind: daemon
+  LACP:
+    ja: LACP
+    kind: protocol
+  LAG:
+    ja: リンク集約
+    kind: concept
+  linkmgrd:
+    ja: リンクマネージャ
+    kind: daemon
+  LLDP:
+    ja: LLDP
+    kind: protocol
+  MCLAG:
+    ja: MCLAG
+    kind: concept
+  minigraph.xml:
+    ja: ミニグラフ
+    kind: tool
+  MUX:
+    ja: MUX
+    kind: concept
+  NAT:
+    ja: NAT
+    kind: concept
+  natmgrd:
+    ja: NAT 管理デーモン
+    kind: daemon
+  natsyncd:
+    ja: NAT 同期デーモン
+    kind: daemon
+  neighsyncd:
+    ja: 隣接同期デーモン
+    kind: daemon
+  Netlink:
+    ja: Netlink
+    kind: component
+  NPU:
+    ja: NPU
+    kind: term
+  orchagent:
+    ja: オーケストレーションエージェント
+    kind: daemon
+  PFC:
+    ja: 優先度ベースフロー制御
+    kind: protocol
+  pfcwd:
+    ja: PFC ウォッチドッグ
+    kind: component
+  portmgrd:
+    ja: ポート設定マネージャ
+    kind: daemon
+  portsyncd:
+    ja: ポート同期デーモン
+    kind: daemon
+  PortChannel:
+    ja: ポートチャネル
+    kind: concept
+  QoS:
+    ja: QoS
+    kind: concept
+  Redis:
+    ja: Redis
+    kind: component
+  RIF:
+    ja: ルータインターフェース
+    kind: concept
+  ROUTE_TABLE:
+    ja: ルートテーブル
+    kind: db
+  SAI:
+    ja: スイッチ抽象化インターフェース
+    kind: component
+  sonic-buildimage:
+    ja: SONiC ビルドイメージ
+    kind: repo
+  sonic-cfggen:
+    ja: 設定ジェネレータ
+    kind: tool
+  sonic-mgmt:
+    ja: SONiC 管理 (テスト)
+    kind: repo
+  sonic-swss:
+    ja: SwSS リポ
+    kind: repo
+  sonic-swss-common:
+    ja: SwSS 共通ライブラリ
+    kind: repo
+  sonic-sairedis:
+    ja: SAI Redis シム
+    kind: repo
+  sonic-utilities:
+    ja: SONiC CLI ユーティリティ
+    kind: repo
+  SmartSwitch:
+    ja: SmartSwitch
+    kind: concept
+  STATE_DB:
+    ja: 状態 DB
+    kind: db
+  swssconfig:
+    ja: SwSS 設定ローダ
+    kind: tool
+  syncd:
+    ja: ASIC 同期デーモン
+    kind: daemon
+  teamd:
+    ja: teamd
+    kind: daemon
+  teamsyncd:
+    ja: teamsyncd
+    kind: daemon
+  teammgrd:
+    ja: teammgrd
+    kind: daemon
+  tunnelmgrd:
+    ja: トンネル管理デーモン
+    kind: daemon
+  VLAN:
+    ja: VLAN
+    kind: concept
+  vlanmgrd:
+    ja: VLAN 管理デーモン
+    kind: daemon
+  VNET:
+    ja: VNET
+    kind: concept
+  VRF:
+    ja: VRF
+    kind: concept
+  vrfmgrd:
+    ja: VRF 管理デーモン
+    kind: daemon
+  VXLAN:
+    ja: VXLAN
+    kind: protocol
+  vxlanmgrd:
+    ja: VXLAN 管理デーモン
+    kind: daemon
+  WRED:
+    ja: 重み付きランダム早期検出
+    kind: concept
+  YANG:
+    ja: YANG
+    kind: component
+  yang-validator:
+    ja: YANG バリデータ
+    kind: tool
+  zebra:
+    ja: zebra
+    kind: daemon
+  ZTP:
+    ja: ゼロタッチプロビジョニング
+    kind: tool

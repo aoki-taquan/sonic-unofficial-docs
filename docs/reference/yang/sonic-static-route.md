@@ -1,5 +1,6 @@
 ---
 title: sonic-static-route YANG
+description: "sonic-static-route YANG — STATIC ROUTE yang Module for SONiC OS"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

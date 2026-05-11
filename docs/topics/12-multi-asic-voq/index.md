@@ -1,5 +1,6 @@
 ---
 title: Multi-ASIC / VOQ Chassis
+description: "Multi-ASIC / VOQ Chassis — この章は、SONiC が「1 つの NOS インスタンスで複数 ASIC を、または複数 line card を 1 つの論理スイッチとして見せる」ための仕組みをまとめて読むための入口です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

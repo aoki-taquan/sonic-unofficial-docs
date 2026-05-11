@@ -1,5 +1,6 @@
 ---
 title: sonic-srv6 YANG
+description: "sonic-srv6 YANG — Segment Routing over IPv6 (SRv6) configuration for SONiC."
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

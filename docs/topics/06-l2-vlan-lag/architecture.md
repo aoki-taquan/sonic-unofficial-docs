@@ -1,5 +1,6 @@
 ---
 title: L2 のアーキテクチャ
+description: "L2 のアーキテクチャ — L2 設定は、CONFIG_DB のテーブルごとに担当 daemon が決まり、APPL_DB や orchagent を通って ASIC に反映されます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

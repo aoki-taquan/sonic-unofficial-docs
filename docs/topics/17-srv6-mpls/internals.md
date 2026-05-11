@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — ここでは SRv6 / MPLS / Path Tracing の主要 daemon・ファイル・SAI 属性のうち、設計を理解する上で欠かせない部分を集約します。コード位置は元 HLD ページに紐付いており、verifier が裏取り済みです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

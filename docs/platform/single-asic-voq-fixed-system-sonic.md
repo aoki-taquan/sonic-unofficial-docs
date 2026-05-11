@@ -1,5 +1,6 @@
 ---
 title: 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）
+description: "単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐） — VoQ（Virtual Output Queue）アーキテクチャはこれまで マルチ ASIC のシャーシシステム でのみ前提とされ、Chassis DB（chassisdb.conf の有無で識別され…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
     - show chassis
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     sonic-buildimage `src/sonic-py-common/sonic_py_common/device_info.py` L43 `CHASSIS_DB_CONF_FILENAME = "chassisdb.conf"`、L261/L265 で chassis_db_conf_path 候補列挙、L622 `is_chassis_config_absent()`、L630-635 `is_voq_chassis()` で `switch_type ∈ {voq, fabric} かつ not is_chassis_config_absent()` の判定（chassisdb.conf 存在チェックで single-ASIC VoQ を区別）を確認。L668 `is_chassis()` で voq+disagg 除外 / packet / virtual を OR 結合。bgpcfgd 側は `src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py` L241 と `bgpcfgd/main.py` L112 で `device_info.is_chassis()` 分岐、テストデータ `tests/data/sonic-cfggen/bgpd.main.conf.j2/voq_chassis.json` L7 で `chassisdb_conf_present` フラグを確認（verified at: 2026-05-09）。
@@ -128,3 +134,10 @@ reasoning: chassisdb.conf による分岐方式と、Orchagent の chassis-DB �
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/single_asic_voq.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

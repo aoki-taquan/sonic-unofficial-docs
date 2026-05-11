@@ -1,5 +1,6 @@
 ---
 title: BGP_MONITORS テーブル
+description: "BGP_MONITORS テーブル — BGP_MONITORS テーブルは BGP Monitoring Protocol (BMP) ではなく、BGP モニター用の特殊隣接（route-monitor）を定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

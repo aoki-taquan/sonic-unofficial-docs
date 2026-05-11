@@ -1,5 +1,6 @@
 ---
 title: Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）
+description: "Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） — ポートの FEC（Forward Error Correction）統計 から Pre / Post FEC BER を計算し、show interface counter fec-stat に列を 2 つ追…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
     - show interface counter fec-stat
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-swss/orchagent/port_rates.lua` に `compute_ber()` と `SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS` / `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES` の HGET、Pre/Post FEC BER 計算（`rs_average_frame_ber` 使用）、lanes / serdes_speed lookup を確認。`sonic-utilities/scripts/portstat` に `-f`/`--fec-stats`、`-fh`/`--fec_hist` flag を実装済み（verified at: 2026-05-09）。
@@ -105,3 +111,10 @@ show interface counter fec-stat
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec-ber/port_fec_ber.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

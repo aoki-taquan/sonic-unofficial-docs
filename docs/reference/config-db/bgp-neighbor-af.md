@@ -1,5 +1,6 @@
 ---
 title: BGP_NEIGHBOR_AF テーブル
+description: "BGP_NEIGHBOR_AF テーブル — BGP_NEIGHBOR の アドレスファミリ別 設定を持つテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: ACL / CoPP / Mirror / Packet Action
+description: "ACL / CoPP / Mirror / Packet Action — この章は、SONiC で「パケットを分類して、通す、落とす、CPU に送る、複製する、数える」という機能群をまとめて読むための入口です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

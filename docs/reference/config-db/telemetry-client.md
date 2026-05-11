@@ -1,5 +1,6 @@
 ---
 title: TELEMETRY_CLIENT テーブル
+description: "TELEMETRY_CLIENT テーブル — docker-sonic-gnmi (旧 docker-sonic-telemetry) の dial-out モードで使う、コレクタ宛のサブスクリプション情報を CONFIG_DB に登録するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

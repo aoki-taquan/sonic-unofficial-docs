@@ -1,5 +1,6 @@
 ---
 title: show snmptrap サブコマンド
+description: "show snmptrap サブコマンド — show snmptrap は SNMP Trap 送信先サーバの設定を表示する CLI グループ。CONFIG_DB の SNMP_TRAP_CONFIG テーブルから登録された v1/v2/v3 Trap receiver を読み、整形して出力する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

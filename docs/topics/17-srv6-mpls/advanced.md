@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — base 機能の上で広がる SRv6 / MPLS / Path Tracing 関連のトピックを、他章へのリンクと一緒にまとめます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

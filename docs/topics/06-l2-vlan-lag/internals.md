@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — L2 / VLAN / LAG / MC-LAG の内部実装は「kernel と orchagent の二重管理」を理解するのが鍵です。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

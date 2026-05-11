@@ -1,5 +1,6 @@
 ---
 title: Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
+description: "Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*） — PMON コンテナ内の xcvrd daemon が SFP / QSFP / QSFP-DD などの光モジュールから EEPROM 情報・DOM（Digital Optical Monitori…"
 area: system
 verification: code-verified
 last_verified: 2026-05-11
@@ -158,3 +159,10 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 - `xcvrd_utilities/` 配下に CMIS / SFP / QSFP-DD の管理ユーティリティ群
 
 HLD の中核（xcvrd デーモン + 60s 周期 DOM ポーリング + CMIS 拡張対応 + 3 テーブル + `show interface transceiver` CLI 連携）は実装と整合。CMIS 関連フィールドは継続追加中だが本ページの設計記述レベルでは齟齬なし。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

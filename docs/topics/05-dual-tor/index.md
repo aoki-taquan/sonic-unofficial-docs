@@ -1,5 +1,6 @@
 ---
 title: Dual-ToR と Mux 制御
+description: "Dual-ToR と Mux 制御 — この章は、SONiC の Dual-ToR 構成で「2 台の ToR と 1 台のサーバ NIC の間にある mux を、どの状態情報で、どのように切り替えるのか」を読み解くための入口です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

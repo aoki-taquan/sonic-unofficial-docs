@@ -1,5 +1,6 @@
 ---
 title: Dynamic Headroom Calculation（buffer_model = dynamic）
+description: "Dynamic Headroom Calculation（buffer_model = dynamic） — PFC headroom（lossless 用 PG の xon / xoff / size）を pg_profile_lookup.ini のテーブル lookup ではなく式から動的計算 するモード。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
@@ -22,6 +23,11 @@ related:
     - config interface mtu
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `buffermgrd` の dynamic クラス主要パスを `sonic-swss/cfgmgr/buffermgrdyn.cpp` で確認: `default_dynamic_th` の `LOSSLESS_TRAFFIC_PATTERN` 読込 (L148-L153)、dynamic pool size 計算ループ (L676-L782)、`dynamic_calculated` profile 管理 (L1297, L1429-L1483)、shared headroom pool による dynamic profile 更新 (L1609-L1681)、PG 適用ガード (L1737-L1757)。vendor 提供 Lua plugin / `asic_table.json` 自体は vendor binary 配布相当のため非確認。
@@ -168,3 +174,5 @@ LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 "3,4"
 ## 関連 Topics
 
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

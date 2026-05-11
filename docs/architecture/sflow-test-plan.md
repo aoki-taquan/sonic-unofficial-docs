@@ -1,5 +1,6 @@
 ---
 title: sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）
+description: "sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling） — T0 上で SONiC sFlow 機能を機能検証するテスト。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -17,6 +18,11 @@ related:
     - show sflow
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified（CLI / docker layout）"
     verifier-batch-18 で確認:
@@ -107,3 +113,10 @@ show sflow interface
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/sflow/Sflow_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sflow/Sflow_test_plan.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

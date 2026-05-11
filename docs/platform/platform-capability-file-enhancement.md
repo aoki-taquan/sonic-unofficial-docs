@@ -1,5 +1,6 @@
 ---
 title: platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
+description: "platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable） — スイッチ機器のプラットフォーム部品（fan, PSU, status LED, thermal 等）は、機種ごとに 制御可能性と取りうる値の範囲 が異なる。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json` 等で `chassis.status_led.controllable`、`fans[].speed.controllable` / `minimum`、`status_led.colors` 配列、`status_led.available` のスキーマが実機向け platform.json に既に展開されていることを確認。Marvell / Dell の複数プラットフォームで採用済み。HLD の capabilities 拡張は実装に取り込まれている。
@@ -174,3 +180,10 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/platform-json/platform_json_enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

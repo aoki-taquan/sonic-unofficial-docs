@@ -1,5 +1,6 @@
 ---
 title: WRED / ECN 統計（per-queue / per-port、capability ベース）
+description: "WRED / ECN 統計（per-queue / per-port、capability ベース） — SAI が出す WRED ドロップ / ECN マーク専用カウンタを Flex Counter で COUNTERS_DB に出し、show queue wredcounters および show interfa…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,6 +20,11 @@ related:
   yang:
     - sonic-flex_counter
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/portsorch.h` L42 で `WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP = "WRED_ECN_QUEUE_STAT_COUNTER"` を確認、`flexcounterorch.cpp` L62/L95 で `WRED_QUEUE_KEY = "WRED_ECN_QUEUE"` のマッピングを確認。`portsorch.cpp` L433 で `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` を、L1872-1901 で `m_queueCounterCapabilitiesTable` への `WRED_ECN_QUEUE_*_COUNTER` capability 書き込みを確認。`sonic-utilities/counterpoll/main.py` L609-L624 で `counterpoll wredqueue` サブコマンド群、`tests/counterpoll_test.py` L326-L374 で `wredport` / `wredqueue` enable/interval を確認（verified at: 2026-05-09）。
@@ -171,3 +177,10 @@ sonic-clear queue wredcounters
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/ECN_and_WRED_statistics_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

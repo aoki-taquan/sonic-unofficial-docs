@@ -1,5 +1,6 @@
 ---
 title: show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
+description: "show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status） — ACL 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
     - show acl rule
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/aclorch.cpp` L4201-4202 で `m_aclTableStateTable(stateDb, STATE_ACL_TABLE_TABLE_NAME)` / `m_aclRuleStateTable(stateDb, STATE_ACL_RULE_TABLE_NAME)` を確認、`sonic-swss-common/common/schema.h` L514-515 で `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` / `STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"` を確認。`sonic-utilities/show/acl.py` の `show acl table` / `show acl rule` が `acl-loader show table/rule` を呼び、`sonic-utilities/acl_loader/main.py` L76-80/L324-340 で STATE_DB の `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` ステータスを参照することを確認（verified at: 2026-05-09）。
@@ -164,3 +170,10 @@ redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATAACL'
 - PFC / Mux 内部生成 ACL の扱いの将来計画
 - sonic-mgmt の test_acl.py 更新状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

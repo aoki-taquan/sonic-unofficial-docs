@@ -1,5 +1,6 @@
 ---
 title: config interface サブコマンド
+description: "config interface サブコマンド — config interface は物理ポート（PORT）・PortChannel・SubInterface・Loopback の state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -254,4 +255,7 @@ if clicommon.get_interface_naming_mode() == "alias":
 <!-- topics-back-ref -->
 ## 関連 Topics
 
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: リファレンス
+description: "リファレンス — CLI、CONFIG_DB、YANG を機械抽出ベースで整理する参照章。"
 verification: meta
 last_verified: 2026-05-11
 ---
@@ -179,3 +180,5 @@ discrepancy-found 自体は reference 内ではなく `docs/topics/` 配下に�
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
 - [Topics: SWSS / SAI / Redis 内部実装](../topics/20-swss-sai-redis/index.md)
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

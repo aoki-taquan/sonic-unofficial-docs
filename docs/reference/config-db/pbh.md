@@ -1,5 +1,6 @@
 ---
 title: PBH_TABLE / PBH_RULE テーブル
+description: "PBH_TABLE / PBH_RULE テーブル — Policy Based Hashing (PBH) は、packet match 条件ごとに ECMP / LAG hash profile を切り替えるための CONFIG_DB テーブル群。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

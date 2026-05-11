@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — Redis、SwSS、orchagent、counter、P4Orch など実装内部の構造を扱う章。"
 verification: stub
 ---
 

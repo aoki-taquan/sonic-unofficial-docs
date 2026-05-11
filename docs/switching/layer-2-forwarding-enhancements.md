@@ -1,5 +1,6 @@
 ---
 title: L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
+description: "L2 Forwarding 強化 — SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する HLD:"
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented
@@ -20,6 +21,11 @@ related:
     - show mac
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: discrepancy-found"
     orchagent 側（`fdborch.cpp` / `switchorch.cpp`）は HLD のとおり実装済み。一方で **`config mac` / `config vlan range` CLI は sonic-utilities 現行 master に存在しない**。詳細は本文末尾の「実装との乖離」を参照（verified at: 2026-05-09）。
@@ -146,3 +152,5 @@ port が VLAN メンバでない間に投入した static は orchagent ログ�
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

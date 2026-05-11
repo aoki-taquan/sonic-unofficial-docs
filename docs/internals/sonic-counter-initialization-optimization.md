@@ -1,5 +1,6 @@
 ---
 title: flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
+description: "flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） — SONiC の counter は counter group（port / port-drop / PG-drop / queue / watermark / RIF 等）単位で flex…"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（命名は FlexCounterCachedManager）"
     `sonic-swss/orchagent/flex_counter/flex_counter_manager.h` で `FlexCounterCachedManager` テンプレート、`flush(group_name, cached_objects)` (L228, L233-235), `pending_sai_objects` 参照 (L190), 派生 `FlexCounterTaggedCachedManager` の `flush()` (L304, L345) を確認。`portsorch.h` L336 で `port_buffer_drop_stat_manager` が `FlexCounterTaggedCachedManager<void>` 型として実装。HLD の `batch_mode` 引数は実装上は専用クラス `FlexCounterCachedManager` で表現されており、構造設計は HLD どおり。queue UC/MC 分割や PG 系の cached 化も同ヘッダで対応 (verified at: 2026-05-09)。
@@ -124,3 +130,10 @@ sequenceDiagram
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/flex_counter/optimize-counter-initialization.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: System-wide Warmboot（going down / up path / SAI 期待値）
+description: "System-wide Warmboot（going down / up path / SAI 期待値） — 全 SONiC コンテナを協調 shutdown → kexec で kernel 入れ替え → 再起動後に control plane state を復元、データプレーンを乱さない warmboot の枠組…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -118,3 +119,10 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/system-warmboot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
+
+<!-- /topics-back-ref -->

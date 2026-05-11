@@ -1,5 +1,6 @@
 ---
 title: BREAKOUT_CFG テーブル
+description: "BREAKOUT_CFG テーブル — BREAKOUT_CFG テーブルは Dynamic Port Breakout (DPB) における親ポートと現在の breakout モードを保持する。子ポートは breakout モードに応じて PORT テーブルに自動展開される。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

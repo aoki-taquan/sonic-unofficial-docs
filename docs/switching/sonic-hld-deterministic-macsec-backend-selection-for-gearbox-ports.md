@@ -1,5 +1,6 @@
 ---
 title: Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
+description: "Gearbox PHY ごとの MACsec backend 決定（macsec_supported） — 外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 SAI（gbsyncd）の switch_id に紐づいて管理されている。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     現行 master で実装済みを確認。`sonic-swss/gearsyncd/gearboxparser.cpp:161-164` で `macsec_supported` パース、`sonic-swss/lib/gearboxutils.h:67` で `gearbox_phy_t::macsec_supported` フィールド、`sonic-swss/lib/gearboxutils.cpp:141,199-201` で default true / `loadPhyMap` のパース。`sonic-swss/orchagent/macsecorch.cpp:363,409` で `force_npu = !phy->macsec_supported`、`macsecorch.cpp:2539-2563` で `phy->macsec_supported` 分岐ガード。HWSKU では `nexthop NH-5010-F-O32-C32` / `arista 7280R4-32QF-32DF` 等の `gearbox_config.json` に取り込み済み（verified at: 2026-05-09）。
@@ -200,3 +206,10 @@ _GEARBOX_TABLE:phy:<phy_id>
 - APP_DB _GEARBOX_TABLE スキーマの最終形
 - HWSKU 側 gearbox_config.json サンプルの存在
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

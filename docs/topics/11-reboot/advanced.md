@@ -1,5 +1,6 @@
 ---
 title: Reboot / Upgrade の発展トピック
+description: "Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「express reboot」、multi-ASIC / chassis 級の同期、in-service upgrade との組合せが論点になる。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

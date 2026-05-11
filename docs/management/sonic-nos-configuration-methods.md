@@ -1,5 +1,6 @@
 ---
 title: SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
+description: "SONiC NOS の設定手段一覧 — SONiC は CONFIG_DB（Redis db 4）に 複数の入口 を提供し、最終的に /etc/sonic/config_db.json で永続化する。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,6 +20,11 @@ related:
     - vtysh
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified / 概観文書"
     `sonic-utilities/config/main.py` で `apply-patch` / `replace` / `rollback` の 3 サブコマンドと `--dry-run` / `--ignore-non-yang-tables` / `--ignore-path` オプションを確認。`generic_config_updater/`、`sonic-buildimage/src/sonic-ztp`、`bgpcfgd` の存在も確認済み。本 HLD は概観文書で各機構の詳細は別 HLD に委ねる。
@@ -178,3 +184,5 @@ flowchart LR
 ## 関連 Topics
 
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
+
+<!-- /topics-back-ref -->

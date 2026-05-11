@@ -1,5 +1,6 @@
 ---
 title: DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル
+description: "DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル — Dynamic buffer manager が動的に生成するロスレスバッファプロファイルの既定パラメータを定義するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

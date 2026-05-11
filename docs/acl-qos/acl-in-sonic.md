@@ -1,5 +1,6 @@
 ---
 title: ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）
+description: "ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン） — 読み手が真っ先に知りたいのは「SONiC の ACL はどの単位で書き、どこを経由して TCAM に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-10
@@ -18,6 +19,11 @@ related:
   yang:
     - sonic-acl
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-swss/orchagent/aclorch.cpp` / `aclorch.h` / `acltable.h` で AclOrch 本体が実装。APPL_DB の `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` は `sonic-swss-common/common/schema.h:94,96` で `APP_ACL_TABLE_TABLE_NAME` として定義。後発の DASH ACL は `APP_DASH_ACL_RULE_TABLE_NAME` (schema.h:178) として別系統で共存。
@@ -157,3 +163,5 @@ CLI 一覧:
 ## 関連 Topics
 
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

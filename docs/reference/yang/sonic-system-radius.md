@@ -1,5 +1,6 @@
 ---
 title: sonic-system-radius YANG
+description: "sonic-system-radius YANG — Remote Authentication Dial-In User Service (RADIUS) YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

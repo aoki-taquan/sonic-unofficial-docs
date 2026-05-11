@@ -1,5 +1,6 @@
 ---
 title: GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
+description: "GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート） — GNS3 はネットワーク機器をエミュレートして簡易トポロジを Windows 上または Ubuntu サーバ上で実行できるツールである。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 21 章: Lab / SONiC-VS / 開発者](../topics/21-lab-vs-developer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified（手順書ベース）"
     `sonic-buildimage/platform/vs/README.gns3.md` および `sonic-gns3a.sh` スクリプトが現存し、`sonic-vs.img` を入力に GNS3 アプライアンスファイル (.gns3a) を生成する手順を記述。デフォルト認証情報 `admin / YourPaSsWoRd` は `sonic-buildimage/rules/config:81 DEFAULT_PASSWORD = YourPaSsWoRd` で実装と一致。Azure pipeline 番号や成果物 URL は時期で変わるため、ビルド時の最新値に追従されたい。
@@ -126,3 +132,10 @@ GNS3 GUI 操作の代替として CLI で扱う場合、`gns3server` の REST AP
 - sonic-buildimage/check_install.py:13 default password='YourPaSsWoRd'
 -->
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

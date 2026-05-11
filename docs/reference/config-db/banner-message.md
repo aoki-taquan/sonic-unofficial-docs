@@ -1,5 +1,6 @@
 ---
 title: BANNER_MESSAGE テーブル
+description: "BANNER_MESSAGE テーブル — SSH / コンソールログイン時の login バナー、MOTD、logout バナーを設定するテーブル。 hostcfgd が CONFIG_DB を購読し、/etc/issue / /etc/motd / /etc/issue.net を書き換える。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

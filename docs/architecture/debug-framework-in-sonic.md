@@ -1,5 +1,6 @@
 ---
 title: Debug Framework（コンポーネント dump 登録 / assert 拡張）
+description: "Debug Framework（コンポーネント dump 登録 / assert 拡張） — SONiC コンポーネント（特に OrchAgent モジュール）が 内部状態のスナップショットダンプ を登録し、CLI / assert / 重大ログから一斉トリガできる仕組み。"
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -15,6 +16,11 @@ related:
     - show interfaces pktdrop
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! danger "裏取りステータス: discrepancy-found"
     HLD v0.3 (2019-07) は **master へ取り込まれていない**。verifier-batch-18 で確認:

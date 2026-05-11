@@ -1,5 +1,6 @@
 ---
 title: SSH サーバ全体設定（SSH_SERVER.POLICIES）
+description: "SSH サーバ全体設定（SSH_SERVER.POLICIES） — SONiC の SSH サーバは Debian 標準 sshd をそのまま使う構成で、運用ポリシーを変えるたびに /etc/ssh/sshd_config を直接書き換える必要があった。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
   yang:
     - sonic-ssh-server
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-host-services/scripts/hostcfgd` L1045 `class SshServer`、L2245-2478 で `init_data['SSH_SERVER']` を読み `self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))` する経路を確認。`SSH_CONFG = "/etc/ssh/sshd_config"` (L32) に書き込み、`LIMITS_CONF_TEMPLATE = "/usr/share/sonic/templates/limits.conf.j2"` (L82) と `PAM_LIMITS_CONF = "/etc/pam.d/pam-limits-conf"` (L83) を render する `limits.conf.j2` も `sonic-host-services/data/templates/limits.conf.j2` で確認。L1412-1478 で `SSH_SERVER` から `pam_limits` / `limits.conf` を render（verified at: 2026-05-09）。
@@ -183,3 +189,10 @@ config save
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssh_config/ssh_config.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

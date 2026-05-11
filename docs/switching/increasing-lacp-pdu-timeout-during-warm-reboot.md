@@ -1,5 +1,6 @@
 ---
 title: Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
+description: "Warm-reboot 中の LACP retry count 拡張 — LACP の long rate は 30 秒間隔、3 回連続未受信で LAG Down → 実効タイムアウト 90 秒。SONiC の warm-reboot はコントロールプレーン断が最大 ~90 秒で、わずかな揺らぎで LAG が落ちる。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
     - config portchannel retry-count
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     libteam パッチ `0015-add-support-for-custom-retry.patch` / `0016-block-retry-count-changes.patch`、`sonic-utilities/scripts/teamd_increase_retry_count.py` で `version=0xf1` / `actor_retry_count_type=0x80` / `partner_retry_count_type=0x81`、`sonic-utilities/config/main.py:3052` `portchannel_retry_count` グループを確認（verified at: 2026-05-09）。

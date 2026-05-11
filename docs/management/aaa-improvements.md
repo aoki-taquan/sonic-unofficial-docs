@@ -1,5 +1,6 @@
 ---
 title: AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
+description: "AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール） — SONiC の AAA（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案:"
 area: management
 verification: code-verified
 last_verified: 2026-05-11
@@ -20,6 +21,11 @@ related:
     - config tacacs
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified / 採否不明な提案"
     本 HLD は 2020 年 Martin Bélanger（Rev 0.4）の **設計討議文書**。AAA / PAM / NSS の本質的問題提起と提案で、現行 master が本提案を全面採用しているかは要確認。`priority=high`。
@@ -137,3 +143,5 @@ HLD は提案中心のため、CONFIG_DB / CLI の最終形は具体化されて
 ## 関連 Topics
 
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

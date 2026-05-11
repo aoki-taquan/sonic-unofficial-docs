@@ -1,5 +1,6 @@
 ---
 title: メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
+description: "メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル） — OS レベルの メモリ使用量（total / used / free / available / cached / shared / buffers） を SONiC ネイティブで定期サンプリングし、CLI から履歴クエ…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
   yang:
     - sonic-memory-statistics
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（基本構成のみ）"
     現行 master の `sonic-host-services/scripts/hostcfgd:1848` に `MemoryStatisticsCfg` クラスがあり MEMORY_STATISTICS テーブル監視と SIGHUP 連携が実装。`sonic-utilities/config/memory_statistics.py` と `show/memory_statistics.py` で CLI が整備、`sonic-yang-models` の `sonic-memory-statistics.yang` も存在。memorystatsd デーモン名そのものは別ファイル名で実装されている可能性あり（verified at: 2026-05-09）。
@@ -130,3 +136,10 @@ show memory-stats config
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/memory_statistics/memory_statistics_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: 概要
+description: "概要 — SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを Redis 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

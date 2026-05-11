@@ -1,5 +1,6 @@
 ---
 title: BUM ストームコントロール（PORT_STORM_CONTROL）
+description: "BUM ストームコントロール — BUM（Broadcast / Unknown-unicast / unknown-Multicast）ストームは L2 ドメインを劣化させる典型的障害。本機能は 物理ポート単位で 3 タイプを個別に kbps レート制限 し、SAI policer をポート入力段に紐付ける:"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -15,6 +16,11 @@ related:
     - show storm-control
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/tests/test_storm_control.py` L9-247 で `PORT_STORM_CONTROL` 経由の broadcast / unknown unicast / unknown multicast の kbps 設定 / 削除を確認。`sonic-utilities/show/main.py` L175-235 で `show storm-control`、`config/main.py` L788-822 で `storm_control_interface_validate` / `is_storm_control_supported` / `storm_control_set_entry` を確認。`scripts/storm_control.py` を `setup.py` L194 で同梱。
@@ -114,3 +120,10 @@ show storm-control interface Ethernet0
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bum_storm_control/bum_storm_control_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

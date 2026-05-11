@@ -1,5 +1,6 @@
 ---
 title: FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
+description: "FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE） — FIPS 140-3 準拠を維持するには、暗号機構（MACsec ハードウェアエンジンを含む）が 動作開始前に Pre-Operational Self-Test (POST) を通っていなければならない。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     現行 master の `sonic-swss/orchagent/macsecpost.cpp` (`STATE_FIPS_MACSEC_POST_TABLE_NAME` を読み書き)、`sonic-swss-common/common/schema.h:471` の `STATE_FIPS_MACSEC_POST_TABLE_NAME = "FIPS_MACSEC_POST_TABLE"`、`sonic-buildimage/build_image.sh:214` の `sonic_fips=1` カーネルコマンドライン、`build_debian.sh:691-692` の `/etc/fips/fips_enable` 初期化、`dockers/docker-macsec/cli/show/plugins/show_macsec.py:351-389` の FIPS_MACSEC_POST_TABLE 読み出し CLI を確認済み（verified at: 2026-05-09）。
@@ -193,3 +199,10 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 - /proc/cmdline 経由 sonic_fips=1 と /etc/fips/fips_enable の取り扱い実装
 - 2025-07 HLD と現行 master 取り込み状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->
