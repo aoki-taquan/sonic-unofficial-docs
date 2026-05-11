@@ -175,6 +175,32 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 - `-u` で IPv6 Multicast を狙う場合、`-a` に IPv6 アドレスを直接指定可能（HLD 上「IPv4 / IPv6 どちらも可」と明記）[^1]。
 - gNOI 側で UDP モードを使いたい場合、本 HLD 時点の proto では `-u` 系オプションが無く、CLI ラッパー経由の機能を完全には呼び出せない可能性がある。proto / 実装側の更新を確認する。
 
+## 実装との乖離
+
+2026-05-11 時点の現行 master を裏取り。
+
+### 1. ファイル + 行番号
+
+- **取り込み済み（CLI 本体）**: `sonic-net/sonic-buildimage` `src/sonic-nettools/wol/src/wol.rs` L47-L75（`broadcast` / `udp` / `ip_address` / `udp_port` / `password` / `count` / `interval` の各 clap 引数）、`src/sonic-nettools/wol/src/wol.rs` L128（magic packet 組立）、`src/sonic-nettools/wol/src/wol.rs` L328-L332（raw / udp socket 分岐）。
+- **取り込み済み（IPv6）**: `src/sonic-nettools/wol/src/socket.rs` L2, L242-L248（`Ipv6Addr::from_str` 経由で `in6_addr` を組み立てる UDP IPv6 経路あり）。
+- **未取り込み（gNOI）**: `sonic-net/sonic-host-services` 配下に `Wol` / `wake_on_lan` ハンドラは見当たらず、HLD が前提とする `SonicWolService` の D-Bus ブリッジは **少なくとも sonic-host-services 側には未統合**。
+
+### 2. 差分の中身
+
+実装は **Rust 製の単独バイナリ**（`sonic-buildimage/src/sonic-nettools/wol`）であり、HLD が示す Python click ラッパーではない。コマンド名は `wol` のまま、引数互換は概ね維持されているが、gNOI 経路（`SonicWolService` proto + sonic-host-service の D-Bus ハンドラ）は実装が見当たらない。`-b`/`-u` の排他制御は clap の `conflicts_with` で実装され（L50, L54）、`-c`/`-i` は `requires_if` で相互必須に変更されている。
+
+### 3. 読者への影響
+
+- CLI `wol` の手元動作は HLD のフラグセットでほぼ問題なし。
+- gNOI 経由で WoL を叩こうとすると proto / ハンドラの欠落に当たる可能性があり、自動化系（gNOI クライアント）から呼び出せない。
+- `-u` モードで `-a` に IPv6 アドレスを指定する場合、socket 層は対応しているが（`socket.rs` L242）、`-a` の clap default `255.255.255.255` は IPv4 文字列なので **IPv6 を使う場合は `-a` を明示** する必要がある。
+
+### 4. 回避策
+
+- gNOI から起動したい場合は当面 SSH 等で `wol` バイナリを直接呼ぶ。gNOI 統合状況は `sonic-host-services` の最新 PR を追跡。
+- IPv6 UDP モード: `wol Vlan1000 00:11:22:33:44:55 -u -a ff02::1 -t 9`。
+- Rust 実装の `--help` で実引数のレンジ（`count` 1〜5、`interval` 0〜2000 ms 等）を再確認してから自動化に組み込む。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/wol/Wake-on-LAN-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

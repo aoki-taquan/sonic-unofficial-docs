@@ -22,9 +22,34 @@ related:
 
 ## 実装との乖離
 
-- **HLD 要件**: `config interface link_event_damping_algorithm <port> <aied|disabled>` 系 CLI を sonic-utilities に追加。
-- **現状**: `sonic-utilities` / `sonic-buildimage` の grep で `link_event_damping` ヒット 0。SwSS 側の port 属性受理は実装済みだが、ユーザ向け CLI は未取り込み。
-- **影響**: HLD どおりに `config interface link_event_damping_algorithm ...` を打っても CLI が解決しない。CONFIG_DB を直接編集するか、別の管理フレームワークから設定する必要がある。
+2026-05-11 時点の現行 master を裏取り。
+
+### 1. ファイル + 行番号
+
+- **取り込み済み（SwSS）**: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L3736-L3760（`setPortLinkEventDampingAlgorithm` / `setPortLinkEventDampingAlgoAiedConfig`）、`orchagent/portsorch.cpp` L4939-L4941（差分検出）、`orchagent/port/porthlpr.cpp` L24, L133, L899-L900, L1345-L1373（`PortConfig` への 6 フィールドのパース）。
+- **取り込み済み（YANG）**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` に `link_event_damping_algorithm` 系 leaf あり。
+- **未取り込み**: `sonic-utilities/config/main.py` および周辺に `link_event_damping_algorithm` の CLI ハンドラは無し（grep で `link_event_damping` のヒットは `sonic-swss` 配下のみ）。
+
+### 2. 差分の中身
+
+HLD は `config interface link_event_damping_algorithm <if> aied <max_suppress> <decay_half> <suppress_thr> <reuse_thr> <flap_penalty>` の click サブコマンド追加と、`config interface link_event_damping_algorithm <if> disabled` を要求している。`sonic-utilities` 側の取り込みが無いため、ユーザ経路は **CONFIG_DB の直接編集（`sonic-db-cli` / `redis-cli`）** または `config_db.json` への記述のみ。一方 SwSS 側は `PORT` テーブルからフィールドを読み取り、SAI redis 属性 `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM` と `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG` に変換するパスは完成している。
+
+### 3. 読者への影響
+
+HLD どおりに `sudo config interface link_event_damping_algorithm Ethernet0 aied 40 30 1500 1300 1000` を打つと `Error: No such command "link_event_damping_algorithm".` で失敗する。ドキュメント主導で運用する読者が CLI 経由で機能を有効化できず、SAI 属性まで届かない。
+
+### 4. 回避策
+
+`sonic-db-cli` で `PORT` テーブルを直接 update する（CLI 不要・即時反映）:
+
+```bash
+sonic-db-cli CONFIG_DB hmset 'PORT|Ethernet0' \
+    link_event_damping_algorithm aied \
+    max_suppress_time 40 decay_half_life 30 \
+    suppress_threshold 1500 reuse_threshold 1300 flap_penalty 1000
+```
+
+`config_db.json` で永続化する場合は `PORT` セクションに 6 フィールドを記述。SwSS は 6 フィールドを **組として** 受けるので、欠落させると damping が disable になる点に注意（`porthlpr.cpp` L1345-L1373）。
 
 # リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
 
