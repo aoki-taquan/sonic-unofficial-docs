@@ -54,6 +54,15 @@ module: sonic-mgmt_vrf
 - CONFIG_DB: `MGMT_VRF_CONFIG|vrf_global`
 - CLI: `config vrf add mgmt`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
+- CLI: [`config vrf`](../cli/config-vrf.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

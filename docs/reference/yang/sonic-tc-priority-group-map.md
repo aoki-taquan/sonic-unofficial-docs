@@ -58,6 +58,14 @@ module: sonic-tc-priority-group-map
 
 - CONFIG_DB: `TC_TO_PRIORITY_GROUP_MAP|<name>`、`PORT_QOS_MAP|<port>/tc_to_pg_map` から参照
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `TC_TO_PRIORITY_GROUP_MAP`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

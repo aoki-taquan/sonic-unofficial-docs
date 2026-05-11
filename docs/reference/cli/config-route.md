@@ -101,6 +101,14 @@ excerpt: |
 - `dev null` 経路は `blackhole=true` として登録される。
 - `distance`（admin distance）は CLI 引数として直接は受けない。コードは `,0` をデフォルトで埋めるため、現状 CLI からは distance のカスタマイズは不可。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`STATIC_ROUTE`](../config-db/static-route.md) / [`VRF`](../config-db/vrf.md) / [`PORTCHANNEL`](../config-db/portchannel.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`INTERFACE`](../config-db/interface.md) / [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `cli_sroute_to_config` の実装は `config/main.py` L1395-L1481。`prefix` / `nexthop` キーを基準に分割し、IP / VRF / interface の存在を検証する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1395>

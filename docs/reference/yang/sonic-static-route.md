@@ -88,6 +88,15 @@ module: sonic-static-route
 - CONFIG_DB: `STATIC_ROUTE`
 - CLI: `config route`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`STATIC_ROUTE`](../config-db/static-route.md)
+- CLI: [`config route`](../cli/config-route.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-static-route.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -61,6 +61,14 @@ show queue wredcounters [INTERFACE_NAME]
 
 `watermark` は `watermarkstat -t q_shared_uni|q_shared_multi|q_shared_all` を実行する。`persistent-watermark` はさらに `-p` を追加する。各 command は `--namespace` と `--json` を受け付ける。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show queue` グループと配下 command。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L774>

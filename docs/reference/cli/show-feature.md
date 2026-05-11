@@ -73,6 +73,14 @@ CONFIG_DB の `FEATURE` テーブルから state / auto_restart / set_owner / no
 - `state == always_enabled` の feature は `config feature state` で書き換えられない。CLI 側で `Feature ... state is always enabled and can not be modified` をエラーで返す (`config/feature.py`)。これは `show feature config` の `State` 列でも `always_enabled` で表示される。
 - multi-ASIC 環境では `FEATURE` の状態が namespace 間で食い違うとエラーで停止するため、表示時に値が空欄に見える場合は CONFIG_DB が未初期化の可能性が高い。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`FEATURE`](../config-db/feature.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `feature` グループは `show/feature.py` L11-L14。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/feature.py#L11>

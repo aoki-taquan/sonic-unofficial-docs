@@ -66,6 +66,15 @@ module: sonic-mgmt_port
 - CONFIG_DB: `MGMT_PORT|<name>`
 - CLI: `config interface`（管理ポート用 サブセット）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MGMT_PORT`](../config-db/mgmt-port.md)
+- CLI: [`config interface`](../cli/config-interface.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

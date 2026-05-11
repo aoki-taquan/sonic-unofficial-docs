@@ -52,6 +52,14 @@ def uptime(verbose):
 
 なし（kernel の `/proc/uptime` を読む `uptime(1)` のラッパ）。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `uptime` コマンドの実装は `show/main.py` L2211-L2216。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2211>

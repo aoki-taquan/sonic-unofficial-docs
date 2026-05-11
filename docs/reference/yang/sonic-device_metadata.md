@@ -162,6 +162,14 @@ module: sonic-device_metadata
 
 - CONFIG_DB: `DEVICE_METADATA`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`DEVICE_METADATA`](../config-db/device-metadata.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-device_metadata.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

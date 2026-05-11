@@ -81,6 +81,14 @@ excerpt: |
 
 `storm_type` は `broadcast` / `unknown-multicast` / `unknown-unicast` の 3 種。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show storm-control` グループ定義は `show/main.py` L499-L533。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L499>

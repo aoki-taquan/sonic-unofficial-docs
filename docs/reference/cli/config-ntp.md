@@ -100,6 +100,15 @@ config ntp del <ntp_ip_address>
 - 既存 IP に再度 `add` してもオプションは更新されない（早期 return する）。オプション変更は一度 `del` してから再 `add` する。
 - chrony 再起動が伴うため、SSH や BGP 等が NTP に依存している場合は短時間のタイムスタンプ揺らぎがありうる。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-ntp`](../yang/sonic-ntp.md)
+- CONFIG_DB: [`NTP_SERVER`](../config-db/ntp-server.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config ntp` グループ定義は `config/main.py` L8968-L9037。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8968>

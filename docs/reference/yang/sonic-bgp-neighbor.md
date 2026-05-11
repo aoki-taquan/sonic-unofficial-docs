@@ -223,6 +223,15 @@ module: sonic-bgp-neighbor
 - CONFIG_DB: `BGP_NEIGHBOR_AF`
 - CLI: `config bgp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BGP_NEIGHBOR`](../config-db/bgp-neighbor.md) / [`BGP_NEIGHBOR_AF`](../config-db/bgp-neighbor-af.md)
+- CLI: [`config bgp`](../cli/config-bgp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

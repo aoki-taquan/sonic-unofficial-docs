@@ -73,6 +73,14 @@ def services():
 
 なし（docker daemon の API のみ）。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `services` コマンドは `show/main.py` L2252-L2267。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2252>

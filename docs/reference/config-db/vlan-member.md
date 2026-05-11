@@ -59,6 +59,15 @@ VLAN_MEMBER|<vlan_name>|<port>
 - 関連 CLI: `config vlan member add/del`
 - 関連 YANG: `sonic-vlan`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-vlan`](../yang/sonic-vlan.md)
+- CLI: `config vlan member`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-vlan.yang` 内 `VLAN_MEMBER` コンテナ。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L273>

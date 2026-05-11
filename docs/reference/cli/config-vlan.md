@@ -122,6 +122,14 @@ config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]
 | `VLAN_MEMBER` | `<vlan>|<port>` の `tagging_mode` | `member add` / `del` |
 | `STP_VLAN` / `STP_VLAN_PORT` / `STP_PORT` | PVST 有効時の追従 | `add` / `del` / `member ...` |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VLAN`](../config-db/vlan.md) / [`VLAN_MEMBER`](../config-db/vlan-member.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`DHCP_RELAY`](../config-db/dhcp-relay.md) / `STP_VLAN` / `STP_VLAN_PORT` / `STP_PORT`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `vlan` グループは `config/vlan.py` で定義され、`config/main.py` 末尾で `config.add_command(vlan.vlan)` 相当の登録が行われる。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vlan.py>

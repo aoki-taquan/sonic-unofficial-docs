@@ -155,6 +155,15 @@ module: sonic-spanning-tree
 - CONFIG_DB: `STP`, `STP_VLAN`, `STP_VLAN_PORT`, `STP_PORT`, `STP_MST`, `STP_MST_INST`, `STP_MST_PORT`
 - CLI: `config spanning-tree`, `show spanning-tree`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `STP` / `STP_VLAN` / `STP_VLAN_PORT` / `STP_PORT` / `STP_MST` / `STP_MST_INST` / `STP_MST_PORT`
+- CLI: `config spanning-tree` / `show spanning-tree`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-spanning-tree.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

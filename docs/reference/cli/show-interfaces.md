@@ -156,6 +156,14 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 | STATE_DB | `PORT_TABLE`, `TRANSCEIVER_INFO`, `TRANSCEIVER_DOM_SENSOR`, `TRANSCEIVER_STATUS`, `SWITCH_CAPABILITY` | `transceiver *`, `fast-linkup status`, `phy-*` |
 | COUNTERS_DB | `COUNTERS:*` | `counters` (via portstat) |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORT`](../config-db/port.md) / [`PORTCHANNEL`](../config-db/portchannel.md) / [`BREAKOUT_CFG`](../config-db/breakout-cfg.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `interfaces` グループ定義は `show/interfaces/__init__.py` L61-L64。`show/main.py` L316 で `cli.add_command(interfaces.interfaces)` 登録。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/interfaces/__init__.py>

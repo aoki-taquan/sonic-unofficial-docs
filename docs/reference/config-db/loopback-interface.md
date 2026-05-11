@@ -62,6 +62,15 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 - 関連 CLI: `config loopback add/del`、`config interface ip add Loopback0 ...`
 - 関連 YANG: `sonic-loopback-interface`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-loopback-interface`](../yang/sonic-loopback-interface.md)
+- CLI: `config loopback`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-loopback-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-loopback-interface.yang>

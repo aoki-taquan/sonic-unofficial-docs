@@ -49,6 +49,14 @@ TC_TO_QUEUE_MAP|<name>|<tc>
 - 関連 CLI: なし
 - 関連 YANG: `sonic-tc-queue-map`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-tc-queue-map`](../yang/sonic-tc-queue-map.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-tc-queue-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang>

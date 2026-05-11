@@ -79,6 +79,15 @@ ROUTE_MAP|<name>|<stmt_name>
 - 関連 CLI: `config route_map`、`vtysh -c "show route-map"`
 - 関連 YANG: `sonic-route-map`、`sonic-routing-policy-sets`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-route-map`](../yang/sonic-route-map.md) / `sonic-routing-policy-sets`
+- CLI: `config route_map`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-route-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-route-map.yang>

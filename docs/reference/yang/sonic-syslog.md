@@ -89,6 +89,15 @@ module: sonic-syslog
 - CONFIG_DB: `SYSLOG_CONFIG`
 - CLI: `config syslog`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SYSLOG_SERVER`](../config-db/syslog-server.md) / [`SYSLOG_CONFIG`](../config-db/syslog-config.md)
+- CLI: [`config syslog`](../cli/config-syslog.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-syslog.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -71,6 +71,15 @@ NTP_SERVER|<server_address>
 - 関連 CLI: `config ntp add/del`
 - 関連 YANG: `sonic-ntp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-ntp`](../yang/sonic-ntp.md)
+- CLI: [`config ntp`](../cli/config-ntp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-ntp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-ntp.yang>

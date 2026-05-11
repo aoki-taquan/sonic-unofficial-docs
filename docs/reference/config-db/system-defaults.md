@@ -49,6 +49,14 @@ SYSTEM_DEFAULTS|<name>
 - 関連 CONFIG_DB: `FEATURE`、`DEVICE_METADATA`
 - 関連 YANG: `sonic-system-defaults`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-system-defaults`](../yang/sonic-system-defaults.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-system-defaults.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-defaults.yang>

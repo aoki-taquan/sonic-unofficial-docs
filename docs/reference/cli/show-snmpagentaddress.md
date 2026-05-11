@@ -68,6 +68,14 @@ excerpt: |
 - key は `tuple` 形式 `(ip, port, vrf)` を直接 split せず、CONFIG_DB の table key parser がすでに分解した形を受ける。
 - `invoke_without_command=True` で実装されているが、サブコマンドは存在しない（group として宣言されているのは将来拡張の名残）。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show snmpagentaddress` グループ定義は `show/main.py` L585-L600。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L585>

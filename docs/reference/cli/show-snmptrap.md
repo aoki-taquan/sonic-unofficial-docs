@@ -76,6 +76,14 @@ excerpt: |
 - key は SNMP バージョンを文字列で表現する固定値 (`v1TrapDest`, `v2TrapDest`, `v3TrapDest`)。各バージョンにつき 1 エントリしか保持できない構造になっている。
 - v3 では `Community` フィールドは SNMPv3 ユーザ名/コンテキストとは別の意味で運用されるため、実環境では空文字や placeholder の場合がある。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `SNMP_TRAP_CONFIG`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show snmptrap` グループ定義は `show/main.py` L603-L624。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L603>

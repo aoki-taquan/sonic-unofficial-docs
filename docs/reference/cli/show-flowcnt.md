@@ -115,6 +115,14 @@ excerpt: |
 |----------|----------|------------------|
 | `FLOW_COUNTER_ROUTE_PATTERN` | key=`<vrf>|<prefix>`, field=`max` | `config flowcnt-route ...` で書き込み、`show flowcnt-route config` で表示 |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `FLOW_COUNTER_ROUTE_PATTERN`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `cli.add_command(flow_counters.flowcnt_route)` / `cli.add_command(flow_counters.flowcnt_trap)` が `show/main.py` L311-L312 にある。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L311>

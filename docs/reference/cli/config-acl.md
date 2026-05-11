@@ -106,6 +106,14 @@ excerpt: |
 | `ACL_TABLE` | 作成・削除 | `config acl add table` / `config acl remove table` |
 | `ACL_RULE` | 全置換 / 差分置換 | `config acl update full` / `config acl update incremental`（実体は `acl-loader`） |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`ACL_TABLE`](../config-db/acl-table.md) / [`ACL_RULE`](../config-db/acl-rule.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `acl` グループ定義は `config/main.py` L7979-L7982。`add table` / `remove table` / `update full|incremental` の 4 コマンドのみで、個別ルール CRUD は `acl-loader` に委譲される設計。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7975>

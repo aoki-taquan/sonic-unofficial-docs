@@ -76,6 +76,14 @@ module: sonic-tunnel
 - CONFIG_DB: `TUNNEL`
 - CLI: なし（DualToR 構築時に config_db.json で直接設定）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`TUNNEL`](../config-db/tunnel.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -61,6 +61,15 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 - 関連 CLI: `config aaa authentication login`、`config ldap`
 - 関連 YANG: `sonic-system-ldap`、`sonic-system-aaa`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-system-ldap`](../yang/sonic-system-ldap.md)
+- CLI: [`config aaa`](../cli/config-aaa.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-system-ldap.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-ldap.yang>

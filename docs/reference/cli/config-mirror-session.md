@@ -137,6 +137,15 @@ excerpt: |
 - `src_port` は **該当ポートのある namespace にのみ** 書く（front-panel でなければ fail）
 - SPAN は `dst_port` の namespace を判定し、そこにのみ書く
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-mirror-session`](../yang/sonic-mirror-session.md)
+- CONFIG_DB: [`MIRROR_SESSION`](../config-db/mirror-session.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: グループ定義 `config/main.py` L3150-L3155。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3148>

@@ -70,6 +70,14 @@ module: sonic-buffer-queue
 
 - CONFIG_DB: `BUFFER_QUEUE`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BUFFER_QUEUE`](../config-db/buffer-queue.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-buffer-queue.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

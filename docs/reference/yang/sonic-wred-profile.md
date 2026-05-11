@@ -80,6 +80,15 @@ module: sonic-wred-profile
 - CONFIG_DB: `WRED_PROFILE`
 - CLI: `config qos`, `show qos`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`WRED_PROFILE`](../config-db/wred-profile.md)
+- CLI: [`config qos`](../cli/config-qos.md) / `show qos`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-wred-profile.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

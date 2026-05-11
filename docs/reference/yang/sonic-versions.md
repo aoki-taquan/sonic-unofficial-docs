@@ -53,6 +53,14 @@ module: sonic-versions
 
 - CONFIG_DB: `VERSIONS|DATABASE` キーで `VERSION` フィールドを保持
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `VERSIONS`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-versions.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -61,6 +61,14 @@ config pfcwd start [--action drop|forward|alert]
 - このページで扱う `config pfcwd` は wrapper であり、DB table 名や永続化の詳細は `pfcwd` 側の実装に依存する。
 - `show pfcwd config` / `show pfcwd stats` も同じ `pfcwd` 実行ファイルへ委譲される。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config pfcwd` グループと各 command は `config/main.py` の PFC watchdog セクションで定義される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450>

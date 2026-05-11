@@ -88,6 +88,15 @@ module: sonic-snmp
 - CONFIG_DB: `SNMP|CONTACT/LOCATION`, `SNMP_COMMUNITY|<name>`, `SNMP_USER|<name>`, `SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>`
 - CLI: `config snmp` 系（agentaddress / community / user）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SNMP`](../config-db/snmp.md) / `SNMP_COMMUNITY` / `SNMP_USER` / [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md)
+- CLI: [`config snmp`](../cli/config-snmp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-snmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

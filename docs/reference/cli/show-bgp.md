@@ -124,6 +124,14 @@ excerpt: |
 - `-n / --namespace` ... 単一 namespace 名 (`asic0` 等) または `all`。
 - `-d / --display` ... `frontend` / `all`。`frontend` は external 向けセッションのみ。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BGP_DEVICE_GLOBAL`](../config-db/bgp-device-global.md) / [`BGP_AGGREGATE_ADDRESS`](../config-db/bgp-aggregate-address.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show/main.py` 末尾で `cli.add_command(bgp_cli.BGP)`（`show/bgp_cli.py` の `BGP` group が `show bgp` として登録される）。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py>

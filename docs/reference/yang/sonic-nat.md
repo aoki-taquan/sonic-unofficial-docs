@@ -124,6 +124,15 @@ module: sonic-nat
 - CONFIG_DB: `NAT_BINDINGS`
 - CLI: `config nat`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `STATIC_NAPT` / `STATIC_NAT` / `NAT_GLOBAL` / `NAT_POOL` / `NAT_BINDINGS`
+- CLI: [`config nat`](../cli/config-nat.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nat.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

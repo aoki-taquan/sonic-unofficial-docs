@@ -64,6 +64,15 @@ module: sonic-fabric-monitor
 - CONFIG_DB: `FABRIC_MONITOR|FABRIC_MONITOR_DATA`
 - CLI: `config fabric monitor`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`FABRIC_MONITOR`](../config-db/fabric-monitor.md)
+- CLI: `config fabric monitor`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fabric-monitor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

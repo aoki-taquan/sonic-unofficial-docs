@@ -111,6 +111,14 @@ excerpt: |
 | `PORT` / `PORTCHANNEL` / `VLAN` / `LOOPBACK_INTERFACE` | `<if_name>` | `nat_zone` | `add/remove interface` |
 | `NAT_GLOBAL` | `Values` | `admin_mode`, `nat_timeout`, `nat_tcp_timeout`, `nat_udp_timeout` | `feature ...` / `set ...` / `reset ...` |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` / `NAT_BINDINGS` / `NAT_GLOBAL` / `NAT_ZONE`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: NAT グループ定義は `config/nat.py` L194-L195 (`@click.group('nat')`)、`config/main.py` 側で `config.add_command(nat.nat)` 経由で登録される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/nat.py#L194>

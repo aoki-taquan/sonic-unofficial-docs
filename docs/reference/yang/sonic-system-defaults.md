@@ -55,6 +55,14 @@ module: sonic-system-defaults
 - CONFIG_DB: `SYSTEM_DEFAULTS`
 - CLI: なし（init_cfg / image 由来の不変設定として参照）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SYSTEM_DEFAULTS`](../config-db/system-defaults.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-defaults.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

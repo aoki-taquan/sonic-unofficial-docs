@@ -102,6 +102,14 @@ excerpt: |
 - `fdbshow` 自体は APPL_DB / ASIC_DB / STATE_DB を読み合わせて FDB を組み立てる。CONFIG_DB は使わない
 - aging time の **設定** は `config mac aging_time <seconds>` 等が存在する場合に行う（本ページは表示系のみ）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1199>

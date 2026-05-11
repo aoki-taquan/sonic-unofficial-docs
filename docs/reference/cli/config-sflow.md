@@ -105,6 +105,14 @@ interface 用 sample-direction。グローバルと同じ `tx/both` の egress c
 - **コレクタ数**: 2 件固定（コード上のリテラル）。
 - **VRF**: `default` と `mgmt` のみ。任意 data VRF はサポート外。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SFLOW`](../config-db/sflow.md) / `SFLOW_SESSION` / `SFLOW_COLLECTOR`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config sflow` グループ定義は `config/main.py` L9042-L9048。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9042>

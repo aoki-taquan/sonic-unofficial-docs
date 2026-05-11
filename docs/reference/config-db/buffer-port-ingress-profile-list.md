@@ -60,6 +60,15 @@ BUFFER_PORT_INGRESS_PROFILE_LIST|<port>
 - 関連 CLI: `config buffer profile` (sonic-utilities)
 - 関連 YANG: `sonic-buffer-port-ingress-profile-list`, `sonic-buffer-profile`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-buffer-port-ingress-profile-list`
+- CLI: [`config buffer`](../cli/config-buffer.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-buffer-port-ingress-profile-list.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-ingress-profile-list.yang>

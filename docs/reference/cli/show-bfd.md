@@ -94,6 +94,14 @@ show bfd peer <peer_ip> [-n|--namespace <ns>]
 - BFD セッションの **生成・削除** は `show bfd` のスコープ外。BGP/static route 側の設定や `bfdsyncd` の動作による
 - `local_discriminator` は古い実装では存在しないため `NA` に置換するガードがある
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `BFD_SESSION_TABLE`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: STATE_DB を参照する `db.db_clients[ns].keys(db.db.STATE_DB, "BFD_SESSION_TABLE|*")` のロジック。

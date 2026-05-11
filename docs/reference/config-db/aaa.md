@@ -60,6 +60,15 @@ AAA|<type>
 - 関連 CLI: `config aaa authentication { login | failthrough | fallback | debug | trace }`
 - 関連 YANG: `sonic-system-aaa`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-system-aaa`](../yang/sonic-system-aaa.md)
+- CLI: [`config aaa`](../cli/config-aaa.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-system-aaa.yang` (container `AAA` / list `AAA_LIST`、leaf `login` の pattern と TACACS+ passkey の must 制約). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-aaa.yang>

@@ -83,6 +83,15 @@ module: sonic-lldp
 - CONFIG_DB: `LLDP_PORT`
 - CLI: `show lldp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`LLDP`](../config-db/lldp.md) / [`LLDP_PORT`](../config-db/lldp-port.md)
+- CLI: [`show lldp`](../cli/show-lldp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-lldp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

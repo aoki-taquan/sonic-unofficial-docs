@@ -76,6 +76,15 @@ grouping `lldp_mode_config` を `uses`:
 - 関連 YANG: `sonic-lldp`、`sonic-port`
 - 関連 CLI: `config lldp`、`show lldp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-lldp`](../yang/sonic-lldp.md)
+- CLI: `config lldp`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-lldp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang>

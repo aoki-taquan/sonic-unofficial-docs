@@ -49,6 +49,14 @@ related:
 |---|---|
 | なし（read-only） | `show clock` は CONFIG_DB を読まない |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `clock` グループの定義は `show/main.py` L2222-L2238。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2222>

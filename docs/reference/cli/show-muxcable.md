@@ -93,6 +93,14 @@ gNMI 経由で server (NIC) 側からキャッシュされた状態を読む経�
 - `cableinfo` だけは tabulate なし。Y-Cable が要件を満たさず情報を返せないと "N/A" 行が並ぶ。
 - `--json` 出力は `create_json_dump_per_port_*` ヘルパ群で生成される。port 名がキーになる辞書形式で、スキーマはコマンドごとに異なる。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MUX_CABLE`](../config-db/mux-cable.md) / [`MUX_LINKMGR`](../config-db/mux-linkmgr.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `muxcable` グループ定義は `show/muxcable.py` L441-L443。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/muxcable.py#L441>

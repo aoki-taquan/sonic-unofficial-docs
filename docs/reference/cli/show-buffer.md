@@ -47,6 +47,14 @@ mmuconfig -l [-n <namespace>] [-vv]
 - `show buffer_pool` と `show headroom-pool` は別の top-level group。
 - 実際に表示される項目は `mmuconfig` 側の実装と platform の buffer model に依存する。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show buffer` と `configuration` command の定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2466>

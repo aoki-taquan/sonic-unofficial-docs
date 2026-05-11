@@ -69,6 +69,14 @@ show platform firmware [fwutil args...]
 - この CLI は CONFIG_DB を直接編集しない。
 - `add_help_option=False` のため、`config platform firmware install --help` のような引数も原則 `fwutil` に渡される。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config platform firmware` の `install` / `update` 定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8734>

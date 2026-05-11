@@ -86,6 +86,15 @@ module: sonic-sflow
 - CONFIG_DB: `SFLOW|global`, `SFLOW_COLLECTOR|<name>`, `SFLOW_SESSION|<port>`
 - CLI: `config sflow`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SFLOW`](../config-db/sflow.md) / `SFLOW_COLLECTOR` / `SFLOW_SESSION`
+- CLI: [`config sflow`](../cli/config-sflow.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-sflow.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

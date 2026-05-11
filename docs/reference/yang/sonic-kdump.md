@@ -64,6 +64,15 @@ module: sonic-kdump
 - CONFIG_DB: `KDUMP|config`
 - CLI: `config kdump`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`KDUMP`](../config-db/kdump.md)
+- CLI: [`config kdump`](../cli/config-kdump.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-kdump.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

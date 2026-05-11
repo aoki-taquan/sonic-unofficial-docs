@@ -119,6 +119,15 @@ module: sonic-flex_counter
 - CONFIG_DB: `FLEX_COUNTER_TABLE|<GROUP>`, `FLOW_COUNTER_ROUTE_PATTERN`
 - CLI: `counterpoll <group> {enable|disable|interval <ms>}`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`FLEX_COUNTER_TABLE`](../config-db/flex-counter-table.md) / `FLOW_COUNTER_ROUTE_PATTERN`
+- CLI: `counterpoll`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-flex_counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

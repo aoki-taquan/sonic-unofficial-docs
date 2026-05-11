@@ -62,6 +62,15 @@ SYSLOG_SERVER|<server_address>
 - 関連 CLI: `config syslog add/del`
 - 関連 YANG: `sonic-syslog`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-syslog`](../yang/sonic-syslog.md)
+- CLI: [`config syslog`](../cli/config-syslog.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-syslog.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-syslog.yang>

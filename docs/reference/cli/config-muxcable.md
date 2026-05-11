@@ -98,6 +98,14 @@ linkmgrd を経由せず xcvrd 経由で **直接 Y-Cable の HW state を切り
 - 大半の low-level コマンド (PRBS / loopback / FW / FEC / ANLT) は **CONFIG_DB を直接書き換えるのではなく xcvrd への async RPC** で動く。タイムアウト時のリトライや RSP 不整合の検出は CLI 側のフォールバック実装を読む必要がある。
 - `port = "all"` 指定をサポートするコマンドと、しないコマンドが混在する。CLI 引数の `default=None` と `MUX_CABLE` 全件ループ実装の有無を要確認。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MUX_CABLE`](../config-db/mux-cable.md) / `XCVRD_LOG` / [`MUX_LINKMGR`](../config-db/mux-linkmgr.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `muxcable` グループ定義は `config/muxcable.py` L224-L226。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L224>

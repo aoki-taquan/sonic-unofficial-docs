@@ -87,6 +87,15 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 - 関連 CLI: `config vxlan`
 - 関連 YANG: `sonic-vnet`、`sonic-vxlan`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-vnet`](../yang/sonic-vnet.md)
+- CLI: [`config vxlan`](../cli/config-vxlan.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-vnet.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang>

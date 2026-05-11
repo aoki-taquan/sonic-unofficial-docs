@@ -113,6 +113,15 @@ module: sonic-port
 - CLI: `config interface`
 - CLI: `show interfaces`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORT`](../config-db/port.md)
+- CLI: [`config interface`](../cli/config-interface.md) / [`show interfaces`](../cli/show-interfaces.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

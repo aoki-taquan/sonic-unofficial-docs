@@ -47,6 +47,14 @@ FIPS|global
 - 関連 CLI: `config fips enable` / `config fips enforce`
 - 関連 YANG: `sonic-fips`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-fips`](../yang/sonic-fips.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-fips.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fips.yang>

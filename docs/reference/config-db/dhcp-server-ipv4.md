@@ -64,6 +64,15 @@ DHCP_SERVER_IPV4|<name>
 - 関連 CLI: `config dhcp_server ipv4 add/del/range/port`
 - 関連 YANG: `sonic-dhcp-server-ipv4`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-dhcp-server-ipv4`
+- CLI: `config dhcp_server`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-dhcp-server-ipv4.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang>

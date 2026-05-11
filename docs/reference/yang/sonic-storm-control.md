@@ -58,6 +58,15 @@ module: sonic-storm-control
 - CONFIG_DB: `PORT_STORM_CONTROL`
 - CLI: `config interface storm-control`, `show storm-control`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md)
+- CLI: `config interface storm-control` / [`show storm-control`](../cli/show-storm-control.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-storm-control.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

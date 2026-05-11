@@ -81,6 +81,15 @@ module: sonic-vlan-sub-interface
 - CLI: `config subinterface`
 - CLI: `show subinterfaces`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md)
+- CLI: `config subinterface` / `show subinterfaces`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

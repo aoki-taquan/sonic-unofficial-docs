@@ -81,6 +81,14 @@ CONFIG_DB の `SSH_SERVER|POLICIES` テーブルに `max_sessions` フィール�
 - 反映には sshd 再ロードが必要。SONiC では hostcfgd が CONFIG_DB の変更を監視して `/etc/ssh/sshd_config` を再生成する。
 - 同名の `config serial_console inactivity-timeout` という別ファミリがあり、こちらは `SERIAL_CONSOLE|POLICIES` テーブルへ書く。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `SSH_SERVER`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config ssh` グループ定義は `config/main.py` L9970-L10000。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9970>

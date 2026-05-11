@@ -100,6 +100,15 @@ CRM が監視する論理リソース（`<class>_threshold_type` / `_high_thresh
 - CONFIG_DB: `CRM|Config`
 - CLI: `crm config thresholds <type> <resource> ...`, `crm show resources`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`CRM`](../config-db/crm.md)
+- CLI: `crm config` / `crm show`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-crm.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

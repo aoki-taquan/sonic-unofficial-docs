@@ -59,6 +59,15 @@ TELEMETRY|gnmi         # gNMI サーバオプション
 - 関連 CLI: `config telemetry config-db`、`config telemetry server`、`gnoi-system reboot` 等
 - 関連 YANG: `sonic-telemetry`、`sonic-gnmi`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-telemetry`
+- CLI: `config telemetry`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-telemetry.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry.yang>

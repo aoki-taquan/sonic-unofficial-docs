@@ -58,6 +58,14 @@ module: sonic-dscp-tc-map
 
 - CONFIG_DB: `DSCP_TO_TC_MAP`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`DSCP_TO_TC_MAP`](../config-db/dscp-to-tc-map.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

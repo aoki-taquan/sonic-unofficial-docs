@@ -73,6 +73,15 @@ module: sonic-system-ldap
 - CONFIG_DB: `LDAP|global`, `LDAP_SERVER|<hostname>`
 - CLI: `config ldap`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `LDAP` / [`LDAP_SERVER`](../config-db/ldap-server.md)
+- CLI: `config ldap`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-ldap.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

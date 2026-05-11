@@ -87,6 +87,14 @@ related:
 - `add` コマンドは IPv4 / IPv6 両対応だが、CLI 引数では区別せず、`ipaddress.ip_address()` で自動判別する。
 - レート制限の単位は **rsyslog の `imuxsock` ratelimit** (interval 秒間に burst 件まで) であり、CLI が指定するのはそれの interval / burst パラメータそのまま。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`SYSLOG_SERVER`](../config-db/syslog-server.md) / [`SYSLOG_CONFIG`](../config-db/syslog-config.md) / [`SYSLOG_CONFIG_FEATURE`](../config-db/syslog-config-feature.md) / `LOGGER`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `syslog` グループは `config/syslog.py` L361-L368。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/syslog.py#L361>

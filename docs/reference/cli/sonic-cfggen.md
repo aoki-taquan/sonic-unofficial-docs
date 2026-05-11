@@ -111,6 +111,14 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 - `show runningconfiguration <table>` 系は内部で `sonic-cfggen -d --var-json <TABLE>` を呼ぶ薄いラッパ。
 - multi-ASIC では NAMESPACE_ID 環境変数や `-n` 引数で per-namespace 動作が切り替わる。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: 例: `show runningconfiguration ports` は `sonic-cfggen -d --var-json PORT [--key NAME]` を呼ぶ（`show/main.py` L1868）。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1868>

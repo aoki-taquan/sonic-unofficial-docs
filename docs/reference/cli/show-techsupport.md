@@ -95,6 +95,14 @@ excerpt: |
 - 大規模ダンプ（数百 MB）になるため、**`/var/dump/` の空き容量** が事前に必要。
 - `--global-timeout` でカット された場合、dump は不完全な状態で残る可能性がある。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `show techsupport` 実装は `show/main.py` L1780-L1814。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1780>

@@ -56,6 +56,15 @@ module: sonic-fips
 - CONFIG_DB: `FIPS|global`
 - CLI: `config fips`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`FIPS`](../config-db/fips.md)
+- CLI: `config fips`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fips.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

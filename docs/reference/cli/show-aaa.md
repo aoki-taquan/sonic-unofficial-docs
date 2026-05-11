@@ -75,6 +75,15 @@ CONFIG_DB に該当キーが無ければ `(default)` 表記のまま出る（実
 
 書き込み側は `config/aaa.py` 経由。実サーバ定義は `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` 等の別テーブルにあり、それぞれ `show tacacs` / `show radius` で表示する。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-aaa`
+- CONFIG_DB: [`AAA`](../config-db/aaa.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `aaa()` コマンドの実装は `show/main.py` L2269-L2299。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2269>

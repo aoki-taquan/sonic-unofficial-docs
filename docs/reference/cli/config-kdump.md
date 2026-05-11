@@ -82,6 +82,14 @@ related:
 - いずれの操作も **`config save` + reboot を経ないと実機には効かない**。`echo_reboot_warning` が enable / disable / memory / num_dumps の各コマンドで明示的に警告を出すのはこのため。
 - `config kdump` は CONFIG_DB しか触らない。`/etc/default/kdump-tools` や initramfs の rebuild は `hostcfgd` が担当する。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`KDUMP`](../config-db/kdump.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `kdump` グループ定義は `config/kdump.py` L11-L14。`config/main.py` 側で `config.add_command(kdump.kdump)` で登録される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/kdump.py#L11>

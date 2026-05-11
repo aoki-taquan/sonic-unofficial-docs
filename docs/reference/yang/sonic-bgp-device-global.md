@@ -63,6 +63,15 @@ module: sonic-bgp-device-global
 - CONFIG_DB: `BGP_DEVICE_GLOBAL`
 - CLI: `config bgp` (`tsa`/`wcmp`/`idf`), `show bgp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BGP_DEVICE_GLOBAL`](../config-db/bgp-device-global.md)
+- CLI: [`config bgp`](../cli/config-bgp.md) / [`show bgp`](../cli/show-bgp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

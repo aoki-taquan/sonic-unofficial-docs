@@ -73,6 +73,15 @@ excerpt: |
 - `is_mgmt_vrf_enabled` は `MGMT_VRF_CONFIG|vrf_global` の `mgmtVrfEnabled` を参照する
 - 管理 VRF の有効化・無効化は `config vrf add mgmt` / `config vrf del mgmt` 系コマンドで行う（本コマンドは表示のみ）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-mgmt-vrf`
+- CONFIG_DB: [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `@cli.group('mgmt-vrf', invoke_without_command=True)` + `@click.argument('routes', required=False)` の組み合わせで、`show mgmt-vrf` も `show mgmt-vrf routes` も同じ関数本体に流れる。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L540>

@@ -74,6 +74,14 @@ show lldp table [--verbose]
 - `show lldp` は明示的なデフォルト subcommand を持つが、Click グループとしては `neighbors` を default として明示せず、引数なしで `show lldp` を呼ぶと help が表示される（`neighbors` を呼びたい場合は明示する）
 - LLDP の有効・無効や送信間隔などの設定は本コマンドのスコープ外（`lldpd.conf` / `LLDP*` テーブル管理ツール側）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: グループ定義は `show/main.py` L1649-L1652。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1649>

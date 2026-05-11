@@ -57,6 +57,14 @@ show version [--brief]
 
 なし（ファイル `/etc/sonic/sonic_version.yml`, platform API, docker daemon を読むのみ）。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `version()` 実装は `show/main.py` L1714-L1750。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1714>

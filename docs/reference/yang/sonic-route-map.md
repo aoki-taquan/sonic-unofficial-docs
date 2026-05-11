@@ -132,6 +132,14 @@ module: sonic-route-map
 - CONFIG_DB: `ROUTE_MAP`
 - CONFIG_DB: `ROUTE_MAP_SET`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`ROUTE_MAP`](../config-db/route-map.md) / `ROUTE_MAP_SET`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-route-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

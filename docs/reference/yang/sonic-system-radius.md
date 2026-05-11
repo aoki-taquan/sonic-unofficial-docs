@@ -91,6 +91,15 @@ module: sonic-system-radius
 - CONFIG_DB: `RADIUS|global`, `RADIUS_SERVER|<ipaddress>`
 - CLI: `config radius`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`RADIUS`](../config-db/radius.md) / `RADIUS_SERVER`
+- CLI: `config radius`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-radius.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

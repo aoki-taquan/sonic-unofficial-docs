@@ -61,6 +61,14 @@ cmd += ['-d', str(display)]
 
 ARP テーブルは **kernel の neighbor table**（および swss/neighsyncd 経由で APPL_DB の `NEIGH_TABLE` に同期）で管理されるため、`show arp` 自体は CONFIG_DB を読まない。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `arp` の click 定義と `nbrshow -4` 起動部分は `show/main.py` L421-L446。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L421>

@@ -61,6 +61,15 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 - 関連 YANG: `sonic-nvgre-tunnel`
 - 関連 CLI: `config nvgre`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-nvgre-tunnel`](../yang/sonic-nvgre-tunnel.md)
+- CLI: `config nvgre`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-nvgre-tunnel.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang>

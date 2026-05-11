@@ -62,6 +62,15 @@ DHCPV4_RELAY|<name>
 - 関連 CLI: `config dhcp_relay ipv4 add/del`
 - 関連 YANG: `sonic-dhcpv4-relay`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: `sonic-dhcpv4-relay`
+- CLI: [`config dhcp_relay`](../cli/config-dhcp-relay.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-dhcpv4-relay.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-dhcpv4-relay.yang>

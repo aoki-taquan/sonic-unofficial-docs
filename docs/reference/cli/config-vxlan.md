@@ -128,6 +128,14 @@ excerpt: |
 - VTEP / NVO は **デバイス 1 つあたり 1 つ限定**
 - `map_range del` は VRF 紐付けがある VNI のみ削除する仕様で、削除されない行があっても警告は print のみ。完全削除には `map del` を使う
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VXLAN_TUNNEL`](../config-db/vxlan-tunnel.md) / [`VXLAN_EVPN_NVO`](../config-db/vxlan-evpn-nvo.md) / [`VXLAN_TUNNEL_MAP`](../config-db/vxlan-tunnel-map.md) / [`VLAN`](../config-db/vlan.md) / [`VNET`](../config-db/vnet.md) / [`VRF`](../config-db/vrf.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `vxlan` グループ全体の定義は `config/vxlan.py` L14-L17。`-n` 必須。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vxlan.py>

@@ -74,6 +74,14 @@ iccpd 内部のログレベル切替。値は iccpd の syslog 等でデバッ�
 - 出力はパース対象として安定したフォーマットではない (人間向け固定列)。スクリプトから扱う際はバージョン差異に注意。
 - ピアとの ICCP 接続が落ちている状態では `dump portlist peer` `dump arp` 等は最後に同期したスナップショットのままになる。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`MCLAG_DOMAIN`](../config-db/mclag-domain.md) / `MCLAG_INTERFACE`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `mclagdctl_sock_connect` 実装 (`src/iccpd/src/mclagdctl/mclagdctl.c` L165-L196)。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mclagdctl/mclagdctl.c#L165>

@@ -103,6 +103,14 @@ CONFIG_DB は触らず、`/host/machine.conf` 由来の environment variables �
 | BMC | `sonic_platform` API | `bmc summary` / `bmc eeprom` |
 | Leakage | `leakageshow` (`LIQUID_COOLING_LEAKAGE` STATE_DB) | `leakage status` |
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `platform` グループ全体は `show/platform.py` で定義。`show/main.py` L321 で `cli.add_command(platform.platform)` 登録。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/platform.py>

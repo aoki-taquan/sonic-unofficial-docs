@@ -101,6 +101,14 @@ current の `debug.main` ツリーには `bgp` / `zebra` / `spanning_tree` の�
 - `debug` の効果は **プロセス再起動で消える**。永続化したい場合は FRR 側 (`/etc/frr/frr.conf` 内 `debug ...` 行) に書く運用となる。
 - Quagga ブランチ (legacy) のコマンド集合は FRR ブランチと部分的に異なる (`debug bgp filters` / `fsm` などは Quagga のみ)。`vtysh -c 'show version'` で判定するため、現役 SONiC では FRR 経路のみが効く。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `setup.py` の entry point `'debug = debug.main:cli'` / `'undebug = undebug.main:cli'`、および `data_files` への登録。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/setup.py>

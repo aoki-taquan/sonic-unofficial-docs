@@ -72,6 +72,15 @@ module: sonic-ssh-server
 - CONFIG_DB: `SSH_SERVER|POLICIES`
 - CLI: `config ssh`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: `SSH_SERVER`
+- CLI: [`config ssh`](../cli/config-ssh.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-ssh-server.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

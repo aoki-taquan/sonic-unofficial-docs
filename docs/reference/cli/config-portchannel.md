@@ -134,6 +134,14 @@ CONFIG_DB ではなく `teamdctl <portchannel_name> state item get runner.retry_
 
 `retry-count` はランタイム制御のみで CONFIG_DB を変更しない点に注意。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`PORTCHANNEL`](../config-db/portchannel.md) / [`PORTCHANNEL_MEMBER`](../config-db/portchannel-member.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `portchannel` グループは `config/main.py` L2817-L2830 で定義される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L2817>

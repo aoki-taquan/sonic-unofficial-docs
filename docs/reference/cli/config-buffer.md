@@ -77,6 +77,14 @@ config buffer profile set <profile>
 - `config interface buffer priority_group ...` と `config interface buffer queue ...` は別グループで、port 上の `BUFFER_PG` / `BUFFER_QUEUE` バインドを操作する。本ページは root の `config buffer profile` を対象にする。
 - CLI 抽出上の `config buffer priority-group` / `queue` 候補は、実装上は `config interface buffer ...` 配下にある。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BUFFER_PROFILE`](../config-db/buffer-profile.md) / [`BUFFER_POOL`](../config-db/buffer-pool.md) / [`DEFAULT_LOSSLESS_BUFFER_PARAMETER`](../config-db/default-lossless-buffer-parameter.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config buffer` グループ定義と dynamic buffer チェック。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8481>

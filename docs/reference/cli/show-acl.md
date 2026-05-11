@@ -59,6 +59,14 @@ related:
 - **set / counter / history 系のサブコマンドは `show acl` 配下に存在しない**。ACL カウンタは `aclshow` という別ユーティリティ（`show/main.py` から `aclshow` コマンドに直接バインド）で取得する設計
 - ルール定義の入力側 (`config acl update full`) と表示側 (`show acl rule`) は両方とも `acl-loader` を経由する一貫した設計
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`ACL_TABLE`](../config-db/acl-table.md) / [`ACL_RULE`](../config-db/acl-rule.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `acl` グループ全体は `show/acl.py` で定義。table / rule の 2 コマンドのみで、本体ロジックは `acl-loader` ユーティリティ（別パッケージ）に委譲。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/acl.py>

@@ -211,6 +211,15 @@ module: sonic-bgp-peergroup
 - CONFIG_DB: `BGP_PEER_GROUP_AF`
 - CLI: `config bgp`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`BGP_PEER_GROUP`](../config-db/bgp-peer-group.md) / [`BGP_PEER_GROUP_AF`](../config-db/bgp-peer-group-af.md)
+- CLI: [`config bgp`](../cli/config-bgp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -58,6 +58,15 @@ module: sonic-vrf
 - CONFIG_DB: `VRF`
 - CLI: `config vrf`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VRF`](../config-db/vrf.md)
+- CLI: [`config vrf`](../cli/config-vrf.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -63,6 +63,14 @@ config vnet add <vnet_name> <vni> <vxlan_tunnel>
 
 `<prefix>` 指定時は該当 route だけを削除する。省略時は対象 VNET に紐づく route をまとめて削除する。
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`VNET`](../config-db/vnet.md) / `VNET_ROUTE_TUNNEL` / `VNET_ROUTE`
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `config vnet` グループ定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10057>

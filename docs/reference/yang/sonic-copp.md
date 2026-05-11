@@ -96,6 +96,14 @@ module: sonic-copp
 - CONFIG_DB: `COPP_GROUP`
 - CONFIG_DB: `COPP_TRAP`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CONFIG_DB: [`COPP_GROUP`](../config-db/copp-group.md) / [`COPP_TRAP`](../config-db/copp-trap.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-copp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

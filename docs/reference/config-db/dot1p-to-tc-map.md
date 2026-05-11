@@ -63,6 +63,15 @@ inner list で定義される各エントリ:
 - 関連 YANG: `sonic-dot1p-tc-map`、`sonic-port-qos-map`
 - 関連 CLI: `config qos`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-dot1p-tc-map`](../yang/sonic-dot1p-tc-map.md)
+- CLI: [`config qos`](../cli/config-qos.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-dot1p-tc-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-dot1p-tc-map.yang>

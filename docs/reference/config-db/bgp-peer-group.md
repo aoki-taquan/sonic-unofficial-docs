@@ -58,6 +58,15 @@ BGP_PEER_GROUP|<vrf_name>|<peer_group_name>
 - 関連 CLI: `config bgp` (peer-group 関連サブコマンド)
 - 関連 YANG: `sonic-bgp-peergroup`、`sonic-bgp-common`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-bgp-peergroup`](../yang/sonic-bgp-peergroup.md) / `sonic-bgp-common`
+- CLI: [`config bgp`](../cli/config-bgp.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-peergroup.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang>

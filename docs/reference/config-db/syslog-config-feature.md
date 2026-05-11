@@ -56,6 +56,15 @@ SYSLOG_CONFIG_FEATURE|<service>
 - 関連 CLI: `config syslog rate-limit-container <service>`
 - 関連 YANG: `sonic-syslog`
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- YANG: [`sonic-syslog`](../yang/sonic-syslog.md)
+- CLI: [`config syslog`](../cli/config-syslog.md)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-syslog.yang` (container `SYSLOG_CONFIG_FEATURE` / list `SYSLOG_CONFIG_FEATURE_LIST`、leaf `service` の leafref). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-syslog.yang>

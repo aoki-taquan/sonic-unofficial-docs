@@ -63,6 +63,14 @@ module: sonic-route-common
 
 - 関連 CLI / CONFIG_DB は本ページからは未リンク（CONFIG_DB のテーブル名は本モジュールの top-level container と一致するのが通例）
 
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- (関連リンクなし)
+
+<!-- ref-triangle:end -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-route-common.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
