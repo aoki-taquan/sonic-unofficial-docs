@@ -2697,6 +2697,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/08-qos-buffer/advanced/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/08-qos-buffer/architecture/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -2749,6 +2753,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/advanced/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/architecture/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -2778,6 +2786,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/11-reboot/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/11-reboot/advanced/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>

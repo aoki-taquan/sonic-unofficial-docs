@@ -4681,6 +4681,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22779,6 +22834,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22833,6 +22943,43 @@
 <li>データプレーン暗号: <a href="../internals/">内部実装</a></li>
 <li>ライフサイクル: <a href="../../11-reboot/">Reboot / Upgrade / Lifecycle</a></li>
 <li>設定基盤: <a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
+</ul>
+<h2 id="_4">発展トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>gNSI による証明書 / authz 集中管理</strong>: gNMI 接続の TLS 証明書、RBAC、Pathz による path レベル authz を controller から push する仕組み。手動 ssh と分離した運用と監査が可能になる。</li>
+<li><strong>MACsec MKA scale</strong>: MACsec を全 port に展開する場合、MKA セッション数と鍵更新コストが ASIC / CPU に効く。<code>MACSEC_PROFILE</code> の rekey interval 設計が要点。</li>
+<li><strong>HSM / TPM 連携</strong>: secure boot 鍵や TLS 秘密鍵を HSM / TPM に保管する構成。<code>tpm2-tools</code> と secure upgrade の連携が議題。</li>
+<li><strong>role-based access control (RBAC)</strong>: ユーザロールと権限の細分化。AAA 認証後の authz で扱うが、CLI / gNMI 両面で一貫した role が要求される。</li>
+<li><strong>audit logging</strong>: 全ての設定変更を audit log に残す要件で、<code>auditd</code> + structured logging への対応拡張。FIPS / セキュア環境では必須。</li>
+</ul>
+<h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>FIPS モード時の cipher 制限</strong>: SSH / TLS で許可される cipher suite が狭まる。client tools 側で legacy 接続が壊れる事例があり、deployment 前に統合テストが必要。</li>
+<li><strong>secure boot の鍵管理</strong>: shim に焼く鍵を交換するには物理アクセスが必要。Production fleet 全体での回転には計画が要る。</li>
+<li><strong>container hardening と debug</strong>: 不要 capability を削ると <code>strace</code> / <code>gdb</code> がコンテナ内で動かなくなる。Debug 用 image を別途用意する運用が現実的。</li>
+<li><strong>TACACS+ サーバ障害時のフォールバック</strong>: 全 TACACS+ サーバ到達不能で local 認証に落ちる挙動を確認しておく。<code>nss-tacplus</code> の設定順序が重要。</li>
+</ul>
+<h2 id="_6">将来計画 / ロードマップ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>gNSI 系 (<code>certz</code>, <code>authz</code>, <code>pathz</code>) の SONiC 取り込みが段階的に進行中。完成すれば controller 駆動の証明書ローテーションが標準化される。</li>
+<li>Post-quantum 対応 (Kyber / Dilithium 等) は OpenSSL FIPS 側の進捗待ちで、SONiC は upstream に追随する形。</li>
+<li>container hardening の自動評価 (CIS Benchmarks 風) が community 議題。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8446">RFC 8446</a> — TLS 1.3</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc4254">RFC 4254</a> — SSH Connection Protocol</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8907">RFC 8907</a> — TACACS+</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc2865">RFC 2865</a> / <a href="https://datatracker.ietf.org/doc/html/rfc6929">RFC 6929</a> — RADIUS / Extended Attributes</li>
+<li><a href="https://csrc.nist.gov/publications/detail/fips/140/3/final">FIPS PUB 140-3</a> — Cryptographic Module Validation</li>
+<li><a href="https://1.ieee802.org/security/802-1ae/">IEEE 802.1AE</a> — MACsec</li>
+<li><a href="https://1.ieee802.org/security/802-1x/">IEEE 802.1X</a> — Port Access Control</li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-gnmi</code> で gNSI 関連 PR が継続して入る。証明書回転、authz ポリシー push の SDK が拡張。</li>
+<li>secure upgrade 周りで署名検証パスのリファクタが進行中。<code>sonic-installer</code> のテレメトリ出力改善も並走。</li>
+<li>container hardening の対象 docker (bgp, swss, syncd, telemetry など) ごとに capability 削減 PR が段階投入されている。</li>
 </ul>
 
 

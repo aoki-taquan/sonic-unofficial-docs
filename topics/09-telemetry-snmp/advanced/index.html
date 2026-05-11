@@ -3284,6 +3284,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22801,6 +22856,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22860,6 +22970,42 @@
 <li><a href="../../../system/process-and-docker-stats-availability-via-telemetry-agent/">Process / docker stats を telemetry に</a></li>
 <li><a href="../../../system/memory-statistics-feature-in-sonic/">Memory statistics 機能</a></li>
 <li><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot cause を telemetry に</a></li>
+</ul>
+<h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>IPFIX / sFlow v5 統合</strong>: 既存 sFlow に加え、IPFIX (RFC 7011) 出力を望むユースケースが増えており、export pipeline を統一する提案がある。</li>
+<li><strong>DTel report の sampling</strong>: 全 flow を export すると collector が飽和するため、watchlist と sampling rate の組合せで scale を制御する。queue / latency event のみ extract する mode も検討対象。</li>
+<li><strong>OTel (OpenTelemetry) との橋渡し</strong>: SONiC counter / log を OTel collector へ流す community 提案がある。observability stack の統合が進めば、SNMP polling の比重が下がる。</li>
+<li><strong>YANG-modeled SNMP</strong>: legacy <code>snmp.yml</code> を YANG モデル経由で生成し、SNMP 設定も gNMI Set で扱える流れ。<code>sonic-snmp.yang</code> の拡充が前提。</li>
+<li><strong>High-frequency counter streaming</strong>: per-port / per-queue counters を 100ms 級で stream する用途。<code>telemetry</code> docker の CPU 影響と subscription 上限が論点。</li>
+</ul>
+<h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>DTel platform 依存</strong>: 全 ASIC が同じ event type を出すわけではなく、INT report header の format も platform 別。Production 投入前に対応 SAI attribute を確認する。</li>
+<li><strong>sFlow sampling rate の現実値</strong>: 設定値どおりにサンプリングされない ASIC があり、<code>SAI_SAMPLEPACKET_TYPE</code> の制約で 1/N が丸められることがある。実測 sampling rate を <code>show sflow</code> と collector 側で照合する。</li>
+<li><strong>SNMP polling と gNMI streaming の重複コスト</strong>: 同じ counter を SNMP polling と gNMI subscribe で両取りすると、Redis 負荷と control CPU が二重になる。一方に寄せる方針を決める。</li>
+<li><strong>Entity MIB の sensor 命名揺れ</strong>: platform daemon が <code>STATE_DB</code> に出す sensor 名が SKU 別で異なり、SNMP polling の dashboard で名前不一致になる事例。命名規約を SKU 横断で揃える運用ガイドが必要。</li>
+</ul>
+<h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>DTel の report format 標準化 (IFA / INT-MD) と SONiC 対応の追従。</li>
+<li>Telemetry agent からの structured logging export と OTel 連携。</li>
+<li>SNMP からの段階的退役は community 課題で、レガシー監視ツールとの併走期間設計が論点。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7011">RFC 7011</a> — IPFIX</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7012">RFC 7012</a> — IPFIX Information Model</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc3176">RFC 3176</a> — sFlow v5</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc4133">RFC 4133</a> — Entity MIB v3</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc3433">RFC 3433</a> — Entity Sensor MIB</li>
+<li><a href="https://github.com/p4lang/p4-applications/blob/master/docs/INT_latest.pdf">In-band Network Telemetry (INT) spec</a></li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-buildimage</code> の telemetry agent 拡張 PR が頻繁に入る（reboot cause、memory stats、process stats など）。</li>
+<li><code>sonic-snmpagent</code> で transceiver / entity / sensor 対応の拡張、SNMP v3 関連修正が継続。</li>
+<li>DTel / sFlow の test plan が更新され、ASIC capability matrix が PR で明確化される傾向。</li>
 </ul>
 
 

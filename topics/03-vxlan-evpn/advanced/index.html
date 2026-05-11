@@ -1744,6 +1744,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22757,6 +22812,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22803,6 +22913,43 @@
 <li><a href="../../../overlay/vnet-local-endpoint-forwarding/">VNET の Local Endpoint Forwarding</a></li>
 <li><a href="../../../overlay/nvgre-tunnel-in-sonic/">NVGRE トンネル</a></li>
 <li><a href="../../../platform/subnet-decapsulation-with-sonic/">VLAN Subnet Decap</a></li>
+</ul>
+<h2 id="_2">発展トピック<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Overlay ECMP with BFD monitoring</strong>: VNET tunnel nexthop に BFD を貼ることで、underlay の障害を検出して nexthop group から外す。<code>overlay-ecmp-with-bfd-monitoring</code> HLD と <code>overlay-ecmp-enhancements</code> で扱う。VNET の規模が大きいときに収束時間を支配する要素になる。</li>
+<li><strong>EVPN Type-5 (IP Prefix Route)</strong>: tenant VRF の prefix を route target 経由で配る方法。Type-2 ベースの MAC/IP モデルと、Type-5 ベースの prefix モデルが共存するときの優先度を意識する。</li>
+<li><strong>DSCP remapping for tunnel traffic</strong>: outer DSCP を VNET 単位で書き換える機能。<code>overlay/dscp-remapping-for-tunnel-traffic</code> で扱われ、QoS 章 (<a href="../../08-qos-buffer/">08 QoS</a>) の DSCP-to-TC マップと組み合わさる。</li>
+<li><strong>Symmetric IRB</strong>: ingress / egress 双方で L3VNI を経由する設計。FRR 側設定と SONiC schema 双方で <code>VXLAN_TUNNEL_MAP</code> に L3 mapping を入れる。</li>
+<li><strong>VXLAN counters / drop visibility</strong>: <code>COUNTERS_DB</code> に tunnel ごとの ingress/egress カウンタが入る。tunnel drop の切り分けは ASIC SAI 側のカウンタも併用する。</li>
+</ul>
+<h2 id="_3">既知の制約と回避方法<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>EVPN multihoming (Type-1/Type-4) の SONiC 対応</strong>: master でも YANG / orch / SAI 全層が揃っているかは ASIC 依存。production 投入前に <code>EVPN_ETHERNET_SEGMENT</code> の有無、FRR <code>evpn mh es</code> の動作、SAI の split horizon サポートを個別に確認する。</li>
+<li><strong>inner hashing が不十分なケース</strong>: VXLAN inner header の 5-tuple がハッシュに入らない ASIC では、ECMP / LAG の偏りが出る。SAI hash setting (<code>SAI_SWITCH_ATTR_LAG_HASH_*</code>) と platform docs を照合する。</li>
+<li><strong>NVGRE と VXLAN の同居</strong>: 同じ port での同時受信は ASIC によっては未対応。<code>nvgreorch</code> の HLD は decap 中心で、encap シナリオは限定されている。</li>
+<li><strong>Subnet decap を VNET の障害切り分けに使わない</strong>: 名前が似ているが目的が違う。<code>SUBNET_DECAP</code> は VLAN subnet 宛 IPinIP の自動 decap で、VNET overlay とは別経路。</li>
+</ul>
+<h2 id="_4">将来計画 / ロードマップ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>evpn-vxlan-hld</code> には Type-2 MAC mobility、ARP suppression、ND suppression、Type-5 集約などの拡張が "Future Work" として継続議論されている。</li>
+<li>DASH / SmartSwitch との接続で、VNET tunnel nexthop と ENI redirect の責務分担が再整理されつつある。<a href="../../13-dash-smartswitch/">13 DASH / SmartSwitch</a> の advanced と相互参照。</li>
+<li>IPv6 overlay (VXLAN over IPv6 underlay) のサポート拡大が議題。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7348">RFC 7348</a> — VXLAN</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7432">RFC 7432</a> — BGP MPLS-Based Ethernet VPN</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8365">RFC 8365</a> — EVPN over VXLAN/NVGRE</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc9135">RFC 9135</a> — Integrated Routing and Bridging in EVPN</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc9136">RFC 9136</a> — IP Prefix Advertisement in EVPN</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7637">RFC 7637</a> — NVGRE</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8926">RFC 8926</a> — Geneve (将来 overlay 候補として参照)</li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li>FRR 側の EVPN 機能拡張に追従して <code>bgpcfgd</code> の Jinja2 と YANG モジュールが更新されることが多い。EVPN MH の SONiC 対応は段階的で、PR 単位で SAI 側依存を確認する必要がある。</li>
+<li><code>sonic-swss</code> 配下の <code>vnetorch</code> / <code>vxlanorch</code> は tunnel nexthop group の扱いに関する PR が継続しており、scale 改善と memory 削減が主軸。</li>
+<li>SmartSwitch / DASH 関連で <code>vnet-local-endpoint-forwarding</code> のような近接最適化 HLD が追加されており、VNET の用途が DC overlay から DASH service へ広がっている。</li>
 </ul>
 
 

@@ -6177,6 +6177,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22735,6 +22790,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22820,6 +22930,42 @@
 <li>test plan で要求される topology / PTF（<a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF validation HLD</a> など共通設計）</li>
 </ol>
 <p>CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非公式ドキュメントの対象外です。upstream SONiC repo の <code>.github</code> と <code>azure-pipelines.yml</code> が一次資料になります。</p>
+<h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Multi-DUT topology in sonic-mgmt</strong>: 複数 DUT を仮想で組み、Dual-ToR / MC-LAG / Chassis シナリオを CI で回す。ansible inventory と PTF docker を組合せる。</li>
+<li><strong>kvm 仮想 SONiC chassis</strong>: 仮想 supervisor + 仮想 line card 構成を kvm 上で動かす。chassis_db の挙動を VS で検証できる。</li>
+<li><strong>ptf-py3 と scapy 拡張</strong>: data plane 検証で複雑 packet を生成。Path Tracing、SRv6、VXLAN、EVPN などで重宝。</li>
+<li><strong>Code coverage と gcov</strong>: SONiC binary を gcov-enabled で build し、CI 経路で coverage を集計する取り組み。orch の race condition 検出に役立つ。</li>
+<li><strong>fuzz testing</strong>: gNMI / gNOI server や CLI parser に対する fuzz テスト。security 章 (<a href="../../15-security-aaa/">15</a>) と相互参照。</li>
+</ul>
+<h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>VS と実機の SAI 差</strong>: SAI VS は CPU 実装で、ASIC 固有の制約 (TCAM / buffer / pipeline depth) を再現しない。機能合格 ≠ 実機合格。</li>
+<li><strong>CI 時間と並列化</strong>: 全 test plan を回すと CI が長い。差分テスト (changed area のみ) と nightly full の二段運用が現実的。</li>
+<li><strong>PTF environment dependency</strong>: PTF docker のバージョンと test plan の整合が崩れると失敗する。pin versioning を CI で固定する。</li>
+<li><strong>DASH KVM の性能限界</strong>: BMv2 ベースなので scale / throughput は限定的。機能テスト専用と割り切る。</li>
+</ul>
+<h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>multi-DUT / multi-ASIC topology の CI 標準化拡大。</li>
+<li>KNE / ALViS と SONiC-VS の機能ギャップ整理と互換 layer 整備。</li>
+<li>Code coverage / mutation testing の標準化。</li>
+<li>DASH KVM の HLD 完成と community 投入。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/p4lang/behavioral-model">P4 Behavioral Model (BMv2)</a> — DASH KVM の data plane</li>
+<li><a href="https://github.com/openconfig/kne">KNE (Kubernetes Network Emulation)</a> — topology orchestration</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc2544">RFC 2544</a> — benchmark methodology (実機テスト参考)</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc6815">RFC 6815</a> — IETF テスト共通フォーマット</li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-mgmt</code> で multi-DUT topology、PTF docker、test plan の拡張 PR が継続。</li>
+<li><code>sonic-buildimage</code> で VS 構成と DASH KVM の整備 PR が散発的。</li>
+<li>KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。</li>
+<li>CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。</li>
+</ul>
 
 
 

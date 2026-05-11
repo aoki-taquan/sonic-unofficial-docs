@@ -2787,6 +2787,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22779,6 +22834,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22828,6 +22938,41 @@
 <li><a href="../../../acl-qos/dash-acl-tags/">DASH ACL タグ</a></li>
 <li><a href="../../../acl-qos/port-access-control-in-sonic/">Port Access Control</a></li>
 <li><a href="../../../acl-qos/dhcp-dos-mitigation-in-sonic/">DHCP DoS 緩和</a></li>
+</ul>
+<h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>ERSPAN Type-II / Type-III</strong>: 通常 SPAN/Everflow に加え、GRE 経由で remote collector に届ける ERSPAN は SAI mirror session の <code>SAI_MIRROR_SESSION_ATTR_TYPE</code> で表現する。Type-III は timestamp と probabilistic sampling をサポートする。</li>
+<li><strong>ACL counters の telemetry export</strong>: <code>COUNTERS_DB</code> から ACL rule 単位のヒット数を gNMI / streaming telemetry で出す構成。Top talker / DoS 検出に直結する。</li>
+<li><strong>TCAM 共有 (ACL group sharing)</strong>: 同じ ACL を複数 port に bind するとき、ASIC TCAM を group 共有でケチる。SAI side で <code>SAI_ACL_TABLE_GROUP</code> の MULTIPLE binding が要件。</li>
+<li><strong>Egress ACL の counter visibility</strong>: ingress ACL counter は読みやすいが egress ACL counter は ASIC によって粒度が異なる。<code>show acl rule</code> で counter が更新されない場合は SAI 側 attribute サポートを確認する。</li>
+<li><strong>CoPP trap 別 policer の動的調整</strong>: 障害対応中に特定 trap (例えば LACPDU storm) の policer を一時的に上げる運用がある。<code>COPP_GROUP</code> / <code>COPP_TRAP</code> で per-feature に切り替える。</li>
+</ul>
+<h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>ACL update 中の transient match miss</strong>: rule replace 時に一瞬 hit しない瞬間がある。<code>atomic update</code> を ASIC がサポートするなら priority 違いで shadow rule を先入れし、後で旧 rule を消す。</li>
+<li><strong>mirror session の TTL / source MAC</strong>: ERSPAN の outer header はデフォルトで encap した装置の MAC / IP を使う。collector 側 NAT / FW が想定外の send 元を弾く例があるので outer header を明示する。</li>
+<li><strong>CoPP の Linux 側 hostif との二重バケット</strong>: SAI policer と Linux netdev queue の両方が rate limit を持つ。CPU 到達後にも drop されることがあるので、<code>ethtool -S Ethernet*</code> で host queue drop を確認する。</li>
+<li><strong>DASH ACL tag と data plane ACL の混同</strong>: 名前は似るが pipeline が別。DASH pipeline 上で動くため <code>iptables</code> や CONFIG_DB <code>ACL_RULE</code> で代用できない。</li>
+</ul>
+<h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>gNOI <code>gnoi.system.SetPackage</code> や <code>gnoi.os.Activate</code> と組み合わせた dynamic ACL push 提案がある (集中 controller からの policy 更新)。</li>
+<li>ACL の P4 表現 (<a href="../../18-p4-pins/">18 P4/PINS</a>) は中長期テーマで、SDN controller が P4 table 経由で ACL を流し込む。</li>
+<li>CoPP の YANG モデル整備 (<code>sonic-copp.yang</code>) が進めば、設定検証と <code>gnmi Set</code> 経由の運用が安定する。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc6035">RFC 6035</a> — sFlow と ACL counter の関係参考</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7011">RFC 7011</a> — IPFIX (ACL hit を export する将来形)</li>
+<li><a href="https://1.ieee802.org/security/802-1x/">IEEE 802.1X</a> — Port Access Control の基準</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc6749">RFC 6749</a> — OAuth2 (PAC + RADIUS 連携の将来モデル)</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc2475">RFC 2475</a> — DiffServ (CoPP の DSCP マッチで参照)</li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-swss</code> の <code>aclorch</code> / <code>coppmgr</code> / <code>copporch</code> で trap capability 公開、policer attribute 動的更新、ACL counter race 修正の PR が継続。</li>
+<li>DASH ACL tags は <code>sonic-dash-api</code> (proto) の更新で flow rule 表現が拡張されており、controller 側との binding が変化しやすい。</li>
+<li>802.1X / MAB 関連は hostapd の SONiC docker 統合と RADIUS attribute 拡張の PR が散発的にあり、AAA 章 (<a href="../../15-security-aaa/">15</a>) と相互に影響する。</li>
 </ul>
 
 

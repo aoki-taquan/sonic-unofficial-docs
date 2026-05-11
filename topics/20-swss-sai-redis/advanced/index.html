@@ -5930,6 +5930,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22757,6 +22812,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22806,6 +22916,41 @@
 <li><a href="../../../system/sonic-optional-feature-control-enhancement/">FEATURE テーブルによるオプショナル機能の有効/無効制御</a></li>
 <li><a href="../../../switching/view-switching-in-producerstatetable/">ProducerStateTable の view switching（warm reboot 用の差分適用）</a></li>
 <li><a href="../../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a></li>
+</ul>
+<h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>SAI Redis pipe / batch</strong>: SAI Redis (<code>libsairedis</code>) は orchagent からの SAI call を pipe batch で syncd に渡す。大量更新時の bulk API が性能を支配する。</li>
+<li><strong>ASIC_DB の sharding</strong>: 単一 Redis インスタンスに全 SAI object が乗ると memory が膨れる。namespace 分割や Redis cluster 化が議題。</li>
+<li><strong>オフライン構成検証</strong>: <code>swss-cli</code> や <code>sonic-cfggen</code> で生成した CONFIG_DB をオフラインで YANG 検証してから流し込むパス。</li>
+<li><strong>CONFIG_DB と APPL_DB の責務再整理</strong>: SET-then-DEL の transient を避けるため、orch 側で diff-based reconciliation が拡張されつつある。</li>
+<li><strong>eventd / publish-subscribe</strong>: state 変化 event の structured stream。telemetry / fault management の前提基盤。</li>
+</ul>
+<h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>config reload</code> の重さ</strong>: 大量 schema reload で daemon 全体が再起動レベルの負荷になる。<code>config reload --no-service</code> のような部分 reload と PortInitDone を組合せる。</li>
+<li><strong>warm reboot 中の view switching 失敗</strong>: 一部 orch が view switching に対応していないと、その object だけ全削除→全追加になる。対象 orch の WARM_BOOT capability 一覧を確認する。</li>
+<li><strong>redis OOM risk</strong>: ASIC_DB / COUNTERS_DB の scale が大きいと memory swap が発生。<code>maxmemory-policy</code> を <code>noeviction</code> にしないと counter が消える。</li>
+<li><strong>FEATURE state の race</strong>: container 起動と FEATURE state 更新が非同期で、依存先を先に起動してしまう例がある。<code>delayed</code> と <code>auto_restart</code> を組み合わせる。</li>
+</ul>
+<h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>system ready</code> HLD の最終形に向けて、closest UP status の整理と sysmonitor の集約ロジックが拡張中。</li>
+<li>ProducerStateTable view switching の対応 orch 拡大。</li>
+<li>Redis 7.x / Valkey への移行検討。</li>
+<li>SAI bulk API の利用範囲拡大による update スループット改善。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li>SAI / SWSS / Redis 層は IETF / IEEE 標準とは独立し、OCP コミュニティの SAI specification が中心。</li>
+<li><a href="https://redis.io/docs/reference/protocol-spec/">Redis Protocol</a> — RESP プロトコル</li>
+<li><a href="https://github.com/opencomputeproject/SAI">OCP SAI specification</a></li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-swss-common</code> で <code>ProducerStateTable</code> view switching 対応 orch 拡大の PR が継続。</li>
+<li><code>sonic-sairedis</code> で bulk API 拡張と syncd の事前計算最適化 PR が散発。</li>
+<li><code>system-health</code> / <code>sysmonitor</code> で closest UP status の event 集約ロジック改善が議題化。</li>
+<li>Redis 6.2 → 7.x への対応検討と、複数 Redis instance での scale 改善議論が続く。</li>
 </ul>
 
 

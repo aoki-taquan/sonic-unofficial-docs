@@ -4552,6 +4552,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22757,6 +22812,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22803,6 +22913,41 @@
 <li><a href="../../../platform/1-6t-support-in-sonic/">1.6T support in SONiC</a></li>
 <li><a href="../../../platform/sonic-port-naming-convention-change/">SONiC port naming convention change</a></li>
 <li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">enhancements to add or del ports dynamically</a></li>
+</ul>
+<h2 id="_4">発展トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>CMIS 5.x optics</strong>: 400G/800G ZR / ZR+ など coherent optics の管理は CMIS で行い、SONiC <code>xcvrd</code> が state machine を実装する。Application select、re-provisioning、firmware download などが要点。</li>
+<li><strong>Optics firmware upgrade</strong>: <code>gnoi.os.Install</code> の概念に近く、optics 内 firmware を host から書き換える。途中で reboot を挟まない hot upgrade 対応が ASIC / optics で異なる。</li>
+<li><strong>Linkmgrd と link prober</strong>: Dual-ToR の link prober 以外にも、汎用 link healthcheck 機能が <code>linkmgrd</code> 系で拡張されつつある。SAI sub-second link state notification が前提。</li>
+<li><strong>Breakout dynamic</strong>: port breakout (4x25G / 2x50G など) の動的切替は <code>dynamic-port-breakout</code> HLD と組合せ、buffer / QoS / ACL を全部 reprovision する。</li>
+<li><strong>PoE / 外部給電</strong>: 一部 platform で PoE 機能 (<code>POE</code> schema 提案) があり、port lifecycle と組合せる。</li>
+</ul>
+<h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>mixed-lane optics の制限</strong>: 一部 platform で同じ port group 内に異速度 optics を入れると lane assignment が動かない。SKU docs を必ず参照する。</li>
+<li><strong>xcvrd の polling 間隔</strong>: DOM polling は 60s 程度がデフォルトで、瞬時の異常を逃すことがある。SNMP / gNMI からの query との同期を考える。</li>
+<li><strong>port naming 変更の運用影響</strong>: スクリプトや監視 dashboard が <code>Ethernet*</code> 直接参照だと壊れる。<code>PORT</code> table key を動的に取得する書き方に揃える。</li>
+<li><strong>dynamic add/del のリソースリーク</strong>: ACL bind / buffer profile / counter object が delete 時に残る不具合事例がある。<code>show acl</code>、<code>COUNTERS_DB</code> を保守時に確認する。</li>
+</ul>
+<h2 id="_6">将来計画 / ロードマップ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>1.6T と coherent ZR+ への対応拡張で、<code>PORT</code> schema / SAI attribute が継続的に拡張される。</li>
+<li>Port naming 規約の改定は community 議題で、deprecation 期間設計が論点。</li>
+<li>Linecard / Module hot-swap の改善 (<a href="../../12-multi-asic-voq/">12 VOQ</a>) と組み合わせて platform lifecycle 全体を再整理する流れ。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://www.oiforum.com/">CMIS spec (OIF)</a> — Common Management Interface Specification</li>
+<li><a href="https://www.snia.org/">SFF-8636 / SFF-8472</a> — QSFP / SFP+ management interface</li>
+<li><a href="https://standards.ieee.org/">IEEE 802.3 series</a> — Ethernet PHY/MAC</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc3635">RFC 3635</a> — Ethernet-Like Interface MIB (port stats 参考)</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8343">RFC 8343</a> — IETF interface YANG (OpenConfig との比較)</li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-platform-common</code> / <code>sonic-platform-daemons</code> で CMIS state machine、PM (Performance Monitoring)、firmware upgrade の PR が定期的に入る。</li>
+<li><code>pmon</code> docker (xcvrd / psud / thermalctld / ledd 等) の安定化と SKU 拡張が継続。</li>
+<li>1.6T / 800G 対応 PR がコア component (port management, buffer model, sai profile) に分散して入っており、追跡には複数 repo を横断する必要がある。</li>
 </ul>
 
 

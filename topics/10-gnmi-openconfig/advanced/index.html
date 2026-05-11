@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/16-nat-dhcp-dns/advanced/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/10-gnmi-openconfig/advanced/">
       
       
         <link rel="prev" href="../">
@@ -27,7 +27,7 @@
     
     
       
-        <title>発展トピック - SONiC 非公式ドキュメント</title>
+        <title>gNMI / OpenConfig の発展トピック - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#gnmi-openconfig" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              発展トピック
+              gNMI / OpenConfig の発展トピック
             
           </span>
         </div>
@@ -3179,8 +3179,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -3214,15 +3216,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_11" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../10-gnmi-openconfig/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -3246,7 +3248,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_11_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_11_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_11">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3266,7 +3268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../10-gnmi-openconfig/concept/" class="md-nav__link">
+      <a href="../concept/" class="md-nav__link">
         
   
   
@@ -3294,7 +3296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../10-gnmi-openconfig/architecture/" class="md-nav__link">
+      <a href="../architecture/" class="md-nav__link">
         
   
   
@@ -3322,7 +3324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../10-gnmi-openconfig/setup/" class="md-nav__link">
+      <a href="../setup/" class="md-nav__link">
         
   
   
@@ -3350,7 +3352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../10-gnmi-openconfig/operations/" class="md-nav__link">
+      <a href="../operations/" class="md-nav__link">
         
   
   
@@ -3378,7 +3380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../10-gnmi-openconfig/internals/" class="md-nav__link">
+      <a href="../internals/" class="md-nav__link">
         
   
   
@@ -3406,7 +3408,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../10-gnmi-openconfig/gnoi-gnsi/" class="md-nav__link">
+      <a href="../gnoi-gnsi/" class="md-nav__link">
         
   
   
@@ -3434,7 +3436,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../10-gnmi-openconfig/yang-reference/" class="md-nav__link">
+      <a href="../yang-reference/" class="md-nav__link">
         
   
   
@@ -4727,8 +4729,6 @@
                 
   
   
-    
-  
   
   
     
@@ -4762,15 +4762,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_17" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_17" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../16-nat-dhcp-dns/" class="md-nav__link ">
               
   
   
@@ -4794,7 +4794,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_17_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_17_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_17">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4811,37 +4811,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    発展トピック
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../16-nat-dhcp-dns/advanced/" class="md-nav__link">
         
   
   
@@ -4857,136 +4830,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#ntp-chrony" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NTP / chrony 移行
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        静的 DNS
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#twamp-light" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TWAMP Light
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#terminal-serverudev-rules" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Terminal server（udev rules）
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連ページ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        発展トピック
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の制約と回避方法
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        将来計画 / ロードマップ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rfc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 RFC / 仕索書
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#upstream" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        upstream 開発の最新動向
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -4999,7 +4842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../architecture/" class="md-nav__link">
+      <a href="../../16-nat-dhcp-dns/architecture/" class="md-nav__link">
         
   
   
@@ -5027,7 +4870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../concept/" class="md-nav__link">
+      <a href="../../16-nat-dhcp-dns/concept/" class="md-nav__link">
         
   
   
@@ -5055,7 +4898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../internals/" class="md-nav__link">
+      <a href="../../16-nat-dhcp-dns/internals/" class="md-nav__link">
         
   
   
@@ -5083,7 +4926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../operations/" class="md-nav__link">
+      <a href="../../16-nat-dhcp-dns/operations/" class="md-nav__link">
         
   
   
@@ -5111,7 +4954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../setup/" class="md-nav__link">
+      <a href="../../16-nat-dhcp-dns/setup/" class="md-nav__link">
         
   
   
@@ -22758,62 +22601,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#ntp-chrony" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NTP / chrony 移行
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        静的 DNS
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#twamp-light" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TWAMP Light
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#terminal-serverudev-rules" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Terminal server（udev rules）
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連ページ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         発展トピック
@@ -22824,7 +22612,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         既知の制約と回避方法
@@ -22835,7 +22623,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         将来計画 / ロードマップ
@@ -22849,7 +22637,7 @@
   <a href="#rfc" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 RFC / 仕索書
+        関連 RFC / 仕様書
       
     </span>
   </a>
@@ -22861,6 +22649,17 @@
     <span class="md-ellipsis">
       
         upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -22884,7 +22683,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/topics/16-nat-dhcp-dns/advanced.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/topics/10-gnmi-openconfig/advanced.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -22892,80 +22691,50 @@
   
 
 
-<h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP / terminal server を同じ章でまとめて読みます。OS daemon と CONFIG_DB のテンプレート生成パスを共通言語にすると、各機能が並列に見えてきます。</p>
-<h2 id="ntp-chrony">NTP / chrony 移行<a class="headerlink" href="#ntp-chrony" title="Permanent link">&para;</a></h2>
-<p>SONiC は長らく <code>ntpd</code>（後に NTPsec）を使っていましたが、master では <code>chrony</code> への移行が完了しています。背景は次の通りです。</p>
+<h1 id="gnmi-openconfig">gNMI / OpenConfig の発展トピック<a class="headerlink" href="#gnmi-openconfig" title="Permanent link">&para;</a></h1>
+<p>gNMI / gNOI / Translib / Transformer の基本パスを押さえた後は、telemetry の規模拡張、認証境界 (gNSI)、新しい RPC への対応が次の論点になる。</p>
+<h2 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>ntpd</code> は long jump を完全には抑止できず、1 時間ずれていると 12 分以内に step してしまう。データプレーンへの副作用懸念から step は避けたい。</li>
-<li>slew 中は kernel time discipline が disable され、HW RTC が更新されず reboot で巻き戻る。</li>
-<li>port 123 を listen し続ける必要があり、interface 追加削除への追従が面倒。</li>
-<li>たまに NTP packet を送らなくなる不安定動作。</li>
+<li><strong>gNMI dial-out (publish to collector)</strong>: 通常の gNMI Subscribe は server-driven だが、規模が増えると collector 側で多数の subscription を維持するコストが高い。dial-out では target 側から collector に push する構成で、scale 上有利。<code>telemetry</code> docker と外部 collector の組合せが議題。</li>
+<li><strong>OpenConfig wildcard subscribe</strong>: <code>/interfaces/interface[name=*]/state/counters</code> のような wildcard query で per-port stream を一括取得する用途。Sample interval と server CPU 負荷のトレードオフがある。</li>
+<li><strong>gNOI による OS upgrade</strong>: <code>gnoi.os.Install</code> / <code>Activate</code> で SONiC イメージを集中投入する運用。warm/fast reboot との組み合わせで in-service upgrade を実現する。</li>
+<li><strong>gNSI による証明書 / authz の管理</strong>: <code>gnsi.certz</code> / <code>gnsi.authz</code> で gNMI の TLS 証明書と RBAC ポリシーを動的に更新する。controller 側で証明書ローテーションを行うと SONiC 側はサービス停止なしで更新できる。</li>
+<li><strong>Transformer の自前 callback 追加</strong>: 既存 OpenConfig path に対応する CONFIG_DB が無いとき、Go callback (transformer/xfmr) を書いて変換ルールを足す。プラグイン的に拡張できる。</li>
+<li><strong>SAI Redis streaming (低レベル)</strong>: gNMI 経由ではなく、<code>COUNTERS_DB</code> を直接 streaming する場合の挙動。debug 用途で <code>redis-cli psubscribe</code> でリアルタイム counter を見る。</li>
 </ul>
-<p>chrony は client 専門（slew 専念）、kernel time discipline を維持、必要時のみソケットを開く、という設計でこれらを解決します。<code>NTP|global</code> の <code>vrf</code> フィールドと <code>NTP_SERVER|&lt;ip&gt;</code> の組合せから <code>chrony.conf</code> を生成します。詳細は <a href="../../../system/sonic-migration-to-chrony/">chrony 移行ページ</a> と <a href="../../../system/sonic-network-time-protocol-ntp-client-configuration/">NTP client 設定ページ</a> を参照してください。</p>
-<p>CONFIG_DB / YANG リファレンスは次の通りです。</p>
+<h2 id="_2">既知の制約と回避方法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../../reference/config-db/ntp-global/">NTP_GLOBAL CONFIG_DB</a></li>
-<li><a href="../../../reference/config-db/ntp-server/">NTP_SERVER CONFIG_DB</a></li>
-<li><a href="../../../reference/yang/sonic-ntp/">sonic-ntp YANG</a></li>
+<li><strong>subscription scale limit</strong>: target あたりの concurrent stream 数には実用上の上限があり、過剰登録で telemetry docker が CPU 100% になる例がある。collector を複数にして load を分割する。</li>
+<li><strong>OpenConfig path と SONiC schema のミスマッチ</strong>: SONiC 固有機能 (Dual-ToR mux、warm-reboot state) は OpenConfig path に対応が無く、<code>sonic-mgmt-common</code> の vendor-augmented YANG で表現される。</li>
+<li><strong>gNMI Set の atomicity</strong>: 単一 SetRequest 内の複数 update は SONiC 側で完全 atomic とは限らない。CONFIG_DB の partial commit で transient 状態が見える可能性。</li>
+<li><strong>証明書回転中の reconnect</strong>: controller が証明書を更新した後、client 側 dial を一度切る必要がある場合がある。gNSI による hot swap が対応していれば回避可能。</li>
 </ul>
-<p>CLI は <code>chronyc sources</code> / <code>chronyc tracking</code> で同期状況を見ます。<code>show ntp</code> も後方互換として使えますが、内部は chrony です。management VRF を使う構成では <code>NTP|global</code> の <code>vrf: mgmt</code> を必ず付けます。</p>
-<h2 id="dns">静的 DNS<a class="headerlink" href="#dns" title="Permanent link">&para;</a></h2>
-<p><code>DNS_NAMESERVER</code> テーブルから <code>resolv-config.service</code> が <code>/etc/resolv.conf</code> を生成し、host と各 container に展開します。<code>config dns nameserver add &lt;ip&gt;</code> で書き込み、<code>show dns nameserver</code> で確認します。<code>update-containers</code> スクリプトが各 container の resolv.conf も更新する点が特徴で、container ごとに名前解決の挙動が変わらないよう設計されています。詳細は <a href="../../../system/static-dns-configuration/">static DNS ページ</a> と <a href="../../../reference/yang/sonic-dns/">sonic-dns YANG</a> を参照してください。</p>
-<h2 id="twamp-light">TWAMP Light<a class="headerlink" href="#twamp-light" title="Permanent link">&para;</a></h2>
-<p>TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では ASIC offload（<code>SAI_TWAMP_*</code> 系 API）を想定した HLD があり、<code>CFG_TWAMP_SESSION_TABLE</code> で Session-Sender / Reflector を定義する設計になっています。ただし community master では SAI 拡張 / orch / CLI が未取り込みで、HLD-only ステータスです。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は <a href="../../../system/twamp-light-hld/">TWAMP Light HLD ページ</a> を参照してください。</p>
-<p>QoS / Observability 寄りの機能ですが、「control 接続を持たない軽量サービス」という性格上、本章の発展トピックとして置きます。</p>
-<h2 id="terminal-serverudev-rules">Terminal server（udev rules）<a class="headerlink" href="#terminal-serverudev-rules" title="Permanent link">&para;</a></h2>
-<p>ターミナルサーバ機能を持つ装置はフロントパネルに複数シリアルポートを持ち、内部で USB hub + USB-to-UART チップ（例: cp210x）経由で <code>/dev/ttyUSB&lt;N&gt;</code> に枚挙されます。デフォルトの枚挙順は単一ポート故障で詰まるため、SONiC は udev rules で物理ポート番号と symlink 名（<code>/dev/Mytty-&lt;N&gt;</code> 等）を固定する設計を採用しています。haliburton platform で <code>50-ttyUSB-C0.rules</code> として実装されています。詳細は <a href="../../../architecture/1-udev-rules-design-for-terminal-server/">udev rules ページ</a> を参照してください。</p>
-<p>terminal server は SONiC を「ネットワーク装置」ではなく「コンソールサーバ装置」として使う場合の周辺機能ですが、管理サービス層という共通点で本章に含めました。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">将来計画 / ロードマップ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../../system/sonic-migration-to-chrony/">chrony 移行</a></li>
-<li><a href="../../../system/sonic-network-time-protocol-ntp-client-configuration/">SONiC NTP client</a></li>
-<li><a href="../../../system/static-dns-configuration/">静的 DNS 設定</a></li>
-<li><a href="../../../reference/config-db/ntp-global/">NTP_GLOBAL CONFIG_DB</a></li>
-<li><a href="../../../reference/config-db/ntp-server/">NTP_SERVER CONFIG_DB</a></li>
-<li><a href="../../../reference/yang/sonic-ntp/">sonic-ntp YANG</a></li>
-<li><a href="../../../reference/yang/sonic-dns/">sonic-dns YANG</a></li>
-<li><a href="../../../system/twamp-light-hld/">TWAMP Light HLD</a></li>
-<li><a href="../../../architecture/1-udev-rules-design-for-terminal-server/">terminal server udev rules</a></li>
+<li>gNxI suite (gNMI / gNOI / gNSI / gRIBI) は OpenConfig コミュニティで継続拡張中。SONiC 側は <code>sonic-gnmi</code> の依存ライブラリ更新で取り込む。</li>
+<li>gRIBI を経由した RIB 直接注入が議論されており、controller 側で経路を直接 push する用途で SDN ベース fabric の管理が変わる可能性。</li>
+<li>OpenConfig の network-instance / VRF モデルの SONiC 対応は段階的で、未対応 path には vendor augment が並走する。</li>
 </ul>
-<h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>NAT64 / DNS64</strong>: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と SAI 対応が前提。</li>
-<li><strong>DHCPv4 / v6 server (in-box)</strong>: 通常は relay 用途だが、lab / mgmt 用途で in-box DHCP server を動かす構成が議論される (<code>dnsmasq</code> ベース)。</li>
-<li><strong>NTP 精度向上 (PTP との比較)</strong>: 1ms 級の同期が必要なら PTP (IEEE 1588) を使うが、SONiC PTP は HLD 段階の機能が多い。chrony で得られる精度の限界を理解しておく。</li>
-<li><strong>DHCP server identifier override</strong>: 複数 DHCP relay 装置で同じ subnet を扱うとき、server identifier override (RFC 5107) を使って応答の経路を制御する。</li>
-<li><strong>TWAMP Light の SAI offload</strong>: control 接続なし双方向遅延測定を ASIC で実行する。SONiC への取り込みは段階的。</li>
-</ul>
-<h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>NAT セッション TCAM 上限</strong>: NAT セッション数は ASIC TCAM に依存する。<code>SAI_OBJECT_TYPE_NAT_ENTRY</code> の capacity を <code>sai capability</code> で確認し、aging timer で session 数を制御する。</li>
-<li><strong>DHCP DoS 緩和との競合</strong>: 章 07 の DHCP DoS 緩和と DHCP relay の rate-limit が二重にかかると、正規 DHCP も落ちる。レイヤを 1 つに揃える。</li>
-<li><strong>chrony の VRF bind</strong>: mgmt VRF を使う場合、chrony 設定の <code>bindaddress</code> / <code>bindacqaddress</code> を mgmt 側に固定しないと data plane に漏れる。</li>
-<li><strong>resolv.conf の container 同期遅延</strong>: <code>update-containers</code> 実行が遅れると container 内で古い DNS server が残る。手動 restart の手順を運用 runbook に残す。</li>
-</ul>
-<h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li>TWAMP Light の community master 取り込み（SAI 拡張と orch / CLI）が future work。</li>
-<li>NAT64 / DNS64 の正式サポート議論が断続的にある。</li>
-<li>DHCP relay の YANG モデル整備と Option 79 / Option 82 の細分化拡張。</li>
-</ul>
-<h2 id="rfc">関連 RFC / 仕索書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc5357">RFC 5357</a> — TWAMP / TWAMP-Light</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc8186">RFC 8186</a> — TWAMP-Light Reflector roles</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc5107">RFC 5107</a> — DHCP Server Identifier Override</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc3022">RFC 3022</a> — Traditional NAT</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc6146">RFC 6146</a> / <a href="https://datatracker.ietf.org/doc/html/rfc6147">RFC 6147</a> — NAT64 / DNS64</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc5905">RFC 5905</a> — NTPv4</li>
-<li><a href="https://standards.ieee.org/ieee/1588/4355/">IEEE 1588-2008</a> — PTP</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc6020">RFC 6020</a> / <a href="https://datatracker.ietf.org/doc/html/rfc7950">RFC 7950</a> — YANG 1.0 / 1.1</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8040">RFC 8040</a> — RESTCONF</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc6241">RFC 6241</a> — NETCONF (gNMI と比較)</li>
+<li><a href="https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-specification.md">gNMI Specification</a></li>
+<li><a href="https://github.com/openconfig">gNOI / gNSI / gRIBI</a></li>
+<li><a href="https://github.com/openconfig/public">OpenConfig models</a></li>
 </ul>
 <h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>sonic-buildimage</code> の chrony 移行関連 PR は完了側に入り、test plan 拡充と timezone まわりの細部修正が継続。</li>
-<li>NAT 関連は <code>natorch</code> / <code>natsyncd</code> で aging / counter / scale 改善 PR が散発的に入る。</li>
-<li>TWAMP Light は HLD のみで community PR は限定的。SAI extension の議論待ちが続く状況。</li>
+<li><code>sonic-gnmi</code> repo で gNSI authz と certz 取り込み、TLS 認証経路のリファクタが継続。</li>
+<li><code>sonic-mgmt-common</code> (Translib / Transformer) で OpenConfig path カバレッジ拡張 PR が頻繁。Routing / BGP / VRF / QoS の path 追加が主軸。</li>
+<li>Telemetry docker の memory footprint 改善と subscription scale 上限緩和の PR が継続。collector 側 (gnmic、gnxi) も community 主導でツール成熟が進む。</li>
+</ul>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../09-telemetry-snmp/">09 Telemetry / SNMP</a></li>
+<li><a href="../../11-reboot/">11 Reboot / Upgrade</a> — gNOI OS upgrade と組み合わせる前提</li>
+<li><a href="../../15-security-aaa/">15 Security / AAA</a> — gNSI authz / certz の境界</li>
 </ul>
 
 

@@ -5208,6 +5208,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22801,6 +22856,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22864,6 +22974,44 @@
 <li><a href="../../../routing/srv6-vpn-hld/">SRv6 VPN</a></li>
 <li><a href="../../../routing/evpn-vxlan-hld/">EVPN-VXLAN HLD</a></li>
 <li><a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR BGP 統一管理フレームワーク</a></li>
+</ul>
+<h2 id="_4">発展トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>uSID (Micro SID)</strong>: 単一 128-bit SID に複数の short SID を carry する圧縮方式 (<code>uSID</code>)。SRH の depth を抑えて ASIC リソースを節約する。</li>
+<li><strong>TI-LFA (Topology-Independent Loop-Free Alternates)</strong>: SR ベースで FRR (Fast Reroute) を実現する手法。SONiC で実装するには FRR 側と SAI 側双方の対応が必要。</li>
+<li><strong>SRv6 OAM (RFC 9259)</strong>: SRv6 経路の OAM probing。ping / traceroute の拡張で end-to-end SID path を検証する。</li>
+<li><strong>L3VPN over SRv6 (draft-ietf-bess-srv6-services)</strong>: BGP VPN family を SRv6 underlay で運ぶ。FRR の <code>address-family ipv4 vpn</code> + SRv6 locator 設定がドライバ。</li>
+<li><strong>flow label entropy</strong>: SRv6 outer IPv6 の flow label を inner 5-tuple から生成し、ECMP hash entropy を維持する。</li>
+</ul>
+<h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>H.Encaps</code> 未実装での制限</strong>: reduced 版のみ動く段階では、特定 vendor の interop で SRH が違う形になる。peer 側の SRH format を必ず確認する。</li>
+<li><strong>MPLS LDP の SONiC 直接サポート不足</strong>: SONiC は MPLS data plane を持つが、LDP の運用例は少ない。SR-MPLS / BGP-LU 経由のシグナリングが現実的。</li>
+<li><strong>SRv6 SID 数 vs ASIC capacity</strong>: SID encode capability と processing depth が ASIC で違う。<code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code> の capacity を必ず確認。</li>
+<li><strong>SRv6 と MPLS 共存</strong>: 同一 router で SRv6 と MPLS を同時に扱うとき、orch 側のリソース取り合いが起こる。設計を分離するのが安全。</li>
+</ul>
+<h2 id="_6">将来計画 / ロードマップ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>segment-routing-over-ipv6-srv6-hld</code> の Phase 2 以降が継続テーマ。HMAC、sBFD、Binding SID、Adj SID が段階的に対応予定。</li>
+<li>FRR 側で SRv6 control plane の拡張が継続。SONiC は FRR バージョン更新で取り込む。</li>
+<li>Path Tracing の集約パスと SONiC telemetry 統合の議論が future work。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8754">RFC 8754</a> — IPv6 Segment Routing Header (SRH)</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8986">RFC 8986</a> — SRv6 Network Programming</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc9252">RFC 9252</a> — BGP Overlay Services Based on SRv6</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc9259">RFC 9259</a> — OAM for SRv6</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc5036">RFC 5036</a> — LDP</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc3209">RFC 3209</a> — RSVP-TE</li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc8660">RFC 8660</a> — SR-MPLS</li>
+<li><a href="https://datatracker.ietf.org/doc/draft-filsfils-spring-path-tracing/">Path Tracing draft (draft-filsfils-spring-path-tracing)</a></li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-swss</code> の <code>srv6orch</code> で SID table、locator、MY_SID 拡張の PR が継続。FRR との fpmsyncd 整合も並行。</li>
+<li>FRR upstream で SRv6 関連の PR が活発で、SONiC FRR バージョン更新と同期して機能が増える。</li>
+<li>Path Tracing midpoint の SAI extension が議論段階。実装は限定的だが HLD で expectation が示されている。</li>
 </ul>
 
 

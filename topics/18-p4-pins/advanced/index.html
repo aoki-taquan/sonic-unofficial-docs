@@ -5433,6 +5433,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22735,6 +22790,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発展トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の制約と回避方法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来計画 / ロードマップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 RFC / 仕様書
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upstream 開発の最新動向
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22785,6 +22895,41 @@
 <li>管理面の入口は <a href="../../">10. gNMI / gNOI / OpenConfig / YANG</a> 系の章で押さえる（章番号は読み物計画側を参照）。</li>
 <li>ACL / mirror / counter は <a href="../../07-acl-copp-mirror/">07. ACL / CoPP / Mirror / Packet Action</a> と同じ部品を P4Orch 側でも使うため、<code>acl_table_manager</code> / <code>acl_rule_manager</code> / <code>mirror_session_manager</code> が共通点になる。</li>
 <li>ECMP / next-hop の振る舞いは <a href="../../04-vrf-ecmp/">04. VRF / ECMP / RIB-FIB パイプライン</a> で読んだものが P4Orch の <code>wcmp_manager</code> でも前提になる。</li>
+</ul>
+<h2 id="_4">発展トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>gRIBI と PINS の組合せ</strong>: gRIBI で RIB を直接 push しつつ、P4Runtime で forwarding 細部を補完する組合せ。Google 系 SDN controller での標準パターン。</li>
+<li><strong>P4 program upgrade</strong>: pipeline 更新時の atomic swap。<code>SetForwardingPipelineConfig</code> の VERIFY / SAVE / COMMIT / RECONCILE_AND_COMMIT モードの違いを理解する。</li>
+<li><strong>WCMP 大規模化</strong>: 数万 nexthop の WCMP group を扱う性能テスト。<code>wcmp_manager</code> の resize と SAI hash optimization が論点。</li>
+<li><strong>PacketIO scale</strong>: punt → CPU → controller の経路で、PacketIO rate が CoPP / hostif queue / gRPC stream の各層で制限される。</li>
+<li><strong>PINS と SONiC standard ACL の共存</strong>: 同じ ASIC TCAM を分け合うため、resource allocation を deployment で固定する必要がある。</li>
+</ul>
+<h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>HashOrch HLD と現実の差分</strong>: HLD どおりの <code>HashOrch</code> は無く <code>SwitchOrch</code> 経由。controller 側で HashOrch 名前を前提にすると壊れる。</li>
+<li><strong>vendor SAI 依存の透明性</strong>: P4 program と SAI pipeline の対応は vendor 依存で、SONiC リポだけ読んでも全体像にならない。vendor SDK docs を併読する。</li>
+<li><strong>PacketIO の遅延</strong>: punt rate が高いと controller 到達まで数 ms 級遅延が出る。重要 control trap は CoPP の専用 policer に分離する。</li>
+<li><strong>gNMI と P4RT の整合性</strong>: gNMI で port を down にした場合、P4RT 側 table 状態は残る。controller 側で両 API を協調させるアプリ層が必要。</li>
+</ul>
+<h2 id="_6">将来計画 / ロードマップ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>PINS のコミュニティリリース整理と、PINS-only / PINS+SONiC standard 構成の使い分けガイドライン整備。</li>
+<li>gRIBI / P4RT / gNMI を統一した SDN controller framework (Google PINS, ONF Stratum 系) との互換性向上。</li>
+<li>vendor SAI と P4 model の bridging を SAI 標準で固める作業が継続。</li>
+</ul>
+<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://p4.org/specs/">P4 Language Specification</a> — P4_16 spec</li>
+<li><a href="https://p4.org/p4-spec/p4runtime/">P4Runtime Specification</a> — Controller-to-data plane API</li>
+<li><a href="https://github.com/openconfig/public">OpenConfig models</a></li>
+<li><a href="https://github.com/openconfig/gribi">gRIBI Specification</a></li>
+<li><a href="https://opennetworking.org/stratum/">Stratum project</a> — P4Runtime + gNMI + gNOI 標準実装</li>
+</ul>
+<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-pins</code> (and <code>pins-infra</code>) で Manager 群の機能拡張と test coverage 拡充の PR が継続。</li>
+<li><code>sonic-swss</code> で P4Orch と既存 orch (SwitchOrch, AclOrch) の境界整理 PR が散発。</li>
+<li>P4Runtime gRPC server (<code>p4rt-app</code>) の認証・TLS 周りの強化、PacketIO scale 改善の PR が議題化。</li>
 </ul>
 
 
