@@ -1637,7 +1637,15 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/arp-entry-stuck/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/asic-link-autoneg-mismatch/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/bgp-graceful-restart-failure/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1650,6 +1658,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/config-db-persistence-failure/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/config-reload-stuck/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1713,6 +1725,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/lldp-neighbor-flapping/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/macsec-mka-not-established/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -1745,11 +1761,19 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/port-admin-up-oper-down/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/portchannel-lacp-not-established/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/rif-acl-counter-zero/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/route-not-installed-in-fib/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1782,6 +1806,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/snmpv3-auth-failure/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/swss-orchagent-busy-loop/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
