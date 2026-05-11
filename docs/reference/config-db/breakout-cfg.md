@@ -32,7 +32,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>BREAKOUT_CFG")]
-  DM["portmgrd"]
+  DM["xcvrd"]
   CDB --> DM
   SAI["SAI<br/>sai_port_api"]
   DM --> SAI

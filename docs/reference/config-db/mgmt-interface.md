@@ -31,7 +31,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>MGMT_INTERFACE")]
-  DM["interfaces-config"]
+  DM["mgmt-framework"]
   CDB --> DM
 ```
 

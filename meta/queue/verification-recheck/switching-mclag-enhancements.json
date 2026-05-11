@@ -1,0 +1,15 @@
+{
+  "page": "docs/switching/mclag-enhancements.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが 7 軸 (dynamic config / unique IP / isolation group / static MAC ほか) すべての裏取り網羅が不明で再精査要",
+    "sources が SONiC HLD doc のみで、sonic-linux-kernel / sonic-iccpd / sonic-utilities config/mclag.py 実装側 SHA pin が欠落",
+    "MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブルのスキーマ差分 (sonic-swss-common/common/schema.h) 最新一致確認",
+    "isolation group / static MAC の orchagent (mclagsyncd / fdborch) 反映パスの裏取り"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}

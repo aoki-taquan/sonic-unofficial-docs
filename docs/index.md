@@ -14,11 +14,11 @@ verification: meta
 
 <!-- quality-banner-start -->
 !!! success "最新の品質状態"
-    - **code-verified ページ**: 578 件（HLD と実コードを照合済み）
+    - **code-verified ページ**: 570 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
     - **discrepancy-found ページ**: 46 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 18 集計中（`meta/quality-audit-18.md`）
-    - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
+    - **監査平均評価**: round 19 集計中（`meta/quality-audit-19.md`）
+    - **hld-only ページ**: 8 件（裏取り待ち）
 <!-- quality-banner-end -->
 
 ## 初めての方はここから

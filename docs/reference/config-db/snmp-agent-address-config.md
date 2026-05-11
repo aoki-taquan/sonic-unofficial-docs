@@ -32,7 +32,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
-  DM["snmpd"]
+  DM["snmp-config"]
   CDB --> DM
 ```
 

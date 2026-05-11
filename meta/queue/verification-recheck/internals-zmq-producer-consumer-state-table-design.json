@@ -1,0 +1,15 @@
+{
+  "page": "docs/internals/zmq-producer-consumer-state-table-design.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが本文に 要確認 キーワードが残存し、ZmqProducerStateTable / ZmqConsumerStateTable の現行 sonic-swss-common インタフェース一致を再精査要",
+    "sources が sonic-net/SONiC の HLD doc のみで、実装側 (sonic-swss-common/common/zmqproducerstatetable.cpp 等) の pin が欠落しているため SHA pin 補強",
+    "ZMQ endpoint (tcp://) のデフォルトポート / addr 命名規約と orchagent 側利用箇所 (gearsyncd 等) の最新一致",
+    "ack / retry セマンティクス (ZMQ_REQ/REP もしくは PUSH/PULL) の現行実装での選択を裏取り"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}
