@@ -76,6 +76,20 @@ CONFIG_DB に該当キーが無ければ `(default)` 表記のまま出る（実
 
 書き込み側は `config/aaa.py` 経由。実サーバ定義は `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` 等の別テーブルにあり、それぞれ `show tacacs` / `show radius` で表示する。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show aaa"]
+  CDB0[("CONFIG_DB<br/>AAA")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -125,6 +125,22 @@ excerpt: |
 - `-n / --namespace` ... 単一 namespace 名 (`asic0` 等) または `all`。
 - `-d / --display` ... `frontend` / `all`。`frontend` は external 向けセッションのみ。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show bgp"]
+  CDB0[("CONFIG_DB<br/>BGP_DEVICE_GLOBAL")]
+  CDB0 --> CLI
+  CDB1[("CONFIG_DB<br/>BGP_AGGREGATE_ADDRESS")]
+  CDB1 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

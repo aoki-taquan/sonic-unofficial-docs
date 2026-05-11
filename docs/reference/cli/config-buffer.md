@@ -94,6 +94,32 @@ config buffer profile set <profile>
 
 [^3]: `profile set` の存在確認と `xoff` 変更制限。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8514>
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config buffer"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>BUFFER_PROFILE")]
+  SC --> CDB0
+  DM0["buffermgrd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>BUFFER_POOL")]
+  SC --> CDB1
+  DM1["buffermgrd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>DEFAULT_LOSSLESS_BUFFER_PARAMETER")]
+  SC --> CDB2
+  DM2["buffermgrdyn"]
+  CDB2 --> DM2
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

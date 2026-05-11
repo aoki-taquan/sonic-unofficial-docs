@@ -74,6 +74,20 @@ CONFIG_DB の `FEATURE` テーブルから state / auto_restart / set_owner / no
 - `state == always_enabled` の feature は `config feature state` で書き換えられない。CLI 側で `Feature ... state is always enabled and can not be modified` をエラーで返す (`config/feature.py`)。これは `show feature config` の `State` 列でも `always_enabled` で表示される。
 - multi-ASIC 環境では `FEATURE` の状態が namespace 間で食い違うとエラーで停止するため、表示時に値が空欄に見える場合は CONFIG_DB が未初期化の可能性が高い。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show feature"]
+  CDB0[("CONFIG_DB<br/>FEATURE")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

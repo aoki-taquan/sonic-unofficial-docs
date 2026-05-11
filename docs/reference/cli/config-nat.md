@@ -157,6 +157,36 @@ NAT feature enabled.
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config nat"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>STATIC_NAT")]
+  SC --> CDB0
+  DM0["natmgrd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>STATIC_NAPT")]
+  SC --> CDB1
+  DM1["natmgrd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>NAT_POOL")]
+  SC --> CDB2
+  DM2["natmgrd"]
+  CDB2 --> DM2
+  CDB3[("CONFIG_DB<br/>NAT_BINDINGS")]
+  SC --> CDB3
+  DM3["natmgrd"]
+  CDB3 --> DM3
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

@@ -69,6 +69,20 @@ excerpt: |
 - key は `tuple` 形式 `(ip, port, vrf)` を直接 split せず、CONFIG_DB の table key parser がすでに分解した形を受ける。
 - `invoke_without_command=True` で実装されているが、サブコマンドは存在しない（group として宣言されているのは将来拡張の名残）。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show snmpagentaddress"]
+  CDB0[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

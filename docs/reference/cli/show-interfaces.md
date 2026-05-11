@@ -157,6 +157,24 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 | STATE_DB | `PORT_TABLE`, `TRANSCEIVER_INFO`, `TRANSCEIVER_DOM_SENSOR`, `TRANSCEIVER_STATUS`, `SWITCH_CAPABILITY` | `transceiver *`, `fast-linkup status`, `phy-*` |
 | COUNTERS_DB | `COUNTERS:*` | `counters` (via portstat) |
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show interfaces"]
+  CDB0[("CONFIG_DB<br/>PORT")]
+  CDB0 --> CLI
+  CDB1[("CONFIG_DB<br/>PORTCHANNEL")]
+  CDB1 --> CLI
+  CDB2[("CONFIG_DB<br/>BREAKOUT_CFG")]
+  CDB2 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

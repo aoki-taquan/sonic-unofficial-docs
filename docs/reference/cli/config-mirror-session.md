@@ -138,6 +138,24 @@ excerpt: |
 - `src_port` は **該当ポートのある namespace にのみ** 書く（front-panel でなければ fail）
 - SPAN は `dst_port` の namespace を判定し、そこにのみ書く
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config mirror_session"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>MIRROR_SESSION")]
+  SC --> CDB0
+  DM0["MirrorOrch"]
+  CDB0 --> DM0
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

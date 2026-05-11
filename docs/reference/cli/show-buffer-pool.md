@@ -74,6 +74,20 @@ excerpt: |
 - WM のクリアは `sonic-clear` 系のコマンド (`sonic-clear queuewatermark`、`sonic-clear pgheadroom` など) で個別に行う
 - persistent WM はクリア不可。電源 OFF まで保持される、いわば「歴代最大値」を保存する仕組み
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show buffer_pool"]
+  CDB0[("CONFIG_DB<br/>BUFFER_POOL")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

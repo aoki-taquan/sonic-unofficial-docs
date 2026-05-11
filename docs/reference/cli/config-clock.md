@@ -87,6 +87,24 @@ config clock date <YYYY-MM-DD> <HH:MM:SS>
 - `date` サブコマンドは NTP 同期が有効な場合、`timedatectl` が "Failed to set time: Automatic time synchronization is enabled" でエラーを返す。先に NTP を停止する必要がある。
 - `timezone` は CONFIG_DB に保存されるため `config save` 後の再起動でも保持される。`date` は OS clock の変更のみで CONFIG_DB に持続化されない。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config clock"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>DEVICE_METADATA")]
+  SC --> CDB0
+  DM0["SwitchOrch"]
+  CDB0 --> DM0
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

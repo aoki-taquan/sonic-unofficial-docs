@@ -123,6 +123,26 @@ multi-ASIC では `-n` を必ず単一 namespace 名のいずれかに合わせ�
 - `all` の出力は **JSON のみ**、テキスト config 形式ではない。
 - `ntp` / `syslog` は CONFIG_DB を見ず、生成済みの conf ファイルを直接 grep する。CONFIG_DB と乖離している場合は乖離が見える。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show runningconfiguration"]
+  CDB0[("CONFIG_DB<br/>PORT")]
+  CDB0 --> CLI
+  CDB1[("CONFIG_DB<br/>INTERFACE")]
+  CDB1 --> CLI
+  CDB2[("CONFIG_DB<br/>SNMP")]
+  CDB2 --> CLI
+  CDB3[("CONFIG_DB<br/>SNMP_COMMUNITY")]
+  CDB3 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
