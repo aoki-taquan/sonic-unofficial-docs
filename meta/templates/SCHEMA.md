@@ -18,7 +18,7 @@
 | `related.cli` | optional | list | 関連 CLI コマンド |
 | `related.yang` | optional | list | 関連 YANG モジュール |
 | `monitor` | conditional | enum | `not_implemented` / `evolved_beyond_hld` / `partially_implemented` / `deprecated`。`verification: discrepancy-found` のとき **必須**。それ以外は optional |
-| `page_kind` | optional | enum | `chapter-index` のみ定義。22 章扉 (`docs/topics/NN-slug/index.md`) に付与する。品質監査の評価軸を区別するためのタグ。未指定 = 通常の解説ページ |
+| `page_kind` | optional | enum | `chapter-index` / `split-child`。22 章扉 (`docs/topics/NN-slug/index.md`) には `chapter-index` を付与する。大型 HLD の章分割で派生した `<base>-concepts.md` / `-operations.md` / `-internals.md` / `-limitations.md` 等のサブページには `split-child` を付与する。品質監査の評価軸を区別するためのタグ。未指定 = 通常の解説ページ |
 
 ## page_kind の意味（品質監査での扱い）
 
@@ -28,6 +28,8 @@
 - **章扉でも維持される軸**: タイトル / description / keywords の整備、配下リンクの網羅性、frontmatter スキーマ準拠
 
 `frontmatter_lint.py` は `page_kind` を optional フィールドとして受理する（hard violation 対象外）。次世代の品質監査ロール (round 14 以降) は `page_kind` を参照して軸別の評価を行う想定。
+
+`page_kind: split-child` は大型 HLD を `<base>.md`（概要ハブ）+ `<base>-concepts.md` / `<base>-operations.md` / `<base>-internals.md` / `<base>-limitations.md` に分割した派生ページに付与する。元ハブの `verification` / `sources` をそのまま継承し、本文は各サブテーマに切り出した内容のみで構成される。章扉と同様に「本文ボリューム単独での完結性」では評価せず、ハブとの導線・主張の網羅性で評価する。
 
 `related.*` は **空配列でも合格**。HLD で言及されていない実装由来の項目を推測で書いてはならない。確実なもののみ列挙し、不明なら空配列にして本文側に「該当する CLI / CONFIG_DB は HLD では未定義」等を注記する。
 

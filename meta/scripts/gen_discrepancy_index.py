@@ -69,7 +69,28 @@ def _rewrite_glossary_links_for_depth2(text: str) -> str:
     return _GLOSSARY_LINK_RE.sub(lambda m: f"(../../reference/glossary.md{m.group(1) or ''})", text)
 
 
-def extract_disc_summary(body: str) -> str:
+# Match relative markdown links to bare filenames like `(foo-bar.md)` or
+# `(foo-bar.md#anchor)` — i.e., same-directory references on the source page.
+# Needs to skip glossary (handled separately) and links starting with `../` or
+# absolute schemes.
+_SAME_DIR_LINK_RE = re.compile(
+    r"\(([A-Za-z0-9][A-Za-z0-9._-]*\.md)(#[^)]+)?\)"
+)
+
+
+def _rewrite_same_dir_links_for_depth2(text: str, src_dir: str) -> str:
+    """Rewrite same-directory ``(foo.md)`` references on a source page
+    (located at ``docs/<src_dir>/<...>.md``) into ``(../../<src_dir>/foo.md)``
+    so the summary excerpt embedded in
+    ``docs/reference/verification/discrepancy-index.md`` resolves correctly."""
+    if not src_dir:
+        return text
+    return _SAME_DIR_LINK_RE.sub(
+        lambda m: f"(../../{src_dir}/{m.group(1)}{m.group(2) or ''})", text
+    )
+
+
+def extract_disc_summary(body: str, src_dir: str = "") -> str:
     """「実装との乖離」セクションの最初の段落を返す。
 
     Markdown の admonition / コードブロックなどは雑に剥がし、最初の段落のみ。
@@ -96,6 +117,9 @@ def extract_disc_summary(body: str) -> str:
             text = text[:400].rstrip() + "…"
         # 相対 link のうち glossary 参照は本ページ (depth 2) からの形に書き換える
         text = _rewrite_glossary_links_for_depth2(text)
+        # 同一ディレクトリの相対 link（split-child などへの sibling 参照）を
+        # discrepancy-index 側で解決可能な形に書き換える
+        text = _rewrite_same_dir_links_for_depth2(text, src_dir)
         return text
     return ""
 
@@ -110,13 +134,15 @@ def collect() -> list[dict]:
         rel = md.relative_to(DOCS_DIR)
         parts = rel.parts
         area = parts[0] if len(parts) > 1 else "_root"
+        # source page's directory (relative to docs/), e.g. "architecture"
+        src_dir = "/".join(parts[:-1]) if len(parts) > 1 else ""
         entries.append(
             {
                 "title": fm.get("title", str(rel)),
                 "area": fm.get("area", area),
                 "last_verified": fm.get("last_verified", ""),
                 "monitor": fm.get("monitor", ""),
-                "summary": extract_disc_summary(body),
+                "summary": extract_disc_summary(body, src_dir),
                 "path": rel.as_posix(),
             }
         )

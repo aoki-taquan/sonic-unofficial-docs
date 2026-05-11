@@ -853,7 +853,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (13)
 - [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../switching/brief-introduction-of-iccp-code.md) (12)
 - [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](../overlay/vnet-local-endpoint-forwarding.md) (9)
-- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (7)
+- [Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）](../overlay/active-standby-dual-tor-internals.md) (8)
 
 ### [ASIC_DB](#term-asic_db)
 
@@ -967,7 +967,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [DPU](#term-dpu)
 
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (107)
-- [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md) (82)
+- [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md) (84)
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (69)
 - [SmartSwitch HA - DPU-Scope-DPU-Driven 構成](../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md) (67)
 - [DPU の IP 割当・gNMI 連携・KVM 検証](../topics/13-dash-smartswitch/setup.md) (66)
@@ -1110,7 +1110,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (54)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (57)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (32)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (27)
 - [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (27)
@@ -1184,8 +1184,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [linkmgrd](#term-linkmgrd)
 
 - [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (23)
+- [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (19)
 - [Mux 制御の内部構造](../topics/05-dual-tor/internals.md) (19)
-- [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (18)
 - [Dual-ToR の運用](../topics/05-dual-tor/operations.md) (17)
 - [Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）](../overlay/active-active-dual-tor.md) (14)
 
@@ -1227,7 +1227,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-mux-cable YANG](yang/sonic-mux-cable.md) (30)
 - [MUX_LINKMGR テーブル](config-db/mux-linkmgr.md) (20)
 - [Dual-ToR の設定](../topics/05-dual-tor/setup.md) (20)
-- [show muxcable サブコマンド](cli/show-muxcable.md) (16)
+- [Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）](../overlay/active-standby-dual-tor-internals.md) (18)
 
 ### [NAT](#term-nat)
 
@@ -1484,7 +1484,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (17)
 - [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](../platform/liquid-cooling-leakage-detection-in-sonic.md) (16)
 - [pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）](../system/platform-monitor-enhancement-design.md) (16)
-- [P4RT アプリケーション（PINS の gRPC サービス、port 9559）](../management/p4rt-application-hld.md) (14)
+- [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (15)
 
 ### [swssconfig](#term-swssconfig)
 

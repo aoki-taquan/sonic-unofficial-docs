@@ -1,6 +1,6 @@
 # Frontmatter Lint Report (v2)
 
-- Scanned: 847 files
+- Scanned: 859 files
 - Hard violations: 0 files
 - Warnings (path liveness): 3 files
 - Path liveness check: skipped (no .cache/sonic-sources)

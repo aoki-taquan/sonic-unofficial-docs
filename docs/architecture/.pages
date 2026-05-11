@@ -33,6 +33,10 @@ nav:
   - smart-switch-database-design.md
   - smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md
   - smartswitch-high-availability-manager-daemon-hamgrd-design.md
+  - smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md
+  - smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md
+  - smartswitch-high-availability-manager-daemon-hamgrd-design-internals.md
+  - smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md
   - 1-udev-rules-design-for-terminal-server.md
   - debug-framework-in-sonic.md
   - error-handling-framework-in-sonic.md

@@ -32,6 +32,14 @@ related:
 
 # VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
 
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [vxlan-sonic-concepts.md](vxlan-sonic-concepts.md) — 概念・用語・Phase 1 / Phase 2 スコープ
+    - [vxlan-sonic-operations.md](vxlan-sonic-operations.md) — CONFIG_DB / APP_DB / CLI / 設定例
+    - [vxlan-sonic-internals.md](vxlan-sonic-internals.md) — Orch 群と SAI 属性
+    - [vxlan-sonic-limitations.md](vxlan-sonic-limitations.md) — 制限事項と既知の課題
+
 ## 読み手が知りたいこと
 
 1. SONiC の [VXLAN](../reference/glossary.md#term-vxlan) は **VTEP と VNet の組合せ** とよく言われるが、両者の関係は？

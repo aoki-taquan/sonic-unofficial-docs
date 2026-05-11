@@ -50,6 +50,14 @@ related:
 
 # Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）
 
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [active-standby-dual-tor-concepts.md](active-standby-dual-tor-concepts.md) — 構成と要件、linkmgrd サブモジュール
+    - [active-standby-dual-tor-operations.md](active-standby-dual-tor-operations.md) — CONFIG_DB / APP_DB / STATE_DB / CLI / トラブルシューティング
+    - [active-standby-dual-tor-internals.md](active-standby-dual-tor-internals.md) — state machine 遷移表、MuxOrch、neighbor 取扱い、I2C シーケンス
+    - [active-standby-dual-tor-limitations.md](active-standby-dual-tor-limitations.md) — 制限事項と既知の課題
+
 ## 読み手が知りたいこと
 
 1. dual ToR の基本構成と **要件** は？

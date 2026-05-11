@@ -30,6 +30,14 @@ related:
 
 # SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
 
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md](smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md) — 概念（actor model / vDPU / HA Set / HA Scope）
+    - [smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md) — CONFIG/APP/STATE_DB スキーマ
+    - [smartswitch-high-availability-manager-daemon-hamgrd-design-internals.md](smartswitch-high-availability-manager-daemon-hamgrd-design-internals.md) — actor workflow / DPU-Driven 詳細
+    - [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) — 制限事項と実装乖離
+
 ## 概要
 
 `hamgrd` は [SmartSwitch](../reference/glossary.md#term-smartswitch) の **[NPU](../reference/glossary.md#term-npu) 側 HA container 内で動く管理デーモン**[^1]。HA 状態機械の駆動、failover 調整、SDN controller config の [DPU](../reference/glossary.md#term-dpu) 配信、DPU/vDPU の health 集約、[BFD](../reference/glossary.md#term-bfd) responder プログラミングを担う。actor model で機能を分割し、各 actor は **swbus ローカルメッセージバス** で通信し state は [STATE_DB](../reference/glossary.md#term-state_db) の対応 table に書く。DPU-Driven mode と Switch-Driven mode の 2 モード対応で、本 [HLD](../reference/glossary.md#term-hld) は前者中心。
