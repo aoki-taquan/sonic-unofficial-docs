@@ -112,6 +112,19 @@ L2 系は kernel 状態と ASIC 状態の二重管理であり、以下の race 
 
 これらは ASIC 通知に対する orchagent の reentrancy 設計上避けにくく、頻発する場合は teamd の `runner.tx_hash` や `lacp_rate` を調整します。
 
+## FDB notification 経路の詳細
+
+ASIC からの FDB 通知は `ASIC_DB` の notification channel（Redis pub/sub）に流れ、`FdbOrch` が以下の event を処理します。
+
+| SAI event | FdbOrch handler | 反映先 |
+| --- | --- | --- |
+| `SAI_FDB_EVENT_LEARNED` | `handleLearnedEvent` | APPL_DB.FDB_TABLE 追加、STATE_DB 更新 |
+| `SAI_FDB_EVENT_AGED` | `handleAgedEvent` | APPL_DB.FDB_TABLE 削除 |
+| `SAI_FDB_EVENT_MOVE` | `handleMoveEvent` | bridge_port 差し替え |
+| `SAI_FDB_EVENT_FLUSHED` | `handleFlushedEvent` | 該当 LAG/VLAN の FDB 一括削除 |
+
+`SAI_BRIDGE_PORT_ATTR_FDB_LEARNING_MODE` を `HW` にすると LEARNED イベントを抑制（CPU 負荷削減）でき、`CPU_TRAP` にすると全 frame が orchagent 経由になります。SONiC 標準は `HW` で、MC-LAG では peer link 側を `DISABLE` に倒します。
+
 ## 関連ページ
 
 - [L2 basic mode test plan](../../switching/sonic-basic-l2-mode-test-plan.md)

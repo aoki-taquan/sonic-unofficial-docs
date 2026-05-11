@@ -109,6 +109,31 @@ Chassis global:
 
 `SystemPortOrch` / `SystemNeighOrch` が chassis_db を subscribe して、自 ASIC の `SAI_OBJECT_TYPE_SYSTEM_PORT` を作成 / 更新します。chassis_db 自体は SUP 上の Redis で、LC 側からは TCP で接続します（接続切断時は前述の段階的劣化）。
 
+## fabric link 監視と `FabricPortsOrch`
+
+VOQ chassis では fabric port が線カード間の中継を担い、`FabricPortsOrch` がその状態を監視します。
+
+| 状態 | 検出 | 反映先 |
+| --- | --- | --- |
+| `FABRIC_ATTACHED` | SAI port attribute から fabric 接続済みか | `STATE_DB:FABRIC_PORT_TABLE` |
+| `FABRIC_REACHABILITY` | 各 fabric switch への到達性 | `CHASSIS_STATE_DB:FABRIC_ASIC_TABLE` |
+| `isolated` | port が isolation domain にあるか | counter / `show fabric` |
+
+fabric link の flap は `SAI_PORT_ATTR_FABRIC_ATTACHED` の notification で `FabricPortsOrch::refreshFabricPortMonitor` に届き、閾値を超えた error count で isolation の判定がなされます。chassis 全体の health を `chassisd` が `CHASSIS_STATE_DB:LINECARD_TABLE` で集約します。
+
+## per-ASIC FRR と internal BGP の構成
+
+VOQ chassis では各 ASIC namespace で独立した FRR が動き、ASIC 間は internal BGP（多くは iBGP over loopback over inband）でつなぐ構成が標準です。
+
+| 観点 | 説明 |
+| --- | --- |
+| AS 番号 | 同一（iBGP） |
+| nexthop | inband interface 経由の loopback |
+| advertise | 外部 BGP の view は per-asic、abstraction なし |
+| convergence | ASIC 間で routes が異なる時間帯が存在しうる |
+
+`minigraph.xml` の `<BGPSessions>` セクションで internal session が定義され、`bgpcfgd` per-namespace が反映します。abstraction が必要な運用では Route Reflector を SUP 上に立てる構成が `BGP setup for VOQ chassis` HLD に書かれています。
+
 ## 関連ページ
 
 - [VOQ SONiC](../../platform/voq-sonic.md)
