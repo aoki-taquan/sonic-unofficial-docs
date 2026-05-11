@@ -9,12 +9,14 @@
     "Pathz handler は sonic-gnmi/gnmi_server/gnsi_pathz.go の GNSIPathzServer で実装",
     "console_mgmt host service モジュールは sonic-host-services/host_modules/gnsi_console.py (MOD_NAME='gnsi_console') として実装",
     "ssh_mgmt host service モジュールは sonic-host-services/host_modules/ssh_mgmt.py (MOD_NAME='ssh_mgmt') として実装",
-    "Authz/Pathz/Certz 関連 config は sonic-gnmi/gnmi_server/server.go:236-245 に AuthzPolicy / AuthzPolicyFile / PathzPolicy / PathzPolicyFile / CertCRLConfig / CertzMetaFile として実装"
+    "Authz/Pathz/Certz 関連 config は sonic-gnmi/gnmi_server/server.go:236-245 に AuthzPolicy / AuthzPolicyFile / PathzPolicy / PathzPolicyFile / CertCRLConfig / CertzMetaFile として実装",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
   "concerns": [
     "Credentialz の gNMI server 側 handler (gnsi_credentialz.go 相当) は存在せず、dbus client (sonic_service_client/dbus_client.go:53-) のみ実装",
     "gNMI server flag 名は HLD の EnableAuthzPolicy / EnablePathzPolicy ではなく AuthzPolicy / PathzPolicy として実装 (server.go:240,243)",
     "STATE_DB gNSI profile state テーブルは sonic-swss-common/common/schema.h に見当たらず、profile 状態はファイル/メモリで保持されている可能性"
   ],
-  "priority": "high"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

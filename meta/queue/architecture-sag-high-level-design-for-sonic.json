@@ -7,7 +7,9 @@
   ],
   "verified_concerns": [
     "HLD path doc/sag/sag-HLD.md は SONiC HEAD 380509d でも存在し、ページ記述と整合",
-    "IntfMgr / IntfsOrch / sonic-utilities CLI / sonic-yang-models のいずれにも SAG 関連シンボルが master に取り込まれていないことを 2026-05-09 に確認"
+    "IntfMgr / IntfsOrch / sonic-utilities CLI / sonic-yang-models のいずれにも SAG 関連シンボルが master に取り込まれていないことを 2026-05-09 に確認",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
-  "priority": "high"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

@@ -3,7 +3,8 @@
   "verification": "discrepancy-found",
   "verified_concerns": [
     "DASH_HA_SET_CONFIG_TABLE / DASH_HA_SET_TABLE / DASH_HA_SCOPE_CONFIG_TABLE / DASH_HA_SCOPE_TABLE は sonic-swss-common schema.h で APP_DB に取り込み済 (verifier-batch-19)",
-    "DASH_HA_GLOBAL_CONFIG は CFG_DB に、DASH_HA_SET_STATE_TABLE / DASH_HA_SCOPE_STATE_TABLE は STATE_DB に取り込み済 (verifier-batch-19)"
+    "DASH_HA_GLOBAL_CONFIG は CFG_DB に、DASH_HA_SET_STATE_TABLE / DASH_HA_SCOPE_STATE_TABLE は STATE_DB に取り込み済 (verifier-batch-19)",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
   "concerns": [
     "hamgrd binary は sonic-swss / sonic-buildimage 共に未存在 (mock_tests コメント言及のみ)。sonic-dash 等別 repo の取り込み確認要",
@@ -12,5 +13,6 @@
     "Switch-Driven mode は HLD で TBD のままで実装 entry-point 未確認",
     "vDPU 抽象 (1:1 vs N:1) の運用は HA Set/Scope のみ先行で VDPU は未実装"
   ],
-  "priority": "high"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

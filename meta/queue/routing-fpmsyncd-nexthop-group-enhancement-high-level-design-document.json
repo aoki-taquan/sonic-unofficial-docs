@@ -4,5 +4,9 @@
   "concerns": [
     "fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドリング (sonic-swss fpmsyncd/routesync.cpp) と NhgOrch (sonic-swss orchagent/nhgorch.cpp) は master 取り込み済みだが、HLD が前提とする有効化キーが実装と一致しない: HLD / 本文は DEVICE_METADATA.localhost.fpm_use_nexthop_groups を要求するが、現行 sonic-buildimage の sonic-yang-models/yang-models/sonic-device_metadata.yang と dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2 は DEVICE_METADATA.localhost.nexthop_group = enabled で zebra に fpm use-next-hop-groups を出す方式 (別途 zebra_nexthop で zebra nexthop kernel enable も制御)。本文の CONFIG_DB スニペットを実装 key 名 (nexthop_group / zebra_nexthop) に合わせる修正が必要"
   ],
-  "priority": "medium"
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "verified_concerns": [
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ]
 }

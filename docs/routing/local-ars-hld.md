@@ -4,7 +4,7 @@ description: "Local ARS（Adaptive Routing & Switching の local 完結版） �
 area: routing
 verification: discrepancy-found
 monitor: not_implemented
-last_verified: 2026-05-10
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/ARS/Local_ARS_HLD.md

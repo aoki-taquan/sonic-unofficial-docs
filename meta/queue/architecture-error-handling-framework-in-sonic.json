@@ -9,7 +9,9 @@
     "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
   ],
   "verified_concerns": [
-    "verifier-batch-18: SWSS_RC_* enum のみ sonic-swss-common/common/status_code_util.h で実装確認、その他は未取り込み"
+    "verifier-batch-18: SWSS_RC_* enum のみ sonic-swss-common/common/status_code_util.h で実装確認、その他は未取り込み",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
-  "priority": "high"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

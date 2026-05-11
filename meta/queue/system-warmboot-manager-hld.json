@@ -4,5 +4,9 @@
   "concerns": [
     "提案 HLD (Rev 0.1, 2023-09)。master には warmboot-finalizer のみ存在し、Warmboot Manager daemon 本体・STATE_DB Component states・freeze プロトコル取り込みなし"
   ],
-  "priority": "high"
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "verified_concerns": [
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ]
 }

@@ -6,11 +6,13 @@
     "g_objectOwner / UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_ も sonic-swss/orchagent/ に存在しない",
     "代替として syncd 側 view comparison (sonic-sairedis/syncd/ComparisonLogic.{cpp,h} と Syncd.cpp::applyView) が現行 master の warm restart 経路を担う"
   ],
-  "priority": "high",
+  "priority": "low",
   "issue": 524,
   "pr": 525,
   "verified_concerns": [
     "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認",
-    "Verifier 2026-05-09: 提案キー/プレフィックスが現行 sairedis master に未取り込みで、syncd ComparisonLogic 側が代替実装となっていることを実コードで確認"
-  ]
+    "Verifier 2026-05-09: 提案キー/プレフィックスが現行 sairedis master に未取り込みで、syncd ComparisonLogic 側が代替実装となっていることを実コードで確認",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ],
+  "last_verified": "2026-05-11"
 }

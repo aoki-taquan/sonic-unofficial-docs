@@ -9,8 +9,10 @@
     "mgmt VRF と data VRF 経路の同時利用が現行実装でどう扱われているか確認",
     "chrony 移行 HLD と本 HLD の重複・置換関係の現行整理状況確認"
   ],
-  "priority": "medium",
+  "priority": "low",
   "verified_concerns": [
-    "現行 master では chrony が採用済み（sonic-buildimage/files/image_config/chrony/）。HLD は ntpd 時代の歴史的設計。yang sonic-ntp.yang は現行も保持。"
-  ]
+    "現行 master では chrony が採用済み（sonic-buildimage/files/image_config/chrony/）。HLD は ntpd 時代の歴史的設計。yang sonic-ntp.yang は現行も保持。",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ],
+  "last_verified": "2026-05-11"
 }

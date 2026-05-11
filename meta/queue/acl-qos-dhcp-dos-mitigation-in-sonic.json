@@ -9,9 +9,10 @@
   ],
   "verified_concerns": [
     "db_migrator が既存ポートに dhcp_rate_limit=300 を挿入するか -> sonic-utilities/scripts/db_migrator.py L514-524 migrate_config_db_port_table_for_dhcp_rate_limit / L1142 呼び出しを確認 (verified 2026-05-09)",
-    "PORT.dhcp_rate_limit YANG / CLI 取り込み -> sonic-yang-models/yang-models/sonic-port.yang L106、sonic-utilities/config/main.py L5948-6002 の interface dhcp-mitigation-rate 系 CLI、utilities_common/cli.py L846 の処理を確認 (verified 2026-05-09)"
+    "PORT.dhcp_rate_limit YANG / CLI 取り込み -> sonic-yang-models/yang-models/sonic-port.yang L106、sonic-utilities/config/main.py L5948-6002 の interface dhcp-mitigation-rate 系 CLI、utilities_common/cli.py L846 の処理を確認 (verified 2026-05-09)",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
-  "priority": "medium",
-  "last_verified": "2026-05-09",
+  "priority": "low",
+  "last_verified": "2026-05-11",
   "notes": "データ層 (YANG / CLI / db_migrator) は取り込み済みだが、ホットパスとなる portmgr の tc qdisc / filter 投入と CoPP 削除が現行 master に未取り込みで、HLD が想定するエンドツーエンドの mitigation は機能しない可能性が高い。"
 }

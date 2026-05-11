@@ -11,7 +11,9 @@
     "sonic-swss #1808 (portsyncd zero-port) は MERGED 確認 (2021-07)",
     "sonic-swss #2019 (per-port flex counter 動的 add/del) は MERGED 確認 (2022-04)",
     "sonic-buildimage/dockers/docker-lldp/lldpmgrd:129-130 で netdev_oper_status チェック",
-    "lldpmgrd:46-198 で pending_cmds 管理ロジック確認"
+    "lldpmgrd:46-198 で pending_cmds 管理ロジック確認",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
-  "priority": "medium"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

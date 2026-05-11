@@ -5,14 +5,16 @@
     "FdbOrch の per-port / per-VLAN / per-(port,VLAN) flush API は flushFDBEntries(bridge_port_oid, vlan_oid) として fdborch.cpp:985,1006,1038,1090,1217 に実装",
     "saved FDB（port が VLAN 未メンバの間 static を保留 / 復活）は saved_fdb_entries map として fdborch.cpp:459,1254-1316,1754 に実装",
     "MAC move event は SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE と mac_move フラグで fdborch.cpp:91-138 に実装",
-    "SWITCH_TABLE.fdb_aging_time → SAI_SWITCH_ATTR_FDB_AGING_TIME 反映は switchorch.cpp:49,664,1674-1686 に実装"
+    "SWITCH_TABLE.fdb_aging_time → SAI_SWITCH_ATTR_FDB_AGING_TIME 反映は switchorch.cpp:49,664,1674-1686 に実装",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
   "concerns": [
     "config mac (aging_time / add / del) CLI は sonic-utilities/config/main.py に存在せず、HLD どおりの取り込みは未完了",
     "config vlan range / config vlan member range CLI も sonic-utilities に存在しない",
     "show mac aging-time のみ sonic-utilities/show/main.py:1244 に実装あり"
   ],
-  "priority": "high",
+  "priority": "low",
   "issue": 177,
-  "pr": 178
+  "pr": 178,
+  "last_verified": "2026-05-11"
 }
