@@ -148,7 +148,7 @@ session は warm/fast boot 越しに **保持しない**（再起動で再 creat
 - ASIC vendor 別 TWAMP offload 対応状況（capability 判定の網羅性）
 -->
 
-## 裏取りメモ（Verifier batch 29）
+## 実装との乖離（裏取りメモ（Verifier batch 29））
 
 per-page queue で既出の通り部分実装。再走査結果:
 

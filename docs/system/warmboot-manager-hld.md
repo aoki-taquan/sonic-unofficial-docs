@@ -112,7 +112,7 @@ HLD で具体の CLI / CONFIG_DB は提示されていない。実装時に専�
 - 採否不明な提案 HLD のため master 取り込み有無の最終確認（priority=high）
 -->
 
-## 裏取りメモ（Verifier batch 29）
+## 実装との乖離（裏取りメモ（Verifier batch 29））
 
 per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 

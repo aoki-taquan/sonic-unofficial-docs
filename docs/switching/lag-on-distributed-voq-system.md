@@ -16,7 +16,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     `portsorch` が `CHASSIS_APP_DB` の `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_MEMBER_TABLE` を購読し remote LAG として SAI に programming する経路、`SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` への `system_lag_id` 反映、`chassisdb.conf` の `SYSTEM_LAG_ID_START/END` 読込、Lua atomic `lag_id_add` / `lag_id_delete` / `lag_id_get` の実装は実コードでの裏取り未済。
 
 # 分散 VOQ シャシでの LAG（`SYSTEM_LAG_TABLE` と `system_lag_id`）

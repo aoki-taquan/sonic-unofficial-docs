@@ -14,7 +14,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     このページは公式 HLD のみを根拠に書かれている。`sonic-gnmi` の Set ハンドラ、`sonic-host-services` 側の DBUS エンドポイント、`telemetry.sh` 起動スクリプトの実コード裏取りは未済。
 
 # gNMI Save-On-Set（Set ごとの ConfigDB 永続化）

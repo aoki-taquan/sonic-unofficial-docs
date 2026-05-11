@@ -16,7 +16,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     HLD は 2024 年 3 月版 (Rev 0.1)。`TunnelDecapOrch` の `SUBNET_DECAP` / `TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` 取り込み、`MP2MP` 形式の decap term の SAI 実装、`IPINIP_SUBNET` / `IPINIP_V6_SUBNET` 自動生成、warm-reboot 対応 (`swssconfig.sh` 拡張) は未裏取り。
 
 # VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）

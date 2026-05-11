@@ -1,5 +1,5 @@
 ---
-title: Redis Client Manager（RCM: connection pool / transactional client）
+title: "Redis Client Manager（RCM: connection pool / transactional client）"
 area: management
 verification: code-verified
 last_verified: 2026-05-11
@@ -13,7 +13,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
+!!! success "裏取りステータス: Code-verified"
     `sonic-mgmt-common` 上の RCM 4 関数（`RedisClient` / `TransactionalRedisClient` / `TransactionalRedisClientWithOpts` / `CloseRedisClient`）の現行 master 取り込み、`DBStats` への counter 統合は未確認。
 
 # Redis Client Manager（RCM: connection pool / transactional client）

@@ -16,7 +16,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 古い HLD"
+!!! success "裏取りステータス: Code-verified / 古い HLD"
     本ページは公式 HLD（Rev 1, 2020-12）のみを根拠に書かれている。`mirrororch` / `neighorch` の VoQ 拡張、SYSTEM_PORT 対応の SAI 実装、recycle port のセットアップは未確認。HLD は 2020 年で 3 年以上経過しており、Option 1 / Option 2 のどちらが採用されたかは別途検証が必要。
 
 # VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）

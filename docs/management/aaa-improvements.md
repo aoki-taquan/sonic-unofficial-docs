@@ -21,7 +21,7 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / 採否不明な提案"
+!!! success "裏取りステータス: Code-verified / 採否不明な提案"
     本 HLD は 2020 年 Martin Bélanger（Rev 0.4）の **設計討議文書**。AAA / PAM / NSS の本質的問題提起と提案で、現行 master が本提案を全面採用しているかは要確認。`priority=high`。
 
 # AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）

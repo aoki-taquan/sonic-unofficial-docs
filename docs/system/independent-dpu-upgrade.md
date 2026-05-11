@@ -1,5 +1,5 @@
 ---
-title: Smart Switch: DPU 独立アップグレード（gNOI 経路）
+title: "Smart Switch: DPU 独立アップグレード（gNOI 経路）"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
