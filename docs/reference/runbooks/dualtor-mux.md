@@ -1,0 +1,101 @@
+---
+title: Dual-ToR mux が切り替わらない
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-linkmgrd
+    path: src/link_manager/LinkManagerStateMachineActiveStandby.cpp
+    ref: 65f563308c689e3225fdf3fc249a132350e9879b
+  - repo: sonic-net/sonic-swss
+    path: orchagent/muxorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+related:
+  config_db: [MUX_CABLE, PEER_SWITCH]
+  cli: [config muxcable mode, show muxcable status, show muxcable config]
+  yang: []
+---
+
+# Runbook: Dual-ToR mux が切り替わらない
+
+## 症状
+
+- `config muxcable mode active <port>` 実行後に `show muxcable status` の state が `unknown` / `standby` のまま
+- `linkmgrd` が `LinkProberMuxState` を反映していない
+- mux が flap し続け、Server 側に断続的な reachability 損失
+
+## 想定原因
+
+1. **linkmgrd / xcvrd / mux_orch のいずれかが down**
+2. **PEER_SWITCH / MUX_CABLE 設定不整合** (server_ipv4 / soc_ipv4 等)
+3. **active-standby と active-active のモード混在**: 設定が古い形式のまま
+4. **ICMP heartbeat (link prober) が対向 ToR へ到達しない** (Loopback 設定 / route)
+5. **Y-cable の firmware 異常 / vendor 別 fault**
+
+## 切り分け手順
+
+### 1. mux 状態と peer 状態
+
+```bash
+show muxcable status
+show muxcable config
+sonic-db-cli STATE_DB hgetall "MUX_CABLE_TABLE|Ethernet4"
+sonic-db-cli STATE_DB hgetall "HW_MUX_CABLE_TABLE|Ethernet4"
+```
+
+- 期待: `state: active` (admin side) / `linkmgrd` view と HW view が一致
+- 異常: `linkmgrd: standby`, `hw: active` などの不一致 → linkmgrd が peer と整合できていない
+
+### 2. linkmgrd / muxcabled / xcvrd
+
+```bash
+docker ps | grep -E "mux|linkmgrd|pmon"
+sudo systemctl status mux 2>/dev/null || true
+docker logs mux 2>&1 | tail -100   # platform 依存名
+docker logs pmon 2>&1 | tail -100
+```
+
+### 3. ICMP heartbeat の状態
+
+```bash
+sonic-db-cli APPL_DB hgetall "LINK_PROBE_STATS|Ethernet4"
+sonic-db-cli STATE_DB hgetall "MUX_LINKMGR_TABLE|Ethernet4"
+```
+
+- 期待: `link_prober_state: active`、`icmp_echo_replies` が増加
+- 異常: replies が増えない → 対向 ToR への ICMP 経路が無い
+
+### 4. mux_orch / SAI 反映
+
+```bash
+sonic-db-cli ASIC_DB keys "ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP:*" | head
+docker logs swss 2>&1 | grep -iE "mux" | tail -50
+```
+
+### 5. Y-cable firmware
+
+```bash
+show muxcable firmware version <port>
+show muxcable cableinfo
+```
+
+## 対処方法
+
+- 一時的に手動切替: `sudo config muxcable mode standby <port>` → 再度 `active`
+- linkmgrd を再起動: `sudo docker restart mux`（または platform 別 service）
+- LinkProber heartbeat 経路を Loopback0 で確認・修正
+- 不整合の根本対策として `config reload -y` で全テーブル再注入
+- firmware up-to-date 化 (`config muxcable firmware download/activate`)
+
+## 関連ページ
+
+- [../../topics/05-dual-tor/operations.md](../../topics/05-dual-tor/operations.md)
+- [../../topics/05-dual-tor/concept.md](../../topics/05-dual-tor/concept.md)
+- [../cli/config-muxcable.md](../cli/config-muxcable.md)
+- [../cli/show-muxcable.md](../cli/show-muxcable.md)
+- [../config-db/mux-cable.md](../config-db/mux-cable.md)
+
+## 引用元
+
+[^1]: sonic-net/sonic-linkmgrd @ 65f5633 — LinkManagerStateMachine
+[^2]: sonic-net/sonic-swss @ 4305596 — muxorch

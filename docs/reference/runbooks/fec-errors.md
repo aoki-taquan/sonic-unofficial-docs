@@ -1,0 +1,107 @@
+---
+title: FEC エラーが多発する
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-platform-daemons
+    path: sonic-xcvrd/xcvrd/xcvrd.py
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-utilities
+    path: show/interfaces/__init__.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-swss
+    path: orchagent/portsorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+related:
+  config_db: [PORT, TRANSCEIVER_INFO]
+  cli: [show interfaces fec status, show interfaces counters errors, show interfaces transceiver eeprom]
+  yang: [sonic-port]
+---
+
+# Runbook: FEC エラーが多発する
+
+## 症状
+
+- `show interfaces counters errors` で `RX_ERR` / `SYMBOL_ERR` が継続的に増加
+- リンク自体は UP するが、BER が高く上位プロトコル（BGP / LACP）が flap
+- `show interfaces fec stats` で `FEC_PRE / FEC_POST` のカウンタが急増
+
+## 想定原因
+
+1. **両端の FEC モード不一致** (`rs` / `fc` / `none` の三択)。100G/400G では `rs` が必須なのに片側 `none`
+2. **物理層異常**: 光ファイバ汚れ、MPO 並び順誤り、SFP 故障、コネクタの曲がり
+3. **対応していない / 互換性のない光モジュール**: ベンダーが platform.json の許容リストに無い品
+4. **ケーブル長と DAC/AOC 規格不一致** (例: 5m 銅 DAC を 100G-DR で使う等)
+5. **port speed のミスマッチ**: auto-neg disable + speed 強制で対向と不一致
+
+## 切り分け手順
+
+### 1. FEC モード確認
+
+```bash
+show interfaces fec status
+sonic-db-cli CONFIG_DB hget "PORT|Ethernet0" fec
+sonic-db-cli APPL_DB hget "PORT_TABLE:Ethernet0" fec
+```
+
+- 期待: 両端で一致 (`rs` 推奨 for 100G+)
+- 異常: 片側のみ `none` → 即時不一致
+
+### 2. エラーカウンタの内訳
+
+```bash
+show interfaces counters errors
+show interfaces counters detailed Ethernet0
+```
+
+- `RX_ERR`、`SYMBOL_ERR`、`UNDER_SIZE`、`JABBER` のどれが伸びているかを切り分ける
+- 期待: idle 時に増加しない
+- 異常: 秒単位で増加 → 物理層の問題が濃厚
+
+### 3. Transceiver / DOM の読み取り
+
+```bash
+show interfaces transceiver eeprom Ethernet0
+show interfaces transceiver presence Ethernet0
+show interfaces transceiver lpmode Ethernet0
+```
+
+- 期待: 適切な vendor / part number、`Rx Power` が規格内
+- 異常: `Rx Power` が `-40dBm` 等異常値 → ファイバ汚れ・断線
+
+### 4. SDK / Driver ログ
+
+```bash
+sudo grep -iE "fec|crc|symbol" /var/log/syslog | tail -100
+docker logs syncd 2>&1 | grep -iE "fec|err" | tail -50
+```
+
+### 5. platform.json の対応速度 / FEC 確認
+
+```bash
+sudo cat /usr/share/sonic/device/*/*/platform.json | jq '.interfaces["Ethernet0"]'
+```
+
+- 異常: 設定中の speed が `support_speeds` に無い → サポート外組み合わせ
+
+## 対処方法
+
+- FEC モード合わせ: `config interface fec Ethernet0 rs` を両端で実行
+- 一時的に `none` で flap を止めて切り分け（恒久対策ではない）
+- 光モジュールの清掃 / 交換（業界推奨ツールで PC/UPC 端面清掃）
+- DAC 長と速度の組み合わせ表を再確認し、規格適合品に交換
+- platform.json の `support_speeds` を超えた設定を巻き戻し: `config interface speed Ethernet0 <support範囲>`
+
+## 関連ページ
+
+- [../../topics/14-platform-port-optics/operations.md](../../topics/14-platform-port-optics/operations.md)
+- [../../topics/14-platform-port-optics/concept.md](../../topics/14-platform-port-optics/concept.md)
+- [../cli/config-interface.md](../cli/config-interface.md)
+- [../cli/show-interfaces.md](../cli/show-interfaces.md)
+- [../config-db/port.md](../config-db/port.md)
+
+## 引用元
+
+[^1]: sonic-net/sonic-platform-daemons @ 4305596 — xcvrd / DOM 監視
+[^2]: sonic-net/sonic-swss @ 4305596 — portsorch
