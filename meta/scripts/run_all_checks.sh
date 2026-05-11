@@ -21,4 +21,8 @@ python3 meta/scripts/gen_cli_mermaid.py --check
 python3 meta/scripts/gen_yang_mermaid.py --check
 python3 meta/scripts/render_evidence.py --check
 
+# Disk-saving cleanup: drop any mkdocs build artifact left in the worktree so
+# parallel agents do not accumulate hundreds of MB of duplicated site/ output.
+rm -rf site/ 2>/dev/null || true
+
 echo "All drift checks passed."
