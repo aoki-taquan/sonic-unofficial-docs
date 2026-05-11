@@ -6,5 +6,6 @@ nav:
   - config-db-orch-map.md
   - yang
   - glossary.md
+  - sai-attributes.md
   - verification
   - runbooks
