@@ -109,6 +109,19 @@ gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT`
 
 未実装の transformer がある OC path に対して GET / SET を投げると、translib 層で `NotFound` を返す動作で、HLD と実装の乖離が出やすいポイントです。
 
+## GNMIGet (ZMQ direct write) 経路
+
+`gnmi-native-write` 系の改善で、いくつかのテーブル（`DASH_*` 系、`APP_DB:GENERIC_CONFIG_UPDATER_TABLE` 等）は GNMISet → orchagent の **ZMQ endpoint** に直接届く経路が追加されました。これにより CONFIG_DB を経由しないため、CONFIG_DB rewrite race / 大量更新時の Redis 単一スレッド bottleneck を回避できます。
+
+| 項目 | 通常経路 | ZMQ direct |
+| --- | --- | --- |
+| Entry point | CONFIG_DB write | orchagent ZMQ socket |
+| Atomicity | Redis transaction (`MULTI/EXEC`) | ZMQ message + orchagent task |
+| Failure feedback | STATE_DB から間接的 | gNMI response に直接 |
+| 対象 | 全テーブル | DASH 等の opt-in テーブルのみ |
+
+CONFIG_DB を bypass するため、`config save` / `config reload` の永続化対象には入りません。再起動後に再投入する責任は外部 controller 側にあります。
+
 ## 関連ページ
 
 - [SONiC gNMI server interface design](../../management/sonic-gnmi-server-interface-design.md)

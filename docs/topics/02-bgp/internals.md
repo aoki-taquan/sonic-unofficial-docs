@@ -108,6 +108,21 @@ dynamic peer modification は、peer range や dynamic peer の変更時に FRR 
 - **graceful restart / warm restart** は FRR 側で実装されていますが、SONiC の warm-reboot framework (`WARM_RESTART_TABLE|bgp`) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の `WARM_RESTART` で十分に確保する必要があります（→ 11 章）。
 - **大量経路投入時** は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提です。`gBufferOrchEnabled` 系のビルドフラグで挙動が変わります。
 
+## bgpcfgd の manager 構成
+
+bgpcfgd は単一プロセス内で複数 manager を並べ、CONFIG_DB の各テーブルを subscribe します。`src/sonic-bgpcfgd/bgpcfgd/managers_*.py` の構成は以下のとおりです。
+
+| manager | 対象テーブル | 反映先 |
+| --- | --- | --- |
+| `BGPPeerMgrBase` 系 | `BGP_NEIGHBOR` / `BGP_INTERNAL_NEIGHBOR` / `BGP_MONITORS` | vtysh `neighbor ...` |
+| `BGPPeerGroupMgr` | `BGP_PEER_RANGE` | vtysh `bgp listen range` |
+| `BGPAllowListMgr` | `BGP_ALLOWED_PREFIXES` | vtysh `prefix-list` |
+| `BGPDeviceGlobalCfgMgr` | `BGP_DEVICE_GLOBAL` | global flags（`tcp-mss`、graceful-restart 等） |
+| `BGPAggregateAddressMgr` | `BGP_AGGREGATE_ADDRESS` | vtysh `aggregate-address` |
+| `BGPVrfMgr` | `VRF` / `BGP_VRF` | vtysh `router bgp ... vrf ...` |
+
+全 manager は共通の `cfgmgr.run()` ループ上で動き、CONFIG_DB の変更を 1 トランザクション分まとめてから vtysh へ投げる設計です。これが「peer 1 件追加で frr.conf 全体を rewrite しない」根拠で、dynamic peer modification の partial update もこの粒度に依存します。
+
 ## 関連ページ
 
 - [BGP Loading Optimization](../../routing/bgp-loading-optimization-for-sonic.md)
