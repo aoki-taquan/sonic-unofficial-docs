@@ -1,8 +1,8 @@
 ---
 title: Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/pfc_asym/PFC_Asymmetric_Test_HLD.md
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only / テストプラン文書"
-    この文書は機能 HLD ではなく **テストプラン**。`sonic-mgmt` の `tests/pfc_asym/pfc_asym.py` 実装、`pfc_gen.py` の Mellanox / Arista 配備手順は要裏取り。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    Asymmetric PFC 本体機能の swss 取り込みを `sonic-swss/orchagent/portsorch.cpp` L2519-L2573 `PortsOrch::setPortPfcAsym()` で確認した（`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE` に `SEPARATE` / `COMBINED` を切り替える経路、CONFIG_DB.PORT.pfc_asym のパースは L5407-L5434）。本テストプランは機能 HLD ではなく **テスト仕様**であり、`sonic-mgmt` 配下のテストスクリプト一致は確認スコープ外（ローカル `.cache` に sonic-mgmt が含まれていないため）。
 
 # Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
 
@@ -134,6 +134,15 @@ pytest pfc_asym/pfc_asym.py --topology=t0
 - ストーム送信レートが期待値に届かない: `multiprocessing` 化が反映されているか、Fanout 側 CPU の制約を確認[^1]。
 - `pfc_gen.py` が Fanout で見つからない: `deploy_pfc_gen` fixture のプラットフォーム別ロジック、対象 Fanout の OS / パスを確認。
 - ARP responder の応答が無い: 設定ファイルの 1 回生成パッチが当たっているか、ARP responder プロセスのログを確認。
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- Asymmetric PFC mode set: `sonic-swss/orchagent/portsorch.cpp` L2519-L2573 `setPortPfcAsym()`（`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE` を `SEPARATE`/`COMBINED` で SAI に書き込む）
+- CONFIG_DB.PORT.pfc_asym パース＆適用: 同 `portsorch.cpp` L5407-L5434（mode の妥当性チェックと `setPortPfcAsym()` 呼び出し、unsupported 時のスキップログ）
+- 初期 attribute セット: 同 `portsorch.cpp` L1347-L1361（`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` への XOFF 値書き込み）
+- Port 構造体: `sonic-swss/orchagent/port/portcnt.h` L89 `pfc_asym` メンバ
+
+> `sonic-mgmt` ツリーは本ローカルキャッシュにクローンされていないため、テストスクリプト本体の一致確認は別バッチで実施する。
 
 ## 引用元
 

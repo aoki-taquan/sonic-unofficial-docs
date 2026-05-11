@@ -1,8 +1,8 @@
 ---
 title: Packet Trimming（symmetric / asymmetric DSCP / ACL disable）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/packet_trimming/packet-trimming-design.md
@@ -19,8 +19,8 @@ related:
     - sonic-switch-trimming
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `SwitchOrch` の trimming 拡張、`BufferOrch` での per-buffer-profile trimming 制御、ACL `DISABLE_TRIMMING` action、symmetric / asymmetric DSCP の SAI capability、Drop counter（v0.3）の取り込みは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `SwitchOrch` の packet trimming 取り込みを `sonic-swss/orchagent/switchorch.cpp` L1004-L1260 で確認。`SAI_SWITCH_ATTR_PACKET_TRIM_SIZE` (L1004), `_DSCP_RESOLUTION_MODE` (L1015), `_DSCP_VALUE` (L1026), `_TC_VALUE` (L1037), `_QUEUE_RESOLUTION_MODE` (L1048), `_QUEUE_INDEX` (L1059) を SAI に書き込む 6 経路を確認。capability エラーハンドリングと symmetric DSCP モード時の TC skip ロジック (L1190 `Skip setting switch trimming TC value for symmetric DSCP mode`) も実装済み。BufferOrch / ACL `DISABLE_TRIMMING` 側は別バッチで深堀予定。
 
 # Packet Trimming（symmetric / asymmetric DSCP / ACL disable）
 
@@ -143,6 +143,16 @@ show switch-trimming counters
 
 - trim が起きない → buffer profile の `packet_trimming=enabled`、ACL で disable していないか確認
 - 受信 NIC で trim 判別ができない → asymmetric DSCP 設定で受信側に signal するよう運用
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- Trim size 設定: `sonic-swss/orchagent/switchorch.cpp` L1004 (`SAI_SWITCH_ATTR_PACKET_TRIM_SIZE`)
+- DSCP resolution / value: 同 L1015 (`PACKET_TRIM_DSCP_RESOLUTION_MODE`), L1026 (`PACKET_TRIM_DSCP_VALUE`)
+- TC value: 同 L1037 (`PACKET_TRIM_TC_VALUE`), L1190 で symmetric DSCP 時の skip
+- Queue resolution / index: 同 L1048 (`PACKET_TRIM_QUEUE_RESOLUTION_MODE`), L1059 (`PACKET_TRIM_QUEUE_INDEX`)
+- capability チェック＆エラーログ: 同 L1083, L1093-L1260 全体（`Switch trimming configuration is not supported: skipping ...` ほか）
+
+> BufferOrch 側の per-profile trimming と ACL `DISABLE_TRIMMING` action、`SWITCH_TRIMMING_CAPABILITY` の STATE_DB 公開は別バッチで深掘り予定。
 
 ## 引用元
 

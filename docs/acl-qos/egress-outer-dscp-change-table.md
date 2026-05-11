@@ -1,8 +1,8 @@
 ---
 title: Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/acl/egress_outer_dscp_change_table.md
@@ -16,11 +16,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `UNDERLAY_SET_DSCP` / `MARK_META` / `EGR_SET_DSCP` の AclOrch 内部展開、SAI metadata 属性の community SAI 取り込み、CLI の sonic-utilities 取り込みは未確認。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `UNDERLAY_SET_DSCP` / `MARK_META` / `EGR_SET_DSCP` の table type 定数は `sonic-swss/orchagent/acltable.h` L38-L42 に定義済み (`TABLE_TYPE_MARK_META`, `TABLE_TYPE_MARK_META_V6`, `TABLE_TYPE_EGR_SET_DSCP`, `TABLE_TYPE_UNDERLAY_SET_DSCP`, `TABLE_TYPE_UNDERLAY_SET_DSCPV6`)。AclOrch 内部の MARK_META → EGR_SET_DSCP 連動展開 (`EGR_SET_DSCP_TABLE_ID = "EgressSetDSCP"` 定数, `isUsingEgrSetDscp()` 判定) を `aclorch.cpp` L51 / L1815 / L2485-L2490 / L3936-L3964 で確認した。
 
 # Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
 
@@ -130,6 +127,14 @@ CLI 文法は HLD 例示。実装側で `--stage` の解釈差異がある可能
 
 - table 作成失敗 → `STATE_DB.ACL_ACTIONS` で `SET_ACL_META_DATA` / `ACL_USER_META` capability を確認
 - DSCP が変わらない → encap が egress の本 ACL より前に走っているか確認、ingress 側の MARK_META rule が hit しているか aclshow で確認
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- Table type 定数: `sonic-swss/orchagent/acltable.h` L38-L42 (`TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_META_V6` / `TABLE_TYPE_EGR_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCPV6`)
+- Built-in table type 定義: `sonic-swss/orchagent/aclorch.cpp` L387-L412, L488-L489 (MARK_META / MARK_METAV6 / EGR_SET_DSCP のテーブル仕様)
+- EgressSetDSCP 内部 table 自動生成と参照: 同 L51 (`EGR_SET_DSCP_TABLE_ID = "EgressSetDSCP"`), L3936-L3964 (`builder.withName(TABLE_TYPE_MARK_META)` / `TABLE_TYPE_MARK_META_V6` / `TABLE_TYPE_EGR_SET_DSCP`)
+- MARK_META action 検証: 同 L2485-L2490 (`ACTION_DSCP` を MARK_META 系で処理する分岐 + EGR_SET_DSCP table 関連付け検証)
+- EgressSetDSCP 連動の table type 判定: 同 L1815 (`isUsingEgrSetDscp(table) || table == EGR_SET_DSCP_TABLE_ID`)
 
 ## 引用元
 

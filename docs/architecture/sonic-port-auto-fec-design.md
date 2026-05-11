@@ -1,8 +1,8 @@
 ---
 title: Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/port_auto_neg/auto-fec.md
@@ -17,8 +17,8 @@ related:
     - sonic-port
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `portsorch` 側の `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` capability query と FEC=auto の処理、`SAI_PORT_ATTR_OPER_PORT_FEC_MODE` 読み出しは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` の portsorch 取り込みを確認: `sonic-swss/orchagent/portsorch.cpp` L991 (capability query), L1325, L2369, L10479, L10556（FEC override 適用 + コメント `FEC override will take effect only when autoneg is enabled`）。FEC=auto と autoneg の関係チェックは L5334-L5336 (`Autoneg must be enabled for port fec mode auto to work`) で実装済み。
 
 # Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）
 
@@ -123,6 +123,13 @@ PORT|<if>:
 
 - `auto` にしても変わらない → `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` 対応 SAI か portsorch ログで確認
 - show 表示と実態が違う → `OPER_PORT_FEC_MODE` 未対応の可能性
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- Capability query: `sonic-swss/orchagent/portsorch.cpp` L991 (`SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE`)
+- 初期 attribute セット時の override 適用: 同 L1325, L2369
+- FEC=auto と autoneg のガード: 同 L5334-L5336 (`Autoneg must be enabled for port fec mode auto to work`)
+- 動的変更経路: 同 L10479, L10553-L10556 (`FEC override will take effect only when autoneg is enabled`)
 
 ## 引用元
 

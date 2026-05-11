@@ -1,8 +1,8 @@
 ---
 title: Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/pbh/pbh-design.md
@@ -20,8 +20,8 @@ related:
     - sonic-pbh
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `PbhOrch` の現行 master 取り込み、SAI fine-grained hash 関連属性の community SAI 取り込み、`PBH_*` テーブル / CLI / YANG の取り込み、CRM 連携は未確認。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `PbhOrch` は `sonic-swss/orchagent/pbhorch.h` L13-L19 に class 宣言、`orchdaemon.cpp` L52 で `gPbhOrch` 大域インスタンス、L553-L570 で `CFG_PBH_TABLE_TABLE_NAME` を含む 4 テーブル接続と `new PbhOrch(pbhTableConnectorList, gAclOrch, gPortsOrch)` 初期化、`m_orchList.push_back(gPbhOrch)` まで取り込み済みであることを確認。スキーマ定数 `PBH_TABLE_INTERFACE_LIST` / `PBH_TABLE_DESCRIPTION` は `orchagent/pbh/pbhschema.h` L5-L6 を確認。SAI fine-grained hash 属性 / CRM 連携の深掘りは別バッチ。
 
 # Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
 
@@ -129,6 +129,14 @@ show pbh table / rule / hash / hash-field
 
 - PBH 効かない → ACL rule が hit しているか aclshow で確認、`SET_ECMP_HASH`/`SET_LAG_HASH` 設定確認
 - 双方向で別パスに行く → `sequence_id` の対称性確認（src/dst が同じ id か）
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- `PbhOrch` クラス: `sonic-swss/orchagent/pbhorch.h` L13-L19 (`class PbhOrch final : public Orch`)
+- 大域 instance / orch 登録: `sonic-swss/orchagent/orchdaemon.cpp` L52 (`PbhOrch *gPbhOrch`), L553 (`TableConnector cfgDbPbhTable(m_configDb, CFG_PBH_TABLE_TABLE_NAME)`), L565 (`gPbhOrch = new PbhOrch(pbhTableConnectorList, gAclOrch, gPortsOrch)`), L570 (`m_orchList.push_back(gPbhOrch)`)
+- スキーマ定数: `sonic-swss/orchagent/pbh/pbhschema.h` L5-L6 (`PBH_TABLE_INTERFACE_LIST`, `PBH_TABLE_DESCRIPTION`)
+
+> SAI fine-grained hash 属性 (`SAI_HASH_ATTR_FINE_GRAINED_HASH_FIELD_LIST` 等) の community SAI ヘッダ取り込み度合と CRM 監視は別バッチで深掘り。
 
 ## 引用元
 
