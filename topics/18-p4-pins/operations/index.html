@@ -5303,13 +5303,74 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cpu-packet-path" class="md-nav__link">
+  <a href="#cpu-packet-pathpacketio-receive" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CPU packet path の確認
+        CPU packet path（PacketIO Receive）の確認
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="CPU packet path（PacketIO Receive）の確認">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-copp-trap-group-genetlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. CoPP の trap group に genetlink が設定されているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-hostif-genetlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI hostif が genetlink チャネルで作られているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-generic-netlink-family-kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. generic netlink family が kernel に登録されているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-controller-punt-flow-match-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. controller の punt flow に match する trap が発火しているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある罠
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5329,6 +5390,28 @@
     <span class="md-ellipsis">
       
         Read が遅いときの確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログの場所まとめ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -21362,13 +21445,74 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cpu-packet-path" class="md-nav__link">
+  <a href="#cpu-packet-pathpacketio-receive" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CPU packet path の確認
+        CPU packet path（PacketIO Receive）の確認
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="CPU packet path（PacketIO Receive）の確認">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-copp-trap-group-genetlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. CoPP の trap group に genetlink が設定されているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-hostif-genetlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI hostif が genetlink チャネルで作られているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-generic-netlink-family-kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. generic netlink family が kernel に登録されているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-controller-punt-flow-match-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. controller の punt flow に match する trap が発火しているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある罠
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -21388,6 +21532,28 @@
     <span class="md-ellipsis">
       
         Read が遅いときの確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログの場所まとめ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -21420,39 +21586,169 @@
 
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>PINS の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。それぞれ確認順を整理します。</p>
+<p>PINS の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。本ページでは出口（show / DB / ログ / kernel netlink）を実例で並べ、よくある異常と復旧手順を整理します。</p>
 <h2 id="write-asic">Write が ASIC に届いているかの確認<a class="headerlink" href="#write-asic" title="Permanent link">&para;</a></h2>
-<p>P4Orch は同期書き込みなので、コントローラの RPC レスポンスがそのまま成否を表します。レスポンスが OK にも関わらず ASIC に効いていないと感じる場合は、APPL_STATE_DB の対応エントリを直接見ます。</p>
-<ol>
-<li><code>redis-cli -n 0 KEYS "P4RT_TABLE:*"</code> で APPL_DB 側に書き込みが残っているか確認</li>
-<li><code>redis-cli -n 14 KEYS "..."</code> で APPL_STATE_DB に成否が返っているか確認</li>
-<li><code>redis-cli -n 1 KEYS "ASIC_STATE:*"</code> で実 SAI オブジェクトの存在を確認</li>
-</ol>
+<p>P4Orch は同期書き込みなので、コントローラの RPC レスポンス（gRPC <code>WriteResponse</code>）がそのまま成否を表します。レスポンスが OK にも関わらず ASIC に効いていないと感じる場合は、APPL_STATE_DB と ASIC_DB を直接見て切り分けます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ redis-cli -n 0 KEYS &quot;P4RT_TABLE:*&quot; | head
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>1) &quot;P4RT_TABLE:FIXED_ROUTER_INTERFACE_TABLE:{...}&quot;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>2) &quot;P4RT_TABLE:FIXED_NEIGHBOR_TABLE:{...}&quot;
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>admin@sonic:~$ redis-cli -n 14 KEYS &quot;P4RT_TABLE:*&quot; | wc -l
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>12
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>admin@sonic:~$ redis-cli -n 14 HGETALL &quot;P4RT_TABLE:FIXED_ROUTER_INTERFACE_TABLE:{...}&quot;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>1) &quot;err_str&quot;
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>2) &quot;SWSS_RC_SUCCESS&quot;
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:*&quot; | wc -l
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>3
+</span></code></pre></div>
+<p>切り分けの目安は次のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>APPL_DB</th>
+<th>APPL_STATE_DB</th>
+<th>ASIC_DB</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>あり</td>
+<td><code>SWSS_RC_SUCCESS</code></td>
+<td>あり</td>
+<td>正常</td>
+</tr>
+<tr>
+<td>あり</td>
+<td><code>SWSS_RC_*</code> で失敗</td>
+<td>なし</td>
+<td>P4Orch / SAI で拒否。<code>err_str</code> と orchagent ログを見る</td>
+</tr>
+<tr>
+<td>あり</td>
+<td>無</td>
+<td>なし</td>
+<td>P4Orch が pending（依存未解決）。例: route の前に nexthop 未 install</td>
+</tr>
+<tr>
+<td>無</td>
+<td>無</td>
+<td>なし</td>
+<td>p4rt-app が controller の write を受けていない。p4rt-app プロセスと gRPC を疑う</td>
+</tr>
+</tbody>
+</table>
+<p>p4rt-app と P4Orch のログは次で。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ docker logs p4rt 2&gt;&amp;1 | tail
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>admin@sonic:~$ docker exec swss supervisorctl tail orchagent | grep -i p4orch
+</span></code></pre></div>
 <p>詳細な責務分担は <a href="../../../internals/p4-orchagent/">P4Orch HLD</a> と <a href="../../../management/p4rt-application-hld/">P4RT App HLD</a> を参照してください。</p>
-<h2 id="cpu-packet-path">CPU packet path の確認<a class="headerlink" href="#cpu-packet-path" title="Permanent link">&para;</a></h2>
+<h2 id="cpu-packet-pathpacketio-receive">CPU packet path（PacketIO Receive）の確認<a class="headerlink" href="#cpu-packet-pathpacketio-receive" title="Permanent link">&para;</a></h2>
 <p>PacketIO Receive は generic netlink + CoPP trap group が両方そろわないと届きません。次の順で確認します。</p>
-<ol>
-<li>CoPP の対象 trap group が <code>genetlink_name</code> / <code>genetlink_mcgrp_name</code> を持っているか（既定では <code>queue2_group1</code>）</li>
-<li>SAI hostif が <code>SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK</code> で作られているか（<code>copporch.cpp</code> の <code>createGenetlinkHostIf()</code> 経路）</li>
-<li>p4rt-app プロセスが generic netlink family <code>psample</code> を受信しているか</li>
-<li>controller が install した punt flow に match する trap が発火しているか（CoPP の counter / <code>aclshow</code> で確認）</li>
-</ol>
-<p>ベンダ側 kernel の <code>genl_packet</code> filter 実装が無い ASIC では、HLD が想定する PacketIO は動きません。詳細は <a href="../../../management/packetio/">PacketIO HLD</a> を参照してください。</p>
-<h2 id="send-to-ingress">Send to Ingress の使い分け<a class="headerlink" href="#send-to-ingress" title="Permanent link">&para;</a></h2>
-<p>Send to Ingress は <strong>ASIC の ingress pipeline にパケットを再注入する</strong> モードで、次の場面で使い分けます。</p>
+<h3 id="1-copp-trap-group-genetlink">1. CoPP の trap group に genetlink が設定されているか<a class="headerlink" href="#1-copp-trap-group-genetlink" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ redis-cli -n 4 HGETALL &quot;COPP_GROUP|queue2_group1&quot;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>1) &quot;queue&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>2) &quot;2&quot;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>3) &quot;genetlink_name&quot;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>4) &quot;psample&quot;
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>5) &quot;genetlink_mcgrp_name&quot;
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>6) &quot;packets&quot;
+</span></code></pre></div>
+<h3 id="2-sai-hostif-genetlink">2. SAI hostif が genetlink チャネルで作られているか<a class="headerlink" href="#2-sai-hostif-genetlink" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*&quot; | head
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$ redis-cli -n 1 HGETALL &quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:oid:0x...&quot; | grep -A1 CHANNEL_TYPE
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>SAI_HOSTIF_ATTR_TYPE
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK
+</span></code></pre></div>
+<p><code>copporch.cpp</code> の <code>createGenetlinkHostIf()</code> 経路が走ったかは syslog で <code>CoppOrch.*genetlink</code> を grep します。</p>
+<h3 id="3-generic-netlink-family-kernel">3. generic netlink family が kernel に登録されているか<a class="headerlink" href="#3-generic-netlink-family-kernel" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ genl-ctrl-list | grep -i psample
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>psample
+</span></code></pre></div>
+<h3 id="4-controller-punt-flow-match-trap">4. controller の punt flow に match する trap が発火しているか<a class="headerlink" href="#4-controller-punt-flow-match-trap" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ aclshow -a
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$ show ip access-lists
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>admin@sonic:~$ redis-cli -n 6 KEYS &quot;USER_WATERMARKS|COPP_*&quot;
+</span></code></pre></div>
+<p><code>aclshow</code> で punt 用 ACL の counter が増えるか、CoPP queue の counter が増えるかを見ます。</p>
+<h3 id="_2">よくある罠<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>使う</strong>: controller が宛先を決め切れず、ECMP / WCMP を ASIC に判定させたい。あるいはテスト用途で「CPU 起点で ingress に入れたパケットの ASIC ルーティングを観察したい」。</li>
-<li><strong>使わない</strong>: 送信先 port がすでに決まっている。この場合は Direct transmit（対応 netdev のソケット）で十分。</li>
+<li>ベンダ側 kernel の <code>genl_packet</code> filter 実装が無い ASIC では HLD どおりには動かない。<code>docker exec syncd dmesg | grep genl_packet</code> で確認。</li>
+<li>CoPP の policer に潰されて p4rt-app に届かない。<code>show platform inventory copp</code> や trap group の <code>cir</code> / <code>cbs</code> を見る。</li>
 </ul>
-<p>ホスト側で <code>ip link show send_to_ingress</code> が出るか、<code>PortsOrch::addSendToIngressHostIf()</code> が呼ばれたかが入口になります。詳細は <a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a> を参照してください。</p>
+<p>詳細は <a href="../../../management/packetio/">PacketIO HLD</a> を参照してください。</p>
+<h2 id="send-to-ingress">Send to Ingress の使い分け<a class="headerlink" href="#send-to-ingress" title="Permanent link">&para;</a></h2>
+<p>Send to Ingress は <strong>ASIC の ingress pipeline にパケットを再注入する</strong> モードです。</p>
+<ul>
+<li><strong>使う</strong>: controller が宛先を決め切れず、ECMP / WCMP を ASIC に判定させたい。テスト用途で「CPU 起点で ingress に入れたパケットの ASIC ルーティングを観察したい」。</li>
+<li><strong>使わない</strong>: 送信先 port がすでに決まっている。Direct transmit（対応 netdev のソケット）で十分。</li>
+</ul>
+<p>確認手順:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ ip link show send_to_ingress
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>42: send_to_ingress: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 9100 qdisc noqueue state UNKNOWN
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*&quot; \
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  | xargs -I{} redis-cli -n 1 HGET {} SAI_HOSTIF_ATTR_NAME 2&gt;/dev/null \
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  | grep -i send_to_ingress
+</span></code></pre></div>
+<p><code>PortsOrch::addSendToIngressHostIf()</code> がコールされた痕跡は orchagent ログにあります。netdev が見えない場合は CONFIG_DB の有効化、ASIC の対応、syncd ログ（<code>SAI_STATUS_NOT_SUPPORTED</code>）を順に見ます。</p>
+<p>詳細は <a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a> を参照してください。</p>
 <h2 id="read">Read が遅いときの確認<a class="headerlink" href="#read" title="Permanent link">&para;</a></h2>
 <p>Read の遅さは AppDb への <code>HGETALL</code> 大量発行が支配的でした。entity_cache_（旧 table_entry_cache_）が効いていれば 16,000 フローでも約 40ms に収まる想定です。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$ docker logs p4rt 2&gt;&amp;1 | grep -i &quot;Read took&quot;
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$ docker logs p4rt 2&gt;&amp;1 | grep VerifyState
+</span></code></pre></div>
 <ul>
-<li>p4rt-app のログで Read 時間が 1 秒オーダーで残っていれば、キャッシュが回避されている経路を疑う</li>
-<li>Write 中の整合不一致は <code>P4RuntimeImpl::VerifyState()</code> が <code>VerifyP4rtTableWithCacheEntities</code> で検出する</li>
-<li>warm boot 時の事前充填は <code>warm_boot_state_adapter_</code> がフレームワーク化済み</li>
+<li>p4rt-app のログで Read 時間が 1 秒オーダーで残っていれば、キャッシュが回避されている経路を疑う（直近の Write で AppDb 整合 mismatch、warm boot 直後でキャッシュ未充填、など）。</li>
+<li>Write 中の整合不一致は <code>P4RuntimeImpl::VerifyState()</code> が <code>VerifyP4rtTableWithCacheEntities</code> で検出する。エラーが出るなら controller 側の reconcile が必要。</li>
+<li>warm boot 時の事前充填は <code>warm_boot_state_adapter_</code> がフレームワーク化済み。warm boot 後最初の Read だけ遅い場合は、この充填が走ったかをログで確認。</li>
 </ul>
 <p>詳細は <a href="../../../management/p4rt-read-cache-hld/">Read キャッシュ HLD</a> を参照してください。</p>
+<h2 id="_3">ログの場所まとめ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>ログ</th>
+<th>grep キーワード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>p4rt-app</td>
+<td><code>docker logs p4rt</code></td>
+<td><code>Write</code>、<code>Read took</code>、<code>VerifyState</code>、<code>genl</code></td>
+</tr>
+<tr>
+<td>orchagent (P4Orch)</td>
+<td><code>docker exec swss supervisorctl tail orchagent</code></td>
+<td><code>P4Orch</code>、<code>SWSS_RC_</code></td>
+</tr>
+<tr>
+<td>syncd</td>
+<td><code>docker exec syncd supervisorctl tail syncd</code></td>
+<td><code>SAI_STATUS</code>、<code>HOSTIF</code>、<code>HOSTIF_TABLE_ENTRY</code></td>
+</tr>
+<tr>
+<td>CoPP</td>
+<td><code>/var/log/syslog</code></td>
+<td><code>CoppOrch</code>、<code>genetlink</code></td>
+</tr>
+<tr>
+<td>kernel</td>
+<td><code>dmesg</code></td>
+<td><code>psample</code>、<code>genl_packet</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../internals/p4-orchagent/">P4Orch HLD</a></li>
+<li><a href="../../../management/p4rt-application-hld/">P4RT App HLD</a></li>
+<li><a href="../../../management/packetio/">PacketIO HLD</a></li>
+<li><a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a></li>
+<li><a href="../../../management/p4rt-read-cache-hld/">Read キャッシュ HLD</a></li>
+<li><a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror 章</a>（trap group / policer の詳細）</li>
+<li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 章</a>（SAI 失敗観察）</li>
+</ul>
 
 
 

@@ -7658,6 +7658,67 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21607,6 +21668,67 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21856,7 +21978,35 @@ reasoning: テストの判定ロジック（DIP=SIP のままルーティング�
 <li>TTL が想定と違う: TTL/HL が 1 減っていない場合、DUT 側で L3 forwarding せず L2 で抜けている可能性。</li>
 <li>port index 不一致: <code>dst_port_ids</code> / <code>src_port_ids</code> の配列が空、または PTF port 番号と DUT 側の物理 port のマッピングがズレている。<code>dip_sip.yml</code> の前処理ログ（minigraph / LLDP gather）を確認。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>2026-05 時点でテスト実体は <strong>PTF スタンドアロンから pytest 配下へ移行済み</strong> で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。</p>
+<h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>現行の本体は <code>sonic-mgmt/tests/ipfwd/test_dip_sip.py</code>（pytest 形式）。HLD が指す旧来の <code>ansible/roles/test/files/ptftests/dip_sip.py</code> は <strong>削除済み</strong>（GitHub 検索でヒット 0）。</li>
+<li><code>sonic-mgmt/ansible/roles/test/tasks/dip_sip.yml</code> は 114 バイトのラッパに縮退しており、中身は <code>include_tasks: roles/test/tasks/pytest_runner.yml</code> + <code>test_node: ipfwd/test_dip_sip.py</code> のみ。HLD が描写した「前処理 → ptf_runner で <code>dip_sip.DipSipTest</code> を起動」という直接呼び出し構造は残っていない。</li>
+<li>一方で <code>sonic-mgmt/ansible/roles/test/vars/testcases.yml</code>（11721 B）は実在し、testbed / topology 定義は HLD 当時から大きく変わっていない。</li>
+</ul>
+<h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
+<p>HLD 当時の構造:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ansible playbook → dip_sip.yml (前処理) → ptf_runner → dip_sip.py (PTF テスト)
+</span></code></pre></div>
+<p>現行:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest tests/ipfwd/test_dip_sip.py
+</span></code></pre></div>
+<p>すなわち <strong>テストロジック本体は pytest 側に移植され、ansible は単に pytest 起動を仲介するだけ</strong> になった。テストの意味論（DIP=SIP パケットが転送される / TTL が 1 減る / 期待ポートから出る）は HLD と同じだが、起動ファイル名・配置・前処理の責務が違う。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HLD の <code>dip_sip.py</code> を探しても見つからない。<code>tests/ipfwd/test_dip_sip.py</code> を直接読まないと現行の挙動が分からない。</li>
+<li>ログ出力先・テスト名（<code>DipSipTest</code> クラス → pytest case 名）が変わっており、過去のトラシュー手順「<code>/tmp/dip_sip.DipSipTest.&lt;ts&gt;.log</code> を grep」も pytest 化以降は <code>pytest --log-file</code> / <code>logs/</code> 配下を見るのが正解。</li>
+<li>新しい topology 追加時の編集箇所も <code>vars/testcases.yml</code> ではなく pytest 側の fixture / pytestmark の場合がある。</li>
+</ul>
+<h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>テストを走らせる</strong>: 旧 ansible 直叩き <code>ansible-playbook ... -e 'testcase_name=dip_sip'</code> は <strong>そのまま動く</strong>（ラッパが pytest を呼ぶため）。HLD の旧手順を保ったまま実行可能。</li>
+<li><strong>テストを読み解く</strong>: 本体ロジックは <code>sonic-mgmt/tests/ipfwd/test_dip_sip.py</code> を <code>grep -n</code> で参照する。クラス名 / log 名のドキュメント不一致は本ページの記述ではなくコード側を真として扱う。</li>
+<li><strong>新規 topology / RIF を追加する</strong>: pytest 側の parametrize / fixture を編集し、必要なら <code>dip_sip.yml</code> の <code>test_node</code> 指定とは別経路で <code>pytestmark</code> の設定を変える。</li>
+</ul>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - gh api search/code: sonic-net/sonic-mgmt 配下に tests/ipfwd/test_dip_sip.py (pytest) が現存
 - gh api repos/sonic-net/sonic-mgmt/contents/ansible/roles/test/tasks/dip_sip.yml: size 114 byte; 中身は include_tasks: roles/test/tasks/pytest_runner.yml + test_node: ipfwd/test_dip_sip.py のラッパ

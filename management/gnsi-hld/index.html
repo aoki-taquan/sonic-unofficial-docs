@@ -22046,6 +22046,18 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <li><strong>STATE_DB gNSI profile state テーブルは未確認</strong>: <code>sonic-swss-common/common/schema.h</code> 内に <code>GNSI</code> 関連テーブル定義は見当たらなかった（profile 状態は gNMI サーバプロセス内のメモリ／ファイルで保持される実装と推測される）。</li>
 </ul>
 <p>主要な合致点として、<code>sonic-gnmi/gnmi_server/gnsi_authz.go</code> (GNSIAuthzServer / Probe / Get / Rotate)、<code>gnsi_certz.go</code> (GNSICertzServer)、<code>gnsi_pathz.go</code> (GNSIPathzServer)、および <code>sonic-host-services/host_modules/gnsi_console.py</code> (<code>MOD_NAME = 'gnsi_console'</code>)、<code>ssh_mgmt.py</code> (<code>MOD_NAME = 'ssh_mgmt'</code>) は HLD どおり実装されている。</p>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li><strong>Credentialz の SSH 鍵 / パスワード rotate を gNSI 経由で要求しても、現状はサーバハンドラが無いため <code>Unimplemented</code> で失敗する</strong>。dbus client 側のコードは準備されているが、gNMI server からのディスパッチ経路が未配線。</li>
+<li>HLD どおりに <code>EnableAuthzPolicy</code> / <code>EnablePathzPolicy</code> という flag 名で telemetry 設定を書こうとすると認識されない。<strong>正しいフィールド名は <code>AuthzPolicy</code> / <code>PathzPolicy</code>（boolean）と <code>AuthzPolicyFile</code> / <code>PathzPolicyFile</code>（path）</strong>。</li>
+<li>STATE_DB から gNSI profile 状態を query するスクリプトを書くと <strong>常に空</strong> が返る（profile 状態は gNMI プロセスのメモリ内保持）。</li>
+</ul>
+<p><strong>回避策 / 対応方法</strong>:</p>
+<ul>
+<li>Credentialz が必要な場合は、現状 <code>ssh_mgmt</code> host service（dbus 経由）を直接叩くか、<code>/etc/ssh/sshd_config</code> / <code>authorized_keys</code> をホスト側スクリプトで管理する。gNSI 経由は上流の handler 実装待ち。</li>
+<li>Authz / Pathz / CRL を有効化する設定は、telemetry config 構造体の <code>AuthzPolicy = true</code> / <code>AuthzPolicyFile = "/path/to/policy.json"</code> / <code>PathzPolicy = true</code> / <code>PathzPolicyFile = "..."</code> / <code>CertCRLConfig = "..."</code> を設定する。HLD の flag 名表記には引きずられない。</li>
+<li>gNSI profile state を観測したい場合は、gNMI Probe / Get RPC を直接叩いて handler の戻り値を見る。STATE_DB 経由は機能しない。</li>
+</ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-gnmi / sonic-mgmt-common の Certz/Authz/Pathz/Credentialz handler 実装存否

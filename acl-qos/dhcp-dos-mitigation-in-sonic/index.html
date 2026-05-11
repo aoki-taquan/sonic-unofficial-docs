@@ -11198,6 +11198,67 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21607,6 +21668,67 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21794,7 +21916,33 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 <li>システム全体で DHCP が通らない場合: 本 HLD 適用後 CoPP の DHCP 制限が削除されているはずだが、CoPP 側ルールが残っていると ASIC で先に絞られる可能性がある。</li>
 <li>値変更が反映されない場合: 同ポートに既存の rate がある状態で新たに add しようとすると CLI が拒否する仕様。先に delete してから add する。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>2026-05 時点で <code>.cache/sonic-sources/</code> の master を裏取りした結果、本機能は <strong>データ層 + CLI のみが取り込み済みで、肝心の TC qdisc / filter 投入経路が未実装</strong> な部分実装状態である。</p>
+<h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>取り込み済み</strong>:</li>
+<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:106</code> で <code>leaf dhcp_rate_limit</code> が定義されている（<code>uint32 range 0..8000</code>）。</li>
+<li><code>sonic-utilities/scripts/db_migrator.py:514-524</code> (<code>migrate_config_db_port_table_for_dhcp_rate_limit</code>) が既存ポートに既定値 <code>300</code> を埋め、<code>db_migrator.py:1142</code> から呼ばれる。</li>
+<li><code>sonic-utilities/config/main.py:5908-5990</code> に <code>config interface dhcp-mitigation-rate add/del</code> の CLI ハンドラが存在し、<code>PORT</code> テーブルへ <code>dhcp_rate_limit</code> を mod_entry する。</li>
+<li><strong>未取り込み（HLD との乖離）</strong>:</li>
+<li><code>sonic-swss/cfgmgr/</code> 配下に <code>dhcp_rate_limit</code> を subscribe する portmgrd ロジックが<strong>存在しない</strong>（<code>grep -rn dhcp_rate_limit sonic-swss/cfgmgr/</code> 0 件）。<code>tc qdisc add ... ingress</code> / <code>tc filter add ... police rate ...</code> を発行するコードも見つからない。</li>
+<li><code>sonic-buildimage/files/image_config/copp/copp_cfg.j2:109-110</code> には依然として <code>"dhcp_relay": { "trap_ids": "dhcp,dhcpv6" ... }</code> が残っており、HLD が前提とする「CoPP 上のシステム全体 DHCP 制限の削除」も実施されていない。</li>
+</ul>
+<h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
+<p>HLD は「CONFIG_DB に書いた値が portmgrd 経由で Linux TC の policer に展開され、CoPP のシステム全体 DHCP 制限と置き換えられる」と述べているが、現行 master では <strong>CONFIG_DB に値を書き込めるだけで、カーネル側に何も投入されない</strong>。CoPP も従来どおりシステム全体で 300 pps に絞っている。HLD のうち「データモデル / CLI / migration」だけが先行採用された格好で、データプレーン側は HLD 通りに動かない。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>config interface dhcp-mitigation-rate add Ethernet0 1000</code> を投入しても <strong>ポート単位のレート制限は効かない</strong>。<code>tc -s qdisc show dev Ethernet0 handle ffff:</code> をしても ingress qdisc は存在しない。</li>
+<li>攻撃ポートからの flood は、依然として CoPP の 300 pps システム全体制限に集約され、同 VLAN の正規 DISCOVER までドロップされる従来挙動になる。HLD のセキュリティ価値は得られない。</li>
+<li>DB migrator により既存ポートに <code>dhcp_rate_limit=300</code> が<strong>勝手に</strong>埋まる副作用だけは発生する（運用上の害は無いが、<code>show runningconfiguration</code> 等に値が現れることに注意）。</li>
+</ul>
+<h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD の効果を得たい場合</strong>: 当面は外部スクリプト（systemd unit など）で <code>tc qdisc add dev &lt;if&gt; handle ffff: ingress</code> + <code>tc filter add ... protocol 17 ... dport 67 ... police rate ...</code> を投入して回避する。バイトレート換算は HLD の <code>pps * 406 B</code> 規約に従う。</li>
+<li><strong>CoPP 側を維持する場合</strong>: 既定の CoPP DHCP 300 pps が依然有効なので、上記スクリプトを入れない限りは <strong>HLD 前の動作のまま</strong> で運用される。CLI 上の値は飾りである旨を運用ドキュメントに明記しておくとよい。</li>
+<li>上流の取り込みを待つ場合は <code>sonic-swss</code> 側で portmgrd の TC 投入実装と、<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> からの <code>dhcp_relay</code> trap_id 削除の双方が入るのを確認する必要がある。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

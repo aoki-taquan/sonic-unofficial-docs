@@ -2851,6 +2851,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="「ドロップしている」と言われたとき">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pfc-storm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログサンプル (PFC storm 検出)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2858,6 +2875,17 @@
     <span class="md-ellipsis">
       
         「PFC で止まる」と言われたとき
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buffer-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buffer pool の枯渇を見つける
       
     </span>
   </a>
@@ -2891,6 +2919,28 @@
     <span class="md-ellipsis">
       
         telemetry / counter の収集間隔
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連章
       
     </span>
   </a>
@@ -21392,6 +21442,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="「ドロップしている」と言われたとき">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pfc-storm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログサンプル (PFC storm 検出)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -21399,6 +21466,17 @@
     <span class="md-ellipsis">
       
         「PFC で止まる」と言われたとき
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buffer-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buffer pool の枯渇を見つける
       
     </span>
   </a>
@@ -21432,6 +21510,28 @@
     <span class="md-ellipsis">
       
         telemetry / counter の収集間隔
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連章
       
     </span>
   </a>
@@ -21498,6 +21598,21 @@
 </tbody>
 </table>
 <p>この 4 つで「どの queue / PG / ポートで何が起きているか」がだいたい分かります。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ show queue counters Ethernet0
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>       Port    TxQ    Counter/pkts    Counter/bytes    Drop/pkts    Drop/bytes
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>-----------  -----  --------------  ---------------  -----------  ------------
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  Ethernet0   UC0          1.2M           1.5G              0             0
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  Ethernet0   UC1            42K           63M              0             0
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  Ethernet0   UC3           890K          1.3G          12.3K          18M
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  Ethernet0   UC4              0             0              0             0
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>admin@sonic:~$ show pfc counters Ethernet0
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>       Port    PFC0    PFC1    PFC2    PFC3    PFC4    PFC5    PFC6    PFC7
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>-----------  ------  ------  ------  ------  ------  ------  ------  ------
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>Ethernet0 Rx     0       0       0     12K     0       0       0       0
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>Ethernet0 Tx     0       0       0       0     0       0       0       0
+</span></code></pre></div>
+<p><code>UC3</code> で drop が伸び、同じ port の <code>PFC3 Rx</code> が増えていれば、上流が PFC で止めているのに自分側の egress も同じ TC で詰まっている、というよくある絵です。</p>
 <h2 id="_1">「ドロップしている」と言われたとき<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li><code>show interfaces counters</code> で port 全体の drop を確認。</li>
@@ -21505,6 +21620,54 @@
 <li>立っていなければ ingress 側を疑い、<a href="../../../acl-qos/port-buffer-drop-counters-in-sonic/">port buffer drop counters</a> の系列カウンタ（<code>SAI_PORT_STAT_IN_DROPPED_PKTS</code> 系 / <code>SAI_PORT_STAT_PFC_*_RX_PKTS</code> など）を <code>portstat -j</code> 系で取り、ingress PG drop かどうかを切り分け。</li>
 <li>WRED / ECN が動いている経路なら <a href="../../../acl-qos/wred-and-ecn-statistics/">WRED and ECN statistics</a> のカウンタで、drop と mark の比率を見る。</li>
 </ol>
+<p>切り分けは「どの DB に何が出ているか」を意識すると速いです:</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>主な DB / Table</th>
+<th>取り方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>port 全体</td>
+<td><code>COUNTERS_DB</code> <code>COUNTERS:Ethernet0</code></td>
+<td><code>portstat -j</code></td>
+</tr>
+<tr>
+<td>egress queue</td>
+<td><code>COUNTERS_DB</code> <code>COUNTERS_QUEUE_NAME_MAP</code></td>
+<td><code>show queue counters</code></td>
+</tr>
+<tr>
+<td>ingress PG</td>
+<td><code>COUNTERS_DB</code> <code>COUNTERS_PG_NAME_MAP</code></td>
+<td><code>show priority-group counters</code></td>
+</tr>
+<tr>
+<td>WRED / ECN</td>
+<td><code>COUNTERS_DB</code> <code>SAI_QUEUE_STAT_WRED_*</code></td>
+<td><a href="../../../acl-qos/wred-and-ecn-statistics/">WRED counters</a></td>
+</tr>
+<tr>
+<td>buffer pool</td>
+<td><code>COUNTERS_DB</code> <code>COUNTERS_BUFFER_POOL_NAME_MAP</code></td>
+<td><code>show buffer pool persistent-watermark</code></td>
+</tr>
+<tr>
+<td>設定マップ</td>
+<td><code>CONFIG_DB</code> <code>DSCP_TO_TC_MAP</code> / <code>TC_TO_QUEUE_MAP</code> / <code>BUFFER_PROFILE</code></td>
+<td><code>redis-cli -n 4</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="pfc-storm">ログサンプル (PFC storm 検出)<a class="headerlink" href="#pfc-storm" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Apr 30 12:34:01 sw01 INFO pfc_wd: storm detected on Ethernet24 queue 3
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Apr 30 12:34:01 sw01 INFO pfc_wd: action=drop, restore_time=200ms, detect_time=200ms
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Apr 30 12:34:02 sw01 INFO pfc_wd: storm restored on Ethernet24 queue 3
+</span></code></pre></div>
+<p>このログが頻発する場合は、Tx PFC を出している ingress 側 (相手) を疑い、自装置側は WRED / ECN しきい値の調整、または該当 TC の buffer profile (<code>xoff</code>) を増やす方向を検討します。</p>
 <h2 id="pfc">「PFC で止まる」と言われたとき<a class="headerlink" href="#pfc" title="Permanent link">&para;</a></h2>
 <ol>
 <li><code>show pfc counters</code> で Rx PFC が増えているか、Tx PFC を出しているかを判断。</li>
@@ -21513,6 +21676,43 @@
 <li>PFC が異常に長く続く場合は PFCWD が止めているはず（<code>show pfcwd stats</code> / <code>show pfcwd config</code>）。</li>
 <li>履歴で振り返りたい場合は <a href="../../../acl-qos/pfc-historical-statistics/">PFC historical statistics</a> を使う。</li>
 </ol>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ show pfcwd stats
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>                     QUEUE    STATUS    STORM DETECTED    TX OK    TX DROP    RX OK    RX DROP
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>-------------------------    ------    --------------    -----    -------    -----    -------
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet24:3                operational             3        0       12.3K        0      8.5K
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Ethernet48:3                operational             0        0           0        0         0
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>admin@sonic:~$ show pfcwd config
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>       PORT    ACTION    DETECTION TIME    RESTORATION TIME
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>-----------  --------  ----------------  ------------------
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>Ethernet24      drop               200                 200
+</span></code></pre></div>
+<p><code>STORM DETECTED</code> の累計が秒〜分のオーダーで増え続けるなら、PFC を出している側を直さない限り収束しません。応急で PFCWD <code>action: forward</code> にすると drop を止められますが、ingress 側の buffer 圧迫が他 PG に飛び火するので恒久対応にはしません。</p>
+<h2 id="buffer-pool">Buffer pool の枯渇を見つける<a class="headerlink" href="#buffer-pool" title="Permanent link">&para;</a></h2>
+<p><code>show buffer pool persistent-watermark</code> で、ingress / egress / lossless / lossy pool の peak バイトを見ます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ show buffer_pool persistent_watermark
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>       Pool                   Bytes
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>-----------  ----------------------
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>ingress_lossless_pool        12345600
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>ingress_lossy_pool             450000
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>egress_lossless_pool          9876500
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>egress_lossy_pool              780000
+</span></code></pre></div>
+<p>pool size に近い値が peak で出ている場合、burst 時に shared pool が頭打ちになっていた可能性が高いです。<code>show buffer_pool</code> (現在値) と差を取り、常時忙しいのか瞬間 burst かを判別します。</p>
+<p><code>BUFFER_POOL</code> テーブルの <code>size</code> と <code>xoff</code> (lossless のみ) が一次的なつまみで、<code>BUFFER_PROFILE</code> の <code>dynamic_th</code> / <code>static_th</code> がポートごとの shared 割当 ratio になります。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ redis-cli -n 4 hgetall &quot;BUFFER_PROFILE|pg_lossless_100000_5m_profile&quot;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>1) &quot;pool&quot;
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>2) &quot;ingress_lossless_pool&quot;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>3) &quot;size&quot;
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>4) &quot;1248&quot;
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>5) &quot;xon&quot;
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>6) &quot;19456&quot;
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>7) &quot;xoff&quot;
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>8) &quot;165888&quot;
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>9) &quot;dynamic_th&quot;
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>10) &quot;0&quot;
+</span></code></pre></div>
+<p><code>xoff</code> (PFC 発火閾値) と <code>xon</code> (停止解除閾値) は cable length / link speed 依存で計算されるため、手で書き換える前に <a href="../../../reference/config-db/buffer-profile/">buffer profile スキーマ</a> と shared headroom pool の有無を確認します。</p>
 <h2 id="watermark">Watermark の見方と落とし穴<a class="headerlink" href="#watermark" title="Permanent link">&para;</a></h2>
 <p>Watermark は <code>show queue persistent-watermark</code>、<code>show priority-group persistent-watermark</code>、<code>show buffer pool persistent-watermark</code> の 3 系統と、それぞれの <code>clear</code> コマンドがあります。</p>
 <ul>
@@ -21528,8 +21728,75 @@
 <li><code>show queue</code> — queue ごとの bytes、packets、drops、WRED drop / ECN mark。</li>
 </ul>
 <p>具体的なオプションは <a href="../../../reference/cli/show-buffer/">show-buffer</a> / <a href="../../../reference/cli/show-queue/">show-queue</a> / <a href="../../../reference/cli/show-priority-group/">show-priority-group</a> を参照。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ show priority-group watermark headroom
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>        Port      PG0    PG1    PG2    PG3       PG4    PG5    PG6    PG7
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>------------  ------  -----  -----  -----  --------  -----  -----  -----
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>   Ethernet0       0      0      0      0    123456      0      0      0
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  Ethernet24       0      0      0      0     12000      0      0      0
+</span></code></pre></div>
+<p><code>headroom</code> 系の watermark が 0 でない PG が、lossless で xoff を消費した瞬間値です。常時 0 ではないが小さい、なら設計範囲内です。0 から急に大きな値になっているなら burst の発生時刻を syslog と照合します。</p>
 <h2 id="telemetry-counter">telemetry / counter の収集間隔<a class="headerlink" href="#telemetry-counter" title="Permanent link">&para;</a></h2>
 <p>FlexCounter のポーリング間隔は CONFIG_DB の <code>FLEX_COUNTER_TABLE</code> で変えられます。queue / PG / pool / PFCWD ごとに独立しているので、短くしたいものだけ短くすれば SAI 側の負荷も抑えられます。観測値の単位や意味は <a href="../../../acl-qos/watermark-counters-in-sonic/">watermark counters in SONiC</a> の表が一次資料です。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ counterpoll show
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Type                     Interval (in ms)    Status
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>-----------------------  ------------------  --------
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>QUEUE_STAT               10000               enable
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>PG_WATERMARK_STAT        10000               enable
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>PORT_STAT                1000                enable
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>BUFFER_POOL_WATERMARK    10000               enable
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>PFCWD_STAT               default (10000)     enable
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>ACL_STAT                 5000                enable
+</span></code></pre></div>
+<p>検証時に細粒度で見たいときは <code>counterpoll queue interval 1000</code> のように短くし、終わったら 10000ms 程度に戻します。常時 1s polling は CPU と SAI 負荷を上げるので避けます。</p>
+<h2 id="_2">対応コマンド早見表<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>入口</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>特定アプリだけ遅い</td>
+<td><code>show queue counters</code></td>
+<td>該当 queue の drop / PFC</td>
+</tr>
+<tr>
+<td>全体的に遅い・bursty</td>
+<td><code>show buffer pool persistent-watermark</code></td>
+<td>shared pool 枯渇</td>
+</tr>
+<tr>
+<td>PFC が止まらない</td>
+<td><code>show pfc counters</code> + <code>show pfcwd stats</code></td>
+<td>Rx/Tx の向き、PFCWD</td>
+</tr>
+<tr>
+<td>ECN mark が立たない</td>
+<td><code>show queue counters</code> (WRED 系)</td>
+<td><code>WRED_PROFILE</code> 設定</td>
+</tr>
+<tr>
+<td>設定したのに反映されない</td>
+<td><code>redis-cli -n 4 hgetall BUFFER_PROFILE\|...</code></td>
+<td>CONFIG_DB と STATE_DB</td>
+</tr>
+<tr>
+<td>port 削除直後の幽霊 watermark</td>
+<td><code>show queue persistent-watermark</code></td>
+<td><a href="../../../acl-qos/align-watermark-flow-with-port-configuration-hld/">align watermark flow</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">関連章<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li>章 <a href="../../07-acl-copp-mirror/operations/">07 ACL / CoPP / mirror</a> — drop の入口の切り分け</li>
+<li>章 <a href="../../09-telemetry-snmp/operations/">09 telemetry / SNMP / observability</a> — counter を gNMI で取る</li>
+<li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — QoS / Buffer の宣言的設定</li>
+<li><a href="../../../reference/config-db/buffer-pool/">Buffer Pool / Profile スキーマ</a></li>
+</ul>
 
 
 

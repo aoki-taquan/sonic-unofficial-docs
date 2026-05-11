@@ -5748,6 +5748,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB 一覧（番号）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5755,6 +5766,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="SAI 失敗を見るときの順番">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-status-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代表的な SAI status code と一次切り分け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5804,6 +5832,39 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログの場所まとめ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sairedisrec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sairedis.rec の使い方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orchagent-event-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent の event loop が詰まったとき
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21373,6 +21434,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB 一覧（番号）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21380,6 +21452,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="SAI 失敗を見るときの順番">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-status-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代表的な SAI status code と一次切り分け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -21431,6 +21520,39 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        ログの場所まとめ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sairedisrec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sairedis.rec の使い方
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orchagent-event-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent の event loop が詰まったとき
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -21465,27 +21587,215 @@
 
 <h1 id="_1">運用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>機能章を読む上で必要な「SAI 失敗時の見方」「内部 dump の取り方」「health/system ready の解釈」をここに集める。機能固有の切り分け（BGP の neighbor down、ACL の install 失敗、L2 の port flap など）は各機能章の運用ページに任せ、ここは共通の観察ポイントを扱う。</p>
+<h2 id="db">DB 一覧（番号）<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
+<p>最初に頭に入れておくと迷わない。</p>
+<table>
+<thead>
+<tr>
+<th>n</th>
+<th>DB 名</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>APPL_DB</td>
+<td>orchagent への入力（fpmsyncd、teamsyncd、portsyncd、p4rt-app など）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>ASIC_DB</td>
+<td>orchagent → syncd / SAI への出力。<code>ASIC_STATE:*</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>COUNTERS_DB</td>
+<td>flex counter</td>
+</tr>
+<tr>
+<td>4</td>
+<td>CONFIG_DB</td>
+<td>ユーザ設定の真実</td>
+</tr>
+<tr>
+<td>6</td>
+<td>STATE_DB</td>
+<td>各 daemon の状態（PORT_TABLE、INTERFACE_TABLE 等）</td>
+</tr>
+<tr>
+<td>13</td>
+<td>ERROR_DB</td>
+<td>SAI 失敗の app 通知</td>
+</tr>
+<tr>
+<td>14</td>
+<td>APPL_STATE_DB</td>
+<td>APPL_DB に書いた結果（成功 / 失敗）</td>
+</tr>
+</tbody>
+</table>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ redis-cli -n 4 KEYS &quot;*&quot; | wc -l
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:*&quot; | head
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>admin@sonic:~$ redis-cli -n 6 KEYS &quot;PORT_TABLE|*&quot; | head
+</span></code></pre></div>
 <h2 id="sai">SAI 失敗を見るときの順番<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
 <ol>
-<li>syncd ログで <code>handleSai*Status</code> の失敗判定を確認する。fatal なら syncd は abort し、stack trace と dump が残る。</li>
-<li><code>ERROR_DB</code> に該当 object と SAI status code が出ているかを確認する。orchagent はここを購読して retry/再構成の判断材料にする。</li>
-<li>上位の APP（例: AclOrch、RouteOrch）でその object がどの CONFIG_DB エントリに対応するかを照合する。</li>
-<li>影響の出ている機能章の運用ページに戻り、機能固有の retry 規約や fallback 動作を確認する。</li>
+<li><strong>syncd ログ</strong> で <code>handleSai*Status</code> の失敗判定を確認する。fatal なら syncd は abort し、stack trace と dump が残る。</li>
+</ol>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ docker exec syncd supervisorctl tail syncd \
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  | grep -E &quot;SAI_STATUS|handleSai&quot;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>admin@sonic:~$ ls /var/log/syncd*.log
+</span></code></pre></div>
+<ol>
+<li><strong>ERROR_DB</strong> に該当 object と SAI status code が出ているかを確認する。orchagent はここを購読して retry / 再構成の判断材料にする。</li>
+</ol>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ redis-cli -n 13 KEYS &quot;ERROR_*&quot;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@sonic:~$ redis-cli -n 13 HGETALL &quot;ERROR_ROUTE_ENTRY|10.0.0.0/24&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>1) &quot;operation&quot;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>2) &quot;create&quot;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>3) &quot;rc&quot;
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>4) &quot;SAI_STATUS_TABLE_FULL&quot;
+</span></code></pre></div>
+<ol>
+<li><strong>上位 APP</strong> （例: AclOrch、RouteOrch）でその object がどの CONFIG_DB エントリに対応するかを照合する。<code>docker exec swss supervisorctl tail orchagent</code> で <code>&lt;Orch名&gt;</code> を grep。</li>
+<li><strong>影響の出ている機能章の運用ページ</strong> に戻り、機能固有の retry 規約や fallback 動作を確認する。</li>
 </ol>
 <p>設計の詳細は <a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a> と <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a> を読む。</p>
+<h3 id="sai-status-code">代表的な SAI status code と一次切り分け<a class="headerlink" href="#sai-status-code" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>status</th>
+<th>典型原因</th>
+<th>一次対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_STATUS_TABLE_FULL</code></td>
+<td>CRM 枯渇（route、ACL、neighbor 等）</td>
+<td><code>crm show resources</code> でテーブル特定、scale を下げる / threshold を設定</td>
+</tr>
+<tr>
+<td><code>SAI_STATUS_NOT_SUPPORTED</code></td>
+<td>ASIC が attribute / object を非対応</td>
+<td>platform 章 / SAI vendor 対応表を確認、機能無効化</td>
+</tr>
+<tr>
+<td><code>SAI_STATUS_INVALID_PARAMETER</code></td>
+<td>orchagent が誤った attribute を渡した可能性</td>
+<td>orchagent ログで attribute 名特定、PR / issue 起票</td>
+</tr>
+<tr>
+<td><code>SAI_STATUS_ITEM_ALREADY_EXISTS</code></td>
+<td>同じ key の重複 install</td>
+<td>warm boot 直後に多発するなら抑止、それ以外は orchagent の reconcile を疑う</td>
+</tr>
+<tr>
+<td><code>SAI_STATUS_OBJECT_IN_USE</code></td>
+<td>削除順序の誤り（依存先がまだ参照中）</td>
+<td>orchagent の destroy 順を確認、retry で消えるか観察</td>
+</tr>
+</tbody>
+</table>
 <h2 id="syncd-dump-sai">syncd dump と SAI 失敗時の自動採取<a class="headerlink" href="#syncd-dump-sai" title="Permanent link">&para;</a></h2>
 <p>SAI 失敗は単発の状態ではなく、その時点の ASIC_DB と SAI 内部状態をセットで保全したいことが多い。syncd には <code>syncd_dump.sh</code> と SAI 通知（<code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code>）を組み合わせ、失敗時に dump を自動採取する仕組みがある。crash を待たずに状態を残せるため、再現が困難な間欠失敗の原因切り分けに使える。</p>
+<p>手動採取の例:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ sudo docker exec syncd syncd_dump.sh
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$ ls /var/log/syncd/
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sairedis.rec.gz  asic_db.json  saidump.txt
+</span></code></pre></div>
 <p>採取の仕掛けと出力場所は <a href="../../../platform/dump-on-sai-failure/">SAI 失敗時の dump 取得</a> を読む。</p>
 <h2 id="dump-utility-db">dump utility による DB 横断調査<a class="headerlink" href="#dump-utility-db" title="Permanent link">&para;</a></h2>
 <p>機能の不具合切り分けでは、ある port や VRF に紐づく key が <code>CONFIG_DB</code>、<code>APPL_DB</code>、<code>STATE_DB</code>、<code>ASIC_DB</code> に同時に存在することを確認したい。dump utility は「モジュール（例: port、vrf）」を起点に複数 DB から関連 key を集約する CLI で、内部実装の経路を辿る作業を簡略化する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ sonic-db-dump -n CONFIG_DB -k &quot;PORT|Ethernet0&quot; -y
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>admin@sonic:~$ dump state port Ethernet0
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>admin@sonic:~$ dump state vlan Vlan1000
+</span></code></pre></div>
 <p>使い方と拡張規約は <a href="../../../internals/dump-utility-for-easy-debugging/">dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）</a> を読む。</p>
 <h2 id="debug-framework">debug framework<a class="headerlink" href="#debug-framework" title="Permanent link">&para;</a></h2>
 <p>各 daemon は debug 情報の dump 関数を Debug Framework に登録し、<code>show techsupport</code> や障害時の自動採取から一括で取得できるようにする。assert 拡張により、想定外状態を「ログだけ残して動作継続」か「停止」かを切り替えやすくする。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ sudo show techsupport --since &quot;1 hour ago&quot;
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$ ls /var/dump/
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic_dump_&lt;hostname&gt;_&lt;timestamp&gt;.tar.gz
+</span></code></pre></div>
+<p>techsupport を解凍すると、各 docker の <code>supervisor</code> ログ、redis 全 DB の snapshot、<code>syncd_dump.sh</code> の出力、syslog、journal、kernel dmesg がまとまっている。</p>
 <p>詳細は <a href="../../../architecture/debug-framework-in-sonic/">Debug Framework（コンポーネント dump 登録 / assert 拡張）</a> を読む。</p>
 <h2 id="health-check-system-ready">health-check と system ready<a class="headerlink" href="#health-check-system-ready" title="Permanent link">&para;</a></h2>
 <p><code>docker exec ... monit</code> ベースの単発 probe ではなく、container 内で複数の検査結果を 1 つの readiness に集約することで、k8s 上の SONiC で正確な readiness を得る。これは container 単位の運用観察。全体起動状態は別途 <code>system ready</code>（sysmonitor）が、per-app の closest UP status を event 集約して判定する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ show system-health summary
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>admin@sonic:~$ show system-health monitor-list
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>admin@sonic:~$ sudo systemctl status sonic.target
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>admin@sonic:~$ docker exec swss /usr/local/bin/container_checker
+</span></code></pre></div>
+<p><code>system not ready</code> で長時間止まる場合の入口:</p>
+<ul>
+<li>どの per-app が UP でないか: <code>show system-health detail</code> で UP していない service を特定。</li>
+<li>service の起動失敗: <code>journalctl -u &lt;svc&gt;.service</code>、<code>docker logs &lt;container&gt;</code>。</li>
+<li>monit が NG: <code>docker exec &lt;container&gt; monit summary</code>。</li>
+</ul>
 <p>詳細は <a href="../../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a> と <a href="../../../system/system-ready-hld/">System Ready（sysmonitor + per-app closest UP status の event 集約）</a> を読む。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">ログの場所まとめ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>ログ</th>
+<th>grep キーワード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent</td>
+<td><code>docker exec swss supervisorctl tail orchagent</code></td>
+<td><code>&lt;Orch名&gt;</code>、<code>SAI_STATUS</code>、<code>SWSS_RC_</code></td>
+</tr>
+<tr>
+<td>syncd</td>
+<td><code>docker exec syncd supervisorctl tail syncd</code></td>
+<td><code>handleSai</code>、<code>SAI_STATUS</code>、<code>SAI_OBJECT_TYPE_*</code></td>
+</tr>
+<tr>
+<td>sairedis 記録</td>
+<td><code>/var/log/syncd/sairedis.rec</code></td>
+<td>全 SAI op が trace される（再現に有用）</td>
+</tr>
+<tr>
+<td>sysmonitor</td>
+<td><code>/var/log/syslog</code></td>
+<td><code>sysmonitor</code>、<code>system_ready</code></td>
+</tr>
+<tr>
+<td>monit</td>
+<td><code>docker exec &lt;container&gt; monit summary</code></td>
+<td>NG service</td>
+</tr>
+<tr>
+<td>swss / sub-daemons</td>
+<td><code>docker exec swss supervisorctl tail &lt;daemon&gt;</code></td>
+<td><code>fpmsyncd</code>、<code>portsyncd</code>、<code>teamsyncd</code> 等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sairedisrec">sairedis.rec の使い方<a class="headerlink" href="#sairedisrec" title="Permanent link">&para;</a></h2>
+<p><code>/var/log/syncd/sairedis.rec</code> は syncd が SAI に投げた全 op を時系列で記録するファイルで、原因不明の SAI 失敗を再現するうえで最強の手掛かりになる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$ docker exec syncd ls -lh /var/log/syncd/sairedis.rec*
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$ docker exec syncd tail -50 /var/log/syncd/sairedis.rec
+</span></code></pre></div>
+<p>行頭の <code>c|</code>（create）、<code>s|</code>（set）、<code>r|</code>（remove）、<code>g|</code>（get response）、<code>n|</code>（notification）を読めば、orchagent から SAI への呼び出しと、SAI が返した OID / status が辿れる。<code>saidump</code> と組み合わせて、失敗直前のオブジェクト群を再構築する用途にも使える。</p>
+<h2 id="orchagent-event-loop">orchagent の event loop が詰まったとき<a class="headerlink" href="#orchagent-event-loop" title="Permanent link">&para;</a></h2>
+<p>オペレーション全般が遅い・反映されないときは、orchagent の event queue が詰まっているケースを疑う。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>admin@sonic:~$ docker exec swss top -bn1 -p $(pidof orchagent)
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>admin@sonic:~$ docker exec swss supervisorctl tail orchagent | grep -i &quot;queue&quot;
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>admin@sonic:~$ redis-cli -n 0 LLEN &quot;_*&quot;
+</span></code></pre></div>
+<ul>
+<li>CPU が貼り付いている: 設定流入が多すぎる、無限 retry に陥っている可能性。<code>ERROR_DB</code> を見る。</li>
+<li>queue 長が増えている: APPL_DB の subscribe を捌けていない。orchagent の単一スレッド設計上、SAI 呼び出しが遅いと全部詰まる。</li>
+</ul>
+<p>並列性の改善は orchagent 周辺の internals ドキュメント群を参照する。</p>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a></li>
 <li><a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a></li>
@@ -21494,6 +21804,8 @@
 <li><a href="../../../architecture/debug-framework-in-sonic/">Debug Framework（コンポーネント dump 登録 / assert 拡張）</a></li>
 <li><a href="../../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a></li>
 <li><a href="../../../system/system-ready-hld/">System Ready（sysmonitor + per-app closest UP status の event 集約）</a></li>
+<li><a href="../../19-build-packaging/">Build / Packaging 章</a>（FEATURE / hostcfgd との関係）</li>
+<li><a href="../../17-srv6-mpls/operations/">SRv6 / MPLS 章</a>（SAI 失敗の実例）</li>
 </ul>
 
 

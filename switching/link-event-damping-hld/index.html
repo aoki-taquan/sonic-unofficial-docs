@@ -9674,6 +9674,56 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -21463,6 +21513,56 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -21706,11 +21806,25 @@
 <p>swss 側は実装あり: <code>sonic-swss/orchagent/port/portschema.h</code> L101 で <code>PORT_DAMPING_ALGO = "link_event_damping_algorithm"</code>、<code>port.h</code> L288 / <code>portcnt.h</code> L251-282 / <code>portsorch.cpp</code> L3736 で <code>sai_redis_link_event_damping_algorithm_t</code> と AIED config 反映ロジックを確認、<code>tests/test_port.py</code> L437-482 でも <code>link_event_damping_algorithm = "aied" / "disabled"</code> の VS テストを確認。一方、<strong><code>sonic-utilities</code> 配下に <code>link_event_damping</code> をキーとする <code>config interface link_event_damping_algorithm</code> CLI のヒットが 0 件</strong>、<code>sonic-buildimage</code> 配下にも対応する CLI plugin が見当たらず、HLD で要件化された CLI は現行 master 未取り込みである（verified at: 2026-05-09）。設定経路は <code>CONFIG_DB.PORT|&lt;port&gt;</code> への直接書き込み、または上位のマネジメントフレームワーク（YANG/REST）経由が必要となる可能性が高い。</p>
 </div>
 <h2 id="_1">実装との乖離<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>2026-05-11 時点の現行 master を裏取り。</p>
+<h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>HLD 要件</strong>: <code>config interface link_event_damping_algorithm &lt;port&gt; &lt;aied|disabled&gt;</code> 系 CLI を sonic-utilities に追加。</li>
-<li><strong>現状</strong>: <code>sonic-utilities</code> / <code>sonic-buildimage</code> の grep で <code>link_event_damping</code> ヒット 0。SwSS 側の port 属性受理は実装済みだが、ユーザ向け CLI は未取り込み。</li>
-<li><strong>影響</strong>: HLD どおりに <code>config interface link_event_damping_algorithm ...</code> を打っても CLI が解決しない。CONFIG_DB を直接編集するか、別の管理フレームワークから設定する必要がある。</li>
+<li><strong>取り込み済み（SwSS）</strong>: <code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> L3736-L3760（<code>setPortLinkEventDampingAlgorithm</code> / <code>setPortLinkEventDampingAlgoAiedConfig</code>）、<code>orchagent/portsorch.cpp</code> L4939-L4941（差分検出）、<code>orchagent/port/porthlpr.cpp</code> L24, L133, L899-L900, L1345-L1373（<code>PortConfig</code> への 6 フィールドのパース）。</li>
+<li><strong>取り込み済み（YANG）</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang</code> に <code>link_event_damping_algorithm</code> 系 leaf あり。</li>
+<li><strong>未取り込み</strong>: <code>sonic-utilities/config/main.py</code> および周辺に <code>link_event_damping_algorithm</code> の CLI ハンドラは無し（grep で <code>link_event_damping</code> のヒットは <code>sonic-swss</code> 配下のみ）。</li>
 </ul>
+<h3 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<p>HLD は <code>config interface link_event_damping_algorithm &lt;if&gt; aied &lt;max_suppress&gt; &lt;decay_half&gt; &lt;suppress_thr&gt; &lt;reuse_thr&gt; &lt;flap_penalty&gt;</code> の click サブコマンド追加と、<code>config interface link_event_damping_algorithm &lt;if&gt; disabled</code> を要求している。<code>sonic-utilities</code> 側の取り込みが無いため、ユーザ経路は <strong>CONFIG_DB の直接編集（<code>sonic-db-cli</code> / <code>redis-cli</code>）</strong> または <code>config_db.json</code> への記述のみ。一方 SwSS 側は <code>PORT</code> テーブルからフィールドを読み取り、SAI redis 属性 <code>SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM</code> と <code>SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG</code> に変換するパスは完成している。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<p>HLD どおりに <code>sudo config interface link_event_damping_algorithm Ethernet0 aied 40 30 1500 1300 1000</code> を打つと <code>Error: No such command "link_event_damping_algorithm".</code> で失敗する。ドキュメント主導で運用する読者が CLI 経由で機能を有効化できず、SAI 属性まで届かない。</p>
+<h3 id="4">4. 回避策<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<p><code>sonic-db-cli</code> で <code>PORT</code> テーブルを直接 update する（CLI 不要・即時反映）:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hmset<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>link_event_damping_algorithm<span class="w"> </span>aied<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>max_suppress_time<span class="w"> </span><span class="m">40</span><span class="w"> </span>decay_half_life<span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>suppress_threshold<span class="w"> </span><span class="m">1500</span><span class="w"> </span>reuse_threshold<span class="w"> </span><span class="m">1300</span><span class="w"> </span>flap_penalty<span class="w"> </span><span class="m">1000</span>
+</span></code></pre></div>
+<p><code>config_db.json</code> で永続化する場合は <code>PORT</code> セクションに 6 フィールドを記述。SwSS は 6 フィールドを <strong>組として</strong> 受けるので、欠落させると damping が disable になる点に注意（<code>porthlpr.cpp</code> L1345-L1373）。</p>
 <h1 id="aied-syncd-intercept">リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）<a class="headerlink" href="#aied-syncd-intercept" title="Permanent link">&para;</a></h1>
 <h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → ASIC_DB → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの <strong>下流負荷</strong> を引き起こす<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -21825,30 +21939,30 @@
 <p>更新は <strong>イベントごとではなく定期更新</strong>（負荷を抑える）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="sai-sairedis">SAI / SAIREDIS 拡張<a class="headerlink" href="#sai-sairedis" title="Permanent link">&para;</a></h3>
 <p><code>saiswitch.h</code><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">_sai_switch_hostif_oper_status_update_mode_t</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_APPLICATION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_SAI_ADAPTER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span><span class="w"> </span><span class="n">sai_switch_hostif_oper_status_update_mode_t</span><span class="p">;</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">SAI_SWITCH_ATTR_HOSTIF_OPER_STATUS_UPDATE_MODE</span><span class="w">  </span><span class="c1">// 新規 switch 属性</span>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">_sai_switch_hostif_oper_status_update_mode_t</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_APPLICATION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">SAI_SWITCH_HOSTIF_OPER_STATUS_UPDATE_MODE_SAI_ADAPTER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span><span class="w"> </span><span class="n">sai_switch_hostif_oper_status_update_mode_t</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">SAI_SWITCH_ATTR_HOSTIF_OPER_STATUS_UPDATE_MODE</span><span class="w">  </span><span class="c1">// 新規 switch 属性</span>
 </span></code></pre></div>
 <p><code>sairedis.h</code><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">_sai_link_event_damping_algorithm_t</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">SAI_LINK_EVENT_DAMPING_ALGORITHM_DISABLED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">SAI_LINK_EVENT_DAMPING_ALGORITHM_AIED</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span><span class="w"> </span><span class="n">sai_link_event_damping_algorithm_t</span><span class="p">;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_sai_redis_link_event_damping_algo_aied_config_t</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">max_suppress_time</span><span class="p">;</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">suppress_threshold</span><span class="p">;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">reuse_threshold</span><span class="p">;</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">decay_half_life</span><span class="p">;</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">flap_penalty</span><span class="p">;</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">}</span><span class="w"> </span><span class="n">sai_redis_link_event_damping_algo_aied_config_t</span><span class="p">;</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1">// sai_redis_port_attr_t に 2 属性追加</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="n">SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG</span><span class="w">  </span><span class="c1">// valid-only AIED</span>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">_sai_link_event_damping_algorithm_t</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">SAI_LINK_EVENT_DAMPING_ALGORITHM_DISABLED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">SAI_LINK_EVENT_DAMPING_ALGORITHM_AIED</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span><span class="w"> </span><span class="n">sai_link_event_damping_algorithm_t</span><span class="p">;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_sai_redis_link_event_damping_algo_aied_config_t</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">max_suppress_time</span><span class="p">;</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">suppress_threshold</span><span class="p">;</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">reuse_threshold</span><span class="p">;</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">decay_half_life</span><span class="p">;</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="n">sai_uint32_t</span><span class="w"> </span><span class="n">flap_penalty</span><span class="p">;</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">}</span><span class="w"> </span><span class="n">sai_redis_link_event_damping_algo_aied_config_t</span><span class="p">;</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1">// sai_redis_port_attr_t に 2 属性追加</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="n">SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG</span><span class="w">  </span><span class="c1">// valid-only AIED</span>
 </span></code></pre></div>
 <!-- evidence:
 source: sonic-net/SONiC/doc/link_event_damping/Link-event-damping-HLD.md#L294-L356 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -21867,34 +21981,34 @@ reasoning: SAIREDIS で port 単位の damping 設定を伝搬する API の根�
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p><code>PORT</code> テーブルに 6 フィールド追加<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>PORT|&lt;port&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  link_event_damping_algorithm = &quot;disabled&quot; | &quot;aied&quot;
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  max_suppress_time            = uint32 (sec)
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  decay_half_life              = uint32 (sec)
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  suppress_threshold           = uint32
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  reuse_threshold              = uint32
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  flap_penalty                 = uint32
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>PORT|&lt;port&gt;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  link_event_damping_algorithm = &quot;disabled&quot; | &quot;aied&quot;
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  max_suppress_time            = uint32 (sec)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  decay_half_life              = uint32 (sec)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  suppress_threshold           = uint32
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  reuse_threshold              = uint32
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  flap_penalty                 = uint32
 </span></code></pre></div>
 <p>例:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;link_event_damping_algorithm&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aied&quot;</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">&quot;max_suppress_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;40&quot;</span><span class="p">,</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">&quot;decay_half_life&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;30&quot;</span><span class="p">,</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nt">&quot;suppress_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1500&quot;</span><span class="p">,</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nt">&quot;reuse_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1300&quot;</span><span class="p">,</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">&quot;flap_penalty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;link_event_damping_algorithm&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aied&quot;</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&quot;max_suppress_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;40&quot;</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="nt">&quot;decay_half_life&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;30&quot;</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="nt">&quot;suppress_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1500&quot;</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="nt">&quot;reuse_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1300&quot;</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="nt">&quot;flap_penalty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p><code>sonic-port</code> YANG にも leaf を追加（既定値 0 / <code>"disabled"</code>）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config interface link_event_damping_algorithm &lt;if&gt; aied &lt;max_suppress&gt; &lt;decay_half&gt; &lt;suppress_thr&gt; &lt;reuse_thr&gt; &lt;flap_penalty&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>config interface link_event_damping_algorithm &lt;if&gt; disabled
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config interface link_event_damping_algorithm &lt;if&gt; aied &lt;max_suppress&gt; &lt;decay_half&gt; &lt;suppress_thr&gt; &lt;reuse_thr&gt; &lt;flap_penalty&gt;
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config interface link_event_damping_algorithm &lt;if&gt; disabled
 </span></code></pre></div>
 <p>例<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>link_event_damping_algorithm<span class="w"> </span>Ethernet0<span class="w"> </span>aied<span class="w"> </span><span class="m">40</span><span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="m">1500</span><span class="w"> </span><span class="m">1300</span><span class="w"> </span><span class="m">1000</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>link_event_damping_algorithm<span class="w"> </span>Ethernet0<span class="w"> </span>disabled
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>link_event_damping_algorithm<span class="w"> </span>Ethernet0<span class="w"> </span>aied<span class="w"> </span><span class="m">40</span><span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="m">1500</span><span class="w"> </span><span class="m">1300</span><span class="w"> </span><span class="m">1000</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>link_event_damping_algorithm<span class="w"> </span>Ethernet0<span class="w"> </span>disabled
 </span></code></pre></div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>

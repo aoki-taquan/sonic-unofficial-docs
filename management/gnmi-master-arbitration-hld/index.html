@@ -21824,6 +21824,17 @@ reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 
 <li><strong>CONFIG_DB スキーマ</strong>: HLD は <code>TELEMETRY|gnmi:master_arbitration_enabled</code> を提案しているが、現行 master の <code>sonic-gnmi</code> には対応する CONFIG_DB 駆動の有効化パスは存在せず、<code>sonic-buildimage</code> 側にも <code>master_arbitration_enabled</code> 名のスキーマは見当たらない。実際の有効化はもっぱら <code>--with-master-arbitration</code> 起動フラグ (<code>sonic-gnmi/telemetry/telemetry.go:188,587-588</code>) であり、CONFIG_DB 経由の動的 ON/OFF はサポートされていない。</li>
 </ul>
 <p>主要な合致点として、<code>sonic-gnmi/gnmi_server/server.go:1310-1351</code> の <code>ReqFromMasterEnabledMA</code>（extension 走査・末尾 MA 採用・128-bit EID 比較・揮発の <code>masterEID</code>・<code>PermissionDenied</code> 返却）、<code>server.go:1070</code> の <code>Set</code> 内での認証前 <code>ReqFromMaster</code> 呼び出し、<code>telemetry/telemetry.go:62,188</code> の <code>--with-master-arbitration</code> フラグは HLD どおり実装されていることを確認した。</p>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li>HLD どおり「Role を無視して default として扱う」と思ってクライアントを実装すると、Role を載せた瞬間 <code>Unimplemented</code> で <code>Set</code> が落ちる。<strong>現行実装では Role 拡張は付けてはいけない</strong>。</li>
+<li>CONFIG_DB から <code>TELEMETRY|gnmi:master_arbitration_enabled</code> を書いて runtime で ON/OFF する経路は未実装。<strong>機能を有効にするには telemetry の起動オプションを書き換えてプロセス再起動が必要</strong>で、サービス無停止の有効化はできない。</li>
+</ul>
+<p><strong>回避策 / 対応方法</strong>:</p>
+<ul>
+<li>クライアント側は <code>MasterArbitration</code> 拡張に Role フィールドを付けず、<code>ElectionId</code> のみで送る実装にする。</li>
+<li>機能を有効化したい場合は <code>/etc/sonic/telemetry/</code> 系の設定または systemd unit を変更し、<code>--with-master-arbitration</code> を付与した状態で telemetry を再起動する。動的切替が必要な場合は上流に CONFIG_DB 駆動の有効化パスを PR する必要がある。</li>
+<li>マルチ ASIC 構成では <code>masterEID</code> がプロセスごとに揮発するため、ASIC ごとに別 telemetry が立つ場合はコントローラ側で各 ASIC への <code>Set</code> ごとに EID を主張し直す。</li>
+</ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-gnmi の telemetry サーバに ReqFromMasterEnabledMA が実装されているか

@@ -7890,6 +7890,67 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-bfdsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. bfdsyncd プロセスは未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-featurebgpbfd_hw_offload-supervisord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. FEATURE.bgp.bfd_hw_offload フラグも supervisord テンプレートに未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-bfd-remote-get-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SAI BFD remote 系属性の get → STATE_DB 反映ロジック未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21607,6 +21668,67 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-bfdsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. bfdsyncd プロセスは未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-featurebgpbfd_hw_offload-supervisord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. FEATURE.bgp.bfd_hw_offload フラグも supervisord テンプレートに未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-bfd-remote-get-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SAI BFD remote 系属性の get → STATE_DB 反映ロジック未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21776,7 +21898,45 @@ reasoning: link-local シナリオでの inject-down モード要件と、MAC �
 <li>セッションは UP だが <code>show bfd peer</code> の remote 値がすべて 0 → SDK が remote 系 SAI 属性を未対応の可能性。BfdOrch のログに get_attribute エラーが出ていないか確認。</li>
 <li>IPv6 link-local 経由で BGP/BFD が上がらない → 実装が neighbor table から宛先 MAC を取れているかを <code>ip -6 neigh</code> で確認する。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
+<h3 id="1-bfdsyncd">1. <code>bfdsyncd</code> プロセスは未取り込み<a class="headerlink" href="#1-bfdsyncd" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: BGP docker に <code>bfdsyncd</code> を新規追加し、bfdd の DP socket と APPL_DB <code>BFD_SESSION_TABLE</code> の翻訳役を担う。</li>
+<li><strong>実装位置</strong>: <code>sonic-buildimage/dockers/docker-fpm-frr/</code> 配下に <code>bfdsyncd</code> 関連ファイル無し（grep ヒット 0）。<code>sonic-frr</code> にも <code>bfdsyncd</code> バイナリ／パッチは未取り込み。</li>
+<li><strong>差分の中身</strong>: BGP container の supervisord 設定にも <code>bfdsyncd</code> プログラムエントリは存在しない。HLD の図 (FRR-bfdd → bfdsyncd → APPL_DB) における中間プロセスがそもそも起動しない。</li>
+<li><strong>読者への影響</strong>: 現行 master では bfdd の BFD dataplane interface 経路は SW BFD としてのみ動作する。FRR からの <code>neighbor X bfd</code> 指定はあくまで FRR の SW BFD として動き、SAI HW BFD には自動連携しない。HW BFD を使うには CLI / staticroute 経由で直接 <code>BFD_SESSION_TABLE</code> を書く外部ツールが必要。</li>
+<li><strong>回避策</strong>:</li>
+<li>BGP セッションの HW BFD 化は現状自動化されていないため、staticroute 用の HW BFD（<a href="../">BFD HW Offload HLD ベース</a> を参照）の経路を流用するか、外部スクリプトで bfdd の出力をパースして APPL_DB に書く。</li>
+<li>SW BFD で要件を満たせるなら FRR bfdd のみで運用（HW BFD と性能は劣るが機能としては動く）。</li>
+</ul>
+<h3 id="2-featurebgpbfd_hw_offload-supervisord">2. <code>FEATURE.bgp.bfd_hw_offload</code> フラグも supervisord テンプレートに未取り込み<a class="headerlink" href="#2-featurebgpbfd_hw_offload-supervisord" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: <code>FEATURE|bgp</code> の <code>bfd_hw_offload</code> フラグで bfdsyncd / <code>bfdd --dplaneaddr</code> を起動する supervisord テンプレートを差し替える。</li>
+<li><strong>実装位置</strong>: BGP docker の <code>supervisord.conf.j2</code> / <code>bgpcfgd</code> / <code>sonic-buildimage/dockers/docker-fpm-frr/</code> に <code>bfd_hw_offload</code> の参照無し。</li>
+<li><strong>差分の中身</strong>: 条件分岐そのものが存在しない。フィーチャフラグを立てても起動内容は変わらない。</li>
+<li><strong>読者への影響</strong>: <code>sonic-db-cli CONFIG_DB HSET 'FEATURE|bgp' bfd_hw_offload true</code> を実行しても何も起こらない（フラグは読まれない）。</li>
+<li><strong>回避策</strong>: 本機能は実装されていないため、本 CLI/設定は <strong>設定しない</strong>。誤って設定しても害は無いが、効果も無い。</li>
+</ul>
+<h3 id="3-sai-bfd-remote-get-state_db">3. SAI BFD remote 系属性の get → STATE_DB 反映ロジック未取り込み<a class="headerlink" href="#3-sai-bfd-remote-get-state_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: ASIC 側で得た remote (peer の) <code>MIN_TX</code> / <code>MIN_RX</code> / <code>MULTIPLIER</code> / <code>LOCAL_DIAG</code> を BfdOrch が読み取り STATE_DB に反映する。</li>
+<li><strong>実装位置</strong>: <code>sonic-swss/orchagent/bfdorch.cpp</code>
+  <div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// L421 set 系のみ実装済み</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_BFD_SESSION_ATTR_LOCAL_DISCRIMINATOR</span><span class="p">;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">// L451-456 set のみ</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_BFD_SESSION_ATTR_MIN_TX</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_BFD_SESSION_ATTR_MIN_RX</span><span class="p">;</span>
+</span></code></pre></div></li>
+<li><strong>差分の中身</strong>: <code>SAI_BFD_SESSION_ATTR_REMOTE_MIN_TX</code> / <code>REMOTE_MIN_RX</code> / <code>REMOTE_MULTIPLIER</code> / <code>REMOTE_DIAG</code> の <strong>get</strong> 呼び出しは grep ヒット 0。HLD で「STATE_DB に remote 系属性を反映」と書かれた経路は実装されていない。</li>
+<li><strong>読者への影響</strong>: <code>STATE_DB.BFD_SESSION_TABLE</code> の remote 系フィールド（HLD で謳う <code>remote_min_tx</code> 等）は埋まらない（または 0 のまま）。peer 視点のセッション情報は SONiC 側からは見えず、FRR <code>vtysh -c 'show bfd peer'</code> で確認するしかない。</li>
+<li><strong>回避策</strong>:</li>
+<li>peer 側のネゴ結果が必要なら <code>vtysh -c "show bfd peer"</code> を使う（SW BFD の値で代用）。</li>
+<li>監視ツールは STATE_DB の <code>BFD_SESSION_TABLE</code> の <code>local_*</code> フィールドと <code>state</code>（UP/DOWN）のみを利用する想定で書く。</li>
+</ul>
+<h3 id="_10">結論<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>本ページの記述は <strong>HLD の Proposal 仕様</strong> であり、現行 master では <code>bfdsyncd</code> / <code>bfd_hw_offload</code> / remote 系 SAI get 経路のいずれも実装されていない。SAI 側に HW BFD 機能はあるため、static route 用 HW BFD HLD の経路を経由してマニュアルにセッションを張ることは可能。</p>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

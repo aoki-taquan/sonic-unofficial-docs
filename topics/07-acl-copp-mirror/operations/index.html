@@ -2631,7 +2631,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#copp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CoPP の確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21428,7 +21450,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#copp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CoPP の確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21467,10 +21511,102 @@
 <p>ACL / CoPP / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。CONFIG_DB に見えていることと、実際に hardware に作られていることは同じではありません。</p>
 <h2 id="acl">ACL の状態確認<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h2>
 <p>最初に <code>show acl table</code> と <code>show acl rule</code> で table / rule の存在と status を見ます。show ACL 強化により、<code>AclOrch</code> が STATE_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> に Active / Inactive を出すため、リソース不足や SAI 失敗で作成できなかった場合を CLI 側から判別できます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ show acl table
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Name          Type      Binding         Description    Stage    Status
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>------------  --------  --------------  -------------  -------  --------
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>DATAACL       L3        Ethernet0       data plane     ingress  Active
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>EVERFLOW      MIRROR    PortChannel0    mirror traffic ingress  Active
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>EVERFLOWV6    MIRRORV6  PortChannel0    mirror v6      ingress  Inactive
+</span></code></pre></div>
+<p><code>Inactive</code> が出ているとき、原因はおおむね以下のいずれかです。</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>典型原因</th>
+<th>確認場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Inactive</code> (作成直後)</td>
+<td>SAI table create が失敗、TCAM スロット不足</td>
+<td><code>/var/log/syslog</code> の <code>orchagent</code> SAI_STATUS</td>
+</tr>
+<tr>
+<td><code>Inactive</code> (port バインド)</td>
+<td>対象 port が削除済み / admin down 直後</td>
+<td><code>show interfaces status</code></td>
+</tr>
+<tr>
+<td><code>Active</code> だが hit しない</td>
+<td>match field が ASIC で未サポート</td>
+<td><code>swssloglevel -l INFO -c orchagent</code> で再現確認</td>
+</tr>
+</tbody>
+</table>
 <p>次に <code>aclshow</code> で rule counter を見ます。counter が期待通り増えない場合は、traffic が match していない、priority で別 rule に先に当たっている、counter polling が止まっている、ASIC に rule が入っていない、の順に切り分けます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ aclshow -a
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>RULE NAME      TABLE NAME      PRIO    PACKETS COUNT    BYTES COUNT
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>-------------  --------------  ------  ---------------  -----------
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>DENY_RULE_1    DATAACL         9999    12345            1518000
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>PERMIT_ANY     DATAACL         1       0                0
+</span></code></pre></div>
+<p>counter polling が止まっているかは <code>counterpoll show</code> で <code>ACL_STAT</code> group の状態を確認します。<code>disable</code> なら <code>counterpoll acl enable</code> で復活させます。STATE_DB / COUNTERS_DB の対応は以下のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>Key 例</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONFIG_DB</code></td>
+<td><code>ACL_TABLE\|DATAACL</code>, <code>ACL_RULE\|DATAACL\|RULE_1</code></td>
+<td>設定</td>
+</tr>
+<tr>
+<td><code>STATE_DB</code></td>
+<td><code>ACL_TABLE_TABLE\|DATAACL</code></td>
+<td>作成結果 (status)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>COUNTERS:oid:0x...</code> / <code>ACL_COUNTER_RULE_MAP</code></td>
+<td>rule 単位 counter</td>
+</tr>
+<tr>
+<td><code>ASIC_DB</code></td>
+<td><code>ASIC_STATE:SAI_OBJECT_TYPE_ACL_TABLE:oid:...</code></td>
+<td>SAI 反映</td>
+</tr>
+</tbody>
+</table>
+<p>設定が CONFIG_DB に入っているのに ASIC_DB に出ていない場合は orchagent が握っているので syslog を見ます。</p>
 <h2 id="mirror">Mirror の確認<a class="headerlink" href="#mirror" title="Permanent link">&para;</a></h2>
 <p>Mirror は session と ACL action の 2 段で確認します。<code>MIRROR_SESSION</code> が有効になっているか、collector への経路があるか、SPAN の <code>dst_port</code> が正しいかを先に見ます。その後、mirror 用 ACL table / rule が Active で、該当 rule counter が増えるかを見ます。</p>
-<p>Everflow では LAG、ECMP、neighbor MAC 変更、IPv6、egress ACL などが絡みます。mirror packet が出ない場合、ACL の match 失敗だけでなく、collector 経路や egress mirror capability も疑います。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ show mirror_session
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ERSPAN Sessions
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Name      Status  SRC IP       DST IP       GRE  DSCP  TTL  Queue  Policer  Monitor Port  SRC Port  Direction
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>--------  ------  -----------  -----------  ---  ----  ---  -----  -------  ------------  --------  ---------
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>everflow0 active  10.1.0.32    2.2.2.2      0x88be  8   255   0      -        Ethernet8     Ethernet0 rx
+</span></code></pre></div>
+<p><code>Status: inactive</code> のときは、collector への route が無い、neighbor MAC が解けていない、policer が無効、のいずれかが多いです。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ redis-cli -n 6 hgetall &quot;MIRROR_SESSION_TABLE|everflow0&quot;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>1) &quot;status&quot;
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>2) &quot;active&quot;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>3) &quot;monitor_port&quot;
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>4) &quot;Ethernet8&quot;
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>5) &quot;dst_mac&quot;
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>6) &quot;ec:0d:9a:xx:xx:xx&quot;
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>7) &quot;route_prefix&quot;
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>8) &quot;2.2.2.2/32&quot;
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>9) &quot;next_hop_ip&quot;
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>10) &quot;10.0.0.1@PortChannel0&quot;
+</span></code></pre></div>
+<p>Everflow では LAG、ECMP、neighbor MAC 変更、IPv6、egress ACL などが絡みます。mirror packet が出ない場合、ACL の match 失敗だけでなく、collector 経路や egress mirror capability も疑います。Everflow テストプランの観点に従い、collector route が ECMP の場合は member すべての MAC が STATE_DB に解決されているかを <code>show ip route</code> と <code>show arp</code> で揃えます。</p>
 <h2 id="drop">Drop 調査の入口<a class="headerlink" href="#drop" title="Permanent link">&para;</a></h2>
 <p>drop 調査では、何を落としているかで見る counter が変わります。</p>
 <table>
@@ -21512,10 +21648,124 @@
 <p>不正パケットの ingress discard テストでは Ethernet 層、IP 層、ACL 層で期待 counter が異なります。<code>SMAC=DMAC</code> のような L2 drop と、TTL 0 や壊れた IP header のような L3 error と、ACL <code>DROP</code> は同じ場所に出ません。</p>
 <h2 id="debug-counter">Debug Counter<a class="headerlink" href="#debug-counter" title="Permanent link">&para;</a></h2>
 <p>設定可能な drop counter は SAI debug counter を使い、drop reason の組み合わせをユーザが定義します。<code>show dropcounters capabilities</code> で type ごとの残スロットとサポート理由を確認し、<code>config dropcounters install</code> で必要な counter を作ります。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ show dropcounters capabilities
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Counter Type             Total
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>PORT_INGRESS_DROPS       3
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>SWITCH_INGRESS_DROPS     2
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Reasons supported per counter type:
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>PORT_INGRESS_DROPS:
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  SMAC_EQUALS_DMAC
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  SMAC_MULTICAST
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>  TTL
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>  L3_ANY
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>  ACL_ANY
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>  ...
+</span></code></pre></div>
+<p>設定〜観測の典型フロー:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 残スロットを確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>capabilities
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># SMAC=DMAC を独立 counter で計測する</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>config<span class="w"> </span>dropcounters<span class="w"> </span>install<span class="w"> </span>BAD_SMAC<span class="w"> </span>PORT_INGRESS_DROPS<span class="w"> </span><span class="s1">&#39;[SMAC_EQUALS_DMAC,SMAC_MULTICAST]&#39;</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;L2 sanity drops&quot;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># 確認</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>configuration
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>counts
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1"># 不要になったら削除</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>config<span class="w"> </span>dropcounters<span class="w"> </span>delete<span class="w"> </span>BAD_SMAC
+</span></code></pre></div>
 <p>drop counter は「なぜ落ちたか」を見る道具です。ACL counter は「どの rule に hit したか」を見る道具です。両方を同時に使うと、ACL で期待通り drop しているのか、別の ASIC reason で落ちているのかを分けられます。</p>
 <h2 id="snmp-mib">SNMP / MIB から見る場合<a class="headerlink" href="#snmp-mib" title="Permanent link">&para;</a></h2>
 <p>port illegal packets drop design は、RIF / VLAN など L3 側の SAI counter を Interface MIB へどう集約するかを扱います。SNMP で <code>ifInErrors</code> や <code>ifOutErrors</code> を監視している環境では、L2 port counter と RIF counter の集約方針がトラブルシュート結果に影響します。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>snmpwalk で <code>IF-MIB::ifInErrors</code> が振り切れているのに <code>portstat</code> の RX_ERR が静かな場合、RIF 側の counter が SNMP 集約されている可能性があります。逆もまた然りで、SNMP モニタと CLI counter の数字が違っても整合は取れているケースが多いです。</p>
+<h2 id="copp">CoPP の確認<a class="headerlink" href="#copp" title="Permanent link">&para;</a></h2>
+<p>CoPP (Control Plane Policer) は CPU 向け punt traffic を trap group ごとに policing します。<code>show copp</code> 系のコマンドは限定的なので、CONFIG_DB と <code>show flowcnt trap</code> を併用します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ show flowcnt trap stats
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    Trap Name         Packets    Bytes    PPS    Trap Group
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>-----------------  ---------    -----    -----    ----------
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>arp_req               1234       98720    12       arp
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>arp_resp              2345      187600    23       arp
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>bgp                     10        1000     0       bgp_lacp
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>lacp                   100       12000     1       bgp_lacp
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>ip2me                   50        4000     0       default
+</span></code></pre></div>
+<p>該当 trap が想定 PPS を超えると policer で drop され、対応プロトコル (BGP / LACP / ARP) が落ち始めます。<code>COPP_TABLE</code> の <code>cir</code> / <code>cbs</code> と <code>red_action: drop</code> を確認し、必要なら trap group ごとに緩めます。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>入口</th>
+<th>DB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>trap group 設定</td>
+<td><code>redis-cli -n 4 keys "COPP_*"</code></td>
+<td>CONFIG_DB <code>COPP_TRAP</code> / <code>COPP_GROUP</code></td>
+</tr>
+<tr>
+<td>trap PPS</td>
+<td><code>show flowcnt trap stats</code></td>
+<td>COUNTERS_DB <code>COUNTERS_TRAP_NAME_MAP</code></td>
+</tr>
+<tr>
+<td>police 結果</td>
+<td>hostif policer drop</td>
+<td>ASIC_DB <code>SAI_OBJECT_TYPE_POLICER</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">対応コマンド早見表<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>最初に叩くコマンド</th>
+<th>次に見る場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACL を作ったのに効かない</td>
+<td><code>show acl table</code> / <code>show acl rule</code> で Status</td>
+<td>STATE_DB <code>ACL_TABLE_TABLE</code>、syslog <code>orchagent</code></td>
+</tr>
+<tr>
+<td>ACL counter が増えない</td>
+<td><code>aclshow -a</code> + <code>counterpoll show</code></td>
+<td>COUNTERS_DB、priority 衝突</td>
+</tr>
+<tr>
+<td>mirror が collector に着かない</td>
+<td><code>show mirror_session</code></td>
+<td>route / arp / <code>MIRROR_SESSION_TABLE</code></td>
+</tr>
+<tr>
+<td>突然 BGP が落ちた</td>
+<td><code>show flowcnt trap stats</code></td>
+<td><code>COPP_TRAP</code> の cir/cbs</td>
+</tr>
+<tr>
+<td>port が drop している</td>
+<td><code>portstat</code> → <code>show dropcounters counts</code></td>
+<td>debug counter で reason 切り分け</td>
+</tr>
+<tr>
+<td>L3 で drop している</td>
+<td><code>intfstat</code></td>
+<td>RIF counter / TTL / IP header</td>
+</tr>
+<tr>
+<td>CPU が忙しい</td>
+<td><code>top</code> + <code>show flowcnt trap</code></td>
+<td>trap PPS 上位、CoPP</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../acl-qos/enhancements-on-show-acl-commands/">show acl 強化</a></li>
 <li><a href="../../../acl-qos/sonic-port-mirroring-hld/">SONiC Port Mirroring</a></li>
@@ -21523,6 +21773,11 @@
 <li><a href="../../../acl-qos/configurable-drop-counters-in-sonic/">設定可能な Drop Counter</a></li>
 <li><a href="../../../acl-qos/sonic-test-ingress-discards-hld/">ingress discards テスト計画</a></li>
 <li><a href="../../../architecture/port-illegal-packets-drop-design/">ポート不正パケットドロップ設計</a></li>
+<li>章 <a href="../../08-qos-buffer/operations/">08 QoS / Buffer</a> — queue / PG drop と PFC</li>
+<li>章 <a href="../../09-telemetry-snmp/operations/">09 telemetry / SNMP / observability</a> — techsupport と system health</li>
+<li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — ACL / mirror を gNMI で設定する場合</li>
+<li><a href="../../../acl-qos/copp-neighbor-miss-trap-and-enhancements/">CoPP neighbor-miss trap と強化</a> — CoPP の trap group 設計</li>
+<li><a href="../../../acl-qos/copp-manager-redesign-test-plan/">CoPP manager リデザイン テストプラン</a> — trap 別の挙動確認の観点</li>
 </ul>
 
 

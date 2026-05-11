@@ -7697,6 +7697,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21741,6 +21752,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21992,7 +22014,63 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 <li><code>Temperature: 0</code> と <code>N/A</code> の区別: API の戻り値仕様上、温度の取得不可は <code>0</code> となる。<code>0℃</code> と取得不可が見分けにくい点は HLD の制約<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>show platform ssdhealth</code> が <code>command not found</code>: <code>show/main.py</code> の <code>platform</code> メニューに項目が登録されているか、<code>ssdhealth</code> スクリプトが PATH にあるかを確認。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（<code>SsdBase</code> / <code>SsdUtil</code>）と CLI（<code>show platform ssdhealth</code>）は概ね素直に取り込まれているが、HLD で Open Question として残されていた <strong>常時監視デーモン <code>ssdmond</code> は現状実装が見当たらない</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD</th>
+<th>現行 master</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SsdBase</code> 基底クラス</td>
+<td>必須</td>
+<td><code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code> に基底定義</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>SsdUtil</code> ベンダー派生</td>
+<td>必須</td>
+<td><code>device/{vendor}/platform/plugins/ssdutil.py</code> の plugin 取り込み</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>show platform ssdhealth [verbose\|vendor]</code></td>
+<td>必須</td>
+<td><code>sonic-utilities/show/platform.py</code> のサブコマンドに該当</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><code>ssdmond</code> 常時監視デーモン</td>
+<td>Open Question</td>
+<td>現行 <code>sonic-platform-daemons/</code> 配下に <code>ssdmond</code> 名のデーモン無し</td>
+<td>⚠️ 未取り込み</td>
+</tr>
+<tr>
+<td>SNMP MIB への露出</td>
+<td>Open Question</td>
+<td>未取り込み（HLD 上もスコープ外と明記）</td>
+<td>⚠️ スコープ外</td>
+</tr>
+</tbody>
+</table>
+<p><strong>差分の中身</strong>: 常時バックグラウンドで SSD 健全性を polling し、閾値割れ時に syslog / SNMP trap を発火する <code>ssdmond</code> は HLD で「optional」扱いのまま、コミュニティ master には取り込まれていない。健全性確認は <strong>on-demand な <code>show platform ssdhealth</code> 実行</strong> に依存する。</p>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li>SSD 寿命警告を「壊れた後に techsupport で気づく」運用になるリスク。連続監視には外部ツール（cron 化、telemetry、Prometheus exporter 等）が必要。</li>
+<li><code>Temperature: 0 ℃</code> を見たときに「冷えている」のか「取得不可」なのか API 戻り値だけでは判別できない。</li>
+</ul>
+<p><strong>回避策 / 対応方法</strong>:</p>
+<ul>
+<li>常時監視が必要なら、<code>show platform ssdhealth</code> を cron + syslog で wrap するか、<code>smartctl</code> を直接 polling する独自 exporter を用意する。</li>
+<li>温度 <code>0</code> を観測したら、必ず <code>smartctl -A /dev/sdX | grep -i temperature</code> で raw 値を併読する運用にする。</li>
+<li>ベンダープラグインが無い platform で <code>vendor</code> モードが空になる場合は、<code>device/&lt;vendor&gt;/platform/plugins/ssdutil.py</code> の存在を <code>dpkg -L sonic-platform-&lt;vendor&gt;</code> 等で確認。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

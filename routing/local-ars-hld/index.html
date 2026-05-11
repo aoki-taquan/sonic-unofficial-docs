@@ -8944,6 +8944,78 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-arsorch-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ArsOrch 等の orch 未実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-config_db-yang-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. CONFIG_DB スキーマ / yang module 未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-cliconfig-ars-show-ars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. CLI（config ars / show ars）未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sai-ars-api-community-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SAI ARS API は community SAI に取り込み済み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21419,6 +21491,78 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-arsorch-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ArsOrch 等の orch 未実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-config_db-yang-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. CONFIG_DB スキーマ / yang module 未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-cliconfig-ars-show-ars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. CLI（config ars / show ars）未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sai-ars-api-community-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SAI ARS API は community SAI に取り込み済み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21552,7 +21696,45 @@
 <li>順序逆転 → idle window が小さすぎないか</li>
 <li>カウンタが進まない → <code>show ars</code> の active flowlet 数を確認、SAI debug counter で ARS reroute 統計を確認</li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>2026-05-10 時点の現行 master を裏取り。<strong>Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了</strong>。</p>
+<h3 id="1-arsorch-orch">1. <code>ArsOrch</code> 等の orch 未実装<a class="headerlink" href="#1-arsorch-orch" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: <code>ArsOrch</code>（または <code>NextHopGroupOrch</code> 拡張）が <code>ARS</code> / <code>ARS_PROFILE</code> / <code>ARS_INTERFACE</code> テーブルを subscribe して SAI ARS object に反映する。</li>
+<li><strong>実装位置</strong>: <code>sonic-swss/orchagent/</code> に <code>arsorch.cpp</code> / <code>arsorch.h</code> 相当ファイル無し（grep ヒット 0）。<code>nexthopgrouporch.cpp</code> にも ARS 連携コードは存在しない。</li>
+<li><strong>差分の中身</strong>: orch 層の処理が無いため CONFIG_DB に <code>ARS|*</code> を書いても何も起きない。<code>gDirectory</code> への ArsOrch 登録も無い。</li>
+<li><strong>読者への影響</strong>: 設定しても ASIC への反映経路が存在しないため、ARS は機能しない。</li>
+<li><strong>回避策</strong>:</li>
+<li><strong>コミュニティ SONiC master では現状利用不可</strong>。</li>
+<li>ベンダー版 SONiC（NVIDIA NOS の SX 系などが先行実装）または upstream の PR を追跡する。</li>
+<li>機能要件として「flowlet 風の動的 ECMP」が必要なら、現状は ASIC ベンダーの platform-specific 設定（sai.profile の vendor extension）か、SONiC 上での hash perturbation（policy-based hashing で hash seed をローテートする）で部分的に代替する。</li>
+</ul>
+<h3 id="2-config_db-yang-module">2. CONFIG_DB スキーマ / yang module 未取り込み<a class="headerlink" href="#2-config_db-yang-module" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: yang module <code>sonic-ars.yang</code> を追加し、<code>ARS</code> / <code>ARS_PROFILE</code> / <code>ARS_INTERFACE</code> / <code>ARS_NEXTHOP_GROUP_MAP</code> テーブルを定義する。</li>
+<li><strong>実装位置</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> に <code>sonic-ars.yang</code> 無し。<code>sonic-cfggen</code> のテンプレート集にも参照無し。</li>
+<li><strong>差分の中身</strong>: yang validation が ARS テーブルを受け付けないため、<code>config_db.json</code> に <code>ARS</code> セクションを書くと <code>sonic-cfggen</code> でエラーになる可能性がある（ConfigMgmt の strict 検証時）。</li>
+<li><strong>読者への影響</strong>: 設定ファイルとして書く手段が無い。</li>
+<li><strong>回避策</strong>: 設定を試したい場合は <code>sonic-db-cli CONFIG_DB HSET 'ARS|global' admin_mode enabled</code> のように Redis 直書きで yang を迂回する。ただし orch が受けないため効果は無い。</li>
+</ul>
+<h3 id="3-cliconfig-ars-show-ars">3. CLI（<code>config ars</code> / <code>show ars</code>）未取り込み<a class="headerlink" href="#3-cliconfig-ars-show-ars" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: <code>config ars enable</code> / <code>config ars profile add ...</code> / <code>show ars</code> / <code>show ars profile</code> を <code>sonic-utilities</code> に追加。</li>
+<li><strong>実装位置</strong>: <code>sonic-utilities/config/</code> および <code>sonic-utilities/show/</code> に <code>ars</code> モジュール無し（grep ヒット 0）。</li>
+<li><strong>差分の中身</strong>: CLI エントリポイントが存在しない。</li>
+<li><strong>読者への影響</strong>: 本ページの CLI 例はすべて動かない。</li>
+<li><strong>回避策</strong>: 上記同様、コミュニティ master では使えない。</li>
+</ul>
+<h3 id="4-sai-ars-api-community-sai">4. SAI ARS API は community SAI に取り込み済み<a class="headerlink" href="#4-sai-ars-api-community-sai" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>実装位置</strong>: <code>sonic-sairedis/unittest/meta/TestMeta.cpp:1821,1857</code> で <code>SAI_OBJECT_TYPE_ARS</code> / <code>SAI_OBJECT_TYPE_ARS_PROFILE</code> の create/get/set/remove 操作を unittest が実施。SAI header 側で型・属性は定義済み。</li>
+<li><strong>差分の中身</strong>: SAI 層は ready、SONiC 上位層（orch / yang / CLI）が未取り込みの状態。</li>
+<li><strong>読者への影響</strong>: ASIC ベンダーが SAI ARS をサポートしていても SONiC からは触れない。</li>
+<li><strong>回避策</strong>: 自前で orch を実装すれば SAI 経由で叩ける（実装労力大）。あるいは ASIC ベンダーが提供する out-of-tree のプラグインを利用する。</li>
+</ul>
+<h3 id="_6">結論<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><strong>Local ARS は SAI 層まで来ているが SONiC 上位層が未着手</strong>。AI / HPC 向けの adaptive routing が必要な場合はベンダー版 SONiC 採用か community 実装の登場を待つ。本ページの記述は仕様理解と将来取り込みに備えた参考資料。</p>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - SAI ARS 拡張 API（SAI_OBJECT_TYPE_ARS / SAI_ARS_ATTR_*）の community SAI 取り込み確認
 - ARSOrch（または NextHopOrch 拡張）の現行実装存在確認

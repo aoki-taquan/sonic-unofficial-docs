@@ -7373,6 +7373,67 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21485,6 +21546,67 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21687,7 +21809,37 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 <li><strong>BFD responder</strong>: DPU が最終 state に到達したとき DPU actor が program</li>
 <li><strong>dpu-graceful-shutdown / DPU upgrade 系</strong>: DPU actor の state 監視と整合性が必要</li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>2026-05 時点で <strong>schema 層（HA Set / HA Scope の table 名）は先行採用済みだが、hamgrd バイナリ・actor framework・swbus・VDPU / DPU_STATE は未取り込み</strong>。HLD の半分弱までが master に入っている部分実装状態。</p>
+<h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>取り込み済み</strong>: <code>sonic-swss-common/common/schema.h</code> で以下が定義:</li>
+<li>APP DB: <code>APP_DASH_HA_SET_CONFIG_TABLE_NAME = "DASH_HA_SET_CONFIG_TABLE"</code>, <code>APP_DASH_HA_SET_TABLE_NAME = "DASH_HA_SET_TABLE"</code>, <code>APP_DASH_HA_SCOPE_CONFIG_TABLE_NAME = "DASH_HA_SCOPE_CONFIG_TABLE"</code>, <code>APP_DASH_HA_SCOPE_TABLE_NAME = "DASH_HA_SCOPE_TABLE"</code>（L180-182 付近）。</li>
+<li>CFG DB: <code>CFG_DASH_HA_GLOBAL_CONFIG_TABLE_NAME = "DASH_HA_GLOBAL_CONFIG"</code>（L391）、<code>CFG_DPU_TABLE = "DPU_TABLE"</code>（L390）。</li>
+<li>STATE DB: <code>STATE_DASH_HA_SCOPE_STATE_TABLE_NAME = "DASH_HA_SCOPE_STATE_TABLE"</code>（L454）、<code>STATE_DASH_HA_SET_STATE_TABLE_NAME</code> も同様。</li>
+<li><strong>未取り込み</strong>:</li>
+<li><strong><code>hamgrd</code> バイナリそのものが community master に存在しない</strong>。<code>grep -ri hamgrd .cache/sonic-sources/sonic-swss/ .cache/sonic-sources/sonic-buildimage/</code> のヒットは <code>sonic-swss/tests/mock_tests/dashenifwdorch_ut.cpp</code> の <strong>コメントのみ</strong>。actor framework / NPU actor / DPU actor の C++ 実装は皆無。</li>
+<li><code>DASH_HA_DPU_STATE</code> / <code>DASH_HA_VDPU_STATE</code> の table 定義は schema.h に無い。<code>VDPU_TABLE</code> も無し（あるのは <code>CFG_DPU_TABLE</code> のみ）。vDPU 抽象は未取り込み。</li>
+<li><strong>swbus</strong>（actor 間メッセージバス）の文字列は <code>sonic-swss-common</code> / <code>sonic-swss</code> 双方で 0 件。実装は別リポ（候補: <code>sonic-dash</code> / vendor 側）に切り出されている可能性が高いが、本 docs のスコープ内には無い。</li>
+<li>HLD が TBD としていた Switch-Driven mode の実装は別 phase で未着手。</li>
+</ul>
+<h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
+<p>HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU 側 actor が DASH_HA_SET / SCOPE を駆動、DPU 側 actor が BFD responder を program する」と述べているが、現行 master では <strong>driver にあたる daemon が居ない</strong>。テーブル定義だけが先に入った格好で、テーブルに produce/consume するコードが community master 上に存在しない。Switch-Driven HA mode は仕様自体 TBD。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>DASH HA を community SONiC で「動かす」ことは現状不可能。<code>hamgrd</code> というプロセスが起動しない。</li>
+<li>HLD の運用例（<code>config dash ha ...</code> 系コマンド、<code>show dash ha-set</code> 等）は community CLI に未追加。</li>
+<li>vendor SmartSwitch 製品（NVIDIA など）には独自実装の hamgrd 相当が入っている可能性があり、ベンダー版と community 版で挙動が大きく違う。</li>
+<li>本ページの仕様記述は将来仕様参考であり、現行 community master で動く設定ではない。</li>
+</ul>
+<h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>community master を使う場合</strong>: DASH HA は使えない。Smart Switch を組まないか、<code>sonic-dash</code> 系の別 component が hamgrd を提供しているか確認する。</li>
+<li><strong>検証だけ進めたい場合</strong>: schema 層は揃っているので、<code>redis-cli -n 0 hset "DASH_HA_SET_CONFIG_TABLE:hs1" ...</code> で手動でテーブルに値を入れ、consumer が居ない状態の確認まではできる。BFD responder の program は別途自前で組む必要がある。</li>
+<li><strong>ベンダー版 SmartSwitch を採用</strong>: NVIDIA Spectrum-X / 等の vendor SmartSwitch では hamgrd 相当が動く可能性。ただし community SONiC のスコープ外（本サイトの対象外）。</li>
+<li>上流取り込み推進: hamgrd 実装本体（C++/Rust 何れか）+ swbus + <code>DASH_HA_DPU_STATE</code> / <code>VDPU_TABLE</code> の schema 追加 + CLI の 4 点セットが必要。</li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-swss-common `common/schema.h` の HA 関連 table 定義（実装済）:
   - APP DB: `APP_DASH_HA_SET_CONFIG_TABLE_NAME "DASH_HA_SET_CONFIG_TABLE"`, `APP_DASH_HA_SET_TABLE_NAME "DASH_HA_SET_TABLE"`, `APP_DASH_HA_SCOPE_CONFIG_TABLE_NAME "DASH_HA_SCOPE_CONFIG_TABLE"`, `APP_DASH_HA_SCOPE_TABLE_NAME "DASH_HA_SCOPE_TABLE"`

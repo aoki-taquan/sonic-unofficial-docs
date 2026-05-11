@@ -15733,6 +15733,67 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gnoi_reboot_daemonpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 独立 gnoi_reboot_daemon.py は実装されていない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-state_db-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STATE_DB のフラグ命名・配置が HLD と異なる
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. YANG 取り込みは確認できない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-hld-v01-2025-12-initial-proposal-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. HLD は v0.1 (2025-12) Initial Proposal で master 取り込み未確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21485,6 +21546,67 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gnoi_reboot_daemonpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 独立 gnoi_reboot_daemon.py は実装されていない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-state_db-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STATE_DB のフラグ命名・配置が HLD と異なる
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. YANG 取り込みは確認できない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-hld-v01-2025-12-initial-proposal-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. HLD は v0.1 (2025-12) Initial Proposal で master 取り込み未確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21667,7 +21789,54 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <li><strong>Independent DPU Upgrade</strong>: shutdown 経路を再利用する可能性</li>
 <li><strong>gNOI / gNMI</strong>: HALT を含む reboot RPC の依存</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">実装との乖離<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
+<h3 id="1-gnoi_reboot_daemonpy">1. 独立 <code>gnoi_reboot_daemon.py</code> は実装されていない<a class="headerlink" href="#1-gnoi_reboot_daemonpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: PMON container に <code>gnoi_reboot_daemon.py</code> を新規追加し、STATE_DB pub/sub 経由で gNOI Reboot RPC (HALT) を投げる役割を担う。</li>
+<li><strong>実装位置</strong>: <code>sonic-platform-daemons/</code> 配下に <code>gnoi_reboot_daemon.py</code> も <code>sonic-pmon</code> も存在しない（<code>find -iname "*gnoi*"</code> 結果ゼロ）。代わりに <code>sonic-chassisd</code> の <code>chassisd</code> (<code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd</code>) が <code>module.set_admin_state_gracefully</code> を直接呼ぶ。</li>
+<li><strong>差分の中身</strong>:
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># sonic-chassisd/scripts/chassisd L256</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">try_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chassis</span><span class="o">.</span><span class="n">get_module</span><span class="p">(</span><span class="n">module_index</span><span class="p">)</span><span class="o">.</span><span class="n">set_admin_state_gracefully</span><span class="p">,</span> <span class="n">admin_state</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># L1362</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">try_get</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">set_admin_state_gracefully</span><span class="p">,</span> <span class="n">admin_state</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># L1373</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">module</span><span class="o">.</span><span class="n">clear_module_gnoi_halt_in_progress</span><span class="p">()</span>
+</span></code></pre></div>
+  HLD は「chassisd は state を書くだけ、別 daemon が gNOI を呼ぶ」と分離するが、実装は <strong>chassisd が <code>module_base</code> の API を直接呼ぶ密結合</strong> になっている。</li>
+<li><strong>読者への影響</strong>: HLD の図を信じて gnoi_reboot_daemon のログを探しても見つからない。pub/sub の経路（<code>CHASSIS_MODULE_INFO_TABLE</code> への書込 → daemon 検知）も存在せず、<code>chassis_state_db</code> に書く前後で <code>chassisd</code> が直接 module API を呼ぶフロー。</li>
+<li><strong>回避策</strong>: 障害解析では <code>sonic-chassisd</code> のログを最初に見る。gNOI Reboot RPC の発行サイトは <code>module_base.py:601</code> 前後（<code>_set_module_gnoi_halt_in_progress</code> を呼んだ直後）。各 platform の <code>module_base</code> 派生クラスが <code>set_admin_state_gracefully</code> をどう override しているかが実体。</li>
+</ul>
+<h3 id="2-state_db-hld">2. STATE_DB のフラグ命名・配置が HLD と異なる<a class="headerlink" href="#2-state_db-hld" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: <code>CHASSIS_MODULE_INFO_TABLE|&lt;name&gt;</code> に <code>state_transition_in_progress</code> 等のフィールドを HSET する。</li>
+<li><strong>実装位置</strong>:</li>
+<li><code>sonic-platform-common/sonic_platform_base/module_base.py:537-583</code> <code>_get_module_gnoi_halt_in_progress</code> / <code>_set_module_gnoi_halt_in_progress</code> / <code>clear_module_gnoi_halt_in_progress</code> は <strong><code>gnoi_halt_in_progress</code></strong> という別フィールドを使う。</li>
+<li><code>module_base.py</code> の <code>set_module_state_transition()</code>（L624 付近）は <strong><code>CHASSIS_MODULE_TABLE|&lt;name&gt;</code></strong>（<code>_INFO_</code> 抜き）に <code>transition_in_progress</code> / <code>transition_type</code> / <code>start_time</code> を HSET する。</li>
+<li><strong>差分の中身</strong>:
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># module_base.py:566 — フラグ HSET</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">state_db</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="n">module_key</span><span class="p">,</span> <span class="s2">&quot;gnoi_halt_in_progress&quot;</span><span class="p">,</span> <span class="s2">&quot;True&quot;</span><span class="p">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># module_base.py:549 — 読み取り</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">gnoi_halt_flag</span> <span class="o">=</span> <span class="n">state_db</span><span class="o">.</span><span class="n">hget</span><span class="p">(</span><span class="n">module_key</span><span class="p">,</span> <span class="s2">&quot;gnoi_halt_in_progress&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+  HLD の <code>CHASSIS_MODULE_INFO_TABLE</code> / <code>state_transition_in_progress</code> は実コードでは 2 系統に分割されている: (a) <code>CHASSIS_MODULE_TABLE|&lt;name&gt;</code> の <code>transition_in_progress</code> (<code>set_module_state_transition</code>)、(b) <code>CHASSIS_MODULE_TABLE|&lt;name&gt;</code> の <code>gnoi_halt_in_progress</code> フラグ（HALT 完了通知用）。</li>
+<li><strong>読者への影響</strong>: 状態監視スクリプトを HLD のフィールド名で書くと取れない。reboot/shutdown 衝突検知も「片方が transition_in_progress フィールドを見れば良い」と思って書くと、<code>gnoi_halt_in_progress</code> の有無を見逃して race を起こす可能性がある。</li>
+<li><strong>回避策</strong>:</li>
+<li>状態確認: <code>redis-cli -n 6 hgetall 'CHASSIS_MODULE_TABLE|DPU0'</code> で <code>transition_in_progress</code> / <code>transition_type</code> / <code>gnoi_halt_in_progress</code> の 3 つを全部見る。</li>
+<li>排他制御を独自実装する場合は両フラグを AND で評価する。</li>
+</ul>
+<h3 id="3-yang">3. YANG 取り込みは確認できない<a class="headerlink" href="#3-yang" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: 新フィールドを <code>sonic-chassis-module.yang</code> に追加する想定。</li>
+<li><strong>実装位置</strong>: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-chassis-module.yang</code> に <code>transition_in_progress</code> / <code>gnoi_halt_in_progress</code> フィールドの取り込みは確認できない。</li>
+<li><strong>読者への影響</strong>: ConfigMgmt / GNMI 経由でこれらフィールドへアクセスしようとしても YANG model 経由では到達できず、<code>sonic-db-cli</code> 等 raw アクセスのみが手段になる。</li>
+<li><strong>回避策</strong>: フィールドは Redis 直叩き（<code>redis-cli -n 6</code> / <code>sonic-db-cli STATE_DB</code>）で扱う。</li>
+</ul>
+<h3 id="4-hld-v01-2025-12-initial-proposal-master">4. HLD は v0.1 (2025-12) Initial Proposal で master 取り込み未確認<a class="headerlink" href="#4-hld-v01-2025-12-initial-proposal-master" title="Permanent link">&para;</a></h3>
+<ul>
+<li>上記乖離は HLD の v0.1 と現行実装の間で構造そのものがリファクタされたことを示唆する。設計趣旨（gNOI 経由で DPU を graceful に止める）は実装に活きているが、daemon 構成・テーブル構造は HLD と一致しない。</li>
+</ul>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - sonic-platform-common/sonic_platform_base/module_base.py L429 set_admin_state_gracefully(up), L468 _graceful_shutdown_handler() (private), L588- gnoi_halt_in_progress フラグで制御
 - sonic-platform-common/sonic_platform_base/module_base.py L624 set_module_state_transition() は CHASSIS_MODULE_TABLE|<name> に transition_in_progress / transition_type / start_time を hset (HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress とは別キー)

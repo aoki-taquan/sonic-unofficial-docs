@@ -13117,6 +13117,67 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21485,6 +21546,67 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21610,7 +21732,31 @@
 <li><strong>warm reboot</strong>: 本機能の主目的</li>
 <li><strong>counter 系</strong>: 別 redis instance 化の議論で COUNTERS_DB が引合に出る</li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>2026-05-11 時点の現行 master を裏取り。</p>
+<h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>未取り込み</strong>: <code>sonic-net/sonic-sairedis</code> の lib/ 配下（<code>ClientSai.cpp</code>, <code>RedisChannel.cpp</code>, <code>Recorder.cpp</code> 等）と syncd 配下を grep しても <code>ATTR2OID_</code>, <code>OID2ATTR_</code>, <code>DEFAULT_OID2ATTR_</code>, <code>DEFAULT_OBJ_</code>, <code>RESTORE_DB</code>（DB 番号 7）に対応するキー定義は <strong>見当たらない</strong>。<code>idempoten</code> の文字列ヒットも 0。</li>
+<li>現行 master の warm restart 経路は <strong>syncd 側の view comparison</strong>（<code>syncd/AsicView.cpp</code> / <code>syncd/BestCandidateFinder.cpp</code> / <code>syncd/HardReiniter.cpp</code>）で重複 OID 発行を抑止しており、HLD が示す「libsairedis 内 prefix scheme」ではない。</li>
+</ul>
+<h3 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<p>HLD は libsairedis 内に以下のキー空間を用意して redis に保存し、warm restart 後の重複 SAI 呼び出しを libsairedis 層で握りつぶす設計を提案している:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEFAULT_ATTR2OID_&lt;serialized attrs&gt;  → &lt;oid&gt;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>DEFAULT_OID2ATTR_&lt;oid&gt;               → {attr: value, ...}
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ATTR2OID_&lt;serialized attrs&gt;          → &lt;oid&gt;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>OID2ATTR_&lt;oid&gt;                       → {attr: value, ...}
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>DEFAULT_OBJ_&lt;owner&gt;_&lt;obj_key&gt;        → {attr: value, ...}
+</span></code></pre></div>
+<p>現行 master は同等の目的を <strong>syncd の view diff 機構</strong> で達成しており、libsairedis 側に prefix キーは作られない。すなわち HLD は <strong>draft / 未採用案</strong> である。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<p><code>redis-cli -n 1 keys 'OID2ATTR_*'</code> 等で HLD どおりのキー出現を期待する読者は何も見えず、設計を誤解する。warm restart 時の挙動を deep dive するときは libsairedis ではなく <strong><code>sonic-sairedis/syncd/</code> 配下の view comparison 実装</strong>（<code>AsicView</code> / <code>HardReiniter</code> / <code>WarmBoot</code>）を読む必要がある。</p>
+<h3 id="4">4. 回避策<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>warm restart 時の重複抑止メカニズムを追うときは <code>sonic-sairedis/syncd/</code> の view comparison ファイル群を起点にする。</li>
+<li>redis 上の warm restart 状態は <code>STATE_WARM_RESTART_TABLE</code> / <code>WARM_RESTART_TABLE</code> を読む。</li>
+<li>本 HLD は「採用されなかった代替案」として読み、現行の挙動は別 HLD <code>doc/warm-reboot/code_implementation.md</code> および syncd ソース、<code>doc/warm-reboot/sai_warmboot.md</code> を参照する。</li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

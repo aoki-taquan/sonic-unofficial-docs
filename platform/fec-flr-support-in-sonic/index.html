@@ -15346,6 +15346,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21607,6 +21618,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21888,7 +21910,80 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <li><code>N/A</code> 表示: SAI counter が当該 platform で未対応</li>
 <li>値が想定の半分/倍: interleaving factor X の取り違え。port speed と lane 数を再確認</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。本機能の <strong>コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み</strong>だが、<strong>HLD で示唆された動的設定 CLI（<code>counterpoll port flr-interval-factor</code>）は未実装</strong>であり、poll 周期は lua スクリプト内のハードコード値に固定されている。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD</th>
+<th>現行 master</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>port_flr.lua</code> の swss 取り込み</td>
+<td>必須</td>
+<td><code>sonic-swss/orchagent/port_flr.lua</code> L1-460 に存在。<code>FEC_FLR</code> / <code>FEC_FLR_PREDICTED</code> / <code>FEC_FLR_R_SQUARED</code> を RATES テーブルへ書く実装あり</td>
+<td>✓ 実装済み</td>
+</tr>
+<tr>
+<td><code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16</code> の利用</td>
+<td>必須</td>
+<td><code>sonic-swss/crates/countersyncd/src/sai/saiport.rs</code> L766-782 で S0〜S16 を列挙、L1144- で文字列マッピング</td>
+<td>✓ 実装済み</td>
+</tr>
+<tr>
+<td><code>COUNTER_DB:RATES</code> への <code>FEC_FLR</code> / <code>FEC_FLR_PREDICTED</code> 書き込み</td>
+<td>必須</td>
+<td><code>port_flr.lua</code> L443 / L451 / L452 で <code>FEC_FLR</code> / <code>FEC_FLR_PREDICTED</code> / <code>FEC_FLR_R_SQUARED</code> を HSET</td>
+<td>✓ 実装済み</td>
+</tr>
+<tr>
+<td><code>show interfaces counters</code> (portstat) に FLR カラム追加</td>
+<td>必須</td>
+<td><code>sonic-utilities/utilities_common/portstat.py</code> L50 のヘッダ列定義に <code>fec_flr</code>, <code>fec_flr_predicted</code>, <code>fec_flr_r_squared</code> が追加済、L271-273 で CHASSIS_STATE_DB から読み出し、L671-673 で format して表示。<code>sonic-utilities/utilities_common/netstat.py</code> L144 <code>format_fec_flr</code> / L156 <code>format_fec_flr_predicted</code> も実装</td>
+<td>✓ 実装済み</td>
+</tr>
+<tr>
+<td><code>counterpoll port flr-interval-factor</code> サブコマンド</td>
+<td>提案</td>
+<td><strong>未実装</strong>。<code>sonic-utilities/counterpoll/</code> 配下に <code>flr</code> / <code>flr-interval</code> サブコマンドは存在しない。<code>port_flr.lua</code> L31 で <code>FEC_FLR_POLL_INTERVAL = 120</code>（秒）がハードコード</td>
+<td>⚠️ 未取り込み</td>
+</tr>
+<tr>
+<td>BIN_FILTER_VALUE / MIN_SIGNIFICANT_BINS / MFC のチューニング API</td>
+<td>想定</td>
+<td><code>port_flr.lua</code> L29-32 で <code>BIN_FILTER_VALUE=10</code> / <code>MIN_SIGNIFICANT_BINS=2</code> / <code>MFC=8</code> ハードコード。実行時変更経路無し</td>
+<td>⚠️ 未取り込み</td>
+</tr>
+<tr>
+<td>portstat <code>-f</code> モードでの FLR(O) / FLR(P) サンプル出力フォーマット</td>
+<td>必須</td>
+<td>HLD のサンプル表示と portstat の列名（<code>fec_flr</code> / <code>fec_flr_predicted</code>）が一致。L156-180 の <code>format_fec_flr_predicted</code> で r_squared から accuracy 列を生成</td>
+<td>✓ 実装済み</td>
+</tr>
+</tbody>
+</table>
+<p><strong>差分の中身</strong>:</p>
+<ul>
+<li>HLD は <strong>「<code>counterpoll</code> で poll 周期を動的に変更できる」</strong> ことを示唆しているが、現行実装の <code>FEC_FLR_POLL_INTERVAL = 120</code> は <strong>lua 内ハードコード</strong>。120 秒（2 分）周期で固定される。</li>
+<li>同様に <code>BIN_FILTER_VALUE</code>（symbol error bin の足切り閾値）と <code>MIN_SIGNIFICANT_BINS</code>（線形回帰の最小データ点数）と <code>MFC</code>（Multiplicative Factor for Codewords）もハードコード。</li>
+</ul>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li>高頻度に FLR を見たい場合（例: 30 秒周期）に、CONFIG_DB / CLI で周期を縮められない。</li>
+<li>計算ロジック（BIN_FILTER_VALUE 等）の調整は <strong>lua スクリプトを直接書き換えてビルドし直す</strong> しか手段が無い。</li>
+<li>一方、コア機能（FLR / FLR_PREDICTED の計算と表示）は最初から使えるので、観測自体には支障なし。</li>
+</ul>
+<p><strong>回避策 / 対応方法</strong>:</p>
+<ul>
+<li>poll 周期を 120 秒以下にしたい場合は、<code>sonic-swss/orchagent/port_flr.lua</code> L31 を書き換えて image をリビルド。</li>
+<li>計算閾値の調整も同様に lua スクリプトレベル。動的にはチューニング不可。</li>
+<li>動的設定を求めるなら、<code>counterpoll port flr-interval-factor</code> CLI の上流 PR 追跡が必要。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - port_flr.lua の swss 取り込み確認
 - FlexCounterOrch への FLR_INTERVAL_FACTOR 伝搬実装確認

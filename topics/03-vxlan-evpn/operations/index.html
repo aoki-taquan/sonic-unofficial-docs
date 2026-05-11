@@ -1687,7 +1687,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-vxlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show vxlan の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21428,7 +21494,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-vxlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show vxlan の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21491,7 +21623,185 @@
 <p>Encapsulated traffic の ECMP 偏りを見るときは、outer 5-tuple で hash しているのか、inner 5-tuple で hash しているのかを確認します。PBH の inner hash テストでは、VXLAN/NVGRE の outer を変えても inner が同じなら同一 nexthop に寄ること、inner を変えれば複数 nexthop に分散することを確認します。</p>
 <h2 id="local-ars">Local ARS との境界<a class="headerlink" href="#local-ars" title="Permanent link">&para;</a></h2>
 <p>Local ARS は ECMP の next-hop 選択を static hash ではなく queue depth や port utilization で動的に変える発展機能です。既存ページでは現行 master で SWSS / YANG / CLI への取り込み未完了の可能性が示されているため、VXLAN/VNET の通常運用手順として前提にしない方が安全です。設計比較や将来機能として読む位置づけです。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="show-vxlan">show vxlan の出力サンプル<a class="headerlink" href="#show-vxlan" title="Permanent link">&para;</a></h2>
+<p><code>show vxlan tunnel</code> は CONFIG_DB の <code>VXLAN_TUNNEL</code> と STATE_DB / APPL_DB の oper 状態を結合します。EVPN 由来の場合 <code>Creation Source = EVPN</code>、static 設定なら <code>CLI</code> 等が出ます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>+---------+-------------+-------------------+--------------+
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>| SIP     | DIP         | Creation Source   | OperStatus   |
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>+=========+=============+===================+==============+
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>| 1.1.1.1 | 25.25.25.25 | EVPN              | oper_down    |
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>+---------+-------------+-------------------+--------------+
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>| 1.1.1.1 | 25.25.25.26 | EVPN              | oper_down    |
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>+---------+-------------+-------------------+--------------+
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>| 1.1.1.1 | 25.25.25.27 | EVPN              | oper_down    |
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>+---------+-------------+-------------------+--------------+
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Total count : 3
+</span></code></pre></div>
+<p><code>show vxlan vlanvnimap</code> は VLAN と VNI の対応を表示します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>+---------+-------+
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>| VLAN    |   VNI |
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>+=========+=======+
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>| Vlan100 |   100 |
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>+---------+-------+
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>| Vlan101 |   101 |
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>+---------+-------+
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>Total count : 2
+</span></code></pre></div>
+<p><code>show vxlan remotevni</code> は受信した Type-2 / Type-3 EVPN route 由来の remote VTEP を表示します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>+---------+--------------+-------+
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>| VLAN    | RemoteVTEP   |   VNI |
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>+=========+==============+=======+
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>| Vlan100 | 25.25.25.25  |   100 |
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>+---------+--------------+-------+
+</span></code></pre></div>
+<p>VNET 構成では <code>show vnet routes all</code> で <code>Vnet name</code>、<code>Prefix</code>、<code>Endpoints</code>、<code>MAC</code>、<code>VNI</code>、<code>Metric</code>、<code>State</code> の 7 カラムが並びます。Endpoints が複数あるときは 3 つずつ折り返されます。</p>
+<h2 id="_2">異常検出パターン<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>観測</th>
+<th>疑う状態</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show vxlan tunnel</code> で <code>OperStatus=oper_down</code></td>
+<td>underlay 到達性なし、SIP/DIP 不一致、SAI tunnel 未作成</td>
+<td><code>ping &lt;remote VTEP&gt;</code>、<code>show ip route &lt;remote&gt;</code>、ASIC_DB の tunnel object 有無</td>
+</tr>
+<tr>
+<td><code>show vxlan remotevni</code> が空だが EVPN Up</td>
+<td>Type-3 受信なし、VNI not imported、RT 不一致</td>
+<td><code>vtysh -c "show bgp l2vpn evpn route"</code>、route-target 整合</td>
+</tr>
+<tr>
+<td>FDB に MAC が入らない</td>
+<td>Type-2 受信なし、または vxlanmgrd 反映失敗</td>
+<td><code>show mac</code>、<code>vtysh -c "show evpn mac vni &lt;id&gt;"</code></td>
+</tr>
+<tr>
+<td>VNET route の endpoint が NHG から外れる</td>
+<td>BFD Down 検出、custom monitor failure</td>
+<td><code>show muxcable health</code> 系ではなく vnet 用 monitor／<code>show vnet endpoint</code></td>
+</tr>
+<tr>
+<td>inner traffic が同じ nexthop に偏る</td>
+<td>outer 5-tuple のみで hash、PBH inner hash 未設定</td>
+<td><code>show pbh</code> 設定、<code>show counters</code> で member 偏り</td>
+</tr>
+<tr>
+<td>DSCP 値が想定と違う</td>
+<td>encap / decap QoS map 未紐付け</td>
+<td><code>TUNNEL_DECAP_TABLE</code>、<code>TC_TO_DSCP_MAP</code>、ASIC_DB の <code>SAI_TUNNEL_ATTR_ENCAP_QOS_*</code></td>
+</tr>
+<tr>
+<td>route advertise されない / Type-5 が出ない</td>
+<td>redistribute connected 未設定、route-target 不一致</td>
+<td><code>vtysh -c "show running-config"</code>、address-family <code>l2vpn evpn</code> 内の <code>advertise</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">典型的なログサンプル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>vxlanorch / VnetOrch / FRR EVPN 関連の代表ログ:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vxlanmgrd: VxlanTunnel &#39;tunnel_v4&#39; was added
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>vxlanmgrd: Tunnel Decap term entry added for tunnel: tunnel_v4 src_ip: 25.25.25.25
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>orchagent: :- create: Can&#39;t create a tunnel object
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>orchagent: :- removeNextHopTunnel: delete NH tunnel for ip &#39;25.25.25.25&#39;, mac &#39;00:00:00:00:00:00&#39; vni 100 failed
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>orchagent: :- addEndpointMonitor: Endpoint 25.25.25.25 for prefix 10.1.1.0/24 set to DOWN
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1 in vrf default Up (BGP-EVPN)
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>zebra: EVPN: Failed to install MAC 00:11:22:33:44:55 in VNI 100
+</span></code></pre></div>
+<p>SAI fail パターン例:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>syncd: SAI_API_TUNNEL: SAI_STATUS_INSUFFICIENT_RESOURCES
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
+</span></code></pre></div>
+<h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tunnel 一覧</td>
+<td><code>show vxlan tunnel</code></td>
+</tr>
+<tr>
+<td>VLAN-VNI map</td>
+<td><code>show vxlan vlanvnimap</code></td>
+</tr>
+<tr>
+<td>Remote VTEP</td>
+<td><code>show vxlan remotevni</code></td>
+</tr>
+<tr>
+<td>VNI のカウンタ</td>
+<td><code>show vxlan counters</code></td>
+</tr>
+<tr>
+<td>VNET 一覧</td>
+<td><code>show vnet brief</code>、<code>show vnet name &lt;vnet&gt;</code></td>
+</tr>
+<tr>
+<td>VNET route 全部</td>
+<td><code>show vnet routes all</code></td>
+</tr>
+<tr>
+<td>VNET endpoint 監視</td>
+<td><code>show vnet endpoint</code></td>
+</tr>
+<tr>
+<td>EVPN MAC / Type-2</td>
+<td><code>vtysh -c "show evpn mac vni all"</code></td>
+</tr>
+<tr>
+<td>EVPN IP-prefix / Type-5</td>
+<td><code>vtysh -c "show evpn next-hops vni all"</code></td>
+</tr>
+<tr>
+<td>EVPN VRF route</td>
+<td><code>vtysh -c "show bgp l2vpn evpn route"</code></td>
+</tr>
+<tr>
+<td>BFD endpoint</td>
+<td><code>show bfd summary</code>、APPL_DB の BFD_SESSION</td>
+</tr>
+<tr>
+<td>Counter clear</td>
+<td><code>sonic-clear vxlancounters</code></td>
+</tr>
+<tr>
+<td>PBH 設定</td>
+<td><code>show pbh table</code>、<code>show pbh rule</code>、<code>show pbh hash</code></td>
+</tr>
+<tr>
+<td>DSCP map</td>
+<td><code>show qos map dscp_to_tc</code>、<code>show qos map tc_to_dscp</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_db-state_db-counter">関連 CONFIG_DB / STATE_DB / counter<a class="headerlink" href="#config_db-state_db-counter" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>CONFIG_DB:VXLAN_TUNNEL|&lt;name&gt;</code> — <code>src_ip</code>、<code>dst_ip</code>（static の場合）。</li>
+<li><code>CONFIG_DB:VXLAN_TUNNEL_MAP|&lt;tunnel&gt;|&lt;map&gt;</code> — <code>vni</code>、<code>vlan</code>。</li>
+<li><code>CONFIG_DB:VNET|&lt;name&gt;</code> — <code>vxlan_tunnel</code>、<code>vni</code>、<code>peer_list</code>、<code>scope</code>、<code>advertise_prefix</code>。</li>
+<li><code>APPL_DB:VNET_ROUTE_TUNNEL_TABLE:&lt;vnet&gt;:&lt;prefix&gt;</code> — <code>endpoint</code>、<code>endpoint_monitor</code>、<code>mac_address</code>、<code>vni</code>、<code>weight</code>、<code>profile</code>、<code>primary</code>、<code>monitoring</code>、<code>adv_prefix</code>。</li>
+<li><code>APPL_DB:VXLAN_FDB_TABLE</code> — EVPN Type-2 由来 FDB。</li>
+<li><code>STATE_DB:VXLAN_TUNNEL_TABLE|&lt;name&gt;</code> — <code>operstatus</code>。</li>
+<li><code>STATE_DB:BFD_SESSION_TABLE|&lt;sess&gt;</code> — VNET endpoint 監視に紐づく状態。</li>
+<li><code>COUNTERS_DB:COUNTERS_TUNNEL_NAME_MAP</code> — tunnel object と counter の対応。</li>
+<li><code>ASIC_DB</code> の <code>SAI_OBJECT_TYPE_TUNNEL</code>、<code>SAI_OBJECT_TYPE_NEXT_HOP</code>（type=TUNNEL_ENCAP）、<code>SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER</code> を ASIC への投入確認に使います。</li>
+</ul>
+<h2 id="_5">横断参照<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>BGP-EVPN session 自体の up/down は <a href="../../02-bgp/operations/">BGP 章 運用</a> のフローで切り分け。</li>
+<li>Type-5 が VRF にインポートされるかは <a href="../../04-vrf-ecmp/operations/">VRF / ECMP 章 運用</a> の RIB/FIB 確認手順を併読。</li>
+<li>Dual-ToR の tunnel bounce-back は <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a> の DSCP / PFC 文脈と切り離せません。</li>
+<li>L2 側の VLAN / FDB と EVPN MAC の同期問題は <a href="../../06-l2-vlan-lag/operations/">L2 章 運用</a> の FDB セクション。</li>
+</ul>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/overlay-ecmp-with-bfd-monitoring/">Overlay ECMP with BFD monitoring</a></li>
 <li><a href="../../../routing/overlay-ecmp-enhancements/">Overlay ECMP enhancements</a></li>

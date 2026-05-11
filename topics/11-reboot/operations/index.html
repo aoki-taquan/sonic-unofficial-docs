@@ -3617,10 +3617,71 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Warmboot Manager と SWSS warm restart">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm reboot 実行ログの例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reboot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reboot 種別の使い分け早見表
+      
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / STATE_DB 関連 key
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連章
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21403,10 +21464,71 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Warmboot Manager と SWSS warm restart">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm reboot 実行ログの例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reboot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reboot 種別の使い分け早見表
+      
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / STATE_DB 関連 key
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連章
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21452,16 +21574,209 @@
 <li>最後に reboot-cause 履歴を見て、想定 reboot か crash/panic/watchdog かを切り分けます。</li>
 </ol>
 <p><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot-cause 履歴の STATE_DB / テレメトリ公開</a> は、起動時に cause を判定し、STATE_DB と telemetry へ公開する流れを説明しています。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ show reboot-cause
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>User issued &#39;warm-reboot&#39; command [User: admin, Time: Mon May 10 11:00:01 UTC 2026]
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>admin@sonic:~$ show reboot-cause history
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Name                 Cause       Time                            User    Comment
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>-------------------  ----------  ------------------------------  ------  -------
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>2026_05_10_11_00_01  warm-reboot Mon May 10 11:00:01 UTC 2026    admin   N/A
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>2026_05_09_03_22_45  Kernel Panic Sun May  9 03:22:45 UTC 2026   N/A     N/A
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>2026_05_08_19_10_00  Power Loss  Sat May  8 19:10:00 UTC 2026    N/A     N/A
+</span></code></pre></div>
+<p><code>Kernel Panic</code> / <code>Watchdog</code> / <code>Power Loss</code> / <code>Hardware - reason</code> のいずれかが出ている場合は計画外で、<code>/host/reboot-cause/</code> 配下のテキストファイルと vmcore (kdump 有効時) を一次資料として保全します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ls<span class="w"> </span>/host/reboot-cause/
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>cat<span class="w"> </span>/host/reboot-cause/reboot-cause.txt
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause.json
+</span></code></pre></div>
 <h2 id="lacp-peer">LACP と peer 側の時間<a class="headerlink" href="#lacp-peer" title="Permanent link">&para;</a></h2>
 <p>warm reboot では自装置だけでなく peer 側の待ち時間が結果を左右します。LAG peer が短い timeout で partner を落とすと、data plane を維持しても bundle が崩れます。<a href="../../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/">Warm-reboot 中の LACP retry count 拡張</a> は、LACP PDU の拡張により warm reboot 中の retry count を増やす設計です。</p>
 <p>BGP も同様に Graceful Restart と timer が前提です。warm reboot を有効化しても、peer が GR を許容しなければ L3 adjacency は維持されません。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sw01# show bgp neighbors 10.0.0.1 graceful-restart
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>BGP neighbor is 10.0.0.1
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  Local GR Mode : Helper*
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  Remote GR Mode: Restart
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  R bit: True
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  Configured Restart Time(sec): 240
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  Received Restart Time(sec): 240
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  ...
+</span></code></pre></div>
+<p><code>Remote GR Mode</code> が <code>Disable</code> の peer は warm reboot 中に session を落とす可能性が高いので、対象から外すか peer 側設定を変えます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ show warm_restart config
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>name        enable    timer_name             timer_duration
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>----------  --------  ---------------------  --------------
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>swss        true                             -
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>bgp         true      bgp_timer              180
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>teamd       true      teamsyncd_timer         30
+</span></code></pre></div>
+<p>LACP の retry 拡張は teamd 側のオプション化されており、warm reboot 中だけ retry を増やします。同 HLD のシーケンス図と CONFIG_DB の <code>WARM_RESTART_TABLE</code> を併せて読みます。</p>
 <h2 id="multi-asic-warm-reboot">multi-ASIC warm reboot<a class="headerlink" href="#multi-asic-warm-reboot" title="Permanent link">&para;</a></h2>
 <p>multi-ASIC では、namespace ごとに service、DB、ASIC が分かれます。warm reboot は default namespace だけで完結せず、ASIC namespace 群の shutdown / boot 順序、除外指定、DB backup、peer 影響を合わせて扱います。詳細は <a href="../../../system/multi-asic-warm-reboot/">Multi-ASIC warm reboot</a> を参照します。</p>
 <p>運用上は、対象 ASIC を絞った reboot とシステム全体 reboot を混同しないことが重要です。<code>-m</code> のような除外指定を使う場合は、残す ASIC と落とす ASIC の依存関係を確認します。</p>
 <h2 id="warmboot-manager-swss-warm-restart">Warmboot Manager と SWSS warm restart<a class="headerlink" href="#warmboot-manager-swss-warm-restart" title="Permanent link">&para;</a></h2>
 <p>Warmboot Manager は、複数 component の shutdown orchestration と reconciliation を統一する設計です。4 phase の shutdown orchestration、component state、race condition の扱いを確認する入口は <a href="../../../system/warmboot-manager-hld/">Warmboot Manager</a> です。</p>
 <p>SWSS docker warm restart は service lifecycle の代表例です。restore、pre/post validation、sync up、失敗時 fallback を順に見ます。仕様は <a href="../../../system/sonic-swss-docker-warm-restart/">SWSS docker warm restart</a>、開発時の実装メモは <a href="../../../system/swss-docker-warm-restart-code-reference/">SWSS docker の Warm Restart 実装メモ</a> に分かれています。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="warm-reboot">Warm reboot 実行ログの例<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ sudo warm-reboot
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Starting warm-reboot...
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Stopping bgp service...
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Pre-shutdown BGP ... [OK]
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Saving config to /etc/sonic/config_db.json
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Backing up Redis to /host/warmboot/redis_db.json
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Stopping syncd service ... [OK]
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Stopping swss service ... [OK]
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>SAI warm shutdown ... [OK]
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>Rebooting...
+</span></code></pre></div>
+<p>起動後の reconciliation 完了は次で確認します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ show warm_restart state
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>name              restore_count  state
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>----------------  -------------  ----------
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>neighsyncd                    1  reconciled
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>bgp                           1  reconciled
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>teamsyncd                     1  reconciled
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>fdbsyncd                      1  reconciled
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>natsyncd                      1  reconciled
+</span></code></pre></div>
+<p><code>reconciled</code> 以外（<code>restored</code>, <code>init</code>, <code>disabled</code>）の component が残る場合、その component の syslog を見ます。<code>reconciled</code> まで届かないと EOIU (End-of-Initial-Update) が出ず、後続の clean up が走らないため、route や neighbor の幽霊が残ることがあります。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>May 10 11:01:08 sw01 INFO swss#bgpcfgd: BGP reached reconciled state
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
+</span></code></pre></div>
+<h2 id="reboot_1">reboot 種別の使い分け早見表<a class="headerlink" href="#reboot_1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>data plane</th>
+<th>control plane</th>
+<th>想定停止時間</th>
+<th>主用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reboot</code> (cold)</td>
+<td>完全停止</td>
+<td>完全停止</td>
+<td>分単位</td>
+<td>image 更新、kernel 更新</td>
+</tr>
+<tr>
+<td><code>fast-reboot</code></td>
+<td>完全停止 (短時間)</td>
+<td>完全停止</td>
+<td>30s〜</td>
+<td>image 更新で warm 不可なとき</td>
+</tr>
+<tr>
+<td><code>warm-reboot</code></td>
+<td>維持</td>
+<td>短時間停止</td>
+<td>数秒 (data plane 影響なし)</td>
+<td>minor update / patch</td>
+</tr>
+<tr>
+<td><code>config reload -y</code></td>
+<td>維持</td>
+<td>swss 系のみ再起動</td>
+<td>数秒</td>
+<td>設定全面適用</td>
+</tr>
+<tr>
+<td><code>systemctl restart bgp</code></td>
+<td>維持</td>
+<td>該当サービスのみ</td>
+<td>サブ秒〜数秒</td>
+<td>サービス単位</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">対応コマンド早見表<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>コマンド</th>
+<th>補足</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>突然 reboot した</td>
+<td><code>show reboot-cause history</code></td>
+<td><code>/host/reboot-cause/</code> も保全</td>
+</tr>
+<tr>
+<td>warm-reboot 後 BGP が落ちた</td>
+<td><code>show bgp neighbors X graceful-restart</code></td>
+<td>peer 側 GR 設定</td>
+</tr>
+<tr>
+<td>warm-reboot 後 LAG が崩れた</td>
+<td><code>show interfaces portchannel</code> + teamd log</td>
+<td>LACP retry 拡張 / peer timeout</td>
+</tr>
+<tr>
+<td>reconciliation が終わらない</td>
+<td><code>show warm_restart state</code></td>
+<td>該当 component の syslog</td>
+</tr>
+<tr>
+<td>ASIC namespace だけ再起動したい</td>
+<td><code>warm-reboot -m &lt;namespace&gt;</code></td>
+<td>multi-ASIC HLD 参照</td>
+</tr>
+<tr>
+<td>panic を保全したい</td>
+<td><code>show kdump status</code></td>
+<td>章 <a href="../../09-telemetry-snmp/operations/">09</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_db-state_db-key">CONFIG_DB / STATE_DB 関連 key<a class="headerlink" href="#config_db-state_db-key" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>DB</th>
+<th>Key</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>warm-restart enable</td>
+<td><code>CONFIG_DB</code></td>
+<td><code>WARM_RESTART\|&lt;service&gt;</code></td>
+</tr>
+<tr>
+<td>warm-restart timer</td>
+<td><code>CONFIG_DB</code></td>
+<td><code>WARM_RESTART\|&lt;service&gt;</code> (timer field)</td>
+</tr>
+<tr>
+<td>各 component の state</td>
+<td><code>STATE_DB</code></td>
+<td><code>WARM_RESTART_TABLE\|&lt;key&gt;</code></td>
+</tr>
+<tr>
+<td>reboot-cause 履歴</td>
+<td><code>STATE_DB</code></td>
+<td><code>REBOOT_CAUSE\|&lt;timestamp&gt;</code></td>
+</tr>
+<tr>
+<td>直近 cause (file)</td>
+<td>n/a</td>
+<td><code>/host/reboot-cause/reboot-cause.txt</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">関連章<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li>章 <a href="../../09-telemetry-snmp/operations/">09 telemetry / SNMP / observability</a> — techsupport / kdump / system-health</li>
+<li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — save-on-set と再起動を跨ぐ永続化</li>
+<li>章 <a href="../../02-bgp/operations/">02 BGP</a> — BGP Graceful Restart の運用</li>
+</ul>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot-cause 履歴の STATE_DB / テレメトリ公開</a></li>
 <li><a href="../../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/">Warm-reboot 中の LACP retry count 拡張</a></li>

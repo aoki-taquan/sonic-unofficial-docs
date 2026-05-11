@@ -1420,7 +1420,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-bgp-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show bgp summary の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frr-swss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な FRR / SWSS ログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21406,7 +21472,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-bgp-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show bgp summary の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frr-swss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な FRR / SWSS ログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21485,7 +21617,171 @@
 <p>BMP は BGP の Adj-RIB-In/Out や peer state を外部 collector に送るための監視機構である。SONiC では BMP_STATE_DB と FRR 側の BMP 有効化が関わる。Multi-ASIC や gNMI Streaming との接点もあるため、単なる <code>show bgp</code> の置き換えではなく、継続監視用の出口として読む。</p>
 <h2 id="ciscobgp4mib-state_db">CiscoBgp4MIB はなぜ STATE_DB 経由か<a class="headerlink" href="#ciscobgp4mib-state_db" title="Permanent link">&para;</a></h2>
 <p>CiscoBgp4MIB は SNMP から BGP neighbor 情報を見せるための互換面である。旧設計のように SNMP 実装が FRR の VTY socket に直接依存すると、daemon 間結合が強い。STATE_DB 経由化では <code>bgpmon</code> が FRR から情報を収集し、<code>NEIGH_STATE_TABLE</code> に書き、SNMP 側は DB を読む。運用上は、SNMP に出ない場合に FRR、bgpmon、STATE_DB、snmp_ax_impl のどこで止まっているかを分けて確認できる。</p>
-<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="show-bgp-summary">show bgp summary の出力サンプル<a class="headerlink" href="#show-bgp-summary" title="Permanent link">&para;</a></h2>
+<p><code>show ip bgp summary</code> は FRR の <code>show bgp ipv4 unicast summary</code> を整形したものです。代表的な T1 ToR の構成では次のように 24 neighbor が並びます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>IPv4 Unicast Summary:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>BGP table version 12811
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>RIB entries 12817, using 2358328 bytes of memory
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Peers 24, using 502080 KiB of memory
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Peer groups 4, using 256 bytes of memory
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Neighbhor      V     AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ  Up/Down    State/PfxRcd    NeighborName
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>-----------  ---  -----  ---------  ---------  --------  -----  ------  ---------  --------------  --------------
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>10.0.0.1       4  65200       5919       2717         0      0       0  1d21h11m   6402            ARISTA01T2
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>10.0.0.5       4  65200       5916       2714         0      0       0  1d21h10m   6402            ARISTA03T2
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>10.0.0.33      4  64001          0          0         0      0       0  never      Active          ARISTA01T0
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>10.0.0.35      4  64002          0          0         0      0       0  never      Active          ARISTA02T0
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>...
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Total number of neighbors 24
+</span></code></pre></div>
+<p>VRF 指定時（<code>show ip bgp summary vrf Vrf_red</code> 等）は <code>vrf-id</code> が 0 ではなく VRF の数値 ID になり、neighbor 集合も VRF スコープに限定されます。</p>
+<p>カラムの読み方:</p>
+<ul>
+<li><code>State/PfxRcd</code> は数値なら受信プレフィクス数で Established 相当、<code>Active</code> / <code>Idle</code> / <code>Connect</code> / <code>OpenSent</code> / <code>OpenConfirm</code> は未確立。<code>Active</code> が続くなら TCP 接続失敗、<code>OpenSent</code> で止まるなら capability 不一致を疑います。</li>
+<li><code>Up/Down</code> の <code>never</code> は一度も Established していない印。physical link / TCP / ACL / source IP / password を最初に疑います。</li>
+<li><code>MsgRcvd</code> / <code>MsgSent</code> が時間と比べて極端に偏っているなら片方向 update が偏在しています。policy で deny されている可能性があります。</li>
+</ul>
+<h2 id="_3">異常検出パターン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>観測</th>
+<th>疑う状態</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>State=Active</code> が継続</td>
+<td>TCP SYN が通っていない、source-address 不一致</td>
+<td><code>ss -tnp \| grep 179</code>、ACL、<code>bgpcfgd</code> のログ</td>
+</tr>
+<tr>
+<td><code>State=OpenSent</code> で停滞</td>
+<td>AS 不一致、capability mismatch、MD5 password 不一致</td>
+<td><code>vtysh -c "show bgp neighbor X.X.X.X"</code> の <code>Last reset reason</code></td>
+</tr>
+<tr>
+<td><code>Up/Down</code> が短い周期</td>
+<td>hold-timer expiry、underlay packet loss、CPU overload</td>
+<td><code>show bgp neighbor X</code> の <code>Hold time</code> と <code>Dropped</code></td>
+</tr>
+<tr>
+<td><code>PfxRcd=0</code> だが Up</td>
+<td>対向 advertise なし、自分側 in-policy で deny</td>
+<td>route-map、prefix-list、対向 <code>show bgp adj-out</code></td>
+</tr>
+<tr>
+<td>FRR では RIB にあるが <code>show ip route</code> の <code>&gt;</code> 印が無い</td>
+<td>RIB-to-FIB 移行で失敗</td>
+<td>zebra ログ、fpmsyncd、APPL_DB:ROUTE_TABLE</td>
+</tr>
+<tr>
+<td>APPL_DB に route あるが ASIC 未投入</td>
+<td>orchagent SAI error、resource 枯渇</td>
+<td><code>/var/log/swss/sairedis.rec</code>、orchagent log</td>
+</tr>
+<tr>
+<td>Suppress FIB pending 有効で advertise が出ない</td>
+<td>FIB install 未完了の prefix が抑止対象</td>
+<td><code>show bgp ipv4 unicast suppress-fib-pending</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="frr-swss">典型的な FRR / SWSS ログサンプル<a class="headerlink" href="#frr-swss" title="Permanent link">&para;</a></h2>
+<p>FRR / bgpd の <code>Last reset reason</code> 系メッセージは syslog にも出ます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Up
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>bgpd[28]: %NOTIFICATION: sent to neighbor 10.0.0.1 4/0 (Hold Timer Expired) 0 bytes
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>bgpd[28]: %ADJCHANGE: neighbor 10.0.0.1(ARISTA01T2) in vrf default Down BGP Notification send
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>zebra[18]: client 5 disconnected
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>fpmsyncd[15]: Received route update for prefix 10.1.0.32/32 nexthop 10.0.0.0 (RTM_NEWROUTE)
+</span></code></pre></div>
+<p>orchagent / syncd 側の典型エラー（route programming 失敗時）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>orchagent: :- create: Failed to create next hop 10.0.0.1 on Ethernet0, rv:-2
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>orchagent: :- doTask: Failed to remove still referenced next hop 10.0.0.1 on Ethernet0
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>syncd: :- processQuadEvent: api SAI_API_ROUTE failed in syncd mode: SAI_STATUS_ITEM_ALREADY_EXISTS
+</span></code></pre></div>
+<p><code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が出る場合は LPM / NextHop / NHG のいずれかが枯渇しています。<code>crm</code> を確認します。</p>
+<h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一覧 summary</td>
+<td><code>show ip bgp summary</code> / <code>show ipv6 bgp summary</code></td>
+</tr>
+<tr>
+<td>neighbor 詳細</td>
+<td><code>show ip bgp neighbor &lt;ip&gt;</code></td>
+</tr>
+<tr>
+<td>neighbor の受信 prefix</td>
+<td><code>show ip bgp neighbor &lt;ip&gt; received-routes</code></td>
+</tr>
+<tr>
+<td>neighbor の送信 prefix</td>
+<td><code>show ip bgp neighbor &lt;ip&gt; advertised-routes</code></td>
+</tr>
+<tr>
+<td>VRF 指定</td>
+<td><code>show ip bgp vrf &lt;vrf&gt; [summary\|neighbor &lt;ip&gt;]</code></td>
+</tr>
+<tr>
+<td>route-map</td>
+<td><code>show route-map [&lt;name&gt;]</code></td>
+</tr>
+<tr>
+<td>route flush</td>
+<td><code>vtysh -c "clear ip bgp &lt;ip&gt; [soft]"</code></td>
+</tr>
+<tr>
+<td>FRR 直接</td>
+<td><code>vtysh -c "show bgp ipv4 unicast"</code></td>
+</tr>
+<tr>
+<td>FIB</td>
+<td><code>show ip route</code>（zebra）、APPL_DB の <code>ROUTE_TABLE</code></td>
+</tr>
+<tr>
+<td>Suppress FIB</td>
+<td><code>show bgp ipv4 unicast suppress-fib-pending</code></td>
+</tr>
+<tr>
+<td>BMP 状態</td>
+<td><code>vtysh -c "show bmp"</code></td>
+</tr>
+<tr>
+<td>CRM 残量</td>
+<td><code>crm show resources all</code>、<code>crm show summary</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_db-state_db-counter">関連 CONFIG_DB / STATE_DB / counter<a class="headerlink" href="#config_db-state_db-counter" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>CONFIG_DB:BGP_NEIGHBOR|&lt;ip&gt;</code> — <code>asn</code>、<code>local_addr</code>、<code>name</code>、<code>admin_status</code>、<code>holdtime</code>、<code>keepalive</code> 等。</li>
+<li><code>CONFIG_DB:BGP_PEER_RANGE|&lt;range&gt;</code> — dynamic peering の prefix と peer group。</li>
+<li><code>APPL_DB:ROUTE_TABLE:&lt;prefix&gt;</code> — fpmsyncd が書く install 対象 route。<code>nexthop</code>、<code>ifname</code>、<code>weight</code>。</li>
+<li><code>APPL_DB:NEXTHOP_GROUP_TABLE:&lt;id&gt;</code> — ECMP nexthop group。member 数と weight。</li>
+<li><code>STATE_DB:NEIGH_STATE_TABLE|&lt;ip&gt;</code> — <code>bgpmon</code> が書く CiscoBgp4MIB 用の neighbor state。</li>
+<li><code>STATE_DB:BFD_SESSION_TABLE|...</code> — BGP に紐づく BFD session 状態。</li>
+<li><code>COUNTERS_DB:CRM_*</code> — LPM、neighbor、nexthop、ACL の使用量。<code>crm show summary</code> で参照。</li>
+<li><code>BMP_STATE_DB</code> — BMP collector に出している Adj-RIB-In/Out の snapshot。</li>
+</ul>
+<h2 id="_5">横断参照<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>BGP service が起動しない: <a href="../../01-overview/operations/">運用入口</a> の feature / hostcfgd 確認。</li>
+<li>VRF 内 BGP の route 検証: <a href="../../04-vrf-ecmp/operations/">VRF / ECMP 章 運用</a>。</li>
+<li>EVPN underlay: <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a> の BGP-EVPN session 観察。</li>
+<li>Dual-ToR 上流 BGP の BFD offload: <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
+</ul>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/show-bgp/">CLI: show bgp</a></li>
 <li><a href="../../../reference/cli/show-route-map/">CLI: show route-map</a></li>

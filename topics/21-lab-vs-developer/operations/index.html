@@ -6075,13 +6075,85 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="test plan の読み方">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vs-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS test の最小回し方
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#lab" class="md-nav__link">
     <span class="md-ellipsis">
       
+        lab で起きがちな異常と対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lab_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         lab のスナップショットとやり直し
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lab_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        仮想 lab の日常操作
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB を素早く差し替える
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI ローカル再実行のヒント
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -21459,13 +21531,85 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="test plan の読み方">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vs-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS test の最小回し方
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#lab" class="md-nav__link">
     <span class="md-ellipsis">
       
+        lab で起きがちな異常と対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lab_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         lab のスナップショットとやり直し
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lab_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        仮想 lab の日常操作
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB を素早く差し替える
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI ローカル再実行のヒント
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -21505,25 +21649,48 @@
 <li>仮想 lab を 1 つ立て、<a href="../../../guides/evaluator/">評価者向けガイド</a> を起点に章をめくる。</li>
 <li>必要なら GNS3 で 2〜3 台つなぎ、BGP / VLAN / L3 / VRF の章を試す。</li>
 <li>ASIC 依存の挙動（buffer、PFC、watermark、optics）は VS では再現しないため、評価対象から外すか、対応 HW での検証に切り替える。</li>
+<li>毎回 image を作り直すのが手間なら、<code>docker save</code> で SONiC-VS image を tar で保存して再 import すると 1 分以内で復旧できる。</li>
 </ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>host$ docker save docker-sonic-vs:latest | gzip &gt; sonic-vs.tar.gz
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>host$ docker load -i sonic-vs.tar.gz
+</span></code></pre></div>
 <h3 id="_3">初学者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>SONiC-VS 1 台で <code>docker ps</code>、Redis、orchagent、syncd を見る。</li>
 <li><a href="../../../guides/beginner/">初学者向けガイド</a> から章本文の概念ページに進む。</li>
 <li>CONFIG_DB と CLI を写経しながら、章本文の設定ページを開く。</li>
 </ul>
+<p>最初に触ると概観が掴める典型コマンド:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ docker ps
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>admin@sonic:~$ show version
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>admin@sonic:~$ show interfaces status
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>admin@sonic:~$ redis-cli -n 4 KEYS &quot;PORT|*&quot; | head
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>admin@sonic:~$ docker exec swss supervisorctl status
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>admin@sonic:~$ docker exec syncd supervisorctl status
+</span></code></pre></div>
+<p><code>config interface ip add Ethernet0 10.0.0.1/24</code> のような操作のあと、CONFIG_DB → APPL_DB → ASIC_DB へどう伝わったかを <code>redis-cli -n {4,0,1}</code> で覗くと SONiC の流れ全体が体感できる。</p>
 <h3 id="_4">運用者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>実機を触る前に SONiC-VS で CLI / CONFIG_DB の手応えを確認する。</li>
 <li><a href="../../../guides/operator/">運用者向けガイド</a> と <a href="../../11-reboot/">Reboot / Upgrade / Lifecycle 章</a> で reboot 系の流れを掴む。</li>
 <li>console / terminal server の構成は本章 <a href="../setup/">設定</a> の物理 lab セクションを使う。</li>
+<li>本番投入予定の image は事前に lab で <code>show techsupport</code> を 1 回取り、ベースラインの dump を残しておくと、現地で「ふだんと違うログ」が一目で分かる。</li>
 </ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ sudo show techsupport
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@sonic:~$ ls /var/dump/
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic_dump_&lt;host&gt;_&lt;ts&gt;.tar.gz
+</span></code></pre></div>
 <h3 id="_5">開発者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../guides/developer/">開発者向けガイド</a> で build / test / HLD 起票の流れを押さえる。</li>
 <li>VS で再現可能な範囲は VS で完結させ、CI（test plan ページ）に乗せる。</li>
 <li>ASIC 依存の改修は HW lab を別途確保し、SAI / syncd / platform 章と組で読む。</li>
+<li>VS 内の orchagent / syncd は gdb / strace でアタッチ可能。</li>
 </ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ docker exec -it swss bash
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>root@sonic:/# gdb -p $(pidof orchagent)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>root@sonic:/# strace -fp $(pidof portsyncd) 2&gt;&amp;1 | head
+</span></code></pre></div>
 <h2 id="test-plan">test plan の読み方<a class="headerlink" href="#test-plan" title="Permanent link">&para;</a></h2>
 <p>test plan ページは「何を検証するか」「どの topology / PTF を使うか」「想定 result」が書かれています。実機 troubleshooting や運用手順書ではないので、章本文と混ぜないようにします。</p>
 <table>
@@ -21553,8 +21720,104 @@
 </tbody>
 </table>
 <p>実機が要らない test plan（VS test、Ansible test）はローカルで再現できます。実機 or PTF + ASIC が要る test plan は、CI 側で何が回っているかの参照として読むのが現実的です。</p>
-<h2 id="lab">lab のスナップショットとやり直し<a class="headerlink" href="#lab" title="Permanent link">&para;</a></h2>
+<h3 id="vs-test">VS test の最小回し方<a class="headerlink" href="#vs-test" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>host$ git clone https://github.com/sonic-net/sonic-buildimage
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>host$ cd sonic-buildimage/platform/vs
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>host$ make sonic-vs-image
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>host$ cd ../../../sonic-mgmt/tests
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>host$ ./run_tests.sh -n vms-kvm-t0 -t bgp/test_bgp_fact.py
+</span></code></pre></div>
+<p>詳細な topology / inventory / testbed の組み立ては sonic-mgmt リポジトリの README（testbed セクション）を参照します。</p>
+<h2 id="lab">lab で起きがちな異常と対処<a class="headerlink" href="#lab" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>一次切り分け</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VS 起動後 <code>system not ready</code> が消えない</td>
+<td><code>show system-health detail</code> で停止 service 特定</td>
+<td>当該 docker のログ確認、不要 feature は disable</td>
+</tr>
+<tr>
+<td><code>docker ps</code> に SWSS / syncd が出ない</td>
+<td><code>journalctl -u swss.service</code>、image の build 失敗</td>
+<td>image 再 import、<code>config feature state</code> 確認</td>
+</tr>
+<tr>
+<td>GNS3 でリンクが上がらない</td>
+<td>host 側の veth、MTU、bridge</td>
+<td><code>ip link</code>、<code>brctl show</code>、MTU を 9100 に揃える</td>
+</tr>
+<tr>
+<td>PTF 経由のパケットが届かない</td>
+<td>PTF と DUT の inject ポート対応</td>
+<td><code>testbed.yaml</code> の <code>vlan_configs</code> を再確認</td>
+</tr>
+<tr>
+<td>VS で reboot が <code>kdump</code> で落ちる</td>
+<td>VM の cpu/mem が足りない</td>
+<td>KVM のリソース増強、<code>platform</code> 系設定を minimal に</td>
+</tr>
+</tbody>
+</table>
+<h2 id="lab_1">lab のスナップショットとやり直し<a class="headerlink" href="#lab_1" title="Permanent link">&para;</a></h2>
 <p>仮想 lab は壊して作り直すのが安いので、運用上の壊れ・状態の不整合は再起動より image 再生成のほうが早い場合が多いです。実機運用の手順を「lab で何度も繰り返す」のが lab の役目で、状態を温存する設計は基本的に不要です。</p>
+<p>ただし「再現に時間がかかる障害を掴んだ瞬間」は別で、そのときは下記を取ってから何もせず保全します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ sudo show techsupport
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$ sudo docker exec syncd syncd_dump.sh
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>admin@sonic:~$ for n in 0 1 4 6 13 14; do
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>&gt;   redis-cli -n $n --rdb /tmp/dump-db-$n.rdb
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>&gt; done
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>admin@sonic:~$ tar czf /tmp/lab-snapshot.tgz /var/dump /var/log /tmp/dump-db-*.rdb
+</span></code></pre></div>
+<p>これは <a href="../../20-swss-sai-redis/operations/">SWSS / SAI / Redis 章</a> の techsupport / dump 取得と同じ手順です。</p>
+<h2 id="lab_2">仮想 lab の日常操作<a class="headerlink" href="#lab_2" title="Permanent link">&para;</a></h2>
+<p>頻出する VS / KVM 操作をまとめておくと、毎回検索する手間が省けます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>host$ virsh list --all
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>host$ virsh start sonic-vs-01
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>host$ virsh console sonic-vs-01
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>host$ virsh shutdown sonic-vs-01
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>host$ virsh destroy sonic-vs-01   # 強制停止（state は壊れる前提）
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>host$ virsh snapshot-create-as sonic-vs-01 baseline
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>host$ virsh snapshot-revert sonic-vs-01 baseline
+</span></code></pre></div>
+<p>snapshot を 1 つ作っておくと「設定を試す → 戻す」を秒で回せます。docker ベースの VS（<code>docker run docker-sonic-vs</code>）なら commit / restore でも同じことが可能。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>host$ docker commit sonic-vs-01 sonic-vs-baseline:latest
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>host$ docker rm -f sonic-vs-01
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>host$ docker run -d --name sonic-vs-01 sonic-vs-baseline:latest
+</span></code></pre></div>
+<h2 id="config_db">CONFIG_DB を素早く差し替える<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<p>lab では <code>config_db.json</code> をテンプレ化しておき、用途別に差し替えると章ごとの検証が速い。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>admin@sonic:~$ sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.bgp-t0.json
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>admin@sonic:~$ sudo cp /tmp/config_db.vlan-only.json /etc/sonic/config_db.json
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>admin@sonic:~$ sudo config reload -y
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>admin@sonic:~$ show ip bgp summary
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>admin@sonic:~$ show vlan brief
+</span></code></pre></div>
+<p>minigraph 経由派なら <code>minigraph.xml</code> を差し替えて <code>config load_minigraph -y</code> でも同じ。</p>
+<h2 id="ci">CI ローカル再実行のヒント<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h2>
+<p>CI で落ちた test を手元 VS で再現する場合、PTF と DUT の port mapping が一致しないと PTF テストが空振りする。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>host$ cat sonic-mgmt/ansible/inventory
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>host$ cat sonic-mgmt/ansible/testbed.yaml | grep -A5 vms-kvm-t0
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>host$ docker exec ptf_vms-kvm-t0 ip link show | grep eth
+</span></code></pre></div>
+<p><code>ptf_*</code> コンテナ内の eth と DUT 側の Ethernet の対応は testbed yaml で決まる。失敗の 9 割はここの番号ずれ。</p>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../guides/evaluator/">評価者向けガイド</a></li>
+<li><a href="../../../guides/beginner/">初学者向けガイド</a></li>
+<li><a href="../../../guides/operator/">運用者向けガイド</a></li>
+<li><a href="../../../guides/developer/">開発者向けガイド</a></li>
+<li><a href="../../11-reboot/">Reboot / Upgrade / Lifecycle 章</a></li>
+<li><a href="../../20-swss-sai-redis/operations/">SWSS / SAI / Redis 章</a>（共通 dump / SAI 失敗観察）</li>
+<li><a href="../../02-bgp/">BGP 章</a> / <a href="../../06-l2-vlan-lag/">VLAN・LAG 章</a>（VS で最初に試すと感覚が掴める）</li>
+<li>本章 <a href="../setup/">設定</a>（lab の物理 / 仮想セットアップ）</li>
+</ul>
 
 
 

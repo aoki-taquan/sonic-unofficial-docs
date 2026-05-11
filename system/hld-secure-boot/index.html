@@ -12047,6 +12047,67 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21585,6 +21646,67 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21739,7 +21861,57 @@
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>dmesg<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;module verification failed&quot;</span>
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>cat<span class="w"> </span>/sys/module/&lt;mod&gt;/sections/.note.*<span class="w"> </span><span class="m">2</span>&gt;/dev/null
 </span></code></pre></div>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>2026-05-11 時点の現行 master を裏取り。</p>
+<h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>取り込み済み（署名スクリプト）</strong>: <code>sonic-net/sonic-buildimage</code> <code>scripts/signing_secure_boot_dev.sh</code>, <code>scripts/secure_boot_signature_verification.sh</code>, <code>files/image_config/secureboot/</code>。</li>
+<li><strong>取り込み済み（ビルド変数）</strong>: <code>sonic-buildimage/rules/config</code> L280-L295（<code>SECURE_UPGRADE_DEV_SIGNING_KEY</code> / <code>SECURE_UPGRADE_SIGNING_CERT</code> / <code>SECURE_UPGRADE_KERNEL_CAFILE</code> / <code>SECURE_UPGRADE_MODE</code> / <code>SECURE_UPGRADE_PROD_SIGNING_TOOL</code> / <code>SECURE_UPGRADE_PROD_TOOL_ARGS</code>）。</li>
+<li><strong>取り込み済み（Docker 連携）</strong>: <code>sonic-buildimage/Makefile.work</code> L366-L383, L625-L628（署名鍵 / 証明書を ONIE installer ビルドコンテナへ bind mount、<code>SECURE_UPGRADE_MODE</code> を伝搬）。</li>
+<li><strong>HLD と差分あり</strong>: HLD が示す <code>SB_BUILD=production</code> / <code>SB_DEV_KEY</code> 形式のビルド変数は <strong>存在しない</strong>。現行は <code>SECURE_UPGRADE_MODE=prod|dev|no_sign</code> と <code>SECURE_UPGRADE_DEV_SIGNING_KEY</code> / <code>SECURE_UPGRADE_SIGNING_CERT</code> のセットに置き換わっている。</li>
+</ul>
+<h3 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>HLD（doc/secure_boot/hld_secure_boot.md）</th>
+<th>現行 master</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make SB_BUILD=production all</code></td>
+<td><code>make SECURE_UPGRADE_MODE=prod SECURE_UPGRADE_PROD_SIGNING_TOOL=/path/tool.sh all</code></td>
+</tr>
+<tr>
+<td><code>SB_BUILD=dev SB_DEV_KEY=... SB_DEV_CERT=...</code></td>
+<td><code>SECURE_UPGRADE_MODE=dev SECURE_UPGRADE_DEV_SIGNING_KEY=... SECURE_UPGRADE_SIGNING_CERT=...</code></td>
+</tr>
+<tr>
+<td>Phase 1 のみ（kernel / shim / GRUB のみ署名）</td>
+<td>secure upgrade（image 全体の署名）と統合された一連の変数体系に移行。kernel CA 埋め込み (<code>SECURE_UPGRADE_KERNEL_CAFILE</code>) も追加</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<p>HLD の <code>SB_BUILD=production</code> を渡しても <strong>Makefile に解決規則が無く無視される</strong>（署名なし image が出来てしまう）。production 署名済 image を期待する読者がそのまま打つと、<code>mokutil --sb-state</code> で <code>SecureBoot disabled</code> の結果に至る恐れがある。</p>
+<h3 id="4">4. 回避策<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<p>現行のビルド変数を使う:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># production（ベンダ署名ツール経由）</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>make<span class="w"> </span><span class="nv">SECURE_UPGRADE_MODE</span><span class="o">=</span>prod<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">     </span><span class="nv">SECURE_UPGRADE_PROD_SIGNING_TOOL</span><span class="o">=</span>/path/to/vendor_sign.sh<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">     </span><span class="nv">SECURE_UPGRADE_PROD_TOOL_ARGS</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">     </span><span class="nv">SECURE_UPGRADE_KERNEL_CAFILE</span><span class="o">=</span>/path/to/ca-bundle.pem<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">     </span>all
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># dev（自前鍵）</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>make<span class="w"> </span><span class="nv">SECURE_UPGRADE_MODE</span><span class="o">=</span>dev<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">     </span><span class="nv">SECURE_UPGRADE_DEV_SIGNING_KEY</span><span class="o">=</span>/path/to/db.key<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">     </span><span class="nv">SECURE_UPGRADE_SIGNING_CERT</span><span class="o">=</span>/path/to/db.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">     </span>all
+</span></code></pre></div>
+<p>最新の変数リストは <code>sonic-buildimage/rules/config</code> のコメントブロック（L275-L300 付近）を参照。</p>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

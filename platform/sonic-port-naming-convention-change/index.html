@@ -15447,6 +15447,67 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-port_configini-alias-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. port_config.ini の alias 列は HLD 提案命名に切替わっていない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-cli-sonic-utilities-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. CLI / sonic-utilities / yang への変更は無い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-portchannel-lag-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. PortChannel 等 LAG 系命名の決定は HLD 上未解決のまま
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21585,6 +21646,67 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-port_configini-alias-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. port_config.ini の alias 列は HLD 提案命名に切替わっていない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-cli-sonic-utilities-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. CLI / sonic-utilities / yang への変更は無い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-portchannel-lag-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. PortChannel 等 LAG 系命名の決定は HLD 上未解決のまま
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21786,7 +21908,42 @@ reasoning: 4 段階移行プランの根拠。
 <li>新命名と従来命名の混在で alias 解決が壊れる場合、CLI と内部名のどちらを参照しているかを確認</li>
 <li>chassis で <code>ets0p1</code> が <code>ets1p1</code> と衝突する場合、line card の slot 番号が想定どおりに振られているか確認</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は <strong>いずれも採用されていない</strong>。</p>
+<h3 id="1-port_configini-alias-hld">1. <code>port_config.ini</code> の alias 列は HLD 提案命名に切替わっていない<a class="headerlink" href="#1-port_configini-alias-hld" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: Stage 1 として alias 列を <code>etsXpY[abcd]</code> 系の新命名に切替える。</li>
+<li><strong>実装位置</strong>: <code>sonic-buildimage/device/&lt;vendor&gt;/&lt;sku&gt;/port_config.ini</code> を代表例で確認:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a># name          lanes             alias         index  speed
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet0       1,2,3,4           Ethernet1/1    1     100000
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet4       5,6,7,8           Ethernet2/1    2     100000
+</span></code></pre></div></li>
+<li>alias は <strong><code>Ethernet&lt;panel&gt;/&lt;sub&gt;</code></strong> 形式（<code>Ethernet1/1</code>, <code>Ethernet1/2</code>, ...）が業界共通で残っており、<code>etsXpY</code> / <code>ets1p1</code> 系は <code>device/</code> ツリー全体に出現しない。</li>
+<li><strong>差分の中身</strong>: 提案された 4 stage（alias 切替 → コード依存除去 → テスト依存除去 → 内部名切替）は 1 つも踏まれていない。</li>
+<li><strong>読者への影響</strong>: HLD を読んで「現行は <code>ets0p1</code> 系」と想定すると CLI / config / 監視全てが噛み合わない。実際は <code>EthernetN</code>（内部キー）+ <code>Ethernet&lt;panel&gt;/&lt;sub&gt;</code>（前面パネル名）+ <code>Ethernet&lt;panel&gt;/&lt;sub&gt;a..d</code>（breakout）が安定した運用慣行。</li>
+<li><strong>回避策</strong>:</li>
+<li>CLI 入出力では <code>Ethernet&lt;panel&gt;/&lt;sub&gt;</code> を使う（<code>show interface alias</code> 出力参照）。</li>
+<li>自動化スクリプトでは CONFIG_DB の <code>PORT|EthernetN</code> を直接参照する。</li>
+<li>chassis では <code>Ethernet&lt;panel&gt;</code> の <code>panel</code> をリニアに振る運用が主流で、slot 番号を埋め込む <code>ets&lt;X&gt;p&lt;Y&gt;</code> 命名は採用例なし。</li>
+</ul>
+<h3 id="2-cli-sonic-utilities-yang">2. CLI / sonic-utilities / yang への変更は無い<a class="headerlink" href="#2-cli-sonic-utilities-yang" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: stage 2/3 では <code>Ethernet</code> prefix への依存をコードとテストから除去する。</li>
+<li><strong>実装位置</strong>: <code>sonic-utilities</code> の <code>config</code> / <code>show</code> / <code>swssconfig</code> / <code>sonic-yang-models</code> のいずれにも HLD 由来の改修は確認できない。<code>scripts/portconfig</code> / <code>swsscommon</code> の interface 名処理は <code>Ethernet</code> prefix を前提に書かれた箇所が多数残存。</li>
+<li><strong>読者への影響</strong>: 「Stage 2 完了済み」と仮定して <code>Ethernet</code> 以外の internal name で CONFIG_DB を書くと <code>intfmgrd</code> / <code>portsyncd</code> が処理しない／クラッシュする可能性がある。</li>
+<li><strong>回避策</strong>: 内部名は <code>EthernetN</code>（N は lanes 開始番号と同期）を厳守。chassis でも <code>Ethernet-IB&lt;n&gt;</code> / <code>Ethernet&lt;n&gt;</code> 等の既存 prefix を踏襲する。</li>
+</ul>
+<h3 id="3-portchannel-lag-hld">3. PortChannel 等 LAG 系命名の決定は HLD 上未解決のまま<a class="headerlink" href="#3-portchannel-lag-hld" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: PortChannel 命名は未解決として保留。</li>
+<li><strong>実装位置</strong>: <code>PORTCHANNEL|PortChannel&lt;N&gt;</code> 形式が CONFIG_DB / yang / CLI ともに統一実装。</li>
+<li><strong>読者への影響</strong>: HLD で「未解決」と読んで独自命名を試みると CONFIG_DB スキーマと衝突。</li>
+<li><strong>回避策</strong>: PortChannel 名は <code>PortChannel&lt;数値&gt;</code> の慣行に従う。</li>
+</ul>
+<h3 id="_12">結論<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p><strong>本 HLD は採用されなかった</strong>。現行 master は従来通り <code>EthernetN</code>（内部）+ <code>Ethernet&lt;panel&gt;/&lt;sub&gt;</code>（alias）の 2 階層命名で安定しており、本ページの記述は「提案として残った歴史的設計」として読むこと。実運用で参照すべきは各 SKU の <code>port_config.ini</code> および <code>CONFIG_DB.PORT</code> の実値。</p>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - 本提案がどの Stage まで実装されたか（master では未だ EthernetN が主流）
 - port_config.ini alias 列の運用ガイドライン

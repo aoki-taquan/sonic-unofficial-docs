@@ -12087,6 +12087,67 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21441,6 +21502,67 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21580,7 +21702,71 @@
 <li>時刻が大きくずれる → 起動直後のステップ調整有無、<code>tinker step</code> 等の設定</li>
 <li>認証エラー → key id と鍵値が一致しているか、daemon 種別による hash アルゴリズム差</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>2026-05-11 時点の現行 master を裏取り。</p>
+<h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>取り込み済み（chrony への移行が完了）</strong>: <code>sonic-net/sonic-buildimage</code> <code>files/image_config/chrony/chrony.conf.j2</code>, <code>files/image_config/chrony/chrony.keys.j2</code>, <code>files/image_config/chrony/chrony-config.sh</code>, <code>files/image_config/chrony/chronyd-starter.sh</code>、<code>src/sonic-config-engine/tests/chrony.conf.j2</code>, <code>src/sonic-config-engine/tests/chrony.keys.j2</code>、<code>sonic-net/sonic-utilities</code> <code>tests/chrony.conf</code>。</li>
+<li><strong>未取り込み（ntpd 系）</strong>: <code>ntp.conf.j2</code> / <code>ntpd.service</code> の参照は <strong>既に削除済み</strong>。<code>sonic-buildimage</code> に <code>ntp</code> 関連の旧設定ファイルは残っていない。</li>
+<li><strong>HLD と差分あり</strong>: 本 HLD（<code>doc/ntp/ntp-design.md</code>）は <strong>ntpd 前提</strong> で書かれており、現行 master は <strong>chrony 一本化</strong> に置き換わっている。並列 HLD <code>doc/ntp/migration-to-chrony.md</code> が事実上の権威となる。</li>
+</ul>
+<h3 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD（ntp-design.md）</th>
+<th>現行 master</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>daemon</td>
+<td>ntpd</td>
+<td>chrony (<code>chronyd</code>)</td>
+</tr>
+<tr>
+<td>設定生成</td>
+<td><code>ntp.conf.j2</code> を hostcfgd が render</td>
+<td><code>chrony.conf.j2</code> を <code>chrony-config.sh</code> + jinja で render（<code>files/image_config/chrony/</code>）</td>
+</tr>
+<tr>
+<td>起動</td>
+<td><code>service ntp restart</code></td>
+<td><code>chronyd-starter.sh</code> 経由</td>
+</tr>
+<tr>
+<td>TLS / NTS</td>
+<td>ntpd は未対応</td>
+<td>chrony は <strong>NTS 対応</strong>（<code>chrony.conf</code> ディレクティブで設定可）</td>
+</tr>
+<tr>
+<td>認証 hash</td>
+<td>MD5 / SHA1 中心</td>
+<td>chrony は SHA256 / SHA384 等もサポート</td>
+</tr>
+<tr>
+<td>CLI 表面</td>
+<td><code>config ntp add/del</code>, <code>show ntp</code></td>
+<td>同名 CLI を維持しつつ内部で chrony 制御</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HLD どおりに <code>service ntp status</code> や <code>ntpq -p</code> を期待しても <strong>存在しない</strong>（<code>chronyc sources</code> が代替）。</li>
+<li><code>/etc/ntp.conf</code> を編集しても効かない。設定は <code>/etc/chrony/chrony.conf</code>（jinja 生成）。</li>
+<li>認証鍵やキー形式が ntpd と異なる（chrony は <code>keyfile</code> ディレクティブ）。</li>
+<li><code>show ntp</code> の出力フォーマットも chrony 由来のものに変わっている。</li>
+</ul>
+<h3 id="4">4. 回避策<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>状態確認は <code>chronyc sources</code> / <code>chronyc tracking</code> を使う。</li>
+<li>設定変更は <code>config ntp add/del/source-interface</code> / <code>show ntp</code> を維持しつつ、内部の差分は <code>/etc/chrony/chrony.conf</code> を確認。</li>
+<li>NTS / 認証を使う場合は chrony のディレクティブを参照し、本 HLD ではなく <code>doc/ntp/migration-to-chrony.md</code> を参照する。</li>
+<li>mgmt VRF 経路は chrony 側で <code>bindcmdaddress</code> / <code>bindaddress</code> を mgmt VRF 内に固定する設定が必要（<code>chrony-config.sh</code> の VRF 分岐を参照）。</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - 現行 master の NTP daemon（ntpd vs chrony）の選定状況確認
 - hostcfgd の NTP config rendering 経路（jinja テンプレート）の現行実装確認

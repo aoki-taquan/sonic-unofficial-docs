@@ -7969,6 +7969,67 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-error_db-error_route_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ERROR_DB / ERROR_ROUTE_TABLE は未実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bgp_error_cfg_table-config-bgp-error-handling-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. BGP_ERROR_CFG_TABLE / config bgp error-handling CLI も未実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-bgp-suppress-fib-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 後発機能 BGP Suppress FIB Pending が代替
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21541,6 +21602,67 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-error_db-error_route_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ERROR_DB / ERROR_ROUTE_TABLE は未実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bgp_error_cfg_table-config-bgp-error-handling-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. BGP_ERROR_CFG_TABLE / config bgp error-handling CLI も未実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-bgp-suppress-fib-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 後発機能 BGP Suppress FIB Pending が代替
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21682,7 +21804,40 @@ reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 <li><code>show ip route</code> に <code>#</code> が増えない → <code>BGP_ERROR_CFG_TABLE.enable=true</code> 確認、fpmsyncd のログで subscribe 完了確認</li>
 <li>enable した直後の既存 route には適用されない → BGP session を <code>clear bgp *</code> で reset</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。<strong>本 HLD は採用されず、後発の BGP Suppress FIB Pending に置き換えられている</strong>。</p>
+<h3 id="1-error_db-error_route_table">1. <code>ERROR_DB</code> / <code>ERROR_ROUTE_TABLE</code> は未実装<a class="headerlink" href="#1-error_db-error_route_table" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: 新規 Redis DB <code>ERROR_DB</code> と <code>ERROR_ROUTE_TABLE</code> を導入し、orchagent → fpmsyncd → zebra → bgpd の経路で FIB-install 失敗を伝搬する。</li>
+<li><strong>実装位置</strong>: <code>sonic-swss-common/common/schema.h</code>、<code>sonic-swss/orchagent/</code>、<code>sonic-buildimage/src/sonic-yang-models/</code>、<code>sonic-frr/</code> のいずれにも <code>ERROR_ROUTE_TABLE</code> / <code>ERROR_DB</code>（独立 Redis DB id）の定義は <strong>存在しない</strong>（grep ヒット 0）。</li>
+<li><strong>差分の中身</strong>: HLD で計画された subscriber クラス（fpmsyncd 側 <code>ErrorListener</code> 等）も実装されていない。FPM socket の双方向化（zebra への送信路）も入っていない。</li>
+<li><strong>読者への影響</strong>: 「HLD のとおりに <code>ERROR_ROUTE_TABLE</code> を watch して BGP advertise を抑止する」設計を期待すると動かない。現行は orchagent の <code>SWSS_LOG_ERROR</code> で失敗ログが出るのみで、BGP 側は失敗を構造化された形で受け取らない。</li>
+<li><strong>回避策</strong>: route install 失敗による誤広告を防ぐには次節の <strong>BGP Suppress FIB Pending</strong> を使う。</li>
+</ul>
+<h3 id="2-bgp_error_cfg_table-config-bgp-error-handling-cli">2. <code>BGP_ERROR_CFG_TABLE</code> / <code>config bgp error-handling</code> CLI も未実装<a class="headerlink" href="#2-bgp_error_cfg_table-config-bgp-error-handling-cli" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: CLI <code>config bgp error-handling enable/disable</code> で <code>BGP_ERROR_CFG_TABLE</code> を ON/OFF する。</li>
+<li><strong>実装位置</strong>: <code>sonic-utilities/config/main.py</code> に <code>bgp error-handling</code> サブコマンドは存在せず、<code>sonic-yang-models</code> にも <code>sonic-bgp-error-cfg.yang</code> 相当は無い。</li>
+<li><strong>差分の中身</strong>: CLI / yang / CONFIG_DB スキーマ全てが提案レベルで止まっている。</li>
+<li><strong>読者への影響</strong>: 設定する手段が無いため、本 HLD の「条件分岐」自体が現行 master では発生しない。</li>
+<li><strong>回避策</strong>: 本機能は <strong>設定しない</strong>。必要な機能は次項に置き換わっている。</li>
+</ul>
+<h3 id="3-bgp-suppress-fib-pending">3. 後発機能 BGP Suppress FIB Pending が代替<a class="headerlink" href="#3-bgp-suppress-fib-pending" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>実装位置</strong>: <code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:107</code>
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>bgp suppress-fib-pending
+</span></code></pre></div>
+  デフォルトで <code>bgpd</code> の起動 config に挿入される。FRR 側は <code>dplane_fpm_nl</code> と zebra の RTM_F_OFFLOAD/RTM_F_TRAP フラグを利用し、ASIC への install 完了通知を受けるまで BGP advertise を保留する。</li>
+<li><strong>差分の中身</strong>: HLD は「ERROR_DB 経由で失敗を能動通知」だが、実装は「ASIC 取り込み成功の確認を待ってから広告する」<strong>inverse</strong> のアプローチ。失敗時の挙動は「ずっと pending のまま広告しない」となる。</li>
+<li><strong>読者への影響</strong>: 結果として運用観点では本 HLD の意図と同じ「未 install な route は広告しない」が満たされる。一方で「失敗の明示的なカウント／lookup table」は提供されない（pending のままという受動的な状態）。</li>
+<li><strong>回避策</strong>:</li>
+<li>実運用では BGP Suppress FIB Pending を有効のままにする（デフォルト有効）。</li>
+<li>「どの prefix が pending か」を知りたいときは <code>vtysh -c "show ip route &lt;prefix&gt;"</code> の <code>T&gt;</code> / <code>&gt;</code> flag（installed/offloaded）を確認するか、<code>show bgp ipv4 unicast</code> の status code を見る。</li>
+<li>詳細は <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/">routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md</a> を参照。</li>
+</ul>
+<h3 id="_11">結論<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p><strong>本 HLD（2019）は採用されなかった</strong>。設計意図は後発の BGP Suppress FIB Pending（FRR <code>bgp suppress-fib-pending</code> + RTM_F_OFFLOAD）に引き継がれており、ERROR_DB 経由の仕組みは実装されていない。本ページは設計史としての参考。</p>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - ERROR_ROUTE_TABLE / ERROR_DB スキーマの現行 master 取り込み確認
 - fpmsyncd 側 ERROR_ROUTE_TABLE subscriber と Zebra への送信ロジック実装確認

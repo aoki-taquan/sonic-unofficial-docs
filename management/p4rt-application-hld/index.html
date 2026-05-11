@@ -21807,6 +21807,18 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <li><code>sonic-swss/orchagent/p4orch/p4orch.h:46</code> に <code>class P4Orch : public ZmqOrch</code>、<code>p4orch_util.cpp</code> に <code>APP_P4RT_*_TABLE_NAME</code> の sub-table 定義群</li>
 <li><code>sonic-swss/orchagent/p4orch/ext_tables_manager.cpp:723</code> で <code>APP_P4RT_TABLE_NAME</code> 経由のレスポンス publish</li>
 </ul>
+<p><strong>差分の中身</strong>: HLD は新規クラス <code>HashOrch</code> を <strong>OrchAgent に追加</strong>し、P4Info 由来の hash 設定を専任で扱うと示唆していた。実際には既存の <code>SwitchOrch</code> が <code>CFG_SWITCH_HASH_TABLE_NAME</code> を購読し、<code>SWITCH_HASH_FIELD_*</code> → <code>SAI_NATIVE_HASH_FIELD_*</code> の対応表 (<code>switch_helper.cpp:24-</code>) で SAI 属性に変換するという、より既存設計に寄せた実装に着地した。</p>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li>アーキ図に <code>HashOrch</code> を書き起こすと <strong>存在しない box</strong> になる。レビュー時に「HashOrch のソースはどこか」と質問された場合、<code>SwitchOrch</code> を案内する必要がある。</li>
+<li>P4RT App から hash 設定を反映させる経路は HLD と論理的には同じ（P4RT App → CONFIG_DB → orchagent → SAI hash 属性）だが、debug 時に attach するクラス名が違う。</li>
+<li>P4Info 由来の hash 設定が反映されない場合のトラブルシュート先は <code>SwitchOrch::doTask</code> 系（<code>switchorch.cpp:1507</code> 付近）。</li>
+</ul>
+<p><strong>回避策 / 対応方法</strong>:</p>
+<ul>
+<li>設計ドキュメントを書く際は HashOrch ではなく <strong>SwitchOrch のハッシュ責務</strong> として記述する。</li>
+<li>ハッシュフィールド名の対応は <code>switch_helper.cpp:24-</code> のテーブルを正として参照。新規フィールド追加時はこのマップに対応エントリを足す必要がある。</li>
+</ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

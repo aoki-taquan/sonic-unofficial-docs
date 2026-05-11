@@ -1190,7 +1190,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show feature の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21406,7 +21472,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show feature の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21496,7 +21628,166 @@
 <h2 id="factory-reset">factory reset は復旧操作として読む<a class="headerlink" href="#factory-reset" title="Permanent link">&para;</a></h2>
 <p><a href="../../../architecture/reset-factory-design/">reset-factory</a> は、設定 corruption からの復旧や機材再利用前のサニタイズに使う強い操作です。<code>default</code>、<code>keep-basic</code>、<code>keep-all-config</code>、<code>only-config</code> のモードで、config、ログ・ファイル、ユーザをどこまで残すかが変わります。</p>
 <p>日常の切り戻しには、まず GCU checkpoint / rollback、保存済み <code>config_db.json</code>、<code>config reload</code> を検討します。<code>reset-factory</code> は「設定基盤を初期状態へ戻す」操作であり、ログやユーザまで消すモードがあるため、障害解析中に安易に実行しない方がよい入口です。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="show-feature">show feature の出力サンプル<a class="headerlink" href="#show-feature" title="Permanent link">&para;</a></h2>
+<p>実装上、<code>show feature status</code> は CONFIG_DB の <code>FEATURE</code> テーブルと STATE_DB の <code>FEATURE|&lt;name&gt;</code> を結合して表示します。標準構成では次の通り、<code>State</code>、<code>AutoRestart</code>、<code>SetOwner</code> の 3 カラムが出ます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Feature     State           AutoRestart     SetOwner
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>----------  --------------  --------------  ----------
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>bgp         enabled         enabled         local
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>database    always_enabled  always_enabled  local
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>dhcp_relay  enabled         enabled         kube
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>lldp        enabled         enabled         kube
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>nat         enabled         enabled         local
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>pmon        enabled         enabled         kube
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>radv        enabled         enabled         kube
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>restapi     disabled        enabled         local
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>sflow       disabled        enabled         local
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>snmp        enabled         enabled         kube
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>swss        enabled         enabled         local
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>syncd       enabled         enabled         local
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>teamd       enabled         enabled         local
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>telemetry   enabled         enabled         kube
+</span></code></pre></div>
+<p>remote management が有効な構成では追加で <code>SystemState</code>、<code>UpdateTime</code>、<code>ContainerId</code>、<code>Version</code>、<code>CurrentOwner</code>、<code>RemoteState</code> が出ます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Feature   State    AutoRestart  SystemState  UpdateTime           ContainerId   Version       SetOwner  CurrentOwner  RemoteState
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>--------  -------  -----------  -----------  -------------------  ------------  ------------  --------  ------------  -----------
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>snmp      enabled  enabled      up           2020-11-12 23:32:56  aaaabbbbcccc  20201230.100  kube      kube          kube
+</span></code></pre></div>
+<p>カラムの意味:</p>
+<ul>
+<li><code>State</code> は CONFIG_DB の <code>FEATURE|&lt;name&gt;:state</code>。<code>enabled</code> / <code>disabled</code> / <code>always_enabled</code> / <code>always_disabled</code> を取り得ます。<code>always_*</code> は build-time fix で <code>config feature</code> から変更できません。</li>
+<li><code>AutoRestart</code> は systemd unit が落ちた時に <code>hostcfgd</code> が再起動するかの方針です。</li>
+<li><code>SystemState</code> は STATE_DB が示す現在状態。<code>up</code> 以外（<code>down</code> / 空）は service が立ち上がっていないことを疑います。</li>
+<li><code>SetOwner</code> は <code>local</code>（host）か <code>kube</code>（kubernetes-managed）の指定で、<code>CurrentOwner</code> がそれと一致しなければ kube join 中などの過渡状態です。</li>
+</ul>
+<h2 id="_2">異常検出パターン<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>観測値</th>
+<th>疑う状態</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>State=enabled</code> だが <code>SystemState=down</code></td>
+<td>container 起動失敗、依存 service 未起動、image 不一致</td>
+<td><code>systemctl status &lt;feature&gt;</code>、<code>docker ps -a</code>、<code>journalctl -u &lt;feature&gt;</code></td>
+</tr>
+<tr>
+<td><code>AutoRestart=enabled</code> で繰り返し再起動</td>
+<td>container 内部の crash loop</td>
+<td><code>docker logs &lt;container&gt;</code>、<code>/var/log/syslog</code> の <code>Main process exited</code> 連続発生</td>
+</tr>
+<tr>
+<td><code>delayed=True</code> の feature が起動しない</td>
+<td><code>delayed-</code> timer 単位の起動順、または前提 service 失敗</td>
+<td><code>systemctl list-timers</code>、<code>&lt;feature&gt;-delayed.timer</code> を確認</td>
+</tr>
+<tr>
+<td><code>SetOwner=kube</code> で <code>CurrentOwner=local</code></td>
+<td>kube join 未完了、または kube image pull 失敗</td>
+<td><code>show feature config</code> で <code>version</code> 表示、<code>docker images</code> で kube tag 有無</td>
+</tr>
+<tr>
+<td><code>config save</code> 後も次回 reboot で消える</td>
+<td><code>/etc/sonic/config_db.json</code> への書き込み失敗、または read-only FS</td>
+<td><code>ls -l /etc/sonic/</code>、<code>mount</code> で rw 確認</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">典型的なログサンプル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><code>hostcfgd</code> は feature の enable/disable と AutoRestart 反映を担当します。<code>/var/log/syslog</code> には次のような行が出ます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>hostcfgd: Feature &#39;bgp&#39; is enabled and started
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>hostcfgd: Feature &#39;snmp&#39; is disabled and stopped
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>hostcfgd: Feature &#39;telemetry&#39; restart policy set to &#39;enabled&#39;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>hostcfgd: Feature &#39;lldp&#39; state transition disabled-&gt;enabled
+</span></code></pre></div>
+<p><code>systemctl status bgp</code> の異常時には次のようなテイルが付きます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>bgp.service: Main process exited, code=exited, status=1/FAILURE
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>bgp.service: Failed with result &#39;exit-code&#39;.
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Stopped BGP container.
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>bgp.service: Scheduled restart job, restart counter is at 5.
+</span></code></pre></div>
+<p><code>docker logs bgp</code> で container 側の zebra/bgpd 立ち上げに失敗している場合は別途 BGP 章を参照します。</p>
+<h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>feature 一覧</td>
+<td><code>show feature status</code></td>
+</tr>
+<tr>
+<td>設定だけ確認</td>
+<td><code>show feature config</code></td>
+</tr>
+<tr>
+<td>個別 feature 切替</td>
+<td><code>config feature state &lt;name&gt; enabled\|disabled</code></td>
+</tr>
+<tr>
+<td>AutoRestart 切替</td>
+<td><code>config feature autorestart &lt;name&gt; enabled\|disabled</code></td>
+</tr>
+<tr>
+<td>owner 切替</td>
+<td><code>config feature owner &lt;name&gt; local\|kube</code></td>
+</tr>
+<tr>
+<td>service 再起動</td>
+<td><code>systemctl restart &lt;feature&gt;</code></td>
+</tr>
+<tr>
+<td>systemd unit 状態</td>
+<td><code>systemctl status &lt;feature&gt;</code></td>
+</tr>
+<tr>
+<td>container 状態</td>
+<td><code>docker ps</code>、<code>docker logs &lt;container&gt;</code></td>
+</tr>
+<tr>
+<td>設定保存</td>
+<td><code>config save -y</code></td>
+</tr>
+<tr>
+<td>設定再適用</td>
+<td><code>config reload -y</code></td>
+</tr>
+<tr>
+<td>差分適用</td>
+<td><code>config apply-patch &lt;patch.json&gt;</code></td>
+</tr>
+<tr>
+<td>target で置換</td>
+<td><code>config replace &lt;target.json&gt;</code></td>
+</tr>
+<tr>
+<td>工場初期化</td>
+<td><code>sonic-installer set-default &lt;image&gt;</code> ／ <code>config reset-factory</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_db-state_db">関連 CONFIG_DB / STATE_DB<a class="headerlink" href="#config_db-state_db" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>CONFIG_DB:FEATURE|&lt;name&gt;</code> — <code>state</code>、<code>auto_restart</code>、<code>delayed</code>、<code>high_mem_alert</code>、<code>set_owner</code>、<code>support_syslog_rate_limit</code>、<code>has_global_scope</code>、<code>has_per_asic_scope</code>、<code>has_per_dpu_scope</code> を保持。</li>
+<li><code>CONFIG_DB:SYSTEM_DEFAULTS|&lt;flag&gt;</code> — 起動時の既定挙動フラグ。<code>tunnel_qos_remap</code>、<code>synchronous_mode</code>、<code>mac_expiry_for_dualtor</code> 等。</li>
+<li><code>STATE_DB:FEATURE|&lt;name&gt;</code> — <code>system_state</code>、<code>update_time</code>、<code>container_id</code>、<code>container_version</code>、<code>current_owner</code>、<code>remote_state</code>。</li>
+<li><code>STATE_DB:DEVICE_METADATA|localhost</code> — 起動時のマシン状態（hwsku、platform、type）の確認用。</li>
+</ul>
+<h2 id="_5">横断参照<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>BGP service が起動しない場合: <a href="../../02-bgp/operations/">BGP 章 運用</a> の neighbor / orchagent 切り分け。</li>
+<li>VXLAN / VNET 関連 service の前提: <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a>。</li>
+<li>L2 service（teamd、swss）の連動失敗: <a href="../../06-l2-vlan-lag/operations/">L2 章 運用</a>。</li>
+<li>Dual-ToR 構成での feature 順序（mux、linkmgrd、telemetry）: <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
+</ul>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/sonic-optional-feature-control-enhancement/">FEATURE テーブルによるオプショナル機能制御</a></li>
 <li><a href="../../../reference/cli/show-feature/">show feature サブコマンド</a></li>

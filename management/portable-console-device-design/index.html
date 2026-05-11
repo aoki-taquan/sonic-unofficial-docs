@@ -14570,6 +14570,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21607,6 +21618,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21737,7 +21759,50 @@
 <li>異なるモデル混在時に動かない → 仕様。1 種類だけプラグインするか、autodetect を disable にして手動指定する。</li>
 <li>daisy-chain で奥のデバイスが見えない → ベンダー実装の最大段数を確認。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / CONFIG_DB スキーマのいずれにも入っていない。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>HLD</th>
+<th>現行 master</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONSOLE_SWITCH</code> テーブルに <code>autodetect</code> / <code>vendor_name</code> / <code>model_name</code> フィールド追加</td>
+<td>必須</td>
+<td><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang</code> L79-90 では <code>console_mgmt</code> 配下に <code>enabled</code> と <code>default_escape_char</code> のみ。<code>autodetect</code> / <code>vendor_name</code> / <code>model_name</code> フィールドは未定義</td>
+<td>⚠️ 未取り込み</td>
+</tr>
+<tr>
+<td><code>config console-switch autodetect enable/disable</code> CLI</td>
+<td>必須</td>
+<td><code>sonic-utilities/config/console.py</code> L22 <code>enable_console_switch</code> / L43 <code>disable_console_switch</code> は <code>CONSOLE_SWITCH\|console_mgmt:enabled</code> を yes/no で操作するのみ。<code>autodetect</code> / <code>vendor_name</code> / <code>model_name</code> のサブコマンドは存在しない</td>
+<td>⚠️ 未取り込み</td>
+</tr>
+<tr>
+<td><code>sonic-platform-common</code> へのベンダー実装統合</td>
+<td>想定</td>
+<td><code>sonic-platform-common</code> にポータブル console-switch 用の抽象基底クラスは見当たらない</td>
+<td>⚠️ 未取り込み</td>
+</tr>
+</tbody>
+</table>
+<p><strong>差分の中身</strong>: HLD は USB 抜き挿しに反応して line を動的に追加する設計だが、現行実装の <code>config console</code> グループは <strong>静的な console line（CONSOLE_PORT table）の baud / flow control / remote_device 設定</strong> に限定される。autodetect モードに対応する hostd / udev rule も搭載されていない。</p>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li>HLD 設定例（<code>sudo config console-switch autodetect enable</code> 等）は <strong>そのまま打ってもエラーになる</strong>。CLI として存在しない。</li>
+<li>ポータブル USB console-switch を SONiC 上で正式サポートする経路は、現状ではベンダー側で udev rule + 独自スクリプトを bake する必要がある。</li>
+</ul>
+<p><strong>回避策 / 対応方法</strong>:</p>
+<ul>
+<li>動的 USB console 追加が必要な場合は、ホスト側 udev rule（<code>/etc/udev/rules.d/</code>）で <code>ttyUSB*</code> を固定 path にバインドし、<code>CONSOLE_PORT</code> テーブルに静的に登録する（<code>config console add &lt;line&gt;</code>）。</li>
+<li>HLD 提案フィールドを使った設定は、上流に PR が取り込まれるまでは独自パッチでの運用となる。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

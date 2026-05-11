@@ -21954,6 +21954,18 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 <li><strong>PFCWD フィールド名</strong>: HLD は <code>pfc_wd_sw_enable</code> と表記しているが、現行 master では <code>pfcwd_sw_enable</code>（アンダースコアの位置が異なる）として実装されている。<code>sonic-utilities/scripts/db_migrator.py:1186-1193</code> で <code>pfc_enable</code> から <code>pfcwd_sw_enable</code> を派生している。CONFIG_DB / YANG (<code>sonic-port-qos-map</code>) を読む際は実装側の名称に合わせる必要がある。</li>
 <li>一方、<code>tunneldecaporch.cpp:834,1084</code>（<code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> / <code>..._TC_TO_PRIORITY_GROUP_MAP</code>）、<code>muxorch.cpp:259,2347</code>（MuxTunnel の <code>SAI_TUNNEL_PEER_MODE_P2P</code>）、<code>files/build_templates/qos_config.j2:441</code> の Dual-ToR 限定 <code>AZURE_TUNNEL</code> 出力は HLD どおり実装されていることを確認した。</li>
 </ul>
+<p><strong>差分の中身</strong>: フィールド名は <code>pfc_wd_sw_enable</code>（HLD 表記）→ <code>pfcwd_sw_enable</code>（実装）でアンダースコアの位置が異なる。<code>db_migrator.py:1186-1193</code> で <code>pfc_enable</code> の値から自動派生される。YANG モジュール <code>sonic-port-qos-map</code> 上のフィールド名も実装側 (<code>pfcwd_sw_enable</code>) を正とする。</p>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li>HLD の表記そのままで <code>config interface pfc-wd ...</code> 系のコマンドや config_db.json テンプレートを書くと、<strong>フィールドが反映されない</strong>（YANG validation で弾かれるか、orchagent が無視する）。</li>
+<li>PFCWD の動作対象キューが「PFC 有効キュー全てではなく、明示指定したキューのみ」になる挙動を期待していた場合、<code>pfcwd_sw_enable</code> が migrator により自動生成される <strong>新規 ToR では正しく動く</strong> が、過去バージョンから upgrade した環境では <code>db_migrator</code> を走らせていないと旧挙動（PFC 有効キュー = WD 対象）になる。</li>
+</ul>
+<p><strong>回避策 / 対応方法</strong>:</p>
+<ul>
+<li>フィールド名は <strong>常に <code>pfcwd_sw_enable</code>（アンダースコア 2 ヶ所）</strong> を使う。<code>grep -r pfc_wd_sw_enable</code> で旧表記が混在していないか確認する。</li>
+<li>upgrade 環境では <code>sonic-utilities/scripts/db_migrator.py</code> の最新版を実行し、<code>PORT_QOS_MAP|&lt;port&gt;:pfcwd_sw_enable</code> が生成されているか CONFIG_DB を確認する。生成されていなければ手動で投入する。</li>
+<li>HLD 由来のドキュメントやテンプレートは新表記に書き換える。</li>
+</ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

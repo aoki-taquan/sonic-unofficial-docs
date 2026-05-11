@@ -3128,6 +3128,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SNMP 経路の確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3140,6 +3151,28 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連章
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21461,6 +21494,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SNMP 経路の確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21473,6 +21517,28 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連章
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21512,19 +21578,104 @@
 <h2 id="_2">起動直後の確認<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><code>show system-health summary</code> と <code>show system-health detail</code> で、システム全体の health monitor 状態と監視対象 daemon / service / docker の up/down を見ます。配下では <code>system-health</code> monitor が <code>system_health_monitoring_config.json</code> に従い、container や critical process、user defined check を polling しています。</p>
 <p><code>show system-health monitor-list</code> で「いま何を見ているか」、<code>show system-health events</code> で過去 24 時間のステータス変化を確認します。<code>system-ready</code> の HLD と組み合わせると、起動 sequence の途中で詰まっているのか、起動後に壊れたのかを切り分けられます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ show system-health summary
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>System status summary
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  System status LED  green
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  Services:
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    Status: OK
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  Hardware:
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    Status: OK
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>admin@sonic:~$ show system-health detail
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>System services and devices monitor list
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>Name                  Status    Type
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>--------------------  --------  -----------
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>bgp                   OK        Process
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>swss                  OK        Process
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>syncd                 OK        Process
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>teamd                 OK        Process
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>PSU 1                 OK        Device
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>Fan Tray 1            OK        Device
+</span></code></pre></div>
+<p><code>Not OK</code> が見えた場合は対応する <code>Type</code> が手がかりです。Process なら docker と critical process、Device なら PMON / <code>pmon-daemon-control.json</code> を見ます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ show system-health events
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Name              Status    Last_Change_Time
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>----------------  --------  -------------------
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>bgp               OK        2026-05-10 02:13:11
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>swss              Failed    2026-05-10 04:01:00
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>swss              OK        2026-05-10 04:02:08
+</span></code></pre></div>
+<p><code>Failed → OK</code> の遷移時刻が syslog の事象と一致するかを照合します。</p>
 <h2 id="counter">Counter で「いま」を見る<a class="headerlink" href="#counter" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show interfaces counters         # port basic
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show queue counters              # queue
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>show priority-group counters     # PG
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>show acl counters                # ACL rule
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>show counters interface          # 拡張
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>counterpoll show                 # 各 flex counter group の状態
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show interfaces counters         # port basic
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show queue counters              # queue
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show priority-group counters     # PG
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show acl counters                # ACL rule
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>show counters interface          # 拡張
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>counterpoll show                 # 各 flex counter group の状態
 </span></code></pre></div>
 <p><code>counterpoll</code> group が <code>disable</code> の場合、対応する <code>COUNTERS:</code> table は更新されません。新しい port を増やしたあと、counter が空の場合は polling 設定を疑います。</p>
+<p>異常検出パターン:</p>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>counter / DB</th>
+<th>典型原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show queue counters</code> が空</td>
+<td><code>COUNTERS_QUEUE_NAME_MAP</code> 空</td>
+<td><code>counterpoll queue</code> disable / syncd 未起動</td>
+</tr>
+<tr>
+<td><code>aclshow</code> が更新されない</td>
+<td><code>COUNTERS_DB</code> ACL counter</td>
+<td><code>counterpoll acl</code> disable</td>
+</tr>
+<tr>
+<td><code>portstat</code> の数字が増えない</td>
+<td><code>COUNTERS:Ethernet*</code></td>
+<td>syncd / orchagent stuck、SAI hang</td>
+</tr>
+<tr>
+<td>すべての counter が止まる</td>
+<td>flexcounterd</td>
+<td><code>docker ps</code> で syncd / flexcounter 確認</td>
+</tr>
+</tbody>
+</table>
 <h2 id="techsupport">障害時の保全: techsupport<a class="headerlink" href="#techsupport" title="Permanent link">&para;</a></h2>
 <p><code>show techsupport</code> は <code>/var/dump/sonic_dump_*.tar.gz</code> を生成します。中身は CLI 一式、<code>/var/log/</code> 配下、core dump、syslog、Redis dump、journal などです。容量が大きいので、調査では <code>--since "2 hours ago"</code> のような時間窓制限を付けます。</p>
 <p>Event-driven techsupport は coredump や critical event を契機に <code>show techsupport</code> を自動実行する仕組みです。<code>AUTO_TECHSUPPORT_FEATURE</code> で feature 単位の rate limit を制御し、同じ問題で tarball が爆発するのを防ぎます。</p>
 <p>光モジュール障害の調査では、<code>show techsupport</code> が SFP EEPROM page の dump を含むため、<code>sfputil</code> で取り直さなくても tarball から transceiver state を読めます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 直近 2 時間に絞る</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;2 hours ago&quot;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 生成された tarball を確認</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>ls<span class="w"> </span>-lh<span class="w"> </span>/var/dump/sonic_dump_*.tar.gz
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># tarball 内の概要を見る</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>tar<span class="w"> </span>tzf<span class="w"> </span>/var/dump/sonic_dump_sw01_20260510_120000.tar.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-40
+</span></code></pre></div>
+<p>典型的に時間がかかるのは <code>redis dump</code> と SAI dump です。<code>/etc/sonic/sonic_dump_*.conf</code> でセクションを絞ることもできますが、原則はデフォルトで取り、不要部分を後段で削るほうが安全です。</p>
+<p>Event-driven techsupport の rate-limit を見るには:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ redis-cli -n 4 hgetall &quot;AUTO_TECHSUPPORT_FEATURE|bgp&quot;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>1) &quot;state&quot;
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>2) &quot;enabled&quot;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>3) &quot;rate_limit_interval&quot;
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>4) &quot;600&quot;
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>admin@sonic:~$ show auto-techsupport-feature
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Feature  State    Rate Limit Interval
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>-------  -------  -------------------
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>bgp      enabled  600
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>swss     enabled  600
+</span></code></pre></div>
+<p><code>rate_limit_interval</code> (秒) 以内に再発した同 feature の coredump では tarball を作りません。</p>
 <h2 id="dump-utility-object">Dump utility で個別 object を深掘り<a class="headerlink" href="#dump-utility-object" title="Permanent link">&para;</a></h2>
 <p><code>sonic-dump -m PORT -i Ethernet0</code> のように、object と instance を指定すると、全 DB と対応 CLI 出力を 1 つの JSON にまとめます。「この port は CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB / ASIC_DB のどこまで反映されているか」を 1 コマンドで横断確認できます。<code>show techsupport</code> よりも軽く、object と DB の整合性チェックに向きます。</p>
 <h2 id="platform">Platform を疑うとき<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h2>
@@ -21533,6 +21684,23 @@
 <h2 id="kernel-kdump">Kernel が壊れたとき: kdump<a class="headerlink" href="#kernel-kdump" title="Permanent link">&para;</a></h2>
 <p>カーネル panic / oops を保全するには kdump を有効化します。<code>config kdump enable</code> と memory 予約後 reboot で kdump kernel が常駐し、panic 時に <code>/var/crash/</code> に vmcore を残します。</p>
 <p>Remote SSH 機能を使うと、<code>/etc/default/kdump-tools</code> を経由して vmcore を SSH 越しに別ホストへ送れます。ローカルディスクが limited な platform で活きる選択肢ですが、SSH 鍵と remote 側 directory の準備が前提です。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ show kdump status
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Kdump Administrative Mode:  Enabled
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Kdump Operational State:    Ready
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Memory Reserved:            512M
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>Number of Kernel Core Files Stored:  0
+</span></code></pre></div>
+<p><code>Operational State: Not Ready</code> のときは <code>dmesg | grep -i crashkernel</code> で起動オプションを確認します。<code>config kdump memory 512M</code> 後、reboot が必須です。</p>
+<h2 id="snmp">SNMP 経路の確認<a class="headerlink" href="#snmp" title="Permanent link">&para;</a></h2>
+<p>snmpd (<code>docker exec snmp ...</code>) と sonic_ax_impl が SNMP を担います。MIB のうち、IF-MIB は port counter、ENTITY-MIB は platform inventory、SNMPv2-MIB の sysName 等が基本です。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 外部ホストから</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>snmpwalk<span class="w"> </span>-v<span class="w"> </span>2c<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span>sw01<span class="w"> </span>IF-MIB::ifInOctets
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>snmpwalk<span class="w"> </span>-v<span class="w"> </span>2c<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span>sw01<span class="w"> </span>IF-MIB::ifInErrors
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># 装置内で</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>snmp<span class="w"> </span>snmpwalk<span class="w"> </span>-v<span class="w"> </span>2c<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>SNMPv2-MIB::sysDescr
+</span></code></pre></div>
+<p>community / v3 user は CONFIG_DB の <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> です。設定変更後は <code>systemctl restart snmp</code> が必要です。</p>
 <h2 id="_3">調査の典型シーケンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ol>
 <li><code>show system-health summary</code> で全体把握。</li>
@@ -21541,7 +21709,61 @@
 <li>設定整合性は <code>sonic-dump</code> で object 単位に深掘り。</li>
 <li>状況保全は <code>show techsupport</code>、kernel 壊れていれば kdump 確保。</li>
 </ol>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>最初に叩くコマンド</th>
+<th>次に見る場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>何かおかしい (漠然)</td>
+<td><code>show system-health summary</code></td>
+<td>events、daemon up/down</td>
+</tr>
+<tr>
+<td>docker が落ちる</td>
+<td><code>docker ps -a</code> + <code>docker logs &lt;name&gt;</code></td>
+<td><code>/var/log/swss/*</code></td>
+</tr>
+<tr>
+<td>counter が動かない</td>
+<td><code>counterpoll show</code></td>
+<td><code>docker logs syncd</code></td>
+</tr>
+<tr>
+<td>後から原因を調べたい</td>
+<td><code>show techsupport --since</code></td>
+<td><code>/var/dump/</code>、coredump</td>
+</tr>
+<tr>
+<td>kernel panic を保全したい</td>
+<td><code>show kdump status</code></td>
+<td><code>/var/crash/</code>、remote ssh</td>
+</tr>
+<tr>
+<td>SNMP で値が来ない</td>
+<td><code>snmpwalk</code> + <code>docker logs snmp</code></td>
+<td>CONFIG_DB <code>SNMP_*</code></td>
+</tr>
+<tr>
+<td>object と DB の整合確認</td>
+<td><code>sonic-dump -m PORT -i Ethernet0</code></td>
+<td>各 DB の差分</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">関連章<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>章 <a href="../../07-acl-copp-mirror/operations/">07 ACL / CoPP / mirror</a> — data plane drop の counter</li>
+<li>章 <a href="../../08-qos-buffer/operations/">08 QoS / Buffer</a> — queue / PG counter polling</li>
+<li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — telemetry を gNMI で取る</li>
+<li>章 <a href="../../11-reboot/operations/">11 Reboot</a> — reboot-cause / techsupport 連携</li>
+</ul>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/show-system-health/">show system-health</a></li>
 <li><a href="../../../reference/cli/show-techsupport/">show techsupport CLI</a></li>

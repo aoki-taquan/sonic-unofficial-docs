@@ -7479,6 +7479,67 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21529,6 +21590,67 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21744,7 +21866,32 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <li><strong>fpmsyncd / bgpcfgd</strong>: route 失敗の receiver 候補</li>
 <li><strong>debug-framework</strong>: 同時期の framework と機能境界が曖昧（debug は dump 中心、本 framework は failure 通知）</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>2026-05 時点で本 framework は <strong>エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装</strong> な部分採用状態。</p>
+<h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>取り込み済み</strong>:</li>
+<li><code>sonic-swss-common/common/status_code_util.h:11-</code> で <code>SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED</code> 等の enum 群が定義されている。HLD の <code>SWSS_RC_*</code> 体系の最低限は libswsscommon 側に入った。</li>
+<li><strong>未取り込み</strong>:</li>
+<li><code>ERROR_DB</code> / <code>ERROR_ROUTE_TABLE</code> / <code>ERROR_NEIGH_TABLE</code> のテーブル名 define は <code>sonic-swss-common/common/schema.h</code> に<strong>存在しない</strong>（<code>grep -n "ERROR_DB\|ERROR_ROUTE_TABLE" schema.h</code> 0 件。<code>lagid.h:16</code> の <code>LAG_ID_ALLOCATOR_ERROR_DB_ERROR</code> は別物の戻り値定数）。</li>
+<li><code>sonic-swss/orchagent/</code> 配下に <code>ErrorListener</code> / <code>ErrorReporter</code> クラスは未定義。RouteOrch / NeighOrch の SAI 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。</li>
+<li><code>sonic-utilities/</code> に <code>show error-database</code> / <code>sonic-clear error-database</code> CLI が無い。</li>
+</ul>
+<h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
+<p>HLD は「OrchAgent が SAI から失敗を受け取る → <code>ERROR_DB</code> の <code>ERROR_ROUTE_TABLE</code> / <code>ERROR_NEIGH_TABLE</code> に entry を produce → app（fpmsyncd / bgpcfgd 等）が listener で受信 → retry / rollback」というワークフローを定義。実装はエラーコード辞書のみで、<strong>通知 transport（ERROR_DB）と consumer 経路が丸ごと欠落</strong>。app は SAI 失敗を実質知り得ない。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>BGP で route install が SAI レベルで失敗しても、fpmsyncd / bgpcfgd には「成功扱い」で帰る。<code>bgp</code> 側の RIB と ASIC FIB が<strong>サイレントに乖離</strong>する古典的問題が、本 framework の HLD 上の解決にもかかわらず実装されていない。</li>
+<li>「<code>show error-database</code> で失敗を一覧できるはず」と読者が期待しても CLI が無い。</li>
+<li>retry / rollback ロジックを app 側に書く前提だったが、入力 stream が無いので書きようがない。</li>
+</ul>
+<h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>SAI 失敗の発見</strong>: syslog の <code>SAI_STATUS_*</code> を grep するか、<code>swssloglevel -l NOTICE -c &lt;orch&gt;</code> で OrchAgent のログを上げる。<code>ASIC_DB</code> の <code>ERROR</code> 状態を <code>redis-cli -n 1 keys</code> で覗くしかない。</li>
+<li><strong>RIB/FIB 乖離検知</strong>: <code>show ip route</code> と <code>show ip fib</code> の突合スクリプトを別途運用ツール側で実装。FRR の <code>show bgp ipv4 unicast detail</code> と <code>sonic-cli show ip route</code> を突合する。</li>
+<li>上流取り込みを望む場合は HLD 自体を現行 master 構造（<code>Producer/ConsumerStateTable</code>、<code>status_code_util.h</code> の enum 活用）に合わせて再ドラフトする必要がある。本ページの記述は仕様参考扱い。</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-18, discrepancy):
 - sonic-swss-common/common/status_code_util.h: `SWSS_RC_SUCCESS|INVALID_PARAM|DEADLINE_EXCEEDED|UNAVAIL|NOT_FOUND|NO_MEMORY|EXISTS|PERMISSION_DENIED` 等の enum 確認済
 - sonic-swss-common, sonic-swss: `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` の table 名は未登録

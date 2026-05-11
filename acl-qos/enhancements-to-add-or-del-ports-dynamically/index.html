@@ -11337,6 +11337,56 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -21779,6 +21829,56 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22077,11 +22177,29 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <li>zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。</li>
 </ul>
 <h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p>2026-05-09 時点の現行 master を裏取り。</p>
+<p>2026-05 時点の <code>.cache/sonic-sources/</code> master を裏取り。</p>
+<h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>取り込み済み</strong>: <code>sonic-swss/portsyncd</code> の zero-port 対応 (#1808 MERGED)、<code>portsorch</code> の per-port flex counter 動的 add/del (#2019 MERGED)、<code>sonic-buildimage/dockers/docker-lldp/lldpmgrd:129-130,46-198</code> の <code>netdev_oper_status</code> チェックと <code>pending_cmds</code> 管理。</li>
-<li><strong>未取り込み</strong>: <code>sonic-swss</code> PR #2022 (port buffer cfg per-port reference counter) は <strong>CLOSED で未マージ</strong>。HLD で「ref-count &gt; 0 のポート削除拒否」の核となる防御策が現行 master に存在しない。削除時 race の防御は HLD 設計通り動かず、ユーザは依存設定の事前削除順序を厳格に守る必要がある。</li>
-<li>buffermgrd の加入時 race（APP_DB に port 存在チェック）の取り込み状況は未検証。</li>
+<li><strong>取り込み済み</strong>:</li>
+<li><code>sonic-swss/portsyncd/portsyncd.cpp:122-176</code> の <code>PortInitDone</code> / <code>notifyPortConfigDone</code> シグナル経路、および zero-port 対応（PR #1808 MERGED）。</li>
+<li><code>sonic-swss/orchagent/portsorch</code> 側の per-port flex counter 動的 add/del（PR #2019 MERGED）。</li>
+<li><code>sonic-buildimage/dockers/docker-lldp/lldpmgrd:46-198</code> の <code>netdev_oper_status</code> チェック + <code>pending_cmds</code> 管理。</li>
+<li><strong>未取り込み</strong>: <code>sonic-swss</code> PR #2022（port buffer cfg per-port reference counter）は <strong>CLOSED で未マージ</strong>。<code>grep -rn "addBufferRefCount\|m_portBufferRef" sonic-swss/orchagent/</code> も 0 件で、HLD が「ref-count &gt; 0 のポート削除拒否」と書いた防御コードは存在しない。</li>
+<li>buffermgrd 加入時 race（APP_DB の port 存在チェック）の取り込み有無も schema / code 上では未確認。</li>
+</ul>
+<h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
+<p>HLD は port 削除時の race を「ref counter による orchagent 側の自動拒否」で守ると述べていたが、現行 master ではこの拒否ロジックがそもそも存在しない。<strong>port 削除の race セーフ性は HLD 側が想定した形では成立しておらず</strong>、設計どおりの安全性は無い。zero-port 起動と per-port counter 動的化のみが先行採用された状態。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ACL / VLAN / LAG / buffer PG が残ったまま <code>del PORT|EthernetX</code> を実行すると、orchagent が SAI レベルで遅延参照エラーや leak を起こす。ログには大量の <code>SAI_STATUS_OBJECT_IN_USE</code> 等が出うる。</li>
+<li>「HLD には ref counter があるからその順で消せばよい」と読んで運用設計すると、実装側がそれを守ってくれないので事故が起きる。</li>
+<li>zero-port 起動は HLD 自身が「未テスト」と明記しており、production 投入前検証が必須。</li>
+</ul>
+<h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>port を削除する前に必ず</strong>: 関連 <code>ACL_TABLE</code> の <code>ports</code> から外す → <code>VLAN_MEMBER</code> から外す → <code>PORTCHANNEL_MEMBER</code> から外す → <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> / <code>QUEUE</code> / <code>PORT_QOS_MAP</code> の当該ポート行を削除、の手順を運用 runbook 化する。</li>
+<li>自動化する場合、削除前に <code>redis-cli -n 4 keys '*|&lt;port&gt;*'</code> で残依存を列挙して 0 件になることを確認する pre-check を入れる。</li>
+<li>ref counter の上流取り込みが必要な場合、新たな PR を <code>sonic-swss</code> 側に提案する（既存 #2022 のリベース）必要がある。</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">

@@ -9934,6 +9934,67 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21607,6 +21668,67 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21796,7 +21918,29 @@ reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれて�
 <li><code>-u</code> で IPv6 Multicast を狙う場合、<code>-a</code> に IPv6 アドレスを直接指定可能（HLD 上「IPv4 / IPv6 どちらも可」と明記）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>gNOI 側で UDP モードを使いたい場合、本 HLD 時点の proto では <code>-u</code> 系オプションが無く、CLI ラッパー経由の機能を完全には呼び出せない可能性がある。proto / 実装側の更新を確認する。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>2026-05-11 時点の現行 master を裏取り。</p>
+<h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>取り込み済み（CLI 本体）</strong>: <code>sonic-net/sonic-buildimage</code> <code>src/sonic-nettools/wol/src/wol.rs</code> L47-L75（<code>broadcast</code> / <code>udp</code> / <code>ip_address</code> / <code>udp_port</code> / <code>password</code> / <code>count</code> / <code>interval</code> の各 clap 引数）、<code>src/sonic-nettools/wol/src/wol.rs</code> L128（magic packet 組立）、<code>src/sonic-nettools/wol/src/wol.rs</code> L328-L332（raw / udp socket 分岐）。</li>
+<li><strong>取り込み済み（IPv6）</strong>: <code>src/sonic-nettools/wol/src/socket.rs</code> L2, L242-L248（<code>Ipv6Addr::from_str</code> 経由で <code>in6_addr</code> を組み立てる UDP IPv6 経路あり）。</li>
+<li><strong>未取り込み（gNOI）</strong>: <code>sonic-net/sonic-host-services</code> 配下に <code>Wol</code> / <code>wake_on_lan</code> ハンドラは見当たらず、HLD が前提とする <code>SonicWolService</code> の D-Bus ブリッジは <strong>少なくとも sonic-host-services 側には未統合</strong>。</li>
+</ul>
+<h3 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<p>実装は <strong>Rust 製の単独バイナリ</strong>（<code>sonic-buildimage/src/sonic-nettools/wol</code>）であり、HLD が示す Python click ラッパーではない。コマンド名は <code>wol</code> のまま、引数互換は概ね維持されているが、gNOI 経路（<code>SonicWolService</code> proto + sonic-host-service の D-Bus ハンドラ）は実装が見当たらない。<code>-b</code>/<code>-u</code> の排他制御は clap の <code>conflicts_with</code> で実装され（L50, L54）、<code>-c</code>/<code>-i</code> は <code>requires_if</code> で相互必須に変更されている。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>CLI <code>wol</code> の手元動作は HLD のフラグセットでほぼ問題なし。</li>
+<li>gNOI 経由で WoL を叩こうとすると proto / ハンドラの欠落に当たる可能性があり、自動化系（gNOI クライアント）から呼び出せない。</li>
+<li><code>-u</code> モードで <code>-a</code> に IPv6 アドレスを指定する場合、socket 層は対応しているが（<code>socket.rs</code> L242）、<code>-a</code> の clap default <code>255.255.255.255</code> は IPv4 文字列なので <strong>IPv6 を使う場合は <code>-a</code> を明示</strong> する必要がある。</li>
+</ul>
+<h3 id="4">4. 回避策<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>gNOI から起動したい場合は当面 SSH 等で <code>wol</code> バイナリを直接呼ぶ。gNOI 統合状況は <code>sonic-host-services</code> の最新 PR を追跡。</li>
+<li>IPv6 UDP モード: <code>wol Vlan1000 00:11:22:33:44:55 -u -a ff02::1 -t 9</code>。</li>
+<li>Rust 実装の <code>--help</code> で実引数のレンジ（<code>count</code> 1〜5、<code>interval</code> 0〜2000 ms 等）を再確認してから自動化に組み込む。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

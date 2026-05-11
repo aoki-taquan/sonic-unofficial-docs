@@ -9956,6 +9956,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-config-mac-config-vlan-range-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. config mac / config vlan range CLI 未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と一致する実装（orch 側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-hld-2019" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. HLD は 2019 年改訂のため命名上の小差異あり
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -21713,6 +21752,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-config-mac-config-vlan-range-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. config mac / config vlan range CLI 未取り込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と一致する実装（orch 側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-hld-2019" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. HLD は 2019 年改訂のため命名上の小差異あり
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22001,15 +22079,35 @@
 </ul>
 <h2 id="_8">実装との乖離<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
+<h3 id="1-config-mac-config-vlan-range-cli">1. <code>config mac</code> / <code>config vlan range</code> CLI 未取り込み<a class="headerlink" href="#1-config-mac-config-vlan-range-cli" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>config mac</code> / <code>config vlan range</code> CLI 未取り込み</strong>: HLD は <code>config mac aging_time</code> / <code>config mac add</code> / <code>config mac del</code> / <code>config vlan range</code> / <code>config vlan member range</code> を提案するが、現行 master の <code>sonic-utilities/config/main.py</code> には <code>mac</code> グループおよび <code>vlan range</code> サブコマンドは存在しない。<code>show mac aging-time</code> (<code>show/main.py:1244</code>) は実装済みだが、CLI 経由での aging_time 設定 / static MAC 追加 / VLAN レンジ作成は <strong>CONFIG_DB 直接書き込み（sonic-cfggen / config_db.json 編集）</strong> か、<code>sonic-utilities/scripts/fdbclear</code>（旧来の <code>sonic-clear fdb</code> 相当）でのフラッシュ運用となっている。</li>
-<li><strong>HLD と一致する実装</strong>: <code>sonic-swss/orchagent/fdborch.cpp</code> 側は HLD どおり実装済み。具体的には:<ul>
-<li><code>fdborch.cpp:91-138</code> MAC move event ハンドリング（<code>SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE</code> を使用）</li>
-<li><code>fdborch.cpp:459,1254-1316,1754</code> <code>saved_fdb_entries</code> による「port が VLAN 未メンバの間に来た static MAC を保留 → 復活」の実装</li>
-<li><code>fdborch.cpp:985,1006,1038,1090,1217</code> <code>flushFDBEntries(bridge_port_oid, vlan_oid)</code> による per-port / per-VLAN / per-(port,VLAN) flush API</li>
-<li><code>sonic-swss/orchagent/switchorch.cpp:49,664,1674-1686</code> で <code>SWITCH_TABLE.fdb_aging_time</code> キーから <code>SAI_SWITCH_ATTR_FDB_AGING_TIME</code> への反映</li>
+<li><strong>HLD 記述</strong>: <code>config mac aging_time &lt;sec&gt;</code> / <code>config mac add &lt;mac&gt; &lt;vlan&gt; &lt;port&gt;</code> / <code>config mac del &lt;mac&gt; &lt;vlan&gt;</code> / <code>config vlan range add &lt;from&gt; &lt;to&gt;</code> / <code>config vlan member range add &lt;from&gt; &lt;to&gt; &lt;port&gt;</code> を <code>sonic-utilities</code> に追加する。</li>
+<li><strong>実装位置</strong>: <code>sonic-utilities/config/main.py</code> 全体を grep しても <code>mac</code> グループ・<code>vlan range</code> サブコマンドは見当たらない（<code>mac</code> の hit は <code>localhost.mac</code> 等の device_metadata 関連のみ:<code>config/main.py:2542,2568,2569</code>）。<code>show mac aging-time</code> (<code>sonic-utilities/show/main.py:1244</code> 付近) のみ読み取り側が実装済み。</li>
+<li><strong>差分の中身</strong>: HLD で提案された 5 つの CLI コマンドは未取り込み。<code>config vlan add &lt;vlan_id&gt;</code> 単体は存在するが、レンジ指定（<code>100 199</code>）と <code>-w</code>（pipelining）オプションは存在しない。</li>
+<li><strong>読者への影響</strong>: HLD の CLI 例（<code>config mac add ...</code> や <code>config vlan range add ...</code>）をそのまま打つと "no such command" エラーで失敗する。VLAN を 100 個一括投入したい運用要件があっても CLI では実現できない。</li>
+<li><strong>回避策</strong>:</li>
+<li>aging_time 設定: <code>sonic-db-cli CONFIG_DB HSET 'SWITCH|switch' fdb_aging_time 300</code> で直接書く。<code>switchorch.cpp</code> がこれを受けて <code>SAI_SWITCH_ATTR_FDB_AGING_TIME</code> に反映する（switchorch.cpp:49,664,1674-1686 で確認）。</li>
+<li>static MAC: <code>sonic-db-cli CONFIG_DB HSET 'FDB|Vlan100|00-11-22-33-44-55' port Ethernet0</code> で直接書く。</li>
+<li>VLAN レンジ作成: <code>for i in $(seq 100 199); do config vlan add $i; config vlan member add $i Ethernet0; done</code> のループで代替（pipelining は効かないので遅い）。あるいは <code>config_db.json</code> を直接編集して <code>config reload</code>。</li>
+<li>FDB クリア: <code>sonic-clear fdb all</code> / <code>sonic-clear fdb port Ethernet0</code> は実装済みなので利用可。</li>
 </ul>
-</li>
+<h3 id="2-hld-orch">2. HLD と一致する実装（orch 側）<a class="headerlink" href="#2-hld-orch" title="Permanent link">&para;</a></h3>
+<p>orchagent 側は HLD のとおり実装済み:</p>
+<ul>
+<li><strong>MAC move event ハンドリング</strong>: <code>sonic-swss/orchagent/fdborch.cpp:91-138</code>、<code>SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE</code> を fdborch.cpp:507,583 で設定。MAC move を SAI 経由で許可し、port 変化時の再学習を許容する。</li>
+<li><strong>saved FDB エントリ</strong>: <code>fdborch.cpp:459</code> で <code>saved_fdb_entries[update.port.m_alias].push_back(...)</code>、<code>fdborch.cpp:1254-1271</code> で port が VLAN メンバになったタイミングで <code>saved_fdb_entries</code> を取り出して再投入する経路を確認。HLD の「port が VLAN 未メンバの間の static MAC を保留」設計と一致。</li>
+<li><strong>per-port / per-VLAN flush API</strong>: <code>fdborch.cpp:1079-1090</code> <code>void FdbOrch::flushFDBEntries(sai_object_id_t bridge_port_oid, sai_object_id_t vlan_oid)</code> が中核。呼び出しサイト:</li>
+<li><code>fdborch.cpp:985</code> <code>flushFDBEntries(port.m_bridge_port_id, SAI_NULL_OBJECT_ID);</code> （per-port）</li>
+<li><code>fdborch.cpp:1006</code> <code>flushFDBEntries(SAI_NULL_OBJECT_ID, vlanPort.m_vlan_info.vlan_oid);</code> （per-VLAN）</li>
+<li><code>fdborch.cpp:1038,1248</code> <code>flushFDBEntries(port.m_bridge_port_id, vlan.m_vlan_info.vlan_oid);</code> （per-(port,VLAN)）</li>
+<li><strong>aging_time</strong>: <code>sonic-swss/orchagent/switchorch.cpp:49</code> で <code>fdb_aging_time</code> キーを mapping、<code>:664</code> switch 状態取得、<code>:1674-1686</code> で <code>SAI_SWITCH_ATTR_FDB_AGING_TIME</code> を set。HLD と一致。</li>
+</ul>
+<h3 id="3-hld-2019">3. HLD は 2019 年改訂のため命名上の小差異あり<a class="headerlink" href="#3-hld-2019" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: 一部の図で <code>FDB_TABLE:&lt;vlan&gt;:&lt;mac&gt;</code> 形式（コロン区切り）と書かれているが、現行は <code>FDB_TABLE:&lt;vlan&gt;|&lt;mac&gt;</code> のような hybrid 表記が並ぶ。</li>
+<li><strong>実装位置</strong>: schema.h と各 orch のキー組み立てを参照。</li>
+<li><strong>読者への影響</strong>: redis-cli で keys pattern を指定する際に区切り文字を間違えると hit しない。</li>
+<li><strong>回避策</strong>: <code>redis-cli -n 0 keys 'FDB_TABLE:*'</code> で取得した実際のキーフォーマットを基準に書く。区切り文字は SONiC バージョンで揺らぐので、固定パターンに頼らない。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

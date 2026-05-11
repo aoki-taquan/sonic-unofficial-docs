@@ -15049,6 +15049,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-handlesaistatus-orch-base-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. handleSai*Status は Orch base の virtual 関数ではない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-error_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ERROR_DB は実装されていない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-hld-todo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. HLD 内の TODO が大半空白
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -21579,6 +21618,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-handlesaistatus-orch-base-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. handleSai*Status は Orch base の virtual 関数ではない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-error_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ERROR_DB は実装されていない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-hld-todo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. HLD 内の TODO が大半空白
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -21779,10 +21857,41 @@ reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシュー
 </ul>
 <h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
+<h3 id="1-handlesaistatus-orch-base-virtual">1. <code>handleSai*Status</code> は Orch base の virtual 関数ではない<a class="headerlink" href="#1-handlesaistatus-orch-base-virtual" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>handleSai*Status</code> は Orch base の virtual 関数ではない</strong>: <code>sonic-swss/orchagent/saihelper.h:19-22</code> に <strong>free function</strong> として宣言され、<code>saihelper.cpp</code> に共通実装がある。個別 Orch（<code>vrforch.cpp</code> / <code>copporch.cpp</code> / <code>dtelorch.cpp</code> / <code>macsecorch.cpp</code> / <code>sfloworch.cpp</code> / <code>natorch.cpp</code> / <code>dash/dashportmaporch.cpp</code> / <code>dash/dashvnetorch.cpp</code> 等 28 箇所程度）が呼び出し側で利用する形になっている。<code>Orch</code> 基底クラスの override は提供されていない。</li>
-<li><strong><code>ERROR_DB</code> は実装されていない</strong>: <code>sonic-swss</code> と <code>sonic-swss-common</code> のどちらにも <code>ERROR_APPL_*</code> テーブル / <code>ERROR_DB</code> という独立 Redis DB の定義は存在しない（<code>lagid.h</code> の <code>LAG_ID_ALLOCATOR_ERROR_DB_ERROR</code> は名前衝突するが無関係な定数）。HLD で計画されていた fpmsyncd 等への失敗エスカレーション経路は未実装。</li>
-<li><strong>HLD 内の TODO（Other SAI statuses / SAI API 別 / Orch 別の対応表）も大半が空白のまま</strong>。</li>
+<li><strong>HLD 記述</strong>: <code>Orch</code> 基底クラスに <code>handleSaiCreateStatus</code> / <code>handleSaiSetStatus</code> / <code>handleSaiRemoveStatus</code> / <code>handleSaiGetStatus</code> を virtual として追加し、個別 Orch が override する。</li>
+<li><strong>実装位置</strong>: <code>sonic-swss/orchagent/saihelper.h:19-22</code> に <strong>free function</strong> として宣言され、共通実装が <code>saihelper.cpp</code> にある。<code>orchagent/orch.h</code> の <code>Orch</code> クラスには対応 virtual は存在しない。</li>
+<li><strong>差分の中身</strong>:
+  <div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// saihelper.h:19-22 （実装）</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">task_process_status</span><span class="w"> </span><span class="nf">handleSaiCreateStatus</span><span class="p">(</span><span class="n">sai_api_t</span><span class="w"> </span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">task_process_status</span><span class="w"> </span><span class="nf">handleSaiSetStatus</span><span class="p">(</span><span class="n">sai_api_t</span><span class="w"> </span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">task_process_status</span><span class="w"> </span><span class="nf">handleSaiRemoveStatus</span><span class="p">(</span><span class="n">sai_api_t</span><span class="w"> </span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">task_process_status</span><span class="w"> </span><span class="nf">handleSaiGetStatus</span><span class="p">(</span><span class="n">sai_api_t</span><span class="w"> </span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
+</span></code></pre></div>
+  個別 Orch（<code>vrforch.cpp</code> / <code>copporch.cpp</code> / <code>dtelorch.cpp</code> / <code>macsecorch.cpp</code> / <code>sfloworch.cpp</code> / <code>natorch.cpp</code> / <code>dash/dashportmaporch.cpp</code> / <code>dash/dashvnetorch.cpp</code> 等 28 箇所程度）は <strong>呼び出し側</strong> として利用するだけで、override / 再定義はしていない。</li>
+<li><strong>読者への影響</strong>: SAI 失敗時のリターン分岐ロジックは Orch 個別ではなく <code>saihelper.cpp</code> の共通実装 1 つに集約される。HLD を読んで「Orch 派生クラスを grep する」とハンドリングロジックに辿り着けない。SAI API 別／Orch 別のカスタム挙動が必要な場合は呼び出し前後で個別 Orch がラップする実装パターンとなっている。</li>
+<li><strong>回避策</strong>: コードを追うときは <code>saihelper.cpp</code> の 4 関数を出発点に、<code>grep -rn "handleSaiCreateStatus\|handleSaiSetStatus" sonic-swss/orchagent/</code> で全呼び出しサイトを列挙する。個別 Orch の return code 判断は <code>task_need_retry</code> / <code>task_failed</code> / <code>task_success</code> の戻り値で分岐される（<code>orch.h</code> の <code>task_process_status</code> enum 参照）。</li>
+</ul>
+<h3 id="2-error_db">2. <code>ERROR_DB</code> は実装されていない<a class="headerlink" href="#2-error_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: 新規 Redis DB <code>ERROR_DB</code> を導入し、<code>ERROR_APPL_ROUTE_TABLE</code> 等のテーブルに SAI 失敗を蓄積、<code>fpmsyncd</code> 等上位プロセスが consume する。</li>
+<li><strong>実装位置</strong>: <code>sonic-swss-common/common/schema.h</code> および <code>sonic-swss/</code> 全体に <code>ERROR_APPL_*</code> テーブル名と <code>ERROR_DB</code> の Redis DB id 定義は <strong>存在しない</strong>（grep ヒット 0、<code>lagid.h</code> の <code>LAG_ID_ALLOCATOR_ERROR_DB_ERROR</code> は無関係な定数）。</li>
+<li><strong>差分の中身</strong>: HLD で計画されていた次のフローはどこにも書かれていない:</li>
+<li>orchagent 側で SAI 失敗時に <code>ERROR_DB.ERROR_APPL_*</code> へ HSET</li>
+<li>fpmsyncd / その他上位プロセスが ERROR_DB を subscribe</li>
+<li>上位プロセスがハンドリング後に <code>DEL</code> で除去</li>
+<li><strong>読者への影響</strong>: 個別 Orch が SAI 失敗を検出した場合、現状は <code>SWSS_LOG_ERROR</code> でログを出して <code>task_need_retry</code> / <code>task_failed</code> / <code>exit(EXIT_FAILURE)</code> のいずれかに分岐するのみ。fpmsyncd 等上位プロセスへの構造化エスカレーション経路は無く、上位は <strong>ログ監視か APPL_DB / ASIC_DB の状態差から失敗を間接推定</strong> するしかない。route install エラーに限れば後発の <strong>BGP Suppress FIB Pending</strong>（<code>dplane_fpm_nl</code> + RTM_F_OFFLOAD 経路）が代替経路を提供する。</li>
+<li><strong>回避策</strong>:</li>
+<li>SAI 失敗を運用監視で拾うなら <code>/var/log/syslog</code> の <code>SAI_STATUS_*</code> 文字列を集約する。</li>
+<li>BGP 経路の install 失敗に限れば BGP Suppress FIB Pending 機能を有効化する（<a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md</a> 参照）。</li>
+<li>独自に上位通知が必要なら orchagent 側にカスタム notifier を追加するか、ASIC_DB と APPL_DB の差分を周期スキャンする外部ツールを書く。</li>
+</ul>
+<h3 id="3-hld-todo">3. HLD 内の TODO が大半空白<a class="headerlink" href="#3-hld-todo" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: 「Other SAI statuses」「SAI API 別の対応表」「Orch 別の対応表」を <code>TODO</code> として残す。</li>
+<li><strong>実装位置</strong>: HLD は更新されないまま、実装は <code>saihelper.cpp</code> ベースで個別進化している（呼び出しサイトの追加が継続）。</li>
+<li><strong>読者への影響</strong>: HLD の SAI status → 動作のマッピング表を見て「これに従う」と判断すると現実と食い違う。</li>
+<li><strong>回避策</strong>: 現行挙動は <code>saihelper.cpp</code> のソース読みが正本。</li>
 </ul>
 <p>したがって本ページは Proposal 段階の設計記述であり、現行 master の挙動を読み解く際は <code>saihelper.cpp</code> の自由関数 4 本と各 Orch の呼び出しサイトを直接参照する必要がある。</p>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>

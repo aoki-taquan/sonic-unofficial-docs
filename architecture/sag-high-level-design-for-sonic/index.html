@@ -7272,6 +7272,67 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21563,6 +21624,67 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21714,7 +21836,31 @@
 <li>IPv6 link-local 応答が来ない → MAC 変更後の link-local me-route 再追加が走っているか。<code>ip -6 route show local</code> で確認。</li>
 <li>ファブリック側にもゲートウェイ IP が広告されてしまう → これは SAG の責務外。EVPN/BGP 側のフィルタを確認。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>2026-05 時点で <strong>SAG コード / YANG / CLI は community master に取り込まれておらず、HLD 提案段階</strong>。</p>
+<h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> に <code>sonic-sag.yang</code> 相当が<strong>存在しない</strong>（<code>grep -rn "SAG\b\|static_anycast" .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/</code> 0 件）。<code>SAG</code> テーブル / <code>static_anycast_gateway</code> leaf は未登録。</li>
+<li><code>sonic-swss/orchagent/</code> に <code>SagOrch</code> / <code>static_anycast_gateway</code> を扱うコードが見つからない（<code>grep -rln "static_anycast\|SagOrch" .cache/sonic-sources/sonic-swss/</code> 0 件）。</li>
+<li><code>sonic-utilities/</code> に <code>config static-anycast-gateway</code> / <code>show static-anycast-gateway</code> の CLI ハンドラが無い（<code>grep -rln "static-anycast-gateway" .cache/sonic-sources/sonic-utilities/</code> 0 件）。</li>
+<li><code>sonic-frr/</code> に SAG 連携の patch は見当たらない（hit は babeld 等の無関係箇所のみ）。</li>
+</ul>
+<h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
+<p>HLD は <code>SAG|GLOBAL.gateway_mac</code>（グローバル SAG MAC）+ <code>VLAN_INTERFACE|&lt;vlan&gt;.static_anycast_gateway</code>（VLAN ごとの有効化フラグ）を CONFIG_DB に追加し、<code>SagOrch</code> が VLAN RIF の MAC を SAG MAC へ差し替える、と述べているが、<strong>3 つの取り込み箇所（YANG / orchagent / CLI）すべてが master に無い</strong>。NVIDIA など一部ベンダー fork で実装済みだが、community master には未マージ。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HLD どおりに <code>sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f</code> を実行しても <code>No such command</code> で終わる。コマンドそのものが存在しない。</li>
+<li>EVPN-VXLAN マルチ leaf 構成で「同一仮想 GW MAC でホストにとっての default gateway を冗長化する」用途は、本機能を待つ間は<strong>個別に各 leaf に同じ MAC を振る運用回避</strong>が必要（後述）。</li>
+<li>本ページの仕様記述は将来仕様 / ベンダー fork 仕様の参考であって、現行 community SONiC で動く設定ではない。</li>
+</ul>
+<h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>代替手段 1（手動 anycast）</strong>: 各 leaf の <code>VLAN_INTERFACE|Vlan100</code> に <strong>個別に同一 IP</strong> を振り、<code>PORT_INTERFACE</code> / <code>INTERFACE</code> の MAC を <code>config interface mac</code> 系（または <code>/etc/network/interfaces.d/</code> でブート時設定）で揃える。EVPN Type-2 で自身の MAC/IP を広告しないフィルタを別途設定。</li>
+<li><strong>代替手段 2（VRRP）</strong>: 純粋な anycast ではなく VRRP master/backup で疑似的にゲートウェイ冗長化を組む（収束はやや遅い）。</li>
+<li><strong>代替手段 3（ベンダー版採用）</strong>: NVIDIA SONiC / Edgecore Enterprise SONiC では SAG 実装が入っているケースがある。community に縛らないなら検討。</li>
+<li>上流取り込み推進: <code>sonic-buildimage</code>（YANG）+ <code>sonic-swss</code>（SagOrch / VlanMgr 改修）+ <code>sonic-utilities</code>（CLI）+ <code>sonic-frr</code>（EVPN 連携）の 4 リポにまたがる大規模 PR が必要。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

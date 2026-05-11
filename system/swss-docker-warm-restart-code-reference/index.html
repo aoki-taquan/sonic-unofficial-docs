@@ -11957,6 +11957,67 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21685,6 +21746,67 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ファイル + 行番号
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21847,7 +21969,42 @@
 <li>復元後に同一エントリが二重登録される → libsairedis 冪等性パッチが効いていない可能性。</li>
 <li>詳細実装は HLD <code>doc/warm-reboot/code_implementation.md</code> を参照（このドキュメントは要点のみ）。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">実装との乖離<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>2026-05-11 時点の現行 master を裏取り。</p>
+<h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>取り込み済み（warm restart コア）</strong>: <code>sonic-net/sonic-swss-common</code> <code>common/warm_restart.cpp</code> L56-L58（<code>STATE_WARM_RESTART_TABLE_NAME</code> / <code>CFG_WARM_RESTART_TABLE_NAME</code> の Table オブジェクト初期化）、同 L122（state 書き込み）、同 L223（<code>WarmStart::setWarmStartState</code>）、ヘッダ <code>common/warm_restart.h</code>。</li>
+<li><strong>取り込み済み（CLI）</strong>: <code>sonic-net/sonic-utilities</code> <code>config/main.py</code> の <code>config warm_restart enable/disable</code> サブコマンド、<code>show/main.py</code> の <code>show warm_restart</code>。</li>
+<li><strong>HLD と差分あり</strong>: HLD 本文に列挙された PR/diff URL は <code>jipanyang</code> の個人 fork に対する compare URL であり、現行 master ではこれらの単独 PR としては存在しない。<strong>機能としては取り込まれているが、URL を辿ってもコードは見られない</strong>。</li>
+</ul>
+<h3 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HLD は <code>WARM_RESTART_TABLE:&lt;app&gt;</code> キーに <code>restart_count</code> / <code>state</code> を保存する旨を書くが、現行コードは <strong><code>STATE_WARM_RESTART_TABLE</code> / <code>CFG_WARM_RESTART_TABLE</code> の 2 系統に分離</strong>して扱う（<code>warm_restart.cpp</code> L56-L58）。<code>STATE_DB</code> 側に <code>WARM_RESTART_TABLE|&lt;app&gt;</code> として <code>state</code>/<code>restart_count</code> が現れる。</li>
+<li><code>sonic-installer upgrade_docker &lt;name&gt; &lt;tag&gt; &lt;url&gt;</code> は現行も存在するが、<code>--cleanup_image</code> オプションの動作と warm restart シーケンスの噛み合いはバージョン差がある。HLD の virtual switch テスト結果（45 tests passed）は当時のスナップショットで、現行 CI の test 数とは合わない。</li>
+<li><code>swss-flushdb</code> というスクリプト名は現行 <code>sonic-buildimage</code> の <code>dockers/docker-orchagent/</code> 配下では見つからない（コマンド名が変わっている / 内部呼び出しに整理された可能性）。</li>
+</ul>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HLD 文中の compare URL から実装を読もうとすると 404 / 個人 fork で迷子になる。</li>
+<li><code>WARM_RESTART_TABLE</code> を 1 系統前提でデバッグすると、<code>CFG_DB</code> 側設定と <code>STATE_DB</code> 側状態の分離を見落とす。</li>
+<li><code>swss-flushdb</code> 名で手動運用を期待すると見つからない。</li>
+</ul>
+<h3 id="4">4. 回避策<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>現行コードは以下を起点に追う:<ul>
+<li><code>sonic-swss-common/common/warm_restart.{h,cpp}</code> （API 層）</li>
+<li><code>sonic-swss/orchagent/*orch.cpp</code> の <code>bake()</code> / <code>WarmStart::checkWarmStart</code> / <code>setWarmStartState</code> 呼び出し</li>
+<li><code>sonic-buildimage/dockers/docker-orchagent/</code> の起動スクリプト群</li>
+</ul>
+</li>
+<li>redis 上での確認:
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|orchagent&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|swss&#39;</span>
+</span></code></pre></div></li>
+<li>詳細仕様は本 HLD（<code>code_implementation.md</code>）ではなく、<code>doc/warm-reboot/SONiC_Warmboot.md</code> および <code>sonic-swss-common</code> のヘッダコメントを優先で参照。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

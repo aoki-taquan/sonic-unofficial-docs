@@ -7462,6 +7462,67 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21551,6 +21612,67 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. どこで乖離が確認されたか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. HLD と実装の差分の中身
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 読者への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 回避策 / 対応方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21790,7 +21912,30 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 <li><strong><code>syslog</code> rate limit / redirect</strong> 系の各 HLD（critical log 抽出は本 framework と連動）</li>
 <li><strong>OrchAgent 全般</strong>: RouteOrch / NeighborOrch / 他 Orch が個別に dump を登録する想定</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>2026-05 時点で本 framework は <strong>master に取り込まれておらず、HLD のみ</strong>（2019-07 v0.3 から 6 年以上停滞）。</p>
+<h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sonic-swss-common/common/</code> 配下に <code>Debugframework</code> クラス、<code>linkWithFramework</code> 関数、<code>SWSS_DEBUG_PRINT</code> マクロのいずれも存在しない（<code>grep -rn 'Debugframework\|linkWithFramework\|SWSS_DEBUG_PRINT' .cache/sonic-sources/sonic-swss-common/common/</code> 0 件）。</li>
+<li><code>sonic-swss/orchagent/natorch.cpp:40-42, 138-142, 4591-</code> に <code>#ifdef DEBUG_FRAMEWORK</code> 内の dead code は残っているが、<code>DEBUG_FRAMEWORK</code> マクロを定義する場所が無く、現行ビルドでは到達不能。</li>
+<li><code>sonic-utilities/show/</code> 配下に <code>show debug</code> / <code>show interfaces pktdrop</code> 等のフレームワーク CLI ハンドラが存在しない。</li>
+<li>APPL_DB の <code>Dump table</code> / <code>Dump done table</code> も <code>sonic-swss-common/common/schema.h</code> と <code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> に登録されていない。</li>
+</ul>
+<h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
+<p>HLD は「コンポーネントが <code>linkWithFramework</code> で自身の dump callback を登録 → CLI が APPL_DB の Dump table へリクエスト → 各コンポーネントが Dump done table に応答」というプロトコルを定義しているが、<strong><code>linkWithFramework</code> のシンボルすら存在せず、プロトコルの送信側・受信側のいずれも未実装</strong>。残骸の <code>#ifdef DEBUG_FRAMEWORK</code> ブロックは HLD 時代の試作の痕跡で、有効化される経路は無い。</p>
+<h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HLD どおりに <code>show debug component &lt;name&gt;</code> を期待しても、CLI そのものが存在せず <code>No such command</code> で終わる。</li>
+<li>コンポーネント側で dump を提供する形（HLD 推奨）も無いため、現状の障害解析は <strong><code>show techsupport</code> の一括採取と各 <code>redis-cli</code> / <code>swssloglevel</code> への手作業ログ抽出</strong> に依存している。</li>
+<li>将来この framework が master に入った場合、HLD と CLI / table 名が<strong>変わる可能性が高い</strong>（v0.3 から長期停滞）。本ページの記述は仕様参考扱い。</li>
+</ul>
+<h3 id="4">4. 回避策 / 対応方法<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>dump 取得は <code>show techsupport</code> で代替</strong>: <code>/var/dump/</code> に techsupport tarball が落ちる。OrchAgent 内部状態は <code>swssloglevel -l DEBUG -c &lt;component&gt;</code> でログレベルを上げて syslog に吐かせる。</li>
+<li><strong>特定 Orch の internal dump</strong>: <code>docker exec swss debugsh -c 'show &lt;subsystem&gt;'</code> 系の swss-side CLI を直接叩く。HLD 経由ではなく各 Orch の hand-crafted dump が個別に存在する。</li>
+<li>本 framework の取り込みを推進する場合、HLD 自体を現行 master 構造（<code>swss-common</code> の <code>ConfigDBConnector</code> / <code>Producer/ConsumerStateTable</code> 前提）に合わせて再ドラフトする必要がある。</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-18, discrepancy):
 - sonic-swss-common: `Debugframework` / `linkWithFramework` / `SWSS_DEBUG_PRINT` 検索 0 件
 - sonic-swss/orchagent/natorch.cpp:40-42, 138-142: `#ifdef DEBUG_FRAMEWORK` 内の dead code のみ（マクロは未定義）

@@ -2173,7 +2173,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-muxcable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show muxcable の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21428,7 +21494,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-muxcable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show muxcable の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21527,7 +21659,204 @@
 <h2 id="bfd">BFD との関係<a class="headerlink" href="#bfd" title="Permanent link">&para;</a></h2>
 <p>BFD hardware offload は Dual-ToR 専用機能ではありませんが、上流 BGP や peer 到達性の高速検出と組み合わせて、mux の安全な切替条件に影響します。BGP セッション向け BFD offload では FRR <code>bfdd</code>、<code>bfdsyncd</code>、<code>BfdOrch</code>、ASIC BFD engine の経路が関係します。</p>
 <p>ここでの注意点は、BFD が下げるのは主に routing adjacency であり、mux state そのものではないことです。default route が消える、BGP が落ちる、上流到達性が無い、という結果が <code>linkmgrd</code> の default route 連動や route programming にどう反映されるかを見る必要があります。</p>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="show-muxcable">show muxcable の出力サンプル<a class="headerlink" href="#show-muxcable" title="Permanent link">&para;</a></h2>
+<p><code>show muxcable grpc muxdirection Ethernet12</code> は gRPC 経由で NIC / peer 側の状態を取り、<code>Direction</code>、<code>Presence</code>、<code>PeerDirection</code>、<code>ConnectivityState</code> の 4 カラムを出します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Port        Direction    Presence    PeerDirection    ConnectivityState
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>----------  -----------  ----------  ---------------  -------------------
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Ethernet12  active       True        active           READY
+</span></code></pre></div>
+<p>両側が <code>active</code> なのは split-brain の可能性があります。<code>active/standby</code> の組み合わせが正常で、<code>unknown</code> / <code>not_applicable</code> は Y-cable へのアクセス失敗を疑います。</p>
+<p><code>show muxcable hwmode muxdirection</code> は ASIC / Y-cable HW から取得した実状態のみを示します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Port        Direction    Presence
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>----------  -----------  ----------
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Ethernet12  active       True
+</span></code></pre></div>
+<p><code>show muxcable metrics Ethernet0</code> は linkmgrd / xcvrd の状態遷移タイムスタンプを並べます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>PORT       EVENT                         TIME
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>---------  ----------------------------  ---------------------------
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet0  linkmgrd_switch_active_start  2021-May-13 10:00:21.420898
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet0  xcvrd_switch_standby_start    2021-May-13 10:01:15.690835
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Ethernet0  xcvrd_switch_standby_end      2021-May-13 10:01:15.696051
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Ethernet0  linkmgrd_switch_standby_end   2021-May-13 10:01:15.696728
+</span></code></pre></div>
+<p><code>switch_*_start</code> と <code>switch_*_end</code> の差が切替遅延（数 ms〜数 100 ms）です。1 秒を超えるなら Y-cable / xcvrd を疑います。</p>
+<p><code>show muxcable packetloss Ethernet0</code> は link prober の連続失敗を集計します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>PORT       COUNT                 VALUE
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>---------  ------------------  -------
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Ethernet0  pck_loss_count          612
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Ethernet0  pck_expected_count      840
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>PORT       EVENT                      TIME
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>---------  -------------------------  ---------------------------
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Ethernet0  link_prober_unknown_start  2022-Jan-26 03:13:05.366900
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>Ethernet0  link_prober_unknown_end    2022-Jan-26 03:17:35.446580
+</span></code></pre></div>
+<p><code>pck_loss_count / pck_expected_count</code> が 1 に近い場合、prober が完全に失敗していて切替判断が止まっています。</p>
+<p><code>show muxcable tunnel_route Ethernet0</code> は MuxOrch が tunnel に向けた server 向け <code>/32</code> route を kernel / asic 別に表示します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>PORT        DEST_TYPE    DEST_ADDRESS    kernel    asic
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>----------  -----------  --------------  --------  ------
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Ethernet0   server_ipv4  10.2.1.1        added     added
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Ethernet4   server_ipv4  10.3.1.1        added     -
+</span></code></pre></div>
+<p><code>asic=-</code> は ASIC への投入が完了していないか standby 側として意図的に空のケースです。kernel が added で asic が <code>-</code> なら SAI / route programming 失敗を疑います。</p>
+<h2 id="_4">異常検出パターン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>観測</th>
+<th>疑う状態</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>両側 <code>Direction=active</code></td>
+<td>split-brain（peer 通信断 + 自律 active 化）</td>
+<td>peer-link、ICCP-like、SoC link、<code>linkmgrd</code> 状態</td>
+</tr>
+<tr>
+<td><code>state=auto</code> だが切替が起きない</td>
+<td>link prober 停止、または <code>state</code> が実は manual</td>
+<td><code>show muxcable status</code>、<code>config muxcable mode auto</code></td>
+</tr>
+<tr>
+<td><code>metrics</code> で <code>switch_*</code> 差が 1s 以上</td>
+<td>Y-cable / xcvrd 遅延、SoC busy</td>
+<td><code>xcvrd</code> ログ、firmware 不一致</td>
+</tr>
+<tr>
+<td><code>pck_loss_count</code> が連続増加</td>
+<td>server-facing link / NIC firmware / ICMP filter</td>
+<td>NIC 側 counter、<code>show interfaces counters</code> の Ethernet</td>
+</tr>
+<tr>
+<td><code>tunnel_route</code> の <code>asic=-</code></td>
+<td>MuxOrch SAI 失敗、tunnel object 不在</td>
+<td>orchagent / muxorch ログ、<code>show vxlan tunnel</code></td>
+</tr>
+<tr>
+<td>default route が消えても切替しない</td>
+<td>linkmgrd の default-route 連動未設定</td>
+<td><code>linkmgrd</code> config、BFD/BGP 上流連動</td>
+</tr>
+<tr>
+<td>ICMP offload 期待だが prober_type=software</td>
+<td>ASIC / SAI 未対応、または <code>MUX_LINKMGR</code> 設定漏れ</td>
+<td><code>MUX_LINKMGR</code> table、<code>show muxcable status</code> の prober</td>
+</tr>
+<tr>
+<td><code>prefix-based mux neighbors</code> 構成で <code>/32</code> が neighbor でなく tunnel</td>
+<td>mux state が standby、または neighbor 学習失敗</td>
+<td><code>show muxcable status</code>、<code>show ip neighbor</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">典型的なログサンプル<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>linkmgrd / muxorch / xcvrd / IcmpOrch の代表ログ:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>linkmgrd: Mux port Ethernet0 transitioning to active due to LinkProberStateActive
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>linkmgrd: Mux port Ethernet0 transitioning to standby due to PeerWaitTimeout
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>linkmgrd: Default route nexthop went unreachable, forcing standby
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>xcvrd: Y-cable switch to active for port Ethernet0
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>xcvrd: Y-cable read NIC failed for port Ethernet0
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>muxorch: :- doTask: switch port Ethernet0 to active, install neigh and route to nexthop
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>muxorch: :- removeNextHopTunnel: delete NH tunnel for ip &#39;10.2.1.1&#39; failed
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>IcmpOrch: ICMP offload session create failed for port Ethernet0, SAI status -2
+</span></code></pre></div>
+<p>split-brain や fast-fail の検出に使う syslog 文字列:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>linkmgrd: Detected dual active on Ethernet0, forcing standby on local
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>linkmgrd: BFD session for upstream peer 10.0.0.1 went down
+</span></code></pre></div>
+<h2 id="_6">対応コマンド早見表<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>設定確認</td>
+<td><code>show muxcable config [&lt;port&gt;]</code></td>
+</tr>
+<tr>
+<td>論理状態</td>
+<td><code>show muxcable status [&lt;port&gt;]</code></td>
+</tr>
+<tr>
+<td>gRPC 状態</td>
+<td><code>show muxcable grpc muxdirection [&lt;port&gt;\|all]</code></td>
+</tr>
+<tr>
+<td>HW 状態</td>
+<td><code>show muxcable hwmode muxdirection [&lt;port&gt;\|all]</code></td>
+</tr>
+<tr>
+<td>Tunnel route</td>
+<td><code>show muxcable tunnel_route [&lt;port&gt;]</code></td>
+</tr>
+<tr>
+<td>Cable health</td>
+<td><code>show muxcable health [&lt;port&gt;]</code></td>
+</tr>
+<tr>
+<td>Metric</td>
+<td><code>show muxcable metrics [&lt;port&gt;]</code></td>
+</tr>
+<tr>
+<td>Packetloss</td>
+<td><code>show muxcable packetloss [&lt;port&gt;]</code></td>
+</tr>
+<tr>
+<td>Cable info</td>
+<td><code>show muxcable cableinfo [&lt;port&gt;]</code></td>
+</tr>
+<tr>
+<td>Firmware</td>
+<td><code>show muxcable firmware version [&lt;port&gt;]</code></td>
+</tr>
+<tr>
+<td>手動切替</td>
+<td><code>config muxcable mode active\|standby \| auto\|manual &lt;port&gt;</code></td>
+</tr>
+<tr>
+<td>HW mode override</td>
+<td><code>config muxcable hwmode state active\|standby &lt;port&gt;</code></td>
+</tr>
+<tr>
+<td>Counter clear</td>
+<td><code>sonic-clear muxcable packetloss &lt;port&gt;</code></td>
+</tr>
+<tr>
+<td>ICMP offload</td>
+<td><code>show feature status \| grep icmp</code>、<code>MUX_LINKMGR</code> の <code>prober_type</code></td>
+</tr>
+<tr>
+<td>BFD HW offload</td>
+<td><code>show bfd summary</code>、<code>BFD_SESSION</code> の <code>hardware</code> フィールド</td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_db-state_db-counter">関連 CONFIG_DB / STATE_DB / counter<a class="headerlink" href="#config_db-state_db-counter" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>CONFIG_DB:MUX_CABLE|&lt;port&gt;</code> — <code>state</code>（auto / active / standby / manual）、<code>server_ipv4</code>、<code>server_ipv6</code>、<code>soc_ipv4</code>、<code>soc_ipv6</code>、<code>cable_type</code>。</li>
+<li><code>CONFIG_DB:MUX_LINKMGR|LINK_PROBER</code> — <code>interval_v4</code>、<code>interval_v6</code>、<code>positive_signal_count</code>、<code>negative_signal_count</code>、<code>prober_type</code>（software / hardware）。</li>
+<li><code>APPL_DB:MUX_CABLE_TABLE:&lt;port&gt;</code> — linkmgrd 出力の現在 state（active / standby / unknown）。</li>
+<li><code>STATE_DB:MUX_CABLE_TABLE\|&lt;port&gt;</code> — <code>state</code>、<code>peer_state</code>、<code>gRPC</code> connectivity。</li>
+<li><code>STATE_DB:HW_MUX_CABLE_TABLE\|&lt;port&gt;</code> — HW 実状態。</li>
+<li><code>STATE_DB:MUX_LINKMGR_TABLE\|&lt;port&gt;</code> — link prober の現在値。</li>
+<li><code>STATE_DB:LINK_PROBE_STATS\|&lt;port&gt;</code> — <code>pck_loss_count</code>、<code>pck_expected_count</code>、unknown event タイムスタンプ。</li>
+<li><code>APPL_DB:TUNNEL_ROUTE_TABLE:&lt;port&gt;</code> — server / soc 向け <code>/32</code> / <code>/128</code> の install 状態。</li>
+<li><code>APPL_DB:NEIGH_TABLE</code> — mux active 時に再 install される neighbor。</li>
+<li><code>COUNTERS_DB:COUNTERS_TUNNEL_NAME_MAP</code> — Dual-ToR tunnel encap counter。</li>
+</ul>
+<h2 id="_7">横断参照<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>上流 BGP / BFD が落ちたときの mux 連動: <a href="../../02-bgp/operations/">BGP 章 運用</a> と <a href="../../04-vrf-ecmp/operations/">VRF / ECMP 章 運用</a> の default route / FIB 確認。</li>
+<li>Bounce-back 経路の DSCP / PFC は <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a> の DSCP remap。</li>
+<li>mux 配下 server の VLAN / FDB / Proxy ARP は <a href="../../06-l2-vlan-lag/operations/">L2 章 運用</a>。</li>
+<li>mux / icmp / linkmgrd feature 自体が落ちている場合: <a href="../../01-overview/operations/">運用入口</a> の feature 切り分け。</li>
+</ul>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/show-muxcable/">show muxcable サブコマンド</a></li>
 <li><a href="../../../reference/cli/config-muxcable/">config muxcable サブコマンド</a></li>

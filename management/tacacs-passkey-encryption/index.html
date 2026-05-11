@@ -21882,6 +21882,19 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 </tbody>
 </table>
 <p>YANG と共通暗号インフラ（<code>security_cipher.py</code> + <code>/etc/cipher_pass.json</code> 永続化スクリプト）は揃っているが、<strong>運用フローの中核である CLI と hostcfgd 取り込みが未完了</strong>であり、現状ユーザは <code>--encrypt</code> 経路で TACACS+ passkey を保護できない。HLD は <code>/etc/cipher_pass</code> と表記しているが実装上の正は <code>/etc/cipher_pass.json</code>。</p>
+<p><strong>差分の中身</strong>: master key ファイル名が <code>/etc/cipher_pass</code> → <code>/etc/cipher_pass.json</code> に変更され、暗号化ペイロードを JSON 構造で格納する設計に進化している。HLD の文字列ベース表記は古い。一方、CLI（<code>config tacacs passkey ... --encrypt</code>）と hostcfgd 側の復号ロジックは <strong><code>sonic-utilities/config/aaa.py</code> L248-256 で平文書き込みのまま</strong>であり、<code>key_encrypt=true</code> を CONFIG_DB に手動で書いても hostcfgd が復号する経路がないため PAM 認証が失敗する。</p>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li>HLD どおりに <code>sudo config tacacs passkey &lt;secret&gt; --encrypt</code> を打っても <strong><code>--encrypt</code> フラグは認識されず</strong>、<code>Usage</code> エラーまたは secret がそのまま平文で CONFIG_DB に書かれる（YANG validator で弾かれない場合もある）。</li>
+<li><code>TACPLUS|global</code> の <code>key_encrypt=true</code> を手で書くと、hostcfgd 側で復号されずに <strong>暗号化文字列がそのまま TACACS server に送信される</strong> ため、認証が落ちる。</li>
+<li><code>config save</code> で吐く JSON に平文 passkey が残るため、ファイル流出時の機密性に注意が必要。HLD が解消しようとした問題は <strong>そのまま残っている</strong>。</li>
+</ul>
+<p><strong>回避策 / 対応方法</strong>:</p>
+<ul>
+<li>現状は <code>--encrypt</code> を使わず、<code>/etc/sonic/config_db.json</code> のパーミッション（root:root, 0644 → 0600 に絞る等）と config save の管理権限で機密性を担保する運用が現実的。</li>
+<li>master key インフラを使った暗号化を試したい場合は、<code>security_cipher.py</code> の <code>encrypt</code>/<code>decrypt</code> API を直接呼んで passkey を加工し、独自スクリプトで hostcfgd の代わりに <code>/etc/pam.d/common-auth-sonic</code> に注入する独自経路を組む必要がある（保守性は低い）。</li>
+<li>上流の CLI / hostcfgd 取り込み PR を待つのが本筋。</li>
+</ul>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - hostcfgd の暗号化 passkey 復号 + master key 読み込みパスの実装

@@ -8927,6 +8927,67 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-evpn_ethernet_segment-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. EVPN_ETHERNET_SEGMENT テーブル / orch が未実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-frr-evpn-mh-sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-esi-label-split-horizon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SAI ESI label / split-horizon 拡張のサポートも未確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21441,6 +21502,67 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-evpn_ethernet_segment-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. EVPN_ETHERNET_SEGMENT テーブル / orch が未実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-frr-evpn-mh-sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-esi-label-split-horizon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SAI ESI label / split-horizon 拡張のサポートも未確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結論
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21578,7 +21700,36 @@
 <li>DF が両側で active → Type-4 受信の確認、<code>show evpn ethernet-segment</code> の DF 状態</li>
 <li>aliasing で trafic が偏る → ECMP hash 設定、remote leaf の Type-1 受信状況</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>2026-05-10 時点の現行 master を裏取り。<strong>EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない</strong>。</p>
+<h3 id="1-evpn_ethernet_segment-orch">1. <code>EVPN_ETHERNET_SEGMENT</code> テーブル / orch が未実装<a class="headerlink" href="#1-evpn_ethernet_segment-orch" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: CONFIG_DB に <code>EVPN_ETHERNET_SEGMENT</code> テーブルを置き、ESI / 紐づく LAG / single-active か all-active か / DF preference を管理。orch（仮称 <code>EthernetSegmentOrch</code>）が SAI へ反映。</li>
+<li><strong>実装位置</strong>: <code>sonic-swss/</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/</code>、<code>sonic-utilities/</code> のいずれにも <code>EVPN_ETHERNET_SEGMENT</code> / <code>EthernetSegment</code> / <code>ESI</code> 関連のシンボルは見つからない（grep ヒット 0）。yang module <code>sonic-evpn-mh.yang</code> のような派生 module も存在しない。</li>
+<li><strong>差分の中身</strong>: テーブル定義 / orch クラス / yang model / CLI のいずれも欠落。HLD は提案段階で止まっている。</li>
+<li><strong>読者への影響</strong>: <code>config evpn ethernet-segment add ...</code> を打っても CLI コマンド自体が存在せず、CONFIG_DB に書いても受ける側がいないため何も起こらない。EVPN MH に依存する設計（dual-attached host）を組み立てると動かない。</li>
+<li><strong>回避策</strong>:</li>
+<li>dual-attach 構成が必要なら <strong>MC-LAG</strong>（<a href="../../switching/mclag-enhancements/">../switching/mclag-enhancements.md</a> 等）を使う。MC-LAG は EVPN MH の代替アプローチで、SONiC では実装済み。</li>
+<li>どうしても EVPN MH が必要なら、ベンダー版 SONiC（一部ベンダーが独自実装を持つ）または upstream FRR の EVPN-MH（FRR 7.5+ で実装）+ 独自 SAI 連携を自前で書く必要がある。</li>
+</ul>
+<h3 id="2-frr-evpn-mh-sonic">2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い<a class="headerlink" href="#2-frr-evpn-mh-sonic" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: FRR の BGP-EVPN MH（Type-1 EAD、Type-4 ES route）が SONiC orchagent に EAD-per-ES / EAD-per-EVI / ES import-RT を渡し、SAI ESI label / split-horizon を設定する。</li>
+<li><strong>実装位置</strong>: SONiC 側受け取り経路（<code>fpmsyncd</code> の MH 拡張、<code>EvpnNvoOrch</code> への Type-1/Type-4 ハンドラ）は確認できず。</li>
+<li><strong>差分の中身</strong>: FRR 単体では EVPN-MH を pcap で観察できても、SONiC の ASIC まで通知が伝わらない。</li>
+<li><strong>読者への影響</strong>: FRR で EVPN-MH を有効化しても、SONiC 側で DF election・ESI label による split-horizon・aliasing による ECMP は ASIC レベルで効かない。</li>
+<li><strong>回避策</strong>: 上記のとおり MC-LAG を使うか、独自 patch を入れる。</li>
+</ul>
+<h3 id="3-sai-esi-label-split-horizon">3. SAI ESI label / split-horizon 拡張のサポートも未確認<a class="headerlink" href="#3-sai-esi-label-split-horizon" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: SAI 側に ESI 関連属性（split-horizon filter / DF flag 等）の拡張を要求。</li>
+<li><strong>実装位置</strong>: <code>sonic-sairedis</code> の SAI header に <code>SAI_TUNNEL_ATTR_*</code> の ESI 関連属性は確認できない（コミュニティ SAI に取り込まれていない可能性が高い）。</li>
+<li><strong>読者への影響</strong>: ASIC vendor が SAI 経由で ESI 機能を露出していないため、たとえ orch を自前実装してもベンダー SAI 側が受け付けない可能性が高い。</li>
+<li><strong>回避策</strong>: ASIC ベンダーに ESI 対応 SAI 拡張のサポートを問い合わせる。現状は SONiC コミュニティ master では非対応と認識する。</li>
+</ul>
+<h3 id="_8">結論<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><strong>本ページの記述は HLD 提案レベルで、現行 master では機能として利用できない</strong>。dual-attached host を扱う実運用構成では MC-LAG を選択する。本 HLD は将来的な機能ロードマップとして参考に留める。</p>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - VxlanOrch / EvpnOrch の MH 拡張（ESI / DF / Type-1/Type-4）の現行実装存在確認
 - CONFIG_DB EVPN_ETHERNET_SEGMENT スキーマと sonic-yang-models 取り込み確認

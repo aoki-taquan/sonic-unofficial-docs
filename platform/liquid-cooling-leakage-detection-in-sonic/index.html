@@ -15531,6 +15531,56 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-state_db-liquid_cooling_device-liquid_cooling_info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STATE_DB テーブル名が LIQUID_COOLING_DEVICE ではなく LIQUID_COOLING_INFO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-liquid_cooling_update_interval-cli-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. liquid_cooling_update_interval は CLI 引数で渡る（CONFIG_DB ではない）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mlnx-platform-api-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. mlnx-platform-api 等ベンダー実装は HLD 公開後に取り込まれている
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21585,6 +21635,56 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-state_db-liquid_cooling_device-liquid_cooling_info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STATE_DB テーブル名が LIQUID_COOLING_DEVICE ではなく LIQUID_COOLING_INFO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-liquid_cooling_update_interval-cli-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. liquid_cooling_update_interval は CLI 引数で渡る（CONFIG_DB ではない）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mlnx-platform-api-hld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. mlnx-platform-api 等ベンダー実装は HLD 公開後に取り込まれている
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -21759,7 +21859,45 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 <li>gNMI イベント未着: STATE_DB は更新されているのに event が来ない場合、<code>system-health</code> の <code>_check_liquid_cooling_status</code> が登録されているか、<code>EVENTS_PUBLISHER_TAG</code> の購読側設定を確認。</li>
 <li>液冷非対応機で Updater が走っている: <code>enable_liquid_cooling</code> が誤って true になっていないか確認。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
+<h3 id="1-state_db-liquid_cooling_device-liquid_cooling_info">1. STATE_DB テーブル名が <code>LIQUID_COOLING_DEVICE</code> ではなく <code>LIQUID_COOLING_INFO</code><a class="headerlink" href="#1-state_db-liquid_cooling_device-liquid_cooling_info" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: STATE_DB テーブル <code>LIQUID_COOLING_DEVICE</code> に sensor 状態を書く。</li>
+<li><strong>実装位置</strong>: <code>sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526</code>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LiquidCoolingUpdater</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">,</span> <span class="n">logger</span><span class="o">.</span><span class="n">Logger</span><span class="p">):</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">LIQUID_COOLING_INFO_TABLE_NAME</span> <span class="o">=</span> <span class="s1">&#39;LIQUID_COOLING_INFO&#39;</span>
+</span></code></pre></div></li>
+<li>L547: <code>self.sensor_table = swsscommon.Table(state_db, LiquidCoolingUpdater.LIQUID_COOLING_INFO_TABLE_NAME)</code> で実際に <code>LIQUID_COOLING_INFO</code> を書く。</li>
+<li><strong>差分の中身</strong>: HLD 図には <code>LIQUID_COOLING_DEVICE</code> と書かれているが、実コードは <code>LIQUID_COOLING_INFO</code>。さらに HLD には無い <code>SYSTEM_LEAK_STATUS</code> (<code>L548</code>)、<code>LEAK_PROFILE</code>（<code>L551</code>）等の補助テーブルも追加されている。</li>
+<li><strong>読者への影響</strong>: HLD の名前で <code>redis-cli -n 6 keys 'LIQUID_COOLING_DEVICE*'</code> を実行しても結果が出ず、漏洩状態を Redis 経由で参照できないと誤解する。system-health 側の hardware_checker も <code>LIQUID_COOLING_INFO</code> を見る前提で書かれているため、HLD の名前で独自スクリプトを書くと連動しない。</li>
+<li><strong>回避策</strong>:</li>
+<li>状態確認: <code>redis-cli -n 6 keys 'LIQUID_COOLING_INFO*'</code> および <code>redis-cli -n 6 keys 'SYSTEM_LEAK_STATUS*'</code>、<code>redis-cli -n 6 keys 'LEAK_PROFILE*'</code> を使う。</li>
+<li>スクリプト連携: <code>LIQUID_COOLING_INFO</code> を subscribe キーとして使う。HLD の名前はリネームされた旧称と考えて読み替える。</li>
+</ul>
+<h3 id="2-liquid_cooling_update_interval-cli-config_db">2. <code>liquid_cooling_update_interval</code> は CLI 引数で渡る（CONFIG_DB ではない）<a class="headerlink" href="#2-liquid_cooling_update_interval-cli-config_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: <code>pmon_daemon_control.json</code> の <code>liquid_cooling_update_interval</code> で polling 間隔を設定する。</li>
+<li><strong>実装位置</strong>: <code>sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:1299</code>, <code>:1433</code>, <code>:1442</code>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># L1299 デフォルト</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">liquid_cooling_update_interval</span><span class="o">=</span><span class="mf">0.5</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># L1433 argparse</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--liquid_cooling_update_interval&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># L1442 渡し込み</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">args</span><span class="o">.</span><span class="n">liquid_cooling_update_interval</span>
+</span></code></pre></div></li>
+<li><strong>差分の中身</strong>: 起動 daemon 引数として渡される設計で、<code>pmon_daemon_control.json</code> の同名キーは（取り込んだ場合）supervisord 起動行で <code>--liquid_cooling_update_interval=&lt;value&gt;</code> に展開される運用前提。HLD の「JSON フィールドそのものが effective」という記述とは間に一段挟まる。</li>
+<li><strong>読者への影響</strong>: <code>pmon_daemon_control.json</code> だけを更新しても、supervisord の起動コマンドを書き換えるテンプレートが platform 側になければ反映されない。</li>
+<li><strong>回避策</strong>: platform の <code>supervisord.conf</code> / <code>thermalctld</code> 起動 entry を確認し、<code>--liquid_cooling_update_interval=&lt;sec&gt;</code> が引数として渡るか確認する。確認できなければ起動行を直接編集するか、ベンダーに platform package の対応を依頼する。</li>
+</ul>
+<h3 id="3-mlnx-platform-api-hld">3. mlnx-platform-api 等ベンダー実装は HLD 公開後に取り込まれている<a class="headerlink" href="#3-mlnx-platform-api-hld" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: ベンダー実装は platform 側の責務で範囲外。</li>
+<li><strong>実装位置</strong>: <code>mlnx-platform-api/sonic_platform/liquid_cooling.py</code> に Mellanox 実装が存在（HLD 範囲外だが運用上必要）。</li>
+<li><strong>読者への影響</strong>: HLD だけ読むと「実装責務はベンダー」で終わるが、実機検証では platform 側の対応が前提で、対応 SKU は限られる。</li>
+<li><strong>回避策</strong>: 対応プラットフォームかどうかは <code>mlnx-platform-api/sonic_platform/liquid_cooling.py</code> 相当のベンダー実装が <code>LiquidCoolingBase</code> を継承しているかで判断する。未対応 platform では <code>enable_liquid_cooling</code> を立てても sensor 検出に至らない。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

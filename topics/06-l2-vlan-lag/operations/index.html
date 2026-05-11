@@ -2412,7 +2412,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-vlan-show-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show vlan / show interfaces の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-appl_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / APPL_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21450,7 +21516,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-vlan-show-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show vlan / show interfaces の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-appl_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / APPL_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21574,7 +21706,211 @@
 <h2 id="link-flap">Link flap を抑える<a class="headerlink" href="#link-flap" title="Permanent link">&para;</a></h2>
 <p>Link event damping は、ポート up/down が短時間に繰り返される場合に、SyncD 側でイベント通知を抑制する設計です。現行ページでは swss 側の実装は確認されている一方、HLD に書かれた CLI は未実装とされています。</p>
 <p>運用手順としては、まず通常の interface state と transceiver / cable 健全性を確認し、damping を使う場合は <a href="../../../switching/link-event-damping-hld/">リンクイベントダンピング</a> の実装との乖離を確認してください。</p>
-<h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="show-vlan-show-interfaces">show vlan / show interfaces の出力サンプル<a class="headerlink" href="#show-vlan-show-interfaces" title="Permanent link">&para;</a></h2>
+<p><code>show vlan brief</code> は CONFIG_DB の <code>VLAN</code>、<code>VLAN_MEMBER</code>、<code>VLAN_INTERFACE</code> を結合したテーブル表示です。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>+-----------+-----------------+-----------------+----------------+-------------+
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>|   VLAN ID | IP Address      | Ports           | Port Tagging   | Proxy ARP   |
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>+===========+=================+=================+================+=============+
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>|      1000 | 192.168.0.1/21  | Ethernet4       | untagged       | disabled    |
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>|           | fc02:1000::1/64 | Ethernet8       | untagged       |             |
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>|           |                 | Ethernet12      | untagged       |             |
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>|           |                 | Ethernet16      | untagged       |             |
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>+-----------+-----------------+-----------------+----------------+-------------+
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>|      2000 | 192.168.0.10/21 | Ethernet24      | untagged       | enabled     |
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>|           | fc02:1011::1/64 | Ethernet28      | untagged       |             |
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>+-----------+-----------------+-----------------+----------------+-------------+
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>|      3000 |                 |                 |                | disabled    |
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>+-----------+-----------------+-----------------+----------------+-------------+
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>|      4000 |                 | PortChannel1001 | tagged         | disabled    |
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>+-----------+-----------------+-----------------+----------------+-------------+
+</span></code></pre></div>
+<p><code>SONIC_CLI_IFACE_MODE=alias</code> のときは <code>Ethernet0</code> が <code>etp1</code> のような alias で出ます。VLAN ID 列が空の行（VLAN 3000）は member も IP も無い未使用 VLAN を示します。</p>
+<p><code>show interfaces portchannel</code> は PortChannel の状態を一覧します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>  No.  Team Dev         Protocol     Ports
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>-----  ---------------  -----------  ---------------------------
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a> 0001  PortChannel0001  LACP(A)(Up)  Ethernet112(S) Ethernet116(S)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a> 0002  PortChannel0002  LACP(A)(Up)  Ethernet108(S) Ethernet104(S)
+</span></code></pre></div>
+<p><code>(A)</code> は active LACP、<code>(S)</code> は selected、<code>(D)</code> は disabled / down。<code>(P)</code> は LACP unsel / not bundled です。</p>
+<h2 id="_1">異常検出パターン<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>観測</th>
+<th>疑う状態</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show vlan brief</code> に member が出ない</td>
+<td><code>VLAN_MEMBER</code> 未登録、または port が PortChannel の中で隠れている</td>
+<td><code>redis-cli -n 4 keys 'VLAN_MEMBER*'</code>、<code>config vlan member add</code></td>
+</tr>
+<tr>
+<td>Port が <code>tagged</code> 想定だが <code>untagged</code> で出る</td>
+<td><code>tagging_mode</code> 設定漏れ</td>
+<td><code>config vlan member add -u\|--tag-mode</code></td>
+</tr>
+<tr>
+<td>PortChannel が <code>(D)</code> のまま</td>
+<td>LACP unmatched、speed/duplex 不一致、<code>min_links</code> 未達</td>
+<td><code>teamdctl &lt;pc&gt; state</code>、<code>show interfaces status</code></td>
+</tr>
+<tr>
+<td><code>mclagdctl dump state</code> で <code>Session Status=DOWN</code></td>
+<td>ICCP peer-link 断、peer IP 不到達、MD5 不一致</td>
+<td>peer-link の <code>show interfaces portchannel</code>、<code>ping &lt;peer&gt;</code></td>
+</tr>
+<tr>
+<td><code>peer state=ERROR</code> / <code>mclag_remote_system_id</code> 取れない</td>
+<td>ICCP capability mismatch</td>
+<td><code>mclagsyncd</code> ログ</td>
+</tr>
+<tr>
+<td>片側だけ MAC を知っている</td>
+<td>ICCP MAC sync 失敗、または対向 PortChannel 不一致</td>
+<td><code>mclagdctl dump mac</code> 両側比較、<code>APP_MCLAG_FDB_TABLE</code></td>
+</tr>
+<tr>
+<td>MAC が古い port に残る</td>
+<td>FDB flush 未発火、または STP/PortChannel down の通知欠落</td>
+<td><code>fdbshow</code>、<code>sonic-clear fdb</code></td>
+</tr>
+<tr>
+<td><code>storm-control</code> 設定後も flooding 続く</td>
+<td>unit が pps か bps か、対象が unknown unicast か broadcast か取り違え</td>
+<td><code>show storm-control all</code>、CONFIG_DB:<code>PORT_STORM_CONTROL</code></td>
+</tr>
+<tr>
+<td>Link が短周期 flap</td>
+<td>cable / transceiver / autoneg / damping 未設定</td>
+<td><code>show interfaces transceiver eeprom</code>、syslog の <code>Link is Up\|Down</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">典型的なログサンプル<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>swss: :- doTask: VLAN 1000 was added
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>swss: :- doTask: Failed to add member Ethernet4 to Vlan1000: not in any port
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>teamd: PortChannel0001: bond carrier changed to UP
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>teamd: PortChannel0001: state changed: down -&gt; up
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>kernel: 8021q: adding VLAN 0 to HW filter on device Ethernet0
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>mclagsyncd: ICCP session UP with peer 12.1.1.2
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>mclagsyncd: ICCP session DOWN with peer 12.1.1.2: KeepaliveTimeout
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>mclagsyncd: Failed to sync MAC 00:aa:bb:cc:dd:ee on Vlan1000 from peer
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>fdbsyncd: FDB entry MAC 00:11:22:33:44:55 on Vlan1000 learned on Ethernet4
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>fdbsyncd: FDB flush triggered for Ethernet4 due to port down
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>orchagent: :- doTask: SAI_API_FDB FDB age out for 00:11:22:33:44:55
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>orchagent: :- doTask: Failed to add FDB entry, SAI status SAI_STATUS_TABLE_FULL
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>linkmgrd: Storm control packet drop on Ethernet0 broadcast
+</span></code></pre></div>
+<h2 id="_3">対応コマンド早見表<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VLAN 一覧</td>
+<td><code>show vlan brief</code>、<code>show vlan config</code></td>
+</tr>
+<tr>
+<td>VLAN 追加 / 削除</td>
+<td><code>config vlan add &lt;id&gt;</code> / <code>config vlan del &lt;id&gt;</code></td>
+</tr>
+<tr>
+<td>VLAN member</td>
+<td><code>config vlan member add [-u] &lt;id&gt; &lt;port&gt;</code></td>
+</tr>
+<tr>
+<td>PortChannel 一覧</td>
+<td><code>show interfaces portchannel</code></td>
+</tr>
+<tr>
+<td>PortChannel 追加</td>
+<td><code>config portchannel add PortChannel&lt;id&gt; [--min-links N] [--fallback]</code></td>
+</tr>
+<tr>
+<td>Member 追加</td>
+<td><code>config portchannel member add &lt;pc&gt; &lt;port&gt;</code></td>
+</tr>
+<tr>
+<td>MC-LAG 状態</td>
+<td><code>mclagdctl dump state</code></td>
+</tr>
+<tr>
+<td>MC-LAG local / peer 一覧</td>
+<td><code>mclagdctl dump portlist local\|peer</code></td>
+</tr>
+<tr>
+<td>MC-LAG MAC</td>
+<td><code>mclagdctl dump mac</code></td>
+</tr>
+<tr>
+<td>MC-LAG ARP / ND</td>
+<td><code>mclagdctl dump arp\|nd</code></td>
+</tr>
+<tr>
+<td>FDB 一覧</td>
+<td><code>fdbshow</code></td>
+</tr>
+<tr>
+<td>FDB flush</td>
+<td><code>sonic-clear fdb all\|port &lt;p&gt;\|vlan &lt;id&gt;</code></td>
+</tr>
+<tr>
+<td>Storm control</td>
+<td><code>config interface storm-control broadcast\|unknown-unicast\|unknown-multicast add &lt;port&gt; &lt;kbps&gt;</code></td>
+</tr>
+<tr>
+<td>Storm 状態</td>
+<td><code>show storm-control all\|interface &lt;port&gt;</code></td>
+</tr>
+<tr>
+<td>L1 状態</td>
+<td><code>show interfaces status</code></td>
+</tr>
+<tr>
+<td>Transceiver</td>
+<td><code>show interfaces transceiver eeprom\|status\|info</code></td>
+</tr>
+<tr>
+<td>Counters</td>
+<td><code>show interfaces counters</code>、<code>sonic-clear counters</code></td>
+</tr>
+<tr>
+<td>Proxy ARP</td>
+<td><code>config vlan proxy_arp &lt;vid&gt; enable\|disable</code>、<code>show vlan brief</code> の Proxy ARP 列</td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_db-appl_db-state_db-counter">関連 CONFIG_DB / APPL_DB / STATE_DB / counter<a class="headerlink" href="#config_db-appl_db-state_db-counter" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>CONFIG_DB:VLAN|Vlan&lt;id&gt;</code> — <code>vlanid</code>、<code>mtu</code>、<code>mac</code>、<code>description</code>、<code>proxy_arp</code>、<code>autostate</code>。</li>
+<li><code>CONFIG_DB:VLAN_MEMBER|Vlan&lt;id&gt;|&lt;port&gt;</code> — <code>tagging_mode</code>。</li>
+<li><code>CONFIG_DB:VLAN_INTERFACE|Vlan&lt;id&gt;</code> / <code>|Vlan&lt;id&gt;|&lt;ip&gt;</code> — SVI 定義と IP。</li>
+<li><code>CONFIG_DB:PORTCHANNEL|PortChannel&lt;id&gt;</code> — <code>admin_status</code>、<code>mtu</code>、<code>min_links</code>、<code>fallback</code>、<code>lacp_key</code>。</li>
+<li><code>CONFIG_DB:PORTCHANNEL_MEMBER|PortChannel&lt;id&gt;|&lt;port&gt;</code> — member 関係。</li>
+<li><code>CONFIG_DB:MCLAG_DOMAIN|&lt;id&gt;</code> — <code>source_ip</code>、<code>peer_ip</code>、<code>peer_link</code>、<code>keepalive_interval</code>、<code>session_timeout</code>。</li>
+<li><code>APPL_DB:FDB_TABLE:Vlan&lt;id&gt;:&lt;mac&gt;</code> — dynamic / static FDB。</li>
+<li><code>APPL_DB:LAG_TABLE:&lt;pc&gt;</code> — admin / oper、active member。</li>
+<li><code>APPL_DB:STORM_CONTROL_TABLE:&lt;port&gt;:&lt;type&gt;</code> — storm control の現在値。</li>
+<li><code>STATE_DB:FDB_TABLE</code> — FDB sync 後の sniffer 出力（fdbshow が読む）。</li>
+<li><code>STATE_DB:PORT_TABLE\|&lt;port&gt;</code> — <code>oper_status</code>、<code>speed</code>、<code>admin_status</code>。</li>
+<li><code>COUNTERS_DB:COUNTERS_LAG_NAME_MAP</code> / <code>COUNTERS_PORT_NAME_MAP</code> — port / LAG の counter OID。</li>
+<li><code>STATE_DB</code> の MC-LAG 同期テーブル（<code>MCLAG_*</code>、<code>APP_MCLAG_FDB_TABLE</code>）。</li>
+</ul>
+<h2 id="_4">横断参照<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li>VLAN_INTERFACE で出す SVI が L3 で動かない: <a href="../../04-vrf-ecmp/operations/">VRF / ECMP 章 運用</a>。</li>
+<li>MC-LAG over Dual-ToR / Active-Active 構成: <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
+<li>VLAN ↔ VNI 紐付けや EVPN 由来 FDB の差分: <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a>。</li>
+<li>teamd / swss が起動しない場合の前提: <a href="../../01-overview/operations/">運用入口</a> の feature / hostcfgd セクション。</li>
+</ul>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/show-vlan/">CLI: show vlan</a></li>
 <li><a href="../../../reference/cli/show-mclag/">CLI: show mclag</a></li>

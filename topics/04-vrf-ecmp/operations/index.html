@@ -1917,7 +1917,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-ip-route-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show ip route / interfaces の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21428,7 +21494,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show-ip-route-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show ip route / interfaces の出力サンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的なログサンプル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-state_db-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB / STATE_DB / counter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21531,7 +21663,179 @@
 <p>このページは HLD-only として整理されています。利用可否や CLI の存在は対象ビルドで確認してください。</p>
 <h2 id="loopback-action">Loopback action は誤転送の最後の防波堤<a class="headerlink" href="#loopback-action" title="Permanent link">&para;</a></h2>
 <p>同じ RIF へ出戻る転送は、構成ミスや経路設計の不整合を示すことがあります。<code>loopback_action=drop</code> を設定すると ASIC で drop し、帯域消費やループを抑えられます。ただし、これは route 設計を直す代替ではありません。出戻りが見えたら、default route、VRF、next hop、ECMP member の設計も確認します。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="show-ip-route-interfaces">show ip route / interfaces の出力サンプル<a class="headerlink" href="#show-ip-route-interfaces" title="Permanent link">&para;</a></h2>
+<p><code>show ip route</code> は zebra の FRR RIB を整形して出します。<code>&gt;</code> は selected、<code>*</code> は FIB に install 済みを示します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>B&gt;* 10.1.0.0/24 [20/0] via 10.0.0.1, Ethernet0, weight 1, 00:12:34
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                       via 10.0.0.5, Ethernet4, weight 1, 00:12:34
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>C&gt;* 10.0.0.0/31 is directly connected, Ethernet0, 01:23:45
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>S&gt;* 0.0.0.0/0 [1/0] via 10.0.0.1, Ethernet0, weight 1, 01:23:45
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>B   10.2.0.0/24 [20/0] via 10.0.0.1 inactive, weight 1, 00:00:05
+</span></code></pre></div>
+<p><code>B</code> で <code>&gt;</code> も <code>*</code> も付かない行は、best 選択も install も完了していない過渡状態か、SAI 側で reject されているケースです。</p>
+<p><code>show ip interfaces</code> は CONFIG_DB の <code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> を結合します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Interface        Master    IPv4 address/mask    Admin/Oper    BGP Neighbor    Neighbor IP
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>---------------  --------  -------------------  ------------  --------------  -----------
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Ethernet0                  10.0.0.0/31          up/up         ARISTA01T2      10.0.0.1
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Ethernet4                  10.0.0.4/31          up/up         ARISTA03T2      10.0.0.5
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>PortChannel101             10.1.0.32/32         up/up         N/A             N/A
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>Vlan1000                   192.168.0.1/21       up/up         N/A             N/A
+</span></code></pre></div>
+<p>VRF binding は <code>Master</code> カラムに VRF 名（<code>Vrf_red</code> 等）で表示されます。<code>Admin=up</code> だが <code>Oper=down</code> の場合、L1 / lldp / autoneg / counters を見ます。</p>
+<h2 id="_2">異常検出パターン<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>観測</th>
+<th>疑う状態</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RIB にあるが <code>&gt;</code> が無い</td>
+<td>metric/distance 競合、または next-hop unreachable</td>
+<td><code>show ip route &lt;prefix&gt;</code> の <code>via ... inactive</code>、neighbor 状態</td>
+</tr>
+<tr>
+<td><code>&gt;</code> あるが <code>*</code> 無し</td>
+<td>FIB 反映失敗（orchagent / SAI）</td>
+<td><code>/var/log/swss/sairedis.rec</code>、APPL_DB:ROUTE_TABLE</td>
+</tr>
+<tr>
+<td><code>Master</code> が想定 VRF と違う</td>
+<td>bind 漏れ、または bind 順序ミス</td>
+<td><code>config interface vrf bind</code>、<code>show vrf</code></td>
+</tr>
+<tr>
+<td>RIF counter の error 増</td>
+<td>MTU mismatch、TTL exceed、loopback drop</td>
+<td><code>show interfaces counters rif</code>、loopback-action 設定</td>
+</tr>
+<tr>
+<td><code>show ip neighbor</code> で IP に対する MAC 解決なし</td>
+<td>ARP / ND 失敗、または VLAN tagging 不一致</td>
+<td><code>arp -n</code>、<code>show vlan brief</code>、対向側 ping</td>
+</tr>
+<tr>
+<td>ECMP member が偏る</td>
+<td>hash seed、PBH 未設定、bucket 数不一致</td>
+<td><code>show ecmp loadshare</code>、PBH 設定</td>
+</tr>
+<tr>
+<td>Route Flow Counter の hit が増えない</td>
+<td>pattern miss、または対象 prefix 非導入</td>
+<td><code>show flowcnt-route stats</code>、対象 prefix の install 状態</td>
+</tr>
+<tr>
+<td><code>loopback_action=drop</code> 設定下で legitimate な return が落ちる</td>
+<td><code>loopback_action</code> を強くしすぎ</td>
+<td><code>show ip interfaces loopback-action</code>、<code>config interface ip loopback-action</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">典型的なログサンプル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>zebra[18]: nexthop_active_check: 10.1.0.0/24, nexthop 10.0.0.1, unreachable
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>zebra[18]: dplane_route_update: Failed to install route 10.1.0.0/24
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>fpmsyncd[15]: Received route update for prefix 10.1.0.0/24 nexthop 10.0.0.1 ifindex 4
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>orchagent: :- doTask: Failed to create next hop 10.0.0.1 on Ethernet0, rv:-2
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>orchagent: :- create: Failed to create route 10.1.0.0/24 SAI_STATUS_INSUFFICIENT_RESOURCES
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>neighsyncd: Received neighbor update for 10.0.0.1 lladdr aa:bb:cc:dd:ee:ff state REACHABLE
+</span></code></pre></div>
+<p>CRM 閾値ログは syslog にも出ます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>crm: CRM Counter THRESHOLD_EXCEEDED for IPV4_ROUTE
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>crm: CRM Counter NEIGHBOR EXCEEDED HIGH threshold(85) used 8700 available 1500
+</span></code></pre></div>
+<h2 id="_4">対応コマンド早見表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interface 一覧</td>
+<td><code>show ip interfaces</code>、<code>show ipv6 interfaces</code></td>
+</tr>
+<tr>
+<td>L1 状態</td>
+<td><code>show interfaces status</code></td>
+</tr>
+<tr>
+<td>L2 counters</td>
+<td><code>show interfaces counters</code></td>
+</tr>
+<tr>
+<td>RIF counters</td>
+<td><code>show interfaces counters rif</code></td>
+</tr>
+<tr>
+<td>transceiver</td>
+<td><code>show interfaces transceiver eeprom</code>、<code>... status</code></td>
+</tr>
+<tr>
+<td>VRF 一覧</td>
+<td><code>show vrf</code></td>
+</tr>
+<tr>
+<td>FRR RIB</td>
+<td><code>show ip route [vrf &lt;vrf&gt;] [&lt;prefix&gt;]</code></td>
+</tr>
+<tr>
+<td>ASIC FIB</td>
+<td><code>show ip fib</code></td>
+</tr>
+<tr>
+<td>neighbor</td>
+<td><code>show ip neighbor</code>、<code>show ip arp</code>、<code>show ipv6 neighbors</code></td>
+</tr>
+<tr>
+<td>Route Flow Counter</td>
+<td><code>show flowcnt-route stats</code>、<code>config flowcnt-route ...</code></td>
+</tr>
+<tr>
+<td>ECMP loadshare</td>
+<td><code>show ecmp loadshare hash-seed</code>（plat 依存）</td>
+</tr>
+<tr>
+<td>CRM 残量</td>
+<td><code>crm show summary</code>、<code>crm show resources all</code>、<code>crm show thresholds all</code></td>
+</tr>
+<tr>
+<td>neighbor flush</td>
+<td><code>sonic-clear arp</code>、<code>sonic-clear ndp</code></td>
+</tr>
+<tr>
+<td>RIF counter clear</td>
+<td><code>sonic-clear counters</code></td>
+</tr>
+<tr>
+<td>loopback-action</td>
+<td><code>show ip interfaces loopback-action</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="config_db-state_db-counter">関連 CONFIG_DB / STATE_DB / counter<a class="headerlink" href="#config_db-state_db-counter" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>CONFIG_DB:VRF|&lt;name&gt;</code> — VRF 定義。</li>
+<li><code>CONFIG_DB:INTERFACE|&lt;port&gt;</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> — <code>vrf_name</code>、<code>loopback_action</code> 等。</li>
+<li><code>APPL_DB:INTF_TABLE:&lt;port&gt;</code> — RIF 投入待ち。</li>
+<li><code>APPL_DB:ROUTE_TABLE:&lt;prefix&gt;</code> — FIB 投入対象。<code>nexthop</code>、<code>ifname</code>、<code>weight</code>、<code>vrf</code>。</li>
+<li><code>APPL_DB:NEIGH_TABLE:&lt;intf&gt;:&lt;ip&gt;</code> — ARP / ND が出来た neighbor。</li>
+<li><code>APPL_DB:NEXTHOP_GROUP_TABLE:&lt;id&gt;</code> — ECMP NHG とその member。</li>
+<li><code>STATE_DB:ROUTE_FLOW_COUNTER_TABLE</code> — Route Flow Counter の hit / byte。</li>
+<li><code>COUNTERS_DB:COUNTERS_RIF_NAME_MAP</code> — RIF counter 用 OID 対応。</li>
+<li><code>COUNTERS_DB:CRM:*</code> — LPM / NEXTHOP / NEIGHBOR / ACL の使用量。</li>
+</ul>
+<h2 id="_5">横断参照<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>BGP 由来の install 失敗は <a href="../../02-bgp/operations/">BGP 章 運用</a> と組み合わせて読みます。</li>
+<li>VRF 跨ぎ leak や Type-5 由来 route の確認は <a href="../../03-vxlan-evpn/operations/">Overlay 章 運用</a>。</li>
+<li>Dual-ToR 上の default route と nexthop は <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
+<li>L2 SVI（VLAN_INTERFACE）の up/down 前提は <a href="../../06-l2-vlan-lag/operations/">L2 章 運用</a>。</li>
+</ul>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/show-ip/">CLI: show ip</a></li>
 <li><a href="../../../reference/cli/show-interfaces/">CLI: show interfaces</a></li>
