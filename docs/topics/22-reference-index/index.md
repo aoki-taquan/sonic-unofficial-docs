@@ -3,6 +3,15 @@ title: リファレンス横断索引
 area: topics
 verification: meta
 last_verified: 2026-05-10
+keywords:
+  - Reference
+  - 横断索引
+  - リファレンス
+  - CLI
+  - CONFIG_DB
+  - YANG
+  - HLD
+  - ナビゲーション
 ---
 
 # リファレンス横断索引

@@ -18,6 +18,15 @@ sources:
   - docs/reference/config-db/tc-to-queue-map.md
   - docs/reference/config-db/port-qos-map.md
   - docs/reference/config-db/pfc-priority-to-priority-group-map.md
+keywords:
+  - QoS
+  - Buffer
+  - 概念
+  - buffer pool
+  - PFC
+  - scheduler
+  - DSCP
+  - TC
 ---
 
 # QoS / Buffer の概念地図

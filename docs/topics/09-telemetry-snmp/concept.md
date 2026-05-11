@@ -8,6 +8,14 @@ sources:
   - docs/system/show-techsupport.md
   - docs/internals/dump-utility-for-easy-debugging.md
   - docs/system/system-ready-hld.md
+keywords:
+  - Telemetry
+  - SNMP
+  - 概念
+  - 可観測性
+  - streaming telemetry
+  - metrics
+  - 監視
 ---
 
 # 概念

@@ -37,6 +37,16 @@ sources:
   - docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md
   - docs/switching/lag-on-distributed-voq-system.md
   - docs/switching/wake-on-lan-in-sonic.md
+keywords:
+  - L2
+  - VLAN
+  - LAG
+  - MC-LAG
+  - teamd
+  - LACP
+  - bridge
+  - FDB
+  - MAC learning
 ---
 
 # L2 / VLAN / LAG / MC-LAG

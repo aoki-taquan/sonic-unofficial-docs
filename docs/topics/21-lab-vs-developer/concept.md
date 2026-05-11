@@ -4,6 +4,13 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+keywords:
+  - Lab
+  - Virtual SONiC
+  - 概念
+  - vs container
+  - developer
+  - testbed
 ---
 
 # 概念

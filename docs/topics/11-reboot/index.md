@@ -11,6 +11,16 @@ sources:
   - docs/reference/cli/reboot-fast-warm.md
   - docs/reference/cli/config-warm_restart.md
   - docs/reference/cli/sonic-installer.md
+keywords:
+  - Reboot
+  - Upgrade
+  - Lifecycle
+  - warm reboot
+  - fast reboot
+  - cold reboot
+  - image install
+  - SONiC firmware
+  - 再起動
 ---
 
 # Reboot / Upgrade / Lifecycle

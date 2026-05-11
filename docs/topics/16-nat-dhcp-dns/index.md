@@ -29,6 +29,16 @@ sources:
   - docs/reference/yang/sonic-dns.md
   - docs/system/twamp-light-hld.md
   - docs/architecture/1-udev-rules-design-for-terminal-server.md
+keywords:
+  - NAT
+  - DHCP Relay
+  - DNS
+  - NTP
+  - Time service
+  - dhcrelay
+  - natsyncd
+  - natmgrd
+  - サービス
 ---
 
 # NAT / DHCP Relay / Time-DNS Services

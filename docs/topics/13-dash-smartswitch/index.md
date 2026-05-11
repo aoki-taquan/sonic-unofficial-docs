@@ -21,6 +21,15 @@ sources:
   - docs/system/independent-dpu-upgrade.md
   - docs/management/gnoi-hld-for-system-apis.md
   - docs/management/gnoi-hld-for-os-apis.md
+keywords:
+  - DASH
+  - SmartSwitch
+  - DPU
+  - appliance
+  - ENI
+  - ACL flow
+  - high-availability
+  - smart NIC offload
 ---
 
 # DASH と SmartSwitch

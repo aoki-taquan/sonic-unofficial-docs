@@ -7,6 +7,14 @@ sources:
   - docs/acl-qos/acl-in-sonic.md
   - docs/acl-qos/acl-support-in-sonic.md
   - docs/categories/sai-extensions.md
+keywords:
+  - ACL
+  - CoPP
+  - Mirror
+  - 概念
+  - packet action
+  - policer
+  - match-action
 ---
 
 # 概念

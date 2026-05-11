@@ -16,6 +16,16 @@ sources:
   - docs/routing/evpn-vxlan-hld.md
   - docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md
   - docs/reference/yang/sonic-route-common.md
+keywords:
+  - SRv6
+  - MPLS
+  - Path Tracing
+  - segment routing
+  - label switching
+  - SID
+  - uSID
+  - transit
+  - underlay
 ---
 
 # SRv6 / MPLS / Path Tracing

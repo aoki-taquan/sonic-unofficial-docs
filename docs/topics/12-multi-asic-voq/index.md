@@ -24,6 +24,16 @@ sources:
   - docs/platform/everflow-support-on-voq-chassis.md
   - docs/routing/reliable-tsa.md
   - docs/system/multi-asic-warm-reboot.md
+keywords:
+  - Multi-ASIC
+  - VOQ
+  - chassis
+  - voq fabric
+  - namespace
+  - linecard
+  - supervisor
+  - 分散ルーティング
+  - マルチASIC
 ---
 
 # Multi-ASIC / VOQ Chassis

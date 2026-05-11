@@ -4,6 +4,16 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+keywords:
+  - Build
+  - Packaging
+  - Application Extension
+  - sonic-buildimage
+  - Debian
+  - Docker
+  - image build
+  - azp
+  - ビルド
 ---
 
 # Build / Packaging / Application Extension

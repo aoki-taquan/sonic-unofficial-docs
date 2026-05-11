@@ -45,6 +45,17 @@ sources:
   - docs/reference/cli/show-platform.md
   - docs/reference/config-db/port.md
   - docs/reference/yang/sonic-port.md
+keywords:
+  - Platform
+  - Port
+  - Optics
+  - PHY
+  - transceiver
+  - xcvrd
+  - pmon
+  - port breakout
+  - SFP
+  - QSFP
 ---
 
 # Platform / Port / Optics / PHY

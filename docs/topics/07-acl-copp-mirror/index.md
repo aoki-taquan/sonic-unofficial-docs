@@ -35,6 +35,16 @@ sources:
   - docs/acl-qos/dash-acl-tags.md
   - docs/acl-qos/port-access-control-in-sonic.md
   - docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
+keywords:
+  - ACL
+  - CoPP
+  - Mirror
+  - ERSPAN
+  - packet action
+  - control plane policer
+  - policy-based ACL
+  - everflow
+  - TCAM
 ---
 
 # ACL / CoPP / Mirror / Packet Action

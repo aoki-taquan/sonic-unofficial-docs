@@ -12,6 +12,15 @@ sources:
   - docs/management/send-to-ingress-hld.md
   - docs/management/sonic-management-framework.md
   - docs/management/gnmi-usage.md
+keywords:
+  - P4
+  - PINS
+  - P4Runtime
+  - programmable pipeline
+  - PINS Infra
+  - p4rt
+  - SDN
+  - match-action
 ---
 
 # P4 / PINS / Programmable Pipeline

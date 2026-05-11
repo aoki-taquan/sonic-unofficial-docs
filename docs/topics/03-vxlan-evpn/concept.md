@@ -8,6 +8,15 @@ sources:
   - docs/routing/evpn-vxlan-hld.md
   - docs/overlay/nvgre-tunnel-in-sonic.md
   - docs/platform/subnet-decapsulation-with-sonic.md
+keywords:
+  - VXLAN
+  - EVPN
+  - VNET
+  - 概念
+  - overlay
+  - L2VPN
+  - MAC-VRF
+  - IP-VRF
 ---
 
 # VXLAN / VNET / EVPN の概要

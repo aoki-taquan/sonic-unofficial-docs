@@ -41,6 +41,16 @@ sources:
   - docs/system/memory-statistics-feature-in-sonic.md
   - docs/system/reboot-cause-information-via-telemetry-agent.md
   - docs/internals/byte-packet-rates-port-utilization-in-sonic.md
+keywords:
+  - Telemetry
+  - SNMP
+  - Observability
+  - gNMI streaming
+  - syslog
+  - counters
+  - snmpd
+  - telemetry container
+  - 監視
 ---
 
 # Telemetry / SNMP / Observability

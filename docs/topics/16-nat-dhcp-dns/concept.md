@@ -9,6 +9,13 @@ sources:
   - docs/architecture/dhcpv6-relay-agent.md
   - docs/routing/dhcp-relay-for-ipv6-hld.md
   - docs/management/ipv4-port-based-dhcp-server-in-sonic.md
+keywords:
+  - NAT
+  - DHCP Relay
+  - DNS
+  - 概念
+  - address translation
+  - relay agent
 ---
 
 # 概念

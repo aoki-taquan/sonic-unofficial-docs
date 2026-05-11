@@ -6,6 +6,13 @@ last_verified: 2026-05-10
 sources:
   - docs/management/pins-hld.md
   - docs/management/p4rt-application-hld.md
+keywords:
+  - P4
+  - PINS
+  - 概念
+  - プログラマブル
+  - p4runtime
+  - pipeline
 ---
 
 # 概念

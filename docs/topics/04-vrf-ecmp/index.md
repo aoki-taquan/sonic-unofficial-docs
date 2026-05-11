@@ -9,6 +9,16 @@ sources:
   - docs/routing/routing-and-next-hop-table-enhancement.md
   - docs/routing/sonic-fine-grained-ecmp.md
   - docs/routing/sonic-weighted-ecmp.md
+keywords:
+  - VRF
+  - ECMP
+  - RIB
+  - FIB
+  - L3
+  - マルチパス
+  - next-hop
+  - default VRF
+  - 管理VRF
 ---
 
 # VRF / ECMP / RIB-FIB パイプライン

@@ -8,6 +8,14 @@ sources:
   - docs/architecture/sonic-port-configuration-refactor-design.md
   - docs/reference/config-db/port.md
   - docs/reference/yang/sonic-port.md
+keywords:
+  - Platform
+  - Port
+  - Optics
+  - 概要
+  - transceiver
+  - pmon
+  - platform API
 ---
 
 # 概要

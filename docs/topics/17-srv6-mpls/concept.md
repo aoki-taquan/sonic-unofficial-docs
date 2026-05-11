@@ -10,6 +10,13 @@ sources:
   - docs/routing/srv6-vpn-hld.md
   - docs/routing/mpls-for-sonic-high-level-design-document.md
   - docs/routing/path-tracing-midpoint.md
+keywords:
+  - SRv6
+  - MPLS
+  - 概念
+  - segment routing
+  - label
+  - Path Tracing
 ---
 
 # 概念

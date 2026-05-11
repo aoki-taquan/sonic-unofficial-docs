@@ -4,6 +4,16 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+keywords:
+  - gNMI
+  - gNOI
+  - OpenConfig
+  - YANG
+  - telemetry
+  - northbound API
+  - gnmi-server
+  - Subscribe
+  - Set/Get
 ---
 
 # gNMI / gNOI / OpenConfig / YANG

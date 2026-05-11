@@ -20,6 +20,16 @@ sources:
   - docs/routing/bfd-hw-offload-for-bgp-session.md
   - docs/overlay/dscp-remapping-for-tunnel-traffic.md
   - docs/architecture/dhcpv6-relay-agent.md
+keywords:
+  - Dual-ToR
+  - Mux
+  - active-standby
+  - active-active
+  - ToR
+  - linkmgrd
+  - orchagent
+  - 冗長化
+  - 切替
 ---
 
 # Dual-ToR と Mux 制御

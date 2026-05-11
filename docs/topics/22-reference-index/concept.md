@@ -3,6 +3,12 @@ title: リファレンス設計の考え方
 area: topics
 verification: meta
 last_verified: 2026-05-10
+keywords:
+  - Reference
+  - 概念
+  - 横断索引
+  - CLI / CONFIG_DB / YANG
+  - 情報設計
 ---
 
 # リファレンス設計の考え方
