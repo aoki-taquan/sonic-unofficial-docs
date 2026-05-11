@@ -15,10 +15,12 @@ keywords:
 - Docker image
 - ビルド構成
 related:
-  cli: []
+  cli:
+  - config feature
   config_db:
   - FEATURE
-  yang: []
+  yang:
+  - sonic-feature
 ---
 
 # 概要

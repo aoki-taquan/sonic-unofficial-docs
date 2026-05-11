@@ -7,10 +7,12 @@ verification: meta
 last_verified: 2026-05-10
 sources: []
 related:
-  cli: []
+  cli:
+  - config feature
   config_db:
   - FEATURE
-  yang: []
+  yang:
+  - sonic-feature
 ---
 
 # アーキテクチャ
