@@ -3,12 +3,140 @@ title: 設定
 area: topics
 verification: meta
 last_verified: 2026-05-10
-sources: []
+sources:
+  - docs/management/gnmi-usage.md
+  - docs/management/openconfig-support-for-ethernet-interfaces.md
+  - docs/management/sonic-yang-model-guidelines.md
+  - docs/management/model-based-replace-delete-in-mgmt-framework-transformer.md
+  - docs/reference/config-db/telemetry.md
 ---
 
 # 設定
 
 gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。ここでは代表機能 (interface, VLAN, PortChannel, BGP) について OpenConfig 側のマップを起点にする。実コマンド例と容量は [gNMI usage](../../management/gnmi-usage.md) にまとまっている。
+
+## シナリオ 1: gNMI server 立ち上げ
+
+DUT 側 (telemetry container) の起動と、client 側からの疎通確認まで。証明書は `/etc/sonic/telemetry/` 配下に置く。
+
+```bash
+# DUT 側
+sudo systemctl start telemetry
+sudo systemctl enable telemetry
+redis-cli -n 4 HSET 'TELEMETRY|gnmi' port 50051 client_auth true
+redis-cli -n 4 HSET 'TELEMETRY|certs' \
+  server_crt /etc/sonic/telemetry/dut.crt \
+  server_key /etc/sonic/telemetry/dut.key \
+  ca_crt     /etc/sonic/telemetry/ca.crt
+sudo systemctl restart telemetry
+
+# client 側 (gNMI tools)
+gnmi_capabilities -target_addr dut.example.com:50051 \
+  -cert client.crt -key client.key -ca ca.crt
+```
+
+期待出力（一部）。
+
+```
+supported_models: <
+  name: "openconfig-interfaces"
+  organization: "OpenConfig working group"
+  version: "2.5.0"
+>
+supported_encodings: JSON_IETF
+supported_encodings: PROTO
+gNMI_version: "0.7.0"
+```
+
+設定後の確認。
+
+```bash
+$ ss -tlnp | grep 50051
+LISTEN 0 128 *:50051 *:* users:(("telemetry",pid=12345,fd=7))
+
+$ docker logs telemetry 2>&1 | tail -3
+INFO[2026-05-11T03:14:21Z] Starting gNMI server on :50051
+INFO[2026-05-11T03:14:21Z] Loaded server cert from /etc/sonic/telemetry/dut.crt
+INFO[2026-05-11T03:14:21Z] Loaded CA cert from /etc/sonic/telemetry/ca.crt
+```
+
+## シナリオ 2: OpenConfig path で interface を Get / Set / Subscribe する
+
+`Ethernet0` の MTU / admin-status を OpenConfig path 経由で読み書きする例。SONiC では `Ethernet0` のような物理ポート命名がそのまま name キーとして使われる。
+
+Get:
+
+```bash
+gnmi_get -target_addr dut:50051 -cert client.crt -key client.key -ca ca.crt \
+  -xpath '/interfaces/interface[name=Ethernet0]/state' \
+  -encoding JSON_IETF
+```
+
+出力（抜粋）。
+
+```json
+{
+  "openconfig-interfaces:state": {
+    "name": "Ethernet0",
+    "mtu": 9100,
+    "admin-status": "UP",
+    "oper-status": "UP",
+    "ifindex": 5
+  }
+}
+```
+
+Set (MTU 変更、replace モード):
+
+```bash
+gnmi_set -target_addr dut:50051 -cert client.crt -key client.key -ca ca.crt \
+  -replace '/interfaces/interface[name=Ethernet0]/config/mtu:::JSON_IETF:::9216'
+```
+
+Subscribe (ON_CHANGE で oper-status):
+
+```bash
+gnmi_cli -address dut:50051 -tls -client_crt client.crt -client_key client.key -ca_crt ca.crt \
+  -query_type s \
+  -query 'interfaces/interface[name=Ethernet0]/state/oper-status' \
+  -streaming_type ON_CHANGE
+```
+
+## シナリオ 3: SONiC native YANG で BGP neighbor を作る
+
+OpenConfig がカバーしない、または運用上 native のほうが薄く済む典型例として BGP neighbor 作成。`sonic-bgp-neighbor` を使う。
+
+```bash
+cat > /tmp/bgp_nbr.json <<'JSON'
+{
+  "sonic-bgp-neighbor:BGP_NEIGHBOR": {
+    "BGP_NEIGHBOR_LIST": [
+      {
+        "neighbor": "10.0.0.1",
+        "asn": 65001,
+        "local_addr": "10.0.0.0",
+        "admin_status": "up",
+        "name": "spine-01"
+      }
+    ]
+  }
+}
+JSON
+
+gnmi_set -target_addr dut:50051 -cert client.crt -key client.key -ca ca.crt \
+  -update '/sonic-bgp-neighbor:sonic-bgp-neighbor/BGP_NEIGHBOR:::JSON_IETF:::@/tmp/bgp_nbr.json'
+```
+
+確認 (DUT 側)。
+
+```bash
+$ redis-cli -n 4 KEYS 'BGP_NEIGHBOR|*'
+1) "BGP_NEIGHBOR|10.0.0.1"
+
+$ show ip bgp summary
+Neighbor        V    AS    MsgRcvd    MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
+10.0.0.1        4 65001         12         12        0    0    0 00:00:42            5
+```
 
 ## Get / Set / Subscribe の典型
 
@@ -48,7 +176,36 @@ OpenConfig がカバーしないフィールド (たとえば SONiC 固有の fe
 
 CLI と gNMI を併用する運用では、同じノードを CLI で書いて gNMI で読むケースが多い。CLI が YANG から自動生成される機能領域では、両者の表現が一致するため `gnmi_get` の結果と `show` 出力を相互参照できる。自動生成範囲外の機能では、CLI が CONFIG_DB を直接更新するケースもあり、その場合 gNMI subscribe で「設定変更があった」と通知される。自動生成の仕組みは [CLI auto-generation tool](../../management/sonic-cli-auto-generation-tool.md) を参照する。
 
-## 関連ページ
+## CONFIG_DB / TELEMETRY 関連 table
+
+gNMI server の起動制御に使う table。
+
+```json
+{
+  "TELEMETRY": {
+    "gnmi": {"port":"50051","client_auth":"true","log_level":"2"},
+    "certs":{"server_crt":"/etc/sonic/telemetry/dut.crt",
+             "server_key":"/etc/sonic/telemetry/dut.key",
+             "ca_crt":"/etc/sonic/telemetry/ca.crt"}
+  }
+}
+```
+
+`client_auth=true` で mTLS、`false` で server 認証のみ。`log_level` は 0–9 で大きいほど詳細。
+
+## よくある設定エラーと対処
+
+| 症状 | 典型的な原因 | 対処 |
+|---|---|---|
+| `gnmi_capabilities` が `transport: authentication handshake failed` | DUT cert の SAN/CN が接続 FQDN と不一致 | `openssl x509 -in dut.crt -text -noout` で SAN を確認、cert 再発行 |
+| `client_auth=true` で `peer certificate not provided` | client 側に `-cert/-key` を渡していない | client 側に DUT が信頼する CA 由来の cert/key を渡す |
+| `Set` が `unknown path` で拒否される | OpenConfig path のうち SONiC 未対応の field | SONiC native YANG (`sonic-*`) に切り替えるか、CLI 経由で設定 |
+| `Subscribe ON_CHANGE` が初回 sync 後に止まる | 対象 path が STATE_DB/COUNTERS_DB ではなく CONFIG_DB のみ | `SAMPLE` に切替、または STATE_DB 側の sibling path に変更 |
+| `Set replace` で意図しないノードまで消える | replace の意味論 (部分木全置換) | 親 path を狭くする、または `update` を使う |
+| FRR の BGP 設定が gNMI から反映されない | `frr_mgmt_framework_config` が無効 | `redis-cli -n 4 HSET 'DEVICE_METADATA|localhost' frr_mgmt_framework_config true` |
+| gNMI server が起動しない (port LISTEN なし) | cert / key の permission または path 誤り | `docker logs telemetry` で読込エラーを確認、`chmod 600 dut.key` |
+
+## 関連リファレンス
 
 - [gNMI usage](../../management/gnmi-usage.md)
 - [Model-based replace/delete in Transformer](../../management/model-based-replace-delete-in-mgmt-framework-transformer.md)
@@ -58,3 +215,4 @@ CLI と gNMI を併用する運用では、同じノードを CLI で書いて g
 - [BGP / FRR Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [SONiC YANG model guidelines](../../management/sonic-yang-model-guidelines.md)
 - [SONiC CLI auto-generation tool](../../management/sonic-cli-auto-generation-tool.md)
+- 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [yang-reference](yang-reference.md)

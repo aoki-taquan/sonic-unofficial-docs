@@ -68,9 +68,174 @@ Chassis DB は supervisor 上の Redis なので、各 line card は supervisor 
 
 通常運用では pizza-box と同じ感覚で扱えますが、CLI の `show queue` 系で system port 由来の出力が混じる点だけ注意します。
 
-## 関連ページ
+## シナリオ 1: 2 ASIC pizza-box の single JSON config を書く
+
+`asic.conf` で `NUM_ASIC=2` の box を例に、Golden Config を 1 ファイルで作って `config load` する流れ。
+
+```bash
+# asic.conf の確認 (platform 由来、これは触らない)
+$ cat /usr/share/sonic/device/x86_64-vendor_box-r0/asic.conf
+NUM_ASIC=2
+NUM_FABRIC_ASIC=0
+
+# Golden Config (single JSON 形式)
+cat > /etc/sonic/config_db.json <<'JSON'
+{
+  "localhost": {
+    "DEVICE_METADATA": {"localhost": {"hostname":"sonic-2asic-01","platform":"x86_64-vendor_box-r0","mac":"00:11:22:33:44:55"}},
+    "MGMT_INTERFACE": {"eth0|10.0.0.10/24": {"gwaddr":"10.0.0.1"}}
+  },
+  "asic0": {
+    "DEVICE_METADATA": {"localhost": {"hostname":"sonic-2asic-01-asic0","sub_role":"FrontEnd","switch_type":"npu"}},
+    "PORT":  {"Ethernet0": {"admin_status":"up","speed":"100000","lanes":"0,1,2,3"}},
+    "BGP_NEIGHBOR": {"10.1.0.1": {"asn":65001,"local_addr":"10.1.0.0"}}
+  },
+  "asic1": {
+    "DEVICE_METADATA": {"localhost": {"hostname":"sonic-2asic-01-asic1","sub_role":"FrontEnd","switch_type":"npu"}},
+    "PORT":  {"Ethernet32": {"admin_status":"up","speed":"100000","lanes":"32,33,34,35"}},
+    "BGP_NEIGHBOR": {"10.2.0.1": {"asn":65002,"local_addr":"10.2.0.0"}}
+  }
+}
+JSON
+
+# 適用 (各 namespace に分配される)
+config load /etc/sonic/config_db.json -y
+config save -y
+```
+
+確認:
+
+```bash
+$ show platform summary
+Platform: x86_64-vendor_box-r0
+HwSKU:    Vendor-2ASIC-100G
+ASIC:     vendor
+ASIC Count: 2
+
+$ ip netns list
+asic1 (id: 1)
+asic0 (id: 0)
+
+$ sudo ip netns exec asic0 redis-cli -n 4 KEYS 'PORT|*' | head
+PORT|Ethernet0
+PORT|Ethernet4
+...
+
+$ show interfaces status -n asic0 | head -5
+  Interface    Lanes    Speed    MTU    FEC    Alias    Vlan    Oper    Admin    Type    Asym PFC
+-----------  -------  -------  -----  -----  --------  ------  ------  -------  ------  ---------
+  Ethernet0   0,1,2,3  100G    9100   rs     eth0/1    routed  up      up       QSFP28  off
+```
+
+CLI で host / namespace を呼び分けるときは `-n asic0` を付けます。付けないと host namespace が暗黙の対象です。
+
+## シナリオ 2: VOQ chassis line card の onboarding
+
+supervisor + 複数 line card 構成で、新しい line card を slot1 に挿入したときの自動構成。Chassis DB は supervisor 上に存在し、line card は inband 経由で読みに行きます。
+
+```bash
+# supervisor 側: Chassis DB が稼働しているか
+$ sudo docker ps | grep database-chassis
+abc1...   docker-database:latest   ...   Up 2 days    database-chassis
+
+# supervisor 側: chassis 全体の view
+$ show chassis modules status
+        Name          Description    Physical-Slot    Oper-Status    Admin-Status
+------------  ----------------- ----------------  -------------  --------------
+   SUPERVISOR0   Supervisor card               17        Online         up
+   LINE-CARD0    100G line card                 1        Online         up
+   LINE-CARD1    100G line card                 2        Empty          up
+
+# line card 側: 自分の sub_role / hwsku を Chassis DB から読んだか
+[lc1] $ redis-cli -n 4 HGETALL 'DEVICE_METADATA|localhost' | grep -E 'sub_role|chassis_hostname|switch_type'
+sub_role         LineCard
+chassis_hostname sonic-chassis-01
+switch_type      voq
+```
+
+CONFIG_DB の `CHASSIS_MODULE` table で個別に admin shutdown も可能:
+
+```bash
+sudo config chassis modules shutdown LINE-CARD1
+# CONFIG_DB:
+# "CHASSIS_MODULE": {"LINE-CARD1": {"admin_status":"down"}}
+```
+
+## シナリオ 3: 1 ASIC fixed VOQ system
+
+1 ASIC pizza-box ながら VOQ architecture を使う box の最小設定差分。`switch_type = voq` を付けるのが核心で、他は通常の pizza-box と同じ。
+
+```bash
+# DEVICE_METADATA に VOQ 印
+redis-cli -n 4 HSET 'DEVICE_METADATA|localhost' \
+  switch_type voq \
+  switch_id   0 \
+  max_cores   1
+
+# system port table を自前で持つ
+cat > /tmp/system_port.json <<'JSON'
+{
+  "SYSTEM_PORT": {
+    "sonic-fixed-voq-01|Ethernet0":   {"system_port_id":"1","switch_id":"0","core_index":"0","core_port_index":"0","speed":"100000"},
+    "sonic-fixed-voq-01|Ethernet4":   {"system_port_id":"2","switch_id":"0","core_index":"0","core_port_index":"1","speed":"100000"}
+  }
+}
+JSON
+sonic-cfggen -j /tmp/system_port.json --write-to-db
+config save -y
+```
+
+確認:
+
+```bash
+$ redis-cli -n 4 HGET 'DEVICE_METADATA|localhost' switch_type
+voq
+
+$ show system-port
+                       System Port Name    Port Id    Switch Id    Core    Core Port    Speed
+---------------------------------------  ---------  -----------  ------  -----------  -------
+sonic-fixed-voq-01|Ethernet0                     1            0       0            0    100G
+sonic-fixed-voq-01|Ethernet4                     2            0       0            1    100G
+
+$ show queue counters | grep -E 'system|MC'
+sonic-fixed-voq-01|Ethernet0  MC0   ...
+```
+
+通常の `show queue` 出力に system port 由来の queue が混じる点だけ意識します。
+
+## ASIC namespace と CONFIG_DB の見取り図 (改めて)
+
+CLI / DB アクセスの分担を改めて図にする。
+
+```mermaid
+flowchart LR
+  C[config CLI] -- "--namespace asic0" --> A0
+  C -- "no flag" --> H
+  H[(host CONFIG_DB<br>DEVICE_METADATA / MGMT_INTERFACE / SNMP)]
+  A0[(asic0 CONFIG_DB<br>PORT / VLAN / BGP_NEIGHBOR)]
+  A1[(asic1 CONFIG_DB<br>PORT / VLAN / BGP_NEIGHBOR)]
+  CH[(Chassis DB<br>SYSTEM_PORT / SYSTEM_NEIGH<br>supervisor 上)]
+  A0 -.inband.-> CH
+  A1 -.inband.-> CH
+```
+
+## よくある設定エラーと対処
+
+| 症状 | 典型的な原因 | 対処 |
+|---|---|---|
+| `config load` で `KeyError: 'asic0'` | single JSON のトップキーが `localhost`/`asic0`/... になっていない | `localhost` キーを必ず含める、ASIC は 0-indexed |
+| `config -n asic0` で `unknown namespace` | `asic.conf` の `NUM_ASIC` が実機より小さい | `/usr/share/sonic/device/<platform>/asic.conf` を platform に合致させる (基本変更不可) |
+| 全 ASIC namespace の `show` が同じ port を表示 | host namespace で `show interface` を叩いた | `show interface -n asic0` のように namespace 明示 |
+| line card が Chassis DB に登録されない | inband interface 未到達、supervisor 側の `INTER_ASIC_VLAN` 未設定 | supervisor ⇔ line card 間の inband 疎通 (ping)、`PORT_NAME_MAP` 確認 |
+| VOQ chassis で system port が増えない | `switch_type=voq` を `DEVICE_METADATA` に書き忘れ | `redis-cli -n 4 HSET 'DEVICE_METADATA|localhost' switch_type voq` を全 namespace |
+| line card 起動後に `sub_role` が未設定 | Chassis DB との sync 前に CONFIG_DB を save した | `config save` 前に `show chassis modules status` で Online を確認 |
+| BGP neighbor が片方の ASIC でしか上がらない | single JSON の asic0/asic1 で `local_addr` が分かれていない | 各 ASIC の正しい local IP を namespace 別に持たせる |
+| Golden Config を更新したのに line card 側に反映されない | line card は Chassis DB 由来の data を優先 | supervisor の Golden Config を更新し、`config reload` を line card 側でも実行 |
+
+## 関連リファレンス
 
 - [Multi-ASIC Single JSON Configuration](../../platform/multi-asic-single-json-configuration-design.md)
 - [DB Design for Multi-ASIC Scenarios](../../platform/db-design-for-multi-asic-scenarios.md)
 - [Automatic Module Provisioning for Chassis](../../platform/automatic-module-provisioning-for-chassis.md)
 - [Single-ASIC VOQ Fixed System](../../platform/single-asic-voq-fixed-system-sonic.md)
+- 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [advanced](advanced.md)
