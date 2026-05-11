@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[Y-cable FW update 失敗] --> B{ycabled プロセス動作?}
+    B -- No --> B1[ycabled を起動 / ログ確認]
+    B -- Yes --> C{SoC との I2C 通信 OK?}
+    C -- No --> C1[I2C bus / mux 設定を確認]
+    C -- Yes --> D{image 整合性 OK?}
+    D -- No --> D1[image を再配置 / checksum 確認]
+    D -- Yes --> E[FW update API の戻り値とログを精査]
+```
+
 ### 1. 現状把握
 
 ```bash

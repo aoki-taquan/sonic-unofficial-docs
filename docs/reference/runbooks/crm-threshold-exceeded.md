@@ -38,6 +38,20 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[CRM threshold 超過アラート] --> B{どのリソース?}
+    B -- ROUTE/NEIGHBOR --> B1[BGP/ARP 学習量と max を比較]
+    B -- ACL_ENTRY/COUNTER --> B2[ACL_TABLE 数を整理]
+    B -- NEXTHOP/GROUP --> B3[ECMP group merge / nh 数削減]
+    B -- FDB --> B4[VLAN aging / mac 学習量確認]
+    B1 --> C[crm config threshold で適正値を設定]
+    B2 --> C
+    B3 --> C
+    B4 --> C
+```
+
 ### 1. 現在の使用量
 
 ```bash

@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[load_minigraph が終わらない] --> B{updategraph 待ち?}
+    B -- Yes --> B1[/etc/sonic/updategraph.conf を確認]
+    B -- No --> C{sonic-cfggen で minigraph parse OK?}
+    C -- No --> C1[minigraph.xml の XML 妥当性確認]
+    C -- Yes --> D{config reload 内部で stuck?}
+    D -- Yes --> D1[config-reload-stuck runbook へ]
+    D -- No --> E[hostcfgd ログを確認]
+```
+
 ### 1. minigraph 構文
 
 ```bash

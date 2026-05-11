@@ -41,6 +41,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[counter が更新されない/停止] --> B{FLEX_COUNTER で対象 enable?}
+    B -- No --> B1[FLEX_COUNTER_TABLE で enable]
+    B -- Yes --> C{counter group の polling 間隔?}
+    C -- 0 --> C1[POLL_INTERVAL を 1000 程度に設定]
+    C -- 正常 --> D{syncd flex counter スレッド健康?}
+    D -- No --> D1[syncd 再起動 / SAI API エラー確認]
+    D -- Yes --> E[COUNTERS_DB のキー存在を確認]
+```
+
 ### 1. counterpoll の有効状態と interval
 
 ```bash

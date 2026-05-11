@@ -37,6 +37,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[config save の diff が想定外] --> B{他オペレータの変更?}
+    B -- Yes --> B1[audit log / history で操作を特定]
+    B -- No --> C{自動生成 entry?}
+    C -- Yes --> C1[hostcfgd / port-init.py の自動追記を確認]
+    C -- No --> D{YANG validation エラー?}
+    D -- Yes --> D1[sonic-cfggen --validate でログ確認]
+    D -- No --> E[手動編集と save の順序を確認]
+```
+
 ### 1. 現 running と保存 config の差分
 
 ```bash

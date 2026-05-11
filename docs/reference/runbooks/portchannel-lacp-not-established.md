@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[LACP が established にならない] --> B{両端 mode = active?}
+    B -- No --> B1[lacp mode active に変更]
+    B -- Yes --> C{member speed/MTU/duplex 一致?}
+    C -- No --> C1[メンバー設定を揃える]
+    C -- Yes --> D{teamd 動作 / partner key 一致?}
+    D -- No --> D1[teamd ログで partner SystemID/Key 確認]
+    D -- Yes --> E[ASIC LAG bind 状態を確認]
+```
+
 ### 1. メンバーポートの L1 状態
 
 ```bash

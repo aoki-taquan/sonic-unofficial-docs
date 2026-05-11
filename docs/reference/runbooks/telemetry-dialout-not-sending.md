@@ -41,6 +41,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[dial-out telemetry が送信されない] --> B{TELEMETRY_CLIENT 設定あり?}
+    B -- No --> B1[CONFIG_DB に DialOut 設定投入]
+    B -- Yes --> C{telemetry container 起動?}
+    C -- No --> C1[feature telemetry enable]
+    C -- Yes --> D{collector 宛 TCP 確立?}
+    D -- No --> D1[L3 到達性 / 証明書を確認]
+    D -- Yes --> E[gnmi DialOut ログでエラー確認]
+```
+
 ### 1. CONFIG_DB の設定確認
 
 ```bash

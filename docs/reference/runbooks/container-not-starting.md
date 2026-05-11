@@ -38,6 +38,20 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[docker container が起動しない] --> B{feature state = enabled?}
+    B -- No --> B1[config feature state <name> enabled]
+    B -- Yes --> C{systemd unit active?}
+    C -- No --> C1[journalctl -u <unit> でエラー確認]
+    C -- Yes --> D{docker image 存在?}
+    D -- No --> D1[image pull / load を実行]
+    D -- Yes --> E{依存サービス起動済み?}
+    E -- No --> E1[database / swss の起動順を確認]
+    E -- Yes --> F[hostcfgd / hostservice のログ確認]
+```
+
 ### 1. feature 設定
 
 ```bash

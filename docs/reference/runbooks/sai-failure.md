@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[SAI API がエラーを返す] --> B{syncd ログにエラーコード?}
+    B -- Yes --> B1[SAI_STATUS_* をベンダ SDK ドキュメントで照合]
+    B -- No --> C{ASIC リソース枯渇?}
+    C -- Yes --> C1[CRM 出力を確認]
+    C -- No --> D{特定 OID で再現?}
+    D -- Yes --> D1[該当 object 削除 / 再投入]
+    D -- No --> E[syncd 再起動 (warm 不可なら cold)]
+```
+
 ### 1. syncd の異常終了情報
 
 ```bash

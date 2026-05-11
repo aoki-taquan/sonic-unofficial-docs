@@ -37,6 +37,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[interface counter が勝手に 0 に戻る] --> B{sonic-clear counters 実行?}
+    B -- Yes --> B1[運用上の clear 操作だった / OK]
+    B -- No --> C{syncd 再起動した?}
+    C -- Yes --> C1[counter は揮発 / 再起動が原因]
+    C -- No --> D{FLEX_COUNTER 設定変更?}
+    D -- Yes --> D1[再設定で base が更新された]
+    D -- No --> E[orchagent ログ確認 / SAI 異常調査]
+```
+
 ### 1. 直近の clear 実行
 
 ```bash

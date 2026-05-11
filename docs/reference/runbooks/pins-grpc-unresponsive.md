@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[PINS P4RT gRPC が応答しない] --> B{p4rt container up?}
+    B -- No --> B1[feature p4rt enable / 起動ログ確認]
+    B -- Yes --> C{listen port LISTEN?}
+    C -- No --> C1[ss -tln で port 9559 を確認]
+    C -- Yes --> D{TLS 証明書 OK?}
+    D -- No --> D1[gnmi/p4rt の cert を再配置]
+    D -- Yes --> E[p4rt log / swss P4Orch の状態確認]
+```
+
 ### 1. container / process
 
 ```bash

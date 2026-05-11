@@ -41,6 +41,20 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[BGP peer State != Established] --> B{interface oper up?}
+    B -- No --> B1[L1/L2 確認: fec-errors / link-flapping]
+    B -- Yes --> C{ping / TCP 179 到達?}
+    C -- No --> C1[対向 ACL / firewall / route 確認]
+    C -- Yes --> D{CONFIG_DB と vtysh の neighbor 一致?}
+    D -- No --> D1[bgpcfgd ログ確認 / config reload]
+    D -- Yes --> E{AS / router-id 整合?}
+    E -- No --> E1[BGP_NEIGHBOR.asn / DEVICE_METADATA.bgp_asn 修正]
+    E -- Yes --> F[BFD / hold-timer / admin_status を確認]
+```
+
 ### 1. リンク・IP の確認
 
 ```bash

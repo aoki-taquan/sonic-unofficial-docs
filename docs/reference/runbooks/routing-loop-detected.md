@@ -37,6 +37,19 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[traceroute がループ / TTL 枯渇] --> B{ループ区間特定?}
+    B -- Yes --> B1[該当 hop の FIB を比較]
+    B -- No --> B2[両端で traceroute / show ip route]
+    B1 --> C{static route と BGP の競合?}
+    C -- Yes --> C1[AD/preference を見直し]
+    C -- No --> D{ECMP nh の片側が誤り?}
+    D -- Yes --> D1[該当 nh を一時 shutdown]
+    D -- No --> E[redistribute / route-map のループを確認]
+```
+
 ### 1. traceroute で loop hop 特定
 
 ```bash

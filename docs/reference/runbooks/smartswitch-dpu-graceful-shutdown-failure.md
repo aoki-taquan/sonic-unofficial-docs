@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[DPU の graceful shutdown が失敗] --> B{NPU から shutdown 要求送出?}
+    B -- No --> B1[chassisd / dpu_mgr のログを確認]
+    B -- Yes --> C{DPU 側 ack 返却?}
+    C -- No --> C1[PCIe / 制御チャネルの疎通確認]
+    C -- Yes --> D{drain 完了したか?}
+    D -- No --> D1[traffic drain の閾値・timeout を見直し]
+    D -- Yes --> E[最終的に強制 shutdown を実施]
+```
+
 ### 1. 現状
 
 ```bash

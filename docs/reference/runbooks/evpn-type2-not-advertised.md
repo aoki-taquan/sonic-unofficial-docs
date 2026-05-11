@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[Type-2 (MAC/IP) 経路が広報されない] --> B{ローカル MAC 学習済み?}
+    B -- No --> B1[VLAN/PortChannel 設定 / FDB 確認]
+    B -- Yes --> C{l2vpn evpn family activate?}
+    C -- No --> C1[address-family l2vpn evpn を有効化]
+    C -- Yes --> D{advertise-all-vni / RD/RT 設定?}
+    D -- No --> D1[EVPN_NVO / VRF RT 設定を投入]
+    D -- Yes --> E[bgp l2vpn evpn neighbor の send-community 確認]
+```
+
 ### 1. VXLAN / VNI
 
 ```bash

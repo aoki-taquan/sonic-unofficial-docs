@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[link が頻繁に up/down] --> B{flap 頻度測定?}
+    B -- 高 --> B1[直近 syslog で trigger を特定]
+    B -- 低 --> C{DOM 値変動?}
+    C -- 異常 --> C1[光学 / 温度 / 給電を確認]
+    C -- 正常 --> D{FEC エラー増?}
+    D -- Yes --> D1[fec-errors runbook へ]
+    D -- No --> E[対向 LACP / autoneg の状態を確認]
+```
+
 ### 1. flap 頻度の定量化
 
 ```bash

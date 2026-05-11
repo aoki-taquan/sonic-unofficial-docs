@@ -37,6 +37,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[DPU イメージ install が失敗] --> B{image 配布 (rsync/http) 成功?}
+    B -- No --> B1[NPU-DPU 間ストレージ / 経路確認]
+    B -- Yes --> C{image checksum 一致?}
+    C -- No --> C1[image を再配布]
+    C -- Yes --> D{DPU 側 installer 動作?}
+    D -- No --> D1[DPU console / boot log を確認]
+    D -- Yes --> E[install 後の reboot / 起動失敗ログを調査]
+```
+
 ### 1. DPU 状態
 
 ```bash

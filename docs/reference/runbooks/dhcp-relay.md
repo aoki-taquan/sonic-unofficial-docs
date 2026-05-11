@@ -38,6 +38,20 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[DHCP リレーで IP 払い出されない] --> B{VLAN に dhcp_servers 設定?}
+    B -- No --> B1[config vlan dhcp_relay add 実施]
+    B -- Yes --> C{dhcp_relay container 起動?}
+    C -- No --> C1[feature dhcp_relay を enable]
+    C -- Yes --> D{クライアント側 capture で DISCOVER 観測?}
+    D -- No --> D1[L2 / port-tagged を確認]
+    D -- Yes --> E{上流へ OFFER 戻る?}
+    E -- No --> E1[L3 到達性 / source IP 設定を確認]
+    E -- Yes --> F[dhcpmon カウンタとログを確認]
+```
+
 ### 1. CONFIG_DB に helper が入っているか
 
 ```bash

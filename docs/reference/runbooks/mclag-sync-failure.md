@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[MCLAG peer 間で状態同期されない] --> B{iccpd プロセス動作?}
+    B -- No --> B1[iccpd 起動 / config feature 確認]
+    B -- Yes --> C{peer link up かつ ICCP TCP 確立?}
+    C -- No --> C1[peer-link / peer_ip 到達性確認]
+    C -- Yes --> D{MCLAG_DOMAIN の system_mac 一致?}
+    D -- No --> D1[system_mac を両側で揃える]
+    D -- Yes --> E[fdbsyncd / mclagsyncd ログ確認]
+```
+
 ### 1. MCLAG state
 
 ```bash

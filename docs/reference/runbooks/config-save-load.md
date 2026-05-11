@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[config save/load が失敗] --> B{write 権限 OK?}
+    B -- No --> B1[/etc/sonic の権限を修正]
+    B -- Yes --> C{JSON parse OK?}
+    C -- No --> C1[jq でフォーマット確認]
+    C -- Yes --> D{load 時に YANG エラー?}
+    D -- Yes --> D1[エラー行の table を修正]
+    D -- No --> E[config reload のログを確認]
+```
+
 ### 1. ファイル時刻 / 権限
 
 ```bash

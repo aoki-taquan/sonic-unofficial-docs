@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[DASH ENI が Down] --> B{DASH_ENI_TABLE 設定あり?}
+    B -- No --> B1[DASH ENI / VNI / ACL 設定を投入]
+    B -- Yes --> C{swss DashOrch で ASIC 反映?}
+    C -- No --> C1[swss / dashorch ログを確認]
+    C -- Yes --> D{underlay 到達性 / VxLAN tunnel?}
+    D -- No --> D1[underlay routing / tunnel src/dst 確認]
+    D -- Yes --> E[DPU データプレーン / SAI DASH counter 確認]
+```
+
 ### 1. CONFIG_DB / APPL_DB
 
 ```bash

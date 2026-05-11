@@ -41,6 +41,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[warm-reboot で経路断 / 失敗] --> B{warm boot enable?}
+    B -- No --> B1[config warm_restart enable]
+    B -- Yes --> C{各サービスの warm-boot 対応?}
+    C -- No --> C1[未対応サービスを fast-reboot に切替]
+    C -- Yes --> D{state restoration 完了?}
+    D -- No --> D1[orchagent / syncd の warm-boot ログ確認]
+    D -- Yes --> E[BGP GR / LACP fast rate の設定を確認]
+```
+
 ### 1. Warm Restart の enable 状態
 
 ```bash

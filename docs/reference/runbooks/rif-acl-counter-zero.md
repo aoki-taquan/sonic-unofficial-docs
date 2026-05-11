@@ -41,6 +41,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[RIF / ACL counter が常に 0] --> B{FLEX_COUNTER で polling enable?}
+    B -- No --> B1[POLL_INTERVAL を設定]
+    B -- Yes --> C{COUNTERS_DB にキー存在?}
+    C -- No --> C1[syncd 再起動 / counter mapping 確認]
+    C -- Yes --> D{実トラフィック流れている?}
+    D -- No --> D1[upstream で経路 / ACL hit を確認]
+    D -- Yes --> E[SAI counter ID と bind を点検]
+```
+
 ### 1. FLEX_COUNTER の状態
 
 ```bash
