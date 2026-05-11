@@ -1,0 +1,95 @@
+---
+title: EVPN Type-2 route が広告されない
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-frr
+    path: bgpd/bgp_evpn.c
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/vxlanorch.cpp
+    ref: master
+related:
+  config_db: [VXLAN_TUNNEL, VXLAN_EVPN_NVO, VLAN, BGP_GLOBALS]
+  cli: [show bgp l2vpn evpn, show vxlan tunnel, show vxlan vlanvnimap]
+  yang: [sonic-vxlan, sonic-bgp-global]
+---
+
+# Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない
+
+!!! danger "実行前提"
+    EVPN / VXLAN 系の `config reload` / `systemctl restart bgp` / VLAN-VNI mapping の変更は VXLAN overlay 経由のテナント通信を瞬断〜数十秒断する。事前に **CONFIG_DB の `VXLAN_TUNNEL` / `VLAN` / `VXLAN_EVPN_NVO` を退避**し、ロールバック手順として `config_db.json` を保存しておく。本番では事前にメンテ枠を確保すること。
+
+## 症状
+
+- `show bgp l2vpn evpn` で local MAC が出ない
+- 対向 VTEP に Type-2 が届かない（受信側で `show bgp l2vpn evpn route type macip` が空）
+- VLAN-to-VNI mapping は設定済みだが overlay 通信できない
+
+## 想定原因（優先度順）
+
+1. **`advertise-all-vni` 未設定**: FRR の `address-family l2vpn evpn` で `advertise-all-vni` がない
+2. **VLAN-VNI mapping 欠落**: `VXLAN_TUNNEL_MAP` が未作成 / VNI 重複
+3. **FDB が学習されていない**: 対象 MAC が `show mac` に出ない
+4. **route-target import/export 不整合**
+5. **`type-2 prefix` の filter / route-map で drop**
+
+## 切り分け手順
+
+### 1. VXLAN / VNI
+
+```bash
+show vxlan tunnel
+show vxlan vlanvnimap
+show vxlan name <tunnel>
+sonic-db-cli CONFIG_DB keys "VXLAN_TUNNEL_MAP|*"
+```
+
+### 2. FRR / BGP EVPN
+
+```bash
+docker exec bgp vtysh -c "show running-config" | grep -A30 "l2vpn evpn"
+docker exec bgp vtysh -c "show bgp l2vpn evpn summary"
+docker exec bgp vtysh -c "show bgp l2vpn evpn route"
+```
+
+- 期待: `advertise-all-vni` あり、`route-target` が対向と一致
+
+### 3. FDB / MAC 学習
+
+```bash
+show mac
+sonic-db-cli APPL_DB keys "FDB_TABLE:Vlan*"
+```
+
+### 4. EVPN MAC/IP
+
+```bash
+docker exec bgp vtysh -c "show evpn mac vni <vni>"
+docker exec bgp vtysh -c "show evpn vni"
+```
+
+### 5. orchagent
+
+```bash
+docker logs swss 2>&1 | grep -iE "vxlan|evpn" | tail -100
+```
+
+## 対処方法
+
+- `advertise-all-vni` 追加: `vtysh -c "conf t" -c "router bgp <asn>" -c "address-family l2vpn evpn" -c "advertise-all-vni"` の後 `config save`（**ロールバック**: `no advertise-all-vni` を同経路で）
+- VLAN-VNI mapping 作成: `sudo config vxlan map add <tunnel> <vlan> <vni>`（**ロールバック**: `config vxlan map del`）
+- RT 不一致: `route-target import/export` を対向と揃える
+- FDB が学習されない: MAC learning enable、port が trunk として正しいか確認
+
+## 関連ページ
+
+- [../../topics/03-vxlan-evpn/concept.md](../../topics/03-vxlan-evpn/concept.md)
+- [../../topics/03-vxlan-evpn/operations.md](../../topics/03-vxlan-evpn/operations.md)
+- [../config-db/vxlan-tunnel.md](../config-db/vxlan-tunnel.md)
+
+## 引用元
+
+[^1]: sonic-net/sonic-frr @ master — bgp_evpn.c
+[^2]: sonic-net/sonic-swss @ master — vxlanorch.cpp

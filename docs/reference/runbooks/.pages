@@ -16,3 +16,18 @@ nav:
   - rif-acl-counter-zero.md
   - config-save-load.md
   - smartswitch-dpu-unresponsive.md
+  - telemetry-dialout-not-sending.md
+  - gnmi-subscribe-disconnect.md
+  - ycable-firmware-update-failure.md
+  - pins-grpc-unresponsive.md
+  - crm-threshold-exceeded.md
+  - asic-link-autoneg-mismatch.md
+  - macsec-mka-not-established.md
+  - dash-eni-down.md
+  - smartswitch-dpu-graceful-shutdown-failure.md
+  - appdb-asicdb-sync-lag.md
+  - snmpv3-auth-failure.md
+  - nat-translation-miss.md
+  - evpn-type2-not-advertised.md
+  - mclag-sync-failure.md
+  - techsupport-size-bloat.md

@@ -47,6 +47,21 @@ related:
 | 13 | RIF / ACL counter が 0 のまま | [rif-acl-counter-zero.md](rif-acl-counter-zero.md) |
 | 14 | CONFIG_DB save / load が反映されない | [config-save-load.md](config-save-load.md) |
 | 15 | SmartSwitch DPU が応答しない | [smartswitch-dpu-unresponsive.md](smartswitch-dpu-unresponsive.md) |
+| 16 | Telemetry が送信されない (gNMI dial-out) | [telemetry-dialout-not-sending.md](telemetry-dialout-not-sending.md) |
+| 17 | gNMI Subscribe が頻繁に切れる | [gnmi-subscribe-disconnect.md](gnmi-subscribe-disconnect.md) |
+| 18 | Y-cable firmware 更新が失敗する | [ycable-firmware-update-failure.md](ycable-firmware-update-failure.md) |
+| 19 | PINS gRPC (P4Runtime) が応答しない | [pins-grpc-unresponsive.md](pins-grpc-unresponsive.md) |
+| 20 | CRM threshold 越え (route / nexthop / FDB / ACL) | [crm-threshold-exceeded.md](crm-threshold-exceeded.md) |
+| 21 | ASIC link が UP しない (autoneg / FEC / speed) | [asic-link-autoneg-mismatch.md](asic-link-autoneg-mismatch.md) |
+| 22 | MACsec MKA セッションが確立しない | [macsec-mka-not-established.md](macsec-mka-not-established.md) |
+| 23 | DASH ENI が落ちる | [dash-eni-down.md](dash-eni-down.md) |
+| 24 | SmartSwitch DPU graceful shutdown 失敗 | [smartswitch-dpu-graceful-shutdown-failure.md](smartswitch-dpu-graceful-shutdown-failure.md) |
+| 25 | APP_DB → ASIC_DB の反映遅延 | [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md) |
+| 26 | SNMPv3 user 認証失敗 | [snmpv3-auth-failure.md](snmpv3-auth-failure.md) |
+| 27 | NAT translation が漏れる | [nat-translation-miss.md](nat-translation-miss.md) |
+| 28 | EVPN Type-2 route が広告されない | [evpn-type2-not-advertised.md](evpn-type2-not-advertised.md) |
+| 29 | MCLAG sync 不能 | [mclag-sync-failure.md](mclag-sync-failure.md) |
+| 30 | show techsupport の size 肥大化対策 | [techsupport-size-bloat.md](techsupport-size-bloat.md) |
 
 ## 使い方の前提
 
