@@ -28,6 +28,10 @@ related:
   - PORT
   - PORTCHANNEL
   - BREAKOUT_CFG
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - VOQ_INBAND_INTERFACE
   yang: []
 ---
 

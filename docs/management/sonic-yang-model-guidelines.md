@@ -1,22 +1,33 @@
 ---
 title: SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）
-description: "SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang） — SONiC の YANG モデルは ABNF.json で表現された Redis スキーマを RFC 7950 準拠の YANG に写像したもの。"
+description: SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang） — SONiC の YANG モデルは
+  ABNF.json で表現された Redis スキーマを RFC 7950 準拠の YANG に写像したもの。
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/SONiC_YANG_Model_Guidelines.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/SONiC_YANG_Model_Guidelines.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - VLAN
+  - VLAN_MEMBER
+  - TC_TO_QUEUE_MAP
+  - ACL_RULE
+  - ACL_TABLE
+  - PORTCHANNEL_INTERFACE
+  - INTERFACE
+  cli:
+  - show acl
+  - config acl
   yang:
-    - sonic-acl
-    - sonic-vlan
-    - sonic-port
-    - sonic-interface
+  - sonic-acl
+  - sonic-vlan
+  - sonic-port
+  - sonic-interface
+  - sonic-dot1p-tc-map
 ---
 
 <!-- topics-tip -->

@@ -164,7 +164,6 @@ flowchart LR
 <!-- topics-back-ref -->
 ## 関連 Topics
 
-- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->

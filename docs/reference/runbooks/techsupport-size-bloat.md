@@ -1,20 +1,39 @@
 ---
 title: show techsupport の出力サイズが肥大化する
-description: "Runbook: show techsupport (generate_dump) のアーカイブが GB 級に肥大化 — : sonic-net/sonic-utilities @ master — generate_dump : sonic-net/sonic-utilities @ master — show/m…"
+description: 'Runbook: show techsupport (generate_dump) のアーカイブが GB 級に肥大化 — : sonic-net/sonic-utilities
+  @ master — generate_dump : sonic-net/sonic-utilities @ master — show/m…'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: scripts/generate_dump
-    ref: master
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: master
+- repo: sonic-net/sonic-utilities
+  path: scripts/generate_dump
+  ref: master
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: master
 related:
-  config_db: [LOGGER]
-  cli: [show techsupport, generate_dump]
-  yang: []
+  config_db:
+  - LOGGER
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  cli:
+  - show techsupport
+  - generate_dump
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 # Runbook: show techsupport (generate_dump) のアーカイブが GB 級に肥大化

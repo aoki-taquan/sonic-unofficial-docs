@@ -1,38 +1,54 @@
 ---
 title: Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
-description: "Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor） — active-active は 両 ToR が常時トラフィックを処理する 設計。"
+description: Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
+  — active-active は 両 ToR が常時トラフィックを処理する 設計。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/active_active_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-  - repo: sonic-net/sonic-linkmgrd
-    path: src/link_manager/LinkManagerStateMachineActiveActive.cpp
-    ref: 65f563308c689e3225fdf3fc249a132350e9879b
-  - repo: sonic-net/sonic-linkmgrd
-    path: src/link_prober/LinkProberStateMachineActiveActive.h
-    ref: 65f563308c689e3225fdf3fc249a132350e9879b
-  - repo: sonic-net/sonic-swss
-    path: orchagent/muxorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss-common
-    path: common/schema.h
-    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
-  - repo: sonic-net/sonic-utilities
-    path: config/muxcable.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/SONiC
+  path: doc/dualtor/active_active_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-linkmgrd
+  path: src/link_manager/LinkManagerStateMachineActiveActive.cpp
+  ref: 65f563308c689e3225fdf3fc249a132350e9879b
+- repo: sonic-net/sonic-linkmgrd
+  path: src/link_prober/LinkProberStateMachineActiveActive.h
+  ref: 65f563308c689e3225fdf3fc249a132350e9879b
+- repo: sonic-net/sonic-swss
+  path: orchagent/muxorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-utilities
+  path: config/muxcable.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - MUX_CABLE
-    - MUX_TUNNEL
+  - MUX_CABLE
+  - MUX_TUNNEL
+  - VLAN
+  - PREFIX_LIST
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - BGP_NEIGHBOR
   cli:
-    - show mux status
-    - show mux config
-    - show mux tunnel-route
-    - config mux mode
-  yang: []
+  - show mux status
+  - show mux config
+  - show mux tunnel-route
+  - config mux mode
+  - config vlan
+  - show arp
+  - show vlan
+  yang:
+  - sonic-vlan
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vlan-sub-interface
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

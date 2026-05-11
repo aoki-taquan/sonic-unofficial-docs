@@ -1,20 +1,39 @@
 ---
 title: ポートの動的 add / del（zero-port 起動と post-init 操作）
-description: "ポートの動的 add / del（zero-port 起動と post-init 操作） — SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。"
+description: ポートの動的 add / del（zero-port 起動と post-init 操作） — SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。
 area: acl-qos
 verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port-add-del-dynamically/dynamic_port_add_del_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port-add-del-dynamically/dynamic_port_add_del_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - PORT
-    - DEBUG_COUNTER
-  cli: []
-  yang: []
+  - PORT
+  - DEBUG_COUNTER
+  - BUFFER_PG
+  - VLAN
+  - LLDP
+  - ACL_TABLE
+  - VLAN_MEMBER
+  cli:
+  - config interface
+  - config vlan
+  - show vlan
+  - show lldp
+  - show acl
+  - config acl
+  - show pfc
+  yang:
+  - sonic-port
+  - sonic-vlan
+  - sonic-port-qos-map
+  - sonic-vlan-sub-interface
+  - sonic-lldp
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
 ---
 
 !!! danger "裏取りステータス: Discrepancy-found（buffer ref counter PR は close、それ以外は merge 済み）"

@@ -1,19 +1,38 @@
 ---
 title: ルータインタフェース (RIF) カウンタ
-description: "ルータインタフェース (RIF) カウンタ — SONiC のポート単位カウンタ（portstat 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される ルータインタフェース (RIF) 単位の入出力統計は別経路で取得する必要がある。"
+description: ルータインタフェース (RIF) カウンタ — SONiC のポート単位カウンタ（portstat 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3
+  で観測される ルータインタフェース (RIF) 単位の入出力統計は別経路で取得する必要がある。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/rif-counters/RIF_counters.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/rif-counters/RIF_counters.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VLAN
+  - SNMP
+  - FLEX_COUNTER_TABLE
+  - VLAN_MEMBER
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - INTERFACE
+  - VLAN_SUB_INTERFACE
   cli:
-    - show interfaces counters rif
-    - sonic-clear interface rifcounters
-  yang: []
+  - show interfaces counters rif
+  - sonic-clear interface rifcounters
+  - show interfaces
+  - clear
+  - config vlan
+  - config interface
+  - clear counters
+  yang:
+  - sonic-vlan
+  - sonic-snmp
+  - sonic-interface
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

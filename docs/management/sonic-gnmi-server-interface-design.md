@@ -1,19 +1,36 @@
 ---
-title: SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）
-description: "SONiC gNMI Server インタフェース設計 — sonic-restapi は case-by-case な API で汎用性が無く、sonic-telemetry は 読み取り (gRPC) 専用 だった。"
+title: SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater
+  連携）
+description: SONiC gNMI Server インタフェース設計 — sonic-restapi は case-by-case な API で汎用性が無く、sonic-telemetry
+  は 読み取り (gRPC) 専用 だった。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/SONiC_GNMI_Server_Interface_Design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VNET
+  - AAA
+  - INTERFACE
+  - TELEMETRY
+  - GNMI
+  - FLEX_COUNTER_TABLE
+  - PORT
   cli:
-    - config apply-patch
-    - config reload
-  yang: []
+  - config apply-patch
+  - config reload
+  - config interface
+  - config aaa
+  - show aaa
+  - config vnet
+  yang:
+  - sonic-restapi
+  - sonic-interface
+  - sonic-vnet
+  - sonic-port
 ---
 
 <!-- topics-tip -->

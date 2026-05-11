@@ -13,10 +13,16 @@ related:
   config_db:
   - ACL_RULE
   - ACL_TABLE
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPUS
+  - P4RT_TABLE
   cli:
   - show acl
   - config acl
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

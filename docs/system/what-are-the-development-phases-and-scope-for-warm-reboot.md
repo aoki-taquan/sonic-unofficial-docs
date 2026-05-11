@@ -1,20 +1,37 @@
 ---
 title: Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）
-description: "Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison） — SONiC の Warm Reboot 設計に関する open issues / 設計の選択肢 を整理した文書。"
+description: Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）
+  — SONiC の Warm Reboot 設計に関する open issues / 設計の選択肢 を整理した文書。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/warm-reboot/open_issues.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/warm-reboot/open_issues.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - WARM_RESTART
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_DEVICE_GLOBAL
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
   cli:
-    - config warm_restart
-    - show warm_restart
-    - sonic-installer upgrade_docker
-  yang: []
+  - config warm_restart
+  - show warm_restart
+  - sonic-installer upgrade_docker
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-warm-restart
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

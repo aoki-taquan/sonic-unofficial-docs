@@ -1,18 +1,28 @@
 ---
 title: dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）
-description: "dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。"
+description: dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB /
+  STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dump-utility/Dump-Utility.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dump-utility/Dump-Utility.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - ACL_RULE
+  - ACL_TABLE
+  - DEBUG_COUNTER
+  - VOQ_INBAND_INTERFACE
+  - CRM
   cli:
-    - dump state
-  yang: []
+  - dump state
+  - show acl
+  - config acl
+  yang:
+  - sonic-debug-counter
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

@@ -1,43 +1,56 @@
 ---
 title: Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）
-description: "Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel） — 要件は 「リンク or ToR 障害時に健全な側へ切り替えられること」 に尽きる。"
+description: Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）
+  — 要件は 「リンク or ToR 障害時に健全な側へ切り替えられること」 に尽きる。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/dualtor_active_standby_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-  - repo: sonic-net/sonic-linkmgrd
-    path: src/link_manager/LinkManagerStateMachineActiveStandby.cpp
-    ref: 65f563308c689e3225fdf3fc249a132350e9879b
-  - repo: sonic-net/sonic-swss
-    path: orchagent/muxorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss-common
-    path: common/schema.h
-    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
-  - repo: sonic-net/sonic-platform-daemons
-    path: sonic-ycabled/ycable/ycable.py
-    ref: 4ba9612cb7756651062d37f977e3df17d57f740d
-  - repo: sonic-net/sonic-buildimage
-    path: files/scripts/arp_update
-    ref: 9ea932ec
-  - repo: sonic-net/sonic-utilities
-    path: scripts/dualtor_neighbor_check.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/SONiC
+  path: doc/dualtor/dualtor_active_standby_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-linkmgrd
+  path: src/link_manager/LinkManagerStateMachineActiveStandby.cpp
+  ref: 65f563308c689e3225fdf3fc249a132350e9879b
+- repo: sonic-net/sonic-swss
+  path: orchagent/muxorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-ycabled/ycable/ycable.py
+  ref: 4ba9612cb7756651062d37f977e3df17d57f740d
+- repo: sonic-net/sonic-buildimage
+  path: files/scripts/arp_update
+  ref: 9ea932ec
+- repo: sonic-net/sonic-utilities
+  path: scripts/dualtor_neighbor_check.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - MUX_LINKMGR
-    - MUX_CABLE
-    - PEER_SWITCH
-    - TUNNEL
-    - DEVICE_METADATA
+  - MUX_LINKMGR
+  - MUX_CABLE
+  - PEER_SWITCH
+  - TUNNEL
+  - DEVICE_METADATA
+  - VLAN
+  - VLAN_INTERFACE
   cli:
-    - config muxcable mode
-    - show muxcable config
-    - show muxcable status
-  yang: []
+  - config muxcable mode
+  - show muxcable config
+  - show muxcable status
+  - config muxcable
+  - show muxcable
+  - config vlan
+  - show arp
+  yang:
+  - sonic-vlan
+  - sonic-tunnel
+  - sonic-vlan-sub-interface
+  - sonic-mux-cable
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

@@ -13,9 +13,11 @@ related:
   config_db:
   - FLEX_COUNTER_TABLE
   - WRED_PROFILE
+  - CRM
   cli: []
   yang:
   - sonic-wred-profile
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

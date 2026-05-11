@@ -1,26 +1,39 @@
 ---
 title: VXLAN / VNet 設定と運用（CONFIG_DB / APP_DB / CLI）
-description: "VXLAN / VNet の設定経路。CONFIG_DB / APP_DB スキーマ、CLI 一覧、VNet ピアリングの設定例、運用時のトラブルシューティング手順を扱う。"
+description: VXLAN / VNet の設定経路。CONFIG_DB / APP_DB スキーマ、CLI 一覧、VNet ピアリングの設定例、運用時のトラブルシューティング手順を扱う。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vxlan/Vxlan_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vxlan/Vxlan_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VXLAN_TUNNEL
-    - VXLAN_TUNNEL_MAP
-    - VNET
-    - INTERFACE
-    - VLAN_INTERFACE
-    - NEIGH_TABLE
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - VNET
+  - INTERFACE
+  - VLAN_INTERFACE
+  - NEIGH_TABLE
+  - VLAN
   cli:
-    - config vxlan
-    - show vxlan
-  yang: []
+  - config vxlan
+  - show vxlan
+  - show mac
+  - config vlan
+  - config vnet
+  - show vlan
+  - config vrf
+  yang:
+  - sonic-vlan
+  - sonic-vxlan
+  - sonic-vnet
+  - sonic-vlan-sub-interface
+  - sonic-vrf
+  - sonic-port
+  - sonic-crm
 ---
 
 # VXLAN / VNet 設定と運用

@@ -1,18 +1,20 @@
 ---
 title: Thermal Control テストプラン
-description: "Thermal Control テストプラン — Thermal Control 機能（FAN status / thermal status / thermal policy）に対する functional テストプラン。"
+description: Thermal Control テストプラン — Thermal Control 機能（FAN status / thermal status
+  / thermal policy）に対する functional テストプラン。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pmon/sonic_thermal_control_test_plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pmon/sonic_thermal_control_test_plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli:
-    - show platform fanstatus
-    - show platform temperature
+  - show platform fanstatus
+  - show platform temperature
+  - show platform
   yang: []
 ---
 

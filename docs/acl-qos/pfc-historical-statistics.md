@@ -1,22 +1,38 @@
 ---
 title: PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）
-description: "PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI） — PFC pause を 受けていた累積時間 / 遷移回数 / 直近 pause 時刻 を PFCWD の lua ポーリングから推定して COUNTERS_DB に書き、show pfc counters…"
+description: PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI） — PFC pause を 受けていた累積時間
+  / 遷移回数 / 直近 pause 時刻 を PFCWD の lua ポーリングから推定して COUNTERS_DB に書き、show pfc counters…
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/PFC_historical_statistics/PFC_Counters_History_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/PFC_historical_statistics/PFC_Counters_History_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - PFC_WD
+  - PFC_WD
+  - CRM
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - BUFFER_POOL
+  - BUFFER_PROFILE
+  - BUFFER_PG
+  - BUFFER_QUEUE
   cli:
-    - config pfcwd pfc_stat_history
-    - config pfcwd start
-    - show pfc counters
-    - sonic-clear pfc
-  yang: []
+  - config pfcwd pfc_stat_history
+  - config pfcwd start
+  - show pfc counters
+  - sonic-clear pfc
+  - config pfcwd
+  - show pfc
+  - clear
+  yang:
+  - sonic-pfcwd
+  - sonic-crm
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-buffer-pool
+  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->

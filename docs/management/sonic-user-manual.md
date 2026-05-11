@@ -1,20 +1,24 @@
 ---
 title: SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像
-description: "SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像 — SONiC のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド。このページでは、HLD やリファレンスとマニュアルの 役割境界 を明確にし、利用者が次に読むべき場所を案内する。"
+description: SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像 — SONiC のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド。このページでは、HLD
+  やリファレンスとマニュアルの 役割境界 を明確にし、利用者が次に読むべき場所を案内する。
 area: management
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/user-manual/SONiC-User-Manual.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/user-manual/SONiC-User-Manual.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CRM
   cli:
-    - show
-    - config
-    - sonic-cli
-  yang: []
+  - show
+  - config
+  - sonic-cli
+  - show techsupport
+  yang:
+  - sonic-crm
 ---
 
 !!! info "裏取りステータス: code-verified（メタドキュメント）"

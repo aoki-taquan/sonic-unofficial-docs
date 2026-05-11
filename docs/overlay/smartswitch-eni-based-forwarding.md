@@ -1,22 +1,29 @@
 ---
 title: SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
-description: "SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:"
+description: 'SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
+  — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:'
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/high-availability/eni-based-forwarding.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/high-availability/eni-based-forwarding.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - ACL_TABLE
-    - ACL_TABLE_TYPE
-    - ACL_RULE
-    - DASH_ENI_FORWARD_TABLE
-    - VIP_TABLE
-  cli: []
-  yang: []
+  - ACL_TABLE
+  - ACL_TABLE_TYPE
+  - ACL_RULE
+  - DASH_ENI_FORWARD_TABLE
+  - VIP_TABLE
+  - DPU
+  - CHASSIS_MODULE
+  cli:
+  - show acl
+  - config acl
+  - show bfd
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

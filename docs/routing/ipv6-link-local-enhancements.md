@@ -1,21 +1,39 @@
 ---
 title: IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）
-description: "IPv6 Link-Local アドレス管理（自動生成と use-link-local-only） — IPv6 link-local (fe80::/64 + EUI-64 ベース interface ID) を SONiC が扱えるようにする拡張。"
+description: IPv6 Link-Local アドレス管理（自動生成と use-link-local-only） — IPv6 link-local (fe80::/64
+  + EUI-64 ベース interface ID) を SONiC が扱えるようにする拡張。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ipv6/ipv6_link_local.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ipv6/ipv6_link_local.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - INTERFACE
+  - INTERFACE
+  - VLAN
+  - VRF
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - VLAN_MEMBER
+  - BGP_PEER_GROUP_AF
   cli:
-    - config interface ipv6 enable use-link-local-only
-    - config ipv6 enable link-local
-    - show ipv6 link-local-mode
-  yang: []
+  - config interface ipv6 enable use-link-local-only
+  - config ipv6 enable link-local
+  - show ipv6 link-local-mode
+  - config interface
+  - show ndp
+  - config vlan
+  - config bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vlan
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

@@ -1,19 +1,29 @@
 ---
 title: クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
-description: "クラスベース転送 (CBF) — 同じ宛先に対して Forwarding Class (FC) ごとに異なるパス を取らせる traffic engineering。FC は Traffic Class（QoS キュー）とは別概念で、入力時に DSCP / MPLS EXP から決まる \"どのパスを通すか\" のラベル。"
+description: クラスベース転送 (CBF) — 同じ宛先に対して Forwarding Class (FC) ごとに異なるパス を取らせる traffic
+  engineering。FC は Traffic Class（QoS キュー）とは別概念で、入力時に DSCP / MPLS EXP から決まる "どのパスを通すか"
+  のラベル。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/cbf/cbf_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/cbf/cbf_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DSCP_TO_FC_MAP
-    - EXP_TO_FC_MAP
-  cli: []
-  yang: []
+  - DSCP_TO_FC_MAP
+  - EXP_TO_FC_MAP
+  - DSCP_TO_TC_MAP
+  - TELEMETRY
+  - GNMI
+  - CRM
+  - PORT_QOS_MAP
+  cli:
+  - config qos
+  yang:
+  - sonic-dscp-tc-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

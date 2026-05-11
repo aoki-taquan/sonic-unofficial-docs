@@ -1,19 +1,21 @@
 ---
 title: SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
-description: "SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約 — SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が CONFIG_DB の DEVICE_METADATA|localhost に蓄積されてきた。"
+description: SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約 — SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が
+  CONFIG_DB の DEVICE_METADATA|localhost に蓄積されてきた。
 area: switching
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SYSTEM_DEFAULTS
-    - DEVICE_METADATA
+  - SYSTEM_DEFAULTS
+  - DEVICE_METADATA
   cli: []
-  yang: []
+  yang:
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

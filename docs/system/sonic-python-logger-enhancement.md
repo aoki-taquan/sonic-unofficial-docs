@@ -1,19 +1,24 @@
 ---
 title: SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
-description: "SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP） — SONiC の Python デーモンが使う logger には複数の選択肢があるが、いずれも 動作中にログレベルを変更できない または redis 起動前に呼べない…"
+description: SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
+  — SONiC の Python デーモンが使う logger には複数の選択肢があるが、いずれも 動作中にログレベルを変更できない または redis 起動前に呼べない…
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/syslog/python-logger-enhancement.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/syslog/python-logger-enhancement.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - LOGGER
+  - LOGGER
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
   cli:
-    - config syslog level
+  - config syslog level
+  - config syslog
   yang: []
 ---
 

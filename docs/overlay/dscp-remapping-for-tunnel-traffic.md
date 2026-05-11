@@ -1,26 +1,34 @@
 ---
 title: トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
-description: "トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避） — Dual-ToR（Active / Standby）でサーバ側輻輳が起きると upper / lower 両 ToR に PFC pause が同時に伝搬 する。"
+description: トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避） — Dual-ToR（Active /
+  Standby）でサーバ側輻輳が起きると upper / lower 両 ToR に PFC pause が同時に伝搬 する。
 area: overlay
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/qos/tunnel_dscp_remapping.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/qos/tunnel_dscp_remapping.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DSCP_TO_TC_MAP
-    - TC_TO_PRIORITY_GROUP_MAP
-    - TC_TO_QUEUE_MAP
-    - TC_TO_DSCP_MAP
-    - TUNNEL
-    - PORT_QOS_MAP
-  cli: []
+  - DSCP_TO_TC_MAP
+  - TC_TO_PRIORITY_GROUP_MAP
+  - TC_TO_QUEUE_MAP
+  - TC_TO_DSCP_MAP
+  - TUNNEL
+  - PORT_QOS_MAP
+  - PFC_WD
+  cli:
+  - show pfc
   yang:
-    - sonic-tc-dscp
-    - sonic-port-qos-map
+  - sonic-tc-dscp
+  - sonic-port-qos-map
+  - sonic-dscp-tc-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-tunnel
+  - sonic-pfcwd
 ---
 
 <!-- topics-tip -->

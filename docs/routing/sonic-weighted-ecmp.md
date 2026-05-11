@@ -1,20 +1,36 @@
 ---
 title: Weighted ECMP（WCMP / BGP link-bandwidth ext community）
-description: "Weighted ECMP（WCMP） — 各 ToR-Spine リンクが部分故障した際、通常 ECMP は 生存リンクの容量差を反映できず 均等分散して輻輳する。"
+description: Weighted ECMP（WCMP） — 各 ToR-Spine リンクが部分故障した際、通常 ECMP は 生存リンクの容量差を反映できず
+  均等分散して輻輳する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/wcmp/wcmp-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/wcmp/wcmp-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - BGP_DEVICE_GLOBAL
+  - BGP_DEVICE_GLOBAL
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
   cli:
-    - config bgp device-global wcmp
-    - show bgp device-global
-  yang: []
+  - config bgp device-global wcmp
+  - show bgp device-global
+  - show bgp
+  - config bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 <!-- topics-tip -->

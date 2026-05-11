@@ -1,20 +1,37 @@
 ---
 title: BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
-description: "BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路） — FRR/bfdd の BFD dataplane (DP) インターフェース を経由して、BGP が要求した BFD セッションを SONiC の BfdOrch 経由でハードウェアオフロードする仕組み。"
+description: BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路） — FRR/bfdd の BFD dataplane (DP)
+  インターフェース を経由して、BGP が要求した BFD セッションを SONiC の BfdOrch 経由でハードウェアオフロードする仕組み。
 area: routing
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: not_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bfd/BFD HW Offload for BGP session HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bfd/BFD HW Offload for BGP session HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FEATURE
+  - FEATURE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
   cli:
-    - show bfd summary
-  yang: []
+  - show bfd summary
+  - show bfd
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 <!-- topics-tip -->

@@ -1,18 +1,38 @@
 ---
 title: Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張
-description: "Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張 — 「Overlay ECMP with BFD monitoring」HLD（SONiC/doc/vxlan/Overlay ECMP with BFD.md）の 後付け拡張 で、VxLAN VNET ルートに 4…"
+description: Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張 — 「Overlay ECMP with
+  BFD monitoring」HLD（SONiC/doc/vxlan/Overlay ECMP with BFD.md）の 後付け拡張 で、VxLAN VNET
+  ルートに 4…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vxlan/Overlay ECMP ehancements.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vxlan/Overlay ECMP ehancements.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VNET
-  cli: []
-  yang: []
+  - VNET
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - BGP_PEER_GROUP_AF
+  cli:
+  - show arp
+  - show bfd
+  - config bgp
+  - show bgp
+  - config vnet
+  yang:
+  - sonic-vnet
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

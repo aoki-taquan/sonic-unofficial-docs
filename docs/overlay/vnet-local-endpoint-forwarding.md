@@ -1,20 +1,32 @@
 ---
 title: VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
-description: "VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化） — Smart Switch（NPU + 複数 DPU）の HA では NPU から local DPU / remote DPU へパケットを送り分ける。"
+description: VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化） — Smart Switch（NPU
+  + 複数 DPU）の HA では NPU から local DPU / remote DPU へパケットを送り分ける。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VNET_ROUTE_TUNNEL_TABLE
-    - ACL_TABLE
-    - ACL_RULE
-  cli: []
-  yang: []
+  - VNET_ROUTE_TUNNEL_TABLE
+  - ACL_TABLE
+  - ACL_RULE
+  - PORT
+  - PORTCHANNEL
+  - VNET
+  - DPU
+  cli:
+  - show arp
+  - config vnet
+  - show acl
+  - config acl
+  - show bfd
+  yang:
+  - sonic-vnet
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

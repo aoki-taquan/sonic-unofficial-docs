@@ -1,23 +1,34 @@
 ---
 title: FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
-description: "FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor） — Frame Loss Ratio (FLR) は 送信フレームに対する欠落フレームの割合 で、リンク品質の代表指標:"
+description: 'FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
+  — Frame Loss Ratio (FLR) は 送信フレームに対する欠落フレームの割合 で、リンク品質の代表指標:'
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-hub
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port_fec_flr/port_fec_flr.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port_fec_flr/port_fec_flr.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FLEX_COUNTER_TABLE
+  - FLEX_COUNTER_TABLE
+  - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - TRANSCEIVER_INFO
+  - PORT_TABLE
+  - TELEMETRY
   cli:
-    - show interfaces counters fec-stats
-    - counterpoll port flr-interval-factor
-    - portstat -f
-  yang: []
+  - show interfaces counters fec-stats
+  - counterpoll port flr-interval-factor
+  - portstat -f
+  - show interfaces
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

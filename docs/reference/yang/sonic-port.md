@@ -165,7 +165,6 @@ show interfaces status
 <!-- topics-back-ref -->
 ## 関連 Topics
 
-- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->

@@ -1,22 +1,29 @@
 ---
 title: SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
-description: "SWSS docker の Warm Restart 実装メモ（開発時リファレンス） — sonic-installer upgrade_docker で SWSS docker をデータプレーンに影響を与えずアップグレードするために必要な変更点を、開発当時の作業メモとしてまとめたもの。"
+description: SWSS docker の Warm Restart 実装メモ（開発時リファレンス） — sonic-installer upgrade_docker
+  で SWSS docker をデータプレーンに影響を与えずアップグレードするために必要な変更点を、開発当時の作業メモとしてまとめたもの。
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/warm-reboot/code_implementation.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/warm-reboot/code_implementation.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - WARM_RESTART
+  - WARM_RESTART
+  - BGP_DEVICE_GLOBAL
+  - DEVICE_METADATA
+  - CRM
+  - FEATURE
   cli:
-    - config warm_restart
-    - show warm_restart
-    - sonic-installer upgrade_docker
-  yang: []
+  - config warm_restart
+  - show warm_restart
+  - sonic-installer upgrade_docker
+  yang:
+  - sonic-warm-restart
+  - sonic-crm
 ---
 
 !!! danger "裏取りステータス: discrepancy-found（HLD は temporary な開発メモであり一部 API は現行と齟齬）"

@@ -1,24 +1,28 @@
 ---
 title: TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
-description: "TACACS+ 認証 — CONFIG_DB を真実の相とし、hostcfgd の AAA モジュールが PAM/NSS 設定ファイルを書き換える。"
+description: TACACS+ 認証 — CONFIG_DB を真実の相とし、hostcfgd の AAA モジュールが PAM/NSS 設定ファイルを書き換える。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/aaa/TACACS+ Authentication.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/aaa/TACACS+ Authentication.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - AAA
-    - TACPLUS
-    - TACPLUS_SERVER
+  - AAA
+  - TACPLUS
+  - TACPLUS_SERVER
+  - RADIUS
+  - RADIUS_SERVER
   cli:
-    - config aaa authentication
-    - config tacacs
-    - show aaa
-    - show tacacs
-  yang: []
+  - config aaa authentication
+  - config tacacs
+  - show aaa
+  - show tacacs
+  - config aaa
+  yang:
+  - sonic-system-aaa
 ---
 
 <!-- topics-tip -->

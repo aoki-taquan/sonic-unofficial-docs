@@ -12,9 +12,16 @@ sources:
 related:
   config_db:
   - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - PORT_TABLE
+  - PORTCHANNEL
+  - BREAKOUT_CFG
   cli:
   - show interfaces
-  yang: []
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
 ---
 
 <!-- topics-tip -->

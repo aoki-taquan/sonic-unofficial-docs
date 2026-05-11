@@ -1,22 +1,34 @@
 ---
 title: ICMP Hardware Offload（DualToR link prober の NPU 化）
-description: "ICMP Hardware Offload（DualToR link prober の NPU 化） — SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を ICMP echo の往復 で監視している。"
+description: ICMP Hardware Offload（DualToR link prober の NPU 化） — SONiC の DualToR
+  では、ToR ↔ サーバ NIC 間のリンク状態を ICMP echo の往復 で監視している。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - MUX_LINKMGR
-    - MUX_CABLE
+  - MUX_LINKMGR
+  - MUX_CABLE
+  - ACL_RULE
+  - ACL_TABLE
+  - COPP_GROUP
+  - COPP_TRAP
+  - PEER_SWITCH
   cli:
-    - show mux config
-    - show icmp sessions
-    - show icmp summary
-  yang: []
+  - show mux config
+  - show icmp sessions
+  - show icmp summary
+  - show acl
+  - config acl
+  yang:
+  - sonic-mux-cable
+  - sonic-copp
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

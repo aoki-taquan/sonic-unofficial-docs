@@ -1,20 +1,35 @@
 ---
 title: SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）
-description: "SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR） — SRv6 SDN を BGP に頼らず構築するシナリオ向けに、SONiC の CONFIG_DB から SRv6 ロケータと local SID を 静的に 投入する仕組みを定義する。"
+description: SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR） — SRv6 SDN を BGP
+  に頼らず構築するシナリオ向けに、SONiC の CONFIG_DB から SRv6 ロケータと local SID を 静的に 投入する仕組みを定義する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/srv6/srv6_static_config_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/srv6/srv6_static_config_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SRV6_MY_LOCATORS
-    - SRV6_MY_SIDS
-  cli: []
+  - SRV6_MY_LOCATORS
+  - SRV6_MY_SIDS
+  - VRF
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - STATIC_ROUTE
+  - BGP_PEER_GROUP_AF
+  cli:
+  - config bgp
+  - show bgp
+  - config vrf
   yang:
-    - sonic-srv6
+  - sonic-srv6
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-static-route
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

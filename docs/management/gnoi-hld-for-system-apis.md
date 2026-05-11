@@ -1,17 +1,22 @@
 ---
 title: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
-description: "gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check） — gnoi.system.System のうち SONiC が初期サポートする RPC は Reboot / RebootStatus / CancelReb…"
+description: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity
+  check） — gnoi.system.System のうち SONiC が初期サポートする RPC は Reboot / RebootStatus / CancelReb…
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/gnmi/gnoi_system_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnoi_system_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPUS
   cli:
-    - gnoi_client
+  - gnoi_client
   yang: []
 ---
 

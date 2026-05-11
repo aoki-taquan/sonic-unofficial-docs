@@ -1,20 +1,34 @@
 ---
 title: SONiC Port Mirroring（SPAN / ERSPAN）
-description: "SONiC Port Mirroring（SPAN / ERSPAN） — SONiC の port mirroring 拡張。Port / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する。"
+description: SONiC Port Mirroring（SPAN / ERSPAN） — SONiC の port mirroring 拡張。Port
+  / Port-Channel 単位の ingress / egress / both SPAN、および ERSPAN（IP encapsulation）に対応する。
 area: acl-qos
 verification: hld-only
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port-mirroring/SONiC_Port_Mirroring_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port-mirroring/SONiC_Port_Mirroring_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - MIRROR_SESSION
+  - MIRROR_SESSION
+  - PORT
+  - ACL_RULE
+  - ACL_TABLE
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - PORT_TABLE
   cli:
-    - config mirror_session
-    - show mirror_session
-  yang: []
+  - config mirror_session
+  - show mirror_session
+  - show interfaces
+  - show acl
+  - config acl
+  yang:
+  - sonic-mirror-session
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

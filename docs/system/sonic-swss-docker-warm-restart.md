@@ -1,19 +1,40 @@
 ---
 title: SWSS docker warm restart（state restore / consistency / sync up）
-description: "SWSS docker warm restart（state restore / consistency / sync up） — SWSS container（orchagent + 周辺 syncd 連携）を再起動・上げ替える際にデータプレーンを乱さないため、control plane state を compl…"
+description: SWSS docker warm restart（state restore / consistency / sync up） — SWSS
+  container（orchagent + 周辺 syncd 連携）を再起動・上げ替える際にデータプレーンを乱さないため、control plane state
+  を compl…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/warm-reboot/swss_warm_restart.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/warm-reboot/swss_warm_restart.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - WARM_RESTART
+  - WARM_RESTART
+  - VLAN
+  - CRM
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - PFC_WD
+  - ACL_RULE
   cli:
-    - config warm_restart
-  yang: []
+  - config warm_restart
+  - show arp
+  - config vlan
+  - config qos
+  - show vlan
+  - show pfc
+  - show acl
+  yang:
+  - sonic-warm-restart
+  - sonic-crm
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-port
 ---
 
 !!! success "裏取りステータス: code-verified"

@@ -1,17 +1,25 @@
 ---
 title: VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
-description: "VOQ カウンタ集約（chassis supervisor からの aggregate 表示） — distributed VOQ アーキテクチャでは、ある 出力 VOQ に対応する VOQ が システム内のすべての ASIC に存在する。"
+description: VOQ カウンタ集約（chassis supervisor からの aggregate 表示） — distributed VOQ アーキテクチャでは、ある
+  出力 VOQ に対応する VOQ が システム内のすべての ASIC に存在する。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/voq/aggregate_voq_counters.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/voq/aggregate_voq_counters.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VOQ_INBAND_INTERFACE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
   cli:
-    - show queue counters --voq
+  - show queue counters --voq
+  - show queue
+  - clear
+  - clear counters
   yang: []
 ---
 

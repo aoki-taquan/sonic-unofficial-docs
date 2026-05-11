@@ -1,25 +1,39 @@
 ---
 title: VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
-description: "VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） — SONiC の VXLAN は VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ で実装される。HLD は次のスコープを定める:"
+description: 'VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） — SONiC の VXLAN
+  は VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ で実装される。HLD は次のスコープを定める:'
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vxlan/Vxlan_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vxlan/Vxlan_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VXLAN_TUNNEL
-    - VXLAN_TUNNEL_MAP
-    - VNET
-    - INTERFACE
-    - VLAN_INTERFACE
-    - NEIGH_TABLE
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - VNET
+  - INTERFACE
+  - VLAN_INTERFACE
+  - NEIGH_TABLE
+  - VRF
   cli:
-    - config vxlan
-    - show vxlan
-  yang: []
+  - config vxlan
+  - show vxlan
+  - show mac
+  - config vlan
+  - config vnet
+  - config vrf
+  - config bgp
+  yang:
+  - sonic-vxlan
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vlan
+  - sonic-vnet
+  - sonic-vrf
+  - sonic-bgp-peergroup
 ---
 
 <!-- topics-tip -->

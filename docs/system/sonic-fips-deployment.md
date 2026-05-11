@@ -1,19 +1,20 @@
 ---
 title: SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
-description: "SONiC FIPS 140-3 デプロイ — データセンタ用途で FIPS 140-3 適合 が要求される場合の、SONiC 上での有効化設計を規定する。設計の中核:"
+description: 'SONiC FIPS 140-3 デプロイ — データセンタ用途で FIPS 140-3 適合 が要求される場合の、SONiC 上での有効化設計を規定する。設計の中核:'
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FIPS
+  - FIPS
   cli: []
-  yang: []
+  yang:
+  - sonic-fips
 ---
 
 !!! danger "裏取りステータス: Discrepancy-found（実装名と HLD 記載に差異あり）"

@@ -1,20 +1,30 @@
 ---
 title: SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
-description: "SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER） — SONiC の SNMP 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が /etc/sonic/snmp.yml と config_db.json の SNMP_ACL に分散していた…"
+description: SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER） — SONiC の SNMP 設定（コミュニティ・ロケーション・コンタクト・SNMPv3
+  ユーザ）が /etc/sonic/snmp.yml と config_db.json の SNMP_ACL に分散していた…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/snmp/snmp-schema-addition.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/snmp/snmp-schema-addition.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SNMP
-    - SNMP_COMMUNITY
-    - SNMP_USER
-  cli: []
-  yang: []
+  - SNMP
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - ACL_RULE
+  - ACL_TABLE
+  - COMMUNITY_SET
+  cli:
+  - config snmp
+  - show acl
+  - config acl
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 <!-- topics-tip -->

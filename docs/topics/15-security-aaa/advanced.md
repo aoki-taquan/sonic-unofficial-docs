@@ -21,6 +21,7 @@ related:
   - TACPLUS_SERVER
   - RADIUS
   - RADIUS_SERVER
+  - TELEMETRY
   yang: []
 ---
 

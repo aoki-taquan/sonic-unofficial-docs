@@ -1,20 +1,33 @@
 ---
 title: DASH ENI が down する / トラフィック止まる
-description: "Runbook: DASH ENI が admin_state=up に遷移しない / トラフィック断 — : sonic-net/sonic-dash-api @ master — dash_eni.proto : sonic-net/sonic-swss @ master — dashorch.cpp"
+description: 'Runbook: DASH ENI が admin_state=up に遷移しない / トラフィック断 — : sonic-net/sonic-dash-api
+  @ master — dash_eni.proto : sonic-net/sonic-swss @ master — dashorch.cpp'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-dash-api
-    path: proto/dash_eni.proto
-    ref: master
-  - repo: sonic-net/sonic-swss
-    path: orchagent/dash/dashorch.cpp
-    ref: master
+- repo: sonic-net/sonic-dash-api
+  path: proto/dash_eni.proto
+  ref: master
+- repo: sonic-net/sonic-swss
+  path: orchagent/dash/dashorch.cpp
+  ref: master
 related:
-  config_db: [DASH_ENI_TABLE, DASH_VNET, DASH_APPLIANCE]
-  cli: [show dash eni, show dash vnet]
-  yang: []
+  config_db:
+  - DASH_ENI_TABLE
+  - DASH_VNET
+  - DASH_APPLIANCE
+  - VNET
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - show dash eni
+  - show dash vnet
+  - show platform
+  - config vnet
+  yang:
+  - sonic-vnet
 ---
 
 # Runbook: DASH ENI が admin_state=up に遷移しない / トラフィック断

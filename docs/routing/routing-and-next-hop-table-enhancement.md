@@ -1,19 +1,37 @@
 ---
 title: NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
-description: "NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離 — 従来の SONiC は APP_DB.ROUTE_TABLE 各エントリにネクストホップ情報 (nexthop / ifname) を 直接埋め込んで いた。"
+description: NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離 — 従来の SONiC は APP_DB.ROUTE_TABLE
+  各エントリにネクストホップ情報 (nexthop / ifname) を 直接埋め込んで いた。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ip/next_hop_group_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ip/next_hop_group_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
   cli:
-    - show ip route
-    - show ipv6 route
-  yang: []
+  - show ip route
+  - show ipv6 route
+  - show ip
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 <!-- topics-tip -->

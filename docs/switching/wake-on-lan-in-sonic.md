@@ -1,19 +1,36 @@
 ---
 title: Wake-on-LAN（wol CLI と SonicWolService gNOI）
-description: "Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。"
+description: Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic
+  Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。
 area: switching
 verification: discrepancy-found
 monitor: evolved_beyond_hld
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/wol/Wake-on-LAN-HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/wol/Wake-on-LAN-HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL
+  - VLAN_SUB_INTERFACE
+  - PORTCHANNEL_INTERFACE
   cli:
-    - wol
-  yang: []
+  - wol
+  - config interface
+  - config vlan
+  - show arp
+  - show vlan
+  - config portchannel
+  yang:
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-vlan-sub-interface
+  - sonic-port
 ---
 
 <!-- topics-tip -->

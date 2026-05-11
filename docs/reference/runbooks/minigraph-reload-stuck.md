@@ -1,20 +1,31 @@
 ---
 title: minigraph 適用後に reload が完了しない / 起動が固まる
-description: "Runbook: minigraph 適用後に reload が完了しない / 起動が固まる — : sonic-net/sonic-utilities @ 39732bceb — config/main.py : sonic-net/sonic-buildimage @ 4305596 — sonic-config…"
+description: 'Runbook: minigraph 適用後に reload が完了しない / 起動が固まる — : sonic-net/sonic-utilities
+  @ 39732bceb — config/main.py : sonic-net/sonic-buildimage @ 4305596 — sonic-config…'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-config-engine/minigraph.py
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-config-engine/minigraph.py
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: [DEVICE_METADATA, PORT, BGP_NEIGHBOR]
-  cli: [config load_minigraph, config reload]
-  yang: []
+  config_db:
+  - DEVICE_METADATA
+  - PORT
+  - BGP_NEIGHBOR
+  - CRM
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  cli:
+  - config load_minigraph
+  - config reload
+  - show interfaces
+  yang:
+  - sonic-crm
 ---
 
 # Runbook: minigraph 適用後に reload が完了しない / 起動が固まる

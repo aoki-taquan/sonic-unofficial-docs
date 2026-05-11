@@ -1,20 +1,30 @@
 ---
 title: FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）
-description: "FEC FLR 機能の内部実装。port_flr.lua counter-poll プラグインの登録位置、参照する SAI counter、observed/predicted の計算手順、FlexCounterOrch が CONFIG_DB から FLEX_COUNTER_DB へ FLR_INTERVAL_FACTOR を伝搬する経路を解説する。"
+description: FEC FLR 機能の内部実装。port_flr.lua counter-poll プラグインの登録位置、参照する SAI counter、observed/predicted
+  の計算手順、FlexCounterOrch が CONFIG_DB から FLEX_COUNTER_DB へ FLR_INTERVAL_FACTOR を伝搬する経路を解説する。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port_fec_flr/port_fec_flr.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port_fec_flr/port_fec_flr.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FLEX_COUNTER_TABLE
+  - FLEX_COUNTER_TABLE
+  - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - TRANSCEIVER_INFO
+  - PORT_TABLE
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-crm
 ---
 
 # FEC FLR 内部実装

@@ -1,18 +1,29 @@
 ---
 title: gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish）
-description: "gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish） — 通常の gNMI subscribe は collector → device の方向で接続するが、ファイアウォール / NAT 越しや stateless collector の場面では de…"
+description: gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish） — 通常の gNMI
+  subscribe は collector → device の方向で接続するが、ファイアウォール / NAT 越しや stateless collector
+  の場面では de…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/system-telemetry/dialout.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/system-telemetry/dialout.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - TELEMETRY_CLIENT
-  cli: []
-  yang: []
+  - TELEMETRY_CLIENT
+  - NAT
+  - TELEMETRY
+  - GNMI
+  - STATIC_NAT
+  - STATIC_NAPT
+  - NAT_POOL
+  cli:
+  - show nat
+  - config nat
+  yang:
+  - sonic-nat
 ---
 
 <!-- topics-tip -->

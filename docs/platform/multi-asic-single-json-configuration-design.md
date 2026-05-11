@@ -1,22 +1,32 @@
 ---
 title: Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
-description: "Multi-ASIC Single JSON Configuration（Golden Config に namespace layer） — minigraph 廃止後の Golden Config（NDM 生成 → HwProxy で push）を multi-ASIC 機にも適用するための JSON スキーマ拡…"
+description: Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
+  — minigraph 廃止後の Golden Config（NDM 生成 → HwProxy で push）を multi-ASIC 機にも適用するための JSON
+  スキーマ拡…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/golden_config/Multi-Asic_Single_JSON_Configuration_Design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/golden_config/Multi-Asic_Single_JSON_Configuration_Design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - VOQ_INBAND_INTERFACE
+  - DEVICE_METADATA
+  - BGP_INTERNAL_NEIGHBOR
+  - PORTCHANNEL
   cli:
-    - config reload
-    - config override-config-table
-    - config apply-patch
-    - config save
-    - show runningconfiguration all
-  yang: []
+  - config reload
+  - config override-config-table
+  - config apply-patch
+  - config save
+  - show runningconfiguration all
+  yang:
+  - sonic-port
 ---
 
 <!-- topics-tip -->

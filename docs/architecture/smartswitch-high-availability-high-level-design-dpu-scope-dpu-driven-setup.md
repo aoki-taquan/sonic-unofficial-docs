@@ -10,10 +10,20 @@ sources:
   path: doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - ACL_RULE
+  - ACL_TABLE
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPUS
+  - CRM
   cli:
   - show bfd
-  yang: []
+  - show acl
+  - config acl
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

@@ -1,14 +1,8 @@
 ---
 title: カバレッジ
-description: カバレッジ — このページは docs/**/*.md の frontmatter verification フィールドを集計したものです。meta/scripts/gen_coverage.py
-  で自動生成されます。
+description: "カバレッジ — このページは docs/**/*.md の frontmatter verification フィールドを集計したものです。meta/scripts/gen_coverage.py で自動生成されます。"
 verification: meta
 last_verified: 2026-05-11
-related:
-  cli: []
-  config_db: []
-  yang: []
-  _no_related: true
 ---
 
 # カバレッジ
@@ -27,7 +21,7 @@ related:
 
 ## 全体合計
 
-全 **871** ページ。
+全 **872** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
@@ -36,14 +30,14 @@ related:
 | discrepancy-found | 62 |
 | issue-confirmed | 0 |
 | hld-only | 8 |
-| meta | 187 |
+| meta | 188 |
 | stub | 9 |
 
 ## area 別マトリクス
 
 | area | code-verified | runbook-verified | discrepancy-found | issue-confirmed | hld-only | meta | stub | 合計 |
 |------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-| `_meta` | 0 | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
+| `_meta` | 0 | 0 | 0 | 0 | 0 | 4 | 0 | 4 |
 | `_root` | 0 | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
 | `acl-qos` | 26 | 0 | 2 | 0 | 3 | 0 | 1 | 32 |
 | `architecture` | 32 | 0 | 16 | 0 | 1 | 0 | 1 | 50 |

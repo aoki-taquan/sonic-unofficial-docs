@@ -1,19 +1,31 @@
 ---
 title: SmartSwitch DPU が応答しない
-description: "Runbook: SmartSwitch DPU が応答しない — : sonic-net/sonic-platform-daemons @ 4305596 — chassisd : sonic-net/sonic-host-services @ c5bbbe8 — DPU state スクリプト"
+description: 'Runbook: SmartSwitch DPU が応答しない — : sonic-net/sonic-platform-daemons
+  @ 4305596 — chassisd : sonic-net/sonic-host-services @ c5bbbe8 — DPU state スクリプト'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-platform-daemons
-    path: sonic-chassisd/scripts/chassisd
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-platform-daemons
-    path: sonic-chassisd/tests/test_dpu_chassisd.py
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-chassisd/scripts/chassisd
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-chassisd/tests/test_dpu_chassisd.py
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: [CHASSIS_MODULE, DPU, MID_PLANE_BRIDGE]
-  cli: [show chassis modules status, show platform inventory, config chassis modules]
+  config_db:
+  - CHASSIS_MODULE
+  - DPU
+  - MID_PLANE_BRIDGE
+  - DPUS
+  - DASH_ENI_TABLE
+  - DASH_VNET
+  - DASH_APPLIANCE
+  cli:
+  - show chassis modules status
+  - show platform inventory
+  - config chassis modules
+  - show platform
   yang: []
 ---
 

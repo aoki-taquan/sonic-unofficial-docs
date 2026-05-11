@@ -1,21 +1,37 @@
 ---
 title: DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
-description: "DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス） — SONiC の DHCPv4 リレーは dhcp-relay docker 内の isc-dhcp ベースの dhcrelay プロセスで実装されている。"
+description: DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス） — SONiC の DHCPv4 リレーは
+  dhcp-relay docker 内の isc-dhcp ベースの dhcrelay プロセスで実装されている。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VLAN
+  - VLAN
+  - DHCP_RELAY
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - DHCP_SERVER_IPV4
+  - VLAN_SUB_INTERFACE
+  - COPP_GROUP
   cli:
-    - config vlan dhcp_relay add
-    - config vlan dhcp_relay del
-    - show vlan brief
-  yang: []
+  - config vlan dhcp_relay add
+  - config vlan dhcp_relay del
+  - show vlan brief
+  - config vlan
+  - show vlan
+  - config interface
+  - config dhcp relay
+  yang:
+  - sonic-vlan
+  - sonic-dhcp-server
+  - sonic-vlan-sub-interface
+  - sonic-copp
+  - sonic-port
 ---
 
 <!-- topics-tip -->

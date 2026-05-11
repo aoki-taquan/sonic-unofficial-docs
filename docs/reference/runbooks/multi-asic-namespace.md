@@ -1,20 +1,35 @@
 ---
 title: Multi-ASIC で namespace 間通信できない
-description: "Runbook: Multi-ASIC で namespace 間通信できない — : sonic-net/sonic-utilities @ 39732bceb — multi_asic.py : sonic-net/sonic-swss @ 4305596 — orchdaemon の namespace 認識"
+description: 'Runbook: Multi-ASIC で namespace 間通信できない — : sonic-net/sonic-utilities
+  @ 39732bceb — multi_asic.py : sonic-net/sonic-swss @ 4305596 — orchdaemon の namespace
+  認識'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: utilities_common/multi_asic.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-swss
-    path: orchagent/orchdaemon.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-utilities
+  path: utilities_common/multi_asic.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss
+  path: orchagent/orchdaemon.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: [DEVICE_METADATA, BGP_INTERNAL_NEIGHBOR, PORTCHANNEL]
-  cli: [show ip bgp summary -n asic0, show interfaces status -n asic0]
-  yang: []
+  config_db:
+  - DEVICE_METADATA
+  - BGP_INTERNAL_NEIGHBOR
+  - PORTCHANNEL
+  - VOQ_INBAND_INTERFACE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - show ip bgp summary -n asic0
+  - show interfaces status -n asic0
+  - show ip
+  - show platform
+  - show interfaces
+  yang:
+  - sonic-port
 ---
 
 # Runbook: Multi-ASIC で namespace 間通信できない

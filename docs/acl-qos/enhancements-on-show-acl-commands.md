@@ -1,21 +1,36 @@
 ---
 title: show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
-description: "show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status） — ACL 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。"
+description: show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status） — ACL
+  設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/acl/ACL-enhancements-on-show-command.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/acl/ACL-enhancements-on-show-command.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - ACL_TABLE
-    - ACL_RULE
+  - ACL_TABLE
+  - ACL_RULE
+  - PFC_WD
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - CRM
+  - BUFFER_POOL
+  - BUFFER_PROFILE
   cli:
-    - show acl table
-    - show acl rule
-  yang: []
+  - show acl table
+  - show acl rule
+  - show acl
+  - config acl
+  - show pfc
+  yang:
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-crm
+  - sonic-pfcwd
+  - sonic-buffer-pool
+  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->

@@ -1,19 +1,26 @@
 ---
 title: 液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
-description: "液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント） — 高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。"
+description: 液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント） — 高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid
+  Cooling）が必須となるが、液漏れは即座に致命的故障につながる。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bmc/leakage_detection_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bmc/leakage_detection_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - TELEMETRY
+  - GNMI
   cli:
-    - show platform leakage status
-    - show system-health detail
+  - show platform leakage status
+  - show system-health detail
+  - show platform
   yang: []
 ---
 

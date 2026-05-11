@@ -1,18 +1,39 @@
 ---
 title: SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）
-description: "SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証） — SONiC を basic L2 switch として構成した場合の最小機能を T0 トポロジで検証する。"
+description: SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証） — SONiC を basic L2
+  switch として構成した場合の最小機能を T0 トポロジで検証する。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/test-plans/Sonic Basic L2 Mode Test plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/test-plans/Sonic Basic L2 Mode Test plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VLAN
+  - SNMP
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
   cli:
-    - sonic-cfggen --preset l2
-  yang: []
+  - sonic-cfggen --preset l2
+  - config vlan
+  - show arp
+  - show vlan
+  - config snmp
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-vlan
+  - sonic-snmp
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-portchannel
+  - sonic-vlan-sub-interface
+  - sonic-bgp-peergroup
 ---
 
 !!! note "裏取りステータス: code-verified（preset l2 部分）"

@@ -1,18 +1,34 @@
 ---
 title: Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
-description: "Warm-reboot 中の LACP retry count 拡張 — LACP の long rate は 30 秒間隔、3 回連続未受信で LAG Down → 実効タイムアウト 90 秒。SONiC の warm-reboot はコントロールプレーン断が最大 ~90 秒で、わずかな揺らぎで LAG が落ちる。"
+description: Warm-reboot 中の LACP retry count 拡張 — LACP の long rate は 30 秒間隔、3 回連続未受信で
+  LAG Down → 実効タイムアウト 90 秒。SONiC の warm-reboot はコントロールプレーン断が最大 ~90 秒で、わずかな揺らぎで LAG
+  が落ちる。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/lag/Increasing LACP PDU timeout during warm-reboot.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/lag/Increasing LACP PDU timeout during warm-reboot.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - LLDP
+  - WARM_RESTART
+  - LLDP_PORT
+  - DPU
+  - CHASSIS_MODULE
+  - BGP_DEVICE_GLOBAL
+  - DEVICE_METADATA
   cli:
-    - config portchannel retry-count
-  yang: []
+  - config portchannel retry-count
+  - config portchannel
+  - show version
+  - show lldp
+  yang:
+  - sonic-warm-restart
+  - sonic-lldp
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

@@ -1,21 +1,36 @@
 ---
 title: ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
-description: "ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8） — TPID（Tag Protocol Identifier）は VLAN tag を識別する Ethernet frame 内の 16-bit 値。"
+description: ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8） — TPID（Tag Protocol
+  Identifier）は VLAN tag を識別する Ethernet frame 内の 16-bit 値。
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/tpid/SonicTPIDSettingHLD1.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/tpid/SonicTPIDSettingHLD1.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - PORT
-    - PORTCHANNEL
+  - PORT
+  - PORTCHANNEL
+  - VLAN
+  - VLAN_MEMBER
+  - PORTCHANNEL_MEMBER
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
   cli:
-    - config interface tpid
-    - show interface tpid
-  yang: []
+  - config interface tpid
+  - show interface tpid
+  - config interface
+  - config vlan
+  - show vlan
+  - config portchannel
+  yang:
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

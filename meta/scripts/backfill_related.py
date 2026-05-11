@@ -172,6 +172,26 @@ def related_is_thin(fm: dict, threshold: int) -> bool:
     return True
 
 
+def related_is_partial(fm: dict) -> bool:
+    """Page qualifies as 'partial': at least one of cli/config_db/yang is
+    empty AND at least one is non-empty. Fully-empty pages are excluded
+    (those are handled by `related_is_empty`)."""
+    rel = fm.get("related") or {}
+    if not isinstance(rel, dict):
+        return False
+    if fm.get("_no_related") is True:
+        return False
+    empty_count = 0
+    nonempty_count = 0
+    for key in ("cli", "config_db", "yang"):
+        v = rel.get(key) or []
+        if isinstance(v, list) and v:
+            nonempty_count += 1
+        else:
+            empty_count += 1
+    return empty_count >= 1 and nonempty_count >= 1
+
+
 # ---------- reference indices ----------
 
 def load_cli_index(root: Path) -> dict[str, str]:
@@ -716,15 +736,22 @@ def process_file(
     mode: str,
     dry_run: bool,
     thin_threshold: int,
+    partial_only: bool = False,
 ):
     text = path.read_text(encoding="utf-8")
     fm, body = split_frontmatter(text)
     if fm is None:
         return None
-    is_empty = related_is_empty(fm)
-    is_thin = thin_threshold > 1 and related_is_thin(fm, thin_threshold)
-    if not is_empty and not is_thin:
+    if fm.get("_no_related") is True:
         return None
+    if partial_only:
+        if not related_is_partial(fm):
+            return None
+    else:
+        is_empty = related_is_empty(fm)
+        is_thin = thin_threshold > 1 and related_is_thin(fm, thin_threshold)
+        if not is_empty and not is_thin:
+            return None
 
     aggressive = mode == "aggressive"
     cap = 7 if aggressive else 5
@@ -813,6 +840,14 @@ def main():
         help="comma-separated directories to scan",
     )
     ap.add_argument(
+        "--partial-only",
+        action="store_true",
+        help=(
+            "Only process pages where at least one of related.{cli,config_db,yang} "
+            "is empty AND at least one is non-empty (fills the gaps; never overwrites)."
+        ),
+    )
+    ap.add_argument(
         "--thin-threshold",
         type=int,
         default=1,
@@ -861,6 +896,7 @@ def main():
             args.mode,
             args.dry_run,
             args.thin_threshold,
+            args.partial_only,
         )
         if res is None:
             continue

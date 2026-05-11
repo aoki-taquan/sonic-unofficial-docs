@@ -1,19 +1,39 @@
 ---
 title: YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
-description: "YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ） — SONiC では従来、config 系 CLI が ConfigDB に書き込む前のフィールド検証を Python のハードコード（ad-hoc）と YANG モデルの両方 で重複定義していた。"
+description: YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ） — SONiC では従来、config
+  系 CLI が ConfigDB に書き込む前のフィールド検証を Python のハードコード（ad-hoc）と YANG モデルの両方 で重複定義していた。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/config_yang_validation/config_db_yang_validation.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/config_yang_validation/config_db_yang_validation.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEVICE_METADATA
+  - DEVICE_METADATA
+  - AAA
+  - VRF
+  - NAT
+  - SNMP
+  - VLAN
+  - BGP_NEIGHBOR
   cli:
-    - config yang_config_validation
-  yang: []
+  - config yang_config_validation
+  - config portchannel
+  - config vlan
+  - config bgp
+  - show bgp
+  - config vrf
+  - show vlan
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vlan
+  - sonic-snmp
+  - sonic-nat
+  - sonic-portchannel
+  - sonic-bgp-peergroup
 ---
 
 <!-- topics-tip -->

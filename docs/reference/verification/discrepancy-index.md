@@ -1,14 +1,8 @@
 ---
 title: HLD と実装の乖離 一覧（discrepancy-index）
-description: 'HLD と実装の乖離 一覧（discrepancy-index） — このページは、verification: discrepancy-found
-  が付いた全ページを自動収集して並べたものです。meta/scripts/gen_discrepancy_index.py で生成されます。'
+description: "HLD と実装の乖離 一覧（discrepancy-index） — このページは、verification: discrepancy-found が付いた全ページを自動収集して並べたものです。meta/scripts/gen_discrepancy_index.py で生成されます。"
 verification: meta
 last_verified: 2026-05-11
-related:
-  cli: []
-  config_db: []
-  yang: []
-  _no_related: true
 ---
 
 # HLD と実装の乖離 一覧（discrepancy-index）
@@ -71,7 +65,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   
   2026-05 時点で本 framework は **master に取り込まれておらず、HLD のみ**（2019-07 v0.3 から 6 年以上停滞）。
 
-- [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）](../../architecture/error-handling-framework-in-sonic-internals.md)  
+- [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB](../../architecture/error-handling-framework-in-sonic-internals.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
 
 - [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)  
@@ -133,7 +127,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 ### internals
 
-- [L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show arp）](../../internals/l3-scaling-and-performance-enhancements-internals.md)  
+- [L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show](../../internals/l3-scaling-and-performance-enhancements-internals.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
 
 - [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../../internals/l3-scaling-and-performance-enhancements-limitations.md)  
@@ -145,7 +139,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）](../../internals/l3-scaling-and-performance-enhancements-operations.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
 
-- [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）](../../internals/l3-scaling-and-performance-enhancements.md)  
+- [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show](../../internals/l3-scaling-and-performance-enhancements.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。

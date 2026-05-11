@@ -1,19 +1,27 @@
 ---
 title: CONFIG_DB save / load が反映されない
-description: "Runbook: CONFIG_DB save / load が反映されない — : sonic-net/sonic-utilities @ 39732bceb — config/main.py, scripts/db_migrator.py"
+description: 'Runbook: CONFIG_DB save / load が反映されない — : sonic-net/sonic-utilities
+  @ 39732bceb — config/main.py, scripts/db_migrator.py'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: scripts/db_migrator.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/db_migrator.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
-  config_db: []
-  cli: [config save, config reload, config load_minigraph, sonic-cfggen]
+  config_db:
+  - DEVICE_METADATA
+  - PORT
+  - BGP_NEIGHBOR
+  cli:
+  - config save
+  - config reload
+  - config load_minigraph
+  - sonic-cfggen
   yang: []
 ---
 

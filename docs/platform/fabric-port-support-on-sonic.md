@@ -1,21 +1,39 @@
 ---
 title: VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
-description: "VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring） — VOQ シャーシは forwarding ASIC（front panel を持つ NPU）を fabric ASIC（cell ベースの内部 fabric）で相互接続する。"
+description: VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring） — VOQ シャーシは forwarding
+  ASIC（front panel を持つ NPU）を fabric ASIC（cell ベースの内部 fabric）で相互接続する。
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/voq/fabric.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/voq/fabric.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEVICE_METADATA
+  - DEVICE_METADATA
+  - LLDP
+  - VOQ_INBAND_INTERFACE
+  - FABRIC_PORT
+  - PORT
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
   cli:
-    - show fabric counters
-    - show fabric port status
-    - clear fabric counters
-  yang: []
+  - show fabric counters
+  - show fabric port status
+  - clear fabric counters
+  - clear
+  - show interfaces
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-port
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-fabric-monitor
+  - sonic-fabric-port
+  - sonic-port-qos-map
+  - sonic-bgp-peergroup
 ---
 
 <!-- topics-tip -->

@@ -1,21 +1,39 @@
 ---
 title: Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）
-description: "Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計） — ホストインタフェース trap（CoPP で ASIC から CPU へ punt されるパケット種別。"
+description: Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計） — ホストインタフェース
+  trap（CoPP で ASIC から CPU へ punt されるパケット種別。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/flow_counters/flow_counters.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/flow_counters/flow_counters.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FLEX_COUNTER_TABLE
-    - COPP_TRAP
+  - FLEX_COUNTER_TABLE
+  - COPP_TRAP
+  - LLDP
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
   cli:
-    - counterpoll
-    - show flowcnt trap
-  yang: []
+  - counterpoll
+  - show flowcnt trap
+  - show flowcnt
+  - show arp
+  - config bgp
+  - show bgp
+  - show lldp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 <!-- topics-tip -->

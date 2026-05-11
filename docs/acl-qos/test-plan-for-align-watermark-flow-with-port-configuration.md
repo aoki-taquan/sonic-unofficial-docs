@@ -1,21 +1,31 @@
 ---
 title: counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン
-description: "counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン — SONiC の counterpoll CLI は queue / watermark / pg-drop の 3 種を個別に enable/disable できる。"
+description: counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン — SONiC の counterpoll
+  CLI は queue / watermark / pg-drop の 3 種を個別に enable/disable できる。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FLEX_COUNTER_TABLE
+  - FLEX_COUNTER_TABLE
+  - PORT
+  - QUEUE
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - PORT_TABLE
   cli:
-    - counterpoll
-    - config save
-    - config reload
-  yang: []
+  - counterpoll
+  - config save
+  - config reload
+  - show queue
+  yang:
+  - sonic-port
+  - sonic-queue
+  - sonic-port-qos-map
 ---
 
 <!-- topics-tip -->

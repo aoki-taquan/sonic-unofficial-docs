@@ -1,22 +1,25 @@
 ---
 title: gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
-description: "gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル — gNSI（gRPC Network Security Interface）は、ネットワーク機器の セキュリティクレデンシャルを gRPC 経由で安全にローテーションする ためのマイクロサービス群である。"
+description: gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル — gNSI（gRPC Network
+  Security Interface）は、ネットワーク機器の セキュリティクレデンシャルを gRPC 経由で安全にローテーションする ためのマイクロサービス群である。
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/gnmi/gnsi.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnsi.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - TELEMETRY
+  - GNMI
   cli: []
   yang:
-    - openconfig-gnsi-certz
-    - openconfig-gnsi-authz
-    - openconfig-gnsi-pathz
-    - openconfig-gnsi-credentialz
+  - openconfig-gnsi-certz
+  - openconfig-gnsi-authz
+  - openconfig-gnsi-pathz
+  - openconfig-gnsi-credentialz
 ---
 
 <!-- topics-tip -->

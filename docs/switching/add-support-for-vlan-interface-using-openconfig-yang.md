@@ -1,22 +1,36 @@
 ---
 title: VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
-description: "VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか REST / gNMI 公開していなかった。"
+description: VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか
+  REST / gNMI 公開していなかった。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/OpenConfig_VLAN_Interface.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/OpenConfig_VLAN_Interface.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VLAN
-    - VLAN_INTERFACE
-    - VLAN_MEMBER
-  cli: []
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL
+  - VLAN_SUB_INTERFACE
+  - INTERFACE
+  cli:
+  - config vlan
+  - show vlan
+  - config interface
+  - config portchannel
   yang:
-    - openconfig-interfaces
-    - openconfig-vlan
+  - openconfig-interfaces
+  - openconfig-vlan
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-vlan-sub-interface
+  - sonic-interface
+  - sonic-port
 ---
 
 <!-- topics-tip -->

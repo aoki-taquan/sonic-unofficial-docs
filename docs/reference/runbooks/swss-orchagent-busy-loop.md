@@ -1,24 +1,48 @@
 ---
 title: orchagent が CPU 100% で詰まる
-description: "Runbook: swss/orchagent が busy loop に陥り、新規設定変更が反映されなくなる場合の切り分け"
+description: 'Runbook: swss/orchagent が busy loop に陥り、新規設定変更が反映されなくなる場合の切り分け'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
-tags: [runbook, swss, orchagent, performance]
+tags:
+- runbook
+- swss
+- orchagent
+- performance
 sources:
-  - repo: sonic-net/sonic-swss
-    path: orchagent/orchdaemon.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss
-    path: orchagent/orch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss-common
-    path: common/consumerstatetable.cpp
-    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss
+  path: orchagent/orchdaemon.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/orch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/consumerstatetable.cpp
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
-  config_db: []
-  cli: [show processes cpu, show logging]
-  yang: []
+  config_db:
+  - CRM
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  cli:
+  - show processes cpu
+  - show logging
+  - config bgp
+  - show bgp
+  - show acl
+  - config acl
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-crm
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 # Runbook: orchagent が CPU 100% で詰まる

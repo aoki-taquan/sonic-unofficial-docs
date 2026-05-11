@@ -1,20 +1,36 @@
 ---
 title: Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
-description: "Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期） — TSA（Traffic-Shift Away）は SONiC ルータをトラフィック対象から外すための運用機能で、BGP に対して 「ネイバへ経路を広告しない」Route Policy を適用する。"
+description: Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期） — TSA（Traffic-Shift
+  Away）は SONiC ルータをトラフィック対象から外すための運用機能で、BGP に対して 「ネイバへ経路を広告しない」Route Policy を適用する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/voq/Reliable_TSA.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/voq/Reliable_TSA.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - BGP_DEVICE_GLOBAL
+  - BGP_DEVICE_GLOBAL
+  - VOQ_INBAND_INTERFACE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
   cli:
-    - TSA
-    - TSB
-  yang: []
+  - TSA
+  - TSB
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 <!-- topics-tip -->

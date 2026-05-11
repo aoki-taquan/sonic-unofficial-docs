@@ -1,24 +1,35 @@
 ---
 title: Multiple Spanning Tree Protocol (MSTP) on SONiC
-description: "Multiple Spanning Tree Protocol (MSTP) on SONiC — IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し 「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」 のが特徴。"
+description: Multiple Spanning Tree Protocol (MSTP) on SONiC — IEEE 802.1Q-2014 準拠の
+  Spanning Tree。RSTP / PVST に対し 「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」
+  のが特徴。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/MSTP/MSTP.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/MSTP/MSTP.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - STP
-    - STP_MST
-    - STP_MST_INST
-    - STP_MST_PORT
-    - STP_PORT
+  - STP
+  - STP_MST
+  - STP_MST_INST
+  - STP_MST_PORT
+  - STP_PORT
+  - VLAN
+  - VLAN_MEMBER
   cli:
-    - config spanning-tree
-    - show spanning-tree
-  yang: []
+  - config spanning-tree
+  - show spanning-tree
+  - config vlan
+  - show vlan
+  yang:
+  - sonic-spanning-tree
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

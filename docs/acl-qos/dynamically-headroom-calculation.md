@@ -1,27 +1,39 @@
 ---
 title: Dynamic Headroom Calculation（buffer_model = dynamic）
-description: "Dynamic Headroom Calculation（buffer_model = dynamic） — PFC headroom（lossless 用 PG の xon / xoff / size）を pg_profile_lookup.ini のテーブル lookup ではなく式から動的計算 するモード。"
+description: Dynamic Headroom Calculation（buffer_model = dynamic） — PFC headroom（lossless
+  用 PG の xon / xoff / size）を pg_profile_lookup.ini のテーブル lookup ではなく式から動的計算 するモード。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/qos/dynamically-headroom-calculation.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/qos/dynamically-headroom-calculation.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEVICE_METADATA
-    - LOSSLESS_TRAFFIC_PATTERN
-    - LOSSLESS_BUFFER_PARAM
-    - BUFFER_POOL
-    - BUFFER_PROFILE
-    - BUFFER_PG
+  - DEVICE_METADATA
+  - LOSSLESS_TRAFFIC_PATTERN
+  - LOSSLESS_BUFFER_PARAM
+  - BUFFER_POOL
+  - BUFFER_PROFILE
+  - BUFFER_PG
+  - BUFFER_QUEUE
   cli:
-    - config qos reload
-    - config interface speed
-    - config interface cable-length
-    - config interface mtu
-  yang: []
+  - config qos reload
+  - config interface speed
+  - config interface cable-length
+  - config interface mtu
+  - config qos
+  - config interface
+  - config buffer
+  yang:
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-buffer-pg
+  - sonic-buffer-queue
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-pfcwd
 ---
 
 <!-- topics-tip -->

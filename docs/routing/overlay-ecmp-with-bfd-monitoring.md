@@ -1,20 +1,38 @@
 ---
 title: Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）
-description: "Overlay ECMP with BFD monitoring — VxLAN VNet 経路 (VNET_ROUTE_TUNNEL_TABLE) に 複数 endpoint を ECMP で並べ、各 endpoint の生存性を BFD で確認 し、Down メンバを NHG から外したい。"
+description: Overlay ECMP with BFD monitoring — VxLAN VNet 経路 (VNET_ROUTE_TUNNEL_TABLE)
+  に 複数 endpoint を ECMP で並べ、各 endpoint の生存性を BFD で確認 し、Down メンバを NHG から外したい。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vxlan/Overlay ECMP with BFD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vxlan/Overlay ECMP with BFD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VXLAN_TUNNEL
-    - VNET
+  - VXLAN_TUNNEL
+  - VNET
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - VXLAN_TUNNEL_MAP
+  - VXLAN_EVPN_NVO
+  - BGP_PEER_GROUP_AF
   cli:
-    - show vnet routes all
-  yang: []
+  - show vnet routes all
+  - show bfd
+  - config vxlan
+  - config vnet
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vxlan
+  - sonic-vnet
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

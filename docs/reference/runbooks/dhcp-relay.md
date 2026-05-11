@@ -1,20 +1,40 @@
 ---
 title: DHCP Relay で IP が払い出されない
-description: "Runbook: DHCP Relay で IP が払い出されない — : sonic-net/sonic-dhcp-relay @ 7316417 — relay.cpp : sonic-net/sonic-utilities @ 39732bceb — config vlan dhcp_relay"
+description: 'Runbook: DHCP Relay で IP が払い出されない — : sonic-net/sonic-dhcp-relay @ 7316417
+  — relay.cpp : sonic-net/sonic-utilities @ 39732bceb — config vlan dhcp_relay'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-dhcp-relay
-    path: dhcp6relay/src/relay.cpp
-    ref: 7316417034fee6a6c6002490362c9bc75eeafde1
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-dhcp-relay
+  path: dhcp6relay/src/relay.cpp
+  ref: 7316417034fee6a6c6002490362c9bc75eeafde1
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
-  config_db: [VLAN, DHCP_RELAY, VLAN_INTERFACE]
-  cli: [config vlan dhcp_relay add, show dhcp_relay ipv4 helper, sonic-clear dhcp_relay]
-  yang: []
+  config_db:
+  - VLAN
+  - DHCP_RELAY
+  - VLAN_INTERFACE
+  - VRF
+  - VLAN_MEMBER
+  - DHCP_SERVER_IPV4
+  - VLAN_SUB_INTERFACE
+  cli:
+  - config vlan dhcp_relay add
+  - show dhcp_relay ipv4 helper
+  - sonic-clear dhcp_relay
+  - config vlan
+  - clear
+  - show feature
+  - config interface
+  yang:
+  - sonic-vlan
+  - sonic-dhcp-server
+  - sonic-vlan-sub-interface
+  - sonic-vrf
+  - sonic-port
 ---
 
 # Runbook: DHCP Relay で IP が払い出されない

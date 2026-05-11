@@ -1,24 +1,39 @@
 ---
 title: Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）
-description: "Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6） — Everflow（SAI mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく 本番に近い構成での functional / negati…"
+description: Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6） — Everflow（SAI
+  mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく 本番に近い構成での functional / negati…
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/acl/Everflow-test-plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/acl/Everflow-test-plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - ACL_TABLE
-    - ACL_RULE
-    - MIRROR_SESSION
+  - ACL_TABLE
+  - ACL_RULE
+  - MIRROR_SESSION
+  - QUEUE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
   cli:
-    - config acl
-    - config mirror_session
-    - acl-loader
-    - aclshow
-  yang: []
+  - config acl
+  - config mirror_session
+  - acl-loader
+  - aclshow
+  - config mirror session
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-mirror-session
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

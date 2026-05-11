@@ -1,24 +1,40 @@
 ---
-title: SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
-description: "SONiC NOS の設定手段一覧 — SONiC は CONFIG_DB（Redis db 4）に 複数の入口 を提供し、最終的に /etc/sonic/config_db.json で永続化する。"
+title: SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP
+  / vtysh / redis / apply-patch）
+description: SONiC NOS の設定手段一覧 — SONiC は CONFIG_DB（Redis db 4）に 複数の入口 を提供し、最終的に /etc/sonic/config_db.json
+  で永続化する。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/configuration/SONiC_NOS_Configuration_Methods.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/configuration/SONiC_NOS_Configuration_Methods.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VLAN
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - VLAN_MEMBER
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
   cli:
-    - config
-    - show
-    - sonic-cfggen
-    - config save
-    - config reload
-    - config apply-patch
-    - vtysh
-  yang: []
+  - config
+  - show
+  - sonic-cfggen
+  - config save
+  - config reload
+  - config apply-patch
+  - vtysh
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vlan
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

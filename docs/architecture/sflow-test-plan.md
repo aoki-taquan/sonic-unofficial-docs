@@ -1,22 +1,30 @@
 ---
 title: sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）
-description: "sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling） — T0 上で SONiC sFlow 機能を機能検証するテスト。"
+description: sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter
+  polling） — T0 上で SONiC sFlow 機能を機能検証するテスト。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sflow/Sflow_test_plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sflow/Sflow_test_plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SFLOW
-    - SFLOW_COLLECTOR
-    - SFLOW_SESSION
+  - SFLOW
+  - SFLOW_COLLECTOR
+  - SFLOW_SESSION
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL
+  - PORTCHANNEL_INTERFACE
+  - PORT
   cli:
-    - config sflow
-    - show sflow
-  yang: []
+  - config sflow
+  - show sflow
+  - config portchannel
+  yang:
+  - sonic-portchannel
+  - sonic-sflow
 ---
 
 <!-- topics-tip -->

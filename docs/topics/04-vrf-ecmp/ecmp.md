@@ -16,8 +16,10 @@ related:
   config_db:
   - FG_NHG
   - SWITCH_HASH
+  - CRM
   yang:
   - sonic-fine-grained-ecmp
+  - sonic-crm
 ---
 
 # ECMP Family

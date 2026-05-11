@@ -1,18 +1,34 @@
 ---
 title: P4Runtime PacketIO（generic netlink + send_to_ingress）
-description: "P4Runtime PacketIO — 通常 netdev では すべての punt パケット が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要:"
+description: 'P4Runtime PacketIO — 通常 netdev では すべての punt パケット が同じ経路に来てしまい、メタデータも
+  input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要:'
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pins/Packet_io.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pins/Packet_io.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SEND_TO_INGRESS_PORT
-  cli: []
-  yang: []
+  - SEND_TO_INGRESS_PORT
+  - VLAN
+  - VLAN_MEMBER
+  - ACL_RULE
+  - ACL_TABLE
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
+  cli:
+  - config vlan
+  - show vlan
+  - show acl
+  - config acl
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-copp
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

@@ -1,21 +1,32 @@
 ---
 title: SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）
-description: "SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携） — 「BMC 付き SONiC platform」では、PSU・fan・温度センサ・電圧などの physical inventory が BMC（OpenBMC 等）配下 にあり、CPU 直結ではない。"
+description: SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携） — 「BMC 付き SONiC
+  platform」では、PSU・fan・温度センサ・電圧などの physical inventory が BMC（OpenBMC 等）配下 にあり、CPU 直結ではない。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bmc/sonicBMC/pmon-bmc-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bmc/sonicBMC/pmon-bmc-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VRF
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - DPUS
+  - MGMT_VRF_CONFIG
+  - VXLAN_TUNNEL_MAP
   cli:
-    - show platform fan
-    - show platform temperature
-    - show platform psu
+  - show platform fan
+  - show platform temperature
+  - show platform psu
+  - show platform
+  - config vrf
   yang:
-    - sonic-platform
+  - sonic-platform
+  - sonic-vrf
 ---
 
 <!-- topics-tip -->

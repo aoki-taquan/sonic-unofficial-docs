@@ -1,19 +1,30 @@
 ---
 title: show platform fan / psu で異常値が出る
-description: "Runbook: show platform fan / psu で異常値が出る — : sonic-net/sonic-platform-daemons @ 4305596 — thermalctld : sonic-net/sonic-platform-common @ 4305596 — fan_base /…"
+description: 'Runbook: show platform fan / psu で異常値が出る — : sonic-net/sonic-platform-daemons
+  @ 4305596 — thermalctld : sonic-net/sonic-platform-common @ 4305596 — fan_base /…'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-platform-daemons
-    path: sonic-thermalctld/scripts/thermalctld
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-platform-common
-    path: sonic_platform_base/fan_base.py
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-platform-daemons
+  path: sonic-thermalctld/scripts/thermalctld
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-platform-common
+  path: sonic_platform_base/fan_base.py
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: [PSU_INFO, FAN_INFO, THERMAL_INFO]
-  cli: [show platform fan, show platform psustatus, show platform temperature]
+  config_db:
+  - PSU_INFO
+  - FAN_INFO
+  - THERMAL_INFO
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - show platform fan
+  - show platform psustatus
+  - show platform temperature
+  - show platform
   yang: []
 ---
 

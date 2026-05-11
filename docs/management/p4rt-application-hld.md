@@ -1,19 +1,31 @@
 ---
 title: P4RT アプリケーション（PINS の gRPC サービス、port 9559）
-description: "P4RT アプリケーション（PINS の gRPC サービス、port 9559） — P4RT アプリケーションは PINS（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、P4Runtime v1.3.0 を実装する gRPC サービスとして TCP…"
+description: P4RT アプリケーション（PINS の gRPC サービス、port 9559） — P4RT アプリケーションは PINS（P4 Integrated
+  Network Stack）プロジェクトが SONiC に追加するコンポーネントで、P4Runtime v1.3.0 を実装する gRPC サービスとして TCP…
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pins/p4rt_app_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pins/p4rt_app_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - P4RT
-  cli: []
-  yang: []
+  - P4RT
+  - PORT
+  - ACL_RULE
+  - ACL_TABLE
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - P4RT_TABLE
+  cli:
+  - show acl
+  - config acl
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

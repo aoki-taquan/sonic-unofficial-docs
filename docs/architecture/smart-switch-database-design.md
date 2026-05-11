@@ -1,19 +1,30 @@
 ---
 title: Smart Switch のデータベース構成（NPU 上の DPU overlay DB）
-description: "Smart Switch のデータベース構成（NPU 上の DPU overlay DB） — DPU の DASH overlay 用 Redis を NPU 側に container として立て、DPU から midplane 経由で remote 接続 させる。"
+description: Smart Switch のデータベース構成（NPU 上の DPU overlay DB） — DPU の DASH overlay 用
+  Redis を NPU 側に container として立て、DPU から midplane 経由で remote 接続 させる。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FEATURE
-  cli: []
+  - FEATURE
+  - VNET
+  - ACL_RULE
+  - ACL_TABLE
+  - SWITCH_TRIMMING
+  - SWITCH_HASH
+  - DPU
+  cli:
+  - show acl
+  - config acl
+  - config vnet
   yang:
-    - sonic-feature
+  - sonic-feature
+  - sonic-vnet
 ---
 
 <!-- topics-tip -->

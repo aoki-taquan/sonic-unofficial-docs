@@ -1,22 +1,25 @@
 ---
 title: Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）
-description: "Generic Config Update / Rollback（GCU・JSON Patch・checkpoint） — config reload で全コンテナを restart せずに、実行中の CONFIG_DB に増分パッチを安全適用 するための仕組み。"
+description: Generic Config Update / Rollback（GCU・JSON Patch・checkpoint） — config
+  reload で全コンテナを restart せずに、実行中の CONFIG_DB に増分パッチを安全適用 するための仕組み。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/config-generic-update-rollback/SONiC_Generic_Config_Update_and_Rollback_Design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/config-generic-update-rollback/SONiC_Generic_Config_Update_and_Rollback_Design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - "*"
+  - '*'
+  - TELEMETRY
+  - GNMI
   cli:
-    - config apply-patch
-    - config replace
-    - config rollback
-    - config checkpoint
-    - config list-checkpoints
+  - config apply-patch
+  - config replace
+  - config rollback
+  - config checkpoint
+  - config list-checkpoints
   yang: []
 ---
 

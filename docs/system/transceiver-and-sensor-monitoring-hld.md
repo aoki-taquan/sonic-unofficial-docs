@@ -1,20 +1,30 @@
 ---
 title: Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
-description: "Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*） — PMON コンテナ内の xcvrd daemon が SFP / QSFP / QSFP-DD などの光モジュールから EEPROM 情報・DOM（Digital Optical Monitori…"
+description: Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*） — PMON コンテナ内の
+  xcvrd daemon が SFP / QSFP / QSFP-DD などの光モジュールから EEPROM 情報・DOM（Digital Optical Monitori…
 area: system
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/xrcvd/transceiver-monitor-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/xrcvd/transceiver-monitor-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_TRAP_CONFIG
+  - MGMT_VRF_CONFIG
   cli:
-    - show interface transceiver info
-    - show interface transceiver eeprom
-    - show interface transceiver presence
-  yang: []
+  - show interface transceiver info
+  - show interface transceiver eeprom
+  - show interface transceiver presence
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 !!! success "裏取りステータス: Code-verified"

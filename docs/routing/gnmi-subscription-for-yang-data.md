@@ -1,20 +1,24 @@
 ---
 title: gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）
-description: "gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED） — gNMI Subscribe は YANG path に紐づくデータを stream / poll / once モードでクライアントに push する仕組み。"
+description: gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）
+  — gNMI Subscribe は YANG path に紐づくデータを stream / poll / once モードでクライアントに push する仕組み。
 area: routing
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/gnmi/gNMI_Subscription_for_YangData.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gNMI_Subscription_for_YangData.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - PORT
+  - TELEMETRY
+  - GNMI
   cli:
-    - gnmi_cli
+  - gnmi_cli
   yang:
-    - openconfig-*
-    - sonic-*
+  - openconfig-*
+  - sonic-*
 ---
 
 <!-- topics-tip -->

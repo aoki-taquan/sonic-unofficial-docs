@@ -13,8 +13,12 @@ sources:
 related:
   config_db:
   - FLEX_COUNTER_TABLE
+  - CRM
+  - ACL_RULE
+  - ACL_TABLE
   cli: []
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

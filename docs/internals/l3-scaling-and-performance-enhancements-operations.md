@@ -1,22 +1,36 @@
 ---
 title: L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）
-description: "L3 Scaling と Performance 強化 HLD の設定・確認手順。kernel ARP/ND gc_thresh の sysctl 適用方法、COPP_TABLE での ARP/ND CoPP 上限の見直し、show arp / show ndp の応答短縮確認、bulk route programming の動作確認方法をまとめる。"
+description: L3 Scaling と Performance 強化 HLD の設定・確認手順。kernel ARP/ND gc_thresh の sysctl
+  適用方法、COPP_TABLE での ARP/ND CoPP 上限の見直し、show arp / show ndp の応答短縮確認、bulk route programming
+  の動作確認方法をまとめる。
 area: internals
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: partially_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - COPP_TABLE
+  - COPP_TABLE
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - COPP_GROUP
+  - COPP_TRAP
+  - VLAN_SUB_INTERFACE
   cli:
-    - show arp
-    - show ndp
-  yang: []
+  - show arp
+  - show ndp
+  - config vlan
+  - show vlan
+  yang:
+  - sonic-vlan
+  - sonic-copp
+  - sonic-vlan-sub-interface
+  - sonic-port
 ---
 
 # L3 Scaling と Performance 強化 設定・運用

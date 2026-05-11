@@ -1,17 +1,21 @@
 ---
 title: PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）
-description: "PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER） — スイッチの ASIC / NPU / 周辺デバイスは PCIe バス越しに CPU と接続 されている。"
+description: PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER） — スイッチの ASIC
+  / NPU / 周辺デバイスは PCIe バス越しに CPU と接続 されている。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pcie-mon/pcie-monitoring-services-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pcie-mon/pcie-monitoring-services-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli:
-    - show platform pcieinfo
+  - show platform pcieinfo
+  - show platform
+  - show techsupport
+  - show services
   yang: []
 ---
 

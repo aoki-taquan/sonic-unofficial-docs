@@ -1,20 +1,35 @@
 ---
 title: SAI failure / syncd リスタート多発
-description: "Runbook: SAI failure / syncd リスタート多発 — : sonic-net/sonic-sairedis @ 88bc51a — syncd 本体 : sonic-net/sonic-swss @ 4305596 — orchagent"
+description: 'Runbook: SAI failure / syncd リスタート多発 — : sonic-net/sonic-sairedis @
+  88bc51a — syncd 本体 : sonic-net/sonic-swss @ 4305596 — orchagent'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-sairedis
-    path: syncd/Syncd.cpp
-    ref: 88bc51ae95df66977601957515e5527119ffd4c5
-  - repo: sonic-net/sonic-swss
-    path: orchagent/orchdaemon.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-sairedis
+  path: syncd/Syncd.cpp
+  ref: 88bc51ae95df66977601957515e5527119ffd4c5
+- repo: sonic-net/sonic-swss
+  path: orchagent/orchdaemon.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: []
-  cli: [show platform summary, show system-health detail]
-  yang: []
+  config_db:
+  - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - show platform summary
+  - show system-health detail
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
+  yang:
+  - sonic-crm
 ---
 
 # Runbook: SAI failure / syncd リスタート多発

@@ -1,26 +1,40 @@
 ---
 title: バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
-description: "バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡） — 読み手の関心は「何を watermark として記録するのか」「telemetry / 手動 / 永続の 3 系統がなぜ要るのか」「clear を打つと何が起きるのか」の 3 点に集約される。順に答える。"
+description: バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡） — 読み手の関心は「何を watermark として記録するのか」「telemetry
+  / 手動 / 永続の 3 系統がなぜ要るのか」「clear を打つと何が起きるのか」の 3 点に集約される。順に答える。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/buffer-watermark/watermarks_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/buffer-watermark/watermarks_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - WATERMARK_TABLE
+  - WATERMARK_TABLE
+  - PFC_WD
+  - QUEUE
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - CRM
+  - BUFFER_POOL
+  - BUFFER_PROFILE
   cli:
-    - show priority-group watermark
-    - show priority-group persistent-watermark
-    - show queue watermark
-    - show queue persistent-watermark
-    - clear priority-group watermark
-    - clear queue watermark
-    - show watermark telemetry interval
-    - config watermark telemetry interval
-  yang: []
+  - show priority-group watermark
+  - show priority-group persistent-watermark
+  - show queue watermark
+  - show queue persistent-watermark
+  - clear priority-group watermark
+  - clear queue watermark
+  - show watermark telemetry interval
+  - config watermark telemetry interval
+  yang:
+  - sonic-queue
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-crm
+  - sonic-pfcwd
+  - sonic-buffer-pool
+  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->

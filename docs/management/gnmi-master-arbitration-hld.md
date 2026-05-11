@@ -1,19 +1,23 @@
 ---
 title: gNMI Master Arbitration（election ID と SetRequest 拡張）
-description: "gNMI Master Arbitration（election ID と SetRequest 拡張） — gNMI Master Arbitration は 複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、Set RPC を出せるのは唯一のマスタだけ…"
+description: gNMI Master Arbitration（election ID と SetRequest 拡張） — gNMI Master Arbitration
+  は 複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、Set RPC を出せるのは唯一のマスタだけ…
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/gnmi/master_arbitration.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/master_arbitration.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - TELEMETRY
+  - TELEMETRY
+  - GNMI
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

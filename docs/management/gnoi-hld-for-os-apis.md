@@ -1,21 +1,28 @@
 ---
 title: gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
-description: "gNOI OS API（Install / Activate / Verify と sonic-installer 連携） — gNOI OS は スイッチの OS イメージを gRPC ストリームで配布・有効化・検証する ための API である。3 つの RPC で構成される:"
+description: 'gNOI OS API（Install / Activate / Verify と sonic-installer 連携） — gNOI
+  OS は スイッチの OS イメージを gRPC ストリームで配布・有効化・検証する ための API である。3 つの RPC で構成される:'
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/gnmi/gnoi_os_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-  - repo: sonic-net/sonic-host-services
-    path: host_modules/image_service.py
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnoi_os_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-host-services
+  path: host_modules/image_service.py
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - DPUS
+  - TELEMETRY
+  - GNMI
   cli:
-    - gnoi_client
-    - sonic-installer
+  - gnoi_client
+  - sonic-installer
   yang: []
 ---
 

@@ -1,24 +1,30 @@
 ---
 title: TACACS+ 認証テストプラン（pam_tacplus + ssh login）
-description: "TACACS+ 認証テストプラン（pam_tacplus + ssh login） — SONiC の TACACS+ 認証（Authentication）を ssh login 経由で検証するテストプラン。"
+description: TACACS+ 認証テストプラン（pam_tacplus + ssh login） — SONiC の TACACS+ 認証（Authentication）を
+  ssh login 経由で検証するテストプラン。
 area: management
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/aaa/TACACS+ Test Plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/aaa/TACACS+ Test Plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - TACPLUS
-    - TACPLUS_SERVER
-    - AAA
+  - TACPLUS
+  - TACPLUS_SERVER
+  - AAA
+  - RADIUS
+  - RADIUS_SERVER
+  - SSH_SERVER
   cli:
-    - config aaa
-    - config tacacs
-    - show aaa
-    - show tacacs
-  yang: []
+  - config aaa
+  - config tacacs
+  - show aaa
+  - show tacacs
+  - config ssh
+  yang:
+  - sonic-ssh-server
 ---
 
 <!-- topics-tip -->

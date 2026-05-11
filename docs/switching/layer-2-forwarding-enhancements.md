@@ -1,25 +1,37 @@
 ---
 title: L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
-description: "L2 Forwarding 強化 — SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する HLD:"
+description: 'L2 Forwarding 強化 — SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する HLD:'
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FDB
-    - SWITCH
+  - FDB
+  - SWITCH
+  - VLAN
+  - VLAN_MEMBER
+  - STATIC_ROUTE
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
   cli:
-    - sonic-clear fdb
-    - config mac
-    - config vlan range
-    - config vlan member range
-    - show mac
-  yang: []
+  - sonic-clear fdb
+  - config mac
+  - config vlan range
+  - config vlan member range
+  - show mac
+  - config vlan
+  - clear
+  yang:
+  - sonic-vlan
+  - sonic-static-route
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

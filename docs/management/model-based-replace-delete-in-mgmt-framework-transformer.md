@@ -15,6 +15,8 @@ related:
   - MGMT_VRF_CONFIG
   - MGMT_PORT
   - DEVICE_METADATA
+  - TELEMETRY
+  - GNMI
   cli:
   - config mgmt trio
   - show mgmt vrf

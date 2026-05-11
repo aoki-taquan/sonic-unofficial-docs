@@ -1,21 +1,36 @@
 ---
 title: SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
-description: "SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。"
+description: SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC
+  8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/srv6/srv6_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/srv6/srv6_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SRV6_SID_LIST
-    - SRV6_MY_SID_TABLE
-    - SRV6_POLICY
-    - SRV6_STEER
-  cli: []
-  yang: []
+  - SRV6_SID_LIST
+  - SRV6_MY_SID_TABLE
+  - SRV6_POLICY
+  - SRV6_STEER
+  - VRF
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  cli:
+  - clear
+  - config bgp
+  - show bgp
+  - config vrf
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-srv6
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

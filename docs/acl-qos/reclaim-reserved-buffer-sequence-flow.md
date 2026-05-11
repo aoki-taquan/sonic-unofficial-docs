@@ -1,24 +1,39 @@
 ---
 title: 未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス
-description: "未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス — SONiC のバッファ管理は buffer pool / profile / PG / queue で構成され、各ポートに priority group (PG) と queue ごとの 予約バッファ（reserved +…"
+description: 未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス — SONiC のバッファ管理は buffer
+  pool / profile / PG / queue で構成され、各ポートに priority group (PG) と queue ごとの 予約バッファ（reserved
+  +…
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/qos/reclaim-reserved-buffer-images/reclaim-reserved-buffer-sequence-flow.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/qos/reclaim-reserved-buffer-images/reclaim-reserved-buffer-sequence-flow.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - BUFFER_POOL
-    - BUFFER_PROFILE
-    - BUFFER_PG
-    - BUFFER_QUEUE
-    - BUFFER_PORT_INGRESS_PROFILE_LIST
-    - BUFFER_PORT_EGRESS_PROFILE_LIST
+  - BUFFER_POOL
+  - BUFFER_PROFILE
+  - BUFFER_PG
+  - BUFFER_QUEUE
+  - BUFFER_PORT_INGRESS_PROFILE_LIST
+  - BUFFER_PORT_EGRESS_PROFILE_LIST
+  - PFC_WD
   cli:
-    - config load-minigraph
-  yang: []
+  - config load-minigraph
+  - config buffer
+  - show buffer
+  - show buffer pool
+  - show pfc
+  - config qos
+  yang:
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-buffer-pg
+  - sonic-buffer-queue
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->
