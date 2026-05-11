@@ -154,10 +154,6 @@ flowchart LR
   SC --> CDB0
   DM0["MuxOrch"]
   CDB0 --> DM0
-  CDB1[("CONFIG_DB<br/>MUX_LINKMGR")]
-  SC --> CDB1
-  DM1["linkmgrd"]
-  CDB1 --> DM1
 ```
 
 !!! note "凡例"

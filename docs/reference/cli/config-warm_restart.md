@@ -72,7 +72,7 @@ flowchart LR
   CLI --> SC
   CDB0[("CONFIG_DB<br/>WARM_RESTART")]
   SC --> CDB0
-  DM0["warm-restart-cli"]
+  DM0["warmrestart"]
   CDB0 --> DM0
   CDB1[("CONFIG_DB<br/>FEATURE")]
   SC --> CDB1

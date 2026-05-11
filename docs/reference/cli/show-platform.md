@@ -145,6 +145,22 @@ ASIC: broadcom
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show platform"]
+  PA["platform_api / chassis API"]
+  ST[("STATE_DB<br/>PSU_INFO / FAN_INFO / TEMP_INFO 等")]
+  CLI --> PA
+  ST --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CLI ← platform_api / STATE_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

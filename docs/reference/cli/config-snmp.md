@@ -208,19 +208,19 @@ flowchart LR
   CLI --> SC
   CDB0[("CONFIG_DB<br/>SNMP")]
   SC --> CDB0
-  DM0["snmpd"]
+  DM0["snmp-config"]
   CDB0 --> DM0
   CDB1[("CONFIG_DB<br/>SNMP_COMMUNITY")]
   SC --> CDB1
-  DM1["snmpd"]
+  DM1["snmp-config"]
   CDB1 --> DM1
   CDB2[("CONFIG_DB<br/>SNMP_USER")]
   SC --> CDB2
-  DM2["snmpd"]
+  DM2["snmp-config"]
   CDB2 --> DM2
   CDB3[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
   SC --> CDB3
-  DM3["snmpd"]
+  DM3["snmp-config"]
   CDB3 --> DM3
 ```
 

@@ -162,6 +162,24 @@ CONFIG_DB ではなく **[STATE_DB](../../reference/glossary.md#term-state_db) �
 
 それ以外のコマンドは **kernel neighbor table** や **[SAI](../../reference/glossary.md#term-sai) 経由の SDK 状態** を操作するもので CONFIG_DB は触らない。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["sonic-clear"]
+  UT["portstat / fdbclear / natclear<br/>flow_counters_stat / consutil 等 (-c)"]
+  APP[("APPL_DB<br/>FDB / NEIGH_FLUSH 等")]
+  CNT[("COUNTERS_DB<br/>カウンタ値")]
+  CLI --> UT
+  UT --> APP
+  UT --> CNT
+```
+
+!!! note "凡例"
+    clear 系 (CLI → ユーティリティ → APPL_DB / COUNTERS_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

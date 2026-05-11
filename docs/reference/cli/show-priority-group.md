@@ -62,6 +62,22 @@ show priority-group watermark shared [--namespace <ns>|all] [--json]
 
 [^1]: `show priority-group` グループと配下 command。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1003>
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show priority-group"]
+  WS["watermarkstat / pg-drop"]
+  CNT[("COUNTERS_DB<br/>PG_WATERMARK / PG_DROP")]
+  CLI --> WS
+  CNT --> WS
+```
+
+!!! note "凡例"
+    show 系 (CLI → watermarkstat ← COUNTERS_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

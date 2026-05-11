@@ -53,6 +53,22 @@ def uptime(verbose):
 
 なし（kernel の `/proc/uptime` を読む `uptime(1)` のラッパ）。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show uptime"]
+  UP["uptime -p"]
+  PROC["/proc/uptime"]
+  CLI --> UP
+  UP --> PROC
+```
+
+!!! note "凡例"
+    show 系 (CLI → uptime ← /proc) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

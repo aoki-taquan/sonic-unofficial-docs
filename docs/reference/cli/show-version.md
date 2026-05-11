@@ -58,6 +58,26 @@ show version [--brief]
 
 なし（ファイル `/etc/sonic/sonic_version.yml`, platform API, docker daemon を読むのみ）。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show version"]
+  YL["sonic_version.yml"]
+  PL["device_info / platform.json"]
+  DK["docker images"]
+  ST[("STATE_DB<br/>CHASSIS_INFO 等")]
+  CLI --> YL
+  CLI --> PL
+  CLI --> DK
+  ST --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CLI ← YAML / platform / docker / STATE_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

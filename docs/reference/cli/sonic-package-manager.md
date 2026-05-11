@@ -119,6 +119,26 @@ Package の docker image / systemd unit / 関連リソースを削除。`--keep-
 - 大半のサブコマンドが root 権限必須。
 - `--use-local-manifest` は hidden オプションで、`spm install --name <name> --use-local-manifest` で `manifests create` 経由のローカル manifest を使う。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["sonic-package-manager / spm"]
+  MGR["PackageManager"]
+  REG["docker registry / repo manifest"]
+  DB[("sonic-package-manager.json<br/>(local package DB)")]
+  DK["docker / systemd unit"]
+  CLI --> MGR
+  MGR --> REG
+  MGR --> DB
+  MGR --> DK
+```
+
+!!! note "凡例"
+    管理系 (CLI → manager → registry / package DB / docker) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
