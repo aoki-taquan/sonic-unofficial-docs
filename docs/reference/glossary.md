@@ -638,8 +638,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [BGP](#term-bgp)
 
-- [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (239)
-- [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (227)
+- [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (240)
+- [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (228)
 - [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (208)
 - [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../routing/bgp-setup-for-voq-chassis.md) (58)
 - [内部実装](../topics/02-bgp/internals.md) (58)
@@ -698,7 +698,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (19)
 - [アーキテクチャ](../topics/09-telemetry-snmp/architecture.md) (17)
 - [概念](../topics/09-telemetry-snmp/concept.md) (14)
-- [sonic-crm YANG](yang/sonic-crm.md) (10)
+- [sonic-crm YANG](yang/sonic-crm.md) (11)
 
 ### [DASH](#term-dash)
 
@@ -852,7 +852,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [LAG](#term-lag)
 
 - [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](../switching/lag-on-distributed-voq-system.md) (63)
-- [sonic-mclag YANG](yang/sonic-mclag.md) (58)
+- [sonic-mclag YANG](yang/sonic-mclag.md) (60)
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (50)
 - [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../switching/mclag-enhancements.md) (33)
 - [ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）](../platform/sonictpidsettinghld1.md) (29)
@@ -875,7 +875,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [MCLAG](#term-mclag)
 
-- [sonic-mclag YANG](yang/sonic-mclag.md) (58)
+- [sonic-mclag YANG](yang/sonic-mclag.md) (60)
 - [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../switching/mclag-enhancements.md) (27)
 - [config mclag サブコマンド](cli/config-mclag.md) (26)
 - [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (18)
@@ -892,14 +892,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MUX](#term-mux)
 
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (43)
-- [sonic-mux-cable YANG](yang/sonic-mux-cable.md) (29)
+- [sonic-mux-cable YANG](yang/sonic-mux-cable.md) (30)
 - [Dual-ToR の設定](../topics/05-dual-tor/setup.md) (20)
 - [MUX_LINKMGR テーブル](config-db/mux-linkmgr.md) (17)
 - [show muxcable サブコマンド](cli/show-muxcable.md) (14)
 
 ### [NAT](#term-nat)
 
-- [sonic-nat YANG](yang/sonic-nat.md) (77)
+- [sonic-nat YANG](yang/sonic-nat.md) (81)
 - [内部実装](../topics/16-nat-dhcp-dns/internals.md) (58)
 - [NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）](../architecture/nat-in-sonic.md) (44)
 - [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (44)
@@ -1114,13 +1114,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (2)
 - [TUNNEL_DECAP_TABLE (APPL_DB)](config-db/tunnel-decap-table.md) (2)
 - [PEER_SWITCH テーブル](config-db/peer-switch.md) (1)
-- [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (1)
+- [sonic-tunnel YANG](yang/sonic-tunnel.md) (1)
 
 ### [VLAN](#term-vlan)
 
-- [sonic-vlan YANG](yang/sonic-vlan.md) (108)
+- [sonic-vlan YANG](yang/sonic-vlan.md) (111)
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (55)
-- [sonic-spanning-tree YANG](yang/sonic-spanning-tree.md) (52)
+- [sonic-spanning-tree YANG](yang/sonic-spanning-tree.md) (54)
 - [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (49)
 - [config vlan サブコマンド](cli/config-vlan.md) (46)
 
@@ -1134,7 +1134,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [VNET](#term-vnet)
 
-- [sonic-vnet YANG](yang/sonic-vnet.md) (82)
+- [sonic-vnet YANG](yang/sonic-vnet.md) (85)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (47)
 - [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (40)
 - [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../overlay/vxlan-sonic.md) (26)
@@ -1158,7 +1158,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [VXLAN](#term-vxlan)
 
-- [sonic-vxlan YANG](yang/sonic-vxlan.md) (53)
+- [sonic-vxlan YANG](yang/sonic-vxlan.md) (56)
 - [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../overlay/vxlan-sonic.md) (52)
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (41)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (33)
@@ -1175,7 +1175,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [WRED](#term-wred)
 
 - [WRED / ECN 統計（per-queue / per-port、capability ベース）](../acl-qos/wred-and-ecn-statistics.md) (48)
-- [sonic-wred-profile YANG](yang/sonic-wred-profile.md) (45)
+- [sonic-wred-profile YANG](yang/sonic-wred-profile.md) (46)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (20)
 - [QoS / Buffer の内部実装](../topics/08-qos-buffer/internals.md) (13)
 - [sonic-queue YANG](yang/sonic-queue.md) (12)
