@@ -75,6 +75,34 @@ show queue wredcounters [INTERFACE_NAME]
 [^1]: `show queue` グループと配下 command。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L774>
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: ポート毎のキュー統計
+show queue counters
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show queue counters Ethernet0
+show queue watermark unicast
+show queue persistent-watermark multicast
+```
+
+### 期待される出力 (抜粋)
+
+```
+       Port    TxQ    Counter/pkts    Counter/bytes    Drop/pkts    Drop/bytes
+-----------  -----  --------------  ---------------  -----------  ------------
+  Ethernet0   UC0          123,456       12,345,678            0             0
+  Ethernet0   UC1            5,432        4,321,234            0             0
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)

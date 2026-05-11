@@ -125,6 +125,34 @@ interface 用 sample-direction。グローバルと同じ `tx/both` の egress c
 [^4]: コレクタ件数チェックは L9354 `len(collector_tbl) == 2` で 2 件固定。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9354>
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: sFlow を有効化
+sudo config sflow enable
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# Collector 追加 + agent ID 指定
+sudo config sflow collector add collector1 10.0.0.50 --port 6343
+sudo config sflow agent-id add Loopback0
+
+# ポートごとの sampling-rate
+sudo config sflow interface sample-rate Ethernet0 8192
+```
+
+### 期待される出力 (抜粋)
+
+```
+Enabling sFlow ...
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)

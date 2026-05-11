@@ -145,6 +145,36 @@ excerpt: |
 
 [^5]: chassis supervisor 分岐は `bgp` group 関数（L23-L33）で `rexec` を呼ぶ。
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: BGP セッションサマリ
+show ip bgp summary
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# VRF サマリ / IPv6 サマリ
+show ip bgp vrf Vrf_Red summary
+show ipv6 bgp summary
+
+# 特定隣接の advertised / received routes
+show ip bgp neighbors 10.0.0.1 advertised-routes
+```
+
+### 期待される出力 (抜粋)
+
+```
+Neighbor        V     AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
+10.0.0.1        4  65100      1023      1019        0    0    0 01:25:34            128
+10.0.0.5        4  65100       980       982        0    0    0 01:25:30            128
+```
+<!-- /usage-example -->
+
 ## 関連ページ
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [CLI: config bgp](config-bgp.md)

@@ -92,6 +92,34 @@ iccpd 内部のログレベル切替。値は iccpd の syslog 等でデバッ�
 [^3]: コマンドテーブルは `command_types[]` (`src/iccpd/src/mclagdctl/mclagdctl.c` L64-L160)。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mclagdctl/mclagdctl.c#L64>
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: MCLAG ブリーフ
+show mclag brief
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show mclag interface 4095 PortChannel0002
+```
+
+### 期待される出力 (抜粋)
+
+```
+Domain ID    : 4095
+Role         : active
+Session State: up
+Peer Link    : PortChannel0001
+Local IP     : 10.0.0.1
+Peer IP      : 10.0.0.2
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)

@@ -69,3 +69,32 @@ show version [--brief]
 ## 引用元
 
 [^1]: `version()` 実装は `show/main.py` L1714-L1750。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1714>
+
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: SONiC バージョン情報
+show version
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show version --verbose
+```
+
+### 期待される出力 (抜粋)
+
+```
+SONiC Software Version: SONiC.master.0-dirty-20260501.012345
+Distribution: Debian 12.5
+Kernel: 6.1.0-18-2-amd64
+Build commit: 39732bce
+Platform: x86_64-cel_seastone-r0
+HwSKU: Celestica-DX010-C32
+ASIC: broadcom
+```
+<!-- /usage-example -->

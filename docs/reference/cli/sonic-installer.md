@@ -164,6 +164,36 @@ stp, snmp, swss, syncd, teamd, telemetry, mgmt-framework
 [^2]: `print_deprecation_warning` 呼び出しは `sonic_installer/main.py` の各サブコマンド冒頭。例: `sonic-installer set-default` (L662)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/sonic_installer/main.py#L662>
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: 新しいイメージをインストール
+sudo sonic-installer install sonic-broadcom.bin
+```
+
+### よくある引数の組み合わせ
+
+```bash
+sonic-installer list
+sudo sonic-installer set-next-boot SONiC-OS-202311
+sudo sonic-installer remove SONiC-OS-202205
+sudo sonic-installer cleanup
+```
+
+### 期待される出力 (抜粋)
+
+```
+Available:
+SONiC-OS-202311
+SONiC-OS-202205
+Current: SONiC-OS-202311
+Next: SONiC-OS-202311
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: Reboot / Upgrade / Lifecycle](../../topics/11-reboot/index.md)

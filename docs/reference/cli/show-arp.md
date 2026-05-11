@@ -73,3 +73,32 @@ ARP テーブルは **kernel の neighbor table**（および swss/neighsyncd �
 ## 引用元
 
 [^1]: `arp` の click 定義と `nbrshow -4` 起動部分は `show/main.py` L421-L446。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L421>
+
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: ARP テーブル表示
+show arp
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show arp 10.0.0.1
+show arp -if Ethernet0
+show arp -vrf Vrf_Red
+```
+
+### 期待される出力 (抜粋)
+
+```
+Address         MacAddress         Iface         Vlan
+--------------  -----------------  ------------  ----
+10.0.0.1        00:11:22:33:44:55  Ethernet0     -
+10.0.0.5        00:11:22:33:44:66  Ethernet4     -
+Total number of entries 2
+```
+<!-- /usage-example -->

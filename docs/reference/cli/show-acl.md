@@ -79,6 +79,32 @@ related:
 - [CONFIG_DB: ACL_RULE](../config-db/acl-rule.md)
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: ACL テーブル一覧
+show acl table
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show acl rule
+show acl rule DATA_ACL
+```
+
+### 期待される出力 (抜粋)
+
+```
+Name      Type    Binding              Description              Stage
+--------  ------  -------------------  -----------------------  -------
+DATA_ACL  L3      Ethernet0,Ethernet4  Data plane ingress ACL   ingress
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)

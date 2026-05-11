@@ -150,6 +150,35 @@ CONFIG_DB ではなく `teamdctl <portchannel_name> state item get runner.retry_
 [^2]: `retry-count` は teamd ランタイム上の値であり CONFIG_DB に保存されない。L3072-L3140 を参照。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072>
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: PortChannel 作成と member 追加
+sudo config portchannel add PortChannel0001
+sudo config portchannel member add PortChannel0001 Ethernet0
+sudo config portchannel member add PortChannel0001 Ethernet4
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# 静的 LAG（LACP 無効）
+sudo config portchannel add PortChannel0002 --static true
+
+# fallback / min-links 指定
+sudo config portchannel add PortChannel0003 --fallback true --min-links 2
+```
+
+### 期待される出力 (抜粋)
+
+```
+Ethernet0 added to PortChannel0001
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)

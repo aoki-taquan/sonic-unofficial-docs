@@ -157,3 +157,36 @@ CONFIG_DB の `BGP_AGGREGATE_ADDRESS` テーブルを直接読み出し、各エ
 ## 引用元
 
 [^1]: `ip` グループ定義は `show/main.py` L1386-L1389。BGP の動的アタッチは L1567-L1581。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1387>
+
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: ルーティングテーブル全件
+show ip route
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show ip route 10.0.0.0/24
+show ip route vrf Vrf_Red
+show ip interfaces
+show ip bgp summary
+```
+
+### 期待される出力 (抜粋)
+
+```
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,
+       F - PBR, f - OpenFabric,
+       > - selected route, * - FIB route
+
+B>* 10.0.1.0/24 [20/0] via 10.0.0.1, Ethernet0, 01:25:34
+C>* 10.0.0.0/24 is directly connected, Ethernet0, 01:30:11
+```
+<!-- /usage-example -->

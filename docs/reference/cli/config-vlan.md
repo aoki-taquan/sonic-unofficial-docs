@@ -144,6 +144,37 @@ config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]
 - [YANG: sonic-vlan](../yang/sonic-vlan.md)
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: VLAN を作成して member を追加
+sudo config vlan add 100
+sudo config vlan member add 100 Ethernet0
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# untagged member として追加（-u）
+sudo config vlan member add -u 100 Ethernet4
+
+# DHCP relay を VLAN 100 に追加
+sudo config vlan dhcp_relay add 100 10.0.0.1
+
+# proxy-arp を有効化
+sudo config vlan proxy_arp 100 enabled
+```
+
+### 期待される出力 (抜粋)
+
+```
+Restarting DHCP relay service ...
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)

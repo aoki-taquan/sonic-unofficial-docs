@@ -138,3 +138,37 @@ multi-ASIC では `-n` を必ず単一 namespace 名のいずれかに合わせ�
 [^2]: `startupconfiguration bgp` は `show/main.py` L2167 〜。bgp コンテナ名を `docker ps` で動的に取得する。
 
 [^3]: `show runningconfiguration bgp` の multi-ASIC バリデーションは `show/main.py` L1890-L1896。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1890>
+
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: 全 running config をダンプ
+show runningconfiguration all
+```
+
+### よくある引数の組み合わせ
+
+```bash
+show runningconfiguration bgp
+show runningconfiguration acl
+show runningconfiguration interfaces
+show runningconfiguration syslog
+```
+
+### 期待される出力 (抜粋)
+
+```
+{
+    "BGP_NEIGHBOR": {
+        "10.0.0.1": {
+            "admin_status": "up",
+            "asn": "65100"
+        }
+    },
+    ...
+}
+```
+<!-- /usage-example -->

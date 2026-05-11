@@ -108,6 +108,33 @@ related:
 - [YANG: sonic-syslog](../yang/sonic-syslog.md)
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: リモート syslog サーバを追加
+sudo config syslog add 10.0.0.100
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# VRF / source / port 指定
+sudo config syslog add 10.0.0.100 --source 10.0.0.1 --vrf mgmt --port 514
+
+# 削除
+sudo config syslog del 10.0.0.100
+```
+
+### 期待される出力 (抜粋)
+
+```
+Restarting rsyslog-config service ...
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)

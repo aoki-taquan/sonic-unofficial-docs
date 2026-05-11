@@ -114,5 +114,30 @@ config ntp del <ntp_ip_address>
 
 [^1]: `config ntp` グループ定義は `config/main.py` L8968-L9037。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8968>
 
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: NTP サーバを追加
+sudo config ntp add 10.0.0.10
+```
+
+### よくある引数の組み合わせ
+
+```bash
+sudo config ntp del 10.0.0.10
+# Management VRF 経由で NTP を引く
+sudo config ntp add 10.0.0.10 --association-type pool
+```
+
+### 期待される出力 (抜粋)
+
+```
+Restarting ntp-config service...
+```
+<!-- /usage-example -->
+
 ## 関連ページ
 - [YANG: sonic-ntp](../yang/sonic-ntp.md)

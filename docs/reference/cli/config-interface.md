@@ -253,6 +253,36 @@ if clicommon.get_interface_naming_mode() == "alias":
 - [YANG: sonic-interface](../yang/sonic-interface.md)
 
 <!-- topics-back-ref -->
+<!-- usage-example -->
+## 実行例
+
+### 典型的な使い方
+
+```bash
+# 例 1: インターフェース起動 + IP 付与
+sudo config interface startup Ethernet0
+sudo config interface ip add Ethernet0 10.0.0.1/24
+```
+
+### よくある引数の組み合わせ
+
+```bash
+# 速度・MTU・FEC 設定
+sudo config interface speed Ethernet0 100000
+sudo config interface mtu Ethernet0 9100
+sudo config interface fec Ethernet0 rs
+
+# VRF にバインド
+sudo config interface vrf bind Ethernet0 Vrf_Red
+```
+
+### 期待される出力 (抜粋)
+
+```
+Ethernet0 admin status set to up.
+```
+<!-- /usage-example -->
+
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
