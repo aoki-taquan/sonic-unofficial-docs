@@ -530,3 +530,17 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #340 [verify] クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
 
 <!-- glossary-links-injected: 89bc82a66132 -->
+
+## 参考リンク
+
+- [Reference 索引](../reference/index.md)
+- [Verification index](../reference/verification/index.md)
+- [Topics: Reference index](../topics/22-reference-index/index.md)
+
+## 関連 reference
+
+- [Discrepancy index](../reference/verification/discrepancy-index.md)
+- [Sources freshness](../reference/verification/sources-freshness.md)
+- [Topics: Overview](../topics/01-overview/index.md)
+- [Glossary](../reference/glossary.md)
+

@@ -60,7 +60,7 @@ EVERFLOWV6    MIRRORV6  PortChannel0    mirror v6      ingress  Inactive
 
 | Status | 典型原因 | 確認場所 |
 |--------|----------|----------|
-| `Inactive` (作成直後) | SAI table create が失敗、TCAM スロット不足 | `/var/log/syslog` の `orchagent` SAI_STATUS |
+| `Inactive` (作成直後) | SAI table create が失敗、[TCAM](../../reference/glossary.md#term-tcam) スロット不足 | `/var/log/syslog` の `orchagent` SAI_STATUS |
 | `Inactive` (port バインド) | 対象 port が削除済み / admin down 直後 | `show interfaces status` |
 | `Active` だが hit しない | match field が ASIC で未サポート | `swssloglevel -l INFO -c orchagent` で再現確認 |
 
@@ -223,4 +223,4 @@ ip2me                   50        4000     0       default
 - [CoPP neighbor-miss trap と強化](../../acl-qos/copp-neighbor-miss-trap-and-enhancements.md) — CoPP の trap group 設計
 - [CoPP manager リデザイン テストプラン](../../acl-qos/copp-manager-redesign-test-plan.md) — trap 別の挙動確認の観点
 
-<!-- glossary-links-injected: 02ec46afe5a7 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

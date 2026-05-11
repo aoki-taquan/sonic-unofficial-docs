@@ -250,6 +250,13 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
     - HLD が想定した汎用 assert 拡張・自動 dump 登録機構の包括的トラッキング Issue は **未確認**。実装は機能ごとの個別 PR に分散している。
 <!-- /diff-admonition -->
 
+## 参考リンク
+
+- [CLI: show techsupport](../reference/cli/show-techsupport.md)
+- [CLI: debug group](../reference/cli/debug-group.md)
+- [Runbook: techsupport size bloat](../reference/runbooks/techsupport-size-bloat.md)
+- [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/debug-framework/debug_framework_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

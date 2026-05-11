@@ -67,7 +67,7 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 - **P4 program upgrade**: pipeline 更新時の atomic swap。`SetForwardingPipelineConfig` の VERIFY / SAVE / COMMIT / RECONCILE_AND_COMMIT モードの違いを理解する。
 - **WCMP 大規模化**: 数万 nexthop の WCMP group を扱う性能テスト。`wcmp_manager` の resize と SAI hash optimization が論点。
 - **PacketIO scale**: punt → CPU → controller の経路で、PacketIO rate が [CoPP](../../reference/glossary.md#term-copp) / hostif queue / gRPC stream の各層で制限される。
-- **PINS と SONiC standard ACL の共存**: 同じ ASIC TCAM を分け合うため、resource allocation を deployment で固定する必要がある。
+- **PINS と SONiC standard ACL の共存**: 同じ ASIC [TCAM](../../reference/glossary.md#term-tcam) を分け合うため、resource allocation を deployment で固定する必要がある。
 
 ## 既知の制約と回避方法
 
@@ -96,4 +96,4 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 - `sonic-swss` で P4Orch と既存 orch (SwitchOrch, AclOrch) の境界整理 PR が散発。
 - P4Runtime gRPC server (`p4rt-app`) の認証・TLS 周りの強化、PacketIO scale 改善の PR が議題化。
 
-<!-- glossary-links-injected: 8c23ac0ed680 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

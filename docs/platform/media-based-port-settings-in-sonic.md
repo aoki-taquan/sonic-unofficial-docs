@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-vendor / media type / cable length ごとに **異なる SerDes 設定**（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、**`media_settings.json`** を vendor が提供し xcvrd 経由で [APPL_DB](../reference/glossary.md#term-appl_db) → PortsOrch → [SAI](../reference/glossary.md#term-sai) に橋渡しする仕組み[^1]。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため **opt-in**。
+vendor / media type / cable length ごとに **異なる [SerDes](../reference/glossary.md#term-serdes) 設定**（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、**`media_settings.json`** を vendor が提供し xcvrd 経由で [APPL_DB](../reference/glossary.md#term-appl_db) → PortsOrch → [SAI](../reference/glossary.md#term-sai) に橋渡しする仕組み[^1]。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため **opt-in**。
 
 ## 動作仕様
 
@@ -204,4 +204,4 @@ CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 5e92b35b3616 -->
+<!-- glossary-links-injected: 710f941d149a -->

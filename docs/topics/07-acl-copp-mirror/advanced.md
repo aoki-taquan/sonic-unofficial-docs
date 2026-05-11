@@ -83,7 +83,7 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 
 - **ERSPAN Type-II / Type-III**: 通常 SPAN/Everflow に加え、GRE 経由で remote collector に届ける ERSPAN は SAI mirror session の `SAI_MIRROR_SESSION_ATTR_TYPE` で表現する。Type-III は timestamp と probabilistic sampling をサポートする。
 - **ACL counters の telemetry export**: `COUNTERS_DB` から ACL rule 単位のヒット数を [gNMI](../../reference/glossary.md#term-gnmi) / streaming telemetry で出す構成。Top talker / DoS 検出に直結する。
-- **TCAM 共有 (ACL group sharing)**: 同じ ACL を複数 port に bind するとき、ASIC TCAM を group 共有でケチる。SAI side で `SAI_ACL_TABLE_GROUP` の MULTIPLE binding が要件。
+- **[TCAM](../../reference/glossary.md#term-tcam) 共有 (ACL group sharing)**: 同じ ACL を複数 port に bind するとき、ASIC TCAM を group 共有でケチる。SAI side で `SAI_ACL_TABLE_GROUP` の MULTIPLE binding が要件。
 - **Egress ACL の counter visibility**: ingress ACL counter は読みやすいが egress ACL counter は ASIC によって粒度が異なる。`show acl rule` で counter が更新されない場合は SAI 側 attribute サポートを確認する。
 - **CoPP trap 別 policer の動的調整**: 障害対応中に特定 trap (例えば LACPDU storm) の policer を一時的に上げる運用がある。`COPP_GROUP` / `COPP_TRAP` で per-feature に切り替える。
 
@@ -114,4 +114,4 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 - DASH ACL tags は `sonic-dash-api` (proto) の更新で flow rule 表現が拡張されており、controller 側との binding が変化しやすい。
 - 802.1X / MAB 関連は hostapd の SONiC docker 統合と RADIUS attribute 拡張の PR が散発的にあり、[AAA](../../reference/glossary.md#term-aaa) 章 ([15](../15-security-aaa/index.md)) と相互に影響する。
 
-<!-- glossary-links-injected: 1195a59bed42 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

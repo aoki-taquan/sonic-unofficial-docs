@@ -202,7 +202,7 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この HLD に対応する運用面の入口（CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) / Runbook）を以下にまとめる。
 
 ### 関連 CLI
 
@@ -221,3 +221,5 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 - [dhcp-relay](../reference/runbooks/dhcp-relay.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

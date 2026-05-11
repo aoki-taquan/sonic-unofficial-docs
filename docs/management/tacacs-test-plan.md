@@ -176,7 +176,7 @@ flowchart LR
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この [HLD](../reference/glossary.md#term-hld) に対応する運用面の入口（CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) / Runbook）を以下にまとめる。
 
 ### 関連 CLI
 
@@ -192,3 +192,5 @@ flowchart LR
 - [AAA](../reference/config-db/aaa.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

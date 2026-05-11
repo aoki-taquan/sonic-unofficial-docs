@@ -89,7 +89,7 @@ QoS / Buffer は **データプレーンに最も深く張り付くサブシス�
 - **TC (Traffic Class)**: SONiC 内部で使うクラス番号 (0〜7)。受信側で DSCP / DOT1P / EXP から 1 つに決め打ちし、以後の経路選択（PG、queue、scheduler、WRED）は TC を経由します。
 - **PG (Priority Group)**: ingress 側のバッファ計上単位。`xon`/`xoff` を持って [PFC](../../reference/glossary.md#term-pfc) のトリガを担います。lossless TC は通常 PG3 / PG4 に固定します。
 - **Queue**: egress 側のバッファ計上 + 出力順制御単位。WRED ドロッパと scheduler はここに紐付きます。典型的には UC 用 8 個 + MC 用 8 個。
-- **Buffer Pool**: ingress / egress 別に存在する共有バッファのプール。`size`、`mode` (static / dynamic)、`type` (lossless / lossy) を持ちます。
+- **[Buffer Pool](../../reference/glossary.md#term-buffer-pool)**: ingress / egress 別に存在する共有バッファのプール。`size`、`mode` (static / dynamic)、`type` (lossless / lossy) を持ちます。
 - **Buffer Profile**: 「ある PG / queue がこの pool からどれくらい取って、どう alpha (`dynamic_th`) で配分し、`xon`/`xoff` の閾値はいくつにするか」をまとめた 1 セット。同じ profile を複数の PG / queue で共有します。
 - **WRED / ECN**: 平均キュー長がある閾値を超えたら、確率的に drop または ECN mark する仕組み。WRED テーブルは色（green / yellow / red）ごとに別閾値を持てます。
 - **PFC (Priority-Based Flow Control)**: 802.1Qbb。PG 単位で「止めて」をリンク相手の MAC 層に送り、特定 priority のフレームだけ流量を絞る仕組み。
@@ -226,4 +226,4 @@ QoS / Buffer は他のサブシステムと領域が重なって見えがちで�
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: 34fd06ba8380 -->
+<!-- glossary-links-injected: f7696bbf835c -->

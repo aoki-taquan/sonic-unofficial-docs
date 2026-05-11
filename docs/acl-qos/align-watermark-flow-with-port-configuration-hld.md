@@ -243,6 +243,13 @@ counterpoll watermark enable
 - queue counter は動くが queue-watermark stat が出ない → `counterpoll show` で watermark group の状態を確認
 - 一旦 disable した後に enable し直すと stat が二重に出る → `FLEX_COUNTER_DB` の残存 entry が原因の可能性
 
+## 参考リンク
+
+- [CLI: show priority-group](../reference/cli/show-priority-group.md)
+- [CLI: show buffer-pool](../reference/cli/show-buffer-pool.md)
+- [YANG: sonic-buffer-pool](../reference/yang/sonic-buffer-pool.md)
+- [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/buffer-watermark/align_watermark_flow_with_port_configuration_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

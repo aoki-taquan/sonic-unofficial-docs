@@ -140,7 +140,7 @@ ASIC_DB:
 ## 既知の実装上の制約
 
 - SRv6 endpoint behavior の SAI mapping は **ベンダ実装で対応が分かれる**。特に `END_DT46` や `UDT*` は未実装の ASIC がある。
-- SID list は SAI で 1 オブジェクト化されるが、SID 数の上限が ASIC TCAM サイズに律速される。HLD 上の数字より実機が低いケースが多い。
+- SID list は SAI で 1 オブジェクト化されるが、SID 数の上限が ASIC [TCAM](../../reference/glossary.md#term-tcam) サイズに律速される。HLD 上の数字より実機が低いケースが多い。
 - MPLS は SONiC core では機能的に古く、`fpmsyncd` の MPLS label 解析は **限定的な netlink encoding** にしか対応していない。L3VPN（VPNv4/VPNv6 over MPLS）の完全サポートは無く、SRv6 経由を推奨。
 - per-port MPLS 有効化は RIF 属性で行うが、`SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` 未対応の ASIC では「kernel は受理するが ASIC が drop」する silent な動作になる。
 - Path Tracing Midpoint は data plane の OAM 拡張で、SONiC では `SAI_PORT_ATTR_PATH_TRACING_*` を介して port 単位設定。midpoint だけで end-to-end が完結するわけではない点に注意。
@@ -156,4 +156,4 @@ ASIC_DB:
 - [MPLS HLD](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
 
-<!-- glossary-links-injected: ffe3152ef683 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

@@ -267,6 +267,13 @@ config rate smoothing_interval port 5    # EMA N=5
 - `counter poll port_rates enable` でエラー: 既存 `port` counter polling が disable の可能性。先にそちらを enable する。
 - 新しい RIF を作ったのに RATES に反映されない: `intfsorch` の `addRifToFlexCounter` が呼ばれていない可能性。`syslog` で SWSS 起動エラーを確認。
 
+## 参考リンク
+
+- [CLI: show interfaces](../reference/cli/show-interfaces.md)
+- [CLI: show flowcnt](../reference/cli/show-flowcnt.md)
+- [Runbook: flex counter stuck](../reference/runbooks/flex-counter-stuck.md)
+- [Topics: Telemetry / SNMP](../topics/09-telemetry-snmp/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/rates-and-utilization/Rates_and_utilization_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

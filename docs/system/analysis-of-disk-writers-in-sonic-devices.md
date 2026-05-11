@@ -165,6 +165,13 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 - **OverlayFS**: kernel worker による xattr 書込み（OS image 設計の根幹）
 - **system upgrade**: tmpfs 化部位は再起動で初期化される前提のため state を残したい用途とは別整理が必要
 
+## 関連 reference
+
+- [HLD: sonic-storage-monitoring-daemon](sonic-storage-monitoring-daemon-design.md)
+- [HLD: ssdhealth-design](../architecture/ssdhealth-design.md)
+- [CLI: show system-health](../reference/cli/show-system-health.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

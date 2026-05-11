@@ -242,6 +242,12 @@ sysctl net.ipv4.tcp_l3mdev_accept
 - traceroute の "から" の IP が想定と違う: `icmp_errors_use_inbound_ifaddr=1` の有無を確認[^1]。
 - mgmt VRF 上のアプリで bind 失敗: `tcp_l3mdev_accept=1` の有無を確認[^1]。
 
+## 参考リンク
+
+- [Reference 索引](../reference/index.md)
+- [Topics: Overview](../topics/01-overview/index.md)
+- [HLD: kdump](kdump.md)
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-frr` `doc/user/Useful_Sysctl_Settings.md` @ `799f47f215e4266063c4ebde0041a0c7dd2d11d0`

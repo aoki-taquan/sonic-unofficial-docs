@@ -215,6 +215,12 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 - `in-progress` で進まない場合、SAI から完了 callback が来ていない可能性。`syncd` ログで POST API 呼び出しと callback を確認
 - FIPS 有効化したのに POST が走らない場合、`/proc/cmdline` の `sonic_fips=1` または `/etc/fips/fips_enable` を確認
 
+## 関連 reference
+
+- [YANG: sonic-macsec](../reference/yang/sonic-macsec.md)
+- [Runbook: macsec mka not established](../reference/runbooks/macsec-mka-not-established.md)
+- [Topics: Security / AAA](../topics/15-security-aaa/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fips/SONiC-SAI-POST.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

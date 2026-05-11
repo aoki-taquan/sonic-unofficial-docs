@@ -212,6 +212,12 @@ config save /tmp/all_config.json
 - `config apply-patch` のパスが効かない → `/<asic>/...` のパスフォーマットを使っているか確認
 - `show runningconfiguration all` が host のみ → multi-ASIC 拡張版 sonic-utilities が入っているか確認
 
+## 参考リンク
+
+- [Topics: Multi-ASIC / VOQ](../topics/12-multi-asic-voq/index.md)
+- [Runbook: Multi-ASIC namespace](../reference/runbooks/multi-asic-namespace.md)
+- [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/multi_asic/DB_Design_for_multi_asic.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

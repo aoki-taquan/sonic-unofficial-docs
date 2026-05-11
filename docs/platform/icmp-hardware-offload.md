@@ -251,6 +251,13 @@ show icmp sessions
 - positive timer 後の Active 遷移が遅い: `tx_interval × positive_signal_count` の積を見直す。HW 側 `tx_interval` が 3 ms 想定なら `positive_signal_count` を絞る。
 - `show icmp summary` の Up 数が想定の半分: 各 mux ポートにつき NORMAL + RX の **2 セッション** ある。台数換算時は注意。
 
+## 参考リンク
+
+- [CONFIG_DB: COPP_TRAP](../reference/config-db/copp-trap.md)
+- [YANG: sonic-copp](../reference/yang/sonic-copp.md)
+- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

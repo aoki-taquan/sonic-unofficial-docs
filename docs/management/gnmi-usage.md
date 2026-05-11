@@ -187,7 +187,7 @@ sequenceDiagram
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この [HLD](../reference/glossary.md#term-hld) に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
 
 ### 関連 CLI
 
@@ -200,3 +200,5 @@ sequenceDiagram
 - [gnmi-subscribe-disconnect](../reference/runbooks/gnmi-subscribe-disconnect.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 167700005048 -->

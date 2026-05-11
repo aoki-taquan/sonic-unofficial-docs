@@ -202,7 +202,7 @@ reasoning: create-only 拡張のセマンティクスを直接引用
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この HLD に対応する運用面の入口（CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / YANG / Runbook）を以下にまとめる。
 
 ### 関連 CLI
 
@@ -217,3 +217,5 @@ reasoning: create-only 拡張のセマンティクスを直接引用
 - [config-save-diff-unexpected](../reference/runbooks/config-save-diff-unexpected.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 896d391185a9 -->

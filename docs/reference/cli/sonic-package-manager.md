@@ -149,6 +149,12 @@ flowchart LR
 
 <!-- ref-triangle:end -->
 
+## 関連 reference
+
+- [CLI: sonic-installer](sonic-installer.md)
+- [Reference index](../index.md)
+- [Topics: Build / Packaging](../../topics/19-build-packaging/index.md)
+
 ## 引用元
 
 [^1]: `get_package_status` は `sonic_package_manager/main.py` L134-L142。`built_in` 属性で Built-In 判定。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/sonic_package_manager/main.py#L134>

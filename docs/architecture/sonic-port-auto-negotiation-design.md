@@ -221,6 +221,13 @@ redis-cli -n 4 HGETALL "PORT|Ethernet0" | grep -E 'autoneg|adv_|interface_type'
 redis-cli -n 0 HGETALL "PORT_TABLE:Ethernet0" | grep -E 'autoneg|adv_|interface_type'
 ```
 
+## 関連 reference
+
+- [CLI: config interface](../reference/cli/config-interface.md)
+- [YANG: sonic-port](../reference/yang/sonic-port.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [Runbook: asic link autoneg mismatch](../reference/runbooks/asic-link-autoneg-mismatch.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_auto_neg/port-auto-negotiation-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

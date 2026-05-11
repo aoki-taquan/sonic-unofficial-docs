@@ -34,7 +34,7 @@ SONiC Application Extension Infrastructure により **SONiC docker（= SONiC Pa
 
 ## API の定義と version 増分規則
 
-「Package API」は **Redis DB インタフェース**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) のそのパッケージが提供する schema）と定義される[^1]。ASIC SDK / [SAI](../reference/glossary.md#term-sai) / カーネルレベル API は別カテゴリ。
+「Package API」は **Redis DB インタフェース**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) のそのパッケージが提供する schema）と定義される[^1]。[ASIC SDK](../reference/glossary.md#term-asic-sdk) / [SAI](../reference/glossary.md#term-sai) / カーネルレベル API は別カテゴリ。
 
 | 変更種別 | 影響 | 増分 |
 |----------|------|------|
@@ -141,4 +141,4 @@ sudo sonic-package-manager show foo
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-versioning-strategy.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 6ac6abee60c7 -->
+<!-- glossary-links-injected: ad4074e0b684 -->

@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / [ACL](../reference/glossary.md#term-acl) TCAM / [FDB](../reference/glossary.md#term-fdb) といった **テーブル容量が有限なリソース** を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring ([CRM](../reference/glossary.md#term-crm)) は、こうしたリソースの **使用量と空き容量を [SAI](../reference/glossary.md#term-sai) 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知** するための機能要件である。
+SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / [ACL](../reference/glossary.md#term-acl) [TCAM](../reference/glossary.md#term-tcam) / [FDB](../reference/glossary.md#term-fdb) といった **テーブル容量が有限なリソース** を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring ([CRM](../reference/glossary.md#term-crm)) は、こうしたリソースの **使用量と空き容量を [SAI](../reference/glossary.md#term-sai) 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知** するための機能要件である。
 
 本ページの一次情報は **要件定義 (`CRM_requirements.md`)** であり、実装方針（COUNTER_DB を介する FLEX Counter 流の構成）は [HLD](../reference/glossary.md#term-hld) 内で「設計会議で詰める」と注記されている段階のものである点に注意する[^1]。
 
@@ -166,6 +166,13 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 - 同じリソースの WARNING が一度出てから止まったように見える場合、**10 回で抑止** されている可能性が高い。一旦リソースを下げるか、process を再起動して抑止カウンタをリセットする運用を検討する。
 - 「使用数は増えているのに空き数が減らない」など整合が崩れて見える場合、`orchagent` 側の自己追跡（使用数）と SAI 側の available count の更新タイミングがズレている可能性がある。
 
+## 参考リンク
+
+- [CONFIG_DB: CRM](../reference/config-db/crm.md)
+- [YANG: sonic-crm](../reference/yang/sonic-crm.md)
+- [Runbook: CRM threshold exceeded](../reference/runbooks/crm-threshold-exceeded.md)
+- [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/crm/CRM_requirements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -187,4 +194,4 @@ HLD の主要要件（SAI 経由のポーリング・しきい値超過時の sy
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 421df673b3f7 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

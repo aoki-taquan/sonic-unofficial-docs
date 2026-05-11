@@ -208,6 +208,12 @@ CONFIG_DB JSON:
 - コンテナ内だけ古い DNS が残る: `update-containers` プラグインの動作不良が疑われる。各コンテナに `docker exec ... cat /etc/resolv.conf` で照合する。
 - IPv6 link-local DNS: `fe80::` 系は zone id が必要なケースがある。CONFIG_DB / CLI 側でゾーン記法を受けるかどうかは HLD では明記されていないため、実装裏取りが必要。
 
+## 関連 reference
+
+- [YANG: sonic-dns](../reference/yang/sonic-dns.md)
+- [Topics: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md)
+- [CLI: config aaa](../reference/cli/config-aaa.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/static-dns/static_dns.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

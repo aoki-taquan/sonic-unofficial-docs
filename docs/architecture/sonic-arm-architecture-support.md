@@ -182,6 +182,12 @@ file target/sonic-marvell-armhf/...        # 出力 binary の arch 確認
 - [19-build-packaging/concept](../topics/19-build-packaging/concept.md): SONiC ビルドシステムの全体像
 - [14-platform-port-optics/concept](../topics/14-platform-port-optics/concept.md): platform レイアウトと vendor 連携
 
+## 関連 reference
+
+- [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
+- [Reference index](../reference/index.md)
+- [HLD: build-profiles](build-profiles.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-multi-architecture/sonic_arm_support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

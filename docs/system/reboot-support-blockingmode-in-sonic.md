@@ -213,6 +213,12 @@ sudo reboot -b -v
 - `blocking_mode_timeout` 超過で抜けた場合、`systemctl reboot` 自体が失敗している可能性。`journalctl` で reboot ターゲットの遷移を確認
 - dot が出ない場合、`-v` または `show_timer=true` が同時に有効か確認
 
+## 関連 reference
+
+- [Topics: Reboot](../topics/11-reboot/index.md)
+- [CLI: reboot / fast / warm](../reference/cli/reboot-fast-warm.md)
+- [Runbook: warm-reboot-failure](../reference/runbooks/warm-reboot-failure.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/reboot/Reboot_BlockingMode_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

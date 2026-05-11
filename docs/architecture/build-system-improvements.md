@@ -225,6 +225,17 @@ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 - BuildKit が効かない: docker version 18.09 以上か確認、`DOCKER_BUILDKIT=1` 環境変数。
 - 並列ビルドで失敗: dh compat 10 以上または `dh --parallel` 設定、各 debian/rules で並列実行に対応しているか確認。
 
+## 参考リンク
+
+- [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
+- [HLD: build-profiles](build-profiles.md)
+- [Reference 索引](../reference/index.md)
+
+## 関連 reference
+
+- [HLD: build-profiles](build-profiles.md)
+- [HLD: rfs-split-build-improvements](rfs-split-build-improvements-hld.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/build_system_improvements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

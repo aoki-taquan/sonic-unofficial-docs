@@ -167,6 +167,13 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 - DOM が更新されない → `TRANSCEIVER_STATUS` の error bitmap で I2C stuck / EEPROM 不能を確認
 - plug 後すぐに info が出ない → vendor platform API のイベント通知遅延を確認
 
+## 関連 reference
+
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [CLI: show interfaces](../reference/cli/show-interfaces.md)
+- [HLD: sonic-pmon-sensor-monitoring-enhancement](sonic-pmon-sensor-monitoring-enhancement.md)
+- [HLD: platform-monitor-enhancement-design](platform-monitor-enhancement-design.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/xrcvd/transceiver-monitor-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

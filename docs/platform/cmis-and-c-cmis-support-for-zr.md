@@ -110,6 +110,12 @@ C-CMIS 拡張[^1]:
 - laser power が想定値と違う → `transceiver-power` 設定値、module 側上下限
 - frequency が変わらない → ITU グリッド外指定、module の wavelength 範囲
 
+## 関連 reference
+
+- [HLD: custom-si-settings-for-cmis-modules](custom-si-settings-for-cmis-modules.md)
+- [HLD: enhancement-of-cmis-module-management](../management/enhancement-of-cmis-module-management.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/platform_api/CMIS_and_C-CMIS_support_for_ZR.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

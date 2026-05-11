@@ -119,7 +119,7 @@ session は **warm/fast boot 越しに保持しない**（再起動で再 create
 ## 干渉する機能
 
 - **[VRF](../reference/glossary.md#term-vrf)**: `vrf_name` で VRF 内 session
-- **[CRM](../reference/glossary.md#term-crm) / TCAM**: session ごとに ASIC リソースを消費
+- **[CRM](../reference/glossary.md#term-crm) / [TCAM](../reference/glossary.md#term-tcam)**: session ごとに ASIC リソースを消費
 - **[SNMP](../reference/glossary.md#term-snmp) / [gNMI](../reference/glossary.md#term-gnmi) / OAM**: 結果吸い上げ経路は HLD 外
 
 ## トラブルシューティング
@@ -186,4 +186,4 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_TWAMP_SESSION_NAME_MAP'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e898d1bd00b3 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

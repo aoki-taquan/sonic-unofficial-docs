@@ -172,7 +172,7 @@ HLD は提案中心のため、[CONFIG_DB](../reference/glossary.md#term-config_
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / [YANG](../reference/glossary.md#term-yang) / Runbook）を以下にまとめる。
 
 ### 関連 CLI
 
@@ -189,3 +189,5 @@ HLD は提案中心のため、[CONFIG_DB](../reference/glossary.md#term-config_
 - [TACPLUS_SERVER](../reference/config-db/tacplus-server.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: d5320e852f7a -->

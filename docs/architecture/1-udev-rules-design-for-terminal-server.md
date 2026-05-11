@@ -184,6 +184,12 @@ ls -l /dev/Mytty*
 - 一部 port が常に欠損 → hub の物理故障 / cp210x 認識失敗 (`dmesg`) を確認
 - 別ハードで rules を流用したら全滅 → `KERNELS` の bus 位置がハードに依存。新ハードで `udevadm info -a` で属性を改めて確認
 
+## 関連 reference
+
+- [HLD: portable-console-device-design](../management/portable-console-device-design.md)
+- [Reference index](../reference/index.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/udev-terminalserver/udev rules for Terminal Server.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

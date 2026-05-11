@@ -268,6 +268,14 @@ show ip bgp summary
 ```
 <!-- /ops-hint -->
 
+## 参考リンク
+
+- [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
+- [CLI: show bgp](../cli/show-bgp.md)
+- [CLI: config bgp](../cli/config-bgp.md)
+- [Topics: BGP](../../topics/02-bgp/index.md)
+- [Runbook: BGP session down](../runbooks/bgp-session-down.md)
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

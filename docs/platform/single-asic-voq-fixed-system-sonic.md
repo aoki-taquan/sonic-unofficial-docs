@@ -172,6 +172,12 @@ reasoning: chassisdb.conf による分岐方式と、Orchagent の chassis-DB �
 - iBGP 設定が生成されてしまう: `is_voq_chassis()` が True を返している可能性。改修版の判定ロジックが効いているかを確認。
 - `fabric_ports` が表示されない: 単一 ASIC VoQ でも残す前提のため、[orchagent](../reference/glossary.md#term-orchagent) の fabric ポート列挙経路を確認。
 
+## 関連 reference
+
+- [Topics: Multi-ASIC / VOQ](../topics/12-multi-asic-voq/index.md)
+- [HLD: db-design-for-multi-asic-scenarios](db-design-for-multi-asic-scenarios.md)
+- [Reference index](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/single_asic_voq.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

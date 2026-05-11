@@ -242,6 +242,17 @@ HLD で明示の制限事項は無い。実運用上の留意点としては:
     - [GitHub Issue / PR の関連リンクは未確認] — `rules/config` のビルドフラグ群は構造上 HLD と直接 1:1 紐づくものではなく、トラッキング Issue は確認できず。各フラグの導入は個別の機能 PR（INCLUDE_KUBERNETES / ENABLE_AUTO_TECH_SUPPORT 等）に紐づく形で混在しているため、各機能ページの GitHub リンクを参照のこと。
 <!-- /diff-admonition -->
 
+## 参考リンク
+
+- [Reference 索引](../reference/index.md)
+- [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
+- [HLD: build-system-improvements](build-system-improvements.md)
+
+## 関連 reference
+
+- [HLD: rfs-split-build-improvements](rfs-split-build-improvements-hld.md)
+- [Reference index](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/Build-Profiles.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

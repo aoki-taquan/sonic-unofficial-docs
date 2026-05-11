@@ -53,7 +53,7 @@ related:
 
 DASH は ENI（Elastic Network Interface）という単位を中心に置きます。1 つの ENI は 1 つの VM ないしテナント接続点で、その配下に VNet（VxLAN VNI と underlay）、Outbound / Inbound ルーティング、ACL、metering、Service Tunnel、Private Link 等の設定が紐付きます。コントローラはこれらを `DASH_VNET` / `DASH_ENI` / `DASH_ROUTE` / `DASH_ACL_GROUP` 等のテーブルとしてプッシュし、`DashOrch` / `DashVnetOrch` / `DashAclOrch` といった [orchagent](../../reference/glossary.md#term-orchagent) が [SAI](../../reference/glossary.md#term-sai) へ落とします。
 
-DASH 自体はホスト型 SmartNIC でも appliance card でも動く設計ですが、SONiC コミュニティの SmartSwitch では「DPU を SONiC で動かし、その上で DASH を回す」形を取ります。
+DASH 自体はホスト型 [SmartNIC](../../reference/glossary.md#term-smartnic) でも appliance card でも動く設計ですが、SONiC コミュニティの SmartSwitch では「DPU を SONiC で動かし、その上で DASH を回す」形を取ります。
 
 ## SmartSwitch の役割分担
 
@@ -180,7 +180,7 @@ sequenceDiagram
 
 | 比較対象 | DASH / SmartSwitch との違い |
 | --- | --- |
-| 通常の SONiC VxLAN / [EVPN](../../reference/glossary.md#term-evpn) ゲートウェイ（[03 章](../03-vxlan-evpn/index.md)） | テナント数・per-ENI state が増えると CPU/TCAM が破綻する。DASH は per-ENI state を DPU 側に押し込む |
+| 通常の SONiC VxLAN / [EVPN](../../reference/glossary.md#term-evpn) ゲートウェイ（[03 章](../03-vxlan-evpn/index.md)） | テナント数・per-ENI state が増えると CPU/[TCAM](../../reference/glossary.md#term-tcam) が破綻する。DASH は per-ENI state を DPU 側に押し込む |
 | Multi-ASIC chassis（[12 章](../12-multi-asic-voq/index.md)） | 複数 ASIC を 1 装置に積む点は似るが、Multi-ASIC は単一スイッチング機能、SmartSwitch は NPU + 別役割の DPU |
 | 単体 SmartNIC（DPU 単独） | SmartNIC は server NIC 側に DPU を載せる発想。SmartSwitch は ToR 側に集約 |
 | ホストベースの仮想 router（OVS / VPP） | CPU 上で動かす分柔軟だが、per-flow CPU コストが線形に効く。DASH はパイプライン処理 |
@@ -210,4 +210,4 @@ sequenceDiagram
 - [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: 64d25cd729a3 -->
+<!-- glossary-links-injected: 7a2ce05409fb -->

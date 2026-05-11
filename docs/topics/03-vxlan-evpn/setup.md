@@ -167,7 +167,7 @@ vtep1                10.1.0.1                       map_100_Vlan100    Vlan100 -
 
 ## 典型シナリオ 2: VNET (controller driven overlay) を設定する
 
-[DASH](../../reference/glossary.md#term-dash) 系や Mellanox SmartNIC 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が `VNET_ROUTE_TUNNEL` を直接 [APPL_DB](../../reference/glossary.md#term-appl_db) / [CONFIG_DB](../../reference/glossary.md#term-config_db) に書きます。
+[DASH](../../reference/glossary.md#term-dash) 系や Mellanox [SmartNIC](../../reference/glossary.md#term-smartnic) 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が `VNET_ROUTE_TUNNEL` を直接 [APPL_DB](../../reference/glossary.md#term-appl_db) / [CONFIG_DB](../../reference/glossary.md#term-config_db) に書きます。
 
 ```bash
 sudo config vxlan add vtep1 10.1.0.1
@@ -281,4 +281,4 @@ VXLAN / NVGRE の外側 header だけで [ECMP](../../reference/glossary.md#term
 - [sonic-vnet YANG](../../reference/yang/sonic-vnet.md)
 - [Policy Based Hashing](../../architecture/sonic-policy-based-hashing.md)
 
-<!-- glossary-links-injected: 9f6c46bc52cb -->
+<!-- glossary-links-injected: b8635cf7f580 -->

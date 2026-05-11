@@ -278,6 +278,21 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
     - [GitHub Issue / PR の関連リンクは未確認] — `ssdutil` プラットフォームプラグインと `show platform ssdhealth` CLI は各ベンダーの platform PR に分散して取り込まれており、HLD 個別のトラッキング Issue は確認できず。
 <!-- /diff-admonition -->
 
+## 参考リンク
+
+- [CLI: show platform](../reference/cli/show-platform.md)
+- [CLI: show system-health](../reference/cli/show-system-health.md)
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+- [Runbook: platform fan / psu anomaly](../reference/runbooks/platform-fan-psu-anomaly.md)
+- [Reference index](../reference/index.md)
+- [Glossary](../reference/glossary.md)
+
+## 関連 reference
+
+- [HLD: transceiver-and-sensor-monitoring](../system/transceiver-and-sensor-monitoring-hld.md)
+- [HLD: pcieinfo-design](../platform/pcieinfo-design.md)
+- [CLI: show platform](../reference/cli/show-platform.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

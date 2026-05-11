@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-BIOS、CPLD、FPGA、BMC、SSD などのプラットフォームコンポーネントの **ファームウェアを統一 CLI から操作** するためのユーティリティ[^1]。狙い:
+BIOS、CPLD、[FPGA](../reference/glossary.md#term-fpga)、BMC、SSD などのプラットフォームコンポーネントの **ファームウェアを統一 CLI から操作** するためのユーティリティ[^1]。狙い:
 
 - ベンダ固有 utility に頼らず SONiC 標準コマンドで firmware を扱う
 - バージョン情報の取得・install・update（次回起動時反映）を共通インタフェース化
@@ -111,4 +111,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7bc589d85f65 -->
+<!-- glossary-links-injected: d12a6eddadee -->

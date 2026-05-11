@@ -136,6 +136,12 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 - **`docker-sonic-vs` / VS test**: cross-compat の見張り
 - **release schedule (5月/11月)**: 取り込みターゲット
 
+## 関連 reference
+
+- [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
+- [CLI: sonic-installer](../reference/cli/sonic-installer.md)
+- [HLD: build-system-improvements](../architecture/build-system-improvements.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
