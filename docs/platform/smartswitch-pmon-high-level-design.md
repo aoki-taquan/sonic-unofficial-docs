@@ -107,3 +107,10 @@ flowchart LR
 - inband mgmt link 未到達時の cached state / liveness 判定ロジックの現行実装確認
 - DPU graceful shutdown / smart-switch HA / independent DPU upgrade との実装連携確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

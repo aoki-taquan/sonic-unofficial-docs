@@ -89,3 +89,10 @@ POLICER|<name>
 ## 引用元
 
 [^1]: policerorch 実装: `policerorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/policerorch.cpp>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

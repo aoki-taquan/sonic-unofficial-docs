@@ -107,3 +107,10 @@ excerpt: |
 ## 引用元
 
 [^1]: `show techsupport` 実装は `show/main.py` L1780-L1814。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1780>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

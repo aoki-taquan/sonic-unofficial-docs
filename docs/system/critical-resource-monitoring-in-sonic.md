@@ -102,3 +102,10 @@ generic SAI extension CRM（新 resource 追加枠組み） / system health moni
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/crm/Critical-Resource-Monitoring-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

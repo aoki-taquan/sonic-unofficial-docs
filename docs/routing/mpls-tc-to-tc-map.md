@@ -191,3 +191,11 @@ HLD で明示されている制限[^1]:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/mpls_tc_to_tc_map.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

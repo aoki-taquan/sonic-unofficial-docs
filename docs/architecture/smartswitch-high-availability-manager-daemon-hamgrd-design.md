@@ -229,3 +229,10 @@ HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU �
 - vDPU 抽象の運用 (1:1 vs N:1) と HA Set/Scope 連動確認 → VDPU table 未取り込み、HA Set/Scope のみ先行
 - 2025-02 Initial Proposal で採否未確認、現行 master との差分大きい可能性 → 部分採用（HA Set/Scope のみ）で確定
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

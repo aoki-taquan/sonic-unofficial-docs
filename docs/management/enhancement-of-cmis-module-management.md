@@ -109,3 +109,10 @@ m_portTable->set(port.m_alias, {{"host_tx_ready", attr.value.u32 ? "true" : "fal
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/cmis-module-enhancement/cmis-module-enhancement.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/cmis-module-enhancement/cmis-module-enhancement.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

@@ -119,3 +119,10 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/system-warmboot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
+
+<!-- /topics-back-ref -->

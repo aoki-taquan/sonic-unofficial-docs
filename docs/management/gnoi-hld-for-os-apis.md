@@ -201,3 +201,10 @@ gnoi_client os verify
 - 起動失敗時のロールバック挙動 (sonic-installer next image pointer)
 - HLD 2025-01 v0.1 と現行 master の差分有無
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

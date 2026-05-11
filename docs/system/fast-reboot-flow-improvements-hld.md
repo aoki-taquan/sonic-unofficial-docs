@@ -119,3 +119,10 @@ fast-reboot Flow Improvements の中核 (`warmboot-finalizer` の fast-reboot �
 - `restore_neighbors.py` 相当の neighbor 復元: `sonic-buildimage/files/image_config/` 配下に `restore_neighbors` 系スクリプトが存在（fast-reboot 経路の dataplane downtime 削減のために neighbor を ARP/ND の前に復元）
 
 HLD が掲げる「fast-reboot / warm-reboot で finalizer を共通化し、各 orch から WARM_RESTART_TABLE で reconcile 完了を通知する」構造は現行 master で稼働しているため `code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
+
+<!-- /topics-back-ref -->

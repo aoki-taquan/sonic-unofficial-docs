@@ -116,3 +116,10 @@ reasoning: 仕様の path 規約と permission 表記の根拠。
 - modular / Smart Switch slot への namespace 拡張の整合確認
 - 仕様文書の数値型 (millidegree / mV / mA / RPM) と SONiC platform API の単位整合確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

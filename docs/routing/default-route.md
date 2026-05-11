@@ -186,3 +186,10 @@ linkmgrd --default_route
 - `sonic-swss/orchagent/routeorch.cpp:127` で `m_stateDefaultRouteTb = unique_ptr<swss::Table>(new Table(m_stateDb.get(), STATE_ROUTE_TABLE_NAME))` として STATE_DB 上の ROUTE state テーブルを open しており、orchagent がデフォルトルート状態を STATE_DB に書く経路が実装済み。
 
 HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd が購読してオプトインで mux 健全性に反映）は実装と整合。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

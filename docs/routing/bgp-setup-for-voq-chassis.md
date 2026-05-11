@@ -165,3 +165,10 @@ exit-address-family
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/bgp_voq_chassis.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

@@ -106,3 +106,10 @@ related:
 - [HLD: Syslog Source IP](../../system/sonic-syslog-source-ip.md)
 - [CONFIG_DB: SYSLOG_SERVER](../config-db/syslog-server.md)
 - [YANG: sonic-syslog](../yang/sonic-syslog.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

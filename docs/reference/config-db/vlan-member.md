@@ -78,3 +78,10 @@ VLAN_MEMBER|<vlan_name>|<port>
 - [CLI: config vlan](../cli/config-vlan.md)
 - [CONFIG_DB: VLAN](vlan.md)
 - [YANG: sonic-vlan](../yang/sonic-vlan.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

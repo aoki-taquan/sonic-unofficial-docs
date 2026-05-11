@@ -150,3 +150,10 @@ CRM 要件 HLD の実装は `sonic-swss` の `orchagent` と `sonic-utilities` �
 - DASH 拡張: `sonic-swss/orchagent/p4orch/tests/fake_crmorch.cpp` および `sonic-utilities/tests/crm_dash_test.py` で DASH ACL 系 resource を CRM に追加
 
 HLD の主要要件（SAI 経由のポーリング・しきい値超過時の syslog 通知・CLI 表示）はすべて実装済み。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

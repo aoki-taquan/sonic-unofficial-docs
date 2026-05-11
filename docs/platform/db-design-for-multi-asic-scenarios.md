@@ -209,3 +209,10 @@ config save /tmp/all_config.json
 - config save <single_file> での 1 ファイル保存実装確認
 - minigraph と Golden Config の過渡期の優先順位や両立シナリオの最終決定状況確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

@@ -120,3 +120,5 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 ## 関連 Topics
 
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

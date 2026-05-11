@@ -139,3 +139,11 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 - ICMP type/code マッチの SAI ACL field 取り込み確認
 - IPv6 Everflow の collector encap（IPv6-in-IPv6 / GRE 6to6）対応確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

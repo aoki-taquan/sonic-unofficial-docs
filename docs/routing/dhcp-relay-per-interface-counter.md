@@ -163,3 +163,10 @@ sonic-clear dhcp_relay ipv6 counters [--dir TX|RX] [--type <type>] [<vlan>]
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/dhcp_relay/DHCP-per-interface-counter.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_relay/DHCP-per-interface-counter.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

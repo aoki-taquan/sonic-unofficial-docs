@@ -166,3 +166,10 @@ sequenceDiagram
 - sonic-mgmt-common transformer の現行 OpenConfig モデル対応状況
 - TLS / 証明書認証経路の標準的な手順（このドキュメントは insecure 例のみ）
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
+
+<!-- /topics-back-ref -->

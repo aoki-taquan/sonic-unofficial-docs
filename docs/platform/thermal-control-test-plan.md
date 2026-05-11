@@ -140,3 +140,11 @@ reasoning: PSU absent → FAN 100% / algorithm disable の根拠。
 - fan.any.absence / psu.any.absence / fan.all.set_speed / thermal_control.control の type 名統一性確認
 - 親 thermal-control-design.md (現状 keboliu fork リンク) の master 移行有無確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

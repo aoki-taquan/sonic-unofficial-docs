@@ -85,3 +85,10 @@ VLAN_SUB_INTERFACE|<name>|<ip-prefix>
 
 [^1]: YANG 定義: `sonic-vlan-sub-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

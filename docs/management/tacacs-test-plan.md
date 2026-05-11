@@ -152,3 +152,10 @@ flowchart LR
 - `/etc/pam.d/common-auth-sonic` 経由の include 切替: L748-L752
 
 テストプランの主要観点（PAM 経由 ssh login、failthrough、passkey、server priority、NSS 共有）はすべて hostcfgd で実装済み。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

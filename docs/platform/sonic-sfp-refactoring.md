@@ -146,3 +146,10 @@ reasoning: identifier-based spec 判定への切替の根拠。
 - sonic_xcvr/sfp_optoe_base.py:14 class SfpOptoeBase(SfpBase)
 - sonic-platform-daemons/sonic-xcvrd/xcvrd/{xcvrd_utilities/optics_si_parser.py:162, media_settings_parser.py:337/375/396, sff_mgr.py:396, common.py:119/242, utils.py:19} で sfp.get_xcvr_api() 使用
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

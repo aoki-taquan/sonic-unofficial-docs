@@ -160,3 +160,10 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 - show platform psustatus の WARNING ステータス表示の sonic-utilities 取り込み確認
 - psuutil 出力での threshold 列追加の確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

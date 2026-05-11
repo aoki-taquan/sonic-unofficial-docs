@@ -148,3 +148,10 @@ VM は qemu で `-m 32768`（32GB RAM）`-smp 12`（12 vCPU）で起動する[^1
 - KNE alpine node type 取り込みの upstream openconfig/kne 状況確認 → 別 repo
 - v0.1 (2025-05) Initial Proposal のため採否未確認、現行 master への取り込み確認 → buildimage 側は採用済
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

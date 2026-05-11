@@ -119,3 +119,5 @@ journalctl -u system-health 2>/dev/null
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

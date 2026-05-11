@@ -79,3 +79,10 @@ PORT_QOS_MAP|<PORT.name>
 
 [^1]: YANG 定義: `sonic-port-qos-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-port-qos-map.yang>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

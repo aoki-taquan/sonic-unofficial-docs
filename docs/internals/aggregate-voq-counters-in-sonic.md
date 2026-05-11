@@ -158,3 +158,10 @@ HLD が明示している制限[^1]:
 - sonic-utilities `scripts/queuestat` に `QUEUE_TYPE_VOQ='VOQ'`, `SAI_QUEUE_TYPE_UNICAST_VOQ`, `COUNTERS_VOQ_NAME_MAP`, `voq_header` テーブル、`Queuestat(... voq=...)` 引数 (l.71-206)
 - sonic-swss-common `common/dbconnector.h` に `DBConnector(int dbId, const std::string &hostname, int port, unsigned int timeout_ms);` (l.217) の hostname/port 直指定コンストラクタあり
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

@@ -256,3 +256,10 @@ YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json
 - show tacacs から passkey フィールドが削除されたか
 - 暗号化アルゴリズム (AES-CBC? AES-GCM?) の確定
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

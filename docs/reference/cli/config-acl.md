@@ -124,3 +124,10 @@ excerpt: |
 - [CONFIG_DB: ACL_TABLE](../config-db/acl-table.md)
 - [CONFIG_DB: ACL_RULE](../config-db/acl-rule.md)
 - [CLI: show acl](show-acl.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

@@ -73,3 +73,10 @@ show queue wredcounters [INTERFACE_NAME]
 ## 引用元
 
 [^1]: `show queue` グループと配下 command。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L774>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

@@ -149,3 +149,5 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 ## 関連 Topics
 
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

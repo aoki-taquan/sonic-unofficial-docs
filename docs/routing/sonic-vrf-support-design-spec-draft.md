@@ -152,3 +152,10 @@ show vrf
 - [CONFIG_DB: VRF](../reference/config-db/vrf.md)
 - [CONFIG_DB: INTERFACE](../reference/config-db/interface.md)
 - [YANG: sonic-vrf](../reference/yang/sonic-vrf.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -127,3 +127,10 @@ GNS3 GUI 操作の代替として CLI で扱う場合、`gns3server` の REST AP
 - sonic-buildimage/check_install.py:13 default password='YourPaSsWoRd'
 -->
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

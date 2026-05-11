@@ -201,3 +201,10 @@ HLD では新しい CONFIG_DB スキーマは導入しない。既存の chassis
 - ベンダー側 provision_module() リファレンス実装の有無
 - 状態遷移失敗時のリトライ戦略
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

@@ -207,3 +207,10 @@ HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
 - 4000 セッションのスケール検証
 - 2021 年 HLD と現行実装の乖離（Phase 2 以降の CONFIG_DB / CLI 追加状況）
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

@@ -112,3 +112,10 @@ flowchart LR
 - config auto-techsupport / show auto-techsupport CLI の sonic-utilities 取り込み確認
 - system health monitor / kdump / persistent log level との連携の現行実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

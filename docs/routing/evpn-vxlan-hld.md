@@ -168,3 +168,11 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 - Type-5 + VRF + L3 VNI の installation path（SAI VRF + tunnel decap）確認
 - multihoming HLD との重複 / 境界整理確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

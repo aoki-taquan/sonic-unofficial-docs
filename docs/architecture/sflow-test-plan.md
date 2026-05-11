@@ -108,3 +108,10 @@ show sflow interface
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/sflow/Sflow_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sflow/Sflow_test_plan.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -254,3 +254,10 @@ ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest te
 - ansible/roles/test/vars/testcases.yml は size 11721 byte で実在
 -->
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

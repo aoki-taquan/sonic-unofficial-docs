@@ -213,3 +213,10 @@ show bfd sessions
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

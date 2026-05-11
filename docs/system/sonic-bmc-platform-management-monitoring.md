@@ -102,3 +102,10 @@ flowchart LR
 - BMC 認証情報の格納方式と rotation の現行運用確認
 - vendor 別 Redfish スキーマ差吸収レイヤの現行実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

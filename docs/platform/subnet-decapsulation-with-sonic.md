@@ -145,3 +145,10 @@ Dst IP         Src IP         Tunnel Name    Decap Term Type
 - `sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2` / `swssconfig.sh` と `sonic-config-engine/tests/sample_output/py3/ipinip_subnet_decap_enable.json` に subnet decap 用の自動生成テンプレート / サンプルが存在し、warm-reboot 対応の swssconfig 経路も裏取り。
 
 HLD と実装は一致。`SUBNET_DECAP` table、`MP2MP` term、自動生成された `IPINIP_SUBNET` / `IPINIP_V6_SUBNET` tunnel いずれも master に取り込み済み。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
+
+<!-- /topics-back-ref -->

@@ -173,3 +173,10 @@ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:*" | head
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

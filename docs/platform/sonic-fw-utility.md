@@ -91,3 +91,10 @@ flowchart LR
 - smart-switch / DPU 環境での fwutil 拡張（DPU 個別更新）の現行実装確認
 - ASIC 本体 firmware の扱い境界（fwutil / SAI / vendor SDK）の整理状況確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

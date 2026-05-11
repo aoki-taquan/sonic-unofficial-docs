@@ -196,3 +196,10 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 - 既存 active SI のキャッシュ + 差分マージ実装確認
 - 3 回リトライ後に当該ポート初期化を中止する実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

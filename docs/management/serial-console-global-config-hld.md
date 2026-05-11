@@ -197,3 +197,10 @@ config save
 - init_cfg.json.j2 に既定値が入っているか確認 → 別途要確認
 - inactivity_timeout=0 の扱い (無効化か即ログアウトか) の動作確認 → 実機検証要
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

@@ -76,3 +76,10 @@ module: sonic-buffer-pool
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-buffer-pool.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

@@ -169,3 +169,10 @@ uDT46（VRF にデキャプ）:
 - FRR の SRv6 制御プレーン対応の進捗（HLD 後の状況）
 - locator パースの 16:8:8:8 デフォルトが現行コードでも有効か
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

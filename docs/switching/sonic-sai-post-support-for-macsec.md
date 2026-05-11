@@ -194,3 +194,10 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 - /proc/cmdline 経由 sonic_fips=1 と /etc/fips/fips_enable の取り扱い実装
 - 2025-07 HLD と現行 master 取り込み状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

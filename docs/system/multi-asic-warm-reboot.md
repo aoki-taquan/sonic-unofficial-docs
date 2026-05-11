@@ -90,3 +90,10 @@ going up は逆順を namespace ごとに走らせ、orchagent compare 完了後
 - multi-asic single-json と warm restart 設定の互換性確認
 - HLD と現行 multi-asic warm reboot CI テストカバレッジの差異確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

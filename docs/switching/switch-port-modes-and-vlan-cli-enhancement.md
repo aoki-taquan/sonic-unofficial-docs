@@ -337,3 +337,5 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

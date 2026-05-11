@@ -188,3 +188,10 @@ show interfaces fast-linkup status
 
 - [Topic: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
 - [Topic: L2 VLAN LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

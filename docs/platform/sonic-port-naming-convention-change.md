@@ -214,3 +214,10 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 - PortChannel 命名の最終決定
 - breakout (a/b/c/d) と CONFIG_DB.PORT のキーの整合
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

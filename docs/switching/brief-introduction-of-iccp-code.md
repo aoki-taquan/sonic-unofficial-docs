@@ -248,3 +248,10 @@ ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MC_LAG_DOMAIN`, `MC_LAG_I
 - HLD の章番号と src ファイル名はほぼ 1:1 で対応。FSM 関数名（`app_csm_transit`、`mlacp_fsm_transit`）も HLD 記載どおり。
 
 ICCPd 内部構成マップは現行 master と整合。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

@@ -200,3 +200,10 @@ show interfaces status | grep -E 'Recirc|Ether-(Rec|IB)'
 - Everflow / mirror が Rec role port を選択するロジックの実装確認
 - VOQ inband port (Inb role) を消費する VOQ inband 機能側の実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

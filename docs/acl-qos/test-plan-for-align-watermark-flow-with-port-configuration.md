@@ -110,3 +110,10 @@ reasoning: 本テストの整合性判定基準を直接表化
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

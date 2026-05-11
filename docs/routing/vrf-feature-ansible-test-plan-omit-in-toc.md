@@ -114,3 +114,10 @@ VRF 跨ぎリダイレクトでは **outgoing interface も明示** が必要[^1
 - 4096 VRF（VRF_TABLE_START=1001, END=5097）のレンジが定義されており、HLD/プランの「1000 VRF スケール」記述と整合。
 
 テストプラン自体は記述で、現行 master の vrfmgrd 実装と整合。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

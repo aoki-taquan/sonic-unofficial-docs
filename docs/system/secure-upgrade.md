@@ -131,3 +131,10 @@ reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 - ONIE 側 PR #11862 / #2337 の merge 状況と互換性確認
 - Secure Boot との chain of trust 整合確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

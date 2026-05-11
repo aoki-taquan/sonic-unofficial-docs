@@ -208,3 +208,10 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 - DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路の実装確認
 - v0.1 2025-12 Initial Proposal、master への取り込み・採否未確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

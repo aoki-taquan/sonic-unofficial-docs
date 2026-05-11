@@ -185,3 +185,10 @@ Supervisor で全体 TSA、LC2 だけ独立に TSB:
 - startup_tsa_tsb サービスの定義
 - Supervisor host config_db.json への tsa_enabled 永続化フロー
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

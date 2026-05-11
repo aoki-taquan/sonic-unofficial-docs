@@ -97,3 +97,10 @@ flowchart LR
 - 旧 ssdhealth-design HLD との実装統合 / 廃止状況の確認
 - system health monitor / show techsupport plugin との連携の現行実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

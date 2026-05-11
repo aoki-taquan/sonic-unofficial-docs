@@ -83,3 +83,10 @@ show platform firmware [fwutil args...]
 [^1]: `config platform firmware` の `install` / `update` 定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L8734>
 
 [^2]: `show platform firmware` は `sudo fwutil show` を実行する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/platform.py#L290>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

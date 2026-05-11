@@ -147,3 +147,10 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 - ACL_TABLE_DTEL_FLOW_WATCHLIST / ACL_TABLE_DTEL_DROP_WATCHLIST の扱い確認
 - euclid Python モジュールの取り込みと利用例の確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

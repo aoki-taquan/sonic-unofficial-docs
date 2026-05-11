@@ -207,3 +207,10 @@ show interfaces status | grep Ethernet0
 - sonic-port YANG の speed 制約 1600000 受理確認
 - SFF-8024 新 ID (30/31/87/88/128/129/130/131 等) の sonic-platform-common 取り込み
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

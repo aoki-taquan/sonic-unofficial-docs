@@ -185,3 +185,10 @@ config sflow interface sample-rate Ethernet0 10000
 - 自動 sample_rate 算出ロジック（speed→rate）の現行実装値確認
 - collector 上限 2 件の現行実装での restriction 確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

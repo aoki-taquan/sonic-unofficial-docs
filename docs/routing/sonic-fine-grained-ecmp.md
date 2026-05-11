@@ -174,3 +174,10 @@ reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原�
 - prefix-based モード（Rev 1.5, 2024 追加）の master 取り込み確認
 - fast-reboot dump への FG_ROUTE_TABLE 含有確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
+
+<!-- /topics-back-ref -->

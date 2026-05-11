@@ -80,3 +80,10 @@ SYSLOG_SERVER|<server_address>
 - [HLD: Syslog Source IP](../../system/sonic-syslog-source-ip.md)
 - [CLI: config syslog](../cli/config-syslog.md)
 - [YANG: sonic-syslog](../yang/sonic-syslog.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

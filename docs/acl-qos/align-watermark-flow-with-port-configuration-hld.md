@@ -237,3 +237,10 @@ counterpoll watermark enable
 - port 動的追加時に watermark stats が自動追加されるパスの実装確認
 - counterpoll disable 時に FLEX_COUNTER_DB から entry を削除しない挙動が現行 master でも維持されているか確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->
