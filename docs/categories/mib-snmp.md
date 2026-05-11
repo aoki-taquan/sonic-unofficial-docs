@@ -9,20 +9,51 @@ last_verified: 2026-05-10
 
 ## 概要
 
-MIB、SNMP、Entity MIB、Sensor MIB、SNMP 設定 / 移行 / IPv6 対応を横断して追う入口です。
+SONiC の SNMP エージェントは **Net-SNMP + sonic_ax_impl (AgentX subagent)** で構成され、`snmpd` が標準 MIB を提供し、Python ベースの subagent が SONiC 固有 MIB（ポート / インタフェース / 物理エンティティ / センサー / トランシーバ / VRF / Dot1agtm 等）を実装しています。設定は歴史的に `snmp.yml` で行っていましたが、現行マスターは CONFIG_DB の `SNMP` / `SNMP_COMMUNITY` / `SNMP_USER` / `SNMP_AGENT_ADDRESS_CONFIG` テーブルに移行済みです。
 
-主要キーワード: `MIB`, `SNMP`, `Entity MIB`, `Sensor MIB`, `trap`, `community`
+このカテゴリは MIB / SNMP に関わるページを area 横断でまとめます。**system**（snmp.yml → CONFIG_DB 移行、SNMP IPv6 対応、Entity / Sensor MIB 拡張、Transceiver Monitoring、SNMP TABLE スキーマ提案）・**switching**（L2 モードでの SNMP 検証）・**architecture**（ポート不正パケット用 MIB 拡張）・**reference**（`config snmp` / `snmpagentaddress` / `snmptrap` CLI）に分散しています。
+
+SNMP IPv6 では応答 SRC IP が listening address と一致しない問題があり、`SNMP_AGENT_ADDRESS_CONFIG` で送信元 IP を縛る運用回避が標準です。Entity MIB はシャーシ・ラインカード・PSU / Fan / Sensor を `entPhysicalEntry` の階層に並べる構造で、chassis 環境で重要です。
+
+主要キーワード: `MIB`, `SNMP`, `Entity MIB`, `Sensor MIB`, `trap`, `community`, `IPv6`, `AgentX`
 
 ## 関連ページ
 
-- [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](../architecture/port-illegal-packets-drop-design.md) (area: `architecture`, verification: `hld-only`)
-- [config snmp / snmpagentaddress / snmptrap サブコマンド](../reference/cli/config-snmp.md) (area: `reference`, verification: `code-verified`)
-- [SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）](../switching/sonic-basic-l2-mode-test-plan.md) (area: `switching`, verification: `code-verified`)
+### system（HLD 本体）
+
+- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (area: `system`, verification: `code-verified`) — CONFIG_DB スキーマの起点
 - [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (area: `system`, verification: `code-verified`)
-- [SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）](../system/snmp-transceiver-monitoring-testbed-test-plan.md) (area: `system`, verification: `code-verified`)
-- [Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）](../system/sonic-entity-mib-and-entity-sensor-mib-extension.md) (area: `system`, verification: `code-verified`)
 - [SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避](../system/sonic-snmp-changes-to-support-ipv6.md) (area: `system`, verification: `code-verified`)
-- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (area: `system`, verification: `code-verified`)
+- [Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）](../system/sonic-entity-mib-and-entity-sensor-mib-extension.md) (area: `system`, verification: `code-verified`)
+- [SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）](../system/snmp-transceiver-monitoring-testbed-test-plan.md) (area: `system`, verification: `code-verified`)
+
+### architecture / switching
+
+- [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](../architecture/port-illegal-packets-drop-design.md) (area: `architecture`, verification: `hld-only`)
+- [SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）](../switching/sonic-basic-l2-mode-test-plan.md) (area: `switching`, verification: `code-verified`)
+
+### reference - CLI
+
+- [config snmp / snmpagentaddress / snmptrap サブコマンド](../reference/cli/config-snmp.md) (area: `reference`, verification: `code-verified`)
+
+## 典型的な読み進め方
+
+1. **設定の基礎** → `sonic-snmp-table-schema-proposal.md` で CONFIG_DB のテーブル構造を把握
+2. **移行** → `snmp-migration-from-snmp-yml-to-configdb.md` で snmp.yml ベース運用からの変更点
+3. **IPv6 注意点** → `sonic-snmp-changes-to-support-ipv6.md`
+4. **物理情報** → `sonic-entity-mib-and-entity-sensor-mib-extension.md` → `snmp-transceiver-monitoring-testbed-test-plan.md` でシャーシ / センサー / トランシーバ
+5. **CLI** → `config-snmp.md` で実機での設定変更
+6. **テスト** → `sonic-basic-l2-mode-test-plan.md`（L2 mode + SNMP）
+
+## 関連 Topics 章
+
+- [Topics 09: Telemetry / SNMP](../topics/09-telemetry-snmp/index.md) — SNMP と telemetry を段階的に学ぶ章
+- [Topics 12: Multi-ASIC / VOQ](../topics/12-multi-asic-voq/index.md) — Entity MIB の chassis 階層化の前提
+- [Topics 14: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) — Sensor MIB / Transceiver の前提
+
+## verification ステータス注意点
+
+- **hld-only**: `port-illegal-packets-drop-design.md`
 
 ## 関連カテゴリ
 
