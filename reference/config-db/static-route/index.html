@@ -23427,6 +23427,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -23441,7 +23458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要フィールド
@@ -23452,7 +23469,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -23463,7 +23480,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23485,7 +23502,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23496,7 +23513,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23534,12 +23551,30 @@
 <h1 id="static_route">STATIC_ROUTE テーブル<a class="headerlink" href="#static_route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>STATIC_ROUTE</code> は静的経路を CONFIG_DB に保持するテーブル。YANG では template 形式 (<code>STATIC_ROUTE|&lt;prefix&gt;</code>) と VRF-aware 形式 (<code>STATIC_ROUTE|&lt;vrf_name&gt;|&lt;prefix&gt;</code>) の 2 つの list が定義されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。nexthop、出力 interface、BGP への advertise、BFD、administrative distance、nexthop VRF、blackhole 指定を扱う。テーブル名の実装側定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<!-- cdb-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CDB[("CONFIG_DB&lt;br/&gt;STATIC_ROUTE")]
+  DM["fpmsyncd"]
+  CDB --&gt; DM
+  APPDB[("APP_DB&lt;br/&gt;APP_ROUTE_TABLE")]
+  DM --&gt; APPDB
+  SYNCD["syncd"]
+  APPDB --&gt; SYNCD
+  SAI["SAI&lt;br/&gt;sai_route_api"]
+  SYNCD --&gt; SAI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
+</div>
+<!-- /cdb-mermaid -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>STATIC_ROUTE|&lt;prefix&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>STATIC_ROUTE|&lt;vrf_name&gt;|&lt;prefix&gt;
 </span></code></pre></div>
 <p><code>&lt;prefix&gt;</code> は IPv4 / IPv6 prefix。<code>&lt;vrf_name&gt;</code> は <code>default</code>、<code>mgmt</code>、または <code>Vrf...</code> 形式。</p>
-<h2 id="_2">主要フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -23594,14 +23629,14 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>advertise</code>、<code>bfd</code>、<code>blackhole</code> は <code>true</code> / <code>false</code> のカンマ区切り文字列。</li>
 <li><code>distance</code> は 0..255 のカンマ区切り文字列。</li>
 <li><code>nexthop-vrf</code> は <code>default</code>、<code>mgmt</code>、<code>Vrf...</code> のカンマ区切り文字列。</li>
 <li>YANG の VRF-aware key は <code>vrf_name prefix</code>。template 形式には <code>vrf_name</code> が無い。</li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>staticd</code> / <code>zebra</code> (FRR): SONiC の設定生成パスを通じて static route を FRR に反映する。</li>
 <li><code>bgpcfgd</code> / routing config パス: <code>advertise</code> が有効な static route を BGP 広告対象として扱う。</li>
@@ -23615,14 +23650,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-static-route/"><code>sonic-static-route</code></a></li>
 <li>CLI: <a href="../../cli/config-route/"><code>config route</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

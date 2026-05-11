@@ -23427,6 +23427,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -23474,7 +23491,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23496,7 +23513,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23507,7 +23524,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23518,7 +23535,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23561,6 +23578,20 @@
 <li><code>MCLAG_INTERFACE</code> — ドメインに紐づく MC-LAG メンバー PortChannel</li>
 <li><code>MCLAG_UNIQUE_IP</code> — MC-LAG ピア間で VLAN インターフェースに <strong>異なる IP</strong> を持たせる対象 VLAN</li>
 </ul>
+<!-- cdb-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CDB[("CONFIG_DB&lt;br/&gt;MCLAG_DOMAIN")]
+  DM["MlagOrch"]
+  CDB --&gt; DM
+  SAI["SAI&lt;br/&gt;sai_fdb_api"]
+  DM --&gt; SAI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
+</div>
+<!-- /cdb-mermaid -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>MCLAG_DOMAIN|&lt;domain_id&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>MCLAG_INTERFACE|&lt;domain_id&gt;|&lt;if_name&gt;
@@ -23668,7 +23699,7 @@
 </table>
 <p><strong>must 制約</strong>: <code>MCLAG_DOMAIN_LIST</code> が少なくとも 1 つ存在すること</p>
 <p>YANG コメントによれば、本来 <code>MCLAG_UNIQUE_IP.if_name</code> は <code>VLAN.name</code> への leafref にしたいが libyang back-links の制約で plain string になっている。</p>
-<h2 id="_2">購読者<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>iccpd</code> (<code>docker-iccpd</code>) — MC-LAG 制御プレーン</li>
 <li>間接的に <code>teamd</code> (PortChannel のメンバー同期)</li>
@@ -23681,15 +23712,15 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-mclag/"><code>sonic-mclag</code></a></li>
 <li>CLI: <a href="../../cli/config-mclag/"><code>config mclag</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../portchannel/">CONFIG_DB: PORTCHANNEL</a></li>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>

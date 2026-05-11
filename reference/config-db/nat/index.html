@@ -23427,6 +23427,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -23441,7 +23458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要フィールド
@@ -23491,7 +23508,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -23502,7 +23519,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23524,7 +23541,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23535,7 +23552,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23584,13 +23601,31 @@
 <h1 id="nat_global-nat_pool">NAT_GLOBAL / NAT_POOL テーブル<a class="headerlink" href="#nat_global-nat_pool" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>NAT_GLOBAL</code> は NAT feature の admin mode と timeout を保持するグローバル設定、<code>NAT_POOL</code> は dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。同じ YANG モジュールには <code>NAT_BINDINGS</code>、<code>STATIC_NAT</code>、<code>STATIC_NAPT</code> も定義される。<code>schema.h</code> では APPL_DB 側に <code>NAT_GLOBAL_TABLE</code> と pool 系 table の定数がある<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<!-- cdb-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CDB[("CONFIG_DB&lt;br/&gt;NAT_GLOBAL")]
+  DM["natmgrd"]
+  CDB --&gt; DM
+  APPDB[("APP_DB&lt;br/&gt;APP_NAT_GLOBAL_TABLE")]
+  DM --&gt; APPDB
+  SYNCD["syncd"]
+  APPDB --&gt; SYNCD
+  SAI["SAI&lt;br/&gt;sai_switch_api"]
+  SYNCD --&gt; SAI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
+</div>
+<!-- /cdb-mermaid -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>NAT_GLOBAL|Values
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>NAT_POOL|&lt;name&gt;
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>NAT_BINDINGS|&lt;name&gt;
 </span></code></pre></div>
 <p><code>NAT_GLOBAL</code> は YANG 上 <code>container Values</code> を持つ singleton 的な形。<code>NAT_POOL</code> と <code>NAT_BINDINGS</code> は <code>name</code> が key。</p>
-<h2 id="_2">主要フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="nat_global">NAT_GLOBAL<a class="headerlink" href="#nat_global" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23684,7 +23719,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>NAT_POOL</code> / <code>NAT_BINDINGS</code> はそれぞれ最大 16 entries。</li>
 <li><code>name</code> は 1..32 文字、英数字で始まり、英数字 / <code>-</code> / <code>_</code> を利用可能。</li>
@@ -23692,7 +23727,7 @@
 <li><code>nat_port</code> は <code>start-end</code> 形式の port 範囲。</li>
 <li><code>NAT_BINDINGS.nat_pool</code> は既存 <code>NAT_POOL</code> への leafref。</li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>natmgrd</code>: CONFIG_DB の NAT 設定を読み、APPL_DB NAT table 群へ反映する。</li>
 <li><code>orchagent</code> / <code>NatOrch</code>: APPL_DB の NAT global / pool / binding / static entry を消費し、SAI NAT object や kernel / ASIC 設定へ反映する。</li>
@@ -23705,14 +23740,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-nat/"><code>sonic-nat</code></a></li>
 <li>CLI: <a href="../../cli/config-nat/"><code>config nat</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

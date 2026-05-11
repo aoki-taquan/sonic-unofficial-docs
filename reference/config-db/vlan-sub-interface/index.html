@@ -23427,6 +23427,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -23441,7 +23458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要フィールド
@@ -23480,7 +23497,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -23491,7 +23508,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23513,7 +23530,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23524,7 +23541,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23573,12 +23590,30 @@
 <h1 id="vlan_sub_interface">VLAN_SUB_INTERFACE テーブル<a class="headerlink" href="#vlan_sub_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>VLAN_SUB_INTERFACE</code> は物理 port または PortChannel 上の 802.1Q sub-interface を定義する CONFIG_DB テーブル。<code>Ethernet0.100</code> や <code>PortChannel10.100</code> のような親 interface + VLAN ID 形式をキーに、admin state、VRF / VNET binding、loopback action、encapsulation VLAN、IP prefix を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では CONFIG_DB テーブル名として <code>CFG_VLAN_SUB_INTF_TABLE_NAME</code> が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<!-- cdb-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CDB[("CONFIG_DB&lt;br/&gt;VLAN_SUB_INTERFACE")]
+  DM["intfmgrd"]
+  CDB --&gt; DM
+  APPDB[("APP_DB&lt;br/&gt;APP_DB")]
+  DM --&gt; APPDB
+  SYNCD["syncd"]
+  APPDB --&gt; SYNCD
+  SAI["SAI&lt;br/&gt;sai_router_intf_api"]
+  SYNCD --&gt; SAI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
+</div>
+<!-- /cdb-mermaid -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VLAN_SUB_INTERFACE|&lt;name&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>VLAN_SUB_INTERFACE|&lt;name&gt;|&lt;ip-prefix&gt;
 </span></code></pre></div>
 <p><code>&lt;name&gt;</code> は <code>ParentInterface.VlanID</code> 形式。IP prefix 行は同じテーブル名で <code>&lt;name&gt;</code> と <code>&lt;ip-prefix&gt;</code> を複合キーにする。</p>
-<h2 id="_2">主要フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="vlan_sub_interface_list">VLAN_SUB_INTERFACE_LIST<a class="headerlink" href="#vlan_sub_interface_list" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23633,7 +23668,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>name</code> は最大 15 文字で、<code>&lt;port&gt;.&lt;vlan_id&gt;</code> / <code>Eth&lt;n&gt;.&lt;vlan_id&gt;</code> / <code>&lt;PortChannel&gt;.&lt;vlan_id&gt;</code> / <code>Po&lt;n&gt;.&lt;vlan_id&gt;</code> の形式。</li>
 <li>parent は <code>PORT</code> または <code>PORTCHANNEL</code> に存在する必要がある。</li>
@@ -23641,7 +23676,7 @@
 <li><code>vrf_name</code> と <code>vnet_name</code> はそれぞれ既存 <code>VRF</code> / <code>VNET</code> への leafref。</li>
 <li>IP prefix 行の <code>name</code> は親 <code>VLAN_SUB_INTERFACE_LIST.name</code> への leafref。</li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>intfmgrd</code>: CONFIG_DB の sub-interface と IP prefix を APPL_DB 側の interface 設定へ展開する。</li>
 <li><code>orchagent</code> / <code>intfsorch</code>: APPL_DB 経由で router interface、IP address、VRF / VNET binding を SAI / kernel へ反映する。</li>
@@ -23654,14 +23689,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-vlan-sub-interface/"><code>sonic-vlan-sub-interface</code></a></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
