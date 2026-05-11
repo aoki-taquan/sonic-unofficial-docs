@@ -30,7 +30,7 @@ related:
 
 ## 想定原因
 
-1. **`FEATURE|<name>` の `state` が `disabled` / `always_disabled`** → hostcfgd が起動を抑制
+1. **`FEATURE|<name>` の `state` が `disabled` / `always_disabled`** → [hostcfgd](../../reference/glossary.md#term-hostcfgd) が起動を抑制
 2. **対象 feature の sub-system 依存が満たされない** (例: `bgp` の起動には `swss` が先に Ready)
 3. **イメージ pull / 展開失敗**: docker image が存在しない or 破損
 4. **設定ファイル不備**: `/etc/sonic/config_db.json` の必須 key 欠落で起動スクリプトが abort
@@ -104,4 +104,6 @@ free -h
 ## 引用元
 
 [^1]: sonic-net/sonic-host-services @ c5bbbe8 — hostcfgd
-[^2]: sonic-net/sonic-utilities @ 39732bceb — config feature state
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config feature state
+
+<!-- glossary-links-injected: 3e47d0d86b63 -->

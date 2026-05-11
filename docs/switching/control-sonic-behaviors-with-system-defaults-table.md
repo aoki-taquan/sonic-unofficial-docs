@@ -30,7 +30,7 @@ related:
 
 SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が `CONFIG_DB` の `DEVICE_METADATA|localhost` に蓄積されてきた。`default_bgp_status`, `default_pfcwd_status`, `synchronous_mode`, `dhcp_server` などである。フラグが増えるにつれて `DEVICE_METADATA` が肥大化し、本来「デバイスのメタデータ」とは性格の異なるフラグが混在する状況が生じた。
 
-本 HLD は、これらのフラグを **新規テーブル `SYSTEM_DEFAULTS`** に切り出し、初期値設定・更新・購読を一元化することを提案している。`DEVICE_METADATA` 内の該当フィールドは `db_migrator.py` で `SYSTEM_DEFAULTS` に移行され、`sonic-device_metadata.yang` の該当エントリは新たな YANG モデルへ切り出される。
+本 [HLD](../reference/glossary.md#term-hld) は、これらのフラグを **新規テーブル `SYSTEM_DEFAULTS`** に切り出し、初期値設定・更新・購読を一元化することを提案している。`DEVICE_METADATA` 内の該当フィールドは `db_migrator.py` で `SYSTEM_DEFAULTS` に移行され、`sonic-device_metadata.yang` の該当エントリは新たな [YANG](../reference/glossary.md#term-yang) モデルへ切り出される。
 
 ## 動作仕様
 
@@ -205,6 +205,8 @@ sonic-cfggen -a '{"SYSTEM_DEFAULTS": {"tunnel_qos_remap": {"status": "enabled"}}
 
 - `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang` が master に存在し、`container SYSTEM_DEFAULTS` 下に `list SYSTEM_DEFAULTS_LIST { key "name"; leaf name; leaf status; }` を定義。HLD の「キー = `feature_name`、必須フィールド = `status`」というスキーマと完全一致。
 - `sonic-buildimage/src/sonic-yang-models/tests/yang_model_tests/tests/system_defaults.json` / `tests_config/system_defaults.json` / `sample_config_db.json` にテストデータが整備され、`SYSTEM_DEFAULTS` テーブルが正式に sonic-yang-models で配信されていることを裏取り。
-- `sonic-utilities` 配下も含めて当該 YANG が `SYSTEM_DEFAULTS` を CONFIG_DB スキーマとして公開する経路が成立している。
+- `sonic-utilities` 配下も含めて当該 YANG が `SYSTEM_DEFAULTS` を [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマとして公開する経路が成立している。
 
 HLD と実装は一致。`code-verified` に昇格。
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

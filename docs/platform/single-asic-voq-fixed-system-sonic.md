@@ -29,7 +29,7 @@ related:
 
 VoQ（Virtual Output Queue）アーキテクチャはこれまで **マルチ ASIC のシャーシシステム** でのみ前提とされ、Chassis DB（`chassisdb.conf` の有無で識別される）を経由した system port 共有・iBGP メッシュ・midplane などの仕組みに強く依存していた[^1]。
 
-本 HLD は VoQ 機能を **単一 ASIC の固定システム** にも持ち込む構成（single-ASIC VoQ）の差分を定義する。switch type `voq` をシャーシ／非シャーシで **共用** し、Chassis DB の存在で動作を分岐する設計思想を取る[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は VoQ 機能を **単一 ASIC の固定システム** にも持ち込む構成（single-ASIC VoQ）の差分を定義する。switch type `voq` をシャーシ／非シャーシで **共用** し、Chassis DB の存在で動作を分岐する設計思想を取る[^1]。
 
 主要原則[^1]:
 
@@ -70,7 +70,7 @@ flowchart TD
 | 機能 | Chassis VoQ | Single-ASIC VoQ |
 |------|------------|-----------------|
 | Line card 拡張サポート | ✅ | ❌ |
-| internal/external BGP 区別 | ✅ | ❌（local のみ）|
+| internal/external [BGP](../reference/glossary.md#term-bgp) 区別 | ✅ | ❌（local のみ）|
 | Fabric port status を Chassis DB から取得 | ✅ | ❌（ローカル取得）|
 | Multi-ASIC チェック | True | **必ず False** |
 
@@ -78,7 +78,7 @@ flowchart TD
 
 ### sonic-host-services / caclmgrd
 
-`caclmgrd` の **midplane トラフィック** 関連 ACL 生成は Chassis VoQ でのみ動作させる[^1]。
+`caclmgrd` の **midplane トラフィック** 関連 [ACL](../reference/glossary.md#term-acl) 生成は Chassis VoQ でのみ動作させる[^1]。
 
 ### CLI
 
@@ -141,7 +141,7 @@ reasoning: chassisdb.conf による分岐方式と、Orchagent の chassis-DB �
 
 ## 干渉する機能
 
-- **`BGP_VOQ_CHASSIS_NEIGHBOR`**: 単一 ASIC VoQ では生成されない。CONFIG_DB 上に空のまま。
+- **`BGP_VOQ_CHASSIS_NEIGHBOR`**: 単一 ASIC VoQ では生成されない。[CONFIG_DB](../reference/glossary.md#term-config_db) 上に空のまま。
 - **fabric port 統計**: 単一 ASIC VoQ でも `fabric_ports` は残す方針[^1]。`fabricstat` 系コマンドの挙動が両モードで微妙に違いうる。
 - **mirror orch**: HLD Rev 1.3 で「neighbors and mirror orch の詳細を追加」と言及されているが、本ファイルの本文側には mirror orch の具体差分は明記されていない（追加更新で記載される想定）[^1]。
 
@@ -149,7 +149,7 @@ reasoning: chassisdb.conf による分岐方式と、Orchagent の chassis-DB �
 
 - 単一 ASIC VoQ 機種なのに Chassis 系挙動になる: `/etc/sonic/chassisdb.conf` の存在を確認。誤って配備されていないか。
 - iBGP 設定が生成されてしまう: `is_voq_chassis()` が True を返している可能性。改修版の判定ロジックが効いているかを確認。
-- `fabric_ports` が表示されない: 単一 ASIC VoQ でも残す前提のため、orchagent の fabric ポート列挙経路を確認。
+- `fabric_ports` が表示されない: 単一 ASIC VoQ でも残す前提のため、[orchagent](../reference/glossary.md#term-orchagent) の fabric ポート列挙経路を確認。
 
 ## 引用元
 
@@ -161,3 +161,5 @@ reasoning: chassisdb.conf による分岐方式と、Orchagent の chassis-DB �
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5388cf19e510 -->

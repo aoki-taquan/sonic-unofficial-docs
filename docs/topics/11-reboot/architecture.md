@@ -14,7 +14,7 @@ sources:
 
 # Warm path の内部構造
 
-warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新状態の差分」を安全に吸収することです。SONiC ではこの役割が systemd/service orchestration、Redis DB backup、orchagent/syncd、SAI、libsairedis、ProducerStateTable の複数層に分かれています。
+warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新状態の差分」を安全に吸収することです。SONiC ではこの役割が systemd/service orchestration、[Redis](../../reference/glossary.md#term-redis) DB backup、[orchagent](../../reference/glossary.md#term-orchagent)/[syncd](../../reference/glossary.md#term-syncd)、[SAI](../../reference/glossary.md#term-sai)、libsairedis、[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) の複数層に分かれています。
 
 ## warm shutdown で作る前提
 
@@ -46,7 +46,7 @@ warm boot の going up path では、SONiC の daemons は通常起動に近い�
 
 ## SAI object をどう扱うか
 
-warm reboot の難所は、SAI object ID が通常の process restart をまたいで同じ意味を持つとは限らない点です。HLD では大きく 2 つの方向が示されています。
+warm reboot の難所は、SAI object ID が通常の process restart をまたいで同じ意味を持つとは限らない点です。[HLD](../../reference/glossary.md#term-hld) では大きく 2 つの方向が示されています。
 
 - syncd view comparison: ASIC に残った object と新しい request を syncd が比較し、create/delete/set を最小化する。
 - libsairedis idempotence: libsairedis が object cache を持ち、duplicate create や冪等な set/remove を吸収する。
@@ -55,7 +55,7 @@ warm reboot の難所は、SAI object ID が通常の process restart をまた�
 
 ## 保持される状態と保持されない状態
 
-warm path で守ろうとする主な状態は、ASIC 上の forwarding object、FDB/neighbor/route に関係する operational state、LAG/BGP peer が許容する graceful interval、そして Redis に保存された application state です。一方、すべての process memory が保持されるわけではありません。daemon は再起動し、CONFIG_DB から desired config を読み直し、STATE_DB/APPL_DB/ASIC_DB や kernel state と照合します。
+warm path で守ろうとする主な状態は、ASIC 上の forwarding object、[FDB](../../reference/glossary.md#term-fdb)/neighbor/route に関係する operational state、[LAG](../../reference/glossary.md#term-lag)/[BGP](../../reference/glossary.md#term-bgp) peer が許容する graceful interval、そして Redis に保存された application state です。一方、すべての process memory が保持されるわけではありません。daemon は再起動し、[CONFIG_DB](../../reference/glossary.md#term-config_db) から desired config を読み直し、[STATE_DB](../../reference/glossary.md#term-state_db)/[APPL_DB](../../reference/glossary.md#term-appl_db)/[ASIC_DB](../../reference/glossary.md#term-asic_db) や kernel state と照合します。
 
 そのため warm reboot の成否は、個々の feature が「restore 可能な state を持つか」「起動後の replay が冪等か」「timer 内に EOIU / reconciliation を完了できるか」に依存します。
 
@@ -66,3 +66,5 @@ warm path で守ろうとする主な状態は、ASIC 上の forwarding object�
 - [ProducerStateTable の view switching](../../switching/view-switching-in-producerstatetable.md)
 - [libsairedis API idempotence](../../system/sonic-libsairedis-api-idempotence-support.md)
 - [Warm Reboot 開発フェーズと OID 復元戦略](../../system/what-are-the-development-phases-and-scope-for-warm-reboot.md)
+
+<!-- glossary-links-injected: 5bbc49c2ae85 -->

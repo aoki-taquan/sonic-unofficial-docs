@@ -15,7 +15,7 @@ sources:
 
 # HA / PMON / reboot / upgrade の運用
 
-SmartSwitch の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。NPU / DPU で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。[NPU](../../reference/glossary.md#term-npu) / [DPU](../../reference/glossary.md#term-dpu) で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。
 
 ## 全体状態の入口
 
@@ -43,7 +43,7 @@ DPU3           169.254.200.4            True
 
 ## HA: DPU-scope, DPU-driven 構成
 
-DASH-on-SmartSwitch の HA は **DPU 単位のペア（DPU-scope）** で組み、フェイルオーバー判定は **DPU 側のセッション状態を主入力（DPU-driven）** とするのが基本形です。NPU 側 HAMgrD は外側の actor として、DPU ペアの組み合わせ・global state・peer リンクの健全性を管理します。
+[DASH](../../reference/glossary.md#term-dash)-on-SmartSwitch の HA は **DPU 単位のペア（DPU-scope）** で組み、フェイルオーバー判定は **DPU 側のセッション状態を主入力（DPU-driven）** とするのが基本形です。NPU 側 HAMgrD は外側の actor として、DPU ペアの組み合わせ・global state・peer リンクの健全性を管理します。
 
 運用時に押さえる流れは次の通りです。
 
@@ -87,7 +87,7 @@ admin@smartswitch:~$ docker logs hamgrd 2>&1 | tail -20
 
 `ha_role` が両側 `active` のままなら split-brain、両側 `standby` なら controller / peer link 障害です。`STATE_DB` の `DPU_STATE` も併せて確認します。
 
-DPU 側にログインして見るときは `redis-cli -h redisdpu0 -n 6` で DPU 側 APPL_DB に直接アタッチします（`docker exec -it database bash` 経由）。
+DPU 側にログインして見るときは `redis-cli -h redisdpu0 -n 6` で DPU 側 [APPL_DB](../../reference/glossary.md#term-appl_db) に直接アタッチします（`docker exec -it database bash` 経由）。
 
 ### HA 障害ドメインの DB 対応表
 
@@ -96,7 +96,7 @@ DPU 側にログインして見るときは `redis-cli -h redisdpu0 -n 6` で DP
 | HA セット定義 | NPU `APPL_DB` (DB 0) | `DASH_HA_SET_TABLE` |
 | HA グループ | NPU `APPL_DB` | `DASH_HA_GLOBAL_TABLE` |
 | HA scope state | NPU `STATE_DB` (DB 6) | `DASH_HA_SCOPE_STATE_TABLE` |
-| ENI 単位 state | DPU `STATE_DB` | `DASH_ENI_STATE_TABLE` |
+| [ENI](../../reference/glossary.md#term-eni) 単位 state | DPU `STATE_DB` | `DASH_ENI_STATE_TABLE` |
 | flow sync 状況 | DPU `COUNTERS_DB` | `DASH_HA_FLOW_SYNC_COUNTERS` |
 
 ## PMON の境界
@@ -144,7 +144,7 @@ SmartSwitch 全体を reboot する際は、**NPU と DPU を別々に・正し�
 | 操作 | 影響範囲 | 主経路 |
 |---|---|---|
 | NPU reboot | NPU + 全 DPU | 通常の `reboot` |
-| 全 DPU reboot | 全 DPU（NPU 維持） | DPU ごとに gNOI HALT → PCI detach → 個別 reboot |
+| 全 DPU reboot | 全 DPU（NPU 維持） | DPU ごとに [gNOI](../../reference/glossary.md#term-gnoi) HALT → PCI detach → 個別 reboot |
 | 個別 DPU reboot | 1 DPU のみ | gNOI HALT → PCI detach → 該当 DPU reboot |
 
 順序の要点は次の通りです。
@@ -206,9 +206,9 @@ bulk sync が完了しないまま次の DPU に進むと、HA ペアの両側�
 
 | 障害 | 最初に見る | 次に見る |
 |---|---|---|
-| DPU 個別がトラフィックを処理しない | NPU 側 `show platform` / PMON、midplane link、`redisdpuN` 接続 | DPU 側 `DashOrch` / SAI 状態、HAMgrD のセッション state |
+| DPU 個別がトラフィックを処理しない | NPU 側 `show platform` / PMON、midplane link、`redisdpuN` 接続 | DPU 側 `DashOrch` / [SAI](../../reference/glossary.md#term-sai) 状態、HAMgrD のセッション state |
 | HA フェイルオーバーしない | HAMgrD ログ、`STATE_DB` の HA state | peer link、DPU 側 `DashHaFlowOrch` の sync 状況 |
-| ACL が効かない | NPU 側 `ENI_REDIRECT` ACL、`DashEniFwdOrch` | DPU 側 `DASH_ACL_GROUP` / `DASH_ACL_RULE` 反映 |
+| [ACL](../../reference/glossary.md#term-acl) が効かない | NPU 側 `ENI_REDIRECT` ACL、`DashEniFwdOrch` | DPU 側 `DASH_ACL_GROUP` / `DASH_ACL_RULE` 反映 |
 | Upgrade 後に DPU が戻らない | gNOI ログ、PCI detach / attach、midplane DHCP | DPU 側 boot / `featured` |
 
 ### 異常検出と典型ログ
@@ -219,7 +219,7 @@ bulk sync が完了しないまま次の DPU に進むと、HA ペアの両側�
 | `hamgrd: peer link down, declaring local active` | peer link 喪失 | 物理 link / inter-switch fabric 確認 |
 | `dashorch: SAI_STATUS_INSUFFICIENT_RESOURCES` | DPU の ENI/ACL 表が満杯 | controller 側で不要 ENI を削除 |
 | `gnoi_reboot_daemon: HALT timeout` | DPU 側 graceful shutdown 不可 | 強制 reboot を検討、要因として flow sync の停止 |
-| `swssdpu<N>: orchagent died` | DPU 側 orchagent クラッシュ | core dump 確認、DPU 単独 reboot |
+| `swssdpu<N>: orchagent died` | DPU 側 [orchagent](../../reference/glossary.md#term-orchagent) クラッシュ | core dump 確認、DPU 単独 reboot |
 
 ### 復旧コマンドの目安
 
@@ -246,3 +246,5 @@ bulk sync が完了しないまま次の DPU に進むと、HA ペアの両側�
 - [SmartSwitch reboot 順序](../../system/smart-switch-reboot-high-level-design.md)
 - [DPU Graceful Shutdown](../../platform/smartswitch-dpu-graceful-shutdown.md)
 - [DPU 独立アップグレード](../../system/independent-dpu-upgrade.md)
+
+<!-- glossary-links-injected: 302d7ca006cb -->

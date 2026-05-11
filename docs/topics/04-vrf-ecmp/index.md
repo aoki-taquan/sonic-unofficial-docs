@@ -25,9 +25,9 @@ keywords:
 
 # VRF / ECMP / RIB-FIB パイプライン
 
-この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種類を選ぶ」という順番で読み直す入口です。
+この章は、SONiC の L3 転送を「[VRF](../../reference/glossary.md#term-vrf) と interface を作る」「route が [FRR](../../reference/glossary.md#term-frr) から APP_DB に来る」「[orchagent](../../reference/glossary.md#term-orchagent) が [RIF](../../reference/glossary.md#term-rif) / next hop / route object を ASIC に作る」「[ECMP](../../reference/glossary.md#term-ecmp) の種類を選ぶ」という順番で読み直す入口です。
 
-既存ページは VRF、static route、RIF counter、ECMP 拡張などの HLD 単位で分かれています。この章では、運用者や実装を追う読者が実際に持つ質問の順に並べ替え、詳細なスキーマやコード裏取りは各ページの関連リンクへ譲ります。
+既存ページは VRF、static route、RIF counter、ECMP 拡張などの [HLD](../../reference/glossary.md#term-hld) 単位で分かれています。この章では、運用者や実装を追う読者が実際に持つ質問の順に並べ替え、詳細なスキーマやコード裏取りは各ページの関連リンクへ譲ります。
 
 ## この章で答える質問
 
@@ -40,8 +40,8 @@ keywords:
 ## 読む順番
 
 1. [概念](concept.md): VRF、RIF、static route、IPv6 link-local、management VRF を L3 の読み順として整理する。
-2. [アーキテクチャ](architecture.md): FRR から `ROUTE_TABLE`、`NEXT_HOP_GROUP_TABLE`、RouteOrch、SAI route object までの流れを追う。
-3. [設定](setup.md): `config vrf`、`config route`、CONFIG_DB、YANG を使った VRF 付き route の最小例を扱う。
+2. [アーキテクチャ](architecture.md): FRR から `ROUTE_TABLE`、`NEXT_HOP_GROUP_TABLE`、RouteOrch、[SAI](../../reference/glossary.md#term-sai) route object までの流れを追う。
+3. [設定](setup.md): `config vrf`、`config route`、[CONFIG_DB](../../reference/glossary.md#term-config_db)、[YANG](../../reference/glossary.md#term-yang) を使った VRF 付き route の最小例を扱う。
 4. [運用](operations.md): route / FIB / interface / RIF counter / route flow counter の確認順をまとめる。
 5. [ECMP family](ecmp.md): ECMP、WCMP、FG ECMP、Ordered ECMP、Generic Hash、CBF の選び方を比較する。
 6. [発展トピック](advanced.md): VRRP、SAG、TSA、他章への橋渡しを整理する。
@@ -71,3 +71,4 @@ keywords:
 - [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
 - [NAT / DHCP Relay / Time-DNS Services](../16-nat-dhcp-dns/index.md)
 
+<!-- glossary-links-injected: 17a32ea74970 -->

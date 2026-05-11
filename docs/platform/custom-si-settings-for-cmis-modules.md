@@ -32,7 +32,7 @@ QSFP-DD / OSFP / QSFP の高速モジュールでは、**プラットフォー�
 
 - ファイル無しなら何もしない（既定挙動と互換）
 - CMIS 非対応モジュールは対象外
-- CONFIG_DB / CLI / YANG / SAI API いずれにも変更なし[^1]
+- [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / [YANG](../reference/glossary.md#term-yang) / [SAI](../reference/glossary.md#term-sai) API いずれにも変更なし[^1]
 - warm/fast boot にも影響なし[^1]
 
 対象パラメータ[^1]:
@@ -137,7 +137,7 @@ xcvrd は **EC=0 で動いている既存の active SI 値をまずキャッシ�
 
 ### Lane speed と TxInputAdaptiveEq 無効化
 
-TX EQ は **AdaptiveInputEqEnableTx を全 lane disable** にしてから FixedInputEqTargetTx を書く必要がある（CMIS 仕様）[^1]。HLD は「`TxInputEqFixedManualControlSupported` がモジュール側で立っている時のみ TX SI を投入」と明記。
+TX EQ は **AdaptiveInputEqEnableTx を全 lane disable** にしてから FixedInputEqTargetTx を書く必要がある（CMIS 仕様）[^1]。[HLD](../reference/glossary.md#term-hld) は「`TxInputEqFixedManualControlSupported` がモジュール側で立っている時のみ TX SI を投入」と明記。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/sfp-cmis/CMIS-custom-SI-settings.md#L218-L246 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -198,7 +198,7 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 
 - **既存 CMIS state machine**: AP_CONFIG → DP_INIT の間に挟まる形。失敗時は **CMIS reinit を強制** する経路あり
 - **Adaptive TX EQ**: TX SI を投入する場合は ON/OFF を切り替える。リンク立ち上げ時間に影響
-- **fec / port speed 変更時の DPB**: 同じ CMIS state machine 経路。lane speed が変わると検索キーが変わるため再評価が必要
+- **fec / port speed 変更時の [DPB](../reference/glossary.md#term-dpb)**: 同じ CMIS state machine 経路。lane speed が変わると検索キーが変わるため再評価が必要
 - **transceiver hot insertion**: モジュール変更ごとに評価し直し
 
 ## トラブルシューティング
@@ -227,3 +227,5 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0b3617cc2a1d -->

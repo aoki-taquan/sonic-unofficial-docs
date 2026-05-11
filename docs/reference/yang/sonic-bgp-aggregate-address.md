@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-bgp-aggregate-address`
 
-SONIC BGP aggregate address configuration module.[^1]
+SONIC [BGP](../../reference/glossary.md#term-bgp) aggregate address configuration module.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -86,7 +86,7 @@ module: sonic-bgp-aggregate-address
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BGP_AGGREGATE_ADDRESS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_AGGREGATE_ADDRESS`
 - CLI: `config bgp`
 
 <!-- ref-triangle:start -->
@@ -103,7 +103,7 @@ module: sonic-bgp-aggregate-address
 
 ### 典型的なデプロイ位置
 
-- BGP の aggregate-address (経路集約) 設定。`BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブル経由で FRR の `aggregate-address` コマンドへ展開。
+- BGP の aggregate-address (経路集約) 設定。`BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブル経由で [FRR](../../reference/glossary.md#term-frr) の `aggregate-address` コマンドへ展開。
 
 ### よくある落とし穴
 
@@ -120,3 +120,5 @@ vtysh -c 'show ip bgp summary'
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 1cacb3304d71 -->

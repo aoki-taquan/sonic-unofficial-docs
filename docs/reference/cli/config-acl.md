@@ -21,9 +21,9 @@ related:
 
 ## 概要
 
-`config acl` は ACL テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（`acl-loader` 起動）を提供する。**個別 ACL ルールを CLI フラグで追加するインタフェースは無い**。ルールは JSON ファイルに記述して `config acl update full|incremental` で投入する設計[^1]。
+`config acl` は [ACL](../../reference/glossary.md#term-acl) テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（`acl-loader` 起動）を提供する。**個別 ACL ルールを CLI フラグで追加するインタフェースは無い**。ルールは JSON ファイルに記述して `config acl update full|incremental` で投入する設計[^1]。
 
-ACL の実体は `aclorch`（swss）が `ACL_TABLE` / `ACL_RULE` を APPL_DB → ASIC_DB へ反映する。`config acl` は CONFIG_DB の `ACL_TABLE` のみ直接書き換え、ルール側は外部ツール `acl-loader` が CONFIG_DB と直接対話する。
+ACL の実体は `aclorch`（swss）が `ACL_TABLE` / `ACL_RULE` を [APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db) へ反映する。`config acl` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `ACL_TABLE` のみ直接書き換え、ルール側は外部ツール `acl-loader` が CONFIG_DB と直接対話する。
 
 ## コマンド一覧
 
@@ -51,7 +51,7 @@ config acl add table <table_name> <table_type>
 **引数**:
 
 - `<table_name>` ... `ACL_TABLE` のキー
-- `<table_type>` ... ACL タイプ（`L3`, `L3V6`, `MIRROR`, `MIRRORV6`, `MIRROR_DSCP`, `CTRLPLANE` 等）。実装は文字列をそのまま `type` フィールドに格納するため、SAI で実装されているタイプであれば任意
+- `<table_type>` ... ACL タイプ（`L3`, `L3V6`, `MIRROR`, `MIRRORV6`, `MIRROR_DSCP`, `CTRLPLANE` 等）。実装は文字列をそのまま `type` フィールドに格納するため、[SAI](../../reference/glossary.md#term-sai) で実装されているタイプであれば任意
 
 **オプション**:
 
@@ -72,7 +72,7 @@ config acl add table <table_name> <table_type>
 **バインド先解決の仕様** (`parse_acl_table_info`):
 
 1. `get_acl_bound_ports`: `PORT` テーブル全件 + `PORTCHANNEL_MEMBER` の portchannel 名（メンバ単独ポートは除外）を有効候補として取得
-2. `expand_vlan_ports`: 引数中に VLAN 名があれば、そのメンバ Ethernet/PortChannel に展開
+2. `expand_vlan_ports`: 引数中に [VLAN](../../reference/glossary.md#term-vlan) 名があれば、そのメンバ Ethernet/[PortChannel](../../reference/glossary.md#term-portchannel) に展開
 3. 展開後に上記候補に含まれない名前があればエラー
 
 <!-- evidence:
@@ -144,7 +144,7 @@ excerpt: |
 ### 典型的な利用シーン
 
 - EVERFLOW / 自前 ACL_TABLE の作成と rule の追加・更新。
-- TACACS / SNMP の制御プレーン保護 (CTRLPLANE ACL)。
+- TACACS / [SNMP](../../reference/glossary.md#term-snmp) の制御プレーン保護 (CTRLPLANE ACL)。
 
 ### よくある落とし穴
 
@@ -222,3 +222,5 @@ flowchart LR
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ad637fdc1d57 -->

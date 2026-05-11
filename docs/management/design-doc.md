@@ -92,7 +92,7 @@ gRPC channel の keepalive を設定し、無音でも周期的に PING を送�
 
 ### STATE_DB schema
 
-gRPC client / channel の状態を STATE_DB に publish する[^1]:
+gRPC client / channel の状態を [STATE_DB](../reference/glossary.md#term-state_db) に publish する[^1]:
 
 ```
 GRPC_CLIENT_TABLE|<peer>
@@ -117,7 +117,7 @@ server-streaming で SoC が能動的に push する。
 
 ### NIC-simulator 連携
 
-sonic-mgmt の testbed 用に **NIC-simulator** を立てて DUT の ycabled が同じ gRPC API でテストできる構成。1 simulator に複数 SoC を相乗りさせるため[^1]:
+[sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) の testbed 用に **NIC-simulator** を立てて DUT の ycabled が同じ gRPC API でテストできる構成。1 simulator に複数 SoC を相乗りさせるため[^1]:
 
 - **gRPC interceptor** を client 側に挿す案
 - **multi server** を simulator 側に立てる案
@@ -158,7 +158,7 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
 
 ### 関連する CONFIG_DB
 
-該当なし（HLD では明示なし）。証明書パス等は **設定ファイル** で渡す想定。
+該当なし（[HLD](../reference/glossary.md#term-hld) では明示なし）。証明書パス等は **設定ファイル** で渡す想定。
 
 ### 関連する CLI
 
@@ -219,3 +219,5 @@ docker logs pmon 2>&1 | grep -i grpc
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 919c144ee0ee -->

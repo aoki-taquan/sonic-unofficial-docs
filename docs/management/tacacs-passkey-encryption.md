@@ -31,9 +31,9 @@ related:
 
 ## 概要
 
-TACACS+ は SONiC のリモート認証で広く使われるが、**TACACS+ passkey は CONFIG_DB に平文で保存** されてきた。`config_db.json` の流出やバックアップファイルからの漏洩がリスクである[^1]。
+TACACS+ は SONiC のリモート認証で広く使われるが、**TACACS+ passkey は [CONFIG_DB](../reference/glossary.md#term-config_db) に平文で保存** されてきた。`config_db.json` の流出やバックアップファイルからの漏洩がリスクである[^1]。
 
-本 HLD は CONFIG_DB 上の passkey を **OpenSSL（base64 エンコード）で暗号化保存** し、PAM 設定ファイル書き込み直前に `hostcfgd` が **マスタキー（`/etc/cipher_pass`、root 専用）** を使って復号する経路を導入する。`config_db.json` 単体では passkey を取り出せなくなり、デバイス間で同じ `config_db.json` を流用しても問題が起きないように、共通インフラとして TACACS / RADIUS / LDAP で再利用可能にする[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は CONFIG_DB 上の passkey を **OpenSSL（base64 エンコード）で暗号化保存** し、PAM 設定ファイル書き込み直前に `hostcfgd` が **マスタキー（`/etc/cipher_pass`、root 専用）** を使って復号する経路を導入する。`config_db.json` 単体では passkey を取り出せなくなり、デバイス間で同じ `config_db.json` を流用しても問題が起きないように、共通インフラとして TACACS / RADIUS / LDAP で再利用可能にする[^1]。
 
 ## 動作仕様
 
@@ -180,7 +180,7 @@ TACPLUS global passkey configured Yes / No
 
 ### 関連する YANG
 
-`sonic-system-tacacs` 系 YANG モジュールに対し、HLD は次の変更を提案[^1]:
+`sonic-system-tacacs` 系 [YANG](../reference/glossary.md#term-yang) モジュールに対し、HLD は次の変更を提案[^1]:
 
 - 既存 `passkey` リーフの **長さ上限を 256 に拡張**
 - 新規 `key_encrypt` リーフを追加
@@ -209,7 +209,7 @@ TACPLUS global passkey configured Yes
 
 ## 干渉する機能
 
-- **`hostcfgd`**: TACACS 以外（RADIUS / LDAP）の AAA 設定 PAM 反映と同じ層に手が入る。共通インフラ化と整合させる必要あり[^1]
+- **`hostcfgd`**: TACACS 以外（RADIUS / LDAP）の [AAA](../reference/glossary.md#term-aaa) 設定 PAM 反映と同じ層に手が入る。共通インフラ化と整合させる必要あり[^1]
 - **`config save` / `config_db.json` の他デバイスへのコピー**: 暗号化 passkey は鍵が同一でないと復号できない。`/etc/cipher_pass` を複製しないと他デバイスで動かない（または暗号化を無効にしてから差し替え）
 - **`show tacacs`**: passkey フィールド削除に伴い、表示と既存スクリプトの parser に影響
 - **YANG validator**: `passkey` の長さ拡張で 64 文字や 128 文字を上限としている YANG / scripts に影響
@@ -230,7 +230,7 @@ TACPLUS global passkey configured Yes
 | master key ファイルパス | `/etc/cipher_pass` | ⚠️ 実体は **`/etc/cipher_pass.json`**（`sonic_py_common/security_cipher.py` L18） |
 | 共通暗号化 API | 必須 | ✅ `security_cipher.py` で encrypt/decrypt API を実装 |
 | `config tacacs passkey ... --encrypt` CLI | 必須 | ❌ **未実装**。`sonic-utilities/config/aaa.py` L248-256 は単に平文 secret をそのまま CONFIG_DB に書く |
-| `hostcfgd` で `key_encrypt=true` を見て復号 → PAM へ | 必須 | ❌ **未実装**（hostcfgd 配下に該当する復号処理が無い） |
+| `hostcfgd` で `key_encrypt=true` を見て復号 → PAM へ | 必須 | ❌ **未実装**（[hostcfgd](../reference/glossary.md#term-hostcfgd) 配下に該当する復号処理が無い） |
 | `show tacacs` から passkey 削除 | 必須 | ❌ 未確認（CLI 取り込みが無いため意味なし） |
 | RADIUS / LDAP との共通化 | future | 未取り込み |
 
@@ -289,3 +289,5 @@ YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5491cc477cce -->

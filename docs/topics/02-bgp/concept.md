@@ -19,30 +19,30 @@ keywords:
 
 # 概要
 
-「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、**SONiC と FRR の境界がどこにあるか** が見えづらいことです。BGP のプロトコル処理は FRR（オープンソースのルーティング suite）が行い、SONiC は設定の受付と ASIC への反映を担当しますが、両者の橋渡しに複数の daemon と DB が並んでいるため、どこで何が起きているかを掴むのに時間がかかります。
+「SONiC で [BGP](../../reference/glossary.md#term-bgp) を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、**SONiC と [FRR](../../reference/glossary.md#term-frr) の境界がどこにあるか** が見えづらいことです。BGP のプロトコル処理は FRR（オープンソースのルーティング suite）が行い、SONiC は設定の受付と ASIC への反映を担当しますが、両者の橋渡しに複数の daemon と DB が並んでいるため、どこで何が起きているかを掴むのに時間がかかります。
 
 この章は、その境界線をはっきりさせるための入口です。
 
 ## SONiC の BGP は何の問題を解決するか
 
-データセンタースイッチでは、BGP は単に AS 間の経路交換ではなく、**EBGP unnumbered で leaf-spine のあらゆる link 上で動かす ECMP fabric の制御面** として使われます。SONiC はこの利用形態を前提に、以下を引き受けます。
+データセンタースイッチでは、BGP は単に AS 間の経路交換ではなく、**EBGP unnumbered で leaf-spine のあらゆる link 上で動かす [ECMP](../../reference/glossary.md#term-ecmp) fabric の制御面** として使われます。SONiC はこの利用形態を前提に、以下を引き受けます。
 
-- BGP neighbor / policy / route-map を CONFIG_DB / YANG / CLI で受ける。
+- BGP neighbor / policy / route-map を [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) / CLI で受ける。
 - FRR の vty / 設定ファイルへ差分反映する。
-- FRR から到達した経路を FPM 経由で受け取り、ASIC の FIB に書き込む。
-- BGP 由来のイベント（peer down、route flap）を STATE_DB / telemetry に出す。
+- FRR から到達した経路を [FPM](../../reference/glossary.md#term-fpm) 経由で受け取り、ASIC の FIB に書き込む。
+- BGP 由来のイベント（peer down、route flap）を [STATE_DB](../../reference/glossary.md#term-state_db) / telemetry に出す。
 
-つまり SONiC の BGP は「FRR をうまく使うための包み」と考えると、HLD を読むときの迷子が減ります。
+つまり SONiC の BGP は「FRR をうまく使うための包み」と考えると、[HLD](../../reference/glossary.md#term-hld) を読むときの迷子が減ります。
 
 ## SONiC の中での位置
 
 | 軸 | 担当 |
 | --- | --- |
-| Management plane | `config bgp`, `vtysh`, sonic-cli, gNMI, CONFIG_DB.BGP_* |
-| Control plane | FRR bgpd / zebra / staticd、bgpcfgd / frrcfgd、fpmsyncd |
-| Data plane | orchagent (RouteOrch / NhgOrch)、syncd、SAI route / next-hop / next-hop-group |
+| Management plane | `config bgp`, `vtysh`, sonic-cli, [gNMI](../../reference/glossary.md#term-gnmi), CONFIG_DB.BGP_* |
+| Control plane | FRR bgpd / [zebra](../../reference/glossary.md#term-zebra) / staticd、[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / frrcfgd、[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) |
+| Data plane | [orchagent](../../reference/glossary.md#term-orchagent) (RouteOrch / NhgOrch)、[syncd](../../reference/glossary.md#term-syncd)、[SAI](../../reference/glossary.md#term-sai) route / next-hop / next-hop-group |
 
-BGP は **management と control の橋渡し** が大半で、data plane 側はほぼ汎用の RouteOrch を使います。BGP 固有のロジックの多くは「CONFIG_DB → FRR」と「FRR → APPL_DB」の 2 つの方向にあります。
+BGP は **management と control の橋渡し** が大半で、data plane 側はほぼ汎用の RouteOrch を使います。BGP 固有のロジックの多くは「CONFIG_DB → FRR」と「FRR → [APPL_DB](../../reference/glossary.md#term-appl_db)」の 2 つの方向にあります。
 
 ## 最初に押さえる用語
 
@@ -61,11 +61,11 @@ BGP は **management と control の橋渡し** が大半で、data plane 側は
 
 | 層 | 主な責務 | 代表コンポーネント |
 | --- | --- | --- |
-| 設定入力 | CLI、gNMI/REST、CONFIG_DB の受付 | sonic-utilities、Management Framework |
+| 設定入力 | CLI、gNMI/REST、CONFIG_DB の受付 | [sonic-utilities](../../reference/glossary.md#term-sonic-utilities)、Management Framework |
 | FRR 設定反映 | CONFIG_DB 差分を FRR 設定へ変換 | bgpcfgd、frrcfgd |
 | BGP 制御 | neighbor、policy、best path、RIB | bgpd |
 | 経路配布 | FRR RIB から SONiC への FPM 出力 | zebra、dplane_fpm_sonic |
-| SONiC 転送面反映 | APPL_DB から ASIC_DB/SAI へ | fpmsyncd、orchagent、syncd |
+| SONiC 転送面反映 | APPL_DB から [ASIC_DB](../../reference/glossary.md#term-asic_db)/SAI へ | fpmsyncd、orchagent、syncd |
 
 従来の中心は `bgpcfgd` で、Jinja template と一部の動的反映により FRR 設定を作ります。OpenConfig BGP を Management Framework から扱う構成では `frrcfgd` が CONFIG_DB の差分から FRR vty コマンドを生成します。両者は同時に動かす前提ではなく、`DEVICE_METADATA.localhost.frr_mgmt_framework_config` で切り替える設計です。詳しくは [FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) を参照してください。
 
@@ -87,7 +87,7 @@ Spine と Leaf の各リンクで EBGP を張り、IPv6 link-local + RFC 5549 �
 
 ### シーン 2: BGP-EVPN を被せた VXLAN overlay
 
-VXLAN / EVPN を被せる場合は、同じ BGP セッションの上に `l2vpn evpn` AFI が乗ります。BGP 自体の設定パスは同じですが、経路を受け取る先が `VXLAN_*` / `EVPN_*` テーブルや FRR の EVPN モジュールに広がります。詳細は [03 章 VXLAN / EVPN](../03-vxlan-evpn/concept.md) を併せて読みます。
+[VXLAN](../../reference/glossary.md#term-vxlan) / [EVPN](../../reference/glossary.md#term-evpn) を被せる場合は、同じ BGP セッションの上に `l2vpn evpn` AFI が乗ります。BGP 自体の設定パスは同じですが、経路を受け取る先が `VXLAN_*` / `EVPN_*` テーブルや FRR の EVPN モジュールに広がります。詳細は [03 章 VXLAN / EVPN](../03-vxlan-evpn/concept.md) を併せて読みます。
 
 ## router-id はどこで決まるか
 
@@ -113,9 +113,9 @@ FRR upgrade は単なるパッケージ更新ではありません。SONiC で�
 | neighbor の up/down | `show bgp summary`, FRR の `vtysh -c "show ip bgp summary"`, STATE_DB.NEIGH_STATE_TABLE |
 | 受信 / 送信経路数 | `show ip bgp summary`, `show bgp neighbor <peer>` |
 | ASIC FIB に入った経路 | `show ip route`, `redis-cli -n 1 keys 'ROUTE_TABLE:*'`, ASIC_DB |
-| FPM 反映の停滞 | fpmsyncd ログ、APPL_DB ROUTE_TABLE pending |
+| FPM 反映の停滞 | fpmsyncd ログ、APPL_DB [ROUTE_TABLE](../../reference/glossary.md#term-route_table) pending |
 
-`show ip route` は FRR 側を見ているのか SONiC 側を見ているのかが混ざりやすい点に注意します。確実な切り分けは「FRR の vty」と「Redis の APPL_DB / ASIC_DB」を別個に確認することです。
+`show ip route` は FRR 側を見ているのか SONiC 側を見ているのかが混ざりやすい点に注意します。確実な切り分けは「FRR の vty」と「[Redis](../../reference/glossary.md#term-redis) の APPL_DB / ASIC_DB」を別個に確認することです。
 
 ## 問題を切り分けるための流れ図
 
@@ -213,3 +213,4 @@ DC 規模では **route scale が秒間数万 update** に達することがあ�
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
 
+<!-- glossary-links-injected: 6ff44b32cebf -->

@@ -27,13 +27,13 @@ related:
 
 ## 概要
 
-`show techsupport` は SONiC のサブシステム横断の診断情報をひとつの **tarball** に集める既存ツール（sonic-utilities 由来）。本 HLD はそれを Management Framework（gNMI / REST / NETCONF などの統一管理層）経由でも起動できるようにし、**`--since`** オプションで採取ログの開始時刻を絞り込める CLI を上乗せする[^1]。
+`show techsupport` は SONiC のサブシステム横断の診断情報をひとつの **tarball** に集める既存ツール（[sonic-utilities](../reference/glossary.md#term-sonic-utilities) 由来）。本 [HLD](../reference/glossary.md#term-hld) はそれを Management Framework（[gNMI](../reference/glossary.md#term-gnmi) / REST / NETCONF などの統一管理層）経由でも起動できるようにし、**`--since`** オプションで採取ログの開始時刻を絞り込める CLI を上乗せする[^1]。
 
 要点[^1]:
 
 - 採取ロジック自体は変えない（既存ツール）
 - 上に Management Framework のフロント（REST API / gNMI 等）を被せる
-- `--since` は **IETF YANG date-time 形式** に縛る（`yyyy-MM-ddTHH:mm:ssZ` 等）
+- `--since` は **IETF [YANG](../reference/glossary.md#term-yang) date-time 形式** に縛る（`yyyy-MM-ddTHH:mm:ssZ` 等）
 
 ## 動作仕様
 
@@ -193,3 +193,5 @@ ls -lh /var/dump/sonic_dump_*.tar.gz
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 12cde428ecc3 -->

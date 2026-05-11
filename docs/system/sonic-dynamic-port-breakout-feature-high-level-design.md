@@ -31,8 +31,8 @@ related:
 
 ## 読み手が知りたいこと
 
-1. **breakout を変えると CONFIG_DB / SAI で何が起きるか**
-2. **どの CLI で変更し、関連設定（VLAN / LAG / ACL / IP）はどうなるか**
+1. **breakout を変えると [CONFIG_DB](../reference/glossary.md#term-config_db) / [SAI](../reference/glossary.md#term-sai) で何が起きるか**
+2. **どの CLI で変更し、関連設定（[VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) / [ACL](../reference/glossary.md#term-acl) / IP）はどうなるか**
 3. **`platform.json` で何を制約しているか**
 4. **拒否される / 一部 port が up しないときに何を見るか**
 5. **`--force` は何に使うか**
@@ -119,3 +119,5 @@ flowchart LR
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 061422e48f63 -->

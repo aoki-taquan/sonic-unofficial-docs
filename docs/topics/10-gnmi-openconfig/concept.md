@@ -17,7 +17,7 @@ keywords:
 
 # 概要
 
-SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。どの入口を使うかで操作対象が変わるわけではなく、同じ YANG モデルで定義された操作が、別の transport で表現されているにすぎない。この理解がないと「gNMI Set で OpenConfig をいじったら CLI が反映していない」ように見えてしまう。
+SONiC のモデル駆動管理は、CLI、[gNMI](../../reference/glossary.md#term-gnmi)、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。どの入口を使うかで操作対象が変わるわけではなく、同じ [YANG](../../reference/glossary.md#term-yang) モデルで定義された操作が、別の transport で表現されているにすぎない。この理解がないと「gNMI Set で OpenConfig をいじったら CLI が反映していない」ように見えてしまう。
 
 ## gNMI / OpenConfig 機能は何を解決するか
 
@@ -25,7 +25,7 @@ SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口�
 
 - CLI 専用機能と API 専用機能が分裂し、片方からしか触れないコマンドが生まれる問題
 - ベンダー固有の MIB / CLI を毎回翻訳しないと NMS から触れない問題
-- 設定の get / set を別プロトコル（SSH/CLI と SNMP）で行わなければならない問題
+- 設定の get / set を別プロトコル（SSH/CLI と [SNMP](../../reference/glossary.md#term-snmp)）で行わなければならない問題
 - 「いまの設定」と「いまの状態」を片方ずつ取りに行く（candidate / running / operational がバラバラ）問題
 - 設定変更を pull する手段しかなく、変更通知を push できない問題
 
@@ -36,17 +36,17 @@ SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口�
 gNMI / OpenConfig は **management plane の中心** に座る。具体的には次の経路で動く。
 
 - **Transport 層**: `telemetry` コンテナ内の gnmi-server が gRPC を受け、`mgmt-framework` コンテナの REST server が同じ Translib に乗る。
-- **モデル変換層**: Translib / Transformer が OpenConfig YANG ↔ SONiC native YANG ↔ CONFIG_DB の構造を相互変換する。CLI auto-generation tool は同じ YANG から CLI コマンド本体を生成する。
+- **モデル変換層**: Translib / Transformer が OpenConfig YANG ↔ SONiC native YANG ↔ [CONFIG_DB](../../reference/glossary.md#term-config_db) の構造を相互変換する。CLI auto-generation tool は同じ YANG から CLI コマンド本体を生成する。
 - **検証層**: `sonic-yang-models` が pyang ベースで YANG 制約をチェック。違反は Transport 層に RPC error として戻る。
-- **永続化層**: CONFIG_DB writer が Redis に書き、`config save` 相当の挙動が `save-on-set` 設定で自動化される。
-- **反映層**: 他章と同じく orchagent → syncd → SAI → ASIC の通常経路を流れる。
+- **永続化層**: CONFIG_DB writer が [Redis](../../reference/glossary.md#term-redis) に書き、`config save` 相当の挙動が `save-on-set` 設定で自動化される。
+- **反映層**: 他章と同じく [orchagent](../../reference/glossary.md#term-orchagent) → [syncd](../../reference/glossary.md#term-syncd) → [SAI](../../reference/glossary.md#term-sai) → ASIC の通常経路を流れる。
 
 つまり gNMI / OpenConfig 章は「**ConfigDB に到達するまでの道のり**」を扱う。ConfigDB から先（orchagent から ASIC まで）は他章の責任、という切り分けで読めばよい。
 
 ## 用語の定義
 
 - **gNMI**: gRPC Network Management Interface。`Capabilities` / `Get` / `Set` / `Subscribe` の 4 RPC を持つ。
-- **gNOI**: gRPC Network Operations Interface。`Reboot` / `File` / `OS` / `Healthz` / `Cert` などの操作 RPC。
+- **[gNOI](../../reference/glossary.md#term-gnoi)**: gRPC Network Operations Interface。`Reboot` / `File` / `OS` / `Healthz` / `Cert` などの操作 RPC。
 - **gNSI**: gRPC Network Security Interface。`Authz` / `Pathz` / `Credentialz` / `Certz` などのセキュリティ管理 RPC。
 - **OpenConfig**: ベンダー非依存の YANG モデル群。`openconfig-interfaces`、`openconfig-bgp` などが主要。
 - **SONiC YANG (native)**: `sonic-port`、`sonic-vlan` のように CONFIG_DB スキーマ 1:1 で書かれた YANG モデル群。
@@ -101,7 +101,7 @@ sequenceDiagram
 
 SONiC は両方の YANG モデルを並行サポートする。
 
-- **OpenConfig**: ベンダー非依存、業界標準。ethernet interface、VLAN、PortChannel、BGP など主要機能のサブセットがマップされる。NMS から差分を取り、複数ベンダー混在環境で運用するときの選択肢。
+- **OpenConfig**: ベンダー非依存、業界標準。ethernet interface、[VLAN](../../reference/glossary.md#term-vlan)、[PortChannel](../../reference/glossary.md#term-portchannel)、[BGP](../../reference/glossary.md#term-bgp) など主要機能のサブセットがマップされる。NMS から差分を取り、複数ベンダー混在環境で運用するときの選択肢。
 - **SONiC native YANG**: CONFIG_DB のスキーマに 1:1 で対応する。SONiC 固有機能や、OpenConfig がまだ表現しない operational 詳細を扱うときに使う。YANG モデルの命名規約と書き方は [SONiC YANG model guidelines](../../management/sonic-yang-model-guidelines.md) を参照する。
 
 同じ機能を OpenConfig と SONiC YANG の両方から触れる場合、Transformer がフィールド単位で変換するため、片方からの設定がもう片方の get でも見えるのが原則である。ただし、OpenConfig 側がそのフィールドを表現しない場合は SONiC YANG だけで操作する。OpenConfig マップの実装範囲は機能ごとに異なるため、interface は [OpenConfig support for ethernet interfaces](../../management/openconfig-support-for-ethernet-interfaces.md)、PortChannel は [OpenConfig PortChannel](../../switching/openconfig-support-for-portchannel-aggregate-interface.md)、VLAN は [OpenConfig VLAN](../../switching/add-support-for-vlan-interface-using-openconfig-yang.md)、BGP は [SONiC FRR BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) を参照する。
@@ -153,3 +153,4 @@ SONiC の CLI は YANG モデルから自動生成される仕組みを持つ。
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 
+<!-- glossary-links-injected: 73c1da851dd5 -->

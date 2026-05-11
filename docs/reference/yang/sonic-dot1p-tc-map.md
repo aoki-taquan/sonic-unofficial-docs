@@ -73,7 +73,7 @@ module: sonic-dot1p-tc-map
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `DOT1P_TO_TC_MAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DOT1P_TO_TC_MAP`
 - CLI: `config qos`
 
 <!-- ref-triangle:start -->
@@ -90,7 +90,7 @@ module: sonic-dot1p-tc-map
 
 ### 典型的なデプロイ位置
 
-- DOT1P → TC マッピング。`DOT1P_TO_TC_MAP|<name>` を qosorch が SAI qos map に反映、`PORT_QOS_MAP` から参照される。
+- DOT1P → TC マッピング。`DOT1P_TO_TC_MAP|<name>` を qosorch が [SAI](../../reference/glossary.md#term-sai) qos map に反映、`PORT_QOS_MAP` から参照される。
 
 ### よくある落とし穴
 
@@ -107,3 +107,5 @@ show qos map dot1p-tc
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dot1p-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 96667c52d98d -->

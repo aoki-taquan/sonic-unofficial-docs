@@ -37,7 +37,7 @@ SONiC スイッチの一部が **過剰な disk write で SSD が劣化し read-
 | Process | 用途 | % |
 |---------|------|--:|
 | **jbd2** | EXT4 journaling | 44% |
-| **vtysh** | BGP `~/.history_frr` への history 連続書き | 28% |
+| **vtysh** | [BGP](../reference/glossary.md#term-bgp) `~/.history_frr` への history 連続書き | 28% |
 | **kworker/u8:x** | swss `supervisor-proc-exit-listener` log + OverlayFS xattr | 25% |
 | **monit** | `/var/lib/monit/` state file 更新 | 2% |
 | **logrotate / bash** | `/var/lib/logrotate/`, shell history 等 | 1% |
@@ -142,7 +142,7 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 
 ## 干渉する機能
 
-- **bgpmon (sonic-bgpcfgd)**: vtysh history 抑止の対象
+- **bgpmon (sonic-[bgpcfgd](../reference/glossary.md#term-bgpcfgd))**: vtysh history 抑止の対象
 - **swss `supervisor-proc-exit-listener`**: log path 変更
 - **monit / logrotate**: state file 配置
 - **OverlayFS**: kernel worker による xattr 書込み（OS image 設計の根幹）
@@ -160,3 +160,5 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 - jbd2 無効化を採用しない方針の確認 (現行 master で journaling は有効維持か)
 - 計測再現性 (新しい SKU での確認、recent OS バージョンでの再測)
 -->
+
+<!-- glossary-links-injected: 76f50f4814f9 -->

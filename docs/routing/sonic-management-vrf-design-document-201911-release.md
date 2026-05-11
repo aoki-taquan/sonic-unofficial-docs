@@ -32,10 +32,10 @@ related:
 
 ## 読者が知りたいこと
 
-- mgmt VRF を有効化すると **eth0 と front panel のトラフィックは具体的にどう分かれる** のか
-- **アプリ（ssh / ping / TACACS+ / NTP / SNMP / DHCP）** を mgmt 経由で動かすには何が必要か
-- **CONFIG_DB のキー** と **CLI** はどう触ればいいか
-- **201911 と現行 master の差分**（HLD と実装の乖離）はどこか
+- mgmt [VRF](../reference/glossary.md#term-vrf) を有効化すると **eth0 と front panel のトラフィックは具体的にどう分かれる** のか
+- **アプリ（ssh / ping / TACACS+ / NTP / [SNMP](../reference/glossary.md#term-snmp) / DHCP）** を mgmt 経由で動かすには何が必要か
+- **[CONFIG_DB](../reference/glossary.md#term-config_db) のキー** と **CLI** はどう触ればいいか
+- **201911 と現行 master の差分**（[HLD](../reference/glossary.md#term-hld) と実装の乖離）はどこか
 - 落とし穴・トラブルシュートの定石
 
 ## 1. トラフィック分離の挙動
@@ -141,3 +141,5 @@ TACACS+ で `config tacacs add --use-mgmt-vrf <ip>` を打つと `TACPLUS_SERVER
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/sonic_stretch_management_vrf_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 3b086e661688 -->

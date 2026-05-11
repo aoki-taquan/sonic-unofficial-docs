@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-Express Reboot は SONiC の再起動シーケンスを拡張し、**サブ秒のデータプレーン断** で SW アップグレードを行うためのモード。Warm Reboot と異なり、外部 PHY を再初期化せず、NPU は **設定再投入が完了してから** 初期化する点が要点[^1]。実装は SAI 側の既存 fastfast boot 用属性 `SAI_SWITCH_ATTR_FAST_API_ENABLE` を拡張流用する。
+Express Reboot は SONiC の再起動シーケンスを拡張し、**サブ秒のデータプレーン断** で SW アップグレードを行うためのモード。[Warm Reboot](../reference/glossary.md#term-warm-reboot) と異なり、外部 PHY を再初期化せず、[NPU](../reference/glossary.md#term-npu) は **設定再投入が完了してから** 初期化する点が要点[^1]。実装は [SAI](../reference/glossary.md#term-sai) 側の既存 fastfast boot 用属性 `SAI_SWITCH_ATTR_FAST_API_ENABLE` を拡張流用する。
 
 ## 動作仕様
 
@@ -112,7 +112,7 @@ typedef enum _sai_start_type_t {
 
 ### 関連する CONFIG_DB
 
-HLD には CONFIG_DB エントリの記述は無い（コマンドラインからの起動シーケンスのみ）。
+[HLD](../reference/glossary.md#term-hld) には [CONFIG_DB](../reference/glossary.md#term-config_db) エントリの記述は無い（コマンドラインからの起動シーケンスのみ）。
 
 ### 関連する CLI
 
@@ -123,7 +123,7 @@ HLD には CONFIG_DB エントリの記述は無い（コマンドラインか�
 
 ### 関連する YANG
 
-HLD に YANG モデルの記述は無い。
+HLD に [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -141,7 +141,7 @@ sudo express-reboot
 
 ## 干渉する機能
 
-- **Warm Reboot / Fast Reboot**: 同じ `fast-reboot` スクリプトを共有する。`SONIC_BOOT_TYPE` で識別。
+- **Warm Reboot / [Fast Reboot](../reference/glossary.md#term-fast-reboot)**: 同じ `fast-reboot` スクリプトを共有する。`SONIC_BOOT_TYPE` で識別。
 - **fastfast boot (Mellanox)**: `SAI_SWITCH_ATTR_FAST_API_ENABLE` の起動後セマンティクスを共有する（pre-shutdown のみ express 固有）。
 - **`show reboot-cause`**: `cause` に `express` が出る拡張を `sonic-host-services` 側で行う。
 
@@ -161,3 +161,5 @@ sudo express-reboot
 - [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1704188b56f9 -->

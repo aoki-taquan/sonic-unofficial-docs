@@ -75,12 +75,12 @@ ip neigh | grep <nexthop_ip>
 
 ## よくある原因
 
-1. **Nexthop が unresolved** — ARP が無く、zebra が FIB に入れない
-2. **fpmsyncd と zebra の FPM socket 断** — FRR の FPM が disable / socket reconnect ループ
+1. **Nexthop が unresolved** — [ARP](../../reference/glossary.md#term-arp) が無く、[zebra](../../reference/glossary.md#term-zebra) が FIB に入れない
+2. **[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) と zebra の [FPM](../../reference/glossary.md#term-fpm) socket 断** — [FRR](../../reference/glossary.md#term-frr) の FPM が disable / socket reconnect ループ
 3. **routeorch の bulk pending** — ASIC への書き込みが queue 滞留中
-4. **CRM route / nexthop 枯渇** — `crm show resources` で `used == max`
+4. **[CRM](../../reference/glossary.md#term-crm) route / nexthop 枯渇** — `crm show resources` で `used == max`
 5. **ASIC FIB table full** — `sai-table-full.md` 参照
-6. **同一 prefix を別 source が上書き** — static route と BGP route の admin distance
+6. **同一 prefix を別 source が上書き** — static route と [BGP](../../reference/glossary.md#term-bgp) route の admin distance
 7. **Blackhole / Null route** — `null0` が選択されていて意図せず DROP
 
 ## 関連 reference / topics
@@ -90,3 +90,5 @@ ip neigh | grep <nexthop_ip>
 - [crm-threshold-exceeded.md](crm-threshold-exceeded.md)
 - [swss-orchagent-busy-loop.md](swss-orchagent-busy-loop.md)
 - [arp-entry-stuck.md](arp-entry-stuck.md)
+
+<!-- glossary-links-injected: f3660992dee9 -->

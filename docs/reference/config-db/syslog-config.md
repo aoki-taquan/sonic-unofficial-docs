@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-ホスト全体の rsyslog グローバル設定を CONFIG_DB に保持するシングルトンテーブル[^1]。`hostcfgd` (`sonic-host-services` 内 `syslog` ハンドラ) が `/etc/rsyslog.conf` および各 docker の rsyslog テンプレに反映する。
+ホスト全体の rsyslog グローバル設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するシングルトンテーブル[^1]。`hostcfgd` (`sonic-host-services` 内 `syslog` ハンドラ) が `/etc/rsyslog.conf` および各 docker の rsyslog テンプレに反映する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -60,7 +60,7 @@ SYSLOG_CONFIG|GLOBAL
 ## 制約
 
 - `welf_firewall_name` は `must "(../format != 'standard')"` で WELF 形式時にのみ意味を持つ
-- container 名 `SYSLOG_CONFIG`、内部 container 名 `GLOBAL` (YANG コメントには `SYSLOG_CONFIG_LIST` と書かれているが、実体は container)[^1]
+- container 名 `SYSLOG_CONFIG`、内部 container 名 `GLOBAL` ([YANG](../../reference/glossary.md#term-yang) コメントには `SYSLOG_CONFIG_LIST` と書かれているが、実体は container)[^1]
 
 ## 購読者
 
@@ -109,3 +109,5 @@ sonic-db-cli CONFIG_DB hgetall 'SYSLOG_CONFIG|GLOBAL'
 show syslog
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

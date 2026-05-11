@@ -48,9 +48,9 @@ related:
 ## 読み手が知りたいこと
 
 1. active-standby と何が違うのか？ **なぜ「両方 active」が可能** なのか？
-2. 両 ToR が同じ VLAN IP / MAC を出して **NIC はどうトラフィックを分けている** のか？
+2. 両 ToR が同じ [VLAN](../reference/glossary.md#term-vlan) IP / MAC を出して **NIC はどうトラフィックを分けている** のか？
 3. cable 制御が y-cable I2C ではなく **gRPC** になったのはなぜか？
-4. **linkmgrd の状態判定** は active-standby とどう違うのか？
+4. **[linkmgrd](../reference/glossary.md#term-linkmgrd) の状態判定** は active-standby とどう違うのか？
 5. **prefix-based neighbor architecture** とは何で、何が嬉しいのか？
 6. **両 ToR が standby に落ちる** ような縮退時に何が起きるか？
 7. 設定とトラブルシュートで最低限見るものは？
@@ -77,7 +77,7 @@ graph TD
     NIC --- HOST[Server Host]
 ```
 
-T1 から見ると 2 つの ECMP next hop が存在する[^1]。
+T1 から見ると 2 つの [ECMP](../reference/glossary.md#term-ecmp) next hop が存在する[^1]。
 
 ## 2. NIC 側の役割（パケット振り分け）
 
@@ -85,7 +85,7 @@ NIC は同一 IP / MAC を 2 リンクで受け、northbound は **5-tuple で 2
 
 | パケット種別 | 動作 |
 |------------|-----|
-| ARP / IPv6 RS / NS / NA (133/135/136) | **両ポート複製** |
+| [ARP](../reference/glossary.md#term-arp) / IPv6 RS / NS / NA (133/135/136) | **両ポート複製** |
 | ICMP / ICMPv6 heartbeat (Loopback2 宛) | **両ポート複製** |
 | gRPC reply (Loopback3_Port0_IP / Port1_IP 宛) | **対応ポートにのみ送信** |
 | その他 | NIC が任意リンクを選択 |
@@ -134,7 +134,7 @@ active-standby と異なり、active-active では **self と peer をそれぞ�
 
 ## 5. prefix-based neighbor architecture
 
-active-standby の旧設計では SAI neighbor + nexthop で **暗黙 host route (/32 or /128)** が SDK 内に作られ、active/standby 切替で neighbor を add/remove していた。これを変更[^1]:
+active-standby の旧設計では [SAI](../reference/glossary.md#term-sai) neighbor + nexthop で **暗黙 host route (/32 or /128)** が SDK 内に作られ、active/standby 切替で neighbor を add/remove していた。これを変更[^1]:
 
 - neighbor entry は `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true` で作る（**暗黙 host route なし**）
 - 別途 `server_ip/32` (or `/128`) **prefix route** を明示的に作る
@@ -158,7 +158,7 @@ flowchart LR
 
 利点: **stability + 性能** 改善、**mux toggle latency が短い**[^1]。
 
-`MuxCfgOrch` が `MUX_CABLE` を読み、`TunnelOrch` が `MUX_TUNNEL` を購読して IPinIP tunnel を作成し、`MuxOrch` が prefix route の next hop を更新する。
+`MuxCfgOrch` が `MUX_CABLE` を読み、`TunnelOrch` が `MUX_TUNNEL` を購読して [IPinIP](../reference/glossary.md#term-ipinip) tunnel を作成し、`MuxOrch` が prefix route の next hop を更新する。
 
 ## 6. 縮退ケース
 
@@ -168,11 +168,11 @@ flowchart LR
 
 ### BGP update delay
 
-BGP セッション確立直後、T0 が default route を学習する前に T1 から traffic が降りる時期がある。standby T0 は tunnel 経由で peer に投げるが、default route が無いと tunnel 経路自体が解決できず blackhole する。対策として **BGP update delay 10 秒**[^1]。
+[BGP](../reference/glossary.md#term-bgp) セッション確立直後、T0 が default route を学習する前に T1 から traffic が降りる時期がある。standby T0 は tunnel 経由で peer に投げるが、default route が無いと tunnel 経路自体が解決できず blackhole する。対策として **BGP update delay 10 秒**[^1]。
 
 ### ingress drop ACL の skip
 
-active-standby では standby 移行時に MuxOrch が ingress drop ACL を貼っていたが、NIC 側の admin state 切替が gRPC で完了する前に upstream traffic が drop される間隙が問題。active-active では **standby 切替時の ingress drop ACL を貼らない**（best effort forwarding）[^1]。
+active-standby では standby 移行時に MuxOrch が ingress drop [ACL](../reference/glossary.md#term-acl) を貼っていたが、NIC 側の admin state 切替が gRPC で完了する前に upstream traffic が drop される間隙が問題。active-active では **standby 切替時の ingress drop ACL を貼らない**（best effort forwarding）[^1]。
 
 ### gRPC unreachable
 
@@ -239,7 +239,7 @@ Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:4
 
 ## 制限事項
 
-- **warm reboot** は HLD で TBD
+- **warm reboot** は [HLD](../reference/glossary.md#term-hld) で TBD
 - gRPC server / ToR の認証は HLD で詳細未定
 - 両 ToR standby 時の tunneled control plane traffic は NIC IP 局所送出に依存
 - BGP update delay 10 秒は active-active 専用。session 確立後 routing convergence が遅延
@@ -251,7 +251,7 @@ Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:4
 
 - **linkmgrd active-active state machine**: `sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}` および `src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}` が active-standby と並列に存在。`PeerActiveState` / `PeerUnknownState` / `PeerWaitState` も `src/link_prober/` に追加されており、self / peer 独立判定が実装されている。
 - **MuxOrch の active-active 分岐**: `sonic-swss/orchagent/muxorch.cpp:2233` で `cable_type_str == "active-active"` 判定。prefix-based neighbor の SAI 属性（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE`）と prefix route の組合せは muxorch / neighorch 内で扱う。
-- **新規 APP_DB / STATE_DB テーブル**: `sonic-swss-common/common/schema.h` に `APP_FORWARDING_STATE_COMMAND_TABLE_NAME` (145行)、`APP_FORWARDING_STATE_RESPONSE_TABLE_NAME` (146行)、`APP_PEER_HW_FORWARDING_STATE_TABLE_NAME` (149行)、`STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME` (465行) が定義済み。
+- **新規 APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) テーブル**: `sonic-swss-common/common/schema.h` に `APP_FORWARDING_STATE_COMMAND_TABLE_NAME` (145行)、`APP_FORWARDING_STATE_RESPONSE_TABLE_NAME` (146行)、`APP_PEER_HW_FORWARDING_STATE_TABLE_NAME` (149行)、`STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME` (465行) が定義済み。
 - **`config mux mode detach`**: `sonic-utilities/config/muxcable.py:351` で `click.Choice(["active","auto","manual","standby","detach"])` として `detach` を受け付ける。
 
 ## 関連トピック
@@ -278,3 +278,5 @@ Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:4
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ca7c1453b3b7 -->

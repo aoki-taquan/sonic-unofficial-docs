@@ -26,13 +26,13 @@ related:
 
 - `show bgp l2vpn evpn` で local MAC が出ない
 - 対向 VTEP に Type-2 が届かない（受信側で `show bgp l2vpn evpn route type macip` が空）
-- VLAN-to-VNI mapping は設定済みだが overlay 通信できない
+- [VLAN](../../reference/glossary.md#term-vlan)-to-VNI mapping は設定済みだが overlay 通信できない
 
 ## 想定原因（優先度順）
 
-1. **`advertise-all-vni` 未設定**: FRR の `address-family l2vpn evpn` で `advertise-all-vni` がない
+1. **`advertise-all-vni` 未設定**: [FRR](../../reference/glossary.md#term-frr) の `address-family l2vpn evpn` で `advertise-all-vni` がない
 2. **VLAN-VNI mapping 欠落**: `VXLAN_TUNNEL_MAP` が未作成 / VNI 重複
-3. **FDB が学習されていない**: 対象 MAC が `show mac` に出ない
+3. **[FDB](../../reference/glossary.md#term-fdb) が学習されていない**: 対象 MAC が `show mac` に出ない
 4. **route-target import/export 不整合**
 5. **`type-2 prefix` の filter / route-map で drop**
 
@@ -93,4 +93,6 @@ docker logs swss 2>&1 | grep -iE "vxlan|evpn" | tail -100
 ## 引用元
 
 [^1]: sonic-net/sonic-frr @ master — bgp_evpn.c
-[^2]: sonic-net/sonic-swss @ master — vxlanorch.cpp
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — vxlanorch.cpp
+
+<!-- glossary-links-injected: cd052884780b -->

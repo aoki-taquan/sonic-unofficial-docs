@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC のポート単位カウンタ（`portstat` 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される **ルータインタフェース (RIF)** 単位の入出力統計は別経路で取得する必要がある。RIF とは物理ポート上の Router Port、VLAN インタフェース、ポートチャネル上の L3 サブインタフェースなど、SAI が `sai_router_interface` オブジェクトとして扱うものを指す。
+SONiC のポート単位カウンタ（`portstat` 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される **ルータインタフェース ([RIF](../reference/glossary.md#term-rif))** 単位の入出力統計は別経路で取得する必要がある。RIF とは物理ポート上の Router Port、[VLAN](../reference/glossary.md#term-vlan) インタフェース、ポートチャネル上の L3 サブインタフェースなど、[SAI](../reference/glossary.md#term-sai) が `sai_router_interface` オブジェクトとして扱うものを指す。
 
 本機能は SAI の `SAI_ROUTER_INTERFACE_STAT_*` カウンタを **flex counter で定期取得** し、`COUNTERS_DB` に集約したうえで、`show interfaces counters rif` CLI から RX/TX のパケット・バイト・エラーを表示できるようにするものである[^1]。
 
@@ -70,7 +70,7 @@ flowchart LR
 | マップ | 用途 |
 |--------|------|
 | `COUNTERS_RIF_NAME_MAP` | RIF OID ↔ RIF 名（例: `Ethernet0`, `Vlan2`, `Portchannel0002`） |
-| `COUNTERS_RIF_TYPE_MAP` | RIF OID ↔ 種別（LAG / Vlan 等） |
+| `COUNTERS_RIF_TYPE_MAP` | RIF OID ↔ 種別（[LAG](../reference/glossary.md#term-lag) / Vlan 等） |
 
 VID ベースの COUNTERS テーブルだけでは人間に読みにくいため、CLI 側はこのマップを介して RIF 名で参照する。
 
@@ -115,7 +115,7 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 
 ### Telemetry 経由の参照
 
-`sonic-telemetry` 経由でも参照できる。スキーマ直叩きでは VID をキーとするため、HLD は **virtual path** 経由の参照を推奨している[^1]。
+`sonic-telemetry` 経由でも参照できる。スキーマ直叩きでは VID をキーとするため、[HLD](../reference/glossary.md#term-hld) は **virtual path** 経由の参照を推奨している[^1]。
 
 | DB target | Virtual Path | 意味 |
 |-----------|--------------|------|
@@ -127,7 +127,7 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 
 ### 関連する CONFIG_DB
 
-HLD には専用の CONFIG_DB エントリは記載されていない。flex counter のインターバル変更等は既存の `FLEX_COUNTER_TABLE` 経路で行うと推測されるが本 HLD のスコープ外（実装裏取りが必要）。
+HLD には専用の [CONFIG_DB](../reference/glossary.md#term-config_db) エントリは記載されていない。flex counter のインターバル変更等は既存の `FLEX_COUNTER_TABLE` 経路で行うと推測されるが本 HLD のスコープ外（実装裏取りが必要）。
 
 ### 関連する CLI
 
@@ -171,7 +171,7 @@ Portchannel0002
 ## 干渉する機能
 
 - **portstat**: 別系統。`SAI_PORT_STAT_*` カウンタを使い、L2 視点のドロップやエラーを返す。RIF カウンタはあくまで L3 視点であり、両者を合算した値ではない。
-- **`Port_illegal_packets_drop_design` (Interface MIB)**: SNMP 側では RIF カウンタは独立エントリではなく、対応する物理ポートの Interface MIB に **集約** されて返る。RIF カウンタが MIB と CLI で独立しているのは仕様上正しい。
+- **`Port_illegal_packets_drop_design` (Interface MIB)**: [SNMP](../reference/glossary.md#term-snmp) 側では RIF カウンタは独立エントリではなく、対応する物理ポートの Interface MIB に **集約** されて返る。RIF カウンタが MIB と CLI で独立しているのは仕様上正しい。
 - **flex counter インターバル**: ポートカウンタと同じ既定 1 秒。負荷増を懸念する場合はインターバルを長くする運用が考えられる。
 
 ## トラブルシューティング
@@ -190,3 +190,5 @@ Portchannel0002
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 21d98f8b47d2 -->

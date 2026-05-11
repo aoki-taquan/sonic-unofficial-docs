@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-EVPN multihoming（MH）は **MC-LAG / vPC を使わず、BGP-EVPN だけで host を複数 leaf にマルチホーム接続する** RFC 7432 / RFC 8365 の仕組み[^1]。SONiC は FRR の EVPN-MH と SAI レイヤを組合せる。
+[EVPN](../reference/glossary.md#term-evpn) multihoming（MH）は **MC-[LAG](../reference/glossary.md#term-lag) / vPC を使わず、[BGP](../reference/glossary.md#term-bgp)-EVPN だけで host を複数 leaf にマルチホーム接続する** RFC 7432 / RFC 8365 の仕組み[^1]。SONiC は [FRR](../reference/glossary.md#term-frr) の [EVPN-MH](../reference/glossary.md#term-evpn-mh) と [SAI](../reference/glossary.md#term-sai) レイヤを組合せる。
 
 主要な構成:
 
@@ -60,8 +60,8 @@ flowchart LR
 
 主要動作[^1]:
 
-- **DF election**: ES メンバ間で BUM の **forwarder を 1 つに選ぶ**（VLAN 単位）。Type-4 で見つかったメンバ群を IP / DF algo で並べる
-- **Aliasing (Type-1)**: remote leaf は ES 全メンバを ECMP next-hop として使い、トラフィックを load-balance
+- **DF election**: ES メンバ間で BUM の **forwarder を 1 つに選ぶ**（[VLAN](../reference/glossary.md#term-vlan) 単位）。Type-4 で見つかったメンバ群を IP / DF algo で並べる
+- **Aliasing (Type-1)**: remote leaf は ES 全メンバを [ECMP](../reference/glossary.md#term-ecmp) next-hop として使い、トラフィックを load-balance
 - **Split-horizon (ESI label)**: ingress leaf が ESI label を付与、egress leaf は同 ESI 受信なら local ES に出さない
 - **Single-Active vs All-Active**: ES が All-Active か Single-Active かを ESI / config で区別
 
@@ -86,17 +86,17 @@ flowchart LR
 
 ## 制限事項
 
-- **対応 ASIC のみ**: ESI label / split-horizon を SAI で扱える NPU が必要
+- **対応 ASIC のみ**: ESI label / split-horizon を SAI で扱える [NPU](../reference/glossary.md#term-npu) が必要
 - **DF election timer**: 起動直後の不安定期に BUM が断する可能性。`hold timer` で対処
 - **VLAN ↔ ES の整合**: ES に紐づく VLAN は両 leaf で同一定義であること
 - **MAC mobility**: host が ES 内で移動した時の MAC mobility extended community 処理に依存
 
 ## 干渉する機能
 
-- **EVPN VXLAN HLD**: 上位の Type-2 / Type-5 流通の前提
+- **EVPN [VXLAN](../reference/glossary.md#term-vxlan) [HLD](../reference/glossary.md#term-hld)**: 上位の Type-2 / Type-5 流通の前提
 - **MC-LAG**: 同じ目的を別アプローチで解く。両者の違いを理解した上で選択
-- **port-channel / LACP**: ES の物理リンク基盤
-- **fpmsyncd / nexthop group**: aliasing による ECMP next-hop インストール
+- **port-channel / [LACP](../reference/glossary.md#term-lacp)**: ES の物理リンク基盤
+- **[fpmsyncd](../reference/glossary.md#term-fpmsyncd) / nexthop group**: aliasing による ECMP next-hop インストール
 
 ## トラブルシューティング
 
@@ -110,7 +110,7 @@ flowchart LR
 
 ### 1. `EVPN_ETHERNET_SEGMENT` テーブル / orch が未実装
 
-- **HLD 記述**: CONFIG_DB に `EVPN_ETHERNET_SEGMENT` テーブルを置き、ESI / 紐づく LAG / single-active か all-active か / DF preference を管理。orch（仮称 `EthernetSegmentOrch`）が SAI へ反映。
+- **HLD 記述**: [CONFIG_DB](../reference/glossary.md#term-config_db) に `EVPN_ETHERNET_SEGMENT` テーブルを置き、ESI / 紐づく LAG / single-active か all-active か / DF preference を管理。orch（仮称 `EthernetSegmentOrch`）が SAI へ反映。
 - **実装位置**: `sonic-swss/`、`sonic-buildimage/src/sonic-yang-models/yang-models/`、`sonic-utilities/` のいずれにも `EVPN_ETHERNET_SEGMENT` / `EthernetSegment` / `ESI` 関連のシンボルは見つからない（grep ヒット 0）。yang module `sonic-evpn-mh.yang` のような派生 module も存在しない。
 - **差分の中身**: テーブル定義 / orch クラス / yang model / CLI のいずれも欠落。HLD は提案段階で止まっている。
 - **読者への影響**: `config evpn ethernet-segment add ...` を打っても CLI コマンド自体が存在せず、CONFIG_DB に書いても受ける側がいないため何も起こらない。EVPN MH に依存する設計（dual-attached host）を組み立てると動かない。
@@ -120,7 +120,7 @@ flowchart LR
 
 ### 2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い
 
-- **HLD 記述**: FRR の BGP-EVPN MH（Type-1 EAD、Type-4 ES route）が SONiC orchagent に EAD-per-ES / EAD-per-EVI / ES import-RT を渡し、SAI ESI label / split-horizon を設定する。
+- **HLD 記述**: FRR の BGP-EVPN MH（Type-1 EAD、Type-4 ES route）が SONiC [orchagent](../reference/glossary.md#term-orchagent) に EAD-per-ES / EAD-per-EVI / ES import-RT を渡し、SAI ESI label / split-horizon を設定する。
 - **実装位置**: SONiC 側受け取り経路（`fpmsyncd` の MH 拡張、`EvpnNvoOrch` への Type-1/Type-4 ハンドラ）は確認できず。
 - **差分の中身**: FRR 単体では EVPN-MH を pcap で観察できても、SONiC の ASIC まで通知が伝わらない。
 - **読者への影響**: FRR で EVPN-MH を有効化しても、SONiC 側で DF election・ESI label による split-horizon・aliasing による ECMP は ASIC レベルで効かない。
@@ -139,9 +139,9 @@ flowchart LR
 
 #### 関連 GitHub Issue / PR
 
-- [sonic-swss #4262: \[EVPN-MH\] Add EVPN VXLAN Multihoming feature support (open)](https://github.com/sonic-net/sonic-swss/pull/4262) — EVPN MH 機能の本体取り込み大型 PR。
+- [[sonic-swss](../reference/glossary.md#term-sonic-swss) #4262: \[EVPN-MH\] Add EVPN VXLAN Multihoming feature support (open)](https://github.com/sonic-net/sonic-swss/pull/4262) — EVPN MH 機能の本体取り込み大型 PR。
 - [sonic-swss #4206: Add support for EVPN MH protocol field (open)](https://github.com/sonic-net/sonic-swss/pull/4206) — MH プロトコルフィールド追加 PR。
-- [sonic-swss #4039: Fdbsyncd changes for EVPN MH feature (open)](https://github.com/sonic-net/sonic-swss/pull/4039) — MH 向け fdbsyncd 改修 PR。
+- [sonic-swss #4039: Fdbsyncd changes for EVPN MH feature (open)](https://github.com/sonic-net/sonic-swss/pull/4039) — MH 向け [fdbsyncd](../reference/glossary.md#term-fdbsyncd) 改修 PR。
 - いずれも 2026-05 時点で open であり、ESI / DF election / split-horizon の master 取り込みは未完了。
 
 ## 引用元
@@ -156,3 +156,5 @@ flowchart LR
 - show evpn ethernet-segment / config evpn ethernet-segment CLI の sonic-utilities 取り込み確認
 - DF election timer / hold timer の現行既定値と挙動確認
 -->
+
+<!-- glossary-links-injected: d934452251c5 -->

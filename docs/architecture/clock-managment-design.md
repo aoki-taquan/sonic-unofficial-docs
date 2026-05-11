@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-SONiC のシステム時刻 / タイムゾーン操作を **`timedatectl` の薄いラッパー** として CLI 化する HLD。`config clock timezone <tz>` / `config clock date <YYYY-MM-DD> <HH:MM:SS>` を導入し、timezone のみ CONFIG_DB に永続化する[^1]。日付時刻自体は CONFIG_DB に保存しない（再起動を跨ぐ意味が薄いため）。
+SONiC のシステム時刻 / タイムゾーン操作を **`timedatectl` の薄いラッパー** として CLI 化する [HLD](../reference/glossary.md#term-hld)。`config clock timezone <tz>` / `config clock date <YYYY-MM-DD> <HH:MM:SS>` を導入し、timezone のみ [CONFIG_DB](../reference/glossary.md#term-config_db) に永続化する[^1]。日付時刻自体は CONFIG_DB に保存しない（再起動を跨ぐ意味が薄いため）。
 
 NTP との関係は明確に切られている[^1]:
 
@@ -78,7 +78,7 @@ DEVICE_METADATA|localhost
 
 時刻自体は保存しない[^1]。timezone のみ永続化することで再起動・config reload 時の整合を保つ。
 
-YANG（`sonic-device_metadata`）に対する追加[^1]:
+[YANG](../reference/glossary.md#term-yang)（`sonic-device_metadata`）に対する追加[^1]:
 
 ```yang
 container sonic-device_metadata {
@@ -208,3 +208,5 @@ config clock date 2024-01-01 12:00:00
 - NTP 状態判定ロジック (timedatectl status / systemctl is-active)
 - rsyslog 再起動の自動化フロー
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

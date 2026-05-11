@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-SONiC Dual-ToR (Active-Standby) 構成における peer ToR の識別情報を保持するテーブル[^1]。`TUNNEL_LIST.src_ip` が `PEER_SWITCH_LIST.address_ipv4` への leafref として参照する。エントリは Dual-ToR 構成上、**最大 1 つ** (YANG `max-elements 1`)。
+SONiC Dual-ToR (Active-Standby) 構成における peer ToR の識別情報を保持するテーブル[^1]。`TUNNEL_LIST.src_ip` が `PEER_SWITCH_LIST.address_ipv4` への leafref として参照する。エントリは Dual-ToR 構成上、**最大 1 つ** ([YANG](../../reference/glossary.md#term-yang) `max-elements 1`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -60,11 +60,11 @@ PEER_SWITCH|<peer_switch>
 ## 購読者
 
 - `tunnelmgrd` / `mux-cable` 系デーモン: peer 情報を読み出して MUX_CABLE / TUNNEL の整合に利用
-- 単独で SAI へ反映するわけではない（メタデータ用テーブル）
+- 単独で [SAI](../../reference/glossary.md#term-sai) へ反映するわけではない（メタデータ用テーブル）
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`TUNNEL`](./tunnel.md)、`MUX_CABLE`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TUNNEL`](./tunnel.md)、`MUX_CABLE`
 - 関連 YANG: `sonic-peer-switch`、`sonic-tunnel`
 - 関連 CLI: なし（`config_db.json` で投入）
 
@@ -97,7 +97,7 @@ PEER_SWITCH|<peer_switch>
 
 ### よくある誤設定
 
-- Dual-ToR で peer hostname の表記揺れがあると linkmgrd が peer を発見できない。
+- Dual-ToR で peer hostname の表記揺れがあると [linkmgrd](../../reference/glossary.md#term-linkmgrd) が peer を発見できない。
 
 ### 確認コマンド
 
@@ -106,3 +106,5 @@ sonic-db-cli CONFIG_DB keys 'PEER_SWITCH|*'
 show mux status
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9f1ccfb50fcc -->

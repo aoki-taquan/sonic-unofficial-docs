@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC の telemetry コンテナには **3 つの gNMI クライアントツール** が `/usr/bin` に同梱されており、運用検証や疎通確認に使う[^1]:
+SONiC の telemetry コンテナには **3 つの [gNMI](../reference/glossary.md#term-gnmi) クライアントツール** が `/usr/bin` に同梱されており、運用検証や疎通確認に使う[^1]:
 
 - `gnmi_get`: 単一または複数パスの取得（`Get` RPC）
 - `gnmi_set`: `update` / `replace` / `delete` 操作（`Set` RPC）
@@ -39,8 +39,8 @@ SONiC の telemetry コンテナには **3 つの gNMI クライアントツー�
 
 ターゲットモデルとして以下を `-xpath_target` で切り替えられる[^1]:
 
-- `OC-YANG`: OpenConfig YANG モデル
-- `SONIC-YANG`: SONiC 独自 YANG（CONFIG_DB を YANG で抽象化したもの）
+- `OC-YANG`: OpenConfig [YANG](../reference/glossary.md#term-yang) モデル
+- `SONIC-YANG`: SONiC 独自 YANG（[CONFIG_DB](../reference/glossary.md#term-config_db) を YANG で抽象化したもの）
 - 非 YANG: `CONFIG_DB` / `COUNTERS_DB` などの **redis DB を直接** 参照するモード（YANG なしの raw アクセス）
 
 ## 動作仕様
@@ -152,7 +152,7 @@ sequenceDiagram
 
 - **gNMI Master Arbitration**: `gnmi_set` を使う場合、サーバが Master Arbitration を有効化していると `MasterArbitration` 拡張なしの `Set` は `PermissionDenied` で落ちる
 - **gNMI 認証 / RBAC**: `-username` / `-password` のロールに応じて `Set` 権限が制限される
-- **CONFIG_DB / COUNTERS_DB の sonic-mgmt-common 経由アクセス**: `-xpath_target SONIC-YANG` を使うと sonic-mgmt-common の transformer 経路を経由する
+- **CONFIG_DB / [COUNTERS_DB](../reference/glossary.md#term-counters_db) の [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt)-common 経由アクセス**: `-xpath_target SONIC-YANG` を使うと sonic-mgmt-common の transformer 経路を経由する
 
 ## トラブルシューティング
 
@@ -178,3 +178,5 @@ sequenceDiagram
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c3f4e76fa339 -->

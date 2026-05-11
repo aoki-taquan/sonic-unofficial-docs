@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-VXLAN tunnel に対し、ローカル VLAN と VNI (VXLAN Network Identifier) のマッピングを与える[^1]。`orchagent` の `VxlanTunnelMapOrch` がこのテーブルを購読し、SAI tunnel-map (`SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI` / `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID`) のエントリを生成する。
+[VXLAN](../../reference/glossary.md#term-vxlan) tunnel に対し、ローカル [VLAN](../../reference/glossary.md#term-vlan) と VNI (VXLAN Network Identifier) のマッピングを与える[^1]。`orchagent` の `VxlanTunnelMapOrch` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) tunnel-map (`SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI` / `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID`) のエントリを生成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -67,13 +67,13 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 ## 購読者
 
 - `orchagent` `VxlanTunnelMapOrch`: SAI tunnel-map エントリ生成
-- EVPN フローでは `VxlanMgr` がここから VLAN-VNI を引き、type-2/3 経路と紐付ける
+- [EVPN](../../reference/glossary.md#term-evpn) フローでは `VxlanMgr` がここから VLAN-VNI を引き、type-2/3 経路と紐付ける
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VXLAN_TUNNEL`、`VLAN`、`VLAN_INTERFACE`、`VNET`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VXLAN_TUNNEL`、`VLAN`、`VLAN_INTERFACE`、`VNET`
 - 関連 CLI: [`config vxlan`](../cli/config-vxlan.md) (`map add` / `map del`)
-- 関連 YANG: `sonic-vxlan`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vxlan`
 
 <!-- ref-triangle:start -->
 
@@ -105,7 +105,7 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 
 ### よくある誤設定
 
-- VLAN 未作成のまま VNI map を入れると orchagent が pending、トンネルが半開状態。
+- VLAN 未作成のまま VNI map を入れると [orchagent](../../reference/glossary.md#term-orchagent) が pending、トンネルが半開状態。
 
 ### 確認コマンド
 
@@ -114,3 +114,5 @@ sonic-db-cli CONFIG_DB keys 'VXLAN_TUNNEL_MAP|*'
 show vxlan vlanvnimap
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4bb5ab6e6a64 -->

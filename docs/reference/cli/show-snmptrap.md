@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-`show snmptrap` は SNMP Trap 送信先サーバの設定を表示する CLI グループ[^1]。CONFIG_DB の `SNMP_TRAP_CONFIG` テーブルから登録された v1/v2/v3 Trap receiver を読み、整形して出力する。
+`show snmptrap` は [SNMP](../../reference/glossary.md#term-snmp) Trap 送信先サーバの設定を表示する CLI グループ[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `SNMP_TRAP_CONFIG` テーブルから登録された v1/v2/v3 Trap receiver を読み、整形して出力する。
 
 ## コマンド一覧
 
@@ -129,3 +129,5 @@ flowchart LR
 ## 引用元
 
 [^1]: `show snmptrap` グループ定義は `show/main.py` L603-L624。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L603>
+
+<!-- glossary-links-injected: 3985b6dcd352 -->

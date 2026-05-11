@@ -31,7 +31,7 @@ related:
 
 ## これは何か（一行で）
 
-PFC pause を **受けていた累積時間 / 遷移回数 / 直近 pause 時刻** を PFCWD の lua ポーリングから推定して `COUNTERS_DB` に書き、`show pfc counters --history` で表示する Broadcom 限定機能[^1]。
+[PFC](../reference/glossary.md#term-pfc) pause を **受けていた累積時間 / 遷移回数 / 直近 pause 時刻** を PFCWD の lua ポーリングから推定して `COUNTERS_DB` に書き、`show pfc counters --history` で表示する Broadcom 限定機能[^1]。
 
 ## どんなときに使うか
 
@@ -51,7 +51,7 @@ per-port × per-priority で次の 4 値を推定する[^1]:
 | `EST_PORT_STAT_PFC_*_RECENT_PAUSE_TIMESTAMP` | 直近 unpaused → paused 時刻（Linux epoch float） |
 | `EST_PORT_STAT_PFC_*_RECENT_PAUSE_TIME_US` | 直近 paused 後の経過時間（μs） |
 
-同等値が SAI で直接出るならそちらを優先する。
+同等値が [SAI](../reference/glossary.md#term-sai) で直接出るならそちらを優先する。
 
 ## 推定アルゴリズム
 
@@ -116,7 +116,7 @@ show pfc counters --history
 
 ### YANG
 
-HLD に記述なし。
+[HLD](../reference/glossary.md#term-hld) に記述なし。
 
 ## 制限事項
 
@@ -130,7 +130,7 @@ HLD に記述なし。
 
 - **PFCWD ストーム検出**: 同じ lua に乗るが検出ロジックは不変
 - **`SAI_QUEUE_ATTR_PAUSE_STATUS` / `SAI_PORT_STAT_PFC_*_ON2OFF_RX_PKTS`**: SAI で出ていれば estimate せず直読
-- **CRM / counter polling**: 通常の flex counter と同じ syncd ポーリングに依存
+- **[CRM](../reference/glossary.md#term-crm) / counter polling**: 通常の flex counter と同じ [syncd](../reference/glossary.md#term-syncd) ポーリングに依存
 
 ## トラブルシューティング
 
@@ -158,3 +158,5 @@ HLD に記述なし。
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4efefd8fbfe5 -->

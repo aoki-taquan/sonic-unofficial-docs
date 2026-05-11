@@ -15,10 +15,10 @@ verification: meta
 <!-- quality-banner-start -->
 !!! success "最新の品質状態"
     - **code-verified ページ**: 578 件（HLD と実コードを照合済み）
-    - **runbook-verified ページ**: 20 件（Runbook 専用。実運用で症状再現性が確認済み）
+    - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
     - **discrepancy-found ページ**: 46 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 16 集計中（`meta/quality-audit-16.md`）
-    - **hld-only ページ**: 7 件（裏取り待ち）
+    - **監査平均評価**: round 18 集計中（`meta/quality-audit-18.md`）
+    - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
 <!-- quality-banner-end -->
 
 ## 初めての方はここから
@@ -73,8 +73,8 @@ verification: meta
 目的に応じて、既存ページを読む順番をまとめたガイドです。
 
 - [初学者向け](guides/beginner.md): SONiC の全体像、設定モデル、仮想環境での導入を順に把握したい読者向け。
-- [運用者向け](guides/operator.md): 日々の確認、設定変更、障害調査、CONFIG_DB の意味確認を素早く引きたい読者向け。
-- [開発者向け](guides/developer.md): HLD、YANG、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追いたい読者向け。
+- [運用者向け](guides/operator.md): 日々の確認、設定変更、障害調査、[CONFIG_DB](./reference/glossary.md#term-config_db) の意味確認を素早く引きたい読者向け。
+- [開発者向け](guides/developer.md): [HLD](./reference/glossary.md#term-hld)、[YANG](./reference/glossary.md#term-yang)、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追いたい読者向け。
 - [評価者向け](guides/evaluator.md): ラボで SONiC を起動し、基本設定と状態確認まで一連の流れを辿りたい読者向け。
 
 ## SONiC とは
@@ -83,9 +83,9 @@ SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベ�
 
 主要な構成要素:
 
-- **SAI (Switch Abstraction Interface)**: ASIC ベンダーを抽象化する標準 API
-- **コンテナ化されたマイクロサービス群**: BGP（FRR）、LLDP、SNMP、PMON など機能ごとに Docker コンテナで分離
-- **Redis を中央データベースとした状態管理**: CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB など
+- **[SAI](./reference/glossary.md#term-sai) (Switch Abstraction Interface)**: ASIC ベンダーを抽象化する標準 API
+- **コンテナ化されたマイクロサービス群**: [BGP](./reference/glossary.md#term-bgp)（[FRR](./reference/glossary.md#term-frr)）、[LLDP](./reference/glossary.md#term-lldp)、[SNMP](./reference/glossary.md#term-snmp)、PMON など機能ごとに Docker コンテナで分離
+- **[Redis](./reference/glossary.md#term-redis) を中央データベースとした状態管理**: CONFIG_DB / [APPL_DB](./reference/glossary.md#term-appl_db) / [STATE_DB](./reference/glossary.md#term-state_db) / [ASIC_DB](./reference/glossary.md#term-asic_db) など
 
 ## このドキュメントの方針
 
@@ -137,3 +137,5 @@ SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベ�
 ## ライセンス
 
 本ドキュメントの内容は、特に断りのない限り [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) のもとで提供されます。
+
+<!-- glossary-links-injected: d0c50357f26c -->

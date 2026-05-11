@@ -67,7 +67,7 @@ flowchart LR
 ## 制限事項
 
 - **platform plugin が必要**: plugin 未実装の component は `fwutil` から触れない
-- **ASIC 本体の firmware は対象外**: SAI/SDK 経由で扱う想定（fwutil は周辺コンポーネント向け）
+- **ASIC 本体の firmware は対象外**: [SAI](../reference/glossary.md#term-sai)/SDK 経由で扱う想定（fwutil は周辺コンポーネント向け）
 - **手動 image 指定 vs manifest**: 両者で受け付ける引数フォーマットが異なる
 - **書き換え失敗の rollback**: 多くは hardware 側保証（dual-bank） に依存
 
@@ -75,7 +75,7 @@ flowchart LR
 
 - **secure-upgrade / secure-boot**: 署名検証や TPM 連携が必要な platform では fwutil の install 経路にも影響
 - **show platform**: `show platform firmware` で同じ情報を見られる platform もある
-- **smart-switch DPU graceful shutdown**: DPU 側 firmware 更新時のシャットダウン整合
+- **smart-switch [DPU](../reference/glossary.md#term-dpu) graceful shutdown**: DPU 側 firmware 更新時のシャットダウン整合
 - **kdump / fast-reboot**: firmware install で求められる reboot 種別との相性
 
 ## トラブルシューティング
@@ -103,3 +103,5 @@ flowchart LR
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7bc589d85f65 -->

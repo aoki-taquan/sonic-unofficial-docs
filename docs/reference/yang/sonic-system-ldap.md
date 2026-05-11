@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-system-ldap`
 
-Lightweight Directory Access Protocol (LDAP) authentication YANG module for SONiC OS.[^1]
+Lightweight Directory Access Protocol (LDAP) authentication [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -90,7 +90,7 @@ module: sonic-system-ldap
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `LDAP|global`, `LDAP_SERVER|<hostname>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `LDAP|global`, `LDAP_SERVER|<hostname>`
 - CLI: `config ldap`
 
 <!-- ref-triangle:start -->
@@ -105,3 +105,5 @@ module: sonic-system-ldap
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-ldap.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

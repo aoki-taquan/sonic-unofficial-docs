@@ -33,7 +33,7 @@ related:
 
 ## これは何か（一行で）
 
-SAI が出す WRED ドロップ / ECN マーク専用カウンタを Flex Counter で `COUNTERS_DB` に出し、`show queue wredcounters` および `show interfaces counters detailed` の拡張で見えるようにする[^1]。
+[SAI](../reference/glossary.md#term-sai) が出す [WRED](../reference/glossary.md#term-wred) ドロップ / ECN マーク専用カウンタを Flex Counter で `COUNTERS_DB` に出し、`show queue wredcounters` および `show interfaces counters detailed` の拡張で見えるようにする[^1]。
 
 ## どんなときに使うか
 
@@ -45,7 +45,7 @@ SAI が出す WRED ドロップ / ECN マーク専用カウンタを Flex Counte
 
 プラットフォームによって対応カウンタが異なるため、`orchagent` が起動時に **`sai_query_stats_capability`** を呼び、`STATE_DB` に結果を書く。CLI はそれを見て **対応カウンタだけを取得・表示** し、非対応は `N/A`[^1]。
 
-`SAI_PORT_STAT_ECN_MARKED_PACKETS`（ポート単位 ECN マーク）は本 HLD の **次フェーズ** 扱い。
+`SAI_PORT_STAT_ECN_MARKED_PACKETS`（ポート単位 ECN マーク）は本 [HLD](../reference/glossary.md#term-hld) の **次フェーズ** 扱い。
 
 ## 全体フロー
 
@@ -151,7 +151,7 @@ sonic-clear queue wredcounters
 
 ## 干渉する機能
 
-- **`portstat` / `queuestat`**: 共通 Flex Counter インフラに並ぶ。`POLL_INTERVAL` を縮めすぎると syncd 全体の負荷が増える
+- **`portstat` / `queuestat`**: 共通 Flex Counter インフラに並ぶ。`POLL_INTERVAL` を縮めすぎると [syncd](../reference/glossary.md#term-syncd) 全体の負荷が増える
 - **WRED 設定 (`WRED_PROFILE`)**: プロファイルがキューに紐付いていないと drop / mark は増えない
 - **ECN マーキング**: WRED プロファイル内の `ecn` 設定が必要。無効なキューでは `EcnMarked/*` が 0 のまま
 - **Warm/fast boot**: HLD で「影響なし」と明記[^1]
@@ -184,3 +184,5 @@ sonic-clear queue wredcounters
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 039e19279416 -->

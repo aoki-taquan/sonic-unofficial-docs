@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-SmartSwitch では NPU 1 台に複数 DPU が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を **NPU に offload** している[^1]。本 HLD は **gNOI API 駆動で 1 台ずつ DPU を独立アップグレード** する手順を定義し、ネットワーク・他 DPU・NPU への影響を最小化する。前提として **DPU と NPU の SONiC Host Services / GNMI が健全** であること（不応答 DPU の復旧用途ではない）。
+[SmartSwitch](../reference/glossary.md#term-smartswitch) では [NPU](../reference/glossary.md#term-npu) 1 台に複数 [DPU](../reference/glossary.md#term-dpu) が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を **NPU に offload** している[^1]。本 [HLD](../reference/glossary.md#term-hld) は **[gNOI](../reference/glossary.md#term-gnoi) API 駆動で 1 台ずつ DPU を独立アップグレード** する手順を定義し、ネットワーク・他 DPU・NPU への影響を最小化する。前提として **DPU と NPU の SONiC Host Services / GNMI が健全** であること（不応答 DPU の復旧用途ではない）。
 
 ## 動作仕様
 
@@ -124,13 +124,13 @@ reasoning: gNOI API 系列と各 phase の根拠。
 - DPU / NPU の SONiC Host Services / GNMI が **健全な状態** が前提
 - 提案段階（v0.1 Initial）。`Containerz` 系 gNOI 拡張は upstream で進行中
 - 互換性チェックは client 責任
-- DPU graceful shutdown HLD（同 SmartSwitch 系）と STATE_DB の race を考慮する必要
+- DPU graceful shutdown HLD（同 SmartSwitch 系）と [STATE_DB](../reference/glossary.md#term-state_db) の race を考慮する必要
 
 ## 干渉する機能
 
 - **DPU graceful shutdown**: 同 STATE_DB `CHASSIS_MODULE_INFO_TABLE` に書き込む可能性
 - **smartswitch HA / hamgrd**: HA scope の状態は upgrade 中も維持されるべき
-- **gNMI / sonic-telemetry**: GNMI/GNOI Splitter 経由のため依存
+- **[gNMI](../reference/glossary.md#term-gnmi) / sonic-telemetry**: GNMI/GNOI Splitter 経由のため依存
 - **Offloader / Containerz**: NPU 側 container 制御の標準 API
 
 ## 引用元
@@ -152,3 +152,5 @@ reasoning: gNOI API 系列と各 phase の根拠。
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0f6974a3283c -->

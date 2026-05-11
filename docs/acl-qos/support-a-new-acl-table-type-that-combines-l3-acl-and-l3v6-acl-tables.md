@@ -30,9 +30,9 @@ related:
 
 ## 概要
 
-従来 SONiC は IPv4 用 `L3` と IPv6 用 `L3V6` を **別々の SAI ACL テーブル** として作成していた。多くの ASIC では同一 TCAM テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た[^1]。
+従来 SONiC は IPv4 用 `L3` と IPv6 用 `L3V6` を **別々の [SAI](../reference/glossary.md#term-sai) [ACL](../reference/glossary.md#term-acl) テーブル** として作成していた。多くの ASIC では同一 TCAM テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た[^1]。
 
-本 HLD は **新規組み込みテーブル型 `L3V4V6`** を導入し、この最適化を operator が選択的に有効化できるようにする[^1]。`MIRROR` / `MIRRORV6` で過去に行ったコンパイル時マージ最適化（Option-A）と異なり、ユーザに見える ACL テーブルが 1 つで済む点が利点。
+本 [HLD](../reference/glossary.md#term-hld) は **新規組み込みテーブル型 `L3V4V6`** を導入し、この最適化を operator が選択的に有効化できるようにする[^1]。`MIRROR` / `MIRRORV6` で過去に行ったコンパイル時マージ最適化（Option-A）と異なり、ユーザに見える ACL テーブルが 1 つで済む点が利点。
 
 ## 動作仕様
 
@@ -54,7 +54,7 @@ related:
 - `IP_PROTOCOL` / `NEXT_HEADER`
 - `L4_SRC_PORT` / `L4_DST_PORT` / `TCP_FLAGS`
 
-action: `PACKET_ACTION` / `REDIRECT_ACTION`（egress では `REDIRECT` 非対応な ASIC では `PACKET_ACTION` のみ）。bind: Port / LAG。
+action: `PACKET_ACTION` / `REDIRECT_ACTION`（egress では `REDIRECT` 非対応な ASIC では `PACKET_ACTION` のみ）。bind: Port / [LAG](../reference/glossary.md#term-lag)。
 
 ACL ルールには **`IP_TYPE` または `ETHER_TYPE` を含めることを推奨**。Phase 2 で非対応 ASIC 上で内部的に v4 用 / v6 用の 2 枚に振り分ける際の判定キーになる[^1]。
 
@@ -69,7 +69,7 @@ flowchart TD
   SP --> U2[ユーザには 1 テーブルとして見える]
 ```
 
-現状は **Phase 1 のみ実装** され、非対応 ASIC では orchagent が syslog にエラーを出してテーブル作成を断る[^1]。
+現状は **Phase 1 のみ実装** され、非対応 ASIC では [orchagent](../reference/glossary.md#term-orchagent) が syslog にエラーを出してテーブル作成を断る[^1]。
 
 ### `STATE_DB` capability 公開
 
@@ -156,3 +156,5 @@ config acl add table -s ingress -p Ethernet0 DATAACL L3V4V6
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 65e3d37d723f -->

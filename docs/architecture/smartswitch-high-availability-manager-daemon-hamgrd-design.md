@@ -32,13 +32,13 @@ related:
 
 ## 概要
 
-`hamgrd` は SmartSwitch の **NPU 側 HA container 内で動く管理デーモン**[^1]。HA 状態機械の駆動、failover 調整、SDN controller config の DPU 配信、DPU/vDPU の health 集約、BFD responder プログラミングを担う。actor model で機能を分割し、各 actor は **swbus ローカルメッセージバス** で通信し state は STATE_DB の対応 table に書く。DPU-Driven mode と Switch-Driven mode の 2 モード対応で、本 HLD は前者中心。
+`hamgrd` は [SmartSwitch](../reference/glossary.md#term-smartswitch) の **[NPU](../reference/glossary.md#term-npu) 側 HA container 内で動く管理デーモン**[^1]。HA 状態機械の駆動、failover 調整、SDN controller config の [DPU](../reference/glossary.md#term-dpu) 配信、DPU/vDPU の health 集約、[BFD](../reference/glossary.md#term-bfd) responder プログラミングを担う。actor model で機能を分割し、各 actor は **swbus ローカルメッセージバス** で通信し state は [STATE_DB](../reference/glossary.md#term-state_db) の対応 table に書く。DPU-Driven mode と Switch-Driven mode の 2 モード対応で、本 [HLD](../reference/glossary.md#term-hld) は前者中心。
 
 ## 動作仕様
 
 ### Actor とテーブル対応
 
-| Actor | resource path | CONFIG_DB | STATE_DB |
+| Actor | resource path | [CONFIG_DB](../reference/glossary.md#term-config_db) | STATE_DB |
 |-------|---------------|-----------|----------|
 | Global Config | `ha-global/config` | `DASH_HA_GLOBAL_CONFIG_TABLE` | `DASH_HA_GLOBAL_CONFIG_STATE` |
 | DPU | `dpu/<dpu-id>` | `DPU:<dpu-id>` | `DASH_HA_DPU_STATE:<dpu-id>` |
@@ -50,7 +50,7 @@ related:
 
 ### Actor 起動 / 動的変動
 
-- `hamgrd` 起動直後に CONFIG_DB / APPL_DB の既存 table から **初期 actor 群（global config / dpu / vdpu / ha set / ha scope）を作成**[^1]
+- `hamgrd` 起動直後に CONFIG_DB / [APPL_DB](../reference/glossary.md#term-appl_db) の既存 table から **初期 actor 群（global config / dpu / vdpu / ha set / ha scope）を作成**[^1]
 - APPL_DB は SDN controller から動的更新されるため、新規 HA set 等の create/delete 時に actor を生成・破棄
 
 ### DPU と vDPU の状態集約
@@ -92,7 +92,7 @@ HA Set は **どの vDPU をペアにするかを定義** するだけのほぼ�
 - HA Set actor は `DASH_HA_SET_CONFIG_TABLE` の vDPU リストを subscribe
 - `DASH_HA_GLOBAL_CONFIG` と vDPU 状態を集約して自分の state を更新
 - scope が `dpu` なら DPU 単位の forwarding rule を設定
-- ローカル vDPU が含まれる HA Set では **DPU 側 HA Set table** を program して ENI から参照可能にする
+- ローカル vDPU が含まれる HA Set では **DPU 側 HA Set table** を program して [ENI](../reference/glossary.md#term-eni) から参照可能にする
 
 ### HA Scope workflow（DPU-Driven mode）
 
@@ -175,7 +175,7 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 ## 干渉する機能
 
 - **Smart Switch HA HLD（親 HLD）**: 全体設計
-- **DASH (Disaggregated API for SONiC Hosts)**: ENI / HA Scope の管理対象
+- **[DASH](../reference/glossary.md#term-dash) (Disaggregated API for SONiC Hosts)**: ENI / HA Scope の管理対象
 - **BFD responder**: DPU が最終 state に到達したとき DPU actor が program
 - **dpu-graceful-shutdown / DPU upgrade 系**: DPU actor の state 監視と整合性が必要
 
@@ -260,3 +260,5 @@ HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU �
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c3703d8bf136 -->

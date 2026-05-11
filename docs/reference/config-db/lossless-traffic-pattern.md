@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-ロスレスフロー (PFC で守るフロー) のトラフィックパターンを記述する設定テーブル[^1]。
+ロスレスフロー ([PFC](../../reference/glossary.md#term-pfc) で守るフロー) のトラフィックパターンを記述する設定テーブル[^1]。
 ヘッドルームサイズの動的計算 (`buffermgrd` の dynamic-buffer モード) において、平均パケットサイズや小パケット比率を入力として使う。
 
 <!-- cdb-mermaid -->
@@ -61,8 +61,8 @@ LOSSLESS_TRAFFIC_PATTERN|<name>
 
 ## 関連 CONFIG_DB / YANG
 
-- 関連 CONFIG_DB: `DEFAULT_LOSSLESS_BUFFER_PARAMETER`, `BUFFER_PROFILE`, `BUFFER_POOL`
-- 関連 YANG: `sonic-lossless-traffic-pattern`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEFAULT_LOSSLESS_BUFFER_PARAMETER`, `BUFFER_PROFILE`, `BUFFER_POOL`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-lossless-traffic-pattern`
 
 <!-- ref-triangle:start -->
 
@@ -101,3 +101,5 @@ sonic-db-cli CONFIG_DB hgetall 'LOSSLESS_TRAFFIC_PATTERN|AZURE'
 show buffer profile
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 83863764844d -->

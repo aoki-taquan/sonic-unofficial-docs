@@ -9,7 +9,7 @@ sources: []
 
 # 内部実装
 
-L2 / VLAN / LAG / MC-LAG の内部実装は「kernel と orchagent の二重管理」を理解するのが鍵です。Linux bond / bridge / vlan device の状態と、SAI の LAG / VLAN member / FDB entry が常に同期しているわけではなく、teamd / portsyncd / vlanmgrd / fdbsyncd が橋渡しをします。
+L2 / [VLAN](../../reference/glossary.md#term-vlan) / [LAG](../../reference/glossary.md#term-lag) / MC-LAG の内部実装は「kernel と [orchagent](../../reference/glossary.md#term-orchagent) の二重管理」を理解するのが鍵です。Linux bond / bridge / vlan device の状態と、[SAI](../../reference/glossary.md#term-sai) の LAG / VLAN member / [FDB](../../reference/glossary.md#term-fdb) entry が常に同期しているわけではなく、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / [portsyncd](../../reference/glossary.md#term-portsyncd) / [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) / [fdbsyncd](../../reference/glossary.md#term-fdbsyncd) が橋渡しをします。
 
 ## データフロー
 
@@ -35,12 +35,12 @@ flowchart LR
 | コンポーネント | 主なクラス | 責務 |
 | --- | --- | --- |
 | `PortsOrch` (`orchagent/portsorch.cpp`) | `PortsOrch::doTask`、`initializePort`、`addLag`、`addLagMember` | PORT / LAG / VLAN を SAI に投入。最も巨大な Orch |
-| `VlanMgr` (`cfgmgr/vlanmgr.cpp`) | `VlanMgr::doTask` | CONFIG_DB の `VLAN` / `VLAN_MEMBER` を bridge fdb 設定と APPL_DB に反映 |
+| `VlanMgr` (`cfgmgr/vlanmgr.cpp`) | `VlanMgr::doTask` | [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VLAN` / `VLAN_MEMBER` を bridge fdb 設定と [APPL_DB](../../reference/glossary.md#term-appl_db) に反映 |
 | `IntfMgr` (`cfgmgr/intfmgr.cpp`) | `IntfMgr::doTask` | router interface の IP/MTU を kernel に設定し、orchagent 用 APPL_DB key を作る |
 | `FdbOrch` (`orchagent/fdborch.cpp`) | `FdbOrch::doTask`、`addFdbEntry`、`handleFdbNotification` | static FDB と learned FDB の管理、aging notification |
-| `teamd` / `teamsyncd` | open source teamd + `teamsyncd.cpp` | LACP の実装は teamd。teamsyncd が kernel bond state を STATE_DB / APPL_DB へ |
+| `teamd` / `teamsyncd` | open source teamd + `teamsyncd.cpp` | [LACP](../../reference/glossary.md#term-lacp) の実装は teamd。teamsyncd が kernel bond state を [STATE_DB](../../reference/glossary.md#term-state_db) / APPL_DB へ |
 | `portsyncd` (`portsyncd/portsyncd.cpp`) | `PortSyncd::run` | netlink で kernel の link state を APPL_DB に反映 |
-| `fdbsyncd` (`fdbsyncd/fdbsync.cpp`) | EVPN type-2 同期も担う。kernel bridge fdb と APPL_DB の同期 |
+| `fdbsyncd` (`fdbsyncd/fdbsync.cpp`) | [EVPN](../../reference/glossary.md#term-evpn) type-2 同期も担う。kernel bridge fdb と APPL_DB の同期 |
 | `iccpd` (`linkmgrd` ではなく `iccpd`) | `iccpd/` 配下 | MC-LAG 制御。ICCP メッセージで peer と sync、active/standby を決め APPL_DB に書く |
 
 ## SAI 属性の使用一覧
@@ -74,18 +74,18 @@ ASIC_DB:
   LAG, LAG_MEMBER, VLAN, VLAN_MEMBER, BRIDGE_PORT, FDB_ENTRY, STP
 ```
 
-`FdbOrch` は ASIC からの notification (`SAI_FDB_EVENT_LEARNED / AGED / FLUSHED`) を Redis pub/sub 経由で受け、APPL_DB.FDB_TABLE を更新します。MC-LAG の remote FDB は iccpd が `MCLAG_REMOTE_FDB_TABLE` に書き、`FdbOrch` がそれを static 同等として SAI に投入します。
+`FdbOrch` は ASIC からの notification (`SAI_FDB_EVENT_LEARNED / AGED / FLUSHED`) を [Redis](../../reference/glossary.md#term-redis) pub/sub 経由で受け、APPL_DB.FDB_TABLE を更新します。MC-LAG の remote FDB は iccpd が `MCLAG_REMOTE_FDB_TABLE` に書き、`FdbOrch` がそれを static 同等として SAI に投入します。
 
 ## ZMQ / Redis pub/sub
 
-- 通常 L2 系は ProducerStateTable / SubscriberStateTable の Redis pub/sub のみ。ZMQ は使いません。
+- 通常 L2 系は [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / SubscriberStateTable の Redis pub/sub のみ。ZMQ は使いません。
 - FDB notification は `ASIC_DB` の notification channel（Redis pub/sub）で `FdbOrch` に届きます。
 - teamsyncd → APPL_DB は netlink → ProducerStateTable で、teamd 自体は Unix socket DBus で teamsyncd と話します。
 
 ## 既知の実装上の制約
 
 - VLAN ID は SONiC では `Vlan<id>` の文字列キーで扱われ、`VLAN_MEMBER|Vlan100|Ethernet0` のように `|` 区切り。`vlanmgrd` 内で id の桁違いやスペースが入ると silent に skip されることが過去 issue で報告されています。
-- MC-LAG（iccpd ベース）と EVPN-MH（EVPN multi-homing、FRR ベース）は別実装で、同じスイッチで両立する設計にはなっていません。
+- MC-LAG（iccpd ベース）と [EVPN-MH](../../reference/glossary.md#term-evpn-mh)（EVPN multi-homing、[FRR](../../reference/glossary.md#term-frr) ベース）は別実装で、同じスイッチで両立する設計にはなっていません。
 - FDB MAC move は ASIC 通知遅延と orchagent 内のリオーダリングで一時的に同じ MAC が複数ポート所属に見えることがあります。`FdbOrch::handleFdbNotification` が `SAI_FDB_EVENT_MOVE` を扱いますが、ASIC が MOVE ではなく LEARNED + DELETE を別タイミングで上げる場合に瞬間的に重複が出ます。
 - LAG member の dynamic add/remove は SAI 側で `EGRESS_DISABLE` を切り替えるだけの実装と、`LAG_MEMBER` を作り直す実装があり、ベンダで挙動が違います。`PortsOrch::setLagMemberEgressDisable` 経路を取れない ASIC では一瞬パケットロスが入ります。
 - STP は SONiC では PVST / RPVST の制御プレーンが limited で、`stp` モジュール ([sonic-stp](https://github.com/sonic-net/sonic-stp)) が有効になっている場合のみ動きます。
@@ -98,7 +98,7 @@ iccpd は peer 2 台間で ICCP セッションを張り、以下の状態を同
 | --- | --- | --- |
 | LAG member status | local / remote の port-channel member 健全性 | `MCLAG_LOCAL_INTF_TABLE`、`MCLAG_REMOTE_INTF_TABLE` |
 | FDB | learned MAC | `MCLAG_REMOTE_FDB_TABLE` → FdbOrch |
-| ARP / ND | neighbor entry | `MCLAG_NEIGH_TABLE` → NeighOrch |
+| [ARP](../../reference/glossary.md#term-arp) / ND | neighbor entry | `MCLAG_NEIGH_TABLE` → NeighOrch |
 | IPv4/IPv6 route | route leak（オプション） | APPL_DB 経由 |
 
 `MCLAG_DOMAIN` テーブルの `peer_ip` / `source_ip` / `keepalive_interval` / `session_timeout` が ICCP TCP セッションを定義します。session timeout 超過で active/standby が切替り、standby 側 LAG member は `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE = true` になります。
@@ -132,3 +132,5 @@ ASIC からの FDB 通知は `ASIC_DB` の notification channel（Redis pub/sub�
 - [MC-LAG enhancements](../../switching/mclag-enhancements.md)
 - [LAG on distributed VOQ system](../../switching/lag-on-distributed-voq-system.md)
 - [SONiC IP LAG incremental update](../../switching/sonic-ip-lag-incremental-update.md)
+
+<!-- glossary-links-injected: 9700865c43d3 -->

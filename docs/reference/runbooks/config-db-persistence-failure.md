@@ -32,7 +32,7 @@ related:
 
 1. **disk full**: `/etc/sonic` を含む rootfs が満杯
 2. **read-only file system**: ストレージ障害で remount-ro
-3. **json schema 違反**: CONFIG_DB に YANG 違反データが入っている
+3. **json schema 違反**: [CONFIG_DB](../../reference/glossary.md#term-config_db) に [YANG](../../reference/glossary.md#term-yang) 違反データが入っている
 4. **権限問題**: 直接 redis-cli で書き込んだ場合に group/other write 不可
 5. **multi-asic で `config save -y` の subprocess 失敗**
 
@@ -89,5 +89,7 @@ sudo dmesg | tail -50
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb — config save 実装
-[^2]: sonic-net/sonic-swss-common @ 4305596 — configdb.cpp
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config save 実装
+[^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 4305596 — configdb.cpp
+
+<!-- glossary-links-injected: 24b53b0175df -->

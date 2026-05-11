@@ -30,8 +30,8 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **NAT zone 設定漏れ**: interface に `nat_zone` が未設定 / inside/outside の組合せ不正
-2. **CRM NAT table の枯渇**: dynamic NAT で空きエントリなし
+1. **[NAT](../../reference/glossary.md#term-nat) zone 設定漏れ**: interface に `nat_zone` が未設定 / inside/outside の組合せ不正
+2. **[CRM](../../reference/glossary.md#term-crm) NAT table の枯渇**: dynamic NAT で空きエントリなし
 3. **timeout 短すぎ**: idle timeout / udp_timeout で先に削除
 4. **protocol 別 binding ない**: TCP のみ pool に bind され UDP / ICMP は通らない
 5. **conntrack 連携の不整合**: `nf_conntrack` が ASIC 側 NAT と乖離
@@ -93,5 +93,7 @@ sudo dmesg | grep -i nf_conntrack | tail -50
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ master — natorch.cpp
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — natorch.cpp
 [^2]: sonic-net/sonic-swss @ master — natsyncd.cpp
+
+<!-- glossary-links-injected: 6132e8ff8c52 -->

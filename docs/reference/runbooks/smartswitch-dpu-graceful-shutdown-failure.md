@@ -26,13 +26,13 @@ related:
 
 - `config chassis modules shutdown DPU0` がタイムアウト
 - `show chassis modules status` で `oper_status` が `Online` のまま
-- shutdown 後も DPU プロセスが残り CPU を消費
+- shutdown 後も [DPU](../../reference/glossary.md#term-dpu) プロセスが残り CPU を消費
 
 ## 想定原因（優先度順）
 
-1. **active ENI / flow 残存**: drain 完了前に shutdown 要求
+1. **active [ENI](../../reference/glossary.md#term-eni) / flow 残存**: drain 完了前に shutdown 要求
 2. **chassisd ↔ DPU 内部 RPC タイムアウト**
-3. **STATE_DB の状態遷移が遅延**: `CHASSIS_MODULE_TABLE` 更新詰まり
+3. **[STATE_DB](../../reference/glossary.md#term-state_db) の状態遷移が遅延**: `CHASSIS_MODULE_TABLE` 更新詰まり
 4. **PCIe / power 制御コマンドの失敗**: platform plugin の異常
 5. **暴走プロセスが SIGTERM を無視**
 
@@ -89,4 +89,6 @@ sudo cat /sys/class/pci_bus/.../power/control
 ## 引用元
 
 [^1]: sonic-net/sonic-platform-daemons @ master — chassisd
-[^2]: sonic-net/sonic-utilities @ master — chassis_modules.py
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — chassis_modules.py
+
+<!-- glossary-links-injected: d32d5a339f26 -->

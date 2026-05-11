@@ -22,16 +22,16 @@ keywords:
 
 # 概念
 
-SRv6、MPLS、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。SONiC で読み解く前に、まずどこで通常の routing 章（[02 BGP](../02-bgp/index.md) や [04 VRF / ECMP](../04-vrf-ecmp/index.md)）と分かれるかを整理します。
+[SRv6](../../reference/glossary.md#term-srv6)、[MPLS](../../reference/glossary.md#term-mpls)、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。SONiC で読み解く前に、まずどこで通常の routing 章（[02 BGP](../02-bgp/index.md) や [04 VRF / ECMP](../04-vrf-ecmp/index.md)）と分かれるかを整理します。
 
 ## この章は何のためにあるか
 
-通常の BGP / VRF 章では「宛先 IP に対応する nexthop を引き、L2 ヘッダを差し替えて送出する」までを扱います。本章はそこに **追加のヘッダ操作（push / pop / swap）** や **経路情報の付加（SID リスト、HbH オプション）** が入る場合、SONiC のどの daemon と DB がどう拡張されるかを読み解きます。読み手が最初に持つ疑問は次の 4 つで、本章のすべての節はそれに答える形で並んでいます。
+通常の [BGP](../../reference/glossary.md#term-bgp) / [VRF](../../reference/glossary.md#term-vrf) 章では「宛先 IP に対応する nexthop を引き、L2 ヘッダを差し替えて送出する」までを扱います。本章はそこに **追加のヘッダ操作（push / pop / swap）** や **経路情報の付加（SID リスト、HbH オプション）** が入る場合、SONiC のどの daemon と DB がどう拡張されるかを読み解きます。読み手が最初に持つ疑問は次の 4 つで、本章のすべての節はそれに答える形で並んでいます。
 
 1. SRv6 / MPLS / Path Tracing は「同じ拡張ヘッダ」の仲間か、それとも別物か
 2. SONiC に入れるとき、どの daemon と DB が増えるか／流用されるか
 3. 既存の BGP / VRF 設定とどこで衝突するか
-4. どこまでが master 実装済みで、どこから提案段階の HLD か
+4. どこまでが master 実装済みで、どこから提案段階の [HLD](../../reference/glossary.md#term-hld) か
 
 ## 何を解決するか
 
@@ -62,7 +62,7 @@ flowchart LR
   PORTSORCH --> SYNCD
 ```
 
-通常の BGP route が `fpmsyncd -> routeorch` で流れるのに対し、SRv6 の SID / Policy / Steer 情報は `bgpcfgd (SRv6Mgr) -> srv6orch` で流れます。MPLS は label を持つ route として `LABEL_ROUTE_TABLE` に乗りますが、L3 nexthop は通常の routeorch と共有します。Path Tracing は forwarding そのものを変えず、port 属性として SAI に渡るだけです。
+通常の BGP route が `fpmsyncd -> routeorch` で流れるのに対し、SRv6 の SID / Policy / Steer 情報は `bgpcfgd (SRv6Mgr) -> srv6orch` で流れます。MPLS は label を持つ route として `LABEL_ROUTE_TABLE` に乗りますが、L3 nexthop は通常の routeorch と共有します。Path Tracing は forwarding そのものを変えず、port 属性として [SAI](../../reference/glossary.md#term-sai) に渡るだけです。
 
 ## 用語の整理
 
@@ -99,16 +99,16 @@ sequenceDiagram
   RO->>SAI: label route / encap nexthop
 ```
 
-ポイントは、**operator が直接書く部分（locator / sid / policy / steer）** と **FRR 経由で来る部分（L3VPN route）** が同じ章で扱われる点です。Phase 1 では FRR の SRv6 が未成熟なため、operator が CONFIG_DB を書く割合が大きくなります。
+ポイントは、**operator が直接書く部分（locator / sid / policy / steer）** と **[FRR](../../reference/glossary.md#term-frr) 経由で来る部分（L3VPN route）** が同じ章で扱われる点です。Phase 1 では FRR の SRv6 が未成熟なため、operator が [CONFIG_DB](../../reference/glossary.md#term-config_db) を書く割合が大きくなります。
 
 ## 似た機能との違い
 
 | 比較 | 共通点 | 違い |
 | --- | --- | --- |
-| EVPN-VXLAN との違い | underlay が L3、tenant を多重化する | EVPN は L2 拡張も含み、VXLAN UDP を使う。SRv6 は IPv6 SRH、MPLS は label。 |
+| [EVPN](../../reference/glossary.md#term-evpn)-[VXLAN](../../reference/glossary.md#term-vxlan) との違い | underlay が L3、tenant を多重化する | EVPN は L2 拡張も含み、VXLAN UDP を使う。SRv6 は IPv6 SRH、MPLS は label。 |
 | Static route との違い | 経路を operator が指定する | static route は「次の hop」のみ指定。SRv6 / MPLS は **経路全体を SID/label の列で指定** できる。 |
-| GRE / IPinIP との違い | encap で tenant を運ぶ | GRE は単純な tunnel、SRv6 は SID 列で TE / VPN / function を同時に表現できる。 |
-| Inband telemetry (INT) との違い | data plane に観測情報を埋め込む | INT は metadata stack をパケットに積む。Path Tracing は 4 byte MCD と HbH オプションに限定。 |
+| GRE / [IPinIP](../../reference/glossary.md#term-ipinip) との違い | encap で tenant を運ぶ | GRE は単純な tunnel、SRv6 は SID 列で TE / VPN / function を同時に表現できる。 |
+| Inband telemetry ([INT](../../reference/glossary.md#term-int)) との違い | data plane に観測情報を埋め込む | INT は metadata stack をパケットに積む。Path Tracing は 4 byte MCD と HbH オプションに限定。 |
 
 ## SRv6 の積み上げ順
 
@@ -126,12 +126,12 @@ SRv6 は HLD が一気に揃っているわけではなく、機能ごとに別 
 
 SONiC の MPLS は **静的 LSP** を前提に、IPv4/IPv6 routing インフラを MPLS にも拡張する設計です。動的シグナリング（LDP / RSVP-TE）は初期 scope 外で、以下の 4 点が基盤になります。
 
-- **per-RIF で MPLS を enable/disable** — `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` の `mpls` 属性で明示的に許可した interface のみ MPLS を扱う。
+- **per-[RIF](../../reference/glossary.md#term-rif) で MPLS を enable/disable** — `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` の `mpls` 属性で明示的に許可した interface のみ MPLS を扱う。
 - **Push / Pop / Swap** — implicit-null / explicit-null を含むラベル操作。
 - **bulk MPLS in-segment entry の SAI programming** — `LABEL_ROUTE_TABLE` を APP_DB 経由で `fpmsyncd` が `AF_MPLS` の netlink から受けて流し込む。
-- **CRM 統合** — MPLS in-segment / nexthop の使用量を Critical Resource Monitoring に乗せる。
+- **[CRM](../../reference/glossary.md#term-crm) 統合** — MPLS in-segment / nexthop の使用量を Critical Resource Monitoring に乗せる。
 
-QoS 連携は `MPLS_TC_TO_TC_MAP` と `PORT_QOS_MAP` の `mpls_tc_to_tc_map` フィールドで、MPLS パケットの TC を SONiC 内部 TC に変換します。
+[QoS](../../reference/glossary.md#term-qos) 連携は `MPLS_TC_TO_TC_MAP` と `PORT_QOS_MAP` の `mpls_tc_to_tc_map` フィールドで、MPLS パケットの TC を SONiC 内部 TC に変換します。
 
 ## Path Tracing は何を観測するか
 
@@ -188,7 +188,7 @@ flowchart LR
 - **既存 MPLS 網との接続** — SONiC を MPLS LSR として配置し、静的 LSP で連携する
 - **障害観測の解像度向上** → Path Tracing で経路上の各 hop の通過時刻と nexthop を probe 単位で取る
 
-純粋な BGP / ECMP では表現できない「経路の制御」「経路の可観測性」を担うのがこの章です。
+純粋な BGP / [ECMP](../../reference/glossary.md#term-ecmp) では表現できない「経路の制御」「経路の可観測性」を担うのがこの章です。
 
 ### SONiC 内での位置
 
@@ -226,7 +226,7 @@ flowchart TB
     FRR -.AF_MPLS netlink.-> FPM
 ```
 
-「経路の決定」は FRR、「ラベル / SID の生成と SAI への落とし込み」は SONiC 内 orchagent と分担しています。
+「経路の決定」は FRR、「ラベル / SID の生成と SAI への落とし込み」は SONiC 内 [orchagent](../../reference/glossary.md#term-orchagent) と分担しています。
 
 ### 用語の最短整理
 
@@ -265,7 +265,7 @@ sequenceDiagram
     DST->>DST: SRv6 decap して IPv4 forward
 ```
 
-ここで Neighbor 未解決の `uA` / `End.X` 系は `srv6orch` の pending queue で待ち、Neighbor 解決後に SAI への push がリトライされます。設定したのに動かない場合は ARP/ND 状態と pending queue の双方を確認します。
+ここで Neighbor 未解決の `uA` / `End.X` 系は `srv6orch` の pending queue で待ち、Neighbor 解決後に SAI への push がリトライされます。設定したのに動かない場合は [ARP](../../reference/glossary.md#term-arp)/ND 状態と pending queue の双方を確認します。
 
 ### 似ているが別物のもの
 
@@ -274,7 +274,7 @@ sequenceDiagram
 | [BGP](../02-bgp/index.md) | 経路情報の交換そのもの。SRv6/MPLS で追加される BGP family（SR-MPLS / SRv6 L3VPN）の挙動は本章 |
 | [VRF / ECMP](../04-vrf-ecmp/index.md) | VRF 一般構造は 04 章。SRv6 SID と VRF の紐付けは本章 |
 | [VXLAN / EVPN](../03-vxlan-evpn/index.md) | overlay は UDP encap 主体。SRv6 / MPLS は IPv6 / AF_MPLS native |
-| [DASH / SmartSwitch](../13-dash-smartswitch/index.md) | DASH は per-ENI overlay。SRv6 / MPLS は装置間 fabric の話 |
+| [DASH / SmartSwitch](../13-dash-smartswitch/index.md) | [DASH](../../reference/glossary.md#term-dash) は per-[ENI](../../reference/glossary.md#term-eni) overlay。SRv6 / MPLS は装置間 fabric の話 |
 | [Telemetry / SNMP](../09-telemetry-snmp/index.md) | counter / event の収集。Path Tracing は data plane に観測ヘッダを埋める点で別軸 |
 | LDP / RSVP-TE | 動的 MPLS シグナリング。SONiC は初期 scope 外、本章は静的 LSP + bulk programming のみ |
 
@@ -302,3 +302,4 @@ sequenceDiagram
 - [BGP と FRR 制御プレーン](../02-bgp/index.md)
 - [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
 
+<!-- glossary-links-injected: 59d6df625996 -->

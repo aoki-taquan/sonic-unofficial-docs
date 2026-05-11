@@ -53,9 +53,9 @@ keywords:
 
 # L2 / VLAN / LAG / MC-LAG
 
-この章は、SONiC を L2 switch として読むときに最初に迷う「VLAN、VLAN interface、switchport、sub-port、LAG、MC-LAG はどの順番で理解すればよいか」を整理する入口です。
+この章は、SONiC を L2 switch として読むときに最初に迷う「[VLAN](../../reference/glossary.md#term-vlan)、VLAN interface、switchport、sub-port、[LAG](../../reference/glossary.md#term-lag)、MC-LAG はどの順番で理解すればよいか」を整理する入口です。
 
-既存ページは HLD、CLI、CONFIG_DB、YANG 参照が別々に並んでいます。ここでは、設計者や運用者が実際に持つ質問の順に、L2 forwarding の基本単位、VLAN と L3 SVI の境界、PortChannel と MC-LAG の責務、FDB / STP / storm control の運用確認、OpenConfig や VOQ との接点を読み直します。
+既存ページは [HLD](../../reference/glossary.md#term-hld)、CLI、[CONFIG_DB](../../reference/glossary.md#term-config_db)、[YANG](../../reference/glossary.md#term-yang) 参照が別々に並んでいます。ここでは、設計者や運用者が実際に持つ質問の順に、L2 forwarding の基本単位、VLAN と L3 SVI の境界、[PortChannel](../../reference/glossary.md#term-portchannel) と MC-LAG の責務、[FDB](../../reference/glossary.md#term-fdb) / STP / storm control の運用確認、OpenConfig や [VOQ](../../reference/glossary.md#term-voq) との接点を読み直します。
 
 ## この章で答える質問
 
@@ -69,11 +69,11 @@ keywords:
 ## 読み進め方
 
 1. [概念](concept.md): VLAN、VLAN interface、sub-port、LAG、MC-LAG の違い。
-2. [アーキテクチャ](architecture.md): CONFIG_DB から manager daemon、APPL_DB、orchagent、SAI へ流れる経路。
+2. [アーキテクチャ](architecture.md): CONFIG_DB から manager daemon、[APPL_DB](../../reference/glossary.md#term-appl_db)、[orchagent](../../reference/glossary.md#term-orchagent)、[SAI](../../reference/glossary.md#term-sai) へ流れる経路。
 3. [設定](setup.md): VLAN / PortChannel / interface / sub-port / TPID の代表パターン。
 4. [運用](operations.md): `show vlan`、`mclagdctl`、FDB、storm control、link damping の確認順。
 5. [発展トピック](advanced.md): OpenConfig、distributed VOQ LAG、Wake-on-LAN、他章との境界。
-6. [内部実装](internals.md): VlanMgr / PortChannelMgr / IntfMgr / FdbOrch の責務分担と APPL_DB / STATE_DB の整合を実装側から見る。
+6. [内部実装](internals.md): VlanMgr / PortChannelMgr / IntfMgr / FdbOrch の責務分担と APPL_DB / [STATE_DB](../../reference/glossary.md#term-state_db) の整合を実装側から見る。
 
 ## 関連ページ
 
@@ -102,3 +102,4 @@ keywords:
 - [QoS / Buffer / PFC / Watermark](../08-qos-buffer/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
+<!-- glossary-links-injected: c0a5c230acb4 -->

@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-`vrf-vs-test-plan` が SwSS 内部の DB 反映を見るのに対し、本プランは **実 SONiC スイッチ上で VRF 機能を E2E 検証** する。`t0` トポロジ前提で、PortChannel / VLAN を 2 つの VRF (`Vrf1` / `Vrf2`) に分け、neighbor / route 学習、ACL redirect、loopback、warm-reboot を網羅する[^1]。
+`vrf-vs-test-plan` が SwSS 内部の DB 反映を見るのに対し、本プランは **実 SONiC スイッチ上で [VRF](../reference/glossary.md#term-vrf) 機能を E2E 検証** する。`t0` トポロジ前提で、[PortChannel](../reference/glossary.md#term-portchannel) / [VLAN](../reference/glossary.md#term-vlan) を 2 つの VRF (`Vrf1` / `Vrf2`) に分け、neighbor / route 学習、[ACL](../reference/glossary.md#term-acl) redirect、loopback、warm-reboot を網羅する[^1]。
 
 ## 動作仕様
 
@@ -98,12 +98,12 @@ VRF 跨ぎリダイレクトでは **outgoing interface も明示** が必要[^1
 ## 制限事項
 
 - `t0` トポロジ前提
-- TODO（HLD 末尾）: `fallback_lookup` 属性、VRF 間 route leak、everflow VRF 対応、ssh 等 application の VRF 対応 は **本プラン範囲外**[^1]
+- TODO（[HLD](../reference/glossary.md#term-hld) 末尾）: `fallback_lookup` 属性、VRF 間 route leak、everflow VRF 対応、ssh 等 application の VRF 対応 は **本プラン範囲外**[^1]
 - 1000 VRF テストは生成時間 / メモリの観点で実機制約を受ける可能性あり
 
 ## 干渉する機能
 
-- **FRR (zebra/bgpd)**: VRF 別ルーティングテーブルの中核
+- **[FRR](../reference/glossary.md#term-frr) ([zebra](../reference/glossary.md#term-zebra)/bgpd)**: VRF 別ルーティングテーブルの中核
 - **ACL redirect**: `redirect:<ip>@<intf>` action の VRF 跨ぎ振る舞い
 - **warm-reboot**: system + swss warm の双方で連続トラフィックを保証
 
@@ -113,9 +113,9 @@ VRF 跨ぎリダイレクトでは **outgoing interface も明示** が必要[^1
 
 ## 裏取りメモ (batch 30, 2026-05-11)
 
-本ページは sonic-mgmt 配下の Ansible テストプラン記述で、対象実装側 (SONiC NOS) の確認ポイント:
+本ページは [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) 配下の Ansible テストプラン記述で、対象実装側 (SONiC NOS) の確認ポイント:
 
-- `sonic-swss/cfgmgr/vrfmgr.cpp:12-26` で `VRF_TABLE_START 1001` / `VRF_TABLE_END 5097` / `MGMT_VRF_TABLE_ID 6000` を持ち、`m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)` / `m_appVxlanVrfTableProducer(appDb, APP_VXLAN_VRF_TABLE_NAME)` / `m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)` / `m_stateVrfObjectTable(stateDb, STATE_VRF_OBJECT_TABLE_NAME)` を open。テストプランが要求する `config vrf` → CONFIG_DB → vrfmgrd → APPL_DB / Linux kernel の流路は cfgmgr に実装済み。
+- `sonic-swss/cfgmgr/vrfmgr.cpp:12-26` で `VRF_TABLE_START 1001` / `VRF_TABLE_END 5097` / `MGMT_VRF_TABLE_ID 6000` を持ち、`m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)` / `m_appVxlanVrfTableProducer(appDb, APP_VXLAN_VRF_TABLE_NAME)` / `m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)` / `m_stateVrfObjectTable(stateDb, STATE_VRF_OBJECT_TABLE_NAME)` を open。テストプランが要求する `config vrf` → [CONFIG_DB](../reference/glossary.md#term-config_db) → [vrfmgrd](../reference/glossary.md#term-vrfmgrd) → [APPL_DB](../reference/glossary.md#term-appl_db) / Linux kernel の流路は cfgmgr に実装済み。
 - 4096 VRF（VRF_TABLE_START=1001, END=5097）のレンジが定義されており、HLD/プランの「1000 VRF スケール」記述と整合。
 
 テストプラン自体は記述で、現行 master の vrfmgrd 実装と整合。`code-verified` に昇格。
@@ -126,3 +126,5 @@ VRF 跨ぎリダイレクトでは **outgoing interface も明示** が必要[^1
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3ad5f2c8e7bc -->

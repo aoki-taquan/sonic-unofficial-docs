@@ -63,13 +63,13 @@ SYSLOG_CONFIG_FEATURE|<service>
 
 ## 購読者
 
-- `hostcfgd` (`sonic-host-services` の syslog handler): CONFIG_DB → 当該 docker の rsyslog 設定再生成
+- `hostcfgd` (`sonic-host-services` の syslog handler): [CONFIG_DB](../../reference/glossary.md#term-config_db) → 当該 docker の rsyslog 設定再生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`SYSLOG_CONFIG`](syslog-config.md), [`FEATURE`](feature.md)
 - 関連 CLI: `config syslog rate-limit-container <service>`
-- 関連 YANG: `sonic-syslog`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-syslog`
 
 <!-- ref-triangle:start -->
 
@@ -109,3 +109,5 @@ show syslog rate-limit-container
 docker exec swss cat /etc/rsyslog.d/*.conf
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

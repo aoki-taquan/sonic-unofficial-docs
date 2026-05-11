@@ -33,7 +33,7 @@ sources:
 
 # QoS / Buffer の設定
 
-設定は「pool / profile を作る → port に classification を当てる → queue に scheduler / WRED を当てる → 必要なら PFC / PFCWD を有効化」の順で組むのが筋が良いです。テンプレートは多くのプラットフォームで `buffers.json.j2` / `qos.json.j2` として配布されていて、まずはそれを読み、必要なところだけ patch するのが現実解です。
+設定は「pool / profile を作る → port に classification を当てる → queue に scheduler / [WRED](../../reference/glossary.md#term-wred) を当てる → 必要なら [PFC](../../reference/glossary.md#term-pfc) / PFCWD を有効化」の順で組むのが筋が良いです。テンプレートは多くのプラットフォームで `buffers.json.j2` / `qos.json.j2` として配布されていて、まずはそれを読み、必要なところだけ patch するのが現実解です。
 
 ## CLI から触れる範囲
 
@@ -41,9 +41,9 @@ sources:
 - [`config qos`](../../reference/cli/config-qos.md) — `qos reload` で `/etc/sonic/qos.json` の再展開、`qos clear`、map 系の操作。
 - [`config pfcwd`](../../reference/cli/config-pfcwd.md) — PFCWD の start/stop/interval/action とポーリング設定。
 
-CONFIG_DB を直接編集する場合は次のテーブル群です。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) を直接編集する場合は次のテーブル群です。
 
-| 目的 | テーブル | YANG |
+| 目的 | テーブル | [YANG](../../reference/glossary.md#term-yang) |
 |------|----------|------|
 | Buffer pool 定義 | [`BUFFER_POOL`](../../reference/config-db/buffer-pool.md) | [sonic-buffer-pool](../../reference/yang/sonic-buffer-pool.md) |
 | Buffer profile | [`BUFFER_PROFILE`](../../reference/config-db/buffer-profile.md) | [sonic-buffer-profile](../../reference/yang/sonic-buffer-profile.md) |
@@ -220,7 +220,7 @@ config qos reload -n asic0
 
 ## YANG / gNMI から触る場合
 
-OpenConfig には QoS 系もありますが、SONiC の native YANG では上表の `sonic-*` YANG が一次情報です。gNMI から `BUFFER_PROFILE` / `QUEUE` / `SCHEDULER` を操作するときは map 整合（参照される profile が存在するか）を YANG validation が見ているので、profile 削除前に PG / queue の参照を外す手順を踏みます。
+OpenConfig には [QoS](../../reference/glossary.md#term-qos) 系もありますが、SONiC の native YANG では上表の `sonic-*` YANG が一次情報です。[gNMI](../../reference/glossary.md#term-gnmi) から `BUFFER_PROFILE` / `QUEUE` / `SCHEDULER` を操作するときは map 整合（参照される profile が存在するか）を YANG validation が見ているので、profile 削除前に PG / queue の参照を外す手順を踏みます。
 
 ```bash
 gnmi_set --replace='/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST[name=q_lossy_profile]:::JSON_IETF:::@/tmp/q_lossy_profile.json' \
@@ -245,3 +245,5 @@ gnmi_set --replace='/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BU
 - CONFIG_DB: [`BUFFER_POOL`](../../reference/config-db/buffer-pool.md) / [`BUFFER_PROFILE`](../../reference/config-db/buffer-profile.md) / [`SCHEDULER`](../../reference/config-db/scheduler.md) / [`PORT_QOS_MAP`](../../reference/config-db/port-qos-map.md)
 - YANG: [sonic-buffer-pool](../../reference/yang/sonic-buffer-pool.md) / [sonic-buffer-profile](../../reference/yang/sonic-buffer-profile.md) / [sonic-pfcwd](../../reference/yang/sonic-pfcwd.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md)
+
+<!-- glossary-links-injected: d51fadc7323f -->

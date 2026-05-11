@@ -13,7 +13,7 @@ sources:
 
 # 設定
 
-Multi-ASIC / VOQ chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」の 2 点です。
+Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」の 2 点です。
 
 ## ASIC namespace と CONFIG_DB の見取り図
 
@@ -25,11 +25,11 @@ flowchart LR
   SP --> A1[(asic1 CONFIG_DB<br>PORT / BGP / VLAN)]
 ```
 
-host namespace は管理面（hostname、`MGMT_INTERFACE`、`SNMP`、`DEVICE_METADATA.localhost`）を持ち、ASIC namespace は port、VLAN、BGP、interface など実データプレーンを構成する table を持ちます。CLI 引数の `--namespace` は ASIC 側を指す概念で、host CONFIG_DB は名前空間引数なしでアクセスします。
+host namespace は管理面（hostname、`MGMT_INTERFACE`、`SNMP`、`DEVICE_METADATA.localhost`）を持ち、ASIC namespace は port、[VLAN](../../reference/glossary.md#term-vlan)、[BGP](../../reference/glossary.md#term-bgp)、interface など実データプレーンを構成する table を持ちます。CLI 引数の `--namespace` は ASIC 側を指す概念で、host [CONFIG_DB](../../reference/glossary.md#term-config_db) は名前空間引数なしでアクセスします。
 
 ## Single JSON Configuration
 
-`multi-asic-single-json-configuration-design` HLD は、複数 namespace 用に分かれた `config_db.json` を 1 ファイルに統合する形式を定義します。トップレベルに `localhost` (host) と `asic0`, `asic1`, ... のキーを持つ構造で、`config load`/`config reload` がそれぞれの namespace の Redis に分配します。
+`multi-asic-single-json-configuration-design` [HLD](../../reference/glossary.md#term-hld) は、複数 namespace 用に分かれた `config_db.json` を 1 ファイルに統合する形式を定義します。トップレベルに `localhost` (host) と `asic0`, `asic1`, ... のキーを持つ構造で、`config load`/`config reload` がそれぞれの namespace の [Redis](../../reference/glossary.md#term-redis) に分配します。
 
 これにより Golden Config を 1 枚で管理でき、`sonic-cfggen` 経由で minigraph や Jinja テンプレからの生成も namespace 別に行わずに済みます。逆に、namespace ごとの個別ファイルを管理する従来形式も後方互換で残っているため、運用方針として「single JSON に寄せる」かどうかは事前に決めておく必要があります。
 
@@ -45,7 +45,7 @@ VOQ chassis や single-ASIC fixed VOQ system では、`DEVICE_METADATA.localhost
 - `chassis_hostname`: chassis 全体の名前（supervisor からも参照）。
 - `sub_role`: line card / supervisor の区別。
 
-これらは orchagent が VOQ orchestrator を有効化するか、Chassis DB に接続するか、自分が supervisor として動くかを決めるための識別子です。
+これらは [orchagent](../../reference/glossary.md#term-orchagent) が VOQ orchestrator を有効化するか、Chassis DB に接続するか、自分が supervisor として動くかを決めるための識別子です。
 
 ## Chassis DB と Inband Configuration
 
@@ -64,7 +64,7 @@ Chassis DB は supervisor 上の Redis なので、各 line card は supervisor 
 1 ASIC pizza-box ながら VOQ アーキテクチャを使うシステムは、以下の点で通常の pizza-box 設定と異なります。
 
 - `switch_type = voq` を `DEVICE_METADATA.localhost` に付ける。
-- system port table を自分自身の port から生成する（Chassis DB は持たないが、SAI system port object は作る）。
+- system port table を自分自身の port から生成する（Chassis DB は持たないが、[SAI](../../reference/glossary.md#term-sai) system port object は作る）。
 - VOQ counter、scheduler 設定は通常の pizza-box と異なる counter naming を持つ。
 
 通常運用では pizza-box と同じ感覚で扱えますが、CLI の `show queue` 系で system port 由来の出力が混じる点だけ注意します。
@@ -240,3 +240,5 @@ flowchart LR
 - [Automatic Module Provisioning for Chassis](../../platform/automatic-module-provisioning-for-chassis.md)
 - [Single-ASIC VOQ Fixed System](../../platform/single-asic-voq-fixed-system-sonic.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [advanced](advanced.md)
+
+<!-- glossary-links-injected: 05d8b676f155 -->

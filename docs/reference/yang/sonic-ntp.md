@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-mgmt_vrf`, `sonic-portchannel`, `sonic-loopback-interface`, `sonic-mgmt_port`, `sonic-types`
 - top container: `sonic-ntp`
 
-Network Time Protocol (NTP) client configuration YANG module for SONiC OS.[^1]
+Network Time Protocol (NTP) client configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -84,7 +84,7 @@ module: sonic-ntp
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `src_intf` | `sonic-ntp/NTP/global/src_intf` | `union` |  |  | union(leafref, leafref, leafref, leafref, string) | This is the interface whose IP address is used as the source IP address for generating NTP traffic. User is required to make sure that the NTP server is reachable via this IP address and the same I... |
-| `vrf` | `sonic-ntp/NTP/global/vrf` | `string` |  |  | pattern `mgmt|default` | NTP can be enabled only in one VRF at a time. In this revision, it is either default VRF or Management VRF. |
+| `vrf` | `sonic-ntp/NTP/global/vrf` | `string` |  |  | pattern `mgmt|default` | NTP can be enabled only in one [VRF](../../reference/glossary.md#term-vrf) at a time. In this revision, it is either default VRF or Management VRF. |
 | `authentication` | `sonic-ntp/NTP/global/authentication` | `stypes:admin_mode` |  | disabled |  | NTP authentication state |
 | `dhcp` | `sonic-ntp/NTP/global/dhcp` | `stypes:admin_mode` |  | enabled |  | Use NTP servers distributed by DHCP |
 | `server_role` | `sonic-ntp/NTP/global/server_role` | `stypes:admin_mode` |  | enabled |  | NTP server functionality state |
@@ -112,7 +112,7 @@ module: sonic-ntp
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `NTP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `NTP`
 - CONFIG_DB: `NTP_SERVER`
 - CONFIG_DB: `NTP_KEY`
 - CLI: `config ntp`
@@ -131,7 +131,7 @@ module: sonic-ntp
 
 ### 典型的なデプロイ位置
 
-- NTP / chrony 設定。`NTP_SERVER|<host>` / `NTP|global` を hostcfgd が chrony.conf に反映。
+- NTP / chrony 設定。`NTP_SERVER|<host>` / `NTP|global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が chrony.conf に反映。
 
 ### よくある落とし穴
 
@@ -156,3 +156,5 @@ show ntp
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0072c8c44112 -->

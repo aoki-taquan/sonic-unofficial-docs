@@ -120,7 +120,7 @@ active control processor への reboot が pending な状態で **更なる rebo
 
 ### warm / NSF reboot との関係
 
-`WARM` / `NSF` の挙動は **vendor 定義**。HLD 本文では「`WARM` と `NSF` が同じかは実装次第」と明記[^1]。SONiC での具体実装は別 HLD（Warmboot Manager HLD、リンク先は upstream / fork のドラフト段階）に委ねており、本 HLD 自体には warm reboot 経路の詳細記載は無い[^1]。
+`WARM` / `NSF` の挙動は **vendor 定義**。[HLD](../reference/glossary.md#term-hld) 本文では「`WARM` と `NSF` が同じかは実装次第」と明記[^1]。SONiC での具体実装は別 HLD（Warmboot Manager HLD、リンク先は upstream / fork のドラフト段階）に委ねており、本 HLD 自体には warm reboot 経路の詳細記載は無い[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/mgmt/gnmi/gnoi_system_hld.md#L176-L188 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -174,7 +174,7 @@ reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及無し。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及無し。
 
 ### 設定例
 
@@ -203,7 +203,7 @@ gnoi_client system cancel_reboot --message "delayed by SRE"
 
 ## 干渉する機能
 
-- **gNOI OS Activate**: `Activate(no_reboot=true)` 後の本 RPC で実 reboot を発火する想定[^1]
+- **[gNOI](../reference/glossary.md#term-gnoi) OS Activate**: `Activate(no_reboot=true)` 後の本 RPC で実 reboot を発火する想定[^1]
 - **gNOI FactoryReset.Start**: `RESET` の代替。reboot とは別のセマンティクス
 - **Warm / Fast reboot 機構**: SONiC 標準の `warm-reboot` / `fast-reboot` スクリプトとの連携経路は別 HLD 側で詳細化
 - **`config save` / `config reload`**: reboot で揮発する設定が無いか事前確認
@@ -233,3 +233,5 @@ gnoi_client system cancel_reboot --message "delayed by SRE"
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 809619d7ad9f -->

@@ -12,20 +12,20 @@ sources:
 
 # 設定
 
-PINS は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で ASIC を直接制御できるようにする機能です。本ページでは、PINS を実用的に動かすための設定フローを「P4RT を起動する」「コントローラ接続を許可する」「Send to Ingress / PacketIO を有効化する」の 3 フェーズで示し、よくある詰まりどころと対処も併記します。
+[PINS](../../reference/glossary.md#term-pins) は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で ASIC を直接制御できるようにする機能です。本ページでは、PINS を実用的に動かすための設定フローを「P4RT を起動する」「コントローラ接続を許可する」「Send to Ingress / PacketIO を有効化する」の 3 フェーズで示し、よくある詰まりどころと対処も併記します。
 
-CLI / CONFIG_DB の reference 整備が PINS では他機能より薄いため (後述の「現時点で不足している reference」節を参照)、本ページの CONFIG_DB スキーマは HLD と既存実装（`sonic-buildimage/dockers/docker-sonic-p4rt`、`sonic-pins/`）から推定したものを示します。実機では必ず `redis-cli HGETALL` で実際のキーを確認してから運用に組み込んでください。
+CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) の reference 整備が PINS では他機能より薄いため (後述の「現時点で不足している reference」節を参照)、本ページの CONFIG_DB スキーマは [HLD](../../reference/glossary.md#term-hld) と既存実装（`sonic-buildimage/dockers/docker-sonic-p4rt`、`sonic-pins/`）から推定したものを示します。実機では必ず `redis-cli HGETALL` で実際のキーを確認してから運用に組み込んでください。
 
 ## このページの読み方: PINS は controller-driven 系
 
-PINS は「運用者が `config p4rt ...` で 1 ルートずつ ACL / route / nexthop を入れる」プロダクトではありません。**人手で CLI を打つのは P4RT 自体の起動 / 証明書配備 / feature toggle あたりまで**で、データプレーンの設定 (route, ACL, nexthop, mirror, VRF など) は基本的に外部の **P4 controller** が P4Runtime gRPC で直接 ASIC に書き込みます。本ページの CLI / `redis-cli` 例は「P4RT を立ち上げる側」と「障害時の状態確認」を中心に据え、データプレーンの flow 投入は controller 側の責務であることを念頭に読んでください。
+PINS は「運用者が `config p4rt ...` で 1 ルートずつ [ACL](../../reference/glossary.md#term-acl) / route / nexthop を入れる」プロダクトではありません。**人手で CLI を打つのは P4RT 自体の起動 / 証明書配備 / feature toggle あたりまで**で、データプレーンの設定 (route, ACL, nexthop, mirror, [VRF](../../reference/glossary.md#term-vrf) など) は基本的に外部の **P4 controller** が P4Runtime gRPC で直接 ASIC に書き込みます。本ページの CLI / `redis-cli` 例は「P4RT を立ち上げる側」と「障害時の状態確認」を中心に据え、データプレーンの flow 投入は controller 側の責務であることを念頭に読んでください。
 
 代表的な設定経路は次の通りです。
 
 | 経路 | 用途 | 投入先 |
 |---|---|---|
-| P4 controller (P4Runtime gRPC) | 本番。ForwardingPipelineConfig + Write RPC で flow を大量投入 | `p4rt-app` 経由で `APPL_DB:P4RT_TABLE` → SAI |
-| gNMI (`/openconfig-interfaces:interfaces` 等) | port / VRF / interface の基盤側 | `CONFIG_DB` 各種 |
+| P4 controller (P4Runtime gRPC) | 本番。ForwardingPipelineConfig + Write RPC で flow を大量投入 | `p4rt-app` 経由で `APPL_DB:P4RT_TABLE` → [SAI](../../reference/glossary.md#term-sai) |
+| [gNMI](../../reference/glossary.md#term-gnmi) (`/openconfig-interfaces:interfaces` 等) | port / VRF / interface の基盤側 | `CONFIG_DB` 各種 |
 | `config feature state p4rt enabled` / `redis-cli` | 初期セットアップ、証明書配置、コンテナ起動 | `CONFIG_DB:FEATURE`、`CONFIG_DB:P4RT` |
 | `config route` 等の通常 SONiC CLI | **PINS と併用するモードでは原則使わない**（P4 controller の所有権と競合） | — |
 
@@ -61,7 +61,7 @@ PINS で controller 側が出すエラーは、層ごとに切り分けると見
 | 仲裁 | `ALREADY_EXISTS` / master 切替後の `PERMISSION_DENIED` | controller の `election_id`、`p4rt-app` ログの "Master arbitration" |
 | パイプライン | `INVALID_ARGUMENT` on `SetForwardingPipelineConfig` | P4Info と SAI capability 不整合、`--p4info` ログ |
 | フロー書込 | `WriteResponse` 内の per-entry `INVALID_ARGUMENT` / `RESOURCE_EXHAUSTED` | テーブル / アクションが SKU でサポートされているか、テーブル容量 |
-| PacketIO | PacketIn が来ない、PacketOut が ASIC に届かない | CoPP trap install、`psample` genl、`send_to_ingress` netdev |
+| PacketIO | PacketIn が来ない、PacketOut が ASIC に届かない | [CoPP](../../reference/glossary.md#term-copp) trap install、`psample` genl、`send_to_ingress` netdev |
 
 ```bash
 # controller 視点に近い確認 (NPU 上で代替)
@@ -186,7 +186,7 @@ PINS でデータプレーン punt (PacketIn) と CPU 注入 (PacketOut / Send t
 
 ### Send to Ingress hostif
 
-`SEND_TO_INGRESS_PORT` を APPL_DB に宣言すると `PortsOrch` が `send_to_ingress` netdev を生成します。CONFIG_DB ではなく APPL_DB なので注意:
+`SEND_TO_INGRESS_PORT` を [APPL_DB](../../reference/glossary.md#term-appl_db) に宣言すると `PortsOrch` が `send_to_ingress` netdev を生成します。CONFIG_DB ではなく APPL_DB なので注意:
 
 ```bash
 # APPL_DB は db number 0
@@ -274,7 +274,7 @@ PINS 系の reference 整備は他機能より薄く、ここで使った CONFIG
 - [reference/config-db/port.md](../../reference/config-db/port.md) — hostif / netdev 関連
 - [reference/config-db/copp-group.md](../../reference/config-db/copp-group.md) — CoPP の trap group
 - [reference/config-db/copp-trap.md](../../reference/config-db/copp-trap.md) — trap 個別
-- [reference/yang/sonic-copp.md](../../reference/yang/sonic-copp.md) — CoPP YANG (schema 側の正本)
+- [reference/yang/sonic-copp.md](../../reference/yang/sonic-copp.md) — CoPP [YANG](../../reference/glossary.md#term-yang) (schema 側の正本)
 
 ## 現時点で不足している reference
 
@@ -295,3 +295,5 @@ PINS 系は `reference/cli/*`、`reference/config-db/p4rt.md`、`reference/yang/
 - [P4RT App HLD](../../management/p4rt-application-hld.md)
 - [PacketIO HLD](../../management/packetio.md)
 - [Send to Ingress HLD](../../management/send-to-ingress-hld.md)
+
+<!-- glossary-links-injected: fd64496a02ec -->

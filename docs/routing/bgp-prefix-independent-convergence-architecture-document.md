@@ -31,21 +31,21 @@ related:
 - **NHG 階層**（service / underlay）の絵
 - **FAST DOWNLOAD / SLOW DOWNLOAD** とは具体的に何の経路か
 - SONiC の **どのファイル** に hierarchical NHG が入っているか
-- 何ができないか（hitless 要件、HW resource、HLD と実装の差）
+- 何ができないか（hitless 要件、HW resource、[HLD](../reference/glossary.md#term-hld) と実装の差）
 
 ## 1. なぜ PIC が必要か
 
-BGP overlay の数百万 route 規模で **影響を受けた N prefix を 1 件ずつ再プログラムする** とパケットロスが膨らむ。**PIC は収束コストを prefix 数 N に依存させず**、ECMP / primary-backup multipath を多段の **level of indirection (NHG)** で共有することで一定時間に抑える[^1]。
+[BGP](../reference/glossary.md#term-bgp) overlay の数百万 route 規模で **影響を受けた N prefix を 1 件ずつ再プログラムする** とパケットロスが膨らむ。**PIC は収束コストを prefix 数 N に依存させず**、[ECMP](../reference/glossary.md#term-ecmp) / primary-backup multipath を多段の **level of indirection (NHG)** で共有することで一定時間に抑える[^1]。
 
-IETF `draft-ietf-rtgwg-bgp-pic` を SONiC で実装するアーキテクチャ。本 HLD は protocol-independent（EVPN / MPLS / SRv6 のどれでも同じ枠組み）。
+IETF `draft-ietf-rtgwg-bgp-pic` を SONiC で実装するアーキテクチャ。本 HLD は protocol-independent（[EVPN](../reference/glossary.md#term-evpn) / [MPLS](../reference/glossary.md#term-mpls) / [SRv6](../reference/glossary.md#term-srv6) のどれでも同じ枠組み）。
 
 ## 2. 3 形態と発火条件
 
 | 形態 | トリガ | 検出 | 補助 |
 |------|--------|------|------|
-| **PIC Core** | underlay (IGP) 内部の故障 | local intf down / BFD | NHG 更新だけで全 prefix 影響 |
+| **PIC Core** | underlay (IGP) 内部の故障 | local intf down / [BFD](../reference/glossary.md#term-bfd) | NHG 更新だけで全 prefix 影響 |
 | **PIC Edge** | overlay (BGP nexthop) の喪失 | nexthop tracking via IGP/BGP | 別 PE への切替を NHG レベルで |
-| **PIC Local (FRR)** | local 接続 link 故障 | local intf down / BFD | egress 側 backup path に切替、ingress 通知までの繋ぎ |
+| **PIC Local ([FRR](../reference/glossary.md#term-frr))** | local 接続 link 故障 | local intf down / BFD | egress 側 backup path に切替、ingress 通知までの繋ぎ |
 
 ## 3. NHG 階層
 
@@ -77,7 +77,7 @@ flowchart LR
 | Phase | やる事 |
 |-------|--------|
 | **FAST DOWNLOAD** | NHG 1 オブジェクトの HW 更新（パス削除）。検出から ms オーダー |
-| **SLOW DOWNLOAD** | control plane (zebra/bgpd) の本来の収束結果を反映。route 個別更新 |
+| **SLOW DOWNLOAD** | control plane ([zebra](../reference/glossary.md#term-zebra)/bgpd) の本来の収束結果を反映。route 個別更新 |
 
 FAST で被害最小化、SLOW で正規化、の二段。
 
@@ -104,7 +104,7 @@ sequenceDiagram
     FPM->>OA: SLOW DOWNLOAD
 ```
 
-0-5 ステップで **HW 1 update を完了**、6 以降が SLOW（kernel netlink → zebra → bgpd → fpmsyncd → ASIC_DB の通常経路）[^1]。
+0-5 ステップで **HW 1 update を完了**、6 以降が SLOW（kernel netlink → zebra → bgpd → [fpmsyncd](../reference/glossary.md#term-fpmsyncd) → [ASIC_DB](../reference/glossary.md#term-asic_db) の通常経路）[^1]。
 
 ## 5. 実装の所在（裏取り）
 
@@ -116,7 +116,7 @@ HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal で�
 
 ## 6. CLI / CONFIG_DB / YANG
 
-本 HLD は **アーキテクチャ文書** で個別 CLI / CONFIG_DB / YANG の定義はない[^1]。具体的設定は zebra の `nexthop-group` 設定や BGP `bestpath` 系で表現される（HLD 未明記）。
+本 HLD は **アーキテクチャ文書** で個別 CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) の定義はない[^1]。具体的設定は zebra の `nexthop-group` 設定や BGP `bestpath` 系で表現される（HLD 未明記）。
 
 ## 7. 制限事項
 
@@ -127,8 +127,8 @@ HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal で�
 
 ## 8. 干渉する機能
 
-- **FRR zebra / bgpd**: NHG (`nexthop-group`) の生成と FPM 連携
-- **fpmsyncd / orchagent (nhgorch)**: APPL_DB → ASIC_DB の NHG 経路
+- **FRR zebra / bgpd**: NHG (`nexthop-group`) の生成と [FPM](../reference/glossary.md#term-fpm) 連携
+- **fpmsyncd / [orchagent](../reference/glossary.md#term-orchagent) (nhgorch)**: [APPL_DB](../reference/glossary.md#term-appl_db) → ASIC_DB の NHG 経路
 - **BFD**: 高速検出
 - **EVPN / MPLS / SRv6**: overlay service の付加（PIC は protocol-independent）
 - **`sonic-weighted-ecmp` / `local-ars-hld`**: NHG を共有する隣接機能
@@ -157,3 +157,5 @@ HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal で�
 - FRR zebra の nexthop-group 機能と FPM への伝搬経路確認
 - single ↔ NHG hitless transition のテスト存在確認
 -->
+
+<!-- glossary-links-injected: 9d861f4dd46a -->

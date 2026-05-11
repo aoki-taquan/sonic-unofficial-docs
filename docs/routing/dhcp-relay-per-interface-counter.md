@@ -31,11 +31,11 @@ related:
 
 ## 概要
 
-旧設計の DHCPv4 counter は `dhcpmon` のプロセスメモリ内で **VLAN/PortChannel 粒度のみ** を持ち、ユーザは syslog からしか可視化できなかった。DHCPv6 は `dhcp6relay` プロセスに counter ロジックが同居し、relay 機能と相互影響していた[^1]。
+旧設計の DHCPv4 counter は `dhcpmon` のプロセスメモリ内で **[VLAN](../reference/glossary.md#term-vlan)/[PortChannel](../reference/glossary.md#term-portchannel) 粒度のみ** を持ち、ユーザは syslog からしか可視化できなかった。DHCPv6 は `dhcp6relay` プロセスに counter ロジックが同居し、relay 機能と相互影響していた[^1]。
 
-本 HLD は[^1]:
+本 [HLD](../reference/glossary.md#term-hld) は[^1]:
 
-- DHCPv4 / DHCPv6 ともに **物理 / LAG / VLAN** 粒度の TX/RX counter を持つ
+- DHCPv4 / DHCPv6 ともに **物理 / [LAG](../reference/glossary.md#term-lag) / VLAN** 粒度の TX/RX counter を持つ
 - counter を **`COUNTERS_DB`** に永続化（プロセスメモリだけでは不可視）
 - DHCPv6 counter を `dhcp6relay` から **`dhcpmon`** に移動し、relay と分離
 - `show` / `sonic-clear` CLI を提供
@@ -175,3 +175,5 @@ sonic-clear dhcp_relay ipv6 counters [--dir TX|RX] [--type <type>] [<vlan>]
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8f3f485ba900 -->

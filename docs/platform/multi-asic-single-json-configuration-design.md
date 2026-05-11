@@ -56,7 +56,7 @@ CLI 互換のため **single-ASIC 機では従来の flat ConfigDB JSON** も扱
 |-----|----------|----------|
 | `config reload` | デフォルト `/etc/sonic/config_db.json` | 単一 file で全 ASIC を reload（key で振分け）|
 | `config reload <a.json,b0.json,...>` | カンマ区切り N 個 | 維持（後方互換）|
-| `config override-config-table` | single-ASIC のみ | multi-ASIC 対応（[sonic-utilities #2738]）|
+| `config override-config-table` | single-ASIC のみ | multi-ASIC 対応（[[sonic-utilities](../reference/glossary.md#term-sonic-utilities) #2738]）|
 | `config apply-patch` | multi-ASIC 非対応 | path に `/asicN/<TABLE>/...` を含む JsonPatch を**ループ展開**[^1] |
 | `show runningconfiguration all` | host のみ | Golden Config 形式で全 ASIC 表示 |
 | `config save` | N 個の file 生成 | 単一 file 保存に対応 |
@@ -88,7 +88,7 @@ flowchart LR
 
 ## YANG はどう当てるか
 
-Top に namespace layer が増えたままでは既存 YANG では検証できない。**namespace 単位（host / 各 asic）に分割して既存 YANG で validate** すれば良いという整理[^1]。新フィールドは不要。
+Top に namespace layer が増えたままでは既存 [YANG](../reference/glossary.md#term-yang) では検証できない。**namespace 単位（host / 各 asic）に分割して既存 YANG で validate** すれば良いという整理[^1]。新フィールドは不要。
 
 ### Pros / Cons
 
@@ -140,7 +140,7 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 
 - [Topics 12 Multi-ASIC / VOQ - operations](../topics/12-multi-asic-voq/operations.md)
 - [Topics 12 Multi-ASIC / VOQ - architecture](../topics/12-multi-asic-voq/architecture.md)
-- 関連 HLD: [SONiC on Multi-ASIC platforms](1-sonic-on-multi-asic-platforms.md) / [DB design for multi-ASIC](db-design-for-multi-asic-scenarios.md)
+- 関連 [HLD](../reference/glossary.md#term-hld): [SONiC on Multi-ASIC platforms](1-sonic-on-multi-asic-platforms.md) / [DB design for multi-ASIC](db-design-for-multi-asic-scenarios.md)
 
 [sonic-utilities #2738]: https://github.com/sonic-net/sonic-utilities/pull/2738
 
@@ -160,3 +160,5 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0c9d5bf2f30d -->

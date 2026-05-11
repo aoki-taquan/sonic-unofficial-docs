@@ -20,7 +20,7 @@ related:
 
 - module: `sonic-bgp-device-global`
 - namespace: `http://github.com/sonic-net/sonic-bgp-device-global`
-- revision: `2024-01-28` (Weighted ECMP using BGP link bandwidth), `2022-06-26` (initial)
+- revision: `2024-01-28` (Weighted [ECMP](../../reference/glossary.md#term-ecmp) using [BGP](../../reference/glossary.md#term-bgp) link bandwidth), `2022-06-26` (initial)
 - import: なし
 - top container: `sonic-bgp-device-global`
 
@@ -77,7 +77,7 @@ module: sonic-bgp-device-global
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BGP_DEVICE_GLOBAL`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_DEVICE_GLOBAL`
 - CLI: `config bgp` (`tsa`/`wcmp`/`idf`), `show bgp`
 
 <!-- ref-triangle:start -->
@@ -94,7 +94,7 @@ module: sonic-bgp-device-global
 
 ### 典型的なデプロイ位置
 
-- BGP のデバイス全体パラメータ。`BGP_DEVICE_GLOBAL|STATE` を介して FRR の `bgp` グローバル設定 (TCP-AO 等) を制御する。
+- BGP のデバイス全体パラメータ。`BGP_DEVICE_GLOBAL|STATE` を介して [FRR](../../reference/glossary.md#term-frr) の `bgp` グローバル設定 (TCP-AO 等) を制御する。
 
 ### よくある落とし穴
 
@@ -111,3 +111,5 @@ vtysh -c 'show bgp summary'
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 144dbe687305 -->

@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-mgmt_vrf`, `sonic-vrf`, `sonic-feature`
 - top container: `sonic-syslog`
 
-Remote syslog server and logging configuration YANG module for SONiC OS.[^1]
+Remote syslog server and logging configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -81,7 +81,7 @@ module: sonic-syslog
 | `server_address` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/server_address` | `inet:host` | yes |  |  | Syslog server IP address |
 | `source` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/source` | `inet:ip-address` |  |  |  | Syslog source IP address |
 | `port` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/port` | `inet:port-number` |  |  |  | Syslog server UDP port |
-| `vrf` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/vrf` | `union` |  |  | union(leafref, vrf-device) | Syslog VRF device |
+| `vrf` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/vrf` | `union` |  |  | union(leafref, vrf-device) | Syslog [VRF](../../reference/glossary.md#term-vrf) device |
 | `filter` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/filter` | `syslog-filter-type` |  |  |  | Syslog filter type |
 | `filter_regex` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/filter_regex` | `string` |  |  | pattern `[^\n\r]+` | Filter regex |
 | `protocol` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/protocol` | `rsyslog-protocol` |  |  |  | The protocol to send logs to remote server |
@@ -105,7 +105,7 @@ module: sonic-syslog
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SYSLOG_SERVER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SYSLOG_SERVER`
 - CONFIG_DB: `SYSLOG_CONFIG`
 - CLI: `config syslog`
 
@@ -123,7 +123,7 @@ module: sonic-syslog
 
 ### 典型的なデプロイ位置
 
-- syslog (rsyslog) リモートサーバ設定。`SYSLOG_SERVER|<host>` を hostcfgd が `/etc/rsyslog.d/` に反映。
+- syslog (rsyslog) リモートサーバ設定。`SYSLOG_SERVER|<host>` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `/etc/rsyslog.d/` に反映。
 
 ### よくある落とし穴
 
@@ -148,3 +148,5 @@ show syslog
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0072c8c44112 -->

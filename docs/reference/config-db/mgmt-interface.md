@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-帯域外管理 IF (`eth0`) に対する IP / gateway / forced routes を保持する[^1]。`hostcfgd` がこのテーブルから `/etc/network/interfaces` の `mgmt-` セクションを再生成する。`MGMT_VRF_CONFIG.mgmtVrfEnabled = true` のとき forced routes は mgmt VRF テーブルに追加される。
+帯域外管理 IF (`eth0`) に対する IP / gateway / forced routes を保持する[^1]。`hostcfgd` がこのテーブルから `/etc/network/interfaces` の `mgmt-` セクションを再生成する。`MGMT_VRF_CONFIG.mgmtVrfEnabled = true` のとき forced routes は mgmt [VRF](../../reference/glossary.md#term-vrf) テーブルに追加される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -67,9 +67,9 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `MGMT_PORT`、`MGMT_VRF_CONFIG`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `MGMT_PORT`、`MGMT_VRF_CONFIG`
 - 関連 CLI: `config interface ip add eth0 ...`
-- 関連 YANG: `sonic-mgmt_interface`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mgmt_interface`
 
 <!-- ref-triangle:start -->
 
@@ -106,3 +106,5 @@ show management_interface address
 ip -4 route show vrf mgmt
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->

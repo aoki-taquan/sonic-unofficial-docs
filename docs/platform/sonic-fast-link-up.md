@@ -47,7 +47,7 @@ related:
 1. **回復時のみ動作**: 初回はフル EQ、フラップ後の再起動でのみ高速経路を試行
 2. **品質ゲート**: `guard_time` で BER をチェック、`ber_threshold` 超過なら full EQ
 3. **3 グローバル + ポート毎 enable**: `polling_time` / `guard_time` / `ber_threshold` をスイッチ全体、`fast_linkup` をポート毎
-4. **Capability ゲート**: SAI から対応可否とレンジを問合せ、未対応は拒否 or safe no-op
+4. **Capability ゲート**: [SAI](../reference/glossary.md#term-sai) から対応可否とレンジを問合せ、未対応は拒否 or safe no-op
 
 ## 全体経路
 
@@ -158,7 +158,7 @@ show interfaces fast-linkup status
 
 ### YANG
 
-`sonic-fast-linkup.yang` モジュール（`SWITCH_FAST_LINKUP.GLOBAL` のみ）[^1]。ポート側 `fast_linkup` は `sonic-port.yang`。動的レンジは YANG ではモデリングせず CLI で STATE_DB を見て検証する[^1]。
+`sonic-fast-linkup.yang` モジュール（`SWITCH_FAST_LINKUP.GLOBAL` のみ）[^1]。ポート側 `fast_linkup` は `sonic-port.yang`。動的レンジは [YANG](../reference/glossary.md#term-yang) ではモデリングせず CLI で [STATE_DB](../reference/glossary.md#term-state_db) を見て検証する[^1]。
 
 ### 設定例
 
@@ -200,3 +200,5 @@ show interfaces fast-linkup status
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: db593ae1fe11 -->

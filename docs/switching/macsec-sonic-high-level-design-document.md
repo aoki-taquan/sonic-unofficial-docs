@@ -31,9 +31,9 @@ related:
 ## 読み手が知りたいこと
 
 1. SONiC で MACsec を有効化すると **どのコンポーネントが動く** のか？
-2. **CONFIG_DB に何を入れれば** 暗号化が始まるのか？
+2. **[CONFIG_DB](../reference/glossary.md#term-config_db) に何を入れれば** 暗号化が始まるのか？
 3. MKA（キー交換）は誰がやるのか？ なぜ **`wpa_supplicant` 拡張版** が必要なのか？
-4. **PFC** や **ACL** との相互作用は？
+4. **[PFC](../reference/glossary.md#term-pfc)** や **[ACL](../reference/glossary.md#term-acl)** との相互作用は？
 5. **トラブル時** に最初に見るべきログ / DB は？
 
 ## 1. 何が動くか（コンポーネント）
@@ -54,8 +54,8 @@ flowchart LR
 
 - **MACsec Mgr**: CONFIG_DB を読み `wpa_supplicant` を起動・制御
 - **wpa_supplicant（SONiC 拡張）**: MKA（Key Agreement）の peer を確立し、SAK（Secure Association Key）を生成
-- **SONiC plugin**: wpa_supplicant のイベント（SAK install/remove）を APPL_DB に書く
-- **MACsec Orch**: APPL_DB を購読し SAI MACsec API を呼ぶ
+- **SONiC plugin**: wpa_supplicant のイベント（SAK install/remove）を [APPL_DB](../reference/glossary.md#term-appl_db) に書く
+- **MACsec Orch**: APPL_DB を購読し [SAI](../reference/glossary.md#term-sai) MACsec API を呼ぶ
 - **ASIC（SAI MACsec）**: 実際の暗号化・復号
 
 ## 2. 設定（CONFIG_DB と CLI）
@@ -101,7 +101,7 @@ show macsec Ethernet0
 
 ## 3. MKA キー管理（wpa_supplicant 拡張）
 
-SONiC は `wpa_supplicant` を MKA エンドポイントとして使う。HLD 時点で **upstream に無い拡張** を施している[^1]:
+SONiC は `wpa_supplicant` を MKA エンドポイントとして使う。[HLD](../reference/glossary.md#term-hld) 時点で **upstream に無い拡張** を施している[^1]:
 
 - **XPN サポート**（GCM-AES-XPN-128/256）
 - **Proactive SAK refresh**（タイマや PN 余命でリキー）
@@ -120,7 +120,7 @@ plugin が wpa_supplicant 内のイベントを APPL_DB に流す。
 
 Flex Counter で SA × Direction 単位の ingress/egress count、replay drops、IC drops を polling。
 
-APPL_DB / STATE_DB 形式:
+APPL_DB / [STATE_DB](../reference/glossary.md#term-state_db) 形式:
 
 ```text
 APPL_DB:MACSEC_PORT_TABLE:<ifname>
@@ -138,7 +138,7 @@ APPL_DB:MACSEC_INGRESS_SA_TABLE:<ifname>:<sci>:<an>
 |------|------|
 | **PFC** | `ETHER_TYPE=0x8808` フレームを暗号化対象から外すため Ingress/Egress に PFC バイパス ACL を追加 |
 | **ACL** | PFC バイパス + MACsec フロー用 ACL_ENTRY を MACsec Orch が暗黙に作成 |
-| **FlexCounter** | SA 単位 counter polling で COUNTERS_DB に大量 entry |
+| **[FlexCounter](../reference/glossary.md#term-flexcounter)** | SA 単位 counter polling で [COUNTERS_DB](../reference/glossary.md#term-counters_db) に大量 entry |
 | **Warm reboot** | SAK / SA は揮発し再生成する設計 |
 
 ## 6. トラブルシューティング
@@ -154,7 +154,7 @@ APPL_DB:MACSEC_INGRESS_SA_TABLE:<ifname>:<sci>:<an>
 - HLD は 60KB 超。詳細フロー（Init / Create SC / Create SA / Disable SA / Deinit Port）は HLD §4 参照
 - SAI MACsec オブジェクトはプラットフォーム依存。Virtual MACsec SAI は HLD §3.4.5
 - `wpa_supplicant` 側に SONiC 拡張パッチが必要。upstream バージョン互換に注意
-- YANG モデル名は HLD では未明示（実装側で追加予定の `sonic-macsec` 系を想定）
+- [YANG](../reference/glossary.md#term-yang) モデル名は HLD では未明示（実装側で追加予定の `sonic-macsec` 系を想定）
 
 ## 関連トピック
 
@@ -171,3 +171,5 @@ APPL_DB:MACSEC_INGRESS_SA_TABLE:<ifname>:<sci>:<an>
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b3479c2e563c -->

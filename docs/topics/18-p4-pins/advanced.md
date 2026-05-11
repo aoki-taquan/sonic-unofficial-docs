@@ -12,11 +12,11 @@ sources:
 
 # 発展トピック
 
-PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると **状態取得 / config push の管理面（gNMI / OpenConfig）と組で読む** のが自然です。SONiC 標準の管理章と PINS の境界、および HLD と実装のあいだに残っている乖離をここでまとめます。
+[PINS](../../reference/glossary.md#term-pins) は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると **状態取得 / config push の管理面（[gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig）と組で読む** のが自然です。SONiC 標準の管理章と PINS の境界、および [HLD](../../reference/glossary.md#term-hld) と実装のあいだに残っている乖離をここでまとめます。
 
 ## gNMI / OpenConfig との関係
 
-SONiC の管理面は YANG（OpenConfig + sonic-yang）→ translib → ConfigDB / sonic-mgmt-framework という構成で、これとは別ラインで gNMI server が gNMI / gNOI を提供します。PINS は **データプレーンの forwarding テーブル書き換え** を P4Runtime で受けますが、port admin、interface address、ACL の宣言的設定といった **管理面の config / state** は gNMI 側を使うのが想定です。
+SONiC の管理面は [YANG](../../reference/glossary.md#term-yang)（OpenConfig + sonic-yang）→ translib → ConfigDB / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework という構成で、これとは別ラインで gNMI server が gNMI / [gNOI](../../reference/glossary.md#term-gnoi) を提供します。PINS は **データプレーンの forwarding テーブル書き換え** を P4Runtime で受けますが、port admin、interface address、[ACL](../../reference/glossary.md#term-acl) の宣言的設定といった **管理面の config / state** は gNMI 側を使うのが想定です。
 
 つまりコントローラ側から見れば:
 
@@ -27,11 +27,11 @@ SONiC の管理面は YANG（OpenConfig + sonic-yang）→ translib → ConfigDB
 
 ## HashOrch HLD と実装の乖離
 
-P4RT App HLD では **HashOrch（orchagent 新規追加）** がハッシュ属性を扱う前提で書かれていますが、現行 master では独立コンポーネントとしては存在せず、**既存の `SwitchOrch`（`switch_helper.cpp` の `SWITCH_HASH_FIELD_*` マップ）が `CFG_SWITCH_HASH_TABLE_NAME` 経由で扱う形** になっています。PINS 側でハッシュフィールドを controller から制御したい場合、現状は SwitchOrch 経由の経路を読む必要があります。詳細は [P4RT App HLD の Discrepancy 節](../../management/p4rt-application-hld.md) を参照してください。
+P4RT App HLD では **HashOrch（[orchagent](../../reference/glossary.md#term-orchagent) 新規追加）** がハッシュ属性を扱う前提で書かれていますが、現行 master では独立コンポーネントとしては存在せず、**既存の `SwitchOrch`（`switch_helper.cpp` の `SWITCH_HASH_FIELD_*` マップ）が `CFG_SWITCH_HASH_TABLE_NAME` 経由で扱う形** になっています。PINS 側でハッシュフィールドを controller から制御したい場合、現状は SwitchOrch 経由の経路を読む必要があります。詳細は [P4RT App HLD の Discrepancy 節](../../management/p4rt-application-hld.md) を参照してください。
 
 ## ベンダ依存の境界
 
-PacketIO の kernel 側（`genl_packet` filter 等）と、SAI pipeline を P4 で表す部分はベンダ実装に依存します。SONiC 本体のリポジトリで読めるのは:
+PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference/glossary.md#term-sai) pipeline を P4 で表す部分はベンダ実装に依存します。SONiC 本体のリポジトリで読めるのは:
 
 - `p4rt-app` Docker と P4Runtime gRPC 部分
 - `P4Orch` と各 Manager
@@ -43,14 +43,14 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、SAI pipeline を P4 �
 
 - 管理面の入口は [10. gNMI / gNOI / OpenConfig / YANG](../../topics/index.md) 系の章で押さえる（章番号は読み物計画側を参照）。
 - ACL / mirror / counter は [07. ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md) と同じ部品を P4Orch 側でも使うため、`acl_table_manager` / `acl_rule_manager` / `mirror_session_manager` が共通点になる。
-- ECMP / next-hop の振る舞いは [04. VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md) で読んだものが P4Orch の `wcmp_manager` でも前提になる。
+- [ECMP](../../reference/glossary.md#term-ecmp) / next-hop の振る舞いは [04. VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md) で読んだものが P4Orch の `wcmp_manager` でも前提になる。
 
 ## 発展トピック
 
 - **gRIBI と PINS の組合せ**: gRIBI で RIB を直接 push しつつ、P4Runtime で forwarding 細部を補完する組合せ。Google 系 SDN controller での標準パターン。
 - **P4 program upgrade**: pipeline 更新時の atomic swap。`SetForwardingPipelineConfig` の VERIFY / SAVE / COMMIT / RECONCILE_AND_COMMIT モードの違いを理解する。
 - **WCMP 大規模化**: 数万 nexthop の WCMP group を扱う性能テスト。`wcmp_manager` の resize と SAI hash optimization が論点。
-- **PacketIO scale**: punt → CPU → controller の経路で、PacketIO rate が CoPP / hostif queue / gRPC stream の各層で制限される。
+- **PacketIO scale**: punt → CPU → controller の経路で、PacketIO rate が [CoPP](../../reference/glossary.md#term-copp) / hostif queue / gRPC stream の各層で制限される。
 - **PINS と SONiC standard ACL の共存**: 同じ ASIC TCAM を分け合うため、resource allocation を deployment で固定する必要がある。
 
 ## 既知の制約と回避方法
@@ -79,3 +79,5 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、SAI pipeline を P4 �
 - `sonic-pins` (and `pins-infra`) で Manager 群の機能拡張と test coverage 拡充の PR が継続。
 - `sonic-swss` で P4Orch と既存 orch (SwitchOrch, AclOrch) の境界整理 PR が散発。
 - P4Runtime gRPC server (`p4rt-app`) の認証・TLS 周りの強化、PacketIO scale 改善の PR が議題化。
+
+<!-- glossary-links-injected: 8c23ac0ed680 -->

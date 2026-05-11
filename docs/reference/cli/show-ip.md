@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-`show ip` は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、BGP 関連表示を集約する[^1]。BGP 系は **routing-stack の選択結果に応じて動的にロード**される（FRR / Quagga / supervisor 環境）。
+`show ip` は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、[BGP](../../reference/glossary.md#term-bgp) 関連表示を集約する[^1]。BGP 系は **routing-stack の選択結果に応じて動的にロード**される（[FRR](../../reference/glossary.md#term-frr) / Quagga / supervisor 環境）。
 
 ```python
 # show/main.py L1567-L1581
@@ -57,7 +57,7 @@ if routing_stack == "frr":
 | `show ip bgp neighbors [<ip>] [<info_type>]` | BGP 隣接詳細 |
 | `show ip bgp network [<prefix>] [<info_type>]` | RIB の特定 prefix |
 | `show ip bgp aggregate-address` | `BGP_AGGREGATE_ADDRESS` テーブル表示 |
-| `show ip bgp vrf <vrf> summary/neighbors/network` | VRF スコープの BGP 表示 |
+| `show ip bgp vrf <vrf> summary/neighbors/network` | [VRF](../../reference/glossary.md#term-vrf) スコープの BGP 表示 |
 
 ## 各コマンドの詳細
 
@@ -121,7 +121,7 @@ show ip route [<IPADDRESS>] [vrf <vrf_name>] [...] [-d|--display all|frontend] [
 
 ### `show ip protocol`
 
-`vtysh -c 'show ip protocol'`。FRR の各プロトコル（zebra / bgp / static 等）有効状態 summary。
+`vtysh -c 'show ip protocol'`。FRR の各プロトコル（[zebra](../../reference/glossary.md#term-zebra) / bgp / static 等）有効状態 summary。
 
 ### `show ip fib [<ipaddress>]`
 
@@ -145,7 +145,7 @@ FRR `vtysh -c 'show bgp ipv4 summary'` 風のコマンドを `summary_helper` �
 ### `show ip bgp aggregate-address`
 
 **動作**:
-CONFIG_DB の `BGP_AGGREGATE_ADDRESS` テーブルを直接読み出し、各エントリの prefix・bbr-required・summary-only・as-set・prefix-list を表示する。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_AGGREGATE_ADDRESS` テーブルを直接読み出し、各エントリの prefix・bbr-required・summary-only・as-set・prefix-list を表示する。
 
 ### `show ip bgp vrf <vrf> summary/neighbors/network ...`
 
@@ -165,7 +165,7 @@ CONFIG_DB の `BGP_AGGREGATE_ADDRESS` テーブルを直接読み出し、各エ
 | `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_SUB_INTERFACE` | `interfaces` / `interfaces loopback-action` |
 | `BGP_AGGREGATE_ADDRESS` | `bgp aggregate-address` |
 | FRR runtime (vtysh) | `route` / `prefix-list` / `protocol` / `bgp ...` |
-| Linux FIB + APPL_DB sync (`fibshow`) | `fib` |
+| Linux FIB + [APPL_DB](../../reference/glossary.md#term-appl_db) sync (`fibshow`) | `fib` |
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -253,3 +253,5 @@ show ip interfaces
 vtysh -c 'show ip route'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 63ea0bb417b1 -->

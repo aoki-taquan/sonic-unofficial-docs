@@ -29,7 +29,7 @@ SONiC 既存の `ntpd`（202405 以降は **NTPsec**、ntpd の security-hardene
 3. **port 123 を listen** する必要があり、interface 追加削除に追従させるのが面倒
 4. たまに **NTP packet を送らなくなる** 不安定動作
 
-この HLD は `ntpd` を **chrony** に置き換え、上記をすべて解消する移行を定める。systemd-timesyncd は SNTP のみで step する仕様のため不採用。
+この [HLD](../reference/glossary.md#term-hld) は `ntpd` を **chrony** に置き換え、上記をすべて解消する移行を定める。systemd-timesyncd は SNTP のみで step する仕様のため不採用。
 
 ## 動作仕様
 
@@ -70,7 +70,7 @@ flowchart LR
 ### 既存 SONiC ntpd → chrony への変更点
 
 - **packaging**: `chrony` を host に install。`ntp` / `ntpsec` を削除
-- **設定**: `/etc/chrony/chrony.conf`（テンプレ）+ `chrony.keys`。CONFIG_DB の `NTP` / `NTP_SERVER` から生成
+- **設定**: `/etc/chrony/chrony.conf`（テンプレ）+ `chrony.keys`。[CONFIG_DB](../reference/glossary.md#term-config_db) の `NTP` / `NTP_SERVER` から生成
 - **CLI**: 旧 `ntpq -p` / `ntpdate` 等は **`chronyc sources`, `chronyc tracking`, `chronyc makestep`** に置換
 - **HW RTC**: 従来明示的に `hwclock` を呼んでいた reboot 経路は、kernel 11min auto-sync があるため **手動 sync 不要**（リーガル枠として残す可能性は別途整理）
 - **port 123 listen**: 不要（client mode）。NTP server として動かす場合のみ listen 設定
@@ -150,3 +150,5 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c5a6ce567024 -->

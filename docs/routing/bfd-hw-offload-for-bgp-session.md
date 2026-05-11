@@ -29,9 +29,9 @@ related:
 
 ## 概要
 
-FRR/bfdd の **BFD dataplane (DP) インターフェース** を経由して、BGP が要求した BFD セッションを SONiC の `BfdOrch` 経由でハードウェアオフロードする仕組み。SW BFD と比較して高速な障害検出と多数セッション収容を狙う[^1]。
+[FRR](../reference/glossary.md#term-frr)/bfdd の **[BFD](../reference/glossary.md#term-bfd) dataplane (DP) インターフェース** を経由して、[BGP](../reference/glossary.md#term-bgp) が要求した BFD セッションを SONiC の `BfdOrch` 経由でハードウェアオフロードする仕組み。SW BFD と比較して高速な障害検出と多数セッション収容を狙う[^1]。
 
-新規コンポーネント `bfdsyncd` が bgp コンテナ内で動作し、`bfdd` の DP socket と Redis (`APPL_DB` / `STATE_DB`) の両側を仲介する。
+新規コンポーネント `bfdsyncd` が bgp コンテナ内で動作し、`bfdd` の DP socket と [Redis](../reference/glossary.md#term-redis) (`APPL_DB` / `STATE_DB`) の両側を仲介する。
 
 ```mermaid
 flowchart LR
@@ -51,9 +51,9 @@ flowchart LR
 
 `bfdsyncd` は次の 3 種類の DP メッセージを処理する[^1]：
 
-- `DP_ADD_SESSION`: bfdd からのセッション生成要求 → APPL_DB の `BFD_SESSION_TABLE` に書き込み、BfdOrch にトリガ。
+- `DP_ADD_SESSION`: bfdd からのセッション生成要求 → [APPL_DB](../reference/glossary.md#term-appl_db) の `BFD_SESSION_TABLE` に書き込み、BfdOrch にトリガ。
 - `DP_DELETE_SESSION`: 削除要求 → APPL_DB から削除。
-- `BFD_STATE_CHANGE`: BfdOrch からの状態変化（STATE_DB 経由）を bfdd に返送。bfdd は BGP に通知し、Down で BGP を IDLE に戻す。
+- `BFD_STATE_CHANGE`: BfdOrch からの状態変化（[STATE_DB](../reference/glossary.md#term-state_db) 経由）を bfdd に返送。bfdd は BGP に通知し、Down で BGP を IDLE に戻す。
 
 `ECHO_REQUEST` / `ECHO_REPLY` / `DP_REQUEST_SESSION_COUNTERS` / `BFD_SESSION_COUNTERS` は **未サポート**[^1]。
 
@@ -63,7 +63,7 @@ flowchart LR
 
 ### `show bfd peers` のためのリモート情報
 
-FRR の `show bfd peers` は remote discriminator / multiplier / RX/TX 間隔を表示する。これらは bfdd 側にしか無いが、HW offload では SAI 側に取りに行く必要がある。HLD は次の SAI 属性が将来追加されることを期待している（現状 SDK サポート任意）[^1]：
+FRR の `show bfd peers` は remote discriminator / multiplier / RX/TX 間隔を表示する。これらは bfdd 側にしか無いが、HW offload では [SAI](../reference/glossary.md#term-sai) 側に取りに行く必要がある。[HLD](../reference/glossary.md#term-hld) は次の SAI 属性が将来追加されることを期待している（現状 SDK サポート任意）[^1]：
 
 - `SAI_BFD_SESSION_ATTR_REMOTE_DISCRIMINATOR`
 - `SAI_BFD_SESSION_ATTR_REMOTE_MULTIPLIER`
@@ -129,7 +129,7 @@ reasoning: link-local シナリオでの inject-down モード要件と、MAC �
 
 ### 関連する YANG
 
-HLD に YANG 追加の記述なし。
+HLD に [YANG](../reference/glossary.md#term-yang) 追加の記述なし。
 
 ### 設定例
 
@@ -160,7 +160,7 @@ show bfd summary
 
 ## 干渉する機能
 
-- **BfdOrch (sonic-swss)**: 既存の BfdOrch（`sonic-swss/orchagent/bfdorch.cpp`）をそのまま使う。HW offload 全般の HLD は別途 `BFD HW Offload HLD.md` を参照。
+- **BfdOrch ([sonic-swss](../reference/glossary.md#term-sonic-swss))**: 既存の BfdOrch（`sonic-swss/orchagent/bfdorch.cpp`）をそのまま使う。HW offload 全般の HLD は別途 `BFD HW Offload HLD.md` を参照。
 - **BGP unnumbered / IPv6 link-local**: 上記の inject-down モード対応が必要。
 - **frr/bfdd の SW BFD**: `FEATURE.bgp.bfd_hw_offload` を未設定にすると bfdd が単独で起動して SW BFD として動く。両モード共存は HLD では想定外。
 - **Control plane BFD**: 全 BFD を HW にするか SW にするかは bfdd 起動時のフラグで決まる（部分オフロードは想定されていない）[^1]。
@@ -242,3 +242,5 @@ show bfd summary
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: cba1420b5c94 -->

@@ -56,7 +56,7 @@ reboot [-h|-?] [-v] [-f] [-d <DPU>] [-p] [-b]
 | `-h` / `-?` | ヘルプ表示 |
 | `-v` | verbose (詳細ログ + blocking モードでは進捗ドット出力) |
 | `-f` | 内部 reboot コマンドに `-f` を引き継ぐ (force) |
-| `-d <DPU>` | smart switch の特定 DPU module 名を指定して DPU だけ reboot |
+| `-d <DPU>` | smart switch の特定 [DPU](../../reference/glossary.md#term-dpu) module 名を指定して DPU だけ reboot |
 | `-p` | DPU 上での pre-shutdown 段階 |
 | `-b` | blocking モード (タイムアウト 180 秒) |
 
@@ -65,10 +65,10 @@ reboot [-h|-?] [-v] [-f] [-d <DPU>] [-p] [-b]
 1. `reboot_pre_check` … `/host` の書込みテスト、platform pre-check、`sonic-installer verify-next-image`。
 2. `check_conflict_boot_in_fw_update` … FW auto update が他種 reboot に予約済みでないことを確認。
 3. `linecard_reboot_notify_supervisor` … chassis のラインカードの場合、CHASSIS_STATE_DB に `reboot=expected` を書いてスーパーバイザに通知。
-4. `stop_sonic_services` … DualToR なら `mux` を停止、syncd を `syncd_request_shutdown --cold` でクリーンシャットダウン、PMon を停止。
+4. `stop_sonic_services` … DualToR なら `mux` を停止、[syncd](../../reference/glossary.md#term-syncd) を `syncd_request_shutdown --cold` でクリーンシャットダウン、PMon を停止。
 5. platform-specific `platform_reboot` を `exec` する。存在しない場合は `/sbin/reboot`、それでもダメなら `echo b > /proc/sysrq-trigger`。
 
-`reboot` は **データプレーン断絶を伴う通常の電源再投入**。BGP / LACP セッションも一旦落ちる。
+`reboot` は **データプレーン断絶を伴う通常の電源再投入**。[BGP](../../reference/glossary.md#term-bgp) / [LACP](../../reference/glossary.md#term-lacp) セッションも一旦落ちる。
 
 ## `fast-reboot`
 
@@ -111,10 +111,10 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 
 ### warm-reboot で増える動作
 
-- `initialize_pre_shutdown` … syncd / orchagent に warm-shutdown 準備を要求。
+- `initialize_pre_shutdown` … syncd / [orchagent](../../reference/glossary.md#term-orchagent) に warm-shutdown 準備を要求。
 - `request_pre_shutdown` + `wait_for_pre_shutdown_complete_or_fail` … pre-shutdown ACK を 待つ。
-- `setup_control_plane_assistant` … `-c` で指定された外部 CPA に対して ARP/ND を打ち、データ平面のスチール先 (黒穴) を作って fail-open を防ぐ。
-- `backup_database` … STATE_DB / APPL_DB のスナップショット保存 (warm boot 時の差分 reconcile 用)。
+- `setup_control_plane_assistant` … `-c` で指定された外部 CPA に対して [ARP](../../reference/glossary.md#term-arp)/ND を打ち、データ平面のスチール先 (黒穴) を作って fail-open を防ぐ。
+- `backup_database` … [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) のスナップショット保存 (warm boot 時の差分 reconcile 用)。
 - 失敗時 `clear_boot` で `kexec -u -a` を呼んで kexec slot を解放し、CPA も撤去する。
 
 ## 終了コード
@@ -130,7 +130,7 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 
 ## 注意
 
-- `warm-reboot` で BGP セッションを保持するには **GR (Graceful Restart) が peer 側で有効** なことが前提。
+- `warm-reboot` で BGP セッションを保持するには **GR ([Graceful Restart](../../reference/glossary.md#term-graceful-restart)) が peer 側で有効** なことが前提。
 - `fast-reboot` / `warm-reboot` は **data plane traffic loss** をゼロにするものではない。SONiC 標準実装でも数秒〜数百ミリ秒の packet drop は出る。`-c` の CPA 構成と GR をきちんと組まないと L3 セッションが切れる。
 - chassis (multi-asic + supervisor + linecard) では `reboot` が CHASSIS_STATE_DB に通知を出すため、ラインカード単独 reboot とシステム全体 reboot で挙動が変わる。
 
@@ -203,7 +203,7 @@ Warm reboot ...
 
 ### よくある落とし穴
 
-- warm-reboot 中に CONFIG_DB を変更すると整合が崩れて再起動失敗する。
+- warm-reboot 中に [CONFIG_DB](../../reference/glossary.md#term-config_db) を変更すると整合が崩れて再起動失敗する。
 - fast-reboot は kernel まで再起動するため通信断は数十秒発生する。
 
 ### 関連する show / debug
@@ -214,3 +214,5 @@ show warm_restart state
 journalctl -u warm-reboot -b -0
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4be05789576d -->

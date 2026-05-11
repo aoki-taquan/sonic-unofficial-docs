@@ -28,9 +28,9 @@ related:
 
 ## 概要
 
-P4RT アプリケーションは PINS（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、**[P4Runtime v1.3.0](https://p4lang.github.io/p4runtime/spec/v1.3.0/P4Runtime-Spec.html) を実装する gRPC サービス**として TCP port **9559** で動く[^1]。SDN コントローラはこの gRPC を経由して P4 forwarding pipeline configuration（P4Info）と P4 テーブルエントリを SONiC に流し込み、SAI パイプラインを操作する。
+P4RT アプリケーションは [PINS](../reference/glossary.md#term-pins)（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、**[P4Runtime v1.3.0](https://p4lang.github.io/p4runtime/spec/v1.3.0/P4Runtime-Spec.html) を実装する gRPC サービス**として TCP port **9559** で動く[^1]。SDN コントローラはこの gRPC を経由して P4 forwarding pipeline configuration（P4Info）と P4 テーブルエントリを SONiC に流し込み、[SAI](../reference/glossary.md#term-sai) パイプラインを操作する。
 
-P4RT アプリケーションは独自 Docker コンテナで稼働し、受け取った Platform Independent (PI) 形式の P4RT メッセージを APPL_DB の `P4RT_TABLE` 系エントリに翻訳する。下流の `P4Orch` が APPL_DB を購読して SAI 経由で ASIC に書き込む[^1]。
+P4RT アプリケーションは独自 Docker コンテナで稼働し、受け取った Platform Independent (PI) 形式の P4RT メッセージを [APPL_DB](../reference/glossary.md#term-appl_db) の `P4RT_TABLE` 系エントリに翻訳する。下流の `P4Orch` が APPL_DB を購読して SAI 経由で ASIC に書き込む[^1]。
 
 ## 動作仕様
 
@@ -67,7 +67,7 @@ P4RT App は SONiC 固有要件を P4Info に課す[^1]:
 
 ### ACL テーブル定義（@sai_action / @sai_field）
 
-ACL のような設定可能部はハードウェア依存（リソース・ステージ制約）で P4 段では検証しきれない。P4 program 内で **`@sai_action` / `@sai_field` アノテーション** を使って SAI の対応を明示し、P4Info push 時に P4RT App が APPL_DB の **`P4RT:DEFINITION`** に翻訳して書き出す。OA 層がこれを読んで SAI に反映を試み、結果を P4RT App に返す[^1]。
+[ACL](../reference/glossary.md#term-acl) のような設定可能部はハードウェア依存（リソース・ステージ制約）で P4 段では検証しきれない。P4 program 内で **`@sai_action` / `@sai_field` アノテーション** を使って SAI の対応を明示し、P4Info push 時に P4RT App が APPL_DB の **`P4RT:DEFINITION`** に翻訳して書き出す。OA 層がこれを読んで SAI に反映を試み、結果を P4RT App に返す[^1]。
 
 例[^1]:
 
@@ -90,7 +90,7 @@ table acl_ingress_table {
 
 PI 形式の Write リクエスト（INSERT / MODIFY / DELETE）は **primary 接続** からのみ受付。P4RT App が APPL_DB の P4RT スキーマに変換して投入し、`P4Orch` が SAI に反映する[^1]。
 
-Read は primary/backup 双方から可能。Read 性能の最適化は別 HLD（[P4RT Read Cache](p4rt-read-cache-hld.md)）で扱う。
+Read は primary/backup 双方から可能。Read 性能の最適化は別 [HLD](../reference/glossary.md#term-hld)（[P4RT Read Cache](p4rt-read-cache-hld.md)）で扱う。
 
 ### WCMP / Hashing
 
@@ -103,7 +103,7 @@ WCMP は 2 段構成[^1]:
 
 `syncd` は同期動作、OrchAgent はハードウェア結果を **別の通知チャネル** で P4RT App に返す。成功時は **`APPL_STATE_DB`** に成功エントリを書き、失敗時は P4RT App が APPL_DB の対応エントリを **元の値に戻す**（rollback）[^1]。
 
-これは既存 STATE_DB のような「定常状態の公開」とは違い、**アプリケーションレベルの応答チャネル** という新しい抽象である。
+これは既存 [STATE_DB](../reference/glossary.md#term-state_db) のような「定常状態の公開」とは違い、**アプリケーションレベルの応答チャネル** という新しい抽象である。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/pins/p4rt_app_hld.md#L152-L156 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -141,7 +141,7 @@ P4RT App は APPL_DB に新規テーブル群を書き出す。スキーマ詳�
 
 ### 関連する CONFIG_DB
 
-P4RT 起動時に CONFIG_DB から `P4RT` テーブルを読む。設定変更時はコンテナの再起動が必要[^1]:
+P4RT 起動時に [CONFIG_DB](../reference/glossary.md#term-config_db) から `P4RT` テーブルを読む。設定変更時はコンテナの再起動が必要[^1]:
 
 ```json
 "P4RT": {
@@ -163,7 +163,7 @@ P4RT 起動時に CONFIG_DB から `P4RT` テーブルを読む。設定変更�
 
 ### 関連する CLI
 
-HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は config_db.json 直接編集または gNMI 経由を想定[^1]。
+HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は [config_db.json](../reference/glossary.md#term-config_db.json) 直接編集または [gNMI](../reference/glossary.md#term-gnmi) 経由を想定[^1]。
 
 ## 制限事項
 
@@ -188,7 +188,7 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は c
 
 実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
 
-- **HashOrch は独立コンポーネントではない**: HLD は OrchAgent に「`HashOrch` を新規追加し、P4Info から渡されたハッシュフィールド/アルゴリズムを `SWITCH_TABLE` の SAI ハッシュ属性に書く」と記載しているが、現行 master では独立した `HashOrch` クラスは存在しない。代わりに既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費し、`sonic-swss/orchagent/switch/switch_helper.cpp:24-` の `SWITCH_HASH_FIELD_*` ↔ `SAI_NATIVE_HASH_FIELD_*` マップを通じて SAI 属性を設定する (`orchagent/switchorch.cpp:1507`、`orchdaemon.cpp:199`)。HLD の論理（P4RT App → orchagent → SAI hash 属性）は同等だが、責務が `HashOrch` ではなく `SwitchOrch` 側にある。
+- **HashOrch は独立コンポーネントではない**: HLD は OrchAgent に「`HashOrch` を新規追加し、P4Info から渡されたハッシュフィールド/アルゴリズムを `SWITCH_TABLE` の SAI ハッシュ属性に書く」と記載しているが、現行 master では独立した `HashOrch` クラスは存在しない。代わりに既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費し、`sonic-swss/orchagent/switch/switch_helper.cpp:24-` の `SWITCH_HASH_FIELD_*` ↔ `SAI_NATIVE_HASH_FIELD_*` マップを通じて SAI 属性を設定する (`orchagent/switchorch.cpp:1507`、`orchdaemon.cpp:199`)。HLD の論理（P4RT App → [orchagent](../reference/glossary.md#term-orchagent) → SAI hash 属性）は同等だが、責務が `HashOrch` ではなく `SwitchOrch` 側にある。
 
 主要な合致点:
 
@@ -238,3 +238,5 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は c
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f369e75e8733 -->

@@ -83,7 +83,7 @@ module: sonic-scheduler
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SCHEDULER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SCHEDULER`
 
 <!-- ref-triangle:start -->
 
@@ -104,3 +104,5 @@ module: sonic-scheduler
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 896d391185a9 -->

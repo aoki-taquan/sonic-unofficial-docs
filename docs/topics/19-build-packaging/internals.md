@@ -9,7 +9,7 @@ sources: []
 
 # 内部実装
 
-build / packaging / application extension の内部実装は「sonic-buildimage は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockerize されるか」の三層で見ます。docker-base / sonic-slave / sonic-build-hooks の関係を押さえると、ビルド時間とイメージサイズの分析が楽になります。
+build / packaging / application extension の内部実装は「[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockerize されるか」の三層で見ます。docker-base / sonic-slave / sonic-build-hooks の関係を押さえると、ビルド時間とイメージサイズの分析が楽になります。
 
 ## データフロー（ビルド）
 
@@ -66,9 +66,9 @@ CONFIG_DB:FEATURE|<name>
 
 ## SAI / Redis pub/sub の使用
 
-ビルド・パッケージング系には SAI 属性も Redis pub/sub も基本ありません（ビルド時にコードを SAI 越しに動かさない）。例外:
+ビルド・パッケージング系には [SAI](../../reference/glossary.md#term-sai) 属性も [Redis](../../reference/glossary.md#term-redis) pub/sub も基本ありません（ビルド時にコードを SAI 越しに動かさない）。例外:
 
-- ランタイムで SPM が FEATURE table を書き、hostcfgd が CONFIG_DB を subscribe して service を起動する経路は Redis pub/sub を使います。
+- ランタイムで SPM が FEATURE table を書き、[hostcfgd](../../reference/glossary.md#term-hostcfgd) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を subscribe して service を起動する経路は Redis pub/sub を使います。
 - `sonic-installer` は image partition の操作のみで Redis 不要。
 
 ## Redis テーブル参照関係
@@ -130,3 +130,5 @@ docker-base-<bullseye/bookworm>
 - [SONiC application extension guide](../../management/sonic-application-extension-guide.md)
 - [sonic-package-manager CLI](../../reference/cli/sonic-package-manager.md)
 - [SONiC optional feature control enhancement](../../system/sonic-optional-feature-control-enhancement.md)
+
+<!-- glossary-links-injected: 3a8e8858827d -->

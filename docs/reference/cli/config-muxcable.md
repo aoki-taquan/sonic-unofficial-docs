@@ -24,7 +24,7 @@ related:
 
 `config muxcable` は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。グループは `config/muxcable.py` の `@click.group(name='muxcable')` で定義される[^1]。
 
-CLI が触る先は CONFIG_DB の `MUX_CABLE` テーブルだけでなく、xcvrd / linkmgrd を介した非同期コマンド・レスポンスチャネル (APPL_DB / STATE_DB の `XCVRD_*_CMD` / `_RSP` 系テーブル) を多用する。`update_and_get_response_for_xcvr_cmd` がそのプロトコルの実装で、CMD テーブルに job を書き、RSP テーブルを timeout 付きで poll する作りになっている[^2]。
+CLI が触る先は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MUX_CABLE` テーブルだけでなく、xcvrd / [linkmgrd](../../reference/glossary.md#term-linkmgrd) を介した非同期コマンド・レスポンスチャネル ([APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) の `XCVRD_*_CMD` / `_RSP` 系テーブル) を多用する。`update_and_get_response_for_xcvr_cmd` がそのプロトコルの実装で、CMD テーブルに job を書き、RSP テーブルを timeout 付きで poll する作りになっている[^2]。
 
 ## コマンド一覧 (主要)
 
@@ -60,7 +60,7 @@ config muxcable mode {active|auto|manual|standby|detach} <port_name|all> [--json
 ```
 
 **動作**:
-`MUX_CABLE` テーブルから対象ポートの STATE_DB エントリを引いて遷移可能性を判断し、`MUX_CABLE|<port>` の `state` フィールドを書き換える。`port = "all"` の場合は `MUX_CABLE` に登録されている全ポートを順に処理する。`detach` は MUX 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は `--json` で JSON、無指定で表形式。
+`MUX_CABLE` テーブルから対象ポートの STATE_DB エントリを引いて遷移可能性を判断し、`MUX_CABLE|<port>` の `state` フィールドを書き換える。`port = "all"` の場合は `MUX_CABLE` に登録されている全ポートを順に処理する。`detach` は [MUX](../../reference/glossary.md#term-mux) 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は `--json` で JSON、無指定で表形式。
 
 ### `config muxcable probertype <hardware|software> <port>`
 
@@ -192,3 +192,5 @@ show muxcable config
 show muxcable hwmode state
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 23e2562f0d36 -->

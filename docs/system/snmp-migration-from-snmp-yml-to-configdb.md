@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-`/etc/sonic/snmp.yml` には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、**全 SNMP 設定を CONFIG_DB に集約** するための移行設計。コンテナ起動時に従来の yaml を読み込んで CONFIG_DB に流し込むコンバータを併走させ、後方互換性を保ったまま乗り換える計画[^1]。
+`/etc/sonic/snmp.yml` には community / location が、[CONFIG_DB](../reference/glossary.md#term-config_db) には [ACL](../reference/glossary.md#term-acl) のみが入る、という分散した [SNMP](../reference/glossary.md#term-snmp) 設定状態を解消し、**全 SNMP 設定を CONFIG_DB に集約** するための移行設計。コンテナ起動時に従来の yaml を読み込んで CONFIG_DB に流し込むコンバータを併走させ、後方互換性を保ったまま乗り換える計画[^1]。
 
 3 つの新規 CONFIG_DB テーブル `SNMP` / `SNMP_COMMUNITY` / `SNMP_USER` が `doc/snmp/snmp-schema-addition.md` で定義されており、本ページはそれを使う側の運用と CLI を扱う。
 
@@ -104,7 +104,7 @@ show run snmp [community|contact|location|user] [--json]
 
 ### 関連する YANG
 
-HLD に YANG 追加の記述は無い（`snmp-schema-addition.md` 側で示唆されるのみ）。
+[HLD](../reference/glossary.md#term-hld) に [YANG](../reference/glossary.md#term-yang) 追加の記述は無い（`snmp-schema-addition.md` 側で示唆されるのみ）。
 
 ### 設定例
 
@@ -120,7 +120,7 @@ show run snmp community
 
 - HLD は移行用コンバータの最終形式（snmp.yml 削除タイミング）を明示していない。「将来的に snmp.yml を撤去する」とする方針のみ[^1]。
 - `SNMP_COMMUNITY.TYPE` の `RW` は将来用で、当時は実装側で `RO` のみが有効と他 HLD で言及されている。
-- パスワードは平文で CONFIG_DB に入る点に注意（既存の sonic-utilities の慣例どおり）。
+- パスワードは平文で CONFIG_DB に入る点に注意（既存の [sonic-utilities](../reference/glossary.md#term-sonic-utilities) の慣例どおり）。
 
 ## 干渉する機能
 
@@ -144,3 +144,5 @@ show run snmp community
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a44572fede5f -->

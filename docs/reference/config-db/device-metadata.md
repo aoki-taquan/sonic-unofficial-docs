@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-装置全体のメタ情報を保持する CONFIG_DB テーブル。hostname、ベース MAC、BGP ASN、ハードウェア SKU、プラットフォーム、デバイス役割 (`type`)、サブタイプ (`DualToR` / `SmartSwitch` 等)、deployment ID、buffer model（dynamic / traditional）、synchronous mode、YANG 検証の有効化、syslog / FRR 関連スイッチなど、SONiC の起動時挙動を決める根本設定を 1 行 (`localhost`) にまとめる。`bmc` キーは BMC 接続情報を別ロウで持つ[^1]。
+装置全体のメタ情報を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。hostname、ベース MAC、[BGP](../../reference/glossary.md#term-bgp) ASN、ハードウェア SKU、プラットフォーム、デバイス役割 (`type`)、サブタイプ (`DualToR` / `SmartSwitch` 等)、deployment ID、buffer model（dynamic / traditional）、synchronous mode、[YANG](../../reference/glossary.md#term-yang) 検証の有効化、syslog / [FRR](../../reference/glossary.md#term-frr) 関連スイッチなど、SONiC の起動時挙動を決める根本設定を 1 行 (`localhost`) にまとめる。`bmc` キーは BMC 接続情報を別ロウで持つ[^1]。
 
 各 Orch / daemon は起動時に `DEVICE_METADATA|localhost` を読み出す。`bgpcfgd` は `bgp_asn` と `frr_mgmt_framework_config` を、`orchagent` は `synchronous_mode` と `async_swss_rec`、`buffer_model` を、`hostcfgd` は `hostname` と `timezone` を、それぞれ依存リソースの初期化に用いる。
 
@@ -56,19 +56,19 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
 | `hwsku` | string (`stypes:hwsku`) | - | ハードウェア SKU 識別子。ポートレイアウトと能力を決める |
-| `asic_id` | string (1..16) | - | SAI 初期化に使う ASIC 識別子 |
+| `asic_id` | string (1..16) | - | [SAI](../../reference/glossary.md#term-sai) 初期化に使う ASIC 識別子 |
 | `default_bgp_status` | enum `up` / `down` | `up` | 起動時の BGP daemon 既定状態 |
 | `docker_routing_config_mode` | string `separated`/`unified`/`split`/`split-unified` | `unified` | FRR 設定生成モード |
 | `hostname` | string (`stypes:hostname`) | - | システムホスト名 |
 | `platform` | string (1..255) | - | プラットフォーム識別子（vendor + model） |
 | `mac` | mac-address | - | システムベース MAC |
-| `default_pfcwd_status` | enum `disable`/`enable` | `disable` | 起動時の PFC watchdog 既定状態 |
+| `default_pfcwd_status` | enum `disable`/`enable` | `disable` | 起動時の [PFC](../../reference/glossary.md#term-pfc) watchdog 既定状態 |
 | `bgp_asn` | as-number | - | BGP 自律システム番号 |
 | `deployment_id` | uint32 | - | 同一ネットワークセグメントを括る deployment ID |
 | `type` | enum (ToRRouter / LeafRouter / SpineRouter / SmartSwitchDPU / 等) | - | デバイス役割 |
 | `buffer_model` | string `dynamic`/`traditional` | - | バッファ計算モード。Mellanox 等は dynamic |
 | `frr_mgmt_framework_config` | boolean | `false` | true で `sonic-frr-mgmt-framework` が FRR 設定を担当、false で `bgpcfgd` がテンプレ展開 |
-| `synchronous_mode` | enum `enable`/`disable` | `enable` | orchagent ASIC 同期モード |
+| `synchronous_mode` | enum `enable`/`disable` | `enable` | [orchagent](../../reference/glossary.md#term-orchagent) ASIC 同期モード |
 | `yang_config_validation` | enum `enable`/`disable` | `disable` | `config_db.json` 直接ロード時の YANG 検証 |
 | `cloudtype` | string | - | デプロイ先のクラウドタイプ |
 | `region` | string | - | 地理的リージョン |
@@ -100,7 +100,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `ring_thread_enabled` | boolean | `false` | OrchDaemon の gRingMode |
 | `t2_group_asns` | leaf-list as-number | - | 同一グループ内の ASN |
 | `anchor_route_source` | leaf-list string | - | anchor route のソース |
-| `orch_northbond_dash_zmq_enabled` | boolean | `true` | APPL_DB DASH テーブル ZMQ |
+| `orch_northbond_dash_zmq_enabled` | boolean | `true` | [APPL_DB](../../reference/glossary.md#term-appl_db) [DASH](../../reference/glossary.md#term-dash) テーブル ZMQ |
 | `orch_northbond_route_zmq_enabled` | boolean | `false` | APPL_DB ROUTE テーブル ZMQ |
 | `syslog_with_osversion` | boolean | `false` | syslog に OS version を付加 |
 | `syslog_counter` | boolean | `false` | syslog counter |
@@ -129,7 +129,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 ## 制約
 
 - `suppress-fib-pending = enabled` のとき `synchronous_mode = enable` が必須（YANG `must`）
-- `subtype = DualToR` のときは `peer_switch` の指定が運用上必要（HLD 由来、YANG では強制されない）
+- `subtype = DualToR` のときは `peer_switch` の指定が運用上必要（[HLD](../../reference/glossary.md#term-hld) 由来、YANG では強制されない）
 - `type` は enum パターンに合致する文字列のみ受理
 
 ## 関連 CONFIG_DB テーブル / YANG / CLI
@@ -192,8 +192,8 @@ reasoning: フィールド一覧と型・デフォルト・enum 値はこのモ�
 
 ### よくある誤設定
 
-- `hwsku` を実機と異なる値にすると sonic-buildimage 起動時に platform plugin が読み込まれず orchagent が起動しない。
-- `type` を誤ると generic_config_updater のチェックや MC-LAG の role 判定で誤動作。
+- `hwsku` を実機と異なる値にすると [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) 起動時に platform plugin が読み込まれず orchagent が起動しない。
+- `type` を誤ると generic_config_updater のチェックや MC-[LAG](../../reference/glossary.md#term-lag) の role 判定で誤動作。
 
 ### 確認コマンド
 
@@ -202,3 +202,5 @@ sonic-db-cli CONFIG_DB hgetall 'DEVICE_METADATA|localhost'
 show platform summary
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0a77174b97b9 -->

@@ -58,8 +58,8 @@ SUPPRESS_ASIC_SDK_HEALTH_EVENT|<severity>
 
 ## 購読者
 
-- `syncd` / `syncd-rpc` 内の SAI health monitor 拡張
-- イベントは別途 `EVENT_HISTORY` 系テーブル (STATE_DB) で観測可能
+- `syncd` / `syncd-rpc` 内の [SAI](../../reference/glossary.md#term-sai) health monitor 拡張
+- イベントは別途 `EVENT_HISTORY` 系テーブル ([STATE_DB](../../reference/glossary.md#term-state_db)) で観測可能
 
 ## 関連 YANG
 
@@ -69,7 +69,7 @@ SUPPRESS_ASIC_SDK_HEALTH_EVENT|<severity>
 
 ## 関連リファレンス
 
-- YANG: `sonic-suppress-asic-sdk-health-event`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-suppress-asic-sdk-health-event`
 
 <!-- ref-triangle:end -->
 
@@ -101,3 +101,5 @@ sonic-db-cli CONFIG_DB keys 'SUPPRESS_ASIC_SDK_HEALTH_EVENT|*'
 sonic-db-cli STATE_DB keys 'ASIC_SDK_HEALTH_EVENT_TABLE|*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: db593ae1fe11 -->

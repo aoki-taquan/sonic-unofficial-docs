@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`config mclag` は MCLAG (Multi-Chassis LAG) ドメイン・メンバ PortChannel・Vlan インタフェース単位の unique IP を CONFIG_DB に書き込む CLI で、`config/mclag.py` の `@click.group()` がエントリポイントとなる[^1]。CONFIG_DB の更新先テーブルは `MCLAG_DOMAIN` / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` の 3 つで、ICCPd (`iccpd` コンテナ) がこれを購読して MCLAG ピアリングを起動する。
+`config mclag` は [MCLAG](../../reference/glossary.md#term-mclag) (Multi-Chassis [LAG](../../reference/glossary.md#term-lag)) ドメイン・メンバ [PortChannel](../../reference/glossary.md#term-portchannel)・Vlan インタフェース単位の unique IP を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む CLI で、`config/mclag.py` の `@click.group()` がエントリポイントとなる[^1]。CONFIG_DB の更新先テーブルは `MCLAG_DOMAIN` / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` の 3 つで、ICCPd (`iccpd` コンテナ) がこれを購読して MCLAG ピアリングを起動する。
 
 `MCLAG_DOMAIN` は **デバイス内に 1 つしか持てない** (既存 domain がある状態で別 ID を `add` するとエラー)[^2]。
 
@@ -74,7 +74,7 @@ related:
 
 ### `config mclag unique-ip add <interface_names>`
 
-`<interface_names>` はカンマ区切り、`Vlan` プレフィクス必須。事前に該当 Vlan インタフェースに **VRF も IP も付いていないこと** を検査し、付いていれば「先に外して再設定せよ」とエラーで返す。OK なら `MCLAG_UNIQUE_IP|<vlan>` に `{unique_ip: enable}` を書く。
+`<interface_names>` はカンマ区切り、`Vlan` プレフィクス必須。事前に該当 Vlan インタフェースに **[VRF](../../reference/glossary.md#term-vrf) も IP も付いていないこと** を検査し、付いていれば「先に外して再設定せよ」とエラーで返す。OK なら `MCLAG_UNIQUE_IP|<vlan>` に `{unique_ip: enable}` を書く。
 
 ### `config mclag unique-ip del <interface_names>`
 
@@ -168,7 +168,7 @@ MCLAG domain 4095 added.
 ### よくある落とし穴
 
 - 両端で system_mac を一致させないと LAG メンバが flap し続ける。
-- keepalive VLAN を tagged で通すと一部 NIC で MTU 差により断続するため、専用 L3 リンク推奨。
+- keepalive [VLAN](../../reference/glossary.md#term-vlan) を tagged で通すと一部 NIC で MTU 差により断続するため、専用 L3 リンク推奨。
 
 ### 関連する show / debug
 
@@ -178,3 +178,5 @@ show mclag config
 mclagdctl -i 1000 dump state
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 2141742a9664 -->

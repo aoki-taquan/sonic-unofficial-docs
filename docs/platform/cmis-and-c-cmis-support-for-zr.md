@@ -56,7 +56,7 @@ flowchart LR
     CDB --> XC
 ```
 
-CMIS state machine の主要状態（HLD ベース）:
+CMIS state machine の主要状態（[HLD](../reference/glossary.md#term-hld) ベース）:
 
 - `MODULE_LOW_PWR` → `MODULE_PWR_UP` → `MODULE_READY`
 - `DATAPATH_DEACTIVATED` → `DATAPATH_INIT` → `DATAPATH_INITIALIZED` → `DATAPATH_ACTIVATED`
@@ -129,3 +129,5 @@ C-CMIS 拡張[^1]:
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 167700005048 -->

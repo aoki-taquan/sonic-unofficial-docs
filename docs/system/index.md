@@ -7,7 +7,7 @@ verification: stub
 # システム
 reboot、warm restart、telemetry、logging、security、techsupport など装置共通の運用機能を扱う章。
 ## この章の読み方
-目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
 - ページ数: 71
 - 分布: Code-verified: 55 / Discrepancy-found: 6 / HLD-only: 9 / Meta: 1
@@ -106,3 +106,5 @@ reboot、warm restart、telemetry、logging、security、techsupport など装�
 | [ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）](reset-local-users-passwords-during-init-hld.md) | HLD-only |
 | [動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）](sonic-dynamic-port-breakout-feature-high-level-design.md) | Code-verified |
 | [静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）](static-dns-configuration.md) | Code-verified |
+
+<!-- glossary-links-injected: 167700005048 -->

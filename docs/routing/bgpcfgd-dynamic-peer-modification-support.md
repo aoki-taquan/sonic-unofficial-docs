@@ -29,14 +29,14 @@ related:
 
 ## 読み手が知りたいこと
 
-- SDN コントローラから dynamic BGP peer（listen-range）を動的に追加・削除したい。今までの bgpcfgd で何が足りなかったか
+- SDN コントローラから dynamic [BGP](../reference/glossary.md#term-bgp) peer（listen-range）を動的に追加・削除したい。今までの [bgpcfgd](../reference/glossary.md#term-bgpcfgd) で何が足りなかったか
 - update / delete が `bgpcfgd` のどこで処理されるか、後方互換は保たれるか
 - SDN 側はどこで「反映済み」を確認できるか
 - 何が **peer_type 依存** なのか
 
 ## 何が問題だったか
 
-従来 bgpcfgd は `BGP_PEER_RANGE` を **create only** で扱い、runtime での range 追加/削除や route-map / prefix-list / peer-group 等の付随設定変更を受け付けなかった[^1]。SDN コントローラから VNET / VRF 単位で dynamic peer を CRUD する要件に応えるため、本 HLD は **update / delete テンプレート** と **STATE_DB ミラー table** を追加する。
+従来 bgpcfgd は `BGP_PEER_RANGE` を **create only** で扱い、runtime での range 追加/削除や route-map / prefix-list / peer-group 等の付随設定変更を受け付けなかった[^1]。SDN コントローラから [VNET](../reference/glossary.md#term-vnet) / [VRF](../reference/glossary.md#term-vrf) 単位で dynamic peer を CRUD する要件に応えるため、本 [HLD](../reference/glossary.md#term-hld) は **update / delete テンプレート** と **[STATE_DB](../reference/glossary.md#term-state_db) ミラー table** を追加する。
 
 スケール目標[^1]:
 
@@ -61,7 +61,7 @@ STATE_DB.BGP_PEER_CONFIGURED_TABLE|<VRF/VNET>|<Peer>
     （CONFIG_DB と同じフィールドのミラー）
 ```
 
-dynamic / static 両 peer で同じ table 名を使う。SDN は CONFIG_DB に投入 → STATE_DB をポーリングして反映確認する想定[^1]。
+dynamic / static 両 peer で同じ table 名を使う。SDN は [CONFIG_DB](../reference/glossary.md#term-config_db) に投入 → STATE_DB をポーリングして反映確認する想定[^1]。
 
 ## bgpcfgd の挙動
 
@@ -167,7 +167,7 @@ show ip bgp vrf Vnet1 summary
 ## 干渉する機能
 
 - **bgpcfgd / docker-fpm-frr**: 主体
-- **FRR bgpd / vtysh**: 現行 listen-range の取得と適用先
+- **[FRR](../reference/glossary.md#term-frr) bgpd / vtysh**: 現行 listen-range の取得と適用先
 - **SDN controller**: CONFIG_DB 投入と STATE_DB ポーリング
 - **VRF / VNET**: 名前解決と routing instance 切替
 
@@ -176,7 +176,7 @@ show ip bgp vrf Vnet1 summary
 - listen-range 追加が反映されない → ベンダ template dir に `update.conf.j2` があるか確認
 - `BGP_PEER_CONFIGURED_TABLE` に entry が出ない → bgpcfgd ログで render エラーを確認
 - diff が誤算出 → vtysh の `show ip bgp listen range` と CONFIG_DB を突き合わせ
-- VNET 上で `show ip bgp vrf <name>` が動かない → sonic-utilities のバージョン確認
+- VNET 上で `show ip bgp vrf <name>` が動かない → [sonic-utilities](../reference/glossary.md#term-sonic-utilities) のバージョン確認
 
 ## 関連 Topic
 
@@ -187,3 +187,5 @@ show ip bgp vrf Vnet1 summary
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/BGP/Bgpcfgd-dyn-peer-modification-support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: f2b208f4ed9e -->

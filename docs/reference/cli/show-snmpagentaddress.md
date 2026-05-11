@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-`show snmpagentaddress` は SNMP エージェント（snmpd）がリッスンする IP/ポート/VRF の設定を表示する CLI グループ[^1]。CONFIG_DB の `SNMP_AGENT_ADDRESS_CONFIG` テーブルを直接読み、tabulate で整形して出力するだけのシンプルな参照系コマンド。
+`show snmpagentaddress` は [SNMP](../../reference/glossary.md#term-snmp) エージェント（snmpd）がリッスンする IP/ポート/[VRF](../../reference/glossary.md#term-vrf) の設定を表示する CLI グループ[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `SNMP_AGENT_ADDRESS_CONFIG` テーブルを直接読み、tabulate で整形して出力するだけのシンプルな参照系コマンド。
 
 ## コマンド一覧
 
@@ -118,3 +118,5 @@ flowchart LR
 ## 引用元
 
 [^1]: `show snmpagentaddress` グループ定義は `show/main.py` L585-L600。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L585>
+
+<!-- glossary-links-injected: ad6993c42691 -->

@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-SONiC の YANG モデルは **ABNF.json** で表現された Redis スキーマを RFC 7950 準拠の YANG に写像したもの。Configuration Validation Library (CVL) と SONiC Mgmt Framework が NB API・設定検証で利用する[^1]。本ドキュメントはそのモデルを書く際のガイドライン 21 項[^1] を構造化したもの。
+SONiC の [YANG](../reference/glossary.md#term-yang) モデルは **ABNF.json** で表現された [Redis](../reference/glossary.md#term-redis) スキーマを RFC 7950 準拠の YANG に写像したもの。Configuration Validation Library (CVL) と SONiC Mgmt Framework が NB API・設定検証で利用する[^1]。本ドキュメントはそのモデルを書く際のガイドライン 21 項[^1] を構造化したもの。
 
 ## ガイドライン要約
 
@@ -82,7 +82,7 @@ SONiC の YANG モデルは **ABNF.json** で表現された Redis スキーマ�
 
 | # | ルール |
 |---|--------|
-| 19 | 状態系 (read-only) は `config false;` で別 container。CONFIG_DB 以外の DB なら `sonic-ext:db-name "<DB>"`、key 区切りが `\|` でなければ `sonic-ext:key-delim "<sep>"` を付ける |
+| 19 | 状態系 (read-only) は `config false;` で別 container。[CONFIG_DB](../reference/glossary.md#term-config_db) 以外の DB なら `sonic-ext:db-name "<DB>"`、key 区切りが `\|` でなければ `sonic-ext:key-delim "<sep>"` を付ける |
 | 20 | clear 等の動作命令は **custom RPC**（input / output は省略可）。設定変更を伴う RPC は禁止 |
 | 21 | 非同期イベントは `notification`（例: `link_event`） |
 
@@ -182,7 +182,7 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 ## 関連ファイル
 
 - 共通型: `sonic-head` / `sonic-common` 等の include 元
-- ACL の完整なサンプル: 本 HLD 末尾に `sonic-acl.yang` を例示[^1]
+- [ACL](../reference/glossary.md#term-acl) の完整なサンプル: 本 [HLD](../reference/glossary.md#term-hld) 末尾に `sonic-acl.yang` を例示[^1]
 
 ## 制限事項
 
@@ -210,8 +210,8 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 
 **差分の中身**:
 
-- `map-list` / `key-delim` は元来 sonic-mgmt-common（NB 側）で導入された拡張で、southbound 側の `sonic-buildimage/sonic-yang-models` には取り込まれていない。両リポでガイドラインの「正」を取り違えると、southbound yang をマッピングする際に拡張未定義エラーになる。
-- `error-app-tag` の未付与は機能上は致命的でないが、NB クライアント (gNMI / REST) でのエラー応答可読性が落ちる。
+- `map-list` / `key-delim` は元来 [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt)-common（NB 側）で導入された拡張で、southbound 側の `sonic-buildimage/sonic-yang-models` には取り込まれていない。両リポでガイドラインの「正」を取り違えると、southbound yang をマッピングする際に拡張未定義エラーになる。
+- `error-app-tag` の未付与は機能上は致命的でないが、NB クライアント ([gNMI](../reference/glossary.md#term-gnmi) / REST) でのエラー応答可読性が落ちる。
 
 **読者への影響**:
 
@@ -237,7 +237,7 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 
 #### 関連 GitHub Issue / PR
 
-- [sonic-buildimage #17348: \[yang\] Sonic yangs with nested lists (list within a list) deviate from Sonic yang modelling guidelines (closed)](https://github.com/sonic-net/sonic-buildimage/issues/17348) — 本ガイドラインからの逸脱を指摘した代表的 issue。
+- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #17348: \[yang\] Sonic yangs with nested lists (list within a list) deviate from Sonic yang modelling guidelines (closed)](https://github.com/sonic-net/sonic-buildimage/issues/17348) — 本ガイドラインからの逸脱を指摘した代表的 issue。
 - [sonic-buildimage #10386: \[YANG\]sonic-dot1p-tc-map.yang would cause failed deployment via mgmt-framework (open)](https://github.com/sonic-net/sonic-buildimage/issues/10386) — ガイドライン違反が運用障害となった具体例。
 - ABNF.json → sonic-*.yang 変換規約全体の包括的 issue は確認できず、個別の YANG 追加 PR (例 #13314, #10786, #9116) で慣行が蓄積されている。
 
@@ -259,3 +259,5 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 - must / when 条件の error-app-tag が NB 側 (gNMI/REST) でエラー応答に反映されるか確認 → yang-models 側は未網羅
 - ABNF.json と sonic-yang-models のドリフト検出ツールの存在確認 → 別途
 -->
+
+<!-- glossary-links-injected: f83beef3850a -->

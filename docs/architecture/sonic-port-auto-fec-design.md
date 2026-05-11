@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-ポートの **autoneg と FEC モードの組み合わせの挙動を決定論的にする** ための設計[^1]。従来は autoneg=on のとき FEC（none / RS / FC）を user 設定したらどう動くか vendor SAI 任せだった。SAI に新属性 `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` を入れ、**FEC mode = `auto`** という新値を SONiC に追加することで、user 意図を明示する。
+ポートの **autoneg と FEC モードの組み合わせの挙動を決定論的にする** ための設計[^1]。従来は autoneg=on のとき FEC（none / RS / FC）を user 設定したらどう動くか vendor [SAI](../reference/glossary.md#term-sai) 任せだった。SAI に新属性 `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` を入れ、**FEC mode = `auto`** という新値を SONiC に追加することで、user 意図を明示する。
 
 | FEC | autoneg | 期待 |
 |-----|---------|------|
@@ -81,7 +81,7 @@ flowchart LR
 
 ### Warm / Fast boot
 
-`PORT.fec=auto` は CONFIG_DB に persist されるため warm/fast boot 越しに継続。autoneg 折衝は再起動後にやり直し[^1]。
+`PORT.fec=auto` は [CONFIG_DB](../reference/glossary.md#term-config_db) に persist されるため warm/fast boot 越しに継続。autoneg 折衝は再起動後にやり直し[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/port_auto_neg/auto-fec.md#L56-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -175,3 +175,5 @@ PORT|<if>:
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 96667c52d98d -->

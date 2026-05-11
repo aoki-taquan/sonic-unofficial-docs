@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-`config ssh` は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の `SSH_SERVER|POLICIES` に書き込む CLI グループ[^1]。実 sshd への反映は `hostcfgd` 系の設定再生成パスを通じて行われる。
+`config ssh` は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を [CONFIG_DB](../../reference/glossary.md#term-config_db) の `SSH_SERVER|POLICIES` に書き込む CLI グループ[^1]。実 sshd への反映は `hostcfgd` 系の設定再生成パスを通じて行われる。
 
 ## コマンド一覧
 
@@ -98,7 +98,7 @@ CONFIG_DB の `SSH_SERVER|POLICIES` テーブルに `max_sessions` フィール�
 
 ## 注意
 
-- 反映には sshd 再ロードが必要。SONiC では hostcfgd が CONFIG_DB の変更を監視して `/etc/ssh/sshd_config` を再生成する。
+- 反映には sshd 再ロードが必要。SONiC では [hostcfgd](../../reference/glossary.md#term-hostcfgd) が CONFIG_DB の変更を監視して `/etc/ssh/sshd_config` を再生成する。
 - 同名の `config serial_console inactivity-timeout` という別ファミリがあり、こちらは `SERIAL_CONSOLE|POLICIES` テーブルへ書く。
 
 <!-- cli-mermaid -->
@@ -132,3 +132,5 @@ flowchart LR
 [^1]: `config ssh` グループ定義は `config/main.py` L9970-L10000。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9970>
 
 [^2]: 書き込みは `ConfigDBConnector().mod_entry("SSH_SERVER", "POLICIES", ...)` で行う。
+
+<!-- glossary-links-injected: a31aab569e22 -->

@@ -20,7 +20,7 @@ keywords:
 
 # Build / Packaging / Application Extension
 
-この章は、SONiC を「どう作って配るか」と「外部アプリケーションをどう持ち込むか」を、開発者と運用者が同じ地図で読むための入口である。既存ページは build 改善 HLD、Debian cadence、image versioning、application extension（SPM）、ARM、container hardening、feature quality の各 HLD に分散しているが、ビルド成果物が ASIC に届くまでの導線で読み直すと位置関係がはっきりする。
+この章は、SONiC を「どう作って配るか」と「外部アプリケーションをどう持ち込むか」を、開発者と運用者が同じ地図で読むための入口である。既存ページは build 改善 [HLD](../../reference/glossary.md#term-hld)、Debian cadence、image versioning、application extension（SPM）、ARM、container hardening、feature quality の各 HLD に分散しているが、ビルド成果物が ASIC に届くまでの導線で読み直すと位置関係がはっきりする。
 
 主な問いは次の 4 つ。
 
@@ -35,7 +35,7 @@ keywords:
 2. [アーキテクチャ](architecture.md): build artifact が ONIE installer になるまでの流れと RFS split を追う。
 3. [設定 / 運用](operations.md): SPM・application extension・package manager の lifecycle を運用面から見る。
 4. [発展トピック](advanced.md): ARM、container hardening、feature quality を、リリース品質の導線として読む。
-5. [内部実装](internals.md): sonic-buildimage の Makefile / docker 階層、slave container、`rules/` / `dockers/` の責務分担、Application Extension マニフェストの解釈を実装側から見る。
+5. [内部実装](internals.md): [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) の Makefile / docker 階層、slave container、`rules/` / `dockers/` の責務分担、Application Extension マニフェストの解釈を実装側から見る。
 
 ## 統合した既存ページ
 
@@ -59,3 +59,4 @@ keywords:
 - [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
+<!-- glossary-links-injected: 3b8cb233052f -->

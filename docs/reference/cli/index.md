@@ -46,7 +46,7 @@ sonic-package-manager
 - サブグループの **概要**（何を制御するか / どのデーモンを操作するか）
 - **コマンド一覧表**（コマンド + 用途）
 - 各コマンドの **用法 / 引数 / オプション / 動作**
-- 関連する **CONFIG_DB テーブル**（コマンド実装中の DB 書き込みから抽出）
+- 関連する **[CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル**（コマンド実装中の DB 書き込みから抽出）
 - 一次情報の脚注
 
 ## 主要サブグループ index（順次追加予定）
@@ -55,12 +55,12 @@ sonic-package-manager
 
 ### config 系
 
-- `config bgp` ... BGP shutdown / startup / remove / autonomous-system
-- `config interface` ... 物理ポート・SubInterface のステート / 速度 / FEC / IP / VRF
-- `config vlan` ... VLAN 作成、メンバ追加、DHCP relay
-- `config portchannel` ... LAG (LACP) 作成・メンバ追加
-- `config acl` ... ACL テーブル更新・ルール削除
-- `config vxlan` ... VTEP / EVPN / VLAN-VNI マッピング
+- `config bgp` ... [BGP](../../reference/glossary.md#term-bgp) shutdown / startup / remove / autonomous-system
+- `config interface` ... 物理ポート・SubInterface のステート / 速度 / FEC / IP / [VRF](../../reference/glossary.md#term-vrf)
+- `config vlan` ... [VLAN](../../reference/glossary.md#term-vlan) 作成、メンバ追加、DHCP relay
+- `config portchannel` ... [LAG](../../reference/glossary.md#term-lag) ([LACP](../../reference/glossary.md#term-lacp)) 作成・メンバ追加
+- `config acl` ... [ACL](../../reference/glossary.md#term-acl) テーブル更新・ルール削除
+- `config vxlan` ... VTEP / [EVPN](../../reference/glossary.md#term-evpn) / VLAN-VNI マッピング
 
 ### show 系
 
@@ -72,7 +72,7 @@ sonic-package-manager
 
 ### clear 系
 
-- `clear` ... ARP / NDP / counters / FDB / BGP セッション等
+- `clear` ... [ARP](../../reference/glossary.md#term-arp) / [NDP](../../reference/glossary.md#term-ndp) / counters / [FDB](../../reference/glossary.md#term-fdb) / BGP セッション等
 
 ## 全体的な仕様メモ
 
@@ -111,3 +111,5 @@ config.add_command(vxlan.vxlan)
 - [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a68494c3c083 -->

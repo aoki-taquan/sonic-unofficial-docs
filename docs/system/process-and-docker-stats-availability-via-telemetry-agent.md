@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-SONiC のテレメトリエージェント（gNMI / gNOI ストリーミング）から **プロセス毎の CPU/メモリ使用量** および **docker コンテナ毎のリソース消費** を購読できるようにする提案。新規デーモンが OS 上の `ps -eo` 出力と `docker stats --no-stream -a` の値を 2 分間隔で STATE_DB に書き、テレメトリエージェント側はそれを既存の購読チャネルで読み出す[^1]。
+SONiC のテレメトリエージェント（[gNMI](../reference/glossary.md#term-gnmi) / [gNOI](../reference/glossary.md#term-gnoi) ストリーミング）から **プロセス毎の CPU/メモリ使用量** および **docker コンテナ毎のリソース消費** を購読できるようにする提案。新規デーモンが OS 上の `ps -eo` 出力と `docker stats --no-stream -a` の値を 2 分間隔で [STATE_DB](../reference/glossary.md#term-state_db) に書き、テレメトリエージェント側はそれを既存の購読チャネルで読み出す[^1]。
 
 ## 動作仕様
 
@@ -90,7 +90,7 @@ DOCKER_STATS|LastUpdateTime
 
 ### 関連する CONFIG_DB
 
-HLD には CONFIG_DB エントリの記述は無い。デーモン自体の有効化スイッチや間隔の調整も明記されていない（2 分固定）[^1]。
+[HLD](../reference/glossary.md#term-hld) には [CONFIG_DB](../reference/glossary.md#term-config_db) エントリの記述は無い。デーモン自体の有効化スイッチや間隔の調整も明記されていない（2 分固定）[^1]。
 
 ### 関連する CLI
 
@@ -98,7 +98,7 @@ HLD には新規 CLI の記述は無い。データはテレメトリエージ�
 
 ### 関連する YANG
 
-HLD には YANG モデルの記述は無い。
+HLD には [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -145,3 +145,5 @@ gnmic -a <switch>:8080 subscribe \
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: bd7e9f303d6c -->

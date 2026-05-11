@@ -31,19 +31,19 @@ related:
 
 ## 読み手が知りたいこと
 
-- なぜ VoQ シャーシは普通の BGP 設定では駄目で、ASIC 間で **ECMP 集合が同一** である必要があるのか
+- なぜ VoQ シャーシは普通の [BGP](../reference/glossary.md#term-bgp) 設定では駄目で、ASIC 間で **[ECMP](../reference/glossary.md#term-ecmp) 集合が同一** である必要があるのか
 - そのために必要な 4 つの設定は何か（特に `bgp bestpath peer-type multipath-relax` の役割）
-- どの CONFIG_DB テーブルと minigraph 要素で「VoQ 内部 iBGP ピア」を表現するか
+- どの [CONFIG_DB](../reference/glossary.md#term-config_db) テーブルと minigraph 要素で「VoQ 内部 iBGP ピア」を表現するか
 - `bgp shutdown all` 等の運用 CLI は内部ピアを扱うのか
 
 ## なぜ ASIC 間 ECMP 整合性が要るか
 
 VoQ（Virtual Output Queue）シャーシは複数 ASIC を 1 論理ルータに束ねる。転送決定は **入口 ASIC で 1 回だけ** 行われ、その後はファブリック経由で出口へ運ばれる。そのためある宛先の **ECMP nexthop 集合が ASIC ごとに異なる** と、入口 ASIC ごとにロードバランスがブレる[^1]。
 
-本 HLD はそれを防ぐ 3 つの仕組みを定義する[^1]:
+本 [HLD](../reference/glossary.md#term-hld) はそれを防ぐ 3 つの仕組みを定義する[^1]:
 
 1. ASIC 間で **iBGP フルメッシュ** を張り、`addpath-tx-all-paths` で全 eBGP 学習経路を交換
-2. 新規 FRR コマンド `bgp bestpath peer-type multipath-relax` で eBGP/iBGP 混在 ECMP を許す
+2. 新規 [FRR](../reference/glossary.md#term-frr) コマンド `bgp bestpath peer-type multipath-relax` で eBGP/iBGP 混在 ECMP を許す
 3. `BGP_VOQ_CHASSIS_NEIGHBOR` テーブルと `bgpcfgd` の `voq_chassis` テンプレートで生成
 
 ```mermaid
@@ -58,7 +58,7 @@ flowchart LR
   R4[(R4)] ---|eBGP| A3
 ```
 
-全 ASIC は **同一 AS**。1 セッションで IPv4/IPv6 両ファミリを運ぶが IPv6 ユニキャストは別途 activate が要る[^1]。iBGP nexthop の再帰解決は VOQ HLD の inband recycle port / グローバル neighbor テーブルが前提[^1]。
+全 ASIC は **同一 AS**。1 セッションで IPv4/IPv6 両ファミリを運ぶが IPv6 ユニキャストは別途 activate が要る[^1]。iBGP nexthop の再帰解決は [VOQ](../reference/glossary.md#term-voq) HLD の inband recycle port / グローバル neighbor テーブルが前提[^1]。
 
 ## ECMP 整合性のための 4 設定
 
@@ -92,7 +92,7 @@ eBGP ピア自身が再帰解決を要する nexthop を送ってきた場合は
 
 ## CONFIG_DB / minigraph 拡張
 
-`BGP_VOQ_CHASSIS_NEIGHBOR` を新設。スキーマは `BGP_NEIGHBOR` と同一で、**bgpcfgd で別テンプレート（`voq_chassis`）を引くためのフラグ** の役割[^1]。`voq_chassis` テンプレートは上記 4 設定を集約した peer-group を定義する。
+`BGP_VOQ_CHASSIS_NEIGHBOR` を新設。スキーマは `BGP_NEIGHBOR` と同一で、**[bgpcfgd](../reference/glossary.md#term-bgpcfgd) で別テンプレート（`voq_chassis`）を引くためのフラグ** の役割[^1]。`voq_chassis` テンプレートは上記 4 設定を集約した peer-group を定義する。
 
 minigraph→CONFIG_DB 変換は `BGPSession` 要素の `<VoQChassisInternal>true</VoQChassisInternal>` を読み、該当ピアを `BGP_VOQ_CHASSIS_NEIGHBOR` に振り分ける[^1]:
 
@@ -177,3 +177,5 @@ exit-address-family
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0a0d068c456d -->

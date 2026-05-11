@@ -32,7 +32,7 @@ SONiC の `reboot` スクリプトは内部で `systemctl reboot` を呼ぶが�
 - A: `systemctl reboot` 戻り後にユーザシェルがプロンプトを 1 行表示してから切断
 - B: シェルが先に kill されてプロンプト無しで切断
 
-自動化システムから見ると **`reboot` 完了の判定が安定しない**。本 HLD はこれを **B 動作（プロンプトを出さずブロックして切断まで待つ）** に統一する **blocking mode** を導入する[^1]。
+自動化システムから見ると **`reboot` 完了の判定が安定しない**。本 [HLD](../reference/glossary.md#term-hld) はこれを **B 動作（プロンプトを出さずブロックして切断まで待つ）** に統一する **blocking mode** を導入する[^1]。
 
 破壊的変更を避けるため、blocking mode は **明示的にオプトイン**（`-b` または `reboot.conf`）。
 
@@ -173,11 +173,11 @@ reasoning: 「-b と reboot.conf のいずれか」「timeout で deadloop か�
 
 ### 関連する CONFIG_DB
 
-CONFIG_DB スキーマには変更なし。設定は **`/etc/sonic/reboot.conf`**（ファイル）で行う。
+[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマには変更なし。設定は **`/etc/sonic/reboot.conf`**（ファイル）で行う。
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない。
 
 ### 設定例
 
@@ -224,3 +224,5 @@ sudo reboot -b -v
 - platform reboot 検出ロジック
 - fast-reboot / warm-reboot への blocking mode 適用可否
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

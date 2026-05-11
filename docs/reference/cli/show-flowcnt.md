@@ -26,7 +26,7 @@ related:
 
 `show flowcnt-trap` と `show flowcnt-route` は **フローカウンタ** 機能の表示コマンド。`show/flow_counters.py` で定義され、`show/main.py` 側で `cli.add_command(flow_counters.flowcnt_trap)` / `cli.add_command(flow_counters.flowcnt_route)` として登録されている[^1]。両グループとも `flow_counters_stat` スクリプトを内部で呼び出す。
 
-- `flowcnt-trap`: コントロールプレーンへ送られる **trap パケット** (ARP, LLDP, BGP, etc.) を type 別にカウント
+- `flowcnt-trap`: コントロールプレーンへ送られる **trap パケット** ([ARP](../../reference/glossary.md#term-arp), [LLDP](../../reference/glossary.md#term-lldp), [BGP](../../reference/glossary.md#term-bgp), etc.) を type 別にカウント
 - `flowcnt-route`: 設定された prefix pattern にマッチする **ルート毎** のフローカウンタ
 
 `flowcnt-route` はプラットフォームサポートが必要で、未対応プラットフォームでは `exit_if_route_flow_counter_not_support()` で即終了する[^2]。
@@ -94,7 +94,7 @@ show flowcnt-route config
 ```
 
 **動作**:
-CONFIG_DB の `FLOW_COUNTER_ROUTE_PATTERN` テーブルを `db.cfgdb.get_table` で取得し、key (`<vrf>|<prefix>`) を `extract_route_pattern` で分解、`max` フィールドとともに tabulate 表示する[^3]。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FLOW_COUNTER_ROUTE_PATTERN` テーブルを `db.cfgdb.get_table` で取得し、key (`<vrf>|<prefix>`) を `extract_route_pattern` で分解、`max` フィールドとともに tabulate 表示する[^3]。
 
 ### `show flowcnt-route stats [pattern|route]`
 
@@ -112,7 +112,7 @@ show flowcnt-route stats route <prefix> [--vrf <vrf>] [-n ...]
 - `pattern <p>`: `flow_counters_stat -t route --prefix_pattern <p>`
 - `route <p>`: `flow_counters_stat -t route --prefix <p>`
 
-いずれも `--vrf` で VRF/VNET フィルタが可能。`stats` は `invoke_without_command=True` の group になっており、引数なしで呼ぶと内部の本体ロジックが、subcommand を付けると pattern/route 関数が走る Click パターン。
+いずれも `--vrf` で [VRF](../../reference/glossary.md#term-vrf)/[VNET](../../reference/glossary.md#term-vnet) フィルタが可能。`stats` は `invoke_without_command=True` の group になっており、引数なしで呼ぶと内部の本体ロジックが、subcommand を付けると pattern/route 関数が走る Click パターン。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/flow_counters.py#L53-L93 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -195,3 +195,5 @@ flowchart LR
 
 - [reference/CLI: show interfaces](show-interfaces.md)
 - [reference/CLI: show route-map](show-route-map.md)
+
+<!-- glossary-links-injected: 35bf215a8536 -->

@@ -76,8 +76,8 @@ sysctl -a 2>/dev/null | grep -E "gc_thresh|gc_stale|gc_interval"
 1. **対向 host の MAC アドレス変更 (NIC 交換 / VM migration)** が GARP を送らず、kernel が STALE のまま retain
 2. **`gc_stale_time` / `base_reachable_time` が長い** — Linux 既定で 30 秒程度だが、tuning で 1 時間になっているケース
 3. **`neighsyncd` が停止 / lag** — `swss` container 内の `supervisorctl status` で確認
-4. **APPL_DB → ASIC_DB の sync 遅延** — `appdb-asicdb-sync-lag.md` 参照
-5. **VLAN/MAC table の inconsistency** — fdb の port が古く、ARP は更新されても転送が誤る
+4. **[APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db) の sync 遅延** — `appdb-asicdb-sync-lag.md` 参照
+5. **[VLAN](../../reference/glossary.md#term-vlan)/MAC table の inconsistency** — fdb の port が古く、[ARP](../../reference/glossary.md#term-arp) は更新されても転送が誤る
 6. **proxy_arp 有効化による偽の応答** — 別 host が応答を返している
 
 ## 関連 reference / topics
@@ -85,3 +85,5 @@ sysctl -a 2>/dev/null | grep -E "gc_thresh|gc_stale|gc_interval"
 - [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md)
 - [routing-loop-detected.md](routing-loop-detected.md)
 - [../cli/show-arp.md](../cli/show-arp.md)
+
+<!-- glossary-links-injected: 6d8c847ef6bb -->

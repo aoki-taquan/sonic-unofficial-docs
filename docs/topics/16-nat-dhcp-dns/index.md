@@ -45,7 +45,7 @@ keywords:
 
 # NAT / DHCP Relay / Time-DNS Services
 
-この章は、SONiC が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり NAT、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や terminal server のような測定・補助サービスをまとめて読むための入口です。これらは BGP や ACL のように data plane の主役ではありませんが、ToR / management スイッチを「使える装置」にするための薄い層であり、container と daemon の境界、management VRF との関係を把握しないと運用で迷います。
+この章は、SONiC が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり [NAT](../../reference/glossary.md#term-nat)、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や terminal server のような測定・補助サービスをまとめて読むための入口です。これらは [BGP](../../reference/glossary.md#term-bgp) や [ACL](../../reference/glossary.md#term-acl) のように data plane の主役ではありませんが、ToR / management スイッチを「使える装置」にするための薄い層であり、container と daemon の境界、management [VRF](../../reference/glossary.md#term-vrf) との関係を把握しないと運用で迷います。
 
 NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP relay は L2/L3 broadcast を upstream へ橋渡しする agent、DHCP server は kea を内蔵してポート単位で leases を払い出す機能、time / DNS は OS レイヤ寄りの設定で management VRF 越しに通信する、というように責務がはっきり分かれます。章内のページでは、まずこれらを「どの container / daemon が処理するか」で並べ直します。
 
@@ -61,10 +61,10 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 
 1. [概念](concept.md): edge service の範囲と、NAT / DHCP relay / DHCP server / time-DNS の責務分担。
 2. [アーキテクチャ](architecture.md): `docker-nat`、`docker-dhcp-relay`、`docker-dhcp-server`、kea、chrony と packet flow。
-3. [設定](setup.md): NAT、DHCP relay、DHCP server の CONFIG_DB / CLI / YANG リファレンス。
+3. [設定](setup.md): NAT、DHCP relay、DHCP server の [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [YANG](../../reference/glossary.md#term-yang) リファレンス。
 4. [運用](operations.md): counter、DoS 緩和、service health の確認順序。
 5. [発展トピック](advanced.md): NTP / chrony 移行、static DNS、TWAMP Light、terminal server udev。
-6. [内部実装](internals.md): natsyncd / natorch / dhcp_relayd / kea-dhcp / chrony の責務分担と CONFIG_DB / APPL_DB / SAI への変換を実装側から見る。
+6. [内部実装](internals.md): natsyncd / natorch / dhcp_relayd / kea-dhcp / chrony の責務分担と CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [SAI](../../reference/glossary.md#term-sai) への変換を実装側から見る。
 
 ## 関連ページ
 
@@ -91,3 +91,4 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
 
+<!-- glossary-links-injected: d6b580496e1f -->

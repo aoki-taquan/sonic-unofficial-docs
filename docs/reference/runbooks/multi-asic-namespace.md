@@ -31,10 +31,10 @@ related:
 ## 想定原因
 
 1. **internal port-channel が片側だけ UP**: backend portchannel の片側が member 0 のまま
-2. **`asic.conf` / `topology.conf` の不一致**: namespace 数と CONFIG_DB の `asic_id` 不整合
+2. **`asic.conf` / `topology.conf` の不一致**: namespace 数と [CONFIG_DB](../../reference/glossary.md#term-config_db) の `asic_id` 不整合
 3. **internal route の漏れ**: `BGP_INTERNAL_NEIGHBOR` が片側のみ
 4. **inband interface 未設定** (`VOQ_INBAND_INTERFACE` 関連)
-5. **swss / syncd コンテナがいずれかの namespace で異常終了**
+5. **swss / [syncd](../../reference/glossary.md#term-syncd) コンテナがいずれかの namespace で異常終了**
 
 ## 切り分け手順
 
@@ -70,7 +70,7 @@ done
 ```
 
 - 期待: backend portchannel が UP、internal iBGP Established
-- 異常: backend portchannel down → 物理リンク / LACP の問題（[fec-errors.md](fec-errors.md)）
+- 異常: backend portchannel down → 物理リンク / [LACP](../../reference/glossary.md#term-lacp) の問題（[fec-errors.md](fec-errors.md)）
 
 ### 4. 各 namespace のコンテナ生存
 
@@ -104,5 +104,7 @@ sudo ip netns exec asic0 sonic-db-cli APPL_DB keys "ROUTE_TABLE:*" | head
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb — `multi_asic.py`
-[^2]: sonic-net/sonic-swss @ 4305596 — orchdaemon の namespace 認識
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `multi_asic.py`
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — orchdaemon の namespace 認識
+
+<!-- glossary-links-injected: 5c57366500bc -->

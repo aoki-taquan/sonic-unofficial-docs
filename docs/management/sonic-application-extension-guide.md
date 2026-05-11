@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-SONiC の docker 化された機能（DHCP relay 等）を **Application Extension** 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録するフローを示す開発者向けガイド[^1]。コアの HLD は別ファイル（`sonic-application-extention-hld.md`）であり、本ページはその実践ガイド側。
+SONiC の docker 化された機能（DHCP relay 等）を **Application Extension** 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録するフローを示す開発者向けガイド[^1]。コアの [HLD](../reference/glossary.md#term-hld) は別ファイル（`sonic-application-extention-hld.md`）であり、本ページはその実践ガイド側。
 
 ## 動作仕様
 
@@ -72,7 +72,7 @@ manifest ベースで docker のランタイム要件（特権・ボリューム
 
 ### 関連する CONFIG_DB
 
-ガイド本文には CONFIG_DB エントリは出てこない（extension ごとに独自スキーマ）。
+ガイド本文には [CONFIG_DB](../reference/glossary.md#term-config_db) エントリは出てこない（extension ごとに独自スキーマ）。
 
 ### 関連する CLI
 
@@ -87,7 +87,7 @@ manifest ベースで docker のランタイム要件（特権・ボリューム
 
 ### 関連する YANG
 
-ガイド本文には記述なし。各 extension が独自 YANG を持つ場合は manifest で宣言する。
+ガイド本文には記述なし。各 extension が独自 [YANG](../reference/glossary.md#term-yang) を持つ場合は manifest で宣言する。
 
 ### 設定例
 
@@ -119,3 +119,5 @@ docker ps | grep my-extension
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extension-guide.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

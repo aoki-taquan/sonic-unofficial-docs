@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-**VRF × アドレスファミリ単位** で BGP に **静的に注入するネットワーク** (`network <prefix>` ステートメント) を定義する CONFIG_DB テーブル[^1]。FRR `bgpd` の `address-family <afi> <safi>` 配下の `network <ip_prefix>` に対応する。`frr-mgmt-framework` 経路 (DEVICE_METADATA `frr_mgmt_framework_config = true`) で使用される。
+**[VRF](../../reference/glossary.md#term-vrf) × アドレスファミリ単位** で [BGP](../../reference/glossary.md#term-bgp) に **静的に注入するネットワーク** (`network <prefix>` ステートメント) を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。[FRR](../../reference/glossary.md#term-frr) `bgpd` の `address-family <afi> <safi>` 配下の `network <ip_prefix>` に対応する。`frr-mgmt-framework` 経路 (DEVICE_METADATA `frr_mgmt_framework_config = true`) で使用される。
 
 `BGP_GLOBALS_AF_AGGREGATE_ADDR` が複数の動的ルートを **集約** するのに対し、こちらは管理者が **明示的に広告したいプレフィックス** を列挙する用途。
 
@@ -77,7 +77,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 - 関連 CONFIG_DB: `BGP_GLOBALS`, `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_AGGREGATE_ADDR`, `ROUTE_MAP_SET`, `STATIC_ROUTE`
 - 関連 CLI: vtysh の `network <prefix>` (`frr-mgmt-framework` 経路では CONFIG_DB 投入)
-- 関連 YANG: `sonic-bgp-global`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
 <!-- ref-triangle:start -->
 
@@ -117,3 +117,5 @@ vtysh -c "show running-config bgpd" | grep "^ network"
 vtysh -c "show ip bgp"
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 07040282b44e -->

@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-LDAP 認証サーバの一覧と global LDAP クライアント設定。`hostcfgd` が CONFIG_DB を購読し、`/etc/nslcd.conf` を生成する[^1]。最大 8 サーバまで登録可能。
+LDAP 認証サーバの一覧と global LDAP クライアント設定。`hostcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、`/etc/nslcd.conf` を生成する[^1]。最大 8 サーバまで登録可能。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -74,7 +74,7 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 
 - 関連 CONFIG_DB: `AAA` (login source 順序), `TACPLUS_SERVER`, `RADIUS_SERVER`
 - 関連 CLI: `config aaa authentication login`、`config ldap`
-- 関連 YANG: `sonic-system-ldap`、`sonic-system-aaa`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-ldap`、`sonic-system-aaa`
 
 <!-- ref-triangle:start -->
 
@@ -119,3 +119,5 @@ show ldap-server
 sudo cat /etc/nslcd.conf
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

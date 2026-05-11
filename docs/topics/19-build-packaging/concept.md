@@ -21,7 +21,7 @@ SONiC の build / packaging は、開発者向けの「ソースから ONIE inst
 
 ## この章は何のためにあるか
 
-SONiC は「機能を動かす」「ASIC に書く」だけでなく、**そもそも image をどう組み立てるか／後から拡張するか** が独立した話題になる NOS である。`docs/architecture/` と `docs/system/` の中には build や packaging の HLD が点在しているが、それらは「開発者視点」「運用者視点」「リリース管理者視点」の混在で読みづらい。本章はそれを次の 4 つの軸で読み解く。
+SONiC は「機能を動かす」「ASIC に書く」だけでなく、**そもそも image をどう組み立てるか／後から拡張するか** が独立した話題になる NOS である。`docs/architecture/` と `docs/system/` の中には build や packaging の [HLD](../../reference/glossary.md#term-hld) が点在しているが、それらは「開発者視点」「運用者視点」「リリース管理者視点」の混在で読みづらい。本章はそれを次の 4 つの軸で読み解く。
 
 1. ソースから ONIE installer を作るまでの「build」
 2. 出来上がった image / docker に **意味のあるバージョンを振る** ための「versioning」
@@ -116,7 +116,7 @@ build 系 HLD は「ビルドを速くする」「ビルドを再現可能にす
 
 ## なぜ Application Extension が必要か
 
-Inbox の機能 docker（bgp、teamd、snmp 等）はすべて `sonic-buildimage` ツリーで一緒にビルドされ、ONIE installer に焼き込まれる。一方、3rd party や任意の docker を **後から** 入れて、`config feature` と同じ管理面で扱いたいケースが増えた。SPM はこれを満たすために、`sonic-package-manager install` で `FEATURE` テーブルへの登録、`docker_image_ctl` 経由の起動、warm reboot / showtech / syslog のフックを揃える設計になっている。詳細は [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md) を参照する。
+Inbox の機能 docker（bgp、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)、snmp 等）はすべて `sonic-buildimage` ツリーで一緒にビルドされ、ONIE installer に焼き込まれる。一方、3rd party や任意の docker を **後から** 入れて、`config feature` と同じ管理面で扱いたいケースが増えた。SPM はこれを満たすために、`sonic-package-manager install` で `FEATURE` テーブルへの登録、`docker_image_ctl` 経由の起動、warm reboot / showtech / syslog のフックを揃える設計になっている。詳細は [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md) を参照する。
 
 ## なぜ build profile / RFS split / Debian cadence が並ぶのか
 
@@ -155,3 +155,4 @@ build profile は「フラグ一式の再現性」、RFS split は「直列ル�
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
 
+<!-- glossary-links-injected: 735025d3a79c -->

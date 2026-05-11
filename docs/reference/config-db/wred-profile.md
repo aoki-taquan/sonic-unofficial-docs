@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-Weighted Random Early Detection (WRED) と ECN マーキングの設定プロファイルを定義する。`QUEUE` テーブルの `wred_profile` から名前で参照される[^1]。orchagent の `QosOrch` が CONFIG_DB を購読し、SAI WRED オブジェクトに変換する。
+Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) と ECN マーキングの設定プロファイルを定義する。`QUEUE` テーブルの `wred_profile` から名前で参照される[^1]。[orchagent](../../reference/glossary.md#term-orchagent) の `QosOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) WRED オブジェクトに変換する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -71,7 +71,7 @@ WRED_PROFILE|<name>
 
 - 関連 CONFIG_DB: `QUEUE`、`SCHEDULER`
 - 関連 CLI: `config qos clear`、テンプレート起点の生成 (`buffers.json.j2`)
-- 関連 YANG: `sonic-wred-profile`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-wred-profile`
 
 <!-- ref-triangle:start -->
 
@@ -113,3 +113,5 @@ sonic-db-cli CONFIG_DB hgetall 'WRED_PROFILE|AZURE_LOSSY'
 show wred
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: c7fb233bdfb1 -->

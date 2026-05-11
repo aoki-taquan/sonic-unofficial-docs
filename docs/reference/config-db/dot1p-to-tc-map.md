@@ -23,9 +23,9 @@ related:
 
 ## 概要
 
-`DOT1P_TO_TC_MAP` テーブルは IEEE 802.1p Priority Code Point (PCP, 0-7) を SONiC の Traffic Class へマップするテーブル[^1]。QoS 入口分類で使われ、`PORT_QOS_MAP.dot1p_to_tc_map` から参照される。`qosorch` (sonic-swss) が CONFIG_DB を読み、SAI の `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` オブジェクトを生成する。
+`DOT1P_TO_TC_MAP` テーブルは IEEE 802.1p Priority Code Point (PCP, 0-7) を SONiC の Traffic Class へマップするテーブル[^1]。[QoS](../../reference/glossary.md#term-qos) 入口分類で使われ、`PORT_QOS_MAP.dot1p_to_tc_map` から参照される。`qosorch` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、[SAI](../../reference/glossary.md#term-sai) の `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` オブジェクトを生成する。
 
-YANG は親 `DOT1P_TO_TC_MAP_LIST`（key: `name`）と、その下の inner list `DOT1P_TO_TC_MAP`（key: `dot1p`）の 2 段構造。
+[YANG](../../reference/glossary.md#term-yang) は親 `DOT1P_TO_TC_MAP_LIST`（key: `name`）と、その下の inner list `DOT1P_TO_TC_MAP`（key: `dot1p`）の 2 段構造。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -115,3 +115,5 @@ sonic-db-cli CONFIG_DB keys 'DOT1P_TO_TC_MAP|*'
 show qos map dot1p-tc
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 7e2c6e652020 -->

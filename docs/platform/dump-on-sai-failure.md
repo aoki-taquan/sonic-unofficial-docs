@@ -27,7 +27,7 @@ related:
 
 ## なぜ必要か
 
-SAI 呼び出しが失敗すると `orchagent` は **abort** し、syncd を含む各 service が再起動される。この再起動で **失敗時点の SAI / SDK / 下位レイヤ状態が失われ**、原因解析ができなくなる[^1]。
+[SAI](../reference/glossary.md#term-sai) 呼び出しが失敗すると `orchagent` は **abort** し、[syncd](../reference/glossary.md#term-syncd) を含む各 service が再起動される。この再起動で **失敗時点の SAI / SDK / 下位レイヤ状態が失われ**、原因解析ができなくなる[^1]。
 
 本機能は SAI 失敗を検知した瞬間に、`orchagent` が **abort 前に syncd へ dump を依頼** し、結果をホストから見える `/var/log/sai_failure_dump/` に保存する。後で `techsupport` を取ると自動回収される[^1]。
 
@@ -57,7 +57,7 @@ sequenceDiagram
 
 1. `orchagent` が SAI 失敗を検知
 2. abort 直前に `SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD = SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` を set
-3. `syncd` が受け、汎用スクリプト（HLD は `syncd_dump.sh` / **実装は `sai_failure_dump.sh`**）を実行[^1]
+3. `syncd` が受け、汎用スクリプト（[HLD](../reference/glossary.md#term-hld) は `syncd_dump.sh` / **実装は `sai_failure_dump.sh`**）を実行[^1]
 4. 汎用は `platform_syncd_dump.sh` の有無を確認、あれば呼ぶ[^1]
 5. `/var/log/sai_failure_dump/` をローテーション、abort 続行
 
@@ -85,11 +85,11 @@ flowchart LR
     TS --> CLEAR[ディレクトリ clear]
 ```
 
-dump はあくまで **失敗時点の証拠保全**。orchagent の abort 自体は防がない[^1]。
+dump はあくまで **失敗時点の証拠保全**。[orchagent](../reference/glossary.md#term-orchagent) の abort 自体は防がない[^1]。
 
 ## 設定 / CLI / YANG
 
-新規 config / show / YANG / DB Migrator の追加は **無し**[^1]。warm/fast boot にも影響なし。SAI 失敗時にだけ動く “見えない安全網”。
+新規 config / show / [YANG](../reference/glossary.md#term-yang) / DB Migrator の追加は **無し**[^1]。warm/fast boot にも影響なし。SAI 失敗時にだけ動く “見えない安全網”。
 
 ```bash
 ls -l /var/log/sai_failure_dump/         # 直近 dump 確認
@@ -151,3 +151,5 @@ sudo show techsupport                    # dump も自動取り込み
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/SAI_failure_handling/dump_on_sai_failure.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 2d37518e0eae -->

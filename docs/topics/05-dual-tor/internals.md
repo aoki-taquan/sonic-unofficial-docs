@@ -47,13 +47,13 @@ Active-Active では mux 方向ではなく、リンクごとの forwarding stat
 
 `MuxOrch` の仕事は、mux state を ASIC の転送状態に落とすことです。Active-Standby で standby 側にサーバ宛パケットが来た場合、直接サーバへ出すのではなく MuxTunnel へ向ける必要があります。
 
-prefix-based neighbor は、この切替を軽くするための方式です。neighbor entry を作り直さず、サーバ IP の `/32` または `/128` route の nexthop だけを直接 neighbor と tunnel の間で切り替えます。大量の neighbor を持つ ToR で、状態遷移時の SAI 操作を減らすための設計です。
+prefix-based neighbor は、この切替を軽くするための方式です。neighbor entry を作り直さず、サーバ IP の `/32` または `/128` route の nexthop だけを直接 neighbor と tunnel の間で切り替えます。大量の neighbor を持つ ToR で、状態遷移時の [SAI](../../reference/glossary.md#term-sai) 操作を減らすための設計です。
 
-multi-nexthop route のループ回避も同じ文脈です。1 つの route が複数 nexthop を持ち、その一部が active、一部が standby になると、ECMP の一部が tunnel へ入り、peer ToR 側でまた戻ってくる可能性があります。このため `MuxOrch` は active nexthop がある場合は単一 nexthop に絞り、全て standby なら tunnel を選ぶ、という動きをします。
+multi-nexthop route のループ回避も同じ文脈です。1 つの route が複数 nexthop を持ち、その一部が active、一部が standby になると、[ECMP](../../reference/glossary.md#term-ecmp) の一部が tunnel へ入り、peer ToR 側でまた戻ってくる可能性があります。このため `MuxOrch` は active nexthop がある場合は単一 nexthop に絞り、全て standby なら tunnel を選ぶ、という動きをします。
 
 ## default route 連動の意味
 
-サーバ側リンクが正常でも、ToR から上流への default route が消えていると、その ToR を active にしても上りがブラックホールになります。default route 連動は、orchagent が STATE_DB に公開する default route 状態を `linkmgrd` が読み、default route が無い側を standby 寄りに倒すための仕組みです。
+サーバ側リンクが正常でも、ToR から上流への default route が消えていると、その ToR を active にしても上りがブラックホールになります。default route 連動は、[orchagent](../../reference/glossary.md#term-orchagent) が [STATE_DB](../../reference/glossary.md#term-state_db) に公開する default route 状態を `linkmgrd` が読み、default route が無い側を standby 寄りに倒すための仕組みです。
 
 重要なのは、これは mux state machine に新しい障害源を足しているというより、「default route が無い間は heartbeat を止める」ことで既存の不健全判定に乗せる設計だという点です。manual mode では自動切替しない、両 ToR で default route を失っても揺れ続けない、という性質を守るために状態キャッシュも必要になります。
 
@@ -70,7 +70,7 @@ Active-Standby の Y-cable 制御では I2C / xcvrd / ycabled の役割が前面
 | `linkmgrd` (`src/linkmgrd/`) | `LinkManagerStateMachineBase`、`ActiveStandbyStateMachine`、`ActiveActiveStateMachine` | LinkProber / LinkState / MuxState を合成し mux 状態決定 |
 | `ycabled` (`sonic-platform-daemons/sonic-ycabled/`) | `y_cable_helper.py` | Y-cable I2C 操作、APP_DB/STATE_DB の mux state 反映 |
 | `MuxOrch` (`orchagent/muxorch.cpp`) | `MuxOrch::doTask`、`MuxCable::stateActive`、`MuxCable::stateStandby` | mux 状態を SAI neighbor / route / tunnel に展開 |
-| `MuxCableOrch` | `MuxCableOrch::updateMuxState` | APPL_DB の `MUX_CABLE_TABLE` を読み、tunnel route の付け替え |
+| `MuxCableOrch` | `MuxCableOrch::updateMuxState` | [APPL_DB](../../reference/glossary.md#term-appl_db) の `MUX_CABLE_TABLE` を読み、tunnel route の付け替え |
 | `TunnelDecapOrch` | `TunnelDecapOrch::doTask` | active 側のサーバ IP を decap する tunnel term entry |
 | `gRPC client` (Active-Active) | proto generated stub | SoC NIC の forwarding state 取得・設定 |
 
@@ -100,13 +100,13 @@ ASIC_DB:
 
 ## ZMQ / Redis pub/sub
 
-- Dual-ToR は **Redis pub/sub のみ**で ZMQ は使われていません。
-- linkmgrd は `STATE_DB:MUX_CABLE_TABLE` を SubscriberStateTable で監視。
+- Dual-ToR は **[Redis](../../reference/glossary.md#term-redis) pub/sub のみ**で ZMQ は使われていません。
+- [linkmgrd](../../reference/glossary.md#term-linkmgrd) は `STATE_DB:MUX_CABLE_TABLE` を SubscriberStateTable で監視。
 - Active-Active gRPC は SoC NIC と TLS 上で双方向 stream。 SONiC コンテナ内の `linkmgrd` プロセス自体が gRPC client。
 
 ## 既知の実装上の制約
 
-- `linkmgrd` の状態機械は **per-port**で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。HLD では individual port basis 設計。
+- `linkmgrd` の状態機械は **per-port**で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。[HLD](../../reference/glossary.md#term-hld) では individual port basis 設計。
 - `MuxOrch` は active → standby 切替時に neighbor を**削除 → tunnel nexthop へ再作成**する path を取るため、ASIC で neighbor を作り直すコストが大きい場合の path として prefix-based mux neighbors が導入された。
 - Active-Active で SoC NIC が応答しない場合、`linkmgrd` 側は admin forwarding state を変えても operational state が追従しないため、observability が不十分という指摘が PR レビューで複数挙がっている。
 - gRPC channel が切断中は `linkmgrd` が default の "active" 想定で進む傾向があり、両 ToR で active になる split-brain 風の状態を運用で監視する必要がある。
@@ -132,3 +132,5 @@ ASIC_DB:
 - [dual-tor mux 跨ぎの multi-nexthop route ループ回避](../../routing/multiple-nexthop-route-hld.md)
 - [Active-Standby Dual ToR](../../overlay/active-standby-dual-tor.md)
 - [Active-Active Dual ToR](../../overlay/active-active-dual-tor.md)
+
+<!-- glossary-links-injected: cf9db24b8f55 -->

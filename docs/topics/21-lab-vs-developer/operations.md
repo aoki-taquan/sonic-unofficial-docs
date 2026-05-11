@@ -16,8 +16,8 @@ sources: []
 ### 評価者
 
 - 仮想 lab を 1 つ立て、[評価者向けガイド](../../guides/evaluator.md) を起点に章をめくる。
-- 必要なら GNS3 で 2〜3 台つなぎ、BGP / VLAN / L3 / VRF の章を試す。
-- ASIC 依存の挙動（buffer、PFC、watermark、optics）は VS では再現しないため、評価対象から外すか、対応 HW での検証に切り替える。
+- 必要なら GNS3 で 2〜3 台つなぎ、[BGP](../../reference/glossary.md#term-bgp) / [VLAN](../../reference/glossary.md#term-vlan) / L3 / [VRF](../../reference/glossary.md#term-vrf) の章を試す。
+- ASIC 依存の挙動（buffer、[PFC](../../reference/glossary.md#term-pfc)、watermark、optics）は VS では再現しないため、評価対象から外すか、対応 HW での検証に切り替える。
 - 毎回 image を作り直すのが手間なら、`docker save` で SONiC-VS image を tar で保存して再 import すると 1 分以内で復旧できる。
 
 ```
@@ -27,9 +27,9 @@ host$ docker load -i sonic-vs.tar.gz
 
 ### 初学者
 
-- SONiC-VS 1 台で `docker ps`、Redis、orchagent、syncd を見る。
+- SONiC-VS 1 台で `docker ps`、[Redis](../../reference/glossary.md#term-redis)、[orchagent](../../reference/glossary.md#term-orchagent)、[syncd](../../reference/glossary.md#term-syncd) を見る。
 - [初学者向けガイド](../../guides/beginner.md) から章本文の概念ページに進む。
-- CONFIG_DB と CLI を写経しながら、章本文の設定ページを開く。
+- [CONFIG_DB](../../reference/glossary.md#term-config_db) と CLI を写経しながら、章本文の設定ページを開く。
 
 最初に触ると概観が掴める典型コマンド:
 
@@ -42,7 +42,7 @@ admin@sonic:~$ docker exec swss supervisorctl status
 admin@sonic:~$ docker exec syncd supervisorctl status
 ```
 
-`config interface ip add Ethernet0 10.0.0.1/24` のような操作のあと、CONFIG_DB → APPL_DB → ASIC_DB へどう伝わったかを `redis-cli -n {4,0,1}` で覗くと SONiC の流れ全体が体感できる。
+`config interface ip add Ethernet0 10.0.0.1/24` のような操作のあと、CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db) へどう伝わったかを `redis-cli -n {4,0,1}` で覗くと SONiC の流れ全体が体感できる。
 
 ### 運用者
 
@@ -59,9 +59,9 @@ sonic_dump_<host>_<ts>.tar.gz
 
 ### 開発者
 
-- [開発者向けガイド](../../guides/developer.md) で build / test / HLD 起票の流れを押さえる。
+- [開発者向けガイド](../../guides/developer.md) で build / test / [HLD](../../reference/glossary.md#term-hld) 起票の流れを押さえる。
 - VS で再現可能な範囲は VS で完結させ、CI（test plan ページ）に乗せる。
-- ASIC 依存の改修は HW lab を別途確保し、SAI / syncd / platform 章と組で読む。
+- ASIC 依存の改修は HW lab を別途確保し、[SAI](../../reference/glossary.md#term-sai) / syncd / platform 章と組で読む。
 - VS 内の orchagent / syncd は gdb / strace でアタッチ可能。
 
 ```
@@ -93,7 +93,7 @@ host$ cd ../../../sonic-mgmt/tests
 host$ ./run_tests.sh -n vms-kvm-t0 -t bgp/test_bgp_fact.py
 ```
 
-詳細な topology / inventory / testbed の組み立ては sonic-mgmt リポジトリの README（testbed セクション）を参照します。
+詳細な topology / inventory / testbed の組み立ては [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) リポジトリの README（testbed セクション）を参照します。
 
 ## lab で起きがちな異常と対処
 
@@ -180,3 +180,5 @@ host$ docker exec ptf_vms-kvm-t0 ip link show | grep eth
 - [SWSS / SAI / Redis 章](../20-swss-sai-redis/operations.md)（共通 dump / SAI 失敗観察）
 - [BGP 章](../02-bgp/index.md) / [VLAN・LAG 章](../06-l2-vlan-lag/index.md)（VS で最初に試すと感覚が掴める）
 - 本章 [設定](setup.md)（lab の物理 / 仮想セットアップ）
+
+<!-- glossary-links-injected: 83449633a7b6 -->

@@ -21,17 +21,17 @@ related:
 
 ## なぜ必要なのか
 
-SONiC Application Extension Infrastructure により **SONiC docker（= SONiC Package）と Base OS が独立配布** されるようになった[^1]。docker 同士・docker と OS の **互換性** をどう担保するかが課題で、SONiC docker 群に [semver.org](https://semver.org) を適用するガイドラインが本 HLD。
+SONiC Application Extension Infrastructure により **SONiC docker（= SONiC Package）と Base OS が独立配布** されるようになった[^1]。docker 同士・docker と OS の **互換性** をどう担保するかが課題で、SONiC docker 群に [semver.org](https://semver.org) を適用するガイドラインが本 [HLD](../reference/glossary.md#term-hld)。
 
 主旨:
 
 - 各 SONiC Package は独自の `major.minor.patch` を持つ
-- **API 互換性の判定基準は Redis DB スキーマ**
+- **API 互換性の判定基準は [Redis](../reference/glossary.md#term-redis) DB スキーマ**
 - 依存先制約は `package.json` の `depends` で表現
 
 ## API の定義と version 増分規則
 
-「Package API」は **Redis DB インタフェース**（CONFIG_DB / APPL_DB / STATE_DB のそのパッケージが提供する schema）と定義される[^1]。ASIC SDK / SAI / カーネルレベル API は別カテゴリ。
+「Package API」は **Redis DB インタフェース**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) のそのパッケージが提供する schema）と定義される[^1]。ASIC SDK / [SAI](../reference/glossary.md#term-sai) / カーネルレベル API は別カテゴリ。
 
 | 変更種別 | 影響 | 増分 |
 |----------|------|------|
@@ -64,7 +64,7 @@ Conventional Commits（`feat:` / `fix:` + `BREAKING CHANGE:`）採用で commit 
 
 | 依存先 | 責務 |
 |--------|------|
-| `sonic-utilities` | sonic-utilities contributor が API 互換維持 |
+| `sonic-utilities` | [sonic-utilities](../reference/glossary.md#term-sonic-utilities) contributor が API 互換維持 |
 | 新カーネル機能（例 3-tuple conntrack） | パッケージ側が **minor 版で記録** |
 | SONiC host service (D-Bus) | host service 側 / パッケージ側双方の合意 |
 
@@ -95,7 +95,7 @@ Conventional Commits（`feat:` / `fix:` + `BREAKING CHANGE:`）採用で commit 
 
 ## 設定・運用
 
-CLI / CONFIG_DB / YANG への変更は **無い**。`package.json` の manifest と Conventional Commits の運用ガイドラインのみ。
+CLI / CONFIG_DB / [YANG](../reference/glossary.md#term-yang) への変更は **無い**。`package.json` の manifest と Conventional Commits の運用ガイドラインのみ。
 
 ```bash
 sudo sonic-package-manager install foo
@@ -125,7 +125,7 @@ sudo sonic-package-manager show foo
 
 ## トラブルシューティング
 
-- install で version 制約エラー → `depends` 制約と install 済 swss / syncd version を比較
+- install で version 制約エラー → `depends` 制約と install 済 swss / [syncd](../reference/glossary.md#term-syncd) version を比較
 - `^X.Y.Z,^A.B.C` 不正解釈 → 実装は AND 解釈、`||` 表記を検討
 - 新 swss で docker 不動作 → major bump 起きている可能性、docker manifest 更新
 
@@ -137,3 +137,5 @@ sudo sonic-package-manager show foo
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-versioning-strategy.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 6ac6abee60c7 -->

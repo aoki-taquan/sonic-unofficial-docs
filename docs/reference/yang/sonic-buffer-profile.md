@@ -70,7 +70,7 @@ module: sonic-buffer-profile
 | `dynamic_th` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/dynamic_th` | `int32` |  |  | range -8..7 | Dynamic threshold alpha value controlling the maximum proportion of free buffer pool space. |
 | `size` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/size` | `uint64` | yes |  |  | Reserved buffer size in bytes for this profile. |
 | `pool` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/pool` | `leafref` | yes |  | /bpl:sonic-buffer-pool/bpl:BUFFER_POOL/bpl:BUFFER_POOL_LIST/bpl:name | Reference to the buffer pool this profile draws from. |
-| `xon_offset` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xon_offset` | `uint64` |  | 0 |  | Xon offset threshold in bytes; PFC resume is triggered when buffer usage falls to max(xon, buffer_limit - xon_offset). |
+| `xon_offset` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xon_offset` | `uint64` |  | 0 |  | Xon offset threshold in bytes; [PFC](../../reference/glossary.md#term-pfc) resume is triggered when buffer usage falls to max(xon, buffer_limit - xon_offset). |
 | `xon` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xon` | `uint64` |  | 0 |  | Xon threshold in bytes for PFC resume on the ingress priority group. |
 | `xoff` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xoff` | `uint64` |  | 0 |  | Xoff threshold in bytes for PFC pause generation on the ingress priority group. |
 | `headroom_type` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/headroom_type` | `enumeration` |  | static | static, dynamic | Whether the headroom is dynamically calculated or statically configured by the user. |
@@ -86,7 +86,7 @@ module: sonic-buffer-profile
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BUFFER_PROFILE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_PROFILE`
 
 <!-- ref-triangle:start -->
 
@@ -101,7 +101,7 @@ module: sonic-buffer-profile
 
 ### 典型的なデプロイ位置
 
-- buffer profile (size, xon/xoff threshold) 定義。`BUFFER_PROFILE|<name>` を bufferorch が SAI に渡す。
+- buffer profile (size, xon/xoff threshold) 定義。`BUFFER_PROFILE|<name>` を bufferorch が [SAI](../../reference/glossary.md#term-sai) に渡す。
 
 ### よくある落とし穴
 
@@ -126,3 +126,5 @@ show buffer profile
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6b2090618073 -->

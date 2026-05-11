@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-ACL コンテナ（適用ポイント / 種別 / 段 (ingress/egress)）を定義する CONFIG_DB テーブル[^1]。`orchagent` の `AclOrch` がこのテーブルを購読し、SAI ACL table を生成、`ACL_RULE` に登録された各エントリを SAI ACL entry として展開する。
+[ACL](../../reference/glossary.md#term-acl) コンテナ（適用ポイント / 種別 / 段 (ingress/egress)）を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`orchagent` の `AclOrch` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) ACL table を生成、`ACL_RULE` に登録された各エントリを SAI ACL entry として展開する。
 
 !!! warning "YANG 未定義"
     `ACL_TABLE` テーブルは現時点で `sonic-yang-models` に該当する YANG モジュールが存在しない。スキーマの正本は `sonic-swss/orchagent/aclorch.{h,cpp}` の定数と `sonic-swss-common/common/schema.h`。
@@ -79,8 +79,8 @@ ACL_TABLE|<table_name>
 
 - `L3` / `L3V6` / `L3V4V6` ... 通常の L3 ACL
 - `MIRROR` / `MIRRORV6` / `MIRROR_DSCP` ... mirror セッションへ振分け
-- `PFCWD` ... PFC watchdog 用
-- `MCLAG` ... MCLAG 制御
+- `PFCWD` ... [PFC](../../reference/glossary.md#term-pfc) watchdog 用
+- `MCLAG` ... [MCLAG](../../reference/glossary.md#term-mclag) 制御
 - `MUX` ... dual-ToR mux 用
 - `DROP` ... drop 専用最適化
 - `MARK_META` / `MARK_META_V6` ... メタデータマーキング
@@ -105,7 +105,7 @@ ACL_TABLE|<table_name>
 
 - 関連 CONFIG_DB: `ACL_RULE`、`ACL_TABLE_TYPE`、`PORT`、`PORTCHANNEL`、`MIRROR_SESSION`
 - 関連 CLI: [`config acl`](../cli/config-acl.md)
-- 関連 YANG: なし（YANG 未定義）
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし（YANG 未定義）
 
 <!-- ref-triangle:start -->
 
@@ -157,3 +157,5 @@ show acl table
 aclshow -a
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: c50e9accece6 -->

@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-BGP の AS path access-list を CONFIG_DB に持たせるテーブル[^1]。`sonic-routing-policy-sets.yang` の `AS_PATH_SET` コンテナで定義され、`ROUTE_MAP` の `match as-path` 等から参照される。
+[BGP](../../reference/glossary.md#term-bgp) の AS path access-list を [CONFIG_DB](../../reference/glossary.md#term-config_db) に持たせるテーブル[^1]。`sonic-routing-policy-sets.yang` の `AS_PATH_SET` コンテナで定義され、`ROUTE_MAP` の `match as-path` 等から参照される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -54,7 +54,7 @@ AS_PATH_SET|<name>
 ## 制約
 
 - `as_path_set_member` は `ordered-by user`。ユーザ指定順を維持する
-- メンバは正規表現文字列（FRR `bgp as-path access-list` の regex 構文）
+- メンバは正規表現文字列（[FRR](../../reference/glossary.md#term-frr) `bgp as-path access-list` の regex 構文）
 
 ## 購読者
 
@@ -63,7 +63,7 @@ AS_PATH_SET|<name>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`COMMUNITY_SET`](./community-set.md)、[`PREFIX_SET`](./prefix-set.md)、`ROUTE_MAP`
-- 関連 YANG: `sonic-routing-policy-sets`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-routing-policy-sets`
 - 関連 CLI: なし（`config_db.json` 投入）
 
 <!-- ref-triangle:start -->
@@ -99,3 +99,5 @@ sonic-db-cli CONFIG_DB keys 'AS_PATH_SET|*'
 vtysh -c "show ip as-path-access-list"
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->

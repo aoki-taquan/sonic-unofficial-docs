@@ -29,9 +29,9 @@ related:
 
 ## 概要
 
-SRv6 SDN を BGP に頼らず構築するシナリオ向けに、SONiC の CONFIG_DB から SRv6 ロケータと local SID を **静的に** 投入する仕組みを定義する。BGP signaling を使わない SDN コントローラ運用を想定している。
+[SRv6](../reference/glossary.md#term-srv6) SDN を [BGP](../reference/glossary.md#term-bgp) に頼らず構築するシナリオ向けに、SONiC の [CONFIG_DB](../reference/glossary.md#term-config_db) から SRv6 ロケータと local SID を **静的に** 投入する仕組みを定義する。BGP signaling を使わない SDN コントローラ運用を想定している。
 
-既存の SONiC では FRR が SRv6 関連テーブルを APPL_DB に書く経路（`fpmsyncd` 経由）はあるが、CONFIG_DB から SRv6 そのものを構成する経路がなかった。本機能は `bgpcfgd` に **SRv6 Manager** モジュールを追加し、2 つの新規 CONFIG_DB テーブル `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` を購読して FRR の `segment-routing srv6` config に変換する[^1]。
+既存の SONiC では [FRR](../reference/glossary.md#term-frr) が SRv6 関連テーブルを [APPL_DB](../reference/glossary.md#term-appl_db) に書く経路（`fpmsyncd` 経由）はあるが、CONFIG_DB から SRv6 そのものを構成する経路がなかった。本機能は `bgpcfgd` に **SRv6 Manager** モジュールを追加し、2 つの新規 CONFIG_DB テーブル `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` を購読して FRR の `segment-routing srv6` config に変換する[^1]。
 
 なお `frrcfgd` 側にも SRv6 を FRR にプログラムする経路は別途存在するが、そちらは BGP で SID を伝搬するシナリオ向けで、本ページの仕組みとはユースケースが異なる（コントローラはどちらかを選択する）[^1]。
 
@@ -76,7 +76,7 @@ interface       = string                ; uA 必須
 adj             = ipv6 address          ; uA 任意（省略時は interface から解決）
 ```
 
-サポート behavior（HLD 時点）は次の 3 種類。
+サポート behavior（[HLD](../reference/glossary.md#term-hld) 時点）は次の 3 種類。
 
 | Alias  | Meaning                  |
 |--------|--------------------------|
@@ -206,8 +206,8 @@ sonic-cfggen -a '{
 
 ## 干渉する機能
 
-- **fpmsyncd / SRV6_MY_SID_TABLE (APPL_DB)**: FRR は今回投入された static-sids を最終的に APPL_DB の SRv6 関連テーブルに書き出すため、orchagent / SAI 側の SRv6 サポートが前提となる。
-- **VRF**: `decap_vrf` / `vrf` 引数は `VRF_TABLE` に該当キーが存在することが前提。
+- **[fpmsyncd](../reference/glossary.md#term-fpmsyncd) / SRV6_MY_SID_TABLE (APPL_DB)**: FRR は今回投入された static-sids を最終的に APPL_DB の SRv6 関連テーブルに書き出すため、[orchagent](../reference/glossary.md#term-orchagent) / [SAI](../reference/glossary.md#term-sai) 側の SRv6 サポートが前提となる。
+- **[VRF](../reference/glossary.md#term-vrf)**: `decap_vrf` / `vrf` 引数は `VRF_TABLE` に該当キーが存在することが前提。
 - **BGP SRv6 (frrcfgd 経路)**: 同一ノードで BGP signaling 由来の SID と本機能の static SID が重複しないよう、コントローラ側で名前空間を整理する必要がある。
 
 ## トラブルシューティング
@@ -226,3 +226,5 @@ sonic-cfggen -a '{
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8e0e202b14c9 -->

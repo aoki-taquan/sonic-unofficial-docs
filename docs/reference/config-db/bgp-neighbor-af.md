@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-`BGP_NEIGHBOR` の **アドレスファミリ別** 設定を持つテーブル[^1]。`sonic-bgp-neighbor.yang` の `BGP_NEIGHBOR_AF` コンテナに定義され、`sonic-bgp-common.yang` の `grouping sonic-bgp-cmn-af` を `uses`。`frr-mgmt-framework` 経路で FRR (`bgpd`) の `address-family ... / neighbor <addr> ...` 配下コマンドに変換される。
+`BGP_NEIGHBOR` の **アドレスファミリ別** 設定を持つテーブル[^1]。`sonic-bgp-neighbor.yang` の `BGP_NEIGHBOR_AF` コンテナに定義され、`sonic-bgp-common.yang` の `grouping sonic-bgp-cmn-af` を `uses`。`frr-mgmt-framework` 経路で [FRR](../../reference/glossary.md#term-frr) (`bgpd`) の `address-family ... / neighbor <addr> ...` 配下コマンドに変換される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -75,7 +75,7 @@ BGP_NEIGHBOR_AF|<vrf_name>|<neighbor>|<afi_safi>
 
 ## 制約
 
-- `neighbor` の leafref は `[vrf_name=current()/../vrf_name]` で同一 VRF の隣接に限定される
+- `neighbor` の leafref は `[vrf_name=current()/../vrf_name]` で同一 [VRF](../../reference/glossary.md#term-vrf) の隣接に限定される
 - `vrf_name` は `BGP_GLOBALS` に存在することが前提
 
 ## 購読者
@@ -85,8 +85,8 @@ BGP_NEIGHBOR_AF|<vrf_name>|<neighbor>|<afi_safi>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`BGP_NEIGHBOR`](./bgp-neighbor.md)、[`BGP_PEER_GROUP_AF`](./bgp-peer-group-af.md)、`PREFIX_LIST`、`ROUTE_MAP`
-- 関連 YANG: `sonic-bgp-neighbor`、`sonic-bgp-common`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BGP_NEIGHBOR`](./bgp-neighbor.md)、[`BGP_PEER_GROUP_AF`](./bgp-peer-group-af.md)、`PREFIX_LIST`、`ROUTE_MAP`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-neighbor`、`sonic-bgp-common`
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:start -->
@@ -121,3 +121,5 @@ sonic-db-cli CONFIG_DB keys 'BGP_NEIGHBOR_AF|*'
 vtysh -c 'show bgp neighbor <ip>'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9753c9509bfa -->

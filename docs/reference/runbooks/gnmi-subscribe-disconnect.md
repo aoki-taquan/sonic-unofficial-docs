@@ -30,10 +30,10 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **TCP keepalive / NAT timeout**: 中間機器（LB / NAT / firewall）のセッション TTL が telemetry の heartbeat 間隔より短い
+1. **TCP keepalive / [NAT](../../reference/glossary.md#term-nat) timeout**: 中間機器（LB / NAT / firewall）のセッション TTL が telemetry の heartbeat 間隔より短い
 2. **TLS handshake failure / 証明書期限切れ**: re-handshake 時に失敗してセッション drop
 3. **server 側 goroutine が CPU bound**: 多数の path を低 interval で subscribe して queue が溢れる
-4. **REDIS subscriber が遅延**: `COUNTERS_DB` の更新頻度に gNMI publisher が追いつかない
+4. **REDIS subscriber が遅延**: `COUNTERS_DB` の更新頻度に [gNMI](../../reference/glossary.md#term-gnmi) publisher が追いつかない
 5. **path syntax 不正で server が close する**: 一部 yang model が未対応で internal error 返却
 
 ## 切り分け手順
@@ -94,3 +94,5 @@ gnmic -a <switch>:8080 --tls-ca ca.pem --tls-cert client.pem --tls-key client.ke
 
 [^1]: sonic-net/sonic-gnmi @ master — client_subscribe.go
 [^2]: sonic-net/sonic-gnmi @ master — db_client.go
+
+<!-- glossary-links-injected: 0856be05524a -->

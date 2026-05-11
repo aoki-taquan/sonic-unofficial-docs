@@ -37,7 +37,7 @@ config warm_restart bgp_eoiu enable
 config save -y
 ```
 
-CONFIG_DB:
+[CONFIG_DB](../../reference/glossary.md#term-config_db):
 
 ```json
 {
@@ -151,8 +151,8 @@ cat /etc/sonic/reboot.conf
 | timer | 主な対象 | 何を待つか |
 |---|---|---|
 | `neighsyncd_timer` | `swss` | neighbor restore / sync を待つ |
-| `bgp_timer` | `bgp` | BGP graceful restart と EOIU 周辺の完了を待つ |
-| `teamsyncd_timer` | `teamd` | LAG/team state の復元を待つ |
+| `bgp_timer` | `bgp` | [BGP](../../reference/glossary.md#term-bgp) graceful restart と EOIU 周辺の完了を待つ |
+| `teamsyncd_timer` | `teamd` | [LAG](../../reference/glossary.md#term-lag)/team state の復元を待つ |
 | `bgp_eoiu` | `bgp` | EOIU の扱いを切り替える |
 
 multi-ASIC では namespace 指定の有無で反映先が変わります。single-ASIC の感覚で default namespace だけを見ていると、ASIC namespace 側の warm restart state を見落とします。
@@ -171,10 +171,10 @@ blocking mode の詳細は [`reboot` コマンドの blocking mode](../../system
 | warm-reboot 後 `state` が `restored` のまま reconcile しない | timer が短すぎて FIB 復元が間に合わない | `bgp_timer` / `neighsyncd_timer` を 2 倍に延ばして再試行 |
 | warm-reboot 中に BGP session が flap する | peer 側 GR helper が無効 / 未交渉 | peer 側で `bgp graceful-restart` を有効化、`show ip bgp neighbors` で Restart Time が見えるか確認 |
 | `sonic-installer verify-next-image` 失敗 | image hash / signature mismatch、disk 不足 | image を再ダウンロード、`/host` の空きを確認 |
-| fast-reboot は通るが warm-reboot だけ失敗 | swss / teamd の warm capability が未 enable | `config warm_restart enable swss teamd` を確認 |
+| fast-reboot は通るが warm-reboot だけ失敗 | swss / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) の warm capability が未 enable | `config warm_restart enable swss teamd` を確認 |
 | multi-ASIC で 一部 ASIC namespace だけ reconcile しない | namespace 別の WARM_RESTART 設定漏れ | `sudo config warm_restart enable -n asic0 swss` 等で個別に設定 |
 | `reboot.conf` を書いたのに blocking にならない | `-b` 未指定、`reboot.conf` の文法誤り | `reboot.conf` を最小形式に戻して再試行、または明示的に `reboot -b` |
-| warm-reboot 後 LACP partner が timeout で外す | `teamsyncd_timer` が短い、peer の lacp_short_timeout 設定 | `teamsyncd_timer` を 90s 以上、peer 側を long timeout に |
+| warm-reboot 後 [LACP](../../reference/glossary.md#term-lacp) partner が timeout で外す | `teamsyncd_timer` が短い、peer の lacp_short_timeout 設定 | `teamsyncd_timer` を 90s 以上、peer 側を long timeout に |
 
 ## 関連リファレンス
 
@@ -183,3 +183,5 @@ blocking mode の詳細は [`reboot` コマンドの blocking mode](../../system
 - [`reboot` コマンドの blocking mode](../../system/reboot-support-blockingmode-in-sonic.md)
 - CONFIG_DB: `WARM_RESTART` table
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [upgrade](upgrade.md)
+
+<!-- glossary-links-injected: ff921c99cb16 -->

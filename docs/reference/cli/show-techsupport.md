@@ -19,7 +19,7 @@ related:
 
 ## 概要
 
-`show techsupport` は障害解析用の **techsupport ダンプ** を生成する。実態は `sudo generate_dump -v ...` のラッパで、システム情報・ログ・config・SAI/syncd データなどを 1 つの `tar.gz` にまとめる[^1]。`generate_dump` 自体は `sonic-utilities/scripts/generate_dump` 内のシェルスクリプトで、Linux 標準コマンドや `dump`、`debug dump`、`fwutil` などを順に呼んで結果を集約する。
+`show techsupport` は障害解析用の **techsupport ダンプ** を生成する。実態は `sudo generate_dump -v ...` のラッパで、システム情報・ログ・config・[SAI](../../reference/glossary.md#term-sai)/[syncd](../../reference/glossary.md#term-syncd) データなどを 1 つの `tar.gz` にまとめる[^1]。`generate_dump` 自体は `sonic-utilities/scripts/generate_dump` 内のシェルスクリプトで、Linux 標準コマンドや `dump`、`debug dump`、`fwutil` などを順に呼んで結果を集約する。
 
 `show techsupport` の click 関数自体は `show/main.py` の `cli.command()` で 1 つだけ。ダンプの中身を制御する各種フラグはすべて `generate_dump` のフラグへ変換される。
 
@@ -161,3 +161,5 @@ Tar file: /var/dump/sonic_dump_<host>_<timestamp>.tar.gz
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6ee6deac630a -->

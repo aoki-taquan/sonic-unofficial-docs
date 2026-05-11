@@ -29,9 +29,9 @@ related:
 
 ## なぜ必要か
 
-VxLAN VNet 経路 (`VNET_ROUTE_TUNNEL_TABLE`) に **複数 endpoint を ECMP で並べ、各 endpoint の生存性を BFD で確認** し、Down メンバを NHG から外したい。SDN コントローラから REST / gNMI で投入された経路を VnetOrch が処理する[^1]。
+VxLAN VNet 経路 (`VNET_ROUTE_TUNNEL_TABLE`) に **複数 endpoint を [ECMP](../reference/glossary.md#term-ecmp) で並べ、各 endpoint の生存性を [BFD](../reference/glossary.md#term-bfd) で確認** し、Down メンバを NHG から外したい。SDN コントローラから REST / [gNMI](../reference/glossary.md#term-gnmi) で投入された経路を VnetOrch が処理する[^1]。
 
-**監視対象 (`endpoint_monitor`)** と **実トンネル送信先 (`endpoint`)** を分離できるのが特徴で、共通 monitoring IP への multi-hop BFD で生存確認できる。健全な経路は `ADVERTISE_NETWORK_TABLE` 経由で BGP に広報される。
+**監視対象 (`endpoint_monitor`)** と **実トンネル送信先 (`endpoint`)** を分離できるのが特徴で、共通 monitoring IP への multi-hop BFD で生存確認できる。健全な経路は `ADVERTISE_NETWORK_TABLE` 経由で [BGP](../reference/glossary.md#term-bgp) に広報される。
 
 ## 全体フロー
 
@@ -51,7 +51,7 @@ VnetOrch の動作[^1]:
 1. 同一 endpoint set/NHG があれば再利用、`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT` で重み付け
 2. 各 endpoint の monitoring IP へ multi-hop BFD セッション（既存があれば共有）
 3. BFD Down メンバは NHG から外す
-4. アクティブメンバが 1 つ以上あれば `ADVERTISE_NETWORK_TABLE` に書き出し → bgpcfgd → BGP 広報
+4. アクティブメンバが 1 つ以上あれば `ADVERTISE_NETWORK_TABLE` に書き出し → [bgpcfgd](../reference/glossary.md#term-bgpcfgd) → BGP 広報
 
 ## スキーマ
 
@@ -79,7 +79,7 @@ STATE_DB:
 | Tunnel routes / endpoints | 16k / 4k |
 | BFD monitoring sessions | 4k |
 
-必須 SAI 属性: 既存 TUNNEL API + BFD HW offload + `SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC` / `_PORT`[^1]。
+必須 [SAI](../reference/glossary.md#term-sai) 属性: 既存 TUNNEL API + BFD HW offload + `SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC` / `_PORT`[^1]。
 
 ## 設定例
 
@@ -106,7 +106,7 @@ show vnet routes all
 
 - **VnetOrch / TunnelOrch**: 「ECMP 複数 endpoint」「BFD state 連動」を既存実装に追加
 - **BfdOrch / BFD HW offload**: 大量 multi-hop BFD（4k）を扱う前提
-- **bgpcfgd / FRR**: `network` 広告と community 付与
+- **bgpcfgd / [FRR](../reference/glossary.md#term-frr)**: `network` 広告と community 付与
 - **後継 [Overlay ECMP Enhancements](overlay-ecmp-enhancements.md)**: primary/secondary / custom monitoring / per-route BFD timer / `pinned_state` を追加
 
 ## トラブルシューティング
@@ -133,3 +133,5 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER:*' | wc -l
 - [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 308b4b9e8a33 -->

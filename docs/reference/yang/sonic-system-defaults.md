@@ -23,7 +23,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-system-defaults`
 
-System-wide default feature settings YANG module for SONiC OS[^1]。プラットフォーム/イメージレベルでオプション機能のデフォルト admin 状態を表す `SYSTEM_DEFAULTS` テーブルを保持する。
+System-wide default feature settings [YANG](../../reference/glossary.md#term-yang) module for SONiC OS[^1]。プラットフォーム/イメージレベルでオプション機能のデフォルト admin 状態を表す `SYSTEM_DEFAULTS` テーブルを保持する。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -69,7 +69,7 @@ module: sonic-system-defaults
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SYSTEM_DEFAULTS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SYSTEM_DEFAULTS`
 - CLI: なし（init_cfg / image 由来の不変設定として参照）
 
 <!-- ref-triangle:start -->
@@ -83,3 +83,5 @@ module: sonic-system-defaults
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-defaults.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

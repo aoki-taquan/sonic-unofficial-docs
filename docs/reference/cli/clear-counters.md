@@ -40,10 +40,10 @@ related:
 | `sonic-clear counters` | `portstat -c` | ポート (`COUNTERS_PORT_NAME_MAP`) の RX/TX バイト・パケット・エラー |
 | `sonic-clear rifcounters [<intf>]` | `intfstat -c [-i <intf>]` | Routed Interface (L3 SVI / sub-interface) の RX/TX |
 | `sonic-clear queuecounters` | `queuestat -c` + `queuestat -c --voq` | キュー単位カウンタ。Supervisor 上では VoQ のみ |
-| `sonic-clear pfccounters` | `pfcstat -c` | PFC pause パケットカウンタ |
+| `sonic-clear pfccounters` | `pfcstat -c` | [PFC](../../reference/glossary.md#term-pfc) pause パケットカウンタ |
 | `sonic-clear dropcounters` | `dropstat -c clear` | DEBUG_COUNTER 系の drop カウンタ |
 | `sonic-clear tunnelcounters` | `tunnelstat -c` | tunnel encap/decap カウンタ |
-| `sonic-clear srv6counters` | `srv6stat -c` | SRv6 SID 別カウンタ |
+| `sonic-clear srv6counters` | `srv6stat -c` | [SRv6](../../reference/glossary.md#term-srv6) SID 別カウンタ |
 | `sonic-clear switchcounters` | `switchstat -c` | スイッチレベル global カウンタ |
 | `sonic-clear fabriccountersqueue` | `fabricstat -C -q` | fabric キューカウンタ |
 | `sonic-clear fabriccountersport` | `fabricstat -C` | fabric ポートカウンタ |
@@ -52,14 +52,14 @@ related:
 
 ## 「クリア」の実態 = スナップショット保存
 
-ここで言う「クリア」は **COUNTERS_DB の値を 0 に戻すわけではなく**、`portstat` 等が「前回 clear 時の値」をディスク上のスナップショットファイル（`/tmp/portstat-<uid>` 等）に書き出して、**次回表示時の差分計算用ベースライン**として使う、という意味[^2]。
+ここで言う「クリア」は **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の値を 0 に戻すわけではなく**、`portstat` 等が「前回 clear 時の値」をディスク上のスナップショットファイル（`/tmp/portstat-<uid>` 等）に書き出して、**次回表示時の差分計算用ベースライン**として使う、という意味[^2]。
 
 つまり:
 
 1. `sonic-clear counters` → `portstat -c` → `/tmp/portstat-<uid>` を現在の COUNTERS_DB 値で上書き。
 2. `show interfaces counters` → COUNTERS_DB の現在値 − スナップショットの差分を表示。
 
-スイッチ ASIC 側 SAI カウンタや orchagent のカウンタリングは触らないため、`sonic-clear counters` を打っても **SAI レイヤから見た累計値は残り続ける**。
+スイッチ ASIC 側 [SAI](../../reference/glossary.md#term-sai) カウンタや [orchagent](../../reference/glossary.md#term-orchagent) のカウンタリングは触らないため、`sonic-clear counters` を打っても **SAI レイヤから見た累計値は残り続ける**。
 
 ## `queuecounters` の VoQ 二段呼び出し
 
@@ -103,3 +103,5 @@ def queuecounters():
 [^1]: `counters` / `rifcounters` / `queuecounters` / `pfccounters` / `dropcounters` / `tunnelcounters` / `srv6counters` / `switchcounters` / `fabriccountersqueue` / `fabriccountersport` の定義は `clear/main.py` L167-L235。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/clear/main.py#L167>
 
 [^2]: `portstat` のスナップショット方式は `scripts/portstat` 参照（`COUNTER_TABLE_PREFIX` を読んで `STATS_TEMP_FILE` に保存）。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/portstat>
+
+<!-- glossary-links-injected: 21a43ad654bd -->

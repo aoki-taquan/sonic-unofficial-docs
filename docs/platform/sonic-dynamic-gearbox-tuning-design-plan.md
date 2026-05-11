@@ -78,8 +78,8 @@ flowchart LR
 
 ポイント[^1]:
 
-- xcvrd / media_settings parser は **既存の更新メカニズムを流用**。ASIC 用 `pre1/main/post1/...` と並べて `gb_line_*` / `gb_system_*` を APPL_DB に書く（HLD Rev 0.3 で format を整理し xcvrd 改造を不要にした[^1]）
-- orchagent は APPL_DB 変化を検出し `doPortTask(SET)` を実行。**line-side / system-side ごとに新 serdes attribute** を作って SAI 経由で gearbox に programming する
+- xcvrd / media_settings parser は **既存の更新メカニズムを流用**。ASIC 用 `pre1/main/post1/...` と並べて `gb_line_*` / `gb_system_*` を [APPL_DB](../reference/glossary.md#term-appl_db) に書く（[HLD](../reference/glossary.md#term-hld) Rev 0.3 で format を整理し xcvrd 改造を不要にした[^1]）
+- [orchagent](../reference/glossary.md#term-orchagent) は APPL_DB 変化を検出し `doPortTask(SET)` を実行。**line-side / system-side ごとに新 serdes attribute** を作って [SAI](../reference/glossary.md#term-sai) 経由で gearbox に programming する
 - 現バージョンでは `pre1/pre2/pre3/main/post1/post2/post3` 7 種のみ対応[^1]
 
 ### APPL_DB の形
@@ -204,3 +204,5 @@ jq '.MEDIA_SETTINGS' /usr/share/sonic/device/$PLATFORM/media_settings.json | hea
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ef44d3c07b8f -->

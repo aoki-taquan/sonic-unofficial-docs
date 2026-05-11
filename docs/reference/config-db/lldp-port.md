@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`LLDP_PORT` は **ポート単位の LLDP 設定** を保持する CONFIG_DB テーブル[^1]。`lldp` (lldpd / lldpmgrd) コンテナが CONFIG_DB から読み、各物理ポートで LLDP を有効化するか、また RX / TX どちらのモードで動かすかを決める。
+`LLDP_PORT` は **ポート単位の [LLDP](../../reference/glossary.md#term-lldp) 設定** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`lldp` (lldpd / lldpmgrd) コンテナが CONFIG_DB から読み、各物理ポートで LLDP を有効化するか、また RX / TX どちらのモードで動かすかを決める。
 
 `LLDP` (グローバル) テーブルが `hello_time` / `multiplier` / `system_name` / `system_description` 等のシャーシ全体の設定を持つのに対し、本テーブルはポート単位の上書き設定。
 
@@ -74,7 +74,7 @@ LLDP_PORT|<ifname>
 
 - 関連 CONFIG_DB: `LLDP` (グローバル設定), `PORT`, `DEVICE_NEIGHBOR` (静的隣接)
 - 関連 CLI: `config lldp interface enable/disable`, `show lldp neighbors`, `show lldp table`
-- 関連 YANG: `sonic-lldp`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-lldp`
 
 <!-- ref-triangle:start -->
 
@@ -111,3 +111,5 @@ sonic-db-cli CONFIG_DB keys 'LLDP_PORT|*'
 show lldp table
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: e5ca7b6a3d0f -->

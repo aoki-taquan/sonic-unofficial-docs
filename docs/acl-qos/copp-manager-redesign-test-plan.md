@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-`CoppMgr` は CONFIG_DB の `COPP_TRAP` と `FEATURE` を観測し、各 trap (BGP / ARP / LACP / UDLD / IP2ME 等) を SAI hostif trap として **install / uninstall** する。旧設計では「`FEATURE` に entry が無い → デフォルトで install する」フォールバックを持っていたため、sflow のように **entry が削除された feature の trap が install されたままになる** バグが発生していた[^1]。
+`CoppMgr` は [CONFIG_DB](../reference/glossary.md#term-config_db) の `COPP_TRAP` と `FEATURE` を観測し、各 trap ([BGP](../reference/glossary.md#term-bgp) / [ARP](../reference/glossary.md#term-arp) / [LACP](../reference/glossary.md#term-lacp) / UDLD / IP2ME 等) を [SAI](../reference/glossary.md#term-sai) hostif trap として **install / uninstall** する。旧設計では「`FEATURE` に entry が無い → デフォルトで install する」フォールバックを持っていたため、sflow のように **entry が削除された feature の trap が install されたままになる** バグが発生していた[^1]。
 
 再設計では以下のルールに整理し、本テストプランはその振る舞いを ptf32 / ptf64 / t1 / t2 トポロジで検証する[^1]:
 
@@ -159,3 +159,5 @@ reasoning: HLD 本文 4 ルールをそのまま判定フローに転写
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6f615bbdf47b -->

@@ -67,7 +67,7 @@ show platform firmware [fwutil args...]
 
 ## 注意
 
-- この CLI は CONFIG_DB を直接編集しない。
+- この CLI は [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接編集しない。
 - `add_help_option=False` のため、`config platform firmware install --help` のような引数も原則 `fwutil` に渡される。
 
 <!-- ref-triangle:start -->
@@ -112,3 +112,5 @@ show platform firmware version
 fwutil show status
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 896d391185a9 -->

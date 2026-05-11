@@ -27,9 +27,9 @@ related:
 
 ## 概要
 
-通常の telemetry（gNMI Subscribe）はコレクタが DUT に **接続を張りに行く**「dial-in」型。一方 dial-out モードは **DUT 側から** コレクタへ接続を張り、テレメトリを stream する[^1]。次のシナリオで使う:
+通常の telemetry（[gNMI](../reference/glossary.md#term-gnmi) Subscribe）はコレクタが DUT に **接続を張りに行く**「dial-in」型。一方 dial-out モードは **DUT 側から** コレクタへ接続を張り、テレメトリを stream する[^1]。次のシナリオで使う:
 
-- DUT とコレクタ間に Firewall / NAT があり、コレクタ側からの接続が困難な場合
+- DUT とコレクタ間に Firewall / [NAT](../reference/glossary.md#term-nat) があり、コレクタ側からの接続が困難な場合
 - コレクタを **stateless** にしたい場合（接続先のリストを管理する責務を別系（NetConf / CLI）に押し付けられる）
 
 実装は openconfig の `gNMIDialOut` サービス[^1]:
@@ -46,7 +46,7 @@ service gNMIDialOut {
 
 ### CONFIG_DB `TELEMETRY_CLIENT` の 3 種別
 
-設定は openconfig telemetry YANG を参照しつつ、CONFIG_DB の `TELEMETRY_CLIENT` テーブルに 3 種類のキーで構造化する[^1]:
+設定は openconfig telemetry [YANG](../reference/glossary.md#term-yang) を参照しつつ、[CONFIG_DB](../reference/glossary.md#term-config_db) の `TELEMETRY_CLIENT` テーブルに 3 種類のキーで構造化する[^1]:
 
 #### 1. Global
 
@@ -129,7 +129,7 @@ sequenceDiagram
 
 ### 既存の DB / non-DB クライアント分離
 
-dial-out も dial-in も「**DB client**（redis 内データ）」と「**non-DB client**（redis 外）」の 2 種に分かれる。本 HLD で扱うのは gRPC dial-out（DB client 系）[^1]。
+dial-out も dial-in も「**DB client**（redis 内データ）」と「**non-DB client**（redis 外）」の 2 種に分かれる。本 [HLD](../reference/glossary.md#term-hld) で扱うのは gRPC dial-out（DB client 系）[^1]。
 
 <!-- evidence:
 source: sonic-net/sonic-gnmi/doc/dialout.md#L100-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -183,7 +183,7 @@ reasoning: dialout_client_cli の起動方法と DestinationGroup フェイル�
 
 ## 制限事項
 
-- HLD は `dialout_client_cli` 経由の **gRPC dial-out のみ** を扱う。NetConf / SNMP の dial-out は対象外
+- HLD は `dialout_client_cli` 経由の **gRPC dial-out のみ** を扱う。NetConf / [SNMP](../reference/glossary.md#term-snmp) の dial-out は対象外
 - DestinationGroup のフェイルオーバは **list の先頭から順次試行**。重み付けや負荷分散はない[^1]
 - `PublishResponse` を返す処理は optional で省略可能。stateful にコレクタ側で ack するシナリオは規定されているが既定では無効
 - HLD は openconfig telemetry YANG を「参照する」と書くに留まり、SONiC 側 YANG モデルとの完全な mapping は別途確認
@@ -213,3 +213,5 @@ redis-cli -n 4 HGETALL "TELEMETRY_CLIENT|Subscription_HS_RDMA"
 ## 引用元
 
 [^1]: `sonic-net/sonic-gnmi` `doc/dialout.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 5a5d755682b5 -->

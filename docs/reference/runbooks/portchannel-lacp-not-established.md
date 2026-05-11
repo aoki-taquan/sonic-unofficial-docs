@@ -26,7 +26,7 @@ related:
 
 - `show interfaces portchannel` で `S` (Selected) ではなく `D` (DOWN) / `I` (Individual) のままになる
 - `teamdctl <PortChannel> state` の `runner.aggregator.selected` が `false`
-- 片側のみ UP（LACP unidirectional）
+- 片側のみ UP（[LACP](../../reference/glossary.md#term-lacp) unidirectional）
 
 ## 想定原因（優先度順）
 
@@ -34,7 +34,7 @@ related:
 2. **対向側の LACP mode 不一致**: 一方が `active` / 他方が `off`（static）
 3. **speed / duplex mismatch**: メンバーごとに速度が異なると LACP は member を eligible にしない
 4. **`min_links` 未達**: PORTCHANNEL の `min_links` を満たすメンバーが UP していない
-5. **teamd / teammgrd の異常**: `teamd@<PortChannel>.service` が crash ループ
+5. **[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / teammgrd の異常**: `teamd@<PortChannel>.service` が crash ループ
 
 ## 切り分け手順
 
@@ -45,7 +45,7 @@ show interfaces status | grep -E "Ethernet|PortChannel"
 show interfaces portchannel
 ```
 
-- 期待: 全メンバーが `up/up`、PortChannel の Protocol が `LACP(A)(Up)`
+- 期待: 全メンバーが `up/up`、[PortChannel](../../reference/glossary.md#term-portchannel) の Protocol が `LACP(A)(Up)`
 - 異常: メンバーが down → SFP / FEC を確認（[fec-errors.md](fec-errors.md)）
 
 ### 2. teamd の生の状態
@@ -98,5 +98,7 @@ sudo grep -iE "teamd|portchannel" /var/log/syslog | tail -100
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — cfgmgr/teammgr.cpp
-[^2]: sonic-net/sonic-utilities @ 39732bceb — show interfaces portchannel
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — cfgmgr/teammgr.cpp
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — show interfaces portchannel
+
+<!-- glossary-links-injected: 12d931c88dd6 -->

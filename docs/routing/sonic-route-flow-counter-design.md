@@ -30,13 +30,13 @@ related:
 
 ## なぜこの機能が必要か
 
-prefix パターンに一致する route について、ASIC 上の **Generic Counter** を ECMP NHG / route entry に bind し、hit / byte を CLI で確認できるようにする[^1]。Trap Flow Counter / FDB Flow Counter と同系列の Flex Counter インフラ上に、route 用の **Route Pattern Orch** を新設する設計。
+prefix パターンに一致する route について、ASIC 上の **Generic Counter** を [ECMP](../reference/glossary.md#term-ecmp) NHG / route entry に bind し、hit / byte を CLI で確認できるようにする[^1]。Trap Flow Counter / [FDB](../reference/glossary.md#term-fdb) Flow Counter と同系列の Flex Counter インフラ上に、route 用の **Route Pattern Orch** を新設する設計。
 
 Phase 1 スコープ:
 
 - パターンは IPv4 / IPv6 **各 1 つ、計 2 件まで**
 - パターンあたり max **50**（default 30）。**reboot またぎで同じ route が選ばれる保証なし**
-- key: 通常 `(vrf, prefix)`、VNET の場合 `(vnet, prefix)`。default VRF は省略可
+- key: 通常 `(vrf, prefix)`、[VNET](../reference/glossary.md#term-vnet) の場合 `(vnet, prefix)`。default [VRF](../reference/glossary.md#term-vrf) は省略可
 - `0.0.0.0` / `::` パターンは default route の exact match
 
 ## コンポーネント
@@ -65,7 +65,7 @@ route イベントごとに:
 2. route 削除 → Bound なら counter unbind + destroy、Unbound なら cache 削除のみ
 3. pattern 変更 → 旧 pattern のみ match は unbind、新 pattern 対象を bind 直し
 
-容量超過時の選定基準は HLD で曖昧、**reboot 後に同じ route が選ばれる保証なし**[^1]。
+容量超過時の選定基準は [HLD](../reference/glossary.md#term-hld) で曖昧、**reboot 後に同じ route が選ばれる保証なし**[^1]。
 
 ### CounterType / FlexCounter
 
@@ -84,7 +84,7 @@ FLOW_COUNTER_ROUTE_PATTERN|<vrf>|<prefix>:
 # VNET ケースは FLOW_COUNTER_ROUTE_PATTERN|<vnet>|<prefix>
 ```
 
-`orchagent` 起動時に SAI Generic Counter サポートを query し、`STATE_DB.FLOW_COUNTER_CAPABILITY_TABLE` に書く。CLI はこれを見て対応 platform 判定[^1]。
+`orchagent` 起動時に [SAI](../reference/glossary.md#term-sai) Generic Counter サポートを query し、`STATE_DB.FLOW_COUNTER_CAPABILITY_TABLE` に書く。CLI はこれを見て対応 platform 判定[^1]。
 
 ## CLI / 設定例
 
@@ -128,3 +128,5 @@ show flowcnt-route stats
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/flow_counters/routes_flow_counters.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: f28bb438d6e7 -->

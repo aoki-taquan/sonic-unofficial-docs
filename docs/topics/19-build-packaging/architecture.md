@@ -9,7 +9,7 @@ sources: []
 
 # アーキテクチャ
 
-ビルド成果物が ONIE installer に収まり、ターゲット機材で立ち上がるまでの流れを、source から image までの順で追う。各ステップに対応する HLD・コードリンクは末尾に集約している。
+ビルド成果物が ONIE installer に収まり、ターゲット機材で立ち上がるまでの流れを、source から image までの順で追う。各ステップに対応する [HLD](../../reference/glossary.md#term-hld)・コードリンクは末尾に集約している。
 
 ## Build artifact flow
 
@@ -41,7 +41,7 @@ flowchart LR
 Base OS のリリース cadence と、その上に乗る docker image / package のバージョニングは別レイヤで管理されている。
 
 - Base OS の更新リズムと旧版の廃止予定は [Debian upgrade cadence](../../system/sonic-debian-upgrade-cadence.md) を見る。`Makefile` の `NOSTRETCH` / `NOBUSTER` / `NOBULLSEYE` / `NOBOOKWORM` / `NOTRIXIE` フラグで build 系統を切り替える形が実装と一致している。
-- 配布される docker 群と Base OS の互換性は semver でラベル付けする。基準は **Redis DB スキーマ** に置く方針で、`manifest.py` / `constraint.py` に実装がある。詳しくは [OS / docker semver](../../system/sonic-os-sonic-docker-images-versioning.md) を参照する。
+- 配布される docker 群と Base OS の互換性は semver でラベル付けする。基準は **[Redis](../../reference/glossary.md#term-redis) DB スキーマ** に置く方針で、`manifest.py` / `constraint.py` に実装がある。詳しくは [OS / docker semver](../../system/sonic-os-sonic-docker-images-versioning.md) を参照する。
 - ディスク書き込み量（log、tmpfs、container 経由の I/O）の分析は [Disk writers analysis](../../system/analysis-of-disk-writers-in-sonic-devices.md) を読む。SSD 寿命の観点で base image / docker 設計に直接効く。
 
 ## Application Extension の入る位置
@@ -58,3 +58,5 @@ Base OS のリリース cadence と、その上に乗る docker image / package 
 - [Disk writers analysis](../../system/analysis-of-disk-writers-in-sonic-devices.md)
 - [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md)
 - [ARM architecture support](../../architecture/sonic-arm-architecture-support.md)
+
+<!-- glossary-links-injected: da7e5aaf4d2c -->

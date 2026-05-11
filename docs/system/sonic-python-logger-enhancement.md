@@ -32,7 +32,7 @@ SONiC の Python デーモンが使う logger には複数の選択肢がある�
 | `sonic_py_common.syslogger.SysLogger` | runtime 変更不可 |
 | `swsscommon.Logger`（C++ 実装の Python wrap） | (1) 起動時に redis を必要とする (2) Linux syslog の制約で daemon 単一 identifier しか持てない |
 
-本 HLD は `SysLogger` を中心に **runtime ログレベル変更** を可能にし、redis 未起動時のフォールバックも担保する。`swsscommon.Logger` のような **常駐スレッド方式は採らず**、CLI 経由で **SIGHUP** を送って refresh する設計を採用する（Python script は短命なものが多く、スレッド常駐がコストになるため）[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は `SysLogger` を中心に **runtime ログレベル変更** を可能にし、redis 未起動時のフォールバックも担保する。`swsscommon.Logger` のような **常駐スレッド方式は採らず**、CLI 経由で **SIGHUP** を送って refresh する設計を採用する（Python script は短命なものが多く、スレッド常駐がコストになるため）[^1]。
 
 ## 動作仕様
 
@@ -41,7 +41,7 @@ SONiC の Python デーモンが使う logger には複数の選択肢がある�
 - **Singleton 化**[^1]
 - `__init__` に `enable_runtime_config: bool = False` 引数を追加
   - `True` 指定のデーモンだけが runtime 設定を使う
-  - `True` のとき初期化で CONFIG_DB から log level を読む（DB に設定があれば）
+  - `True` のとき初期化で [CONFIG_DB](../reference/glossary.md#term-config_db) から log level を読む（DB に設定があれば）
   - `True` のとき DB に設定が無ければ初期化で **デフォルトを DB に書き込む**（`save` フォールバック）
 - 新しいクラスメソッド `update_log_level`: load / save の制御を集約
 
@@ -188,7 +188,7 @@ LOGGER|<component>
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない。
 
 ## 制限事項
 
@@ -262,3 +262,5 @@ class SysLogger:
 - redis 未起動時の fallback 経路の実装
 - swssloglevel の deprecation 計画
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

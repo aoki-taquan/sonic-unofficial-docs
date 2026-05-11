@@ -67,7 +67,7 @@ docker exec bgp vtysh -c "show bgp ipv4 unicast" | grep -i stale | head
 1. **片側でしか graceful-restart が有効化されていない** — `bgp graceful-restart` が router bgp 配下に無い
 2. **Restart Time が短すぎる** — bgpd 再起動が完了する前に対向が stale path を破棄
 3. **GR-Notification capability の非互換** — RFC 8538 対応版とそれ以前で挙動が異なる
-4. **BFD と併用時の即 down** — BFD が即 session down を通知するため GR をスキップする
+4. **[BFD](../../reference/glossary.md#term-bfd) と併用時の即 down** — BFD が即 session down を通知するため GR をスキップする
 5. **TCP セッションが MD5 / MSS で再確立できない** — control plane の再ハンドシェイクが失敗
 
 ## 関連 reference / topics
@@ -76,3 +76,5 @@ docker exec bgp vtysh -c "show bgp ipv4 unicast" | grep -i stale | head
 - [bgp-route-not-advertised.md](bgp-route-not-advertised.md)
 - [../../topics/02-bgp/operations.md](../../topics/02-bgp/operations.md)
 - [../cli/show-bgp.md](../cli/show-bgp.md)
+
+<!-- glossary-links-injected: c40fdca68bfe -->

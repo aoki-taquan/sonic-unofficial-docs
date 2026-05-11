@@ -9,16 +9,16 @@ last_verified: 2026-05-11
 
 `docs/reference/` は SONiC NOS (community master) を運用 / 検証する際に **辞書として直接引く** 情報を集める章である。Topics 章 (`docs/topics/`) が「読み物」として導線を提供するのに対し、本章は **コマンド名 / テーブル名 / モジュール名 / 症状** から逆引きする使い方を想定している。
 
-各 reference ページは原則 `verification: code-verified` で、`.cache/sonic-sources/` に shallow clone した master の固定 commit を一次情報として持つ。HLD 由来の推測は本文に明示する。
+各 reference ページは原則 `verification: code-verified` で、`.cache/sonic-sources/` に shallow clone した master の固定 commit を一次情報として持つ。[HLD](../reference/glossary.md#term-hld) 由来の推測は本文に明示する。
 
 ## サブセクションの入口
 
 | カテゴリ | 入口 | 役割 |
 |---|---|---|
 | **CLI** | [cli/index.md](cli/index.md) | `config-*` / `show-*` / `clear` / `debug-*` / `sonic-installer` / `sonic-cfggen` 等の `sonic-utilities` ベースのコマンドツリー |
-| **CONFIG_DB** | [config-db/index.md](config-db/index.md) | Redis DB 4 (CONFIG_DB) のテーブル定義。orchagent / *mgrd 各 daemon が subscribe するスキーマ |
-| **YANG** | [yang/index.md](yang/index.md) | `sonic-yang-models` の native SONiC YANG モジュール。CONFIG_DB の正本 |
-| **Runbooks** | [runbooks/index.md](runbooks/index.md) | 症状逆引きの運用ハンドブック (BGP down, PFC bandwidth, warm-reboot 失敗 等) |
+| **[CONFIG_DB](../reference/glossary.md#term-config_db)** | [config-db/index.md](config-db/index.md) | [Redis](../reference/glossary.md#term-redis) DB 4 (CONFIG_DB) のテーブル定義。[orchagent](../reference/glossary.md#term-orchagent) / *mgrd 各 daemon が subscribe するスキーマ |
+| **[YANG](../reference/glossary.md#term-yang)** | [yang/index.md](yang/index.md) | `sonic-yang-models` の native SONiC YANG モジュール。CONFIG_DB の正本 |
+| **Runbooks** | [runbooks/index.md](runbooks/index.md) | 症状逆引きの運用ハンドブック ([BGP](../reference/glossary.md#term-bgp) down, [PFC](../reference/glossary.md#term-pfc) bandwidth, warm-reboot 失敗 等) |
 | **Verification** | [verification/index.md](verification/index.md) | 裏取り運用方針と [discrepancy-index](verification/discrepancy-index.md) (HLD と実装の乖離一覧) |
 
 ### 将来追加予定 (未着手)
@@ -26,7 +26,7 @@ last_verified: 2026-05-11
 | カテゴリ | 状態 |
 |---|---|
 | `glossary/` (用語集) | 未着手。現状は本文中で都度説明 |
-| `sai-attributes/` (SAI 属性表) | 未着手。今後 `meta/index/sai.json` から生成予定 |
+| `sai-attributes/` ([SAI](../reference/glossary.md#term-sai) 属性表) | 未着手。今後 `meta/index/sai.json` から生成予定 |
 | `config-db-orch-map/` (テーブル ↔ Orch マッピング) | 未着手。現状は CONFIG_DB ページ本文に分散 |
 
 これらの placeholder は backlog (`meta/backlog/reference/`) で追跡する。
@@ -54,7 +54,7 @@ discrepancy-found 自体は reference 内ではなく `docs/topics/` 配下に�
 |---|---:|---:|---|
 | `sonic-utilities` click グループ | ~85 | 72 | 主要グループは網羅、低使用頻度の dropcounters / vrouter 等が残 |
 | `sonic-yang-models` の CONFIG_DB テーブル | ~160 | 121 | 派生・廃止テーブルを除いた主要分は網羅 |
-| `sonic-*` native YANG モジュール | ~110 | 84 | smartswitch / DASH 系の一部、ベンダー特化モジュールが残 |
+| `sonic-*` native YANG モジュール | ~110 | 84 | smartswitch / [DASH](../reference/glossary.md#term-dash) 系の一部、ベンダー特化モジュールが残 |
 
 未カバー分は `meta/backlog/reference/` で追跡しており、Reference 拡張バッチで段階的に消化する。
 
@@ -179,3 +179,5 @@ discrepancy-found 自体は reference 内ではなく `docs/topics/` 配下に�
 - [Topics: リファレンス横断索引](../topics/22-reference-index/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1f7c67d9cefa -->

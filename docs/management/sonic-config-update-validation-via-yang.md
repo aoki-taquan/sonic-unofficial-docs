@@ -28,9 +28,9 @@ related:
 
 ## 概要
 
-SONiC では従来、`config <feature>` 系 CLI が ConfigDB に書き込む前のフィールド検証を **Python のハードコード（ad-hoc）と YANG モデルの両方** で重複定義していた。同じ制約を 2 箇所で書くと乖離が起きやすく、保守コストが高い[^1]。
+SONiC では従来、`config <feature>` 系 CLI が ConfigDB に書き込む前のフィールド検証を **Python のハードコード（ad-hoc）と [YANG](../reference/glossary.md#term-yang) モデルの両方** で重複定義していた。同じ制約を 2 箇所で書くと乖離が起きやすく、保守コストが高い[^1]。
 
-本プロジェクトはその二重管理を解消し、**既存の YANG モデルを単一の Source of Truth** として ConfigDB 更新時に再利用する。具体的には Generic Config Updater (GCU) を介した JSON patch 検証を `ConfigDBConnector.set_entry()` のデコレータとして注入する[^1]。
+本プロジェクトはその二重管理を解消し、**既存の YANG モデルを単一の Source of Truth** として ConfigDB 更新時に再利用する。具体的には Generic Config Updater ([GCU](../reference/glossary.md#term-gcu)) を介した JSON patch 検証を `ConfigDBConnector.set_entry()` のデコレータとして注入する[^1]。
 
 ## 動作仕様
 
@@ -69,15 +69,15 @@ def validate_decorator(config_db_connector):
 
 #### Python（`sonic-utilities/config/`）
 
-`config <feature>` 系 CLI のうち、HLD で列挙されているもの[^1]:
+`config <feature>` 系 CLI のうち、[HLD](../reference/glossary.md#term-hld) で列挙されているもの[^1]:
 
-> AAA / ACL / BGP / Console / DHCP Relay / Drop Counter / Dynamic Buffer Management / ECN / Feature / Interface / Interface Naming Mode / Interface Vrf Binding / IPv6 Link Local / Kubernetes / Linux Kernel Dump / Loopback Interfaces / VRF / Management VRF / Mirroring / Muxcable / NAT / NTP / NVGRE / PBH / Platform Component Firmware / PortChannel / QoS / sFlow / SNMP / Subinterfaces / Syslog / VLAN / Warm Restart / Watermark / ZTP
+> [AAA](../reference/glossary.md#term-aaa) / [ACL](../reference/glossary.md#term-acl) / [BGP](../reference/glossary.md#term-bgp) / Console / [DHCP Relay](../reference/glossary.md#term-dhcp-relay) / Drop Counter / Dynamic Buffer Management / ECN / Feature / Interface / Interface Naming Mode / Interface Vrf Binding / IPv6 Link Local / Kubernetes / Linux Kernel Dump / Loopback Interfaces / [VRF](../reference/glossary.md#term-vrf) / Management VRF / Mirroring / Muxcable / [NAT](../reference/glossary.md#term-nat) / NTP / NVGRE / PBH / Platform Component Firmware / [PortChannel](../reference/glossary.md#term-portchannel) / [QoS](../reference/glossary.md#term-qos) / sFlow / [SNMP](../reference/glossary.md#term-snmp) / Subinterfaces / Syslog / [VLAN](../reference/glossary.md#term-vlan) / Warm Restart / Watermark / [ZTP](../reference/glossary.md#term-ztp)
 
 加えて ACL rules（incremental update / delete）、`pfc`、`crm`、`mclag`、`counterpoll`、および以下のスクリプト: `configlet` / `db_migrator` / `dropconfig` / `mellanox_buffer_migrator` / `neighbor_advertisor` / `null_route_helper` / `hostcfgd`。
 
 #### C++
 
-`buffermgrd` のみ。Python から呼ぶ手段として HLD は 3 案を挙げ、**D-Bus GCU API** を本プロジェクトの推奨手段としている（gNMI プロジェクトが既に採用中）[^1]。
+`buffermgrd` のみ。Python から呼ぶ手段として HLD は 3 案を挙げ、**D-Bus GCU API** を本プロジェクトの推奨手段としている（[gNMI](../reference/glossary.md#term-gnmi) プロジェクトが既に採用中）[^1]。
 
 ### 不足 YANG への対応
 
@@ -100,7 +100,7 @@ CLI 用途では許容範囲だが、warm/fast reboot のような **性能要�
 
 GCU 検証バグでフィールドが不当にブロックされて運用停止に追い込まれる事故を避けるため、無効化フラグが用意される[^1]。
 
-CONFIG_DB:
+[CONFIG_DB](../reference/glossary.md#term-config_db):
 
 ```json
 "DEVICE_METADATA": {
@@ -191,3 +191,5 @@ sudo config portchannel add PortChannel04    # ad-hoc 検証だけが走る
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/config_yang_validation/config_db_yang_validation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: a0345c62ade3 -->

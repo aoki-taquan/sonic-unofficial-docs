@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-DUT が **特定の不正パケット** を ingress で drop し、対応する drop counter が正しく増えるかを検証する sonic-mgmt テストプラン[^1]。Ethernet / IP / ACL の各層の drop reason を 21 ケースで網羅する。
+DUT が **特定の不正パケット** を ingress で drop し、対応する drop counter が正しく増えるかを検証する [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) テストプラン[^1]。Ethernet / IP / [ACL](../reference/glossary.md#term-acl) の各層の drop reason を 21 ケースで網羅する。
 
 > 注: 制御プレーン traffic（VM 由来）は本テスト前に **無効化** することが前提[^1]。drop されるパケットの **destination IP は routable** にしておき、「routing で出ていく」のではなく「discard されている」ことを確実にする。
 
@@ -95,7 +95,7 @@ flowchart LR
 
 ### ベンダ間 counter 集約の差異
 
-HLD で明記されている注意点[^1]:
+[HLD](../reference/glossary.md#term-hld) で明記されている注意点[^1]:
 
 > different vendors can have different drop counters calculation, for example L2 and L3 drop counters can be combined and L2 drop counter will be increased for all ingress discards.
 
@@ -131,14 +131,14 @@ reasoning: ベンダ依存の counter 集約方式（合算 vs 分離）の根�
 
 ### 関連する CONFIG_DB
 
-該当なし。テストプランで CONFIG_DB スキーマ拡張は無い。
+該当なし。テストプランで [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマ拡張は無い。
 
 ### 関連する CLI
 
 | Command | 用途 |
 |---------|------|
 | `counterpoll port enable` | port counter group ON |
-| `counterpoll rif enable` | RIF counter group ON |
+| `counterpoll rif enable` | [RIF](../reference/glossary.md#term-rif) counter group ON |
 | `portstat -j` | port 統計を JSON で |
 | `intfstat -j` | RIF (interface) 統計を JSON で |
 | `aclshow -a` | ACL counter |
@@ -162,17 +162,17 @@ aclshow -a
 
 ## 制限事項
 
-- **VM trafic 無効化が前提**[^1]。BGP keepalive 等が走っていると counter が汚れる
+- **VM trafic 無効化が前提**[^1]。[BGP](../reference/glossary.md#term-bgp) keepalive 等が走っていると counter が汚れる
 - destination IP は **routable** であることを確認した上で injection（routing で出ていかない / かつ discard 経路に乗る）
 - ベンダ間で L2/L3 counter 合算挙動が異なるため、合否判定は per-vendor のロジックを必要とする
-- 21 ケース中、SAI 属性 / CONFIG_DB の特定 attribute によっては **deprecated** されたものがあれば注意
+- 21 ケース中、[SAI](../reference/glossary.md#term-sai) 属性 / CONFIG_DB の特定 attribute によっては **deprecated** されたものがあれば注意
 
 ## 干渉する機能
 
 - **debug counters / trap flow counter**: 同じ drop reason を別 counter で見ることがある。本テストは port / RIF / ACL の sentinel counter を見る
-- **CoPP**: control plane traffic を OFF にする際に CoPP の挙動を意識
+- **[CoPP](../reference/glossary.md#term-copp)**: control plane traffic を OFF にする際に CoPP の挙動を意識
 - **ACL**: ケース 20 のみ ACL に依存。ACL がデフォルトで入っている前提
-- **port breakout / VLAN config**: ケース 2 (VLAN TAG) は VLAN 設定に強く依存
+- **port breakout / [VLAN](../reference/glossary.md#term-vlan) config**: ケース 2 (VLAN TAG) は VLAN 設定に強く依存
 
 ## トラブルシューティング
 
@@ -203,3 +203,5 @@ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:*" | head
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5a655f5b35d2 -->

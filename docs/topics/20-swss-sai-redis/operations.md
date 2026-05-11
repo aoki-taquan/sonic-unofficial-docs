@@ -9,7 +9,7 @@ sources: []
 
 # 運用
 
-機能章を読む上で必要な「SAI 失敗時の見方」「内部 dump の取り方」「health/system ready の解釈」をここに集める。機能固有の切り分け（BGP の neighbor down、ACL の install 失敗、L2 の port flap など）は各機能章の運用ページに任せ、ここは共通の観察ポイントを扱う。
+機能章を読む上で必要な「[SAI](../../reference/glossary.md#term-sai) 失敗時の見方」「内部 dump の取り方」「health/system ready の解釈」をここに集める。機能固有の切り分け（[BGP](../../reference/glossary.md#term-bgp) の neighbor down、[ACL](../../reference/glossary.md#term-acl) の install 失敗、L2 の port flap など）は各機能章の運用ページに任せ、ここは共通の観察ポイントを扱う。
 
 ## DB 一覧（番号）
 
@@ -17,11 +17,11 @@ sources: []
 
 | n | DB 名 | 役割 |
 | --- | --- | --- |
-| 0 | APPL_DB | orchagent への入力（fpmsyncd、teamsyncd、portsyncd、p4rt-app など） |
-| 1 | ASIC_DB | orchagent → syncd / SAI への出力。`ASIC_STATE:*` |
-| 2 | COUNTERS_DB | flex counter |
-| 4 | CONFIG_DB | ユーザ設定の真実 |
-| 6 | STATE_DB | 各 daemon の状態（PORT_TABLE、INTERFACE_TABLE 等） |
+| 0 | [APPL_DB](../../reference/glossary.md#term-appl_db) | [orchagent](../../reference/glossary.md#term-orchagent) への入力（[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)、teamsyncd、[portsyncd](../../reference/glossary.md#term-portsyncd)、p4rt-app など） |
+| 1 | [ASIC_DB](../../reference/glossary.md#term-asic_db) | orchagent → [syncd](../../reference/glossary.md#term-syncd) / SAI への出力。`ASIC_STATE:*` |
+| 2 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | flex counter |
+| 4 | [CONFIG_DB](../../reference/glossary.md#term-config_db) | ユーザ設定の真実 |
+| 6 | [STATE_DB](../../reference/glossary.md#term-state_db) | 各 daemon の状態（PORT_TABLE、INTERFACE_TABLE 等） |
 | 13 | ERROR_DB | SAI 失敗の app 通知 |
 | 14 | APPL_STATE_DB | APPL_DB に書いた結果（成功 / 失敗） |
 
@@ -61,7 +61,7 @@ admin@sonic:~$ redis-cli -n 6 KEYS "PORT_TABLE|*" | head
 
 | status | 典型原因 | 一次対処 |
 | --- | --- | --- |
-| `SAI_STATUS_TABLE_FULL` | CRM 枯渇（route、ACL、neighbor 等） | `crm show resources` でテーブル特定、scale を下げる / threshold を設定 |
+| `SAI_STATUS_TABLE_FULL` | [CRM](../../reference/glossary.md#term-crm) 枯渇（route、ACL、neighbor 等） | `crm show resources` でテーブル特定、scale を下げる / threshold を設定 |
 | `SAI_STATUS_NOT_SUPPORTED` | ASIC が attribute / object を非対応 | platform 章 / SAI vendor 対応表を確認、機能無効化 |
 | `SAI_STATUS_INVALID_PARAMETER` | orchagent が誤った attribute を渡した可能性 | orchagent ログで attribute 名特定、PR / issue 起票 |
 | `SAI_STATUS_ITEM_ALREADY_EXISTS` | 同じ key の重複 install | warm boot 直後に多発するなら抑止、それ以外は orchagent の reconcile を疑う |
@@ -83,7 +83,7 @@ sairedis.rec.gz  asic_db.json  saidump.txt
 
 ## dump utility による DB 横断調査
 
-機能の不具合切り分けでは、ある port や VRF に紐づく key が `CONFIG_DB`、`APPL_DB`、`STATE_DB`、`ASIC_DB` に同時に存在することを確認したい。dump utility は「モジュール（例: port、vrf）」を起点に複数 DB から関連 key を集約する CLI で、内部実装の経路を辿る作業を簡略化する。
+機能の不具合切り分けでは、ある port や [VRF](../../reference/glossary.md#term-vrf) に紐づく key が `CONFIG_DB`、`APPL_DB`、`STATE_DB`、`ASIC_DB` に同時に存在することを確認したい。dump utility は「モジュール（例: port、vrf）」を起点に複数 DB から関連 key を集約する CLI で、内部実装の経路を辿る作業を簡略化する。
 
 ```
 admin@sonic:~$ sonic-db-dump -n CONFIG_DB -k "PORT|Ethernet0" -y
@@ -172,5 +172,7 @@ admin@sonic:~$ redis-cli -n 0 LLEN "_*"
 - [Debug Framework（コンポーネント dump 登録 / assert 拡張）](../../architecture/debug-framework-in-sonic.md)
 - [コンテナ health-check（k8s readiness probe）](../../internals/why-need-health-check.md)
 - [System Ready（sysmonitor + per-app closest UP status の event 集約）](../../system/system-ready-hld.md)
-- [Build / Packaging 章](../19-build-packaging/index.md)（FEATURE / hostcfgd との関係）
+- [Build / Packaging 章](../19-build-packaging/index.md)（FEATURE / [hostcfgd](../../reference/glossary.md#term-hostcfgd) との関係）
 - [SRv6 / MPLS 章](../17-srv6-mpls/operations.md)（SAI 失敗の実例）
+
+<!-- glossary-links-injected: f2f28aee324f -->

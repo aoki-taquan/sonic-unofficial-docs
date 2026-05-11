@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する[^1]。同一 PORTCHANNEL 名で `PORTCHANNEL_INTERFACE_LIST` (属性ロウ) と `PORTCHANNEL_INTERFACE_IPPREFIX_LIST` (IP プレフィクス) の二系統に分かれる。
+PORTCHANNEL を L3 IF として扱うときの設定（[VRF](../../reference/glossary.md#term-vrf) binding、IP アサイン、MAC、loopback action 等）を保持する[^1]。同一 PORTCHANNEL 名で `PORTCHANNEL_INTERFACE_LIST` (属性ロウ) と `PORTCHANNEL_INTERFACE_IPPREFIX_LIST` (IP プレフィクス) の二系統に分かれる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,11 +58,11 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `name` (key) | leafref `PORTCHANNEL.name` | ✅ | - | LAG 名 |
+| `name` (key) | leafref `PORTCHANNEL.name` | ✅ | - | [LAG](../../reference/glossary.md#term-lag) 名 |
 | `vrf_name` | leafref `VRF.name` | - | - | バインドする VRF |
 | `loopback_action` | `loopback_action` (drop/forward) | - | - | 同一 IF へ ingress→routed のパケット動作 |
-| `nat_zone` | uint8 (0..3) | - | `0` | NAT zone |
-| `mpls` | enum `enable`/`disable` | - | - | MPLS routing |
+| `nat_zone` | uint8 (0..3) | - | `0` | [NAT](../../reference/glossary.md#term-nat) zone |
+| `mpls` | enum `enable`/`disable` | - | - | [MPLS](../../reference/glossary.md#term-mpls) routing |
 | `ipv6_use_link_local_only` | `mode-status` | - | `disable` | IPv6 link-local のみ |
 | `mac_addr` | mac-address | - | - | 管理者指定 MAC |
 
@@ -76,14 +76,14 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 ## 購読者
 
 - `intfmgrd`: `vrf_name` / `mac_addr` / `mpls` / `ipv6_use_link_local_only` を Linux カーネルに反映
-- `orchagent` `IntfsOrch`: SAI ルータインタフェースを生成
+- `orchagent` `IntfsOrch`: [SAI](../../reference/glossary.md#term-sai) ルータインタフェースを生成
 - `nat_zone`: `natmgrd` が利用
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORTCHANNEL`、`VRF`、`PORTCHANNEL_MEMBER`
-- 関連 CLI: `config interface ip add/remove`（PortChannel に対しても適用）
-- 関連 YANG: `sonic-portchannel`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL`、`VRF`、`PORTCHANNEL_MEMBER`
+- 関連 CLI: `config interface ip add/remove`（[PortChannel](../../reference/glossary.md#term-portchannel) に対しても適用）
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
 <!-- ref-triangle:start -->
 
@@ -124,3 +124,5 @@ sonic-db-cli CONFIG_DB keys 'PORTCHANNEL_INTERFACE|*'
 show ip interfaces
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 73a5cc24f249 -->

@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-`config ntp` は NTP サーバ（chrony で動作）の追加・削除を行う CLI グループ。CONFIG_DB の `NTP_SERVER` テーブルを直接書き換え、`chrony` サービスを再起動する[^1]。
+`config ntp` は NTP サーバ（chrony で動作）の追加・削除を行う CLI グループ。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `NTP_SERVER` テーブルを直接書き換え、`chrony` サービスを再起動する[^1]。
 
 SONiC では NTP daemon として `chrony` を採用しており、`config ntp` で `NTP_SERVER` テーブルを書くと `chrony.conf` テンプレートが再生成され、`systemctl restart chrony` で反映される。
 
@@ -122,7 +122,7 @@ config ntp del <ntp_ip_address>
 ## 注意
 
 - 既存 IP に再度 `add` してもオプションは更新されない（早期 return する）。オプション変更は一度 `del` してから再 `add` する。
-- chrony 再起動が伴うため、SSH や BGP 等が NTP に依存している場合は短時間のタイムスタンプ揺らぎがありうる。
+- chrony 再起動が伴うため、SSH や [BGP](../../reference/glossary.md#term-bgp) 等が NTP に依存している場合は短時間のタイムスタンプ揺らぎがありうる。
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -146,7 +146,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- YANG: [`sonic-ntp`](../yang/sonic-ntp.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-ntp`](../yang/sonic-ntp.md)
 - CONFIG_DB: [`NTP_SERVER`](../config-db/ntp-server.md)
 
 <!-- ref-triangle:end -->
@@ -185,7 +185,7 @@ Restarting ntp-config service...
 
 ### 典型的な利用シーン
 
-- NTP server 追加・削除、VRF (mgmt) 越し設定。
+- NTP server 追加・削除、[VRF](../../reference/glossary.md#term-vrf) (mgmt) 越し設定。
 - 時刻同期失敗の調査前段。
 
 ### よくある落とし穴
@@ -204,3 +204,5 @@ chronyc sources
 
 ## 関連ページ
 - [YANG: sonic-ntp](../yang/sonic-ntp.md)
+
+<!-- glossary-links-injected: 3f1a66b76c8d -->

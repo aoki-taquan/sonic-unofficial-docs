@@ -25,14 +25,14 @@ related:
 ## 症状
 
 - `config save -y` 後の再起動で設定が古いまま戻る
-- `config reload -y` を打っても CLI が処理しない / 完了しても CONFIG_DB に乗らない
-- `config load_minigraph` で minigraph.xml から再構成しても期待設定にならない
+- `config reload -y` を打っても CLI が処理しない / 完了しても [CONFIG_DB](../../reference/glossary.md#term-config_db) に乗らない
+- `config load_minigraph` で [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) から再構成しても期待設定にならない
 
 ## 想定原因
 
 1. **`/etc/sonic/config_db.json` の権限 / オーナーが root 以外で書き込み失敗**
 2. **multi-asic 環境で host 側だけ save し、`config_db<N>.json` が更新されていない**
-3. **YANG / sonic-cfggen 検証で reject されたが ユーザが気付いていない**
+3. **[YANG](../../reference/glossary.md#term-yang) / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) 検証で reject されたが ユーザが気付いていない**
 4. **db_migrator のバージョン不整合**: ファイル format version と SONiC ビルドの期待バージョン不一致
 5. **minigraph.xml を編集したのに `load_minigraph` を打たず `reload` だけしている**
 
@@ -107,4 +107,6 @@ done
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb — `config/main.py`, `scripts/db_migrator.py`
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `config/main.py`, `scripts/db_migrator.py`
+
+<!-- glossary-links-injected: 9a543bc5900d -->

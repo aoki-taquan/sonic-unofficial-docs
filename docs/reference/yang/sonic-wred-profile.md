@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-wred-profile`
 
-Weighted Random Early Detection (WRED) プロファイルを名前付きで保持する。色 (green/yellow/red) 毎の min/max 閾値、ドロップ確率、 ECN 有効化、 WRED 有効化を保持する[^1]。
+Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) プロファイルを名前付きで保持する。色 (green/yellow/red) 毎の min/max 閾値、ドロップ確率、 ECN 有効化、 WRED 有効化を保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -94,7 +94,7 @@ module: sonic-wred-profile
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `WRED_PROFILE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `WRED_PROFILE`
 - CLI: `config qos`, `show qos`
 
 <!-- ref-triangle:start -->
@@ -109,3 +109,5 @@ module: sonic-wred-profile
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-wred-profile.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: c2489a894785 -->

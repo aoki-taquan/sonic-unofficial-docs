@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-SONiC で「現在の running config」を見るには CLI が **`show runningconfiguration`**（`show running-config` のエイリアスではない、空白なしの単一トークン）。本ページは同グループ配下のサブコマンドを網羅する。実装は `show/main.py` 内の `runningconfiguration` group[^1]。多くのサブコマンドは `sonic-cfggen -d --var-json <TABLE>` の薄いラッパで、CONFIG_DB から JSON を取り出して表示する。`startupconfiguration bgp` も合わせて扱う。
+SONiC で「現在の running config」を見るには CLI が **`show runningconfiguration`**（`show running-config` のエイリアスではない、空白なしの単一トークン）。本ページは同グループ配下のサブコマンドを網羅する。実装は `show/main.py` 内の `runningconfiguration` group[^1]。多くのサブコマンドは `sonic-cfggen -d --var-json <TABLE>` の薄いラッパで、[CONFIG_DB](../../reference/glossary.md#term-config_db) から JSON を取り出して表示する。`startupconfiguration bgp` も合わせて扱う。
 
 ## コマンド一覧
 
@@ -38,10 +38,10 @@ SONiC で「現在の running config」を見るには CLI が **`show runningco
 | `show runningconfiguration all` | host + 各 namespace の CONFIG_DB JSON ダンプ + bgpraw | `get_config_json_by_namespace` + `vtysh -c "show running-config"` |
 | `show runningconfiguration acl` | ACL_RULE のみ | `sonic-cfggen -d --var-json ACL_RULE` |
 | `show runningconfiguration ports [<portname>]` | PORT テーブル | `sonic-cfggen -d --var-json PORT [--key NAME]` |
-| `show runningconfiguration bgp [-n NS]` | FRR の vtysh `show running-config` | `bgp_util.run_bgp_show_command` |
+| `show runningconfiguration bgp [-n NS]` | [FRR](../../reference/glossary.md#term-frr) の vtysh `show running-config` | `bgp_util.run_bgp_show_command` |
 | `show runningconfiguration interfaces [<ifname>]` | INTERFACE テーブル | `sonic-cfggen -d --var-json INTERFACE [--key NAME]` |
 | `show runningconfiguration ntp` | `/etc/chrony/chrony.conf` を grep | ファイルパース |
-| `show runningconfiguration snmp` | SNMP / SNMP_COMMUNITY / SNMP_USER 全部 | `show_run_snmp` |
+| `show runningconfiguration snmp` | [SNMP](../../reference/glossary.md#term-snmp) / SNMP_COMMUNITY / SNMP_USER 全部 | `show_run_snmp` |
 | `show runningconfiguration snmp community` | community のみテーブル表示 | CONFIG_DB |
 | `show runningconfiguration snmp contact` | contact 表示 | CONFIG_DB |
 | `show runningconfiguration snmp location` | location 表示 | CONFIG_DB |
@@ -219,12 +219,12 @@ show runningconfiguration syslog
 ### 典型的な利用シーン
 
 - 現在 CONFIG_DB に載っている設定スナップショットの取得。
-- BGP / VRF / interface ごとの部分出力。
+- [BGP](../../reference/glossary.md#term-bgp) / [VRF](../../reference/glossary.md#term-vrf) / interface ごとの部分出力。
 
 ### よくある落とし穴
 
 - `show runningconfiguration all` は JSON 出力で巨大。区分ごとのサブコマンドが実用的。
-- FRR 側 (bgp / zebra) は CONFIG_DB に同期されていない部分がある。
+- FRR 側 (bgp / [zebra](../../reference/glossary.md#term-zebra)) は CONFIG_DB に同期されていない部分がある。
 
 ### 関連する show / debug
 
@@ -234,3 +234,5 @@ show runningconfiguration bgp
 vtysh -c 'show running-config'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 34d76fce17e7 -->

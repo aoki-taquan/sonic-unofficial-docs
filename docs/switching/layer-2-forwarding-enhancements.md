@@ -34,10 +34,10 @@ related:
 
 ## なぜ拡張するのか
 
-SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する HLD[^1]:
+SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する [HLD](../reference/glossary.md#term-hld)[^1]:
 
-1. **per-port / per-VLAN / per-(port,VLAN) FDB flush** （port down / VLAN 抜去 / STP topo change 時）
-2. **MAC move event** の SAI / orchagent 対応
+1. **per-port / per-[VLAN](../reference/glossary.md#term-vlan) / per-(port,VLAN) [FDB](../reference/glossary.md#term-fdb) flush** （port down / VLAN 抜去 / STP topo change 時）
+2. **MAC move event** の [SAI](../reference/glossary.md#term-sai) / [orchagent](../reference/glossary.md#term-orchagent) 対応
 3. **FDB aging time の CLI 設定**（既定 600 秒、0〜1,000,000 秒）
 4. **Static FDB の CLI 設定**
 5. **`sonic-clear fdb` 拡張**（port / VLAN 指定）
@@ -95,7 +95,7 @@ sonic-clear fdb port Ethernet0
 
 ## 干渉する機能
 
-`FdbOrch`（主体）/ `SwitchOrch`（aging）/ `VlanMgr` / `VlanOrch` / STP / teamd・Portchannel（down 時 flush）/ warm boot / sonic-utilities
+`FdbOrch`（主体）/ `SwitchOrch`（aging）/ `VlanMgr` / `VlanOrch` / STP / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd)・Portchannel（down 時 flush）/ warm boot / [sonic-utilities](../reference/glossary.md#term-sonic-utilities)
 
 ## 実装との乖離
 
@@ -154,3 +154,5 @@ port が VLAN メンバでない間に投入した static は orchagent ログ�
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 621fc85fd285 -->

@@ -57,14 +57,14 @@ keywords:
 
 # Telemetry / SNMP / Observability
 
-この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。counters、CRM、SNMP、gNMI telemetry、sFlow、DTel、syslog、techsupport、kdump など複数の経路があり、HLD は別ページに散らばっています。ここでは運用者と設計者の質問順に並べ直し、既存ページへの入口にします。
+この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。counters、[CRM](../../reference/glossary.md#term-crm)、[SNMP](../../reference/glossary.md#term-snmp)、[gNMI](../../reference/glossary.md#term-gnmi) telemetry、sFlow、DTel、syslog、techsupport、kdump など複数の経路があり、[HLD](../../reference/glossary.md#term-hld) は別ページに散らばっています。ここでは運用者と設計者の質問順に並べ直し、既存ページへの入口にします。
 
 観測手段は「現在値を polling で読む」「変化点を push で受ける」「障害時に dump を取る」の 3 系統に整理できます。SNMP は古典的な polling、gNMI telemetry は push 型 streaming、syslog / event / techsupport は障害発生時の証跡です。この区分けが分かると、どこを設定し、どこを見れば良いかが定まります。
 
 ## この章で答える質問
 
 - 状態を見るとき、counter、telemetry、SNMP、techsupport のどれを使い分けるか。
-- FlexCounter、CRM、DTel、sFlow、watermark は何が違い、どの粒度で出るか。
+- [FlexCounter](../../reference/glossary.md#term-flexcounter)、CRM、DTel、sFlow、watermark は何が違い、どの粒度で出るか。
 - system health、logging、kdump、dump utility は障害調査でどう連携するか。
 - SNMP MIB と gNMI telemetry は同じ情報を別経路で出しているのか。
 - auto-techsupport と event-driven techsupport は何が変わったのか。
@@ -75,7 +75,7 @@ keywords:
 2. [アーキテクチャ](architecture.md): FlexCounter / CRM / telemetry / SNMP のデータ収集経路。
 3. [設定](setup.md): SNMP、sFlow、syslog、telemetry、auto-techsupport の最小設定。
 4. [運用](operations.md): `show techsupport`、`show system-health`、counter、kdump の調査順。
-5. [内部実装](internals.md): syncd / flex counter group、telemetry agent、SNMP subagent。
+5. [内部実装](internals.md): [syncd](../../reference/glossary.md#term-syncd) / flex counter group、telemetry agent、SNMP subagent。
 6. [発展トピック](advanced.md): DTel、sFlow、Entity MIB、process / memory stats、reboot cause。
 
 ## 関連ページ
@@ -103,3 +103,4 @@ keywords:
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 - [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
 
+<!-- glossary-links-injected: 9f060dca9b0d -->

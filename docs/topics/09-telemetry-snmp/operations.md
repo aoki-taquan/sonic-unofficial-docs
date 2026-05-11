@@ -23,7 +23,7 @@ sources:
 
 `show system-health summary` と `show system-health detail` で、システム全体の health monitor 状態と監視対象 daemon / service / docker の up/down を見ます。配下では `system-health` monitor が `system_health_monitoring_config.json` に従い、container や critical process、user defined check を polling しています。
 
-`show system-health monitor-list` で「いま何を見ているか」、`show system-health events` で過去 24 時間のステータス変化を確認します。`system-ready` の HLD と組み合わせると、起動 sequence の途中で詰まっているのか、起動後に壊れたのかを切り分けられます。
+`show system-health monitor-list` で「いま何を見ているか」、`show system-health events` で過去 24 時間のステータス変化を確認します。`system-ready` の [HLD](../../reference/glossary.md#term-hld) と組み合わせると、起動 sequence の途中で詰まっているのか、起動後に壊れたのかを切り分けられます。
 
 ```text
 admin@sonic:~$ show system-health summary
@@ -77,14 +77,14 @@ counterpoll show                 # 各 flex counter group の状態
 
 | 症状 | counter / DB | 典型原因 |
 |------|--------------|----------|
-| `show queue counters` が空 | `COUNTERS_QUEUE_NAME_MAP` 空 | `counterpoll queue` disable / syncd 未起動 |
-| `aclshow` が更新されない | `COUNTERS_DB` ACL counter | `counterpoll acl` disable |
-| `portstat` の数字が増えない | `COUNTERS:Ethernet*` | syncd / orchagent stuck、SAI hang |
+| `show queue counters` が空 | `COUNTERS_QUEUE_NAME_MAP` 空 | `counterpoll queue` disable / [syncd](../../reference/glossary.md#term-syncd) 未起動 |
+| `aclshow` が更新されない | `COUNTERS_DB` [ACL](../../reference/glossary.md#term-acl) counter | `counterpoll acl` disable |
+| `portstat` の数字が増えない | `COUNTERS:Ethernet*` | syncd / [orchagent](../../reference/glossary.md#term-orchagent) stuck、[SAI](../../reference/glossary.md#term-sai) hang |
 | すべての counter が止まる | flexcounterd | `docker ps` で syncd / flexcounter 確認 |
 
 ## 障害時の保全: techsupport
 
-`show techsupport` は `/var/dump/sonic_dump_*.tar.gz` を生成します。中身は CLI 一式、`/var/log/` 配下、core dump、syslog、Redis dump、journal などです。容量が大きいので、調査では `--since "2 hours ago"` のような時間窓制限を付けます。
+`show techsupport` は `/var/dump/sonic_dump_*.tar.gz` を生成します。中身は CLI 一式、`/var/log/` 配下、core dump、syslog、[Redis](../../reference/glossary.md#term-redis) dump、journal などです。容量が大きいので、調査では `--since "2 hours ago"` のような時間窓制限を付けます。
 
 Event-driven techsupport は coredump や critical event を契機に `show techsupport` を自動実行する仕組みです。`AUTO_TECHSUPPORT_FEATURE` で feature 単位の rate limit を制御し、同じ問題で tarball が爆発するのを防ぎます。
 
@@ -123,7 +123,7 @@ swss     enabled  600
 
 ## Dump utility で個別 object を深掘り
 
-`sonic-dump -m PORT -i Ethernet0` のように、object と instance を指定すると、全 DB と対応 CLI 出力を 1 つの JSON にまとめます。「この port は CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB / ASIC_DB のどこまで反映されているか」を 1 コマンドで横断確認できます。`show techsupport` よりも軽く、object と DB の整合性チェックに向きます。
+`sonic-dump -m PORT -i Ethernet0` のように、object と instance を指定すると、全 DB と対応 CLI 出力を 1 つの JSON にまとめます。「この port は [CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) のどこまで反映されているか」を 1 コマンドで横断確認できます。`show techsupport` よりも軽く、object と DB の整合性チェックに向きます。
 
 ## Platform を疑うとき
 
@@ -149,7 +149,7 @@ Number of Kernel Core Files Stored:  0
 
 ## SNMP 経路の確認
 
-snmpd (`docker exec snmp ...`) と sonic_ax_impl が SNMP を担います。MIB のうち、IF-MIB は port counter、ENTITY-MIB は platform inventory、SNMPv2-MIB の sysName 等が基本です。
+snmpd (`docker exec snmp ...`) と sonic_ax_impl が [SNMP](../../reference/glossary.md#term-snmp) を担います。MIB のうち、IF-MIB は port counter、ENTITY-MIB は platform inventory、SNMPv2-MIB の sysName 等が基本です。
 
 ```bash
 # 外部ホストから
@@ -186,7 +186,7 @@ community / v3 user は CONFIG_DB の `SNMP_COMMUNITY` / `SNMP_USER` です。�
 
 - 章 [07 ACL / CoPP / mirror](../07-acl-copp-mirror/operations.md) — data plane drop の counter
 - 章 [08 QoS / Buffer](../08-qos-buffer/operations.md) — queue / PG counter polling
-- 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — telemetry を gNMI で取る
+- 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — telemetry を [gNMI](../../reference/glossary.md#term-gnmi) で取る
 - 章 [11 Reboot](../11-reboot/operations.md) — reboot-cause / techsupport 連携
 
 ## 関連ページ
@@ -199,3 +199,5 @@ community / v3 user は CONFIG_DB の `SNMP_COMMUNITY` / `SNMP_USER` です。�
 - [kdump](../../system/kdump.md)
 - [kdump remote SSH](../../system/kdump-remote-ssh.md)
 - [Dump utility](../../internals/dump-utility-for-easy-debugging.md)
+
+<!-- glossary-links-injected: 86d533e3fc0d -->

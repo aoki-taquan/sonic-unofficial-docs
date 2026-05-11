@@ -82,9 +82,9 @@ NTP_SERVER|<server_address>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `NTP`、`NTP_KEY`、`VRF`、`MGMT_VRF_CONFIG`、`PORT`、`LOOPBACK_INTERFACE`、`MGMT_PORT`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `NTP`、`NTP_KEY`、`VRF`、`MGMT_VRF_CONFIG`、`PORT`、`LOOPBACK_INTERFACE`、`MGMT_PORT`
 - 関連 CLI: `config ntp add/del`
-- 関連 YANG: `sonic-ntp`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-ntp`
 
 <!-- ref-triangle:start -->
 
@@ -127,3 +127,5 @@ show ntp
 chronyc sources
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

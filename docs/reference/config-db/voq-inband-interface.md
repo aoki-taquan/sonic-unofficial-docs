@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`VOQ_INBAND_INTERFACE` テーブルは VOQ chassis におけるラインカード間のインバンド通信用論理インターフェース (`Ethernet-IB<n>`) を CONFIG_DB に定義する[^1]。BGP internal-neighbor などのコントロールプレーン通信に使われる。テーブルは 2 段構造:
+`VOQ_INBAND_INTERFACE` テーブルは [VOQ](../../reference/glossary.md#term-voq) chassis におけるラインカード間のインバンド通信用論理インターフェース (`Ethernet-IB<n>`) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。[BGP](../../reference/glossary.md#term-bgp) internal-neighbor などのコントロールプレーン通信に使われる。テーブルは 2 段構造:
 
 - `VOQ_INBAND_INTERFACE_LIST` (key: name)
 - `VOQ_INBAND_INTERFACE_IPPREFIX_LIST` (key: name, ip-prefix)
@@ -73,13 +73,13 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 
 ## 購読者
 
-- `intfmgrd` / `intfsyncd` (sonic-swss)
+- `intfmgrd` / `intfsyncd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss))
 - `bgpcfgd` / `bgpd` — BGP internal neighbor のソース interface として使う場合
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `SYSTEM_PORT`、`BGP_INTERNAL_NEIGHBOR`、`BGP_VOQ_CHASSIS_NEIGHBOR`、`CHASSIS_MODULE`
-- 関連 YANG: `sonic-voq-inband-interface`、`sonic-bgp-internal-neighbor`、`sonic-bgp-voq-chassis-neighbor`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-voq-inband-interface`、`sonic-bgp-internal-neighbor`、`sonic-bgp-voq-chassis-neighbor`
 - 関連 CLI: `config interface`
 
 <!-- ref-triangle:start -->
@@ -119,3 +119,5 @@ show interfaces status Ethernet-IB0
 show ip interface | grep Ethernet-IB
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 5542a4a1928e -->

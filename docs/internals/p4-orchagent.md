@@ -26,9 +26,9 @@ related:
 
 ## なぜ必要か
 
-PINS (P4 Integrated Network Stack) は SONiC を **P4 / P4Runtime で遠隔制御** する。中核の **`P4Orch`** は `APPL_DB.P4RT` テーブルを購読し、SAI 呼び出しに変換して ASIC_DB に書く[^1]。
+[PINS](../reference/glossary.md#term-pins) (P4 Integrated Network Stack) は SONiC を **P4 / P4Runtime で遠隔制御** する。中核の **`P4Orch`** は `APPL_DB.P4RT` テーブルを購読し、[SAI](../reference/glossary.md#term-sai) 呼び出しに変換して [ASIC_DB](../reference/glossary.md#term-asic_db) に書く[^1]。
 
-通常 orchagent との差異[^1]:
+通常 [orchagent](../reference/glossary.md#term-orchagent) との差異[^1]:
 
 | 観点 | 既存 orchagent | P4Orch |
 |------|---------------|--------|
@@ -45,9 +45,9 @@ PINS (P4 Integrated Network Stack) は SONiC を **P4 / P4Runtime で遠隔制�
 | `FIXED_ROUTER_INTERFACE_TABLE` | Router Interface |
 | `FIXED_NEIGHBOR_TABLE` | Neighbor |
 | `FIXED_NEXTHOP_TABLE` | Next Hop |
-| `FIXED_WCMP_GROUP_TABLE` | Next Hop Group + Member |
+| `FIXED_WCMP_GROUP_TABLE` | [Next Hop Group](../reference/glossary.md#term-next-hop-group) + Member |
 | `FIXED_IPV4_TABLE` / `FIXED_IPV6_TABLE` | Route |
-| `ACL_*` | ACL Table / Rule |
+| `ACL_*` | [ACL](../reference/glossary.md#term-acl) Table / Rule |
 
 各 Manager は共通インターフェイスを実装する[^1]:
 
@@ -77,7 +77,7 @@ sequenceDiagram
     PO->>PO: AclRuleManager.drain
 ```
 
-HLD 当初 (2021-11) の 7 Manager は **RouterInterface / Neighbor / Nexthop / Wcmp / Route / AclTable / AclRule**[^1]。drain 順は依存（neighbor は router interface 依存、route は nexthop 依存）。
+[HLD](../reference/glossary.md#term-hld) 当初 (2021-11) の 7 Manager は **RouterInterface / Neighbor / Nexthop / Wcmp / Route / AclTable / AclRule**[^1]。drain 順は依存（neighbor は router interface 依存、route は nexthop 依存）。
 
 各 Manager の drain は **SET/DEL 判別 → deserialize+validate → ローカル map 参照で create/modify 判別 → sairedis 経由で SAI 呼び出し** という共通パターン。ローカル map は `key=P4RT object id` で create/modify を判定する。
 
@@ -108,14 +108,14 @@ local map / Centralized Mapper のキー生成を共通化[^1]:
 P4Orch は **既存 orch の public method / グローバルポインタ** で SONiC object を参照する[^1]:
 
 - `PortsOrch`: port 情報 + 参照カウント
-- `VrfOrch`: VRF + 参照カウント（`RouterInterfaceManager` から）
+- `VrfOrch`: [VRF](../reference/glossary.md#term-vrf) + 参照カウント（`RouterInterfaceManager` から）
 - `CrmOrch`: SAI create/delete 時のリソースカウント更新
 
 逆に他 orch は **P4Orch の public method 経由でしか P4RT object に触れない**（資源分離）。
 
 ## Application 応答経路
 
-P4 SDN は「programming 完了を controller に返す」要件があるため、orchagent ↔ syncd を **synchronous mode** にし、SAI 戻り値を `APPL_STATE_DB` の通知チャネルで返す[^1]:
+P4 SDN は「programming 完了を controller に返す」要件があるため、orchagent ↔ [syncd](../reference/glossary.md#term-syncd) を **synchronous mode** にし、SAI 戻り値を `APPL_STATE_DB` の通知チャネルで返す[^1]:
 
 ```mermaid
 sequenceDiagram
@@ -139,7 +139,7 @@ sequenceDiagram
 
 ## 設定
 
-CLI / CONFIG_DB / YANG / SAI への変更は **無し**[^1]。設定は P4Runtime controller 経由。確認は:
+CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) / SAI への変更は **無し**[^1]。設定は P4Runtime controller 経由。確認は:
 
 ```bash
 docker exec swss ps aux | grep orchagent
@@ -165,7 +165,7 @@ sonic-db-cli APPL_STATE_DB keys '*'
 
 ## トラブルシューティング
 
-- P4 request が反映されない → APPL_DB の P4RT entry、`APPL_STATE_DB` のエラーレスポンス
+- P4 request が反映されない → [APPL_DB](../reference/glossary.md#term-appl_db) の P4RT entry、`APPL_STATE_DB` のエラーレスポンス
 - 依存エラーが多い → Controller 投入順序（router_interface → neighbor → nexthop → route）
 - restart 後に消える → 仕様。Controller が再投入
 - ref_count 異常 → Centralized Mapper の値を debug log で確認、CrmOrch カウンタも対照
@@ -185,3 +185,5 @@ sonic-db-cli APPL_STATE_DB keys '*'
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 5c794d9f4a5c -->

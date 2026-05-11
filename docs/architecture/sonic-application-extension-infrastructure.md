@@ -102,7 +102,7 @@ manifest が必須宣言する項目[^1]:
 
 ## 制限事項
 
-- **manifest 検査の限界**: `min-sonic-version` / `depends` で表せない暗黙依存（kernel module、SAI 拡張等）は捕まえられない
+- **manifest 検査の限界**: `min-sonic-version` / `depends` で表せない暗黙依存（kernel module、[SAI](../reference/glossary.md#term-sai) 拡張等）は捕まえられない
 - **warm reboot 対応**: package 側の対応が必要。非対応 package は warm reboot でリセット
 - **CLI plugin 衝突**: 同じ `config <subcommand>` を複数 package が登録すると挙動不定
 - **資源管理**: cgroup / メモリ / CPU 上限はコンテナ起動オプションでしか制御できない
@@ -127,3 +127,5 @@ manifest が必須宣言する項目[^1]:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extention-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: f9445b5b4106 -->

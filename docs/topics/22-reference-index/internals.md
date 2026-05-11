@@ -9,7 +9,7 @@ sources: []
 
 # 内部実装
 
-22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。
+22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。
 
 ## データフロー（CLI → CONFIG_DB → ASIC）
 
@@ -47,12 +47,12 @@ flowchart LR
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
 | `sonic-utilities` (`config`、`show`、`sonic-installer` 等) | python click | ユーザ操作の入口。CLI 引数 → CONFIG_DB 書き込み / 各 DB 読み出し |
-| `sonic-mgmt-common` (translib) | go | YANG ↔ Redis テーブル変換、gNMI / RESTCONF の core |
+| `sonic-mgmt-common` (translib) | go | YANG ↔ [Redis](../../reference/glossary.md#term-redis) テーブル変換、[gNMI](../../reference/glossary.md#term-gnmi) / RESTCONF の core |
 | `sonic-yang-models` | `*.yang` | CONFIG_DB のスキーマ定義（must / when 制約） |
 | `sonic-yang-mgmt` | python wrapper | CLI から YANG validation を呼ぶ層 |
 | `swsscommon` (`sonic-swss-common`) | C++ / python binding | Producer/Consumer/Notification の Redis 抽象、ZMQ producer も含む |
-| `*mgrd` group | `cfgmgr/*` | CONFIG_DB → kernel + APPL_DB |
-| `*Orch` group | `orchagent/*` | APPL_DB → SAI |
+| `*mgrd` group | `cfgmgr/*` | CONFIG_DB → kernel + [APPL_DB](../../reference/glossary.md#term-appl_db) |
+| `*Orch` group | `orchagent/*` | APPL_DB → [SAI](../../reference/glossary.md#term-sai) |
 
 ## YANG とテーブルの対応
 
@@ -63,7 +63,7 @@ flowchart LR
 | `sonic-port` | `PORT` | PortsOrch |
 | `sonic-vlan` | `VLAN`、`VLAN_MEMBER`、`VLAN_INTERFACE` | VlanMgr / IntfMgr |
 | `sonic-portchannel` | `PORTCHANNEL`、`PORTCHANNEL_MEMBER` | TeamMgr |
-| `sonic-bgp-neighbor` | `BGP_NEIGHBOR`、`BGP_PEER_RANGE` | bgpcfgd |
+| `sonic-bgp-neighbor` | `BGP_NEIGHBOR`、`BGP_PEER_RANGE` | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) |
 | `sonic-acl` | `ACL_TABLE`、`ACL_RULE` | AclOrch |
 | `sonic-vrf` | `VRF` | VRFOrch |
 | `sonic-vxlan` | `VXLAN_TUNNEL`、`VNET` | VxlanOrch / VNetOrch |
@@ -75,13 +75,13 @@ OpenConfig YANG は translib transformer が間に入って SONiC YANG / Redis �
 
 | CLI | 書き込む / 読む DB |
 | --- | --- |
-| `config vlan add/del` | CONFIG_DB:VLAN |
+| `config vlan add/del` | CONFIG_DB:[VLAN](../../reference/glossary.md#term-vlan) |
 | `config interface ip add` | CONFIG_DB:INTERFACE / VLAN_INTERFACE |
 | `config bgp shutdown` | CONFIG_DB:BGP_NEIGHBOR |
 | `config qos clear / reload` | CONFIG_DB:BUFFER_* / QOS_* |
-| `show interfaces counters` | COUNTERS_DB:COUNTERS:<oid> |
-| `show ip route` | APPL_DB / FRR vtysh 経由 |
-| `show platform` | STATE_DB:PLATFORM_*、CHASSIS_STATE_DB（chassis のとき） |
+| `show interfaces counters` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db):COUNTERS:<oid> |
+| `show ip route` | APPL_DB / [FRR](../../reference/glossary.md#term-frr) vtysh 経由 |
+| `show platform` | [STATE_DB](../../reference/glossary.md#term-state_db):PLATFORM_*、CHASSIS_STATE_DB（chassis のとき） |
 | `show warm-restart` | STATE_DB:WARM_RESTART_TABLE |
 
 ## SAI 属性の入り口一覧（章間索引）
@@ -91,27 +91,27 @@ OpenConfig YANG は translib transformer が間に入って SONiC YANG / Redis �
 | L2 | `LAG`、`VLAN`、`FDB_ENTRY`、`BRIDGE_PORT` | 06 |
 | L3 | `ROUTE_ENTRY`、`NEXT_HOP_GROUP`、`VIRTUAL_ROUTER` | 04 |
 | VxLAN | `TUNNEL`、`TUNNEL_MAP`、`TUNNEL_TERM_TABLE_ENTRY` | 03 |
-| ACL | `ACL_TABLE`、`ACL_ENTRY`、`ACL_COUNTER`、`POLICER` | 07 |
-| QoS / buffer | `BUFFER_POOL`、`BUFFER_PROFILE`、`QUEUE`、`SCHEDULER` | 08 |
+| [ACL](../../reference/glossary.md#term-acl) | `ACL_TABLE`、`ACL_ENTRY`、`ACL_COUNTER`、`POLICER` | 07 |
+| [QoS](../../reference/glossary.md#term-qos) / buffer | `BUFFER_POOL`、`BUFFER_PROFILE`、`QUEUE`、`SCHEDULER` | 08 |
 | Port / SerDes | `PORT`、`PORT_SERDES`、`MACSEC` | 14 / 15 |
-| NAT | `NAT_ENTRY` | 16 |
-| SRv6 / MPLS | `MY_SID_ENTRY`、`INSEG_ENTRY` | 17 |
+| [NAT](../../reference/glossary.md#term-nat) | `NAT_ENTRY` | 16 |
+| [SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) | `MY_SID_ENTRY`、`INSEG_ENTRY` | 17 |
 
 ## Redis pub/sub / ZMQ の概観
 
 | 機構 | 用途 | 例 |
 | --- | --- | --- |
-| Redis pub/sub (`__keyspace@N__:*`) | CONFIG_DB / APPL_DB / STATE_DB 変更通知 | gNMI on_change、ConsumerStateTable |
-| Redis pub/sub (notification channel) | ASIC_DB のイベント通知 | FDB notification、port state change |
-| ZMQ | orchagent への大量 push 経路 | VNET_ROUTE_TUNNEL_TABLE（→ 03 章） |
-| ZMQ | DASH SDN push | DASH controller → SWBUS（→ 13 章） |
-| Unix DBus / socket | host service 呼び出し | gNOI Reboot（→ 10 章） |
+| Redis pub/sub (`__keyspace@N__:*`) | CONFIG_DB / APPL_DB / STATE_DB 変更通知 | gNMI on_change、[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) |
+| Redis pub/sub (notification channel) | [ASIC_DB](../../reference/glossary.md#term-asic_db) のイベント通知 | [FDB](../../reference/glossary.md#term-fdb) notification、port state change |
+| ZMQ | [orchagent](../../reference/glossary.md#term-orchagent) への大量 push 経路 | VNET_ROUTE_TUNNEL_TABLE（→ 03 章） |
+| ZMQ | [DASH](../../reference/glossary.md#term-dash) SDN push | DASH controller → SWBUS（→ 13 章） |
+| Unix DBus / socket | host service 呼び出し | [gNOI](../../reference/glossary.md#term-gnoi) Reboot（→ 10 章） |
 
 ## 既知の実装上の制約
 
-- リファレンス索引は **HLD に書かれている範囲を中心**にしており、ベンダー実装由来の SAI 拡張属性（`SAI_OBJECT_TYPE_*_EXTENSION`）は網羅していません。実装で必要になったら 22 章 quality-gaps に追記する運用です。
+- リファレンス索引は **[HLD](../../reference/glossary.md#term-hld) に書かれている範囲を中心**にしており、ベンダー実装由来の SAI 拡張属性（`SAI_OBJECT_TYPE_*_EXTENSION`）は網羅していません。実装で必要になったら 22 章 quality-gaps に追記する運用です。
 - YANG / CONFIG_DB / CLI の三者は一対一ではない（同じ機能を複数 CLI が触る、別 CLI が同じテーブルを上書きする等）。書き込み順序による race は 22 章索引では追えないので、各機能章 internals.md を当たる必要があります。
-- gNMI / sonic-mgmt-common を経由する書き込みは、`*mgrd` / `*Orch` の処理を待たずに完了応答を返すため、即時の SAI 反映を確認したい場合は別途 STATE_DB 上の対応 key を polling する設計になります。
+- gNMI / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common を経由する書き込みは、`*mgrd` / `*Orch` の処理を待たずに完了応答を返すため、即時の SAI 反映を確認したい場合は別途 STATE_DB 上の対応 key を polling する設計になります。
 
 ## 索引生成パイプライン
 
@@ -137,3 +137,5 @@ Indexer は AST 解析（Click は ast.parse、YANG は pyang）を使い、生�
 - [YANG index](./yang-index.md)
 - [Quality gaps](./quality-gaps.md)
 - [20 章 swss / sai / Redis 内部実装](../20-swss-sai-redis/internals.md)
+
+<!-- glossary-links-injected: 1cbd3e5a6262 -->

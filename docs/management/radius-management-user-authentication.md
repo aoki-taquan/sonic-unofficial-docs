@@ -39,7 +39,7 @@ SONiC 管理ユーザの SSH / console ログインを RADIUS で認証する仕
 - RADIUS パケットの **source IP 設定** が可能（NAS-IP-Address）
 - 多サーバ + **priority** + 自動 failover。passphrase 不一致は "unreachable" 扱いで次サーバへ
 - 最大 **8 サーバ**
-- `source-interface` / `NAS-IP-Address` / Management VRF 対応
+- `source-interface` / `NAS-IP-Address` / Management [VRF](../reference/glossary.md#term-vrf) 対応
 - `many_to_one` フラグ（同一 RADIUS user → 単一 local アカウントへ多対一マッピング）
 
 ## 動作仕様
@@ -62,11 +62,11 @@ flowchart LR
 
 3 つの mapping モード[^1]:
 
-1. **個別 local account**: 各 RADIUS user に local UID を作成（HLD 既定）
+1. **個別 local account**: 各 RADIUS user に local UID を作成（[HLD](../reference/glossary.md#term-hld) 既定）
 2. **`many_to_one`**: RADIUS user を単一 local account に集約（共有アカウントの簡易運用）
 3. **Unconfirmed Users**: 認証は通ったが local account がまだないユーザの暫定状態（priority lookup 中など）
 
-`many_to_one=y` のときは AAA Improvements HLD が指摘する `remote_user` 共有問題と同等の副作用がある（ホームディレクトリ共有・auditd 不能）。
+`many_to_one=y` のときは [AAA](../reference/glossary.md#term-aaa) Improvements HLD が指摘する `remote_user` 共有問題と同等の副作用がある（ホームディレクトリ共有・auditd 不能）。
 
 ### User Privilege Table
 
@@ -125,7 +125,7 @@ passphrase 不一致時に "unreachable" として次に進むのは、運用ミ
 
 ### Warm boot
 
-CONFIG_DB が persist しているので RADIUS 設定は warm boot 越しに継続。ただしランタイムで `nsswitch.conf` を書き換える方式に伴う問題（**AAA Improvements HLD** が指摘）を内包する[^1]。
+[CONFIG_DB](../reference/glossary.md#term-config_db) が persist しているので RADIUS 設定は warm boot 越しに継続。ただしランタイムで `nsswitch.conf` を書き換える方式に伴う問題（**AAA Improvements HLD** が指摘）を内包する[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/aaa/radius_authentication.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -218,3 +218,5 @@ HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh log
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1efb6dec9331 -->

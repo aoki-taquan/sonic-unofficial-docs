@@ -28,7 +28,7 @@ related:
 
 ターミナルサーバ機能を持つ SONiC 装置はフロントパネルに複数のシリアルポートを持ち、内部で **USB hub + USB-to-UART (例: cp210x) チップ** を介して `/dev/ttyUSB<N>` に枚挙される。標準では `ttyUSB0`〜`ttyUSB(n-1)` という順序付けだが、**1 つのポートが故障すると枚挙が詰まり** `ttyUSB0` 以降の number と front-panel 番号の対応が崩れる[^1]。
 
-本 HLD は **udev rules で安定した symlink** を生成し、front-panel 番号と `/dev/Mytty-<N>` 名の **物理的な対応を固定** する設計を示す。
+本 [HLD](../reference/glossary.md#term-hld) は **udev rules で安定した symlink** を生成し、front-panel 番号と `/dev/Mytty-<N>` 名の **物理的な対応を固定** する設計を示す。
 
 ## 動作仕様
 
@@ -205,3 +205,5 @@ ls -l /dev/Mytty*
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 167700005048 -->

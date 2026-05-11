@@ -24,11 +24,11 @@ related:
 
 ## 概要
 
-`BGP_PEER_RANGE` テーブルは BGP の dynamic neighbor 用 listen-range / peer-range を CONFIG_DB に定義する[^1]。`bgpcfgd` テンプレが `bgpd` の `bgp listen range <prefix> peer-group <name>` 相当を生成するための入力。
+`BGP_PEER_RANGE` テーブルは [BGP](../../reference/glossary.md#term-bgp) の dynamic neighbor 用 listen-range / peer-range を [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。`bgpcfgd` テンプレが `bgpd` の `bgp listen range <prefix> peer-group <name>` 相当を生成するための入力。
 
 定義は 2 list:
 
-- `BGP_PEER_RANGE_LIST` (vrf_name, peer_range_name): VRF または VNET 別の peer range
+- `BGP_PEER_RANGE_LIST` (vrf_name, peer_range_name): [VRF](../../reference/glossary.md#term-vrf) または [VNET](../../reference/glossary.md#term-vnet) 別の peer range
 - `BGP_PEER_RANGE_TEMPLATE_LIST` (peer_range_name): テンプレベース
 
 <!-- cdb-mermaid -->
@@ -79,7 +79,7 @@ BGP_PEER_RANGE_TEMPLATE|<peer_range_name>        # template
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BGP_GLOBALS`、`VRF`、`VNET`、`BGP_PEER_GROUP`
-- 関連 YANG: `sonic-bgp-peerrange`、`sonic-vrf`、`sonic-vnet`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-peerrange`、`sonic-vrf`、`sonic-vnet`
 - 関連 CLI: `config bgp`
 
 <!-- ref-triangle:start -->
@@ -118,3 +118,5 @@ sonic-db-cli CONFIG_DB keys 'BGP_PEER_RANGE|*'
 vtysh -c 'show bgp listen range'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0b428f8adcd6 -->

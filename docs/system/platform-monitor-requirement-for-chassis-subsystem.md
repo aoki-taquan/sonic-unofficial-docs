@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-このドキュメントはシャーシ型 SONiC（Supervisor + Linecards + Fabric Cards）における **PMON 関連の必須要件と将来要件** を箇条書きで挙げたチェックリスト形式の HLD である。具体実装は各サブ HLD（chassisd / psud / thermalctld / pcie-monitoring 等）に委ねられる[^1]。
+このドキュメントはシャーシ型 SONiC（Supervisor + Linecards + Fabric Cards）における **PMON 関連の必須要件と将来要件** を箇条書きで挙げたチェックリスト形式の [HLD](../reference/glossary.md#term-hld) である。具体実装は各サブ HLD（chassisd / psud / thermalctld / pcie-monitoring 等）に委ねられる[^1]。
 
 ## 動作仕様
 
@@ -59,8 +59,8 @@ related:
 | # | 要件 |
 |---|------|
 | 8 | LC / RP 両方で `chassisd` 動作。`CHASSIS_MODULE_TABLE|<key>` の全フィールドを正しく埋める |
-| 9 | `CHASSIS_ASIC_TABLE|<key>` も埋める。SUP 上で FABRIC ASIC ready を待って swss/syncd 起動を制御 |
-| 12 | Supervisor と LC の両方が `TEMPERATURE_INFO` を **Chassis State DB** に反映。LC STATE_DB にもローカル分が残る |
+| 9 | `CHASSIS_ASIC_TABLE|<key>` も埋める。SUP 上で FABRIC ASIC ready を待って swss/[syncd](../reference/glossary.md#term-syncd) 起動を制御 |
+| 12 | Supervisor と LC の両方が `TEMPERATURE_INFO` を **Chassis State DB** に反映。LC [STATE_DB](../reference/glossary.md#term-state_db) にもローカル分が残る |
 
 #### PSU / FAN / 温度（thermalctld 系）
 
@@ -92,7 +92,7 @@ related:
 | 3 | Module / Chassis / Board LED 統一インフラ（led daemon と show 拡張）|
 | 4 | 温度測定の **粒度向上** + ポーリング間隔の調整、show での location フィルタ |
 | 5 | Voltage / Current センサを sensorsd/libsensors から **PMON / thermalctld 経由** に移行 |
-| 6 | Midplane switch の counter 監視と QoS 調整（HW midplane 機種向け）|
+| 6 | Midplane switch の counter 監視と [QoS](../reference/glossary.md#term-qos) 調整（HW midplane 機種向け）|
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/pmon/pmon-chassis-requirements.md#L11-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -126,7 +126,7 @@ reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィ�
 
 ### 関連する CONFIG_DB / STATE_DB
 
-本 HLD は要件のみで CONFIG_DB スキーマを規定しない。STATE_DB / Chassis State DB 側の主要テーブルとして以下が言及される[^1]:
+本 HLD は要件のみで [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマを規定しない。STATE_DB / Chassis State DB 側の主要テーブルとして以下が言及される[^1]:
 
 | Table | 場所 | 用途 |
 |-------|------|------|
@@ -173,3 +173,5 @@ reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィ�
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: afb862484b2b -->

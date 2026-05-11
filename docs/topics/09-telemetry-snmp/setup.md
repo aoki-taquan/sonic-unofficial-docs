@@ -18,7 +18,7 @@ sources:
 
 # 設定
 
-監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の `show` 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。
+監視機能の設定は経路ごとに別の [CONFIG_DB](../../reference/glossary.md#term-config_db) table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の `show` 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。
 
 ## シナリオ 1: SNMP v2c read-only と v3 priv user の併設
 
@@ -77,7 +77,7 @@ $ docker exec snmp snmpwalk -v3 -u monitor -l authPriv -a SHA -A 'AuthPass!2026'
 SNMPv2-MIB::sysName.0 = STRING: sonic-tor-01
 ```
 
-古い `snmp.yml` から CONFIG_DB への移行は SNMP migration で扱われ、`config load_minigraph` 時に再生成されます。詳細は [SNMP migration](../../system/snmp-migration-from-snmp-yml-to-configdb.md) を参照。
+古い `snmp.yml` から CONFIG_DB への移行は [SNMP](../../reference/glossary.md#term-snmp) migration で扱われ、`config load_minigraph` 時に再生成されます。詳細は [SNMP migration](../../system/snmp-migration-from-snmp-yml-to-configdb.md) を参照。
 
 ## シナリオ 2: sFlow を 2 collector に同時に送る
 
@@ -132,7 +132,7 @@ sFlow interface configurations
 
 ## シナリオ 3: Syslog を mgmt VRF 越しに 2 台へ転送
 
-mgmt VRF 経由で外部 SIEM に syslog を送る構成。management VRF を有効にしてある box では `--vrf mgmt` 指定が必須で、忘れると default VRF から DNS lookup が走って到達不能になります。
+mgmt [VRF](../../reference/glossary.md#term-vrf) 経由で外部 SIEM に syslog を送る構成。management VRF を有効にしてある box では `--vrf mgmt` 指定が必須で、忘れると default VRF から DNS lookup が走って到達不能になります。
 
 ```bash
 config syslog add 192.0.2.20 --vrf mgmt
@@ -161,11 +161,11 @@ $ tcpdump -n -i eth0 -c 4 'udp port 514'
 13:24:15.001 IP 10.0.0.10.43211 > 192.0.2.21.514: SYSLOG ...
 ```
 
-YANG model は `sonic-syslog.yang`、CONFIG_DB は [`SYSLOG_SERVER`](../../reference/config-db/syslog-server.md)。
+[YANG](../../reference/glossary.md#term-yang) model は `sonic-syslog.yang`、CONFIG_DB は [`SYSLOG_SERVER`](../../reference/config-db/syslog-server.md)。
 
 ## シナリオ 4: Telemetry (gNMI server) を有効化する
 
-dial-in / dial-out 両方をサポートする gNMI server を立ち上げます。証明書は通常 `/etc/sonic/telemetry/` 配下に置きます。
+dial-in / dial-out 両方をサポートする [gNMI](../../reference/glossary.md#term-gnmi) server を立ち上げます。証明書は通常 `/etc/sonic/telemetry/` 配下に置きます。
 
 ```bash
 # 証明書配置
@@ -233,7 +233,7 @@ total 24M
 
 1. `redis-cli -n 4 KEYS '<TABLE>|*'` で CONFIG_DB の entry が存在するか。
 2. 対応 daemon (`snmpd` / `hsflowd` / `telemetry` / `rsyslogd`) が running か (`systemctl status`、`docker ps`)。
-3. APPL_DB / STATE_DB に反映があるか (`show <feature>` か `redis-cli -n 0/6`)。
+3. [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) に反映があるか (`show <feature>` か `redis-cli -n 0/6`)。
 4. syslog の該当 container に reject や parse error が出ていないか (`docker logs snmp 2>&1 | tail -50`)。
 
 ## よくある設定エラーと対処
@@ -261,3 +261,5 @@ total 24M
 - [AUTO_TECHSUPPORT table](../../reference/config-db/auto-techsupport.md)
 - [sonic-syslog YANG](../../reference/yang/sonic-syslog.md)
 - [SNMP yml から CONFIG_DB への移行](../../system/snmp-migration-from-snmp-yml-to-configdb.md)
+
+<!-- glossary-links-injected: ee15e5ef29a6 -->

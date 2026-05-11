@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-[Everflow](https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design) は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。**通常スイッチ** では `mirrororch` が `routeorch` / `neighorch` に問い合わせ、出力 IF と DST MAC を決定し、SAI `create_mirror_session` を呼ぶ[^1]。
+[Everflow](https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design) は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。**通常スイッチ** では `mirrororch` が `routeorch` / `neighorch` に問い合わせ、出力 IF と DST MAC を決定し、[SAI](../reference/glossary.md#term-sai) `create_mirror_session` を呼ぶ[^1]。
 
 VoQ Chassis では構造が大きく異なる。複数 LC にまたがる中で、**ミラー送信元と宛先が別 LC** という構成が普通に発生する[^1]:
 
@@ -37,7 +37,7 @@ VoQ Chassis では構造が大きく異なる。複数 LC にまたがる中で�
 - パケットの egress rewrite は宛先 LC の egress ASIC で行う
 - そのままでは `SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` に他 LC のポートを指定できない
 
-本 HLD はこの問題を **「ingress LC の段階で完全に GRE rewrite し、ingress ASIC の recycle port から再注入する」** 方式で解く[^1]。ASIC を 2 段通すことで、最終 LC への配送を underlay の switch fabric に任せる。
+本 [HLD](../reference/glossary.md#term-hld) はこの問題を **「ingress LC の段階で完全に GRE rewrite し、ingress ASIC の recycle port から再注入する」** 方式で解く[^1]。ASIC を 2 段通すことで、最終 LC への配送を underlay の switch fabric に任せる。
 
 ## 動作仕様
 
@@ -74,7 +74,7 @@ SAI 側に手を入れる方式[^1]:
 - `mirrororch` は普段どおり destination IP → routeorch / neighorch で解決
 - `neighorch` が「remote neighbor の場合、interface alias まで返せる」ように拡張
 - `mirrororch` は remote neighbor だと判定したら **その remote IF の SYSTEM_PORT** を MONITOR_PORT として SAI に渡す
-- SAI が裏で「recycle port から流す + 再注入時は neighbor の DST MAC」を仕込む。FDB も SAI 側で適切に設定
+- SAI が裏で「recycle port から流す + 再注入時は neighbor の DST MAC」を仕込む。[FDB](../reference/glossary.md#term-fdb) も SAI 側で適切に設定
 
 つまり SONiC 側の変更は最小で、ASIC ベンダーの SAI 実装に責任が寄る。
 
@@ -100,7 +100,7 @@ local 宛のときも recycle を使う方が `mirrororch` の実装が両ケー
 | SONiC 変更 | 小 | 大（mirrororch が recycle port + router MAC 設定） |
 | local 宛で recycle | 非推奨 | 推奨（実装統一・LB） |
 | パケットの再注入時動作 | bridging（FDB 経由） | routing（router MAC + DST IP） |
-| LB（複数 nexthop） | 不可 | 可（routing なので ECMP 効く）[^1] |
+| LB（複数 nexthop） | 不可 | 可（routing なので [ECMP](../reference/glossary.md#term-ecmp) 効く）[^1] |
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/voq/everflow.md#L75-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -158,7 +158,7 @@ VoQ chassis 固有 CLI は提案されていない。`config mirror_session` / `
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない。
 
 ### 設定例
 
@@ -218,3 +218,5 @@ HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC �
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 74c72b83304f -->

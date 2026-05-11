@@ -28,15 +28,15 @@ related:
 
 ## 読み手が知りたいこと
 
-- Smart Switch で DPU の overlay データはどこに置かれるか
-- なぜ DPU 上の Redis にそのまま置けないのか
-- NPU と DPU はどう繋がり、どの port を使うのか
+- Smart Switch で [DPU](../reference/glossary.md#term-dpu) の overlay データはどこに置かれるか
+- なぜ DPU 上の [Redis](../reference/glossary.md#term-redis) にそのまま置けないのか
+- [NPU](../reference/glossary.md#term-npu) と DPU はどう繋がり、どの port を使うのか
 - どの FEATURE フラグでこれを ON にするのか
 - メモリはどれくらい食うのか
 
 ## 結論
 
-DPU の DASH overlay 用 Redis を **NPU 側に container として立て、DPU から midplane 経由で remote 接続** させる。DPU の RAM 不足を NPU 側に肩代わりさせ、multi-ASIC と同じ機構（`featured` + `has_per_*_scope`）を流用する[^1]。
+DPU の [DASH](../reference/glossary.md#term-dash) overlay 用 Redis を **NPU 側に container として立て、DPU から midplane 経由で remote 接続** させる。DPU の RAM 不足を NPU 側に肩代わりさせ、multi-ASIC と同じ機構（`featured` + `has_per_*_scope`）を流用する[^1]。
 
 ## 動作仕様
 
@@ -100,12 +100,12 @@ multi-ASIC 用 `database_global.json` を拡張し、DPU 単位の `database_con
 
 | DB | id | format | 用途 |
 |----|----|--------|------|
-| `DPU_APPL_DB` | 15 | proto | DASH overlay objects（VNET, ENI, ACL, ROUTE）の書込先 |
+| `DPU_APPL_DB` | 15 | proto | DASH overlay objects（[VNET](../reference/glossary.md#term-vnet), [ENI](../reference/glossary.md#term-eni), [ACL](../reference/glossary.md#term-acl), ROUTE）の書込先 |
 | `DPU_APPL_STATE_DB` | 16 | – | DPU swss の反映状態 |
 | `DPU_STATE_DB` | 17 | – | DPU 内部状態 |
 | `DPU_COUNTERS_DB` | 18 | – | DASH counters / meters |
 
-`DPU_APPL_DB` は protobuf エンコード。GNMI に「proto → human-readable」変換 CLI が想定されているが具体的コマンド名は HLD に明示なし[^1]。
+`DPU_APPL_DB` は protobuf エンコード。GNMI に「proto → human-readable」変換 CLI が想定されているが具体的コマンド名は [HLD](../reference/glossary.md#term-hld) に明示なし[^1]。
 
 ### DPU 側の参照設定
 
@@ -128,7 +128,7 @@ sequenceDiagram
 ```
 
 - 上位 → DPU swss の主経路は **GNMI 経由 ZMQ**。`DPU_APPL_DB` 書込はバックアップ・debug・migration 用[^1]
-- counters は DPU の syncd flex counter が `DPU_COUNTERS_DB` に書く
+- counters は DPU の [syncd](../reference/glossary.md#term-syncd) flex counter が `DPU_COUNTERS_DB` に書く
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md#L300-L320 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -211,3 +211,5 @@ redis-cli -h 169.254.200.254 -p 6381 KEYS "DASH_*" | head
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d5b6931e63bd -->

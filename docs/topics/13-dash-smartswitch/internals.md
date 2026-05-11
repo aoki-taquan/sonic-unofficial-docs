@@ -14,7 +14,7 @@ sources:
 
 # NPU-DPU DB と ENI ベース転送の内部構造
 
-DASH / SmartSwitch を実装視点で読むときは、「設定がコントローラから DPU の SAI に届くまで」と「データプレーンが NPU 上の ACL でどう振り分けられるか」を分けて追うと理解しやすくなります。ここでは DB レイヤ、ENI ベース転送、DASH ACL タグ、HA の actor 関係を順に見ていきます。
+[DASH](../../reference/glossary.md#term-dash) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) を実装視点で読むときは、「設定がコントローラから [DPU](../../reference/glossary.md#term-dpu) の [SAI](../../reference/glossary.md#term-sai) に届くまで」と「データプレーンが [NPU](../../reference/glossary.md#term-npu) 上の [ACL](../../reference/glossary.md#term-acl) でどう振り分けられるか」を分けて追うと理解しやすくなります。ここでは DB レイヤ、[ENI](../../reference/glossary.md#term-eni) ベース転送、DASH ACL タグ、HA の actor 関係を順に見ていきます。
 
 ## NPU 上の DPU overlay DB
 
@@ -55,9 +55,9 @@ flowchart LR
 
 コントローラからの設定は次のように流れます。
 
-1. コントローラが NPU 側 gNMI / `swssconfig` に `DASH_VNET` / `DASH_ENI` / `DASH_ROUTE` / `DASH_ACL_GROUP` / `DASH_PREFIX_TAG_TABLE` 等を入れる。
-2. 対象 DPU 向けに NPU の `redisdpuN` に書き込まれる（あるいは DPU 側 orchagent がここを購読する）。
-3. DPU 側 `DashOrch` 系が APPL_DB を読み、SAI へ落とす。
+1. コントローラが NPU 側 [gNMI](../../reference/glossary.md#term-gnmi) / `swssconfig` に `DASH_VNET` / `DASH_ENI` / `DASH_ROUTE` / `DASH_ACL_GROUP` / `DASH_PREFIX_TAG_TABLE` 等を入れる。
+2. 対象 DPU 向けに NPU の `redisdpuN` に書き込まれる（あるいは DPU 側 [orchagent](../../reference/glossary.md#term-orchagent) がここを購読する）。
+3. DPU 側 `DashOrch` 系が [APPL_DB](../../reference/glossary.md#term-appl_db) を読み、SAI へ落とす。
 
 主要 orchagent は次の通りです。
 
@@ -83,7 +83,7 @@ ACL の基本優先度は `EniAclRule::BASE_PRIORITY = 9996` で、ローカル 
 
 ## DASH ACL タグ
 
-DASH ACL は「サービスタグ = プレフィックス群」という抽象を持ち、`DASH_PREFIX_TAG_TABLE` でタグを定義し、ACL ルール側から参照できます。Stage 1（現行）は SWSS 側でタグをルール生成時にプレフィックス列に展開するソフトウェア実装で、SAI 変更はありません。Stage 2 として SAI API でタグを直接扱う計画は HLD 範囲外です。
+DASH ACL は「サービスタグ = プレフィックス群」という抽象を持ち、`DASH_PREFIX_TAG_TABLE` でタグを定義し、ACL ルール側から参照できます。Stage 1（現行）は SWSS 側でタグをルール生成時にプレフィックス列に展開するソフトウェア実装で、SAI 変更はありません。Stage 2 として SAI API でタグを直接扱う計画は [HLD](../../reference/glossary.md#term-hld) 範囲外です。
 
 タグの利点は次の通りです。
 
@@ -99,7 +99,7 @@ SmartSwitch HA は NPU 側 daemon **HAMgrD** が actor として動きます。H
 
 - DPU ごとに「自 DPU の HA state」「peer DPU との同期」を持つ
 - 物理 / 論理障害を検知し、active / standby 切替を駆動する
-- DPU 側 `DashHaOrch` と APPL_DB / STATE_DB を介して連携する
+- DPU 側 `DashHaOrch` と APPL_DB / [STATE_DB](../../reference/glossary.md#term-state_db) を介して連携する
 - HA グループや HA セット（DPU ペア / フロー）を管理する
 
 データプレーンの flow sync は DPU 側 `DashHaFlowOrch` が持ち、HAMgrD が制御メッセージを発行する分業です。NPU 側 / DPU 側で actor を分けるのは、NPU が複数 DPU をまとめて見やすい一方、DPU 側はフロー状態を SAI に近い場所で扱う必要があるためです。HAMgrD は実装上 `discrepancy-found` 扱いの点があるため、[HAMgrD ページ](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md) で個別差分を確認してください。
@@ -116,7 +116,7 @@ DASH SAI は `sai/experimental/saiexperimentaldash*.h` 系で定義される DAS
 | `SAI_OBJECT_TYPE_VNET` | `SAI_VNET_ATTR_VNI` |
 | `SAI_OBJECT_TYPE_OUTBOUND_ROUTING_ENTRY` | encap 種別、tunnel_id、overlay_ip |
 | `SAI_OBJECT_TYPE_OUTBOUND_CA_TO_PA_ENTRY` | customer addr → provider addr の mapping |
-| `SAI_OBJECT_TYPE_INBOUND_ROUTING_ENTRY` | inbound 側の VNI / VNET 解決 |
+| `SAI_OBJECT_TYPE_INBOUND_ROUTING_ENTRY` | inbound 側の VNI / [VNET](../../reference/glossary.md#term-vnet) 解決 |
 | `SAI_OBJECT_TYPE_DASH_ACL_GROUP` / `DASH_ACL_RULE` | DASH ACL（NSG / SG 用） |
 | `SAI_OBJECT_TYPE_FLOW_TABLE` / `FLOW_ENTRY` | HA flow sync（DPU 側） |
 | `SAI_OBJECT_TYPE_METER_*` | metering / billing |
@@ -144,7 +144,7 @@ NPU 側 CONFIG_DB / APPL_DB:
 
 ## ZMQ / SWBUS / Redis pub/sub
 
-- DASH は **ZMQ + SWBUS** を多用します。NPU ↔ DPU 間の制御パスは SONiC 標準の Redis pub/sub ではなく、SWBUS (`sonic-swbus` based。`gnmi-native-write` と並び ZMQ producer/consumer を使う) でメッセージを配送します。これは大量の DASH route / ENI / flow を Redis を介さず直接 orchagent に流すためです。
+- DASH は **ZMQ + SWBUS** を多用します。NPU ↔ DPU 間の制御パスは SONiC 標準の [Redis](../../reference/glossary.md#term-redis) pub/sub ではなく、SWBUS (`sonic-swbus` based。`gnmi-native-write` と並び ZMQ producer/consumer を使う) でメッセージを配送します。これは大量の DASH route / ENI / flow を Redis を介さず直接 orchagent に流すためです。
 - HA flow sync は DPU 間の専用 channel（DASH-HA dataplane channel）で行い、Redis を経由しません。
 - 通常の DASH 設定（ENI / VNET / route）は SWBUS → 各 DPU の APPL_DB に書かれ、`DashOrch` 系が SubscriberStateTable で読み取ります。
 
@@ -164,3 +164,5 @@ NPU 側 CONFIG_DB / APPL_DB:
 - [SmartSwitch ENI Based Forwarding](../../overlay/smartswitch-eni-based-forwarding.md)
 - [DASH ACL タグ](../../acl-qos/dash-acl-tags.md)
 - [SmartSwitch HAMgrD 設計](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md)
+
+<!-- glossary-links-injected: 1c002d86094a -->

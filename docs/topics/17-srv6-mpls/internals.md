@@ -16,7 +16,7 @@ sources:
 
 # 内部実装
 
-ここでは SRv6 / MPLS / Path Tracing の主要 daemon・ファイル・SAI 属性のうち、設計を理解する上で欠かせない部分を集約します。コード位置は元 HLD ページに紐付いており、verifier が裏取り済みです。
+ここでは [SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) / Path Tracing の主要 daemon・ファイル・[SAI](../../reference/glossary.md#term-sai) 属性のうち、設計を理解する上で欠かせない部分を集約します。コード位置は元 [HLD](../../reference/glossary.md#term-hld) ページに紐付いており、verifier が裏取り済みです。
 
 ## srv6orch の構造
 
@@ -32,9 +32,9 @@ sources:
 
 Static SID / Locator は `src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py` の `SRv6Mgr` が処理します。
 
-- `locators_set_handler` / `sids_set_handler` が CONFIG_DB の subscribe ハンドラ。
+- `locators_set_handler` / `sids_set_handler` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の subscribe ハンドラ。
 - locator 不在のまま SID が来ても、`SRV6_MY_LOCATORS` を subscribe して deferred 解決する経路を持ちます。
-- 最終的に `vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid {} locator {} behavior {} vrf {}"` を発行して FRR に流し込みます。
+- 最終的に `vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid {} locator {} behavior {} vrf {}"` を発行して [FRR](../../reference/glossary.md#term-frr) に流し込みます。
 
 `frrcfgd` 側では `SRV6_MY_LOCATORS` を `zebra`、`SRV6_MY_SIDS` を `mgmtd` に向けるターゲット daemon 設定があります。CONFIG_DB → FRR の中継経路が二重化されているわけではなく、各テーブルで担当 daemon が異なる構造です。
 
@@ -44,13 +44,13 @@ Static SID / Locator は `src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py` の `SRv6M
 
 - `APP_LABEL_ROUTE_TABLE_NAME` を `ProducerStateTable` として開きます。
 - `AF_MPLS` の netlink route を受け取り、`RTA_NEWDST` から MPLS NH label stack、`LWTUNNEL_ENCAP_MPLS` から encap label を取り出して APP_DB に書きます。
-- APP_DB の `LABEL_ROUTE_TABLE` を orchagent 側が消費し、SAI `INSEG_ENTRY` を bulk で programming します。
+- APP_DB の `LABEL_ROUTE_TABLE` を [orchagent](../../reference/glossary.md#term-orchagent) 側が消費し、SAI `INSEG_ENTRY` を bulk で programming します。
 
-per-RIF の MPLS 有効化（`INTERFACE.<intf>.mpls = enable`）は `intfmgrd` / `IntfMgr` が SAI の RIF 属性として渡し、ASIC が MPLS フレームを受理するかどうかを切り替えます。
+per-[RIF](../../reference/glossary.md#term-rif) の MPLS 有効化（`INTERFACE.<intf>.mpls = enable`）は `intfmgrd` / `IntfMgr` が SAI の RIF 属性として渡し、ASIC が MPLS フレームを受理するかどうかを切り替えます。
 
 ## QoS との接続
 
-`sonic-swss/orchagent/qosorch.cpp` の `m_qos_handler_map` に `CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME` が登録され、`mpls_tc_to_tc_field_name` が `PORT_QOS_MAP` のフィールド名として参照されます。ハンドラは `QosOrch::handleMplsTcToTcTable` です。DSCP / TC / PG マップと同じ枠組みで MPLS TC が扱われるため、QoS 側の運用知識がそのまま使えます。
+`sonic-swss/orchagent/qosorch.cpp` の `m_qos_handler_map` に `CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME` が登録され、`mpls_tc_to_tc_field_name` が `PORT_QOS_MAP` のフィールド名として参照されます。ハンドラは `QosOrch::handleMplsTcToTcTable` です。DSCP / TC / PG マップと同じ枠組みで MPLS TC が扱われるため、[QoS](../../reference/glossary.md#term-qos) 側の運用知識がそのまま使えます。
 
 ## Path Tracing の SAI 属性
 
@@ -119,8 +119,8 @@ ASIC_DB:
 ## ZMQ / Redis pub/sub
 
 - ZMQ は使わない。
-- bgpcfgd ↔ FRR は **vtysh execve**（プロセス起動）で config を流し込む経路。Redis pub/sub も間接的にしか使われない。
-- fpmsyncd は FPM netlink を受け、ProducerStateTable で LABEL_ROUTE_TABLE に書く。
+- [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) ↔ FRR は **vtysh execve**（プロセス起動）で config を流し込む経路。[Redis](../../reference/glossary.md#term-redis) pub/sub も間接的にしか使われない。
+- [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) は [FPM](../../reference/glossary.md#term-fpm) netlink を受け、[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) で LABEL_ROUTE_TABLE に書く。
 
 ## 既知の実装上の制約
 
@@ -140,3 +140,5 @@ ASIC_DB:
 - [SRv6 Static SID / Locator 設定](../../routing/static-configuration-of-srv6-in-sonic-hld.md)
 - [MPLS HLD](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
+
+<!-- glossary-links-injected: ffe3152ef683 -->

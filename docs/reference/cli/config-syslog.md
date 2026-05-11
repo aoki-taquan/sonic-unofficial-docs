@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`config syslog` は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を CONFIG_DB に書き込む CLI で、`config/syslog.py` の `@click.group()` がエントリポイントとなる[^1]。
+`config syslog` は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む CLI で、`config/syslog.py` の `@click.group()` がエントリポイントとなる[^1]。
 
 `hostcfgd` および各 feature コンテナの supervisord ラッパが CONFIG_DB を購読して `rsyslog` 設定を再生成する。CLI 自身は rsyslog をリスタートしないため、変更が反映されるまでタイムラグがある。
 
@@ -48,7 +48,7 @@ related:
 - `<server_ip_address>` ... IPv4 / IPv6。`ip_addr_validator` で検証。
 - `--source <ip>` ... 送信元 IP (Loopback 等を想定)。`source_validator` がアドレス整合と存在検査を行う。
 - `--port <port>` ... 送信先 UDP port (省略時 514)。
-- `--vrf <vrf>` ... 出力 VRF。`mgmt` (mgmt-vrf) または CONFIG_DB の `VRF` テーブルに存在する VRF。`source` と組み合わせる場合 `source_to_vrf_validator` で同 VRF 内のインタフェースかをチェックする。
+- `--vrf <vrf>` ... 出力 [VRF](../../reference/glossary.md#term-vrf)。`mgmt` (mgmt-vrf) または CONFIG_DB の `VRF` テーブルに存在する VRF。`source` と組み合わせる場合 `source_to_vrf_validator` で同 VRF 内のインタフェースかをチェックする。
 
 **動作**:
 `SYSLOG_SERVER|<server_ip>` を新規作成する。同じ key が既存ならエラー終了 (重複はサポートしない)[^2]。
@@ -188,3 +188,5 @@ flowchart LR
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 84c52960aadd -->

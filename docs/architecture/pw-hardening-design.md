@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-ローカルユーザのパスワードに対して **エイジング**（強制更新）、**複雑度要件**、**履歴禁止**、**ロックアウト** を Linux 標準の PAM スタックを通じて適用する仕組み[^1]。SONiC 側は CONFIG_DB の `PASSW_HARDENING` テーブルを単一の真実源として、`hostcfgd` が `/etc/login.defs`・`/etc/pam.d/common-password`・`/etc/security/pwquality.conf` 等を rendering する。
+ローカルユーザのパスワードに対して **エイジング**（強制更新）、**複雑度要件**、**履歴禁止**、**ロックアウト** を Linux 標準の PAM スタックを通じて適用する仕組み[^1]。SONiC 側は [CONFIG_DB](../reference/glossary.md#term-config_db) の `PASSW_HARDENING` テーブルを単一の真実源として、`hostcfgd` が `/etc/login.defs`・`/etc/pam.d/common-password`・`/etc/security/pwquality.conf` 等を rendering する。
 
 ## 動作仕様
 
@@ -51,7 +51,7 @@ flowchart LR
 - **length**: `minlen` などの最小長
 - **complexity**: 大文字・小文字・数字・記号の最低数（`pwquality` の `ucredit / lcredit / dcredit / ocredit`）
 - **history**: `pam_pwhistory` の `remember=N` で過去パスワード再利用禁止
-- **lockout**: `pam_tally2` / `pam_faillock` で連続失敗時のロック（HLD 文脈による）
+- **lockout**: `pam_tally2` / `pam_faillock` で連続失敗時のロック（[HLD](../reference/glossary.md#term-hld) 文脈による）
 - **expiration policy**: 既存ローカルユーザに対するマイグレーション（`chage` 適用方針）
 
 ### 設定例 (CONFIG_DB)
@@ -93,7 +93,7 @@ PASSW_HARDENING|POLICIES
 
 - **ローカルユーザのみ**: TACACS+ / LDAP / RADIUS でリモート認証する場合、サーバ側のポリシーが優先されローカル hardening は無関係になる
 - **既存ハッシュには遡及しない**: complexity を強化しても既存パスワードハッシュの強度を改めるわけではない。再設定で初めて適用
-- **PAM スタックが上書きされる前提**: 他機能（AAA 改善、SSH global config 等）が `/etc/pam.d/` を編集する場合、`hostcfgd` の rendering 順序に依存
+- **PAM スタックが上書きされる前提**: 他機能（[AAA](../reference/glossary.md#term-aaa) 改善、SSH global config 等）が `/etc/pam.d/` を編集する場合、`hostcfgd` の rendering 順序に依存
 
 ## 干渉する機能
 
@@ -126,3 +126,5 @@ PASSW_HARDENING|POLICIES
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a9c18564f33f -->

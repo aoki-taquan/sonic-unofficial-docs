@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`show route-map` は FRR の `route-map` 設定（policy / match / set 句）をそのまま表示するコマンドで、CONFIG_DB は読まず **`vtysh -c "show route-map [<name>]"` を `sudo` で実行する単純なラッパ**である[^1]。SONiC では route-map は `bgpcfgd` が CONFIG_DB の `ROUTE_MAP` テーブル等から FRR config を生成しており、CLI で見えるのは生成後の vtysh 側の状態。
+`show route-map` は [FRR](../../reference/glossary.md#term-frr) の `route-map` 設定（policy / match / set 句）をそのまま表示するコマンドで、[CONFIG_DB](../../reference/glossary.md#term-config_db) は読まず **`vtysh -c "show route-map [<name>]"` を `sudo` で実行する単純なラッパ**である[^1]。SONiC では route-map は `bgpcfgd` が CONFIG_DB の `ROUTE_MAP` テーブル等から FRR config を生成しており、CLI で見えるのは生成後の vtysh 側の状態。
 
 ## 用法
 
@@ -113,3 +113,5 @@ flowchart LR
 ## 引用元
 
 [^1]: `show/main.py` L1266-L1274。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1266>
+
+<!-- glossary-links-injected: 87299d91c8a4 -->

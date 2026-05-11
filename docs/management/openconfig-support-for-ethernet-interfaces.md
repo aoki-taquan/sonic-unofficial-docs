@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-`openconfig-interfaces` / `openconfig-if-ethernet` / `openconfig-if-ip` を **REST (RESTCONF) と gNMI** で配信する仕組みを SONiC の Management Framework に追加する設計[^1]。
+`openconfig-interfaces` / `openconfig-if-ethernet` / `openconfig-if-ip` を **REST (RESTCONF) と [gNMI](../reference/glossary.md#term-gnmi)** で配信する仕組みを SONiC の Management Framework に追加する設計[^1]。
 
 ポイント[^1]:
 
@@ -43,7 +43,7 @@ related:
 - gNMI **subscription** は対象外（GET / SET / DELETE のみ）
 - secondary IP 構成は対象外
 - 既存の **translib App ベース実装を transformer ベース実装に置き換える** 方向性
-- **CONFIG_DB / APP_DB / STATE_DB / ASIC_DB / COUNTER_DB のスキーマ追加なし**[^1]。OpenConfig YANG → 既存 SONiC YANG への mapping だけで処理する
+- **[CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / COUNTER_DB のスキーマ追加なし**[^1]。OpenConfig [YANG](../reference/glossary.md#term-yang) → 既存 SONiC YANG への mapping だけで処理する
 
 実装は `sonic-mgmt-common` リポジトリの **Management Framework コンテナ**（REST server + gnmi コンテナ）に入る[^1]。
 
@@ -175,7 +175,7 @@ reasoning: transformer の attribute mapping ルールの根拠。
 
 ### Negative ケース（仕様上は禁止）
 
-HLD の Negative Test Cases から派生する不可操作[^1]:
+[HLD](../reference/glossary.md#term-hld) の Negative Test Cases から派生する不可操作[^1]:
 
 - `interfaces` / `interface` / `interface/name` コンテナそのものへの **DELETE 不可**
 - Ethernet interface への `REPLACE` 不可（PATCH のみ）
@@ -225,8 +225,8 @@ gnmi_set -insecure -username admin -password sonicadmin \
 ## 干渉する機能
 
 - **既存 SONiC CLI / `config interface ...`**: KLISH は別経路で同じ CONFIG_DB を変更する。並行設定で競合する場合は最後の write が勝つ
-- **portsyncd / IntfMgr**: CONFIG_DB の `PORT` / `INTERFACE` を監視する既存 daemon。OpenConfig 経由の変更も同経路で APP_DB / kernel に反映される
-- **SONiC YANG validation (sonic-mgmt-common)**: transformer は SONiC YANG の制約を後段で適用するため、OpenConfig 側で valid でも SONiC YANG 側で reject される可能性
+- **[portsyncd](../reference/glossary.md#term-portsyncd) / IntfMgr**: CONFIG_DB の `PORT` / `INTERFACE` を監視する既存 daemon。OpenConfig 経由の変更も同経路で APP_DB / kernel に反映される
+- **SONiC YANG validation ([sonic-mgmt](../reference/glossary.md#term-sonic-mgmt)-common)**: transformer は SONiC YANG の制約を後段で適用するため、OpenConfig 側で valid でも SONiC YANG 側で reject される可能性
 - **gNSI Pathz**: 有効化されていれば、OC path 単位で gNMI read/write が認可で絞られる
 
 ## トラブルシューティング
@@ -248,3 +248,5 @@ gnmi_set -insecure -username admin -password sonicadmin \
 - translib App から transformer への移行進捗
 - 重複 IP 検出の実装位置（transformer / SONiC YANG validator）
 -->
+
+<!-- glossary-links-injected: 34da0d5f7679 -->

@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-bgp-common`, `sonic-port`, `sonic-portchannel`, `sonic-bgp-global`, `sonic-bgp-peergroup`
 - top container: `sonic-bgp-neighbor`
 
-SONIC BGP Neighbor[^1]
+SONIC [BGP](../../reference/glossary.md#term-bgp) Neighbor[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -145,7 +145,7 @@ module: sonic-bgp-neighbor
 | `nhopself` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/nhopself` | `uint8` |  |  | range 0..1 | Set nexthop to self for routes advertised to this peer. |
 | `rrclient` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/rrclient` | `uint8` |  |  | range 0..1 | Configure this neighbor as a route reflector client. |
 | `admin_status` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_TEMPLATE_LIST/admin_status` | `stypes:admin_status` |  |  |  | Administrative status to enable or disable this BGP peer. |
-| `vrf_name` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/VRF name |
+| `vrf_name` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/vrf_name` | `leafref` | yes |  | /bgpg:sonic-bgp-global/bgpg:BGP_GLOBALS/bgpg:BGP_GLOBALS_LIST/bgpg:vrf_name | Network-instance/[VRF](../../reference/glossary.md#term-vrf) name |
 | `neighbor` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/neighbor` | `union` | yes |  | union(inet:ip-address, leafref, leafref, string) | BGP Neighbor, it will be neighbor address or interface name |
 | `peer_group_name` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/peer_group_name` | `leafref` |  |  | /bgppg:sonic-bgp-peergroup/bgppg:BGP_PEER_GROUP/bgppg:BGP_PEER_GROUP_LIST[bgppg:vrf_name=current()/../vrf_name]/bgppg:peer_group_name | Peer group name |
 | `local_asn` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/local_asn` | `uint32` |  |  | range 1..4294967295 | Local AS number |
@@ -166,7 +166,7 @@ module: sonic-bgp-neighbor
 | `enforce_first_as` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/enforce_first_as` | `boolean` |  |  |  | Require the first AS in the AS path to be the peer's AS number for eBGP sessions. |
 | `solo_peer` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/solo_peer` | `boolean` |  |  |  | Place this peer in its own update group to prevent route sharing with other peers. |
 | `ttl_security_hops` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/ttl_security_hops` | `uint8` |  |  | range 1..254 | Maximum number of hops expected for the BGP TTL security mechanism (GTSM). |
-| `bfd` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/bfd` | `boolean` |  |  |  | Enable Bidirectional Forwarding Detection (BFD) for rapid link failure detection on this peer. |
+| `bfd` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/bfd` | `boolean` |  |  |  | Enable Bidirectional Forwarding Detection ([BFD](../../reference/glossary.md#term-bfd)) for rapid link failure detection on this peer. |
 | `bfd_check_ctrl_plane_failure` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/bfd_check_ctrl_plane_failure` | `boolean` |  |  |  | Trigger BGP session reset when a BFD control plane failure is detected. |
 | `capability_dynamic` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/capability_dynamic` | `boolean` |  |  |  | Advertise dynamic capability |
 | `dont_negotiate_capability` | `sonic-bgp-neighbor/BGP_NEIGHBOR/BGP_NEIGHBOR_LIST/dont_negotiate_capability` | `boolean` |  |  |  | Do not perform capability negotiation |
@@ -236,7 +236,7 @@ module: sonic-bgp-neighbor
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BGP_NEIGHBOR`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_NEIGHBOR`
 - CONFIG_DB: `BGP_NEIGHBOR_AF`
 - CLI: `config bgp`
 
@@ -254,7 +254,7 @@ module: sonic-bgp-neighbor
 
 ### 典型的なデプロイ位置
 
-- BGP neighbor の静的設定。`BGP_NEIGHBOR|<addr>` を bgpcfgd が FRR neighbor stanza に展開。
+- BGP neighbor の静的設定。`BGP_NEIGHBOR|<addr>` を [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [FRR](../../reference/glossary.md#term-frr) neighbor stanza に展開。
 
 ### よくある落とし穴
 
@@ -272,3 +272,4 @@ show ip bgp summary
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: 1187f506dd55 -->

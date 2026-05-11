@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-BGP コミュニティ集合を CONFIG_DB に登録するテーブル[^1]。`sonic-routing-policy-sets.yang` の `COMMUNITY_SET` コンテナで定義され、`ROUTE_MAP` の `match community` 等から参照される。`EXTENDED_COMMUNITY_SET` も同モジュール内で並行定義される（同フィールド構成）。
+[BGP](../../reference/glossary.md#term-bgp) コミュニティ集合を [CONFIG_DB](../../reference/glossary.md#term-config_db) に登録するテーブル[^1]。`sonic-routing-policy-sets.yang` の `COMMUNITY_SET` コンテナで定義され、`ROUTE_MAP` の `match community` 等から参照される。`EXTENDED_COMMUNITY_SET` も同モジュール内で並行定義される（同フィールド構成）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -59,7 +59,7 @@ EXTENDED_COMMUNITY_SET|<name>
 
 ## 制約
 
-- `community_member` は `ordered-by user`。ユーザ指定順をそのまま FRR の community-list に展開する前提
+- `community_member` は `ordered-by user`。ユーザ指定順をそのまま [FRR](../../reference/glossary.md#term-frr) の community-list に展開する前提
 - `set_type` の選択により FRR 側で正規表現マッチ (`EXPANDED`) か数値マッチ (`STANDARD`) かが切り替わる
 
 ## 購読者
@@ -69,7 +69,7 @@ EXTENDED_COMMUNITY_SET|<name>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `EXTENDED_COMMUNITY_SET`、[`AS_PATH_SET`](./as-path-set.md)、[`PREFIX_SET`](./prefix-set.md)、`ROUTE_MAP`
-- 関連 YANG: `sonic-routing-policy-sets`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-routing-policy-sets`
 - 関連 CLI: なし（`config_db.json` 投入）
 
 <!-- ref-triangle:start -->
@@ -103,3 +103,5 @@ sonic-db-cli CONFIG_DB keys 'COMMUNITY_SET|*'
 vtysh -c 'show bgp community-list'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->

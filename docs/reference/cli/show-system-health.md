@@ -19,7 +19,7 @@ related:
 
 ## 概要
 
-`show system-health` は `system-health` デーモン（`HealthCheckerManager`）が保持するシステム状態（サービス・ハードウェア・ファイルシステムなど）と、SmartSwitch 構成での DPU 状態、システムが boot 完了したかの「sysready」状態を表示する。実装は `show/system_health.py`、`show/main.py` 末尾で `cli.add_command(system_health.system_health)` の形で登録される[^1]。
+`show system-health` は `system-health` デーモン（`HealthCheckerManager`）が保持するシステム状態（サービス・ハードウェア・ファイルシステムなど）と、[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成での [DPU](../../reference/glossary.md#term-dpu) 状態、システムが boot 完了したかの「sysready」状態を表示する。実装は `show/system_health.py`、`show/main.py` 末尾で `cli.add_command(system_health.system_health)` の形で登録される[^1]。
 
 `HealthCheckerManager` の本体は `health_checker/` パッケージで、`/usr/share/sonic/device/<platform>/system_health_monitoring_config.json` をベースに監視対象を決める。`show system-health` は **root 権限必須**（`os.geteuid()` チェック）。
 
@@ -179,3 +179,5 @@ show system-health monitor-list
 show platform fan
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: cce0edbb8271 -->

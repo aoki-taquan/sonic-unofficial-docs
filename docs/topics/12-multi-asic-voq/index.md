@@ -40,9 +40,9 @@ keywords:
 
 # Multi-ASIC / VOQ Chassis
 
-この章は、SONiC が「1 つの NOS インスタンスで複数 ASIC を、または複数 line card を 1 つの論理スイッチとして見せる」ための仕組みをまとめて読むための入口です。既存ページは Multi-ASIC namespace、VOQ chassis、Chassis DB、fabric / system port、distributed forwarding、line card provisioning、aggregate counter、entity MIB といった HLD 単位に分かれているため、ここでは pizza-box 1 ASIC を前提にしてきた読者が chassis に拡張するときの質問順に並べ直します。
+この章は、SONiC が「1 つの NOS インスタンスで複数 ASIC を、または複数 line card を 1 つの論理スイッチとして見せる」ための仕組みをまとめて読むための入口です。既存ページは Multi-ASIC namespace、[VOQ](../../reference/glossary.md#term-voq) chassis、Chassis DB、fabric / system port、distributed forwarding、line card provisioning、aggregate counter、entity MIB といった [HLD](../../reference/glossary.md#term-hld) 単位に分かれているため、ここでは pizza-box 1 ASIC を前提にしてきた読者が chassis に拡張するときの質問順に並べ直します。
 
-Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC を独立した network namespace + Redis インスタンスとして動かす設計です。VOQ chassis は、その Multi-ASIC を複数 line card にまたがって連結し、supervisor の Chassis DB と fabric ASIC を介して「distributed VOQ アーキテクチャ」として 1 つに見せます。single-ASIC fixed VOQ system は、その VOQ 機構を 1 ASIC pizza-box に閉じ込めた中間形態です。
+Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC を独立した network namespace + [Redis](../../reference/glossary.md#term-redis) インスタンスとして動かす設計です。VOQ chassis は、その Multi-ASIC を複数 line card にまたがって連結し、supervisor の Chassis DB と fabric ASIC を介して「distributed VOQ アーキテクチャ」として 1 つに見せます。single-ASIC fixed VOQ system は、その VOQ 機構を 1 ASIC pizza-box に閉じ込めた中間形態です。
 
 ## この章で答える質問
 
@@ -50,7 +50,7 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 - Chassis DB、system port、fabric port、recirculation port、line card provisioning はどうつながるか。
 - 設定は ASIC ごとに別ファイルか、それとも 1 枚の JSON で済むか。
 - supervisor と line card のどちらから何を見ればよいか。
-- VOQ chassis の BGP、LAG、Everflow、TSA、warm reboot はどの章で読むのか。
+- VOQ chassis の [BGP](../../reference/glossary.md#term-bgp)、[LAG](../../reference/glossary.md#term-lag)、Everflow、TSA、warm reboot はどの章で読むのか。
 - single-ASIC fixed VOQ はどんな移行用途で使うのか。
 
 ## 読み進め方
@@ -87,3 +87,4 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 
+<!-- glossary-links-injected: 9ccbb7e70850 -->

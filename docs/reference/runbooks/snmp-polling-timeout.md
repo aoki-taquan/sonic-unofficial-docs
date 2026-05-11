@@ -30,8 +30,8 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **`sonic_ax_impl` の hang**: COUNTERS_DB poll で blocking
-2. **ACL / management interface で SNMP port (161/udp) が遮断**
+1. **`sonic_ax_impl` の hang**: [COUNTERS_DB](../../reference/glossary.md#term-counters_db) poll で blocking
+2. **[ACL](../../reference/glossary.md#term-acl) / management interface で [SNMP](../../reference/glossary.md#term-snmp) port (161/udp) が遮断**
 3. **community / SNMPv3 認証ミス**: net-snmp 側で reject
 4. **大規模 port 数 (256+) でテーブル取得が遅い**
 5. **snmp container の CPU 飽和**
@@ -88,4 +88,6 @@ show acl rule
 ## 引用元
 
 [^1]: sonic-net/sonic-snmpagent @ 4305596 — ax_impl
-[^2]: sonic-net/sonic-buildimage @ 4305596 — docker-snmp config
+[^2]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — docker-snmp config
+
+<!-- glossary-links-injected: 2bcfb6360cc4 -->

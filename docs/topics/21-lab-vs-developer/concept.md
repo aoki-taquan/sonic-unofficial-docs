@@ -20,7 +20,7 @@ keywords:
 
 ## この章は何のためにあるか
 
-SONiC コミュニティの HLD / test plan / guide は、書き手が想定している読者がページごとに違います。同じ「lab」でも、開発者の CI 自動化と、運用者の事前検証と、評価者の機能トライアルでは前提と粒度が異なります。本章はその違いを整理して、読み手が「自分はどのガイドのどこから入ればいいか」を即答できる地図を提供します。
+SONiC コミュニティの [HLD](../../reference/glossary.md#term-hld) / test plan / guide は、書き手が想定している読者がページごとに違います。同じ「lab」でも、開発者の CI 自動化と、運用者の事前検証と、評価者の機能トライアルでは前提と粒度が異なります。本章はその違いを整理して、読み手が「自分はどのガイドのどこから入ればいいか」を即答できる地図を提供します。
 
 読み手の最初の疑問は次の 4 つで、各節がそれに答えます。
 
@@ -59,14 +59,14 @@ flowchart LR
 
 | 用語 | 意味 | 補足 |
 | --- | --- | --- |
-| SONiC-VS | SAI VS を使った仮想 SONiC | Linux bridge を ASIC 代わりに使う |
+| SONiC-VS | [SAI](../../reference/glossary.md#term-sai) VS を使った仮想 SONiC | Linux bridge を ASIC 代わりに使う |
 | SAI VS | virtual switch 実装の SAI | counter / capability は限定的 |
 | PTF | Packet Test Framework | scapy ベースで packet を生成して検証 |
 | spytest | 物理 / 仮想両対応のテストランナー | feature テストの主要枠 |
-| Ansible test plan | Ansible を使った大規模 topology テスト | sonic-mgmt リポ配下 |
+| Ansible test plan | Ansible を使った大規模 topology テスト | [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) リポ配下 |
 | PR Gate | PR ごとに走る必須テスト | 主に VS で構成 |
 | nightly | 物理 lab で動く夜間テスト | CVE / 性能 / HW 依存項目 |
-| Mgmt DUT | テスト対象 SONiC | mgmt VRF や PTF と接続される |
+| Mgmt DUT | テスト対象 SONiC | mgmt [VRF](../../reference/glossary.md#term-vrf) や PTF と接続される |
 
 ## 典型シーン
 
@@ -93,9 +93,9 @@ sequenceDiagram
 | 比較 | 共通点 | 違い |
 | --- | --- | --- |
 | GNS3 / EVE-NG のラボ環境との違い | 仮想ネットワーク機器を組み立てる | SONiC-VS は **本物の SONiC コンテナ群** をそのまま動かす。コントロールプレーンは実機と同一バイナリ。 |
-| Mininet との違い | Linux 上で仮想 switch を組む | SONiC-VS は SAI VS + sairedis を含み、orchagent も走る。Mininet は OVS や user-space switch を使う。 |
+| Mininet との違い | Linux 上で仮想 switch を組む | SONiC-VS は SAI VS + sairedis を含み、[orchagent](../../reference/glossary.md#term-orchagent) も走る。Mininet は OVS や user-space switch を使う。 |
 | ベンダ NOS の VM 版との違い | NOS を VM で評価できる | SONiC-VS は **OSS** で、PTF / Ansible / spytest と統合済み。CI に組み込みやすい。 |
-| 単なる Docker テストとの違い | コンテナを並べる | SONiC-VS は CONFIG_DB / APPL_DB / ASIC_DB を備えた状態管理ありの環境。HW を伴わない以外は本番に近い。 |
+| 単なる Docker テストとの違い | コンテナを並べる | SONiC-VS は [CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) を備えた状態管理ありの環境。HW を伴わない以外は本番に近い。 |
 
 ## persona と lab の対応
 
@@ -106,7 +106,7 @@ SONiC のガイドは目的別に 4 つに分かれており、章本文への�
 | persona | 入口 | 主な関心 |
 | --- | --- | --- |
 | 評価者 (evaluator) | [評価者向けガイド](../../guides/evaluator.md) | NOS としての機能と限界を短時間で把握する |
-| 初学者 (beginner) | [初学者向けガイド](../../guides/beginner.md) | docker / Redis / orchagent などの基本構造を学ぶ |
+| 初学者 (beginner) | [初学者向けガイド](../../guides/beginner.md) | docker / [Redis](../../reference/glossary.md#term-redis) / orchagent などの基本構造を学ぶ |
 | 運用者 (operator) | [運用者向けガイド](../../guides/operator.md) | CLI、CONFIG_DB、reboot、telemetry を実機運用で扱う |
 | 開発者 (developer) | [開発者向けガイド](../../guides/developer.md) | ビルド、テスト、HLD 起票、SAI / orchagent 改修 |
 
@@ -116,13 +116,13 @@ SONiC のガイドは目的別に 4 つに分かれており、章本文への�
 
 仮想 SONiC は ASIC を SAI VS（virtual switch）で置き換えた構成です。SAI VS は Linux kernel の bridge / route table を ASIC の代わりに使うため、次のような層が「実機と挙動が違う」または「再現されない」ことに注意します。
 
-- ASIC 固有の SAI capability、buffer / queue 容量、PFC / watermark のような ASIC counter
+- ASIC 固有の SAI capability、buffer / queue 容量、[PFC](../../reference/glossary.md#term-pfc) / watermark のような ASIC counter
 - optics（CMIS / SFP）、PHY、gearbox、retimer
 - thermal、PSU、fan、LED、BMC、PCIe
-- HW offload に依存する mux / EVPN VXLAN encap / DASH の一部
+- HW offload に依存する mux / [EVPN](../../reference/glossary.md#term-evpn) [VXLAN](../../reference/glossary.md#term-vxlan) encap / [DASH](../../reference/glossary.md#term-dash) の一部
 - 線速で出る drop / 微小遅延 / micro-burst
 
-逆に、CONFIG_DB / sairedis / orchagent / FRR / lldp / snmp / gNMI といった control plane の動作は、SONiC-VS で十分に再現できます。仕様レベルの HLD 検証は virtual で、HW capability に踏み込む検証は physical で、と切り分けるのが基本です。
+逆に、CONFIG_DB / sairedis / orchagent / [FRR](../../reference/glossary.md#term-frr) / lldp / snmp / [gNMI](../../reference/glossary.md#term-gnmi) といった control plane の動作は、SONiC-VS で十分に再現できます。仕様レベルの HLD 検証は virtual で、HW capability に踏み込む検証は physical で、と切り分けるのが基本です。
 
 ## test plan を「どの persona の読み物か」で読む
 
@@ -155,3 +155,4 @@ test plan ページは「機能章の検証可能性を読み解く参考」と�
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
+<!-- glossary-links-injected: c41a67c19350 -->

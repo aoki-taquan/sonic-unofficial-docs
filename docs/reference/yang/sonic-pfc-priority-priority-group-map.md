@@ -59,7 +59,7 @@ module: sonic-pfc-priority-priority-group-map
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-pfc-priority-priority-group-map/PFC_PRIORITY_TO_PRIORITY_GROUP_MAP/PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})`, length 1..32 | Name of the PFC priority to priority group map. |
+| `name` | `sonic-pfc-priority-priority-group-map/PFC_PRIORITY_TO_PRIORITY_GROUP_MAP/PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})`, length 1..32 | Name of the [PFC](../../reference/glossary.md#term-pfc) priority to priority group map. |
 | `pfc_priority` | `.../PFC_PRIORITY_TO_PRIORITY_GROUP_MAP/pfc_priority` | `string` | yes |  | pattern `[0-7]?` | PFC priority value (0-7). |
 | `pg` | `.../PFC_PRIORITY_TO_PRIORITY_GROUP_MAP/pg` | `string` |  |  | pattern `[0-7]?` | Target ingress priority group (0-7). |
 
@@ -73,7 +73,7 @@ module: sonic-pfc-priority-priority-group-map
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>`、`PORT_QOS_MAP|<port>/pfc_to_pg_map` から参照
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>`、`PORT_QOS_MAP|<port>/pfc_to_pg_map` から参照
 
 <!-- ref-triangle:start -->
 
@@ -86,3 +86,5 @@ module: sonic-pfc-priority-priority-group-map
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pfc-priority-priority-group-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 97e8f7840821 -->

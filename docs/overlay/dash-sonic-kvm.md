@@ -27,12 +27,12 @@ related:
 
 ## 何のための機能か
 
-物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ[^1]:
+物理 [DPU](../reference/glossary.md#term-dpu) を持たずに [DASH](../reference/glossary.md#term-dash)（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ[^1]:
 
 1. **POC / 開発**: 物理 HW なしで DASH のコントロール・データプレーンを開発・テスト
 2. **CI**: `sonic-buildimage` / `sonic-swss` の Azure Pipelines に DASH を組み込む
 
-データプレーンは **BMv2 (P4 simple_switch)** を中核に、フロー作成・resimulation 等で BMv2 が苦手な部分を **VPP** で補強。SAI 互換は `dashsai`（remote shim サーバ + クライアント）が担う。
+データプレーンは **BMv2 (P4 simple_switch)** を中核に、フロー作成・resimulation 等で BMv2 が苦手な部分を **VPP** で補強。[SAI](../reference/glossary.md#term-sai) 互換は `dashsai`（remote shim サーバ + クライアント）が担う。
 
 ## どう動くか
 
@@ -65,13 +65,13 @@ flowchart TB
 
 | 種別 | 用途 |
 |-----|------|
-| `Ethernet0..` | system port（BGP/LLDP 等プロトコル用） |
+| `Ethernet0..` | system port（[BGP](../reference/glossary.md#term-bgp)/[LLDP](../reference/glossary.md#term-lldp) 等プロトコル用） |
 | `eth1, eth2..` | line port。KVM 実 IF。Ethernet と 1 対 1 対応 |
-| CPU port (DPDK) | Dataplane APP 用。BMv2 ↔ CPU パス |
+| CPU port ([DPDK](../reference/glossary.md#term-dpdk)) | Dataplane APP 用。BMv2 ↔ CPU パス |
 
 ### 動作モード
 
-- **DPU モード**: 物理 SmartSwitch と同様、外部 NPU が `eth-midplane` 経由で GNMI Set
+- **DPU モード**: 物理 [SmartSwitch](../reference/glossary.md#term-smartswitch) と同様、外部 [NPU](../reference/glossary.md#term-npu) が `eth-midplane` 経由で GNMI Set
 - **Single device モード**: KVM 内 GNMI に直接接続し SWSS へローカル forward
 
 ### データプレーン経路
@@ -178,11 +178,11 @@ python2 /root/gnxi/gnmi_cli_py/py_gnmicli.py \
 
 ## 設定
 
-KVM 自体には追加 CONFIG_DB スキーマ・CLI・YANG は無い。物理 DPU と同じ DASH テーブル（`DASH_VNET_TABLE`, `DASH_APPLIANCE_TABLE` 等）を APP_DB / CONFIG_DB に投入する。testbed 操作は `testbed-cli.sh`（sonic-mgmt）。
+KVM 自体には追加 [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマ・CLI・[YANG](../reference/glossary.md#term-yang) は無い。物理 DPU と同じ DASH テーブル（`DASH_VNET_TABLE`, `DASH_APPLIANCE_TABLE` 等）を APP_DB / CONFIG_DB に投入する。testbed 操作は `testbed-cli.sh`（[sonic-mgmt](../reference/glossary.md#term-sonic-mgmt)）。
 
 ## 制限事項
 
-- **データプレーン付き DPU SONiC KVM image は HLD 時点で未公開**（通常 `sonic-vs.img.gz` のみ）。
+- **データプレーン付き DPU SONiC KVM image は [HLD](../reference/glossary.md#term-hld) 時点で未公開**（通常 `sonic-vs.img.gz` のみ）。
 - `dashsai` 未対応 SAI API（`DTEL` 等）は **mock 実装**[^1]。
 - `gnmi_cli_py` が Python 2 依存。
 - **DPU + VPP NPU testbed (HLD §5.2) は TBD**。
@@ -192,7 +192,7 @@ KVM 自体には追加 CONFIG_DB スキーマ・CLI・YANG は無い。物理 DP
 - **物理 SmartSwitch**: SWSS / GNMI / APP_DB が互換のため、テスト共通化可能。
 - **sonic-mgmt**: `vms-kvm-dpu` トポロジ・cEOS image・SSH 鍵が前提。
 - **CI**: BMv2 / VPP の build 時間が CI 全体に影響。
-- **DASH 系 HLD（VNet, ENI Forwarding 等）**: 本 KVM はそれらの検証実装。
+- **DASH 系 HLD（VNet, [ENI](../reference/glossary.md#term-eni) Forwarding 等）**: 本 KVM はそれらの検証実装。
 
 ## トラブルシューティング
 
@@ -203,7 +203,7 @@ KVM 自体には追加 CONFIG_DB スキーマ・CLI・YANG は無い。物理 DP
 
 ## 関連トピック
 
-- [Topics: GNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md) — gNMI 経由の DASH 設定
+- [Topics: GNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md) — [gNMI](../reference/glossary.md#term-gnmi) 経由の DASH 設定
 - [sonic-dash-hld](sonic-dash-hld.md) — DASH の全体像
 
 ## 引用元
@@ -217,3 +217,5 @@ KVM 自体には追加 CONFIG_DB スキーマ・CLI・YANG は無い。物理 DP
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7d682f06bb41 -->

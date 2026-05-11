@@ -16,7 +16,7 @@ sources:
 
 # 設定
 
-ここでは、port 設定と platform 関連設定を、CLI / CONFIG_DB / YANG のどれから入るかという観点で整理します。全オプションは個別リファレンスに任せ、この章では入口の対応関係を示します。
+ここでは、port 設定と platform 関連設定を、CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) のどれから入るかという観点で整理します。全オプションは個別リファレンスに任せ、この章では入口の対応関係を示します。
 
 ## 入口の対応
 
@@ -50,7 +50,7 @@ config interface advertised-speeds Ethernet0 25000,100000
 config interface breakout Ethernet0 "4x25G"
 ```
 
-speed や FEC を変更すると、buffer profile や ACL bind が影響を受ける場合があります。QoS / ACL 章とあわせて読んでください。
+speed や FEC を変更すると、buffer profile や [ACL](../../reference/glossary.md#term-acl) bind が影響を受ける場合があります。[QoS](../../reference/glossary.md#term-qos) / ACL 章とあわせて読んでください。
 
 ## 設定シナリオ 1: 100G ポートを 4x25G にブレイクアウト
 
@@ -99,7 +99,7 @@ Ethernet1    66           25G      9100   rs     etp1b    routed  up      up    
 
 ## 設定シナリオ 2: 既存ポートの speed と FEC の切替
 
-光モジュール交換に伴い 100G → 400G に上げる、ないし FEC を `rs` から `fc` に切り替える運用です。port が UP のままだと SAI 側で reject される実装があるため、必ず一旦 admin down にします。
+光モジュール交換に伴い 100G → 400G に上げる、ないし FEC を `rs` から `fc` に切り替える運用です。port が UP のままだと [SAI](../../reference/glossary.md#term-sai) 側で reject される実装があるため、必ず一旦 admin down にします。
 
 ```bash
 sudo config interface shutdown Ethernet8
@@ -182,7 +182,7 @@ Ethernet0:
         tx1bias:     7.5 mA
 ```
 
-各値の Warning / Alarm 閾値は EEPROM の A0/A2 page から `xcvrd` が読み、`STATE_DB:TRANSCEIVER_STATUS_FLAG_*` に立てます。`COUNTERS_DB` に直接落ちないことに注意。SNMP / telemetry で監視する場合は `xcvrd` の `TRANSCEIVER_DOM_FLAG_TABLE` を subscribe します。
+各値の Warning / Alarm 閾値は EEPROM の A0/A2 page から `xcvrd` が読み、`STATE_DB:TRANSCEIVER_STATUS_FLAG_*` に立てます。`COUNTERS_DB` に直接落ちないことに注意。[SNMP](../../reference/glossary.md#term-snmp) / telemetry で監視する場合は `xcvrd` の `TRANSCEIVER_DOM_FLAG_TABLE` を subscribe します。
 
 ## 設定シナリオ 5: media_settings.json による per-port preemphasis
 
@@ -204,12 +204,12 @@ ASIC の SerDes preemphasis / 振幅は default では `port_config.ini` の lan
 
 ## Platform capability ファイル
 
-ASIC や platform が「何ができるか」を宣言する capability ファイルは、port 設定や機能の可否を実行前に判別するために使われます。詳細は [platform capability file enhancement](../../platform/platform-capability-file-enhancement.md) を参照してください。capability に書かれていない機能を設定で要求した場合、orchagent / SAI 層で reject されます。
+ASIC や platform が「何ができるか」を宣言する capability ファイルは、port 設定や機能の可否を実行前に判別するために使われます。詳細は [platform capability file enhancement](../../platform/platform-capability-file-enhancement.md) を参照してください。capability に書かれていない機能を設定で要求した場合、[orchagent](../../reference/glossary.md#term-orchagent) / SAI 層で reject されます。
 
 ## 関連リファレンス
 
 - CLI: `config interface`、`config interface breakout`、`config interface speed/fec/mtu/autoneg`、`config platform firmware`、`show interfaces status`、`show interfaces transceiver`、`show platform inventory`、`show platform firmware status`
-- CONFIG_DB: `PORT`、`BREAKOUT_CFG`、`PORT_TABLE`（APPL_DB）、`TRANSCEIVER_INFO`（STATE_DB）、`TRANSCEIVER_DOM_SENSOR`（STATE_DB）、`DEVICE_METADATA`、`CHASSIS_INFO`
+- CONFIG_DB: `PORT`、`BREAKOUT_CFG`、`PORT_TABLE`（[APPL_DB](../../reference/glossary.md#term-appl_db)）、`TRANSCEIVER_INFO`（[STATE_DB](../../reference/glossary.md#term-state_db)）、`TRANSCEIVER_DOM_SENSOR`（STATE_DB）、`DEVICE_METADATA`、`CHASSIS_INFO`
 - YANG: [`sonic-port`](../../reference/yang/sonic-port.md)、`sonic-portchannel`、`sonic-device-metadata`
 - platform 実装ファイル: `platform.json`、`port_config.ini`、`media_settings.json`、`platform_components.json`、`hwsku.json`
 
@@ -222,3 +222,5 @@ ASIC や platform が「何ができるか」を宣言する capability ファ�
 - [sonic-port YANG](../../reference/yang/sonic-port.md)
 - [SONiC fw-utility](../../platform/sonic-fw-utility.md)
 - [platform capability file enhancement](../../platform/platform-capability-file-enhancement.md)
+
+<!-- glossary-links-injected: dde81be76b4f -->

@@ -34,7 +34,7 @@ related:
 2. **engineID の不整合**: ホスト名変更 / image 入替で engineID が変わり、key が再導出されず polling 側 cache とずれる
 3. **security level (`authNoPriv` / `authPriv`) の食い違い**
 4. **AgentX 経由の sub-agent (sonic-snmpagent) 未起動**: 一部 OID のみ返らない
-5. **ACL / firewall で UDP 161 がブロック**
+5. **[ACL](../../reference/glossary.md#term-acl) / firewall で UDP 161 がブロック**
 
 ## 切り分け手順
 
@@ -90,4 +90,6 @@ sonic-db-cli CONFIG_DB keys "ACL_TABLE|*"
 ## 引用元
 
 [^1]: sonic-net/sonic-snmpagent @ master — main.py
-[^2]: sonic-net/sonic-buildimage @ master — docker-snmp
+[^2]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ master — docker-snmp
+
+<!-- glossary-links-injected: 5f1b3b7f966c -->

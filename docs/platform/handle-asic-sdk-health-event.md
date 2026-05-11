@@ -30,9 +30,9 @@ related:
 
 ## 概要
 
-ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを **SAI の health event 通知** として上に上げ、SONiC が運用フックに変換するパス[^1]。狙い:
+ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを **[SAI](../reference/glossary.md#term-sai) の health event 通知** として上に上げ、SONiC が運用フックに変換するパス[^1]。狙い:
 
-- 従来 platform-specific ログに埋もれていた重要イベントを **共通スキーマで STATE_DB に出す**
+- 従来 platform-specific ログに埋もれていた重要イベントを **共通スキーマで [STATE_DB](../reference/glossary.md#term-state_db) に出す**
 - syslog / show / telemetry のいずれからも一貫した形で観測可能にする
 - 重要度ごとに **shutdown / log-only / ignore** の運用ポリシーを設定できる
 
@@ -50,7 +50,7 @@ flowchart LR
     CFG[CONFIG_DB\nSUPPRESS_ASIC_SDK_HEALTH_EVENT] --> ORCH
 ```
 
-イベントスキーマ（HLD 概念）[^1]:
+イベントスキーマ（[HLD](../reference/glossary.md#term-hld) 概念）[^1]:
 
 - **severity**: fatal / warning / notice
 - **category**: ASIC firmware / SDK / link / packet / temperature / memory ...
@@ -92,7 +92,7 @@ flowchart LR
 
 ## トラブルシューティング
 
-- イベントが出ない → vendor SAI が notification を register しているか、orchagent ログを確認
+- イベントが出ない → vendor SAI が notification を register しているか、[orchagent](../reference/glossary.md#term-orchagent) ログを確認
 - `show` で何も出ない → STATE_DB `ASIC_SDK_HEALTH_EVENT_TABLE` を `redis-cli` で直接確認
 - 抑制が効かない → `SUPPRESS_ASIC_SDK_HEALTH_EVENT` の key 名と category 名のスペル確認
 
@@ -108,3 +108,5 @@ flowchart LR
 - show asic-sdk-health-event / config asic-sdk-health-event CLI の sonic-utilities 取り込み確認
 - system health / dump-on-sai-failure / telemetry との統合経路の現行実装確認
 -->
+
+<!-- glossary-links-injected: 4811545374b1 -->

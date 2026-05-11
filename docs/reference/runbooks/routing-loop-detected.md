@@ -30,7 +30,7 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **static route と BGP 経路の競合**: 自身を next-hop に向ける static
+1. **static route と [BGP](../../reference/glossary.md#term-bgp) 経路の競合**: 自身を next-hop に向ける static
 2. **default route の相互広告**: ToR ↔ Leaf 双方が default を交換
 3. **redistribute connected + summary-only が一致しない**: 集約経路で自分の subnet が抜ける
 4. **BGP の next-hop unchanged 設定誤り**
@@ -52,7 +52,7 @@ show ip route <prefix>
 ```
 
 - 期待: 1 つの best 経路
-- 異常: 自身に戻る next-hop / 不適切な ECMP メンバー
+- 異常: 自身に戻る next-hop / 不適切な [ECMP](../../reference/glossary.md#term-ecmp) メンバー
 
 ### 3. static route 確認
 
@@ -88,5 +88,7 @@ show interfaces counters | head -20
 
 ## 引用元
 
-[^1]: sonic-net/sonic-frr @ 799f47f — zebra/zebra_rib.c
-[^2]: sonic-net/sonic-swss @ 4305596 — routeorch.cpp
+[^1]: sonic-net/sonic-frr @ 799f47f — [zebra](../../reference/glossary.md#term-zebra)/zebra_rib.c
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — routeorch.cpp
+
+<!-- glossary-links-injected: 118ad94be6a7 -->

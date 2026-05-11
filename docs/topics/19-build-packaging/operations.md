@@ -74,7 +74,7 @@ inbox docker（例: dhcp_relay）を Extension 形式に変換する具体手順
 
 ## バージョン互換と依存解決
 
-extension の `manifest.json` には `version` / `depends` を書く。依存制約は semver で表現し、Redis DB スキーマを互換境界として使う方針が [OS / docker semver](../../system/sonic-os-sonic-docker-images-versioning.md) に詳しい。注意点として、HLD で例示される `"^1.0.0,^2.0.0"` のような並列 OR 表記や `SWSS_VERSION` 環境変数注入は **採用見送り** であり、原文 HLD と実装で差がある（裏取り済み）。
+extension の `manifest.json` には `version` / `depends` を書く。依存制約は semver で表現し、[Redis](../../reference/glossary.md#term-redis) DB スキーマを互換境界として使う方針が [OS / docker semver](../../system/sonic-os-sonic-docker-images-versioning.md) に詳しい。注意点として、[HLD](../../reference/glossary.md#term-hld) で例示される `"^1.0.0,^2.0.0"` のような並列 OR 表記や `SWSS_VERSION` 環境変数注入は **採用見送り** であり、原文 HLD と実装で差がある（裏取り済み）。
 
 依存衝突は install / upgrade 時に SPM が解決を試み、解けない場合は次のように出る。
 
@@ -184,3 +184,5 @@ extension を CI に乗せる場合、毎回確認したい最小項目:
 - [OS / docker semver](../../system/sonic-os-sonic-docker-images-versioning.md)
 - [Reboot / Upgrade / Lifecycle 章](../11-reboot/index.md)（warm/fast reboot とのフック整合）
 - [SWSS / SAI / Redis 章](../20-swss-sai-redis/index.md)（FEATURE と sysmonitor の関係）
+
+<!-- glossary-links-injected: da7e5aaf4d2c -->

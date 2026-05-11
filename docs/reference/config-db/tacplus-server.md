@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-TACACS+ 認証サーバの一覧と global TACACS+ クライアント設定を保持する。最大 8 サーバ。`hostcfgd` が CONFIG_DB を購読して `/etc/pam.d/*`, `/etc/nss-tacplus.conf`, `/etc/tacplus_nss.conf` を生成する[^1]。
+TACACS+ 認証サーバの一覧と global TACACS+ クライアント設定を保持する。最大 8 サーバ。`hostcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読して `/etc/pam.d/*`, `/etc/nss-tacplus.conf`, `/etc/tacplus_nss.conf` を生成する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,7 +58,7 @@ TACPLUS|global
 | `auth_type` | enum `pap`/`chap`/`mschap`/`login` | `pap` | per-server 認証プロトコル |
 | `key_encrypt` | boolean | false | passkey 暗号化保存フラグ |
 | `passkey` | string (1..256, no SPACE/`#`/`,`) | - | per-server 共有秘密 |
-| `vrf` | string `mgmt`/`default` | - | サーバ到達 VRF |
+| `vrf` | string `mgmt`/`default` | - | サーバ到達 [VRF](../../reference/glossary.md#term-vrf) |
 
 ## TACPLUS|global
 
@@ -79,7 +79,7 @@ TACPLUS|global
 
 - 関連 CONFIG_DB: `AAA`、`LDAP_SERVER`、`RADIUS_SERVER`
 - 関連 CLI: `config tacacs add/delete/passkey/timeout/authtype/default`、`show tacacs`
-- 関連 YANG: `sonic-system-tacacs`、`sonic-system-aaa`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-tacacs`、`sonic-system-aaa`
 
 <!-- ref-triangle:start -->
 
@@ -125,3 +125,5 @@ sonic-db-cli CONFIG_DB keys 'TACPLUS_SERVER|*'
 show tacacs
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->

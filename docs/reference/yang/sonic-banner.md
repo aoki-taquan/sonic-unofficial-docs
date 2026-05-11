@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-banner`
 
-Login, MOTD, and logout banner message YANG module for SONiC OS.[^1]
+Login, MOTD, and logout banner message [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -74,7 +74,7 @@ module: sonic-banner
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BANNER_MESSAGE|global`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BANNER_MESSAGE|global`
 - CLI: `config banner`
 
 <!-- ref-triangle:start -->
@@ -91,7 +91,7 @@ module: sonic-banner
 
 ### 典型的なデプロイ位置
 
-- ログインバナー / MOTD 設定。`BANNER_MESSAGE|global` を hostcfgd が `/etc/issue` `/etc/motd` に書き出す。
+- ログインバナー / MOTD 設定。`BANNER_MESSAGE|global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `/etc/issue` `/etc/motd` に書き出す。
 
 ### よくある落とし穴
 
@@ -108,3 +108,5 @@ show banner
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-banner.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 928d8e8f2278 -->

@@ -61,8 +61,8 @@ SYSTEM_DEFAULTS|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `FEATURE`、`DEVICE_METADATA`
-- 関連 YANG: `sonic-system-defaults`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FEATURE`、`DEVICE_METADATA`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-defaults`
 
 <!-- ref-triangle:start -->
 
@@ -86,7 +86,7 @@ SYSTEM_DEFAULTS|<name>
 
 ### よくある誤設定
 
-- synchronous_mode=enabled のままで遅い orchagent と組み合わせると config push 全体が詰まる。
+- synchronous_mode=enabled のままで遅い [orchagent](../../reference/glossary.md#term-orchagent) と組み合わせると config push 全体が詰まる。
 
 ### 確認コマンド
 
@@ -94,3 +94,5 @@ SYSTEM_DEFAULTS|<name>
 sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 7c7c96ee6ab8 -->

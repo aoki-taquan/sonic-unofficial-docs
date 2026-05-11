@@ -92,7 +92,7 @@ flowchart LR
 - 設定変更 → `sonic-mgmt` 経由
 - sysdump 取得 → `sonic-mgmt` 経由
 
-CLI 直接の規定は本 HLD には無い[^1]。
+CLI 直接の規定は本 [HLD](../reference/glossary.md#term-hld) には無い[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/logging/Logging_and_sysdump_arch_spec.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -126,7 +126,7 @@ reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 
 ### 関連する CONFIG_DB / CLI / YANG
 
-本 HLD では具体的な CONFIG_DB / CLI / YANG スキーマを規定していない。実装側で別途決まる前提。実機の SONiC では `show techsupport` / `generate_dump` 系コマンドが Per daemon / Per platform フックを呼ぶ実装が存在するが、本 HLD はそのレイヤを定義するだけ[^1]。
+本 HLD では具体的な [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / [YANG](../reference/glossary.md#term-yang) スキーマを規定していない。実装側で別途決まる前提。実機の SONiC では `show techsupport` / `generate_dump` 系コマンドが Per daemon / Per platform フックを呼ぶ実装が存在するが、本 HLD はそのレイヤを定義するだけ[^1]。
 
 ## 制限事項
 
@@ -156,3 +156,5 @@ reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

@@ -87,5 +87,7 @@ docker logs swss 2>&1 | grep -iE "macsec" | tail -100
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ master — macsecorch.cpp
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — macsecorch.cpp
 [^2]: sonic-net/wpa_supplicant @ master — ieee802_1x_kay.c
+
+<!-- glossary-links-injected: 1fe559aeba2e -->

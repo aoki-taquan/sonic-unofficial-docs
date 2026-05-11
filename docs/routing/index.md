@@ -5,9 +5,9 @@ verification: stub
 ---
 
 # ルーティング
-BGP、VRF、ECMP、SRv6、MPLS、DHCP relay など L3 制御面を扱う章。
+[BGP](../reference/glossary.md#term-bgp)、[VRF](../reference/glossary.md#term-vrf)、[ECMP](../reference/glossary.md#term-ecmp)、[SRv6](../reference/glossary.md#term-srv6)、[MPLS](../reference/glossary.md#term-mpls)、DHCP relay など L3 制御面を扱う章。
 ## この章の読み方
-目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は HLD と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
 - ページ数: 51
 - 分布: Code-verified: 40 / Discrepancy-found: 5 / HLD-only: 6
@@ -82,3 +82,5 @@ BGP、VRF、ECMP、SRv6、MPLS、DHCP relay など L3 制御面を扱う章。
 | [プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）](prefix-based-mux-neighbors.md) | Code-verified |
 | [ルータインタフェース (RIF) カウンタ](router-interface-counters-in-sonic.md) | Code-verified |
 | [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](new-frr-sonic-communication-channel.md) | Code-verified |
+
+<!-- glossary-links-injected: 6bc31d3f0d0b -->

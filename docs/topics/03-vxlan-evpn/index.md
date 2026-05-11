@@ -28,9 +28,9 @@ keywords:
 
 # VXLAN / EVPN / VNET オーバーレイ
 
-この章は、SONiC の overlay を「VXLAN tunnel を作る」「VNET と VRF/VNI を対応させる」「EVPN やコントローラから経路を入れる」「運用中に ECMP、BFD、QoS を確認する」という読者の順番で読み直す入口です。
+この章は、SONiC の overlay を「[VXLAN](../../reference/glossary.md#term-vxlan) tunnel を作る」「[VNET](../../reference/glossary.md#term-vnet) と [VRF](../../reference/glossary.md#term-vrf)/VNI を対応させる」「[EVPN](../../reference/glossary.md#term-evpn) やコントローラから経路を入れる」「運用中に [ECMP](../../reference/glossary.md#term-ecmp)、[BFD](../../reference/glossary.md#term-bfd)、[QoS](../../reference/glossary.md#term-qos) を確認する」という読者の順番で読み直す入口です。
 
-既存ページは VXLAN、EVPN、VNET、NVGRE、IPinIP decap、Overlay ECMP などの HLD 単位に分かれています。この章では、それらを 1 つの overlay データプレーンとして見たときの責務境界を先に整理し、詳細なフィールドや実装裏取りは area / reference ページへ誘導します。
+既存ページは VXLAN、EVPN、VNET、NVGRE、[IPinIP](../../reference/glossary.md#term-ipinip) decap、Overlay ECMP などの [HLD](../../reference/glossary.md#term-hld) 単位に分かれています。この章では、それらを 1 つの overlay データプレーンとして見たときの責務境界を先に整理し、詳細なフィールドや実装裏取りは area / reference ページへ誘導します。
 
 ## この章で答える質問
 
@@ -43,10 +43,10 @@ keywords:
 ## 読む順番
 
 1. [概要](concept.md): VXLAN / VNET / EVPN / NVGRE / subnet decap の用語と境界を整理する。
-2. [アーキテクチャ](architecture.md): VxlanTunnelOrch、VnetOrch、FRR EVPN、SAI tunnel object の流れを追う。
+2. [アーキテクチャ](architecture.md): VxlanTunnelOrch、VnetOrch、[FRR](../../reference/glossary.md#term-frr) EVPN、[SAI](../../reference/glossary.md#term-sai) tunnel object の流れを追う。
 3. [設定](setup.md): VXLAN tunnel、VNET、EVPN NVO、VNET route、tunnel decap、PBH inner hash の入口を選ぶ。
 4. [運用](operations.md): Overlay ECMP、BFD monitoring、DSCP remap、inner hash の確認順を扱う。
-5. [発展トピック](advanced.md): EVPN multihoming、DASH / SmartSwitch、NVGRE、subnet decap との境界を確認する。
+5. [発展トピック](advanced.md): EVPN multihoming、[DASH](../../reference/glossary.md#term-dash) / [SmartSwitch](../../reference/glossary.md#term-smartswitch)、NVGRE、subnet decap との境界を確認する。
 6. [内部実装](internals.md): VxlanTunnelOrch / VnetOrch のオブジェクト整合と、FRR EVPN との状態同期を実装側から見る。
 
 ## 統合した既存ページ
@@ -72,3 +72,4 @@ keywords:
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
+<!-- glossary-links-injected: 21d7ff6ee0d7 -->

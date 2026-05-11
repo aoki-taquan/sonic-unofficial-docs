@@ -30,20 +30,20 @@ related:
 
 # ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）
 
-読み手が真っ先に知りたいのは「SONiC の ACL はどの単位で書き、どこを経由して TCAM に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。
+読み手が真っ先に知りたいのは「SONiC の [ACL](../reference/glossary.md#term-acl) はどの単位で書き、どこを経由して TCAM に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。
 
 ## ACL はどの単位で書くのか
 
-SONiC の ACL は **table（型を持つ）+ rule** の二層構造。table の **type** で許される match / action と bind 先（port / LAG / VLAN / switch）が決まる[^1]。
+SONiC の ACL は **table（型を持つ）+ rule** の二層構造。table の **type** で許される match / action と bind 先（port / [LAG](../reference/glossary.md#term-lag) / [VLAN](../reference/glossary.md#term-vlan) / switch）が決まる[^1]。
 
 主な type:
 
 - `L3` / `L3v6`: ingress IPv4 / IPv6 ACL
 - `MIRROR` / `MIRRORV6`: ingress traffic を mirror
-- `PFCWD`, `EVERFLOW`, `DROP`, `MUX`: 用途別の派生 type（HLD 本体は基礎のみ記述、後発で追加）
-- カスタム: Rev 1.1 (2025-04) で **VXLAN inner src MAC rewrite** 用 type が追加[^1]
+- `PFCWD`, `EVERFLOW`, `DROP`, `MUX`: 用途別の派生 type（[HLD](../reference/glossary.md#term-hld) 本体は基礎のみ記述、後発で追加）
+- カスタム: Rev 1.1 (2025-04) で **[VXLAN](../reference/glossary.md#term-vxlan) inner src MAC rewrite** 用 type が追加[^1]
 
-CONFIG_DB のキーは次の 2 つだけ。
+[CONFIG_DB](../reference/glossary.md#term-config_db) のキーは次の 2 つだけ。
 
 ```
 ACL_TABLE|<table_name>
@@ -59,7 +59,7 @@ ACL_RULE|<table_name>|<rule_name>
 
 ## CLI → ASIC まで何が起きるのか
 
-CONFIG_DB → APPL_DB → AclOrch → SAI Redis → ASIC_DB → syncd → SAI → ASIC TCAM、というスタックを通る[^1]。
+CONFIG_DB → [APPL_DB](../reference/glossary.md#term-appl_db) → AclOrch → [SAI](../reference/glossary.md#term-sai) [Redis](../reference/glossary.md#term-redis) → [ASIC_DB](../reference/glossary.md#term-asic_db) → [syncd](../reference/glossary.md#term-syncd) → SAI → ASIC TCAM、というスタックを通る[^1]。
 
 ```mermaid
 flowchart LR
@@ -159,7 +159,7 @@ CLI 一覧:
 
 - **Mirror セッション**: Mirror table は `MIRROR_SESSION` と密結合
 - **EVERFLOW / DSCP-based mirror**: Mirror 上に積み重ねる別 HLD
-- **PFCWD / DROP / MUX**: 同じ ACL_TABLE 機構を type 違いで再利用
+- **PFCWD / DROP / [MUX](../reference/glossary.md#term-mux)**: 同じ ACL_TABLE 機構を type 違いで再利用
 - **ACL Flex Counters**: Phase 2 から導入
 - **port / LAG**: `ports` で bind。LAG 解体時の rebind は AclOrch 側ロジック
 
@@ -182,3 +182,5 @@ CLI 一覧:
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 53f5206a8a22 -->

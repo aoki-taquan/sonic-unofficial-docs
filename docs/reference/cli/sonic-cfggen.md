@@ -23,7 +23,7 @@ related:
 
 主な役割は以下の 4 つ:
 
-1. **データ収集**: minigraph (XML) / device-description / hwsku 設定 / yang JSON / 任意 YAML / 任意 JSON / CONFIG_DB / 平面オプションを 1 つの dict にマージ
+1. **データ収集**: minigraph (XML) / device-description / hwsku 設定 / yang JSON / 任意 YAML / 任意 JSON / [CONFIG_DB](../../reference/glossary.md#term-config_db) / 平面オプションを 1 つの dict にマージ
 2. **テンプレートレンダリング**: jinja2 テンプレートを上記 dict を context として描画
 3. **値の取り出し**: jinja2 式 (`-v`) で任意の値を文字列または JSON で出力
 4. **CONFIG_DB 書き込み**: `--write-to-db` で集約 dict を CONFIG_DB に直接書く
@@ -42,8 +42,8 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 
 | 引数 | 用途 |
 |------|------|
-| `-m, --minigraph [<file>]` | minigraph.xml をパース。引数省略時は `/etc/sonic/minigraph.xml` |
-| `-Y, --yang [<file>]` | YANG JSON から CONFIG_DB JSON を生成。省略時は `/etc/sonic/config_yang.json`。Python3 のみ |
+| `-m, --minigraph [<file>]` | [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) をパース。引数省略時は `/etc/sonic/minigraph.xml` |
+| `-Y, --yang [<file>]` | [YANG](../../reference/glossary.md#term-yang) JSON から CONFIG_DB JSON を生成。省略時は `/etc/sonic/config_yang.json`。Python3 のみ |
 | `-M, --device-description <file>` | device description XML を読む |
 | `-k, --hwsku <name>` | HwSKU 名を指定して `port_config.ini` 由来の PORT 情報を集める |
 
@@ -57,7 +57,7 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 | `-a, --additional-data '<json string>'` | コマンドライン JSON 文字列で追加変数を渡す |
 | `-H, --platform-info` | platform / hardware 情報を `device_info` から読む |
 | `-n, --namespace <name>` | multi-ASIC namespace 指定。`asic0` 等。指定すると `asic_id` が逆引きされ port_config 等の path に影響 |
-| `-s, --redis-unix-sock-file <sock>` | redis unix sock のパス（CONFIG_DB / STATE_DB 接続先切替） |
+| `-s, --redis-unix-sock-file <sock>` | redis unix sock のパス（CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) 接続先切替） |
 | `-p, --port-config <file>` | port config ファイルパス（`-m` / `-k` と併用） |
 | `-S, --hwsku-config <file>` | hwsku config ファイル（`-p` + `-m`/`-k` と併用） |
 
@@ -85,7 +85,7 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 
 1. `device_info.get_platform()` でプラットフォーム文字列取得、必要なら `bmc_data` を `DEVICE_METADATA.bmc` に取り込む。
 2. `redis_unix_sock_file` を `db_kwargs` に保持。
-3. `--hwsku` 指定時は `get_path_to_port_config_file(hwsku, asic_id)` から port_config.ini を解決し `PORT` を集める。breakout 情報があれば `BREAKOUT_CFG` も。
+3. `--hwsku` 指定時は `get_path_to_port_config_file(hwsku, asic_id)` から [port_config.ini](../../reference/glossary.md#term-port-config-ini) を解決し `PORT` を集める。breakout 情報があれば `BREAKOUT_CFG` も。
 4. `_process_json(args, data)` で `--json` 指定の各ファイルをマージ。
 5. `--yang` 指定なら `SonicYangCfgDbGenerator` で yang → config_db json 変換。
 6. `--minigraph` 指定なら `parse_xml` で minigraph をパースして dict に展開。
@@ -99,7 +99,7 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 
 | 用途 | コマンド |
 |------|---------|
-| minigraph + jinja2 で BGP 設定生成 | `sonic-cfggen -m -t /usr/share/template/bgpd.conf.j2` |
+| minigraph + jinja2 で [BGP](../../reference/glossary.md#term-bgp) 設定生成 | `sonic-cfggen -m -t /usr/share/template/bgpd.conf.j2` |
 | CONFIG_DB を JSON ダンプ | `sonic-cfggen -d --print-data > config_db.json` |
 | JSON を CONFIG_DB に書き込み | `sonic-cfggen -j config_db.json --write-to-db` |
 | 単一テーブル JSON 取得 | `sonic-cfggen -d --var-json PORT` |
@@ -123,3 +123,5 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 ## 引用元
 
 [^1]: 例: `show runningconfiguration ports` は `sonic-cfggen -d --var-json PORT [--key NAME]` を呼ぶ（`show/main.py` L1868）。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1868>
+
+<!-- glossary-links-injected: 41f564526bd6 -->

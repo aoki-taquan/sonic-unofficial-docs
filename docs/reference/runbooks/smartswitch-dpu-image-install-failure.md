@@ -25,12 +25,12 @@ related:
 ## 症状
 
 - `sonic-installer install --dpu <DPU0> <image.bin>` が exit code 非 0
-- DPU が `installing` 状態で固まる
+- [DPU](../../reference/glossary.md#term-dpu) が `installing` 状態で固まる
 - 再起動後 `show chassis modules` で DPU が DOWN
 
 ## 想定原因（優先度順）
 
-1. **image の DPU platform 不一致**: NPU 用 image を DPU に流した
+1. **image の DPU platform 不一致**: [NPU](../../reference/glossary.md#term-npu) 用 image を DPU に流した
 2. **空き flash 不足**: DPU の SSD 使用率 90%+
 3. **PCIe / chassisd 通信失敗**: DPU 側 control plane に届かない
 4. **DPU が graceful shutdown できていない**
@@ -78,4 +78,6 @@ sudo dpuctl exec DPU0 df -h /
 ## 引用元
 
 [^1]: sonic-net/sonic-platform-daemons @ 4305596 — chassisd
-[^2]: sonic-net/sonic-utilities @ 39732bceb — sonic-installer
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — sonic-installer
+
+<!-- glossary-links-injected: 0999bc110a44 -->

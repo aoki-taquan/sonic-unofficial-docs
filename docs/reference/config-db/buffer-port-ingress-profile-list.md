@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-**ポートに紐づけるイングレスバッファプロファイル群** を定義する CONFIG_DB テーブル[^1]。SAI における `SAI_PORT_ATTR_QOS_INGRESS_BUFFER_PROFILE_LIST` 相当で、`BUFFER_PROFILE` テーブルで定義した複数プロファイルを、ポート単位で **順序を保ったリスト** として束ねる。
+**ポートに紐づけるイングレスバッファプロファイル群** を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。[SAI](../../reference/glossary.md#term-sai) における `SAI_PORT_ATTR_QOS_INGRESS_BUFFER_PROFILE_LIST` 相当で、`BUFFER_PROFILE` テーブルで定義した複数プロファイルを、ポート単位で **順序を保ったリスト** として束ねる。
 
 ingress 方向の `BUFFER_PG` (priority-group ごとのバッファ) と並ぶ別系統で、こちらはポート全体としての ingress プロファイル群の集約。動的バッファモデル (`buffer_model = dynamic`) ではあまり使われず、静的バッファ設定で利用されることが多い。
 
@@ -72,14 +72,14 @@ BUFFER_PORT_INGRESS_PROFILE_LIST|<port>
 
 ## 購読者
 
-- `buffermgrd` (`docker-swss`): CONFIG_DB → APPL_DB の `BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE`
+- `buffermgrd` (`docker-swss`): CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) の `BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE`
 - `orchagent` (BufferOrch): APPL_DB → SAI の port ingress buffer profile list 設定
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BUFFER_PROFILE`, `BUFFER_POOL`, `BUFFER_PG`, `PORT`, `BUFFER_PORT_EGRESS_PROFILE_LIST`
-- 関連 CLI: `config buffer profile` (sonic-utilities)
-- 関連 YANG: `sonic-buffer-port-ingress-profile-list`, `sonic-buffer-profile`
+- 関連 CLI: `config buffer profile` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities))
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-port-ingress-profile-list`, `sonic-buffer-profile`
 
 <!-- ref-triangle:start -->
 
@@ -121,3 +121,5 @@ sonic-db-cli APPL_DB hgetall 'BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE:Ethernet0'
 show buffer pool
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: c6905fe6b44a -->

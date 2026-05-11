@@ -28,9 +28,9 @@ SONiC には `config default-route` という独立した click コマンドは 
 
 | 目的 | 使うコマンド | 書き込み先 |
 |---|---|---|
-| データプレーン側のスタティックルート | `config route add prefix 0.0.0.0/0 nexthop <ip>` | CONFIG_DB `STATIC_ROUTE` |
+| データプレーン側のスタティックルート | `config route add prefix 0.0.0.0/0 nexthop <ip>` | [CONFIG_DB](../../reference/glossary.md#term-config_db) `STATIC_ROUTE` |
 | 管理 NIC (`eth0`) の default gateway | `config mgmt-interface add` 系 + `MGMT_INTERFACE` の gwaddr | CONFIG_DB `MGMT_INTERFACE` |
-| BGP で受ける default route | FRR vtysh / `config bgp` 配下 | CONFIG_DB（一部）+ FRR config |
+| [BGP](../../reference/glossary.md#term-bgp) で受ける default route | [FRR](../../reference/glossary.md#term-frr) vtysh / `config bgp` 配下 | CONFIG_DB（一部）+ FRR config |
 
 本ページは前 2 つの「CLI で書き込めるデフォルトルート」のパターンを整理する。`config route` 全体の仕様は [config route サブコマンド（static route）](config-route.md) を参照。
 
@@ -68,7 +68,7 @@ STATIC_ROUTE|0.0.0.0/0
   blackhole:    "false"
 ```
 
-VRF 付きの場合のキーは `STATIC_ROUTE|Vrf-Red|0.0.0.0/0`。
+[VRF](../../reference/glossary.md#term-vrf) 付きの場合のキーは `STATIC_ROUTE|Vrf-Red|0.0.0.0/0`。
 
 ## パターン 2: 管理 NIC のデフォルトゲートウェイ
 
@@ -87,7 +87,7 @@ MGMT_INTERFACE|eth0|10.0.0.0/24
 
 ## STATIC_ROUTE の更新ロジック（補足）
 
-`config route add` が同じ prefix で複数回呼ばれた場合、`config/main.py` の `add_route()` は **既存エントリの値カラムに `,` 区切りで追記**する形で複数 nexthop を蓄積する仕様[^1]。デフォルトルートに複数 ECMP nexthop を載せたい場合は、その分だけコマンドを繰り返すか 1 度のコマンドで `nexthop 10.0.0.1 nexthop 10.0.0.2` の形で書く。
+`config route add` が同じ prefix で複数回呼ばれた場合、`config/main.py` の `add_route()` は **既存エントリの値カラムに `,` 区切りで追記**する形で複数 nexthop を蓄積する仕様[^1]。デフォルトルートに複数 [ECMP](../../reference/glossary.md#term-ecmp) nexthop を載せたい場合は、その分だけコマンドを繰り返すか 1 度のコマンドで `nexthop 10.0.0.1 nexthop 10.0.0.2` の形で書く。
 
 削除は `config route del prefix 0.0.0.0/0 ...` で対象 nexthop を指定する。
 
@@ -117,7 +117,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- YANG: [`sonic-static-route`](../yang/sonic-static-route.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-static-route`](../yang/sonic-static-route.md)
 - CONFIG_DB: [`STATIC_ROUTE`](../config-db/static-route.md) / [`MGMT_INTERFACE`](../config-db/mgmt-interface.md)
 
 <!-- ref-triangle:end -->
@@ -146,3 +146,5 @@ show ip route vrf all
 vtysh -c 'show ip route 0.0.0.0/0'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 35efc0f6df25 -->

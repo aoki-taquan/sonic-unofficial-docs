@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が **内部ファブリック** で繋がれた 1 つの論理ルータとして動く。本 HLD は SONiC を「ラインカード × N」+「スーパバイザ × 1」の **分散 SONiC インスタンス** として動かすための骨格設計を定義する[^1]。
+VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が **内部ファブリック** で繋がれた 1 つの論理ルータとして動く。本 [HLD](../reference/glossary.md#term-hld) は SONiC を「ラインカード × N」+「スーパバイザ × 1」の **分散 SONiC インスタンス** として動かすための骨格設計を定義する[^1]。
 
 主要登場人物[^1]:
 
@@ -37,10 +37,10 @@ VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が **内
 |------|------|------|
 | **FSI** | Forwarding SONiC Instance | ラインカード上の SONiC OS。1 個以上の ASIC を制御 |
 | **SSI** | Supervisor SONiC Instance | スーパバイザ上の SONiC OS。FSI 群と内部ファブリックを管理 |
-| ASIC / NPU | Forwarding ASIC | 実パケット転送 |
+| ASIC / [NPU](../reference/glossary.md#term-npu) | Forwarding ASIC | 実パケット転送 |
 | Fabric Chip | 内部ファブリックチップ | パケットを ASIC 間で運ぶ |
 
-スコープは **SONiC 側の骨格のみ**（物理ポート表現と Chassis DB）。LAG / 内部制御プレーン / データプレーンの具体は別 HLD に譲る[^1]。シャーシ前提だが「VoQ 構成なら他のフォームファクタにも拡張可能」と明記されている[^1]。
+スコープは **SONiC 側の骨格のみ**（物理ポート表現と Chassis DB）。[LAG](../reference/glossary.md#term-lag) / 内部制御プレーン / データプレーンの具体は別 HLD に譲る[^1]。シャーシ前提だが「VoQ 構成なら他のフォームファクタにも拡張可能」と明記されている[^1]。
 
 ## 動作仕様
 
@@ -70,7 +70,7 @@ flowchart LR
   end
 ```
 
-全システム共通状態は SSI 上の **`redis_chassis`** に乗る。各 FSI はローカル Redis に加えて `redis_chassis` にもつなぎ、`CHASSIS_APP_DB`（id=8）にアクセスする[^1]。
+全システム共通状態は SSI 上の **`redis_chassis`** に乗る。各 FSI はローカル [Redis](../reference/glossary.md#term-redis) に加えて `redis_chassis` にもつなぎ、`CHASSIS_APP_DB`（id=8）にアクセスする[^1]。
 
 #### `chassisdb.conf` による起動制御
 
@@ -179,10 +179,10 @@ reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠�
 
 ### 将来課題（HLD §4）
 
-- **Dynamic system ports**: 走行中の FSI 追加 / SKU 変更カードへの差し替え。SAI に `create_port` / `remove_port` のサポートが必要[^1]。
+- **Dynamic system ports**: 走行中の FSI 追加 / SKU 変更カードへの差し替え。[SAI](../reference/glossary.md#term-sai) に `create_port` / `remove_port` のサポートが必要[^1]。
 - **Dual supervisor**:
-  - Warm standby: スタンバイ SSI は OS 起動だけ。切替時に再ブート相当の処理。OrchAgent / syncd を一旦止めて Redis アドレスを切替えて再接続[^1]
-  - Hot standby: スタンバイ SSI も Chassis DB を mirror で保持。Live sync + 再接続時に SAI ASIC_DB と整合をとる必要[^1]
+  - Warm standby: スタンバイ SSI は OS 起動だけ。切替時に再ブート相当の処理。OrchAgent / [syncd](../reference/glossary.md#term-syncd) を一旦止めて Redis アドレスを切替えて再接続[^1]
+  - Hot standby: スタンバイ SSI も Chassis DB を mirror で保持。Live sync + 再接続時に SAI [ASIC_DB](../reference/glossary.md#term-asic_db) と整合をとる必要[^1]
 
 ## 設定
 
@@ -219,7 +219,7 @@ chassis_db_address=127.100.0.1
 - **`syncd` / `swss` の Multi-ASIC 動作**: 既存の multi-ASIC パターンの拡張。FSI 内の ASIC ごとに `syncd` / `swss` が立つ。
 - **iBGP メッシュ（[BGP for VoQ Chassis](../routing/bgp-setup-for-voq-chassis.md)）**: 内部 FSI 間の制御プレーンとして iBGP を張る前提。本 HLD はその物理基盤を提供する。
 - **Single-ASIC VoQ**: chassisdb.conf の有無を `is_voq_chassis()` の判定キーに流用する派生機能[^1]（[Single-ASIC VoQ](../platform/single-asic-voq-fixed-system-sonic.md) 参照）。
-- **dual-tor / SmartSwitch**: 似た概念だが本 HLD のスコープ外。Chassis DB は混同しないこと。
+- **dual-tor / [SmartSwitch](../reference/glossary.md#term-smartswitch)**: 似た概念だが本 HLD のスコープ外。Chassis DB は混同しないこと。
 
 ## トラブルシューティング
 
@@ -237,3 +237,5 @@ chassis_db_address=127.100.0.1
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f0d5c7142479 -->

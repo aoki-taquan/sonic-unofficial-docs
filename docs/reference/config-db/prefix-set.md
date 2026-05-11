@@ -72,12 +72,12 @@ PREFIX_SET|<name>
 ## 購読者
 
 - `frr-mgmt-framework`: ルーティングポリシ管理（`DEVICE_METADATA.frr_mgmt_framework_config = true` 環境）
-- 一部 sonic-mgmt-common transformer がここから FRR vtysh コマンドへ変換
+- 一部 [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common transformer がここから [FRR](../../reference/glossary.md#term-frr) vtysh コマンドへ変換
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PREFIX_LIST` / `PREFIX_NOSEQ_LIST`、[`COMMUNITY_SET`](./community-set.md)、[`AS_PATH_SET`](./as-path-set.md)、`ROUTE_MAP`
-- 関連 YANG: `sonic-routing-policy-sets`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PREFIX_LIST` / `PREFIX_NOSEQ_LIST`、[`COMMUNITY_SET`](./community-set.md)、[`AS_PATH_SET`](./as-path-set.md)、`ROUTE_MAP`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-routing-policy-sets`
 - 関連 CLI: なし（`config_db.json` 投入。FRR 側の `ip prefix-list` 等に最終的に変換される）
 
 <!-- ref-triangle:start -->
@@ -111,3 +111,5 @@ sonic-db-cli CONFIG_DB keys 'PREFIX_SET|*'
 vtysh -c 'show ip prefix-list'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f7bde22b7495 -->

@@ -26,13 +26,13 @@ related:
 
 ## 概要
 
-2M routes 級の BGP loading を end-to-end で 50% 高速化することを狙った最適化 HLD（2023-2024）[^1]。次の 3 ステップを最適化する。
+2M routes 級の [BGP](../reference/glossary.md#term-bgp) loading を end-to-end で 50% 高速化することを狙った最適化 [HLD](../reference/glossary.md#term-hld)（2023-2024）[^1]。次の 3 ステップを最適化する。
 
-1. **fpmsyncd**: redis pipeline の flush 頻度・サイズ・PUBLISH 命令を見直す
-2. **orchagent**: 単スレッド（pops / addToSync / drain）→ アシスタントスレッドと ring buffer による pipelining
+1. **[fpmsyncd](../reference/glossary.md#term-fpmsyncd)**: redis pipeline の flush 頻度・サイズ・PUBLISH 命令を見直す
+2. **[orchagent](../reference/glossary.md#term-orchagent)**: 単スレッド（pops / addToSync / drain）→ アシスタントスレッドと ring buffer による pipelining
 3. **sairedis**: 同期 API → 非同期 API 経路と orchagent 側の `ResponseThread`
 
-ASIC / SAI 自体の最適化はスコープ外。
+ASIC / [SAI](../reference/glossary.md#term-sai) 自体の最適化はスコープ外。
 
 ## 動作仕様
 
@@ -61,7 +61,7 @@ flowchart LR
 
 ### Step 3: sairedis の async 化
 
-`sairedis` の同期 API は、ASIC_DB 書き込み後 syncd 応答を待つため orchagent 側の processing が止まる。新たに **`ResponseThread`** を orchagent に追加し、async 経路で発行 → 応答だけ別スレッドで受ける構成[^1]。
+`sairedis` の同期 API は、[ASIC_DB](../reference/glossary.md#term-asic_db) 書き込み後 [syncd](../reference/glossary.md#term-syncd) 応答を待つため orchagent 側の processing が止まる。新たに **`ResponseThread`** を orchagent に追加し、async 経路で発行 → 応答だけ別スレッドで受ける構成[^1]。
 
 ```mermaid
 sequenceDiagram
@@ -115,7 +115,7 @@ reasoning: pipeline size 50k と 500ms timer、PUBLISH 1 回化の根拠。
 
 ## 設定
 
-HLD で新規 CONFIG_DB / CLI の言及は無い（性能側のチューニングのみ）。pipeline サイズ等は build 時定数で組み込まれる想定。
+HLD で新規 [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI の言及は無い（性能側のチューニングのみ）。pipeline サイズ等は build 時定数で組み込まれる想定。
 
 ## 制限事項
 
@@ -127,7 +127,7 @@ HLD で新規 CONFIG_DB / CLI の言及は無い（性能側のチューニン�
 
 - **`fpmsyncd` NextHop Group 拡張**: 同じ pipeline 経路を共有。NHG 経路でも PUBLISH 削減は有効
 - **warm reboot**: `ResponseThread` と warm restart の order 保証は HLD 内で別述
-- **ACL / VLAN / FDB orch**: ring buffer は orch 共通基盤に乗るため広範囲に影響
+- **[ACL](../reference/glossary.md#term-acl) / [VLAN](../reference/glossary.md#term-vlan) / [FDB](../reference/glossary.md#term-fdb) orch**: ring buffer は orch 共通基盤に乗るため広範囲に影響
 
 ## トラブルシューティング
 
@@ -146,3 +146,5 @@ HLD で新規 CONFIG_DB / CLI の言及は無い（性能側のチューニン�
 - warm restart 経路での async / ring buffer の order 保証実装確認
 - 2M routes ベンチの実測値 vs HLD 主張 50% 高速化の検証
 -->
+
+<!-- glossary-links-injected: ef8c5688ad31 -->

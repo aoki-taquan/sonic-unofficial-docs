@@ -33,9 +33,9 @@ related:
 
 ## 概要
 
-SONiC Management Framework（REST / gNMI / IS-CLI）から **OpenConfig BGP** モデル経由で FRR-BGP を一気通貫に扱えるようにする設計[^1]。`bgpcfgd`（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の **`frrcfgd`** daemon が CONFIG_DB の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。
+SONiC Management Framework（REST / [gNMI](../reference/glossary.md#term-gnmi) / IS-CLI）から **OpenConfig [BGP](../reference/glossary.md#term-bgp)** モデル経由で [FRR](../reference/glossary.md#term-frr)-BGP を一気通貫に扱えるようにする設計[^1]。`bgpcfgd`（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の **`frrcfgd`** daemon が [CONFIG_DB](../reference/glossary.md#term-config_db) の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。
 
-切り替えは `DEVICE_METADATA.localhost.frr_mgmt_framework_config = "true"` で行う[^1]。default は `false`（従来 bgpcfgd）。state / statistics の get は FRR から on-demand 取得するため warm boot 影響なし。
+切り替えは `DEVICE_METADATA.localhost.frr_mgmt_framework_config = "true"` で行う[^1]。default は `false`（従来 [bgpcfgd](../reference/glossary.md#term-bgpcfgd)）。state / statistics の get は FRR から on-demand 取得するため warm boot 影響なし。
 
 ## 動作仕様
 
@@ -53,18 +53,18 @@ flowchart LR
 
 ### bgpcfgd と frrcfgd
 
-| 項目 | bgpcfgd（既存） | frrcfgd（本 HLD） |
+| 項目 | bgpcfgd（既存） | frrcfgd（本 [HLD](../reference/glossary.md#term-hld)） |
 |------|----------------|------------------|
 | 起動条件 | default | `frr_mgmt_framework_config = true` |
 | 入力 | CONFIG_DB + Jinja template | CONFIG_DB のみ |
 | 出力 | startup config 生成（FRR 起動時にロード）+ 一部動的 | FRR 起動後の **動的** vty コマンド適用 |
-| 機能網羅 | template が対応するもの限定 | フル BGP（neighbor / peer-group / prefix-list / route-map / policy / VRF） |
+| 機能網羅 | template が対応するもの限定 | フル BGP（neighbor / peer-group / prefix-list / route-map / policy / [VRF](../reference/glossary.md#term-vrf)） |
 | 場所 | `sonic-buildimage/dockers/docker-fpm-frr/` | `sonic-buildimage/src/sonic-frr-mgmt-framework` |
 
 ### Management Framework 側
 
-- OpenConfig BGP YANG → SONiC YANG（ABNF）への annotation
-- transformer methods（Go）が syntactic / semantic 検証 + Redis 書き込み
+- OpenConfig BGP [YANG](../reference/glossary.md#term-yang) → SONiC YANG（ABNF）への annotation
+- transformer methods（Go）が syntactic / semantic 検証 + [Redis](../reference/glossary.md#term-redis) 書き込み
 - Marshalling は **YGOT**、CAS（Check-And-Set）transaction で書く（lock / rollback なし）[^1]
 
 ### CONFIG_DB スキーマ（拡張部）
@@ -86,7 +86,7 @@ VRF キーが各 BGP テーブルの最上位に来る点（`<vrf>|...`）が、
 
 ### State / Statistics の取得
 
-`frrcfgd` は state / counters は持たず、Management Framework から要求が来たら **FRR vtysh の `show ... json` を直接叩いて返す**。COUNTERS_DB / STATE_DB に永続化しないため warm boot 復元の必要なし[^1]。
+`frrcfgd` は state / counters は持たず、Management Framework から要求が来たら **FRR vtysh の `show ... json` を直接叩いて返す**。[COUNTERS_DB](../reference/glossary.md#term-counters_db) / [STATE_DB](../reference/glossary.md#term-state_db) に永続化しないため warm boot 復元の必要なし[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md#L96-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -174,3 +174,5 @@ DEVICE_METADATA|localhost:
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 21c54538406e -->

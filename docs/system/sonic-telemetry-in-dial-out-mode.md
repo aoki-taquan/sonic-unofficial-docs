@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-通常の gNMI subscribe は **collector → device** の方向で接続するが、ファイアウォール / NAT 越しや stateless collector の場面では device 側から発信したい[^1]。本機能は SONiC を **dial-out クライアント**にし、収集側で動く `gNMIDialOut` サービスへ telemetry を push する。
+通常の [gNMI](../reference/glossary.md#term-gnmi) subscribe は **collector → device** の方向で接続するが、ファイアウォール / [NAT](../reference/glossary.md#term-nat) 越しや stateless collector の場面では device 側から発信したい[^1]。本機能は SONiC を **dial-out クライアント**にし、収集側で動く `gNMIDialOut` サービスへ telemetry を push する。
 
 dialout / dialin の両モードは同じ telemetry コンテナで提供される。DB client が redis から取得、non-DB client は redis 外データを返す[^1]。
 
@@ -144,7 +144,7 @@ OpenConfig の [telemetry yang model](https://github.com/openconfig/public/blob/
 
 - `unidirectional=true` 既定のため `PublishResponse` を使う場合は明示設定
 - `DestinationGroup` 内のフェイルオーバは順序付き。両方落ちると retry_interval 後に再試行
-- 認証は HLD では明示されていない（dialout は通常 TLS で行う）。詳細は telemetry コンテナ側設定に従う
+- 認証は [HLD](../reference/glossary.md#term-hld) では明示されていない（dialout は通常 TLS で行う）。詳細は telemetry コンテナ側設定に従う
 
 ## 干渉する機能
 
@@ -155,3 +155,5 @@ OpenConfig の [telemetry yang model](https://github.com/openconfig/public/blob/
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/system-telemetry/dialout.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/system-telemetry/dialout.md)
+
+<!-- glossary-links-injected: 1642bcc520bc -->

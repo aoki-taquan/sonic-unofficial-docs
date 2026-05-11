@@ -32,7 +32,7 @@ keywords:
 
 # QoS / Buffer の概念地図
 
-QoS の話は語彙が多くて、どこから読めばよいかが見えづらいです。ここでは「パケットが入ってから出るまで、どこで何が決まるか」を一本道で並べ、それぞれの設定テーブルがどの段階に作用するかを示します。
+[QoS](../../reference/glossary.md#term-qos) の話は語彙が多くて、どこから読めばよいかが見えづらいです。ここでは「パケットが入ってから出るまで、どこで何が決まるか」を一本道で並べ、それぞれの設定テーブルがどの段階に作用するかを示します。
 
 ## QoS / Buffer 機能は何を解決するか
 
@@ -40,7 +40,7 @@ QoS の話は語彙が多くて、どこから読めばよいかが見えづら�
 
 具体的には次の問いに答えます。
 
-- RoCE のような lossless が必要なトラフィックが詰まったとき、上流に PAUSE を送って物理的に止めたい
+- [RoCE](../../reference/glossary.md#term-roce) のような lossless が必要なトラフィックが詰まったとき、上流に PAUSE を送って物理的に止めたい
 - 動画やストリーミング telemetry のように遅延に敏感なトラフィックを strict priority で先に出したい
 - best effort トラフィックは公平に分け合いつつ、急に増えたフローだけ早めに ECN マークして TCP に減速を促したい
 - バッファのピーク占有を可視化し、設計時の見積もりと実運用のギャップに早期に気付きたい
@@ -51,18 +51,18 @@ QoS の話は語彙が多くて、どこから読めばよいかが見えづら�
 
 QoS / Buffer は **データプレーンに最も深く張り付くサブシステム**で、控えめに見ても以下の 3 層にまたがります。
 
-- **設定 (control plane 寄り)**: `CONFIG_DB` の `BUFFER_*`、`QUEUE`、`SCHEDULER`、`WRED_PROFILE`、各種 MAP テーブルを `qosorch` / `bufferorch` が読み、APPL_DB → ASIC_DB と流して syncd 経由で SAI コール（`create_buffer_pool`、`create_queue`、`create_scheduler` など）に変換します。
-- **データプレーン**: ASIC 内のキュー、PG、バッファプール、WRED ドロッパ、scheduler 木が実体です。SONiC は SAI 越しに「設定」を流し込むだけで、パケットごとの判定は ASIC 側で完結します。
-- **可観測性**: FlexCounter が queue / PG / pool の使用量と WRED / ECN カウンタを定期的に COUNTERS_DB に落とし、watermark は別 group として「観測区間ピーク」を保持します。`show queue counters` / `show priority-group watermark` などの CLI は COUNTERS_DB / STATE_DB を読むだけです。
+- **設定 (control plane 寄り)**: `CONFIG_DB` の `BUFFER_*`、`QUEUE`、`SCHEDULER`、`WRED_PROFILE`、各種 MAP テーブルを `qosorch` / `bufferorch` が読み、[APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db) と流して [syncd](../../reference/glossary.md#term-syncd) 経由で [SAI](../../reference/glossary.md#term-sai) コール（`create_buffer_pool`、`create_queue`、`create_scheduler` など）に変換します。
+- **データプレーン**: ASIC 内のキュー、PG、バッファプール、[WRED](../../reference/glossary.md#term-wred) ドロッパ、scheduler 木が実体です。SONiC は SAI 越しに「設定」を流し込むだけで、パケットごとの判定は ASIC 側で完結します。
+- **可観測性**: [FlexCounter](../../reference/glossary.md#term-flexcounter) が queue / PG / pool の使用量と WRED / ECN カウンタを定期的に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に落とし、watermark は別 group として「観測区間ピーク」を保持します。`show queue counters` / `show priority-group watermark` などの CLI は COUNTERS_DB / [STATE_DB](../../reference/glossary.md#term-state_db) を読むだけです。
 
-つまり運用者が触れる Redis テーブルと、実際にパケットが通る ASIC 構造体が 1:1 に近い距離で対応している、それが QoS / Buffer 章を読むときの前提です。
+つまり運用者が触れる [Redis](../../reference/glossary.md#term-redis) テーブルと、実際にパケットが通る ASIC 構造体が 1:1 に近い距離で対応している、それが QoS / Buffer 章を読むときの前提です。
 
 ## 用語の定義
 
 混同しやすい用語をここで一度切り分けておきます。
 
 - **TC (Traffic Class)**: SONiC 内部で使うクラス番号 (0〜7)。受信側で DSCP / DOT1P / EXP から 1 つに決め打ちし、以後の経路選択（PG、queue、scheduler、WRED）は TC を経由します。
-- **PG (Priority Group)**: ingress 側のバッファ計上単位。`xon`/`xoff` を持って PFC のトリガを担います。lossless TC は通常 PG3 / PG4 に固定します。
+- **PG (Priority Group)**: ingress 側のバッファ計上単位。`xon`/`xoff` を持って [PFC](../../reference/glossary.md#term-pfc) のトリガを担います。lossless TC は通常 PG3 / PG4 に固定します。
 - **Queue**: egress 側のバッファ計上 + 出力順制御単位。WRED ドロッパと scheduler はここに紐付きます。典型的には UC 用 8 個 + MC 用 8 個。
 - **Buffer Pool**: ingress / egress 別に存在する共有バッファのプール。`size`、`mode` (static / dynamic)、`type` (lossless / lossy) を持ちます。
 - **Buffer Profile**: 「ある PG / queue がこの pool からどれくらい取って、どう alpha (`dynamic_th`) で配分し、`xon`/`xoff` の閾値はいくつにするか」をまとめた 1 セット。同じ profile を複数の PG / queue で共有します。
@@ -120,13 +120,13 @@ flowchart LR
 
 ## パケットが通る順番
 
-1. **受信ポートで TC を決める**: `DSCP_TO_TC_MAP`（IP の場合）または `DOT1P_TO_TC_MAP`（L2 の場合）が、ポートで適用される `PORT_QOS_MAP` 経由で参照されます。MPLS のラベル EXP を扱うときは [MPLS TC-to-TC マップ](../../routing/mpls-tc-to-tc-map.md) が追加で挟まります。
+1. **受信ポートで TC を決める**: `DSCP_TO_TC_MAP`（IP の場合）または `DOT1P_TO_TC_MAP`（L2 の場合）が、ポートで適用される `PORT_QOS_MAP` 経由で参照されます。[MPLS](../../reference/glossary.md#term-mpls) のラベル EXP を扱うときは [MPLS TC-to-TC マップ](../../routing/mpls-tc-to-tc-map.md) が追加で挟まります。
 2. **TC を ingress PG に対応付ける**: `TC_TO_PG_MAP` が ingress priority group (PG) を決めます。ingress 側のバッファ計上は PG 単位で行われます。
 3. **入力バッファに積む**: `BUFFER_PG` テーブルで PG ごとに `BUFFER_PROFILE` が割り当てられ、その profile が `BUFFER_POOL` を指します。lossless トラフィック（典型的には RoCE 用の TC3/TC4）はここで PFC 用 headroom (`xon`/`xoff`) を持ちます。
 4. **出力 queue を決める**: `TC_TO_QUEUE_MAP` が egress queue を選びます。
 5. **出力バッファに積む**: `BUFFER_QUEUE` が queue 単位で `BUFFER_PROFILE` を割り当てます。`QUEUE` テーブルでは queue ごとの WRED と scheduler を紐付けます。
 6. **混んできたら捨てるか mark する**: `WRED_PROFILE` で WRED / ECN 閾値を決めます。詳細は [WRED and ECN statistics](../../acl-qos/wred-and-ecn-statistics.md) を参照。
-7. **取り出す順番を決める**: `SCHEDULER` が strict priority / DWRR / shaping を設定します。`sonic-qos-scheduler-and-shaping` HLD が背景です。詳細は [SONiC QoS scheduler / shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md)。
+7. **取り出す順番を決める**: `SCHEDULER` が strict priority / DWRR / shaping を設定します。`sonic-qos-scheduler-and-shaping` [HLD](../../reference/glossary.md#term-hld) が背景です。詳細は [SONiC QoS scheduler / shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md)。
 
 このうち「入力側で止める仕組み」が PFC、「出力側で捨てる/mark する仕組み」が WRED / ECN、「使ったバッファのピークを覚える仕組み」が watermark です。
 
@@ -172,11 +172,11 @@ QoS / Buffer は他のサブシステムと領域が重なって見えがちで�
 
 | 比較対象 | 共通点 | 違い |
 |---|---|---|
-| ACL | 「特定のトラフィックを選別する」点 | ACL は match → action（permit / deny / redirect / counter / mirror）。QoS の入口で TC を決めるのも実は ACL ベースで可能だが、通常は DSCP / DOT1P map を使う。 |
+| [ACL](../../reference/glossary.md#term-acl) | 「特定のトラフィックを選別する」点 | ACL は match → action（permit / deny / redirect / counter / mirror）。QoS の入口で TC を決めるのも実は ACL ベースで可能だが、通常は DSCP / DOT1P map を使う。 |
 | Storm Control | 「ある種類のトラフィックを抑える」点 | Storm Control は BUM (broadcast/unknown unicast/multicast) フレームの rate を粗く制限する仕組み。queue 単位の輻輳制御ではない。 |
 | Policer (ingress rate-limit) | 「速度を制限する」点 | Policer は ingress でトークンバケットによる drop / mark。QoS の shaper は egress queue ごとの送出速度上限で、バッファに溜める点が違う。 |
-| CoPP | 「CPU 向けトラフィックを優先する」点 | CoPP は trap した制御パケット（BGP/LACP/ARP など）を CPU queue ごとに rate-limit する別系統。一般 forwarding 用の QoS とは queue が別。 |
-| Telemetry (gNMI / DTel) | 「混雑状況を可視化する」点 | gNMI は COUNTERS_DB を読むだけ、DTel は ASIC が直接 INT を export。QoS 自体の輻輳判断には関与しない。 |
+| [CoPP](../../reference/glossary.md#term-copp) | 「CPU 向けトラフィックを優先する」点 | CoPP は trap した制御パケット（[BGP](../../reference/glossary.md#term-bgp)/[LACP](../../reference/glossary.md#term-lacp)/[ARP](../../reference/glossary.md#term-arp) など）を CPU queue ごとに rate-limit する別系統。一般 forwarding 用の QoS とは queue が別。 |
+| Telemetry ([gNMI](../../reference/glossary.md#term-gnmi) / DTel) | 「混雑状況を可視化する」点 | gNMI は COUNTERS_DB を読むだけ、DTel は ASIC が直接 [INT](../../reference/glossary.md#term-int) を export。QoS 自体の輻輳判断には関与しない。 |
 
 特に **CoPP は QoS と同じ「優先制御」だが対象が CPU bound trap のみ** という分離を覚えておくと、`show queue counters CPU` が指している場所が一気に腹落ちします。
 
@@ -201,3 +201,4 @@ QoS / Buffer は他のサブシステムと領域が重なって見えがちで�
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
+<!-- glossary-links-injected: 34fd06ba8380 -->

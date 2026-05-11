@@ -20,9 +20,9 @@ related:
 
 ## 概要
 
-SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定を投入する。本ページは
-**orchagent / syncd が実際に参照する SAI 属性のうち頻出のもの**を object_type 別にまとめた早見表。
-属性名・object_type・用途・関連 orchagent クラス / CONFIG_DB テーブル・関連ドキュメントを併記する。
+SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossary.md#term-sai) (Switch Abstraction Interface) を介して ASIC に設定を投入する。本ページは
+**[orchagent](../reference/glossary.md#term-orchagent) / syncd が実際に参照する SAI 属性のうち頻出のもの**を object_type 別にまとめた早見表。
+属性名・object_type・用途・関連 orchagent クラス / [CONFIG_DB](../reference/glossary.md#term-config_db) テーブル・関連ドキュメントを併記する。
 
 データ収集は `.cache/sonic-sources/sonic-swss/orchagent/` 配下を `grep -roh 'SAI_<TYPE>_ATTR_[A-Z_0-9]*'`
 で全件抽出し、頻出かつ意味の明確なものに絞った（commit
@@ -41,15 +41,15 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | `SAI_SWITCH_ATTR_CPU_PORT` | CPU ポートの OID | `PortsOrch`, `HostifMgr` |
 | `SAI_SWITCH_ATTR_DEFAULT_VIRTUAL_ROUTER_ID` | デフォルト VR OID | `VRFOrch` |
 | `SAI_SWITCH_ATTR_DEFAULT_1Q_BRIDGE_ID` | デフォルト .1Q ブリッジ | `PortsOrch` |
-| `SAI_SWITCH_ATTR_DEFAULT_TRAP_GROUP` | 既定 CoPP trap group | `CoppOrch` |
+| `SAI_SWITCH_ATTR_DEFAULT_TRAP_GROUP` | 既定 [CoPP](../reference/glossary.md#term-copp) trap group | `CoppOrch` |
 | `SAI_SWITCH_ATTR_PORT_LIST` | 全ポート OID リスト | `PortsOrch` |
 | `SAI_SWITCH_ATTR_PORT_NUMBER` | ポート数 | `PortsOrch` |
 | `SAI_SWITCH_ATTR_SRC_MAC_ADDRESS` | スイッチ自身の MAC | `SwitchOrch` |
-| `SAI_SWITCH_ATTR_FDB_AGING_TIME` | FDB エージングタイマ | `SwitchOrch` (`SWITCH\|switch` table) |
-| `SAI_SWITCH_ATTR_ECMP_HASH` / `LAG_HASH` | ECMP/LAG ハッシュ OID | `SwitchOrch` |
+| `SAI_SWITCH_ATTR_FDB_AGING_TIME` | [FDB](../reference/glossary.md#term-fdb) エージングタイマ | `SwitchOrch` (`SWITCH\|switch` table) |
+| `SAI_SWITCH_ATTR_ECMP_HASH` / `LAG_HASH` | [ECMP](../reference/glossary.md#term-ecmp)/[LAG](../reference/glossary.md#term-lag) ハッシュ OID | `SwitchOrch` |
 | `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_ALGORITHM` | ECMP ハッシュアルゴ | `SwitchOrch` |
 | `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_SEED` | ECMP ハッシュ seed | `SwitchOrch` |
-| `SAI_SWITCH_ATTR_ACL_STAGE_INGRESS` / `ACL_STAGE_EGRESS` | サポート ACL ステージ | `AclOrch` (capability 取得) |
+| `SAI_SWITCH_ATTR_ACL_STAGE_INGRESS` / `ACL_STAGE_EGRESS` | サポート [ACL](../reference/glossary.md#term-acl) ステージ | `AclOrch` (capability 取得) |
 | `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` / `MAXIMUM_PRIORITY` | ACL prio 範囲 | `AclOrch` |
 | `SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY` / `IPV6_ROUTE_ENTRY` | 残ルートテーブル容量 | `CrmOrch` |
 | `SAI_SWITCH_ATTR_AVAILABLE_IPV4_NEIGHBOR_ENTRY` / `IPV6_NEIGHBOR_ENTRY` | neighbor 残 | `CrmOrch` |
@@ -58,7 +58,7 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | `SAI_SWITCH_ATTR_AVAILABLE_NEXT_HOP_GROUP_ENTRY` / `MEMBER_ENTRY` | NHG 残 | `CrmOrch` |
 | `SAI_SWITCH_ATTR_FDB_EVENT_NOTIFY` | FDB イベント通知 cb | `FdbOrch` |
 | `SAI_SWITCH_ATTR_PORT_STATE_CHANGE_NOTIFY` | リンク状態通知 cb | `PortsOrch` |
-| `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` | BFD 状態通知 cb | `BfdOrch` |
+| `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` | [BFD](../reference/glossary.md#term-bfd) 状態通知 cb | `BfdOrch` |
 | `SAI_SWITCH_ATTR_SHUTDOWN_REQUEST_NOTIFY` | warm shutdown 通知 | `SwitchOrch` |
 | `SAI_SWITCH_ATTR_RESTART_WARM` / `WARM_RECOVER` | warm boot 制御 | `OrchDaemon`, `syncd` |
 | `SAI_SWITCH_ATTR_PRE_SHUTDOWN` | pre-shutdown phase | warm boot |
@@ -89,15 +89,15 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` / `EGRESS_SAMPLEPACKET_ENABLE` | sFlow | `SflowOrch` |
 | `SAI_PORT_ATTR_INGRESS_MACSEC_ACL` / `EGRESS_MACSEC_ACL` | MACsec ACL | `MACsecOrch` |
 | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` / `MULTICAST_STORM_CONTROL_POLICER_ID` / `FLOOD_STORM_CONTROL_POLICER_ID` | storm control | `PfcWdOrch` 等 |
-| `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` / `DSCP_TO_TC_MAP` / `TC_TO_QUEUE_MAP` | QoS マップ | `QosOrch` |
+| `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` / `DSCP_TO_TC_MAP` / `TC_TO_QUEUE_MAP` | [QoS](../reference/glossary.md#term-qos) マップ | `QosOrch` |
 | `SAI_PORT_ATTR_QOS_INGRESS_BUFFER_PROFILE_LIST` / `EGRESS_BUFFER_PROFILE_LIST` | バッファ | `BufferOrch` |
 | `SAI_PORT_ATTR_QOS_MAXIMUM_HEADROOM_SIZE` | headroom 上限 | `BufferOrch` |
-| `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` / `_MODE` / `_RX` / `_TX` | PFC | `PfcWdOrch`, `QosOrch` |
+| `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` / `_MODE` / `_RX` / `_TX` | [PFC](../reference/glossary.md#term-pfc) | `PfcWdOrch`, `QosOrch` |
 | `SAI_PORT_ATTR_GLOBAL_FLOW_CONTROL_FORWARD` / `PRIORITY_FLOW_CONTROL_FORWARD` | FC 転送可否 | `PortsOrch` |
 | `SAI_PORT_ATTR_INGRESS_PRIORITY_GROUP_LIST` / `NUMBER_OF_INGRESS_PRIORITY_GROUPS` | PG | `BufferOrch` |
 | `SAI_PORT_ATTR_PORT_SERDES_ID` | SerDes attribute object | `PortsOrch` |
-| `SAI_PORT_ATTR_ISOLATION_GROUP` | private VLAN 分離 | `IsoGrpOrch` |
-| `SAI_PORT_ATTR_FABRIC_ATTACHED` / `FABRIC_ATTACHED_PORT_INDEX` / `FABRIC_ATTACHED_SWITCH_ID` / `FABRIC_ISOLATE` | VOQ fabric | `FabricPortsOrch` |
+| `SAI_PORT_ATTR_ISOLATION_GROUP` | private [VLAN](../reference/glossary.md#term-vlan) 分離 | `IsoGrpOrch` |
+| `SAI_PORT_ATTR_FABRIC_ATTACHED` / `FABRIC_ATTACHED_PORT_INDEX` / `FABRIC_ATTACHED_SWITCH_ID` / `FABRIC_ISOLATE` | [VOQ](../reference/glossary.md#term-voq) fabric | `FabricPortsOrch` |
 | `SAI_PORT_ATTR_PATH_TRACING_INTF` / `PATH_TRACING_TIMESTAMP_TYPE` | Path tracing | `PortsOrch` |
 | `SAI_PORT_ATTR_IPG` | inter-packet gap | `PortsOrch` |
 | 関連: [Port 設計](../topics/14-platform-port-optics/architecture.md), [QoS/Buffer](../topics/08-qos-buffer/architecture.md) | | |
@@ -134,7 +134,7 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | `SAI_BRIDGE_PORT_ATTR_BRIDGE_ID` | 所属ブリッジ | `PortsOrch` |
 | `SAI_BRIDGE_PORT_ATTR_ADMIN_STATE` | bridge port up/down | `PortsOrch` |
 | `SAI_BRIDGE_PORT_ATTR_FDB_LEARNING_MODE` | learning モード | `PortsOrch` (`PORT\|learn_mode`) |
-| `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` | VXLAN tunnel BP | `VxlanTunnelOrch` |
+| `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` | [VXLAN](../reference/glossary.md#term-vxlan) tunnel BP | `VxlanTunnelOrch` |
 | `SAI_BRIDGE_PORT_ATTR_ISOLATION_GROUP` | private VLAN | `IsoGrpOrch` |
 
 ## BFD_SESSION (`sai_bfd_api`)
@@ -147,7 +147,7 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | `SAI_BFD_SESSION_ATTR_SRC_IP_ADDRESS` / `DST_IP_ADDRESS` | session 端点 | `BfdOrch` |
 | `SAI_BFD_SESSION_ATTR_SRC_MAC_ADDRESS` / `DST_MAC_ADDRESS` | L2 ヘッダ | `BfdOrch` |
 | `SAI_BFD_SESSION_ATTR_PORT` | tx 出力ポート | `BfdOrch` |
-| `SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER` | 所属 VRF | `BfdOrch` |
+| `SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER` | 所属 [VRF](../reference/glossary.md#term-vrf) | `BfdOrch` |
 | `SAI_BFD_SESSION_ATTR_BFD_ENCAPSULATION_TYPE` | encap (none / IP-in-IP) | `BfdOrch` |
 | `SAI_BFD_SESSION_ATTR_IPHDR_VERSION` | v4 / v6 | `BfdOrch` |
 | `SAI_BFD_SESSION_ATTR_UDP_SRC_PORT` | UDP src | `BfdOrch` |
@@ -231,7 +231,7 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | `SAI_QUEUE_ATTR_TYPE` | UC / MC / ALL | `QosOrch` |
 | `SAI_QUEUE_ATTR_INDEX` | キュー番号 | `QosOrch` |
 | `SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` | キュー bufprof | `BufferOrch` |
-| `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | WRED バインド | `QosOrch` |
+| `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | [WRED](../reference/glossary.md#term-wred) バインド | `QosOrch` |
 | `SAI_QUEUE_ATTR_PAUSE_STATUS` | PFC pause 状態 (RO) | `PfcWdOrch` |
 | `SAI_QUEUE_ATTR_PFC_DLR_INIT` | DLR トリガ | `PfcWdOrch` |
 | `SAI_SCHEDULER_ATTR_SCHEDULING_TYPE` | SP / WRR / DWRR | `QosOrch` (`SCHEDULER\|type`) |
@@ -249,13 +249,13 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | 属性 | 用途 | 関連 orch |
 |------|------|-----------|
 | `SAI_HOSTIF_ATTR_TYPE` | NETDEV / FD / GENETLINK | `HostIntfMgr` |
-| `SAI_HOSTIF_ATTR_OBJ_ID` | 対応する port / RIF | `HostIntfMgr` |
+| `SAI_HOSTIF_ATTR_OBJ_ID` | 対応する port / [RIF](../reference/glossary.md#term-rif) | `HostIntfMgr` |
 | `SAI_HOSTIF_ATTR_NAME` | netdev 名 (Ethernet0 等) | `HostIntfMgr` |
 | `SAI_HOSTIF_ATTR_OPER_STATUS` | netdev 状態 | `PortsOrch` |
 | `SAI_HOSTIF_ATTR_VLAN_TAG` | tag / strip / keep | `HostIntfMgr` |
 | `SAI_HOSTIF_ATTR_QUEUE` | hostif 受信キュー | `HostIntfMgr` |
 | `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` | genetlink グループ | `HostIntfMgr` (sFlow / psample) |
-| `SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE` | BGP / LACP / ARP / LLDP 等 | `CoppOrch` (`COPP_TRAP`) |
+| `SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE` | [BGP](../reference/glossary.md#term-bgp) / [LACP](../reference/glossary.md#term-lacp) / [ARP](../reference/glossary.md#term-arp) / [LLDP](../reference/glossary.md#term-lldp) 等 | `CoppOrch` (`COPP_TRAP`) |
 | `SAI_HOSTIF_TRAP_ATTR_PACKET_ACTION` | TRAP / COPY / DROP | `CoppOrch` |
 | `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` | trap 優先度 | `CoppOrch` |
 | `SAI_HOSTIF_TRAP_ATTR_TRAP_GROUP` | 所属 trap group (policer 共有) | `CoppOrch` |
@@ -266,7 +266,7 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 
 | 属性 | 用途 | 関連 orch |
 |------|------|-----------|
-| `SAI_TUNNEL_ATTR_TYPE` | VXLAN / IPINIP / MPLS / SRV6 | `VxlanTunnelOrch`, `TunnelDecapOrch` |
+| `SAI_TUNNEL_ATTR_TYPE` | VXLAN / IPINIP / [MPLS](../reference/glossary.md#term-mpls) / SRV6 | `VxlanTunnelOrch`, `TunnelDecapOrch` |
 | `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` / `OVERLAY_INTERFACE` | RIF | `VxlanTunnelOrch` |
 | `SAI_TUNNEL_ATTR_ENCAP_SRC_IP` / `ENCAP_DST_IP` | encap 端点 | `VxlanTunnelOrch` |
 | `SAI_TUNNEL_ATTR_ENCAP_TTL_MODE` / `ENCAP_TTL_VAL` | TTL | `VxlanTunnelOrch` |
@@ -291,7 +291,7 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | `SAI_ROUTER_INTERFACE_ATTR_MTU` | L3 MTU | `IntfsOrch` (`INTERFACE\|mtu`) |
 | `SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE` / `ADMIN_V6_STATE` / `ADMIN_MPLS_STATE` | プロトコル個別 admin | `IntfsOrch` |
 | `SAI_ROUTER_INTERFACE_ATTR_V4_MCAST_ENABLE` / `V6_MCAST_ENABLE` | MC RIF | `IntfsOrch` |
-| `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` | NAT zone | `NatOrch` |
+| `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` | [NAT](../reference/glossary.md#term-nat) zone | `NatOrch` |
 | `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` | self-loop drop | `IntfsOrch` |
 | `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID` | sub-port VID | `IntfsOrch` |
 
@@ -318,13 +318,13 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 | `SAI_ROUTE_ENTRY_ATTR_PREFIX_AGG_ID` | prefix 集約 ID | `RouteOrch` |
 | `SAI_NEIGHBOR_ENTRY_ATTR_DST_MAC_ADDRESS` | neighbor MAC | `NeighOrch` |
 | `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` | host route 抑止 | `NeighOrch` |
-| `SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX` | overlay encap idx | `NeighOrch` (EVPN) |
+| `SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX` | overlay encap idx | `NeighOrch` ([EVPN](../reference/glossary.md#term-evpn)) |
 | `SAI_NEIGHBOR_ENTRY_ATTR_IS_LOCAL` | local neighbor | `NeighOrch` |
 | `SAI_NEXT_HOP_ATTR_TYPE` | IP / TUNNEL / MPLS / SRV6 | `NeighOrch` / `VxlanTunnelOrch` |
 | `SAI_NEXT_HOP_ATTR_IP` / `ROUTER_INTERFACE_ID` | 基本 NH | `NeighOrch` |
 | `SAI_NEXT_HOP_ATTR_TUNNEL_ID` / `TUNNEL_VNI` / `TUNNEL_MAC` | overlay NH | `VxlanTunnelOrch` |
 | `SAI_NEXT_HOP_ATTR_LABELSTACK` / `OUTSEG_TYPE` | MPLS PUSH | `MplsOrch` |
-| `SAI_NEXT_HOP_ATTR_SRV6_SIDLIST_ID` | SRv6 H.Encaps | `Srv6Orch` |
+| `SAI_NEXT_HOP_ATTR_SRV6_SIDLIST_ID` | [SRv6](../reference/glossary.md#term-srv6) H.Encaps | `Srv6Orch` |
 | `SAI_NEXT_HOP_ATTR_DISABLE_DECREMENT_TTL` / `DISABLE_*_REWRITE` | rewrite 抑止 | `NeighOrch` |
 | `SAI_NEXT_HOP_GROUP_ATTR_TYPE` | ECMP / FINE_GRAIN_ECMP / PROTECTION | `NhgOrch` |
 | `SAI_NEXT_HOP_GROUP_ATTR_NEXT_HOP_LIST` | メンバ NH | `NhgOrch` |
@@ -358,7 +358,7 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 
 - syncd の `SAI_REDIS` ログや `saidump` 出力中の `SAI_*_ATTR_*` を本表で検索すれば、
   どの orch が書いた・どの CONFIG_DB に対応するかを当てやすい。
-- ASIC_DB (`COUNTERS_DB` 上の Redis) を `redis-cli -n 1 HGETALL ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...`
+- [ASIC_DB](../reference/glossary.md#term-asic_db) (`COUNTERS_DB` 上の [Redis](../reference/glossary.md#term-redis)) を `redis-cli -n 1 HGETALL ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...`
   すると、ここに並ぶ属性キーがそのまま値として現れる。
 - 完全な仕様（取得可否・型・デフォルト値・mandatory flag）は SAI ヘッダの doxygen コメントに記載。
   本表は「実装で実際に触られているかどうか」を補完するもの。
@@ -368,3 +368,5 @@ SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定�
 - [sonic-net/sonic-sairedis](https://github.com/sonic-net/sonic-sairedis/tree/88bc51ae95df66977601957515e5527119ffd4c5) @ `88bc51ae95df66977601957515e5527119ffd4c5` (SAI submodule pin)
 - [sonic-net/sonic-swss `orchagent/`](https://github.com/sonic-net/sonic-swss/tree/master/orchagent) — `SAI_*_ATTR_*` の全件 grep より抽出
 - SAI ヘッダ本体: [sonic-net/SAI](https://github.com/sonic-net/SAI) の `inc/sai*.h`
+
+<!-- glossary-links-injected: 31fc35d7a539 -->

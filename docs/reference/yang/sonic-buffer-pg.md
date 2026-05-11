@@ -72,7 +72,7 @@ module: sonic-buffer-pg
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BUFFER_PG`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_PG`
 
 <!-- ref-triangle:start -->
 
@@ -87,7 +87,7 @@ module: sonic-buffer-pg
 
 ### 典型的なデプロイ位置
 
-- QoS priority-group のバッファ割り当て。`BUFFER_PG|<port>|<pg-index>` を `swss/orchagent` の bufferorch が SAI へ反映する。
+- [QoS](../../reference/glossary.md#term-qos) priority-group のバッファ割り当て。`BUFFER_PG|<port>|<pg-index>` を `swss/orchagent` の bufferorch が [SAI](../../reference/glossary.md#term-sai) へ反映する。
 
 ### よくある落とし穴
 
@@ -112,3 +112,5 @@ show priority-group persistent-watermark headroom
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ecaa2e5d86b0 -->

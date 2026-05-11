@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`config qos` は QoS と buffer 関連テンプレートを再生成して CONFIG_DB に反映する CLI グループ。`clear` は既存 QoS 設定を削除し、`reload` は platform/HWSKU の `qos.json.j2` と `buffers*.json.j2` を `sonic-cfggen` で展開する[^1]。
+`config qos` は [QoS](../../reference/glossary.md#term-qos) と buffer 関連テンプレートを再生成して [CONFIG_DB](../../reference/glossary.md#term-config_db) に反映する CLI グループ。`clear` は既存 QoS 設定を削除し、`reload` は platform/HWSKU の `qos.json.j2` と `buffers*.json.j2` を `sonic-cfggen` で展開する[^1]。
 
 ## コマンド一覧
 
@@ -149,8 +149,8 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- QoS プロファイルの再ロード、TC マップ・スケジューラ・WRED の更新。
-- DSCP / dot1p / PFC priority の対応付け確認。
+- QoS プロファイルの再ロード、TC マップ・スケジューラ・[WRED](../../reference/glossary.md#term-wred) の更新。
+- DSCP / dot1p / [PFC](../../reference/glossary.md#term-pfc) priority の対応付け確認。
 
 ### よくある落とし穴
 
@@ -165,3 +165,5 @@ show priority-group persistent-watermark headroom
 show queue counters
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 87f89dd63737 -->

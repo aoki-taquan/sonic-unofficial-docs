@@ -28,18 +28,18 @@ related:
 
 - 既存 PUT/DELETE の何が「自然じゃない」のか
 - 「model 由来の自然な replace/delete」とは具体的にどんな挙動か
-- payload と YANG hierarchy traversal の **2 段階処理** はどう協調するか
+- payload と [YANG](../reference/glossary.md#term-yang) hierarchy traversal の **2 段階処理** はどう協調するか
 - 新しい `validate-xfmr` annotation は何のためで、旧 `get-validate` とどう違うか
 - defaults と DELETE が組み合わさったときの罠
 
 ## なぜ拡張が必要か
 
-SONiC の Management Framework Transformer は **YANG（OpenConfig 等）↔ 内部 ABNF / CONFIG_DB** を変換するコンポーネント。これまで RESTCONF の **PUT/REPLACE と DELETE は YANG 階層の任意深さで正しく動かない** 問題があった[^1]:
+SONiC の Management Framework Transformer は **YANG（OpenConfig 等）↔ 内部 ABNF / [CONFIG_DB](../reference/glossary.md#term-config_db)** を変換するコンポーネント。これまで RESTCONF の **PUT/REPLACE と DELETE は YANG 階層の任意深さで正しく動かない** 問題があった[^1]:
 
 - `PUT`: payload に無い兄弟ノードを残してしまう（純粋な replace ではない）
 - `DELETE`: target だけ削除し、配下を残す
 
-本 HLD はこれを **任意深さで** 自然に動くようにする[^1]:
+本 [HLD](../reference/glossary.md#term-hld) はこれを **任意深さで** 自然に動くようにする[^1]:
 
 - **PUT 完了後**: GET で取れるのは **payload + defaults のみ**（同階層の他データは消える）
 - **DELETE 完了後**: GET で配下も含めて空になる
@@ -115,7 +115,7 @@ curl -k -X DELETE \
 
 - **CVL**（Config Validation Library）: 既存通り呼ばれる
 - **subtree / post-transformer callback**: アプリ実装次第でカバー範囲が変わる
-- **gNMI / RESTCONF**: PUT / DELETE セマンティクス変更の影響先
+- **[gNMI](../reference/glossary.md#term-gnmi) / RESTCONF**: PUT / DELETE セマンティクス変更の影響先
 - **OpenConfig YANG models**: 主対象 / **SONiC YANG**: future
 
 ## トラブルシューティング
@@ -135,3 +135,5 @@ curl -i -k -X PUT ... | head -1
 - [Topic: gNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md)
 - [HLD: SONiC gNMI Server インタフェース設計](sonic-gnmi-server-interface-design.md)
 - [HLD: SONiC Management Framework](sonic-management-framework.md)
+
+<!-- glossary-links-injected: ef91cb130632 -->

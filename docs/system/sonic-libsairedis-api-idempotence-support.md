@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-orchagent と syncd の間にある **libsairedis API** の `create` / `set` / `remove` / `get` を **idempotent** にし、orchagent が warm restart 後に同じ呼出を繰り返しても data plane に影響を与えない設計[^1]。`get` は無害なので重複可、それ以外は libsairedis 内のキャッシュで重複を吸収して syncd まで降ろさない。
+[orchagent](../reference/glossary.md#term-orchagent) と [syncd](../reference/glossary.md#term-syncd) の間にある **libsairedis API** の `create` / `set` / `remove` / `get` を **idempotent** にし、orchagent が warm restart 後に同じ呼出を繰り返しても data plane に影響を与えない設計[^1]。`get` は無害なので重複可、それ以外は libsairedis 内のキャッシュで重複を吸収して syncd まで降ろさない。
 
 ## 動作仕様
 
@@ -38,7 +38,7 @@ orchagent と syncd の間にある **libsairedis API** の `create` / `set` / `
 | `OID2ATTR_<oid>` | 現在の OID → attributes（SET / REMOVE の duplicate 検出） |
 | `DEFAULT_OBJ_<owner>_<obj_key>` | libsai/SDK が作る default object に orchagent が後で attribute SET した場合の最新 attributes |
 
-`g_objectOwner` はアプリ識別子。同一 attributes だが意味が異なるケース（例: underlay loopback RIF と overlay loopback RIF が同 VR を参照）を別 OID にする[^1]。
+`g_objectOwner` はアプリ識別子。同一 attributes だが意味が異なるケース（例: underlay loopback [RIF](../reference/glossary.md#term-rif) と overlay loopback RIF が同 VR を参照）を別 OID にする[^1]。
 
 ### create フロー
 
@@ -101,13 +101,13 @@ libsai / SDK 起動時に作る default object（例: default switch）に orcha
 
 - 設計は **draft レベル**。同じ目的の別実装案（syncd view comparison）と競合
 - `ATTR2OID_*` のキー長が長くなる（attributes 全列挙）
-- Redis 単一インスタンスでは route flapping 等で律速の可能性
+- [Redis](../reference/glossary.md#term-redis) 単一インスタンスでは route flapping 等で律速の可能性
 
 ## 干渉する機能
 
 - **syncd view comparison**: 同じ問題を syncd 側で解く別案。どちらかを採用する設計選択
 - **warm reboot**: 本機能の主目的
-- **counter 系**: 別 redis instance 化の議論で COUNTERS_DB が引合に出る
+- **counter 系**: 別 redis instance 化の議論で [COUNTERS_DB](../reference/glossary.md#term-counters_db) が引合に出る
 
 ## 実装との乖離
 
@@ -116,11 +116,11 @@ libsai / SDK 起動時に作る default object（例: default switch）に orcha
 ### 1. ファイル + 行番号
 
 - **未取り込み**: `sonic-net/sonic-sairedis` の lib/ 配下（`ClientSai.cpp`, `RedisChannel.cpp`, `Recorder.cpp` 等）と syncd 配下を grep しても `ATTR2OID_`, `OID2ATTR_`, `DEFAULT_OID2ATTR_`, `DEFAULT_OBJ_`, `RESTORE_DB`（DB 番号 7）に対応するキー定義は **見当たらない**。`idempoten` の文字列ヒットも 0。
-- 現行 master の warm restart 経路は **syncd 側の view comparison**（`syncd/AsicView.cpp` / `syncd/BestCandidateFinder.cpp` / `syncd/HardReiniter.cpp`）で重複 OID 発行を抑止しており、HLD が示す「libsairedis 内 prefix scheme」ではない。
+- 現行 master の warm restart 経路は **syncd 側の view comparison**（`syncd/AsicView.cpp` / `syncd/BestCandidateFinder.cpp` / `syncd/HardReiniter.cpp`）で重複 OID 発行を抑止しており、[HLD](../reference/glossary.md#term-hld) が示す「libsairedis 内 prefix scheme」ではない。
 
 ### 2. 差分の中身
 
-HLD は libsairedis 内に以下のキー空間を用意して redis に保存し、warm restart 後の重複 SAI 呼び出しを libsairedis 層で握りつぶす設計を提案している:
+HLD は libsairedis 内に以下のキー空間を用意して redis に保存し、warm restart 後の重複 [SAI](../reference/glossary.md#term-sai) 呼び出しを libsairedis 層で握りつぶす設計を提案している:
 
 ```text
 DEFAULT_ATTR2OID_<serialized attrs>  → <oid>
@@ -144,8 +144,10 @@ DEFAULT_OBJ_<owner>_<obj_key>        → {attr: value, ...}
 
 #### 関連 GitHub Issue / PR
 
-- [GitHub Issue / PR の関連リンクは未確認] — warm restart 用 OID キャッシュ / duplicate 抑止は sonic-sairedis 内部リファクタとして散発的に取り込まれており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
+- [GitHub Issue / PR の関連リンクは未確認] — warm restart 用 OID キャッシュ / duplicate 抑止は [sonic-sairedis](../reference/glossary.md#term-sonic-sairedis) 内部リファクタとして散発的に取り込まれており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
 
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/warm-reboot/sai_redis_api_idempotence.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/warm-reboot/sai_redis_api_idempotence.md)
+
+<!-- glossary-links-injected: 32f24cf9f75a -->

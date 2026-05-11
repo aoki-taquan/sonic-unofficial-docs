@@ -27,17 +27,17 @@ keywords:
 
 # 概念と読み始め方
 
-この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。SONiC は、Linux distribution、複数の daemon、複数の Redis DB、ASIC vendor 固有の syncd、FRR のような外部 OSS、そして CLI / gNMI / RESTCONF / config_db.json といった複数の入口を組み合わせた NOS です。それぞれが独立した HLD を持つため、最初から HLD を順に読むと「設定 1 つを変えるためのコンテキスト」を組み立てるのに時間がかかります。
+この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。SONiC は、Linux distribution、複数の daemon、複数の [Redis](../../reference/glossary.md#term-redis) DB、ASIC vendor 固有の [syncd](../../reference/glossary.md#term-syncd)、[FRR](../../reference/glossary.md#term-frr) のような外部 OSS、そして CLI / [gNMI](../../reference/glossary.md#term-gnmi) / RESTCONF / [config_db.json](../../reference/glossary.md#term-config_db.json) といった複数の入口を組み合わせた NOS です。それぞれが独立した [HLD](../../reference/glossary.md#term-hld) を持つため、最初から HLD を順に読むと「設定 1 つを変えるためのコンテキスト」を組み立てるのに時間がかかります。
 
 このページでは、まず読み手が抱きやすい疑問を順に解いていきます。
 
 ## SONiC とは何か / 何の問題を解決するか
 
-SONiC は、ホワイトボックススイッチ上で BGP、L2、ACL、QoS、Telemetry といった一般的なネットワーク機能を提供する Linux ベースの NOS です。中心となる発想は次の 3 つです。
+SONiC は、ホワイトボックススイッチ上で [BGP](../../reference/glossary.md#term-bgp)、L2、[ACL](../../reference/glossary.md#term-acl)、[QoS](../../reference/glossary.md#term-qos)、Telemetry といった一般的なネットワーク機能を提供する Linux ベースの NOS です。中心となる発想は次の 3 つです。
 
-- **ASIC を vendor 非依存に扱う**: ベンダー固有の SDK ではなく SAI (Switch Abstraction Interface) を介して ASIC を操作する。
+- **ASIC を vendor 非依存に扱う**: ベンダー固有の SDK ではなく [SAI](../../reference/glossary.md#term-sai) (Switch Abstraction Interface) を介して ASIC を操作する。
 - **状態を Redis DB に集約する**: 設定、APP 層からの依頼、観測状態、ASIC への投影をすべて DB エントリで表現する。これにより、観測 / 監視 / 自動化が DB 単位で標準化できる。
-- **機能を docker container に分離する**: BGP、teamd、LLDP、syncd などを別 container にして、再起動・upgrade 単位を分ける。
+- **機能を docker container に分離する**: BGP、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)、[LLDP](../../reference/glossary.md#term-lldp)、syncd などを別 container にして、再起動・upgrade 単位を分ける。
 
 SONiC が解いているのは「複数 vendor のスイッチを 1 つの NOS で扱いたい」「ネットワークの状態を Linux 流のテキスト + DB で扱いたい」「機能ごとに upgrade したい」という運用課題です。
 
@@ -47,24 +47,24 @@ SONiC を構成軸で 3 つに分けると次のようになります。本章�
 
 | 軸 | 主な担当 | この章での扱い |
 | --- | --- | --- |
-| Management plane | CLI、gNMI、RESTCONF、ZTP、`config_db.json` | 中心トピック |
-| Control plane | bgpd / teamd / linkmgrd / orchagent | DB 経由でどう触るかの観点で扱う |
+| Management plane | CLI、gNMI、RESTCONF、[ZTP](../../reference/glossary.md#term-ztp)、`config_db.json` | 中心トピック |
+| Control plane | bgpd / teamd / [linkmgrd](../../reference/glossary.md#term-linkmgrd) / [orchagent](../../reference/glossary.md#term-orchagent) | DB 経由でどう触るかの観点で扱う |
 | Data plane | syncd / SAI / ASIC | 「設定が最終的にここに落ちる」程度に触れる |
 
-設定変更の話は management plane と control plane の境界、つまり「人間/コントローラの意図 → CONFIG_DB → daemon → ASIC」の経路を読むことが中心になります。
+設定変更の話は management plane と control plane の境界、つまり「人間/コントローラの意図 → [CONFIG_DB](../../reference/glossary.md#term-config_db) → daemon → ASIC」の経路を読むことが中心になります。
 
 ## 最初に押さえる用語
 
 | 用語 | 意味（最低限） |
 | --- | --- |
 | CONFIG_DB | 運用者 / コントローラの「意図」を保持する Redis DB。永続化対象は `config_db.json` |
-| APPL_DB | 各 `*mgrd` が orchagent に渡す「依頼」を保持する DB |
-| STATE_DB | SONiC daemon が観測した状態（link 状態、neighbor、PFC counter など） |
-| ASIC_DB | syncd / SAI に投影された ASIC object |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | 各 `*mgrd` が orchagent に渡す「依頼」を保持する DB |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | SONiC daemon が観測した状態（link 状態、neighbor、[PFC](../../reference/glossary.md#term-pfc) counter など） |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | syncd / SAI に投影された ASIC object |
 | orchagent | APPL_DB を読み、SAI 呼び出しで ASIC_DB に書き出す中心 daemon |
 | syncd | ASIC_DB を見て SAI/SDK に流す ASIC vendor 固有 daemon |
 | `*mgrd` / cfgd | CONFIG_DB をその機能ドメインの APPL_DB / Linux 設定に翻訳する daemon 群 |
-| GCU (Generic Config Updater) | `config apply-patch` / `replace` の中身。YANG validation 付きの差分適用 |
+| [GCU](../../reference/glossary.md#term-gcu) (Generic Config Updater) | `config apply-patch` / `replace` の中身。[YANG](../../reference/glossary.md#term-yang) validation 付きの差分適用 |
 | Management Framework | YANG → REST/gNMI → CONFIG_DB のパス。`sonic-cli` がこの上にいる |
 
 「`config` CLI」と「`sonic-cli`」は別系統です。前者は Click ベースで `sonic-utilities` に入っており、後者は Management Framework / YANG を経由します。両方が CONFIG_DB に向かうため、最終的な状態は同じですが、validation や RBAC、対応コマンド範囲が異なります。
@@ -100,7 +100,7 @@ flowchart LR
   ASIC --> SYNC[syncd]
 ```
 
-CLI を 1 行打っただけのように見えますが、内部では CONFIG_DB → FRR → FPM → APPL_DB → ASIC_DB と複数のホップを経由します。問題切り分けはこのホップのどこで止まったかで決まります。
+CLI を 1 行打っただけのように見えますが、内部では CONFIG_DB → FRR → [FPM](../../reference/glossary.md#term-fpm) → APPL_DB → ASIC_DB と複数のホップを経由します。問題切り分けはこのホップのどこで止まったかで決まります。
 
 ### シーン 2: 「Golden config をまるごと適用する」
 
@@ -176,3 +176,4 @@ flowchart LR
 
 この章は SONiC ドキュメント全体の入口に位置するため、特段の前提章はない。`docs/topics/index.md` の読み進め方マップを参照すること。
 
+<!-- glossary-links-injected: 9dc8d00bbbb1 -->

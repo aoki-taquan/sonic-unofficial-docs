@@ -28,12 +28,12 @@ related:
 
 ## 概要
 
-`sonic-mgmt-framework` は外部 API（REST / gNMI / CLI）と内部 CONFIG_DB / 各種 daemon 間の **モデル翻訳層** を担う[^1]。中核は次の 4 つ:
+`sonic-mgmt-framework` は外部 API（REST / [gNMI](../reference/glossary.md#term-gnmi) / CLI）と内部 [CONFIG_DB](../reference/glossary.md#term-config_db) / 各種 daemon 間の **モデル翻訳層** を担う[^1]。中核は次の 4 つ:
 
 - **北側 API server**: REST (OpenAPI)、gNMI（gRPC）、CLI（KLISH）からの要求を受ける
-- **Translib**: YANG モデル（openconfig / IETF / sonic-*）と内部表現の間の汎用変換ライブラリ
+- **Translib**: [YANG](../reference/glossary.md#term-yang) モデル（openconfig / IETF / sonic-*）と内部表現の間の汎用変換ライブラリ
 - **Transformer**: モデル間（openconfig YANG ↔ sonic YANG / CONFIG_DB）の写像を per-module に実装
-- **App-DB Layer**: CONFIG_DB / APPL_DB / STATE_DB へ Redis 経由で読み書き
+- **App-DB Layer**: CONFIG_DB / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) へ [Redis](../reference/glossary.md#term-redis) 経由で読み書き
 
 ## 動作仕様
 
@@ -59,7 +59,7 @@ flowchart LR
 - **Transformer は二種**: app-specific（openconfig ↔ sonic）と sonic-yang only（schema-driven）
 - **gNMI subscription**: STATE_DB の更新を SAMPLE / ON_CHANGE で stream（別ページ「gNMI Subscription for YANG Data」を参照）
 - **mgmt-framework container**: REST / Translib / Transformer / KLISH を 1 コンテナに同居させる構成
-- **認証/認可**: TLS + client cert、TACACS+/RADIUS/LDAP は AAA 改善 HLD に従う
+- **認証/認可**: TLS + client cert、TACACS+/RADIUS/LDAP は [AAA](../reference/glossary.md#term-aaa) 改善 [HLD](../reference/glossary.md#term-hld) に従う
 
 ## 主要なフロー
 
@@ -95,7 +95,7 @@ sequenceDiagram
 
 - **YANG モデルが定義されていない機能は API 化できない**: 機能側で sonic-* YANG を追加する必要がある
 - **transformer は per-module 実装**: openconfig 側の新モジュール対応は手作業のコストが高い
-- **ロールバック / 部分失敗**: GCU / JSON Patch ordering の HLD（同 architecture area）と組み合わせて初めて transactional になる
+- **ロールバック / 部分失敗**: [GCU](../reference/glossary.md#term-gcu) / JSON Patch ordering の HLD（同 architecture area）と組み合わせて初めて transactional になる
 - **大規模 GET の性能**: tree 全体取得はオブジェクト変換コストが高く、`fields=` 限定や paginate 推奨
 
 ## 干渉する機能
@@ -130,3 +130,5 @@ sequenceDiagram
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8b4906c6c628 -->

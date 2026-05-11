@@ -31,11 +31,11 @@ SONiC で L2 を読むときは、最初に「どの interface がどの forward
 
 ## SONiC の L2 は何の問題を解決するか
 
-データセンタの leaf-spine fabric では L2 を極力使わず L3 ECMP に寄せるのが王道ですが、現実にはサーバ - ToR 間の VLAN、management VLAN、ストレージ系の broadcast 要件、L2 over VXLAN を運ぶための L2 bridge など、L2 は完全には消えません。SONiC の L2 機能は以下を引き受けます。
+データセンタの leaf-spine fabric では L2 を極力使わず L3 [ECMP](../../reference/glossary.md#term-ecmp) に寄せるのが王道ですが、現実にはサーバ - ToR 間の [VLAN](../../reference/glossary.md#term-vlan)、management VLAN、ストレージ系の broadcast 要件、L2 over [VXLAN](../../reference/glossary.md#term-vxlan) を運ぶための L2 bridge など、L2 は完全には消えません。SONiC の L2 機能は以下を引き受けます。
 
 - VLAN bridge domain、tagged / untagged のメンバシップ、SVI を提供する。
-- 複数物理リンクを LAG (PortChannel) として束ねる。
-- FDB、STP、storm control、link event damping など L2 周りの保護機能を持つ。
+- 複数物理リンクを [LAG](../../reference/glossary.md#term-lag) ([PortChannel](../../reference/glossary.md#term-portchannel)) として束ねる。
+- [FDB](../../reference/glossary.md#term-fdb)、STP、storm control、link event damping など L2 周りの保護機能を持つ。
 - MC-LAG、sub-port interface など、L2 と L3 の境界にいる機能をサポートする。
 
 ## SONiC の中での位置
@@ -43,20 +43,20 @@ SONiC で L2 を読むときは、最初に「どの interface がどの forward
 | 軸 | 担当 |
 | --- | --- |
 | Management plane | `config vlan`, `config interface`, `config portchannel`, `CONFIG_DB.VLAN / VLAN_MEMBER / PORTCHANNEL` |
-| Control plane | vlanmgrd, intfmgrd, teammgrd / Linux teamd, fdb sync, STP daemon |
-| Data plane | VlanMgr / VlanMgrOrch, LagOrch, FdbOrch, SAI bridge-port / LAG |
+| Control plane | [vlanmgrd](../../reference/glossary.md#term-vlanmgrd), [intfmgrd](../../reference/glossary.md#term-intfmgrd), teammgrd / Linux [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd), fdb sync, STP daemon |
+| Data plane | VlanMgr / VlanMgrOrch, LagOrch, FdbOrch, [SAI](../../reference/glossary.md#term-sai) bridge-port / LAG |
 
 LAG の責務は Linux 側の `teamd` と SONiC の `teammgrd` / `LagOrch` に分かれており、最終的に SAI LAG object に落ちます。VLAN は Linux bridge を使わずに SAI bridge-port で扱う点が、一般的な Linux distribution と違う部分です。
 
 ## 最初に押さえる単位
 
-| 単位 | 主な CONFIG_DB | 役割 |
+| 単位 | 主な [CONFIG_DB](../../reference/glossary.md#term-config_db) | 役割 |
 |---|---|---|
 | 物理ポート | `PORT` | Ethernet ポートの速度、MTU、admin state、switchport mode、TPID など |
 | VLAN | `VLAN` | L2 broadcast domain の定義。名前は `Vlan<id>` |
 | VLAN メンバ | `VLAN_MEMBER` | `PORT` または `PORTCHANNEL` を VLAN に tagged / untagged で所属させる |
-| VLAN interface | `VLAN_INTERFACE` | VLAN を L3 SVI として使い、IP / VRF / proxy ARP などを持たせる |
-| PortChannel | `PORTCHANNEL` / `PORTCHANNEL_MEMBER` | 複数物理ポートを LACP LAG として束ねる |
+| VLAN interface | `VLAN_INTERFACE` | VLAN を L3 SVI として使い、IP / [VRF](../../reference/glossary.md#term-vrf) / proxy [ARP](../../reference/glossary.md#term-arp) などを持たせる |
+| PortChannel | `PORTCHANNEL` / `PORTCHANNEL_MEMBER` | 複数物理ポートを [LACP](../../reference/glossary.md#term-lacp) LAG として束ねる |
 | PortChannel interface | `PORTCHANNEL_INTERFACE` | PortChannel を L3 interface として使う |
 | Sub-port | `VLAN_SUB_INTERFACE` | 親 `Ethernet` / `PortChannel` 上に `.<vlan-id>` の L3 sub-interface を作る |
 
@@ -106,13 +106,13 @@ Switchport mode は、ポートや PortChannel をどう扱うかを運用者に
 
 VLAN interface は、VLAN 全体に対する L3 gateway です。`Vlan100` に `192.0.2.1/24` を持たせると、その VLAN に属する member port から来る端末の gateway になります。
 
-Sub-port は、親 interface 上の dot1q tag を L3 RIF として直接扱います。`Ethernet0.100` や `PortChannel100.20` のように、VLAN bridge domain へ入れるのではなく、親 interface + VLAN ID の組を L3 interface にします。既存 HLD では sub-port を L2 bridge port として使うことはスコープ外です。
+Sub-port は、親 interface 上の dot1q tag を L3 [RIF](../../reference/glossary.md#term-rif) として直接扱います。`Ethernet0.100` や `PortChannel100.20` のように、VLAN bridge domain へ入れるのではなく、親 interface + VLAN ID の組を L3 interface にします。既存 [HLD](../../reference/glossary.md#term-hld) では sub-port を L2 bridge port として使うことはスコープ外です。
 
 ## LAG と MC-LAG の境界
 
-通常の PortChannel は 1 台のスイッチ内で複数の物理ポートを束ねます。SONiC では `PORTCHANNEL` と `PORTCHANNEL_MEMBER` を `teammgrd` が読み、Linux `teamd` と orchagent の LAG programming へつなぎます。
+通常の PortChannel は 1 台のスイッチ内で複数の物理ポートを束ねます。SONiC では `PORTCHANNEL` と `PORTCHANNEL_MEMBER` を `teammgrd` が読み、Linux `teamd` と [orchagent](../../reference/glossary.md#term-orchagent) の LAG programming へつなぎます。
 
-MC-LAG は 2 台のスイッチが peer になり、下流ホストから 1 つの LAG に見えるように協調します。通常 LAG の設定に加えて、ICCP セッション、peer-link、MCLAG domain、remote MAC / ARP / ND 同期、isolation group、unique IP といった制御面が必要です。通常の PortChannel の延長ではなく、「2 台の制御面を同期する仕組み」として読むのが安全です。
+MC-LAG は 2 台のスイッチが peer になり、下流ホストから 1 つの LAG に見えるように協調します。通常 LAG の設定に加えて、ICCP セッション、peer-link、[MCLAG](../../reference/glossary.md#term-mclag) domain、remote MAC / ARP / ND 同期、isolation group、unique IP といった制御面が必要です。通常の PortChannel の延長ではなく、「2 台の制御面を同期する仕組み」として読むのが安全です。
 
 ## FDB、STP、storm control の位置づけ
 
@@ -152,3 +152,4 @@ STP / MSTP は L2 ループを避ける制御面です。Storm control はルー
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 
+<!-- glossary-links-injected: e619cbc46960 -->

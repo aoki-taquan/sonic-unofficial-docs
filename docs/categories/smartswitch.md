@@ -10,11 +10,11 @@ last_verified: 2026-05-10
 
 ## 概要
 
-**SmartSwitch** は、従来の単一 NPU 型 SONiC スイッチに **複数の DPU**（SmartNIC / IPU）を内蔵し、L2/L3 スイッチング機能を NPU 側、ステートフルな NAT / ACL / フロー処理を DPU 側に分担させるアーキテクチャです。Microsoft が提案した DASH の上位プラットフォームとして整備され、`HAMgrD` を中心とした HA、DPU ごとの gNOI 経路、`midplane` ブリッジによる DPU IP 管理など、独自のサブシステムが多数あります。
+**[SmartSwitch](../reference/glossary.md#term-smartswitch)** は、従来の単一 [NPU](../reference/glossary.md#term-npu) 型 SONiC スイッチに **複数の [DPU](../reference/glossary.md#term-dpu)**（SmartNIC / IPU）を内蔵し、L2/L3 スイッチング機能を NPU 側、ステートフルな [NAT](../reference/glossary.md#term-nat) / [ACL](../reference/glossary.md#term-acl) / フロー処理を DPU 側に分担させるアーキテクチャです。Microsoft が提案した [DASH](../reference/glossary.md#term-dash) の上位プラットフォームとして整備され、`HAMgrD` を中心とした HA、DPU ごとの [gNOI](../reference/glossary.md#term-gnoi) 経路、`midplane` ブリッジによる DPU IP 管理など、独自のサブシステムが多数あります。
 
-このカテゴリでは、SmartSwitch を横断するページを **NPU 側設計**（CONFIG_DB / APPL_DB の DPU overlay と HA actor）・**DPU 管理**（IP 割当・gNMI フィードバック・独立アップグレード・graceful shutdown）・**ENI Forwarding**（DASH ベースの DPU 振り分け）・**reboot 順序**（NPU と DPU の協調 reboot）に分類しています。HLD は数多くあるものの、DPU 側ソフトウェアは別リポ管理が多く、SmartSwitch ページだけで完結する設計ではありません。
+このカテゴリでは、SmartSwitch を横断するページを **NPU 側設計**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) の DPU overlay と HA actor）・**DPU 管理**（IP 割当・[gNMI](../reference/glossary.md#term-gnmi) フィードバック・独立アップグレード・graceful shutdown）・**[ENI](../reference/glossary.md#term-eni) Forwarding**（DASH ベースの DPU 振り分け）・**reboot 順序**（NPU と DPU の協調 reboot）に分類しています。[HLD](../reference/glossary.md#term-hld) は数多くあるものの、DPU 側ソフトウェアは別リポ管理が多く、SmartSwitch ページだけで完結する設計ではありません。
 
-SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが Redis ベース DB で、どこが DBUS / gNMI / gNOI 経由なのか）を押さえると全体が見えやすくなります。HA は DPU-Scope-DPU-Driven 構成が現行マスターブランチの主流で、`HAMgrD` の actor 分割が中心です。
+SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが [Redis](../reference/glossary.md#term-redis) ベース DB で、どこが DBUS / gNMI / gNOI 経由なのか）を押さえると全体が見えやすくなります。HA は DPU-Scope-DPU-Driven 構成が現行マスターブランチの主流で、`HAMgrD` の actor 分割が中心です。
 
 主要キーワード: `SmartSwitch`, `DPU`, `NPU`, `HA`, `gNMI`, `gNOI`, `HAMgrD`, `midplane`
 
@@ -22,7 +22,7 @@ SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが Redis ベ
 
 ### architecture（NPU 側設計 / HA）
 
-- [Smart Switch のデータベース構成（NPU 上の DPU overlay DB）](../architecture/smart-switch-database-design.md) (area: `architecture`, verification: `code-verified`) — DPU APPL_DB / STATE_DB の overlay 構造
+- [Smart Switch のデータベース構成（NPU 上の DPU overlay DB）](../architecture/smart-switch-database-design.md) (area: `architecture`, verification: `code-verified`) — DPU APPL_DB / [STATE_DB](../reference/glossary.md#term-state_db) の overlay 構造
 - [SmartSwitch HA - DPU-Scope-DPU-Driven 構成](../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md) (area: `architecture`, verification: `code-verified`) — 現行マスターの HA 主流
 - [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md) (area: `architecture`, verification: `discrepancy-found`)
 
@@ -78,3 +78,5 @@ SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが Redis ベ
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0bdb1766977f -->

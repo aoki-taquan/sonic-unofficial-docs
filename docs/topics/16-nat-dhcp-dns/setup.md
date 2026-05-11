@@ -17,28 +17,28 @@ sources:
 
 # 設定
 
-この章の機能は CLI と CONFIG_DB の二系統から設定でき、それぞれ YANG モデルで形式化されています。各リファレンスページの内容はそちら側を正にし、ここでは「どこを最初に編集するか」と「どの順で組み合わせるか」だけ示します。
+この章の機能は CLI と [CONFIG_DB](../../reference/glossary.md#term-config_db) の二系統から設定でき、それぞれ [YANG](../../reference/glossary.md#term-yang) モデルで形式化されています。各リファレンスページの内容はそちら側を正にし、ここでは「どこを最初に編集するか」と「どの順で組み合わせるか」だけ示します。
 
 ## NAT の設定入口
 
-NAT は次のレイヤで構成します。
+[NAT](../../reference/glossary.md#term-nat) は次のレイヤで構成します。
 
 - グローバル: `NAT_GLOBAL` で機能 enable / timeout / TCP/UDP の挙動を決めます。CLI は `config nat feature enable` と `config nat add ...`。
 - ゾーン: `NAT_ZONE` で interface に inside / outside を付けます（`config interface nat add inside|outside`）。
 - 静的: `STATIC_NAT` / `STATIC_NAPT` で 1:1 アドレス / port マッピング。
-- 動的: `NAT_POOL` + `NAT_BINDINGS` + ACL でプール / バインディング / マッチ条件を組みます。
+- 動的: `NAT_POOL` + `NAT_BINDINGS` + [ACL](../../reference/glossary.md#term-acl) でプール / バインディング / マッチ条件を組みます。
 
 CLI ツリーは [config nat](../../reference/cli/config-nat.md) / [show nat](../../reference/cli/show-nat.md) を参照してください。CONFIG_DB スキーマは [NAT テーブル群](../../reference/config-db/nat.md) と [sonic-nat YANG](../../reference/yang/sonic-nat.md) にあります。
 
 ## DHCP relay の設定入口
 
-DHCPv4 relay は VLAN ごとに upstream server を指定する形です。
+DHCPv4 relay は [VLAN](../../reference/glossary.md#term-vlan) ごとに upstream server を指定する形です。
 
 - CLI: `config vlan dhcp_relay add <vlan> <server_ip>` / `config vlan dhcp_relay del ...`。CLI plugin の正確な階層は [config dhcp_relay リファレンス](../../reference/cli/config-dhcp-relay.md) を参照してください。
 - CONFIG_DB: `DHCP_RELAY|<vlan>` の `dhcp_servers` リスト。v6 は同 entry の `dhcpv6_servers` と `dhcpv6_option|rfc6939_support`。詳細は [DHCPV4_RELAY スキーマ](../../reference/config-db/dhcpv4-relay.md) にあります。
 - giaddr 固定: `config interface ip add --secondary` で `VLAN_INTERFACE` に `secondary: "true"` を付けると、primary IPv4 が `-pg` で giaddr に固定されます。
 
-per-interface counter / Option 82 は CLI / CONFIG_DB レベルでは特別な操作が要らず、relay 起動時に自動で COUNTERS_DB に書かれます。
+per-interface counter / Option 82 は CLI / CONFIG_DB レベルでは特別な操作が要らず、relay 起動時に自動で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書かれます。
 
 ## DHCP server の設定入口
 
@@ -112,7 +112,7 @@ sudo config acl rule create NAT_ACL R10 --src-ip 10.10.0.0/24 --action FORWARD
 sudo config nat add binding BIND1 --pool POOL1 --acl-name NAT_ACL --nat-type dnat
 ```
 
-`NAT_POOL` / `NAT_BINDINGS` テーブルに反映され、`natsyncd` が conntrack を作成して `APPL_DB:NAT_TABLE` 経由で SAI へ流します。
+`NAT_POOL` / `NAT_BINDINGS` テーブルに反映され、`natsyncd` が conntrack を作成して `APPL_DB:NAT_TABLE` 経由で [SAI](../../reference/glossary.md#term-sai) へ流します。
 
 ## 設定シナリオ 3: ToR の DHCP relay と giaddr 固定
 
@@ -223,7 +223,7 @@ DHCP server / relay の Option 6（DNS server）と Option 15（domain name）�
 
 - CLI: `config nat`、`show nat`、`config interface nat`、`config vlan dhcp_relay`、`config dhcp_server ipv4`、`show dhcp_relay ipv4`、`show dhcp_server ipv4`
 - CONFIG_DB: `NAT_GLOBAL`、`NAT_ZONE`、`STATIC_NAT`、`STATIC_NAPT`、`NAT_POOL`、`NAT_BINDINGS`、`DHCP_RELAY`、`DHCP_SERVER_IPV4`、`DHCP_SERVER_IPV4_RANGE`、`DHCP_SERVER_IPV4_PORT`、`DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS`、`VLAN_INTERFACE`（secondary giaddr 用）
-- APPL_DB: `NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`
+- [APPL_DB](../../reference/glossary.md#term-appl_db): `NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`
 - COUNTERS_DB: NAT / DHCP relay の per-entry / per-interface counter
 - YANG: [`sonic-nat`](../../reference/yang/sonic-nat.md)、[`sonic-dhcp-server`](../../reference/yang/sonic-dhcp-server.md)、`sonic-dhcpv4-relay`
 
@@ -237,3 +237,5 @@ DHCP server / relay の Option 6（DNS server）と Option 15（domain name）�
 - [DHCP_SERVER_IPV4 CONFIG_DB](../../reference/config-db/dhcp-server-ipv4.md)
 - [sonic-nat YANG](../../reference/yang/sonic-nat.md)
 - [sonic-dhcp-server YANG](../../reference/yang/sonic-dhcp-server.md)
+
+<!-- glossary-links-injected: 469d17d8763e -->

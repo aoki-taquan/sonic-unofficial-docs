@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-debug-counter`
 
-パケットドロップ理由ベースのデバッグカウンタ設定と、永続的ドロップモニタの YANG モジュール[^1]。3 つのサブコンテナ `DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` / `DEBUG_DROP_MONITOR` を持つ。
+パケットドロップ理由ベースのデバッグカウンタ設定と、永続的ドロップモニタの [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。3 つのサブコンテナ `DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` / `DEBUG_DROP_MONITOR` を持つ。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -97,7 +97,7 @@ module: sonic-debug-counter
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `DEBUG_COUNTER`, `DEBUG_COUNTER_DROP_REASON`, `DEBUG_DROP_MONITOR`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEBUG_COUNTER`, `DEBUG_COUNTER_DROP_REASON`, `DEBUG_DROP_MONITOR`
 - CLI: `config debug-counter`, `show debug-counter`
 
 <!-- ref-triangle:start -->
@@ -114,7 +114,7 @@ module: sonic-debug-counter
 
 ### 典型的なデプロイ位置
 
-- デバッグカウンタ (drop reason 等) 定義。`DEBUG_COUNTER|<name>` を debug_counter_orch が SAI に登録。
+- デバッグカウンタ (drop reason 等) 定義。`DEBUG_COUNTER|<name>` を debug_counter_orch が [SAI](../../reference/glossary.md#term-sai) に登録。
 
 ### よくある落とし穴
 
@@ -131,3 +131,5 @@ show dropcounters configuration
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-debug-counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: bbcc78132807 -->

@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-SONiC の SNMP Entity MIB（RFC 2737）実装は当初、`entityPhysical` グループの **transceiver と DOM sensor** だけが対象で、`entPhysicalContainedIn` も埋まっておらず物理階層を取れなかった[^1]。本 HLD はこれを拡張して:
+SONiC の [SNMP](../reference/glossary.md#term-snmp) Entity MIB（RFC 2737）実装は当初、`entityPhysical` グループの **transceiver と DOM sensor** だけが対象で、`entPhysicalContainedIn` も埋まっておらず物理階層を取れなかった[^1]。本 [HLD](../reference/glossary.md#term-hld) はこれを拡張して:
 
 1. **`entityPhysical` の MIB object を全部** 実装する
 2. **thermal sensor / fan / fan tachometer / PSU / PSU fan / PSU 内 sensor** を物理エンティティとして追加
@@ -76,7 +76,7 @@ Chassis
 
 ### データソース
 
-`sonic-snmpagent` (`sonic_ax_impl`) は Redis を直接読む実装。各 sensor / module 情報は STATE_DB のテーブルに依存:
+`sonic-snmpagent` (`sonic_ax_impl`) は [Redis](../reference/glossary.md#term-redis) を直接読む実装。各 sensor / module 情報は [STATE_DB](../reference/glossary.md#term-state_db) のテーブルに依存:
 
 | MIB object 群 | DB ソース |
 |---------------|-----------|
@@ -202,3 +202,5 @@ redis-cli -n 6 KEYS "FAN_INFO|*"
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3ef536773086 -->

@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-ポートミラーリング (SPAN / ERSPAN) セッションを CONFIG_DB で定義するテーブル。`MirrorOrch` が CONFIG_DB を購読し、SAI MIRROR_SESSION オブジェクトに変換する[^1]。ERSPAN では outer GRE/IP ヘッダ用パラメータ (src_ip / dst_ip / dscp / ttl / gre_type) を伴い、SPAN では `dst_port` (ローカル物理ポートまたは `CPU`) を指定する。
+ポートミラーリング (SPAN / ERSPAN) セッションを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`MirrorOrch` が CONFIG_DB を購読し、[SAI](../../reference/glossary.md#term-sai) MIRROR_SESSION オブジェクトに変換する[^1]。ERSPAN では outer GRE/IP ヘッダ用パラメータ (src_ip / dst_ip / dscp / ttl / gre_type) を伴い、SPAN では `dst_port` (ローカル物理ポートまたは `CPU`) を指定する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -74,13 +74,13 @@ MIRROR_SESSION|<name>
 ## 購読者
 
 - `swss` 内の `orchagent` (`MirrorOrch`)
-- 関連 STATE_DB: `MIRROR_SESSION_TABLE` にセッションのアクティブ状態が反映される
+- 関連 [STATE_DB](../../reference/glossary.md#term-state_db): `MIRROR_SESSION_TABLE` にセッションのアクティブ状態が反映される
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `POLICER`、`PORT`、`PORTCHANNEL`
 - 関連 CLI: `config mirror_session add/remove`
-- 関連 YANG: `sonic-mirror-session`、`sonic-policer`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mirror-session`、`sonic-policer`
 
 <!-- ref-triangle:start -->
 
@@ -126,3 +126,5 @@ sonic-db-cli STATE_DB hgetall 'MIRROR_SESSION_TABLE|everflow0'
 show mirror_session
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: adfb05b6fe02 -->

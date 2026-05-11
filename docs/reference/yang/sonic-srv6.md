@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-vrf`
 - top container: `sonic-srv6`
 
-Segment Routing over IPv6 (SRv6) configuration for SONiC.[^1]
+Segment Routing over IPv6 ([SRv6](../../reference/glossary.md#term-srv6)) configuration for SONiC.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -78,7 +78,7 @@ module: sonic-srv6
 | `node_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/node_len` | `uint8` |  | `16` | range 1..128 | Length in bits of the SRv6 locator node portion. |
 | `func_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/func_len` | `uint8` |  | `16` | range 0..128 | Length in bits of the SRv6 SID function portion. |
 | `arg_len` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/arg_len` | `uint8` |  | `0` | range 0..128 | Length in bits of the SRv6 SID argument portion. |
-| `vrf` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/vrf` | `union` |  | `default` | leafref(VRF) or `default` | VRF name. |
+| `vrf` | `sonic-srv6/SRV6_MY_LOCATORS/SRV6_MY_LOCATORS_LIST/vrf` | `union` |  | `default` | leafref([VRF](../../reference/glossary.md#term-vrf)) or `default` | VRF name. |
 | `ip_prefix` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/ip_prefix` | `inet:ipv6-prefix` | yes |  |  | IPv6 prefix representing this SID. |
 | `locator` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/locator` | `leafref` | yes |  | /srv6:sonic-srv6/srv6:SRV6_MY_LOCATORS/srv6:SRV6_MY_LOCATORS_LIST/srv6:locator_name | Reference to the parent SRv6 locator. |
 | `action` | `sonic-srv6/SRV6_MY_SIDS/SRV6_MY_SIDS_LIST/action` | `enumeration` |  |  | `uN`, `uDT46` | SRv6 endpoint behavior (uN for prefix SID, uDT46 for decap with VRF lookup). |
@@ -101,7 +101,7 @@ module: sonic-srv6
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SRV6_MY_LOCATORS`, `SRV6_MY_SIDS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SRV6_MY_LOCATORS`, `SRV6_MY_SIDS`
 
 <!-- ref-triangle:start -->
 
@@ -114,3 +114,5 @@ module: sonic-srv6
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-srv6.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: ec6746ccf582 -->

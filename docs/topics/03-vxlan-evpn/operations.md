@@ -15,16 +15,16 @@ sources:
 
 # Overlay 運用
 
-Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS / hash の順に見ると無駄が少なくなります。VXLAN の外側パケットが届かない問題と、EVPN / VNET route が入らない問題は、最初から分けて扱います。
+Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、[QoS](../../reference/glossary.md#term-qos) / hash の順に見ると無駄が少なくなります。[VXLAN](../../reference/glossary.md#term-vxlan) の外側パケットが届かない問題と、[EVPN](../../reference/glossary.md#term-evpn) / [VNET](../../reference/glossary.md#term-vnet) route が入らない問題は、最初から分けて扱います。
 
 ## 確認順
 
 1. Underlay で remote VTEP IP に到達できるか。
 2. `VXLAN_TUNNEL` と `VXLAN_TUNNEL_MAP` / `VNET` が想定どおり DB に入っているか。
-3. EVPN 利用時は BGP-EVPN session、VNI、Type-2 / Type-5 の受信状態を見る。
-4. VNET route 利用時は `VNET_ROUTE_TUNNEL_TABLE`、endpoint、monitoring、BFD state を見る。
-5. ASIC 側で tunnel object、tunnel nexthop、NHG member、route / FDB が作られているかを確認する。
-6. 負荷分散や loss が問題なら DSCP remap、PBH inner hash、ECMP / ARS の影響を切り分ける。
+3. EVPN 利用時は [BGP](../../reference/glossary.md#term-bgp)-EVPN session、VNI、Type-2 / Type-5 の受信状態を見る。
+4. VNET route 利用時は `VNET_ROUTE_TUNNEL_TABLE`、endpoint、monitoring、[BFD](../../reference/glossary.md#term-bfd) state を見る。
+5. ASIC 側で tunnel object、tunnel nexthop、NHG member、route / [FDB](../../reference/glossary.md#term-fdb) が作られているかを確認する。
+6. 負荷分散や loss が問題なら DSCP remap、PBH inner hash、[ECMP](../../reference/glossary.md#term-ecmp) / ARS の影響を切り分ける。
 
 ## Overlay ECMP と BFD
 
@@ -44,9 +44,9 @@ flowchart LR
 
 ## DSCP remap
 
-Tunnel traffic の DSCP remap は、特に Dual-ToR の bounce-back 経路で PFC deadlock を避けるための QoS 機能です。VXLAN/VNET そのものの到達性ではなく、tunnel encap / decap 時の DSCP、TC、PG、Queue の対応を変えます。
+Tunnel traffic の DSCP remap は、特に Dual-ToR の bounce-back 経路で [PFC](../../reference/glossary.md#term-pfc) deadlock を避けるための QoS 機能です。VXLAN/VNET そのものの到達性ではなく、tunnel encap / decap 時の DSCP、TC、PG、Queue の対応を変えます。
 
-切り分けでは、`TUNNEL` / `TUNNEL_DECAP_TABLE` に QoS map が紐付いているか、`dscp_mode` が想定どおりか、ASIC_DB に `SAI_TUNNEL_ATTR_ENCAP_QOS_*` / `DECAP_QOS_*` が入っているかを確認します。
+切り分けでは、`TUNNEL` / `TUNNEL_DECAP_TABLE` に QoS map が紐付いているか、`dscp_mode` が想定どおりか、[ASIC_DB](../../reference/glossary.md#term-asic_db) に `SAI_TUNNEL_ATTR_ENCAP_QOS_*` / `DECAP_QOS_*` が入っているかを確認します。
 
 ## Inner packet hashing
 
@@ -54,11 +54,11 @@ Encapsulated traffic の ECMP 偏りを見るときは、outer 5-tuple で hash 
 
 ## Local ARS との境界
 
-Local ARS は ECMP の next-hop 選択を static hash ではなく queue depth や port utilization で動的に変える発展機能です。既存ページでは現行 master で SWSS / YANG / CLI への取り込み未完了の可能性が示されているため、VXLAN/VNET の通常運用手順として前提にしない方が安全です。設計比較や将来機能として読む位置づけです。
+Local ARS は ECMP の next-hop 選択を static hash ではなく queue depth や port utilization で動的に変える発展機能です。既存ページでは現行 master で SWSS / [YANG](../../reference/glossary.md#term-yang) / CLI への取り込み未完了の可能性が示されているため、VXLAN/VNET の通常運用手順として前提にしない方が安全です。設計比較や将来機能として読む位置づけです。
 
 ## show vxlan の出力サンプル
 
-`show vxlan tunnel` は CONFIG_DB の `VXLAN_TUNNEL` と STATE_DB / APPL_DB の oper 状態を結合します。EVPN 由来の場合 `Creation Source = EVPN`、static 設定なら `CLI` 等が出ます。
+`show vxlan tunnel` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VXLAN_TUNNEL` と [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) の oper 状態を結合します。EVPN 由来の場合 `Creation Source = EVPN`、static 設定なら `CLI` 等が出ます。
 
 ```text
 +---------+-------------+-------------------+--------------+
@@ -73,7 +73,7 @@ Local ARS は ECMP の next-hop 選択を static hash ではなく queue depth �
 Total count : 3
 ```
 
-`show vxlan vlanvnimap` は VLAN と VNI の対応を表示します。
+`show vxlan vlanvnimap` は [VLAN](../../reference/glossary.md#term-vlan) と VNI の対応を表示します。
 
 ```text
 +---------+-------+
@@ -102,9 +102,9 @@ VNET 構成では `show vnet routes all` で `Vnet name`、`Prefix`、`Endpoints
 
 | 観測 | 疑う状態 | 一次切り分け |
 |---|---|---|
-| `show vxlan tunnel` で `OperStatus=oper_down` | underlay 到達性なし、SIP/DIP 不一致、SAI tunnel 未作成 | `ping <remote VTEP>`、`show ip route <remote>`、ASIC_DB の tunnel object 有無 |
+| `show vxlan tunnel` で `OperStatus=oper_down` | underlay 到達性なし、SIP/DIP 不一致、[SAI](../../reference/glossary.md#term-sai) tunnel 未作成 | `ping <remote VTEP>`、`show ip route <remote>`、ASIC_DB の tunnel object 有無 |
 | `show vxlan remotevni` が空だが EVPN Up | Type-3 受信なし、VNI not imported、RT 不一致 | `vtysh -c "show bgp l2vpn evpn route"`、route-target 整合 |
-| FDB に MAC が入らない | Type-2 受信なし、または vxlanmgrd 反映失敗 | `show mac`、`vtysh -c "show evpn mac vni <id>"` |
+| FDB に MAC が入らない | Type-2 受信なし、または [vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd) 反映失敗 | `show mac`、`vtysh -c "show evpn mac vni <id>"` |
 | VNET route の endpoint が NHG から外れる | BFD Down 検出、custom monitor failure | `show muxcable health` 系ではなく vnet 用 monitor／`show vnet endpoint` |
 | inner traffic が同じ nexthop に偏る | outer 5-tuple のみで hash、PBH inner hash 未設定 | `show pbh` 設定、`show counters` で member 偏り |
 | DSCP 値が想定と違う | encap / decap QoS map 未紐付け | `TUNNEL_DECAP_TABLE`、`TC_TO_DSCP_MAP`、ASIC_DB の `SAI_TUNNEL_ATTR_ENCAP_QOS_*` |
@@ -112,7 +112,7 @@ VNET 構成では `show vnet routes all` で `Vnet name`、`Prefix`、`Endpoints
 
 ## 典型的なログサンプル
 
-vxlanorch / VnetOrch / FRR EVPN 関連の代表ログ:
+vxlanorch / VnetOrch / [FRR](../../reference/glossary.md#term-frr) EVPN 関連の代表ログ:
 
 ```text
 vxlanmgrd: VxlanTunnel 'tunnel_v4' was added
@@ -144,7 +144,7 @@ syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
 | VNET endpoint 監視 | `show vnet endpoint` |
 | EVPN MAC / Type-2 | `vtysh -c "show evpn mac vni all"` |
 | EVPN IP-prefix / Type-5 | `vtysh -c "show evpn next-hops vni all"` |
-| EVPN VRF route | `vtysh -c "show bgp l2vpn evpn route"` |
+| EVPN [VRF](../../reference/glossary.md#term-vrf) route | `vtysh -c "show bgp l2vpn evpn route"` |
 | BFD endpoint | `show bfd summary`、APPL_DB の BFD_SESSION |
 | Counter clear | `sonic-clear vxlancounters` |
 | PBH 設定 | `show pbh table`、`show pbh rule`、`show pbh hash` |
@@ -177,3 +177,5 @@ syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
 - [ECMP inner packet hashing テストプラン](../../routing/test-plan-for-inner-packet-hashing-in-ecmp.md)
 - [Policy Based Hashing](../../architecture/sonic-policy-based-hashing.md)
 - [Local ARS](../../routing/local-ars-hld.md)
+
+<!-- glossary-links-injected: a80c59f067fa -->

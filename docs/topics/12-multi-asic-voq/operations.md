@@ -13,7 +13,7 @@ sources:
 
 # 運用
 
-Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から見るか、line card から見るか、ASIC namespace から見るか。ここでは典型的な確認順を整理します。
+Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から見るか、line card から見るか、ASIC namespace から見るか。ここでは典型的な確認順を整理します。
 
 ## どこから見るかの判定
 
@@ -22,7 +22,7 @@ Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこか
 | 物理 inventory（line card / fabric / PSU / fan） | supervisor の PMON / Entity MIB |
 | line card 個別の port up/down、route、neighbor | line card host の `show` に `--namespace asic0` など |
 | ASIC 内部 counter（queue、buffer、PG） | line card の ASIC namespace |
-| VOQ counter（ingress 側 per-system-port queue） | line card の COUNTERS_DB を aggregate |
+| VOQ counter（ingress 側 per-system-port queue） | line card の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を aggregate |
 | chassis 全体の system port、line card 状態 | supervisor の Chassis DB |
 
 CLI 上は `show platform inventory` / `show chassis modules` などが supervisor で chassis 全体を見せ、line card 内では従来の `show interfaces` 系が namespace を集約して見せます。
@@ -49,7 +49,7 @@ LINE-CARD1|asic1|Ethernet0                512          2      0          1     4
 ...
 ```
 
-`Oper-Status` が `Offline` のまま戻らない line card は、まず supervisor `/var/log/syslog` の `chassisd` / `chassis_db_init` のエラーを追います。`Online (boot)` で長時間止まる場合は line card 側 `bgpd`/`swss` 起動が SAI 初期化で詰まっている可能性があり、line card にログインして `docker ps` と `journalctl -u swss@asic0` を見ます。
+`Oper-Status` が `Offline` のまま戻らない line card は、まず supervisor `/var/log/syslog` の `chassisd` / `chassis_db_init` のエラーを追います。`Online (boot)` で長時間止まる場合は line card 側 `bgpd`/`swss` 起動が [SAI](../../reference/glossary.md#term-sai) 初期化で詰まっている可能性があり、line card にログインして `docker ps` と `journalctl -u swss@asic0` を見ます。
 
 ### line card からの典型 show 出力
 
@@ -71,7 +71,7 @@ Neighbor        V    AS  MsgRcvd  MsgSent  Up/Down   State/PfxRcd
 
 ## Aggregate VOQ Counter
 
-`aggregate-voq-counters-in-sonic` HLD は、VOQ counter が ASIC namespace ごとに分散している問題を解決します。VOQ は ingress 側で egress system port ごとに存在するため、「ある egress system port の輻輳」を知りたいときに、全 ingress line card の COUNTERS_DB を横断する必要があります。
+`aggregate-voq-counters-in-sonic` [HLD](../../reference/glossary.md#term-hld) は、VOQ counter が ASIC namespace ごとに分散している問題を解決します。VOQ は ingress 側で egress system port ごとに存在するため、「ある egress system port の輻輳」を知りたいときに、全 ingress line card の COUNTERS_DB を横断する必要があります。
 
 集約は以下の流れで行います。
 
@@ -123,7 +123,7 @@ DB スキーマは原典の [Aggregate VOQ Counters HLD](../../internals/aggrega
 
 ## Entity MIB / Entity Sensor MIB
 
-`sonic-entity-mib-and-entity-sensor-mib-extension` は、chassis を含む物理コンポーネントツリーを SNMP で公開するための entityPhysical / entitySensor 拡張を定義します。
+`sonic-entity-mib-and-entity-sensor-mib-extension` は、chassis を含む物理コンポーネントツリーを [SNMP](../../reference/glossary.md#term-snmp) で公開するための entityPhysical / entitySensor 拡張を定義します。
 
 - chassis -> linecard -> ASIC -> port のような階層を `entPhysicalTable` で表現します。
 - thermal / voltage / current / fan speed を `entSensorTable` 系で提供します。
@@ -168,7 +168,7 @@ SNMPv2-SMI::mib-2.47.1.1.1.1.2.10 = STRING: "ASIC 0 on Linecard slot 1"
 問題タイプ別の入口の例:
 
 1. **特定の egress port で drop が見える**: line card 側 `show interfaces counters` で drop 種別を確認し、ingress 側全 line card の VOQ counter を aggregate で確認、fabric port の link monitoring を見る。
-2. **route が片方向しか上がっていない**: line card ごとの BGP namespace で neighbor 状態確認、Chassis DB の system port presence、`show ip route --namespace` で各 ASIC namespace を順に見る。
+2. **route が片方向しか上がっていない**: line card ごとの [BGP](../../reference/glossary.md#term-bgp) namespace で neighbor 状態確認、Chassis DB の system port presence、`show ip route --namespace` で各 ASIC namespace を順に見る。
 3. **新しい line card が立ち上がらない**: supervisor PMON で module 検出ログ、Chassis DB の line card 登録、line card 起動ログ（sub_role / hwsku 取得失敗を検索）。
 4. **fabric link error**: supervisor PMON で fabric card 状態、`show fabric` 系コマンド、line card 側 fabric port counter。
 
@@ -225,3 +225,5 @@ SNMPv2-SMI::mib-2.47.1.1.1.1.2.10 = STRING: "ASIC 0 on Linecard slot 1"
 - [PMON for Multi-ASIC Platforms](../../system/platform-monitor-design-for-multi-asic-platforms.md)
 - [PMON for Chassis Subsystem](../../system/platform-monitor-requirement-for-chassis-subsystem.md)
 - [Entity MIB / Entity Sensor MIB 拡張](../../system/sonic-entity-mib-and-entity-sensor-mib-extension.md)
+
+<!-- glossary-links-injected: 0ae9a48e5601 -->

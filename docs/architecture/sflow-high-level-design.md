@@ -37,9 +37,9 @@ sFlow は ASIC が一定 sampling-rate でパケットをサンプリングし�
 
 - **`hsflowd`**: Host sFlow daemon（OSS）。実際に collector へ datagram を送る user-space プロセス
 - **`sflowmgrd`**: SONiC 側の管理 daemon。`CONFIG_DB` の `SFLOW` / `SFLOW_SESSION` / `SFLOW_COLLECTOR` を読んで `hsflowd` の設定ファイル / `STATE_DB` を更新
-- **SAI sample-packet API**: ASIC 側の sampling 設定。`SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` を port に紐づけて per-port sampling-rate を駆動
+- **[SAI](../reference/glossary.md#term-sai) sample-packet API**: ASIC 側の sampling 設定。`SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` を port に紐づけて per-port sampling-rate を駆動
 
-`SflowOrch` が sflowmgrd の指示を受けて syncd 経由で SAI に設定を流す。
+`SflowOrch` が sflowmgrd の指示を受けて [syncd](../reference/glossary.md#term-syncd) 経由で SAI に設定を流す。
 
 ## 動作仕様
 
@@ -64,7 +64,7 @@ flowchart LR
 
 ## sample_rate 既定値
 
-HLD と実装は揃って `(ifSpeed / 1e6)` を既定値とする（`SflowMgr::findSamplingRate()` は `oper_speed` 文字列を Mbps 単位でそのまま返す）:
+[HLD](../reference/glossary.md#term-hld) と実装は揃って `(ifSpeed / 1e6)` を既定値とする（`SflowMgr::findSamplingRate()` は `oper_speed` 文字列を Mbps 単位でそのまま返す）:
 
 - 1G   → 1000
 - 10G  → 10000
@@ -139,7 +139,7 @@ config sflow interface sample-rate Ethernet0 10000
 ## 制限事項
 
 - collector は **2 件まで**（HLD 制限）
-- VRF 内 collector は `collector_vrf` 指定が必要（`default` / `mgmt` / 任意 VRF）
+- [VRF](../reference/glossary.md#term-vrf) 内 collector は `collector_vrf` 指定が必要（`default` / `mgmt` / 任意 VRF）
 - sampling は ingress 方向のみ（egress sampling は別 HLD で扱う場合あり）
 - ASIC が sample-packet API をサポートしない platform では機能しない
 
@@ -148,7 +148,7 @@ config sflow interface sample-rate Ethernet0 10000
 - **port speed 変更**: 自動 sample-rate 算出があるため、speed change 時に `sflowmgrd` が再計算する設計
 - **VRF**: collector 到達経路を VRF 指定する。`mgmt` VRF と data VRF を意識する必要あり
 - **counter polling**: `polling_interval` で counters を集める。0 で polling 無効
-- **EverFlow / mirror**: 別系統の packet capture。ACL action と SAI sampling は独立
+- **EverFlow / mirror**: 別系統の packet capture。[ACL](../reference/glossary.md#term-acl) action と SAI sampling は独立
 
 ## トラブルシューティング
 
@@ -163,7 +163,7 @@ config sflow interface sample-rate Ethernet0 10000
 ### 1. どこで乖離が確認されたか
 
 - **取り込み済み（一致）**:
-  - `sonic-swss/cfgmgr/sflowmgr.cpp:103-212, 280, 353` で `SflowMgr` が CONFIG_DB / STATE_DB を購読し、APP_DB に sample_rate を書く経路。
+  - `sonic-swss/cfgmgr/sflowmgr.cpp:103-212, 280, 353` で `SflowMgr` が [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) を購読し、APP_DB に sample_rate を書く経路。
   - `sonic-swss/orchagent/sfloworch.cpp:120, 164, 227` で `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` を SAI に投入。
   - `sonic-buildimage/files/build_templates/sflow.service.j2`、`sonic-yang-models/yang-models/sonic-sflow.yang`、`sonic-utilities/config/main.py` の `config sflow` は実装済。
 - **実装と HLD の不一致（既定 sample_rate）**:
@@ -196,7 +196,7 @@ config sflow interface sample-rate Ethernet0 10000
 #### 関連 GitHub Issue / PR
 
 - [sonic-buildimage #20327: Sflow configurations cannot be removed with SONiC CLI commands (open)](https://github.com/sonic-net/sonic-buildimage/issues/20327) — CLI からの設定削除の不整合。HLD と現行 sflowmgrd 実装の運用面ギャップとして既知。
-- [sonic-buildimage #16607: \[sflow\] Remove the ENABLE_SFLOW_DROPMON flag (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16607) — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。
+- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #16607: \[sflow\] Remove the ENABLE_SFLOW_DROPMON flag (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16607) — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。
 
 ## 引用元
 
@@ -217,3 +217,5 @@ config sflow interface sample-rate Ethernet0 10000
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7c7826dedf86 -->

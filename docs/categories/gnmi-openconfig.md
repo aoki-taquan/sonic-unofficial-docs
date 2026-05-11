@@ -10,9 +10,9 @@ last_verified: 2026-05-10
 
 ## 概要
 
-SONiC の管理プレーンは **Management Framework**（REST / gNMI / Translib / Transformer）と **sonic-gnmi**（gNMI Server）を中心に、CONFIG_DB と SONiC YANG / OpenConfig YANG の双方を扱う構造になっています。`telemetryd` が gNMI Subscribe を提供し、`gnmi-native` モード（SONiC YANG）と `gnmi-translib` モード（OpenConfig 経由）が共存します。設定経路では **Generic Config Updater (GCU)** が JSON Patch を YANG 制約に従って段階的に apply する仕組みを担当します。
+SONiC の管理プレーンは **Management Framework**（REST / [gNMI](../reference/glossary.md#term-gnmi) / Translib / Transformer）と **sonic-gnmi**（gNMI Server）を中心に、[CONFIG_DB](../reference/glossary.md#term-config_db) と SONiC [YANG](../reference/glossary.md#term-yang) / OpenConfig YANG の双方を扱う構造になっています。`telemetryd` が gNMI Subscribe を提供し、`gnmi-native` モード（SONiC YANG）と `gnmi-translib` モード（OpenConfig 経由）が共存します。設定経路では **Generic Config Updater ([GCU](../reference/glossary.md#term-gcu))** が JSON Patch を YANG 制約に従って段階的に apply する仕組みを担当します。
 
-gNOI は gRPC ベースの **運用 API**（OS install / System reboot / File / FactoryReset / Healthz / Wake-on-LAN など）で、DBUS 経由でホスト側サービスを叩く構造になっています。SONiC 内では `system / OS / file / factory_reset / healthz` などのサービス実装が `sonic-gnmi` 配下にあり、SmartSwitch では DPU 単位の gNOI を持ちます。
+[gNOI](../reference/glossary.md#term-gnoi) は gRPC ベースの **運用 API**（OS install / System reboot / File / FactoryReset / Healthz / Wake-on-LAN など）で、DBUS 経由でホスト側サービスを叩く構造になっています。SONiC 内では `system / OS / file / factory_reset / healthz` などのサービス実装が `sonic-gnmi` 配下にあり、[SmartSwitch](../reference/glossary.md#term-smartswitch) では [DPU](../reference/glossary.md#term-dpu) 単位の gNOI を持ちます。
 
 このカテゴリは gNMI / gNOI / OpenConfig / YANG・Management Framework に関わるページを area 横断でまとめます。本ドキュメントで最も関連ページが多い（57 件）カテゴリで、YANG リファレンスが大半を占めるのは設計通りです。
 
@@ -114,7 +114,7 @@ YANG リファレンスは全件 `code-verified`。詳細は [reference/yang イ
 ## verification ステータス注意点
 
 - **hld-only**: `save-on-set-hld.md`, `smart-switch-gnmi-feedback-design-omit-in-toc.md`
-- **discrepancy-found**: `gnmi-master-arbitration-hld.md`, `sonic-yang-model-guidelines.md`, `liquid-cooling-leakage-detection-in-sonic.md`, `smartswitch-dpu-graceful-shutdown.md`, `wake-on-lan-in-sonic.md` — HLD と実装に差異あり
+- **discrepancy-found**: `gnmi-master-arbitration-hld.md`, `sonic-yang-model-guidelines.md`, `liquid-cooling-leakage-detection-in-sonic.md`, `smartswitch-dpu-graceful-shutdown.md`, `wake-on-lan-in-sonic.md` — [HLD](../reference/glossary.md#term-hld) と実装に差異あり
 
 ## 関連カテゴリ
 
@@ -122,3 +122,5 @@ YANG リファレンスは全件 `code-verified`。詳細は [reference/yang イ
 - [BGP / EVPN 関連](bgp-evpn.md)
 - [MIB / SNMP 関連](mib-snmp.md)
 - [Container / Build system 関連](container-build.md)
+
+<!-- glossary-links-injected: abd2c70baa6c -->

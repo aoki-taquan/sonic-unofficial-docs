@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-ASIC 側 SerDes は SWSS の `PortsOrch`（→ vendor SAI）が、CMIS モジュール側は PMON の `xcvrd` が制御するという二段構成だが、両者を **「ASIC が high-speed signal を送り始めてからモジュール初期化を始める」** 順で同期させる必要がある。従来は `STATE_DB.PORT.host_tx_ready` フラグを **PortsOrch が SAI Admin UP の戻りで即立てる** 設計だったが、以下のギャップがあった[^1]:
+ASIC 側 SerDes は SWSS の `PortsOrch`（→ vendor [SAI](../reference/glossary.md#term-sai)）が、CMIS モジュール側は PMON の `xcvrd` が制御するという二段構成だが、両者を **「ASIC が high-speed signal を送り始めてからモジュール初期化を始める」** 順で同期させる必要がある。従来は `STATE_DB.PORT.host_tx_ready` フラグを **PortsOrch が SAI Admin UP の戻りで即立てる** 設計だったが、以下のギャップがあった[^1]:
 
 1. ASIC ポート初期化に時間がかかり、Admin UP 戻り直後に signal が出ていないケース（特に BiDi 等の新世代 transceiver）
 2. モジュール未挿入時に ASIC が signal を出しっぱなしになり、隣接ポートへのクロストーク・EMI・transceiver 寿命短縮を招く
@@ -95,7 +95,7 @@ m_portTable->set(port.m_alias, {{"host_tx_ready", attr.value.u32 ? "true" : "fal
 
 ## トラブルシューティング
 
-- `redis-cli -n 6 hget "PORT_TABLE|<port>" host_tx_ready`（STATE_DB）
+- `redis-cli -n 6 hget "PORT_TABLE|<port>" host_tx_ready`（[STATE_DB](../reference/glossary.md#term-state_db)）
 - `redis-cli -n 6 hgetall "TRANSCEIVER_INFO|<port>"` でモジュール挿抜状態
 - ASIC 側 capability: vendor SAI のログまたは debug 系コマンドで `HOST_TX_SIGNAL_ENABLE` / `HOST_TX_READY` の値確認
 
@@ -116,3 +116,5 @@ m_portTable->set(port.m_alias, {{"host_tx_ready", attr.value.u32 ? "true" : "fal
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a64504b824d7 -->

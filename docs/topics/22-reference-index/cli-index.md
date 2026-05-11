@@ -124,6 +124,8 @@ last_verified: 2026-05-10
 
 ## 補足
 
-- `show ip / show ipv6` ページは BGP 章と VRF 章の両方から参照される。主入口は VRF 章。
+- `show ip / show ipv6` ページは [BGP](../../reference/glossary.md#term-bgp) 章と [VRF](../../reference/glossary.md#term-vrf) 章の両方から参照される。主入口は VRF 章。
 - `config interface` は L2 章と VRF 章の双方から参照される。主入口は L2 章。
-- `config-mgmt-trio` は management framework / gNMI 章で扱う想定だが、Phase B 第 1 波では未実装のため上記 15 章プレースホルダとして残す。
+- `config-mgmt-trio` は management framework / [gNMI](../../reference/glossary.md#term-gnmi) 章で扱う想定だが、Phase B 第 1 波では未実装のため上記 15 章プレースホルダとして残す。
+
+<!-- glossary-links-injected: d913b2e2ebed -->

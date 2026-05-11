@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SmartSwitch では DPU の graceful reboot に続き **graceful shutdown** をサポートする[^1]。"reboot の前半" に見えるが、CLI 起動経路、コードパス、PMON container の制限（`docker` / `bash` / `hostexec` 不可）から実装が分離される。chassisd が NPU 側で動き、各 DPU には gNOI Reboot RPC (`HALT`) を発行する `gnoi_reboot_daemon.py` 経由で並列に shutdown を投げる構成。
+[SmartSwitch](../reference/glossary.md#term-smartswitch) では [DPU](../reference/glossary.md#term-dpu) の graceful reboot に続き **graceful shutdown** をサポートする[^1]。"reboot の前半" に見えるが、CLI 起動経路、コードパス、PMON container の制限（`docker` / `bash` / `hostexec` 不可）から実装が分離される。chassisd が [NPU](../reference/glossary.md#term-npu) 側で動き、各 DPU には [gNOI](../reference/glossary.md#term-gnoi) Reboot RPC (`HALT`) を発行する `gnoi_reboot_daemon.py` 経由で並列に shutdown を投げる構成。
 
 ## 動作仕様
 
@@ -55,7 +55,7 @@ flowchart LR
 2. ユーザが `config chassis module shutdown DPUx` を発行
 3. `chassisd` → `module_base.set_admin_state(down)` を呼出
 4. `module_base.py` は **DEVICE_METADATA の `subtype="SmartSwitch"` かつ `switch_type != dpu`** を確認。条件成立で `graceful_shutdown_handler()` 経路へ。それ以外は通常の `module.set_admin_state(down)`
-5. `graceful_shutdown_handler()` が STATE_DB の `CHASSIS_MODULE_INFO_TABLE|DPUx` に `state_transition_in_progress=True`, `transition_type=shutdown` を書き込む
+5. `graceful_shutdown_handler()` が [STATE_DB](../reference/glossary.md#term-state_db) の `CHASSIS_MODULE_INFO_TABLE|DPUx` に `state_transition_in_progress=True`, `transition_type=shutdown` を書き込む
 6. `gnoi_reboot_daemon` は変化を検出し DPUx の sysmgr に **gNOI Reboot RPC `HALT`** を送る。sysmgr は DBUS で `reboot -p` を発行
 7. daemon が `gnoi_client -rpc RebootStatus` で polling
 8. DPU が kernel shutdown 完了後、daemon が `state_transition_in_progress=False` に戻す（タイムアウト時は失敗結果を書く）
@@ -82,7 +82,7 @@ key: `CHASSIS_MODULE_INFO_TABLE|<MODULE>`
 
 複数 DPU の graceful shutdown は並列に実行される[^1]。`module_base.py` と `smartswitch_reboot_helper` が同 module の `state_transition_in_progress` に書き込みを競った場合、**先に True に書いた側が勝つ**。負け側は失敗扱いで再投を要求される。
 
-主要シナリオ（HLD 抜粋）[^1]:
+主要シナリオ（[HLD](../reference/glossary.md#term-hld) 抜粋）[^1]:
 
 | Scenario | 結果 |
 |----------|------|
@@ -128,7 +128,7 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 ## CLI / CONFIG_DB / YANG
 
 - CLI: `config chassis module shutdown DPUx`（既存 chassis CLI 流用）[^1]
-- CONFIG_DB は本 HLD では追加なし。STATE_DB の `CHASSIS_MODULE_INFO_TABLE` のフィールドが拡張される
+- [CONFIG_DB](../reference/glossary.md#term-config_db) は本 HLD では追加なし。STATE_DB の `CHASSIS_MODULE_INFO_TABLE` のフィールドが拡張される
 
 ## 制限事項
 
@@ -142,7 +142,7 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 - **Smart Switch Reboot (`smartswitch_reboot_helper`)**: 同じ STATE_DB フィールドで race
 - **smartswitch-pmon HLD**: chassisd / pmon の親設計
 - **Independent DPU Upgrade**: shutdown 経路を再利用する可能性
-- **gNOI / gNMI**: HALT を含む reboot RPC の依存
+- **gNOI / [gNMI](../reference/glossary.md#term-gnmi)**: HALT を含む reboot RPC の依存
 
 ## 実装との乖離
 
@@ -188,8 +188,8 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 
 - **HLD 記述**: 新フィールドを `sonic-chassis-module.yang` に追加する想定。
 - **実装位置**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-chassis-module.yang` に `transition_in_progress` / `gnoi_halt_in_progress` フィールドの取り込みは確認できない。
-- **読者への影響**: ConfigMgmt / GNMI 経由でこれらフィールドへアクセスしようとしても YANG model 経由では到達できず、`sonic-db-cli` 等 raw アクセスのみが手段になる。
-- **回避策**: フィールドは Redis 直叩き（`redis-cli -n 6` / `sonic-db-cli STATE_DB`）で扱う。
+- **読者への影響**: ConfigMgmt / GNMI 経由でこれらフィールドへアクセスしようとしても [YANG](../reference/glossary.md#term-yang) model 経由では到達できず、`sonic-db-cli` 等 raw アクセスのみが手段になる。
+- **回避策**: フィールドは [Redis](../reference/glossary.md#term-redis) 直叩き（`redis-cli -n 6` / `sonic-db-cli STATE_DB`）で扱う。
 
 ### 4. HLD は v0.1 (2025-12) Initial Proposal で master 取り込み未確認
 
@@ -239,3 +239,5 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 898f4197cacb -->

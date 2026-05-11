@@ -15,17 +15,17 @@ sources:
 
 # Reboot 運用と障害調査
 
-reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。特に warm reboot は「コマンドが成功したか」だけでは不十分で、FDB/neighbor/route/LAG/BGP が期待通り戻ったかを見る必要があります。
+reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。特に warm reboot は「コマンドが成功したか」だけでは不十分で、[FDB](../../reference/glossary.md#term-fdb)/neighbor/route/[LAG](../../reference/glossary.md#term-lag)/[BGP](../../reference/glossary.md#term-bgp) が期待通り戻ったかを見る必要があります。
 
 ## 失敗時の確認順
 
 1. reboot 種別と入口を確認する。`reboot`、`fast-reboot`、`warm-reboot`、service restart のどれかで見る DB と log が変わります。
 2. pre-check と終了コードを確認する。次回 image 検証、platform pre-check、FW auto-update conflict は reboot 前に失敗します。
-3. warm path では pre-shutdown ACK、DB backup、syncd shutdown、SAI warm shutdown のどこで止まったかを分けます。
-4. 起動後は reconciliation の完了、EOIU、neighbor/route restore、teamd/LACP restore を確認します。
+3. warm path では pre-shutdown ACK、DB backup、[syncd](../../reference/glossary.md#term-syncd) shutdown、[SAI](../../reference/glossary.md#term-sai) warm shutdown のどこで止まったかを分けます。
+4. 起動後は reconciliation の完了、EOIU、neighbor/route restore、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)/[LACP](../../reference/glossary.md#term-lacp) restore を確認します。
 5. 最後に reboot-cause 履歴を見て、想定 reboot か crash/panic/watchdog かを切り分けます。
 
-[Reboot-cause 履歴の STATE_DB / テレメトリ公開](../../system/reboot-cause-information-via-telemetry-agent.md) は、起動時に cause を判定し、STATE_DB と telemetry へ公開する流れを説明しています。
+[Reboot-cause 履歴の STATE_DB / テレメトリ公開](../../system/reboot-cause-information-via-telemetry-agent.md) は、起動時に cause を判定し、[STATE_DB](../../reference/glossary.md#term-state_db) と telemetry へ公開する流れを説明しています。
 
 ```text
 admin@sonic:~$ show reboot-cause
@@ -51,7 +51,7 @@ cat /host/reboot-cause/previous-reboot-cause.json
 
 warm reboot では自装置だけでなく peer 側の待ち時間が結果を左右します。LAG peer が短い timeout で partner を落とすと、data plane を維持しても bundle が崩れます。[Warm-reboot 中の LACP retry count 拡張](../../switching/increasing-lacp-pdu-timeout-during-warm-reboot.md) は、LACP PDU の拡張により warm reboot 中の retry count を増やす設計です。
 
-BGP も同様に Graceful Restart と timer が前提です。warm reboot を有効化しても、peer が GR を許容しなければ L3 adjacency は維持されません。
+BGP も同様に [Graceful Restart](../../reference/glossary.md#term-graceful-restart) と timer が前提です。warm reboot を有効化しても、peer が GR を許容しなければ L3 adjacency は維持されません。
 
 ```text
 sw01# show bgp neighbors 10.0.0.1 graceful-restart
@@ -75,7 +75,7 @@ bgp         true      bgp_timer              180
 teamd       true      teamsyncd_timer         30
 ```
 
-LACP の retry 拡張は teamd 側のオプション化されており、warm reboot 中だけ retry を増やします。同 HLD のシーケンス図と CONFIG_DB の `WARM_RESTART_TABLE` を併せて読みます。
+LACP の retry 拡張は teamd 側のオプション化されており、warm reboot 中だけ retry を増やします。同 [HLD](../../reference/glossary.md#term-hld) のシーケンス図と [CONFIG_DB](../../reference/glossary.md#term-config_db) の `WARM_RESTART_TABLE` を併せて読みます。
 
 ## multi-ASIC warm reboot
 
@@ -202,3 +202,5 @@ May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 - [Warmboot Manager](../../system/warmboot-manager-hld.md)
 - [SWSS docker warm restart](../../system/sonic-swss-docker-warm-restart.md)
 - [SWSS docker の Warm Restart 実装メモ](../../system/swss-docker-warm-restart-code-reference.md)
+
+<!-- glossary-links-injected: a0c544b0ce3b -->

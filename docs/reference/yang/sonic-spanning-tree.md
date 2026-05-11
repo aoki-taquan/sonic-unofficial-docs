@@ -24,7 +24,7 @@ related:
 - import: `sonic-extension`
 - top container: `sonic-spanning-tree`
 
-PVST / RSTP / MSTP のグローバル・VLAN 別・ポート別・MST instance/port 別の設定を保持する[^1]。
+PVST / RSTP / MSTP のグローバル・[VLAN](../../reference/glossary.md#term-vlan) 別・ポート別・MST instance/port 別の設定を保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -135,7 +135,7 @@ module: sonic-spanning-tree
 | `max_age` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/max_age` | `uint8` |  |  | range 6..40 | Per-VLAN max age |
 | `priority` | `sonic-spanning-tree/STP_VLAN/STP_VLAN_LIST/priority` | `uint16` |  |  | range 0..61440 | Per-VLAN bridge priority |
 | `vlan-name` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/vlan-name` | `leafref` | yes |  | ../../../STP_VLAN/STP_VLAN_LIST/name | Reference to VLAN |
-| `ifname` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/ifname` | `leafref` | yes |  | ../../../STP_PORT/STP_PORT_LIST/ifname | Reference to Ethernet interface or PortChannel |
+| `ifname` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/ifname` | `leafref` | yes |  | ../../../STP_PORT/STP_PORT_LIST/ifname | Reference to Ethernet interface or [PortChannel](../../reference/glossary.md#term-portchannel) |
 | `path_cost` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/path_cost` | `uint64` |  |  | range 1..200000000 | Path cost per VLAN per port |
 | `priority` | `sonic-spanning-tree/STP_VLAN_PORT/STP_VLAN_PORT_LIST/priority` | `uint8` |  |  | range 0..240 (step 16) | Port priority per VLAN |
 | `ifname` | `sonic-spanning-tree/STP_PORT/STP_PORT_LIST/ifname` | `leafref` | yes |  | Ethernet/PortChannel | Reference to Ethernet interface or PortChannel |
@@ -178,7 +178,7 @@ module: sonic-spanning-tree
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `STP`, `STP_VLAN`, `STP_VLAN_PORT`, `STP_PORT`, `STP_MST`, `STP_MST_INST`, `STP_MST_PORT`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `STP`, `STP_VLAN`, `STP_VLAN_PORT`, `STP_PORT`, `STP_MST`, `STP_MST_INST`, `STP_MST_PORT`
 - CLI: `config spanning-tree`, `show spanning-tree`
 
 <!-- ref-triangle:start -->
@@ -212,3 +212,5 @@ show spanning_tree
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-spanning-tree.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 48a4ad682f2a -->

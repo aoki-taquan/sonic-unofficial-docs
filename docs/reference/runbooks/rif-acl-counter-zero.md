@@ -34,7 +34,7 @@ related:
 ## 想定原因
 
 1. **`FLEX_COUNTER_TABLE|ACL` / `FLEX_COUNTER_TABLE|RIF` が disable**
-2. **ACL rule が ASIC に install されていない**: orchagent エラーで install 失敗
+2. **[ACL](../../reference/glossary.md#term-acl) rule が ASIC に install されていない**: [orchagent](../../reference/glossary.md#term-orchagent) エラーで install 失敗
 3. **rule の match 条件にトラフィックが該当していない** (DSCP / src_ip / in_port のミスマッチ)
 4. **rule 優先度 (`PRIORITY`) が他 rule に隠されている**: 先に match した別 rule に取られている
 5. **stage / type 不一致**: L3 rule を `INGRESS_L2` テーブルに入れている
@@ -88,7 +88,7 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS_RIF_NAME_MAP"
 sonic-db-cli COUNTERS_DB hgetall "COUNTERS:oid:<RIF OID>"
 ```
 
-- 期待: 各 VLAN / portchannel L3 interface に対応する OID あり、increment あり
+- 期待: 各 [VLAN](../../reference/glossary.md#term-vlan) / portchannel L3 interface に対応する OID あり、increment あり
 
 ## 対処方法
 
@@ -107,5 +107,7 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:oid:<RIF OID>"
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — aclorch / intfsorch
-[^2]: sonic-net/sonic-utilities @ 39732bceb — acl_loader / aclshow
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — aclorch / intfsorch
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — acl_loader / aclshow
+
+<!-- glossary-links-injected: 7e711c4007df -->

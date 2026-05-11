@@ -54,7 +54,7 @@ build 時に `SB_BUILD` フラグで切替[^1]:
 | `dev` | `signing_secure_boot_dev.py` | ユーザがコンパイル時に鍵を供給 |
 | `production` | `signing_secure_boot_production.py` | 鍵は使わない / 外部 sign server へ送って署名済 component を受領 |
 
-production スクリプトは **ベンダ各社が自分のフローに合わせて実装** する想定。HLD は dev 用スクリプトのみ供給する[^1]。
+production スクリプトは **ベンダ各社が自分のフローに合わせて実装** する想定。[HLD](../reference/glossary.md#term-hld) は dev 用スクリプトのみ供給する[^1]。
 
 ```mermaid
 flowchart LR
@@ -98,7 +98,7 @@ HLD は明示的に **"Phase 1 Design"** とラベル付け[^1]. 即ち:
 
 ### CLI / CONFIG_DB
 
-HLD では具体的な CONFIG_DB / CLI 拡張は **明示されていない**[^1]。Secure Boot の有効化は build 時の `SB_BUILD` と UEFI 側の Setup Mode / User Mode 切替で決まり、ランタイム設定は基本ない。署名済イメージを書き込んで boot するだけ。
+HLD では具体的な [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI 拡張は **明示されていない**[^1]。Secure Boot の有効化は build 時の `SB_BUILD` と UEFI 側の Setup Mode / User Mode 切替で決まり、ランタイム設定は基本ない。署名済イメージを書き込んで boot するだけ。
 
 ## 設定
 
@@ -202,7 +202,7 @@ make SECURE_UPGRADE_MODE=dev \
 
 - [sonic-buildimage #5282: Secure boot (open)](https://github.com/sonic-net/sonic-buildimage/pull/5282) — Secure Boot 機能の元 PR。長期 open で部分マージのみ。
 - [sonic-buildimage #24287: Secureboot: Install boot components in sonic-to-sonic installs for Secure Boot enabled images (open)](https://github.com/sonic-net/sonic-buildimage/pull/24287) — sonic-to-sonic upgrade パスでの secureboot 整合性修正 PR (open)。
-- [sonic-buildimage #24249: Bug: \[Trixie\] Debian 13 with grub 2.12-9 can't chainload onie with grub 2.04 on secure boot enabled machines (open)](https://github.com/sonic-net/sonic-buildimage/issues/24249) — chain of trust の現実装上の制約を示す bug。
+- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #24249: Bug: \[Trixie\] Debian 13 with grub 2.12-9 can't chainload onie with grub 2.04 on secure boot enabled machines (open)](https://github.com/sonic-net/sonic-buildimage/issues/24249) — chain of trust の現実装上の制約を示す bug。
 
 ## 引用元
 
@@ -214,3 +214,5 @@ make SECURE_UPGRADE_MODE=dev \
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8935cf9724b3 -->

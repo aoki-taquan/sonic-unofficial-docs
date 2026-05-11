@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-SONiC-VS（Virtual Switch）は ASIC を SAI VS バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。本ドキュメントは [`doc/test/Bring-up_Sonic-VS_on_Cloud_top.md`](https://github.com/sonic-net/SONiC/blob/master/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md) を基にした手順サマリである[^1]。
+SONiC-VS（Virtual Switch）は ASIC を [SAI](../reference/glossary.md#term-sai) VS バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。本ドキュメントは [`doc/test/Bring-up_Sonic-VS_on_Cloud_top.md`](https://github.com/sonic-net/SONiC/blob/master/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md) を基にした手順サマリである[^1]。
 
 [GNS3 経路](sonic-on-gns3-vm.md) は GUI 中心、本ページは **CLI で libvirt を直接叩く** 経路。
 
@@ -117,7 +117,7 @@ telnet localhost 7000
 # user: admin / pass: YourPaSsWoRd
 ```
 
-`virsh create` は **persistent ではない** 起動。再起動後に消える。永続化したい場合は `virsh define` を使う[^1]（HLD には記載なし）。
+`virsh create` は **persistent ではない** 起動。再起動後に消える。永続化したい場合は `virsh define` を使う[^1]（[HLD](../reference/glossary.md#term-hld) には記載なし）。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md#L86-L129 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -167,7 +167,7 @@ reasoning: 起動コマンドとデフォルト認証情報の根拠。
 ## トラブルシューティング
 
 - `kvm-ok` でエラー: BIOS の VT-x / AMD-V を有効化、または nested virtualization が許可されているかを確認。
-- `virsh create` で permission denied: `libvirt-sock` の ACL（前述の setfacl）と libvirt 起動状態を確認[^1]。
+- `virsh create` で permission denied: `libvirt-sock` の [ACL](../reference/glossary.md#term-acl)（前述の setfacl）と libvirt 起動状態を確認[^1]。
 - `telnet localhost 7000` が拒否: `sonic1-vs.xml` の serial port 設定を確認。port 番号は VM ごとに違うことがある。
 - ログイン拒否: パスワード `YourPaSsWoRd` の大文字小文字を厳密に。新しいビルドでは別パスワードのことがある。
 
@@ -181,3 +181,5 @@ reasoning: 起動コマンドとデフォルト認証情報の根拠。
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f09f0f2ecd9e -->

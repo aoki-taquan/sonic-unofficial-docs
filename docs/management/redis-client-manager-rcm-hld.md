@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`sonic-mgmt-common` の translib（gNMI GET/SET/SUBSCRIBE 処理）は内部で **大量の Redis client** を作成し、Redis TCP/Unix socket に負荷をかけていた[^1]。Google 提案（2024-09 v0.1）の RCM は、go-redis の **connection pool** をフル活用しつつ transactional 操作（MULTI / EXEC / PSUBSCRIBE 等）も扱える 4 関数を新設して **全部この経路に集約** する設計。
+`sonic-mgmt-common` の translib（[gNMI](../reference/glossary.md#term-gnmi) GET/SET/SUBSCRIBE 処理）は内部で **大量の [Redis](../reference/glossary.md#term-redis) client** を作成し、Redis TCP/Unix socket に負荷をかけていた[^1]。Google 提案（2024-09 v0.1）の RCM は、go-redis の **connection pool** をフル活用しつつ transactional 操作（MULTI / EXEC / PSUBSCRIBE 等）も扱える 4 関数を新設して **全部この経路に集約** する設計。
 
 ポイント:
 
@@ -125,7 +125,7 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 
 ## 設定
 
-ユーザに公開される CONFIG_DB / CLI は無い。`sonic-mgmt-common` 内部 API。
+ユーザに公開される [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI は無い。`sonic-mgmt-common` 内部 API。
 
 ## 制限事項
 
@@ -165,4 +165,6 @@ RCM 4 関数のうち `CloseRedisClient` は現行 `sonic-mgmt-common` で利用
 - `CloseRedisClient(rc)` 呼び出し: `.cache/sonic-sources/sonic-mgmt-common/translib/db/db_redis_opts.go` L202、`translib/db/db.go` L472 / L481 / L515 / L529 / L587
 - redis options / pool 設定: `db_redis_opts.go` の `setGoRedisOpts` / `adjustRedisOpts` / `initializeRedisOpts` / `_DBRedisOptsConfig.reconfigure / handleReconfigureSignal / readFromDB / parseRedisOptsConfig`（L66-L213）が pool size / read/write timeout / reconfigure 経路を実装
 
-HLD が示す「pool 化と中央集権 close」の主要意図はコードに反映済み。`RedisClient` / `TransactionalRedisClient` / `TransactionalRedisClientWithOpts` の正確な API シグネチャは複数ファイルに散らばっているが、共有 client + transactional client の二系統 + close API という設計は現行コードと一致する。`code-verified` に昇格。
+[HLD](../reference/glossary.md#term-hld) が示す「pool 化と中央集権 close」の主要意図はコードに反映済み。`RedisClient` / `TransactionalRedisClient` / `TransactionalRedisClientWithOpts` の正確な API シグネチャは複数ファイルに散らばっているが、共有 client + transactional client の二系統 + close API という設計は現行コードと一致する。`code-verified` に昇格。
+
+<!-- glossary-links-injected: 43011ad1abe5 -->

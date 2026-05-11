@@ -22,9 +22,9 @@ related:
 
 ## 概要
 
-`BGP_ALLOWED_PREFIXES` は **deployment ID 単位の prefix 許可リスト** を CONFIG_DB に格納するテーブル[^1]。bgpcfgd の Jinja テンプレが読み込み、ToR / leaf スイッチで広告する prefix-list / route-map を生成する。Microsoft 由来の deployment 駆動構成 (T0/T1/T2 ロール) で利用される。
+`BGP_ALLOWED_PREFIXES` は **deployment ID 単位の prefix 許可リスト** を [CONFIG_DB](../../reference/glossary.md#term-config_db) に格納するテーブル[^1]。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の Jinja テンプレが読み込み、ToR / leaf スイッチで広告する prefix-list / route-map を生成する。Microsoft 由来の deployment 駆動構成 (T0/T1/T2 ロール) で利用される。
 
-YANG モジュール 1 つで 4 つの list（key の組合せが異なる）を持つ:
+[YANG](../../reference/glossary.md#term-yang) モジュール 1 つで 4 つの list（key の組合せが異なる）を持つ:
 
 1. `BGP_ALLOWED_PREFIXES_LIST` (deployment, id)
 2. `BGP_ALLOWED_PREFIXES_NEIGH_LIST` (deployment, id, neighbor, neighbor_type)
@@ -69,7 +69,7 @@ BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>
 | `prefixes_v4` | leaf-list of `bgp-allowed-ipv4-prefix` (ordered-by user) | 許可する IPv4 prefix リスト |
 | `prefixes_v6` | leaf-list of `bgp-allowed-ipv6-prefix` (ordered-by user) | 許可する IPv6 prefix リスト |
 
-`bgp-allowed-ipv4-prefix` / `bgp-allowed-ipv6-prefix` は **`<prefix> [le|ge <len>]`** という FRR-like の構文を許す独自 typedef。例: `10.0.0.0/8 le 32`。
+`bgp-allowed-ipv4-prefix` / `bgp-allowed-ipv6-prefix` は **`<prefix> [le|ge <len>]`** という [FRR](../../reference/glossary.md#term-frr)-like の構文を許す独自 typedef。例: `10.0.0.0/8 le 32`。
 
 ## 制約
 
@@ -80,7 +80,7 @@ BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>
 ## 購読者
 
 - `bgpcfgd` (`docker-fpm-frr`): deployment id ごとに `BGP_ALLOWED_PREFIXES_*` を読み、Jinja テンプレで `ip prefix-list` / `route-map` 文を vtysh に流す
-- `bgpd` (FRR): 生成された prefix-list / route-map を BGP neighbor / peer-group に適用
+- `bgpd` (FRR): 生成された prefix-list / route-map を [BGP](../../reference/glossary.md#term-bgp) neighbor / peer-group に適用
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -119,3 +119,5 @@ sonic-db-cli CONFIG_DB keys 'BGP_ALLOWED_PREFIXES|*'
 vtysh -c 'show running-config bgp'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0a371cf7e1da -->

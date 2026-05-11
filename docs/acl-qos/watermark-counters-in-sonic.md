@@ -37,7 +37,7 @@ related:
 
 ## 何を watermark として記録するのか
 
-対象 SAI カウンタは 3 つ[^1]。
+対象 [SAI](../reference/glossary.md#term-sai) カウンタは 3 つ[^1]。
 
 | 用途 | SAI 属性 |
 |------|----------|
@@ -45,7 +45,7 @@ related:
 | Ingress shared 占有 per PG | `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` |
 | Egress shared 占有 per queue (UC/MC 共通) | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` |
 
-これらを Flex Counter が **既定 1 秒間隔で `STATS_MODE_READ_AND_CLEAR`** で取り、ハードウェア側も同時にクリアする[^1]。新規拡張として syncd の FC 設定スキーマに `STATS_MODE` 行が追加される。
+これらを Flex Counter が **既定 1 秒間隔で `STATS_MODE_READ_AND_CLEAR`** で取り、ハードウェア側も同時にクリアする[^1]。新規拡張として [syncd](../reference/glossary.md#term-syncd) の FC 設定スキーマに `STATS_MODE` 行が追加される。
 
 ```text
 "POLL_INTERVAL"  -> "1000"
@@ -103,7 +103,7 @@ COUNTERS / PERIODIC_WATERMARKS / USER_WATERMARKS / PERSISTENT_WATERMARKS
 
 3 点だけ[^1]:
 
-1. `WATERMARK_TABLE`（CONFIG_DB）の subscribe
+1. `WATERMARK_TABLE`（[CONFIG_DB](../reference/glossary.md#term-config_db)）の subscribe
 2. `PERIODIC_WATERMARKS` を `TELEMETRY_INTERVAL` ごとに 0 化（**新値は現行タイマー満了時にのみ反映**）
 3. `CLEAR_WATERMARK` 通知の受信処理
 
@@ -144,7 +144,7 @@ reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根�
 
 | Table | Key | フィールド |
 |-------|-----|-----------|
-| `WATERMARK_TABLE` | `TELEMETRY_INTERVAL`（HLD では `TELEMETRY_PERIOD` 表記あり） | streaming telemetry の周期クリア間隔 |
+| `WATERMARK_TABLE` | `TELEMETRY_INTERVAL`（[HLD](../reference/glossary.md#term-hld) では `TELEMETRY_PERIOD` 表記あり） | streaming telemetry の周期クリア間隔 |
 
 | Command | 用途 |
 |---------|------|
@@ -166,7 +166,7 @@ Ethernet0           0  1092     0   380     0     0     0     0
 
 ## 干渉する機能
 
-- **PFC watchdog**: 同じ FC 系を使うためポーリング負荷の競合に留意（HLD の Open Question）[^1]
+- **[PFC](../reference/glossary.md#term-pfc) watchdog**: 同じ FC 系を使うためポーリング負荷の競合に留意（HLD の Open Question）[^1]
 - **`STATS_MODE_READ_AND_CLEAR`**: 非対応 SAI 実装では意図どおりに動かない
 - **`clear` の即時 0 観測**: トラフィック停止状態でしか純粋な 0 は得られない
 - **`TELEMETRY_INTERVAL` の遅延反映**: 現行タイマー満了まで新値は効かない
@@ -198,3 +198,5 @@ Ethernet0           0  1092     0   380     0     0     0     0
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3f79bdf7d31b -->

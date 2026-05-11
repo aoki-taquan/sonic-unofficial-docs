@@ -59,7 +59,7 @@ module: sonic-pfc-priority-queue-map
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-pfc-priority-queue-map/MAP_PFC_PRIORITY_TO_QUEUE/MAP_PFC_PRIORITY_TO_QUEUE_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})`, length 1..32 | Name of the PFC priority to queue map. |
+| `name` | `sonic-pfc-priority-queue-map/MAP_PFC_PRIORITY_TO_QUEUE/MAP_PFC_PRIORITY_TO_QUEUE_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})`, length 1..32 | Name of the [PFC](../../reference/glossary.md#term-pfc) priority to queue map. |
 | `pfc_priority` | `.../MAP_PFC_PRIORITY_TO_QUEUE/pfc_priority` | `string` | yes |  | pattern `[0-7]?` | PFC priority value (0-7). |
 | `qindex` | `.../MAP_PFC_PRIORITY_TO_QUEUE/qindex` | `string` |  |  | pattern `[0-7]?` | Target egress queue index (0-7). |
 
@@ -73,7 +73,7 @@ module: sonic-pfc-priority-queue-map
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `MAP_PFC_PRIORITY_TO_QUEUE|<name>` でマップ本体、`PORT_QOS_MAP|<port>/pfc_to_queue_map` から参照
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MAP_PFC_PRIORITY_TO_QUEUE|<name>` でマップ本体、`PORT_QOS_MAP|<port>/pfc_to_queue_map` から参照
 - CLI: マップ名は `config qos reload` / minigraph 経由で投入
 
 <!-- ref-triangle:start -->
@@ -87,3 +87,5 @@ module: sonic-pfc-priority-queue-map
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pfc-priority-queue-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 97e8f7840821 -->

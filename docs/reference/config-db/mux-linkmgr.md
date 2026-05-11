@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-DualToR (Active-Standby) 構成で `linkmgrd` の動作パラメータを CONFIG_DB に保持するテーブル[^1]。ICMP ハートビート間隔やオシレーションの設定、ログレベル、サービス管理動作を 4 つのシングルトン container (`LINK_PROBER` / `TIMED_OSCILLATION` / `MUXLOGGER` / `SERVICE_MGMT`) に分けて持つ。
+DualToR (Active-Standby) 構成で `linkmgrd` の動作パラメータを [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。ICMP ハートビート間隔やオシレーションの設定、ログレベル、サービス管理動作を 4 つのシングルトン container (`LINK_PROBER` / `TIMED_OSCILLATION` / `MUXLOGGER` / `SERVICE_MGMT`) に分けて持つ。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,7 +58,7 @@ MUX_LINKMGR|SERVICE_MGMT
 | `interval_v6` | uint32 | `1000` | ms | IPv6 ICMP ハートビート送信間隔 |
 | `positive_signal_count` | uint32 | `1` | 件 | アクティブ判定に必要な連続受信回数 |
 | `negative_signal_count` | uint32 | `3` | 件 | スタンバイ判定に必要な連続喪失回数 |
-| `suspend_timer` | uint32 | なし | - | ICMP ハートビート停止タイマ (現状未使用と YANG コメント) |
+| `suspend_timer` | uint32 | なし | - | ICMP ハートビート停止タイマ (現状未使用と [YANG](../../reference/glossary.md#term-yang) コメント) |
 | `use_well_known_mac` | enum `enabled`/`disabled` | なし | - | well-known MAC を宛先 MAC に使うか |
 | `src_mac` | enum `ToRMac`/`VlanMac` | なし | - | ハートビート送信元 MAC の選択 |
 | `interval_pck_loss_count_update` | uint32 | なし | - | パケットロス統計をテレメトリにストリーミングする頻度 |
@@ -74,7 +74,7 @@ MUX_LINKMGR|SERVICE_MGMT
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `log_verbosity` | enum `trace`/`debug`/`info`/`error`/`fatal` | linkmgrd ログレベル |
+| `log_verbosity` | enum `trace`/`debug`/`info`/`error`/`fatal` | [linkmgrd](../../reference/glossary.md#term-linkmgrd) ログレベル |
 
 ### `MUX_LINKMGR|SERVICE_MGMT`
 
@@ -133,3 +133,5 @@ sonic-db-cli CONFIG_DB keys 'MUX_LINKMGR|*'
 show mux config
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 7bd19c5684ed -->

@@ -26,20 +26,20 @@ related:
 
 ## なぜ必要か
 
-DASH (Disaggregated APIs for SONiC Hosts) の ACL では、**サービスタグ** が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。タグメンバが変わってもタグ自体の更新だけで済み、これを参照する ACL ルールは無変更でよい。プレフィックスを各ルールに複製する必要が無くなり、メモリ効率も上がる[^1]。
+[DASH](../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) の [ACL](../reference/glossary.md#term-acl) では、**サービスタグ** が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。タグメンバが変わってもタグ自体の更新だけで済み、これを参照する ACL ルールは無変更でよい。プレフィックスを各ルールに複製する必要が無くなり、メモリ効率も上がる[^1]。
 
 実装は **2 段階**[^1]:
 
 | Stage | 内容 |
 |-------|------|
-| Stage 1 | **SWSS 内のソフト展開のみ**。ルール作成時にタグをプレフィックス列に展開（SAI 変更なし） |
-| Stage 2 | **SAI API 経由でタグを ASIC へ**（本 HLD 対象外） |
+| Stage 1 | **SWSS 内のソフト展開のみ**。ルール作成時にタグをプレフィックス列に展開（[SAI](../reference/glossary.md#term-sai) 変更なし） |
+| Stage 2 | **SAI API 経由でタグを ASIC へ**（本 [HLD](../reference/glossary.md#term-hld) 対象外） |
 
 本 HLD は **Stage 1** を定義する。
 
 要件 (Stage 1)[^1]:
 
-- orchagent で ACL タグ設定をサポート
+- [orchagent](../reference/glossary.md#term-orchagent) で ACL タグ設定をサポート
 - 1 プレフィックスは **複数タグに所属可**
 - タグからプレフィックス追加 / 削除は **いつでも**
 - ルール生成時に **タグ → プレフィックス列に展開**
@@ -93,7 +93,7 @@ flowchart LR
     C -->|no| D[タグ削除]
 ```
 
-- **update tag (prefix_list 変更)**: 影響を受けるルールが **ENI に bind 済 group** に属するなら「コピー → 新 group bind → 旧 group 削除」、未 bind なら **in-place 更新**[^1]:
+- **update tag (prefix_list 変更)**: 影響を受けるルールが **[ENI](../reference/glossary.md#term-eni) に bind 済 group** に属するなら「コピー → 新 group bind → 旧 group 削除」、未 bind なら **in-place 更新**[^1]:
 
 ```mermaid
 flowchart TD
@@ -145,7 +145,7 @@ DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
 | APP_DB | `DASH_PREFIX_TAG_TABLE` | tag 単位の prefix 集合 |
 | APP_DB | `DASH_ACL_RULE_TABLE` | `src_tag` / `dst_tag` を新たに受理 |
 
-CLI / YANG 拡張・`CONFIG_DB` 変更は **無し**。コントローラが APP_DB に直接書き込む設計[^1]。
+CLI / [YANG](../reference/glossary.md#term-yang) 拡張・`CONFIG_DB` 変更は **無し**。コントローラが APP_DB に直接書き込む設計[^1]。
 
 ```text
 DASH_PREFIX_TAG_TABLE:Tag1  ip_version=ipv4  prefix_list=1.1.1.0/24,1.1.2.0/24
@@ -157,7 +157,7 @@ DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
 ## 制限事項
 
 - **Stage 1 は SAI 不使用**。ASIC からはタグの存在は見えない
-- **warm / fast reboot 未サポート**（DPU SONiC 自体が未対応）
+- **warm / fast reboot 未サポート**（[DPU](../reference/glossary.md#term-dpu) SONiC 自体が未対応）
 - **ENI bind 済 group のルール削除 / 更新は不可**。タグ更新は group コピー方式
 - **同種 tag と prefix の併用不可**（`src_tag + src_addr` 等）
 - 未存在 tag 参照は **retry 延期**。controller は投入順序を意識
@@ -183,7 +183,7 @@ sonic-db-cli APPL_DB keys 'DASH_ACL_RULE_TABLE:*'
 
 ## 関連 Topics
 
-- [13-dash-smartswitch/concept](../topics/13-dash-smartswitch/concept.md): DASH / SmartSwitch の全体像
+- [13-dash-smartswitch/concept](../topics/13-dash-smartswitch/concept.md): DASH / [SmartSwitch](../reference/glossary.md#term-smartswitch) の全体像
 - [07-acl-copp-mirror/concept](../topics/07-acl-copp-mirror/concept.md): ACL と DASH ACL の置き場所
 
 ## 引用元
@@ -197,3 +197,5 @@ sonic-db-cli APPL_DB keys 'DASH_ACL_RULE_TABLE:*'
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e226b2d44a27 -->

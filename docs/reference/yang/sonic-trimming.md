@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-trimming`
 
-パケットトリミング（輻輳テレメトリ用にパケットを縮小して送信）のグローバル設定を保持する YANG モジュール[^1]。
+パケットトリミング（輻輳テレメトリ用にパケットを縮小して送信）のグローバル設定を保持する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -74,7 +74,7 @@ module: sonic-trimming
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SWITCH_TRIMMING|GLOBAL`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SWITCH_TRIMMING|GLOBAL`
 - CLI: `config switch-trimming`
 
 <!-- ref-triangle:start -->
@@ -89,3 +89,5 @@ module: sonic-trimming
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-trimming.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

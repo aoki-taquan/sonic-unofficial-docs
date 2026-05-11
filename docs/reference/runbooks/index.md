@@ -27,44 +27,44 @@ related:
 - **対処方法**: 復旧手段
 - **関連ページ**: 該当 topic / reference / discrepancy へのリンク
 
-掲載コマンドおよび DB スキーマは `.cache/sonic-sources/` 内の master 実装を根拠としている。HLD 由来の推測は本文中に明示する。
+掲載コマンドおよび DB スキーマは `.cache/sonic-sources/` 内の master 実装を根拠としている。[HLD](../../reference/glossary.md#term-hld) 由来の推測は本文中に明示する。
 
 ## 一覧
 
 | # | 症状 | Runbook |
 |---|------|---------|
-| 01 | BGP セッションが UP しない | [bgp-session-down.md](bgp-session-down.md) |
-| 02 | VLAN メンバー追加してもタグが付かない | [vlan-tagging.md](vlan-tagging.md) |
+| 01 | [BGP](../../reference/glossary.md#term-bgp) セッションが UP しない | [bgp-session-down.md](bgp-session-down.md) |
+| 02 | [VLAN](../../reference/glossary.md#term-vlan) メンバー追加してもタグが付かない | [vlan-tagging.md](vlan-tagging.md) |
 | 03 | FEC エラーが多発する | [fec-errors.md](fec-errors.md) |
-| 04 | Warm Reboot が失敗する / 通信断が長引く | [warm-reboot-failure.md](warm-reboot-failure.md) |
-| 05 | PFC で帯域が出ない / Buffer overflow | [pfc-bandwidth.md](pfc-bandwidth.md) |
-| 06 | DHCP Relay で IP が払い出されない | [dhcp-relay.md](dhcp-relay.md) |
+| 04 | [Warm Reboot](../../reference/glossary.md#term-warm-reboot) が失敗する / 通信断が長引く | [warm-reboot-failure.md](warm-reboot-failure.md) |
+| 05 | [PFC](../../reference/glossary.md#term-pfc) で帯域が出ない / Buffer overflow | [pfc-bandwidth.md](pfc-bandwidth.md) |
+| 06 | [DHCP Relay](../../reference/glossary.md#term-dhcp-relay) で IP が払い出されない | [dhcp-relay.md](dhcp-relay.md) |
 | 07 | Multi-ASIC で namespace 間通信できない | [multi-asic-namespace.md](multi-asic-namespace.md) |
 | 08 | Dual-ToR mux が切り替わらない | [dualtor-mux.md](dualtor-mux.md) |
-| 09 | SAI failure / syncd リスタート多発 | [sai-failure.md](sai-failure.md) |
+| 09 | [SAI](../../reference/glossary.md#term-sai) failure / [syncd](../../reference/glossary.md#term-syncd) リスタート多発 | [sai-failure.md](sai-failure.md) |
 | 10 | コンテナが起動しない (FEATURE) | [container-not-starting.md](container-not-starting.md) |
 | 11 | show techsupport が timeout する | [techsupport-timeout.md](techsupport-timeout.md) |
 | 12 | counter が更新されない (FLEX_COUNTER) | [flex-counter-stuck.md](flex-counter-stuck.md) |
-| 13 | RIF / ACL counter が 0 のまま | [rif-acl-counter-zero.md](rif-acl-counter-zero.md) |
-| 14 | CONFIG_DB save / load が反映されない | [config-save-load.md](config-save-load.md) |
-| 15 | SmartSwitch DPU が応答しない | [smartswitch-dpu-unresponsive.md](smartswitch-dpu-unresponsive.md) |
-| 16 | Telemetry が送信されない (gNMI dial-out) | [telemetry-dialout-not-sending.md](telemetry-dialout-not-sending.md) |
+| 13 | [RIF](../../reference/glossary.md#term-rif) / [ACL](../../reference/glossary.md#term-acl) counter が 0 のまま | [rif-acl-counter-zero.md](rif-acl-counter-zero.md) |
+| 14 | [CONFIG_DB](../../reference/glossary.md#term-config_db) save / load が反映されない | [config-save-load.md](config-save-load.md) |
+| 15 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) が応答しない | [smartswitch-dpu-unresponsive.md](smartswitch-dpu-unresponsive.md) |
+| 16 | Telemetry が送信されない ([gNMI](../../reference/glossary.md#term-gnmi) dial-out) | [telemetry-dialout-not-sending.md](telemetry-dialout-not-sending.md) |
 | 17 | gNMI Subscribe が頻繁に切れる | [gnmi-subscribe-disconnect.md](gnmi-subscribe-disconnect.md) |
 | 18 | Y-cable firmware 更新が失敗する | [ycable-firmware-update-failure.md](ycable-firmware-update-failure.md) |
-| 19 | PINS gRPC (P4Runtime) が応答しない | [pins-grpc-unresponsive.md](pins-grpc-unresponsive.md) |
-| 20 | CRM threshold 越え (route / nexthop / FDB / ACL) | [crm-threshold-exceeded.md](crm-threshold-exceeded.md) |
+| 19 | [PINS](../../reference/glossary.md#term-pins) gRPC (P4Runtime) が応答しない | [pins-grpc-unresponsive.md](pins-grpc-unresponsive.md) |
+| 20 | [CRM](../../reference/glossary.md#term-crm) threshold 越え (route / nexthop / [FDB](../../reference/glossary.md#term-fdb) / ACL) | [crm-threshold-exceeded.md](crm-threshold-exceeded.md) |
 | 21 | ASIC link が UP しない (autoneg / FEC / speed) | [asic-link-autoneg-mismatch.md](asic-link-autoneg-mismatch.md) |
 | 22 | MACsec MKA セッションが確立しない | [macsec-mka-not-established.md](macsec-mka-not-established.md) |
-| 23 | DASH ENI が落ちる | [dash-eni-down.md](dash-eni-down.md) |
+| 23 | [DASH](../../reference/glossary.md#term-dash) [ENI](../../reference/glossary.md#term-eni) が落ちる | [dash-eni-down.md](dash-eni-down.md) |
 | 24 | SmartSwitch DPU graceful shutdown 失敗 | [smartswitch-dpu-graceful-shutdown-failure.md](smartswitch-dpu-graceful-shutdown-failure.md) |
-| 25 | APP_DB → ASIC_DB の反映遅延 | [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md) |
+| 25 | APP_DB → [ASIC_DB](../../reference/glossary.md#term-asic_db) の反映遅延 | [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md) |
 | 26 | SNMPv3 user 認証失敗 | [snmpv3-auth-failure.md](snmpv3-auth-failure.md) |
-| 27 | NAT translation が漏れる | [nat-translation-miss.md](nat-translation-miss.md) |
-| 28 | EVPN Type-2 route が広告されない | [evpn-type2-not-advertised.md](evpn-type2-not-advertised.md) |
-| 29 | MCLAG sync 不能 | [mclag-sync-failure.md](mclag-sync-failure.md) |
+| 27 | [NAT](../../reference/glossary.md#term-nat) translation が漏れる | [nat-translation-miss.md](nat-translation-miss.md) |
+| 28 | [EVPN](../../reference/glossary.md#term-evpn) Type-2 route が広告されない | [evpn-type2-not-advertised.md](evpn-type2-not-advertised.md) |
+| 29 | [MCLAG](../../reference/glossary.md#term-mclag) sync 不能 | [mclag-sync-failure.md](mclag-sync-failure.md) |
 | 30 | show techsupport の size 肥大化対策 | [techsupport-size-bloat.md](techsupport-size-bloat.md) |
-| 31 | PortChannel メンバーで LACP が確立しない | [portchannel-lacp-not-established.md](portchannel-lacp-not-established.md) |
-| 32 | SNMP polling が timeout する | [snmp-polling-timeout.md](snmp-polling-timeout.md) |
+| 31 | [PortChannel](../../reference/glossary.md#term-portchannel) メンバーで [LACP](../../reference/glossary.md#term-lacp) が確立しない | [portchannel-lacp-not-established.md](portchannel-lacp-not-established.md) |
+| 32 | [SNMP](../../reference/glossary.md#term-snmp) polling が timeout する | [snmp-polling-timeout.md](snmp-polling-timeout.md) |
 | 33 | BGP route が広告されない | [bgp-route-not-advertised.md](bgp-route-not-advertised.md) |
 | 34 | ACL ルールが効かない / counter が増えない | [acl-rule-no-hit.md](acl-rule-no-hit.md) |
 | 35 | Interface MTU mismatch によるドロップ | [interface-mtu-mismatch.md](interface-mtu-mismatch.md) |
@@ -83,10 +83,12 @@ related:
 
 - すべてのコマンドは admin ユーザ（sudo 可）で host 側 shell から実行することを想定する
 - container 内コマンドの場合は明示的に `docker exec -it <container> bash` 経由で示す
-- Redis key の確認は `redis-cli` ではなく **`sonic-db-cli <DB-NAME>`** を推奨（multi-ASIC 環境で namespace を意識せずに済むため）
+- [Redis](../../reference/glossary.md#term-redis) key の確認は `redis-cli` ではなく **`sonic-db-cli <DB-NAME>`** を推奨（multi-ASIC 環境で namespace を意識せずに済むため）
 - 出力例の数値・MAC・IP はマスクされたサンプル
 
 ## 引用元
 
-[^1]: sonic-net/sonic-utilities @ 39732bceb（`show/`, `scripts/` 配下の各種ツール）
-[^2]: sonic-net/sonic-swss @ 4305596（orchagent, syncd 連携）
+[^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb（`show/`, `scripts/` 配下の各種ツール）
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596（[orchagent](../../reference/glossary.md#term-orchagent), syncd 連携）
+
+<!-- glossary-links-injected: 46f1dbcad950 -->

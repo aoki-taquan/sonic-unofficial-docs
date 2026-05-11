@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-VLAN を L3 IF (SVI) として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local、grat ARP / proxy ARP、loopback action、MAC を持つ[^1]。
+[VLAN](../../reference/glossary.md#term-vlan) を L3 IF (SVI) として扱う設定を保持する。[VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) binding、IP アサイン、[NAT](../../reference/glossary.md#term-nat) zone、[MPLS](../../reference/glossary.md#term-mpls)、IPv6 link-local、grat [ARP](../../reference/glossary.md#term-arp) / proxy ARP、loopback action、MAC を持つ[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -82,14 +82,14 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 ## 購読者
 
 - `intfmgrd`: VRF / MAC / MPLS / IPv6 LL / proxy_arp / grat_arp を Linux に反映
-- `orchagent` `IntfsOrch`: SAI ルータインタフェースを生成
+- `orchagent` `IntfsOrch`: [SAI](../../reference/glossary.md#term-sai) ルータインタフェースを生成
 - `arpresponder` 等: proxy ARP / grat ARP を扱う
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VLAN`、`VLAN_MEMBER`、`VRF`、`VNET`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`VLAN_MEMBER`、`VRF`、`VNET`
 - 関連 CLI: `config interface ip add/remove Vlan<id>`、`config vlan proxy_arp`
-- 関連 YANG: `sonic-vlan`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
 <!-- ref-triangle:start -->
 
@@ -131,3 +131,5 @@ sonic-db-cli CONFIG_DB keys 'VLAN_INTERFACE|*'
 show ip interfaces
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9a96ec343525 -->

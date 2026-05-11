@@ -32,7 +32,7 @@ related:
 
 OS レベルの **メモリ使用量（total / used / free / available / cached / shared / buffers）** を SONiC ネイティブで定期サンプリングし、CLI から履歴クエリできるようにする機能。サードパーティ監視ツールへの依存を減らす目的[^1]。
 
-新規デーモン `memorystatsd` がデータを収集し、圧縮ログとして保持する。`hostcfgd` が CONFIG_DB の設定変化を監視して SIGHUP で再ロードする。**デフォルトは無効**（リソース節約のため）[^1]。
+新規デーモン `memorystatsd` がデータを収集し、圧縮ログとして保持する。`hostcfgd` が [CONFIG_DB](../reference/glossary.md#term-config_db) の設定変化を監視して SIGHUP で再ロードする。**デフォルトは無効**（リソース節約のため）[^1]。
 
 ## 動作仕様
 
@@ -49,7 +49,7 @@ flowchart LR
 ```
 
 - **memorystatsd**: psutil でメモリ統計を取り、ログに書く。`SIGHUP` で設定再読込、`SIGTERM` で graceful shutdown。
-- **hostcfgd**: CONFIG_DB の `MEMORY_STATISTICS` テーブル変更を購読し、デーモンに `SIGHUP` を送る。
+- **[hostcfgd](../reference/glossary.md#term-hostcfgd)**: CONFIG_DB の `MEMORY_STATISTICS` テーブル変更を購読し、デーモンに `SIGHUP` を送る。
 - **再起動時の挙動**: クラッシュや再起動時は **設定ファイルの default に戻る**。runtime に CONFIG_DB から反映された値は永続化されない（次回起動では再度 hostcfgd が同期する）[^1]。
 
 ### サンプリングと保持
@@ -119,7 +119,7 @@ show memory-stats config
 
 - `memorystatsd` は再起動時に必ず default 設定に戻り、その後 hostcfgd 経由で CONFIG_DB の値を SIGHUP で適用する設計。`enabled` が CONFIG_DB で `true` でも、デーモン起動直後は無効状態を経由する。
 - メモリメトリクスは **OS レベルの全体値** のみで、個別プロセス・コンテナ単位の統計は対象外（Future Work で言及）[^1]。
-- アラート / 閾値通知は HLD では Future Work として明記。
+- アラート / 閾値通知は [HLD](../reference/glossary.md#term-hld) では Future Work として明記。
 
 ## 干渉する機能
 
@@ -143,3 +143,5 @@ show memory-stats config
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: efdba57a44d3 -->

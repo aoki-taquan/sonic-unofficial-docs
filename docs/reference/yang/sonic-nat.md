@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-nat`
 
-SONiC NAT yang model[^1]
+SONiC [NAT](../../reference/glossary.md#term-nat) yang model[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -146,7 +146,7 @@ module: sonic-nat
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `STATIC_NAPT`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `STATIC_NAPT`
 - CONFIG_DB: `STATIC_NAT`
 - CONFIG_DB: `NAT_GLOBAL`
 - CONFIG_DB: `NAT_POOL`
@@ -167,7 +167,7 @@ module: sonic-nat
 
 ### 典型的なデプロイ位置
 
-- NAT (static / dynamic) 設定。`STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` 等を natmgrd / natorch が処理。
+- NAT (static / dynamic) 設定。`STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` 等を [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) / natorch が処理。
 
 ### よくある落とし穴
 
@@ -191,3 +191,5 @@ show nat translations
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2cc996c5bd0a -->

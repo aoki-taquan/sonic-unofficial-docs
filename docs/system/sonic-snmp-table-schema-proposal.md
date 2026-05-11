@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC の SNMP 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が `/etc/sonic/snmp.yml` と `config_db.json` の `SNMP_ACL` に分散していた状態を解消し、CONFIG_DB に **SNMP / SNMP_COMMUNITY / SNMP_USER** の 3 テーブルとして集約するためのスキーマ提案[^1]。具体的な移行手順や CLI は別 HLD（`snmp-configdb-migration-hld.md`）が扱う。
+SONiC の [SNMP](../reference/glossary.md#term-snmp) 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が `/etc/sonic/snmp.yml` と `config_db.json` の `SNMP_ACL` に分散していた状態を解消し、[CONFIG_DB](../reference/glossary.md#term-config_db) に **SNMP / SNMP_COMMUNITY / SNMP_USER** の 3 テーブルとして集約するためのスキーマ提案[^1]。具体的な移行手順や CLI は別 [HLD](../reference/glossary.md#term-hld)（`snmp-configdb-migration-hld.md`）が扱う。
 
 ## 動作仕様
 
@@ -130,7 +130,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 
 ### 関連する YANG
 
-HLD には YANG モデルの記述は無い。
+HLD には [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -166,7 +166,7 @@ sonic-cfggen -a '{
 
 - **SNMP_ACL（既存）**: 本提案は ACL 部分を扱わない。引き続き既存の `SNMP_ACL` テーブルが ACL を表す。
 - **`docker-snmp` 起動順**: CONFIG_DB が起動済みである必要がある（既存 SONiC 設計と同じ）。
-- **caclmgrd**: HLD は `snmpd-config-updater` の caclmgrd 置き換えを前提としているため、ACL 反映ルートが将来変わる可能性に注意。
+- **caclmgrd**: HLD は `snmpd-config-updater` の caclmgrd 置き換えを前提としているため、[ACL](../reference/glossary.md#term-acl) 反映ルートが将来変わる可能性に注意。
 
 ## トラブルシューティング
 
@@ -176,3 +176,5 @@ sonic-cfggen -a '{
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp-schema-addition.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 601f13437a09 -->

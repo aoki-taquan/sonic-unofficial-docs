@@ -27,13 +27,13 @@ related:
 
 ## 概要
 
-In-band Network Telemetry (INT) と Postcard / Drop / Queue report を含む **Dataplane Telemetry**[^1] の機能を PTF + sonic-mgmt で検証する設計。各テストは設定投入 → トラフィック送出 → 検証 → 設定戻しを完結して行う。
+In-band Network Telemetry ([INT](../reference/glossary.md#term-int)) と Postcard / Drop / Queue report を含む **Dataplane Telemetry**[^1] の機能を PTF + [sonic-mgmt](../reference/glossary.md#term-sonic-mgmt) で検証する設計。各テストは設定投入 → トラフィック送出 → 検証 → 設定戻しを完結して行う。
 
 ## 動作仕様
 
 ### sonic-mgmt 側モジュール構造[^1]
 
-`dtel/` サブモジュール（DTel 抽象）と `sonic/` サブモジュール（CONFIG_DB 連携）の二層:
+`dtel/` サブモジュール（DTel 抽象）と `sonic/` サブモジュール（[CONFIG_DB](../reference/glossary.md#term-config_db) 連携）の二層:
 
 | dtel/ | sonic/ |
 |-------|--------|
@@ -112,7 +112,7 @@ queue depth/latency 閾値超過時に report:
 
 ## 制限事項
 
-- 全 ACL 関連テストが pass している前提（regression 防止のため）[^1]
+- 全 [ACL](../reference/glossary.md#term-acl) 関連テストが pass している前提（regression 防止のため）[^1]
 - INT パケット解析は max hop 8 まで
 - Drop report は SRC MAC 異常等での意図的 drop が前提
 
@@ -120,7 +120,7 @@ queue depth/latency 閾値超過時に report:
 
 - **ACL**: DTel watchlist の正体は ACL ベース。ACL テストの後段で DTel が走る
 - **Mirror / Everflow**: report packet 送出パスで共通インフラ
-- **SAI DTel object types**: `SAI_OBJECT_TYPE_DTEL_*` 群
+- **[SAI](../reference/glossary.md#term-sai) DTel object types**: `SAI_OBJECT_TYPE_DTEL_*` 群
 
 ## 引用元
 
@@ -143,3 +143,5 @@ DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8f15c1459e58 -->

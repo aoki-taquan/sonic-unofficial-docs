@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` は PFC priority 0..7 を ingress priority group 0..7 に対応付ける named QoS map テーブル[^1]。`PORT_QOS_MAP.pfc_to_pg_map` から参照され、lossless traffic の buffer priority group 選択に使われる。`schema.h` では APPL_DB 側の `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE` 定数が定義されている[^2]。
+`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` は [PFC](../../reference/glossary.md#term-pfc) priority 0..7 を ingress priority group 0..7 に対応付ける named [QoS](../../reference/glossary.md#term-qos) map テーブル[^1]。`PORT_QOS_MAP.pfc_to_pg_map` から参照され、lossless traffic の buffer priority group 選択に使われる。`schema.h` では [APPL_DB](../../reference/glossary.md#term-appl_db) 側の `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE` 定数が定義されている[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -48,7 +48,7 @@ flowchart LR
 PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 ```
 
-YANG 上は map 名を key にする outer list と、`pfc_priority` を key にする inner list の 2 階層。
+[YANG](../../reference/glossary.md#term-yang) 上は map 名を key にする outer list と、`pfc_priority` を key にする inner list の 2 階層。
 
 ## 主要フィールド
 
@@ -66,7 +66,7 @@ YANG 上は map 名を key にする outer list と、`pfc_priority` を key に
 
 ## 購読者
 
-- `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): CONFIG_DB の QoS map を直接 subscribe し、SAI QoS map (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP`) として作成、port QoS binding に利用する（master には独立した `qosmgrd` プロセスは存在しない）。
+- `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): [CONFIG_DB](../../reference/glossary.md#term-config_db) の QoS map を直接 subscribe し、[SAI](../../reference/glossary.md#term-sai) QoS map (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP`) として作成、port QoS binding に利用する（master には独立した `qosmgrd` プロセスは存在しない）。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -101,7 +101,7 @@ YANG 上は map 名を key にする outer list と、`pfc_priority` を key に
 ### 典型値
 
 - key 形式: `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<map-name>`。
-- lossless 用に dot1p `3`→PG `3`、`4`→PG `4` をマップするのが RoCE v2 の定番。
+- lossless 用に dot1p `3`→PG `3`、`4`→PG `4` をマップするのが [RoCE](../../reference/glossary.md#term-roce) v2 の定番。
 
 ### よくある誤設定
 
@@ -114,3 +114,5 @@ sonic-db-cli CONFIG_DB keys 'PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|*'
 show priority-group persistent-watermark
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a142710d04f2 -->

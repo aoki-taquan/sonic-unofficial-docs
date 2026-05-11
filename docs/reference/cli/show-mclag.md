@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-SONiC には `show mclag` という Click サブコマンドは存在しない。MCLAG の状態確認は **`mclagdctl`** コマンド経由で行い、これは `iccpd` コンテナ内の Unix ソケット (`/var/run/iccpd/mclagdctl.sock`) に接続する `iccpd` 由来のユーティリティである[^1]。
+SONiC には `show mclag` という Click サブコマンドは存在しない。[MCLAG](../../reference/glossary.md#term-mclag) の状態確認は **`mclagdctl`** コマンド経由で行い、これは `iccpd` コンテナ内の Unix ソケット (`/var/run/iccpd/mclagdctl.sock`) に接続する `iccpd` 由来のユーティリティである[^1]。
 
 ホスト側の `/usr/local/bin/mclagdctl` は `docker exec -i iccpd mclagdctl "$@"` を呼ぶだけのラッパーで、引数はそのままコンテナ内 `mclagdctl` に渡る[^2]。
 
@@ -36,7 +36,7 @@ SONiC には `show mclag` という Click サブコマンドは存在しない�
 | コマンド | 用途 |
 |---------|------|
 | `mclagdctl -i <domain_id> dump state` | ICCP セッションの現在状態 |
-| `mclagdctl -i <domain_id> dump arp` | MCLAG 同期されている ARP テーブル |
+| `mclagdctl -i <domain_id> dump arp` | MCLAG 同期されている [ARP](../../reference/glossary.md#term-arp) テーブル |
 | `mclagdctl -i <domain_id> dump nd` | 同 IPv6 neighbor (Neighbor Discovery) |
 | `mclagdctl -i <domain_id> dump mac` | 同 MAC テーブル |
 | `mclagdctl -i <domain_id> dump unique_ip` | unique-ip 機能を有効にした Vlan インタフェースの一覧 |
@@ -55,7 +55,7 @@ ICCP / KA セッションの状態と ToR 識別子、peer link、isolation 状�
 
 ### `mclagdctl dump portlist local` / `peer`
 
-local は自ノードの MCLAG メンバ PortChannel + そのメンバ物理 port、peer はピア側からの ICCP メッセージで取得した port 状態。`peer` 側は ICCP セッション断絶中はステイル状態となる。
+local は自ノードの MCLAG メンバ [PortChannel](../../reference/glossary.md#term-portchannel) + そのメンバ物理 port、peer はピア側からの ICCP メッセージで取得した port 状態。`peer` 側は ICCP セッション断絶中はステイル状態となる。
 
 ### `mclagdctl dump arp` / `dump nd` / `dump mac`
 
@@ -79,7 +79,7 @@ iccpd 内部のログレベル切替。値は iccpd の syslog 等でデバッ�
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MCLAG_DOMAIN`](../config-db/mclag-domain.md) / `MCLAG_INTERFACE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MCLAG_DOMAIN`](../config-db/mclag-domain.md) / `MCLAG_INTERFACE`
 
 <!-- ref-triangle:end -->
 
@@ -147,8 +147,8 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- MC-LAG のピアリンク・keepalive・メンバ LAG の同期状態を確認する。
-- ARP/ND/MAC の同期 (mclag syncd) が想定どおり動いているかを判定する。
+- MC-[LAG](../../reference/glossary.md#term-lag) のピアリンク・keepalive・メンバ LAG の同期状態を確認する。
+- ARP/ND/MAC の同期 (mclag [syncd](../../reference/glossary.md#term-syncd)) が想定どおり動いているかを判定する。
 
 ### よくある落とし穴
 
@@ -163,3 +163,5 @@ show mclag interface
 mclagdctl -i 1000 dump state
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 0db2469421e6 -->

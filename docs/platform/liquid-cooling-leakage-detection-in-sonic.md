@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。本機能は液冷漏洩を検出するセンサを監視し、漏洩発生時に SONiC が **即時** アラート（syslog + STATE_DB + gNMI event）を出すパイプラインを定義する[^1]。
+高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。本機能は液冷漏洩を検出するセンサを監視し、漏洩発生時に SONiC が **即時** アラート（syslog + [STATE_DB](../reference/glossary.md#term-state_db) + [gNMI](../reference/glossary.md#term-gnmi) event）を出すパイプラインを定義する[^1]。
 
 要件[^1]:
 
@@ -163,7 +163,7 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 
 ### 関連する CONFIG_DB / YANG
 
-CONFIG_DB の追加は無い。`pmon_daemon_control.json` の起動設定で機能を gate する[^1]。
+[CONFIG_DB](../reference/glossary.md#term-config_db) の追加は無い。`pmon_daemon_control.json` の起動設定で機能を gate する[^1]。
 
 ### 関連する CLI
 
@@ -202,7 +202,7 @@ leak_sensors3     Not OK    LiquidCooling
 
 ## 制限事項
 
-- **0.5 秒 polling**: メインスレッドの 1 分とは別系統。0.5 秒は HLD のデフォルトだが、CPU/IPC 負荷の問題があれば調整可。
+- **0.5 秒 polling**: メインスレッドの 1 分とは別系統。0.5 秒は [HLD](../reference/glossary.md#term-hld) のデフォルトだが、CPU/IPC 負荷の問題があれば調整可。
 - **Per-sensor name 管理がプラットフォーム責任**: 漏洩位置特定のため複数センサ前提。`name` の命名規則は HLD で規定なし。
 - **STATE_DB と gNMI イベントの二重経路**: STATE_DB を監視する system-health からのイベント発行であり、`thermalctld` 直接の gNMI 発行ではない。state-db 更新が遅延するとイベントも遅延する。
 
@@ -232,7 +232,7 @@ leak_sensors3     Not OK    LiquidCooling
   ```
   - L547: `self.sensor_table = swsscommon.Table(state_db, LiquidCoolingUpdater.LIQUID_COOLING_INFO_TABLE_NAME)` で実際に `LIQUID_COOLING_INFO` を書く。
 - **差分の中身**: HLD 図には `LIQUID_COOLING_DEVICE` と書かれているが、実コードは `LIQUID_COOLING_INFO`。さらに HLD には無い `SYSTEM_LEAK_STATUS` (`L548`)、`LEAK_PROFILE`（`L551`）等の補助テーブルも追加されている。
-- **読者への影響**: HLD の名前で `redis-cli -n 6 keys 'LIQUID_COOLING_DEVICE*'` を実行しても結果が出ず、漏洩状態を Redis 経由で参照できないと誤解する。system-health 側の hardware_checker も `LIQUID_COOLING_INFO` を見る前提で書かれているため、HLD の名前で独自スクリプトを書くと連動しない。
+- **読者への影響**: HLD の名前で `redis-cli -n 6 keys 'LIQUID_COOLING_DEVICE*'` を実行しても結果が出ず、漏洩状態を [Redis](../reference/glossary.md#term-redis) 経由で参照できないと誤解する。system-health 側の hardware_checker も `LIQUID_COOLING_INFO` を見る前提で書かれているため、HLD の名前で独自スクリプトを書くと連動しない。
 - **回避策**:
   - 状態確認: `redis-cli -n 6 keys 'LIQUID_COOLING_INFO*'` および `redis-cli -n 6 keys 'SYSTEM_LEAK_STATUS*'`、`redis-cli -n 6 keys 'LEAK_PROFILE*'` を使う。
   - スクリプト連携: `LIQUID_COOLING_INFO` を subscribe キーとして使う。HLD の名前はリネームされた旧称と考えて読み替える。
@@ -288,3 +288,5 @@ leak_sensors3     Not OK    LiquidCooling
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f5299aff9050 -->

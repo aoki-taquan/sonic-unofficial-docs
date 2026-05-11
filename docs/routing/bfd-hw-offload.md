@@ -27,15 +27,15 @@ related:
 
 ## 概要
 
-BFD（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。SONiC では従来 FRR（`bfdd`）でソフトウェア BFD を実装するが、本機能は **BFD セッションを ASIC 側にオフロードして CPU を介在させずに検知する** 経路を導入する[^1]。
+[BFD](../reference/glossary.md#term-bfd)（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。SONiC では従来 [FRR](../reference/glossary.md#term-frr)（`bfdd`）でソフトウェア BFD を実装するが、本機能は **BFD セッションを ASIC 側にオフロードして CPU を介在させずに検知する** 経路を導入する[^1]。
 
 設計の主眼は以下のとおり。
 
 - ASIC 側で BFD パケットの送受信・状態遷移を完結させ、最大 4000 セッションまでスケールする
-- セッションは `APPL_DB.BFD_SESSION` 経由で外部コンポーネント（例: 上位コントローラ、orchagent）が直接書き込む。Phase 1 では `CONFIG_DB` 経由および専用 `config` CLI は実装しない[^1]
-- 状態は SAI 通知を `BfdOrch` が受け取り `STATE_DB` に反映、`show bfd session` で参照する
+- セッションは `APPL_DB.BFD_SESSION` 経由で外部コンポーネント（例: 上位コントローラ、[orchagent](../reference/glossary.md#term-orchagent)）が直接書き込む。Phase 1 では `CONFIG_DB` 経由および専用 `config` CLI は実装しない[^1]
+- 状態は [SAI](../reference/glossary.md#term-sai) 通知を `BfdOrch` が受け取り `STATE_DB` に反映、`show bfd session` で参照する
 
-本 HLD は 2021 年時点の Phase 1 設計であり、Control plane BFD（FRR `bfdd`）との共存は同 HLD のスコープ外である[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は 2021 年時点の Phase 1 設計であり、Control plane BFD（FRR `bfdd`）との共存は同 HLD のスコープ外である[^1]。
 
 ## 動作仕様
 
@@ -61,7 +61,7 @@ flowchart LR
 
 ### APPL_DB スキーマ
 
-セッションキーは VRF・インタフェース・宛先 IP の 3 つで一意化する[^1]。
+セッションキーは [VRF](../reference/glossary.md#term-vrf)・インタフェース・宛先 IP の 3 つで一意化する[^1]。
 
 ```
 BFD_SESSION:{vrf}:{ifname}:{ipaddr}
@@ -107,7 +107,7 @@ Phase 1 では **`CONFIG_DB` スキーマは未定義**。BFD manager の設計�
 | `SAI_BFD_SESSION_ATTR_DST_IP_ADDRESS` | リモート IP |
 | `SAI_BFD_SESSION_ATTR_MULTIHOP` | true |
 
-multihop セッションでは ASIC 側で `SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER`（未指定なら `SAI_SWITCH_ATTR_DEFAULT_VIRTUAL_ROUTER_ID`）に紐づく underlay ルーティングテーブルで宛先解決する。underlay の ECMP パス解決も HW 任せで、ASIC 詳細は HLD のスコープ外と明記される[^1]。
+multihop セッションでは ASIC 側で `SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER`（未指定なら `SAI_SWITCH_ATTR_DEFAULT_VIRTUAL_ROUTER_ID`）に紐づく underlay ルーティングテーブルで宛先解決する。underlay の [ECMP](../reference/glossary.md#term-ecmp) パス解決も HW 任せで、ASIC 詳細は HLD のスコープ外と明記される[^1]。
 
 ### 状態遷移とライフサイクル
 
@@ -166,7 +166,7 @@ HLD は HW オフロードと FRR `bfdd` の **共存自体は否定しない** 
 
 ### 関連する CONFIG_DB
 
-Phase 1 ではユーザ向け CONFIG_DB スキーマは未定義。ただし `APPL_DB.BFD_SESSION` を直接書く producer（HA・vnet・peer monitor など）が必要。
+Phase 1 ではユーザ向け [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは未定義。ただし `APPL_DB.BFD_SESSION` を直接書く producer（HA・vnet・peer monitor など）が必要。
 
 ### 関連する CLI
 
@@ -178,7 +178,7 @@ Phase 1 ではユーザ向け CONFIG_DB スキーマは未定義。ただし `AP
 
 ### 関連する YANG
 
-HLD で YANG モジュールへの言及は無い（`CONFIG_DB` スキーマが未定義のため）。
+HLD で [YANG](../reference/glossary.md#term-yang) モジュールへの言及は無い（`CONFIG_DB` スキーマが未定義のため）。
 
 ### スケール上限
 
@@ -216,7 +216,7 @@ HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
 ## トラブルシューティング
 
 - セッションが Up にならない場合、まず `show bfd session` で `STATE_DB.BFD_SESSION_TABLE` 上の状態を確認。`Init` で止まっているならピア側の状態を疑う
-- `APPL_DB` に SET したのにセッションが現れない場合、`BfdOrch` ログ・syncd ログに SAI エラーが出ていないか確認（SAI BFD 未対応 ASIC では create が失敗）
+- `APPL_DB` に SET したのにセッションが現れない場合、`BfdOrch` ログ・[syncd](../reference/glossary.md#term-syncd) ログに SAI エラーが出ていないか確認（SAI BFD 未対応 ASIC では create が失敗）
 - HW オフロード対応 SAI 属性は ASIC ベンダー依存。`SAI_BFD_SESSION_OFFLOAD_TYPE_FULL` を解釈できない実装では full offload にならない可能性あり
 
 ## 引用元
@@ -238,3 +238,5 @@ HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 87dbd5422985 -->

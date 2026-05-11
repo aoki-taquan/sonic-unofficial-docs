@@ -28,7 +28,7 @@ related:
 
 SONiC の k8s 連携では、コンテナそのものが起動しているかどうかは `kubelet` が把握しているが、**コンテナ内の supervisor 配下サービスが本当に正常か** は外から見えない。`docker ps` で running でも、内部の `swss` が落ちっぱなしという状況がある[^1]。
 
-この HLD は **k8s の readiness probe を使ってコンテナ内サービスの健全性を外部に見せる** ための仕組みを定義している。アップグレード時の post-check で readiness probe の終了コードを参照し、healthy なら次に進み、unhealthy ならタイムアウトまで再試行→fallback、という運用に乗せる[^1]。
+この [HLD](../reference/glossary.md#term-hld) は **k8s の readiness probe を使ってコンテナ内サービスの健全性を外部に見せる** ための仕組みを定義している。アップグレード時の post-check で readiness probe の終了コードを参照し、healthy なら次に進み、unhealthy ならタイムアウトまで再試行→fallback、という運用に乗せる[^1]。
 
 ## 動作仕様
 
@@ -123,7 +123,7 @@ reasoning: スクリプトのパスと二段階チェック構成の根拠。
 
 ## 設定
 
-このページの機能はコンテナ内の固定パススクリプトと k8s 設定で完結する。CONFIG_DB / CLI のエンドユーザ向けインターフェースは HLD では定義されていない。
+このページの機能はコンテナ内の固定パススクリプトと k8s 設定で完結する。[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI のエンドユーザ向けインターフェースは HLD では定義されていない。
 
 ### 関連する CONFIG_DB
 
@@ -155,3 +155,5 @@ reasoning: スクリプトのパスと二段階チェック構成の根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/kubernetes/health-check.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: c5a6ce567024 -->

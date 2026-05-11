@@ -29,9 +29,9 @@ related:
 
 ## 概要
 
-Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサーバ向けネイバエントリを **追加・削除** する必要があり、ネイバ数が多い ToR では切替時の処理量と SAI コール回数が線形に増えていく[^1]。
+Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサーバ向けネイバエントリを **追加・削除** する必要があり、ネイバ数が多い ToR では切替時の処理量と [SAI](../reference/glossary.md#term-sai) コール回数が線形に増えていく[^1]。
 
-本機能は SAI ネイバ作成時に **暗黙のホストルート生成を抑止**（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true`）し、その代わりに `/32`（IPv4）または `/128`（IPv6）の **明示的なプレフィックスルート** を作成する。Mux 状態遷移時はネイバエントリ自体は触らず、プレフィックスルートの **ネクストホップだけを直接ネイバ↔IPinIP トンネルで切り替える**。これにより `O(neighbor 数)` の add/remove が 1 ルートの nexthop 更新に集約され、切替が大幅に軽量化される[^1]。
+本機能は SAI ネイバ作成時に **暗黙のホストルート生成を抑止**（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true`）し、その代わりに `/32`（IPv4）または `/128`（IPv6）の **明示的なプレフィックスルート** を作成する。Mux 状態遷移時はネイバエントリ自体は触らず、プレフィックスルートの **ネクストホップだけを直接ネイバ↔[IPinIP](../reference/glossary.md#term-ipinip) トンネルで切り替える**。これにより `O(neighbor 数)` の add/remove が 1 ルートの nexthop 更新に集約され、切替が大幅に軽量化される[^1]。
 
 ## 動作仕様
 
@@ -71,7 +71,7 @@ mux ポートに動的指定された場合のために、`MuxOrch` から既存
 
 新たに「プレフィックスルート用 neighbor handler」を追加し、ポート単位の `neighbor_mode` で従来 handler と切り替える。これにより同一スイッチ上で host_route と prefix_route の **共存** を許す[^1]。
 
-linkmgrd の状態通知に応じて[^1]:
+[linkmgrd](../reference/glossary.md#term-linkmgrd) の状態通知に応じて[^1]:
 
 | 遷移 | 動作 |
 |------|------|
@@ -161,13 +161,13 @@ NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_R
 
 - **ASIC capability 必須**: `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` を実装しない ASIC では使えず、host_route にフォールバックする[^1]。
 - **mode 動的変更不可**: 一度作成された mux ネイバの mode を実行時に切り替えることはサポートされない[^1]。
-- **Warm reboot 対応は TBD**: HLD は warm reboot サポートを「TBD」と明記しており未確定[^1]。
+- **Warm reboot 対応は TBD**: [HLD](../reference/glossary.md#term-hld) は warm reboot サポートを「TBD」と明記しており未確定[^1]。
 
 ## 干渉する機能
 
 - **`linkmgrd` / `MuxOrch` の状態機械**: 状態遷移は従来どおり linkmgrd → MuxOrch だが、SAI 操作の中身が neighbor add/remove から route attribute set に置き換わる。
 - **IPinIP トンネル**: standby 時の tunnel nexthop は既存 IPinIP 機構を再利用する。tunnel terminator 側に変更はない。
-- **暗黙ホストルート挙動の差**: 他機能（例: ARP/ND 学習に紐づくホストルート期待）が暗黙ホストルートに依存している場合、mux ポートでは prefix route で代替されるため挙動を確認する必要がある。
+- **暗黙ホストルート挙動の差**: 他機能（例: [ARP](../reference/glossary.md#term-arp)/ND 学習に紐づくホストルート期待）が暗黙ホストルートに依存している場合、mux ポートでは prefix route で代替されるため挙動を確認する必要がある。
 
 ## トラブルシューティング
 
@@ -185,3 +185,5 @@ NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_R
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2f9f3ecb28d2 -->

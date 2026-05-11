@@ -30,7 +30,7 @@ related:
 
 ## 想定原因
 
-1. **linkmgrd / xcvrd / mux_orch のいずれかが down**
+1. **[linkmgrd](../../reference/glossary.md#term-linkmgrd) / xcvrd / mux_orch のいずれかが down**
 2. **PEER_SWITCH / MUX_CABLE 設定不整合** (server_ipv4 / soc_ipv4 等)
 3. **active-standby と active-active のモード混在**: 設定が古い形式のまま
 4. **ICMP heartbeat (link prober) が対向 ToR へ到達しない** (Loopback 設定 / route)
@@ -102,4 +102,6 @@ show muxcable cableinfo
 ## 引用元
 
 [^1]: sonic-net/sonic-linkmgrd @ 65f5633 — LinkManagerStateMachine
-[^2]: sonic-net/sonic-swss @ 4305596 — muxorch
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — muxorch
+
+<!-- glossary-links-injected: eac8b54205e6 -->

@@ -97,7 +97,7 @@ reasoning: 本テストの整合性判定基準を直接表化
 1. すべての counterpoll を disable して config save → reload
 2. queue / watermark / pg-drop のいずれか 1 つを enable
 3. その counter group が `FLEX_COUNTER_DB` に出現
-4. 関連する COUNTERS_DB マップが作成
+4. 関連する [COUNTERS_DB](../reference/glossary.md#term-counters_db) マップが作成
 5. 他種別の counter / マップが存在しないこと
 
 ### 全 counterpoll 有効化シーケンス
@@ -121,7 +121,7 @@ reasoning: 本テストの整合性判定基準を直接表化
 
 ### 関連する CONFIG_DB
 
-`FLEX_COUNTER_TABLE` の各 group entry。本テストでは CONFIG_DB の参照は限定的で、主に `FLEX_COUNTER_DB` (DB 5) と `COUNTERS_DB` (DB 2) を対象にする。
+`FLEX_COUNTER_TABLE` の各 group entry。本テストでは [CONFIG_DB](../reference/glossary.md#term-config_db) の参照は限定的で、主に `FLEX_COUNTER_DB` (DB 5) と `COUNTERS_DB` (DB 2) を対象にする。
 
 ## 制限事項
 
@@ -143,3 +143,5 @@ reasoning: 本テストの整合性判定基準を直接表化
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2fb486a7acc8 -->

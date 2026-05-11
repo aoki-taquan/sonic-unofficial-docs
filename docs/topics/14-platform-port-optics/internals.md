@@ -32,7 +32,7 @@ flowchart LR
   PYP --> BMC[BMC / Redfish]
 ```
 
-SAI 側はベンダー SDK が、`sonic_platform` プラグイン側は装置依存の sysfs / i2c アクセスが担当します。BMC を持つ装置では sensor / FRU / chassis 情報が BMC 経由で取得されます。
+[SAI](../../reference/glossary.md#term-sai) 側はベンダー SDK が、`sonic_platform` プラグイン側は装置依存の sysfs / i2c アクセスが担当します。BMC を持つ装置では sensor / FRU / chassis 情報が BMC 経由で取得されます。
 
 ## Media-based port settings
 
@@ -40,7 +40,7 @@ SAI 側はベンダー SDK が、`sonic_platform` プラグイン側は装置依
 
 ## Gearbox
 
-NPU と optics の間に PHY (Gearbox) を挟む装置では、SAI 経由で Gearbox 側もプログラムされます。動的に Gearbox の SI を調整する設計は [SONiC dynamic Gearbox tuning design plan](../../platform/sonic-dynamic-gearbox-tuning-design-plan.md) を参照してください。
+[NPU](../../reference/glossary.md#term-npu) と optics の間に PHY (Gearbox) を挟む装置では、SAI 経由で Gearbox 側もプログラムされます。動的に Gearbox の SI を調整する設計は [SONiC dynamic Gearbox tuning design plan](../../platform/sonic-dynamic-gearbox-tuning-design-plan.md) を参照してください。
 
 ## MDIO アクセスと gbsyncd
 
@@ -93,11 +93,11 @@ flowchart LR
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
 | `PortsOrch` (`orchagent/portsorch.cpp`) | `PortsOrch::doTask`、`initializePort`、`setPortAdminStatus` | port SAI object 作成、speed/FEC/autoneg 設定 |
-| `portsyncd` | netlink listener | kernel link state を APPL_DB へ |
-| `xcvrd` (`sonic-platform-daemons/sonic-xcvrd/`) | `xcvrd.py` | transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を STATE_DB に書く |
+| `portsyncd` | netlink listener | kernel link state を [APPL_DB](../../reference/glossary.md#term-appl_db) へ |
+| `xcvrd` (`sonic-platform-daemons/sonic-xcvrd/`) | `xcvrd.py` | transceiver EEPROM 読み出し、SI 適用、TRANSCEIVER_INFO/DOM/STATUS を [STATE_DB](../../reference/glossary.md#term-state_db) に書く |
 | `thermalctld` | platform plugin で温度センサ取得 | thermal policy 反映 |
 | `psud`、`pcied`、`syseepromd`、`ledd` | 各種 sensor / FRU | STATE_DB に状況書き込み |
-| `gbsyncd` | Gearbox 用 syncd | NPU 経由の PHY MDIO |
+| `gbsyncd` | Gearbox 用 [syncd](../../reference/glossary.md#term-syncd) | NPU 経由の PHY MDIO |
 | `sfputil` / `sfpshow` | CLI | xcvrd の出力を整形 |
 
 ## SAI 属性使用一覧
@@ -133,7 +133,7 @@ ASIC_DB:
 ## ZMQ / Redis pub/sub
 
 - ZMQ は使わない。
-- `xcvrd` は sonic_platform plugin を直接呼び、結果を Redis に push。
+- `xcvrd` は sonic_platform plugin を直接呼び、結果を [Redis](../../reference/glossary.md#term-redis) に push。
 - PMON 系 daemon は `supervisord` で管理され、互いに Redis 経由でしか通信しない。
 - BMC 経路を持つ場合、`pmon` 配下の daemon が REST/Redfish を直接呼び、結果を STATE_DB に統一形式で書く。
 
@@ -141,8 +141,8 @@ ASIC_DB:
 
 - `xcvrd` の EEPROM polling 周期は default 60s 程度で、optics の即時 plug/unplug 検知は GPIO interrupt 経路（あれば）を `xcvrd` の event API で取り込む実装に依存する。これがベンダ plugin で未実装だと polling 周期分の遅延が出る。
 - media_settings の SI は port speed × media の組み合わせで `media_settings.json` に static に書く設計で、新規 optic 投入時にファイル更新と config reload が必要。
-- Gearbox SI 動的調整は `gbsyncd` の HLD では将来的な拡張で、master ではまだ static 適用のみのケースが多い（discrepancy として記録される）。
-- breakout（4×25G ↔ 100G 等）時の sequence は `PortsOrch` が `removePort` → `createPort` を行うため、kernel netdev が瞬間的に消える。LACP / LLDP / route が影響を受ける。
+- Gearbox SI 動的調整は `gbsyncd` の [HLD](../../reference/glossary.md#term-hld) では将来的な拡張で、master ではまだ static 適用のみのケースが多い（discrepancy として記録される）。
+- breakout（4×25G ↔ 100G 等）時の sequence は `PortsOrch` が `removePort` → `createPort` を行うため、kernel netdev が瞬間的に消える。[LACP](../../reference/glossary.md#term-lacp) / [LLDP](../../reference/glossary.md#term-lldp) / route が影響を受ける。
 - S3IP sysfs を使わないレガシー platform plugin では sysfs パスがベンダ独自で、共通 CLI（`show platform fan` 等）の出力に差が出る。
 - BMC 経由運用では、host OS の sensor 値が BMC の cache に律速され、host OS の `pmon` 周期と BMC polling 周期がずれて oscillation することがある。
 
@@ -156,3 +156,5 @@ ASIC_DB:
 - [S3IP sysfs framework HLD](../../architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md)
 - [support BMC flows in SONiC](../../platform/support-bmc-flows-in-sonic.md)
 - [SONiC BMC platform management monitoring](../../system/sonic-bmc-platform-management-monitoring.md)
+
+<!-- glossary-links-injected: 34e33b94bfc4 -->

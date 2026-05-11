@@ -29,9 +29,9 @@ related:
 
 ## 概要
 
-AAA (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。**`aaa`・`tacacs`・`radius` の 3 つは独立した click グループ**で、`config/main.py` がそれぞれを `config.add_command(aaa.aaa)` `config.add_command(aaa.tacacs)` `config.add_command(aaa.radius)` の形で `config` 直下に登録する[^1]。すべて `config/aaa.py` に同居している。
+[AAA](../../reference/glossary.md#term-aaa) (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。**`aaa`・`tacacs`・`radius` の 3 つは独立した click グループ**で、`config/main.py` がそれぞれを `config.add_command(aaa.aaa)` `config.add_command(aaa.tacacs)` `config.add_command(aaa.radius)` の形で `config` 直下に登録する[^1]。すべて `config/aaa.py` に同居している。
 
-操作対象は CONFIG_DB の `AAA` / `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` テーブル。値の追加には `add_table_kv` (= `mod_entry`)、削除には `del_table_key` を使う。`set_entry` は `ValidatedConfigDBConnector` 経由で YANG 検証を伴う。
+操作対象は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `AAA` / `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` テーブル。値の追加には `add_table_kv` (= `mod_entry`)、削除には `del_table_key` を使う。`set_entry` は `ValidatedConfigDBConnector` 経由で [YANG](../../reference/glossary.md#term-yang) 検証を伴う。
 
 ## コマンド一覧
 
@@ -232,3 +232,5 @@ flowchart LR
 - [Topics: Security / AAA / FIPS / Hardening](../../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ec4ea08af950 -->

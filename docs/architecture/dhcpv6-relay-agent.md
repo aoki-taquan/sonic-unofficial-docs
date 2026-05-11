@@ -66,9 +66,9 @@ hop-count > `HOP_COUNT_LIMIT` のメッセージは破棄。`link-address` に�
 | | DHCPv4 (ISC) | DHCPv6 (SONiC 自前) |
 |---|--------------|--------------------|
 | Option | 82 | **79 (RFC 6939)**、default on |
-| 設定変更 | container 再起動 | CONFIG_DB 経由で動的反映 |
+| 設定変更 | container 再起動 | [CONFIG_DB](../reference/glossary.md#term-config_db) 経由で動的反映 |
 | dual ToR | 既存 | **loopback 送信元 IP** オプション |
-| CoPP | DHCPv4 trap | DHCPv6 enable 時のみ trap[^1] |
+| [CoPP](../reference/glossary.md#term-copp) | DHCPv4 trap | DHCPv6 enable 時のみ trap[^1] |
 
 ### CONFIG_DB / YANG
 
@@ -78,7 +78,7 @@ DHCP|<intf>
   dhcpv6_option|rfc6939_support  = "true" | "false"   ; default true
 ```
 
-YANG は `sonic-dhcpv6-relay.yang`。`DHCP` コンテナ下の `VLAN_LIST` に `dhcpv6_servers`（`inet6:ip-address` list）と `rfc6939_support`（bool）を持つ[^1]。
+[YANG](../reference/glossary.md#term-yang) は `sonic-dhcpv6-relay.yang`。`DHCP` コンテナ下の `VLAN_LIST` に `dhcpv6_servers`（`inet6:ip-address` list）と `rfc6939_support`（bool）を持つ[^1]。
 
 ### Option 79 の役割
 
@@ -86,7 +86,7 @@ relay agent が SOLICIT/REQUEST を受けた際の **L2 source MAC を Relay-For
 
 ### Dual ToR の送信元 IP
 
-active/standby dual ToR で active が送った Relay-Forward の返答が **standby 側 ToR に着く** ことがある。VLAN SVI を src にすると応答先が自分宛と認識できないため、**loopback IP を src に固定するオプション** (`use-loopback-address`) を提供[^1]。peer ToR は loopback 宛の応答を見て相手 ToR へ forward する。
+active/standby dual ToR で active が送った Relay-Forward の返答が **standby 側 ToR に着く** ことがある。[VLAN](../reference/glossary.md#term-vlan) SVI を src にすると応答先が自分宛と認識できないため、**loopback IP を src に固定するオプション** (`use-loopback-address`) を提供[^1]。peer ToR は loopback 宛の応答を見て相手 ToR へ forward する。
 
 | 環境 | 送信元 IP |
 |------|-----------|
@@ -173,3 +173,5 @@ reasoning: ISC 置換動機と Option 79 採用の根拠。
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 076fff3e00eb -->

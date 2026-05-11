@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-バッファプロファイル（プール参照、reserved size、admission threshold、PFC xon/xoff など）を名前付きで定義する[^1]。`buffermgrd` がこのテーブルを APPL_DB の `BUFFER_PROFILE_TABLE` に転送し、`orchagent` `BufferOrch` が SAI buffer profile を生成する。`BUFFER_PG` / `BUFFER_QUEUE` から leafref で参照される。
+バッファプロファイル（プール参照、reserved size、admission threshold、[PFC](../../reference/glossary.md#term-pfc) xon/xoff など）を名前付きで定義する[^1]。`buffermgrd` がこのテーブルを [APPL_DB](../../reference/glossary.md#term-appl_db) の `BUFFER_PROFILE_TABLE` に転送し、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) buffer profile を生成する。`BUFFER_PG` / `BUFFER_QUEUE` から leafref で参照される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -74,9 +74,9 @@ BUFFER_PROFILE|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BUFFER_POOL`、`BUFFER_PG`、`BUFFER_QUEUE`、`DEVICE_METADATA` (`buffer_model`)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_POOL`、`BUFFER_PG`、`BUFFER_QUEUE`、`DEVICE_METADATA` (`buffer_model`)
 - 関連 CLI: 通常は `config_db.json` からロード。CLI 直接編集は限定的
-- 関連 YANG: `sonic-buffer-profile`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-profile`
 
 <!-- ref-triangle:start -->
 
@@ -119,3 +119,5 @@ sonic-db-cli CONFIG_DB hgetall 'BUFFER_PROFILE|pg_lossless_100000_5m_profile'
 show buffer profile
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: faaeb5caf487 -->

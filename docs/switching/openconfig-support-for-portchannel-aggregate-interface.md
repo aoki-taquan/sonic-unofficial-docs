@@ -29,7 +29,7 @@ related:
 
 ## なぜ OpenConfig が必要か
 
-SONiC の PortChannel は REST/gNMI で操作できるが、SONiC 独自 YANG（`sonic-portchannel` 等）に縛られる。本 HLD は **ベンダ間共通の OpenConfig** ツリー（`openconfig-interfaces` / `openconfig-if-aggregate` / `openconfig-if-ethernet`）で read/write できることを目指す[^1]。マッピングは **`sonic-mgmt-common` の transformer 基盤** に閉じ、**DB スキーマ変更を一切伴わない**[^1]。
+SONiC の [PortChannel](../reference/glossary.md#term-portchannel) は REST/[gNMI](../reference/glossary.md#term-gnmi) で操作できるが、SONiC 独自 [YANG](../reference/glossary.md#term-yang)（`sonic-portchannel` 等）に縛られる。本 [HLD](../reference/glossary.md#term-hld) は **ベンダ間共通の OpenConfig** ツリー（`openconfig-interfaces` / `openconfig-if-aggregate` / `openconfig-if-ethernet`）で read/write できることを目指す[^1]。マッピングは **`sonic-mgmt-common` の transformer 基盤** に閉じ、**DB スキーマ変更を一切伴わない**[^1]。
 
 スコープ: REST + gNMI（KLISH CLI / subinterface は対象外）[^1]。
 
@@ -104,7 +104,7 @@ gNMI も `Capabilities` で同 YANG を公開し `Get` / `Set` で同等[^1]。
 
 ## DB / CLI への影響
 
-- CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB / COUNTERS_DB のスキーマ変更なし[^1]
+- [CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) のスキーマ変更なし[^1]
 - 既存 `config portchannel` 等の KLISH CLI は変更されない（対象外）[^1]
 - 既存 SONiC YANG ベースの REST PATCH/GET は並存。OpenConfig 経路は別ルート
 
@@ -113,19 +113,19 @@ gNMI も `Capabilities` で同 YANG を公開し `Get` / `Set` で同等[^1]。
 | YANG | 用途 |
 |------|------|
 | `openconfig-interfaces` | interface 全般（config/state/counters）|
-| `openconfig-if-aggregate` | LAG（`min-links`, `aggregate-id`）|
+| `openconfig-if-aggregate` | [LAG](../reference/glossary.md#term-lag)（`min-links`, `aggregate-id`）|
 | `openconfig-if-ethernet` | メンバ Ethernet（`auto-negotiate`, `port-speed`, `aggregate-id`）|
 
 ## 制限事項
 
-- subinterface（VLAN / L3 サブ）は対象外[^1]
+- subinterface（[VLAN](../reference/glossary.md#term-vlan) / L3 サブ）は対象外[^1]
 - KLISH CLI 経由の同等 OpenConfig 操作は提供しない[^1]
 - `min-links` 等のマッピングは transformer 実装に依存
 - gNMI subscribe / streaming telemetry の挙動は明示記述なし
 
 ## 干渉する機能
 
-`sonic-mgmt-common` transformer / `teamd` / `teamsyncd`（最終反映先）/ `PortChannelOrch` / `PortChannelMemberOrch`（SAI 反映）/ 既存 SONiC YANG ベースの経路。
+`sonic-mgmt-common` transformer / `teamd` / `teamsyncd`（最終反映先）/ `PortChannelOrch` / `PortChannelMemberOrch`（[SAI](../reference/glossary.md#term-sai) 反映）/ 既存 SONiC YANG ベースの経路。
 
 ## トラブルシューティング
 
@@ -149,3 +149,5 @@ gNMI も `Capabilities` で同 YANG を公開し `Get` / `Set` で同等[^1]。
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 6bd1731a2f9b -->

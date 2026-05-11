@@ -46,7 +46,7 @@ related:
 
 ## なぜ「1 テーブル 1 マネージャ」なのか
 
-SONiC の初期実装は port / IP / LAG を `/etc/network/interfaces` や `/etc/teamd/` の **静的ファイル** に書き出していた。再起動なしの設定変更ができず運用上厳しい。本 HLD は構成変更を **CONFIG_DB から incremental に流す** モデルを定め、原則を **theorem** として明文化する[^1]:
+SONiC の初期実装は port / IP / [LAG](../reference/glossary.md#term-lag) を `/etc/network/interfaces` や `/etc/teamd/` の **静的ファイル** に書き出していた。再起動なしの設定変更ができず運用上厳しい。本 [HLD](../reference/glossary.md#term-hld) は構成変更を **[CONFIG_DB](../reference/glossary.md#term-config_db) から incremental に流す** モデルを定め、原則を **theorem** として明文化する[^1]:
 
 > "Each configuration table can have one and only one manager daemon associated with it."
 
@@ -57,7 +57,7 @@ SONiC の初期実装は port / IP / LAG を `/etc/network/interfaces` や `/etc
 | 責任 | CONFIG_DB | 担当 daemon |
 |------|-----------|------------|
 | port admin / MTU | `PORT` | `portmgrd` |
-| IP（port / portchannel / VLAN）| `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` | `intfmgrd` |
+| IP（port / portchannel / [VLAN](../reference/glossary.md#term-vlan)）| `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` | `intfmgrd` |
 | portchannel と member | `PORTCHANNEL` / `PORTCHANNEL_MEMBER` | `teammgrd` |
 
 ```mermaid
@@ -77,20 +77,20 @@ flowchart LR
 
 主な挙動[^1]:
 
-- `intfmgrd` / `teammgrd` は **STATE_DB を listen** して依存解決（portchannel 生成 / member netdev 出現を待つ）
+- `intfmgrd` / `teammgrd` は **[STATE_DB](../reference/glossary.md#term-state_db) を listen** して依存解決（portchannel 生成 / member netdev 出現を待つ）
 - `teammgrd` は **LAG から外れた port の admin/MTU を元に戻す** 責務も持つ
 - `portsyncd` / `teamsyncd` は netdev 検知で `state=ok` を STATE_DB に書くだけ
-- `orchagent` は LAG MTU → 全 member MTU、port/LAG MTU → RIF MTU を追従
+- `orchagent` は LAG MTU → 全 member MTU、port/LAG MTU → [RIF](../reference/glossary.md#term-rif) MTU を追従
 
 ## Phase 別ゴール
 
 | Phase | 到達点 |
 |-------|--------|
 | 0 | minigraph で boot 直後に動作状態へ。IP / LAG / admin / MTU が正しく入る |
-| 1 | フロントパネル / teamd の静的設定を排除。CLI で port up/down、IP 追加削除、MTU、LAG 作成削除、member 追加削除が incremental に可能。**`docker swss` 再起動** で状態復元 |
-| 2 | loopback も portmgrd 管理へ。**`docker teamd` 再起動** で LAG 全再構築（一旦削除 → 作り直し） |
+| 1 | フロントパネル / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) の静的設定を排除。CLI で port up/down、IP 追加削除、MTU、LAG 作成削除、member 追加削除が incremental に可能。**`docker swss` 再起動** で状態復元 |
+| 2 | loopback も [portmgrd](../reference/glossary.md#term-portmgrd) 管理へ。**`docker teamd` 再起動** で LAG 全再構築（一旦削除 → 作り直し） |
 
-Phase 2 は IPv6 neighbor 削除や SAI 問題で Phase 1 から切り出された経緯[^1]。
+Phase 2 は IPv6 neighbor 削除や [SAI](../reference/glossary.md#term-sai) 問題で Phase 1 から切り出された経緯[^1]。
 
 ## サポートしない conflicting 操作
 
@@ -142,7 +142,7 @@ config interface PortChannel0001 mtu 9216
 
 ## 干渉する機能
 
-旧 `/etc/network/interfaces` 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（orchagent が追従）/ LACP `fall_back` / `min_links`。
+旧 `/etc/network/interfaces` 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（[orchagent](../reference/glossary.md#term-orchagent) が追従）/ [LACP](../reference/glossary.md#term-lacp) `fall_back` / `min_links`。
 
 ## トラブルシューティング
 
@@ -173,3 +173,5 @@ config interface PortChannel0001 mtu 9216
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c3ce919a1b54 -->

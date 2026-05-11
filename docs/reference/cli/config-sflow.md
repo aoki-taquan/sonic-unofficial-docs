@@ -24,7 +24,7 @@ related:
 
 `config sflow` は sFlow のグローバル制御（admin / polling-interval / sample-direction / agent-id）と、インターフェイス単位のサンプル設定、最大 2 件のコレクタ登録を扱う。すべて `config/main.py` 内に直接定義され、3 段の click group (`sflow` / `sflow interface` / `sflow collector` / `sflow agent-id`) で構成される[^1]。
 
-`config sflow enable` だけは特殊で、`SFLOW|global.admin_state` を `up` にしたうえで `systemctl is-active sflow` を確認し、未アクティブなら `systemctl enable sflow` + `start sflow` を実行する。それ以外のコマンドは CONFIG_DB 書き込みのみ。
+`config sflow enable` だけは特殊で、`SFLOW|global.admin_state` を `up` にしたうえで `systemctl is-active sflow` を確認し、未アクティブなら `systemctl enable sflow` + `start sflow` を実行する。それ以外のコマンドは [CONFIG_DB](../../reference/glossary.md#term-config_db) 書き込みのみ。
 
 ## コマンド一覧
 
@@ -120,7 +120,7 @@ interface 用 sample-direction。グローバルと同じ `tx/both` の egress c
 
 - **egress sampling**（`tx` / `both`）: `STATE_DB.SWITCH_CAPABILITY|switch.PORT_EGRESS_SAMPLE_CAPABLE` を見て無効化される。
 - **コレクタ数**: 2 件固定（コード上のリテラル）。
-- **VRF**: `default` と `mgmt` のみ。任意 data VRF はサポート外。
+- **[VRF](../../reference/glossary.md#term-vrf)**: `default` と `mgmt` のみ。任意 data VRF はサポート外。
 
 <!-- ref-triangle:start -->
 
@@ -218,3 +218,5 @@ show sflow interface
 docker logs sflow
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 84c52960aadd -->

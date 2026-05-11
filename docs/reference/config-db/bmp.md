@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-BGP Monitoring Protocol (BMP, RFC 7854) の **テーブルダンプ機能のオンオフ**を設定するテーブル[^1]。
+[BGP](../../reference/glossary.md#term-bgp) Monitoring Protocol (BMP, RFC 7854) の **テーブルダンプ機能のオンオフ**を設定するテーブル[^1]。
 BMP collector への接続自体は `BGP_MONITORS` で定義し、`BMP` テーブルは「どのテーブルダンプ (BGP neighbor / Adj-RIB-In / Adj-RIB-Out) を送るか」のフラグだけを持つ。
 
 `openbmpd`（BMP collector 側）ではなく、SONiC スイッチ側の BMP exporter を制御する想定。
@@ -57,12 +57,12 @@ BMP|table
 
 ## 購読者
 
-- BMP exporter（`bmpcfgd` 系。BGP container 内のサイドカー）が CONFIG_DB を購読し、FRR の BMP プラグインに反映
+- BMP exporter（`bmpcfgd` 系。BGP container 内のサイドカー）が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[FRR](../../reference/glossary.md#term-frr) の BMP プラグインに反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BGP_MONITORS`（BMP collector 接続定義）
-- 関連 YANG: `sonic-bmp`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bmp`
 
 <!-- ref-triangle:start -->
 
@@ -98,3 +98,5 @@ sonic-db-cli CONFIG_DB hgetall 'BMP|table'
 show bmp
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->

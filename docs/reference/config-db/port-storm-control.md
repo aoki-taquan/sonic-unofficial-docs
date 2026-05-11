@@ -21,7 +21,7 @@ related:
 ## 概要
 
 物理ポートで BUM (broadcast / unknown-unicast / unknown-multicast) トラフィックのレート制限 (storm control) を設定するテーブル[^1]。
-3 種類のトラフィックに対して個別にレートを指定でき、`orchagent` が SAI `SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID` 系で SAI policer を作って attach する。
+3 種類のトラフィックに対して個別にレートを指定でき、`orchagent` が [SAI](../../reference/glossary.md#term-sai) `SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID` 系で SAI policer を作って attach する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -45,7 +45,7 @@ flowchart LR
 PORT_STORM_CONTROL|<ifname>|<storm_type>
 ```
 
-- `<ifname>`: `PORT.name` への leafref (物理ポートのみ。LAG / VLAN は非対応)
+- `<ifname>`: `PORT.name` への leafref (物理ポートのみ。[LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) は非対応)
 - `<storm_type>`: `broadcast` / `unknown-unicast` / `unknown-multicast` のいずれか
 
 ## フィールド
@@ -66,9 +66,9 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT`, `POLICER`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT`, `POLICER`
 - 関連 CLI: `config interface storm-control <type> <ifname> <kbps>`
-- 関連 YANG: `sonic-storm-control`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-storm-control`
 
 <!-- ref-triangle:start -->
 
@@ -105,3 +105,5 @@ sonic-db-cli CONFIG_DB keys 'PORT_STORM_CONTROL|*'
 show storm-control all
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: b27e55924bf2 -->

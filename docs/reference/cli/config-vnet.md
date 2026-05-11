@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`config vnet` は overlay VNET と VNET route を CONFIG_DB に作成・削除する CLI グループ。multi-ASIC では `--namespace` で対象 namespace を選択できる[^1]。
+`config vnet` は overlay [VNET](../../reference/glossary.md#term-vnet) と VNET route を [CONFIG_DB](../../reference/glossary.md#term-config_db) に作成・削除する CLI グループ。multi-ASIC では `--namespace` で対象 namespace を選択できる[^1]。
 
 ## コマンド一覧
 
@@ -109,7 +109,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- DASH / T1 SmartSwitch 向けに VNET (VRF + VxLAN) を作成する。
+- [DASH](../../reference/glossary.md#term-dash) / T1 [SmartSwitch](../../reference/glossary.md#term-smartswitch) 向けに VNET ([VRF](../../reference/glossary.md#term-vrf) + VxLAN) を作成する。
 - VNET route / VNET neighbor の追加メンテ。
 
 ### よくある落とし穴
@@ -125,3 +125,5 @@ show vnet routes all
 show vnet endpoint
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f503aac56e20 -->

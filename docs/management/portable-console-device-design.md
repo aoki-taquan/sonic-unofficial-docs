@@ -102,11 +102,11 @@ autodetect 時に複数ベンダーの USB を同時検出した場合は失敗�
 
 ### 関連する CLI
 
-HLD には新規 CLI の正式定義は含まれない。既存の `config console` 系で `vendor_name` / `model_name` を設定すると示唆される。
+[HLD](../reference/glossary.md#term-hld) には新規 CLI の正式定義は含まれない。既存の `config console` 系で `vendor_name` / `model_name` を設定すると示唆される。
 
 ### 関連する YANG
 
-HLD に YANG モデルの記述は無い。
+HLD に [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -141,7 +141,7 @@ sudo config console-switch model simulator
 
 ## 実装との乖離
 
-2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / CONFIG_DB スキーマのいずれにも入っていない。
+2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマのいずれにも入っていない。
 
 | 項目 | HLD | 現行 master | 結果 |
 |------|-----|------|------|
@@ -187,3 +187,5 @@ sudo config console-switch model simulator
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

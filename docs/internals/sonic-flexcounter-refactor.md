@@ -27,7 +27,7 @@ related:
 ## 読み手が知りたいこと
 
 - 旧 `FlexCounter` クラスの何が問題で、なぜリファクタが要るのか
-- SAI 統計型がバラバラなのに、どうやってテンプレ化したのか
+- [SAI](../reference/glossary.md#term-sai) 統計型がバラバラなのに、どうやってテンプレ化したのか
 - 公開 API は変わるのか
 - 新しい counter type を追加する手数はどう減るのか
 
@@ -40,7 +40,7 @@ related:
 | データ種別 | 旧メンバ例 |
 |------------|------------|
 | Counter IDs map | `m_portCounterIdsMap`, `m_queueCounterIdsMap` ... |
-| Plugins（Redis Lua の SHA）| `m_portPlugins`, `m_queuePlugins` ... |
+| Plugins（[Redis](../reference/glossary.md#term-redis) Lua の SHA）| `m_portPlugins`, `m_queuePlugins` ... |
 | Supported counters | `m_supportedPortCounters`, `m_supportedQueueCounters` ... |
 
 加えて種別ごとに `PortCounterIds` / `QueueCounterIds` / `BufferPoolCounterIds` 等の構造体と関数群が一式存在。**ロジックはほぼ同一だが SAI 統計型が違うため C++ の同じコンテナに入らない** という制約が重複を温存していた[^1]。
@@ -141,7 +141,7 @@ void FlexCounter::collectCounters(swss::Table &countersTable) {
 
 ## 設定
 
-CONFIG_DB / CLI / YANG への影響は HLD 上 **N/A**[^1]。`FLEX_COUNTER_TABLE` スキーマは不変、syncd 内部実装のみ変更。
+[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / [YANG](../reference/glossary.md#term-yang) への影響は [HLD](../reference/glossary.md#term-hld) 上 **N/A**[^1]。`FLEX_COUNTER_TABLE` スキーマは不変、[syncd](../reference/glossary.md#term-syncd) 内部実装のみ変更。
 
 ## 制限事項
 
@@ -150,7 +150,7 @@ HLD は `Restrictions/Limitations` を **N/A** と明記[^1]。事実上の前�
 ## 干渉する機能
 
 - **`FlexCounterManager`**: 呼出し側として変更不要。`FlexCounter::addCounter` の signature と意味は維持
-- **既存 Lua plugin (Watermark / RATES / WRED 等)**: SHA 登録経路と `runPlugins` 挙動は同等、Lua 側は不変
+- **既存 Lua plugin (Watermark / RATES / [WRED](../reference/glossary.md#term-wred) 等)**: SHA 登録経路と `runPlugins` 挙動は同等、Lua 側は不変
 - **warmboot / fastboot**: HLD は影響 N/A。public interface 不変が前提[^1]
 - **新規 SAI 統計の追加**: 拡張容易性が向上
 
@@ -174,3 +174,5 @@ HLD は `Restrictions/Limitations` を **N/A** と明記[^1]。事実上の前�
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 78e7206f4df2 -->

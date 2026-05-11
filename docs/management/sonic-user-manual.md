@@ -24,13 +24,13 @@ related:
 
 ## 概要
 
-SONiC のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド[^1]。このページでは、HLD やリファレンスとマニュアルの **役割境界** を明確にし、利用者が次に読むべき場所を案内する。
+SONiC のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド[^1]。このページでは、[HLD](../reference/glossary.md#term-hld) やリファレンスとマニュアルの **役割境界** を明確にし、利用者が次に読むべき場所を案内する。
 
 | 種類 | 何が書いてあるか | このサイトでの居場所 |
 |------|------------------|----------------------|
 | User Manual | コマンド使い方・設定例・運用 tips | 個別機能ページ + reference/cli |
-| HLD | 設計意図・内部 daemon 構成・SAI 期待値 | architecture / area 別ページ |
-| Reference | 機械抽出した CLI ツリー / YANG / CONFIG_DB | `docs/reference/...` |
+| HLD | 設計意図・内部 daemon 構成・[SAI](../reference/glossary.md#term-sai) 期待値 | architecture / area 別ページ |
+| Reference | 機械抽出した CLI ツリー / [YANG](../reference/glossary.md#term-yang) / [CONFIG_DB](../reference/glossary.md#term-config_db) | `docs/reference/...` |
 
 ## 動作仕様（CLI 系統の二重化）
 
@@ -46,7 +46,7 @@ flowchart LR
     MF --> CDB
 ```
 
-- **`show` / `config` 系**（`sonic-utilities`）: Python click + 直接 Redis 操作。歴史が長く、機能カバレッジが広い
+- **`show` / `config` 系**（`sonic-utilities`）: Python click + 直接 [Redis](../reference/glossary.md#term-redis) 操作。歴史が長く、機能カバレッジが広い
 - **`sonic-cli` (KLISH)**: モデル駆動。openconfig YANG への 1:1 マッピングが厚い
 
 User Manual は両者の併用前提で書かれており、機能によって主に使う系統が異なる。
@@ -76,7 +76,7 @@ flowchart LR
 ## 干渉する機能
 
 - **Management Framework**: KLISH CLI を成立させる土台。同 area の別ページ参照
-- **GCU / JSON patch ordering**: 大規模変更を `config reload` ではなく `apply-patch` で行うパスがあるため、運用に影響
+- **[GCU](../reference/glossary.md#term-gcu) / JSON patch ordering**: 大規模変更を `config reload` ではなく `apply-patch` で行うパスがあるため、運用に影響
 - **Application Extension**: install した拡張がそれぞれ独自の `config` / `show` サブコマンドを足す
 
 ## トラブルシューティング
@@ -104,3 +104,5 @@ flowchart LR
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1103f073f6d0 -->

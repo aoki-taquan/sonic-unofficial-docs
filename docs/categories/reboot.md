@@ -10,9 +10,9 @@ last_verified: 2026-05-10
 
 ## 概要
 
-**Warm Reboot** はデータパス維持（無瞬断）を目標とした SONiC 再起動方式、**Fast Reboot** は数十秒〜数分のサービス停止を許容しつつ通常 reboot より高速にイメージを切り替える方式です。両者とも `kexec` で新カーネルにジャンプし、SWSS / syncd / orchagent / BGP / LACP などのプロセスを **warm restart モード** で再立ち上げして、ASIC の状態を可能な限り再利用します。
+**[Warm Reboot](../reference/glossary.md#term-warm-reboot)** はデータパス維持（無瞬断）を目標とした SONiC 再起動方式、**[Fast Reboot](../reference/glossary.md#term-fast-reboot)** は数十秒〜数分のサービス停止を許容しつつ通常 reboot より高速にイメージを切り替える方式です。両者とも `kexec` で新カーネルにジャンプし、SWSS / [syncd](../reference/glossary.md#term-syncd) / [orchagent](../reference/glossary.md#term-orchagent) / [BGP](../reference/glossary.md#term-bgp) / [LACP](../reference/glossary.md#term-lacp) などのプロセスを **warm restart モード** で再立ち上げして、ASIC の状態を可能な限り再利用します。
 
-このカテゴリは、warm/fast reboot に関わるページを area 横断でまとめます。**system**（warm-reboot 全体順序・SWSS docker warm restart・libsairedis idempotence・Multi-ASIC warm-reboot）・**switching**（LACP retry 拡張・ProducerStateTable view switching）・**routing**（BGP テストプラン）・**reference**（`reboot` / `fast-reboot` / `warm-reboot` CLI）に分散しています。
+このカテゴリは、warm/fast reboot に関わるページを area 横断でまとめます。**system**（warm-reboot 全体順序・SWSS docker warm restart・libsairedis idempotence・Multi-ASIC warm-reboot）・**switching**（LACP retry 拡張・[ProducerStateTable](../reference/glossary.md#term-producerstatetable) view switching）・**routing**（BGP テストプラン）・**reference**（`reboot` / `fast-reboot` / `warm-reboot` CLI）に分散しています。
 
 歴史的に warm-reboot は「syncd view comparison 方式」と「libsairedis idempotence 方式」の 2 系統で発展しており、現行マスターは後者ベースです。設計の経緯は [`what-are-the-development-phases-and-scope-for-warm-reboot.md`](../system/what-are-the-development-phases-and-scope-for-warm-reboot.md) を参照すると理解しやすいです。
 
@@ -59,7 +59,7 @@ last_verified: 2026-05-10
 ## verification ステータス注意点
 
 - **hld-only**: `fast-reboot-flow-improvements-hld.md`, `vrf-feature-ansible-test-plan-omit-in-toc.md`
-- **discrepancy-found**: `swss-docker-warm-restart-code-reference.md`, `sonic-libsairedis-api-idempotence-support.md`（HLD と現行コードの差異）
+- **discrepancy-found**: `swss-docker-warm-restart-code-reference.md`, `sonic-libsairedis-api-idempotence-support.md`（[HLD](../reference/glossary.md#term-hld) と現行コードの差異）
 
 ## 関連カテゴリ
 
@@ -74,3 +74,5 @@ last_verified: 2026-05-10
 - [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1af70874b912 -->

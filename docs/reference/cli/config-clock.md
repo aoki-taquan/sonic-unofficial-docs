@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-`config clock` はシステムのタイムゾーンと日時を設定する CLI グループ[^1]。タイムゾーンは CONFIG_DB の `DEVICE_METADATA|localhost.timezone` に保存し、日時は OS の `timedatectl set-time` を実行する。
+`config clock` はシステムのタイムゾーンと日時を設定する CLI グループ[^1]。タイムゾーンは [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DEVICE_METADATA|localhost.timezone` に保存し、日時は OS の `timedatectl set-time` を実行する。
 
 ## コマンド一覧
 
@@ -139,3 +139,5 @@ flowchart LR
 [^1]: `config clock` グループ定義は `config/main.py` L9758-L9815。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9758>
 
 [^2]: `timedatectl set-time` は systemd 提供の操作で OS 時刻のみを変更する。
+
+<!-- glossary-links-injected: 896d391185a9 -->

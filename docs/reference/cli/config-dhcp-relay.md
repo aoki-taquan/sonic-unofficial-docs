@@ -98,7 +98,7 @@ IPv4 helper と対称、`VLAN|Vlan<vid>` の `dhcpv6_servers` リストを更新
 |-----------|----|------|
 | `--source-interface` | ifname | リレーパケットの送信元インタフェース (Loopback など) |
 | `--link-selection` | enable / disable | RFC 3527 link selection sub-option (option 82.5) |
-| `--vrf-selection` | enable / disable | VRF selection sub-option (option 82.151 / VPN-ID) |
+| `--vrf-selection` | enable / disable | [VRF](../../reference/glossary.md#term-vrf) selection sub-option (option 82.151 / VPN-ID) |
 | `--server-id-override` | enable / disable | server-id サブオプションの override |
 | `--server-vrf` | vrf 名 | リレー先サーバ到達用の VRF |
 | `--agent-relay-mode` | discard / append / replace | option 82 を含むリレーパケットの扱い |
@@ -121,7 +121,7 @@ IPv4 helper と対称、`VLAN|Vlan<vid>` の `dhcpv6_servers` リストを更新
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VLAN`](../config-db/vlan.md) / [`DHCP_RELAY`](../config-db/dhcp-relay.md) / [`DHCPV4_RELAY`](../config-db/dhcpv4-relay.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VLAN`](../config-db/vlan.md) / [`DHCP_RELAY`](../config-db/dhcp-relay.md) / [`DHCPV4_RELAY`](../config-db/dhcpv4-relay.md)
 
 <!-- ref-triangle:end -->
 
@@ -171,7 +171,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- VLAN に DHCP relay server を割り当て、テナント収容を有効化。
+- [VLAN](../../reference/glossary.md#term-vlan) に DHCP relay server を割り当て、テナント収容を有効化。
 - DHCPv6 relay の interface-id / link-address 設定。
 
 ### よくある落とし穴
@@ -187,3 +187,5 @@ show runningconfiguration | grep -i dhcp
 docker logs dhcp_relay
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: e9f260f92543 -->

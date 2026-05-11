@@ -19,7 +19,7 @@ keywords:
 
 # Dual-ToR の考え方
 
-Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続する」ための構成です。MC-LAG とよく混同されますが、Dual-ToR は **クラウド事業者の大規模 ToR 冗長を念頭に置いた SONiC 固有の構成** で、特殊なケーブル / NIC とそれを制御する SONiC daemon を組み合わせている点が異なります。
+Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続する」ための構成です。MC-[LAG](../../reference/glossary.md#term-lag) とよく混同されますが、Dual-ToR は **クラウド事業者の大規模 ToR 冗長を念頭に置いた SONiC 固有の構成** で、特殊なケーブル / NIC とそれを制御する SONiC daemon を組み合わせている点が異なります。
 
 ## Dual-ToR は何の問題を解決するか
 
@@ -36,9 +36,9 @@ Dual-ToR は smart Y-cable や SoC NIC を使い、サーバ NIC に切替の責
 
 | 軸 | 担当 |
 | --- | --- |
-| Management plane | `MUX_CABLE` CONFIG_DB、`config muxcable`、ycabled (Active-Standby) |
-| Control plane | linkmgrd、MuxOrch、icmp_responder、SoC との gRPC channel (Active-Active) |
-| Data plane | MuxTunnel (IPinIP)、neighbor / route nexthop の active/standby 切替、SAI tunnel |
+| Management plane | `MUX_CABLE` [CONFIG_DB](../../reference/glossary.md#term-config_db)、`config muxcable`、ycabled (Active-Standby) |
+| Control plane | [linkmgrd](../../reference/glossary.md#term-linkmgrd)、MuxOrch、icmp_responder、SoC との gRPC channel (Active-Active) |
+| Data plane | MuxTunnel ([IPinIP](../../reference/glossary.md#term-ipinip))、neighbor / route nexthop の active/standby 切替、[SAI](../../reference/glossary.md#term-sai) tunnel |
 
 `linkmgrd` がリンク健全性を判断し、`MuxOrch` が forwarding（neighbor / route の nexthop）を直接サーバ向け / tunnel 向けに切り替える、というのが Dual-ToR 中核の流れです。
 
@@ -119,9 +119,9 @@ flowchart TB
 
 | 比較対象 | 違い |
 | --- | --- |
-| MC-LAG | 2 台の ToR を 1 つの LAG として見せる。サーバ NIC 側は標準 LACP。Dual-ToR より物理層の特殊要件が小さい |
+| MC-LAG | 2 台の ToR を 1 つの LAG として見せる。サーバ NIC 側は標準 [LACP](../../reference/glossary.md#term-lacp)。Dual-ToR より物理層の特殊要件が小さい |
 | VRRP / FHRP | gateway IP の冗長化が目的。物理リンクの選び替えはしない |
-| BGP ECMP unnumbered | Spine - Leaf に向く設計。サーバ - ToR の冗長化には別の仕組みが要る |
+| [BGP](../../reference/glossary.md#term-bgp) [ECMP](../../reference/glossary.md#term-ecmp) unnumbered | Spine - Leaf に向く設計。サーバ - ToR の冗長化には別の仕組みが要る |
 | 単純な NIC bonding | サーバ OS 側に依存。ToR から能動的に切り替えを誘導できない |
 
 ## どちらを選ぶか
@@ -143,8 +143,8 @@ Dual-ToR で見るべき主な DB は次のとおりです。
 | --- | --- | --- |
 | `MUX_CABLE` | CONFIG_DB | server-facing port ごとの `cable_type` / `state` / server IP / SoC IP / neighbor mode |
 | `MUX_LINKMGR` | CONFIG_DB | linkmgrd の各種パラメータ（heartbeat 間隔 / timeout / mode） |
-| `TUNNEL` / `TUNNEL_DECAP_TABLE` | CONFIG_DB / APPL_DB | MuxTunnel の IPinIP 設定 |
-| `HW_MUX_CABLE_TABLE` | STATE_DB | ycabled が見る physical mux 方向 |
+| `TUNNEL` / `TUNNEL_DECAP_TABLE` | CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) | MuxTunnel の IPinIP 設定 |
+| `HW_MUX_CABLE_TABLE` | [STATE_DB](../../reference/glossary.md#term-state_db) | ycabled が見る physical mux 方向 |
 | `MUX_CABLE_TABLE` | STATE_DB | linkmgrd の論理 state（active/standby/unknown） |
 | `MUX_LINKMGR_TABLE` | STATE_DB | link prober の状態 |
 | `MUX_CABLE_COMMAND_TABLE` | STATE_DB | linkmgrd → ycabled への切替指示 |
@@ -171,7 +171,7 @@ Active-Standby ではこの SDB を経由した制御が中心で、Active-Activ
 
 ## prefix-based mux neighbor の意味
 
-Active-Standby では、サーバ側 neighbor を残したまま **`/32` / `/128` route の nexthop だけ** を切り替える方式（prefix-based mux neighbor）が使われます。理由は、neighbor を削除すると ARP/ND の再解決が必要になり、切替時間が伸びるからです。詳細は [Prefix-based mux neighbors](../../routing/prefix-based-mux-neighbors.md) を参照してください。
+Active-Standby では、サーバ側 neighbor を残したまま **`/32` / `/128` route の nexthop だけ** を切り替える方式（prefix-based mux neighbor）が使われます。理由は、neighbor を削除すると [ARP](../../reference/glossary.md#term-arp)/ND の再解決が必要になり、切替時間が伸びるからです。詳細は [Prefix-based mux neighbors](../../routing/prefix-based-mux-neighbors.md) を参照してください。
 
 ## ループ回避と境界
 
@@ -203,3 +203,4 @@ standby から peer に IPinIP で戻したパケットを **peer 側でルー�
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
 
+<!-- glossary-links-injected: 9c6c8acabd8d -->

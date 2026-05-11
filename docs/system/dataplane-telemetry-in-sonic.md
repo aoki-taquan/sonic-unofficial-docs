@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-**Dataplane Telemetry (DTel)** は ASIC dataplane から **per-packet メタデータ**（path / latency / queue / drop など）を抽出して collector に送る機構[^1]。In-band Network Telemetry (INT)、Postcard、Drop report、Queue report の 4 系統を扱い、SAI 側は OCP の `SAI-Proposal-Data-Plane-Telemetry.md`、SONiC 側は本 HLD で **CONFIG_DB 中心の構成** を定義する。当初は CLI が無く `redis-cli` / `swss-py-sdk` / 専用 Python モジュール `euclid` で設定する。
+**Dataplane Telemetry (DTel)** は ASIC dataplane から **per-packet メタデータ**（path / latency / queue / drop など）を抽出して collector に送る機構[^1]。In-band Network Telemetry ([INT](../reference/glossary.md#term-int))、Postcard、Drop report、Queue report の 4 系統を扱い、[SAI](../reference/glossary.md#term-sai) 側は OCP の `SAI-Proposal-Data-Plane-Telemetry.md`、SONiC 側は本 [HLD](../reference/glossary.md#term-hld) で **[CONFIG_DB](../reference/glossary.md#term-config_db) 中心の構成** を定義する。当初は CLI が無く `redis-cli` / `swss-py-sdk` / 専用 Python モジュール `euclid` で設定する。
 
 ## 動作仕様
 
@@ -154,9 +154,9 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 ## 干渉する機能
 
 - **AclOrch**: 新 watchlist テーブルの新規 rule subclass を共有
-- **PFC / queue 系**: queue report の閾値設定と queue scheduler は密接
+- **[PFC](../reference/glossary.md#term-pfc) / queue 系**: queue report の閾値設定と queue scheduler は密接
 - **SAI dtel proposal**: 仕様の上流文書
-- **gNMI / sonic-telemetry**: 別系統の telemetry。DTel は dataplane 側
+- **[gNMI](../reference/glossary.md#term-gnmi) / sonic-telemetry**: 別系統の telemetry。DTel は dataplane 側
 
 ## 引用元
 
@@ -177,3 +177,5 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1d2244168bb3 -->

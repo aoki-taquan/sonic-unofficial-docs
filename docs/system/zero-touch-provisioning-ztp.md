@@ -25,7 +25,7 @@ related:
 
 ## 読み手が知りたいこと
 
-1. **ZTP はいつ自動で動き出すか**（トリガ条件）
+1. **[ZTP](../reference/glossary.md#term-ztp) はいつ自動で動き出すか**（トリガ条件）
 2. **ZTP JSON はどこから取られ、どんな構造か**
 3. **どんな種類の section / plugin があるか**
 4. **どのファイルで現在状態を見るか、CLI でどう再試行するか**
@@ -90,12 +90,12 @@ flowchart LR
 ## 5. 制限事項と干渉する機能
 
 - **management interface 経由が基本**: data port 経由 ZTP は DHCP option / route 設定が要る
-- **HTTPS の cert 検証**: 本番は信頼 CA / pinning が必要（HLD は緩い検証も許す）
+- **HTTPS の cert 検証**: 本番は信頼 CA / pinning が必要（[HLD](../reference/glossary.md#term-hld) は緩い検証も許す）
 - **plugin 拡張の互換性**: vendor 拡張 plugin には対応版 ztp daemon が要る
 - **failure 時の半適用**: 一部 section だけ成功した状態で停止すると整合性保証なし
 - **DHCP relay (v4/v6)**: ZTP は DHCP に強く依存。relay の設定不備が直撃
 - **fwutil / secure-upgrade / secure-boot**: firmware section / image 検証で連動
-- **gNOI OS / file APIs**: 後発の運用 API と用途が一部重なる
+- **[gNOI](../reference/glossary.md#term-gnoi) OS / file APIs**: 後発の運用 API と用途が一部重なる
 
 ## 6. トラブルシューティング
 
@@ -111,3 +111,5 @@ flowchart LR
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ztp/ztp.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 7429d2aea81c -->

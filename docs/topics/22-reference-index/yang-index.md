@@ -8,9 +8,9 @@ last_verified: 2026-05-10
 
 # YANG 横断索引
 
-`docs/reference/yang/` 配下の 39 モジュールを、Phase B の機能章ごとに並べ直した索引である。SONiC の YANG は概ね `sonic-<feature>.yang` の命名で CONFIG_DB の table family に 1 対 1 ないし 1 対多で対応している。
+`docs/reference/yang/` 配下の 39 モジュールを、Phase B の機能章ごとに並べ直した索引である。SONiC の [YANG](../../reference/glossary.md#term-yang) は概ね `sonic-<feature>.yang` の命名で [CONFIG_DB](../../reference/glossary.md#term-config_db) の table family に 1 対 1 ないし 1 対多で対応している。
 
-management framework / gNMI / OpenConfig との対応関係は別章 (Phase B 第 2 波で予定) で扱う。本ページは native SONiC YANG モジュールから機能章へ戻る逆引きに専念する。
+management framework / [gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig との対応関係は別章 (Phase B 第 2 波で予定) で扱う。本ページは native SONiC YANG モジュールから機能章へ戻る逆引きに専念する。
 
 ## 機能章別 YANG モジュール
 
@@ -41,7 +41,7 @@ management framework / gNMI / OpenConfig との対応関係は別章 (Phase B �
 
 ### 05 Dual-ToR と Mux 制御
 
-- (native YANG なし — table のみ。VLAN / interface 系で間接的に表現)
+- (native YANG なし — table のみ。[VLAN](../../reference/glossary.md#term-vlan) / interface 系で間接的に表現)
 
 ### 06 L2 / VLAN / LAG / MC-LAG
 
@@ -96,3 +96,5 @@ native SONiC YANG は CONFIG_DB の table 構造を素直に表す。一方、ma
 ## 未カバーのモジュール
 
 `meta/reference-gaps.md` に、CONFIG_DB table はあるが YANG モジュール辞書化が未着手のものが積まれている。本ページの章別マッピングは現状辞書化済の 39 モジュールに限定する。
+
+<!-- glossary-links-injected: e18e74707525 -->

@@ -59,7 +59,7 @@ SWITCH_TRIMMING|GLOBAL
 
 ## 購読者
 
-- `orchagent` (SwitchOrch trimming 拡張)。SAI の switch-level trimming 属性に push
+- `orchagent` (SwitchOrch trimming 拡張)。[SAI](../../reference/glossary.md#term-sai) の switch-level trimming 属性に push
 
 ## 関連 YANG
 
@@ -69,7 +69,7 @@ SWITCH_TRIMMING|GLOBAL
 
 ## 関連リファレンス
 
-- YANG: [`sonic-trimming`](../yang/sonic-trimming.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-trimming`](../yang/sonic-trimming.md)
 
 <!-- ref-triangle:end -->
 
@@ -101,3 +101,5 @@ sonic-db-cli CONFIG_DB hgetall 'SWITCH_TRIMMING|GLOBAL'
 show switch-trimming
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 766c2b488f5d -->

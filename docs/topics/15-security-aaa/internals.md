@@ -12,7 +12,7 @@ sources:
 
 # 内部実装
 
-ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の SAI POST を扱います。control plane の AAA 系は [アーキテクチャ](architecture.md) で完結しており、本ページではリンクの暗号と完全性に話を限定します。
+ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の [SAI](../../reference/glossary.md#term-sai) POST を扱います。control plane の [AAA](../../reference/glossary.md#term-aaa) 系は [アーキテクチャ](architecture.md) で完結しており、本ページではリンクの暗号と完全性に話を限定します。
 
 ## MACsec の control / data plane 境界
 
@@ -21,7 +21,7 @@ MACsec はリンク単位の L2 暗号化規格で、SONiC では大きく二つ
 - Control plane: MKA（MACsec Key Agreement）と SAK 配布。ホスト側の `wpa_supplicant` ベースのプロセスが担当し、`macsecmgr` が `CONFIG_DB` と仲介します。
 - Data plane: SAI MACsec object（SC、SA、フィルタ）と、ASIC または Gearbox PHY 上の暗号エンジン。
 
-全体設計と既存ページの呼び出し方は [MACsec HLD](../../switching/macsec-sonic-high-level-design-document.md) に集約されています。CONFIG_DB から SAI までのデータフロー、cipher suite、replay protection の取り扱いはこの HLD を起点に読み進めます。
+全体設計と既存ページの呼び出し方は [MACsec HLD](../../switching/macsec-sonic-high-level-design-document.md) に集約されています。[CONFIG_DB](../../reference/glossary.md#term-config_db) から SAI までのデータフロー、cipher suite、replay protection の取り扱いはこの [HLD](../../reference/glossary.md#term-hld) を起点に読み進めます。
 
 ```mermaid
 flowchart LR
@@ -35,7 +35,7 @@ flowchart LR
 
 ## Gearbox port での backend 選択
 
-NPU 側と Gearbox PHY 側のどちらに MACsec engine を寄せるかは、プラットフォームごとに異なります。SONiC は両方を抽象化するため、決定的に backend を選ぶ仕組みが [deterministic MACsec backend selection for gearbox ports HLD](../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) で導入されています。設定の意図が「NPU で暗号する」「PHY で暗号する」のどちらなのかが、運用時の counter 配置や trouble shooting の起点を決めます。
+[NPU](../../reference/glossary.md#term-npu) 側と Gearbox PHY 側のどちらに MACsec engine を寄せるかは、プラットフォームごとに異なります。SONiC は両方を抽象化するため、決定的に backend を選ぶ仕組みが [deterministic MACsec backend selection for gearbox ports HLD](../../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) で導入されています。設定の意図が「NPU で暗号する」「PHY で暗号する」のどちらなのかが、運用時の counter 配置や trouble shooting の起点を決めます。
 
 ## SAI POST
 
@@ -43,7 +43,7 @@ NPU 側と Gearbox PHY 側のどちらに MACsec engine を寄せるかは、プ
 
 ## control plane との接続点
 
-MACsec の有効化は AAA や SSH のような login 系ポリシーとは独立に運用しますが、鍵のローテーションや障害時の bypass ポリシーは管理面 ACL や CoPP の設計と組み合わせて考えるべきです。CoPP の枠組みは [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) を参照してください。
+MACsec の有効化は AAA や SSH のような login 系ポリシーとは独立に運用しますが、鍵のローテーションや障害時の bypass ポリシーは管理面 [ACL](../../reference/glossary.md#term-acl) や [CoPP](../../reference/glossary.md#term-copp) の設計と組み合わせて考えるべきです。CoPP の枠組みは [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) を参照してください。
 
 platform 側の信頼チェーン（OpenSSL FIPS、secure boot、secure upgrade）は [発展トピック](advanced.md) で扱います。
 
@@ -70,10 +70,10 @@ flowchart LR
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
 | `macsecmgr` (`cfgmgr/macsecmgr.cpp`) | `MACsecMgr::doTask` | CONFIG_DB の MACSEC_PROFILE / MACSEC_INTERFACE を読み、wpa_supplicant config を生成 |
-| `MACsecOrch` (`orchagent/macsecorch.cpp`) | `MACsecOrch::doTask` | APPL_DB から SAI MACsec object に展開 |
+| `MACsecOrch` (`orchagent/macsecorch.cpp`) | `MACsecOrch::doTask` | [APPL_DB](../../reference/glossary.md#term-appl_db) から SAI MACsec object に展開 |
 | `wpa_supplicant` (MKA mode) | open source wpa_supplicant | MKA peer 探索、SAK 生成・配布 |
 | `hostcfgd` | python | AAA / SSH / SYSLOG 系の host 設定 render |
-| `mgmt-framework` | YANG / REST | management plane 認証統合 |
+| `mgmt-framework` | [YANG](../../reference/glossary.md#term-yang) / REST | management plane 認証統合 |
 
 ## SAI 属性使用一覧（MACsec）
 
@@ -110,13 +110,13 @@ ASIC_DB:
 ## ZMQ / Redis pub/sub
 
 - ZMQ は使わない。
-- `wpa_supplicant` と `macsecmgr` は Unix socket（wpa_ctrl）で通信。Redis 経由ではない。
+- `wpa_supplicant` と `macsecmgr` は Unix socket（wpa_ctrl）で通信。[Redis](../../reference/glossary.md#term-redis) 経由ではない。
 - AAA 認証（PAM → TACACS+/RADIUS）は同期 RPC で、Redis を経由しない。
 
 ## 既知の実装上の制約
 
 - MACsec SAK の rekey 頻度（key lifetime）は wpa_supplicant の設定で、頻度を上げすぎると ASIC 側で `SA install` が間に合わず短時間 drop が発生する。
-- `MACSEC_SA_ATTR_SAK` の wrap キーは平文で SAI まで渡る設計のため、syncd / SAI のメモリ保護が信頼境界。コア dump に鍵が出るリスクは HLD 範囲。
+- `MACSEC_SA_ATTR_SAK` の wrap キーは平文で SAI まで渡る設計のため、[syncd](../../reference/glossary.md#term-syncd) / SAI のメモリ保護が信頼境界。コア dump に鍵が出るリスクは HLD 範囲。
 - Gearbox backend 選択は装置依存で、deterministic 選択 HLD があっても全ベンダ実装が揃っているとは限らない。
 - SAI POST は MACsec engine の起動確認のみで、運用中の rekey 失敗や cipher suite mismatch は捕捉しない。
 - TACACS+ の `command` authorization は host CLI 経由のみで、`gnmi` / REST API 経路では別途 RBAC 設定が必要。
@@ -139,3 +139,5 @@ flowchart LR
 ```
 
 順序と authz policy は `CONFIG_DB:AAA` テーブルから `hostcfgd` が `/etc/pam.d/common-auth-sonic` 等を render することで反映されます。`gnmi` や REST API の認証は PAM を経由しない別経路（gNSI authz、token-based）であり、TACACS+ の `command` authorization は host CLI のみに効きます。
+
+<!-- glossary-links-injected: 4cd22b04b1d1 -->

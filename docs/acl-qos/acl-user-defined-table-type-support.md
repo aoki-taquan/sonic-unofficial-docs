@@ -32,9 +32,9 @@ related:
 
 ## 概要
 
-従来の ACL は `L3` / `L3V6` / `MIRROR` / `PFC_WD` 等の **事前定義テーブルタイプ** を `AclOrch` 内に持っており、新機能追加のたびに orchagent を改修する必要があった。さらに事前定義タイプが固定的に持つマッチフィールド集合は、用途次第で **必要以上の HW リソースを消費** していた[^1]。
+従来の [ACL](../reference/glossary.md#term-acl) は `L3` / `L3V6` / `MIRROR` / `PFC_WD` 等の **事前定義テーブルタイプ** を `AclOrch` 内に持っており、新機能追加のたびに [orchagent](../reference/glossary.md#term-orchagent) を改修する必要があった。さらに事前定義タイプが固定的に持つマッチフィールド集合は、用途次第で **必要以上の HW リソースを消費** していた[^1]。
 
-本機能は **ユーザがマッチ／アクション／バインドポイントを自由に定義した ACL テーブルタイプを CONFIG_DB から作れる** ようにする。新タイプは `ACL_TABLE_TYPE` テーブルに定義し、`ACL_TABLE` の `TYPE` フィールドからその名前を参照する。
+本機能は **ユーザがマッチ／アクション／バインドポイントを自由に定義した ACL テーブルタイプを [CONFIG_DB](../reference/glossary.md#term-config_db) から作れる** ようにする。新タイプは `ACL_TABLE_TYPE` テーブルに定義し、`ACL_TABLE` の `TYPE` フィールドからその名前を参照する。
 
 組み込みタイプ（`L3`、`MIRROR` 等）は **特殊扱いが必要なため** orchagent 側に残る[^1]（特に `MIRROR` / `MIRRORV6`）。
 
@@ -99,7 +99,7 @@ container ACL_TABLE_TYPE {
 
 ### STATE_DB の Capability 公開
 
-`AclOrch` 起動時に SAI から取得した capability を STATE_DB に書く[^1]:
+`AclOrch` 起動時に [SAI](../reference/glossary.md#term-sai) から取得した capability を [STATE_DB](../reference/glossary.md#term-state_db) に書く[^1]:
 
 ```
 ACL_STAGE_CAPABILITY|<INGRESS|EGRESS>
@@ -156,7 +156,7 @@ private:
 };
 ```
 
-create/update/remove は protected で、外部からは AclOrch の public API（`addAclRule` 等）経由でしか呼べない。これにより CRM / Flex Counter 管理が AclOrch に集約される[^1]。
+create/update/remove は protected で、外部からは AclOrch の public API（`addAclRule` 等）経由でしか呼べない。これにより [CRM](../reference/glossary.md#term-crm) / Flex Counter 管理が AclOrch に集約される[^1]。
 
 ### AclOrch 公開 API
 
@@ -218,7 +218,7 @@ CLI は ACL_TABLE_TYPE 名を CONFIG_DB に対して検証し、actions が STAT
 sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 ```
 
-新規 CLI（カスタムタイプ自体を作るコマンド）は **本 HLD では追加しない**[^1]。CONFIG_DB / config_db.json 直接編集または gNMI から作る前提。
+新規 CLI（カスタムタイプ自体を作るコマンド）は **本 [HLD](../reference/glossary.md#term-hld) では追加しない**[^1]。CONFIG_DB / [config_db.json](../reference/glossary.md#term-config_db.json) 直接編集または [gNMI](../reference/glossary.md#term-gnmi) から作る前提。
 
 ## 設定
 
@@ -231,7 +231,7 @@ sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 - **table type の matches / actions / bind_points は CREATE-only**: テーブルタイプを変えるには、テーブル＋ルールも作り直しが必要[^1]。
 - **組み込みタイプは残る**: `L3` / `MIRROR` 等は依然 orchagent ハードコード。完全な汎用化ではない[^1]。
 - **CLI からカスタムタイプは作れない**: CLI 改修は本 HLD のスコープ外。`config_db.json` 直接編集または gNMI ルート[^1]。
-- **YANG validation の限界**: STATE_DB（capability）への validation 連動は YANG infra の対応次第。Open Question として残る[^1]。
+- **[YANG](../reference/glossary.md#term-yang) validation の限界**: STATE_DB（capability）への validation 連動は YANG infra の対応次第。Open Question として残る[^1]。
 - **マッチ capability の SAI クエリ**: `sai_query_attribute_capability` は CREATE/SET/GET 実装の有無は返すが「サポートか否か」を直接返さない。HLD は Open Question として残している[^1]。
 
 ## 干渉する機能
@@ -257,3 +257,5 @@ sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c3f7b90f3488 -->

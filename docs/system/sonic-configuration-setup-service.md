@@ -43,7 +43,7 @@ SONiC の起動時設定は `/etc/sonic/config_db.json` に保存され、boot �
 4. **`config_db.json` 以外** の設定（frr 等）も対象に
 5. 設定初期化中の **中間 reboot** をサポート（SDK 変更で reboot 必要なケース）
 6. 新版インストール時の **migration インフラ** を提供
-7. **ZTP / updategraph 等** の他経路と整合
+7. **[ZTP](../reference/glossary.md#term-ztp) / updategraph 等** の他経路と整合
 
 ### CLI（`/usr/bin/config-setup`）
 
@@ -56,7 +56,7 @@ SONiC の起動時設定は `/etc/sonic/config_db.json` に保存され、boot �
 | 新版インストール時に旧設定を **backup** | `config-setup backup` 等 |
 | 新版起動時に backup を **restore / migrate** して適用 | `config-setup migrate` 等 |
 
-> HLD は具体的なサブコマンド名を列挙しないので、上の整理は機能カテゴリを示すのみ。実際のコマンド面は実装側で確認のこと。
+> [HLD](../reference/glossary.md#term-hld) は具体的なサブコマンド名を列挙しないので、上の整理は機能カテゴリを示すのみ。実際のコマンド面は実装側で確認のこと。
 
 ### Boot 時のフロー
 
@@ -75,7 +75,7 @@ flowchart TB
 
 ### `updategraph` からの移行
 
-従来 `updategraph` が担っていた **「minigraph.xml から config_db.json を作る」** 仕事と「**設定の場所を整える**」仕事を分離し、後者を `config-setup` に寄せる[^1]。最終的に `updategraph` 廃止が目標。
+従来 `updategraph` が担っていた **「[minigraph.xml](../reference/glossary.md#term-minigraph.xml) から [config_db.json](../reference/glossary.md#term-config_db.json) を作る」** 仕事と「**設定の場所を整える**」仕事を分離し、後者を `config-setup` に寄せる[^1]。最終的に `updategraph` 廃止が目標。
 
 ### Config DB 外の設定の扱い
 
@@ -119,7 +119,7 @@ reasoning: config-setup の存在動機と updategraph 廃止計画の根拠。
 
 ### 関連する CONFIG_DB
 
-該当なし（本サービスは **CONFIG_DB の生成元** であって、CONFIG_DB 内に table を持たない）。
+該当なし（本サービスは **[CONFIG_DB](../reference/glossary.md#term-config_db) の生成元** であって、CONFIG_DB 内に table を持たない）。
 
 ### 関連する CLI
 
@@ -170,3 +170,5 @@ systemctl is-enabled updategraph
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ztp/SONiC-config-setup.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 944345ff21b0 -->

@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-実行ファイル名は `sonic-clear` だが click のエントリ名は `cli`（`/usr/local/bin/sonic-clear` 経由で呼ばれる）。**カウンタ系のリセット、ARP/NDP テーブルのフラッシュ、FDB クリア、NAT 統計クリア、PBH カウンタ保存、route flow counter リセット、ASIC/SDK health-event 消去**などをまとめている[^1]。
+実行ファイル名は `sonic-clear` だが click のエントリ名は `cli`（`/usr/local/bin/sonic-clear` 経由で呼ばれる）。**カウンタ系のリセット、[ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) テーブルのフラッシュ、[FDB](../../reference/glossary.md#term-fdb) クリア、[NAT](../../reference/glossary.md#term-nat) 統計クリア、PBH カウンタ保存、route flow counter リセット、ASIC/SDK health-event 消去**などをまとめている[^1]。
 
 ほとんどのコマンドが `portstat` / `intfstat` / `queuestat` / `pfcstat` / `dropstat` / `tunnelstat` / `srv6stat` / `switchstat` / `watermarkstat` / `wredstat` / `fdbclear` / `flow_counters_stat` / `natclear` / `consutil` 等の **C++/python ユーティリティを `-c` (clear) フラグで呼び出すラッパ**。
 
@@ -87,7 +87,7 @@ sonic-clear (= clear)
 
 ### `sonic-clear counters`
 
-`portstat -c` を起動。`portstat` は COUNTERS_DB の各ポートのスナップショットを `/tmp/portstat-<uid>` 等にコピーする実装で、表示時の差分計算用ベースラインを更新する。
+`portstat -c` を起動。`portstat` は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の各ポートのスナップショットを `/tmp/portstat-<uid>` 等にコピーする実装で、表示時の差分計算用ベースラインを更新する。
 
 ### `sonic-clear rifcounters [<interface>]`
 
@@ -119,7 +119,7 @@ sonic-clear (= clear)
 
 ### `sonic-clear fdb all`
 
-`fdbclear` を起動。**`fdb port` / `fdb vlan` はソースコード上ではコメントアウト**されており、現行 master では起動できない仕様（必要なら APPL_DB の `FDB_TABLE` を直接操作する形になる）[^2]。
+`fdbclear` を起動。**`fdb port` / `fdb vlan` はソースコード上ではコメントアウト**されており、現行 master では起動できない仕様（必要なら [APPL_DB](../../reference/glossary.md#term-appl_db) の `FDB_TABLE` を直接操作する形になる）[^2]。
 
 ### `sonic-clear line <target> [-d|--devicename]`
 
@@ -131,19 +131,19 @@ sonic-clear (= clear)
 
 ### `sonic-clear pbh statistics`
 
-実装が他と異なり、`PBH_RULE` を CONFIG_DB から取得 → `read_pbh_counters` で現在値を読み出し → `serialize_pbh_counters` で `/tmp` 系のファイルへ書き出す。**「クリア」ではなくスナップショット保存**で、表示時の差分計算用ベースラインに使う。
+実装が他と異なり、`PBH_RULE` を [CONFIG_DB](../../reference/glossary.md#term-config_db) から取得 → `read_pbh_counters` で現在値を読み出し → `serialize_pbh_counters` で `/tmp` 系のファイルへ書き出す。**「クリア」ではなくスナップショット保存**で、表示時の差分計算用ベースラインに使う。
 
 ### `sonic-clear flowcnt-trap`
 
-`flow_counters_stat -c -t trap`。CoPP trap 名ごとのカウンタをリセット。
+`flow_counters_stat -c -t trap`。[CoPP](../../reference/glossary.md#term-copp) trap 名ごとのカウンタをリセット。
 
 ### `sonic-clear flowcnt-route [pattern <prefix-pattern>] [route <prefix>]`
 
-サブコマンド省略時は全 route flow counter をクリア。`pattern <pattern>` でワイルドカード絞り、`route <prefix>` で 1 prefix 指定。`--vrf` で VRF/VNET 指定可能。
+サブコマンド省略時は全 route flow counter をクリア。`pattern <pattern>` でワイルドカード絞り、`route <prefix>` で 1 prefix 指定。`--vrf` で [VRF](../../reference/glossary.md#term-vrf)/[VNET](../../reference/glossary.md#term-vnet) 指定可能。
 
 ### `sonic-clear asic-sdk-health-event [-n <namespace>]`
 
-CONFIG_DB ではなく **STATE_DB の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを namespace ごとに delete** する。multi-ASIC 時に `-n` 指定で対象 namespace のみ。
+CONFIG_DB ではなく **[STATE_DB](../../reference/glossary.md#term-state_db) の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを namespace ごとに delete** する。multi-ASIC 時に `-n` 指定で対象 namespace のみ。
 
 ### `sonic-clear spanning-tree`
 
@@ -151,7 +151,7 @@ CONFIG_DB ではなく **STATE_DB の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを n
 
 ## ip / ipv6 サブグループ
 
-`cli.add_command(arp)` と `ip.add_command(arp)` の **両方**が呼ばれており、`sonic-clear arp` と `sonic-clear ip arp` がエイリアス的に同じ機能を提供する（NDP も同様）。BGP セッションリセット系は `routing_stack` の値に応じて `clear/bgp_quagga_v4.py` または `clear/bgp_frr_v6.py` 等が動的に `ip.add_command(bgp)` / `ipv6.add_command(bgp)` を実行する。
+`cli.add_command(arp)` と `ip.add_command(arp)` の **両方**が呼ばれており、`sonic-clear arp` と `sonic-clear ip arp` がエイリアス的に同じ機能を提供する（NDP も同様）。[BGP](../../reference/glossary.md#term-bgp) セッションリセット系は `routing_stack` の値に応じて `clear/bgp_quagga_v4.py` または `clear/bgp_frr_v6.py` 等が動的に `ip.add_command(bgp)` / `ipv6.add_command(bgp)` を実行する。
 
 ## STATE_DB / CONFIG_DB との接点
 
@@ -160,7 +160,7 @@ CONFIG_DB ではなく **STATE_DB の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを n
 | STATE_DB `ASIC_SDK_HEALTH_EVENT_TABLE*` | delete | `asic-sdk-health-event` |
 | 各 COUNTERS_DB スナップショット | 外部ツール経由 | `counters` 系全般 |
 
-それ以外のコマンドは **kernel neighbor table** や **SAI 経由の SDK 状態** を操作するもので CONFIG_DB は触らない。
+それ以外のコマンドは **kernel neighbor table** や **[SAI](../../reference/glossary.md#term-sai) 経由の SDK 状態** を操作するもので CONFIG_DB は触らない。
 
 <!-- ref-triangle:start -->
 
@@ -197,3 +197,5 @@ show arp
 show mac
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 14dca49aeb7d -->

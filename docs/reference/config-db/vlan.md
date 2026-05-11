@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-IEEE 802.1Q VLAN を CONFIG_DB で定義するテーブル。VLAN 名 (`Vlan100` 形式) をキーに、VLAN ID、DHCP リレーサーバ、MTU、admin status、MAC、エイリアスを保持する[^1]。`VLAN_MEMBER` と組合わせてポート割当てを、`VLAN_INTERFACE` と組合わせて L3 IF を構成する。
+IEEE 802.1Q [VLAN](../../reference/glossary.md#term-vlan) を [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。VLAN 名 (`Vlan100` 形式) をキーに、VLAN ID、DHCP リレーサーバ、MTU、admin status、MAC、エイリアスを保持する[^1]。`VLAN_MEMBER` と組合わせてポート割当てを、`VLAN_INTERFACE` と組合わせて L3 IF を構成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -74,14 +74,14 @@ VLAN|<name>
 ## 購読者
 
 - `vlanmgrd`: VLAN 作成・MTU・admin_status をモニタし Linux bridge に反映
-- `orchagent` の `VlanMgr` / `VRouterOrch`: SAI bridge / VLAN を構成
+- `orchagent` の `VlanMgr` / `VRouterOrch`: [SAI](../../reference/glossary.md#term-sai) bridge / VLAN を構成
 - `dhcprelayd` (`sonic-dhcp-relay`): `dhcp_servers` / `dhcpv6_servers` を読み出して relay agent を構成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `VLAN_MEMBER`、`VLAN_INTERFACE`、`DHCP_RELAY`
 - 関連 CLI: `config vlan` (add / del / member / dhcp_relay)
-- 関連 YANG: `sonic-vlan`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
 <!-- ref-triangle:start -->
 
@@ -133,3 +133,5 @@ sonic-db-cli CONFIG_DB keys 'VLAN_MEMBER|Vlan100|*'
 show vlan brief
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 900cdc977a64 -->

@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-`docker-sonic-gnmi` (旧 `docker-sonic-telemetry`) の **dial-out** モードで使う、コレクタ宛のサブスクリプション情報を CONFIG_DB に登録するテーブル[^1]。`Global` (共通設定) と、`Subscription` / `DestinationGroup` の 2 種類のエントリリストから成る。
+`docker-sonic-gnmi` (旧 `docker-sonic-telemetry`) の **dial-out** モードで使う、コレクタ宛のサブスクリプション情報を [CONFIG_DB](../../reference/glossary.md#term-config_db) に登録するテーブル[^1]。`Global` (共通設定) と、`Subscription` / `DestinationGroup` の 2 種類のエントリリストから成る。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -85,7 +85,7 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 - 関連 CONFIG_DB: [`TELEMETRY`](telemetry.md) (dial-in 側設定)
 - CLI: 標準 CLI ラッパなし。CONFIG_DB / init_cfg.json で直接設定
-- 関連 YANG: `sonic-telemetry_client`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry_client`
 
 <!-- ref-triangle:start -->
 
@@ -123,3 +123,5 @@ sonic-db-cli CONFIG_DB keys 'TELEMETRY_CLIENT|*'
 docker logs gnmi | grep -i dial-out
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

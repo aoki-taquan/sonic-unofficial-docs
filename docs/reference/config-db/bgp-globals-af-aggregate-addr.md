@@ -24,11 +24,11 @@ related:
 
 ## 概要
 
-**VRF × アドレスファミリ単位の BGP aggregate-address 設定** を保持する CONFIG_DB テーブル[^1]。`frr-mgmt-framework` (DEVICE_METADATA の `frr_mgmt_framework_config = true` 経路) が CONFIG_DB から読み、FRR `bgpd` の `router bgp <as>` → `address-family <afi> <safi>` → `aggregate-address <prefix>` 系コマンドに反映する。
+**[VRF](../../reference/glossary.md#term-vrf) × アドレスファミリ単位の [BGP](../../reference/glossary.md#term-bgp) aggregate-address 設定** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`frr-mgmt-framework` (DEVICE_METADATA の `frr_mgmt_framework_config = true` 経路) が CONFIG_DB から読み、[FRR](../../reference/glossary.md#term-frr) `bgpd` の `router bgp <as>` → `address-family <afi> <safi>` → `aggregate-address <prefix>` 系コマンドに反映する。
 
 `BGP_GLOBALS_AF` で AF レベルの設定（multipath、route distance、L2VPN advertise-all-vni 等）を行い、その AF 配下の **aggregate prefix** をこのテーブルで列挙する。
 
-なお、似た名前の `BGP_AGGREGATE_ADDRESS` テーブル (YANG `sonic-bgp-aggregate-address`) は **AF/VRF を持たないフラットな** aggregate 定義で、別経路 (bgpcfgd テンプレ) で利用される。両者は実装パスが異なる点に注意。
+なお、似た名前の `BGP_AGGREGATE_ADDRESS` テーブル ([YANG](../../reference/glossary.md#term-yang) `sonic-bgp-aggregate-address`) は **AF/VRF を持たないフラットな** aggregate 定義で、別経路 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレ) で利用される。両者は実装パスが異なる点に注意。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -81,7 +81,7 @@ BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf_name>|<afi_safi>|<ip_prefix>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BGP_GLOBALS`, `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_NETWORK`, `BGP_AGGREGATE_ADDRESS`, `ROUTE_MAP_SET`
-- 関連 CLI: `config bgp` (sonic-utilities 経由)、vtysh の `aggregate-address` (直接)
+- 関連 CLI: `config bgp` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities) 経由)、vtysh の `aggregate-address` (直接)
 - 関連 YANG: `sonic-bgp-global`
 
 <!-- ref-triangle:start -->
@@ -123,3 +123,5 @@ vtysh -c "show ip bgp summary"
 vtysh -c "show running-config bgpd" | grep aggregate-address
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: ded86831ff84 -->

@@ -29,12 +29,12 @@ related:
 
 ## 概要
 
-ASIC への route install が（CRM 制限などで）失敗した場合に、その情報を `ERROR_DB.ERROR_ROUTE_TABLE` 経由で fpmsyncd → zebra → bgpd まで伝搬し、**bgpd 側で当該 prefix を "FIB-install pending" と marking して peer への advertise を抑止する** 仕組み[^1]。
+ASIC への route install が（[CRM](../reference/glossary.md#term-crm) 制限などで）失敗した場合に、その情報を `ERROR_DB.ERROR_ROUTE_TABLE` 経由で [fpmsyncd](../reference/glossary.md#term-fpmsyncd) → [zebra](../reference/glossary.md#term-zebra) → bgpd まで伝搬し、**bgpd 側で当該 prefix を "FIB-install pending" と marking して peer への advertise を抑止する** 仕組み[^1]。
 
 要点:
 
-- ECMP の場合、NHG 内の一部 NH の install 失敗も route 全体の失敗として扱う
-- BGP のリトライ機構は本 HLD のスコープ外（user が `clear` 系コマンドで手動 retry 必要）[^1]
+- [ECMP](../reference/glossary.md#term-ecmp) の場合、NHG 内の一部 NH の install 失敗も route 全体の失敗として扱う
+- [BGP](../reference/glossary.md#term-bgp) のリトライ機構は本 [HLD](../reference/glossary.md#term-hld) のスコープ外（user が `clear` 系コマンドで手動 retry 必要）[^1]
 - warm reboot / GR 対応は別物としてスコープ外
 - グローバル ON/OFF は `BGP_ERROR_CFG_TABLE:config.enable=true/false`。default disabled。enabled→disabled の切替は **BGP container 再起動推奨**
 
@@ -70,8 +70,8 @@ sequenceDiagram
 
 | Layer | 責務 |
 |-------|------|
-| `syncd` / `orchagent` | SAI 失敗を `ERROR_ROUTE_TABLE` に書き出す（既存 error handling framework 経由）[^1] |
-| `fpmsyncd` | `BGP_ERROR_CFG_TABLE.enable=true` のとき `ERROR_ROUTE_TABLE` を subscribe。失敗を zebra socket 経由で送る（既存 FPM TCP socket を再利用） |
+| `syncd` / `orchagent` | [SAI](../reference/glossary.md#term-sai) 失敗を `ERROR_ROUTE_TABLE` に書き出す（既存 error handling framework 経由）[^1] |
+| `fpmsyncd` | `BGP_ERROR_CFG_TABLE.enable=true` のとき `ERROR_ROUTE_TABLE` を subscribe。失敗を zebra socket 経由で送る（既存 [FPM](../reference/glossary.md#term-fpm) TCP socket を再利用） |
 | `zebra` | 失敗 route を kernel から withdraw、RIB に "Not installed in hardware" フラグ。次善 NH を fpmsyncd に流さない |
 | `bgpd` | "pending FIB install" を default 状態とし、success 通知でクリア。failure 通知では advertise しない / RIB-OUT から削除 |
 
@@ -147,7 +147,7 @@ config bgp error-handling disable
 
 - **[BGP Suppress FIB Pending](./bgp-suppress-announcements-of-routes-not-installed-in-hw.md)**: 同じ目的で後発の dplane_fpm_nl + RTM_F_OFFLOAD 経路がある。両機能の共存・置き換え関係は要確認
 - **CRM**: ASIC リソース不足を警告するメカニズム。本機能と組み合わせ、CRM threshold 越え前から advertise 抑止できる
-- **orchagent error framework**: `ERROR_ROUTE_TABLE` 自体は SAI failure 一般の枠組みの一部
+- **[orchagent](../reference/glossary.md#term-orchagent) error framework**: `ERROR_ROUTE_TABLE` 自体は SAI failure 一般の枠組みの一部
 
 ## トラブルシューティング
 
@@ -160,7 +160,7 @@ config bgp error-handling disable
 
 ### 1. `ERROR_DB` / `ERROR_ROUTE_TABLE` は未実装
 
-- **HLD 記述**: 新規 Redis DB `ERROR_DB` と `ERROR_ROUTE_TABLE` を導入し、orchagent → fpmsyncd → zebra → bgpd の経路で FIB-install 失敗を伝搬する。
+- **HLD 記述**: 新規 [Redis](../reference/glossary.md#term-redis) DB `ERROR_DB` と `ERROR_ROUTE_TABLE` を導入し、orchagent → fpmsyncd → zebra → bgpd の経路で FIB-install 失敗を伝搬する。
 - **実装位置**: `sonic-swss-common/common/schema.h`、`sonic-swss/orchagent/`、`sonic-buildimage/src/sonic-yang-models/`、`sonic-frr/` のいずれにも `ERROR_ROUTE_TABLE` / `ERROR_DB`（独立 Redis DB id）の定義は **存在しない**（grep ヒット 0）。
 - **差分の中身**: HLD で計画された subscriber クラス（fpmsyncd 側 `ErrorListener` 等）も実装されていない。FPM socket の双方向化（zebra への送信路）も入っていない。
 - **読者への影響**: 「HLD のとおりに `ERROR_ROUTE_TABLE` を watch して BGP advertise を抑止する」設計を期待すると動かない。現行は orchagent の `SWSS_LOG_ERROR` で失敗ログが出るのみで、BGP 側は失敗を構造化された形で受け取らない。
@@ -170,7 +170,7 @@ config bgp error-handling disable
 
 - **HLD 記述**: CLI `config bgp error-handling enable/disable` で `BGP_ERROR_CFG_TABLE` を ON/OFF する。
 - **実装位置**: `sonic-utilities/config/main.py` に `bgp error-handling` サブコマンドは存在せず、`sonic-yang-models` にも `sonic-bgp-error-cfg.yang` 相当は無い。
-- **差分の中身**: CLI / yang / CONFIG_DB スキーマ全てが提案レベルで止まっている。
+- **差分の中身**: CLI / yang / [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマ全てが提案レベルで止まっている。
 - **読者への影響**: 設定する手段が無いため、本 HLD の「条件分岐」自体が現行 master では発生しない。
 - **回避策**: 本機能は **設定しない**。必要な機能は次項に置き換わっている。
 
@@ -180,7 +180,7 @@ config bgp error-handling disable
   ```
   bgp suppress-fib-pending
   ```
-  デフォルトで `bgpd` の起動 config に挿入される。FRR 側は `dplane_fpm_nl` と zebra の RTM_F_OFFLOAD/RTM_F_TRAP フラグを利用し、ASIC への install 完了通知を受けるまで BGP advertise を保留する。
+  デフォルトで `bgpd` の起動 config に挿入される。[FRR](../reference/glossary.md#term-frr) 側は `dplane_fpm_nl` と zebra の RTM_F_OFFLOAD/RTM_F_TRAP フラグを利用し、ASIC への install 完了通知を受けるまで BGP advertise を保留する。
 - **差分の中身**: HLD は「ERROR_DB 経由で失敗を能動通知」だが、実装は「ASIC 取り込み成功の確認を待ってから広告する」**inverse** のアプローチ。失敗時の挙動は「ずっと pending のまま広告しない」となる。
 - **読者への影響**: 結果として運用観点では本 HLD の意図と同じ「未 install な route は広告しない」が満たされる。一方で「失敗の明示的なカウント／lookup table」は提供されない（pending のままという受動的な状態）。
 - **回避策**:
@@ -208,3 +208,5 @@ config bgp error-handling disable
 - 後発 BGP Suppress FIB Pending（dplane_fpm_nl 経路）との置き換え関係 / 共存確認
 - 2019 年 HLD のため現行実装乖離リスク（priority=high）
 -->
+
+<!-- glossary-links-injected: 514a896aa279 -->

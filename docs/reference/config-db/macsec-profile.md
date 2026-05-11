@@ -79,8 +79,8 @@ MACSEC_PROFILE|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT` (`macsec` フィールドでプロファイル名参照)
-- 関連 YANG: `sonic-macsec`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT` (`macsec` フィールドでプロファイル名参照)
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-macsec`
 
 <!-- ref-triangle:start -->
 
@@ -116,3 +116,5 @@ sonic-db-cli CONFIG_DB keys 'MACSEC_PROFILE|*'
 show macsec
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

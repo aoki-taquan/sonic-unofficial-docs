@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC スイッチの **工場出荷状態への復元** を 1 コマンド `reset-factory` で行えるようにする HLD。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う[^1]。
+SONiC スイッチの **工場出荷状態への復元** を 1 コマンド `reset-factory` で行えるようにする [HLD](../reference/glossary.md#term-hld)。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う[^1]。
 
 主要な設計方針:
 
@@ -185,11 +185,11 @@ reasoning: 4 モードの分岐が「ステップごとに skip 条件を変え�
 
 ### 関連する CONFIG_DB
 
-CONFIG_DB スキーマには変更なし。`KEEP_BASIC_TABLES` で保持対象の **テーブル群** を `/etc/config-setup/config-setup.conf` に定義する。
+[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマには変更なし。`KEEP_BASIC_TABLES` で保持対象の **テーブル群** を `/etc/config-setup/config-setup.conf` に定義する。
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない。
 
 ### 設定例
 
@@ -218,7 +218,7 @@ sudo reset-factory keep-basic
 - **overlayfs**: `/etc/sonic` のクリアは upperdir 削除で実現
 - **`config-setup` hook**: ユーザカスタマイズ ポイント
 - **`/etc/shadow` / `/etc/sonic/default_users.json`**: パスワード初期化に依存
-- **AAA / TACACS / LDAP**: 非 default ユーザ削除と整合させる必要
+- **[AAA](../reference/glossary.md#term-aaa) / TACACS / LDAP**: 非 default ユーザ削除と整合させる必要
 
 ## トラブルシューティング
 
@@ -239,3 +239,5 @@ sudo reset-factory keep-basic
 - sonic-environment immutable 取り扱い
 - gNOI FactoryReset との関係
 -->
+
+<!-- glossary-links-injected: 04127c73f090 -->

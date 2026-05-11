@@ -28,7 +28,7 @@ related:
 
 P4 Runtime (P4RT) サーバはコントローラから 3 種の操作（Stream / Write / Read）を受ける。SONiC の P4RT App は **1 リクエスト同時実行** モデルで動くため、Read が遅いと Write を含む他リクエストが詰まる[^1]。
 
-実測では 16,000 フローの Read で **約 1.30s** を要し、その大半（1.28s）が AppDb (Redis) の `HGETALL` を 16,000 回叩く時間で消える。さらに Redis の生データを Platform Independent (PI) 形式へ変換する処理にも一定時間がかかる[^1]。
+実測では 16,000 フローの Read で **約 1.30s** を要し、その大半（1.28s）が AppDb ([Redis](../reference/glossary.md#term-redis)) の `HGETALL` を 16,000 回叩く時間で消える。さらに Redis の生データを Platform Independent (PI) 形式へ変換する処理にも一定時間がかかる[^1]。
 
 本機能は P4RT App プロセス内に **PI 形式そのままを保持するキャッシュ** を持たせ、Read 時には Redis にアクセスせずキャッシュから直接返す。実測では同等のフロー数で Read が **40ms**（約 40 倍高速化）に短縮される[^1]。
 
@@ -74,7 +74,7 @@ Read リクエストは Redis を見ずキャッシュを直接走査して返�
 
 ### キャッシュと AppDb の同期検証
 
-P4Orch は P4 エントリを **独自に書き換えない** 想定なので、定常的なポーリングは不要[^1]。ただし「2 つの Source of Truth」が原理的に存在するため、HLD は明示的に **検証ロジック** を組み込むと述べる[^1]:
+P4Orch は P4 エントリを **独自に書き換えない** 想定なので、定常的なポーリングは不要[^1]。ただし「2 つの Source of Truth」が原理的に存在するため、[HLD](../reference/glossary.md#term-hld) は明示的に **検証ロジック** を組み込むと述べる[^1]:
 
 1. Redis の全 `P4RT_TABLE` エントリを読む
 2. 各エントリを PI 形式に変換
@@ -121,7 +121,7 @@ reasoning: Write 連動更新ルールと検証ロジックの根拠。
 |------|------|----------|
 | Exp.1 (cache 無し) | 16,000 フロー end-to-end Read | ~1.30s（うち 1.28s が Redis 読み）|
 | Exp.2 (cache 無し) | 22,152 フロー、種別混在。Redis 読み 1.27s + PI 変換 0.29s | ~1.60s |
-| Exp.3 (cache 有り) | 22,152 フロー（VRF 64, RIF 64, Neighbor 512, Nexthop 512, IPv4 10000, IPv6 10000, WCMP 1000×2）| **40ms** |
+| Exp.3 (cache 有り) | 22,152 フロー（[VRF](../reference/glossary.md#term-vrf) 64, [RIF](../reference/glossary.md#term-rif) 64, Neighbor 512, Nexthop 512, IPv4 10000, IPv6 10000, WCMP 1000×2）| **40ms** |
 
 PI 形式キャッシュのメモリ占有[^1]:
 
@@ -141,7 +141,7 @@ PI 形式キャッシュのメモリ占有[^1]:
 
 ### 関連する CONFIG_DB / CLI / YANG
 
-本機能はプロセス内最適化であり、CONFIG_DB / CLI / YANG への外部表面は持たない。設定項目は HLD 上では言及されていない（オン/オフのフラグや検証頻度の設定有無は実装依存）。
+本機能はプロセス内最適化であり、[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / [YANG](../reference/glossary.md#term-yang) への外部表面は持たない。設定項目は HLD 上では言及されていない（オン/オフのフラグや検証頻度の設定有無は実装依存）。
 
 ### 設定例
 
@@ -151,7 +151,7 @@ PI 形式キャッシュのメモリ占有[^1]:
 
 - **2 つの Source of Truth リスク**: cache と AppDb がずれる可能性は構造上ゼロにできない。HLD は検証ロジックでの突合を必須としている[^1]。
 - **Warm boot は未対応**: 現時点で P4RT App が warm boot 未対応のため、再起動でキャッシュは消える。前述の事前充填策は将来の対応案[^1]。
-- **メモリ消費**: PI 形式の保持で常駐メモリが増える。HLD の見積では数十万エントリで数 MB だが、ACL 等で大規模化するとさらに増える。
+- **メモリ消費**: PI 形式の保持で常駐メモリが増える。HLD の見積では数十万エントリで数 MB だが、[ACL](../reference/glossary.md#term-acl) 等で大規模化するとさらに増える。
 
 ## 干渉する機能
 
@@ -175,3 +175,5 @@ PI 形式キャッシュのメモリ占有[^1]:
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f235cb0ee2df -->

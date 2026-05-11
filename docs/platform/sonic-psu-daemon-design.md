@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-`psud` は **PSU の物理状態と電力指標を周期収集し STATE_DB に書く platform monitor 系 daemon**[^1]。supervisord が `psud` を起動。3 秒ループで platform API（fallback で plugin）を呼び、PSU の present / power_good / 電圧 / 電流 / 電力 / 温度 / 各種閾値を取得して `PSU_INFO` table を更新する。電圧範囲超過 / 温度過熱 / 電源喪失 / PSU 抜去 / **power critical threshold 超過** に対し PSU LED 色変更と syslog 発報を行う。`power threshold` チェックは v0.4 で追加され、ヒステリシス付き 2 段閾値 (`warning-suppress`, `critical`) で alarm flapping を抑止する。
+`psud` は **PSU の物理状態と電力指標を周期収集し [STATE_DB](../reference/glossary.md#term-state_db) に書く platform monitor 系 daemon**[^1]。supervisord が `psud` を起動。3 秒ループで platform API（fallback で plugin）を呼び、PSU の present / power_good / 電圧 / 電流 / 電力 / 温度 / 各種閾値を取得して `PSU_INFO` table を更新する。電圧範囲超過 / 温度過熱 / 電源喪失 / PSU 抜去 / **power critical threshold 超過** に対し PSU LED 色変更と syslog 発報を行う。`power threshold` チェックは v0.4 で追加され、ヒステリシス付き 2 段閾値 (`warning-suppress`, `critical`) で alarm flapping を抑止する。
 
 ## 動作仕様
 
@@ -78,7 +78,7 @@ key: `PSU_INFO|<psu_name>`
 | `power_overload` | "true" / "false" |
 | `power_warning_suppress_threshold` / `power_critical_threshold` | 2 段閾値 |
 
-PSU 数自体は別途 `chassis_info` テーブルに格納（pmon-enhancement HLD と整合）[^1]。
+PSU 数自体は別途 `chassis_info` テーブルに格納（pmon-enhancement [HLD](../reference/glossary.md#term-hld) と整合）[^1]。
 
 ### イベント定義
 
@@ -191,3 +191,5 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 10394a5e95a8 -->

@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-mgmt_port`
 
-OOB マネジメントポート（`eth0` 等）の物理パラメータ（速度・MTU・admin status）を保持する YANG モジュール[^1]。
+OOB マネジメントポート（`eth0` 等）の物理パラメータ（速度・MTU・admin status）を保持する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -80,7 +80,7 @@ module: sonic-mgmt_port
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `MGMT_PORT|<name>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MGMT_PORT|<name>`
 - CLI: `config interface`（管理ポート用 サブセット）
 
 <!-- ref-triangle:start -->
@@ -114,3 +114,5 @@ show management_interface
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

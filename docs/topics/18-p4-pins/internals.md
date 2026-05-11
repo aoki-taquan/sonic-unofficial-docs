@@ -12,11 +12,11 @@ sources:
 
 # 内部実装
 
-PINS の中身を読むときに、まず押さえるのは **P4Orch の Manager 群と P4OidMapper**、次に **entity_cache_ の Write 連動更新**、最後に **APPL_STATE_DB を介した同期応答** の 3 点です。HLD 当初の設計から実装が拡張されているところがあるため、現行 master の構造に沿って整理します。
+[PINS](../../reference/glossary.md#term-pins) の中身を読むときに、まず押さえるのは **P4Orch の Manager 群と P4OidMapper**、次に **entity_cache_ の Write 連動更新**、最後に **APPL_STATE_DB を介した同期応答** の 3 点です。[HLD](../../reference/glossary.md#term-hld) 当初の設計から実装が拡張されているところがあるため、現行 master の構造に沿って整理します。
 
 ## P4Orch の Manager 群
 
-P4Orch は `sonic-swss/orchagent/p4orch/` に置かれ、`p4orch.cpp` / `p4orch.h` が本体です。各 Manager が独立した SAI オブジェクト種別を担当します:
+P4Orch は `sonic-swss/orchagent/p4orch/` に置かれ、`p4orch.cpp` / `p4orch.h` が本体です。各 Manager が独立した [SAI](../../reference/glossary.md#term-sai) オブジェクト種別を担当します:
 
 - `router_interface_manager`
 - `neighbor_manager`
@@ -38,7 +38,7 @@ HLD 当初は 7 Manager の構成でしたが、現行 master ではこれらに
 
 ## ObjectManagerInterface の抽象
 
-各 Manager は `object_manager_interface.h` の `enqueue` / `drain` / `drainWithNotExecuted` を実装します。`enqueue` で APPL_DB から取り出した entry を蓄え、`drain` で SAI 呼び出しを実行し、`drainWithNotExecuted` でエラーケースのリカバリを記述するという 3 つの責務分離です。
+各 Manager は `object_manager_interface.h` の `enqueue` / `drain` / `drainWithNotExecuted` を実装します。`enqueue` で [APPL_DB](../../reference/glossary.md#term-appl_db) から取り出した entry を蓄え、`drain` で SAI 呼び出しを実行し、`drainWithNotExecuted` でエラーケースのリカバリを記述するという 3 つの責務分離です。
 
 ## P4OidMapper
 
@@ -55,7 +55,7 @@ HLD 当初は 7 Manager の構成でしたが、現行 master ではこれらに
 
 ## 同期書き込みと APPL_STATE_DB
 
-通常の orchagent は SAI を非同期に呼びますが、P4Orch は **SAI 応答を待ち、結果を APPL_STATE_DB に書き戻す** ことで P4RT App が controller に成否を返せるようにします。`APPL_STATE_DB=14` は `sonic-swss-common/common/schema.h` で定義されており、PINS のために追加されたものです（SmartSwitch 向けに `DPU_APPL_STATE_DB=16` も別途追加）。
+通常の [orchagent](../../reference/glossary.md#term-orchagent) は SAI を非同期に呼びますが、P4Orch は **SAI 応答を待ち、結果を APPL_STATE_DB に書き戻す** ことで P4RT App が controller に成否を返せるようにします。`APPL_STATE_DB=14` は `sonic-swss-common/common/schema.h` で定義されており、PINS のために追加されたものです（[SmartSwitch](../../reference/glossary.md#term-smartswitch) 向けに `DPU_APPL_STATE_DB=16` も別途追加）。
 
 ## warm boot とキャッシュの整合
 
@@ -122,7 +122,7 @@ ASIC_DB:
 
 ## ZMQ / Redis pub/sub
 
-- p4rt-app と orchagent の間は **Redis pub/sub + ProducerStateTable / NotificationConsumer**。
+- p4rt-app と orchagent の間は **[Redis](../../reference/glossary.md#term-redis) pub/sub + [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / NotificationConsumer**。
 - ZMQ は使わない。
 - controller との sync は gRPC StreamChannel で、P4RT 上の packet I/O も gRPC stream で行う。
 - APPL_STATE_DB は ack 用専用 DB で、orchagent が SAI 応答後に書き込む（通常 orchagent は APPL_STATE_DB を使わない）。
@@ -141,3 +141,5 @@ ASIC_DB:
 - [P4Orch HLD](../../internals/p4-orchagent.md)
 - [P4RT Read cache HLD](../../management/p4rt-read-cache-hld.md)
 - [P4RT Application HLD](../../management/p4rt-application-hld.md)
+
+<!-- glossary-links-injected: b22d62b3d852 -->

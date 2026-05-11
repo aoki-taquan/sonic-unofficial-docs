@@ -33,11 +33,11 @@ related:
 
 ## 概要
 
-Everflow（SAI mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく **本番に近い構成での functional / negative テスト** を行うプラン[^1]。LAG・BGP route advertise・ECMP next-hop 変動・neighbor MAC 変更・policer DSCP enforcement を含む。
+Everflow（[SAI](../reference/glossary.md#term-sai) mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく **本番に近い構成での functional / negative テスト** を行うプラン[^1]。[LAG](../reference/glossary.md#term-lag)・[BGP](../reference/glossary.md#term-bgp) route advertise・[ECMP](../reference/glossary.md#term-ecmp) next-hop 変動・neighbor MAC 変更・policer DSCP enforcement を含む。
 
 旧 Everflow テストプランからの拡張点:
 
-- **Egress ACL table** と **Egress mirror session** の追加カバレッジ
+- **Egress [ACL](../reference/glossary.md#term-acl) table** と **Egress mirror session** の追加カバレッジ
 - ACL rule で `IN_PORTS` マッチ（既存スクリプトでは未カバー）
 - ICMP `type` / `code` マッチ
 - **IPv6 Everflow**
@@ -172,3 +172,5 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 33e61764da82 -->

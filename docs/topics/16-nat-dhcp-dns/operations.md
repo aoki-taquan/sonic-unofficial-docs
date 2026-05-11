@@ -14,7 +14,7 @@ sources:
 
 # 運用
 
-NAT / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと ASIC ハードウェアパスの両方を含むため、調査時はまず「どの daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。
+[NAT](../../reference/glossary.md#term-nat) / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと ASIC ハードウェアパスの両方を含むため、調査時はまず「どの daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。
 
 ## サービス全体の入口
 
@@ -30,14 +30,14 @@ dhcp_relay        enabled        enabled         enabled       N/A
 dhcp_server       enabled        enabled         enabled       N/A
 ```
 
-`Status` が `Restarting` を繰り返す container は config 不整合（CONFIG_DB 側の参照テーブル欠落、テンプレート展開失敗）か、kernel 側の前提モジュール（`nf_conntrack`, `nf_nat`）未ロードの可能性があります。`docker logs --tail 200 docker-nat` を先に見ます。
+`Status` が `Restarting` を繰り返す container は config 不整合（[CONFIG_DB](../../reference/glossary.md#term-config_db) 側の参照テーブル欠落、テンプレート展開失敗）か、kernel 側の前提モジュール（`nf_conntrack`, `nf_nat`）未ロードの可能性があります。`docker logs --tail 200 docker-nat` を先に見ます。
 
 ## NAT の確認順序
 
 1. `show nat config global` / `show nat config bindings` で feature と設定が CONFIG_DB に入っているか。
-2. `show nat translations` で iptables 側（natmgrd / natsyncd 経路）の動的・静的エントリ。
+2. `show nat translations` で iptables 側（[natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) / natsyncd 経路）の動的・静的エントリ。
 3. `show nat statistics` で hit counter。0 ヒットなら、route lookup と NAT zone の inside / outside 設定を疑います。
-4. ASIC オフロードを確認するときは `sai_dump` / `SAI_OBJECT_TYPE_NAT_ENTRY` 数を syncd 側で見ます。
+4. ASIC オフロードを確認するときは `sai_dump` / `SAI_OBJECT_TYPE_NAT_ENTRY` 数を [syncd](../../reference/glossary.md#term-syncd) 側で見ます。
 5. natsyncd が conntrack を拾えない場合は `docker-nat` の `natsyncd` ログと kernel `nf_conntrack` の counter を確認します。
 
 CLI は [show nat ページ](../../reference/cli/show-nat.md) に詳細があります。
@@ -80,7 +80,7 @@ admin@sonic:~$ redis-cli -n 4 hgetall 'NAT_GLOBAL|Values'
 
 ## DHCP relay の確認順序
 
-1. `show dhcp_relay` / `show vlan brief` で VLAN ごとの upstream server が登録されているか。
+1. `show dhcp_relay` / `show vlan brief` で [VLAN](../../reference/glossary.md#term-vlan) ごとの upstream server が登録されているか。
 2. `show dhcp_relay ipv4 counter Vlan<N>` / `show dhcp_relay ipv6 counters Vlan<N>` で per-interface counter が増えるか。RX/TX、direction、message type で切り分けできます。詳細は [per-interface counter ページ](../../routing/dhcp-relay-per-interface-counter.md) を参照してください。
 3. counter が 0 のときは `docker-dhcp-relay` 内の `supervisorctl status` で `dhcrelay-Vlan<N>` / `dhcpmon-Vlan<N>` / `dhcp6relay` が `RUNNING` か確認します。
 4. v6 で reply が戻らないときは Option 79 / RFC 6939（`dhcpv6_option|rfc6939_support`）の設定と、dual-ToR の場合は loopback アドレス利用を確認します。
@@ -145,7 +145,7 @@ admin@sonic:~$ docker logs docker-dhcp-server 2>&1 | tail -10
 
 ## DHCP DoS 緩和の確認
 
-ポートごとの `dhcp_rate_limit` は CONFIG_DB の `PORT` に書き込まれます。ただし master では portmgrd の tc 投入実装が未取り込みで、`tc qdisc show dev <port>` で確認しても rate limiter は入っていない可能性が高いです。CoPP 側の `dhcp_relay` trap は従来通り残っているため、システム全体での DHCP rate 制限はそちらで効きます。詳細は [DHCP DoS 緩和ページ](../../acl-qos/dhcp-dos-mitigation-in-sonic.md) を参照してください。
+ポートごとの `dhcp_rate_limit` は CONFIG_DB の `PORT` に書き込まれます。ただし master では [portmgrd](../../reference/glossary.md#term-portmgrd) の tc 投入実装が未取り込みで、`tc qdisc show dev <port>` で確認しても rate limiter は入っていない可能性が高いです。[CoPP](../../reference/glossary.md#term-copp) 側の `dhcp_relay` trap は従来通り残っているため、システム全体での DHCP rate 制限はそちらで効きます。詳細は [DHCP DoS 緩和ページ](../../acl-qos/dhcp-dos-mitigation-in-sonic.md) を参照してください。
 
 ```
 admin@sonic:~$ redis-cli -n 4 hget 'PORT|Ethernet0' dhcp_rate_limit
@@ -179,7 +179,7 @@ dhcpv6              queue1_group3    trap                       3       3      6
 | `natsyncd: failed to receive conntrack event: No buffer space` | conntrack イベント受信オーバーフロー | `nf_conntrack_buckets` 確認、kernel パラメータ調整 |
 | `natmgrd: failed to add NAT entry: SAI_STATUS_TABLE_FULL` | ASIC NAT 表枯渇 | NAT pool 縮小、timeout 短縮で entry 自然削減 |
 | `dhcrelay: cannot bind socket: Address already in use` | 別 dhcrelay インスタンスが残存 | `pkill dhcrelay` の上、`supervisorctl restart` |
-| `dhcrelay: forward_packet: bad bootp packet` | malformed DHCP packet 受信 | source MAC / port を ACL でブロック |
+| `dhcrelay: forward_packet: bad bootp packet` | malformed DHCP packet 受信 | source MAC / port を [ACL](../../reference/glossary.md#term-acl) でブロック |
 | `dhcp6relay: drop packet: option 79 missing` | LDRA 設定不一致 | RFC 6939 (Option 79) 設定を確認 |
 | `kea-dhcp4: CONFIGURATION_FAILED` | 設定生成 / 構文エラー | `dhcpservd` ログと kea config 実体を確認 |
 | `kernel: nf_conntrack: table full, dropping packet` | conntrack table 満杯 | hashsize / max を増やす |
@@ -224,3 +224,5 @@ dhcpv6              queue1_group3    trap                       3       3      6
 - [DHCP DoS 緩和](../../acl-qos/dhcp-dos-mitigation-in-sonic.md)
 - [DHCPv4 Relay Agent](../../architecture/dhcpv4-relay-agent.md)
 - [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md)
+
+<!-- glossary-links-injected: 6c3f4b3a3498 -->

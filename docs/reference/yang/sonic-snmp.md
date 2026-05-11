@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-snmp`
 
-Simple Network Management Protocol (SNMP) agent configuration YANG module for SONiC OS.[^1]
+Simple Network Management Protocol ([SNMP](../../reference/glossary.md#term-snmp)) agent configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -98,7 +98,7 @@ module: sonic-snmp
 | `SNMP_USER_ENCRYPTION_PASSWORD` | `sonic-snmp/SNMP_USER/SNMP_USER_LIST/SNMP_USER_ENCRYPTION_PASSWORD` | `string` | yes |  | length 0..64, `must` で Priv のとき 8 文字以上 | Encryption password for the user. |
 | `agent_ip` | `sonic-snmp/SNMP_AGENT_ADDRESS_CONFIG/SNMP_AGENT_ADDRESS_CONFIG_LIST/agent_ip` | `inet:ip-address` | yes |  |  | SNMP agent listening IP. |
 | `port` | `sonic-snmp/SNMP_AGENT_ADDRESS_CONFIG/SNMP_AGENT_ADDRESS_CONFIG_LIST/port` | `union` | yes |  | inet:port-number または空文字列 | SNMP agent listening port number. |
-| `vrf_name` | `sonic-snmp/SNMP_AGENT_ADDRESS_CONFIG/SNMP_AGENT_ADDRESS_CONFIG_LIST/vrf_name` | `union` | yes |  | `mgmt`, `Vrf<name>`, または空 | VRF name. |
+| `vrf_name` | `sonic-snmp/SNMP_AGENT_ADDRESS_CONFIG/SNMP_AGENT_ADDRESS_CONFIG_LIST/vrf_name` | `union` | yes |  | `mgmt`, `Vrf<name>`, または空 | [VRF](../../reference/glossary.md#term-vrf) name. |
 
 ## leafref / 依存
 
@@ -111,7 +111,7 @@ module: sonic-snmp
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SNMP|CONTACT/LOCATION`, `SNMP_COMMUNITY|<name>`, `SNMP_USER|<name>`, `SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SNMP|CONTACT/LOCATION`, `SNMP_COMMUNITY|<name>`, `SNMP_USER|<name>`, `SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>`
 - CLI: `config snmp` 系（agentaddress / community / user）
 
 <!-- ref-triangle:start -->
@@ -126,3 +126,5 @@ module: sonic-snmp
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-snmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 60a02696c221 -->

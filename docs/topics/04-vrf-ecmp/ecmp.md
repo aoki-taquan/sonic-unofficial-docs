@@ -14,7 +14,7 @@ sources:
 
 # ECMP Family
 
-ECMP は「複数 next hop に分散する」だけなら単純ですが、SONiC には用途に応じて複数の拡張があります。まず通常 ECMP を基準にし、重み、bucket 安定性、順序、hash 入力、traffic class による path 選択を別々の問題として分けます。
+[ECMP](../../reference/glossary.md#term-ecmp) は「複数 next hop に分散する」だけなら単純ですが、SONiC には用途に応じて複数の拡張があります。まず通常 ECMP を基準にし、重み、bucket 安定性、順序、hash 入力、traffic class による path 選択を別々の問題として分けます。
 
 ## 方式比較
 
@@ -24,12 +24,12 @@ ECMP は「複数 next hop に分散する」だけなら単純ですが、SONiC
 | WCMP | next hop ごとに重みを付ける。 | weight 付き nexthop | link 容量や意図した比率が異なる経路。 |
 | Fine Grained ECMP | member 変化時の flow 移動を抑える。 | `FG_NHG` bucket / member / prefix | appliance 経由、flow stickiness が重要な構成。 |
 | Ordered ECMP | ECMP member の順序を揃える。 | ordered NHG / sequence id | 複数装置で同じ flow を同じ上流へ寄せたい構成。 |
-| Generic Hash | hash field / algorithm を制御する。 | `SWITCH_HASH` | ECMP / LAG の分散キーを設計したい場合。 |
+| Generic Hash | hash field / algorithm を制御する。 | `SWITCH_HASH` | ECMP / [LAG](../../reference/glossary.md#term-lag) の分散キーを設計したい場合。 |
 | CBF | forwarding class ごとに path を変える。 | DSCP/EXP to FC、class-based NHG | traffic engineering。 |
 
 ## 通常 ECMP を基準にする
 
-通常 ECMP は route の next-hop set から SAI next hop group を作り、ASIC の hash によって flow を member に割り振ります。運用上は、route の nexthop set、neighbor 解決、hash field、member の up/down を確認します。
+通常 ECMP は route の next-hop set から [SAI](../../reference/glossary.md#term-sai) next hop group を作り、ASIC の hash によって flow を member に割り振ります。運用上は、route の nexthop set、neighbor 解決、hash field、member の up/down を確認します。
 
 この基準を理解してから、重み付けや bucket 固定のような拡張を読むと混乱しにくくなります。
 
@@ -57,7 +57,7 @@ ECMP の偏りを見たとき、next hop group だけでなく hash field も確
 
 ## CBF は path を traffic class で選ぶ問題
 
-Class Based Forwarding は、DSCP / MPLS EXP から Forwarding Class を決め、その FC に応じて異なる child NHG を選ぶ traffic engineering です。ECMP の hash で均等に分散する話ではなく、「この class はこの path set」を選ぶ機能です。
+Class Based Forwarding は、DSCP / [MPLS](../../reference/glossary.md#term-mpls) EXP から Forwarding Class を決め、その FC に応じて異なる child NHG を選ぶ traffic engineering です。ECMP の hash で均等に分散する話ではなく、「この class はこの path set」を選ぶ機能です。
 
 詳細は [クラスベース転送](../../routing/class-based-forwarding-enhancement.md) を参照してください。
 
@@ -69,3 +69,4 @@ Class Based Forwarding は、DSCP / MPLS EXP から Forwarding Class を決め�
 - [Generic Hash](../../architecture/sonic-generic-hash.md)
 - [クラスベース転送](../../routing/class-based-forwarding-enhancement.md)
 
+<!-- glossary-links-injected: 79de31b5b699 -->

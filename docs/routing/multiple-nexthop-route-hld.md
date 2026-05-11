@@ -28,7 +28,7 @@ related:
 
 Gemini active-standby サーバ環境では **1 経路に複数の next-hop neighbor** が指定され、それぞれが **異なる Ethernet ポート (= 異なる mux)** に居る場合、片方の port が UT0 で active、もう片方が LT0 で active という非対称が起きる。すなわち **同一 ToR 内で 1 つは active neighbor、もう 1 つは standby neighbor** という構成になる[^1]。
 
-このとき ECMP の半分が standby 側 nexthop に当たり、**peer ToR の tunnel** に流れ、peer ToR でも ECMP で半分が元 ToR に戻り、無限ループ（実質パケロス）が起きる[^1]。
+このとき [ECMP](../reference/glossary.md#term-ecmp) の半分が standby 側 nexthop に当たり、**peer ToR の tunnel** に流れ、peer ToR でも ECMP で半分が元 ToR に戻り、無限ループ（実質パケロス）が起きる[^1]。
 
 ```text
 Neighbor 192.168.0.100 on Ethernet0 (Active on this ToR, Standby on peer)
@@ -133,7 +133,7 @@ sequenceDiagram
 
 ## 設定
 
-CONFIG_DB / CLI / YANG **変更なし**。dual-tor の既存設定 (`MUX_CABLE` / `cable_type=active-standby` 等) のまま、orchagent 内部挙動だけ変わる。
+[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI / [YANG](../reference/glossary.md#term-yang) **変更なし**。dual-tor の既存設定 (`MUX_CABLE` / `cable_type=active-standby` 等) のまま、[orchagent](../reference/glossary.md#term-orchagent) 内部挙動だけ変わる。
 
 ```bash
 sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24*'
@@ -157,10 +157,10 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24
 
 ## トラブルシューティング
 
-- 経路ループ → ASIC_DB で nexthop が単一に絞られているか、`MuxOrch` ログで `updateRoute()` 呼び出し確認
+- 経路ループ → [ASIC_DB](../reference/glossary.md#term-asic_db) で nexthop が単一に絞られているか、`MuxOrch` ログで `updateRoute()` 呼び出し確認
 - nexthop が **常に tunnel** → `show muxcable status` で active/standby 確認
 - nexthop group のまま → `is_mux_nexthop()` が false。`mux_nexthop_tb_` 登録確認
-- ECMP したい → 本 HLD は **mux nexthop ECMP を許容しない** 設計
+- ECMP したい → 本 [HLD](../reference/glossary.md#term-hld) は **mux nexthop ECMP を許容しない** 設計
 
 ## 関連トピック
 
@@ -187,3 +187,5 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c099de103a59 -->

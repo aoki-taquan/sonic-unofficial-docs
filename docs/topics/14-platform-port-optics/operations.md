@@ -23,7 +23,7 @@ sources:
 
 # 運用
 
-ここでは、装置 health と optics に関連する確認順序を、運用シナリオ別に整理します。各 daemon の詳細は元 HLD を参照してください。
+ここでは、装置 health と optics に関連する確認順序を、運用シナリオ別に整理します。各 daemon の詳細は元 [HLD](../../reference/glossary.md#term-hld) を参照してください。
 
 ## どの daemon がどこを見ているか
 
@@ -46,7 +46,7 @@ flowchart LR
   SDB --> CLI[show platform / SNMP / Redfish]
 ```
 
-`show platform` 系コマンドは基本的に STATE_DB を経由するため、daemon が値を更新できていないと CLI も空に見えます。最初に確認するのは daemon の up/down です。
+`show platform` 系コマンドは基本的に [STATE_DB](../../reference/glossary.md#term-state_db) を経由するため、daemon が値を更新できていないと CLI も空に見えます。最初に確認するのは daemon の up/down です。
 
 ### daemon の起動確認
 
@@ -204,7 +204,7 @@ Reallocated Sectors: 0
 - [pcieinfo design](../../platform/pcieinfo-design.md): `pcieutil` / `pcied` の旧設計。
 - [SONiC PCIe monitoring services HLD](../../system/sonic-pcie-monitoring-services-hld.md): PCIe 経路の健全性監視。
 
-PCIe error は ASIC との通信不能や syncd 落ちにつながるため、syslog と STATE_DB を併せて確認します。
+PCIe error は ASIC との通信不能や [syncd](../../reference/glossary.md#term-syncd) 落ちにつながるため、syslog と STATE_DB を併せて確認します。
 
 ```
 admin@sonic:~$ show platform pcieinfo -c
@@ -278,3 +278,5 @@ AER (Advanced Error Reporting) の `severity=fatal` は次に syncd が落ちる
 - [SONiC PSU daemon design](../../platform/sonic-psu-daemon-design.md)
 - [storage monitoring daemon design](../../system/sonic-storage-monitoring-daemon-design.md)
 - [SONiC PCIe monitoring services HLD](../../system/sonic-pcie-monitoring-services-hld.md)
+
+<!-- glossary-links-injected: a1e3b64175ec -->

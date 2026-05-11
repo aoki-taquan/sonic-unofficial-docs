@@ -34,7 +34,7 @@ SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため�
 
 実装は `sonic-utilities` 側のスクリプト + `sonic-platform-common` 側の **抽象クラス `SsdBase`** + 各ベンダ実装の **`SsdUtil` プラグイン** の三層構成。汎用情報は `smartctl`（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の `iSmart`、StorFly/Virtium の `SmartCmd` 等）から拾う[^1]。
 
-オプションで pmon に常駐する `ssdmond` デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（HLD では Optional 扱い）[^1]。
+オプションで pmon に常駐する `ssdmond` デーモンを追加し、health 値を周期的にチェックして閾値割り込みでアラートを上げる構成も提案されている（[HLD](../reference/glossary.md#term-hld) では Optional 扱い）[^1]。
 
 ## 動作仕様
 
@@ -153,7 +153,7 @@ HLD は **オプション** として、pmon に常駐するデーモン `ssdmon
 
 - 周期的に `get_health()` を呼び出す。
 - 値が **クリティカルしきい値を割った時にアラート** を上げる。
-- HLD では「Open Questions」で「Daemon and monitoring?」「SNMP needed?」が未確定として残されている[^1]。
+- HLD では「Open Questions」で「Daemon and monitoring?」「[SNMP](../reference/glossary.md#term-snmp) needed?」が未確定として残されている[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -276,3 +276,5 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1d579f83f1e2 -->

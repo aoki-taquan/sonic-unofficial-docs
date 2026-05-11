@@ -30,9 +30,9 @@ related:
 
 ## 概要
 
-ホストインタフェース trap（CoPP で ASIC から CPU へ punt されるパケット種別。BGP / LLDP / ARP / DHCP 等）について、**trap ID ごとの packet / byte / PPS** を計測する仕組み[^1]。デバッグ・トラブルシュート・性能解析が目的で、CoPP の policer 監視や予期しない CPU bound traffic の発見に使う。
+ホストインタフェース trap（[CoPP](../reference/glossary.md#term-copp) で ASIC から CPU へ punt されるパケット種別。[BGP](../reference/glossary.md#term-bgp) / [LLDP](../reference/glossary.md#term-lldp) / [ARP](../reference/glossary.md#term-arp) / DHCP 等）について、**trap ID ごとの packet / byte / PPS** を計測する仕組み[^1]。デバッグ・トラブルシュート・性能解析が目的で、CoPP の policer 監視や予期しない CPU bound traffic の発見に使う。
 
-実装は SAI **Generic Counter**（[SAI-Proposal-Generic-Counters.md](https://github.com/opencomputeproject/SAI/blob/master/doc/SAI-Proposal-Generic-Counters.md)）を流用し、SONiC 既存の **Flex Counter** infrastructure に新グループを足す形で乗せる[^1]。
+実装は [SAI](../reference/glossary.md#term-sai) **Generic Counter**（[SAI-Proposal-Generic-Counters.md](https://github.com/opencomputeproject/SAI/blob/master/doc/SAI-Proposal-Generic-Counters.md)）を流用し、SONiC 既存の **Flex Counter** infrastructure に新グループを足す形で乗せる[^1]。
 
 ## 動作仕様
 
@@ -59,7 +59,7 @@ flowchart LR
 ### 設計の中核
 
 1. **Generic Counter で実装**: trap ごとに `SAI_OBJECT_TYPE_COUNTER` を 1 つ確保し、`hostif_trap` に bind する。`SAI_PORT_STAT_*` 系のような専用 stat ID は使わず、汎用 counter object を使い回す[^1]
-2. **新 Flex Counter group `HOSTIF_TRAP_FLOW_COUNTER`**（CONFIG_DB 上のキーは `FLOW_CNT_TRAP`）。`counterpoll` CLI で group の status / interval を制御
+2. **新 Flex Counter group `HOSTIF_TRAP_FLOW_COUNTER`**（[CONFIG_DB](../reference/glossary.md#term-config_db) 上のキーは `FLOW_CNT_TRAP`）。`counterpoll` CLI で group の status / interval を制御
 3. **per-trap でなく group 単位 ON/OFF**。group が enable になると、登録済の **すべての** trap に counter が一括 bind される[^1]
 4. **trap の動的登録 / 解除に追従**: trap が新しく register されたとき、group が enable なら自動で counter を確保 / bind する。trap が外されれば counter も release[^1]
 5. **multi-ASIC 対応**: Flex Counter インフラがそのまま multi-ASIC を扱う
@@ -74,13 +74,13 @@ CFG_FLEX_COUNTER_TABLE|FLOW_CNT_TRAP
 
 ### COPP_TABLE / COPP_TRAP との関係
 
-CoPP は `CFG_COPP_TRAP_TABLE`（CONFIG_DB）→ `COPP_TABLE`（APPL_DB）の流れで Copp Orch まで運ばれる。Trap Flow Counter は **既存の CoPP コードパスに後付け** する形で、Copp Orch の create / remove path にフックを差し込む[^1]:
+CoPP は `CFG_COPP_TRAP_TABLE`（CONFIG_DB）→ `COPP_TABLE`（[APPL_DB](../reference/glossary.md#term-appl_db)）の流れで Copp Orch まで運ばれる。Trap Flow Counter は **既存の CoPP コードパスに後付け** する形で、Copp Orch の create / remove path にフックを差し込む[^1]:
 
 - trap create 時:
   1. `Flow Counter Handler::createGenericCounter()`
   2. `bind` host_if_trap ↔ counter（SAI Host Interface API）
   3. `FlexCounterManager` 経由で `FLEX_COUNTER_TABLE` に COUNTER OID と attribute list を登録
-  4. `COUNTERS_TRAP_NAME_MAP`（COUNTERS_DB）に `<trap_name>:<counter_oid>` を保存
+  4. `COUNTERS_TRAP_NAME_MAP`（[COUNTERS_DB](../reference/glossary.md#term-counters_db)）に `<trap_name>:<counter_oid>` を保存
 - trap remove 時は逆順
 
 ### Counter group が後から enable になった場合
@@ -121,7 +121,7 @@ reasoning: group enable/disable の Hook 名と CONFIG キー (FLOW_CNT_TRAP) �
 
 ### syncd 側の収集
 
-syncd 内 FlexCounter スレッドが poll 間隔で:
+[syncd](../reference/glossary.md#term-syncd) 内 [FlexCounter](../reference/glossary.md#term-flexcounter) スレッドが poll 間隔で:
 
 - `m_flowCounterIdsMap[<counter_oid>]` を見て supported stat ID を SAI に問い合わせ
 - `COUNTERS_DB` に書き込む（既存 flex counter と同じ流れ）
@@ -141,7 +141,7 @@ Lua plugin（redis plugin）で rate を計算し `FLEX_COUNTER_GROUP_TABLE` の
 | `FLEX_COUNTER_TABLE` | `FLOW_CNT_TRAP` | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL` |
 | `COPP_TRAP` | `<trap_name>` | 既存（trap 登録）|
 
-`COUNTERS_TRAP_NAME_MAP`（COUNTERS_DB）と `HOSTIF_TRAP_FLOW_COUNTER` 系 entry（FLEX_COUNTER_DB）はランタイムで生成される。
+`COUNTERS_TRAP_NAME_MAP`（COUNTERS_DB）と `HOSTIF_TRAP_FLOW_COUNTER` 系 entry（[FLEX_COUNTER_DB](../reference/glossary.md#term-flex_counter_db)）はランタイムで生成される。
 
 ### 関連する CLI
 
@@ -151,7 +151,7 @@ Lua plugin（redis plugin）で rate を計算し `FLEX_COUNTER_GROUP_TABLE` の
 | `counterpoll flowcnt-trap interval <ms>` | poll 間隔変更 |
 | `show flowcnt trap stats` | trap 単位の累計 / レート表示 |
 
-> 注: HLD 文中で具体名は「new CLI command (`show flowcnt trap stats`)」とのみ言及。`counterpoll` のサブコマンド表記は再構成側の推測を含む。
+> 注: [HLD](../reference/glossary.md#term-hld) 文中で具体名は「new CLI command (`show flowcnt trap stats`)」とのみ言及。`counterpoll` のサブコマンド表記は再構成側の推測を含む。
 
 ### 設定例
 
@@ -200,3 +200,5 @@ redis-cli -n 2 HGETALL "COUNTERS:<counter_oid>"
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0d3c1956e387 -->

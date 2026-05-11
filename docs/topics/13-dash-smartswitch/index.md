@@ -36,17 +36,17 @@ keywords:
 
 # DASH と SmartSwitch
 
-この章は、SONiC で「NPU スイッチに DPU をぶら下げ、その上で DASH オーバーレイを処理する」SmartSwitch 構成を読み解くための入口です。
+この章は、SONiC で「[NPU](../../reference/glossary.md#term-npu) スイッチに [DPU](../../reference/glossary.md#term-dpu) をぶら下げ、その上で [DASH](../../reference/glossary.md#term-dash) オーバーレイを処理する」[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成を読み解くための入口です。
 
-DASH 系と SmartSwitch 系の既存 HLD は、NPU 側 / DPU 側 / HA / 管理経路にまたがって分散しています。ここでは「NPU と DPU はどう役割を分けているのか」「コントローラから入れた設定はどの DB を通って DPU に届くのか」「HA フェイルオーバーや DPU の reboot / upgrade はどの daemon が動かすのか」という運用者・設計者の質問順に並べ直します。
+DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld) は、NPU 側 / DPU 側 / HA / 管理経路にまたがって分散しています。ここでは「NPU と DPU はどう役割を分けているのか」「コントローラから入れた設定はどの DB を通って DPU に届くのか」「HA フェイルオーバーや DPU の reboot / upgrade はどの daemon が動かすのか」という運用者・設計者の質問順に並べ直します。
 
 ## この章で答える質問
 
-- DASH、DPU、SmartSwitch、ENI Based Forwarding はそれぞれ何を指しているのか。
-- NPU 側 Redis と DPU 側 overlay Redis はどう分かれ、どう同期するのか。
-- ENI ベース転送と DASH ACL タグはどの ACL レイヤに入るのか。
+- DASH、DPU、SmartSwitch、[ENI](../../reference/glossary.md#term-eni) Based Forwarding はそれぞれ何を指しているのか。
+- NPU 側 [Redis](../../reference/glossary.md#term-redis) と DPU 側 overlay Redis はどう分かれ、どう同期するのか。
+- ENI ベース転送と DASH [ACL](../../reference/glossary.md#term-acl) タグはどの ACL レイヤに入るのか。
 - SmartSwitch HA（HAMgrD）と DPU の reboot / upgrade / graceful shutdown はどの順序で動くのか。
-- gNMI フィードバックと gNOI 系 API は SmartSwitch でどこに位置付けられるのか。
+- [gNMI](../../reference/glossary.md#term-gnmi) フィードバックと [gNOI](../../reference/glossary.md#term-gnoi) 系 API は SmartSwitch でどこに位置付けられるのか。
 
 ## 読み進め方
 
@@ -54,7 +54,7 @@ DASH 系と SmartSwitch 系の既存 HLD は、NPU 側 / DPU 側 / HA / 管理�
 2. [内部構造](internals.md): NPU-DPU DB アーキテクチャ、ENI ベース転送、DASH ACL タグ。
 3. [設定](setup.md): DPU IP 割当、gNMI フィードバック、DASH KVM での検証。
 4. [運用](operations.md): HA フェイルオーバー、PMON、reboot / shutdown / upgrade。
-5. [発展トピック](advanced.md): gNOI 系との関係、Multi-ASIC / VOQ との境界、管理章への橋渡し。
+5. [発展トピック](advanced.md): gNOI 系との関係、Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) との境界、管理章への橋渡し。
 
 ## 関連ページ
 
@@ -82,3 +82,4 @@ DASH 系と SmartSwitch 系の既存 HLD は、NPU 側 / DPU 側 / HA / 管理�
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 - [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
 
+<!-- glossary-links-injected: 7409e80dd9a7 -->

@@ -26,14 +26,14 @@ related:
 
 ## 読み手が知りたいこと
 
-- Redis 版 `ProducerStateTable` / `ConsumerStateTable` と何が違うのか
+- [Redis](../reference/glossary.md#term-redis) 版 `ProducerStateTable` / `ConsumerStateTable` と何が違うのか
 - なぜ ZMQ に置き換えるのか、何を犠牲にして何を得るのか
 - `dbPersistence` フラグを off にしたとき、データはどこに残るのか
-- 既存 orchagent のループに統合する際の前提
+- 既存 [orchagent](../reference/glossary.md#term-orchagent) のループに統合する際の前提
 
 ## なぜ ZMQ 版が必要か
 
-通常の `ProducerStateTable` / `ConsumerStateTable` は Redis 経由でメッセージを運ぶ。永続化・観測性は得られるが **書き込みコストが Redis に縛られる**。本 HLD は API シグネチャを保ったまま **ZMQ をトランスポートに使う** バリエーションを定義する[^1]:
+通常の `ProducerStateTable` / `ConsumerStateTable` は Redis 経由でメッセージを運ぶ。永続化・観測性は得られるが **書き込みコストが Redis に縛られる**。本 [HLD](../reference/glossary.md#term-hld) は API シグネチャを保ったまま **ZMQ をトランスポートに使う** バリエーションを定義する[^1]:
 
 - Redis を経由せず低レイテンシで直接プロセス間メッセージング
 - Consumer 側で **DB 更新を on/off できる**（メモリ削減 / 高性能ユースケース向け）
@@ -97,7 +97,7 @@ DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Red
 
 ## 設定
 
-ライブラリレベル API のため CONFIG_DB / CLI による直接の制御点は HLD に無い。DB 更新 on/off は **コード側で `ZmqConsumerStateTable` 構築時に指定**。
+ライブラリレベル API のため [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI による直接の制御点は HLD に無い。DB 更新 on/off は **コード側で `ZmqConsumerStateTable` 構築時に指定**。
 
 ## 制限事項
 
@@ -127,3 +127,5 @@ DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Red
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-swss-common/ZMQ producer-consumer state table design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 7aa3a64b7a02 -->

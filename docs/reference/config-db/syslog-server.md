@@ -55,7 +55,7 @@ SYSLOG_SERVER|<server_address>
 | `server_address` (key) | `inet:host` | ✅ | サーバアドレス |
 | `source` | ip-address | - | 送信元 IP。`server_address` と同 family である `must` |
 | `port` | port-number | - | UDP/TCP ポート |
-| `vrf` | leafref `VRF.name` または enum (`default`/`mgmt`) | - | 経路 VRF。`mgmt` 指定時は `MGMT_VRF_CONFIG.mgmtVrfEnabled = true` 必須 (`must`) |
+| `vrf` | leafref `VRF.name` または enum (`default`/`mgmt`) | - | 経路 [VRF](../../reference/glossary.md#term-vrf)。`mgmt` 指定時は `MGMT_VRF_CONFIG.mgmtVrfEnabled = true` 必須 (`must`) |
 | `filter` | enum `include`/`exclude` | - | フィルタタイプ |
 | `filter_regex` | string (`[^\n\r]+`) | - | フィルタ正規表現 |
 | `protocol` | enum `tcp`/`udp` | - | 転送プロトコル |
@@ -73,9 +73,9 @@ SYSLOG_SERVER|<server_address>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VRF`、`MGMT_VRF_CONFIG`、`FEATURE`、`SYSLOG_CONFIG`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VRF`、`MGMT_VRF_CONFIG`、`FEATURE`、`SYSLOG_CONFIG`
 - 関連 CLI: `config syslog add/del`
-- 関連 YANG: `sonic-syslog`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-syslog`
 
 <!-- ref-triangle:start -->
 
@@ -123,3 +123,5 @@ sonic-db-cli CONFIG_DB keys 'SYSLOG_SERVER|*'
 show syslog
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->

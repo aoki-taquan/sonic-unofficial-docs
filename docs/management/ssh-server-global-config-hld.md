@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC の SSH サーバは Debian 標準 `sshd` をそのまま使う構成で、運用ポリシーを変えるたびに `/etc/ssh/sshd_config` を直接書き換える必要があった。本機能は CONFIG_DB の `SSH_SERVER` テーブルに 5 種のポリシーを集約し、**`hostcfgd` がテーブル変更を購読して `sshd_config` などを更新 → SSH サービスを再起動** することで、CONFIG_DB だけで一貫した SSH 運用ポリシー管理を可能にする[^1]。
+SONiC の SSH サーバは Debian 標準 `sshd` をそのまま使う構成で、運用ポリシーを変えるたびに `/etc/ssh/sshd_config` を直接書き換える必要があった。本機能は [CONFIG_DB](../reference/glossary.md#term-config_db) の `SSH_SERVER` テーブルに 5 種のポリシーを集約し、**`hostcfgd` がテーブル変更を購読して `sshd_config` などを更新 → SSH サービスを再起動** することで、CONFIG_DB だけで一貫した SSH 運用ポリシー管理を可能にする[^1]。
 
 設定対象は次の 5 ポリシー[^1]。
 
@@ -56,7 +56,7 @@ flowchart LR
     HC -->|systemctl restart| SVC[ssh service]
 ```
 
-`hostcfgd` は **ホスト直接動作（コンテナ内ではない）** のデーモンで、これは「ホスト側の SSH 設定ファイルを書き換える必要があるため」と HLD で明示されている[^1]。
+`hostcfgd` は **ホスト直接動作（コンテナ内ではない）** のデーモンで、これは「ホスト側の SSH 設定ファイルを書き換える必要があるため」と [HLD](../reference/glossary.md#term-hld) で明示されている[^1]。
 
 ### 各ポリシーのマッピング先
 
@@ -65,7 +65,7 @@ flowchart LR
 | `authentication_retries` | `/etc/ssh/sshd_config` の `MaxAuthTries` | 認証試行上限 |
 | `login_timeout` | `LoginGraceTime` | ログイン猶予時間（秒）|
 | `ports` | `Port` （複数行可） | 待受ポート |
-| `inactivity_timeout` | hostcfgd の **既存 inactivity フロー** で `TMOUT` 系を更新 | シェルレベル idle |
+| `inactivity_timeout` | [hostcfgd](../reference/glossary.md#term-hostcfgd) の **既存 inactivity フロー** で `TMOUT` 系を更新 | シェルレベル idle |
 | `max_syslogins` | `limits.conf.j2` 経由で `/etc/security/limits.conf` の `* - maxsyslogins <N>` | PAM レベルの全ユーザ並列ログイン上限 |
 
 `max_syslogins` は jinja2 テンプレートで条件分岐される[^1]:
@@ -80,7 +80,7 @@ flowchart LR
 
 ### `ports` の構文
 
-YANG の正規表現で複数ポートを `,` 区切りで許可している[^1]。例: `"22,2222"`. 数字は 1..65536（YANG 上は 65536 までの上限が確認できる正規表現）。
+[YANG](../reference/glossary.md#term-yang) の正規表現で複数ポートを `,` 区切りで許可している[^1]。例: `"22,2222"`. 数字は 1..65536（YANG 上は 65536 までの上限が確認できる正規表現）。
 
 ### 起動シーケンス
 
@@ -164,7 +164,7 @@ JSON サンプル[^1]:
 
 ### 関連する CLI
 
-HLD 上では「**現状は CONFIG_DB を手動で編集**」しており、`config ssh ...` のような専用 CLI は Phase 1 では定義されていない。`config_db.json` 直接編集 / `sonic-cfggen` / gNMI 経由で投入する想定。
+HLD 上では「**現状は CONFIG_DB を手動で編集**」しており、`config ssh ...` のような専用 CLI は Phase 1 では定義されていない。`config_db.json` 直接編集 / `sonic-cfggen` / [gNMI](../reference/glossary.md#term-gnmi) 経由で投入する想定。
 
 ### 関連する YANG
 
@@ -216,3 +216,5 @@ config save
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ff031fbb8bc1 -->

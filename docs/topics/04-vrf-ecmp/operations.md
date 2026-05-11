@@ -14,16 +14,16 @@ sources:
 
 # Route / Interface / Counter の確認
 
-L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。
+L3 の障害調査では、最初に route だけを見ても原因を絞れません。[VRF](../../reference/glossary.md#term-vrf)、interface、RIB、FIB、[RIF](../../reference/glossary.md#term-rif) counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。
 
 ## 確認コマンドの順番
 
 | 目的 | コマンド / 入口 | 見ること |
 |------|----------------|----------|
 | Interface 状態 | `show ip interfaces`、`show interfaces status` | L3 interface の IP、admin/oper、VRF bind 前提。 |
-| FRR RIB | `show ip route` / `show ipv6 route` | FRR が route を選んでいるか。 |
-| ASIC FIB | `show ip fib` | FIB に入っているか。RIB にあり FIB にない場合は orchagent 側を見る。 |
-| BGP VRF | `show ip bgp vrf <vrf> ...` | dynamic route の入力側。 |
+| [FRR](../../reference/glossary.md#term-frr) RIB | `show ip route` / `show ipv6 route` | FRR が route を選んでいるか。 |
+| ASIC FIB | `show ip fib` | FIB に入っているか。RIB にあり FIB にない場合は [orchagent](../../reference/glossary.md#term-orchagent) 側を見る。 |
+| [BGP](../../reference/glossary.md#term-bgp) VRF | `show ip bgp vrf <vrf> ...` | dynamic route の入力側。 |
 | RIF 統計 | `show interfaces counters rif` | RIF 単位の RX/TX packet / byte / error。 |
 | Route flow | `show flowcnt-route stats` | route pattern に一致する traffic counter。 |
 | Loopback action | `show ip interfaces loopback-action` | 同一 RIF 出戻りの drop / forward 設定。 |
@@ -37,8 +37,8 @@ L3 の障害調査では、最初に route だけを見ても原因を絞れま�
 1. route の VRF が意図通りか。
 2. next hop の interface が同じ VRF にあるか、または `nexthop-vrf` が意図通りか。
 3. neighbor が解決しているか。
-4. ECMP / NHG の member が作れる状態か。
-5. ASIC resource や SAI エラーで route programming が失敗していないか。
+4. [ECMP](../../reference/glossary.md#term-ecmp) / NHG の member が作れる状態か。
+5. ASIC resource や [SAI](../../reference/glossary.md#term-sai) エラーで route programming が失敗していないか。
 
 BGP 由来 route の FIB 未導入や route install failure は BGP 章の運用ページも関係します。この章では L3 pipeline 側の前提、つまり RIF / NHG / RouteOrch の準備ができているかを見ます。
 
@@ -52,7 +52,7 @@ port counter は L2 port の統計で、RIF counter は SAI router interface の
 
 [Route Flow Counter](../../routing/sonic-route-flow-counter-design.md) は、route pattern に一致する route に Generic Counter を bind して hit / byte を見る設計です。全 route の統計を常時見る仕組みではなく、調査したい prefix pattern を指定して観測する機能として読みます。
 
-このページは HLD-only として整理されています。利用可否や CLI の存在は対象ビルドで確認してください。
+このページは [HLD](../../reference/glossary.md#term-hld)-only として整理されています。利用可否や CLI の存在は対象ビルドで確認してください。
 
 ## Loopback action は誤転送の最後の防波堤
 
@@ -60,7 +60,7 @@ port counter は L2 port の統計で、RIF counter は SAI router interface の
 
 ## show ip route / interfaces の出力サンプル
 
-`show ip route` は zebra の FRR RIB を整形して出します。`>` は selected、`*` は FIB に install 済みを示します。
+`show ip route` は [zebra](../../reference/glossary.md#term-zebra) の FRR RIB を整形して出します。`>` は selected、`*` は FIB に install 済みを示します。
 
 ```text
 B>* 10.1.0.0/24 [20/0] via 10.0.0.1, Ethernet0, weight 1, 00:12:34
@@ -72,7 +72,7 @@ B   10.2.0.0/24 [20/0] via 10.0.0.1 inactive, weight 1, 00:00:05
 
 `B` で `>` も `*` も付かない行は、best 選択も install も完了していない過渡状態か、SAI 側で reject されているケースです。
 
-`show ip interfaces` は CONFIG_DB の `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `LOOPBACK_INTERFACE` を結合します。
+`show ip interfaces` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `LOOPBACK_INTERFACE` を結合します。
 
 ```text
 Interface        Master    IPv4 address/mask    Admin/Oper    BGP Neighbor    Neighbor IP
@@ -90,10 +90,10 @@ VRF binding は `Master` カラムに VRF 名（`Vrf_red` 等）で表示され�
 | 観測 | 疑う状態 | 一次切り分け |
 |---|---|---|
 | RIB にあるが `>` が無い | metric/distance 競合、または next-hop unreachable | `show ip route <prefix>` の `via ... inactive`、neighbor 状態 |
-| `>` あるが `*` 無し | FIB 反映失敗（orchagent / SAI） | `/var/log/swss/sairedis.rec`、APPL_DB:ROUTE_TABLE |
+| `>` あるが `*` 無し | FIB 反映失敗（orchagent / SAI） | `/var/log/swss/sairedis.rec`、[APPL_DB](../../reference/glossary.md#term-appl_db):[ROUTE_TABLE](../../reference/glossary.md#term-route_table) |
 | `Master` が想定 VRF と違う | bind 漏れ、または bind 順序ミス | `config interface vrf bind`、`show vrf` |
 | RIF counter の error 増 | MTU mismatch、TTL exceed、loopback drop | `show interfaces counters rif`、loopback-action 設定 |
-| `show ip neighbor` で IP に対する MAC 解決なし | ARP / ND 失敗、または VLAN tagging 不一致 | `arp -n`、`show vlan brief`、対向側 ping |
+| `show ip neighbor` で IP に対する MAC 解決なし | [ARP](../../reference/glossary.md#term-arp) / ND 失敗、または [VLAN](../../reference/glossary.md#term-vlan) tagging 不一致 | `arp -n`、`show vlan brief`、対向側 ping |
 | ECMP member が偏る | hash seed、PBH 未設定、bucket 数不一致 | `show ecmp loadshare`、PBH 設定 |
 | Route Flow Counter の hit が増えない | pattern miss、または対象 prefix 非導入 | `show flowcnt-route stats`、対象 prefix の install 状態 |
 | `loopback_action=drop` 設定下で legitimate な return が落ちる | `loopback_action` を強くしすぎ | `show ip interfaces loopback-action`、`config interface ip loopback-action` |
@@ -109,7 +109,7 @@ orchagent: :- create: Failed to create route 10.1.0.0/24 SAI_STATUS_INSUFFICIENT
 neighsyncd: Received neighbor update for 10.0.0.1 lladdr aa:bb:cc:dd:ee:ff state REACHABLE
 ```
 
-CRM 閾値ログは syslog にも出ます。
+[CRM](../../reference/glossary.md#term-crm) 閾値ログは syslog にも出ます。
 
 ```text
 crm: CRM Counter THRESHOLD_EXCEEDED for IPV4_ROUTE
@@ -146,7 +146,7 @@ crm: CRM Counter NEIGHBOR EXCEEDED HIGH threshold(85) used 8700 available 1500
 - `APPL_DB:NEXTHOP_GROUP_TABLE:<id>` — ECMP NHG とその member。
 - `STATE_DB:ROUTE_FLOW_COUNTER_TABLE` — Route Flow Counter の hit / byte。
 - `COUNTERS_DB:COUNTERS_RIF_NAME_MAP` — RIF counter 用 OID 対応。
-- `COUNTERS_DB:CRM:*` — LPM / NEXTHOP / NEIGHBOR / ACL の使用量。
+- `COUNTERS_DB:CRM:*` — LPM / NEXTHOP / NEIGHBOR / [ACL](../../reference/glossary.md#term-acl) の使用量。
 
 ## 横断参照
 
@@ -198,3 +198,4 @@ Vlan1000   180,512 155.40 KB   120.3/s         0  120,330 110.11 KB    85.7/s   
 - [Route Flow Counter](../../routing/sonic-route-flow-counter-design.md)
 - [IP インタフェース ループバックアクション](../../architecture/sonic-ip-interface-loopback-action.md)
 
+<!-- glossary-links-injected: 78ce2cc4d22c -->

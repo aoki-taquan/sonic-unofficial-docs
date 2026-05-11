@@ -31,8 +31,8 @@ related:
 ## 読み手が知りたいこと
 
 1. **warm reboot とは何で、cold / fast / express とどう違うか**
-2. **どこに何が保存され、何が復元されるか**（SAI dump / Redis dump）
-3. **各 docker（bgp / teamd / swss / lldp / dhcp_relay）は何を準備するべきか**
+2. **どこに何が保存され、何が復元されるか**（[SAI](../reference/glossary.md#term-sai) dump / [Redis](../reference/glossary.md#term-redis) dump）
+3. **各 docker（bgp / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / swss / lldp / dhcp_relay）は何を準備するべきか**
 4. **どの CLI で有効化・実行・確認するか**
 5. **データプレーン断や reconcile 失敗のときに何を見るか**
 
@@ -42,7 +42,7 @@ related:
 
 - 同 image / version upgrade は対象、**downgrade は対象外**
 - すべての docker / SAI vendor が warm restart を実装している前提
-- BGP の GR-helper や teamd の LACP 拡張 timer が peer 側に必要
+- [BGP](../reference/glossary.md#term-bgp) の GR-helper や teamd の [LACP](../reference/glossary.md#term-lacp) 拡張 timer が peer 側に必要
 
 cold / fast / express との関係は [11-reboot](../topics/11-reboot/index.md) を参照。詳細な going-down / up path と `SONIC_BOOT_TYPE` の扱いは [`system-wide-warmboot.md`](system-wide-warmboot.md)。
 
@@ -51,7 +51,7 @@ cold / fast / express との関係は [11-reboot](../topics/11-reboot/index.md) 
 | 物 | 保存先 | 役割 |
 |----|--------|------|
 | ASIC / SAI state | `/host/warmboot/sai-warmboot.bin` | SAI が `remove_switch()` 時に dump、`create_switch` 時に復元 |
-| Redis 全体 | `/host/warmboot/dump.rdb` | APP_DB / ASIC_DB / STATE_DB を再起動後 load |
+| Redis 全体 | `/host/warmboot/dump.rdb` | APP_DB / [ASIC_DB](../reference/glossary.md#term-asic_db) / [STATE_DB](../reference/glossary.md#term-state_db) を再起動後 load |
 | `WARM_RESTART_TABLE:system` | STATE_DB | shutdown 進行中フラグ |
 
 ## 3. 各レイヤへの要件
@@ -67,7 +67,7 @@ cold / fast / express との関係は [11-reboot](../topics/11-reboot/index.md) 
 
 - ASIC_DB / 制御 channel から warm shutdown を受けて SAI に橋渡し
 - 復旧時に Redis dump と SAI dump を read
-- orchagent との **init view → apply view → diff** で差分のみ SAI に流す
+- [orchagent](../reference/glossary.md#term-orchagent) との **init view → apply view → diff** で差分のみ SAI に流す
 
 ### アプリケーション
 
@@ -102,7 +102,7 @@ stateDiagram-v2
 | `sudo warm-reboot` | warm reboot 実施 |
 | `show warm_restart` | 状態確認 |
 
-CONFIG_DB:
+[CONFIG_DB](../reference/glossary.md#term-config_db):
 
 | Key | 説明 |
 |-----|------|
@@ -111,7 +111,7 @@ CONFIG_DB:
 
 ## 6. トラブルシューティング
 
-- **90s 超のデータプレーン断** → syncd warm recovery 失敗。`sai-warmboot.bin` の有無を確認
+- **90s 超のデータプレーン断** → [syncd](../reference/glossary.md#term-syncd) warm recovery 失敗。`sai-warmboot.bin` の有無を確認
 - **BGP convergence 不良** → peer の GR-helper 対応、`config bgp graceful-restart` の値
 - **orchagent reconcile が永遠** → APP_DB と ASIC_DB の不一致、syncd ログ
 
@@ -130,3 +130,5 @@ CONFIG_DB:
 - [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 28f6e043a6cd -->

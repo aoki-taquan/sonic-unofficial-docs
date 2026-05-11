@@ -9,7 +9,7 @@ sources: []
 
 # 内部実装
 
-gNMI / OpenConfig の内部実装は、`telemetry` コンテナの中に gNMI server があり、translib / sonic-mgmt-common 経由で YANG → CONFIG_DB / APPL_DB / STATE_DB に変換するという縦の流れを押さえると整理できます。GET / SET / SUBSCRIBE で経路がそれぞれ違うのが特徴です。
+[gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig の内部実装は、`telemetry` コンテナの中に gNMI server があり、translib / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common 経由で [YANG](../../reference/glossary.md#term-yang) → [CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) に変換するという縦の流れを押さえると整理できます。GET / SET / SUBSCRIBE で経路がそれぞれ違うのが特徴です。
 
 ## データフロー
 
@@ -30,8 +30,8 @@ flowchart LR
 
 | コンポーネント | 主な実体 | 責務 |
 | --- | --- | --- |
-| `telemetry` container | `sonic-gnmi`（旧 `sonic-telemetry`）/ `gnmi_server` | gNMI / gNOI / gNSI gRPC server。TLS / mTLS 終端 |
-| `translib` (`sonic-mgmt-common/translib/`) | `translib.go`、`transformer/` | YANG path ↔ Redis テーブルの双方向変換、ocyang バインドを使う |
+| `telemetry` container | `sonic-gnmi`（旧 `sonic-telemetry`）/ `gnmi_server` | gNMI / [gNOI](../../reference/glossary.md#term-gnoi) / gNSI gRPC server。TLS / mTLS 終端 |
+| `translib` (`sonic-mgmt-common/translib/`) | `translib.go`、`transformer/` | YANG path ↔ [Redis](../../reference/glossary.md#term-redis) テーブルの双方向変換、ocyang バインドを使う |
 | `transformer` | per-module transformer（`translib/transformer/xfmr_*.go`） | OpenConfig path から SONiC YANG / Redis テーブルへの mapping 規則 |
 | `sonic-yang-mgmt` / `sonic-yang-models` | `yang-models/*.yang` | SONiC 独自 YANG。CONFIG_DB との整合の根拠 |
 | `dialin` / `dialout` server | `telemetry/dialin.go` / `dialout.go` | dial-in (subscribe) と dial-out collector |
@@ -40,14 +40,14 @@ flowchart LR
 
 ## SAI 属性使用
 
-gNMI server は SAI 属性を直接触りません。代わりに `COUNTERS_DB` の counter（port / queue / PG / buffer pool）、`STATE_DB` の運用状態を**読み取り側**として参照します。SAI 属性は `flexcounter` が裏で populate しています（→ 08 章 / 20 章）。
+gNMI server は [SAI](../../reference/glossary.md#term-sai) 属性を直接触りません。代わりに `COUNTERS_DB` の counter（port / queue / PG / buffer pool）、`STATE_DB` の運用状態を**読み取り側**として参照します。SAI 属性は `flexcounter` が裏で populate しています（→ 08 章 / 20 章）。
 
 書き込み側で gNMI SET から SAI に到達する経路は:
 
 1. `gnmi SET` → translib transformer → `CONFIG_DB`
 2. `CONFIG_DB` 変更 → `*mgrd` / `orchagent` → SAI
 
-であり、gNMI server から直接 ASIC_DB を叩く経路はありません。
+であり、gNMI server から直接 [ASIC_DB](../../reference/glossary.md#term-asic_db) を叩く経路はありません。
 
 ## Redis テーブル参照関係
 
@@ -65,7 +65,7 @@ SUBSCRIBE は target が `STATE_DB` か `COUNTERS_DB` かによって on_change�
 ## ZMQ / Redis pub/sub の使用
 
 - **Redis keyspace notifications**（`__keyspace@*__`）を gNMI server が subscribe して on_change を出します。
-- **ZMQ**: GNMIGet / GNMISet の一部経路で、orchagent との直結 RPC を行う実装が追加されました（`gnmi-native-write` 系の HLD）。これにより CONFIG_DB を経由しない write が一部のテーブルで可能です。
+- **ZMQ**: GNMIGet / GNMISet の一部経路で、[orchagent](../../reference/glossary.md#term-orchagent) との直結 RPC を行う実装が追加されました（`gnmi-native-write` 系の [HLD](../../reference/glossary.md#term-hld)）。これにより CONFIG_DB を経由しない write が一部のテーブルで可能です。
 - **dial-out**: collector への gRPC push（poll/on_change の結果）。
 - gNOI の `Reboot` / `Ping` 等は **host service**（`sonic-host-service`）に DBus / Unix socket で投げ、root 権限の操作はコンテナ外で行います。
 
@@ -94,7 +94,7 @@ gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT`
 
 - **subscribe sample interval** の下限は flexcounter polling と整合させるのが安全で、port counter は 10s、queue / PG は 10s、buffer pool は 60s が標準です。100ms 等は無意味（同じ値を返す）です。
 - **GET の最大サブツリー深さ**には実質制限が無く、`/interfaces` 全体を 1 度に取ると数千 OID の Redis 読み出しが直列で走り、数秒〜数十秒かかります。client 側でリスト要素を絞るのが定石です。
-- **dial-out** は collector への gRPC で QoS / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告があります。`TELEMETRY_CLIENT` の `queue_size` で抑えます。
+- **dial-out** は collector への gRPC で [QoS](../../reference/glossary.md#term-qos) / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告があります。`TELEMETRY_CLIENT` の `queue_size` で抑えます。
 
 ## translib transformer の責務分担
 
@@ -119,7 +119,7 @@ gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT`
 | Entry point | CONFIG_DB write | orchagent ZMQ socket |
 | Atomicity | Redis transaction (`MULTI/EXEC`) | ZMQ message + orchagent task |
 | Failure feedback | STATE_DB から間接的 | gNMI response に直接 |
-| 対象 | 全テーブル | DASH 等の opt-in テーブルのみ |
+| 対象 | 全テーブル | [DASH](../../reference/glossary.md#term-dash) 等の opt-in テーブルのみ |
 
 CONFIG_DB を bypass するため、`config save` / `config reload` の永続化対象には入りません。再起動後に再投入する責任は外部 controller 側にあります。
 
@@ -130,3 +130,5 @@ CONFIG_DB を bypass するため、`config save` / `config reload` の永続化
 - [gNMI master arbitration](../../management/gnmi-master-arbitration-hld.md)
 - [gNOI / gNSI](./gnoi-gnsi.md)
 - [YANG リファレンス](./yang-reference.md)
+
+<!-- glossary-links-injected: cb52a7361215 -->

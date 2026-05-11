@@ -73,9 +73,9 @@ ethtool Ethernet0
 
 1. **Transceiver 未挿入 / EEPROM 異常** — `sfputil show presence` が `Not present`
 2. **speed / FEC / autoneg の不一致** — 25G で FEC 設定が片側 RS、片側 none など
-3. **portsorch が CONFIG_DB を APPL_DB に反映できていない** — `swss` container の異常
+3. **portsorch が [CONFIG_DB](../../reference/glossary.md#term-config_db) を [APPL_DB](../../reference/glossary.md#term-appl_db) に反映できていない** — `swss` container の異常
 4. **lane / serdes 設定の platform.json バグ** — port-breakout 後の設定残り
-5. **SAI driver / FW のリンクトレーニング失敗** — `syncd` ログに `link training failed`
+5. **[SAI](../../reference/glossary.md#term-sai) driver / FW のリンクトレーニング失敗** — `syncd` ログに `link training failed`
 6. **kernel netdev は up だが ASIC 側で down** — host-side のみ up となる multi-asic 構成の罠
 
 ## 関連 reference / topics
@@ -85,3 +85,5 @@ ethtool Ethernet0
 - [link-flapping.md](link-flapping.md)
 - [interface-mtu-mismatch.md](interface-mtu-mismatch.md)
 - [../cli/show-interfaces.md](../cli/show-interfaces.md)
+
+<!-- glossary-links-injected: 3c23d919b483 -->

@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-ssh-server`
 
-SSH server daemon configuration YANG module for SONiC OS.[^1]
+SSH server daemon configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -86,7 +86,7 @@ module: sonic-ssh-server
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `SSH_SERVER|POLICIES`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `SSH_SERVER|POLICIES`
 - CLI: `config ssh`
 
 <!-- ref-triangle:start -->
@@ -101,3 +101,5 @@ module: sonic-ssh-server
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-ssh-server.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

@@ -29,7 +29,7 @@ PMON コンテナ内の **`xcvrd` daemon** が SFP / QSFP / QSFP-DD などの光
 設計の要点:
 
 - **静的情報**（type, vendor, S/N, model, cable type 等）は plug 時に 1 回だけ更新
-- **DOM センサ値**（temperature, voltage, rx/tx power, bias）は **約 60s 周期で polling**（HLD 段階では tentative）
+- **DOM センサ値**（temperature, voltage, rx/tx power, bias）は **約 60s 周期で polling**（[HLD](../reference/glossary.md#term-hld) 段階では tentative）
 - transceiver error event は bitmap で 1 つにまとまる（旧 7 種値とは互換）。EEPROM 読み取り不能時は **DOM 更新を停止し、static info は保持** する
 - port config 変更（speed / lane mapping）にも追随[^1]
 
@@ -150,7 +150,7 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 
 - **Port auto FEC / Port link training**: speed / lane と DOM フィールド構成の対応
 - **CMIS LPO 拡張デバッグレジスタ**: VDM / advertise byte に伴う TRANSCEIVER_INFO / DOM 拡張
-- **SNMP transceiver-mib**: TRANSCEIVER_DOM_SENSOR を SNMP MIB に橋渡しする別 HLD あり
+- **[SNMP](../reference/glossary.md#term-snmp) transceiver-mib**: TRANSCEIVER_DOM_SENSOR を SNMP MIB に橋渡しする別 HLD あり
 
 ## トラブルシューティング
 
@@ -186,3 +186,5 @@ HLD の中核（xcvrd デーモン + 60s 周期 DOM ポーリング + CMIS 拡�
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1d579f83f1e2 -->

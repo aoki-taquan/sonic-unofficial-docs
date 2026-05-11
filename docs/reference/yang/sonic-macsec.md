@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-macsec`
 
-IEEE 802.1AE MACsec のプロファイル（CAK/CKN、cipher、replay protection、rekey 等）を保持する YANG モジュール[^1]。ポートへの紐付けは `sonic-port` の `macsec` リーフ側で行う。
+IEEE 802.1AE MACsec のプロファイル（CAK/CKN、cipher、replay protection、rekey 等）を保持する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。ポートへの紐付けは `sonic-port` の `macsec` リーフ側で行う。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -90,7 +90,7 @@ module: sonic-macsec
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `MACSEC_PROFILE|<name>`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MACSEC_PROFILE|<name>`
 - CLI: `config macsec`
 
 <!-- ref-triangle:start -->
@@ -124,3 +124,5 @@ show macsec
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-macsec.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

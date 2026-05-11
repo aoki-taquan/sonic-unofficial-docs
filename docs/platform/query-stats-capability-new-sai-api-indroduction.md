@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-SONiC `syncd` の `FlexCounter` は、各オブジェクト（Port / Queue / Priority Group / RIF / Buffer Pool）について **「どの統計 ID が SAI でサポートされているか」を `getStats()` を 1 ID ずつ叩いて確認** していた。Port だけでも数十個の counter ID をループで試すため、起動・fast-reboot 時のオーバーヘッドが大きい[^1]。
+SONiC `syncd` の `FlexCounter` は、各オブジェクト（Port / Queue / Priority Group / [RIF](../reference/glossary.md#term-rif) / Buffer Pool）について **「どの統計 ID が [SAI](../reference/glossary.md#term-sai) でサポートされているか」を `getStats()` を 1 ID ずつ叩いて確認** していた。Port だけでも数十個の counter ID をループで試すため、起動・fast-reboot 時のオーバーヘッドが大きい[^1]。
 
 本機能は SAI に追加された **`sai_query_stats_capability()`** API を使って **オブジェクトの全 counter capability を 1 コールで取得** するように `FlexCounter` を改修する。fast-reboot のような時間制約のあるパスで特に効果が大きい[^1]。
 
@@ -147,7 +147,7 @@ reasoning: 改修対象関数とフォールバック動作の根拠。
 
 - **SAI ベンダ実装依存**: 新 API を実装するか、`SAI_STATUS_NOT_IMPLEMENTED` を返すかのいずれかが要求される[^1]。誤った status を返すベンダではフォールバックが働かない可能性。
 - **互換のためのコードパス二重化**: 旧 per-ID ループ実装も残す必要があり、メンテナンスコストは増える。
-- **mode 情報の扱い**: 新 API は stats mode のビットマスクも返すが、SONiC `FlexCounter` 側でどこまで活用するかは HLD では明記されていない（counter 集合判定のみ言及）[^1]。
+- **mode 情報の扱い**: 新 API は stats mode のビットマスクも返すが、SONiC `FlexCounter` 側でどこまで活用するかは [HLD](../reference/glossary.md#term-hld) では明記されていない（counter 集合判定のみ言及）[^1]。
 
 ## 干渉する機能
 
@@ -163,3 +163,5 @@ reasoning: 改修対象関数とフォールバック動作の根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 934155bd29c3 -->

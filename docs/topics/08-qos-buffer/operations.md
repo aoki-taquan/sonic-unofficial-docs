@@ -19,7 +19,7 @@ sources:
 
 # QoS / Buffer の運用
 
-「アプリが詰まる」「PFC で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理します。
+「アプリが詰まる」「[PFC](../../reference/glossary.md#term-pfc) で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理します。
 
 ## まず叩く 4 コマンド
 
@@ -55,7 +55,7 @@ Ethernet0 Tx     0       0       0       0     0       0       0       0
 1. `show interfaces counters` で port 全体の drop を確認。
 2. `show queue counters` で egress 側 queue の drop が立っているか。立っていればその queue を持つ flow（DSCP / TC）を [`DSCP_TO_TC_MAP`](../../reference/config-db/dscp-to-tc-map.md) と [`TC_TO_QUEUE_MAP`](../../reference/config-db/tc-to-queue-map.md) から逆引き。
 3. 立っていなければ ingress 側を疑い、[port buffer drop counters](../../acl-qos/port-buffer-drop-counters-in-sonic.md) の系列カウンタ（`SAI_PORT_STAT_IN_DROPPED_PKTS` 系 / `SAI_PORT_STAT_PFC_*_RX_PKTS` など）を `portstat -j` 系で取り、ingress PG drop かどうかを切り分け。
-4. WRED / ECN が動いている経路なら [WRED and ECN statistics](../../acl-qos/wred-and-ecn-statistics.md) のカウンタで、drop と mark の比率を見る。
+4. [WRED](../../reference/glossary.md#term-wred) / ECN が動いている経路なら [WRED and ECN statistics](../../acl-qos/wred-and-ecn-statistics.md) のカウンタで、drop と mark の比率を見る。
 
 切り分けは「どの DB に何が出ているか」を意識すると速いです:
 
@@ -164,7 +164,7 @@ admin@sonic:~$ show priority-group watermark headroom
 
 ## telemetry / counter の収集間隔
 
-FlexCounter のポーリング間隔は CONFIG_DB の `FLEX_COUNTER_TABLE` で変えられます。queue / PG / pool / PFCWD ごとに独立しているので、短くしたいものだけ短くすれば SAI 側の負荷も抑えられます。観測値の単位や意味は [watermark counters in SONiC](../../acl-qos/watermark-counters-in-sonic.md) の表が一次資料です。
+[FlexCounter](../../reference/glossary.md#term-flexcounter) のポーリング間隔は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FLEX_COUNTER_TABLE` で変えられます。queue / PG / pool / PFCWD ごとに独立しているので、短くしたいものだけ短くすれば [SAI](../../reference/glossary.md#term-sai) 側の負荷も抑えられます。観測値の単位や意味は [watermark counters in SONiC](../../acl-qos/watermark-counters-in-sonic.md) の表が一次資料です。
 
 ```text
 admin@sonic:~$ counterpoll show
@@ -188,12 +188,14 @@ ACL_STAT                 5000                enable
 | 全体的に遅い・bursty | `show buffer pool persistent-watermark` | shared pool 枯渇 |
 | PFC が止まらない | `show pfc counters` + `show pfcwd stats` | Rx/Tx の向き、PFCWD |
 | ECN mark が立たない | `show queue counters` (WRED 系) | `WRED_PROFILE` 設定 |
-| 設定したのに反映されない | `redis-cli -n 4 hgetall BUFFER_PROFILE\|...` | CONFIG_DB と STATE_DB |
+| 設定したのに反映されない | `redis-cli -n 4 hgetall BUFFER_PROFILE\|...` | CONFIG_DB と [STATE_DB](../../reference/glossary.md#term-state_db) |
 | port 削除直後の幽霊 watermark | `show queue persistent-watermark` | [align watermark flow](../../acl-qos/align-watermark-flow-with-port-configuration-hld.md) |
 
 ## 関連章
 
 - 章 [07 ACL / CoPP / mirror](../07-acl-copp-mirror/operations.md) — drop の入口の切り分け
-- 章 [09 telemetry / SNMP / observability](../09-telemetry-snmp/operations.md) — counter を gNMI で取る
-- 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — QoS / Buffer の宣言的設定
+- 章 [09 telemetry / SNMP / observability](../09-telemetry-snmp/operations.md) — counter を [gNMI](../../reference/glossary.md#term-gnmi) で取る
+- 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — [QoS](../../reference/glossary.md#term-qos) / Buffer の宣言的設定
 - [Buffer Pool / Profile スキーマ](../../reference/config-db/buffer-pool.md)
+
+<!-- glossary-links-injected: c27ed40a8e10 -->

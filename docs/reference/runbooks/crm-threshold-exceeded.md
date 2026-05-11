@@ -25,15 +25,15 @@ related:
 ## 症状
 
 - syslog に `CRM_THRESHOLD_EXCEEDED` / `THRESHOLD_TYPE_USED` が出力される
-- 新しい route / nexthop / FDB エントリが ASIC に書けず `SAI_STATUS_TABLE_FULL`
+- 新しい route / nexthop / [FDB](../../reference/glossary.md#term-fdb) エントリが ASIC に書けず `SAI_STATUS_TABLE_FULL`
 - `crm show resources all` の `Used` が `Available` に迫っている
 
 ## 想定原因（優先度順）
 
 1. **ASIC 容量に対する実需要超過**: route テーブル / FDB の物理上限
 2. **threshold 設定が低すぎる**: high=70% など過敏設定で誤検知
-3. **leak**: orchagent が delete を ASIC に流していない（programming bug / syncd 詰まり）
-4. **特定 resource 種別の偏り**: ACL counter / mirror / Nexthop group が過大
+3. **leak**: [orchagent](../../reference/glossary.md#term-orchagent) が delete を ASIC に流していない（programming bug / [syncd](../../reference/glossary.md#term-syncd) 詰まり）
+4. **特定 resource 種別の偏り**: [ACL](../../reference/glossary.md#term-acl) counter / mirror / Nexthop group が過大
 5. **multi-asic で 1 ASIC に偏った programming**
 
 ## 切り分け手順
@@ -65,7 +65,7 @@ sonic-db-cli COUNTERS_DB hgetall "CRM:STATS"
 sonic-db-cli ASIC_DB keys "ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*" | wc -l
 ```
 
-- COUNTERS_DB と ASIC_DB の実数が乖離 → orchagent / syncd の leak 可能性
+- [COUNTERS_DB](../../reference/glossary.md#term-counters_db) と [ASIC_DB](../../reference/glossary.md#term-asic_db) の実数が乖離 → orchagent / syncd の leak 可能性
 
 ### 4. 閾値の妥当性
 
@@ -85,8 +85,8 @@ docker logs swss 2>&1 | grep -iE "crm|table_full|sai_status" | tail -100
 
 - 実需要超過: route summarization、不要 nexthop の削減、ACL の集約
 - threshold 調整: `crm config thresholds ipv4 route high 85` 等で適正化（**ロールバック**: 元値を控えて同コマンドで戻す）
-- leak 疑い: `docker restart swss` は影響が極めて大きい。先に `sonic-db-cli` で APPL_DB と ASIC_DB の差分を取得しベンダ / コミュニティに報告
-- multi-asic 偏り: ECMP hash の見直し、internal BGP の announce 制御
+- leak 疑い: `docker restart swss` は影響が極めて大きい。先に `sonic-db-cli` で [APPL_DB](../../reference/glossary.md#term-appl_db) と ASIC_DB の差分を取得しベンダ / コミュニティに報告
+- multi-asic 偏り: [ECMP](../../reference/glossary.md#term-ecmp) hash の見直し、internal [BGP](../../reference/glossary.md#term-bgp) の announce 制御
 - ACL counter 過剰: 未使用 ACL rule の整理、`SAI_ACL_COUNTER` 不要分の解放
 
 ## 関連ページ
@@ -97,5 +97,7 @@ docker logs swss 2>&1 | grep -iE "crm|table_full|sai_status" | tail -100
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ master — crmorch.cpp
-[^2]: sonic-net/sonic-utilities @ master — crm/main.py
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — crmorch.cpp
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — crm/main.py
+
+<!-- glossary-links-injected: a7a936b33d04 -->

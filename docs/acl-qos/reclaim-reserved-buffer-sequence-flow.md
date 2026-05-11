@@ -35,11 +35,11 @@ related:
 
 SONiC のバッファ管理は **buffer pool / profile / PG / queue** で構成され、各ポートに priority group (PG) と queue ごとの **予約バッファ（reserved + headroom）** が確保される。minigraph で neighbor が宣言されない **INACTIVE PORT** の分まで予約すると ASIC の有限リソースを浪費する。
 
-本 HLD は **「INACTIVE / admin-down ポートの予約を zero buffer profile で 0 化する」** 3 系統のフローを定義する[^1]:
+本 [HLD](../reference/glossary.md#term-hld) は **「INACTIVE / admin-down ポートの予約を zero buffer profile で 0 化する」** 3 系統のフローを定義する[^1]:
 
 1. **deploy フロー**: `config load-minigraph` 起動時に INACTIVE ポートへ zero profile 投入
 2. **normal フロー**: 動的 admin-down 時に lossless PG を削除（traditional buffer model）
-3. **dynamic buffer フロー**: shutdown 時に zero pool / profile を APPL_DB に挿入し、PG / queue / profile_list を全て zero へ寄せる
+3. **dynamic buffer フロー**: shutdown 時に zero pool / profile を [APPL_DB](../reference/glossary.md#term-appl_db) に挿入し、PG / queue / profile_list を全て zero へ寄せる
 
 ## 1. deploy フロー（`config load-minigraph`）
 
@@ -70,7 +70,7 @@ sequenceDiagram
 
 ## 2. normal フロー（traditional buffer model, admin-down 時）
 
-cable length / speed / admin-status を起点に **`buffer manager`** が反応、必要なら profile を生成 → `BUFFER_PG` 更新 → **`BufferOrch`** が SAI に反映[^1]。
+cable length / speed / admin-status を起点に **`buffer manager`** が反応、必要なら profile を生成 → `BUFFER_PG` 更新 → **`BufferOrch`** が [SAI](../reference/glossary.md#term-sai) に反映[^1]。
 
 ```mermaid
 sequenceDiagram
@@ -160,10 +160,10 @@ sequenceDiagram
 
 | 種別 | 名前 | 用途 |
 |------|------|------|
-| CONFIG_DB | `BUFFER_POOL` / `BUFFER_PROFILE` | zero pool / profile もここに挿入される |
+| [CONFIG_DB](../reference/glossary.md#term-config_db) | `BUFFER_POOL` / `BUFFER_PROFILE` | zero pool / profile もここに挿入される |
 | CONFIG_DB | `BUFFER_PG` / `BUFFER_QUEUE` | PG / queue 単位の割当 |
 | CONFIG_DB | `BUFFER_PORT_{INGRESS,EGRESS}_PROFILE_LIST` | port 側 profile リスト |
-| STATE_DB | `BUFFER_MAX_PARAM_TABLE` | port の最大 queue / PG / headroom |
+| [STATE_DB](../reference/glossary.md#term-state_db) | `BUFFER_MAX_PARAM_TABLE` | port の最大 queue / PG / headroom |
 | CLI | `config load-minigraph` | deploy フローのトリガ |
 
 ### 設定例
@@ -183,7 +183,7 @@ INACTIVE ポートの予約回収は **ユーザ操作不要**。minigraph に n
 - `BufferOrch`: SAI 反映。set / create / remove の整合を担当
 - `portsorch`: dynamic buffer 前段で `BUFFER_MAX_PARAM_TABLE` を構築
 - `sonic-cfggen` + buffer template (Jinja): deploy フローの zero profile 生成元
-- lossless / lossy queue 構成: PFC / headroom と密結合（zero 適用で PFC 設定が失われないこと）
+- lossless / lossy queue 構成: [PFC](../reference/glossary.md#term-pfc) / headroom と密結合（zero 適用で PFC 設定が失われないこと）
 
 ## トラブルシューティング
 
@@ -198,7 +198,7 @@ redis-cli -n 6 hgetall 'BUFFER_MAX_PARAM_TABLE|<port>'   # 最大 PG/queue が�
 
 ## 関連 Topics
 
-- [08-qos-buffer/concept](../topics/08-qos-buffer/concept.md): QoS / buffer の全体像
+- [08-qos-buffer/concept](../topics/08-qos-buffer/concept.md): [QoS](../reference/glossary.md#term-qos) / buffer の全体像
 - [08-qos-buffer/internals](../topics/08-qos-buffer/internals.md): buffermgrd / BufferOrch / dynamic buffer
 
 ## 引用元
@@ -211,3 +211,5 @@ redis-cli -n 6 hgetall 'BUFFER_MAX_PARAM_TABLE|<port>'   # 最大 PG/queue が�
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4e2c45f685fb -->

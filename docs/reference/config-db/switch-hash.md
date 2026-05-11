@@ -24,8 +24,8 @@ related:
 
 ## 概要
 
-ECMP / LAG ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル[^1]。
-`orchagent` が CONFIG_DB から読んで SAI `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*` / `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*` 系属性として SAI に push する。
+[ECMP](../../reference/glossary.md#term-ecmp) / [LAG](../../reference/glossary.md#term-lag) ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル[^1]。
+`orchagent` が [CONFIG_DB](../../reference/glossary.md#term-config_db) から読んで [SAI](../../reference/glossary.md#term-sai) `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*` / `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*` 系属性として SAI に push する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -64,7 +64,7 @@ SWITCH_HASH|GLOBAL
 
 `IN_PORT` / `DST_MAC` / `SRC_MAC` / `ETHERTYPE` / `VLAN_ID` / `IP_PROTOCOL` / `DST_IP` / `SRC_IP` / `L4_DST_PORT` / `L4_SRC_PORT` / `INNER_*` 同等 / `IPV6_FLOW_LABEL`
 
-`ordered-by user` が付くため、ユーザー設定順が保たれる (実装上はベンダーによっては順序を無視するが、YANG 上の意味は保存される)。
+`ordered-by user` が付くため、ユーザー設定順が保たれる (実装上はベンダーによっては順序を無視するが、[YANG](../../reference/glossary.md#term-yang) 上の意味は保存される)。
 
 ## 購読者
 
@@ -111,3 +111,5 @@ sonic-db-cli CONFIG_DB hgetall 'SWITCH_HASH|GLOBAL'
 show switch-hash global
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a4763c04a26b -->

@@ -36,7 +36,7 @@ related:
 
 SONiC の docker 内プロセスが crash すると、core ファイルが生成される。**core 生成イベントを契機に自動で `show techsupport` を呼び、結果アーカイブと core を保存** するのが本機能の中核[^1]。狙い:
 
-- 障害解析に必要な状態（log / config / counter / SAI dump）を **障害発生時点** の snapshot として残す
+- 障害解析に必要な状態（log / config / counter / [SAI](../reference/glossary.md#term-sai) dump）を **障害発生時点** の snapshot として残す
 - core / techsupport の **disk 容量爆発を防ぐ**（rate-limit + quota）
 - per-feature で発火条件 / 抑制を変えられる（`AUTO_TECHSUPPORT_FEATURE`）
 
@@ -124,3 +124,5 @@ flowchart LR
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->

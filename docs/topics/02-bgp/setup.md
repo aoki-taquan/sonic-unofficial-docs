@@ -16,7 +16,7 @@ sources:
 
 # 設定
 
-BGP の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら CONFIG_DB、外部 controller から投入するなら YANG/OpenConfig を見る。重要なのは、最終的に FRR に入る設定と CONFIG_DB の状態を分離しないことである。
+[BGP](../../reference/glossary.md#term-bgp) の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら [CONFIG_DB](../../reference/glossary.md#term-config_db)、外部 controller から投入するなら [YANG](../../reference/glossary.md#term-yang)/OpenConfig を見る。重要なのは、最終的に [FRR](../../reference/glossary.md#term-frr) に入る設定と CONFIG_DB の状態を分離しないことである。
 
 ## どの入口を使うか
 
@@ -24,14 +24,14 @@ BGP の設定入口は複数ある。運用コマンドで触るなら CLI、宣
 | --- | --- | --- |
 | 手作業で neighbor や global 設定を入れる | `config bgp ...` | [CLI: config bgp](../../reference/cli/config-bgp.md) |
 | 自動化で SONiC native schema を書く | CONFIG_DB | `BGP_GLOBALS`、`BGP_NEIGHBOR`、`BGP_PEER_GROUP` |
-| gNMI/REST/OpenConfig を使う | YANG/Management Framework | `sonic-bgp-*`、`sonic-route-map` |
+| [gNMI](../../reference/glossary.md#term-gnmi)/REST/OpenConfig を使う | YANG/Management Framework | `sonic-bgp-*`、`sonic-route-map` |
 | policy を再利用する | route-map、prefix-list、prefix-set | CONFIG_DB と CLI reference |
 
 ## 最小構成で考える
 
 BGP 設定を読むときは、次の順番で追うとよい。
 
-1. `BGP_GLOBALS` で VRF 単位の router-id、ASN、global option を確認する。
+1. `BGP_GLOBALS` で [VRF](../../reference/glossary.md#term-vrf) 単位の router-id、ASN、global option を確認する。
 2. `BGP_NEIGHBOR` または `BGP_PEER_GROUP` で peer の ASN、peer group 所属、timer、password などを確認する。
 3. `BGP_NEIGHBOR_AF` または `BGP_PEER_GROUP_AF` で address family ごとの activate、route-map、prefix-limit などを見る。
 4. policy は `ROUTE_MAP`、`PREFIX_LIST`、`PREFIX_SET` を別に確認する。
@@ -204,7 +204,7 @@ sudo config bgp aggregate-address add default 10.10.0.0/16 \
 
 ## aggregate address と BBR 連動
 
-aggregate address は単に FRR に summary を入れるだけではなく、BBR awareness や prefix-list 連携を含む設計がある。CONFIG_DB では `BGP_AGGREGATE_ADDRESS` を使い、bgpcfgd が FRR 設定へ反映する。細かいスキーマと挙動は [BBR 連動の BGP ルート集約](../../routing/bgp-route-aggregation-with-bbr-awareness.md) を参照する。
+aggregate address は単に FRR に summary を入れるだけではなく、BBR awareness や prefix-list 連携を含む設計がある。CONFIG_DB では `BGP_AGGREGATE_ADDRESS` を使い、[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が FRR 設定へ反映する。細かいスキーマと挙動は [BBR 連動の BGP ルート集約](../../routing/bgp-route-aggregation-with-bbr-awareness.md) を参照する。
 
 ## OpenConfig/Management Framework を使う場合
 
@@ -215,7 +215,7 @@ OpenConfig BGP 経由で広い範囲を扱う場合、`frrcfgd` が有効かど�
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | neighbor 追加で `Peer does not exist` 等 | local_addr の interface に IP 未設定 | 先に `config interface ip add` を済ませる |
-| `State/PfxRcd` が `Active` のまま | TCP 179 が片道 ACL で drop / route-map で reject | `show ip route <peer>` と CoPP / data ACL を確認 |
+| `State/PfxRcd` が `Active` のまま | TCP 179 が片道 [ACL](../../reference/glossary.md#term-acl) で drop / route-map で reject | `show ip route <peer>` と [CoPP](../../reference/glossary.md#term-copp) / data ACL を確認 |
 | `Connect` で止まる | router-id 重複、両 ToR が同じ loopback IP | `BGP_GLOBALS.router_id` を確認 |
 | MD5 password mismatch | `BGP_NEIGHBOR.auth_password` 不一致 | 両側で同じ平文を入れる (vtysh 表示は encrypted) |
 | `OpenSent` のまま | ASN 不一致 (eBGP 期待だが iBGP 設定) | `BGP_NEIGHBOR.asn` を確認 |
@@ -242,3 +242,5 @@ CONFIG_DB の値は文字列であって boolean ではない (`"true"` / `"fals
 - [CONFIG_DB: BGP_AGGREGATE_ADDRESS](../../reference/config-db/bgp-aggregate-address.md)
 - [BBR 連動の BGP ルート集約](../../routing/bgp-route-aggregation-with-bbr-awareness.md)
 - [FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
+
+<!-- glossary-links-injected: 25d631d5e5c9 -->

@@ -78,7 +78,7 @@ module: sonic-buffer-pool
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BUFFER_POOL`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_POOL`
 
 <!-- ref-triangle:start -->
 
@@ -118,3 +118,5 @@ show buffer pool persistent-watermark
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 896d391185a9 -->

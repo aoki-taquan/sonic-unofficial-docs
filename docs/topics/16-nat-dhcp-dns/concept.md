@@ -21,14 +21,14 @@ keywords:
 
 # 概念
 
-「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく 4 群に分けて読むと混乱しません。L3 forwarding 章で扱う routing そのものとは別の層であり、共通点は「container 単位で隔離された daemon が CONFIG_DB を読んで OS パッケージや iptables を駆動する」点にあります。
+「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく 4 群に分けて読むと混乱しません。L3 forwarding 章で扱う routing そのものとは別の層であり、共通点は「container 単位で隔離された daemon が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読んで OS パッケージや iptables を駆動する」点にあります。
 
 ## 4 つの責務
 
-- NAT: data plane でのアドレス書換。`docker-nat` の `natmgrd` / `natsyncd` が CONFIG_DB を読み、Linux iptables の conntrack エントリと SAI NAT 属性を同期します。SONiC では iptables ↔ SAI の二重管理がポイントです。
-- DHCP relay: client broadcast を upstream server へ unicast 中継する agent。`docker-dhcp-relay` 内の ISC 由来 `dhcrelay` を VLAN 単位で起動し、`dhcpmon` が監視と counter を持ちます。v4 と v6 で別プロセスです。
+- [NAT](../../reference/glossary.md#term-nat): data plane でのアドレス書換。`docker-nat` の `natmgrd` / `natsyncd` が CONFIG_DB を読み、Linux iptables の conntrack エントリと [SAI](../../reference/glossary.md#term-sai) NAT 属性を同期します。SONiC では iptables ↔ SAI の二重管理がポイントです。
+- DHCP relay: client broadcast を upstream server へ unicast 中継する agent。`docker-dhcp-relay` 内の ISC 由来 `dhcrelay` を [VLAN](../../reference/glossary.md#term-vlan) 単位で起動し、`dhcpmon` が監視と counter を持ちます。v4 と v6 で別プロセスです。
 - DHCP server: kea ベースのポートベース server。`docker-dhcp-server` の `dhcpservd` が CONFIG_DB の `DHCP_SERVER_IPV4*` を読んで `kea-dhcp4.conf` を生成し、relay 側と Option 82 で連携します。
-- Time / DNS: chrony（旧 ntpd）と静的 resolv.conf。OS レイヤの daemon が management VRF 内で外向き通信します。CONFIG_DB の `NTP_*` / `DNS_NAMESERVER` から生成される設定ファイルが入口です。
+- Time / DNS: chrony（旧 ntpd）と静的 resolv.conf。OS レイヤの daemon が management [VRF](../../reference/glossary.md#term-vrf) 内で外向き通信します。CONFIG_DB の `NTP_*` / `DNS_NAMESERVER` から生成される設定ファイルが入口です。
 
 ## NAT と routing の境界
 
@@ -64,7 +64,7 @@ SONiC では front-panel port は data VRF（default や user VRF）にあり、
 
 ## TWAMP Light と terminal server の置き場所
 
-TWAMP Light（RFC 5357）は data plane の測定プロトコルで、本来は QoS / observability 寄りですが、サービス系として「control 接続を持たない軽量サービス」枠でこの章の発展トピックに置きます。terminal server は udev rules で `/dev/ttyUSB*` を安定 symlink にする platform 寄りの話で、management 装置として SONiC を使うときの周辺機能です。
+TWAMP Light（RFC 5357）は data plane の測定プロトコルで、本来は [QoS](../../reference/glossary.md#term-qos) / observability 寄りですが、サービス系として「control 接続を持たない軽量サービス」枠でこの章の発展トピックに置きます。terminal server は udev rules で `/dev/ttyUSB*` を安定 symlink にする platform 寄りの話で、management 装置として SONiC を使うときの周辺機能です。
 
 ## まず読み手の質問に答える
 
@@ -87,7 +87,7 @@ TWAMP Light（RFC 5357）は data plane の測定プロトコルで、本来は 
 - 装置の時刻が揃わないと log と TLS 検証が壊れる → chrony + management VRF
 - DNS 名前解決を ToR から打ちたいが out-of-band で出したい → static resolv.conf + mgmt VRF
 
-これらは個別 HLD としてバラバラに見えても、運用ではセットで設計されます。
+これらは個別 [HLD](../../reference/glossary.md#term-hld) としてバラバラに見えても、運用ではセットで設計されます。
 
 ### SONiC 内での位置
 
@@ -134,7 +134,7 @@ flowchart LR
 ### 用語の最短整理
 
 - **`natmgrd`**: CONFIG_DB の `STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` / `NAT_BINDINGS` / `NAT_GLOBAL` を読んで iptables と APP_DB に展開する
-- **`natsyncd`**: conntrack エントリを観測し APP_DB と STATE_DB に同期する
+- **`natsyncd`**: conntrack エントリを観測し APP_DB と [STATE_DB](../../reference/glossary.md#term-state_db) に同期する
 - **SAI NAT object**: ASIC 側 NAT エントリ。fast path に乗せるためのもの
 - **`dhcrelay`**: ISC dhcp 由来。VLAN 1 本に 1 process が標準
 - **`dhcpmon`**: relay のヘルスとパケット counter を取る別 process。`COUNTERS_DB` に書く
@@ -179,7 +179,7 @@ sequenceDiagram
 | [Security / AAA](../15-security-aaa/index.md) | 管理通信の経路（mgmt VRF）はこの章。認証は 15 章 |
 | [Dual-ToR](../05-dual-tor/index.md) | Option 82 や giaddr 固定が dual-ToR でなぜ必要かは 05 章の文脈、設定そのものは本章 |
 | ホスト Linux の DHCP / NAT 単体 | SONiC では CONFIG_DB → 各 container daemon → OS / SAI の二段で動く点が違う |
-| [DASH / SmartSwitch](../13-dash-smartswitch/index.md) | DASH NAT は overlay tenant 単位の NAT で、本章の管理 / edge NAT とはスケール感が違う |
+| [DASH / SmartSwitch](../13-dash-smartswitch/index.md) | [DASH](../../reference/glossary.md#term-dash) NAT は overlay tenant 単位の NAT で、本章の管理 / edge NAT とはスケール感が違う |
 
 ### 読了後にできるようになること
 
@@ -204,3 +204,4 @@ sequenceDiagram
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
 
+<!-- glossary-links-injected: a5e4127f0b55 -->

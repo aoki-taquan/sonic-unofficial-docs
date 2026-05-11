@@ -28,7 +28,7 @@ related:
 
 SONiC モジュラー chassis では、各 line card（LC）が **独立した SONiC インスタンスとして動作** する。新規 LC を空きスロットに挿す、または既存 LC を交換する場合、その LC が SONiC を実行できる状態になっている保証は無い。ベンダーによっては Supervisor 上でスクリプトを走らせる等、**「工場状態の LC を SONiC が動くようにする手順」** を踏む必要がある[^1]。
 
-本 HLD はこのプロセスを SONiC 共通の枠組みとして取り込むため、**新しいプラットフォーム API `provision_module()` と新しい pmon デーモン `sonic-provisiond`** を導入する。Supervisor で LC 検出 → state 監視 → API 呼び出し → ベンダー固有変換 → 再起動して LC を SONiC 化、という流れを統一する。
+本 [HLD](../reference/glossary.md#term-hld) はこのプロセスを SONiC 共通の枠組みとして取り込むため、**新しいプラットフォーム API `provision_module()` と新しい pmon デーモン `sonic-provisiond`** を導入する。Supervisor で LC 検出 → state 監視 → API 呼び出し → ベンダー固有変換 → 再起動して LC を SONiC 化、という流れを統一する。
 
 ## 動作仕様
 
@@ -113,7 +113,7 @@ CHASSIS_MODULE_TABLE|LINE-CARD0
     serial      : <SN>
 ```
 
-`chassisd` が `get_oper_status()` をポーリングして STATE_DB に同期する責務を持つ。`sonic-provisiond` は STATE_DB を購読するだけ[^1]。
+`chassisd` が `get_oper_status()` をポーリングして [STATE_DB](../reference/glossary.md#term-state_db) に同期する責務を持つ。`sonic-provisiond` は STATE_DB を購読するだけ[^1]。
 
 ### 新 API: `provision_module()`
 
@@ -182,7 +182,7 @@ reasoning: sonic-provisiond の責務（STATE_DB 購読のみ・ProvisionReady �
 
 ### 関連する CONFIG_DB
 
-HLD では新しい CONFIG_DB スキーマは導入しない。既存の chassis 関連設定（モジュールスロット定義など）に依存。
+HLD では新しい [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは導入しない。既存の chassis 関連設定（モジュールスロット定義など）に依存。
 
 ### 関連する CLI
 
@@ -190,7 +190,7 @@ HLD では新しい CONFIG_DB スキーマは導入しない。既存の chassis
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+該当 [YANG](../reference/glossary.md#term-yang) モジュールは HLD で言及されていない。
 
 ## 制限事項
 
@@ -232,3 +232,5 @@ HLD では新しい CONFIG_DB スキーマは導入しない。既存の chassis
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 4e4b0dab1086 -->

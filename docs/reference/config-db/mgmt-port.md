@@ -65,9 +65,9 @@ MGMT_PORT|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `MGMT_INTERFACE`（IP 設定）、`MGMT_VRF_CONFIG`（mgmt VRF）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `MGMT_INTERFACE`（IP 設定）、`MGMT_VRF_CONFIG`（mgmt [VRF](../../reference/glossary.md#term-vrf)）
 - 関連 CLI: `config interface speed/mtu eth0 ...`
-- 関連 YANG: `sonic-mgmt_port`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mgmt_port`
 
 <!-- ref-triangle:start -->
 
@@ -101,3 +101,5 @@ sonic-db-cli CONFIG_DB hgetall 'MGMT_PORT|eth0'
 show management_interface address
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: a6c6612be307 -->

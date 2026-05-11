@@ -29,15 +29,15 @@ related:
 
 ## なぜ必要か
 
-分散 VOQ シャシは **複数 ASIC が独立した SONiC instance** で動き、ASIC 間情報共有は **supervisor 上の `CHASSIS_APP_DB`** で行う[^1]。LAG は全 ASIC で共通に見せる必要があり、本 HLD はその仕組みを定義する。
+分散 [VOQ](../reference/glossary.md#term-voq) シャシは **複数 ASIC が独立した SONiC instance** で動き、ASIC 間情報共有は **supervisor 上の `CHASSIS_APP_DB`** で行う[^1]。[LAG](../reference/glossary.md#term-lag) は全 ASIC で共通に見せる必要があり、本 [HLD](../reference/glossary.md#term-hld) はその仕組みを定義する。
 
 要件と制約[^1]:
 
 - メンバは **同一 ASIC に閉じる**（複数 ASIC 跨ぎ LAG は不可）
 - 別 ASIC で受けたトラフィックを **他 ASIC 上の LAG egress** に出すのは可
-- LACP / 動的 LAG / 動的メンバ変更は非 VOQ 機と同等
+- [LACP](../reference/glossary.md#term-lacp) / 動的 LAG / 動的メンバ変更は非 VOQ 機と同等
 
-VOQ SAI 側の前提[^1]:
+VOQ [SAI](../reference/glossary.md#term-sai) 側の前提[^1]:
 
 - LAG は **全 ASIC SAI で create**、active メンバリストも一致
 - SAI は **system port のリスト** をメンバとして受け取れるよう拡張済
@@ -165,9 +165,9 @@ CHASSIS_APP_DB.SYSTEM_LAG_MEMBER_TABLE:<host>|<asic>|<lag>|<system_port_alias>
 
 | 種別 | 名前 | 用途 |
 |------|------|------|
-| CONFIG_DB | `PORTCHANNEL` / `_MEMBER` / `_INTERFACE` | 既存スキーマ、変更なし |
+| [CONFIG_DB](../reference/glossary.md#term-config_db) | `PORTCHANNEL` / `_MEMBER` / `_INTERFACE` | 既存スキーマ、変更なし |
 | CONFIG_DB | `DEVICE_METADATA.localhost.hostname/asic_name` | system LAG name 生成元 |
-| APPL_DB | `LAG_TABLE` / `LAG_MEMBER_TABLE` | local LAG のみ |
+| [APPL_DB](../reference/glossary.md#term-appl_db) | `LAG_TABLE` / `LAG_MEMBER_TABLE` | local LAG のみ |
 | CHASSIS_APP_DB | `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_MEMBER_TABLE` | 全 ASIC 共有 |
 
 ```bash
@@ -206,7 +206,7 @@ redis-cli -h <supervisor> -n CHASSIS_APP_DB hgetall 'SYSTEM_LAG_TABLE:<host>|<as
 ## 関連 Topics
 
 - [12-multi-asic-voq/concept](../topics/12-multi-asic-voq/concept.md): VOQ シャシの全体像
-- [06-l2-vlan-lag/internals](../topics/06-l2-vlan-lag/internals.md): LAG / teamd / portsorch
+- [06-l2-vlan-lag/internals](../topics/06-l2-vlan-lag/internals.md): LAG / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / portsorch
 
 ## 引用元
 
@@ -219,3 +219,5 @@ redis-cli -h <supervisor> -n CHASSIS_APP_DB hgetall 'SYSTEM_LAG_TABLE:<host>|<as
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3279fa7c3594 -->

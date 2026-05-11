@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-TSA（Traffic-Shift Away）は SONiC ルータをトラフィック対象から外すための運用機能で、BGP に対して **「ネイバへ経路を広告しない」Route Policy** を適用する。新規導入時のヘルスチェックや、稼働中ルータのメンテナンス前に使う[^1]。
+TSA（Traffic-Shift Away）は SONiC ルータをトラフィック対象から外すための運用機能で、[BGP](../reference/glossary.md#term-bgp) に対して **「ネイバへ経路を広告しない」Route Policy** を適用する。新規導入時のヘルスチェックや、稼働中ルータのメンテナンス前に使う[^1]。
 
 VoQ Chassis（Supervisor + 複数 Line Card で 1 つの論理ルータを構成）では、従来の TSA 実装が次のように動いていた[^1]:
 
@@ -38,7 +38,7 @@ VoQ Chassis（Supervisor + 複数 Line Card で 1 つの論理ルータを構成
 
 この方式は「LC への SSH 直列発行」という前提のため、(a) 末尾 LC への遅延、(b) ハング LC は永久に TSA がかからない、(c) Supervisor 側コマンドが LC 側の TSA 設定を書き換えてしまうので **LC ごとに異なる TSA 状態を維持できない**、という問題があった[^1]。
 
-本 HLD は **`CHASSIS_APP_DB` に Supervisor の TSA 状態を 1 つ持たせ、各 LC asic の `bgpcfgd` がそれを subscribe する** 設計に切り替える。SSH 配布をやめ、Supervisor / LC それぞれで独立に `tsa_enabled` を持ち、運用上の TSA 状態は両者の OR で決まる。
+本 [HLD](../reference/glossary.md#term-hld) は **`CHASSIS_APP_DB` に Supervisor の TSA 状態を 1 つ持たせ、各 LC asic の `bgpcfgd` がそれを subscribe する** 設計に切り替える。SSH 配布をやめ、Supervisor / LC それぞれで独立に `tsa_enabled` を持ち、運用上の TSA 状態は両者の OR で決まる。
 
 ## 動作仕様
 
@@ -86,7 +86,7 @@ LC asic ごとの **operational TSA 状態** は次の真理値表で決まる[^
 
 ポイント:
 
-- LC ごとの `startup_tsa_tsb` サービスは廃止しない。LC のローカル CONFIG_DB を従来どおり更新するが、最終的な TSA 状態は OR で決まる
+- LC ごとの `startup_tsa_tsb` サービスは廃止しない。LC のローカル [CONFIG_DB](../reference/glossary.md#term-config_db) を従来どおり更新するが、最終的な TSA 状態は OR で決まる
 - Supervisor の `tsa_enabled` も `config_db.json` に保存され、Supervisor 再起動を跨いで永続化する[^1]
 
 ### Supervisor → LC への伝搬シーケンス
@@ -217,3 +217,5 @@ Supervisor で全体 TSA、LC2 だけ独立に TSB:
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3824fa3eb22e -->

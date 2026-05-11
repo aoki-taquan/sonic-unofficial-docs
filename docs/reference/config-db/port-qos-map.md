@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`PORT_QOS_MAP` は QoS map、PFC enable bitmap、PFC watchdog software enable bitmap、scheduler profile を port または global default に bind する CONFIG_DB テーブル[^1]。`schema.h` では APPL_DB 側の `PORT_QOS_MAP_TABLE` 定数が定義されている[^2]。
+`PORT_QOS_MAP` は [QoS](../../reference/glossary.md#term-qos) map、[PFC](../../reference/glossary.md#term-pfc) enable bitmap、PFC watchdog software enable bitmap、scheduler profile を port または global default に bind する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`schema.h` では [APPL_DB](../../reference/glossary.md#term-appl_db) 側の `PORT_QOS_MAP_TABLE` 定数が定義されている[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -74,13 +74,13 @@ PORT_QOS_MAP|<PORT.name>
 
 ## 購読者
 
-- `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): CONFIG_DB の QoS map binding を直接 subscribe し、SAI QoS map、scheduler、PFC 設定として port に反映する（master には独立した `qosmgrd` プロセスは存在せず、CONFIG_DB → APPL_DB の中間段は無い）。
+- `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): CONFIG_DB の QoS map binding を直接 subscribe し、[SAI](../../reference/glossary.md#term-sai) QoS map、scheduler、PFC 設定として port に反映する（master には独立した `qosmgrd` プロセスは存在せず、CONFIG_DB → APPL_DB の中間段は無い）。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `PORT`、`DSCP_TO_TC_MAP`、`TC_TO_QUEUE_MAP`、`TC_TO_PRIORITY_GROUP_MAP`、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`、`SCHEDULER`、`PFC_WD`
 - 関連 CLI: `config qos`
-- 関連 YANG: `sonic-port-qos-map`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-port-qos-map`
 
 <!-- ref-triangle:start -->
 
@@ -123,3 +123,5 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 show qos map
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 13283933a7dc -->

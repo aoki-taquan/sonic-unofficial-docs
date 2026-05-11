@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `ietf-yang-types`, `sonic-portchannel`, `sonic-port`
 - top container: `sonic-neigh`
 
-静的な隣接 (neighbor) エントリを CONFIG_DB に書き込むための YANG モジュール[^1]。`(port, neighbor_ip) -> MAC, family` のマッピング。Vlan インタフェースは `string` パターン（sonic-vlan import が TODO 状態）として受け入れている。
+静的な隣接 (neighbor) エントリを [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込むための [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。`(port, neighbor_ip) -> MAC, family` のマッピング。Vlan インタフェースは `string` パターン（sonic-vlan import が TODO 状態）として受け入れている。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -91,3 +91,5 @@ module: sonic-neigh
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-neigh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

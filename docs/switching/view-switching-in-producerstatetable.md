@@ -26,9 +26,9 @@ related:
 
 ## なぜ必要か
 
-warm reboot では、各 daemon が **新しい状態を一気に作って consumer に届ける** 必要がある。再起動直後に旧 view と新 view を比較し **差分だけ** SAI に流せれば、再 program によるデータプレーン断が最小化される。
+warm reboot では、各 daemon が **新しい状態を一気に作って consumer に届ける** 必要がある。再起動直後に旧 view と新 view を比較し **差分だけ** [SAI](../reference/glossary.md#term-sai) に流せれば、再 program によるデータプレーン断が最小化される。
 
-本 HLD は `ProducerStateTable` に「一時 view をプロセス内メモリで構築 → `apply_temp_view()` で旧 view との差分だけ Redis に書き出す」機構を追加する[^1]。差分計算は producer 側で行うため **`ConsumerStateTable` (pop 含む) は無変更**[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は `ProducerStateTable` に「一時 view をプロセス内メモリで構築 → `apply_temp_view()` で旧 view との差分だけ [Redis](../reference/glossary.md#term-redis) に書き出す」機構を追加する[^1]。差分計算は producer 側で行うため **`ConsumerStateTable` (pop 含む) は無変更**[^1]。
 
 前提: **1 テーブルにつき producer は 1 つだけ**。複数 producer が同テーブルを書くと、view 切替中の二次 producer の書き込みが `apply_temp_view()` で失われる可能性がある[^1]。
 
@@ -107,8 +107,10 @@ sequenceDiagram
 
 - [11-reboot/architecture](../topics/11-reboot/architecture.md): warm reboot 全体像
 - [11-reboot/internals](../topics/11-reboot/internals.md): view switching 内部
-- [20-swss-sai-redis/internals](../topics/20-swss-sai-redis/internals.md): ProducerStateTable / ConsumerStateTable
+- [20-swss-sai-redis/internals](../topics/20-swss-sai-redis/internals.md): [ProducerStateTable](../reference/glossary.md#term-producerstatetable) / [ConsumerStateTable](../reference/glossary.md#term-consumerstatetable)
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/view_switch.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: ccf91819747c -->

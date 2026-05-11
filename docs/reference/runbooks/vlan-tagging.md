@@ -31,10 +31,10 @@ related:
 ## 想定原因
 
 1. **`add` 時に `-u` (untagged) フラグの付け忘れ / 余計**: デフォルトは tagged 動作
-2. **既存の Untagged VLAN 多重設定**: ポートが既に別 VLAN の untagged member であるため新規 untagged 追加に失敗（silently fallback）
+2. **既存の Untagged [VLAN](../../reference/glossary.md#term-vlan) 多重設定**: ポートが既に別 VLAN の untagged member であるため新規 untagged 追加に失敗（silently fallback）
 3. **VLAN_MEMBER の `tagging_mode` が `priority_tagged` になっている**: 0 priority tag 付与で意図と違う動作
 4. **対向側がトランクではなく access ポート**: 自機側が tagged 送出しても対向で drop / strip
-5. **PortChannel メンバーに対する add 操作**: 物理ポートではなく LAG 名で追加する必要がある
+5. **[PortChannel](../../reference/glossary.md#term-portchannel) メンバーに対する add 操作**: 物理ポートではなく [LAG](../../reference/glossary.md#term-lag) 名で追加する必要がある
 
 ## 切り分け手順
 
@@ -45,7 +45,7 @@ sonic-db-cli CONFIG_DB hgetall "VLAN_MEMBER|Vlan100|Ethernet8"
 ```
 
 - 期待値: `{"tagging_mode": "tagged"}` または `"untagged"`
-- 異常: `tagging_mode` が存在しない → vlanmgrd が member を取り込んでいない
+- 異常: `tagging_mode` が存在しない → [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が member を取り込んでいない
 
 ### 2. APPL_DB / ASIC_DB への伝搬確認
 
@@ -54,8 +54,8 @@ sonic-db-cli APPL_DB hgetall "VLAN_MEMBER_TABLE:Vlan100:Ethernet8"
 sonic-db-cli ASIC_DB keys "ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:*" | head
 ```
 
-- 期待: APPL_DB / ASIC_DB の双方に対応する key が存在
-- 異常: CONFIG_DB のみ → `docker logs swss 2>&1 | grep -i vlanmgr` で例外を確認
+- 期待: [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) の双方に対応する key が存在
+- 異常: [CONFIG_DB](../../reference/glossary.md#term-config_db) のみ → `docker logs swss 2>&1 | grep -i vlanmgr` で例外を確認
 
 ### 3. 同一ポートの他 VLAN untagged member 検索
 
@@ -102,7 +102,7 @@ config vlan member add 100 Ethernet8     # default = tagged
 config vlan member add -u 100 Ethernet8
 ```
 
-- swss / syncd の整合が崩れた疑いがあれば: `sudo config save -y && sudo systemctl restart swss`
+- swss / [syncd](../../reference/glossary.md#term-syncd) の整合が崩れた疑いがあれば: `sudo config save -y && sudo systemctl restart swss`
 
 ## 関連ページ
 
@@ -114,5 +114,7 @@ config vlan member add -u 100 Ethernet8
 
 ## 引用元
 
-[^1]: sonic-net/sonic-swss @ 4305596 — vlanmgrd
-[^2]: sonic-net/sonic-utilities @ 39732bceb — config vlan member
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — vlanmgrd
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config vlan member
+
+<!-- glossary-links-injected: 0e99457f44c0 -->

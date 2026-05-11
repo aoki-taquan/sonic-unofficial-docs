@@ -34,10 +34,10 @@ related:
 `sonic-installer upgrade_docker` で SWSS docker をデータプレーンに影響を与えずアップグレードするために必要な変更点を、開発当時の作業メモとしてまとめたもの[^1]。CLI 動作例と関連リポジトリへの diff リンクが主な内容で、以下の 5 領域の実装変更を扱う。
 
 1. SWSS warm restart の有効化スイッチ（`config warm_restart enable swss`）
-2. `swss` と `syncd` サービスの分離 + warm start での CONFIG_DB 取り扱い
+2. `swss` と `syncd` サービスの分離 + warm start での [CONFIG_DB](../reference/glossary.md#term-config_db) 取り扱い
 3. `swss-flushdb` スクリプトの追加
-4. SWSS データ復元（idempotent な orchagent 動作）
-5. Redis client の `hmset` / `hgetallordered` 追加と libsairedis の Redis API 冪等性サポート
+4. SWSS データ復元（idempotent な [orchagent](../reference/glossary.md#term-orchagent) 動作）
+5. [Redis](../reference/glossary.md#term-redis) client の `hmset` / `hgetallordered` 追加と libsairedis の Redis API 冪等性サポート
 
 ## 動作仕様
 
@@ -87,15 +87,15 @@ flowchart TD
 
 #### 1. swss / syncd の分離
 
-warm restart 対象は **swss コンテナのみ**。syncd は別サービスとして残し、CONFIG_DB の起動順や warm start シーケンスで両者を分けて扱う必要がある[^1]。
+warm restart 対象は **swss コンテナのみ**。[syncd](../reference/glossary.md#term-syncd) は別サービスとして残し、CONFIG_DB の起動順や warm start シーケンスで両者を分けて扱う必要がある[^1]。
 
 #### 2. swss-flushdb
 
-旧 swss コンテナが落ちる前に APPL_DB / STATE_DB の特定エントリをクリーンに保つためのスクリプト。
+旧 swss コンテナが落ちる前に [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) の特定エントリをクリーンに保つためのスクリプト。
 
 #### 3. データ復元（idempotent orchagent）
 
-新 swss コンテナが起動すると、APPL_DB に残っている既存エントリと SAI 側の既存オブジェクトを突き合わせ、**同じプログラムを再実行しても副作用を起こさない**（idempotent）動作をする必要がある[^1]。
+新 swss コンテナが起動すると、APPL_DB に残っている既存エントリと [SAI](../reference/glossary.md#term-sai) 側の既存オブジェクトを突き合わせ、**同じプログラムを再実行しても副作用を起こさない**（idempotent）動作をする必要がある[^1]。
 
 #### 4. Redis ライブラリ拡張
 
@@ -123,7 +123,7 @@ orchagent の復元処理に必要な、Redis 経由の SAI コマンド再実�
 
 ### 関連する YANG
 
-HLD に YANG モデルの記述は無い。
+[HLD](../reference/glossary.md#term-hld) に [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -143,7 +143,7 @@ sonic-installer upgrade_docker swss test_v03 docker-orchagent-brcm_v03.gz --clea
 ## 干渉する機能
 
 - **syncd warm restart**: 別途 `sonic-buildimage` 側の syncd warm restart 設計を参照する必要がある。
-- **teamd warm restart**: `WARM_RESTART teamd` フラグで別管理。
+- **[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) warm restart**: `WARM_RESTART teamd` フラグで別管理。
 - **System warm restart (kernel)**: `WARM_RESTART system` フラグで別管理。
 
 ## トラブルシューティング
@@ -249,3 +249,5 @@ sudo systemctl restart swss   # warm restart 状態をクリアしてフル再�
 #### 検証日
 
 2026-05-11 (q3-disc-detail batch)
+
+<!-- glossary-links-injected: 580e0024e364 -->

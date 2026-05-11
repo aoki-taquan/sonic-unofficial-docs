@@ -24,7 +24,7 @@ related:
 - import: `sonic-port`, `sonic-tc-priority-group-map`, `sonic-tc-queue-map`, `sonic-pfc-priority-queue-map`, `sonic-pfc-priority-priority-group-map`, `sonic-dscp-tc-map`, `sonic-dot1p-tc-map`, `sonic-scheduler`, `sonic-tc-dscp-map`
 - top container: `sonic-port-qos-map`
 
-Binds QoS maps and scheduler profiles to specific ports or globally.[^1]
+Binds [QoS](../../reference/glossary.md#term-qos) maps and scheduler profiles to specific ports or globally.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -67,7 +67,7 @@ module: sonic-port-qos-map
 | 種別 | パス | key | 説明 |
 |------|------|-----|------|
 | `container` | `sonic-port-qos-map` |  |  |
-| `container` | `sonic-port-qos-map/PORT_QOS_MAP` |  | Configures QoS map bindings, PFC settings, and scheduler for ports. |
+| `container` | `sonic-port-qos-map/PORT_QOS_MAP` |  | Configures QoS map bindings, [PFC](../../reference/glossary.md#term-pfc) settings, and scheduler for ports. |
 | `list` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST` | `ifname` | QoS map binding for a port or the global default. |
 
 ## leaf 一覧
@@ -103,7 +103,7 @@ module: sonic-port-qos-map
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `PORT_QOS_MAP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT_QOS_MAP`
 - CLI: `config qos`
 
 <!-- ref-triangle:start -->
@@ -125,3 +125,5 @@ module: sonic-port-qos-map
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 98ed0d3e3a01 -->

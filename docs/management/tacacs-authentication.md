@@ -51,7 +51,7 @@ flowchart LR
   PAMLIB --> PAM --> TAC[(TACACS+ server)]
 ```
 
-CONFIG_DB を真実の相とし、`hostcfgd` の AAA モジュールが PAM/NSS 設定ファイルを書き換える[^1]。
+[CONFIG_DB](../reference/glossary.md#term-config_db) を真実の相とし、`hostcfgd` の [AAA](../reference/glossary.md#term-aaa) モジュールが PAM/NSS 設定ファイルを書き換える[^1]。
 
 ## なぜ `common-auth-sonic` を分離するか
 
@@ -167,7 +167,7 @@ show tacacs
 
 - **root はローカルのみ**（要件として明示）[^1]
 - `pam_tacplus` 上流に `source_ip` 未取込、SONiC 独自パッチで対応[^1]
-- 本 HLD は **認証** に限定。authorization / accounting は別設計
+- 本 [HLD](../reference/glossary.md#term-hld) は **認証** に限定。authorization / accounting は別設計
 - ホームディレクトリ自動作成、ディスク逼迫時の挙動は未規定
 
 ## 干渉する機能
@@ -198,3 +198,5 @@ show tacacs
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: a9c18564f33f -->

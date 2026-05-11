@@ -27,7 +27,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の機能は **複数 DB**（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。設定が orchagent → SAI → ASIC まで伝播したかを見るには各 DB を個別に grep する必要があり、属人化していた[^1]。
+SONiC の機能は **複数 DB**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / 設定 JSON）に状態が分散する。設定が [orchagent](../reference/glossary.md#term-orchagent) → [SAI](../reference/glossary.md#term-sai) → ASIC まで伝播したかを見るには各 DB を個別に grep する必要があり、属人化していた[^1]。
 
 `dump state <module> <id>` は、モジュール毎に「どの DB のどのキーを取れば良いか」を **プラグイン定義** で持ち、DB 横断で 1 view に集約する。
 
@@ -96,7 +96,7 @@ flowchart LR
   TGM --> TG[ACL_TABLE_GROUP]
 ```
 
-ACL は **rule が 1 件以上ある時のみ** ASIC 側に出る性質を反映し、`ACL_COUNTER_RULE_MAP` 経由で逆引きする[^1]。
+[ACL](../reference/glossary.md#term-acl) は **rule が 1 件以上ある時のみ** ASIC 側に出る性質を反映し、`ACL_COUNTER_RULE_MAP` 経由で逆引きする[^1]。
 
 ## techsupport 統合
 
@@ -144,3 +144,5 @@ dump state copp all                            # CONFIG_FILE も含む
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 3c16455a710d -->

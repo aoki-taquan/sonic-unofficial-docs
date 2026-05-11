@@ -24,13 +24,13 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 ## 2026-05
 
 - 2026-05-11 #987 [reference] 横断索引強化 [lgtm]
-- 2026-05-11 #988 [reference] 頻出 SAI 属性早見表 [lgtm]
-- 2026-05-11 #989 [quality] area HLD ページに Topics 誘導 admonition 追加 [lgtm]
+- 2026-05-11 #988 [reference] 頻出 [SAI](../reference/glossary.md#term-sai) 属性早見表 [lgtm]
+- 2026-05-11 #989 [quality] area [HLD](../reference/glossary.md#term-hld) ページに Topics 誘導 admonition 追加 [lgtm]
 - 2026-05-11 #986 [reference] 用語集 (glossary) 新設 [lgtm]
 - 2026-05-11 #985 [meta] 品質改善 サンプリング監査 (round 11) [lgtm]
 - 2026-05-11 #983 [meta] area Topics back-link 強化 + CI drift check [lgtm]
 - 2026-05-11 #982 [meta] 全ページ frontmatter description 追加 [lgtm]
-- 2026-05-11 #984 [reference] CONFIG_DB ↔ orchagent クラス対応表 [lgtm]
+- 2026-05-11 #984 [reference] [CONFIG_DB](../reference/glossary.md#term-config_db) ↔ [orchagent](../reference/glossary.md#term-orchagent) クラス対応表 [lgtm]
 - 2026-05-11 #981 [quality] HLD 中規模残 8 件 再構成 [lgtm]
 - 2026-05-11 #979 [meta] 品質改善 サンプリング監査 (round 10)
 - 2026-05-11 #976 [meta] discrepancy 運用ドキュメント整備
@@ -52,7 +52,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-11 #962 [meta] 横断リンク双方向化 (Topics ↔ area)
 - 2026-05-11 #961 [quality] discrepancy ページ GitHub Issue/PR 紐づけ
 - 2026-05-11 #960 [quality] HLD 最終残 8 件 再構成
-- 2026-05-11 #959 [meta] Reference 三角リンク (YANG ↔ CDB ↔ CLI)
+- 2026-05-11 #959 [meta] Reference 三角リンク ([YANG](../reference/glossary.md#term-yang) ↔ CDB ↔ CLI)
 - 2026-05-11 #958 [meta] 品質バナー自動更新スクリプト + CI 統合
 - 2026-05-11 #957 [reference/cli] batch D (10 件)
 - 2026-05-11 #955 [quality] HLD 横断 高優先残 8 件 再構成
@@ -110,9 +110,9 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-11 #904 [quality] Topics setup 強化 (batch 1)
 - 2026-05-11 #903 [meta] 品質改善 サンプリング監査 (round 2)
 - 2026-05-11 #901 [reference/cli] batch A (buffer/pfc/qos/warm)
-- 2026-05-11 #902 [reference/config-db] batch A (BGP monitor/range, MCLAG, LLDP, NVGRE, VOQ chassis 等)
+- 2026-05-11 #902 [reference/config-db] batch A ([BGP](../reference/glossary.md#term-bgp) monitor/range, [MCLAG](../reference/glossary.md#term-mclag), [LLDP](../reference/glossary.md#term-lldp), NVGRE, [VOQ](../reference/glossary.md#term-voq) chassis 等)
 - 2026-05-11 #900 [verify] batch 28 (architecture/acl-qos) [lgtm]
-- 2026-05-11 #898 [reference/config-db] batch B (QoS/BGP/DHCP 等)
+- 2026-05-11 #898 [reference/config-db] batch B ([QoS](../reference/glossary.md#term-qos)/BGP/DHCP 等)
 - 2026-05-11 #897 [verify] batch 30 (sw/plat/int/rt/ov)
 - 2026-05-11 #896 [verify] batch 29 (system/management)
 - 2026-05-11 #895 [reference/cli] batch B (vnet/queue/lldp 等)
@@ -151,25 +151,25 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-11 #861 [meta] 構成評価 (他 OSS docs ベンチマーク) [lgtm]
 - 2026-05-11 #860 [meta] 構成評価 (IA 専門家視点) [lgtm]
 - 2026-05-11 #862 [meta] 構成評価 (読み手ペルソナ動線視点)
-- 2026-05-11 #859 [topics/08-qos-buffer] QoS / Buffer / PFC / Watermark [lgtm]
-- 2026-05-11 #858 [topics/16-nat-dhcp-dns] NAT / DHCP Relay / Time-DNS Services [lgtm]
+- 2026-05-11 #859 [topics/08-qos-buffer] QoS / Buffer / [PFC](../reference/glossary.md#term-pfc) / Watermark [lgtm]
+- 2026-05-11 #858 [topics/16-nat-dhcp-dns] [NAT](../reference/glossary.md#term-nat) / [DHCP Relay](../reference/glossary.md#term-dhcp-relay) / Time-DNS Services [lgtm]
 - 2026-05-11 #857 [topics/14-platform-port-optics] Platform / Port / Optics / PHY [lgtm]
 - 2026-05-11 #854 [topics/21-lab-vs-developer] Lab / Virtual SONiC / Developer Entry
-- 2026-05-11 #855 [topics/09-telemetry-snmp] Telemetry / SNMP / Observability [lgtm]
-- 2026-05-11 #856 [topics/20-swss-sai-redis] SWSS / SAI / Redis 内部実装
+- 2026-05-11 #855 [topics/09-telemetry-snmp] Telemetry / [SNMP](../reference/glossary.md#term-snmp) / Observability [lgtm]
+- 2026-05-11 #856 [topics/20-swss-sai-redis] SWSS / SAI / [Redis](../reference/glossary.md#term-redis) 内部実装
 - 2026-05-11 #852 [topics/22-reference-index] リファレンス横断索引
-- 2026-05-11 #853 [topics/17-srv6-mpls] SRv6 / MPLS / Path Tracing
-- 2026-05-11 #851 [topics/18-p4-pins] P4 / PINS / Programmable Pipeline
-- 2026-05-11 #850 [topics/15-security-aaa] Security / AAA / FIPS / Hardening
+- 2026-05-11 #853 [topics/17-srv6-mpls] [SRv6](../reference/glossary.md#term-srv6) / [MPLS](../reference/glossary.md#term-mpls) / Path Tracing
+- 2026-05-11 #851 [topics/18-p4-pins] P4 / [PINS](../reference/glossary.md#term-pins) / Programmable Pipeline
+- 2026-05-11 #850 [topics/15-security-aaa] Security / [AAA](../reference/glossary.md#term-aaa) / FIPS / Hardening
 - 2026-05-11 #849 [topics/19-build-packaging] Build / Packaging / Application Extension
 - 2026-05-11 #847 [topics/12-multi-asic-voq] Multi-ASIC / VOQ Chassis [lgtm]
-- 2026-05-11 #846 [topics/13-dash-smartswitch] DASH / SmartSwitch [lgtm]
-- 2026-05-11 #848 [topics/10-gnmi-openconfig] gNMI / gNOI / OpenConfig / YANG [lgtm]
-- 2026-05-10 #845 [topics/03-vxlan-evpn] VXLAN / EVPN / VNET オーバーレイ [lgtm]
-- 2026-05-10 #844 [topics/04-vrf-ecmp] VRF / ECMP / RIB-FIB パイプライン [lgtm]
-- 2026-05-10 #843 [topics/07-acl-copp-mirror] ACL / CoPP / Mirror / Packet Action [lgtm]
-- 2026-05-10 #842 [topics/06-l2-vlan-lag] L2 / VLAN / LAG / MC-LAG [lgtm]
-- 2026-05-10 #841 [topics/02-bgp] BGP と FRR 制御プレーン [lgtm]
+- 2026-05-11 #846 [topics/13-dash-smartswitch] [DASH](../reference/glossary.md#term-dash) / [SmartSwitch](../reference/glossary.md#term-smartswitch) [lgtm]
+- 2026-05-11 #848 [topics/10-gnmi-openconfig] [gNMI](../reference/glossary.md#term-gnmi) / [gNOI](../reference/glossary.md#term-gnoi) / OpenConfig / YANG [lgtm]
+- 2026-05-10 #845 [topics/03-vxlan-evpn] [VXLAN](../reference/glossary.md#term-vxlan) / [EVPN](../reference/glossary.md#term-evpn) / [VNET](../reference/glossary.md#term-vnet) オーバーレイ [lgtm]
+- 2026-05-10 #844 [topics/04-vrf-ecmp] [VRF](../reference/glossary.md#term-vrf) / [ECMP](../reference/glossary.md#term-ecmp) / RIB-FIB パイプライン [lgtm]
+- 2026-05-10 #843 [topics/07-acl-copp-mirror] [ACL](../reference/glossary.md#term-acl) / [CoPP](../reference/glossary.md#term-copp) / Mirror / Packet Action [lgtm]
+- 2026-05-10 #842 [topics/06-l2-vlan-lag] L2 / [VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) / MC-LAG [lgtm]
+- 2026-05-10 #841 [topics/02-bgp] BGP と [FRR](../reference/glossary.md#term-frr) 制御プレーン [lgtm]
 - 2026-05-10 #840 [topics/05-dual-tor] Dual-ToR と Mux 制御 [lgtm]
 - 2026-05-10 #839 [topics/01-overview] SONiC 全体像と設定基盤 [lgtm]
 - 2026-05-10 #838 [topics/11-reboot] Reboot / Upgrade / Lifecycle [lgtm]
@@ -217,12 +217,12 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-10 #796 chore(queue): aggregate verification-queue after batch #11
 - 2026-05-10 #795 [system] Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）
 - 2026-05-10 #793 [system] 動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）
-- 2026-05-10 #791 [system] Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）
+- 2026-05-10 #791 [system] Critical Resource Monitoring（[CRM](../reference/glossary.md#term-crm)・SAI 表枯渇のしきい値監視）
 - 2026-05-10 #789 [system] PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）
 - 2026-05-10 #787 [system] SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）
 - 2026-05-10 #785 [system] storagemond（SSD / eMMC の health 監視）
-- 2026-05-10 #783 [system] SONiC Warm Reboot（要件・順序・docker 別 warm restart）
-- 2026-05-10 #781 [system] Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）
+- 2026-05-10 #783 [system] SONiC [Warm Reboot](../reference/glossary.md#term-warm-reboot)（要件・順序・docker 別 warm restart）
+- 2026-05-10 #781 [system] Zero Touch Provisioning（[ZTP](../reference/glossary.md#term-ztp)・DHCP option / plugin / state machine）
 - 2026-05-10 #779 [system] SONiC Container Hardening（capability / read-only / privileged 削減）
 - 2026-05-10 #777 [system] Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）
 - 2026-05-10 #775 [system] SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）
@@ -233,15 +233,15 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-10 #766 [routing] SONiC における FRR upgrade の手順とパッチ管理
 - 2026-05-10 #764 [routing] Local ARS（Adaptive Routing & Switching の local 完結版）
 - 2026-05-10 #762 [platform] ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
-- 2026-05-10 #760 [platform] SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）
+- 2026-05-10 #760 [platform] SmartSwitch PMON（[NPU](../reference/glossary.md#term-npu) 側 pmon と [DPU](../reference/glossary.md#term-dpu) 連携の境界）
 - 2026-05-10 #758 verify(batch-24): promote 18 hld-only pages, mark sflow as discrepancy-found [lgtm]
 - 2026-05-10 #757 [platform] SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
-- 2026-05-10 #755 [platform] ASIC / SDK Health Event ハンドリング（SAI notification → STATE_DB → action）
+- 2026-05-10 #755 [platform] ASIC / SDK Health Event ハンドリング（SAI notification → [STATE_DB](../reference/glossary.md#term-state_db) → action）
 - 2026-05-10 #753 [platform] fwutil（platform component firmware の install / update / show）
 - 2026-05-10 #751 [platform] VoQ SONiC（distributed VoQ chassis / system-port / fabric）
 - 2026-05-10 #749 [management] SONiC User Manual の位置づけと CLI / 運用フローの全体像
 - 2026-05-10 #747 [management] SONiC Management Framework（REST / gNMI / Translib / Transformer）
-- 2026-05-10 #745 [architecture] Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）
+- 2026-05-10 #745 [architecture] Generic Config Update / Rollback（[GCU](../reference/glossary.md#term-gcu)・JSON Patch・checkpoint）
 - 2026-05-10 #743 [architecture] SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
 - 2026-05-10 #741 [architecture] パスワード強化（password hardening / aging / complexity / history）
 - 2026-05-10 #739 verify(batch-23): promote 11 hld-only pages to code-verified, mark 1 as discrepancy-found [lgtm]
@@ -252,7 +252,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-10 #731 [management] Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE [lgtm]
 - 2026-05-10 #729 [management] gRPC client（active-active DualToR / ycabled ↔ SoC 連携） [lgtm]
 - 2026-05-10 #727 [switching] MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC） [lgtm]
-- 2026-05-10 #725 [routing] SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP） [lgtm]
+- 2026-05-10 #725 [routing] SONiC の MPLS 基盤（per-[RIF](../reference/glossary.md#term-rif) MPLS / LABEL_ROUTE_TABLE / 静的 LSP） [lgtm]
 - 2026-05-10 #723 [routing] VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking） [lgtm]
 - 2026-05-10 #721 [routing] Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） [lgtm]
 - 2026-05-10 #719 [acl-qos] ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン） [lgtm]
@@ -263,7 +263,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-10 #709 [system] Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式） [lgtm]
 - 2026-05-10 #707 [system] SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） [lgtm]
 - 2026-05-10 #705 [system] syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE） [lgtm]
-- 2026-05-10 #703 [system] config-setup サービス（first-boot config 生成 / 版間 migration） [lgtm]
+- 2026-05-10 #703 [system] [config-setup](../reference/glossary.md#term-config-setup) サービス（first-boot config 生成 / 版間 migration） [lgtm]
 - 2026-05-10 #701 [system] PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担） [lgtm]
 - 2026-05-10 #699 [system] SensorMon（PMON 内の voltage / current センサ監視） [lgtm]
 - 2026-05-10 #697 [system] telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT） [lgtm]
@@ -291,7 +291,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #656 verify(batch-20): promote 9 hld-only pages to code-verified, mark 3 as discrepancy-found [lgtm]
 - 2026-05-09 #655 [system] kdump（kexec ベース kernel crash dump / makedumpfile）
 - 2026-05-09 #653 [system] Smart Switch: DPU 独立アップグレード（gNOI 経路）
-- 2026-05-09 #651 [system] Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）
+- 2026-05-09 #651 [system] Dataplane Telemetry（DTel / [INT](../reference/glossary.md#term-int) / Postcard / Drop / Queue Report）
 - 2026-05-09 #649 [system] SONiC Disk I/O 削減（writer 分析と tmpfs 化）
 - 2026-05-09 #647 [routing] Weighted ECMP（WCMP / BGP link-bandwidth ext community）
 - 2026-05-09 #645 [routing] SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
@@ -312,7 +312,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #617 [architecture] Port Profile Init（SAI bulk port API による fast-boot 高速化）
 - 2026-05-09 #615 [architecture] JSON Change Application（apply-change / table 単位 alphabetical 適用）
 - 2026-05-09 #612 [architecture] Error Handling Framework（ERROR_DB / SAI 失敗の app 通知）
-- 2026-05-09 #613 verify(batch-17): promote 11 hld-only pages, mark fpmsyncd NHG as discrepancy-found
+- 2026-05-09 #613 verify(batch-17): promote 11 hld-only pages, mark [fpmsyncd](../reference/glossary.md#term-fpmsyncd) NHG as discrepancy-found
 - 2026-05-09 #610 [architecture] DHCPv6 Relay Agent
 - 2026-05-09 #608 [architecture] Debug Framework（コンポーネント dump 登録 / assert 拡張）
 - 2026-05-09 #606 [architecture] Alpine 仮想 SONiC（ALViS / KNE）
@@ -351,7 +351,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #547 [verify] medium 優先度 12 ページの裏取り (batch11) [lgtm]
 - 2026-05-09 #546 [routing] BGP Loading Optimization
 - 2026-05-09 #544 [routing] fpmsyncd NextHop Group 拡張
-- 2026-05-09 #542 [routing] VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
+- 2026-05-09 #542 [routing] VRF サポート（[vrfmgrd](../reference/glossary.md#term-vrfmgrd) / vrforch / FRR vrf-aware）
 - 2026-05-09 #540 [routing] Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）
 - 2026-05-09 #538 [routing] Fine Grained ECMP（FG_NHG / fgnhgorch）
 - 2026-05-09 #536 [verify] medium 優先度 12 ページの裏取り (batch10) [lgtm]
@@ -423,23 +423,23 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #442 [reference/config-db] MIRROR_SESSION テーブル
 - 2026-05-09 #441 [acl-qos] counterpoll 種別 vs マップ整合性テストプラン
 - 2026-05-09 #439 [acl-qos] CoPP Manager 再設計テストプラン
-- 2026-05-09 #437 [verify] Active-Standby Dual ToR（y-cable + linkmgrd + IPinIP）
+- 2026-05-09 #437 [verify] Active-Standby Dual ToR（y-cable + [linkmgrd](../reference/glossary.md#term-linkmgrd) + [IPinIP](../reference/glossary.md#term-ipinip)）
 - 2026-05-09 #436 [verify] Active-Active Dual ToR（gRPC + prefix-based neighbor）
 - 2026-05-09 #433 [verify] ACL egress mirror 対応 + SAI action capability 問い合わせ
 - 2026-05-09 #435 chore(meta): worktree path guard + CONFIG_DB index skeleton [lgtm]
 - 2026-05-09 #434 [reference/yang] スケルトン更新 + 主要 YANG モジュール 28 ページ追加
-- 2026-05-09 #432 [verify] IP / LAG / MTU Incremental Update（portmgrd / intfmgrd / teammgrd）
+- 2026-05-09 #432 [verify] IP / LAG / MTU Incremental Update（[portmgrd](../reference/glossary.md#term-portmgrd) / [intfmgrd](../reference/glossary.md#term-intfmgrd) / teammgrd）
 - 2026-05-09 #431 chore(meta): regenerate aggregate verification-queue after batch #6 [lgtm]
 - 2026-05-09 #430 [overlay] SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観 [area/overlay, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #429 [switching] MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI） [area/switching, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #428 [switching] Multiple Spanning Tree Protocol (MSTP) on SONiC [area/switching, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #427 [internals] swss-schema（APPL_DB / STATE_DB の中心スキーマ参照） [area/internals, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #426 [verify] SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
+- 2026-05-09 #427 [internals] swss-schema（[APPL_DB](../reference/glossary.md#term-appl_db) / STATE_DB の中心スキーマ参照） [area/internals, type/hld-port, source/hld, verification/hld-only, lgtm]
+- 2026-05-09 #426 [verify] SmartSwitch [ENI](../reference/glossary.md#term-eni) Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
 - 2026-05-09 #425 [routing] Management VRF 設計（201911 release / l3mdev + cgroups） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #424 [verify] VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
 - 2026-05-09 #423 [management] Portable Console Device 設計（USB ベンダー console デバイスの抽象化） [area/management, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #422 [verify] ポートの動的 add/del（discrepancy-found）
-- 2026-05-09 #421 [management] LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携） [area/management, type/hld-port, source/hld, verification/hld-only, lgtm]
+- 2026-05-09 #421 [management] LDAP 認証（[hostcfgd](../reference/glossary.md#term-hostcfgd) / nslcd / NSS / PAM 連携） [area/management, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #420 [verify] Chassis Line Card 自動プロビジョニング（実装未着手確認）
 - 2026-05-09 #419 [architecture] Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御） [area/architecture, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #418 [verify] SONiC OS と Docker イメージのセマンティックバージョニング
@@ -455,7 +455,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #409 [verify] SAI 失敗ハンドリング（discrepancy-found）
 - 2026-05-09 #406 [reference/config-db] ACL_TABLE
 - 2026-05-09 #402 [reference/config-db] FLEX_COUNTER_TABLE
-- 2026-05-09 #408 [routing] Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
+- 2026-05-09 #408 [routing] Overlay ECMP with [BFD](../reference/glossary.md#term-bfd) monitoring（VxLAN VNet ルートと BFD 連動） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #400 [reference/config-db] NTP_SERVER
 - 2026-05-09 #397 [reference/config-db] SYSLOG_SERVER
 - 2026-05-09 #405 [verify] Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
@@ -463,7 +463,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #403 [verify] IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）
 - 2026-05-09 #401 [acl-qos] 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter） [area/acl-qos, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #348 [reference/cli] show bgp / show ip bgp / show ipv6 bgp サブコマンド [lgtm]
-- 2026-05-09 #375 [reference/cli] sonic-cfggen コマンド [lgtm]
+- 2026-05-09 #375 [reference/cli] [sonic-cfggen](../reference/glossary.md#term-sonic-cfggen) コマンド [lgtm]
 - 2026-05-09 #370 [reference/cli] sonic-package-manager コマンド [lgtm]
 - 2026-05-09 #365 [reference/cli] sonic-installer コマンド [lgtm]
 - 2026-05-09 #362 [reference/cli] show system-health サブコマンド [lgtm]
@@ -514,7 +514,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #353 [reference/config-db] PORTCHANNEL_MEMBER
 - 2026-05-09 #359 [system] SNMP 設定の snmp.yml → CONFIG_DB 移行 [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
 - 2026-05-09 #354 [routing] BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #352 [verify] L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
+- 2026-05-09 #352 [verify] L2 Forwarding 強化（[FDB](../reference/glossary.md#term-fdb) flush / aging / static MAC / VLAN range）
 - 2026-05-09 #350 [reference/config-db] PORTCHANNEL
 - 2026-05-09 #347 [reference/config-db] VLAN_MEMBER
 - 2026-05-09 #346 [reference/config-db] VLAN
@@ -524,3 +524,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #341 [reference/config-db] PORT
 - 2026-05-09 #340 [verify] クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
 
+<!-- glossary-links-injected: 89bc82a66132 -->

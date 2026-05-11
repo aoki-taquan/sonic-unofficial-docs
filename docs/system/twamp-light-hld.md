@@ -26,7 +26,7 @@ related:
 
 ## どんな機能か
 
-RFC 5357 に基づく軽量な双方向性能測定（latency / jitter / packet loss）を SONiC ASIC offload で実装する HLD（2023-06）[^1]。control connection を持たず、Session-Sender 側が Test-Request を送り、Session-Reflector が timestamp 付きで返す純粋な data-plane プロトコル。
+RFC 5357 に基づく軽量な双方向性能測定（latency / jitter / packet loss）を SONiC ASIC offload で実装する [HLD](../reference/glossary.md#term-hld)（2023-06）[^1]。control connection を持たず、Session-Sender 側が Test-Request を送り、Session-Reflector が timestamp 付きで返す純粋な data-plane プロトコル。
 
 ```text
 Latency = (t3 - t0) - (t2 - t1)
@@ -73,7 +73,7 @@ CFG_TWAMP_SESSION_TABLE|<name>:
 
 - `STATE_TWAMP_SESSION_TABLE|<name>`: 状態（active / completed / error）、`tx_packets` / `rx_packets` / latency / jitter
 - `STATE_SWITCH_CAPABILITY_TABLE`: ASIC TWAMP support flag、CLI が事前 check[^1]
-- COUNTERS_DB: session 単位で `tx_pkts` / `rx_pkts` / `latency_*` / `jitter_*` polling[^1]
+- [COUNTERS_DB](../reference/glossary.md#term-counters_db): session 単位で `tx_pkts` / `rx_pkts` / `latency_*` / `jitter_*` polling[^1]
 
 ASIC は packet-count 終了時 / error 発生時に session-sender event を発行、orch が STATE を更新[^1]。`config twamp-light start/stop` で restart 可能（counter リセット → session 再 create）[^1]。
 
@@ -87,7 +87,7 @@ ASIC は packet-count 終了時 / error 発生時に session-sender event を発
 | `show twamp-light session status` | 状態 |
 | `show twamp-light latency-jitter` / `packet-loss` | 計測結果 |
 
-**注意**: 現状 CLI / YANG は未取り込み（実装との乖離を参照）。CONFIG_DB 直書きで起動するしかない:
+**注意**: 現状 CLI / [YANG](../reference/glossary.md#term-yang) は未取り込み（実装との乖離を参照）。[CONFIG_DB](../reference/glossary.md#term-config_db) 直書きで起動するしかない:
 
 ```bash
 # Sender 側
@@ -118,9 +118,9 @@ session は **warm/fast boot 越しに保持しない**（再起動で再 create
 
 ## 干渉する機能
 
-- **VRF**: `vrf_name` で VRF 内 session
-- **CRM / TCAM**: session ごとに ASIC リソースを消費
-- **SNMP / gNMI / OAM**: 結果吸い上げ経路は HLD 外
+- **[VRF](../reference/glossary.md#term-vrf)**: `vrf_name` で VRF 内 session
+- **[CRM](../reference/glossary.md#term-crm) / TCAM**: session ごとに ASIC リソースを消費
+- **[SNMP](../reference/glossary.md#term-snmp) / [gNMI](../reference/glossary.md#term-gnmi) / OAM**: 結果吸い上げ経路は HLD 外
 
 ## トラブルシューティング
 
@@ -130,16 +130,16 @@ sonic-db-cli STATE_DB hgetall 'SWITCH_CAPABILITY|switch' | grep -i twamp
 sonic-db-cli COUNTERS_DB keys 'COUNTERS_TWAMP_SESSION_NAME_MAP'
 ```
 
-- `error` 終了 → STATE_DB の error code を確認
+- `error` 終了 → [STATE_DB](../reference/glossary.md#term-state_db) の error code を確認
 - capability not supported → ASIC TWAMP offload 未対応
 
 ## 実装との乖離
 
 | 層 | 状況 |
 |----|------|
-| Orch / SAI | **取り込み済**（`twamporch.cpp` 実装、SAI_TWAMP_* 属性使用、test 完備）|
-| YANG `sonic-twamp-light` | **欠落**（sonic-buildimage に存在せず）|
-| `config/show twamp-light` CLI | **欠落**（sonic-utilities 配下に grep ヒット 0）|
+| Orch / [SAI](../reference/glossary.md#term-sai) | **取り込み済**（`twamporch.cpp` 実装、SAI_TWAMP_* 属性使用、test 完備）|
+| YANG `sonic-twamp-light` | **欠落**（[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) に存在せず）|
+| `config/show twamp-light` CLI | **欠落**（[sonic-utilities](../reference/glossary.md#term-sonic-utilities) 配下に grep ヒット 0）|
 
 **読者への影響**:
 
@@ -151,7 +151,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_TWAMP_SESSION_NAME_MAP'
 
 ### 関連 GitHub Issue / PR
 
-- [sonic-swss #2927: \[orchagent\] TWAMP Light orchagent implementation (merged)](https://github.com/sonic-net/sonic-swss/pull/2927) — TwampOrch 取り込み確定 PR
+- [[sonic-swss](../reference/glossary.md#term-sonic-swss) #2927: \[[orchagent](../reference/glossary.md#term-orchagent)\] TWAMP Light orchagent implementation (merged)](https://github.com/sonic-net/sonic-swss/pull/2927) — TwampOrch 取り込み確定 PR
 - [sonic-buildimage #24135: Enhancement: \[YANG\] YANG model needed for TWAMP_SESSION (open)](https://github.com/sonic-net/sonic-buildimage/issues/24135) — YANG 欠落 issue
 - [SONiC #1192: Two-Way Active Measurement Protocol (TWAMP) Light (open)](https://github.com/sonic-net/SONiC/issues/1192) — community 全体トラッキング
 
@@ -170,3 +170,5 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_TWAMP_SESSION_NAME_MAP'
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: e898d1bd00b3 -->

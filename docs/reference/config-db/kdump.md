@@ -58,12 +58,12 @@ KDUMP|config
 
 ## 購読者
 
-- `hostcfgd` (`docker-config-engine`): CONFIG_DB → `/etc/default/kdump-tools`
+- `hostcfgd` (`docker-config-engine`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → `/etc/default/kdump-tools`
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CLI: `config kdump enable/disable/memory/num_dumps/remote/add ssh_string`、`show kdump`
-- 関連 YANG: `sonic-kdump`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-kdump`
 
 <!-- ref-triangle:start -->
 
@@ -101,3 +101,5 @@ sonic-db-cli CONFIG_DB hgetall 'KDUMP|config'
 show kdump config
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 9dae6d74c08e -->

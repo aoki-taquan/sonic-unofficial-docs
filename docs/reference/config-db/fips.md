@@ -60,7 +60,7 @@ FIPS|global
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CLI: `config fips enable` / `config fips enforce`
-- 関連 YANG: `sonic-fips`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-fips`
 
 <!-- ref-triangle:start -->
 
@@ -96,3 +96,5 @@ sonic-db-cli CONFIG_DB hgetall 'FIPS|global'
 show fips status
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: d5320e852f7a -->

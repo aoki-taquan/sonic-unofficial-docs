@@ -27,15 +27,15 @@ related:
 
 ## 概要
 
-「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを SONiC スイッチが正しくルーティングできるかを **PTF (Packet Test Framework) で検証** するテストの設計。一見奇妙な条件だが、ループバック検証や特定の DOS 系トラフィック形状への耐性、ハードウェアパスでの ACL / RPF が誤作動しないかを担保する目的で必要となる[^1]。
+「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを SONiC スイッチが正しくルーティングできるかを **PTF (Packet Test Framework) で検証** するテストの設計。一見奇妙な条件だが、ループバック検証や特定の DOS 系トラフィック形状への耐性、ハードウェアパスでの [ACL](../reference/glossary.md#term-acl) / RPF が誤作動しないかを担保する目的で必要となる[^1]。
 
-このページは機能 HLD ではなく **テストインフラの HLD**。SONiC 自体の挙動仕様というより、**`sonic-mgmt` リポジトリにどんな Ansible role / PTF スクリプトを置くか** の設計が記述されている[^1]。
+このページは機能 [HLD](../reference/glossary.md#term-hld) ではなく **テストインフラの HLD**。SONiC 自体の挙動仕様というより、**`sonic-mgmt` リポジトリにどんな Ansible role / PTF スクリプトを置くか** の設計が記述されている[^1]。
 
 ## 動作仕様
 
 ### トポロジ
 
-DUT に対して **SRC RIF / DST RIF** の 2 つの router interface を立て、それぞれの先に Source / Destination ホスト VM をぶら下げる単純な構成[^1]:
+DUT に対して **SRC [RIF](../reference/glossary.md#term-rif) / DST RIF** の 2 つの router interface を立て、それぞれの先に Source / Destination ホスト VM をぶら下げる単純な構成[^1]:
 
 ```mermaid
 flowchart LR
@@ -45,7 +45,7 @@ flowchart LR
     DRIF --- DUT
 ```
 
-RIF は **PORT または LAG** のいずれにも対応する[^1]。host は VM でエミュレートする。
+RIF は **PORT または [LAG](../reference/glossary.md#term-lag)** のいずれにも対応する[^1]。host は VM でエミュレートする。
 
 ### 対応 testbed
 
@@ -54,7 +54,7 @@ RIF は **PORT または LAG** のいずれにも対応する[^1]。host は VM 
 - `t0`, `t0-16`, `t0-56`, `t0-64`, `t0-64-32`, `t0-116`
 - `t1`, `t1-lag`, `t1-64-lag`
 
-router が複数メンバ（LAG など）を持つ場合は **すべてのメンバ index を算出** する必要があるため、Ansible の前処理段階で minigraph / LLDP を見て port index 配列を作る[^1]。
+router が複数メンバ（LAG など）を持つ場合は **すべてのメンバ index を算出** する必要があるため、Ansible の前処理段階で minigraph / [LLDP](../reference/glossary.md#term-lldp) を見て port index 配列を作る[^1]。
 
 ### ファイル構成
 
@@ -205,7 +205,7 @@ sudo -H ansible-playbook test_sonic.yml -i inventory \
 ## 制限事項
 
 - **対応 topology が固定リスト**: `t0` 系と `t1` 系の特定型のみ。それ以外の topology では `dip_sip.yml` の前処理が想定外で動かない可能性がある[^1]。
-- **RIF 種別が PORT / LAG のみ**: VLAN RIF など他の RIF 種は HLD で言及されていない[^1]。
+- **RIF 種別が PORT / LAG のみ**: [VLAN](../reference/glossary.md#term-vlan) RIF など他の RIF 種は HLD で言及されていない[^1]。
 - **テスト対象は L3 ルーティングの可否のみ**: ACL / RPF / uRPF など個別機能との相互作用までは本テストでカバーしない。「ルーティングが成立すること」が単一の合否条件[^1]。
 
 ## 干渉する機能
@@ -272,7 +272,7 @@ ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest te
 
 #### 関連 GitHub Issue / PR
 
-- [GitHub Issue / PR の関連リンクは未確認] — DIP=SIP ドロップ自体は SAI / プラットフォーム側で常時有効な挙動であり、HLD は PTF テスト追加のみが眼目。`sonic-mgmt` 側で対応する PTF テストは命名規則上の独立 PR で取り込まれた可能性が高いが、HLD と紐づく明示的 Issue / PR は確認できず。
+- [GitHub Issue / PR の関連リンクは未確認] — DIP=SIP ドロップ自体は [SAI](../reference/glossary.md#term-sai) / プラットフォーム側で常時有効な挙動であり、HLD は PTF テスト追加のみが眼目。`sonic-mgmt` 側で対応する PTF テストは命名規則上の独立 PR で取り込まれた可能性が高いが、HLD と紐づく明示的 Issue / PR は確認できず。
 
 ## 引用元
 
@@ -291,3 +291,5 @@ ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest te
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8c0e35007835 -->

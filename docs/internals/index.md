@@ -5,12 +5,12 @@ verification: stub
 ---
 
 # 内部実装
-Redis、SwSS、orchagent、counter、P4Orch など実装内部の構造を扱う章。
+[Redis](../reference/glossary.md#term-redis)、SwSS、[orchagent](../reference/glossary.md#term-orchagent)、counter、P4Orch など実装内部の構造を扱う章。
 ## この章の読み方
 まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。
 ## 検証状況
 - ページ数: 12
-- 分布: Code-verified: 10 / Discrepancy-found: 1 / HLD-only: 1
+- 分布: Code-verified: 10 / Discrepancy-found: 1 / [HLD](../reference/glossary.md#term-hld)-only: 1
 
 ## 実装差分があるページ
 - [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）](l3-scaling-and-performance-enhancements.md)
@@ -34,3 +34,5 @@ Redis、SwSS、orchagent、counter、P4Orch など実装内部の構造を扱う
 | [コンテナ health-check（k8s readiness probe）](why-need-health-check.md) | Code-verified |
 | [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](byte-packet-rates-port-utilization-in-sonic.md) | Code-verified |
 | [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](support-multiple-user-defined-redis-database-instances.md) | Code-verified |
+
+<!-- glossary-links-injected: 90f82b1c14c0 -->

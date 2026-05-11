@@ -26,14 +26,14 @@ related:
 
 ## 読み手が知りたいこと
 
-- なぜマルチ ASIC で従来の SNMP→vtyソケット 直結方式が破綻するのか
-- 新方式（`bgpmon` + STATE_DB）はどこで動き、どう負荷を抑えているか
+- なぜマルチ ASIC で従来の [SNMP](../reference/glossary.md#term-snmp)→vtyソケット 直結方式が破綻するのか
+- 新方式（`bgpmon` + [STATE_DB](../reference/glossary.md#term-state_db)）はどこで動き、どう負荷を抑えているか
 - スキーマ（`NEIGH_STATE_TABLE`）に何が入るのか
 - 旧 Bgp4MIB（`1.3.6.1.2.1.15`）はマルチ ASIC で動くのか
 
 ## 旧方式が抱えた問題
 
-CiscoBgp4MIB（OID `1.3.6.1.4.1.9.9.187`）は従来、`snmp_ax_impl` が **bgpd の vty ソケットに直結** し `show` をパースしていた[^1]。マルチ ASIC では BGP コンテナが ASIC ごとに別 network namespace で動くため、host 側エージェントから N 個のソケットを束ねる必要があり破綻する。
+CiscoBgp4MIB（OID `1.3.6.1.4.1.9.9.187`）は従来、`snmp_ax_impl` が **bgpd の vty ソケットに直結** し `show` をパースしていた[^1]。マルチ ASIC では [BGP](../reference/glossary.md#term-bgp) コンテナが ASIC ごとに別 network namespace で動くため、host 側エージェントから N 個のソケットを束ねる必要があり破綻する。
 
 ```mermaid
 flowchart LR
@@ -42,7 +42,7 @@ flowchart LR
     AX --> RDB[(redis: 各種 MIB)]
 ```
 
-HLD では「namespace の eth0 に bgpd TCP listen」「`/var/run/bgpd.vty` を host から参照」の 2 案を検討したが、いずれも N 本ソケット問題と listen アドレス変更が必要で見送り[^1]。
+[HLD](../reference/glossary.md#term-hld) では「namespace の eth0 に bgpd TCP listen」「`/var/run/bgpd.vty` を host から参照」の 2 案を検討したが、いずれも N 本ソケット問題と listen アドレス変更が必要で見送り[^1]。
 
 ## 新方式（STATE_DB 経由）
 
@@ -119,7 +119,7 @@ CiscoBgp4MIB が必要とする「neighbor IP + state」だけを切り出した
 
 ## 設定 / CLI
 
-新規 CONFIG_DB スキーマも CLI も**提案されていない**。`bgpmon` は BGP コンテナの supervisor で起動し、ユーザ設定は不要。検証は既存 `snmpwalk`:
+新規 [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマも CLI も**提案されていない**。`bgpmon` は BGP コンテナの supervisor で起動し、ユーザ設定は不要。検証は既存 `snmpwalk`:
 
 ```
 snmpwalk -v2c -c <community> 127.0.0.1 iso.3.6.1.4.1.9.9.187
@@ -135,7 +135,7 @@ snmpwalk -v2c -c <community> 127.0.0.1 iso.3.6.1.4.1.9.9.187
 
 - **マルチ ASIC SNMP**: 既存の namespace redis 集約機構の延長
 - **frr / bgpd ログ設定**: bgpmon が `frr.log` の mtime をトリガに使う
-- **telemetry / gNMI**: `NEIGH_STATE_TABLE` は SNMP 以外からも参照できる汎用 table
+- **telemetry / [gNMI](../reference/glossary.md#term-gnmi)**: `NEIGH_STATE_TABLE` は SNMP 以外からも参照できる汎用 table
 
 ## トラブルシューティング
 
@@ -152,3 +152,5 @@ snmpwalk -v2c -c <community> 127.0.0.1 iso.3.6.1.4.1.9.9.187
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp_ciscobgp4mib.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 148c5064300b -->

@@ -28,7 +28,7 @@ related:
 
 スイッチ機器のプラットフォーム部品（fan, PSU, status LED, thermal 等）は、機種ごとに **制御可能性と取りうる値の範囲** が異なる。たとえば**ステータス LED の色**は機種により `off/amber/green` だったり `red/green` だったり、**fan speed** には推奨される `minimum/maximum` の範囲があったり、**PSU の LED は NOS から触れない**（BMC 専管）こともある[^1]。
 
-SONiC は従来 `platform.json` を **コンポーネント構造（fan / PSU / thermal の所在）と dynamic port breakout のためのインタフェース情報** に使ってきたが、各属性の **「能力情報（capability）」を上位アプリへ渡す手段が無かった**[^1]。本 HLD は `platform.json` に **`capabilities` フィールド** を追加して、この情報を取り出せるようにする拡張を定義する。
+SONiC は従来 `platform.json` を **コンポーネント構造（fan / PSU / thermal の所在）と dynamic port breakout のためのインタフェース情報** に使ってきたが、各属性の **「能力情報（capability）」を上位アプリへ渡す手段が無かった**[^1]。本 [HLD](../reference/glossary.md#term-hld) は `platform.json` に **`capabilities` フィールド** を追加して、この情報を取り出せるようにする拡張を定義する。
 
 ## 動作仕様
 
@@ -172,7 +172,7 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 
 ### 関連する CONFIG_DB
 
-該当エントリは無い。`platform.json` は **CONFIG_DB の上流** にあるベンダ提供静的ファイルであり、ランタイムで Redis に乗るデータではない。
+該当エントリは無い。`platform.json` は **[CONFIG_DB](../reference/glossary.md#term-config_db) の上流** にあるベンダ提供静的ファイルであり、ランタイムで [Redis](../reference/glossary.md#term-redis) に乗るデータではない。
 
 ### 関連する CLI
 
@@ -180,7 +180,7 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 
 ## 制限事項
 
-- `controllable` の **既定値が `true`**。記述が無いプラットフォームでは「制御可能」と仮定して上位アプリが動く。**実機が制御できない属性に書くと SAI / プラットフォームドライバ側でエラー**になる可能性がある[^1]。
+- `controllable` の **既定値が `true`**。記述が無いプラットフォームでは「制御可能」と仮定して上位アプリが動く。**実機が制御できない属性に書くと [SAI](../reference/glossary.md#term-sai) / プラットフォームドライバ側でエラー**になる可能性がある[^1]。
 - `colors` / `minimum` / `maximum` の **未指定時の挙動が HLD で明文化されていない**。後方互換のため任意値を許容する方向と思われるが、実装で確認が必要。
 - 単位（fan speed の `%` か `RPM` か）が HLD 内で明示されていない。サンプルの `40-100` は % と読める。
 - `capabilities` フィールドはあくまで **メタデータ**。NOS が `controllable=false` を尊重しないコード経路があれば抜け穴になる。
@@ -210,3 +210,5 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: efdb904808b0 -->

@@ -91,7 +91,7 @@ sequenceDiagram
 
 ### Configuration / CLI
 
-CONFIG_DB / YANG への新規追加は無し[^1]。`sonic-installer install` の挙動が変わるのみ。
+[CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) への新規追加は無し[^1]。`sonic-installer install` の挙動が変わるのみ。
 
 ### Build フラグまとめ
 
@@ -138,7 +138,7 @@ reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 
 ## 干渉する機能
 
-- **Secure Boot HLD (`hld_secure_boot.md`)**: UEFI 段 chain of trust と接続
+- **Secure Boot [HLD](../reference/glossary.md#term-hld) (`hld_secure_boot.md`)**: UEFI 段 chain of trust と接続
 - **ONIE secure boot/upgrade**: 別 PR で組込
 - **`sonic-installer`**: install path に検証ステップを挿入
 - **`build_image.sh` / `onie-mk-demo.sh`**: build フラグ駆動
@@ -162,3 +162,5 @@ reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

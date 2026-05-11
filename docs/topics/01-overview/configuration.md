@@ -24,9 +24,9 @@ SONiC には設定変更の入口が複数あります。選び方の軸は「�
 | 現在の設定を保存する | `config save` | running `CONFIG_DB` を `/etc/sonic/config_db.json` へ dump する |
 | ファイルの設定を merge する | `config load` | 既存エントリを消さずに書き足す |
 | ファイルの設定で入れ替える | `config reload` | `CONFIG_DB` をクリアして再ロードし、必要な service restart を伴う |
-| 全体 config の差分だけ当てる | `config replace` | target config との差分を JSON Patch 化し、GCU 経由で適用する |
+| 全体 config の差分だけ当てる | `config replace` | target config との差分を JSON Patch 化し、[GCU](../../reference/glossary.md#term-gcu) 経由で適用する |
 | 増分変更を明示的に当てる | `config apply-patch` | RFC 6902 JSON Patch を validation / ordering / rollback 前提で適用する |
-| DB dump やテンプレート生成をする | `sonic-cfggen` | CONFIG_DB、minigraph、YANG JSON、Jinja2 を扱う汎用エンジン |
+| DB dump やテンプレート生成をする | `sonic-cfggen` | [CONFIG_DB](../../reference/glossary.md#term-config_db)、minigraph、[YANG](../../reference/glossary.md#term-yang) JSON、Jinja2 を扱う汎用エンジン |
 
 `config load` と `config reload` は特に混同しやすい入口です。`load` は merge なので、ファイルから消した設定が DB に残る可能性があります。クリーンな全体入れ替えが必要なら `reload`、停止影響を抑えて差分だけ当てたいなら `replace` を検討します。
 
@@ -45,7 +45,7 @@ flowchart LR
   OK -->|no| RB[auto rollback / config rollback]
 ```
 
-GCU を使う典型例は、VLAN / ACL / BGP など複数テーブルにまたがる変更を、依存順序を壊さずに入れたい場合です。特に dynamic port breakout のように `PORT`、`VLAN_MEMBER`、`ACL_TABLE` などの参照関係が絡む変更では、[JSON Patch ordering](../../management/json-patch-ordering-using-yang-models.md) の考え方が効きます。
+GCU を使う典型例は、[VLAN](../../reference/glossary.md#term-vlan) / [ACL](../../reference/glossary.md#term-acl) / [BGP](../../reference/glossary.md#term-bgp) など複数テーブルにまたがる変更を、依存順序を壊さずに入れたい場合です。特に dynamic port breakout のように `PORT`、`VLAN_MEMBER`、`ACL_TABLE` などの参照関係が絡む変更では、[JSON Patch ordering](../../management/json-patch-ordering-using-yang-models.md) の考え方が効きます。
 
 ## JSON Patch と JsonChange の違い
 
@@ -67,3 +67,5 @@ JSON Patch はユーザが投入する操作列です。一方、内部の JsonC
 - [config reload の event-driven 化](../../management/config-reload-enhancement.md)
 - [config save / load / reload / replace / qos reload](../../reference/cli/config-mgmt-trio.md)
 - [sonic-cfggen コマンド](../../reference/cli/sonic-cfggen.md)
+
+<!-- glossary-links-injected: c20582729222 -->

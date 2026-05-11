@@ -184,11 +184,11 @@ config エントリは 3 種類[^1]:
 
 ### 関連する CONFIG_DB
 
-該当なし。本機能は **kernel / sysfs 層** で完結し、CONFIG_DB は使わない。
+該当なし。本機能は **kernel / sysfs 層** で完結し、[CONFIG_DB](../reference/glossary.md#term-config_db) は使わない。
 
 ### 関連する CLI
 
-該当なし。**ファイルシステム経由の参照** が直接のインタフェースであり、HLD 内に CLI 提案は無い。
+該当なし。**ファイルシステム経由の参照** が直接のインタフェースであり、[HLD](../reference/glossary.md#term-hld) 内に CLI 提案は無い。
 
 ### 設定例（vendor 側 init コード抜粋）
 
@@ -252,3 +252,5 @@ journalctl -u s3ip-sysfs.service
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: c5a6ce567024 -->

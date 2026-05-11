@@ -20,7 +20,7 @@ related:
 
 ## 概要
 
-`config banner` はシステムバナー（ログイン前/後メッセージ、MOTD）を CONFIG_DB の `BANNER_MESSAGE|global` テーブルに書き込む CLI グループ[^1]。SONiC では hostcfgd 系がこのテーブル変更を監視し、`/etc/issue.net` / `/etc/motd` などを再生成する。
+`config banner` はシステムバナー（ログイン前/後メッセージ、MOTD）を [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BANNER_MESSAGE|global` テーブルに書き込む CLI グループ[^1]。SONiC では [hostcfgd](../../reference/glossary.md#term-hostcfgd) 系がこのテーブル変更を監視し、`/etc/issue.net` / `/etc/motd` などを再生成する。
 
 ## コマンド一覧
 
@@ -134,3 +134,5 @@ flowchart LR
 [^1]: `config banner` グループ定義は `config/main.py` L10003-L10053。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L10003>
 
 [^2]: テーブル名は `swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME` 定数経由で取得される（= `"BANNER_MESSAGE"`）。
+
+<!-- glossary-links-injected: a31aab569e22 -->

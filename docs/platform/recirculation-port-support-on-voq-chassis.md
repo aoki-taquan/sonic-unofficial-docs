@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-VOQ ベースのシャシでは **入口 chip（ingress ASIC）** と **出口 chip（egress ASIC）** が異なることがあり、両 chip の rewrite 設定を協調プログラムする必要がある。**recirculation port (= recycle port)** は egress を ingress にループバックする特殊ポートで、これを使えば **egress chip の rewrite を協調設定する代わりに ingress 側で 1 度処理し直す** ことで chip 間 forwarding を達成できる[^1]。
+[VOQ](../reference/glossary.md#term-voq) ベースのシャシでは **入口 chip（ingress ASIC）** と **出口 chip（egress ASIC）** が異なることがあり、両 chip の rewrite 設定を協調プログラムする必要がある。**recirculation port (= recycle port)** は egress を ingress にループバックする特殊ポートで、これを使えば **egress chip の rewrite を協調設定する代わりに ingress 側で 1 度処理し直す** ことで chip 間 forwarding を達成できる[^1]。
 
 利用ケース[^1]:
 
@@ -61,18 +61,18 @@ DMAC と recycle port の設定により分岐する[^1]:
 | パターン | 条件 | 振る舞い |
 |----------|------|---------|
 | **Recycle-to-bridged** | DMAC ≠ ingress ASIC の router MAC | DMAC で **L2 bridging** |
-| **Recycle-to-routed** | DMAC = ingress ASIC の router MAC かつ recycle port が routed port | **L3 routing** （DIP ベース、ECMP 利用可） |
+| **Recycle-to-routed** | DMAC = ingress ASIC の router MAC かつ recycle port が routed port | **L3 routing** （DIP ベース、[ECMP](../reference/glossary.md#term-ecmp) 利用可） |
 
 trade-off[^1]:
 
 - routed の方が ECMP 等 L3 の利点を活かせるため **一般に preferred**
 - ただし routed では **ルーティング 2 回** で **TTL が 2 度 decrement** される副作用
 
-bridge / route いずれの場合も **対応する FDB / route entry が ingress ASIC に programming されている必要**。
+bridge / route いずれの場合も **対応する [FDB](../reference/glossary.md#term-fdb) / route entry が ingress ASIC に programming されている必要**。
 
 ### Explicit recycle port
 
-統計（counter / error）を front panel port と同じく取得するため、**recycle port を SONiC から見える形にする**[^1]。SAI 側は **既存の port API で create できれば追加変更なし**。
+統計（counter / error）を front panel port と同じく取得するため、**recycle port を SONiC から見える形にする**[^1]。[SAI](../reference/glossary.md#term-sai) 側は **既存の port API で create できれば追加変更なし**。
 
 ### 設定方法
 
@@ -128,9 +128,9 @@ flowchart LR
     IO --> SAI
 ```
 
-- `portsyncd`: recycle port を APPL_DB.PORT_TABLE に投入
+- `portsyncd`: recycle port を [APPL_DB](../reference/glossary.md#term-appl_db).PORT_TABLE に投入
 - `portsorch`: 初期化 + host interface 作成
-- `intfsorch`: router interface (RIF) 作成
+- `intfsorch`: router interface ([RIF](../reference/glossary.md#term-rif)) 作成
 
 ### `show interfaces status` 例
 
@@ -173,7 +173,7 @@ show interfaces status | grep -E 'Recirc|Ether-(Rec|IB)'
 - 対応する **FDB / route entry が ingress ASIC に programming 済み** でないと recycle 後に黒穴
 - ASIC ベンダによって recycle port の実装方法が異なる。**front panel port と同等に作れない場合は SAI 拡張が必要**[^1]
 - `show interfaces` の Type 列は recycle port では `N/A` 表示。transceiver 監視機能は無効
-- VOQ アーキテクチャ前提。pizza box 機への適用は本 HLD の対象外
+- VOQ アーキテクチャ前提。pizza box 機への適用は本 [HLD](../reference/glossary.md#term-hld) の対象外
 - HLD は 2021-01 改訂と古い。recycle-to-routed の細部実装はベンダ追従
 
 ## 干渉する機能
@@ -212,3 +212,5 @@ show interfaces status | grep -E 'Recirc|Ether-(Rec|IB)'
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 2bce428c821d -->

@@ -35,7 +35,7 @@ related:
 
 ## 結論
 
-親 HLD `Generic Config Update and Rollback` で定義された `apply-change(JsonChange)` の実装設計[^1]。**table 単位 alphabetical 順** で CONFIG_DB 書込み → service 再起動（必要時）→ 反映確認 → 最終 diff 検証。失敗しても自動 rollback はせず、上位 `apply-patch` が責任を持つ。
+親 [HLD](../reference/glossary.md#term-hld) `Generic Config Update and Rollback` で定義された `apply-change(JsonChange)` の実装設計[^1]。**table 単位 alphabetical 順** で [CONFIG_DB](../reference/glossary.md#term-config_db) 書込み → service 再起動（必要時）→ 反映確認 → 最終 diff 検証。失敗しても自動 rollback はせず、上位 `apply-patch` が責任を持つ。
 
 ## 動作仕様
 
@@ -139,7 +139,7 @@ reasoning: alphabetical 順と per-table フローの根拠。
 ## 干渉する機能
 
 - **Generic Config Update / Rollback (`apply-patch`)**: 上位呼出
-- **YANG validation**: `JsonChange` 妥当性検証は親 HLD 側
+- **[YANG](../reference/glossary.md#term-yang) validation**: `JsonChange` 妥当性検証は親 HLD 側
 - **個別 service**: `swss`, `bgp`, `dhcp_relay`, `rsyslog`, `ntp`, `restapi` 等で restart vs subscribe 分岐
 
 ## 引用元
@@ -157,3 +157,5 @@ reasoning: alphabetical 順と per-table フローの根拠。
 - `generic_updater.py` で `ChangeApplier` / `DryRunChangeApplier` 切替
 - `config apply-patch` は `config/main.py` から `apply_patch_from_file` を呼ぶ
 -->
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

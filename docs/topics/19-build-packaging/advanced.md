@@ -9,7 +9,7 @@ sources: []
 
 # 発展トピック
 
-リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 HLD だが、**リリース時にまとめて満たしておきたい条件** という共通点がある。
+リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 [HLD](../../reference/glossary.md#term-hld) だが、**リリース時にまとめて満たしておきたい条件** という共通点がある。
 
 ## ARM (armhf / arm64) サポート
 
@@ -85,3 +85,5 @@ SONiC の docker は歴史的に `--privileged` が多かった。CVE 対応と�
 - container hardening (各 docker の `--privileged` 縮減) PR が漸進的に進む。
 - SPM (`sonic-package-manager`) で manifest schema 拡張と署名検証関連の議論が継続。
 - SBOM 出力と CVE スキャン自動化の PR が CI 周りで議題化。
+
+<!-- glossary-links-injected: 167700005048 -->

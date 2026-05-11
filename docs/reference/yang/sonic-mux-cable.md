@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`
 - top container: `sonic-mux-cable`
 
-DualToR 構成における MUX cable のポート別状態（cable type, prober, neighbor, server/SoC IP, MUX state）を保持する[^1]。
+DualToR 構成における [MUX](../../reference/glossary.md#term-mux) cable のポート別状態（cable type, prober, neighbor, server/SoC IP, MUX state）を保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -84,7 +84,7 @@ module: sonic-mux-cable
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `MUX_CABLE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `MUX_CABLE`
 - CLI: `config mux`, `show mux`
 
 <!-- ref-triangle:start -->
@@ -99,3 +99,5 @@ module: sonic-mux-cable
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mux-cable.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 6d86ca6c317c -->

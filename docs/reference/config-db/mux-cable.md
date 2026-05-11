@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-Dual-ToR (active-active / active-standby) 構成で各 server-facing port に紐付く mux cable の状態と接続先サーバ情報を保持する[^1]。`linkmgrd` (`docker-mux`) と `orchagent` の `MuxOrch` が CONFIG_DB を購読する。
+Dual-ToR (active-active / active-standby) 構成で各 server-facing port に紐付く mux cable の状態と接続先サーバ情報を保持する[^1]。`linkmgrd` (`docker-mux`) と `orchagent` の `MuxOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -53,8 +53,8 @@ MUX_CABLE|<ifname>
 | フィールド | 型 | 既定 | 説明 |
 |-----------|----|------|------|
 | `cable_type` | enum `active-active`/`active-standby` | `active-standby` | DualToR ケーブル種別 |
-| `prober_type` | enum `hardware`/`software` | `software` | linkmgrd の ICMP prober モード |
-| `neighbor_mode` | enum `prefix-route`/`host-route` | `host-route` | MUX neighbor 経路モード |
+| `prober_type` | enum `hardware`/`software` | `software` | [linkmgrd](../../reference/glossary.md#term-linkmgrd) の ICMP prober モード |
+| `neighbor_mode` | enum `prefix-route`/`host-route` | `host-route` | [MUX](../../reference/glossary.md#term-mux) neighbor 経路モード |
 | `server_ipv4` | ipv4-prefix | - | サーバ IPv4 アドレス |
 | `server_ipv6` | ipv6-prefix | - | サーバ IPv6 アドレス |
 | `soc_ipv4` | ipv4-prefix | - | SoC IPv4 (active-active 限定) |
@@ -63,14 +63,14 @@ MUX_CABLE|<ifname>
 
 ## 購読者
 
-- `linkmgrd` (`docker-mux`): ICMP prober を駆動して `state` を更新、`MUX_CABLE_TABLE` (APPL_DB) と `STATE_DB` 反映
-- `orchagent` の `MuxOrch`: SAI tunnel encap / route programming で active/standby 切替
+- `linkmgrd` (`docker-mux`): ICMP prober を駆動して `state` を更新、`MUX_CABLE_TABLE` ([APPL_DB](../../reference/glossary.md#term-appl_db)) と `STATE_DB` 反映
+- `orchagent` の `MuxOrch`: [SAI](../../reference/glossary.md#term-sai) tunnel encap / route programming で active/standby 切替
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `PEER_SWITCH`、`TUNNEL` (DualToR の MuxTunnel0)、`PORT`
 - 関連 CLI: `config muxcable mode/active/standby/auto`、`show muxcable`
-- 関連 YANG: `sonic-mux-cable`、`sonic-tunnel`、`sonic-peer-switch`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-mux-cable`、`sonic-tunnel`、`sonic-peer-switch`
 
 <!-- ref-triangle:start -->
 
@@ -115,3 +115,5 @@ show mux status
 show mux config
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: d02a52a92b03 -->

@@ -47,19 +47,19 @@ Active-Standby では `status` と HW mux direction の不一致が切り分け�
 
 ## ループ回避を見る
 
-Active-Standby で複数 nexthop route が mux port をまたぐ場合、standby nexthop を含む ECMP がループを作る可能性があります。`MuxOrch` は active nexthop がある場合は単一 nexthop に絞り、全て standby なら tunnel に向ける設計です。
+Active-Standby で複数 nexthop route が mux port をまたぐ場合、standby nexthop を含む [ECMP](../../reference/glossary.md#term-ecmp) がループを作る可能性があります。`MuxOrch` は active nexthop がある場合は単一 nexthop に絞り、全て standby なら tunnel に向ける設計です。
 
 運用上は、問題の prefix がどの nexthop を持ち、それぞれがどの mux state の port に属するかを確認します。prefix-based neighbor を使っている場合、neighbor entry の有無だけでなく、サーバ `/32` / `/128` route の nexthop が直接 neighbor なのか tunnel なのかを見る必要があります。
 
 ## ICMP hardware offload
 
-ICMP hardware offload は、Dual-ToR の link prober を NPU 側へ寄せ、検出時間を短縮するための仕組みです。software prober では raw socket とユーザ空間処理が入るため、数百 ms 程度の検出が下限になります。hardware prober では ICMP echo session を ASIC に作り、状態通知を `IcmpOrch` 経由で受けます。
+ICMP hardware offload は、Dual-ToR の link prober を [NPU](../../reference/glossary.md#term-npu) 側へ寄せ、検出時間を短縮するための仕組みです。software prober では raw socket とユーザ空間処理が入るため、数百 ms 程度の検出が下限になります。hardware prober では ICMP echo session を ASIC に作り、状態通知を `IcmpOrch` 経由で受けます。
 
-運用者目線では、`prober_type` が hardware か software か、offload session が作成されているか、TLV 入り ICMP などソフトウェア処理に残る部分があるかを分けて見ます。高速検出を期待するなら、単に `MUX_CABLE` を入れるだけでなく、対象 ASIC / SAI / ICMP offload 機能の対応も前提です。
+運用者目線では、`prober_type` が hardware か software か、offload session が作成されているか、TLV 入り ICMP などソフトウェア処理に残る部分があるかを分けて見ます。高速検出を期待するなら、単に `MUX_CABLE` を入れるだけでなく、対象 ASIC / [SAI](../../reference/glossary.md#term-sai) / ICMP offload 機能の対応も前提です。
 
 ## BFD との関係
 
-BFD hardware offload は Dual-ToR 専用機能ではありませんが、上流 BGP や peer 到達性の高速検出と組み合わせて、mux の安全な切替条件に影響します。BGP セッション向け BFD offload では FRR `bfdd`、`bfdsyncd`、`BfdOrch`、ASIC BFD engine の経路が関係します。
+[BFD](../../reference/glossary.md#term-bfd) hardware offload は Dual-ToR 専用機能ではありませんが、上流 [BGP](../../reference/glossary.md#term-bgp) や peer 到達性の高速検出と組み合わせて、mux の安全な切替条件に影響します。BGP セッション向け BFD offload では [FRR](../../reference/glossary.md#term-frr) `bfdd`、`bfdsyncd`、`BfdOrch`、ASIC BFD engine の経路が関係します。
 
 ここでの注意点は、BFD が下げるのは主に routing adjacency であり、mux state そのものではないことです。default route が消える、BGP が落ちる、上流到達性が無い、という結果が `linkmgrd` の default route 連動や route programming にどう反映されるかを見る必要があります。
 
@@ -83,7 +83,7 @@ Port        Direction    Presence
 Ethernet12  active       True
 ```
 
-`show muxcable metrics Ethernet0` は linkmgrd / xcvrd の状態遷移タイムスタンプを並べます。
+`show muxcable metrics Ethernet0` は [linkmgrd](../../reference/glossary.md#term-linkmgrd) / xcvrd の状態遷移タイムスタンプを並べます。
 
 ```text
 PORT       EVENT                         TIME
@@ -130,7 +130,7 @@ Ethernet4   server_ipv4  10.3.1.1        added     -
 | `state=auto` だが切替が起きない | link prober 停止、または `state` が実は manual | `show muxcable status`、`config muxcable mode auto` |
 | `metrics` で `switch_*` 差が 1s 以上 | Y-cable / xcvrd 遅延、SoC busy | `xcvrd` ログ、firmware 不一致 |
 | `pck_loss_count` が連続増加 | server-facing link / NIC firmware / ICMP filter | NIC 側 counter、`show interfaces counters` の Ethernet |
-| `tunnel_route` の `asic=-` | MuxOrch SAI 失敗、tunnel object 不在 | orchagent / muxorch ログ、`show vxlan tunnel` |
+| `tunnel_route` の `asic=-` | MuxOrch SAI 失敗、tunnel object 不在 | [orchagent](../../reference/glossary.md#term-orchagent) / muxorch ログ、`show vxlan tunnel` |
 | default route が消えても切替しない | linkmgrd の default-route 連動未設定 | `linkmgrd` config、BFD/BGP 上流連動 |
 | ICMP offload 期待だが prober_type=software | ASIC / SAI 未対応、または `MUX_LINKMGR` 設定漏れ | `MUX_LINKMGR` table、`show muxcable status` の prober |
 | `prefix-based mux neighbors` 構成で `/32` が neighbor でなく tunnel | mux state が standby、または neighbor 学習失敗 | `show muxcable status`、`show ip neighbor` |
@@ -193,8 +193,8 @@ linkmgrd: BFD session for upstream peer 10.0.0.1 went down
 ## 横断参照
 
 - 上流 BGP / BFD が落ちたときの mux 連動: [BGP 章 運用](../02-bgp/operations.md) と [VRF / ECMP 章 運用](../04-vrf-ecmp/operations.md) の default route / FIB 確認。
-- Bounce-back 経路の DSCP / PFC は [Overlay 章 運用](../03-vxlan-evpn/operations.md) の DSCP remap。
-- mux 配下 server の VLAN / FDB / Proxy ARP は [L2 章 運用](../06-l2-vlan-lag/operations.md)。
+- Bounce-back 経路の DSCP / [PFC](../../reference/glossary.md#term-pfc) は [Overlay 章 運用](../03-vxlan-evpn/operations.md) の DSCP remap。
+- mux 配下 server の [VLAN](../../reference/glossary.md#term-vlan) / [FDB](../../reference/glossary.md#term-fdb) / Proxy [ARP](../../reference/glossary.md#term-arp) は [L2 章 運用](../06-l2-vlan-lag/operations.md)。
 - mux / icmp / linkmgrd feature 自体が落ちている場合: [運用入口](../01-overview/operations.md) の feature 切り分け。
 
 ## 関連ページ
@@ -207,3 +207,5 @@ linkmgrd: BFD session for upstream peer 10.0.0.1 went down
 - [linkmgrd のデフォルトルート連動](../../routing/default-route.md)
 - [プレフィックスルート方式の Mux ネイバ](../../routing/prefix-based-mux-neighbors.md)
 - [multi-nexthop route ループ回避](../../routing/multiple-nexthop-route-hld.md)
+
+<!-- glossary-links-injected: 2403459d4907 -->

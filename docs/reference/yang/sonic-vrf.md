@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-vrf`
 
-Virtual Routing and Forwarding (VRF) instance configuration for L3 traffic isolation[^1]
+Virtual Routing and Forwarding ([VRF](../../reference/glossary.md#term-vrf)) instance configuration for L3 traffic isolation[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -72,7 +72,7 @@ module: sonic-vrf
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `VRF`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VRF`
 - CLI: `config vrf`
 
 <!-- ref-triangle:start -->
@@ -88,3 +88,4 @@ module: sonic-vrf
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+<!-- glossary-links-injected: 84c52960aadd -->

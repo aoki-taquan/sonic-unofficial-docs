@@ -27,7 +27,7 @@ related:
 
 - **runtime で有効化** 可能（再起動なしで control/management plane = sshd / telemetry / restapi を切替）
 - **enforce mode** は **kernel cmdline** に依存するため、切替に warm/fast-reboot が必須
-- 状態フラグは **`/etc/fips/fips_enabled`**（HLD 表記）/ 実装は `/etc/fips/fips_enable` という単純なファイル（`1`/`0`）
+- 状態フラグは **`/etc/fips/fips_enabled`**（[HLD](../reference/glossary.md#term-hld) 表記）/ 実装は `/etc/fips/fips_enable` という単純なファイル（`1`/`0`）
 
 スコープは SONiC OS v11+ / 202205 / 202211 / master[^1]。
 
@@ -70,7 +70,7 @@ stateDiagram-v2
 | enforce 変更 | warm/fast-reboot 必須 |
 | SONiC upgrade（enforce 設定済） | 次 boot image にも enforce 引継ぎ |
 | SONiC upgrade（enforce 未設定） | 次 image の default に従う |
-| runtime `enable` 変更 | upgrade 完了後 CONFIG_DB 再読み込みで反映 |
+| runtime `enable` 変更 | upgrade 完了後 [CONFIG_DB](../reference/glossary.md#term-config_db) 再読み込みで反映 |
 
 ビルド既定は `ENABLE_FIPS=n`（disabled）。データセンタ全機 enforce 運用なら `ENABLE_FIPS=y` でビルド + `enforce=true` 配布[^1]。
 
@@ -105,13 +105,13 @@ sonic-db-cli STATE_DB hgetall 'FIPS_STATS|state'
 ## トラブルシューティング
 
 - `enable=true` でも sshd が FIPS 化していない → `cat /etc/fips/fips_enable` が `1` か host と各 container で確認
-- STATE_DB が更新されない → `hostcfgd` ログ確認
+- [STATE_DB](../reference/glossary.md#term-state_db) が更新されない → `hostcfgd` ログ確認
 - enforce が反映されない → `cat /proc/cmdline` で kernel cmdline 確認
 - upgrade 後に enforce が外れた → 新 image の default を確認
 
 ## 実装との乖離
 
-| 項目 | HLD 表記 | 実装（hostcfgd） |
+| 項目 | HLD 表記 | 実装（[hostcfgd](../reference/glossary.md#term-hostcfgd)） |
 |---|---|---|
 | flag file | `/etc/fips/fips_enabled` | `/etc/fips/fips_enable`（L102）|
 | STATE_DB key | `FIPS_STAT\|state` | `FIPS_STATS\|state`（L1792）|
@@ -121,7 +121,7 @@ CONFIG_DB の `FIPS|global` 表記は HLD どおりで問題なし。
 
 #### 関連 GitHub Issue / PR
 
-- [sonic-buildimage #11494: \[TestOnly\] Support openssl fips disable openssl fips mod (open)](https://github.com/sonic-net/sonic-buildimage/pull/11494) — FIPS 有効/無効切替の長期 open PR。本 HLD の `/etc/fips/fips_enabled` 制御と直接関連。
+- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #11494: \[TestOnly\] Support openssl fips disable openssl fips mod (open)](https://github.com/sonic-net/sonic-buildimage/pull/11494) — FIPS 有効/無効切替の長期 open PR。本 HLD の `/etc/fips/fips_enabled` 制御と直接関連。
 - [sonic-buildimage #11205: \[sonic-fips\] Makefile bugfix (open)](https://github.com/sonic-net/sonic-buildimage/pull/11205) — FIPS ビルド系の修正 PR。長期 open で取り込み停滞を示唆。
 - FIPS 140-3 全体（140-2 → 140-3 移行）を束ねるトラッキング Issue は確認できず。
 
@@ -139,3 +139,5 @@ CONFIG_DB の `FIPS|global` 表記は HLD どおりで問題なし。
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 43901919356e -->

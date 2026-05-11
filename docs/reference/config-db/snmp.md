@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-SNMP エージェント (`snmpd` in `docker-snmp`) のシステム情報 (Contact / Location) を保持するテーブル[^1]。`docker-snmp` 内の起動スクリプトと `hostcfgd` の SNMP ハンドラが CONFIG_DB を読み、`/etc/snmp/snmpd.conf` のテンプレ展開で `sysContact` / `sysLocation` 行に反映される。
+[SNMP](../../reference/glossary.md#term-snmp) エージェント (`snmpd` in `docker-snmp`) のシステム情報 (Contact / Location) を保持するテーブル[^1]。`docker-snmp` 内の起動スクリプトと `hostcfgd` の SNMP ハンドラが [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、`/etc/snmp/snmpd.conf` のテンプレ展開で `sysContact` / `sysLocation` 行に反映される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -77,7 +77,7 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 
 - 関連 CONFIG_DB: `SNMP_COMMUNITY` (v1/v2c), `SNMP_USER` (v3), [`SNMP_AGENT_ADDRESS_CONFIG`](snmp-agent-address-config.md)
 - 関連 CLI: `config snmp contact { add | modify | del }` / `config snmp location { add | modify | del }`
-- 関連 YANG: `sonic-snmp`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-snmp`
 
 <!-- ref-triangle:start -->
 
@@ -114,3 +114,5 @@ sonic-db-cli CONFIG_DB keys 'SNMP*'
 show snmp community
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: c344938db88f -->

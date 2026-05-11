@@ -78,7 +78,7 @@ module: sonic-fabric-monitor
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FABRIC_MONITOR|FABRIC_MONITOR_DATA`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FABRIC_MONITOR|FABRIC_MONITOR_DATA`
 - CLI: `config fabric monitor`
 
 <!-- ref-triangle:start -->
@@ -112,3 +112,5 @@ show fabric reachability
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fabric-monitor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 896d391185a9 -->

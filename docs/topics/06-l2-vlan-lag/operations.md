@@ -15,7 +15,7 @@ sources:
 
 # L2 運用確認
 
-L2 障害は「VLAN に入っていない」「LAG が期待通り up していない」「MAC 学習が古い」「MC-LAG peer と状態がずれている」「BUM traffic や link flap が制御面を壊している」に分けると追いやすくなります。
+L2 障害は「[VLAN](../../reference/glossary.md#term-vlan) に入っていない」「[LAG](../../reference/glossary.md#term-lag) が期待通り up していない」「MAC 学習が古い」「MC-LAG peer と状態がずれている」「BUM traffic や link flap が制御面を壊している」に分けると追いやすくなります。
 
 ## VLAN の状態を見る
 
@@ -26,20 +26,20 @@ show vlan brief
 show vlan config
 ```
 
-`show vlan brief` は VLAN ID、IP Address、Ports、Port Tagging、Proxy ARP を一覧します。`show vlan config` は 1 行 1 member で VLAN と member port を展開します。multi-ASIC 環境では namespace 指定の有無に注意します。
+`show vlan brief` は VLAN ID、IP Address、Ports、Port Tagging、Proxy [ARP](../../reference/glossary.md#term-arp) を一覧します。`show vlan config` は 1 行 1 member で VLAN と member port を展開します。multi-ASIC 環境では namespace 指定の有無に注意します。
 
 見るべき点は次の順です。
 
 | 確認 | 観点 |
 |---|---|
 | VLAN が存在するか | `VLAN|Vlan<id>` が作られているか |
-| member がいるか | `VLAN_MEMBER` に port / PortChannel が入っているか |
+| member がいるか | `VLAN_MEMBER` に port / [PortChannel](../../reference/glossary.md#term-portchannel) が入っているか |
 | tagged / untagged が期待通りか | access なら untagged、trunk なら tagged の組み合わせ |
 | SVI が必要か | L3 gateway が必要なら `VLAN_INTERFACE` と IP があるか |
 
 ## LAG の状態を見る
 
-PortChannel の設定は `config portchannel` と CONFIG_DB の `PORTCHANNEL` / `PORTCHANNEL_MEMBER` が入口です。運用時は LACP、member の admin / oper、`min_links` の条件、VLAN member への参加有無を分けて確認します。
+PortChannel の設定は `config portchannel` と [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORTCHANNEL` / `PORTCHANNEL_MEMBER` が入口です。運用時は [LACP](../../reference/glossary.md#term-lacp)、member の admin / oper、`min_links` の条件、VLAN member への参加有無を分けて確認します。
 
 削除や変更が失敗する場合は、PortChannel が VLAN member、L3 interface、DHCP relay 対象、または member を残した状態ではないかを先に確認します。
 
@@ -67,7 +67,7 @@ MAC が期待と違う port に出る場合は、次を確認します。
 
 | 症状 | 見る場所 |
 |---|---|
-| VLAN member 変更後に古い MAC が残る | FDB flush の対象と static / dynamic の違い |
+| VLAN member 変更後に古い MAC が残る | [FDB](../../reference/glossary.md#term-fdb) flush の対象と static / dynamic の違い |
 | PortChannel down 後に誤転送する | PortChannel 単位の dynamic FDB flush |
 | STP topology change 後に片側へ流れ続ける | STP と FDB flush の連動 |
 | MC-LAG で片側だけ MAC を知っている | `mclagdctl dump mac` と APP_MCLAG_FDB_TABLE の同期 |
@@ -88,7 +88,7 @@ show storm-control interface Ethernet0
 
 ## Link flap を抑える
 
-Link event damping は、ポート up/down が短時間に繰り返される場合に、SyncD 側でイベント通知を抑制する設計です。現行ページでは swss 側の実装は確認されている一方、HLD に書かれた CLI は未実装とされています。
+Link event damping は、ポート up/down が短時間に繰り返される場合に、SyncD 側でイベント通知を抑制する設計です。現行ページでは swss 側の実装は確認されている一方、[HLD](../../reference/glossary.md#term-hld) に書かれた CLI は未実装とされています。
 
 運用手順としては、まず通常の interface state と transceiver / cable 健全性を確認し、damping を使う場合は [リンクイベントダンピング](../../switching/link-event-damping-hld.md) の実装との乖離を確認してください。
 
@@ -202,8 +202,8 @@ linkmgrd: Storm control packet drop on Ethernet0 broadcast
 
 - VLAN_INTERFACE で出す SVI が L3 で動かない: [VRF / ECMP 章 運用](../04-vrf-ecmp/operations.md)。
 - MC-LAG over Dual-ToR / Active-Active 構成: [Dual-ToR 章 運用](../05-dual-tor/operations.md)。
-- VLAN ↔ VNI 紐付けや EVPN 由来 FDB の差分: [Overlay 章 運用](../03-vxlan-evpn/operations.md)。
-- teamd / swss が起動しない場合の前提: [運用入口](../01-overview/operations.md) の feature / hostcfgd セクション。
+- VLAN ↔ VNI 紐付けや [EVPN](../../reference/glossary.md#term-evpn) 由来 FDB の差分: [Overlay 章 運用](../03-vxlan-evpn/operations.md)。
+- [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / swss が起動しない場合の前提: [運用入口](../01-overview/operations.md) の feature / [hostcfgd](../../reference/glossary.md#term-hostcfgd) セクション。
 
 ## 関連ページ
 
@@ -212,3 +212,5 @@ linkmgrd: Storm control packet drop on Ethernet0 broadcast
 - [BUM ストームコントロール](../../switching/sonic-bum-storm-control.md)
 - [リンクイベントダンピング](../../switching/link-event-damping-hld.md)
 - [MCLAG Enhancements](../../switching/mclag-enhancements.md)
+
+<!-- glossary-links-injected: 133c93c6ce9a -->

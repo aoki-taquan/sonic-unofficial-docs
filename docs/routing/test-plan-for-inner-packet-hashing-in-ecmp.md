@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-ECMP nexthop の選択を **outer ヘッダではなく inner パケットの 5-tuple**（src/dst IP、L4 port、IP proto）でハッシュさせる動作を T0 上で検証するテスト[^1]。dynamic Policy Based Hashing (PBH) を使って ECMP ハッシュキーを上書きし、4 種の outer (IPv4/IPv6 × VxLAN/NVGRE) × 2 種の inner (IPv4/IPv6) を網羅する。
+[ECMP](../reference/glossary.md#term-ecmp) nexthop の選択を **outer ヘッダではなく inner パケットの 5-tuple**（src/dst IP、L4 port、IP proto）でハッシュさせる動作を T0 上で検証するテスト[^1]。dynamic Policy Based Hashing (PBH) を使って ECMP ハッシュキーを上書きし、4 種の outer (IPv4/IPv6 × VxLAN/NVGRE) × 2 種の inner (IPv4/IPv6) を網羅する。
 
 ## 動作仕様
 
@@ -35,7 +35,7 @@ ECMP nexthop の選択を **outer ヘッダではなく inner パケットの 5-
 
 | 構成要素 | 内容 |
 |---------|------|
-| PBH table | T0 トポロジの **VLAN 内 PTF ポート**を bind（Up かつ非 LAG） |
+| PBH table | T0 トポロジの **[VLAN](../reference/glossary.md#term-vlan) 内 PTF ポート**を bind（Up かつ非 [LAG](../reference/glossary.md#term-lag)） |
 | hash field | `inner_ip_proto`/`inner_l4_dst_port`/`inner_l4_src_port`/`inner_dst_ipv4`/`inner_src_ipv4`/`inner_dst_ipv6`/`inner_src_ipv6`。L4 port と IP は **symmetric=Yes** |
 | hash | 上記 7 フィールドをまとめた `inner_hash` |
 | rule | outer encap ごとに 8 ルール（NVGRE × {v4,v6}×{v4,v6} priority=2、VxLAN × {v4,v6}×{v4,v6} priority=1）。action=`SET_ECMP_HASH`、counter=ENABLED |
@@ -78,3 +78,5 @@ inner tuple を固定し outer tuple を変えた 4000 packets を流すと **�
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/ecmp/inner_packet_hashing_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/ecmp/inner_packet_hashing_test_plan.md)
+
+<!-- glossary-links-injected: f2f1ca683636 -->

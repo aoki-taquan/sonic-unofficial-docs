@@ -28,7 +28,7 @@ related:
 
 SONiC の `debug` および `undebug` コマンドは、`config` / `show` とは別の独立した Click root として実装される (`debug = debug.main:cli`、`undebug = undebug.main:cli`)[^1]。
 
-対象は主に **FRR (BGP / zebra)** と **STP (`stpctl`)** の動的デバッグスイッチで、いずれも実体は `vtysh` または `stpctl` のラッパー。CONFIG_DB は触らず、対象プロセスの runtime ログレベルや trace を切り替えるだけ。`undebug` は `debug` のミラーで、各 `debug ...` コマンドに対応する `no debug ...` を vtysh に投げる。
+対象は主に **[FRR](../../reference/glossary.md#term-frr) ([BGP](../../reference/glossary.md#term-bgp) / [zebra](../../reference/glossary.md#term-zebra))** と **STP (`stpctl`)** の動的デバッグスイッチで、いずれも実体は `vtysh` または `stpctl` のラッパー。[CONFIG_DB](../../reference/glossary.md#term-config_db) は触らず、対象プロセスの runtime ログレベルや trace を切り替えるだけ。`undebug` は `debug` のミラーで、各 `debug ...` コマンドに対応する `no debug ...` を vtysh に投げる。
 
 `debug.main` は **import 時に `sudo vtysh -c 'show version'` を実行して FRR か Quagga かを判定**し、コマンドツリーを動的に切り替える点が特徴的[^2]。本ドキュメントでは現役の FRR ブランチを中心に記述する。
 
@@ -117,3 +117,5 @@ current の `debug.main` ツリーには `bgp` / `zebra` / `spanning_tree` の�
 [^2]: `debug.main` の import 時 FRR 判定 (`debug/main.py` L31-L32)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/debug/main.py#L31>
 
 [^3]: prefix バリデーション (`debug/main.py` L30 + L60-L63 etc.)。
+
+<!-- glossary-links-injected: dbd756d1e010 -->

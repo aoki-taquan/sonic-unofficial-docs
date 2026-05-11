@@ -27,9 +27,9 @@ related:
 
 ## 概要
 
-SONiC の MC-LAG（Multi-Chassis LAG）は専用デーモン **ICCPd**（ICCP daemon、`docker-iccp` コンテナ内）で実装されている。ICCPd は IETF [RFC 7275](https://www.rfc-editor.org/rfc/rfc7275) の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する[^1]。
+SONiC の MC-[LAG](../reference/glossary.md#term-lag)（Multi-Chassis LAG）は専用デーモン **ICCPd**（ICCP daemon、`docker-iccp` コンテナ内）で実装されている。ICCPd は IETF [RFC 7275](https://www.rfc-editor.org/rfc/rfc7275) の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する[^1]。
 
-このページは ICCPd ソースコードのファイル別役割を、HLD のコード解説ドキュメントから再構成した **読み手のためのコードマップ** である。実装を追う際の入口に使う。
+このページは ICCPd ソースコードのファイル別役割を、[HLD](../reference/glossary.md#term-hld) のコード解説ドキュメントから再構成した **読み手のためのコードマップ** である。実装を追う際の入口に使う。
 
 ## 動作仕様
 
@@ -101,7 +101,7 @@ stateDiagram-v2
 ```
 
 - **INIT**: ピア未接続
-- **STAGE1**: ピア接続確立直後。最初に ARP / MAC を同期。standby 側は active へ sync request を投げる。active が受けると全情報を standby へ同期
+- **STAGE1**: ピア接続確立直後。最初に [ARP](../reference/glossary.md#term-arp) / MAC を同期。standby 側は active へ sync request を投げる。active が受けると全情報を standby へ同期
 - **STAGE2**: active 側が standby へ sync request を投げ、standby が応答すると active へ全同期
 - **EXCHANGE**: 定常状態。`mlacp_exchange_handler()` が動く
 
@@ -116,7 +116,7 @@ flowchart LR
     CLI2[iccp_cli.c\ndomain-id / local-ip / peer-ip /\npeer-link / mclag-interface] --> SYS
 ```
 
-ICCPd 起動時、CONFIG_DB から `iccpd.j2` テンプレートを通じて `/etc/iccpd/iccpd.conf` を生成し、`iccp_cmd.c` がそれを読む[^1]。`system-id` は `localhost.mac`（DEVICE_METADATA 配下）を使う **グローバル設定** であり、CLI で変えるものではない。
+ICCPd 起動時、[CONFIG_DB](../reference/glossary.md#term-config_db) から `iccpd.j2` テンプレートを通じて `/etc/iccpd/iccpd.conf` を生成し、`iccp_cmd.c` がそれを読む[^1]。`system-id` は `localhost.mac`（DEVICE_METADATA 配下）を使う **グローバル設定** であり、CLI で変えるものではない。
 
 ### CLI / 表示経路
 
@@ -151,7 +151,7 @@ ICCPd (iccp_cmd_show.c) → 内部状態を整形して返却
 - ピアの local-IP / peer-IP がローカル設定と一致するか（不一致なら接続拒否）
 - MC-LAG portchannel のモード（L2 / L3）が両ピアで揃っているか
 - L3 構成なら IP アドレスが一致するか
-- VLAN メンバなら同じ VLAN に属しているか
+- [VLAN](../reference/glossary.md#term-vlan) メンバなら同じ VLAN に属しているか
 
 ### MLACP 同期コンテンツ
 
@@ -165,7 +165,7 @@ ICCPd (iccp_cmd_show.c) → 内部状態を整形して返却
 | MAC エントリ | MC-LAG / orphan を問わず全 MAC を同期 |
 | ARP エントリ | MC-LAG IF または MC-LAG メンバ VLAN IF 由来のみ同期 |
 | portchannel 設定 | mode / IPv4 / 参加 VLAN（整合性検査用） |
-| peer-link 情報 | 種別（VLAN / VXLAN）と VXLAN 名 |
+| peer-link 情報 | 種別（VLAN / [VXLAN](../reference/glossary.md#term-vxlan)）と VXLAN 名 |
 | Warm reboot 情報 | local 側の warm-reboot 開始通知 |
 
 ### Warm reboot 経路
@@ -235,7 +235,7 @@ ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MC_LAG_DOMAIN`, `MC_LAG_I
 
 ### 関連する YANG
 
-本ドキュメントでは YANG モジュールに言及していない。
+本ドキュメントでは [YANG](../reference/glossary.md#term-yang) モジュールに言及していない。
 
 ## 制限事項
 
@@ -281,3 +281,5 @@ ICCPd 内部構成マップは現行 master と整合。`code-verified` に昇�
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b8de3bf6fffa -->

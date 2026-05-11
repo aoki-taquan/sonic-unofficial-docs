@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-bgp-bbr`
 
-SONiC の BGP Border Router (BBR) を有効化/無効化する小さなグローバル設定モジュール[^1]。`all` 単一インスタンスのコンテナ配下に `status` リーフを持つ。
+SONiC の [BGP](../../reference/glossary.md#term-bgp) Border Router (BBR) を有効化/無効化する小さなグローバル設定モジュール[^1]。`all` 単一インスタンスのコンテナ配下に `status` リーフを持つ。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -68,12 +68,12 @@ module: sonic-bgp-bbr
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `BGP_BBR|all`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_BBR|all`
 - CLI: `config bgp bbr`
 
 ## redis-cli での観測
 
-YANG の `enum`（`enabled` / `disabled`）と `default` の挙動は、実機では CONFIG_DB の `BGP_BBR` キーを直接覗くと素早く突き合わせできる。設定値・FRR への反映状況を 1 セッションで確認する定型は以下。
+[YANG](../../reference/glossary.md#term-yang) の `enum`（`enabled` / `disabled`）と `default` の挙動は、実機では CONFIG_DB の `BGP_BBR` キーを直接覗くと素早く突き合わせできる。設定値・[FRR](../../reference/glossary.md#term-frr) への反映状況を 1 セッションで確認する定型は以下。
 
 ```bash
 # 1. 現在の CONFIG_DB 値（YANG leaf "status" に相当）
@@ -108,7 +108,7 @@ docker exec -it bgp vtysh -c 'show running-config bgpd' | grep -E 'aggregate-add
 
 ### 典型的なデプロイ位置
 
-- FRR の BGP BBR (Best-path Backup Routing) 機能。sonic-mgmt-framework 経由で `BGP_BBR` テーブルに書かれ、FRR `bgpd` の vtysh コマンドへ変換される。
+- FRR の BGP BBR (Best-path Backup Routing) 機能。[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework 経由で `BGP_BBR` テーブルに書かれ、FRR `bgpd` の vtysh コマンドへ変換される。
 
 ### よくある落とし穴
 
@@ -125,3 +125,5 @@ show runningconfiguration bgp
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 971def93d123 -->

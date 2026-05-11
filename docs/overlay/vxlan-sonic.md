@@ -34,29 +34,29 @@ related:
 
 ## 読み手が知りたいこと
 
-1. SONiC の VXLAN は **VTEP と VNet の組合せ** とよく言われるが、両者の関係は？
+1. SONiC の [VXLAN](../reference/glossary.md#term-vxlan) は **VTEP と VNet の組合せ** とよく言われるが、両者の関係は？
 2. **L2 VXLAN と L3 VXLAN** はどう作り分けられる？（mapper / tunnel が別なのか）
-3. **どの orchagent が何を担当** するのか？
-4. **CONFIG_DB / APP_DB に何を入れれば** VNet ピアリングが動くのか？
-5. **BGP EVPN との関係**は？ Phase 1 と Phase 2 で何が違う？
+3. **どの [orchagent](../reference/glossary.md#term-orchagent) が何を担当** するのか？
+4. **[CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB に何を入れれば** VNet ピアリングが動くのか？
+5. **[BGP](../reference/glossary.md#term-bgp) [EVPN](../reference/glossary.md#term-evpn) との関係**は？ Phase 1 と Phase 2 で何が違う？
 6. **Warm restart** は使えるのか？
 7. トラブル時に最低限見るテーブルは？
 
 ## 1. 全体像（VTEP + VNet + Orch 群）
 
-SONiC の VXLAN は **VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ** で実装される。HLD は次のスコープを定める[^1]:
+SONiC の VXLAN は **VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ** で実装される。[HLD](../reference/glossary.md#term-hld) は次のスコープを定める[^1]:
 
 - **Phase 1**: VTEP として動作。顧客 VM ↔ ベアメタルサーバ間の VNet ピアリング、Symmetric IRB（RIOT）の分散 VXLAN ルーティング
 - **Phase 2**: BGP EVPN 統合、L2 VXLAN（タグ・無タグ）、HER（Head End Replication）、CLI 整備
 
-Kernel VRF（L3mdev）の programming は **本 HLD のスコープ外**[^1]。
+Kernel [VRF](../reference/glossary.md#term-vrf)（L3mdev）の programming は **本 HLD のスコープ外**[^1]。
 
 主要 orchagent:
 
 - `VxlanOrch`（実コード上は `VxlanTunnelOrch` 等に分割）: VXLAN tunnel object、encap/decap mapper、tunnel termination
 - `VnetOrch` / `VnetRouteOrch`: VNet 単位の VRF / BRIDGE、ピアリング、VNet 経路
-- `VrfMgrD` / `VrfOrch`: kernel L3mdev と SAI VRF の同期
-- `IntfMgrD` / `IntfsOrch`: VNet 配下の RIF
+- `VrfMgrD` / `VrfOrch`: kernel L3mdev と [SAI](../reference/glossary.md#term-sai) VRF の同期
+- `IntfMgrD` / `IntfsOrch`: VNet 配下の [RIF](../reference/glossary.md#term-rif)
 - `FdbOrch`: remote VTEP の MAC 学習
 
 ```mermaid
@@ -90,7 +90,7 @@ flowchart TB
 
 ## 2. L2 / L3 VXLAN の作り分け
 
-`VxlanOrch` は `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` から **L2 VXLAN（VLAN ↔ VNI）** と **L3 VXLAN（VRF ↔ VNI）** を **別トンネル** として作る[^1]。それぞれに encap/decap mapper を attach。
+`VxlanOrch` は `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` から **L2 VXLAN（[VLAN](../reference/glossary.md#term-vlan) ↔ VNI）** と **L3 VXLAN（VRF ↔ VNI）** を **別トンネル** として作る[^1]。それぞれに encap/decap mapper を attach。
 
 SAI 属性の対応:
 
@@ -130,7 +130,7 @@ sequenceDiagram
     VO->>VO: SAI VRF / Bridge 作成
 ```
 
-- `VrfMgrD`: VNet 設定から kernel L3mdev を作成 + STATE_DB に状態出力
+- `VrfMgrD`: VNet 設定から kernel L3mdev を作成 + [STATE_DB](../reference/glossary.md#term-state_db) に状態出力
 - `VrfOrch`: 通常 VRF を APP_DB から SAI に投入（RouteOrch が利用）[^1]
 
 ### VnetOrch / VnetRouteOrch
@@ -283,8 +283,8 @@ APP_DB に `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を投入してベア�
 - **BGP EVPN（Phase 2）**: 経路供給源として `VNET_ROUTE_TUNNEL_TABLE` を埋める
 - **VLAN / VLAN_MEMBER**: L2 VXLAN は VLAN ↔ VNI mapping 前提
 - **VRF（通常 VRF）**: `VrfOrch` 経由
-- **DASH / SmartSwitch**: 新しい HLD（[ENI Based Forwarding](smartswitch-eni-based-forwarding.md)）は本 HLD の VxLAN tunnel を利用
-- **MC-LAG / dual-ToR**: 拡張あり
+- **[DASH](../reference/glossary.md#term-dash) / [SmartSwitch](../reference/glossary.md#term-smartswitch)**: 新しい HLD（[ENI Based Forwarding](smartswitch-eni-based-forwarding.md)）は本 HLD の VxLAN tunnel を利用
+- **MC-[LAG](../reference/glossary.md#term-lag) / dual-ToR**: 拡張あり
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/vxlan/Vxlan_hld.md#L299-L330 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -345,3 +345,5 @@ reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経
 - [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: edc9bd421e86 -->

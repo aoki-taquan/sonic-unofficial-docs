@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-ルータ ID やサービス IP として使う仮想ループバック IF を定義する[^1]。`Loopback0` は通常 BGP の router-id / source として使われる。`intfmgrd` が Linux 上の dummy IF を生成し、`orchagent` `IntfsOrch` が SAI ルータ IF を作る。
+ルータ ID やサービス IP として使う仮想ループバック IF を定義する[^1]。`Loopback0` は通常 [BGP](../../reference/glossary.md#term-bgp) の router-id / source として使われる。`intfmgrd` が Linux 上の dummy IF を生成し、`orchagent` `IntfsOrch` が [SAI](../../reference/glossary.md#term-sai) ルータ IF を作る。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,8 +58,8 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
 | `name` (key) | `interface_name` | ✅ | - | ループバック名（例: `Loopback0`） |
-| `vrf_name` | leafref `VRF.name` | - | - | バインドする VRF |
-| `nat_zone` | uint8 (0..3) | - | `0` | NAT zone |
+| `vrf_name` | leafref `VRF.name` | - | - | バインドする [VRF](../../reference/glossary.md#term-vrf) |
+| `nat_zone` | uint8 (0..3) | - | `0` | [NAT](../../reference/glossary.md#term-nat) zone |
 | `admin_status` | `admin_status` | - | `up` | 管理状態 |
 
 ## IP プレフィクスロウ
@@ -79,9 +79,9 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `VRF`、`DEVICE_METADATA` (`bgp_adv_lo_prefix_as_128`)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VRF`、`DEVICE_METADATA` (`bgp_adv_lo_prefix_as_128`)
 - 関連 CLI: `config loopback add/del`、`config interface ip add Loopback0 ...`
-- 関連 YANG: `sonic-loopback-interface`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-loopback-interface`
 
 <!-- ref-triangle:start -->
 
@@ -115,3 +115,5 @@ sonic-db-cli CONFIG_DB keys 'LOOPBACK_INTERFACE|*'
 show ip interfaces | grep Loopback
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 29ce8582b809 -->

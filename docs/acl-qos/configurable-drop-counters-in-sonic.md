@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-SAI **debug counter** を活用し、ユーザがドロップ理由（drop reason）の組み合わせを動的に定義してカウントできるようにする機能[^1]。`STAT_IF_IN_DISCARDS` のような単一カウンタを「期待ドロップ」と「異常ドロップ」に切り分けるフィルタ用途や、即時デバッグ・常設アラートの 4 用途を想定する。
+[SAI](../reference/glossary.md#term-sai) **debug counter** を活用し、ユーザがドロップ理由（drop reason）の組み合わせを動的に定義してカウントできるようにする機能[^1]。`STAT_IF_IN_DISCARDS` のような単一カウンタを「期待ドロップ」と「異常ドロップ」に切り分けるフィルタ用途や、即時デバッグ・常設アラートの 4 用途を想定する。
 
 v1.1（2024-09）で **persistent drop counter monitoring** が追加された[^1]。
 
@@ -79,7 +79,7 @@ flowchart LR
 
 ### v1.1 拡張: persistent drop counter
 
-v1.1 で persistent drop counter monitoring が追加され、特定 drop reason のドロップが継続発生したときにアラート可能なモニタが定義される（具体的なテーブル名・ロジックは HLD 当該節を参照）[^1]。
+v1.1 で persistent drop counter monitoring が追加され、特定 drop reason のドロップが継続発生したときにアラート可能なモニタが定義される（具体的なテーブル名・ロジックは [HLD](../reference/glossary.md#term-hld) 当該節を参照）[^1]。
 
 ## 設定
 
@@ -105,7 +105,7 @@ sonic-clear dropcounters
 
 ### 関連する YANG
 
-HLD に YANG モデルの記述は無い。
+HLD に [YANG](../reference/glossary.md#term-yang) モデルの記述は無い。
 
 ### 設定例
 
@@ -126,14 +126,14 @@ show dropcounters counts
 ## 干渉する機能
 
 - **STAT_IF_IN_DISCARDS / STAT_IF_OUT_DISCARDS**: 既存集約カウンタ。debug counter で「期待ドロップ」を計上し、両者の差分で異常を検知する用途。
-- **CRM**: debug counter のスロット消費は CRM の resource 監視に乗らない（HLD で明記なし、要確認）。
-- **Watermark / PFC**: 別系統のカウンタ。drop counter とは独立。
+- **[CRM](../reference/glossary.md#term-crm)**: debug counter のスロット消費は CRM の resource 監視に乗らない（HLD で明記なし、要確認）。
+- **Watermark / [PFC](../reference/glossary.md#term-pfc)**: 別系統のカウンタ。drop counter とは独立。
 
 ## トラブルシューティング
 
 - `install` が失敗する → `show dropcounters capabilities` で残スロットと reason サポートを確認。
 - counts が増えない → 該当 reason に該当する drop が起きていない／ASIC が当該 reason を SAI で公開していない可能性。
-- `show dropcounters configuration` が空 → CONFIG_DB の `DEBUG_COUNTER` テーブルに entry があるかを `redis-cli -n 4 keys 'DEBUG_COUNTER|*'` で確認。
+- `show dropcounters configuration` が空 → [CONFIG_DB](../reference/glossary.md#term-config_db) の `DEBUG_COUNTER` テーブルに entry があるかを `redis-cli -n 4 keys 'DEBUG_COUNTER|*'` で確認。
 
 ## 引用元
 
@@ -145,3 +145,5 @@ show dropcounters counts
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d254c26cc494 -->

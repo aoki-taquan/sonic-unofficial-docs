@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-PFC Watchdog の設定テーブル。port ごとに `detection_time` / `restoration_time` / `action` を持ち、PFC pause storm を検出して指定アクションを取る。`GLOBAL` という特別キーでシステム全体のポーリング間隔を設定する[^1]。`pfcwd` ツール / `pfcwdorch` (orchagent) が購読する。
+[PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) の設定テーブル。port ごとに `detection_time` / `restoration_time` / `action` を持ち、[PFC](../../reference/glossary.md#term-pfc) pause storm を検出して指定アクションを取る。`GLOBAL` という特別キーでシステム全体のポーリング間隔を設定する[^1]。`pfcwd` ツール / `pfcwdorch` ([orchagent](../../reference/glossary.md#term-orchagent)) が購読する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -76,14 +76,14 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 
 ## 購読者
 
-- `orchagent` の `PfcWdOrch`: SAI で per-queue counter polling とアクション実装
+- `orchagent` の `PfcWdOrch`: [SAI](../../reference/glossary.md#term-sai) で per-queue counter polling とアクション実装
 - `pfcwd` CLI: 起動 / 停止 / 統計
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PORT`、`PORT_QOS_MAP` (PFC enable bitmap)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT`、`PORT_QOS_MAP` (PFC enable bitmap)
 - 関連 CLI: `pfcwd start/stop/show_config/counter_poll`
-- 関連 YANG: `sonic-pfcwd`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pfcwd`
 
 <!-- ref-triangle:start -->
 
@@ -127,3 +127,5 @@ show pfcwd config
 show pfcwd stats
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 27fb7a00cfd8 -->

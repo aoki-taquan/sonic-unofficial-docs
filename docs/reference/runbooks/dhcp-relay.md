@@ -24,14 +24,14 @@ related:
 
 ## 症状
 
-- VLAN 配下のクライアントが DHCP DISCOVER を出すが OFFER を受け取れない
+- [VLAN](../../reference/glossary.md#term-vlan) 配下のクライアントが DHCP DISCOVER を出すが OFFER を受け取れない
 - `show dhcp_relay ipv4 helper` には正しい helper IP が見えるが pcap で外向き relay フレームが出ていない
 - 反対に relay forward は出るが、server からの reply が戻ってこない
 
 ## 想定原因
 
 1. **VLAN_INTERFACE に IP が振られていない**: relay agent の `giaddr` が 0.0.0.0 になり server 側で破棄
-2. **helper サーバへの L3 到達性なし** (route / firewall / VRF 不一致)
+2. **helper サーバへの L3 到達性なし** (route / firewall / [VRF](../../reference/glossary.md#term-vrf) 不一致)
 3. **helper IP の登録漏れ / typo**: `DHCP_RELAY|Vlan100` の `dhcpv4_servers` が空
 4. **`dhcp_relay` コンテナが起動していない**: `show feature status` で disabled
 5. **option 82 (circuit/remote-id) の挿入仕様が server と不一致** → server が DISCOVER を黙って drop
@@ -104,4 +104,6 @@ sonic-clear dhcp_relay ipv4 counters
 ## 引用元
 
 [^1]: sonic-net/sonic-dhcp-relay @ 7316417 — relay.cpp
-[^2]: sonic-net/sonic-utilities @ 39732bceb — config vlan dhcp_relay
+[^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config vlan dhcp_relay
+
+<!-- glossary-links-injected: 7693efbae10f -->

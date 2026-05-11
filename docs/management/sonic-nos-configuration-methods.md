@@ -40,7 +40,7 @@ related:
 
 ## 入口は 10 種類、収束先は CONFIG_DB
 
-SONiC は CONFIG_DB（Redis db 4）に **複数の入口** を提供し、最終的に `/etc/sonic/config_db.json` で永続化する[^1]。
+SONiC は [CONFIG_DB](../reference/glossary.md#term-config_db)（[Redis](../reference/glossary.md#term-redis) db 4）に **複数の入口** を提供し、最終的に `/etc/sonic/config_db.json` で永続化する[^1]。
 
 ```mermaid
 graph TD
@@ -71,11 +71,11 @@ graph TD
 | `show` CLI | - | - | - | 閲覧 |
 | `sonic-cfggen` | save 経由 | schema 依存 | △ | スクリプト |
 | `config_db.json` 直編集 | reload 後 | 起動時のみ | × | オフライン管理 |
-| RESTCONF | 即時 | YANG | ○ | コントローラ |
-| gNMI | 即時 | YANG | ◎ | 大規模 + telemetry |
+| RESTCONF | 即時 | [YANG](../reference/glossary.md#term-yang) | ○ | コントローラ |
+| [gNMI](../reference/glossary.md#term-gnmi) | 即時 | YANG | ◎ | 大規模 + telemetry |
 | Ansible / NAPALM | playbook 次第 | playbook | ◎ | IaC |
-| ZTP | 初回起動時 | スクリプト次第 | ◎ | 工場出荷 |
-| `vtysh` | しない | FRR | × | routing 詳細 |
+| [ZTP](../reference/glossary.md#term-ztp) | 初回起動時 | スクリプト次第 | ◎ | 工場出荷 |
+| `vtysh` | しない | [FRR](../reference/glossary.md#term-frr) | × | routing 詳細 |
 | `redis-cli` | しない | **無し** | × | デバッグ |
 | `config apply-patch` | 即時 | dry-run | ○ | 構造化変更 |
 
@@ -90,7 +90,7 @@ config interface ip add Ethernet0 10.0.0.1/24
 config save -y
 ```
 
-`show` は STATE_DB / APPL_DB の閲覧専用。
+`show` は [STATE_DB](../reference/glossary.md#term-state_db) / [APPL_DB](../reference/glossary.md#term-appl_db) の閲覧専用。
 
 ### `sonic-cfggen`
 
@@ -106,7 +106,7 @@ YANG モデルに基づく標準 API。RESTCONF は OpenConfig 対応でマル�
 
 ### Ansible / NAPALM
 
-宣言的に interface / BGP / VLAN / ACL を管理。CI/CD パイプライン統合に向く[^1]。
+宣言的に interface / [BGP](../reference/glossary.md#term-bgp) / [VLAN](../reference/glossary.md#term-vlan) / [ACL](../reference/glossary.md#term-acl) を管理。CI/CD パイプライン統合に向く[^1]。
 
 ### ZTP
 
@@ -186,3 +186,5 @@ flowchart LR
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 32fbe70babcc -->

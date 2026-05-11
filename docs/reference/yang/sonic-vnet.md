@@ -24,7 +24,7 @@ related:
 - import: `ietf-yang-types`, `ietf-inet-types`, `sonic-types`, `sonic-vxlan`
 - top container: `sonic-vnet`
 
-Virtual Network (VNET) configuration for overlay networking using VxLAN tunnels[^1]
+Virtual Network ([VNET](../../reference/glossary.md#term-vnet)) configuration for overlay networking using VxLAN tunnels[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -131,7 +131,7 @@ module: sonic-vnet
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `VNET`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VNET`
 - CONFIG_DB: `VNET_ROUTE`
 - CONFIG_DB: `VNET_ROUTE_TUNNEL`
 - CLI: `config vnet`
@@ -148,3 +148,5 @@ module: sonic-vnet
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-vnet.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
+
+<!-- glossary-links-injected: 1f42b84fd2f9 -->

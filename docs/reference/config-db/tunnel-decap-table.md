@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`tunneldecaporch` が消費する **アプリケーション層テーブル**。CONFIG_DB の [`TUNNEL`](./tunnel.md) を `tunnelmgrd` が APPL_DB に投影する形で生成され、SAI tunnel/tunnel-term オブジェクトに反映される[^1]。STATE_DB にも同名のミラーがある。
+`tunneldecaporch` が消費する **アプリケーション層テーブル**。[CONFIG_DB](../../reference/glossary.md#term-config_db) の [`TUNNEL`](./tunnel.md) を `tunnelmgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に投影する形で生成され、[SAI](../../reference/glossary.md#term-sai) tunnel/tunnel-term オブジェクトに反映される[^1]。[STATE_DB](../../reference/glossary.md#term-state_db) にも同名のミラーがある。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -81,13 +81,13 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 
 ## 購読者
 
-- `tunneldecaporch` (orchagent): SAI tunnel / tunnel-term オブジェクト作成
+- `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): SAI tunnel / tunnel-term オブジェクト作成
 - `STATE_DB` 側はモニタリング用ミラー
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`TUNNEL`](./tunnel.md)（CONFIG_DB 側のソース）
-- 関連 YANG: なし
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし
 - 関連 CLI: なし（テーブルは内部）
 
 <!-- ref-triangle:start -->
@@ -121,3 +121,5 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 sonic-db-cli CONFIG_DB keys 'TUNNEL_DECAP_TABLE|*'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: e3a65a1701e9 -->

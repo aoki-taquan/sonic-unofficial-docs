@@ -25,7 +25,7 @@ SONiC の reboot は、単に「速い順」に並べるよりも、どの状態
 
 ## Reboot family は何を解決するか
 
-データセンタでスイッチを再起動するときに困るのは、停止時間そのものよりも「停止中に転送が落ちる」「再起動後に経路が落ち着くまで通信が不安定になる」ことです。アプリケーション側からすると、TCP セッションが切れる、RoCE が止まる、BGP がフルテーブル再収束する、というのが避けたいイベントです。Reboot family はそれぞれ違う設計判断でこの問題に取り組みます。
+データセンタでスイッチを再起動するときに困るのは、停止時間そのものよりも「停止中に転送が落ちる」「再起動後に経路が落ち着くまで通信が不安定になる」ことです。アプリケーション側からすると、TCP セッションが切れる、[RoCE](../../reference/glossary.md#term-roce) が止まる、[BGP](../../reference/glossary.md#term-bgp) がフルテーブル再収束する、というのが避けたいイベントです。Reboot family はそれぞれ違う設計判断でこの問題に取り組みます。
 
 - 「設備保全のために完全に綺麗な状態から起動したい」→ cold reboot
 - 「セキュリティパッチを当てる程度なので、停止時間は短く済ませたい」→ fast reboot
@@ -39,11 +39,11 @@ SONiC の reboot は、単に「速い順」に並べるよりも、どの状態
 
 Reboot 系の機能は **management plane と control plane の境界** に座ります。
 
-- 入口は CLI (`reboot` / `fast-reboot` / `warm-reboot` / `config warm_restart ...`)、gNOI (`Reboot` RPC)、Ansible 等の自動化経路。
+- 入口は CLI (`reboot` / `fast-reboot` / `warm-reboot` / `config warm_restart ...`)、[gNOI](../../reference/glossary.md#term-gnoi) (`Reboot` RPC)、Ansible 等の自動化経路。
 - 中間で `pre-shutdown`、`warm shutdown`、DB backup（`/host/warmboot/`）、kexec の準備が走ります。
-- 起動時には reboot type を `STATE_DB` / `/proc/cmdline` から判別し、syncd / orchagent / fpmsyncd / neighsyncd / teamd などが各々 warm / fast モードで起動し、最終的に reboot finalizer が「整合性が取れた」と判定して終了します。
-- データプレーン状態の維持は SAI の warm boot サポートと ASIC firmware の協力が前提です。
-- BGP / LACP / IGMP などの control plane プロトコルは Graceful Restart や warm restart 拡張で peer 側にも見えないように落ちます。
+- 起動時には reboot type を `STATE_DB` / `/proc/cmdline` から判別し、[syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) / [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) / [neighsyncd](../../reference/glossary.md#term-neighsyncd) / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) などが各々 warm / fast モードで起動し、最終的に reboot finalizer が「整合性が取れた」と判定して終了します。
+- データプレーン状態の維持は [SAI](../../reference/glossary.md#term-sai) の warm boot サポートと ASIC firmware の協力が前提です。
+- BGP / [LACP](../../reference/glossary.md#term-lacp) / IGMP などの control plane プロトコルは [Graceful Restart](../../reference/glossary.md#term-graceful-restart) や warm restart 拡張で peer 側にも見えないように落ちます。
 
 つまり Reboot は「**OS 全体の lifecycle イベントとして system 全コンポーネントを一斉に協調させる**」サブシステムです。1 コンポーネントでも warm 対応が抜けると warm reboot は不成立になります。
 
@@ -52,10 +52,10 @@ Reboot 系の機能は **management plane と control plane の境界** に座�
 - **Cold reboot**: 普通の `reboot`。OS ごと止めて起動し直す。
 - **Fast reboot**: kexec で kernel だけ載せ替えて bootloader / firmware 初期化を省略する。data plane は止まる。
 - **Warm reboot**: data plane を維持したまま OS を再起動。SAI の warm boot と DB backup / restore に依存。
-- **Express reboot**: fast reboot を拡張し、特定 ASIC で data plane 断を sub-second に詰めた派生。Cisco 8000 系向け HLD が背景。
+- **Express reboot**: fast reboot を拡張し、特定 ASIC で data plane 断を sub-second に詰めた派生。Cisco 8000 系向け [HLD](../../reference/glossary.md#term-hld) が背景。
 - **Service warm restart**: OS は維持したまま、`swss` / `bgp` / `teamd` などの container や daemon 単位で warm 再起動する。
 - **Warm shutdown / pre-shutdown**: warm reboot 前に SAI / orchagent / fpmsyncd 等に「これから warm で落ちる」と通知し、DB を凍結する手順。
-- **Reconciliation**: 起動後に kernel と APPL_DB の状態を突き合わせて、抜け漏れを補正するフェーズ。
+- **Reconciliation**: 起動後に kernel と [APPL_DB](../../reference/glossary.md#term-appl_db) の状態を突き合わせて、抜け漏れを補正するフェーズ。
 - **Reboot finalizer**: reconciliation を待ち、整合性が取れたタイミングで warm/fast モードを終了させる単純な systemd unit。
 - **kexec**: Linux の機能で、既存 kernel から新 kernel を直接ロードして起動する仕組み。BIOS / bootloader を経由しない。
 
@@ -97,7 +97,7 @@ flowchart TB
 
 fast reboot は「素早く落として戻す」経路です。kexec を使い、boot loader や firmware 初期化の一部を避けますが、data plane を維持すること自体は主目的ではありません。起動後は syncd、neighsyncd、fpmsyncd などが DB や kernel state を使って復元し、最終的に reboot finalizer が整合性を締めます。詳しくは [Fast-reboot Flow Improvements](../../system/fast-reboot-flow-improvements-hld.md) を参照します。
 
-warm reboot は「落とす前に warm shutdown を成立させ、戻る時に warm recovery と reconciliation を行う」経路です。ASIC が warm boot をサポートし、SAI object、Redis state、routing/LAG peer との graceful behavior が揃って初めて意味を持ちます。要件と順序は [SONiC Warm Reboot](../../system/sonic-warm-reboot.md) が基礎です。
+warm reboot は「落とす前に warm shutdown を成立させ、戻る時に warm recovery と reconciliation を行う」経路です。ASIC が warm boot をサポートし、SAI object、[Redis](../../reference/glossary.md#term-redis) state、routing/[LAG](../../reference/glossary.md#term-lag) peer との graceful behavior が揃って初めて意味を持ちます。要件と順序は [SONiC Warm Reboot](../../system/sonic-warm-reboot.md) が基礎です。
 
 ```mermaid
 flowchart LR
@@ -115,7 +115,7 @@ flowchart LR
 
 ## warm restart は reboot ではない
 
-`config warm_restart` は system-wide reboot ではなく、daemon や feature container の restart 時に状態を戻すための設定です。たとえば `swss` の warm restart は、APPL_DB / ASIC_DB / kernel / orchagent の関係を検証しながら restore と sync up を行います。warm reboot と同じく「状態を保持して差分を吸収する」考え方を使いますが、対象は OS ではなく service lifecycle です。
+`config warm_restart` は system-wide reboot ではなく、daemon や feature container の restart 時に状態を戻すための設定です。たとえば `swss` の warm restart は、APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) / kernel / orchagent の関係を検証しながら restore と sync up を行います。warm reboot と同じく「状態を保持して差分を吸収する」考え方を使いますが、対象は OS ではなく service lifecycle です。
 
 ## express reboot は派生として読む
 
@@ -157,3 +157,4 @@ warm reboot と「container restart + warm restart 機能」は混同しやす�
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
+<!-- glossary-links-injected: 4d61b14993eb -->

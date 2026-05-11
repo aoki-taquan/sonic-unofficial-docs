@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-BGP aggregate-address (集約広告) の設定テーブル。`frr-mgmt-framework` または `bgpcfgd` テンプレ経路で `aggregate-address <prefix> [summary-only] [as-set] ...` に変換される[^1]。
+[BGP](../../reference/glossary.md#term-bgp) aggregate-address (集約広告) の設定テーブル。`frr-mgmt-framework` または `bgpcfgd` テンプレ経路で `aggregate-address <prefix> [summary-only] [as-set] ...` に変換される[^1]。
 
 !!! note "VRF スコープ"
     YANG 定義のキーは `aggregate-address` のみで VRF スコープが取れない。MR 由来の初期実装で、BGP_GLOBALS の default VRF に対する集約として扱われる前提。複数 VRF 対応については HLD / 実装と整合性検証が要 (本ページは YANG 定義のみを根拠とする)。
@@ -62,13 +62,13 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 
 ## 購読者
 
-- `frr-mgmt-framework`: CONFIG_DB → FRR `aggregate-address` コマンド
+- `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → [FRR](../../reference/glossary.md#term-frr) `aggregate-address` コマンド
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `BGP_GLOBALS`、`PREFIX_SET`
 - 関連 CLI: `vtysh -c "show ip bgp aggregate"`
-- 関連 YANG: `sonic-bgp-aggregate-address`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-aggregate-address`
 
 <!-- ref-triangle:start -->
 
@@ -102,3 +102,5 @@ sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF_AGGREGATE_ADDR|*'
 vtysh -c 'show bgp ipv4 unicast'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3aa2902e22d8 -->
