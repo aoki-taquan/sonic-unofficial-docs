@@ -249,6 +249,22 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-operations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -621,6 +637,22 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/active-standby-dual-tor-concepts/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/active-standby-dual-tor-internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/active-standby-dual-tor-limitations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/active-standby-dual-tor-operations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/active-standby-dual-tor/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -646,6 +678,22 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vnet-local-endpoint-forwarding/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vxlan-sonic-concepts/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vxlan-sonic-internals/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vxlan-sonic-limitations/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vxlan-sonic-operations/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
