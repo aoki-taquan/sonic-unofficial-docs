@@ -2,7 +2,7 @@
 title: ポートの動的 add / del（zero-port 起動と post-init 操作）
 area: acl-qos
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/port-add-del-dynamically/dynamic_port_add_del_hld.md
@@ -247,3 +247,79 @@ HLD は port 削除時の race を「ref counter による orchagent 側の自�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+### 深掘り（2026-05-11、batch q3-disc-detail）
+
+#### HLD 記述と実装の差分（行番号 + コード抜粋）
+
+`sonic-swss/portsyncd/portsyncd.cpp` L122-L176 で `PortInitDone` 通知 + zero-port boot 対応が入っているが、HLD が要求する **port 削除時の ref-count 拒否** は未実装:
+
+```bash
+$ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
+    .cache/sonic-sources/sonic-swss/orchagent/
+# 0 件
+```
+
+`sonic-swss/orchagent/portsorch.cpp` 内の `removePort()` / `del PORT` 経路は依然として SAI 削除を試み、失敗時の syslog 出力のみで上位（VLAN / LAG / ACL / buffer PG）側の依存をチェックしない。
+
+#### 読者への影響
+
+- `sudo config interface shutdown EthernetX` 後に CONFIG_DB から直接 `PORT|EthernetX` を消すと、orchagent が以下を順次出す:
+  - `SAI_STATUS_OBJECT_IN_USE`（VLAN_MEMBER / ACL_TABLE / BUFFER_PG が参照中）
+  - `SAI_STATUS_INVALID_OBJECT_ID`（既に部分削除された下流 SAI オブジェクト）
+  - 最悪は orchagent 自体が `abort()` し syncd / swss コンテナが crash loop に入る。`fast-reboot` / `warm-reboot` が必要になる。
+- chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / lldpmgrd の起動順次第で `pending_cmds` が滞留し、lldp neighbor 表に古い情報が残る。
+- HLD で「ref counter で守られているから順序気にせず消してよい」と読んで自動化スクリプトを書くと、上記 race を踏む。
+
+#### 回避策の実コマンド
+
+port 削除の安全手順:
+
+```bash
+PORT=Ethernet64
+
+# 1) 全依存を列挙
+for db in 4 6; do
+  sonic-db-cli $([ "$db" = "4" ] && echo CONFIG_DB || echo STATE_DB) keys "*$PORT*"
+done
+
+# 2) ACL バインド解除
+for tbl in $(sonic-db-cli CONFIG_DB keys 'ACL_TABLE|*'); do
+  ports=$(sonic-db-cli CONFIG_DB hget "$tbl" ports)
+  if [[ "$ports" == *"$PORT"* ]]; then
+    new=$(echo "$ports" | sed "s/,$PORT//;s/$PORT,//;s/^$PORT$//")
+    sonic-db-cli CONFIG_DB hset "$tbl" ports "$new"
+  fi
+done
+
+# 3) VLAN / PortChannel メンバ解除
+for vm in $(sonic-db-cli CONFIG_DB keys "VLAN_MEMBER|*|$PORT"); do
+  sonic-db-cli CONFIG_DB del "$vm"
+done
+for pcm in $(sonic-db-cli CONFIG_DB keys "PORTCHANNEL_MEMBER|*|$PORT"); do
+  sonic-db-cli CONFIG_DB del "$pcm"
+done
+
+# 4) buffer PG / queue / qos-map をすべて消す
+for k in $(sonic-db-cli CONFIG_DB keys "BUFFER_PG|$PORT|*" "BUFFER_QUEUE|$PORT|*" "QUEUE|$PORT|*" "PORT_QOS_MAP|$PORT"); do
+  sonic-db-cli CONFIG_DB del "$k"
+done
+
+# 5) admin down → 削除
+sudo config interface shutdown $PORT
+sonic-db-cli CONFIG_DB del "PORT|$PORT"
+
+# 6) orchagent ログで SAI_STATUS_OBJECT_IN_USE が出ていないか確認
+sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
+```
+
+orchagent 側に上記前処理が無いため、**運用側で全部やりきる**しかない。
+
+#### 関連 GitHub Issue / PR
+
+- [sonic-swss #1112: \[DPB portsyncd/portmgrd/portorch\] Support dynamic port add/deletion without dependencies (merged)](https://github.com/sonic-net/sonic-swss/pull/1112) — 動的 port add/del のコア実装（DPB: Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。
+- HLD 内で言及されていた PR #2022（port buffer ref counter）は CLOSED で未マージのまま。後継 PR も提案されておらず、機能ギャップは継続。
+
+#### 検証日
+
+2026-05-11 (q3-disc-detail batch)

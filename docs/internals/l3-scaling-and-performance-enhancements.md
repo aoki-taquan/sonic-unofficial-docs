@@ -2,7 +2,7 @@
 title: L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
 area: internals
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
@@ -231,3 +231,79 @@ show ndp
 - show arp / show ndp の個別 FDB lookup 化が sonic-utilities に取り込まれているか確認
 - HLD は 2019 年改訂のため現行 master との乖離リスクあり
 -->
+
+### 深掘り（2026-05-11、batch q3-disc-detail）
+
+#### HLD 記述と実装の差分（行番号 + コード抜粋）
+
+`sonic-buildimage/files/image_config/sysctl/90-sonic.conf` L21-L26:
+
+```ini
+net.ipv4.neigh.default.gc_thresh1=1024
+net.ipv6.neigh.default.gc_thresh1=1024
+net.ipv4.neigh.default.gc_thresh2=2048
+net.ipv6.neigh.default.gc_thresh2=2048
+net.ipv4.neigh.default.gc_thresh3=4096
+net.ipv6.neigh.default.gc_thresh3=4096
+```
+
+→ HLD 提案値 (`16k/32k/48k` for v4, `8k/16k/32k` for v6) は **採用されていない**。実装は v4/v6 共通で `1024/2048/4096`。
+
+`sonic-buildimage/files/image_config/copp/copp_cfg.j2` L7, L17, L27 等で `cir` は `600` のまま、ARP trap (`queue4_group2`) の HLD 提案値 `8000 pps` は採用されず。
+
+`sonic-swss/orchagent/routeorch.cpp` L41:
+
+```cpp
+RouteOrch::RouteOrch(DBConnector *db, vector<table_name_with_pri_t> &tableNames,
+                     SwitchOrch *switchOrch, NeighOrch *neighOrch, IntfsOrch *intfsOrch,
+                     VRFOrch *vrfOrch, FgNhgOrch *fgNhgOrch, Srv6Orch *srv6Orch) :
+        gRouteBulker(sai_route_api, gMaxBulkSize),
+```
+
+→ bulker は **取り込み済み**。
+
+`sonic-swss/fpmsyncd/routesync.cpp` L2077-L2082 で `rt_table == 0` 時の master device lookup スキップは **取り込み済み**。
+
+#### 読者への影響
+
+- HLD 数値（ARP 32k スケール）を前提にスケール試験を組むと、`net.ipv4.neigh.default.gc_thresh3=4096` で gc が走り、**dmesg に `neighbour: arp_cache: neighbor table overflow!`** が出て学習に失敗。
+- CoPP ARP 600 pps なので **大規模 L2 sweep / failover 時に ARP / ND 学習が間に合わない**。HLD で謳う 8000 pps での収束 SLA を計算に入れた設計は破綻する。
+- 一方、bulk route programming と master device lookup スキップは入っているので、**routing path 自体の latency 改善は HLD どおりに享受できる**。誤解しないようにスケールと latency を分けて見積もる必要がある。
+
+#### 回避策の実コマンド
+
+```bash
+# 1) ARP/ND テーブル拡大（恒久化、image 再ビルド不要、runtime 上書き）
+sudo tee /etc/sysctl.d/99-arp-scale.conf <<EOF
+net.ipv4.neigh.default.gc_thresh1=8192
+net.ipv4.neigh.default.gc_thresh2=16384
+net.ipv4.neigh.default.gc_thresh3=32768
+net.ipv6.neigh.default.gc_thresh1=4096
+net.ipv6.neigh.default.gc_thresh2=8192
+net.ipv6.neigh.default.gc_thresh3=16384
+EOF
+sudo sysctl --system
+
+# 2) CoPP ARP 上限引き上げ（runtime）
+sonic-db-cli CONFIG_DB hset 'COPP_GROUP|queue4_group2' cir 8000 cbs 8000
+# 注: config_reload 後は copp_cfg.j2 由来の 600 に戻るため、bake 化が望ましい
+
+# 3) 現在の溢れ状況確認
+dmesg | grep -i "neighbour\|arp_cache" | tail
+ip -s -s neigh flush all   # 必要時のみ
+cat /proc/sys/net/ipv4/neigh/default/gc_thresh3
+
+# 4) bulk route 動作確認
+swssloglevel -l INFO -c routeorch
+sudo grep -i "bulk" /var/log/swss/sairedis.rec | tail
+```
+
+#### 関連 GitHub Issue / PR
+
+- 該当の `gc_thresh` / CoPP 値変更は明示的な community PR としては未提出。コミュニティ master では「メモリ・CPU トレードオフを優先して default を保守」の方針が継続している。
+- bulk route 関連: `sonic-swss/orchagent/routeorch.cpp` の `gRouteBulker` 追加は複数 PR で漸進的に成立。`grep -n "bulker" sonic-swss/orchagent/routeorch.cpp` で詳細を追える。
+- VnetOrch の bulker 拡張は [sonic-swss #4303 (open)](https://github.com/sonic-net/sonic-swss/pull/4303)。HLD 当時カバーされていなかった VNET ルート bulk programming の続き。
+
+#### 検証日
+
+2026-05-11 (q3-disc-detail batch)

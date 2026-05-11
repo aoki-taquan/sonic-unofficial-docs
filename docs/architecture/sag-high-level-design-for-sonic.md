@@ -2,7 +2,7 @@
 title: SAG（Static Anycast Gateway）for SONiC
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/sag/sag-HLD.md
@@ -153,3 +153,68 @@ HLD は `SAG|GLOBAL.gateway_mac`（グローバル SAG MAC）+ `VLAN_INTERFACE|<
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sag/sag-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+### 深掘り（2026-05-11、batch q3-disc-detail）
+
+#### HLD 記述と実装の差分（行番号 + コード抜粋）
+
+community master 側に SAG 関連の実装は **依然として全く無い**:
+
+```bash
+$ grep -rln "static_anycast\|SagOrch\|SAG_GLOBAL" \
+    .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/ \
+    .cache/sonic-sources/sonic-swss/orchagent/ \
+    .cache/sonic-sources/sonic-utilities/
+# 0 件
+```
+
+すべて open PR 状態でレビューが停滞:
+
+- `sonic-swss/orchagent/sagorch.{cpp,h}` — PR #1974 / #3167 で提案中、未マージ
+- `sonic-utilities/config/sag.py` — PR #2881 / #3339 で提案中、未マージ
+- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sag.yang` — PR #19069 で提案中、未マージ
+
+#### 読者への影響
+
+- HLD どおりに `sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f` を叩くと `Error: No such command "static-anycast-gateway"` で終了。CLI ハンドラが click ツリーに登録されていない。
+- `CONFIG_DB` に直接 `SAG|GLOBAL` / `VLAN_INTERFACE|Vlan100` の `static_anycast_gateway` を書いても、それを購読する `SagOrch` が起動していないため SAI 側に何も伝播しない（YANG validation も無いので `config save` 後に `config load` で消えないだけ）。
+- EVPN-VXLAN の leaf 冗長構成で「同一仮想 GW MAC」運用を community master 標準だけで実現する手段は **無い**。ベンダー fork（NVIDIA / Edgecore Enterprise SONiC / AsterNOS）か、手動の anycast 設定（後述）で代替。
+
+#### 回避策の実コマンド
+
+community master で SAG 相当を **手動で**作る方法:
+
+```bash
+# 1) leaf 全台で同じ MAC を VLAN RIF に振る（hostcfgd は MAC を上書きしないので /etc/network/interfaces.d/ で固定）
+SAG_MAC="00:11:22:33:44:0f"
+sudo ip link set dev Vlan100 address $SAG_MAC
+sudo ip link set dev Vlan100 up
+
+# 2) 各 leaf に同じゲートウェイ IP を振る（VLAN_INTERFACE）
+sudo config interface ip add Vlan100 10.0.100.1/24
+
+# 3) EVPN Type-2 で自身の MAC/IP を広告しないフィルタを FRR 側で書く
+# vtysh で route-map deny-sag-mac を作成し、neighbor <peer> route-map ... out で適用
+
+# 4) host 側へは VRRP / GARP も不要。各 leaf が同じ MAC で ARP 応答するので host から見れば 1 ホップ先が同一
+```
+
+確認:
+
+```bash
+ip -d link show Vlan100   # address が SAG_MAC か
+arping -I Vlan100 10.0.100.1   # 自身に対する ARP 応答が安定するか
+```
+
+#### 関連 GitHub Issue / PR
+
+- [SONiC #1915: eVPN Static Anycast Gateway + bug fixes (open, feature request)](https://github.com/sonic-net/SONiC/issues/1915) — community 側の本機能トラッキング issue。
+- [sonic-swss #3167: \[swss\] add static anycast gateway support (open)](https://github.com/sonic-net/sonic-swss/pull/3167) — SagOrch 実装提案 PR、現役レビュー対象。
+- [sonic-swss #1974: \[SAG\]: Add SAG implementation (open, 古い)](https://github.com/sonic-net/sonic-swss/pull/1974) — 旧提案、長期 stale。
+- [sonic-utilities #3339: \[CLI\] add static anycast gateway support (open)](https://github.com/sonic-net/sonic-utilities/pull/3339) — CLI 側提案 PR。
+- [sonic-buildimage #19069: \[Yang\] Add SAG Yang models (open)](https://github.com/sonic-net/sonic-buildimage/pull/19069) — YANG 側提案 PR。
+- [sonic-buildimage #13676: Defining a SAG setup on an ISP connected route/switch breaks Uplink BGP peer settings (open, Edgecore)](https://github.com/sonic-net/sonic-buildimage/issues/13676) — ベンダー fork 上でも組み合わせバグが既知。
+
+#### 検証日
+
+2026-05-11 (q3-disc-detail batch)
