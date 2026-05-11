@@ -91,6 +91,7 @@ def extract_average(audit_path: Path) -> tuple[float, str] | None:
 def build_banner() -> str:
     counts = collect_verification_counts()
     cv = counts.get("code-verified", 0)
+    rv = counts.get("runbook-verified", 0)
     dn = counts.get("discrepancy-found", 0)
     hld = counts.get("hld-only", 0)
 
@@ -124,6 +125,7 @@ def build_banner() -> str:
             MARK_START,
             "!!! success \"最新の品質状態\"",
             f"    - **code-verified ページ**: {cv} 件（HLD と実コードを照合済み）",
+            f"    - **runbook-verified ページ**: {rv} 件（Runbook 専用。実運用で症状再現性が確認済み）",
             f"    - **discrepancy-found ページ**: {dn} 件（HLD と実装の乖離を明示）",
             f"    {audit_line}",
             f"    {hld_line}",

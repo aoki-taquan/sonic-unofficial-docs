@@ -12,6 +12,7 @@ last_verified: 2026-05-11
 各状態の意味は次のとおりです。
 
 - **code-verified**: HLD と現行 master 実装を突き合わせて整合が取れているページ
+- **runbook-verified**: Runbook 専用ステータス。実運用で症状再現性が確認されており、HLD 一致は副次的
 - **discrepancy-found**: 実装と HLD の間に乖離が確認されたページ（[一覧](discrepancies.md)）
 - **issue-confirmed**: GitHub issue / PR で裏取り済みだが実コード突き合わせ未完了のページ
 - **hld-only**: HLD のみを根拠にしたページ（読み手は鵜呑みにせず実コード確認推奨）
@@ -24,7 +25,8 @@ last_verified: 2026-05-11
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 598 |
+| code-verified | 578 |
+| runbook-verified | 20 |
 | discrepancy-found | 46 |
 | issue-confirmed | 0 |
 | hld-only | 7 |
@@ -33,22 +35,22 @@ last_verified: 2026-05-11
 
 ## area 別マトリクス
 
-| area | code-verified | discrepancy-found | issue-confirmed | hld-only | meta | stub | 合計 |
-|------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-| `_meta` | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
-| `_root` | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
-| `acl-qos` | 29 | 2 | 0 | 0 | 0 | 1 | 32 |
-| `architecture` | 33 | 8 | 0 | 0 | 0 | 1 | 42 |
-| `categories` | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
-| `guides` | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
-| `internals` | 11 | 1 | 0 | 0 | 0 | 1 | 13 |
-| `management` | 35 | 8 | 0 | 0 | 0 | 1 | 44 |
-| `overlay` | 8 | 1 | 0 | 0 | 0 | 1 | 10 |
-| `platform` | 36 | 7 | 0 | 0 | 0 | 1 | 44 |
-| `reference` | 325 | 0 | 0 | 7 | 9 | 0 | 341 |
-| `routing` | 45 | 6 | 0 | 0 | 0 | 1 | 52 |
-| `switching` | 15 | 4 | 0 | 0 | 0 | 1 | 20 |
-| `system` | 61 | 9 | 0 | 0 | 1 | 1 | 72 |
-| `topics` | 0 | 0 | 0 | 0 | 155 | 0 | 155 |
+| area | code-verified | runbook-verified | discrepancy-found | issue-confirmed | hld-only | meta | stub | 合計 |
+|------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
+| `_meta` | 0 | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
+| `_root` | 0 | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
+| `acl-qos` | 29 | 0 | 2 | 0 | 0 | 0 | 1 | 32 |
+| `architecture` | 33 | 0 | 8 | 0 | 0 | 0 | 1 | 42 |
+| `categories` | 0 | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
+| `guides` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
+| `internals` | 11 | 0 | 1 | 0 | 0 | 0 | 1 | 13 |
+| `management` | 35 | 0 | 8 | 0 | 0 | 0 | 1 | 44 |
+| `overlay` | 8 | 0 | 1 | 0 | 0 | 0 | 1 | 10 |
+| `platform` | 36 | 0 | 7 | 0 | 0 | 0 | 1 | 44 |
+| `reference` | 305 | 20 | 0 | 0 | 7 | 9 | 0 | 341 |
+| `routing` | 45 | 0 | 6 | 0 | 0 | 0 | 1 | 52 |
+| `switching` | 15 | 0 | 4 | 0 | 0 | 0 | 1 | 20 |
+| `system` | 61 | 0 | 9 | 0 | 0 | 1 | 1 | 72 |
+| `topics` | 0 | 0 | 0 | 0 | 0 | 155 | 0 | 155 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。

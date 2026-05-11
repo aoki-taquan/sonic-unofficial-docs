@@ -52,7 +52,13 @@ VALID_AREAS = {
     "routing", "switching", "overlay", "acl-qos", "system",
     "management", "platform", "architecture", "internals", "reference",
 }
-VERIFICATIONS_REQUIRING_SOURCES = {"hld-only", "code-verified", "discrepancy-found"}
+VALID_VERIFICATION = {
+    "hld-only", "issue-confirmed", "code-verified", "discrepancy-found",
+    "runbook-verified", "stub", "meta",
+}
+VERIFICATIONS_REQUIRING_SOURCES = {
+    "hld-only", "code-verified", "discrepancy-found", "runbook-verified",
+}
 VALID_MONITORS = {
     "not_implemented", "evolved_beyond_hld", "partially_implemented", "deprecated",
 }
@@ -151,6 +157,10 @@ def lint_file(path: Path, *, check_paths: bool):
         return violations, warnings
 
     verification = fm.get("verification")
+    if verification is not None and str(verification).strip():
+        vv = str(verification).strip()
+        if vv not in VALID_VERIFICATION:
+            violations.append(f"verification '{vv}' not in valid enum {sorted(VALID_VERIFICATION)}")
     title = fm.get("title")
     area = fm.get("area")
     last_verified = fm.get("last_verified")
