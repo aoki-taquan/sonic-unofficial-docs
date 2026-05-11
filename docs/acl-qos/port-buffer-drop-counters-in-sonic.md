@@ -17,163 +17,99 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    `sonic-swss/orchagent/portsorch.h` L31 で `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP="PORT_BUFFER_DROP_STAT"`、`portsorch.cpp` L88 で `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS=60000`（HLD のデフォルト 60s と一致）、`flexcounterorch.cpp` L75 で flex counter テーブル登録を確認。`sonic-utilities/counterpoll/main.py` L146-178 に `counterpoll port-buffer-drop` グループ、interval バリデーションは `click.IntRange(30000, 300000)` で実装 (verified at: 2026-05-09)。
+    `sonic-swss/orchagent/portsorch.h` L31 で `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP="PORT_BUFFER_DROP_STAT"`、`portsorch.cpp` L88 で `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS=60000`、`sonic-utilities/counterpoll/main.py` L146-178 で `click.IntRange(30000, 300000)` バリデーション (verified at: 2026-05-09)。
 
 # ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
 
-## 概要
+ポート単位の SAI バッファドロップカウンタは「**なぜ専用 FC グループにしたか**」「**何を取るのか**」「**CLI でどう操作するか**」の 3 点が分かれば全体像はつかめる。順に答える。
 
-SONiC のポート単位 SAI ドロップカウンタ（ingress/egress バッファドロップ）は、過去に普通の port counter と同じ Flex Counter グループに混ぜて 1 秒間隔でポーリングしようとしたところ、**性能上の問題と衝突を引き起こすことが判明** し、いったん master から外された経緯がある[^1]:
+## なぜ専用 FC グループに分けたのか
 
-> "These counters are causing widespread issues in the master branch, so we're backing them out for now to be revisited in a later PR. They will likely need to be polled separately from the other counters, and on a longer interval, to avoid performance issues and conflicts." — sonic-swss PR 1308 [^1]
+過去に普通の `PORT_STAT` と同じ FC グループに混ぜて 1 秒間隔でポーリングしたところ、性能影響と衝突を起こし master から外された経緯がある[^1]。
 
-本機能は **専用の Flex Counter グループ `PORT_BUFFER_DROP` を新設** し、デフォルト 60 秒というゆったりした間隔で安全にポーリングする設計である。CLI 側でも「短すぎる interval を設定できないようバリデーション」を入れる[^1]。
+> "These counters are causing widespread issues in the master branch, so we're backing them out for now to be revisited in a later PR. They will likely need to be polled separately from the other counters, and on a longer interval, to avoid performance issues and conflicts." — sonic-swss PR 1308
 
-## 動作仕様
+そこで **専用 FC グループ `PORT_BUFFER_DROP` を新設し、既定 60 秒** というゆったりした間隔で取る設計に切り替えた。CLI でも短すぎる interval を弾くバリデーションを入れている[^1]。
 
-### 要件サマリ
+## 何を取るのか
 
-HLD の Functional Requirements[^1]:
-
-- ポートレベル buffer drop 用の **新しい Flex Counter グループ** を導入する。
-- このグループは **既定で enable**。
-- ポーリング間隔の **既定は 60s**。
-- CLI で以下を提供:
-    - enable / disable
-    - 30s〜5m の範囲で interval 設定
-    - 設定の表示
-
-### 対象カウンタ
-
-ポーリング対象は以下の SAI port stat 2 種[^1]:
+SAI port stat 2 種[^1]:
 
 | SAI counter | 意味 |
 |-------------|------|
-| `SAI_PORT_STAT_IN_DROPPED_PKTS` | ポート ingress バッファドロップ数 |
-| `SAI_PORT_STAT_OUT_DROPPED_PKTS` | ポート egress バッファドロップ数 |
-
-これらは port のバッファ起因のドロップを示す。**通常の `PORT_STAT`（既定 1s）と分離** して、長い間隔で取りに行く構造になる。
-
-### Flex Counter group の位置付け
+| `SAI_PORT_STAT_IN_DROPPED_PKTS` | ingress バッファドロップ |
+| `SAI_PORT_STAT_OUT_DROPPED_PKTS` | egress バッファドロップ |
 
 ```mermaid
 flowchart LR
-    SAI[SAI port stats] --> FC1[PORT_STAT FC group\n(default 1000ms)]
-    FC1 --> CDB1[(COUNTERS_DB)]
-    SAI --> FC2[PORT_BUFFER_DROP FC group\n(default 60000ms)]
-    FC2 --> CDB2[(COUNTERS_DB)]
+    SAI[SAI port stats] --> FC1[PORT_STAT FC group<br/>1000ms]
+    FC1 --> CDB[(COUNTERS_DB)]
+    SAI --> FC2[PORT_BUFFER_DROP FC group<br/>60000ms]
+    FC2 --> CDB
 ```
 
-既存 `PORT_STAT` から本機能対象の 2 カウンタを切り出して **別 FC グループにする** だけで、データの保管先（COUNTERS_DB）は同じ。
+既存 `PORT_STAT` から本 2 カウンタを切り出して別 FC グループにするだけ。保管先は同じ COUNTERS_DB。
 
-### CLI: 表示
+## CLI でどう操作するか
 
-`counterpoll show` の出力に `PORT_BUFFER_DROP` 行が **新たに追加** される[^1]:
-
-```text
-Before:
-admin@sonic:~$ counterpoll show
-Type                        Interval (in ms)    Status
---------------------------  ------------------  --------
-QUEUE_STAT                  default (10000)     enable
-PORT_STAT                   default (1000)      enable
-RIF_STAT                    default (1000)      enable
-QUEUE_WATERMARK_STAT        default (10000)     enable
-PG_WATERMARK_STAT           default (10000)     enable
-BUFFER_POOL_WATERMARK_STAT  default (10000)     enable
-
-After:
-admin@sonic:~$ counterpoll show
-Type                        Interval (in ms)    Status
---------------------------  ------------------  --------
-QUEUE_STAT                  default (10000)     enable
-PORT_STAT                   default (1000)      enable
-PORT_BUFFER_DROP            default (60000)     enable
-RIF_STAT                    default (1000)      enable
-QUEUE_WATERMARK_STAT        default (10000)     enable
-PG_WATERMARK_STAT           default (10000)     enable
-BUFFER_POOL_WATERMARK_STAT  default (10000)     enable
-```
-
-既定値は **60000ms = 60s**。
-
-### CLI: enable/disable と interval 変更
+`counterpoll show` の出力に `PORT_BUFFER_DROP` 行が追加される（既定 60000ms / enable）[^1]。
 
 ```bash
-# enable / disable
 counterpoll port-buffer-drop enable
 counterpoll port-buffer-drop disable
-
-# interval を変更（ms 単位、30000〜300000 の範囲）
-counterpoll port-buffer-drop interval 30000
+counterpoll port-buffer-drop interval 30000    # 30000〜300000 のみ受理
 ```
 
-interval は **30000ms（30s）以上、300000ms（5min）以下** にバリデーションされる[^1]。それ未満の値は CLI で拒否する。これは旧来の問題（短い interval だと性能影響）を CLI 段階で防ぐためのガード[^1]。
+interval バリデーションは **30s〜5min**。範囲外は CLI で拒否される（過去の性能問題再発防止）[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md#L52-L60 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
-  1. New flex counter group is introduced for the port-level buffer drop counters
-  2. The FC group is enabled by default
   3. The polling interval is 60s by default
-  3. Users can configure FC group via a CLI tool
-      1. Users can enable/disable polling
-      2. Users can set the polling interval in range from 30s to 5m
-      3. Users can view the FC configuration
+  3.2 Users can set the polling interval in range from 30s to 5m
 reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠。
 -->
 
-## 設定
-
-### 関連する CONFIG_DB
+## 関連する CONFIG_DB / CLI
 
 | Table | Key | フィールド | 用途 |
 |-------|-----|-----------|------|
-| `FLEX_COUNTER_TABLE` | `PORT_BUFFER_DROP` | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL` | 本グループの enable / interval を保持 |
-
-具体的なフィールド名は他 FC グループと同じスキーマに従う想定。HLD では FC グループ名 `PORT_BUFFER_DROP` 自体のみが明示されている[^1]。
-
-### 関連する CLI
+| `FLEX_COUNTER_TABLE` | `PORT_BUFFER_DROP` | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL` | enable / interval 保持 |
 
 | Command | 用途 |
 |---------|------|
-| `counterpoll show` | 全 FC グループ状態の一覧（PORT_BUFFER_DROP 行が追加される）|
-| `counterpoll port-buffer-drop enable` | 当該グループ有効化 |
-| `counterpoll port-buffer-drop disable` | 同 無効化 |
-| `counterpoll port-buffer-drop interval <ms>` | 30000〜300000 の範囲で interval 変更 |
-
-### 設定例
-
-```bash
-# 通常運用（60s）
-counterpoll port-buffer-drop enable
-
-# 短時間に切り詰め（最短 30s）
-counterpoll port-buffer-drop interval 30000
-
-# 一時的に止める
-counterpoll port-buffer-drop disable
-```
+| `counterpoll show` | 全 FC グループ状態一覧 |
+| `counterpoll port-buffer-drop enable/disable` | 有効化 / 無効化 |
+| `counterpoll port-buffer-drop interval <ms>` | 30000〜300000 |
 
 ## 制限事項
 
-- **interval は 30s〜5min の範囲外を受け付けない**。これは過去の master 問題（drop counters を 1s 間隔で回したら問題が出た）を再発させないための設計上の制限[^1]。
-- 対象カウンタは **port 単位の `IN_DROPPED_PKTS` / `OUT_DROPPED_PKTS` のみ**。Queue / PG / Buffer Pool 単位の drop は別 FC グループ系統が担当する[^1]。
-- 既定間隔 60s のため、**短時間のマイクロドロップを瞬時に観測する用途には向かない**。観測解像度は 1 分単位が前提。
+- interval は 30s〜5min の範囲外を受け付けない[^1]
+- 対象は port 単位の `IN/OUT_DROPPED_PKTS` のみ。Queue / PG / Buffer Pool 単位は別 FC 系統[^1]
+- 既定 60s のため、サブ秒のマイクロドロップを瞬時に観測する用途には向かない
 
 ## 干渉する機能
 
-- **`PORT_STAT` FC group**: 元々 1 つにまとめられていた drop 系カウンタが分離した。`PORT_STAT` の interval を 1s に保ったままでも drop 系は 60s 側で安全に取れる[^1]。
-- **既存の `show interfaces counters`**: 表示する drop 系列の値は `COUNTERS_DB` 経由で読み取る前提。FC グループの polling が disable だと最新値が更新されないため、disable 時は値が固まる挙動になる。
-- **マイクロバースト解析**: drop 系を 30s〜60s 単位でしか取らないので、サブ秒のバーストドロップを捉える要求があるなら、別途 watermark 系・テレメトリ機構を併用する必要がある（本 HLD のスコープ外）。
-- **WRED / ECN 統計**: 別 HLD 系統。`PORT_BUFFER_DROP` は SAI のバッファドロップ全般を見るが、WRED 由来の早期ドロップを区別するには WRED 統計側の機能を使う。
+- **`PORT_STAT` FC group**: 元々まとまっていた drop 系が分離。`PORT_STAT` を 1s のまま運用しても drop 系は 60s 側で安全
+- **`show interfaces counters`**: `COUNTERS_DB` 経由で読むため、disable 時は値が固まる
+- **マイクロバースト解析**: サブ秒精度が要るなら watermark / テレメトリ系を併用
+- **WRED 統計**: WRED 由来の早期ドロップを区別したいなら WRED 統計側を使う
 
 ## トラブルシューティング
 
-- `PORT_BUFFER_DROP` 行が `counterpoll show` に出ない: sonic-utilities が当該機能未取り込みの可能性。`counterpoll show` の実装と `FLEX_COUNTER_TABLE|PORT_BUFFER_DROP` のエントリ存在を確認。
-- `interval 1000` 等の短い値で error: 仕様どおり。30000〜300000 の範囲を指定する[^1]。
-- drop count が 0 のまま増えない: enable 状態か `counterpoll show` で確認。disable のままだと当然 0 のまま。
-- 値が想定と桁違いに少ない: interval が長いため **定常的な drop もまばらにしか積み上がらないように見える** ことがある。値は累積カウンタなので、観測時の `dt` を考慮して評価する。
+- `PORT_BUFFER_DROP` 行が出ない: sonic-utilities が未取り込み。`FLEX_COUNTER_TABLE|PORT_BUFFER_DROP` を redis で確認
+- `interval 1000` で error: 仕様。30000〜300000 を指定
+- drop count が 0 のまま: `counterpoll show` で enable 状態か確認
+- 値が桁違いに少ない: interval が長いため瞬間ドロップは積み上がりにくい。観測時の dt を考慮
+
+## 関連トピック
+
+- [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)
+
+## 関連ページ
+
+- [Configurable Drop Counters in SONiC](./configurable-drop-counters-in-sonic.md)
+- [Watermark Counters in SONiC](./watermark-counters-in-sonic.md)
 
 ## 引用元
 
