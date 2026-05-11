@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[ToR mux 状態が想定と違う] --> B{config_db MUX_CABLE 設定?}
+    B -- No --> B1[MUX_CABLE table を投入]
+    B -- Yes --> C{linkmgrd ヘルスチェック OK?}
+    C -- No --> C1[heartbeat / icmp_responder 確認]
+    C -- Yes --> D{ycabled / mux_status 一致?}
+    D -- No --> D1[ycabled ログ確認 / SoC 通信を点検]
+    D -- Yes --> E[gRPC / tunnel orch の状態確認]
+```
+
 ### 1. mux 状態と peer 状態
 
 ```bash

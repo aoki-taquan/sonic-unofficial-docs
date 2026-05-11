@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[link が up しない / 速度が想定と違う] --> B{両端 autoneg 設定一致?}
+    B -- No --> B1[port autoneg on/off を揃える]
+    B -- Yes --> C{advertised speeds が重なる?}
+    C -- No --> C1[adv-speeds / adv-types を見直し]
+    C -- Yes --> D{transceiver / cable 種別対応?}
+    D -- No --> D1[platform.json の対応リスト確認]
+    D -- Yes --> E[FEC / training の状態を確認]
+```
+
 ### 1. interface 状態
 
 ```bash

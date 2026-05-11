@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[gNMI Subscribe が頻繁に切断] --> B{TLS / 証明書 期限 OK?}
+    B -- No --> B1[証明書更新 / CA 設定確認]
+    B -- Yes --> C{telemetry container 安定動作?}
+    C -- No --> C1[docker logs telemetry でクラッシュ確認]
+    C -- Yes --> D{keepalive / heartbeat 設定?}
+    D -- No --> D1[grpc keepalive timeout を調整]
+    D -- Yes --> E[クライアント側 deadline / NW 経路を確認]
+```
+
 ### 1. セッション統計の確認
 
 ```bash

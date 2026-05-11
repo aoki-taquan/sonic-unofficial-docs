@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[multi-ASIC で namespace 操作失敗] --> B{namespace 列挙 OK?}
+    B -- No --> B1[/etc/sonic/sonic_version.yml / asic.conf 確認]
+    B -- Yes --> C{対象 ns の database container up?}
+    C -- No --> C1[database@<id> service を起動]
+    C -- Yes --> D{sonic-db-cli -n asicX 応答?}
+    D -- No --> D1[netns / docker exec の経路を確認]
+    D -- Yes --> E[swss@<id> / syncd@<id> の状態確認]
+```
+
 ### 1. namespace 一覧と feature 状態
 
 ```bash

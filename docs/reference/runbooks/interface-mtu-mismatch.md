@@ -37,6 +37,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[大きいパケットが落ちる / ping -s で失敗] --> B{両端 MTU 一致?}
+    B -- No --> B1[config interface mtu で揃える]
+    B -- Yes --> C{PortChannel メンバー mtu 一致?}
+    C -- No --> C1[LAG メンバー全てに同 MTU 設定]
+    C -- Yes --> D{VLAN/Vxlan の overhead 考慮?}
+    D -- No --> D1[overlay 用に +50/+54 増やす]
+    D -- Yes --> E[ASIC port MTU と sysctl を確認]
+```
+
 ### 1. 両端 MTU 比較
 
 ```bash

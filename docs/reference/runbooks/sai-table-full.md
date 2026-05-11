@@ -37,6 +37,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[SAI table 満杯エラー] --> B{どの table?}
+    B -- ROUTE/NH --> B1[BGP 経路数 / ECMP group を削減]
+    B -- ACL --> B2[ACL_TABLE 数 / entry を整理]
+    B -- FDB --> B3[VLAN aging / mac 学習量を見直し]
+    B1 --> C[platform のリソース上限を確認]
+    B2 --> C
+    B3 --> C
+```
+
 ### 1. CRM
 
 ```bash

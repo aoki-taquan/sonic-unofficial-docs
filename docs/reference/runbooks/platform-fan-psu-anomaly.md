@@ -37,6 +37,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[fan/PSU の異常検知] --> B{pmon container 健康?}
+    B -- No --> B1[pmon 再起動 / ログ確認]
+    B -- Yes --> C{STATE_DB FAN_INFO/PSU_INFO 取得可?}
+    C -- No --> C1[platform plugin (sonic_platform) を確認]
+    C -- Yes --> D{物理的に異常?}
+    D -- Yes --> D1[ハードウェア交換 / SP/BMC ログ]
+    D -- No --> E[thermalctld ログを精査]
+```
+
 ### 1. STATE_DB / sensor
 
 ```bash

@@ -42,6 +42,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[PFC で帯域が出ない / pause 過多] --> B{PFC 設定 priority 一致?}
+    B -- No --> B1[両端 DSCP/TC マップを揃える]
+    B -- Yes --> C{PFC watchdog 発火?}
+    C -- Yes --> C1[show pfcwd で対象 queue を特定]
+    C -- No --> D{buffer profile size 妥当?}
+    D -- No --> D1[BUFFER_PROFILE の xon/xoff 調整]
+    D -- Yes --> E[対向側 congestion / receiver を確認]
+```
+
 ### 1. QoS マッピングと PFC enabled priority の整合
 
 ```bash

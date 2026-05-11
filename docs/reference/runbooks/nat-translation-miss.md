@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[NAT が効かない / 期待通り変換されない] --> B{CONFIG_DB NAT 設定あり?}
+    B -- No --> B1[NAT / NAT_POOL / NAT_BINDINGS 投入]
+    B -- Yes --> C{natsyncd 動作 / ASIC_DB 反映?}
+    C -- No --> C1[natsyncd / natorch ログ確認]
+    C -- Yes --> D{conntrack エントリ生成?}
+    D -- No --> D1[ACL での bypass / zone 設定を確認]
+    D -- Yes --> E[CRM SNAT/DNAT エントリ枯渇を確認]
+```
+
 ### 1. グローバル / interface
 
 ```bash

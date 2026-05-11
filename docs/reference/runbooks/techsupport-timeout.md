@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[show techsupport が timeout] --> B{特定コマンドで stuck?}
+    B -- Yes --> B1[該当コマンドを除外 / 個別取得]
+    B -- No --> C{disk I/O 高負荷?}
+    C -- Yes --> C1[I/O 落ち着くまで待機 / nice 値調整]
+    C -- No --> D{database 応答遅延?}
+    D -- Yes --> D1[redis dump 範囲を絞る]
+    D -- No --> E[generate_dump.sh の timeout 値を引き上げ]
+```
+
 ### 1. 直近の dump サイズ / 残骸
 
 ```bash

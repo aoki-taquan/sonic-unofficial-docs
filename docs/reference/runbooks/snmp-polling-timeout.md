@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[SNMP polling が timeout] --> B{snmp container 起動?}
+    B -- No --> B1[feature snmp enable]
+    B -- Yes --> C{community / source ACL 一致?}
+    C -- No --> C1[SNMP_COMMUNITY / SNMP_AGENT_ADDRESS_CONFIG 修正]
+    C -- Yes --> D{snmpd CPU 高負荷?}
+    D -- Yes --> D1[OID 数削減 / polling 間隔を緩和]
+    D -- No --> E[NW 経路 / MTU を確認]
+```
+
 ### 1. host 側 reachability
 
 ```bash

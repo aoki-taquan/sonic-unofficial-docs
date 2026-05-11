@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[対向に経路が届かない] --> B{local RIB に経路あり?}
+    B -- No --> B1[起源側 redistribute / network 文を確認]
+    B -- Yes --> C{Adj-RIB-Out に乗っている?}
+    C -- No --> C1[route-map / prefix-list で deny されていないか]
+    C -- Yes --> D{outbound policy 適用順序 OK?}
+    D -- No --> D1[route-map seq 番号と match 条件を修正]
+    D -- Yes --> E[clear bgp <peer> soft out で再送信]
+```
+
 ### 1. local RIB と Adj-RIB-Out
 
 ```bash

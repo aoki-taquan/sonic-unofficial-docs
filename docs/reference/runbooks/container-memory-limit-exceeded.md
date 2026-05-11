@@ -37,6 +37,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[container OOM / RSS 異常増加] --> B{docker stats で RSS 増?}
+    B -- No --> B1[memory leak ではない / 他要因調査]
+    B -- Yes --> C{cgroup limit 設定?}
+    C -- No --> C1[/etc/sonic/docker_image_ctl で limit 調整]
+    C -- Yes --> D{特定プロセスの RSS 偏り?}
+    D -- Yes --> D1[該当プロセスの core / heap profile 採取]
+    D -- No --> E[techsupport 採取しコミュニティへ報告]
+```
+
 ### 1. 各 container の使用量
 
 ```bash

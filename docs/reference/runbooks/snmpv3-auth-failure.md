@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[SNMPv3 認証失敗] --> B{user / authPriv 設定一致?}
+    B -- No --> B1[SNMP_USER の authProto/privProto 修正]
+    B -- Yes --> C{passphrase 長さ要件 OK?}
+    C -- No --> C1[8 文字以上に再設定]
+    C -- Yes --> D{engineID 一致?}
+    D -- No --> D1[snmpd の engineID 確認 / 再生成]
+    D -- Yes --> E[snmpd ログで authError を確認]
+```
+
 ### 1. user 設定
 
 ```bash

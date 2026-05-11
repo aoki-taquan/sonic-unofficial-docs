@@ -38,6 +38,20 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[ACL rule の counter が 0] --> B{CONFIG_DB に rule あり?}
+    B -- No --> B1[ACL_RULE / ACL_TABLE 投入]
+    B -- Yes --> C{ASIC_DB に ENTRY 反映?}
+    C -- No --> C1[orchagent / aclorch ログ確認]
+    C -- Yes --> D{stage / bind port が正しい?}
+    D -- No --> D1[ACL_TABLE.ports / stage を見直し]
+    D -- Yes --> E{counter polling 有効?}
+    E -- No --> E1[FLEX_COUNTER で ACL を enable]
+    E -- Yes --> F[CRM ACL_ENTRY / ACL_COUNTER 枯渇を確認]
+```
+
 ### 1. CONFIG_DB の table / rule
 
 ```bash

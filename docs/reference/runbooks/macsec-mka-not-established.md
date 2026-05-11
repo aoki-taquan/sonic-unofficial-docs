@@ -38,6 +38,18 @@ related:
 
 ## 切り分け手順
 
+
+```mermaid
+flowchart TD
+    A[MACsec MKA が established にならない] --> B{両端 CAK/CKN 一致?}
+    B -- No --> B1[MACSEC_PROFILE の CAK/CKN を再投入]
+    B -- Yes --> C{cipher suite 一致?}
+    C -- No --> C1[cipher_suite を揃える]
+    C -- Yes --> D{wpa_supplicant ログ EAPOL 通信?}
+    D -- No --> D1[L2 forwarding / etype 0x888E を確認]
+    D -- Yes --> E[macsecmgrd / SAI MACSEC 設定を確認]
+```
+
 ### 1. profile / port 状態
 
 ```bash
