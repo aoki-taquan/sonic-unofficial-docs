@@ -174,6 +174,36 @@ Restarting DHCP relay service ...
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config vlan"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>VLAN")]
+  SC --> CDB0
+  DM0["vlanmgrd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>VLAN_MEMBER")]
+  SC --> CDB1
+  DM1["vlanmgrd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>VLAN_INTERFACE")]
+  SC --> CDB2
+  DM2["intfmgrd"]
+  CDB2 --> DM2
+  CDB3[("CONFIG_DB<br/>DHCP_RELAY")]
+  SC --> CDB3
+  DM3["dhcrelay"]
+  CDB3 --> DM3
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

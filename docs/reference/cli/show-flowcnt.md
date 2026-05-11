@@ -116,6 +116,20 @@ excerpt: |
 |----------|----------|------------------|
 | `FLOW_COUNTER_ROUTE_PATTERN` | key=`<vrf>|<prefix>`, field=`max` | `config flowcnt-route ...` で書き込み、`show flowcnt-route config` で表示 |
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show flowcnt-trap"]
+  CDB0[("CONFIG_DB<br/>FLOW_COUNTER_ROUTE_PATTERN")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

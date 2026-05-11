@@ -153,6 +153,28 @@ Successfully loaded ACL rules from /etc/sonic/acl_rules.json
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config acl"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>ACL_TABLE")]
+  SC --> CDB0
+  DM0["AclOrch"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>ACL_RULE")]
+  SC --> CDB1
+  DM1["AclOrch"]
+  CDB1 --> DM1
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

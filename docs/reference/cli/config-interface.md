@@ -282,6 +282,36 @@ Ethernet0 admin status set to up.
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config interface"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>PORT")]
+  SC --> CDB0
+  DM0["portmgrd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>PORTCHANNEL")]
+  SC --> CDB1
+  DM1["teammgrd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>VLAN_SUB_INTERFACE")]
+  SC --> CDB2
+  DM2["intfmgrd"]
+  CDB2 --> DM2
+  CDB3[("CONFIG_DB<br/>LOOPBACK_INTERFACE")]
+  SC --> CDB3
+  DM3["intfmgrd"]
+  CDB3 --> DM3
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

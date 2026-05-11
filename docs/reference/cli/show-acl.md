@@ -104,6 +104,22 @@ DATA_ACL  L3      Ethernet0,Ethernet4  Data plane ingress ACL   ingress
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show acl"]
+  CDB0[("CONFIG_DB<br/>ACL_TABLE")]
+  CDB0 --> CLI
+  CDB1[("CONFIG_DB<br/>ACL_RULE")]
+  CDB1 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
