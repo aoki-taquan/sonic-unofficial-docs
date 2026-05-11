@@ -2,6 +2,7 @@
 title: L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
 area: internals
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

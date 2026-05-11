@@ -2,6 +2,7 @@
 title: ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
 area: system
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

@@ -2,6 +2,7 @@
 title: SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）
 area: system
 verification: discrepancy-found
+monitor: deprecated
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

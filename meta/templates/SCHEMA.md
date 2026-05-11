@@ -17,6 +17,7 @@
 | `related.config_db` | optional | list | 関連 CONFIG_DB テーブル名 |
 | `related.cli` | optional | list | 関連 CLI コマンド |
 | `related.yang` | optional | list | 関連 YANG モジュール |
+| `monitor` | conditional | enum | `not_implemented` / `evolved_beyond_hld` / `partially_implemented` / `deprecated`。`verification: discrepancy-found` のとき **必須**。それ以外は optional |
 
 `related.*` は **空配列でも合格**。HLD で言及されていない実装由来の項目を推測で書いてはならない。確実なもののみ列挙し、不明なら空配列にして本文側に「該当する CLI / CONFIG_DB は HLD では未定義」等を注記する。
 
@@ -30,6 +31,21 @@
 | `issue-confirmed` | issue/PR コメントで補強済み | 🔍 Issue-confirmed |
 | `code-verified` | 該当実装を読んで一致確認済み | ✅ Code-verified |
 | `discrepancy-found` | HLD と実装に差分あり。本文に注記 | ⚠️ Discrepancy-found |
+
+## monitor の意味（discrepancy-found 専用タグ）
+
+`verification: discrepancy-found` のページは、HLD と実装の差分の **性質** を表す `monitor:` タグを必ず持つ。Verifier / 読み手が「設計が未着手なのか、それとも実装が進化して別物になったのか」を一目で判別できるようにするため。
+
+| 値 | 意味 | 判定基準 |
+|----|------|---------|
+| `not_implemented` | HLD は提案段階で、master に対応コードが一切無い | 関連 orch / table / CLI / yang を grep してヒット 0 件。HLD は採用見送りか着手前 |
+| `evolved_beyond_hld` | 実装は HLD から進化し、名前・構造・経路が異なる | 機能としては存在するが、CONFIG_DB テーブル名 / 引数 / 変数名 / クラス名 / 設定経路が HLD と一致しない |
+| `partially_implemented` | HLD のうち一部だけ取り込まれ、残りは欠落 | 取り込み済み要素と未取り込み要素が **両方** 列挙されており、ユーザに見える機能境界が HLD と一致しない |
+| `deprecated` | HLD の方針自体が廃止され、後発別機能に置き換えられた | 「本 HLD は採用されず X に置き換えられている」「migration-to-Y で置換」等を本文に明記 |
+
+判定が迷う場合の優先順位は **`deprecated` > `not_implemented` > `partially_implemented` > `evolved_beyond_hld`**。後発の置き換えがあるなら `deprecated`、全く取り込まれていないなら `not_implemented`、一部のみなら `partially_implemented`、全部実装はあるが形が違うなら `evolved_beyond_hld`。
+
+`verification` が `discrepancy-found` 以外（`hld-only` / `code-verified` 等）でも、将来 monitor タグを再利用する余地はあるが現状は optional 扱い。
 
 ## 引用ルール
 

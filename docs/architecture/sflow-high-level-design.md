@@ -2,6 +2,7 @@
 title: sFlow（hsflowd / sflowmgrd / SAI sample-packet）
 area: architecture
 verification: discrepancy-found
+monitor: evolved_beyond_hld
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC

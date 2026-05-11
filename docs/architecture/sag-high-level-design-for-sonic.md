@@ -2,6 +2,7 @@
 title: SAG（Static Anycast Gateway）for SONiC
 area: architecture
 verification: discrepancy-found
+monitor: not_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

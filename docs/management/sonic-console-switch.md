@@ -2,6 +2,7 @@
 title: Console Switch（serial hub の reverse SSH 集約）
 area: management
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

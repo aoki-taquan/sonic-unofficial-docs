@@ -2,6 +2,7 @@
 title: L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
 area: switching
 verification: discrepancy-found
+monitor: partially_implemented
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

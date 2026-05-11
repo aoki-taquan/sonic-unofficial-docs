@@ -2,6 +2,7 @@
 title: Local ARS（Adaptive Routing & Switching の local 完結版）
 area: routing
 verification: discrepancy-found
+monitor: not_implemented
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC

@@ -2,6 +2,7 @@
 title: fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
 area: routing
 verification: discrepancy-found
+monitor: evolved_beyond_hld
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

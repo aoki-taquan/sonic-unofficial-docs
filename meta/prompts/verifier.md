@@ -22,7 +22,9 @@ merge 済みのページについて、実コードを読んで裏取りを行�
 4. 結果に応じて以下のいずれか:
    - 完全に一致: ページ frontmatter の `verification: code-verified`、`last_verified` を更新。対応する `meta/queue/<area>-<slug>.json` を **削除**（裏取り済みのため）するか、`verified_concerns` に確認済み懸念を移して `concerns` を空にする
    - 齟齬あり: `verification: discrepancy-found`、本文に注記、必要なら別 issue を起票。per-page ファイルの `concerns` を更新
+   - **`discrepancy-found` を付ける場合は frontmatter に `monitor:` タグを必ず追加する**（`not_implemented` / `evolved_beyond_hld` / `partially_implemented` / `deprecated` のいずれか、SCHEMA.md 参照）。判定優先度は `deprecated` > `not_implemented` > `partially_implemented` > `evolved_beyond_hld`
 5. `.venv/bin/python3 meta/scripts/aggregate_queue.py` を実行して集約ビューを再生成し、PR に含める
+6. `.venv/bin/python3 meta/scripts/frontmatter_lint.py` を走らせて enum 違反が出ないことを確認する
 
 ## 出力
 

@@ -2,6 +2,7 @@
 title: BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
 area: routing
 verification: discrepancy-found
+monitor: deprecated
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

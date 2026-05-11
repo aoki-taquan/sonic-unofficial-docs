@@ -2,6 +2,7 @@
 title: SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
 area: management
 verification: discrepancy-found
+monitor: not_implemented
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC

@@ -25,7 +25,12 @@ issue のラベルにより、以下のサブタイプに分岐する。
    - HLD のみ参照した場合: `hld-only`
    - issue/PR コメントで補強した場合: `issue-confirmed`
    - 実コードを読んで確認した場合のみ: `code-verified`
-   - 食い違いを発見した場合: `discrepancy-found` + 本文に注記
+   - 食い違いを発見した場合: `discrepancy-found` + 本文に注記 + `monitor:` タグ必須
+     - `not_implemented`: HLD は提案だが master に対応コードが一切無い（grep で 0 件）
+     - `evolved_beyond_hld`: 実装は存在するが、テーブル名・引数・変数名・クラス名・経路が HLD と異なる
+     - `partially_implemented`: HLD のうち一部のみ取り込み、残りは未実装
+     - `deprecated`: 本 HLD の方針は採用されず、後発の別機能（後継 HLD / FRR 機能等）に置き換えられた
+     - 判定優先度: `deprecated` > `not_implemented` > `partially_implemented` > `evolved_beyond_hld`。詳細は `meta/templates/SCHEMA.md` の "monitor の意味" 節を参照
 5. 関連する CONFIG_DB テーブル / CLI コマンド / YANG モジュールを `related.*` に列挙
 6. 図は **mermaid**。スクリーンショット・PNG は使わない
    - HLD 側に PNG 参照（例: `images/foo.png`）が含まれる場合、画像をそのままコピー・参照しない。図の意味を読み取り **mermaid（フローチャート / シーケンス / 状態遷移）で再描画**する

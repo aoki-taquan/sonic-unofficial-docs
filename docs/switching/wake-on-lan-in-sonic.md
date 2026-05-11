@@ -2,6 +2,7 @@
 title: Wake-on-LAN（wol CLI と SonicWolService gNOI）
 area: switching
 verification: discrepancy-found
+monitor: evolved_beyond_hld
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

@@ -2,6 +2,7 @@
 title: EVPN VXLAN Multihoming（ESI / DF election / split-horizon）
 area: routing
 verification: discrepancy-found
+monitor: not_implemented
 last_verified: 2026-05-10
 sources:
   - repo: sonic-net/SONiC
