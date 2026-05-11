@@ -23446,6 +23446,7 @@
 <p>各状態の意味は次のとおりです。</p>
 <ul>
 <li><strong>code-verified</strong>: HLD と現行 master 実装を突き合わせて整合が取れているページ</li>
+<li><strong>runbook-verified</strong>: Runbook 専用ステータス。実運用で症状再現性が確認されており、HLD 一致は副次的</li>
 <li><strong>discrepancy-found</strong>: 実装と HLD の間に乖離が確認されたページ（<a href="../discrepancies/">一覧</a>）</li>
 <li><strong>issue-confirmed</strong>: GitHub issue / PR で裏取り済みだが実コード突き合わせ未完了のページ</li>
 <li><strong>hld-only</strong>: HLD のみを根拠にしたページ（読み手は鵜呑みにせず実コード確認推奨）</li>
@@ -23464,7 +23465,11 @@
 <tbody>
 <tr>
 <td>code-verified</td>
-<td style="text-align: right;">598</td>
+<td style="text-align: right;">578</td>
+</tr>
+<tr>
+<td>runbook-verified</td>
+<td style="text-align: right;">20</td>
 </tr>
 <tr>
 <td>discrepancy-found</td>
@@ -23494,6 +23499,7 @@
 <tr>
 <th>area</th>
 <th style="text-align: right;">code-verified</th>
+<th style="text-align: right;">runbook-verified</th>
 <th style="text-align: right;">discrepancy-found</th>
 <th style="text-align: right;">issue-confirmed</th>
 <th style="text-align: right;">hld-only</th>
@@ -23509,12 +23515,14 @@
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">3</td>
 </tr>
 <tr>
 <td><code>_root</code></td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23526,6 +23534,7 @@
 <tr>
 <td><code>acl-qos</code></td>
 <td style="text-align: right;">29</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">2</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23536,6 +23545,7 @@
 <tr>
 <td><code>architecture</code></td>
 <td style="text-align: right;">33</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">8</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23545,6 +23555,7 @@
 </tr>
 <tr>
 <td><code>categories</code></td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23559,6 +23570,7 @@
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">5</td>
@@ -23566,6 +23578,7 @@
 <tr>
 <td><code>internals</code></td>
 <td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23576,6 +23589,7 @@
 <tr>
 <td><code>management</code></td>
 <td style="text-align: right;">35</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">8</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23586,6 +23600,7 @@
 <tr>
 <td><code>overlay</code></td>
 <td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23596,6 +23611,7 @@
 <tr>
 <td><code>platform</code></td>
 <td style="text-align: right;">36</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">7</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23605,7 +23621,8 @@
 </tr>
 <tr>
 <td><code>reference</code></td>
-<td style="text-align: right;">325</td>
+<td style="text-align: right;">305</td>
+<td style="text-align: right;">20</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">7</td>
@@ -23616,6 +23633,7 @@
 <tr>
 <td><code>routing</code></td>
 <td style="text-align: right;">45</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">6</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23626,6 +23644,7 @@
 <tr>
 <td><code>switching</code></td>
 <td style="text-align: right;">15</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23636,6 +23655,7 @@
 <tr>
 <td><code>system</code></td>
 <td style="text-align: right;">61</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">9</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
@@ -23645,6 +23665,7 @@
 </tr>
 <tr>
 <td><code>topics</code></td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
