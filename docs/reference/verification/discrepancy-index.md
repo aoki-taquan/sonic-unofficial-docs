@@ -9,7 +9,7 @@ last_verified: 2026-05-11
 
 このページは、`verification: discrepancy-found` が付いた全ページを自動収集して並べたものです。`meta/scripts/gen_discrepancy_index.py` で生成されます。
 
-SONiC コミュニティ master の [HLD](../../reference/glossary.md#term-hld) には、(1) 設計提案のみで実装が取り込まれなかったもの、(2) 取り込まれた後に別設計へ置き換えられたもの、(3) 部分的に取り込まれて HLD の記述と乖離しているもの、が混在しています。本プロジェクトでは該当ページに `verification: discrepancy-found` を付け、frontmatter `monitor:` で次のように分類しています。
+SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装が取り込まれなかったもの、(2) 取り込まれた後に別設計へ置き換えられたもの、(3) 部分的に取り込まれて HLD の記述と乖離しているもの、が混在しています。本プロジェクトでは該当ページに `verification: discrepancy-found` を付け、frontmatter `monitor:` で次のように分類しています。
 
 - `not_implemented`: HLD 提案が現行 master に取り込まれていない
 - `evolved_beyond_hld`: 取り込まれたが HLD 記述と乖離した形で進化／置換された
@@ -73,7 +73,7 @@ SONiC コミュニティ master の [HLD](../../reference/glossary.md#term-hld) 
 - [SAG（Static Anycast Gateway）for SONiC](../../architecture/sag-high-level-design-for-sonic.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
-  2026-05 時点で **SAG コード / [YANG](../../reference/glossary.md#term-yang) / CLI は community master に取り込まれておらず、HLD 提案段階**。
+  2026-05 時点で **SAG コード / [YANG](../reference/glossary.md#term-yang) / CLI は community master に取り込まれておらず、HLD 提案段階**。
 
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../../architecture/ssdhealth-design.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -117,7 +117,7 @@ SONiC コミュニティ master の [HLD](../../reference/glossary.md#term-hld) 
 - [Portable Console Device 設計（USB ベンダー console デバイスの抽象化）](../../management/portable-console-device-design.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
-  2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマのいずれにも入っていない。
+  2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマのいずれにも入っていない。
 
 - [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../../management/sonic-yang-model-guidelines.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -156,7 +156,7 @@ SONiC コミュニティ master の [HLD](../../reference/glossary.md#term-hld) 
 - [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](../../platform/fec-flr-support-in-sonic.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
-  2026-05-09 時点の現行 master を裏取り。本機能の **コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み**だが、**HLD で示唆された動的設定 CLI（`counterpoll port flr-interval-factor`）は未実装**であり、poll 周期は lua スクリプト内のハードコード値に固定されている。
+  2026-05-09 時点の現行 master を裏取り。本機能の **コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み**だが、**[HLD](../reference/glossary.md#term-hld) で示唆された動的設定 CLI（`counterpoll port flr-interval-factor`）は未実装**であり、poll 周期は lua スクリプト内のハードコード値に固定されている。
 
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -285,10 +285,10 @@ SONiC コミュニティ master の [HLD](../../reference/glossary.md#term-hld) 
 - [ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）](../../system/reset-local-users-passwords-during-init-hld.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
   
-  per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
+  per-page queue で既出の通り、[HLD](../reference/glossary.md#term-hld) が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
 
 ## 監査基準の取り扱い
 
 本ページ群（`verification: discrepancy-found` のページ）は、「機能としては完結していなくても、代わりに HLD と実装の差分を整理して読み手に渡す」ことを目的としています。品質監査 (`meta/quality-audit-*.md`) における **軸 6 (完結性)** は、本ページ群では「乖離説明の整理度」（monitor タグ妥当性 / 「実装との乖離」セクションの構造化 / 裏取り evidence / 読み手への next-action）に読み替えて評価します。詳細は `meta/templates/SCHEMA.md` の 「`discrepancy-found` ページの軸 6 評価基準」セクション、および `meta/quality-audit-guide.md` を参照してください。
 
-<!-- glossary-links-injected: 2c50e311bc81 -->
+<!-- glossary-links-injected: 6d8bb7aa6d25 -->
