@@ -76,17 +76,37 @@ GPU クラスタの allreduce が走り始めて、ToR 1 台の特定 uplink で
 
 ```mermaid
 flowchart LR
-  IN[ingress packet<br>DSCP=26] --> M1[DSCP_TO_TC_MAP<br>TC=3]
-  M1 --> M2[TC_TO_PG_MAP<br>PG=3]
-  M2 --> PGBUF[ingress PG buffer<br>xoff 接近]
-  PGBUF -->|xoff 到達| PFC[PFC frame 送出<br>upstream に PAUSE]
-  PGBUF --> M3[TC_TO_QUEUE_MAP<br>Q=3]
-  M3 --> QBUF[egress queue buffer]
-  QBUF --> WRED[WRED / ECN<br>平均深さで mark]
-  WRED --> SCH[SCHEDULER<br>strict / DWRR]
-  SCH --> OUT[出力]
-  PFC -.可観測.-> CNT[(COUNTERS_DB<br>PFC_RX/TX)]
-  QBUF -.観測.-> WM[(WATERMARK<br>queue peak)]
+  IN["<b>ingress packet</b><br/>DSCP=26"]:::pkt
+  subgraph INGRESS["Ingress (受信)"]
+    direction TB
+    M1["DSCP_TO_TC_MAP<br/>→ TC=3"]:::map
+    M2["TC_TO_PG_MAP<br/>→ PG=3"]:::map
+    PGBUF["<b>PG buffer</b><br/>xoff 接近"]:::buf
+    PFC["<b>PFC frame</b><br/>upstream に PAUSE"]:::alert
+  end
+  subgraph EGRESS["Egress (送信)"]
+    direction TB
+    M3["TC_TO_QUEUE_MAP<br/>→ Q=3"]:::map
+    QBUF["<b>queue buffer</b>"]:::buf
+    WRED["WRED / ECN mark"]:::policy
+    SCH["SCHEDULER<br/>strict / DWRR"]:::policy
+  end
+  OUT["<b>出力</b>"]:::pkt
+  CNT[("COUNTERS_DB<br/>PFC_RX/TX")]:::obs
+  WM[("WATERMARK<br/>queue peak")]:::obs
+
+  IN --> M1 --> M2 --> PGBUF
+  PGBUF ==>|xoff 到達| PFC
+  PGBUF --> M3 --> QBUF --> WRED --> SCH --> OUT
+  PFC -.観測.-> CNT
+  QBUF -.観測.-> WM
+
+  classDef pkt fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef map fill:#e2e3e5,stroke:#41464b,color:#000;
+  classDef buf fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef alert fill:#f8d7da,stroke:#721c24,stroke-width:2px,color:#000;
+  classDef policy fill:#d4edda,stroke:#155724,color:#000;
+  classDef obs fill:#e8d5f0,stroke:#4b0082,color:#000;
 ```
 
 このとき運用者が見るのは大体次の 3 つです。

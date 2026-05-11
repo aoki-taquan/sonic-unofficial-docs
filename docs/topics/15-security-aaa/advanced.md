@@ -19,15 +19,35 @@ sources:
 
 ```mermaid
 flowchart LR
-  BIOS[UEFI / BIOS] --> SHIM[shim]
-  SHIM --> GRUB[GRUB]
-  GRUB --> KERNEL[kernel + initrd]
-  KERNEL --> DOCKER[dockerd]
-  DOCKER --> CONT[SONiC containers]
-  KERNEL --> SSL[OpenSSL FIPS provider]
+  subgraph BOOT["起動時の信頼チェーン (secure boot)"]
+    direction LR
+    BIOS["<b>UEFI / BIOS</b>"]:::hw
+    SHIM["shim"]:::boot
+    GRUB["GRUB"]:::boot
+    KERNEL["<b>kernel + initrd</b>"]:::boot
+  end
+
+  subgraph RUNTIME["実行時 (container hardening + FIPS)"]
+    direction TB
+    DOCKER["dockerd"]:::rt
+    CONT["<b>SONiC containers</b><br/>(cap-drop / hardening)"]:::rt
+    SSL["<b>OpenSSL FIPS provider</b><br/>(140-3)"]:::crypto
+  end
+
+  UPGRADE["<b>secure upgrade</b><br/>image 署名検証"]:::upg
+
+  BIOS --> SHIM --> GRUB --> KERNEL
+  KERNEL --> DOCKER --> CONT
+  KERNEL --> SSL
   CONT --> SSL
-  UPGRADE[secure upgrade] -. verifies .-> KERNEL
-  UPGRADE -. verifies .-> CONT
+  UPGRADE -. 検証 .-> KERNEL
+  UPGRADE -. 検証 .-> CONT
+
+  classDef hw fill:#e2e3e5,stroke:#41464b,stroke-width:2px,color:#000;
+  classDef boot fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef rt fill:#d4edda,stroke:#155724,stroke-width:1.5px,color:#000;
+  classDef crypto fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef upg fill:#fde2e4,stroke:#a83279,stroke-width:2px,color:#000;
 ```
 
 secure boot は起動時の真正性、OpenSSL FIPS は実行時の暗号モジュールの認証、secure upgrade は image 更新時の真正性、container hardening は実行時の attack surface 縮小に対応します。

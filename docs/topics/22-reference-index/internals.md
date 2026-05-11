@@ -14,17 +14,31 @@ sources: []
 
 ```mermaid
 flowchart LR
-  USER[oper / script] --> CLICK[sonic-utilities<br/>click CLI]
-  CLICK --> CONFIG[config_db / mgmt_framework]
-  CLICK -->|swssconfig 直書きは限定的| APPL
-  CONFIG --> CFG[(CONFIG_DB)]
-  CFG --> CFGMGR[*mgrd<br/>vlanmgr/intfmgr/natmgr/...]
-  CFGMGR --> APPL[(APPL_DB)]
-  APPL --> ORCH[orchagent / *orch]
-  ORCH --> SAI[syncd → SAI]
-  SAI --> ASIC[(ASIC)]
-  YANG[sonic-yang-models] -.validate.-> CFG
-  GNMI[gNMI / translib] -.write/read.-> CFG
+  USER["<b>oper / script</b>"]:::user
+  CLICK["<b>sonic-utilities</b><br/>(click CLI)"]:::cli
+  GNMI["<b>gNMI / translib</b>"]:::cli
+  YANG["<b>sonic-yang-models</b><br/>(schema)"]:::schema
+
+  CFG[("<b>CONFIG_DB</b>")]:::db
+  APPL[("<b>APPL_DB</b>")]:::db
+  CFGMGR["<b>*mgrd</b><br/>vlanmgr / intfmgr / natmgr"]:::proc
+  ORCH["<b>orchagent / *Orch</b>"]:::proc
+  SAI["syncd + SAI"]:::proc
+  ASIC[("<b>ASIC</b>")]:::hw
+
+  USER --> CLICK
+  CLICK ==> CFG
+  CLICK -. swssconfig 限定 .-> APPL
+  GNMI ==> CFG
+  YANG -. validate .-> CFG
+  CFG ==> CFGMGR ==> APPL ==> ORCH ==> SAI ==> ASIC
+
+  classDef user fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef cli fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef schema fill:#e8d5f0,stroke:#4b0082,stroke-width:1.5px,color:#000;
+  classDef db fill:#d4edda,stroke:#155724,stroke-width:2px,color:#000;
+  classDef proc fill:#ffe0b2,stroke:#8a4b00,stroke-width:1.5px,color:#000;
+  classDef hw fill:#fde2e4,stroke:#a83279,stroke-width:2px,color:#000;
 ```
 
 ## 主要コンポーネントの責務
