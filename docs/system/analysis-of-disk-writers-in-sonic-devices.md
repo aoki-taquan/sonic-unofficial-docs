@@ -106,6 +106,25 @@ excerpt: |
 reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md#L46-L65 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md#L46-L65 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    | jbd2 | Kernel journaling thread | 44% |
+    | vtysh | CLI for network protocols | 28% |
+    ... vtysh: "show bgp summary json" repeatedly written to ~/.history_frr within BGP container due to bgpmon command repetition.
+    ```
+
+    **判断根拠**: 主要 writer の比率と vtysh history 書込みの根因の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 推奨
 
 | 優先度 | 戦略 |

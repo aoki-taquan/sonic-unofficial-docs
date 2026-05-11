@@ -97,3 +97,27 @@ FG_NHG_MEMBER|<next_hop_ip>      # next-hop → group + bank
 ## 引用元
 
 [^1]: YANG 定義: `sonic-fine-grained-ecmp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fine-grained-ecmp.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `FG_NHG|<name>`、`FG_NHG_PREFIX|<prefix>`、`FG_NHG_MEMBER|<nh_ip>`。
+- `bucket_size`: 64 や 128 等、メンバ数の最小公倍数を考慮した値。
+- `match_mode`: `nexthop-based` が一般的、dynamic 用途では `prefix-based`。
+
+### よくある誤設定
+
+- `bucket_size` がメンバ数で割り切れず、トラフィック分散が偏る。
+- `match_mode=prefix-based` で `FG_NHG_MEMBER` を投入し、本来不要な定義が衝突する。
+- `link` を未設定にして port-down 時にメンバ自動除去が効かない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'FG_NHG*'
+sonic-db-cli APPL_DB keys 'FG_ROUTE_TABLE:*'
+show fgnhg active-hops
+```
+<!-- /ops-hint -->

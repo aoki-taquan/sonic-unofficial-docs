@@ -123,6 +123,28 @@ excerpt: |
 reasoning: Phase 1 のサポート機能の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/srv6/srv6_hld.md#L78-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/srv6/srv6_hld.md#L78-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Phase #1
+     Should be able to perform the role of SRv6 domain headend node, and endpoint node, more specific:
+     - Support END, Endpoint function ...
+     - Support END.DT46 ... - IP L3VPN use (equivalent of a per-VRF VPN label)
+     - Support H.Encaps.Red ...
+     - Support traffic steering on SID list
+    ```
+
+    **判断根拠**: Phase 1 のサポート機能の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - v0.5 で MySID counter 追加。それ以前 (Phase 1) は END / END.DT46 / H.Encaps.Red のみ

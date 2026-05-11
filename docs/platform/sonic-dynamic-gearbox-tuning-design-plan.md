@@ -111,6 +111,23 @@ excerpt: |
 reasoning: orchagent doPortTask での反映と新 serdes 属性、PR #4113 の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/media-settings/Dynamic-gearbox-tuning.md#L229-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/media-settings/Dynamic-gearbox-tuning.md#L229-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Upon detecting a change within APPL_DB for a particular port, orchagent will be triggered to run doPortTask() with SET_COMMAND on the logical port. ... new serdes attributes for line-side and system-side tunings ... [sonic-swss PR #4113]
+    ```
+
+    **判断根拠**: orchagent doPortTask での反映と新 serdes 属性、PR #4113 の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 関連 PR
 
 - 動的反映のための buildimage / 設定生成: HLD 中で参照

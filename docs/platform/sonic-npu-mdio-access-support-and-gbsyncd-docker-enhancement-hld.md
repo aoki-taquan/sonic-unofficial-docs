@@ -119,6 +119,25 @@ excerpt: |
 reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/gearbox/gearbox_mdio-HLD.md#L82-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/gearbox/gearbox_mdio-HLD.md#L82-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Our design choice is to use the Unix socket as the IPC mechanism. Our design has the MDIO IPC server
+    in the syncd daemon with its own thread. A new syncd class MdioIpcServer is added to start a new thread,
+    to create an unix socket, to listen on the socket, to accept connection and to read/reply IPC messages.
+    ```
+
+    **判断根拠**: Unix socket IPC + MdioIpcServer 採用の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - HLD 検証は Broadcom NPU でのみ。他 vendor は未確認[^1]

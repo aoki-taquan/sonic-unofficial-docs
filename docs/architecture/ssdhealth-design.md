@@ -167,6 +167,28 @@ excerpt: |
 reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/ssdhealth/ssdhealth_design.md#L89-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Class SsdBase
+    Location: sonic-buildimage/src/sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py
+    Generic implementation of the API. Will use specific utilities for known disks or the systemctl utility for others.
+    Class SsdUtil
+    Inherited from SsdBase. Can be implemented by vendors to provide detailed info about the disk installed.
+    Location: sonic-buildimage/device/{{vendor}}/platform/plugins/ssdutil.py
+    ```
+
+    **判断根拠**: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

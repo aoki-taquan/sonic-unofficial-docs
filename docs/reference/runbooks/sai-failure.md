@@ -2,7 +2,7 @@
 title: SAI failure / syncd リスタート多発
 description: "Runbook: SAI failure / syncd リスタート多発 — : sonic-net/sonic-sairedis @ 88bc51a — syncd 本体 : sonic-net/sonic-swss @ 4305596 — orchagent"
 area: reference
-verification: code-verified
+verification: runbook-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-sairedis

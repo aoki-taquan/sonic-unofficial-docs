@@ -1,0 +1,16 @@
+{
+  "page": "docs/routing/bgp-route-install-error-handling.md",
+  "verification": "discrepancy-found",
+  "monitor": "deprecated",
+  "kind": "recheck",
+  "concerns": [
+    "ERROR_ROUTE_TABLE / FIB-install pending 系の遺残コードが sonic-swss orchagent / fpmsyncd に残っていないか再 grep",
+    "後継 (BGP Suppress FIB Pending) が完全に取って代わり、HLD の deprecated 注記が今後も妥当か確認",
+    "HLD 文書が公式リポで archive / deprecated tag に移動していないか upstream を確認",
+    "CONFIG_DB / YANG 側に deprecated 由来の dead schema が残っていないか確認"
+  ],
+  "verified_concerns": [],
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "notes": "再裏取り対象: discrepancy-index 由来。deprecated 判定の正当性を次回サイクルで再確認する。"
+}

@@ -76,6 +76,29 @@ excerpt: |
       clicommon.run_command(['systemctl', 'restart', 'chrony'], display_cmd=False)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L8982-L9016 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L8982-L9016 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @ntp.command('add')
+    def add_ntp_server(ctx, ntp_ip_address, association_type, iburst, version):
+        if ADHOC_VALIDATION:
+            if not clicommon.is_ipaddress(ntp_ip_address) and association_type != "pool":
+                ctx.fail('Invalid IP address')
+        ...
+        db.set_entry('NTP_SERVER', ntp_ip_address, ntp_server_options)
+        ...
+        clicommon.run_command(['systemctl', 'restart', 'chrony'], display_cmd=False)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config ntp del <ntp_ip_address>`
 
 **用法**:

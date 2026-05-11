@@ -123,6 +123,25 @@ excerpt: |
 reasoning: AC_TRY_RUN ベースのビルド時検査と、PATCH 緩和ポリシーの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sonic-build-system/saiversioncheck.md#L77-L83 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sonic-build-system/saiversioncheck.md#L77-L83 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Using that new API we can implement a configure-time check in sonic-sairedis with autotools AC_TRY_RUN:
+    ...
+    In case, SAI versioning follows sematical versioning rules, the test program can implement a check for only MAJOR and MINOR version, relaxing the constraint on the PATCH version.
+    ```
+
+    **判断根拠**: AC_TRY_RUN ベースのビルド時検査と、PATCH 緩和ポリシーの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 不整合がもたらす問題（背景）
 
 HLD は不整合時の典型症状を 4 つ列挙している[^1]:

@@ -120,6 +120,26 @@ excerpt: |
 reasoning: 「CHASSIS_APP_DB 追加 + bgpcfgd 双方参照」という本設計の中核根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/voq/Reliable_TSA.md#L62-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/voq/Reliable_TSA.md#L62-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    1. Add a new tsa_enabled attribute to CHASSIS_APP_DB
+    ...
+    4. Modify bgpcfgd to subscribe to updates to the tsa_enabled attribute of CHASSIS_APP_DB
+    5. Modify bgpcfgd to take into account the values of tsa_enabled attributes of both the CHASSIS_APP_DB and the local CONFIG_DB when determining whether BGP should be in TSA or TSB state.
+    ```
+
+    **判断根拠**: 「CHASSIS_APP_DB 追加 + bgpcfgd 双方参照」という本設計の中核根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CHASSIS_APP_DB

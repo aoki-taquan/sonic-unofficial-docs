@@ -2,7 +2,7 @@
 title: BGP route が広告されない
 description: "Runbook: BGP route が広告されない — : sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c : sonic-net/sonic-swss @ 4305596 — fpmsyncd で zebra → APP_DB 反映"
 area: reference
-verification: code-verified
+verification: runbook-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-frr

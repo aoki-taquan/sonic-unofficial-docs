@@ -60,6 +60,27 @@ excerpt: |
                           {'timezone': timezone})
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L9777-L9790 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L9777-L9790 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @clock.command()
+    def timezone(timezone):
+        if timezone not in get_tzs(None, None, ''):
+            click.echo(f'Timezone {timezone} does not conform format')
+            sys.exit(1)
+        config_db.mod_entry(swsscommon.CFG_DEVICE_METADATA_TABLE_NAME, 'localhost',
+                            {'timezone': timezone})
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config clock date <date> <time>`
 
 **用法**:

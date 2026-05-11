@@ -131,6 +131,30 @@ excerpt: |
 reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれていないことの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/wol/Wake-on-LAN-HLD.md#L168-L182 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/wol/Wake-on-LAN-HLD.md#L168-L182 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    message WolRequest {
+      string interface = 1;
+      repeated string target_mac = 2;
+      optional bool broadcast = 3;
+      optional string password = 4;
+      optional int32 count = 5;
+      optional int32 interval = 6;
+    }
+    ```
+
+    **判断根拠**: HLD 時点の proto に UDP 拡張用フィールドが含まれていないことの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### バリデーション
 
 CLI 側は以下を検査する[^1]。

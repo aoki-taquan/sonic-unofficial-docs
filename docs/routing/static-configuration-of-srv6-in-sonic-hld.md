@@ -128,6 +128,32 @@ excerpt: |
 reasoning: HLD 3.2.1 / 3.2.2 セクションのコンパイル例。CONFIG_DB エントリと FRR config の対応関係の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/srv6/srv6_static_config_hld.md#L221-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/srv6/srv6_static_config_hld.md#L221-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Bgpcfgd will compile the following configuration in FRR:
+    segment-routing
+      srv6
+        locators
+          locator loc1
+            prefix fcbb:bbbb:20::/48 block-len 32 node-len 32 func-bits 16
+            behavior usid
+        static-sids
+          sid fcbb:bbbb:20:f1::/64 locator loc1 behavior uDT46 vrf Vrf1
+          sid fcbb:bbbb:21:fe24::/64 locator loc2 behavior uA interface Ethernet24 nexthop 2001:db8:4:501::5
+    ```
+
+    **判断根拠**: HLD 3.2.1 / 3.2.2 セクションのコンパイル例。CONFIG_DB エントリと FRR config の対応関係の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### バリデーション
 
 `SRv6 Manager` は CONFIG_DB エントリを FRR に投入する前にバリデーションする。`action` フィールド未指定、未サポート action、必須フィールド欠落のエントリは syslog に出すだけで FRR には反映されない[^1]。

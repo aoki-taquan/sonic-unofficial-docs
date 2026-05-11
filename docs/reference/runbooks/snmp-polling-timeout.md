@@ -2,7 +2,7 @@
 title: SNMP polling が timeout する
 description: "Runbook: SNMP polling が timeout する — : sonic-net/sonic-snmpagent @ 4305596 — ax_impl : sonic-net/sonic-buildimage @ 4305596 — docker-snmp config"
 area: reference
-verification: code-verified
+verification: runbook-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-snmpagent

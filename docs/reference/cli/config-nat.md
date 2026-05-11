@@ -77,6 +77,24 @@ excerpt: |
       config_db.set_entry('STATIC_NAT', global_ip, dataKey)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/nat.py#L242-L332 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/nat.py#L242-L332 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @static.command('basic')
+    def add_basic(ctx, global_ip, local_ip, nat_type, twice_nat_id):
+        ...
+        config_db.set_entry('STATIC_NAT', global_ip, dataKey)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config nat add static tcp|udp <gip> <gport> <lip> <lport>`
 
 `STATIC_NAPT|<gip>|TCP|<gport>` (UDP 同様) に `{local_ip, local_port, nat_type, twice_nat_id}` を書く。port は `IntRange(1, 65535)` でバリデート。

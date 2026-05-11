@@ -2,7 +2,7 @@
 title: Routing loop が発生している
 description: "Runbook: Routing loop が発生している — : sonic-net/sonic-frr @ 799f47f — zebra/zebra_rib.c : sonic-net/sonic-swss @ 4305596 — routeorch.cpp"
 area: reference
-verification: code-verified
+verification: runbook-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-frr

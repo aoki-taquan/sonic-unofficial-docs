@@ -142,6 +142,29 @@ excerpt: |
 reasoning: 4 モードの分岐が「ステップごとに skip 条件を変える」形になっていることの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/reset_factory/ResetFactoryHLD.md#L88-L116 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/reset_factory/ResetFactoryHLD.md#L88-L116 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Steps:
+    1. Stops sonic.target: ... systemctl stop sonic.target
+    2. If not "keep-all-config": config-setup factory ...
+    3. If not ("only-config" or "keep-basic"): Delete all non-default users ...
+    4. If not "only-config": Remove all docker containers / Restore "/etc/sonic" ... / Delete all files under "/var/log" ...
+    5. Print to /var/log/systemlog ...
+    6. Reboot
+    ```
+
+    **判断根拠**: 4 モードの分岐が「ステップごとに skip 条件を変える」形になっていることの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### エラーリカバリ
 
 `reset-factory` は **`config_db.json` の一時コピー** を保持する。スクリプトが中断・終了した場合[^1]:

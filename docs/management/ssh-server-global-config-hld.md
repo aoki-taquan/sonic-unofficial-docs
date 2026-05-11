@@ -110,6 +110,26 @@ excerpt: |
 reasoning: 設定 → sshd_config 更新 → service 再起動 という反映経路の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/ssh_config/ssh_config.md#L62-L86 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/ssh_config/ssh_config.md#L62-L86 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    1. configDB - to include a dedicated table for configurations
+    2. hostcfg demon - to update ssh config files once configDB relevant areas are modified
+    3. OS ssh config files - specific for this stage we are only /etc/ssh/sshd_config is going to be modifed by the hostcfg demon.
+    4. OS ssh service - to be restarted after each configuration change.
+    ```
+
+    **判断根拠**: 設定 → sshd_config 更新 → service 再起動 という反映経路の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 既定の出所
 
 `init_cfg.json.j2` に既定値が埋め込まれており、ファクトリ起動時に `SSH_SERVER.POLICIES` が初期化される[^1]。

@@ -117,6 +117,25 @@ excerpt: |
 reasoning: 物理 port / PortChannel + VRF RIF というスコープ限定の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/subport/sonic-sub-port-intf-hld.md#L67-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/subport/sonic-sub-port-intf-hld.md#L67-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    A sub port interface is a logical interface that can be created on a physical port or a port channel.
+    ... This design focuses on the use case of creating a sub port interface on a physical port or a port channel
+    and using it as a router interface to a VRF
+    ```
+
+    **判断根拠**: 物理 port / PortChannel + VRF RIF というスコープ限定の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

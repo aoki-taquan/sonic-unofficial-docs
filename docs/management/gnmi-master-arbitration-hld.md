@@ -135,6 +135,30 @@ excerpt: |
 reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 判定」というルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/master_arbitration.md#L196-L265 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/gnmi/master_arbitration.md#L196-L265 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    func (s *Server) Set(ctx context.Context, req *gnmipb.SetRequest) (*gnmipb.SetResponse, error) {
+      if !reqFromMaster(req) {
+        return nil, status.Error(codes.PermissionDenied, "Not a master")
+      }
+    ...
+    // ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+    ...
+    // Use the election ID that is in the last extension, so, no 'break' here.
+    ```
+
+    **判断根拠**: 「extension は最後の MA を採用」「Set 前に reqFromMaster 判定」というルールの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Role（ほぼ未使用）
 
 仕様としては Role 単位でマスタを別々に持てる（control plane の役割分担を想定）。SONiC 実装は **default role のみ対応** で、`Role.id` フィールドは無視する[^1]。

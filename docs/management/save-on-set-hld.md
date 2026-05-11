@@ -109,6 +109,26 @@ excerpt: |
 reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出しというフロー全体の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/save_on_set.md#L106-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/gnmi/save_on_set.md#L106-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    A new command-line parameter will be added to control the behavior ... --with-save-on-set
+    if *withSaveOnSet { gnmi.SaveOnSet = gnmi.SaveOnSetEnabled }
+    func SaveOnSetEnabled() { transformer.SaveStartupConfig() }
+    if err == nil { SaveOnSet() }
+    ```
+
+    **判断根拠**: フラグ→関数ポインタ差し替え→Set 末尾呼び出しというフロー全体の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### リビジョン履歴に見える設計の進化
 
 HLD のリビジョン表は本機能が **DBUS 直叩きから「Sonic Service Client」経由に変更された** ことを示している[^1]。

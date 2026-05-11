@@ -69,6 +69,32 @@ excerpt: |
           click.echo(tabulate(body, header, tablefmt="grid"))
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/vlan.py#L119-L164 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/vlan.py#L119-L164 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @vlan.command()
+    def brief(verbose, namespace):
+        def _brief_helper(db):
+            header = [colname for colname, getter in VlanBrief.COLUMNS]
+            ...
+            for vlan in natsorted(vlan_data):
+                row = []
+                for column in VlanBrief.COLUMNS:
+                    column_name, getter = column
+                    row.append(getter((vlan_cfg, db), vlan))
+                body.append(row)
+            click.echo(tabulate(body, header, tablefmt="grid"))
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show vlan config [-n|--namespace <ns>]`
 
 **動作**:

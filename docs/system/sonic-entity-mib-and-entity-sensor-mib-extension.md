@@ -119,6 +119,25 @@ excerpt: |
 reasoning: 拡張対象の MIB object 一覧と階層化要件の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/snmp/extension-to-physical-entity-mib.md#L72-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/snmp/extension-to-physical-entity-mib.md#L72-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    This extension aims to implement all the objects in the entityPhysical group.
+    Also plan to add more physical entities such as thermal sensors, fan, and its tachometers; PSU, PSU fan, and some sensors contained in PSU.
+    Another thing need to highlight is that in the current implementation, "entPhysicalContainedIn" object is not implemented, so there is no way to reflect the physical location
+    ```
+
+    **判断根拠**: 拡張対象の MIB object 一覧と階層化要件の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

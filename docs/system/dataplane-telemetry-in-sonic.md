@@ -126,6 +126,24 @@ excerpt: |
 reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/barefoot_dtel/Dtel-SONiC.md#L271-L300 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/barefoot_dtel/Dtel-SONiC.md#L271-L300 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    This is a new Orch agent added to handle DTel events. These events are demuxed based on the ConfigDB table name.
+    ... When DTel orchagent is restarted and all the ConfigDB events are played back, dependent events played out of order are inherently ordered by the orchagent.
+    ```
+
+    **判断根拠**: DtelOrch の demux 動作と再起動時 replay の順序保証の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - 専用 CLI が無く、redis-cli / SwSS SDK / euclid から設定

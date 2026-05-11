@@ -167,6 +167,30 @@ excerpt: |
 reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR の伝搬経路の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port_fec_flr/port_fec_flr.md#L74-L86 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port_fec_flr/port_fec_flr.md#L74-L86 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    port_flr.lua
+      - Access the COUNTER_DB for already available counters for SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES, SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES,
+        and SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si...
+      - Perform the FEC FLR computation on each port once every `port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR` seconds
+    portsorch.cpp
+      - Link the new "port_flr.lua" script as a plugin to the existing PORT_STAT_COUNTER_FLEX_COUNTER_GROUP
+    flexcounterorch.cpp
+      - Enhance "FlexCounterOrch" to propagate FLR_INTERVAL_FACTOR from CONFIG_DB to FLEX_COUNTER_DB.
+    ```
+
+    **判断根拠**: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR の伝搬経路の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

@@ -2,7 +2,7 @@
 title: FEC エラーが多発する
 description: "Runbook: FEC エラーが多発する — : sonic-net/sonic-platform-daemons @ 4305596 — xcvrd / DOM 監視 : sonic-net/sonic-swss @ 4305596 — portsorch"
 area: reference
-verification: code-verified
+verification: runbook-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-platform-daemons

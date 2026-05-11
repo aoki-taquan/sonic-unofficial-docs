@@ -139,6 +139,25 @@ excerpt: |
 reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/error-handling/error_handling_design_spec.md#L121-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/error-handling/error_handling_design_spec.md#L121-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    A new database, ERROR_DB, is introduced to store the details of failed entries/objects ...
+    OrchAgent is registered as producer of ERROR_DB table. If the SAI CREATE/SET method fails,
+    Syncd informs OrchAgent using the notification channel of ASIC_DB.
+    ```
+
+    **判断根拠**: ERROR_DB の役割と producer/consumer 構成の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## Warm boot / scalability
 
 - ERROR_DB は **warm boot 越しに永続化されない**[^1]

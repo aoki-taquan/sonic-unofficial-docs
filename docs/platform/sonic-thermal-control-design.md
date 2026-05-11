@@ -121,6 +121,25 @@ excerpt: |
 reasoning: ベンダ実装と SONiC 共通実装の境界、ポリシー例の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/thermal-control/thermal-control-design.md#L84-L101 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/thermal-control/thermal-control-design.md#L84-L101 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Adjust cooling device according to the current temperature can be very vendor specific ... This cooling device control function can be disabled if the vendor have their own implementation in the kernel or somewhere else.
+    - Set PWM to full speed if one of PS units is not present
+    - Set the fan speed to a consant value (60% of full speed) thermal control functions was disabled.
+    ```
+
+    **判断根拠**: ベンダ実装と SONiC 共通実装の境界、ポリシー例の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定 / CLI
 
 CONFIG_DB スキーマは無し。policy はベンダの `/usr/share/sonic/device/$PLATFORM/thermal_policy.json` 等で配布される。CLI は HLD で明示されないが、典型的には `show platform temperature` / `show platform fan` で STATE_DB 値を取り出す。

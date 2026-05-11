@@ -114,6 +114,27 @@ excerpt: |
 reasoning: 取り込み順位と後方互換性の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sonic-build-system/Build-Profiles.md#L44-L50 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sonic-build-system/Build-Profiles.md#L44-L50 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Order of precedence will be:
+    1. `rules/config`
+    2. `rules/config.user` - only if it exists
+    3. `rules/profiles/$(PROFILE).mk` - only if `$(PROFILE)` is defined
+    The changes required to implement this are very simple and completely backwards compatible: if the new `PROFILE` build flag is not provided, build behavior is identical to baseline.
+    ```
+
+    **判断根拠**: 取り込み順位と後方互換性の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### CI/CD 不要・自己完結
 
 HLD は「CI/CD でやれば良いのでは」という問いに対して、**手元ビルドや顧客配布のシナリオで CI を使えない** ケースを挙げる[^1]:

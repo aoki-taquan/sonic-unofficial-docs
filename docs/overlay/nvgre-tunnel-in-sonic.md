@@ -83,6 +83,26 @@ excerpt: |
 reasoning: SAI 種別と P2MP 終端、二系統の decap mapper の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/nvgre_tunnel/nvgre_tunnel.md#L181-L188 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/nvgre_tunnel/nvgre_tunnel.md#L181-L188 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    | NVGRE tunnel type | SAI_TUNNEL_TYPE_NVGRE |
+    | Decap mapper | SAI_TUNNEL_MAP_TYPE_VSID_TO_VLAN_ID |
+    | Decap mapper | SAI_TUNNEL_MAP_TYPE_VSID_TO_BRIDGE_IF |
+    | NVGRE tunnel termination entry type | SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP |
+    ```
+
+    **判断根拠**: SAI 種別と P2MP 終端、二系統の decap mapper の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### トンネル作成シーケンス
 
 ```mermaid

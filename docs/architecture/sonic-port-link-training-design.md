@@ -98,6 +98,23 @@ excerpt: |
 reasoning: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port_link_training/port-link-training-design.md#L270-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port_link_training/port-link-training-design.md#L270-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    During system startup, PortsOrch should query for the per-port link-training abilities from syncd, and have these per-port flags maintained in the m_port_cap_lt field of Port object.
+    ```
+
+    **判断根拠**: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### ステータスポーラ
 
 PortsOrch のタイマースレッドが全 port を順に巡回。発火/停止条件[^1]:

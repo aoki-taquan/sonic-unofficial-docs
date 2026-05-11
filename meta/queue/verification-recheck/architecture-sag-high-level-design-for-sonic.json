@@ -1,0 +1,16 @@
+{
+  "page": "docs/architecture/sag-high-level-design-for-sonic.md",
+  "verification": "discrepancy-found",
+  "monitor": "not_implemented",
+  "kind": "recheck",
+  "concerns": [
+    "SAG 関連の Orch (sagorch / vrforch SAG 拡張) が sonic-swss に登場していないかを再 grep ('sag_' / 'StaticAnycastGateway' / 'anycast_mac')",
+    "sonic-yang-models に SAG 用 schema (例: sonic-sag.yang) や VLAN_INTERFACE の anycast 属性が追加されていないか確認",
+    "config sag / show ip sag 系 CLI が sonic-utilities に追加されていないか確認",
+    "upstream PR で SAG 機能の再提案 / merge が走っていないか (sonic-buildimage / sonic-swss / sonic-utilities)"
+  ],
+  "verified_concerns": [],
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "notes": "再裏取り対象: discrepancy-index 由来。HLD 提案のみで master 未取り込みのため、次回サイクルで upstream 動向を再確認する。"
+}

@@ -136,6 +136,24 @@ excerpt: |
 reasoning: capability query を STATE_DB に保存して CLI 前段で拒否する設計の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/tpid/SonicTPIDSettingHLD1.md#L82-L108 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/tpid/SonicTPIDSettingHLD1.md#L82-L108 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    SONiC during boot up will query SAI using SAI capability query API to check if the HW SKU can support TPID setting for PORT and LAG objects.
+    PORT_TPID_CAPABLE = true / LAG_TPID_CAPABLE = false
+    ```
+
+    **判断根拠**: capability query を STATE_DB に保存して CLI 前段で拒否する設計の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Linux Kernel との関係
 
 Linux kernel は VLAN TPID を `0x8100` (802.1Q) または `0x88A8` (802.1ad) しか受け付けない[^1]。SONiC TPID 設定は **ASIC 側だけ** を変える。Kernel 側で送受信する VLAN frame は引き続き 0x8100/0x88A8 のいずれか。Q-in-Q の完全実装ではない、と HLD が明言。

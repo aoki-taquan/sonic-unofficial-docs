@@ -114,6 +114,23 @@ excerpt: |
 reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/buffer-watermark/watermarks_HLD.md#L99-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/buffer-watermark/watermarks_HLD.md#L99-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    When one regular user and the streaming telemetry coexist, they do not interfere with each other.
+    ```
+
+    **判断根拠**: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## Telemetry 経由の参照
 
 `sonic-telemetry` は `WATERMARKS/...` virtual path から読める[^1]:

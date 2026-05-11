@@ -118,6 +118,27 @@ excerpt: |
 reasoning: 4 段階移行プランの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    ## Change stages ##
+    1. Change port_config.ini alias column to use the new naming convention.
+    2. Break SONiC code dependency of 'Ethernet' prefix.
+    3. Break SONiC test dependency of 'Ethernet' prefix and/or 'Ethernet0'.
+    4. Change SONiC port name to new naming convention.
+    ```
+
+    **判断根拠**: 4 段階移行プランの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

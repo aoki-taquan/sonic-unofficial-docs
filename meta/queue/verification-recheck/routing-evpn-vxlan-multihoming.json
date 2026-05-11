@@ -1,0 +1,16 @@
+{
+  "page": "docs/routing/evpn-vxlan-multihoming.md",
+  "verification": "discrepancy-found",
+  "monitor": "not_implemented",
+  "kind": "recheck",
+  "concerns": [
+    "sonic-swss/orchagent/vxlanorch.{cpp,h} に ESI / DF election 関連の処理が追加されていないか再確認",
+    "FRR 側 (BGP-EVPN) で Type-1 / Type-4 EVPN route の advertise が SONiC FRR 設定生成に組み込まれていないか",
+    "CONFIG_DB に EVPN_ETHERNET_SEGMENT / EVPN_ES など Multihoming 用テーブルが追加されていないか",
+    "HLD 改訂日と sonic-swss / FRR 連携 PR の upstream 進捗を確認"
+  ],
+  "verified_concerns": [],
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "notes": "再裏取り対象: discrepancy-index 由来。EVPN Multihoming 機能群が community master に未取り込みのため、次回サイクルで再走査する。"
+}

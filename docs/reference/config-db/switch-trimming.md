@@ -79,3 +79,25 @@ SWITCH_TRIMMING|GLOBAL
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key: `SWITCH_TRIMMING|GLOBAL` (シングルトン)。
+- `size`: 128〜256 bytes 程度。`dscp_value`: `from-tc` または明示 DSCP。
+- `queue_index`: `dynamic` または特定 queue。
+
+### よくある誤設定
+
+- `dscp_value=from-tc` と `queue_index=dynamic` を同時指定して導出元が曖昧になる。
+- packet trimming 非対応 ASIC に投入して SAI でエラーになる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'SWITCH_TRIMMING|GLOBAL'
+show switch-trimming
+```
+<!-- /ops-hint -->

@@ -79,3 +79,25 @@ SUPPRESS_ASIC_SDK_HEALTH_EVENT|<severity>
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SUPPRESS_ASIC_SDK_HEALTH_EVENT|<severity>` (`fatal`/`warning`/`notice`)。最大 3 行。
+- `categories`: `software` / `firmware` / `cpu_hw` / `asic_hw` のうち抑制したいものを列挙。
+- `max_events`: 数百〜数千程度を推奨。
+
+### よくある誤設定
+
+- `categories` に `fatal` 重大度のイベントを大量に抑制してしまい、本当に必要なアラートを見逃す。
+- `<severity>` に許可外 (`error` / `info` 等) を入れて投入に失敗する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SUPPRESS_ASIC_SDK_HEALTH_EVENT|*'
+sonic-db-cli STATE_DB keys 'ASIC_SDK_HEALTH_EVENT_TABLE|*'
+```
+<!-- /ops-hint -->

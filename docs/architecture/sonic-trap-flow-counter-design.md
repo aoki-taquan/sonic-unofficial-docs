@@ -98,6 +98,27 @@ excerpt: |
 reasoning: group enable/disable の Hook 名と CONFIG キー (FLOW_CNT_TRAP) の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/flow_counters/flow_counters.md#L186-L210 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/flow_counters/flow_counters.md#L186-L210 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    if (gCoppOrch && (key == FLOW_CNT_TRAP))
+    {
+        if (value == "enable")  gCoppOrch->generateHostIfTrapCounterIdList();
+        else if (value == "disable") gCoppOrch->clearHostIfTrapCounterIdList();
+    }
+    ```
+
+    **判断根拠**: group enable/disable の Hook 名と CONFIG キー (FLOW_CNT_TRAP) の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### syncd 側の収集
 
 syncd 内 FlexCounter スレッドが poll 間隔で:

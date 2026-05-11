@@ -120,6 +120,25 @@ excerpt: |
 reasoning: 静的 / 動的の排他切替ロジックの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/static-dns/static_dns.md#L82-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/static-dns/static_dns.md#L82-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    - Get DNS configuration from Config DB.
+    - If no DNS configuration is available in Config DB enable resolvconf updates to receive dynamic DNS configuration.
+    - If DNS configuration is available render static DNS configuration with resolv.conf.j2 template, disable resolvconf update to not receive dynamic configuration updates.
+    ```
+
+    **判断根拠**: 静的 / 動的の排他切替ロジックの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

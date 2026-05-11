@@ -95,6 +95,27 @@ excerpt: |
 reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「インフラを TACACS / RADIUS / LDAP で共有する」という核となる設計判断の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md#L60-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md#L60-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    This decryption step is crucial because the login or SSH daemon references the PAM config file to verify the TACACS secret / passkey.
+    If it remains encrypted, the SSH daemon will be unable to recognize the passkey, leading to login failures.
+    ...
+    3. Same file will be read while decrypting the passkey at hostcfgd
+    4. The infra (encrypt/decrypt and master key/password storage & retrieval) will be common for all the features like TACACS, RADIUS, LDAP etc..
+    ```
+
+    **判断根拠**: 「PAM が平文を要求するので hostcfgd で復号する」「インフラを TACACS / RADIUS / LDAP で共有する」という核となる設計判断の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 暗号化インフラ
 
 | 項目 | 値 |

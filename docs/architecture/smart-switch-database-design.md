@@ -137,6 +137,23 @@ excerpt: |
 reasoning: GNMI/ZMQ 主経路と DPU_APPL_DB バックアップ用途の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md#L300-L320 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md#L300-L320 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Communication with the SWSS of the DPU occurs through GNMI, leveraging ZMQ. Simultaneously, an asynchronous insertion of the object backup is made to the DPU_APPL_DB.
+    ```
+
+    **判断根拠**: GNMI/ZMQ 主経路と DPU_APPL_DB バックアップ用途の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### メモリ規模
 
 DASH スケーリング要件で見積もると、**DPU_APPL_DB だけで card あたり約 5.18 GB**、STATE 系で 2.45 GB[^1]。最大の食いは `DASH_VNET_MAPPING_TABLE`（10M）と per-ENI `DASH_ROUTE_TABLE`（100k × ENI 数）。これが DPU でなく NPU 側 RAM に乗る理由でもある。

@@ -67,6 +67,27 @@ excerpt: |
 reasoning: 本テストの整合性判定基準を直接表化
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    | counterpoll type | state    | counter                                                 | pass criteria  |
+    | queue            | enabled  | FLEX_COUNTER_TABLE:QUEUE_STAT_COUNTER:oid:0x*           | present        |
+    | watermark        | enabled  | FLEX_COUNTER_TABLE:QUEUE_WATERMARK_STAT_COUNTER:oid:0x* | present        |
+    |                  |          | FLEX_COUNTER_TABLE:PG_WATERMARK_STAT_COUNTER:oid:0x*    | present        |
+    | pg-drop          | enabled  | FLEX_COUNTER_TABLE:PG_DROP_STAT_COUNTER:oid:0x*         | present        |
+    ```
+
+    **判断根拠**: 本テストの整合性判定基準を直接表化
+
+<!-- evidence-rendered:end -->
+
 ## テスト項目
 
 ### 単一 counterpoll 有効化（config save → reload）

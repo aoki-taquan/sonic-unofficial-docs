@@ -114,6 +114,26 @@ excerpt: |
 reasoning: gNOI HALT/RebootStatus フローと PCI detach/reattach の vendor API / sysfs フォールバック経路の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/reboot/reboot-hld.md#L86-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/smart-switch/reboot/reboot-hld.md#L86-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    the NPU transmits a gNOI Reboot RPC signal with RebootMethod set to 'HALT'
+    ... gNOI RebootStatus RPC ... STATUS_SUCCESS and 'active' will be set to false
+    ... NPU detaches the DPU PCI device via the pci_detach() vendor API, or ... echo 1 > /sys/bus/pci/devices/XXXX:XX:XX.X/remove
+    ... pci_reattach() vendor API or ... echoing '1' to /sys/bus/pci/rescan
+    ```
+
+    **判断根拠**: gNOI HALT/RebootStatus フローと PCI detach/reattach の vendor API / sysfs フォールバック経路の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### `ModuleBase` の新 API
 
 `ModuleBase`（platform_api 内）に DPU を扱う新メソッドが追加される[^1]:

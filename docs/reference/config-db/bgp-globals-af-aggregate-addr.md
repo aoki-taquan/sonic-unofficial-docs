@@ -87,3 +87,25 @@ BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf_name>|<afi_safi>|<ip_prefix>
 - [CONFIG_DB: BGP_GLOBALS_AF](bgp-globals-af.md)
 - [CONFIG_DB: BGP_AGGREGATE_ADDRESS](bgp-aggregate-address.md)
 - [YANG: sonic-bgp-global](../yang/sonic-bgp-global.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf>|<afi_safi>|<prefix>` (例 `BGP_GLOBALS_AF_AGGREGATE_ADDR|default|ipv4_unicast|10.0.0.0/8`)。
+- `summary_only=true` で more-specific を抑制、`as_set=true` で AS_SET 生成。
+
+### よくある誤設定
+
+- 同一 AF に対して `BGP_AGGREGATE_ADDRESS` (フラット) と本テーブル (frr-mgmt-framework 経路) を併用し、設定経路が衝突。
+- 集約に含まれる more-specific ルートが RIB に無く、aggregate が広告されない (BGP では 1 本以上の構成ルートが必要)。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF_AGGREGATE_ADDR|*'
+vtysh -c "show ip bgp summary"
+vtysh -c "show running-config bgpd" | grep aggregate-address
+```
+<!-- /ops-hint -->

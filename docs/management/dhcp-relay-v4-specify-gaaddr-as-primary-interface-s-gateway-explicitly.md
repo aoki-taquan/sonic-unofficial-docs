@@ -122,6 +122,26 @@ excerpt: |
 reasoning: 4 つの要件 (CONFIG_DB / parsing / -pg 渡し / dhcrelay 拡張) の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/DHCPv4_Gateway/DHCPv4_gateway.md#L37-L47 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/DHCPv4_Gateway/DHCPv4_gateway.md#L37-L47 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    1. Support a new member 'secondary' of VLAN_INTERFACE in config_db.
+    2. Support parsing and assignment of subnets from minigraph/json/cli to config_db.
+    3. Support specifying non-secondary interfaces' gateway address to command line arguments to /usr/sbin/dhcrelay as -pg (primary gateway).
+    4. isc-dhcp/dhcrelay to support '-pg gateway' argument.
+    ```
+
+    **判断根拠**: 4 つの要件 (CONFIG_DB / parsing / -pg 渡し / dhcrelay 拡張) の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

@@ -93,6 +93,25 @@ excerpt: |
 reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/aaa/AAA Improvements/AAA Improvements.md#L52-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/aaa/AAA Improvements/AAA Improvements.md#L52-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Lack of support for Multiple Roles ... a single GID cannot represent multiple roles.
+    ... retrieving the roles from a RADIUS server is only possible during authentication (`pam_authenticate`),
+    which takes place after the sshd monitor invokes `getpwnam()`
+    ```
+
+    **判断根拠**: 多重 role と getpwnam 先行の鶏卵問題の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 HLD は提案中心のため、CONFIG_DB / CLI の最終形は具体化されていない。`AAA` / `RADIUS` / `RADIUS_SERVER` / `TACPLUS` / `TACPLUS_SERVER` 既存テーブルは前提として継続利用する想定。

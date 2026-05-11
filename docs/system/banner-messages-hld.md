@@ -124,6 +124,28 @@ excerpt: |
 reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前段で動くという挙動の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/banner/banner_hld.md#L84-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/banner/banner_hld.md#L84-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Hostcfgd will listen for the configuration changes in corresponding tables and restart banner-config service.
+    Banner config service - it is simple SystemD service which runs before we get SSH connection.
+    ...
+    /etc/issue.net and /etc/issue - Login message
+    /etc/motd - Message of the day
+    /etc/logout_message - Logout message
+    ```
+
+    **判断根拠**: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前段で動くという挙動の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

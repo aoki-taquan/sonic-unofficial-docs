@@ -2,7 +2,7 @@
 title: PortChannel メンバーで LACP が確立しない
 description: "Runbook: PortChannel メンバーで LACP が確立しない — : sonic-net/sonic-swss @ 4305596 — cfgmgr/teammgr.cpp : sonic-net/sonic-utilities @ 39732bceb — show interfaces portch…"
 area: reference
-verification: code-verified
+verification: runbook-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-swss

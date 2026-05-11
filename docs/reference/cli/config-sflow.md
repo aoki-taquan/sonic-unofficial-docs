@@ -64,6 +64,22 @@ excerpt: |
       ctx.fail("Sample direction {} is not supported on this platform".format(direction))
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L9136-L9159 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L9136-L9159 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    if ((direction == 'tx' or direction == 'both') and (is_port_egress_sflow_supported() == 'false')):
+        ctx.fail("Sample direction {} is not supported on this platform".format(direction))
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config sflow interface enable <ifname|all>`
 
 `ifname` は `interface_name_is_valid` で検証、ただし特殊値 `all` も許可。`SFLOW_SESSION|<ifname>` の `admin_state` を `up` に書く。テーブルにエントリが無ければ新規作成。

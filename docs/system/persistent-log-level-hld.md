@@ -136,6 +136,25 @@ excerpt: |
 reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除する設計の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/logging/persistent_logger/persistent_loglevel.md#L246-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/logging/persistent_logger/persistent_loglevel.md#L246-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    After moving the Logger's table from LOGLEVEL DB, the leftover in LOGLEVEL DB will be the JINJA2_CACHE key.
+    ... we recommend removing the jinja2 cache and the LOGLEVEL DB.
+    - Removing /sonic-config-engine/build/lib/redis_bcc.py file.
+    ```
+
+    **判断根拠**: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除する設計の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 起動時の挙動
 
 `database` コンテナ初期化中に `config_db.json` が CONFIG_DB に読み込まれる。**`rsyslog-config` は database コンテナ起動後** に立ち上がるため、これより前にログメッセージが出ることは想定していない（出た場合は既定 loglevel）と HLD は明言している[^1]。

@@ -105,6 +105,26 @@ excerpt: |
 reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/xrcvd/transceiver-monitor-hld.md#L18-L26 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/xrcvd/transceiver-monitor-hld.md#L18-L26 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The transceiver dom sensor information(temperature, power,voltage, etc.) can change frequently,
+    these information need to be updated periodically, for now the time period temporarily set to 60s
+    ... if transceiver on a error status which blocking EEPROM access, Xcvrd will stop updating
+    and remove the transceiver DOM info from DB until it recovered from the error
+    ```
+
+    **判断根拠**: 60s polling と error 時 DOM 停止 / static 保持の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

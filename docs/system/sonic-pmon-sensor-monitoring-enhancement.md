@@ -93,6 +93,26 @@ excerpt: |
 reasoning: SensorMon を新設する根本動機の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pmon/pmon-sensormon.md#L34-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pmon/pmon-sensormon.md#L34-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Linux does provide some support of voltage and current sensor monitoring using lmsensors/hwmon infrastructure. However there are a few limitations:
+    - Devices not supported with Hwmon are not covered
+    - Simple devices which donot have an inbuilt monitoring functions do not generate any alarms
+    - Platform specific thresholds for monitoring are not available
+    ```
+
+    **判断根拠**: SensorMon を新設する根本動機の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 拡張性
 
 「将来 sensor 種別を増やす framework」を提供することが要件[^1]。voltage / current は最初の対象。altitude などはこの枠組みに同種で乗せる前提。

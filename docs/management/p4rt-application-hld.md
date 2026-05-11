@@ -114,6 +114,25 @@ excerpt: |
 reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pins/p4rt_app_hld.md#L152-L156 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pins/p4rt_app_hld.md#L152-L156 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    syncd operates in synchronous mode and OrchAgent relays the hardware status of the operation back to P4RT application via a separate notification channel
+    and writes all successful responses into the APPL_STATE_DB.
+    P4RT application uses the APPL_STATE_DB to restore the entry in APPL_DB when a particular request fails.
+    ```
+
+    **判断根拠**: APPL_STATE_DB の役割と失敗時のロールバック動作の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### APPL_DB スキーマ
 
 P4RT App は APPL_DB に新規テーブル群を書き出す。スキーマ詳細は **P4RT DB Schema HLD**（別ドキュメント）に分離されている[^1]。本ページでは `P4RT_TABLE`（テーブルエントリ）と `P4RT:DEFINITION`（ACL テーブル等の定義）の存在を押さえる。

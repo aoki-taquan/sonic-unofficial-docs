@@ -154,6 +154,25 @@ excerpt: |
 reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MACsec 設定を処理しないという中核ルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/fips/SONiC-SAI-POST.md#L97-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/fips/SONiC-SAI-POST.md#L97-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In order to be compliant to FIPS, SONiC should process MACSec configuration only after POST passes.
+    This is achieved by enhancing MACSecMgr, running in MACSec container, to check POST status published
+    in State DB before processing any MACSec configuration
+    ```
+
+    **判断根拠**: MACSecMgr が POST 完了確認を担当し、POST=pass までは MACsec 設定を処理しないという中核ルールの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

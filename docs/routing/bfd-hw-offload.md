@@ -139,6 +139,25 @@ excerpt: |
 reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であることの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/bfd/BFD HW Offload HLD.md#L110-L140 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/bfd/BFD HW Offload HLD.md#L110-L140 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    A new module, BfdOrch shall be introduced to handle BFD session ...
+    BfdOrch shall offload the session initiation/sustenance to hardware via SAI APIs and gets the notifications of session state from SAI.
+    The session state shall be updated in STATE_DB and to any other observer orchestration agents.
+    ```
+
+    **判断根拠**: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であることの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Control plane BFD との共存
 
 HLD は HW オフロードと FRR `bfdd` の **共存自体は否定しない** が、同一宛先 IP について両方のセッションを張ることは想定外と明記する[^1]。BFD trap を入れてコントロールプレーン BFD を有効化すると BFD パケットが CPU に上がるため、HW セッション側が独立で動くと一部パケットが silently drop され得る点に注意とある。

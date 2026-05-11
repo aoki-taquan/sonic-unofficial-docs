@@ -123,6 +123,24 @@ excerpt: |
 reasoning: 継続的に改訂されている fabric link 監視機能の設計実績の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/voq/fabric.md#L33-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/voq/fabric.md#L33-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    | 3.5 | Aug-12 2024 | Update fabric link monitoring behavior on link down |
+    | 3.6 | Oct-09 2025 | Update fabric link monitoring behavior on persistent link flap |
+    ```
+
+    **判断根拠**: 継続的に改訂されている fabric link 監視機能の設計実績の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定と CLI
 
 | Table | Key | フィールド |

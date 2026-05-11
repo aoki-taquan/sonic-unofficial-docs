@@ -103,6 +103,25 @@ excerpt: |
 reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pfc_asym/PFC_Asymmetric_Test_HLD.md#L96-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pfc_asym/PFC_Asymmetric_Test_HLD.md#L96-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    deploy_pfc_gen (scope="module", autouse=True)
+    To simulate that neighbors are overloaded (send many PFC frames) there is used PFC packets generator which is running on Fanout switch.
+    File location - roles/test/files/helpers/pfc_gen.py
+    ```
+
+    **判断根拠**: pfc_gen.py の役割と配備 fixture の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### PTF テストケース実行
 
 `tests/ptf_runner.py` モジュールを使って既存 PTF テストケースをラップする[^1]。

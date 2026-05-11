@@ -85,6 +85,24 @@ excerpt: |
       config_db.set_entry('SNMP_COMMUNITY', community, {'TYPE': string_type})
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L4372-L4403 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L4372-L4403 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @community.command('add')
+    def add_community(db, community, string_type):
+        ...
+        config_db.set_entry('SNMP_COMMUNITY', community, {'TYPE': string_type})
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config snmp user add <user> <type> <RO|RW> [<auth_type> <auth_pw> [<enc_type> <enc_pw>]]`
 
 **引数**（`SnmpUserError` 列挙で網羅）:

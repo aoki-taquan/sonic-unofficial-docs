@@ -102,6 +102,24 @@ excerpt: |
 reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port-profile-init/port-profile-init-design.md#L60-L72 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port-profile-init/port-profile-init-design.md#L60-L72 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    After feature is implemented, SAI initialization time should be reduced.
+    Hence, we expect fast-boot up time to meet max 30 seconds restriction.
+    ```
+
+    **判断根拠**: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
+
+<!-- evidence-rendered:end -->
+
 ## CLI / CONFIG_DB / YANG
 
 本 HLD では **変更なし**[^1]。port table スキーマ・user 体験は同一で、内部の SAI 呼び出し方式だけ切替わる。

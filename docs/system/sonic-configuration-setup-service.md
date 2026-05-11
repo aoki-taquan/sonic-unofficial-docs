@@ -97,6 +97,24 @@ excerpt: |
 reasoning: config-setup の存在動機と updategraph 廃止計画の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/ztp/SONiC-config-setup.md#L46-L60 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/ztp/SONiC-config-setup.md#L46-L60 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    When a new SONiC firmware version is installed, the newly installed image does not include a startup-configuration. A startup-config has to be created on first boot. Also when the user upgrades from firmware version A to version B, the startup-config needs to be migrated to the new version B.
+    ... functionality dealing with configuration management is moved from updategraph to config-setup service. In future, the updategraph service can be removed all together and config-setup can be the single place where SONiC configuration files are managed.
+    ```
+
+    **判断根拠**: config-setup の存在動機と updategraph 廃止計画の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

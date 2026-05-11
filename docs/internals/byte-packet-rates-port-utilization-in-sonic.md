@@ -106,6 +106,26 @@ excerpt: |
 reasoning: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置く」設計の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/rates-and-utilization/Rates_and_utilization_HLD.md#L137-L148 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/rates-and-utilization/Rates_and_utilization_HLD.md#L137-L148 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    ALPHA (precalculated):
+    N = [PORT|RIF]_SMOOTH_INTERVAL
+    ALPHA = 2/(N+1)
+    EMA = ALPHA * VALUE + (1 - ALPHA) * EMA_last
+    ```
+
+    **判断根拠**: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置く」設計の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### COUNTERS_DB スキーマ
 
 `RATES:port_vid` / `RATES:rif_vid` に下記を保持[^1]:

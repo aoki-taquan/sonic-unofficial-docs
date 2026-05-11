@@ -103,6 +103,25 @@ excerpt: |
 reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィールド充足) の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pmon/pmon-chassis-requirements.md#L11-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pmon/pmon-chassis-requirements.md#L11-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    1. On LC the reboot command should power-cycle the entire LC ...
+    3. Ungraceful Reboot of Supervisor should bring all LC's. LC's should not run headless.
+    8. chassisd daemon support on both LC and RP with all fields of table CHASSIS_MODULE_TABLE|xxxx correctly populated.
+    ```
+
+    **判断根拠**: 主要な必須要件 (再起動、headless 禁止、chassisd フィールド充足) の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB / STATE_DB

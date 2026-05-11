@@ -151,6 +151,25 @@ excerpt: |
 reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sonic-build-system/build_system_improvements.md#L160-L173 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sonic-build-system/build_system_improvements.md#L160-L173 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    - No need to build libthrift, saithrift when 'ENABLE_SYNCD_RPC != y'
+    - The debian/rules in sairedis is written in a way that it will built sairedis from scratch twice - non-rpc and rpc version.
+    This improvement is achivable by specifying in rules/sairedis.mk: SAIREDIS_DPKG_TARGET = binary-syncd
+    ```
+
+    **判断根拠**: sairedis 2 度ビルドの問題と修正方針の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 累積改善
 
 12 CPU のビルドサーバでの実測[^1]:
