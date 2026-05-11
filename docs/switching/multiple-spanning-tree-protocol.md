@@ -25,13 +25,17 @@ related:
 
 # Multiple Spanning Tree Protocol (MSTP) on SONiC
 
-## 概要
+## 読み手が知りたいこと
 
-IEEE 802.1Q-2014 準拠の **MSTP（Multiple Spanning Tree Protocol）** を SONiC に実装する設計[^1]。RSTP / PVST に対し MSTP は「VLAN 群を同一インスタンス (MSTI) にまとめて、インスタンス単位でトポロジを計算する」点が特徴。`stp` コンテナで `stpd` が走り、`stpmgrd` 経由で APPL_DB / CONFIG_DB と連携する。
+1. **PVST / RSTP に比べて MSTP を選ぶ理由** は？
+2. **どのテーブル** を編集すれば MSTP が動くのか？
+3. **MST Region** とは何か、何を一致させると同一リージョンになるのか？
+4. MSTP モードへの **切替時に通信は揺れる** のか？
+5. **ルートが期待どおりに選ばれない** ときに見る場所は？
 
-## 動作仕様
+## 1. なぜ MSTP か
 
-### コンテナ構成
+IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し **「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」** のが特徴。VLAN 数が多くても MSTI 数だけの STP インスタンスで済むためスケールに有利[^1]。
 
 ```mermaid
 flowchart LR
@@ -43,7 +47,11 @@ flowchart LR
     SO -->|SAI_STP_*| ASIC[(ASIC)]
 ```
 
-### CONFIG_DB スキーマ概要
+`stp` コンテナで `stpd` が走り、`stpmgrd` が CONFIG_DB ↔ APPL_DB を橋渡しする。
+
+## 2. 設定（CONFIG_DB と CLI）
+
+### CONFIG_DB スキーマ
 
 ```text
 STP|GLOBAL
@@ -68,11 +76,40 @@ STP_PORT|<ifname>
     bpdu_guard / root_guard / edge_port / ... = bool
 ```
 
-CIST (instance 0) は常に存在し、IST と呼ばれる。MSTI は `instance_id` 1..n[^1]。
+CIST (instance 0) は常に存在し IST と呼ぶ。MSTI は `instance_id` 1..n[^1]。
 
-### MST Region
+| Table | 説明 |
+|-------|------|
+| `STP` | グローバル設定（mode 等） |
+| `STP_MST` | MSTP リージョン情報 |
+| `STP_MST_INST` | MSTI 単位の VLAN マッピング + bridge priority |
+| `STP_MST_PORT` | MSTI × port の priority / path_cost |
+| `STP_PORT` | 共通 port パラメータ（bpdu_guard 等） |
 
-MST Region は `region_name` / `revision` / VLAN→MSTI マッピングが一致するスイッチの集合で、Region 境界では IST 経由で BPDU 交換する。`max_hops` は Region 内の MSTI BPDU TTL。
+### CLI と設定例
+
+```bash
+sudo config spanning-tree mode mst
+sudo config spanning-tree mst region-name region1
+sudo config spanning-tree mst revision 1
+sudo config spanning-tree mst instance 1 vlan 10,20,30
+sudo config spanning-tree mst instance 1 priority 4096
+show spanning-tree mst instance 1
+```
+
+詳細サブコマンド（Disabled Commands、`show spanning-tree counters` 系）は HLD の対応節を参照。
+
+## 3. MST Region
+
+MST Region は次が **完全一致** するスイッチの集合[^1]:
+
+- `region_name`
+- `revision`
+- VLAN → MSTI マッピング
+
+Region 境界では IST 経由で BPDU 交換する。`max_hops` は Region 内の MSTI BPDU TTL。**1 文字でも違うと別リージョン** になるので注意。
+
+## 4. モード切替と SAI マッピング
 
 ### 主要シーケンス
 
@@ -90,72 +127,41 @@ sequenceDiagram
     APP-->>MGR: applied state
 ```
 
-`mode` を rstp / pvst から mst へ切り替える際、stpd は内部状態を破棄して MSTP モードで再起動する[^1]。
+`mode` を rstp / pvst から mst へ切り替える際、stpd は内部状態を破棄して MSTP モードで再起動する。**瞬間的に L2 トポロジが揺れる** 可能性あり[^1]。
 
-### SAI マッピング
+### SAI
 
-CIST が SAI の default STP オブジェクトに対応し、各 MSTI が `SAI_STP_OBJECT_ID` の追加インスタンスとして表現される。Port × MSTI ごとに `SAI_STP_PORT_ATTR_STATE` を operate する。詳細は HLD の SAI 節および `sai_stp.h` を参照[^1]。
+- CIST が SAI の default STP オブジェクト
+- 各 MSTI は追加の `SAI_STP_OBJECT_ID` インスタンス
+- Port × MSTI ごとに `SAI_STP_PORT_ATTR_STATE` を operate
 
-## 設定
+MSTI 数の上限は `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存。
 
-### 関連する CONFIG_DB
+## 5. 他機能との干渉
 
-| Table | 説明 |
-|-------|------|
-| `STP` | グローバル設定（mode 等） |
-| `STP_MST` | MSTP リージョン情報 |
-| `STP_MST_INST` | MSTI 単位の VLAN マッピング・bridge priority |
-| `STP_MST_PORT` | MSTI × port の priority / path_cost |
-| `STP_PORT` | 共通 port パラメータ（bpdu_guard 等） |
+- **VLAN / Port-Channel / FDB**: MSTP の Port State 変化（Forwarding ↔ Discarding）に応じて FDB 学習・転送が変化
+- **PVST / RSTP**: 同じ `STP|GLOBAL.mode` を共有するため同時動作不可
+- **BPDU Guard / Root Guard / Edge Port**: 共通の `STP_PORT` 経由で MSTP でも有効
 
-### 関連する CLI
+## 6. トラブルシューティング
 
-```text
-config spanning-tree mode mst
-config spanning-tree mst region-name <name>
-config spanning-tree mst revision <rev>
-config spanning-tree mst instance <id> vlan <vlan-list>
-config spanning-tree mst instance <id> priority <p>
-config spanning-tree mst instance <id> interface <ifname> path-cost <c>
-show spanning-tree
-show spanning-tree mst instance <id>
-```
-
-`config spanning-tree disable mst` 等の Disabled Commands、`show spanning-tree counters` 等の Show / Clear / Debug 系コマンドは HLD の対応節を参照。
-
-### 関連する YANG
-
-HLD は `STP_MST_*` の YANG モデル提案を含むが、ファイル名・モジュール名はオフィシャルなマージ後に確定する想定。
-
-### 設定例
-
-```bash
-sudo config spanning-tree mode mst
-sudo config spanning-tree mst region-name region1
-sudo config spanning-tree mst revision 1
-sudo config spanning-tree mst instance 1 vlan 10,20,30
-sudo config spanning-tree mst instance 1 priority 4096
-show spanning-tree mst instance 1
-```
+| 症状 | 最初に見る場所 |
+|------|---------------|
+| ルートが期待どおり選ばれない | `show spanning-tree mst instance <id>` で bridge priority と root bridge を確認 |
+| リージョン境界で IST にしか入らない | `region_name` / `revision` / VLAN→MSTI マッピングが対向と完全一致しているか |
+| BPDU が出ない | `STP_PORT.enabled=true` か、stpd ログで送信エラー |
 
 ## 制限事項
 
-- HLD は v0.2 で **大型 (50KB)** のため、ここでは中心テーブルとフローのみ抜粋。詳細フローや edge case は HLD `doc/MSTP/MSTP.md` を参照。
-- MSTP モード切替は stpd 再起動を伴うため、瞬間的に L2 トポロジが揺れる可能性。
-- MSTI 数の上限はプラットフォーム SAI の `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存。
-- Warm Boot 中の BPDU タイマ整合性は HLD で要件定義あり、実装側の対応は別途確認が必要。
+- HLD は v0.2 (50KB) のため、ここでは中心テーブルとフローのみ抜粋。詳細は HLD `doc/MSTP/MSTP.md`
+- MSTP モード切替は stpd 再起動を伴う
+- MSTI 数は SAI 依存
+- Warm Boot 中の BPDU タイマ整合性は実装側の対応を別途確認
 
-## 干渉する機能
+## 関連トピック
 
-- **VLAN / Port-Channel / FDB**: MSTP の Port State 変化（Forwarding ↔ Discarding）に応じて FDB 学習や転送が変わる。
-- **PVST / RSTP**: 同じ `STP|GLOBAL.mode` を共有するため、同時動作不可。モード切替時の挙動が中心。
-- **BPDU Guard / Root Guard / Edge Port**: 共通の `STP_PORT` テーブル経由で MSTP でも有効。
-
-## トラブルシューティング
-
-- ルートが期待どおり選ばれない → `show spanning-tree mst instance <id>` で bridge priority と root bridge を確認。
-- リージョン境界で IST にしか入らない → `region_name` / `revision` / VLAN→MSTI マッピングが対向と完全一致しているかを確認（1 文字でも違うと別リージョン）。
-- BPDU が出ない → `STP_PORT.enabled=true` か、stpd ログで送信エラーが出ていないか確認。
+- [Topics: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) — VLAN / FDB と STP の関係
+- [Topics: Reference Index](../topics/22-reference-index/index.md)
 
 ## 引用元
 
