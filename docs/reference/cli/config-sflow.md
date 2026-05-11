@@ -109,7 +109,7 @@ interface 用 sample-direction。グローバルと同じ `tx/both` の egress c
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SFLOW`](../config-db/sflow.md) / `SFLOW_SESSION` / `SFLOW_COLLECTOR`
+- CONFIG_DB: [`SFLOW`](../config-db/sflow.md) / [`SFLOW_SESSION`](../config-db/sflow.md) / [`SFLOW_COLLECTOR`](../config-db/sflow.md)
 
 <!-- ref-triangle:end -->
 

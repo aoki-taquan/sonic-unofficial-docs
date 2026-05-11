@@ -65,7 +65,7 @@ NTP|global
 
 ## 関連リファレンス
 
-- YANG: [`sonic-ntp`](../yang/sonic-ntp.md) / `sonic-mgmt_vrf`
+- YANG: [`sonic-ntp`](../yang/sonic-ntp.md) / [`sonic-mgmt_vrf`](../yang/sonic-mgmt_vrf.md)
 - CLI: [`config ntp`](../cli/config-ntp.md)
 
 <!-- ref-triangle:end -->

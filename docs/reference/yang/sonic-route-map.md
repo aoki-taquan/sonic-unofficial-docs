@@ -136,7 +136,7 @@ module: sonic-route-map
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`ROUTE_MAP`](../config-db/route-map.md) / `ROUTE_MAP_SET`
+- CONFIG_DB: [`ROUTE_MAP`](../config-db/route-map.md) / [`ROUTE_MAP_SET`](../config-db/route-map.md)
 
 <!-- ref-triangle:end -->
 

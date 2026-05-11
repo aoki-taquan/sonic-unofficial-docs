@@ -123,6 +123,26 @@ DASH ACL は通常の `ACL_TABLE` / `ACL_RULE` と同じ名前空間ではなく
 | Drop counter vs ACL counter | 前者は ASIC の drop reason、後者は ACL rule の hit。重なるが粒度と意味が違う |
 | TCAM ACL vs DASH ACL | 前者は SAI ACL table、後者は DASH orchestration による policy table |
 
+## 問題を切り分けるための流れ図
+
+「ドロップしている / CPU が高い / ミラーが届かない」のいずれの症状でも、まず ACL / CoPP / Mirror のどれが関与する事象かを切り分けてから節を選ぶと迷子にならない。
+
+```mermaid
+flowchart TD
+  Q[症状] --> A{パケットが落ちている?}
+  A -->|Yes| A1{ASIC の drop reason は?}
+  A1 -->|ACL_DROP / ACL_ANY| A2[setup.md: ACL_TABLE type / ACL_RULE の priority と match]
+  A1 -->|L2/L3 不正 / TTL など| A3[internals.md: SAI drop reason と debug-counter]
+  A -->|No| B{CPU 使用率が高い・control plane が不安定?}
+  B -->|Yes| B1[operations.md: COPP_TRAP / COPP_GROUP の policer と CPU queue]
+  B -->|No| C{ミラーが想定先に届かない?}
+  C -->|Yes| C1[architecture.md: MIRROR_SESSION の type と SAI capability] --> C2[internals.md: ERSPAN / GRE outer / queue 属性の伝搬]
+  C -->|No| D{特定 rule が hit していない?}
+  D -->|Yes| D1[operations.md: FLEX_COUNTER_TABLE.ACL / TRAP_FLOW_COUNTER で観測]
+```
+
+3 機能が独立に見えても、`POLICER` と counter は ACL / CoPP の両方から参照される。流れ図で `setup` → `internals` のように節をまたぐときは、共有部品（policer / counter / SAI capability）を経由する点に注意。
+
 ## 読み終わったあとにできるようになること
 
 - ACL / CoPP / Mirror の責務を 1 行で説明できる。

@@ -80,7 +80,7 @@ related:
 
 ## 関連リファレンス
 
-- CONFIG_DB: `STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` / `NAT_BINDINGS` / `NAT_GLOBAL`
+- CONFIG_DB: `STATIC_NAT` / `STATIC_NAPT` / [`NAT_POOL`](../config-db/nat.md) / [`NAT_BINDINGS`](../config-db/nat.md) / [`NAT_GLOBAL`](../config-db/nat.md)
 
 <!-- ref-triangle:end -->
 

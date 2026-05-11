@@ -140,7 +140,7 @@ excerpt: |
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SNMP`](../config-db/snmp.md) / `SNMP_COMMUNITY` / `SNMP_USER` / [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md) / `SNMP_TRAP_CONFIG` / [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
+- CONFIG_DB: [`SNMP`](../config-db/snmp.md) / [`SNMP_COMMUNITY`](../config-db/snmp.md) / [`SNMP_USER`](../config-db/snmp.md) / [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md) / [`SNMP_TRAP_CONFIG`](../config-db/snmp.md) / [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
 
 <!-- ref-triangle:end -->
 

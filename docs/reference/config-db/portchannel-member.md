@@ -57,7 +57,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 ## 関連リファレンス
 
 - YANG: [`sonic-portchannel`](../yang/sonic-portchannel.md)
-- CLI: `config portchannel member`
+- CLI: [`config portchannel member`](../cli/config-portchannel.md)
 
 <!-- ref-triangle:end -->
 

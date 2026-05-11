@@ -82,7 +82,7 @@ module: sonic-fine-grained-ecmp
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`FG_NHG`](../config-db/fg-nhg.md) / `FG_NHG_PREFIX` / `FG_NHG_MEMBER`
+- CONFIG_DB: [`FG_NHG`](../config-db/fg-nhg.md) / [`FG_NHG_PREFIX`](../config-db/fg-nhg.md) / [`FG_NHG_MEMBER`](../config-db/fg-nhg.md)
 
 <!-- ref-triangle:end -->
 

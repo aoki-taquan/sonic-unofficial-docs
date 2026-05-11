@@ -35,6 +35,38 @@ def slugify(name: str) -> str:
     return s
 
 
+def slugify_keep_underscore(name: str) -> str:
+    """Variant that preserves `_` (some file stems keep underscores, e.g. sonic-mgmt_interface)."""
+    s = name.strip().lower()
+    s = s.replace(" ", "-").replace("/", "-")
+    s = re.sub(r"-+", "-", s).strip("-")
+    return s
+
+
+def resolve_slug(name: str, index: set[str]) -> str | None:
+    """Try several slug normalizations / prefix fallbacks. Return matching stem or None.
+
+    Order:
+    1. exact slugify (`_` → `-`)
+    2. slugify keeping `_` (handles `sonic-mgmt_interface.md`, `config-warm_restart.md`)
+    3. progressively drop trailing `-token` segments and retry both forms
+       (handles `config bgp bbr` → `config-bgp`, `PBH_HASH_FIELD` → `pbh`)
+    """
+    candidates = [slugify(name), slugify_keep_underscore(name)]
+    for c in candidates:
+        if c and c in index:
+            return c
+    # Trailing-segment fallback
+    for c in list(candidates):
+        parts = c.split("-")
+        while len(parts) > 1:
+            parts.pop()
+            cand = "-".join(parts)
+            if cand and cand in index:
+                return cand
+    return None
+
+
 def parse_related(fm_text: str) -> dict[str, list[str]]:
     """Very small purpose-built parser for the `related:` block."""
     out: dict[str, list[str]] = {"config_db": [], "cli": [], "yang": []}
@@ -91,8 +123,8 @@ def build_index(area: str) -> set[str]:
 
 
 def render_link(area_from: str, area_to: str, name: str, index: set[str]) -> str:
-    slug = slugify(name)
-    if slug in index:
+    slug = resolve_slug(name, index)
+    if slug:
         # relative path from area_from to area_to
         if area_from == area_to:
             rel = f"{slug}.md"

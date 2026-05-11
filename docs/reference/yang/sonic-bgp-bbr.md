@@ -54,12 +54,35 @@ module: sonic-bgp-bbr
 - CONFIG_DB: `BGP_BBR|all`
 - CLI: `config bgp bbr`
 
+## redis-cli での観測
+
+YANG の `enum`（`enabled` / `disabled`）と `default` の挙動は、実機では CONFIG_DB の `BGP_BBR` キーを直接覗くと素早く突き合わせできる。設定値・FRR への反映状況を 1 セッションで確認する定型は以下。
+
+```bash
+# 1. 現在の CONFIG_DB 値（YANG leaf "status" に相当）
+sonic-db-cli CONFIG_DB hgetall 'BGP_BBR|all'
+# 期待: 1) "status"
+#       2) "enabled"   (または "disabled")
+
+# 2. キーが未作成のときは default(enabled) 扱い
+sonic-db-cli CONFIG_DB keys 'BGP_BBR|*'
+
+# 3. 設定変更と即時反映確認
+sonic-db-cli CONFIG_DB hset 'BGP_BBR|all' status enabled
+sonic-db-cli CONFIG_DB hget  'BGP_BBR|all' status
+
+# 4. bgpcfgd が FRR へ反映した結果（aggregate-address の suppress-map / advertise-map）
+docker exec -it bgp vtysh -c 'show running-config bgpd' | grep -E 'aggregate-address|bbr'
+```
+
+`status=enabled` のとき、`BGP_AGGREGATE_ADDRESS` の BBR 連動ロジック（`suppress-map` の動的切替）が `bgpcfgd` の Jinja テンプレートで生成される。`disabled` に切り替えても `aggregate-address` 設定自体は残るため、FRR 側の `running-config` 差分で「BBR 機能のみが OFF」を確認するのがポイント。
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
 - CONFIG_DB: `BGP_BBR`
-- CLI: `config bgp bbr`
+- CLI: [`config bgp bbr`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 

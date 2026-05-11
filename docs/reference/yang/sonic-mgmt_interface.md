@@ -65,7 +65,7 @@ module: sonic-mgmt_interface
 ## 関連リファレンス
 
 - CONFIG_DB: [`MGMT_INTERFACE`](../config-db/mgmt-interface.md)
-- CLI: `config interface ip`
+- CLI: [`config interface ip`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
 

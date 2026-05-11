@@ -67,7 +67,7 @@ module: sonic-warm-restart
 ## 関連リファレンス
 
 - CONFIG_DB: [`WARM_RESTART`](../config-db/warm-restart.md)
-- CLI: `config warm_restart`
+- CLI: [`config warm_restart`](../cli/config-warm_restart.md)
 
 <!-- ref-triangle:end -->
 

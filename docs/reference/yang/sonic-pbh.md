@@ -123,7 +123,7 @@ module: sonic-pbh
 
 ## 関連リファレンス
 
-- CONFIG_DB: `PBH_HASH_FIELD` / `PBH_HASH` / `PBH_RULE` / `PBH_TABLE`
+- CONFIG_DB: [`PBH_HASH_FIELD`](../config-db/pbh.md) / [`PBH_HASH`](../config-db/pbh.md) / [`PBH_RULE`](../config-db/pbh.md) / [`PBH_TABLE`](../config-db/pbh.md)
 
 <!-- ref-triangle:end -->
 

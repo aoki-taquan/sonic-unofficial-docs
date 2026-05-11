@@ -60,7 +60,7 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 ## 関連リファレンス
 
-- YANG: `sonic-mgmt_interface`
+- YANG: [`sonic-mgmt_interface`](../yang/sonic-mgmt_interface.md)
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->

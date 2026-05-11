@@ -70,7 +70,7 @@ module: sonic-nvgre-tunnel
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`NVGRE_TUNNEL`](../config-db/nvgre-tunnel.md) / `NVGRE_TUNNEL_MAP`
+- CONFIG_DB: [`NVGRE_TUNNEL`](../config-db/nvgre-tunnel.md) / [`NVGRE_TUNNEL_MAP`](../config-db/nvgre-tunnel.md)
 
 <!-- ref-triangle:end -->
 

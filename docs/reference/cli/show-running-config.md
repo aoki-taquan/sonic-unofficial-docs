@@ -126,7 +126,7 @@ multi-ASIC では `-n` を必ず単一 namespace 名のいずれかに合わせ�
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`PORT`](../config-db/port.md) / [`INTERFACE`](../config-db/interface.md) / [`SNMP`](../config-db/snmp.md) / `SNMP_COMMUNITY` / `SNMP_USER` / [`ACL_RULE`](../config-db/acl-rule.md) / `STP`
+- CONFIG_DB: [`PORT`](../config-db/port.md) / [`INTERFACE`](../config-db/interface.md) / [`SNMP`](../config-db/snmp.md) / [`SNMP_COMMUNITY`](../config-db/snmp.md) / [`SNMP_USER`](../config-db/snmp.md) / [`ACL_RULE`](../config-db/acl-rule.md) / `STP`
 
 <!-- ref-triangle:end -->
 

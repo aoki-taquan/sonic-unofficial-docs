@@ -125,7 +125,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 
 ## 関連リファレンス
 
-- YANG: `sonic-device_metadata`
+- YANG: [`sonic-device_metadata`](../yang/sonic-device_metadata.md)
 - CLI: `config hostname` / [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->

@@ -57,7 +57,7 @@ container 構造のため key は固定文字列 `vrf_global`。
 
 ## 関連リファレンス
 
-- YANG: `sonic-mgmt_vrf`
+- YANG: [`sonic-mgmt_vrf`](../yang/sonic-mgmt_vrf.md)
 - CLI: [`config vrf`](../cli/config-vrf.md)
 
 <!-- ref-triangle:end -->

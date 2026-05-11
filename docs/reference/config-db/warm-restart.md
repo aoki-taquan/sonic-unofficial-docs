@@ -68,7 +68,7 @@ WARM_RESTART|<module>
 ## 関連リファレンス
 
 - YANG: [`sonic-warm-restart`](../yang/sonic-warm-restart.md)
-- CLI: `config warm_restart` / `show warm_restart`
+- CLI: [`config warm_restart`](../cli/config-warm_restart.md) / `show warm_restart`
 
 <!-- ref-triangle:end -->
 

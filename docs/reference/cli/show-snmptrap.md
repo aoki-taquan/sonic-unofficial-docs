@@ -80,7 +80,7 @@ excerpt: |
 
 ## 関連リファレンス
 
-- CONFIG_DB: `SNMP_TRAP_CONFIG`
+- CONFIG_DB: [`SNMP_TRAP_CONFIG`](../config-db/snmp.md)
 
 <!-- ref-triangle:end -->
 

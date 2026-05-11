@@ -68,7 +68,7 @@ DHCP_SERVER_IPV4|<name>
 
 ## 関連リファレンス
 
-- YANG: `sonic-dhcp-server-ipv4`
+- YANG: [`sonic-dhcp-server-ipv4`](../yang/sonic-dhcp-server.md)
 - CLI: `config dhcp_server`
 
 <!-- ref-triangle:end -->

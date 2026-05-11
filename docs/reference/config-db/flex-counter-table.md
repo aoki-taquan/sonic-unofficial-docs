@@ -88,7 +88,7 @@ FLEX_COUNTER_TABLE|<group>
 
 ## 関連リファレンス
 
-- YANG: `sonic-flex_counter`
+- YANG: [`sonic-flex_counter`](../yang/sonic-flex_counter.md)
 - CLI: `counterpoll`
 
 <!-- ref-triangle:end -->
