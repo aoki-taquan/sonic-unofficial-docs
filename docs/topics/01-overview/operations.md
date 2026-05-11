@@ -50,6 +50,108 @@ bgp、telemetry、snmp、lldp などの feature service は [FEATURE テーブ�
 
 日常の切り戻しには、まず GCU checkpoint / rollback、保存済み `config_db.json`、`config reload` を検討します。`reset-factory` は「設定基盤を初期状態へ戻す」操作であり、ログやユーザまで消すモードがあるため、障害解析中に安易に実行しない方がよい入口です。
 
+## show feature の出力サンプル
+
+実装上、`show feature status` は CONFIG_DB の `FEATURE` テーブルと STATE_DB の `FEATURE|<name>` を結合して表示します。標準構成では次の通り、`State`、`AutoRestart`、`SetOwner` の 3 カラムが出ます。
+
+```text
+Feature     State           AutoRestart     SetOwner
+----------  --------------  --------------  ----------
+bgp         enabled         enabled         local
+database    always_enabled  always_enabled  local
+dhcp_relay  enabled         enabled         kube
+lldp        enabled         enabled         kube
+nat         enabled         enabled         local
+pmon        enabled         enabled         kube
+radv        enabled         enabled         kube
+restapi     disabled        enabled         local
+sflow       disabled        enabled         local
+snmp        enabled         enabled         kube
+swss        enabled         enabled         local
+syncd       enabled         enabled         local
+teamd       enabled         enabled         local
+telemetry   enabled         enabled         kube
+```
+
+remote management が有効な構成では追加で `SystemState`、`UpdateTime`、`ContainerId`、`Version`、`CurrentOwner`、`RemoteState` が出ます。
+
+```text
+Feature   State    AutoRestart  SystemState  UpdateTime           ContainerId   Version       SetOwner  CurrentOwner  RemoteState
+--------  -------  -----------  -----------  -------------------  ------------  ------------  --------  ------------  -----------
+snmp      enabled  enabled      up           2020-11-12 23:32:56  aaaabbbbcccc  20201230.100  kube      kube          kube
+```
+
+カラムの意味:
+
+- `State` は CONFIG_DB の `FEATURE|<name>:state`。`enabled` / `disabled` / `always_enabled` / `always_disabled` を取り得ます。`always_*` は build-time fix で `config feature` から変更できません。
+- `AutoRestart` は systemd unit が落ちた時に `hostcfgd` が再起動するかの方針です。
+- `SystemState` は STATE_DB が示す現在状態。`up` 以外（`down` / 空）は service が立ち上がっていないことを疑います。
+- `SetOwner` は `local`（host）か `kube`（kubernetes-managed）の指定で、`CurrentOwner` がそれと一致しなければ kube join 中などの過渡状態です。
+
+## 異常検出パターン
+
+| 観測値 | 疑う状態 | 一次切り分け |
+|---|---|---|
+| `State=enabled` だが `SystemState=down` | container 起動失敗、依存 service 未起動、image 不一致 | `systemctl status <feature>`、`docker ps -a`、`journalctl -u <feature>` |
+| `AutoRestart=enabled` で繰り返し再起動 | container 内部の crash loop | `docker logs <container>`、`/var/log/syslog` の `Main process exited` 連続発生 |
+| `delayed=True` の feature が起動しない | `delayed-` timer 単位の起動順、または前提 service 失敗 | `systemctl list-timers`、`<feature>-delayed.timer` を確認 |
+| `SetOwner=kube` で `CurrentOwner=local` | kube join 未完了、または kube image pull 失敗 | `show feature config` で `version` 表示、`docker images` で kube tag 有無 |
+| `config save` 後も次回 reboot で消える | `/etc/sonic/config_db.json` への書き込み失敗、または read-only FS | `ls -l /etc/sonic/`、`mount` で rw 確認 |
+
+## 典型的なログサンプル
+
+`hostcfgd` は feature の enable/disable と AutoRestart 反映を担当します。`/var/log/syslog` には次のような行が出ます。
+
+```text
+hostcfgd: Feature 'bgp' is enabled and started
+hostcfgd: Feature 'snmp' is disabled and stopped
+hostcfgd: Feature 'telemetry' restart policy set to 'enabled'
+hostcfgd: Feature 'lldp' state transition disabled->enabled
+```
+
+`systemctl status bgp` の異常時には次のようなテイルが付きます。
+
+```text
+bgp.service: Main process exited, code=exited, status=1/FAILURE
+bgp.service: Failed with result 'exit-code'.
+Stopped BGP container.
+bgp.service: Scheduled restart job, restart counter is at 5.
+```
+
+`docker logs bgp` で container 側の zebra/bgpd 立ち上げに失敗している場合は別途 BGP 章を参照します。
+
+## 対応コマンド早見表
+
+| 目的 | コマンド |
+|---|---|
+| feature 一覧 | `show feature status` |
+| 設定だけ確認 | `show feature config` |
+| 個別 feature 切替 | `config feature state <name> enabled\|disabled` |
+| AutoRestart 切替 | `config feature autorestart <name> enabled\|disabled` |
+| owner 切替 | `config feature owner <name> local\|kube` |
+| service 再起動 | `systemctl restart <feature>` |
+| systemd unit 状態 | `systemctl status <feature>` |
+| container 状態 | `docker ps`、`docker logs <container>` |
+| 設定保存 | `config save -y` |
+| 設定再適用 | `config reload -y` |
+| 差分適用 | `config apply-patch <patch.json>` |
+| target で置換 | `config replace <target.json>` |
+| 工場初期化 | `sonic-installer set-default <image>` ／ `config reset-factory` |
+
+## 関連 CONFIG_DB / STATE_DB
+
+- `CONFIG_DB:FEATURE|<name>` — `state`、`auto_restart`、`delayed`、`high_mem_alert`、`set_owner`、`support_syslog_rate_limit`、`has_global_scope`、`has_per_asic_scope`、`has_per_dpu_scope` を保持。
+- `CONFIG_DB:SYSTEM_DEFAULTS|<flag>` — 起動時の既定挙動フラグ。`tunnel_qos_remap`、`synchronous_mode`、`mac_expiry_for_dualtor` 等。
+- `STATE_DB:FEATURE|<name>` — `system_state`、`update_time`、`container_id`、`container_version`、`current_owner`、`remote_state`。
+- `STATE_DB:DEVICE_METADATA|localhost` — 起動時のマシン状態（hwsku、platform、type）の確認用。
+
+## 横断参照
+
+- BGP service が起動しない場合: [BGP 章 運用](../02-bgp/operations.md) の neighbor / orchagent 切り分け。
+- VXLAN / VNET 関連 service の前提: [Overlay 章 運用](../03-vxlan-evpn/operations.md)。
+- L2 service（teamd、swss）の連動失敗: [L2 章 運用](../06-l2-vlan-lag/operations.md)。
+- Dual-ToR 構成での feature 順序（mux、linkmgrd、telemetry）: [Dual-ToR 章 運用](../05-dual-tor/operations.md)。
+
 ## 関連ページ
 
 - [FEATURE テーブルによるオプショナル機能制御](../../system/sonic-optional-feature-control-enhancement.md)

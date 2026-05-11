@@ -91,6 +91,119 @@ Link event damping は、ポート up/down が短時間に繰り返される場�
 
 運用手順としては、まず通常の interface state と transceiver / cable 健全性を確認し、damping を使う場合は [リンクイベントダンピング](../../switching/link-event-damping-hld.md) の実装との乖離を確認してください。
 
+## show vlan / show interfaces の出力サンプル
+
+`show vlan brief` は CONFIG_DB の `VLAN`、`VLAN_MEMBER`、`VLAN_INTERFACE` を結合したテーブル表示です。
+
+```text
++-----------+-----------------+-----------------+----------------+-------------+
+|   VLAN ID | IP Address      | Ports           | Port Tagging   | Proxy ARP   |
++===========+=================+=================+================+=============+
+|      1000 | 192.168.0.1/21  | Ethernet4       | untagged       | disabled    |
+|           | fc02:1000::1/64 | Ethernet8       | untagged       |             |
+|           |                 | Ethernet12      | untagged       |             |
+|           |                 | Ethernet16      | untagged       |             |
++-----------+-----------------+-----------------+----------------+-------------+
+|      2000 | 192.168.0.10/21 | Ethernet24      | untagged       | enabled     |
+|           | fc02:1011::1/64 | Ethernet28      | untagged       |             |
++-----------+-----------------+-----------------+----------------+-------------+
+|      3000 |                 |                 |                | disabled    |
++-----------+-----------------+-----------------+----------------+-------------+
+|      4000 |                 | PortChannel1001 | tagged         | disabled    |
++-----------+-----------------+-----------------+----------------+-------------+
+```
+
+`SONIC_CLI_IFACE_MODE=alias` のときは `Ethernet0` が `etp1` のような alias で出ます。VLAN ID 列が空の行（VLAN 3000）は member も IP も無い未使用 VLAN を示します。
+
+`show interfaces portchannel` は PortChannel の状態を一覧します。
+
+```text
+  No.  Team Dev         Protocol     Ports
+-----  ---------------  -----------  ---------------------------
+ 0001  PortChannel0001  LACP(A)(Up)  Ethernet112(S) Ethernet116(S)
+ 0002  PortChannel0002  LACP(A)(Up)  Ethernet108(S) Ethernet104(S)
+```
+
+`(A)` は active LACP、`(S)` は selected、`(D)` は disabled / down。`(P)` は LACP unsel / not bundled です。
+
+## 異常検出パターン
+
+| 観測 | 疑う状態 | 一次切り分け |
+|---|---|---|
+| `show vlan brief` に member が出ない | `VLAN_MEMBER` 未登録、または port が PortChannel の中で隠れている | `redis-cli -n 4 keys 'VLAN_MEMBER*'`、`config vlan member add` |
+| Port が `tagged` 想定だが `untagged` で出る | `tagging_mode` 設定漏れ | `config vlan member add -u\|--tag-mode` |
+| PortChannel が `(D)` のまま | LACP unmatched、speed/duplex 不一致、`min_links` 未達 | `teamdctl <pc> state`、`show interfaces status` |
+| `mclagdctl dump state` で `Session Status=DOWN` | ICCP peer-link 断、peer IP 不到達、MD5 不一致 | peer-link の `show interfaces portchannel`、`ping <peer>` |
+| `peer state=ERROR` / `mclag_remote_system_id` 取れない | ICCP capability mismatch | `mclagsyncd` ログ |
+| 片側だけ MAC を知っている | ICCP MAC sync 失敗、または対向 PortChannel 不一致 | `mclagdctl dump mac` 両側比較、`APP_MCLAG_FDB_TABLE` |
+| MAC が古い port に残る | FDB flush 未発火、または STP/PortChannel down の通知欠落 | `fdbshow`、`sonic-clear fdb` |
+| `storm-control` 設定後も flooding 続く | unit が pps か bps か、対象が unknown unicast か broadcast か取り違え | `show storm-control all`、CONFIG_DB:`PORT_STORM_CONTROL` |
+| Link が短周期 flap | cable / transceiver / autoneg / damping 未設定 | `show interfaces transceiver eeprom`、syslog の `Link is Up\|Down` |
+
+## 典型的なログサンプル
+
+```text
+swss: :- doTask: VLAN 1000 was added
+swss: :- doTask: Failed to add member Ethernet4 to Vlan1000: not in any port
+teamd: PortChannel0001: bond carrier changed to UP
+teamd: PortChannel0001: state changed: down -> up
+kernel: 8021q: adding VLAN 0 to HW filter on device Ethernet0
+mclagsyncd: ICCP session UP with peer 12.1.1.2
+mclagsyncd: ICCP session DOWN with peer 12.1.1.2: KeepaliveTimeout
+mclagsyncd: Failed to sync MAC 00:aa:bb:cc:dd:ee on Vlan1000 from peer
+fdbsyncd: FDB entry MAC 00:11:22:33:44:55 on Vlan1000 learned on Ethernet4
+fdbsyncd: FDB flush triggered for Ethernet4 due to port down
+orchagent: :- doTask: SAI_API_FDB FDB age out for 00:11:22:33:44:55
+orchagent: :- doTask: Failed to add FDB entry, SAI status SAI_STATUS_TABLE_FULL
+linkmgrd: Storm control packet drop on Ethernet0 broadcast
+```
+
+## 対応コマンド早見表
+
+| 目的 | コマンド |
+|---|---|
+| VLAN 一覧 | `show vlan brief`、`show vlan config` |
+| VLAN 追加 / 削除 | `config vlan add <id>` / `config vlan del <id>` |
+| VLAN member | `config vlan member add [-u] <id> <port>` |
+| PortChannel 一覧 | `show interfaces portchannel` |
+| PortChannel 追加 | `config portchannel add PortChannel<id> [--min-links N] [--fallback]` |
+| Member 追加 | `config portchannel member add <pc> <port>` |
+| MC-LAG 状態 | `mclagdctl dump state` |
+| MC-LAG local / peer 一覧 | `mclagdctl dump portlist local\|peer` |
+| MC-LAG MAC | `mclagdctl dump mac` |
+| MC-LAG ARP / ND | `mclagdctl dump arp\|nd` |
+| FDB 一覧 | `fdbshow` |
+| FDB flush | `sonic-clear fdb all\|port <p>\|vlan <id>` |
+| Storm control | `config interface storm-control broadcast\|unknown-unicast\|unknown-multicast add <port> <kbps>` |
+| Storm 状態 | `show storm-control all\|interface <port>` |
+| L1 状態 | `show interfaces status` |
+| Transceiver | `show interfaces transceiver eeprom\|status\|info` |
+| Counters | `show interfaces counters`、`sonic-clear counters` |
+| Proxy ARP | `config vlan proxy_arp <vid> enable\|disable`、`show vlan brief` の Proxy ARP 列 |
+
+## 関連 CONFIG_DB / APPL_DB / STATE_DB / counter
+
+- `CONFIG_DB:VLAN|Vlan<id>` — `vlanid`、`mtu`、`mac`、`description`、`proxy_arp`、`autostate`。
+- `CONFIG_DB:VLAN_MEMBER|Vlan<id>|<port>` — `tagging_mode`。
+- `CONFIG_DB:VLAN_INTERFACE|Vlan<id>` / `|Vlan<id>|<ip>` — SVI 定義と IP。
+- `CONFIG_DB:PORTCHANNEL|PortChannel<id>` — `admin_status`、`mtu`、`min_links`、`fallback`、`lacp_key`。
+- `CONFIG_DB:PORTCHANNEL_MEMBER|PortChannel<id>|<port>` — member 関係。
+- `CONFIG_DB:MCLAG_DOMAIN|<id>` — `source_ip`、`peer_ip`、`peer_link`、`keepalive_interval`、`session_timeout`。
+- `APPL_DB:FDB_TABLE:Vlan<id>:<mac>` — dynamic / static FDB。
+- `APPL_DB:LAG_TABLE:<pc>` — admin / oper、active member。
+- `APPL_DB:STORM_CONTROL_TABLE:<port>:<type>` — storm control の現在値。
+- `STATE_DB:FDB_TABLE` — FDB sync 後の sniffer 出力（fdbshow が読む）。
+- `STATE_DB:PORT_TABLE\|<port>` — `oper_status`、`speed`、`admin_status`。
+- `COUNTERS_DB:COUNTERS_LAG_NAME_MAP` / `COUNTERS_PORT_NAME_MAP` — port / LAG の counter OID。
+- `STATE_DB` の MC-LAG 同期テーブル（`MCLAG_*`、`APP_MCLAG_FDB_TABLE`）。
+
+## 横断参照
+
+- VLAN_INTERFACE で出す SVI が L3 で動かない: [VRF / ECMP 章 運用](../04-vrf-ecmp/operations.md)。
+- MC-LAG over Dual-ToR / Active-Active 構成: [Dual-ToR 章 運用](../05-dual-tor/operations.md)。
+- VLAN ↔ VNI 紐付けや EVPN 由来 FDB の差分: [Overlay 章 運用](../03-vxlan-evpn/operations.md)。
+- teamd / swss が起動しない場合の前提: [運用入口](../01-overview/operations.md) の feature / hostcfgd セクション。
+
 ## 関連ページ
 
 - [CLI: show vlan](../../reference/cli/show-vlan.md)

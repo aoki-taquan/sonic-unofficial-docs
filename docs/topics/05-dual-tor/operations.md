@@ -62,6 +62,140 @@ BFD hardware offload は Dual-ToR 専用機能ではありませんが、上流 
 
 ここでの注意点は、BFD が下げるのは主に routing adjacency であり、mux state そのものではないことです。default route が消える、BGP が落ちる、上流到達性が無い、という結果が `linkmgrd` の default route 連動や route programming にどう反映されるかを見る必要があります。
 
+## show muxcable の出力サンプル
+
+`show muxcable grpc muxdirection Ethernet12` は gRPC 経由で NIC / peer 側の状態を取り、`Direction`、`Presence`、`PeerDirection`、`ConnectivityState` の 4 カラムを出します。
+
+```text
+Port        Direction    Presence    PeerDirection    ConnectivityState
+----------  -----------  ----------  ---------------  -------------------
+Ethernet12  active       True        active           READY
+```
+
+両側が `active` なのは split-brain の可能性があります。`active/standby` の組み合わせが正常で、`unknown` / `not_applicable` は Y-cable へのアクセス失敗を疑います。
+
+`show muxcable hwmode muxdirection` は ASIC / Y-cable HW から取得した実状態のみを示します。
+
+```text
+Port        Direction    Presence
+----------  -----------  ----------
+Ethernet12  active       True
+```
+
+`show muxcable metrics Ethernet0` は linkmgrd / xcvrd の状態遷移タイムスタンプを並べます。
+
+```text
+PORT       EVENT                         TIME
+---------  ----------------------------  ---------------------------
+Ethernet0  linkmgrd_switch_active_start  2021-May-13 10:00:21.420898
+Ethernet0  xcvrd_switch_standby_start    2021-May-13 10:01:15.690835
+Ethernet0  xcvrd_switch_standby_end      2021-May-13 10:01:15.696051
+Ethernet0  linkmgrd_switch_standby_end   2021-May-13 10:01:15.696728
+```
+
+`switch_*_start` と `switch_*_end` の差が切替遅延（数 ms〜数 100 ms）です。1 秒を超えるなら Y-cable / xcvrd を疑います。
+
+`show muxcable packetloss Ethernet0` は link prober の連続失敗を集計します。
+
+```text
+PORT       COUNT                 VALUE
+---------  ------------------  -------
+Ethernet0  pck_loss_count          612
+Ethernet0  pck_expected_count      840
+PORT       EVENT                      TIME
+---------  -------------------------  ---------------------------
+Ethernet0  link_prober_unknown_start  2022-Jan-26 03:13:05.366900
+Ethernet0  link_prober_unknown_end    2022-Jan-26 03:17:35.446580
+```
+
+`pck_loss_count / pck_expected_count` が 1 に近い場合、prober が完全に失敗していて切替判断が止まっています。
+
+`show muxcable tunnel_route Ethernet0` は MuxOrch が tunnel に向けた server 向け `/32` route を kernel / asic 別に表示します。
+
+```text
+PORT        DEST_TYPE    DEST_ADDRESS    kernel    asic
+----------  -----------  --------------  --------  ------
+Ethernet0   server_ipv4  10.2.1.1        added     added
+Ethernet4   server_ipv4  10.3.1.1        added     -
+```
+
+`asic=-` は ASIC への投入が完了していないか standby 側として意図的に空のケースです。kernel が added で asic が `-` なら SAI / route programming 失敗を疑います。
+
+## 異常検出パターン
+
+| 観測 | 疑う状態 | 一次切り分け |
+|---|---|---|
+| 両側 `Direction=active` | split-brain（peer 通信断 + 自律 active 化） | peer-link、ICCP-like、SoC link、`linkmgrd` 状態 |
+| `state=auto` だが切替が起きない | link prober 停止、または `state` が実は manual | `show muxcable status`、`config muxcable mode auto` |
+| `metrics` で `switch_*` 差が 1s 以上 | Y-cable / xcvrd 遅延、SoC busy | `xcvrd` ログ、firmware 不一致 |
+| `pck_loss_count` が連続増加 | server-facing link / NIC firmware / ICMP filter | NIC 側 counter、`show interfaces counters` の Ethernet |
+| `tunnel_route` の `asic=-` | MuxOrch SAI 失敗、tunnel object 不在 | orchagent / muxorch ログ、`show vxlan tunnel` |
+| default route が消えても切替しない | linkmgrd の default-route 連動未設定 | `linkmgrd` config、BFD/BGP 上流連動 |
+| ICMP offload 期待だが prober_type=software | ASIC / SAI 未対応、または `MUX_LINKMGR` 設定漏れ | `MUX_LINKMGR` table、`show muxcable status` の prober |
+| `prefix-based mux neighbors` 構成で `/32` が neighbor でなく tunnel | mux state が standby、または neighbor 学習失敗 | `show muxcable status`、`show ip neighbor` |
+
+## 典型的なログサンプル
+
+linkmgrd / muxorch / xcvrd / IcmpOrch の代表ログ:
+
+```text
+linkmgrd: Mux port Ethernet0 transitioning to active due to LinkProberStateActive
+linkmgrd: Mux port Ethernet0 transitioning to standby due to PeerWaitTimeout
+linkmgrd: Default route nexthop went unreachable, forcing standby
+xcvrd: Y-cable switch to active for port Ethernet0
+xcvrd: Y-cable read NIC failed for port Ethernet0
+muxorch: :- doTask: switch port Ethernet0 to active, install neigh and route to nexthop
+muxorch: :- removeNextHopTunnel: delete NH tunnel for ip '10.2.1.1' failed
+IcmpOrch: ICMP offload session create failed for port Ethernet0, SAI status -2
+```
+
+split-brain や fast-fail の検出に使う syslog 文字列:
+
+```text
+linkmgrd: Detected dual active on Ethernet0, forcing standby on local
+linkmgrd: BFD session for upstream peer 10.0.0.1 went down
+```
+
+## 対応コマンド早見表
+
+| 目的 | コマンド |
+|---|---|
+| 設定確認 | `show muxcable config [<port>]` |
+| 論理状態 | `show muxcable status [<port>]` |
+| gRPC 状態 | `show muxcable grpc muxdirection [<port>\|all]` |
+| HW 状態 | `show muxcable hwmode muxdirection [<port>\|all]` |
+| Tunnel route | `show muxcable tunnel_route [<port>]` |
+| Cable health | `show muxcable health [<port>]` |
+| Metric | `show muxcable metrics [<port>]` |
+| Packetloss | `show muxcable packetloss [<port>]` |
+| Cable info | `show muxcable cableinfo [<port>]` |
+| Firmware | `show muxcable firmware version [<port>]` |
+| 手動切替 | `config muxcable mode active\|standby \| auto\|manual <port>` |
+| HW mode override | `config muxcable hwmode state active\|standby <port>` |
+| Counter clear | `sonic-clear muxcable packetloss <port>` |
+| ICMP offload | `show feature status \| grep icmp`、`MUX_LINKMGR` の `prober_type` |
+| BFD HW offload | `show bfd summary`、`BFD_SESSION` の `hardware` フィールド |
+
+## 関連 CONFIG_DB / STATE_DB / counter
+
+- `CONFIG_DB:MUX_CABLE|<port>` — `state`（auto / active / standby / manual）、`server_ipv4`、`server_ipv6`、`soc_ipv4`、`soc_ipv6`、`cable_type`。
+- `CONFIG_DB:MUX_LINKMGR|LINK_PROBER` — `interval_v4`、`interval_v6`、`positive_signal_count`、`negative_signal_count`、`prober_type`（software / hardware）。
+- `APPL_DB:MUX_CABLE_TABLE:<port>` — linkmgrd 出力の現在 state（active / standby / unknown）。
+- `STATE_DB:MUX_CABLE_TABLE\|<port>` — `state`、`peer_state`、`gRPC` connectivity。
+- `STATE_DB:HW_MUX_CABLE_TABLE\|<port>` — HW 実状態。
+- `STATE_DB:MUX_LINKMGR_TABLE\|<port>` — link prober の現在値。
+- `STATE_DB:LINK_PROBE_STATS\|<port>` — `pck_loss_count`、`pck_expected_count`、unknown event タイムスタンプ。
+- `APPL_DB:TUNNEL_ROUTE_TABLE:<port>` — server / soc 向け `/32` / `/128` の install 状態。
+- `APPL_DB:NEIGH_TABLE` — mux active 時に再 install される neighbor。
+- `COUNTERS_DB:COUNTERS_TUNNEL_NAME_MAP` — Dual-ToR tunnel encap counter。
+
+## 横断参照
+
+- 上流 BGP / BFD が落ちたときの mux 連動: [BGP 章 運用](../02-bgp/operations.md) と [VRF / ECMP 章 運用](../04-vrf-ecmp/operations.md) の default route / FIB 確認。
+- Bounce-back 経路の DSCP / PFC は [Overlay 章 運用](../03-vxlan-evpn/operations.md) の DSCP remap。
+- mux 配下 server の VLAN / FDB / Proxy ARP は [L2 章 運用](../06-l2-vlan-lag/operations.md)。
+- mux / icmp / linkmgrd feature 自体が落ちている場合: [運用入口](../01-overview/operations.md) の feature 切り分け。
+
 ## 関連ページ
 
 - [show muxcable サブコマンド](../../reference/cli/show-muxcable.md)
