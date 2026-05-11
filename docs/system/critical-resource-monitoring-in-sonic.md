@@ -81,7 +81,7 @@ flowchart LR
 
 - **[SAI](../reference/glossary.md#term-sai) 側 availability API が必要**。vendor 未対応 resource は値が出ない
 - WARN/CRIT は syslog のみで **自動 recovery アクションは無い**
-- 多 resource を高頻度ポーリングすると **ASIC SDK 負荷増**
+- 多 resource を高頻度ポーリングすると **[ASIC SDK](../reference/glossary.md#term-asic-sdk) 負荷増**
 - `ACL_COUNTER` / `FDB_ENTRY` は SDK query が高コストになることがあり、長めの polling 推奨
 
 ## 干渉する機能
@@ -110,4 +110,4 @@ generic SAI extension CRM（新 resource 追加枠組み） / system health moni
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4bc7eca3bfbd -->
+<!-- glossary-links-injected: ad4074e0b684 -->

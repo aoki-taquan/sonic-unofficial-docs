@@ -34,7 +34,7 @@ related:
 2. **bind 先 interface 誤り**: PORT ではなく PORTCHANNEL に bind すべき場面
 3. **rule priority の競合**: 上位 priority に permit があり、対象が先に抜ける
 4. **`PACKET_ACTION` の typo**: `FORWARD` / `DROP` の大小区別
-5. **TCAM 不足**: ASIC リソース不足で program 失敗 → [sai-table-full.md](sai-table-full.md)
+5. **[TCAM](../../reference/glossary.md#term-tcam) 不足**: ASIC リソース不足で program 失敗 → [sai-table-full.md](sai-table-full.md)
 
 ## 切り分け手順
 
@@ -90,7 +90,7 @@ crm show resources acl-table acl-group
 
 - table 再作成: `sudo config acl remove table <name> && sudo config acl add table <name> L3 -p Ethernet0,Ethernet1 -s ingress`
 - rule JSON で適用: `sudo acl-loader update full rules.json`
-- TCAM 不足の場合 priority を整理し低優先 deny を集約
+- [TCAM](../../reference/glossary.md#term-tcam) 不足の場合 priority を整理し低優先 deny を集約
 
 ## 関連ページ
 
@@ -103,4 +103,4 @@ crm show resources acl-table acl-group
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/aclorch.cpp
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — acl_loader
 
-<!-- glossary-links-injected: 1f2da1437d5b -->
+<!-- glossary-links-injected: 16cbb7ac9ae6 -->

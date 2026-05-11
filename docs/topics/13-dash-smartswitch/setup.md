@@ -229,7 +229,7 @@ gnmic -a <npu>:8080 --insecure subscribe \
 | 観点 | lab (KVM / 単機) | production (SmartSwitch 実機) |
 |---|---|---|
 | DPU | BMv2 仮想 DPU | SoC 実機 + SAI 実装 |
-| midplane | 仮想 bridge | 物理 PCIe / midplane SerDes |
+| midplane | 仮想 bridge | 物理 PCIe / midplane [SerDes](../../reference/glossary.md#term-serdes) |
 | HA | 単 DPU で擬似的に確認 | DPU ペア / 跨ぎ ENI |
 | 性能 | データプレーンは BMv2 速度 | line-rate（DPU SAI 依存） |
 | 上限 | ENI 数・rule 数は小さく | 規模パラメータは DPU 仕様 |
@@ -295,4 +295,4 @@ DPU 1 台が単独で稼働する形では HA の検証ができないため、�
 - [DASH SONiC KVM](../../overlay/dash-sonic-kvm.md)
 - [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md)
 
-<!-- glossary-links-injected: d50204739097 -->
+<!-- glossary-links-injected: 710f941d149a -->

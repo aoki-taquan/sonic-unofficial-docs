@@ -232,4 +232,16 @@ config save /tmp/all_config.json
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`MACSEC_PROFILE` CONFIG_DB スキーマ](../reference/config-db/macsec-profile.md)
+- [`VOQ_INBAND_INTERFACE` CONFIG_DB スキーマ](../reference/config-db/voq-inband-interface.md)
+- [`DEVICE_METADATA` CONFIG_DB スキーマ](../reference/config-db/device-metadata.md)
+- [`sonic-port` YANG モジュール](../reference/yang/sonic-port.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 8104c301a725 -->

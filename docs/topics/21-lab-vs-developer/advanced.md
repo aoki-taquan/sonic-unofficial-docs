@@ -81,7 +81,7 @@ CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非
 
 ## 既知の制約と回避方法
 
-- **VS と実機の SAI 差**: SAI VS は CPU 実装で、ASIC 固有の制約 (TCAM / buffer / pipeline depth) を再現しない。機能合格 ≠ 実機合格。
+- **VS と実機の SAI 差**: SAI VS は CPU 実装で、ASIC 固有の制約 ([TCAM](../../reference/glossary.md#term-tcam) / buffer / pipeline depth) を再現しない。機能合格 ≠ 実機合格。
 - **CI 時間と並列化**: 全 test plan を回すと CI が長い。差分テスト (changed area のみ) と nightly full の二段運用が現実的。
 - **PTF environment dependency**: PTF docker のバージョンと test plan の整合が崩れると失敗する。pin versioning を CI で固定する。
 - **DASH KVM の性能限界**: BMv2 ベースなので scale / throughput は限定的。機能テスト専用と割り切る。
@@ -107,4 +107,4 @@ CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非
 - KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。
 - CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。
 
-<!-- glossary-links-injected: f4f1f9bb2387 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

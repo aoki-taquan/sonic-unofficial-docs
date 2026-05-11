@@ -210,7 +210,7 @@ show ndp
 - **`RouteOrch`**: bulk API + timer 化
 - **`fpmsyncd`**: master device lookup 最適化
 - **`sairedis` (meta_sai + JSON)**: bulk API + JSON 更新
-- **`syncd`**: bulk 受け取り側（ASIC SDK 個別 call）
+- **`syncd`**: bulk 受け取り側（[ASIC SDK](../reference/glossary.md#term-asic-sdk) 個別 call）
 - **kernel ARP/ND**: gc_thresh による cache サイズ
 - **`COPP_TABLE`**: ARP/ND の到達 pps
 - **`show arp` / `show ndp` CLI**: 個別 FDB lookup 化
@@ -357,4 +357,4 @@ sudo grep -i "bulk" /var/log/swss/sairedis.rec | tail
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 7570ef7216f8 -->
+<!-- glossary-links-injected: ad4074e0b684 -->

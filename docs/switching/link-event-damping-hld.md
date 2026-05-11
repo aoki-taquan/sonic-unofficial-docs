@@ -69,7 +69,7 @@ related:
 
 ## 概要
 
-光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → [ASIC_DB](../reference/glossary.md#term-asic_db) → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの **下流負荷** を引き起こす[^1]。
+光トランシーバの汚れや不良ケーブルなどで [SerDes](../reference/glossary.md#term-serdes) の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → [ASIC_DB](../reference/glossary.md#term-asic_db) → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの **下流負荷** を引き起こす[^1]。
 
 本機能は **インタフェース単位で link up / down イベントを抑制（damping）** する仕組みを SONiC に追加する。多くの NOS で標準的な慣習で、SONiC では SyncD で intercept する形で実装される[^1]。
 
@@ -311,4 +311,15 @@ sudo config interface link_event_damping_algorithm Ethernet0 disabled
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: bbeca8ace23b -->
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config interface link_event_damping_algorithm` CLI リファレンス](../reference/cli/config-interface.md)
+- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
+- [`sonic-port` YANG モジュール](../reference/yang/sonic-port.md)
+
+<!-- augmented-links: v1 -->
+
+<!-- glossary-links-injected: 710f941d149a -->

@@ -361,4 +361,17 @@ config muxcable mode auto all
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config muxcable mode` CLI リファレンス](../reference/cli/config-muxcable.md)
+- [`show muxcable config` CLI リファレンス](../reference/cli/show-muxcable.md)
+- [`show muxcable status` CLI リファレンス](../reference/cli/show-muxcable.md)
+- [`config muxcable` CLI リファレンス](../reference/cli/config-muxcable.md)
+- [`show muxcable` CLI リファレンス](../reference/cli/show-muxcable.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: b5409080014b -->

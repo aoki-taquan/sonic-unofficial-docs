@@ -182,4 +182,17 @@ HLD が示すテスト計画[^1]:
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show interfaces` CLI リファレンス](../reference/cli/show-interfaces.md)
+- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
+- [`PORT_STORM_CONTROL` CONFIG_DB スキーマ](../reference/config-db/port-storm-control.md)
+- [`PORT_QOS_MAP` CONFIG_DB スキーマ](../reference/config-db/port-qos-map.md)
+- [`PORTCHANNEL` CONFIG_DB スキーマ](../reference/config-db/portchannel.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 54111b0e8f9b -->

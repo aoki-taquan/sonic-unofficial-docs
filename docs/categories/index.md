@@ -16,7 +16,7 @@ last_verified: 2026-05-10
 
 ## カテゴリ一覧
 
-- [DASH 関連](dash.md) (3 pages) — [DPU](../reference/glossary.md#term-dpu) / SmartNIC オフロード・SONiC-DASH 仮想 DPU・DASH [ACL](../reference/glossary.md#term-acl)
+- [DASH 関連](dash.md) (3 pages) — [DPU](../reference/glossary.md#term-dpu) / [SmartNIC](../reference/glossary.md#term-smartnic) オフロード・SONiC-DASH 仮想 DPU・DASH [ACL](../reference/glossary.md#term-acl)
 - [SmartSwitch 関連](smartswitch.md) (10 pages) — [NPU](../reference/glossary.md#term-npu)/DPU 分担・HA・[gNOI](../reference/glossary.md#term-gnoi) 経路・DPU upgrade
 - [Dual-ToR 関連](dual-tor.md) (12 pages) — active-active / active-standby・[MUX](../reference/glossary.md#term-mux) cable・[linkmgrd](../reference/glossary.md#term-linkmgrd)
 - [Warm-Reboot / Fast-Reboot 関連](reboot.md) (12 pages) — warm-restart・kexec・SWSS docker 再起動
@@ -33,4 +33,4 @@ last_verified: 2026-05-10
 - 機能テーマで「全体像 → 設定 → 運用 → 内部実装」と段階的に学ぶなら [Topics 章](../topics/index.md)。
 - 「ある機能の関連ページを area 横断で全部見たい」なら本カテゴリページ。
 
-<!-- glossary-links-injected: 698f9b12f9ac -->
+<!-- glossary-links-injected: b8635cf7f580 -->

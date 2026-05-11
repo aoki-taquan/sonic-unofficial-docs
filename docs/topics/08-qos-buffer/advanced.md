@@ -48,7 +48,7 @@ related:
 - **動的 buffer model**: 旧来の static buffer profile から、`BUFFER_POOL` の thresholds と alpha (dynamic threshold) を ASIC レベルで決める動的モデルへの移行。`buffermgrd` が `BUFFER_PROFILE` を auto 計算する。
 - **PFC watchdog の per-queue 詳細化**: storm 検出窓 / restore 窓を queue ごとにチューニングし、不要な polling load を減らす。`PFC_WD_TABLE` のパラメータ調整。
 - **Tunnel DSCP remap**: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は [05 Dual-ToR](../05-dual-tor/advanced.md) と相互参照。
-- **Headroom pool**: PFC pause 受信中に必要な headroom buffer を共有 pool で確保する設計。port shutdown 時に headroom が解放される動作の理解が必要。
+- **[Headroom](../../reference/glossary.md#term-headroom) pool**: PFC pause 受信中に必要な headroom buffer を共有 pool で確保する設計。port shutdown 時に headroom が解放される動作の理解が必要。
 - **[WRED](../../reference/glossary.md#term-wred) / ECN の細分化**: green / yellow / red の閾値別ドロップ確率と、ECN-marking 閾値を queue ごとに調整。CSE 系 telemetry と組み合わせて congestion 兆候を捕捉する。
 - **Watermark の align-with-port-config**: port admin down 時に watermark を 0 に clear する整合性改善で、運用 dashboard の誤検知を減らす。
 
@@ -88,4 +88,4 @@ related:
 - [Watermark Counters](../../acl-qos/watermark-counters-in-sonic.md)
 - [Tunnel DSCP remap](../../overlay/dscp-remapping-for-tunnel-traffic.md)
 
-<!-- glossary-links-injected: 277aae7cf41e -->
+<!-- glossary-links-injected: 0b23a3c63c91 -->

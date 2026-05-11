@@ -232,4 +232,14 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`CRM` CONFIG_DB スキーマ](../reference/config-db/crm.md)
+- [`sonic-crm` YANG モジュール](../reference/yang/sonic-crm.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 0b3617cc2a1d -->
