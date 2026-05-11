@@ -31,7 +31,7 @@ related:
 ## 想定原因（優先度順）
 
 1. **`advertise-all-vni` 未設定**: [FRR](../../reference/glossary.md#term-frr) の `address-family l2vpn evpn` で `advertise-all-vni` がない
-2. **VLAN-VNI mapping 欠落**: `VXLAN_TUNNEL_MAP` が未作成 / VNI 重複
+2. **[VLAN](../../reference/glossary.md#term-vlan)-VNI mapping 欠落**: `VXLAN_TUNNEL_MAP` が未作成 / VNI 重複
 3. **[FDB](../../reference/glossary.md#term-fdb) が学習されていない**: 対象 MAC が `show mac` に出ない
 4. **route-target import/export 不整合**
 5. **`type-2 prefix` の filter / route-map で drop**
@@ -92,9 +92,9 @@ docker logs swss 2>&1 | grep -iE "vxlan|evpn" | tail -100
 ## 対処方法
 
 - `advertise-all-vni` 追加: `vtysh -c "conf t" -c "router bgp <asn>" -c "address-family l2vpn evpn" -c "advertise-all-vni"` の後 `config save`（**ロールバック**: `no advertise-all-vni` を同経路で）
-- VLAN-VNI mapping 作成: `sudo config vxlan map add <tunnel> <vlan> <vni>`（**ロールバック**: `config vxlan map del`）
+- [VLAN](../../reference/glossary.md#term-vlan)-VNI mapping 作成: `sudo config vxlan map add <tunnel> <vlan> <vni>`（**ロールバック**: `config vxlan map del`）
 - RT 不一致: `route-target import/export` を対向と揃える
-- FDB が学習されない: MAC learning enable、port が trunk として正しいか確認
+- [FDB](../../reference/glossary.md#term-fdb) が学習されない: MAC learning enable、port が trunk として正しいか確認
 
 ## 関連ページ
 
@@ -107,4 +107,4 @@ docker logs swss 2>&1 | grep -iE "vxlan|evpn" | tail -100
 [^1]: sonic-net/sonic-frr @ master — bgp_evpn.c
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — vxlanorch.cpp
 
-<!-- glossary-links-injected: cd052884780b -->
+<!-- glossary-links-injected: 164802a4df0c -->

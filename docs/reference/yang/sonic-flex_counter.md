@@ -71,8 +71,8 @@ module: sonic-flex_counter
 | `BUFFER_POOL_WATERMARK` | バッファプール ウォーターマーク | ○ |
 | `DEBUG_COUNTER` | デバッグカウンタ（ドロップ理由など） | × |
 | `ENI` | [DASH](../../reference/glossary.md#term-dash) [ENI](../../reference/glossary.md#term-eni) 統計 | ○ |
-| `DASH_METER` | DASH メーター統計 | ○ |
-| `HA_SET` | DASH HA セット統計 | ○ |
+| `DASH_METER` | [DASH](../../reference/glossary.md#term-dash) メーター統計 | ○ |
+| `HA_SET` | [DASH](../../reference/glossary.md#term-dash) HA セット統計 | ○ |
 | `PFCWD` | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) | ○ |
 | `PG_DROP` | Priority Group ドロップ | ○ |
 | `PG_WATERMARK` | Priority Group ウォーターマーク | ○ |
@@ -89,7 +89,7 @@ module: sonic-flex_counter
 | `FLOW_CNT_ROUTE` | route フローカウンタ | ○ |
 | `TUNNEL` | トンネル統計 | ○ |
 | `WRED_ECN_QUEUE` | [WRED](../../reference/glossary.md#term-wred)/ECN キュー統計 | ○ |
-| `WRED_ECN_PORT` | WRED/ECN ポート統計 | ○ |
+| `WRED_ECN_PORT` | [WRED](../../reference/glossary.md#term-wred)/ECN ポート統計 | ○ |
 | `SRV6` | [SRv6](../../reference/glossary.md#term-srv6) 統計 | ○ |
 | `SWITCH` | スイッチ全体統計 | ○ |
 
@@ -100,7 +100,7 @@ module: sonic-flex_counter
 | `flex_status` | enum `enable` / `disable` |
 | `flex_delay_status` | `stypes:boolean_type`（ファストリブート時のポーリング遅延） |
 | `poll_interval` | `uint32` range 100..4294967295（ミリ秒） |
-| `bulk_chunk_size` | `uint32` range 1..4294967295（SAI bulk counter API 呼び出しごとのエントリ数） |
+| `bulk_chunk_size` | `uint32` range 1..4294967295（[SAI](../../reference/glossary.md#term-sai) bulk counter API 呼び出しごとのエントリ数） |
 | `bulk_chunk_size_per_prefix` | `string`（プレフィックス毎の bulk chunk size） |
 
 ## 共通 leaf
@@ -115,13 +115,13 @@ module: sonic-flex_counter
 
 ## `FLOW_COUNTER_ROUTE_PATTERN`
 
-ルート単位のフローカウンタを動的に紐付けるためのプレフィックスパターン。デフォルト [VRF](../../reference/glossary.md#term-vrf) 用 `FLOW_COUNTER_ROUTE_PATTERN_LIST` と VRF/[VNET](../../reference/glossary.md#term-vnet) スコープ用 `FLOW_COUNTER_ROUTE_PATTERN_VRF_LIST` の 2 リストを持つ。`vrf_name` は leafref ではなく文字列（VNET 名も受け入れる、[orchagent](../../reference/glossary.md#term-orchagent) が後で解決する）。
+ルート単位のフローカウンタを動的に紐付けるためのプレフィックスパターン。デフォルト [VRF](../../reference/glossary.md#term-vrf) 用 `FLOW_COUNTER_ROUTE_PATTERN_LIST` と [VRF](../../reference/glossary.md#term-vrf)/[VNET](../../reference/glossary.md#term-vnet) スコープ用 `FLOW_COUNTER_ROUTE_PATTERN_VRF_LIST` の 2 リストを持つ。`vrf_name` は leafref ではなく文字列（[VNET](../../reference/glossary.md#term-vnet) 名も受け入れる、[orchagent](../../reference/glossary.md#term-orchagent) が後で解決する）。
 
 | leaf | 型 | 必須 | 説明 |
 |------|----|------|------|
 | `ip_prefix` | `inet:ip-prefix` | yes | マッチさせる IP プレフィックスパターン |
 | `max_match_count` | `uint32` (1..50) |  | バインドする最大ルート数 |
-| `vrf_name` | `string` (length 0..16) | yes (VRF list のみ) | VRF または VNET 名 |
+| `vrf_name` | `string` (length 0..16) | yes ([VRF](../../reference/glossary.md#term-vrf) list のみ) | VRF または [VNET](../../reference/glossary.md#term-vnet) 名 |
 
 ## leafref / 依存
 
@@ -140,7 +140,7 @@ module: sonic-flex_counter
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`FLEX_COUNTER_TABLE`](../config-db/flex-counter-table.md) / `FLOW_COUNTER_ROUTE_PATTERN`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`FLEX_COUNTER_TABLE`](../config-db/flex-counter-table.md) / `FLOW_COUNTER_ROUTE_PATTERN`
 - CLI: `counterpoll`
 
 <!-- ref-triangle:end -->
@@ -150,11 +150,11 @@ module: sonic-flex_counter
 
 ### 典型的なデプロイ位置
 
-- Flex counter polling 制御。`FLEX_COUNTER_TABLE|<group>` を flex counter orch が SAI に渡す。
+- Flex counter polling 制御。`FLEX_COUNTER_TABLE|<group>` を flex counter orch が [SAI](../../reference/glossary.md#term-sai) に渡す。
 
 ### よくある落とし穴
 
-- `POLL_INTERVAL` を極端に小さく (< 1000ms) すると [syncd](../../reference/glossary.md#term-syncd) CPU が張り付き、orchagent の他処理が遅延する。
+- `POLL_INTERVAL` を極端に小さく (< 1000ms) すると [syncd](../../reference/glossary.md#term-syncd) CPU が張り付き、[orchagent](../../reference/glossary.md#term-orchagent) の他処理が遅延する。
 
 ### 関連する config / show コマンド
 
@@ -168,4 +168,4 @@ counterpoll show
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-flex_counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: d2ce881d0d90 -->
+<!-- glossary-links-injected: 96c812df0832 -->

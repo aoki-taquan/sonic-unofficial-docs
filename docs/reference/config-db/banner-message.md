@@ -66,13 +66,13 @@ BANNER_MESSAGE|global
 
 ## 関連リファレンス
 
-- YANG: [`sonic-banner`](../yang/sonic-banner.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-banner`](../yang/sonic-banner.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-banner.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-banner.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-banner.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-banner.yang>
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
@@ -97,4 +97,4 @@ show banner
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

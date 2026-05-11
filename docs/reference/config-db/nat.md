@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`NAT_GLOBAL` は [NAT](../../reference/glossary.md#term-nat) feature の admin mode と timeout を保持するグローバル設定、`NAT_POOL` は dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。同じ [YANG](../../reference/glossary.md#term-yang) モジュールには `NAT_BINDINGS`、`STATIC_NAT`、`STATIC_NAPT` も定義される。`schema.h` では [APPL_DB](../../reference/glossary.md#term-appl_db) 側に `NAT_GLOBAL_TABLE` と pool 系 table の定数がある[^2]。
+`NAT_GLOBAL` は [NAT](../../reference/glossary.md#term-nat) feature の admin mode と timeout を保持するグローバル設定、`NAT_POOL` は dynamic [NAT](../../reference/glossary.md#term-nat) で利用する変換アドレス / port 範囲の named pool を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。同じ [YANG](../../reference/glossary.md#term-yang) モジュールには `NAT_BINDINGS`、`STATIC_NAT`、`STATIC_NAPT` も定義される。`schema.h` では [APPL_DB](../../reference/glossary.md#term-appl_db) 側に `NAT_GLOBAL_TABLE` と pool 系 table の定数がある[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -56,7 +56,7 @@ NAT_POOL|<name>
 NAT_BINDINGS|<name>
 ```
 
-`NAT_GLOBAL` は YANG 上 `container Values` を持つ singleton 的な形。`NAT_POOL` と `NAT_BINDINGS` は `name` が key。
+`NAT_GLOBAL` は [YANG](../../reference/glossary.md#term-yang) 上 `container Values` を持つ singleton 的な形。`NAT_POOL` と `NAT_BINDINGS` は `name` が key。
 
 ## 主要フィールド
 
@@ -64,7 +64,7 @@ NAT_BINDINGS|<name>
 
 | フィールド | 型 | 既定値 | 説明 |
 |-----------|----|--------|------|
-| `admin_mode` | `admin_mode` | `disabled` | NAT feature の有効 / 無効 |
+| `admin_mode` | `admin_mode` | `disabled` | [NAT](../../reference/glossary.md#term-nat) feature の有効 / 無効 |
 | `nat_timeout` | uint32 300..432000 | `600` | NAT entry timeout 秒 |
 | `nat_tcp_timeout` | uint32 300..432000 | `86400` | TCP NAT entry timeout 秒 |
 | `nat_udp_timeout` | uint16 120..600 | `300` | UDP NAT entry timeout 秒 |
@@ -94,14 +94,14 @@ NAT_BINDINGS|<name>
 
 ## 購読者
 
-- `natmgrd`: CONFIG_DB の NAT 設定を読み、APPL_DB NAT table 群へ反映する。
-- `orchagent` / `NatOrch`: APPL_DB の NAT global / pool / binding / static entry を消費し、[SAI](../../reference/glossary.md#term-sai) NAT object や kernel / ASIC 設定へ反映する。
+- `natmgrd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) の NAT 設定を読み、[APPL_DB](../../reference/glossary.md#term-appl_db) NAT table 群へ反映する。
+- `orchagent` / `NatOrch`: [APPL_DB](../../reference/glossary.md#term-appl_db) の NAT global / pool / binding / static entry を消費し、[SAI](../../reference/glossary.md#term-sai) NAT object や kernel / ASIC 設定へ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `STATIC_NAT`、`STATIC_NAPT`、`NAT_BINDINGS`、`ACL_TABLE`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `STATIC_NAT`、`STATIC_NAPT`、`NAT_BINDINGS`、`ACL_TABLE`
 - 関連 CLI: `config nat`
-- 関連 YANG: `sonic-nat`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-nat`
 
 <!-- ref-triangle:start -->
 
@@ -145,4 +145,4 @@ show nat translations
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 871223ce15ad -->
+<!-- glossary-links-injected: a6fe2efe021a -->

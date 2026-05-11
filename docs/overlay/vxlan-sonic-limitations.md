@@ -35,12 +35,12 @@ related:
 
 | 項目 | 状態 |
 |------|------|
-| BGP EVPN 統合 | Phase 1 ではなし。経路は外部から `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` に直接投入する前提[^1] |
-| L2 VXLAN（タグ・無タグ） | Phase 2 で導入予定 |
+| [BGP](../reference/glossary.md#term-bgp) [EVPN](../reference/glossary.md#term-evpn) 統合 | Phase 1 ではなし。経路は外部から `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` に直接投入する前提[^1] |
+| L2 [VXLAN](../reference/glossary.md#term-vxlan)（タグ・無タグ） | Phase 2 で導入予定 |
 | HER（Head End Replication） | Phase 2 で導入予定 |
-| CLI 整備 | Phase 2 で拡充。Phase 1 では CONFIG_DB 直接編集 |
-| Warm restart | Phase 1 で非対応。SAI VR オブジェクトが warm restart 非互換のため Phase 2 で再検討[^1] |
-| Kernel VRF programming | HLD スコープ外 |
+| CLI 整備 | Phase 2 で拡充。Phase 1 では [CONFIG_DB](../reference/glossary.md#term-config_db) 直接編集 |
+| Warm restart | Phase 1 で非対応。[SAI](../reference/glossary.md#term-sai) VR オブジェクトが warm restart 非互換のため Phase 2 で再検討[^1] |
+| Kernel [VRF](../reference/glossary.md#term-vrf) programming | [HLD](../reference/glossary.md#term-hld) スコープ外 |
 
 ## 2. 設計上の制約
 
@@ -55,18 +55,18 @@ HLD 初版が古いため、現行 master の実装と乖離している可能�
 
 - BGP EVPN 統合 (Phase 2) の現状
 - Warm restart 対応状況（Phase 2 で再検討予定だった）
-- `VXLAN_TUNNEL_MAP` の最終スキーマ（VNI ↔ VLAN / VNI ↔ VRF）
+- `VXLAN_TUNNEL_MAP` の最終スキーマ（VNI ↔ [VLAN](../reference/glossary.md#term-vlan) / VNI ↔ VRF）
 - `FdbOrch` と `VxlanOrch` の協調実装（HLD で TBD だった部分）
 - HER（head-end replication）の現行実装
-- CLI（`config vxlan` / `show vxlan`）の sonic-utilities への取り込み形
+- CLI（`config vxlan` / `show vxlan`）の [sonic-utilities](../reference/glossary.md#term-sonic-utilities) への取り込み形
 
 ## 4. 干渉する機能
 
 - **BGP EVPN（Phase 2）**: 経路供給源として `VNET_ROUTE_TUNNEL_TABLE` を埋める
 - **VLAN / VLAN_MEMBER**: L2 VXLAN は VLAN ↔ VNI mapping 前提
 - **VRF（通常 VRF）**: `VrfOrch` 経由
-- **DASH / SmartSwitch**: 新しい HLD（[ENI Based Forwarding](smartswitch-eni-based-forwarding.md)）は本 HLD の VxLAN tunnel を利用
-- **MC-LAG / dual-ToR**: 拡張あり
+- **[DASH](../reference/glossary.md#term-dash) / [SmartSwitch](../reference/glossary.md#term-smartswitch)**: 新しい HLD（[ENI Based Forwarding](smartswitch-eni-based-forwarding.md)）は本 HLD の VxLAN tunnel を利用
+- **MC-[LAG](../reference/glossary.md#term-lag) / dual-ToR**: 拡張あり
 
 ## 関連ページ
 
@@ -78,3 +78,5 @@ HLD 初版が古いため、現行 master の実装と乖離している可能�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 3c8f190a1c06 -->

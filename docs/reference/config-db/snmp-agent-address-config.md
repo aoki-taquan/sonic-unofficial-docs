@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`snmpd` のリッスンアドレスと UDP ポートを [CONFIG_DB](../../reference/glossary.md#term-config_db) に登録するテーブル[^1]。`docker-snmp` 起動スクリプトが CONFIG_DB を読み、`snmpd.conf` の `agentaddress` 行を生成する。複数エントリで複数アドレス / ポート / [VRF](../../reference/glossary.md#term-vrf) を同時に bind できる。
+`snmpd` のリッスンアドレスと UDP ポートを [CONFIG_DB](../../reference/glossary.md#term-config_db) に登録するテーブル[^1]。`docker-snmp` 起動スクリプトが [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、`snmpd.conf` の `agentaddress` 行を生成する。複数エントリで複数アドレス / ポート / [VRF](../../reference/glossary.md#term-vrf) を同時に bind できる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -54,16 +54,16 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 |-----------|----|------|
 | `agent_ip` | `inet:ip-address` | [SNMP](../../reference/glossary.md#term-snmp) エージェントの bind IP |
 | `port` | `inet:port-number` または空文字 (default 161 を意味する) | bind UDP ポート |
-| `vrf_name` | enum: 空文字 / `mgmt` / `Vrf<name>` (`Vrf[a-zA-Z0-9_-]+`) | bind VRF。空文字は default |
+| `vrf_name` | enum: 空文字 / `mgmt` / `Vrf<name>` (`Vrf[a-zA-Z0-9_-]+`) | bind [VRF](../../reference/glossary.md#term-vrf)。空文字は default |
 
 ## 制約
 
-- key の 3 要素のうち `port`/`vrf_name` は空文字パターン (`pattern ''`) を許容しており、空文字は「未指定 = 既定 (161 / default VRF)」を意味する
+- key の 3 要素のうち `port`/`vrf_name` は空文字パターン (`pattern ''`) を許容しており、空文字は「未指定 = 既定 (161 / default [VRF](../../reference/glossary.md#term-vrf))」を意味する
 - `unique "agent_ip port"` により、同一の (ip, port) を異なる VRF に重複登録することはできない[^1]
 
 ## 購読者
 
-- `docker-snmp` の `snmpd` テンプレ: CONFIG_DB → `agentaddress udp:<ip>:<port>[%vrf]` 行を生成
+- `docker-snmp` の `snmpd` テンプレ: [CONFIG_DB](../../reference/glossary.md#term-config_db) → `agentaddress udp:<ip>:<port>[%vrf]` 行を生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -75,7 +75,7 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-snmp`](../yang/sonic-snmp.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-snmp`](../yang/sonic-snmp.md)
 - CLI: [`config snmp agentaddress`](../cli/config-snmp.md)
 
 <!-- ref-triangle:end -->
@@ -97,7 +97,7 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 
 ### よくある誤設定
 
-- vrf 指定を空にして default VRF で listen し続け、front-panel から SNMP が抜ける。
+- vrf 指定を空にして default VRF で listen し続け、front-panel から [SNMP](../../reference/glossary.md#term-snmp) が抜ける。
 
 ### 確認コマンド
 
@@ -107,4 +107,4 @@ show runningconfiguration snmp
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 60a02696c221 -->
+<!-- glossary-links-injected: f02106101ebd -->

@@ -67,20 +67,20 @@ RADIUS|global
 
 ## 購読者
 
-- `hostcfgd` (`sonic-host-services` の AAA ハンドラ): [CONFIG_DB](../../reference/glossary.md#term-config_db) → PAM / nsswitch / pam_radius 設定の再生成
+- `hostcfgd` (`sonic-host-services` の [AAA](../../reference/glossary.md#term-aaa) ハンドラ): [CONFIG_DB](../../reference/glossary.md#term-config_db) → PAM / nsswitch / pam_radius 設定の再生成
 - `AAA.authentication.login` が `radius` を含むとき、PAM 経由でログイン認証時に参照される
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `RADIUS_SERVER` (※サーバごとのエントリ、[YANG](../../reference/glossary.md#term-yang): `sonic-system-radius` の同名 list), [`AAA`](aaa.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `RADIUS_SERVER` (※サーバごとのエントリ、[YANG](../../reference/glossary.md#term-yang): `sonic-system-radius` の同名 list), [`AAA`](aaa.md)
 - 関連 CLI: `config radius { passkey | timeout | retransmit | authtype | nasip | sourceip | statistics }`
-- 関連 YANG: `sonic-system-radius`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-radius`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-system-radius`](../yang/sonic-system-radius.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-system-radius`](../yang/sonic-system-radius.md)
 - CLI: `config radius`
 
 <!-- ref-triangle:end -->
@@ -112,4 +112,4 @@ show radius
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ec4ea08af950 -->
+<!-- glossary-links-injected: 213d79b8c3ff -->

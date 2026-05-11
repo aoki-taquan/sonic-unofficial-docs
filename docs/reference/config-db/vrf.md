@@ -60,8 +60,8 @@ VRF|<name>
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `name` (key) | string `Vrf<...>` | ✅ | - | VRF 名 |
-| `fallback` | boolean | - | `false` | 指定 VRF からデフォルト経路へフォールバック |
+| `name` (key) | string `Vrf<...>` | ✅ | - | [VRF](../../reference/glossary.md#term-vrf) 名 |
+| `fallback` | boolean | - | `false` | 指定 [VRF](../../reference/glossary.md#term-vrf) からデフォルト経路へフォールバック |
 | `vni` | uint32 (0..16777215) | - | `0` | この VRF にマップする L3 VNI |
 
 ## 購読者
@@ -81,14 +81,14 @@ VRF|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-vrf`](../yang/sonic-vrf.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-vrf`](../yang/sonic-vrf.md)
 - CLI: [`config vrf`](../cli/config-vrf.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-vrf.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-vrf.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang>
 
 ## 関連ページ
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
@@ -102,13 +102,13 @@ VRF|<name>
 ### 典型値
 
 - key 形式: `VRF|Vrf<name>` (例 `VRF|VrfRed`)。
-- `vni`: L3 VNI（VXLAN EVPN tenant L3）。
+- `vni`: L3 VNI（[VXLAN](../../reference/glossary.md#term-vxlan) [EVPN](../../reference/glossary.md#term-evpn) tenant L3）。
 - `fallback`: `true` で default VRF にフォールバック。
 
 ### よくある誤設定
 
 - VRF 名が `Vrf` で始まらないと [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / [orchagent](../../reference/glossary.md#term-orchagent) が認識しない。
-- `vni` を tenant 間で重複させると EVPN route が混線する。
+- `vni` を tenant 間で重複させると [EVPN](../../reference/glossary.md#term-evpn) route が混線する。
 
 ### 確認コマンド
 
@@ -119,4 +119,4 @@ ip vrf show
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9ad2e5233a04 -->
+<!-- glossary-links-injected: fb18b738b957 -->

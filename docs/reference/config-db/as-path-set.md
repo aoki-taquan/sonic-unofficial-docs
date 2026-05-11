@@ -58,11 +58,11 @@ AS_PATH_SET|<name>
 
 ## 購読者
 
-- `frr-mgmt-framework`: BGP AS path access-list として FRR (`bgpd`) に反映
+- `frr-mgmt-framework`: [BGP](../../reference/glossary.md#term-bgp) AS path access-list として [FRR](../../reference/glossary.md#term-frr) (`bgpd`) に反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`COMMUNITY_SET`](./community-set.md)、[`PREFIX_SET`](./prefix-set.md)、`ROUTE_MAP`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`COMMUNITY_SET`](./community-set.md)、[`PREFIX_SET`](./prefix-set.md)、`ROUTE_MAP`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-routing-policy-sets`
 - 関連 CLI: なし（`config_db.json` 投入）
 
@@ -70,13 +70,13 @@ AS_PATH_SET|<name>
 
 ## 関連リファレンス
 
-- YANG: `sonic-routing-policy-sets`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-routing-policy-sets`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -89,7 +89,7 @@ AS_PATH_SET|<name>
 
 ### よくある誤設定
 
-- FRR 形式と Cisco/Quagga 形式の AS path regex を混在させて意図と異なるマッチになる。
+- [FRR](../../reference/glossary.md#term-frr) 形式と Cisco/Quagga 形式の AS path regex を混在させて意図と異なるマッチになる。
 - `as_path_set_member` の順序が結果に影響することを忘れる (`ordered-by user`、上から評価)。
 
 ### 確認コマンド
@@ -100,4 +100,4 @@ vtysh -c "show ip as-path-access-list"
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3aa2902e22d8 -->
+<!-- glossary-links-injected: 3c93d6c0b6a4 -->

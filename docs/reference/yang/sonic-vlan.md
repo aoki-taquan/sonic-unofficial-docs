@@ -94,13 +94,13 @@ module: sonic-vlan
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/name` | `leafref` | yes |  | /vlan:sonic-vlan/vlan:VLAN/vlan:VLAN_LIST/vlan:name | VLAN interface name (e.g., Vlan100) |
-| `vrf_name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | VRF instance this VLAN interface belongs to |
-| `vnet_name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | Reference to the name of a VNET in sonic-vnet model |
+| `name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/name` | `leafref` | yes |  | /vlan:sonic-vlan/vlan:[VLAN](../../reference/glossary.md#term-vlan)/vlan:VLAN_LIST/vlan:name | [VLAN](../../reference/glossary.md#term-vlan) interface name (e.g., Vlan100) |
+| `vrf_name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | [VRF](../../reference/glossary.md#term-vrf) instance this VLAN interface belongs to |
+| `vnet_name` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/vnet_name` | `leafref` |  |  | /svnet:sonic-vnet/svnet:[VNET](../../reference/glossary.md#term-vnet)/svnet:VNET_LIST/svnet:name | Reference to the name of a [VNET](../../reference/glossary.md#term-vnet) in sonic-vnet model |
 | `nat_zone` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | [NAT](../../reference/glossary.md#term-nat) Zone for the vlan interface |
 | `mpls` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/mpls` | `enumeration` |  |  | enable, disable | Enable/disable [MPLS](../../reference/glossary.md#term-mpls) routing for the vlan interface |
 | `grat_arp` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/grat_arp` | `string` |  |  | pattern `enabled|disabled` | Enable or disable gratuitous [ARP](../../reference/glossary.md#term-arp) on the VLAN interface |
-| `proxy_arp` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/proxy_arp` | `string` |  |  | pattern `enabled|disabled` | Enable or disable proxy ARP on the VLAN interface |
+| `proxy_arp` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/proxy_arp` | `string` |  |  | pattern `enabled|disabled` | Enable or disable proxy [ARP](../../reference/glossary.md#term-arp) on the VLAN interface |
 | `ipv6_use_link_local_only` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/ipv6_use_link_local_only` | `stypes:mode-status` |  | disable |  | Enable/Disable IPv6 link local address on vlan interface |
 | `mac_addr` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/mac_addr` | `yang:mac-address` |  |  |  | Assign administrator-provided MAC address to Interface |
 | `loopback_action` | `sonic-vlan/VLAN_INTERFACE/VLAN_INTERFACE_LIST/loopback_action` | `stypes:loopback_action` |  |  |  | Packet action when a packet ingress and gets routed on the same IP interface |
@@ -137,8 +137,8 @@ module: sonic-vlan
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`
-- CONFIG_DB: `VLAN_INTERFACE`
-- CONFIG_DB: `VLAN_MEMBER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN_INTERFACE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN_MEMBER`
 - CLI: `config vlan`
 
 <!-- ref-triangle:start -->
@@ -162,4 +162,4 @@ module: sonic-vlan
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e65c0c2c3d25 -->
+<!-- glossary-links-injected: 3f2a7b8232fc -->

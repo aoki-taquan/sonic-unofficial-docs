@@ -80,7 +80,7 @@ module: sonic-dot1p-tc-map
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`DOT1P_TO_TC_MAP`](../config-db/dot1p-to-tc-map.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DOT1P_TO_TC_MAP`](../config-db/dot1p-to-tc-map.md)
 - CLI: [`config qos`](../cli/config-qos.md)
 
 <!-- ref-triangle:end -->
@@ -108,4 +108,4 @@ show qos map dot1p-tc
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dot1p-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 96667c52d98d -->
+<!-- glossary-links-injected: 896d391185a9 -->

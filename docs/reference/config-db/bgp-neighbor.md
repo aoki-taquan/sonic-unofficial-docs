@@ -77,7 +77,7 @@ BGP_NEIGHBOR|<vrf_name>|<neighbor>       # generic 形式
 | `enforce_first_as` | boolean | first-AS enforce |
 | `solo_peer` | boolean | solo peer |
 | `ttl_security_hops` | uint8 | GTSM hops |
-| `bfd` | boolean | [BFD](../../reference/glossary.md#term-bfd) multihop / BFD enable |
+| `bfd` | boolean | [BFD](../../reference/glossary.md#term-bfd) multihop / [BFD](../../reference/glossary.md#term-bfd) enable |
 | `peer_port` | uint16 | TCP port |
 | `admin_status` | string `up`/`down` | セッション管理状態 |
 | `local_as_no_prepend` / `local_as_replace_as` | boolean | local-as 動作 |
@@ -94,21 +94,21 @@ BGP_NEIGHBOR|<vrf_name>|<neighbor>       # generic 形式
 
 ## 購読者
 
-- `bgpcfgd` (`docker-fpm-frr` 内): CONFIG_DB → vtysh コマンド変換。テンプレベース
+- `bgpcfgd` (`docker-fpm-frr` 内): [CONFIG_DB](../../reference/glossary.md#term-config_db) → vtysh コマンド変換。テンプレベース
 - `frr-mgmt-framework`: `DEVICE_METADATA.frr_mgmt_framework_config = true` のときに代替パスとして動作
-- `bgpd` (FRR): vtysh / config 経由で間接反映
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): vtysh / config 経由で間接反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_GLOBALS`、`BGP_PEER_GROUP`、`BGP_NEIGHBOR_AF`、`BGP_DEVICE_GLOBAL`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`、`BGP_PEER_GROUP`、`BGP_NEIGHBOR_AF`、`BGP_DEVICE_GLOBAL`
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md) (shutdown / startup / remove neighbor)
-- 関連 YANG: `sonic-bgp-neighbor`、`sonic-bgp-common`、`sonic-bgp-global`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-neighbor`、`sonic-bgp-common`、`sonic-bgp-global`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-neighbor`](../yang/sonic-bgp-neighbor.md) / `sonic-bgp-common`
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-neighbor`](../yang/sonic-bgp-neighbor.md) / `sonic-bgp-common`
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
@@ -138,8 +138,8 @@ BGP_NEIGHBOR|<vrf_name>|<neighbor>       # generic 形式
 ### よくある誤設定
 
 - `local_addr` を未設定 or 誤ったインタフェース IP にすると update-source が解決できず neighbor 確立せず。
-- `asn` を string で入れても通るが、4-byte ASN を `65000.1` 形式で書くと bgpcfgd がパースに失敗する版がある。10 進で書く。
-- iBGP で `local_addr` を物理 IF ではなく Loopback0 にしないと片側 down で BGP が落ちる。
+- `asn` を string で入れても通るが、4-byte ASN を `65000.1` 形式で書くと [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) がパースに失敗する版がある。10 進で書く。
+- iBGP で `local_addr` を物理 IF ではなく Loopback0 にしないと片側 down で [BGP](../../reference/glossary.md#term-bgp) が落ちる。
 
 ### 確認コマンド
 
@@ -150,4 +150,4 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f65b6ed8bf8a -->
+<!-- glossary-links-injected: 9133f44230c2 -->

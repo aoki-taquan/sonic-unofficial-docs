@@ -84,7 +84,7 @@ module: sonic-ntp
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `src_intf` | `sonic-ntp/NTP/global/src_intf` | `union` |  |  | union(leafref, leafref, leafref, leafref, string) | This is the interface whose IP address is used as the source IP address for generating NTP traffic. User is required to make sure that the NTP server is reachable via this IP address and the same I... |
-| `vrf` | `sonic-ntp/NTP/global/vrf` | `string` |  |  | pattern `mgmt|default` | NTP can be enabled only in one [VRF](../../reference/glossary.md#term-vrf) at a time. In this revision, it is either default VRF or Management VRF. |
+| `vrf` | `sonic-ntp/NTP/global/vrf` | `string` |  |  | pattern `mgmt|default` | NTP can be enabled only in one [VRF](../../reference/glossary.md#term-vrf) at a time. In this revision, it is either default [VRF](../../reference/glossary.md#term-vrf) or Management [VRF](../../reference/glossary.md#term-vrf). |
 | `authentication` | `sonic-ntp/NTP/global/authentication` | `stypes:admin_mode` |  | disabled |  | NTP authentication state |
 | `dhcp` | `sonic-ntp/NTP/global/dhcp` | `stypes:admin_mode` |  | enabled |  | Use NTP servers distributed by DHCP |
 | `server_role` | `sonic-ntp/NTP/global/server_role` | `stypes:admin_mode` |  | enabled |  | NTP server functionality state |
@@ -113,8 +113,8 @@ module: sonic-ntp
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `NTP`
-- CONFIG_DB: `NTP_SERVER`
-- CONFIG_DB: `NTP_KEY`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `NTP_SERVER`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `NTP_KEY`
 - CLI: `config ntp`
 
 <!-- ref-triangle:start -->
@@ -157,4 +157,4 @@ show ntp
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0072c8c44112 -->
+<!-- glossary-links-injected: a7c87bab11c9 -->

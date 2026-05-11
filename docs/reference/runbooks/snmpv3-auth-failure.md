@@ -92,7 +92,7 @@ sonic-db-cli CONFIG_DB keys "ACL_TABLE|*"
 - パスワード再投入: `sudo config snmp user del <user>` → `sudo config snmp user add <user> ...`（**ロールバック**: 退避値で再作成）
 - engineID 固定: `/etc/snmp/snmpd.conf` の `engineID` を固定値に（再起動後も維持される）
 - sub-agent: `docker exec snmp supervisorctl restart snmp-subagent`
-- ACL: `ACL_RULE` で UDP/161 を許可
+- [ACL](../../reference/glossary.md#term-acl): `ACL_RULE` で UDP/161 を許可
 
 ## 関連ページ
 
@@ -104,4 +104,4 @@ sonic-db-cli CONFIG_DB keys "ACL_TABLE|*"
 [^1]: sonic-net/sonic-snmpagent @ master — main.py
 [^2]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ master — docker-snmp
 
-<!-- glossary-links-injected: 5f1b3b7f966c -->
+<!-- glossary-links-injected: 1f2da1437d5b -->

@@ -20,16 +20,16 @@ related:
 
 # VXLAN / VNet 内部実装
 
-このページは [VXLAN / VNet 全体設計（概要ハブ）](vxlan-sonic.md) の派生ページで、**Orch 群と SAI 連携の内部実装** に絞って整理する。概念は [vxlan-sonic-concepts.md](vxlan-sonic-concepts.md)、運用は [vxlan-sonic-operations.md](vxlan-sonic-operations.md)、制限事項は [vxlan-sonic-limitations.md](vxlan-sonic-limitations.md) を参照。
+このページは [VXLAN / VNet 全体設計（概要ハブ）](vxlan-sonic.md) の派生ページで、**Orch 群と [SAI](../reference/glossary.md#term-sai) 連携の内部実装** に絞って整理する。概念は [vxlan-sonic-concepts.md](vxlan-sonic-concepts.md)、運用は [vxlan-sonic-operations.md](vxlan-sonic-operations.md)、制限事項は [vxlan-sonic-limitations.md](vxlan-sonic-limitations.md) を参照。
 
 ## 1. orchagent 役割分担
 
 | Orch | 役割 |
 |------|------|
-| `VxlanOrch`（実コードは `VxlanTunnelOrch` 等に分割） | VXLAN tunnel object、encap/decap mapper、tunnel termination |
-| `VnetOrch` / `VnetRouteOrch` | VNet 単位の VRF / BRIDGE、ピアリング、VNet 経路 |
+| `VxlanOrch`（実コードは `VxlanTunnelOrch` 等に分割） | [VXLAN](../reference/glossary.md#term-vxlan) tunnel object、encap/decap mapper、tunnel termination |
+| `VnetOrch` / `VnetRouteOrch` | VNet 単位の [VRF](../reference/glossary.md#term-vrf) / BRIDGE、ピアリング、VNet 経路 |
 | `VrfMgrD` / `VrfOrch` | kernel L3mdev と SAI VRF の同期 |
-| `IntfMgrD` / `IntfsOrch` | VNet 配下の RIF |
+| `IntfMgrD` / `IntfsOrch` | VNet 配下の [RIF](../reference/glossary.md#term-rif) |
 | `FdbOrch` | remote VTEP の MAC 学習 |
 
 ```mermaid
@@ -63,7 +63,7 @@ flowchart TB
 
 ## 2. VxlanOrch（実装は VxlanTunnelOrch 等に分割）
 
-VXLAN の中核。tunnel オブジェクト + mapper + termination を作る。EVPN remote VTEP の動的生成も `vxlanorch.cpp` 内（`TNL_CREATION_SRC_EVPN`）。実コードでは下記のクラスに分割されている:
+VXLAN の中核。tunnel オブジェクト + mapper + termination を作る。[EVPN](../reference/glossary.md#term-evpn) remote VTEP の動的生成も `vxlanorch.cpp` 内（`TNL_CREATION_SRC_EVPN`）。実コードでは下記のクラスに分割されている:
 
 - `VxlanTunnelOrch` (`sonic-swss/orchagent/vxlanorch.h:268`)
 - `VxlanTunnelMapOrch` (`vxlanorch.h:414`)
@@ -90,7 +90,7 @@ sequenceDiagram
     VO->>VO: SAI VRF / Bridge 作成
 ```
 
-- `VrfMgrD`: VNet 設定から kernel L3mdev を作成 + STATE_DB に状態出力
+- `VrfMgrD`: VNet 設定から kernel L3mdev を作成 + [STATE_DB](../reference/glossary.md#term-state_db) に状態出力
 - `VrfOrch`: 通常 VRF を APP_DB から SAI に投入（RouteOrch が利用）[^1]
 
 ## 4. VnetOrch / VnetRouteOrch
@@ -119,7 +119,7 @@ sequenceDiagram
 
 ## 関連ページ
 
-- [VXLAN / VNet 全体設計（概要ハブ）](vxlan-sonic.md) — 元 HLD ページ
+- [VXLAN / VNet 全体設計（概要ハブ）](vxlan-sonic.md) — 元 [HLD](../reference/glossary.md#term-hld) ページ
 - [vxlan-sonic-concepts.md](vxlan-sonic-concepts.md) — 概念・用語
 - [vxlan-sonic-operations.md](vxlan-sonic-operations.md) — 設定・運用
 - [vxlan-sonic-limitations.md](vxlan-sonic-limitations.md) — 制限事項
@@ -127,3 +127,5 @@ sequenceDiagram
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: feffe0589983 -->

@@ -104,14 +104,14 @@ BGP_PEER_GROUP_AF|<vrf_name>|<peer_group_name>|<afi_safi>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-peergroup`](../yang/sonic-bgp-peergroup.md) / `sonic-bgp-common`
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-peergroup`](../yang/sonic-bgp-peergroup.md) / `sonic-bgp-common`
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-peergroup.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang>; AF 共通 leaf は `sonic-bgp-common.yang` の `grouping sonic-bgp-cmn-af`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-common.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-peergroup.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang>; AF 共通 leaf は `sonic-bgp-common.yang` の `grouping sonic-bgp-cmn-af`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-common.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -135,4 +135,4 @@ vtysh -c "show running-config bgpd"
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 07040282b44e -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

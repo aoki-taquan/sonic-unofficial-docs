@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-`config nat` は SONiC の NAT44 (NAT / NAPT) 機能の [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接操作する CLI で、`config/nat.py` の `@click.group('nat')` がエントリポイントとなる[^1]。`add` / `remove` / `set` / `reset` の 4 つのサブグループに分かれ、static エントリ・dynamic pool / binding・interface zone・タイムアウト・feature on/off を扱う。NAT データプレーン本体は [orchagent](../../reference/glossary.md#term-orchagent) 配下の `natorch` が [SAI](../../reference/glossary.md#term-sai) 経由でハードに書き込むが、CLI 層は CONFIG_DB を更新するだけで、NAT 機能が無効ならそもそも変更がデータプレーンに伝わらない点に注意。
+`config nat` は SONiC の NAT44 ([NAT](../../reference/glossary.md#term-nat) / NAPT) 機能の [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接操作する CLI で、`config/nat.py` の `@click.group('nat')` がエントリポイントとなる[^1]。`add` / `remove` / `set` / `reset` の 4 つのサブグループに分かれ、static エントリ・dynamic pool / binding・interface zone・タイムアウト・feature on/off を扱う。[NAT](../../reference/glossary.md#term-nat) データプレーン本体は [orchagent](../../reference/glossary.md#term-orchagent) 配下の `natorch` が [SAI](../../reference/glossary.md#term-sai) 経由でハードに書き込むが、CLI 層は [CONFIG_DB](../../reference/glossary.md#term-config_db) を更新するだけで、NAT 機能が無効ならそもそも変更がデータプレーンに伝わらない点に注意。
 
 ## コマンド一覧
 
@@ -109,7 +109,7 @@ excerpt: |
 
 ### `config nat add interface <if_name> -nat_zone <0-3>`
 
-`nat_interface_name_is_valid` でインタフェース種別 (Ethernet / [PortChannel](../../reference/glossary.md#term-portchannel) / Vlan / Loopback) と CONFIG_DB の存在を確認したうえで、当該テーブル (`PORT` / `PORTCHANNEL` / `VLAN` / `LOOPBACK_INTERFACE`) に `nat_zone` フィールドをマージする。テーブル名は interface ごとに切り替わり、`NAT_ZONE` という独立テーブルが作られるわけではない。
+`nat_interface_name_is_valid` でインタフェース種別 (Ethernet / [PortChannel](../../reference/glossary.md#term-portchannel) / Vlan / Loopback) と [CONFIG_DB](../../reference/glossary.md#term-config_db) の存在を確認したうえで、当該テーブル (`PORT` / `PORTCHANNEL` / `VLAN` / `LOOPBACK_INTERFACE`) に `nat_zone` フィールドをマージする。テーブル名は interface ごとに切り替わり、`NAT_ZONE` という独立テーブルが作られるわけではない。
 
 ### `config nat feature enable` / `disable`
 
@@ -234,4 +234,4 @@ show nat statistics
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 2d91ef9e4a0f -->
+<!-- glossary-links-injected: 0a2da183a336 -->

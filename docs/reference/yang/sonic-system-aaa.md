@@ -67,11 +67,11 @@ module: sonic-system-aaa
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `type` | `sonic-system-aaa/AAA/AAA_LIST/type` | `enumeration` | yes |  | authentication, authorization, accounting | AAA function type: authentication, authorization, or accounting. |
+| `type` | `sonic-system-aaa/AAA/AAA_LIST/type` | `enumeration` | yes |  | authentication, authorization, accounting | [AAA](../../reference/glossary.md#term-aaa) function type: authentication, authorization, or accounting. |
 | `login` | `sonic-system-aaa/AAA/AAA_LIST/login` | `string` |  | local | pattern `((ldap|tacacs\+|local|radius|default),)*(ldap|tacacs\+|lo...` | Ordered list of authentication methods to attempt (radius, tacacs+, ldap, local, or default). |
 | `failthrough` | `sonic-system-aaa/AAA/AAA_LIST/failthrough` | `stypes:boolean_type` |  | False |  | When true, authentication continues to the next method in the list upon failure. |
 | `fallback` | `sonic-system-aaa/AAA/AAA_LIST/fallback` | `stypes:boolean_type` |  | False |  | When true, falls back to local authentication if all remote methods fail. |
-| `debug` | `sonic-system-aaa/AAA/AAA_LIST/debug` | `stypes:boolean_type` |  | False |  | Enable or disable verbose AAA debug logging. |
+| `debug` | `sonic-system-aaa/AAA/AAA_LIST/debug` | `stypes:boolean_type` |  | False |  | Enable or disable verbose [AAA](../../reference/glossary.md#term-aaa) debug logging. |
 | `trace` | `sonic-system-aaa/AAA/AAA_LIST/trace` | `stypes:boolean_type` |  | False |  | Enable or disable AAA protocol packet tracing. |
 
 ## leafref / 依存
@@ -85,8 +85,8 @@ module: sonic-system-aaa
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `AAA`
-- CONFIG_DB: `TACPLUS`
-- CONFIG_DB: `RADIUS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `TACPLUS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `RADIUS`
 - CLI: `config aaa`
 
 <!-- ref-triangle:start -->
@@ -110,4 +110,4 @@ module: sonic-system-aaa
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec4ea08af950 -->
+<!-- glossary-links-injected: 9aa22a8db298 -->

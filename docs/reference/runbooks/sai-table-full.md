@@ -33,7 +33,7 @@ related:
 1. **route prefix の過剰投入**: peer から default + specific の二重広告
 2. **next-hop group の枯渇**: [ECMP](../../reference/glossary.md#term-ecmp) メンバー組み合わせが爆発
 3. **[FDB](../../reference/glossary.md#term-fdb) age out 不足**: aging 0 で MAC が滞留
-4. **[ACL](../../reference/glossary.md#term-acl) TCAM 競合**: 同 stage の table が ACL リソースを奪い合う
+4. **[ACL](../../reference/glossary.md#term-acl) TCAM 競合**: 同 stage の table が [ACL](../../reference/glossary.md#term-acl) リソースを奪い合う
 
 ## 切り分け手順
 
@@ -79,10 +79,10 @@ show mac | wc -l
 
 ## 対処方法
 
-- BGP inbound filter で prefix を絞る: `neighbor <peer> prefix-list PL_IN in`
-- ECMP grouping を縮小: `crm config polling interval 60` で観測しつつ調整
-- FDB aging を有効化: `sudo config mac aging-time 600`
-- 不要 ACL table 削除
+- [BGP](../../reference/glossary.md#term-bgp) inbound filter で prefix を絞る: `neighbor <peer> prefix-list PL_IN in`
+- [ECMP](../../reference/glossary.md#term-ecmp) grouping を縮小: `crm config polling interval 60` で観測しつつ調整
+- [FDB](../../reference/glossary.md#term-fdb) aging を有効化: `sudo config mac aging-time 600`
+- 不要 [ACL](../../reference/glossary.md#term-acl) table 削除
 
 ## 関連ページ
 
@@ -95,4 +95,4 @@ show mac | wc -l
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/crmorch.cpp
 [^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ 4305596 — [syncd](../../reference/glossary.md#term-syncd)/Syncd.cpp
 
-<!-- glossary-links-injected: 4d8e499d7d85 -->
+<!-- glossary-links-injected: dc7a83054e97 -->

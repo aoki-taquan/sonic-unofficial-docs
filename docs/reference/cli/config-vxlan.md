@@ -27,7 +27,7 @@ related:
 
 `config vxlan` は [VXLAN](../../reference/glossary.md#term-vxlan) VTEP (`VXLAN_TUNNEL`)、[EVPN](../../reference/glossary.md#term-evpn) NVO (`VXLAN_EVPN_NVO`)、および [VLAN](../../reference/glossary.md#term-vlan)-VNI マッピング (`VXLAN_TUNNEL_MAP`) を管理する。`config/vxlan.py` に分離されており、`config/main.py` 末尾の `config.add_command(vxlan.vxlan)` で登録される構造[^1]。
 
-VTEP **1 デバイスにつき 1 つだけ**しか作れない（`vxlan add` 時に既存件数 > 0 でエラー）。EVPN NVO も 1 つだけ。
+VTEP **1 デバイスにつき 1 つだけ**しか作れない（`vxlan add` 時に既存件数 > 0 でエラー）。[EVPN](../../reference/glossary.md#term-evpn) NVO も 1 つだけ。
 
 ## コマンド一覧
 
@@ -35,10 +35,10 @@ VTEP **1 デバイスにつき 1 つだけ**しか作れない（`vxlan add` 時
 |---------|------|
 | `config vxlan add <vxlan_name> <src_ip>` | VTEP を作成 |
 | `config vxlan del <vxlan_name>` | VTEP を削除 |
-| `config vxlan evpn_nvo add <nvo_name> <vxlan_name>` | EVPN NVO を作成 |
+| `config vxlan evpn_nvo add <nvo_name> <vxlan_name>` | [EVPN](../../reference/glossary.md#term-evpn) NVO を作成 |
 | `config vxlan evpn_nvo del <nvo_name>` | EVPN NVO を削除 |
-| `config vxlan map add <vxlan_name> <vlan_id> <vni>` | VLAN-VNI マップを 1 つ作成 |
-| `config vxlan map del <vxlan_name> <vlan_id> <vni>` | VLAN-VNI マップを 1 つ削除 |
+| `config vxlan map add <vxlan_name> <vlan_id> <vni>` | [VLAN](../../reference/glossary.md#term-vlan)-VNI マップを 1 つ作成 |
+| `config vxlan map del <vxlan_name> <vlan_id> <vni>` | [VLAN](../../reference/glossary.md#term-vlan)-VNI マップを 1 つ削除 |
 | `config vxlan map_range add <vxlan_name> <vlan_start> <vlan_end> <vni_start>` | VLAN 範囲をまとめてマップ |
 | `config vxlan map_range del <vxlan_name> <vlan_start> <vlan_end> <vni_start>` | VLAN 範囲のマップを削除 |
 
@@ -130,7 +130,7 @@ excerpt: |
 
 ### `config vxlan map_range del <vxlan_name> <vlan_start> <vlan_end> <vni_start>`
 
-範囲内の各 (vlan, vni) について、**`is_vni_vrf_mapped` が真**（VRF に VNI 紐付け済み）の行のみ削除する仕様[^2]。それ以外の行はスキップしてメッセージを出すだけ。
+範囲内の各 (vlan, vni) について、**`is_vni_vrf_mapped` が真**（[VRF](../../reference/glossary.md#term-vrf) に VNI 紐付け済み）の行のみ削除する仕様[^2]。それ以外の行はスキップしてメッセージを出すだけ。
 
 ## 関連する CONFIG_DB
 
@@ -145,7 +145,7 @@ excerpt: |
 ## 注意点
 
 - VTEP / NVO は **デバイス 1 つあたり 1 つ限定**
-- `map_range del` は VRF 紐付けがある VNI のみ削除する仕様で、削除されない行があっても警告は print のみ。完全削除には `map del` を使う
+- `map_range del` は [VRF](../../reference/glossary.md#term-vrf) 紐付けがある VNI のみ削除する仕様で、削除されない行があっても警告は print のみ。完全削除には `map del` を使う
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -246,4 +246,4 @@ show vxlan name <tunnel>
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](../config-db/vxlan-tunnel-map.md)
 - [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
 
-<!-- glossary-links-injected: 4459c49968d1 -->
+<!-- glossary-links-injected: 30b3c32e2ff3 -->

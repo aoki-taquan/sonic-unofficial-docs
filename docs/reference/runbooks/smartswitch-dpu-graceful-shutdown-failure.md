@@ -31,7 +31,7 @@ related:
 ## 想定原因（優先度順）
 
 1. **active [ENI](../../reference/glossary.md#term-eni) / flow 残存**: drain 完了前に shutdown 要求
-2. **chassisd ↔ DPU 内部 RPC タイムアウト**
+2. **chassisd ↔ [DPU](../../reference/glossary.md#term-dpu) 内部 RPC タイムアウト**
 3. **[STATE_DB](../../reference/glossary.md#term-state_db) の状態遷移が遅延**: `CHASSIS_MODULE_TABLE` 更新詰まり
 4. **PCIe / power 制御コマンドの失敗**: platform plugin の異常
 5. **暴走プロセスが SIGTERM を無視**
@@ -88,7 +88,7 @@ sudo cat /sys/class/pci_bus/.../power/control
 
 ## 対処方法
 
-- ENI 残: controller 側で migration を実行、完了後に再 shutdown
+- [ENI](../../reference/glossary.md#term-eni) 残: controller 側で migration を実行、完了後に再 shutdown
 - chassisd 詰まり: `docker restart pmon` （**注意**: 他センサ / fan / xcvrd も再起動される）
 - 強制 shutdown: `config chassis modules shutdown DPU0 -f` （対応 utilities 版でのみ。**ロールバック**: `config chassis modules startup DPU0`、ただしフロー復元不可）
 - platform plugin 異常: ベンダ提供 plugin の log と GitHub Issue で確認
@@ -103,4 +103,4 @@ sudo cat /sys/class/pci_bus/.../power/control
 [^1]: sonic-net/sonic-platform-daemons @ master — chassisd
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — chassis_modules.py
 
-<!-- glossary-links-injected: d32d5a339f26 -->
+<!-- glossary-links-injected: 4353e5992ae2 -->

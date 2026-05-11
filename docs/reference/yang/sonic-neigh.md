@@ -77,8 +77,8 @@ module: sonic-neigh
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `NEIGH|<port>|<neighbor>`
-- CLI: なし（CONFIG_DB 直接設定 / minigraph）
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `NEIGH|<port>|<neighbor>`
+- CLI: なし（[CONFIG_DB](../../reference/glossary.md#term-config_db) 直接設定 / minigraph）
 
 <!-- ref-triangle:start -->
 
@@ -92,4 +92,4 @@ module: sonic-neigh
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-neigh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

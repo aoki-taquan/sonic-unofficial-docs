@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`config mclag` は [MCLAG](../../reference/glossary.md#term-mclag) (Multi-Chassis [LAG](../../reference/glossary.md#term-lag)) ドメイン・メンバ [PortChannel](../../reference/glossary.md#term-portchannel)・Vlan インタフェース単位の unique IP を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む CLI で、`config/mclag.py` の `@click.group()` がエントリポイントとなる[^1]。CONFIG_DB の更新先テーブルは `MCLAG_DOMAIN` / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` の 3 つで、ICCPd (`iccpd` コンテナ) がこれを購読して MCLAG ピアリングを起動する。
+`config mclag` は [MCLAG](../../reference/glossary.md#term-mclag) (Multi-Chassis [LAG](../../reference/glossary.md#term-lag)) ドメイン・メンバ [PortChannel](../../reference/glossary.md#term-portchannel)・Vlan インタフェース単位の unique IP を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む CLI で、`config/mclag.py` の `@click.group()` がエントリポイントとなる[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) の更新先テーブルは `MCLAG_DOMAIN` / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` の 3 つで、ICCPd (`iccpd` コンテナ) がこれを購読して [MCLAG](../../reference/glossary.md#term-mclag) ピアリングを起動する。
 
 `MCLAG_DOMAIN` は **デバイス内に 1 つしか持てない** (既存 domain がある状態で別 ID を `add` するとエラー)[^2]。
 
@@ -30,11 +30,11 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `config mclag add <domain_id> <source_ip> <peer_ip> [<peer_ifname>]` | MCLAG ドメイン作成 |
+| `config mclag add <domain_id> <source_ip> <peer_ip> [<peer_ifname>]` | [MCLAG](../../reference/glossary.md#term-mclag) ドメイン作成 |
 | `config mclag del <domain_id>` | ドメイン削除 (関連メンバも同時削除) |
 | `config mclag keepalive-interval <domain_id> <secs>` | keepalive 周期 (1-60) |
 | `config mclag session-timeout <domain_id> <secs>` | session timeout (3-3600) |
-| `config mclag member add <domain_id> <portchannels>` | MCLAG メンバ PortChannel を追加 |
+| `config mclag member add <domain_id> <portchannels>` | MCLAG メンバ [PortChannel](../../reference/glossary.md#term-portchannel) を追加 |
 | `config mclag member del <domain_id> <portchannels>` | MCLAG メンバ削除 |
 | `config mclag unique-ip add <vlan_interfaces>` | Vlan インタフェースに unique IP 機能を有効化 |
 | `config mclag unique-ip del <vlan_interfaces>` | unique IP 機能を無効化 |
@@ -114,7 +114,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MCLAG_DOMAIN`](../config-db/mclag-domain.md) / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MCLAG_DOMAIN`](../config-db/mclag-domain.md) / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP`
 
 <!-- ref-triangle:end -->
 
@@ -162,12 +162,12 @@ MCLAG domain 4095 added.
 
 ### 典型的な利用シーン
 
-- MC-LAG ドメイン作成、ピアリンク・peer IP・keepalive 設定。
+- MC-[LAG](../../reference/glossary.md#term-lag) ドメイン作成、ピアリンク・peer IP・keepalive 設定。
 - Unique IP / system MAC の同期設定。
 
 ### よくある落とし穴
 
-- 両端で system_mac を一致させないと LAG メンバが flap し続ける。
+- 両端で system_mac を一致させないと [LAG](../../reference/glossary.md#term-lag) メンバが flap し続ける。
 - keepalive [VLAN](../../reference/glossary.md#term-vlan) を tagged で通すと一部 NIC で MTU 差により断続するため、専用 L3 リンク推奨。
 
 ### 関連する show / debug
@@ -179,4 +179,4 @@ mclagdctl -i 1000 dump state
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 2141742a9664 -->
+<!-- glossary-links-injected: 0bf15a09bb5d -->

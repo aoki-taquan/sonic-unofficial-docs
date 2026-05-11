@@ -80,7 +80,7 @@ sudo tcpdump -i Vlan100 -nn -e port 67 or port 68
 sudo tcpdump -i <upstream> -nn -e port 67 and host <helper-ip>
 ```
 
-- 期待: VLAN 側で broadcast DISCOVER、上流で unicast を helper に relay
+- 期待: [VLAN](../../reference/glossary.md#term-vlan) 側で broadcast DISCOVER、上流で unicast を helper に relay
 - 異常: 上流に出ない → relay daemon の判断で drop。`docker logs dhcp_relay` を確認
 
 ### 4. L3 到達性
@@ -90,7 +90,7 @@ ping -I <vlan_ip> <helper-ip>
 ip route get <helper-ip>
 ```
 
-- 異常: VRF 違いで route なし → `mgmt_vrf` から `default` への route leaking 構成を見直し
+- 異常: [VRF](../../reference/glossary.md#term-vrf) 違いで route なし → `mgmt_vrf` から `default` への route leaking 構成を見直し
 
 ### 5. statistics / counter
 
@@ -120,4 +120,4 @@ sonic-clear dhcp_relay ipv4 counters
 [^1]: sonic-net/sonic-dhcp-relay @ 7316417 — relay.cpp
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config vlan dhcp_relay
 
-<!-- glossary-links-injected: 7693efbae10f -->
+<!-- glossary-links-injected: ad07899a32d7 -->

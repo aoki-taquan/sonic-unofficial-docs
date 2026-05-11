@@ -33,7 +33,7 @@ related:
 1. **static route と [BGP](../../reference/glossary.md#term-bgp) 経路の競合**: 自身を next-hop に向ける static
 2. **default route の相互広告**: ToR ↔ Leaf 双方が default を交換
 3. **redistribute connected + summary-only が一致しない**: 集約経路で自分の subnet が抜ける
-4. **BGP の next-hop unchanged 設定誤り**
+4. **[BGP](../../reference/glossary.md#term-bgp) の next-hop unchanged 設定誤り**
 
 ## 切り分け手順
 
@@ -90,7 +90,7 @@ show interfaces counters | head -20
 ## 対処方法
 
 - 怪しい static を一時 disable: `sudo config route del prefix <p>`
-- BGP の default 広告抑制: `neighbor <peer> default-originate` を外す
+- [BGP](../../reference/glossary.md#term-bgp) の default 広告抑制: `neighbor <peer> default-originate` を外す
 - summary 配下を明示 announce: `aggregate-address <p> as-set` の見直し
 - ループ確定箇所の interface を一時 admin down: `sudo config interface shutdown Ethernet0`
 
@@ -104,4 +104,4 @@ show interfaces counters | head -20
 [^1]: sonic-net/sonic-frr @ 799f47f — [zebra](../../reference/glossary.md#term-zebra)/zebra_rib.c
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — routeorch.cpp
 
-<!-- glossary-links-injected: 118ad94be6a7 -->
+<!-- glossary-links-injected: 758aafff1fd5 -->

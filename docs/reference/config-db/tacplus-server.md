@@ -72,12 +72,12 @@ TACPLUS|global
 
 ## 購読者
 
-- `hostcfgd`: CONFIG_DB → PAM / NSS 設定の再生成
+- `hostcfgd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → PAM / NSS 設定の再生成
 - 関連: `pam_tacplus`, `libnss_tacplus`
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `AAA`、`LDAP_SERVER`、`RADIUS_SERVER`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `AAA`、`LDAP_SERVER`、`RADIUS_SERVER`
 - 関連 CLI: `config tacacs add/delete/passkey/timeout/authtype/default`、`show tacacs`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-tacacs`、`sonic-system-aaa`
 
@@ -85,14 +85,14 @@ TACPLUS|global
 
 ## 関連リファレンス
 
-- YANG: [`sonic-system-tacacs`](../yang/sonic-system-tacacs.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-system-tacacs`](../yang/sonic-system-tacacs.md)
 - CLI: `config tacacs`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-system-tacacs.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-tacacs.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-system-tacacs.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-tacacs.yang>
 
 ## 関連ページ
 - [HLD: TACACS+ 認証](../../management/tacacs-authentication.md)
@@ -126,4 +126,4 @@ show tacacs
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: 32758c44ab11 -->

@@ -21,7 +21,7 @@ related:
 ## 概要
 
 物理ポートで BUM (broadcast / unknown-unicast / unknown-multicast) トラフィックのレート制限 (storm control) を設定するテーブル[^1]。
-3 種類のトラフィックに対して個別にレートを指定でき、`orchagent` が [SAI](../../reference/glossary.md#term-sai) `SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID` 系で SAI policer を作って attach する。
+3 種類のトラフィックに対して個別にレートを指定でき、`orchagent` が [SAI](../../reference/glossary.md#term-sai) `SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID` 系で [SAI](../../reference/glossary.md#term-sai) policer を作って attach する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -62,7 +62,7 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 
 ## 購読者
 
-- `orchagent` (`PortsOrch` の storm-control パス)。内部で SAI policer を作成し、`ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` / `UNKNOWN_UNICAST_STORM_CONTROL_POLICER_ID` / `UNKNOWN_MULTICAST_STORM_CONTROL_POLICER_ID` を更新
+- `orchagent` (`PortsOrch` の storm-control パス)。内部で [SAI](../../reference/glossary.md#term-sai) policer を作成し、`ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` / `UNKNOWN_UNICAST_STORM_CONTROL_POLICER_ID` / `UNKNOWN_MULTICAST_STORM_CONTROL_POLICER_ID` を更新
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -74,13 +74,13 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-storm-control`](../yang/sonic-storm-control.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-storm-control`](../yang/sonic-storm-control.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-storm-control.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-storm-control.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-storm-control.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-storm-control.yang>
 
 ## 関連ページ
 - [CONFIG_DB: PORT](port.md)
@@ -106,4 +106,4 @@ show storm-control all
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b27e55924bf2 -->
+<!-- glossary-links-injected: 16a5b728a75a -->

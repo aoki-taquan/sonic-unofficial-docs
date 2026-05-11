@@ -58,7 +58,7 @@ module: sonic-bmp
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `bgp_neighbor_table` | `sonic-bmp/BMP/table/bgp_neighbor_table` | `stypes:boolean_type` |  | `true` |  | BMP BGP ネイバーテーブルダンプの有効/無効 |
+| `bgp_neighbor_table` | `sonic-bmp/BMP/table/bgp_neighbor_table` | `stypes:boolean_type` |  | `true` |  | BMP [BGP](../../reference/glossary.md#term-bgp) ネイバーテーブルダンプの有効/無効 |
 | `bgp_rib_in_table` | `sonic-bmp/BMP/table/bgp_rib_in_table` | `stypes:boolean_type` |  | `false` |  | BMP Adj-RIB-In テーブルダンプの有効/無効 |
 | `bgp_rib_out_table` | `sonic-bmp/BMP/table/bgp_rib_out_table` | `stypes:boolean_type` |  | `false` |  | BMP Adj-RIB-Out テーブルダンプの有効/無効 |
 
@@ -79,7 +79,7 @@ module: sonic-bmp
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BMP`](../config-db/bmp.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BMP`](../config-db/bmp.md)
 - CLI: `config bmp`
 
 <!-- ref-triangle:end -->
@@ -89,7 +89,7 @@ module: sonic-bmp
 
 ### 典型的なデプロイ位置
 
-- BGP Monitoring Protocol (RFC 7854) コレクタ向け設定。openbmp / sonic-bmp コンテナで参照される。
+- [BGP](../../reference/glossary.md#term-bgp) Monitoring Protocol (RFC 7854) コレクタ向け設定。openbmp / sonic-bmp コンテナで参照される。
 
 ### よくある落とし穴
 
@@ -107,4 +107,4 @@ docker logs bmp
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 5d521d465b91 -->
+<!-- glossary-links-injected: 23dcc9b38d9f -->

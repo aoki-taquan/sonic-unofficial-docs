@@ -139,8 +139,8 @@ module: sonic-bgp-global
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `vrf_name` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/vrf_name` | `union` | yes |  | union(string, leafref) | [VRF](../../reference/glossary.md#term-vrf) name |
-| `router_id` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/router_id` | `inet:ipv4-address` |  |  |  | BGP router identifier in IPv4 address format. |
-| `local_asn` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/local_asn` | `uint32` |  |  | range 1..4294967295 | Local autonomous system number for this BGP instance. |
+| `router_id` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/router_id` | `inet:ipv4-address` |  |  |  | [BGP](../../reference/glossary.md#term-bgp) router identifier in IPv4 address format. |
+| `local_asn` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/local_asn` | `uint32` |  |  | range 1..4294967295 | Local autonomous system number for this [BGP](../../reference/glossary.md#term-bgp) instance. |
 | `always_compare_med` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/always_compare_med` | `boolean` |  |  |  | Allow comparing MED from different neighbors |
 | `load_balance_mp_relax` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/load_balance_mp_relax` | `boolean` |  |  |  | Allow load sharing across routes that have different AS paths (but same length) |
 | `graceful_restart_enable` | `sonic-bgp-global/BGP_GLOBALS/BGP_GLOBALS_LIST/graceful_restart_enable` | `boolean` |  |  |  | Enable graceful restart |
@@ -186,8 +186,8 @@ module: sonic-bgp-global
 | `afi_safi` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/afi_safi` | `string` | yes |  |  | Address family name and subsequent address family name |
 | `max_ebgp_paths` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/max_ebgp_paths` | `uint16` |  | 1 | range 1..256 | Maximum number of equal-cost eBGP paths to install for multipath forwarding. |
 | `max_ibgp_paths` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/max_ibgp_paths` | `uint16` |  | 1 | range 1..256 | Maximum number of equal-cost iBGP paths to install for multipath forwarding. |
-| `import_vrf` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/import_vrf` | `union` |  |  | union(string, leafref) | Import routes from particular VRF |
-| `import_vrf_route_map` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/import_vrf_route_map` | `leafref` |  |  | /rmap:sonic-route-map/rmap:ROUTE_MAP_SET/rmap:ROUTE_MAP_SET_LIST/rmap:name | Import routes from VRF with route filter |
+| `import_vrf` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/import_vrf` | `union` |  |  | union(string, leafref) | Import routes from particular [VRF](../../reference/glossary.md#term-vrf) |
+| `import_vrf_route_map` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/import_vrf_route_map` | `leafref` |  |  | /rmap:sonic-route-map/rmap:ROUTE_MAP_SET/rmap:ROUTE_MAP_SET_LIST/rmap:name | Import routes from [VRF](../../reference/glossary.md#term-vrf) with route filter |
 | `route_download_filter` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/route_download_filter` | `leafref` |  |  | /rmap:sonic-route-map/rmap:ROUTE_MAP_SET/rmap:ROUTE_MAP_SET_LIST/rmap:name | Route map applied to filter routes downloaded to the FIB (table-map). |
 | `ebgp_route_distance` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/ebgp_route_distance` | `uint8` |  |  | range 1..255 | Distance for routes external to the AS |
 | `ibgp_route_distance` | `sonic-bgp-global/BGP_GLOBALS_AF/BGP_GLOBALS_AF_LIST/ibgp_route_distance` | `uint8` |  |  | range 1..255 | Distance for routes internal to the AS |
@@ -230,14 +230,14 @@ module: sonic-bgp-global
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`
-- CONFIG_DB: `BGP_GLOBALS_AF`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS_AF`
 - CLI: `config bgp`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BGP_GLOBALS`](../config-db/bgp-globals.md) / [`BGP_GLOBALS_AF`](../config-db/bgp-globals-af.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BGP_GLOBALS`](../config-db/bgp-globals.md) / [`BGP_GLOBALS_AF`](../config-db/bgp-globals-af.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
@@ -265,4 +265,4 @@ vtysh -c 'show bgp summary'
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-global.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: c1ba91027e65 -->
+<!-- glossary-links-injected: ede555c3899a -->

@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-[BGP](../../reference/glossary.md#term-bgp) のルートフィルタ用 prefix リストを [CONFIG_DB](../../reference/glossary.md#term-config_db) に持たせるための簡易テーブル[^1]。`bgpcfgd` テンプレートで [FRR](../../reference/glossary.md#term-frr) の `ip prefix-list` / `ipv6 prefix-list` に展開される。共通ルーティングポリシ用の汎用 [`PREFIX_SET`](./prefix-set.md) / `PREFIX_LIST` (sonic-routing-policy-sets) とは別物（こちらは BGP 限定の簡易 entry）。
+[BGP](../../reference/glossary.md#term-bgp) のルートフィルタ用 prefix リストを [CONFIG_DB](../../reference/glossary.md#term-config_db) に持たせるための簡易テーブル[^1]。`bgpcfgd` テンプレートで [FRR](../../reference/glossary.md#term-frr) の `ip prefix-list` / `ipv6 prefix-list` に展開される。共通ルーティングポリシ用の汎用 [`PREFIX_SET`](./prefix-set.md) / `PREFIX_LIST` (sonic-routing-policy-sets) とは別物（こちらは [BGP](../../reference/glossary.md#term-bgp) 限定の簡易 entry）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -62,19 +62,19 @@ PREFIX_LIST|<prefix_type>|<ip-prefix>
 
 ## 購読者
 
-- `bgpcfgd` (`docker-fpm-frr`): テンプレート展開で FRR vtysh `ip prefix-list <prefix_type> seq N permit <prefix>` を生成
+- `bgpcfgd` (`docker-fpm-frr`): テンプレート展開で [FRR](../../reference/glossary.md#term-frr) vtysh `ip prefix-list <prefix_type> seq N permit <prefix>` を生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`PREFIX_SET`](./prefix-set.md) / `PREFIX_LIST` (sonic-routing-policy-sets), `BGP_NEIGHBOR_AF`, `BGP_PEER_GROUP_AF`, `ROUTE_MAP`
-- 関連 YANG: `sonic-bgp-prefix-list`、`sonic-routing-policy-sets`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`PREFIX_SET`](./prefix-set.md) / `PREFIX_LIST` (sonic-routing-policy-sets), `BGP_NEIGHBOR_AF`, `BGP_PEER_GROUP_AF`, `ROUTE_MAP`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-prefix-list`、`sonic-routing-policy-sets`
 - 関連 CLI: なし（`config_db.json` 投入）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-bgp-prefix-list`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-prefix-list`
 
 <!-- ref-triangle:end -->
 
@@ -102,4 +102,4 @@ vtysh -c 'show ip prefix-list'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3aa2902e22d8 -->
+<!-- glossary-links-injected: 830f3e5569ea -->

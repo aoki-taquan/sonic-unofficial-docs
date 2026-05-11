@@ -56,7 +56,7 @@ module: sonic-bgp-bbr
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `status` | `sonic-bgp-bbr/BGP_BBR/all/status` | `stypes:admin_mode` |  | `enabled` | enabled / disabled | デバイス上で BGP BBR 機能を有効/無効にする |
+| `status` | `sonic-bgp-bbr/BGP_BBR/all/status` | `stypes:admin_mode` |  | `enabled` | enabled / disabled | デバイス上で [BGP](../../reference/glossary.md#term-bgp) BBR 機能を有効/無効にする |
 
 ## leafref / 依存
 
@@ -73,7 +73,7 @@ module: sonic-bgp-bbr
 
 ## redis-cli での観測
 
-[YANG](../../reference/glossary.md#term-yang) の `enum`（`enabled` / `disabled`）と `default` の挙動は、実機では CONFIG_DB の `BGP_BBR` キーを直接覗くと素早く突き合わせできる。設定値・[FRR](../../reference/glossary.md#term-frr) への反映状況を 1 セッションで確認する定型は以下。
+[YANG](../../reference/glossary.md#term-yang) の `enum`（`enabled` / `disabled`）と `default` の挙動は、実機では [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_BBR` キーを直接覗くと素早く突き合わせできる。設定値・[FRR](../../reference/glossary.md#term-frr) への反映状況を 1 セッションで確認する定型は以下。
 
 ```bash
 # 1. 現在の CONFIG_DB 値（YANG leaf "status" に相当）
@@ -92,13 +92,13 @@ sonic-db-cli CONFIG_DB hget  'BGP_BBR|all' status
 docker exec -it bgp vtysh -c 'show running-config bgpd' | grep -E 'aggregate-address|bbr'
 ```
 
-`status=enabled` のとき、`BGP_AGGREGATE_ADDRESS` の BBR 連動ロジック（`suppress-map` の動的切替）が `bgpcfgd` の Jinja テンプレートで生成される。`disabled` に切り替えても `aggregate-address` 設定自体は残るため、FRR 側の `running-config` 差分で「BBR 機能のみが OFF」を確認するのがポイント。
+`status=enabled` のとき、`BGP_AGGREGATE_ADDRESS` の BBR 連動ロジック（`suppress-map` の動的切替）が `bgpcfgd` の Jinja テンプレートで生成される。`disabled` に切り替えても `aggregate-address` 設定自体は残るため、[FRR](../../reference/glossary.md#term-frr) 側の `running-config` 差分で「BBR 機能のみが OFF」を確認するのがポイント。
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: `BGP_BBR`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_BBR`
 - CLI: [`config bgp bbr`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
@@ -108,7 +108,7 @@ docker exec -it bgp vtysh -c 'show running-config bgpd' | grep -E 'aggregate-add
 
 ### 典型的なデプロイ位置
 
-- FRR の BGP BBR (Best-path Backup Routing) 機能。[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework 経由で `BGP_BBR` テーブルに書かれ、FRR `bgpd` の vtysh コマンドへ変換される。
+- [FRR](../../reference/glossary.md#term-frr) の [BGP](../../reference/glossary.md#term-bgp) BBR (Best-path Backup Routing) 機能。[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework 経由で `BGP_BBR` テーブルに書かれ、FRR `bgpd` の vtysh コマンドへ変換される。
 
 ### よくある落とし穴
 
@@ -126,4 +126,4 @@ show runningconfiguration bgp
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-bbr.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 971def93d123 -->
+<!-- glossary-links-injected: ba6cfbefec38 -->

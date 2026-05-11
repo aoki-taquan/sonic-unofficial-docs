@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-ポートの egress queue ごとにバッファプロファイルを割り当てる[^1]。non-[VOQ](../../reference/glossary.md#term-voq) 用と VOQ シャーシ用で list が分かれる。`buffermgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に転送、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) egress queue buffer profile を反映する。
+ポートの egress queue ごとにバッファプロファイルを割り当てる[^1]。non-[VOQ](../../reference/glossary.md#term-voq) 用と [VOQ](../../reference/glossary.md#term-voq) シャーシ用で list が分かれる。`buffermgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に転送、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) egress queue buffer profile を反映する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -46,7 +46,7 @@ flowchart LR
 
 ## key 構造
 
-非 VOQ:
+非 [VOQ](../../reference/glossary.md#term-voq):
 ```
 BUFFER_QUEUE|<port>|<qindex>
 ```
@@ -82,8 +82,8 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 
 ## 購読者
 
-- `buffermgrd`: APPL_DB へ転送
-- `orchagent` `BufferOrch`: SAI egress queue buffer profile を反映
+- `buffermgrd`: [APPL_DB](../../reference/glossary.md#term-appl_db) へ転送
+- `orchagent` `BufferOrch`: [SAI](../../reference/glossary.md#term-sai) egress queue buffer profile を反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -95,13 +95,13 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-buffer-queue`](../yang/sonic-buffer-queue.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-buffer-queue`](../yang/sonic-buffer-queue.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-buffer-queue.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-queue.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-buffer-queue.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-queue.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -130,4 +130,4 @@ show buffer queue
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6ee095ec571 -->
+<!-- glossary-links-injected: efbc9015e957 -->

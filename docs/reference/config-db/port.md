@@ -98,7 +98,7 @@ PORT|<name>
 
 ## 購読者
 
-- `orchagent` の `PortsOrch`: PORT 全フィールドを購読し、SAI で `SAI_PORT_ATTR_*` に反映
+- `orchagent` の `PortsOrch`: PORT 全フィールドを購読し、[SAI](../../reference/glossary.md#term-sai) で `SAI_PORT_ATTR_*` に反映
 - `portmgrd`: ポート status と admin_status をモニタ
 - `xcvrd`: トランシーバ関連 (`tx_power`、`laser_freq`、`dom_polling`) をモニタ
 - `linkmgrd`: `mux_cable = true` のポートを mux 制御対象として扱う
@@ -114,14 +114,14 @@ PORT|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-port`](../yang/sonic-port.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-port`](../yang/sonic-port.md)
 - CLI: [`config interface`](../cli/config-interface.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` (sha `9ea932ec`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-port.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` (sha `9ea932ec`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-port.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -145,7 +145,7 @@ PORT|<name>
 
 ### よくある誤設定
 
-- `speed` を `lanes` 数と不整合な値にすると SAI が `SAI_STATUS_INVALID_PARAMETER` を返してポートが down のまま。
+- `speed` を `lanes` 数と不整合な値にすると [SAI](../../reference/glossary.md#term-sai) が `SAI_STATUS_INVALID_PARAMETER` を返してポートが down のまま。
 - 対向と `fec` が不一致だと PHY は up しても link 不安定。両端を同じ FEC モードに揃える。
 - `mtu` を [VLAN](../../reference/glossary.md#term-vlan)/[PortChannel](../../reference/glossary.md#term-portchannel) メンバ間で揃えないと L2 で巨大フレームがドロップされる。
 - Breakout 中の親ポートに `admin_status: up` を残すと subport と二重設定で [orchagent](../../reference/glossary.md#term-orchagent) エラー。
@@ -159,4 +159,4 @@ show interfaces transceiver eeprom Ethernet0
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ea1f97661839 -->
+<!-- glossary-links-injected: 16a5b728a75a -->

@@ -44,7 +44,7 @@ config ssh inactivity-timeout <timeout>
 - `<timeout>` ... `0` 〜 `35000` の整数。`0` で無効化（`click.IntRange(0, 35000)`）
 
 **動作**:
-CONFIG_DB の `SSH_SERVER|POLICIES` テーブルに `inactivity_timeout` フィールドを `mod_entry` で書き込む[^2]。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `SSH_SERVER|POLICIES` テーブルに `inactivity_timeout` フィールドを `mod_entry` で書き込む[^2]。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L9979-L9988 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -88,7 +88,7 @@ config ssh max-sessions <max-sessions>
 - `<max-sessions>` ... `0` 〜 `100` の整数（`click.IntRange(0, 100)`）
 
 **動作**:
-CONFIG_DB の `SSH_SERVER|POLICIES` テーブルに `max_sessions` フィールドを書き込む。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `SSH_SERVER|POLICIES` テーブルに `max_sessions` フィールドを書き込む。
 
 ## 関連する CONFIG_DB
 
@@ -133,4 +133,4 @@ flowchart LR
 
 [^2]: 書き込みは `ConfigDBConnector().mod_entry("SSH_SERVER", "POLICIES", ...)` で行う。
 
-<!-- glossary-links-injected: a31aab569e22 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

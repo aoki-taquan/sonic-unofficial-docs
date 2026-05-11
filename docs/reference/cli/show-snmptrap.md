@@ -26,7 +26,7 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `show snmptrap` | SNMP Trap 送信先設定の表示 |
+| `show snmptrap` | [SNMP](../../reference/glossary.md#term-snmp) Trap 送信先設定の表示 |
 
 ## 詳細
 
@@ -38,8 +38,8 @@ show snmptrap
 
 **動作**:
 
-1. CONFIG_DB に接続し、`get_table('SNMP_TRAP_CONFIG')` でテーブルを取得
-2. テーブルの key（`v1TrapDest` / `v2TrapDest` / `v3TrapDest`）から SNMP バージョン番号を決定
+1. [CONFIG_DB](../../reference/glossary.md#term-config_db) に接続し、`get_table('SNMP_TRAP_CONFIG')` でテーブルを取得
+2. テーブルの key（`v1TrapDest` / `v2TrapDest` / `v3TrapDest`）から [SNMP](../../reference/glossary.md#term-snmp) バージョン番号を決定
 3. 各エントリの `DestIp`, `DestPort`, `vrf`, `Community` を読み出し、tabulate で出力
 
 表示ヘッダ:
@@ -122,7 +122,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SNMP_TRAP_CONFIG`](../config-db/snmp.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SNMP_TRAP_CONFIG`](../config-db/snmp.md)
 
 <!-- ref-triangle:end -->
 
@@ -130,4 +130,4 @@ flowchart LR
 
 [^1]: `show snmptrap` グループ定義は `show/main.py` L603-L624。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L603>
 
-<!-- glossary-links-injected: 3985b6dcd352 -->
+<!-- glossary-links-injected: 33ad7ce5b321 -->

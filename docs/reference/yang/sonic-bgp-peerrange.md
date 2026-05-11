@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`, `sonic-vrf`, `sonic-vnet`
 - top container: `sonic-bgp-peerrange`
 
-SONIC [BGP](../../reference/glossary.md#term-bgp) Peer Range [YANG](../../reference/glossary.md#term-yang)。 BGP dynamic neighbor (listen range) 設定を [VRF](../../reference/glossary.md#term-vrf)/[VNET](../../reference/glossary.md#term-vnet) 別、 およびテンプレートとして保持する[^1]。
+SONIC [BGP](../../reference/glossary.md#term-bgp) Peer Range [YANG](../../reference/glossary.md#term-yang)。 [BGP](../../reference/glossary.md#term-bgp) dynamic neighbor (listen range) 設定を [VRF](../../reference/glossary.md#term-vrf)/[VNET](../../reference/glossary.md#term-vnet) 別、 およびテンプレートとして保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -67,7 +67,7 @@ module: sonic-bgp-peerrange
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `vrf_name` | `sonic-bgp-peerrange/BGP_PEER_RANGE/BGP_PEER_RANGE_LIST/vrf_name` | `union` | yes |  | VRF または VNET leafref | VRF or VNET name for this peer range |
+| `vrf_name` | `sonic-bgp-peerrange/BGP_PEER_RANGE/BGP_PEER_RANGE_LIST/vrf_name` | `union` | yes |  | [VRF](../../reference/glossary.md#term-vrf) または [VNET](../../reference/glossary.md#term-vnet) leafref | [VRF](../../reference/glossary.md#term-vrf) or [VNET](../../reference/glossary.md#term-vnet) name for this peer range |
 | `peer_range_name` | `sonic-bgp-peerrange/BGP_PEER_RANGE/BGP_PEER_RANGE_LIST/peer_range_name` | `string` | yes |  |  | Peer range name |
 | `name` | `sonic-bgp-peerrange/BGP_PEER_RANGE/BGP_PEER_RANGE_LIST/name` | `string` |  |  |  | Peer range display name; must match the key |
 | `src_address` | `sonic-bgp-peerrange/BGP_PEER_RANGE/BGP_PEER_RANGE_LIST/src_address` | `inet:ip-address` |  |  |  | Source address for the connection |
@@ -96,7 +96,7 @@ module: sonic-bgp-peerrange
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BGP_PEER_RANGE`](../config-db/bgp-peer-range.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BGP_PEER_RANGE`](../config-db/bgp-peer-range.md)
 
 <!-- ref-triangle:end -->
 
@@ -105,7 +105,7 @@ module: sonic-bgp-peerrange
 
 ### 典型的なデプロイ位置
 
-- BGP dynamic neighbor 用 prefix range 設定。`BGP_PEER_RANGE` テーブルが [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) で FRR `bgp listen range` に変換される。
+- [BGP](../../reference/glossary.md#term-bgp) dynamic neighbor 用 prefix range 設定。`BGP_PEER_RANGE` テーブルが [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) で [FRR](../../reference/glossary.md#term-frr) `bgp listen range` に変換される。
 
 ### よくある落とし穴
 
@@ -123,4 +123,4 @@ vtysh -c 'show bgp summary'
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-peerrange.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 33a73c58d240 -->
+<!-- glossary-links-injected: 216d95e4b171 -->

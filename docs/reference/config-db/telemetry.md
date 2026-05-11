@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-gRPC ストリーミングテレメトリ / [gNMI](../../reference/glossary.md#term-gnmi) サーバの設定。TLS 証明書パスと gNMI ランタイムオプションを保持する[^1]。`telemetry` コンテナ (`docker-telemetry`、`docker-gnmi`) が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み込む。
+gRPC ストリーミングテレメトリ / [gNMI](../../reference/glossary.md#term-gnmi) サーバの設定。TLS 証明書パスと [gNMI](../../reference/glossary.md#term-gnmi) ランタイムオプションを保持する[^1]。`telemetry` コンテナ (`docker-telemetry`、`docker-gnmi`) が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み込む。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -57,7 +57,7 @@ TELEMETRY|gnmi         # gNMI サーバオプション
 | フィールド | 型 | 説明 |
 |-----------|----|------|
 | `client_auth` | boolean | クライアント認証要求 |
-| `log_level` | uint8 (0..100) | gNMI ログレベル |
+| `log_level` | uint8 (0..100) | [gNMI](../../reference/glossary.md#term-gnmi) ログレベル |
 | `port` | inet:port-number | gNMI 待受 TCP ポート |
 | `save_on_set` | boolean | `Set` RPC 完了時に config 永続化 |
 | `enable_crl` | boolean | CRL (Certificate Revocation List) 有効化 |
@@ -70,7 +70,7 @@ TELEMETRY|gnmi         # gNMI サーバオプション
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `GNMI_CLIENT_CERT` (gNMI クライアント証明書 fingerprint)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `GNMI_CLIENT_CERT` (gNMI クライアント証明書 fingerprint)
 - 関連 CLI: `config telemetry config-db`、`config telemetry server`、`gnoi-system reboot` 等
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry`、`sonic-gnmi`
 
@@ -78,14 +78,14 @@ TELEMETRY|gnmi         # gNMI サーバオプション
 
 ## 関連リファレンス
 
-- YANG: `sonic-telemetry`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry`
 - CLI: `config telemetry`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-telemetry.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-telemetry.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -114,4 +114,4 @@ systemctl status telemetry
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4c576d9c7fa6 -->
+<!-- glossary-links-injected: 41d5238b3a97 -->

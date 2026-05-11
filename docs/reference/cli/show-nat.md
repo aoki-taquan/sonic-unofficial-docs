@@ -33,7 +33,7 @@ related:
 
 | コマンド | 用途 | 内部呼び出し |
 |---------|------|-------------|
-| `show nat statistics` | NAT 変換のカウンタ統計 | `natshow -s` |
+| `show nat statistics` | [NAT](../../reference/glossary.md#term-nat) 変換のカウンタ統計 | `natshow -s` |
 | `show nat translations` | 現在の動的変換テーブル | `natshow -t` |
 | `show nat translations count` | 変換エントリ数 | `natshow -c` |
 | `show nat config` | 全体設定の一括表示 | `natconfig -g/-s/-p/-b/-z` を順に |
@@ -41,7 +41,7 @@ related:
 | `show nat config pool` | pool 設定のみ | `natconfig -p` |
 | `show nat config bindings` | binding 設定のみ | `natconfig -b` |
 | `show nat config globalvalues` | グローバル設定のみ | `natconfig -g` |
-| `show nat config zones` | NAT zone 設定のみ | `natconfig -z` |
+| `show nat config zones` | [NAT](../../reference/glossary.md#term-nat) zone 設定のみ | `natconfig -z` |
 
 各コマンドに `--verbose` オプションがあり、内部で実行する `sudo natshow ...` / `sudo natconfig ...` の起動コマンドラインを表示する。
 
@@ -74,14 +74,14 @@ related:
 
 ## 注意
 
-- `natshow` `natconfig` の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は `--json` 等の互換オプションは無いので、現状はラフな text 出力のパース、または [STATE_DB](../../reference/glossary.md#term-state_db) / CONFIG_DB を直接読むしかない。
+- `natshow` `natconfig` の出力フォーマットは固定列。スクリプトから JSON で扱いたい場合は `--json` 等の互換オプションは無いので、現状はラフな text 出力のパース、または [STATE_DB](../../reference/glossary.md#term-state_db) / [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接読むしかない。
 - `show nat translations` は **NAT が実際にハード offload されている前提**。`config nat feature disable` 状態では空表示になる。
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: `STATIC_NAT` / `STATIC_NAPT` / [`NAT_POOL`](../config-db/nat.md) / [`NAT_BINDINGS`](../config-db/nat.md) / [`NAT_GLOBAL`](../config-db/nat.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `STATIC_NAT` / `STATIC_NAPT` / [`NAT_POOL`](../config-db/nat.md) / [`NAT_BINDINGS`](../config-db/nat.md) / [`NAT_GLOBAL`](../config-db/nat.md)
 
 <!-- ref-triangle:end -->
 
@@ -169,4 +169,4 @@ show nat config
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 59e493d94ec9 -->
+<!-- glossary-links-injected: 0a2da183a336 -->

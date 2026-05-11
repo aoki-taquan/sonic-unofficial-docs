@@ -60,16 +60,16 @@ BUFFER_PROFILE|<name>
 | `size` | uint64 | ✅ | - | 予約バッファサイズ [byte] |
 | `static_th` | uint64 | - | - | static threshold [byte]（最大占有量） |
 | `dynamic_th` | int32 (-8..7) | - | - | dynamic threshold alpha 値 |
-| `xon` | uint64 | - | `0` | PFC xon 閾値 [byte] |
+| `xon` | uint64 | - | `0` | [PFC](../../reference/glossary.md#term-pfc) xon 閾値 [byte] |
 | `xon_offset` | uint64 | - | `0` | xon offset [byte]（resume を `max(xon, limit-offset)` で発火） |
-| `xoff` | uint64 | - | `0` | PFC xoff 閾値 [byte]（pause 生成） |
+| `xoff` | uint64 | - | `0` | [PFC](../../reference/glossary.md#term-pfc) xoff 閾値 [byte]（pause 生成） |
 | `headroom_type` | enum `static`/`dynamic` | - | `static` | headroom 動的計算かどうか |
 | `packet_discard_action` | enum `drop`/`trim` | - | - | shared buffer に admit できないときの動作 |
 
 ## 購読者
 
 - `buffermgrd`: dynamic buffer model のとき、ポート速度・ケーブル長・MTU から `headroom_type=dynamic` のサイズを計算
-- `orchagent` `BufferOrch`: SAI buffer profile を生成
+- `orchagent` `BufferOrch`: [SAI](../../reference/glossary.md#term-sai) buffer profile を生成
 - `pfcwd`: profile の xon/xoff を参照
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -82,13 +82,13 @@ BUFFER_PROFILE|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-buffer-profile`](../yang/sonic-buffer-profile.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-buffer-profile`](../yang/sonic-buffer-profile.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-buffer-profile.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-profile.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-buffer-profile.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-profile.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -120,4 +120,4 @@ show buffer profile
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: faaeb5caf487 -->
+<!-- glossary-links-injected: 22dbf67b9d97 -->

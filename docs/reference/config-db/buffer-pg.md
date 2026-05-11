@@ -62,8 +62,8 @@ BUFFER_PG|<port>|<pg_num>
 
 ## 購読者
 
-- `buffermgrd`: APPL_DB へ転送
-- `orchagent` `BufferOrch`: SAI に PG buffer profile を反映
+- `buffermgrd`: [APPL_DB](../../reference/glossary.md#term-appl_db) へ転送
+- `orchagent` `BufferOrch`: [SAI](../../reference/glossary.md#term-sai) に PG buffer profile を反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -75,13 +75,13 @@ BUFFER_PG|<port>|<pg_num>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-buffer-pg`](../yang/sonic-buffer-pg.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-buffer-pg`](../yang/sonic-buffer-pg.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-buffer-pg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pg.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-buffer-pg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pg.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -100,7 +100,7 @@ BUFFER_PG|<port>|<pg_num>
 
 ### よくある誤設定
 
-- PFC 対象 PG (`3-4`) に `lossy` profile を当てると PFC が機能しない。
+- [PFC](../../reference/glossary.md#term-pfc) 対象 PG (`3-4`) に `lossy` profile を当てると [PFC](../../reference/glossary.md#term-pfc) が機能しない。
 
 ### 確認コマンド
 
@@ -110,4 +110,4 @@ show buffer pg
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: faaeb5caf487 -->
+<!-- glossary-links-injected: 566f959873ea -->

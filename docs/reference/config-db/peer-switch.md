@@ -65,14 +65,14 @@ PEER_SWITCH|<peer_switch>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TUNNEL`](./tunnel.md)、`MUX_CABLE`
-- 関連 YANG: `sonic-peer-switch`、`sonic-tunnel`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-peer-switch`、`sonic-tunnel`
 - 関連 CLI: なし（`config_db.json` で投入）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-peer-switch`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-peer-switch`
 
 <!-- ref-triangle:end -->
 
@@ -107,4 +107,4 @@ show mux status
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9f1ccfb50fcc -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

@@ -25,13 +25,13 @@ related:
 
 ## 1. CLI / CONFIG_DB / YANG
 
-新規 CLI / CONFIG_DB / YANG なし[^1]。設定は **kernel sysctl** と **`COPP_TABLE`** 値、CLI 改修（`show arp` 高速化）に閉じる。
+新規 CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) なし[^1]。設定は **kernel sysctl** と **`COPP_TABLE`** 値、CLI 改修（`show arp` 高速化）に閉じる。
 
 ## 2. 関連する CONFIG_DB
 
 | Table | フィールド | 用途 |
 |-------|----------|------|
-| `COPP_TABLE` | ARP/ND group の `cir` / `cbs` | 600 → 8000 pps（HLD 提案。現行 master は 600 のまま）|
+| `COPP_TABLE` | [ARP](../reference/glossary.md#term-arp)/ND group の `cir` / `cbs` | 600 → 8000 pps（[HLD](../reference/glossary.md#term-hld) 提案。現行 master は 600 のまま）|
 | (`/etc/sysctl.d/...`) | `net.ipv4.neigh.default.gc_thresh1/2/3` 等 | kernel ARP cache（HLD 提案値と現行 default は乖離）|
 
 ## 3. HLD 提案 vs 現行 default
@@ -41,7 +41,7 @@ related:
 | `gc_thresh1` | 16000 | 8000 | 1024 |
 | `gc_thresh2` | 32000 | 16000 | 2048 |
 | `gc_thresh3` | 48000 | 32000 | 4096 |
-| CoPP ARP/ND `cir` | 8000 pps | 8000 pps | 600 pps |
+| [CoPP](../reference/glossary.md#term-copp) ARP/ND `cir` | 8000 pps | 8000 pps | 600 pps |
 
 HLD 値で運用したい場合は **自前で sysctl 上書きと CoPP 上書き** が必要（後述）。
 
@@ -86,7 +86,7 @@ time show arp
 time show ndp
 ```
 
-旧版（VLAN L3 上 ARP の outgoing IF 解決で FDB 全件 fetch）では entry が大量だと秒〜分単位。新版は個別 FDB lookup でほぼ即時に近い応答[^1]。
+旧版（[VLAN](../reference/glossary.md#term-vlan) L3 上 ARP の outgoing IF 解決で [FDB](../reference/glossary.md#term-fdb) 全件 fetch）では entry が大量だと秒〜分単位。新版は個別 FDB lookup でほぼ即時に近い応答[^1]。
 
 ## 7. bulk route programming の動作確認
 
@@ -126,3 +126,5 @@ sudo grep -i "bulk" /var/log/swss/sairedis.rec | tail
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: f0f6af0a12c5 -->

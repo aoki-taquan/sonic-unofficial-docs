@@ -24,11 +24,11 @@ related:
 
 ## 概要
 
-**[VRF](../../reference/glossary.md#term-vrf) × アドレスファミリ単位の [BGP](../../reference/glossary.md#term-bgp) aggregate-address 設定** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`frr-mgmt-framework` (DEVICE_METADATA の `frr_mgmt_framework_config = true` 経路) が CONFIG_DB から読み、[FRR](../../reference/glossary.md#term-frr) `bgpd` の `router bgp <as>` → `address-family <afi> <safi>` → `aggregate-address <prefix>` 系コマンドに反映する。
+**[VRF](../../reference/glossary.md#term-vrf) × アドレスファミリ単位の [BGP](../../reference/glossary.md#term-bgp) aggregate-address 設定** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`frr-mgmt-framework` (DEVICE_METADATA の `frr_mgmt_framework_config = true` 経路) が [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み、[FRR](../../reference/glossary.md#term-frr) `bgpd` の `router bgp <as>` → `address-family <afi> <safi>` → `aggregate-address <prefix>` 系コマンドに反映する。
 
 `BGP_GLOBALS_AF` で AF レベルの設定（multipath、route distance、L2VPN advertise-all-vni 等）を行い、その AF 配下の **aggregate prefix** をこのテーブルで列挙する。
 
-なお、似た名前の `BGP_AGGREGATE_ADDRESS` テーブル ([YANG](../../reference/glossary.md#term-yang) `sonic-bgp-aggregate-address`) は **AF/VRF を持たないフラットな** aggregate 定義で、別経路 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレ) で利用される。両者は実装パスが異なる点に注意。
+なお、似た名前の `BGP_AGGREGATE_ADDRESS` テーブル ([YANG](../../reference/glossary.md#term-yang) `sonic-bgp-aggregate-address`) は **AF/[VRF](../../reference/glossary.md#term-vrf) を持たないフラットな** aggregate 定義で、別経路 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレ) で利用される。両者は実装パスが異なる点に注意。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,7 +58,7 @@ BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf_name>|<afi_safi>|<ip_prefix>
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `vrf_name` (key) | leafref → `BGP_GLOBALS.vrf_name` | 所属 VRF |
+| `vrf_name` (key) | leafref → `BGP_GLOBALS.vrf_name` | 所属 [VRF](../../reference/glossary.md#term-vrf) |
 | `afi_safi` (key) | string | アドレスファミリ |
 | `ip_prefix` (key) | inet:ip-prefix | 集約プレフィックス |
 | `as_set` | boolean | AS_SET path 情報を生成 (RFC 4271) |
@@ -68,27 +68,27 @@ BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf_name>|<afi_safi>|<ip_prefix>
 ## 制約
 
 - 3 つのキー (`vrf_name` / `afi_safi` / `ip_prefix`) で一意。
-- `vrf_name` は `BGP_GLOBALS_LIST.vrf_name` への leafref のため、対応する VRF の BGP インスタンスが先に存在している必要がある。
-- `summary_only = true` を指定すると aggregate に含まれる more-specific ルートは BGP UPDATE から抑制される（FRR の `aggregate-address ... summary-only` 相当）。
+- `vrf_name` は `BGP_GLOBALS_LIST.vrf_name` への leafref のため、対応する VRF の [BGP](../../reference/glossary.md#term-bgp) インスタンスが先に存在している必要がある。
+- `summary_only = true` を指定すると aggregate に含まれる more-specific ルートは [BGP](../../reference/glossary.md#term-bgp) UPDATE から抑制される（[FRR](../../reference/glossary.md#term-frr) の `aggregate-address ... summary-only` 相当）。
 
 ## 購読者
 
 - `frr-mgmt-framework`: 本テーブルを vtysh の `aggregate-address` コマンドに変換し `bgpd` に投入
-- `bgpd` (FRR): RIB から該当プレフィックス配下のルートを集約し、設定に応じて抑制・AS_SET 生成・route-map 適用を行う
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): RIB から該当プレフィックス配下のルートを集約し、設定に応じて抑制・AS_SET 生成・route-map 適用を行う
 
 `bgpcfgd` (テンプレベース) ではこのテーブルではなく `BGP_AGGREGATE_ADDRESS` を使う。設定経路を明確にするため、両方を併用するのは避ける。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_GLOBALS`, `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_NETWORK`, `BGP_AGGREGATE_ADDRESS`, `ROUTE_MAP_SET`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`, `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_NETWORK`, `BGP_AGGREGATE_ADDRESS`, `ROUTE_MAP_SET`
 - 関連 CLI: `config bgp` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities) 経由)、vtysh の `aggregate-address` (直接)
-- 関連 YANG: `sonic-bgp-global`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-global`](../yang/sonic-bgp-global.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-global`](../yang/sonic-bgp-global.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
@@ -124,4 +124,4 @@ vtysh -c "show running-config bgpd" | grep aggregate-address
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ded86831ff84 -->
+<!-- glossary-links-injected: fcbe746ecf8b -->

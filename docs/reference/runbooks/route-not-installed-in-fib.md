@@ -76,16 +76,16 @@ ip neigh | grep <nexthop_ip>
 ## よくある原因
 
 1. **Nexthop が unresolved** — [ARP](../../reference/glossary.md#term-arp) が無く、[zebra](../../reference/glossary.md#term-zebra) が FIB に入れない
-2. **[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) と zebra の [FPM](../../reference/glossary.md#term-fpm) socket 断** — [FRR](../../reference/glossary.md#term-frr) の FPM が disable / socket reconnect ループ
+2. **[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) と [zebra](../../reference/glossary.md#term-zebra) の [FPM](../../reference/glossary.md#term-fpm) socket 断** — [FRR](../../reference/glossary.md#term-frr) の [FPM](../../reference/glossary.md#term-fpm) が disable / socket reconnect ループ
 3. **routeorch の bulk pending** — ASIC への書き込みが queue 滞留中
 4. **[CRM](../../reference/glossary.md#term-crm) route / nexthop 枯渇** — `crm show resources` で `used == max`
 5. **ASIC FIB table full** — `sai-table-full.md` 参照
 6. **同一 prefix を別 source が上書き** — static route と [BGP](../../reference/glossary.md#term-bgp) route の admin distance
 7. **Blackhole / Null route** — `null0` が選択されていて意図せず DROP
 
-FRR zebra → FPM → fpmsyncd → APPL_DB → routeorch → ASIC_DB のパイプライン構造は `sonic-frr` の `zebra_fpm.c` と `sonic-swss` の `fpmsyncd.cpp` / `routeorch.cpp` の組合せで実装される[^1]。
+[FRR](../../reference/glossary.md#term-frr) [zebra](../../reference/glossary.md#term-zebra) → [FPM](../../reference/glossary.md#term-fpm) → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) → [APPL_DB](../../reference/glossary.md#term-appl_db) → routeorch → [ASIC_DB](../../reference/glossary.md#term-asic_db) のパイプライン構造は `sonic-frr` の `zebra_fpm.c` と `sonic-swss` の `fpmsyncd.cpp` / `routeorch.cpp` の組合せで実装される[^1]。
 
-[^1]: `sonic-net/sonic-frr` `zebra/zebra_fpm.c` (FPM client / Netlink encoding) と `sonic-net/sonic-swss` `fpmsyncd/fpmsyncd.cpp` (FPM server / APPL_DB writer)、`orchagent/routeorch.cpp` (APPL_DB → ASIC_DB) で経路が伝播する。
+[^1]: `sonic-net/sonic-frr` `zebra/zebra_fpm.c` (FPM client / [Netlink](../../reference/glossary.md#term-netlink) encoding) と `sonic-net/sonic-swss` `fpmsyncd/fpmsyncd.cpp` (FPM server / [APPL_DB](../../reference/glossary.md#term-appl_db) writer)、`orchagent/routeorch.cpp` ([APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db)) で経路が伝播する。
 
 ## 関連 reference / topics
 
@@ -95,4 +95,4 @@ FRR zebra → FPM → fpmsyncd → APPL_DB → routeorch → ASIC_DB のパイ�
 - [swss-orchagent-busy-loop.md](swss-orchagent-busy-loop.md)
 - [arp-entry-stuck.md](arp-entry-stuck.md)
 
-<!-- glossary-links-injected: f3660992dee9 -->
+<!-- glossary-links-injected: bc3113061698 -->

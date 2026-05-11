@@ -85,8 +85,8 @@ module: sonic-snmp
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `Contact` | `sonic-snmp/SNMP/CONTACT/Contact` | `string` |  |  | length 1..255 | SNMP System Contact. |
-| `Location` | `sonic-snmp/SNMP/LOCATION/Location` | `string` |  |  | length 1..255 | SNMP System Location. |
+| `Contact` | `sonic-snmp/SNMP/CONTACT/Contact` | `string` |  |  | length 1..255 | [SNMP](../../reference/glossary.md#term-snmp) System Contact. |
+| `Location` | `sonic-snmp/SNMP/LOCATION/Location` | `string` |  |  | length 1..255 | [SNMP](../../reference/glossary.md#term-snmp) System Location. |
 | `name` | `sonic-snmp/SNMP_COMMUNITY/SNMP_COMMUNITY_LIST/name` | `string` | yes |  | length 4..32 | Community name (SNMPv1/v2c). |
 | `TYPE` | `sonic-snmp/SNMP_COMMUNITY/SNMP_COMMUNITY_LIST/TYPE` | `enumeration` |  |  | `RO`, `RW` | Type of community, read-only or read-write. |
 | `name` | `sonic-snmp/SNMP_USER/SNMP_USER_LIST/name` | `string` | yes |  | length 4..32 | Name defining the SNMP User. |
@@ -118,7 +118,7 @@ module: sonic-snmp
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SNMP`](../config-db/snmp.md) / [`SNMP_COMMUNITY`](../config-db/snmp.md) / [`SNMP_USER`](../config-db/snmp.md) / [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SNMP`](../config-db/snmp.md) / [`SNMP_COMMUNITY`](../config-db/snmp.md) / [`SNMP_USER`](../config-db/snmp.md) / [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md)
 - CLI: [`config snmp`](../cli/config-snmp.md)
 
 <!-- ref-triangle:end -->
@@ -127,4 +127,4 @@ module: sonic-snmp
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-snmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 60a02696c221 -->
+<!-- glossary-links-injected: 4d9bcd8a6ee6 -->

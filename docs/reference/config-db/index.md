@@ -23,7 +23,7 @@ related:
 
 `CONFIG_DB` は SONiC における **中央設定 DB**。[Redis](../../reference/glossary.md#term-redis) instance の `DB 4` 上に置かれ、CLI (`config ...`) や [gNMI](../../reference/glossary.md#term-gnmi) / REST API、`config_db.json` のロードによって書き込まれる。各 Orch / daemon ([orchagent](../../reference/glossary.md#term-orchagent), [bgpcfgd](../../reference/glossary.md#term-bgpcfgd), [intfmgrd](../../reference/glossary.md#term-intfmgrd), [vlanmgrd](../../reference/glossary.md#term-vlanmgrd), [portmgrd](../../reference/glossary.md#term-portmgrd), teammgrd, ...) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の対象テーブルを **subscribe** し、[APPL_DB](../../reference/glossary.md#term-appl_db) やシステム設定（[FRR](../../reference/glossary.md#term-frr)・kernel・docker）に反映する。
 
-ユーザの設定は **[YANG](../../reference/glossary.md#term-yang) モデル** (`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-*.yang`) で記述された制約に従う必要がある。CLI / REST 経由の入力は `sonic-mgmt-common` の translib / transformer を通って YANG 検証されるが、`config_db.json` の直接ロード経路では `DEVICE_METADATA.localhost.yang_config_validation = enable` のときだけ検証が走る。
+ユーザの設定は **[YANG](../../reference/glossary.md#term-yang) モデル** (`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-*.yang`) で記述された制約に従う必要がある。CLI / REST 経由の入力は `sonic-mgmt-common` の translib / transformer を通って [YANG](../../reference/glossary.md#term-yang) 検証されるが、`config_db.json` の直接ロード経路では `DEVICE_METADATA.localhost.yang_config_validation = enable` のときだけ検証が走る。
 
 ## ページ粒度
 
@@ -39,10 +39,10 @@ related:
 各ページは以下を含む。
 
 - **テーブルの役割**: 何の設定を表すか / どこから書かれ、誰が読むか
-- **key 構造**: Redis 上のキー形式（`<TABLE>|<key1>[|<key2>...]`）
+- **key 構造**: [Redis](../../reference/glossary.md#term-redis) 上のキー形式（`<TABLE>|<key1>[|<key2>...]`）
 - **フィールド一覧**: フィールド名 / 型 / 必須かどうか / デフォルト / enum 値 / 説明
 - **購読する Orch / daemon**: 値の変化をトリガに動くプロセス
-- **関連 CONFIG_DB / YANG / CLI**: 相互参照（FK 的な依存、外部キー leafref、関連 CLI コマンド）
+- **関連 [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) / CLI**: 相互参照（FK 的な依存、外部キー leafref、関連 CLI コマンド）
 - **引用元**: YANG モジュール / `init_cfg.json.j2` / `db_migrator.py` / orch ソース
 
 ## verification の扱い
@@ -53,21 +53,21 @@ related:
 
 ## 主要テーブル一覧（順次拡充中）
 
-CONFIG_DB のテーブル数は YANG モジュール 100 超に対し 200 以上ある。本リファレンスは利用頻度の高いテーブルから順次ページ化していく。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) のテーブル数は YANG モジュール 100 超に対し 200 以上ある。本リファレンスは利用頻度の高いテーブルから順次ページ化していく。
 
 - `DEVICE_METADATA` ... 装置全体のメタ情報（hostname / ASN / role / hwsku 等）
 - `PORT` ... 物理ポート設定（admin/oper、speed、MTU、FEC、autoneg 等）
 - `INTERFACE` / `LOOPBACK_INTERFACE` / `MGMT_INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` ... L3 インタフェース上の IP アサイン
 - `VLAN` / `VLAN_MEMBER` ... [VLAN](../../reference/glossary.md#term-vlan) 定義とポートメンバ
 - `PORTCHANNEL` / `PORTCHANNEL_MEMBER` ... [LAG](../../reference/glossary.md#term-lag) 定義とメンバ
-- `BGP_NEIGHBOR` / `BGP_GLOBALS` / `BGP_DEVICE_GLOBAL` ... [BGP](../../reference/glossary.md#term-bgp) セッション・ルータ全体・スイッチ全体スコープの BGP 状態
+- `BGP_NEIGHBOR` / `BGP_GLOBALS` / `BGP_DEVICE_GLOBAL` ... [BGP](../../reference/glossary.md#term-bgp) セッション・ルータ全体・スイッチ全体スコープの [BGP](../../reference/glossary.md#term-bgp) 状態
 - `ACL_TABLE` / `ACL_RULE` ... [ACL](../../reference/glossary.md#term-acl) コンテナとルール
 - `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` ... [EVPN](../../reference/glossary.md#term-evpn) [VXLAN](../../reference/glossary.md#term-vxlan) トンネルと VNI マップ
 - `MGMT_PORT` ... 管理ポート L1/L2 設定
 - `VRF` ... [VRF](../../reference/glossary.md#term-vrf) (Virtual Routing and Forwarding) インスタンス
 - `BUFFER_PROFILE` / `BUFFER_PG` / `BUFFER_QUEUE` ... [QoS](../../reference/glossary.md#term-qos) バッファ階層
 - `QUEUE` / `SCHEDULER` ... キュー設定とスケジューラ
-- `DSCP_TO_TC_MAP` / `TC_TO_QUEUE_MAP` ... QoS マッピング
+- `DSCP_TO_TC_MAP` / `TC_TO_QUEUE_MAP` ... [QoS](../../reference/glossary.md#term-qos) マッピング
 - `DHCP_SERVER_IPV4` / `DHCP_RELAY` ... DHCP サーバ / リレー
 - `FLEX_COUNTER_TABLE` ... カウンタポーリングのオン／オフ・周期
 - `FEATURE` ... 機能 docker のオン／オフ・autorestart
@@ -84,4 +84,4 @@ CONFIG_DB の正本は YANG モデル群 (`sonic-buildimage/src/sonic-yang-model
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: acf63e8e2a7e -->
+<!-- glossary-links-injected: 72c4e83be12c -->

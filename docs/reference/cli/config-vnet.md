@@ -23,14 +23,14 @@ related:
 
 ## 概要
 
-`config vnet` は overlay [VNET](../../reference/glossary.md#term-vnet) と VNET route を [CONFIG_DB](../../reference/glossary.md#term-config_db) に作成・削除する CLI グループ。multi-ASIC では `--namespace` で対象 namespace を選択できる[^1]。
+`config vnet` は overlay [VNET](../../reference/glossary.md#term-vnet) と [VNET](../../reference/glossary.md#term-vnet) route を [CONFIG_DB](../../reference/glossary.md#term-config_db) に作成・削除する CLI グループ。multi-ASIC では `--namespace` で対象 namespace を選択できる[^1]。
 
 ## コマンド一覧
 
 | コマンド | 用途 |
 |---------|------|
 | `config vnet add <vnet_name> <vni> <vxlan_tunnel> [options]` | `VNET|<vnet_name>` を追加/更新 |
-| `config vnet del <vnet_name>` | VNET と関連 interface/route を削除 |
+| `config vnet del <vnet_name>` | [VNET](../../reference/glossary.md#term-vnet) と関連 interface/route を削除 |
 | `config vnet add-route <vnet_name> <prefix> <endpoint> [options]` | tunnel route を追加/更新 |
 | `config vnet del-route <vnet_name> [<prefix>]` | route 1件または VNET 配下全 route を削除 |
 
@@ -94,7 +94,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VNET`](../config-db/vnet.md) / [`VNET_ROUTE_TUNNEL`](../config-db/vnet.md) / [`VNET_ROUTE`](../config-db/vnet.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VNET`](../config-db/vnet.md) / [`VNET_ROUTE_TUNNEL`](../config-db/vnet.md) / [`VNET_ROUTE`](../config-db/vnet.md)
 
 <!-- ref-triangle:end -->
 
@@ -114,7 +114,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- VNET に紐付ける VxLAN tunnel が未作成だと CONFIG_DB に入っても `vnetorch` が起動できない。
+- VNET に紐付ける VxLAN tunnel が未作成だと [CONFIG_DB](../../reference/glossary.md#term-config_db) に入っても `vnetorch` が起動できない。
 - guid / scope を変えると既存 route が無効化される。
 
 ### 関連する show / debug
@@ -126,4 +126,4 @@ show vnet endpoint
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f503aac56e20 -->
+<!-- glossary-links-injected: 2acdb695c264 -->

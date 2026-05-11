@@ -65,7 +65,7 @@ sonic-db-cli CONFIG_DB hgetall "PORT|Ethernet0" | grep -i id
 sonic-db-cli APPL_DB hgetall "PORT_TABLE:Ethernet0" | grep -i id
 ```
 
-- 期待: `id` フィールドが空でない（PINS では required）
+- 期待: `id` フィールドが空でない（[PINS](../../reference/glossary.md#term-pins) では required）
 
 ### 3. APPL_DB / ASIC_DB の滞留
 
@@ -94,7 +94,7 @@ openssl x509 -in /etc/sonic/credentials/ca.crt -noout -dates
 - container down: `docker start p4rt`、原因は `docker logs p4rt --tail 500` で追跡
 - PORT_ID 未割当: `config interface portchannel/port id <port> <id>` で割当（実装に依る）
 - election ID 衝突: controller 側で election_id を一意に
-- 滞留: orchagent restart は影響大なので、まず `sonic-db-cli APPL_STATE_DB` で何が pending か確認
+- 滞留: [orchagent](../../reference/glossary.md#term-orchagent) restart は影響大なので、まず `sonic-db-cli APPL_STATE_DB` で何が pending か確認
 - 証明書: 旧証明書を退避 → 新証明書配置 → `docker restart p4rt`。**ロールバック**: 退避から戻す
 
 ## 関連ページ
@@ -106,4 +106,4 @@ openssl x509 -in /etc/sonic/credentials/ca.crt -noout -dates
 [^1]: sonic-net/sonic-pins @ master — p4runtime_impl.cc
 [^2]: sonic-net/sonic-pins @ master — app_db_manager.cc
 
-<!-- glossary-links-injected: 2dcef9a41725 -->
+<!-- glossary-links-injected: c16fb11ac157 -->

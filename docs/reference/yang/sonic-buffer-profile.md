@@ -71,8 +71,8 @@ module: sonic-buffer-profile
 | `size` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/size` | `uint64` | yes |  |  | Reserved buffer size in bytes for this profile. |
 | `pool` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/pool` | `leafref` | yes |  | /bpl:sonic-buffer-pool/bpl:BUFFER_POOL/bpl:BUFFER_POOL_LIST/bpl:name | Reference to the buffer pool this profile draws from. |
 | `xon_offset` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xon_offset` | `uint64` |  | 0 |  | Xon offset threshold in bytes; [PFC](../../reference/glossary.md#term-pfc) resume is triggered when buffer usage falls to max(xon, buffer_limit - xon_offset). |
-| `xon` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xon` | `uint64` |  | 0 |  | Xon threshold in bytes for PFC resume on the ingress priority group. |
-| `xoff` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xoff` | `uint64` |  | 0 |  | Xoff threshold in bytes for PFC pause generation on the ingress priority group. |
+| `xon` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xon` | `uint64` |  | 0 |  | Xon threshold in bytes for [PFC](../../reference/glossary.md#term-pfc) resume on the ingress priority group. |
+| `xoff` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/xoff` | `uint64` |  | 0 |  | Xoff threshold in bytes for [PFC](../../reference/glossary.md#term-pfc) pause generation on the ingress priority group. |
 | `headroom_type` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/headroom_type` | `enumeration` |  | static | static, dynamic | Whether the headroom is dynamically calculated or statically configured by the user. |
 | `packet_discard_action` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/packet_discard_action` | `enumeration` |  |  | drop, trim | Action taken when a packet cannot be admitted to the shared buffer (drop or trim for congestion telemetry). |
 
@@ -92,7 +92,7 @@ module: sonic-buffer-profile
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BUFFER_PROFILE`](../config-db/buffer-profile.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BUFFER_PROFILE`](../config-db/buffer-profile.md)
 
 <!-- ref-triangle:end -->
 
@@ -127,4 +127,4 @@ show buffer profile
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6b2090618073 -->
+<!-- glossary-links-injected: 6e0dbc41d9f1 -->

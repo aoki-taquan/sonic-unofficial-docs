@@ -30,7 +30,7 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **TCP keepalive / [NAT](../../reference/glossary.md#term-nat) timeout**: 中間機器（LB / NAT / firewall）のセッション TTL が telemetry の heartbeat 間隔より短い
+1. **TCP keepalive / [NAT](../../reference/glossary.md#term-nat) timeout**: 中間機器（LB / [NAT](../../reference/glossary.md#term-nat) / firewall）のセッション TTL が telemetry の heartbeat 間隔より短い
 2. **TLS handshake failure / 証明書期限切れ**: re-handshake 時に失敗してセッション drop
 3. **server 側 goroutine が CPU bound**: 多数の path を低 interval で subscribe して queue が溢れる
 4. **REDIS subscriber が遅延**: `COUNTERS_DB` の更新頻度に [gNMI](../../reference/glossary.md#term-gnmi) publisher が追いつかない
@@ -88,7 +88,7 @@ gnmic -a <switch>:8080 --tls-ca ca.pem --tls-cert client.pem --tls-key client.ke
 ### 5. 中間機器の keepalive
 
 - 中間 LB / firewall のセッション TTL を 5 分以上に設定
-- gNMI client 側の `keepalive` を 30 秒に設定
+- [gNMI](../../reference/glossary.md#term-gnmi) client 側の `keepalive` を 30 秒に設定
 
 ## 対処方法
 

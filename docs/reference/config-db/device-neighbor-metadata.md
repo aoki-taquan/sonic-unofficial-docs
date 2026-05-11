@@ -75,14 +75,14 @@ DEVICE_NEIGHBOR_METADATA|<name>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_NEIGHBOR`](./device-neighbor.md)
-- 関連 YANG: `sonic-device_neighbor_metadata`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-device_neighbor_metadata`
 - 関連 CLI: なし
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-device_neighbor_metadata`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-device_neighbor_metadata`
 
 <!-- ref-triangle:end -->
 
@@ -100,7 +100,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 ### よくある誤設定
 
-- DEVICE_NEIGHBOR と hostname がズレると minigraph 由来の自動 BGP セッションが立ち上がらない。
+- DEVICE_NEIGHBOR と hostname がズレると minigraph 由来の自動 [BGP](../../reference/glossary.md#term-bgp) セッションが立ち上がらない。
 
 ### 確認コマンド
 
@@ -110,4 +110,4 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 2948ac8427b0 -->
+<!-- glossary-links-injected: 9bd4f7a3d366 -->

@@ -30,7 +30,7 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `show vlan brief [-n <ns>]` | VLAN サマリ（VLAN ID / IP / Ports / Tagging / Proxy [ARP](../../reference/glossary.md#term-arp)） |
+| `show vlan brief [-n <ns>]` | [VLAN](../../reference/glossary.md#term-vlan) サマリ（[VLAN](../../reference/glossary.md#term-vlan) ID / IP / Ports / Tagging / Proxy [ARP](../../reference/glossary.md#term-arp)） |
 | `show vlan config [-n <ns>]` | VLAN とメンバ port を 1 行 1 メンバで列挙 |
 
 ## 各コマンドの詳細
@@ -39,7 +39,7 @@ related:
 
 **動作**:
 
-1. `VLAN`, `VLAN_INTERFACE`, `VLAN_MEMBER` を CONFIG_DB から取得
+1. `VLAN`, `VLAN_INTERFACE`, `VLAN_MEMBER` を [CONFIG_DB](../../reference/glossary.md#term-config_db) から取得
 2. `VLAN` のキーを natsort して、各 VLAN について以下の列を計算:
 
 | 列 | 取得元 |
@@ -123,7 +123,7 @@ excerpt: |
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VLAN`](../config-db/vlan.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`VLAN_MEMBER`](../config-db/vlan-member.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VLAN`](../config-db/vlan.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`VLAN_MEMBER`](../config-db/vlan-member.md)
 
 <!-- ref-triangle:end -->
 
@@ -212,4 +212,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 145837b8a94b -->
+<!-- glossary-links-injected: 811ff352b60e -->

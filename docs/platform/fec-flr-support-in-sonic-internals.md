@@ -37,7 +37,7 @@ flowchart LR
 
 ## 2. 利用する SAI counter
 
-すべて既存の SAI port counter[^1]:
+すべて既存の [SAI](../reference/glossary.md#term-sai) port counter[^1]:
 
 - `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES`
 - `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES`
@@ -86,7 +86,7 @@ flowchart TD
 interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 ```
 
-`FLR_INTERVAL_FACTOR` は **`FLEX_COUNTER_DB`** から読む。`FlexCounterOrch` が CONFIG_DB の `counterpoll port flr-interval-factor` を伝搬する。デフォルト `120`[^1]。
+`FLR_INTERVAL_FACTOR` は **`FLEX_COUNTER_DB`** から読む。`FlexCounterOrch` が [CONFIG_DB](../reference/glossary.md#term-config_db) の `counterpoll port flr-interval-factor` を伝搬する。デフォルト `120`[^1]。
 
 つまり port_stat poll が `1000ms` であれば FLR 計算は `120` 秒に 1 回。
 
@@ -96,7 +96,7 @@ interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 |---------|------|
 | `sonic-swss/orchagent/port_flr.lua` | observed/predicted の lua 実装本体。`FEC_FLR_POLL_INTERVAL = 120` ハードコード |
 | `sonic-swss/orchagent/portsorch.cpp` | プラグイン登録ポイント |
-| `sonic-swss/orchagent/flexcounterorch.cpp` | `FLR_INTERVAL_FACTOR` 伝搬経路（HLD 提案）|
+| `sonic-swss/orchagent/flexcounterorch.cpp` | `FLR_INTERVAL_FACTOR` 伝搬経路（[HLD](../reference/glossary.md#term-hld) 提案）|
 | `sonic-swss/crates/countersyncd/src/sai/saiport.rs` | `IF_IN_FEC_CODEWORD_ERRORS_S0..S16` を列挙 |
 | `sonic-utilities/utilities_common/portstat.py` | `fec_flr` / `fec_flr_predicted` / `fec_flr_r_squared` 列追加 |
 | `sonic-utilities/utilities_common/netstat.py` | `format_fec_flr` / `format_fec_flr_predicted` フォーマッタ |
@@ -128,3 +128,5 @@ interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 5440b86e15ed -->

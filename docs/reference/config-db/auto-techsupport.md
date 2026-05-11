@@ -75,15 +75,15 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `FEATURE`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FEATURE`
 - 関連 CLI: `config auto-techsupport global`、`config auto-techsupport-feature`
-- 関連 YANG: `sonic-auto_techsupport`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-auto_techsupport`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-auto_techsupport`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-auto_techsupport`
 - CLI: `config auto-techsupport`
 
 <!-- ref-triangle:end -->
@@ -120,4 +120,4 @@ show auto-techsupport global
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 48d5f456ebb6 -->

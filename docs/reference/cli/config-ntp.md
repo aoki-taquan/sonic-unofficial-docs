@@ -59,7 +59,7 @@ config ntp add <ntp_ip_address>
 
 1. `ADHOC_VALIDATION` が真のとき、IP 検証を実施 (`association_type != "pool"` の場合)
 2. 既存 `NTP_SERVER` テーブルを取得し、同 IP が既存なら `NTP server <ip> is already configured` で no-op return
-3. options を辞書化（version / association_type / iburst）し、`db.set_entry('NTP_SERVER', <ip>, opts)` で CONFIG_DB に書く
+3. options を辞書化（version / association_type / iburst）し、`db.set_entry('NTP_SERVER', <ip>, opts)` で [CONFIG_DB](../../reference/glossary.md#term-config_db) に書く
 4. `systemctl restart chrony` を実行。失敗時は `ctx.fail`
 
 <!-- evidence:
@@ -147,7 +147,7 @@ flowchart LR
 ## 関連リファレンス
 
 - [YANG](../../reference/glossary.md#term-yang): [`sonic-ntp`](../yang/sonic-ntp.md)
-- CONFIG_DB: [`NTP_SERVER`](../config-db/ntp-server.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`NTP_SERVER`](../config-db/ntp-server.md)
 
 <!-- ref-triangle:end -->
 
@@ -190,7 +190,7 @@ Restarting ntp-config service...
 
 ### よくある落とし穴
 
-- mgmt VRF を使う環境で `config ntp add` に VRF オプションを忘れると到達できない。
+- mgmt [VRF](../../reference/glossary.md#term-vrf) を使う環境で `config ntp add` に [VRF](../../reference/glossary.md#term-vrf) オプションを忘れると到達できない。
 - chronyc / ntpq の出力差で「同期済み」判定がズレる。
 
 ### 関連する show / debug
@@ -205,4 +205,4 @@ chronyc sources
 ## 関連ページ
 - [YANG: sonic-ntp](../yang/sonic-ntp.md)
 
-<!-- glossary-links-injected: 3f1a66b76c8d -->
+<!-- glossary-links-injected: a7c87bab11c9 -->

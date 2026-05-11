@@ -57,6 +57,9 @@ jobs:
       - name: Check .pages awesome-pages integrity
         run: python3 meta/scripts/check_pages_integrity.py --check
 
+      - name: Report broken intra-doc links (informational)
+        run: python3 meta/scripts/check_broken_links.py --check
+
       - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4

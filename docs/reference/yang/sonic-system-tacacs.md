@@ -110,7 +110,7 @@ module: sonic-system-tacacs
 
 ## 関連リファレンス
 
-- CONFIG_DB: `TACPLUS` / [`TACPLUS_SERVER`](../config-db/tacplus-server.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `TACPLUS` / [`TACPLUS_SERVER`](../config-db/tacplus-server.md)
 - CLI: `config tacacs`
 
 <!-- ref-triangle:end -->
@@ -119,4 +119,4 @@ module: sonic-system-tacacs
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-tacacs.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: 896d391185a9 -->

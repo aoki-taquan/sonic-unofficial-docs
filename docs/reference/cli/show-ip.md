@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-`show ip` は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、[BGP](../../reference/glossary.md#term-bgp) 関連表示を集約する[^1]。BGP 系は **routing-stack の選択結果に応じて動的にロード**される（[FRR](../../reference/glossary.md#term-frr) / Quagga / supervisor 環境）。
+`show ip` は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、[BGP](../../reference/glossary.md#term-bgp) 関連表示を集約する[^1]。[BGP](../../reference/glossary.md#term-bgp) 系は **routing-stack の選択結果に応じて動的にロード**される（[FRR](../../reference/glossary.md#term-frr) / Quagga / supervisor 環境）。
 
 ```python
 # show/main.py L1567-L1581
@@ -49,11 +49,11 @@ if routing_stack == "frr":
 |---------|------|
 | `show ip interfaces` | インタフェイスの IPv4 状態（`ipintutil -a ipv4`） |
 | `show ip interfaces loopback-action` | INTERFACE 系テーブルの `loopback_action` 値表示 |
-| `show ip route [<args>]` | IPv4 RIB（FRR vtysh `show ip route`） |
-| `show ip prefix-list [<name>]` | FRR の prefix-list 表示 |
+| `show ip route [<args>]` | IPv4 RIB（[FRR](../../reference/glossary.md#term-frr) vtysh `show ip route`） |
+| `show ip prefix-list [<name>]` | [FRR](../../reference/glossary.md#term-frr) の prefix-list 表示 |
 | `show ip protocol` | FRR の routing protocol summary |
 | `show ip fib [<ipaddress>]` | FIB テーブル（`fibshow -4`） |
-| `show ip bgp summary` | BGP セッション summary (FRR) |
+| `show ip bgp summary` | [BGP](../../reference/glossary.md#term-bgp) セッション summary (FRR) |
 | `show ip bgp neighbors [<ip>] [<info_type>]` | BGP 隣接詳細 |
 | `show ip bgp network [<prefix>] [<info_type>]` | RIB の特定 prefix |
 | `show ip bgp aggregate-address` | `BGP_AGGREGATE_ADDRESS` テーブル表示 |
@@ -191,7 +191,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`INTERFACE`](../config-db/interface.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`PORTCHANNEL_INTERFACE`](../config-db/portchannel-interface.md) / [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`INTERFACE`](../config-db/interface.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`PORTCHANNEL_INTERFACE`](../config-db/portchannel-interface.md) / [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md)
 
 <!-- ref-triangle:end -->
 
@@ -238,11 +238,11 @@ C>* 10.0.0.0/24 is directly connected, Ethernet0, 01:30:11
 ### 典型的な利用シーン
 
 - 経路テーブル、BGP / OSPF 状態、static route 確認。
-- VRF 別経路の確認。
+- [VRF](../../reference/glossary.md#term-vrf) 別経路の確認。
 
 ### よくある落とし穴
 
-- `show ip route` は default VRF。VRF 切替は `show ip route vrf <name>`。
+- `show ip route` は default [VRF](../../reference/glossary.md#term-vrf)。VRF 切替は `show ip route vrf <name>`。
 - FRR と kernel routing table のズレ。`vtysh -c 'show ip route'` と `ip route` を比較。
 
 ### 関連する show / debug
@@ -254,4 +254,4 @@ vtysh -c 'show ip route'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 63ea0bb417b1 -->
+<!-- glossary-links-injected: 1d7d649e3359 -->

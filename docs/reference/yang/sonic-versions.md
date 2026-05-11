@@ -68,13 +68,13 @@ module: sonic-versions
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `VERSIONS|DATABASE` キーで `VERSION` フィールドを保持
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VERSIONS|DATABASE` キーで `VERSION` フィールドを保持
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: `VERSIONS`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `VERSIONS`
 
 <!-- ref-triangle:end -->
 
@@ -82,4 +82,4 @@ module: sonic-versions
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-versions.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

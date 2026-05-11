@@ -78,9 +78,9 @@ ethtool Ethernet0
 5. **[SAI](../../reference/glossary.md#term-sai) driver / FW のリンクトレーニング失敗** — `syncd` ログに `link training failed`
 6. **kernel netdev は up だが ASIC 側で down** — host-side のみ up となる multi-asic 構成の罠
 
-`portsorch` は CONFIG_DB の `PORT` 変更を SAI 属性 (`SAI_PORT_ATTR_ADMIN_STATE` 等) に変換して syncd へ渡し、`xcvrd` は EEPROM 読出し結果を STATE_DB の `TRANSCEIVER_INFO` に書き戻す[^1]。
+`portsorch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` 変更を [SAI](../../reference/glossary.md#term-sai) 属性 (`SAI_PORT_ATTR_ADMIN_STATE` 等) に変換して [syncd](../../reference/glossary.md#term-syncd) へ渡し、`xcvrd` は EEPROM 読出し結果を [STATE_DB](../../reference/glossary.md#term-state_db) の `TRANSCEIVER_INFO` に書き戻す[^1]。
 
-[^1]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` (CONFIG_DB → SAI mapping) と `sonic-net/sonic-platform-daemons` の `sonic-xcvrd` (SFP EEPROM 監視) が分担する。
+[^1]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` ([CONFIG_DB](../../reference/glossary.md#term-config_db) → [SAI](../../reference/glossary.md#term-sai) mapping) と `sonic-net/sonic-platform-daemons` の `sonic-xcvrd` (SFP EEPROM 監視) が分担する。
 
 ## 関連 reference / topics
 
@@ -90,4 +90,4 @@ ethtool Ethernet0
 - [interface-mtu-mismatch.md](interface-mtu-mismatch.md)
 - [../cli/show-interfaces.md](../cli/show-interfaces.md)
 
-<!-- glossary-links-injected: 3c23d919b483 -->
+<!-- glossary-links-injected: 6f36db8074ad -->

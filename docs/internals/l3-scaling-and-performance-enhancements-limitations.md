@@ -22,12 +22,12 @@ related:
 
 ## 1. HLD レベルの制限事項
 
-- **HLD は 2019 年改訂**。kernel sysctl 値や CoPP 値はその後の SONiC で更に調整されている可能性[^1]
+- **[HLD](../reference/glossary.md#term-hld) は 2019 年改訂**。kernel sysctl 値や [CoPP](../reference/glossary.md#term-copp) 値はその後の SONiC で更に調整されている可能性[^1]
 - `gc_thresh3` を上げると **kernel メモリ使用量** が増える。低スペック CPU 機では注意
-- CoPP の ARP/ND 上限を 8000 pps に上げると **CPU 負荷増**。他の trap との合算で CPU 飽和に注意
-- sairedis bulk API は **ASIC 側 bulk 未対応の場合 syncd 内で逐次処理** されるため、改善幅は Redis message 削減分に留まる
+- CoPP の [ARP](../reference/glossary.md#term-arp)/ND 上限を 8000 pps に上げると **CPU 負荷増**。他の trap との合算で CPU 飽和に注意
+- sairedis bulk API は **ASIC 側 bulk 未対応の場合 [syncd](../reference/glossary.md#term-syncd) 内で逐次処理** されるため、改善幅は [Redis](../reference/glossary.md#term-redis) message 削減分に留まる
 - `RouteOrch` の 1 秒 timer flush は **大量経路投入時のみ効果**。少量更新では遅延がむしろ増える可能性
-- `fpmsyncd` の VNET 判定スキップは **VNET 利用時の挙動変更ではない**（`rt_table != 0` の経路には従来通り lookup）
+- `fpmsyncd` の [VNET](../reference/glossary.md#term-vnet) 判定スキップは **VNET 利用時の挙動変更ではない**（`rt_table != 0` の経路には従来通り lookup）
 - HLD は AS7712 (Tomahawk) で測定。他 ASIC では **異なる timing** になる
 
 ## 2. 実装との乖離
@@ -39,7 +39,7 @@ related:
 | `RouteOrch` の bulk route API + 1 秒 timer flush | `sonic-swss/orchagent/routeorch.cpp:41` で `gRouteBulker(sai_route_api, gMaxBulkSize)`、`routeorch.cpp:626-1116` で bulker 経由の add/remove と flush 処理 | ✓ 実装済み |
 | `fpmsyncd` の `rt_table == 0` で master device lookup スキップ | `sonic-swss/fpmsyncd/routesync.cpp:2077-2082` で `master_index` 取得し、0 のときは lookup を行わない | ✓ 実装済み |
 | sairedis 内 nlohmann/json v2.0 → v3.6 | 本確認では未検証（実装は時間経過で更に進んでいると見られる） | △ |
-| `show arp` / `show ndp` の個別 FDB lookup 化 | 本確認では未検証 | △ |
+| `show arp` / `show ndp` の個別 [FDB](../reference/glossary.md#term-fdb) lookup 化 | 本確認では未検証 | △ |
 
 `gc_thresh` と CoPP ARP/ND が HLD 提案値を採用していない理由は、その後の運用で **kernel メモリ消費**と **CPU 負荷** が問題になったためと思われる（本文「制限事項」で警告済みのトレードオフ）。HLD のスケール目標値（IPv4 ARP 32k 等）は **kernel cache 上限としては届かない設定**になっている点に注意。
 
@@ -115,3 +115,5 @@ RouteOrch::RouteOrch(DBConnector *db, vector<table_name_with_pri_t> &tableNames,
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: be197a56d725 -->

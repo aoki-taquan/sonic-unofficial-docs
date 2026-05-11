@@ -73,7 +73,7 @@ docker logs swss 2>&1 | grep -iE "aclorch|acl_entry" | tail
 ```
 
 - 期待: rule 数と ASIC entry 数が概ね一致
-- 異常: 0 件 → orchagent install 失敗
+- 異常: 0 件 → [orchagent](../../reference/glossary.md#term-orchagent) install 失敗
 
 ### 3. rule の match 条件確認
 
@@ -122,4 +122,4 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:oid:<RIF OID>"
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — aclorch / intfsorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — acl_loader / aclshow
 
-<!-- glossary-links-injected: 7e711c4007df -->
+<!-- glossary-links-injected: e2892b76fd9a -->

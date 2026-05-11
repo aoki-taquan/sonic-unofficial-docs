@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-[VLAN](../../reference/glossary.md#term-vlan) とポート (PORT または PORTCHANNEL) のメンバ関係、および各メンバが tagged / untagged のいずれで参加するかを保持する。VLAN_MEMBER のエントリ追加で `vlanmgrd` が Linux bridge にメンバを add し、`orchagent` が [SAI](../../reference/glossary.md#term-sai) VLAN member を生成する[^1]。
+[VLAN](../../reference/glossary.md#term-vlan) とポート (PORT または PORTCHANNEL) のメンバ関係、および各メンバが tagged / untagged のいずれで参加するかを保持する。VLAN_MEMBER のエントリ追加で `vlanmgrd` が Linux bridge にメンバを add し、`orchagent` が [SAI](../../reference/glossary.md#term-sai) [VLAN](../../reference/glossary.md#term-vlan) member を生成する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,7 +58,7 @@ VLAN_MEMBER|<vlan_name>|<port>
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `name` (key) | leafref `VLAN.name` | ✅ | - | 親 VLAN |
+| `name` (key) | leafref `VLAN.name` | ✅ | - | 親 [VLAN](../../reference/glossary.md#term-vlan) |
 | `port` (key) | leafref `PORT.name` \| `PORTCHANNEL.name` | ✅ | - | メンバポート / [LAG](../../reference/glossary.md#term-lag) |
 | `tagging_mode` | `vlan_tagging_mode` (`tagged`/`untagged`/`priority_tagged`) | ✅ | - | タグ付与モード |
 
@@ -72,7 +72,7 @@ VLAN_MEMBER|<vlan_name>|<port>
 ## 購読者
 
 - `vlanmgrd`: Linux bridge へのメンバ操作
-- `orchagent` の `VlanMgr`: SAI VLAN member を生成
+- `orchagent` の `VlanMgr`: [SAI](../../reference/glossary.md#term-sai) VLAN member を生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -84,14 +84,14 @@ VLAN_MEMBER|<vlan_name>|<port>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-vlan`](../yang/sonic-vlan.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-vlan`](../yang/sonic-vlan.md)
 - CLI: [`config vlan member`](../cli/config-vlan.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-vlan.yang` 内 `VLAN_MEMBER` コンテナ。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L273>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-vlan.yang` 内 `VLAN_MEMBER` コンテナ。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L273>
 
 ## 関連ページ
 - [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
@@ -117,7 +117,7 @@ VLAN_MEMBER|<vlan_name>|<port>
 ### よくある誤設定
 
 - `tagging_mode: untagged` を 1 ポート上の複数 VLAN に重複指定すると先勝ちで残りが silently 反映されない。
-- [PortChannel](../../reference/glossary.md#term-portchannel) メンバを VLAN_MEMBER に直付けすると L2 が壊れる。LAG 親 (`PortChannelN`) を入れる。
+- [PortChannel](../../reference/glossary.md#term-portchannel) メンバを VLAN_MEMBER に直付けすると L2 が壊れる。[LAG](../../reference/glossary.md#term-lag) 親 (`PortChannelN`) を入れる。
 
 ### 確認コマンド
 
@@ -127,4 +127,4 @@ show vlan brief
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 55a84469f079 -->
+<!-- glossary-links-injected: e1bfad0ce64c -->

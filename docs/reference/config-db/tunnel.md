@@ -60,7 +60,7 @@ TUNNEL|<mux_tunnel>
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `tunnel_type` | enum `IPINIP` | カプセル化方式。Dual-ToR では IPinIP 固定 |
+| `tunnel_type` | enum `IPINIP` | カプセル化方式。Dual-ToR では [IPinIP](../../reference/glossary.md#term-ipinip) 固定 |
 | `src_ip` | leafref → `PEER_SWITCH.address_ipv4` | トンネル送信元 (= peer ToR の IPv4) |
 | `dst_ip` | inet:ipv4-address | トンネル宛先 (自スイッチの IPv4) |
 | `dscp_mode` | string `uniform`/`pipe` | DSCP 継承モード |
@@ -79,26 +79,26 @@ TUNNEL|<mux_tunnel>
 
 ## 購読者
 
-- `tunnelmgrd` (cfgmgr): CONFIG_DB→APPL_DB へ橋渡し
-- `tunneldecaporch` (orchagent): APPL_DB `TUNNEL_DECAP_TABLE` 経由で SAI へ反映
+- `tunnelmgrd` (cfgmgr): [CONFIG_DB](../../reference/glossary.md#term-config_db)→[APPL_DB](../../reference/glossary.md#term-appl_db) へ橋渡し
+- `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [APPL_DB](../../reference/glossary.md#term-appl_db) `TUNNEL_DECAP_TABLE` 経由で [SAI](../../reference/glossary.md#term-sai) へ反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `PEER_SWITCH`、`MUX_CABLE`、`TUNNEL_DECAP_TABLE` (派生は `docs/reference/config-db/tunnel-decap-table.md`)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PEER_SWITCH`、`MUX_CABLE`、`TUNNEL_DECAP_TABLE` (派生は `docs/reference/config-db/tunnel-decap-table.md`)
 - 関連 CLI: 直接の CLI は無く `config_db.json` で投入
-- 関連 YANG: `sonic-tunnel`、`sonic-peer-switch`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-tunnel`、`sonic-peer-switch`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-tunnel`](../yang/sonic-tunnel.md) / `sonic-peer-switch`
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-tunnel`](../yang/sonic-tunnel.md) / `sonic-peer-switch`
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-tunnel.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang>; orchagent 側パース: `tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp>
+[^1]: YANG 定義: `sonic-tunnel.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang>; [orchagent](../../reference/glossary.md#term-orchagent) 側パース: `tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -121,4 +121,4 @@ show tunnel
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 1f724ed8975d -->
+<!-- glossary-links-injected: 7e370733bdf6 -->

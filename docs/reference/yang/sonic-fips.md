@@ -77,7 +77,7 @@ module: sonic-fips
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`FIPS`](../config-db/fips.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`FIPS`](../config-db/fips.md)
 - CLI: `config fips`
 
 <!-- ref-triangle:end -->
@@ -105,4 +105,4 @@ show fips status
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fips.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 928d8e8f2278 -->
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -79,7 +79,7 @@ module: sonic-tc-queue-map
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`TC_TO_QUEUE_MAP`](../config-db/tc-to-queue-map.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TC_TO_QUEUE_MAP`](../config-db/tc-to-queue-map.md)
 
 <!-- ref-triangle:end -->
 
@@ -114,4 +114,4 @@ show qos map tc-queue
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: fb312971a750 -->
+<!-- glossary-links-injected: 896d391185a9 -->

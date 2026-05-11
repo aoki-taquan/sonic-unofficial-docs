@@ -30,15 +30,15 @@ CLI が触る先は [CONFIG_DB](../../reference/glossary.md#term-config_db) の 
 
 | コマンド | 用途 |
 |---------|------|
-| `config muxcable mode <state> <port>` | mux 状態 (`active` / `auto` / `manual` / `standby` / `detach`) を CONFIG_DB に書く |
-| `config muxcable probertype <hardware\|software> <port>` | linkmgrd の probe 方式を切替 |
+| `config muxcable mode <state> <port>` | mux 状態 (`active` / `auto` / `manual` / `standby` / `detach`) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書く |
+| `config muxcable probertype <hardware\|software> <port>` | [linkmgrd](../../reference/glossary.md#term-linkmgrd) の probe 方式を切替 |
 | `config muxcable kill_radv <enable\|disable>` | radv 停止挙動の knob |
 | `config muxcable packetloss reset <port>` | パケロスカウンタリセット (xcvrd 経由) |
 | `config muxcable prbs enable <port> <target> <mode> <lanemask> [<dir>]` | Y-Cable PRBS 開始 |
 | `config muxcable prbs disable <port> <target> [<dir>]` | PRBS 停止 |
 | `config muxcable loopback enable <port> <target> <lanemask> [<mode>]` | loopback 開始 (near-end / far-end) |
 | `config muxcable loopback disable <port> <target>` | loopback 停止 |
-| `config muxcable hwmode state <active\|standby> <port>` | HW レベルの mux 切替 (linkmgrd 介さず) |
+| `config muxcable hwmode state <active\|standby> <port>` | HW レベルの mux 切替 ([linkmgrd](../../reference/glossary.md#term-linkmgrd) 介さず) |
 | `config muxcable hwmode setswitchmode <auto\|manual> <port>` | HW switchmode の更新 |
 | `config muxcable firmware download <fwfile> <port>` | FW を inactive bank に書き込み |
 | `config muxcable firmware activate <port> [<fwfile>] [--nonhitless]` | inactive bank → active へ切り替え |
@@ -60,7 +60,7 @@ config muxcable mode {active|auto|manual|standby|detach} <port_name|all> [--json
 ```
 
 **動作**:
-`MUX_CABLE` テーブルから対象ポートの STATE_DB エントリを引いて遷移可能性を判断し、`MUX_CABLE|<port>` の `state` フィールドを書き換える。`port = "all"` の場合は `MUX_CABLE` に登録されている全ポートを順に処理する。`detach` は [MUX](../../reference/glossary.md#term-mux) 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は `--json` で JSON、無指定で表形式。
+`MUX_CABLE` テーブルから対象ポートの [STATE_DB](../../reference/glossary.md#term-state_db) エントリを引いて遷移可能性を判断し、`MUX_CABLE|<port>` の `state` フィールドを書き換える。`port = "all"` の場合は `MUX_CABLE` に登録されている全ポートを順に処理する。`detach` は [MUX](../../reference/glossary.md#term-mux) 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は `--json` で JSON、無指定で表形式。
 
 ### `config muxcable probertype <hardware|software> <port>`
 
@@ -92,11 +92,11 @@ linkmgrd を経由せず xcvrd 経由で **直接 Y-Cable の HW state を切り
 |----------|---------------|------------------|
 | `MUX_CABLE` | `state`, `server_ipv4`, `server_ipv6`, `soc_ipv4` 等 | `mode` / `hwmode` |
 | `MUX_LINKMGR` | `prober_type`, `address` 等 | `probertype` / `kill_radv` |
-| `XCVRD_*_CMD` / `XCVRD_*_RSP` (APPL_DB / STATE_DB) | xcvrd RPC | `prbs` / `loopback` / `firmware ...` / `reset` / `set_anlt` / `set_fec` / `packetloss reset` |
+| `XCVRD_*_CMD` / `XCVRD_*_RSP` ([APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db)) | xcvrd RPC | `prbs` / `loopback` / `firmware ...` / `reset` / `set_anlt` / `set_fec` / `packetloss reset` |
 
 ## 注意
 
-- 大半の low-level コマンド (PRBS / loopback / FW / FEC / ANLT) は **CONFIG_DB を直接書き換えるのではなく xcvrd への async RPC** で動く。タイムアウト時のリトライや RSP 不整合の検出は CLI 側のフォールバック実装を読む必要がある。
+- 大半の low-level コマンド (PRBS / loopback / FW / FEC / ANLT) は **[CONFIG_DB](../../reference/glossary.md#term-config_db) を直接書き換えるのではなく xcvrd への async RPC** で動く。タイムアウト時のリトライや RSP 不整合の検出は CLI 側のフォールバック実装を読む必要がある。
 - `port = "all"` 指定をサポートするコマンドと、しないコマンドが混在する。CLI 引数の `default=None` と `MUX_CABLE` 全件ループ実装の有無を要確認。
 
 <!-- ref-triangle:start -->
@@ -189,4 +189,4 @@ show muxcable hwmode state
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 23e2562f0d36 -->
+<!-- glossary-links-injected: 449be12facf1 -->

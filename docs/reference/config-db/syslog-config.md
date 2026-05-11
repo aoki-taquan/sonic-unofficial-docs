@@ -64,20 +64,20 @@ SYSLOG_CONFIG|GLOBAL
 
 ## 購読者
 
-- `hostcfgd` (`sonic-host-services`): CONFIG_DB → rsyslog テンプレ展開 → systemd reload
+- `hostcfgd` (`sonic-host-services`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → rsyslog テンプレ展開 → systemd reload
 - 各 docker 内の `rsyslogd`: ホスト側 rsyslog にフォワード後、グローバル設定で集約
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`SYSLOG_CONFIG_FEATURE`](syslog-config-feature.md), [`SYSLOG_SERVER`](syslog-server.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SYSLOG_CONFIG_FEATURE`](syslog-config-feature.md), [`SYSLOG_SERVER`](syslog-server.md)
 - 関連 CLI: `config syslog rate-limit-host` / `config syslog level`
-- 関連 YANG: `sonic-syslog`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-syslog`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-syslog`](../yang/sonic-syslog.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-syslog`](../yang/sonic-syslog.md)
 - CLI: [`config syslog`](../cli/config-syslog.md)
 
 <!-- ref-triangle:end -->
@@ -110,4 +110,4 @@ show syslog
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 32758c44ab11 -->

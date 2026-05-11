@@ -104,7 +104,7 @@ module: sonic-debug-counter
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`DEBUG_COUNTER`](../config-db/debug-counter.md) / [`DEBUG_COUNTER_DROP_REASON`](../config-db/debug-counter.md) / `DEBUG_DROP_MONITOR`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEBUG_COUNTER`](../config-db/debug-counter.md) / [`DEBUG_COUNTER_DROP_REASON`](../config-db/debug-counter.md) / `DEBUG_DROP_MONITOR`
 - CLI: `config debug-counter` / `show debug-counter`
 
 <!-- ref-triangle:end -->
@@ -132,4 +132,4 @@ show dropcounters configuration
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-debug-counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: bbcc78132807 -->
+<!-- glossary-links-injected: 896d391185a9 -->

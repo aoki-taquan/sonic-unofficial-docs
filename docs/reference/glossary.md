@@ -1215,8 +1215,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [minigraph.xml](#term-minigraph.xml)
 
+- [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (7)
 - [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (7)
-- [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (6)
 - [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](../switching/control-sonic-behaviors-with-system-defaults-table.md) (5)
 - [sonic-cfggen コマンド](cli/sonic-cfggen.md) (4)
 - [SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像](../management/sonic-user-manual.md) (3)
@@ -1546,8 +1546,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [vlanmgrd](#term-vlanmgrd)
 
+- [VLAN メンバーを追加してもタグが付かない](runbooks/vlan-tagging.md) (6)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (5)
-- [VLAN メンバーを追加してもタグが付かない](runbooks/vlan-tagging.md) (4)
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (4)
 - [VLAN_MEMBER テーブル](config-db/vlan-member.md) (3)
 - [アーキテクチャ](../topics/20-swss-sai-redis/architecture.md) (3)
@@ -1620,8 +1620,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (30)
 - [debug / undebug コマンド群](cli/debug-group.md) (25)
+- [経路は RIB にあるが FIB / ASIC に降りない](runbooks/route-not-installed-in-fib.md) (12)
 - [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](../routing/new-frr-sonic-communication-channel.md) (12)
-- [経路は RIB にあるが FIB / ASIC に降りない](runbooks/route-not-installed-in-fib.md) (10)
 - [BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）](../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) (10)
 
 ### [ZTP](#term-ztp)

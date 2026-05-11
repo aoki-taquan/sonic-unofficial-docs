@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-mgmt_vrf`
 
-マネジメント [VRF](../../reference/glossary.md#term-vrf) (mgmt traffic を data-plane と分離する VRF) のグローバル有効/無効を保持する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
+マネジメント [VRF](../../reference/glossary.md#term-vrf) (mgmt traffic を data-plane と分離する [VRF](../../reference/glossary.md#term-vrf)) のグローバル有効/無効を保持する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -56,7 +56,7 @@ module: sonic-mgmt_vrf
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `mgmtVrfEnabled` | `sonic-mgmt_vrf/MGMT_VRF_CONFIG/vrf_global/mgmtVrfEnabled` | `boolean` |  | `false` |  | マネジメント VRF の有効/無効 |
+| `mgmtVrfEnabled` | `sonic-mgmt_vrf/MGMT_VRF_CONFIG/vrf_global/mgmtVrfEnabled` | `boolean` |  | `false` |  | マネジメント [VRF](../../reference/glossary.md#term-vrf) の有効/無効 |
 
 ## leafref / 依存
 
@@ -75,7 +75,7 @@ module: sonic-mgmt_vrf
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md)
 - CLI: [`config vrf`](../cli/config-vrf.md)
 
 <!-- ref-triangle:end -->
@@ -103,4 +103,4 @@ show mgmt-vrf
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 0072c8c44112 -->
+<!-- glossary-links-injected: daea650a90b0 -->

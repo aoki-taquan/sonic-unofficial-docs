@@ -66,7 +66,7 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_GLOBALS`、`PREFIX_SET`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`、`PREFIX_SET`
 - 関連 CLI: `vtysh -c "show ip bgp aggregate"`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-aggregate-address`
 
@@ -74,14 +74,14 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-aggregate-address`](../yang/sonic-bgp-aggregate-address.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-aggregate-address`](../yang/sonic-bgp-aggregate-address.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-aggregate-address.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-aggregate-address.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -103,4 +103,4 @@ vtysh -c 'show bgp ipv4 unicast'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3aa2902e22d8 -->
+<!-- glossary-links-injected: 48d5f456ebb6 -->

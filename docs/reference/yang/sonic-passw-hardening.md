@@ -93,7 +93,7 @@ module: sonic-passwh
 
 ## 関連リファレンス
 
-- CONFIG_DB: `PASSW_HARDENING`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PASSW_HARDENING`
 - CLI: `config passwd-hardening`
 
 <!-- ref-triangle:end -->
@@ -121,4 +121,4 @@ show passw-hardening policies
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-passwh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 928d8e8f2278 -->
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -31,8 +31,8 @@ related:
 ## 想定原因（優先度順）
 
 1. **物理リンク oper down**: メンバーポートが L1 で UP していない
-2. **対向側の LACP mode 不一致**: 一方が `active` / 他方が `off`（static）
-3. **speed / duplex mismatch**: メンバーごとに速度が異なると LACP は member を eligible にしない
+2. **対向側の [LACP](../../reference/glossary.md#term-lacp) mode 不一致**: 一方が `active` / 他方が `off`（static）
+3. **speed / duplex mismatch**: メンバーごとに速度が異なると [LACP](../../reference/glossary.md#term-lacp) は member を eligible にしない
 4. **`min_links` 未達**: PORTCHANNEL の `min_links` を満たすメンバーが UP していない
 5. **[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / teammgrd の異常**: `teamd@<PortChannel>.service` が crash ループ
 
@@ -100,7 +100,7 @@ sudo grep -iE "teamd|portchannel" /var/log/syslog | tail -100
 - speed mismatch: `config interface speed Ethernet0 <speed>` で揃える
 - LACP mode 不一致: 対向と協調し `mode active` で揃える
 - `min_links` の見直し: `config portchannel <name> --min-links <N>`
-- teamd crash: `sudo systemctl restart teamd@PortChannel0001`
+- [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) crash: `sudo systemctl restart teamd@PortChannel0001`
 
 ## 関連ページ
 
@@ -113,4 +113,4 @@ sudo grep -iE "teamd|portchannel" /var/log/syslog | tail -100
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — cfgmgr/teammgr.cpp
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — show interfaces portchannel
 
-<!-- glossary-links-injected: 12d931c88dd6 -->
+<!-- glossary-links-injected: 50d40ad47ab6 -->

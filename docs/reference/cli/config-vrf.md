@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`config vrf` は [VRF](../../reference/glossary.md#term-vrf) (Virtual Routing and Forwarding) インスタンスの作成・削除と、L3 VNI マッピング（[VXLAN](../../reference/glossary.md#term-vxlan) [EVPN](../../reference/glossary.md#term-evpn) 用）を提供する。`config/main.py` 内に二重定義があり、上段（L6569）の `vrf` グループは古い定義で実際の `config` 直下に登録されているのは後段（L7673）の `@config.group(cls=clicommon.AbbreviationGroup, name='vrf')`。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `VRF` テーブルに対する add/del と、`MGMT_VRF_CONFIG` に対する管理 VRF の有効化を扱う[^1]。
+`config vrf` は [VRF](../../reference/glossary.md#term-vrf) (Virtual Routing and Forwarding) インスタンスの作成・削除と、L3 VNI マッピング（[VXLAN](../../reference/glossary.md#term-vxlan) [EVPN](../../reference/glossary.md#term-evpn) 用）を提供する。`config/main.py` 内に二重定義があり、上段（L6569）の `vrf` グループは古い定義で実際の `config` 直下に登録されているのは後段（L7673）の `@config.group(cls=clicommon.AbbreviationGroup, name='vrf')`。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `VRF` テーブルに対する add/del と、`MGMT_VRF_CONFIG` に対する管理 [VRF](../../reference/glossary.md#term-vrf) の有効化を扱う[^1]。
 
 ManagementVRF (`mgmt` / `management`) は通常データプレーン用の `Vrf<name>` とは扱いが異なり、`vrf_add_management_vrf` / `vrf_delete_management_vrf` が `MGMT_VRF_CONFIG` を直接操作する。
 
@@ -32,7 +32,7 @@ ManagementVRF (`mgmt` / `management`) は通常データプレーン用の `Vrf<
 
 | コマンド | 用途 |
 |---------|------|
-| `config vrf add <vrf_name>` | データ VRF または management VRF を追加 |
+| `config vrf add <vrf_name>` | データ [VRF](../../reference/glossary.md#term-vrf) または management VRF を追加 |
 | `config vrf del <vrf_name>` | VRF を削除（ヒットする interface IP も全消去） |
 | `config vrf add_vrf_vni_map <vrf-name> <vni>` | VRF に L3 VNI を割り当て |
 | `config vrf del_vrf_vni_map <vrf-name>` | VRF の VNI マッピングを 0 にリセット |
@@ -161,7 +161,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VRF`](../config-db/vrf.md) / [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md) / [`VXLAN_TUNNEL_MAP`](../config-db/vxlan-tunnel-map.md) / [`SYSLOG_SERVER`](../config-db/syslog-server.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VRF`](../config-db/vrf.md) / [`MGMT_VRF_CONFIG`](../config-db/mgmt-vrf-config.md) / [`VXLAN_TUNNEL_MAP`](../config-db/vxlan-tunnel-map.md) / [`SYSLOG_SERVER`](../config-db/syslog-server.md)
 
 <!-- ref-triangle:end -->
 
@@ -205,4 +205,4 @@ VRF Vrf_Red added.
 - [CONFIG_DB: MGMT_VRF_CONFIG](../config-db/mgmt-vrf-config.md)
 - [YANG: sonic-vrf](../yang/sonic-vrf.md)
 
-<!-- glossary-links-injected: e9411ffbc438 -->
+<!-- glossary-links-injected: daea650a90b0 -->

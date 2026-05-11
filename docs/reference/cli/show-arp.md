@@ -60,7 +60,7 @@ cmd += ['-d', str(display)]
 
 ## CONFIG_DB との接点
 
-ARP テーブルは **kernel の neighbor table**（および swss/[neighsyncd](../../reference/glossary.md#term-neighsyncd) 経由で APPL_DB の `NEIGH_TABLE` に同期）で管理されるため、`show arp` 自体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を読まない。
+[ARP](../../reference/glossary.md#term-arp) テーブルは **kernel の neighbor table**（および swss/[neighsyncd](../../reference/glossary.md#term-neighsyncd) 経由で [APPL_DB](../../reference/glossary.md#term-appl_db) の `NEIGH_TABLE` に同期）で管理されるため、`show arp` 自体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を読まない。
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -125,11 +125,11 @@ Total number of entries 2
 ### 典型的な利用シーン
 
 - L3 隣接の MAC 解決状況、aging 状態の確認。
-- MC-[LAG](../../reference/glossary.md#term-lag) / VRRP 構成での ARP 同期検証。
+- MC-[LAG](../../reference/glossary.md#term-lag) / VRRP 構成での [ARP](../../reference/glossary.md#term-arp) 同期検証。
 
 ### よくある落とし穴
 
-- `show arp` は default [VRF](../../reference/glossary.md#term-vrf)。VRF 内 ARP は `show arp -V <vrf>` または `ip neigh show vrf <vrf>`。
+- `show arp` は default [VRF](../../reference/glossary.md#term-vrf)。[VRF](../../reference/glossary.md#term-vrf) 内 ARP は `show arp -V <vrf>` または `ip neigh show vrf <vrf>`。
 - [STATE_DB](../../reference/glossary.md#term-state_db) の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。
 
 ### 関連する show / debug
@@ -141,4 +141,4 @@ sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 5edea368a8c3 -->
+<!-- glossary-links-injected: 2a3b0952d27c -->

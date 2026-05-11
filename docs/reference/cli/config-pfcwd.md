@@ -26,8 +26,8 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `config pfcwd start [options] <ports>... <detection-time>` | port 群で PFC watchdog を開始 |
-| `config pfcwd stop` | PFC watchdog を停止 |
+| `config pfcwd start [options] <ports>... <detection-time>` | port 群で [PFC](../../reference/glossary.md#term-pfc) watchdog を開始 |
+| `config pfcwd stop` | [PFC](../../reference/glossary.md#term-pfc) watchdog を停止 |
 | `config pfcwd interval <poll_interval>` | counter polling 間隔を設定 |
 | `config pfcwd counter_poll enable\|disable` | counter polling を有効/無効化 |
 | `config pfcwd big_red_switch enable\|disable` | BIG_RED_SWITCH mode を有効/無効化 |
@@ -123,4 +123,4 @@ show pfc counters
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 97e8f7840821 -->
+<!-- glossary-links-injected: 7cb1f9e73b9e -->

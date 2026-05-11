@@ -68,13 +68,13 @@ SYSTEM_DEFAULTS|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-system-defaults`](../yang/sonic-system-defaults.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-system-defaults`](../yang/sonic-system-defaults.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-system-defaults.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-defaults.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-system-defaults.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-defaults.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -95,4 +95,4 @@ sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7c7c96ee6ab8 -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

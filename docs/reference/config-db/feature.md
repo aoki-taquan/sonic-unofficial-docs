@@ -72,13 +72,13 @@ FEATURE|<name>
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `KUBERNETES_MASTER`（`set_owner = kube` のとき）、`SYSLOG_CONFIG_FEATURE`（`support_syslog_rate_limit = true` のとき）
 - 関連 CLI: `config feature state <name> <enabled|disabled>`、`config feature autorestart`
-- 関連 YANG: `sonic-feature`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-feature`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-feature`](../yang/sonic-feature.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-feature`](../yang/sonic-feature.md)
 - CLI: `config feature`
 
 <!-- ref-triangle:end -->
@@ -110,4 +110,4 @@ show feature status
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9a2381a3263e -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

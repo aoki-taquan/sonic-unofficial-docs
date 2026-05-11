@@ -21,9 +21,9 @@ related:
 
 ## 概要
 
-`config acl` は [ACL](../../reference/glossary.md#term-acl) テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（`acl-loader` 起動）を提供する。**個別 ACL ルールを CLI フラグで追加するインタフェースは無い**。ルールは JSON ファイルに記述して `config acl update full|incremental` で投入する設計[^1]。
+`config acl` は [ACL](../../reference/glossary.md#term-acl) テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（`acl-loader` 起動）を提供する。**個別 [ACL](../../reference/glossary.md#term-acl) ルールを CLI フラグで追加するインタフェースは無い**。ルールは JSON ファイルに記述して `config acl update full|incremental` で投入する設計[^1]。
 
-ACL の実体は `aclorch`（swss）が `ACL_TABLE` / `ACL_RULE` を [APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db) へ反映する。`config acl` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `ACL_TABLE` のみ直接書き換え、ルール側は外部ツール `acl-loader` が CONFIG_DB と直接対話する。
+[ACL](../../reference/glossary.md#term-acl) の実体は `aclorch`（swss）が `ACL_TABLE` / `ACL_RULE` を [APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db) へ反映する。`config acl` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `ACL_TABLE` のみ直接書き換え、ルール側は外部ツール `acl-loader` が [CONFIG_DB](../../reference/glossary.md#term-config_db) と直接対話する。
 
 ## コマンド一覧
 
@@ -107,7 +107,7 @@ excerpt: |
 ### `config acl remove table <table_name> [-n <namespace>]`
 
 **動作**:
-`ACL_TABLE|<table_name>` を `set_entry(..., None)` で削除する。**配下の ACL_RULE 自動削除は CLI 側ではしない**（aclorch が `ACL_TABLE` 不在になった時点で APPL_DB → SAI から rule を取り除く）。
+`ACL_TABLE|<table_name>` を `set_entry(..., None)` で削除する。**配下の ACL_RULE 自動削除は CLI 側ではしない**（aclorch が `ACL_TABLE` 不在になった時点で [APPL_DB](../../reference/glossary.md#term-appl_db) → [SAI](../../reference/glossary.md#term-sai) から rule を取り除く）。
 
 ### `config acl update full <file_name>`
 
@@ -130,7 +130,7 @@ excerpt: |
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`ACL_TABLE`](../config-db/acl-table.md) / [`ACL_RULE`](../config-db/acl-rule.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`ACL_TABLE`](../config-db/acl-table.md) / [`ACL_RULE`](../config-db/acl-rule.md)
 
 <!-- ref-triangle:end -->
 
@@ -148,7 +148,7 @@ excerpt: |
 
 ### よくある落とし穴
 
-- `config acl add table` で stage を間違えると aclorch が SAI でテーブルを作れず syslog にエラー。
+- `config acl add table` で stage を間違えると aclorch が [SAI](../../reference/glossary.md#term-sai) でテーブルを作れず syslog にエラー。
 - `ports` を空にすると CONFIG_DB には載るが ASIC には降りない。
 
 ### 関連する show / debug
@@ -223,4 +223,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ad637fdc1d57 -->
+<!-- glossary-links-injected: 73668e28bc19 -->

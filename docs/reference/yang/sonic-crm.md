@@ -60,7 +60,7 @@ module: sonic-crm
 
 ## リソースクラス一覧
 
-CRM が監視する論理リソース（`<class>_threshold_type` / `_high_threshold` / `_low_threshold` の 3 リーフが定義されているもの）:
+[CRM](../../reference/glossary.md#term-crm) が監視する論理リソース（`<class>_threshold_type` / `_high_threshold` / `_low_threshold` の 3 リーフが定義されているもの）:
 
 ### ACL 系
 
@@ -92,12 +92,12 @@ CRM が監視する論理リソース（`<class>_threshold_type` / `_high_thresh
 
 | leaf | パス | 型 | 必須 | デフォルト | 説明 |
 |------|------|----|------|-----------|------|
-| `polling_interval` | `sonic-crm/CRM/Config/polling_interval` | `uint32` |  |  | CRM ポーリング間隔（秒） |
+| `polling_interval` | `sonic-crm/CRM/Config/polling_interval` | `uint32` |  |  | [CRM](../../reference/glossary.md#term-crm) ポーリング間隔（秒） |
 | `<resource>_threshold_type` | `sonic-crm/CRM/Config/<resource>_threshold_type` | `stypes:crm_threshold_type` |  |  | 閾値タイプ（PERCENTAGE / USED / FREE） |
 | `<resource>_high_threshold` | `sonic-crm/CRM/Config/<resource>_high_threshold` | `uint16` |  |  | THRESHOLD_EXCEEDED アラートを起こす上限値 |
 | `<resource>_low_threshold` | `sonic-crm/CRM/Config/<resource>_low_threshold` | `uint16` |  |  | THRESHOLD_CLEAR アラートを起こす下限値 |
 
-完全な leaf 一覧は YANG ソース（37 リソースクラス × 3 + `polling_interval` ＝ 約 112 リーフ）を直接参照のこと。
+完全な leaf 一覧は [YANG](../../reference/glossary.md#term-yang) ソース（37 リソースクラス × 3 + `polling_interval` ＝ 約 112 リーフ）を直接参照のこと。
 
 ## must / 制約
 
@@ -121,7 +121,7 @@ CRM が監視する論理リソース（`<class>_threshold_type` / `_high_thresh
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`CRM`](../config-db/crm.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`CRM`](../config-db/crm.md)
 - CLI: `crm config` / `crm show`
 
 <!-- ref-triangle:end -->
@@ -150,4 +150,4 @@ crm show thresholds all
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-crm.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 9e946ae6784c -->
+<!-- glossary-links-injected: dd676255be82 -->

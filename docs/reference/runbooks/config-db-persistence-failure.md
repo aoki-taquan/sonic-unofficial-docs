@@ -91,7 +91,7 @@ sudo dmesg | tail -50
 
 - disk full: `sudo find /var/log -size +100M -delete` でログ削減
 - ro mount: 再起動して fsck 実施
-- YANG 違反 key を削除: `sudo sonic-db-cli CONFIG_DB del "<key>"` で除外、再 save
+- [YANG](../../reference/glossary.md#term-yang) 違反 key を削除: `sudo sonic-db-cli CONFIG_DB del "<key>"` で除外、再 save
 - backup 復旧: `sudo cp /etc/sonic/config_db.json.bak.<ts> /etc/sonic/config_db.json && sudo config reload -y -f`
 
 ## 関連ページ
@@ -104,4 +104,4 @@ sudo dmesg | tail -50
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config save 実装
 [^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 4305596 — configdb.cpp
 
-<!-- glossary-links-injected: 24b53b0175df -->
+<!-- glossary-links-injected: d5320e852f7a -->

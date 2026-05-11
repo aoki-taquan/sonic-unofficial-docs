@@ -31,9 +31,9 @@ related:
 ## 想定原因（優先度順）
 
 1. **MAC / underlay_ip 不整合**: [ENI](../../reference/glossary.md#term-eni) の `mac_address` / `underlay_ip` が [SmartSwitch](../../reference/glossary.md#term-smartswitch) の物理構成と合っていない
-2. **依存リソース未作成**: `DASH_VNET` / `DASH_APPLIANCE` が ENI より後に作られた / 削除された
-3. **DPU 側 dataplane 異常**: DPU 内 ASIC programming が失敗
-4. **License / capability mismatch**: model がサポートしない ENI count
+2. **依存リソース未作成**: `DASH_VNET` / `DASH_APPLIANCE` が [ENI](../../reference/glossary.md#term-eni) より後に作られた / 削除された
+3. **[DPU](../../reference/glossary.md#term-dpu) 側 dataplane 異常**: [DPU](../../reference/glossary.md#term-dpu) 内 ASIC programming が失敗
+4. **License / capability mismatch**: model がサポートしない [ENI](../../reference/glossary.md#term-eni) count
 5. **route / mapping table 衝突**
 
 ## 切り分け手順
@@ -90,7 +90,7 @@ show dash counter eni <eni>
 
 - 依存欠如: 先に `DASH_APPLIANCE` → `DASH_VNET` → `DASH_ENI_TABLE` の順に投入
 - MAC / IP 不整合: controller 側 inventory と突合、[CONFIG_DB](../../reference/glossary.md#term-config_db) を `redis-cli hset` で修正（**ロールバック**: 退避値で hset 戻し）
-- DPU dataplane 異常: SmartSwitch の DPU を graceful shutdown → 再起動（[smartswitch-dpu-graceful-shutdown-failure.md](smartswitch-dpu-graceful-shutdown-failure.md) を参照）
+- DPU dataplane 異常: [SmartSwitch](../../reference/glossary.md#term-smartswitch) の DPU を graceful shutdown → 再起動（[smartswitch-dpu-graceful-shutdown-failure.md](smartswitch-dpu-graceful-shutdown-failure.md) を参照）
 - 容量超過: ENI 数を削減、ベンダ提供の max_eni を確認
 
 ## 関連ページ
@@ -104,4 +104,4 @@ show dash counter eni <eni>
 [^1]: sonic-net/sonic-dash-api @ master — dash_eni.proto
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — dashorch.cpp
 
-<!-- glossary-links-injected: 61b0dc200b41 -->
+<!-- glossary-links-injected: d39f7c17ce76 -->

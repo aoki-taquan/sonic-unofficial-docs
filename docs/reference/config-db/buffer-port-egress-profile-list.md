@@ -63,7 +63,7 @@ BUFFER_PORT_EGRESS_PROFILE_LIST|<port>
 | `port` (key) | leafref → `PORT.name` | 対象ポート |
 | `profile_list` | leaf-list of leafref → `BUFFER_PROFILE.name` (ordered-by user) | ポートにバインドする egress バッファプロファイル名の順序付きリスト |
 
-`ordered-by user` のため、設定順がそのまま SAI への bind 順となる。
+`ordered-by user` のため、設定順がそのまま [SAI](../../reference/glossary.md#term-sai) への bind 順となる。
 
 ## 制約
 
@@ -71,12 +71,12 @@ BUFFER_PORT_EGRESS_PROFILE_LIST|<port>
 
 ## 購読者
 
-- `buffermgrd`: CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`
-- `orchagent` (BufferOrch): SAI 側 port egress profile list 設定
+- `buffermgrd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`
+- `orchagent` (BufferOrch): [SAI](../../reference/glossary.md#term-sai) 側 port egress profile list 設定
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BUFFER_PROFILE`, `BUFFER_POOL`, `BUFFER_QUEUE`, `PORT`, `BUFFER_PORT_INGRESS_PROFILE_LIST`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_PROFILE`, `BUFFER_POOL`, `BUFFER_QUEUE`, `PORT`, `BUFFER_PORT_INGRESS_PROFILE_LIST`
 - 関連 CLI: `config buffer profile` 系
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-port-egress-profile-list`, `sonic-buffer-profile`
 
@@ -84,14 +84,14 @@ BUFFER_PORT_EGRESS_PROFILE_LIST|<port>
 
 ## 関連リファレンス
 
-- YANG: `sonic-buffer-port-egress-profile-list`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-port-egress-profile-list`
 - CLI: [`config buffer`](../cli/config-buffer.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-buffer-port-egress-profile-list.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-egress-profile-list.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-buffer-port-egress-profile-list.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-egress-profile-list.yang>
 
 ## 関連ページ
 - [CONFIG_DB: BUFFER_PROFILE](buffer-profile.md)
@@ -121,4 +121,4 @@ show buffer pool
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 77766b59392d -->
+<!-- glossary-links-injected: 5ad0ecc20ddb -->

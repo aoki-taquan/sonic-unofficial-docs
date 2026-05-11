@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-[LACP](../../reference/glossary.md#term-lacp) ベースの Link Aggregation Group ([LAG](../../reference/glossary.md#term-lag)) を定義する。`teamd` がこのテーブルから設定を読み、Linux [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 経由で物理ポートを bond する[^1]。`orchagent` の `PortsOrch` / `LagOrch` が [SAI](../../reference/glossary.md#term-sai) LAG オブジェクトを構成する。
+[LACP](../../reference/glossary.md#term-lacp) ベースの Link Aggregation Group ([LAG](../../reference/glossary.md#term-lag)) を定義する。`teamd` がこのテーブルから設定を読み、Linux [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 経由で物理ポートを bond する[^1]。`orchagent` の `PortsOrch` / `LagOrch` が [SAI](../../reference/glossary.md#term-sai) [LAG](../../reference/glossary.md#term-lag) オブジェクトを構成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -57,21 +57,21 @@ PORTCHANNEL|<name>
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `name` (key) | string `PortChannel\d{1,4}` | ✅ | - | LAG 名 |
+| `name` (key) | string `PortChannel\d{1,4}` | ✅ | - | [LAG](../../reference/glossary.md#term-lag) 名 |
 | `min_links` | uint16 (1..1024) | - | - | Operational up に必要な最小メンバ数 |
 | `mode` | `switchport_mode` | - | `routed` | スイッチポートモード |
 | `description` | string (1..255) | - | - | 説明 |
 | `mtu` | uint16 (1..9216) | - | - | MTU |
 | `admin_status` | `admin_status` | ✅ | - | 管理状態 |
-| `lacp_key` | `auto` \| uint16 (1..65535) | - | - | LACP 集約キー。`auto` で名前末尾から導出 |
+| `lacp_key` | `auto` \| uint16 (1..65535) | - | - | [LACP](../../reference/glossary.md#term-lacp) 集約キー。`auto` で名前末尾から導出 |
 | `tpid` | `tpid_type` | - | - | TPID（HW 対応時） |
-| `fallback` | boolean | - | - | LACP fallback |
+| `fallback` | boolean | - | - | [LACP](../../reference/glossary.md#term-lacp) fallback |
 | `fast_rate` | boolean | - | - | LACP fast rate |
 
 ## 購読者
 
-- `teammgrd`: PORTCHANNEL を読み、Linux teamd を spawn
-- `orchagent` `LagOrch`: SAI LAG を生成、`min_links` でアップ判定
+- `teammgrd`: PORTCHANNEL を読み、Linux [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) を spawn
+- `orchagent` `LagOrch`: [SAI](../../reference/glossary.md#term-sai) LAG を生成、`min_links` でアップ判定
 - `intfmgrd`: `mtu`、`admin_status` 変化を Linux カーネルに反映
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -84,14 +84,14 @@ PORTCHANNEL|<name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-portchannel`](../yang/sonic-portchannel.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-portchannel`](../yang/sonic-portchannel.md)
 - CLI: [`config portchannel`](../cli/config-portchannel.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-portchannel.yang` (sha `9ea932ec`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-portchannel.yang` (sha `9ea932ec`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -115,7 +115,7 @@ PORTCHANNEL|<name>
 
 - `min_links` をメンバ総数以上にすると LAG が常時 down。
 - `fallback: true` を未設定で対向が LACP 未対応だと [PortChannel](../../reference/glossary.md#term-portchannel) が永遠に down。
-- メンバ間で `speed`/`mtu` を揃えないと teamd が LAG を組まない。
+- メンバ間で `speed`/`mtu` を揃えないと [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) が LAG を組まない。
 
 ### 確認コマンド
 
@@ -126,4 +126,4 @@ teamdctl PortChannel0001 state
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 70a8686d90f5 -->
+<!-- glossary-links-injected: 7c180e687fe7 -->

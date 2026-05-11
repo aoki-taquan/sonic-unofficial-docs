@@ -46,7 +46,7 @@ config buffer profile add <profile>
     [--pool <pool>]
 ```
 
-`BUFFER_PROFILE|<profile>` が既に存在する場合はエラー。存在しない場合、`update_profile()` を通じて `pool`, `xon`, `xoff`, `size`, `dynamic_th` を組み立て、`ValidatedConfigDBConnector` で CONFIG_DB に書き込む[^2]。
+`BUFFER_PROFILE|<profile>` が既に存在する場合はエラー。存在しない場合、`update_profile()` を通じて `pool`, `xon`, `xoff`, `size`, `dynamic_th` を組み立て、`ValidatedConfigDBConnector` で [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む[^2]。
 
 `--pool` を省略すると `ingress_lossless_pool` が使われる。指定 pool は `BUFFER_POOL` に存在する必要がある。
 
@@ -82,7 +82,7 @@ config buffer profile set <profile>
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`BUFFER_PROFILE`](../config-db/buffer-profile.md) / [`BUFFER_POOL`](../config-db/buffer-pool.md) / [`DEFAULT_LOSSLESS_BUFFER_PARAMETER`](../config-db/default-lossless-buffer-parameter.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BUFFER_PROFILE`](../config-db/buffer-profile.md) / [`BUFFER_POOL`](../config-db/buffer-pool.md) / [`DEFAULT_LOSSLESS_BUFFER_PARAMETER`](../config-db/default-lossless-buffer-parameter.md)
 
 <!-- ref-triangle:end -->
 
@@ -149,4 +149,4 @@ show buffer pool
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f6aa270ee665 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

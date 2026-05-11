@@ -46,7 +46,7 @@ config clock timezone <timezone_name>
 **動作**:
 
 1. `timedatectl list-timezones` の出力を取得し、引数がリストに含まれるか検証。不一致なら `Timezone <name> does not conform format` を表示して `sys.exit(1)`
-2. CONFIG_DB の `DEVICE_METADATA|localhost` テーブルに `timezone` フィールドを `mod_entry` で書き込む
+2. [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DEVICE_METADATA|localhost` テーブルに `timezone` フィールドを `mod_entry` で書き込む
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L9777-L9790 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -95,7 +95,7 @@ config clock date <YYYY-MM-DD> <HH:MM:SS>
 - `<time>` ... `HH:MM:SS` 形式（同様に検証）
 
 **動作**:
-両方のフォーマットチェック後、`timedatectl set-time "<date> <time>"` を実行する。CONFIG_DB は更新しない（systemd 経由で OS の wall clock を変更するのみ）[^2]。
+両方のフォーマットチェック後、`timedatectl set-time "<date> <time>"` を実行する。[CONFIG_DB](../../reference/glossary.md#term-config_db) は更新しない（systemd 経由で OS の wall clock を変更するのみ）[^2]。
 
 ## 関連する CONFIG_DB
 
@@ -140,4 +140,4 @@ flowchart LR
 
 [^2]: `timedatectl set-time` は systemd 提供の操作で OS 時刻のみを変更する。
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->

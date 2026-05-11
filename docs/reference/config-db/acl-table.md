@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-[ACL](../../reference/glossary.md#term-acl) コンテナ（適用ポイント / 種別 / 段 (ingress/egress)）を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`orchagent` の `AclOrch` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) ACL table を生成、`ACL_RULE` に登録された各エントリを SAI ACL entry として展開する。
+[ACL](../../reference/glossary.md#term-acl) コンテナ（適用ポイント / 種別 / 段 (ingress/egress)）を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`orchagent` の `AclOrch` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) [ACL](../../reference/glossary.md#term-acl) table を生成、`ACL_RULE` に登録された各エントリを [SAI](../../reference/glossary.md#term-sai) [ACL](../../reference/glossary.md#term-acl) entry として展開する。
 
 !!! warning "YANG 未定義"
     `ACL_TABLE` テーブルは現時点で `sonic-yang-models` に該当する YANG モジュールが存在しない。スキーマの正本は `sonic-swss/orchagent/aclorch.{h,cpp}` の定数と `sonic-swss-common/common/schema.h`。
@@ -98,14 +98,14 @@ ACL_TABLE|<table_name>
 
 ## 購読者
 
-- `orchagent` の `AclOrch`: SAI ACL table 生成、ポートへのバインド
+- `orchagent` の `AclOrch`: [SAI](../../reference/glossary.md#term-sai) ACL table 生成、ポートへのバインド
 - `copporch`: `CTRLPLANE` 系の登録時に連動
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `ACL_RULE`、`ACL_TABLE_TYPE`、`PORT`、`PORTCHANNEL`、`MIRROR_SESSION`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `ACL_RULE`、`ACL_TABLE_TYPE`、`PORT`、`PORTCHANNEL`、`MIRROR_SESSION`
 - 関連 CLI: [`config acl`](../cli/config-acl.md)
-- 関連 [YANG](../../reference/glossary.md#term-yang): なし（YANG 未定義）
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし（[YANG](../../reference/glossary.md#term-yang) 未定義）
 
 <!-- ref-triangle:start -->
 
@@ -147,7 +147,7 @@ ACL_TABLE|<table_name>
 
 - `type` と紐付けポートの能力（V4/V6/MIRROR）が不一致だと aclorch が SAI でテーブルを作らない。
 - `stage: EGRESS` を ASIC が未サポートなのに指定すると syslog にエラー、何も適用されない。
-- `ports` を空にすると ACL_RULE は CONFIG_DB に入っても hardware に降りない。
+- `ports` を空にすると ACL_RULE は [CONFIG_DB](../../reference/glossary.md#term-config_db) に入っても hardware に降りない。
 
 ### 確認コマンド
 
@@ -158,4 +158,4 @@ aclshow -a
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c50e9accece6 -->
+<!-- glossary-links-injected: 83944bad94c7 -->

@@ -52,7 +52,7 @@ BGP_GLOBALS|<vrf_name>
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `router_id` | ipv4-address | - | BGP router-id |
+| `router_id` | ipv4-address | - | [BGP](../../reference/glossary.md#term-bgp) router-id |
 | `local_asn` | uint32 (1..2^32-1) | - | local AS |
 | `always_compare_med` | boolean | - | 異なる隣接からの MED を比較 |
 | `load_balance_mp_relax` | boolean | - | multipath-relax (AS path 異なる [ECMP](../../reference/glossary.md#term-ecmp) 許容) |
@@ -109,12 +109,12 @@ BGP_GLOBALS|<vrf_name>
 
 ## 購読者
 
-- `bgpcfgd` / `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → vtysh / FRR config に変換
-- `bgpd` (FRR)
+- `bgpcfgd` / `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → vtysh / [FRR](../../reference/glossary.md#term-frr) config に変換
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr))
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BGP_NEIGHBOR`、`BGP_DEVICE_GLOBAL`、`BGP_AGGREGATE_ADDRESS`、`VRF`、`ROUTE_MAP_SET`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_NEIGHBOR`、`BGP_DEVICE_GLOBAL`、`BGP_AGGREGATE_ADDRESS`、`VRF`、`ROUTE_MAP_SET`
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
@@ -122,14 +122,14 @@ BGP_GLOBALS|<vrf_name>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-bgp-global`](../yang/sonic-bgp-global.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-global`](../yang/sonic-bgp-global.md)
 - CLI: [`config bgp`](../cli/config-bgp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-bgp-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang>
 
 ## 関連ページ
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
@@ -160,4 +160,4 @@ vtysh -c 'show running-config bgpd'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 35efc0f6df25 -->
+<!-- glossary-links-injected: 3c93d6c0b6a4 -->

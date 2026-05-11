@@ -117,7 +117,7 @@ free -h
 
 ## 引用元
 
-[^1]: sonic-net/sonic-host-services @ c5bbbe8 — hostcfgd
+[^1]: sonic-net/sonic-host-services @ c5bbbe8 — [hostcfgd](../../reference/glossary.md#term-hostcfgd)
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config feature state
 
-<!-- glossary-links-injected: 3e47d0d86b63 -->
+<!-- glossary-links-injected: 9bd150521228 -->

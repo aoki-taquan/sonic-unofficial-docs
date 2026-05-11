@@ -88,7 +88,7 @@ module: sonic-restapi
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`RESTAPI`](../config-db/restapi.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`RESTAPI`](../config-db/restapi.md)
 
 <!-- ref-triangle:end -->
 
@@ -96,4 +96,4 @@ module: sonic-restapi
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-restapi.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 750f82636a14 -->
+<!-- glossary-links-injected: 896d391185a9 -->

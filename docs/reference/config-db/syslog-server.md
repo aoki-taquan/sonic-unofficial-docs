@@ -81,14 +81,14 @@ SYSLOG_SERVER|<server_address>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-syslog`](../yang/sonic-syslog.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-syslog`](../yang/sonic-syslog.md)
 - CLI: [`config syslog`](../cli/config-syslog.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-syslog.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-syslog.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-syslog.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-syslog.yang>
 
 ## 関連ページ
 - [HLD: Syslog Source IP](../../system/sonic-syslog-source-ip.md)
@@ -124,4 +124,4 @@ show syslog
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

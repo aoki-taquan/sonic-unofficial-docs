@@ -31,7 +31,7 @@ related:
 | コマンド | 用途 |
 |---------|------|
 | `show muxcable status [<port>] [--json]` | mux 状態 (active/standby/auto/...) サマリ |
-| `show muxcable config [<port>] [--json]` | CONFIG_DB の [MUX](../../reference/glossary.md#term-mux) 設定一覧 |
+| `show muxcable config [<port>] [--json]` | [CONFIG_DB](../../reference/glossary.md#term-config_db) の [MUX](../../reference/glossary.md#term-mux) 設定一覧 |
 | `show muxcable berinfo <port> <target> [--json]` | BER 情報 (lane 単位) |
 | `show muxcable eyeinfo <port> <target> [--json]` | eye margin 情報 |
 | `show muxcable fecstatistics <port> <target> [--json]` | FEC 統計 |
@@ -42,7 +42,7 @@ related:
 | `show muxcable hwmode muxdirection [<port>] [--json]` | HW 上の mux 方向 |
 | `show muxcable hwmode switchmode [<port>]` | HW switchmode (auto / manual) |
 | `show muxcable firmware version <port> [--active]` | FW version (両 bank or active のみ) |
-| `show muxcable metrics <port> [--json]` | linkmgrd 由来のメトリクス |
+| `show muxcable metrics <port> [--json]` | [linkmgrd](../../reference/glossary.md#term-linkmgrd) 由来のメトリクス |
 | `show muxcable event_log <port> [--json]` | xcvrd の event log |
 | `show muxcable get_fec_anlt_speed <port> [--json]` | 現在の FEC / ANLT / speed |
 | `show muxcable packetloss <port> [--json]` | パケロス統計 |
@@ -57,11 +57,11 @@ related:
 
 ### `show muxcable status [<port>] [--json]`
 
-`MUX_CABLE` テーブルから対象ポートの `state` と STATE_DB の `MUX_CABLE_TABLE|<port>` を統合表示する。`port` 省略で全ポート。`--json` 指定で JSON 出力。
+`MUX_CABLE` テーブルから対象ポートの `state` と [STATE_DB](../../reference/glossary.md#term-state_db) の `MUX_CABLE_TABLE|<port>` を統合表示する。`port` 省略で全ポート。`--json` 指定で JSON 出力。
 
 ### `show muxcable config [<port>] [--json]`
 
-CONFIG_DB の `MUX_CABLE` 設定 (server_ipv4 / server_ipv6 / soc_ipv4 / state) と `MUX_LINKMGR` の prober_type 等を統合表示する。Active-Active / Active-Standby のトポロジに応じて出力列が分岐する (`create_active_active_mux_direction_*` / `create_active_standby_mux_direction_*`)[^2]。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `MUX_CABLE` 設定 (server_ipv4 / server_ipv6 / soc_ipv4 / state) と `MUX_LINKMGR` の prober_type 等を統合表示する。Active-Active / Active-Standby のトポロジに応じて出力列が分岐する (`create_active_active_mux_direction_*` / `create_active_standby_mux_direction_*`)[^2]。
 
 ### `show muxcable berinfo|eyeinfo|fecstatistics|pcsstatistics <port> <target>`
 
@@ -85,7 +85,7 @@ xcvrd 経由で Y-Cable の HW state を直接読む。CONFIG_DB の `MUX_CABLE.
 |----------|---------------|------------------|
 | `MUX_CABLE` (CONFIG_DB) | `state`, `server_ipv4`, `server_ipv6`, `soc_ipv4` | `status` / `config` |
 | `MUX_LINKMGR` (CONFIG_DB) | `prober_type`, `address` | `config` |
-| `MUX_CABLE_TABLE` (STATE_DB) | xcvrd / linkmgrd 経由の動的状態 | ほぼ全コマンド |
+| `MUX_CABLE_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) | xcvrd / [linkmgrd](../../reference/glossary.md#term-linkmgrd) 経由の動的状態 | ほぼ全コマンド |
 | `MUX_INFO` 系 RSP テーブル | xcvrd RPC 応答 | `berinfo` / `eyeinfo` / `fecstatistics` / `firmware version` / 他 |
 
 ## 注意
@@ -159,4 +159,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: eab46fcbaad8 -->
+<!-- glossary-links-injected: f050aad25177 -->

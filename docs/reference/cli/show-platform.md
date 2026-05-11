@@ -49,7 +49,7 @@ related:
 - `get_chassis_info()` で Serial / Model / Hardware Revision を取得
 - `--json` 指定時は両者をマージして JSON 出力
 
-CONFIG_DB は触らず、`/host/machine.conf` 由来の environment variables や `device_info` で参照される `platform.json` / `hwsku.json` を経由する。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) は触らず、`/host/machine.conf` 由来の environment variables や `device_info` で参照される `platform.json` / `hwsku.json` を経由する。
 
 ### `show platform syseeprom`
 
@@ -88,7 +88,7 @@ CONFIG_DB は触らず、`/host/machine.conf` 由来の environment variables �
 ### `show platform leakage status`
 
 **動作**:
-`leakageshow` コマンドを起動。`leakageshow` は STATE_DB の `LIQUID_COOLING_LEAKAGE` 系テーブルを読み出して整形表示するユーティリティ。液冷モデル限定。
+`leakageshow` コマンドを起動。`leakageshow` は [STATE_DB](../../reference/glossary.md#term-state_db) の `LIQUID_COOLING_LEAKAGE` 系テーブルを読み出して整形表示するユーティリティ。液冷モデル限定。
 
 ## 関連する STATE_DB / 一次情報
 
@@ -96,7 +96,7 @@ CONFIG_DB は触らず、`/host/machine.conf` 由来の environment variables �
 |------|------|------------------|
 | HwSKU / ASIC | `platform.json`, `hwsku.json` | `summary` |
 | Chassis Serial / Model | `decode-syseeprom` 出力 | `summary`, `syseeprom` |
-| PSU 状態 | STATE_DB `PSU_INFO` (psud) | `psustatus` |
+| PSU 状態 | [STATE_DB](../../reference/glossary.md#term-state_db) `PSU_INFO` (psud) | `psustatus` |
 | Fan / Temp / Voltage / Current | STATE_DB `FAN_INFO`/`TEMPERATURE_INFO`/`*_INFO` (thermalctld + psud) | `fan` / `temperature` / `voltage` / `current` |
 | SSD | `ssdutil` (smart-tools 直接実行) | `ssdhealth` |
 | PCIe | `pcie.yaml` + `lspci` | `pcieinfo` |
@@ -169,4 +169,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: a13f05370620 -->

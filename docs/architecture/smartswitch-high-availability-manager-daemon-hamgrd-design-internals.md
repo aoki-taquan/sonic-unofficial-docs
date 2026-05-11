@@ -18,14 +18,14 @@ related:
 
 # SmartSwitch HA HAMgrD 内部実装
 
-このページは [HAMgrD（概要ハブ）](smartswitch-high-availability-manager-daemon-hamgrd-design.md) の派生ページで、**actor の workflow と DPU-Driven mode の詳細** に絞って整理する。概念は [smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md](smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md)、設定は [smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md)、制限事項は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) を参照。
+このページは [HAMgrD（概要ハブ）](smartswitch-high-availability-manager-daemon-hamgrd-design.md) の派生ページで、**actor の workflow と [DPU](../reference/glossary.md#term-dpu)-Driven mode の詳細** に絞って整理する。概念は [smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md](smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md)、設定は [smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md)、制限事項は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) を参照。
 
 !!! warning "現状未実装"
     本ページの記述は HLD v0.1 を元にした **将来仕様の参考**。`hamgrd` バイナリは community master に未取り込みで、actor framework / swbus / DPU/vDPU の STATE 系テーブルは欠落している。
 
 ## 1. Actor 起動と動的変動
 
-- `hamgrd` 起動直後に CONFIG_DB / APPL_DB の既存 table から **初期 actor 群（global config / dpu / vdpu / ha set / ha scope）を作成**[^1]
+- `hamgrd` 起動直後に [CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) の既存 table から **初期 actor 群（global config / dpu / vdpu / ha set / ha scope）を作成**[^1]
 - APPL_DB は SDN controller から動的更新されるため、新規 HA set 等の create/delete 時に actor を生成・破棄
 
 ## 2. DPU と vDPU の状態集約
@@ -39,7 +39,7 @@ HA Set は **どの vDPU をペアにするかを定義** するだけのほぼ�
 - HA Set actor は `DASH_HA_SET_CONFIG_TABLE` の vDPU リストを subscribe
 - `DASH_HA_GLOBAL_CONFIG` と vDPU 状態を集約して自分の state を更新
 - scope が `dpu` なら DPU 単位の forwarding rule を設定
-- ローカル vDPU が含まれる HA Set では **DPU 側 HA Set table** を program して ENI から参照可能にする
+- ローカル vDPU が含まれる HA Set では **DPU 側 HA Set table** を program して [ENI](../reference/glossary.md#term-eni) から参照可能にする
 
 ## 4. HA Scope workflow（DPU-Driven mode）
 
@@ -73,17 +73,17 @@ sequenceDiagram
 - SDN controller が enable を立てると HAMgrD が DPU に転送
 - DPU の状態遷移を監視
 - DPU からの role activation 要求を扱う
-- DPU が最終 state に達したとき DPU actor が **BFD responder を program**
+- DPU が最終 state に達したとき DPU actor が **[BFD](../reference/glossary.md#term-bfd) responder を program**
 
 ### 削除時
 
-- HA Scope actor を pending deletion マーク → DPU 側削除 → 完了後 actor 自体と STATE_DB エントリを削除
+- HA Scope actor を pending deletion マーク → DPU 側削除 → 完了後 actor 自体と [STATE_DB](../reference/glossary.md#term-state_db) エントリを削除
 
 詳細は `smart-switch-ha-dpu-scope-dpu-driven-setup.md` 参照[^1]。
 
 ## 5. Switch-Driven mode
 
-TBD（HLD で未確定）[^1]。NPU が能動的に HA state machine を駆動するモード。
+TBD（[HLD](../reference/glossary.md#term-hld) で未確定）[^1]。[NPU](../reference/glossary.md#term-npu) が能動的に HA state machine を駆動するモード。
 
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
@@ -114,3 +114,5 @@ TBD（HLD で未確定）[^1]。NPU が能動的に HA state machine を駆動�
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
+
+<!-- glossary-links-injected: f7ac8418d6a5 -->

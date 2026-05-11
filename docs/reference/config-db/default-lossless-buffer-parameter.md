@@ -70,13 +70,13 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER|<name>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_POOL`, `BUFFER_PROFILE`, `LOSSLESS_TRAFFIC_PATTERN`, `BUFFER_PG`
-- 関連 YANG: `sonic-default-lossless-buffer-parameter`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-default-lossless-buffer-parameter`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: `sonic-default-lossless-buffer-parameter`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-default-lossless-buffer-parameter`
 
 <!-- ref-triangle:end -->
 
@@ -112,4 +112,4 @@ show buffer profile
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

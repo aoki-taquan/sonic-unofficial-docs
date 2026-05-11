@@ -75,15 +75,15 @@ container `RESTAPI` の下に固定キー `certs` / `config` の 2 シングル�
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: なし (`FEATURE.restapi` で有効化される)
-- CLI: 標準 CLI ラッパなし。`config restapi` 系コマンドは未提供 (CONFIG_DB 直接編集または init_cfg 経由)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): なし (`FEATURE.restapi` で有効化される)
+- CLI: 標準 CLI ラッパなし。`config restapi` 系コマンドは未提供 ([CONFIG_DB](../../reference/glossary.md#term-config_db) 直接編集または init_cfg 経由)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-restapi`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-restapi`](../yang/sonic-restapi.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-restapi`](../yang/sonic-restapi.md)
 
 <!-- ref-triangle:end -->
 
@@ -114,4 +114,4 @@ systemctl status restapi
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 4b3b3fd0739b -->

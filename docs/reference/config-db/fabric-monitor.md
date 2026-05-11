@@ -73,15 +73,15 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `FABRIC_PORT`、`CHASSIS_MODULE`
-- 関連 YANG: `sonic-fabric-monitor`、`sonic-fabric-port`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FABRIC_PORT`、`CHASSIS_MODULE`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-fabric-monitor`、`sonic-fabric-port`
 - 関連 CLI: `config fabric`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- YANG: [`sonic-fabric-monitor`](../yang/sonic-fabric-monitor.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-fabric-monitor`](../yang/sonic-fabric-monitor.md)
 - CLI: `config fabric`
 
 <!-- ref-triangle:end -->
@@ -91,7 +91,7 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 [^1]: YANG 定義: `sonic-fabric-monitor.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fabric-monitor.yang>
 
 ## 関連ページ
-- 関連 CONFIG_DB ページ: `FABRIC_PORT`（本バッチで追加）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db) ページ: `FABRIC_PORT`（本バッチで追加）
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -115,4 +115,4 @@ show fabric isolation
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: aa7ef688df3b -->
+<!-- glossary-links-injected: 32758c44ab11 -->

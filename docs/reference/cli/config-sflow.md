@@ -120,13 +120,13 @@ interface 用 sample-direction。グローバルと同じ `tx/both` の egress c
 
 - **egress sampling**（`tx` / `both`）: `STATE_DB.SWITCH_CAPABILITY|switch.PORT_EGRESS_SAMPLE_CAPABLE` を見て無効化される。
 - **コレクタ数**: 2 件固定（コード上のリテラル）。
-- **[VRF](../../reference/glossary.md#term-vrf)**: `default` と `mgmt` のみ。任意 data VRF はサポート外。
+- **[VRF](../../reference/glossary.md#term-vrf)**: `default` と `mgmt` のみ。任意 data [VRF](../../reference/glossary.md#term-vrf) はサポート外。
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`SFLOW`](../config-db/sflow.md) / [`SFLOW_SESSION`](../config-db/sflow.md) / [`SFLOW_COLLECTOR`](../config-db/sflow.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SFLOW`](../config-db/sflow.md) / [`SFLOW_SESSION`](../config-db/sflow.md) / [`SFLOW_COLLECTOR`](../config-db/sflow.md)
 
 <!-- ref-triangle:end -->
 

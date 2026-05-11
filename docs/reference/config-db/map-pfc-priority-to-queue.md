@@ -25,9 +25,9 @@ related:
 
 **[PFC](../../reference/glossary.md#term-pfc) priority (0..7) → 出力キュー (qindex 0..7) のマッピング** を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`PORT_QOS_MAP.pfc_to_queue_map` から参照され、`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE` として ASIC に反映される。
 
-PFC frame の Priority 値から、どの egress queue を一時停止対象とするかを決めるためのマップ。`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` (ingress 側 PG マップ) と対になる egress 側の表。
+[PFC](../../reference/glossary.md#term-pfc) frame の Priority 値から、どの egress queue を一時停止対象とするかを決めるためのマップ。`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` (ingress 側 PG マップ) と対になる egress 側の表。
 
-> テーブル名は [YANG](../../reference/glossary.md#term-yang) container 名そのまま `MAP_PFC_PRIORITY_TO_QUEUE` で、`PFC_PRIORITY_TO_QUEUE_MAP` ではない点に注意。CONFIG_DB key にもこの名前が使われる。
+> テーブル名は [YANG](../../reference/glossary.md#term-yang) container 名そのまま `MAP_PFC_PRIORITY_TO_QUEUE` で、`PFC_PRIORITY_TO_QUEUE_MAP` ではない点に注意。[CONFIG_DB](../../reference/glossary.md#term-config_db) key にもこの名前が使われる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -59,7 +59,7 @@ MAP_PFC_PRIORITY_TO_QUEUE|<name>
 MAP_PFC_PRIORITY_TO_QUEUE|<name>|<pfc_priority>
 ```
 
-ただし CONFIG_DB の慣習として、外側 hash の field-value に直接 `pfc_priority → qindex` の対を保存する実装もある（`{"name": "AZURE", "0": "0", "1": "1", ...}` のような形式）。実体は `swssconfig` / `sonic-cfggen` がいずれかに正規化する。
+ただし [CONFIG_DB](../../reference/glossary.md#term-config_db) の慣習として、外側 hash の field-value に直接 `pfc_priority → qindex` の対を保存する実装もある（`{"name": "AZURE", "0": "0", "1": "1", ...}` のような形式）。実体は `swssconfig` / `sonic-cfggen` がいずれかに正規化する。
 
 ## フィールド
 
@@ -73,7 +73,7 @@ MAP_PFC_PRIORITY_TO_QUEUE|<name>|<pfc_priority>
 
 | フィールド | 型 | 説明 |
 |-----------|----|------|
-| `pfc_priority` (key) | string pattern `[0-7]?` | PFC priority 値 (0..7) |
+| `pfc_priority` (key) | string pattern `[0-7]?` | [PFC](../../reference/glossary.md#term-pfc) priority 値 (0..7) |
 | `qindex` | string pattern `[0-7]?` | 対応する egress queue index (0..7) |
 
 `pattern "[0-7]?"` は空文字も許容するパターンで、実運用では必ず数値を入れる。
@@ -81,7 +81,7 @@ MAP_PFC_PRIORITY_TO_QUEUE|<name>|<pfc_priority>
 ## 制約
 
 - マップ名の長さは 1..32 文字、英数字スタートで `[-_]` 含む。
-- pfc_priority / qindex は単一の 0..7 数字（範囲外は YANG validation で拒否）。
+- pfc_priority / qindex は単一の 0..7 数字（範囲外は [YANG](../../reference/glossary.md#term-yang) validation で拒否）。
 
 ## 購読者
 
@@ -92,7 +92,7 @@ MAP_PFC_PRIORITY_TO_QUEUE|<name>|<pfc_priority>
 
 - 関連 CONFIG_DB: `PORT_QOS_MAP` (バインド)、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` (ingress 側)、`TC_TO_QUEUE_MAP`, `TC_TO_PRIORITY_GROUP_MAP`, `DSCP_TO_TC_MAP`
 - 関連 CLI: `config qos`、`config qos reload`
-- 関連 YANG: `sonic-pfc-priority-queue-map`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pfc-priority-queue-map`
 
 <!-- ref-triangle:start -->
 
@@ -133,4 +133,4 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3dadbe92257e -->
+<!-- glossary-links-injected: 08955b0b376e -->

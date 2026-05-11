@@ -109,10 +109,10 @@ module: sonic-route-map
 | `match_tag` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_tag` | `uint32` |  |  |  | Value of the tag match member |
 | `match_med` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_med` | `uint32` |  |  |  | Match based on MED value |
 | `match_origin` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_origin` | `string` |  |  |  | Match based on [BGP](../../reference/glossary.md#term-bgp) route origin egp, igp and incomplete |
-| `match_local_pref` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_local_pref` | `uint32` |  |  |  | Match based on BGP local preference value |
+| `match_local_pref` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_local_pref` | `uint32` |  |  |  | Match based on [BGP](../../reference/glossary.md#term-bgp) local preference value |
 | `match_community` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_community` | `leafref` |  |  | /rpolsets:sonic-routing-policy-sets/rpolsets:COMMUNITY_SET/rpolsets:COMMUNITY_SET_LIST/rpolsets:name | Match based on community value |
 | `match_ext_community` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_ext_community` | `leafref` |  |  | /rpolsets:sonic-routing-policy-sets/rpolsets:EXTENDED_COMMUNITY_SET/rpolsets:EXTENDED_COMMUNITY_SET_LIST/rpolsets:name | Match based on extended community value |
-| `match_as_path` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_as_path` | `leafref` |  |  | /rpolsets:sonic-routing-policy-sets/rpolsets:AS_PATH_SET/rpolsets:AS_PATH_SET_LIST/rpolsets:name | Match based on BGP AS-PATH |
+| `match_as_path` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/match_as_path` | `leafref` |  |  | /rpolsets:sonic-routing-policy-sets/rpolsets:AS_PATH_SET/rpolsets:AS_PATH_SET_LIST/rpolsets:name | Match based on [BGP](../../reference/glossary.md#term-bgp) AS-PATH |
 | `call_route_map` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/call_route_map` | `leafref` |  |  | ../../../ROUTE_MAP_SET/ROUTE_MAP_SET_LIST/name | Invoke another route-map |
 | `set_origin` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/set_origin` | `string` |  |  |  | Set BGP origin value |
 | `set_local_pref` | `sonic-route-map/ROUTE_MAP/ROUTE_MAP_LIST/set_local_pref` | `uint32` |  |  |  | Set BGP local preference value |
@@ -150,13 +150,13 @@ module: sonic-route-map
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `ROUTE_MAP`
-- CONFIG_DB: `ROUTE_MAP_SET`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `ROUTE_MAP_SET`
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`ROUTE_MAP`](../config-db/route-map.md) / [`ROUTE_MAP_SET`](../config-db/route-map.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`ROUTE_MAP`](../config-db/route-map.md) / [`ROUTE_MAP_SET`](../config-db/route-map.md)
 
 <!-- ref-triangle:end -->
 
@@ -164,4 +164,4 @@ module: sonic-route-map
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-route-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 3f1a66b76c8d -->
+<!-- glossary-links-injected: ed0e3d8580f8 -->

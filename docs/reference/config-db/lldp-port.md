@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`LLDP_PORT` は **ポート単位の [LLDP](../../reference/glossary.md#term-lldp) 設定** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`lldp` (lldpd / lldpmgrd) コンテナが CONFIG_DB から読み、各物理ポートで LLDP を有効化するか、また RX / TX どちらのモードで動かすかを決める。
+`LLDP_PORT` は **ポート単位の [LLDP](../../reference/glossary.md#term-lldp) 設定** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`lldp` (lldpd / lldpmgrd) コンテナが [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み、各物理ポートで [LLDP](../../reference/glossary.md#term-lldp) を有効化するか、また RX / TX どちらのモードで動かすかを決める。
 
 `LLDP` (グローバル) テーブルが `hello_time` / `multiplier` / `system_name` / `system_description` 等のシャーシ全体の設定を持つのに対し、本テーブルはポート単位の上書き設定。
 
@@ -55,7 +55,7 @@ LLDP_PORT|<ifname>
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|----------|------|
 | `ifname` (key) | leafref → `PORT.name` | - | 対象ポート |
-| `enabled` | boolean | `true` | このポートで LLDP を有効化するか |
+| `enabled` | boolean | `true` | このポートで [LLDP](../../reference/glossary.md#term-lldp) を有効化するか |
 | `mode` | enum `RECEIVE`/`TRANSMIT` | - | LLDP フレームの RX/TX モード |
 
 `enabled` と `mode` は `sonic-lldp` の `lldp_mode_config` grouping から `uses` されている共通フィールド。`mode` を省略した場合は lldpd のデフォルト (双方向) で動作する実装が多い。
@@ -67,7 +67,7 @@ LLDP_PORT|<ifname>
 
 ## 購読者
 
-- `lldpmgrd` (`docker-lldp`): CONFIG_DB → `lldpcli` コマンドに変換し `lldpd` に投入
+- `lldpmgrd` (`docker-lldp`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → `lldpcli` コマンドに変換し `lldpd` に投入
 - `lldpd`: 実際の LLDPDU 送受信
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -80,14 +80,14 @@ LLDP_PORT|<ifname>
 
 ## 関連リファレンス
 
-- YANG: [`sonic-lldp`](../yang/sonic-lldp.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-lldp`](../yang/sonic-lldp.md)
 - CLI: `config lldp` / [`show lldp`](../cli/show-lldp.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-lldp.yang` (revision 2021-07-08). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-lldp.yang` (revision 2021-07-08). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang>
 
 ## 関連ページ
 - [YANG: sonic-lldp](../yang/sonic-lldp.md)
@@ -112,4 +112,4 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e5ca7b6a3d0f -->
+<!-- glossary-links-injected: 1c2f663967b9 -->
