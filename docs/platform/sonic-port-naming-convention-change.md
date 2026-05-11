@@ -172,62 +172,63 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 - 新命名と従来命名の混在で alias 解決が壊れる場合、CLI と内部名のどちらを参照しているかを確認
 - chassis で `ets0p1` が `ets1p1` と衝突する場合、line card の slot 番号が想定どおりに振られているか確認
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は **いずれも採用されていない**。
 
-2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は **いずれも採用されていない**。
+    ### 1. `port_config.ini` の alias 列は HLD 提案命名に切替わっていない
 
-### 1. `port_config.ini` の alias 列は HLD 提案命名に切替わっていない
+    - **HLD 記述**: Stage 1 として alias 列を `etsXpY[abcd]` 系の新命名に切替える。
+    - **実装位置**: `sonic-buildimage/device/<vendor>/<sku>/port_config.ini` を代表例で確認:
+      ```
+      # sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini
+      # name          lanes             alias         index  speed
+      Ethernet0       1,2,3,4           Ethernet1/1    1     100000
+      Ethernet4       5,6,7,8           Ethernet2/1    2     100000
+      ```
+      - alias は **`Ethernet<panel>/<sub>`** 形式（`Ethernet1/1`, `Ethernet1/2`, ...）が業界共通で残っており、`etsXpY` / `ets1p1` 系は `device/` ツリー全体に出現しない。
+    - **差分の中身**: 提案された 4 stage（alias 切替 → コード依存除去 → テスト依存除去 → 内部名切替）は 1 つも踏まれていない。
+    - **読者への影響**: HLD を読んで「現行は `ets0p1` 系」と想定すると CLI / config / 監視全てが噛み合わない。実際は `EthernetN`（内部キー）+ `Ethernet<panel>/<sub>`（前面パネル名）+ `Ethernet<panel>/<sub>a..d`（breakout）が安定した運用慣行。
+    - **回避策**:
+      - CLI 入出力では `Ethernet<panel>/<sub>` を使う（`show interface alias` 出力参照）。
+      - 自動化スクリプトでは CONFIG_DB の `PORT|EthernetN` を直接参照する。
+      - chassis では `Ethernet<panel>` の `panel` をリニアに振る運用が主流で、slot 番号を埋め込む `ets<X>p<Y>` 命名は採用例なし。
 
-- **HLD 記述**: Stage 1 として alias 列を `etsXpY[abcd]` 系の新命名に切替える。
-- **実装位置**: `sonic-buildimage/device/<vendor>/<sku>/port_config.ini` を代表例で確認:
-  ```
-  # sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini
-  # name          lanes             alias         index  speed
-  Ethernet0       1,2,3,4           Ethernet1/1    1     100000
-  Ethernet4       5,6,7,8           Ethernet2/1    2     100000
-  ```
-  - alias は **`Ethernet<panel>/<sub>`** 形式（`Ethernet1/1`, `Ethernet1/2`, ...）が業界共通で残っており、`etsXpY` / `ets1p1` 系は `device/` ツリー全体に出現しない。
-- **差分の中身**: 提案された 4 stage（alias 切替 → コード依存除去 → テスト依存除去 → 内部名切替）は 1 つも踏まれていない。
-- **読者への影響**: HLD を読んで「現行は `ets0p1` 系」と想定すると CLI / config / 監視全てが噛み合わない。実際は `EthernetN`（内部キー）+ `Ethernet<panel>/<sub>`（前面パネル名）+ `Ethernet<panel>/<sub>a..d`（breakout）が安定した運用慣行。
-- **回避策**:
-  - CLI 入出力では `Ethernet<panel>/<sub>` を使う（`show interface alias` 出力参照）。
-  - 自動化スクリプトでは CONFIG_DB の `PORT|EthernetN` を直接参照する。
-  - chassis では `Ethernet<panel>` の `panel` をリニアに振る運用が主流で、slot 番号を埋め込む `ets<X>p<Y>` 命名は採用例なし。
+    ### 2. CLI / sonic-utilities / yang への変更は無い
 
-### 2. CLI / sonic-utilities / yang への変更は無い
+    - **HLD 記述**: stage 2/3 では `Ethernet` prefix への依存をコードとテストから除去する。
+    - **実装位置**: `sonic-utilities` の `config` / `show` / `swssconfig` / `sonic-yang-models` のいずれにも HLD 由来の改修は確認できない。`scripts/portconfig` / `swsscommon` の interface 名処理は `Ethernet` prefix を前提に書かれた箇所が多数残存。
+    - **読者への影響**: 「Stage 2 完了済み」と仮定して `Ethernet` 以外の internal name で CONFIG_DB を書くと `intfmgrd` / `portsyncd` が処理しない／クラッシュする可能性がある。
+    - **回避策**: 内部名は `EthernetN`（N は lanes 開始番号と同期）を厳守。chassis でも `Ethernet-IB<n>` / `Ethernet<n>` 等の既存 prefix を踏襲する。
 
-- **HLD 記述**: stage 2/3 では `Ethernet` prefix への依存をコードとテストから除去する。
-- **実装位置**: `sonic-utilities` の `config` / `show` / `swssconfig` / `sonic-yang-models` のいずれにも HLD 由来の改修は確認できない。`scripts/portconfig` / `swsscommon` の interface 名処理は `Ethernet` prefix を前提に書かれた箇所が多数残存。
-- **読者への影響**: 「Stage 2 完了済み」と仮定して `Ethernet` 以外の internal name で CONFIG_DB を書くと `intfmgrd` / `portsyncd` が処理しない／クラッシュする可能性がある。
-- **回避策**: 内部名は `EthernetN`（N は lanes 開始番号と同期）を厳守。chassis でも `Ethernet-IB<n>` / `Ethernet<n>` 等の既存 prefix を踏襲する。
+    ### 3. PortChannel 等 LAG 系命名の決定は HLD 上未解決のまま
 
-### 3. PortChannel 等 LAG 系命名の決定は HLD 上未解決のまま
+    - **HLD 記述**: PortChannel 命名は未解決として保留。
+    - **実装位置**: `PORTCHANNEL|PortChannel<N>` 形式が CONFIG_DB / yang / CLI ともに統一実装。
+    - **読者への影響**: HLD で「未解決」と読んで独自命名を試みると CONFIG_DB スキーマと衝突。
+    - **回避策**: PortChannel 名は `PortChannel<数値>` の慣行に従う。
 
-- **HLD 記述**: PortChannel 命名は未解決として保留。
-- **実装位置**: `PORTCHANNEL|PortChannel<N>` 形式が CONFIG_DB / yang / CLI ともに統一実装。
-- **読者への影響**: HLD で「未解決」と読んで独自命名を試みると CONFIG_DB スキーマと衝突。
-- **回避策**: PortChannel 名は `PortChannel<数値>` の慣行に従う。
+    ### 結論
 
-### 結論
+    **本 HLD は採用されなかった**。現行 master は従来通り `EthernetN`（内部）+ `Ethernet<panel>/<sub>`（alias）の 2 階層命名で安定しており、本ページの記述は「提案として残った歴史的設計」として読むこと。実運用で参照すべきは各 SKU の `port_config.ini` および `CONFIG_DB.PORT` の実値。
 
-**本 HLD は採用されなかった**。現行 master は従来通り `EthernetN`（内部）+ `Ethernet<panel>/<sub>`（alias）の 2 階層命名で安定しており、本ページの記述は「提案として残った歴史的設計」として読むこと。実運用で参照すべきは各 SKU の `port_config.ini` および `CONFIG_DB.PORT` の実値。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - 提案 4 stage のいずれも採用されていない。`sonic-buildimage/device/<vendor>/<sku>/port_config.ini` の alias 列は `Ethernet<panel>/<sub>` 形式が標準で `etsXpY` 系は 0 件 (`grep -rn 'ets[0-9]' .cache/sonic-sources/sonic-buildimage/device/` ヒット 0)。
+    - 内部キー `EthernetN` も変更されておらず、CLI / config / 監視ツールはすべて `EthernetN` 前提のまま。
+    - 関連 Issue/PR: HLD 自体が提案段階で停止、後続 PR 無し。命名規約変更は影響範囲が広大なため事実上 freeze。
+    - **追加運用コマンド**: 現行命名の確認 — `show interfaces alias` で前面パネル名 (`Ethernet1/1` 等)、`redis-cli -n 4 keys 'PORT|Ethernet*' | head` で内部キー、`redis-cli -n 4 hget 'PORT|Ethernet0' alias` で alias 単体を取得。
 
-- 提案 4 stage のいずれも採用されていない。`sonic-buildimage/device/<vendor>/<sku>/port_config.ini` の alias 列は `Ethernet<panel>/<sub>` 形式が標準で `etsXpY` 系は 0 件 (`grep -rn 'ets[0-9]' .cache/sonic-sources/sonic-buildimage/device/` ヒット 0)。
-- 内部キー `EthernetN` も変更されておらず、CLI / config / 監視ツールはすべて `EthernetN` 前提のまま。
-- 関連 Issue/PR: HLD 自体が提案段階で停止、後続 PR 無し。命名規約変更は影響範囲が広大なため事実上 freeze。
-- **追加運用コマンド**: 現行命名の確認 — `show interfaces alias` で前面パネル名 (`Ethernet1/1` 等)、`redis-cli -n 4 keys 'PORT|Ethernet*' | head` で内部キー、`redis-cli -n 4 hget 'PORT|Ethernet0' alias` で alias 単体を取得。
+    > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
-> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-buildimage #22955: sonic-buildimage: update quicksilver-p port names (merged)](https://github.com/sonic-net/sonic-buildimage/pull/22955) — 新命名規則 (et[sX]pY[abcd] 系) の実プラットフォーム適用 PR の代表例。
-- [sonic-buildimage #22577: sonic-buildimage: update quicksilver-512 port names (merged)](https://github.com/sonic-net/sonic-buildimage/pull/22577) — 同上、512 ポート版。
-- 命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の [port_config.ini](../reference/glossary.md#term-port-config-ini) 更新で部分採用。
+    - [sonic-buildimage #22955: sonic-buildimage: update quicksilver-p port names (merged)](https://github.com/sonic-net/sonic-buildimage/pull/22955) — 新命名規則 (et[sX]pY[abcd] 系) の実プラットフォーム適用 PR の代表例。
+    - [sonic-buildimage #22577: sonic-buildimage: update quicksilver-512 port names (merged)](https://github.com/sonic-net/sonic-buildimage/pull/22577) — 同上、512 ポート版。
+    - 命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の [port_config.ini](../reference/glossary.md#term-port-config-ini) 更新で部分採用。
+<!-- /diff-admonition -->
 
 ## 引用元
 

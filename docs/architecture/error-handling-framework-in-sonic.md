@@ -185,34 +185,35 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 - **[fpmsyncd](../reference/glossary.md#term-fpmsyncd) / [bgpcfgd](../reference/glossary.md#term-bgpcfgd)**: route 失敗の receiver 候補
 - **debug-framework**: 同時期の framework と機能境界が曖昧（debug は dump 中心、本 framework は failure 通知）
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05 時点で本 framework は **エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装** な部分採用状態。
 
-2026-05 時点で本 framework は **エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装** な部分採用状態。
+    ### 1. どこで乖離が確認されたか
 
-### 1. どこで乖離が確認されたか
+    - **取り込み済み**:
+      - `sonic-swss-common/common/status_code_util.h:11-` で `SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED` 等の enum 群が定義されている。[HLD](../reference/glossary.md#term-hld) の `SWSS_RC_*` 体系の最低限は libswsscommon 側に入った。
+    - **未取り込み**:
+      - `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` のテーブル名 define は `sonic-swss-common/common/schema.h` に**存在しない**（`grep -n "ERROR_DB\|ERROR_ROUTE_TABLE" schema.h` 0 件。`lagid.h:16` の `LAG_ID_ALLOCATOR_ERROR_DB_ERROR` は別物の戻り値定数）。
+      - `sonic-swss/orchagent/` 配下に `ErrorListener` / `ErrorReporter` クラスは未定義。RouteOrch / NeighOrch の SAI 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。
+      - `sonic-utilities/` に `show error-database` / `sonic-clear error-database` CLI が無い。
 
-- **取り込み済み**:
-  - `sonic-swss-common/common/status_code_util.h:11-` で `SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED` 等の enum 群が定義されている。[HLD](../reference/glossary.md#term-hld) の `SWSS_RC_*` 体系の最低限は libswsscommon 側に入った。
-- **未取り込み**:
-  - `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` のテーブル名 define は `sonic-swss-common/common/schema.h` に**存在しない**（`grep -n "ERROR_DB\|ERROR_ROUTE_TABLE" schema.h` 0 件。`lagid.h:16` の `LAG_ID_ALLOCATOR_ERROR_DB_ERROR` は別物の戻り値定数）。
-  - `sonic-swss/orchagent/` 配下に `ErrorListener` / `ErrorReporter` クラスは未定義。RouteOrch / NeighOrch の SAI 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。
-  - `sonic-utilities/` に `show error-database` / `sonic-clear error-database` CLI が無い。
+    ### 2. HLD と実装の差分の中身
 
-### 2. HLD と実装の差分の中身
+    HLD は「OrchAgent が SAI から失敗を受け取る → `ERROR_DB` の `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` に entry を produce → app（fpmsyncd / bgpcfgd 等）が listener で受信 → retry / rollback」というワークフローを定義。実装はエラーコード辞書のみで、**通知 transport（ERROR_DB）と consumer 経路が丸ごと欠落**。app は SAI 失敗を実質知り得ない。
 
-HLD は「OrchAgent が SAI から失敗を受け取る → `ERROR_DB` の `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` に entry を produce → app（fpmsyncd / bgpcfgd 等）が listener で受信 → retry / rollback」というワークフローを定義。実装はエラーコード辞書のみで、**通知 transport（ERROR_DB）と consumer 経路が丸ごと欠落**。app は SAI 失敗を実質知り得ない。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    - BGP で route install が SAI レベルで失敗しても、fpmsyncd / bgpcfgd には「成功扱い」で帰る。`bgp` 側の RIB と ASIC FIB が**サイレントに乖離**する古典的問題が、本 framework の HLD 上の解決にもかかわらず実装されていない。
+    - 「`show error-database` で失敗を一覧できるはず」と読者が期待しても CLI が無い。
+    - retry / rollback ロジックを app 側に書く前提だったが、入力 stream が無いので書きようがない。
 
-- BGP で route install が SAI レベルで失敗しても、fpmsyncd / bgpcfgd には「成功扱い」で帰る。`bgp` 側の RIB と ASIC FIB が**サイレントに乖離**する古典的問題が、本 framework の HLD 上の解決にもかかわらず実装されていない。
-- 「`show error-database` で失敗を一覧できるはず」と読者が期待しても CLI が無い。
-- retry / rollback ロジックを app 側に書く前提だったが、入力 stream が無いので書きようがない。
+    ### 4. 回避策 / 対応方法
 
-### 4. 回避策 / 対応方法
-
-- **SAI 失敗の発見**: syslog の `SAI_STATUS_*` を grep するか、`swssloglevel -l NOTICE -c <orch>` で OrchAgent のログを上げる。`ASIC_DB` の `ERROR` 状態を `redis-cli -n 1 keys` で覗くしかない。
-- **RIB/FIB 乖離検知**: `show ip route` と `show ip fib` の突合スクリプトを別途運用ツール側で実装。[FRR](../reference/glossary.md#term-frr) の `show bgp ipv4 unicast detail` と `sonic-cli show ip route` を突合する。
-- 上流取り込みを望む場合は HLD 自体を現行 master 構造（`Producer/ConsumerStateTable`、`status_code_util.h` の enum 活用）に合わせて再ドラフトする必要がある。本ページの記述は仕様参考扱い。
+    - **SAI 失敗の発見**: syslog の `SAI_STATUS_*` を grep するか、`swssloglevel -l NOTICE -c <orch>` で OrchAgent のログを上げる。`ASIC_DB` の `ERROR` 状態を `redis-cli -n 1 keys` で覗くしかない。
+    - **RIB/FIB 乖離検知**: `show ip route` と `show ip fib` の突合スクリプトを別途運用ツール側で実装。[FRR](../reference/glossary.md#term-frr) の `show bgp ipv4 unicast detail` と `sonic-cli show ip route` を突合する。
+    - 上流取り込みを望む場合は HLD 自体を現行 master 構造（`Producer/ConsumerStateTable`、`status_code_util.h` の enum 活用）に合わせて再ドラフトする必要がある。本ページの記述は仕様参考扱い。
+<!-- /diff-admonition -->
 
 ## 引用元
 

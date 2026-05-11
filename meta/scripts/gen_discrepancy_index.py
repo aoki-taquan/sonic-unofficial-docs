@@ -28,12 +28,15 @@ OUTPUT = DOCS_DIR / "reference" / "verification" / "discrepancy-index.md"
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n?(.*)$", re.DOTALL)
 
 # 「実装との乖離」セクションを拾う見出しパターン
+# - 旧来の `## 実装との乖離`
+# - inject_diff_admonition.py で導入された `!!! diff "HLD と実装の差分"` admonition
 DISC_HEADING_RE = re.compile(
-    r"^##\s+(?:実装との乖離|現行実装との乖離|HLD と実装の乖離)(?:[^\n]*)$",
+    r"^(?:##\s+(?:実装との乖離|現行実装との乖離|HLD と実装の乖離)(?:[^\n]*)"
+    r"|!!! diff(?:\s+\"[^\"]*\")?)$",
     re.MULTILINE,
 )
-# 次の `##` セクション開始
-NEXT_HEADING_RE = re.compile(r"^##\s+", re.MULTILINE)
+# 次の `##` セクション開始 / admonition 終端マーカー
+NEXT_HEADING_RE = re.compile(r"^(?:##\s+|<!-- /diff-admonition -->)", re.MULTILINE)
 
 MONITOR_LABEL = {
     "not_implemented": "未実装",
@@ -102,6 +105,13 @@ def extract_disc_summary(body: str, src_dir: str = "") -> str:
     rest = body[start:]
     nxt = NEXT_HEADING_RE.search(rest)
     section = rest[: nxt.start()] if nxt else rest
+
+    # `!!! diff` admonition の body は 4 スペース indent されているので剥がす
+    if m.group(0).startswith("!!! diff"):
+        section = "\n".join(
+            line[4:] if line.startswith("    ") else line
+            for line in section.split("\n")
+        )
 
     # 最初の段落（空行区切り）を取り出す
     paragraphs = [p.strip() for p in re.split(r"\n\s*\n", section) if p.strip()]

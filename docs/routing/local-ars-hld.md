@@ -97,51 +97,52 @@ flowchart LR
 - 順序逆転 → idle window が小さすぎないか
 - カウンタが進まない → `show ars` の active flowlet 数を確認、SAI debug counter で ARS reroute 統計を確認
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-10 時点の現行 master を裏取り。**Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了**。
 
-2026-05-10 時点の現行 master を裏取り。**Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了**。
+    ### 1. `ArsOrch` 等の orch 未実装
 
-### 1. `ArsOrch` 等の orch 未実装
+    - **HLD 記述**: `ArsOrch`（または `NextHopGroupOrch` 拡張）が `ARS` / `ARS_PROFILE` / `ARS_INTERFACE` テーブルを subscribe して SAI ARS object に反映する。
+    - **実装位置**: `sonic-swss/orchagent/` に `arsorch.cpp` / `arsorch.h` 相当ファイル無し（grep ヒット 0）。`nhgorch.cpp` (NhgOrch) にも ARS 連携コードは存在しない。
+    - **差分の中身**: orch 層の処理が無いため [CONFIG_DB](../reference/glossary.md#term-config_db) に `ARS|*` を書いても何も起きない。`gDirectory` への ArsOrch 登録も無い。
+    - **読者への影響**: 設定しても ASIC への反映経路が存在しないため、ARS は機能しない。
+    - **回避策**:
+      - **コミュニティ SONiC master では現状利用不可**。
+      - ベンダー版 SONiC（NVIDIA NOS の SX 系などが先行実装）または upstream の PR を追跡する。
+      - 機能要件として「flowlet 風の動的 ECMP」が必要なら、現状は ASIC ベンダーの platform-specific 設定（sai.profile の vendor extension）か、SONiC 上での hash perturbation（policy-based hashing で hash seed をローテートする）で部分的に代替する。
 
-- **HLD 記述**: `ArsOrch`（または `NextHopGroupOrch` 拡張）が `ARS` / `ARS_PROFILE` / `ARS_INTERFACE` テーブルを subscribe して SAI ARS object に反映する。
-- **実装位置**: `sonic-swss/orchagent/` に `arsorch.cpp` / `arsorch.h` 相当ファイル無し（grep ヒット 0）。`nhgorch.cpp` (NhgOrch) にも ARS 連携コードは存在しない。
-- **差分の中身**: orch 層の処理が無いため [CONFIG_DB](../reference/glossary.md#term-config_db) に `ARS|*` を書いても何も起きない。`gDirectory` への ArsOrch 登録も無い。
-- **読者への影響**: 設定しても ASIC への反映経路が存在しないため、ARS は機能しない。
-- **回避策**:
-  - **コミュニティ SONiC master では現状利用不可**。
-  - ベンダー版 SONiC（NVIDIA NOS の SX 系などが先行実装）または upstream の PR を追跡する。
-  - 機能要件として「flowlet 風の動的 ECMP」が必要なら、現状は ASIC ベンダーの platform-specific 設定（sai.profile の vendor extension）か、SONiC 上での hash perturbation（policy-based hashing で hash seed をローテートする）で部分的に代替する。
+    ### 2. CONFIG_DB スキーマ / yang module 未取り込み
 
-### 2. CONFIG_DB スキーマ / yang module 未取り込み
+    - **HLD 記述**: yang module `sonic-ars.yang` を追加し、`ARS` / `ARS_PROFILE` / `ARS_INTERFACE` / `ARS_NEXTHOP_GROUP_MAP` テーブルを定義する。
+    - **実装位置**: `sonic-buildimage/src/sonic-yang-models/yang-models/` に `sonic-ars.yang` 無し。`sonic-cfggen` のテンプレート集にも参照無し。
+    - **差分の中身**: yang validation が ARS テーブルを受け付けないため、`config_db.json` に `ARS` セクションを書くと `sonic-cfggen` でエラーになる可能性がある（ConfigMgmt の strict 検証時）。
+    - **読者への影響**: 設定ファイルとして書く手段が無い。
+    - **回避策**: 設定を試したい場合は `sonic-db-cli CONFIG_DB HSET 'ARS|global' admin_mode enabled` のように [Redis](../reference/glossary.md#term-redis) 直書きで yang を迂回する。ただし orch が受けないため効果は無い。
 
-- **HLD 記述**: yang module `sonic-ars.yang` を追加し、`ARS` / `ARS_PROFILE` / `ARS_INTERFACE` / `ARS_NEXTHOP_GROUP_MAP` テーブルを定義する。
-- **実装位置**: `sonic-buildimage/src/sonic-yang-models/yang-models/` に `sonic-ars.yang` 無し。`sonic-cfggen` のテンプレート集にも参照無し。
-- **差分の中身**: yang validation が ARS テーブルを受け付けないため、`config_db.json` に `ARS` セクションを書くと `sonic-cfggen` でエラーになる可能性がある（ConfigMgmt の strict 検証時）。
-- **読者への影響**: 設定ファイルとして書く手段が無い。
-- **回避策**: 設定を試したい場合は `sonic-db-cli CONFIG_DB HSET 'ARS|global' admin_mode enabled` のように [Redis](../reference/glossary.md#term-redis) 直書きで yang を迂回する。ただし orch が受けないため効果は無い。
+    ### 3. CLI（`config ars` / `show ars`）未取り込み
 
-### 3. CLI（`config ars` / `show ars`）未取り込み
+    - **HLD 記述**: `config ars enable` / `config ars profile add ...` / `show ars` / `show ars profile` を `sonic-utilities` に追加。
+    - **実装位置**: `sonic-utilities/config/` および `sonic-utilities/show/` に `ars` モジュール無し（grep ヒット 0）。
+    - **差分の中身**: CLI エントリポイントが存在しない。
+    - **読者への影響**: 本ページの CLI 例はすべて動かない。
+    - **回避策**: 上記同様、コミュニティ master では使えない。
 
-- **HLD 記述**: `config ars enable` / `config ars profile add ...` / `show ars` / `show ars profile` を `sonic-utilities` に追加。
-- **実装位置**: `sonic-utilities/config/` および `sonic-utilities/show/` に `ars` モジュール無し（grep ヒット 0）。
-- **差分の中身**: CLI エントリポイントが存在しない。
-- **読者への影響**: 本ページの CLI 例はすべて動かない。
-- **回避策**: 上記同様、コミュニティ master では使えない。
+    ### 4. SAI ARS API は community SAI に取り込み済み
 
-### 4. SAI ARS API は community SAI に取り込み済み
+    - **実装位置**: `sonic-sairedis/unittest/meta/TestMeta.cpp:1821,1857` で `SAI_OBJECT_TYPE_ARS` / `SAI_OBJECT_TYPE_ARS_PROFILE` の create/get/set/remove 操作を unittest が実施。SAI header 側で型・属性は定義済み。
+    - **差分の中身**: SAI 層は ready、SONiC 上位層（orch / yang / CLI）が未取り込みの状態。
+    - **読者への影響**: ASIC ベンダーが SAI ARS をサポートしていても SONiC からは触れない。
+    - **回避策**: 自前で orch を実装すれば SAI 経由で叩ける（実装労力大）。あるいは ASIC ベンダーが提供する out-of-tree のプラグインを利用する。
 
-- **実装位置**: `sonic-sairedis/unittest/meta/TestMeta.cpp:1821,1857` で `SAI_OBJECT_TYPE_ARS` / `SAI_OBJECT_TYPE_ARS_PROFILE` の create/get/set/remove 操作を unittest が実施。SAI header 側で型・属性は定義済み。
-- **差分の中身**: SAI 層は ready、SONiC 上位層（orch / yang / CLI）が未取り込みの状態。
-- **読者への影響**: ASIC ベンダーが SAI ARS をサポートしていても SONiC からは触れない。
-- **回避策**: 自前で orch を実装すれば SAI 経由で叩ける（実装労力大）。あるいは ASIC ベンダーが提供する out-of-tree のプラグインを利用する。
+    ### 結論
 
-### 結論
+    **Local ARS は SAI 層まで来ているが SONiC 上位層が未着手**。AI / HPC 向けの adaptive routing が必要な場合はベンダー版 SONiC 採用か community 実装の登場を待つ。本ページの記述は仕様理解と将来取り込みに備えた参考資料。
 
-**Local ARS は SAI 層まで来ているが SONiC 上位層が未着手**。AI / HPC 向けの adaptive routing が必要な場合はベンダー版 SONiC 採用か community 実装の登場を待つ。本ページの記述は仕様理解と将来取り込みに備えた参考資料。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-swss #3597: Local ARS (Adaptive Routing and Switching) (open)](https://github.com/sonic-net/sonic-swss/pull/3597) — 本 HLD の本体取り込み PR。2026-05 時点で open であり master 未取り込み。
+    - [sonic-swss #3597: Local ARS (Adaptive Routing and Switching) (open)](https://github.com/sonic-net/sonic-swss/pull/3597) — 本 HLD の本体取り込み PR。2026-05 時点で open であり master 未取り込み。
+<!-- /diff-admonition -->
 
 ## 引用元
 

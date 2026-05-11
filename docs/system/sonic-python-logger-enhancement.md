@@ -210,46 +210,47 @@ LOGGER|<component>
 - redis 未起動で例外になる場合、`enable_runtime_config=False` のまま使われていないか・初期化順序を確認
 - C++ logger と混在する component で動作が不一致な場合、`require_manual_refresh` の値が想定どおりか確認
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-11 時点の現行 master を裏取り。
 
-2026-05-11 時点の現行 master を裏取り。
+    ### 1. ファイル + 行番号
 
-### 1. ファイル + 行番号
+    - **取り込み済み**: `sonic-net/sonic-buildimage` `src/sonic-py-common/sonic_py_common/syslogger.py` L26（`enable_runtime_config` 引数）、同 L34-L36（既存 handler の `removeHandler` 重複防止）、同 L48-L69（`update_log_level()` の CONFIG_DB.LOGGER 読み取りと初回 `require_manual_refresh='true'` 書き込み、redis 未起動時の `(False, msg)` 返却）。
+    - **取り込み済み**: `sonic-net/sonic-utilities` `config/syslog.py` L647-L686（`config syslog level` サブコマンド、`require_manual_refresh` 判定、対象プロセスへの SIGHUP 送出）。
+    - **HLD と差分あり**: HLD が要求する `SysLogger` の **singleton 化**（`__new__` / `_instance` 共有）は **未実装**。現行は普通の `class SysLogger:` で、同名 logger に対する `logging.getLogger(name)` 共有 + 既存 handler 除去で重複ハンドラを抑止している。
 
-- **取り込み済み**: `sonic-net/sonic-buildimage` `src/sonic-py-common/sonic_py_common/syslogger.py` L26（`enable_runtime_config` 引数）、同 L34-L36（既存 handler の `removeHandler` 重複防止）、同 L48-L69（`update_log_level()` の CONFIG_DB.LOGGER 読み取りと初回 `require_manual_refresh='true'` 書き込み、redis 未起動時の `(False, msg)` 返却）。
-- **取り込み済み**: `sonic-net/sonic-utilities` `config/syslog.py` L647-L686（`config syslog level` サブコマンド、`require_manual_refresh` 判定、対象プロセスへの SIGHUP 送出）。
-- **HLD と差分あり**: HLD が要求する `SysLogger` の **singleton 化**（`__new__` / `_instance` 共有）は **未実装**。現行は普通の `class SysLogger:` で、同名 logger に対する `logging.getLogger(name)` 共有 + 既存 handler 除去で重複ハンドラを抑止している。
+    ### 2. 差分の中身
 
-### 2. 差分の中身
+    HLD は概ね以下を要求していた:
 
-HLD は概ね以下を要求していた:
+    ```python
+    class SysLogger:
+        _instances = {}
+        def __new__(cls, identifier, *args, **kwargs):
+            if identifier not in cls._instances:
+                cls._instances[identifier] = super().__new__(cls)
+            return cls._instances[identifier]
+    ```
 
-```python
-class SysLogger:
-    _instances = {}
-    def __new__(cls, identifier, *args, **kwargs):
-        if identifier not in cls._instances:
-            cls._instances[identifier] = super().__new__(cls)
-        return cls._instances[identifier]
-```
+    現行実装は `__new__` を override せず、毎回新しいインスタンスを返す。同一 `identifier` で `SysLogger("foo")` を 2 回呼ぶと **別オブジェクトだが、内部の `logging.Logger` は `getLogger("foo")` で共有**される。L34-L36 で先に登録された handler を `removeHandler` することで「同一 logger に同じ handler が複数付く」事故を回避している。
 
-現行実装は `__new__` を override せず、毎回新しいインスタンスを返す。同一 `identifier` で `SysLogger("foo")` を 2 回呼ぶと **別オブジェクトだが、内部の `logging.Logger` は `getLogger("foo")` で共有**される。L34-L36 で先に登録された handler を `removeHandler` することで「同一 logger に同じ handler が複数付く」事故を回避している。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    - 実用上のログ重複は発生しないため、エンドユーザ運用には影響なし。
+    - ただし `SysLogger` インスタンスを `is` 比較したり、インスタンス属性に状態を持たせる設計の上位コードを書くと、想定外に複数オブジェクトが存在する。
+    - redis 未起動状態で `update_log_level()` を呼ぶと例外を握って `(False, msg)` を返すだけで、自動フォールバックは無い。
 
-- 実用上のログ重複は発生しないため、エンドユーザ運用には影響なし。
-- ただし `SysLogger` インスタンスを `is` 比較したり、インスタンス属性に状態を持たせる設計の上位コードを書くと、想定外に複数オブジェクトが存在する。
-- redis 未起動状態で `update_log_level()` を呼ぶと例外を握って `(False, msg)` を返すだけで、自動フォールバックは無い。
+    ### 4. 回避策
 
-### 4. 回避策
+    - 「同じ component で 1 つの logger 状態を共有したい」場合は `logging.getLogger(name)` の共有性に依存する（インスタンス側ではなく logger 側に状態を持たせる）。
+    - redis 未起動時に備えるなら、上位で `update_log_level()` の戻り値を `(success, msg)` で判定し、`enable_runtime_config=False` のフォールバック経路を別途用意する。
+    - 短命 Python スクリプトは SIGHUP では追従しないので、起動時に必ず `update_log_level()` を呼ぶか、`config syslog level` の `--container` / `--program` で対象プロセスを明示する。
 
-- 「同じ component で 1 つの logger 状態を共有したい」場合は `logging.getLogger(name)` の共有性に依存する（インスタンス側ではなく logger 側に状態を持たせる）。
-- redis 未起動時に備えるなら、上位で `update_log_level()` の戻り値を `(success, msg)` で判定し、`enable_runtime_config=False` のフォールバック経路を別途用意する。
-- 短命 Python スクリプトは SIGHUP では追従しないので、起動時に必ず `update_log_level()` を呼ぶか、`config syslog level` の `--container` / `--program` で対象プロセスを明示する。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [GitHub Issue / PR の関連リンクは未確認] — `SysLogger` 拡張 (runtime log level / `require_manual_refresh` / SIGHUP) は `sonic-py-common` の小規模機能追加として段階的に取り込まれており、HLD と 1:1 で紐づくトラッキング Issue / PR は確認できず。
+    - [GitHub Issue / PR の関連リンクは未確認] — `SysLogger` 拡張 (runtime log level / `require_manual_refresh` / SIGHUP) は `sonic-py-common` の小規模機能追加として段階的に取り込まれており、HLD と 1:1 で紐づくトラッキング Issue / PR は確認できず。
+<!-- /diff-admonition -->
 
 ## 引用元
 

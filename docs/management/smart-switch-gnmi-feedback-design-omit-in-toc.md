@@ -219,20 +219,21 @@ DASH_ROUTE_GROUP_TABLE:{group_id}
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-## 実装との乖離（裏取りメモ（Verifier batch 29））
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    HLD が要件として掲げる以下の構成要素を現行 master の `sonic-gnmi` に確認できなかった。
 
-HLD が要件として掲げる以下の構成要素を現行 master の `sonic-gnmi` に確認できなかった。
+    - `version_id` フィールドを必須にする gNMI スキーマ拡張: `sonic-gnmi` 配下に `version_id` の参照なし
+    - batch gNMI 操作: `BatchGetRequest` / `BatchSetRequest` 系 API が `gnmi_server/` に存在しない
+    - DPU `APPL_STATE_DB` スキーマ: `database_config_dpu.json` には `APPL_DB` / `ASIC_DB` / `COUNTERS_DB` 等は定義されているが、HLD が要求する `APPL_STATE_DB` 専用 instance はテストデータレベルでは確認できず
+    - ZMQ 経由の swss 連携: `gnmi_server/` 配下に SmartSwitch 専用 ZMQ handler は未検出
 
-- `version_id` フィールドを必須にする gNMI スキーマ拡張: `sonic-gnmi` 配下に `version_id` の参照なし
-- batch gNMI 操作: `BatchGetRequest` / `BatchSetRequest` 系 API が `gnmi_server/` に存在しない
-- DPU `APPL_STATE_DB` スキーマ: `database_config_dpu.json` には `APPL_DB` / `ASIC_DB` / `COUNTERS_DB` 等は定義されているが、HLD が要求する `APPL_STATE_DB` 専用 instance はテストデータレベルでは確認できず
-- ZMQ 経由の swss 連携: `gnmi_server/` 配下に SmartSwitch 専用 ZMQ handler は未検出
+    HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合は別経路（HA manager / hamgrd）が進行中。本ページの主張は提案段階のため `discrepancy-found` に変更。
 
-HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合は別経路（HA manager / hamgrd）が進行中。本ページの主張は提案段階のため `discrepancy-found` に変更。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [GitHub Issue / PR の関連リンクは未確認] — SmartSwitch DPU 側 APPL_STATE_DB と version_id フィードバック機構は SmartSwitch 全体の HA / gNMI 改修 PR 群に取り込まれており、本 HLD 単独のトラッキング Issue / PR は確認できず。
+    - [GitHub Issue / PR の関連リンクは未確認] — SmartSwitch DPU 側 APPL_STATE_DB と version_id フィードバック機構は SmartSwitch 全体の HA / gNMI 改修 PR 群に取り込まれており、本 HLD 単独のトラッキング Issue / PR は確認できず。
+<!-- /diff-admonition -->
 
 <!-- next-action -->
 ## このページを読んだ後の次アクション
