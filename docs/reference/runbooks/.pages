@@ -46,3 +46,10 @@ nav:
   - smartswitch-dpu-image-install-failure.md
   - platform-fan-psu-anomaly.md
   - interface-counters-reset.md
+  - bgp-graceful-restart-failure.md
+  - lldp-neighbor-flapping.md
+  - port-admin-up-oper-down.md
+  - arp-entry-stuck.md
+  - swss-orchagent-busy-loop.md
+  - config-reload-stuck.md
+  - route-not-installed-in-fib.md

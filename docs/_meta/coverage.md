@@ -20,16 +20,16 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **835** ページ。
+全 **844** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 597 |
+| code-verified | 598 |
 | discrepancy-found | 46 |
 | issue-confirmed | 0 |
-| hld-only | 0 |
-| meta | 182 |
-| stub | 10 |
+| hld-only | 7 |
+| meta | 184 |
+| stub | 9 |
 
 ## area 別マトリクス
 
@@ -45,7 +45,7 @@ last_verified: 2026-05-11
 | `management` | 35 | 8 | 0 | 0 | 0 | 1 | 44 |
 | `overlay` | 8 | 1 | 0 | 0 | 0 | 1 | 10 |
 | `platform` | 36 | 7 | 0 | 0 | 0 | 1 | 44 |
-| `reference` | 324 | 0 | 0 | 0 | 5 | 1 | 330 |
+| `reference` | 325 | 0 | 0 | 7 | 7 | 0 | 339 |
 | `routing` | 45 | 6 | 0 | 0 | 0 | 1 | 52 |
 | `switching` | 15 | 4 | 0 | 0 | 0 | 1 | 20 |
 | `system` | 61 | 9 | 0 | 0 | 1 | 1 | 72 |
