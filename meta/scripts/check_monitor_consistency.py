@@ -56,8 +56,10 @@ MONITOR_RULES: dict[str, dict[str, list]] = {
     },
     "partially_implemented": {
         "all_of_groups": [
-            [r"一部のみ", r"部分的", r"partial", r"一部だけ", r"片方のみ"],
-            [r"未実装", r"未取り込み", r"未対応", r"未\s*マージ"],
+            [r"一部のみ", r"部分的", r"partial", r"一部だけ", r"片方のみ",
+             r"部分のみ", r"一部実装", r"部分実装"],
+            [r"未実装", r"未取り込み", r"未対応", r"未\s*マージ",
+             r"欠落", r"未だ実装", r"実装されていな"],
         ],
     },
     "evolved_beyond_hld": {
