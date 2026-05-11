@@ -50,6 +50,22 @@ related:
 |---|---|
 | なし（read-only） | `show clock` は CONFIG_DB を読まない |
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show clock / show clock timezones"]
+  DC["date / timedatectl list-timezones"]
+  SYS["/etc/timezone / systemd-timedated"]
+  CLI --> DC
+  DC --> SYS
+```
+
+!!! note "凡例"
+    show 系 (CLI → date/timedatectl) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -2,7 +2,7 @@
 title: P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）
 description: "P4RT App の Read キャッシュ（PI 形式の table_entry_cache_） — P4 Runtime (P4RT) サーバはコントローラから 3 種の操作（Stream / Write / Read）を受ける。"
 area: management
-verification: code-verified
+verification: hld-only
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

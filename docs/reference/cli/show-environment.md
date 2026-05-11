@@ -55,6 +55,22 @@ SONiC では **platform_daemons (`pmon` コンテナ)** が `STATE_DB` の `TEMP
 
 なし（`sensors(1)` 経由で `/sys/class/hwmon` を読むのみ）。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show environment"]
+  SE["sudo sensors<br/>(lm-sensors)"]
+  HW["I2C / hwmon ドライバ"]
+  CLI --> SE
+  SE --> HW
+```
+
+!!! note "凡例"
+    show 系 (CLI → lm-sensors → HW) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

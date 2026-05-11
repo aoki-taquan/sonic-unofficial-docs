@@ -2,7 +2,7 @@
 title: ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）
 description: "ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ） — SONiC の data plane ACL の 初期設計 を定義する文書。"
 area: acl-qos
-verification: code-verified
+verification: hld-only
 last_verified: 2026-05-09
 sources:
   - repo: sonic-net/SONiC

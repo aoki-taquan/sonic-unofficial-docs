@@ -60,6 +60,22 @@ mmuconfig -l [-n <namespace>] [-vv]
 
 [^1]: `show buffer` と `configuration` command の定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2466>
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show buffer configuration"]
+  MM["mmuconfig -l"]
+  CDB[("CONFIG_DB<br/>BUFFER_POOL / BUFFER_PROFILE<br/>BUFFER_PG / BUFFER_QUEUE")]
+  CLI --> MM
+  CDB --> MM
+```
+
+!!! note "凡例"
+    show 系 (CLI → mmuconfig ← CONFIG_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

@@ -1,0 +1,4 @@
+{
+  "_comment": "verification: code-verified / runbook-verified を自称するページのうち、本文に「未実装」「TBD」等のキーワードが含まれてもよい例外パス一覧。例えば「未実装機能の一覧」を扱う meta ページ、用語集など。Path は repo root からの相対 (docs/...) を指定。",
+  "exceptions": []
+}

@@ -193,6 +193,26 @@ Next: SONiC-OS-202311
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["sonic-installer"]
+  BL["bootloader<br/>(Aboot / GRUB / UBoot)"]
+  IMG["新 SONiC イメージ / next-boot"]
+  CDB[("CONFIG_DB<br/>WARM_RESTART_ENABLE_TABLE<br/>WARM_RESTART_TABLE")]
+  DK["docker upgrade-docker"]
+  CLI --> BL
+  BL --> IMG
+  CLI --> CDB
+  CLI --> DK
+```
+
+!!! note "凡例"
+    image 管理 (CLI → bootloader / CONFIG_DB / docker) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

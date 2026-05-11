@@ -172,10 +172,6 @@ flowchart LR
   SC --> CDB1
   DM1["hostcfgd"]
   CDB1 --> DM1
-  CDB2[("CONFIG_DB<br/>SYSLOG_CONFIG_FEATURE")]
-  SC --> CDB2
-  DM2["hostcfgd"]
-  CDB2 --> DM2
 ```
 
 !!! note "凡例"

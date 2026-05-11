@@ -186,6 +186,24 @@ Warm reboot ...
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["reboot / fast-reboot / warm-reboot"]
+  SH["bash スクリプト<br/>(scripts/reboot 系)"]
+  WR[("STATE_DB<br/>WARM_RESTART hint")]
+  KD["kexec / systemctl reboot"]
+  CLI --> SH
+  SH --> WR
+  SH --> KD
+```
+
+!!! note "凡例"
+    再起動系 (CLI → スクリプト → STATE_DB / kexec) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

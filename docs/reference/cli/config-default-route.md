@@ -105,7 +105,7 @@ flowchart LR
   CDB0 --> DM0
   CDB1[("CONFIG_DB<br/>MGMT_INTERFACE")]
   SC --> CDB1
-  DM1["interfaces-config"]
+  DM1["mgmt-framework"]
   CDB1 --> DM1
 ```
 
