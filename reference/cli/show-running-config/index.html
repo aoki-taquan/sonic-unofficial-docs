@@ -18077,6 +18077,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23953,6 +24003,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -24238,6 +24338,25 @@ excerpt: |
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>}
 </span></code></pre></div>
 <!-- /usage-example -->
+
+<!-- ops-hint -->
+<h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li>現在 CONFIG_DB に載っている設定スナップショットの取得。</li>
+<li>BGP / VRF / interface ごとの部分出力。</li>
+</ul>
+<h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>show runningconfiguration all</code> は JSON 出力で巨大。区分ごとのサブコマンドが実用的。</li>
+<li>FRR 側 (bgp / zebra) は CONFIG_DB に同期されていない部分がある。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>bgp
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config&#39;</span>
+</span></code></pre></div>
+<!-- /ops-hint -->
 
 <div class="footnote">
 <hr />

@@ -17851,6 +17851,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -24012,6 +24062,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -24239,7 +24339,26 @@ excerpt: |
 </span></code></pre></div>
 <!-- /usage-example -->
 
-<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- ops-hint -->
+<h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li>BGP セッションが UP しているか、prefix 学習数が想定どおりかをオペ監視で確認する。</li>
+<li>障害切り分け時に隣接ステータス・received-routes・advertised-routes を順に追う。</li>
+</ul>
+<h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>show ip bgp summary</code> は default VRF のみで、VRF 設定がある場合は <code>show ip bgp vrf &lt;name&gt; summary</code> を使う。</li>
+<li>multi-ASIC 機種では <code>-n asic0</code> などで namespace を明示しないと一部 ASIC の状態が見えない。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>neighbors<span class="w"> </span><span class="m">10</span>.0.0.1
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>network<span class="w"> </span><span class="m">10</span>.0.0.0/24
+</span></code></pre></div>
+<!-- /ops-hint -->
+
+<h2 id="_15">関連ページ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">HLD: FRR-BGP Unified Mgmt Framework</a></li>
 <li><a href="../config-bgp/">CLI: config bgp</a></li>

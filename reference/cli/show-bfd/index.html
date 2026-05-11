@@ -23544,6 +23544,56 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -23698,7 +23748,26 @@ excerpt: |
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- ops-hint -->
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型的な利用シーン<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>BGP/Static の高速断検知で BFD セッションが UP しているかを確認する。</li>
+<li>障害時に session state と TX/RX interval、multiplier を確認して片側設定漏れを検出する。</li>
+</ul>
+<h3 id="_10">よくある落とし穴<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>show bfd summary</code> は STATE_DB ベースで、CONFIG_DB に session があっても peer 未到達なら DOWN のまま。</li>
+<li>multi-hop BFD は別グループ。<code>show bfd peer &lt;ip&gt; multihop</code> を使う必要がある。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>bfd<span class="w"> </span>summary
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>bfd<span class="w"> </span>peer<span class="w"> </span><span class="m">10</span>.0.0.1
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BFD_SESSION_TABLE|*&#39;</span>
+</span></code></pre></div>
+<!-- /ops-hint -->
+
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../show-bgp/">reference/CLI: show bgp</a></li>
 <li><a href="../show-ip/">reference/CLI: show ip</a></li>

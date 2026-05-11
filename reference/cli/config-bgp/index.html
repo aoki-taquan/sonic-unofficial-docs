@@ -17347,6 +17347,56 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -23956,6 +24006,56 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -24293,7 +24393,26 @@ excerpt: |
 </span></code></pre></div>
 <!-- /usage-example -->
 
-<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- ops-hint -->
+<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">典型的な利用シーン<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>メンテナンス前に対象隣接を <code>shutdown</code>、終了後 <code>startup</code> する運用。</li>
+<li>TSA (Traffic-Shift-Away) で機器全体の外向き advertise を一括停止する。</li>
+</ul>
+<h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>config bgp shutdown neighbor</code> は FRR には即反映だが CONFIG_DB 上は <code>admin_status</code> が変わるのみ。<code>config save</code> を忘れると再起動で戻る。</li>
+<li>TSA は AS-Path prepend で実現するため、対向側の bestpath ロジック次第では退避が遅延する。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>bgp
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>show<span class="w"> </span>bgp<span class="w"> </span>device-global
+</span></code></pre></div>
+<!-- /ops-hint -->
+
+<h2 id="_14">関連ページ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">HLD: FRR-BGP Unified Mgmt Framework</a></li>
 <li><a href="../../config-db/bgp-globals/">CONFIG_DB: BGP_GLOBALS</a></li>

@@ -18244,6 +18244,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23951,6 +24001,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -24179,6 +24279,24 @@
 <li><a href="../../../topics/11-reboot/">Topics: Reboot / Upgrade / Lifecycle</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">典型的な利用シーン<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>新 SONiC イメージのインストール、boot image 切替、image 削除。</li>
+</ul>
+<h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sonic-installer install</code> 後 reboot しないと反映されない。</li>
+<li><code>sonic-installer set-default</code> を間違えると意図しない image で起動する。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>sonic-installer<span class="w"> </span>list
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>boot
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>version
+</span></code></pre></div>
+<!-- /ops-hint -->
 
 <div class="footnote">
 <hr />

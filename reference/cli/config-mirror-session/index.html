@@ -23616,6 +23616,56 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -23846,7 +23896,26 @@ excerpt: |
 </span></code></pre></div>
 <!-- /usage-example -->
 
-<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- ops-hint -->
+<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">典型的な利用シーン<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>障害解析 / セキュリティ用途で ERSPAN / SPAN セッションを設定する。</li>
+<li>EVERFLOW ACL とセットでミラー先を変える。</li>
+</ul>
+<h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ERSPAN の src IP / dst IP が ASIC で到達不能だとセッションが INACTIVE のまま。</li>
+<li>GRE / ERSPAN type を機種が非サポートだと syslog にだけエラー、CLI は成功表示。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>show<span class="w"> </span>mirror_session
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>show<span class="w"> </span>acl<span class="w"> </span>table<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>MIRROR
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>show<span class="w"> </span>acl<span class="w"> </span>rule<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>MIRROR
+</span></code></pre></div>
+<!-- /ops-hint -->
+
+<h2 id="_14">関連ページ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../config-acl/">reference/CLI: config acl</a></li>
 <li><a href="../show-acl/">reference/CLI: show acl</a></li>

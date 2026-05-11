@@ -18226,6 +18226,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -24027,6 +24077,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -24170,6 +24270,25 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- ops-hint -->
+<h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="_7">典型的な利用シーン<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>counters / ARP / FDB / BGP セッションの状態をリセットする。</li>
+<li>障害解析前のベースラインクリア。</li>
+</ul>
+<h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sonic-clear counters</code> は累積カウンタを 0 にするのみで、<code>persistent-watermark</code> は別コマンド。</li>
+<li><code>sonic-clear fdb all</code> を本番で打つと一時的に L2 通信が flood に切替わる。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>arp
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>mac
+</span></code></pre></div>
+<!-- /ops-hint -->
+
 <div class="footnote">
 <hr />
 <ol>

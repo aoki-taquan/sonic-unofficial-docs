@@ -17522,6 +17522,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23907,6 +23957,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -24174,6 +24274,25 @@ excerpt: |
 <li><a href="../../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">典型的な利用シーン<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Static NAT / NAPT / Pool ベース dynamic NAT のセットアップ。</li>
+<li>NAT zone を境界インタフェースに割り当てる。</li>
+</ul>
+<h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ASIC の NAT capability を超えると追加 entry がドロップされる。<code>show nat statistics</code> で hardware 反映を確認。</li>
+<li><code>nat zone</code> を変更すると flow がリセットされ既存 connection が切断される。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>nat<span class="w"> </span>config
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>nat<span class="w"> </span>translations
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>nat<span class="w"> </span>statistics
+</span></code></pre></div>
+<!-- /ops-hint -->
 
 <div class="footnote">
 <hr />

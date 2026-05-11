@@ -23534,6 +23534,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23621,6 +23671,25 @@
 <li><a href="../../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型的な利用シーン<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>BIOS / CPLD / FPGA / SSD の firmware install と確認。</li>
+<li>fwutil でのスケジュール更新 (next / boot)。</li>
+</ul>
+<h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>install</code> 後の reboot 種別 (cold / warm / fast / power) を間違えると flash しない。</li>
+<li>firmware 競合状態で install を中断すると BIOS が brick することがある。電源断厳禁。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>status
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>version
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>fwutil<span class="w"> </span>show<span class="w"> </span>status
+</span></code></pre></div>
+<!-- /ops-hint -->
 
 <div class="footnote">
 <hr />

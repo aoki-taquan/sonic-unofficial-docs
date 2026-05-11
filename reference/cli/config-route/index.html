@@ -17501,6 +17501,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23753,6 +23803,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23931,6 +24031,24 @@ excerpt: |
 <!-- ref-triangle:end -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- ops-hint -->
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型的な利用シーン<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>static route の追加・更新、nexthop multipath 設定。</li>
+</ul>
+<h3 id="_11">よくある落とし穴<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>config route add</code> は CONFIG_DB の STATIC_ROUTE に書く。FRR の zebra に渡るまで 1〜2 秒遅延あり。</li>
+<li>nexthop が unreachable な route は kernel route table に出ない。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;STATIC_ROUTE|*&#39;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route static&#39;</span>
+</span></code></pre></div>
+<!-- /ops-hint -->
+
 <div class="footnote">
 <hr />
 <ol>

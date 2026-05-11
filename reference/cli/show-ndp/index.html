@@ -23495,6 +23495,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な利用シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある落とし穴
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-debug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連する show / debug
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23578,6 +23628,24 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- ops-hint -->
+<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型的な利用シーン<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>IPv6 隣接の NS/NA 状態確認、SLAAC 動作検証。</li>
+</ul>
+<h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Link-local アドレスは scope 付き表示。<code>fe80::xxx%Ethernet0</code> の <code>%</code> 以降は interface scope。</li>
+<li>Duplicate Address Detection (DAD) 失敗時は state が <code>FAILED</code> で kernel に残る。</li>
+</ul>
+<h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>ndp
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ip<span class="w"> </span>-6<span class="w"> </span>neigh<span class="w"> </span>show
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEIGH_TABLE:*&#39;</span>
+</span></code></pre></div>
+<!-- /ops-hint -->
+
 <div class="footnote">
 <hr />
 <ol>
