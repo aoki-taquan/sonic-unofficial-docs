@@ -114,3 +114,7 @@ elif vendor_name == 'Arista' and re.match(ARISTA_ENHANCED_LPO, vendor_pn):
 ## 実装との乖離（裏取りメモ (batch 30, 2026-05-11) — discrepancy-found）
 
 `sonic-platform-common` を grep した結果、本 HLD が前提とする `CmisEnhancedLpoApi` / `CmisEnhancedLpoCodes` / `CmisEnhancedLpoMemMap` クラス、`xcvr_api_factory.py` での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、`LPOTxHostInputVMA*` / `LPORxInputOMA*` フィールドのいずれも HEAD に取り込まれていない（`grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/` でヒット 0）。HLD は 2025 年 2 月 Arista 提案 (Rev 1.0) の段階で、現行 master には未着手の **提案文書**。本ページは設計の解説として残すが、`code-verified` には昇格できない。
+
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — LPO 拡張デバッグレジスタ (VMA / OMA per-lane) の Redis 公開は xcvrd / platform daemon 系の機能拡張 PR で散発的に追加されており、HLD 全体を束ねる上流 Issue は確認できず。

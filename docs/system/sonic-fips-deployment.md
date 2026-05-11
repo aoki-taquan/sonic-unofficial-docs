@@ -118,6 +118,12 @@ sonic-db-cli STATE_DB hgetall 'FIPS_STATS|state'
 
 CONFIG_DB の `FIPS|global` 表記は HLD どおりで問題なし。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #11494: \[TestOnly\] Support openssl fips disable openssl fips mod (open)](https://github.com/sonic-net/sonic-buildimage/pull/11494) — FIPS 有効/無効切替の長期 open PR。本 HLD の `/etc/fips/fips_enabled` 制御と直接関連。
+- [sonic-buildimage #11205: \[sonic-fips\] Makefile bugfix (open)](https://github.com/sonic-net/sonic-buildimage/pull/11205) — FIPS ビルド系の修正 PR。長期 open で取り込み停滞を示唆。
+- FIPS 140-3 全体（140-2 → 140-3 移行）を束ねるトラッキング Issue は確認できず。
+
 ## 関連 Topics
 
 - [15-security-aaa](../topics/15-security-aaa/index.md): セキュリティ機能全般

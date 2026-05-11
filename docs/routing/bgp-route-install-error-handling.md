@@ -166,6 +166,10 @@ config bgp error-handling disable
 
 **本 HLD（2019）は採用されなかった**。設計意図は後発の BGP Suppress FIB Pending（FRR `bgp suppress-fib-pending` + RTM_F_OFFLOAD）に引き継がれており、ERROR_DB 経由の仕組みは実装されていない。本ページは設計史としての参考。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — `ERROR_ROUTE_TABLE` / FIB-install pending の HLD 取り込みは fpmsyncd / orchagent の個別 PR に分散しており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

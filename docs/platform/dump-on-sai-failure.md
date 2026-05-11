@@ -198,6 +198,10 @@ sudo show techsupport
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — `syncd_dump.sh` / `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` の取り込みは sonic-sairedis の内部改修として進んだが、HLD と直接紐づくトラッキング Issue / PR は確認できず。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/SAI_failure_handling/dump_on_sai_failure.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

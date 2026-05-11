@@ -124,6 +124,12 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 - **読者への影響**: SONiC CLI だけで EVPN 設定が完結すると誤解しやすい
 - **回避**: 実運用では `frr.conf` template 差し替え、または `vtysh` で `address-family l2vpn evpn` を直接設定する
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-swss #2181: Missing ARP and ND Suppression implementation (open)](https://github.com/sonic-net/sonic-swss/issues/2181) — EVPN VXLAN HLD が前提とする ARP/ND suppression が未実装である旨の long-open issue。
+- [sonic-swss #3384: NEIGH_TABLE not populated with VXLAN routes (closed)](https://github.com/sonic-net/sonic-swss/issues/3384) — Type-2 neighbor 学習の不整合事例。
+- [sonic-swss #4262: \[EVPN-MH\] Add EVPN VXLAN Multihoming feature support (open)](https://github.com/sonic-net/sonic-swss/pull/4262) — EVPN multihoming 大型 PR。基本 EVPN HLD の機能セット完成度を高める。
+
 ## 5. 制限事項
 
 - **下位 ASIC 依存**: VXLAN encap/decap、Tunnel Termination の SAI サポート要

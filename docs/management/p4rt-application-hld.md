@@ -198,6 +198,11 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は c
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-pins #232: Device ID for SONiC Virtual Switch with P4RT (open)](https://github.com/sonic-net/sonic-pins/issues/232) — Virtual Switch 環境での P4RT device ID 扱いに関する未解決 issue。
+- [sonic-pins #1647: \[PDPI\] Move from `third_party/pins_infra/p4_pdpi` to `third_party/pins_infra/p4_infra/p4_pdpi` (open)](https://github.com/sonic-net/sonic-pins/pull/1647) — PINS 内 P4 PDPI のリファクタ進行中 PR。本 HLD の gRPC port 9559 サービス取り込みは sonic-pins 側で進行中だが SONiC 本体への統合トラッキングは未整理。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/p4rt_app_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

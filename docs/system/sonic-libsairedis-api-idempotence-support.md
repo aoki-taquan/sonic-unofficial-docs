@@ -141,6 +141,10 @@ DEFAULT_OBJ_<owner>_<obj_key>        → {attr: value, ...}
 - redis 上の warm restart 状態は `STATE_WARM_RESTART_TABLE` / `WARM_RESTART_TABLE` を読む。
 - 本 HLD は「採用されなかった代替案」として読み、現行の挙動は別 HLD `doc/warm-reboot/code_implementation.md` および syncd ソース、`doc/warm-reboot/sai_warmboot.md` を参照する。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — warm restart 用 OID キャッシュ / duplicate 抑止は sonic-sairedis 内部リファクタとして散発的に取り込まれており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/warm-reboot/sai_redis_api_idempotence.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/warm-reboot/sai_redis_api_idempotence.md)

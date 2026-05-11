@@ -201,6 +201,12 @@ show bfd summary
 
 > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-swss #4513: \[bfd\] SYSTEM_DEFAULTS|software_bfd should force software BFD over HW offload (open)](https://github.com/sonic-net/sonic-swss/issues/4513) — HW offload と software BFD の選択ロジック不備に関する open issue。
+- [sonic-swss #4511: \[bfd\] Honour software_bfd config to force software BFD over HW offload (open)](https://github.com/sonic-net/sonic-swss/pull/4511) — 上記 issue の対応 PR。
+- [sonic-swss #3515: \[swss\] add bfd session deletion handling in acceleration logic (open)](https://github.com/sonic-net/sonic-swss/pull/3515) — HW offload セッション削除パスの欠落補修 PR。HLD の bfdsyncd 経路に齟齬が残ることを示す。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bfd/BFD HW Offload for BGP session HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -196,6 +196,12 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 
 > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #22955: sonic-buildimage: update quicksilver-p port names (merged)](https://github.com/sonic-net/sonic-buildimage/pull/22955) — 新命名規則 (et[sX]pY[abcd] 系) の実プラットフォーム適用 PR の代表例。
+- [sonic-buildimage #22577: sonic-buildimage: update quicksilver-512 port names (merged)](https://github.com/sonic-net/sonic-buildimage/pull/22577) — 同上、512 ポート版。
+- 命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の port_config.ini 更新で部分採用。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-port-name/sonic-port-name.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

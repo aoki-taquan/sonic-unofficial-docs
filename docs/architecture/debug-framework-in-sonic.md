@@ -207,6 +207,11 @@ HLD は「コンポーネントが `linkWithFramework` で自身の dump callbac
 
 > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-utilities #1669: \[debug dump util\] Techsupport addition (merged)](https://github.com/sonic-net/sonic-utilities/pull/1669) — `debug dump` ユーティリティ自体の取り込み PR。HLD の「コンポーネント dump 登録 / assert 拡張」のうち、`show techsupport` 連携部分はここに収束した。
+- HLD が想定した汎用 assert 拡張・自動 dump 登録機構の包括的トラッキング Issue は **未確認**。実装は機能ごとの個別 PR に分散している。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/debug-framework/debug_framework_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

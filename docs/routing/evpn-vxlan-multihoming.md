@@ -131,6 +131,13 @@ flowchart LR
 
 **本ページの記述は HLD 提案レベルで、現行 master では機能として利用できない**。dual-attached host を扱う実運用構成では MC-LAG を選択する。本 HLD は将来的な機能ロードマップとして参考に留める。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-swss #4262: \[EVPN-MH\] Add EVPN VXLAN Multihoming feature support (open)](https://github.com/sonic-net/sonic-swss/pull/4262) — EVPN MH 機能の本体取り込み大型 PR。
+- [sonic-swss #4206: Add support for EVPN MH protocol field (open)](https://github.com/sonic-net/sonic-swss/pull/4206) — MH プロトコルフィールド追加 PR。
+- [sonic-swss #4039: Fdbsyncd changes for EVPN MH feature (open)](https://github.com/sonic-net/sonic-swss/pull/4039) — MH 向け fdbsyncd 改修 PR。
+- いずれも 2026-05 時点で open であり、ESI / DF election / split-horizon の master 取り込みは未完了。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/EVPN/EVPN_VxLAN_Multihoming.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

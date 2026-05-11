@@ -236,6 +236,12 @@ YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #13846: TACACS+ passkey encryption (open)](https://github.com/sonic-net/sonic-buildimage/issues/13846) — 本 HLD のトラッキング Issue。長期 open で部分実装中。
+- [sonic-buildimage #17201: Adding support of common security cipher module for encryption and decryption of a passkey (merged)](https://github.com/sonic-net/sonic-buildimage/pull/17201) — 共通暗号モジュール (master key /etc/cipher_pass 基盤) の取り込み PR。
+- [sonic-utilities #3027: TACACSPLUS_PASSKEY_ENCRYPTION support Part - I (closed)](https://github.com/sonic-net/sonic-utilities/pull/3027) — CLI / hostcfgd 連携の Part-I PR。closed のため後続 PR が必要。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

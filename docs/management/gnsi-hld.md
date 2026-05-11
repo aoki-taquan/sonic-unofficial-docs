@@ -253,6 +253,12 @@ gnsi_client credentialz rotate-account \
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-gnmi #559: Implements the frontend logic for gNSI Certz (merged)](https://github.com/sonic-net/sonic-gnmi/pull/559) — gNSI Certz サブシステムのフロントエンド実装 PR。
+- [sonic-gnmi #616: TestGnsiCertzServer/Rotate_ConcurrentRPC_ReturnsAborted is flaky (open)](https://github.com/sonic-net/sonic-gnmi/issues/616) — Certz Rotate の並行 RPC 試験 flaky issue。実装の成熟度を示す。
+- gNSI Authz / Pathz / Credentialz の包括的トラッキング Issue は確認できず、各サブシステムは個別 PR で順次取り込まれている。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

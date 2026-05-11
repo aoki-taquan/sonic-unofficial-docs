@@ -263,6 +263,11 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-utilities #4126: Add secondary poll factor to flex counter infra (open)](https://github.com/sonic-net/sonic-utilities/pull/4126) — `counterpoll port flr-interval-factor` 周辺で必要となる flex counter 二次ポーリング機構の追加 PR。本 HLD の `port_flr.lua` 実装と整合させる前提。
+- HLD 本体の FLR 算出ロジック (`port_flr.lua`) の取り込み PR は明示的に紐づく単独 PR が確認できず、断片的な flexcounter / port counter 改修に混在している。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

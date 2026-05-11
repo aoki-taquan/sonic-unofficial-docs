@@ -167,6 +167,11 @@ config sflow interface sample-rate Ethernet0 10000
 - **port speed 変更時**: `findSamplingRate()` が `STATE_DB` の `oper_speed` 変更を契機に再計算する（`sflowmgr.cpp:194-212`）ため、明示設定していない場合は新 speed の Mbps 値に切り替わる。HLD どおり。
 - 本ページの仕様記述に古い sample_rate 表が残っていないか、編集時には `sonic-swss/cfgmgr/sflowmgr.cpp::findSamplingRate()` を再参照すること。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #20327: Sflow configurations cannot be removed with SONiC CLI commands (open)](https://github.com/sonic-net/sonic-buildimage/issues/20327) — CLI からの設定削除の不整合。HLD と現行 sflowmgrd 実装の運用面ギャップとして既知。
+- [sonic-buildimage #16607: \[sflow\] Remove the ENABLE_SFLOW_DROPMON flag (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16607) — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sflow/sflow_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -133,6 +133,10 @@ flowchart LR
 
 **Local ARS は SAI 層まで来ているが SONiC 上位層が未着手**。AI / HPC 向けの adaptive routing が必要な場合はベンダー版 SONiC 採用か community 実装の登場を待つ。本ページの記述は仕様理解と将来取り込みに備えた参考資料。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-swss #3597: Local ARS (Adaptive Routing and Switching) (open)](https://github.com/sonic-net/sonic-swss/pull/3597) — 本 HLD の本体取り込み PR。2026-05 時点で open であり master 未取り込み。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ARS/Local_ARS_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
