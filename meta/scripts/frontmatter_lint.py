@@ -39,8 +39,21 @@ from pathlib import Path
 
 try:
     import yaml  # type: ignore
-except Exception:  # pragma: no cover
-    yaml = None
+except Exception as _yaml_exc:  # pragma: no cover
+    # PyYAML is REQUIRED. The previous fallback parser (`_simple_yaml`) silently
+    # mis-parsed list-form fields like `sources:` (it skipped indented lines),
+    # which produced ~675 false-positive "a: sources empty" hard violations
+    # whenever the linter was run with a stock python3 that lacked PyYAML.
+    # That made the result indistinguishable from a real regression. Fail loudly
+    # instead so the operator installs PyYAML (CI does: see `pip install PyYAML`
+    # in .github/workflows/ci.yml; locally use `.venv/bin/python`).
+    print(
+        "frontmatter_lint: PyYAML is required. Install it with `pip install PyYAML` "
+        "or run via `.venv/bin/python meta/scripts/frontmatter_lint.py`.\n"
+        f"  (import error: {_yaml_exc})",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DOCS_DIR = REPO_ROOT / "docs"
@@ -86,24 +99,11 @@ def parse_frontmatter(text: str):
     if not m:
         return None, text
     fm_raw, body = m.group(1), m.group(2)
-    if yaml is not None:
-        try:
-            data = yaml.safe_load(fm_raw) or {}
-        except Exception as e:
-            data = {"__parse_error__": str(e)}
-    else:
-        data = _simple_yaml(fm_raw)
+    try:
+        data = yaml.safe_load(fm_raw) or {}
+    except Exception as e:
+        data = {"__parse_error__": str(e)}
     return data, body
-
-
-def _simple_yaml(raw: str) -> dict:
-    out: dict = {}
-    for line in raw.splitlines():
-        if not line or line.startswith(" ") or ":" not in line:
-            continue
-        k, _, v = line.partition(":")
-        out[k.strip()] = v.strip()
-    return out
 
 
 def _cache_paths_check_enabled() -> bool:
