@@ -1,0 +1,55 @@
+---
+title: BANNER_MESSAGE テーブル
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-banner.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db:
+    - BANNER_MESSAGE
+  yang:
+    - sonic-banner
+---
+
+# BANNER_MESSAGE テーブル
+
+## 概要
+
+SSH / コンソールログイン時の login バナー、MOTD、logout バナーを設定するテーブル[^1]。
+`hostcfgd` が CONFIG_DB を購読し、`/etc/issue` / `/etc/motd` / `/etc/issue.net` を書き換える。
+
+## key 構造
+
+```
+BANNER_MESSAGE|global
+```
+
+シングルトン (`global` の 1 行のみ)。
+
+## フィールド
+
+| フィールド | 型 | 既定 | 説明 |
+|-----------|----|------|------|
+| `state`  | `admin_mode` (enabled/disabled) | `disabled` | バナー機能の有効化フラグ |
+| `login`  | string | `Debian GNU/Linux 11` | ログインプロンプト前に表示 |
+| `motd`   | string | SONiC アスキーアート + 警告文 | ログイン直後に表示 |
+| `logout` | string | `""` | ログアウト時に表示 |
+
+## 購読者
+
+- `hostcfgd` (`host-services` パッケージ)。ConfigDBConnector で `BANNER_MESSAGE/global` を listen し、`/etc/issue`, `/etc/motd`, `/etc/issue.net` をテンプレ展開して書き換える
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 CLI: `config banner state` / `config banner login` / `config banner motd` / `config banner logout`
+- 関連 YANG: `sonic-banner`
+
+## 引用元
+
+[^1]: YANG 定義: `sonic-banner.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-banner.yang>
+
+## 関連ページ
+- [CONFIG_DB index](index.md)

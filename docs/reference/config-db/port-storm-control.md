@@ -1,0 +1,62 @@
+---
+title: PORT_STORM_CONTROL テーブル
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-storm-control.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db:
+    - PORT_STORM_CONTROL
+    - PORT
+  yang:
+    - sonic-storm-control
+---
+
+# PORT_STORM_CONTROL テーブル
+
+## 概要
+
+物理ポートで BUM (broadcast / unknown-unicast / unknown-multicast) トラフィックのレート制限 (storm control) を設定するテーブル[^1]。
+3 種類のトラフィックに対して個別にレートを指定でき、`orchagent` が SAI `SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID` 系で SAI policer を作って attach する。
+
+## key 構造
+
+```
+PORT_STORM_CONTROL|<ifname>|<storm_type>
+```
+
+- `<ifname>`: `PORT.name` への leafref (物理ポートのみ。LAG / VLAN は非対応)
+- `<storm_type>`: `broadcast` / `unknown-unicast` / `unknown-multicast` のいずれか
+
+## フィールド
+
+| フィールド | 型 | 説明 |
+|-----------|----|------|
+| `kbps` | uint64 (0..100000000) | レート制限 [kbps]。0 で無制限相当 (実装依存) |
+
+## 制約
+
+- `ifname` は `PORT_LIST.name` への leafref のため、PORT に存在しないインタフェースは指定不可
+- 3 種類の storm_type を別々のエントリで設定する
+- range 上限 100 Gbps 相当 (実装側でハードウェア上限による更なる制約あり)
+
+## 購読者
+
+- `orchagent` (`PortsOrch` の storm-control パス)。内部で SAI policer を作成し、`ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` / `UNKNOWN_UNICAST_STORM_CONTROL_POLICER_ID` / `UNKNOWN_MULTICAST_STORM_CONTROL_POLICER_ID` を更新
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 CONFIG_DB: `PORT`, `POLICER`
+- 関連 CLI: `config interface storm-control <type> <ifname> <kbps>`
+- 関連 YANG: `sonic-storm-control`
+
+## 引用元
+
+[^1]: YANG 定義: `sonic-storm-control.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-storm-control.yang>
+
+## 関連ページ
+- [CONFIG_DB: PORT](port.md)
+- [CONFIG_DB: POLICER](policer.md)
