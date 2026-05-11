@@ -1058,7 +1058,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (9)
 - [内部実装](../topics/02-bgp/internals.md) (8)
 - [概念](../topics/17-srv6-mpls/concept.md) (8)
-- [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../routing/bgp-route-install-error-handling.md) (7)
+- [経路は RIB にあるが FIB / ASIC に降りない](runbooks/route-not-installed-in-fib.md) (7)
 
 ### [fpmsyncd](#term-fpmsyncd)
 
@@ -1103,7 +1103,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [Graceful Restart](#term-graceful-restart)
 
 - [Reboot 運用と障害調査](../topics/11-reboot/operations.md) (5)
-- [BGP Graceful Restart のネゴシエーションに失敗する](runbooks/bgp-graceful-restart-failure.md) (3)
+- [BGP Graceful Restart のネゴシエーションに失敗する](runbooks/bgp-graceful-restart-failure.md) (4)
 - [Reboot / Upgrade の発展トピック](../topics/11-reboot/advanced.md) (2)
 - [Reboot family の選び方](../topics/11-reboot/concept.md) (2)
 - [reboot / fast-reboot / warm-reboot コマンド](cli/reboot-fast-warm.md) (1)
@@ -1195,7 +1195,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (19)
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (14)
 - [show lldp サブコマンド](cli/show-lldp.md) (7)
-- [LLDP 隣接が頻繁に up/down する](runbooks/lldp-neighbor-flapping.md) (6)
+- [LLDP 隣接が頻繁に up/down する](runbooks/lldp-neighbor-flapping.md) (7)
 
 ### [MPLS](#term-mpls)
 
@@ -1245,15 +1245,17 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [neighsyncd](#term-neighsyncd)
 
 - [WARM_RESTART テーブル](config-db/warm-restart.md) (7)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (6)
 - [Reboot / warm restart の設定](../topics/11-reboot/setup.md) (6)
 - [config warm_restart サブコマンド](cli/config-warm_restart.md) (5)
 - [sonic-warm-restart YANG](yang/sonic-warm-restart.md) (5)
-- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (4)
 
 ### [Netlink](#term-netlink)
 
 - [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](../routing/new-frr-sonic-communication-channel.md) (5)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](runbooks/arp-entry-stuck.md) (2)
 - [BGP / EVPN 関連](../categories/bgp-evpn.md) (1)
+- [経路は RIB にあるが FIB / ASIC に降りない](runbooks/route-not-installed-in-fib.md) (1)
 - [アーキテクチャ](../topics/02-bgp/architecture.md) (1)
 
 ### [Next Hop Group](#term-next-hop-group)
@@ -1619,8 +1621,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (30)
 - [debug / undebug コマンド群](cli/debug-group.md) (25)
 - [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](../routing/new-frr-sonic-communication-channel.md) (12)
+- [経路は RIB にあるが FIB / ASIC に降りない](runbooks/route-not-installed-in-fib.md) (10)
 - [BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）](../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) (10)
-- [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../routing/bgp-route-install-error-handling.md) (9)
 
 ### [ZTP](#term-ztp)
 
