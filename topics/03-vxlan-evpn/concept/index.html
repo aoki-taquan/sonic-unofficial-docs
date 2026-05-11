@@ -1712,6 +1712,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evpn-vnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN と VNET 直書きのデータパスは同じ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evpn-type-sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN Type と SONiC 側の受け口
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#smartswitch-dash-vnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch / DASH の VNET との関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23398,6 +23442,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evpn-vnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN と VNET 直書きのデータパスは同じ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evpn-type-sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN Type と SONiC 側の受け口
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#smartswitch-dash-vnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch / DASH の VNET との関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23596,12 +23684,92 @@
 <li>NVGRE や subnet decap が overlay tenant とは別の話だと区別できる。</li>
 <li>BGP-EVPN のセッションがあるのに data plane が来ない問題を「FRR EVPN」「VxlanTunnelOrch」「SAI tunnel」のどこで止まったかで切れる。</li>
 </ul>
+<h2 id="config_db">CONFIG_DB の主要テーブル<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<p>VXLAN / VNET / EVPN まわりで把握しておくべき CONFIG_DB は次のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VXLAN_TUNNEL</code></td>
+<td>VTEP（src IP）と peer 種別を定義</td>
+</tr>
+<tr>
+<td><code>VXLAN_TUNNEL_MAP</code></td>
+<td>VLAN ↔ VNI / VRF ↔ VNI 対応</td>
+</tr>
+<tr>
+<td><code>VXLAN_EVPN_NVO</code></td>
+<td>EVPN を VXLAN 上で動かす宣言（FRR EVPN 接続点）</td>
+</tr>
+<tr>
+<td><code>VNET</code></td>
+<td>VRF + VNI + vxlan_tunnel をまとめた SONiC 内オブジェクト</td>
+</tr>
+<tr>
+<td><code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code></td>
+<td>VNET の local / remote endpoint route</td>
+</tr>
+<tr>
+<td><code>EVPN_NVO</code> / <code>EVPN_RT_TBL</code> 等</td>
+<td>EVPN 系の補助 table（FRR との接続側）</td>
+</tr>
+</tbody>
+</table>
+<p><code>vxlanmgrd</code> は CONFIG_DB と Linux netlink を仲立ちし、<code>VNetOrch</code> / <code>VxlanTunnelOrch</code> / <code>TunnelDecapOrch</code> が SAI tunnel / bridge port を作ります。EVPN を使う構成では FRR 側で受けた Type-2 / Type-5 が APPL_DB / VNET_ROUTE_TUNNEL に降りてきます。</p>
+<h2 id="evpn-vnet">EVPN と VNET 直書きのデータパスは同じ<a class="headerlink" href="#evpn-vnet" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+  subgraph Control_Plane
+    FRR[FRR bgpd&lt;br/&gt;l2vpn evpn] -.-&gt;|Type-2 / Type-5| APPL[(APPL_DB)]
+    Ctrl[SDN controller] --&gt;|CONFIG_DB 直書き| CFG[(CONFIG_DB.VNET_*)]
+    CFG --&gt; APPL
+  end
+  APPL --&gt; Orch[VxlanTunnelOrch /&lt;br/&gt;VNetOrch /&lt;br/&gt;VNetRouteOrch]
+  Orch --&gt; ASIC[(ASIC_DB)]
+  ASIC --&gt; SAI[SAI tunnel / bridge-port]</code></pre>
+<p>control plane は EVPN（FRR 経路）か controller 直書きの 2 系統に分かれますが、SAI tunnel / bridge port を作る orchagent 側はほぼ共通です。問題切り分けでは「EVPN セッションは張れているか」「VNET object は CONFIG_DB に居るか」「APPL_DB の TUNNEL/VNET_ROUTE まで来ているか」「ASIC_DB に tunnel object が居るか」を順に追います。</p>
+<h2 id="evpn-type-sonic">EVPN Type と SONiC 側の受け口<a class="headerlink" href="#evpn-type-sonic" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>意味</th>
+<th>SONiC で書き込まれる先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type-2</td>
+<td>MAC / MAC+IP 到達性</td>
+<td>bridge-port / FDB / NEIGH / VNET_ROUTE_TUNNEL（L2 端末向け）</td>
+</tr>
+<tr>
+<td>Type-3</td>
+<td>inclusive multicast tunnel endpoint</td>
+<td>head-end replication 用 tunnel member</td>
+</tr>
+<tr>
+<td>Type-5</td>
+<td>IP prefix</td>
+<td>VNET_ROUTE_TUNNEL / VRF route</td>
+</tr>
+</tbody>
+</table>
+<p>Type-2 が来ても bridge-port が作られていない場合は <strong>vlan-vni map</strong> が抜けていることが多く、Type-5 が来ても VNET_ROUTE_TUNNEL に乗らない場合は <strong>VRF-VNI map</strong> や <code>nvo</code> の設定漏れが原因になりがちです。</p>
+<h2 id="smartswitch-dash-vnet">SmartSwitch / DASH の VNET との関係<a class="headerlink" href="#smartswitch-dash-vnet" title="Permanent link">&para;</a></h2>
+<p>DASH / SmartSwitch の SDN data path は VNET スキーマを再利用し、ENI 単位の policy（ACL / mapping）と組み合わせて DPU 上に展開します。EVPN を介さず controller が VNET_ROUTE 系を直書きする使い方は、SmartSwitch ENI と相性が良い構成です。詳細は <a href="../../13-dash-smartswitch/concept/">13 章 DASH / SmartSwitch</a> を参照してください。</p>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../overlay/vxlan-sonic/">VXLAN / VNet 全体設計</a></li>
 <li><a href="../../../routing/evpn-vxlan-hld/">EVPN VXLAN</a></li>
 <li><a href="../../../overlay/nvgre-tunnel-in-sonic/">NVGRE トンネル</a></li>
 <li><a href="../../../platform/subnet-decapsulation-with-sonic/">VLAN Subnet Decap</a></li>
+<li><a href="../../../overlay/vnet-local-endpoint-forwarding/">VNet local endpoint forwarding</a></li>
+<li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">DSCP remapping for tunnel traffic</a></li>
 </ul>
 <!-- xref-prereq -->
 <h2 id="_6">この章の前提知識<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>

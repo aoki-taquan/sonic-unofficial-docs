@@ -2005,6 +2005,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecmp-nhg-wcmp-fg-ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP / NHG / WCMP / FG-ECMP の整理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rib-fib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIB → FIB の段ごとの確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#management-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        management VRF の特殊性
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23464,6 +23508,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecmp-nhg-wcmp-fg-ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP / NHG / WCMP / FG-ECMP の整理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rib-fib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIB → FIB の段ごとの確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#management-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        management VRF の特殊性
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23688,12 +23776,104 @@
 <li>IPv6 link-local + BGP unnumbered の next-hop が「IP + interface」のセットで決まることを理解した上で <code>show ip route</code> を読める。</li>
 <li>ECMP / NHG が SAI object としてどう ASIC に入るか想像できる。</li>
 </ul>
+<h2 id="config_db">CONFIG_DB の主要テーブル<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<p>L3 / VRF / ECMP まわりで押さえる CONFIG_DB を整理します。</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF</code></td>
+<td>data VRF の定義（fallback、import/export RT 等を含む）</td>
+</tr>
+<tr>
+<td><code>MGMT_VRF_CONFIG</code></td>
+<td>management VRF の enable / DNS / NTP source など</td>
+</tr>
+<tr>
+<td><code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code></td>
+<td>L3 interface と VRF 所属</td>
+</tr>
+<tr>
+<td><code>STATIC_ROUTE</code></td>
+<td>static route。VRF・ECMP・blackhole を表現できる</td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR</code> 等</td>
+<td>各 VRF 配下の BGP（02 章）</td>
+</tr>
+<tr>
+<td><code>NEIGH</code> / <code>FDB</code></td>
+<td>neighbor / MAC 解決の入口（運用時に STATE_DB と対照）</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.localhost</code></td>
+<td><code>bgp_router_id</code> や <code>frr_mgmt_framework_config</code> の置き場</td>
+</tr>
+</tbody>
+</table>
+<p><code>vrfmgrd</code> が <code>VRF</code> / <code>MGMT_VRF_CONFIG</code> を読み Linux VRF を作り、<code>intfmgrd</code> が L3 interface を VRF に bind し、<code>VRFOrch</code> / <code>IntfsOrch</code> が SAI Virtual Router / Router Interface を作ります。経路系はその上に乗ります。</p>
+<h2 id="ecmp-nhg-wcmp-fg-ecmp">ECMP / NHG / WCMP / FG-ECMP の整理<a class="headerlink" href="#ecmp-nhg-wcmp-fg-ecmp" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>機構</th>
+<th>重み</th>
+<th>動的性</th>
+<th>SONiC 側の入口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ECMP</td>
+<td>等分散</td>
+<td>static</td>
+<td>NhgOrch、RouteOrch</td>
+</tr>
+<tr>
+<td>WCMP</td>
+<td>重み付き</td>
+<td>static</td>
+<td>sonic-weighted-ecmp / NhgOrch</td>
+</tr>
+<tr>
+<td>FG-ECMP</td>
+<td>flow-group 単位</td>
+<td>dynamic（再 hash 抑制）</td>
+<td>fine-grained ecmp HLD</td>
+</tr>
+<tr>
+<td>Overlay ECMP + BFD</td>
+<td>overlay nexthop の生死で再選択</td>
+<td>dynamic（BFD 通知）</td>
+<td>overlay-ecmp-with-bfd-monitoring</td>
+</tr>
+</tbody>
+</table>
+<p>SAI 側は <strong>Next Hop Group + Next Hop Group Member</strong> の 2 段で表現され、member の OID 配列の最大値 / 1 group あたりの最大 member 数は ASIC の制約に強く依存します。経路爆発時にはこの上限超過で「ECMP が縮退する」「最も古い member だけが残る」現象が起きやすく、<code>CRM</code> カウンタや <code>flex counter</code> で監視するのが定石です。</p>
+<h2 id="rib-fib">RIB → FIB の段ごとの確認<a class="headerlink" href="#rib-fib" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+  FRR[FRR RIB] -- FPM --&gt; APPL[(APPL_DB.ROUTE_TABLE)]
+  APPL --&gt; Orch[RouteOrch / NhgOrch / NeighOrch]
+  Orch --&gt; ASIC[(ASIC_DB)]
+  ASIC --&gt; SAI[SAI route / nexthop / nhg]
+  FRR -.-&gt;|kernel zebra| Kernel[Linux FIB]</code></pre>
+<p><code>show ip route</code> を見ても、それが FRR RIB（vtysh）か Linux FIB（<code>ip route</code>）か SONiC FIB（<code>sonic-db-cli APPL_DB</code>）か ASIC FIB（ASIC_DB）かで意味が違います。VRF 付きの問題切り分けでは「どの VRF の table を見ているか」を都度確認します。</p>
+<h2 id="management-vrf">management VRF の特殊性<a class="headerlink" href="#management-vrf" title="Permanent link">&para;</a></h2>
+<p>management VRF（既定 <code>mgmt</code>）は <strong>front panel 経路ではなく <code>eth0</code> の管理通信を分離する</strong> ための VRF です。現行 SONiC は iproute2 の VRF master device 方式を採り、古い HLD に出てくる cgroup wrapper 方式は使われなくなっています。NTP / DNS / TACACS / SNMP の source interface 設定や、<code>config save -y</code> / <code>sonic-installer</code> 系コマンドが management VRF 側を経由する点が、forwarding 系 VRF との運用差分になります。</p>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート</a></li>
 <li><a href="../../../routing/static-ip-route-configuration/">Static IP Route 設定</a></li>
 <li><a href="../../../routing/ipv6-link-local-enhancements/">IPv6 Link-Local アドレス管理</a></li>
 <li><a href="../../../routing/sonic-management-vrf-design-document-201911-release/">Management VRF 設計</a></li>
+<li><a href="../../../routing/sonic-fine-grained-ecmp/">Fine-grained ECMP</a></li>
+<li><a href="../../../routing/sonic-weighted-ecmp/">Weighted ECMP</a></li>
+<li><a href="../../../routing/overlay-ecmp-with-bfd-monitoring/">Overlay ECMP with BFD</a></li>
 </ul>
 <!-- xref-prereq -->
 <h2 id="_7">この章の前提知識<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>

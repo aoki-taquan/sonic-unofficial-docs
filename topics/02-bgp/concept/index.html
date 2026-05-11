@@ -1487,7 +1487,51 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bgpcfgd-frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd と frrcfgd の切替
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路が ASIC に入るまでの段
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        大量経路 / 高速収束で押さえる機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -1498,7 +1542,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -23464,7 +23508,51 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bgpcfgd-frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd と frrcfgd の切替
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路が ASIC に入るまでの段
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        大量経路 / 高速収束で押さえる機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23475,7 +23563,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -23707,14 +23795,106 @@
 <li>同じ <code>show ip route</code> でも、FRR と SONiC のどちらを見るべきかが選べる。</li>
 <li>HLD を読むとき、その記述が FRR version 依存か SONiC patch 依存かに当たりを付けられる。</li>
 </ul>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="config_db">CONFIG_DB の主要テーブル<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<p>BGP まわりで最初に把握しておくべき CONFIG_DB は次のとおりです。詳細は <code>docs/reference/config-db/</code> 配下の各ページに辞書化されています。</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_NEIGHBOR</code></td>
+<td>個別 neighbor（peer IP）の AS / hold time / shutdown / route-map など</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_RANGE</code></td>
+<td>unnumbered / dynamic peer の subnet 単位定義。leaf-spine ECMP fabric の主流</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBAL</code></td>
+<td>router-id、ebgp/ibgp multipath、graceful-restart などのグローバル設定</td>
+</tr>
+<tr>
+<td><code>BGP_ALLOWED_PREFIXES</code> / <code>PREFIX_LIST</code></td>
+<td>prefix-list と route-map の参照先</td>
+</tr>
+<tr>
+<td><code>BGP_AGGREGATE_ADDRESS</code></td>
+<td>集約広告。<code>BGP_BBR</code> 連動による条件付き advertise が可能</td>
+</tr>
+<tr>
+<td><code>BGP_BBR</code></td>
+<td>Bounce Back Routing の enable/disable。集約広告と密結合</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.localhost</code></td>
+<td><code>bgp_router_id</code> / <code>frr_mgmt_framework_config</code> 等のメタ設定</td>
+</tr>
+</tbody>
+</table>
+<p><code>bgpcfgd</code> 構成では Jinja テンプレートでこれらを FRR <code>vtysh</code> 設定に reduce します。<code>frrcfgd</code> 構成では Management Framework が差分を vty コマンドに翻訳します。同じ CONFIG_DB を読んでいるように見えても、生成される FRR 設定の経路が違う点に注意してください。</p>
+<h2 id="bgpcfgd-frrcfgd">bgpcfgd と frrcfgd の切替<a class="headerlink" href="#bgpcfgd-frrcfgd" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+  CDB[(CONFIG_DB)] --&gt;|legacy| Bgpcfgd[bgpcfgd&lt;br/&gt;Jinja template]
+  CDB --&gt;|OpenConfig 経由| Frrcfgd[frrcfgd&lt;br/&gt;vty 変換]
+  Bgpcfgd --&gt; FRR[FRR bgpd]
+  Frrcfgd --&gt; FRR</code></pre>
+<p>切替キーは <code>DEVICE_METADATA.localhost.frr_mgmt_framework_config</code> です。<code>true</code> で frrcfgd 経路、未設定 / <code>false</code> で bgpcfgd 経路。両方を同時に動かす設計ではないため、機能 HLD を読むときは「どちらの経路を前提とした記述か」を判定する必要があります。新しい OpenConfig BGP 機能は frrcfgd 側に寄り、レガシー Jinja で扱いづらかった政策系の入力経路が広がっています。</p>
+<h2 id="asic">経路が ASIC に入るまでの段<a class="headerlink" href="#asic" title="Permanent link">&para;</a></h2>
+<p><code>show ip route</code> が同じプレフィックスを返しても、それが FRR RIB か Linux FIB か ASIC FIB のどれかで切り分けが必要です。</p>
+<table>
+<thead>
+<tr>
+<th>段</th>
+<th>場所</th>
+<th>確認方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FRR RIB</td>
+<td>bgpd / zebra の内部</td>
+<td><code>vtysh -c "show ip bgp"</code> / <code>show ip route</code></td>
+</tr>
+<tr>
+<td>FPM 通過後</td>
+<td>APPL_DB.ROUTE_TABLE</td>
+<td><code>sonic-db-cli APPL_DB keys 'ROUTE_TABLE:*'</code></td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td>syncd / SAI 入力</td>
+<td><code>sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*'</code></td>
+</tr>
+<tr>
+<td>Linux FIB</td>
+<td>kernel</td>
+<td><code>ip route show</code></td>
+</tr>
+</tbody>
+</table>
+<p>特に <strong>大量経路 + 障害収束</strong> の場面では、「BGP は受け取ったが FPM が詰まって APPL_DB に来ていない」「APPL_DB には入ったが orchagent が SAI へ書き切れていない」のような中間状態が観測されます。</p>
+<h2 id="_8">大量経路 / 高速収束で押さえる機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>DC 規模では <strong>route scale が秒間数万 update</strong> に達することがあり、収束時間を延ばす主な要因は FRR ↔ SONiC 境界です。SONiC 側で確認すべき機能は次のとおりです。</p>
+<ul>
+<li><strong>BGP suppress-fib-pending</strong>: ASIC FIB に入っていない経路の advertise を抑止し、ブラックホールを避ける（<a href="../../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">詳細</a>）</li>
+<li><strong>dplane_fpm_sonic plugin の合体送信</strong>: FRR 側で複数 update をまとめて FPM に流す（<a href="../../../routing/new-frr-sonic-communication-channel/">FRR-SONiC FPM channel</a>）</li>
+<li><strong>next-hop group の共有</strong>: 同一 nexthop を持つ経路の group 化で ASIC への書込み量を削減（<a href="../../../routing/multiple-nexthop-route-hld/">Multiple Nexthop Route</a>）</li>
+<li><strong>prefix-independent convergence (PIC)</strong>: backup nexthop の事前 program による収束時間短縮（<a href="../../../routing/bgp-prefix-independent-convergence-architecture-document/">PIC architecture</a>）</li>
+</ul>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/bgp-router-id-explicitly-configured/">BGP router-id を明示的に設定する</a></li>
 <li><a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR-BGP Unified Mgmt Framework</a></li>
 <li><a href="../../../routing/detailed-steps-to-upgrade-frr-in-sonic/">SONiC における FRR upgrade</a></li>
+<li><a href="../../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP suppress-fib-pending</a></li>
+<li><a href="../../../routing/bgp-prefix-independent-convergence-architecture-document/">PIC architecture</a></li>
 </ul>
 <!-- xref-prereq -->
-<h2 id="_9">この章の前提知識<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">この章の前提知識<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>この章を読み進める前に、次の章を押さえておくと迷子になりにくい。</p>
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>

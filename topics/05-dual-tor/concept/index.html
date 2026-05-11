@@ -2278,7 +2278,51 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APPL_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        切替の信号フロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prefix-based-mux-neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prefix-based mux neighbor の意味
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ループ回避と境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -2289,7 +2333,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -23442,7 +23486,51 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APPL_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        切替の信号フロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prefix-based-mux-neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prefix-based mux neighbor の意味
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ループ回避と境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23453,7 +23541,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -23674,14 +23762,88 @@
 <li>下り方向のパスが何によって決まるか（mux state / SoC forwarding state）を意識して切り分けに臨める。</li>
 <li><code>linkmgrd</code> と <code>MuxOrch</code> が neighbor / route の nexthop をどう書き換えるかをイメージできる。</li>
 </ul>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="config_db-appl_db">CONFIG_DB / APPL_DB の主要テーブル<a class="headerlink" href="#config_db-appl_db" title="Permanent link">&para;</a></h2>
+<p>Dual-ToR で見るべき主な DB は次のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MUX_CABLE</code></td>
+<td>CONFIG_DB</td>
+<td>server-facing port ごとの <code>cable_type</code> / <code>state</code> / server IP / SoC IP / neighbor mode</td>
+</tr>
+<tr>
+<td><code>MUX_LINKMGR</code></td>
+<td>CONFIG_DB</td>
+<td>linkmgrd の各種パラメータ（heartbeat 間隔 / timeout / mode）</td>
+</tr>
+<tr>
+<td><code>TUNNEL</code> / <code>TUNNEL_DECAP_TABLE</code></td>
+<td>CONFIG_DB / APPL_DB</td>
+<td>MuxTunnel の IPinIP 設定</td>
+</tr>
+<tr>
+<td><code>HW_MUX_CABLE_TABLE</code></td>
+<td>STATE_DB</td>
+<td>ycabled が見る physical mux 方向</td>
+</tr>
+<tr>
+<td><code>MUX_CABLE_TABLE</code></td>
+<td>STATE_DB</td>
+<td>linkmgrd の論理 state（active/standby/unknown）</td>
+</tr>
+<tr>
+<td><code>MUX_LINKMGR_TABLE</code></td>
+<td>STATE_DB</td>
+<td>link prober の状態</td>
+</tr>
+<tr>
+<td><code>MUX_CABLE_COMMAND_TABLE</code></td>
+<td>STATE_DB</td>
+<td>linkmgrd → ycabled への切替指示</td>
+</tr>
+</tbody>
+</table>
+<p>linkmgrd は ICMP heartbeat（link prober）/ HW link / mux 方向の 3 信号を STATE_DB 越しに集めて状態遷移を決め、MuxOrch が neighbor / route の nexthop を直接サーバ向け or tunnel 向けに切り替えます。</p>
+<h2 id="_7">切替の信号フロー<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant LP as link prober&lt;br/&gt;(linkmgrd)
+    participant YC as ycabled (AS) /&lt;br/&gt;gRPC client (AA)
+    participant SDB as STATE_DB
+    participant ORCH as MuxOrch
+    participant ASIC as SAI tunnel / nhop
+    LP-&gt;&gt;SDB: server / peer reachability
+    YC-&gt;&gt;SDB: HW_MUX_CABLE direction
+    SDB-&gt;&gt;ORCH: MUX_CABLE_TABLE 状態遷移
+    ORCH-&gt;&gt;ASIC: neighbor / route の nexthop を切替
+    ORCH-&gt;&gt;SDB: MUX_CABLE_COMMAND_TABLE で ycabled へ</code></pre>
+<p>Active-Standby ではこの SDB を経由した制御が中心で、Active-Active では同様の構図で gRPC client が SoC との forwarding state を扱います。</p>
+<h2 id="prefix-based-mux-neighbor">prefix-based mux neighbor の意味<a class="headerlink" href="#prefix-based-mux-neighbor" title="Permanent link">&para;</a></h2>
+<p>Active-Standby では、サーバ側 neighbor を残したまま <strong><code>/32</code> / <code>/128</code> route の nexthop だけ</strong> を切り替える方式（prefix-based mux neighbor）が使われます。理由は、neighbor を削除すると ARP/ND の再解決が必要になり、切替時間が伸びるからです。詳細は <a href="../../../routing/prefix-based-mux-neighbors/">Prefix-based mux neighbors</a> を参照してください。</p>
+<h2 id="_8">ループ回避と境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+  Spine[Spine] --&gt; ToR1[ToR1 active]
+  Spine --&gt; ToR2[ToR2 standby]
+  ToR1 -- direct --&gt; Server((Server))
+  ToR2 -. IPinIP tunnel .-&gt; ToR1
+  ToR1 == decap ==&gt; Server</code></pre>
+<p>standby から peer に IPinIP で戻したパケットを <strong>peer 側でループしてもう一度 tunnel に乗せない</strong> ように、MuxOrch は tunnel decap 後の nexthop を local server 向けに固定します。Active-Active では両 ToR が直接サーバへ送るためこのループ問題は出ず、代わりに「<strong>北行きの 5-tuple ハッシュが両側で一致するか</strong>」が観測すべき項目になります。</p>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR</a></li>
 <li><a href="../../../overlay/active-active-dual-tor/">Active-Active Dual ToR</a></li>
 <li><a href="../../../categories/dual-tor/">Dual-ToR 関連</a></li>
+<li><a href="../../../routing/prefix-based-mux-neighbors/">Prefix-based mux neighbors</a></li>
+<li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">DSCP remapping for tunnel traffic</a></li>
 </ul>
 <!-- xref-prereq -->
-<h2 id="_8">この章の前提知識<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">この章の前提知識<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>この章を読み進める前に、次の章を押さえておくと迷子になりにくい。</p>
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>

@@ -2766,6 +2766,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-bind-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage と bind point の組み合わせ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#copp-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CoPP は SAI capability 確認とセットで読む
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mirror-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mirror session の出力種別
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23442,6 +23486,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB の主要テーブル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-bind-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage と bind point の組み合わせ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#copp-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CoPP は SAI capability 確認とセットで読む
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mirror-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mirror session の出力種別
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23658,11 +23746,90 @@
 <li>CPU 負荷の問題を「CoPP policer が緩い / 厳しすぎ / 該当 trap が落ちている」のどれかに切り分けられる。</li>
 <li>パケットキャプチャ / 観測の要件を、ACL mirror action と <code>MIRROR_SESSION</code> のどちらで実現するか選べる。</li>
 </ul>
+<h2 id="config_db">CONFIG_DB の主要テーブル<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<p>ACL / CoPP / Mirror の周辺で押さえておくべき CONFIG_DB を整理します。</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ACL_TABLE</code></td>
+<td>type / stage / bind point / ports</td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TYPE</code></td>
+<td>カスタム table type（user-defined match / action / bind point）</td>
+</tr>
+<tr>
+<td><code>ACL_RULE</code></td>
+<td>match / action / priority</td>
+</tr>
+<tr>
+<td><code>MIRROR_SESSION</code></td>
+<td>観測先 session（local / ERSPAN / DSCP / queue）</td>
+</tr>
+<tr>
+<td><code>POLICER</code></td>
+<td>rate-limit 単位（ACL / CoPP 双方から参照）</td>
+</tr>
+<tr>
+<td><code>COPP_TRAP</code> / <code>COPP_GROUP</code></td>
+<td>CPU 行き trap と policer / queue の組</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_TABLE</code> の <code>ACL</code> / <code>TRAP_FLOW_COUNTER</code></td>
+<td>カウンタ収集設定</td>
+</tr>
+</tbody>
+</table>
+<p><code>ACL_TABLE_TYPE</code> を使うと「どの match を許す table を作るか」をユーザ側で定義でき、user-defined table type のサンプルとして DASH や P4 拡張系の HLD が引かれます。詳細は <a href="../../../acl-qos/acl-user-defined-table-type-support/">ACL user-defined table type support</a> を参照してください。</p>
+<h2 id="stage-bind-point">stage と bind point の組み合わせ<a class="headerlink" href="#stage-bind-point" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+  Pkt[受信パケット] --&gt; Ing{Ingress ACL&lt;br/&gt;port/lag/vlan/switch}
+  Ing --&gt;|hit| IngA[DROP / FWD / MIRROR / POLICER]
+  Ing --&gt;|miss| L3[Forwarding]
+  L3 --&gt; Eg{Egress ACL&lt;br/&gt;port/lag/switch}
+  Eg --&gt;|hit| EgA[DROP / SET_DSCP / MIRROR_EGRESS]
+  Eg --&gt; Out[送出]</code></pre>
+<p>stage（ingress/egress）と bind point（port / LAG / VLAN / switch）の組み合わせで利用可能な match / action が決まります。例えば egress 側で SET_DSCP / MIRROR_EGRESS_ACTION を使う場合は <code>EGR_SET_DSCP</code> / <code>MIRROR</code> 系の table type を選び、対象 stage は <code>egress</code> にします。</p>
+<h2 id="copp-sai-capability">CoPP は SAI capability 確認とセットで読む<a class="headerlink" href="#copp-sai-capability" title="Permanent link">&para;</a></h2>
+<p>CoPP は ASIC 依存が強く、利用可能な trap、policer の単位、CPU queue 数がプラットフォームによって違います。<code>SWITCH_CAPABILITY</code> テーブルや <code>STATE_DB</code> の関連テーブルで「この ASIC がどの trap / policer を受けるか」を確認するのが診断の入口です。CPU 高負荷時には <code>show platform queue counters</code> などで CPU queue 側のドロップが見えていないかも併せて確認します。</p>
+<h2 id="mirror-session">Mirror session の出力種別<a class="headerlink" href="#mirror-session" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SPAN</code></td>
+<td>同一 ToR 上のローカルポートへコピー</td>
+</tr>
+<tr>
+<td><code>ERSPAN</code> / GRE encap</td>
+<td>remote collector へ送る。dst IP、TTL、DSCP、queue を指定</td>
+</tr>
+<tr>
+<td><code>Truncated</code></td>
+<td>一定サイズで切る observability 用途</td>
+</tr>
+</tbody>
+</table>
+<p>ERSPAN は GRE outer / DSCP / queue / TTL の各属性が SAI mirror session attr にそのまま伝搬します。複数 ACL ルールから同一 session を参照すると mirror engine が共有されるため、TCAM 消費は ACL 側のみで mirror engine 側は 1 リソースとして使えます。</p>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../acl-qos/acl-in-sonic/">ACL in SONiC</a></li>
 <li><a href="../../../acl-qos/acl-support-in-sonic/">ACL の基本設計</a></li>
 <li><a href="../../../categories/sai-extensions/">SAI 拡張属性追加系</a></li>
+<li><a href="../../../acl-qos/acl-user-defined-table-type-support/">ACL user-defined table type support</a></li>
+<li><a href="../../../acl-qos/egress-mirroring-support-and-acl-action-capability-check/">Egress mirroring と ACL action capability</a></li>
+<li><a href="../../../acl-qos/dash-acl-tags/">DASH ACL タグ</a></li>
 </ul>
 <!-- xref-prereq -->
 <h2 id="_7">この章の前提知識<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
