@@ -241,10 +241,25 @@ def lint_file(path: Path, *, check_paths: bool):
         if pk not in VALID_PAGE_KINDS:
             violations.append(f"page_kind '{pk}' not in valid enum {sorted(VALID_PAGE_KINDS)}")
 
-    # i) description recommended (warn-only)
+    # i) description required (warn-only) for regular content pages.
+    # Excluded from the requirement:
+    #   - page_kind in {chapter-index, split-hub, split-child}
+    #     (gateway / navigational / fragment pages; their description is
+    #     supplied by the hub or parent chapter)
+    #   - verification in {meta, stub}
+    #     (placeholder / index pages that have little body to summarise)
+    # mkdocs-material consumes `description:` for the `<meta name="description">`
+    # tag (SEO / SERP / OGP card layouts), so regular explanatory pages should
+    # always carry one. Generate missing values with gen_descriptions.py.
     description = fm.get("description")
-    if description is None or not str(description).strip():
-        warnings.append("i: description field missing (recommended for SEO; run gen_descriptions.py)")
+    pk_for_desc = str(fm.get("page_kind") or "").strip()
+    ver_for_desc = str(fm.get("verification") or "").strip()
+    desc_exempt = (
+        pk_for_desc in {"chapter-index", "split-hub", "split-child"}
+        or ver_for_desc in {"meta", "stub"}
+    )
+    if not desc_exempt and (description is None or not str(description).strip()):
+        warnings.append("i: description field missing (required for SEO; run gen_descriptions.py)")
 
     # h) sources[].path liveness check (warning bucket)
     if check_paths and isinstance(sources, list):

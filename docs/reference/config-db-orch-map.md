@@ -1,5 +1,6 @@
 ---
 title: CONFIG_DB ↔ orchagent クラス対応表
+description: "CONFIG_DB ↔ orchagent クラス対応表 — SONiC の CONFIG_DB テーブル が「誰によって読まれるか」を一望できる早見表。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
