@@ -1,8 +1,8 @@
 ---
 title: ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/port-illegal-packets/Port_illegal_packets_drop_design.md
@@ -13,8 +13,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD のみを根拠に書かれている。実コード（`sonic-snmpagent` / `py-swsssdk` 等）での裏取りは未済。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `sonic-snmpagent` で RIF カウンタを L2 カウンタへ集約する経路を実装で確認した。`sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py` L34-L38 に `RIF_DROPS_AGGR_MAP` が定義され、`SAI_PORT_STAT_IF_IN_OCTETS` 等を `SAI_ROUTER_INTERFACE_STAT_IN_OCTETS` 系へマップ。`rfc1213.py` L341-L346 で `rif_port_map` / `port_rif_map` を構築し、L427-L440 で `sai_lag_rif_id` を参照して `self.rif_counters[...]` から `counter_value` に加算する集約処理を確認。
 
 # ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
 
@@ -126,6 +126,14 @@ snmpwalk -v2c -c <community> <switch> ifInErrors
 - L3 ドロップが SNMP に出てこない場合、まず `COUNTERS_DB` 上に RIF の COUNTERS エントリが存在するか確認する。存在しない場合は `rifcounter` flex counter グループが当該プラットフォームで無効。
 - `ifType=136` の VLAN エントリが見えない場合、`sonic-snmpagent` のバージョンが本 HLD 反映前の可能性がある。
 - テストは `test_snmp_interfaces.py` でカバーされている旨が HLD に記載されており、回帰確認の起点として有用[^1]。
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- RIF → Port aggregation テーブル: `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py` L34-L38, L42 (`RIF_DROPS_AGGR_MAP`、`SAI_PORT_STAT_IF_IN_OCTETS` → `SAI_ROUTER_INTERFACE_STAT_IN_OCTETS` 等)
+- `rif_port_map` / `port_rif_map` 構築: `sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py` L341-L346
+- LAG 経由の RIF カウンタ加算: 同 `rfc1213.py` L427-L440 (`sai_lag_rif_id = self.port_rif_map[sai_lag_id]` → `self.rif_counters[sai_lag_rif_id].get(rif_table_name, 0)` を `counter_value` に加算)
+- 関連 RFC2863 拡張ファイル: `sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc2863.py`（IfX MIB 側の同 aggregation）
+- テスト: `sonic-snmpagent/tests/test_interfaces.py`, `tests/namespace/test_interfaces.py`
 
 ## 引用元
 

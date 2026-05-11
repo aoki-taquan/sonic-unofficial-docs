@@ -1,8 +1,8 @@
 ---
 title: Bulk Counter（sai_bulk_object_get_stats / chunk size）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/bulk_counter/bulk_counter.md
@@ -14,8 +14,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `sonic-sairedis` の `BulkStatsContext` 実装、SAI bulk API（`sai_bulk_object_get_stats` / `sai_bulk_object_clear_stats`）の community SAI 取り込み、bulk chunk size 設定 (v0.2 追記) のフォーマットは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `BulkStatsContext` の実装を `sonic-sairedis/syncd/FlexCounter.cpp` L208-L211 で確認。SAI bulk API は `sonic-sairedis/syncd/VendorSai.cpp` L41 `.bulk_object_get_stats = &sai_bulk_object_get_stats` で取り込み済み。chunk size の per-prefix 設定 (`m_counterChunkSizeMapFromPrefix`) も同 `FlexCounter.cpp` L544-L671 で `default_bulk_chunk_size` および partition prefix 別の chunk 計算を確認。
 
 # Bulk Counter（sai_bulk_object_get_stats / chunk size）
 
@@ -122,6 +122,13 @@ CLI / CONFIG_DB の **新規追加なし**（Phase 1）[^1]。FLEX_COUNTER_TABLE
 
 - 一部 counter が更新されない → fallback 経路に落ちている可能性。syncd ログで bulk capability rejection を確認
 - chunk 細分化したが分散しない → counter ID prefix の表記揺れに注意
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- `BulkStatsContext` 定義: `sonic-sairedis/syncd/FlexCounter.cpp` L208-L211
+- SAI bulk API VendorSai 紐付け: `sonic-sairedis/syncd/VendorSai.cpp` L41 (`.bulk_object_get_stats = &sai_bulk_object_get_stats`)
+- bulk context 生成と chunk size 適用: `sonic-sairedis/syncd/FlexCounter.cpp` L544-L671 (`typedef BulkStatsContext<StatType> BulkContextType;` → `default_bulk_chunk_size` / `m_counterChunkSizeMapFromPrefix[counterPrefix.first]` / `default_partition` を使った `getBulkStatsContext()` / `addBulkStatsContext()`)
+- 関連: `sonic-swss/orchagent/flexcounterorch.cpp`, `sonic-swss/orchagent/saihelper.cpp`, テストは `sonic-sairedis/syncd/tests/TestSyncdMlnx.cpp` と `sonic-swss/tests/mock_tests/flexcounter_ut.cpp`
 
 ## 引用元
 
