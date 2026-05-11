@@ -1,0 +1,15 @@
+{
+  "page": "docs/architecture/sonic-port-link-training-design.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが本文に 要確認 キーワードが残存し、IEEE clause 72/93 dynamic FIR 設定の現行 portsyncd/portmgrd 取扱いを再精査要",
+    "config interface link-training CLI と CONFIG_DB PORT.link_training フィールドの取り込みパス (sonic-utilities config/main.py / portmgrd) の最新実装一致を裏取り",
+    "SAI 側 SAI_PORT_ATTR_LINK_TRAINING_ENABLE 取り込みが portsorch で gating されているかの再確認",
+    "show interfaces link-training status の出力フォーマットが STATE_DB 側 PORT_TABLE と一貫しているかの裏取り"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}

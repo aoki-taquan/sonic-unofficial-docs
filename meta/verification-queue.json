@@ -669,6 +669,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/acl-qos/egress-mirroring-support-and-acl-action-capability-check.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に TBD / 未実装 キーワードが残存しており、capability query 経路の未完部分が再精査要",
+        "SAI ベース ACL action capability 問い合わせ (SAI_OBJECT_TYPE_ACL_ENTRY enum_values_capability) が sonic-sairedis / orchagent で最新の switch_capability_table 経由か再確認",
+        "egress mirror に対する SAI_ACL_ACTION_TYPE_MIRROR_EGRESS の SWITCH_CAPABILITY エントリの実装網羅性 (orchagent/saihelper, swssconfig) を確認",
+        "acl_loader CLI 側の egress stage 受け付けが capability 反映後にエラー化されるパスの裏取り"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+    },
+    {
       "page": "docs/acl-qos/enhancements-on-show-acl-commands.md",
       "issue": 125,
       "verification": "code-verified",
@@ -877,6 +892,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/architecture/sonic-port-link-training-design.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に 要確認 キーワードが残存し、IEEE clause 72/93 dynamic FIR 設定の現行 portsyncd/portmgrd 取扱いを再精査要",
+        "config interface link-training CLI と CONFIG_DB PORT.link_training フィールドの取り込みパス (sonic-utilities config/main.py / portmgrd) の最新実装一致を裏取り",
+        "SAI 側 SAI_PORT_ATTR_LINK_TRAINING_ENABLE 取り込みが portsorch で gating されているかの再確認",
+        "show interfaces link-training status の出力フォーマットが STATE_DB 側 PORT_TABLE と一貫しているかの裏取り"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+    },
+    {
       "page": "docs/internals/byte-packet-rates-port-utilization-in-sonic.md",
       "issue": 49,
       "verification": "code-verified",
@@ -967,6 +997,36 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/internals/zmq-producer-consumer-state-table-design.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に 要確認 キーワードが残存し、ZmqProducerStateTable / ZmqConsumerStateTable の現行 sonic-swss-common インタフェース一致を再精査要",
+        "sources が sonic-net/SONiC の HLD doc のみで、実装側 (sonic-swss-common/common/zmqproducerstatetable.cpp 等) の pin が欠落しているため SHA pin 補強",
+        "ZMQ endpoint (tcp://) のデフォルトポート / addr 命名規約と orchagent 側利用箇所 (gearsyncd 等) の最新一致",
+        "ack / retry セマンティクス (ZMQ_REQ/REP もしくは PUSH/PULL) の現行実装での選択を裏取り"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+    },
+    {
+      "page": "docs/management/aaa-improvements.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に 要確認 キーワードが残存し、PAM / NSS / D-Bus 多重ロール RBAC の実装到達度を再精査要",
+        "sources が HLD doc のみで、sonic-buildimage の files/image_config/aaa/ 配下や hostcfgd の AAA / RADIUS / TACPLUS handler 実装側 SHA pin が欠落",
+        "CONFIG_DB AAA / RADIUS / TACPLUS テーブルのフィールド差分 (例: src_intf, retransmit) が最新 schema.h と一致するか再確認",
+        "gNOI / REST 認可と Linux ローカルユーザ RBAC との二重実装の現状を裏取り"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
     },
     {
       "page": "docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md",
@@ -1244,6 +1304,21 @@
       "notes": "YANG と security_cipher.py の汎用暗号基盤は揃うが、TACACS+ passkey に特化した CLI (--encrypt) と hostcfgd 連携は現行 master に未取り込み。HLD 設計の中核フローが未稼働。HLD 表記 /etc/cipher_pass は実装上 /etc/cipher_pass.json に修正されている。"
     },
     {
+      "page": "docs/overlay/active-active-dual-tor.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に TBD キーワードが残存し、gRPC ベース cable control と prefix-based neighbor の対応範囲を再精査要",
+        "sonic-linkmgrd の LinkManagerStateMachineActiveActive / LinkProberStateMachineActiveActive が最新 SHA で本文記載の状態遷移と一致するか再確認",
+        "muxorch の MUX_CABLE / MUX_TUNNEL ハンドリング (gRPC client 経路) の現行実装での網羅性裏取り",
+        "config muxcable / show muxcable サブコマンドの active-active 固有出力 (peer 状態, prefix 同期) のフォーマット一致確認"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+    },
+    {
       "page": "docs/overlay/dash-sonic-kvm.md",
       "issue": 111,
       "verification": "code-verified",
@@ -1261,6 +1336,21 @@
       "priority": "medium",
       "last_verified": "2026-05-09",
       "notes": "DASH SAI build profile / BMv2 / vms-kvm-dpu testbed トポロジは現行 master に取り込み済み。HLD で明示的に TBD とされる「DPU image with dataplane」「DPU+VPP NPU testbed」は仕様通り未着手。"
+    },
+    {
+      "page": "docs/platform/1-6t-support-in-sonic.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に 未確認 キーワードが残存し、200G SerDes / SFF-8024 / xcvrd の取り込み実装到達度を再精査要",
+        "sources が SONiC HLD doc のみで sonic-platform-common / sonic-platform-daemons (xcvrd) の実装側 SHA pin が欠落",
+        "PORT.speed enum の 1600000 (1.6T) 受け付けが sonic-utilities / sonic-swss / sonic-yang-models で揃っているか裏取り",
+        "SFF-8024 identifier extension に対する transceiver_info テーブルのフィールド変更状況 (sonic-platform-common/sonic_platform_base/sonic_xcvr/) 確認"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
     },
     {
       "page": "docs/platform/custom-si-settings-for-cmis-modules.md",
@@ -1390,6 +1480,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/reference/cli/config-muxcable.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に 要確認 キーワードが残存し、PRBS / loopback / FW / FEC / ANLT サブコマンドの最新実装網羅性を再精査要",
+        "sources が sonic-utilities config/muxcable.py 単一 SHA で、xcvrd 側 (sonic-platform-daemons xcvrd/sff_mgr_interface.py 等) のミラー実装 SHA pin が欠落",
+        "MUX_CABLE / XCVRD_LOG / MUX_LINKMGR テーブルとの整合性 (オペレータが投入する値域) の最新スキーマ一致確認",
+        "Y-Cable Vendor SDK 抽象 (sonic_y_cable) の現行 API と本文に書いたサブコマンドのマッピング裏取り"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+    },
+    {
       "page": "docs/routing/bfd-hw-offload-for-bgp-session.md",
       "issue": 307,
       "verification": "discrepancy-found",
@@ -1405,6 +1510,21 @@
       "priority": "medium",
       "last_verified": "2026-05-09",
       "notes": "HLD は 2024-06 v0.2。BFD HW Offload に必要な bfdsyncd / hw_offload feature flag / REMOTE_* attr の get 経路は現行 master 未取り込みで、ページは仕様参考扱い。"
+    },
+    {
+      "page": "docs/routing/bgp-prefix-independent-convergence-architecture-document.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に 未確認 キーワードが残存し、NHG 階層 / BGP PIC core / edge の到達範囲を再精査要",
+        "sources が SONiC HLD doc のみで、FRR (frr/bgpd/bgp_nht.c, bgp_nexthop.c) と sonic-swss の NhgOrch / fpmsyncd 実装側 SHA pin が欠落",
+        "NEXTHOP_GROUP / NEXTHOP_GROUP_MEMBER テーブルのフォーマットと orchagent 経路 (nhgorch.cpp) の一致確認",
+        "discrepancy-index 上で BGP nexthop 周辺と関連付くページ (bgp-suppress-announcements 等) との整合性チェック"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
     },
     {
       "page": "docs/routing/bgp-route-aggregation-with-bbr-awareness.md",
@@ -1721,6 +1841,21 @@
       "last_verified": "2026-05-09"
     },
     {
+      "page": "docs/switching/mclag-enhancements.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが 7 軸 (dynamic config / unique IP / isolation group / static MAC ほか) すべての裏取り網羅が不明で再精査要",
+        "sources が SONiC HLD doc のみで、sonic-linux-kernel / sonic-iccpd / sonic-utilities config/mclag.py 実装側 SHA pin が欠落",
+        "MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブルのスキーマ差分 (sonic-swss-common/common/schema.h) 最新一致確認",
+        "isolation group / static MAC の orchagent (mclagsyncd / fdborch) 反映パスの裏取り"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+    },
+    {
       "page": "docs/switching/multiple-spanning-tree-protocol.md",
       "issue": 313,
       "verification": "code-verified",
@@ -1824,6 +1959,21 @@
         "sonic-memory-statistics YANG モジュールの sonic-yang-models 取り込み確認 -> 実コードで存在を確認 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
+    },
+    {
+      "page": "docs/system/multi-asic-warm-reboot.md",
+      "verification": "code-verified",
+      "kind": "recheck",
+      "concerns": [
+        "自称 code-verified だが本文に 未確認 キーワードが残存し、namespace 横断の協調 shutdown / boot 順序の裏取り網羅が不明",
+        "sources が SONiC HLD doc のみで、sonic-utilities scripts/fast-reboot / scripts/warm-reboot 実装側 SHA pin が欠落",
+        "WARM_RESTART テーブル (system / swss / bgp / teamd 等のキー) の最新スキーマと restore_count / state 取り扱いの一致確認",
+        "multi-ASIC 固有の per-namespace 順序制御 (sonic-py-common multi_asic.py) の最新実装裏取り"
+      ],
+      "verified_concerns": [],
+      "priority": "medium",
+      "last_verified": "2026-05-11",
+      "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
     },
     {
       "page": "docs/system/persistent-log-level-hld.md",

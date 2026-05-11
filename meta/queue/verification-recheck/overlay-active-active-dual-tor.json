@@ -1,0 +1,15 @@
+{
+  "page": "docs/overlay/active-active-dual-tor.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが本文に TBD キーワードが残存し、gRPC ベース cable control と prefix-based neighbor の対応範囲を再精査要",
+    "sonic-linkmgrd の LinkManagerStateMachineActiveActive / LinkProberStateMachineActiveActive が最新 SHA で本文記載の状態遷移と一致するか再確認",
+    "muxorch の MUX_CABLE / MUX_TUNNEL ハンドリング (gRPC client 経路) の現行実装での網羅性裏取り",
+    "config muxcable / show muxcable サブコマンドの active-active 固有出力 (peer 状態, prefix 同期) のフォーマット一致確認"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}

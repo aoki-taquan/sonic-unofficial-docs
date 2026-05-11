@@ -1,0 +1,15 @@
+{
+  "page": "docs/routing/bgp-prefix-independent-convergence-architecture-document.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが本文に 未確認 キーワードが残存し、NHG 階層 / BGP PIC core / edge の到達範囲を再精査要",
+    "sources が SONiC HLD doc のみで、FRR (frr/bgpd/bgp_nht.c, bgp_nexthop.c) と sonic-swss の NhgOrch / fpmsyncd 実装側 SHA pin が欠落",
+    "NEXTHOP_GROUP / NEXTHOP_GROUP_MEMBER テーブルのフォーマットと orchagent 経路 (nhgorch.cpp) の一致確認",
+    "discrepancy-index 上で BGP nexthop 周辺と関連付くページ (bgp-suppress-announcements 等) との整合性チェック"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}

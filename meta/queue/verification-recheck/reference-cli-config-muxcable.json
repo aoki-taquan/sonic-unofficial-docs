@@ -1,0 +1,15 @@
+{
+  "page": "docs/reference/cli/config-muxcable.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが本文に 要確認 キーワードが残存し、PRBS / loopback / FW / FEC / ANLT サブコマンドの最新実装網羅性を再精査要",
+    "sources が sonic-utilities config/muxcable.py 単一 SHA で、xcvrd 側 (sonic-platform-daemons xcvrd/sff_mgr_interface.py 等) のミラー実装 SHA pin が欠落",
+    "MUX_CABLE / XCVRD_LOG / MUX_LINKMGR テーブルとの整合性 (オペレータが投入する値域) の最新スキーマ一致確認",
+    "Y-Cable Vendor SDK 抽象 (sonic_y_cable) の現行 API と本文に書いたサブコマンドのマッピング裏取り"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}
