@@ -168,64 +168,65 @@ ERROR_DB は **上位プロセスが消費して削除する** 前提で設計�
 - orchagent が頻繁に再起動する: `exit(EXIT_FAILURE)` 経路を踏んでいる。`NOT_SUPPORTED` 等の crash 条件が立っていないか SAI status を syslog で確認。
 - 同じエントリで `counter` が増え続ける: `task_need_retry` で再試行ループに入っている可能性。条件が解消しないなら `task_failed` 化を検討。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
-2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
+    ### 1. `handleSai*Status` は Orch base の virtual 関数ではない
 
-### 1. `handleSai*Status` は Orch base の virtual 関数ではない
+    - **HLD 記述**: `Orch` 基底クラスに `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` / `handleSaiGetStatus` を virtual として追加し、個別 Orch が override する。
+    - **実装位置**: `sonic-swss/orchagent/saihelper.h:19-22` に **free function** として宣言され、共通実装が `saihelper.cpp` にある。`orchagent/orch.h` の `Orch` クラスには対応 virtual は存在しない。
+    - **差分の中身**:
+      ```cpp
+      // saihelper.h:19-22 （実装）
+      task_process_status handleSaiCreateStatus(sai_api_t api, sai_status_t status, void *context = nullptr);
+      task_process_status handleSaiSetStatus(sai_api_t api, sai_status_t status, void *context = nullptr);
+      task_process_status handleSaiRemoveStatus(sai_api_t api, sai_status_t status, void *context = nullptr);
+      task_process_status handleSaiGetStatus(sai_api_t api, sai_status_t status, void *context = nullptr);
+      ```
+      個別 Orch（`vrforch.cpp` / `copporch.cpp` / `dtelorch.cpp` / `macsecorch.cpp` / `sfloworch.cpp` / `natorch.cpp` / `dash/dashportmaporch.cpp` / `dash/dashvnetorch.cpp` 等 28 箇所程度）は **呼び出し側** として利用するだけで、override / 再定義はしていない。
+    - **読者への影響**: SAI 失敗時のリターン分岐ロジックは Orch 個別ではなく `saihelper.cpp` の共通実装 1 つに集約される。HLD を読んで「Orch 派生クラスを grep する」とハンドリングロジックに辿り着けない。SAI API 別／Orch 別のカスタム挙動が必要な場合は呼び出し前後で個別 Orch がラップする実装パターンとなっている。
+    - **回避策**: コードを追うときは `saihelper.cpp` の 4 関数を出発点に、`grep -rn "handleSaiCreateStatus\|handleSaiSetStatus" sonic-swss/orchagent/` で全呼び出しサイトを列挙する。個別 Orch の return code 判断は `task_need_retry` / `task_failed` / `task_success` の戻り値で分岐される（`orch.h` の `task_process_status` enum 参照）。
 
-- **HLD 記述**: `Orch` 基底クラスに `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` / `handleSaiGetStatus` を virtual として追加し、個別 Orch が override する。
-- **実装位置**: `sonic-swss/orchagent/saihelper.h:19-22` に **free function** として宣言され、共通実装が `saihelper.cpp` にある。`orchagent/orch.h` の `Orch` クラスには対応 virtual は存在しない。
-- **差分の中身**:
-  ```cpp
-  // saihelper.h:19-22 （実装）
-  task_process_status handleSaiCreateStatus(sai_api_t api, sai_status_t status, void *context = nullptr);
-  task_process_status handleSaiSetStatus(sai_api_t api, sai_status_t status, void *context = nullptr);
-  task_process_status handleSaiRemoveStatus(sai_api_t api, sai_status_t status, void *context = nullptr);
-  task_process_status handleSaiGetStatus(sai_api_t api, sai_status_t status, void *context = nullptr);
-  ```
-  個別 Orch（`vrforch.cpp` / `copporch.cpp` / `dtelorch.cpp` / `macsecorch.cpp` / `sfloworch.cpp` / `natorch.cpp` / `dash/dashportmaporch.cpp` / `dash/dashvnetorch.cpp` 等 28 箇所程度）は **呼び出し側** として利用するだけで、override / 再定義はしていない。
-- **読者への影響**: SAI 失敗時のリターン分岐ロジックは Orch 個別ではなく `saihelper.cpp` の共通実装 1 つに集約される。HLD を読んで「Orch 派生クラスを grep する」とハンドリングロジックに辿り着けない。SAI API 別／Orch 別のカスタム挙動が必要な場合は呼び出し前後で個別 Orch がラップする実装パターンとなっている。
-- **回避策**: コードを追うときは `saihelper.cpp` の 4 関数を出発点に、`grep -rn "handleSaiCreateStatus\|handleSaiSetStatus" sonic-swss/orchagent/` で全呼び出しサイトを列挙する。個別 Orch の return code 判断は `task_need_retry` / `task_failed` / `task_success` の戻り値で分岐される（`orch.h` の `task_process_status` enum 参照）。
+    ### 2. `ERROR_DB` は実装されていない
 
-### 2. `ERROR_DB` は実装されていない
+    - **HLD 記述**: 新規 Redis DB `ERROR_DB` を導入し、`ERROR_APPL_ROUTE_TABLE` 等のテーブルに SAI 失敗を蓄積、`fpmsyncd` 等上位プロセスが consume する。
+    - **実装位置**: `sonic-swss-common/common/schema.h` および `sonic-swss/` 全体に `ERROR_APPL_*` テーブル名と `ERROR_DB` の Redis DB id 定義は **存在しない**（grep ヒット 0、`lagid.h` の `LAG_ID_ALLOCATOR_ERROR_DB_ERROR` は無関係な定数）。
+    - **差分の中身**: HLD で計画されていた次のフローはどこにも書かれていない:
+      1. orchagent 側で SAI 失敗時に `ERROR_DB.ERROR_APPL_*` へ HSET
+      2. fpmsyncd / その他上位プロセスが ERROR_DB を subscribe
+      3. 上位プロセスがハンドリング後に `DEL` で除去
+    - **読者への影響**: 個別 Orch が SAI 失敗を検出した場合、現状は `SWSS_LOG_ERROR` でログを出して `task_need_retry` / `task_failed` / `exit(EXIT_FAILURE)` のいずれかに分岐するのみ。fpmsyncd 等上位プロセスへの構造化エスカレーション経路は無く、上位は **ログ監視か APPL_DB / [ASIC_DB](../reference/glossary.md#term-asic_db) の状態差から失敗を間接推定** するしかない。route install エラーに限れば後発の **[BGP](../reference/glossary.md#term-bgp) Suppress FIB Pending**（`dplane_fpm_nl` + RTM_F_OFFLOAD 経路）が代替経路を提供する。
+    - **回避策**:
+      - SAI 失敗を運用監視で拾うなら `/var/log/syslog` の `SAI_STATUS_*` 文字列を集約する。
+      - BGP 経路の install 失敗に限れば BGP Suppress FIB Pending 機能を有効化する（[../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md](../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) 参照）。
+      - 独自に上位通知が必要なら orchagent 側にカスタム notifier を追加するか、ASIC_DB と APPL_DB の差分を周期スキャンする外部ツールを書く。
 
-- **HLD 記述**: 新規 Redis DB `ERROR_DB` を導入し、`ERROR_APPL_ROUTE_TABLE` 等のテーブルに SAI 失敗を蓄積、`fpmsyncd` 等上位プロセスが consume する。
-- **実装位置**: `sonic-swss-common/common/schema.h` および `sonic-swss/` 全体に `ERROR_APPL_*` テーブル名と `ERROR_DB` の Redis DB id 定義は **存在しない**（grep ヒット 0、`lagid.h` の `LAG_ID_ALLOCATOR_ERROR_DB_ERROR` は無関係な定数）。
-- **差分の中身**: HLD で計画されていた次のフローはどこにも書かれていない:
-  1. orchagent 側で SAI 失敗時に `ERROR_DB.ERROR_APPL_*` へ HSET
-  2. fpmsyncd / その他上位プロセスが ERROR_DB を subscribe
-  3. 上位プロセスがハンドリング後に `DEL` で除去
-- **読者への影響**: 個別 Orch が SAI 失敗を検出した場合、現状は `SWSS_LOG_ERROR` でログを出して `task_need_retry` / `task_failed` / `exit(EXIT_FAILURE)` のいずれかに分岐するのみ。fpmsyncd 等上位プロセスへの構造化エスカレーション経路は無く、上位は **ログ監視か APPL_DB / [ASIC_DB](../reference/glossary.md#term-asic_db) の状態差から失敗を間接推定** するしかない。route install エラーに限れば後発の **[BGP](../reference/glossary.md#term-bgp) Suppress FIB Pending**（`dplane_fpm_nl` + RTM_F_OFFLOAD 経路）が代替経路を提供する。
-- **回避策**:
-  - SAI 失敗を運用監視で拾うなら `/var/log/syslog` の `SAI_STATUS_*` 文字列を集約する。
-  - BGP 経路の install 失敗に限れば BGP Suppress FIB Pending 機能を有効化する（[../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md](../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) 参照）。
-  - 独自に上位通知が必要なら orchagent 側にカスタム notifier を追加するか、ASIC_DB と APPL_DB の差分を周期スキャンする外部ツールを書く。
+    ### 3. HLD 内の TODO が大半空白
 
-### 3. HLD 内の TODO が大半空白
+    - **HLD 記述**: 「Other SAI statuses」「SAI API 別の対応表」「Orch 別の対応表」を `TODO` として残す。
+    - **実装位置**: HLD は更新されないまま、実装は `saihelper.cpp` ベースで個別進化している（呼び出しサイトの追加が継続）。
+    - **読者への影響**: HLD の SAI status → 動作のマッピング表を見て「これに従う」と判断すると現実と食い違う。
+    - **回避策**: 現行挙動は `saihelper.cpp` のソース読みが正本。
 
-- **HLD 記述**: 「Other SAI statuses」「SAI API 別の対応表」「Orch 別の対応表」を `TODO` として残す。
-- **実装位置**: HLD は更新されないまま、実装は `saihelper.cpp` ベースで個別進化している（呼び出しサイトの追加が継続）。
-- **読者への影響**: HLD の SAI status → 動作のマッピング表を見て「これに従う」と判断すると現実と食い違う。
-- **回避策**: 現行挙動は `saihelper.cpp` のソース読みが正本。
+    したがって本ページは Proposal 段階の設計記述であり、現行 master の挙動を読み解く際は `saihelper.cpp` の自由関数 4 本と各 Orch の呼び出しサイトを直接参照する必要がある。
 
-したがって本ページは Proposal 段階の設計記述であり、現行 master の挙動を読み解く際は `saihelper.cpp` の自由関数 4 本と各 Orch の呼び出しサイトを直接参照する必要がある。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - `handleSai{Create,Set,Remove,Get}Status` は `Orch` 基底 virtual ではなく `sonic-swss/orchagent/saihelper.h:19-22` の **free function**。共通実装が `saihelper.cpp` に集約。
+    - 個別 Orch（28 箇所程度: `vrforch.cpp` / `copporch.cpp` / `dtelorch.cpp` / `macsecorch.cpp` / `sfloworch.cpp` / `natorch.cpp` / `dash/dashportmaporch.cpp` / `dash/dashvnetorch.cpp` 等）は呼び出し側として利用するのみで override 無し。
+    - 戻り値分岐は `task_process_status` enum (`orch.h`) で `task_need_retry` / `task_failed` / `task_success` を返す。
+    - 関連 PR: 実装は HLD 提案後の review で free function 形式に変更（Orch 基底へ追加する設計から、再利用性のため saihelper.cpp に集約）。
+    - **追加コード追跡コマンド**: 全呼出元の列挙 — `grep -rn 'handleSaiCreateStatus\|handleSaiSetStatus\|handleSaiRemoveStatus\|handleSaiGetStatus' .cache/sonic-sources/sonic-swss/orchagent/ | wc -l` で約 100+ 箇所、`saihelper.cpp` の関数本体に breakpoint を設定すれば全 SAI 失敗を一元的にトラップ可能。
 
-- `handleSai{Create,Set,Remove,Get}Status` は `Orch` 基底 virtual ではなく `sonic-swss/orchagent/saihelper.h:19-22` の **free function**。共通実装が `saihelper.cpp` に集約。
-- 個別 Orch（28 箇所程度: `vrforch.cpp` / `copporch.cpp` / `dtelorch.cpp` / `macsecorch.cpp` / `sfloworch.cpp` / `natorch.cpp` / `dash/dashportmaporch.cpp` / `dash/dashvnetorch.cpp` 等）は呼び出し側として利用するのみで override 無し。
-- 戻り値分岐は `task_process_status` enum (`orch.h`) で `task_need_retry` / `task_failed` / `task_success` を返す。
-- 関連 PR: 実装は HLD 提案後の review で free function 形式に変更（Orch 基底へ追加する設計から、再利用性のため saihelper.cpp に集約）。
-- **追加コード追跡コマンド**: 全呼出元の列挙 — `grep -rn 'handleSaiCreateStatus\|handleSaiSetStatus\|handleSaiRemoveStatus\|handleSaiGetStatus' .cache/sonic-sources/sonic-swss/orchagent/ | wc -l` で約 100+ 箇所、`saihelper.cpp` の関数本体に breakpoint を設定すれば全 SAI 失敗を一元的にトラップ可能。
+    > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
-> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [GitHub Issue / PR の関連リンクは未確認] — `handleSai*Status` virtual / ERROR_DB ハンドリングは [sonic-swss](../reference/glossary.md#term-sonic-swss) orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。[CRM](../reference/glossary.md#term-crm) (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。
+    - [GitHub Issue / PR の関連リンクは未確認] — `handleSai*Status` virtual / ERROR_DB ハンドリングは [sonic-swss](../reference/glossary.md#term-sonic-swss) orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。[CRM](../reference/glossary.md#term-crm) (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。
+<!-- /diff-admonition -->
 
 ## 引用元
 

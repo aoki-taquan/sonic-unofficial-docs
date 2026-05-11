@@ -1,0 +1,36 @@
+/*
+ * sonic-unofficial-docs — extra styles
+ *
+ * カスタム admonition `diff` を定義する。
+ * 用途: discrepancy-found ページで「HLD と実装の差分」を視覚的に強調する。
+ * MkDocs Material の組み込み admonition と同じ命名規約に従い、
+ * `!!! diff "..."` で利用できる。
+ */
+
+:root {
+  --md-admonition-icon--diff: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3 4 8.5l5.5 5.5 1.4-1.4-3.1-3.1H20V7.5H7.8l3.1-3.1L9.5 3zm5 7 1.4 1.4 3.1 3.1H6v2H19l-3.1 3.1 1.4 1.4 5.5-5.5-5.3-5.5z"/></svg>');
+}
+
+.md-typeset .admonition.diff,
+.md-typeset details.diff {
+  border-color: #f57c00; /* オレンジ */
+}
+
+.md-typeset .diff > .admonition-title,
+.md-typeset .diff > summary {
+  background-color: rgba(245, 124, 0, 0.12);
+  border-color: #f57c00;
+}
+
+.md-typeset .diff > .admonition-title::before,
+.md-typeset .diff > summary::before {
+  background-color: #f57c00;
+  -webkit-mask-image: var(--md-admonition-icon--diff);
+          mask-image: var(--md-admonition-icon--diff);
+}
+
+/* dark scheme での視認性調整 */
+[data-md-color-scheme="slate"] .md-typeset .diff > .admonition-title,
+[data-md-color-scheme="slate"] .md-typeset .diff > summary {
+  background-color: rgba(245, 124, 0, 0.18);
+}

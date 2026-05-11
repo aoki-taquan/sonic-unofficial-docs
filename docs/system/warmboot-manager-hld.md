@@ -132,82 +132,83 @@ HLD で具体の CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) は�
 - 採否不明な提案 HLD のため master 取り込み有無の最終確認（priority=high）
 -->
 
-## 実装との乖離（裏取りメモ（Verifier batch 29））
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
-per-page queue で既出の通り提案 HLD は未採用。再走査でも:
+    - `warmboot-manager` / `warmbootmgr` / `warmbootmgrd` を名乗る daemon は `sonic-buildimage` / `sonic-swss` のどこにも検出できず
+    - 既存の warm shutdown orchestration は `warmboot-finalizer.service` + `finalize-warmboot.sh` (`.cache/sonic-sources/sonic-buildimage/files/image_config/warmboot-finalizer/`) のシェルベースのまま
 
-- `warmboot-manager` / `warmbootmgr` / `warmbootmgrd` を名乗る daemon は `sonic-buildimage` / `sonic-swss` のどこにも検出できず
-- 既存の warm shutdown orchestration は `warmboot-finalizer.service` + `finalize-warmboot.sh` (`.cache/sonic-sources/sonic-buildimage/files/image_config/warmboot-finalizer/`) のシェルベースのまま
+    HLD は Google による 2023-09 Rev 0.1 提案で「co-exist」を明記しており、現行 master の方向性としては既存 orchestration 維持。`discrepancy-found` を維持。
 
-HLD は Google による 2023-09 Rev 0.1 提案で「co-exist」を明記しており、現行 master の方向性としては既存 orchestration 維持。`discrepancy-found` を維持。
+    ### 深掘り（2026-05-11、batch q3-disc-detail）
 
-### 深掘り（2026-05-11、batch q3-disc-detail）
+    #### HLD 記述と実装の差分（行番号 + コード抜粋）
 
-#### HLD 記述と実装の差分（行番号 + コード抜粋）
+    community master では HLD が提案する **4-phase Warmboot Manager daemon は不在** で、代わりに以下のシェルベース orchestration が稼働:
 
-community master では HLD が提案する **4-phase Warmboot Manager daemon は不在** で、代わりに以下のシェルベース orchestration が稼働:
+    `sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh` L13-L29:
 
-`sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh` L13-L29:
+    ```bash
+    declare -A RECONCILE_COMPONENTS=( \
+                            ["swss"]="orchagent neighsyncd" \
+                            ["bgp"]="bgp"                   \
+                            ["nat"]="natsyncd"              \
+                            ["mux"]="linkmgrd"              \
+                           )
 
-```bash
-declare -A RECONCILE_COMPONENTS=( \
-                        ["swss"]="orchagent neighsyncd" \
-                        ["bgp"]="bgp"                   \
-                        ["nat"]="natsyncd"              \
-                        ["mux"]="linkmgrd"              \
-                       )
+    for reconcile_file in $(find /etc/sonic/ -iname '*_reconcile' -type f); do
+        file_basename=$(basename $reconcile_file)
+        docker_container_name=${file_basename%_reconcile}
+        RECONCILE_COMPONENTS[$docker_container_name]=$(cat $reconcile_file)
+    done
 
-for reconcile_file in $(find /etc/sonic/ -iname '*_reconcile' -type f); do
-    file_basename=$(basename $reconcile_file)
-    docker_container_name=${file_basename%_reconcile}
-    RECONCILE_COMPONENTS[$docker_container_name]=$(cat $reconcile_file)
-done
+    EXP_STATE="reconciled"
+    ```
 
-EXP_STATE="reconciled"
-```
+    - HLD の `Quiescence Timer` / `Unfreeze on Failure` / `Component Warmboot States` (`FREEZING / FROZEN / CHECKPOINTING / RESTORED / RECONCILED`) のような完全状態機械は無い。
+    - 実装は **`reconciled` 一状態待ち** + `*_reconcile` ファイルでコンポーネントを拡張する仕組みのみ。
 
-- HLD の `Quiescence Timer` / `Unfreeze on Failure` / `Component Warmboot States` (`FREEZING / FROZEN / CHECKPOINTING / RESTORED / RECONCILED`) のような完全状態機械は無い。
-- 実装は **`reconciled` 一状態待ち** + `*_reconcile` ファイルでコンポーネントを拡張する仕組みのみ。
+    `grep -rn "warmboot-manager\|warmbootmgrd\|WarmbootMgr" .cache/sonic-sources/` は 0 件で、daemon コードは未マージ。
 
-`grep -rn "warmboot-manager\|warmbootmgrd\|WarmbootMgr" .cache/sonic-sources/` は 0 件で、daemon コードは未マージ。
+    #### 読者への影響
 
-#### 読者への影響
+    - HLD 記載の `STATE_DB:WARMBOOT_COMPONENT_TABLE` を購読するアプリを書いても、誰もそのテーブルに書き込まないため永久に通知が来ない。
+    - 「Phase 2 freeze 中は xcvrd / DOM polling が止まる」と読んで運用設計すると、現行では止まらない（finalize-warmboot.sh は freeze に介入しない）。`warm-reboot` 中の DOM polling 由来の i2c エラーは現行版で出る可能性がある。
+    - `unfreeze on failure` の自動ロールバックは無いので、warm-reboot 失敗時のリカバリは手動。
 
-- HLD 記載の `STATE_DB:WARMBOOT_COMPONENT_TABLE` を購読するアプリを書いても、誰もそのテーブルに書き込まないため永久に通知が来ない。
-- 「Phase 2 freeze 中は xcvrd / DOM polling が止まる」と読んで運用設計すると、現行では止まらない（finalize-warmboot.sh は freeze に介入しない）。`warm-reboot` 中の DOM polling 由来の i2c エラーは現行版で出る可能性がある。
-- `unfreeze on failure` の自動ロールバックは無いので、warm-reboot 失敗時のリカバリは手動。
+    #### 回避策の実コマンド
 
-#### 回避策の実コマンド
+    現行 master での warm-reboot 監視・操作:
 
-現行 master での warm-reboot 監視・操作:
+    ```bash
+    # 1) reconcile 待機状態の確認
+    sudo systemctl status warmboot-finalizer
+    sudo journalctl -u warmboot-finalizer -f
 
-```bash
-# 1) reconcile 待機状態の確認
-sudo systemctl status warmboot-finalizer
-sudo journalctl -u warmboot-finalizer -f
+    # 2) 各コンポーネントの reconcile 進行
+    for app in orchagent neighsyncd bgp natsyncd linkmgrd; do
+      state=$(sonic-db-cli STATE_DB hget "WARM_RESTART_TABLE|$app" state)
+      echo "$app: $state"
+    done
 
-# 2) 各コンポーネントの reconcile 進行
-for app in orchagent neighsyncd bgp natsyncd linkmgrd; do
-  state=$(sonic-db-cli STATE_DB hget "WARM_RESTART_TABLE|$app" state)
-  echo "$app: $state"
-done
+    # 3) 新規コンポーネントの reconcile 参加（HLD の component 登録の代替）
+    echo "myapp1 myapp2" | sudo tee /etc/sonic/mycontainer_reconcile
 
-# 3) 新規コンポーネントの reconcile 参加（HLD の component 登録の代替）
-echo "myapp1 myapp2" | sudo tee /etc/sonic/mycontainer_reconcile
+    # 4) warm-reboot 失敗時の手動リカバリ
+    sudo config warm_restart disable swss
+    sudo config warm_restart disable bgp
+    sudo reboot   # cold reboot に fallback
+    ```
 
-# 4) warm-reboot 失敗時の手動リカバリ
-sudo config warm_restart disable swss
-sudo config warm_restart disable bgp
-sudo reboot   # cold reboot に fallback
-```
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
+    - 本 HLD（Google Rev 0.1）に対応する upstream PR は **未提出 / 未マージ**。GitHub 上では本 HLD ドキュメント自体の追加 PR (`sonic-net/SONiC` `doc/warm-reboot/Warmboot_Manager_HLD.md`) のみ存在。
+    - 現行の `finalize-warmboot.sh` ベースの reconcile 機構は `sonic-buildimage` 内で漸進的に更新されており、`*_reconcile` ファイル拡張は実装済み。
 
-- 本 HLD（Google Rev 0.1）に対応する upstream PR は **未提出 / 未マージ**。GitHub 上では本 HLD ドキュメント自体の追加 PR (`sonic-net/SONiC` `doc/warm-reboot/Warmboot_Manager_HLD.md`) のみ存在。
-- 現行の `finalize-warmboot.sh` ベースの reconcile 機構は `sonic-buildimage` 内で漸進的に更新されており、`*_reconcile` ファイル拡張は実装済み。
+    #### 検証日
 
-#### 検証日
+    2026-05-11 (q3-disc-detail batch)
 
-2026-05-11 (q3-disc-detail batch)
-
-<!-- glossary-links-injected: 34c2dd9af927 -->
+    <!-- glossary-links-injected: 34c2dd9af927 -->
+<!-- /diff-admonition -->

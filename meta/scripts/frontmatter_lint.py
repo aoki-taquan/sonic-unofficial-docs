@@ -210,7 +210,16 @@ def lint_file(path: Path, *, check_paths: bool):
     # the discrepancy detail lives in the limitations child).
     page_kind_val = str(fm.get("page_kind") or "").strip()
     if verification == "discrepancy-found" and page_kind_val != "split-child":
-        if "実装との乖離" not in body and "実装からの乖離" not in body:
+        # `!!! diff "HLD と実装の差分"` admonition (inject_diff_admonition.py)
+        # で乖離節をラップした後も検出できるよう、admonition マーカー /
+        # title 文字列 / 旧来の H2 見出しのいずれかが残っていれば OK とする。
+        has_diff_section = (
+            "実装との乖離" in body
+            or "実装からの乖離" in body
+            or "HLD と実装の差分" in body
+            or "<!-- diff-admonition -->" in body
+        )
+        if not has_diff_section:
             violations.append("c: discrepancy-found page missing '実装との乖離' section")
 
     # f) monitor enum check and presence requirement for discrepancy-found

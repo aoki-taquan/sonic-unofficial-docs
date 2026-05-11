@@ -133,27 +133,28 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_TWAMP_SESSION_NAME_MAP'
 - `error` 終了 → [STATE_DB](../reference/glossary.md#term-state_db) の error code を確認
 - capability not supported → ASIC TWAMP offload 未対応
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    | 層 | 状況 |
+    |----|------|
+    | Orch / [SAI](../reference/glossary.md#term-sai) | **取り込み済**（`twamporch.cpp` 実装、SAI_TWAMP_* 属性使用、test 完備）|
+    | YANG `sonic-twamp-light` | **欠落**（[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) に存在せず）|
+    | `config/show twamp-light` CLI | **欠落**（[sonic-utilities](../reference/glossary.md#term-sonic-utilities) 配下に grep ヒット 0）|
 
-| 層 | 状況 |
-|----|------|
-| Orch / [SAI](../reference/glossary.md#term-sai) | **取り込み済**（`twamporch.cpp` 実装、SAI_TWAMP_* 属性使用、test 完備）|
-| YANG `sonic-twamp-light` | **欠落**（[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) に存在せず）|
-| `config/show twamp-light` CLI | **欠落**（[sonic-utilities](../reference/glossary.md#term-sonic-utilities) 配下に grep ヒット 0）|
+    **読者への影響**:
 
-**読者への影響**:
+    - HLD の `config/show twamp-light` を叩くと `No such command`
+    - YANG 無しで `config save/load` 経由は schema validation で reject されうる → 生 CONFIG_DB 直書きで運用
+    - HA / `config_reload` 越しの再現には独自 playbook が必要
 
-- HLD の `config/show twamp-light` を叩くと `No such command`
-- YANG 無しで `config save/load` 経由は schema validation で reject されうる → 生 CONFIG_DB 直書きで運用
-- HA / `config_reload` 越しの再現には独自 playbook が必要
+    > 分類: `monitor: partially_implemented` — HLD スタックのうち低層が取り込まれ、上層（YANG / CLI）が未完成。
 
-> 分類: `monitor: partially_implemented` — HLD スタックのうち低層が取り込まれ、上層（YANG / CLI）が未完成。
+    ### 関連 GitHub Issue / PR
 
-### 関連 GitHub Issue / PR
-
-- [[sonic-swss](../reference/glossary.md#term-sonic-swss) #2927: \[[orchagent](../reference/glossary.md#term-orchagent)\] TWAMP Light orchagent implementation (merged)](https://github.com/sonic-net/sonic-swss/pull/2927) — TwampOrch 取り込み確定 PR
-- [sonic-buildimage #24135: Enhancement: \[YANG\] YANG model needed for TWAMP_SESSION (open)](https://github.com/sonic-net/sonic-buildimage/issues/24135) — YANG 欠落 issue
-- [SONiC #1192: Two-Way Active Measurement Protocol (TWAMP) Light (open)](https://github.com/sonic-net/SONiC/issues/1192) — community 全体トラッキング
+    - [[sonic-swss](../reference/glossary.md#term-sonic-swss) #2927: \[[orchagent](../reference/glossary.md#term-orchagent)\] TWAMP Light orchagent implementation (merged)](https://github.com/sonic-net/sonic-swss/pull/2927) — TwampOrch 取り込み確定 PR
+    - [sonic-buildimage #24135: Enhancement: \[YANG\] YANG model needed for TWAMP_SESSION (open)](https://github.com/sonic-net/sonic-buildimage/issues/24135) — YANG 欠落 issue
+    - [SONiC #1192: Two-Way Active Measurement Protocol (TWAMP) Light (open)](https://github.com/sonic-net/SONiC/issues/1192) — community 全体トラッキング
+<!-- /diff-admonition -->
 
 ## 関連 Topics
 

@@ -27,44 +27,45 @@ related:
 !!! danger "裏取りステータス: Discrepancy-found（CLI 未実装）"
     swss 側は実装あり: `sonic-swss/orchagent/port/portschema.h` L101 で `PORT_DAMPING_ALGO = "link_event_damping_algorithm"`、`port.h` L288 / `portcnt.h` L251-282 / `portsorch.cpp` L3736 で `sai_redis_link_event_damping_algorithm_t` と AIED config 反映ロジックを確認、`tests/test_port.py` L437-482 でも `link_event_damping_algorithm = "aied" / "disabled"` の VS テストを確認。一方、**`sonic-utilities` 配下に `link_event_damping` をキーとする `config interface link_event_damping_algorithm` CLI のヒットが 0 件**、`sonic-buildimage` 配下にも対応する CLI plugin が見当たらず、HLD で要件化された CLI は現行 master 未取り込みである（verified at: 2026-05-09）。設定経路は `CONFIG_DB.PORT|<port>` への直接書き込み、または上位のマネジメントフレームワーク（YANG/REST）経由が必要となる可能性が高い。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-11 時点の現行 master を裏取り。
 
-2026-05-11 時点の現行 master を裏取り。
+    ### 1. ファイル + 行番号
 
-### 1. ファイル + 行番号
+    - **取り込み済み（SwSS）**: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L3736-L3760（`setPortLinkEventDampingAlgorithm` / `setPortLinkEventDampingAlgoAiedConfig`）、`orchagent/portsorch.cpp` L4939-L4941（差分検出）、`orchagent/port/porthlpr.cpp` L24, L133, L899-L900, L1345-L1373（`PortConfig` への 6 フィールドのパース）。
+    - **取り込み済み（[YANG](../reference/glossary.md#term-yang)）**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` に `link_event_damping_algorithm` 系 leaf あり。
+    - **未取り込み**: `sonic-utilities/config/main.py` および周辺に `link_event_damping_algorithm` の CLI ハンドラは無し（grep で `link_event_damping` のヒットは `sonic-swss` 配下のみ）。
 
-- **取り込み済み（SwSS）**: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` L3736-L3760（`setPortLinkEventDampingAlgorithm` / `setPortLinkEventDampingAlgoAiedConfig`）、`orchagent/portsorch.cpp` L4939-L4941（差分検出）、`orchagent/port/porthlpr.cpp` L24, L133, L899-L900, L1345-L1373（`PortConfig` への 6 フィールドのパース）。
-- **取り込み済み（[YANG](../reference/glossary.md#term-yang)）**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` に `link_event_damping_algorithm` 系 leaf あり。
-- **未取り込み**: `sonic-utilities/config/main.py` および周辺に `link_event_damping_algorithm` の CLI ハンドラは無し（grep で `link_event_damping` のヒットは `sonic-swss` 配下のみ）。
+    ### 2. 差分の中身
 
-### 2. 差分の中身
+    [HLD](../reference/glossary.md#term-hld) は `config interface link_event_damping_algorithm <if> aied <max_suppress> <decay_half> <suppress_thr> <reuse_thr> <flap_penalty>` の click サブコマンド追加と、`config interface link_event_damping_algorithm <if> disabled` を要求している。`sonic-utilities` 側の取り込みが無いため、ユーザ経路は **[CONFIG_DB](../reference/glossary.md#term-config_db) の直接編集（`sonic-db-cli` / `redis-cli`）** または `config_db.json` への記述のみ。一方 SwSS 側は `PORT` テーブルからフィールドを読み取り、[SAI](../reference/glossary.md#term-sai) redis 属性 `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM` と `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG` に変換するパスは完成している。
 
-[HLD](../reference/glossary.md#term-hld) は `config interface link_event_damping_algorithm <if> aied <max_suppress> <decay_half> <suppress_thr> <reuse_thr> <flap_penalty>` の click サブコマンド追加と、`config interface link_event_damping_algorithm <if> disabled` を要求している。`sonic-utilities` 側の取り込みが無いため、ユーザ経路は **[CONFIG_DB](../reference/glossary.md#term-config_db) の直接編集（`sonic-db-cli` / `redis-cli`）** または `config_db.json` への記述のみ。一方 SwSS 側は `PORT` テーブルからフィールドを読み取り、[SAI](../reference/glossary.md#term-sai) redis 属性 `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM` と `SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG` に変換するパスは完成している。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    HLD どおりに `sudo config interface link_event_damping_algorithm Ethernet0 aied 40 30 1500 1300 1000` を打つと `Error: No such command "link_event_damping_algorithm".` で失敗する。ドキュメント主導で運用する読者が CLI 経由で機能を有効化できず、SAI 属性まで届かない。
 
-HLD どおりに `sudo config interface link_event_damping_algorithm Ethernet0 aied 40 30 1500 1300 1000` を打つと `Error: No such command "link_event_damping_algorithm".` で失敗する。ドキュメント主導で運用する読者が CLI 経由で機能を有効化できず、SAI 属性まで届かない。
+    ### 4. 回避策
 
-### 4. 回避策
+    `sonic-db-cli` で `PORT` テーブルを直接 update する（CLI 不要・即時反映）:
 
-`sonic-db-cli` で `PORT` テーブルを直接 update する（CLI 不要・即時反映）:
+    ```bash
+    sonic-db-cli CONFIG_DB hmset 'PORT|Ethernet0' \
+        link_event_damping_algorithm aied \
+        max_suppress_time 40 decay_half_life 30 \
+        suppress_threshold 1500 reuse_threshold 1300 flap_penalty 1000
+    ```
 
-```bash
-sonic-db-cli CONFIG_DB hmset 'PORT|Ethernet0' \
-    link_event_damping_algorithm aied \
-    max_suppress_time 40 decay_half_life 30 \
-    suppress_threshold 1500 reuse_threshold 1300 flap_penalty 1000
-```
+    `config_db.json` で永続化する場合は `PORT` セクションに 6 フィールドを記述。SwSS は 6 フィールドを **組として** 受けるので、欠落させると damping が disable になる点に注意（`porthlpr.cpp` L1345-L1373）。
 
-`config_db.json` で永続化する場合は `PORT` セクションに 6 フィールドを記述。SwSS は 6 フィールドを **組として** 受けるので、欠落させると damping が disable になる点に注意（`porthlpr.cpp` L1345-L1373）。
+    # リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
 
-# リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-swss #2933: Add SWSS support for link event damping feature (merged)](https://github.com/sonic-net/sonic-swss/pull/2933) — AIED アルゴリズム取り込みの本体 PR。
-- [sonic-swss #2916: Implement link event damping SWSS component (closed)](https://github.com/sonic-net/sonic-swss/pull/2916) — 上記の先行 PR (closed)。
-- SyncD intercept 経路の完成度については追加トラッキング Issue 未確認。
+    - [sonic-swss #2933: Add SWSS support for link event damping feature (merged)](https://github.com/sonic-net/sonic-swss/pull/2933) — AIED アルゴリズム取り込みの本体 PR。
+    - [sonic-swss #2916: Implement link event damping SWSS component (closed)](https://github.com/sonic-net/sonic-swss/pull/2916) — 上記の先行 PR (closed)。
+    - SyncD intercept 経路の完成度については追加トラッキング Issue 未確認。
+<!-- /diff-admonition -->
 
 ## 概要
 

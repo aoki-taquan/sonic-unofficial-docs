@@ -225,46 +225,47 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 - `Temperature: 0` と `N/A` の区別: API の戻り値仕様上、温度の取得不可は `0` となる。`0℃` と取得不可が見分けにくい点は HLD の制約[^1]。
 - `show platform ssdhealth` が `command not found`: `show/main.py` の `platform` メニューに項目が登録されているか、`ssdhealth` スクリプトが PATH にあるかを確認。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（`SsdBase` / `SsdUtil`）と CLI（`show platform ssdhealth`）は概ね素直に取り込まれているが、HLD で Open Question として残されていた **常時監視デーモン `ssdmond` は現状実装が見当たらない**。
 
-2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（`SsdBase` / `SsdUtil`）と CLI（`show platform ssdhealth`）は概ね素直に取り込まれているが、HLD で Open Question として残されていた **常時監視デーモン `ssdmond` は現状実装が見当たらない**。
+    | 項目 | HLD | 現行 master | 結果 |
+    |------|-----|------|------|
+    | `SsdBase` 基底クラス | 必須 | `sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py` に基底定義 | ✓ |
+    | `SsdUtil` ベンダー派生 | 必須 | `device/{vendor}/platform/plugins/ssdutil.py` の plugin 取り込み | ✓ |
+    | `show platform ssdhealth [verbose\|vendor]` | 必須 | `sonic-utilities/show/platform.py` のサブコマンドに該当 | ✓ |
+    | `ssdmond` 常時監視デーモン | Open Question | 現行 `sonic-platform-daemons/` 配下に `ssdmond` 名のデーモン無し | ⚠️ 未取り込み |
+    | SNMP MIB への露出 | Open Question | 未取り込み（HLD 上もスコープ外と明記） | ⚠️ スコープ外 |
 
-| 項目 | HLD | 現行 master | 結果 |
-|------|-----|------|------|
-| `SsdBase` 基底クラス | 必須 | `sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py` に基底定義 | ✓ |
-| `SsdUtil` ベンダー派生 | 必須 | `device/{vendor}/platform/plugins/ssdutil.py` の plugin 取り込み | ✓ |
-| `show platform ssdhealth [verbose\|vendor]` | 必須 | `sonic-utilities/show/platform.py` のサブコマンドに該当 | ✓ |
-| `ssdmond` 常時監視デーモン | Open Question | 現行 `sonic-platform-daemons/` 配下に `ssdmond` 名のデーモン無し | ⚠️ 未取り込み |
-| SNMP MIB への露出 | Open Question | 未取り込み（HLD 上もスコープ外と明記） | ⚠️ スコープ外 |
+    **差分の中身**: 常時バックグラウンドで SSD 健全性を polling し、閾値割れ時に syslog / SNMP trap を発火する `ssdmond` は HLD で「optional」扱いのまま、コミュニティ master には取り込まれていない。健全性確認は **on-demand な `show platform ssdhealth` 実行** に依存する。
 
-**差分の中身**: 常時バックグラウンドで SSD 健全性を polling し、閾値割れ時に syslog / SNMP trap を発火する `ssdmond` は HLD で「optional」扱いのまま、コミュニティ master には取り込まれていない。健全性確認は **on-demand な `show platform ssdhealth` 実行** に依存する。
+    **読者への影響**:
 
-**読者への影響**:
+    - SSD 寿命警告を「壊れた後に techsupport で気づく」運用になるリスク。連続監視には外部ツール（cron 化、telemetry、Prometheus exporter 等）が必要。
+    - `Temperature: 0 ℃` を見たときに「冷えている」のか「取得不可」なのか API 戻り値だけでは判別できない。
 
-- SSD 寿命警告を「壊れた後に techsupport で気づく」運用になるリスク。連続監視には外部ツール（cron 化、telemetry、Prometheus exporter 等）が必要。
-- `Temperature: 0 ℃` を見たときに「冷えている」のか「取得不可」なのか API 戻り値だけでは判別できない。
+    **回避策 / 対応方法**:
 
-**回避策 / 対応方法**:
+    - 常時監視が必要なら、`show platform ssdhealth` を cron + syslog で wrap するか、`smartctl` を直接 polling する独自 exporter を用意する。
+    - 温度 `0` を観測したら、必ず `smartctl -A /dev/sdX | grep -i temperature` で raw 値を併読する運用にする。
+    - ベンダープラグインが無い platform で `vendor` モードが空になる場合は、`device/<vendor>/platform/plugins/ssdutil.py` の存在を `dpkg -L sonic-platform-<vendor>` 等で確認。
 
-- 常時監視が必要なら、`show platform ssdhealth` を cron + syslog で wrap するか、`smartctl` を直接 polling する独自 exporter を用意する。
-- 温度 `0` を観測したら、必ず `smartctl -A /dev/sdX | grep -i temperature` で raw 値を併読する運用にする。
-- ベンダープラグインが無い platform で `vendor` モードが空になる場合は、`device/<vendor>/platform/plugins/ssdutil.py` の存在を `dpkg -L sonic-platform-<vendor>` 等で確認。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - `SsdBase` / `SsdUtil` / `show platform ssdhealth` は実装済み (`sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py`, `sonic-utilities/show/platform.py`)。HLD の主要パスは到達済み。
+    - HLD の Open Question として残されていた `ssdmond` 常時監視デーモンは未実装。`sonic-platform-daemons/` 配下に `ssdmond` ディレクトリ無し (`find . -iname 'ssdmond*'` 結果 0)。
+    - SNMP MIB 露出も未実装（HLD でも明示的にスコープ外と記載）。
+    - 関連 PR: `sonic-platform-common` への SsdBase 取り込みは 2019-2020 年に merge 済み。`ssdmond` は提案 PR 無し。
+    - **追加運用コマンド**: 常時監視を要する場合 — `*/15 * * * * /usr/local/bin/show platform ssdhealth | logger -t ssdhealth` の cron 化で代替。閾値割れの検知は `show platform ssdhealth | awk '/Health/{if ($2+0 < 10) exit 1}'` でテレメトリ連携。
 
-- `SsdBase` / `SsdUtil` / `show platform ssdhealth` は実装済み (`sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py`, `sonic-utilities/show/platform.py`)。HLD の主要パスは到達済み。
-- HLD の Open Question として残されていた `ssdmond` 常時監視デーモンは未実装。`sonic-platform-daemons/` 配下に `ssdmond` ディレクトリ無し (`find . -iname 'ssdmond*'` 結果 0)。
-- SNMP MIB 露出も未実装（HLD でも明示的にスコープ外と記載）。
-- 関連 PR: `sonic-platform-common` への SsdBase 取り込みは 2019-2020 年に merge 済み。`ssdmond` は提案 PR 無し。
-- **追加運用コマンド**: 常時監視を要する場合 — `*/15 * * * * /usr/local/bin/show platform ssdhealth | logger -t ssdhealth` の cron 化で代替。閾値割れの検知は `show platform ssdhealth | awk '/Health/{if ($2+0 < 10) exit 1}'` でテレメトリ連携。
+    > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
-> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [GitHub Issue / PR の関連リンクは未確認] — `ssdutil` プラットフォームプラグインと `show platform ssdhealth` CLI は各ベンダーの platform PR に分散して取り込まれており、HLD 個別のトラッキング Issue は確認できず。
+    - [GitHub Issue / PR の関連リンクは未確認] — `ssdutil` プラットフォームプラグインと `show platform ssdhealth` CLI は各ベンダーの platform PR に分散して取り込まれており、HLD 個別のトラッキング Issue は確認できず。
+<!-- /diff-admonition -->
 
 ## 引用元
 

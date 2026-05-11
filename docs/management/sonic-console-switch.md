@@ -171,21 +171,23 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 - USB serial 挿抜時の TTY 番号安定化機構の現行実装確認
 -->
 
-## 実装との乖離（裏取りメモ（Verifier batch 29））
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:
 
-per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:
+    - `consutil` CLI: `.cache/sonic-sources/sonic-utilities/consutil/{__init__.py,lib.py,main.py}` に存在 → 取り込み済み
+    - `sonic-console.yang` (CONSOLE_PORT / CONSOLE_SWITCH の [YANG](../reference/glossary.md#term-yang)): `.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang` に存在（revision 2026-02-12 `escape_char` 追加 / 2022-08-22 First Revision）
+    - `consoled` デーモン本体・`ser2net` 連携・reverse SSH の port/IP forwarding ロジック: `sonic-buildimage` / `sonic-host-services` のいずれにも検出できず
 
-- `consutil` CLI: `.cache/sonic-sources/sonic-utilities/consutil/{__init__.py,lib.py,main.py}` に存在 → 取り込み済み
-- `sonic-console.yang` (CONSOLE_PORT / CONSOLE_SWITCH の [YANG](../reference/glossary.md#term-yang)): `.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang` に存在（revision 2026-02-12 `escape_char` 追加 / 2022-08-22 First Revision）
-- `consoled` デーモン本体・`ser2net` 連携・reverse SSH の port/IP forwarding ロジック: `sonic-buildimage` / `sonic-host-services` のいずれにも検出できず
+    HLD が想定する「serial hub 機能を備えた switch hub としての reverse SSH 集約」までは未統合のため、`discrepancy-found` を維持。
 
-HLD が想定する「serial hub 機能を備えた switch hub としての reverse SSH 集約」までは未統合のため、`discrepancy-found` を維持。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
+    - [GitHub Issue / PR の関連リンクは未確認] — Console Switch（serial hub の reverse SSH 集約）構成は専用 platform / image 設定の積み重ねで実現されており、HLD 単独で追跡可能な GitHub Issue / PR は確認できず。
 
-- [GitHub Issue / PR の関連リンクは未確認] — Console Switch（serial hub の reverse SSH 集約）構成は専用 platform / image 設定の積み重ねで実現されており、HLD 単独で追跡可能な GitHub Issue / PR は確認できず。
+    <!-- topics-back-ref -->
+<!-- /diff-admonition -->
 
-<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)

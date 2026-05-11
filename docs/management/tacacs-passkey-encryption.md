@@ -220,54 +220,55 @@ TACPLUS global passkey configured Yes
 - `common-auth-sonic` に書かれた passkey が暗号化のままになっていないか確認（書き込み直前の復号で失敗している可能性）
 - `key_encrypt=true` のまま平文 `passkey` が混在しているケースは復号失敗で PAM が動かなくなる。一旦 `key_encrypt=false` で平文に揃えてから再暗号化する
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-09 時点の現行 master を裏取り。
 
-2026-05-09 時点の現行 master を裏取り。
+    | 項目 | HLD | 現行 master |
+    |------|-----|-------------|
+    | YANG `key_encrypt` leaf | 必須 | ✅ 取り込み済み (`sonic-system-tacacs.yang` L47/L100-101/L148-149) |
+    | master key ファイルパス | `/etc/cipher_pass` | ⚠️ 実体は **`/etc/cipher_pass.json`**（`sonic_py_common/security_cipher.py` L18） |
+    | 共通暗号化 API | 必須 | ✅ `security_cipher.py` で encrypt/decrypt API を実装 |
+    | `config tacacs passkey ... --encrypt` CLI | 必須 | ❌ **未実装**。`sonic-utilities/config/aaa.py` L248-256 は単に平文 secret をそのまま CONFIG_DB に書く |
+    | `hostcfgd` で `key_encrypt=true` を見て復号 → PAM へ | 必須 | ❌ **未実装**（[hostcfgd](../reference/glossary.md#term-hostcfgd) 配下に該当する復号処理が無い） |
+    | `show tacacs` から passkey 削除 | 必須 | ❌ 未確認（CLI 取り込みが無いため意味なし） |
+    | RADIUS / LDAP との共通化 | future | 未取り込み |
 
-| 項目 | HLD | 現行 master |
-|------|-----|-------------|
-| YANG `key_encrypt` leaf | 必須 | ✅ 取り込み済み (`sonic-system-tacacs.yang` L47/L100-101/L148-149) |
-| master key ファイルパス | `/etc/cipher_pass` | ⚠️ 実体は **`/etc/cipher_pass.json`**（`sonic_py_common/security_cipher.py` L18） |
-| 共通暗号化 API | 必須 | ✅ `security_cipher.py` で encrypt/decrypt API を実装 |
-| `config tacacs passkey ... --encrypt` CLI | 必須 | ❌ **未実装**。`sonic-utilities/config/aaa.py` L248-256 は単に平文 secret をそのまま CONFIG_DB に書く |
-| `hostcfgd` で `key_encrypt=true` を見て復号 → PAM へ | 必須 | ❌ **未実装**（[hostcfgd](../reference/glossary.md#term-hostcfgd) 配下に該当する復号処理が無い） |
-| `show tacacs` から passkey 削除 | 必須 | ❌ 未確認（CLI 取り込みが無いため意味なし） |
-| RADIUS / LDAP との共通化 | future | 未取り込み |
+    YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json` 永続化スクリプト）は揃っているが、**運用フローの中核である CLI と hostcfgd 取り込みが未完了**であり、現状ユーザは `--encrypt` 経路で TACACS+ passkey を保護できない。HLD は `/etc/cipher_pass` と表記しているが実装上の正は `/etc/cipher_pass.json`。
 
-YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json` 永続化スクリプト）は揃っているが、**運用フローの中核である CLI と hostcfgd 取り込みが未完了**であり、現状ユーザは `--encrypt` 経路で TACACS+ passkey を保護できない。HLD は `/etc/cipher_pass` と表記しているが実装上の正は `/etc/cipher_pass.json`。
+    **差分の中身**: master key ファイル名が `/etc/cipher_pass` → `/etc/cipher_pass.json` に変更され、暗号化ペイロードを JSON 構造で格納する設計に進化している。HLD の文字列ベース表記は古い。一方、CLI（`config tacacs passkey ... --encrypt`）と hostcfgd 側の復号ロジックは **`sonic-utilities/config/aaa.py` L248-256 で平文書き込みのまま**であり、`key_encrypt=true` を CONFIG_DB に手動で書いても hostcfgd が復号する経路がないため PAM 認証が失敗する。
 
-**差分の中身**: master key ファイル名が `/etc/cipher_pass` → `/etc/cipher_pass.json` に変更され、暗号化ペイロードを JSON 構造で格納する設計に進化している。HLD の文字列ベース表記は古い。一方、CLI（`config tacacs passkey ... --encrypt`）と hostcfgd 側の復号ロジックは **`sonic-utilities/config/aaa.py` L248-256 で平文書き込みのまま**であり、`key_encrypt=true` を CONFIG_DB に手動で書いても hostcfgd が復号する経路がないため PAM 認証が失敗する。
+    **読者への影響**:
 
-**読者への影響**:
+    - HLD どおりに `sudo config tacacs passkey <secret> --encrypt` を打っても **`--encrypt` フラグは認識されず**、`Usage` エラーまたは secret がそのまま平文で CONFIG_DB に書かれる（YANG validator で弾かれない場合もある）。
+    - `TACPLUS|global` の `key_encrypt=true` を手で書くと、hostcfgd 側で復号されずに **暗号化文字列がそのまま TACACS server に送信される** ため、認証が落ちる。
+    - `config save` で吐く JSON に平文 passkey が残るため、ファイル流出時の機密性に注意が必要。HLD が解消しようとした問題は **そのまま残っている**。
 
-- HLD どおりに `sudo config tacacs passkey <secret> --encrypt` を打っても **`--encrypt` フラグは認識されず**、`Usage` エラーまたは secret がそのまま平文で CONFIG_DB に書かれる（YANG validator で弾かれない場合もある）。
-- `TACPLUS|global` の `key_encrypt=true` を手で書くと、hostcfgd 側で復号されずに **暗号化文字列がそのまま TACACS server に送信される** ため、認証が落ちる。
-- `config save` で吐く JSON に平文 passkey が残るため、ファイル流出時の機密性に注意が必要。HLD が解消しようとした問題は **そのまま残っている**。
+    **回避策 / 対応方法**:
 
-**回避策 / 対応方法**:
+    - 現状は `--encrypt` を使わず、`/etc/sonic/config_db.json` のパーミッション（root:root, 0644 → 0600 に絞る等）と config save の管理権限で機密性を担保する運用が現実的。
+    - master key インフラを使った暗号化を試したい場合は、`security_cipher.py` の `encrypt`/`decrypt` API を直接呼んで passkey を加工し、独自スクリプトで hostcfgd の代わりに `/etc/pam.d/common-auth-sonic` に注入する独自経路を組む必要がある（保守性は低い）。
+    - 上流の CLI / hostcfgd 取り込み PR を待つのが本筋。
 
-- 現状は `--encrypt` を使わず、`/etc/sonic/config_db.json` のパーミッション（root:root, 0644 → 0600 に絞る等）と config save の管理権限で機密性を担保する運用が現実的。
-- master key インフラを使った暗号化を試したい場合は、`security_cipher.py` の `encrypt`/`decrypt` API を直接呼んで passkey を加工し、独自スクリプトで hostcfgd の代わりに `/etc/pam.d/common-auth-sonic` に注入する独自経路を組む必要がある（保守性は低い）。
-- 上流の CLI / hostcfgd 取り込み PR を待つのが本筋。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - master key ファイル名差異: HLD `/etc/cipher_pass` → 実装 `/etc/cipher_pass.json` (`sonic_py_common/security_cipher.py:18`)。JSON 構造で暗号化ペイロードを保持する設計に進化。
+    - YANG `key_encrypt` leaf は取り込み済み (`sonic-system-tacacs.yang` L47/L100-101/L148-149)。
+    - CLI 側未実装: `sonic-utilities/config/aaa.py` L248-256 は平文 secret をそのまま CONFIG_DB に書き込み、`--encrypt` フラグの分岐無し。
+    - hostcfgd 側の復号処理も未実装 (`grep -rn 'key_encrypt\|security_cipher' .cache/sonic-sources/sonic-buildimage/files/image_config/hostcfgd/` で復号呼出 0 件)。
+    - 関連 PR: `sonic_py_common` への `security_cipher` API 追加は merge 済みだが、aaa.py / hostcfgd 側の利用 PR は未マージ。
+    - **追加回避策コマンド**: 暗号化を強制したい場合 — `python3 -c 'from sonic_py_common.security_cipher import master_key_mgr; m=master_key_mgr(); print(m.encrypt_passkey("<plain>", "TACPLUS"))'` で encrypt 出力を得て、`config tacacs passkey <encrypted>` で書き込み、`redis-cli -n 4 hset 'TACPLUS|global' key_encrypt true` を手動で立てる（ただし hostcfgd 復号無しのため PAM 認証は失敗する点に注意）。
 
-- master key ファイル名差異: HLD `/etc/cipher_pass` → 実装 `/etc/cipher_pass.json` (`sonic_py_common/security_cipher.py:18`)。JSON 構造で暗号化ペイロードを保持する設計に進化。
-- YANG `key_encrypt` leaf は取り込み済み (`sonic-system-tacacs.yang` L47/L100-101/L148-149)。
-- CLI 側未実装: `sonic-utilities/config/aaa.py` L248-256 は平文 secret をそのまま CONFIG_DB に書き込み、`--encrypt` フラグの分岐無し。
-- hostcfgd 側の復号処理も未実装 (`grep -rn 'key_encrypt\|security_cipher' .cache/sonic-sources/sonic-buildimage/files/image_config/hostcfgd/` で復号呼出 0 件)。
-- 関連 PR: `sonic_py_common` への `security_cipher` API 追加は merge 済みだが、aaa.py / hostcfgd 側の利用 PR は未マージ。
-- **追加回避策コマンド**: 暗号化を強制したい場合 — `python3 -c 'from sonic_py_common.security_cipher import master_key_mgr; m=master_key_mgr(); print(m.encrypt_passkey("<plain>", "TACPLUS"))'` で encrypt 出力を得て、`config tacacs passkey <encrypted>` で書き込み、`redis-cli -n 4 hset 'TACPLUS|global' key_encrypt true` を手動で立てる（ただし hostcfgd 復号無しのため PAM 認証は失敗する点に注意）。
+    > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
-> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-buildimage #13846: TACACS+ passkey encryption (open)](https://github.com/sonic-net/sonic-buildimage/issues/13846) — 本 HLD のトラッキング Issue。長期 open で部分実装中。
-- [sonic-buildimage #17201: Adding support of common security cipher module for encryption and decryption of a passkey (merged)](https://github.com/sonic-net/sonic-buildimage/pull/17201) — 共通暗号モジュール (master key /etc/cipher_pass 基盤) の取り込み PR。
-- [sonic-utilities #3027: TACACSPLUS_PASSKEY_ENCRYPTION support Part - I (closed)](https://github.com/sonic-net/sonic-utilities/pull/3027) — CLI / hostcfgd 連携の Part-I PR。closed のため後続 PR が必要。
+    - [sonic-buildimage #13846: TACACS+ passkey encryption (open)](https://github.com/sonic-net/sonic-buildimage/issues/13846) — 本 HLD のトラッキング Issue。長期 open で部分実装中。
+    - [sonic-buildimage #17201: Adding support of common security cipher module for encryption and decryption of a passkey (merged)](https://github.com/sonic-net/sonic-buildimage/pull/17201) — 共通暗号モジュール (master key /etc/cipher_pass 基盤) の取り込み PR。
+    - [sonic-utilities #3027: TACACSPLUS_PASSKEY_ENCRYPTION support Part - I (closed)](https://github.com/sonic-net/sonic-utilities/pull/3027) — CLI / hostcfgd 連携の Part-I PR。closed のため後続 PR が必要。
+<!-- /diff-admonition -->
 
 ## 引用元
 

@@ -109,21 +109,22 @@ sonic-db-cli STATE_DB hgetall 'FIPS_STATS|state'
 - enforce が反映されない → `cat /proc/cmdline` で kernel cmdline 確認
 - upgrade 後に enforce が外れた → 新 image の default を確認
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    | 項目 | HLD 表記 | 実装（[hostcfgd](../reference/glossary.md#term-hostcfgd)） |
+    |---|---|---|
+    | flag file | `/etc/fips/fips_enabled` | `/etc/fips/fips_enable`（L102）|
+    | STATE_DB key | `FIPS_STAT\|state` | `FIPS_STATS\|state`（L1792）|
+    | 再起動サービス | sshd / telemetry / restapi | `['ssh', 'telemetry.service', 'restapi']`（L103）|
 
-| 項目 | HLD 表記 | 実装（[hostcfgd](../reference/glossary.md#term-hostcfgd)） |
-|---|---|---|
-| flag file | `/etc/fips/fips_enabled` | `/etc/fips/fips_enable`（L102）|
-| STATE_DB key | `FIPS_STAT\|state` | `FIPS_STATS\|state`（L1792）|
-| 再起動サービス | sshd / telemetry / restapi | `['ssh', 'telemetry.service', 'restapi']`（L103）|
+    CONFIG_DB の `FIPS|global` 表記は HLD どおりで問題なし。
 
-CONFIG_DB の `FIPS|global` 表記は HLD どおりで問題なし。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #11494: \[TestOnly\] Support openssl fips disable openssl fips mod (open)](https://github.com/sonic-net/sonic-buildimage/pull/11494) — FIPS 有効/無効切替の長期 open PR。本 HLD の `/etc/fips/fips_enabled` 制御と直接関連。
-- [sonic-buildimage #11205: \[sonic-fips\] Makefile bugfix (open)](https://github.com/sonic-net/sonic-buildimage/pull/11205) — FIPS ビルド系の修正 PR。長期 open で取り込み停滞を示唆。
-- FIPS 140-3 全体（140-2 → 140-3 移行）を束ねるトラッキング Issue は確認できず。
+    - [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #11494: \[TestOnly\] Support openssl fips disable openssl fips mod (open)](https://github.com/sonic-net/sonic-buildimage/pull/11494) — FIPS 有効/無効切替の長期 open PR。本 HLD の `/etc/fips/fips_enabled` 制御と直接関連。
+    - [sonic-buildimage #11205: \[sonic-fips\] Makefile bugfix (open)](https://github.com/sonic-net/sonic-buildimage/pull/11205) — FIPS ビルド系の修正 PR。長期 open で取り込み停滞を示唆。
+    - FIPS 140-3 全体（140-2 → 140-3 移行）を束ねるトラッキング Issue は確認できず。
+<!-- /diff-admonition -->
 
 ## 関連 Topics
 

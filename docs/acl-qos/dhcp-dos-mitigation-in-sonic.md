@@ -124,51 +124,52 @@ CLI ルール[^1]:
 - **DHCP Starvation** の緩和（DHCP Snooping）は将来作業[^1]
 - warm boot / fast boot には影響を与えない[^1]
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05 時点で `.cache/sonic-sources/` を裏取りした結果、本機能は **データ層 + CLI のみ取り込み済み、肝心の TC 投入経路が未実装** な部分実装状態。
 
-2026-05 時点で `.cache/sonic-sources/` を裏取りした結果、本機能は **データ層 + CLI のみ取り込み済み、肝心の TC 投入経路が未実装** な部分実装状態。
+    ### 取り込み済み
 
-### 取り込み済み
+    - `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:106` の `leaf dhcp_rate_limit` (`uint32 range 0..8000`)
+    - `sonic-utilities/scripts/db_migrator.py:514-524` の `migrate_config_db_port_table_for_dhcp_rate_limit`（既存ポートに既定 300 埋め）
+    - `sonic-utilities/config/main.py:5908-5990` の `config interface dhcp-mitigation-rate add/del`
 
-- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:106` の `leaf dhcp_rate_limit` (`uint32 range 0..8000`)
-- `sonic-utilities/scripts/db_migrator.py:514-524` の `migrate_config_db_port_table_for_dhcp_rate_limit`（既存ポートに既定 300 埋め）
-- `sonic-utilities/config/main.py:5908-5990` の `config interface dhcp-mitigation-rate add/del`
+    ### 未取り込み（HLD との乖離）
 
-### 未取り込み（HLD との乖離）
+    - `sonic-swss/cfgmgr/` に `dhcp_rate_limit` を subscribe する portmgrd ロジック **不存在**（`grep -rn dhcp_rate_limit sonic-swss/cfgmgr/` 0 件）。`tc qdisc add ... ingress` / `tc filter add ... police rate ...` を発行するコードなし
+    - `sonic-buildimage/files/image_config/copp/copp_cfg.j2:109-110` に `"dhcp_relay": { "trap_ids": "dhcp,dhcpv6" ... }` が残っており、CoPP 全体 DHCP 制限の撤去も **未実施**
 
-- `sonic-swss/cfgmgr/` に `dhcp_rate_limit` を subscribe する portmgrd ロジック **不存在**（`grep -rn dhcp_rate_limit sonic-swss/cfgmgr/` 0 件）。`tc qdisc add ... ingress` / `tc filter add ... police rate ...` を発行するコードなし
-- `sonic-buildimage/files/image_config/copp/copp_cfg.j2:109-110` に `"dhcp_relay": { "trap_ids": "dhcp,dhcpv6" ... }` が残っており、CoPP 全体 DHCP 制限の撤去も **未実施**
+    ### 読者への影響
 
-### 読者への影響
+    - `config interface dhcp-mitigation-rate add Ethernet0 1000` を入れても **ポート単位レート制限は効かない**。`tc -s qdisc show dev Ethernet0 handle ffff:` で ingress qdisc は出てこない
+    - 攻撃ポートからの flood は依然 CoPP の 300 pps に集約され、同 VLAN の正規 DISCOVER までドロップされる従来挙動
+    - DB migrator により既存ポートに `dhcp_rate_limit=300` が勝手に埋まる副作用は発生（`show runningconfiguration` に出る）
 
-- `config interface dhcp-mitigation-rate add Ethernet0 1000` を入れても **ポート単位レート制限は効かない**。`tc -s qdisc show dev Ethernet0 handle ffff:` で ingress qdisc は出てこない
-- 攻撃ポートからの flood は依然 CoPP の 300 pps に集約され、同 VLAN の正規 DISCOVER までドロップされる従来挙動
-- DB migrator により既存ポートに `dhcp_rate_limit=300` が勝手に埋まる副作用は発生（`show runningconfiguration` に出る）
+    ### 回避策
 
-### 回避策
+    - **[HLD](../reference/glossary.md#term-hld) の効果を得たい場合**: 外部スクリプトで `tc qdisc add ... ingress` + `tc filter add ... police rate=<pps*406>bps` を投入。一括投入例:
 
-- **[HLD](../reference/glossary.md#term-hld) の効果を得たい場合**: 外部スクリプトで `tc qdisc add ... ingress` + `tc filter add ... police rate=<pps*406>bps` を投入。一括投入例:
+      ```bash
+      for p in $(redis-cli -n 4 keys 'PORT|Ethernet*' | sed 's/PORT|//'); do
+        r=$(redis-cli -n 4 hget "PORT|$p" dhcp_rate_limit)
+        [ -n "$r" ] && [ "$r" -gt 0 ] && \
+          tc qdisc add dev $p handle ffff: ingress 2>/dev/null && \
+          tc filter add dev $p protocol ip parent ffff: prio 1 u32 \
+            match ip protocol 17 0xff match ip dport 67 0xffff \
+            police rate $((r*406))bps burst $((r*406))b conform-exceed drop
+      done
+      ```
 
-  ```bash
-  for p in $(redis-cli -n 4 keys 'PORT|Ethernet*' | sed 's/PORT|//'); do
-    r=$(redis-cli -n 4 hget "PORT|$p" dhcp_rate_limit)
-    [ -n "$r" ] && [ "$r" -gt 0 ] && \
-      tc qdisc add dev $p handle ffff: ingress 2>/dev/null && \
-      tc filter add dev $p protocol ip parent ffff: prio 1 u32 \
-        match ip protocol 17 0xff match ip dport 67 0xffff \
-        police rate $((r*406))bps burst $((r*406))b conform-exceed drop
-  done
-  ```
+    - **CoPP 維持で運用する場合**: 既定の CoPP 300 pps が依然有効。CLI 上の値は飾りである旨を運用ドキュメントに明記
+    - 上流取り込み待ち: `sonic-swss` の portmgrd TC 投入 PR と `copp_cfg.j2` からの `dhcp_relay` trap 削除の双方が必要
 
-- **CoPP 維持で運用する場合**: 既定の CoPP 300 pps が依然有効。CLI 上の値は飾りである旨を運用ドキュメントに明記
-- 上流取り込み待ち: `sonic-swss` の portmgrd TC 投入 PR と `copp_cfg.j2` からの `dhcp_relay` trap 削除の双方が必要
+    > 分類: `monitor: not_implemented`
 
-> 分類: `monitor: not_implemented`
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-buildimage #18843: Adding Support for DHCP DOS Mitigation rate limit (closed)](https://github.com/sonic-net/sonic-buildimage/pull/18843) — HLD のデータ層 / CLI 取り込みに繋がった上流 PR の痕跡。TC 投入経路 (portmgrd 拡張) を含む完成版 PR は引き続き未マージ。
-- [sonic-swss #3130: SwSS Changes for DHCP DoS Mitigation Feature (open)](https://github.com/sonic-net/sonic-swss/pull/3130) — portmgrd 側で `tc` を投入するための swss 側変更。本 PR が merge されるまで CLI で値を入れても実効性なし。
+    - [sonic-buildimage #18843: Adding Support for DHCP DOS Mitigation rate limit (closed)](https://github.com/sonic-net/sonic-buildimage/pull/18843) — HLD のデータ層 / CLI 取り込みに繋がった上流 PR の痕跡。TC 投入経路 (portmgrd 拡張) を含む完成版 PR は引き続き未マージ。
+    - [sonic-swss #3130: SwSS Changes for DHCP DoS Mitigation Feature (open)](https://github.com/sonic-net/sonic-swss/pull/3130) — portmgrd 側で `tc` を投入するための swss 側変更。本 PR が merge されるまで CLI で値を入れても実効性なし。
+<!-- /diff-admonition -->
 
 ## 干渉する機能
 

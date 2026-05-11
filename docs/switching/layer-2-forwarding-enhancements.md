@@ -97,31 +97,32 @@ sonic-clear fdb port Ethernet0
 
 `FdbOrch`（主体）/ `SwitchOrch`（aging）/ `VlanMgr` / `VlanOrch` / STP / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd)・Portchannel（down 時 flush）/ warm boot / [sonic-utilities](../reference/glossary.md#term-sonic-utilities)
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    実コード裏取りで判明（verified at: 2026-05-09）:
 
-実コード裏取りで判明（verified at: 2026-05-09）:
+    ### 1. `config mac` / `config vlan range` CLI 未取り込み
 
-### 1. `config mac` / `config vlan range` CLI 未取り込み
+    - **HLD**: `config mac aging_time` / `config mac add|del` / `config vlan range` / `config vlan member range` を `sonic-utilities` に追加
+    - **実態**: `sonic-utilities/config/main.py` には該当 click group が存在しない。`show mac aging-time` (`show/main.py`) のみ実装済み
+    - **影響**: HLD の CLI 例をそのまま打つと "no such command" で失敗
+    - **回避策**:
+        - aging: `sonic-db-cli CONFIG_DB HSET 'SWITCH|switch' fdb_aging_time 300`（`switchorch.cpp:1674-1686` で `SAI_SWITCH_ATTR_FDB_AGING_TIME` に反映）
+        - static MAC: `sonic-db-cli CONFIG_DB HSET 'FDB|Vlan100|00-11-22-33-44-55' port Ethernet0`
+        - VLAN bulk: `for i in $(seq 100 199); do config vlan add $i; done` または `config_db.json` 直編集
+        - FDB クリア: `sonic-clear fdb [all|port X]` は実装済み
 
-- **HLD**: `config mac aging_time` / `config mac add|del` / `config vlan range` / `config vlan member range` を `sonic-utilities` に追加
-- **実態**: `sonic-utilities/config/main.py` には該当 click group が存在しない。`show mac aging-time` (`show/main.py`) のみ実装済み
-- **影響**: HLD の CLI 例をそのまま打つと "no such command" で失敗
-- **回避策**:
-    - aging: `sonic-db-cli CONFIG_DB HSET 'SWITCH|switch' fdb_aging_time 300`（`switchorch.cpp:1674-1686` で `SAI_SWITCH_ATTR_FDB_AGING_TIME` に反映）
-    - static MAC: `sonic-db-cli CONFIG_DB HSET 'FDB|Vlan100|00-11-22-33-44-55' port Ethernet0`
-    - VLAN bulk: `for i in $(seq 100 199); do config vlan add $i; done` または `config_db.json` 直編集
-    - FDB クリア: `sonic-clear fdb [all|port X]` は実装済み
+    ### 2. orch 側は HLD 一致
 
-### 2. orch 側は HLD 一致
+    - **MAC move**: `fdborch.cpp:91-138`、`SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` を `:507,583` で設定
+    - **saved FDB**: `fdborch.cpp:459` で `saved_fdb_entries[port].push_back(...)`、`:1254-1271` で VLAN member 追加時に再投入
+    - **flush API**: `fdborch.cpp:1079-1090` `FdbOrch::flushFDBEntries(bridge_port_oid, vlan_oid)` がコア。`:985`/`:1006`/`:1038,1248` で per-port / per-VLAN / per-(port,VLAN) として呼び出し
+    - **aging_time**: `switchorch.cpp:49,664,1674-1686` で `SAI_SWITCH_ATTR_FDB_AGING_TIME`
 
-- **MAC move**: `fdborch.cpp:91-138`、`SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` を `:507,583` で設定
-- **saved FDB**: `fdborch.cpp:459` で `saved_fdb_entries[port].push_back(...)`、`:1254-1271` で VLAN member 追加時に再投入
-- **flush API**: `fdborch.cpp:1079-1090` `FdbOrch::flushFDBEntries(bridge_port_oid, vlan_oid)` がコア。`:985`/`:1006`/`:1038,1248` で per-port / per-VLAN / per-(port,VLAN) として呼び出し
-- **aging_time**: `switchorch.cpp:49,664,1674-1686` で `SAI_SWITCH_ATTR_FDB_AGING_TIME`
+    ### 3. キー区切り揺れ
 
-### 3. キー区切り揺れ
-
-HLD 図中の `FDB_TABLE:<vlan>:<mac>` と現行 schema の `FDB_TABLE:<vlan>|<mac>` が混在。redis-cli の pattern を実キーで確認すること（バージョンによって揺らぐ）。
+    HLD 図中の `FDB_TABLE:<vlan>:<mac>` と現行 schema の `FDB_TABLE:<vlan>|<mac>` が混在。redis-cli の pattern を実キーで確認すること（バージョンによって揺らぐ）。
+<!-- /diff-admonition -->
 
 ## トラブルシューティング
 

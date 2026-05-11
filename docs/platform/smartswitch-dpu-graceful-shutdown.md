@@ -144,73 +144,74 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 - **Independent DPU Upgrade**: shutdown 経路を再利用する可能性
 - **gNOI / [gNMI](../reference/glossary.md#term-gnmi)**: HALT を含む reboot RPC の依存
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
-2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
+    ### 1. 独立 `gnoi_reboot_daemon.py` は実装されていない
 
-### 1. 独立 `gnoi_reboot_daemon.py` は実装されていない
+    - **HLD 記述**: PMON container に `gnoi_reboot_daemon.py` を新規追加し、STATE_DB pub/sub 経由で gNOI Reboot RPC (HALT) を投げる役割を担う。
+    - **実装位置**: `sonic-platform-daemons/` 配下に `gnoi_reboot_daemon.py` も `sonic-pmon` も存在しない（`find -iname "*gnoi*"` 結果ゼロ）。代わりに `sonic-chassisd` の `chassisd` (`sonic-platform-daemons/sonic-chassisd/scripts/chassisd`) が `module.set_admin_state_gracefully` を直接呼ぶ。
+    - **差分の中身**:
+      ```python
+      # sonic-chassisd/scripts/chassisd L256
+      try_get(self.chassis.get_module(module_index).set_admin_state_gracefully, admin_state, default=False)
+      # L1362
+      try_get(module.set_admin_state_gracefully, admin_state, default=False)
+      # L1373
+      module.clear_module_gnoi_halt_in_progress()
+      ```
+      HLD は「chassisd は state を書くだけ、別 daemon が gNOI を呼ぶ」と分離するが、実装は **chassisd が `module_base` の API を直接呼ぶ密結合** になっている。
+    - **読者への影響**: HLD の図を信じて gnoi_reboot_daemon のログを探しても見つからない。pub/sub の経路（`CHASSIS_MODULE_INFO_TABLE` への書込 → daemon 検知）も存在せず、`chassis_state_db` に書く前後で `chassisd` が直接 module API を呼ぶフロー。
+    - **回避策**: 障害解析では `sonic-chassisd` のログを最初に見る。gNOI Reboot RPC の発行サイトは `module_base.py:601` 前後（`_set_module_gnoi_halt_in_progress` を呼んだ直後）。各 platform の `module_base` 派生クラスが `set_admin_state_gracefully` をどう override しているかが実体。
 
-- **HLD 記述**: PMON container に `gnoi_reboot_daemon.py` を新規追加し、STATE_DB pub/sub 経由で gNOI Reboot RPC (HALT) を投げる役割を担う。
-- **実装位置**: `sonic-platform-daemons/` 配下に `gnoi_reboot_daemon.py` も `sonic-pmon` も存在しない（`find -iname "*gnoi*"` 結果ゼロ）。代わりに `sonic-chassisd` の `chassisd` (`sonic-platform-daemons/sonic-chassisd/scripts/chassisd`) が `module.set_admin_state_gracefully` を直接呼ぶ。
-- **差分の中身**:
-  ```python
-  # sonic-chassisd/scripts/chassisd L256
-  try_get(self.chassis.get_module(module_index).set_admin_state_gracefully, admin_state, default=False)
-  # L1362
-  try_get(module.set_admin_state_gracefully, admin_state, default=False)
-  # L1373
-  module.clear_module_gnoi_halt_in_progress()
-  ```
-  HLD は「chassisd は state を書くだけ、別 daemon が gNOI を呼ぶ」と分離するが、実装は **chassisd が `module_base` の API を直接呼ぶ密結合** になっている。
-- **読者への影響**: HLD の図を信じて gnoi_reboot_daemon のログを探しても見つからない。pub/sub の経路（`CHASSIS_MODULE_INFO_TABLE` への書込 → daemon 検知）も存在せず、`chassis_state_db` に書く前後で `chassisd` が直接 module API を呼ぶフロー。
-- **回避策**: 障害解析では `sonic-chassisd` のログを最初に見る。gNOI Reboot RPC の発行サイトは `module_base.py:601` 前後（`_set_module_gnoi_halt_in_progress` を呼んだ直後）。各 platform の `module_base` 派生クラスが `set_admin_state_gracefully` をどう override しているかが実体。
+    ### 2. STATE_DB のフラグ命名・配置が HLD と異なる
 
-### 2. STATE_DB のフラグ命名・配置が HLD と異なる
+    - **HLD 記述**: `CHASSIS_MODULE_INFO_TABLE|<name>` に `state_transition_in_progress` 等のフィールドを HSET する。
+    - **実装位置**:
+      - `sonic-platform-common/sonic_platform_base/module_base.py:537-583` `_get_module_gnoi_halt_in_progress` / `_set_module_gnoi_halt_in_progress` / `clear_module_gnoi_halt_in_progress` は **`gnoi_halt_in_progress`** という別フィールドを使う。
+      - `module_base.py` の `set_module_state_transition()`（L624 付近）は **`CHASSIS_MODULE_TABLE|<name>`**（`_INFO_` 抜き）に `transition_in_progress` / `transition_type` / `start_time` を HSET する。
+    - **差分の中身**:
+      ```python
+      # module_base.py:566 — フラグ HSET
+      state_db.hset(module_key, "gnoi_halt_in_progress", "True")
+      # module_base.py:549 — 読み取り
+      gnoi_halt_flag = state_db.hget(module_key, "gnoi_halt_in_progress")
+      ```
+      HLD の `CHASSIS_MODULE_INFO_TABLE` / `state_transition_in_progress` は実コードでは 2 系統に分割されている: (a) `CHASSIS_MODULE_TABLE|<name>` の `transition_in_progress` (`set_module_state_transition`)、(b) `CHASSIS_MODULE_TABLE|<name>` の `gnoi_halt_in_progress` フラグ（HALT 完了通知用）。
+    - **読者への影響**: 状態監視スクリプトを HLD のフィールド名で書くと取れない。reboot/shutdown 衝突検知も「片方が transition_in_progress フィールドを見れば良い」と思って書くと、`gnoi_halt_in_progress` の有無を見逃して race を起こす可能性がある。
+    - **回避策**:
+      - 状態確認: `redis-cli -n 6 hgetall 'CHASSIS_MODULE_TABLE|DPU0'` で `transition_in_progress` / `transition_type` / `gnoi_halt_in_progress` の 3 つを全部見る。
+      - 排他制御を独自実装する場合は両フラグを AND で評価する。
 
-- **HLD 記述**: `CHASSIS_MODULE_INFO_TABLE|<name>` に `state_transition_in_progress` 等のフィールドを HSET する。
-- **実装位置**:
-  - `sonic-platform-common/sonic_platform_base/module_base.py:537-583` `_get_module_gnoi_halt_in_progress` / `_set_module_gnoi_halt_in_progress` / `clear_module_gnoi_halt_in_progress` は **`gnoi_halt_in_progress`** という別フィールドを使う。
-  - `module_base.py` の `set_module_state_transition()`（L624 付近）は **`CHASSIS_MODULE_TABLE|<name>`**（`_INFO_` 抜き）に `transition_in_progress` / `transition_type` / `start_time` を HSET する。
-- **差分の中身**:
-  ```python
-  # module_base.py:566 — フラグ HSET
-  state_db.hset(module_key, "gnoi_halt_in_progress", "True")
-  # module_base.py:549 — 読み取り
-  gnoi_halt_flag = state_db.hget(module_key, "gnoi_halt_in_progress")
-  ```
-  HLD の `CHASSIS_MODULE_INFO_TABLE` / `state_transition_in_progress` は実コードでは 2 系統に分割されている: (a) `CHASSIS_MODULE_TABLE|<name>` の `transition_in_progress` (`set_module_state_transition`)、(b) `CHASSIS_MODULE_TABLE|<name>` の `gnoi_halt_in_progress` フラグ（HALT 完了通知用）。
-- **読者への影響**: 状態監視スクリプトを HLD のフィールド名で書くと取れない。reboot/shutdown 衝突検知も「片方が transition_in_progress フィールドを見れば良い」と思って書くと、`gnoi_halt_in_progress` の有無を見逃して race を起こす可能性がある。
-- **回避策**:
-  - 状態確認: `redis-cli -n 6 hgetall 'CHASSIS_MODULE_TABLE|DPU0'` で `transition_in_progress` / `transition_type` / `gnoi_halt_in_progress` の 3 つを全部見る。
-  - 排他制御を独自実装する場合は両フラグを AND で評価する。
+    ### 3. YANG 取り込みは確認できない
 
-### 3. YANG 取り込みは確認できない
+    - **HLD 記述**: 新フィールドを `sonic-chassis-module.yang` に追加する想定。
+    - **実装位置**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-chassis-module.yang` に `transition_in_progress` / `gnoi_halt_in_progress` フィールドの取り込みは確認できない。
+    - **読者への影響**: ConfigMgmt / GNMI 経由でこれらフィールドへアクセスしようとしても [YANG](../reference/glossary.md#term-yang) model 経由では到達できず、`sonic-db-cli` 等 raw アクセスのみが手段になる。
+    - **回避策**: フィールドは [Redis](../reference/glossary.md#term-redis) 直叩き（`redis-cli -n 6` / `sonic-db-cli STATE_DB`）で扱う。
 
-- **HLD 記述**: 新フィールドを `sonic-chassis-module.yang` に追加する想定。
-- **実装位置**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-chassis-module.yang` に `transition_in_progress` / `gnoi_halt_in_progress` フィールドの取り込みは確認できない。
-- **読者への影響**: ConfigMgmt / GNMI 経由でこれらフィールドへアクセスしようとしても [YANG](../reference/glossary.md#term-yang) model 経由では到達できず、`sonic-db-cli` 等 raw アクセスのみが手段になる。
-- **回避策**: フィールドは [Redis](../reference/glossary.md#term-redis) 直叩き（`redis-cli -n 6` / `sonic-db-cli STATE_DB`）で扱う。
+    ### 4. HLD は v0.1 (2025-12) Initial Proposal で master 取り込み未確認
 
-### 4. HLD は v0.1 (2025-12) Initial Proposal で master 取り込み未確認
+    - 上記乖離は HLD の v0.1 と現行実装の間で構造そのものがリファクタされたことを示唆する。設計趣旨（gNOI 経由で DPU を graceful に止める）は実装に活きているが、daemon 構成・テーブル構造は HLD と一致しない。
 
-- 上記乖離は HLD の v0.1 と現行実装の間で構造そのものがリファクタされたことを示唆する。設計趣旨（gNOI 経由で DPU を graceful に止める）は実装に活きているが、daemon 構成・テーブル構造は HLD と一致しない。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - `gnoi_reboot_daemon.py` は未実装 (`find .cache/sonic-sources/sonic-platform-daemons -iname '*gnoi*'` 結果 0)。
+    - 代替実装: `sonic-chassisd/scripts/chassisd` L256/L1362 で `module.set_admin_state_gracefully(admin_state)` を直接呼び、L1373 で `module.clear_module_gnoi_halt_in_progress()`。
+    - gNOI Reboot RPC 発行サイトは `sonic_platform_base/module_base.py:601` 前後の `_set_module_gnoi_halt_in_progress` 周辺。platform 派生クラスが `set_admin_state_gracefully` を override。
+    - 関連 PR: smartswitch DPU graceful shutdown の chassisd 統合は merge 済み。独立 daemon 案は採用せず chassisd に統合された設計変更。
+    - **追加デバッグコマンド**: shutdown フロー追跡 — `docker logs pmon 2>&1 | grep -E 'chassisd.*(graceful|halt|admin_state)'`、`redis-cli -n 6 hgetall 'CHASSIS_MODULE_INFO_TABLE|DPU0'` で current state、`redis-cli psubscribe '__keyspace@6__:CHASSIS_MODULE_INFO_TABLE*'` で遷移を監視。
 
-- `gnoi_reboot_daemon.py` は未実装 (`find .cache/sonic-sources/sonic-platform-daemons -iname '*gnoi*'` 結果 0)。
-- 代替実装: `sonic-chassisd/scripts/chassisd` L256/L1362 で `module.set_admin_state_gracefully(admin_state)` を直接呼び、L1373 で `module.clear_module_gnoi_halt_in_progress()`。
-- gNOI Reboot RPC 発行サイトは `sonic_platform_base/module_base.py:601` 前後の `_set_module_gnoi_halt_in_progress` 周辺。platform 派生クラスが `set_admin_state_gracefully` を override。
-- 関連 PR: smartswitch DPU graceful shutdown の chassisd 統合は merge 済み。独立 daemon 案は採用せず chassisd に統合された設計変更。
-- **追加デバッグコマンド**: shutdown フロー追跡 — `docker logs pmon 2>&1 | grep -E 'chassisd.*(graceful|halt|admin_state)'`、`redis-cli -n 6 hgetall 'CHASSIS_MODULE_INFO_TABLE|DPU0'` で current state、`redis-cli psubscribe '__keyspace@6__:CHASSIS_MODULE_INFO_TABLE*'` で遷移を監視。
+    > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
-> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-buildimage #25554: Bug: gnoi-shutdown service blocks SYSTEM_READY on non-SmartSwitch platforms (closed)](https://github.com/sonic-net/sonic-buildimage/issues/25554) — `gnoi_reboot_daemon` (gnoi-shutdown service) が SmartSwitch 以外で SYSTEM_READY を阻害する bug。HLD と現実装の境界条件の齟齬を示す。
-- HALT 機能本体（DPU 個別停止）の取り込み PR は明示的に紐づくものが確認できず、SmartSwitch 系の複数 PR にまたがる。
+    - [sonic-buildimage #25554: Bug: gnoi-shutdown service blocks SYSTEM_READY on non-SmartSwitch platforms (closed)](https://github.com/sonic-net/sonic-buildimage/issues/25554) — `gnoi_reboot_daemon` (gnoi-shutdown service) が SmartSwitch 以外で SYSTEM_READY を阻害する bug。HLD と現実装の境界条件の齟齬を示す。
+    - HALT 機能本体（DPU 個別停止）の取り込み PR は明示的に紐づくものが確認できず、SmartSwitch 系の複数 PR にまたがる。
+<!-- /diff-admonition -->
 
 ## 引用元
 

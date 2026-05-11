@@ -207,32 +207,33 @@ show ndp
 - `show arp` が遅い → `show arp` 実装が **個別 FDB lookup 版** か、古い版で全件取得していないかを確認
 - VNET ありで route 反映が遅い → 本最適化の対象外（`rt_table != 0` の lookup は従来通り）
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-09 時点の現行 master を裏取り。
 
-2026-05-09 時点の現行 master を裏取り。
+    | HLD 主張 | 実装 | 結果 |
+    |---|---|---|
+    | `net.ipv4.neigh.default.gc_thresh1/2/3 = 16000/32000/48000`、IPv6 = 8000/16000/32000 | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:21-26` で v4/v6 ともに `1024/2048/4096` | ⚠️ HLD 提案値は採用されず |
+    | CoPP ARP/ND 上限 600 → 8000 pps | `sonic-buildimage/files/image_config/copp/copp_cfg.j2` で `arp` trap は `queue4_group2`（cir/cbs 600）。8000 pps への引き上げは無し | ⚠️ HLD 提案値は採用されず |
+    | `RouteOrch` の bulk route API + 1 秒 timer flush | `sonic-swss/orchagent/routeorch.cpp:41` で `gRouteBulker(sai_route_api, gMaxBulkSize)`、`routeorch.cpp:626-1116` で bulker 経由の add/remove と flush 処理 | ✓ 実装済み |
+    | `fpmsyncd` の `rt_table == 0` で master device lookup スキップ | `sonic-swss/fpmsyncd/routesync.cpp:2077-2082` で `master_index` 取得し、0 のときは lookup を行わない | ✓ 実装済み |
+    | sairedis 内 nlohmann/json v2.0 → v3.6 | 本確認では未検証（実装は時間経過で更に進んでいると見られる） | △ |
+    | `show arp` / `show ndp` の個別 FDB lookup 化 | 本確認では未検証 | △ |
 
-| HLD 主張 | 実装 | 結果 |
-|---|---|---|
-| `net.ipv4.neigh.default.gc_thresh1/2/3 = 16000/32000/48000`、IPv6 = 8000/16000/32000 | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:21-26` で v4/v6 ともに `1024/2048/4096` | ⚠️ HLD 提案値は採用されず |
-| CoPP ARP/ND 上限 600 → 8000 pps | `sonic-buildimage/files/image_config/copp/copp_cfg.j2` で `arp` trap は `queue4_group2`（cir/cbs 600）。8000 pps への引き上げは無し | ⚠️ HLD 提案値は採用されず |
-| `RouteOrch` の bulk route API + 1 秒 timer flush | `sonic-swss/orchagent/routeorch.cpp:41` で `gRouteBulker(sai_route_api, gMaxBulkSize)`、`routeorch.cpp:626-1116` で bulker 経由の add/remove と flush 処理 | ✓ 実装済み |
-| `fpmsyncd` の `rt_table == 0` で master device lookup スキップ | `sonic-swss/fpmsyncd/routesync.cpp:2077-2082` で `master_index` 取得し、0 のときは lookup を行わない | ✓ 実装済み |
-| sairedis 内 nlohmann/json v2.0 → v3.6 | 本確認では未検証（実装は時間経過で更に進んでいると見られる） | △ |
-| `show arp` / `show ndp` の個別 FDB lookup 化 | 本確認では未検証 | △ |
+    `gc_thresh` と CoPP ARP/ND が HLD 提案値を採用していない理由は、その後の運用で **kernel メモリ消費**と **CPU 負荷** が問題になったためと思われる（本文「制限事項」で警告済みのトレードオフ）。本ページで挙げているスケール目標値（IPv4 ARP 32k 等）は **kernel cache 上限としては届かない設定**になっている点に注意。
 
-`gc_thresh` と CoPP ARP/ND が HLD 提案値を採用していない理由は、その後の運用で **kernel メモリ消費**と **CPU 負荷** が問題になったためと思われる（本文「制限事項」で警告済みのトレードオフ）。本ページで挙げているスケール目標値（IPv4 ARP 32k 等）は **kernel cache 上限としては届かない設定**になっている点に注意。
+    **読者への影響**:
 
-**読者への影響**:
+    - HLD の数値（IPv4 ARP 32k / IPv6 16k 等）を期待してスケール試験を組むと、**現行 default 値（v4 上限 2048〜4096、v6 同様）で先に gc が走り、想定スケールに到達できない**。`dmesg` に `neighbour: arp_cache: neighbor table overflow!` が出る。
+    - CoPP ARP/ND が 600 pps のままなので、**大規模 L2 sweep / fast reroute 時に ARP/ND 学習が間に合わない** 場合がある。HLD で謳う 8000 pps での収束時間を期待してはいけない。
+    - 一方、`RouteOrch` の bulk + 1 秒 timer flush と `fpmsyncd` の master device lookup スキップは取り込み済みで、**経路投入レイテンシ自体は HLD どおりの改善**が得られる。
 
-- HLD の数値（IPv4 ARP 32k / IPv6 16k 等）を期待してスケール試験を組むと、**現行 default 値（v4 上限 2048〜4096、v6 同様）で先に gc が走り、想定スケールに到達できない**。`dmesg` に `neighbour: arp_cache: neighbor table overflow!` が出る。
-- CoPP ARP/ND が 600 pps のままなので、**大規模 L2 sweep / fast reroute 時に ARP/ND 学習が間に合わない** 場合がある。HLD で謳う 8000 pps での収束時間を期待してはいけない。
-- 一方、`RouteOrch` の bulk + 1 秒 timer flush と `fpmsyncd` の master device lookup スキップは取り込み済みで、**経路投入レイテンシ自体は HLD どおりの改善**が得られる。
+    **回避策 / 対応方法**:
 
-**回避策 / 対応方法**:
-
-- ARP/ND テーブルを 32k/16k スケールで動かしたい場合は、`/etc/sysctl.d/` 配下に独自ファイル（例: `99-arp-scale.conf`）を bake して `net.ipv4.neigh.default.gc_thresh3 = 65536` 等を上書き。次回 image build から有効。
-- CoPP の ARP/ND 上限を上げる場合は `sonic-buildimage/files/image_config/copp/copp_cfg.j2` の `queue4_group2` の `cir`/`cbs` を編集してリビルド。COPP_TABLE を runtime で書き換える経路もあるが、`copp_cfg.j2` ベースの設定が再 apply されると上書きされる。
-- スケール試験設計時は、HLD の提案値ではなく **現行 default 値** を前提に見積もりを立てる。
+    - ARP/ND テーブルを 32k/16k スケールで動かしたい場合は、`/etc/sysctl.d/` 配下に独自ファイル（例: `99-arp-scale.conf`）を bake して `net.ipv4.neigh.default.gc_thresh3 = 65536` 等を上書き。次回 image build から有効。
+    - CoPP の ARP/ND 上限を上げる場合は `sonic-buildimage/files/image_config/copp/copp_cfg.j2` の `queue4_group2` の `cir`/`cbs` を編集してリビルド。COPP_TABLE を runtime で書き換える経路もあるが、`copp_cfg.j2` ベースの設定が再 apply されると上書きされる。
+    - スケール試験設計時は、HLD の提案値ではなく **現行 default 値** を前提に見積もりを立てる。
+<!-- /diff-admonition -->
 
 ## 引用元
 

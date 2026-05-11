@@ -218,65 +218,66 @@ leak_sensors3     Not OK    LiquidCooling
 - gNMI イベント未着: STATE_DB は更新されているのに event が来ない場合、`system-health` の `_check_liquid_cooling_status` が登録されているか、`EVENTS_PUBLISHER_TAG` の購読側設定を確認。
 - 液冷非対応機で Updater が走っている: `enable_liquid_cooling` が誤って true になっていないか確認。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
-2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
+    ### 1. STATE_DB テーブル名が `LIQUID_COOLING_DEVICE` ではなく `LIQUID_COOLING_INFO`
 
-### 1. STATE_DB テーブル名が `LIQUID_COOLING_DEVICE` ではなく `LIQUID_COOLING_INFO`
+    - **HLD 記述**: STATE_DB テーブル `LIQUID_COOLING_DEVICE` に sensor 状態を書く。
+    - **実装位置**: `sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526`
+      ```python
+      class LiquidCoolingUpdater(threading.Thread, logger.Logger):
+          LIQUID_COOLING_INFO_TABLE_NAME = 'LIQUID_COOLING_INFO'
+      ```
+      - L547: `self.sensor_table = swsscommon.Table(state_db, LiquidCoolingUpdater.LIQUID_COOLING_INFO_TABLE_NAME)` で実際に `LIQUID_COOLING_INFO` を書く。
+    - **差分の中身**: HLD 図には `LIQUID_COOLING_DEVICE` と書かれているが、実コードは `LIQUID_COOLING_INFO`。さらに HLD には無い `SYSTEM_LEAK_STATUS` (`L548`)、`LEAK_PROFILE`（`L551`）等の補助テーブルも追加されている。
+    - **読者への影響**: HLD の名前で `redis-cli -n 6 keys 'LIQUID_COOLING_DEVICE*'` を実行しても結果が出ず、漏洩状態を [Redis](../reference/glossary.md#term-redis) 経由で参照できないと誤解する。system-health 側の hardware_checker も `LIQUID_COOLING_INFO` を見る前提で書かれているため、HLD の名前で独自スクリプトを書くと連動しない。
+    - **回避策**:
+      - 状態確認: `redis-cli -n 6 keys 'LIQUID_COOLING_INFO*'` および `redis-cli -n 6 keys 'SYSTEM_LEAK_STATUS*'`、`redis-cli -n 6 keys 'LEAK_PROFILE*'` を使う。
+      - スクリプト連携: `LIQUID_COOLING_INFO` を subscribe キーとして使う。HLD の名前はリネームされた旧称と考えて読み替える。
 
-- **HLD 記述**: STATE_DB テーブル `LIQUID_COOLING_DEVICE` に sensor 状態を書く。
-- **実装位置**: `sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526`
-  ```python
-  class LiquidCoolingUpdater(threading.Thread, logger.Logger):
-      LIQUID_COOLING_INFO_TABLE_NAME = 'LIQUID_COOLING_INFO'
-  ```
-  - L547: `self.sensor_table = swsscommon.Table(state_db, LiquidCoolingUpdater.LIQUID_COOLING_INFO_TABLE_NAME)` で実際に `LIQUID_COOLING_INFO` を書く。
-- **差分の中身**: HLD 図には `LIQUID_COOLING_DEVICE` と書かれているが、実コードは `LIQUID_COOLING_INFO`。さらに HLD には無い `SYSTEM_LEAK_STATUS` (`L548`)、`LEAK_PROFILE`（`L551`）等の補助テーブルも追加されている。
-- **読者への影響**: HLD の名前で `redis-cli -n 6 keys 'LIQUID_COOLING_DEVICE*'` を実行しても結果が出ず、漏洩状態を [Redis](../reference/glossary.md#term-redis) 経由で参照できないと誤解する。system-health 側の hardware_checker も `LIQUID_COOLING_INFO` を見る前提で書かれているため、HLD の名前で独自スクリプトを書くと連動しない。
-- **回避策**:
-  - 状態確認: `redis-cli -n 6 keys 'LIQUID_COOLING_INFO*'` および `redis-cli -n 6 keys 'SYSTEM_LEAK_STATUS*'`、`redis-cli -n 6 keys 'LEAK_PROFILE*'` を使う。
-  - スクリプト連携: `LIQUID_COOLING_INFO` を subscribe キーとして使う。HLD の名前はリネームされた旧称と考えて読み替える。
+    ### 2. `liquid_cooling_update_interval` は CLI 引数で渡る（CONFIG_DB ではない）
 
-### 2. `liquid_cooling_update_interval` は CLI 引数で渡る（CONFIG_DB ではない）
+    - **HLD 記述**: `pmon_daemon_control.json` の `liquid_cooling_update_interval` で polling 間隔を設定する。
+    - **実装位置**: `sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:1299`, `:1433`, `:1442`
+      ```python
+      # L1299 デフォルト
+      liquid_cooling_update_interval=0.5
+      # L1433 argparse
+      parser.add_argument('--liquid_cooling_update_interval', type=float, default=0.5)
+      # L1442 渡し込み
+      args.liquid_cooling_update_interval
+      ```
+    - **差分の中身**: 起動 daemon 引数として渡される設計で、`pmon_daemon_control.json` の同名キーは（取り込んだ場合）supervisord 起動行で `--liquid_cooling_update_interval=<value>` に展開される運用前提。HLD の「JSON フィールドそのものが effective」という記述とは間に一段挟まる。
+    - **読者への影響**: `pmon_daemon_control.json` だけを更新しても、supervisord の起動コマンドを書き換えるテンプレートが platform 側になければ反映されない。
+    - **回避策**: platform の `supervisord.conf` / `thermalctld` 起動 entry を確認し、`--liquid_cooling_update_interval=<sec>` が引数として渡るか確認する。確認できなければ起動行を直接編集するか、ベンダーに platform package の対応を依頼する。
 
-- **HLD 記述**: `pmon_daemon_control.json` の `liquid_cooling_update_interval` で polling 間隔を設定する。
-- **実装位置**: `sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:1299`, `:1433`, `:1442`
-  ```python
-  # L1299 デフォルト
-  liquid_cooling_update_interval=0.5
-  # L1433 argparse
-  parser.add_argument('--liquid_cooling_update_interval', type=float, default=0.5)
-  # L1442 渡し込み
-  args.liquid_cooling_update_interval
-  ```
-- **差分の中身**: 起動 daemon 引数として渡される設計で、`pmon_daemon_control.json` の同名キーは（取り込んだ場合）supervisord 起動行で `--liquid_cooling_update_interval=<value>` に展開される運用前提。HLD の「JSON フィールドそのものが effective」という記述とは間に一段挟まる。
-- **読者への影響**: `pmon_daemon_control.json` だけを更新しても、supervisord の起動コマンドを書き換えるテンプレートが platform 側になければ反映されない。
-- **回避策**: platform の `supervisord.conf` / `thermalctld` 起動 entry を確認し、`--liquid_cooling_update_interval=<sec>` が引数として渡るか確認する。確認できなければ起動行を直接編集するか、ベンダーに platform package の対応を依頼する。
+    ### 3. mlnx-platform-api 等ベンダー実装は HLD 公開後に取り込まれている
 
-### 3. mlnx-platform-api 等ベンダー実装は HLD 公開後に取り込まれている
+    - **HLD 記述**: ベンダー実装は platform 側の責務で範囲外。
+    - **実装位置**: `mlnx-platform-api/sonic_platform/liquid_cooling.py` に Mellanox 実装が存在（HLD 範囲外だが運用上必要）。
+    - **読者への影響**: HLD だけ読むと「実装責務はベンダー」で終わるが、実機検証では platform 側の対応が前提で、対応 SKU は限られる。
+    - **回避策**: 対応プラットフォームかどうかは `mlnx-platform-api/sonic_platform/liquid_cooling.py` 相当のベンダー実装が `LiquidCoolingBase` を継承しているかで判断する。未対応 platform では `enable_liquid_cooling` を立てても sensor 検出に至らない。
 
-- **HLD 記述**: ベンダー実装は platform 側の責務で範囲外。
-- **実装位置**: `mlnx-platform-api/sonic_platform/liquid_cooling.py` に Mellanox 実装が存在（HLD 範囲外だが運用上必要）。
-- **読者への影響**: HLD だけ読むと「実装責務はベンダー」で終わるが、実機検証では platform 側の対応が前提で、対応 SKU は限られる。
-- **回避策**: 対応プラットフォームかどうかは `mlnx-platform-api/sonic_platform/liquid_cooling.py` 相当のベンダー実装が `LiquidCoolingBase` を継承しているかで判断する。未対応 platform では `enable_liquid_cooling` を立てても sensor 検出に至らない。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - STATE_DB テーブル名差異: HLD `LIQUID_COOLING_DEVICE` → 実装 `LIQUID_COOLING_INFO` (`sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526, 547`)。
+    - 追加テーブル: HLD に無い `SYSTEM_LEAK_STATUS` (L548) / `LEAK_PROFILE` (L551) が追加実装。
+    - `liquid_cooling_update_interval` は CLI 引数で渡る（CONFIG_DB ではない）。
+    - system-health 側 hardware_checker も `LIQUID_COOLING_INFO` を見る前提で書かれている。
+    - 関連 PR: liquid cooling 機能取り込み PR で table 名がリネーム。HLD 文書側は旧名のまま。
+    - **追加検証コマンド**: 全関連 STATE_DB key 確認 — `redis-cli -n 6 keys 'LIQUID_COOLING_INFO*' 'SYSTEM_LEAK_STATUS*' 'LEAK_PROFILE*'`、各 value は `redis-cli -n 6 hgetall <key>` で展開。
 
-- STATE_DB テーブル名差異: HLD `LIQUID_COOLING_DEVICE` → 実装 `LIQUID_COOLING_INFO` (`sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526, 547`)。
-- 追加テーブル: HLD に無い `SYSTEM_LEAK_STATUS` (L548) / `LEAK_PROFILE` (L551) が追加実装。
-- `liquid_cooling_update_interval` は CLI 引数で渡る（CONFIG_DB ではない）。
-- system-health 側 hardware_checker も `LIQUID_COOLING_INFO` を見る前提で書かれている。
-- 関連 PR: liquid cooling 機能取り込み PR で table 名がリネーム。HLD 文書側は旧名のまま。
-- **追加検証コマンド**: 全関連 STATE_DB key 確認 — `redis-cli -n 6 keys 'LIQUID_COOLING_INFO*' 'SYSTEM_LEAK_STATUS*' 'LEAK_PROFILE*'`、各 value は `redis-cli -n 6 hgetall <key>` で展開。
+    > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
-> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-platform-daemons #690: Add support for liquid cooling leakage detection (merged)](https://github.com/sonic-net/sonic-platform-daemons/pull/690) — `LiquidCoolingBase` + `thermalctld` 連携の本体取り込み PR。
-- system-health gNMI イベント公開は本 PR では未取り込みで、追加の gNMI / system-health 側 PR が必要。
+    - [sonic-platform-daemons #690: Add support for liquid cooling leakage detection (merged)](https://github.com/sonic-net/sonic-platform-daemons/pull/690) — `LiquidCoolingBase` + `thermalctld` 連携の本体取り込み PR。
+    - system-health gNMI イベント公開は本 PR では未取り込みで、追加の gNMI / system-health 側 PR が必要。
+<!-- /diff-admonition -->
 
 ## 引用元
 

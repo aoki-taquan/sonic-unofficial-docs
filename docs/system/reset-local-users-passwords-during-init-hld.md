@@ -124,21 +124,23 @@ enabled
 
 [^1]: [sonic-net/SONiC doc/password-reset/SONiC_local_users_password_reset_hld.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/password-reset/SONiC_local_users_password_reset_hld.md)
 
-## 実装との乖離（裏取りメモ（Verifier batch 29））
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    per-page queue で既出の通り、[HLD](../reference/glossary.md#term-hld) が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
 
-per-page queue で既出の通り、[HLD](../reference/glossary.md#term-hld) が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
+    - `reset-local-users-passwords.service` / `LOCAL_USERS_PASSWORDS_RESET` テーブル / `config local-users-passwords-reset` CLI / `sonic-local-users-passwords-reset.yang` / `ENABLE_LOCAL_USERS_PASSWORDS_RESET` ビルドフラグ: いずれも検出できず
+    - `sonic-platform-common` 配下に `LocalUsersConfigurationResetBase` 抽象クラスなし
+    - 一方、reset-factory script (`sonic-buildimage/files/image_config/reset-factory/reset-factory`) は **`/etc/sonic/default_users.json` 経由でローカルユーザのパスワードを既定値に戻す** 処理を実装しており（L14, L88-L104）、`build_debian.sh` L579 で `default_users.json` を j2 テンプレから生成している
 
-- `reset-local-users-passwords.service` / `LOCAL_USERS_PASSWORDS_RESET` テーブル / `config local-users-passwords-reset` CLI / `sonic-local-users-passwords-reset.yang` / `ENABLE_LOCAL_USERS_PASSWORDS_RESET` ビルドフラグ: いずれも検出できず
-- `sonic-platform-common` 配下に `LocalUsersConfigurationResetBase` 抽象クラスなし
-- 一方、reset-factory script (`sonic-buildimage/files/image_config/reset-factory/reset-factory`) は **`/etc/sonic/default_users.json` 経由でローカルユーザのパスワードを既定値に戻す** 処理を実装しており（L14, L88-L104）、`build_debian.sh` L579 で `default_users.json` を j2 テンプレから生成している
+    つまり「default_users.json で復元」という基礎部品は採用されたが、HLD が要求する **long reset button トリガ + 専用 systemd service + plat 抽象 + 設定 [YANG](../reference/glossary.md#term-yang)** の枠組みは取り込まれていない。`discrepancy-found` を維持。
 
-つまり「default_users.json で復元」という基礎部品は採用されたが、HLD が要求する **long reset button トリガ + 専用 systemd service + plat 抽象 + 設定 [YANG](../reference/glossary.md#term-yang)** の枠組みは取り込まれていない。`discrepancy-found` を維持。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
+    - [GitHub Issue / PR の関連リンクは未確認] — `reset-local-users-passwords.service` と long reset button トリガの取り込みは個別 image_config PR で進行しているが、HLD と直接紐づくトラッキング Issue は確認できず（検索結果 #24867 は無関係な doc refactor link issue）。
 
-- [GitHub Issue / PR の関連リンクは未確認] — `reset-local-users-passwords.service` と long reset button トリガの取り込みは個別 image_config PR で進行しているが、HLD と直接紐づくトラッキング Issue は確認できず（検索結果 #24867 は無関係な doc refactor link issue）。
+    <!-- topics-back-ref -->
+<!-- /diff-admonition -->
 
-<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)

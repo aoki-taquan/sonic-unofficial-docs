@@ -190,27 +190,28 @@ CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `d
 - PFCWD 対象キューがずれる: `db_migrator` で `pfcwd_sw_enable` が生成されたか、または手動投入を確認。
 - terminator 競合: MuxTunnel と通常 IPinIP の両方を立てている場合、orchagent が P2P / P2MP に分離しているか。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    verified at: 2026-05-09。
 
-verified at: 2026-05-09。
+    - **PFCWD フィールド名**: HLD `pfc_wd_sw_enable` に対し、master 実装は `pfcwd_sw_enable`（アンダースコア位置違い）。`sonic-utilities/scripts/db_migrator.py:1186-1193` で `pfc_enable` から派生。[CONFIG_DB](../reference/glossary.md#term-config_db) / YANG (`sonic-port-qos-map`) も実装名を正とする。
+    - `tunneldecaporch.cpp:834,1084`（`DECAP_QOS_*`）、`muxorch.cpp:259,2347`（`SAI_TUNNEL_PEER_MODE_P2P`）、`qos_config.j2:441`（Dual-ToR 限定 `AZURE_TUNNEL` 出力）は HLD どおり実装。
 
-- **PFCWD フィールド名**: HLD `pfc_wd_sw_enable` に対し、master 実装は `pfcwd_sw_enable`（アンダースコア位置違い）。`sonic-utilities/scripts/db_migrator.py:1186-1193` で `pfc_enable` から派生。[CONFIG_DB](../reference/glossary.md#term-config_db) / YANG (`sonic-port-qos-map`) も実装名を正とする。
-- `tunneldecaporch.cpp:834,1084`（`DECAP_QOS_*`）、`muxorch.cpp:259,2347`（`SAI_TUNNEL_PEER_MODE_P2P`）、`qos_config.j2:441`（Dual-ToR 限定 `AZURE_TUNNEL` 出力）は HLD どおり実装。
+    **影響**: HLD 表記そのままで [config_db.json](../reference/glossary.md#term-config_db.json) テンプレートを書くと YANG validation で弾かれるか orchagent が無視する。upgrade 環境では `db_migrator.py` 最新版を走らせ `pfcwd_sw_enable` が生成されているか確認する。
 
-**影響**: HLD 表記そのままで [config_db.json](../reference/glossary.md#term-config_db.json) テンプレートを書くと YANG validation で弾かれるか orchagent が無視する。upgrade 環境では `db_migrator.py` 最新版を走らせ `pfcwd_sw_enable` が生成されているか確認する。
+    **確認コマンド**:
 
-**確認コマンド**:
+    ```bash
+    redis-cli -n 4 keys 'PORT_QOS_MAP|*' \
+      | while read k; do redis-cli -n 4 hgetall "$k" | grep -E 'pfc(wd)?_sw_enable'; done
+    ```
 
-```bash
-redis-cli -n 4 keys 'PORT_QOS_MAP|*' \
-  | while read k; do redis-cli -n 4 hgetall "$k" | grep -E 'pfc(wd)?_sw_enable'; done
-```
+    > 分類: `monitor: evolved_beyond_hld` — HLD は取り込み済みだがフィールド名が実装側で変更。
 
-> 分類: `monitor: evolved_beyond_hld` — HLD は取り込み済みだがフィールド名が実装側で変更。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [GitHub Issue / PR の関連リンクは未確認] — Dual-ToR PFC デッドロック回避向けトンネル DSCP / TC リマップは dualtor 系 PR と SAI tunnel TC リマップ機能の組み合わせで段階的に取り込まれており、HLD 単独の上流 Issue は確認できず。
+    - [GitHub Issue / PR の関連リンクは未確認] — Dual-ToR PFC デッドロック回避向けトンネル DSCP / TC リマップは dualtor 系 PR と SAI tunnel TC リマップ機能の組み合わせで段階的に取り込まれており、HLD 単独の上流 Issue は確認できず。
+<!-- /diff-admonition -->
 
 ## 関連トピック
 

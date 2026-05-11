@@ -109,42 +109,43 @@ libsai / SDK 起動時に作る default object（例: default switch）に orcha
 - **warm reboot**: 本機能の主目的
 - **counter 系**: 別 redis instance 化の議論で [COUNTERS_DB](../reference/glossary.md#term-counters_db) が引合に出る
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-11 時点の現行 master を裏取り。
 
-2026-05-11 時点の現行 master を裏取り。
+    ### 1. ファイル + 行番号
 
-### 1. ファイル + 行番号
+    - **未取り込み**: `sonic-net/sonic-sairedis` の lib/ 配下（`ClientSai.cpp`, `RedisChannel.cpp`, `Recorder.cpp` 等）と syncd 配下を grep しても `ATTR2OID_`, `OID2ATTR_`, `DEFAULT_OID2ATTR_`, `DEFAULT_OBJ_`, `RESTORE_DB`（DB 番号 7）に対応するキー定義は **見当たらない**。`idempoten` の文字列ヒットも 0。
+    - 現行 master の warm restart 経路は **syncd 側の view comparison**（`syncd/AsicView.cpp` / `syncd/BestCandidateFinder.cpp` / `syncd/HardReiniter.cpp`）で重複 OID 発行を抑止しており、[HLD](../reference/glossary.md#term-hld) が示す「libsairedis 内 prefix scheme」ではない。
 
-- **未取り込み**: `sonic-net/sonic-sairedis` の lib/ 配下（`ClientSai.cpp`, `RedisChannel.cpp`, `Recorder.cpp` 等）と syncd 配下を grep しても `ATTR2OID_`, `OID2ATTR_`, `DEFAULT_OID2ATTR_`, `DEFAULT_OBJ_`, `RESTORE_DB`（DB 番号 7）に対応するキー定義は **見当たらない**。`idempoten` の文字列ヒットも 0。
-- 現行 master の warm restart 経路は **syncd 側の view comparison**（`syncd/AsicView.cpp` / `syncd/BestCandidateFinder.cpp` / `syncd/HardReiniter.cpp`）で重複 OID 発行を抑止しており、[HLD](../reference/glossary.md#term-hld) が示す「libsairedis 内 prefix scheme」ではない。
+    ### 2. 差分の中身
 
-### 2. 差分の中身
+    HLD は libsairedis 内に以下のキー空間を用意して redis に保存し、warm restart 後の重複 [SAI](../reference/glossary.md#term-sai) 呼び出しを libsairedis 層で握りつぶす設計を提案している:
 
-HLD は libsairedis 内に以下のキー空間を用意して redis に保存し、warm restart 後の重複 [SAI](../reference/glossary.md#term-sai) 呼び出しを libsairedis 層で握りつぶす設計を提案している:
+    ```text
+    DEFAULT_ATTR2OID_<serialized attrs>  → <oid>
+    DEFAULT_OID2ATTR_<oid>               → {attr: value, ...}
+    ATTR2OID_<serialized attrs>          → <oid>
+    OID2ATTR_<oid>                       → {attr: value, ...}
+    DEFAULT_OBJ_<owner>_<obj_key>        → {attr: value, ...}
+    ```
 
-```text
-DEFAULT_ATTR2OID_<serialized attrs>  → <oid>
-DEFAULT_OID2ATTR_<oid>               → {attr: value, ...}
-ATTR2OID_<serialized attrs>          → <oid>
-OID2ATTR_<oid>                       → {attr: value, ...}
-DEFAULT_OBJ_<owner>_<obj_key>        → {attr: value, ...}
-```
+    現行 master は同等の目的を **syncd の view diff 機構** で達成しており、libsairedis 側に prefix キーは作られない。すなわち HLD は **draft / 未採用案** である。
 
-現行 master は同等の目的を **syncd の view diff 機構** で達成しており、libsairedis 側に prefix キーは作られない。すなわち HLD は **draft / 未採用案** である。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    `redis-cli -n 1 keys 'OID2ATTR_*'` 等で HLD どおりのキー出現を期待する読者は何も見えず、設計を誤解する。warm restart 時の挙動を deep dive するときは libsairedis ではなく **`sonic-sairedis/syncd/` 配下の view comparison 実装**（`AsicView` / `HardReiniter` / `WarmBoot`）を読む必要がある。
 
-`redis-cli -n 1 keys 'OID2ATTR_*'` 等で HLD どおりのキー出現を期待する読者は何も見えず、設計を誤解する。warm restart 時の挙動を deep dive するときは libsairedis ではなく **`sonic-sairedis/syncd/` 配下の view comparison 実装**（`AsicView` / `HardReiniter` / `WarmBoot`）を読む必要がある。
+    ### 4. 回避策
 
-### 4. 回避策
+    - warm restart 時の重複抑止メカニズムを追うときは `sonic-sairedis/syncd/` の view comparison ファイル群を起点にする。
+    - redis 上の warm restart 状態は `STATE_WARM_RESTART_TABLE` / `WARM_RESTART_TABLE` を読む。
+    - 本 HLD は「採用されなかった代替案」として読み、現行の挙動は別 HLD `doc/warm-reboot/code_implementation.md` および syncd ソース、`doc/warm-reboot/sai_warmboot.md` を参照する。
 
-- warm restart 時の重複抑止メカニズムを追うときは `sonic-sairedis/syncd/` の view comparison ファイル群を起点にする。
-- redis 上の warm restart 状態は `STATE_WARM_RESTART_TABLE` / `WARM_RESTART_TABLE` を読む。
-- 本 HLD は「採用されなかった代替案」として読み、現行の挙動は別 HLD `doc/warm-reboot/code_implementation.md` および syncd ソース、`doc/warm-reboot/sai_warmboot.md` を参照する。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [GitHub Issue / PR の関連リンクは未確認] — warm restart 用 OID キャッシュ / duplicate 抑止は [sonic-sairedis](../reference/glossary.md#term-sonic-sairedis) 内部リファクタとして散発的に取り込まれており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
+    - [GitHub Issue / PR の関連リンクは未確認] — warm restart 用 OID キャッシュ / duplicate 抑止は [sonic-sairedis](../reference/glossary.md#term-sonic-sairedis) 内部リファクタとして散発的に取り込まれており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
+<!-- /diff-admonition -->
 
 ## 引用元
 
