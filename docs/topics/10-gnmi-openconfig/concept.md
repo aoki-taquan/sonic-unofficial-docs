@@ -10,6 +10,72 @@ sources: []
 
 SONiC のモデル駆動管理は、CLI、gNMI、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。どの入口を使うかで操作対象が変わるわけではなく、同じ YANG モデルで定義された操作が、別の transport で表現されているにすぎない。この理解がないと「gNMI Set で OpenConfig をいじったら CLI が反映していない」ように見えてしまう。
 
+## gNMI / OpenConfig 機能は何を解決するか
+
+データセンタの規模で運用していると、CLI でログインして 1 台ずつ設定する世界はすぐに破綻する。NMS / SDN コントローラから API でまとめて投入し、戻りも構造化データで取りたい、しかもベンダーが混ざってもなるべく同じ表現で扱いたい。この要求に答えるのが gNMI（プロトコル）と OpenConfig（モデル）の組み合わせで、SONiC では次の問題を一気に解消している。
+
+- CLI 専用機能と API 専用機能が分裂し、片方からしか触れないコマンドが生まれる問題
+- ベンダー固有の MIB / CLI を毎回翻訳しないと NMS から触れない問題
+- 設定の get / set を別プロトコル（SSH/CLI と SNMP）で行わなければならない問題
+- 「いまの設定」と「いまの状態」を片方ずつ取りに行く（candidate / running / operational がバラバラ）問題
+- 設定変更を pull する手段しかなく、変更通知を push できない問題
+
+逆に、低レイヤの ASIC 設定や SONiC 固有 feature flag の中には OpenConfig がまだカバーしていない領域もあり、その隙間を SONiC native YANG が埋める、という二段構えになっている。
+
+## SONiC 内での位置
+
+gNMI / OpenConfig は **management plane の中心** に座る。具体的には次の経路で動く。
+
+- **Transport 層**: `telemetry` コンテナ内の gnmi-server が gRPC を受け、`mgmt-framework` コンテナの REST server が同じ Translib に乗る。
+- **モデル変換層**: Translib / Transformer が OpenConfig YANG ↔ SONiC native YANG ↔ CONFIG_DB の構造を相互変換する。CLI auto-generation tool は同じ YANG から CLI コマンド本体を生成する。
+- **検証層**: `sonic-yang-models` が pyang ベースで YANG 制約をチェック。違反は Transport 層に RPC error として戻る。
+- **永続化層**: CONFIG_DB writer が Redis に書き、`config save` 相当の挙動が `save-on-set` 設定で自動化される。
+- **反映層**: 他章と同じく orchagent → syncd → SAI → ASIC の通常経路を流れる。
+
+つまり gNMI / OpenConfig 章は「**ConfigDB に到達するまでの道のり**」を扱う。ConfigDB から先（orchagent から ASIC まで）は他章の責任、という切り分けで読めばよい。
+
+## 用語の定義
+
+- **gNMI**: gRPC Network Management Interface。`Capabilities` / `Get` / `Set` / `Subscribe` の 4 RPC を持つ。
+- **gNOI**: gRPC Network Operations Interface。`Reboot` / `File` / `OS` / `Healthz` / `Cert` などの操作 RPC。
+- **gNSI**: gRPC Network Security Interface。`Authz` / `Pathz` / `Credentialz` / `Certz` などのセキュリティ管理 RPC。
+- **OpenConfig**: ベンダー非依存の YANG モデル群。`openconfig-interfaces`、`openconfig-bgp` などが主要。
+- **SONiC YANG (native)**: `sonic-port`、`sonic-vlan` のように CONFIG_DB スキーマ 1:1 で書かれた YANG モデル群。
+- **Translib**: OpenConfig / SONiC YANG を翻訳して CONFIG_DB へ落とす中間層。YGOT ベース。
+- **Transformer**: Translib 内のモデル変換。フィールド単位で OpenConfig ↔ SONiC のマッピングを定義。
+- **Save-on-Set**: gNMI Set が成功した時に `/etc/sonic/config_db.json` まで永続化する設定。
+- **Master Arbitration**: 複数 client が同じ path に同時 Set する競合を防ぐため、gNMI Set の「primary client」を Election で決める仕組み。
+- **Dial-out subscription**: collector 側ではなく switch 側から telemetry stream を発信する telemetry の逆方向モード。
+
+## 典型シーン: NMS から interface description をまとめて投入する
+
+NMS が 100 台の ToR に対し interface description を OpenConfig path で Set する場面を考える。SONiC 内ではこう動く。
+
+```mermaid
+sequenceDiagram
+  participant NMS
+  participant GNMI as telemetry container<br>(gnmi-server)
+  participant TR as Translib / Transformer
+  participant YANG as sonic-yang-models
+  participant CFG as CONFIG_DB
+  participant ORCH as portsyncd / orchagent
+  NMS->>GNMI: SetRequest(path=/interfaces/interface[name=Ethernet0]/config/description)
+  GNMI->>TR: convert OpenConfig → internal
+  TR->>YANG: validate (must / when 制約)
+  YANG-->>TR: ok
+  TR->>CFG: write PORT|Ethernet0:description=…
+  CFG-->>ORCH: keyspace notification
+  ORCH->>ORCH: 該当 feature 無関係なので無視
+  TR-->>GNMI: SetResponse(ok)
+  GNMI-->>NMS: ok
+  NMS->>GNMI: Subscribe ON_CHANGE /interfaces/interface/state/oper-status
+  GNMI->>CFG: STATE_DB watch
+  CFG-->>GNMI: oper-status updates
+  GNMI-->>NMS: stream
+```
+
+ポイントは **Set した path と Subscribe する path がどちらも YANG モデル上の path** で、`/config/...` と `/state/...` で writeable / read-only が分かれている、という OpenConfig の規約。SONiC native YANG にも同じ流儀がある。
+
 ## 入口の責務を分ける
 
 | 層 | 主な責務 | 代表コンポーネント |
@@ -42,6 +108,25 @@ SONiC の CLI は YANG モデルから自動生成される仕組みを持つ。
 - 競合制御 (master arbitration)、永続化 (save-on-set)、dial-out subscription は [運用](operations.md) へ。
 - gNOI、gNSI で reboot / file / OS install / healthz / 証明書配布を扱うときは [gNOI / gNSI](gnoi-gnsi.md) へ。
 - YANG モジュールを機能章から逆引きするときは [YANG リファレンス](yang-reference.md) へ。
+
+## 似た機能との違い
+
+| 比較対象 | 共通点 | 違い |
+|---|---|---|
+| SNMP | NMS から状態を取れる | SNMP は MIB / UDP / pull のみ。gNMI は YANG / gRPC / push 可。Set 系も SNMP は SET PDU しかなく実運用では使われない |
+| NETCONF | YANG モデル駆動 | NETCONF は SSH + XML、gNMI は gRPC + protobuf。SONiC は NETCONF を実装していないので議論はモデル互換性の話に限る |
+| RESTCONF | YANG モデル駆動 + HTTP | SONiC の REST server は OpenAPI 生成版で、RESTCONF の RFC 8040 仕様には準拠しない。同じ Translib に乗るので機能は等価 |
+| CLI | 設定の入口 | CLI は内部で同じ YANG / Translib を経由（auto-generate 経由）。差は transport と UX のみ |
+| SAI / `sonic-cfggen` | 設定の最終形 | gNMI は ConfigDB まで、SAI は ASIC 上の object。gNMI からは SAI を直接触れない |
+| gRPC で書いた独自 API | gRPC 上で動く | gNMI は仕様化された 4 RPC のみ。汎用 gRPC ではないので、独自拡張は path / extension で行う |
+
+## 読了後にできること
+
+- 同じ機能を OpenConfig path と SONiC native path のどちらで触るべきか、その feature が OpenConfig で表現できるかを基準に判断できる
+- gNMI Set が失敗したとき、Transport 層・Translib 変換・YANG validation・ConfigDB writer のどこで止まったか順序立てて切り分けられる
+- 「CLI からは見える設定が gNMI Get で取れない」現象を、YANG モデル未対応 / Transformer 未実装 / state path 未実装の 3 つから選ぶ目線を持てる
+- Master arbitration / save-on-set / dial-out のような運用上の仕掛けが、なぜ必要かを CLI との対比で説明できる
+- gNOI と gNSI が gNMI とは別の RPC セットで、reboot / 証明書管理が transport 共用なだけと理解できる
 
 ## 関連ページ
 

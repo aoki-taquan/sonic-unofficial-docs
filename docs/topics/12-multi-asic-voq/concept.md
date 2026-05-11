@@ -16,6 +16,46 @@ sources:
 
 Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。
 
+## Multi-ASIC / VOQ は何を解決するか
+
+1 ASIC の pizza-box では足りない radix（ポート数 × 帯域）が必要になったとき、ハードウェア側は「1 筐体に複数 ASIC を載せる」「複数 line card を fabric でつなぐ」という拡張を取ります。ところが NOS から見ると、ASIC が複数あるだけで以下が一気に難しくなります。
+
+- ポート命名空間: `Ethernet0` が複数 ASIC の片方にあるのか、どちらにあるのか
+- routing daemon: 同じ BGP プロセスから複数 ASIC の RIB を更新するのか、ASIC ごとに別 daemon を立てるのか
+- 設定永続化: CONFIG_DB は 1 つで全 ASIC を表すのか、ASIC ごとに 1 つ持つのか
+- counter / show: `show interfaces counters` は ASIC を跨ぐのか、まとめるのか
+- fabric / chassis: line card を跨いだ system port は単一 switch に見えるのか
+
+Multi-ASIC SONiC と VOQ SONiC が解決しているのは、**「複数 ASIC があるのに 1 つのスイッチとして運用できる」UX を NOS 側で組み上げる**ことです。具体的な手段が、namespace 分離、Redis インスタンス多重化、Chassis DB、system port、distributed VOQ の組み合わせです。
+
+## SONiC 内での位置
+
+Multi-ASIC / VOQ は data plane の構造を反映した **全層横断のアーキテクチャ変更** で、特定 1 機能ではなく次の各層に変更が入ります。
+
+- **Linux**: ASIC ごとに `asic0`、`asic1` ... の network namespace を作り、portmgmtd / orchagent / syncd / bgpd を namespace 内で複数起動
+- **Redis / DB**: ASIC ごとに `redis<N>.sock` を立て、CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB をそれぞれ分離。host namespace は管理系の CONFIG_DB を別途持つ
+- **Routing**: BGP は ASIC namespace ごとに bgpd を立て、internal-BGP で各 ASIC 間を繋ぐ。FRR の `vrf` ではなく namespace で分離
+- **Forwarding plane**: VOQ chassis では fabric ASIC + system port + distributed VOQ により、line card 間で 1 つの論理 switch を構成
+- **CLI**: `show` 系コマンドが `--namespace` を取り、引数なしのときは全 namespace を集約。`sonic-utilities` が namespace 一覧を `/usr/share/sonic/device/.../asic.conf` から読む
+
+つまり Multi-ASIC / VOQ 章は、他の機能章（BGP / VXLAN / QoS / Reboot...）が**「1 ASIC の前提」で書かれている内容に対する例外条項集**でもあります。BGP 章の話を Multi-ASIC で適用するときに何が変わるか、というレンズで読み返すと意味が立ち上がります。
+
+## 用語の定義
+
+- **Pizza-box**: 1U〜2U 程度の fixed switch。多くは 1 ASIC。
+- **Multi-ASIC platform**: 1 筐体に複数 ASIC を搭載した固定スイッチ。例: 一部 7800 / 7050 系の大型機。
+- **VOQ chassis**: 複数 line card と fabric / supervisor card を持つシャーシ型システム。modular chassis とも。
+- **Line card (LC)**: front-panel port と 1 つ以上の ASIC を搭載する差し込みカード。
+- **Fabric card / supervisor**: line card 間を fabric ASIC で結ぶ内部スイッチング層を担当するカード。
+- **Namespace**: Linux network namespace。SONiC では ASIC ごとに 1 つ。
+- **Front-panel port**: 運用者が実際にケーブルを挿す物理 port。`Ethernet0` などの命名。
+- **System port**: VOQ chassis 全体で一意な論理 port ID。chassis 内の全 front-panel port を 1 名前空間で表現する。
+- **Fabric port**: line card と fabric ASIC を結ぶ内部 port。L2/L3 forwarding はせず cell スイッチング。
+- **Recirculation port**: ASIC 内でパケットを再度パイプライン入力に戻すための内部 loop port。
+- **Chassis DB**: supervisor 上に立つ Redis インスタンスで、全 line card に共通な system port、neighbor、router 等を集約。
+- **Distributed VOQ**: ingress 側で egress system port 単位の virtual output queue を持ち、credit ベースで egress に送る仕組み。HOL blocking を回避。
+- **Switch type**: `DEVICE_METADATA.localhost.switch_type` に `chassis-packet` / `voq` / `fabric` などが入り、起動時の挙動を分岐。
+
 ## Pizza-box / Multi-ASIC / VOQ Chassis の三層
 
 - **Pizza-box (1 ASIC)**: NOS は単一の Redis インスタンスと単一の network namespace で動きます。CLI と CONFIG_DB が 1 対 1 です。
@@ -57,6 +97,52 @@ VOQ chassis では、ingress line card が egress system port ごとに **virtua
 1 ASIC の pizza-box でも、内部で VOQ アーキテクチャを採用するシステムが定義されています。これは「pizza-box でありながら、将来的に VOQ chassis の line card として組み込むことを想定する」中間形態で、Chassis DB を持たず、system port は自分自身に閉じます。
 
 単独運用する場合は通常の Multi-ASIC として見え、`CONFIG_DB` の `DEVICE_METADATA.localhost.switch_type = voq` のような印で識別します。設定の流儀は [設定](setup.md) で扱います。
+
+## 典型シーン: VOQ chassis での経路投入と転送
+
+外部 BGP peer から受けた route が、ある line card に着信して、別 line card の port から出ていく場面を考えます。
+
+```mermaid
+sequenceDiagram
+  participant Peer as external BGP peer
+  participant LC1 as Line Card 1 (asic0 ns)
+  participant SUP as Supervisor (Chassis DB)
+  participant LC2 as Line Card 2 (asic0 ns)
+  participant Fabric as Fabric ASIC
+  Peer->>LC1: BGP UPDATE (prefix=10.0.0.0/24, nh=10.1.1.1)
+  LC1->>LC1: bgpd → zebra → fpmsyncd → APPL_DB
+  LC1->>LC1: orchagent → syncd → SAI (LC1 ASIC FIB)
+  LC1->>SUP: system port info / neighbor share
+  SUP->>LC2: 共有 neighbor / system port を反映
+  Note over LC2: 別 LC でも宛先解決可能に
+  Peer->>LC2: ingress traffic to 10.0.0.0/24
+  LC2->>LC2: FIB lookup → egress system port (LC1 の port)
+  LC2->>Fabric: cell forwarding (VOQ で credit ベース送信)
+  Fabric->>LC1: 宛先 system port に到達
+  LC1->>Peer: front-panel port から送出
+```
+
+ここで重要なのは、**LC1 で受信した route 情報が Chassis DB を経由して LC2 にも届く** という点と、**LC2 で「LC1 の port が egress」と解決できる system port 抽象が要る** という点。pizza-box の感覚で「ingress 側 LC でだけ route が見えていればいい」と思うと FIB miss を量産します。
+
+## 似た機能との違い
+
+| 比較対象 | 共通点 | 違い |
+|---|---|---|
+| MLAG (MCLAG) | 複数装置を 1 つに見せたい | MLAG は別筐体 2 台を LACP 観点で 1 つに見せるだけ。control plane は分離、forwarding は分散 |
+| Stack switch | 1 system に統合 | stack は management の統合が主、forwarding は stack link 経由。VOQ chassis のような cell-based fabric ではない |
+| VRF | namespace に似て見える | VRF は L3 route table の論理分離。Multi-ASIC namespace は OS レベルの完全分離 |
+| Docker container | プロセス分離 | container は process / mount / network の分離。namespace 分離は network 軸のみ |
+| SmartSwitch (DPU) | 複数 ASIC 的に見える | SmartSwitch は switch ASIC + DPU の組合せで、Multi-ASIC とは構造が違う。詳細は dash-smartswitch 章 |
+
+特に **「VOQ chassis ≒ stack」 と思うのは誤読** で、VOQ chassis はハードウェアレベルで全 line card が cell-based fabric で 1 つの switch を構成するのに対し、stack は別装置の管理統合という質的に違うものです。
+
+## 読了後にできること
+
+- `show interfaces counters` の挙動が pizza-box と Multi-ASIC で違うことを知って、`-n asic0` を意識的に使える
+- ある CLI が引数なしで「全 namespace まとめ」を返すか「host namespace だけ」を返すかを、まず疑えるようになる
+- VOQ chassis 上で「BGP route が入っているのに forwarding しない」現象を、Chassis DB → system port → distributed VOQ credit のどこで止まったかで切り分けられる
+- recirculation port は ASIC 機能であって front-panel port ではないので、`show interfaces` に出ない / 出ても触らない、と判断できる
+- Single-ASIC VOQ system が「VOQ chassis 線形の予習」用の中間形態で、Chassis DB を持たない閉じた構成だと理解した上で switch_type を確認できる
 
 ## 関連ページ
 
