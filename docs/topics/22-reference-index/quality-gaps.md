@@ -14,14 +14,14 @@ last_verified: 2026-05-10
 
 ## discrepancy の追跡
 
-Phase 6 で `verification: hld-only` のページを 0 件にし、すべて `code-verified` か `discrepancy-found` に振り分けた。`discrepancy-found` が付いたページは [Discrepancies](../../_meta/discrepancies.md) から area 別に一覧できる。
+Phase 6 で `verification: hld-only` のページを 0 件にし、すべて `code-verified` か `discrepancy-found` に振り分けた。`discrepancy-found` が付いたページは [Discrepancy index](../../reference/verification/discrepancy-index.md) から area 別・`monitor` タグ別に一覧できる（自動生成）。
 
 各ページ本文末尾には、HLD 記述と実装の差分が「実装との乖離」節として記録されている。読み手は次の優先順で読むと安全である。
 
 1. 章のページ (topics) で機能の意図を掴む。
 2. 関連する HLD 派生ページ冒頭の `verification` フィールドを確認する。
 3. `discrepancy-found` の場合は本文末尾の「実装との乖離」節を読む。
-4. discrepancy 一覧 ([Discrepancies](../../_meta/discrepancies.md)) で同じ area の他ページの傾向も確認する。
+4. discrepancy 一覧 ([Discrepancy index](../../reference/verification/discrepancy-index.md)) で同じ area の他ページの傾向も確認する。
 
 discrepancy が新規に追加される導線は次の通り。
 
@@ -50,6 +50,6 @@ discrepancy の解消は、HLD 側を書き換えるのではなく、実装と�
 
 ## 関連ページ
 
-- [Discrepancies](../../_meta/discrepancies.md)
+- [Discrepancy index](../../reference/verification/discrepancy-index.md)
 - [リファレンス トップ](../../reference/index.md)
 - [リファレンス横断索引 トップ](index.md)
