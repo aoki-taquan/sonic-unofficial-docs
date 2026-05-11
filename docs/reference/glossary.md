@@ -1,5 +1,6 @@
 ---
 title: 用語集 (Glossary)
+description: "用語集 (Glossary) — SONiC NOS で頻出する固有用語・略語・コンポーネント名・データベース名・デーモン名を、アルファベット順に整理した日本語用語集です。各エントリは「用語 / 略称 / 日本語訳 / 簡潔な説明 / 関連ページ」の形式で記載しています。"
 area: reference
 verification: meta
 last_verified: 2026-05-11
