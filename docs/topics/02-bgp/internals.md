@@ -24,17 +24,38 @@ BGP の内部実装トピックは、同じ「BGP の改善」でも狙ってい
 
 ```mermaid
 flowchart LR
-  BGPD[bgpd / FRR] -->|FPM netlink| ZEBRA[zebra]
-  ZEBRA -->|FPM RTM_NEWROUTE| FPMSYNCD[fpmsyncd]
-  FPMSYNCD --> APPL[(APPL_DB<br/>ROUTE_TABLE)]
-  APPL --> ROUTEORCH[RouteOrch<br/>+ NhgOrch]
-  ROUTEORCH --> ASIC[(ASIC_DB<br/>ROUTE_ENTRY / NHG)]
-  STATE[(STATE_DB<br/>ROUTE_TABLE.offloaded)] <-->|offload feedback| ROUTEORCH
-  STATE -->|suppress-fib-pending| BGPD
-  CFG[(CONFIG_DB<br/>BGP_NEIGHBOR / BGP_PEER_RANGE / BGP_AGGREGATE_ADDRESS)] --> BGPCFGD[bgpcfgd]
-  BGPCFGD -->|jinja2 template| FRRCFG[frr.conf]
-  FRRCFG --> BGPD
-  STATECFG[(STATE_DB<br/>BGP_PEER_CONFIGURED_TABLE)] <--> BGPCFGD
+  subgraph CTRL["制御面 (FRR)"]
+    direction TB
+    BGPD["<b>bgpd</b><br/>FRR BGP"]:::frr
+    ZEBRA["<b>zebra</b><br/>RIB / FPM 送出"]:::frr
+  end
+
+  subgraph SONIC["SONiC 層"]
+    direction TB
+    BGPCFGD["<b>bgpcfgd</b><br/>jinja2 → frr.conf"]:::proc
+    FPMSYNCD["<b>fpmsyncd</b><br/>FPM → APPL_DB"]:::proc
+    ROUTEORCH["<b>RouteOrch + NhgOrch</b><br/>APPL → ASIC"]:::proc
+  end
+
+  CFG[("<b>CONFIG_DB</b><br/>BGP_NEIGHBOR<br/>BGP_PEER_RANGE<br/>BGP_AGGREGATE_ADDRESS")]:::db
+  APPL[("<b>APPL_DB</b><br/>ROUTE_TABLE")]:::db
+  STATE[("<b>STATE_DB</b><br/>ROUTE_TABLE.offloaded<br/>BGP_PEER_CONFIGURED")]:::db
+  ASIC[("<b>ASIC_DB</b><br/>ROUTE_ENTRY / NHG")]:::db
+
+  CFG ==> BGPCFGD
+  BGPCFGD -->|frr.conf| BGPD
+  BGPCFGD <--> STATE
+  BGPD -->|FPM netlink| ZEBRA
+  ZEBRA -->|RTM_NEWROUTE| FPMSYNCD
+  FPMSYNCD ==> APPL
+  APPL ==> ROUTEORCH
+  ROUTEORCH ==> ASIC
+  ROUTEORCH <-->|offloaded| STATE
+  STATE -.->|suppress-fib-pending| BGPD
+
+  classDef frr fill:#fde2e4,stroke:#a83279,stroke-width:2px,color:#000;
+  classDef proc fill:#d4edda,stroke:#155724,stroke-width:1.5px,color:#000;
+  classDef db fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
 ```
 
 ## 主要 Orch / daemon の責務

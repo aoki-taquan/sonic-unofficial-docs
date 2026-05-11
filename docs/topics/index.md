@@ -20,98 +20,125 @@ related:
 
 ## 読み進め方マップ
 
-22 章の依存関係を、**前提（実線）** と **派生（点線）** の 2 種類で示す。`01-overview` と `20-swss-sai-redis` は他章のほぼ全ての前提となる土台。`02-bgp` / `03-vxlan-evpn` / `04-vrf-ecmp` は L3 系の中核、`06-l2-vlan-lag` / `05-dual-tor` は L2 系の中核、`07-08` は転送ポリシー、`09-10` は観測、`11/19/21` はライフサイクル、`12-13-17-18` は拡張トポロジと programmability、`14-15-16-22` は周辺基盤と索引である。
+22 章の依存関係を、カテゴリ別の色分けと **前提 (実線)** / **派生・補完 (点線)** の 2 種類のエッジで示す。読み方の指針は次のとおり。
+
+- **Foundation (黄)**: `01-overview` と `20-swss-sai-redis` は他章のほぼ全ての前提となる土台。
+- **L3 core (青)**: `02-bgp` / `03-vxlan-evpn` / `04-vrf-ecmp` は L3 の中核。
+- **L2 core (緑)**: `05-dual-tor` / `06-l2-vlan-lag` は L2 の中核。
+- **Policy (橙)**: `07-acl-copp-mirror` / `08-qos-buffer` は転送ポリシー。
+- **Observe (紫)**: `09-telemetry-snmp` / `10-gnmi-openconfig` は観測と北向き API。
+- **Lifecycle (灰)**: `11-reboot` / `19-build-packaging` / `21-lab` はビルドからリブートまでのライフサイクル。
+- **Extension (桃)**: `12-multi-asic-voq` / `13-dash-smartswitch` / `17-srv6-mpls` / `18-p4-pins` は拡張トポロジと programmability。
+- **Periphery (薄灰)**: `14-platform-port-optics` / `15-security-aaa` / `16-nat-dhcp-dns` / `22-reference-index` は周辺基盤と索引。
+
+向きは左→右、上→下に統一し、Foundation → core → Policy/Observe → Extension の順に層を積む。
 
 ```mermaid
 graph LR
-  C01["01 全体像と設定基盤"]
-  C20["20 SWSS/SAI/Redis"]
-  C02["02 BGP/FRR"]
-  C03["03 VXLAN/EVPN"]
-  C04["04 VRF/ECMP/RIB-FIB"]
-  C05["05 Dual-ToR"]
-  C06["06 L2/VLAN/LAG"]
-  C07["07 ACL/CoPP/Mirror"]
-  C08["08 QoS/Buffer/PFC"]
-  C09["09 Telemetry/SNMP"]
-  C10["10 gNMI/OpenConfig"]
-  C11["11 Reboot/Upgrade"]
-  C12["12 Multi-ASIC/VOQ"]
-  C13["13 DASH/SmartSwitch"]
-  C14["14 Platform/Port/Optics"]
-  C15["15 Security/AAA"]
-  C16["16 NAT/DHCP/DNS"]
-  C17["17 SRv6/MPLS"]
-  C18["18 P4/PINS"]
-  C19["19 Build/Packaging"]
-  C21["21 Lab/Virtual SONiC"]
-  C22["22 リファレンス索引"]
+  subgraph FOUND["Foundation (土台)"]
+    direction TB
+    C01["<b>01 Overview</b><br/>全体像と設定基盤"]
+    C20["<b>20 SWSS / SAI / Redis</b><br/>内部実装の土台"]
+  end
 
-  C01 --> C02
-  C01 --> C03
-  C01 --> C04
-  C01 --> C05
-  C01 --> C06
-  C01 --> C07
-  C01 --> C08
-  C01 --> C09
-  C01 --> C10
-  C01 --> C11
-  C01 --> C12
-  C01 --> C13
-  C01 --> C14
-  C01 --> C15
-  C01 --> C16
-  C01 --> C17
-  C01 --> C18
-  C01 --> C20
-  C01 --> C21
-  C01 --> C22
+  subgraph L3["L3 core (経路)"]
+    direction TB
+    C04["<b>04 VRF / ECMP</b><br/>RIB と FIB"]
+    C02["<b>02 BGP / FRR</b><br/>外部経路"]
+    C03["<b>03 VXLAN / EVPN</b><br/>オーバレイ"]
+  end
 
-  C20 --> C04
-  C20 --> C07
-  C20 --> C08
-  C20 --> C09
-  C20 --> C11
-  C20 --> C12
-  C20 --> C13
-  C20 --> C18
+  subgraph L2["L2 core (転送)"]
+    direction TB
+    C06["<b>06 L2 / VLAN / LAG</b><br/>ブリッジング"]
+    C05["<b>05 Dual-ToR</b><br/>高可用 ToR"]
+  end
 
+  subgraph POL["Policy (制御)"]
+    direction TB
+    C07["<b>07 ACL / CoPP / Mirror</b><br/>選別とミラー"]
+    C08["<b>08 QoS / Buffer</b><br/>PFC と輻輳制御"]
+  end
+
+  subgraph OBS["Observe (観測)"]
+    direction TB
+    C09["<b>09 Telemetry / SNMP</b><br/>カウンタ集約"]
+    C10["<b>10 gNMI / OpenConfig</b><br/>北向き API"]
+  end
+
+  subgraph EXT["Extension (拡張)"]
+    direction TB
+    C12["<b>12 Multi-ASIC / VOQ</b><br/>シャーシ"]
+    C13["<b>13 DASH / SmartSwitch</b><br/>SDN appliance"]
+    C17["<b>17 SRv6 / MPLS</b><br/>ラベル転送"]
+    C18["<b>18 P4 / PINS</b><br/>programmable"]
+  end
+
+  subgraph LC["Lifecycle (運用)"]
+    direction TB
+    C11["<b>11 Reboot / Upgrade</b><br/>warm/fast/cold"]
+    C19["<b>19 Build / Packaging</b><br/>image build"]
+    C21["<b>21 Lab / Virtual SONiC</b><br/>VS / KVM"]
+  end
+
+  subgraph PER["Periphery (周辺)"]
+    direction TB
+    C14["<b>14 Platform / Optics</b><br/>port / PHY"]
+    C15["<b>15 Security / AAA</b><br/>認証認可"]
+    C16["<b>16 NAT / DHCP / DNS</b><br/>サービス系"]
+    C22["<b>22 Reference Index</b><br/>CLI / DB / YANG 索引"]
+  end
+
+  %% 強い前提 (実線、太線は土台→中核)
+  C01 ==> C20
+  C20 ==> C04
+  C20 ==> C07
+  C20 ==> C08
   C04 --> C02
-  C04 --> C03
-  C04 --> C16
-  C04 --> C17
-  C04 --> C05
-
   C02 --> C03
-  C02 --> C12
-  C02 --> C17
-
+  C04 --> C03
+  C06 --> C05
+  C03 --> C05
   C14 --> C06
   C14 --> C08
-
-  C06 --> C05
-  C06 --> C03
-
-  C03 --> C13
-  C03 --> C05
-
   C09 --> C10
+  C04 --> C17
+  C02 --> C17
+  C20 --> C13
+  C03 --> C13
+  C20 --> C12
+  C02 --> C12
+  C20 --> C18
   C10 --> C18
-
   C21 --> C19
+  C01 --> C22
 
-  C02 -.-> C03
-  C03 -.-> C13
-  C04 -.-> C17
-  C10 -.-> C18
+  %% 派生・補完 (点線)
   C08 -.-> C07
   C11 -.-> C19
+  C04 -.-> C16
+  C20 -.-> C09
+  C20 -.-> C11
+  C15 -.-> C10
+  C22 -.-> C10
 
-  classDef base fill:#fff3cd,stroke:#856404;
-  classDef core fill:#d1ecf1,stroke:#0c5460;
-  class C01,C20 base;
-  class C02,C03,C04,C06 core;
+  classDef found fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef l3 fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef l2 fill:#d4edda,stroke:#155724,stroke-width:2px,color:#000;
+  classDef policy fill:#ffe0b2,stroke:#8a4b00,stroke-width:1.5px,color:#000;
+  classDef observe fill:#e8d5f0,stroke:#4b0082,stroke-width:1.5px,color:#000;
+  classDef extension fill:#fde2e4,stroke:#a83279,stroke-width:1.5px,color:#000;
+  classDef lifecycle fill:#e2e3e5,stroke:#41464b,stroke-width:1.5px,color:#000;
+  classDef periphery fill:#f5f5f5,stroke:#666,stroke-width:1px,color:#000;
+
+  class C01,C20 found;
+  class C02,C03,C04 l3;
+  class C05,C06 l2;
+  class C07,C08 policy;
+  class C09,C10 observe;
+  class C12,C13,C17,C18 extension;
+  class C11,C19,C21 lifecycle;
+  class C14,C15,C16,C22 periphery;
 ```
 
 各章の `index.md` 末尾「関連する章」と `concept.md` 末尾「この章の前提知識」も合わせて参照すること。

@@ -76,19 +76,37 @@ Single-ASIC では「global が唯一の Redis」と考えれば十分です。M
 
 ```mermaid
 flowchart LR
-  CLI[CLI / gNMI / minigraph] --> CFG[(CONFIG_DB)]
-  CFG --> MGR[*mgrd<br/>cfgmgr]
-  MGR --> KERNEL[Linux kernel<br/>netlink]
-  MGR --> APPL[(APPL_DB)]
-  KERNEL --> SYNCD_NL[*syncd daemons<br/>portsyncd/fdbsyncd/...]
-  SYNCD_NL --> APPL
-  APPL --> ORCH[orchagent<br/>per-feature Orch]
-  ORCH --> ASIC[(ASIC_DB)]
-  ASIC --> SYNCD[syncd] --> SAI[SAI lib] --> CHIP[(ASIC)]
-  ORCH --> STATE[(STATE_DB)]
-  SYNCD --> COUNT[(COUNTERS_DB)]
-  STATE --> GNMI[gNMI / SNMP / CLI]
+  CLI["<b>北向き入口</b><br/>CLI / gNMI / minigraph"]:::north
+  CFG[("<b>CONFIG_DB</b>")]:::db
+  MGR["<b>*mgrd</b><br/>(cfgmgr 層)"]:::proc
+  KERNEL["Linux kernel<br/>netlink / FPM"]:::kernel
+  APPL[("<b>APPL_DB</b>")]:::db
+  ORCH["<b>orchagent</b><br/>per-feature Orch"]:::proc
+  ASIC[("<b>ASIC_DB</b>")]:::db
+  SYNCD["syncd + SAI lib"]:::proc
+  CHIP[("<b>ASIC</b>")]:::hw
+  STATE[("<b>STATE_DB</b>")]:::db
+  COUNT[("<b>COUNTERS_DB</b>")]:::db
+  GNMI["<b>北向き出口</b><br/>gNMI / SNMP / CLI"]:::north
+
+  CLI --> CFG
+  CFG --> MGR
+  MGR --> KERNEL
+  MGR --> APPL
+  KERNEL -. netlink sync .-> APPL
+  APPL --> ORCH
+  ORCH --> ASIC
+  ASIC --> SYNCD --> CHIP
+  ORCH --> STATE
+  SYNCD --> COUNT
+  STATE --> GNMI
   COUNT --> GNMI
+
+  classDef north fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#000;
+  classDef db fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,color:#000;
+  classDef proc fill:#d4edda,stroke:#155724,stroke-width:1.5px,color:#000;
+  classDef kernel fill:#e2e3e5,stroke:#41464b,stroke-width:1px,color:#000;
+  classDef hw fill:#fde2e4,stroke:#a83279,stroke-width:2px,color:#000;
 ```
 
 ## 主要 Orch / daemon の責務（一覧）
