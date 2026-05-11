@@ -17,73 +17,73 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    現行 master で実装済みを確認。`sonic-swss/orchagent/vnetorch.cpp:3213,3251-3253,3306,3334` で `check_directly_connected` フィールドのパースと `vnet_tunnel_route_check_directly_connected` への保存、`isPartiallyLocal` ガードを確認。`sonic-swss/orchagent/tunneltermhelper.h:12-15` で `VNET_TUNNEL_TERM_ACL_TABLE_TYPE = "VNET_LOCAL_ENDPOINT_REDIRECT"`、`VNET_TUNNEL_TERM_ACL_TABLE = "VNET_LOCAL_ENDPOINT"`、`VNET_TUNNEL_TERM_ACL_BASE_PRIORITY = 9998`、`VNET_TUNNEL_TERM_ACL_RULE_NAME_SUFFIX = "TUNN_TERM"` を確認。`sonic-dash-ha/crates/hamgrd` 側にも `check_directly_connected` 関連のフィールドが存在（verified at: 2026-05-09）。
+    `sonic-swss/orchagent/vnetorch.cpp:3213,3251-3253,3306,3334` で `check_directly_connected` のパースと `isPartiallyLocal` ガードを確認。`sonic-swss/orchagent/tunneltermhelper.h:12-15` で `VNET_TUNNEL_TERM_ACL_TABLE_TYPE = "VNET_LOCAL_ENDPOINT_REDIRECT"`、`VNET_TUNNEL_TERM_ACL_TABLE = "VNET_LOCAL_ENDPOINT"`、`BASE_PRIORITY = 9998`、`SUFFIX = "TUNN_TERM"` を確認。`sonic-dash-ha/crates/hamgrd` 側にも `check_directly_connected` あり（verified at: 2026-05-09）。
 
 # VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
 
-## 概要
+## なぜ必要か
 
-Smart Switch（NPU + 複数 DPU 構成）における HA 動作では、NPU から **local DPU** または **remote DPU** へパケットを送り分ける必要がある。詳細は別 HLD `smart-switch-ha-hld.md` の 4.2 節（data path HA）に記述されている[^1]。
+Smart Switch（NPU + 複数 DPU）の HA では NPU から **local DPU** / **remote DPU** へパケットを送り分ける。全体像は `smart-switch-ha-hld.md` の 4.2 節（data path HA）が担い、本ページはその上で 2 つの最適化を定義する小さな拡張[^1]:
 
-このページが扱う HLD は、その流れの中で 2 つの最適化を定義する小さな拡張仕様である[^1]:
+1. **directly connected nexthop**: local DPU が NPU から直結（ARP で見える）なら tunnel route ではなく **通常の ECMP route** で扱う。
+2. **failover transient state のドロップ防止**: failover の瞬間に **high-priority ACL** で `TUNNEL_TERM` を見て必ず **local nexthop** にリダイレクトする。
 
-1. **directly connected nexthop の扱い**: local DPU が NPU から直結（ARP で見える）であるとき、tunnel route ではなく **通常の ECMP route** で扱うようにする。
-2. **HA failover 時の transient state でのドロップ防止**: failover の瞬間に **high-priority ACL** で TUNNEL_TERM フラグを見て、必ず **local nexthop へ redirect** する。
-
-## 動作仕様
+## どう動くか
 
 ### `VNET_ROUTE_TUNNEL_TABLE` の拡張
 
-`VNET_ROUTE_TUNNEL_TABLE` に optional フィールド `check_directly_connected` を追加する[^1]:
+optional フィールド `check_directly_connected` を追加[^1]:
 
 ```text
 key   = VNET_ROUTE_TUNNEL_TABLE:<vnet_name>:<prefix>
 field = check_directly_connected = BOOLEAN  (optional)
 ```
 
-`true` の場合、`VnetOrch` は **ARP テーブルを引いて nexthop が directly connected かどうか確認** する[^1]:
+`true` の場合、`VnetOrch` は ARP テーブルを引いて directly connected か確認する:
 
-- 直結の nexthop については **tunnel route ではなく、通常の ECMP route** を使う。
-- ECMP route は通常の VxLAN ECMP route と同じく、**BFD liveness に追従** して更新される[^1]。
-
-これは "Overlay ECMP enhancements - support for directly connected nexthops" の延長線上の設計[^1]。
+- 直結なら tunnel route ではなく **通常 ECMP route**（VxLAN ECMP と同じく BFD liveness に追従[^1]）
+- そうでなければ従来どおり tunnel route
 
 ```mermaid
 flowchart TD
-    VRT[VNET_ROUTE_TUNNEL_TABLE\ncheck_directly_connected=true] --> VO[VnetOrch]
+    VRT[VNET_ROUTE_TUNNEL_TABLE<br/>check_directly_connected=true] --> VO[VnetOrch]
     VO --> A{ARP に存在?}
-    A -- yes --> ECMP[通常 ECMP route\n+ BFD 追従]
-    A -- no --> TUN[tunnel route\n(従来どおり)]
+    A -- yes --> ECMP[通常 ECMP route + BFD 追従]
+    A -- no --> TUN[tunnel route 従来どおり]
 ```
+
+これは "Overlay ECMP enhancements - support for directly connected nexthops" の延長線上の設計[^1]。
 
 ### Failover transient state の問題
 
-HA failover では一瞬「旧 active が standby に降格、旧 standby はそのまま standby」という **両方が standby** に近い transient state ができる。この間にパケットが正規ルートで処理されるとドロップが発生する可能性がある[^1]。
+HA failover では一瞬「旧 active が standby に降格、旧 standby はそのまま standby」という **両方 standby に近い transient state** ができ、この間に正規ルートを通るとパケットがドロップしうる。対策は **high-priority ACL** で **TUNNEL_TERM フラグ（tunnel decap 済）** のパケットを local nexthop に強制リダイレクトする[^1]。
 
-対策として、**high-priority ACL** を使って **TUNNEL_TERM フラグが立った（= tunnel decap 済の）パケット** を local nexthop に強制リダイレクトする[^1]。
-
-### ACL の構造
-
-`VnetOrch` が必要に応じて以下を APP_DB に投入する[^1]:
+### ACL の構造と連携モジュール
 
 ```mermaid
 flowchart LR
     HAMGRD[hamgrd] --> VRTT[(VNET_ROUTE_TUNNEL_TABLE)]
     VRTT --> VO[VnetOrch]
-    VXTT[(VXLAN_TUNNEL|tunnel_name)] --> VTO[VxlanTunnelOrch]
-    VNT[(VNET|vnet_name)] --> VTO
+    VXTT[(VXLAN_TUNNEL)] --> VTO[VxlanTunnelOrch]
+    VNT[(VNET)] --> VTO
     VO -->|create tunnel nh| VTO --> SAI[SAI/SDK]
-    VO --> ART[(ACL_RULE_TABLE)]
-    ART --> AO[AclOrch]
-    IO[IntfOrch] -->|get local endpoint intf alias| VO
-    AO --> SAI
+    VO --> ART[(ACL_RULE)] --> AO[AclOrch] --> SAI
+    IO[IntfOrch] -->|local endpoint intf alias| VO
 ```
 
-`check_directly_connected=true` のエンドポイントが ARP で **neighbor として確認** できる場合のみ、**TUNNEL_TERM を match する ACL ルール** を追加する。全シナリオで作るとリソースを浪費するため、**local endpoint と確定したもののみ** ACL 化する設計[^1]。
+`check_directly_connected=true` のエンドポイントが ARP で確認できる場合のみ ACL を立てる。全シナリオで作ると TCAM を浪費するため **local endpoint と確定したもののみ** に限定する[^1]。
+
+| モジュール | 役割 |
+|------------|------|
+| `hamgrd` | HA 状態管理。`VNET_ROUTE_TUNNEL_TABLE` 書き込み源 |
+| `VnetOrch` | tunnel nexthop 作成、ARP 確認、ACL 投入の起点 |
+| `VxlanTunnelOrch` | tunnel nexthop の SAI 投入 |
+| `IntfOrch` | local endpoint interface alias の解決 |
+| `AclOrch` | ACL を SAI に降ろす |
 
 ### ACL テーブルタイプとルール
 
-新規の ACL テーブルタイプ `VNET_LOCAL_ENDPOINT_REDIRECT`[^1]:
+新規 `VNET_LOCAL_ENDPOINT_REDIRECT`[^1]:
 
 | 観点 | 値 |
 |------|----|
@@ -91,96 +91,74 @@ flowchart LR
 | `ACTIONS` | `REDIRECT_ACTION` |
 | `BIND_POINTS` | `PORT`, `PORTCHANNEL` |
 
-ACL テーブル定義例[^1]:
-
 ```json
 {
   "ACL_TABLE": {
-    "VNET_LOCAL_ENDPOINT": {
-      "STAGE": "INGRESS",
-      "TYPE": "VNET_LOCAL_ENDPOINT_REDIRECT",
-      "PORTS": ["<Ingress front panel ports>"]
-    }
-  }
-}
-```
-
-ACL ルール例[^1]:
-
-```json
-{
+    "VNET_LOCAL_ENDPOINT": { "STAGE": "INGRESS", "TYPE": "VNET_LOCAL_ENDPOINT_REDIRECT", "PORTS": ["..."] }
+  },
   "ACL_RULE": {
-    "VNET_LOCAL_ENDPOINT:<vnet_name>_<prefix>_IN_TUNN_TERM": {
-      "PRIORITY": "9998",
-      "DST_IP": "1.1.1.1/32",
-      "TUNN_TERM": "true",
-      "REDIRECT": "<local nexthop interface>"
+    "VNET_LOCAL_ENDPOINT:<vnet>_<prefix>_IN_TUNN_TERM": {
+      "PRIORITY": "9998", "DST_IP": "1.1.1.1/32",
+      "TUNN_TERM": "true", "REDIRECT": "<local nexthop interface>"
     }
   }
 }
 ```
 
-priority 9998 という高い値で、**通常の forwarding 経路よりも先にこの ACL が効く** 設計。tunnel decap 後のパケット（`TUNN_TERM=true`）で DST が当該 prefix のものは、必ず local nexthop に飛ぶ。
+priority 9998 で通常 forwarding より先に効く。tunnel decap 後 (`TUNN_TERM=true`) で DST が当該 prefix のパケットは必ず local へ。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md#L31-L34 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
   During an HA failover, the HA pair briefly enters a transient state...
   To handle this scenario, **high-priority** ACL rules matching tunnel termination flag are used to ensure redirects always go to the local nexthop.
-reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM match を使うという中核ロジックの根拠。
+reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM match を使う中核ロジックの根拠。
 -->
-
-### 連携モジュール
-
-ACL 投入と nexthop 解決のために複数 orch が連携する[^1]:
-
-| モジュール | 役割 |
-|------------|------|
-| `hamgrd` | HA 状態管理。`VNET_ROUTE_TUNNEL_TABLE` への書き込み源 |
-| `VnetOrch` | tunnel nexthop の作成、ARP 確認、ACL ルール投入の起点 |
-| `VxlanTunnelOrch` | tunnel nexthop の SAI への降ろし |
-| `IntfOrch` | local endpoint の interface alias 解決 |
-| `AclOrch` | ACL ルールを SAI に降ろす |
-
-`VnetOrch` から `IntfOrch` を引いて local endpoint の interface alias を取り、それを ACL の `REDIRECT` ターゲットに使う[^1]。
 
 ## 設定
 
-### 関連する CONFIG_DB
+### CONFIG_DB
 
 | Table | Key | フィールド | 用途 |
 |-------|-----|-----------|------|
-| `VNET_ROUTE_TUNNEL_TABLE` | `<vnet>:<prefix>` | `check_directly_connected` (BOOLEAN, optional) | 直結チェックの opt-in |
-| `ACL_TABLE` | `VNET_LOCAL_ENDPOINT` | `STAGE`, `TYPE=VNET_LOCAL_ENDPOINT_REDIRECT`, `PORTS` | 専用 ACL テーブル |
-| `ACL_RULE` | `VNET_LOCAL_ENDPOINT:<vnet>_<prefix>_IN_TUNN_TERM` | `PRIORITY=9998`, `DST_IP`, `TUNN_TERM`, `REDIRECT` | 自動投入される redirect ルール |
+| `VNET_ROUTE_TUNNEL_TABLE` | `<vnet>:<prefix>` | `check_directly_connected` (BOOL, opt) | 直結チェック opt-in |
+| `ACL_TABLE` | `VNET_LOCAL_ENDPOINT` | `STAGE`, `TYPE`, `PORTS` | 専用 ACL テーブル |
+| `ACL_RULE` | `..._IN_TUNN_TERM` | `PRIORITY=9998`, `DST_IP`, `TUNN_TERM`, `REDIRECT` | 自動投入 redirect |
 
-`hamgrd` が `VNET_ROUTE_TUNNEL_TABLE` を編集することでパイプラインが起動する。`ACL_TABLE_TYPE` / `ACL_TABLE` / `ACL_RULE` は `VnetOrch` が必要に応じて自動投入する想定[^1]。
+`hamgrd` が `VNET_ROUTE_TUNNEL_TABLE` を編集してパイプラインが起動。ACL 系は `VnetOrch` が必要に応じて自動投入[^1]。
 
-### 関連する CLI
+### CLI / YANG
 
-該当する直接の CLI は HLD 内で定義されていない。Smart Switch / HA の管理 CLI 経由で `VNET_ROUTE_TUNNEL_TABLE` が更新される運用前提。
+直接の CLI / YANG は HLD 内に定義なし。Smart Switch / HA 管理 CLI 経由で `VNET_ROUTE_TUNNEL_TABLE` が更新される運用前提。
 
 ## 制限事項
 
-- **`check_directly_connected` は optional**。指定が無い場合は従来どおり tunnel route のみで処理される。
-- ACL を追加する条件は **ARP で nexthop が neighbor として確認できる場合のみ**[^1]。ARP の解決に失敗している間は ACL が立たないため、failover transient の保護効果も得られない時間帯がある可能性。
-- ACL リソース（特にハードウェア TCAM）を消費する。directly connected な nexthop が多数ある環境では `VNET_LOCAL_ENDPOINT` テーブルのエントリが増えてリソース上限に達するリスクがある（HLD 内に明示の制限値はない）。
-- HLD 自体に **packet flow diagram は TODO** とマーキングされている[^1]。詳細経路は smart-switch-ha-hld 4.2 章および Overlay ECMP enhancements 3.3 章を併読する必要がある。
+- `check_directly_connected` は optional（無指定なら従来の tunnel route のみ）
+- ACL は ARP で neighbor 確認できた場合のみ追加。ARP 未解決の間は failover 保護効果が得られない[^1]
+- ACL TCAM を消費。directly connected nexthop が多いとリソース上限リスク
+- HLD 上 **packet flow diagram は TODO** マーキング。詳細は smart-switch-ha-hld 4.2 章および Overlay ECMP enhancements 3.3 章を併読[^1]
 
 ## 干渉する機能
 
-- **`smart-switch-ha-hld` の 4.2 節（data path HA）**: 本ページは「local endpoint と判別できた場合の最適化」のみを定義する。NPU→DPU 全体のパケットフローはこの本体 HLD を参照[^1]。
-- **Overlay ECMP enhancements**: directly connected nexthop の取り扱いは Overlay ECMP enhancements の 3.3 章で定義されている設計を踏襲する。BFD liveness 連動の ECMP route も同経路[^1]。
-- **BFD**: directly connected nexthop の通常 ECMP route は BFD で生死判定される。BFD が UP→DOWN になると ECMP メンバから外れる挙動。
-- **`VxlanTunnelOrch`**: tunnel nexthop の作成自体はこちらの責務。`VnetOrch` から呼ばれて SAI に降ろす[^1]。
-- **`AclOrch`**: 自動投入される ACL を SAI に降ろす。priority 9998 の ACL がポート bind されるため、既存の運用 ACL と priority が競合しないよう設計する必要がある[^1]。
+- **smart-switch-ha-hld 4.2**: 本ページは「local endpoint 判別時の最適化」のみを定義。NPU→DPU 全体は本体 HLD 参照[^1]
+- **Overlay ECMP enhancements**: directly connected nexthop の扱いは 3.3 章を踏襲。BFD 連動 ECMP も同経路[^1]
+- **BFD**: 通常 ECMP route は BFD で生死判定、UP→DOWN で ECMP メンバから外れる
+- **VxlanTunnelOrch**: tunnel nexthop 作成はこちらの責務
+- **AclOrch**: priority 9998 ACL がポート bind されるため既存運用 ACL と priority 競合に注意[^1]
 
 ## トラブルシューティング
 
-- failover 直後に DROP が出る: ACL ルール `VNET_LOCAL_ENDPOINT:*` が CONFIG_DB / APP_DB に投入されているか確認。`check_directly_connected=true` 設定漏れ、または ARP 未解決のため ACL が立っていない可能性[^1]。
-- tunnel route のままで local DPU 直結を生かせない: `VNET_ROUTE_TUNNEL_TABLE` の `check_directly_connected` を `true` に設定する。`VnetOrch` のログで ARP 確認結果を見る[^1]。
-- ACL 数が肥大: directly connected nexthop が大量にある場合に発生しうる。設計上は local endpoint と確定したものに **限定して** 作る前提だが、prefix 単位での増加を見積もる必要[^1]。
-- redirect が想定と違う interface に飛ぶ: `IntfOrch` から取得する `local nexthop interface` の alias が想定どおりか確認。`VnetOrch` のログで使用された interface 名を追う[^1]。
+- failover 直後の DROP: `VNET_LOCAL_ENDPOINT:*` ACL が投入されているか、`check_directly_connected=true` か、ARP 解決済みか。
+- 直結 DPU を生かせず tunnel route: `check_directly_connected=true` を設定し `VnetOrch` ログで ARP 確認結果を見る。
+- ACL 数が肥大: directly connected nexthop が多い環境。prefix 単位の見積もりが必要。
+- redirect 先が想定外: `IntfOrch` 経由の local nexthop interface alias を `VnetOrch` ログで追う。
+
+## 関連トピック
+
+- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) — ACL_TABLE_TYPE / TUNNEL_TERM match
+- [Topics: VRF / ECMP](../topics/04-vrf-ecmp/index.md) — Overlay ECMP enhancement の延長
+- [smartswitch-eni-based-forwarding](smartswitch-eni-based-forwarding.md)
+- [sonic-dash-hld](sonic-dash-hld.md)
 
 ## 引用元
 
