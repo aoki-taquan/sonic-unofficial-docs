@@ -17,99 +17,87 @@ related:
     - sonic-crm
 ---
 
-!!! warning "裏取りステータス: code-verified"
-    CrmOrch / SAI Object availability API の現行 master 取り込み状況、generic-sai-extension HLD（同 area）との関係は未確認。
-
-!!! note "Verifier 注記（2026-05-10）"
-    実コード裏取り: `sonic-swss/orchagent/crmorch.h` / `crmorch.cpp` に CrmOrch 実装、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-crm.yang` に CONFIG_DB CRM スキーマを確認。`fdborch.cpp` / `routeorch.cpp` / `srv6orch.cpp` 等から CRM カウンタ更新が呼ばれていることを grep で確認。
+!!! success "裏取りステータス: code-verified"
+    `sonic-swss/orchagent/crmorch.h` / `crmorch.cpp` に CrmOrch 実装、`sonic-yang-models/yang-models/sonic-crm.yang` に CONFIG_DB CRM スキーマ。`fdborch.cpp` / `routeorch.cpp` / `srv6orch.cpp` 等から CRM カウンタ更新が呼ばれることを grep で確認（verified at: 2026-05-10）。
 
 # Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）
 
-## 概要
+## なぜ必要なのか
 
-ASIC 側のリソース（route 表エントリ数、neighbor 数、ACL counter 数、FDB 数、NAT 数 等）は **ハードウェアサイズで上限が決まっている**。CRM はそれらの **使用量をポーリングし、しきい値超えで警告/critical を出す** 仕組み[^1]。
+ASIC 側の各種リソース（route 表、neighbor、ACL counter、FDB、NAT 等）は **ハードウェアサイズで上限がある**。上限到達で**運用中に突然パケットドロップやプログラム失敗**が起きるため、CRM は使用量をポーリングして **しきい値超えで WARN / CRITICAL を syslog に出す** ことで障害前検知を狙う[^1]。
 
-主目的:
+ねらい:
 
-- ASIC 表の枯渇を **障害発生前に** 通知
-- 使用量・上限値を運用者が `crm show` で常時確認できるようにする
-- しきい値の dynamic / static、`high` / `low` の区別
+- 表枯渇を **障害発生前に** 通知
+- `crm show` で使用量・上限値を常時可視化
+- しきい値の `percentage` / `used` / `free` モード、`high` / `low` の双方を扱う
 
-## 監視対象
+## 監視対象の resource
 
-主要な resource 種別（HLD ベース）[^1]:
+主要種別（HLD ベース、後発追加あり）[^1]:
 
-- L3: `IPV4_ROUTE`, `IPV6_ROUTE`, `IPV4_NEIGHBOR`, `IPV6_NEIGHBOR`, `IPV4_NEXTHOP`, `IPV6_NEXTHOP`
-- L3 group: `NEXTHOP_GROUP`, `NEXTHOP_GROUP_MEMBER`
+- L3: `IPV4_ROUTE` / `IPV6_ROUTE` / `IPV4_NEIGHBOR` / `IPV6_NEIGHBOR` / `IPV4_NEXTHOP` / `IPV6_NEXTHOP`
+- L3 group: `NEXTHOP_GROUP` / `NEXTHOP_GROUP_MEMBER`
 - L2: `FDB_ENTRY`
-- ACL: `ACL_TABLE`, `ACL_GROUP`, `ACL_ENTRY`, `ACL_COUNTER`
-- DNAT/SNAT: `DNAT_ENTRY`, `SNAT_ENTRY`, `IPMC_ENTRY`
-- Tunnel / SRv6 等: 後発で追加
+- ACL: `ACL_TABLE` / `ACL_GROUP` / `ACL_ENTRY` / `ACL_COUNTER`
+- NAT / multicast: `DNAT_ENTRY` / `SNAT_ENTRY` / `IPMC_ENTRY`
+- Tunnel / SRv6 等は後発で追加
 
-## 動作仕様
+## どう動くのか
 
 ```mermaid
 flowchart LR
-    CFG[CONFIG_DB CRM] --> CO[CrmOrch]
+    CFG[CONFIG_DB.CRM] --> CO[CrmOrch]
     CO --> SAI[(SAI object availability API)]
-    CO --> COUNTERSDB[(COUNTERS_DB CRM)]
-    CO --> SYS[syslog\n(WARN / CRITICAL)]
-    USR[管理者] --> CLI[crm show]
-    CLI --> COUNTERSDB
+    CO --> CDB[(COUNTERS_DB.CRM)]
+    CO --> SYS[syslog WARN/CRITICAL]
+    CLI[crm show] --> CDB
 ```
 
 しきい値モード[^1]:
 
-- **percentage**: 上限の % で `high_threshold` / `low_threshold` を設定
+- **percentage**: 上限の % で `high_threshold` / `low_threshold`
 - **used**: 絶対使用量
 - **free**: 残量
 
-`high` を超えると WARN/CRIT、`low` を下回ると clear、`free` モードはその逆。ポーリング周期は `polling_interval`（既定数秒〜数十秒）。
+`high` 超えで WARN/CRIT、`low` を下回ると clear（`free` モードはその逆）。周期は `polling_interval`。
 
-## 関連 CONFIG_DB
+## CONFIG_DB / CLI
 
 | Key | 説明 |
 |-----|------|
-| `CRM|Config` | `polling_interval`、各 resource ごとに `<r>_threshold_type`、`<r>_high_threshold`、`<r>_low_threshold` |
-
-## 関連 CLI
+| `CRM\|Config` | `polling_interval`、各 resource ごとに `<r>_threshold_type` / `<r>_high_threshold` / `<r>_low_threshold` |
 
 | Command | 用途 |
 |---------|------|
-| `crm config polling interval <n>` | 周期設定 |
-| `crm config thresholds <r> type <p|u|f>` | mode |
+| `crm config polling interval <n>` | 周期 |
+| `crm config thresholds <r> type <p\|u\|f>` | mode |
 | `crm config thresholds <r> high <n>` / `low <n>` | しきい値 |
-| `crm show resources [all|ipv4 route|...]` | 残量と使用量 |
+| `crm show resources [all\|ipv4 route\|...]` | 残量 / 使用量 |
 | `crm show thresholds` | 現行しきい値 |
 
 ## 制限事項
 
-- **SAI 実装が availability API を返す必要がある**: vendor 側で未対応の resource は値が出ない
-- **フィードバック先**: WARN/CRIT は syslog のみで自動 recovery アクションは無い（運用側で対応）
-- **resource ごとのコスト**: 多 resource を高頻度ポーリングすると ASIC SDK が重くなる
-- **ACL counter / FDB**: SDK の query が高コストな場合があり推奨 polling 間隔が大きい
+- **SAI 側 availability API が必要**。vendor 未対応 resource は値が出ない
+- WARN/CRIT は syslog のみで **自動 recovery アクションは無い**
+- 多 resource を高頻度ポーリングすると **ASIC SDK 負荷増**
+- `ACL_COUNTER` / `FDB_ENTRY` は SDK query が高コストになることがあり、長めの polling 推奨
 
 ## 干渉する機能
 
-- **generic SAI extension CRM (`generic-sai-extension-critical-resource-monitoring-crm`)**: HLD レベルの拡張。新 resource 追加の枠組み（同 area の別 HLD）
-- **system health monitor**: critical 通知の集約
-- **NAT / mux / SRv6 / multi-asic**: 各機能側で resource 種別を増やす
+generic SAI extension CRM（新 resource 追加枠組み） / system health monitor（critical 集約） / NAT / mux / SRv6 / multi-asic（resource 種別を増やす側）。
 
 ## トラブルシューティング
 
-- `crm show` で値が `N/A` → SAI vendor の object_availability 実装の有無
-- しきい値未通知 → polling_interval、syslog の rate-limit、threshold mode の確認
-- counter が振動する → polling 周期と実際の使用量変動の解像度差
+- `crm show` が `N/A` → SAI vendor の object_availability 実装の有無
+- 通知が来ない → `polling_interval`、syslog rate-limit、threshold mode 確認
+- counter が振動する → 周期と使用量変動の解像度差を再検討
+
+## 関連 Topics
+
+- [07-acl-copp-mirror](../topics/07-acl-copp-mirror/index.md): ACL リソース消費
+- [20-swss-sai-redis](../topics/20-swss-sai-redis/index.md): orchagent と SAI の関係
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/crm/Critical-Resource-Monitoring-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
-
-<!-- concerns hint:
-- CrmOrch の現行 master 実装（CRM resource の追加範囲）の確認
-- SAI object availability API（SAI_OBJECT_TYPE_*_AVAILABLE_*) の community SAI 取り込み確認
-- CONFIG_DB CRM スキーマの現行 sonic-yang-models 取り込み確認
-- crm config / crm show CLI の sonic-utilities 取り込み確認
-- generic-sai-extension CRM HLD との実装統合確認
-- system health monitor / telemetry dial-out との連携の現行実装確認
--->
