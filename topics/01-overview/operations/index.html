@@ -1302,7 +1302,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加の show 出力例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な運用シナリオ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23375,7 +23397,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加の show 出力例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な運用シナリオ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23624,7 +23668,30 @@
 <li>L2 service（teamd、swss）の連動失敗: <a href="../../06-l2-vlan-lag/operations/">L2 章 運用</a>。</li>
 <li>Dual-ToR 構成での feature 順序（mux、linkmgrd、telemetry）: <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
 </ul>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="show">追加の show 出力例<a class="headerlink" href="#show" title="Permanent link">&para;</a></h2>
+<p><code>show feature config</code> は CONFIG_DB の <code>FEATURE</code> テーブルだけを抜粋表示し、起動時挙動を確認できます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Feature     State           AutoRestart     Delayed  HighMemAlert  SetOwner
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>----------  --------------  --------------  -------  ------------  --------
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>bgp         enabled         enabled         False    disabled      local
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>dhcp_relay  enabled         enabled         True     disabled      kube
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>lldp        enabled         enabled         False    disabled      kube
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>snmp        enabled         enabled         False    disabled      kube
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>telemetry   enabled         enabled         True     disabled      kube
+</span></code></pre></div>
+<p><code>Delayed=True</code> は systemd の <code>*-delayed.timer</code> 経由で遅延起動される feature です。boot 直後に <code>up</code> にならないことが正常仕様の場合があるため、<code>systemctl list-timers '*-delayed.timer'</code> で次回起動予定時刻を併せて確認します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>NEXT                          LEFT     LAST  PASSED  UNIT                 ACTIVATES
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Mon 2026-05-11 12:05:43 UTC   2min     n/a   n/a     telemetry-delayed.timer   telemetry-delayed.service
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Mon 2026-05-11 12:08:00 UTC   4min     n/a   n/a     dhcp_relay-delayed.timer  dhcp_relay-delayed.service
+</span></code></pre></div>
+<h2 id="_6">典型的な運用シナリオ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>新規 feature 有効化</strong> — <code>config feature state &lt;name&gt; enabled</code> 後に <code>show feature status</code> で <code>SystemState=up</code> を確認し、当該 container の <code>docker ps</code> を見ます。<code>enabled</code> だが <code>down</code> のまま停滞する場合は <code>systemctl status &lt;feature&gt;</code> の Main process exit を見ます。</li>
+<li><strong>設定差分の慎重な適用</strong> — <code>config apply-patch</code> で patch を適用する前に <code>config checkpoint &lt;name&gt;</code> を取り、失敗時に <code>config rollback &lt;name&gt;</code> で戻せる状態を作ります。GCU は YANG 検証を通すため、<code>config replace</code> よりも安全側です。</li>
+<li><strong>kube 管理への移行</strong> — <code>SetOwner</code> を <code>kube</code> に切り替えた直後は <code>CurrentOwner</code> が <code>local</code> のまま残るのが正常で、kube join 後に一致します。長時間一致しない場合は kube image pull と <code>acms</code> connectivity を疑います。</li>
+<li><strong>緊急時の reload と reboot 判断</strong> — service 個別 restart で復旧する見込みがあるなら <code>systemctl restart &lt;feature&gt;</code> で局所化します。CONFIG_DB の不整合が広範な場合のみ <code>config reload -y</code>、kernel / image 自体の問題なら <code>fast-reboot</code> または <code>reboot</code> を選びます。</li>
+<li><strong>factory reset の決断</strong> — <code>config reload</code> でも復旧しない設定 corruption、または機材払い出し前のサニタイズ用途でのみ <code>config reset-factory</code> を選びます。本番投入機ではログとユーザを残すモードを選び、データ消失を最小化します。</li>
+</ol>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/sonic-optional-feature-control-enhancement/">FEATURE テーブルによるオプショナル機能制御</a></li>
 <li><a href="../../../reference/cli/show-feature/">show feature サブコマンド</a></li>

@@ -1571,6 +1571,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bgpcfgd-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd の manager 構成
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23397,6 +23408,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bgpcfgd-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd の manager 構成
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23597,6 +23619,50 @@
 <li><strong>graceful restart / warm restart</strong> は FRR 側で実装されていますが、SONiC の warm-reboot framework (<code>WARM_RESTART_TABLE|bgp</code>) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の <code>WARM_RESTART</code> で十分に確保する必要があります（→ 11 章）。</li>
 <li><strong>大量経路投入時</strong> は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提です。<code>gBufferOrchEnabled</code> 系のビルドフラグで挙動が変わります。</li>
 </ul>
+<h2 id="bgpcfgd-manager">bgpcfgd の manager 構成<a class="headerlink" href="#bgpcfgd-manager" title="Permanent link">&para;</a></h2>
+<p>bgpcfgd は単一プロセス内で複数 manager を並べ、CONFIG_DB の各テーブルを subscribe します。<code>src/sonic-bgpcfgd/bgpcfgd/managers_*.py</code> の構成は以下のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>manager</th>
+<th>対象テーブル</th>
+<th>反映先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGPPeerMgrBase</code> 系</td>
+<td><code>BGP_NEIGHBOR</code> / <code>BGP_INTERNAL_NEIGHBOR</code> / <code>BGP_MONITORS</code></td>
+<td>vtysh <code>neighbor ...</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerGroupMgr</code></td>
+<td><code>BGP_PEER_RANGE</code></td>
+<td>vtysh <code>bgp listen range</code></td>
+</tr>
+<tr>
+<td><code>BGPAllowListMgr</code></td>
+<td><code>BGP_ALLOWED_PREFIXES</code></td>
+<td>vtysh <code>prefix-list</code></td>
+</tr>
+<tr>
+<td><code>BGPDeviceGlobalCfgMgr</code></td>
+<td><code>BGP_DEVICE_GLOBAL</code></td>
+<td>global flags（<code>tcp-mss</code>、graceful-restart 等）</td>
+</tr>
+<tr>
+<td><code>BGPAggregateAddressMgr</code></td>
+<td><code>BGP_AGGREGATE_ADDRESS</code></td>
+<td>vtysh <code>aggregate-address</code></td>
+</tr>
+<tr>
+<td><code>BGPVrfMgr</code></td>
+<td><code>VRF</code> / <code>BGP_VRF</code></td>
+<td>vtysh <code>router bgp ... vrf ...</code></td>
+</tr>
+</tbody>
+</table>
+<p>全 manager は共通の <code>cfgmgr.run()</code> ループ上で動き、CONFIG_DB の変更を 1 トランザクション分まとめてから vtysh へ投げる設計です。これが「peer 1 件追加で frr.conf 全体を rewrite しない」根拠で、dynamic peer modification の partial update もこの粒度に依存します。</p>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization</a></li>

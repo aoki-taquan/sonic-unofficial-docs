@@ -6395,6 +6395,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ci-vs-ansible-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI における VS と Ansible test の使い分け
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-meta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verification: meta を選ぶ理由
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23407,6 +23440,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ci-vs-ansible-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI における VS と Ansible test の使い分け
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-meta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verification: meta を選ぶ理由
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23556,6 +23622,49 @@
 <p><code>tests/common/plugins/sanity_check/</code> が各 test 前に DUT のヘルス（BGP up、interface up、critical process）を確認し、failed なら test を skip します。</p>
 <h2 id="simx-kvm-based">SimX / kvm-based 自動化<a class="headerlink" href="#simx-kvm-based" title="Permanent link">&para;</a></h2>
 <p>KVM 上の SONiC-VS は libvirt で起動し、<code>testbed-cli.sh</code> が PTF host と組み合わせて topology を構築します。SimX（一部ベンダ提供）は packet forwarding と counter を高精度にシミュレートする商用ツールで、SONiC-VS だけでは検証できない ASIC capability path を埋めるのに使われます。OSS の範囲では SimX は外部依存で、CI 上の代替として <code>make PLATFORM=vs</code> の SAI VS が標準です。</p>
+<h2 id="ci-vs-ansible-test">CI における VS と Ansible test の使い分け<a class="headerlink" href="#ci-vs-ansible-test" title="Permanent link">&para;</a></h2>
+<p><code>azure-pipelines.yml</code> 系の Azure DevOps pipeline は PR ごとに以下の順で実行します。</p>
+<table>
+<thead>
+<tr>
+<th>stage</th>
+<th>実行内容</th>
+<th>失敗時の扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build</td>
+<td><code>make PLATFORM=vs</code> で sonic-vs.img を生成</td>
+<td>block</td>
+</tr>
+<tr>
+<td>VS smoke</td>
+<td>KVM 起動 → critical process が up になるか</td>
+<td>block</td>
+</tr>
+<tr>
+<td>VS feature test</td>
+<td><code>tests/</code> の <code>--testbed_type vs</code> 対象のみ</td>
+<td>block（一部 known-flaky は warn）</td>
+</tr>
+<tr>
+<td>Ansible feature test</td>
+<td>物理 testbed 上で nightly のみ</td>
+<td>warn（PR mergeable は維持）</td>
+</tr>
+</tbody>
+</table>
+<p>VS test plan に書かれているテストでも、CI 側で実行対象になっていないものがあるため、HLD と CI 実装の乖離は <code>tests/common/plugins/conditional_mark/</code> の skip 条件を見るのが早道です。</p>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../architecture/steps-to-bring-up-sonic-vs/">SONiC-VS のビルドと libvirt 起動手順</a></li>
+<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF validation HLD</a></li>
+<li><a href="../../../architecture/alpine-high-level-design/">Alpine 仮想 SONiC</a></li>
+<li><a href="../../../routing/vrf-vs-test-plan/">VRF VS test plan</a></li>
+</ul>
+<h2 id="verification-meta">verification: meta を選ぶ理由<a class="headerlink" href="#verification-meta" title="Permanent link">&para;</a></h2>
+<p>このページが <code>verification: meta</code> なのは、lab / 開発者ワークフローは「実装の状態」ではなく「複数 HLD への横断ガイド」だからです。SAI VS / sonic-mgmt / PTF / KNE / Alpine それぞれに別途 <code>code-verified</code> ページがあり、ここで重複して裏取りする必要はありません。サブ章で言及するコンポーネント別の挙動裏取りは、リンク先の章を参照してください。</p>
 
 
 

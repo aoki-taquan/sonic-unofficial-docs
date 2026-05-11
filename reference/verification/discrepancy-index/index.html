@@ -21378,17 +21378,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#topics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 Topics
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -23379,17 +23368,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#topics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 Topics
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -23480,16 +23458,20 @@
 </thead>
 <tbody>
 <tr>
-<td><code>(未指定)</code>（(未指定)）</td>
-<td style="text-align: right;">26</td>
+<td><code>deprecated</code>（deprecated）</td>
+<td style="text-align: right;">3</td>
 </tr>
 <tr>
 <td><code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化）</td>
-<td style="text-align: right;">12</td>
+<td style="text-align: right;">20</td>
 </tr>
 <tr>
 <td><code>not_implemented</code>（未実装）</td>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr>
+<td><code>partially_implemented</code>（partially_implemented）</td>
+<td style="text-align: right;">9</td>
 </tr>
 </tbody>
 </table>
@@ -23499,10 +23481,10 @@
 <li><a href="../../../acl-qos/dhcp-dos-mitigation-in-sonic/">DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）</a><br />
   monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>2026-05 時点で <code>.cache/sonic-sources/</code> の master を裏取りした結果、本機能は <strong>データ層 + CLI のみが取り込み済みで、肝心の TC qdisc / filter 投入経路が未実装</strong> な部分実装状態である。</p>
+<p>2026-05 時点で <code>.cache/sonic-sources/</code> を裏取りした結果、本機能は <strong>データ層 + CLI のみ取り込み済み、肝心の TC 投入経路が未実装</strong> な部分実装状態。</p>
 <ul>
 <li><a href="../../../acl-qos/enhancements-to-add-or-del-ports-dynamically/">ポートの動的 add / del（zero-port 起動と post-init 操作）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05 時点の <code>.cache/sonic-sources/</code> master を裏取り。</p>
 <h3 id="architecture">architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
@@ -23518,12 +23500,12 @@
 <p>2026-05 時点で本 framework は <strong>master に取り込まれておらず、HLD のみ</strong>（2019-07 v0.3 から 6 年以上停滞）。</p>
 <ul>
 <li><a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05 時点で本 framework は <strong>エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装</strong> な部分採用状態。</p>
 <ul>
 <li><a href="../../../architecture/sag-high-level-design-for-sonic/">SAG（Static Anycast Gateway）for SONiC</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05 時点で <strong>SAG コード / YANG / CLI は community master に取り込まれておらず、HLD 提案段階</strong>。</p>
 <ul>
@@ -23538,7 +23520,7 @@
 <p>2026-05 時点で <strong>schema 層（HA Set / HA Scope の table 名）は先行採用済みだが、hamgrd バイナリ・actor framework・swbus・VDPU / DPU_STATE は未取り込み</strong>。HLD の半分弱までが master に入っている部分実装状態。</p>
 <ul>
 <li><a href="../../../architecture/sflow-high-level-design/">sFlow（hsflowd / sflowmgrd / SAI sample-packet）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-10</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-10</code></li>
 </ul>
 <p>2026-05 時点で本機能の <strong>全体取り込みは完了している</strong> が、HLD 文書中の「sample_rate の既定値テーブル」だけが実装と不一致である。</p>
 <ul>
@@ -23549,13 +23531,13 @@
 <h3 id="internals">internals<a class="headerlink" href="#internals" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../internals/l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
 <h3 id="management">management<a class="headerlink" href="#management" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../management/sonic-console-switch/">Console Switch（serial hub の reverse SSH 集約）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:</p>
 <ul>
@@ -23575,7 +23557,7 @@
 <p>2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、<strong><code>sonic-buildimage</code> 側の yang-models と <code>sonic-mgmt-common</code> 側で取り込み状況が分裂している</strong>点が最大の罠。</p>
 <ul>
 <li><a href="../../../management/smart-switch-gnmi-feedback-design-omit-in-toc/">SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>HLD が要件として掲げる以下の構成要素を現行 master の <code>sonic-gnmi</code> に確認できなかった。</p>
 <ul>
@@ -23598,7 +23580,7 @@
 <li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）</a><br />
   monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
+<p>verified at: 2026-05-09。</p>
 <h3 id="platform">platform<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../platform/fec-flr-support-in-sonic/">FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）</a><br />
@@ -23631,7 +23613,7 @@
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
 <li><a href="../../../platform/enhanced-lpo-debug-registers-hld/">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p><code>sonic-platform-common</code> を grep した結果、本 HLD が前提とする <code>CmisEnhancedLpoApi</code> / <code>CmisEnhancedLpoCodes</code> / <code>CmisEnhancedLpoMemMap</code> クラス、<code>xcvr_api_factory.py</code> での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、<code>LPOTxHostInputVMA*</code> / <code>LPORxInputOMA*</code> フィールドのいずれも HEAD に取り込まれていない（<code>grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/</code> でヒット 0）。…</p>
 <ul>
@@ -23642,7 +23624,7 @@
 <h3 id="routing">routing<a class="headerlink" href="#routing" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../routing/bgp-route-install-error-handling/">BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>deprecated</code> / last_verified: <code>2026-05-09</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。<strong>本 HLD は採用されず、後発の BGP Suppress FIB Pending に置き換えられている</strong>。</p>
 <ul>
@@ -23652,97 +23634,92 @@
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
 <li><a href="../../../routing/evpn-vxlan-multihoming/">EVPN VXLAN Multihoming（ESI / DF election / split-horizon）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-10</code></li>
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-10</code></li>
 </ul>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない</strong>。</p>
 <ul>
 <li>
 <p><a href="../../../routing/evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-10</code></p>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-10</code></p>
 </li>
 <li>
 <p><a href="../../../routing/local-ars-hld/">Local ARS（Adaptive Routing &amp; Switching の local 完結版）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-10</code></p>
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-10</code></p>
 </li>
 </ul>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了</strong>。</p>
 <ul>
 <li><a href="../../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p><code>sonic-swss/fpmsyncd/routesync.cpp</code> と <code>sonic-swss/fpmsyncd/routesync.h</code> を確認。HLD のコア部分は master に取り込み済み:</p>
 <h3 id="switching">switching<a class="headerlink" href="#switching" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../switching/layer-2-forwarding-enhancements/">L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-09</code></li>
 </ul>
-<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
+<p>実コード裏取りで判明（verified at: 2026-05-09）:</p>
 <ul>
 <li><a href="../../../switching/switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
 <li><a href="../../../switching/wake-on-lan-in-sonic/">Wake-on-LAN（wol CLI と SonicWolService gNOI）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-09</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
 <li><a href="../../../switching/link-event-damping-hld/">リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-09</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <h3 id="system">system<a class="headerlink" href="#system" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../system/sonic-fips-deployment/">SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-09</code></li>
 </ul>
-<p>2026-05-11 時点の現行 master を裏取り。</p>
+<p>CONFIG_DB の <code>FIPS|global</code> 表記は HLD どおりで問題なし。</p>
 <ul>
 <li><a href="../../../system/sonic-network-time-protocol-ntp-client-configuration/">SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>deprecated</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
 <li><a href="../../../system/hld-secure-boot/">SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-10</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-10</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
 <li><a href="../../../system/swss-docker-warm-restart-code-reference/">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
 <li><a href="../../../system/sonic-python-logger-enhancement/">SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-09</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
 <li><a href="../../../system/twamp-light-hld/">TWAMP Light（Session-Sender / Session-Reflector）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>per-page queue で既出の通り部分実装。再走査結果:</p>
 <ul>
 <li><a href="../../../system/warmboot-manager-hld/">Warmboot Manager（shutdown orchestration / reconciliation 統一）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>per-page queue で既出の通り提案 HLD は未採用。再走査でも:</p>
 <ul>
 <li><a href="../../../system/sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>deprecated</code> / last_verified: <code>2026-05-09</code></li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
 <li><a href="../../../system/reset-local-users-passwords-during-init-hld/">ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）</a><br />
-  monitor: <code>(未指定)</code> / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
-<!-- topics-back-ref -->
-<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../../topics/22-reference-index/">Topics: リファレンス横断索引</a></li>
-</ul>
 
 
 

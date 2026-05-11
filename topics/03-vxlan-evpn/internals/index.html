@@ -1785,6 +1785,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tunnel-decap-term" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnel decap term の使い分け
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evpn-gr-fast-convergence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN GR / fast convergence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23309,6 +23331,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tunnel-decap-term" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnel decap term の使い分け
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evpn-gr-fast-convergence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN GR / fast convergence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23526,6 +23570,37 @@
 </tbody>
 </table>
 <p><code>fpmsyncd</code> は FRR からの EVPN route を <code>EVPN_REMOTE_VNI_TABLE</code> 系で受け、<code>VnetOrch</code> がそれを SAI tunnel / FDB / route に変換します。VNI が L2 と L3 で衝突する設定は CONFIG_DB の整合性チェックで拒否される設計ですが、bgpcfgd 経由でない手動の vtysh 投入では拒否されない既知の隙があります。</p>
+<h2 id="tunnel-decap-term">tunnel decap term の使い分け<a class="headerlink" href="#tunnel-decap-term" title="Permanent link">&para;</a></h2>
+<p><code>SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY</code> には P2P / P2MP / MP2MP の 3 種があり、SONiC は EVPN の挙動に合わせて切り替えます。</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>用途</th>
+<th>SAI 属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P2P</td>
+<td>特定 remote VTEP からの decap</td>
+<td><code>DST_IP</code>（local VTEP IP）+ <code>SRC_IP</code>（remote VTEP IP）</td>
+</tr>
+<tr>
+<td>P2MP</td>
+<td>任意 remote からの decap、特定 local IP</td>
+<td><code>DST_IP</code> のみ</td>
+</tr>
+<tr>
+<td>MP2MP</td>
+<td>DCI 用、任意 source / 任意 destination</td>
+<td>DST/SRC とも IP range</td>
+</tr>
+</tbody>
+</table>
+<p><code>EvpnRemoteVnipOrch</code> は remote VTEP を学習するごとに P2P term を追加する実装と、初回に P2MP を 1 件作って共有する実装が SONiC のバージョンによって混在します。<code>VxlanTunnelOrch::createTunnel</code> の <code>dip</code> 引数が空かどうかで分岐します。</p>
+<h2 id="evpn-gr-fast-convergence">EVPN GR / fast convergence<a class="headerlink" href="#evpn-gr-fast-convergence" title="Permanent link">&para;</a></h2>
+<p>EVPN の障害収束は FRR の <code>bgp graceful-restart</code> と SONiC の <code>EVPN_REMOTE_VNI_TABLE</code> の TTL に依存します。FRR 側が下流 advertise を止めた後、<code>VxlanTunnelOrch</code> が remote VTEP を保持する期間（HOLD time）に traffic を blackhole しないようにする <code>restart-time</code> 系のパラメータが <code>BGP_NEIGHBOR.graceful_restart_helper_only</code> で制御されます。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../overlay/vxlan-sonic/">VXLAN SONiC HLD</a></li>

@@ -3852,6 +3852,39 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な運用シナリオ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド追加
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -23368,6 +23401,39 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な運用シナリオ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド追加
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -23613,7 +23679,105 @@
 <li>章 <a href="../../10-gnmi-openconfig/operations/">10 gNMI / OpenConfig</a> — save-on-set と再起動を跨ぐ永続化</li>
 <li>章 <a href="../../02-bgp/operations/">02 BGP</a> — BGP Graceful Restart の運用</li>
 </ul>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">異常検出パターン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>観測</th>
+<th>疑う状態</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show reboot-cause</code> が <code>Unknown</code></td>
+<td><code>/host/reboot-cause/</code> の更新失敗、または初回 boot</td>
+<td>ファイル mtime、<code>determine-reboot-cause.service</code> の journal</td>
+</tr>
+<tr>
+<td>warm-reboot 後 <code>restore_count</code> が 0</td>
+<td>warm path に入らず cold boot した</td>
+<td><code>/var/log/syslog</code> の warm-reboot 実行ログ、<code>pre-shutdown</code> 失敗</td>
+</tr>
+<tr>
+<td>reconciliation が <code>restored</code> で止まる</td>
+<td>EOIU 未受領、または依存 service 未起動</td>
+<td>該当 component の syslog、<code>show warm_restart state</code> の他 component</td>
+</tr>
+<tr>
+<td>warm-reboot 中に LAG が落ちる</td>
+<td>LACP retry 拡張未対応、peer 側 timeout 短</td>
+<td>teamd ログ、peer 側 LACP rate</td>
+</tr>
+<tr>
+<td>warm-reboot 中に BGP session が落ちる</td>
+<td>peer の Graceful Restart が <code>Disable</code></td>
+<td><code>show bgp neighbor X graceful-restart</code> の <code>Remote GR Mode</code></td>
+</tr>
+<tr>
+<td><code>Kernel Panic</code> 直後の boot で kdump が無い</td>
+<td>kdump 無効、または <code>/var/crash/</code> 空き不足</td>
+<td><code>show kdump status</code>、<code>/var/crash/</code> 容量</td>
+</tr>
+<tr>
+<td>fast-reboot 後 BGP neighbor が <code>never</code></td>
+<td>image 切替で config drift、または <code>config_db.json</code> 破損</td>
+<td><code>config_db.json</code> の <code>BGP_NEIGHBOR</code>、<code>bgpcfgd</code> ログ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">典型的な運用シナリオ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>計画 warm-reboot（minor update）</strong> — <code>show warm_restart config</code> で対象 service が enable で timer が適切か確認 → peer の Graceful Restart 設定確認 → <code>sudo warm-reboot</code> → 起動後 <code>show warm_restart state</code> が全て <code>reconciled</code> を確認。</li>
+<li><strong>計画外の Kernel Panic 解析</strong> — <code>/host/reboot-cause/previous-reboot-cause.json</code> と <code>/var/crash/</code> の vmcore を保全 → <code>show techsupport</code> で全 log 収集 → <code>dmesg</code> で MCE / OOM / driver oops を確認。</li>
+<li><strong>multi-ASIC で一部 ASIC のみ再起動</strong> — 対象 namespace を特定 → <code>warm-reboot -m &lt;namespace&gt;</code> または該当 namespace の <code>swss</code>/<code>syncd</code> を <code>systemctl restart</code> → 残り ASIC が影響を受けていないことを <code>show interfaces counters</code> の連続性で確認。</li>
+<li><strong>fast-reboot で image 切替</strong> — <code>sonic-installer set-default &lt;image&gt;</code> → <code>fast-reboot</code> → 起動後 <code>show version</code> で image を確認 → BGP/LAG/route 件数が事前メモと合っているかを確認。</li>
+<li><strong>reboot 履歴の定期点検</strong> — <code>show reboot-cause history</code> を週次で確認し、<code>Watchdog</code> / <code>Hardware - reason</code> が一度でも出ていれば platform team に escalate、<code>Kernel Panic</code> が複数回なら同 stack trace を比較。</li>
+</ol>
+<h2 id="_6">対応コマンド追加<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>直近 cause の生ファイル</td>
+<td><code>cat /host/reboot-cause/reboot-cause.txt</code></td>
+</tr>
+<tr>
+<td>前回 cause（JSON）</td>
+<td><code>cat /host/reboot-cause/previous-reboot-cause.json</code></td>
+</tr>
+<tr>
+<td>reboot 一覧履歴</td>
+<td><code>show reboot-cause history</code></td>
+</tr>
+<tr>
+<td>warm-restart 設定</td>
+<td><code>show warm_restart config</code></td>
+</tr>
+<tr>
+<td>warm-restart 状態</td>
+<td><code>show warm_restart state</code></td>
+</tr>
+<tr>
+<td>Graceful Restart 状態（BGP）</td>
+<td><code>vtysh -c "show bgp neighbor &lt;ip&gt; graceful-restart"</code></td>
+</tr>
+<tr>
+<td>kdump 状態</td>
+<td><code>show kdump status</code>、<code>ls /var/crash/</code></td>
+</tr>
+<tr>
+<td>reconciliation log</td>
+<td><code>grep -i reconcil /var/log/syslog</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot-cause 履歴の STATE_DB / テレメトリ公開</a></li>
 <li><a href="../../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/">Warm-reboot 中の LACP retry count 拡張</a></li>

@@ -2570,6 +2570,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fdb-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FDB notification 経路の詳細
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23331,6 +23342,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fdb-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FDB notification 経路の詳細
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23546,6 +23568,40 @@
 <li>portchannel down → up のフラップで <code>LAG_MEMBER_TABLE</code> の delete/add がペアにならず、<code>PortsOrch::removeLagMember</code> が orphan member を残すケース</li>
 </ul>
 <p>これらは ASIC 通知に対する orchagent の reentrancy 設計上避けにくく、頻発する場合は teamd の <code>runner.tx_hash</code> や <code>lacp_rate</code> を調整します。</p>
+<h2 id="fdb-notification">FDB notification 経路の詳細<a class="headerlink" href="#fdb-notification" title="Permanent link">&para;</a></h2>
+<p>ASIC からの FDB 通知は <code>ASIC_DB</code> の notification channel（Redis pub/sub）に流れ、<code>FdbOrch</code> が以下の event を処理します。</p>
+<table>
+<thead>
+<tr>
+<th>SAI event</th>
+<th>FdbOrch handler</th>
+<th>反映先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_FDB_EVENT_LEARNED</code></td>
+<td><code>handleLearnedEvent</code></td>
+<td>APPL_DB.FDB_TABLE 追加、STATE_DB 更新</td>
+</tr>
+<tr>
+<td><code>SAI_FDB_EVENT_AGED</code></td>
+<td><code>handleAgedEvent</code></td>
+<td>APPL_DB.FDB_TABLE 削除</td>
+</tr>
+<tr>
+<td><code>SAI_FDB_EVENT_MOVE</code></td>
+<td><code>handleMoveEvent</code></td>
+<td>bridge_port 差し替え</td>
+</tr>
+<tr>
+<td><code>SAI_FDB_EVENT_FLUSHED</code></td>
+<td><code>handleFlushedEvent</code></td>
+<td>該当 LAG/VLAN の FDB 一括削除</td>
+</tr>
+</tbody>
+</table>
+<p><code>SAI_BRIDGE_PORT_ATTR_FDB_LEARNING_MODE</code> を <code>HW</code> にすると LEARNED イベントを抑制（CPU 負荷削減）でき、<code>CPU_TRAP</code> にすると全 frame が orchagent 経由になります。SONiC 標準は <code>HW</code> で、MC-LAG では peer link 側を <code>DISABLE</code> に倒します。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../switching/sonic-basic-l2-mode-test-plan/">L2 basic mode test plan</a></li>

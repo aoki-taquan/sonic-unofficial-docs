@@ -3585,6 +3585,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gnmiget-zmq-direct-write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GNMIGet (ZMQ direct write) 経路
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23353,6 +23364,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gnmiget-zmq-direct-write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GNMIGet (ZMQ direct write) 経路
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23553,6 +23575,40 @@
 </tbody>
 </table>
 <p>未実装の transformer がある OC path に対して GET / SET を投げると、translib 層で <code>NotFound</code> を返す動作で、HLD と実装の乖離が出やすいポイントです。</p>
+<h2 id="gnmiget-zmq-direct-write">GNMIGet (ZMQ direct write) 経路<a class="headerlink" href="#gnmiget-zmq-direct-write" title="Permanent link">&para;</a></h2>
+<p><code>gnmi-native-write</code> 系の改善で、いくつかのテーブル（<code>DASH_*</code> 系、<code>APP_DB:GENERIC_CONFIG_UPDATER_TABLE</code> 等）は GNMISet → orchagent の <strong>ZMQ endpoint</strong> に直接届く経路が追加されました。これにより CONFIG_DB を経由しないため、CONFIG_DB rewrite race / 大量更新時の Redis 単一スレッド bottleneck を回避できます。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>通常経路</th>
+<th>ZMQ direct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entry point</td>
+<td>CONFIG_DB write</td>
+<td>orchagent ZMQ socket</td>
+</tr>
+<tr>
+<td>Atomicity</td>
+<td>Redis transaction (<code>MULTI/EXEC</code>)</td>
+<td>ZMQ message + orchagent task</td>
+</tr>
+<tr>
+<td>Failure feedback</td>
+<td>STATE_DB から間接的</td>
+<td>gNMI response に直接</td>
+</tr>
+<tr>
+<td>対象</td>
+<td>全テーブル</td>
+<td>DASH 等の opt-in テーブルのみ</td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB を bypass するため、<code>config save</code> / <code>config reload</code> の永続化対象には入りません。再起動後に再投入する責任は外部 controller 側にあります。</p>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../management/sonic-gnmi-server-interface-design/">SONiC gNMI server interface design</a></li>

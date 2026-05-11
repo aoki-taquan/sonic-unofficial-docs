@@ -4107,6 +4107,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fabric-link-fabricportsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fabric link 監視と FabricPortsOrch
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-asic-frr-internal-bgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        per-ASIC FRR と internal BGP の構成
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23309,6 +23331,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fabric-link-fabricportsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fabric link 監視と FabricPortsOrch
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-asic-frr-internal-bgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        per-ASIC FRR と internal BGP の構成
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23504,6 +23548,64 @@
 </tbody>
 </table>
 <p><code>SystemPortOrch</code> / <code>SystemNeighOrch</code> が chassis_db を subscribe して、自 ASIC の <code>SAI_OBJECT_TYPE_SYSTEM_PORT</code> を作成 / 更新します。chassis_db 自体は SUP 上の Redis で、LC 側からは TCP で接続します（接続切断時は前述の段階的劣化）。</p>
+<h2 id="fabric-link-fabricportsorch">fabric link 監視と <code>FabricPortsOrch</code><a class="headerlink" href="#fabric-link-fabricportsorch" title="Permanent link">&para;</a></h2>
+<p>VOQ chassis では fabric port が線カード間の中継を担い、<code>FabricPortsOrch</code> がその状態を監視します。</p>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>検出</th>
+<th>反映先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FABRIC_ATTACHED</code></td>
+<td>SAI port attribute から fabric 接続済みか</td>
+<td><code>STATE_DB:FABRIC_PORT_TABLE</code></td>
+</tr>
+<tr>
+<td><code>FABRIC_REACHABILITY</code></td>
+<td>各 fabric switch への到達性</td>
+<td><code>CHASSIS_STATE_DB:FABRIC_ASIC_TABLE</code></td>
+</tr>
+<tr>
+<td><code>isolated</code></td>
+<td>port が isolation domain にあるか</td>
+<td>counter / <code>show fabric</code></td>
+</tr>
+</tbody>
+</table>
+<p>fabric link の flap は <code>SAI_PORT_ATTR_FABRIC_ATTACHED</code> の notification で <code>FabricPortsOrch::refreshFabricPortMonitor</code> に届き、閾値を超えた error count で isolation の判定がなされます。chassis 全体の health を <code>chassisd</code> が <code>CHASSIS_STATE_DB:LINECARD_TABLE</code> で集約します。</p>
+<h2 id="per-asic-frr-internal-bgp">per-ASIC FRR と internal BGP の構成<a class="headerlink" href="#per-asic-frr-internal-bgp" title="Permanent link">&para;</a></h2>
+<p>VOQ chassis では各 ASIC namespace で独立した FRR が動き、ASIC 間は internal BGP（多くは iBGP over loopback over inband）でつなぐ構成が標準です。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AS 番号</td>
+<td>同一（iBGP）</td>
+</tr>
+<tr>
+<td>nexthop</td>
+<td>inband interface 経由の loopback</td>
+</tr>
+<tr>
+<td>advertise</td>
+<td>外部 BGP の view は per-asic、abstraction なし</td>
+</tr>
+<tr>
+<td>convergence</td>
+<td>ASIC 間で routes が異なる時間帯が存在しうる</td>
+</tr>
+</tbody>
+</table>
+<p><code>minigraph.xml</code> の <code>&lt;BGPSessions&gt;</code> セクションで internal session が定義され、<code>bgpcfgd</code> per-namespace が反映します。abstraction が必要な運用では Route Reflector を SUP 上に立てる構成が <code>BGP setup for VOQ chassis</code> HLD に書かれています。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/voq-sonic/">VOQ SONiC</a></li>

@@ -2061,7 +2061,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加の show 出力例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な運用シナリオ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23397,7 +23419,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加の show 出力例
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な運用シナリオ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23672,7 +23716,33 @@
 <li>Dual-ToR 上の default route と nexthop は <a href="../../05-dual-tor/operations/">Dual-ToR 章 運用</a>。</li>
 <li>L2 SVI（VLAN_INTERFACE）の up/down 前提は <a href="../../06-l2-vlan-lag/operations/">L2 章 運用</a>。</li>
 </ul>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="show">追加の show 出力例<a class="headerlink" href="#show" title="Permanent link">&para;</a></h2>
+<p><code>show vrf</code> は CONFIG_DB の <code>VRF</code> テーブルと <code>INTERFACE</code>/<code>VLAN_INTERFACE</code>/<code>PORTCHANNEL_INTERFACE</code> の <code>vrf_name</code> を結合して表示します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>VRF        Interfaces
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>---------  -------------------------
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Vrf_red    Ethernet8
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>           Vlan100
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Vrf_blue   Ethernet12
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>           PortChannel201
+</span></code></pre></div>
+<p>VRF が定義されているが Interface 欄が空の場合、bind 漏れか、bind 直後で APPL_DB:INTF_TABLE が未反映の過渡状態です。<code>config interface vrf bind</code> の順序、または <code>swssconfig</code> の流入を確認します。</p>
+<p><code>show interfaces counters rif</code> は RIF（router interface）単位の RX/TX を表示します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>    IFACE    RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    TX_PPS    TX_ERR
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>---------  -------  --------  --------  --------  -------  --------  --------  --------
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Ethernet0   12,453  12.34 KB     8.2/s         0    9,832  10.21 KB     6.4/s         0
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Ethernet4   45,210  41.22 KB    28.7/s         3   32,109  31.55 KB    21.0/s         0
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>Vlan1000   180,512 155.40 KB   120.3/s         0  120,330 110.11 KB    85.7/s         2
+</span></code></pre></div>
+<p><code>RX_ERR</code> / <code>TX_ERR</code> の増加は MTU / TTL / loopback-action drop を疑い、CRM 閾値超過と合わせて切り分けます。</p>
+<h2 id="_6">典型的な運用シナリオ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>新規 VRF 払い出し</strong> — <code>config vrf add Vrf_red</code> → 対象 Interface に <code>config interface vrf bind &lt;intf&gt; Vrf_red</code> → <code>show vrf</code> で member 確認 → 必要なら BGP / static route を VRF 配下に投入。bind 順序を誤ると IP 設定が消えるので、IP 設定前に bind するのが安全です。</li>
+<li><strong>VRF leak / import の検証</strong> — <code>show ip bgp vrf &lt;vrf&gt;</code> の RT import で予期する prefix を確認し、<code>show ip route vrf &lt;vrf&gt;</code> に <code>&gt;</code> <code>*</code> が付いているかを見ます。leak 経路は RT mismatch が原因の大半です。</li>
+<li><strong>ECMP 偏りの調査</strong> — <code>show interfaces counters rif</code> で各 member の TX 偏りを確認、<code>crm show summary</code> で NHG / NEXTHOP の使用量を確認、必要なら hash-seed / hash-field を見直します。</li>
+<li><strong>MTU mismatch 切り分け</strong> — <code>RX_ERR</code> の急増と TTL exceed の syslog を見て、両端 MTU を <code>show interfaces status</code> で揃え、jumbo 設定とパス MTU を確認します。</li>
+<li><strong>loopback-action 設計確認</strong> — <code>show ip interfaces loopback-action</code> で <code>drop</code> 設定の interface を一覧化し、設計外の interface に <code>drop</code> がついて legitimate な return traffic が落ちていないかを確認します。</li>
+</ol>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/show-ip/">CLI: show ip</a></li>
 <li><a href="../../../reference/cli/show-interfaces/">CLI: show interfaces</a></li>

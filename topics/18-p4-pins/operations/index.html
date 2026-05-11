@@ -5667,6 +5667,39 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な運用シナリオ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -23390,6 +23423,39 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        異常検出パターン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        対応コマンド早見表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型的な運用シナリオ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -23576,7 +23642,100 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">異常検出パターン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>観測</th>
+<th>疑う状態</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>controller の <code>WriteResponse</code> が <code>INVALID_ARGUMENT</code></td>
+<td>p4info 不一致、未対応 table、key 重複</td>
+<td>p4rt-app log の <code>Translate</code> 失敗、コントローラ側 p4info hash</td>
+</tr>
+<tr>
+<td><code>WriteResponse</code> OK だが <code>APPL_STATE_DB</code> に <code>err_str</code> 失敗</td>
+<td>P4Orch / SAI で reject</td>
+<td>orchagent log の <code>P4Orch</code>、SAI status</td>
+</tr>
+<tr>
+<td><code>send_to_ingress</code> netdev が無い</td>
+<td>platform 未対応、または有効化不足</td>
+<td>syncd の <code>SAI_STATUS_NOT_SUPPORTED</code>、CONFIG_DB の <code>SEND_TO_INGRESS</code></td>
+</tr>
+<tr>
+<td>PacketIO punt がコントローラに届かない</td>
+<td>CoPP queue で drop、genetlink family 未登録</td>
+<td><code>psample</code> family、CoPP counter、policer cir</td>
+</tr>
+<tr>
+<td>Read 応答が秒オーダー</td>
+<td>キャッシュ未充填、または VerifyState で再構築</td>
+<td>p4rt-app の <code>Read took</code>、<code>VerifyState</code></td>
+</tr>
+<tr>
+<td>controller 再接続後に flow が消える</td>
+<td>session lifetime / role 設定の取り違え</td>
+<td>controller 側 role config、Election ID</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">対応コマンド早見表<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P4Orch 処理状況</td>
+<td><code>redis-cli -n 14 KEYS "P4RT_TABLE:*"</code>、<code>HGETALL &lt;key&gt;</code></td>
+</tr>
+<tr>
+<td>ASIC 反映確認</td>
+<td><code>redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_*"</code></td>
+</tr>
+<tr>
+<td>p4rt-app ログ</td>
+<td><code>docker logs p4rt</code></td>
+</tr>
+<tr>
+<td>orchagent (P4Orch) ログ</td>
+<td><code>docker exec swss supervisorctl tail orchagent</code></td>
+</tr>
+<tr>
+<td>send_to_ingress netdev</td>
+<td><code>ip link show send_to_ingress</code></td>
+</tr>
+<tr>
+<td>genetlink family</td>
+<td><code>genl-ctrl-list \| grep psample</code></td>
+</tr>
+<tr>
+<td>CoPP counter</td>
+<td><code>show platform inventory copp</code>、<code>aclshow -a</code></td>
+</tr>
+<tr>
+<td>process 状態</td>
+<td><code>docker ps</code>、<code>docker exec p4rt supervisorctl status</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_6">典型的な運用シナリオ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>新規コントローラ接続</strong> — gRPC 接続後、<code>SetForwardingPipelineConfig</code> で p4info を投入し、<code>WriteResponse</code> が OK になるかを確認します。<code>INVALID_ARGUMENT</code> が返るなら p4info と P4Orch 対応 table の差分を疑います。</li>
+<li><strong>PacketIO punt 確認</strong> — controller 側からの punt 設定後、テストフローを流して <code>aclshow -a</code> の counter が増えること、p4rt-app log で受信が見えることを順に確認します。届かないなら <code>psample</code> 経路と CoPP policer を順に切り分けます。</li>
+<li><strong>warm boot 後の Read 性能確認</strong> — <code>docker logs p4rt | grep "Read took"</code> で Read latency を確認し、warm boot 直後だけ遅い場合は <code>warm_boot_state_adapter_</code> の事前充填ログが出ているかを見ます。</li>
+<li><strong>依存未解決 pending の解消</strong> — APPL_DB にあるが APPL_STATE_DB に無い entry が残る場合、route の前提となる nexthop / router_interface が install されているかを順に確認します。controller 側 reconcile で順序を整え直します。</li>
+<li><strong>コントローラ切替（standby → primary）</strong> — Election ID と role config を確認し、新 primary が <code>SetForwardingPipelineConfig</code> を再投入する必要があるか、reconcile だけで済むかを判断します。</li>
+</ol>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../internals/p4-orchagent/">P4Orch HLD</a></li>
 <li><a href="../../../management/p4rt-application-hld/">P4RT App HLD</a></li>

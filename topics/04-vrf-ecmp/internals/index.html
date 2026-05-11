@@ -2084,6 +2084,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#nhg-resync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NHG 参照カウントと resync
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23331,6 +23342,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#nhg-resync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NHG 参照カウントと resync
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23532,6 +23554,35 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  lag_hash:  &quot;...&quot;
 </span></code></pre></div>
 <p>これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは VXLAN / SRv6 でしばしば問題になります（→ 03 章、17 章）。</p>
+<h2 id="nhg-resync">NHG 参照カウントと resync<a class="headerlink" href="#nhg-resync" title="Permanent link">&para;</a></h2>
+<p><code>NhgOrch</code> は同一の <code>(prefix, nexthop set)</code> を共有して SAI 上の <code>NEXT_HOP_GROUP</code> を再利用します。参照カウントは以下のように動きます。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>内部処理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>route 追加で新 NHG 必要</td>
+<td><code>NhgOrch::addNhg</code> で SAI create、refcount=1</td>
+</tr>
+<tr>
+<td>既存 NHG と同形</td>
+<td><code>NextHopGroup::find</code> でヒット、refcount++</td>
+</tr>
+<tr>
+<td>route 削除</td>
+<td>refcount--、0 になったら SAI remove</td>
+</tr>
+<tr>
+<td>member の BFD down</td>
+<td><code>setNextHopGroupMembers</code> で member 差し替え</td>
+</tr>
+</tbody>
+</table>
+<p>PIC では member の <code>weight=0</code> 化のみで NHG 自体は維持するため、refcount は減りません。member 集合が変わらない限り SAI object は再作成されない設計です。<code>gNhgMapOrch</code> 経由の CBF（class-based forwarding）は別管理で、<code>CbfNhgOrch</code> が一段上の階層 NHG として <code>NhgOrch</code> を呼びます。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization</a></li>
