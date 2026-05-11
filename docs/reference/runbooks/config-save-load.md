@@ -2,7 +2,7 @@
 title: CONFIG_DB save / load が反映されない
 description: "Runbook: CONFIG_DB save / load が反映されない — : sonic-net/sonic-utilities @ 39732bceb — config/main.py, scripts/db_migrator.py"
 area: reference
-verification: code-verified
+verification: runbook-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-utilities

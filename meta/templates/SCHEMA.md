@@ -8,7 +8,7 @@
 |------|------|----|------|
 | `title` | ✅ | string | 表示タイトル |
 | `area` | ✅ | enum | `routing` / `switching` / `overlay` / `acl-qos` / `system` / `management` / `platform` / `architecture` / `internals` / `reference` |
-| `verification` | ✅ | enum | `hld-only` / `issue-confirmed` / `code-verified` / `discrepancy-found` / `stub` / `meta` |
+| `verification` | ✅ | enum | `hld-only` / `issue-confirmed` / `code-verified` / `discrepancy-found` / `runbook-verified` / `stub` / `meta` |
 | `last_verified` | ✅ | date | `YYYY-MM-DD`。裏取りまたは更新を行った日 |
 | `sources` | ✅ | list | このページの根拠となる一次情報のリスト |
 | `sources[].repo` | ✅ | string | `sonic-net/<repo>` 形式 |
@@ -41,6 +41,7 @@
 | `issue-confirmed` | issue/PR コメントで補強済み | 🔍 Issue-confirmed |
 | `code-verified` | 該当実装を読んで一致確認済み | ✅ Code-verified |
 | `discrepancy-found` | HLD と実装に差分あり。本文に注記 | ⚠️ Discrepancy-found |
+| `runbook-verified` | Runbook 専用。実運用で症状再現性が確認されており、HLD 一致は副次的 | 🛠 Runbook-verified |
 
 ## monitor の意味（discrepancy-found 専用タグ）
 

@@ -22,6 +22,7 @@ OUTPUT = DOCS_DIR / "_meta" / "coverage.md"
 # 集計対象の verification 状態（順序固定で表に並べる）
 STATES = [
     "code-verified",
+    "runbook-verified",
     "discrepancy-found",
     "issue-confirmed",
     "hld-only",
@@ -30,6 +31,7 @@ STATES = [
 ]
 STATE_LABEL = {
     "code-verified": "code-verified",
+    "runbook-verified": "runbook-verified",
     "discrepancy-found": "discrepancy-found",
     "issue-confirmed": "issue-confirmed",
     "hld-only": "hld-only",
@@ -95,6 +97,7 @@ def render(matrix: dict[str, dict[str, int]]) -> str:
     )
     lines.append("")
     lines.append("- **code-verified**: HLD と現行 master 実装を突き合わせて整合が取れているページ")
+    lines.append("- **runbook-verified**: Runbook 専用ステータス。実運用で症状再現性が確認されており、HLD 一致は副次的")
     lines.append("- **discrepancy-found**: 実装と HLD の間に乖離が確認されたページ（[一覧](discrepancies.md)）")
     lines.append("- **issue-confirmed**: GitHub issue / PR で裏取り済みだが実コード突き合わせ未完了のページ")
     lines.append("- **hld-only**: HLD のみを根拠にしたページ（読み手は鵜呑みにせず実コード確認推奨）")

@@ -2,7 +2,7 @@
 title: Interface MTU mismatch によるパケットドロップ
 description: "Runbook: Interface MTU mismatch によるパケットドロップ — : sonic-net/sonic-swss @ 4305596 — portsorch.cpp の MTU 反映 : sonic-net/sonic-utilities @ 39732bceb — config interf…"
 area: reference
-verification: code-verified
+verification: runbook-verified
 last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-swss
