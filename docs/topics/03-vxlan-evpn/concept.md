@@ -118,12 +118,59 @@ Subnet decap は overlay tenant を作る機能ではなく、VLAN subnet 宛の
 - NVGRE や subnet decap が overlay tenant とは別の話だと区別できる。
 - BGP-EVPN のセッションがあるのに data plane が来ない問題を「FRR EVPN」「VxlanTunnelOrch」「SAI tunnel」のどこで止まったかで切れる。
 
+## CONFIG_DB の主要テーブル
+
+VXLAN / VNET / EVPN まわりで把握しておくべき CONFIG_DB は次のとおりです。
+
+| Table | 用途 |
+| --- | --- |
+| `VXLAN_TUNNEL` | VTEP（src IP）と peer 種別を定義 |
+| `VXLAN_TUNNEL_MAP` | VLAN ↔ VNI / VRF ↔ VNI 対応 |
+| `VXLAN_EVPN_NVO` | EVPN を VXLAN 上で動かす宣言（FRR EVPN 接続点） |
+| `VNET` | VRF + VNI + vxlan_tunnel をまとめた SONiC 内オブジェクト |
+| `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` | VNET の local / remote endpoint route |
+| `EVPN_NVO` / `EVPN_RT_TBL` 等 | EVPN 系の補助 table（FRR との接続側） |
+
+`vxlanmgrd` は CONFIG_DB と Linux netlink を仲立ちし、`VNetOrch` / `VxlanTunnelOrch` / `TunnelDecapOrch` が SAI tunnel / bridge port を作ります。EVPN を使う構成では FRR 側で受けた Type-2 / Type-5 が APPL_DB / VNET_ROUTE_TUNNEL に降りてきます。
+
+## EVPN と VNET 直書きのデータパスは同じ
+
+```mermaid
+flowchart LR
+  subgraph Control_Plane
+    FRR[FRR bgpd<br/>l2vpn evpn] -.->|Type-2 / Type-5| APPL[(APPL_DB)]
+    Ctrl[SDN controller] -->|CONFIG_DB 直書き| CFG[(CONFIG_DB.VNET_*)]
+    CFG --> APPL
+  end
+  APPL --> Orch[VxlanTunnelOrch /<br/>VNetOrch /<br/>VNetRouteOrch]
+  Orch --> ASIC[(ASIC_DB)]
+  ASIC --> SAI[SAI tunnel / bridge-port]
+```
+
+control plane は EVPN（FRR 経路）か controller 直書きの 2 系統に分かれますが、SAI tunnel / bridge port を作る orchagent 側はほぼ共通です。問題切り分けでは「EVPN セッションは張れているか」「VNET object は CONFIG_DB に居るか」「APPL_DB の TUNNEL/VNET_ROUTE まで来ているか」「ASIC_DB に tunnel object が居るか」を順に追います。
+
+## EVPN Type と SONiC 側の受け口
+
+| Type | 意味 | SONiC で書き込まれる先 |
+| --- | --- | --- |
+| Type-2 | MAC / MAC+IP 到達性 | bridge-port / FDB / NEIGH / VNET_ROUTE_TUNNEL（L2 端末向け） |
+| Type-3 | inclusive multicast tunnel endpoint | head-end replication 用 tunnel member |
+| Type-5 | IP prefix | VNET_ROUTE_TUNNEL / VRF route |
+
+Type-2 が来ても bridge-port が作られていない場合は **vlan-vni map** が抜けていることが多く、Type-5 が来ても VNET_ROUTE_TUNNEL に乗らない場合は **VRF-VNI map** や `nvo` の設定漏れが原因になりがちです。
+
+## SmartSwitch / DASH の VNET との関係
+
+DASH / SmartSwitch の SDN data path は VNET スキーマを再利用し、ENI 単位の policy（ACL / mapping）と組み合わせて DPU 上に展開します。EVPN を介さず controller が VNET_ROUTE 系を直書きする使い方は、SmartSwitch ENI と相性が良い構成です。詳細は [13 章 DASH / SmartSwitch](../13-dash-smartswitch/concept.md) を参照してください。
+
 ## 関連ページ
 
 - [VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
 - [EVPN VXLAN](../../routing/evpn-vxlan-hld.md)
 - [NVGRE トンネル](../../overlay/nvgre-tunnel-in-sonic.md)
 - [VLAN Subnet Decap](../../platform/subnet-decapsulation-with-sonic.md)
+- [VNet local endpoint forwarding](../../overlay/vnet-local-endpoint-forwarding.md)
+- [DSCP remapping for tunnel traffic](../../overlay/dscp-remapping-for-tunnel-traffic.md)
 
 <!-- xref-prereq -->
 ## この章の前提知識

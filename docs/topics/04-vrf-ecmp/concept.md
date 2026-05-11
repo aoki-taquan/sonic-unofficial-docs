@@ -126,12 +126,59 @@ VRF 付き static route では key が `STATIC_ROUTE|<vrf>|<prefix>` になり�
 - IPv6 link-local + BGP unnumbered の next-hop が「IP + interface」のセットで決まることを理解した上で `show ip route` を読める。
 - ECMP / NHG が SAI object としてどう ASIC に入るか想像できる。
 
+## CONFIG_DB の主要テーブル
+
+L3 / VRF / ECMP まわりで押さえる CONFIG_DB を整理します。
+
+| Table | 用途 |
+| --- | --- |
+| `VRF` | data VRF の定義（fallback、import/export RT 等を含む） |
+| `MGMT_VRF_CONFIG` | management VRF の enable / DNS / NTP source など |
+| `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `LOOPBACK_INTERFACE` | L3 interface と VRF 所属 |
+| `STATIC_ROUTE` | static route。VRF・ECMP・blackhole を表現できる |
+| `BGP_NEIGHBOR` 等 | 各 VRF 配下の BGP（02 章） |
+| `NEIGH` / `FDB` | neighbor / MAC 解決の入口（運用時に STATE_DB と対照） |
+| `DEVICE_METADATA.localhost` | `bgp_router_id` や `frr_mgmt_framework_config` の置き場 |
+
+`vrfmgrd` が `VRF` / `MGMT_VRF_CONFIG` を読み Linux VRF を作り、`intfmgrd` が L3 interface を VRF に bind し、`VRFOrch` / `IntfsOrch` が SAI Virtual Router / Router Interface を作ります。経路系はその上に乗ります。
+
+## ECMP / NHG / WCMP / FG-ECMP の整理
+
+| 機構 | 重み | 動的性 | SONiC 側の入口 |
+| --- | --- | --- | --- |
+| ECMP | 等分散 | static | NhgOrch、RouteOrch |
+| WCMP | 重み付き | static | sonic-weighted-ecmp / NhgOrch |
+| FG-ECMP | flow-group 単位 | dynamic（再 hash 抑制） | fine-grained ecmp HLD |
+| Overlay ECMP + BFD | overlay nexthop の生死で再選択 | dynamic（BFD 通知） | overlay-ecmp-with-bfd-monitoring |
+
+SAI 側は **Next Hop Group + Next Hop Group Member** の 2 段で表現され、member の OID 配列の最大値 / 1 group あたりの最大 member 数は ASIC の制約に強く依存します。経路爆発時にはこの上限超過で「ECMP が縮退する」「最も古い member だけが残る」現象が起きやすく、`CRM` カウンタや `flex counter` で監視するのが定石です。
+
+## RIB → FIB の段ごとの確認
+
+```mermaid
+flowchart LR
+  FRR[FRR RIB] -- FPM --> APPL[(APPL_DB.ROUTE_TABLE)]
+  APPL --> Orch[RouteOrch / NhgOrch / NeighOrch]
+  Orch --> ASIC[(ASIC_DB)]
+  ASIC --> SAI[SAI route / nexthop / nhg]
+  FRR -.->|kernel zebra| Kernel[Linux FIB]
+```
+
+`show ip route` を見ても、それが FRR RIB（vtysh）か Linux FIB（`ip route`）か SONiC FIB（`sonic-db-cli APPL_DB`）か ASIC FIB（ASIC_DB）かで意味が違います。VRF 付きの問題切り分けでは「どの VRF の table を見ているか」を都度確認します。
+
+## management VRF の特殊性
+
+management VRF（既定 `mgmt`）は **front panel 経路ではなく `eth0` の管理通信を分離する** ための VRF です。現行 SONiC は iproute2 の VRF master device 方式を採り、古い HLD に出てくる cgroup wrapper 方式は使われなくなっています。NTP / DNS / TACACS / SNMP の source interface 設定や、`config save -y` / `sonic-installer` 系コマンドが management VRF 側を経由する点が、forwarding 系 VRF との運用差分になります。
+
 ## 関連ページ
 
 - [VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
 - [Static IP Route 設定](../../routing/static-ip-route-configuration.md)
 - [IPv6 Link-Local アドレス管理](../../routing/ipv6-link-local-enhancements.md)
 - [Management VRF 設計](../../routing/sonic-management-vrf-design-document-201911-release.md)
+- [Fine-grained ECMP](../../routing/sonic-fine-grained-ecmp.md)
+- [Weighted ECMP](../../routing/sonic-weighted-ecmp.md)
+- [Overlay ECMP with BFD](../../routing/overlay-ecmp-with-bfd-monitoring.md)
 
 <!-- xref-prereq -->
 ## この章の前提知識

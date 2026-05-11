@@ -117,11 +117,63 @@ BGP の設定問題は [設定](setup.md) へ進みます。経路が ASIC に�
 - 同じ `show ip route` でも、FRR と SONiC のどちらを見るべきかが選べる。
 - HLD を読むとき、その記述が FRR version 依存か SONiC patch 依存かに当たりを付けられる。
 
+## CONFIG_DB の主要テーブル
+
+BGP まわりで最初に把握しておくべき CONFIG_DB は次のとおりです。詳細は `docs/reference/config-db/` 配下の各ページに辞書化されています。
+
+| Table | 用途 |
+| --- | --- |
+| `BGP_NEIGHBOR` | 個別 neighbor（peer IP）の AS / hold time / shutdown / route-map など |
+| `BGP_PEER_RANGE` | unnumbered / dynamic peer の subnet 単位定義。leaf-spine ECMP fabric の主流 |
+| `BGP_GLOBAL` | router-id、ebgp/ibgp multipath、graceful-restart などのグローバル設定 |
+| `BGP_ALLOWED_PREFIXES` / `PREFIX_LIST` | prefix-list と route-map の参照先 |
+| `BGP_AGGREGATE_ADDRESS` | 集約広告。`BGP_BBR` 連動による条件付き advertise が可能 |
+| `BGP_BBR` | Bounce Back Routing の enable/disable。集約広告と密結合 |
+| `DEVICE_METADATA.localhost` | `bgp_router_id` / `frr_mgmt_framework_config` 等のメタ設定 |
+
+`bgpcfgd` 構成では Jinja テンプレートでこれらを FRR `vtysh` 設定に reduce します。`frrcfgd` 構成では Management Framework が差分を vty コマンドに翻訳します。同じ CONFIG_DB を読んでいるように見えても、生成される FRR 設定の経路が違う点に注意してください。
+
+## bgpcfgd と frrcfgd の切替
+
+```mermaid
+flowchart LR
+  CDB[(CONFIG_DB)] -->|legacy| Bgpcfgd[bgpcfgd<br/>Jinja template]
+  CDB -->|OpenConfig 経由| Frrcfgd[frrcfgd<br/>vty 変換]
+  Bgpcfgd --> FRR[FRR bgpd]
+  Frrcfgd --> FRR
+```
+
+切替キーは `DEVICE_METADATA.localhost.frr_mgmt_framework_config` です。`true` で frrcfgd 経路、未設定 / `false` で bgpcfgd 経路。両方を同時に動かす設計ではないため、機能 HLD を読むときは「どちらの経路を前提とした記述か」を判定する必要があります。新しい OpenConfig BGP 機能は frrcfgd 側に寄り、レガシー Jinja で扱いづらかった政策系の入力経路が広がっています。
+
+## 経路が ASIC に入るまでの段
+
+`show ip route` が同じプレフィックスを返しても、それが FRR RIB か Linux FIB か ASIC FIB のどれかで切り分けが必要です。
+
+| 段 | 場所 | 確認方法 |
+| --- | --- | --- |
+| FRR RIB | bgpd / zebra の内部 | `vtysh -c "show ip bgp"` / `show ip route` |
+| FPM 通過後 | APPL_DB.ROUTE_TABLE | `sonic-db-cli APPL_DB keys 'ROUTE_TABLE:*'` |
+| ASIC_DB | syncd / SAI 入力 | `sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*'` |
+| Linux FIB | kernel | `ip route show` |
+
+特に **大量経路 + 障害収束** の場面では、「BGP は受け取ったが FPM が詰まって APPL_DB に来ていない」「APPL_DB には入ったが orchagent が SAI へ書き切れていない」のような中間状態が観測されます。
+
+## 大量経路 / 高速収束で押さえる機能
+
+DC 規模では **route scale が秒間数万 update** に達することがあり、収束時間を延ばす主な要因は FRR ↔ SONiC 境界です。SONiC 側で確認すべき機能は次のとおりです。
+
+- **BGP suppress-fib-pending**: ASIC FIB に入っていない経路の advertise を抑止し、ブラックホールを避ける（[詳細](../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md)）
+- **dplane_fpm_sonic plugin の合体送信**: FRR 側で複数 update をまとめて FPM に流す（[FRR-SONiC FPM channel](../../routing/new-frr-sonic-communication-channel.md)）
+- **next-hop group の共有**: 同一 nexthop を持つ経路の group 化で ASIC への書込み量を削減（[Multiple Nexthop Route](../../routing/multiple-nexthop-route-hld.md)）
+- **prefix-independent convergence (PIC)**: backup nexthop の事前 program による収束時間短縮（[PIC architecture](../../routing/bgp-prefix-independent-convergence-architecture-document.md)）
+
 ## 関連ページ
 
 - [BGP router-id を明示的に設定する](../../routing/bgp-router-id-explicitly-configured.md)
 - [FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [SONiC における FRR upgrade](../../routing/detailed-steps-to-upgrade-frr-in-sonic.md)
+- [BGP suppress-fib-pending](../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md)
+- [PIC architecture](../../routing/bgp-prefix-independent-convergence-architecture-document.md)
 
 <!-- xref-prereq -->
 ## この章の前提知識
