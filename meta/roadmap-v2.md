@@ -96,3 +96,45 @@ v1.0 時点で「ベンダー版 SONiC (NVIDIA / Edgecore / Cisco / AsterNOS 等
 1. このロードマップ自体を merge (本 PR)
 2. CLAUDE.md にバージョン状態を反映済み (v1.0 GA、次は v1.1 運用フェーズ着手)
 3. v1.1 着手の最初の 1 手は「Indexer v3 (週次 SHA 差分検出)」の設計メモ作成
+
+## 6. 現状進捗 (v1.0 GA 後の累積、2026-05-11 round 30 時点)
+
+v1.0 GA (2026-05-11、監査 9.79/10) 後に v1.1 着手前の品質固めとして iteration L〜AF を実施。本セクションはそのスナップショット。
+
+### 6.1 iteration L〜AF サマリ
+
+- **32 並列バッチ × 4-6 PR/iter = 約 150 追加 PR**、累積 **1078+ PR** に到達
+- 主要改善:
+  - `hld-only` 0 件達成（round 27 以降 5 round 連続で母集団から消失）
+  - **glossary 5500+ リンク注入**（NVGRE / VXLAN / VTEP / SAI / orchagent 等の用語が hover で説明される状態）
+  - **CDB / YANG / CLI mermaid 90%+ カバー**（Reference 系の自動生成パイプライン完成）
+  - **ops-hint (運用入口表) 100%**（HLD ページの末尾「運用入口表」が全 HLD 系で確認可能）
+  - Topics chapter-progress 表（22 章すべての chapter-index に進捗表を埋め込み、未完 split-child の可視化）
+  - style guide / site map / changelog の整備、frontmatter lint 強化、`check_link_density.py` 導入
+- **品質スコア推移**: round 12 (4.85) → round 27 (4.941) → round 29 (4.944) → round 30 (**4.944**) で **4.94+ で安定プラトー化**。母集団真値が **4.94 ± 0.005** の極狭帯域に 4 round 連続収束したことを round 30 で確認
+- 奇偶交互運用 (奇数 round = random / 偶数 round = stratified) を round 28 で確立し、round 29-30 で 2 周目完走
+
+### 6.2 残課題 (v1.1 本格着手前に処理する候補)
+
+| 項目 | 内容 | 規模 |
+|------|------|------|
+| Topics advanced 残数 | DASH / SmartSwitch HA / MCLAG / EVPN-VXLAN 等の advanced 章で chapter-progress 表に未完表示の split-child を集中執筆 | 10〜15 ページ |
+| 低密度ページ残数削減 | `related` 合計 ≤ 2 件のページを 30 件以下まで圧縮（現状 ~50 件） | M |
+| CLI mermaid 100% 化 | CLI Reference 70 ページ中 90% は mermaid 済み、残 7 ページを mermaid 補完か `_no_mermaid: true` opt-out で 100% に | S |
+| `_no_related_*` opt-out seed | `meta/index/cli-yang-mapping.json` を実投入、本質的に空が正解の Reference 15〜20 件に明示マーカー | S |
+| discrepancy `related.yang` 残 6 補完 | round 28 で informational 検出 9 件中 3 件補完済み、残 6 件を補完 + 2 件に `_no_yang` 明示 | M |
+| document i18n 検討 | v1.2 着手のための PoC（`mkdocs-static-i18n` 1 ページ移行試走） | S |
+
+これらが概ね処理されたタイミングで **v1.1 (運用フェーズ確立)** の Indexer v3 設計に正式着手する想定。
+
+### 6.3 監査履歴ハイライト
+
+| Round | 平均 | サンプリング | 備考 |
+|-------|------|------------|------|
+| 12 | 4.85 | random | early baseline |
+| 19 | 4.90 | random | glossary boost 前 |
+| 26 | 4.92 | random | partial-empty 一掃 |
+| 27 | 4.941 | **stratified 初投入** | サブセット軸別平均算出 |
+| 28 | 4.94 | random | 奇偶交互運用確立 |
+| 29 | 4.944 | stratified 2 周目 | scheme mature 確認 |
+| **30** | **4.944** | random 2 周目 | **母集団真値 4.94 ± 0.005 確定** |
