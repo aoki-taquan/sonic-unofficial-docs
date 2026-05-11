@@ -22,7 +22,7 @@ PRIORITY_ORDER = {"high": 0, "medium": 1, "low": 2}
 
 def load_entries() -> list[dict]:
     entries: list[dict] = []
-    for path in sorted(QUEUE_DIR.glob("*.json")):
+    for path in sorted(QUEUE_DIR.rglob("*.json")):
         with path.open(encoding="utf-8") as fh:
             try:
                 data = json.load(fh)

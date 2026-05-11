@@ -1,0 +1,16 @@
+{
+  "page": "docs/internals/l3-scaling-and-performance-enhancements.md",
+  "verification": "discrepancy-found",
+  "monitor": "partially_implemented",
+  "kind": "recheck",
+  "concerns": [
+    "fpmsyncd の bulk route 処理 / nexthop group 拡張が更に進化していないか sonic-swss/fpmsyncd を再 grep",
+    "sairedis の bulk API 使用率 (orchagent 側) が拡大していないかコミットログを確認",
+    "show arp / show ndp の Lua スクリプト経路が新 CLI として整備されていないか sonic-utilities を再確認",
+    "kernel ARP gc 関連の sysctl が rc.local / docker-database 起動スクリプトに追加されていないか"
+  ],
+  "verified_concerns": [],
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "notes": "再裏取り対象: discrepancy-index 由来。partially_implemented 状態のため、未取り込み要素が後追いで取り込まれていないか定期確認する。"
+}

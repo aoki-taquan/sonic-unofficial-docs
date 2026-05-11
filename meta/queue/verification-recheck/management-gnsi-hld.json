@@ -1,0 +1,16 @@
+{
+  "page": "docs/management/gnsi-hld.md",
+  "verification": "discrepancy-found",
+  "monitor": "evolved_beyond_hld",
+  "kind": "recheck",
+  "concerns": [
+    "sonic-gnmi の gNSI Certz / Authz / Pathz / Credentialz Rotate ハンドラ実装が更新され HLD と整合してきたか再 grep",
+    "gnmi-feature flag / docker-gnmi の gNSI 有効化スイッチが進化していないか確認",
+    "HLD 改訂日と sonic-gnmi の SHA (前回 verifier: eb635b76) を比較し差分があるか",
+    "upstream で OpenConfig gNSI proto の更新版が取り込まれていないか"
+  ],
+  "verified_concerns": [],
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "notes": "再裏取り対象: discrepancy-index 由来。sonic-gnmi は更新頻度が高いため、次回サイクルで Rotate モデルの差分を再確認する。"
+}

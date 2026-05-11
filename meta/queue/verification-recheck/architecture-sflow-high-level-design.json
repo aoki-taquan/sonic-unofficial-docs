@@ -1,0 +1,16 @@
+{
+  "page": "docs/architecture/sflow-high-level-design.md",
+  "verification": "discrepancy-found",
+  "monitor": "evolved_beyond_hld",
+  "kind": "recheck",
+  "concerns": [
+    "HLD 文書中の sample_rate 既定値テーブルが更新されて実装と一致したか sonic-swss/cfgmgr/sflowmgr.cpp の sampleRateTable を再確認",
+    "sflowmgrd が新たな速度クラス (例: 800G/1.6T) に対応していないか確認",
+    "CONFIG_DB SFLOW_SESSION / SFLOW_COLLECTOR スキーマと sonic-yang-models の整合性",
+    "HLD 改訂日 / upstream PR (sonic-swss sflow 関連) の進捗"
+  ],
+  "verified_concerns": [],
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "notes": "再裏取り対象: discrepancy-index 由来。実装側の sample_rate 既定値テーブルが時々追加更新されるため、次回サイクルで HLD と再突合する。"
+}

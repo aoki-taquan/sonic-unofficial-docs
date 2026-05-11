@@ -1,0 +1,16 @@
+{
+  "page": "docs/architecture/build-profiles.md",
+  "verification": "discrepancy-found",
+  "monitor": "not_implemented",
+  "kind": "recheck",
+  "concerns": [
+    "sonic-buildimage の rules/profiles/*.mk ディレクトリが新規に追加されていないか確認",
+    "Makefile.work / slave.mk に PROFILE / BUILD_PROFILE 系のスイッチが導入されていないか grep",
+    "HLD 改訂日が更新されておらず提案が陳腐化していないか (doc/build-profiles*)",
+    "upstream で本提案が WG レベルで議論再開されていないか (sonic-buildimage Issues / PR)"
+  ],
+  "verified_concerns": [],
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "notes": "再裏取り対象: discrepancy-index 由来。純粋未実装。次回サイクルで upstream 動向のみ追跡する。"
+}
