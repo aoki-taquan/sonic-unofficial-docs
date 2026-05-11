@@ -21,212 +21,169 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    現行 master の `sonic-swss/orchagent/switchorch.cpp:2094-2271` (`setFastLinkupCapability` / `setSwitchFastLinkup` / `doCfgSwitchFastLinkupTableTask`)、`portsorch.h:300` (`setPortFastLinkupEnabled`)、SAI 属性 `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]` / `..._GUARD_TIMEOUT[_RANGE]` / `..._BER_THRESHOLD`、`sonic-utilities/show/main.py:2933` および `config/main.py:5095` の `switch-fast-linkup` CLI 群を確認済み（verified at: 2026-05-09）。
+    `switchorch.cpp:2094-2271`（`setFastLinkupCapability` / `doCfgSwitchFastLinkupTableTask`）、`portsorch.h:300`（`setPortFastLinkupEnabled`）、SAI `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]` / `_GUARD_TIMEOUT[_RANGE]` / `_BER_THRESHOLD`、`sonic-utilities/show/main.py:2933` / `config/main.py:5095` の `switch-fast-linkup` CLI を確認済み (verified at: 2026-05-09)。
 
-# SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
+# SONiC Fast Link-Up
 
-## 概要
+## 読み手が知りたいこと
 
-100G 以上の高速イーサネット（特に PAM4）では、リンクトレーニング (Equalization, EQ) 自体に秒オーダーの時間がかかる。リンクフラップ後に **毎回フル EQ を走らせる** と、ピア側 ASIC ファームと協調するうえで数秒〜10 秒前後の停止になり、データプレーンの収束時間に効いてくる。Fast Link-Up は **「直前の良好な EQ パラメータが残っているなら、それを再利用して即座に Up を試みる」** 設計（Just-Do-Fast）で、回復シナリオに限定して動作する[^1]。
+- 何を解決する機能か（なぜ「再リンク時の EQ 再利用」が必要か）
+- 動くのは「初回リンク」か「フラップ後」か
+- どの 3 パラメータを設定すれば良いか、単位は何か
+- プラットフォーム未対応時はどうなる（拒否？ no-op？）
 
-主要要素は以下のとおり[^1]。
+## 解こうとしている問題
 
-1. **回復時のみ動作**: 初回リンクアップではフル EQ を行い、フラップ後の再起動でのみ高速経路を試みる。
-2. **品質ゲート**: 高速経路で UP した後、`guard_time` 経過時点で BER をチェックし、`ber_threshold` を超えていれば フル EQ にフォールバック。
-3. **3 つのグローバルパラメータ + ポート単位 enable/disable**: `polling_time` / `guard_time` / `ber_threshold` をスイッチ全体に。`fast_linkup` をポート毎に。
-4. **Capability ゲート**: 起動時に SAI から対応可否と許容レンジを問い合わせ、未対応のプラットフォームでは設定を拒否する（あるいは ports 側は **safe no-op**）。
+100G 以上の高速 Ethernet（特に PAM4）では link training (EQ) 自体が秒オーダーかかる。リンクフラップごとにフル EQ を回すと数秒〜10 秒の収束遅延になる。Fast Link-Up は **「直前の良好 EQ が残っているなら再利用して即 Up」** を試み、品質劣化なら **フル EQ にフォールバック** する設計[^1]。
 
-## 動作仕様
+要点 4 つ:
 
-### 全体経路
+1. **回復時のみ動作**: 初回はフル EQ、フラップ後の再起動でのみ高速経路を試行
+2. **品質ゲート**: `guard_time` で BER をチェック、`ber_threshold` 超過なら full EQ
+3. **3 グローバル + ポート毎 enable**: `polling_time` / `guard_time` / `ber_threshold` をスイッチ全体、`fast_linkup` をポート毎
+4. **Capability ゲート**: SAI から対応可否とレンジを問合せ、未対応は拒否 or safe no-op
+
+## 全体経路
 
 ```mermaid
 flowchart LR
-    SAI[SAI capability query\nSAI_SWITCH_ATTR_FAST_LINKUP_*] --> SO[switchorch\n(init)]
-    SO --> SDB[(STATE_DB\nSWITCH_CAPABILITY|switch)]
-    User1[config switch-fast-linkup global ...] --> CLI1[CLI 検証]
-    CLI1 --> CDB1[(CONFIG_DB\nSWITCH_FAST_LINKUP|GLOBAL)]
+    SAI[SAI capability query] --> SO[switchorch init]
+    SO --> SDB[(STATE_DB SWITCH_CAPABILITY)]
+    U1[config switch-fast-linkup global] --> CDB1[(CONFIG_DB SWITCH_FAST_LINKUP)]
     CDB1 --> SO
     SO -->|set switch attrs| SAI
-    User2[config interface fast-linkup ...] --> CDB2[(CONFIG_DB\nPORT|<intf>.fast_linkup)]
+    U2[config interface fast-linkup] --> CDB2[(CONFIG_DB PORT.fast_linkup)]
     CDB2 --> PO[portsorch]
     PO -->|SAI_PORT_ATTR_FAST_LINKUP_ENABLED| SAI
 ```
 
-### Capability discovery
+## どこで capability を確認するか
 
-`switchorch` の init 時に次を問い合わせる[^1]:
+`switchorch` init で次を問い合わせる[^1]:
 
-- `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIME` の create/set 可否で **対応可否** を判定
-- 任意の **レンジ** を `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIME_RANGE` / `_GUARD_TIME_RANGE` から取得
+- `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIME` の create/set 可否で **対応可否**
+- `_POLLING_TIME_RANGE` / `_GUARD_TIME_RANGE` で **許容レンジ**
 
-結果は `STATE_DB:SWITCH_CAPABILITY|switch` に下記キーで公開される[^1]:
+結果は `STATE_DB:SWITCH_CAPABILITY|switch` に公開[^1]:
 
-```text
-FAST_LINKUP_CAPABLE             = "true" / "false"
-FAST_LINKUP_POLLING_TIMER_RANGE = "<min>,<max>"  (任意)
-FAST_LINKUP_GUARD_TIMER_RANGE   = "<min>,<max>"  (任意)
+```
+FAST_LINKUP_CAPABLE             = "true"/"false"
+FAST_LINKUP_POLLING_TIMER_RANGE = "<min>,<max>"
+FAST_LINKUP_GUARD_TIMER_RANGE   = "<min>,<max>"
 ```
 
-CLI / OA はこれを参照して入力検証する。レンジ未公表のプラットフォームでは「対応はあるが範囲制約は非公開」として、CLI 側はレンジチェックをスキップし、OA も SAI のエラーで拒否する形になる。
+CLI / OA はこれを参照して入力検証する。レンジ未公表時は CLI 側のレンジチェックを skip し、SAI 側で拒否させる。
 
-### グローバルパラメータの設定経路
+## 3 つのパラメータ（単位とセマンティクス）
+
+| パラメータ | 単位 | 意味 |
+|---|---|---|
+| `polling_time` | 秒 | Fast Link-Up 試行最大時間。超えたら通常 Up に切替 |
+| `guard_time` | 秒 | Up 後この期間 BER を計測 |
+| `ber_threshold` | **負指数の絶対値** | `12` を入れると `1e-12` を許容上限。超過で full EQ にフォールバック |
+
+部分更新が許容され、未指定フィールドは保持される（partial update）[^1]。未対応プラットフォームでは NOTICE ログを出し SAI 呼出さず return（safe no-op）。
+
+## 動作モデル（recovery only）
+
+ASIC ファームウェアは **既に Up していて落ちた後の再起動** にのみ Fast Link-Up を試みる[^1]:
+
+1. リンクフラップ発生
+2. ASIC FW が前回 EQ を使い `polling_time` 秒以内に Up を試行
+3. 成功したら `guard_time` ガード開始、満了時に BER 計測
+4. BER > 閾値ならフル EQ にフォールバック
+5. `polling_time` 内に成功しなければ通常 Link-Up に戻る
+
+## ポート単位の経路
 
 ```mermaid
 sequenceDiagram
     participant U as user
-    participant CLI as CLI
-    participant SDB as STATE_DB
-    participant CDB as CONFIG_DB
-    participant SO as switchorch
-    participant SAI as SAI
-    U->>CLI: config switch-fast-linkup global --polling-time 60 --guard-time 10 --ber 12
-    CLI->>SDB: read SWITCH_CAPABILITY|switch
-    CLI->>CLI: validate (capability + range)
-    CLI->>CDB: write SWITCH_FAST_LINKUP|GLOBAL
-    CDB-->>SO: notify
-    SO->>SO: doCfgSwitchFastLinkupTableTask()
-    SO->>SO: validate (cached cap)
-    SO->>SAI: SET FAST_LINKUP_POLLING_TIME=60
-    SO->>SAI: SET FAST_LINKUP_GUARD_TIME=10
-    SO->>SAI: SET FAST_LINKUP_BER_THRESHOLD=12
-```
-
-部分更新が許容されており、未指定のフィールドはそのまま残る（partial update semantics）[^1]。未対応プラットフォームでは NOTICE ログを出して **SAI 呼び出しなしでリターン**（safe no-op）。
-
-### ポート単位の enable/disable
-
-```mermaid
-sequenceDiagram
-    participant U as user
-    participant CLI as CLI
-    participant CDB as CONFIG_DB
+    participant CLI
+    participant CDB
     participant PO as portsorch
-    participant SAI as SAI
+    participant SAI
     U->>CLI: config interface fast-linkup Ethernet0 enabled
     CLI->>CDB: PORT|Ethernet0.fast_linkup = true
     CDB-->>PO: notify
     alt SAI_PORT_ATTR_FAST_LINKUP_ENABLED supported
-        PO->>SAI: SET FAST_LINKUP_ENABLED=true on port
-    else not supported
+        PO->>SAI: SET on port
+    else
         PO->>PO: NOTICE log, no SAI call
     end
 ```
 
-`portsorch` 側でも `querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)` を init で打ち、`m_fastLinkupPortAttrSupported` にキャッシュ。CLI でのアラインメント（インタフェース別名解決）は CLI 側責務[^1]。
+`portsorch` init でも `querySwitchCapability(SAI_OBJECT_TYPE_PORT, SAI_PORT_ATTR_FAST_LINKUP_ENABLED)` を打ちキャッシュする[^1]。
 
-### 動作モデル（recovery only）
-
-ASIC ファームウェアの挙動として、**リンクが既に Up していて落ちた後の再起動** にのみ Fast Link-Up を試みる。フローは次のとおり[^1]:
-
-1. リンクフラップ発生。
-2. ASIC FW は前回の EQ を使って `polling_time` 秒以内に Up を試みる。
-3. 成功したら `guard_time` のガードタイマーを開始。満了時点で BER を計測。
-4. BER が `ber_threshold = 1e-<E>` を超えていたら **フル EQ にフォールバック**。
-5. `polling_time` 内に Fast Link-Up が成功しなければ通常の Link-Up シーケンスに戻る。
-
-### BER 閾値の表記
-
-`ber_threshold` は **負指数の絶対値** を入れる[^1]。例えば `12` を指定すると `1e-12` を許容上限とする。
-
-<!-- evidence:
-source: sonic-net/SONiC/doc/fast-linkup/fast-link-up-hld.md#L60-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  - polling_time (sec): max time to attempt fast link-up before falling back.
-  - guard_time (sec): period the link must remain UP with acceptable BER.
-  - ber_threshold (exponent): acceptable BER as 1e-<E> (e.g., 12 → 1e-12).
-reasoning: 3 つのパラメータの単位とセマンティクスの根拠。
--->
-
-### エラーハンドリング / ログ
-
-エラーは CLI 側 / OA 側の両方で多段にチェック。代表的な事象とログ重大度[^1]:
+## エラーハンドリング
 
 | 事象 | 主体 | 重大度 |
 |------|------|--------|
 | Capability query failed | switchorch | ERROR |
-| Global parameters applied (SAI) | switchorch | INFO |
-| Out-of-range global rejected | switchorch | NOTICE |
-| Unsupported operation on SWITCH_FAST_LINKUP | switchorch | ERROR |
-| Unknown field in SWITCH_FAST_LINKUP ignored | switchorch | WARN |
-| Per-port fast_linkup applied (SAI) | portsorch | INFO |
-| Per-port fast_linkup apply failed (SAI) | portsorch | ERROR |
-| Fast-linkup not supported (switch/port path) | both | NOTICE |
+| Global params applied | switchorch | INFO |
+| Out-of-range rejected | switchorch | NOTICE |
+| Unknown field ignored | switchorch | WARN |
+| Per-port apply failed | portsorch | ERROR |
+| Not supported (no-op) | both | NOTICE |
 
 ## 設定
 
-### 関連する CONFIG_DB
+### CONFIG_DB
 
 | Table | Key | フィールド | 説明 |
 |-------|-----|-----------|------|
-| `SWITCH_FAST_LINKUP` | `GLOBAL` | `polling_time` | 秒。Fast Link-Up 試行最大時間 |
-| | | `guard_time` | 秒。BER 評価までのガード期間 |
-| | | `ber_threshold` | 整数。負指数（例: `12` → `1e-12`）|
-| `PORT` | `<ifname>` | `fast_linkup` | `"true"` / `"false"`（既定 `"false"`）|
+| `SWITCH_FAST_LINKUP` | `GLOBAL` | `polling_time` / `guard_time` / `ber_threshold` | 秒 / 秒 / 負指数 |
+| `PORT` | `<ifname>` | `fast_linkup` | `"true"` / `"false"`（既定 false）|
 
-### 関連する STATE_DB
+### STATE_DB
 
-| Table | Key | フィールド | 説明 |
-|-------|-----|-----------|------|
-| `SWITCH_CAPABILITY` | `switch` | `FAST_LINKUP_CAPABLE` | `true` / `false` |
-| | | `FAST_LINKUP_POLLING_TIMER_RANGE` | `"<min>,<max>"`（任意） |
-| | | `FAST_LINKUP_GUARD_TIMER_RANGE` | `"<min>,<max>"`（任意） |
+| Table | Key | フィールド |
+|-------|-----|-----------|
+| `SWITCH_CAPABILITY` | `switch` | `FAST_LINKUP_CAPABLE`、`FAST_LINKUP_POLLING_TIMER_RANGE`、`FAST_LINKUP_GUARD_TIMER_RANGE` |
 
-### 関連する CLI
+### CLI
 
-| Command | 用途 |
-|---------|------|
-| `config switch-fast-linkup global [--polling-time <sec>] [--guard-time <sec>] [--ber <E>]` | グローバル設定 |
-| `config interface fast-linkup <ifname> {enabled\|disabled}` | ポート単位の有効化 |
-| `show switch-fast-linkup global [--json]` | 設定確認 |
-| `show interfaces fast-linkup status` | ポート単位状態 |
-
-### 関連する YANG
-
-`sonic-fast-linkup.yang` モジュール（`SWITCH_FAST_LINKUP.GLOBAL` のみ）[^1]:
-
-```yang
-container GLOBAL {
-    leaf polling_time  { type uint16; }
-    leaf guard_time    { type uint16; }
-    leaf ber_threshold { type uint8;  }
-}
+```
+config switch-fast-linkup global [--polling-time <sec>] [--guard-time <sec>] [--ber <E>]
+config interface fast-linkup <ifname> {enabled|disabled}
+show switch-fast-linkup global [--json]
+show interfaces fast-linkup status
 ```
 
-ポート側 `fast_linkup` は既存の `sonic-port.yang` に従う。動的レンジは YANG ではモデリングせず CLI 側で STATE_DB を参照して検証する設計[^1]。
+### YANG
+
+`sonic-fast-linkup.yang` モジュール（`SWITCH_FAST_LINKUP.GLOBAL` のみ）[^1]。ポート側 `fast_linkup` は `sonic-port.yang`。動的レンジは YANG ではモデリングせず CLI で STATE_DB を見て検証する[^1]。
 
 ### 設定例
 
 ```bash
-# capability 確認
-redis-cli -n 6 HGETALL 'SWITCH_CAPABILITY|switch'
-
-# グローバル設定
+redis-cli -n 6 HGETALL 'SWITCH_CAPABILITY|switch'   # capability 確認
 config switch-fast-linkup global --polling-time 60 --guard-time 10 --ber 12
-
-# ポート毎に有効化
 config interface fast-linkup Ethernet0 enabled
-
-# 確認
 show switch-fast-linkup global
 show interfaces fast-linkup status
 ```
 
 ## 干渉する機能
 
-- **Auto-FEC / Link Training (LT) / Auto-Negotiation**: フル EQ シーケンスのうち、FEC モードや LT 状態は EQ パラメータと密接に関連する。Fast Link-Up はパラメータ再利用のみが対象で、ピア設定が変わるシナリオでは再利用しても収束しない。
-- **Warm reboot / Fast reboot**: リンクが事前に Down → Up になる経路では「直前の EQ」が ASIC FW にどこまで残るかは ASIC 依存。HLD はその点まで踏み込んでいない。
-- **Capability 未公表のプラットフォーム**: `FAST_LINKUP_CAPABLE=false` の場合、グローバル設定は CLI で拒否され、ポート側は safe no-op になる。誤って `enabled` を入れたときに何が起きるかを事前に CLI で確認する。
-- **BER 計測精度**: `guard_time` 内の BER 計測精度は ASIC FW 依存。低トラフィック時は BER の信頼区間が広く、フォールバック判定が遅延する可能性。
+- **Auto-FEC / Link Training / Auto-Neg**: パラメータ再利用が前提のため、ピア側設定が変わるシナリオでは収束しない
+- **Warm / Fast reboot**: ASIC FW にどこまで前回 EQ が残るかは ASIC 依存
+- **Capability 未公表**: グローバル設定は CLI で拒否、ポート側は safe no-op
+- **BER 計測精度**: 低トラフィック時は信頼区間が広くフォールバック判定が遅延
 
 ## トラブルシューティング
 
-- 設定したのに反映されない: `STATE_DB SWITCH_CAPABILITY|switch.FAST_LINKUP_CAPABLE` を確認。`false` ならプラットフォーム未対応。
-- レンジ外で拒否される: `FAST_LINKUP_POLLING_TIMER_RANGE` / `FAST_LINKUP_GUARD_TIMER_RANGE` を `redis-cli -n 6` で確認し、許容範囲内に収める。
-- リンクフラップ後の収束が遅い: BER 閾値を厳しくしすぎている可能性。`ber_threshold` を緩めるとフォールバック頻度が下がる代わりに品質劣化リスクが上がる。
-- 一部ポートだけ Fast Link-Up が効かない: ポート側 `fast_linkup=true` になっていてもプラットフォーム / SAI 実装が未対応の可能性。`syslog` の `Fast-linkup not supported (switch/port path)` NOTICE を確認。
-- syslog に `Unknown field in SWITCH_FAST_LINKUP ignored` WARN: 古い CLI / 新しい OA、または逆の組み合わせでスキーマズレが発生している可能性。
+- 設定反映されない → `SWITCH_CAPABILITY.FAST_LINKUP_CAPABLE` を確認
+- レンジ外で拒否 → `*_TIMER_RANGE` を `redis-cli -n 6` で確認
+- フラップ後の収束が遅い → `ber_threshold` を緩めると fallback 頻度減（品質劣化リスクとトレードオフ）
+- 一部ポートだけ効かない → syslog の `Fast-linkup not supported (port path)` NOTICE を確認
+- syslog `Unknown field ignored` WARN → CLI / OA のスキーマズレ
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fast-linkup/fast-link-up-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+## 関連ページ
+
+- [Topic: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [Topic: L2 VLAN LAG](../topics/06-l2-vlan-lag/index.md)
