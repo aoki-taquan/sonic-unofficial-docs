@@ -1,0 +1,59 @@
+---
+title: show environment サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: show/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db: []
+  cli:
+    - show environment
+    - show platform temperature
+    - show platform fan
+    - show platform psu
+  yang: []
+---
+
+# show environment サブコマンド
+
+## 概要
+
+`show environment` は **電圧・ファン・温度センサ**の状態を `lm-sensors` 経由で表示する click コマンド。実装は `sudo sensors` を起動するだけの薄いラッパ[^1]。
+
+## シグネチャ
+
+```
+show environment [--verbose]
+```
+
+| オプション | 意味 |
+|---|---|
+| `--verbose` | 起動コマンド文字列を echo |
+
+## 実装
+
+```python
+@cli.command()
+@click.option('--verbose', is_flag=True, help="Enable verbose output")
+def environment(verbose):
+    """Show environmentals (voltages, fans, temps)"""
+    cmd = ['sudo', 'sensors']
+    run_command(cmd, display_cmd=verbose)
+```
+
+出力内容は `/etc/sensors3.conf` および platform 提供の `sensors.conf` に依存する。プラットフォームベンダが lm-sensors 用設定を持ち込まない（あるいは `pmon` コンテナ経由でしか温度を出さない）場合、`show environment` の出力は CPU 側の汎用センサ（`coretemp-isa-*` 等）だけになる。
+
+## 関連 / 代替
+
+SONiC では **platform_daemons (`pmon` コンテナ)** が `STATE_DB` の `TEMPERATURE_INFO` / `FAN_INFO` / `PSU_INFO` 等にスイッチハードウェア側のセンサ値を集約しており、そちらは `show platform temperature` / `show platform fan` / `show platform psu` から閲覧できる。lm-sensors 単独の出力に出ないスイッチ ASIC 温度や前面ファントレイ情報はこちらで取得すること。
+
+## CONFIG_DB との接点
+
+なし（`sensors(1)` 経由で `/sys/class/hwmon` を読むのみ）。
+
+## 引用元
+
+[^1]: `environment` コマンドの実装は `show/main.py` L1756-L1761。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1756>

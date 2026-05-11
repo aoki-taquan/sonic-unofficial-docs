@@ -1,0 +1,95 @@
+---
+title: config default-route（デフォルトルート設定パターン）
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db:
+    - STATIC_ROUTE
+    - MGMT_INTERFACE
+  cli:
+    - config route add
+    - config route del
+    - config mgmt-interface add
+  yang:
+    - sonic-static-route
+---
+
+# config default-route（デフォルトルート設定パターン）
+
+## 概要
+
+SONiC には `config default-route` という独立した click コマンドは **存在しない**。デフォルトルート（`0.0.0.0/0` / `::/0`）を設定する場合は、用途に応じて以下のいずれかを使う:
+
+| 目的 | 使うコマンド | 書き込み先 |
+|---|---|---|
+| データプレーン側のスタティックルート | `config route add prefix 0.0.0.0/0 nexthop <ip>` | CONFIG_DB `STATIC_ROUTE` |
+| 管理 NIC (`eth0`) の default gateway | `config mgmt-interface add` 系 + `MGMT_INTERFACE` の gwaddr | CONFIG_DB `MGMT_INTERFACE` |
+| BGP で受ける default route | FRR vtysh / `config bgp` 配下 | CONFIG_DB（一部）+ FRR config |
+
+本ページは前 2 つの「CLI で書き込めるデフォルトルート」のパターンを整理する。`config route` 全体の仕様は [config route サブコマンド（static route）](config-route.md) を参照。
+
+## パターン 1: スタティックなデフォルトルート
+
+`config route add` で `0.0.0.0/0` を prefix に指定する。実装は `config/main.py:add_route()`[^1] で、内部関数 `cli_sroute_to_config()` が CLI トークンを解析して `STATIC_ROUTE` テーブルのキーと value 辞書に展開する。
+
+```bash
+# IPv4 デフォルトルート
+sudo config route add prefix 0.0.0.0/0 nexthop 10.0.0.1
+
+# VRF 指定
+sudo config route add prefix vrf Vrf-Red 0.0.0.0/0 nexthop vrf Vrf-Blue 192.0.2.1
+
+# IPv6
+sudo config route add prefix ::/0 nexthop 2001:db8::1
+
+# 出力インタフェース指定（dev <iface>）
+sudo config route add prefix 0.0.0.0/0 nexthop dev Ethernet0
+
+# Blackhole (null route)
+sudo config route add prefix 0.0.0.0/0 nexthop dev null
+```
+
+最後の `dev null` 形式は内部で `'blackhole': 'true'` が `STATIC_ROUTE` に書き込まれる[^1]。
+
+書き込まれる CONFIG_DB エントリ例:
+
+```
+STATIC_ROUTE|0.0.0.0/0
+  nexthop:      10.0.0.1
+  nexthop-vrf:  ""
+  ifname:       ""
+  distance:     "0"
+  blackhole:    "false"
+```
+
+VRF 付きの場合のキーは `STATIC_ROUTE|Vrf-Red|0.0.0.0/0`。
+
+## パターン 2: 管理 NIC のデフォルトゲートウェイ
+
+eth0 (mgmt) のデフォルトゲートウェイは `MGMT_INTERFACE` テーブルの `gwaddr` フィールドで設定する。`config mgmt-interface` 系コマンドまたは `config_db.json` 直編集で扱う。
+
+```
+MGMT_INTERFACE|eth0|10.0.0.0/24
+  gwaddr: 10.0.0.1
+```
+
+このゲートウェイは管理 VRF（有効時）または default VRF の routing table に `default via 10.0.0.1 dev eth0` として注入される。**データプレーン側の default route と分離する**点に注意。
+
+## パターン 3: BGP 経由
+
+業務トラフィック向けのデフォルトルートは大抵 BGP で受ける。CLI 単独で設定する場合は `config bgp` 系（`config-bgp.md` 参照）または `vtysh` で `neighbor X default-originate` / `default-information originate` を使う。
+
+## STATIC_ROUTE の更新ロジック（補足）
+
+`config route add` が同じ prefix で複数回呼ばれた場合、`config/main.py` の `add_route()` は **既存エントリの値カラムに `,` 区切りで追記**する形で複数 nexthop を蓄積する仕様[^1]。デフォルトルートに複数 ECMP nexthop を載せたい場合は、その分だけコマンドを繰り返すか 1 度のコマンドで `nexthop 10.0.0.1 nexthop 10.0.0.2` の形で書く。
+
+削除は `config route del prefix 0.0.0.0/0 ...` で対象 nexthop を指定する。
+
+## 引用元
+
+[^1]: `config route add` の実装は `config/main.py` L7812-L7888。`blackhole` の自動付与は L7858-L7870。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7812>
