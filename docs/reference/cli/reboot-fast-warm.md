@@ -1,26 +1,29 @@
 ---
 title: reboot / fast-reboot / warm-reboot コマンド
-description: "reboot / fast-reboot / warm-reboot コマンド — SONiC の再起動コマンドは Click ベースではなく bash スクリプト として実装されており、sonic-utilities/scripts/ 配下に置かれる。本ページは以下の 3 系統を一括して扱う:"
+description: 'reboot / fast-reboot / warm-reboot コマンド — SONiC の再起動コマンドは Click ベースではなく
+  bash スクリプト として実装されており、sonic-utilities/scripts/ 配下に置かれる。本ページは以下の 3 系統を一括して扱う:'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: scripts/reboot
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: scripts/fast-reboot
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: scripts/warm-reboot
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/reboot
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/fast-reboot
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/warm-reboot
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - reboot
-    - fast-reboot
-    - warm-reboot
-  yang: []
+  - reboot
+  - fast-reboot
+  - warm-reboot
+  yang:
+  - sonic-warm-restart
+  - sonic-fast-linkup
 ---
 
 # reboot / fast-reboot / warm-reboot コマンド

@@ -1,24 +1,29 @@
 ---
 title: clear (sonic-clear) コマンド
-description: "clear (sonic-clear) コマンド — 実行ファイル名は sonic-clear だが click のエントリ名は cli（/usr/local/bin/sonic-clear 経由で呼ばれる）。"
+description: clear (sonic-clear) コマンド — 実行ファイル名は sonic-clear だが click のエントリ名は cli（/usr/local/bin/sonic-clear
+  経由で呼ばれる）。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: clear/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: clear/stp.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: clear/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: clear/stp.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - sonic-clear
-    - clear arp
-    - clear ndp
-    - clear counters
-  yang: []
+  - sonic-clear
+  - clear arp
+  - clear ndp
+  - clear counters
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-nat
+  - sonic-interface
 ---
 
 # clear (sonic-clear) コマンド

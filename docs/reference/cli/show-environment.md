@@ -1,21 +1,23 @@
 ---
 title: show environment サブコマンド
-description: "show environment サブコマンド — show environment は 電圧・ファン・温度センサの状態を lm-sensors 経由で表示する click コマンド。実装は sudo sensors を起動するだけの薄いラッパ。"
+description: show environment サブコマンド — show environment は 電圧・ファン・温度センサの状態を lm-sensors
+  経由で表示する click コマンド。実装は sudo sensors を起動するだけの薄いラッパ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show environment
-    - show platform temperature
-    - show platform fan
-    - show platform psu
-  yang: []
+  - show environment
+  - show platform temperature
+  - show platform fan
+  - show platform psu
+  yang:
+  - sonic-device_metadata
 ---
 
 # show environment サブコマンド

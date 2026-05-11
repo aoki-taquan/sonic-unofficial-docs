@@ -1,18 +1,22 @@
 ---
 title: show buffer サブコマンド
-description: "show buffer サブコマンド — show buffer は buffer 設定・状態の表示を mmuconfig に委譲する CLI グループ。"
+description: show buffer サブコマンド — show buffer は buffer 設定・状態の表示を mmuconfig に委譲する CLI
+  グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show buffer
-  yang: []
+  - show buffer
+  yang:
+  - sonic-buffer-pg
+  - sonic-buffer-queue
+  - sonic-buffer-profile
 ---
 
 # show buffer サブコマンド

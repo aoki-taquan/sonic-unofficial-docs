@@ -1,18 +1,21 @@
 ---
 title: show priority-group サブコマンド
-description: "show priority-group サブコマンド — show priority-group は priority group (PG) の watermark と drop counter を表示する CLI グループ。"
+description: show priority-group サブコマンド — show priority-group は priority group (PG)
+  の watermark と drop counter を表示する CLI グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show priority-group
-  yang: []
+  - show priority-group
+  yang:
+  - sonic-buffer-pg
+  - sonic-tc-priority-group-map
 ---
 
 # show priority-group サブコマンド

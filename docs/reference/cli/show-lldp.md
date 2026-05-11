@@ -1,18 +1,20 @@
 ---
 title: show lldp サブコマンド
-description: "show lldp サブコマンド — show lldp は LLDP (Link Layer Discovery Protocol) 隣接情報を表示するグループ。実体は lldpd プロセスが収集した隣接情報を、SONiC 同梱の lldpshow スクリプト経由でフォーマットして出力する薄いラッパである。"
+description: show lldp サブコマンド — show lldp は LLDP (Link Layer Discovery Protocol) 隣接情報を表示するグループ。実体は
+  lldpd プロセスが収集した隣接情報を、SONiC 同梱の lldpshow スクリプト経由でフォーマットして出力する薄いラッパである。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show lldp
-  yang: []
+  - show lldp
+  yang:
+  - sonic-lldp
 ---
 
 # show lldp サブコマンド

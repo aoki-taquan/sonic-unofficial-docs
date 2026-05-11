@@ -1,20 +1,22 @@
 ---
 title: show services サブコマンド
-description: "show services サブコマンド — show services は 稼働中の SONiC docker コンテナ全てに対して ps aux を一括実行して結果を結合表示するデバッグ用コマンド。各 docker サービスの中で動いているプロセスツリーをまとめて見られる。"
+description: show services サブコマンド — show services は 稼働中の SONiC docker コンテナ全てに対して ps
+  aux を一括実行して結果を結合表示するデバッグ用コマンド。各 docker サービスの中で動いているプロセスツリーをまとめて見られる。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show services
-    - show feature status
-    - show system-health
-  yang: []
+  - show services
+  - show feature status
+  - show system-health
+  yang:
+  - sonic-feature
 ---
 
 # show services サブコマンド

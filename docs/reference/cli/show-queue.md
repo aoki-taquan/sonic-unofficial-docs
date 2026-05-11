@@ -1,18 +1,22 @@
 ---
 title: show queue サブコマンド
-description: "show queue サブコマンド — show queue は queue counter、WRED counter、queue watermark を表示する CLI グループ。counter は queuestat / wredstat、watermark は watermarkstat へ委譲する。"
+description: show queue サブコマンド — show queue は queue counter、WRED counter、queue watermark
+  を表示する CLI グループ。counter は queuestat / wredstat、watermark は watermarkstat へ委譲する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show queue
-  yang: []
+  - show queue
+  yang:
+  - sonic-queue
+  - sonic-buffer-queue
+  - sonic-tc-queue-map
 ---
 
 # show queue サブコマンド

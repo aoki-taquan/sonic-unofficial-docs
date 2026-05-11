@@ -1,27 +1,29 @@
 ---
 title: config nat サブコマンド
-description: "config nat サブコマンド — config nat は SONiC の NAT44 (NAT / NAPT) 機能の CONFIG_DB を直接操作する CLI で、config/nat.py の @click.group('nat') がエントリポイントとなる。"
+description: config nat サブコマンド — config nat は SONiC の NAT44 (NAT / NAPT) 機能の CONFIG_DB
+  を直接操作する CLI で、config/nat.py の @click.group('nat') がエントリポイントとなる。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/nat.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/nat.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/nat.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/nat.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - STATIC_NAT
-    - STATIC_NAPT
-    - NAT_POOL
-    - NAT_BINDINGS
-    - NAT_GLOBAL
-    - NAT_ZONE
+  - STATIC_NAT
+  - STATIC_NAPT
+  - NAT_POOL
+  - NAT_BINDINGS
+  - NAT_GLOBAL
+  - NAT_ZONE
   cli:
-    - config nat
-  yang: []
+  - config nat
+  yang:
+  - sonic-nat
 ---
 
 # config nat サブコマンド

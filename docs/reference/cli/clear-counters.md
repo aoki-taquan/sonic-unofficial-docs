@@ -1,30 +1,36 @@
 ---
 title: clear counters サブコマンド群（詳細）
-description: "clear counters サブコマンド群（詳細） — sonic-clear（sonic-utilities の click グループ clear/main.py:cli）には カウンタ系のリセット用サブコマンドが多数定義されており、いずれも外部の C++/Python ユーティリティを -c または -C フラ…"
+description: clear counters サブコマンド群（詳細） — sonic-clear（sonic-utilities の click グループ
+  clear/main.py:cli）には カウンタ系のリセット用サブコマンドが多数定義されており、いずれも外部の C++/Python ユーティリティを -c
+  または -C フラ…
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: clear/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: scripts/portstat
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: clear/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/portstat
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - sonic-clear counters
-    - sonic-clear rifcounters
-    - sonic-clear queuecounters
-    - sonic-clear pfccounters
-    - sonic-clear dropcounters
-    - sonic-clear tunnelcounters
-    - sonic-clear srv6counters
-    - sonic-clear switchcounters
-    - sonic-clear fabriccountersqueue
-    - sonic-clear fabriccountersport
-  yang: []
+  - sonic-clear counters
+  - sonic-clear rifcounters
+  - sonic-clear queuecounters
+  - sonic-clear pfccounters
+  - sonic-clear dropcounters
+  - sonic-clear tunnelcounters
+  - sonic-clear srv6counters
+  - sonic-clear switchcounters
+  - sonic-clear fabriccountersqueue
+  - sonic-clear fabriccountersport
+  yang:
+  - sonic-port
+  - sonic-flex_counter
+  - sonic-queue
+  - sonic-pfcwd
 ---
 
 # clear counters サブコマンド群（詳細）

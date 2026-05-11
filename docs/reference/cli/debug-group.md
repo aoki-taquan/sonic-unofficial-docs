@@ -1,25 +1,27 @@
 ---
 title: debug / undebug コマンド群
-description: "debug / undebug コマンド群 — SONiC の debug および undebug コマンドは、config / show とは別の独立した Click root として実装される (debug = debug.main:cli、undebug = undebug.main:cli)。"
+description: debug / undebug コマンド群 — SONiC の debug および undebug コマンドは、config / show
+  とは別の独立した Click root として実装される (debug = debug.main:cli、undebug = undebug.main:cli)。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: debug/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: debug/stp.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: undebug/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: debug/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: debug/stp.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: undebug/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - debug
-    - undebug
-  yang: []
+  - debug
+  - undebug
+  yang:
+  - sonic-debug-counter
 ---
 
 # debug / undebug コマンド群

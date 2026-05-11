@@ -1,20 +1,22 @@
 ---
 title: show acl サブコマンド
-description: "show acl サブコマンド — show acl は ACL テーブルとルールの一覧表示専用サブグループ。実装は acl-loader show ... の薄いラッパで、CONFIG_DB の読み出しは acl-loader 側が行う。"
+description: show acl サブコマンド — show acl は ACL テーブルとルールの一覧表示専用サブグループ。実装は acl-loader
+  show ... の薄いラッパで、CONFIG_DB の読み出しは acl-loader 側が行う。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/acl.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/acl.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - ACL_TABLE
-    - ACL_RULE
+  - ACL_TABLE
+  - ACL_RULE
   cli:
-    - show acl
-  yang: []
+  - show acl
+  yang:
+  - sonic-routing-policy-sets
 ---
 
 # show acl サブコマンド

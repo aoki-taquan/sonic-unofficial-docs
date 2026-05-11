@@ -1,30 +1,35 @@
 ---
 title: show ip サブコマンド
-description: "show ip サブコマンド — show ip は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、BGP 関連表示を集約する。"
+description: show ip サブコマンド — show ip は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、BGP
+  関連表示を集約する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/bgp_frr_v4.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/bgp_common.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/bgp_frr_v4.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/bgp_common.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - INTERFACE
-    - VLAN_INTERFACE
-    - PORTCHANNEL_INTERFACE
-    - VLAN_SUB_INTERFACE
+  - INTERFACE
+  - VLAN_INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - VLAN_SUB_INTERFACE
   cli:
-    - show ip
-    - show ip route
-    - show ip bgp
-  yang: []
+  - show ip
+  - show ip route
+  - show ip bgp
+  yang:
+  - sonic-interface
+  - sonic-static-route
+  - sonic-route-common
+  - sonic-bgp-global
 ---
 
 # show ip サブコマンド

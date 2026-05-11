@@ -1,22 +1,26 @@
 ---
 title: config dhcp_relay / dhcpv4_relay サブコマンド
-description: "config dhcp_relay / dhcpv4_relay サブコマンド — config dhcp_relay および config dhcpv4_relay グループは、sonic-buildimage 側の docker-dhcp-relay コンテナの CLI plugin (cli/config/pl…"
+description: config dhcp_relay / dhcpv4_relay サブコマンド — config dhcp_relay および config
+  dhcpv4_relay グループは、sonic-buildimage 側の docker-dhcp-relay コンテナの CLI plugin (cli/config/pl…
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
-    - VLAN
-    - DHCP_RELAY
-    - DHCPV4_RELAY
+  - VLAN
+  - DHCP_RELAY
+  - DHCPV4_RELAY
   cli:
-    - config dhcp_relay
-    - config dhcpv4_relay
-  yang: []
+  - config dhcp_relay
+  - config dhcpv4_relay
+  yang:
+  - sonic-dhcpv4-relay
+  - sonic-dhcpv6-relay
+  - sonic-dhcp-server-ipv4
 ---
 
 # config dhcp_relay / dhcpv4_relay サブコマンド

@@ -1,19 +1,22 @@
 ---
 title: config kdump サブコマンド
-description: "config kdump サブコマンド — config kdump は Linux kdump (panic 時のクラッシュダンプ機構) を CONFIG_DB の KDUMP テーブル経由で制御する CLI で、config/kdump.py の @click.group(name='kdump') がエントリポ…"
+description: config kdump サブコマンド — config kdump は Linux kdump (panic 時のクラッシュダンプ機構)
+  を CONFIG_DB の KDUMP テーブル経由で制御する CLI で、config/kdump.py の @click.group(name='kdump')
+  がエントリポ…
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/kdump.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/kdump.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - KDUMP
+  - KDUMP
   cli:
-    - config kdump
-  yang: []
+  - config kdump
+  yang:
+  - sonic-kdump
 ---
 
 # config kdump サブコマンド

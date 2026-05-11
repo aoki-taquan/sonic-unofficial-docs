@@ -1,20 +1,22 @@
 ---
 title: show buffer_pool / headroom-pool サブコマンド
-description: "show buffer_pool / headroom-pool サブコマンド — show buffer_pool および show headroom-pool は QoS バッファプール / ヘッドルームプールの watermark 統計 を表示するためのコマンドグループ。"
+description: show buffer_pool / headroom-pool サブコマンド — show buffer_pool および show headroom-pool
+  は QoS バッファプール / ヘッドルームプールの watermark 統計 を表示するためのコマンドグループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - BUFFER_POOL
+  - BUFFER_POOL
   cli:
-    - show buffer_pool
-    - show headroom-pool
-  yang: []
+  - show buffer_pool
+  - show headroom-pool
+  yang:
+  - sonic-buffer-pool
 ---
 
 # show buffer_pool / headroom-pool サブコマンド

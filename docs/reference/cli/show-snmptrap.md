@@ -1,19 +1,21 @@
 ---
 title: show snmptrap サブコマンド
-description: "show snmptrap サブコマンド — show snmptrap は SNMP Trap 送信先サーバの設定を表示する CLI グループ。CONFIG_DB の SNMP_TRAP_CONFIG テーブルから登録された v1/v2/v3 Trap receiver を読み、整形して出力する。"
+description: show snmptrap サブコマンド — show snmptrap は SNMP Trap 送信先サーバの設定を表示する CLI グループ。CONFIG_DB
+  の SNMP_TRAP_CONFIG テーブルから登録された v1/v2/v3 Trap receiver を読み、整形して出力する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - SNMP_TRAP_CONFIG
+  - SNMP_TRAP_CONFIG
   cli:
-    - show snmptrap
-  yang: []
+  - show snmptrap
+  yang:
+  - sonic-snmp
 ---
 
 # show snmptrap サブコマンド

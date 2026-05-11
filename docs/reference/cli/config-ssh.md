@@ -1,19 +1,21 @@
 ---
 title: config ssh サブコマンド
-description: "config ssh サブコマンド — config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd 系の設定再生成パスを通じて行われる。"
+description: config ssh サブコマンド — config ssh は SSH デーモンの動作ポリシー（無操作タイムアウト、最大同時セッション数）を
+  CONFIG_DB の SSH_SERVER|POLICIES に書き込む CLI グループ。実 sshd への反映は hostcfgd 系の設定再生成パスを通じて行われる。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - SSH_SERVER
+  - SSH_SERVER
   cli:
-    - config ssh
-  yang: []
+  - config ssh
+  yang:
+  - sonic-ssh-server
 ---
 
 # config ssh サブコマンド

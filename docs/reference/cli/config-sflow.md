@@ -1,21 +1,23 @@
 ---
 title: config sflow サブコマンド
-description: "config sflow サブコマンド — config sflow は sFlow のグローバル制御（admin / polling-interval / sample-direction / agent-id）と、インターフェイス単位のサンプル設定、最大 2 件のコレクタ登録を扱う。"
+description: config sflow サブコマンド — config sflow は sFlow のグローバル制御（admin / polling-interval
+  / sample-direction / agent-id）と、インターフェイス単位のサンプル設定、最大 2 件のコレクタ登録を扱う。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - SFLOW
-    - SFLOW_SESSION
-    - SFLOW_COLLECTOR
+  - SFLOW
+  - SFLOW_SESSION
+  - SFLOW_COLLECTOR
   cli:
-    - config sflow
-  yang: []
+  - config sflow
+  yang:
+  - sonic-sflow
 ---
 
 # config sflow サブコマンド

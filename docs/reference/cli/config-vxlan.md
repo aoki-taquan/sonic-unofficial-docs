@@ -1,24 +1,27 @@
 ---
 title: config vxlan サブコマンド
-description: "config vxlan サブコマンド — config vxlan は VXLAN VTEP (VXLAN_TUNNEL)、EVPN NVO (VXLAN_EVPN_NVO)、および VLAN-VNI マッピング (VXLAN_TUNNEL_MAP) を管理する。"
+description: config vxlan サブコマンド — config vxlan は VXLAN VTEP (VXLAN_TUNNEL)、EVPN NVO
+  (VXLAN_EVPN_NVO)、および VLAN-VNI マッピング (VXLAN_TUNNEL_MAP) を管理する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/vxlan.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/vxlan.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - VXLAN_TUNNEL
-    - VXLAN_EVPN_NVO
-    - VXLAN_TUNNEL_MAP
-    - VLAN
-    - VNET
-    - VRF
+  - VXLAN_TUNNEL
+  - VXLAN_EVPN_NVO
+  - VXLAN_TUNNEL_MAP
+  - VLAN
+  - VNET
+  - VRF
   cli:
-    - config vxlan
-  yang: []
+  - config vxlan
+  yang:
+  - sonic-vxlan
+  - sonic-tunnel
 ---
 
 # config vxlan サブコマンド

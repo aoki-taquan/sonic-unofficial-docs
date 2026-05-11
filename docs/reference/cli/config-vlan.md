@@ -1,29 +1,30 @@
 ---
 title: config vlan サブコマンド
-description: "config vlan サブコマンド — config vlan は VLAN の作成・削除、メンバ追加・削除、Proxy-ARP のオン／オフを担当する。"
+description: config vlan サブコマンド — config vlan は VLAN の作成・削除、メンバ追加・削除、Proxy-ARP のオン／オフを担当する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/vlan.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/vlan.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - VLAN
-    - VLAN_MEMBER
-    - VLAN_INTERFACE
-    - DHCP_RELAY
-    - STP_VLAN
-    - STP_VLAN_PORT
-    - STP_PORT
+  - VLAN
+  - VLAN_MEMBER
+  - VLAN_INTERFACE
+  - DHCP_RELAY
+  - STP_VLAN
+  - STP_VLAN_PORT
+  - STP_PORT
   cli:
-    - config vlan
-    - config vlan member
-  yang: []
+  - config vlan
+  - config vlan member
+  yang:
+  - sonic-vlan
 ---
 
 # config vlan サブコマンド

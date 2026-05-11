@@ -1,21 +1,23 @@
 ---
 title: config warm_restart サブコマンド
-description: "config warm_restart サブコマンド — config warm_restart は warm restart の enable 状態と daemon timer を設定する CLI グループ。"
+description: config warm_restart サブコマンド — config warm_restart は warm restart の enable
+  状態と daemon timer を設定する CLI グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - WARM_RESTART
-    - FEATURE
+  - WARM_RESTART
+  - FEATURE
   cli:
-    - config warm_restart
-    - show warm_restart
-  yang: []
+  - config warm_restart
+  - show warm_restart
+  yang:
+  - sonic-warm-restart
 ---
 
 # config warm_restart サブコマンド

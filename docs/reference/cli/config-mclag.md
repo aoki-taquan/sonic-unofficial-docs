@@ -1,21 +1,24 @@
 ---
 title: config mclag サブコマンド
-description: "config mclag サブコマンド — config mclag は MCLAG (Multi-Chassis LAG) ドメイン・メンバ PortChannel・Vlan インタフェース単位の unique IP を CONFIG_DB に書き込む CLI で、config/mclag.py の @click.…"
+description: config mclag サブコマンド — config mclag は MCLAG (Multi-Chassis LAG) ドメイン・メンバ
+  PortChannel・Vlan インタフェース単位の unique IP を CONFIG_DB に書き込む CLI で、config/mclag.py の
+  @click.…
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/mclag.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/mclag.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - MCLAG_DOMAIN
-    - MCLAG_INTERFACE
-    - MCLAG_UNIQUE_IP
+  - MCLAG_DOMAIN
+  - MCLAG_INTERFACE
+  - MCLAG_UNIQUE_IP
   cli:
-    - config mclag
-  yang: []
+  - config mclag
+  yang:
+  - sonic-mclag
 ---
 
 # config mclag サブコマンド
