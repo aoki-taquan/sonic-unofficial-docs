@@ -11,6 +11,59 @@ verification: meta
     このドキュメントは有志による非公式ドキュメントです。SONiC プロジェクトおよび SONiC Foundation とは関係ありません。
     内容の正確性についてはベストエフォートで管理していますが、最新の正確な情報は [公式リポジトリ](https://github.com/sonic-net/SONiC) を参照してください。
 
+!!! success "最新の品質状態"
+    - **code-verified ページ**: 545 件（HLD と実コードを照合済み）
+    - **discrepancy-found ページ**: 48 件（HLD と実装の乖離を明示）
+    - **監査平均評価**: 4.97 / 5.0（quality-audit 系レポート）
+    - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
+
+## 初めての方はここから
+
+目的別に「最初に開くべきページ」をまとめました。読み進める順番に並んでいます。
+
+<div class="grid cards" markdown>
+
+-   :material-book-open-variant: __概念を知りたい__
+
+    ---
+
+    SONiC のアーキテクチャ、CONFIG_DB / APPL_DB の流れ、各機能の設計思想を理解したい方向け。
+
+    - [SONiC 全体像 (01-overview/concept)](topics/01-overview/concept.md)
+    - [アーキテクチャ (01-overview/architecture)](topics/01-overview/architecture.md)
+    - [BGP の概念 (02-bgp/concept)](topics/02-bgp/concept.md)
+    - [VXLAN/EVPN の概念 (03-vxlan-evpn/concept)](topics/03-vxlan-evpn/concept.md)
+    - [読み手別ガイド (developer)](guides/developer.md)
+
+-   :material-cog: __設定したい__
+
+    ---
+
+    実機・VS で SONiC を設定・運用する方向け。`setup.md` 系と CLI リファレンスを横並びに引きます。
+
+    - [01-overview の設定](topics/01-overview/configuration.md)
+    - [BGP セットアップ (02-bgp/setup)](topics/02-bgp/setup.md)
+    - [VXLAN/EVPN セットアップ](topics/03-vxlan-evpn/setup.md)
+    - [L2 VLAN/LAG セットアップ](topics/06-l2-vlan-lag/setup.md)
+    - [CLI リファレンス](reference/cli/index.md)
+    - [CONFIG_DB リファレンス](reference/config-db/index.md)
+    - [評価者向けガイド](guides/evaluator.md)
+
+-   :material-tools: __障害切り分けたい__
+
+    ---
+
+    現場で「動かない」を解くための Runbook 集。30 件以上の典型障害シナリオを症状起点で整理。
+
+    - [Runbook 一覧 (reference/runbooks)](reference/runbooks/index.md)
+    - [BGP セッションが上がらない](reference/runbooks/bgp-session-down.md)
+    - [EVPN Type-2 が広告されない](reference/runbooks/evpn-type2-not-advertised.md)
+    - [Dual-ToR MUX 不整合](reference/runbooks/dualtor-mux.md)
+    - [warm-reboot 失敗](reference/runbooks/warm-reboot-failure.md)
+    - [運用者向けガイド](guides/operator.md)
+
+</div>
+
 ## 読み手別の入口
 
 目的に応じて、既存ページを読む順番をまとめたガイドです。
@@ -34,11 +87,29 @@ SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベ�
 
 - 公式 HLD の翻訳ではなく、**再構成**された解説
 - HLD・実コード・issue を横断して引用し、各ページの末尾に出典を明示
-- 各ページに裏取りステータス（HLD-only / Issue-confirmed / Code-verified）を付与
+- 各ページに裏取りステータス（HLD-only / Issue-confirmed / Code-verified / Discrepancy-found）を付与
+
+## 検索のヒント
+
+本サイトは [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) の全文検索を備えています。
+
+- 画面右上の検索ボックス（または `/` キー）から横断検索ができます
+- 単語をスペース区切りで複数入れると AND 検索になります（例: `bgp graceful`）
+- 日本語キーワードと英語キーワードの両方が効きます（例: `バッファ pool`、`route-map`）
+- ヒット結果はページ内見出しまで降りるので、長いリファレンスでも目的のセクションへ直接飛べます
+- CLI コマンド名・CONFIG_DB テーブル名・YANG モジュール名は原則として原文表記で索引化しています
+
+## 更新サイクル
+
+- **追従対象**: SONiC コミュニティ版 `master` ブランチのみ。ベンダー版・リリースブランチは対象外
+- **裏取り**: 主要ページは `meta/index/repos.json` に記録した SHA に対して `.cache/sonic-sources/` の実コードと照合
+- **頻度**: 不定期。新規 HLD・大型 PR をトリガに `meta/backlog/` を更新し、Writer → Reviewer → Verifier のパイプラインで反映
+- **乖離検出**: 実装が HLD と食い違う箇所は `verification: discrepancy-found` として明示し、[実装との乖離](_meta/discrepancies.md) で一覧化
 
 ## 目次
 
 - [読み手別ガイド](guides/index.md)
+- [トピック](topics/index.md)
 - [アーキテクチャ](architecture/index.md)
 - [ルーティング](routing/index.md)
 - [スイッチング](switching/index.md)
