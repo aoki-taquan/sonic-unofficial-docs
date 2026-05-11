@@ -109,6 +109,11 @@ jobs:
       - name: Report stale-verified pages (informational)
         run: python3 meta/scripts/check_stale_verified.py --check
 
+      - name: Check docs/_meta/sitemap.md drift (informational)
+        run: |
+          pip install PyYAML
+          python3 meta/scripts/gen_sitemap.py --check || true
+
   topics-back-ref:
     runs-on: ubuntu-latest
     steps:
