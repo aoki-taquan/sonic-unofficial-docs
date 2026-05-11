@@ -35,64 +35,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/architecture/debug-framework-in-sonic.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "HLD v0.3 (2019-07) は master 未取り込み。Debugframework クラス / linkWithFramework / SWSS_DEBUG_PRINT は sonic-swss-common に存在せず",
-        "natorch.cpp の gDebugDumpOrch / addDbgCompMap は #ifdef DEBUG_FRAMEWORK 内の dead code（マクロ未定義）",
-        "show debug / show interfaces pktdrop CLI は sonic-utilities/show/ に未実装",
-        "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
-      ],
-      "verified_concerns": [
-        "verifier-batch-18: sonic-swss-common, sonic-swss/orchagent/natorch.cpp:40-42,138-142, sonic-utilities/show/ を確認"
-      ],
-      "priority": "high"
-    },
-    {
-      "page": "docs/architecture/error-handling-framework-in-sonic.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "HLD v0.1 (2019-05) Initial Proposal の大部分は master 未取り込み",
-        "ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE は sonic-swss-common にも sonic-swss にも未登録",
-        "ErrorListener / ErrorReporter クラスは sonic-swss / sonic-swss-common に未定義",
-        "show error-database / sonic-clear error-database CLI は sonic-utilities に未実装",
-        "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
-      ],
-      "verified_concerns": [
-        "verifier-batch-18: SWSS_RC_* enum のみ sonic-swss-common/common/status_code_util.h で実装確認、その他は未取り込み"
-      ],
-      "priority": "high"
-    },
-    {
-      "page": "docs/architecture/sag-high-level-design-for-sonic.md",
-      "issue": 332,
-      "verification": "discrepancy-found",
-      "concerns": [
-        "HLD v0.3 (2021-10) で承認済みだが community master sonic-buildimage HEAD 9ea932e には src/sonic-sag が無く、sonic-yang-models にも sonic-static-anycast-gateway.yang が存在しない。SAI / IntfsOrch 統合も未取り込み"
-      ],
-      "verified_concerns": [
-        "HLD path doc/sag/sag-HLD.md は SONiC HEAD 380509d でも存在し、ページ記述と整合",
-        "IntfMgr / IntfsOrch / sonic-utilities CLI / sonic-yang-models のいずれにも SAG 関連シンボルが master に取り込まれていないことを 2026-05-09 に確認"
-      ],
-      "priority": "high"
-    },
-    {
-      "page": "docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md",
-      "verification": "discrepancy-found",
-      "verified_concerns": [
-        "DASH_HA_SET_CONFIG_TABLE / DASH_HA_SET_TABLE / DASH_HA_SCOPE_CONFIG_TABLE / DASH_HA_SCOPE_TABLE は sonic-swss-common schema.h で APP_DB に取り込み済 (verifier-batch-19)",
-        "DASH_HA_GLOBAL_CONFIG は CFG_DB に、DASH_HA_SET_STATE_TABLE / DASH_HA_SCOPE_STATE_TABLE は STATE_DB に取り込み済 (verifier-batch-19)"
-      ],
-      "concerns": [
-        "hamgrd binary は sonic-swss / sonic-buildimage 共に未存在 (mock_tests コメント言及のみ)。sonic-dash 等別 repo の取り込み確認要",
-        "swbus ローカルメッセージバスの実装は本リポ群で未確認。別 repo / vendor 側を要追跡",
-        "DASH_HA_DPU_STATE / DASH_HA_VDPU_STATE / VDPU_TABLE の schema 定義が swss-common に未取り込み",
-        "Switch-Driven mode は HLD で TBD のままで実装 entry-point 未確認",
-        "vDPU 抽象 (1:1 vs N:1) の運用は HA Set/Scope のみ先行で VDPU は未実装"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/internals/dump-utility-for-easy-debugging.md",
       "verification": "code-verified",
       "concerns": [],
@@ -144,41 +86,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/management/gnmi-master-arbitration-hld.md",
-      "issue": 201,
-      "verification": "discrepancy-found",
-      "verified_concerns": [
-        "sonic-gnmi/gnmi_server/server.go:1310-1351 で ReqFromMasterEnabledMA が実装済み（extension 走査・末尾 MA 採用・128-bit EID 比較・PermissionDenied 返却）を確認",
-        "sonic-gnmi/telemetry/telemetry.go:62,188,587-588 で --with-master-arbitration フラグから ReqFromMaster をスイッチする実装を確認",
-        "sonic-gnmi/gnmi_server/server.go:1070 で Set 内の認証前 MA チェック（ReqFromMaster 呼び出し）を確認"
-      ],
-      "concerns": [
-        "Role.id 取扱いの乖離: HLD は default role 以外を無視と記載するが、実装は ma.Role != nil で codes.Unimplemented を返して拒否する (sonic-gnmi/gnmi_server/server.go:1329-1331)",
-        "TELEMETRY|gnmi:master_arbitration_enabled の CONFIG_DB スキーマは sonic-gnmi / sonic-buildimage いずれにも存在せず、有効化は --with-master-arbitration フラグのみ"
-      ],
-      "priority": "high"
-    },
-    {
-      "page": "docs/management/gnsi-hld.md",
-      "issue": 211,
-      "pr": 212,
-      "verification": "discrepancy-found",
-      "verified_concerns": [
-        "Authz handler は sonic-gnmi/gnmi_server/gnsi_authz.go:36 GNSIAuthzServer + Probe/Get/Rotate (43,46,66) で実装",
-        "Certz handler は sonic-gnmi/gnmi_server/gnsi_certz.go の GNSICertzServer で実装",
-        "Pathz handler は sonic-gnmi/gnmi_server/gnsi_pathz.go の GNSIPathzServer で実装",
-        "console_mgmt host service モジュールは sonic-host-services/host_modules/gnsi_console.py (MOD_NAME='gnsi_console') として実装",
-        "ssh_mgmt host service モジュールは sonic-host-services/host_modules/ssh_mgmt.py (MOD_NAME='ssh_mgmt') として実装",
-        "Authz/Pathz/Certz 関連 config は sonic-gnmi/gnmi_server/server.go:236-245 に AuthzPolicy / AuthzPolicyFile / PathzPolicy / PathzPolicyFile / CertCRLConfig / CertzMetaFile として実装"
-      ],
-      "concerns": [
-        "Credentialz の gNMI server 側 handler (gnsi_credentialz.go 相当) は存在せず、dbus client (sonic_service_client/dbus_client.go:53-) のみ実装",
-        "gNMI server flag 名は HLD の EnableAuthzPolicy / EnablePathzPolicy ではなく AuthzPolicy / PathzPolicy として実装 (server.go:240,243)",
-        "STATE_DB gNSI profile state テーブルは sonic-swss-common/common/schema.h に見当たらず、profile 状態はファイル/メモリで保持されている可能性"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/management/ipv4-port-based-dhcp-server-in-sonic.md",
       "verification": "code-verified",
       "concerns": [],
@@ -214,21 +121,6 @@
         "本 HLD は 2021 年版で 5 年経過。priority=high で queue 登録 -> 現行実装で骨子保持を確認 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/management/p4rt-application-hld.md",
-      "issue": 244,
-      "verification": "discrepancy-found",
-      "verified_concerns": [
-        "p4rt-app Docker コンテナは sonic-buildimage/dockers/docker-sonic-p4rt/ (Dockerfile.j2, supervisord.conf, start.sh, p4rt.sh) として存在",
-        "P4Orch 実装は sonic-swss/orchagent/p4orch/p4orch.h:46 で class P4Orch : public ZmqOrch として確認",
-        "APP_P4RT_TABLE_NAME / APP_P4RT_TABLES_DEFINITION_TABLE_NAME は sonic-swss-common/common/schema.h:59,60 に定義",
-        "APPL_STATE_DB は sonic-swss-common/common/schema.h:27 で DB ID 14 として定義済み"
-      ],
-      "concerns": [
-        "HashOrch は独立コンポーネントとして実装されておらず、ハッシュ属性は SwitchOrch + CFG_SWITCH_HASH_TABLE_NAME (switchorch.cpp:1507, orchdaemon.cpp:199, switch_helper.cpp:24-) が扱う"
-      ],
-      "priority": "high"
     },
     {
       "page": "docs/management/sonic-gnmi-server-interface-design.md",
@@ -294,20 +186,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/platform/smartswitch-dpu-graceful-shutdown.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "gnoi_reboot_daemon.py は sonic-platform-daemons に未取り込み（HLD と乖離）。chassisd が直接 module.set_admin_state_gracefully を呼ぶ構成",
-        "STATE_DB は HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress ではなく CHASSIS_MODULE_TABLE / transition_in_progress と別フラグ gnoi_halt_in_progress の 2 系統で実装",
-        "DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路は本リポ群に未確認"
-      ],
-      "verified_concerns": [
-        "module_base.py の set_admin_state_gracefully (L429) / _graceful_shutdown_handler (L588) 実装は確認済み",
-        "chassisd の submit_dpu_callback / set_initial_dpu_admin_state で gnoi_halt_in_progress / set_admin_state_gracefully を呼ぶ経路を確認"
-      ],
-      "priority": "high"
-    },
-    {
       "page": "docs/platform/sonic-fast-link-up.md",
       "issue": 41,
       "verification": "code-verified",
@@ -371,38 +249,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/routing/evpn-vxlan-hld.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "VxlanOrch / VxlanTunnelOrch / VxlanMapOrch / EvpnRouteOrch の現行実装存在確認",
-        "CONFIG_DB VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / EVPN_NVO スキーマの現行 sonic-yang-models 取り込み確認",
-        "FRR BGP-EVPN（bgpd / zebra）と SONiC 連携（fpmsyncd / FRR template）の現行実装確認",
-        "show evpn / show vxlan CLI の sonic-utilities 取り込み確認",
-        "Type-5 + VRF + L3 VNI の installation path（SAI VRF + tunnel decap オブジェクト）確認",
-        "EVPN VxLAN multihoming HLD（ESI / DF election / Type-1 / Type-4）との実装上の境界確認"
-      ],
-      "priority": "high",
-      "verified_concerns": [
-        "CONFIG_DB NVO テーブル名は VXLAN_EVPN_NVO（実装・yang） で、ページ冒頭の EVPN_NVO は略記である旨を本文の Verifier 注記で明示済み。VxlanOrch / sonic-vxlan.yang / show vxlan / show evpn の存在は確認済み。"
-      ]
-    },
-    {
-      "page": "docs/routing/evpn-vxlan-multihoming.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "VxlanOrch / EvpnOrch の MH 拡張（ESI / DF / Type-1/Type-4 ハンドリング）の現行実装存在確認",
-        "CONFIG_DB EVPN_ETHERNET_SEGMENT スキーマと sonic-yang-models 取り込み確認",
-        "FRR EVPN-MH（bgpd / zebra）の SONiC ビルド取り込み version と機能カバレッジ確認",
-        "SAI ESI label / split-horizon サポート（SAI_TUNNEL / SAI_TUNNEL_TERM 拡張属性）の community SAI 取り込み確認",
-        "show evpn ethernet-segment / config evpn ethernet-segment CLI の sonic-utilities 取り込み確認",
-        "DF election hold timer / mobility extended community の現行既定値と挙動確認"
-      ],
-      "priority": "high",
-      "verified_concerns": [
-        "現行 master に EVPN_ETHERNET_SEGMENT yang / EthernetSegment orch / config evpn ethernet-segment CLI が未取り込みであることを確認。HLD は提案レベル。"
-      ]
-    },
-    {
       "page": "docs/routing/high-level-design-document.md",
       "verification": "code-verified",
       "concerns": [],
@@ -419,22 +265,6 @@
         "Phase 2 (warm restart / CONFIG_DB knob / Nexthop Group OA 化) の実装ステータス確認 -> Phase 1 capability + nh group type 切替は確認、CONFIG_DB knob は明示無し (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/routing/local-ars-hld.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "SAI ARS 拡張 API（SAI_OBJECT_TYPE_ARS / SAI_ARS_ATTR_*）の community SAI 取り込み確認",
-        "ARSOrch（または NextHopOrch / NextHopGroupOrch 拡張）の現行実装存在確認",
-        "CONFIG_DB ARS / ARS_PROFILE / ARS_INTERFACE スキーマの現行 sonic-yang-models 取り込み確認",
-        "config ars / show ars CLI の sonic-utilities 取り込み確認",
-        "対応 ASIC platform リスト（特に AI cluster 向け NPU）の現行確認",
-        "inner packet hashing / policy-based hashing / fine-grained ECMP / weighted ECMP との同居挙動確認"
-      ],
-      "priority": "high",
-      "verified_concerns": [
-        "SAI ARS API は community SAI に取り込み済み（sonic-sairedis/unittest/meta/TestMeta.cpp で参照）。一方 sonic-swss / sonic-yang-models / sonic-utilities への ArsOrch / ARS yang / ars CLI 取り込みは未確認。HLD は提案段階。"
-      ]
     },
     {
       "page": "docs/routing/sonic-management-vrf-design-document-201911-release.md",
@@ -467,24 +297,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/switching/layer-2-forwarding-enhancements.md",
-      "verification": "discrepancy-found",
-      "verified_concerns": [
-        "FdbOrch の per-port / per-VLAN / per-(port,VLAN) flush API は flushFDBEntries(bridge_port_oid, vlan_oid) として fdborch.cpp:985,1006,1038,1090,1217 に実装",
-        "saved FDB（port が VLAN 未メンバの間 static を保留 / 復活）は saved_fdb_entries map として fdborch.cpp:459,1254-1316,1754 に実装",
-        "MAC move event は SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE と mac_move フラグで fdborch.cpp:91-138 に実装",
-        "SWITCH_TABLE.fdb_aging_time → SAI_SWITCH_ATTR_FDB_AGING_TIME 反映は switchorch.cpp:49,664,1674-1686 に実装"
-      ],
-      "concerns": [
-        "config mac (aging_time / add / del) CLI は sonic-utilities/config/main.py に存在せず、HLD どおりの取り込みは未完了",
-        "config vlan range / config vlan member range CLI も sonic-utilities に存在しない",
-        "show mac aging-time のみ sonic-utilities/show/main.py:1244 に実装あり"
-      ],
-      "priority": "high",
-      "issue": 177,
-      "pr": 178
-    },
-    {
       "page": "docs/switching/sonic-sai-post-support-for-macsec.md",
       "issue": 103,
       "verification": "code-verified",
@@ -499,30 +311,6 @@
         "/proc/cmdline sonic_fips=1 と /etc/fips/fips_enable 検査ロジック → build_image.sh:214 で sonic_fips=1、build_debian.sh:691-692 で /etc/fips/fips_enable 初期化 (verified 2026-05-09)"
       ],
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/system/sonic-libsairedis-api-idempotence-support.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "本 HLD 提案 (RESTORE_DB / ATTR2OID_* / OID2ATTR_* / DEFAULT_* キープレフィックス) は現行 sonic-sairedis master に未取り込み (Verifier 2026-05-09 grep で 0 件)",
-        "g_objectOwner / UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_ も sonic-swss/orchagent/ に存在しない",
-        "代替として syncd 側 view comparison (sonic-sairedis/syncd/ComparisonLogic.{cpp,h} と Syncd.cpp::applyView) が現行 master の warm restart 経路を担う"
-      ],
-      "priority": "high",
-      "issue": 524,
-      "pr": 525,
-      "verified_concerns": [
-        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認",
-        "Verifier 2026-05-09: 提案キー/プレフィックスが現行 sairedis master に未取り込みで、syncd ComparisonLogic 側が代替実装となっていることを実コードで確認"
-      ]
-    },
-    {
-      "page": "docs/system/warmboot-manager-hld.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "提案 HLD (Rev 0.1, 2023-09)。master には warmboot-finalizer のみ存在し、Warmboot Manager daemon 本体・STATE_DB Component states・freeze プロトコル取り込みなし"
-      ],
-      "priority": "high"
     },
     {
       "page": "docs/system/what-are-the-development-phases-and-scope-for-warm-reboot.md",
@@ -639,23 +427,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/acl-qos/dhcp-dos-mitigation-in-sonic.md",
-      "issue": 23,
-      "verification": "discrepancy-found",
-      "concerns": [
-        "portmgrd の tc qdisc/filter 投入実装が sonic-swss/cfgmgr に未取り込み (grep ヒット 0)",
-        "CoPP のシステム全体 DHCP 制限が削除されておらず、copp_cfg.j2 の dhcp_relay (trap_ids=dhcp,dhcpv6) が残存",
-        "ドロップ監視デーモンの実装も未取り込み"
-      ],
-      "verified_concerns": [
-        "db_migrator が既存ポートに dhcp_rate_limit=300 を挿入するか -> sonic-utilities/scripts/db_migrator.py L514-524 migrate_config_db_port_table_for_dhcp_rate_limit / L1142 呼び出しを確認 (verified 2026-05-09)",
-        "PORT.dhcp_rate_limit YANG / CLI 取り込み -> sonic-yang-models/yang-models/sonic-port.yang L106、sonic-utilities/config/main.py L5948-6002 の interface dhcp-mitigation-rate 系 CLI、utilities_common/cli.py L846 の処理を確認 (verified 2026-05-09)"
-      ],
-      "priority": "medium",
-      "last_verified": "2026-05-09",
-      "notes": "データ層 (YANG / CLI / db_migrator) は取り込み済みだが、ホットパスとなる portmgr の tc qdisc / filter 投入と CoPP 削除が現行 master に未取り込みで、HLD が想定するエンドツーエンドの mitigation は機能しない可能性が高い。"
-    },
-    {
       "page": "docs/acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md",
       "issue": 284,
       "verification": "code-verified",
@@ -697,23 +468,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md",
-      "issue": 277,
-      "verification": "discrepancy-found",
-      "concerns": [
-        "sonic-swss #2022 (port buffer cfg per-port reference counter) は CLOSED で未マージ。HLD の delete ガード防御は現行 master に存在しない",
-        "buffermgrd の加入時 race（APP_DB に port 存在チェック）の現行取り込み状況は未検証",
-        "zero-port SKU (hwsku.json / platform.json / SAI profile) の現行サンプル存在確認は未検証"
-      ],
-      "verified_concerns": [
-        "sonic-swss #1808 (portsyncd zero-port) は MERGED 確認 (2021-07)",
-        "sonic-swss #2019 (per-port flex counter 動的 add/del) は MERGED 確認 (2022-04)",
-        "sonic-buildimage/dockers/docker-lldp/lldpmgrd:129-130 で netdev_oper_status チェック",
-        "lldpmgrd:46-198 で pending_cmds 管理ロジック確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/acl-qos/pfc-historical-statistics.md",
@@ -850,20 +604,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/architecture/sflow-high-level-design.md",
-      "verification": "discrepancy-found",
-      "concerns": [],
-      "verified_concerns": [
-        "sflowmgrd: sonic-swss/cfgmgr/sflowmgrd.cpp + sflowmgr.cpp (CFG_SFLOW_TABLE / CFG_SFLOW_SESSION_TABLE / STATE_PORT_TABLE 監視) で確認",
-        "SflowOrch SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE: sonic-swss/orchagent/sfloworch.cpp:120,164,227 で確認",
-        "CONFIG_DB SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR スキーマ: sonic-yang-models sonic-sflow.yang 取り込み済み",
-        "config sflow CLI: sonic-utilities/config/main.py に取り込み済み",
-        "sflow.service.j2: sonic-buildimage/files/build_templates/sflow.service.j2 取り込み済み",
-        "discrepancy: 既定 sample_rate 表が HLD (ifSpeed/1e6) と乖離。本ページを (1G→1000, 10G→10000, 40G→40000, 50G→50000, 100G→100000, 400G→400000) に訂正"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/architecture/sonic-generic-hash.md",
       "issue": 333,
       "verification": "code-verified",
@@ -919,23 +659,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/internals/l3-scaling-and-performance-enhancements.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "sysctl 90-sonic.conf の gc_thresh は 1024/2048/4096 で HLD 提案 (16000/32000/48000) と乖離。スケール目標 IPv4 ARP 32k には届かない",
-        "CoPP ARP は queue4_group2 cir/cbs=600 で HLD 提案 8000 pps と乖離",
-        "sonic-sairedis 内 nlohmann/json バージョン取り込み確認は未検証",
-        "show arp / show ndp の個別 FDB lookup 化最適化は未検証"
-      ],
-      "verified_concerns": [
-        "RouteOrch の bulk route API (gRouteBulker) を sonic-swss/orchagent/routeorch.cpp:41,626-1116 で確認",
-        "fpmsyncd の rt_table=0 master lookup スキップを sonic-swss/fpmsyncd/routesync.cpp:2077-2082 で確認"
-      ],
-      "priority": "medium",
-      "issue": 197,
-      "pr": 198
     },
     {
       "page": "docs/internals/sonic-counter-initialization-optimization.md",
@@ -1232,14 +955,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/management/sonic-console-switch.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "consutil CLI (sonic-utilities/consutil/main.py) と CONSOLE_PORT 単体テーブル（minigraph 経由）は master 取り込み済みだが、HLD が前提とする consoled デーモン本体・CONSOLE_SWITCH トップレベルテーブル・reverse SSH 集約のための remote_device mapping ロジックは sonic-buildimage / sonic-host-services のいずれにも検出できない。HLD 1.1 の中核（switch hub としての port-based / IP-based forwarding と consoled）は未実装"
-      ],
-      "priority": "medium"
-    },
-    {
       "page": "docs/management/sonic-tacacs-improvement.md",
       "verification": "code-verified",
       "concerns": [],
@@ -1403,16 +1118,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/platform/enhanced-lpo-debug-registers-hld.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "CmisEnhancedLpoApi / CmisEnhancedLpoCodes / CmisEnhancedLpoMemMap および xcvr_api_factory.py の Arista enhanced LPO vendor 分岐は sonic-platform-common HEAD で grep 検出できず、Page 01h Byte 195 = 0x4C ベースの enhanced LPO 検出ロジックも未取り込み。HLD は提案段階で master 反映なし"
-      ],
-      "priority": "medium",
-      "issue": 530,
-      "pr": 531
-    },
-    {
       "page": "docs/platform/fec-flr-support-in-sonic.md",
       "issue": 219,
       "pr": 220,
@@ -1430,22 +1135,6 @@
       "priority": "medium",
       "last_verified": "2026-05-09",
       "notes": "FEC FLR 計算/RATES 書き込み/portstat 表示は完全に取り込み済み。HLD §New CLI の counterpoll port flr-interval-factor サブコマンドが現行 master 未取り込み のため discrepancy-found。"
-    },
-    {
-      "page": "docs/platform/hld-for-handling-sai-failures.md",
-      "issue": 259,
-      "verification": "discrepancy-found",
-      "concerns": [
-        "HLD の `Orch` 基底クラス virtual 関数案は不採用。現行 master は saihelper.h の free function (handleSaiCreateStatus/SetStatus/RemoveStatus/GetStatus) として実装",
-        "HLD の ERROR_DB（ERROR_APPL_*_TABLE）は sonic-swss / sonic-swss-common とも未実装。fpmsyncd 等への失敗エスカレーション経路は存在しない",
-        "warm reboot pre-check の ERROR_DB チェックは ERROR_DB 自体が無いため未実装",
-        "HLD の SAI API 別 / Orch 別 / その他 status 別の対応表 TODO の進捗追跡は要継続"
-      ],
-      "verified_concerns": [
-        "saihelper.h:19-22 で 4 関数の free function 宣言を確認",
-        "vrforch / copporch / dtelorch / macsecorch / sfloworch / natorch / dash 配下等で利用箇所 28 程度を確認"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/platform/recirculation-port-support-on-voq-chassis.md",
@@ -1594,14 +1283,6 @@
       ],
       "priority": "medium",
       "last_verified": "2026-05-09"
-    },
-    {
-      "page": "docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドリング (sonic-swss fpmsyncd/routesync.cpp) と NhgOrch (sonic-swss orchagent/nhgorch.cpp) は master 取り込み済みだが、HLD が前提とする有効化キーが実装と一致しない: HLD / 本文は DEVICE_METADATA.localhost.fpm_use_nexthop_groups を要求するが、現行 sonic-buildimage の sonic-yang-models/yang-models/sonic-device_metadata.yang と dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2 は DEVICE_METADATA.localhost.nexthop_group = enabled で zebra に fpm use-next-hop-groups を出す方式 (別途 zebra_nexthop で zebra nexthop kernel enable も制御)。本文の CONFIG_DB スニペットを実装 key 名 (nexthop_group / zebra_nexthop) に合わせる修正が必要"
-      ],
-      "priority": "medium"
     },
     {
       "page": "docs/routing/multiple-nexthop-route-hld.md",
@@ -2005,16 +1686,6 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/reset-local-users-passwords-during-init-hld.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "HLD は提案段階。reset-local-users-passwords.service / LocalUsersConfigurationResetBase / config local-users-passwords-reset CLI / sonic-local-users-passwords-reset.yang / ENABLE_LOCAL_USERS_PASSWORDS_RESET フラグのいずれも master に検出できない"
-      ],
-      "priority": "medium",
-      "issue": 519,
-      "pr": 520
-    },
-    {
       "page": "docs/system/snmp-migration-from-snmp-yml-to-configdb.md",
       "issue": 317,
       "verification": "code-verified",
@@ -2064,22 +1735,6 @@
       "notes": "実装名の差異 (FIPS_STATS / fips_enable) を本文 admonition に記載。次回 Writer ローテーションで本文も実装名に揃える検討。"
     },
     {
-      "page": "docs/system/sonic-network-time-protocol-ntp-client-configuration.md",
-      "verification": "discrepancy-found",
-      "concerns": [
-        "現行 master の NTP daemon（ntpd vs chrony）の選定状況の確認",
-        "hostcfgd の NTP config rendering 経路（jinja テンプレート / ntp.conf or chrony.conf）の現行実装確認",
-        "CONFIG_DB NTP / NTP_SERVER / NTP_KEY スキーマと sonic-yang-models 取り込み確認",
-        "config ntp / show ntp CLI の sonic-utilities 取り込み確認",
-        "mgmt VRF と data VRF 経路の同時利用が現行実装でどう扱われているか確認",
-        "chrony 移行 HLD と本 HLD の重複・置換関係の現行整理状況確認"
-      ],
-      "priority": "medium",
-      "verified_concerns": [
-        "現行 master では chrony が採用済み（sonic-buildimage/files/image_config/chrony/）。HLD は ntpd 時代の歴史的設計。yang sonic-ntp.yang は現行も保持。"
-      ]
-    },
-    {
       "page": "docs/system/sonic-python-logger-enhancement.md",
       "issue": 133,
       "verification": "discrepancy-found",
@@ -2127,12 +1782,41 @@
       "last_verified": "2026-05-09"
     },
     {
-      "page": "docs/system/twamp-light-hld.md",
+      "page": "docs/acl-qos/dhcp-dos-mitigation-in-sonic.md",
+      "issue": 23,
       "verification": "discrepancy-found",
       "concerns": [
-        "twamporch.cpp と SAI_TWAMP_SESSION_ATTR_* / NotificationTwampSessionEvent は master 取り込み済みだが、sonic-yang-models に sonic-twamp-light.yang・sonic-utilities に config/show twamp-light CLI は未取り込み（部分実装）"
+        "portmgrd の tc qdisc/filter 投入実装が sonic-swss/cfgmgr に未取り込み (grep ヒット 0)",
+        "CoPP のシステム全体 DHCP 制限が削除されておらず、copp_cfg.j2 の dhcp_relay (trap_ids=dhcp,dhcpv6) が残存",
+        "ドロップ監視デーモンの実装も未取り込み"
       ],
-      "priority": "medium"
+      "verified_concerns": [
+        "db_migrator が既存ポートに dhcp_rate_limit=300 を挿入するか -> sonic-utilities/scripts/db_migrator.py L514-524 migrate_config_db_port_table_for_dhcp_rate_limit / L1142 呼び出しを確認 (verified 2026-05-09)",
+        "PORT.dhcp_rate_limit YANG / CLI 取り込み -> sonic-yang-models/yang-models/sonic-port.yang L106、sonic-utilities/config/main.py L5948-6002 の interface dhcp-mitigation-rate 系 CLI、utilities_common/cli.py L846 の処理を確認 (verified 2026-05-09)",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11",
+      "notes": "データ層 (YANG / CLI / db_migrator) は取り込み済みだが、ホットパスとなる portmgr の tc qdisc / filter 投入と CoPP 削除が現行 master に未取り込みで、HLD が想定するエンドツーエンドの mitigation は機能しない可能性が高い。"
+    },
+    {
+      "page": "docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md",
+      "issue": 277,
+      "verification": "discrepancy-found",
+      "concerns": [
+        "sonic-swss #2022 (port buffer cfg per-port reference counter) は CLOSED で未マージ。HLD の delete ガード防御は現行 master に存在しない",
+        "buffermgrd の加入時 race（APP_DB に port 存在チェック）の現行取り込み状況は未検証",
+        "zero-port SKU (hwsku.json / platform.json / SAI profile) の現行サンプル存在確認は未検証"
+      ],
+      "verified_concerns": [
+        "sonic-swss #1808 (portsyncd zero-port) は MERGED 確認 (2021-07)",
+        "sonic-swss #2019 (per-port flex counter 動的 add/del) は MERGED 確認 (2022-04)",
+        "sonic-buildimage/dockers/docker-lldp/lldpmgrd:129-130 で netdev_oper_status チェック",
+        "lldpmgrd:46-198 で pending_cmds 管理ロジック確認",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
     },
     {
       "page": "docs/architecture/build-profiles.md",
@@ -2164,6 +1848,22 @@
       "notes": "再裏取り対象: discrepancy-index 由来。純粋未実装。次回サイクルで upstream 動向のみ追跡する。"
     },
     {
+      "page": "docs/architecture/debug-framework-in-sonic.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "HLD v0.3 (2019-07) は master 未取り込み。Debugframework クラス / linkWithFramework / SWSS_DEBUG_PRINT は sonic-swss-common に存在せず",
+        "natorch.cpp の gDebugDumpOrch / addDbgCompMap は #ifdef DEBUG_FRAMEWORK 内の dead code（マクロ未定義）",
+        "show debug / show interfaces pktdrop CLI は sonic-utilities/show/ に未実装",
+        "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
+      ],
+      "verified_concerns": [
+        "verifier-batch-18: sonic-swss-common, sonic-swss/orchagent/natorch.cpp:40-42,138-142, sonic-utilities/show/ を確認",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
+    },
+    {
       "page": "docs/architecture/dip-sip-ptf-validation-high-level-design.md",
       "issue": 63,
       "verification": "discrepancy-found",
@@ -2177,6 +1877,38 @@
         "ansible/roles/test/vars/testcases.yml は実在 (size 11721)"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/architecture/error-handling-framework-in-sonic.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "HLD v0.1 (2019-05) Initial Proposal の大部分は master 未取り込み",
+        "ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE は sonic-swss-common にも sonic-swss にも未登録",
+        "ErrorListener / ErrorReporter クラスは sonic-swss / sonic-swss-common に未定義",
+        "show error-database / sonic-clear error-database CLI は sonic-utilities に未実装",
+        "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
+      ],
+      "verified_concerns": [
+        "verifier-batch-18: SWSS_RC_* enum のみ sonic-swss-common/common/status_code_util.h で実装確認、その他は未取り込み",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
+    },
+    {
+      "page": "docs/architecture/sag-high-level-design-for-sonic.md",
+      "issue": 332,
+      "verification": "discrepancy-found",
+      "concerns": [
+        "HLD v0.3 (2021-10) で承認済みだが community master sonic-buildimage HEAD 9ea932e には src/sonic-sag が無く、sonic-yang-models にも sonic-static-anycast-gateway.yang が存在しない。SAI / IntfsOrch 統合も未取り込み"
+      ],
+      "verified_concerns": [
+        "HLD path doc/sag/sag-HLD.md は SONiC HEAD 380509d でも存在し、ページ記述と整合",
+        "IntfMgr / IntfsOrch / sonic-utilities CLI / sonic-yang-models のいずれにも SAG 関連シンボルが master に取り込まれていないことを 2026-05-09 に確認",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
     },
     {
       "page": "docs/architecture/sag-high-level-design-for-sonic.md",
@@ -2197,6 +1929,22 @@
     {
       "page": "docs/architecture/sflow-high-level-design.md",
       "verification": "discrepancy-found",
+      "concerns": [],
+      "verified_concerns": [
+        "sflowmgrd: sonic-swss/cfgmgr/sflowmgrd.cpp + sflowmgr.cpp (CFG_SFLOW_TABLE / CFG_SFLOW_SESSION_TABLE / STATE_PORT_TABLE 監視) で確認",
+        "SflowOrch SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE: sonic-swss/orchagent/sfloworch.cpp:120,164,227 で確認",
+        "CONFIG_DB SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR スキーマ: sonic-yang-models sonic-sflow.yang 取り込み済み",
+        "config sflow CLI: sonic-utilities/config/main.py に取り込み済み",
+        "sflow.service.j2: sonic-buildimage/files/build_templates/sflow.service.j2 取り込み済み",
+        "discrepancy: 既定 sample_rate 表が HLD (ifSpeed/1e6) と乖離。本ページを (1G→1000, 10G→10000, 40G→40000, 50G→50000, 100G→100000, 400G→400000) に訂正",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
+    },
+    {
+      "page": "docs/architecture/sflow-high-level-design.md",
+      "verification": "discrepancy-found",
       "monitor": "evolved_beyond_hld",
       "kind": "recheck",
       "concerns": [
@@ -2209,6 +1957,24 @@
       "priority": "low",
       "last_verified": "2026-05-11",
       "notes": "再裏取り対象: discrepancy-index 由来。実装側の sample_rate 既定値テーブルが時々追加更新されるため、次回サイクルで HLD と再突合する。"
+    },
+    {
+      "page": "docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md",
+      "verification": "discrepancy-found",
+      "verified_concerns": [
+        "DASH_HA_SET_CONFIG_TABLE / DASH_HA_SET_TABLE / DASH_HA_SCOPE_CONFIG_TABLE / DASH_HA_SCOPE_TABLE は sonic-swss-common schema.h で APP_DB に取り込み済 (verifier-batch-19)",
+        "DASH_HA_GLOBAL_CONFIG は CFG_DB に、DASH_HA_SET_STATE_TABLE / DASH_HA_SCOPE_STATE_TABLE は STATE_DB に取り込み済 (verifier-batch-19)",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "concerns": [
+        "hamgrd binary は sonic-swss / sonic-buildimage 共に未存在 (mock_tests コメント言及のみ)。sonic-dash 等別 repo の取り込み確認要",
+        "swbus ローカルメッセージバスの実装は本リポ群で未確認。別 repo / vendor 側を要追跡",
+        "DASH_HA_DPU_STATE / DASH_HA_VDPU_STATE / VDPU_TABLE の schema 定義が swss-common に未取り込み",
+        "Switch-Driven mode は HLD で TBD のままで実装 entry-point 未確認",
+        "vDPU 抽象 (1:1 vs N:1) の運用は HA Set/Scope のみ先行で VDPU は未実装"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
     },
     {
       "page": "docs/architecture/ssdhealth-design.md",
@@ -2228,6 +1994,25 @@
     {
       "page": "docs/internals/l3-scaling-and-performance-enhancements.md",
       "verification": "discrepancy-found",
+      "concerns": [
+        "sysctl 90-sonic.conf の gc_thresh は 1024/2048/4096 で HLD 提案 (16000/32000/48000) と乖離。スケール目標 IPv4 ARP 32k には届かない",
+        "CoPP ARP は queue4_group2 cir/cbs=600 で HLD 提案 8000 pps と乖離",
+        "sonic-sairedis 内 nlohmann/json バージョン取り込み確認は未検証",
+        "show arp / show ndp の個別 FDB lookup 化最適化は未検証"
+      ],
+      "verified_concerns": [
+        "RouteOrch の bulk route API (gRouteBulker) を sonic-swss/orchagent/routeorch.cpp:41,626-1116 で確認",
+        "fpmsyncd の rt_table=0 master lookup スキップを sonic-swss/fpmsyncd/routesync.cpp:2077-2082 で確認",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "issue": 197,
+      "pr": 198,
+      "last_verified": "2026-05-11"
+    },
+    {
+      "page": "docs/internals/l3-scaling-and-performance-enhancements.md",
+      "verification": "discrepancy-found",
       "monitor": "partially_implemented",
       "kind": "recheck",
       "concerns": [
@@ -2240,6 +2025,45 @@
       "priority": "low",
       "last_verified": "2026-05-11",
       "notes": "再裏取り対象: discrepancy-index 由来。partially_implemented 状態のため、未取り込み要素が後追いで取り込まれていないか定期確認する。"
+    },
+    {
+      "page": "docs/management/gnmi-master-arbitration-hld.md",
+      "issue": 201,
+      "verification": "discrepancy-found",
+      "verified_concerns": [
+        "sonic-gnmi/gnmi_server/server.go:1310-1351 で ReqFromMasterEnabledMA が実装済み（extension 走査・末尾 MA 採用・128-bit EID 比較・PermissionDenied 返却）を確認",
+        "sonic-gnmi/telemetry/telemetry.go:62,188,587-588 で --with-master-arbitration フラグから ReqFromMaster をスイッチする実装を確認",
+        "sonic-gnmi/gnmi_server/server.go:1070 で Set 内の認証前 MA チェック（ReqFromMaster 呼び出し）を確認",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "concerns": [
+        "Role.id 取扱いの乖離: HLD は default role 以外を無視と記載するが、実装は ma.Role != nil で codes.Unimplemented を返して拒否する (sonic-gnmi/gnmi_server/server.go:1329-1331)",
+        "TELEMETRY|gnmi:master_arbitration_enabled の CONFIG_DB スキーマは sonic-gnmi / sonic-buildimage いずれにも存在せず、有効化は --with-master-arbitration フラグのみ"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
+    },
+    {
+      "page": "docs/management/gnsi-hld.md",
+      "issue": 211,
+      "pr": 212,
+      "verification": "discrepancy-found",
+      "verified_concerns": [
+        "Authz handler は sonic-gnmi/gnmi_server/gnsi_authz.go:36 GNSIAuthzServer + Probe/Get/Rotate (43,46,66) で実装",
+        "Certz handler は sonic-gnmi/gnmi_server/gnsi_certz.go の GNSICertzServer で実装",
+        "Pathz handler は sonic-gnmi/gnmi_server/gnsi_pathz.go の GNSIPathzServer で実装",
+        "console_mgmt host service モジュールは sonic-host-services/host_modules/gnsi_console.py (MOD_NAME='gnsi_console') として実装",
+        "ssh_mgmt host service モジュールは sonic-host-services/host_modules/ssh_mgmt.py (MOD_NAME='ssh_mgmt') として実装",
+        "Authz/Pathz/Certz 関連 config は sonic-gnmi/gnmi_server/server.go:236-245 に AuthzPolicy / AuthzPolicyFile / PathzPolicy / PathzPolicyFile / CertCRLConfig / CertzMetaFile として実装",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "concerns": [
+        "Credentialz の gNMI server 側 handler (gnsi_credentialz.go 相当) は存在せず、dbus client (sonic_service_client/dbus_client.go:53-) のみ実装",
+        "gNMI server flag 名は HLD の EnableAuthzPolicy / EnablePathzPolicy ではなく AuthzPolicy / PathzPolicy として実装 (server.go:240,243)",
+        "STATE_DB gNSI profile state テーブルは sonic-swss-common/common/schema.h に見当たらず、profile 状態はファイル/メモリで保持されている可能性"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
     },
     {
       "page": "docs/management/gnsi-hld.md",
@@ -2258,6 +2082,23 @@
       "notes": "再裏取り対象: discrepancy-index 由来。sonic-gnmi は更新頻度が高いため、次回サイクルで Rotate モデルの差分を再確認する。"
     },
     {
+      "page": "docs/management/p4rt-application-hld.md",
+      "issue": 244,
+      "verification": "discrepancy-found",
+      "verified_concerns": [
+        "p4rt-app Docker コンテナは sonic-buildimage/dockers/docker-sonic-p4rt/ (Dockerfile.j2, supervisord.conf, start.sh, p4rt.sh) として存在",
+        "P4Orch 実装は sonic-swss/orchagent/p4orch/p4orch.h:46 で class P4Orch : public ZmqOrch として確認",
+        "APP_P4RT_TABLE_NAME / APP_P4RT_TABLES_DEFINITION_TABLE_NAME は sonic-swss-common/common/schema.h:59,60 に定義",
+        "APPL_STATE_DB は sonic-swss-common/common/schema.h:27 で DB ID 14 として定義済み",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "concerns": [
+        "HashOrch は独立コンポーネントとして実装されておらず、ハッシュ属性は SwitchOrch + CFG_SWITCH_HASH_TABLE_NAME (switchorch.cpp:1507, orchdaemon.cpp:199, switch_helper.cpp:24-) が扱う"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
+    },
+    {
       "page": "docs/management/portable-console-device-design.md",
       "issue": 328,
       "verification": "discrepancy-found",
@@ -2270,6 +2111,18 @@
         "CONSOLE_SWITCH テーブル自体は sonic-yang-models/yang-models/sonic-console.yang と sonic-utilities/config/console.py で取り込み済み（escape_char 等を含む別 HLD 経由）"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/management/sonic-console-switch.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "consutil CLI (sonic-utilities/consutil/main.py) と CONSOLE_PORT 単体テーブル（minigraph 経由）は master 取り込み済みだが、HLD が前提とする consoled デーモン本体・CONSOLE_SWITCH トップレベルテーブル・reverse SSH 集約のための remote_device mapping ロジックは sonic-buildimage / sonic-host-services のいずれにも検出できない。HLD 1.1 の中核（switch hub としての port-based / IP-based forwarding と consoled）は未実装"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11",
+      "verified_concerns": [
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ]
     },
     {
       "page": "docs/management/sonic-yang-model-guidelines.md",
@@ -2290,6 +2143,38 @@
       "pr": 480
     },
     {
+      "page": "docs/platform/enhanced-lpo-debug-registers-hld.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "CmisEnhancedLpoApi / CmisEnhancedLpoCodes / CmisEnhancedLpoMemMap および xcvr_api_factory.py の Arista enhanced LPO vendor 分岐は sonic-platform-common HEAD で grep 検出できず、Page 01h Byte 195 = 0x4C ベースの enhanced LPO 検出ロジックも未取り込み。HLD は提案段階で master 反映なし"
+      ],
+      "priority": "low",
+      "issue": 530,
+      "pr": 531,
+      "last_verified": "2026-05-11",
+      "verified_concerns": [
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ]
+    },
+    {
+      "page": "docs/platform/hld-for-handling-sai-failures.md",
+      "issue": 259,
+      "verification": "discrepancy-found",
+      "concerns": [
+        "HLD の `Orch` 基底クラス virtual 関数案は不採用。現行 master は saihelper.h の free function (handleSaiCreateStatus/SetStatus/RemoveStatus/GetStatus) として実装",
+        "HLD の ERROR_DB（ERROR_APPL_*_TABLE）は sonic-swss / sonic-swss-common とも未実装。fpmsyncd 等への失敗エスカレーション経路は存在しない",
+        "warm reboot pre-check の ERROR_DB チェックは ERROR_DB 自体が無いため未実装",
+        "HLD の SAI API 別 / Orch 別 / その他 status 別の対応表 TODO の進捗追跡は要継続"
+      ],
+      "verified_concerns": [
+        "saihelper.h:19-22 で 4 関数の free function 宣言を確認",
+        "vrforch / copporch / dtelorch / macsecorch / sfloworch / natorch / dash 配下等で利用箇所 28 程度を確認",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
+    },
+    {
       "page": "docs/platform/liquid-cooling-leakage-detection-in-sonic.md",
       "issue": 256,
       "verification": "discrepancy-found",
@@ -2303,6 +2188,22 @@
         "ベンダー実装として mlnx-platform-api/sonic_platform/liquid_cooling.py が存在"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/platform/smartswitch-dpu-graceful-shutdown.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "gnoi_reboot_daemon.py は sonic-platform-daemons に未取り込み（HLD と乖離）。chassisd が直接 module.set_admin_state_gracefully を呼ぶ構成",
+        "STATE_DB は HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress ではなく CHASSIS_MODULE_TABLE / transition_in_progress と別フラグ gnoi_halt_in_progress の 2 系統で実装",
+        "DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路は本リポ群に未確認"
+      ],
+      "verified_concerns": [
+        "module_base.py の set_admin_state_gracefully (L429) / _graceful_shutdown_handler (L588) 実装は確認済み",
+        "chassisd の submit_dpu_callback / set_initial_dpu_admin_state で gnoi_halt_in_progress / set_admin_state_gracefully を呼ぶ経路を確認",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11"
     },
     {
       "page": "docs/platform/sonic-port-naming-convention-change.md",
@@ -2335,6 +2236,42 @@
       "notes": "再裏取り対象: discrepancy-index 由来。deprecated 判定の正当性を次回サイクルで再確認する。"
     },
     {
+      "page": "docs/routing/evpn-vxlan-hld.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "VxlanOrch / VxlanTunnelOrch / VxlanMapOrch / EvpnRouteOrch の現行実装存在確認",
+        "CONFIG_DB VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / EVPN_NVO スキーマの現行 sonic-yang-models 取り込み確認",
+        "FRR BGP-EVPN（bgpd / zebra）と SONiC 連携（fpmsyncd / FRR template）の現行実装確認",
+        "show evpn / show vxlan CLI の sonic-utilities 取り込み確認",
+        "Type-5 + VRF + L3 VNI の installation path（SAI VRF + tunnel decap オブジェクト）確認",
+        "EVPN VxLAN multihoming HLD（ESI / DF election / Type-1 / Type-4）との実装上の境界確認"
+      ],
+      "priority": "low",
+      "verified_concerns": [
+        "CONFIG_DB NVO テーブル名は VXLAN_EVPN_NVO（実装・yang） で、ページ冒頭の EVPN_NVO は略記である旨を本文の Verifier 注記で明示済み。VxlanOrch / sonic-vxlan.yang / show vxlan / show evpn の存在は確認済み。",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "last_verified": "2026-05-11"
+    },
+    {
+      "page": "docs/routing/evpn-vxlan-multihoming.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "VxlanOrch / EvpnOrch の MH 拡張（ESI / DF / Type-1/Type-4 ハンドリング）の現行実装存在確認",
+        "CONFIG_DB EVPN_ETHERNET_SEGMENT スキーマと sonic-yang-models 取り込み確認",
+        "FRR EVPN-MH（bgpd / zebra）の SONiC ビルド取り込み version と機能カバレッジ確認",
+        "SAI ESI label / split-horizon サポート（SAI_TUNNEL / SAI_TUNNEL_TERM 拡張属性）の community SAI 取り込み確認",
+        "show evpn ethernet-segment / config evpn ethernet-segment CLI の sonic-utilities 取り込み確認",
+        "DF election hold timer / mobility extended community の現行既定値と挙動確認"
+      ],
+      "priority": "low",
+      "verified_concerns": [
+        "現行 master に EVPN_ETHERNET_SEGMENT yang / EthernetSegment orch / config evpn ethernet-segment CLI が未取り込みであることを確認。HLD は提案レベル。",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "last_verified": "2026-05-11"
+    },
+    {
       "page": "docs/routing/evpn-vxlan-multihoming.md",
       "verification": "discrepancy-found",
       "monitor": "not_implemented",
@@ -2349,6 +2286,56 @@
       "priority": "low",
       "last_verified": "2026-05-11",
       "notes": "再裏取り対象: discrepancy-index 由来。EVPN Multihoming 機能群が community master に未取り込みのため、次回サイクルで再走査する。"
+    },
+    {
+      "page": "docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドリング (sonic-swss fpmsyncd/routesync.cpp) と NhgOrch (sonic-swss orchagent/nhgorch.cpp) は master 取り込み済みだが、HLD が前提とする有効化キーが実装と一致しない: HLD / 本文は DEVICE_METADATA.localhost.fpm_use_nexthop_groups を要求するが、現行 sonic-buildimage の sonic-yang-models/yang-models/sonic-device_metadata.yang と dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2 は DEVICE_METADATA.localhost.nexthop_group = enabled で zebra に fpm use-next-hop-groups を出す方式 (別途 zebra_nexthop で zebra nexthop kernel enable も制御)。本文の CONFIG_DB スニペットを実装 key 名 (nexthop_group / zebra_nexthop) に合わせる修正が必要"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11",
+      "verified_concerns": [
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ]
+    },
+    {
+      "page": "docs/routing/local-ars-hld.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "SAI ARS 拡張 API（SAI_OBJECT_TYPE_ARS / SAI_ARS_ATTR_*）の community SAI 取り込み確認",
+        "ARSOrch（または NextHopOrch / NextHopGroupOrch 拡張）の現行実装存在確認",
+        "CONFIG_DB ARS / ARS_PROFILE / ARS_INTERFACE スキーマの現行 sonic-yang-models 取り込み確認",
+        "config ars / show ars CLI の sonic-utilities 取り込み確認",
+        "対応 ASIC platform リスト（特に AI cluster 向け NPU）の現行確認",
+        "inner packet hashing / policy-based hashing / fine-grained ECMP / weighted ECMP との同居挙動確認"
+      ],
+      "priority": "low",
+      "verified_concerns": [
+        "SAI ARS API は community SAI に取り込み済み（sonic-sairedis/unittest/meta/TestMeta.cpp で参照）。一方 sonic-swss / sonic-yang-models / sonic-utilities への ArsOrch / ARS yang / ars CLI 取り込みは未確認。HLD は提案段階。",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "last_verified": "2026-05-11"
+    },
+    {
+      "page": "docs/switching/layer-2-forwarding-enhancements.md",
+      "verification": "discrepancy-found",
+      "verified_concerns": [
+        "FdbOrch の per-port / per-VLAN / per-(port,VLAN) flush API は flushFDBEntries(bridge_port_oid, vlan_oid) として fdborch.cpp:985,1006,1038,1090,1217 に実装",
+        "saved FDB（port が VLAN 未メンバの間 static を保留 / 復活）は saved_fdb_entries map として fdborch.cpp:459,1254-1316,1754 に実装",
+        "MAC move event は SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE と mac_move フラグで fdborch.cpp:91-138 に実装",
+        "SWITCH_TABLE.fdb_aging_time → SAI_SWITCH_ATTR_FDB_AGING_TIME 反映は switchorch.cpp:49,664,1674-1686 に実装",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "concerns": [
+        "config mac (aging_time / add / del) CLI は sonic-utilities/config/main.py に存在せず、HLD どおりの取り込みは未完了",
+        "config vlan range / config vlan member range CLI も sonic-utilities に存在しない",
+        "show mac aging-time のみ sonic-utilities/show/main.py:1244 に実装あり"
+      ],
+      "priority": "low",
+      "issue": 177,
+      "pr": 178,
+      "last_verified": "2026-05-11"
     },
     {
       "page": "docs/switching/switch-port-modes-and-vlan-cli-enhancement.md",
@@ -2395,12 +2382,62 @@
       "notes": "discrepancy-found: HLD は signing_secure_boot_dev.py / SB_BUILD と書いているが実装は .sh / SECURE_UPGRADE_MODE。boot chain の verify 思想は HLD どおり。verified 2026-05-10 (verifier batch-23)."
     },
     {
+      "page": "docs/system/reset-local-users-passwords-during-init-hld.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "HLD は提案段階。reset-local-users-passwords.service / LocalUsersConfigurationResetBase / config local-users-passwords-reset CLI / sonic-local-users-passwords-reset.yang / ENABLE_LOCAL_USERS_PASSWORDS_RESET フラグのいずれも master に検出できない"
+      ],
+      "priority": "low",
+      "issue": 519,
+      "pr": 520,
+      "last_verified": "2026-05-11",
+      "verified_concerns": [
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ]
+    },
+    {
       "page": "docs/system/sonic-feature-quality-definition.md",
       "verification": "meta",
       "concerns": [],
       "priority": "low",
       "issue": 515,
       "pr": 516
+    },
+    {
+      "page": "docs/system/sonic-libsairedis-api-idempotence-support.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "本 HLD 提案 (RESTORE_DB / ATTR2OID_* / OID2ATTR_* / DEFAULT_* キープレフィックス) は現行 sonic-sairedis master に未取り込み (Verifier 2026-05-09 grep で 0 件)",
+        "g_objectOwner / UNDERLAY_INTERFACE_ / OVERLAY_INTERFACE_ も sonic-swss/orchagent/ に存在しない",
+        "代替として syncd 側 view comparison (sonic-sairedis/syncd/ComparisonLogic.{cpp,h} と Syncd.cpp::applyView) が現行 master の warm restart 経路を担う"
+      ],
+      "priority": "low",
+      "issue": 524,
+      "pr": 525,
+      "verified_concerns": [
+        "Verifier 2026-05-09: SONiC HEAD 380509d で HLD パス到達性とページ記述の整合を再確認",
+        "Verifier 2026-05-09: 提案キー/プレフィックスが現行 sairedis master に未取り込みで、syncd ComparisonLogic 側が代替実装となっていることを実コードで確認",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "last_verified": "2026-05-11"
+    },
+    {
+      "page": "docs/system/sonic-network-time-protocol-ntp-client-configuration.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "現行 master の NTP daemon（ntpd vs chrony）の選定状況の確認",
+        "hostcfgd の NTP config rendering 経路（jinja テンプレート / ntp.conf or chrony.conf）の現行実装確認",
+        "CONFIG_DB NTP / NTP_SERVER / NTP_KEY スキーマと sonic-yang-models 取り込み確認",
+        "config ntp / show ntp CLI の sonic-utilities 取り込み確認",
+        "mgmt VRF と data VRF 経路の同時利用が現行実装でどう扱われているか確認",
+        "chrony 移行 HLD と本 HLD の重複・置換関係の現行整理状況確認"
+      ],
+      "priority": "low",
+      "verified_concerns": [
+        "現行 master では chrony が採用済み（sonic-buildimage/files/image_config/chrony/）。HLD は ntpd 時代の歴史的設計。yang sonic-ntp.yang は現行も保持。",
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ],
+      "last_verified": "2026-05-11"
     },
     {
       "page": "docs/system/swss-docker-warm-restart-code-reference.md",
@@ -2415,6 +2452,30 @@
         "RedisClient::hmset / DBConnector::hmset / DBInterface::hmset は sonic-swss-common/common/{redisclient.h,dbconnector.h,dbinterface.cpp,sonicv2connector.cpp} に存在し活きている"
       ],
       "priority": "low"
+    },
+    {
+      "page": "docs/system/twamp-light-hld.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "twamporch.cpp と SAI_TWAMP_SESSION_ATTR_* / NotificationTwampSessionEvent は master 取り込み済みだが、sonic-yang-models に sonic-twamp-light.yang・sonic-utilities に config/show twamp-light CLI は未取り込み（部分実装）"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11",
+      "verified_concerns": [
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ]
+    },
+    {
+      "page": "docs/system/warmboot-manager-hld.md",
+      "verification": "discrepancy-found",
+      "concerns": [
+        "提案 HLD (Rev 0.1, 2023-09)。master には warmboot-finalizer のみ存在し、Warmboot Manager daemon 本体・STATE_DB Component states・freeze プロトコル取り込みなし"
+      ],
+      "priority": "low",
+      "last_verified": "2026-05-11",
+      "verified_concerns": [
+        "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+      ]
     }
   ]
 }

@@ -8,7 +8,9 @@
     "CONFIG_DB SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR スキーマ: sonic-yang-models sonic-sflow.yang 取り込み済み",
     "config sflow CLI: sonic-utilities/config/main.py に取り込み済み",
     "sflow.service.j2: sonic-buildimage/files/build_templates/sflow.service.j2 取り込み済み",
-    "discrepancy: 既定 sample_rate 表が HLD (ifSpeed/1e6) と乖離。本ページを (1G→1000, 10G→10000, 40G→40000, 50G→50000, 100G→100000, 400G→400000) に訂正"
+    "discrepancy: 既定 sample_rate 表が HLD (ifSpeed/1e6) と乖離。本ページを (1G→1000, 10G→10000, 40G→40000, 50G→50000, 100G→100000, 400G→400000) に訂正",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
-  "priority": "medium"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

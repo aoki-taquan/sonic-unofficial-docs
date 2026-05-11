@@ -9,8 +9,10 @@
     "対応 ASIC platform リスト（特に AI cluster 向け NPU）の現行確認",
     "inner packet hashing / policy-based hashing / fine-grained ECMP / weighted ECMP との同居挙動確認"
   ],
-  "priority": "high",
+  "priority": "low",
   "verified_concerns": [
-    "SAI ARS API は community SAI に取り込み済み（sonic-sairedis/unittest/meta/TestMeta.cpp で参照）。一方 sonic-swss / sonic-yang-models / sonic-utilities への ArsOrch / ARS yang / ars CLI 取り込みは未確認。HLD は提案段階。"
-  ]
+    "SAI ARS API は community SAI に取り込み済み（sonic-sairedis/unittest/meta/TestMeta.cpp で参照）。一方 sonic-swss / sonic-yang-models / sonic-utilities への ArsOrch / ARS yang / ars CLI 取り込みは未確認。HLD は提案段階。",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ],
+  "last_verified": "2026-05-11"
 }

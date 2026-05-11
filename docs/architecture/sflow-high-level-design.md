@@ -4,7 +4,7 @@ description: "sFlow（hsflowd / sflowmgrd / SAI sample-packet） — sFlow は A
 area: architecture
 verification: discrepancy-found
 monitor: evolved_beyond_hld
-last_verified: 2026-05-10
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/sflow/sflow_hld.md

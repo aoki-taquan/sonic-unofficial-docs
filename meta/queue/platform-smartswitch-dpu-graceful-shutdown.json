@@ -8,7 +8,9 @@
   ],
   "verified_concerns": [
     "module_base.py の set_admin_state_gracefully (L429) / _graceful_shutdown_handler (L588) 実装は確認済み",
-    "chassisd の submit_dpu_callback / set_initial_dpu_admin_state で gnoi_halt_in_progress / set_admin_state_gracefully を呼ぶ経路を確認"
+    "chassisd の submit_dpu_callback / set_initial_dpu_admin_state で gnoi_halt_in_progress / set_admin_state_gracefully を呼ぶ経路を確認",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
-  "priority": "high"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

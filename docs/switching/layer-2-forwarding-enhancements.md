@@ -4,7 +4,7 @@ description: "L2 Forwarding 強化 — SONiC 初期の L2 機能に欠けてい�
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented
-last_verified: 2026-05-09
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md

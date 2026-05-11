@@ -10,7 +10,9 @@
   ],
   "verified_concerns": [
     "saihelper.h:19-22 で 4 関数の free function 宣言を確認",
-    "vrforch / copporch / dtelorch / macsecorch / sfloworch / natorch / dash 配下等で利用箇所 28 程度を確認"
+    "vrforch / copporch / dtelorch / macsecorch / sfloworch / natorch / dash 配下等で利用箇所 28 程度を確認",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
-  "priority": "medium"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

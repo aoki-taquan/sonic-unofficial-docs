@@ -4,7 +4,7 @@ description: "libsairedis API idempotence（warm restart 用 OID キャッシュ
 area: system
 verification: discrepancy-found
 monitor: deprecated
-last_verified: 2026-05-09
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/warm-reboot/sai_redis_api_idempotence.md

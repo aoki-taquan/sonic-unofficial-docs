@@ -104,7 +104,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   2026-05 時点で **schema 層（HA Set / HA Scope の table 名）は先行採用済みだが、hamgrd バイナリ・actor framework・swbus・VDPU / DPU_STATE は未取り込み**。HLD の半分弱までが master に入っている部分実装状態。
 
 - [sFlow（hsflowd / sflowmgrd / SAI sample-packet）](../../architecture/sflow-high-level-design.md)  
-  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-10`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   2026-05 時点で本機能の **全体取り込みは完了している** が、HLD 文書中の「sample_rate の既定値テーブル」だけが実装と不一致である。
 
@@ -219,15 +219,15 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
 - [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../../routing/evpn-vxlan-multihoming.md)  
-  monitor: `not_implemented`（未実装） / last_verified: `2026-05-10`
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05-10 時点の現行 master を裏取り。**EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない**。
 
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../../routing/evpn-vxlan-hld.md)  
-  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-10`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
 
 - [Local ARS（Adaptive Routing & Switching の local 完結版）](../../routing/local-ars-hld.md)  
-  monitor: `not_implemented`（未実装） / last_verified: `2026-05-10`
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05-10 時点の現行 master を裏取り。**Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了**。
 
@@ -239,7 +239,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 ### switching
 
 - [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../../switching/layer-2-forwarding-enhancements.md)  
-  monitor: `partially_implemented` / last_verified: `2026-05-09`
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   実コード裏取りで判明（verified at: 2026-05-09）:
 
@@ -296,7 +296,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)  
-  monitor: `deprecated` / last_verified: `2026-05-09`
+  monitor: `deprecated` / last_verified: `2026-05-11`
   
   2026-05-11 時点の現行 master を裏取り。
 

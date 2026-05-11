@@ -4,7 +4,7 @@ description: "EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5） — EVPN
 area: routing
 verification: discrepancy-found
 monitor: evolved_beyond_hld
-last_verified: 2026-05-10
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/vxlan/EVPN/EVPN_VXLAN_HLD.md

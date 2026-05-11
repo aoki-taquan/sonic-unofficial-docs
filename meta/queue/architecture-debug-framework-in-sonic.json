@@ -8,7 +8,9 @@
     "本ページは HLD 仕様の参考資料として残置（実装乖離注記済み）"
   ],
   "verified_concerns": [
-    "verifier-batch-18: sonic-swss-common, sonic-swss/orchagent/natorch.cpp:40-42,138-142, sonic-utilities/show/ を確認"
+    "verifier-batch-18: sonic-swss-common, sonic-swss/orchagent/natorch.cpp:40-42,138-142, sonic-utilities/show/ を確認",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
   ],
-  "priority": "high"
+  "priority": "low",
+  "last_verified": "2026-05-11"
 }

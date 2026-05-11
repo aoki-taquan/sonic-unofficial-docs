@@ -4,5 +4,9 @@
   "concerns": [
     "twamporch.cpp と SAI_TWAMP_SESSION_ATTR_* / NotificationTwampSessionEvent は master 取り込み済みだが、sonic-yang-models に sonic-twamp-light.yang・sonic-utilities に config/show twamp-light CLI は未取り込み（部分実装）"
   ],
-  "priority": "medium"
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "verified_concerns": [
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ]
 }

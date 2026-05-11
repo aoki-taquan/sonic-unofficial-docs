@@ -4,5 +4,9 @@
   "concerns": [
     "consutil CLI (sonic-utilities/consutil/main.py) と CONSOLE_PORT 単体テーブル（minigraph 経由）は master 取り込み済みだが、HLD が前提とする consoled デーモン本体・CONSOLE_SWITCH トップレベルテーブル・reverse SSH 集約のための remote_device mapping ロジックは sonic-buildimage / sonic-host-services のいずれにも検出できない。HLD 1.1 の中核（switch hub としての port-based / IP-based forwarding と consoled）は未実装"
   ],
-  "priority": "medium"
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "verified_concerns": [
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ]
 }

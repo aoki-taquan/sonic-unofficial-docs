@@ -9,8 +9,10 @@
     "show evpn ethernet-segment / config evpn ethernet-segment CLI の sonic-utilities 取り込み確認",
     "DF election hold timer / mobility extended community の現行既定値と挙動確認"
   ],
-  "priority": "high",
+  "priority": "low",
   "verified_concerns": [
-    "現行 master に EVPN_ETHERNET_SEGMENT yang / EthernetSegment orch / config evpn ethernet-segment CLI が未取り込みであることを確認。HLD は提案レベル。"
-  ]
+    "現行 master に EVPN_ETHERNET_SEGMENT yang / EthernetSegment orch / config evpn ethernet-segment CLI が未取り込みであることを確認。HLD は提案レベル。",
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ],
+  "last_verified": "2026-05-11"
 }

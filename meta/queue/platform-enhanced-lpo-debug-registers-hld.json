@@ -4,7 +4,11 @@
   "concerns": [
     "CmisEnhancedLpoApi / CmisEnhancedLpoCodes / CmisEnhancedLpoMemMap および xcvr_api_factory.py の Arista enhanced LPO vendor 分岐は sonic-platform-common HEAD で grep 検出できず、Page 01h Byte 195 = 0x4C ベースの enhanced LPO 検出ロジックも未取り込み。HLD は提案段階で master 反映なし"
   ],
-  "priority": "medium",
+  "priority": "low",
   "issue": 530,
-  "pr": 531
+  "pr": 531,
+  "last_verified": "2026-05-11",
+  "verified_concerns": [
+    "verifier-batch-q22: 2026-05-11 quarterly recheck, state maintained (discrepancy still present per frontmatter monitor tag)"
+  ]
 }
