@@ -28911,7 +28911,7 @@
 </ul>
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>NAT セッション TCAM 上限</strong>: NAT セッション数は ASIC TCAM に依存する。<code>SAI_OBJECT_TYPE_NAT_ENTRY</code> の capacity を <code>sai capability</code> で確認し、aging timer で session 数を制御する。</li>
+<li><strong>NAT セッション <a href="../../../reference/glossary/#term-tcam">TCAM</a> 上限</strong>: NAT セッション数は ASIC TCAM に依存する。<code>SAI_OBJECT_TYPE_NAT_ENTRY</code> の capacity を <code>sai capability</code> で確認し、aging timer で session 数を制御する。</li>
 <li><strong>DHCP DoS 緩和との競合</strong>: 章 07 の DHCP DoS 緩和と DHCP relay の rate-limit が二重にかかると、正規 DHCP も落ちる。レイヤを 1 つに揃える。</li>
 <li><strong>chrony の VRF bind</strong>: mgmt VRF を使う場合、chrony 設定の <code>bindaddress</code> / <code>bindacqaddress</code> を mgmt 側に固定しないと data plane に漏れる。</li>
 <li><strong>resolv.conf の container 同期遅延</strong>: <code>update-containers</code> 実行が遅れると container 内で古い DNS server が残る。手動 restart の手順を運用 runbook に残す。</li>
@@ -28938,7 +28938,7 @@
 <li>NAT 関連は <code>natorch</code> / <code>natsyncd</code> で aging / counter / scale 改善 PR が散発的に入る。</li>
 <li>TWAMP Light は HLD のみで community PR は限定的。SAI extension の議論待ちが続く状況。</li>
 </ul>
-<!-- glossary-links-injected: 3a5a8be23ca3 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 
 

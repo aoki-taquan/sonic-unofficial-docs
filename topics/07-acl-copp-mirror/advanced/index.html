@@ -28914,7 +28914,7 @@
 <ul>
 <li><strong>ERSPAN Type-II / Type-III</strong>: 通常 SPAN/Everflow に加え、GRE 経由で remote collector に届ける ERSPAN は SAI mirror session の <code>SAI_MIRROR_SESSION_ATTR_TYPE</code> で表現する。Type-III は timestamp と probabilistic sampling をサポートする。</li>
 <li><strong>ACL counters の telemetry export</strong>: <code>COUNTERS_DB</code> から ACL rule 単位のヒット数を <a href="../../../reference/glossary/#term-gnmi">gNMI</a> / streaming telemetry で出す構成。Top talker / DoS 検出に直結する。</li>
-<li><strong>TCAM 共有 (ACL group sharing)</strong>: 同じ ACL を複数 port に bind するとき、ASIC TCAM を group 共有でケチる。SAI side で <code>SAI_ACL_TABLE_GROUP</code> の MULTIPLE binding が要件。</li>
+<li><strong><a href="../../../reference/glossary/#term-tcam">TCAM</a> 共有 (ACL group sharing)</strong>: 同じ ACL を複数 port に bind するとき、ASIC TCAM を group 共有でケチる。SAI side で <code>SAI_ACL_TABLE_GROUP</code> の MULTIPLE binding が要件。</li>
 <li><strong>Egress ACL の counter visibility</strong>: ingress ACL counter は読みやすいが egress ACL counter は ASIC によって粒度が異なる。<code>show acl rule</code> で counter が更新されない場合は SAI 側 attribute サポートを確認する。</li>
 <li><strong>CoPP trap 別 policer の動的調整</strong>: 障害対応中に特定 trap (例えば LACPDU storm) の policer を一時的に上げる運用がある。<code>COPP_GROUP</code> / <code>COPP_TRAP</code> で per-feature に切り替える。</li>
 </ul>
@@ -28945,7 +28945,7 @@
 <li>DASH ACL tags は <code>sonic-dash-api</code> (proto) の更新で flow rule 表現が拡張されており、controller 側との binding が変化しやすい。</li>
 <li>802.1X / MAB 関連は hostapd の SONiC docker 統合と RADIUS attribute 拡張の PR が散発的にあり、<a href="../../../reference/glossary/#term-aaa">AAA</a> 章 (<a href="../../15-security-aaa/">15</a>) と相互に影響する。</li>
 </ul>
-<!-- glossary-links-injected: 1195a59bed42 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 
 

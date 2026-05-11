@@ -28953,7 +28953,7 @@
     VO --&gt;|create tunnel nh| VTO --&gt; SAI[SAI/SDK]
     VO --&gt; ART[(ACL_RULE)] --&gt; AO[AclOrch] --&gt; SAI
     IO[IntfOrch] --&gt;|local endpoint intf alias| VO</code></pre>
-<p><code>check_directly_connected=true</code> のエンドポイントが ARP で確認できる場合のみ ACL を立てる。全シナリオで作ると TCAM を浪費するため <strong>local endpoint と確定したもののみ</strong> に限定する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>check_directly_connected=true</code> のエンドポイントが ARP で確認できる場合のみ ACL を立てる。全シナリオで作ると <a href="../../reference/glossary/#term-tcam">TCAM</a> を浪費するため <strong>local endpoint と確定したもののみ</strong> に限定する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -29107,7 +29107,7 @@ reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM ma
 <li><a href="../sonic-dash-hld/">sonic-dash-hld</a></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 4dc7b054596d -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 <div class="footnote">
 <hr />

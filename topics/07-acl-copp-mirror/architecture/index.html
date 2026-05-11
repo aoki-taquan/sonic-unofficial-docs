@@ -28770,7 +28770,7 @@
   AO --&gt; ST[(STATE_DB&lt;br&gt;ACL_TABLE_TABLE&lt;br&gt;ACL_RULE_TABLE)]</code></pre>
 <p>table は bind 先と stage を決め、rule は priority と action を決め、counter は rule hit を後から読めるようにします。<code>ACL_TABLE_TYPE</code> を使うと、組み込み type ではなくユーザ定義の match / action / bind point セットを <code>ACL_TABLE.type</code> から参照できます。</p>
 <h2 id="type-type">組み込み Type と拡張 Type<a class="headerlink" href="#type-type" title="Permanent link">&para;</a></h2>
-<p>古い ACL は <code>L3</code>、<code>L3V6</code>、<code>MIRROR</code> などを <code>AclOrch</code> 内部の組み込み type として持ちます。新しい要求が増えると <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 改修と TCAM 消費が増えるため、ユーザ定義 table type では <code>ACL_TABLE_TYPE</code> に match、action、bind point を宣言します。</p>
+<p>古い ACL は <code>L3</code>、<code>L3V6</code>、<code>MIRROR</code> などを <code>AclOrch</code> 内部の組み込み type として持ちます。新しい要求が増えると <a href="../../../reference/glossary/#term-orchagent">orchagent</a> 改修と <a href="../../../reference/glossary/#term-tcam">TCAM</a> 消費が増えるため、ユーザ定義 table type では <code>ACL_TABLE_TYPE</code> に match、action、bind point を宣言します。</p>
 <p>一方、<code>MIRROR</code> / <code>MIRRORV6</code> のように特別な内部処理が必要な type は組み込みに残ります。<code>L3V4V6</code> も組み込み type で、IPv4 と IPv6 rule を 1 つの SAI ACL table に同居させ、ASIC が対応する場合に TCAM 消費を抑える狙いがあります。</p>
 <h2 id="flex-counter">Flex Counter 化<a class="headerlink" href="#flex-counter" title="Permanent link">&para;</a></h2>
 <p>ACL counter は rule ごとの packet / byte count を持ちます。以前は orchagent が固定周期で polling する設計でしたが、rule 数が増えると orchagent main loop を圧迫します。ACL flex counter 化により、polling は <a href="../../../reference/glossary/#term-syncd">syncd</a> 側の flex counter infrastructure に寄せられ、<code>COUNTERS_ACL_COUNTER_RULE_MAP</code> で rule 名から counter OID を引けるようになります。</p>
@@ -28796,7 +28796,7 @@
 <li><a href="../../../acl-qos/acl-flex-counters-support/">ACL カウンタの flex counter 化</a></li>
 <li><a href="../../../architecture/sonic-trap-flow-counter-design/">Trap Flow Counter</a></li>
 </ul>
-<!-- glossary-links-injected: fe65670c8aa9 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 
 

@@ -29012,7 +29012,7 @@
 <p>つまり「DASH を動かす器」が SmartSwitch であり、SmartSwitch 上で動く主役のオーバーレイ処理が DASH です。</p>
 <h2 id="dash">DASH は何を解くか<a class="headerlink" href="#dash" title="Permanent link">&para;</a></h2>
 <p>DASH は ENI（Elastic Network Interface）という単位を中心に置きます。1 つの ENI は 1 つの VM ないしテナント接続点で、その配下に VNet（VxLAN VNI と underlay）、Outbound / Inbound ルーティング、ACL、metering、Service Tunnel、Private Link 等の設定が紐付きます。コントローラはこれらを <code>DASH_VNET</code> / <code>DASH_ENI</code> / <code>DASH_ROUTE</code> / <code>DASH_ACL_GROUP</code> 等のテーブルとしてプッシュし、<code>DashOrch</code> / <code>DashVnetOrch</code> / <code>DashAclOrch</code> といった <a href="../../../reference/glossary/#term-orchagent">orchagent</a> が <a href="../../../reference/glossary/#term-sai">SAI</a> へ落とします。</p>
-<p>DASH 自体はホスト型 SmartNIC でも appliance card でも動く設計ですが、SONiC コミュニティの SmartSwitch では「DPU を SONiC で動かし、その上で DASH を回す」形を取ります。</p>
+<p>DASH 自体はホスト型 <a href="../../../reference/glossary/#term-smartnic">SmartNIC</a> でも appliance card でも動く設計ですが、SONiC コミュニティの SmartSwitch では「DPU を SONiC で動かし、その上で DASH を回す」形を取ります。</p>
 <h2 id="smartswitch">SmartSwitch の役割分担<a class="headerlink" href="#smartswitch" title="Permanent link">&para;</a></h2>
 <p>SmartSwitch は次の 2 つから成ります。</p>
 <ul>
@@ -29205,7 +29205,7 @@
 <tbody>
 <tr>
 <td>通常の SONiC VxLAN / <a href="../../../reference/glossary/#term-evpn">EVPN</a> ゲートウェイ（<a href="../../03-vxlan-evpn/">03 章</a>）</td>
-<td>テナント数・per-ENI state が増えると CPU/TCAM が破綻する。DASH は per-ENI state を DPU 側に押し込む</td>
+<td>テナント数・per-ENI state が増えると CPU/<a href="../../../reference/glossary/#term-tcam">TCAM</a> が破綻する。DASH は per-ENI state を DPU 側に押し込む</td>
 </tr>
 <tr>
 <td>Multi-ASIC chassis（<a href="../../12-multi-asic-voq/">12 章</a>）</td>
@@ -29248,7 +29248,7 @@
 <li><a href="../../03-vxlan-evpn/">VXLAN / EVPN / VNET オーバーレイ</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
-<!-- glossary-links-injected: 64d25cd729a3 -->
+<!-- glossary-links-injected: 7a2ce05409fb -->
 
 
 

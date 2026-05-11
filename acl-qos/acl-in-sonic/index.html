@@ -28829,7 +28829,7 @@
 <p><code>sonic-swss/orchagent/aclorch.cpp</code> / <code>aclorch.h</code> / <code>acltable.h</code> で AclOrch 本体が実装。APPL_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> は <code>sonic-swss-common/common/schema.h:94,96</code> で <code>APP_ACL_TABLE_TABLE_NAME</code> として定義。後発の DASH ACL は <code>APP_DASH_ACL_RULE_TABLE_NAME</code> (schema.h:178) として別系統で共存。</p>
 </div>
 <h1 id="acl-in-sonic-swss">ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）<a class="headerlink" href="#acl-in-sonic-swss" title="Permanent link">&para;</a></h1>
-<p>読み手が真っ先に知りたいのは「SONiC の <a href="../../reference/glossary/#term-acl">ACL</a> はどの単位で書き、どこを経由して TCAM に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。</p>
+<p>読み手が真っ先に知りたいのは「SONiC の <a href="../../reference/glossary/#term-acl">ACL</a> はどの単位で書き、どこを経由して <a href="../../reference/glossary/#term-tcam">TCAM</a> に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。</p>
 <h2 id="acl">ACL はどの単位で書くのか<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h2>
 <p>SONiC の ACL は <strong>table（型を持つ）+ rule</strong> の二層構造。table の <strong>type</strong> で許される match / action と bind 先（port / <a href="../../reference/glossary/#term-lag">LAG</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a> / switch）が決まる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>主な type:</p>
@@ -28994,7 +28994,7 @@ reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 53f5206a8a22 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 <div class="footnote">
 <hr />

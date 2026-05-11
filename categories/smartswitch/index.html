@@ -28853,7 +28853,7 @@
 
 <h1 id="smartswitch">SmartSwitch 関連<a class="headerlink" href="#smartswitch" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong> は、従来の単一 <a href="../../reference/glossary/#term-npu">NPU</a> 型 SONiC スイッチに <strong>複数の <a href="../../reference/glossary/#term-dpu">DPU</a></strong>（SmartNIC / IPU）を内蔵し、L2/L3 スイッチング機能を NPU 側、ステートフルな <a href="../../reference/glossary/#term-nat">NAT</a> / <a href="../../reference/glossary/#term-acl">ACL</a> / フロー処理を DPU 側に分担させるアーキテクチャです。Microsoft が提案した <a href="../../reference/glossary/#term-dash">DASH</a> の上位プラットフォームとして整備され、<code>HAMgrD</code> を中心とした HA、DPU ごとの <a href="../../reference/glossary/#term-gnoi">gNOI</a> 経路、<code>midplane</code> ブリッジによる DPU IP 管理など、独自のサブシステムが多数あります。</p>
+<p><strong><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong> は、従来の単一 <a href="../../reference/glossary/#term-npu">NPU</a> 型 SONiC スイッチに <strong>複数の <a href="../../reference/glossary/#term-dpu">DPU</a></strong>（<a href="../../reference/glossary/#term-smartnic">SmartNIC</a> / IPU）を内蔵し、L2/L3 スイッチング機能を NPU 側、ステートフルな <a href="../../reference/glossary/#term-nat">NAT</a> / <a href="../../reference/glossary/#term-acl">ACL</a> / フロー処理を DPU 側に分担させるアーキテクチャです。Microsoft が提案した <a href="../../reference/glossary/#term-dash">DASH</a> の上位プラットフォームとして整備され、<code>HAMgrD</code> を中心とした HA、DPU ごとの <a href="../../reference/glossary/#term-gnoi">gNOI</a> 経路、<code>midplane</code> ブリッジによる DPU IP 管理など、独自のサブシステムが多数あります。</p>
 <p>このカテゴリでは、SmartSwitch を横断するページを <strong>NPU 側設計</strong>（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の DPU overlay と HA actor）・<strong>DPU 管理</strong>（IP 割当・<a href="../../reference/glossary/#term-gnmi">gNMI</a> フィードバック・独立アップグレード・graceful shutdown）・<strong><a href="../../reference/glossary/#term-eni">ENI</a> Forwarding</strong>（DASH ベースの DPU 振り分け）・<strong>reboot 順序</strong>（NPU と DPU の協調 reboot）に分類しています。<a href="../../reference/glossary/#term-hld">HLD</a> は数多くあるものの、DPU 側ソフトウェアは別リポ管理が多く、SmartSwitch ページだけで完結する設計ではありません。</p>
 <p>SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが <a href="../../reference/glossary/#term-redis">Redis</a> ベース DB で、どこが DBUS / gNMI / gNOI 経由なのか）を押さえると全体が見えやすくなります。HA は DPU-Scope-DPU-Driven 構成が現行マスターブランチの主流で、<code>HAMgrD</code> の actor 分割が中心です。</p>
 <p>主要キーワード: <code>SmartSwitch</code>, <code>DPU</code>, <code>NPU</code>, <code>HA</code>, <code>gNMI</code>, <code>gNOI</code>, <code>HAMgrD</code>, <code>midplane</code></p>
@@ -28917,7 +28917,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0bdb1766977f -->
+<!-- glossary-links-injected: b8635cf7f580 -->
 
 
 

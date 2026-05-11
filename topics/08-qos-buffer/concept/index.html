@@ -28933,7 +28933,7 @@
 <li><strong>TC (Traffic Class)</strong>: SONiC 内部で使うクラス番号 (0〜7)。受信側で DSCP / DOT1P / EXP から 1 つに決め打ちし、以後の経路選択（PG、queue、scheduler、WRED）は TC を経由します。</li>
 <li><strong>PG (Priority Group)</strong>: ingress 側のバッファ計上単位。<code>xon</code>/<code>xoff</code> を持って <a href="../../../reference/glossary/#term-pfc">PFC</a> のトリガを担います。lossless TC は通常 PG3 / PG4 に固定します。</li>
 <li><strong>Queue</strong>: egress 側のバッファ計上 + 出力順制御単位。WRED ドロッパと scheduler はここに紐付きます。典型的には UC 用 8 個 + MC 用 8 個。</li>
-<li><strong>Buffer Pool</strong>: ingress / egress 別に存在する共有バッファのプール。<code>size</code>、<code>mode</code> (static / dynamic)、<code>type</code> (lossless / lossy) を持ちます。</li>
+<li><strong><a href="../../../reference/glossary/#term-buffer-pool">Buffer Pool</a></strong>: ingress / egress 別に存在する共有バッファのプール。<code>size</code>、<code>mode</code> (static / dynamic)、<code>type</code> (lossless / lossy) を持ちます。</li>
 <li><strong>Buffer Profile</strong>: 「ある PG / queue がこの pool からどれくらい取って、どう alpha (<code>dynamic_th</code>) で配分し、<code>xon</code>/<code>xoff</code> の閾値はいくつにするか」をまとめた 1 セット。同じ profile を複数の PG / queue で共有します。</li>
 <li><strong>WRED / ECN</strong>: 平均キュー長がある閾値を超えたら、確率的に drop または ECN mark する仕組み。WRED テーブルは色（green / yellow / red）ごとに別閾値を持てます。</li>
 <li><strong>PFC (Priority-Based Flow Control)</strong>: 802.1Qbb。PG 単位で「止めて」をリンク相手の MAC 層に送り、特定 priority のフレームだけ流量を絞る仕組み。</li>
@@ -29104,7 +29104,7 @@
 <li><a href="../../14-platform-port-optics/">Platform / Port / Optics / PHY</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
-<!-- glossary-links-injected: 34fd06ba8380 -->
+<!-- glossary-links-injected: f7696bbf835c -->
 
 
 

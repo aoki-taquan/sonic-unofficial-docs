@@ -28881,7 +28881,7 @@
 <ul>
 <li><a href="../../reference/glossary/#term-bgp">BGP</a> が経路追加を要求し、ASIC FIB がそれを <code>SAI_STATUS_TABLE_FULL</code> で reject した場合、<a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / bgpd は <strong>失敗を知らない</strong>ため、<code>show ip route</code> には経路が見えるが <code>show ip fib</code> には無い、というサイレントな乖離が発生する。</li>
 <li>HLD 通りに <code>show error-database</code> を期待する自動化スクリプトは即座に失敗する。</li>
-<li>retry / rollback ロジックが実装されないため、ASIC リソース不足（TCAM full 等）の状態は手動介入が必要。</li>
+<li>retry / rollback ロジックが実装されないため、ASIC リソース不足（<a href="../../reference/glossary/#term-tcam">TCAM</a> full 等）の状態は手動介入が必要。</li>
 <li>一時的回避として OrchAgent のログを syslog で grep する以外に体系的な検知手段が無い。</li>
 </ul>
 <h2 id="5">5. 回避策の実コマンド<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
@@ -28935,7 +28935,7 @@
 </div>
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 9b9babc63251 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 <div class="footnote">
 <hr />

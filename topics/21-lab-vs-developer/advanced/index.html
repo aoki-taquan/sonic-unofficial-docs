@@ -28911,7 +28911,7 @@
 </ul>
 <h2 id="_4">既知の制約と回避方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VS と実機の SAI 差</strong>: SAI VS は CPU 実装で、ASIC 固有の制約 (TCAM / buffer / pipeline depth) を再現しない。機能合格 ≠ 実機合格。</li>
+<li><strong>VS と実機の SAI 差</strong>: SAI VS は CPU 実装で、ASIC 固有の制約 (<a href="../../../reference/glossary/#term-tcam">TCAM</a> / buffer / pipeline depth) を再現しない。機能合格 ≠ 実機合格。</li>
 <li><strong>CI 時間と並列化</strong>: 全 test plan を回すと CI が長い。差分テスト (changed area のみ) と nightly full の二段運用が現実的。</li>
 <li><strong>PTF environment dependency</strong>: PTF docker のバージョンと test plan の整合が崩れると失敗する。pin versioning を CI で固定する。</li>
 <li><strong>DASH KVM の性能限界</strong>: BMv2 ベースなので scale / throughput は限定的。機能テスト専用と割り切る。</li>
@@ -28937,7 +28937,7 @@
 <li>KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。</li>
 <li>CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。</li>
 </ul>
-<!-- glossary-links-injected: f4f1f9bb2387 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 
 

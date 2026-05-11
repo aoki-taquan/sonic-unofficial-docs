@@ -28979,7 +28979,7 @@
 </div>
 <h1 id="crm">クリティカルリソースモニタリング (CRM) 要件<a class="headerlink" href="#crm" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / <a href="../../reference/glossary/#term-acl">ACL</a> TCAM / <a href="../../reference/glossary/#term-fdb">FDB</a> といった <strong>テーブル容量が有限なリソース</strong> を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring (<a href="../../reference/glossary/#term-crm">CRM</a>) は、こうしたリソースの <strong>使用量と空き容量を <a href="../../reference/glossary/#term-sai">SAI</a> 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知</strong> するための機能要件である。</p>
+<p>SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / <a href="../../reference/glossary/#term-acl">ACL</a> <a href="../../reference/glossary/#term-tcam">TCAM</a> / <a href="../../reference/glossary/#term-fdb">FDB</a> といった <strong>テーブル容量が有限なリソース</strong> を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring (<a href="../../reference/glossary/#term-crm">CRM</a>) は、こうしたリソースの <strong>使用量と空き容量を <a href="../../reference/glossary/#term-sai">SAI</a> 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知</strong> するための機能要件である。</p>
 <p>本ページの一次情報は <strong>要件定義 (<code>CRM_requirements.md</code>)</strong> であり、実装方針（COUNTER_DB を介する FLEX Counter 流の構成）は <a href="../../reference/glossary/#term-hld">HLD</a> 内で「設計会議で詰める」と注記されている段階のものである点に注意する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">機能要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -29135,7 +29135,7 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 421df673b3f7 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 <div class="footnote">
 <hr />

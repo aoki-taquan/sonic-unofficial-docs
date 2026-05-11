@@ -28863,7 +28863,7 @@
 <li><strong>bind 先 interface 誤り</strong>: PORT ではなく PORTCHANNEL に bind すべき場面</li>
 <li><strong>rule priority の競合</strong>: 上位 priority に permit があり、対象が先に抜ける</li>
 <li><strong><code>PACKET_ACTION</code> の typo</strong>: <code>FORWARD</code> / <code>DROP</code> の大小区別</li>
-<li><strong>TCAM 不足</strong>: ASIC リソース不足で program 失敗 → <a href="../sai-table-full/">sai-table-full.md</a></li>
+<li><strong><a href="../../glossary/#term-tcam">TCAM</a> 不足</strong>: ASIC リソース不足で program 失敗 → <a href="../sai-table-full/">sai-table-full.md</a></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
@@ -28900,7 +28900,7 @@
 <ul>
 <li>table 再作成: <code>sudo config acl remove table &lt;name&gt; &amp;&amp; sudo config acl add table &lt;name&gt; L3 -p Ethernet0,Ethernet1 -s ingress</code></li>
 <li>rule JSON で適用: <code>sudo acl-loader update full rules.json</code></li>
-<li>TCAM 不足の場合 priority を整理し低優先 deny を集約</li>
+<li><a href="../../glossary/#term-tcam">TCAM</a> 不足の場合 priority を整理し低優先 deny を集約</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28909,7 +28909,7 @@
 <li><a href="../../config-db/acl-table/">../config-db/acl-table.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 1f2da1437d5b -->
+<!-- glossary-links-injected: 16cbb7ac9ae6 -->
 
 <div class="footnote">
 <hr />

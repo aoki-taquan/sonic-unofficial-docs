@@ -28876,7 +28876,7 @@
 </div>
 <h1 id="lpo-vma-oma-per-lane-redis">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）<a class="headerlink" href="#lpo-vma-oma-per-lane-redis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 SerDes の電気信号が直接モジュレータを駆動するため、debug には <strong>TX 側 VMA</strong>（電気振幅）と <strong>RX 側 OMA</strong>（光振幅）の監視が決定的。本 <a href="../../reference/glossary/#term-hld">HLD</a> は CMIS LPO 上に <strong>拡張デバッグレジスタ</strong>を新設し、SONiC から <a href="../../reference/glossary/#term-redis">Redis</a> に公開する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 <a href="../../reference/glossary/#term-serdes">SerDes</a> の電気信号が直接モジュレータを駆動するため、debug には <strong>TX 側 VMA</strong>（電気振幅）と <strong>RX 側 OMA</strong>（光振幅）の監視が決定的。本 <a href="../../reference/glossary/#term-hld">HLD</a> は CMIS LPO 上に <strong>拡張デバッグレジスタ</strong>を新設し、SONiC から <a href="../../reference/glossary/#term-redis">Redis</a> に公開する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">拡張レジスタの所在<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>CMIS Page 01h Byte 195 = <code>0x4C</code> (<code>'L'</code>) でモジュールが拡張対応を宣言。Byte 196 で仕様バージョン。実体レジスタは Upper Page <strong>C1h / C2h</strong> に集約。Page 01h Byte 195 != 0x4C のモジュールは従来 CMIS 扱い。</p>
@@ -29035,7 +29035,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ab90f1e23035 -->
+<!-- glossary-links-injected: 710f941d149a -->
 
 <div class="footnote">
 <hr />

@@ -29033,7 +29033,7 @@
 </span></code></pre></div>
 <p><code>destination ip</code> 列は EVPN モードでは空欄になります (動的学習)。EVPN BGP neighbor 確認は <code>show bgp l2vpn evpn summary</code> で別経路です。</p>
 <h2 id="2-vnet-controller-driven-overlay">典型シナリオ 2: VNET (controller driven overlay) を設定する<a class="headerlink" href="#2-vnet-controller-driven-overlay" title="Permanent link">&para;</a></h2>
-<p><a href="../../../reference/glossary/#term-dash">DASH</a> 系や Mellanox SmartNIC 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が <code>VNET_ROUTE_TUNNEL</code> を直接 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に書きます。</p>
+<p><a href="../../../reference/glossary/#term-dash">DASH</a> 系や Mellanox <a href="../../../reference/glossary/#term-smartnic">SmartNIC</a> 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が <code>VNET_ROUTE_TUNNEL</code> を直接 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に書きます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">10</span>.1.0.1
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vnet<span class="w"> </span>add<span class="w"> </span>Vnet1000<span class="w"> </span><span class="m">1000</span><span class="w"> </span>vtep1
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vnet<span class="w"> </span>add-route<span class="w"> </span>Vnet1000<span class="w"> </span><span class="m">192</span>.0.2.10/32<span class="w"> </span><span class="m">203</span>.0.113.10<span class="w"> </span>--vni<span class="w"> </span><span class="m">1000</span><span class="w"> </span><span class="se">\</span>
@@ -29204,7 +29204,7 @@
 <li><a href="../../../reference/yang/sonic-vnet/">sonic-vnet YANG</a></li>
 <li><a href="../../../architecture/sonic-policy-based-hashing/">Policy Based Hashing</a></li>
 </ul>
-<!-- glossary-links-injected: 9f6c46bc52cb -->
+<!-- glossary-links-injected: b8635cf7f580 -->
 
 
 

@@ -28898,7 +28898,7 @@
 </div>
 <h1 id="sai_query_stats_capability-counter-capability">sai_query_stats_capability による Counter Capability 一括取得<a class="headerlink" href="#sai_query_stats_capability-counter-capability" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC <code>syncd</code> の <code>FlexCounter</code> は、各オブジェクト（Port / Queue / Priority Group / <a href="../../reference/glossary/#term-rif">RIF</a> / Buffer Pool）について <strong>「どの統計 ID が <a href="../../reference/glossary/#term-sai">SAI</a> でサポートされているか」を <code>getStats()</code> を 1 ID ずつ叩いて確認</strong> していた。Port だけでも数十個の counter ID をループで試すため、起動・fast-reboot 時のオーバーヘッドが大きい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC <code>syncd</code> の <code>FlexCounter</code> は、各オブジェクト（Port / Queue / Priority Group / <a href="../../reference/glossary/#term-rif">RIF</a> / <a href="../../reference/glossary/#term-buffer-pool">Buffer Pool</a>）について <strong>「どの統計 ID が <a href="../../reference/glossary/#term-sai">SAI</a> でサポートされているか」を <code>getStats()</code> を 1 ID ずつ叩いて確認</strong> していた。Port だけでも数十個の counter ID をループで試すため、起動・fast-reboot 時のオーバーヘッドが大きい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は SAI に追加された <strong><code>sai_query_stats_capability()</code></strong> API を使って <strong>オブジェクトの全 counter capability を 1 コールで取得</strong> するように <code>FlexCounter</code> を改修する。fast-reboot のような時間制約のあるパスで特に効果が大きい<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">既存実装<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -29027,7 +29027,7 @@ reasoning: 改修対象関数とフォールバック動作の根拠。
 <li>一部 counter が認識されない: 新 API が返す <code>stat_enum</code> 集合と旧 per-ID 列挙の差が無いか、SAI バージョン依存を疑う。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 934155bd29c3 -->
+<!-- glossary-links-injected: f7696bbf835c -->
 
 <div class="footnote">
 <hr />

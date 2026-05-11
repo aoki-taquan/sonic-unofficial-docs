@@ -28842,7 +28842,7 @@
 </div>
 <h1 id="l3v4v6-acl-v4-v6-1-sai-acl">L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）<a class="headerlink" href="#l3v4v6-acl-v4-v6-1-sai-acl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>従来 SONiC は IPv4 用 <code>L3</code> と IPv6 用 <code>L3V6</code> を <strong>別々の <a href="../../reference/glossary/#term-sai">SAI</a> <a href="../../reference/glossary/#term-acl">ACL</a> テーブル</strong> として作成していた。多くの ASIC では同一 TCAM テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>従来 SONiC は IPv4 用 <code>L3</code> と IPv6 用 <code>L3V6</code> を <strong>別々の <a href="../../reference/glossary/#term-sai">SAI</a> <a href="../../reference/glossary/#term-acl">ACL</a> テーブル</strong> として作成していた。多くの ASIC では同一 <a href="../../reference/glossary/#term-tcam">TCAM</a> テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>新規組み込みテーブル型 <code>L3V4V6</code></strong> を導入し、この最適化を operator が選択的に有効化できるようにする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>MIRROR</code> / <code>MIRRORV6</code> で過去に行ったコンパイル時マージ最適化（Option-A）と異なり、ユーザに見える ACL テーブルが 1 つで済む点が利点。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">検討された選択肢<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -28958,7 +28958,7 @@ reasoning: orchagent 側エントリポイントと STATE_DB capability キー�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 65e3d37d723f -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 <div class="footnote">
 <hr />

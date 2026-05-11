@@ -28975,7 +28975,7 @@
 <h3 id="appl_db">主要 APPL_DB テーブル（抜粋）<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
 <p>ファイル冒頭から並ぶ代表テーブル：</p>
 <ul>
-<li><strong><code>PORT_TABLE</code></strong>: 物理ポート（CPU / loopback は除外）。<code>admin_status</code> / <code>oper_status</code> / <code>lanes</code> / <code>mac</code> / <code>alias</code> / <code>speed</code> / <code>mtu</code> / <code>fec</code> / <code>autoneg</code> / <code>preemphasis</code> / FEC・SerDes 用 hex リスト / Path Tracing 用フィールド / <a href="../../reference/glossary/#term-qos">QoS</a> マッピング reference 等<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>PORT_TABLE</code></strong>: 物理ポート（CPU / loopback は除外）。<code>admin_status</code> / <code>oper_status</code> / <code>lanes</code> / <code>mac</code> / <code>alias</code> / <code>speed</code> / <code>mtu</code> / <code>fec</code> / <code>autoneg</code> / <code>preemphasis</code> / FEC・<a href="../../reference/glossary/#term-serdes">SerDes</a> 用 hex リスト / Path Tracing 用フィールド / <a href="../../reference/glossary/#term-qos">QoS</a> マッピング reference 等<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong><code>INTF_TABLE</code></strong>: 論理ネットワークインタフェース。<code>&lt;ifname&gt;:&lt;IPprefix&gt;</code> 形式キー、<code>scope</code> (global/local)、<code>if_mtu</code>、<code>family</code>。</li>
 <li><strong><code>VLAN_TABLE</code> / <code>VLAN_MEMBER_TABLE</code></strong>: <a href="../../reference/glossary/#term-vlan">VLAN</a> 定義とメンバ。</li>
 <li><strong><code>LAG_TABLE</code> / <code>LAG_MEMBER_TABLE</code></strong>: Port-Channel 定義とメンバ。</li>
@@ -29050,7 +29050,7 @@
 <li><code>APP_NEXTHOP_GROUP_TABLE_NAME</code> は <code>sonic-swss/fpmsyncd/routesync.cpp:157</code> で実際に <a href="../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> として open されており、HLD と実装の双方が NEXTHOP_GROUP_TABLE を APPL_DB の正規エントリとして扱っている裏取り。</li>
 </ul>
 <p>本ページは個別テーブルへの入口として位置付けられたリファレンスで、実テーブル詳細はリンク先の生きた HLD を参照する旨を冒頭で明示しており、参照ドキュメントとしての記述は実体と整合する。</p>
-<!-- glossary-links-injected: fdde38aa50b9 -->
+<!-- glossary-links-injected: 710f941d149a -->
 
 <div class="footnote">
 <hr />

@@ -29063,7 +29063,7 @@
 </ul>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ACL の <strong>stage / bind point / action / field</strong> の組み合わせは ASIC の TCAM レイアウト依存で、HLD で書ける組み合わせでも <code>STATE_DB:SWITCH_CAPABILITY</code> で許されていないと無効。capability が公開されていない ASIC では確認が困難。</li>
+<li>ACL の <strong>stage / bind point / action / field</strong> の組み合わせは ASIC の <a href="../../../reference/glossary/#term-tcam">TCAM</a> レイアウト依存で、HLD で書ける組み合わせでも <code>STATE_DB:SWITCH_CAPABILITY</code> で許されていないと無効。capability が公開されていない ASIC では確認が困難。</li>
 <li><code>MIRROR_EGRESS</code> action はベンダ依存が大きく、<code>MIRROR_INGRESS</code> のみ実装で <code>MIRROR_EGRESS</code> 未対応の ASIC では egress mirror が黙って ingress mirror に倒れる discrepancy が報告されている。</li>
 <li>CoPP の queue / policer 設定は <code>copp_cfg.json</code> のテンプレートに依存し、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の動的変更が即時反映されない経路がある（<code>hostcfgd</code> 経由のものは reload が必要）。</li>
 <li>ACL counter は ASIC によって entry per counter か rule per counter かが分かれ、SONiC は両方を抽象化するが、counter clear / reset の挙動が ASIC で違う。</li>
@@ -29075,7 +29075,7 @@
 <li><a href="../../../acl-qos/egress-outer-dscp-change-table/">Egress Outer DSCP 書換 ACL</a></li>
 <li><a href="../../../architecture/sonic-packet-trimming/">Packet Trimming</a></li>
 </ul>
-<!-- glossary-links-injected: c4fe9e359764 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 
 

@@ -28569,10 +28569,10 @@
 <li><a href="../../about/">このドキュメントについて</a> — [meta] このドキュメントについて — 本ページは sonic-unofficial-docs プロジェクトの目的・スコープ・ライセンス・フィードバック窓口・貢献方法を…</li>
 <li><strong>読み手別ガイド</strong> (<code>guides/</code>)</li>
 <li><a href="../../guides/">読み手別ガイド</a> — [meta] 読み手別ガイド — SONiC ドキュメントを読む目的に応じて、既存ページを読む順番をまとめた入口です。area 別の章構成はそのままに、初回に見るべきページ…</li>
-<li><a href="../../guides/beginner/">初学者向けガイド</a> — [meta] 初学者向けガイド — SONiC を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、Redis DB、SAI、…</li>
-<li><a href="../../guides/operator/">運用者向けガイド</a> — [meta] 運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show tech…</li>
-<li><a href="../../guides/developer/">開発者向けガイド</a> — [meta] 開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon / orch、テ…</li>
-<li><a href="../../guides/evaluator/">評価者向けガイド</a> — [meta] 評価者向けガイド — ラボで SONiC を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を…</li>
+<li><a href="../../guides/beginner/">初学者向けガイド</a> — [meta] 初学者向けガイド — SONiC を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、<a href="../../reference/glossary/#term-redis">Redis</a> DB、<a href="../../reference/glossary/#term-sai">SAI</a>、…</li>
+<li><a href="../../guides/operator/">運用者向けガイド</a> — [meta] 運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の意味確認、show tech…</li>
+<li><a href="../../guides/developer/">開発者向けガイド</a> — [meta] 開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。<a href="../../reference/glossary/#term-hld">HLD</a>、<a href="../../reference/glossary/#term-yang">YANG</a>、CONFIG_DB、CLI、daemon / orch、テ…</li>
+<li><a href="../../guides/evaluator/">評価者向けガイド</a> — [meta] 評価者向けガイド — ラボで SONiC を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、<a href="../../reference/glossary/#term-vlan">VLAN</a>、<a href="../../reference/glossary/#term-bgp">BGP</a> などの基本設定を…</li>
 <li><strong>読み物</strong> (<code>topics/</code>)</li>
 <li><a href="../../topics/">読み物</a> — [meta] 読み物（章立て駆動） — 機能ドメイン単位で複数の HLD・実コードを横断統合した「読み物」章群。HLD 1 件 = 1 ページの reference（doc…</li>
 <li><strong>SONiC 全体像と設定基盤</strong> (<code>topics/01-overview/</code>)<ul>
@@ -28594,7 +28594,7 @@
 <li><a href="../../topics/02-bgp/advanced/">発展トピック</a> — [meta] 発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話で…</li>
 </ul>
 </li>
-<li><strong>VXLAN / EVPN / VNET オーバーレイ</strong> (<code>topics/03-vxlan-evpn/</code>)<ul>
+<li><strong><a href="../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../reference/glossary/#term-evpn">EVPN</a> / <a href="../../reference/glossary/#term-vnet">VNET</a> オーバーレイ</strong> (<code>topics/03-vxlan-evpn/</code>)<ul>
 <li><a href="../../topics/03-vxlan-evpn/">VXLAN / EVPN / VNET オーバーレイ</a> — [meta] VXLAN / EVPN / VNET オーバーレイ — この章は、SONiC の overlay を「VXLAN tunnel を作る」「VNET と VR…</li>
 <li><a href="../../topics/03-vxlan-evpn/concept/">VXLAN / VNET / EVPN の概要</a> — [meta] VXLAN / VNET / EVPN の概要 — SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という 3 つの単語がほぼ同…</li>
 <li><a href="../../topics/03-vxlan-evpn/architecture/">Overlay アーキテクチャ</a> — [meta] Overlay アーキテクチャ — Overlay を読むときの中心は、設定テーブルそのものではなく「誰がどの table を見て、最終的にどの SAI ob…</li>
@@ -28604,7 +28604,7 @@
 <li><a href="../../topics/03-vxlan-evpn/advanced/">Overlay 発展トピック</a> — [meta] Overlay 発展トピック — ここでは、基本の VXLAN / VNET / EVPN の延長に見えるが、別の前提や別の orch を持つ機能を整理します…</li>
 </ul>
 </li>
-<li><strong>VRF / ECMP / RIB-FIB パイプライン</strong> (<code>topics/04-vrf-ecmp/</code>)<ul>
+<li><strong><a href="../../reference/glossary/#term-vrf">VRF</a> / <a href="../../reference/glossary/#term-ecmp">ECMP</a> / RIB-FIB パイプライン</strong> (<code>topics/04-vrf-ecmp/</code>)<ul>
 <li><a href="../../topics/04-vrf-ecmp/">VRF / ECMP / RIB-FIB パイプライン</a> — [meta] VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が…</li>
 <li><a href="../../topics/04-vrf-ecmp/concept/">L3 基盤と VRF</a> — [meta] L3 基盤と VRF — SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞い…</li>
 <li><a href="../../topics/04-vrf-ecmp/architecture/">RIB-FIB と Route Object 生成</a> — [meta] RIB-FIB と Route Object 生成 — SONiC の L3 pipeline は、FRR が持つ RIB と、orchagent / syn…</li>
@@ -28624,7 +28624,7 @@
 <li><a href="../../topics/05-dual-tor/advanced/">Dual-ToR の発展トピック</a> — [meta] Dual-ToR の発展トピック — Dual-ToR は mux state だけで閉じた機能ではありません。</li>
 </ul>
 </li>
-<li><strong>L2 / VLAN / LAG / MC-LAG</strong> (<code>topics/06-l2-vlan-lag/</code>)<ul>
+<li><strong>L2 / VLAN / <a href="../../reference/glossary/#term-lag">LAG</a> / MC-LAG</strong> (<code>topics/06-l2-vlan-lag/</code>)<ul>
 <li><a href="../../topics/06-l2-vlan-lag/">L2 / VLAN / LAG / MC-LAG</a> — [meta] L2 / VLAN / LAG / MC-LAG — この章は、SONiC を L2 switch として読むときに最初に迷う「VLAN、VLAN inter…</li>
 <li><a href="../../topics/06-l2-vlan-lag/concept/">L2 機能の考え方</a> — [meta] L2 機能の考え方 — SONiC で L2 を読むときは、最初に「どの interface がどの forwarding domain に属するか」と「その…</li>
 <li><a href="../../topics/06-l2-vlan-lag/architecture/">L2 のアーキテクチャ</a> — [meta] L2 のアーキテクチャ — L2 設定は、CONFIG_DB のテーブルごとに担当 daemon が決まり、APPL_DB や orchagent を通って…</li>
@@ -28634,7 +28634,7 @@
 <li><a href="../../topics/06-l2-vlan-lag/advanced/">L2 発展トピック</a> — [meta] L2 発展トピック — このページは、通常の VLAN / PortChannel / MC-LAG 設計から一歩外れる話題の入口です。OpenConfig…</li>
 </ul>
 </li>
-<li><strong>ACL / CoPP / Mirror / Packet Action</strong> (<code>topics/07-acl-copp-mirror/</code>)<ul>
+<li><strong><a href="../../reference/glossary/#term-acl">ACL</a> / <a href="../../reference/glossary/#term-copp">CoPP</a> / Mirror / Packet Action</strong> (<code>topics/07-acl-copp-mirror/</code>)<ul>
 <li><a href="../../topics/07-acl-copp-mirror/">ACL / CoPP / Mirror / Packet Action</a> — [meta] ACL / CoPP / Mirror / Packet Action — この章は、SONiC で「パケットを分類して、通す、落とす、CPU に送る、複製す…</li>
 <li><a href="../../topics/07-acl-copp-mirror/concept/">概念</a> — [meta] 概念 — ACL（Access Control List）と CoPP（Control Plane Policing）と Mirror（パケットコピー）は、S…</li>
 <li><a href="../../topics/07-acl-copp-mirror/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — ACL の中心は AclOrch です。設定は CONFIG_DB から入り、APPL_DB を経由して AclOrch が SAI AC…</li>
@@ -28644,7 +28644,7 @@
 <li><a href="../../topics/07-acl-copp-mirror/advanced/">発展トピック</a> — [meta] 発展トピック — このページは、ACL / CoPP / mirror の基本線から少し外れるが、同じ「分類、保護、観測、rate limit」の考え方で読め…</li>
 </ul>
 </li>
-<li><strong>QoS / Buffer / PFC / Watermark</strong> (<code>topics/08-qos-buffer/</code>)<ul>
+<li><strong><a href="../../reference/glossary/#term-qos">QoS</a> / Buffer / <a href="../../reference/glossary/#term-pfc">PFC</a> / Watermark</strong> (<code>topics/08-qos-buffer/</code>)<ul>
 <li><a href="../../topics/08-qos-buffer/">QoS / Buffer / PFC / Watermark</a> — [meta] QoS / Buffer / PFC / Watermark — この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混…</li>
 <li><a href="../../topics/08-qos-buffer/concept/">QoS / Buffer の概念地図</a> — [meta] QoS / Buffer の概念地図 — QoS の話は語彙が多くて、どこから読めばよいかが見えづらいです。ここでは「パケットが入ってから出るまで、どこで何が…</li>
 <li><a href="../../topics/08-qos-buffer/architecture/">QoS / Buffer のアーキテクチャ</a> — [meta] QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、…</li>
@@ -28654,7 +28654,7 @@
 <li><a href="../../topics/08-qos-buffer/advanced/">QoS / Buffer の発展トピック</a> — [meta] QoS / Buffer の発展トピック — QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）…</li>
 </ul>
 </li>
-<li><strong>Telemetry / SNMP / Observability</strong> (<code>topics/09-telemetry-snmp/</code>)<ul>
+<li><strong>Telemetry / <a href="../../reference/glossary/#term-snmp">SNMP</a> / Observability</strong> (<code>topics/09-telemetry-snmp/</code>)<ul>
 <li><a href="../../topics/09-telemetry-snmp/">Telemetry / SNMP / Observability</a> — [meta] Telemetry / SNMP / Observability — この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読む…</li>
 <li><a href="../../topics/09-telemetry-snmp/concept/">概念</a> — [meta] 概念 — SONiC の observability は、用途ごとに別のサブシステムが担当します。読み解くときは「いま何が起きているか」「変化点をどう受け取る…</li>
 <li><a href="../../topics/09-telemetry-snmp/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — 観測経路は ASIC 側で値を作り、syncd / orchagent / 各 daemon が Redis に書き、上から SNMP /…</li>
@@ -28687,7 +28687,7 @@
 <li><a href="../../topics/11-reboot/advanced/">Reboot / Upgrade の発展トピック</a> — [meta] Reboot / Upgrade の発展トピック — warm / fast / cold reboot の基本パスを押さえた後は、収束時間を縮める「expr…</li>
 </ul>
 </li>
-<li><strong>Multi-ASIC / VOQ Chassis</strong> (<code>topics/12-multi-asic-voq/</code>)<ul>
+<li><strong>Multi-ASIC / <a href="../../reference/glossary/#term-voq">VOQ</a> Chassis</strong> (<code>topics/12-multi-asic-voq/</code>)<ul>
 <li><a href="../../topics/12-multi-asic-voq/">Multi-ASIC / VOQ Chassis</a> — [meta] Multi-ASIC / VOQ Chassis — この章は、SONiC が「1 つの NOS インスタンスで複数 ASIC を、または複数 line ca…</li>
 <li><a href="../../topics/12-multi-asic-voq/concept/">概念</a> — [meta] 概念 — Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、ど…</li>
 <li><a href="../../topics/12-multi-asic-voq/architecture/">アーキテクチャ</a> — [meta] アーキテクチャ — ここでは「supervisor の Chassis DB」「各 ASIC namespace の Redis」「fabric を介した d…</li>
@@ -28697,7 +28697,7 @@
 <li><a href="../../topics/12-multi-asic-voq/advanced/">発展トピック</a> — [meta] 発展トピック — VOQ chassis 固有の機能は、BGP・LAG・Everflow・TSA・warm reboot のような既存機能領域ごとに別 HLD…</li>
 </ul>
 </li>
-<li><strong>DASH と SmartSwitch</strong> (<code>topics/13-dash-smartswitch/</code>)<ul>
+<li><strong><a href="../../reference/glossary/#term-dash">DASH</a> と <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong> (<code>topics/13-dash-smartswitch/</code>)<ul>
 <li><a href="../../topics/13-dash-smartswitch/">DASH と SmartSwitch</a> — [meta] DASH と SmartSwitch — この章は、SONiC で「NPU スイッチに DPU をぶら下げ、その上で DASH オーバーレイを処理する」Sma…</li>
 <li><a href="../../topics/13-dash-smartswitch/concept/">DASH と SmartSwitch の考え方</a> — [meta] DASH と SmartSwitch の考え方 — DASH と SmartSwitch は混同されやすい言葉ですが、別レイヤのものです。</li>
 <li><a href="../../topics/13-dash-smartswitch/internals/">NPU-DPU DB と ENI ベース転送の内部構造</a> — [meta] NPU-DPU DB と ENI ベース転送の内部構造 — DASH / SmartSwitch を実装視点で読むときは、「設定がコントローラから DPU の…</li>
@@ -28801,7 +28801,7 @@
 <li><a href="../../architecture/json-change-application/">JSON Change Application（apply-change / table 単位 alphabetical 適用）</a> — [code-verified] JSON Change Application（apply-change / table 単位 alphabetical 適用） — 親 HLD Generi…</li>
 <li><a href="../../architecture/pw-hardening-design/">パスワード強化（password hardening / aging / complexity / history）</a> — [code-verified] パスワード強化（password hardening / aging / complexity / history） — ローカルユーザのパスワードに対して…</li>
 <li><a href="../../architecture/reset-factory-design/">reset-factory（keep-basic / keep-all-config / only-config）</a> — [code-verified] reset-factory（keep-basic / keep-all-config / only-config） — SONiC スイッチの 工場出荷状態へ…</li>
-<li><a href="../../architecture/sonic-generic-configuration-update-and-rollback/">Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）</a> — [code-verified] Generic Config Update / Rollback（GCU・JSON Patch・checkpoint） — config reload で全コ…</li>
+<li><a href="../../architecture/sonic-generic-configuration-update-and-rollback/">Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）</a> — [code-verified] Generic Config Update / Rollback（<a href="../../reference/glossary/#term-gcu">GCU</a>・JSON Patch・checkpoint） — config reload で全コ…</li>
 <li><a href="../../architecture/alpine-high-level-design/">Alpine 仮想 SONiC（ALViS / KNE デプロイ）</a> — [code-verified] Alpine 仮想 SONiC（ALViS / KNE デプロイ） — ALPINE は Google が提案した SONiC のスイッチスタックシミュレーシ…</li>
 <li><a href="../../architecture/build-profiles/">ビルドプロファイル（rules/profiles/*.mk）</a> — [discrepancy-found] ビルドプロファイル（rules/profiles/*.mk） — SONiC のビルドは多数のビルドフラグ（ENABLE_ZTP, SECURE_UPGRAD…</li>
 <li><a href="../../architecture/build-system-improvements/">ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）</a> — [code-verified] ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離） — 本 HLD は主に第 2 段階に焦…</li>
@@ -28812,22 +28812,22 @@
 <li><a href="../../architecture/port-illegal-packets-drop-design/">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）</a> — [code-verified] ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張） — SNMP の Interface MIB（RFC1213）が返すイン…</li>
 <li><a href="../../architecture/port-profile-init-hld/">Port Profile Init（SAI bulk port API による fast-boot 高速化）</a> — [code-verified] Port Profile Init（SAI bulk port API による fast-boot 高速化） — 従来の port 構成は SAI profi…</li>
 <li><a href="../../architecture/sonic-generic-hash/">Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）</a> — [code-verified] Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御） — switch グローバルの hash 設定（フィールド集合…</li>
-<li><a href="../../architecture/sonic-ip-interface-loopback-action/">IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）</a> — [code-verified] IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward） — ルータが受信したパケットをルーティングテーブルに従って転…</li>
+<li><a href="../../architecture/sonic-ip-interface-loopback-action/">IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）</a> — [code-verified] IP インタフェース ループバックアクション（同一 <a href="../../reference/glossary/#term-rif">RIF</a> 出戻りの drop/forward） — ルータが受信したパケットをルーティングテーブルに従って転…</li>
 <li><a href="../../architecture/sonic-packet-trimming/">Packet Trimming（symmetric / asymmetric DSCP / ACL disable）</a> — [code-verified] Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — Packet Trimming（PT…</li>
 <li><a href="../../architecture/sonic-policy-based-hashing/">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）</a> — [code-verified] Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple） — NVGRE / VxLAN のような enc…</li>
 <li><a href="../../architecture/sonic-port-auto-fec-design/">Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）</a> — [hld-only] Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto） — ポートの auton…</li>
 <li><a href="../../architecture/sonic-port-auto-negotiation-design/">ポート Auto-Negotiation（advertised-speeds / interface-type）</a> — [code-verified] ポート Auto-Negotiation（advertised-speeds / interface-type） — IEEE 802.3 の auto-ne…</li>
-<li><a href="../../architecture/sonic-port-configuration-refactor-design/">port_config.ini パーサ統合（portconfig.py 一元化）</a> — [code-verified] port_config.ini パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラ…</li>
+<li><a href="../../architecture/sonic-port-configuration-refactor-design/">port_config.ini パーサ統合（portconfig.py 一元化）</a> — [code-verified] <a href="../../reference/glossary/#term-port-config-ini">port_config.ini</a> パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラ…</li>
 <li><a href="../../architecture/sonic-port-link-training-design/">ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）</a> — [code-verified] ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR） — LT は CR/KR 系で送受信が 動的に FIR…</li>
-<li><a href="../../architecture/sonic-sub-port-interface-high-level-design/">Sub-port Interface（dot1q encap / VRF RIF / 命名規則）</a> — [code-verified] Sub-port Interface（dot1q encap / VRF RIF / 命名規則） — 物理 port または PortChannel に .…</li>
+<li><a href="../../architecture/sonic-sub-port-interface-high-level-design/">Sub-port Interface（dot1q encap / VRF RIF / 命名規則）</a> — [code-verified] Sub-port Interface（dot1q encap / VRF RIF / 命名規則） — 物理 port または <a href="../../reference/glossary/#term-portchannel">PortChannel</a> に .…</li>
 <li><a href="../../architecture/dhcpv4-relay-agent/">DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）</a> — [code-verified] DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id） — ToR スイッチが dow…</li>
 <li><a href="../../architecture/dhcpv6-relay-agent/">DHCPv6 Relay Agent（Option 79 / dual ToR loopback）</a> — [code-verified] DHCPv6 Relay Agent（Option 79 / dual ToR loopback） — DHCPv6 では SONiC 自前実装の relay…</li>
-<li><a href="../../architecture/nat-in-sonic/">NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）</a> — [code-verified] NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI） — SONiC は Linux kernel の conn…</li>
+<li><a href="../../architecture/nat-in-sonic/">NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）</a> — [code-verified] <a href="../../reference/glossary/#term-nat">NAT</a> in SONiC（natsyncd / NatOrch / iptables ↔ SAI） — SONiC は Linux kernel の conn…</li>
 <li><a href="../../architecture/sag-high-level-design-for-sonic/">SAG（Static Anycast Gateway）for SONiC</a> — [discrepancy-found] SAG（Static Anycast Gateway）for SONiC — EVPN/VxLAN ファブリックで全 leaf が 同一 IP / MAC を…</li>
 <li><a href="../../architecture/sflow-high-level-design/">sFlow（hsflowd / sflowmgrd / SAI sample-packet）</a> — [discrepancy-found] sFlow（hsflowd / sflowmgrd / SAI sample-packet） — sFlow は ASIC が一定 sampling-rate…</li>
 <li><a href="../../architecture/sflow-test-plan/">sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）</a> — [code-verified] sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling…</li>
-<li><a href="../../architecture/smart-switch-database-design/">Smart Switch のデータベース構成（NPU 上の DPU overlay DB）</a> — [code-verified] Smart Switch のデータベース構成（NPU 上の DPU overlay DB） — DPU の DASH overlay 用 Redis を NP…</li>
-<li><a href="../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/">SmartSwitch HA - DPU-Scope-DPU-Driven 構成</a> — [code-verified] SmartSwitch HA - DPU-Scope-DPU-Driven 構成 — SmartSwitch の HA はもともと ENI-Scope-NPU…</li>
+<li><a href="../../architecture/smart-switch-database-design/">Smart Switch のデータベース構成（NPU 上の DPU overlay DB）</a> — [code-verified] Smart Switch のデータベース構成（<a href="../../reference/glossary/#term-npu">NPU</a> 上の <a href="../../reference/glossary/#term-dpu">DPU</a> overlay DB） — DPU の DASH overlay 用 Redis を NP…</li>
+<li><a href="../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/">SmartSwitch HA - DPU-Scope-DPU-Driven 構成</a> — [code-verified] SmartSwitch HA - DPU-Scope-DPU-Driven 構成 — SmartSwitch の HA はもともと <a href="../../reference/glossary/#term-eni">ENI</a>-Scope-NPU…</li>
 <li><a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）</a> — [discrepancy-found] SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携） — hamgrd は SmartSwitch の NPU 側 H…</li>
 <li><a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/">SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）</a> — [discrepancy-found] HAMgrD の概念。NPU 側 actor model、vDPU 抽象、HA Set / HA Scope の役割、DPU-Driven / Switch-…</li>
 <li><a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）</a> — [discrepancy-found] HAMgrD の設定経路。DASH_HA_GLOBAL_CONFIG / DASH_HA_SET_CONFIG / DASH_HA_SCOPE_CONFIG…</li>
@@ -28835,7 +28835,7 @@
 <li><a href="../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">SmartSwitch HA HAMgrD 制限事項と実装乖離</a> — [discrepancy-found] HAMgrD の制限事項と実装乖離。community master 上で hamgrd バイナリ未取り込み、DASH_HA_DPU_STATE / VDPU…</li>
 <li><a href="../../architecture/1-udev-rules-design-for-terminal-server/">ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計</a> — [code-verified] ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計 — ターミナルサーバ機能を持つ SONiC 装置はフロントパネルに…</li>
 <li><a href="../../architecture/debug-framework-in-sonic/">Debug Framework（コンポーネント dump 登録 / assert 拡張）</a> — [discrepancy-found] Debug Framework（コンポーネント dump 登録 / assert 拡張） — SONiC コンポーネント（特に OrchAgent モジュール…</li>
-<li><a href="../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a> — [discrepancy-found] Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬） — 従来 syncd は SAI CREATE/S…</li>
+<li><a href="../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a> — [discrepancy-found] Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬） — 従来 <a href="../../reference/glossary/#term-syncd">syncd</a> は SAI CREATE/S…</li>
 <li><a href="../../architecture/error-handling-framework-in-sonic-concepts/">Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）</a> — [discrepancy-found] Error Handling Framework HLD の概念整理。SAI 失敗を fatal 扱いせず ERROR_DB 経由で app に伝搬する設計思…</li>
 <li><a href="../../architecture/error-handling-framework-in-sonic-operations/">Error Handling Framework 設定・運用（show / clear error-database / ERROR_DB スキーマ）</a> — [discrepancy-found] Error Handling Framework HLD の CLI / ERROR_DB スキーマ。<code>show error-database</code> / `son…</li>
 <li><a href="../../architecture/error-handling-framework-in-sonic-internals/">Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）</a> — [discrepancy-found] Error Handling Framework HLD の内部実装。OrchAgent が SAI 失敗を ASIC_DB notification cha…</li>
@@ -29527,6 +29527,7 @@
 <li><a href="../../categories/gnmi-openconfig/">gNMI / gNOI / OpenConfig 関連</a> — [meta] gNMI / gNOI / OpenConfig 関連 — SONiC の管理プレーンは Management Framework（REST / gNMI /…</li>
 <li><a href="../../categories/container-build/">Container / Build system 関連</a> — [meta] Container / Build system 関連 — SONiC は sonic-buildimage リポジトリで Debian ベースの host…</li>
 </ul>
+<!-- glossary-links-injected: 2f586d5417d8 -->
 
 
 

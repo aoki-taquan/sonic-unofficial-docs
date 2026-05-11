@@ -29023,7 +29023,7 @@
 </div>
 <h1 id="grpc-clientactive-active-dualtor-ycabled-soc">gRPC client（active-active DualToR / ycabled ↔ SoC 連携）<a class="headerlink" href="#grpc-clientactive-active-dualtor-ycabled-soc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DualToR の <strong>active-active</strong> 構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で <strong>forwarding state</strong> が動的に切り替わる。SONiC 側の <code>linkmgrd</code> / <code>ycabled</code> から SoC 上のステートマシンへ RPC で問い合わせ・設定するために <strong>gRPC client daemon</strong> を PMON コンテナ内に置く設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>DualToR の <strong>active-active</strong> 構成では、HOST → <a href="../../reference/glossary/#term-fpga">FPGA</a> → SoC（外部のサブシステム）の経路で <strong>forwarding state</strong> が動的に切り替わる。SONiC 側の <code>linkmgrd</code> / <code>ycabled</code> から SoC 上のステートマシンへ RPC で問い合わせ・設定するために <strong>gRPC client daemon</strong> を PMON コンテナ内に置く設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>採用理由として gRPC の利点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>メッセージサイズが JSON 比 30-50% 小さい</li>
@@ -29173,7 +29173,7 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 919c144ee0ee -->
+<!-- glossary-links-injected: d12a6eddadee -->
 
 <div class="footnote">
 <hr />

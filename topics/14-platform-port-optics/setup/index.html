@@ -29012,7 +29012,7 @@
 </span></code></pre></div>
 <p>期待されるエラーカウンタは基本ゼロ近傍です。FEC を変えた直後は <code>RX_ERR</code> や <code>SYMBOL_ERR</code> が一時的に増えることがあるため、<code>watch -n 1 show interfaces counters Ethernet8</code> で 10〜30 秒の収束を待ちます。</p>
 <h2 id="3-platform-firmware">設定シナリオ 3: platform firmware のステージング更新<a class="headerlink" href="#3-platform-firmware" title="Permanent link">&para;</a></h2>
-<p><code>fw-util</code> は装置上で BIOS / CPLD / FPGA / SSD / optics を統一して扱います。本番投入前に「DUT 上に新 firmware を仕込み、次回 cold reboot で適用する」というステージング運用が典型です。</p>
+<p><code>fw-util</code> は装置上で BIOS / CPLD / <a href="../../../reference/glossary/#term-fpga">FPGA</a> / SSD / optics を統一して扱います。本番投入前に「DUT 上に新 firmware を仕込み、次回 cold reboot で適用する」というステージング運用が典型です。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 現状</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>status
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
@@ -29050,7 +29050,7 @@
 </tr>
 <tr>
 <td><code>config interface speed 400000</code> が <code>SAI_STATUS_INVALID_ATTR_VALUE_0</code> でログに残る</td>
-<td>ASIC は対応していても SerDes / FEC 組合せが NG</td>
+<td>ASIC は対応していても <a href="../../../reference/glossary/#term-serdes">SerDes</a> / FEC 組合せが NG</td>
 <td><code>port_config.ini</code> / <code>media_settings.json</code> で許可された組合せを確認</td>
 </tr>
 <tr>
@@ -29123,7 +29123,7 @@
 <li><a href="../../../platform/sonic-fw-utility/">SONiC fw-utility</a></li>
 <li><a href="../../../platform/platform-capability-file-enhancement/">platform capability file enhancement</a></li>
 </ul>
-<!-- glossary-links-injected: dde81be76b4f -->
+<!-- glossary-links-injected: 7d8aa76d140c -->
 
 
 

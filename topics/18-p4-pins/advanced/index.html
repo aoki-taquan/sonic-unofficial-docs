@@ -28873,7 +28873,7 @@
 <li><strong>P4 program upgrade</strong>: pipeline 更新時の atomic swap。<code>SetForwardingPipelineConfig</code> の VERIFY / SAVE / COMMIT / RECONCILE_AND_COMMIT モードの違いを理解する。</li>
 <li><strong>WCMP 大規模化</strong>: 数万 nexthop の WCMP group を扱う性能テスト。<code>wcmp_manager</code> の resize と SAI hash optimization が論点。</li>
 <li><strong>PacketIO scale</strong>: punt → CPU → controller の経路で、PacketIO rate が <a href="../../../reference/glossary/#term-copp">CoPP</a> / hostif queue / gRPC stream の各層で制限される。</li>
-<li><strong>PINS と SONiC standard ACL の共存</strong>: 同じ ASIC TCAM を分け合うため、resource allocation を deployment で固定する必要がある。</li>
+<li><strong>PINS と SONiC standard ACL の共存</strong>: 同じ ASIC <a href="../../../reference/glossary/#term-tcam">TCAM</a> を分け合うため、resource allocation を deployment で固定する必要がある。</li>
 </ul>
 <h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28902,7 +28902,7 @@
 <li><code>sonic-swss</code> で P4Orch と既存 orch (SwitchOrch, AclOrch) の境界整理 PR が散発。</li>
 <li>P4Runtime gRPC server (<code>p4rt-app</code>) の認証・TLS 周りの強化、PacketIO scale 改善の PR が議題化。</li>
 </ul>
-<!-- glossary-links-injected: 8c23ac0ed680 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 
 

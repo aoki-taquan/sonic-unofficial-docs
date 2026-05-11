@@ -29059,7 +29059,7 @@
 <p>VS でも <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub の経路は通常運用と同じ。<a href="../../../reference/glossary/#term-fdb">FDB</a> learn 等の notification は SAI VS が Linux netlink event を変換して <code>_NOTIFY</code> channel に流す実装。</p>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>VS は <strong>packet forwarding の datapath が Linux kernel</strong> で、ASIC の能力（hardware tracing、bulk counter、SAI 拡張属性、TCAM 上限）は再現しない。</li>
+<li>VS は <strong>packet forwarding の datapath が Linux kernel</strong> で、ASIC の能力（hardware tracing、bulk counter、SAI 拡張属性、<a href="../../../reference/glossary/#term-tcam">TCAM</a> 上限）は再現しない。</li>
 <li>ACL / mirror / WRED / <a href="../../../reference/glossary/#term-pfc">PFC</a> / <a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-nat">NAT</a> は VS では「設定は受理されるが効果なし」になることが多い。動作確認は実機 / SimX が必要。</li>
 <li>VS image は <code>make PLATFORM=vs</code> で生成され、<code>onie-installer-vs.bin</code> または <code>sonic-vs.img</code> を libvirt / qemu で起動。boot だけで 1〜2 分かかる。</li>
 <li>PTF は veth 経由で SONiC-VS と接続するが、veth の MTU / VLAN / offload 設定によっては想定外の動作になる。<code>ethtool -K</code> で TX/RX checksum を無効化する運用がある。</li>
@@ -29140,7 +29140,7 @@
 </ul>
 <h2 id="verification-meta">verification: meta を選ぶ理由<a class="headerlink" href="#verification-meta" title="Permanent link">&para;</a></h2>
 <p>このページが <code>verification: meta</code> なのは、lab / 開発者ワークフローは「実装の状態」ではなく「複数 HLD への横断ガイド」だからです。SAI VS / <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a> / PTF / KNE / Alpine それぞれに別途 <code>code-verified</code> ページがあり、ここで重複して裏取りする必要はありません。サブ章で言及するコンポーネント別の挙動裏取りは、リンク先の章を参照してください。</p>
-<!-- glossary-links-injected: eb5486859daf -->
+<!-- glossary-links-injected: 4d9f23481e68 -->
 
 
 

@@ -28886,7 +28886,7 @@
 </div>
 <h1 id="npu-mdio-gbsyncd-docker">NPU MDIO アクセスと gbsyncd 単一 docker 化<a class="headerlink" href="#npu-mdio-gbsyncd-docker" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>外部 PHY (gearbox) を制御するために gbsyncd は <strong>PAI library</strong> を使う。PHY が接続される MDIO バスは platform により異なり、(a) FPGA/CPLD ベースで Linux kernel driver + sysfs 経由のもの と (b) <strong>switch <a href="../../reference/glossary/#term-npu">NPU</a> の MDIO bus</strong> で <a href="../../reference/glossary/#term-sai">SAI</a> 経由でアクセスするもの の 2 系統がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後者では syncd と gbsyncd の <strong>プロセス間通信（IPC）</strong> が必要になる。本 <a href="../../reference/glossary/#term-hld">HLD</a> は (i) NPU MDIO 経由のアクセスを Unix socket IPC で実現し、(ii) PAI library と MDIO access library を <strong>runtime ロード</strong> することで <strong>単一 gbsyncd docker</strong> で全 platform を扱えるようにする設計。</p>
+<p>外部 PHY (gearbox) を制御するために gbsyncd は <strong>PAI library</strong> を使う。PHY が接続される MDIO バスは platform により異なり、(a) <a href="../../reference/glossary/#term-fpga">FPGA</a>/CPLD ベースで Linux kernel driver + sysfs 経由のもの と (b) <strong>switch <a href="../../reference/glossary/#term-npu">NPU</a> の MDIO bus</strong> で <a href="../../reference/glossary/#term-sai">SAI</a> 経由でアクセスするもの の 2 系統がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。後者では syncd と gbsyncd の <strong>プロセス間通信（IPC）</strong> が必要になる。本 <a href="../../reference/glossary/#term-hld">HLD</a> は (i) NPU MDIO 経由のアクセスを Unix socket IPC で実現し、(ii) PAI library と MDIO access library を <strong>runtime ロード</strong> することで <strong>単一 gbsyncd docker</strong> で全 platform を扱えるようにする設計。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29053,7 +29053,7 @@ reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 45f90d834d39 -->
+<!-- glossary-links-injected: d12a6eddadee -->
 
 <div class="footnote">
 <hr />

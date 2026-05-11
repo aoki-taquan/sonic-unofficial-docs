@@ -28930,7 +28930,7 @@
 </div>
 <h1 id="media-based-port-settingsmedia_settingsjson-serdes">Media-based Port Settings（media_settings.json による SerDes プロファイル）<a class="headerlink" href="#media-based-port-settingsmedia_settingsjson-serdes" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>vendor / media type / cable length ごとに <strong>異なる SerDes 設定</strong>（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、<strong><code>media_settings.json</code></strong> を vendor が提供し xcvrd 経由で <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> → PortsOrch → <a href="../../reference/glossary/#term-sai">SAI</a> に橋渡しする仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため <strong>opt-in</strong>。</p>
+<p>vendor / media type / cable length ごとに <strong>異なる <a href="../../reference/glossary/#term-serdes">SerDes</a> 設定</strong>（preemphasis / idriver / ipredriver 等）を必要とする ASIC のために、<strong><code>media_settings.json</code></strong> を vendor が提供し xcvrd 経由で <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> → PortsOrch → <a href="../../reference/glossary/#term-sai">SAI</a> に橋渡しする仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定ミスは CRC error / port が up しない等の症状を招くため、Optic 挿抜ごとに正しいプロファイルを適用する必要がある。本機能は file 不在なら無効化されるため <strong>opt-in</strong>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">データフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29082,7 +29082,7 @@ reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 5e92b35b3616 -->
+<!-- glossary-links-injected: 710f941d149a -->
 
 <div class="footnote">
 <hr />

@@ -28808,7 +28808,7 @@
 </div>
 <h1 id="asic-asic_sensors-asic_temperature_info">ASIC 内部温度センサのポーリング（<code>ASIC_SENSORS</code> / <code>ASIC_TEMPERATURE_INFO</code>）<a class="headerlink" href="#asic-asic_sensors-asic_temperature_info" title="Permanent link">&para;</a></h1>
 <h2 id="_1">何が課題なのか<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>スイッチ上の温度センサのうち <strong>外部（オンボード）</strong> は既存ドライバで読めるが、<strong>ASIC 内部センサは ASIC SDK 経由でしか読めない</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。pmon に <a href="../../reference/glossary/#term-sai">SAI</a> 依存を入れたくないため、<a href="../../reference/glossary/#term-orchagent">orchagent</a> 側に poller を置いて <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に書き出し、<code>thermalctld</code> / <code>show platform temperature</code> / <a href="../../reference/glossary/#term-snmp">SNMP</a> / Telemetry から透過的に参照できるようにする。</p>
+<p>スイッチ上の温度センサのうち <strong>外部（オンボード）</strong> は既存ドライバで読めるが、<strong>ASIC 内部センサは <a href="../../reference/glossary/#term-asic-sdk">ASIC SDK</a> 経由でしか読めない</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。pmon に <a href="../../reference/glossary/#term-sai">SAI</a> 依存を入れたくないため、<a href="../../reference/glossary/#term-orchagent">orchagent</a> 側に poller を置いて <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に書き出し、<code>thermalctld</code> / <code>show platform temperature</code> / <a href="../../reference/glossary/#term-snmp">SNMP</a> / Telemetry から透過的に参照できるようにする。</p>
 <p>SAI が提供する関連属性<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
@@ -28889,7 +28889,7 @@
 <li><a href="../../topics/09-telemetry-snmp/">09-telemetry-snmp</a>: 温度値の publish</li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 41a610d020b5 -->
+<!-- glossary-links-injected: ad4074e0b684 -->
 
 <div class="footnote">
 <hr />
