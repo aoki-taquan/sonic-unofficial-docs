@@ -28813,6 +28813,14 @@
 <li><strong>container 再起動で <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> が初期化</strong>: redis ephemeral</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[interface counter が勝手に 0 に戻る] --&gt; B{sonic-clear counters 実行?}
+    B -- Yes --&gt; B1[運用上の clear 操作だった / OK]
+    B -- No --&gt; C{syncd 再起動した?}
+    C -- Yes --&gt; C1[counter は揮発 / 再起動が原因]
+    C -- No --&gt; D{FLEX_COUNTER 設定変更?}
+    D -- Yes --&gt; D1[再設定で base が更新された]
+    D -- No --&gt; E[orchagent ログ確認 / SAI 異常調査]</code></pre>
 <h3 id="1-clear">1. 直近の clear 実行<a class="headerlink" href="#1-clear" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;sonic-clear|portstat&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>ls<span class="w"> </span>-la<span class="w"> </span>/tmp/portstat-*<span class="w"> </span>/tmp/.portstat-*<span class="w"> </span><span class="m">2</span>&gt;/dev/null

@@ -28836,6 +28836,16 @@
 <li><strong><a href="../../glossary/#term-bfd">BFD</a> セッション断</strong>: <code>bfdd</code> が UP しないと <a href="../../glossary/#term-bgp">BGP</a> が即 down する構成（bfd hold-down）</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[BGP peer State != Established] --&gt; B{interface oper up?}
+    B -- No --&gt; B1[L1/L2 確認: fec-errors / link-flapping]
+    B -- Yes --&gt; C{ping / TCP 179 到達?}
+    C -- No --&gt; C1[対向 ACL / firewall / route 確認]
+    C -- Yes --&gt; D{CONFIG_DB と vtysh の neighbor 一致?}
+    D -- No --&gt; D1[bgpcfgd ログ確認 / config reload]
+    D -- Yes --&gt; E{AS / router-id 整合?}
+    E -- No --&gt; E1[BGP_NEIGHBOR.asn / DEVICE_METADATA.bgp_asn 修正]
+    E -- Yes --&gt; F[BFD / hold-timer / admin_status を確認]</code></pre>
 <h3 id="1-ip">1. リンク・IP の確認<a class="headerlink" href="#1-ip" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>interface<span class="w"> </span>status<span class="w"> </span>Ethernet0
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interface

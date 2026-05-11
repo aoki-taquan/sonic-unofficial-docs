@@ -28814,6 +28814,14 @@
 <li><strong>対向側 OS の panic / reboot ループ</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[link が頻繁に up/down] --&gt; B{flap 頻度測定?}
+    B -- 高 --&gt; B1[直近 syslog で trigger を特定]
+    B -- 低 --&gt; C{DOM 値変動?}
+    C -- 異常 --&gt; C1[光学 / 温度 / 給電を確認]
+    C -- 正常 --&gt; D{FEC エラー増?}
+    D -- Yes --&gt; D1[fec-errors runbook へ]
+    D -- No --&gt; E[対向 LACP / autoneg の状態を確認]</code></pre>
 <h3 id="1-flap">1. flap 頻度の定量化<a class="headerlink" href="#1-flap" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;oper status changed&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Ethernet0<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </span></code></pre></div>

@@ -28836,6 +28836,14 @@
 <li><strong>stage / type 不一致</strong>: L3 rule を <code>INGRESS_L2</code> テーブルに入れている</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[RIF / ACL counter が常に 0] --&gt; B{FLEX_COUNTER で polling enable?}
+    B -- No --&gt; B1[POLL_INTERVAL を設定]
+    B -- Yes --&gt; C{COUNTERS_DB にキー存在?}
+    C -- No --&gt; C1[syncd 再起動 / counter mapping 確認]
+    C -- Yes --&gt; D{実トラフィック流れている?}
+    D -- No --&gt; D1[upstream で経路 / ACL hit を確認]
+    D -- Yes --&gt; E[SAI counter ID と bind を点検]</code></pre>
 <h3 id="1-flex_counter">1. FLEX_COUNTER の状態<a class="headerlink" href="#1-flex_counter" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>counterpoll<span class="w"> </span>show
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;FLEX_COUNTER_TABLE|ACL&quot;</span>

@@ -28836,6 +28836,14 @@
 <li><strong>best-path にならない</strong>: 同 prefix で他の経路（IGP / static）に負けて Adj-RIB-Out に乗らない</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[対向に経路が届かない] --&gt; B{local RIB に経路あり?}
+    B -- No --&gt; B1[起源側 redistribute / network 文を確認]
+    B -- Yes --&gt; C{Adj-RIB-Out に乗っている?}
+    C -- No --&gt; C1[route-map / prefix-list で deny されていないか]
+    C -- Yes --&gt; D{outbound policy 適用順序 OK?}
+    D -- No --&gt; D1[route-map seq 番号と match 条件を修正]
+    D -- Yes --&gt; E[clear bgp &lt;peer&gt; soft out で再送信]</code></pre>
 <h3 id="1-local-rib-adj-rib-out">1. local RIB と Adj-RIB-Out<a class="headerlink" href="#1-local-rib-adj-rib-out" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show ip bgp 1.1.1.0/24&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show ip bgp neighbors &lt;peer&gt; advertised-routes&quot;</span>

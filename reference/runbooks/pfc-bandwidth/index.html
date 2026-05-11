@@ -28837,6 +28837,14 @@
 <li><strong>MMU 共有プールの先頭飽和</strong>: 他 priority のトラフィックが共有プールを食い潰し、lossless 用 reserved が確保できない</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[PFC で帯域が出ない / pause 過多] --&gt; B{PFC 設定 priority 一致?}
+    B -- No --&gt; B1[両端 DSCP/TC マップを揃える]
+    B -- Yes --&gt; C{PFC watchdog 発火?}
+    C -- Yes --&gt; C1[show pfcwd で対象 queue を特定]
+    C -- No --&gt; D{buffer profile size 妥当?}
+    D -- No --&gt; D1[BUFFER_PROFILE の xon/xoff 調整]
+    D -- Yes --&gt; E[対向側 congestion / receiver を確認]</code></pre>
 <h3 id="1-qos-pfc-enabled-priority">1. QoS マッピングと PFC enabled priority の整合<a class="headerlink" href="#1-qos-pfc-enabled-priority" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;PORT_QOS_MAP|Ethernet0&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DSCP_TO_TC_MAP|AZURE&quot;</span>

@@ -28836,6 +28836,14 @@
 <li><strong><a href="../../glossary/#term-acl">ACL</a> / firewall で UDP 161 がブロック</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[SNMPv3 認証失敗] --&gt; B{user / authPriv 設定一致?}
+    B -- No --&gt; B1[SNMP_USER の authProto/privProto 修正]
+    B -- Yes --&gt; C{passphrase 長さ要件 OK?}
+    C -- No --&gt; C1[8 文字以上に再設定]
+    C -- Yes --&gt; D{engineID 一致?}
+    D -- No --&gt; D1[snmpd の engineID 確認 / 再生成]
+    D -- Yes --&gt; E[snmpd ログで authError を確認]</code></pre>
 <h3 id="1-user">1. user 設定<a class="headerlink" href="#1-user" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;SNMP_USER|*&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;SNMP_USER|&lt;user&gt;&quot;</span>

@@ -28836,6 +28836,16 @@
 <li><strong>リソース不足</strong>: tmpfs 領域 / inode / shared memory 枯渇</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[docker container が起動しない] --&gt; B{feature state = enabled?}
+    B -- No --&gt; B1[config feature state &lt;name&gt; enabled]
+    B -- Yes --&gt; C{systemd unit active?}
+    C -- No --&gt; C1[journalctl -u &lt;unit&gt; でエラー確認]
+    C -- Yes --&gt; D{docker image 存在?}
+    D -- No --&gt; D1[image pull / load を実行]
+    D -- Yes --&gt; E{依存サービス起動済み?}
+    E -- No --&gt; E1[database / swss の起動順を確認]
+    E -- Yes --&gt; F[hostcfgd / hostservice のログ確認]</code></pre>
 <h3 id="1-feature">1. feature 設定<a class="headerlink" href="#1-feature" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>feature<span class="w"> </span>status
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;FEATURE|bgp&quot;</span>

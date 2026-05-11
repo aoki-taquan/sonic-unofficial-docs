@@ -28835,6 +28835,15 @@
 <li><strong>BGP の next-hop unchanged 設定誤り</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[traceroute がループ / TTL 枯渇] --&gt; B{ループ区間特定?}
+    B -- Yes --&gt; B1[該当 hop の FIB を比較]
+    B -- No --&gt; B2[両端で traceroute / show ip route]
+    B1 --&gt; C{static route と BGP の競合?}
+    C -- Yes --&gt; C1[AD/preference を見直し]
+    C -- No --&gt; D{ECMP nh の片側が誤り?}
+    D -- Yes --&gt; D1[該当 nh を一時 shutdown]
+    D -- No --&gt; E[redistribute / route-map のループを確認]</code></pre>
 <h3 id="1-traceroute-loop-hop">1. traceroute で loop hop 特定<a class="headerlink" href="#1-traceroute-loop-hop" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>traceroute<span class="w"> </span>-n<span class="w"> </span>-q<span class="w"> </span><span class="m">1</span><span class="w"> </span>-w<span class="w"> </span><span class="m">1</span><span class="w"> </span>&lt;dst&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mtr<span class="w"> </span>-n<span class="w"> </span>--no-dns<span class="w"> </span>&lt;dst&gt;

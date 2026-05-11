@@ -28835,6 +28835,14 @@
 <li><strong>host 側の swap 無効 + free 不足</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[container OOM / RSS 異常増加] --&gt; B{docker stats で RSS 増?}
+    B -- No --&gt; B1[memory leak ではない / 他要因調査]
+    B -- Yes --&gt; C{cgroup limit 設定?}
+    C -- No --&gt; C1[/etc/sonic/docker_image_ctl で limit 調整]
+    C -- Yes --&gt; D{特定プロセスの RSS 偏り?}
+    D -- Yes --&gt; D1[該当プロセスの core / heap profile 採取]
+    D -- No --&gt; E[techsupport 採取しコミュニティへ報告]</code></pre>
 <h3 id="1-container">1. 各 container の使用量<a class="headerlink" href="#1-container" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>stats<span class="w"> </span>--no-stream
 </span></code></pre></div>

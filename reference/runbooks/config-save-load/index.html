@@ -28836,6 +28836,14 @@
 <li><strong>minigraph.xml を編集したのに <code>load_minigraph</code> を打たず <code>reload</code> だけしている</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[config save/load が失敗] --&gt; B{write 権限 OK?}
+    B -- No --&gt; B1[/etc/sonic の権限を修正]
+    B -- Yes --&gt; C{JSON parse OK?}
+    C -- No --&gt; C1[jq でフォーマット確認]
+    C -- Yes --&gt; D{load 時に YANG エラー?}
+    D -- Yes --&gt; D1[エラー行の table を修正]
+    D -- No --&gt; E[config reload のログを確認]</code></pre>
 <h3 id="1">1. ファイル時刻 / 権限<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ls<span class="w"> </span>-la<span class="w"> </span>/etc/sonic/
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;keys | length&#39;</span>

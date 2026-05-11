@@ -28836,6 +28836,16 @@
 <li><strong>multi-asic で 1 ASIC に偏った programming</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[CRM threshold 超過アラート] --&gt; B{どのリソース?}
+    B -- ROUTE/NEIGHBOR --&gt; B1[BGP/ARP 学習量と max を比較]
+    B -- ACL_ENTRY/COUNTER --&gt; B2[ACL_TABLE 数を整理]
+    B -- NEXTHOP/GROUP --&gt; B3[ECMP group merge / nh 数削減]
+    B -- FDB --&gt; B4[VLAN aging / mac 学習量確認]
+    B1 --&gt; C[crm config threshold で適正値を設定]
+    B2 --&gt; C
+    B3 --&gt; C
+    B4 --&gt; C</code></pre>
 <h3 id="1">1. 現在の使用量<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>crm<span class="w"> </span>show<span class="w"> </span>summary

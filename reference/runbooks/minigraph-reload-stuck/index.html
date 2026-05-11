@@ -28836,6 +28836,14 @@
 <li><strong>swss / <a href="../../glossary/#term-syncd">syncd</a> が初期化中に <a href="../../glossary/#term-sai">SAI</a> エラー</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[load_minigraph が終わらない] --&gt; B{updategraph 待ち?}
+    B -- Yes --&gt; B1[/etc/sonic/updategraph.conf を確認]
+    B -- No --&gt; C{sonic-cfggen で minigraph parse OK?}
+    C -- No --&gt; C1[minigraph.xml の XML 妥当性確認]
+    C -- Yes --&gt; D{config reload 内部で stuck?}
+    D -- Yes --&gt; D1[config-reload-stuck runbook へ]
+    D -- No --&gt; E[hostcfgd ログを確認]</code></pre>
 <h3 id="1-minigraph">1. minigraph 構文<a class="headerlink" href="#1-minigraph" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>sonic-cfggen<span class="w"> </span>-m<span class="w"> </span>/etc/sonic/minigraph.xml<span class="w"> </span>-p<span class="w"> </span>/usr/share/sonic/device/&lt;platform&gt;/&lt;hwsku&gt;/port_config.ini<span class="w"> </span>--print-data<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>

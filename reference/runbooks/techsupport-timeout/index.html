@@ -28836,6 +28836,14 @@
 <li><strong>core file / dump 過多</strong>: 過去 dump が片付かず <code>/var/dump</code> が容量圧迫</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[show techsupport が timeout] --&gt; B{特定コマンドで stuck?}
+    B -- Yes --&gt; B1[該当コマンドを除外 / 個別取得]
+    B -- No --&gt; C{disk I/O 高負荷?}
+    C -- Yes --&gt; C1[I/O 落ち着くまで待機 / nice 値調整]
+    C -- No --&gt; D{database 応答遅延?}
+    D -- Yes --&gt; D1[redis dump 範囲を絞る]
+    D -- No --&gt; E[generate_dump.sh の timeout 値を引き上げ]</code></pre>
 <h3 id="1-dump">1. 直近の dump サイズ / 残骸<a class="headerlink" href="#1-dump" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ls<span class="w"> </span>-lh<span class="w"> </span>/var/dump/
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>df<span class="w"> </span>-h<span class="w"> </span>/var

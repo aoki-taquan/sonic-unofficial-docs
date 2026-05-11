@@ -28813,6 +28813,14 @@
 <li><strong><a href="../../glossary/#term-acl">ACL</a> TCAM 競合</strong>: 同 stage の table が ACL リソースを奪い合う</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[SAI table 満杯エラー] --&gt; B{どの table?}
+    B -- ROUTE/NH --&gt; B1[BGP 経路数 / ECMP group を削減]
+    B -- ACL --&gt; B2[ACL_TABLE 数 / entry を整理]
+    B -- FDB --&gt; B3[VLAN aging / mac 学習量を見直し]
+    B1 --&gt; C[platform のリソース上限を確認]
+    B2 --&gt; C
+    B3 --&gt; C</code></pre>
 <h3 id="1-crm">1. CRM<a class="headerlink" href="#1-crm" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
 </span></code></pre></div>

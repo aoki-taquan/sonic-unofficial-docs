@@ -28836,6 +28836,14 @@
 <li><strong>TLS / mTLS 証明書失敗</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[PINS P4RT gRPC が応答しない] --&gt; B{p4rt container up?}
+    B -- No --&gt; B1[feature p4rt enable / 起動ログ確認]
+    B -- Yes --&gt; C{listen port LISTEN?}
+    C -- No --&gt; C1[ss -tln で port 9559 を確認]
+    C -- Yes --&gt; D{TLS 証明書 OK?}
+    D -- No --&gt; D1[gnmi/p4rt の cert を再配置]
+    D -- Yes --&gt; E[p4rt log / swss P4Orch の状態確認]</code></pre>
 <h3 id="1-container-process">1. container / process<a class="headerlink" href="#1-container-process" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>p4rt
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>p4rt<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-200

@@ -28836,6 +28836,14 @@
 <li><strong>snmp container の CPU 飽和</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[SNMP polling が timeout] --&gt; B{snmp container 起動?}
+    B -- No --&gt; B1[feature snmp enable]
+    B -- Yes --&gt; C{community / source ACL 一致?}
+    C -- No --&gt; C1[SNMP_COMMUNITY / SNMP_AGENT_ADDRESS_CONFIG 修正]
+    C -- Yes --&gt; D{snmpd CPU 高負荷?}
+    D -- Yes --&gt; D1[OID 数削減 / polling 間隔を緩和]
+    D -- No --&gt; E[NW 経路 / MTU を確認]</code></pre>
 <h3 id="1-host-reachability">1. host 側 reachability<a class="headerlink" href="#1-host-reachability" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-ulnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>:161
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-nn<span class="w"> </span>udp<span class="w"> </span>port<span class="w"> </span><span class="m">161</span><span class="w"> </span>-c<span class="w"> </span><span class="m">10</span>

@@ -28836,6 +28836,14 @@
 <li><strong><a href="../../glossary/#term-mclag">MCLAG</a> interface 設定漏れ</strong>: PortChannel が <code>MCLAG_INTERFACE</code> に登録されていない</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[MCLAG peer 間で状態同期されない] --&gt; B{iccpd プロセス動作?}
+    B -- No --&gt; B1[iccpd 起動 / config feature 確認]
+    B -- Yes --&gt; C{peer link up かつ ICCP TCP 確立?}
+    C -- No --&gt; C1[peer-link / peer_ip 到達性確認]
+    C -- Yes --&gt; D{MCLAG_DOMAIN の system_mac 一致?}
+    D -- No --&gt; D1[system_mac を両側で揃える]
+    D -- Yes --&gt; E[fdbsyncd / mclagsyncd ログ確認]</code></pre>
 <h3 id="1-mclag-state">1. MCLAG state<a class="headerlink" href="#1-mclag-state" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>mclag<span class="w"> </span>brief
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>mclag<span class="w"> </span>interface

@@ -28836,6 +28836,14 @@
 <li><strong><code>CHASSIS_MODULE|DPU0</code> の admin_status が <code>down</code></strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[DPU が無応答] --&gt; B{NPU から PCIe / mgmt link OK?}
+    B -- No --&gt; B1[PCIe link / 電源を確認]
+    B -- Yes --&gt; C{ping / gNMI 応答?}
+    C -- No --&gt; C1[DPU agent / dhcp_server を確認]
+    C -- Yes --&gt; D{DPU 側 dataplane 動作?}
+    D -- No --&gt; D1[DPU 内 syslog / dataplane プロセス確認]
+    D -- Yes --&gt; E[DPU reset (graceful → force)]</code></pre>
 <h3 id="1">1. モジュール状態<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>platform<span class="w"> </span>inventory

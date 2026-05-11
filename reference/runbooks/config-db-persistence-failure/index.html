@@ -28836,6 +28836,14 @@
 <li><strong>multi-asic で <code>config save -y</code> の subprocess 失敗</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[config save しても再起動後に消える] --&gt; B{config_db.json に書き込まれた?}
+    B -- No --&gt; B1[config save の戻り値 / 権限を確認]
+    B -- Yes --&gt; C{minigraph.xml が優先されている?}
+    C -- Yes --&gt; C1[/etc/sonic/updategraph.conf を disable]
+    C -- No --&gt; D{config_db.json の JSON 妥当?}
+    D -- No --&gt; D1[sonic-cfggen で syntax 確認]
+    D -- Yes --&gt; E[load_minigraph / write_standby スクリプトを確認]</code></pre>
 <h3 id="1">1. ディスク状態<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>df<span class="w"> </span>-h<span class="w"> </span>/
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mount<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot; / &quot;</span>

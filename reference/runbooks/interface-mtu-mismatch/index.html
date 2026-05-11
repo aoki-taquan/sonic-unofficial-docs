@@ -28813,6 +28813,14 @@
 <li><strong>PMTUD ブラックホール</strong>: 中間 <a href="../../glossary/#term-acl">ACL</a> が ICMP <code>frag-needed</code> を破棄</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[大きいパケットが落ちる / ping -s で失敗] --&gt; B{両端 MTU 一致?}
+    B -- No --&gt; B1[config interface mtu で揃える]
+    B -- Yes --&gt; C{PortChannel メンバー mtu 一致?}
+    C -- No --&gt; C1[LAG メンバー全てに同 MTU 設定]
+    C -- Yes --&gt; D{VLAN/Vxlan の overhead 考慮?}
+    D -- No --&gt; D1[overlay 用に +50/+54 増やす]
+    D -- Yes --&gt; E[ASIC port MTU と sysctl を確認]</code></pre>
 <h3 id="1-mtu">1. 両端 MTU 比較<a class="headerlink" href="#1-mtu" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Ethernet0|PortChannel&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ip<span class="w"> </span>-d<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>Ethernet0

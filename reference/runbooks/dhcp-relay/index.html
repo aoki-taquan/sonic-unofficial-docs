@@ -28836,6 +28836,16 @@
 <li><strong>option 82 (circuit/remote-id) の挿入仕様が server と不一致</strong> → server が DISCOVER を黙って drop</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[DHCP リレーで IP 払い出されない] --&gt; B{VLAN に dhcp_servers 設定?}
+    B -- No --&gt; B1[config vlan dhcp_relay add 実施]
+    B -- Yes --&gt; C{dhcp_relay container 起動?}
+    C -- No --&gt; C1[feature dhcp_relay を enable]
+    C -- Yes --&gt; D{クライアント側 capture で DISCOVER 観測?}
+    D -- No --&gt; D1[L2 / port-tagged を確認]
+    D -- Yes --&gt; E{上流へ OFFER 戻る?}
+    E -- No --&gt; E1[L3 到達性 / source IP 設定を確認]
+    E -- Yes --&gt; F[dhcpmon カウンタとログを確認]</code></pre>
 <h3 id="1-config_db-helper">1. CONFIG_DB に helper が入っているか<a class="headerlink" href="#1-config_db-helper" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DHCP_RELAY|Vlan100&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;VLAN|Vlan100&quot;</span>

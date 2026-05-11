@@ -28813,6 +28813,14 @@
 <li><strong>DPU が graceful shutdown できていない</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[DPU イメージ install が失敗] --&gt; B{image 配布 (rsync/http) 成功?}
+    B -- No --&gt; B1[NPU-DPU 間ストレージ / 経路確認]
+    B -- Yes --&gt; C{image checksum 一致?}
+    C -- No --&gt; C1[image を再配布]
+    C -- Yes --&gt; D{DPU 側 installer 動作?}
+    D -- No --&gt; D1[DPU console / boot log を確認]
+    D -- Yes --&gt; E[install 後の reboot / 起動失敗ログを調査]</code></pre>
 <h3 id="1-dpu">1. DPU 状態<a class="headerlink" href="#1-dpu" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CHASSIS_STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;CHASSIS_MODULE_TABLE|DPU0&quot;</span>

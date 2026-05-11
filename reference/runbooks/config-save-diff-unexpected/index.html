@@ -28813,6 +28813,14 @@
 <li><strong>手動で <code>sonic-db-cli SET</code> した値が runtime のみ反映</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[config save の diff が想定外] --&gt; B{他オペレータの変更?}
+    B -- Yes --&gt; B1[audit log / history で操作を特定]
+    B -- No --&gt; C{自動生成 entry?}
+    C -- Yes --&gt; C1[hostcfgd / port-init.py の自動追記を確認]
+    C -- No --&gt; D{YANG validation エラー?}
+    D -- Yes --&gt; D1[sonic-cfggen --validate でログ確認]
+    D -- No --&gt; E[手動編集と save の順序を確認]</code></pre>
 <h3 id="1-running-config">1. 現 running と保存 config の差分<a class="headerlink" href="#1-running-config" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>sonic-cfggen<span class="w"> </span>-d<span class="w"> </span>--print-data<span class="w"> </span>&gt;<span class="w"> </span>/tmp/run.json
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>diff<span class="w"> </span>&lt;<span class="o">(</span>jq<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>/tmp/run.json<span class="o">)</span><span class="w"> </span>&lt;<span class="o">(</span>jq<span class="w"> </span>-S<span class="w"> </span>.<span class="w"> </span>/etc/sonic/config_db.json<span class="o">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-50

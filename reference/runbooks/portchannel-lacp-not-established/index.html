@@ -28836,6 +28836,14 @@
 <li><strong><a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / teammgrd の異常</strong>: <code>teamd@&lt;PortChannel&gt;.service</code> が crash ループ</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[LACP が established にならない] --&gt; B{両端 mode = active?}
+    B -- No --&gt; B1[lacp mode active に変更]
+    B -- Yes --&gt; C{member speed/MTU/duplex 一致?}
+    C -- No --&gt; C1[メンバー設定を揃える]
+    C -- Yes --&gt; D{teamd 動作 / partner key 一致?}
+    D -- No --&gt; D1[teamd ログで partner SystemID/Key 確認]
+    D -- Yes --&gt; E[ASIC LAG bind 状態を確認]</code></pre>
 <h3 id="1-l1">1. メンバーポートの L1 状態<a class="headerlink" href="#1-l1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Ethernet|PortChannel&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel

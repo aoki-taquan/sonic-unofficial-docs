@@ -28836,6 +28836,14 @@
 <li><strong>route / mapping table 衝突</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[DASH ENI が Down] --&gt; B{DASH_ENI_TABLE 設定あり?}
+    B -- No --&gt; B1[DASH ENI / VNI / ACL 設定を投入]
+    B -- Yes --&gt; C{swss DashOrch で ASIC 反映?}
+    C -- No --&gt; C1[swss / dashorch ログを確認]
+    C -- Yes --&gt; D{underlay 到達性 / VxLAN tunnel?}
+    D -- No --&gt; D1[underlay routing / tunnel src/dst 確認]
+    D -- Yes --&gt; E[DPU データプレーン / SAI DASH counter 確認]</code></pre>
 <h3 id="1-config_db-appl_db">1. CONFIG_DB / APPL_DB<a class="headerlink" href="#1-config_db-appl_db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DASH_ENI_TABLE|&lt;eni&gt;&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;DASH_ENI_TABLE:*&quot;</span>
