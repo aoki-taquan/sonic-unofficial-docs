@@ -86,6 +86,10 @@ sonic-db-cli COUNTERS_DB dbsize
 - ACL / route の bulk delete を試す前に `config save -y` で backup
 - 最終手段として `docker restart swss`（中断発生）→ warm-restart 設定がある場合のみ無瞬断に近い
 
+`Orch::doTask` は ConsumerStateTable から取り出した変更を 1 件ずつ ASIC へ適用し、SAI が失敗を返したエントリは `m_toSync` に残して次回ループで再試行する設計のため、解消不能なエラーが入ると CPU を使い切る[^1]。
+
+[^1]: `sonic-net/sonic-swss` `orchagent/orch.cpp::Orch::doTask` および `orchagent/orchdaemon.cpp` のメインループ実装。`SAI_STATUS_*` エラーは consumer 側で再キューイングされ、根本原因が解決するまで指数バックオフ無しで retry される。
+
 ## 関連 reference / topics
 
 - [sai-table-full.md](sai-table-full.md)

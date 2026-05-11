@@ -70,6 +70,10 @@ docker exec bgp vtysh -c "show bgp ipv4 unicast" | grep -i stale | head
 4. **[BFD](../../reference/glossary.md#term-bfd) と併用時の即 down** — BFD が即 session down を通知するため GR をスキップする
 5. **TCP セッションが MD5 / MSS で再確立できない** — control plane の再ハンドシェイクが失敗
 
+GR capability の交換は BGP OPEN メッセージ中の Capability Optional Parameter で行われ、FRR は `bgpd/bgp_open.c` でエンコード/デコードする[^1]。
+
+[^1]: `sonic-net/sonic-frr` `bgpd/bgp_open.c` における Graceful Restart capability (Type 64) のパース。Restart Time / Flags / AFI-SAFI の対称性が両端で合っていなければ GR は片側だけ "advertised" 表示となり実際には機能しない。
+
 ## 関連 reference / topics
 
 - [bgp-session-down.md](bgp-session-down.md)
