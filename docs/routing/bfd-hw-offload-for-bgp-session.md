@@ -145,6 +145,49 @@ show bfd summary
 - セッションは UP だが `show bfd peer` の remote 値がすべて 0 → SDK が remote 系 SAI 属性を未対応の可能性。BfdOrch のログに get_attribute エラーが出ていないか確認。
 - IPv6 link-local 経由で BGP/BFD が上がらない → 実装が neighbor table から宛先 MAC を取れているかを `ip -6 neigh` で確認する。
 
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
+
+### 1. `bfdsyncd` プロセスは未取り込み
+
+- **HLD 記述**: BGP docker に `bfdsyncd` を新規追加し、bfdd の DP socket と APPL_DB `BFD_SESSION_TABLE` の翻訳役を担う。
+- **実装位置**: `sonic-buildimage/dockers/docker-fpm-frr/` 配下に `bfdsyncd` 関連ファイル無し（grep ヒット 0）。`sonic-frr` にも `bfdsyncd` バイナリ／パッチは未取り込み。
+- **差分の中身**: BGP container の supervisord 設定にも `bfdsyncd` プログラムエントリは存在しない。HLD の図 (FRR-bfdd → bfdsyncd → APPL_DB) における中間プロセスがそもそも起動しない。
+- **読者への影響**: 現行 master では bfdd の BFD dataplane interface 経路は SW BFD としてのみ動作する。FRR からの `neighbor X bfd` 指定はあくまで FRR の SW BFD として動き、SAI HW BFD には自動連携しない。HW BFD を使うには CLI / staticroute 経由で直接 `BFD_SESSION_TABLE` を書く外部ツールが必要。
+- **回避策**:
+  - BGP セッションの HW BFD 化は現状自動化されていないため、staticroute 用の HW BFD（[BFD HW Offload HLD ベース](../routing/index.md) を参照）の経路を流用するか、外部スクリプトで bfdd の出力をパースして APPL_DB に書く。
+  - SW BFD で要件を満たせるなら FRR bfdd のみで運用（HW BFD と性能は劣るが機能としては動く）。
+
+### 2. `FEATURE.bgp.bfd_hw_offload` フラグも supervisord テンプレートに未取り込み
+
+- **HLD 記述**: `FEATURE|bgp` の `bfd_hw_offload` フラグで bfdsyncd / `bfdd --dplaneaddr` を起動する supervisord テンプレートを差し替える。
+- **実装位置**: BGP docker の `supervisord.conf.j2` / `bgpcfgd` / `sonic-buildimage/dockers/docker-fpm-frr/` に `bfd_hw_offload` の参照無し。
+- **差分の中身**: 条件分岐そのものが存在しない。フィーチャフラグを立てても起動内容は変わらない。
+- **読者への影響**: `sonic-db-cli CONFIG_DB HSET 'FEATURE|bgp' bfd_hw_offload true` を実行しても何も起こらない（フラグは読まれない）。
+- **回避策**: 本機能は実装されていないため、本 CLI/設定は **設定しない**。誤って設定しても害は無いが、効果も無い。
+
+### 3. SAI BFD remote 系属性の get → STATE_DB 反映ロジック未取り込み
+
+- **HLD 記述**: ASIC 側で得た remote (peer の) `MIN_TX` / `MIN_RX` / `MULTIPLIER` / `LOCAL_DIAG` を BfdOrch が読み取り STATE_DB に反映する。
+- **実装位置**: `sonic-swss/orchagent/bfdorch.cpp`
+  ```cpp
+  // L421 set 系のみ実装済み
+  attr.id = SAI_BFD_SESSION_ATTR_LOCAL_DISCRIMINATOR;
+  // L451-456 set のみ
+  attr.id = SAI_BFD_SESSION_ATTR_MIN_TX;
+  attr.id = SAI_BFD_SESSION_ATTR_MIN_RX;
+  ```
+- **差分の中身**: `SAI_BFD_SESSION_ATTR_REMOTE_MIN_TX` / `REMOTE_MIN_RX` / `REMOTE_MULTIPLIER` / `REMOTE_DIAG` の **get** 呼び出しは grep ヒット 0。HLD で「STATE_DB に remote 系属性を反映」と書かれた経路は実装されていない。
+- **読者への影響**: `STATE_DB.BFD_SESSION_TABLE` の remote 系フィールド（HLD で謳う `remote_min_tx` 等）は埋まらない（または 0 のまま）。peer 視点のセッション情報は SONiC 側からは見えず、FRR `vtysh -c 'show bfd peer'` で確認するしかない。
+- **回避策**:
+  - peer 側のネゴ結果が必要なら `vtysh -c "show bfd peer"` を使う（SW BFD の値で代用）。
+  - 監視ツールは STATE_DB の `BFD_SESSION_TABLE` の `local_*` フィールドと `state`（UP/DOWN）のみを利用する想定で書く。
+
+### 結論
+
+本ページの記述は **HLD の Proposal 仕様** であり、現行 master では `bfdsyncd` / `bfd_hw_offload` / remote 系 SAI get 経路のいずれも実装されていない。SAI 側に HW BFD 機能はあるため、static route 用 HW BFD HLD の経路を経由してマニュアルにセッションを張ることは可能。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bfd/BFD HW Offload for BGP session HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
