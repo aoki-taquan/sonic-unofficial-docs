@@ -80,6 +80,7 @@ plugins:
       lang: ja
       separator: '[\s\-、。・]+'
   - awesome-pages
+  - tags
 
 copyright: >
   &copy; 2024–2026 sonic-unofficial-docs contributors —

@@ -113,6 +113,22 @@ EVPN は VNI を L2（type-2）と L3（type-5）の両方で使うため、VNI 
 
 `fpmsyncd` は FRR からの EVPN route を `EVPN_REMOTE_VNI_TABLE` 系で受け、`VnetOrch` がそれを SAI tunnel / FDB / route に変換します。VNI が L2 と L3 で衝突する設定は CONFIG_DB の整合性チェックで拒否される設計ですが、bgpcfgd 経由でない手動の vtysh 投入では拒否されない既知の隙があります。
 
+## tunnel decap term の使い分け
+
+`SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` には P2P / P2MP / MP2MP の 3 種があり、SONiC は EVPN の挙動に合わせて切り替えます。
+
+| type | 用途 | SAI 属性 |
+| --- | --- | --- |
+| P2P | 特定 remote VTEP からの decap | `DST_IP`（local VTEP IP）+ `SRC_IP`（remote VTEP IP） |
+| P2MP | 任意 remote からの decap、特定 local IP | `DST_IP` のみ |
+| MP2MP | DCI 用、任意 source / 任意 destination | DST/SRC とも IP range |
+
+`EvpnRemoteVnipOrch` は remote VTEP を学習するごとに P2P term を追加する実装と、初回に P2MP を 1 件作って共有する実装が SONiC のバージョンによって混在します。`VxlanTunnelOrch::createTunnel` の `dip` 引数が空かどうかで分岐します。
+
+## EVPN GR / fast convergence
+
+EVPN の障害収束は FRR の `bgp graceful-restart` と SONiC の `EVPN_REMOTE_VNI_TABLE` の TTL に依存します。FRR 側が下流 advertise を止めた後、`VxlanTunnelOrch` が remote VTEP を保持する期間（HOLD time）に traffic を blackhole しないようにする `restart-time` 系のパラメータが `BGP_NEIGHBOR.graceful_restart_helper_only` で制御されます。
+
 ## 関連ページ
 
 - [VXLAN SONiC HLD](../../overlay/vxlan-sonic.md)

@@ -109,3 +109,27 @@ VS でも Redis pub/sub の経路は通常運用と同じ。FDB learn 等の not
 ## SimX / kvm-based 自動化
 
 KVM 上の SONiC-VS は libvirt で起動し、`testbed-cli.sh` が PTF host と組み合わせて topology を構築します。SimX（一部ベンダ提供）は packet forwarding と counter を高精度にシミュレートする商用ツールで、SONiC-VS だけでは検証できない ASIC capability path を埋めるのに使われます。OSS の範囲では SimX は外部依存で、CI 上の代替として `make PLATFORM=vs` の SAI VS が標準です。
+
+## CI における VS と Ansible test の使い分け
+
+`azure-pipelines.yml` 系の Azure DevOps pipeline は PR ごとに以下の順で実行します。
+
+| stage | 実行内容 | 失敗時の扱い |
+| --- | --- | --- |
+| Build | `make PLATFORM=vs` で sonic-vs.img を生成 | block |
+| VS smoke | KVM 起動 → critical process が up になるか | block |
+| VS feature test | `tests/` の `--testbed_type vs` 対象のみ | block（一部 known-flaky は warn） |
+| Ansible feature test | 物理 testbed 上で nightly のみ | warn（PR mergeable は維持） |
+
+VS test plan に書かれているテストでも、CI 側で実行対象になっていないものがあるため、HLD と CI 実装の乖離は `tests/common/plugins/conditional_mark/` の skip 条件を見るのが早道です。
+
+## 関連ページ
+
+- [SONiC-VS のビルドと libvirt 起動手順](../../architecture/steps-to-bring-up-sonic-vs.md)
+- [DIP=SIP PTF validation HLD](../../architecture/dip-sip-ptf-validation-high-level-design.md)
+- [Alpine 仮想 SONiC](../../architecture/alpine-high-level-design.md)
+- [VRF VS test plan](../../routing/vrf-vs-test-plan.md)
+
+## verification: meta を選ぶ理由
+
+このページが `verification: meta` なのは、lab / 開発者ワークフローは「実装の状態」ではなく「複数 HLD への横断ガイド」だからです。SAI VS / sonic-mgmt / PTF / KNE / Alpine それぞれに別途 `code-verified` ページがあり、ここで重複して裏取りする必要はありません。サブ章で言及するコンポーネント別の挙動裏取りは、リンク先の章を参照してください。

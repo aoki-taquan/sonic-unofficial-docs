@@ -145,6 +145,38 @@ admin@sonic:~$ docker logs p4rt 2>&1 | grep VerifyState
 | CoPP | `/var/log/syslog` | `CoppOrch`、`genetlink` |
 | kernel | `dmesg` | `psample`、`genl_packet` |
 
+## 異常検出パターン
+
+| 観測 | 疑う状態 | 一次切り分け |
+|---|---|---|
+| controller の `WriteResponse` が `INVALID_ARGUMENT` | p4info 不一致、未対応 table、key 重複 | p4rt-app log の `Translate` 失敗、コントローラ側 p4info hash |
+| `WriteResponse` OK だが `APPL_STATE_DB` に `err_str` 失敗 | P4Orch / SAI で reject | orchagent log の `P4Orch`、SAI status |
+| `send_to_ingress` netdev が無い | platform 未対応、または有効化不足 | syncd の `SAI_STATUS_NOT_SUPPORTED`、CONFIG_DB の `SEND_TO_INGRESS` |
+| PacketIO punt がコントローラに届かない | CoPP queue で drop、genetlink family 未登録 | `psample` family、CoPP counter、policer cir |
+| Read 応答が秒オーダー | キャッシュ未充填、または VerifyState で再構築 | p4rt-app の `Read took`、`VerifyState` |
+| controller 再接続後に flow が消える | session lifetime / role 設定の取り違え | controller 側 role config、Election ID |
+
+## 対応コマンド早見表
+
+| 目的 | コマンド |
+|---|---|
+| P4Orch 処理状況 | `redis-cli -n 14 KEYS "P4RT_TABLE:*"`、`HGETALL <key>` |
+| ASIC 反映確認 | `redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_*"` |
+| p4rt-app ログ | `docker logs p4rt` |
+| orchagent (P4Orch) ログ | `docker exec swss supervisorctl tail orchagent` |
+| send_to_ingress netdev | `ip link show send_to_ingress` |
+| genetlink family | `genl-ctrl-list \| grep psample` |
+| CoPP counter | `show platform inventory copp`、`aclshow -a` |
+| process 状態 | `docker ps`、`docker exec p4rt supervisorctl status` |
+
+## 典型的な運用シナリオ
+
+1. **新規コントローラ接続** — gRPC 接続後、`SetForwardingPipelineConfig` で p4info を投入し、`WriteResponse` が OK になるかを確認します。`INVALID_ARGUMENT` が返るなら p4info と P4Orch 対応 table の差分を疑います。
+2. **PacketIO punt 確認** — controller 側からの punt 設定後、テストフローを流して `aclshow -a` の counter が増えること、p4rt-app log で受信が見えることを順に確認します。届かないなら `psample` 経路と CoPP policer を順に切り分けます。
+3. **warm boot 後の Read 性能確認** — `docker logs p4rt | grep "Read took"` で Read latency を確認し、warm boot 直後だけ遅い場合は `warm_boot_state_adapter_` の事前充填ログが出ているかを見ます。
+4. **依存未解決 pending の解消** — APPL_DB にあるが APPL_STATE_DB に無い entry が残る場合、route の前提となる nexthop / router_interface が install されているかを順に確認します。controller 側 reconcile で順序を整え直します。
+5. **コントローラ切替（standby → primary）** — Election ID と role config を確認し、新 primary が `SetForwardingPipelineConfig` を再投入する必要があるか、reconcile だけで済むかを判断します。
+
 ## 関連ページ
 
 - [P4Orch HLD](../../internals/p4-orchagent.md)

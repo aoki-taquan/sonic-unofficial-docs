@@ -110,6 +110,19 @@ CONFIG_DB:SWITCH_HASH|GLOBAL
 
 これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは VXLAN / SRv6 でしばしば問題になります（→ 03 章、17 章）。
 
+## NHG 参照カウントと resync
+
+`NhgOrch` は同一の `(prefix, nexthop set)` を共有して SAI 上の `NEXT_HOP_GROUP` を再利用します。参照カウントは以下のように動きます。
+
+| 操作 | 内部処理 |
+| --- | --- |
+| route 追加で新 NHG 必要 | `NhgOrch::addNhg` で SAI create、refcount=1 |
+| 既存 NHG と同形 | `NextHopGroup::find` でヒット、refcount++ |
+| route 削除 | refcount--、0 になったら SAI remove |
+| member の BFD down | `setNextHopGroupMembers` で member 差し替え |
+
+PIC では member の `weight=0` 化のみで NHG 自体は維持するため、refcount は減りません。member 集合が変わらない限り SAI object は再作成されない設計です。`gNhgMapOrch` 経由の CBF（class-based forwarding）は別管理で、`CbfNhgOrch` が一段上の階層 NHG として `NhgOrch` を呼びます。
+
 ## 関連ページ
 
 - [BGP Loading Optimization](../../routing/bgp-loading-optimization-for-sonic.md)

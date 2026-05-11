@@ -19,35 +19,35 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **657** ページ。
+全 **833** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 401 |
-| discrepancy-found | 39 |
+| code-verified | 596 |
+| discrepancy-found | 46 |
 | issue-confirmed | 0 |
-| hld-only | 42 |
-| meta | 164 |
-| stub | 11 |
+| hld-only | 0 |
+| meta | 181 |
+| stub | 10 |
 
 ## area 別マトリクス
 
 | area | code-verified | discrepancy-found | issue-confirmed | hld-only | meta | stub | 合計 |
 |------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-| `_meta` | 0 | 0 | 0 | 0 | 0 | 1 | 1 |
-| `_root` | 0 | 0 | 0 | 0 | 1 | 0 | 1 |
-| `acl-qos` | 23 | 2 | 0 | 6 | 0 | 1 | 32 |
-| `architecture` | 27 | 8 | 0 | 6 | 0 | 1 | 42 |
+| `_meta` | 0 | 0 | 0 | 0 | 2 | 0 | 2 |
+| `_root` | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
+| `acl-qos` | 29 | 2 | 0 | 0 | 0 | 1 | 32 |
+| `architecture` | 33 | 8 | 0 | 0 | 0 | 1 | 42 |
 | `categories` | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
 | `guides` | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
-| `internals` | 10 | 1 | 0 | 1 | 0 | 1 | 13 |
-| `management` | 30 | 6 | 0 | 7 | 0 | 1 | 44 |
+| `internals` | 11 | 1 | 0 | 0 | 0 | 1 | 13 |
+| `management` | 35 | 8 | 0 | 0 | 0 | 1 | 44 |
 | `overlay` | 8 | 1 | 0 | 0 | 0 | 1 | 10 |
-| `platform` | 33 | 6 | 0 | 4 | 0 | 1 | 44 |
-| `reference` | 163 | 0 | 0 | 0 | 3 | 1 | 167 |
-| `routing` | 40 | 5 | 0 | 6 | 0 | 1 | 52 |
-| `switching` | 12 | 4 | 0 | 3 | 0 | 1 | 20 |
-| `system` | 55 | 6 | 0 | 9 | 1 | 1 | 72 |
-| `topics` | 0 | 0 | 0 | 0 | 143 | 0 | 143 |
+| `platform` | 36 | 7 | 0 | 0 | 0 | 1 | 44 |
+| `reference` | 323 | 0 | 0 | 0 | 4 | 1 | 328 |
+| `routing` | 45 | 6 | 0 | 0 | 0 | 1 | 52 |
+| `switching` | 15 | 4 | 0 | 0 | 0 | 1 | 20 |
+| `system` | 61 | 9 | 0 | 0 | 1 | 1 | 72 |
+| `topics` | 0 | 0 | 0 | 0 | 155 | 0 | 155 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。

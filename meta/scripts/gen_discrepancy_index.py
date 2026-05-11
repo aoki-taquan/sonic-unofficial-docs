@@ -15,7 +15,9 @@ Usage:
 """
 from __future__ import annotations
 
+import argparse
 import re
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -188,12 +190,45 @@ def render(entries: list[dict]) -> str:
     return "\n".join(out)
 
 
-def main() -> None:
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="差分があれば exit 1（CI 用、書き込みはしない）",
+    )
+    args = parser.parse_args()
+
     entries = collect()
+    new_text = render(entries)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(render(entries), encoding="utf-8")
+
+    if args.check:
+        original = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else ""
+        if original != new_text:
+            print(
+                "ERROR: docs/reference/verification/discrepancy-index.md が古い。"
+                "`python3 meta/scripts/gen_discrepancy_index.py` を実行して commit すること。",
+                file=sys.stderr,
+            )
+            import difflib
+
+            diff = difflib.unified_diff(
+                original.splitlines(keepends=True),
+                new_text.splitlines(keepends=True),
+                fromfile="discrepancy-index.md (現状)",
+                tofile="discrepancy-index.md (期待)",
+                n=3,
+            )
+            sys.stderr.writelines(diff)
+            return 1
+        print(f"OK: discrepancy-index は最新 ({len(entries)} entries)")
+        return 0
+
+    OUTPUT.write_text(new_text, encoding="utf-8")
     print(f"wrote {OUTPUT.relative_to(REPO_ROOT)} ({len(entries)} entries)")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
