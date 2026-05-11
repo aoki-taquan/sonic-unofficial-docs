@@ -4809,6 +4809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#aaa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AAA の認証フロー詳細
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22323,6 +22334,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#aaa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AAA の認証フロー詳細
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22487,6 +22509,18 @@
 <li>TACACS+ の <code>command</code> authorization は host CLI 経由のみで、<code>gnmi</code> / REST API 経路では別途 RBAC 設定が必要。</li>
 <li>FIPS モードは OpenSSL の library 切替に依存し、libssl のバージョン整合と FIPS module の有無で「FIPS にしたつもりが効いていない」事故が起きやすい。</li>
 </ul>
+<h2 id="aaa">AAA の認証フロー詳細<a class="headerlink" href="#aaa" title="Permanent link">&para;</a></h2>
+<p>SONiC の AAA は <strong>PAM + NSS</strong> を起点に、TACACS+ / RADIUS / LDAP / local を順序通り問い合わせます。</p>
+<pre class="mermaid"><code>flowchart LR
+  USER[ssh / CLI login] --&gt; SSHD[sshd / login]
+  SSHD --&gt; PAM[PAM]
+  PAM --&gt; AAACTL[hostcfgd 生成&lt;br/&gt;/etc/pam.d/* + /etc/nsswitch.conf]
+  PAM --&gt;|primary| TACACS[libpam-tacplus]
+  PAM --&gt;|fallback| LOCAL[/etc/shadow]
+  TACACS --&gt;|fail| RADIUS[libpam-radius-auth]
+  TACACS --&gt;|authz| TACAUTHZ[command authorization]
+  TACAUTHZ --&gt; AUDIT[(STATE_DB / journald)]</code></pre>
+<p>順序と authz policy は <code>CONFIG_DB:AAA</code> テーブルから <code>hostcfgd</code> が <code>/etc/pam.d/common-auth-sonic</code> 等を render することで反映されます。<code>gnmi</code> や REST API の認証は PAM を経由しない別経路（gNSI authz、token-based）であり、TACACS+ の <code>command</code> authorization は host CLI のみに効きます。</p>
 
 
 

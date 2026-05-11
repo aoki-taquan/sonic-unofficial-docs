@@ -6327,6 +6327,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sonic-mgmt-testbed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-mgmt testbed の構造
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simx-kvm-based" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SimX / kvm-based 自動化
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22323,6 +22345,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sonic-mgmt-testbed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-mgmt testbed の構造
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simx-kvm-based" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SimX / kvm-based 自動化
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22441,6 +22485,37 @@
 <li>KNE 連携は Container Networking 経由で SONiC VS を pod として起動。SAI VS の起動順序や <code>syncd --asicType vs</code> の引数が KNE config で生成される。</li>
 <li>VS test と Ansible test plan の二重化は意図的だが、HLD のうち「VS だけで verify 可能なもの」と「実機が要るもの」の境界が明示されていないテスト項目があり、CI 通過でも HLD と乖離するケースがある。</li>
 </ul>
+<h2 id="sonic-mgmt-testbed">sonic-mgmt testbed の構造<a class="headerlink" href="#sonic-mgmt-testbed" title="Permanent link">&para;</a></h2>
+<p><code>sonic-mgmt</code> リポジトリの testbed は ansible + pytest をベースに、以下の層で構成されます。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ansible/files/sonic_lab_devices.csv</code></td>
+<td>DUT / fanout / PTF host の物理 inventory</td>
+</tr>
+<tr>
+<td><code>ansible/templates/topo_*.j2</code></td>
+<td>topology（t0、t1、ptf32、ciscovs-7nodes 等）</td>
+</tr>
+<tr>
+<td><code>tests/common/</code></td>
+<td>pytest fixture（duthost、ptfhost、nbrhosts）</td>
+</tr>
+<tr>
+<td><code>tests/&lt;feature&gt;/test_*.py</code></td>
+<td>機能別 test case</td>
+</tr>
+</tbody>
+</table>
+<p><code>tests/common/plugins/sanity_check/</code> が各 test 前に DUT のヘルス（BGP up、interface up、critical process）を確認し、failed なら test を skip します。</p>
+<h2 id="simx-kvm-based">SimX / kvm-based 自動化<a class="headerlink" href="#simx-kvm-based" title="Permanent link">&para;</a></h2>
+<p>KVM 上の SONiC-VS は libvirt で起動し、<code>testbed-cli.sh</code> が PTF host と組み合わせて topology を構築します。SimX（一部ベンダ提供）は packet forwarding と counter を高精度にシミュレートする商用ツールで、SONiC-VS だけでは検証できない ASIC capability path を埋めるのに使われます。OSS の範囲では SimX は外部依存で、CI 上の代替として <code>make PLATFORM=vs</code> の SAI VS が標準です。</p>
 
 
 

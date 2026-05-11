@@ -2232,6 +2232,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#linkmgrd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linkmgrd 状態機械の遷移
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22335,6 +22346,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#linkmgrd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linkmgrd 状態機械の遷移
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22519,6 +22541,40 @@
 <li>Active-Active で SoC NIC が応答しない場合、<code>linkmgrd</code> 側は admin forwarding state を変えても operational state が追従しないため、observability が不十分という指摘が PR レビューで複数挙がっている。</li>
 <li>gRPC channel が切断中は <code>linkmgrd</code> が default の "active" 想定で進む傾向があり、両 ToR で active になる split-brain 風の状態を運用で監視する必要がある。</li>
 </ul>
+<h2 id="linkmgrd_1">linkmgrd 状態機械の遷移<a class="headerlink" href="#linkmgrd_1" title="Permanent link">&para;</a></h2>
+<p><code>linkmgrd</code> は per-port の有限状態機械を持ち、ICMP probe（ToR ↔ SoC NIC）と gRPC（SoC NIC API）の二系統入力で遷移します。</p>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>意味</th>
+<th>主な遷移条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Active</td>
+<td>自 ToR が forwarding 担当</td>
+<td>probe 応答正常、peer は standby</td>
+</tr>
+<tr>
+<td>Standby</td>
+<td>対向 ToR が forwarding 担当</td>
+<td>peer が active を主張、自分はバックアップ</td>
+</tr>
+<tr>
+<td>Unknown</td>
+<td>probe failure</td>
+<td>ICMP 連続失敗、grace 期間中</td>
+</tr>
+<tr>
+<td>Wait</td>
+<td>切替判定中</td>
+<td>switchover 中の transition</td>
+</tr>
+</tbody>
+</table>
+<p>状態は <code>STATE_DB.MUX_CABLE_TABLE|&lt;port&gt;.state</code> に publish され、<code>MuxOrch</code> がそれを受けて SAI の neighbor / route を切替えます。split-brain（両側 active）の検出は HLD で peer 状態を追加チェックする設計ですが、運用上は監視で網を張る必要があります。</p>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../management/design-doc/">gRPC client</a></li>

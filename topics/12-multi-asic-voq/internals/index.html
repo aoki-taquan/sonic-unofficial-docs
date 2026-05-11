@@ -4050,6 +4050,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#chassis_db-system-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassis_db / system port の同期
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22247,6 +22258,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#chassis_db-system-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassis_db / system port の同期
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22413,6 +22435,35 @@
 <li>BGP は per-asic で独立した FRR process が走り、internal BGP（iBGP）で ASIC 間を結ぶ構成が一般的。external BGP の view を一つにする abstraction は SONiC master にはありません。</li>
 <li><code>show</code> 系 CLI は <code>--namespace</code> を取らない場合に host namespace から各 namespace に exec する構造で、多 ASIC では出力が長くなり、collect 時にエラーが部分的に出ても全体が成功扱いになる落とし穴があります。</li>
 </ul>
+<h2 id="chassis_db-system-port">chassis_db / system port の同期<a class="headerlink" href="#chassis_db-system-port" title="Permanent link">&para;</a></h2>
+<p><code>chassis_db</code> は線カード (LC) / supervisor (SUP) 間で system-wide な状態を共有する Redis インスタンスで、各 ASIC namespace の <code>CONFIG_DB</code> / <code>APPL_DB</code> とは別に SUP 上に置かれます。同期対象は次の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SYSTEM_PORT_TABLE</code></td>
+<td>chassis 全体での system port ID 割当（VOQ 設計上の必須）</td>
+</tr>
+<tr>
+<td><code>SYSTEM_NEIGH_TABLE</code></td>
+<td>全 LC 共有の neighbor entry</td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_TABLE</code></td>
+<td>chassis 跨ぎ LAG（VOQ chassis only）</td>
+</tr>
+<tr>
+<td><code>SYSTEM_INTERFACE</code></td>
+<td>router-interface の system-wide view</td>
+</tr>
+</tbody>
+</table>
+<p><code>SystemPortOrch</code> / <code>SystemNeighOrch</code> が chassis_db を subscribe して、自 ASIC の <code>SAI_OBJECT_TYPE_SYSTEM_PORT</code> を作成 / 更新します。chassis_db 自体は SUP 上の Redis で、LC 側からは TCP で接続します（接続切断時は前述の段階的劣化）。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/voq-sonic/">VOQ SONiC</a></li>

@@ -3509,6 +3509,39 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        認証 / 認可の内部経路
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        性能観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#translib-transformer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        translib transformer の責務分担
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22250,6 +22283,39 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        認証 / 認可の内部経路
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        性能観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#translib-transformer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        translib transformer の責務分担
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22374,7 +22440,80 @@
 <li>gNSI の certz は <code>sonic-host-service</code> に証明書ローテーションを依頼する経路で、OS 側 <code>/etc/sonic/telemetry/</code> のファイル更新まで含めて atomicity を担保する設計です（途中失敗で telemetry が起動できなくなる事故が過去 issue にあります）。</li>
 <li>Subscribe の <code>sample</code> mode で interval を極端に短く（例: 100ms）すると、counter 読み出し（flexcounter polling は通常 10s）と整合せず、同じ値を返し続けることがあります。</li>
 </ul>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">認証 / 認可の内部経路<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>gNMI server の認証は CONFIG_DB の <code>TELEMETRY</code> / <code>GNMI</code> / <code>TELEMETRY_CLIENT</code> テーブルを起点に、複数経路で行われます。</p>
+<table>
+<thead>
+<tr>
+<th>認証方式</th>
+<th>入口</th>
+<th>確認先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TLS client cert</td>
+<td>mTLS handshake</td>
+<td><code>/etc/sonic/telemetry/dsmsroot.cer</code> 等</td>
+</tr>
+<tr>
+<td><code>password</code></td>
+<td>gRPC metadata</td>
+<td><code>/etc/sonic/dsms_users</code> または PAM</td>
+</tr>
+<tr>
+<td><code>cert_username</code></td>
+<td>TLS CN / SAN</td>
+<td>gNSI authz policy で確認</td>
+</tr>
+<tr>
+<td>JWT</td>
+<td>gRPC metadata</td>
+<td><code>gnsi/authz</code> の policy 評価</td>
+</tr>
+</tbody>
+</table>
+<p><code>gnsi/authz</code> の policy は protobuf テキストで、<code>SetRequest</code> の rotate API でローテーションする設計です。policy が壊れていると gNMI 自体が起動できない fail-closed 設計です。</p>
+<h2 id="_5">性能観点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>subscribe sample interval</strong> の下限は flexcounter polling と整合させるのが安全で、port counter は 10s、queue / PG は 10s、buffer pool は 60s が標準です。100ms 等は無意味（同じ値を返す）です。</li>
+<li><strong>GET の最大サブツリー深さ</strong>には実質制限が無く、<code>/interfaces</code> 全体を 1 度に取ると数千 OID の Redis 読み出しが直列で走り、数秒〜数十秒かかります。client 側でリスト要素を絞るのが定石です。</li>
+<li><strong>dial-out</strong> は collector への gRPC で QoS / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告があります。<code>TELEMETRY_CLIENT</code> の <code>queue_size</code> で抑えます。</li>
+</ul>
+<h2 id="translib-transformer">translib transformer の責務分担<a class="headerlink" href="#translib-transformer" title="Permanent link">&para;</a></h2>
+<p><code>translib/transformer/</code> 配下の per-module ファイル（<code>xfmr_&lt;module&gt;.go</code>）は、OpenConfig YANG path を SONiC YANG path に変換する mapping を提供します。</p>
+<table>
+<thead>
+<tr>
+<th>transformer</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xfmr_interfaces.go</code></td>
+<td><code>/openconfig-interfaces/interfaces</code> ↔ <code>PORT</code> / <code>PORT_TABLE</code></td>
+</tr>
+<tr>
+<td><code>xfmr_network_instance.go</code></td>
+<td><code>/openconfig-network-instance</code> ↔ <code>VRF</code> / <code>BGP_NEIGHBOR</code> / etc</td>
+</tr>
+<tr>
+<td><code>xfmr_acl.go</code></td>
+<td><code>/openconfig-acl</code> ↔ <code>ACL_TABLE</code> / <code>ACL_RULE</code></td>
+</tr>
+<tr>
+<td><code>xfmr_qos.go</code></td>
+<td><code>/openconfig-qos</code> ↔ <code>QUEUE</code> / <code>SCHEDULER</code> / <code>WRED_PROFILE</code></td>
+</tr>
+<tr>
+<td><code>xfmr_system.go</code></td>
+<td><code>/openconfig-system</code> ↔ <code>DEVICE_METADATA</code> / <code>SYSLOG</code> / etc</td>
+</tr>
+</tbody>
+</table>
+<p>未実装の transformer がある OC path に対して GET / SET を投げると、translib 層で <code>NotFound</code> を返す動作で、HLD と実装の乖離が出やすいポイントです。</p>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../management/sonic-gnmi-server-interface-design/">SONiC gNMI server interface design</a></li>
 <li><a href="../../../management/gnmi-usage/">gNMI usage</a></li>

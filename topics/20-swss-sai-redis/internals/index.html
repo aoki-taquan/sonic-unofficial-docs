@@ -6076,6 +6076,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        syncd の処理モデル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22347,6 +22358,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        syncd の処理モデル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22576,6 +22598,35 @@
 </tbody>
 </table>
 <p>Debug Framework と dump utility はオペレータ目線、SAI failure dump はベンダ調査目線で読むと整理しやすい。</p>
+<h2 id="syncd">syncd の処理モデル<a class="headerlink" href="#syncd" title="Permanent link">&para;</a></h2>
+<p><code>syncd</code> は SAI を呼び出す唯一のプロセスで、内部で以下のスレッド構成を持ちます。</p>
+<table>
+<thead>
+<tr>
+<th>スレッド</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>main</td>
+<td><code>ASIC_DB</code> の <code>_temp</code> key を読み、SAI API 呼び出しを順序通り発行</td>
+</tr>
+<tr>
+<td>notification</td>
+<td>SAI からの notification（fdb_event、port_state_change、switch_shutdown）を Redis pub/sub に転送</td>
+</tr>
+<tr>
+<td>flexcounter</td>
+<td>counter group ごとに polling し、<code>COUNTERS_DB</code> に書き込む（→ 09 章）</td>
+</tr>
+<tr>
+<td>dump</td>
+<td><code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code> 受信時に SAI / ASIC_DB を snapshot</td>
+</tr>
+</tbody>
+</table>
+<p>sairedis library 側で async / sync モードが選べ、SONiC master はデフォルト async（pipeline で複数 op をまとめる）を採用しています。sync モードは SAI 失敗の即時検知に有用ですが throughput が落ちます。</p>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a></li>

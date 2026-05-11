@@ -1415,6 +1415,61 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orch-daemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要 Orch / daemon の責務
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 属性使用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis テーブル参照関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zmq-redis-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ / Redis pub/sub
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#route-loading" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1459,7 +1514,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の実装上の制約
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22181,6 +22247,61 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orch-daemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要 Orch / daemon の責務
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 属性使用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis テーブル参照関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zmq-redis-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ / Redis pub/sub
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#route-loading" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22225,7 +22346,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の実装上の制約
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22305,6 +22437,109 @@
 </tr>
 </tbody>
 </table>
+<h2 id="_3">データフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+  BGPD[bgpd / FRR] --&gt;|FPM netlink| ZEBRA[zebra]
+  ZEBRA --&gt;|FPM RTM_NEWROUTE| FPMSYNCD[fpmsyncd]
+  FPMSYNCD --&gt; APPL[(APPL_DB&lt;br/&gt;ROUTE_TABLE)]
+  APPL --&gt; ROUTEORCH[RouteOrch&lt;br/&gt;+ NhgOrch]
+  ROUTEORCH --&gt; ASIC[(ASIC_DB&lt;br/&gt;ROUTE_ENTRY / NHG)]
+  STATE[(STATE_DB&lt;br/&gt;ROUTE_TABLE.offloaded)] &lt;--&gt;|offload feedback| ROUTEORCH
+  STATE --&gt;|suppress-fib-pending| BGPD
+  CFG[(CONFIG_DB&lt;br/&gt;BGP_NEIGHBOR / BGP_PEER_RANGE / BGP_AGGREGATE_ADDRESS)] --&gt; BGPCFGD[bgpcfgd]
+  BGPCFGD --&gt;|jinja2 template| FRRCFG[frr.conf]
+  FRRCFG --&gt; BGPD
+  STATECFG[(STATE_DB&lt;br/&gt;BGP_PEER_CONFIGURED_TABLE)] &lt;--&gt; BGPCFGD</code></pre>
+<h2 id="orch-daemon">主要 Orch / daemon の責務<a class="headerlink" href="#orch-daemon" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>コンポーネント</th>
+<th>主実体</th>
+<th>責務</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgpd</code> (FRR)</td>
+<td><code>frr/bgpd/</code></td>
+<td>BGP プロトコル実装、best path 計算、graceful restart、suppress-fib-pending</td>
+</tr>
+<tr>
+<td><code>zebra</code> (FRR)</td>
+<td><code>frr/zebra/</code> + <code>zebra_fpm.c</code></td>
+<td>RIB 管理、kernel route 反映、FPM 経由で fpmsyncd へ送信</td>
+</tr>
+<tr>
+<td><code>bgpcfgd</code> (<code>src/sonic-bgpcfgd/</code>)</td>
+<td><code>bgpcfgd/main.py</code>、<code>managers_*.py</code></td>
+<td>CONFIG_DB の BGP 系テーブルを subscribe し、jinja2 template で frr.conf を render</td>
+</tr>
+<tr>
+<td><code>fpmsyncd</code> (<code>fpmsyncd/fpmsyncd.cpp</code>)</td>
+<td><code>FpmLink::processFpmMessage</code>、<code>RouteSync</code></td>
+<td>FPM netlink を APPL_DB の ROUTE_TABLE に流す。Loading Optimization の Redis pipeline 入口</td>
+</tr>
+<tr>
+<td><code>RouteOrch</code> (<code>orchagent/routeorch.cpp</code>)</td>
+<td><code>RouteOrch::doTask</code>、<code>addRoute</code></td>
+<td>ROUTE_TABLE から SAI route entry を生成。ring buffer + assistant thread で大量 route を処理</td>
+</tr>
+<tr>
+<td><code>NhgOrch</code> / <code>CbfNhgOrch</code> (<code>orchagent/nhgorch.cpp</code>)</td>
+<td><code>NhgOrch::doTask</code></td>
+<td>shared nexthop group の作成。BGP PIC の階層 NHG (CbfNhg) を提供</td>
+</tr>
+<tr>
+<td><code>bgpmon</code> (<code>src/sonic-bgpcfgd/bgpmon/</code>)</td>
+<td><code>bgpmon.py</code></td>
+<td>BGP neighbor state を STATE_DB に publish</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sai">SAI 属性使用<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>object</th>
+<th>主要属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_OBJECT_TYPE_ROUTE_ENTRY</code></td>
+<td><code>SAI_ROUTE_ENTRY_ATTR_PACKET_ACTION</code>、<code>SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID</code></td>
+</tr>
+<tr>
+<td><code>SAI_OBJECT_TYPE_NEXT_HOP_GROUP</code></td>
+<td><code>SAI_NEXT_HOP_GROUP_ATTR_TYPE = ECMP / DYNAMIC_UNORDERED_ECMP</code></td>
+</tr>
+<tr>
+<td><code>SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER</code></td>
+<td><code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code>（PIC で BFD down 時に動的更新）、<code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID</code></td>
+</tr>
+</tbody>
+</table>
+<p>PIC は member weight の hot update に依存するため、ベンダ SAI 側で WEIGHT のホットスワップが SAI_STATUS_SUCCESS で返るかが分かれ目になります。<code>offloaded</code> feedback も同じく ASIC 側の <code>ROUTE_ENTRY</code> 設置完了通知に依存します。</p>
+<h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  BGP_NEIGHBOR, BGP_PEER_RANGE, BGP_INTERNAL_NEIGHBOR,
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  BGP_AGGREGATE_ADDRESS, BGP_MONITORS, DEVICE_METADATA (suppress-fib-pending flag)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>APPL_DB:
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  ROUTE_TABLE, LABEL_ROUTE_TABLE, NEXTHOP_GROUP_TABLE
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>STATE_DB:
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  BGP_PEER_CONFIGURED_TABLE, NEIGH_STATE_TABLE,
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  ROUTE_TABLE (offloaded=true/false)
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>ASIC_DB:
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  ROUTE_ENTRY, NEXT_HOP, NEXT_HOP_GROUP, NEXT_HOP_GROUP_MEMBER
+</span></code></pre></div>
+<p><code>bgpcfgd</code> は CONFIG_DB の更新を subscribe するときに <code>BGP_PEER_RANGE</code> 単位で diff を取り、FRR vtysh に<strong>追加/削除コマンド単位</strong>で投入するため、frr.conf 全体を再書き出しせずに済みます。</p>
+<h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
+<ul>
+<li>BGP 系で <strong>ZMQ は使われません</strong>。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と ProducerStateTable です。</li>
+<li>Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（<code>gRingBuffer</code>）+ assistant thread で大量 route 投入の throughput を上げます（→ 04 章参照）。</li>
+<li><code>bgpd</code> は <code>fpm</code> socket（TCP localhost:2620）で zebra と通信し、Redis を介しません。</li>
+</ul>
 <h2 id="route-loading">大量 route loading<a class="headerlink" href="#route-loading" title="Permanent link">&para;</a></h2>
 <p>BGP Loading Optimization は、BGP 自体の best path 計算ではなく、SONiC に route が流れ込んだ後の処理量を減らす。fpmsyncd の Redis pipeline flush、orchagent の ring buffer/assistant thread、sairedis async 化が主な論点である。小規模経路の即時性と大量経路の throughput のバランスが設計上の注意点になる。詳細は <a href="../../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization</a> を参照する。</p>
 <h2 id="pic">障害収束と PIC<a class="headerlink" href="#pic" title="Permanent link">&para;</a></h2>
@@ -22314,7 +22549,15 @@
 <p>注意点は、これは「route install 失敗を完全に解決する」機能ではないこと。一度 install された後に dataplane から消えた route を自動 withdraw する範囲には制約がある。</p>
 <h2 id="dynamic-peer">dynamic peer はどこが動的か<a class="headerlink" href="#dynamic-peer" title="Permanent link">&para;</a></h2>
 <p>dynamic peer modification は、peer range や dynamic peer の変更時に FRR container 全体を大きく揺らさず、bgpcfgd が追加/削除用 template を使って反映する設計である。STATE_DB の <code>BGP_PEER_CONFIGURED_TABLE</code> により、どの dynamic peer が構成済みかを管理する。頻繁に peer が増減する fabric では、設定反映の粒度と既存 session への影響を確認する。</p>
-<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">既知の実装上の制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Suppress FIB Pending</strong> は ASIC からの <code>offloaded</code> フィードバックが前提で、ベンダ syncd が <code>STATE_DB.ROUTE_TABLE.offloaded</code> を更新しない場合は永続的に suppress 状態のままになります。FRR の <code>show bgp suppress-fib-pending</code> で詰まった prefix を確認する必要があります。</li>
+<li><strong>BGP PIC</strong> は ASIC 側で <code>NEXT_HOP_GROUP_MEMBER</code> の weight 動的更新がサポートされている前提です。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ません。</li>
+<li><strong>bgpcfgd の jinja2 template</strong> は SONiC 標準 <code>bgpd.main.conf.j2</code> 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがあります。</li>
+<li><strong>graceful restart / warm restart</strong> は FRR 側で実装されていますが、SONiC の warm-reboot framework (<code>WARM_RESTART_TABLE|bgp</code>) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の <code>WARM_RESTART</code> で十分に確保する必要があります（→ 11 章）。</li>
+<li><strong>大量経路投入時</strong> は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提です。<code>gBufferOrchEnabled</code> 系のビルドフラグで挙動が変わります。</li>
+</ul>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization</a></li>
 <li><a href="../../../routing/bgp-prefix-independent-convergence-architecture-document/">BGP PIC</a></li>

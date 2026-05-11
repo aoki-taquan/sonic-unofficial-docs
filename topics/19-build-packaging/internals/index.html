@@ -5807,6 +5807,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#incremental-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ビルドキャッシュと incremental build
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        docker image の階層
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22269,6 +22291,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#incremental-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ビルドキャッシュと incremental build
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        docker image の階層
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22402,6 +22446,49 @@
 <li><code>sonic-buildimage</code> のターゲット platform は <code>PLATFORM=&lt;vendor&gt;</code> 環境変数で切替えますが、複数 platform を同時にビルドする supported workflow は無いに等しく、CI 側で逐次 build しています。</li>
 <li>application extension の docker image は SONiC の base layer に依存していると更新時にサイズが膨らみ、<code>/host</code> の空き容量に注意が必要です。</li>
 </ul>
+<h2 id="incremental-build">ビルドキャッシュと incremental build<a class="headerlink" href="#incremental-build" title="Permanent link">&para;</a></h2>
+<p><code>sonic-buildimage</code> は package ごとに <code>.flag</code> ファイルでビルド完了を記録します。submodule の HEAD SHA が変わると、その submodule 由来のすべての <code>.deb</code> と参照する docker image が rebuild 対象になります。incremental 化のために以下が用意されています。</p>
+<table>
+<thead>
+<tr>
+<th>機構</th>
+<th>目的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SONIC_DPKG_CACHE_METHOD=cache</code></td>
+<td><code>.deb</code> の hash-key ベースキャッシュ（<code>/sonic/target/cache/</code>）</td>
+</tr>
+<tr>
+<td><code>BLDENV</code> の固定</td>
+<td>slave 側 OS バージョン（bullseye / bookworm）を固定して再利用</td>
+</tr>
+<tr>
+<td><code>SONIC_BUILD_JOBS</code></td>
+<td>並列度の制御。host CPU/RAM に応じて調整</td>
+</tr>
+<tr>
+<td><code>NOSTRETCH</code> 等の Make 変数</td>
+<td>不要 platform deb のスキップ</td>
+</tr>
+</tbody>
+</table>
+<p>キャッシュは個別開発者環境では効果が大きい一方、PR build（GitHub Actions）では基本クリーンビルドであり、CI 時間の大半は slave docker の起動と deb の sequential build に費やされます。</p>
+<h2 id="docker-image">docker image の階層<a class="headerlink" href="#docker-image" title="Permanent link">&para;</a></h2>
+<p>ランタイムの SONiC docker image は階層を持ちます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker-base-&lt;bullseye/bookworm&gt;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  └─ docker-config-engine
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>       └─ docker-swss
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>       └─ docker-syncd-&lt;vendor&gt;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>       └─ docker-bgp
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>       └─ docker-teamd
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>       └─ docker-pmon
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>       └─ docker-snmp
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>       └─ docker-telemetry
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>       └─ docker-mux
+</span></code></pre></div>
+<p><code>docker-config-engine</code> が共通の python / sonic-py-common / supervisord 設定を持ち、機能 container はそれを base にして個別バイナリと supervisord conf を足します。新規 extension は <code>docker-base-&lt;os&gt;</code> から派生させる選択も可能ですが、サイズ削減のためには既存階層への mount が推奨されます。</p>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../architecture/build-profiles/">Build profiles</a></li>

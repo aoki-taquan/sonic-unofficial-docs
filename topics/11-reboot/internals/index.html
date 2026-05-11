@@ -3792,6 +3792,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fast-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fast-reboot タイムライン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-installer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-installer の内部
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22247,6 +22269,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fast-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fast-reboot タイムライン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-installer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-installer の内部
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22383,6 +22427,31 @@
 <li><code>fast-reboot</code> は data plane が ~30s 切れる前提で設計されており、warm-reboot より要求 SAI 機能が少なく対応 ASIC が広い一方、BGP の収束待ちが入ります。</li>
 <li>ONIE / image install 系（<code>sonic-installer</code>）は SONiC の docker image を持ち回るためサイズが大きく、<code>/host</code> パーティションの空き容量が問題になりやすいです。HLD の <code>image dir 構造</code>を運用で意識する必要があります。</li>
 </ul>
+<h2 id="fast-reboot">fast-reboot タイムライン<a class="headerlink" href="#fast-reboot" title="Permanent link">&para;</a></h2>
+<p>fast-reboot は data plane が一時的に切れる前提で、warm-reboot より要求 SAI 機能が少ない代わりに以下の順序で進みます。</p>
+<pre class="mermaid"><code>sequenceDiagram
+  participant CLI as fast-reboot CLI
+  participant FR as scripts/fast-reboot
+  participant SWSS as swss container
+  participant BGP as bgp container
+  participant K as kernel
+  CLI-&gt;&gt;FR: invoke
+  FR-&gt;&gt;BGP: send graceful shutdown
+  FR-&gt;&gt;SWSS: stop orchagent / syncd
+  FR-&gt;&gt;K: kexec into new image
+  K-&gt;&gt;SWSS: start (warm-start framework reuses saved state)
+  SWSS-&gt;&gt;BGP: notify warm-restart
+  BGP-&gt;&gt;BGP: graceful restart (re-establish peers)</code></pre>
+<p><code>scripts/fast-reboot-dump.py</code> が ASIC/FDB の dump を取り、<code>/host/fast-reboot/</code> に保存します。新 image 起動後の <code>fast-reboot-finalizer</code> が dump と比較して route / neighbor の差分を打ち消します。</p>
+<h2 id="sonic-installer">sonic-installer の内部<a class="headerlink" href="#sonic-installer" title="Permanent link">&para;</a></h2>
+<p><code>sonic-installer</code> は <code>/host/image-&lt;version&gt;/</code> 配下に新 image を展開する CLI です。</p>
+<ul>
+<li><code>install</code>: <code>.bin</code> または <code>.swi</code> を展開、GRUB / aboot のエントリを追加</li>
+<li><code>set-next-boot</code>: GRUB default または aboot <code>boot-config</code> を変更</li>
+<li><code>set-default</code>: 永続デフォルトを設定</li>
+<li><code>cleanup</code>: 起動失敗 / rollback 用に古い image を保持しつつ、定義数を超えたら削除</li>
+</ul>
+<p><code>/host</code> パーティションのサイズ（通常 数 GB）が image の数を制約します。docker image をホスト側で持ち回るため、image 1 つで 1〜2GB 消費します。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/sonic-warm-reboot/">SONiC warm reboot</a></li>

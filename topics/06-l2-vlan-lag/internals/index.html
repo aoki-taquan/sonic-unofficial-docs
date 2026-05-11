@@ -2502,6 +2502,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#mc-lag-iccpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MC-LAG (iccpd) の内部状態機械
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kernel-asic-race" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kernel ↔ ASIC 同期の race
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22247,6 +22269,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#mc-lag-iccpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MC-LAG (iccpd) の内部状態機械
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kernel-asic-race" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kernel ↔ ASIC 同期の race
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22420,6 +22464,48 @@
 <li>LAG member の dynamic add/remove は SAI 側で <code>EGRESS_DISABLE</code> を切り替えるだけの実装と、<code>LAG_MEMBER</code> を作り直す実装があり、ベンダで挙動が違います。<code>PortsOrch::setLagMemberEgressDisable</code> 経路を取れない ASIC では一瞬パケットロスが入ります。</li>
 <li>STP は SONiC では PVST / RPVST の制御プレーンが limited で、<code>stp</code> モジュール (<a href="https://github.com/sonic-net/sonic-stp">sonic-stp</a>) が有効になっている場合のみ動きます。</li>
 </ul>
+<h2 id="mc-lag-iccpd">MC-LAG (iccpd) の内部状態機械<a class="headerlink" href="#mc-lag-iccpd" title="Permanent link">&para;</a></h2>
+<p>iccpd は peer 2 台間で ICCP セッションを張り、以下の状態を同期します。</p>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>同期内容</th>
+<th>反映先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LAG member status</td>
+<td>local / remote の port-channel member 健全性</td>
+<td><code>MCLAG_LOCAL_INTF_TABLE</code>、<code>MCLAG_REMOTE_INTF_TABLE</code></td>
+</tr>
+<tr>
+<td>FDB</td>
+<td>learned MAC</td>
+<td><code>MCLAG_REMOTE_FDB_TABLE</code> → FdbOrch</td>
+</tr>
+<tr>
+<td>ARP / ND</td>
+<td>neighbor entry</td>
+<td><code>MCLAG_NEIGH_TABLE</code> → NeighOrch</td>
+</tr>
+<tr>
+<td>IPv4/IPv6 route</td>
+<td>route leak（オプション）</td>
+<td>APPL_DB 経由</td>
+</tr>
+</tbody>
+</table>
+<p><code>MCLAG_DOMAIN</code> テーブルの <code>peer_ip</code> / <code>source_ip</code> / <code>keepalive_interval</code> / <code>session_timeout</code> が ICCP TCP セッションを定義します。session timeout 超過で active/standby が切替り、standby 側 LAG member は <code>SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE = true</code> になります。</p>
+<h2 id="kernel-asic-race">kernel ↔ ASIC 同期の race<a class="headerlink" href="#kernel-asic-race" title="Permanent link">&para;</a></h2>
+<p>L2 系は kernel 状態と ASIC 状態の二重管理であり、以下の race が頻出します。</p>
+<ul>
+<li>VLAN member 追加直後の FDB learn が、bridge fdb 反映前に ASIC notification として届くと <code>FdbOrch</code> が <code>BRIDGE_PORT_ID</code> を解決できず drop する</li>
+<li>LAG member 追加で teamd が kernel bond に member を入れた直後、portsyncd の netlink 通知より先に LACP packet が flow しはじめ、orchagent が <code>LAG_MEMBER</code> を作る前に <code>EGRESS_DISABLE</code> の初期値で短時間ロスする</li>
+<li>portchannel down → up のフラップで <code>LAG_MEMBER_TABLE</code> の delete/add がペアにならず、<code>PortsOrch::removeLagMember</code> が orphan member を残すケース</li>
+</ul>
+<p>これらは ASIC 通知に対する orchagent の reentrancy 設計上避けにくく、頻発する場合は teamd の <code>runner.tx_hash</code> や <code>lacp_rate</code> を調整します。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../switching/sonic-basic-l2-mode-test-plan/">L2 basic mode test plan</a></li>

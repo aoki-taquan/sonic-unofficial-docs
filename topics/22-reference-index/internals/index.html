@@ -6556,6 +6556,28 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        索引生成パイプライン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quality-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quality-gaps の運用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22272,6 +22294,28 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        索引生成パイプライン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quality-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quality-gaps の運用
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22558,7 +22602,43 @@
 <li>YANG / CONFIG_DB / CLI の三者は一対一ではない（同じ機能を複数 CLI が触る、別 CLI が同じテーブルを上書きする等）。書き込み順序による race は 22 章索引では追えないので、各機能章 internals.md を当たる必要があります。</li>
 <li>gNMI / sonic-mgmt-common を経由する書き込みは、<code>*mgrd</code> / <code>*Orch</code> の処理を待たずに完了応答を返すため、即時の SAI 反映を確認したい場合は別途 STATE_DB 上の対応 key を polling する設計になります。</li>
 </ul>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">索引生成パイプライン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p><code>meta/index/*.json</code> は SONiC ソースリポを <code>.cache/sonic-sources/</code> 配下に shallow clone し、Indexer が走査して生成します。</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>ソース</th>
+<th>生成内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>meta/index/hld.json</code></td>
+<td><code>SONiC/doc/</code> <code>.md</code> ファイル</td>
+<td>HLD タイトル / area / file path / verification target</td>
+</tr>
+<tr>
+<td><code>meta/index/cli.json</code></td>
+<td><code>sonic-utilities/config/</code>、<code>show/</code></td>
+<td>Click のコマンドツリーを解析</td>
+</tr>
+<tr>
+<td><code>meta/index/yang.json</code></td>
+<td><code>sonic-yang-models/yang-models/*.yang</code></td>
+<td>module / container / leaf の階層</td>
+</tr>
+<tr>
+<td><code>meta/index/repos.json</code></td>
+<td>15 リポの clone</td>
+<td>name / SHA / branch（master 固定）</td>
+</tr>
+</tbody>
+</table>
+<p>Indexer は AST 解析（Click は ast.parse、YANG は pyang）を使い、生成物は <code>meta/templates/SCHEMA.md</code> の frontmatter 規約に従う形で .md ページからリンクされます。</p>
+<h2 id="quality-gaps">quality-gaps の運用<a class="headerlink" href="#quality-gaps" title="Permanent link">&para;</a></h2>
+<p><code>quality-gaps.md</code> は HLD と実装の乖離（discrepancy-found）を一覧化する meta ページです。各機能章の internals.md / runbook.md で <code>discrepancy-found</code> ステータスを付けた箇所が集約されます。Verifier が <code>meta/verification-queue.json</code>（または per-page <code>meta/queue/&lt;area&gt;-&lt;slug&gt;.json</code>）の懸念点を裏取りした結果が、quality-gaps に積み上がっていく形で、読者は「どこが信用できないか」を 1 ページで把握できます。</p>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../cli-index/">CLI index</a></li>
 <li><a href="../config-db-index/">CONFIG_DB index</a></li>

@@ -2016,6 +2016,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#vrf-linux-kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF と Linux kernel の連携
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecmp-hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP hash の制御
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22247,6 +22269,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#vrf-linux-kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF と Linux kernel の連携
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ecmp-hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP hash の制御
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22412,6 +22456,42 @@
 <li><code>Suppress FIB Pending</code> の offload-feedback path は、ASIC reject（capacity over や属性 unsupported）の通知を <code>STATE_DB.ROUTE_TABLE</code> の <code>offloaded</code> field 経由で FRR に返しますが、ベンダ syncd が <code>offloaded</code> を更新しない場合に suppress が解除されない discrepancy がよく観測されます。</li>
 <li>FgNhgOrch は <code>FG_NHG_PREFIX</code> テーブルに登録された prefix のみ fine-grained 扱いになり、その範囲外の ECMP は通常の <code>NhgOrch</code> 経路を通ります。</li>
 </ul>
+<h2 id="vrf-linux-kernel">VRF と Linux kernel の連携<a class="headerlink" href="#vrf-linux-kernel" title="Permanent link">&para;</a></h2>
+<p>SONiC は VRF を Linux kernel の VRF（<code>l3mdev</code>）と SAI の <code>VIRTUAL_ROUTER</code> の二重で表現します。<code>IntfMgr</code> が CONFIG_DB の <code>INTERFACE|&lt;intf&gt;</code> の <code>vrf_name</code> フィールドを見て、kernel に <code>ip link set &lt;intf&gt; master Vrf-Red</code> を発行し、同時に APPL_DB 経路で orchagent に SAI router interface の VRF 属性を更新させます。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>kernel 側</th>
+<th>ASIC 側</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VRF 追加</td>
+<td><code>ip link add Vrf-Red type vrf table 1001</code></td>
+<td><code>SAI_OBJECT_TYPE_VIRTUAL_ROUTER</code> 作成</td>
+</tr>
+<tr>
+<td>interface に VRF 割当</td>
+<td><code>ip link set Ethernet0 master Vrf-Red</code></td>
+<td>router_interface の <code>VIRTUAL_ROUTER_ID</code> を更新</td>
+</tr>
+<tr>
+<td>route 投入</td>
+<td><code>ip route add … vrf Vrf-Red</code></td>
+<td>ROUTE_ENTRY の <code>vr_id</code> に紐付け</td>
+</tr>
+</tbody>
+</table>
+<p>kernel side が遅延し orchagent 側が先に更新されると、<code>fpmsyncd</code> が「該当 VRF table が kernel に無い」エラーで route を skip するケースが報告されています（VRF 作成直後の race）。</p>
+<h2 id="ecmp-hash">ECMP hash の制御<a class="headerlink" href="#ecmp-hash" title="Permanent link">&para;</a></h2>
+<p>ECMP のハッシュフィールドは <code>SwitchOrch</code> が起動時に <code>SWITCH_HASH</code> テーブル（<code>CONFIG_DB</code>）を読み、SAI に投入します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CONFIG_DB:SWITCH_HASH|GLOBAL
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ecmp_hash: &quot;SRC_IP,DST_IP,IP_PROTOCOL,L4_SRC_PORT,L4_DST_PORT,INNER_*&quot;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  lag_hash:  &quot;...&quot;
+</span></code></pre></div>
+<p>これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは VXLAN / SRv6 でしばしば問題になります（→ 03 章、17 章）。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization</a></li>
