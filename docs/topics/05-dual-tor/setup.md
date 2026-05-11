@@ -29,13 +29,53 @@ Dual-ToR の設定は、port ごとの `MUX_CABLE` と peer ToR を表す `PEER_
 
 Active-Standby の構成では、peer ToR の情報も `PEER_SWITCH` に置きます。`PEER_SWITCH` は Dual-ToR ペアの相手を 1 つだけ表すメタデータで、MuxTunnel や mux 関連の整合に使われます。
 
-## Active-Standby の例
+## 典型シナリオ 1: Active-Standby Dual-ToR を初期設定する
+
+「上位 spine と接続済みの 2 台の ToR が用意され、サーバの dual-attached NIC を mux 制御したい」というケース。
+
+### CLI で打つ
+
+```bash
+# 1. peer ToR の loopback を登録
+# (CLI 直接コマンドは無く JSON で投入するか sonic-cfggen を使う)
+
+# 2. 各サーバ port を mux 配下にする
+sudo config muxcable mode auto Ethernet0
+sudo config muxcable mode auto Ethernet4
+
+# 3. 状態確認
+show muxcable status
+show muxcable config Ethernet0
+```
+
+`PEER_SWITCH` や `MUX_CABLE` の初期 row 作成は通常 CLI ではなく `config_db.json` への投入 (deployment template) で行われます。CLI は state 操作 (`mode`、`probertype`) が中心です。
+
+### CONFIG_DB JSON
+
+Active-Standby の最小例:
 
 ```json
 {
+  "DEVICE_METADATA": {
+    "localhost": {
+      "subtype": "DualToR",
+      "peer_switch": "tor-peer"
+    }
+  },
   "PEER_SWITCH": {
     "tor-peer": {
       "address_ipv4": "10.1.0.32"
+    }
+  },
+  "TUNNEL": {
+    "MuxTunnel0": {
+      "tunnel_type": "IPINIP",
+      "src_ip": "10.1.0.33",
+      "dst_ip": "10.1.0.32",
+      "dscp_mode": "uniform",
+      "encap_ecn_mode": "standard",
+      "ecn_mode": "copy_from_outer",
+      "ttl_mode": "pipe"
     }
   },
   "MUX_CABLE": {
@@ -51,9 +91,31 @@ Active-Standby の構成では、peer ToR の情報も `PEER_SWITCH` に置き�
 }
 ```
 
-この例では `state: auto` により `linkmgrd` が状態遷移を管理します。`neighbor_mode: prefix-route` にすると、サーバ向け neighbor を残したまま route の nexthop を直接 neighbor / tunnel 間で切り替える設計になります。
+`DEVICE_METADATA.subtype = DualToR` は linkmgrd / mux-related orchestration の有効化フラグです。これが無いと MUX_CABLE row があっても `linkmgrd` は起動しない実装になっています。
 
-## Active-Active の例
+`state: auto` により `linkmgrd` が状態遷移を管理します。`neighbor_mode: prefix-route` にすると、サーバ向け neighbor を残したまま route の nexthop を直接 neighbor / tunnel 間で切り替える設計になります。
+
+### show コマンドで確認
+
+```bash
+show muxcable status
+show muxcable config Ethernet0
+show muxcable tunnel_route Ethernet0
+show muxcable hwmode muxdirection
+```
+
+`show muxcable status` の典型出力:
+
+```text
+PORT        STATUS    HEALTH    HWSTATUS
+----------  --------  --------  ----------
+Ethernet0   active    healthy   active
+Ethernet4   standby   healthy   standby
+```
+
+`STATUS` (linkmgrd 視点) と `HWSTATUS` (実 hardware mux) がずれている場合は ycabled の状態を疑います。
+
+## 典型シナリオ 2: Active-Active (SoC NIC 連動) を設定する
 
 ```json
 {
@@ -73,6 +135,32 @@ Active-Standby の構成では、peer ToR の情報も `PEER_SWITCH` に置き�
 ```
 
 Active-Active では SoC NIC と通信するための `soc_ipv4` / `soc_ipv6` が設定の読みどころになります。実際の到達性は gRPC channel、Loopback IP、証明書、NIC 側 service の状態にも依存します。
+
+確認:
+
+```bash
+show muxcable grpc muxdirection Ethernet0
+show muxcable grpc connection-info Ethernet0
+```
+
+`grpc connection-info` で `connection_status: READY` でない場合は SoC NIC との TLS / 経路を確認します。
+
+## 典型シナリオ 3: 障害切替テスト (手動 toggle)
+
+upgrade 前の draining などで、active 側を強制的に standby 化したいケース。
+
+```bash
+# 全 port を standby に倒す
+sudo config muxcable mode standby all
+
+# 個別 port のみ
+sudo config muxcable mode standby Ethernet0
+
+# 完了後 auto に戻す
+sudo config muxcable mode auto all
+```
+
+`mode standby` は `MUX_CABLE.state` を `standby` に書き、linkmgrd の auto 制御を一時的に上書きします。`mode auto` に戻すと再評価が走ります。
 
 ## `config muxcable` で変えるもの
 
@@ -101,9 +189,65 @@ show muxcable grpc muxdirection Ethernet0
 
 `show muxcable config` は CONFIG_DB の見え方、`status` は動的状態、`tunnel_route` は tunnel 経路、`grpc muxdirection` は Active-Active 側の gRPC キャッシュを確認する入口です。詳細な列や JSON 出力の形は既存の CLI ページを参照してください。
 
+## よくある設定エラーと対処
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| `MUX_CABLE` 書いたが linkmgrd が動かない | `DEVICE_METADATA.subtype != DualToR` | metadata を確認 |
+| `state: standby` 固定で戻らない | 過去の手動 toggle 残存 | `config muxcable mode auto <port>` |
+| `STATUS` と `HWSTATUS` が永続的にズレる | ycabled crash / cable firmware 異常 | `docker exec pmon supervisorctl status ycabled` |
+| MuxTunnel decap が動かない | `PEER_SWITCH.address_ipv4` 不一致 / TUNNEL src_ip 誤り | `show ip route <peer_loopback>` で reachability 確認 |
+| Active-Active で grpc `NOT_READY` | SoC NIC IP 未到達 / cert 不整合 | `show muxcable grpc connection-info` でエラー詳細 |
+| `prefix-route` モードで neighbor が消える | neighbor learning が standby で抑止される設計 | 仕様。`host-route` モードの方が観測上は残る |
+
+`cable_type: active-active` と `cable_type: active-standby` を box 内で混在させる構成は基本的に想定外です。port 単位の混在は controller / linkmgrd の前提を崩します。
+
+## sonic-cfggen で部分パッチを当てる
+
+deployment template (`minigraph.xml` → `sonic-cfggen` 経路) ではなく、運用中に Dual-ToR 関連の row を追加・削除したいときは sonic-cfggen の部分パッチを使います。
+
+```bash
+cat > /tmp/mux_patch.json <<'EOF'
+{
+  "MUX_CABLE": {
+    "Ethernet8": {
+      "cable_type": "active-standby",
+      "state": "auto",
+      "server_ipv4": "192.168.0.4/32",
+      "server_ipv6": "fc02:1000::4/128",
+      "prober_type": "software",
+      "neighbor_mode": "prefix-route"
+    }
+  }
+}
+EOF
+sudo sonic-cfggen -a "$(cat /tmp/mux_patch.json)" --write-to-db
+sudo config save -y
+```
+
+部分パッチを当てた後は linkmgrd の subscription 経由で自動的に config が読まれます。`docker restart mux` などの強制再起動は通常不要です。
+
+## CONFIG_DB / STATE_DB の関係
+
+`MUX_CABLE` は CONFIG_DB の管理対象ですが、実状態は次の table に分かれます。
+
+| 配置 | テーブル | 内容 |
+|---|---|---|
+| CONFIG_DB | `MUX_CABLE` | 静的設定 (cable_type, state, server_ip 等) |
+| APPL_DB | `MUX_CABLE_TABLE` | linkmgrd が反映した動的設定 |
+| STATE_DB | `MUX_CABLE_TABLE` | 現在状態 (active/standby, link prober 状態) |
+| STATE_DB | `HW_MUX_CABLE_TABLE` | ycabled が報告する hardware 上の mux 方向 |
+
+`show muxcable status` が混乱した出力をするときは、STATE_DB の `MUX_CABLE_TABLE` と `HW_MUX_CABLE_TABLE` の不一致を `redis-cli -n 6 keys 'MUX*'` で確認します。CONFIG_DB の `state` を変えても hardware が追従していないケース (cable firmware ハング、ycabled デッドロック) はこの 2 table の差分で判別できます。
+
+## YANG を見る場面
+
+Dual-ToR 関連の YANG モジュールは `sonic-mux-cable` (`MUX_CABLE` の型)、`sonic-peer-switch` (`PEER_SWITCH`)、`sonic-tunnel` (`TUNNEL`) の 3 つに分かれます。`cable_type` の enum (`active-standby` / `active-active`) や `state` の許容値はここに定義されています。外部から gNMI で設定する場合は値の正規化を YANG 側で確認します。
+
 ## 関連ページ
 
 - [MUX_CABLE テーブル](../../reference/config-db/mux-cable.md)
 - [PEER_SWITCH テーブル](../../reference/config-db/peer-switch.md)
 - [config muxcable サブコマンド](../../reference/cli/config-muxcable.md)
 - [show muxcable サブコマンド](../../reference/cli/show-muxcable.md)
+- [TUNNEL テーブル](../../reference/config-db/tunnel.md)

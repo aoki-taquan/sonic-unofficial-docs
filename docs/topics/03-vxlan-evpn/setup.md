@@ -48,6 +48,158 @@ config vnet add-route Vnet1000 192.0.2.10/32 203.0.113.10 --vni 1000
 
 実際の引数、依存チェック、削除時の順序は [config vxlan](../../reference/cli/config-vxlan.md) と [config vnet](../../reference/cli/config-vnet.md) を確認してください。
 
+## 典型シナリオ 1: EVPN VXLAN を有効化する (leaf として参加)
+
+「underlay BGP は既に動いている。leaf として L2VPN EVPN family を有効化し、VLAN100 を VNI 100100 で広告したい」というケース。
+
+### CLI で打つ
+
+```bash
+# 1. loopback を VTEP source として使う
+sudo config interface ip add Loopback1 10.1.0.1/32
+
+# 2. VTEP を作成
+sudo config vxlan add vtep1 10.1.0.1
+
+# 3. EVPN NVO を有効化
+sudo config vxlan evpn_nvo add nvo1 vtep1
+
+# 4. VLAN を作る
+sudo config vlan add 100
+sudo config vlan member add 100 Ethernet0 -u
+
+# 5. VLAN-VNI map を作る
+sudo config vxlan map add vtep1 100 100100
+```
+
+`vtep1` という名前はインスタンス名で、内部的に `VXLAN_TUNNEL|vtep1` になります。同一 box で複数 VTEP を持つことは想定されないため通常は単一です。
+
+### CONFIG_DB で投入する
+
+`config_db.json` 抜粋:
+
+```json
+{
+  "VXLAN_TUNNEL": {
+    "vtep1": {
+      "src_ip": "10.1.0.1"
+    }
+  },
+  "VXLAN_EVPN_NVO": {
+    "nvo1": {
+      "source_vtep": "vtep1"
+    }
+  },
+  "VXLAN_TUNNEL_MAP": {
+    "vtep1|map_100_Vlan100": {
+      "vni": "100100",
+      "vlan": "Vlan100"
+    }
+  },
+  "VLAN": {
+    "Vlan100": {
+      "vlanid": "100"
+    }
+  },
+  "VLAN_MEMBER": {
+    "Vlan100|Ethernet0": {
+      "tagging_mode": "untagged"
+    }
+  }
+}
+```
+
+`VXLAN_TUNNEL_MAP` のキーは `<tunnel>|<map_name>` で、`map_name` の命名は慣例的に `map_<vni>_<vlan>` 形式が使われます。`vlan` フィールドは `Vlan<id>` 形式で書く必要があります (数字単独ではエラー)。
+
+`sonic-cfggen` で部分パッチを当てる場合:
+
+```bash
+sonic-cfggen -a "$(cat vxlan_patch.json)" --write-to-db
+config save -y
+```
+
+### show コマンドで確認
+
+```bash
+show vxlan tunnel
+show vxlan vlanvnimap
+show vxlan name vtep1
+show vxlan remotevtep
+show vxlan remotemac all
+```
+
+`show vxlan tunnel` の典型出力:
+
+```text
+vxlan tunnel name    source ip    destination ip    tunnel map name    tunnel map mapping(s)
+-------------------  -----------  ----------------  -----------------  --------------------
+vtep1                10.1.0.1                       map_100_Vlan100    Vlan100 -> 100100
+```
+
+`destination ip` 列は EVPN モードでは空欄になります (動的学習)。EVPN BGP neighbor 確認は `show bgp l2vpn evpn summary` で別経路です。
+
+## 典型シナリオ 2: VNET (controller driven overlay) を設定する
+
+DASH 系や Mellanox SmartNIC 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が `VNET_ROUTE_TUNNEL` を直接 APPL_DB / CONFIG_DB に書きます。
+
+```bash
+sudo config vxlan add vtep1 10.1.0.1
+sudo config vnet add Vnet1000 1000 vtep1
+sudo config vnet add-route Vnet1000 192.0.2.10/32 203.0.113.10 --vni 1000 \
+  --mac 00:11:22:33:44:55
+```
+
+CONFIG_DB:
+
+```json
+{
+  "VNET": {
+    "Vnet1000": {
+      "vxlan_tunnel": "vtep1",
+      "vni": "1000",
+      "peer_list": ""
+    }
+  },
+  "VNET_ROUTE_TUNNEL": {
+    "Vnet1000|192.0.2.10/32": {
+      "endpoint": "203.0.113.10",
+      "vni": "1000",
+      "mac_address": "00:11:22:33:44:55"
+    }
+  }
+}
+```
+
+確認:
+
+```bash
+show vnet brief
+show vnet routes all
+show vnet endpoint
+```
+
+## 典型シナリオ 3: IPinIP decap を Dual-ToR 用に設定する
+
+`TUNNEL` テーブルは IPinIP decap term を表現します。Dual-ToR の standby → active 折り返しに使われる構成例:
+
+```json
+{
+  "TUNNEL": {
+    "MuxTunnel0": {
+      "tunnel_type": "IPINIP",
+      "src_ip": "10.1.0.32",
+      "dst_ip": "10.1.0.33",
+      "dscp_mode": "uniform",
+      "encap_ecn_mode": "standard",
+      "ecn_mode": "copy_from_outer",
+      "ttl_mode": "pipe"
+    }
+  }
+}
+```
+
+`TUNNEL_DECAP_TABLE` は APPL_DB に書かれる ephemeral state で、CONFIG_DB から書く対象ではありません。orchagent が `TUNNEL` を見て APPL_DB に派生する流れです。
+
 ## CONFIG_DB / APPL_DB の見方
 
 | 目的 | 主なテーブル | 読み方 |
@@ -69,12 +221,32 @@ Reference の `config-db` ページは、CLI で触る table と orchagent が�
 
 VXLAN / NVGRE の外側 header だけで ECMP / LAG hash すると、複数 flow が同じ tunnel endpoint へ偏ることがあります。Policy Based Hashing は ACL match した encapsulated packet に対して inner 5-tuple ベースの hash を適用する機能です。設定単位は `PBH_TABLE`、`PBH_RULE`、`PBH_HASH`、`PBH_HASH_FIELD` で、VXLAN/VNET そのものの設定とは別です。
 
+## よくある設定エラーと対処
+
+`sonic-utilities/config/vxlan.py` の `ctx.fail()` から抜粋した実エラーメッセージ:
+
+| エラーメッセージ | 原因 | 対処 |
+|---|---|---|
+| `VTEP already configured.` | 既に別名で VTEP が存在 | `show vxlan tunnel` で確認し、不要なら削除 |
+| `EVPN NVO already configured` | NVO は 1 box 1 個 | 既存 NVO を削除してから再作成 |
+| `VTEP <name> not configured` | map / NVO の追加で VTEP 未作成 | 先に `config vxlan add` |
+| `Please delete the EVPN NVO configuration.` | VTEP 削除で NVO 残存 | `config vxlan evpn_nvo del` 先行 |
+| `Please delete all VLAN VNI mappings.` | VTEP 削除で map 残存 | `config vxlan map del` 先行 |
+| `Vlan Id already mapped` | 同一 VLAN を別 VNI に二重 map | 既存 map を確認して削除 |
+| `VNI Id already mapped` | 同一 VNI を別 VLAN に二重 map | 同上 |
+| `Invalid Vlan Id , Valid Range : 1 to 4094` | VLAN ID 範囲外 | 入力値を見直す |
+| `Invalid VNI <vni>. Valid range [1 to 16777215].` | VNI 範囲外 | 24bit 範囲に収める |
+| `VNI mapped to vrf <vrf>, Please remove VRF VNI mapping` | VRF-VNI 結びつきあり | `config vrf del_vrf_vni_map` 先行 |
+
+削除順序は **add の逆順** が原則: `(rule) → map → NVO → VTEP`。途中に VLAN_MEMBER / VLAN が残っていると VTEP 削除はできますが VLAN 側の clean-up は別途必要です。
+
 ## 関連ページ
 
 - [config vxlan](../../reference/cli/config-vxlan.md)
 - [config vnet](../../reference/cli/config-vnet.md)
 - [VXLAN_TUNNEL テーブル](../../reference/config-db/vxlan-tunnel.md)
 - [VXLAN_TUNNEL_MAP テーブル](../../reference/config-db/vxlan-tunnel-map.md)
+- [VXLAN_EVPN_NVO テーブル](../../reference/config-db/vxlan-evpn-nvo.md)
 - [VNET / VNET_ROUTE テーブル](../../reference/config-db/vnet.md)
 - [TUNNEL テーブル](../../reference/config-db/tunnel.md)
 - [TUNNEL_DECAP_TABLE](../../reference/config-db/tunnel-decap-table.md)

@@ -122,11 +122,174 @@ config interface tpid PortChannel0002 0x9200
 
 TPID は Q-in-Q 全体を提供する機能ではなく、「どの TPID を VLAN tag として認識するか」を設定する機能として扱います。
 
+## 典型シナリオ 1: サーバ access port (VLAN 100 untagged)
+
+最も基本的な構成。
+
+### CLI
+
+```bash
+sudo config vlan add 100
+sudo config vlan member add 100 Ethernet0 -u
+```
+
+### CONFIG_DB JSON
+
+```json
+{
+  "VLAN": {
+    "Vlan100": {
+      "vlanid": "100"
+    }
+  },
+  "VLAN_MEMBER": {
+    "Vlan100|Ethernet0": {
+      "tagging_mode": "untagged"
+    }
+  }
+}
+```
+
+### 確認
+
+```bash
+show vlan brief
+```
+
+```text
++-----------+-----------------+-----------------+----------------+-------------+
+|   VLAN ID | IP Address      | Ports           | Port Tagging   | Proxy ARP   |
++===========+=================+=================+================+=============+
+|       100 |                 | Ethernet0       | untagged       | disabled    |
++-----------+-----------------+-----------------+----------------+-------------+
+```
+
+## 典型シナリオ 2: LACP LAG を作って trunk として上位 switch に上げる
+
+```bash
+sudo config portchannel add PortChannel10 --min-links 1 --fallback false
+sudo config portchannel member add PortChannel10 Ethernet0
+sudo config portchannel member add PortChannel10 Ethernet4
+sudo config vlan member add 100 PortChannel10
+sudo config vlan member add 200 PortChannel10
+```
+
+CONFIG_DB:
+
+```json
+{
+  "PORTCHANNEL": {
+    "PortChannel10": {
+      "admin_status": "up",
+      "mtu": "9100",
+      "min_links": "1",
+      "fallback": "false",
+      "lacp_key": "auto"
+    }
+  },
+  "PORTCHANNEL_MEMBER": {
+    "PortChannel10|Ethernet0": { "NULL": "NULL" },
+    "PortChannel10|Ethernet4": { "NULL": "NULL" }
+  },
+  "VLAN_MEMBER": {
+    "Vlan100|PortChannel10": { "tagging_mode": "tagged" },
+    "Vlan200|PortChannel10": { "tagging_mode": "tagged" }
+  }
+}
+```
+
+確認:
+
+```bash
+show interfaces portchannel
+```
+
+```text
+  No.  Team Dev         Protocol     Ports
+-----  ---------------  -----------  ---------------------------
+   10  PortChannel10    LACP(A)(Up)  Ethernet4(S) Ethernet0(S)
+```
+
+`(S)` selected、`(D)` deselected。`Up` 状態でないと VLAN member であっても traffic は流れません。
+
+## 典型シナリオ 3: VLAN interface に IP を付けて SVI として使う
+
+```bash
+sudo config vlan add 100
+sudo config vlan member add 100 Ethernet0 -u
+sudo config vlan member add 100 Ethernet4 -u
+sudo config interface ip add Vlan100 192.168.100.1/24
+```
+
+```json
+{
+  "VLAN_INTERFACE": {
+    "Vlan100": { "NULL": "NULL" },
+    "Vlan100|192.168.100.1/24": { "NULL": "NULL" }
+  }
+}
+```
+
+確認:
+
+```bash
+show ip interfaces
+show vlan brief
+```
+
+`show ip interfaces` の出力で `Vlan100` に IP が付き、`Oper` が `up` になれば SVI として動作。`down` の場合は VLAN 配下に operational up な member が無い可能性が高いです (member が全 link down)。
+
+## sonic-cfggen で部分パッチを当てる
+
+deployment template ではなく、運用中に config_db.json の小規模変更を行うときの典型パタン:
+
+```bash
+cat > /tmp/vlan_patch.json <<'EOF'
+{
+  "VLAN": { "Vlan300": { "vlanid": "300" } },
+  "VLAN_MEMBER": { "Vlan300|Ethernet8": { "tagging_mode": "tagged" } }
+}
+EOF
+sudo sonic-cfggen -a "$(cat /tmp/vlan_patch.json)" --write-to-db
+sudo config save -y
+```
+
+`config save -y` を打たないと reboot で揮発します。
+
+## よくある設定エラーと対処
+
+`sonic-utilities/config/vlan.py` と `config/main.py` の `ctx.fail()` から抜粋:
+
+| エラーメッセージ | 原因 | 対処 |
+|---|---|---|
+| `Invalid VLAN ID <vid> (2-4094)` | 1 や 4095 以上を指定 | 範囲内に修正 (1 は default VLAN で reserved) |
+| `<vlan> is default VLAN` | Vlan1 を作成/削除 | default VLAN は対象外 |
+| `<vlan> already exists.` | 二重作成 | 既存を確認 |
+| `<vlan> does not exist` | 未作成の VLAN への member add | 先に `config vlan add` |
+| `VLAN ID <vid> can not be removed. First remove all members assigned to this VLAN.` | member 残存で VLAN 削除 | 先に member を削除 |
+| `<vlan> can not be removed. First remove IP addresses assigned to this VLAN` | VLAN_INTERFACE に IP あり | 先に `config interface ip remove` |
+| `<port> cannot have more than one untagged Vlan.` | 同一物理 port を 2 VLAN の untagged に追加 | tagged にするか、片方を削除 |
+| `<port> is already a member of <vlan>` | 同じ port を二重追加 | 既存 member を確認 |
+| `<port> is configured as mirror destination port` | mirror dst の port を VLAN に入れた | mirror session を先に解除 |
+| `<portchannel> already exists!` | LAG 二重作成 | 既存を確認 |
+| `<portchannel> is invalid! name should have prefix 'PortChannel' and suffix '<digits>'` | 命名規則違反 | `PortChannel<NNNN>` 形式に従う |
+| `Error: Portchannel <name> contains members. Remove members before deleting Portchannel!` | member 残存で LAG 削除 | 先に member 削除 |
+| `<port> has subinterfaces configured` | sub-port 親を VLAN member に入れた | 先に subinterface を削除 |
+| `<port> Interface configured as VLAN_MEMBER under vlan : <vid>` | LAG member 化したい port が VLAN member | 先に VLAN_MEMBER 解除 |
+| `<port> Interface is already member of <portchannel>` | LAG 二重所属 | 既存 LAG から削除 |
+| `Port speed of <port> is different than the other members of the portchannel <name>` | LAG member の speed 不一致 | 同一 speed の port を揃える |
+
+LAG 削除順序: `VLAN_MEMBER (LAG)` → `PORTCHANNEL_MEMBER` → `PORTCHANNEL`。途中をスキップすると上記の `contains members` などで止まります。
+
 ## 関連ページ
 
 - [CLI: config vlan](../../reference/cli/config-vlan.md)
 - [CLI: config portchannel](../../reference/cli/config-portchannel.md)
 - [CLI: config interface](../../reference/cli/config-interface.md)
+- [CONFIG_DB: VLAN](../../reference/config-db/vlan.md)
 - [CONFIG_DB: VLAN_MEMBER](../../reference/config-db/vlan-member.md)
+- [CONFIG_DB: VLAN_INTERFACE](../../reference/config-db/vlan-interface.md)
+- [CONFIG_DB: PORTCHANNEL](../../reference/config-db/portchannel.md)
 - [CONFIG_DB: PORTCHANNEL_MEMBER](../../reference/config-db/portchannel-member.md)
+- [CONFIG_DB: PORTCHANNEL_INTERFACE](../../reference/config-db/portchannel-interface.md)
 - [TPID 設定 HLD](../../platform/sonictpidsettinghld1.md)

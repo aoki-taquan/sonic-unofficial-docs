@@ -31,16 +31,169 @@ sources:
 
 CLI の詳細な引数は [config vrf](../../reference/cli/config-vrf.md) と [config route](../../reference/cli/config-route.md) を参照してください。
 
-## CLI 例
+## 典型シナリオ 1: tenant VRF を新規作成して L3 サブインタフェースに割り当てる
 
-```console
+「multi-tenant の青 VRF を作って、`Ethernet0` をその VRF の uplink にして、上位 router 向け static default を入れたい」というケース。
+
+### CLI で打つ場合
+
+```bash
+# 1. VRF を作成
 sudo config vrf add Vrf_blue
+
+# 2. interface を VRF に bind (この瞬間に IP が剥がれるので注意)
 sudo config interface vrf bind Ethernet0 Vrf_blue
+
+# 3. IP を付け直す
 sudo config interface ip add Ethernet0 192.0.2.1/31
-sudo config route add prefix vrf Vrf_blue 198.51.100.0/24 nexthop 192.0.2.0 dev Ethernet0
+
+# 4. VRF 内の default route
+sudo config route add prefix vrf Vrf_blue 0.0.0.0/0 nexthop 192.0.2.0
 ```
 
-この例では、`Vrf_blue` を作り、`Ethernet0` をその VRF の L3 interface にし、VRF 内の static route を追加します。実際の構文と制約は SONiC バージョンや interface 種別で変わり得るため、CLI reference 側を正にしてください。
+`bind` の瞬間に kernel netlink で interface が VRF table に紐づき直されるため、既存の IP は一度落ちます。順序を逆にすると `Interface ... has IP address ...` のような warning が出るバージョンもあるので、空にしてから bind するのが安全です。
+
+### CONFIG_DB で投入する場合
+
+```json
+{
+  "VRF": {
+    "Vrf_blue": {
+      "NULL": "NULL"
+    }
+  },
+  "INTERFACE": {
+    "Ethernet0": {
+      "vrf_name": "Vrf_blue"
+    },
+    "Ethernet0|192.0.2.1/31": {
+      "NULL": "NULL"
+    }
+  },
+  "STATIC_ROUTE": {
+    "Vrf_blue|0.0.0.0/0": {
+      "nexthop": "192.0.2.0",
+      "ifname": "Ethernet0",
+      "distance": "0",
+      "blackhole": "false"
+    }
+  }
+}
+```
+
+`VRF|<name>` 行は属性なしの marker、`INTERFACE|<name>` 行は VRF binding を持ち、`INTERFACE|<name>|<ip/prefix>` 行は IP 割り当てです。3 行は別々の key であり、削除時もこの順序を逆に外します。
+
+`sonic-cfggen` で部分適用:
+
+```bash
+sonic-cfggen -a "$(cat vrf_patch.json)" --write-to-db
+config save -y
+```
+
+### show コマンドで確認
+
+```bash
+show vrf
+show ip route vrf Vrf_blue
+show ip interfaces
+show interfaces vrf
+```
+
+`show vrf` の典型出力:
+
+```text
+VRF        Interfaces
+---------  ------------
+Vrf_blue   Ethernet0
+```
+
+`show ip route vrf Vrf_blue`:
+
+```text
+VRF Vrf_blue:
+S>* 0.0.0.0/0 [1/0] via 192.0.2.0, Ethernet0, weight 1, 00:00:12
+C>* 192.0.2.0/31 is directly connected, Ethernet0, 00:00:30
+```
+
+`S>*` が static、`C>*` が connected。`>` が無いと FIB に入っていない (RIB のみ) ことを示します。
+
+## 典型シナリオ 2: ECMP static route を 2 nexthop で組む
+
+WAN 側に 2 本の uplink がある場合の冗長化。
+
+```bash
+sudo config route add prefix vrf Vrf_blue 203.0.113.0/24 \
+  nexthop 192.0.2.0 nexthop 192.0.2.2
+```
+
+CONFIG_DB 表現 (カンマ区切り、index で揃える):
+
+```json
+{
+  "STATIC_ROUTE": {
+    "Vrf_blue|203.0.113.0/24": {
+      "nexthop": "192.0.2.0,192.0.2.2",
+      "ifname": "Ethernet0,Ethernet4",
+      "distance": "0,0",
+      "blackhole": "false,false"
+    }
+  }
+}
+```
+
+確認:
+
+```bash
+show ip route vrf Vrf_blue 203.0.113.0/24
+```
+
+```text
+Routing entry for 203.0.113.0/24
+  Known via "static", distance 1, metric 0
+  Last update 00:00:05 ago
+  * 192.0.2.0, via Ethernet0, weight 1
+  * 192.0.2.2, via Ethernet4, weight 1
+```
+
+両 nexthop に `*` が出れば両方 active。片方だけなら ARP / next-hop reachability を疑います。
+
+## 典型シナリオ 3: VRF leaking と blackhole
+
+「青 VRF から赤 VRF の loopback (10.99.0.1/32) を見えるようにする」。
+
+```bash
+sudo config route add prefix vrf Vrf_blue 10.99.0.1/32 \
+  nexthop vrf Vrf_red 10.99.0.1
+```
+
+```json
+{
+  "STATIC_ROUTE": {
+    "Vrf_blue|10.99.0.1/32": {
+      "nexthop": "10.99.0.1",
+      "nexthop-vrf": "Vrf_red",
+      "distance": "0",
+      "blackhole": "false"
+    }
+  }
+}
+```
+
+blackhole route (流入 packet を破棄):
+
+```json
+{
+  "STATIC_ROUTE": {
+    "Vrf_blue|192.168.100.0/24": {
+      "nexthop": "",
+      "blackhole": "true",
+      "distance": "0"
+    }
+  }
+}
+```
+
+`blackhole=true` の場合 `nexthop` は空でよい (orchagent が null route を installs)。
 
 ## CONFIG_DB で見る形
 
@@ -94,6 +247,24 @@ YANG は、外部 API や config validation の入力制約を確認するとき
 | [sonic-static-route](../../reference/yang/sonic-static-route.md) | VRF-aware static route、`nexthop-vrf`、blackhole。 |
 | [sonic-route-common](../../reference/yang/sonic-route-common.md) | route redistribute の VRF / protocol / route-map の型。 |
 
+## よくある設定エラーと対処
+
+`sonic-utilities/config/main.py` の `ctx.fail()` から抜粋:
+
+| エラーメッセージ | 原因 | 対処 |
+|---|---|---|
+| `VRF <name> does not exist!` | route で参照した VRF 未作成 | 先に `config vrf add <name>` |
+| `Nexthop VRF <vrf> does not exist!` | `nexthop-vrf` 指定先が未作成 | leaking 先の VRF を先に作成 |
+| `interface <name> does not exist.` | route の `ifname` 未作成 | 先に物理 / VLAN / PortChannel interface を確認 |
+| `portchannel does not exist.` | LAG ifname を指定したが LAG 未作成 | `config portchannel add` |
+| `vlan interface does not exist.` | VLAN ifname を指定したが VLAN_INTERFACE 未作成 | `config interface ip add Vlan<id>` |
+| `argument is not in pattern prefix [vrf ...] <A.B.C.D/M> nexthop [vrf ...] ...` | `config route add` の引数順誤り | reference の構文に厳密に従う |
+
+bind 系の暗黙挙動:
+
+- `config interface vrf bind` は対象 interface の IP を kernel 側で一度落とします。bind 後に `ip add` し直す
+- VRF 削除は配下 interface を全て unbind してから。残っていると `VRF still has interfaces bound` 系の警告
+
 ## 関連ページ
 
 - [CLI: config vrf](../../reference/cli/config-vrf.md)
@@ -107,4 +278,3 @@ YANG は、外部 API や config validation の入力制約を確認するとき
 - [YANG: sonic-interface](../../reference/yang/sonic-interface.md)
 - [YANG: sonic-static-route](../../reference/yang/sonic-static-route.md)
 - [YANG: sonic-route-common](../../reference/yang/sonic-route-common.md)
-
