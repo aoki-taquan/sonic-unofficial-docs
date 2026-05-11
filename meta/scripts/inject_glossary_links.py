@@ -178,11 +178,79 @@ def _in_span(pos: int, end: int, spans: list[tuple[int, int]]) -> bool:
     return False
 
 
+def _count_term_occurrences(
+    lines: list[str],
+    eligible: list[bool],
+    term: str,
+) -> int:
+    """Count occurrences of ``term`` across eligible lines, outside protected
+    spans. Word-boundary aware for ASCII-only terms (mirrors injection logic)."""
+    ascii_only = all(ord(c) < 128 for c in term)
+
+    def _wordy(ch: str) -> bool:
+        return ch.isalnum() or ch == "_"
+
+    total = 0
+    for idx, line in enumerate(lines):
+        if not eligible[idx]:
+            continue
+        spans = _mask_protected_spans(line)
+        search_from = 0
+        while True:
+            p = line.find(term, search_from)
+            if p < 0:
+                break
+            end = p + len(term)
+            if _in_span(p, end, spans):
+                search_from = p + 1
+                continue
+            if ascii_only:
+                before = line[p - 1] if p > 0 else ""
+                after = line[end] if end < len(line) else ""
+                if (before and _wordy(before)) or (after and _wordy(after)):
+                    search_from = p + 1
+                    continue
+            total += 1
+            search_from = end
+    return total
+
+
+def _demote_existing_links(
+    lines: list[str],
+    terms_to_demote: set[tuple[str, str]],
+) -> tuple[list[str], int]:
+    """Replace ``[term](.../glossary.md#anchor)`` with bare ``term`` for the
+    given (term, anchor) pairs. Returns (new_lines, demote_count)."""
+    if not terms_to_demote:
+        return lines, 0
+    demote_count = 0
+    new_lines = list(lines)
+    for term, anchor in terms_to_demote:
+        pat = re.compile(
+            r"\[(" + re.escape(term) + r")\]\([^)]*#" + re.escape(anchor) + r"\)"
+        )
+        for idx, line in enumerate(new_lines):
+            new_line, n = pat.subn(r"\1", line)
+            if n:
+                new_lines[idx] = new_line
+                demote_count += n
+    return new_lines, demote_count
+
+
 def process_file(
     path: Path,
     terms: list[tuple[str, str]],
+    min_occurrences: int = 1,
+    demote_below_threshold: bool = False,
 ) -> tuple[str, int, list[tuple[str, str]]]:
-    """Return (new_text, injected_count, injected_pairs)."""
+    """Return (new_text, injected_count, injected_pairs).
+
+    ``min_occurrences``: only inject a link for a term if it appears at least
+    this many times on eligible lines in the page (default 1 = legacy
+    behavior).
+    ``demote_below_threshold``: if True, also un-link any pre-existing
+    glossary link for terms that fail the threshold on this page.
+    """
     original = path.read_text(encoding="utf-8")
     fm, body = parse_frontmatter(original)
     rel = path.relative_to(DOCS).as_posix()
@@ -264,16 +332,41 @@ def process_file(
     # body, suppress further injection for that term (idempotency: a previous
     # run already handled it; do not chase later occurrences).
     full_body = "\n".join(lines)
+    already_linked: set[tuple[str, str]] = set()
     for term, anchor in list(remaining.items()):
         # Match [<term>](...#<anchor>) loosely.
         pat = re.compile(
             r"\[" + re.escape(term) + r"\]\([^)]*#" + re.escape(anchor) + r"\)"
         )
         if pat.search(full_body):
+            already_linked.add((term, anchor))
             del remaining[term]
 
-    injected_pairs: list[tuple[str, str]] = []
+    # Apply min-occurrences threshold: drop candidates that appear fewer than
+    # ``min_occurrences`` times on eligible lines.
+    if min_occurrences > 1:
+        for term in list(remaining.keys()):
+            if _count_term_occurrences(lines, eligible, term) < min_occurrences:
+                del remaining[term]
+
     new_lines = list(lines)
+
+    # Optional: demote already-linked terms whose occurrence count (including
+    # the linked one, which is in a protected span and therefore NOT counted
+    # by _count_term_occurrences) is below the threshold. We un-link and then
+    # re-count plain occurrences; if still under threshold, leave un-linked.
+    demote_count = 0
+    if demote_below_threshold and min_occurrences > 1 and already_linked:
+        to_check: set[tuple[str, str]] = set()
+        for term, anchor in already_linked:
+            # Build temp un-linked view to count true occurrences.
+            tmp_lines, _ = _demote_existing_links(new_lines, {(term, anchor)})
+            occ = _count_term_occurrences(tmp_lines, eligible, term)
+            if occ < min_occurrences:
+                to_check.add((term, anchor))
+        new_lines, demote_count = _demote_existing_links(new_lines, to_check)
+
+    injected_pairs: list[tuple[str, str]] = []
     injected_count = 0
 
     # Iterate lines, then terms; we want the *earliest* occurrence per term,
@@ -323,18 +416,26 @@ def process_file(
             if not remaining:
                 break
 
-    if injected_count == 0:
-        # No new injections.  Preserve existing file content verbatim so that
-        # a re-run is a true no-op (idempotent).  If the previous marker is
-        # somehow stale, it will be refreshed only when a new injection
-        # actually occurs.
+    if injected_count == 0 and demote_count == 0:
+        # No new injections and no demotions.  Preserve existing file content
+        # verbatim so that a re-run is a true no-op (idempotent).
         return original, 0, []
 
-    payload = ",".join(f"{t}:{a}" for t, a in sorted(injected_pairs))
-    digest = hashlib.sha1(payload.encode("utf-8")).hexdigest()[:12]
-    marker = f"<!-- glossary-links-injected: {digest} -->"
-
-    new_body = "\n".join(new_lines).rstrip() + "\n\n" + marker + "\n"
+    if injected_count > 0:
+        payload = ",".join(f"{t}:{a}" for t, a in sorted(injected_pairs))
+        digest = hashlib.sha1(payload.encode("utf-8")).hexdigest()[:12]
+        marker = f"<!-- glossary-links-injected: {digest} -->"
+        new_body = "\n".join(new_lines).rstrip() + "\n\n" + marker + "\n"
+    else:
+        # Demotion-only path: keep / recompute marker if present, otherwise
+        # just rewrite the body without a fresh marker.
+        existing_marker_m = MARKER_RE.search(body)
+        suffix = ""
+        if existing_marker_m:
+            suffix = "\n\n" + existing_marker_m.group(0) + "\n"
+        else:
+            suffix = "\n"
+        new_body = "\n".join(new_lines).rstrip() + suffix
     return fm + new_body, injected_count, injected_pairs
 
 
@@ -368,7 +469,39 @@ def main() -> int:
     ap.add_argument(
         "--verbose", "-v", action="store_true", help="print per-file injection counts"
     )
+    ap.add_argument(
+        "--min-occurrences",
+        type=int,
+        default=1,
+        help=(
+            "Only inject a glossary link for a term if it appears at least "
+            "N times on the page (default: 1, i.e. legacy first-hit behavior)"
+        ),
+    )
+    ap.add_argument(
+        "--demote-below-threshold",
+        action="store_true",
+        help=(
+            "Also un-link any pre-existing glossary link for terms that fail "
+            "the --min-occurrences threshold on the page"
+        ),
+    )
+    ap.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Compute changes and print summary without writing files",
+    )
+    ap.add_argument(
+        "--report",
+        type=str,
+        default=None,
+        help="Write a per-file dry-run report (markdown) to this path",
+    )
     args = ap.parse_args()
+
+    if args.min_occurrences < 1:
+        print("error: --min-occurrences must be >= 1", file=sys.stderr)
+        return 2
 
     terms = collect_terms()
     if not terms:
@@ -378,18 +511,49 @@ def main() -> int:
     total_files = 0
     total_links = 0
     drift_files: list[Path] = []
+    per_file: list[tuple[Path, int]] = []
 
     for path in iter_target_files():
         original = path.read_text(encoding="utf-8")
-        new_text, count, _pairs = process_file(path, terms)
+        new_text, count, _pairs = process_file(
+            path,
+            terms,
+            min_occurrences=args.min_occurrences,
+            demote_below_threshold=args.demote_below_threshold,
+        )
         if new_text != original:
             drift_files.append(path)
             total_files += 1
             total_links += count
-            if not args.check:
+            per_file.append((path, count))
+            if not args.check and not args.dry_run:
                 path.write_text(new_text, encoding="utf-8")
                 if args.verbose:
                     print(f"  {path.relative_to(ROOT)}: +{count}")
+
+    if args.report:
+        report_path = Path(args.report)
+        if not report_path.is_absolute():
+            report_path = ROOT / report_path
+        lines_out = [
+            "# Glossary threshold dry-run report",
+            "",
+            f"- min-occurrences: `{args.min_occurrences}`",
+            f"- demote-below-threshold: `{args.demote_below_threshold}`",
+            f"- dry-run: `{args.dry_run}`",
+            f"- files that would change: **{total_files}**",
+            f"- links that would be injected: **{total_links}**",
+            "",
+            "## Per-file injection counts",
+            "",
+        ]
+        for p, n in sorted(per_file, key=lambda x: (-x[1], x[0].as_posix())):
+            lines_out.append(f"- `{p.relative_to(ROOT).as_posix()}`: +{n}")
+        if not per_file:
+            lines_out.append("- (none)")
+        lines_out.append("")
+        report_path.write_text("\n".join(lines_out), encoding="utf-8")
+        print(f"report written: {report_path.relative_to(ROOT)}")
 
     if args.check:
         if drift_files:
@@ -402,6 +566,14 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
+        return 0
+
+    if args.dry_run:
+        print(
+            f"glossary inject (dry-run, min-occurrences={args.min_occurrences}): "
+            f"{total_files} file(s) would change, "
+            f"{total_links} link(s) would be injected."
+        )
         return 0
 
     print(
