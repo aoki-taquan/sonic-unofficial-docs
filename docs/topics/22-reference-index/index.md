@@ -38,4 +38,4 @@ last_verified: 2026-05-10
 - [CLI リファレンス](../../reference/cli/index.md)
 - [CONFIG_DB リファレンス](../../reference/config-db/index.md)
 - [YANG リファレンス](../../reference/yang/index.md)
-- [Discrepancies](../../_meta/discrepancies.md)
+- [Discrepancy index](../../reference/verification/discrepancy-index.md)
