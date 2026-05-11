@@ -192,6 +192,12 @@ make SECURE_UPGRADE_MODE=dev \
 
 最新の変数リストは `sonic-buildimage/rules/config` のコメントブロック（L275-L300 付近）を参照。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #5282: Secure boot (open)](https://github.com/sonic-net/sonic-buildimage/pull/5282) — Secure Boot 機能の元 PR。長期 open で部分マージのみ。
+- [sonic-buildimage #24287: Secureboot: Install boot components in sonic-to-sonic installs for Secure Boot enabled images (open)](https://github.com/sonic-net/sonic-buildimage/pull/24287) — sonic-to-sonic upgrade パスでの secureboot 整合性修正 PR (open)。
+- [sonic-buildimage #24249: Bug: \[Trixie\] Debian 13 with grub 2.12-9 can't chainload onie with grub 2.04 on secure boot enabled machines (open)](https://github.com/sonic-net/sonic-buildimage/issues/24249) — chain of trust の現実装上の制約を示す bug。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/secure_boot/hld_secure_boot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

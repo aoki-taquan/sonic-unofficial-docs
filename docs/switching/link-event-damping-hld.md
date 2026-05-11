@@ -54,6 +54,12 @@ sonic-db-cli CONFIG_DB hmset 'PORT|Ethernet0' \
 
 # リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-swss #2933: Add SWSS support for link event damping feature (merged)](https://github.com/sonic-net/sonic-swss/pull/2933) — AIED アルゴリズム取り込みの本体 PR。
+- [sonic-swss #2916: Implement link event damping SWSS component (closed)](https://github.com/sonic-net/sonic-swss/pull/2916) — 上記の先行 PR (closed)。
+- SyncD intercept 経路の完成度については追加トラッキング Issue 未確認。
+
 ## 概要
 
 光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → ASIC_DB → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの **下流負荷** を引き起こす[^1]。

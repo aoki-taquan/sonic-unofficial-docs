@@ -194,3 +194,7 @@ HLD が要件として掲げる以下の構成要素を現行 master の `sonic-
 - ZMQ 経由の swss 連携: `gnmi_server/` 配下に SmartSwitch 専用 ZMQ handler は未検出
 
 HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合は別経路（HA manager / hamgrd）が進行中。本ページの主張は提案段階のため `discrepancy-found` に変更。
+
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — SmartSwitch DPU 側 APPL_STATE_DB と version_id フィードバック機構は SmartSwitch 全体の HA / gNMI 改修 PR 群に取り込まれており、本 HLD 単独のトラッキング Issue / PR は確認できず。

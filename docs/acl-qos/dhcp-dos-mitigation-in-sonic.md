@@ -142,6 +142,11 @@ CLI ルール[^1]:
 
 > 分類: `monitor: not_implemented`
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #18843: Adding Support for DHCP DOS Mitigation rate limit (closed)](https://github.com/sonic-net/sonic-buildimage/pull/18843) — HLD のデータ層 / CLI 取り込みに繋がった上流 PR の痕跡。TC 投入経路 (portmgrd 拡張) を含む完成版 PR は引き続き未マージ。
+- [sonic-swss #3130: SwSS Changes for DHCP DoS Mitigation Feature (open)](https://github.com/sonic-net/sonic-swss/pull/3130) — portmgrd 側で `tc` を投入するための swss 側変更。本 PR が merge されるまで CLI で値を入れても実効性なし。
+
 ## 干渉する機能
 
 - **CoPP**: 従来の DHCP 全体制限 (300 pps) を削除する前提。リレー等への影響は HLD では明記なし、要確認

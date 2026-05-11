@@ -174,3 +174,7 @@ per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。
 - `consoled` デーモン本体・`ser2net` 連携・reverse SSH の port/IP forwarding ロジック: `sonic-buildimage` / `sonic-host-services` のいずれにも検出できず
 
 HLD が想定する「serial hub 機能を備えた switch hub としての reverse SSH 集約」までは未統合のため、`discrepancy-found` を維持。
+
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — Console Switch（serial hub の reverse SSH 集約）構成は専用 platform / image 設定の積み重ねで実現されており、HLD 単独で追跡可能な GitHub Issue / PR は確認できず。

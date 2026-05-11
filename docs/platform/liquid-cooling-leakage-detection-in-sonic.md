@@ -247,6 +247,11 @@ leak_sensors3     Not OK    LiquidCooling
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-platform-daemons #690: Add support for liquid cooling leakage detection (merged)](https://github.com/sonic-net/sonic-platform-daemons/pull/690) — `LiquidCoolingBase` + `thermalctld` 連携の本体取り込み PR。
+- system-health gNMI イベント公開は本 PR では未取り込みで、追加の gNMI / system-health 側 PR が必要。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bmc/leakage_detection_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -231,6 +231,10 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-gnmi #86: sonic-gnmi: Master Arbitration (closed)](https://github.com/sonic-net/sonic-gnmi/pull/86) — Master Arbitration 機能の sonic-gnmi 側追加 PR の痕跡。本 HLD と直接対応するが closed であり、現在の master 取り込み状況は要再確認。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/master_arbitration.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -182,6 +182,11 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 
 > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #25554: Bug: gnoi-shutdown service blocks SYSTEM_READY on non-SmartSwitch platforms (closed)](https://github.com/sonic-net/sonic-buildimage/issues/25554) — `gnoi_reboot_daemon` (gnoi-shutdown service) が SmartSwitch 以外で SYSTEM_READY を阻害する bug。HLD と現実装の境界条件の齟齬を示す。
+- HALT 機能本体（DPU 個別停止）の取り込み PR は明示的に紐づくものが確認できず、SmartSwitch 系の複数 PR にまたがる。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/graceful-shutdown/graceful-shutdown.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

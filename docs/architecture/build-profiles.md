@@ -208,6 +208,10 @@ HLD は「`rules/config` < `rules/config.user` < `rules/profiles/$(PROFILE).mk`�
 
 > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — `rules/config` のビルドフラグ群は構造上 HLD と直接 1:1 紐づくものではなく、トラッキング Issue は確認できず。各フラグの導入は個別の機能 PR（INCLUDE_KUBERNETES / ENABLE_AUTO_TECH_SUPPORT 等）に紐づく形で混在しているため、各機能ページの GitHub リンクを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/Build-Profiles.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

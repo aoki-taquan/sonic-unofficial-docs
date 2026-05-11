@@ -239,6 +239,10 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — `ssdutil` プラットフォームプラグインと `show platform ssdhealth` CLI は各ベンダーの platform PR に分散して取り込まれており、HLD 個別のトラッキング Issue は確認できず。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

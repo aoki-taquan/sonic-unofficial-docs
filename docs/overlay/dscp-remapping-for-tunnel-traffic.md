@@ -183,6 +183,10 @@ redis-cli -n 4 keys 'PORT_QOS_MAP|*' \
 
 > 分類: `monitor: evolved_beyond_hld` — HLD は取り込み済みだがフィールド名が実装側で変更。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — Dual-ToR PFC デッドロック回避向けトンネル DSCP / TC リマップは dualtor 系 PR と SAI tunnel TC リマップ機能の組み合わせで段階的に取り込まれており、HLD 単独の上流 Issue は確認できず。
+
 ## 関連トピック
 
 - [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md) — DSCP/TC/PG/Queue/PFC の全体像

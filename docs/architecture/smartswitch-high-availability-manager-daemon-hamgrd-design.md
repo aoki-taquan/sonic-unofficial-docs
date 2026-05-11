@@ -200,6 +200,10 @@ HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU �
 
 > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — `hamgrd` (NPU 側 actor) は SmartSwitch HA フィーチャ群の一部として段階的に取り込まれており、本 HLD 個別の追跡 Issue / PR は確認できず。関連実装は `sonic-platform-daemons` / `sonic-swss` の SmartSwitch HA 系 PR 群を横断的に参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

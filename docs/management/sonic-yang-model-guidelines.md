@@ -211,6 +211,12 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 
 > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #17348: \[yang\] Sonic yangs with nested lists (list within a list) deviate from Sonic yang modelling guidelines (closed)](https://github.com/sonic-net/sonic-buildimage/issues/17348) — 本ガイドラインからの逸脱を指摘した代表的 issue。
+- [sonic-buildimage #10386: \[YANG\]sonic-dot1p-tc-map.yang would cause failed deployment via mgmt-framework (open)](https://github.com/sonic-net/sonic-buildimage/issues/10386) — ガイドライン違反が運用障害となった具体例。
+- ABNF.json → sonic-*.yang 変換規約全体の包括的 issue は確認できず、個別の YANG 追加 PR (例 #13314, #10786, #9116) で慣行が蓄積されている。
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/mgmt/SONiC_YANG_Model_Guidelines.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/mgmt/SONiC_YANG_Model_Guidelines.md)

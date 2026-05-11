@@ -202,6 +202,10 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 - IPv6 UDP モード: `wol Vlan1000 00:11:22:33:44:55 -u -a ff02::1 -t 9`。
 - Rust 実装の `--help` で実引数のレンジ（`count` 1〜5、`interval` 0〜2000 ms 等）を再確認してから自動化に組み込む。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — `wol` CLI / `SonicWolService` gNOI 実装は sonic-utilities / sonic-gnmi の個別 PR で取り込まれており、HLD 単独のトラッキング Issue は確認できず。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/wol/Wake-on-LAN-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

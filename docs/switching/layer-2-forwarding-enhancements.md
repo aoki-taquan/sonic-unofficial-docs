@@ -270,6 +270,10 @@ orchagent 側は HLD のとおり実装済み:
 - **読者への影響**: redis-cli で keys pattern を指定する際に区切り文字を間違えると hit しない。
 - **回避策**: `redis-cli -n 0 keys 'FDB_TABLE:*'` で取得した実際のキーフォーマットを基準に書く。区切り文字は SONiC バージョンで揺らぐので、固定パターンに頼らない。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — FDB flush / aging / static MAC / VLAN range 拡張は L2 系の小粒 PR が継続的に追加されており、HLD 全体を束ねるトラッキング Issue / PR は確認できず。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/layer2-forwarding-enhancements/SONiC Layer 2 Forwarding Enhancements HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

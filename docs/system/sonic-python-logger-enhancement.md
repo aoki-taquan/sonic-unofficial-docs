@@ -226,6 +226,10 @@ class SysLogger:
 - redis 未起動時に備えるなら、上位で `update_log_level()` の戻り値を `(success, msg)` で判定し、`enable_runtime_config=False` のフォールバック経路を別途用意する。
 - 短命 Python スクリプトは SIGHUP では追従しないので、起動時に必ず `update_log_level()` を呼ぶか、`config syslog level` の `--container` / `--program` で対象プロセスを明示する。
 
+#### 関連 GitHub Issue / PR
+
+- [GitHub Issue / PR の関連リンクは未確認] — `SysLogger` 拡張 (runtime log level / `require_manual_refresh` / SIGHUP) は `sonic-py-common` の小規模機能追加として段階的に取り込まれており、HLD と 1:1 で紐づくトラッキング Issue / PR は確認できず。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/syslog/python-logger-enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
