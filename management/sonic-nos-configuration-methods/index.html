@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sonic-nos-cli-sonic-cfggen-config_dbjson-restconf-gnmi-ztp-vtysh-redis-apply-patch" class="md-skip">
+        <a href="#sonic-nos" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -13907,7 +13907,18 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        入口は 10 種類、収束先は CONFIG_DB
       
     </span>
   </a>
@@ -13918,157 +13929,118 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#11-config-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.1 config CLI
+        どれを使うべきか（比較表）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#12-show-cli" class="md-nav__link">
-    <span class="md-ellipsis">
       
-        1.2 show CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-sonic-cfggen" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. sonic-cfggen
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-etcsonicconfig_dbjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. /etc/sonic/config_db.json 直編集
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-restconf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. RESTCONF
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. gNMI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. 自動化フレームワーク
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#7-zero-touch-provisioning-ztp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. Zero-Touch Provisioning (ZTP)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#8-vtysh-frrouting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        8. vtysh (FRRouting)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#9-redis-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9. redis-cli 直接操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#10-config-apply-patch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        10. config apply-patch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        各手段の比較
+        各手段の要点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各手段の要点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-config-show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI (config / show)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-cfggen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-cfggen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_dbjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config_db.json 直編集
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restconf-gnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RESTCONF / gNMI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ansible-napalm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ansible / NAPALM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ztp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZTP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vtyshfrrouting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vtysh（FRRouting）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        redis-cli 直接操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-apply-patch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config apply-patch
       
     </span>
   </a>
@@ -14084,34 +14056,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（用途別）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -14120,7 +14064,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -14131,7 +14075,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -14142,10 +14086,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -17013,6 +16968,8 @@
       
         
           
+        
+      
         
       
         
@@ -21362,6 +21319,98 @@
     
       
         
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_5" id="__nav_13_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    裏取り
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    裏取り
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/verification/discrepancy-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HLD と実装の乖離 一覧（discrepancy-index）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
           
         
       
@@ -21438,7 +21487,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_6" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21460,14 +21509,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_13_5" id="__nav_13_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_13_6" id="__nav_13_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_13_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -22738,7 +22787,18 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        入口は 10 種類、収束先は CONFIG_DB
       
     </span>
   </a>
@@ -22749,157 +22809,118 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. CLI
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#11-config-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.1 config CLI
+        どれを使うべきか（比較表）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#12-show-cli" class="md-nav__link">
-    <span class="md-ellipsis">
       
-        1.2 show CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-sonic-cfggen" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. sonic-cfggen
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-etcsonicconfig_dbjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. /etc/sonic/config_db.json 直編集
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-restconf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. RESTCONF
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-gnmi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. gNMI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. 自動化フレームワーク
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#7-zero-touch-provisioning-ztp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. Zero-Touch Provisioning (ZTP)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#8-vtysh-frrouting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        8. vtysh (FRRouting)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#9-redis-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9. redis-cli 直接操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#10-config-apply-patch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        10. config apply-patch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        各手段の比較
+        各手段の要点
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="各手段の要点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-config-show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI (config / show)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-cfggen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-cfggen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_dbjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config_db.json 直編集
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restconf-gnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RESTCONF / gNMI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ansible-napalm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ansible / NAPALM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ztp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZTP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vtyshfrrouting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vtysh（FRRouting）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        redis-cli 直接操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-apply-patch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config apply-patch
       
     </span>
   </a>
@@ -22915,34 +22936,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例（用途別）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -22951,7 +22944,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -22962,7 +22955,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -22973,10 +22966,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -23010,133 +23014,54 @@
 
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified / 概観文書</p>
-<p><code>sonic-utilities/config/main.py</code> で <code>apply-patch</code> / <code>replace</code> / <code>rollback</code> の 3 サブコマンドおよび <code>--dry-run</code> / <code>--ignore-non-yang-tables</code> / <code>--ignore-path</code> オプションを確認（<code>@click.argument('checkpoint-name')</code> を含む rollback 経路）。<code>generic_config_updater/</code> パッケージ（<code>generic_updater.py</code>、<code>patch_sorter.py</code>、<code>change_applier.py</code>、<code>gu_common.py</code>、<code>field_operation_validators.py</code>、<code>gcu_services_validator.conf.json</code>）も実装済み。<code>sonic-buildimage/src/sonic-ztp</code> 配下に ZTP 実装、<code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd</code> に BGP 設定エージェントが存在。本 HLD は <strong>設定手段の概観文書</strong> で各機構の詳細は別 HLD に委ねる方針自体は妥当。</p>
+<p><code>sonic-utilities/config/main.py</code> で <code>apply-patch</code> / <code>replace</code> / <code>rollback</code> の 3 サブコマンドと <code>--dry-run</code> / <code>--ignore-non-yang-tables</code> / <code>--ignore-path</code> オプションを確認。<code>generic_config_updater/</code>、<code>sonic-buildimage/src/sonic-ztp</code>、<code>bgpcfgd</code> の存在も確認済み。本 HLD は概観文書で各機構の詳細は別 HLD に委ねる。</p>
 </div>
-<h1 id="sonic-nos-cli-sonic-cfggen-config_dbjson-restconf-gnmi-ztp-vtysh-redis-apply-patch">SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）<a class="headerlink" href="#sonic-nos-cli-sonic-cfggen-config_dbjson-restconf-gnmi-ztp-vtysh-redis-apply-patch" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は設定の入口を <strong>複数提供</strong> する。本 HLD は各手段の <strong>目的と適用範囲</strong> を比較整理する概観文書である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h1 id="sonic-nos">SONiC NOS の設定手段一覧<a class="headerlink" href="#sonic-nos" title="Permanent link">&para;</a></h1>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>手作業: <code>config</code> / <code>show</code> CLI</li>
-<li>スクリプト: <code>sonic-cfggen</code></li>
-<li>ファイル直編集: <code>config_db.json</code></li>
-<li>リモート / 標準 API: RESTCONF / gNMI</li>
-<li>自動化: Ansible / NAPALM / CI/CD</li>
-<li>工場出荷時 / 大量展開: ZTP</li>
-<li>上級者の routing 操作: <code>vtysh</code></li>
-<li>低レベル: <code>redis-cli</code></li>
-<li>構造化変更: <code>config apply-patch</code></li>
+<li>SONiC で設定を入れる方法は何種類あり、どう使い分けるか</li>
+<li>永続化されるのはどれか、再起動で消えるのはどれか</li>
+<li>自動化／コントローラ統合に使えるのはどれか</li>
+<li>「触ってはいけない」低レベル手段はどれか</li>
 </ul>
+<h2 id="10-config_db">入口は 10 種類、収束先は CONFIG_DB<a class="headerlink" href="#10-config_db" title="Permanent link">&para;</a></h2>
+<p>SONiC は CONFIG_DB（Redis db 4）に <strong>複数の入口</strong> を提供し、最終的に <code>/etc/sonic/config_db.json</code> で永続化する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>graph TD
     USER[Operator] --&gt; CFG[config CLI]
-    USER --&gt; SHOW[show CLI]
     USER --&gt; CFGGEN[sonic-cfggen]
-    USER --&gt; JSON[config_db.json 直編集]
+    USER --&gt; JSON[config_db.json]
     USER --&gt; VTYSH[vtysh]
     USER --&gt; REDIS[redis-cli]
-    AUTO[Automation] --&gt; ANS[Ansible / NAPALM]
-    AUTO --&gt; REST[RESTCONF]
+    AUTO[Automation] --&gt; REST[RESTCONF]
     AUTO --&gt; GNMI[gNMI]
     AUTO --&gt; PATCH[config apply-patch]
     DEPLOY[ZTP] --&gt; JSON
-    CFG --&gt; CDB[CONFIG_DB Redis db 4]
+    CFG --&gt; CDB[(CONFIG_DB)]
     CFGGEN --&gt; CDB
     JSON --&gt; CDB
     REST --&gt; CDB
     GNMI --&gt; CDB
     PATCH --&gt; CDB
     REDIS --&gt; CDB
-    VTYSH --&gt; FRR[FRR daemon (bgpd, zebra, ...)]</code></pre>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="1-cli">1. CLI<a class="headerlink" href="#1-cli" title="Permanent link">&para;</a></h3>
-<h4 id="11-config-cli">1.1 <code>config</code> CLI<a class="headerlink" href="#11-config-cli" title="Permanent link">&para;</a></h4>
-<p><code>CONFIG_DB</code> (Redis db 4) に直接書き、永続化は <code>config save</code> で <code>/etc/sonic/config_db.json</code> に書き戻す<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y<span class="w">                      </span><span class="c1"># /etc/sonic/config_db.json に保存</span>
-</span></code></pre></div>
-<p>操作者の手動配備や軽微な変更に向く。</p>
-<h4 id="12-show-cli">1.2 <code>show</code> CLI<a class="headerlink" href="#12-show-cli" title="Permanent link">&para;</a></h4>
-<p>read-only。<code>STATE_DB</code> / <code>APPL_DB</code> 等の運用状態を表示。設定確認やトラブルシューティング用<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="2-sonic-cfggen">2. <code>sonic-cfggen</code><a class="headerlink" href="#2-sonic-cfggen" title="Permanent link">&para;</a></h3>
-<p>JSON ↔ Redis のブリッジ。<strong>スクリプト / 自動化</strong> で使う<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>入力 JSON は SONiC schema に従う必要がある</li>
-<li>不適合だと書き込み時にエラー</li>
-</ul>
-<h3 id="3-etcsonicconfig_dbjson">3. <code>/etc/sonic/config_db.json</code> 直編集<a class="headerlink" href="#3-etcsonicconfig_dbjson" title="Permanent link">&para;</a></h3>
-<p>オフライン編集の元締め<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>vi<span class="w"> </span>/etc/sonic/config_db.json
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>reload<span class="w"> </span>-y
-</span></code></pre></div>
-<p>利点: 全設定を 1 ファイルで Git バージョン管理可。リスク: <strong>構文エラーで起動不能</strong> を招きうるため適用前検証を推奨。</p>
-<h3 id="4-restconf">4. RESTCONF<a class="headerlink" href="#4-restconf" title="Permanent link">&para;</a></h3>
-<p>YANG モデルに基づく REST API。OpenConfig YANG にも対応するため <strong>マルチベンダ環境</strong> に向く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>明示的に enable + 認証 / アクセス制御の構成が必須</li>
-<li>クラウドコントローラ統合 / リモート監視 / ダッシュボード構築</li>
-</ul>
-<h3 id="5-gnmi">5. gNMI<a class="headerlink" href="#5-gnmi" title="Permanent link">&para;</a></h3>
-<p>gRPC ベース。<strong>リアルタイム設定 + telemetry streaming</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>gnmic</code> 等のクライアント</li>
-<li>ONCE / STREAM の両モード</li>
-<li>Prometheus 等との接続</li>
-</ul>
-<h3 id="6">6. 自動化フレームワーク<a class="headerlink" href="#6" title="Permanent link">&para;</a></h3>
-<p>Ansible / NAPALM 等<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。playbook で interface / BGP / VLAN / ACL を宣言的に管理。CI/CD pipeline 統合。</p>
-<h3 id="7-zero-touch-provisioning-ztp">7. Zero-Touch Provisioning (ZTP)<a class="headerlink" href="#7-zero-touch-provisioning-ztp" title="Permanent link">&para;</a></h3>
-<p>工場出荷後の初回 boot で <strong>DHCP option 67 または USB drive</strong> からスクリプトを取得し自動設定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>設定取得 + 適用、CONFIG_DB の編集、サービス起動 / 設定が可能</li>
-<li>ログは <code>/var/log/ztp.log</code></li>
-</ul>
-<h3 id="8-vtysh-frrouting">8. <code>vtysh</code> (FRRouting)<a class="headerlink" href="#8-vtysh-frrouting" title="Permanent link">&para;</a></h3>
-<p>BGP / OSPF 等 routing 上級設定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><strong>vtysh だけの変更は永続化されない</strong>（CONFIG_DB に反映する必要あり）</li>
-<li>ライブ診断・障害切り分け向け</li>
-</ul>
-<h3 id="9-redis-cli">9. <code>redis-cli</code> 直接操作<a class="headerlink" href="#9-redis-cli" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB (db 4) を直接いじる手段<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>admin_status<span class="w"> </span>up
-</span></code></pre></div>
-<p><strong>SONiC のバリデーションをバイパス</strong> するため整合性破壊リスク。デバッグ / 低レベル検証用途。</p>
-<h3 id="10-config-apply-patch">10. <code>config apply-patch</code><a class="headerlink" href="#10-config-apply-patch" title="Permanent link">&para;</a></h3>
-<p>JSON / YAML パッチを <strong>CONFIG_DB に動的適用</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>&lt;patch.json&gt;
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>--dry-run<span class="w"> </span>&lt;patch.json&gt;<span class="w">     </span><span class="c1"># 検証のみ</span>
-</span></code></pre></div>
-<p>特徴<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>反映は <strong>即時</strong>（reboot / reload 不要）</li>
-<li><code>--dry-run</code> で <strong>構文 / キー検証</strong></li>
-<li><strong>Checkpoint + Rollback</strong> をサポート（直前の checkpoint に戻せる）</li>
-</ul>
-<pre class="mermaid"><code>flowchart LR
-    P[patch.json/yaml] --&gt; DR{--dry-run?}
-    DR --&gt;|yes| V[validate only]
-    DR --&gt;|no| C[checkpoint 自動取得]
-    C --&gt; A[apply to CONFIG_DB]
-    A --&gt; S{success?}
-    S --&gt;|yes| OK[完了]
-    S --&gt;|no| RB[rollback to checkpoint]</code></pre>
-<h3 id="_3">各手段の比較<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+    VTYSH --&gt; FRR[FRR daemons]</code></pre>
+<h2 id="_2">どれを使うべきか（比較表）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>手段</th>
 <th>永続化</th>
 <th>検証</th>
-<th>大規模対応</th>
-<th>用途</th>
+<th>大規模</th>
+<th>主用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>config</code> CLI</td>
 <td>save 後</td>
-<td>あり (CLI 内)</td>
+<td>あり</td>
 <td>×</td>
-<td>手動</td>
+<td>手動運用</td>
 </tr>
 <tr>
 <td><code>show</code> CLI</td>
@@ -23162,21 +23087,21 @@
 <tr>
 <td>RESTCONF</td>
 <td>即時</td>
-<td>YANG 検証</td>
+<td>YANG</td>
 <td>○</td>
 <td>コントローラ</td>
 </tr>
 <tr>
 <td>gNMI</td>
 <td>即時</td>
-<td>YANG 検証</td>
+<td>YANG</td>
 <td>◎</td>
 <td>大規模 + telemetry</td>
 </tr>
 <tr>
 <td>Ansible / NAPALM</td>
-<td>playbook 設計次第</td>
-<td>playbook 内</td>
+<td>playbook 次第</td>
+<td>playbook</td>
 <td>◎</td>
 <td>IaC</td>
 </tr>
@@ -23189,8 +23114,8 @@
 </tr>
 <tr>
 <td><code>vtysh</code></td>
-<td>しない（要転記）</td>
-<td>FRR 内</td>
+<td>しない</td>
+<td>FRR</td>
 <td>×</td>
 <td>routing 詳細</td>
 </tr>
@@ -23204,69 +23129,86 @@
 <tr>
 <td><code>config apply-patch</code></td>
 <td>即時</td>
-<td>dry-run / 構文</td>
+<td>dry-run</td>
 <td>○</td>
 <td>構造化変更</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>本 HLD 自身は <strong>CONFIG_DB / CLI / YANG / SAI を変更しない</strong>。各手段の <strong>入り口の集合</strong> を整理する文書。</p>
-<h3 id="_5">設定例（用途別）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 手動運用: CLI で IP を付与し永続化</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># 自動化: sonic-cfggen で JSON から CONFIG_DB を上書き</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>sonic-cfggen<span class="w"> </span>-j<span class="w"> </span>/tmp/changes.json<span class="w"> </span>--write-to-db
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># 動的構造化変更: apply-patch + dry-run</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>--dry-run<span class="w"> </span>/tmp/patch.json
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>/tmp/patch.json
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># 上級者ルーティング</span>
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;configure terminal&#39;</span><span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;router bgp 65000&#39;</span><span class="w"> </span>...
+<h2 id="_3">各手段の要点<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="cli-config-show">CLI (<code>config</code> / <code>show</code>)<a class="headerlink" href="#cli-config-show" title="Permanent link">&para;</a></h3>
+<p><code>config</code> は CONFIG_DB に直書き、<code>config save</code> で <code>/etc/sonic/config_db.json</code> に永続化<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y
 </span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p><code>show</code> は STATE_DB / APPL_DB の閲覧専用。</p>
+<h3 id="sonic-cfggen"><code>sonic-cfggen</code><a class="headerlink" href="#sonic-cfggen" title="Permanent link">&para;</a></h3>
+<p>JSON ↔ Redis のブリッジ。スクリプト/自動化用。入力 JSON は SONiC schema に従う必要があり、不適合だと書き込み時エラー<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="config_dbjson"><code>config_db.json</code> 直編集<a class="headerlink" href="#config_dbjson" title="Permanent link">&para;</a></h3>
+<p>オフライン編集の元締め。全設定を 1 ファイルで Git 管理可能。構文エラーで起動不能リスクあり<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="restconf-gnmi">RESTCONF / gNMI<a class="headerlink" href="#restconf-gnmi" title="Permanent link">&para;</a></h3>
+<p>YANG モデルに基づく標準 API。RESTCONF は OpenConfig 対応でマルチベンダ向け、gNMI は gRPC ベースで telemetry streaming もサポート。<strong>明示的に有効化 + 認証設定</strong> が必須<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="ansible-napalm">Ansible / NAPALM<a class="headerlink" href="#ansible-napalm" title="Permanent link">&para;</a></h3>
+<p>宣言的に interface / BGP / VLAN / ACL を管理。CI/CD パイプライン統合に向く<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="ztp">ZTP<a class="headerlink" href="#ztp" title="Permanent link">&para;</a></h3>
+<p>工場出荷後の初回 boot で DHCP option 67 または USB から設定スクリプトを取得し自動適用。ログは <code>/var/log/ztp.log</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="vtyshfrrouting"><code>vtysh</code>（FRRouting）<a class="headerlink" href="#vtyshfrrouting" title="Permanent link">&para;</a></h3>
+<p>BGP / OSPF の上級設定。<strong>vtysh だけの変更は永続化されない</strong>。CONFIG_DB / FRR テンプレートに転記しないと再起動で失われる<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="redis-cli"><code>redis-cli</code> 直接操作<a class="headerlink" href="#redis-cli" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>admin_status<span class="w"> </span>up
+</span></code></pre></div>
+<p><strong>SONiC のバリデーションをバイパス</strong> するため整合性破壊リスク。デバッグ用途限定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="config-apply-patch"><code>config apply-patch</code><a class="headerlink" href="#config-apply-patch" title="Permanent link">&para;</a></h3>
+<p>JSON/YAML パッチで CONFIG_DB を <strong>動的・即時</strong> に変更し、checkpoint + rollback をサポート<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>--dry-run<span class="w"> </span>patch.json<span class="w">    </span><span class="c1"># 検証のみ</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>apply-patch<span class="w"> </span>patch.json<span class="w">              </span><span class="c1"># 適用</span>
+</span></code></pre></div>
+<pre class="mermaid"><code>flowchart LR
+    P[patch.json] --&gt; DR{--dry-run?}
+    DR --&gt;|yes| V[validate only]
+    DR --&gt;|no| C[checkpoint] --&gt; A[apply] --&gt; S{ok?}
+    S --&gt;|yes| OK[完了]
+    S --&gt;|no| RB[rollback]</code></pre>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>vtysh</code> の変更は永続化されない</strong>。CONFIG_DB / <code>bgp</code> 系 frr.conf テンプレートに転記しないと再起動で失われる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong><code>redis-cli</code> 直接操作はバリデーションをバイパス</strong> するため、不整合状態で起動失敗する可能性<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>ZTP は <strong>スクリプトの品質に依存</strong>。boot failure を起こすスクリプトはリカバリが面倒<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>RESTCONF / gNMI server 機能は <strong>明示的に有効化</strong> 必要、認証も別設定<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>config apply-patch</code> のサポート機能（<code>--dry-run</code> / checkpoint / rollback）は実装段階により差がある可能性</li>
-<li>手段が 10 種類あるため、<strong>運用上どれが正の正解か</strong> は組織のポリシー次第（HLD は併用禁止を規定しない）</li>
+<li>vtysh の変更は永続化されない（CONFIG_DB / FRR テンプレート転記が必要）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>redis-cli</code> 直接操作はバリデーション無し、不整合状態を作りうる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>ZTP boot failure はリカバリが面倒<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>RESTCONF / gNMI は有効化と認証を別途設定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>apply-patch</code> の checkpoint / rollback 実装の取り込みは要確認</li>
 </ul>
-<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Redis (<code>CONFIG_DB</code>)</strong>: 全手段の最終収束先</li>
-<li><strong><code>hostcfgd</code></strong>: CONFIG_DB の変更を OS 側設定（systemd / 各種 conf）に反映</li>
-<li><strong><code>bgpcfgd</code> 等の orchestration daemon</strong>: CONFIG_DB → daemon 設定生成 + reload</li>
-<li><strong><code>config_db.json</code></strong>: 永続化フォーマットの真実の相</li>
-<li><strong><code>vtysh</code> ↔ <code>frr.conf</code> の整合</strong>: 永続化に手作業が必要</li>
+<li><strong>CONFIG_DB</strong>: 全手段の収束先</li>
+<li><strong><code>hostcfgd</code></strong>: CONFIG_DB → OS 側設定（systemd / 各種 conf）に反映</li>
+<li><strong><code>bgpcfgd</code></strong> 等の orchestration daemon: CONFIG_DB → daemon 設定生成</li>
+<li><strong><code>vtysh</code> ↔ <code>frr.conf</code> の整合</strong>: 永続化は手作業</li>
 </ul>
-<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>設定が再起動で消える → <code>config save -y</code> を忘れていないか確認、<code>config_db.json</code> の更新時刻を見る</li>
-<li><code>vtysh</code> の変更が消える → CONFIG_DB / FRR テンプレートに反映されているか</li>
-<li>patch apply が即時反映されない → 対応 daemon (<code>hostcfgd</code> / <code>bgpcfgd</code> 等) のログ確認</li>
-<li>redis-cli で書いた値が無視される → SONiC 側 listener が再 normalize / reject している可能性</li>
-<li>ZTP が起動しない → <code>/var/log/ztp.log</code> を確認、DHCP option 67 / USB 検出を確認</li>
-<li>gNMI / RESTCONF に繋がらない → server 有効化と認証設定 (証明書、ユーザ) を確認</li>
+<li>設定が再起動で消える → <code>config save -y</code> 忘れ、<code>config_db.json</code> の更新時刻を確認</li>
+<li>vtysh の変更が消える → CONFIG_DB / FRR テンプレートへの反映確認</li>
+<li>patch apply が反映されない → <code>hostcfgd</code> / <code>bgpcfgd</code> のログ確認</li>
+<li>ZTP が起動しない → <code>/var/log/ztp.log</code>、DHCP option 67 / USB 検出確認</li>
+<li>gNMI / RESTCONF 接続不可 → server 有効化と証明書/ユーザ設定確認</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/02-bgp/">Topic: BGP</a></li>
+<li><a href="../../reference/cli/config-bgp/">CLI: config-bgp</a></li>
+</ul>
 <!-- concerns hint:
-- config apply-patch の --dry-run / checkpoint / rollback フラグの sonic-utilities 取り込み確認
-- ZTP の DHCP option 67 / USB 起動経路の現行実装確認
-- RESTCONF / gNMI server 有効化手順 (sonic-mgmt-common / gnmi container) の現行確認
-- sonic-cfggen が許容する schema の現行整合確認
-- vtysh ↔ frr.conf テンプレート ↔ CONFIG_DB の整合経路（bgpcfgd 等）の現行確認
+- config apply-patch の checkpoint / rollback の sonic-utilities 取り込み確認
+- ZTP の DHCP option 67 / USB 経路の現行実装確認
+- RESTCONF / gNMI server 有効化手順の現行確認
 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/configuration/SONiC_NOS_Configuration_Methods.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/configuration/SONiC_NOS_Configuration_Methods.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

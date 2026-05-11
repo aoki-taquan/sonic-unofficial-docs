@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tacacs-pam_tacplus-nss_tacplus-aaa-tacplus" class="md-skip">
+        <a href="#tacacs" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -14383,7 +14383,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -14391,67 +14391,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#config_db-hostcfgd-pamnss" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体構成
+        全体構成（CONFIG_DB → hostcfgd → PAM/NSS）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#pam_tacplus" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#common-auth-sonic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pam_tacplus の拡張
+        なぜ common-auth-sonic を分離するか
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#nss_tacplus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        nss_tacplus と権限テーブル
+        なぜ nss_tacplus が必要か
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="nss_tacplus と権限テーブル">
+    <nav class="md-nav" aria-label="なぜ nss_tacplus が必要か">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         既定の権限テーブル
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        有効化
       
     </span>
   </a>
@@ -14462,24 +14439,24 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#pam-configuration" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#pam-3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PAM configuration
+        どう PAM ファイルを書き分けるか（3 パターン）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="PAM configuration">
+    <nav class="md-nav" aria-label="どう PAM ファイルを書き分けるか（3 パターン）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#1-2-source_ip-fail_through" class="md-nav__link">
     <span class="md-ellipsis">
       
-        パターン 1: 2 サーバ、source_ip 指定、fail_through 無効
+        パターン 1: 2 サーバ + source_ip + fail_through 無効
       
     </span>
   </a>
@@ -14512,8 +14489,19 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
+  <a href="#source_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ source_ip が必要か
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -14537,10 +14525,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tacplus-global" class="md-nav__link">
+  <a href="#tacplusglobal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TACPLUS (global)
+        TACPLUS（global）
       
     </span>
   </a>
@@ -14562,37 +14550,9 @@
     </nav>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -14601,14 +14561,9 @@
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -14619,7 +14574,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -14630,7 +14585,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -14641,7 +14596,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -14652,7 +14607,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -17047,6 +17002,8 @@
       
         
           
+        
+      
         
       
         
@@ -21396,6 +21353,98 @@
     
       
         
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_5" id="__nav_13_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    裏取り
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    裏取り
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/verification/discrepancy-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HLD と実装の乖離 一覧（discrepancy-index）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
           
         
       
@@ -21472,7 +21521,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_6" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21494,14 +21543,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_13_5" id="__nav_13_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_13_6" id="__nav_13_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_13_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -22772,7 +22821,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -22780,67 +22829,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#config_db-hostcfgd-pamnss" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        全体構成
+        全体構成（CONFIG_DB → hostcfgd → PAM/NSS）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#pam_tacplus" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#common-auth-sonic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pam_tacplus の拡張
+        なぜ common-auth-sonic を分離するか
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#nss_tacplus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        nss_tacplus と権限テーブル
+        なぜ nss_tacplus が必要か
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="nss_tacplus と権限テーブル">
+    <nav class="md-nav" aria-label="なぜ nss_tacplus が必要か">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         既定の権限テーブル
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        有効化
       
     </span>
   </a>
@@ -22851,24 +22877,24 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#pam-configuration" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#pam-3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PAM configuration
+        どう PAM ファイルを書き分けるか（3 パターン）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="PAM configuration">
+    <nav class="md-nav" aria-label="どう PAM ファイルを書き分けるか（3 パターン）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#1-2-source_ip-fail_through" class="md-nav__link">
     <span class="md-ellipsis">
       
-        パターン 1: 2 サーバ、source_ip 指定、fail_through 無効
+        パターン 1: 2 サーバ + source_ip + fail_through 無効
       
     </span>
   </a>
@@ -22901,8 +22927,19 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
+  <a href="#source_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ source_ip が必要か
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22926,10 +22963,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tacplus-global" class="md-nav__link">
+  <a href="#tacplusglobal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TACPLUS (global)
+        TACPLUS（global）
       
     </span>
   </a>
@@ -22951,37 +22988,9 @@
     </nav>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -22990,14 +22999,9 @@
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -23008,7 +23012,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -23019,7 +23023,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -23030,7 +23034,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23041,7 +23045,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23078,39 +23082,34 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-host-services/scripts/hostcfgd</code> L354 <code>class AaaCfg</code>、L2185 で <code>self.aaacfg = AaaCfg(self.config_db)</code>、L2224-2225 で <code>init_data['TACPLUS']</code> / <code>init_data['TACPLUS_SERVER']</code> 初期化、L748-752 で <code>/etc/pam.d/sshd</code> と <code>/etc/pam.d/login</code> を <code>common-auth</code> ↔ <code>common-auth-sonic</code> で切替、L28-35 で <code>PAM_AUTH_CONF_TEMPLATE = "common-auth-sonic.j2"</code> / <code>NSS_TACPLUS_CONF_TEMPLATE = "tacplus_nss.conf.j2"</code> を確認。<code>pam_tacplus</code> の <code>source_ip</code> パッチは <code>sonic-buildimage/src/tacacs/pam/0006-Add-support-for-source-ip-address.patch</code> で当たっている。CLI は <code>sonic-utilities/config/aaa.py</code> L200-318 に <code>config tacacs</code> / <code>add</code> / <code>delete</code> 全部取り込み済み（verified at: 2026-05-09）。</p>
+<p><code>hostcfgd</code> の <code>class AaaCfg</code> で <code>AAA</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> を購読し <code>/etc/pam.d/common-auth-sonic</code> と <code>/etc/tacplus_nss.conf</code> を生成、<code>pam_tacplus</code> の <code>source_ip</code> パッチ (<code>0006-Add-support-for-source-ip-address.patch</code>)、<code>sonic-utilities/config/aaa.py</code> の <code>config tacacs</code> CLI 群を確認済み（verified at: 2026-05-09）。</p>
 </div>
-<h1 id="tacacs-pam_tacplus-nss_tacplus-aaa-tacplus">TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）<a class="headerlink" href="#tacacs-pam_tacplus-nss_tacplus-aaa-tacplus" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC は SSH / コンソールログインで TACACS+ サーバを使った認証をサポートする。Linux の Pluggable Authentication Modules (PAM) と Name Service Switch (NSS) の枠組みに <strong><code>pam_tacplus</code></strong> と <strong><code>nss_tacplus</code></strong> を組み込み、CONFIG_DB の <code>AAA</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> テーブルから <code>hostcfgd</code> が PAM/NSS 設定ファイルを生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>主要要件（HLD §Requirements）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h1 id="tacacs">TACACS+ 認証<a class="headerlink" href="#tacacs" title="Permanent link">&para;</a></h1>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>SSH と console の両方で TACACS+ ログイン認証</li>
-<li>TACACS+ パケットの送信元 IP 指定</li>
-<li>複数 TACACS+ サーバ + 優先度</li>
-<li>ローカル認証と TACACS+ 認証の順序設定</li>
-<li>fail_through（あるサーバで失敗したら次へ）</li>
-<li><strong>root のみローカル認証</strong> に固定</li>
+<li>SONiC で TACACS+ を有効化するとどこに何が書き込まれるか</li>
+<li>ローカル認証と TACACS+ の優先順位、フェイルオーバはどう決まるか</li>
+<li>なぜ <code>common-auth-sonic</code> が分離されているか</li>
+<li>何を設定すれば動くか / 動かないときどこを見るか</li>
 </ul>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h2 id="config_db-hostcfgd-pamnss">全体構成（CONFIG_DB → hostcfgd → PAM/NSS）<a class="headerlink" href="#config_db-hostcfgd-pamnss" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  CLI[config aaa / config tacacs] --&gt; CDB[(ConfigDB:&lt;br&gt;AAA / TACPLUS /&lt;br&gt;TACPLUS_SERVER)]
-  CDB --&gt; HC[hostcfgd&lt;br&gt;AAA Config Module]
+  CLI[config aaa / tacacs] --&gt; CDB[(CONFIG_DB:&lt;br&gt;AAA / TACPLUS /&lt;br&gt;TACPLUS_SERVER)]
+  CDB --&gt; HC[hostcfgd AaaCfg]
   HC --&gt; PAM[/etc/pam.d/common-auth-sonic/]
   HC --&gt; NSS[/etc/tacplus_nss.conf]
   HC --&gt; NSWITCH[/etc/nsswitch.conf]
-  SSH[SSH] --&gt; PAMLIB[PAM libs]
-  CON[Console] --&gt; PAMLIB
-  PAMLIB --&gt; PAM
-  PAMLIB --&gt; TAC[(TACACS+ Server)]</code></pre>
-<p><code>hostcfgd</code> の AAA module が CONFIG_DB を購読し、PAM/NSS 設定ファイルをホスト上に生成する。SSH/console の認証フローは標準 PAM 経由で <code>pam_tacplus.so</code> を呼ぶ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="pam_tacplus">pam_tacplus の拡張<a class="headerlink" href="#pam_tacplus" title="Permanent link">&para;</a></h3>
-<p><code>pam_tacplus</code> は server / secret / timeout 等の標準オプションは持つが <strong>送信元 IP 指定が無い</strong> ため、SONiC は <code>source_ip</code> を加えるパッチを当てている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="nss_tacplus">nss_tacplus と権限テーブル<a class="headerlink" href="#nss_tacplus" title="Permanent link">&para;</a></h3>
-<p>TACACS+ 認証ユーザは通常 <code>/etc/passwd</code> に存在しないため、TACACS+ 認証だけでは getpwnam が失敗してログインが切れる。SONiC は <strong><code>nss_tacplus</code></strong> を NSS プラグインとして導入し、<code>getpwnam_r()</code> で TACACS+ サーバから user privilege を取得し、ローカルにユーザレコードを擬似的に提供する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><code>/etc/tacplus_nss.conf</code> で TACACS+ 接続情報（と権限テーブル）を保持する。<code>hostcfgd</code> の AAA module がこのファイルを更新する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="_4">既定の権限テーブル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+  SSH[SSH / Console] --&gt; PAMLIB[PAM]
+  PAMLIB --&gt; PAM --&gt; TAC[(TACACS+ server)]</code></pre>
+<p>CONFIG_DB を真実の相とし、<code>hostcfgd</code> の AAA モジュールが PAM/NSS 設定ファイルを書き換える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="common-auth-sonic">なぜ <code>common-auth-sonic</code> を分離するか<a class="headerlink" href="#common-auth-sonic" title="Permanent link">&para;</a></h2>
+<p>既存 <code>/etc/pam.d/common-auth</code> を直接編集すると cron など他サブシステムに波及する。SONiC は <strong>専用ファイル <code>common-auth-sonic</code></strong> を作り、SSH / login だけがこれを参照するよう差し替える<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="nss_tacplus">なぜ <code>nss_tacplus</code> が必要か<a class="headerlink" href="#nss_tacplus" title="Permanent link">&para;</a></h2>
+<p>TACACS+ ユーザは <code>/etc/passwd</code> に存在しない。<code>getpwnam</code> が失敗するとログインが切れるため、NSS プラグイン <code>nss_tacplus</code> で TACACS+ サーバからユーザ privilege を取得しローカルレコードを擬似提供する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>/etc/nsswitch.conf</code> の <code>passwd</code> 行に <code>tacplus</code> を追記:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>passwd: compat tacplus
+</span></code></pre></div>
+<h3 id="_2">既定の権限テーブル<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -23130,7 +23129,7 @@
 <td><code>/bin/bash</code></td>
 </tr>
 <tr>
-<td>1 〜 14</td>
+<td>1〜14</td>
 <td><code>remote_user</code></td>
 <td>999</td>
 <td><code>docker</code></td>
@@ -23138,141 +23137,85 @@
 </tr>
 </tbody>
 </table>
-<p><code>/etc/tacplus_nss.conf</code> で再定義した例<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（<code>netops</code> と <code>operator</code> を分割）:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>user_priv=7;pw_info=netops;gid=999;group=docker;shell=/bin/bash
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>user_priv=1;pw_info=operator;gid=999;group=docker;shell=/bin/rbash
+<p><code>/etc/tacplus_nss.conf</code> で privilege 範囲ごとに <code>user_priv</code> / <code>pw_info</code> / <code>shell</code> を再定義できる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ホームは <code>/home/&lt;username&gt;</code>。</p>
+<h2 id="pam-3">どう PAM ファイルを書き分けるか（3 パターン）<a class="headerlink" href="#pam-3" title="Permanent link">&para;</a></h2>
+<h3 id="1-2-source_ip-fail_through">パターン 1: 2 サーバ + <code>source_ip</code> + fail_through 無効<a class="headerlink" href="#1-2-source_ip-fail_through" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>auth [success=done ... auth_err=die] pam_unix.so nullok try_first_pass
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>auth [success=done ... auth_err=die] pam_tacplus.so server=A:49 secret=X source_ip=Y try_first_pass
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>auth [success=1 default=ignore]      pam_tacplus.so server=B:49 secret=X source_ip=Y try_first_pass
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>auth requisite pam_deny.so
 </span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>user privilege</th>
-<th>user info</th>
-<th>shell</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>15</td>
-<td><code>remote_user_su</code></td>
-<td><code>/bin/bash</code></td>
-</tr>
-<tr>
-<td>14 〜 7</td>
-<td><code>netops</code></td>
-<td><code>/bin/bash</code></td>
-</tr>
-<tr>
-<td>1 〜 6</td>
-<td><code>operator</code></td>
-<td><code>/bin/rbash</code></td>
-</tr>
-</tbody>
-</table>
-<p>ホームディレクトリは <code>/home/&lt;username&gt;</code> に作成される。</p>
-<h4 id="_5">有効化<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
-<p><code>nss_tacplus</code> は既定では無効。TACACS+ 認証を有効化したときに <code>/etc/nsswitch.conf</code> の <code>passwd</code> 行へ <code>tacplus</code> を追記する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>passwd: compat tacplus
+<p><code>auth_err=die</code> で最初のサーバが認証エラーなら <strong>次は試さない</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="2-fail_through">パターン 2: fail_through 有効<a class="headerlink" href="#2-fail_through" title="Permanent link">&para;</a></h3>
+<p><code>auth_err=die</code> を外すと失敗時に次の TACACS+ 行へフォールスルーする<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="3-tacacs-root">パターン 3: TACACS+ 優先 + root はローカル<a class="headerlink" href="#3-tacacs-root" title="Permanent link">&para;</a></h3>
+<p>冒頭に <code>pam_succeed_if user=root</code> を置いて root だけ TACACS+ をスキップさせる構造<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>auth [success=1 ...] pam_succeed_if.so user = root debug
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>auth [success=done ...] pam_tacplus.so ... try_first_pass
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>auth [success=1 default=ignore] pam_unix.so nullok try_first_pass
 </span></code></pre></div>
-<h3 id="pam-configuration">PAM configuration<a class="headerlink" href="#pam-configuration" title="Permanent link">&para;</a></h3>
-<p>既存 <code>common-auth</code> をそのまま編集すると他のアプリ（cron など）に影響するため、SONiC は <strong><code>/etc/pam.d/common-auth-sonic</code></strong> を独立に作成し、SSH / login がこれを参照するように差し替える<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="1-2-source_ip-fail_through">パターン 1: 2 サーバ、<code>source_ip</code> 指定、<code>fail_through</code> 無効<a class="headerlink" href="#1-2-source_ip-fail_through" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>auth [success=done new_authtok_reqd=done default=ignore auth_err=die] pam_unix.so nullok try_first_pass
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>auth [success=done new_authtok_reqd=done default=ignore auth_err=die] pam_tacplus.so server=10.65.254.222:49 secret=test123 login=pap timeout=3 source_ip=100.0.0.9 try_first_pass
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>auth [success=1 default=ignore] pam_tacplus.so server=10.65.254.248:49 secret=test123 login=pap timeout=3 source_ip=100.0.0.9 try_first_pass
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>auth requisite pam_deny.so
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>auth required  pam_permit.so
+<p>要件として <strong>root はローカル限定</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="source_ip">なぜ <code>source_ip</code> が必要か<a class="headerlink" href="#source_ip" title="Permanent link">&para;</a></h2>
+<p><code>pam_tacplus</code> 上流には送信元 IP 指定が無い。マルチホーム switch では TACACS+ サーバが特定の管理ネットワーク経由でのみ到達できることが多いため、SONiC は <code>source_ip</code> を加えるパッチを当てている<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<h3 id="aaa"><code>AAA</code><a class="headerlink" href="#aaa" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>key = &quot;authentication&quot;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>protocol    = LIST(local, tacacs+)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>fallback    = &quot;True&quot;|&quot;False&quot;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>failthrough = &quot;True&quot;|&quot;False&quot;
 </span></code></pre></div>
-<p><code>auth_err=die</code> により最初のサーバで認証エラーが返ったら <strong>次サーバを試さない</strong>（fail_through 無効）<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="2-fail_through">パターン 2: <code>fail_through</code> 有効<a class="headerlink" href="#2-fail_through" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>auth [success=done new_authtok_reqd=done default=ignore] pam_unix.so nullok try_first_pass
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>auth [success=1   new_authtok_reqd=done default=ignore] pam_tacplus.so server=10.65.254.223:49 secret=test123 login=pap timeout=5 try_first_pass
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>auth requisite pam_deny.so
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>auth required  pam_permit.so
+<h3 id="tacplusglobal"><code>TACPLUS</code>（global）<a class="headerlink" href="#tacplusglobal" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>key = &quot;global&quot;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>passkey   = 1*32VCHAR
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>auth_type = pap|chap|mschap
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>src_ip    = IPAddress
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>timeout   = 1-99
 </span></code></pre></div>
-<p><code>auth_err=die</code> を外すことで失敗時に次の TACACS+ 行へフォールスルーする。</p>
-<h4 id="3-tacacs-root">パターン 3: TACACS+ 優先 + root はローカル<a class="headerlink" href="#3-tacacs-root" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>auth [success=1 new_authtok_reqd=done default=ignore] pam_succeed_if.so user = root debug
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>auth [success=done new_authtok_reqd=done default=ignore] pam_tacplus.so server=10.65.254.222:49 secret=test123 login=pap timeout=3 try_first_pass
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>auth [success=1 default=ignore] pam_unix.so nullok try_first_pass
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>auth requisite pam_deny.so
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>auth required  pam_permit.so
+<h3 id="tacplus_server"><code>TACPLUS_SERVER</code><a class="headerlink" href="#tacplus_server" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>key = &lt;server IP&gt;
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>tcp_port  = 1-65535
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>passkey   = 1*32VCHAR
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>auth_type = pap|chap|mschap
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>priority  = 1-64
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>timeout   = 1-99
 </span></code></pre></div>
-<p>冒頭の <code>pam_succeed_if user=root</code> で root だけ TACACS+ をスキップさせる構造<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<!-- evidence:
-source: sonic-net/SONiC/doc/aaa/TACACS+ Authentication.md#L104-L146 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  If TACACS+ Authentication is enabled, a new PAM configuration file "common-auth-sonic" is created
-  and replaced in login and ssh, and the other application which authentication include "common-auth" will not be affected.
-reasoning: 専用 PAM ファイル分離と root ローカル限定の根拠。
--->
-
-<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<h4 id="aaa"><code>AAA</code><a class="headerlink" href="#aaa" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>key = &quot;authentication&quot;
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>protocol    = LIST(local, tacacs+)   ; pam modules
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>fallback    = &quot;True&quot;|&quot;False&quot;
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>failthrough = &quot;True&quot;|&quot;False&quot;
+<p><code>TACPLUS_SERVER</code> は global を <strong>個別に上書き</strong><sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_3">設定例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config<span class="w"> </span>tacacs<span class="w"> </span>src_ip<span class="w"> </span><span class="m">100</span>.0.0.9
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.65.254.222<span class="w"> </span>--port<span class="w"> </span><span class="m">49</span><span class="w"> </span>--key<span class="w"> </span>test123<span class="w"> </span>--type<span class="w"> </span>pap<span class="w"> </span>--pri<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.65.254.248<span class="w"> </span>--port<span class="w"> </span><span class="m">49</span><span class="w"> </span>--key<span class="w"> </span>test123<span class="w"> </span>--type<span class="w"> </span>pap<span class="w"> </span>--pri<span class="w"> </span><span class="m">2</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>login<span class="w"> </span>tacacs+
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>failthrough<span class="w"> </span><span class="nb">enable</span>
 </span></code></pre></div>
-<h4 id="tacplus-global"><code>TACPLUS</code> (global)<a class="headerlink" href="#tacplus-global" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>key = &quot;global&quot;
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>passkey   = 1*32VCHAR
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>auth_type = pap|chap|mschap
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>src_ip    = IPAddress
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>timeout   = 1-99
+<p>CLI 一覧:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>config aaa authentication login {local | tacacs+}
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>config aaa authentication failthrough enable|disable
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>config tacacs {src_ip|timeout|authtype|passkey|add|delete} ...
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>show aaa
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>show tacacs
 </span></code></pre></div>
-<h4 id="tacplus_server"><code>TACPLUS_SERVER</code><a class="headerlink" href="#tacplus_server" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>key = &lt;server IP&gt;
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>tcp_port  = 1-65535
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>passkey   = 1*32VCHAR
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>auth_type = pap|chap|mschap
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>priority  = 1-64
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>timeout   = 1-99
-</span></code></pre></div>
-<p><code>TACPLUS_SERVER</code> のフィールドは <code>TACPLUS</code> のグローバル値を <strong>個別に上書き</strong> する形で評価される<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>config aaa authentication login {local | tacacs+}
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>config aaa authentication failthrough enable|disable
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>show aaa
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>config tacacs src_ip &lt;ADDRESS&gt;
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>config tacacs timeout &lt;0-60&gt;
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>config tacacs authtype {pap|chap|mschap}
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>config tacacs passkey &lt;TEXT&gt;
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>config tacacs add &lt;ADDRESS&gt; --port &lt;1-65535&gt; --timeout &lt;0-60&gt; --key &lt;TEXT&gt; --type {pap|chap|mschap} --pri &lt;1-64&gt;
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>config tacacs delete &lt;ADDRESS&gt;
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>show tacacs
-</span></code></pre></div>
-<p>CLI は <code>sonic-utilities</code> の click モジュールで実装される<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>config<span class="w"> </span>tacacs<span class="w"> </span>src_ip<span class="w"> </span><span class="m">100</span>.0.0.9
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.65.254.222<span class="w"> </span>--port<span class="w"> </span><span class="m">49</span><span class="w"> </span>--key<span class="w"> </span>test123<span class="w"> </span>--type<span class="w"> </span>pap<span class="w"> </span>--pri<span class="w"> </span><span class="m">1</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.65.254.248<span class="w"> </span>--port<span class="w"> </span><span class="m">49</span><span class="w"> </span>--key<span class="w"> </span>test123<span class="w"> </span>--type<span class="w"> </span>pap<span class="w"> </span>--pri<span class="w"> </span><span class="m">2</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>login<span class="w"> </span>tacacs+
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>failthrough<span class="w"> </span><span class="nb">enable</span>
-</span></code></pre></div>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>root はローカルのみ</strong>: 要件として明示されており、TACACS+ では root を認証できない<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>pam_tacplus</code> 上流に <code>source_ip</code> が無い</strong>: SONiC は独自パッチで対応。upstream 取り込み状況は別途確認が必要<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>TACACS+ 認可・アカウンティング</strong>: 本 HLD は <strong>認証</strong> に閉じる。authorization / accounting は別の設計（pam_tacplus 自体は対応するが本 HLD では言及最小）<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>ホームディレクトリ作成</strong>: 認証成功時に <code>/home/&lt;username&gt;</code> を作成する仕様。ディスク逼迫時の挙動は未規定。</li>
+<li><strong>root はローカルのみ</strong>（要件として明示）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>pam_tacplus</code> 上流に <code>source_ip</code> 未取込、SONiC 独自パッチで対応<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>本 HLD は <strong>認証</strong> に限定。authorization / accounting は別設計</li>
+<li>ホームディレクトリ自動作成、ディスク逼迫時の挙動は未規定</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>hostcfgd</code></strong>: 本機能の本体。<code>AAA</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> を購読して PAM/NSS ファイルを再生成する。<code>hostcfgd</code> 停止中は CONFIG_DB 変更が反映されない。</li>
-<li><strong><code>/etc/pam.d/common-auth</code></strong>: SONiC は <strong>触らない</strong>。共通 auth を変えると他サブシステム（cron 等）に波及するため、専用 <code>common-auth-sonic</code> を分離して使う<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>NSS の <code>passwd</code> ライン</strong>: 本機能を有効化すると <code>tacplus</code> が追記される。他 NSS プラグイン（ldap 等）と共存させる場合は順序に注意。</li>
+<li><strong><code>hostcfgd</code></strong>: 本機能の本体。停止中は CONFIG_DB 変更が反映されない</li>
+<li><strong><code>/etc/pam.d/common-auth</code></strong>: SONiC は触らない（cron 等への波及防止）</li>
+<li><strong>NSS の <code>passwd</code> ライン</strong>: 他 NSS プラグイン（ldap 等）と共存させる場合は順序注意</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ログインは認証通るがホームディレクトリが無い: <code>nss_tacplus</code> の <code>getpwnam_r</code> 経路、<code>/etc/tacplus_nss.conf</code> の権限テーブルを確認。</li>
-<li><code>source_ip</code> が反映されない: <code>pam_tacplus</code> のパッチ取り込み状況、PAM 設定行の <code>source_ip=</code> を確認。</li>
-<li>フェイルオーバーしない: PAM の <code>auth_err=die</code> の有無を確認。<code>failthrough enable</code> 時は <code>die</code> を外す構造。</li>
-<li>root が TACACS+ に流れる: <code>pam_succeed_if user=root</code> の前置きが入っているか確認。</li>
+<li>ホームディレクトリが無い → <code>nss_tacplus</code> の <code>getpwnam_r</code>、<code>/etc/tacplus_nss.conf</code> の権限テーブル確認</li>
+<li><code>source_ip</code> 反映されない → PAM 設定行の <code>source_ip=</code> 有無、パッチ取り込み確認</li>
+<li>フェイルオーバしない → PAM の <code>auth_err=die</code> の有無、<code>failthrough enable</code> の整合確認</li>
+<li>root が TACACS+ に流れる → <code>pam_succeed_if user=root</code> 前置きの有無を確認</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/cli/config-aaa/">CLI: config aaa / tacacs</a></li>
 <li><a href="../../reference/config-db/tacplus-server/">CONFIG_DB: TACPLUS_SERVER</a></li>
@@ -23282,7 +23225,7 @@ reasoning: 専用 PAM ファイル分離と root ローカル限定の根拠。
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/aaa/TACACS+ Authentication.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/aaa/TACACS+ Authentication.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

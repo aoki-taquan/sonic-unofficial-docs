@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bmc-redfish-platform_common-redfishclient-show-platform-bmc" class="md-skip">
+        <a href="#bmc-redfish" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -15579,7 +15579,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -15590,19 +15590,30 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        全体像
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        どこに何が書かれるか
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="どこに何が書かれるか">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#bmc-ip" class="md-nav__link">
+  <a href="#deviceplatformbmcjson" class="md-nav__link">
     <span class="md-ellipsis">
       
-        BMC IP 初期化フロー
+        入力: device/platform/bmc.json
       
     </span>
   </a>
@@ -15610,82 +15621,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#redfish-client-redfish_clientpy" class="md-nav__link">
+  <a href="#etcnetworkinterfaces" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redfish client (redfish_client.py)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Redfish client (redfish_client.py)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#scope-login-logout" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        scope (login / logout の挟み込み)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#componentbmc-componentpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ComponentBMC (component.py)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#firmware-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Firmware Upgrade フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-techsupport-bmc-dump" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show techsupport への BMC dump 統合
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fast-warm-cold-boot-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fast / Warm / Cold boot と upgrade
+        反映先: /etc/network/interfaces
       
     </span>
   </a>
@@ -15698,7 +15637,79 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#redfishclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RedfishClient の設計ポイント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RedfishClient の設計ポイント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-decorator-loginlogout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ Python decorator で login/logout を挟むのか
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#componentbmc-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ComponentBMC の API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#techsupport-bmc-dump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        techsupport への BMC dump 統合（非同期）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fast-warm-cold-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fast / Warm / Cold boot との関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -15713,7 +15724,7 @@
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        CONFIG_DB
       
     </span>
   </a>
@@ -15721,18 +15732,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -15748,7 +15748,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -15759,7 +15759,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -15770,7 +15770,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15781,7 +15781,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15792,10 +15792,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#batch-30-2026-05-11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        裏取りメモ (batch 30, 2026-05-11)
+        関連ページ
       
     </span>
   </a>
@@ -16991,6 +16991,8 @@
       
         
           
+        
+      
         
       
         
@@ -21340,6 +21342,98 @@
     
       
         
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_5" id="__nav_13_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    裏取り
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    裏取り
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/verification/discrepancy-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HLD と実装の乖離 一覧（discrepancy-index）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
           
         
       
@@ -21416,7 +21510,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_6" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21438,14 +21532,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_13_5" id="__nav_13_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_13_6" id="__nav_13_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_13_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -22716,7 +22810,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -22727,19 +22821,30 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        全体像
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        どこに何が書かれるか
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="どこに何が書かれるか">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#bmc-ip" class="md-nav__link">
+  <a href="#deviceplatformbmcjson" class="md-nav__link">
     <span class="md-ellipsis">
       
-        BMC IP 初期化フロー
+        入力: device/platform/bmc.json
       
     </span>
   </a>
@@ -22747,82 +22852,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#redfish-client-redfish_clientpy" class="md-nav__link">
+  <a href="#etcnetworkinterfaces" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redfish client (redfish_client.py)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Redfish client (redfish_client.py)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#scope-login-logout" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        scope (login / logout の挟み込み)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#componentbmc-componentpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ComponentBMC (component.py)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#firmware-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Firmware Upgrade フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-techsupport-bmc-dump" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        show techsupport への BMC dump 統合
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fast-warm-cold-boot-upgrade" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fast / Warm / Cold boot と upgrade
+        反映先: /etc/network/interfaces
       
     </span>
   </a>
@@ -22835,7 +22868,79 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#redfishclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RedfishClient の設計ポイント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RedfishClient の設計ポイント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-decorator-loginlogout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ Python decorator で login/logout を挟むのか
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#componentbmc-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ComponentBMC の API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#techsupport-bmc-dump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        techsupport への BMC dump 統合（非同期）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fast-warm-cold-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fast / Warm / Cold boot との関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定
@@ -22850,7 +22955,7 @@
   <a href="#config_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CONFIG_DB
+        CONFIG_DB
       
     </span>
   </a>
@@ -22858,18 +22963,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連する CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -22885,7 +22979,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -22896,7 +22990,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -22907,7 +23001,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -22918,7 +23012,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22929,10 +23023,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#batch-30-2026-05-11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        裏取りメモ (batch 30, 2026-05-11)
+        関連ページ
       
     </span>
   </a>
@@ -22966,25 +23060,31 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-platform-common</code> への <code>RedfishClient</code> / <code>ComponentBMC</code> 追加、<code>bmc.json</code> 読み込みと <code>DEVICE_METADATA|bmc</code> 書き込み、<code>interfaces.j2</code> での <code>usb0</code> static 設定生成、<code>generate-dump</code> への BMC dump 取得追加、<code>show platform bmc</code> 系 CLI の <code>sonic-utilities</code> 取り込みは実コードでの裏取り未済。</p>
+<p><code>sonic-platform-common/sonic_platform_base/redfish_client.py</code> の <code>RedfishClient</code>、<code>bmc_base.py</code> の <code>ComponentBMC</code> / <code>BmcBase</code>、<code>sonic-utilities/show/platform.py</code> の <code>def bmc()</code> / <code>def bmc_summary()</code> Click グループが master に存在。<code>generate_dump</code> の BMC dump 取り込み経路も確認済み。HLD と実装は一致 (verified at: 2026-05-11)。</p>
 </div>
-<h1 id="bmc-redfish-platform_common-redfishclient-show-platform-bmc">BMC / Redfish 統合（platform_common <code>RedfishClient</code> + <code>show platform bmc</code>）<a class="headerlink" href="#bmc-redfish-platform_common-redfishclient-show-platform-bmc" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>BMC (Board Management Controller) は server / switch のメインボードに搭載される <strong>out-of-band 管理用マイコン</strong>。OpenBMC は Linux ベースの BMC firmware で <strong>Redfish (RESTful) API</strong> を提供する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD は SONiC NOS が <strong>Redfish client を内蔵</strong> して BMC を操作し、CLI 経由で eeprom / firmware バージョン取得、firmware アップグレード、debug log dump 等を可能にする設計を定める<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>主な機能<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h1 id="bmc-redfish">BMC / Redfish 統合<a class="headerlink" href="#bmc-redfish" title="Permanent link">&para;</a></h1>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BMC IP の <strong><code>bmc.json</code> ベース初期化</strong></li>
-<li>BMC firmware <strong>アップグレード</strong></li>
-<li><code>show platform bmc summary / eeprom</code>、<code>show platform firmware status</code> CLI</li>
-<li><code>show techsupport</code> への <strong>BMC dump 統合</strong>（非同期、ベストエフォート）</li>
+<li>BMC とは何で、SONiC からどう操作するか</li>
+<li>どこに設定を入れ（<code>bmc.json</code>）、どこに反映される（CONFIG_DB / <code>/etc/network/interfaces</code>）か</li>
+<li><code>show platform bmc</code> / firmware update / techsupport それぞれ何が起こるか</li>
+<li>BMC 非対応プラットフォームではどう振る舞うか</li>
 </ul>
-<p>将来 (202605 branch) 拡張<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>Redfish client を <strong>platform common API</strong> に統合し、ベンダ固有用途への流用を容易化</li>
-</ul>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="bmc-ip">BMC IP 初期化フロー<a class="headerlink" href="#bmc-ip" title="Permanent link">&para;</a></h3>
-<p><code>device/platform/bmc.json</code> が真実の相となる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_2">全体像<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>BMC (Board Management Controller) は switch メインボード上の <strong>out-of-band 管理用マイコン</strong>。OpenBMC は Redfish (RESTful) API を提供し、SONiC はその client を <code>sonic-platform-common</code> に内蔵して CLI / techsupport から呼ぶ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<pre class="mermaid"><code>flowchart LR
+    BJSON[device/platform/bmc.json]
+    GBD[device_info.get_bmc_data]
+    CFG[sonic-cfggen]
+    DM[CONFIG_DB.DEVICE_METADATA bmc]
+    INT[interfaces.j2]
+    NET[/etc/network/interfaces]
+    BJSON --&gt; GBD --&gt; CFG --&gt; DM --&gt; INT --&gt; NET
+    CLI[show platform bmc / config firmware install] --&gt; CB[ComponentBMC]
+    CB --&gt; RC[RedfishClient]
+    RC --&gt; BMC[(BMC / Redfish API)]</code></pre>
+<h2 id="_3">どこに何が書かれるか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="deviceplatformbmcjson">入力: <code>device/platform/bmc.json</code><a class="headerlink" href="#deviceplatformbmcjson" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;bmc_if_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;usb0&quot;</span><span class="p">,</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;bmc_if_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;169.254.x.x&quot;</span><span class="p">,</span>
@@ -22992,22 +23092,16 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;bmc_net_mask&quot;</span><span class="p">:</span><span class="s2">&quot;255.255.255.0&quot;</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<pre class="mermaid"><code>flowchart LR
-    BJSON[device/platform/bmc.json]
-    GBD[device_info.get_bmc_data]
-    CFG[sonic-cfggen]
-    DM[CONFIG_DB.DEVICE_METADATA bmc 配下]
-    INT[interfaces.j2]
-    NET[/etc/network/interfaces]
-    BJSON --&gt; GBD --&gt; CFG --&gt; DM --&gt; INT --&gt; NET</code></pre>
-<p><code>/etc/network/interfaces</code> への展開例<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>device_info.get_bmc_data()</code> が読み、<code>sonic-cfggen</code> 経由で <code>CONFIG_DB.DEVICE_METADATA|bmc</code> に投入される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="etcnetworkinterfaces">反映先: <code>/etc/network/interfaces</code><a class="headerlink" href="#etcnetworkinterfaces" title="Permanent link">&para;</a></h3>
+<p><code>interfaces.j2</code> で usb0 を static で起こす<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>auto usb0
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>iface usb0 inet static
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    address &lt;bmc_if_addr&gt;
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    netmask &lt;bmc_net_mask&gt;
 </span></code></pre></div>
-<h3 id="redfish-client-redfish_clientpy">Redfish client (<code>redfish_client.py</code>)<a class="headerlink" href="#redfish-client-redfish_clientpy" title="Permanent link">&para;</a></h3>
-<p><code>sonic-platform-common</code> に <strong><code>RedfishClient</code></strong> を追加する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>curl</code> ラッパで Redfish API を呼ぶ。主要機能:</p>
+<h2 id="redfishclient">RedfishClient の設計ポイント<a class="headerlink" href="#redfishclient" title="Permanent link">&para;</a></h2>
+<p><code>sonic-platform-common</code> に追加された <code>RedfishClient</code> は curl ラッパで、主に以下を担う<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -23017,56 +23111,42 @@
 </thead>
 <tbody>
 <tr>
-<td>Session 管理</td>
-<td>login / logout、token / session_id、token expire 時の自動再 login</td>
+<td>Session</td>
+<td>login / logout、token / session_id、expire 時の自動再 login</td>
 </tr>
 <tr>
-<td>Firmware 管理</td>
-<td>バージョン取得 / 更新 (Redfish API)</td>
+<td>Firmware</td>
+<td>version 取得、update</td>
 </tr>
 <tr>
 <td>BMC 操作</td>
-<td>reset / password 変更 / debug log dump 起動・取得</td>
+<td>reset、password 変更、debug log dump 起動・取得</td>
 </tr>
 <tr>
-<td>エラーハンドリング</td>
+<td>Error</td>
 <td>curl エラー → RedfishClient エラーコードへマップ</td>
 </tr>
 <tr>
-<td>セキュリティ</td>
-<td>token / password を log と CLI 出力で <strong>obfuscate</strong></td>
+<td>Security</td>
+<td>token / password を log・CLI 出力で <strong>obfuscate</strong></td>
 </tr>
 </tbody>
 </table>
-<h4 id="scope-login-logout">scope (login / logout の挟み込み)<a class="headerlink" href="#scope-login-logout" title="Permanent link">&para;</a></h4>
-<p>SONiC では各 CLI が <strong>独立プロセス</strong>（プロセス間で何も共有しない）として実行される。よって 2 コマンド = 2 セッションになり session を浪費する。<code>RedfishClient</code> は <strong>Python decorator</strong> で各 API を <strong>login → call → logout</strong> で囲む設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="componentbmc-componentpy"><code>ComponentBMC</code> (<code>component.py</code>)<a class="headerlink" href="#componentbmc-componentpy" title="Permanent link">&para;</a></h3>
-<p><code>platform/component.py</code> に新規 <code>ComponentBMC</code> クラスを追加し、Device Base 系 API + BMC 固有 API を提供<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h3 id="python-decorator-loginlogout">なぜ Python decorator で login/logout を挟むのか<a class="headerlink" href="#python-decorator-loginlogout" title="Permanent link">&para;</a></h3>
+<p>SONiC では各 CLI が <strong>独立プロセス</strong> で動き状態を共有しない。2 コマンド = 2 session でセッション枯渇を招くため、<code>RedfishClient</code> は decorator で <code>login → call → logout</code> を 1 呼び出しにまとめる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="componentbmc-api"><code>ComponentBMC</code> の API<a class="headerlink" href="#componentbmc-api" title="Permanent link">&para;</a></h2>
+<p><code>platform/component.py</code> に追加された <code>ComponentBMC</code> は Device Base 系（<code>get_name</code> / <code>get_presence</code> / <code>get_model</code> 等）に加えて以下を提供<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
-<th>API（Device Base）</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>get_name()</code> <code>get_presence()</code> <code>get_model()</code> <code>get_serial()</code> <code>get_revision()</code> <code>get_status()</code> <code>is_replaceable()</code></td>
-<td>既存共通</td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th>API（BMC 固有）</th>
+<th>API</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>get_eeprom()</code></td>
-<td><code>Manufacturer/Model/PartNumber/PowerState/SerialNumber</code> を dict で返却</td>
+<td>Manufacturer / Model / PartNumber / PowerState / SerialNumber</td>
 </tr>
 <tr>
 <td><code>get_version()</code></td>
@@ -23086,51 +23166,36 @@
 </tr>
 <tr>
 <td><code>update_firmware(fw_image)</code></td>
-<td>firmware アップグレード</td>
+<td>firmware update</td>
 </tr>
 </tbody>
 </table>
-<h3 id="firmware-upgrade">Firmware Upgrade フロー<a class="headerlink" href="#firmware-upgrade" title="Permanent link">&para;</a></h3>
-<p><code>config platform firmware install chassis component BMC fw -y &lt;BMC_IMAGE&gt;</code> で <code>ComponentBMC.update_firmware()</code> を呼ぶ。Redfish API で BMC に push し、Redfish task を polling して完了を待つ<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show platform bmc summary
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  Manufacturer / Model / PartNumber / SerialNumber / PowerState / FirmwareVersion
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show platform firmware status
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  Component  Version  Description
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  ONIE / SSD / BIOS / CPLD1..N / BMC ...
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>show platform bmc eeprom
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  Manufacturer / Model / PartNumber / PowerState / SerialNumber
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>config platform firmware install chassis component BMC fw -y &lt;BMC_IMAGE&gt;
+<h2 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show platform bmc summary       # Manufacturer / Model / FW Version 等
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show platform bmc eeprom        # EEPROM 情報
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show platform firmware status   # ONIE / SSD / BIOS / CPLD / BMC ...
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>config platform firmware install chassis component BMC fw -y &lt;BMC_IMAGE&gt;
 </span></code></pre></div>
-<h3 id="show-techsupport-bmc-dump"><code>show techsupport</code> への BMC dump 統合<a class="headerlink" href="#show-techsupport-bmc-dump" title="Permanent link">&para;</a></h3>
-<p><code>generate-dump</code> に <strong>非同期 BMC dump 収集</strong> を追加<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>config platform firmware install ...</code> は <code>ComponentBMC.update_firmware()</code> を呼び、Redfish task を polling して完了を待つ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="techsupport-bmc-dump">techsupport への BMC dump 統合（非同期）<a class="headerlink" href="#techsupport-bmc-dump" title="Permanent link">&para;</a></h2>
+<p><code>generate-dump</code> の流れ<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <pre class="mermaid"><code>sequenceDiagram
     participant TS as generate-dump
     participant BMC as ComponentBMC
     participant RF as Redfish API
     TS-&gt;&gt;BMC: trigger_bmc_debug_log_dump()
-    BMC-&gt;&gt;RF: POST /Tasks (dump 起動)
+    BMC-&gt;&gt;RF: POST /Tasks
     RF--&gt;&gt;BMC: task_id
-    BMC--&gt;&gt;TS: task_id 返却
     Note over TS: SONiC 通常 dump 採取 (≥ 1m20s)
-    TS-&gt;&gt;BMC: get_bmc_debug_log_dump(task_id, ..., timeout=60s)
-    BMC-&gt;&gt;RF: GET /Tasks/&lt;id&gt; + dump 取得
+    TS-&gt;&gt;BMC: get_bmc_debug_log_dump(task_id, timeout=60s)
+    BMC-&gt;&gt;RF: GET /Tasks/&lt;id&gt; + dump
     RF--&gt;&gt;BMC: dump file
-    BMC--&gt;&gt;TS: 成果物
     TS-&gt;&gt;TS: tarball に同梱</code></pre>
-<p>特徴<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><strong>非ブロッキング</strong>: BMC dump 起動を最初に投げ、その後通常 dump 採取</li>
-<li><strong>timeout 60 秒</strong> (collect 時)。SONiC techsupport 自体が 1 分 20 秒以上かかるため、実際に待ちが発生することは稀</li>
-<li><strong>エラー耐性</strong>: BMC 未対応プラットフォーム (<code>bmc.json</code> 未存在) は skip。エラーは log のみで全体は止めない</li>
-</ul>
-<h3 id="fast-warm-cold-boot-upgrade">Fast / Warm / Cold boot と upgrade<a class="headerlink" href="#fast-warm-cold-boot-upgrade" title="Permanent link">&para;</a></h3>
-<p>これらの動作は <strong>CPU 側 method</strong> で完結し、BMC とは独立に動く。BMC 側の状態は影響しない<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>特徴: <strong>非ブロッキング</strong>（dump 起動を先に投げて並行採取）、<strong>timeout 60 秒</strong>、エラーは log のみで全体は止めない。<code>bmc.json</code> 未存在のプラットフォームは skip<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="fast-warm-cold-boot">Fast / Warm / Cold boot との関係<a class="headerlink" href="#fast-warm-cold-boot" title="Permanent link">&para;</a></h2>
+<p>これらは CPU 側 method で完結し BMC と独立。BMC 側の状態は影響しない<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -23149,93 +23214,52 @@
 </tr>
 </tbody>
 </table>
-<h3 id="cli_1">関連する CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>show platform bmc summary</code></td>
-<td>BMC 概要表示</td>
-</tr>
-<tr>
-<td><code>show platform bmc eeprom</code></td>
-<td>BMC EEPROM 情報</td>
-</tr>
-<tr>
-<td><code>show platform firmware status</code></td>
-<td>BIOS / SSD / CPLD / BMC 等のバージョン</td>
-</tr>
-<tr>
-<td><code>config platform firmware install chassis component BMC fw -y &lt;image&gt;</code></td>
-<td>BMC firmware 更新</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># BMC が presence しているか</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>platform<span class="w"> </span>bmc<span class="w"> </span>summary
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># firmware 更新</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>install<span class="w"> </span>chassis<span class="w"> </span>component<span class="w"> </span>BMC<span class="w"> </span>fw<span class="w"> </span>-y<span class="w"> </span>/tmp/bmc_fw.bin
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># techsupport（BMC dump 自動同梱）</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport
+<h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>platform<span class="w"> </span>bmc<span class="w"> </span>summary
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>install<span class="w"> </span>chassis<span class="w"> </span>component<span class="w"> </span>BMC<span class="w"> </span>fw<span class="w"> </span>-y<span class="w"> </span>/tmp/bmc_fw.bin
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport<span class="w">     </span><span class="c1"># BMC dump 自動同梱</span>
 </span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>bmc.json</code> が存在しないプラットフォーム</strong> では BMC 機能 skip<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC 全機能には影響しないが BMC 関連 CLI は <code>N/A</code> を返す</li>
-<li>各 CLI が <strong>独立プロセスで login/logout を毎回行う</strong> ため、Redfish session のオーバヘッドが大きい</li>
-<li><code>update_firmware</code> は Redfish task 完了を待つため <strong>長時間ブロック</strong> する場合あり</li>
-<li>BMC dump 収集の timeout 60 秒は <strong>techsupport 全体時間に依存</strong> したヒューリスティック</li>
-<li>BMC 操作は password / token を扱うため <strong>log への出力 obfuscate</strong> 必須<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>202605 branch で platform common API への統合が予定されている（HLD 当時 phase 2）<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>bmc.json</code> 未存在プラットフォームでは BMC 機能 skip、関連 CLI は <code>N/A</code><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>各 CLI が独立プロセスで login/logout を毎回行うためセッションオーバヘッド大<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>update_firmware</code> は Redfish task 完了を待ち長時間ブロック</li>
+<li>BMC dump timeout 60 秒は techsupport 全体時間に依存したヒューリスティック</li>
+<li>password / token を扱うため log 出力 obfuscate 必須<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>202605 branch で platform common API への統合（phase 2）が予定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>sonic-platform-common</code></strong>: <code>RedfishClient</code> / <code>ComponentBMC</code> 追加</li>
-<li><strong><code>sonic-py-common</code></strong>: <code>device_info.get_bmc_data()</code> の追加</li>
-<li><strong><code>sonic-config-engine</code> / <code>sonic-cfggen</code></strong>: <code>DEVICE_METADATA|bmc</code> への書き込み</li>
-<li><strong><code>interfaces.j2</code></strong>: usb0 静的設定の生成</li>
+<li><strong><code>sonic-py-common</code></strong>: <code>device_info.get_bmc_data()</code></li>
+<li><strong><code>sonic-cfggen</code></strong>: <code>DEVICE_METADATA|bmc</code> 書き込み</li>
+<li><strong><code>interfaces.j2</code></strong>: usb0 静的設定生成</li>
 <li><strong><code>generate-dump</code></strong>: techsupport 拡張</li>
-<li><strong><code>config platform firmware</code></strong>: 既存 CLI を BMC component で拡張</li>
-<li><strong><code>show platform firmware status</code></strong>: BMC を行に追加</li>
+<li><strong><code>config platform firmware</code> / <code>show platform firmware status</code></strong>: 既存 CLI を BMC で拡張</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show platform bmc summary</code> が <code>N/A</code> → <code>bmc.json</code> の有無、<code>usb0</code> の <code>ip a</code> 結果を確認</li>
-<li>BMC firmware update が失敗 → Redfish task ID と RedfishClient ログ、curl 戻り値を確認</li>
-<li>techsupport に BMC dump が含まれない → <code>generate-dump</code> ログで trigger / collect の各 stage の結果を確認</li>
-<li>session 数枯渇 → CLI 各回で logout が走っているか、decorator が外れていないかを確認</li>
+<li><code>show platform bmc summary</code> が <code>N/A</code> → <code>bmc.json</code> の有無、<code>ip a</code> で usb0 を確認</li>
+<li>BMC firmware update 失敗 → Redfish task ID、<code>RedfishClient</code> log、curl 戻り値</li>
+<li>techsupport に BMC dump が無い → <code>generate-dump</code> log の trigger / collect 各 stage 結果</li>
+<li>session 枯渇 → CLI ごとに logout が走っているか、decorator が外れていないか</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../reference/cli/show-platform/">CLI: show-platform</a></li>
+<li><a href="../../reference/cli/config-platform-firmware/">CLI: config-platform-firmware</a></li>
+</ul>
 <!-- concerns hint:
-- sonic-platform-common への RedfishClient (redfish_client.py) と ComponentBMC の取り込み確認
-- sonic-py-common の device_info.get_bmc_data() 実装存在確認
-- sonic-cfggen による DEVICE_METADATA|bmc への書き込み確認
-- interfaces.j2 で usb0 static 設定を生成する経路の確認
-- generate-dump への BMC dump 非同期収集ロジック取り込み確認
-- show platform bmc summary / eeprom / config platform firmware install の sonic-utilities 取り込み確認
-- 202605 branch の platform common API 統合フェーズ（phase 2）の進捗確認
+- sonic-platform-common の RedfishClient / ComponentBMC 取り込みは確認済み (2026-05-11)
+- 202605 branch の platform common API 統合 phase 2 の進捗確認
 -->
 
-<h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>sonic-platform-common/sonic_platform_base/redfish_client.py</code> に <code>RedfishClient</code> クラスが存在（cURL ラッパで Redfish API を叩く、<code>REDFISH_URI_FW_INVENTORY = '/redfish/v1/UpdateService/FirmwareInventory'</code> を定数で持つ）。HLD 提案の RedfishClient は master に取り込み済み。</li>
-<li>同階層に <code>bmc_base.py</code> (<code>ComponentBMC</code> / <code>BmcBase</code> の基底) と <code>tests/redfish_client_test.py</code> / <code>bmc_base_test.py</code> が同梱。</li>
-<li><code>sonic-utilities/show/platform.py:75-110</code> に <code>def bmc()</code> / <code>def bmc_summary()</code> の Click グループが定義されており、<code>chassis.get_bmc().get_eeprom() / get_version()</code> を呼び出して <code>show platform bmc summary</code> を実装している。HLD 提示の CLI が sonic-utilities に取り込み済み。</li>
-<li><code>sonic-utilities/scripts/generate_dump</code> に BMC dump 取り込み経路が存在し、<code>show techsupport</code> 統合の裏取り。</li>
-</ul>
-<p>実装と HLD は一致。<code>code-verified</code> に昇格可。</p>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/bmc/bmc_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/bmc/bmc_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
