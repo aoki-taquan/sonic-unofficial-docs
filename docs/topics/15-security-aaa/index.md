@@ -102,6 +102,38 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 - [Password hardening 設計](../../architecture/pw-hardening-design.md)
 - [Container hardening](../../system/sonic-container-hardening.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: 概念](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）](../../management/tacacs-authentication.md)
+- [TACACS+ 認証テストプラン（pam_tacplus + ssh login）](../../management/tacacs-test-plan.md)
+- [TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）](../../management/sonic-tacacs-improvement.md)
+- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
+- [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](../../management/default-credential-management-for-california-sb-327-conformance.md)
+- [LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）](../../management/hld-ldap.md)
+- [P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）](../../management/p4rt-read-cache-hld.md)
+
+**関連トラブルシュート 5 件**
+
+- [SAI failure / syncd リスタート多発](../../reference/runbooks/sai-failure.md)
+- [ACL ルールが効かない / counter が増えない](../../reference/runbooks/acl-rule-no-hit.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [DHCP Relay で IP が払い出されない](../../reference/runbooks/dhcp-relay.md)
+- [RIF / ACL counter が 0 のまま](../../reference/runbooks/rif-acl-counter-zero.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

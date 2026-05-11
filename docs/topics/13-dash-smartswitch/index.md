@@ -88,6 +88,37 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 - [SONiC-DASH アーキテクチャ概観](../../overlay/sonic-dash-hld.md)
 - [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: DASH と SmartSwitch の考え方](concept.md)
+- [設定: DPU の IP 割当・gNMI 連携・KVM 検証](setup.md)
+- [運用: HA / PMON / reboot / upgrade の運用](operations.md)
+- [内部実装: NPU-DPU DB と ENI ベース転送の内部構造](internals.md)
+- [発展トピック: gNOI 連携と他章との境界](advanced.md)
+
+**関連する HLD 7 件**
+
+- [DASH SONiC KVM（BMv2 ベース仮想 DPU）](../../overlay/dash-sonic-kvm.md)
+- [単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）](../../platform/single-asic-voq-fixed-system-sonic.md)
+- [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)
+- [SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）](../../overlay/smartswitch-eni-based-forwarding.md)
+- [SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観](../../overlay/sonic-dash-hld.md)
+- [ICMP Hardware Offload（DualToR link prober の NPU 化）](../../platform/icmp-hardware-offload.md)
+- [VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）](../../overlay/vxlan-sonic-concepts.md)
+
+**関連トラブルシュート 5 件**
+
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

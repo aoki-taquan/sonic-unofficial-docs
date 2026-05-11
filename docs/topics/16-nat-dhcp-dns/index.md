@@ -98,6 +98,38 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md)
 - [ポートベース IPv4 DHCP Server](../../management/ipv4-port-based-dhcp-server-in-sonic.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: 概念](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [SWSS docker warm restart（state restore / consistency / sync up）](../../system/sonic-swss-docker-warm-restart.md)
+- [BUM ストームコントロール（PORT_STORM_CONTROL）](../../switching/sonic-bum-storm-control.md)
+- [Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）](../../system/smart-switch-ip-address-assignment.md)
+- [SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）](../../system/sonic-network-time-protocol-ntp-client-configuration.md)
+- [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](../../switching/add-support-for-vlan-interface-using-openconfig-yang.md)
+- [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../../switching/brief-introduction-of-iccp-code.md)
+- [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../../switching/layer-2-forwarding-enhancements.md)
+
+**関連トラブルシュート 5 件**
+
+- [DHCP Relay で IP が払い出されない](../../reference/runbooks/dhcp-relay.md)
+- [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [ACL ルールが効かない / counter が増えない](../../reference/runbooks/acl-rule-no-hit.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

@@ -60,6 +60,9 @@ jobs:
       - name: Report broken intra-doc links (informational)
         run: python3 meta/scripts/check_broken_links.py --check
 
+      - name: Check topics chapter "next-reads" drift (informational)
+        run: python3 meta/scripts/gen_next_reads.py --check || true
+
       - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4
