@@ -123,6 +123,28 @@ flowchart LR
 
 [^2]: <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2672>
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- BGP/Static の高速断検知で BFD セッションが UP しているかを確認する。
+- 障害時に session state と TX/RX interval、multiplier を確認して片側設定漏れを検出する。
+
+### よくある落とし穴
+
+- `show bfd summary` は STATE_DB ベースで、CONFIG_DB に session があっても peer 未到達なら DOWN のまま。
+- multi-hop BFD は別グループ。`show bfd peer <ip> multihop` を使う必要がある。
+
+### 関連する show / debug
+
+```bash
+show bfd summary
+show bfd peer 10.0.0.1
+sonic-db-cli STATE_DB keys 'BFD_SESSION_TABLE|*'
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 
 - [reference/CLI: show bgp](show-bgp.md)

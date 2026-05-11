@@ -204,3 +204,25 @@ flowchart LR
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- community / user / target host を追加して NMS から監視させる。
+- v3 移行時の auth/priv 鍵切り替え。
+
+### よくある落とし穴
+
+- ACL で SNMP ポート (UDP 161) を許可していないと外から見えない（CTRLPLANE ACL）。
+- `config snmp community add` の type は `RO` / `RW`。RW を不用意に開けない。
+
+### 関連する show / debug
+
+```bash
+show snmp community
+show snmp user
+show runningconfiguration snmp
+```
+<!-- /ops-hint -->

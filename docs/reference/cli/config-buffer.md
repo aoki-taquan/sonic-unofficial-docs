@@ -126,3 +126,25 @@ flowchart LR
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- dynamic buffer モードと traditional モードの切り替え。
+- lossless プロファイル ($headroom$) の最適化。
+
+### よくある落とし穴
+
+- switchmode 変更は `config save` + reload 必須。即時切替不可。
+- PG/queue から profile を外す前に profile を削除すると orchagent が拒否する。
+
+### 関連する show / debug
+
+```bash
+show buffer profile
+show priority-group persistent-watermark headroom
+show buffer pool
+```
+<!-- /ops-hint -->

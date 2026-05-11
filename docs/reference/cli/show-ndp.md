@@ -73,3 +73,24 @@ NDP テーブルは **kernel の IPv6 neighbor table** および swss/neighsyncd
 ## 引用元
 
 [^1]: `ndp` の click 定義と `nbrshow -6` 起動は `show/main.py` L452-L472。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L452>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- IPv6 隣接の NS/NA 状態確認、SLAAC 動作検証。
+
+### よくある落とし穴
+
+- Link-local アドレスは scope 付き表示。`fe80::xxx%Ethernet0` の `%` 以降は interface scope。
+- Duplicate Address Detection (DAD) 失敗時は state が `FAILED` で kernel に残る。
+
+### 関連する show / debug
+
+```bash
+show ndp
+ip -6 neigh show
+sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
+```
+<!-- /ops-hint -->

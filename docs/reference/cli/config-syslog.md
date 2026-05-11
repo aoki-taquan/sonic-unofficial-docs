@@ -102,6 +102,28 @@ related:
 
 [^2]: `add` / `delete` は `config/syslog.py` L370-L454。重複検査は `is_exist_in_db`。
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- 外部 syslog server への転送設定、severity 調整。
+- rate-limit による flood 抑止。
+
+### よくある落とし穴
+
+- VRF (mgmt) 越しに送る場合 `--source` と VRF 指定を忘れると届かない。
+- rate-limit を厳しくしすぎると障害時のログが欠落する。
+
+### 関連する show / debug
+
+```bash
+show syslog
+show runningconfiguration syslog
+systemctl status rsyslog
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [HLD: Syslog Source IP](../../system/sonic-syslog-source-ip.md)
 - [CONFIG_DB: SYSLOG_SERVER](../config-db/syslog-server.md)

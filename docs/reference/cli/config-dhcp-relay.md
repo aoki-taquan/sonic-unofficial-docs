@@ -161,3 +161,25 @@ flowchart LR
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- VLAN に DHCP relay server を割り当て、テナント収容を有効化。
+- DHCPv6 relay の interface-id / link-address 設定。
+
+### よくある落とし穴
+
+- VLAN に IP が無い状態で relay を入れても client から DISCOVER を受けない。
+- `config dhcp-relay del` で server を全消去すると relay 機能自体が停止する。
+
+### 関連する show / debug
+
+```bash
+show dhcp_relay
+show runningconfiguration | grep -i dhcp
+docker logs dhcp_relay
+```
+<!-- /ops-hint -->

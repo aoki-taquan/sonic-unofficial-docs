@@ -102,3 +102,25 @@ flowchart LR
 ## 引用元
 
 [^1]: `aaa()` コマンドの実装は `show/main.py` L2269-L2299。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2269>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- AAA login / authorization / accounting の現状確認。
+- TACACS+ / RADIUS との連携検証。
+
+### よくある落とし穴
+
+- `local` を fallback に含めないと AAA server 不達時に全員ログインできなくなる。
+- TACACS+ 共有鍵が syslog に出力されてしまう古いビルドあり。
+
+### 関連する show / debug
+
+```bash
+show aaa
+show tacacs
+show radius
+```
+<!-- /ops-hint -->

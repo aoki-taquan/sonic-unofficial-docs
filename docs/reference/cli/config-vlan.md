@@ -137,6 +137,28 @@ config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]
 
 [^2]: `proxy_arp` は VLAN そのものではなく `VLAN_INTERFACE` テーブルに書き込まれる（L3 SVI 機能のため）。`config/vlan.py` L302-L320。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/vlan.py#L302>
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- VLAN 新設・メンバ追加・IP 付与の典型フロー。
+- DHCP relay や VRF 紐付けの前段としての VLAN セットアップ。
+
+### よくある落とし穴
+
+- `config vlan member del` はメンバを外すのみで VLAN 本体は残る。`config vlan del` で本体削除。
+- VLAN に IP を付けた状態で `config vlan del` するとエラー。先に `config interface ip remove` が必要。
+
+### 関連する show / debug
+
+```bash
+show vlan brief
+show vlan config
+show interfaces status
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
 - [CONFIG_DB: VLAN](../config-db/vlan.md)

@@ -82,3 +82,25 @@ config pfcwd start [--action drop|forward|alert]
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- PFC watchdog の有効化、polling interval / detection-time / restoration-time の調整。
+- deadlock 検出時の counters 取得。
+
+### よくある落とし穴
+
+- PFC が有効でない queue に対して PFCWD を設定しても検知されない。
+- `forward` action を選ぶと PFC 自体が無効化されるため、輻輳の影響範囲が広がる。
+
+### 関連する show / debug
+
+```bash
+show pfcwd config
+show pfcwd stats
+show pfc counters
+```
+<!-- /ops-hint -->

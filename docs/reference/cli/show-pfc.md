@@ -89,3 +89,25 @@ show pfc asymmetric
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- PFC counters / asymmetric PFC 状態の確認。
+- 輻輳発生時の priority 別 PAUSE フレーム数監視。
+
+### よくある落とし穴
+
+- PFC を有効にしていないキューにも counter は出るが、値はゼロのまま誤解される。
+- asymmetric PFC は機種依存。`show pfc asymmetric` で対応有無を確認。
+
+### 関連する show / debug
+
+```bash
+show pfc counters
+show pfc priority
+show pfcwd stats
+```
+<!-- /ops-hint -->

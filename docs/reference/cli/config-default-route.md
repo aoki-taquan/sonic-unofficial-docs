@@ -121,3 +121,24 @@ flowchart LR
 ## 引用元
 
 [^1]: `config route add` の実装は `config/main.py` L7812-L7888。`blackhole` の自動付与は L7858-L7870。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L7812>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- default route の追加・削除、VRF 別 default route。
+
+### よくある落とし穴
+
+- BGP / OSPF からの default route と static default route が共存すると AD で挙動が変わる。
+- VRF 指定を忘れると default VRF に入り、想定外の経路漏れになる。
+
+### 関連する show / debug
+
+```bash
+show ip route 0.0.0.0/0
+show ip route vrf all
+vtysh -c 'show ip route 0.0.0.0/0'
+```
+<!-- /ops-hint -->

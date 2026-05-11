@@ -166,3 +166,25 @@ flowchart LR
 - [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- Dual-ToR (Active-Standby) 環境での muxcable mode 切替。
+- 障害切替や計画切替の手順。
+
+### よくある落とし穴
+
+- `config muxcable mode active all` は強制 active 化。両 ToR で同時実行すると split-brain になる。
+- ycabled / linkmgrd が落ちていると CLI は成功表示でも実切替されない。
+
+### 関連する show / debug
+
+```bash
+show muxcable status
+show muxcable config
+show muxcable hwmode state
+```
+<!-- /ops-hint -->

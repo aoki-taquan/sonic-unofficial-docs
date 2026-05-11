@@ -211,3 +211,25 @@ B>* 10.0.1.0/24 [20/0] via 10.0.0.1, Ethernet0, 01:25:34
 C>* 10.0.0.0/24 is directly connected, Ethernet0, 01:30:11
 ```
 <!-- /usage-example -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- 経路テーブル、BGP / OSPF 状態、static route 確認。
+- VRF 別経路の確認。
+
+### よくある落とし穴
+
+- `show ip route` は default VRF。VRF 切替は `show ip route vrf <name>`。
+- FRR と kernel routing table のズレ。`vtysh -c 'show ip route'` と `ip route` を比較。
+
+### 関連する show / debug
+
+```bash
+show ip route
+show ip interfaces
+vtysh -c 'show ip route'
+```
+<!-- /ops-hint -->

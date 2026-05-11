@@ -143,3 +143,24 @@ flowchart LR
 ## 引用元
 
 [^1]: `cli_sroute_to_config` の実装は `config/main.py` L1395-L1481。`prefix` / `nexthop` キーを基準に分割し、IP / VRF / interface の存在を検証する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1395>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- static route の追加・更新、nexthop multipath 設定。
+
+### よくある落とし穴
+
+- `config route add` は CONFIG_DB の STATIC_ROUTE に書く。FRR の zebra に渡るまで 1〜2 秒遅延あり。
+- nexthop が unreachable な route は kernel route table に出ない。
+
+### 関連する show / debug
+
+```bash
+show ip route
+sonic-db-cli CONFIG_DB keys 'STATIC_ROUTE|*'
+vtysh -c 'show ip route static'
+```
+<!-- /ops-hint -->

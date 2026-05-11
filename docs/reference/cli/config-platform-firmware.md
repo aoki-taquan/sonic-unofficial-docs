@@ -90,3 +90,25 @@ show platform firmware [fwutil args...]
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- BIOS / CPLD / FPGA / SSD の firmware install と確認。
+- fwutil でのスケジュール更新 (next / boot)。
+
+### よくある落とし穴
+
+- `install` 後の reboot 種別 (cold / warm / fast / power) を間違えると flash しない。
+- firmware 競合状態で install を中断すると BIOS が brick することがある。電源断厳禁。
+
+### 関連する show / debug
+
+```bash
+show platform firmware status
+show platform firmware version
+fwutil show status
+```
+<!-- /ops-hint -->

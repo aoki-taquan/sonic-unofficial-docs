@@ -193,3 +193,25 @@ show runningconfiguration syslog
 }
 ```
 <!-- /usage-example -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- 現在 CONFIG_DB に載っている設定スナップショットの取得。
+- BGP / VRF / interface ごとの部分出力。
+
+### よくある落とし穴
+
+- `show runningconfiguration all` は JSON 出力で巨大。区分ごとのサブコマンドが実用的。
+- FRR 側 (bgp / zebra) は CONFIG_DB に同期されていない部分がある。
+
+### 関連する show / debug
+
+```bash
+show runningconfiguration all
+show runningconfiguration bgp
+vtysh -c 'show running-config'
+```
+<!-- /ops-hint -->

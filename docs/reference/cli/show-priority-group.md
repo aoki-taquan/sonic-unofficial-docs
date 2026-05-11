@@ -68,3 +68,25 @@ show priority-group watermark shared [--namespace <ns>|all] [--json]
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- headroom watermark を見て lossless 設定の余裕を判定する。
+- PG 別 shared / headroom 使用量の傾向監視。
+
+### よくある落とし穴
+
+- persistent-watermark は手動 clear するまでリセットされない。
+- PG が profile 紐付けされていないと watermark は 0 のまま。
+
+### 関連する show / debug
+
+```bash
+show priority-group watermark headroom
+show priority-group persistent-watermark headroom
+show buffer profile
+```
+<!-- /ops-hint -->

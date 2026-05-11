@@ -66,3 +66,25 @@ mmuconfig -l [-n <namespace>] [-vv]
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- buffer pool / profile の現状確認。
+- dynamic buffer mode の動作確認。
+
+### よくある落とし穴
+
+- dynamic buffer mode では profile が自動生成されるため、`config save` 直後の値と実値がズレる。
+- pool size は ASIC 限界に依存。容量超過は syslog にだけ出る。
+
+### 関連する show / debug
+
+```bash
+show buffer pool
+show buffer profile
+show runningconfiguration | grep -i buffer
+```
+<!-- /ops-hint -->

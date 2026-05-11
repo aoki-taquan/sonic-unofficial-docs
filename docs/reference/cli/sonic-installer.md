@@ -199,3 +199,24 @@ Next: SONiC-OS-202311
 - [Topics: Reboot / Upgrade / Lifecycle](../../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- 新 SONiC イメージのインストール、boot image 切替、image 削除。
+
+### よくある落とし穴
+
+- `sonic-installer install` 後 reboot しないと反映されない。
+- `sonic-installer set-default` を間違えると意図しない image で起動する。
+
+### 関連する show / debug
+
+```bash
+sudo sonic-installer list
+show boot
+show version
+```
+<!-- /ops-hint -->

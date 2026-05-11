@@ -86,3 +86,25 @@ flowchart LR
 - [Topics: Reboot / Upgrade / Lifecycle](../../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- BGP / teamd / swss / syncd の warm-restart 有効化と timer 調整。
+- ソフト再起動前の安全弁としての有効化。
+
+### よくある落とし穴
+
+- warm-restart 中に CONFIG_DB を書き換えると state が破損する。
+- timer を短くしすぎると hardware 復旧前に reconcile が走り経路ドロップ。
+
+### 関連する show / debug
+
+```bash
+show warm_restart config
+show warm_restart state
+sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
+```
+<!-- /ops-hint -->

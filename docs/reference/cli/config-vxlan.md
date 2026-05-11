@@ -199,6 +199,28 @@ VxLAN tunnel vtep1 added.
 ```
 <!-- /usage-example -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- VxLAN tunnel 作成、VLAN-VNI map、EVPN VNI 紐付け。
+- VNET (asymmetric IRB) のセットアップ起点。
+
+### よくある落とし穴
+
+- source IP に Loopback を指定しないと FRR/EVPN 経路が広告されない。
+- `config vxlan map add` の VNI は uint24 上限。`vlan` を消す前に map を外さないと残骸が STATE_DB に残る。
+
+### 関連する show / debug
+
+```bash
+show vxlan tunnel
+show vxlan vlanvnimap
+show vxlan name <tunnel>
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [HLD: VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
 - [HLD: EVPN VXLAN](../../routing/evpn-vxlan-hld.md)

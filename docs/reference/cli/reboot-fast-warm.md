@@ -192,3 +192,25 @@ Warm reboot ...
 - [Topics: Reboot / Upgrade / Lifecycle](../../topics/11-reboot/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- メンテナンスでのソフト再起動（fast / warm）の選択。
+- warm-restart 有効時のサービス継続再起動。
+
+### よくある落とし穴
+
+- warm-reboot 中に CONFIG_DB を変更すると整合が崩れて再起動失敗する。
+- fast-reboot は kernel まで再起動するため通信断は数十秒発生する。
+
+### 関連する show / debug
+
+```bash
+show reboot-cause
+show warm_restart state
+journalctl -u warm-reboot -b -0
+```
+<!-- /ops-hint -->

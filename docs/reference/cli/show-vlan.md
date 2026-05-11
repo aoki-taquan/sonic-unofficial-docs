@@ -105,6 +105,28 @@ excerpt: |
 
 [^1]: `vlan` グループ全体は `show/vlan.py` で定義。`brief` と `config` の 2 コマンドのみ。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/vlan.py>
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- VLAN メンバ・tagging mode・IP を一覧して L2/L3 設定の整合を確認する。
+- DHCP relay や VxLAN tunnel との紐付け確認の起点。
+
+### よくある落とし穴
+
+- `show vlan brief` は CONFIG_DB ベース表示で、ASIC に未反映でも見えてしまう。実反映は `show interfaces status` や fdb で裏取り。
+- tagged / untagged の混在ミスは link ダウン要因。`tagging_mode` 列を必ず確認。
+
+### 関連する show / debug
+
+```bash
+show vlan brief
+show vlan config
+show mac
+```
+<!-- /ops-hint -->
+
 ## 関連ページ
 - [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
 - [CLI: config vlan](config-vlan.md)

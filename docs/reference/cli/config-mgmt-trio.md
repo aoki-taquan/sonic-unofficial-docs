@@ -149,3 +149,25 @@ flowchart LR
 [^2]: `save` の sort 処理 (`config/main.py` L1845-L1849)。
 
 [^3]: `replace` 内部の `GenericUpdater().replace(...)` 呼び出し (`config/main.py` L1981-L2036)。`generic_config_updater/` 配下に JSON Patch ベースの差分計算実装がある。
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- Mgmt VRF / Mgmt interface / Mgmt route のまとめて設定。
+- out-of-band 監視ネット切替時の安全な再設定。
+
+### よくある落とし穴
+
+- Mgmt VRF を有効化すると SSH/SNMP/NTP も VRF コンテキストへ切り替わる。
+- Mgmt route を消すと自分の SSH が切れる可能性。console 経由で作業する。
+
+### 関連する show / debug
+
+```bash
+show mgmt-vrf
+show management_interface address
+ip -4 route show vrf mgmt
+```
+<!-- /ops-hint -->

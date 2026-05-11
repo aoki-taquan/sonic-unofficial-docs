@@ -180,3 +180,25 @@ flowchart LR
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- sFlow agent / collector / sampling-rate の設定とインタフェース別 polling。
+- テレメトリ収集系（InfluxDB / Kafka）連携前段。
+
+### よくある落とし穴
+
+- sampling-rate を小さくしすぎると CPU 使用率が跳ねる。1:1024 程度を目安に。
+- Mgmt port は sFlow 対象外。データプレーン経由で collector に到達できる経路が必要。
+
+### 関連する show / debug
+
+```bash
+show sflow
+show sflow interface
+docker logs sflow
+```
+<!-- /ops-hint -->

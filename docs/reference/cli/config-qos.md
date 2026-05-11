@@ -143,3 +143,25 @@ flowchart LR
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的な利用シーン
+
+- QoS プロファイルの再ロード、TC マップ・スケジューラ・WRED の更新。
+- DSCP / dot1p / PFC priority の対応付け確認。
+
+### よくある落とし穴
+
+- `config qos reload` は既存 buffer profile を一旦消すため、瞬断・パケロスが出る可能性。
+- `--no-dynamic-buffer` 機種で dynamic buffer 設定を投入しても無視される。
+
+### 関連する show / debug
+
+```bash
+show qos
+show priority-group persistent-watermark headroom
+show queue counters
+```
+<!-- /ops-hint -->
