@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server） — DASH SmartSwitch では NPU と各 DPU が PCIe ベースの control plane interface (netdev) で繋がる。">
       
       
       
@@ -13199,6 +13199,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -16948,6 +16959,8 @@
       
         
           
+        
+      
         
       
         
@@ -21325,6 +21338,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集 (Glossary)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21347,7 +21388,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21369,14 +21410,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_6" id="__nav_14_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21540,7 +21581,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21562,14 +21603,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23394,6 +23435,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23418,6 +23470,13 @@
   
   
 
+
+<!-- topics-tip -->
+<div class="admonition tip">
+<p class="admonition-title">Topics で読み物として読む</p>
+<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/13-dash-smartswitch/">Topics 13 章: DASH / SmartSwitch</a> を参照。</p>
+</div>
+<!-- /topics-tip -->
 
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified</p>
@@ -23541,6 +23600,13 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 - DPU PCIe netdev 名 dpu<N> の vendor init での確立方法と整合確認
 - DHCP server container (sonic-net/SONiC#1282) の master 取り込み確認
 -->
+
+<!-- topics-back-ref -->
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
+</ul>
+<!-- /topics-back-ref -->
 
 <div class="footnote">
 <hr />

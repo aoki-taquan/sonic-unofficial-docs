@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net） — 1 台の chassis 内に複数 ASIC を持つ platform で SONiC を動かすための設計:">
       
       
       
@@ -16940,6 +16940,8 @@
       
         
       
+        
+      
     
     
     
@@ -21303,6 +21305,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集 (Glossary)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21325,7 +21355,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21347,14 +21377,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_6" id="__nav_14_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21518,7 +21548,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21540,14 +21570,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23375,6 +23405,13 @@
   
 
 
+<!-- topics-tip -->
+<div class="admonition tip">
+<p class="admonition-title">Topics で読み物として読む</p>
+<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/12-multi-asic-voq/">Topics 12 章: Multi-ASIC / VoQ / Chassis</a> を参照。</p>
+</div>
+<!-- /topics-tip -->
+
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified（大規模 HLD・要点裏取り）</p>
 <p>HLD は 71KB。本ページは architecturally distinctive な要素（namespace 分離・per-ASIC Redis・internal BGP・sonic-net link）に絞る。裏取り: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang</code>（<code>sub_role</code> / <code>asic_id</code> / <code>switch_id</code> / <code>switch_type</code>）、<code>sonic-bgp-internal-neighbor.yang</code>、<code>sonic-buildimage/files/build_templates/per_namespace/{swss,syncd,bgp}.service.j2</code>（per-ASIC instanced unit）、<code>sonic-utilities</code> の <code>--namespace</code>/<code>-n</code> オプション（<code>show/main.py</code>）。</p>
@@ -23507,6 +23544,8 @@
 <ul>
 <li><a href="../../topics/12-multi-asic-voq/">Topics: Multi-ASIC / VOQ Chassis</a></li>
 </ul>
+<!-- /topics-back-ref -->
+
 <div class="footnote">
 <hr />
 <ol>

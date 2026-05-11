@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="P4RT アプリケーション（PINS の gRPC サービス、port 9559） — P4RT アプリケーションは PINS（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、P4Runtime v1.3.0 を実装する gRPC サービスとして TCP…">
       
       
       
@@ -17079,6 +17079,8 @@
       
         
       
+        
+      
     
     
     
@@ -21442,6 +21444,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集 (Glossary)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21464,7 +21494,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21486,14 +21516,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_6" id="__nav_14_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21657,7 +21687,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21679,14 +21709,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23653,6 +23683,13 @@
   
 
 
+<!-- topics-tip -->
+<div class="admonition tip">
+<p class="admonition-title">Topics で読み物として読む</p>
+<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/10-gnmi-openconfig/">Topics 10 章: gNMI / OpenConfig / 管理プレーン</a> を参照。</p>
+</div>
+<!-- /topics-tip -->
+
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: Discrepancy-found</p>
 <p><code>p4rt-app</code> Docker、<code>P4Orch</code>、<code>APP_P4RT_TABLE_NAME</code> / <code>APPL_STATE_DB</code> は実装済みを確認した一方、HLD で言及された <strong>HashOrch（OrchAgent 新規追加）</strong> は現行 master では独立コンポーネントとして存在せず、ハッシュ属性は既存の <code>SwitchOrch</code> (<code>switch_helper.cpp</code> の <code>SWITCH_HASH_FIELD_*</code> マップ) が <code>CFG_SWITCH_HASH_TABLE_NAME</code> 経由で扱う形になっている。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。</p>
@@ -23812,6 +23849,8 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <ul>
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
+<!-- /topics-back-ref -->
+
 <div class="footnote">
 <hr />
 <ol>

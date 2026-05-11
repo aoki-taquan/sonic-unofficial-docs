@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール） — SONiC の AAA（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案:">
       
       
       
@@ -16973,6 +16973,8 @@
       
         
       
+        
+      
     
     
     
@@ -21336,6 +21338,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集 (Glossary)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21358,7 +21388,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21380,14 +21410,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_6" id="__nav_14_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21551,7 +21581,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21573,14 +21603,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23441,6 +23471,13 @@
   
 
 
+<!-- topics-tip -->
+<div class="admonition tip">
+<p class="admonition-title">Topics で読み物として読む</p>
+<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/15-security-aaa/">Topics 15 章: Security / AAA</a> を参照。</p>
+</div>
+<!-- /topics-tip -->
+
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified / 採否不明な提案</p>
 <p>本 HLD は 2020 年 Martin Bélanger（Rev 0.4）の <strong>設計討議文書</strong>。AAA / PAM / NSS の本質的問題提起と提案で、現行 master が本提案を全面採用しているかは要確認。<code>priority=high</code>。</p>
@@ -23564,6 +23601,8 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 <ul>
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
 </ul>
+<!-- /topics-back-ref -->
+
 <div class="footnote">
 <hr />
 <ol>

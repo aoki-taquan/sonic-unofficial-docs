@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース） — 「なぜ CoPP 全体ではダメか」「何を投入すれば効くのか」「いま master でどこまで効くのか」が読み手の最大の関心。">
       
       
       
@@ -11532,6 +11532,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -17023,6 +17034,8 @@
       
         
       
+        
+      
     
     
     
@@ -21386,6 +21399,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集 (Glossary)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21408,7 +21449,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21430,14 +21471,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_6" id="__nav_14_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21601,7 +21642,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21623,14 +21664,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23516,6 +23557,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 Topics
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23540,6 +23592,13 @@
   
   
 
+
+<!-- topics-tip -->
+<div class="admonition tip">
+<p class="admonition-title">Topics で読み物として読む</p>
+<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/07-acl-copp-mirror/">Topics 07 章: ACL / CoPP / Mirror</a> を参照。</p>
+</div>
+<!-- /topics-tip -->
 
 <div class="admonition danger">
 <p class="admonition-title">裏取りステータス: Discrepancy-found（部分実装）</p>
@@ -23687,6 +23746,14 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 <li><a href="../copp-neighbor-miss-trap-and-enhancements/">CoPP Neighbor Miss Trap and Enhancements</a></li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- topics-back-ref -->
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
+<li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
+</ul>
+<!-- /topics-back-ref -->
+
 <div class="footnote">
 <hr />
 <ol>

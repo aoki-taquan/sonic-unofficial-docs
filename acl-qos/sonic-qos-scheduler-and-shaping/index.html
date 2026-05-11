@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth） — SONiC の QoS には scheduling と shaping の 2 軸がある:">
       
       
       
@@ -17001,6 +17001,8 @@
       
         
       
+        
+      
     
     
     
@@ -21364,6 +21366,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集 (Glossary)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21386,7 +21416,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21408,14 +21438,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_6" id="__nav_14_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21579,7 +21609,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21601,14 +21631,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23497,6 +23527,13 @@
   
 
 
+<!-- topics-tip -->
+<div class="admonition tip">
+<p class="admonition-title">Topics で読み物として読む</p>
+<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/08-qos-buffer/">Topics 08 章: QoS / Buffer / PFC</a> を参照。</p>
+</div>
+<!-- /topics-tip -->
+
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
 <p>Verifier 2026-05-09: <code>sonic-swss/orchagent/qosorch.cpp:1333</code> で <code>m_qos_handler_map.insert({CFG_SCHEDULER_TABLE_NAME, &amp;QosOrch::handleSchedulerTable})</code>、L1380-1432 で <code>SAI_SCHEDULER_ATTR_SCHEDULING_TYPE</code> / <code>SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT</code> / <code>SAI_SCHEDULER_ATTR_METER_TYPE</code> / <code>SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE</code> / <code>SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_BURST_RATE</code> / <code>SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_RATE</code> / <code>SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_BURST_RATE</code> の SAI scheduler attribute 設定経路を確認。L70 では <code>SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID</code> で port バインドを確認。HLD の SAI 属性マッピングと整合。</p>
@@ -23645,6 +23682,8 @@
 <ul>
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
+<!-- /topics-back-ref -->
+
 <div class="footnote">
 <hr />
 <ol>

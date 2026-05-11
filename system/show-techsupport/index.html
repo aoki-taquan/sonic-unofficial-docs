@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式） — show techsupport は SONiC のサブシステム横断の診断情報をひとつの tarball に集める既存ツール（sonic-utilities 由来）。">
       
       
       
@@ -17012,6 +17012,8 @@
       
         
       
+        
+      
     
     
     
@@ -21375,6 +21377,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集 (Glossary)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21397,7 +21427,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21419,14 +21449,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_6" id="__nav_14_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21590,7 +21620,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21612,14 +21642,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23519,6 +23549,13 @@
   
 
 
+<!-- topics-tip -->
+<div class="admonition tip">
+<p class="admonition-title">Topics で読み物として読む</p>
+<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/09-telemetry-snmp/">Topics 09 章: Telemetry / SNMP / ログ</a> を参照。</p>
+</div>
+<!-- /topics-tip -->
+
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
 <p>YANG モデル <code>sonic-mgmt-common/models/yang/sonic/sonic-show-techsupport.yang</code> に <code>rpc sonic-show-techsupport-info</code> が定義され、annotations <code>sonic-showtech-annot.yang</code> で transformer に紐付け済み。tarball 採取本体は <code>sonic-utilities/scripts/generate_dump</code> (techsupport_cleanup.py / bmc_techsupport.py が呼ぶ) で従来どおり。<code>sonic-buildimage</code> には <code>sonic-auto_techsupport.yang</code> も存在。RPC 起動経路は HLD どおり実装。</p>
@@ -23656,6 +23693,8 @@ reasoning: --since の IETF date-time 形式制約と sonic-hostservices 依存�
 <ul>
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
 </ul>
+<!-- /topics-back-ref -->
+
 <div class="footnote">
 <hr />
 <ol>

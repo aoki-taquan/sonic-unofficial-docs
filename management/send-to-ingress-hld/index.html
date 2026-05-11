@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="Send to Ingress（CPU から ingress pipeline へパケット注入する hostif） — PINS（P4 Integrated Network Stack）の Packet I/O では、TX 経路として 2 種類の送信モードが想定される:">
       
       
       
@@ -17023,6 +17023,8 @@
       
         
       
+        
+      
     
     
     
@@ -21386,6 +21388,34 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集 (Glossary)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -21408,7 +21438,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21430,14 +21460,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_6" id="__nav_14_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -21601,7 +21631,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -21623,14 +21653,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_14_7" id="__nav_14_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_14_8" id="__nav_14_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_14_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_14_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23541,6 +23571,13 @@
   
 
 
+<!-- topics-tip -->
+<div class="admonition tip">
+<p class="admonition-title">Topics で読み物として読む</p>
+<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/10-gnmi-openconfig/">Topics 10 章: gNMI / OpenConfig / 管理プレーン</a> を参照。</p>
+</div>
+<!-- /topics-tip -->
+
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
 <p><code>sonic-swss/orchagent/portsorch.cpp</code> L771 で <code>m_sendToIngressPortTable(db, APP_SEND_TO_INGRESS_PORT_TABLE_NAME)</code> 登録、L6507 で <code>APP_SEND_TO_INGRESS_PORT_TABLE_NAME</code> 分岐、L7106 <code>addSendToIngressHostIf()</code> で <code>SAI_HOSTIF_TYPE_NETDEV</code> 属性を設定する hostif 作成を確認。<code>orchdaemon.cpp</code> L219 で <code>APP_SEND_TO_INGRESS_PORT_TABLE_NAME</code> を portsorch 優先度に登録。<code>cfgmgr/portmgrd.cpp</code> / <code>portmgr.cpp</code> 側の関連処理も確認（verified at: 2026-05-09）。</p>
@@ -23705,6 +23742,8 @@ reasoning: 「ベンダー SAI 拡張が前提」という最重要の制約の�
 <ul>
 <li><a href="../../topics/18-p4-pins/">Topics: P4 / PINS / Programmable Pipeline</a></li>
 </ul>
+<!-- /topics-back-ref -->
+
 <div class="footnote">
 <hr />
 <ol>
