@@ -27,7 +27,8 @@
 1. `meta/queue/` 配下に `verification-recheck/<area>-<slug>.json` を生成する（最終 `last_verified` から 90 日以上経過した `discrepancy-found` ページを自動列挙）
 2. Verifier バッチを走らせて再裏取り（後述「昇格手順」「monitor 変更」を参照）
 3. `.venv/bin/python3 meta/scripts/aggregate_queue.py` で集約ビューを再生成し、`docs/reference/verification/discrepancy-index.md` を `meta/scripts/gen_discrepancy_index.py` で再生成
-4. 変更分を 1 PR にまとめて squash merge
+4. `.venv/bin/python3 meta/scripts/check_sources_freshness.py --write --check` で `docs/reference/verification/sources-freshness.md` を再生成し、`meta/index/repos.json` の pinned SHA が upstream master からどれだけ遅れているかを更新する（オフライン環境では cache が無いので CI には組み込まない。ローカル `.cache/sonic-sources/` 配下の shallow clone を最新化してから実行）
+5. 変更分を 1 PR にまとめて squash merge
 
 ---
 
