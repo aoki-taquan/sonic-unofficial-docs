@@ -1,37 +1,62 @@
 ---
 title: Dual-ToR と Mux 制御
-description: "Dual-ToR と Mux 制御 — この章は、SONiC の Dual-ToR 構成で「2 台の ToR と 1 台のサーバ NIC の間にある mux を、どの状態情報で、どのように切り替えるのか」を読み解くための入口です。"
+description: Dual-ToR と Mux 制御 — この章は、SONiC の Dual-ToR 構成で「2 台の ToR と 1 台のサーバ NIC の間にある mux を、どの状態情報で、どのように切り替えるのか」を読み解くための入口です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/categories/dual-tor.md
-  - docs/overlay/active-active-dual-tor.md
-  - docs/overlay/active-standby-dual-tor.md
-  - docs/management/design-doc.md
-  - docs/routing/default-route.md
-  - docs/routing/prefix-based-mux-neighbors.md
-  - docs/routing/multiple-nexthop-route-hld.md
-  - docs/reference/cli/config-muxcable.md
-  - docs/reference/cli/show-muxcable.md
-  - docs/reference/config-db/mux-cable.md
-  - docs/reference/config-db/peer-switch.md
-  - docs/platform/icmp-hardware-offload.md
-  - docs/routing/bfd-hw-offload.md
-  - docs/routing/bfd-hw-offload-for-bgp-session.md
-  - docs/overlay/dscp-remapping-for-tunnel-traffic.md
-  - docs/architecture/dhcpv6-relay-agent.md
+- docs/categories/dual-tor.md
+- docs/overlay/active-active-dual-tor.md
+- docs/overlay/active-standby-dual-tor.md
+- docs/management/design-doc.md
+- docs/routing/default-route.md
+- docs/routing/prefix-based-mux-neighbors.md
+- docs/routing/multiple-nexthop-route-hld.md
+- docs/reference/cli/config-muxcable.md
+- docs/reference/cli/show-muxcable.md
+- docs/reference/config-db/mux-cable.md
+- docs/reference/config-db/peer-switch.md
+- docs/platform/icmp-hardware-offload.md
+- docs/routing/bfd-hw-offload.md
+- docs/routing/bfd-hw-offload-for-bgp-session.md
+- docs/overlay/dscp-remapping-for-tunnel-traffic.md
+- docs/architecture/dhcpv6-relay-agent.md
 keywords:
-  - Dual-ToR
-  - Mux
-  - active-standby
-  - active-active
-  - ToR
-  - linkmgrd
-  - orchagent
-  - 冗長化
-  - 切替
+- Dual-ToR
+- Mux
+- active-standby
+- active-active
+- ToR
+- linkmgrd
+- orchagent
+- 冗長化
+- 切替
+related:
+  cli:
+  - config muxcable
+  - clear
+  - config bgp
+  - show arp
+  - show bfd
+  - show bgp
+  - show ip
+  config_db:
+  - MUX_CABLE
+  - MUX_LINKMGR
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_PEER_GROUP_AF
+  - TUNNEL
+  - VLAN
+  yang:
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-bbr
+  - sonic-bgp-global
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-sentinel
 ---
 
 # Dual-ToR と Mux 制御

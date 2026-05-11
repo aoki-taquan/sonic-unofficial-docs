@@ -1,28 +1,53 @@
 ---
 title: P4 / PINS / Programmable Pipeline
-description: "P4 / PINS / Programmable Pipeline — この章は、SONiC を P4Runtime ベースの SDN コントローラから直接プログラムする ための仕組み（PINS: P4 Integrated Network Stack）をまとめて読むための入口です。"
+description: 'P4 / PINS / Programmable Pipeline — この章は、SONiC を P4Runtime ベースの SDN コントローラから直接プログラムする ための仕組み（PINS: P4 Integrated Network Stack）をまとめて読むための入口です。'
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/management/pins-hld.md
-  - docs/management/p4rt-application-hld.md
-  - docs/management/p4rt-read-cache-hld.md
-  - docs/internals/p4-orchagent.md
-  - docs/management/packetio.md
-  - docs/management/send-to-ingress-hld.md
-  - docs/management/sonic-management-framework.md
-  - docs/management/gnmi-usage.md
+- docs/management/pins-hld.md
+- docs/management/p4rt-application-hld.md
+- docs/management/p4rt-read-cache-hld.md
+- docs/internals/p4-orchagent.md
+- docs/management/packetio.md
+- docs/management/send-to-ingress-hld.md
+- docs/management/sonic-management-framework.md
+- docs/management/gnmi-usage.md
 keywords:
-  - P4
-  - PINS
-  - P4Runtime
-  - programmable pipeline
-  - PINS Infra
-  - p4rt
-  - SDN
-  - match-action
+- P4
+- PINS
+- P4Runtime
+- programmable pipeline
+- PINS Infra
+- p4rt
+- SDN
+- match-action
+related:
+  cli:
+  - config acl
+  - show acl
+  - show platform
+  - config bgp
+  - config route
+  - config vrf
+  - show bgp
+  config_db:
+  - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - COPP_GROUP
+  - COPP_TRAP
+  - DEVICE_METADATA
+  - P4RT_TABLE
+  yang:
+  - sonic-crm
+  - sonic-copp
+  - sonic-bgp-bbr
+  - sonic-bgp-device-global
+  - sonic-bgp-global
+  - sonic-bgp-monitor
+  - sonic-bgp-neighbor
 ---
 
 # P4 / PINS / Programmable Pipeline

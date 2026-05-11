@@ -1,21 +1,46 @@
 ---
 title: gNMI / gNOI / OpenConfig / YANG
-description: "gNMI / gNOI / OpenConfig / YANG — この章は、SONiC の「モデル駆動管理」を、リクエストが入る入口から ConfigDB に到達するまでの順で読み直すための入口である。"
+description: gNMI / gNOI / OpenConfig / YANG — この章は、SONiC の「モデル駆動管理」を、リクエストが入る入口から ConfigDB に到達するまでの順で読み直すための入口である。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources: []
 keywords:
-  - gNMI
-  - gNOI
-  - OpenConfig
-  - YANG
-  - telemetry
-  - northbound API
-  - gnmi-server
-  - Subscribe
-  - Set/Get
+- gNMI
+- gNOI
+- OpenConfig
+- YANG
+- telemetry
+- northbound API
+- gnmi-server
+- Subscribe
+- Set/Get
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config vlan
+  - show vlan
+  - config portchannel
+  - config qos
+  - show nat
+  config_db:
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_PEER_GROUP_AF
+  - VLAN
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - TELEMETRY
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-peergroup
+  - sonic-bgp-bbr
+  - sonic-bgp-monitor
+  - sonic-bgp-peerrange
+  - sonic-bgp-aggregate-address
+  - sonic-port
 ---
 
 # gNMI / gNOI / OpenConfig / YANG

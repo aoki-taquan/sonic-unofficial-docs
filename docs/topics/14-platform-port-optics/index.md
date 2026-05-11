@@ -1,63 +1,87 @@
 ---
 title: Platform / Port / Optics / PHY
-description: "Platform / Port / Optics / PHY — この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。"
+description: Platform / Port / Optics / PHY — この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/platform/global-platform-specific-psuutil-class-instance.md
-  - docs/architecture/sonic-port-configuration-refactor-design.md
-  - docs/architecture/port-profile-init-hld.md
-  - docs/system/sonic-dynamic-port-breakout-feature-high-level-design.md
-  - docs/architecture/sonic-port-auto-negotiation-design.md
-  - docs/architecture/sonic-port-link-training-design.md
-  - docs/architecture/sonic-port-auto-fec-design.md
-  - docs/platform/sonic-port-fec-ber.md
-  - docs/platform/fec-flr-support-in-sonic.md
-  - docs/platform/sonic-fast-link-up.md
-  - docs/platform/sonic-sfp-refactoring.md
-  - docs/management/enhancement-of-cmis-module-management.md
-  - docs/platform/cmis-and-c-cmis-support-for-zr.md
-  - docs/platform/custom-si-settings-for-cmis-modules.md
-  - docs/system/transceiver-and-sensor-monitoring-hld.md
-  - docs/platform/sonic-thermal-control-design.md
-  - docs/platform/thermal-control-test-plan.md
-  - docs/platform/liquid-cooling-leakage-detection-in-sonic.md
-  - docs/platform/sonic-psu-daemon-design.md
-  - docs/architecture/ssdhealth-design.md
-  - docs/system/sonic-storage-monitoring-daemon-design.md
-  - docs/platform/pcieinfo-design.md
-  - docs/system/sonic-pcie-monitoring-services-hld.md
-  - docs/platform/media-based-port-settings-in-sonic.md
-  - docs/platform/sonic-dynamic-gearbox-tuning-design-plan.md
-  - docs/platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md
-  - docs/platform/enhanced-lpo-debug-registers-hld.md
-  - docs/platform/s3ip-sysfs-specification.md
-  - docs/architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md
-  - docs/platform/support-bmc-flows-in-sonic.md
-  - docs/system/sonic-bmc-platform-management-monitoring.md
-  - docs/platform/1-6t-support-in-sonic.md
-  - docs/platform/sonic-port-naming-convention-change.md
-  - docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
-  - docs/platform/sonic-fw-utility.md
-  - docs/platform/platform-capability-file-enhancement.md
-  - docs/reference/cli/config-interface.md
-  - docs/reference/cli/config-platform-firmware.md
-  - docs/reference/cli/show-platform.md
-  - docs/reference/config-db/port.md
-  - docs/reference/yang/sonic-port.md
+- docs/platform/global-platform-specific-psuutil-class-instance.md
+- docs/architecture/sonic-port-configuration-refactor-design.md
+- docs/architecture/port-profile-init-hld.md
+- docs/system/sonic-dynamic-port-breakout-feature-high-level-design.md
+- docs/architecture/sonic-port-auto-negotiation-design.md
+- docs/architecture/sonic-port-link-training-design.md
+- docs/architecture/sonic-port-auto-fec-design.md
+- docs/platform/sonic-port-fec-ber.md
+- docs/platform/fec-flr-support-in-sonic.md
+- docs/platform/sonic-fast-link-up.md
+- docs/platform/sonic-sfp-refactoring.md
+- docs/management/enhancement-of-cmis-module-management.md
+- docs/platform/cmis-and-c-cmis-support-for-zr.md
+- docs/platform/custom-si-settings-for-cmis-modules.md
+- docs/system/transceiver-and-sensor-monitoring-hld.md
+- docs/platform/sonic-thermal-control-design.md
+- docs/platform/thermal-control-test-plan.md
+- docs/platform/liquid-cooling-leakage-detection-in-sonic.md
+- docs/platform/sonic-psu-daemon-design.md
+- docs/architecture/ssdhealth-design.md
+- docs/system/sonic-storage-monitoring-daemon-design.md
+- docs/platform/pcieinfo-design.md
+- docs/system/sonic-pcie-monitoring-services-hld.md
+- docs/platform/media-based-port-settings-in-sonic.md
+- docs/platform/sonic-dynamic-gearbox-tuning-design-plan.md
+- docs/platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md
+- docs/platform/enhanced-lpo-debug-registers-hld.md
+- docs/platform/s3ip-sysfs-specification.md
+- docs/architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md
+- docs/platform/support-bmc-flows-in-sonic.md
+- docs/system/sonic-bmc-platform-management-monitoring.md
+- docs/platform/1-6t-support-in-sonic.md
+- docs/platform/sonic-port-naming-convention-change.md
+- docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
+- docs/platform/sonic-fw-utility.md
+- docs/platform/platform-capability-file-enhancement.md
+- docs/reference/cli/config-interface.md
+- docs/reference/cli/config-platform-firmware.md
+- docs/reference/cli/show-platform.md
+- docs/reference/config-db/port.md
+- docs/reference/yang/sonic-port.md
 keywords:
-  - Platform
-  - Port
-  - Optics
-  - PHY
-  - transceiver
-  - xcvrd
-  - pmon
-  - port breakout
-  - SFP
-  - QSFP
+- Platform
+- Port
+- Optics
+- PHY
+- transceiver
+- xcvrd
+- pmon
+- port breakout
+- SFP
+- QSFP
+related:
+  cli:
+  - config qos
+  - show acl
+  - show platform
+  - config acl
+  - config snmp
+  - show interfaces
+  - config interface
+  config_db:
+  - PORT
+  - ACL_RULE
+  - ACL_TABLE
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - BREAKOUT_CFG
+  - DEVICE_METADATA
+  yang:
+  - sonic-snmp
+  - sonic-port
+  - sonic-lldp
+  - sonic-portchannel
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # Platform / Port / Optics / PHY

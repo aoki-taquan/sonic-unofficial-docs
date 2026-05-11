@@ -1,19 +1,44 @@
 ---
 title: リファレンス横断索引
-description: "リファレンス横断索引 — この章は、docs/reference/ 配下に集めた CLI / CONFIG_DB / YANG の辞書ページと、Phase B で新設された機能章 (docs/topics/) との間を行き来するための索引である。"
+description: リファレンス横断索引 — この章は、docs/reference/ 配下に集めた CLI / CONFIG_DB / YANG の辞書ページと、Phase B で新設された機能章 (docs/topics/) との間を行き来するための索引である。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 keywords:
-  - Reference
-  - 横断索引
-  - リファレンス
-  - CLI
-  - CONFIG_DB
-  - YANG
-  - HLD
-  - ナビゲーション
+- Reference
+- 横断索引
+- リファレンス
+- CLI
+- CONFIG_DB
+- YANG
+- HLD
+- ナビゲーション
+related:
+  cli:
+  - config bgp
+  - config interface
+  - config vlan
+  - show ip
+  - config platform firmware
+  - config qos
+  - config vnet
+  config_db:
+  - CRM
+  - PORT
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - VRF
+  - ACL_TABLE
+  yang:
+  - sonic-bgp-neighbor
+  - sonic-vrf
+  - sonic-bgp-global
+  - sonic-crm
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-bbr
+  - sonic-bgp-device-global
 ---
 
 # リファレンス横断索引

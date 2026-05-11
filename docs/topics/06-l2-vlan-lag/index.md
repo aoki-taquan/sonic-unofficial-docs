@@ -1,54 +1,79 @@
 ---
 title: L2 / VLAN / LAG / MC-LAG
-description: "L2 / VLAN / LAG / MC-LAG — この章は、SONiC を L2 switch として読むときに最初に迷う「VLAN、VLAN interface、switchport、sub-port、LAG、MC-LAG はどの順番で理解すればよいか」を整理する入口です。"
+description: L2 / VLAN / LAG / MC-LAG — この章は、SONiC を L2 switch として読むときに最初に迷う「VLAN、VLAN interface、switchport、sub-port、LAG、MC-LAG はどの順番で理解すればよいか」を整理する入口です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/switching/layer-2-forwarding-enhancements.md
-  - docs/switching/sonic-basic-l2-mode-test-plan.md
-  - docs/switching/switch-port-modes-and-vlan-cli-enhancement.md
-  - docs/switching/mclag-enhancements.md
-  - docs/switching/brief-introduction-of-iccp-code.md
-  - docs/switching/multiple-spanning-tree-protocol.md
-  - docs/switching/sonic-ip-lag-incremental-update.md
-  - docs/reference/cli/config-vlan.md
-  - docs/reference/cli/config-portchannel.md
-  - docs/reference/cli/config-interface.md
-  - docs/reference/config-db/vlan.md
-  - docs/reference/config-db/vlan-member.md
-  - docs/reference/config-db/vlan-interface.md
-  - docs/reference/config-db/vlan-sub-interface.md
-  - docs/reference/config-db/portchannel.md
-  - docs/reference/config-db/portchannel-member.md
-  - docs/reference/config-db/portchannel-interface.md
-  - docs/reference/config-db/port.md
-  - docs/reference/config-db/interface.md
-  - docs/reference/yang/sonic-vlan.md
-  - docs/reference/yang/sonic-vlan-sub-interface.md
-  - docs/reference/yang/sonic-portchannel.md
-  - docs/reference/yang/sonic-port.md
-  - docs/architecture/sonic-sub-port-interface-high-level-design.md
-  - docs/platform/sonictpidsettinghld1.md
-  - docs/reference/cli/show-vlan.md
-  - docs/reference/cli/show-mclag.md
-  - docs/switching/sonic-bum-storm-control.md
-  - docs/switching/link-event-damping-hld.md
-  - docs/switching/openconfig-support-for-portchannel-aggregate-interface.md
-  - docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md
-  - docs/switching/lag-on-distributed-voq-system.md
-  - docs/switching/wake-on-lan-in-sonic.md
+- docs/switching/layer-2-forwarding-enhancements.md
+- docs/switching/sonic-basic-l2-mode-test-plan.md
+- docs/switching/switch-port-modes-and-vlan-cli-enhancement.md
+- docs/switching/mclag-enhancements.md
+- docs/switching/brief-introduction-of-iccp-code.md
+- docs/switching/multiple-spanning-tree-protocol.md
+- docs/switching/sonic-ip-lag-incremental-update.md
+- docs/reference/cli/config-vlan.md
+- docs/reference/cli/config-portchannel.md
+- docs/reference/cli/config-interface.md
+- docs/reference/config-db/vlan.md
+- docs/reference/config-db/vlan-member.md
+- docs/reference/config-db/vlan-interface.md
+- docs/reference/config-db/vlan-sub-interface.md
+- docs/reference/config-db/portchannel.md
+- docs/reference/config-db/portchannel-member.md
+- docs/reference/config-db/portchannel-interface.md
+- docs/reference/config-db/port.md
+- docs/reference/config-db/interface.md
+- docs/reference/yang/sonic-vlan.md
+- docs/reference/yang/sonic-vlan-sub-interface.md
+- docs/reference/yang/sonic-portchannel.md
+- docs/reference/yang/sonic-port.md
+- docs/architecture/sonic-sub-port-interface-high-level-design.md
+- docs/platform/sonictpidsettinghld1.md
+- docs/reference/cli/show-vlan.md
+- docs/reference/cli/show-mclag.md
+- docs/switching/sonic-bum-storm-control.md
+- docs/switching/link-event-damping-hld.md
+- docs/switching/openconfig-support-for-portchannel-aggregate-interface.md
+- docs/switching/add-support-for-vlan-interface-using-openconfig-yang.md
+- docs/switching/lag-on-distributed-voq-system.md
+- docs/switching/wake-on-lan-in-sonic.md
 keywords:
-  - L2
+- L2
+- VLAN
+- LAG
+- MC-LAG
+- teamd
+- LACP
+- bridge
+- FDB
+- MAC learning
+related:
+  cli:
+  - config vlan
+  - config portchannel
+  - show vlan
+  - config interface
+  - show arp
+  - show interfaces
+  - show mclag
+  config_db:
   - VLAN
-  - LAG
-  - MC-LAG
-  - teamd
-  - LACP
-  - bridge
-  - FDB
-  - MAC learning
+  - VLAN_INTERFACE
+  - PORTCHANNEL
+  - VLAN_MEMBER
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL_INTERFACE
+  - VLAN_SUB_INTERFACE
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-portchannel
+  - sonic-mclag
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-bbr
+  - sonic-bgp-global
 ---
 
 # L2 / VLAN / LAG / MC-LAG
