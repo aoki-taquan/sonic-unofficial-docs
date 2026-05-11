@@ -23193,6 +23193,8 @@
 <li><a href="setup/">Setup</a>: CLI と設定。<code>reboot</code> 系コマンド、warm restart enable、timer、blocking mode。</li>
 <li><a href="operations/">Operations</a>: 原因調査と失敗時の確認順。reboot-cause、LACP timeout、multi-ASIC、Warmboot Manager、SWSS warm restart。</li>
 <li><a href="upgrade/">Upgrade</a>: image lifecycle。<code>sonic-installer</code>、secure upgrade、Debian cadence、versioning、DPU independent upgrade。</li>
+<li><a href="internals/">内部実装 / Internals</a>: warm reboot で SWSS / orchagent / syncd が保持する state の構造と、SAI view switching を実装側から見る。</li>
+<li><a href="advanced/">発展トピック / Advanced</a>: express boot、multi-ASIC warmboot、SmartSwitch / DPU の独立アップグレード、他章との境界。</li>
 </ol>
 <h2 id="_3">章内の境界<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>この章は「reboot または upgrade の実行時に、SONiC の状態をどう落とし、どう戻すか」を扱います。SmartSwitch の NPU/DPU アーキテクチャ全体、Multi-ASIC/VOQ chassis の通常運用、port/optics の bring-up は別章の主題です。ただし reboot lifecycle に直接関係する DPU reboot、DPU graceful shutdown、multi-ASIC warm reboot はこの章でも扱います。</p>
