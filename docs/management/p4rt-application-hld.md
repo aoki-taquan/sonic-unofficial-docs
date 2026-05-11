@@ -271,7 +271,7 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は [
 <!-- ops-entry -->
 ## 運用入口
 
-この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / [YANG](../reference/glossary.md#term-yang) / Runbook）を以下にまとめる。
 
 ### 関連 CONFIG_DB
 
@@ -282,3 +282,5 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は [
 - [pins-grpc-unresponsive](../reference/runbooks/pins-grpc-unresponsive.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: d5320e852f7a -->

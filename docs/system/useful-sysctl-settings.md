@@ -246,4 +246,17 @@ sysctl net.ipv4.tcp_l3mdev_accept
 
 [^1]: `sonic-net/sonic-frr` `doc/user/Useful_Sysctl_Settings.md` @ `799f47f215e4266063c4ebde0041a0c7dd2d11d0`
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`show arp` CLI リファレンス](../reference/cli/show-arp.md)
+- [`config vrf` CLI リファレンス](../reference/cli/config-vrf.md)
+- [`config bgp` CLI リファレンス](../reference/cli/config-bgp.md)
+- [`show bgp` CLI リファレンス](../reference/cli/show-bgp.md)
+- [`VRF` CONFIG_DB スキーマ](../reference/config-db/vrf.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 3ded3a99de10 -->

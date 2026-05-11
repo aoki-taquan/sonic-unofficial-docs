@@ -30,7 +30,7 @@ related:
 
 # ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）
 
-読み手が真っ先に知りたいのは「SONiC の [ACL](../reference/glossary.md#term-acl) はどの単位で書き、どこを経由して TCAM に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。
+読み手が真っ先に知りたいのは「SONiC の [ACL](../reference/glossary.md#term-acl) はどの単位で書き、どこを経由して [TCAM](../reference/glossary.md#term-tcam) に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。
 
 ## ACL はどの単位で書くのか
 
@@ -183,4 +183,4 @@ CLI 一覧:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 53f5206a8a22 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

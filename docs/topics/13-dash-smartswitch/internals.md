@@ -168,7 +168,7 @@ NPU 側 CONFIG_DB / APPL_DB:
 - DASH SAI は **experimental** に分類され、SAI ABI が安定していない。DPU SDK の更新で SONiC 側の sai header 同期が必要。
 - ENI 数の上限はベンダ DPU の SDK 制約に依存。HLD 上は「数万 ENI」を想定するが、実機ベンチで上限が変わる。
 - HAMgrD と DashHaOrch / DashHaFlowOrch の通信は実装途中の箇所があり、failure scenario（DPU crash / link down / split brain）のカバレッジは limited。`discrepancy-found` ページに詳細を記録。
-- NPU 側 ENI_REDIRECT ACL は ENI 数に比例して ACL rule 数が増えるため、NPU の TCAM 上限を超える可能性がある。`SAI_ACL_TABLE_ATTR_SIZE` の事前確認が必要。
+- NPU 側 ENI_REDIRECT ACL は ENI 数に比例して ACL rule 数が増えるため、NPU の [TCAM](../../reference/glossary.md#term-tcam) 上限を超える可能性がある。`SAI_ACL_TABLE_ATTR_SIZE` の事前確認が必要。
 - DASH prefix tag の Stage 1（SWSS 展開）は ACL rule 数を `タグメンバ数 × ルール数` に膨らませる。Stage 2（SAI ネイティブ）の計画はあるが未着手。
 - per-DPU redis / orchagent は `featured` で起動し、DPU instance の crash 時に NPU 側の `pmon` が detect → restart する設計だが、HA 切替と orchagent restart の競合は HLD 範囲外。
 
@@ -180,4 +180,4 @@ NPU 側 CONFIG_DB / APPL_DB:
 - [DASH ACL タグ](../../acl-qos/dash-acl-tags.md)
 - [SmartSwitch HAMgrD 設計](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md)
 
-<!-- glossary-links-injected: 1c002d86094a -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

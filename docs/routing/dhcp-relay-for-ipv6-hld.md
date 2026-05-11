@@ -230,4 +230,17 @@ CLI 操作後は `Restarting DHCP relay service...` と表示され、コンテ�
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config vlan dhcp_relay add` CLI リファレンス](../reference/cli/config-vlan.md)
+- [`config vlan dhcp_relay del` CLI リファレンス](../reference/cli/config-vlan.md)
+- [`show vlan brief` CLI リファレンス](../reference/cli/show-vlan.md)
+- [`config vlan` CLI リファレンス](../reference/cli/config-vlan.md)
+- [`show vlan` CLI リファレンス](../reference/cli/show-vlan.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 8edad9eaadfa -->

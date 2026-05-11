@@ -113,7 +113,7 @@ VS でも [Redis](../../reference/glossary.md#term-redis) pub/sub の経路は�
 
 ## 既知の実装上の制約
 
-- VS は **packet forwarding の datapath が Linux kernel** で、ASIC の能力（hardware tracing、bulk counter、SAI 拡張属性、TCAM 上限）は再現しない。
+- VS は **packet forwarding の datapath が Linux kernel** で、ASIC の能力（hardware tracing、bulk counter、SAI 拡張属性、[TCAM](../../reference/glossary.md#term-tcam) 上限）は再現しない。
 - ACL / mirror / WRED / [PFC](../../reference/glossary.md#term-pfc) / [SRv6](../../reference/glossary.md#term-srv6) / [NAT](../../reference/glossary.md#term-nat) は VS では「設定は受理されるが効果なし」になることが多い。動作確認は実機 / SimX が必要。
 - VS image は `make PLATFORM=vs` で生成され、`onie-installer-vs.bin` または `sonic-vs.img` を libvirt / qemu で起動。boot だけで 1〜2 分かかる。
 - PTF は veth 経由で SONiC-VS と接続するが、veth の MTU / VLAN / offload 設定によっては想定外の動作になる。`ethtool -K` で TX/RX checksum を無効化する運用がある。
@@ -161,4 +161,4 @@ VS test plan に書かれているテストでも、CI 側で実行対象にな�
 
 このページが `verification: meta` なのは、lab / 開発者ワークフローは「実装の状態」ではなく「複数 HLD への横断ガイド」だからです。SAI VS / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) / PTF / KNE / Alpine それぞれに別途 `code-verified` ページがあり、ここで重複して裏取りする必要はありません。サブ章で言及するコンポーネント別の挙動裏取りは、リンク先の章を参照してください。
 
-<!-- glossary-links-injected: eb5486859daf -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

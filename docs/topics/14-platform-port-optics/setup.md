@@ -136,7 +136,7 @@ show interfaces counters errors Ethernet8
 
 ## 設定シナリオ 3: platform firmware のステージング更新
 
-`fw-util` は装置上で BIOS / CPLD / FPGA / SSD / optics を統一して扱います。本番投入前に「DUT 上に新 firmware を仕込み、次回 cold reboot で適用する」というステージング運用が典型です。
+`fw-util` は装置上で BIOS / CPLD / [FPGA](../../reference/glossary.md#term-fpga) / SSD / optics を統一して扱います。本番投入前に「DUT 上に新 firmware を仕込み、次回 cold reboot で適用する」というステージング運用が典型です。
 
 ```bash
 # 現状
@@ -169,7 +169,7 @@ Chassis1   N/A       SSD          2024.1        Internal SSD
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | `config interface breakout` が `Not supported on this platform` で失敗 | `platform.json` / capability に該当 mode が無い | `show platform inventory` と `platform.json` の `breakout_modes` を確認、ベンダー提供版を入手 |
-| `config interface speed 400000` が `SAI_STATUS_INVALID_ATTR_VALUE_0` でログに残る | ASIC は対応していても SerDes / FEC 組合せが NG | `port_config.ini` / `media_settings.json` で許可された組合せを確認 |
+| `config interface speed 400000` が `SAI_STATUS_INVALID_ATTR_VALUE_0` でログに残る | ASIC は対応していても [SerDes](../../reference/glossary.md#term-serdes) / FEC 組合せが NG | `port_config.ini` / `media_settings.json` で許可された組合せを確認 |
 | 子ポートが Oper down のまま | 対向側のブレイクアウトモード不一致、または FEC 不一致 | 対向の `show int status` と FEC をそろえる |
 | `show int transceiver eeprom` が空 | SFP I2C エラー / `xcvrd` 未起動 | `docker logs pmon`、`xcvrd` のステータスを確認 |
 | `fw-util` が `policy next` 後も適用されない | warm reboot を使った / power cycle が必要な component | component の reboot 要件を `platform_components.json` で確認、`cold reboot` で再試行 |
@@ -244,4 +244,4 @@ ASIC や platform が「何ができるか」を宣言する capability ファ�
 - [SONiC fw-utility](../../platform/sonic-fw-utility.md)
 - [platform capability file enhancement](../../platform/platform-capability-file-enhancement.md)
 
-<!-- glossary-links-injected: dde81be76b4f -->
+<!-- glossary-links-injected: 7d8aa76d140c -->

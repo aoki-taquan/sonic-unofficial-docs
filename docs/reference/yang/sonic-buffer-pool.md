@@ -61,9 +61,9 @@ module: sonic-buffer-pool
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/name` | `string` | yes |  |  | Buffer Pool name |
-| `type` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/type` | `enumeration` | yes |  | ingress, egress, both | Buffer Pool Type |
-| `mode` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/mode` | `enumeration` | yes |  | static, dynamic | Buffer Pool Mode |
+| `name` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/name` | `string` | yes |  |  | [Buffer Pool](../../reference/glossary.md#term-buffer-pool) name |
+| `type` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/type` | `enumeration` | yes |  | ingress, egress, both | [Buffer Pool](../../reference/glossary.md#term-buffer-pool) Type |
+| `mode` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/mode` | `enumeration` | yes |  | static, dynamic | [Buffer Pool](../../reference/glossary.md#term-buffer-pool) Mode |
 | `size` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/size` | `uint64` |  |  |  | Buffer Pool Size (in Bytes) |
 | `xoff` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/xoff` | `uint64` |  | 0 |  | Buffer Pool Xoff Threshold (in Bytes) |
 | `percentage` | `sonic-buffer-pool/BUFFER_POOL/BUFFER_POOL_LIST/percentage` | `uint8` |  |  |  | Buffer Pool percentage. The buffer pool size will be available_buffer * percentage / 100 if percentage is provided. It is valid in dynamic buffer model only. |
@@ -119,4 +119,4 @@ show buffer pool persistent-watermark
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 3c041e3316da -->

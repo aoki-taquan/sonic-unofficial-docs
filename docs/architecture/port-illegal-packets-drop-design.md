@@ -208,4 +208,17 @@ snmpwalk -v2c -c <community> <switch> ifInErrors
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`config interface` CLI リファレンス](../reference/cli/config-interface.md)
+- [`config snmp` CLI リファレンス](../reference/cli/config-snmp.md)
+- [`config vlan` CLI リファレンス](../reference/cli/config-vlan.md)
+- [`show vlan` CLI リファレンス](../reference/cli/show-vlan.md)
+- [`SNMP` CONFIG_DB スキーマ](../reference/config-db/snmp.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 21d98f8b47d2 -->

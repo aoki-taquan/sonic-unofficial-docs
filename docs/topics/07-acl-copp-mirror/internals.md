@@ -140,7 +140,7 @@ ASIC_DB:
 
 ## 既知の実装上の制約
 
-- ACL の **stage / bind point / action / field** の組み合わせは ASIC の TCAM レイアウト依存で、HLD で書ける組み合わせでも `STATE_DB:SWITCH_CAPABILITY` で許されていないと無効。capability が公開されていない ASIC では確認が困難。
+- ACL の **stage / bind point / action / field** の組み合わせは ASIC の [TCAM](../../reference/glossary.md#term-tcam) レイアウト依存で、HLD で書ける組み合わせでも `STATE_DB:SWITCH_CAPABILITY` で許されていないと無効。capability が公開されていない ASIC では確認が困難。
 - `MIRROR_EGRESS` action はベンダ依存が大きく、`MIRROR_INGRESS` のみ実装で `MIRROR_EGRESS` 未対応の ASIC では egress mirror が黙って ingress mirror に倒れる discrepancy が報告されている。
 - CoPP の queue / policer 設定は `copp_cfg.json` のテンプレートに依存し、[CONFIG_DB](../../reference/glossary.md#term-config_db) の動的変更が即時反映されない経路がある（`hostcfgd` 経由のものは reload が必要）。
 - ACL counter は ASIC によって entry per counter か rule per counter かが分かれ、SONiC は両方を抽象化するが、counter clear / reset の挙動が ASIC で違う。
@@ -152,4 +152,4 @@ ASIC_DB:
 - [Egress Outer DSCP 書換 ACL](../../acl-qos/egress-outer-dscp-change-table.md)
 - [Packet Trimming](../../architecture/sonic-packet-trimming.md)
 
-<!-- glossary-links-injected: c4fe9e359764 -->
+<!-- glossary-links-injected: 4d9f23481e68 -->

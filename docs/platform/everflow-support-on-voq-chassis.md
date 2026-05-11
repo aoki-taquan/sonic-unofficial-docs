@@ -229,4 +229,17 @@ HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC �
 
 <!-- /topics-back-ref -->
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`MIRROR_SESSION` CONFIG_DB スキーマ](../reference/config-db/mirror-session.md)
+- [`VOQ_INBAND_INTERFACE` CONFIG_DB スキーマ](../reference/config-db/voq-inband-interface.md)
+- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
+- [`PORT_STORM_CONTROL` CONFIG_DB スキーマ](../reference/config-db/port-storm-control.md)
+- [`PORT_QOS_MAP` CONFIG_DB スキーマ](../reference/config-db/port-qos-map.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 74c72b83304f -->

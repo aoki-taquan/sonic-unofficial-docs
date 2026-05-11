@@ -211,4 +211,15 @@ sonic-cfggen -a '{"SYSTEM_DEFAULTS": {"tunnel_qos_remap": {"status": "enabled"}}
 
 HLD と実装は一致。`code-verified` に昇格。
 
+
+## 参考リンク
+
+本ページに関連する参照ドキュメント:
+
+- [`SYSTEM_DEFAULTS` CONFIG_DB スキーマ](../reference/config-db/system-defaults.md)
+- [`DEVICE_METADATA` CONFIG_DB スキーマ](../reference/config-db/device-metadata.md)
+- [`sonic-system-defaults` YANG モジュール](../reference/yang/sonic-system-defaults.md)
+
+<!-- augmented-links: v1 -->
+
 <!-- glossary-links-injected: 20dbc11976b6 -->

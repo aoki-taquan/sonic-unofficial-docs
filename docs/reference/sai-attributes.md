@@ -76,7 +76,7 @@ SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossa
 | `SAI_PORT_ATTR_OPER_STATUS` | 物理リンク状態 (RO) | `PortsOrch` |
 | `SAI_PORT_ATTR_SPEED` / `OPER_SPEED` | 速度設定 / 実効値 | `PortsOrch` (`PORT\|speed`) |
 | `SAI_PORT_ATTR_MTU` | L2 MTU | `PortsOrch` (`PORT\|mtu`) |
-| `SAI_PORT_ATTR_HW_LANE_LIST` | SerDes lane | `PortsOrch` (`PORT\|lanes`) |
+| `SAI_PORT_ATTR_HW_LANE_LIST` | [SerDes](../reference/glossary.md#term-serdes) lane | `PortsOrch` (`PORT\|lanes`) |
 | `SAI_PORT_ATTR_FEC_MODE` / `OPER_PORT_FEC_MODE` | FEC | `PortsOrch` (`PORT\|fec`) |
 | `SAI_PORT_ATTR_AUTO_NEG_MODE` | AN | `PortsOrch` (`PORT\|autoneg`) |
 | `SAI_PORT_ATTR_ADVERTISED_SPEED` / `ADVERTISED_FEC_MODE` / `ADVERTISED_AUTO_NEG_MODE` | AN 広告 | `PortsOrch` |
@@ -371,4 +371,4 @@ SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossa
 - [sonic-net/sonic-swss `orchagent/`](https://github.com/sonic-net/sonic-swss/tree/master/orchagent) — `SAI_*_ATTR_*` の全件 grep より抽出
 - SAI ヘッダ本体: [sonic-net/SAI](https://github.com/sonic-net/SAI) の `inc/sai*.h`
 
-<!-- glossary-links-injected: 31fc35d7a539 -->
+<!-- glossary-links-injected: 710f941d149a -->

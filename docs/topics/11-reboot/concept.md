@@ -159,7 +159,7 @@ warm reboot と「container restart + warm restart 機能」は混同しやす�
 - 「BGP GR 対応 peer に対しては warm reboot、GR 未対応 peer も含む場合は fast reboot」のような選択を、root cause から説明できる
 - warm reboot 前に `show warm_restart config` で feature ごとの restart timer を確認する必要性が分かる
 - 起動後の `show warm_restart state` で stuck している daemon を特定し、reboot finalizer がなぜ終了しないかの当たりがつく
-- express reboot は platform-specific であり、自前 platform で動かない場合の原因（ASIC SDK / SAI 拡張 / fast-reboot script の patch）まで遡れる
+- express reboot は platform-specific であり、自前 platform で動かない場合の原因（[ASIC SDK](../../reference/glossary.md#term-asic-sdk) / SAI 拡張 / fast-reboot script の patch）まで遡れる
 - service warm restart と warm reboot の関係を「同じ DB backup / restore の枠組みを、対象範囲を変えて再利用している」と整理して説明できる
 
 ## 関連ページ
@@ -178,4 +178,4 @@ warm reboot と「container restart + warm restart 機能」は混同しやす�
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: 4d61b14993eb -->
+<!-- glossary-links-injected: ad4074e0b684 -->

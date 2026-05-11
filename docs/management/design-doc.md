@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-DualToR の **active-active** 構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で **forwarding state** が動的に切り替わる。SONiC 側の `linkmgrd` / `ycabled` から SoC 上のステートマシンへ RPC で問い合わせ・設定するために **gRPC client daemon** を PMON コンテナ内に置く設計[^1]。
+DualToR の **active-active** 構成では、HOST → [FPGA](../reference/glossary.md#term-fpga) → SoC（外部のサブシステム）の経路で **forwarding state** が動的に切り替わる。SONiC 側の `linkmgrd` / `ycabled` から SoC 上のステートマシンへ RPC で問い合わせ・設定するために **gRPC client daemon** を PMON コンテナ内に置く設計[^1]。
 
 採用理由として gRPC の利点[^1]:
 
@@ -223,4 +223,4 @@ docker logs pmon 2>&1 | grep -i grpc
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 919c144ee0ee -->
+<!-- glossary-links-injected: d12a6eddadee -->
