@@ -14,34 +14,36 @@ related:
 ---
 
 !!! success "裏取りステータス: code-verified"
-    実装裏取り済み（下記コード位置）。thermalctld: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld (POLICY_FILE = /usr/share/sonic/platform/thermal_policy.json:1291) / ThermalBase / FanBase: sonic-platform-common/sonic_platform_base/{thermal_base.py,fan_base.py,fan_drawer_base.py,sonic_thermal_control/} で確認。
+    実装裏取り済み。`thermalctld`: `sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld`（`POLICY_FILE = /usr/share/sonic/platform/thermal_policy.json:1291`）/ `ThermalBase` / `FanBase`: `sonic-platform-common/sonic_platform_base/{thermal_base.py,fan_base.py,fan_drawer_base.py,sonic_thermal_control/}`。
 
 # Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御）
 
-## 概要
+## 何のための daemon か
 
-Thermal Control は switch を適温に保つために cooling device（主に fan）を制御する仕組み[^1]:
+switch を適温に保つために cooling device（主に fan）を制御する 2 階建ての仕組み[^1]:
 
-1. **thermal device monitoring**: CPU / ASIC / 光モジュール / PSU 等の温度と fan の running status を周期 poll して `STATE_DB` に保存
-2. **thermal control management**: 取得した温度・fan 状態と **ポリシー** を突合し、PWM の調整やアラート / syslog を発する
+1. **thermal device monitoring**: CPU / ASIC / 光モジュール / PSU 等の温度と fan running status を周期 poll し `STATE_DB` に保存
+2. **thermal control management**: 取得値と **ポリシー** を突合し、PWM 調整・アラート・syslog を発する
 
-ベンダ独自のアルゴリズムが kernel 等で動いている場合は SONiC 側の cooling device 制御を **disable** にして、監視のみ行うこともできる[^1]。
+ベンダ独自アルゴリズムが kernel / BMC 等で動く場合は SONiC 側制御を **disable** にして監視のみも可[^1]。
 
-## 動作仕様
+## どんな platform API を使うか
 
-### platform API（`ThermalBase`）
-
-ThermalBase() クラスが温度センサを抽象化[^1]:
+### `ThermalBase`（温度センサ抽象）
 
 | メソッド | 用途 |
 |----------|------|
 | `get_temperature()` | 現在値 |
-| `get_high_threshold()` / `get_critical_high_threshold()` | 高温側しきい値 |
-| `get_low_threshold()` / `get_critical_low_threshold()` | 低温側しきい値 |
+| `get_high_threshold()` / `get_critical_high_threshold()` | 高温側 |
+| `get_low_threshold()` / `get_critical_low_threshold()` | 低温側 |
 
-しきい値超過 → `warning_status = true` を STATE_DB に書き、syslog 出力。
+しきい値超過 → `warning_status=true` を STATE_DB に書き syslog 出力[^1]。
 
-### STATE_DB スキーマ
+### `FanBase`（fan 抽象）
+
+`get_speed()` / `set_speed()` / `get_target_speed()` / `get_presence()` 等で PWM 制御と冗長監視を行う。
+
+## どこに値が出るか（STATE_DB）
 
 ```
 TEMPERATURE_INFO|<object_name>
@@ -52,40 +54,33 @@ TEMPERATURE_INFO|<object_name>
   low_threshold           = float
   critical_low_threshold  = float
   warning_status          = bool
-```
 
-`object_name` は `cpu_core_0` / `asic` / `psu_2` のように **device_name + index** 形式[^1]。
-
-```
 FAN_INFO|<fan_name>
   drawer_name      = string
   presence         = bool
   model / serial   = string
   status           = bool
-  direction        = string         # F2B / B2F 等
-  speed            = int            # 現在 RPM 比
-  speed_target     = int            # 目標
+  direction        = string     # F2B / B2F 等
+  speed            = int        # 現在 RPM 比
+  speed_target     = int
   speed_tolerance  = int
   led_status       = string
-  timestamp        = string
 ```
 
-### Polling 周期
+`object_name` は `cpu_core_0` / `asic` / `psu_2` のように **device_name + index**。温度の推奨 poll 間隔は **60 秒**（短期変動が小さいため）[^1]。
 
-温度は 60 秒間隔を推奨[^1]（短期間で大きく変動しないため）。fan は別途 poll される。
+## ポリシーの例
 
-### ポリシー例
-
-HLD で例示されている代表ポリシー[^1]:
+HLD で例示されている代表ケース[^1]:
 
 - PSU 1 個が未挿入 → PWM 100%
 - FAN drawer 未挿入 / tachometer 故障 → PWM 100%
-- thermal control 機能が disable → PWM 60% 固定
-- 一定温度を超えたら **shutdown 系** を発動するベンダ実装も典型
+- thermal control disable → PWM 60% 固定
+- 一定温度超過 → shutdown 系発動（ベンダ依存）
 
-ポリシー実装はベンダ specific が許容される。kernel / BMC でやる場合は SONiC daemon 側の制御 loop を OFF にする。
+ポリシー実装はベンダ specific 許容。kernel / BMC でやる場合は SONiC daemon の制御 loop を OFF にする。
 
-### Fan / 温度の不一致時のログ例
+### Syslog 出力例
 
 ```
 High temperature warning: PSU 1 current temperature 85C, high threshold 80C
@@ -94,7 +89,7 @@ Fan removed warning: Fan 1 was removed from the system, potential overheat hazar
 Fan removed warning cleared: Fan 1 was inserted.
 ```
 
-これらは syslog 経由で event-driven 監視 / techsupport にも乗る。
+event-driven 監視 / techsupport にも乗る。
 
 ### コンポーネント関係
 
@@ -120,41 +115,29 @@ excerpt: |
 reasoning: ベンダ実装と SONiC 共通実装の境界、ポリシー例の根拠。
 -->
 
-## 設定
+## 設定 / CLI
 
-### 関連する CONFIG_DB
-
-該当なし。policy はベンダ JSON / コードに置かれ、CONFIG_DB ではない[^1]。
-
-### 関連する CLI
-
-HLD は CLI を明示しないが、典型的には `show platform temperature` / `show platform fan` 等で STATE_DB の値を取り出す。詳細は HLD では未確認のため列挙しない。
-
-### 設定例
+CONFIG_DB スキーマは無し。policy はベンダの `/usr/share/sonic/device/$PLATFORM/thermal_policy.json` 等で配布される。CLI は HLD で明示されないが、典型的には `show platform temperature` / `show platform fan` で STATE_DB 値を取り出す。
 
 ```bash
-# 温度・fan 状態の確認
 redis-cli -n 6 KEYS "TEMPERATURE_INFO|*"
 redis-cli -n 6 HGETALL "TEMPERATURE_INFO|asic"
 redis-cli -n 6 HGETALL "FAN_INFO|fan1"
-
-# 警告ログ
-journalctl | grep -i "high temperature warning\|fan removed"
+journalctl | grep -iE "high temperature warning|fan removed"
 ```
 
 ## 制限事項
 
-- **ベンダ依存**: 具体的な thermal algorithm や PWM 制御は ASIC / chassis ごとに異なり、共通実装は限定的
-- HLD は **Rev 0.3 で日付欄空欄**[^1]。改訂時期不明。`pmon-enhancement-design.md` の FAN テーブル等と相互参照
-- thermal control disable 時は SONiC 側で fan 速度を一定（60%）に固定するだけ
-- 光モジュール温度は xcvrd 側でも取得しているが、本 HLD のテーブルとの統合経路は明示なし
+- 具体的な thermal algorithm / PWM 制御は ASIC / chassis 依存で共通実装は限定的
+- HLD は Rev 0.3 で日付欄空欄。改訂時期不明
+- thermal control disable 時は SONiC 側は fan 速度を 60% 固定するだけ
+- 光モジュール温度は xcvrd 側でも取得しており、本 HLD テーブルとの統合経路は未明示
 
 ## 干渉する機能
 
-- **PMON enhancement design**: FAN_INFO / PSU_INFO の table フォーマット定義は別 HLD（`doc/pmon/pmon-enhancement-design.md`）に依拠
-- **xcvrd / 光モジュール温度**: 同じ device の温度を 2 経路で取り得る
-- **fancontrol（旧 lm-sensors 由来）**: SONiC は基本これを置換するが、ベンダ実装次第
-- **system health monitoring / system-ready**: 重大温度・fan 異常はシステム ready 判定に影響
+- **PMON enhancement design**: `FAN_INFO` / `PSU_INFO` table フォーマットは別 HLD（`doc/pmon/pmon-enhancement-design.md`）
+- **xcvrd / 光モジュール温度**: 同一 device の温度が 2 経路で取得され得る
+- **system health / system-ready**: 重大温度・fan 異常は ready 判定に影響
 - **chassis platform management**: シャーシ全体での集約は別 HLD
 
 ## トラブルシューティング
@@ -165,15 +148,18 @@ redis-cli -n 6 KEYS "TEMPERATURE_INFO|*" | while read k; do
   redis-cli -n 6 HGET "$k" warning_status | grep -q true && echo "$k WARN"
 done
 
-# fan が target 速度に達しているか
+# fan が target に達しているか
 redis-cli -n 6 HGETALL "FAN_INFO|fan1" | grep -E "speed|target|tolerance"
 
-# サブシステム
 docker exec pmon supervisorctl status thermalctld
-
-# policy ファイル
 ls /usr/share/sonic/device/$PLATFORM/thermal_policy.json 2>/dev/null
 ```
+
+## 関連 Topics
+
+- [Topics 14 Platform / Port / Optics - operations](../topics/14-platform-port-optics/operations.md)
+- [Topics 14 Platform / Port / Optics - internals](../topics/14-platform-port-optics/internals.md)
+- 関連 HLD: [PSU daemon](sonic-psu-daemon-design.md) / [Liquid cooling leakage detection](liquid-cooling-leakage-detection-in-sonic.md)
 
 ## 引用元
 
