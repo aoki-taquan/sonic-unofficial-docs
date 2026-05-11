@@ -24038,6 +24038,7 @@
 <li><strong><a href="../../glossary/#term-vlan">VLAN</a>/MAC table の inconsistency</strong> — fdb の port が古く、<a href="../../glossary/#term-arp">ARP</a> は更新されても転送が誤る</li>
 <li><strong>proxy_arp 有効化による偽の応答</strong> — 別 host が応答を返している</li>
 </ol>
+<p><code>neighsyncd</code> が Netlink で Linux neighbor table の変化を監視して APPL_DB の <code>NEIGH_TABLE</code> を書き換え、<code>neighorch</code> がそれを SAI neighbor entry に変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Linux 側で STALE のまま残ると当然 ASIC 側も更新されない。</p>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../appdb-asicdb-sync-lag/">appdb-asicdb-sync-lag.md</a></li>
@@ -24045,6 +24046,15 @@
 <li><a href="../../cli/show-arp/">../cli/show-arp.md</a></li>
 </ul>
 <!-- glossary-links-injected: 6d8c847ef6bb -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-net/sonic-swss</code> <code>neighsyncd/neighsync.cpp</code> (Netlink → APPL_DB) と <code>orchagent/neighorch.cpp</code> (APPL_DB → SAI) の組合せ。MAC が変わったかどうかは Linux neighbor subsystem 側の判定に依存する。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

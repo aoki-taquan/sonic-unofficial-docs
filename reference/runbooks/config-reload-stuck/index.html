@@ -24069,6 +24069,7 @@
 <li>それでも詰まる場合は <code>sudo reboot</code>（fast-reboot ではなく完全 reboot）</li>
 <li>backup から <code>cp /etc/sonic/config_db.json.bak.* /etc/sonic/config_db.json</code> で巻き戻し</li>
 </ol>
+<p><code>config reload</code> の実装は <code>sonic-utilities</code> の <code>config/main.py</code> にあり、<code>stop services → load config_db → start services</code> の各段で待ち合わせる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../swss-orchagent-busy-loop/">swss-orchagent-busy-loop.md</a></li>
@@ -24077,6 +24078,15 @@
 <li><a href="../minigraph-reload-stuck/">minigraph-reload-stuck.md</a></li>
 </ul>
 <!-- glossary-links-injected: 1f4a6b7af56d -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-net/sonic-utilities</code> の <code>config/main.py</code> における <code>reload</code> コマンド実装。停止と起動の各サブステップが順次 systemd を叩くため、いずれか 1 つでも応答しなければ全体が hang する。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

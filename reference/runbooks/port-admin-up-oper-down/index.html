@@ -24035,6 +24035,7 @@
 <li><strong><a href="../../glossary/#term-sai">SAI</a> driver / FW のリンクトレーニング失敗</strong> — <code>syncd</code> ログに <code>link training failed</code></li>
 <li><strong>kernel netdev は up だが ASIC 側で down</strong> — host-side のみ up となる multi-asic 構成の罠</li>
 </ol>
+<p><code>portsorch</code> は CONFIG_DB の <code>PORT</code> 変更を SAI 属性 (<code>SAI_PORT_ATTR_ADMIN_STATE</code> 等) に変換して syncd へ渡し、<code>xcvrd</code> は EEPROM 読出し結果を STATE_DB の <code>TRANSCEIVER_INFO</code> に書き戻す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../asic-link-autoneg-mismatch/">asic-link-autoneg-mismatch.md</a></li>
@@ -24044,6 +24045,15 @@
 <li><a href="../../cli/show-interfaces/">../cli/show-interfaces.md</a></li>
 </ul>
 <!-- glossary-links-injected: 3c23d919b483 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-net/sonic-swss</code> <code>orchagent/portsorch.cpp</code> (CONFIG_DB → SAI mapping) と <code>sonic-net/sonic-platform-daemons</code> の <code>sonic-xcvrd</code> (SFP EEPROM 監視) が分担する。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

@@ -24032,6 +24032,7 @@
 <li><strong>中継機の LLDP BPDU フィルタ</strong> — DAC 直結ではなく Hub / Tap 経由で frame が間引かれる</li>
 <li><strong>port admin down/up の運用スクリプト</strong> — 監視スクリプトが LLDP-MED の都合で port toggle している</li>
 </ol>
+<p>SONiC の LLDP は専用 <code>docker-lldp</code> コンテナ内で <code>lldpd</code> を実行し、<code>lldp_syncd</code> が隣接情報を APPL_DB に書き出す構成のため、container の再起動や supervisord の異常もコントロールプレーン側 flap の原因になる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../link-flapping/">link-flapping.md</a></li>
@@ -24040,6 +24041,15 @@
 <li><a href="../../cli/show-lldp/">../cli/show-lldp.md</a></li>
 </ul>
 <!-- glossary-links-injected: 512d9ffb4e12 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-net/sonic-buildimage</code> <code>dockers/docker-lldp/</code> 配下の <code>Dockerfile</code>・<code>supervisord.conf</code>・<code>lldp_syncd.py</code>。<code>lldpd</code> 本体と <code>lldp_syncd</code> が別プロセスで動作し、いずれかが落ちると <code>show lldp table</code> の隣接が消える。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
