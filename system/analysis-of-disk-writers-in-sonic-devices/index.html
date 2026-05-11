@@ -23920,6 +23920,20 @@ excerpt: |
 reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md#L46-L65 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md#L46-L65 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>| jbd2 | Kernel journaling thread | 44% |
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>| vtysh | CLI for network protocols | 28% |
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>... vtysh: &quot;show bgp summary json&quot; repeatedly written to ~/.history_frr within BGP container due to bgpmon command repetition.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 主要 writer の比率と vtysh history 書込みの根因の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_5">推奨<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

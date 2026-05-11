@@ -23939,6 +23939,19 @@ excerpt: |
 reasoning: lossless PG は削除、それ以外は zero_profile という分担の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/qos/reclaim-reserved-buffer.md#L66-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/qos/reclaim-reserved-buffer.md#L66-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>- For lossless buffer priority groups, SONiC should remove them from SAI when the port is admin down.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>- For other buffer objects: Introduce a new type of buffer profiles - `zero profile`.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: lossless PG は削除、それ以外は zero_profile という分担の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>HLD 内で reclaim 専用の CLI 言及は無い。<code>config interface shutdown</code> / <code>startup</code> のフックとして buffer manager が自動で <code>zero_profile</code> を着脱する設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

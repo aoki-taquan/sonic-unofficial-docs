@@ -24042,6 +24042,21 @@ excerpt: |
 reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得る、という設計判断の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/voq/everflow.md#L75-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/voq/everflow.md#L75-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>This option can be implemented with minimal changes to SAI as long as a recycle port can be created.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>... mirrororch needs to use the recycle port as the mirror destination port and the router mac as the destination MAC address.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>... When the mirror destination port is a local port, it&#39;s recommended to recycle mirror packets too
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>for the following reasons: The implementation of mirrororch is simplified ... mirrored packets can be load-balanced
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得る、という設計判断の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="orchagent">対象 orchagent の責務<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24087,8 +24102,8 @@ reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得�
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>該当 YANG モジュールは HLD で言及されていない。</p>
 <h3 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># LC0 で everflow セッションを作成（destination は LC1 のポートに到達する IP）</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>Everflow1<span class="w"> </span><span class="m">10</span>.0.0.10<span class="w"> </span><span class="m">10</span>.0.0.11<span class="w"> </span>0x88be<span class="w"> </span>0x6<span class="w"> </span><span class="m">0</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># LC0 で everflow セッションを作成（destination は LC1 のポートに到達する IP）</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>Everflow1<span class="w"> </span><span class="m">10</span>.0.0.10<span class="w"> </span><span class="m">10</span>.0.0.11<span class="w"> </span>0x88be<span class="w"> </span>0x6<span class="w"> </span><span class="m">0</span>
 </span></code></pre></div>
 <p>VoQ chassis 上では同じ CLI で動くが、内部的には Option 1 or Option 2 で recycle 経由の経路が組まれる。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>

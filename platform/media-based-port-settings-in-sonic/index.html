@@ -23927,6 +23927,20 @@ excerpt: |
 reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/media-settings/Media-based-Port-settings.md#L24-L34 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/media-settings/Media-based-Port-settings.md#L24-L34 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>When a media is detected, the front panel port is identified and index number is derived.
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>First the global level is looked up ... If vendor key doesn&#39;t match, then media key
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>... A no-match on vendor and media keys will make the search fall back to individual port based block.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: GLOBAL → PORT、各内で Vendor → Media → Default の検索順の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
 <p>CLI / CONFIG_DB / YANG への追加は無し<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>media_settings.json</code> は image build 時に platform tree に同梱される静的 file。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>

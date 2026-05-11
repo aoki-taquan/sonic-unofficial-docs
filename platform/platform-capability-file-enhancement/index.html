@@ -23960,6 +23960,24 @@ excerpt: |
 reasoning: capabilities フィールドの仕様（controllable + 属性別 colors / minimum / maximum）と既定値 true の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/platform-json/platform_json_enhancement.md#L40-L49 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/platform-json/platform_json_enhancement.md#L40-L49 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>For each component&#39;s attribute, the defined `capabilities` fields are as follows:
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>- &quot;controllable&quot; : A boolean, &#39;true&#39; if the given attribute can be controlled from the NOS, &#39;false&#39; otherwise. Defaults to &#39;true&#39;.
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>- Attribute specific fields:
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    - status led - &quot;color&quot; - A list of the supported colors.
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    - speed
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        - &quot;minimum&quot; - Minimum recommended fan speed that can be set.
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        - &quot;maximum&quot; - Maximum recommended fan speed that can be set.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: capabilities フィールドの仕様（controllable + 属性別 colors / minimum / maximum）と既定値 true の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_5">想定ユースケース<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>status LED 色のバリデーション</strong>: ユーザが <code>config platform led set &lt;color&gt;</code> のような操作を試みた際、<code>platform.json</code> の <code>colors</code> リストに無い色なら CLI が拒否する。</li>

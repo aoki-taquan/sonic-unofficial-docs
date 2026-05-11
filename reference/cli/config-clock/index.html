@@ -23613,9 +23613,26 @@ excerpt: |
                           {'timezone': timezone})
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L9777-L9790 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L9777-L9790 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>@clock.command()
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>def timezone(timezone):
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    if timezone not in get_tzs(None, None, &#39;&#39;):
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        click.echo(f&#39;Timezone {timezone} does not conform format&#39;)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        sys.exit(1)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    config_db.mod_entry(swsscommon.CFG_DEVICE_METADATA_TABLE_NAME, &#39;localhost&#39;,
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>                        {&#39;timezone&#39;: timezone})
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="config-clock-date-date-time"><code>config clock date &lt;date&gt; &lt;time&gt;</code><a class="headerlink" href="#config-clock-date-date-time" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config clock date &lt;YYYY-MM-DD&gt; &lt;HH:MM:SS&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config clock date &lt;YYYY-MM-DD&gt; &lt;HH:MM:SS&gt;
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>

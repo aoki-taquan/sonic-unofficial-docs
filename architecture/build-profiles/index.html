@@ -24102,6 +24102,22 @@ excerpt: |
 reasoning: 取り込み順位と後方互換性の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/sonic-build-system/Build-Profiles.md#L44-L50 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/sonic-build-system/Build-Profiles.md#L44-L50 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Order of precedence will be:
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>1. `rules/config`
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>2. `rules/config.user` - only if it exists
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>3. `rules/profiles/$(PROFILE).mk` - only if `$(PROFILE)` is defined
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>The changes required to implement this are very simple and completely backwards compatible: if the new `PROFILE` build flag is not provided, build behavior is identical to baseline.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 取り込み順位と後方互換性の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="cicd">CI/CD 不要・自己完結<a class="headerlink" href="#cicd" title="Permanent link">&para;</a></h3>
 <p>HLD は「CI/CD でやれば良いのでは」という問いに対して、<strong>手元ビルドや顧客配布のシナリオで CI を使えない</strong> ケースを挙げる<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -24116,15 +24132,15 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当なし。</p>
 <h3 id="_6">ビルド時の使い方<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># プロファイルなし（従来どおり）</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>make<span class="w"> </span>all
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># プロファイル指定</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>make<span class="w"> </span><span class="nv">PROFILE</span><span class="o">=</span>ztp.signed<span class="w"> </span>all
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># プロファイルと個別フラグの併用も可能</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># （後勝ちで、コマンドラインの個別指定は通常 profile より優先される。</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1">#  実装は make の変数代入順序に依存。）</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># プロファイルなし（従来どおり）</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>make<span class="w"> </span>all
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># プロファイル指定</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>make<span class="w"> </span><span class="nv">PROFILE</span><span class="o">=</span>ztp.signed<span class="w"> </span>all
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># プロファイルと個別フラグの併用も可能</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># （後勝ちで、コマンドラインの個別指定は通常 profile より優先される。</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1">#  実装は make の変数代入順序に依存。）</span>
 </span></code></pre></div>
 <p>新しいプロファイルを追加するには <code>rules/profiles/&lt;name&gt;.mk</code> を作成し、必要な <code>KEY=VALUE</code> を並べてコミットするだけ。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24153,10 +24169,10 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <ul>
 <li><code>sonic-buildimage/rules/profiles/</code> ディレクトリが存在しない（<code>ls .cache/sonic-sources/sonic-buildimage/rules/</code> で <code>config</code> 系 mk のみで <code>profiles/</code> サブディレクトリは無し）。</li>
 <li><code>sonic-buildimage/Makefile.work:150-156</code> に該当する include はわずか:
-  <div class="language-make highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nf">rules/config.user</span><span class="o">:</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="err">...</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="cp">include rules/config</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="cp">-include rules/config.user</span>
+  <div class="language-make highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nf">rules/config.user</span><span class="o">:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="err">...</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="cp">include rules/config</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="cp">-include rules/config.user</span>
 </span></code></pre></div>
   HLD が要求する <code>-include rules/profiles/$(PROFILE).mk</code> の行は <strong>存在しない</strong>。</li>
 <li>結果として <code>PROFILE=foo</code> を渡しても make は <code>$(PROFILE)</code> を解釈する箇所が無く、フラグは一切読み込まれない。</li>

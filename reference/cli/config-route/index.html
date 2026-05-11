@@ -23833,6 +23833,21 @@ excerpt: |
       config_db.set_entry("STATIC_ROUTE", key, current_entry)
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L7812-L7889 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L7812-L7889 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>@route.command(&#39;add&#39;, context_settings={&quot;ignore_unknown_options&quot;: True})
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>def add_route(ctx, command_str):
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    key, route, vrf = cli_sroute_to_config(ctx, command_str)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    ...
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    config_db.set_entry(&quot;STATIC_ROUTE&quot;, key, current_entry)
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="config-route-del-prefix"><code>config route del prefix ...</code><a class="headerlink" href="#config-route-del-prefix" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:</p>
 <ol>

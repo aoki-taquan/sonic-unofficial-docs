@@ -23920,6 +23920,18 @@ excerpt: |
 reasoning: orchagent doPortTask での反映と新 serdes 属性、PR #4113 の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/media-settings/Dynamic-gearbox-tuning.md#L229-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/media-settings/Dynamic-gearbox-tuning.md#L229-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Upon detecting a change within APPL_DB for a particular port, orchagent will be triggered to run doPortTask() with SET_COMMAND on the logical port. ... new serdes attributes for line-side and system-side tunings ... [sonic-swss PR #4113]
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: orchagent doPortTask での反映と新 serdes 属性、PR #4113 の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="pr">関連 PR<a class="headerlink" href="#pr" title="Permanent link">&para;</a></h3>
 <ul>
 <li>動的反映のための buildimage / 設定生成: HLD 中で参照</li>
@@ -23932,19 +23944,19 @@ reasoning: orchagent doPortTask での反映と新 serdes 属性、PR #4113 の�
 <p>該当なし（HLD で言及なし）。<code>show interfaces ...</code> 系の既存コマンドが gearbox port の状態を表示する。</p>
 <h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p><code>media_settings.json</code> で <strong>media 種別と物理 port 範囲</strong> ごとに gearbox 両サイドの値を指定する。<code>Default</code> キーで media 横断の共有値を置ける（特に system-side）:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;MEDIA_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;2-32&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;Default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="nt">&quot;gb_system_main&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x80&quot;</span><span class="p">,</span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="s2">&quot;0x80&quot;</span><span class="p">,</span><span class="nt">&quot;lane2&quot;</span><span class="p">:</span><span class="s2">&quot;0x80&quot;</span><span class="p">,</span><span class="nt">&quot;lane3&quot;</span><span class="p">:</span><span class="s2">&quot;0x80&quot;</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="nt">&quot;gb_system_pre1&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x00&quot;</span><span class="p">,</span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="s2">&quot;0x00&quot;</span><span class="p">,</span><span class="nt">&quot;lane2&quot;</span><span class="p">:</span><span class="s2">&quot;0x00&quot;</span><span class="p">,</span><span class="nt">&quot;lane3&quot;</span><span class="p">:</span><span class="s2">&quot;0x00&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="nt">&quot;COPPER100&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="nt">&quot;gb_line_main&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x75&quot;</span><span class="p">,</span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="s2">&quot;0x75&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;MEDIA_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;2-32&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="nt">&quot;Default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">        </span><span class="nt">&quot;gb_system_main&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x80&quot;</span><span class="p">,</span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="s2">&quot;0x80&quot;</span><span class="p">,</span><span class="nt">&quot;lane2&quot;</span><span class="p">:</span><span class="s2">&quot;0x80&quot;</span><span class="p">,</span><span class="nt">&quot;lane3&quot;</span><span class="p">:</span><span class="s2">&quot;0x80&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">        </span><span class="nt">&quot;gb_system_pre1&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x00&quot;</span><span class="p">,</span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="s2">&quot;0x00&quot;</span><span class="p">,</span><span class="nt">&quot;lane2&quot;</span><span class="p">:</span><span class="s2">&quot;0x00&quot;</span><span class="p">,</span><span class="nt">&quot;lane3&quot;</span><span class="p">:</span><span class="s2">&quot;0x00&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">      </span><span class="nt">&quot;COPPER100&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">        </span><span class="nt">&quot;gb_line_main&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;lane0&quot;</span><span class="p">:</span><span class="s2">&quot;0x75&quot;</span><span class="p">,</span><span class="nt">&quot;lane1&quot;</span><span class="p">:</span><span class="s2">&quot;0x75&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -23960,19 +23972,19 @@ reasoning: orchagent doPortTask での反映と新 serdes 属性、PR #4113 の�
 <li><strong><code>role: Ext</code> の port</strong>: gearbox 配下の external port にのみ gb_* 属性が効く</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 値が APPL_DB に反映されているか</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT_TABLE:Ethernet48&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;gb_line_|gb_system_&#39;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 反映タイミング</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># transceiver 挿抜 → xcvrd → APPL_DB → orchagent</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>xcvrd
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>gearbox
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># 旧 gearbox_config.json 残置</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>ls<span class="w"> </span>/usr/share/sonic/device/<span class="nv">$PLATFORM</span>/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>gearbox
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># media_settings.json の port-range / Default キー</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>jq<span class="w"> </span><span class="s1">&#39;.MEDIA_SETTINGS&#39;</span><span class="w"> </span>/usr/share/sonic/device/<span class="nv">$PLATFORM</span>/media_settings.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-40
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 値が APPL_DB に反映されているか</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT_TABLE:Ethernet48&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;gb_line_|gb_system_&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># 反映タイミング</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># transceiver 挿抜 → xcvrd → APPL_DB → orchagent</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>xcvrd
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>gearbox
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># 旧 gearbox_config.json 残置</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>ls<span class="w"> </span>/usr/share/sonic/device/<span class="nv">$PLATFORM</span>/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>gearbox
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># media_settings.json の port-range / Default キー</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>jq<span class="w"> </span><span class="s1">&#39;.MEDIA_SETTINGS&#39;</span><span class="w"> </span>/usr/share/sonic/device/<span class="nv">$PLATFORM</span>/media_settings.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-40
 </span></code></pre></div>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->

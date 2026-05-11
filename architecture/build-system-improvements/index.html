@@ -24031,6 +24031,20 @@ excerpt: |
 reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/sonic-build-system/build_system_improvements.md#L160-L173 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/sonic-build-system/build_system_improvements.md#L160-L173 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>- No need to build libthrift, saithrift when &#39;ENABLE_SYNCD_RPC != y&#39;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>- The debian/rules in sairedis is written in a way that it will built sairedis from scratch twice - non-rpc and rpc version.
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>This improvement is achivable by specifying in rules/sairedis.mk: SAIREDIS_DPKG_TARGET = binary-syncd
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: sairedis 2 度ビルドの問題と修正方針の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_4">累積改善<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>12 CPU のビルドサーバでの実測<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -24080,7 +24094,7 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 </tbody>
 </table>
 <h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>make<span class="w"> </span><span class="nv">SONIC_USE_DOCKER_BUILDKIT</span><span class="o">=</span>y<span class="w"> </span>target/sonic-mellanox.bin
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>make<span class="w"> </span><span class="nv">SONIC_USE_DOCKER_BUILDKIT</span><span class="o">=</span>y<span class="w"> </span>target/sonic-mellanox.bin
 </span></code></pre></div>
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>

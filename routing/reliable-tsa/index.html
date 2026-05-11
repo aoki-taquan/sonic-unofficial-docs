@@ -23988,16 +23988,31 @@ excerpt: |
 reasoning: 「CHASSIS_APP_DB 追加 + bgpcfgd 双方参照」という本設計の中核根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/voq/Reliable_TSA.md#L62-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/voq/Reliable_TSA.md#L62-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1. Add a new tsa_enabled attribute to CHASSIS_APP_DB
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>...
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>4. Modify bgpcfgd to subscribe to updates to the tsa_enabled attribute of CHASSIS_APP_DB
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>5. Modify bgpcfgd to take into account the values of tsa_enabled attributes of both the CHASSIS_APP_DB and the local CONFIG_DB when determining whether BGP should be in TSA or TSB state.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 「CHASSIS_APP_DB 追加 + bgpcfgd 双方参照」という本設計の中核根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="chassis_app_db">関連する CHASSIS_APP_DB<a class="headerlink" href="#chassis_app_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BGP_DEVICE_GLOBAL|STATE
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    tsa_enabled : &quot;true&quot; | &quot;false&quot;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>BGP_DEVICE_GLOBAL|STATE
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    tsa_enabled : &quot;true&quot; | &quot;false&quot;
 </span></code></pre></div>
 <p>これは Supervisor の TSA 状態だけを保持する。LC ごとの TSA は LC の CONFIG_DB に従来どおり持つ。</p>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>LC asic 側の CONFIG_DB（既存）:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>BGP_DEVICE_GLOBAL|STATE
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    tsa_enabled : &quot;true&quot; | &quot;false&quot;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>BGP_DEVICE_GLOBAL|STATE
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    tsa_enabled : &quot;true&quot; | &quot;false&quot;
 </span></code></pre></div>
 <p>Supervisor の host CONFIG_DB にも同じ key を追加し、<code>config_db.json</code> 永続化に組み込まれる<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>

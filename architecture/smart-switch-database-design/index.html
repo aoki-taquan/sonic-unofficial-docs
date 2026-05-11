@@ -24007,6 +24007,18 @@ excerpt: |
 reasoning: GNMI/ZMQ 主経路と DPU_APPL_DB バックアップ用途の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md#L300-L320 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md#L300-L320 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Communication with the SWSS of the DPU occurs through GNMI, leveraging ZMQ. Simultaneously, an asynchronous insertion of the object backup is made to the DPU_APPL_DB.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: GNMI/ZMQ 主経路と DPU_APPL_DB バックアップ用途の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_6">メモリ規模<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>DASH スケーリング要件で見積もると、<strong>DPU_APPL_DB だけで card あたり約 5.18 GB</strong>、STATE 系で 2.45 GB<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。最大の食いは <code>DASH_VNET_MAPPING_TABLE</code>（10M）と per-ENI <code>DASH_ROUTE_TABLE</code>（100k × ENI 数）。これが DPU でなく NPU 側 RAM に乗る理由でもある。</p>
 <h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24026,7 +24038,7 @@ reasoning: GNMI/ZMQ 主経路と DPU_APPL_DB バックアップ用途の根拠�
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>NUM_DPU=2   # /usr/share/sonic/device/$PLATFORM/platform_env.conf
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>NUM_DPU=2   # /usr/share/sonic/device/$PLATFORM/platform_env.conf
 </span></code></pre></div>
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24043,15 +24055,15 @@ reasoning: GNMI/ZMQ 主経路と DPU_APPL_DB バックアップ用途の根拠�
 <li><strong>warm-boot</strong>: redis は <code>persistence_for_warm_boot: yes</code> だが DPU swss/syncd の reattach は scope 外</li>
 </ul>
 <h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># NPU から DPU 用 redis にアクセス</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="m">169</span>.254.200.254<span class="w"> </span>-p<span class="w"> </span><span class="m">6381</span><span class="w"> </span>PING<span class="w">        </span><span class="c1"># DPU0</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>database@dpu0
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># featured が DPU 数を認識しているか</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>grep<span class="w"> </span>NUM_DPU<span class="w"> </span>/usr/share/sonic/device/<span class="nv">$PLATFORM</span>/platform_env.conf
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># DPU 側から remote_redis を確認</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="m">169</span>.254.200.254<span class="w"> </span>-p<span class="w"> </span><span class="m">6381</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;DASH_*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># NPU から DPU 用 redis にアクセス</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="m">169</span>.254.200.254<span class="w"> </span>-p<span class="w"> </span><span class="m">6381</span><span class="w"> </span>PING<span class="w">        </span><span class="c1"># DPU0</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>database@dpu0
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># featured が DPU 数を認識しているか</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>grep<span class="w"> </span>NUM_DPU<span class="w"> </span>/usr/share/sonic/device/<span class="nv">$PLATFORM</span>/platform_env.conf
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># DPU 側から remote_redis を確認</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="m">169</span>.254.200.254<span class="w"> </span>-p<span class="w"> </span><span class="m">6381</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;DASH_*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>

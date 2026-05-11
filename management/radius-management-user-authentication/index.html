@@ -23946,6 +23946,20 @@ excerpt: |
 reasoning: 多サーバ priority + 8 上限 + passphrase 不一致を unreachable 扱いの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/aaa/radius_authentication.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/aaa/radius_authentication.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Support multiple RADIUS servers, with server priority configuration.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>... if an incorrect RADIUS passphrase ... has been configured ... is treated as an &quot;unreachable&quot; RADIUS server,
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>... Support configuring a maximum of 8 servers
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 多サーバ priority + 8 上限 + passphrase 不一致を unreachable 扱いの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>

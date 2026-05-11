@@ -24000,32 +24000,47 @@ excerpt: |
 reasoning: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置く」設計の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/rates-and-utilization/Rates_and_utilization_HLD.md#L137-L148 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/rates-and-utilization/Rates_and_utilization_HLD.md#L137-L148 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ALPHA (precalculated):
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>N = [PORT|RIF]_SMOOTH_INTERVAL
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ALPHA = 2/(N+1)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>EMA = ALPHA * VALUE + (1 - ALPHA) * EMA_last
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置く」設計の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="counters_db">COUNTERS_DB スキーマ<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
 <p><code>RATES:port_vid</code> / <code>RATES:rif_vid</code> に下記を保持<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>RATES:&lt;port_vid&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>   # 前回値（Lua plugin が diff 計算に使う）
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>   SAI_PORT_STAT_IF_IN_UCAST_PKTS_last
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>   SAI_PORT_STAT_IF_IN_NON_UCAST_PKTS_last
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>   SAI_PORT_STAT_IF_OUT_UCAST_PKTS_last
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>   SAI_PORT_STAT_IF_OUT_NON_UCAST_PKTS_last
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>   SAI_PORT_STAT_IF_IN_OCTETS_last
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>   SAI_PORT_STAT_IF_OUT_OCTETS_last
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>   # 計算結果（CLI が参照）
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>   RX_BPS, TX_BPS, RX_PPS, TX_PPS, RX_UTIL, TX_UTIL
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>RATES:&lt;rif_vid&gt;
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>   SAI_ROUTER_INTERFACE_STAT_IN_OCTETS_last
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>   SAI_ROUTER_INTERFACE_STAT_IN_PACKETS_last
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>   SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS_last
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>   SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS_last
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>   RX_BPS, TX_BPS, RX_PPS, TX_PPS, RX_UTIL, TX_UTIL
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>RATES:&lt;port_vid&gt;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>   # 前回値（Lua plugin が diff 計算に使う）
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>   SAI_PORT_STAT_IF_IN_UCAST_PKTS_last
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>   SAI_PORT_STAT_IF_IN_NON_UCAST_PKTS_last
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>   SAI_PORT_STAT_IF_OUT_UCAST_PKTS_last
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>   SAI_PORT_STAT_IF_OUT_NON_UCAST_PKTS_last
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>   SAI_PORT_STAT_IF_IN_OCTETS_last
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>   SAI_PORT_STAT_IF_OUT_OCTETS_last
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>   # 計算結果（CLI が参照）
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>   RX_BPS, TX_BPS, RX_PPS, TX_PPS, RX_UTIL, TX_UTIL
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>RATES:&lt;rif_vid&gt;
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>   SAI_ROUTER_INTERFACE_STAT_IN_OCTETS_last
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>   SAI_ROUTER_INTERFACE_STAT_IN_PACKETS_last
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>   SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS_last
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>   SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS_last
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>   RX_BPS, TX_BPS, RX_PPS, TX_PPS, RX_UTIL, TX_UTIL
 </span></code></pre></div>
 <p>CONFIG_DB 側は次のキーで設定が入る<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>RATES
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>   PORT_SMOOTH_INTERVAL
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>   RIF_SMOOTH_INTERVAL
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>   PORT_ALPHA       # 事前計算
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>   RIF_ALPHA        # 事前計算
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>RATES
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>   PORT_SMOOTH_INTERVAL
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>   RIF_SMOOTH_INTERVAL
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>   PORT_ALPHA       # 事前計算
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>   RIF_ALPHA        # 事前計算
 </span></code></pre></div>
 <h3 id="flex-counter">Flex Counter グループの動的登録<a class="headerlink" href="#flex-counter" title="Permanent link">&para;</a></h3>
 <p>ポートと RIF はそれぞれ <code>portsorch</code> / <code>intfsorch</code> がライフサイクルを管理する。RIF 側は <code>addRifToFlexCounter()</code> / <code>removeRifFromFlexCounter()</code> メソッドで動的に登録/解除する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。新しい RIF が増えたタイミングで自動で <code>RIF_RATES</code> の対象になり、削除時に外れる。</p>
@@ -24047,8 +24062,8 @@ reasoning: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置�
 <p>ユーザ向けの <code>show</code> 出力は <strong>既存と同じ列</strong> を返す。CLI は内部で <code>COUNTERS:vid</code> ではなく <code>RATES:vid</code> を参照するように切り替わるだけ<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>-p / --period</code> オプションを使うと「指定期間で計算したレート」を見せる必要があるが、その場合は <strong>CLI 側でスナップショット差分を取る方式</strong> に切り替えるとされている<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。常用は RATES テーブル、<code>-p</code> 指定時のみスナップショット計算という二系統。</p>
 <h3 id="counterpoll">counterpoll 拡張<a class="headerlink" href="#counterpoll" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>counterpoll [port_rates|rif_rates] interval &lt;seconds&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>counterpoll [port_rates|rif_rates] [enable|disable]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>counterpoll [port_rates|rif_rates] interval &lt;seconds&gt;
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>counterpoll [port_rates|rif_rates] [enable|disable]
 </span></code></pre></div>
 <p>ガード条件<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -24056,7 +24071,7 @@ reasoning: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置�
 <li><code>port_rates</code> の interval を <strong>counter polling の interval より短く</strong> 設定しようとすると <strong>警告</strong> を出し、counter polling と同じ interval にそろえる。</li>
 </ul>
 <p>EMA の窓だけは別 CLI で設定する:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config<span class="w"> </span>rate<span class="w"> </span>smoothing_interval<span class="w"> </span><span class="o">[</span>all<span class="p">|</span>port<span class="p">|</span>rif<span class="o">]</span><span class="w"> </span>&lt;interval&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config<span class="w"> </span>rate<span class="w"> </span>smoothing_interval<span class="w"> </span><span class="o">[</span>all<span class="p">|</span>port<span class="p">|</span>rif<span class="o">]</span><span class="w"> </span>&lt;interval&gt;
 </span></code></pre></div>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
@@ -24146,9 +24161,9 @@ reasoning: EMA の係数決定式と「事前計算 ALPHA を CONFIG_DB に置�
 </tbody>
 </table>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>counterpoll<span class="w"> </span>port_rates<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>counterpoll<span class="w"> </span>port_rates<span class="w"> </span>interval<span class="w"> </span><span class="m">1</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>config<span class="w"> </span>rate<span class="w"> </span>smoothing_interval<span class="w"> </span>port<span class="w"> </span><span class="m">5</span><span class="w">    </span><span class="c1"># EMA N=5</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>counterpoll<span class="w"> </span>port_rates<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>counterpoll<span class="w"> </span>port_rates<span class="w"> </span>interval<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>config<span class="w"> </span>rate<span class="w"> </span>smoothing_interval<span class="w"> </span>port<span class="w"> </span><span class="m">5</span><span class="w">    </span><span class="c1"># EMA N=5</span>
 </span></code></pre></div>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

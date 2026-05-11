@@ -24177,6 +24177,22 @@ excerpt: |
 reasoning: 4 段階移行プランの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/sonic-port-name/sonic-port-name.md#L32-L40 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>## Change stages ##
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>1. Change port_config.ini alias column to use the new naming convention.
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>2. Break SONiC code dependency of &#39;Ethernet&#39; prefix.
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>3. Break SONiC test dependency of &#39;Ethernet&#39; prefix and/or &#39;Ethernet0&#39;.
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>4. Change SONiC port name to new naming convention.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 4 段階移行プランの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>本提案は CONFIG_DB のスキーマを直接変えるのではなく、<code>port_config.ini</code> の <code>alias</code> 列をまず新命名にする運用面の提案<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT|alias</code> の値が変わる。</p>
@@ -24209,10 +24225,10 @@ reasoning: 4 段階移行プランの根拠。
 <ul>
 <li><strong>HLD 記述</strong>: Stage 1 として alias 列を <code>etsXpY[abcd]</code> 系の新命名に切替える。</li>
 <li><strong>実装位置</strong>: <code>sonic-buildimage/device/&lt;vendor&gt;/&lt;sku&gt;/port_config.ini</code> を代表例で確認:
-  <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a># name          lanes             alias         index  speed
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet0       1,2,3,4           Ethernet1/1    1     100000
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet4       5,6,7,8           Ethernet2/1    2     100000
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a># sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a># name          lanes             alias         index  speed
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Ethernet0       1,2,3,4           Ethernet1/1    1     100000
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Ethernet4       5,6,7,8           Ethernet2/1    2     100000
 </span></code></pre></div></li>
 <li>alias は <strong><code>Ethernet&lt;panel&gt;/&lt;sub&gt;</code></strong> 形式（<code>Ethernet1/1</code>, <code>Ethernet1/2</code>, ...）が業界共通で残っており、<code>etsXpY</code> / <code>ets1p1</code> 系は <code>device/</code> ツリー全体に出現しない。</li>
 <li><strong>差分の中身</strong>: 提案された 4 stage（alias 切替 → コード依存除去 → テスト依存除去 → 内部名切替）は 1 つも踏まれていない。</li>

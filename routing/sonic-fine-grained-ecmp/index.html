@@ -23959,6 +23959,20 @@ excerpt: |
 reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原則の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/ecmp/fine_grained_next_hop_hld.md#L344-L352 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/ecmp/fine_grained_next_hop_hld.md#L344-L352 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>A key idea ... is the creation of many hash buckets ... having a next-hop repeated multiple times within it.
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>... in the route/nexthop match modes, by pushing configuration with next-hop bank membership, we can ensure
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>that we only refill the affected hash buckets with those next-hops within the same bank.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: bank 内 consistent hashing と「同 bank 内のみで refill」原則の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <!-- concerns hint:
 - fgnhgorch の現行 master 実装存在確認
 - FG_NHG / FG_NHG_PREFIX / FG_NHG_MEMBER の YANG / sonic-buildimage 取り込み確認

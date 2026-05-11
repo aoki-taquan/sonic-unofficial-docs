@@ -23983,6 +23983,20 @@ excerpt: |
 reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX Counter 流で COUNTERS_DB 経由」という 3 点の方針の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/crm/CRM_requirements.md#L44-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/crm/CRM_requirements.md#L44-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>In regards to CLI command to query the USED and AVAILABLE numbers, SAI provides API to query the current available entries.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>This means, Orchagent shall keep track of the respective entries that are programmed and implements the logic to calculate the Used/Available entries.
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>To poll the counter values from SAI, suggest to follow the same approach as FLEX Counters where syncd can update the values to COUNTER_DB and critical_resource_monitoring process can fetch the information from COUNTER_DB and perform the calculations.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX Counter 流で COUNTERS_DB 経由」という 3 点の方針の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>要件 HLD 上はテーブル名が明示されていない。実装側で <code>CRM</code> テーブルが追加されている可能性が高いが、本ページでは未確認のため空配列とする。実装裏取り（<code>code-verified</code> 昇格）時に追記する想定。</p>

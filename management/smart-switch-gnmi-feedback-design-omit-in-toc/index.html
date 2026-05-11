@@ -23974,17 +23974,32 @@ excerpt: |
 reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md#L42-L134 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md#L42-L134 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>GS --) AD: Insert object
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>GS -&gt;&gt; ZMQ: Update command
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>... SW -&gt;&gt; ASD: Update command result
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Note over ZMQ: Include result code and version ID (If it&#39;s non-child object)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 非同期反映 + version_id 付き結果書き戻しの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="dpu-appl_state_db">DPU APPL_STATE_DB スキーマ<a class="headerlink" href="#dpu-appl_state_db" title="Permanent link">&para;</a></h3>
 <p>APPL_STATE_DB の各エントリは APPL_DB のエントリ <strong>同名 key にマップ</strong> される。値は親オブジェクトなら <code>result</code> + <code>version_id</code>、子なら <code>result</code> のみ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>result</code> は <code>uint32</code>。<strong>0=成功</strong>、&gt;0 はエラーコード<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>例 1: <code>DASH_ROUTE_TABLE</code>（子オブジェクト）</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DASH_ROUTE_TABLE:{group_id}:{prefix}
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  result = &lt;uint32&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DASH_ROUTE_TABLE:{group_id}:{prefix}
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  result = &lt;uint32&gt;
 </span></code></pre></div>
 <p>例 2: <code>DASH_ROUTE_GROUP_TABLE</code>（親オブジェクト）</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DASH_ROUTE_GROUP_TABLE:{group_id}
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  result     = &lt;uint32&gt;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  version_id = &quot;1&quot;   ; &quot;1.1&quot; など、controller が決めた一意のバージョン文字列
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DASH_ROUTE_GROUP_TABLE:{group_id}
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  result     = &lt;uint32&gt;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  version_id = &quot;1&quot;   ; &quot;1.1&quot; など、controller が決めた一意のバージョン文字列
 </span></code></pre></div>
 <p><code>version_id</code> はコントローラが set 時に渡したものがそのまま反映される。Get / Subscribe でこれを見ることでコントローラは「自分が投入したバージョンが DPU まで届いたか」を確認できる<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>

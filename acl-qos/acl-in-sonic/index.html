@@ -23812,17 +23812,29 @@ excerpt: |
 reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/acl/ACL-High-Level-Design.md#L83-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/acl/ACL-High-Level-Design.md#L83-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>| 1.1 | 08-Apr-2025 | Anish Narsian | VXLAN inner src mac rewrite support |
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_1">設定例とトラブルシューティング<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>table<span class="w"> </span>BLACKLIST<span class="w"> </span>L3<span class="w"> </span>-p<span class="w"> </span>Ethernet0,Ethernet4<span class="w"> </span>-s<span class="w"> </span>ingress
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>rule<span class="w"> </span>BLACKLIST<span class="w"> </span>DENY_BAD<span class="w"> </span>--priority<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--src-ip<span class="w"> </span><span class="m">192</span>.0.2.0/24<span class="w"> </span>--action<span class="w"> </span>DROP
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>aclshow<span class="w"> </span>-a
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>table<span class="w"> </span>BLACKLIST<span class="w"> </span>L3<span class="w"> </span>-p<span class="w"> </span>Ethernet0,Ethernet4<span class="w"> </span>-s<span class="w"> </span>ingress
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>rule<span class="w"> </span>BLACKLIST<span class="w"> </span>DENY_BAD<span class="w"> </span>--priority<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--src-ip<span class="w"> </span><span class="m">192</span>.0.2.0/24<span class="w"> </span>--action<span class="w"> </span>DROP
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>aclshow<span class="w"> </span>-a
 </span></code></pre></div>
 <p>CONFIG_DB / APPL_DB / ASIC_DB / capability を見るコマンド:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ACL_TABLE|*&quot;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ACL_*&quot;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_ACL_*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;SWITCH_CAPABILITY|switch&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ACL
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ACL_TABLE|*&quot;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ACL_*&quot;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_ACL_*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;SWITCH_CAPABILITY|switch&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ACL
 </span></code></pre></div>
 <p>CLI 一覧:</p>
 <table>

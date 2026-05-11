@@ -24065,6 +24065,20 @@ excerpt: |
 reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/graceful-shutdown/graceful-shutdown.md#L93-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/smart-switch/graceful-shutdown/graceful-shutdown.md#L93-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>This design enables the chassisd process running in the PMON container to invoke a gNOI-based reboot
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>when it triggers the &quot;set_admin_state(down)&quot; API of a DPU module, without relying on docker, bash,
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>or hostexec within the container.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: PMON 制限下での実装方針と Redis pub/sub への分離の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <code>config chassis module shutdown DPUx</code>（既存 chassis CLI 流用）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -24091,12 +24105,12 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <li><strong>HLD 記述</strong>: PMON container に <code>gnoi_reboot_daemon.py</code> を新規追加し、STATE_DB pub/sub 経由で gNOI Reboot RPC (HALT) を投げる役割を担う。</li>
 <li><strong>実装位置</strong>: <code>sonic-platform-daemons/</code> 配下に <code>gnoi_reboot_daemon.py</code> も <code>sonic-pmon</code> も存在しない（<code>find -iname "*gnoi*"</code> 結果ゼロ）。代わりに <code>sonic-chassisd</code> の <code>chassisd</code> (<code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd</code>) が <code>module.set_admin_state_gracefully</code> を直接呼ぶ。</li>
 <li><strong>差分の中身</strong>:
-  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># sonic-chassisd/scripts/chassisd L256</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">try_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chassis</span><span class="o">.</span><span class="n">get_module</span><span class="p">(</span><span class="n">module_index</span><span class="p">)</span><span class="o">.</span><span class="n">set_admin_state_gracefully</span><span class="p">,</span> <span class="n">admin_state</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># L1362</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">try_get</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">set_admin_state_gracefully</span><span class="p">,</span> <span class="n">admin_state</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># L1373</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">module</span><span class="o">.</span><span class="n">clear_module_gnoi_halt_in_progress</span><span class="p">()</span>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># sonic-chassisd/scripts/chassisd L256</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">try_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chassis</span><span class="o">.</span><span class="n">get_module</span><span class="p">(</span><span class="n">module_index</span><span class="p">)</span><span class="o">.</span><span class="n">set_admin_state_gracefully</span><span class="p">,</span> <span class="n">admin_state</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># L1362</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">try_get</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">set_admin_state_gracefully</span><span class="p">,</span> <span class="n">admin_state</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># L1373</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">module</span><span class="o">.</span><span class="n">clear_module_gnoi_halt_in_progress</span><span class="p">()</span>
 </span></code></pre></div>
   HLD は「chassisd は state を書くだけ、別 daemon が gNOI を呼ぶ」と分離するが、実装は <strong>chassisd が <code>module_base</code> の API を直接呼ぶ密結合</strong> になっている。</li>
 <li><strong>読者への影響</strong>: HLD の図を信じて gnoi_reboot_daemon のログを探しても見つからない。pub/sub の経路（<code>CHASSIS_MODULE_INFO_TABLE</code> への書込 → daemon 検知）も存在せず、<code>chassis_state_db</code> に書く前後で <code>chassisd</code> が直接 module API を呼ぶフロー。</li>
@@ -24109,10 +24123,10 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <li><code>sonic-platform-common/sonic_platform_base/module_base.py:537-583</code> <code>_get_module_gnoi_halt_in_progress</code> / <code>_set_module_gnoi_halt_in_progress</code> / <code>clear_module_gnoi_halt_in_progress</code> は <strong><code>gnoi_halt_in_progress</code></strong> という別フィールドを使う。</li>
 <li><code>module_base.py</code> の <code>set_module_state_transition()</code>（L624 付近）は <strong><code>CHASSIS_MODULE_TABLE|&lt;name&gt;</code></strong>（<code>_INFO_</code> 抜き）に <code>transition_in_progress</code> / <code>transition_type</code> / <code>start_time</code> を HSET する。</li>
 <li><strong>差分の中身</strong>:
-  <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># module_base.py:566 — フラグ HSET</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">state_db</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="n">module_key</span><span class="p">,</span> <span class="s2">&quot;gnoi_halt_in_progress&quot;</span><span class="p">,</span> <span class="s2">&quot;True&quot;</span><span class="p">)</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># module_base.py:549 — 読み取り</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">gnoi_halt_flag</span> <span class="o">=</span> <span class="n">state_db</span><span class="o">.</span><span class="n">hget</span><span class="p">(</span><span class="n">module_key</span><span class="p">,</span> <span class="s2">&quot;gnoi_halt_in_progress&quot;</span><span class="p">)</span>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># module_base.py:566 — フラグ HSET</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">state_db</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="n">module_key</span><span class="p">,</span> <span class="s2">&quot;gnoi_halt_in_progress&quot;</span><span class="p">,</span> <span class="s2">&quot;True&quot;</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># module_base.py:549 — 読み取り</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">gnoi_halt_flag</span> <span class="o">=</span> <span class="n">state_db</span><span class="o">.</span><span class="n">hget</span><span class="p">(</span><span class="n">module_key</span><span class="p">,</span> <span class="s2">&quot;gnoi_halt_in_progress&quot;</span><span class="p">)</span>
 </span></code></pre></div>
   HLD の <code>CHASSIS_MODULE_INFO_TABLE</code> / <code>state_transition_in_progress</code> は実コードでは 2 系統に分割されている: (a) <code>CHASSIS_MODULE_TABLE|&lt;name&gt;</code> の <code>transition_in_progress</code> (<code>set_module_state_transition</code>)、(b) <code>CHASSIS_MODULE_TABLE|&lt;name&gt;</code> の <code>gnoi_halt_in_progress</code> フラグ（HALT 完了通知用）。</li>
 <li><strong>読者への影響</strong>: 状態監視スクリプトを HLD のフィールド名で書くと取れない。reboot/shutdown 衝突検知も「片方が transition_in_progress フィールドを見れば良い」と思って書くと、<code>gnoi_halt_in_progress</code> の有無を見逃して race を起こす可能性がある。</li>

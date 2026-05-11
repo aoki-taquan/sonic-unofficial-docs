@@ -23918,6 +23918,22 @@ excerpt: |
 reasoning: 本テストの整合性判定基準を直接表化
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>| counterpoll type | state    | counter                                                 | pass criteria  |
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>| queue            | enabled  | FLEX_COUNTER_TABLE:QUEUE_STAT_COUNTER:oid:0x*           | present        |
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>| watermark        | enabled  | FLEX_COUNTER_TABLE:QUEUE_WATERMARK_STAT_COUNTER:oid:0x* | present        |
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>|                  |          | FLEX_COUNTER_TABLE:PG_WATERMARK_STAT_COUNTER:oid:0x*    | present        |
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>| pg-drop          | enabled  | FLEX_COUNTER_TABLE:PG_DROP_STAT_COUNTER:oid:0x*         | present        |
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 本テストの整合性判定基準を直接表化</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_3">テスト項目<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="counterpoll-config-save-reload">単一 counterpoll 有効化（config save → reload）<a class="headerlink" href="#counterpoll-config-save-reload" title="Permanent link">&para;</a></h3>
 <p>各種別を 1 つずつ enable し、対応するマップ／counter group のみが存在することを確認<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

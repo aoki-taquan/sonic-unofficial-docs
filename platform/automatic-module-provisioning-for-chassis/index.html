@@ -24023,6 +24023,20 @@ excerpt: |
 reasoning: sonic-provisiond の責務（STATE_DB 購読のみ・ProvisionReady で provision_module() 呼び出し）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md#L96-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md#L96-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>A new pmon daemon will be introduced which will be responsible for triggering provisioning / calling this new API.
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>This daemon will simply subscribe to all `CHASSIS_MODULE_TABLE|*` tables, and listen to changes to the `oper_state` field.
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>If `oper_state` switches to `&#39;ProvisionReady&#39;`, it will call provision_module() on the corresponding module.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: sonic-provisiond の責務（STATE_DB 購読のみ・ProvisionReady で provision_module() 呼び出し）の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>HLD では新しい CONFIG_DB スキーマは導入しない。既存の chassis 関連設定（モジュールスロット定義など）に依存。</p>

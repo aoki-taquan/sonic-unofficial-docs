@@ -23827,6 +23827,20 @@ excerpt: |
 reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/warm-reboot/system-warmboot.md#L40-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/warm-reboot/system-warmboot.md#L40-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Application sets switch attribute SAI_SWITCH_ATTR_RESTART_WARM to true before calling remove_switch().
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Application sets profile value SAI_KEY_BOOT_TYPE to 1 to indicate WARM BOOT.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Application re-register all callbacks/notificaions. These function points are not retained by SAI across warm boot.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: SAI 側 warm shutdown / recovery の API 契約根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="4">4. 設定<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <p><code>config warm_restart enable system</code> で <code>WARM_RESTART_TABLE</code> を有効化。docker 別の有効化や CLI 一覧は <a href="../sonic-warm-reboot/"><code>sonic-warm-reboot.md</code></a> を参照。</p>
 <h2 id="5">5. 制限事項と干渉する機能<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>

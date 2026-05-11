@@ -24164,6 +24164,22 @@ excerpt: |
 reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/debug-framework/debug_framework_design_spec.md#L96-L168 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/debug-framework/debug_framework_design_spec.md#L96-L168 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Debug Framework provides an API for components to register with the framework. ...
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Framework uses Redis notifications for communicating the trigger message ...
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Components register dump routine with debug framework using the API:
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  Debugframework::linkWithFramework(...)
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  Debugframework::linkWithFrameworkNoThread(...)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="tech-support">tech-support 拡張・補助スクリプト<a class="headerlink" href="#tech-support" title="Permanent link">&para;</a></h2>
 <p><code>show techsupport</code> は本 HLD の延長で <strong>STATE_DB dump、ASIC 固有 dump、critical log の persistent log 切り出し</strong> を追加<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。さらに次のヘルパーが付随する:</p>
 <ul>

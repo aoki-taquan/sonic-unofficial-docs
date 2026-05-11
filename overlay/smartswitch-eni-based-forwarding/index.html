@@ -24022,6 +24022,20 @@ excerpt: |
 reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ルールが高優先 (9997) で local に留める設計の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/high-availability/eni-based-forwarding.md#L182-L211 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/smart-switch/high-availability/eni-based-forwarding.md#L182-L211 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>When the HA failover happens, the used-to-be active becomes standby, but the used-to-be standby is still unchanged.
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>... ACL rules with high priority are added and the redirect should always be to local nexthop
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>&quot;ENI:Vnet1000_AABBCCDDEEFF_TERM&quot;: { &quot;PRIORITY&quot;: &quot;9997&quot;, ... &quot;TUNN_TERM&quot;: &quot;true&quot;, &quot;REDIRECT&quot;: &quot;&lt;local nexthop oid&gt;&quot; }
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: HA failover 過渡期のループ防止と、Tunnel Termination ルールが高優先 (9997) で local に留める設計の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>

@@ -23628,9 +23628,28 @@ excerpt: |
               values = db.db_clients[ns].get_all(db.db.STATE_DB, key)
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L2682-L2710 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/show/main.py#L2682-L2710 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>@bfd.command()
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>def summary(db, namespace):
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    ...
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    for ns in namespace_list:
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        bfd_keys = db.db_clients[ns].keys(db.db.STATE_DB, &quot;BFD_SESSION_TABLE|*&quot;)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        ...
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        for key in bfd_keys:
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>            key_values = key.split(&#39;|&#39;)
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>            values = db.db_clients[ns].get_all(db.db.STATE_DB, key)
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="show-bfd-peer-peer_ip"><code>show bfd peer &lt;peer_ip&gt;</code><a class="headerlink" href="#show-bfd-peer-peer_ip" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show bfd peer &lt;peer_ip&gt; [-n|--namespace &lt;ns&gt;]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show bfd peer &lt;peer_ip&gt; [-n|--namespace &lt;ns&gt;]
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>

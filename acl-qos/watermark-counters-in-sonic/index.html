@@ -23889,6 +23889,18 @@ excerpt: |
 reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/buffer-watermark/watermarks_HLD.md#L99-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/buffer-watermark/watermarks_HLD.md#L99-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>When one regular user and the streaming telemetry coexist, they do not interfere with each other.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="telemetry">Telemetry 経由の参照<a class="headerlink" href="#telemetry" title="Permanent link">&para;</a></h2>
 <p><code>sonic-telemetry</code> は <code>WATERMARKS/...</code> virtual path から読める<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -23965,9 +23977,9 @@ reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根�
 </tbody>
 </table>
 <p>表示例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$ show priority-group watermark shared
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Interface         PG0   PG1   PG2   PG3   PG4   PG5   PG6   PG7
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet0           0  1092     0   380     0     0     0     0
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$ show priority-group watermark shared
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Interface         PG0   PG1   PG2   PG3   PG4   PG5   PG6   PG7
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Ethernet0           0  1092     0   380     0     0     0     0
 </span></code></pre></div>
 <h2 id="_1">干渉する機能<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>

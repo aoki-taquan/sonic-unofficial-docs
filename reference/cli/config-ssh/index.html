@@ -23591,9 +23591,24 @@ excerpt: |
                           {'inactivity_timeout': inactivity_timeout})
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L9979-L9988 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L9979-L9988 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>@ssh.command(&#39;inactivity-timeout&#39;)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>@click.argument(&#39;inactivity_timeout&#39;, type=click.IntRange(0, 35000))
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>def inactivity_timeout_ssh(inactivity_timeout):
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    config_db.mod_entry(&quot;SSH_SERVER&quot;, &#39;POLICIES&#39;,
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>                        {&#39;inactivity_timeout&#39;: inactivity_timeout})
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="config-ssh-max-sessions-max-sessions"><code>config ssh max-sessions &lt;max-sessions&gt;</code><a class="headerlink" href="#config-ssh-max-sessions-max-sessions" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config ssh max-sessions &lt;max-sessions&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config ssh max-sessions &lt;max-sessions&gt;
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>

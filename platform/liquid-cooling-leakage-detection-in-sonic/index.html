@@ -24110,30 +24110,45 @@ excerpt: |
 reasoning: gNMI イベント仕様と双方向通知の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/bmc/leakage_detection_hld.md#L108-L122 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/bmc/leakage_detection_hld.md#L108-L122 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>A new function named `_check_liquid_cooling_status(self, config)` will be added to the system health monitor hardware_chekcer.py
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>... It worth to note that both change from NOTleak to leak and leak to NOTleak will trigger an event.
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>EVENTS_PUBLISHER_SOURCE = &quot;sonic-events-host&quot;
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>EVENTS_PUBLISHER_TAG = &quot;liquid-cooling-leak&quot;
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: gNMI イベント仕様と双方向通知の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-yang">関連する CONFIG_DB / YANG<a class="headerlink" href="#config_db-yang" title="Permanent link">&para;</a></h3>
 <p>CONFIG_DB の追加は無い。<code>pmon_daemon_control.json</code> の起動設定で機能を gate する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>新規 <code>show platform leakage status</code><sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Name              Leak
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>------------------------
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>leak_sensors1     NO
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>leak_sensors2     NO
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>...
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>leak_sensorsX     Yes
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Name              Leak
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>------------------------
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>leak_sensors1     NO
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>leak_sensors2     NO
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>...
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>leak_sensorsX     Yes
 </span></code></pre></div>
 <p><code>show system-health detail</code> の出力に Liquid Cooling 行が追加される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Name              Status    Type
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>leak_sensors1     OK        LiquidCooling
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>leak_sensors2     OK        LiquidCooling
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>leak_sensors3     Not OK    LiquidCooling
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Name              Status    Type
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>leak_sensors1     OK        LiquidCooling
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>leak_sensors2     OK        LiquidCooling
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>leak_sensors3     Not OK    LiquidCooling
 </span></code></pre></div>
 <h3 id="_5">設定例（液冷対応プラットフォーム）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p><code>/usr/share/sonic/device/&lt;platform&gt;/pmon_daemon_control.json</code> に追加:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;enable_liquid_cooling&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&quot;liquid_cooling_update_interval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;enable_liquid_cooling&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="nt">&quot;liquid_cooling_update_interval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>液冷非対応プラットフォームでは <strong>このフィールド自体を入れない</strong>（または <code>enable_liquid_cooling: false</code>）。<code>thermalctld</code> 起動時に Updater スレッドを生成しないため、追加オーバーヘッドはゼロ<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -24160,8 +24175,8 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 <ul>
 <li><strong>HLD 記述</strong>: STATE_DB テーブル <code>LIQUID_COOLING_DEVICE</code> に sensor 状態を書く。</li>
 <li><strong>実装位置</strong>: <code>sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526</code>
-  <div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LiquidCoolingUpdater</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">,</span> <span class="n">logger</span><span class="o">.</span><span class="n">Logger</span><span class="p">):</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">LIQUID_COOLING_INFO_TABLE_NAME</span> <span class="o">=</span> <span class="s1">&#39;LIQUID_COOLING_INFO&#39;</span>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">LiquidCoolingUpdater</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">,</span> <span class="n">logger</span><span class="o">.</span><span class="n">Logger</span><span class="p">):</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">LIQUID_COOLING_INFO_TABLE_NAME</span> <span class="o">=</span> <span class="s1">&#39;LIQUID_COOLING_INFO&#39;</span>
 </span></code></pre></div></li>
 <li>L547: <code>self.sensor_table = swsscommon.Table(state_db, LiquidCoolingUpdater.LIQUID_COOLING_INFO_TABLE_NAME)</code> で実際に <code>LIQUID_COOLING_INFO</code> を書く。</li>
 <li><strong>差分の中身</strong>: HLD 図には <code>LIQUID_COOLING_DEVICE</code> と書かれているが、実コードは <code>LIQUID_COOLING_INFO</code>。さらに HLD には無い <code>SYSTEM_LEAK_STATUS</code> (<code>L548</code>)、<code>LEAK_PROFILE</code>（<code>L551</code>）等の補助テーブルも追加されている。</li>
@@ -24174,12 +24189,12 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 <ul>
 <li><strong>HLD 記述</strong>: <code>pmon_daemon_control.json</code> の <code>liquid_cooling_update_interval</code> で polling 間隔を設定する。</li>
 <li><strong>実装位置</strong>: <code>sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:1299</code>, <code>:1433</code>, <code>:1442</code>
-  <div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># L1299 デフォルト</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">liquid_cooling_update_interval</span><span class="o">=</span><span class="mf">0.5</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># L1433 argparse</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--liquid_cooling_update_interval&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># L1442 渡し込み</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">args</span><span class="o">.</span><span class="n">liquid_cooling_update_interval</span>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># L1299 デフォルト</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">liquid_cooling_update_interval</span><span class="o">=</span><span class="mf">0.5</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1"># L1433 argparse</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--liquid_cooling_update_interval&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># L1442 渡し込み</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="n">args</span><span class="o">.</span><span class="n">liquid_cooling_update_interval</span>
 </span></code></pre></div></li>
 <li><strong>差分の中身</strong>: 起動 daemon 引数として渡される設計で、<code>pmon_daemon_control.json</code> の同名キーは（取り込んだ場合）supervisord 起動行で <code>--liquid_cooling_update_interval=&lt;value&gt;</code> に展開される運用前提。HLD の「JSON フィールドそのものが effective」という記述とは間に一段挟まる。</li>
 <li><strong>読者への影響</strong>: <code>pmon_daemon_control.json</code> だけを更新しても、supervisord の起動コマンドを書き換えるテンプレートが platform 側になければ反映されない。</li>

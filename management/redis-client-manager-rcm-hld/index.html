@@ -23864,6 +23864,20 @@ excerpt: |
 reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/redis_client_manager.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/mgmt/redis_client_manager.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Redis Clients with a connection pool must be reused wherever possible instead of creating a new Redis Client each time one is needed.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>... a cache of Redis Clients that are initialized during the Go init process. One client is created for each DBNum and stored in a map.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>... max pool size is set to 20
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 共有 client + DBNum cache + PoolSize 20 の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>ユーザに公開される CONFIG_DB / CLI は無い。<code>sonic-mgmt-common</code> 内部 API。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>

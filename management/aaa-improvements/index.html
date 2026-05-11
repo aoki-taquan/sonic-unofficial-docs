@@ -23857,6 +23857,20 @@ excerpt: |
 reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/aaa/AAA Improvements/AAA Improvements.md#L52-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/aaa/AAA Improvements/AAA Improvements.md#L52-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Lack of support for Multiple Roles ... a single GID cannot represent multiple roles.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>... retrieving the roles from a RADIUS server is only possible during authentication (`pam_authenticate`),
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>which takes place after the sshd monitor invokes `getpwnam()`
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 多重 role と getpwnam 先行の鶏卵問題の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>HLD は提案中心のため、CONFIG_DB / CLI の最終形は具体化されていない。<code>AAA</code> / <code>RADIUS</code> / <code>RADIUS_SERVER</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> 既存テーブルは前提として継続利用する想定。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

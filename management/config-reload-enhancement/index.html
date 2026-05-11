@@ -24011,6 +24011,19 @@ excerpt: |
 reasoning: has_timer→delayed のスキーマ変更と PortInitDone 駆動の中核フローの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/config_reload/config_reload_enhancement.md#L66-L68 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/config_reload/config_reload_enhancement.md#L66-L68 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Currently hostcfgd controls the services based on the feature table. The feature table has a specific field &#39;has_timer&#39; for the non essential services which needs to be delayed during the reboot flow. This field will be now replaced by new field called &quot;delayed&quot;. These services will controlled by hostcfgd.
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>... The hostcfgd will also subscribe to PORT_TABLE in the APPL_DB. Once the switch is initialized and all the ports are created in ASIC and Kernel the PortSyncd will publish PortInitDone key in the APPL_DB. On receiving this key the hostcfgd will go through the delayed services list and enables them.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: has_timer→delayed のスキーマ変更と PortInitDone 駆動の中核フローの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
@@ -24034,12 +24047,12 @@ reasoning: has_timer→delayed のスキーマ変更と PortInitDone 駆動の�
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>新規 CLI は無し<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。既存の <code>config reload</code> / <code>warm-reboot</code> / <code>fast-reboot</code> / <code>reboot</code> がそのまま使える。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># CONFIG_DB 直接編集</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;FEATURE|snmp&#39;</span><span class="w"> </span>delayed<span class="w"> </span><span class="nb">true</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;FEATURE|telemetry&#39;</span><span class="w"> </span>delayed<span class="w"> </span><span class="nb">true</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># config reload を実行（critical だけ即起動、delayed は PortInitDone 後）</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># CONFIG_DB 直接編集</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;FEATURE|snmp&#39;</span><span class="w"> </span>delayed<span class="w"> </span><span class="nb">true</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;FEATURE|telemetry&#39;</span><span class="w"> </span>delayed<span class="w"> </span><span class="nb">true</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># config reload を実行（critical だけ即起動、delayed は PortInitDone 後）</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y
 </span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

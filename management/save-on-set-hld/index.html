@@ -23929,6 +23929,21 @@ excerpt: |
 reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出しというフロー全体の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/save_on_set.md#L106-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/mgmt/gnmi/save_on_set.md#L106-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>A new command-line parameter will be added to control the behavior ... --with-save-on-set
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>if *withSaveOnSet { gnmi.SaveOnSet = gnmi.SaveOnSetEnabled }
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>func SaveOnSetEnabled() { transformer.SaveStartupConfig() }
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>if err == nil { SaveOnSet() }
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: フラグ→関数ポインタ差し替え→Set 末尾呼び出しというフロー全体の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_5">リビジョン履歴に見える設計の進化<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>HLD のリビジョン表は本機能が <strong>DBUS 直叩きから「Sonic Service Client」経由に変更された</strong> ことを示している<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
@@ -24015,13 +24030,13 @@ reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出し�
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>HLD は CLI / YANG の変更を <strong>明示的に拒否</strong> している（"No changes to CLI or YANG"）。設定は CONFIG_DB を直接書き換えるか、既存の telemetry 設定経路で行う前提。</p>
 <h3 id="_9">設定例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 有効化（CONFIG_DB を書き換えてから telemetry 再起動）</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{&quot;TELEMETRY&quot;: {&quot;gnmi&quot;: {&quot;save_on_set&quot;: &quot;true&quot;}}}&#39;</span><span class="w"> </span>--write-to-db
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 無効化に戻す</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{&quot;TELEMETRY&quot;: {&quot;gnmi&quot;: {&quot;save_on_set&quot;: &quot;false&quot;}}}&#39;</span><span class="w"> </span>--write-to-db
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 有効化（CONFIG_DB を書き換えてから telemetry 再起動）</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{&quot;TELEMETRY&quot;: {&quot;gnmi&quot;: {&quot;save_on_set&quot;: &quot;true&quot;}}}&#39;</span><span class="w"> </span>--write-to-db
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># 無効化に戻す</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{&quot;TELEMETRY&quot;: {&quot;gnmi&quot;: {&quot;save_on_set&quot;: &quot;false&quot;}}}&#39;</span><span class="w"> </span>--write-to-db
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
 </span></code></pre></div>
 <h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>

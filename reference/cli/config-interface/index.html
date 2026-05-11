@@ -24400,6 +24400,27 @@ excerpt: |
       lo_list = config_db.get_table("LOOPBACK_INTERFACE")
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L5187-L5226 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L5187-L5226 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>@interface.command()
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>def startup(ctx, interface_name):
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    ...
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    for port_name in port_dict:
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        if port_name in intf_fs:
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>            config_db.mod_entry(&quot;PORT&quot;, port_name, {&quot;admin_status&quot;: &quot;up&quot;})
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    portchannel_list = config_db.get_table(&quot;PORTCHANNEL&quot;)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    ...
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    subport_list = config_db.get_table(&quot;VLAN_SUB_INTERFACE&quot;)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    ...
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    lo_list = config_db.get_table(&quot;LOOPBACK_INTERFACE&quot;)
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="config-interface-speed-interface_name-speed"><code>config interface speed &lt;interface_name&gt; &lt;speed&gt;</code><a class="headerlink" href="#config-interface-speed-interface_name-speed" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
 コマンド本体は CONFIG_DB を直接書かず、外部ツール <code>portconfig -p &lt;intf&gt; -s &lt;speed&gt;</code> を <code>subprocess</code> 起動する。<code>portconfig</code> 内部で <code>PORT</code> テーブルの <code>speed</code> フィールドが更新される。multi-ASIC 時は <code>-n &lt;namespace&gt;</code> が <code>portconfig</code> にも転送される。<code>-v|--verbose</code> で <code>-vv</code> を付与。</p>
@@ -24568,8 +24589,8 @@ excerpt: |
 </table>
 <h2 id="interface-naming-mode-alias">interface naming mode と alias<a class="headerlink" href="#interface-naming-mode-alias" title="Permanent link">&para;</a></h2>
 <p><code>config interface</code> 配下のほぼ全コマンドが冒頭で:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span> <span class="n">clicommon</span><span class="o">.</span><span class="n">get_interface_naming_mode</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;alias&quot;</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">interface_name</span> <span class="o">=</span> <span class="n">interface_alias_to_name</span><span class="p">(</span><span class="n">config_db</span><span class="p">,</span> <span class="n">interface_name</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">if</span> <span class="n">clicommon</span><span class="o">.</span><span class="n">get_interface_naming_mode</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;alias&quot;</span><span class="p">:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">interface_name</span> <span class="o">=</span> <span class="n">interface_alias_to_name</span><span class="p">(</span><span class="n">config_db</span><span class="p">,</span> <span class="n">interface_name</span><span class="p">)</span>
 </span></code></pre></div>
 <p>を実行する。<code>/etc/sonic/config_db.json</code> の <code>DEVICE_METADATA|localhost</code> の <code>interface_naming_mode</code> が <code>alias</code> の場合、ユーザは <code>etp1a</code> 等のエイリアスを入力でき、内部で <code>Ethernet0</code> に変換される。</p>
 <!-- ref-triangle:start -->
@@ -24591,21 +24612,21 @@ excerpt: |
 <!-- usage-example -->
 <h2 id="_9">実行例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <h3 id="_10">典型的な使い方<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 例 1: インターフェース起動 + IP 付与</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>startup<span class="w"> </span>Ethernet0
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 例 1: インターフェース起動 + IP 付与</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>startup<span class="w"> </span>Ethernet0
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>.0.0.1/24
 </span></code></pre></div>
 <h3 id="_11">よくある引数の組み合わせ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 速度・MTU・FEC 設定</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>speed<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">100000</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>mtu<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">9100</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>fec<span class="w"> </span>Ethernet0<span class="w"> </span>rs
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># VRF にバインド</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>vrf<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>Ethernet0<span class="w"> </span>Vrf_Red
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 速度・MTU・FEC 設定</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>speed<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">100000</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>mtu<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">9100</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>fec<span class="w"> </span>Ethernet0<span class="w"> </span>rs
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># VRF にバインド</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>vrf<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>Ethernet0<span class="w"> </span>Vrf_Red
 </span></code></pre></div>
 <h3 id="_12">期待される出力 (抜粋)<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Ethernet0 admin status set to up.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Ethernet0 admin status set to up.
 </span></code></pre></div>
 <!-- /usage-example -->
 

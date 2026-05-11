@@ -24040,6 +24040,21 @@ excerpt: |
 reasoning: 公開 API と更新セマンティクスの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/acl/ACL-Table-Type-HLD.md#L308-L362 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/acl/ACL-Table-Type-HLD.md#L308-L362 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>The create/update/remove methods are protected allowing the child classes to be overwritten for custom behavior...
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>bool addAclTable(shared_ptr&lt;AclTable&gt; aclTable); ...
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>NOTE: Updating ACL table allows only for updating ports bound to it.
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>NOTE: ACL rules coming from CONFIG DB are updated by removal and re-creation, an updateAclRule is mostly used for other orch&#39;s use cases.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 公開 API と更新セマンティクスの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_3">フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -24065,7 +24080,7 @@ reasoning: 公開 API と更新セマンティクスの根拠。
 </table>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>CLI は ACL_TABLE_TYPE 名を CONFIG_DB に対して検証し、actions が STATE_DB 公開 capability に含まれているかも検証する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 </span></code></pre></div>
 <p>新規 CLI（カスタムタイプ自体を作るコマンド）は <strong>本 HLD では追加しない</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB / config_db.json 直接編集または gNMI から作る前提。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>

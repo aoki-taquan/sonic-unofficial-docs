@@ -24246,6 +24246,20 @@ excerpt: |
 reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/gnsi.md#L168-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/mgmt/gnmi/gnsi.md#L168-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Credentialz is for managing SSH and Console access. Changes are made through dbus calls to appropiate host service modules.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>...
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>When this type of message is received the back-end will replace the content of /home/&lt;account&gt;/.ssh/authorized_keys file and restart the sshd daemon.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="gnmi-sonic-gnmi">gNMI / sonic-gnmi 側のフラグ追加<a class="headerlink" href="#gnmi-sonic-gnmi" title="Permanent link">&para;</a></h3>
 <p>HLD は gNMI server に以下のフラグを追加する想定<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -24291,16 +24305,16 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>OpenConfig 公開モデル（<code>openconfig-gnsi-certz</code> / <code>-authz</code> / <code>-pathz</code> / <code>-credentialz</code>）のパスを通す<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">設定例（運用イメージ）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Certz: gnxi profile に新証明書を流し込む</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gnsi_client<span class="w"> </span>certz<span class="w"> </span>rotate<span class="w"> </span>--profile<span class="w"> </span>gnxi<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--cert<span class="w"> </span>./new.pem<span class="w"> </span>--bundle<span class="w"> </span>./root.pem<span class="w"> </span>--crl-dir<span class="w"> </span>./crls/
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># 検証 OK で finalize</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>gnsi_client<span class="w"> </span>certz<span class="w"> </span>finalize
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Credentialz: SSH 認可鍵更新</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>gnsi_client<span class="w"> </span>credentialz<span class="w"> </span>rotate-account<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span>--account<span class="w"> </span>root<span class="w"> </span>--keys<span class="w"> </span>./new_authorized_keys.json
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Certz: gnxi profile に新証明書を流し込む</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gnsi_client<span class="w"> </span>certz<span class="w"> </span>rotate<span class="w"> </span>--profile<span class="w"> </span>gnxi<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--cert<span class="w"> </span>./new.pem<span class="w"> </span>--bundle<span class="w"> </span>./root.pem<span class="w"> </span>--crl-dir<span class="w"> </span>./crls/
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># 検証 OK で finalize</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>gnsi_client<span class="w"> </span>certz<span class="w"> </span>finalize
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># Credentialz: SSH 認可鍵更新</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>gnsi_client<span class="w"> </span>credentialz<span class="w"> </span>rotate-account<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span>--account<span class="w"> </span>root<span class="w"> </span>--keys<span class="w"> </span>./new_authorized_keys.json
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>

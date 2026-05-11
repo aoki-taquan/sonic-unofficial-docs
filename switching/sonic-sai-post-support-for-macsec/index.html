@@ -24042,6 +24042,20 @@ excerpt: |
 reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MACsec 設定を処理しないという中核ルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/fips/SONiC-SAI-POST.md#L97-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/fips/SONiC-SAI-POST.md#L97-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>In order to be compliant to FIPS, SONiC should process MACSec configuration only after POST passes.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>This is achieved by enhancing MACSecMgr, running in MACSec container, to check POST status published
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>in State DB before processing any MACSec configuration
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: MACSecMgr が POST 完了確認を担当し、POST=pass までは MACsec 設定を処理しないという中核ルールの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>専用 CONFIG_DB スキーマは本 HLD では新設しない。FIPS 自体の有効化は <code>sonic-installer</code> または <code>/etc/sonic/fips.json</code> で行う<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

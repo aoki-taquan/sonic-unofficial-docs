@@ -23997,33 +23997,47 @@ excerpt: |
 reasoning: BMv2 単体では足りないので VPP + saidash で補い、SAIRedis は remote dashsai client をロードする構成根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/dash/dash-sonic-kvm.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/dash/dash-sonic-kvm.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Due to the P4 and BMv2 limitation, such as flow creation, flow resimulation and etc, in this virtual DPU,
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>our implementation is based on the VPP framework with the CPU interface to enhance the dataplane engine ...
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>this dataplane APP loads the generated shared library, saidash, which communicates with BMv2 via GRPC.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: BMv2 単体では足りないので VPP + saidash で補い、SAIRedis は remote dashsai client をロードする構成根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_8">どう使うか<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="testbed-single-device">testbed セットアップ（single device モード）<a class="headerlink" href="#testbed-single-device" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># sonic-mgmt コンテナ内</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>/data/sonic-mgmt/ansible
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>./testbed-cli.sh<span class="w"> </span>-t<span class="w"> </span>vtestbed.yaml<span class="w"> </span>-m<span class="w"> </span>veos_vtb<span class="w"> </span>add-topo<span class="w">  </span>vms-kvm-dpu<span class="w"> </span>password.txt
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>./testbed-cli.sh<span class="w"> </span>-t<span class="w"> </span>vtestbed.yaml<span class="w"> </span>-m<span class="w"> </span>veos_vtb<span class="w"> </span>deploy-mg<span class="w"> </span>vms-kvm-dpu<span class="w"> </span>veos_vtb<span class="w"> </span>password.txt
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># sonic-mgmt コンテナ内</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>/data/sonic-mgmt/ansible
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>./testbed-cli.sh<span class="w"> </span>-t<span class="w"> </span>vtestbed.yaml<span class="w"> </span>-m<span class="w"> </span>veos_vtb<span class="w"> </span>add-topo<span class="w">  </span>vms-kvm-dpu<span class="w"> </span>password.txt
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>./testbed-cli.sh<span class="w"> </span>-t<span class="w"> </span>vtestbed.yaml<span class="w"> </span>-m<span class="w"> </span>veos_vtb<span class="w"> </span>deploy-mg<span class="w"> </span>vms-kvm-dpu<span class="w"> </span>veos_vtb<span class="w"> </span>password.txt
 </span></code></pre></div>
 <p>デフォルト管理 IP <code>10.250.0.101</code> / パスワード <code>password</code>。SSH:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sshpass<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;password&#39;</span><span class="w"> </span>ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">StrictHostKeyChecking</span><span class="o">=</span>no<span class="w"> </span>admin@10.250.0.101
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sshpass<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;password&#39;</span><span class="w"> </span>ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">StrictHostKeyChecking</span><span class="o">=</span>no<span class="w"> </span>admin@10.250.0.101
 </span></code></pre></div>
 <h3 id="gnmi">gNMI クライアント<a class="headerlink" href="#gnmi" title="Permanent link">&para;</a></h3>
 <p><code>sonic-mgmt</code> 内 <code>/tmp/&lt;UUID&gt;/</code> に CA / クライアント証明書が生成される。<code>gnmi_cli_py</code>（<strong>Python 2 依存</strong>）が PTF コンテナにプリインストール。DUT で gnmi-native を停止し証明書付きで再起動が必要<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>supervisorctl<span class="w"> </span>stop<span class="w"> </span>gnmi-native
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;/usr/sbin/telemetry -logtostderr --port 50052 \</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="s2">  --server_crt /etc/sonic/telemetry/gnmiserver.crt \</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="s2">  --server_key /etc/sonic/telemetry/gnmiserver.key \</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="s2">  --ca_crt /etc/sonic/telemetry/gnmiCA.pem \</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s2">  -gnmi_native_write=true -v=10 &gt;/root/gnmi.log 2&gt;&amp;1 &amp;&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>supervisorctl<span class="w"> </span>stop<span class="w"> </span>gnmi-native
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;/usr/sbin/telemetry -logtostderr --port 50052 \</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="s2">  --server_crt /etc/sonic/telemetry/gnmiserver.crt \</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="s2">  --server_key /etc/sonic/telemetry/gnmiserver.key \</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="s2">  --ca_crt /etc/sonic/telemetry/gnmiCA.pem \</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="s2">  -gnmi_native_write=true -v=10 &gt;/root/gnmi.log 2&gt;&amp;1 &amp;&quot;</span>
 </span></code></pre></div>
 <p>クライアント例:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python2<span class="w"> </span>/root/gnxi/gnmi_cli_py/py_gnmicli.py<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--timeout<span class="w"> </span><span class="m">30</span><span class="w"> </span>-t<span class="w"> </span><span class="m">10</span>.0.0.88<span class="w"> </span>-p<span class="w"> </span><span class="m">50052</span><span class="w"> </span>-xo<span class="w"> </span>sonic-db<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-rcert<span class="w"> </span>/root/gnmiCA.pem<span class="w"> </span>-pkey<span class="w"> </span>/root/gnmiclient.key<span class="w"> </span>-cchain<span class="w"> </span>/root/gnmiclient.crt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>-m<span class="w"> </span>set-update<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>--xpath<span class="w"> </span>/APPL_DB/localhost/DASH_APPLIANCE_TABLE<span class="o">[</span><span class="nv">key</span><span class="o">=</span><span class="m">123</span><span class="o">]</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">          </span>/APPL_DB/localhost/DASH_VNET_TABLE<span class="o">[</span><span class="nv">key</span><span class="o">=</span>Vnet1<span class="o">]</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span>--value<span class="w"> </span>$/root/update1<span class="w"> </span>$/root/update2
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python2<span class="w"> </span>/root/gnxi/gnmi_cli_py/py_gnmicli.py<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>--timeout<span class="w"> </span><span class="m">30</span><span class="w"> </span>-t<span class="w"> </span><span class="m">10</span>.0.0.88<span class="w"> </span>-p<span class="w"> </span><span class="m">50052</span><span class="w"> </span>-xo<span class="w"> </span>sonic-db<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>-rcert<span class="w"> </span>/root/gnmiCA.pem<span class="w"> </span>-pkey<span class="w"> </span>/root/gnmiclient.key<span class="w"> </span>-cchain<span class="w"> </span>/root/gnmiclient.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>-m<span class="w"> </span>set-update<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>--xpath<span class="w"> </span>/APPL_DB/localhost/DASH_APPLIANCE_TABLE<span class="o">[</span><span class="nv">key</span><span class="o">=</span><span class="m">123</span><span class="o">]</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">          </span>/APPL_DB/localhost/DASH_VNET_TABLE<span class="o">[</span><span class="nv">key</span><span class="o">=</span>Vnet1<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>--value<span class="w"> </span>$/root/update1<span class="w"> </span>$/root/update2
 </span></code></pre></div>
 <h2 id="_9">設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>KVM 自体には追加 CONFIG_DB スキーマ・CLI・YANG は無い。物理 DPU と同じ DASH テーブル（<code>DASH_VNET_TABLE</code>, <code>DASH_APPLIANCE_TABLE</code> 等）を APP_DB / CONFIG_DB に投入する。testbed 操作は <code>testbed-cli.sh</code>（sonic-mgmt）。</p>

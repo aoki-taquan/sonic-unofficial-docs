@@ -24036,6 +24036,25 @@ excerpt: |
 reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 判定」というルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/master_arbitration.md#L196-L265 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/mgmt/gnmi/master_arbitration.md#L196-L265 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>func (s *Server) Set(ctx context.Context, req *gnmipb.SetRequest) (*gnmipb.SetResponse, error) {
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  if !reqFromMaster(req) {
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    return nil, status.Error(codes.PermissionDenied, &quot;Not a master&quot;)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  }
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>...
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>// ReqFromMasterEnabledMA returns true if the request is sent by the master controller.
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>...
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>// Use the election ID that is in the last extension, so, no &#39;break&#39; here.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 「extension は最後の MA を採用」「Set 前に reqFromMaster 判定」というルールの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="role">Role（ほぼ未使用）<a class="headerlink" href="#role" title="Permanent link">&para;</a></h3>
 <p>仕様としては Role 単位でマスタを別々に持てる（control plane の役割分担を想定）。SONiC 実装は <strong>default role のみ対応</strong> で、<code>Role.id</code> フィールドは無視する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_5">ロギング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -24068,18 +24087,18 @@ reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>該当 YANG モジュールは HLD で言及されていない（CLI/YANG model Enhancements が "N/A"）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="hld">設定例（HLD 記述ベース）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># telemetry / gnmi コンテナ起動時にフラグを足す形（実装依存）</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># 例: telemetry コンテナの supervisord/argv に --with-master-arbitration を追加</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># telemetry / gnmi コンテナ起動時にフラグを足す形（実装依存）</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># 例: telemetry コンテナの supervisord/argv に --with-master-arbitration を追加</span>
 </span></code></pre></div>
 <p>クライアント側 (Go gNMI client 例):</p>
-<div class="language-go highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">ext</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension</span><span class="p">{</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nx">Ext</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension_MasterArbitration</span><span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="nx">MasterArbitration</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">MasterArbitration</span><span class="p">{</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">            </span><span class="nx">ElectionId</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Uint128</span><span class="p">{</span><span class="nx">High</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nx">Low</span><span class="p">:</span><span class="w"> </span><span class="nb">uint64</span><span class="p">(</span><span class="nx">myEID</span><span class="p">)},</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="p">},</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nx">req</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi</span><span class="p">.</span><span class="nx">SetRequest</span><span class="p">{</span><span class="w"> </span><span class="nx">Extension</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="o">*</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension</span><span class="p">{</span><span class="nx">ext</span><span class="p">},</span><span class="w"> </span><span class="o">...</span><span class="w"> </span><span class="p">}</span>
+<div class="language-go highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nx">ext</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension</span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nx">Ext</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension_MasterArbitration</span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">        </span><span class="nx">MasterArbitration</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">MasterArbitration</span><span class="p">{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">            </span><span class="nx">ElectionId</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Uint128</span><span class="p">{</span><span class="nx">High</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nx">Low</span><span class="p">:</span><span class="w"> </span><span class="nb">uint64</span><span class="p">(</span><span class="nx">myEID</span><span class="p">)},</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="nx">req</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">gnmi</span><span class="p">.</span><span class="nx">SetRequest</span><span class="p">{</span><span class="w"> </span><span class="nx">Extension</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="o">*</span><span class="nx">gnmi_ext</span><span class="p">.</span><span class="nx">Extension</span><span class="p">{</span><span class="nx">ext</span><span class="p">},</span><span class="w"> </span><span class="o">...</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

@@ -23841,6 +23841,19 @@ excerpt: |
 reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/port-profile-init/port-profile-init-design.md#L60-L72 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/port-profile-init/port-profile-init-design.md#L60-L72 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>After feature is implemented, SAI initialization time should be reduced.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Hence, we expect fast-boot up time to meet max 30 seconds restriction.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 本機能の主要 goal が fast-boot 30s 達成にある根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
 <p>本 HLD では <strong>変更なし</strong><sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。port table スキーマ・user 体験は同一で、内部の SAI 呼び出し方式だけ切替わる。</p>
 <h2 id="warm-boot-fast-boot">Warm boot / Fast boot<a class="headerlink" href="#warm-boot-fast-boot" title="Permanent link">&para;</a></h2>

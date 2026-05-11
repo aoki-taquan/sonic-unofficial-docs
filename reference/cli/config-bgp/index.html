@@ -24067,9 +24067,27 @@ excerpt: |
               _change_bgp_session_status_by_addr(config_db, ipaddress, 'down', verbose)
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L4939-L4959 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L4939-L4959 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>@shutdown.command()
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>def all(verbose):
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    ...
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    for namespace in namespaces:
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        config_db = ConfigDBConnector(...)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        ...
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        for ipaddress in bgp_neighbor_ip_list:
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>            _change_bgp_session_status_by_addr(config_db, ipaddress, &#39;down&#39;, verbose)
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="config-bgp-shutdown-neighbor-ipaddr_or_hostname"><code>config bgp shutdown neighbor &lt;ipaddr_or_hostname&gt;</code><a class="headerlink" href="#config-bgp-shutdown-neighbor-ipaddr_or_hostname" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config bgp shutdown neighbor &lt;ipaddr_or_hostname&gt; [-v|--verbose]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config bgp shutdown neighbor &lt;ipaddr_or_hostname&gt; [-v|--verbose]
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
@@ -24081,7 +24099,7 @@ excerpt: |
 <p><code>shutdown</code> と対称。書き換え値が <code>up</code> になるだけで、引数・オプション・スコープは同一。</p>
 <h3 id="config-bgp-remove-neighbor-neighbor_ip_or_hostname"><code>config bgp remove neighbor &lt;neighbor_ip_or_hostname&gt;</code><a class="headerlink" href="#config-bgp-remove-neighbor-neighbor_ip_or_hostname" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config bgp remove neighbor &lt;neighbor_ip_or_hostname&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config bgp remove neighbor &lt;neighbor_ip_or_hostname&gt;
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>_remove_bgp_neighbor_config</code> が <code>BGP_NEIGHBOR</code> テーブルから当該エントリを完全削除する。<code>admin_status</code> を変えるだけの shutdown と異なり、隣接定義そのものが消える。multi-ASIC では <code>front_ns</code> + <code>back_ns</code> を走査。</p>
@@ -24095,10 +24113,25 @@ excerpt: |
           removed_neighbor = True
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L5052-L5074 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L5052-L5074 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>@remove.command(&#39;neighbor&#39;)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>def remove_neighbor(neighbor_ip_or_hostname):
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    ...
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    if _remove_bgp_neighbor_config(config_db, neighbor_ip_or_hostname):
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        removed_neighbor = True
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="config-bgp-device-global-tsa-enabled-disabled"><code>config bgp device-global tsa enabled</code> / <code>disabled</code><a class="headerlink" href="#config-bgp-device-global-tsa-enabled-disabled" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config bgp device-global tsa enabled
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config bgp device-global tsa disabled
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config bgp device-global tsa enabled
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config bgp device-global tsa disabled
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>tsa_handler</code> が <code>BGP_DEVICE_GLOBAL</code> テーブルの key <code>STATE</code> の <code>tsa_enabled</code> フィールドを <code>true</code> / <code>false</code> に更新する。隣接単位ではなくスイッチ全体の状態変更で、外部向けトラフィックを能動的に他デバイスに振り替えるための機能<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
@@ -24107,12 +24140,12 @@ excerpt: |
 <code>wcmp_handler</code> が <code>BGP_DEVICE_GLOBAL|STATE</code> の <code>wcmp_enabled</code> を更新する。Weighted-Cost Multi-Path 機能のスイッチ全体スコープのオン／オフ。</p>
 <h3 id="config-bgp-aggregate-address-add-address-options"><code>config bgp aggregate-address add &lt;address&gt; [options]</code><a class="headerlink" href="#config-bgp-aggregate-address-add-address-options" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config bgp aggregate-address add &lt;address&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    [--bbr-required]
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    [--summary-only]
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    [--as-set]
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    [--aggregate-address-prefix-list &lt;name&gt;]
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    [--contributing-address-prefix-list &lt;name&gt;]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config bgp aggregate-address add &lt;address&gt;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    [--bbr-required]
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    [--summary-only]
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    [--as-set]
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    [--aggregate-address-prefix-list &lt;name&gt;]
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    [--contributing-address-prefix-list &lt;name&gt;]
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
@@ -24145,6 +24178,28 @@ excerpt: |
       }
       db.cfgdb.set_entry(table, key, data)
 -->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/bgp_cli.py#L255-L286 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/bgp_cli.py#L255-L286 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>def AGGREGATE_ADDRESS_ADD(ctx, db, address, bbr_required, summary_only, as_set, ...):
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    table = CFG_BGP_AGGREGATE_ADDRESS  # = &quot;BGP_AGGREGATE_ADDRESS&quot;
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    key = address
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    ...
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    if table in cfg and key in cfg[table]:
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>        ctx.fail(&quot;Aggregate address &#39;{}&#39; already exists&quot;.format(key))
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    data = {
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>        &quot;bbr-required&quot;: ..., &quot;summary-only&quot;: ..., &quot;as-set&quot;: ...,
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>        &quot;aggregate-address-prefix-list&quot;: ...,
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>        &quot;contributing-address-prefix-list&quot;: ...,
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    }
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    db.cfgdb.set_entry(table, key, data)
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
 
 <h3 id="config-bgp-aggregate-address-remove-address"><code>config bgp aggregate-address remove &lt;address&gt;</code><a class="headerlink" href="#config-bgp-aggregate-address-remove-address" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
@@ -24223,18 +24278,18 @@ excerpt: |
 <!-- usage-example -->
 <h2 id="_7">実行例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="_8">典型的な使い方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 例 1: 特定隣接の BGP セッションをシャットダウン</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>shutdown<span class="w"> </span>neighbor<span class="w"> </span><span class="m">10</span>.0.0.1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 例 1: 特定隣接の BGP セッションをシャットダウン</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>shutdown<span class="w"> </span>neighbor<span class="w"> </span><span class="m">10</span>.0.0.1
 </span></code></pre></div>
 <h3 id="_9">よくある引数の組み合わせ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 集約 prefix を summary-only で広告</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>aggregate-address<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.0/16<span class="w"> </span>--summary-only
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Traffic-Shift-Away を有効化（メンテナンス前に外向きトラフィックを退避）</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>device-global<span class="w"> </span>tsa<span class="w"> </span>enabled
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># 集約 prefix を summary-only で広告</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>aggregate-address<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.0/16<span class="w"> </span>--summary-only
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Traffic-Shift-Away を有効化（メンテナンス前に外向きトラフィックを退避）</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>device-global<span class="w"> </span>tsa<span class="w"> </span>enabled
 </span></code></pre></div>
 <h3 id="_10">期待される出力 (抜粋)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Starting up BGP session with neighbor 10.0.0.1 .....
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Starting up BGP session with neighbor 10.0.0.1 .....
 </span></code></pre></div>
 <!-- /usage-example -->
 

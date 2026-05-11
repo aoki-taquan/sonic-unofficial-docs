@@ -23908,6 +23908,18 @@ excerpt: |
 reasoning: 一元化の動機が「platform.json への移行容易化」にあることの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/port-config-refactor/port-config-refactor-design.md#L13-L15 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/port-config-refactor/port-config-refactor-design.md#L13-L15 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>There are also open PRs to begin transitioning from the &quot;port_config.ini&quot; file to a new &quot;platform.json&quot; file. So if we keep all parse logic in portconfig.py, it will be easy to keep backward compatible.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 一元化の動機が「platform.json への移行容易化」にあることの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_4">依存関係<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p><code>portconfig.py</code> 自体は <code>sonic-buildimage/src/sonic-config-engine</code> パッケージに属する。これを他モジュールから再利用するために、HLD は次の 2 点を要求している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>

@@ -23885,6 +23885,20 @@ excerpt: |
 reasoning: 2-container 構成と各 container の役割の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/alpine/alpine_hld.md#L101-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/alpine/alpine_hld.md#L101-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>At a high level, the Alpine Virtual Switch (ALViS) is composed of 2 foundational Docker containers:
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>1. SwitchStack Container which runs a SONiC VM, and
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>2. ASIC Simulation Container which runs the virtual ASIC.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 2-container 構成と各 container の役割の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="sai">SAI<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
 <p>SAI 仕様自体への変更は無い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dataplane への接続方式は vendor 実装次第。Lucius の場合は <strong>gRPC 経由で SAI 呼び出しを auto-generated client が転送</strong> する（<a href="https://github.com/openconfig/lemming/blob/main/dataplane/docs/protoforsai.md">lemming の protoforsai</a> 参照）。</p>
 <h2 id="_3">リソース要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>

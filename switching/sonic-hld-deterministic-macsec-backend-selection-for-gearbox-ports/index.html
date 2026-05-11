@@ -24083,6 +24083,21 @@ excerpt: |
 reasoning: 「フォールバックしない」「不在は true 扱い」という本設計の中核ルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/macsec-gearbox/macsec_backend_gearbox.md#L78-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/macsec-gearbox/macsec_backend_gearbox.md#L78-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>For each port:
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>- If `macsec_supported == false`: use NPU/global switch for MACsec
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>- If `macsec_supported == true` OR field is absent: use PHY switch for MACsec (default, preserves existing behavior)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>No runtime fallback. If PHY SAI does not implement MACsec and the field is true/absent, the operation fails and is logged.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 「フォールバックしない」「不在は true 扱い」という本設計の中核ルールの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="warm-boot-fast-boot">Warm boot / Fast boot<a class="headerlink" href="#warm-boot-fast-boot" title="Permanent link">&para;</a></h3>
 <p>バックエンド選定は決定論的（<code>gearbox_config.json</code> 由来）であり、再起動後も同じ結果になる。Warm/Fast boot に対する追加処理は不要<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="backward-compatibility">Backward Compatibility<a class="headerlink" href="#backward-compatibility" title="Permanent link">&para;</a></h3>
@@ -24095,8 +24110,8 @@ reasoning: 「フォールバックしない」「不在は true 扱い」とい
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>CONFIG_DB スキーマには変更を加えない。設定の入口は HWSKU の <code>gearbox_config.json</code><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="app_db">APP_DB<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>_GEARBOX_TABLE:phy:&lt;phy_id&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    macsec_supported : &quot;true&quot; | &quot;false&quot;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>_GEARBOX_TABLE:phy:&lt;phy_id&gt;
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    macsec_supported : &quot;true&quot; | &quot;false&quot;
 </span></code></pre></div>
 <p>他の PHY 属性（<code>phy_id</code>, <code>name</code>, <code>bus_id</code>, <code>context_id</code>, <code>macsec_ipg</code> など）と同じテーブルに並ぶ。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>

@@ -23845,6 +23845,20 @@ excerpt: |
 reasoning: 採用判定ルールと fallback の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/bulk_counter/bulk_counter.md#L30-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/bulk_counter/bulk_counter.md#L30-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Syncd shall use bulk stats APIs based on object type.
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>... For a certain object in a counter group, it shall use bulk stats only if all counter IDs support bulk API
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>... Syncd shall automatically fall back to old way if bulk stats APIs are not supported
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 採用判定ルールと fallback の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>CLI / CONFIG_DB の <strong>新規追加なし</strong>（Phase 1）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FLEX_COUNTER_TABLE 既存スキーマの <code>STATS_MODE</code> から bulk mode を導出するのみ。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

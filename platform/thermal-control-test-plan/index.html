@@ -23991,6 +23991,19 @@ excerpt: |
 reasoning: PSU absent → FAN 100% / algorithm disable の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/pmon/sonic_thermal_control_test_plan.md#L43-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/pmon/sonic_thermal_control_test_plan.md#L43-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>In the case of &quot;any PSU absence&quot;, the expected behavior based on the design and implementation
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>is that FAN speed is set to 100% and thermal control algorithm is disabled.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: PSU absent → FAN 100% / algorithm disable の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_5">実装基盤<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://github.com/sonic-net/SONiC-mgmt/tree/master/tests/platform">SONiC-mgmt <code>tests/platform</code></a> を流用</li>

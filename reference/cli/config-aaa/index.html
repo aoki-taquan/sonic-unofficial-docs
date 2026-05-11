@@ -24089,6 +24089,20 @@ excerpt: |
   add_table_kv(db, 'AAA', 'authentication', 'login', val)
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/aaa.py#L120-L155 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/aaa.py#L120-L155 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>if good_ap == True:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    val += &#39;,&#39; + val2
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>...
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>add_table_kv(db, &#39;AAA&#39;, &#39;authentication&#39;, &#39;login&#39;, val)
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="config-aaa-authorization-protocol-accounting-protocol"><code>config aaa authorization &lt;protocol&gt;</code> / <code>accounting &lt;protocol&gt;</code><a class="headerlink" href="#config-aaa-authorization-protocol-accounting-protocol" title="Permanent link">&para;</a></h3>
 <p><code>AAA|authorization</code> または <code>AAA|accounting</code> の <code>login</code> フィールドに <code>tacacs+</code> / <code>local</code> / <code>tacacs+,local</code> を設定する。<code>accounting disable</code> のみ <code>del_table_key</code> で削除する。</p>
 <h3 id="config-tacacs-add-ip"><code>config tacacs add &lt;ip&gt; [...]</code><a class="headerlink" href="#config-tacacs-add-ip" title="Permanent link">&para;</a></h3>

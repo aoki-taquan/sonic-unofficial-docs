@@ -24241,6 +24241,27 @@ excerpt: |
 reasoning: テストの判定ロジック（DIP=SIP のままルーティングされ TTL が 1 減る）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/dip-sip/DIP=SIP_HLD.md#L120-L143 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/dip-sip/DIP=SIP_HLD.md#L120-L143 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Default values:
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>* pkt_ttl_hlim=64
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Values:
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>* dst_host_ipv4_ipv6=&lt;dst_router_ipv4_ipv6&gt;+1
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>* src_host_ipv4_ipv6=&lt;src_router_ipv4_ipv6&gt;+1
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Data packet:
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>* DST_IPv4_IPv6=&lt;dst_host_ipv4_ipv6&gt;
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>* SRC_IPv4_IPv6=&lt;dst_host_ipv4_ipv6&gt;
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>Expected packet:
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>* TTL_HL=&lt;pkt_ttl_hlim&gt;-1
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: テストの判定ロジック（DIP=SIP のままルーティングされ TTL が 1 減る）の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_6">判定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>期待パケットが destination port のいずれかで観測されれば pass、それ以外は fail。fail 時は <strong>expected / received のパケットダンプを含むエラーメッセージ</strong> が出力される<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -24248,11 +24269,11 @@ reasoning: テストの判定ロジック（DIP=SIP のままルーティング�
 <p>該当エントリは無い。本機能は <strong>テストインフラ</strong> であり DUT 側の設定変更は伴わない（既存の RIF を使うのみ）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当 CLI は無い。実行は Ansible から行う<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>-H<span class="w"> </span>ansible-playbook<span class="w"> </span>test_sonic.yml<span class="w"> </span>-i<span class="w"> </span>inventory<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">     </span>--limit<span class="w"> </span>arc-switch1025-t0<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">     </span>-e<span class="w"> </span><span class="nv">testbed_name</span><span class="o">=</span>arc-switch1025-t0<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">     </span>-e<span class="w"> </span><span class="nv">testbed_type</span><span class="o">=</span>t0<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">     </span>-e<span class="w"> </span><span class="nv">testcase_name</span><span class="o">=</span>dip_sip<span class="w"> </span>-vvvvv
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>-H<span class="w"> </span>ansible-playbook<span class="w"> </span>test_sonic.yml<span class="w"> </span>-i<span class="w"> </span>inventory<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">     </span>--limit<span class="w"> </span>arc-switch1025-t0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">     </span>-e<span class="w"> </span><span class="nv">testbed_name</span><span class="o">=</span>arc-switch1025-t0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">     </span>-e<span class="w"> </span><span class="nv">testbed_type</span><span class="o">=</span>t0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">     </span>-e<span class="w"> </span><span class="nv">testcase_name</span><span class="o">=</span>dip_sip<span class="w"> </span>-vvvvv
 </span></code></pre></div>
 <p>ログ出力は <code>/tmp/dip_sip.DipSipTest.&lt;timestamp&gt;.log</code><sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -24283,10 +24304,10 @@ reasoning: テストの判定ロジック（DIP=SIP のままルーティング�
 </ul>
 <h3 id="2-hld">2. HLD と実装の差分の中身<a class="headerlink" href="#2-hld" title="Permanent link">&para;</a></h3>
 <p>HLD 当時の構造:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ansible playbook → dip_sip.yml (前処理) → ptf_runner → dip_sip.py (PTF テスト)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ansible playbook → dip_sip.yml (前処理) → ptf_runner → dip_sip.py (PTF テスト)
 </span></code></pre></div>
 <p>現行:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest tests/ipfwd/test_dip_sip.py
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest tests/ipfwd/test_dip_sip.py
 </span></code></pre></div>
 <p>すなわち <strong>テストロジック本体は pytest 側に移植され、ansible は単に pytest 起動を仲介するだけ</strong> になった。テストの意味論（DIP=SIP パケットが転送される / TTL が 1 減る / 期待ポートから出る）は HLD と同じだが、起動ファイル名・配置・前処理の責務が違う。</p>
 <h3 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>

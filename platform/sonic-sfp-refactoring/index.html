@@ -23839,6 +23839,20 @@ excerpt: |
 reasoning: identifier-based spec 判定への切替の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/sfp-refactor/sfp-refactor.md#L150-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/sfp-refactor/sfp-refactor.md#L150-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>The correct specification abstraction needs to be selected at runtime to interpret a xcvr&#39;s memory map correctly.
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>This should be done by reading the first byte in the xcvr&#39;s EEPROM ...
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>This approach is in contrast to what&#39;s currently done with selecting parsers based on the xcvr&#39;s port number.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: identifier-based spec 判定への切替の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="in-scope-out-of-scope">In Scope / Out of Scope<a class="headerlink" href="#in-scope-out-of-scope" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

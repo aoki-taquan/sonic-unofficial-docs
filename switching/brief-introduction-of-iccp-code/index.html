@@ -24191,6 +24191,22 @@ excerpt: |
 reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/mclag/iccpd-code-introduction.md#L70-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/mclag/iccpd-code-introduction.md#L70-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>There are four states in MCLAG finite state machine:
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>- MLACP_STATE_INIT: Peer connection is not established.
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>- MLACP_STATE_STAGE1: ... first sync up ARP and MAC info with peer ...
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>- MLACP_STATE_STAGE2: ...
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>- MLACP_STATE_EXCHANGE: This is the steady state. Function mlacp_exchange_handler() handle some events in this switch.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: MLACP FSM の 4 状態と各状態の責務の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（<code>MC_LAG_DOMAIN</code>, <code>MC_LAG_INTERFACE</code> 等）から <code>iccpd.j2</code> で生成された <code>/etc/iccpd/iccpd.conf</code> を介する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD ドキュメントには CONFIG_DB スキーマの直接記載は無いため、詳細は MC-LAG HLD 系を参照する必要がある。</p>

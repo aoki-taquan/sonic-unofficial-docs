@@ -24159,6 +24159,20 @@ excerpt: |
 reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/voq/architecture.md#L218-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/voq/architecture.md#L218-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Loss of connectivity to the Chassis DB can prevent forwarding state from other FSIs from being propagated.
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>To avoid traffic impact, The FSI must take defensive action to disconnect from the outside world
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>(for example by ceasing protocol sessions) with neighbors to avoid any traffic flows through the FSI.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: Chassis DB 切断時の防御的シャットダウン動作の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="hld-4">将来課題（HLD §4）<a class="headerlink" href="#hld-4" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Dynamic system ports</strong>: 走行中の FSI 追加 / SKU 変更カードへの差し替え。SAI に <code>create_port</code> / <code>remove_port</code> のサポートが必要<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -24170,13 +24184,13 @@ reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠�
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
 <p>このページの主要表面は <code>chassisdb.conf</code> と <code>database_config.json</code> というファイルレベル。<code>CHASSIS_APP_DB</code> 上のテーブルスキーマは別 HLD（system port 等）に分離されている<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="ssi">設定例（SSI 上）<a class="headerlink" href="#ssi" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a># /usr/share/sonic/device/&lt;platform&gt;/chassisdb.conf
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>start_chassis_db=1
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>chassis_db_address=127.100.0.1
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a># /usr/share/sonic/device/&lt;platform&gt;/chassisdb.conf
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>start_chassis_db=1
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>chassis_db_address=127.100.0.1
 </span></code></pre></div>
 <h3 id="fsi">設定例（FSI 上）<a class="headerlink" href="#fsi" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a># /usr/share/sonic/device/&lt;platform&gt;/chassisdb.conf
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>chassis_db_address=127.100.0.1
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a># /usr/share/sonic/device/&lt;platform&gt;/chassisdb.conf
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>chassis_db_address=127.100.0.1
 </span></code></pre></div>
 <p><code>/etc/hosts</code> に <code>127.100.0.1 redis_chassis.server</code> を <code>config-chassisdb</code> が追加する<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>

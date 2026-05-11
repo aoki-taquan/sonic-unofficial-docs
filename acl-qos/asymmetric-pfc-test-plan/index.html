@@ -24041,15 +24041,29 @@ excerpt: |
 reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/pfc_asym/PFC_Asymmetric_Test_HLD.md#L96-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/pfc_asym/PFC_Asymmetric_Test_HLD.md#L96-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>deploy_pfc_gen (scope=&quot;module&quot;, autouse=True)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>To simulate that neighbors are overloaded (send many PFC frames) there is used PFC packets generator which is running on Fanout switch.
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>File location - roles/test/files/helpers/pfc_gen.py
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: pfc_gen.py の役割と配備 fixture の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="ptf_1">PTF テストケース実行<a class="headerlink" href="#ptf_1" title="Permanent link">&para;</a></h3>
 <p><code>tests/ptf_runner.py</code> モジュールを使って既存 PTF テストケースをラップする<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
 <p>該当なし（テスト計画文書）。</p>
 <h3 id="_6">設定例（テスト実行）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># sonic-mgmt 側</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>sonic-mgmt/tests
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>pytest<span class="w"> </span>pfc_asym/pfc_asym.py<span class="w"> </span>--topology<span class="o">=</span>t0
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># sonic-mgmt 側</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>sonic-mgmt/tests
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>pytest<span class="w"> </span>pfc_asym/pfc_asym.py<span class="w"> </span>--topology<span class="o">=</span>t0
 </span></code></pre></div>
 <p>具体的な引数は sonic-mgmt の標準 testbed パラメタに従う。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>

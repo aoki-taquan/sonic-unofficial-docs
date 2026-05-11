@@ -23976,6 +23976,20 @@ excerpt: |
 reasoning: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md#L62-L82 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md#L62-L82 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>- DHCPv6 trap should be enabled through the COPP manager when the DHCP relay feature is enabled and vice versa.
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>- Downstream network is the VLAN interface with the relay configuration. Global IPv6 address is required to be configured on that interface.
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>&quot;dhcpv6_servers&quot;: [ &quot;21da:d3:0:2f3b::7&quot;, &quot;21da:d3:0:2f3b::6&quot; ]
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_7">設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <table>
@@ -24027,17 +24041,17 @@ reasoning: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。
 </tbody>
 </table>
 <h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>dhcp_relay<span class="w"> </span>add<span class="w"> </span><span class="m">1000</span><span class="w"> </span>21da:d3:0:2f3b::7
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Added<span class="w"> </span>DHCP<span class="w"> </span>relay<span class="w"> </span>destination<span class="w"> </span>address<span class="w"> </span>21da:d3:0:2f3b::7<span class="w"> </span>to<span class="w"> </span>Vlan1000
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Restarting<span class="w"> </span>DHCP<span class="w"> </span>relay<span class="w"> </span>service...
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>dhcp_relay<span class="w"> </span>add<span class="w"> </span><span class="m">1000</span><span class="w"> </span>21da:d3:0:2f3b::7
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Added<span class="w"> </span>DHCP<span class="w"> </span>relay<span class="w"> </span>destination<span class="w"> </span>address<span class="w"> </span>21da:d3:0:2f3b::7<span class="w"> </span>to<span class="w"> </span>Vlan1000
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Restarting<span class="w"> </span>DHCP<span class="w"> </span>relay<span class="w"> </span>service...
 </span></code></pre></div>
 <p><code>show vlan brief</code> の出力例<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>+---------+----------------------+------------+----------+-----------------------+----------+
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>| VLAN ID | IP Address           | Ports      | Tagging  | DHCP Helper Address   | ProxyARP |
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>+=========+======================+============+==========+=======================+==========+
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>|    1000 | 21da:d3:0:2f3b::6/96 | Ethernet28 | untagged | 21da:d3:0:2f3b::6     | disabled |
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>|         |                      |            |          | 21da:d3:0:2f3b::7     |          |
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>+---------+----------------------+------------+----------+-----------------------+----------+
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>+---------+----------------------+------------+----------+-----------------------+----------+
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>| VLAN ID | IP Address           | Ports      | Tagging  | DHCP Helper Address   | ProxyARP |
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>+=========+======================+============+==========+=======================+==========+
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>|    1000 | 21da:d3:0:2f3b::6/96 | Ethernet28 | untagged | 21da:d3:0:2f3b::6     | disabled |
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>|         |                      |            |          | 21da:d3:0:2f3b::7     |          |
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>+---------+----------------------+------------+----------+-----------------------+----------+
 </span></code></pre></div>
 <p>CLI 操作後は <code>Restarting DHCP relay service...</code> と表示され、コンテナごと再起動して新構成で <code>dhcrelay -6</code> が立ち上がる<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>

@@ -24051,6 +24051,19 @@ excerpt: |
 reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通過の差別化の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/port_auto_neg/port-auto-negotiation-design.md#L96-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/port_auto_neg/port-auto-negotiation-design.md#L96-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>If autoneg is enabled, the administrative port speed updates should not disable the autoneg. The configured speed should be cached in swss#orchagent and gets replayed when autoneg is transitioned from enabled to disabled.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>If autoneg is enabled, while the administrative interface type updates via CONFIG_DB should be blocked, the dynamic interface type updates from pmon#xcvrd via APPL_DB should be delivered to the SAI to update the autoneg advertisement.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通過の差別化の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="db-migrator">DB Migrator<a class="headerlink" href="#db-migrator" title="Permanent link">&para;</a></h3>
 <p>既存 <code>PORT.autoneg</code> の値が boolean 表記から enum 表記へ変わる場合などに DB migrator が一括変換する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。レガシー設定との後方互換性は migrator 側で吸収する。</p>
 <h3 id="portsyncd-portmgrd-port-breakout-xcvrd">portsyncd / portmgrd / Port Breakout / xcvrd の影響<a class="headerlink" href="#portsyncd-portmgrd-port-breakout-xcvrd" title="Permanent link">&para;</a></h3>
@@ -24081,17 +24094,17 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>上記 5 個。<code>saiport.h</code> の interface_type enum が valid value の母集合。</p>
 <h3 id="_4">設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># AN ON で 40G/100G のみ advertise、KR4/CR4 のみ</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>interface<span class="w"> </span>autoneg<span class="w">            </span>Ethernet0<span class="w"> </span>enabled
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config<span class="w"> </span>interface<span class="w"> </span>advertised-speeds<span class="w">  </span>Ethernet0<span class="w"> </span><span class="m">40000</span>,100000
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config<span class="w"> </span>interface<span class="w"> </span>advertised-types<span class="w">   </span>Ethernet0<span class="w"> </span>KR4,CR4
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># AN OFF で固定 100G KR4</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>config<span class="w"> </span>interface<span class="w"> </span>autoneg<span class="w">            </span>Ethernet0<span class="w"> </span>disabled
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>config<span class="w"> </span>interface<span class="w"> </span>speed<span class="w">              </span>Ethernet0<span class="w"> </span><span class="m">100000</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>config<span class="w"> </span>interface<span class="w"> </span><span class="nb">type</span><span class="w">               </span>Ethernet0<span class="w"> </span>KR4
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>show<span class="w"> </span>interfaces<span class="w"> </span>autoneg<span class="w"> </span>status
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># AN ON で 40G/100G のみ advertise、KR4/CR4 のみ</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>interface<span class="w"> </span>autoneg<span class="w">            </span>Ethernet0<span class="w"> </span>enabled
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>config<span class="w"> </span>interface<span class="w"> </span>advertised-speeds<span class="w">  </span>Ethernet0<span class="w"> </span><span class="m">40000</span>,100000
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>config<span class="w"> </span>interface<span class="w"> </span>advertised-types<span class="w">   </span>Ethernet0<span class="w"> </span>KR4,CR4
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># AN OFF で固定 100G KR4</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>config<span class="w"> </span>interface<span class="w"> </span>autoneg<span class="w">            </span>Ethernet0<span class="w"> </span>disabled
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>config<span class="w"> </span>interface<span class="w"> </span>speed<span class="w">              </span>Ethernet0<span class="w"> </span><span class="m">100000</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>config<span class="w"> </span>interface<span class="w"> </span><span class="nb">type</span><span class="w">               </span>Ethernet0<span class="w"> </span>KR4
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>show<span class="w"> </span>interfaces<span class="w"> </span>autoneg<span class="w"> </span>status
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -24109,18 +24122,18 @@ reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通�
 <li><strong>port breakout</strong>: 分割後の各 sub-port に AN 設定が継承されるかは vendor SAI 依存</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># AN 結果が想定と違う</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>autoneg<span class="w"> </span>status<span class="w"> </span>Ethernet0
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Oper Speed / Oper IfType が CONFIG_DB の adv_* に含まれているか確認</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># AN ON でもリンク立たない</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># 1) 対向側の advertise 集合と交差があるか</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 2) SFP の場合: link-training の状態を確認 (show interfaces link-training status)</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># 3) FEC mismatch を疑う</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># 設定が反映されない</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT|Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;autoneg|adv_|interface_type&#39;</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT_TABLE:Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;autoneg|adv_|interface_type&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># AN 結果が想定と違う</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>autoneg<span class="w"> </span>status<span class="w"> </span>Ethernet0
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Oper Speed / Oper IfType が CONFIG_DB の adv_* に含まれているか確認</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># AN ON でもリンク立たない</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># 1) 対向側の advertise 集合と交差があるか</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 2) SFP の場合: link-training の状態を確認 (show interfaces link-training status)</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># 3) FEC mismatch を疑う</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># 設定が反映されない</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT|Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;autoneg|adv_|interface_type&#39;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT_TABLE:Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;autoneg|adv_|interface_type&#39;</span>
 </span></code></pre></div>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->

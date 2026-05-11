@@ -23959,6 +23959,19 @@ excerpt: |
 reasoning: 入力 → 再計算 → APPL_DB の流れと CONFIG_DB / APPL_DB / STATE_DB の責務分担。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/qos/dynamically-headroom-calculation.md#L102-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/qos/dynamically-headroom-calculation.md#L102-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>- When a port&#39;s cable length, speed or MTU is updated, headroom of all lossless priority groups will be updated according to the well-known formula
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>- All the statically configured data will be stored in `CONFIG_DB` and all dynamically data in `APPL_DB`.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 入力 → 再計算 → APPL_DB の流れと CONFIG_DB / APPL_DB / STATE_DB の責務分担。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="headroom-override">Headroom override（式から外す）<a class="headerlink" href="#headroom-override" title="Permanent link">&para;</a></h2>
 <p>特定 port の headroom を式から外して固定値にする運用も可能。<code>BUFFER_PROFILE</code> を直接指定して <code>BUFFER_PG</code> に当てる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="cli-config_db">関連する CLI / CONFIG_DB<a class="headerlink" href="#cli-config_db" title="Permanent link">&para;</a></h2>
@@ -23984,9 +23997,9 @@ reasoning: 入力 → 再計算 → APPL_DB の流れと CONFIG_DB / APPL_DB / S
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DEVICE_METADATA|localhost:    buffer_model = dynamic | traditional
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>LOSSLESS_TRAFFIC_PATTERN:     mtu, small_packet_percentage, default_dynamic_th
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 &quot;3,4&quot;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEVICE_METADATA|localhost:    buffer_model = dynamic | traditional
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>LOSSLESS_TRAFFIC_PATTERN:     mtu, small_packet_percentage, default_dynamic_th
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 &quot;3,4&quot;
 </span></code></pre></div>
 <h2 id="_1">制限事項<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>

@@ -23959,6 +23959,20 @@ excerpt: |
 reasoning: NO_HOST_ROUTE 属性とプレフィックスルート差し替えによる状態遷移最適化の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/dualtor/mux_neighbors_using_prefix_route.md#L62-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/dualtor/mux_neighbors_using_prefix_route.md#L62-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>The neighbor entry is created with SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true,
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>which prevents implicit host route creation in SDK/ASIC.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>... During active to standby transition: The prefix route&#39;s nexthop is updated from the direct neighbor nexthop to the tunnel nexthop ...
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: NO_HOST_ROUTE 属性とプレフィックスルート差し替えによる状態遷移最適化の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="capability">Capability チェックと後方互換<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h3>
 <p>ASIC が <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code> をサポートしない場合、自動的に <strong>host_route 方式へフォールバック</strong> する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。さらに per-port の config knob <code>neighbor_mode</code> で強制的に host_route に戻すこともできる。これによりプラットフォーム間の混在配備と新旧比較デバッグを許す。</p>
 <p>ネイバモードの <strong>動的変更はサポート対象外</strong>。一度 mux ネイバとして作られたら、その port の mode 変更は config reload を伴う想定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24022,15 +24036,15 @@ reasoning: NO_HOST_ROUTE 属性とプレフィックスルート差し替えに�
 </table>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p><code>show muxcable config</code> の出力末尾に <code>neighbor_mode</code> 列が追加される<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>port         state   ipv4             cable_type     prober_type   neighbor_mode
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>-----------  ------  ---------------  -------------  ------------  -------------
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Ethernet0    auto    192.168.0.2/32   active-active  software      host-route
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Ethernet8    auto    192.168.0.4/32   active-active  software      prefix-route
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>port         state   ipv4             cable_type     prober_type   neighbor_mode
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>-----------  ------  ---------------  -------------  ------------  -------------
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Ethernet0    auto    192.168.0.2/32   active-active  software      host-route
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Ethernet8    auto    192.168.0.4/32   active-active  software      prefix-route
 </span></code></pre></div>
 <p><code>dualtor_neighbor_check</code> ユーティリティは prefix route 方式向けに新フォーマットを出す<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_ROUTE  NEXTHOP_TYPE  HWSTATUS
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>192.168.0.3  e2:67:e4:05:9a:ec  Ethernet0  standby    yes               yes           TUNNEL        consistent
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>192.168.0.7  9a:41:63:4f:86:7c  Ethernet16 active     yes               yes           NEIGHBOR      consistent
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_ROUTE  NEXTHOP_TYPE  HWSTATUS
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>192.168.0.3  e2:67:e4:05:9a:ec  Ethernet0  standby    yes               yes           TUNNEL        consistent
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>192.168.0.7  9a:41:63:4f:86:7c  Ethernet16 active     yes               yes           NEIGHBOR      consistent
 </span></code></pre></div>
 <p><code>NEXTHOP_TYPE</code> が現在 prefix route に紐付いている nexthop 種別（<code>NEIGHBOR</code> または <code>TUNNEL</code>）を示す。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

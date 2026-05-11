@@ -23948,6 +23948,20 @@ excerpt: |
 reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/logging/Logging_and_sysdump_arch_spec.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/logging/Logging_and_sysdump_arch_spec.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>All modules should use the same common API for logging and dumps (provided by libswss-common).
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>... User can change logging configuration via sonic-mgmt, which takes care of deploying configs.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Sysdump should be available through sonic-mgmt.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 共通 API と sonic-mgmt 経由運用の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
 <p>本 HLD では具体的な CONFIG_DB / CLI / YANG スキーマを規定していない。実装側で別途決まる前提。実機の SONiC では <code>show techsupport</code> / <code>generate_dump</code> 系コマンドが Per daemon / Per platform フックを呼ぶ実装が存在するが、本 HLD はそのレイヤを定義するだけ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

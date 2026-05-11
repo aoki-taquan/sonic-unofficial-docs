@@ -23962,6 +23962,21 @@ excerpt: |
 reasoning: chassisdb.conf による分岐方式と、Orchagent の chassis-DB 接続条件の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/voq/single_asic_voq.md#L119-L147 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/voq/single_asic_voq.md#L119-L147 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>This method reuses the voq switch type for non chassis systems as well.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>... API is_voq_chassis will check for the presence of the chassisdb.conf file.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>... Orchagent will handle VOQ functionality the same way i.e. creation of system ports.
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>But connect to Chassis DB only if chassis DB is supported in the sonic system.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: chassisdb.conf による分岐方式と、Orchagent の chassis-DB 接続条件の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-yang">関連する CONFIG_DB / YANG<a class="headerlink" href="#config_db-yang" title="Permanent link">&para;</a></h3>
 <p>該当なし。判定は <strong><code>/etc/sonic/chassisdb.conf</code> の有無</strong> で行う。</p>

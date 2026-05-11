@@ -23935,6 +23935,18 @@ excerpt: |
 reasoning: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/port_link_training/port-link-training-design.md#L270-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/port_link_training/port-link-training-design.md#L270-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>During system startup, PortsOrch should query for the per-port link-training abilities from syncd, and have these per-port flags maintained in the m_port_cap_lt field of Port object.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="_5">ステータスポーラ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>PortsOrch のタイマースレッドが全 port を順に巡回。発火/停止条件<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -23965,14 +23977,14 @@ reasoning: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。
 </tr>
 </tbody>
 </table>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>interface<span class="w"> </span>link-training<span class="w"> </span>Ethernet0<span class="w"> </span>on
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>link-training<span class="w"> </span>status<span class="w"> </span>Ethernet0
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>interface<span class="w"> </span>link-training<span class="w"> </span>Ethernet0<span class="w"> </span>on
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>link-training<span class="w"> </span>status<span class="w"> </span>Ethernet0
 </span></code></pre></div>
 <p>出力例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Interface      LT Oper      LT Admin    Oper    Admin
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>-----------  -----------    ----------  ------  -------
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet0      trained          on      up      up
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Ethernet32   not trained        on      down    up
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Interface      LT Oper      LT Admin    Oper    Admin
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>-----------  -----------    ----------  ------  -------
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Ethernet0      trained          on      up      up
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Ethernet32   not trained        on      down    up
 </span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>HLD の <code>Limitations</code> は <code>N/A</code> のみ<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実運用上:</p>
@@ -23989,13 +24001,13 @@ reasoning: m_port_cap_lt + AN 共存 + pre-emphasis replay 仕様の根拠。
 <li><strong>gearbox</strong>: 本 HLD scope 外</li>
 </ul>
 <h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># LT が trained にならない</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>link-training<span class="w"> </span>status<span class="w"> </span>Ethernet0
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># not_trained / snr_low / timeout → 物理問題（ケーブル品質 / 距離）</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># off のまま → m_port_cap_lt が false。ASIC サポート要確認</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># AN と同時有効でリンクが立たない</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>config<span class="w"> </span>interface<span class="w"> </span>autoneg<span class="w"> </span>Ethernet0<span class="w"> </span>off<span class="w">    </span><span class="c1"># AN を切って LT 単独で再評価</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># LT が trained にならない</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>link-training<span class="w"> </span>status<span class="w"> </span>Ethernet0
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># not_trained / snr_low / timeout → 物理問題（ケーブル品質 / 距離）</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># off のまま → m_port_cap_lt が false。ASIC サポート要確認</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># AN と同時有効でリンクが立たない</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>config<span class="w"> </span>interface<span class="w"> </span>autoneg<span class="w"> </span>Ethernet0<span class="w"> </span>off<span class="w">    </span><span class="c1"># AN を切って LT 単独で再評価</span>
 </span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>

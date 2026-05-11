@@ -23816,19 +23816,32 @@ excerpt: |
 reasoning: critical service / process 判定の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/system_health_monitoring/system-health-HLD.md#L19-L52 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/system_health_monitoring/system-health-HLD.md#L19-L52 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Read FEATURE table in CONFIG_DB, any service whose &quot;STATE&quot; field was configured with &quot;enabled&quot; or &quot;always_enabled&quot; is expected to run in the system
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>... For each container, use &quot;supervisorctl status&quot; to get its critical process status, any critical process is not in &quot;RUNNING&quot; status will be considered as fault condition.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: critical service / process 判定の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="3-system_health_monitoring_configjson">3. 除外 / 拡張: <code>system_health_monitoring_config.json</code><a class="headerlink" href="#3-system_health_monitoring_configjson" title="Permanent link">&para;</a></h2>
 <p><code>/usr/share/sonic/device/&lt;platform&gt;/system_health_monitoring_config.json</code> で platform 別に plugin と除外対象を注入<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;services_to_ignore&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;snmpd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;snmp_subagent&quot;</span><span class="p">],</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;devices_to_ignore&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;psu&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan.speed&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan2.speed&quot;</span><span class="p">],</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;external_checkers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;my_external_checker.py -opt v&quot;</span><span class="p">]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;services_to_ignore&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;snmpd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;snmp_subagent&quot;</span><span class="p">],</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;devices_to_ignore&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;psu&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan.speed&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fan2.speed&quot;</span><span class="p">],</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;external_checkers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;my_external_checker.py -opt v&quot;</span><span class="p">]</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>filter は <code>fan.speed</code>, <code>&lt;fan_name&gt;.direction</code> のようなドット区切り<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。未知 filter は silently ignore。</p>
 <h3 id="external-checker">External checker<a class="headerlink" href="#external-checker" title="Permanent link">&para;</a></h3>
 <p>ユーザ提供スクリプトを Monit に登録、決まった出力形式で結果を返すと healthd が吸い上げる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;category_name&gt;
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>&lt;item_name&gt;:&lt;item_status&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&lt;category_name&gt;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>&lt;item_name&gt;:&lt;item_status&gt;
 </span></code></pre></div>
 <h3 id="monit">Monit を使わない経路<a class="headerlink" href="#monit" title="Permanent link">&para;</a></h3>
 <p>v0.2 で "Check service status without monit" が追加<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Monit が使えない / load が重い環境向けに、supervisor + docker ps のみで判定する経路を確保する想定。</p>

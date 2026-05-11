@@ -23938,10 +23938,23 @@ excerpt: |
 reasoning: bgpcfgd / frrcfgd の切替フィールドと warm boot スコープ外の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md#L96-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md#L96-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Ability to start frrcfgd ... or bgpcfgd ... based on frr_mgmt_framework_config field with &quot;true&quot;/&quot;false&quot; in DEVICE_METADATA table
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>... As state and statistics information is retrieved from FRR-BGP on demand there is no Warm Boot specific requirements for this feature.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: bgpcfgd / frrcfgd の切替フィールドと warm boot スコープ外の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="config_db_1">CONFIG_DB の有効化フラグ<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DEVICE_METADATA|localhost:
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  frr_mgmt_framework_config = &quot;true&quot;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEVICE_METADATA|localhost:
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  frr_mgmt_framework_config = &quot;true&quot;
 </span></code></pre></div>
 <h3 id="cli-nbi">CLI / NBI<a class="headerlink" href="#cli-nbi" title="Permanent link">&para;</a></h3>
 <ul>

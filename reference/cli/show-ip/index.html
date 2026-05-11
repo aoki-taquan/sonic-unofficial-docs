@@ -24116,9 +24116,26 @@ excerpt: |
           ifs_action.append([iface, all_tables[iface]['loopback_action']])
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1416-L1441 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/show/main.py#L1416-L1441 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>def loopback_action():
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    ...
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    for tbl in [if_tbl, vlan_if_tbl, po_if_tbl, sub_if_tbl]:
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        all_tables.update(tbl)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    ...
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    if &#39;loopback_action&#39; in all_tables[iface]:
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        ifs_action.append([iface, all_tables[iface][&#39;loopback_action&#39;]])
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="show-ip-route-args"><code>show ip route [&lt;args&gt;]</code><a class="headerlink" href="#show-ip-route-args" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show ip route [&lt;IPADDRESS&gt;] [vrf &lt;vrf_name&gt;] [...] [-d|--display all|frontend] [-n|--namespace &lt;ns&gt;]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show ip route [&lt;IPADDRESS&gt;] [vrf &lt;vrf_name&gt;] [...] [-d|--display all|frontend] [-n|--namespace &lt;ns&gt;]
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>bgp_common.show_routes</code> が <code>vtysh -c 'show ip route ...'</code> を組み立てて実行する。<code>&lt;args&gt;</code> は <strong>そのまま vtysh コマンドラインに連結</strong>されるため、<code>show ip route 10.0.0.0/24 longer-prefixes</code> のような FRR ネイティブ書式を直接渡せる。multi-ASIC 時は対象 namespace のコンテナ内で vtysh を起動する。</p>
@@ -24206,24 +24223,24 @@ CONFIG_DB の <code>BGP_AGGREGATE_ADDRESS</code> テーブルを直接読み出�
 <!-- usage-example -->
 <h2 id="_8">実行例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="_9">典型的な使い方<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 例 1: ルーティングテーブル全件</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 例 1: ルーティングテーブル全件</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route
 </span></code></pre></div>
 <h3 id="_10">よくある引数の組み合わせ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span><span class="m">10</span>.0.0.0/24
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>vrf<span class="w"> </span>Vrf_Red
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span><span class="m">10</span>.0.0.0/24
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>vrf<span class="w"> </span>Vrf_Red
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
 </span></code></pre></div>
 <h3 id="_11">期待される出力 (抜粋)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Codes: K - kernel route, C - connected, S - static, R - RIP,
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>       T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>       F - PBR, f - OpenFabric,
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>       &gt; - selected route, * - FIB route
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>B&gt;* 10.0.1.0/24 [20/0] via 10.0.0.1, Ethernet0, 01:25:34
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>C&gt;* 10.0.0.0/24 is directly connected, Ethernet0, 01:30:11
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Codes: K - kernel route, C - connected, S - static, R - RIP,
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>       T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>       F - PBR, f - OpenFabric,
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>       &gt; - selected route, * - FIB route
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>B&gt;* 10.0.1.0/24 [20/0] via 10.0.0.1, Ethernet0, 01:25:34
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>C&gt;* 10.0.0.0/24 is directly connected, Ethernet0, 01:30:11
 </span></code></pre></div>
 <!-- /usage-example -->
 

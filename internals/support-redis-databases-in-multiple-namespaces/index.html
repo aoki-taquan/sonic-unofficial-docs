@@ -24134,6 +24134,22 @@ excerpt: |
 reasoning: 異 namespace への接続が Unix socket 必須であることの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/database/multi_namespace_db_instances.md#L341-L372 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/database/multi_namespace_db_instances.md#L341-L372 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>class SonicV2Connector(DBInterface):
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  def __init__(self, use_unix_socket_path=False, namespace=&#39;&#39;, **kwargs):
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    ...
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    if namespace != &#39;&#39; and use_unix_socket_path == False:
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>      raise NotImplementedError(&quot;TCP connectivity to ... different namespace is not implemented!&quot;)
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 異 namespace への接続が Unix socket 必須であることの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
 <p>外部設定スキーマは無い。本機能は <strong>Redis 配備とクライアントライブラリ</strong> の話<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -24165,13 +24181,13 @@ reasoning: 異 namespace への接続が Unix socket 必須であることの根
 </tbody>
 </table>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># asic0 namespace の COUNTERS_DB を見る</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>--namespace<span class="w"> </span>asic0<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;*&#39;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Python から</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>from<span class="w"> </span>swsssdk<span class="w"> </span>import<span class="w"> </span>SonicV2Connector
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="nv">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>SonicV2Connector<span class="o">(</span><span class="nv">use_unix_socket_path</span><span class="o">=</span>True,<span class="w"> </span><span class="nv">namespace</span><span class="o">=</span><span class="s1">&#39;asic0&#39;</span><span class="o">)</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>db.connect<span class="o">(</span><span class="s1">&#39;CONFIG_DB&#39;</span><span class="o">)</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># asic0 namespace の COUNTERS_DB を見る</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>--namespace<span class="w"> </span>asic0<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;*&#39;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Python から</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>from<span class="w"> </span>swsssdk<span class="w"> </span>import<span class="w"> </span>SonicV2Connector
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nv">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>SonicV2Connector<span class="o">(</span><span class="nv">use_unix_socket_path</span><span class="o">=</span>True,<span class="w"> </span><span class="nv">namespace</span><span class="o">=</span><span class="s1">&#39;asic0&#39;</span><span class="o">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>db.connect<span class="o">(</span><span class="s1">&#39;CONFIG_DB&#39;</span><span class="o">)</span>
 </span></code></pre></div>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

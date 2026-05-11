@@ -23721,10 +23721,24 @@ excerpt: |
       config_db.set_entry("MIRROR_SESSION", session_name, session_info)
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L3213-L3313 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L3213-L3313 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>def add_erspan(session_name, src_ip, dst_ip, dscp, ttl, gre_type, queue, policer, src_port=None, direction=None):
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    session_info = {&quot;type&quot;: &quot;ERSPAN&quot;, &quot;src_ip&quot;: src_ip, &quot;dst_ip&quot;: dst_ip, &quot;dscp&quot;: dscp, &quot;ttl&quot;: ttl}
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    ...
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    config_db.set_entry(&quot;MIRROR_SESSION&quot;, session_name, session_info)
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="config-mirror_session-span-add"><code>config mirror_session span add</code><a class="headerlink" href="#config-mirror_session-span-add" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config mirror_session span add &lt;session_name&gt; &lt;dst_port&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    [&lt;src_port&gt;] [&lt;direction&gt;] [&lt;queue&gt;] [--policer &lt;name&gt;]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config mirror_session span add &lt;session_name&gt; &lt;dst_port&gt;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    [&lt;src_port&gt;] [&lt;direction&gt;] [&lt;queue&gt;] [--policer &lt;name&gt;]
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
@@ -23737,7 +23751,7 @@ excerpt: |
 <code>session_info = {"type": "SPAN", "dst_port": ..., ...}</code> を組み立て <code>MIRROR_SESSION</code> に書き込む。<code>dst_port</code> の <strong>元名</strong> から namespace を判定して該当 namespace に書く（multi-ASIC）。<code>validate_mirror_session_config</code> で同名セッションの重複や <code>dst_port</code> の妥当性を事前検証する。</p>
 <h3 id="config-mirror_session-remove-session_name"><code>config mirror_session remove &lt;session_name&gt;</code><a class="headerlink" href="#config-mirror_session-remove-session_name" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config mirror_session remove &lt;session_name&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config mirror_session remove &lt;session_name&gt;
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>config_db.set_entry("MIRROR_SESSION", session_name, None)</code> で削除<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。multi-ASIC では front_ns を走査し、各 namespace に該当エントリが存在すれば削除。</p>
@@ -23750,6 +23764,21 @@ excerpt: |
       ...
       config_db.set_entry("MIRROR_SESSION", session_name, None)
 -->
+
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L3418-L3445 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-utilities/config/main.py#L3418-L3445 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>@mirror_session.command()
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>@click.argument(&#39;session_name&#39;, required=True)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>def remove(session_name):
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    ...
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    config_db.set_entry(&quot;MIRROR_SESSION&quot;, session_name, None)
+</span></code></pre></div>
+</details>
+<!-- evidence-rendered:end -->
 
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
@@ -23803,17 +23832,17 @@ excerpt: |
 <!-- usage-example -->
 <h2 id="_7">実行例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="_8">典型的な使い方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 例 1: ERSPAN mirror session を作成</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>mirror1<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span><span class="m">10</span>.0.0.50<span class="w"> </span>0x88be<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">100</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 例 1: ERSPAN mirror session を作成</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>mirror1<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span><span class="m">10</span>.0.0.50<span class="w"> </span>0x88be<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">100</span>
 </span></code></pre></div>
 <h3 id="_9">よくある引数の組み合わせ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># SPAN (ローカル mirror)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>span1<span class="w"> </span>--type<span class="w"> </span>span<span class="w"> </span>--dst-port<span class="w"> </span>Ethernet24<span class="w"> </span>--source<span class="w"> </span>Ethernet0<span class="w"> </span>--direction<span class="w"> </span>rx
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>remove<span class="w"> </span>mirror1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># SPAN (ローカル mirror)</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>span1<span class="w"> </span>--type<span class="w"> </span>span<span class="w"> </span>--dst-port<span class="w"> </span>Ethernet24<span class="w"> </span>--source<span class="w"> </span>Ethernet0<span class="w"> </span>--direction<span class="w"> </span>rx
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>mirror_session<span class="w"> </span>remove<span class="w"> </span>mirror1
 </span></code></pre></div>
 <h3 id="_10">期待される出力 (抜粋)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Mirror session mirror1 added.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Mirror session mirror1 added.
 </span></code></pre></div>
 <!-- /usage-example -->
 

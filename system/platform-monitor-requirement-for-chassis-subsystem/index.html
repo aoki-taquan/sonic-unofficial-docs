@@ -24083,6 +24083,20 @@ excerpt: |
 reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィールド充足) の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/pmon/pmon-chassis-requirements.md#L11-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/pmon/pmon-chassis-requirements.md#L11-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1. On LC the reboot command should power-cycle the entire LC ...
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>3. Ungraceful Reboot of Supervisor should bring all LC&#39;s. LC&#39;s should not run headless.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>8. chassisd daemon support on both LC and RP with all fields of table CHASSIS_MODULE_TABLE|xxxx correctly populated.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 主要な必須要件 (再起動、headless 禁止、chassisd フィールド充足) の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-state_db">関連する CONFIG_DB / STATE_DB<a class="headerlink" href="#config_db-state_db" title="Permanent link">&para;</a></h3>
 <p>本 HLD は要件のみで CONFIG_DB スキーマを規定しない。STATE_DB / Chassis State DB 側の主要テーブルとして以下が言及される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

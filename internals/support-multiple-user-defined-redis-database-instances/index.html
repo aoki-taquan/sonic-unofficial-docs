@@ -23901,6 +23901,19 @@ excerpt: |
 reasoning: 2 インスタンス分割の実測効果の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/database/multi_database_instances.md#L4-L6 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/database/multi_database_instances.md#L4-L6 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>We tried to create two database instances and separate the huge write into two database instances.
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>The test result shows the performance (time) improved 20-30%.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 2 インスタンス分割の実測効果の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="upgrade-downgrade">Upgrade / Downgrade<a class="headerlink" href="#upgrade-downgrade" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Upgrade</strong>: 旧イメージ → 新イメージで、ユーザが <code>/etc/sonic/database_config.json</code> を置いていれば反映、なければ既定（単一インスタンス）。挙動は後方互換<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -23910,9 +23923,9 @@ reasoning: 2 インスタンス分割の実測効果の根拠。
 <h3 id="config_db-cli-yang">関連する CONFIG_DB / CLI / YANG<a class="headerlink" href="#config_db-cli-yang" title="Permanent link">&para;</a></h3>
 <p>該当なし。設定は <strong>JSON ファイル</strong> ベース。</p>
 <h3 id="_5">設定例（カスタム配置）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># DUT 上で</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>my-database_config.json<span class="w"> </span>/etc/sonic/database_config.json
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>database
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># DUT 上で</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>my-database_config.json<span class="w"> </span>/etc/sonic/database_config.json
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>database
 </span></code></pre></div>
 <p>中身は前述の 2 インスタンス例を参考。書き換えたら database service の再起動が必要<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>

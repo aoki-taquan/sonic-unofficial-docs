@@ -24054,6 +24054,21 @@ excerpt: |
 reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用という設計事実の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/sonic-linkmgrd/doc/default_route.md#L1-L6 (sha: 65f563308c689e3225fdf3fc249a132350e9879b)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/sonic-linkmgrd/doc/default_route.md#L1-L6 (sha: 65f563308c689e3225fdf3fc249a132350e9879b)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Orchagent will update both IPv4 and Ipv6 default route status to state db entries.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>If there is a valid default route, it shall be updated as `state:ok`.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>If there isn&#39;t a valid default route, it shall be updated as `state:na`.
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>For now we only care about IPv4, but state db notification handler should be properly defined for both entries.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用という設計事実の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="active-standby">要件（Active-Standby）<a class="headerlink" href="#active-standby" title="Permanent link">&para;</a></h3>
 <p>Active-Standby 構成における要件は次のとおり整理される。</p>
 <ol>
@@ -24085,9 +24100,9 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <p>要件 #5（manual モードで反応しない）と要件 #6（機能自体のオフ）を満たすため、<code>linkmgrd</code> 内部にデフォルトルート状態をキャッシュしておく。mux mode が <code>auto</code> ↔ <code>manual</code> で切り替わった時、現在のキャッシュ値に応じてハートビート送信を再開・停止できるようにするためである。</p>
 <h4 id="active-active-standby"><code>active</code> への積極切替の抑止（Active-Standby のみ）<a class="headerlink" href="#active-active-standby" title="Permanent link">&para;</a></h4>
 <p>「デフォルトルートを欠いた ToR を <code>active</code> にしない」という要件 #1.2 を直接的に実装するため、Active-Standby の状態遷移では <strong>デフォルトルート不在時に <code>active</code> 側へ遷移するパスを明示的に塞ぐ</strong>。これにより、Solution One の遷移パスは次のように整理される（A 側で消失 → B 側で消失 → B 復旧 → A 復旧）。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>              0.init           1.A消失           2.B消失            3.B復旧            4.A復旧
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ToR A    active, healthy -&gt; standby, healthy -&gt; standby, unhealthy -&gt; standby, healthy -&gt; standby, healthy
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>ToR B    standby, healthy -&gt; active,  healthy -&gt; active,  unhealthy -&gt; active,  healthy -&gt; active,  healthy
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>              0.init           1.A消失           2.B消失            3.B復旧            4.A復旧
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ToR A    active, healthy -&gt; standby, healthy -&gt; standby, unhealthy -&gt; standby, healthy -&gt; standby, healthy
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ToR B    standby, healthy -&gt; active,  healthy -&gt; active,  unhealthy -&gt; active,  healthy -&gt; active,  healthy
 </span></code></pre></div>
 <p>積極切替を抑止する前は step #2 で <code>ToR A</code> が一時的に <code>active, unhealthy</code> を経由していたが、抑止によって <code>standby, unhealthy</code> で停留する。Active-Active ではこの抑止は不要で、両 ToR は独立に振る舞う<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="cli">CLI オプション<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h4>
@@ -24134,7 +24149,7 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <p>HLD に記載なし。</p>
 <h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p><code>linkmgrd</code> の起動引数として下記のように渡す（実際のサービスユニットファイル内での渡し方はプラットフォーム依存）。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>linkmgrd<span class="w"> </span>--default_route
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>linkmgrd<span class="w"> </span>--default_route
 </span></code></pre></div>
 <h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>

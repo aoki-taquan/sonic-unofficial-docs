@@ -23834,6 +23834,20 @@ excerpt: |
 reasoning: pipeline size 50k と 500ms timer、PUBLISH 1 回化の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/bgp_loading_optimization/bgp-loading-optimization-hld.md#L156-L182 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/bgp_loading_optimization/bgp-loading-optimization-hld.md#L156-L182 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>We can attach a lua script which only contains `PUBLISH` command at the end of the pipeline once it flushes `n` entries
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>... we increase pipeline size from the default 125 to 50k
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>... we activate a 500-millisecond timer after a skip to make sure that these commands are eventually flushed.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: pipeline size 50k と 500ms timer、PUBLISH 1 回化の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>HLD で新規 CONFIG_DB / CLI の言及は無い（性能側のチューニングのみ）。pipeline サイズ等は build 時定数で組み込まれる想定。</p>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

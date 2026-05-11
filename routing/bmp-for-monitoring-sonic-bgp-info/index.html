@@ -23911,6 +23911,19 @@ excerpt: |
 reasoning: bmp container 構成と 2 daemon の役割の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/bmp/bmp.md#L82-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/bmp/bmp.md#L82-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Add new bmp container, it has two daemons: bmpcfgd to monitor config db change and control corresponding table that openbmpd populates;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>openbmpd to accept connection from FRR and do bgp related table specific population.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: bmp container 構成と 2 daemon の役割の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h2 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <p><code>config bmp &lt;table-name&gt; &lt;enable|disable&gt;</code> 系で table 単位 on/off、<code>show bmp &lt;table&gt;</code> で表示する想定（HLD で詳細な引数定義はまだ）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="warm-restart">Warm restart<a class="headerlink" href="#warm-restart" title="Permanent link">&para;</a></h2>

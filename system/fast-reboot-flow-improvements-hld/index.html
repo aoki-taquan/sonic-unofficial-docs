@@ -23864,6 +23864,20 @@ excerpt: |
 reasoning: finalizer 流用と新 flag 導入の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md#L40-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md#L40-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>In addition to the recover mechanism, the warmboot-finalizer can be enhanced to finalize fast-reboot as well
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>and introduce a new flag indicating the process is done.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>This new flag can be used later on for any functionality, we want to start only after init flow finished
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: finalizer 流用と新 flag 導入の根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="vendor-nos-sonic-issu">vendor NOS → SONiC ISSU<a class="headerlink" href="#vendor-nos-sonic-issu" title="Permanent link">&para;</a></h3>
 <p>dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC→SONiC と同じ flow。渡されなくても起動は完了するが、neighbor / FDB を slow path で再学習するため downtime が伸びる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>

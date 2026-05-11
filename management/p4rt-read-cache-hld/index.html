@@ -23937,6 +23937,20 @@ excerpt: |
 reasoning: Write 連動更新ルールと検証ロジックの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+<details class="note">
+<summary>📋 検証エビデンス: sonic-net/SONiC/doc/pins/p4rt_app_read_cache_hld.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
+<p><strong>出典</strong>:</p>
+<p><code>sonic-net/SONiC/doc/pins/p4rt_app_read_cache_hld.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
+<p><strong>抜粋</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>The cache will be updated for each P4RT App write request based on the P4Orch agents response.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>... INSERT/SUCCESS -&gt; Create a new PI entry; MODIFY/SUCCESS -&gt; Update; DELETE/SUCCESS -&gt; Remove
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>... we will also implement verification logic that ensures the cache and AppDb entries are in sync.
+</span></code></pre></div>
+<p><strong>判断根拠</strong>: Write 連動更新ルールと検証ロジックの根拠。</p>
+</details>
+<!-- evidence-rendered:end -->
+
 <h3 id="hld">性能測定（HLD 添付）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
