@@ -1061,7 +1061,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [BGP](#term-bgp)
 
-- [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (243)
+- [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (246)
 - [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (231)
 - [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (214)
 - [サイトマップ](../_meta/sitemap.md) (122)
@@ -1126,7 +1126,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CRM](#term-crm)
 
 - [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (40)
-- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (21)
+- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (23)
 - [アーキテクチャ](../topics/09-telemetry-snmp/architecture.md) (17)
 - [サイトマップ](../_meta/sitemap.md) (16)
 - [概念](../topics/09-telemetry-snmp/concept.md) (14)
@@ -1289,7 +1289,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (28)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (23)
 - [DPU の IP 割当・gNMI 連携・KVM 検証](../topics/13-dash-smartswitch/setup.md) (23)
-- [gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル](../management/gnsi-hld.md) (18)
+- [gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル](../management/gnsi-hld.md) (19)
 
 ### [GCU](#term-gcu)
 
@@ -1321,7 +1321,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (34)
 - [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (31)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (30)
-- [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (28)
+- [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (30)
 
 ### [Headroom](#term-headroom)
 
@@ -1355,7 +1355,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-vlan YANG](yang/sonic-vlan.md) (44)
 - [sonic-interface YANG](yang/sonic-interface.md) (42)
-- [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (38)
+- [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (39)
 - [sonic-vlan-sub-interface YANG](yang/sonic-vlan-sub-interface.md) (36)
 - [config interface サブコマンド](cli/config-interface.md) (30)
 
@@ -1601,7 +1601,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Redis](#term-redis)
 
-- [Redis Client Manager（RCM: connection pool / transactional client）](../management/redis-client-manager-rcm-hld.md) (37)
+- [Redis Client Manager（RCM: connection pool / transactional client）](../management/redis-client-manager-rcm-hld.md) (38)
 - [サイトマップ](../_meta/sitemap.md) (28)
 - [VOQ カウンタ集約（chassis supervisor からの aggregate 表示）](../internals/aggregate-voq-counters-in-sonic.md) (20)
 - [設定](../topics/20-swss-sai-redis/setup.md) (19)
@@ -1643,7 +1643,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [頻出 SAI 属性早見表](sai-attributes.md) (241)
 - [サイトマップ](../_meta/sitemap.md) (82)
-- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (56)
+- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (59)
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (42)
 - [QoS / Buffer の内部実装](../topics/08-qos-buffer/internals.md) (42)
 
