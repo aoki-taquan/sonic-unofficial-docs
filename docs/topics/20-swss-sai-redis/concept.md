@@ -10,6 +10,98 @@ sources: []
 
 SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを Redis 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。
 
+## この章は何のためにあるか
+
+機能章（BGP / ACL / VRF / VXLAN など）を読み進めると、必ず次の用語に出会う: `CONFIG_DB`、`APPL_DB`、`STATE_DB`、`COUNTERS_DB`、`ASIC_DB`、`ERROR_DB`、`orchagent`、`sub-Orch`、`syncd`、`sairedis`、`SAI`、`ProducerStateTable`、`bulk counter`。これらを **どの章でも同じ意味で使えるように一度地ならしする** のが本章の目的である。
+
+具体的には、読み手の以下の疑問に章全体で答える。
+
+1. なぜ DB がこれほど多いのか（CONFIG / APPL / STATE / ASIC / ERROR / COUNTERS の理由）
+2. APPL_DB と CONFIG_DB はどう違うのか（CONFIG_DB に直接書いてはいけないのか）
+3. orchagent と syncd の責務はどこで切れるのか
+4. SAI の失敗（attribute not supported、status returned）はどう報告されるのか
+5. counter / debug / dump の話が他の章に出てきたとき、どの仕組みを呼んでいるのか
+
+## 何を解決するか
+
+- **疎結合**: 機能ごとの daemon を Redis pubsub で分離することで、どれか 1 つを落としても他に波及しにくい。crash recovery が機能単位で完結する。
+- **状態の見える化**: `STATE_DB` / `COUNTERS_DB` を介して、CLI / telemetry / 監視がプロセス境界を越えて状態を読める。
+- **SAI 抽象化**: ASIC ベンダごとの差を syncd と SAI 実装で吸収し、orchagent から見たインタフェースを揃える。
+- **再起動の選択肢**: warm / fast / cold の各種 reboot で「どの DB を残し、どの DB を再生成するか」を細かく制御できる。
+
+## SONiC 内での位置
+
+```mermaid
+flowchart LR
+  CLI[CLI / gNMI] --> CDB[(CONFIG_DB)]
+  CDB --> CFGD[*cfgd / *mgrd<br/>例: bgpcfgd, intfmgrd]
+  CFGD --> ADB[(APPL_DB)]
+  EXT[FRR / teamd / lldpd] --> SYNC[*syncd<br/>fpmsyncd, teamsyncd, lldpsyncd]
+  SYNC --> ADB
+  ADB --> ORCH[orchagent<br/>sub-Orch 群]
+  ORCH --> AS[(ASIC_DB)]
+  AS --> SYNCD[syncd] --> SAI[SAI / ASIC]
+  ORCH --> STATE[(STATE_DB)]
+  SAI -. counter .-> COUNT[(COUNTERS_DB)]
+  SYNCD -- 失敗 --> ERR[(ERROR_DB)]
+  ERR --> ORCH
+```
+
+機能章で「APPL_DB に書く」「STATE_DB を見て確認」と書かれていたら、必ずこの図のどこかの矢印を辿っているはずである。本章はこの図を、機能を持たない素の地図として扱う。
+
+## 用語の整理
+
+| 用語 | 意味 | 補足 |
+| --- | --- | --- |
+| Redis DB | 名前付きの key-value 空間。番号で識別される | `database_config.json` で定義 |
+| ProducerStateTable | 書き手用の async API | APPL_DB の追記に使う |
+| ConsumerStateTable | 読み手用の async API | orchagent の sub-Orch が購読 |
+| Bulk API | 複数 SAI 呼び出しをまとめる | route / neighbor の大量更新 |
+| Flex counter | 周期的に SAI から counter を引く仕組み | counter group で頻度を設定 |
+| sairedis | SAI 呼び出しを Redis ASIC_DB 経由で記録／再生するライブラリ | orchagent ↔ syncd 間の本体 |
+| view switching | warm boot 時に古い APPL_DB から新しい APPL_DB へ切り替える操作 | warm reboot で必須 |
+| handleSai\*Status | SAI 呼び出し失敗を分類するハンドラ | retriable / fatal / ignore に振り分け |
+
+## 典型シーン
+
+```mermaid
+sequenceDiagram
+  participant U as Operator (CLI)
+  participant CDB as CONFIG_DB
+  participant M as *mgrd / *cfgd
+  participant A as APPL_DB
+  participant O as orchagent
+  participant S as syncd
+  participant H as SAI / HW
+  U->>CDB: config set
+  CDB-->>M: subscribe notify
+  M->>A: APPL_DB に書き込み
+  A-->>O: ProducerStateTable notify
+  O->>S: ASIC_DB write (sairedis)
+  S->>H: SAI call
+  H-->>S: status
+  alt 成功
+    S->>O: 状態反映
+    O->>STATE_DB: 状態書き込み
+  else 失敗
+    S->>ERROR_DB: error 記録
+    ERROR_DB-->>O: notify
+  end
+```
+
+機能章の操作手順や troubleshooting は、必ずこの流れの「どこを覗いたか」を意識すると読み下しが速くなる。
+
+## 似た機能との違い
+
+| 比較 | 共通点 | 違い |
+| --- | --- | --- |
+| 一枚岩の制御プレーン NOS との違い | 経路や ACL を ASIC に書く | SONiC は機能ごとに別プロセス + Redis pubsub。crash 影響を局所化。 |
+| etcd / Consul との違い | 設定 / 状態の共有 DB | Redis は **同じノード内** の IPC が中心。クラスタ共有ではない。 |
+| SAI を直接叩く構成との違い | ASIC を抽象化 | sairedis を挟むことで record/replay、warm boot、async が成立。 |
+| SQL DB との違い | 状態を読み書きする | スキーマは弱く、key の命名規約とテーブル定義 (`yang`/`docs`) で補強。 |
+
+## 内部実装章のスコープ
+
 ## 内部実装章のスコープ
 
 この章は機能（BGP、L2、ACL、VRF など）を語らない。代わりに、機能章のどこにでも出てくる次の要素を扱う。
@@ -48,6 +140,14 @@ SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋�
 ## この章での読み方
 
 DB と daemon の地図がほしい人は [アーキテクチャ](architecture.md) を先に読む。multi-namespace（Multi-ASIC）や独自 Redis instance を構成したい人は [設定](setup.md) に進む。SAI 失敗の見方を覚えたい人は [運用](operations.md) と [内部実装](internals.md) を続けて読む。bulk/flex counter、debug、dump の設計差は [内部実装](internals.md) を読む。startup や warm reboot の view switching は [発展トピック](advanced.md) に置いた。
+
+## 読了後にできること
+
+- 「ROUTE_TABLE は APPL_DB と CONFIG_DB のどちらに置くべきか」のような質問に、書き手と読み手の役割で即答できる。
+- orchagent が APPL_DB を読み、ASIC_DB に書き、syncd が SAI を呼ぶ流れを、矢印 4 本で説明できる。
+- SAI 呼び出しが失敗したときに ERROR_DB / handleSai\*Status のどちらの仕組みを期待すべきかを判断できる。
+- bulk counter と flex counter の違いを、登録単位と取得タイミングの観点で説明できる。
+- 続く [アーキテクチャ](architecture.md) / [設定](setup.md) / [運用](operations.md) / [内部実装](internals.md) / [発展トピック](advanced.md) で出てくる固有名詞の 9 割を、章を行き来せずに位置付けられる。
 
 ## 関連ページ
 
