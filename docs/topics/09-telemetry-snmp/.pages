@@ -1,0 +1,9 @@
+title: Telemetry / SNMP / Observability
+nav:
+  - index.md
+  - concept.md
+  - architecture.md
+  - setup.md
+  - operations.md
+  - internals.md
+  - advanced.md
