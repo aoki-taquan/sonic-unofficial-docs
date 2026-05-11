@@ -70,10 +70,14 @@ flowchart LR
   CLI["config warm_restart"]
   SC["sonic-cfggen<br/>(config CLI のみ)"]
   CLI --> SC
-  CDB0[("CONFIG_DB<br/>FEATURE")]
+  CDB0[("CONFIG_DB<br/>WARM_RESTART")]
   SC --> CDB0
-  DM0["coppmgrd"]
+  DM0["warm-restart-cli"]
   CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>FEATURE")]
+  SC --> CDB1
+  DM1["coppmgrd"]
+  CDB1 --> DM1
 ```
 
 !!! note "凡例"

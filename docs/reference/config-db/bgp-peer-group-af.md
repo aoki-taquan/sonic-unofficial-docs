@@ -29,6 +29,20 @@ related:
 
 `BGP_PEER_GROUP` の **アドレスファミリ別** 設定を保持するテーブル[^1]。`frr-mgmt-framework` が `DEVICE_METADATA.frr_mgmt_framework_config = true` のときに使用する generic 形式。`sonic-bgp-common.yang` の `sonic-bgp-cmn-af` grouping を `uses` し、route-map / prefix-list / community / max-prefix 等の AF スコープ設定を表現する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BGP_PEER_GROUP_AF")]
+  DM["bgpcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

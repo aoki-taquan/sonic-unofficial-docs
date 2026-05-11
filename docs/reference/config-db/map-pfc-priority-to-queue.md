@@ -29,6 +29,22 @@ PFC frame の Priority 値から、どの egress queue を一時停止対象と�
 
 > テーブル名は YANG container 名そのまま `MAP_PFC_PRIORITY_TO_QUEUE` で、`PFC_PRIORITY_TO_QUEUE_MAP` ではない点に注意。CONFIG_DB key にもこの名前が使われる。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>MAP_PFC_PRIORITY_TO_QUEUE")]
+  DM["qosorch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_qos_map_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

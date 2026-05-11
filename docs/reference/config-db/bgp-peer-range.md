@@ -31,6 +31,20 @@ related:
 - `BGP_PEER_RANGE_LIST` (vrf_name, peer_range_name): VRF または VNET 別の peer range
 - `BGP_PEER_RANGE_TEMPLATE_LIST` (peer_range_name): テンプレベース
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BGP_PEER_RANGE")]
+  DM["bgpcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

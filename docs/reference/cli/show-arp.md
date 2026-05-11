@@ -62,6 +62,21 @@ cmd += ['-d', str(display)]
 
 ARP テーブルは **kernel の neighbor table**（および swss/neighsyncd 経由で APPL_DB の `NEIGH_TABLE` に同期）で管理されるため、`show arp` 自体は CONFIG_DB を読まない。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show arp"]
+  SRC0[("APP_DB<br/>NEIGH_TABLE")]
+  V0["nbrshow (-4)"]
+  SRC0 --> V0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (データソース → ラッパスクリプト → CLI) のミニ図。CONFIG_DB は経由しない。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

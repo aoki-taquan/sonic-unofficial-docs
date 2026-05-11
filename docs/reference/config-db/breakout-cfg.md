@@ -26,6 +26,22 @@ related:
 
 `port` leaf は `PORT` への leafref ではなく **plain string**。DPB 中は親ポートが `PORT` から消えるタイミングがあり、leafref で参照すると不整合になるため意図的に外してある（YANG 内コメントに明記）。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BREAKOUT_CFG")]
+  DM["portmgrd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_port_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

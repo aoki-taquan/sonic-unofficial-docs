@@ -101,6 +101,24 @@ CONFIG_DB の `SSH_SERVER|POLICIES` テーブルに `max_sessions` フィール�
 - 反映には sshd 再ロードが必要。SONiC では hostcfgd が CONFIG_DB の変更を監視して `/etc/ssh/sshd_config` を再生成する。
 - 同名の `config serial_console inactivity-timeout` という別ファミリがあり、こちらは `SERIAL_CONSOLE|POLICIES` テーブルへ書く。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config ssh"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>SSH_SERVER")]
+  SC --> CDB0
+  DM0["hostcfgd"]
+  CDB0 --> DM0
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

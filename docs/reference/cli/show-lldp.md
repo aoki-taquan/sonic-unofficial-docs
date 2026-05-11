@@ -98,6 +98,21 @@ show lldp table [--verbose]
 - `show lldp` は明示的なデフォルト subcommand を持つが、Click グループとしては `neighbors` を default として明示せず、引数なしで `show lldp` を呼ぶと help が表示される（`neighbors` を呼びたい場合は明示する）
 - LLDP の有効・無効や送信間隔などの設定は本コマンドのスコープ外（`lldpd.conf` / `LLDP*` テーブル管理ツール側）
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show lldp"]
+  SRC0[("lldpd")]
+  V0["lldpshow / lldpctl"]
+  SRC0 --> V0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (データソース → ラッパスクリプト → CLI) のミニ図。CONFIG_DB は経由しない。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

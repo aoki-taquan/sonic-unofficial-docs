@@ -87,6 +87,21 @@ FRR の `show route-map` 出力をそのまま表示する。フィールド整�
 
 `show route-map` 自体は CONFIG_DB を参照しない。SONiC で route-map を定義するには `ROUTE_MAP` / `ROUTE_MAP_SET` などのテーブルか、または FRR config を直接書く方法のみで、`config route-map` 系の CLI は **コミュニティ版 master には存在しない**（`config/main.py` 上では `route-map` グループは未定義）。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show route-map"]
+  SRC0[("FRR (vtysh)")]
+  V0["show route-map [name]"]
+  SRC0 --> V0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (データソース → ラッパスクリプト → CLI) のミニ図。CONFIG_DB は経由しない。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

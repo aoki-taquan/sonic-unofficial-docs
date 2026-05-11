@@ -25,6 +25,20 @@ related:
 
 LDAP 認証サーバの一覧と global LDAP クライアント設定。`hostcfgd` が CONFIG_DB を購読し、`/etc/nslcd.conf` を生成する[^1]。最大 8 サーバまで登録可能。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>LDAP_SERVER")]
+  DM["hostcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

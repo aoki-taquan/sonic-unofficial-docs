@@ -83,6 +83,24 @@ related:
 - いずれの操作も **`config save` + reboot を経ないと実機には効かない**。`echo_reboot_warning` が enable / disable / memory / num_dumps の各コマンドで明示的に警告を出すのはこのため。
 - `config kdump` は CONFIG_DB しか触らない。`/etc/default/kdump-tools` や initramfs の rebuild は `hostcfgd` が担当する。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config kdump"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>KDUMP")]
+  SC --> CDB0
+  DM0["hostcfgd"]
+  CDB0 --> DM0
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

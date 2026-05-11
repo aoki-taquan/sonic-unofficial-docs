@@ -151,6 +151,21 @@ excerpt: |
 - `fdbshow` 自体は APPL_DB / ASIC_DB / STATE_DB を読み合わせて FDB を組み立てる。CONFIG_DB は使わない
 - aging time の **設定** は `config mac aging_time <seconds>` 等が存在する場合に行う（本ページは表示系のみ）
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show mac"]
+  SRC0[("APP_DB<br/>FDB_TABLE / STATE_DB<br/>FDB_TABLE")]
+  V0["fdbshow"]
+  SRC0 --> V0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (データソース → ラッパスクリプト → CLI) のミニ図。CONFIG_DB は経由しない。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

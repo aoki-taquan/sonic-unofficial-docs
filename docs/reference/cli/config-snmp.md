@@ -206,10 +206,22 @@ flowchart LR
   CLI["config snmp"]
   SC["sonic-cfggen<br/>(config CLI のみ)"]
   CLI --> SC
-  CDB0[("CONFIG_DB<br/>MGMT_VRF_CONFIG")]
+  CDB0[("CONFIG_DB<br/>SNMP")]
   SC --> CDB0
-  DM0["vrfmgrd"]
+  DM0["snmpd"]
   CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>SNMP_COMMUNITY")]
+  SC --> CDB1
+  DM1["snmpd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>SNMP_USER")]
+  SC --> CDB2
+  DM2["snmpd"]
+  CDB2 --> DM2
+  CDB3[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
+  SC --> CDB3
+  DM3["snmpd"]
+  CDB3 --> DM3
 ```
 
 !!! note "凡例"
