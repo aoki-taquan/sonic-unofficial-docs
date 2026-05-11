@@ -31,3 +31,18 @@ nav:
   - evpn-type2-not-advertised.md
   - mclag-sync-failure.md
   - techsupport-size-bloat.md
+  - portchannel-lacp-not-established.md
+  - snmp-polling-timeout.md
+  - bgp-route-not-advertised.md
+  - acl-rule-no-hit.md
+  - interface-mtu-mismatch.md
+  - routing-loop-detected.md
+  - minigraph-reload-stuck.md
+  - link-flapping.md
+  - config-db-persistence-failure.md
+  - container-memory-limit-exceeded.md
+  - config-save-diff-unexpected.md
+  - sai-table-full.md
+  - smartswitch-dpu-image-install-failure.md
+  - platform-fan-psu-anomaly.md
+  - interface-counters-reset.md
