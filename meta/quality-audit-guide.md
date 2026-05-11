@@ -68,6 +68,19 @@ quality-audit-N.md の冒頭サマリには、本ガイドの読み替えを適�
 
 過去 round（round 17 以前）は通常基準で評価されており、`discrepancy-found` ページが軸 6 = 4 点で天井に当たっていた。round 18 以降は本ガイドの読み替えを適用する。
 
+## 3.1. サンプリング戦略（奇偶交互運用、round 28 で確立）
+
+round 28 以降、サンプリング方式を round 番号のパリティで機械的に決定する:
+
+| パリティ | サンプリング | 目的 |
+|---------|------------|------|
+| **奇数 round** | **random 12**（`find docs -name '*.md' \| shuf -n 12`） | 母集団 unbiased estimator、構造的偏り検知 |
+| **偶数 round** | **stratified 12**（cv 6 / rv 2 / df 2 / ci 1 / meta 1） | サブセット軸別平均の安定監視 |
+
+stratified の比率は `quality-audit-27.md` §1 の抽出シェルを参照。stratified round では母集団重み補正後の期待値を生サンプル平均と並記し、続く random round の生サンプル平均との乖離を測ることで stratified scheme の mature 度を継続検証する（乖離 0.05 以下で mature）。
+
+round 28 で round 27 (stratified, 4.941) と round 28 (random, 4.94) の乖離が 0.001 と確認され、stratified scheme は mature 判定済み。
+
 ## 4. 関連ドキュメント
 
 - `meta/templates/SCHEMA.md`: frontmatter スキーマ全体および `page_kind` / `monitor` の定義
