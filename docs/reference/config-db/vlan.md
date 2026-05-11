@@ -108,3 +108,28 @@ VLAN|<name>
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- `Vlan100` 等の `Vlan<2..4094>` 形式キー。`vlanid` は名前末尾と一致。
+- `mtu`: 9100（ホスト側 jumbo 用途）。
+- `admin_status`: `up`。
+- `dhcp_servers`: `["10.0.0.1", "10.0.0.2"]` 等の relay 先。
+
+### よくある誤設定
+
+- `vlanid` を `name` 末尾と異なる値で投入すると YANG `must` 違反で reject される。
+- `VLAN_MEMBER` を作る前に `VLAN_INTERFACE` を作ると L3 IF が isolated VLAN にぶら下がる。
+- `dhcp_servers` をリストで無く単一文字列で入れると dhcprelayd が relay を起動しない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'VLAN|Vlan100'
+sonic-db-cli CONFIG_DB keys 'VLAN_MEMBER|Vlan100|*'
+show vlan brief
+```
+<!-- /ops-hint -->

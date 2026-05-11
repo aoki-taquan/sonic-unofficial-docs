@@ -110,3 +110,24 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VLAN_INTERFACE|Vlan100` (L3 enable 行) と `VLAN_INTERFACE|Vlan100|10.0.0.1/24` (IP 行) の 2 段。
+- `vrf_name`: `Vrfdefault` または `Vrf<name>`。
+
+### よくある誤設定
+
+- L3 enable 行を作らずに IP 行だけ投入すると IntfMgr が IP を作らない。
+- `vrf_name` を後から変更しても既存 IP は古い VRF に残る。一旦 del してから再 add。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'VLAN_INTERFACE|*'
+show ip interfaces
+```
+<!-- /ops-hint -->

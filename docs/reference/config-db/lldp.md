@@ -93,3 +93,23 @@ grouping `lldp_mode_config` を `uses`:
 ## 関連ページ
 - [CONFIG_DB: DEVICE_NEIGHBOR](device-neighbor.md)
 - [CONFIG_DB: PORT](port.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `LLDP|GLOBAL`。
+- `hello_timer`: 10、`mode`: `receive` / `transmit-and-receive`。
+
+### よくある誤設定
+
+- `mode: receive` のみだと対向 LLDP に自身が見えず、トポロジ把握が崩れる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'LLDP|GLOBAL'
+show lldp table
+```
+<!-- /ops-hint -->

@@ -92,3 +92,24 @@ WRED_PROFILE|<name>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `WRED_PROFILE|<name>`。
+- `ecn`: `ecn_all` / `ecn_green` / `ecn_none`。
+- `*_min_threshold` / `*_max_threshold` / `*_drop_probability`。
+
+### よくある誤設定
+
+- min > max に設定すると SAI がエラーを返し、profile が hardware に下りない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'WRED_PROFILE|AZURE_LOSSY'
+show wred
+```
+<!-- /ops-hint -->

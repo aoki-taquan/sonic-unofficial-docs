@@ -121,3 +121,27 @@ BGP_GLOBALS|<vrf_name>
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [CLI: config bgp](../cli/config-bgp.md)
 - [YANG: sonic-bgp-global](../yang/sonic-bgp-global.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_GLOBALS|<vrf>` (`default` または `Vrf<name>`)。
+- `local_asn`: 自身の AS。
+- `router_id`: Loopback0 の IP。
+- `load_balance_mp_relax`: `true`（マルチパスを緩和）。
+
+### よくある誤設定
+
+- `router_id` を未設定にすると最初に up した IF の IP が選ばれ、運用で値がブレる。明示するのが鉄則。
+- `local_asn` を後から変更すると全 neighbor が一旦落ちる。メンテ窓で実施。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BGP_GLOBALS|default'
+show ip bgp summary
+vtysh -c 'show running-config bgpd'
+```
+<!-- /ops-hint -->

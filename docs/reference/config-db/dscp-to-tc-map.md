@@ -86,3 +86,23 @@ YANG 上は親子 list 構造。Redis に展開すると `DSCP_TO_TC_MAP|<name>`
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DSCP_TO_TC_MAP|<name>` (例 `AZURE`)。
+- 値: `0:0`, `8:1`, `16:0`, `24:3`, `48:6` 等の dscp→TC マップ。
+
+### よくある誤設定
+
+- TC を 8 以上に書くと ASIC が拒否（TC は 0..7）。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'DSCP_TO_TC_MAP|AZURE'
+show qos map dscp-tc
+```
+<!-- /ops-hint -->

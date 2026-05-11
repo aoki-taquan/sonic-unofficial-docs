@@ -101,3 +101,28 @@ MIRROR_SESSION|<name>
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MIRROR_SESSION|<session-name>` (例 `everflow0`)。
+- `type`: `SPAN`（L2 ローカル）または `ERSPAN`（L3 遠隔）。
+- ERSPAN 必須: `src_ip` / `dst_ip` / `gre_type` (`0x88be` / `0x8949`) / `dscp` / `ttl`。
+- `policer`: 制限する場合のみ。
+
+### よくある誤設定
+
+- `dst_ip` が経路解決できないと session は `inactive` のまま hardware に降りない。
+- `src_ip` を 0.0.0.0 にすると `mirror_session` は作成されても ASIC が drop する。
+- `gre_type` を `0x88be` (Cisco) と `0x8949` (Broadcom) の対向ミスマッチで mirror パケットが収集側で parse できない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'MIRROR_SESSION|everflow0'
+sonic-db-cli STATE_DB hgetall 'MIRROR_SESSION_TABLE|everflow0'
+show mirror_session
+```
+<!-- /ops-hint -->

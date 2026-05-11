@@ -95,3 +95,26 @@ VRF|<name>
 - [CLI: config vrf](../cli/config-vrf.md)
 - [CLI: config interface](../cli/config-interface.md)
 - [YANG: sonic-vrf](../yang/sonic-vrf.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VRF|Vrf<name>` (例 `VRF|VrfRed`)。
+- `vni`: L3 VNI（VXLAN EVPN tenant L3）。
+- `fallback`: `true` で default VRF にフォールバック。
+
+### よくある誤設定
+
+- VRF 名が `Vrf` で始まらないと sonic-cfggen / orchagent が認識しない。
+- `vni` を tenant 間で重複させると EVPN route が混線する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'VRF|*'
+show vrf
+ip vrf show
+```
+<!-- /ops-hint -->

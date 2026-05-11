@@ -70,3 +70,24 @@ DEVICE_NEIGHBOR|<peer_name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-device_neighbor.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-device_neighbor.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DEVICE_NEIGHBOR|Ethernet0`。
+- `name`: 対向ホスト名（minigraph 由来）。
+- `port`: 対向ポート名。
+
+### よくある誤設定
+
+- `name` が `DEVICE_NEIGHBOR_METADATA` に未登録だと BGP の neighbor 名解決が失敗。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DEVICE_NEIGHBOR|*'
+show lldp neighbors
+```
+<!-- /ops-hint -->

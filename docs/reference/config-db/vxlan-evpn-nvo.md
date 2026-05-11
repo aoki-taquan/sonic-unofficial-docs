@@ -93,3 +93,23 @@ VXLAN_EVPN_NVO|<name>
 ## 関連ページ
 - [CONFIG_DB: VXLAN_TUNNEL](vxlan-tunnel.md)
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](vxlan-tunnel-map.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VXLAN_EVPN_NVO|<nvo-name>` (例 `nvo1`)。
+- `source_vtep`: `VXLAN_TUNNEL` 名を指す。
+
+### よくある誤設定
+
+- `source_vtep` が複数 NVO で重複指定されると最初の 1 つしか有効にならない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'VXLAN_EVPN_NVO|nvo1'
+show vxlan tunnel
+```
+<!-- /ops-hint -->

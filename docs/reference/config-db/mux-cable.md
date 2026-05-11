@@ -90,3 +90,28 @@ MUX_CABLE|<ifname>
 - [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MUX_CABLE|Ethernet0`（dual-ToR の Active-Standby 用）。
+- `state`: `auto` / `active` / `standby` / `manual`。
+- `server_ipv4` / `server_ipv6`: ぶら下がるサーバ IP。
+- `soc_ipv4`: SmartCable SoC IP。
+
+### よくある誤設定
+
+- `state: manual` のまま放置すると linkmgrd が自動フェイルオーバしない。
+- ToR 間で `server_ipv4` が不一致だと両 ToR が active になり tunnel ループ。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'MUX_CABLE|Ethernet0'
+sonic-db-cli STATE_DB hgetall 'MUX_CABLE_TABLE|Ethernet0'
+show mux status
+show mux config
+```
+<!-- /ops-hint -->

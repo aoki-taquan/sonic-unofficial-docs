@@ -95,3 +95,25 @@ SCHEDULER|<name>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SCHEDULER|<name>` (例 `scheduler.0`)。
+- `type`: `STRICT` / `DWRR` / `WRR`。
+- `weight`: 1..100。
+- `meter_type` / `pir` (shaping 用)。
+
+### よくある誤設定
+
+- `type: STRICT` を全 queue に設定すると低優先 queue が永遠に starve。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SCHEDULER|*'
+show queue counters
+```
+<!-- /ops-hint -->

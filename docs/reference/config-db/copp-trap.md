@@ -93,3 +93,25 @@ COPP_TRAP|<name>
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `COPP_TRAP|<trap-name>` (`bgp`, `lldp`, `arp` 等)。
+- `trap_ids`: `bgp,bgpv6` 等のカンマ区切り。
+- `trap_group`: 紐付ける `COPP_GROUP` 名。
+
+### よくある誤設定
+
+- 存在しない `trap_group` を参照すると copporch が trap を install しない。
+- `trap_ids` のスペル違いは silently 無視され該当トラフィックが CPU に上がらない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'COPP_TRAP|*'
+show copp config
+```
+<!-- /ops-hint -->

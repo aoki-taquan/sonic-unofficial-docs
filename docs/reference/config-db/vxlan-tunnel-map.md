@@ -93,3 +93,24 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 - [CLI: config vxlan](../cli/config-vxlan.md)
 - [CONFIG_DB: VXLAN_TUNNEL](vxlan-tunnel.md)
 - [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VXLAN_TUNNEL_MAP|<tunnel>|<map-name>` (例 `tunnel1|map_1000_Vlan100`)。
+- `vni`: L2 VNI (例 1000)。
+- `vlan`: `Vlan100`。
+
+### よくある誤設定
+
+- VLAN 未作成のまま VNI map を入れると orchagent が pending、トンネルが半開状態。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'VXLAN_TUNNEL_MAP|*'
+show vxlan vlanvnimap
+```
+<!-- /ops-hint -->

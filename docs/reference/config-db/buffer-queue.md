@@ -109,3 +109,23 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BUFFER_QUEUE|<port>|<queue-range>` (例 `0-2`, `3-4`, `5-6`)。
+- `profile`: `q_lossy_profile` 等。
+
+### よくある誤設定
+
+- queue 範囲が抜けると当該 queue が default profile になり、計画値と乖離。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BUFFER_QUEUE|Ethernet0|*'
+show buffer queue
+```
+<!-- /ops-hint -->

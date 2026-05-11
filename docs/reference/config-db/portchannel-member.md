@@ -92,3 +92,24 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PORTCHANNEL_MEMBER|PortChannel0001|Ethernet0`。
+- 値は空 hash（メンバ関係の存在自体が意味を持つ）。
+
+### よくある誤設定
+
+- VLAN_MEMBER に同じ Ethernet が残ったまま PORTCHANNEL_MEMBER に追加すると orchagent エラー。
+- L3 IP を持つポートを LAG メンバに入れると INTERFACE 側が孤立。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PORTCHANNEL_MEMBER|PortChannel0001|*'
+show interfaces portchannel
+```
+<!-- /ops-hint -->

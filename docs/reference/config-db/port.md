@@ -130,3 +130,31 @@ PORT|<name>
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- `Ethernet0` 等の `EthernetN` 形式キー。`N` は port_config.ini 由来の lane base。
+- `speed`: 10000 / 25000 / 40000 / 100000 / 400000 (Mbps)。
+- `mtu`: 9100（jumbo を有効にする一般運用値）。
+- `admin_status`: `up`（運用ポート）。
+- `fec`: `rs` (100G+) / `fc` (25G) / `none`。
+- `autoneg`: `on`/`off`（25G/100G の対向と合わせる）。
+
+### よくある誤設定
+
+- `speed` を `lanes` 数と不整合な値にすると SAI が `SAI_STATUS_INVALID_PARAMETER` を返してポートが down のまま。
+- 対向と `fec` が不一致だと PHY は up しても link 不安定。両端を同じ FEC モードに揃える。
+- `mtu` を VLAN/PortChannel メンバ間で揃えないと L2 で巨大フレームがドロップされる。
+- Breakout 中の親ポートに `admin_status: up` を残すと subport と二重設定で orchagent エラー。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'PORT|Ethernet0'
+show interfaces status
+show interfaces transceiver eeprom Ethernet0
+```
+<!-- /ops-hint -->

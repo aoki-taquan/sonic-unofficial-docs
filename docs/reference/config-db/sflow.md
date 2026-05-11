@@ -114,3 +114,25 @@ key の `port` は `PORT.name` または `'all'` (全ポート既定)。
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SFLOW|global` と `SFLOW_SESSION|<port>`、`SFLOW_COLLECTOR|<name>`。
+- `admin_state`: `up`。
+- `polling_interval`: 20（秒）。
+- `agent_id`: `Loopback0` 等。
+
+### よくある誤設定
+
+- `agent_id` を management IF にすると collector 側で device 識別が混乱。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'SFLOW|global'
+show sflow
+```
+<!-- /ops-hint -->

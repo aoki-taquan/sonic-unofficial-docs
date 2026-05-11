@@ -108,3 +108,24 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `QUEUE|<port>|<queue-range>` (例 `QUEUE|Ethernet0|3-4`)。
+- `scheduler`: `scheduler.0` 等。
+- `wred_profile`: `AZURE_LOSSY` 等。
+
+### よくある誤設定
+
+- PFC 対応 queue に `wred_profile` を当てて ECN を有効にしないと、輻輳時に PFC が連続発火する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'QUEUE|Ethernet0|*'
+show queue counters
+```
+<!-- /ops-hint -->

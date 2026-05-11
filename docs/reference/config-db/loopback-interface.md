@@ -95,3 +95,23 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 ## 引用元
 
 [^1]: YANG 定義: `sonic-loopback-interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-loopback-interface.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `LOOPBACK_INTERFACE|Loopback0` (L3 enable 行) と `LOOPBACK_INTERFACE|Loopback0|<ip/prefix>`。
+- `Loopback0` は BGP router-id / VTEP src として標準利用。
+
+### よくある誤設定
+
+- L3 enable 行を省略すると IP 行だけでは Loopback が作られない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'LOOPBACK_INTERFACE|*'
+show ip interfaces | grep Loopback
+```
+<!-- /ops-hint -->

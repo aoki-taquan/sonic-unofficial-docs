@@ -76,3 +76,25 @@ WARM_RESTART|<module>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-warm-restart.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-warm-restart.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `WARM_RESTART|<module>` (`bgp`, `swss`, `teamd`, `system`)。
+- `enable`: `true` / `false`。
+- `bgp_timer`: 300、`neighsyncd_timer`: 110。
+
+### よくある誤設定
+
+- `enable: true` のまま長時間運用したまま `config save` し忘れて再起動すると warm-restart 状態が不整合になる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'WARM_RESTART|*'
+show warm_restart config
+show warm_restart state
+```
+<!-- /ops-hint -->

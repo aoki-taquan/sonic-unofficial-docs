@@ -112,3 +112,25 @@ POLICER|<name>
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `POLICER|<name>`。
+- `meter_type`: `packets` / `bytes`。
+- `mode`: `sr_tcm` / `tr_tcm` / `storm`。
+- `cir` / `cbs` / `pir` / `pbs`。
+
+### よくある誤設定
+
+- `mode: storm` で `pir` を指定すると SAI がエラーを返す版がある。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'POLICER|*'
+show policer
+```
+<!-- /ops-hint -->

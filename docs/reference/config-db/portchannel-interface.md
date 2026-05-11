@@ -104,3 +104,23 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PORTCHANNEL_INTERFACE|PortChannel0001` と `PORTCHANNEL_INTERFACE|PortChannel0001|<ip/prefix>`。
+- `vrf_name`: `Vrfdefault` 等。
+
+### よくある誤設定
+
+- メンバが 1 本も up していない LAG に IP を載せても route がアクティブにならない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PORTCHANNEL_INTERFACE|*'
+show ip interfaces
+```
+<!-- /ops-hint -->

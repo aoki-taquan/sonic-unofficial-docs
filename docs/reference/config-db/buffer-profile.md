@@ -96,3 +96,26 @@ BUFFER_PROFILE|<name>
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BUFFER_PROFILE|<profile-name>` (例 `pg_lossless_100000_5m_profile`)。
+- `pool`: `ingress_lossless_pool` 等。
+- `xon` / `xoff` / `size`: PFC 閾値（バイト）。
+- `dynamic_th`: `-3` 〜 `3` (α 値)。
+
+### よくある誤設定
+
+- `xoff` を `size` より大きく設定すると PFC が常時 ON。
+- `pool` のサイズを超える profile を多数バインドすると `bufferorch` がエラーログを吐き続ける。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BUFFER_PROFILE|pg_lossless_100000_5m_profile'
+show buffer profile
+```
+<!-- /ops-hint -->
