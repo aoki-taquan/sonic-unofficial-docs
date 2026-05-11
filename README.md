@@ -15,23 +15,30 @@
 
 ## 公開状態
 
-現在の公開ステータス: **β リリース可（v1.0 未到達）**
+現在の公開ステータス: **v1.0 リリース候補 (RC)** — 残ブロッカはユーザー手動 2 件のみ。
 
 品質指標 (2026-05-11 時点):
 
 | 指標 | 値 |
 |------|----|
-| 総ページ数 | 779 |
-| `code-verified` ページ | 545 |
+| 総ページ数 | 833 |
+| `code-verified` ページ | 597 (581+ 達成済み) |
 | `discrepancy-found` ページ | 48 |
 | `hld-only` 本文ページ | 0 |
-| 監査平均評価 (round 6) | 4.978 / 5.0 |
-| CLI Reference | 63 ページ |
-| CONFIG_DB Reference | 110 ページ |
-| YANG Reference | 70 ページ |
-| Runbooks | 31 ページ |
+| 監査平均評価 (round 8、10 段階) | 9.74 / 10.0 |
+| CLI Reference | 73 ページ |
+| CONFIG_DB Reference | 122 ページ |
+| YANG Reference | 85 ページ |
+| Runbooks | 46 ページ |
 
-v1.0 昇格までの残作業は [`meta/release-checklist-v1.md`](./meta/release-checklist-v1.md) を参照。GitHub Pages の Source 設定手順は [`meta/github-pages-setup.md`](./meta/github-pages-setup.md) を参照。
+v1.0 RC として、自動化可能なチェック項目は全て [x]。残ブロッカは以下のユーザー手動マター 2 件のみです:
+
+1. **GitHub Pages の Source 設定** (`gh-pages` branch を Pages の Source に設定): [`meta/github-pages-setup.md`](./meta/github-pages-setup.md) 参照
+2. **リリースタグ `v1.0.0` の打鍵とアナウンス** ([CHANGELOG](./CHANGELOG.md) 参照)
+
+公開後の URL: <https://aoki-taquan.github.io/sonic-unofficial-docs/>
+
+詳細は [`meta/release-checklist-v1.md`](./meta/release-checklist-v1.md) と [`CHANGELOG.md`](./CHANGELOG.md) を参照。
 
 ## ローカルでのプレビュー
 
