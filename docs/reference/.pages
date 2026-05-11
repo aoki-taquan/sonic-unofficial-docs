@@ -4,5 +4,6 @@ nav:
   - cli
   - config-db
   - yang
+  - sai-attributes.md
   - verification
   - runbooks
