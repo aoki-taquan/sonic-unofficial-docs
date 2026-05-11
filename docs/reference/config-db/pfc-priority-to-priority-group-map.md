@@ -49,8 +49,7 @@ YANG 上は map 名を key にする outer list と、`pfc_priority` を key に
 
 ## 購読者
 
-- `qosmgrd`: CONFIG_DB の PFC priority to PG map を APPL_DB QoS map へ展開する。
-- `orchagent` / `QosOrch`: APPL_DB の map を SAI QoS map (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP`) として作成し、port QoS binding に利用する。
+- `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): CONFIG_DB の QoS map を直接 subscribe し、SAI QoS map (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP`) として作成、port QoS binding に利用する（master には独立した `qosmgrd` プロセスは存在しない）。
 
 ## 関連 CONFIG_DB / YANG / CLI
 

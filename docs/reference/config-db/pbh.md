@@ -72,8 +72,8 @@ PBH_HASH_FIELD|<hash_field_name>
 
 ## 購読者
 
-- `pbhmgrd`: CONFIG_DB の PBH table / rule / hash / hash-field を検証し APPL_DB へ展開する。
-- `orchagent` / PBH orch: APPL_DB の PBH 設定を SAI hash / ACL 相当のオブジェクトへ反映する。
+- `sonic-utilities/scripts/pbh`（CLI 側スクリプト）: CONFIG_DB の PBH table / rule / hash / hash-field を読み取り、ユーザ向け CLI を提供する（独立した `pbhmgrd` プロセスは master には存在しない）。
+- `orchagent` の `PbhOrch` (`sonic-swss/orchagent/pbhorch.cpp`): CONFIG_DB の PBH 設定を直接 subscribe して SAI hash / ACL 相当のオブジェクトへ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 

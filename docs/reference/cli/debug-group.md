@@ -93,7 +93,7 @@ current の `debug.main` ツリーには `bgp` / `zebra` / `spanning_tree` の�
 
 ### `debug spanning_tree`
 
-サブコマンド無しで実行すると `sudo stpctl dbg enable` を起動し、`stpsyncd` / `stpd` のデバッグ出力を有効化する。`dump global` / `vlan` / `interface` は内部状態のスナップショット表示。
+サブコマンド無しで実行すると `sudo stpctl dbg enable` を起動し、`stpd` / `stpmgrd`（docker-stp の critical_processes に登録されている 2 プロセス）のデバッグ出力を有効化する。`dump global` / `vlan` / `interface` は内部状態のスナップショット表示。
 
 ## 注意
 

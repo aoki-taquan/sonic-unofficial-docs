@@ -57,8 +57,7 @@ PORT_QOS_MAP|<PORT.name>
 
 ## 購読者
 
-- `qosmgrd`: CONFIG_DB の QoS map binding を APPL_DB `PORT_QOS_MAP_TABLE` へ展開する。
-- `orchagent` / `QosOrch`: APPL_DB の QoS map binding を SAI QoS map、scheduler、PFC 設定として port に反映する。
+- `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): CONFIG_DB の QoS map binding を直接 subscribe し、SAI QoS map、scheduler、PFC 設定として port に反映する（master には独立した `qosmgrd` プロセスは存在せず、CONFIG_DB → APPL_DB の中間段は無い）。
 
 ## 関連 CONFIG_DB / YANG / CLI
 

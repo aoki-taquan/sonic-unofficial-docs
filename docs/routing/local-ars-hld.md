@@ -98,7 +98,7 @@ flowchart LR
 ### 1. `ArsOrch` 等の orch 未実装
 
 - **HLD 記述**: `ArsOrch`（または `NextHopGroupOrch` 拡張）が `ARS` / `ARS_PROFILE` / `ARS_INTERFACE` テーブルを subscribe して SAI ARS object に反映する。
-- **実装位置**: `sonic-swss/orchagent/` に `arsorch.cpp` / `arsorch.h` 相当ファイル無し（grep ヒット 0）。`nexthopgrouporch.cpp` にも ARS 連携コードは存在しない。
+- **実装位置**: `sonic-swss/orchagent/` に `arsorch.cpp` / `arsorch.h` 相当ファイル無し（grep ヒット 0）。`nhgorch.cpp` (NhgOrch) にも ARS 連携コードは存在しない。
 - **差分の中身**: orch 層の処理が無いため CONFIG_DB に `ARS|*` を書いても何も起きない。`gDirectory` への ArsOrch 登録も無い。
 - **読者への影響**: 設定しても ASIC への反映経路が存在しないため、ARS は機能しない。
 - **回避策**:

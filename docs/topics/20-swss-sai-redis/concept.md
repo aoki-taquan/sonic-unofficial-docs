@@ -36,7 +36,7 @@ flowchart LR
   CLI[CLI / gNMI] --> CDB[(CONFIG_DB)]
   CDB --> CFGD[*cfgd / *mgrd<br/>例: bgpcfgd, intfmgrd]
   CFGD --> ADB[(APPL_DB)]
-  EXT[FRR / teamd / lldpd] --> SYNC[*syncd<br/>fpmsyncd, teamsyncd, lldpsyncd]
+  EXT[FRR / teamd / lldpd] --> SYNC[*syncd<br/>fpmsyncd, teamsyncd, lldp-syncd]
   SYNC --> ADB
   ADB --> ORCH[orchagent<br/>sub-Orch 群]
   ORCH --> AS[(ASIC_DB)]
