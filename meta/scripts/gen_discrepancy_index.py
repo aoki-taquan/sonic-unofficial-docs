@@ -188,6 +188,23 @@ def render(entries: list[dict]) -> str:
                 out.append(f"  ")
                 out.append(f"  {e['summary']}")
             out.append("")
+
+    # フッター: 品質監査軸 6 の読み替えに関する注記（固定文）
+    out.append("## 監査基準の取り扱い")
+    out.append("")
+    out.append(
+        "本ページ群（`verification: discrepancy-found` のページ）は、"
+        "「機能としては完結していなくても、代わりに HLD と実装の差分を整理して"
+        "読み手に渡す」ことを目的としています。"
+        "品質監査 (`meta/quality-audit-*.md`) における **軸 6 (完結性)** は、"
+        "本ページ群では「乖離説明の整理度」"
+        "（monitor タグ妥当性 / 「実装との乖離」セクションの構造化 / "
+        "裏取り evidence / 読み手への next-action）に読み替えて評価します。"
+        "詳細は `meta/templates/SCHEMA.md` の "
+        "「`discrepancy-found` ページの軸 6 評価基準」セクション、"
+        "および `meta/quality-audit-guide.md` を参照してください。"
+    )
+    out.append("")
     return "\n".join(out)
 
 

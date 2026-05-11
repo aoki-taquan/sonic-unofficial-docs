@@ -286,3 +286,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
+
+## 監査基準の取り扱い
+
+本ページ群（`verification: discrepancy-found` のページ）は、「機能としては完結していなくても、代わりに HLD と実装の差分を整理して読み手に渡す」ことを目的としています。品質監査 (`meta/quality-audit-*.md`) における **軸 6 (完結性)** は、本ページ群では「乖離説明の整理度」（monitor タグ妥当性 / 「実装との乖離」セクションの構造化 / 裏取り evidence / 読み手への next-action）に読み替えて評価します。詳細は `meta/templates/SCHEMA.md` の 「`discrepancy-found` ページの軸 6 評価基準」セクション、および `meta/quality-audit-guide.md` を参照してください。
