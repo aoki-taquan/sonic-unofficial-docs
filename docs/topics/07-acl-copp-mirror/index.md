@@ -103,6 +103,19 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 - [ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
 - [SAI 拡張属性追加系](../../categories/sai-extensions.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (196 行) | meta |
+| setup | ✅ 完成 (282 行) | meta |
+| operations | ✅ 完成 (186 行) | meta |
+| internals | ✅ 完成 (128 行) | meta |
+| advanced | ⚠️ プレースホルダ (79 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

@@ -84,6 +84,19 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 - [SONiC の MPLS 基盤](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (284 行) | meta |
+| setup | ✅ 完成 (242 行) | meta |
+| operations | ✅ 完成 (205 行) | meta |
+| internals | ✅ 完成 (129 行) | meta |
+| advanced | ⚠️ プレースホルダ (90 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

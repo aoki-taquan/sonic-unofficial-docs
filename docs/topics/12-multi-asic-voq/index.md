@@ -93,6 +93,19 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 - [VOQ SONiC](../../platform/voq-sonic.md)
 - [Multi-ASIC カテゴリ](../../categories/multi-asic.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (151 行) | meta |
+| setup | ✅ 完成 (232 行) | meta |
+| operations | ✅ 完成 (217 行) | meta |
+| internals | ✅ 完成 (140 行) | meta |
+| advanced | ✅ 完成 (108 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

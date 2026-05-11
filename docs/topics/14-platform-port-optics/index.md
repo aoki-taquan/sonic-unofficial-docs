@@ -119,6 +119,19 @@ related:
 - [show platform](../../reference/cli/show-platform.md)
 - [config interface](../../reference/cli/config-interface.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (170 行) | meta |
+| setup | ✅ 完成 (211 行) | meta |
+| operations | ✅ 完成 (260 行) | meta |
+| internals | ✅ 完成 (144 行) | meta |
+| advanced | ⚠️ プレースホルダ (69 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

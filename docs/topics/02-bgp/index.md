@@ -68,6 +68,19 @@ related:
 
 この章は routing の HLD 派生ページ 20 件と reference ページ 19 件を横断している。細部のスキーマ、CLI、実装裏取りは各サブページ末尾の「関連ページ」から参照する。
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (198 行) | meta |
+| setup | ✅ 完成 (231 行) | meta |
+| operations | ✅ 完成 (183 行) | meta |
+| internals | ✅ 完成 (148 行) | meta |
+| advanced | ⚠️ プレースホルダ (62 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

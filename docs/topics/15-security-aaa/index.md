@@ -102,6 +102,19 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 - [Password hardening 設計](../../architecture/pw-hardening-design.md)
 - [Container hardening](../../system/sonic-container-hardening.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (154 行) | meta |
+| setup | ✅ 完成 (211 行) | meta |
+| operations | ✅ 完成 (193 行) | meta |
+| internals | ✅ 完成 (132 行) | meta |
+| advanced | ✅ 完成 (105 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

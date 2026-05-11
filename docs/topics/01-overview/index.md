@@ -83,6 +83,19 @@ related:
 - [SONiC User Manual の位置づけ](../../management/sonic-user-manual.md)
 - [SONiC NOS の設定手段一覧](../../management/sonic-nos-configuration-methods.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (153 行) | meta |
+| setup | ❌ 未着手 | - |
+| operations | ✅ 完成 (181 行) | meta |
+| internals | ✅ 完成 (137 行) | meta |
+| advanced | ❌ 未着手 | - |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

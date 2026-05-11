@@ -91,6 +91,19 @@ related:
 - [評価者向けガイド](../../guides/evaluator.md)
 - [運用者向けガイド](../../guides/operator.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (143 行) | meta |
+| setup | ✅ 完成 (277 行) | meta |
+| operations | ✅ 完成 (176 行) | meta |
+| internals | ✅ 完成 (130 行) | meta |
+| advanced | ⚠️ プレースホルダ (79 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

@@ -110,6 +110,19 @@ related:
 - [Dump utility](../../internals/dump-utility-for-easy-debugging.md)
 - [System ready](../../system/system-ready-hld.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (140 行) | meta |
+| setup | ✅ 完成 (248 行) | meta |
+| operations | ✅ 完成 (187 行) | meta |
+| internals | ✅ 完成 (129 行) | meta |
+| advanced | ⚠️ プレースホルダ (90 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

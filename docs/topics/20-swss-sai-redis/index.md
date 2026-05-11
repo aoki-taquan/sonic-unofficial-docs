@@ -67,6 +67,19 @@ related:
 
 この章は internals / architecture / platform / system 配下の [HLD](../../reference/glossary.md#term-hld) 派生ページを横断する。スキーマや SAI 呼び出しの詳細は各サブページ末尾の「関連ページ」から、機能固有の話は当該機能章（[BGP](../02-bgp/index.md)、[L2 VLAN LAG](../06-l2-vlan-lag/index.md)、[ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) など）から参照する。
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (158 行) | meta |
+| setup | ✅ 完成 (272 行) | meta |
+| operations | ✅ 完成 (170 行) | meta |
+| internals | ✅ 完成 (124 行) | meta |
+| advanced | ⚠️ プレースホルダ (74 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 
