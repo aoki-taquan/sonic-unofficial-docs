@@ -3,6 +3,7 @@ title: Platform / Port / Optics / PHY
 description: "Platform / Port / Optics / PHY — この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
   - docs/platform/global-platform-specific-psuutil-class-instance.md

@@ -3,6 +3,7 @@ title: VXLAN / EVPN / VNET オーバーレイ
 description: "VXLAN / EVPN / VNET オーバーレイ — この章は、SONiC の overlay を「VXLAN tunnel を作る」「VNET と VRF/VNI を対応させる」「EVPN やコントローラから経路を入れる」「運用中に ECMP、BFD、QoS を確認する」という読者の順番で読み直す入口です。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
   - docs/overlay/vxlan-sonic.md

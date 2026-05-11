@@ -3,6 +3,7 @@ title: DASH と SmartSwitch
 description: "DASH と SmartSwitch — この章は、SONiC で「NPU スイッチに DPU をぶら下げ、その上で DASH オーバーレイを処理する」SmartSwitch 構成を読み解くための入口です。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
   - docs/categories/dash.md

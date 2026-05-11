@@ -3,6 +3,7 @@ title: Build / Packaging / Application Extension
 description: "Build / Packaging / Application Extension — この章は、SONiC を「どう作って配るか」と「外部アプリケーションをどう持ち込むか」を、開発者と運用者が同じ地図で読むための入口である。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources: []
 keywords:
