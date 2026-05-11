@@ -94,3 +94,25 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 ## 関連ページ
 - [CONFIG_DB: VXLAN_TUNNEL](vxlan-tunnel.md)
 - [CONFIG_DB: VLAN](vlan.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `NVGRE_TUNNEL|<name>` / `NVGRE_TUNNEL_MAP|<tunnel>|<map_entry>`。
+- `src_ip`: ローカル VTEP の loopback アドレス。
+- `vsid`: 24bit (0..16777214)、`vlan_id`: 1..4094。
+
+### よくある誤設定
+
+- `src_ip` がローカル IP として実在しない (Loopback 未設定) ためトンネルが up しない。
+- `VXLAN_TUNNEL` と `NVGRE_TUNNEL` を同一スイッチで併用し、orch が想定外動作。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'NVGRE_TUNNEL*'
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
+```
+<!-- /ops-hint -->

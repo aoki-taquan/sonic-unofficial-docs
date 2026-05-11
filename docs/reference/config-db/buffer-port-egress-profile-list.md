@@ -98,3 +98,25 @@ BUFFER_PORT_EGRESS_PROFILE_LIST|<port>
 - [CONFIG_DB: BUFFER_POOL](buffer-pool.md)
 - [CONFIG_DB: BUFFER_QUEUE](buffer-queue.md)
 - [CONFIG_DB: BUFFER_PORT_INGRESS_PROFILE_LIST](buffer-port-ingress-profile-list.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BUFFER_PORT_EGRESS_PROFILE_LIST|<port>` (例 `BUFFER_PORT_EGRESS_PROFILE_LIST|Ethernet0`)。
+- `profile_list`: `","` 区切り (例 `"egress_lossless_profile,egress_lossy_profile"`)。
+
+### よくある誤設定
+
+- `BUFFER_PROFILE` 未登録のプロファイル名を入れて leafref エラー。
+- `BUFFER_QUEUE` の queue 単位 profile とポート単位 profile_list の役割を混同する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BUFFER_PORT_EGRESS_PROFILE_LIST|Ethernet0'
+sonic-db-cli APPL_DB hgetall 'BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE:Ethernet0'
+show buffer pool
+```
+<!-- /ops-hint -->

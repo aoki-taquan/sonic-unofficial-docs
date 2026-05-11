@@ -78,3 +78,24 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 ## 関連ページ
 - [CONFIG_DB: DEVICE_METADATA](device-metadata.md)
 - [CONFIG_DB: FEATURE](feature.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- CONFIG_DB に永続化されない仮想テーブル。`sonic-cfggen` 実行時のメモリ上に展開される。
+- サブキー: `CHASSIS_METADATA` (chassis のみ) / `ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED`。
+
+### よくある誤設定
+
+- 手動でこのテーブルを `config_db.json` に書こうとしても無視される (テンプレ生成専用)。
+- chassis でない箱で `CHASSIS_METADATA` が存在しないことを前提に書かれていないテンプレを使うとエラー。
+
+### 確認コマンド
+
+```bash
+sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA"
+sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
+```
+<!-- /ops-hint -->

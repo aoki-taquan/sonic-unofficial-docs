@@ -111,3 +111,28 @@ PBH_HASH_FIELD|<hash_field_name>
 
 [^1]: YANG 定義: `sonic-pbh.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang>
 [^2]: テーブル名定数参照: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PBH_TABLE|<name>`、`PBH_RULE|<table>|<rule>`、`PBH_HASH|<hash>`、`PBH_HASH_FIELD|<field>`。
+- match field は `0x...` / `0x.../0x...` (mask 付) の hex 文字列。
+- `packet_action=SET_ECMP_HASH` が一般的。
+
+### よくある誤設定
+
+- `priority` が他 rule と衝突して評価順序が予測不能。
+- `hash` フィールドに未定義の `PBH_HASH` を指定し leafref エラー。
+- `interface_list` に未登録の `PORTCHANNEL` を入れる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PBH_*'
+show pbh table
+show pbh rule
+show pbh statistics
+```
+<!-- /ops-hint -->

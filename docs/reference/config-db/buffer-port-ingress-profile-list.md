@@ -98,3 +98,26 @@ BUFFER_PORT_INGRESS_PROFILE_LIST|<port>
 - [CONFIG_DB: BUFFER_PROFILE](buffer-profile.md)
 - [CONFIG_DB: BUFFER_POOL](buffer-pool.md)
 - [CONFIG_DB: BUFFER_PG](buffer-pg.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BUFFER_PORT_INGRESS_PROFILE_LIST|<port>` (例 `BUFFER_PORT_INGRESS_PROFILE_LIST|Ethernet0`)。
+- `profile_list`: `","` 区切り (例 `"ingress_lossless_profile,ingress_lossy_profile"`)。
+- static-buffer モードでの利用が中心。dynamic-buffer モードでは通常不要。
+
+### よくある誤設定
+
+- `BUFFER_PROFILE` に存在しないプロファイル名を入れて leafref 検証エラー。
+- dynamic-buffer モードで設定したが反映されず混乱する (dynamic では buffermgrd が自動生成)。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BUFFER_PORT_INGRESS_PROFILE_LIST|Ethernet0'
+sonic-db-cli APPL_DB hgetall 'BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE:Ethernet0'
+show buffer pool
+```
+<!-- /ops-hint -->

@@ -81,3 +81,27 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 - [Topics: Security / AAA / FIPS / Hardening](../../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `LDAP_SERVER|<host>` (例 `LDAP_SERVER|ldap.example.com`)、`LDAP|global`。
+- `port=389` (LDAP) / `636` (LDAPS)、`version=3`、`bind_timeout=5`、最大 8 サーバ。
+
+### よくある誤設定
+
+- `bind_password` に SPACE / `#` / `,` を含めて YANG pattern で reject される。
+- `base_dn` 未設定で `nslcd` がユーザ検索できず認証失敗。
+- 複数 `LDAP_SERVER` の `priority` 重複でフェイルオーバ順序が不定。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'LDAP_SERVER|*'
+sonic-db-cli CONFIG_DB hgetall 'LDAP|global'
+show ldap-server
+sudo cat /etc/nslcd.conf
+```
+<!-- /ops-hint -->

@@ -98,3 +98,25 @@ BGP_PEER_GROUP_AF|<vrf_name>|<peer_group_name>|<afi_safi>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-peergroup.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang>; AF 共通 leaf は `sonic-bgp-common.yang` の `grouping sonic-bgp-cmn-af`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-common.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_PEER_GROUP_AF|<vrf>|<peer_group>|<afi_safi>` (例 `BGP_PEER_GROUP_AF|default|UPSTREAM|ipv4_unicast`)。
+- `admin_status=true` で activate、`route_map_in`/`route_map_out` でフィルタ。
+
+### よくある誤設定
+
+- peer-group を作成した直後に AF 設定を行わず、neighbor が activate されない (アドレスファミリ未投入)。
+- `max_prefix_limit` を運用ピーク以下に設定して BGP セッションが reset する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_PEER_GROUP_AF|*'
+vtysh -c "show ip bgp summary"
+vtysh -c "show running-config bgpd"
+```
+<!-- /ops-hint -->

@@ -63,3 +63,25 @@ LOSSLESS_TRAFFIC_PATTERN|<name>
 ## 関連ページ
 - [CONFIG_DB: DEFAULT_LOSSLESS_BUFFER_PARAMETER](default-lossless-buffer-parameter.md)
 - [CONFIG_DB: BUFFER_PROFILE](buffer-profile.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key: `LOSSLESS_TRAFFIC_PATTERN|AZURE` (通常 1 件のみ)。
+- `mtu`: `1500` または `9216` (jumbo)。
+- `small_packet_percentage`: 経験的に `50` 程度。
+
+### よくある誤設定
+
+- `mtu` を実 MTU と乖離した値にし、ヘッドルームが過小/過大になる。
+- dynamic-buffer モード以外でこのテーブルを変更しても効かない (`buffermgrd` の動的モードのみ参照)。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'LOSSLESS_TRAFFIC_PATTERN|AZURE'
+show buffer profile
+```
+<!-- /ops-hint -->

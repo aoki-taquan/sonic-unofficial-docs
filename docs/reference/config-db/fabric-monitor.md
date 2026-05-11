@@ -92,3 +92,25 @@ YANG では `container FABRIC_MONITOR_DATA` の直下にスカラー leaf が並
 
 ## 関連ページ
 - 関連 CONFIG_DB ページ: `FABRIC_PORT`（本バッチで追加）
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key: `FABRIC_MONITOR|FABRIC_MONITOR_DATA` (シングルトン)。
+- `monState`: 運用開始時は `enable`。閾値はデフォルト (`monErrThreshCrcCells=1`, `monErrThreshRxCells=61035156`) で開始。
+
+### よくある誤設定
+
+- `monPollThreshIsolation` を 1 にすると一時的 CRC スパイクで isolate が頻発する。
+- `monState=disable` のまま運用し、不良ファブリックリンクが検出されない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'FABRIC_MONITOR|FABRIC_MONITOR_DATA'
+show fabric counters
+show fabric isolation
+```
+<!-- /ops-hint -->

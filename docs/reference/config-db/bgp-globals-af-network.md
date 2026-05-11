@@ -81,3 +81,25 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 ## 関連ページ
 - [CONFIG_DB: BGP_GLOBALS_AF](bgp-globals-af.md)
 - [CONFIG_DB: BGP_GLOBALS_AF_AGGREGATE_ADDR](bgp-globals-af-aggregate-addr.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_GLOBALS_AF_NETWORK|<vrf>|<afi_safi>|<prefix>` (例 `BGP_GLOBALS_AF_NETWORK|default|ipv4_unicast|10.1.0.0/16`)。
+- `policy`: route-map 名 (任意)。`backdoor`: 通常 `false`。
+
+### よくある誤設定
+
+- 対象 prefix が RIB に存在せず広告されない (`network_import_check=true` の既定で必須)。
+- `BGP_GLOBALS_AF_AGGREGATE_ADDR` と用途を混同して、集約の代わりに network で多数の prefix を列挙してしまう。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF_NETWORK|*'
+vtysh -c "show running-config bgpd" | grep "^ network"
+vtysh -c "show ip bgp"
+```
+<!-- /ops-hint -->

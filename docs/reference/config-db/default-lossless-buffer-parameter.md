@@ -88,3 +88,26 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER|<name>
 - [CONFIG_DB: BUFFER_PROFILE](buffer-profile.md)
 - [CONFIG_DB: BUFFER_POOL](buffer-pool.md)
 - [CONFIG_DB: LOSSLESS_TRAFFIC_PATTERN](lossless-traffic-pattern.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key: `DEFAULT_LOSSLESS_BUFFER_PARAMETER|AZURE` (単一エントリ)。
+- `default_dynamic_th`: 通常 `0` (alpha=1)。`-3..3` の範囲で運用。
+- `over_subscribe_ratio`: SHP 利用時は `2` 等、無効は未設定。
+
+### よくある誤設定
+
+- `over_subscribe_ratio > 0` に設定したが、`BUFFER_POOL` 側の `xoff` (SHP サイズ) を設定せず動的計算が破綻する。
+- static-buffer モードのスイッチに設定しても無視され、設定が効いていないように見える。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'DEFAULT_LOSSLESS_BUFFER_PARAMETER|AZURE'
+sonic-db-cli CONFIG_DB hget 'DEVICE_METADATA|localhost' buffer_model
+show buffer profile
+```
+<!-- /ops-hint -->
