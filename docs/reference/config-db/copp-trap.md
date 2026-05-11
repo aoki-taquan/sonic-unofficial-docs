@@ -24,6 +24,26 @@ related:
 
 CoPP の trap エントリを定義し、SAI hostif trap ID 群を `COPP_GROUP` に束ねる。各 trap は `trap_ids` フィールドにカンマ区切り識別子 (`bgp`、`lldp`、`arp_req` など) を列挙し、`trap_group` で `COPP_GROUP` に紐付ける[^1]。`coppmgr` が両テーブルを結合し APPL_DB の `COPP_TABLE` に書く。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>COPP_TRAP")]
+  DM["coppmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_COPP_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_hostif_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

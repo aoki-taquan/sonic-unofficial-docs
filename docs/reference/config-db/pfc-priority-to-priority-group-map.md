@@ -26,6 +26,22 @@ related:
 
 `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` は PFC priority 0..7 を ingress priority group 0..7 に対応付ける named QoS map テーブル[^1]。`PORT_QOS_MAP.pfc_to_pg_map` から参照され、lossless traffic の buffer priority group 選択に使われる。`schema.h` では APPL_DB 側の `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE` 定数が定義されている[^2]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP")]
+  DM["QosOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_qos_map_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

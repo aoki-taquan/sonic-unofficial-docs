@@ -26,6 +26,22 @@ related:
 
 `PORT_QOS_MAP` は QoS map、PFC enable bitmap、PFC watchdog software enable bitmap、scheduler profile を port または global default に bind する CONFIG_DB テーブル[^1]。`schema.h` では APPL_DB 側の `PORT_QOS_MAP_TABLE` 定数が定義されている[^2]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>PORT_QOS_MAP")]
+  DM["QosOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_port_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

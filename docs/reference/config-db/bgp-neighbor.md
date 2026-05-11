@@ -32,6 +32,20 @@ BGP 隣接 (peer) を CONFIG_DB で定義するテーブル。`bgpcfgd` (テン�
 - `BGP_NEIGHBOR_TEMPLATE_LIST` (key: `neighbor`): bgpcfgd テンプレ用の単純形式
 - `BGP_NEIGHBOR_LIST` (key: `vrf_name`, `neighbor`): generic 形式。`frr_mgmt_framework_config = true` のときに使われる
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BGP_NEIGHBOR")]
+  DM["bgpcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

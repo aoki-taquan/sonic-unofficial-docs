@@ -25,6 +25,20 @@ related:
 
 組み込み DHCPv4 サーバ機能の VLAN/IF 単位設定を保持する[^1]。`dhcpservd`（`sonic-dhcp-server` パッケージ）が `kea-dhcp4` の設定を生成、起動する。`DEVICE_METADATA.localhost.dhcp_server` で全体有効化が制御される。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>DHCP_SERVER_IPV4")]
+  DM["dhcpservd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

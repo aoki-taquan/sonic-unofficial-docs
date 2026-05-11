@@ -25,6 +25,26 @@ related:
 
 VXLAN tunnel に対し、ローカル VLAN と VNI (VXLAN Network Identifier) のマッピングを与える[^1]。`orchagent` の `VxlanTunnelMapOrch` がこのテーブルを購読し、SAI tunnel-map (`SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI` / `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID`) のエントリを生成する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL_MAP")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_MAP_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_tunnel_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

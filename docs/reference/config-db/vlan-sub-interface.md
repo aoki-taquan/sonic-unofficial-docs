@@ -26,6 +26,26 @@ related:
 
 `VLAN_SUB_INTERFACE` は物理 port または PortChannel 上の 802.1Q sub-interface を定義する CONFIG_DB テーブル。`Ethernet0.100` や `PortChannel10.100` のような親 interface + VLAN ID 形式をキーに、admin state、VRF / VNET binding、loopback action、encapsulation VLAN、IP prefix を持つ[^1]。`schema.h` では CONFIG_DB テーブル名として `CFG_VLAN_SUB_INTF_TABLE_NAME` が定義されている[^2]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>VLAN_SUB_INTERFACE")]
+  DM["intfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_router_intf_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

@@ -30,6 +30,22 @@ MC-LAG (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / u
 - `MCLAG_INTERFACE` — ドメインに紐づく MC-LAG メンバー PortChannel
 - `MCLAG_UNIQUE_IP` — MC-LAG ピア間で VLAN インターフェースに **異なる IP** を持たせる対象 VLAN
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>MCLAG_DOMAIN")]
+  DM["MlagOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_fdb_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

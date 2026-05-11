@@ -26,6 +26,26 @@ related:
 
 `STATIC_ROUTE` は静的経路を CONFIG_DB に保持するテーブル。YANG では template 形式 (`STATIC_ROUTE|<prefix>`) と VRF-aware 形式 (`STATIC_ROUTE|<vrf_name>|<prefix>`) の 2 つの list が定義されている[^1]。nexthop、出力 interface、BGP への advertise、BFD、administrative distance、nexthop VRF、blackhole 指定を扱う。テーブル名の実装側定数は `schema.h` も参照する[^2]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
+  DM["fpmsyncd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_route_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

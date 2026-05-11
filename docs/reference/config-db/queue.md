@@ -25,6 +25,22 @@ related:
 
 ポートの egress queue ごとに `SCHEDULER` (WRR/DWRR/STRICT) と `WRED_PROFILE` を割り当てる[^1]。`qosorch` が SAI queue scheduler / WRED を設定する。VOQ シャーシでは `QUEUE_LIST` ではなく `VOQ_QUEUE_LIST` を使う。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>QUEUE")]
+  DM["QosOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_queue_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 非 VOQ:

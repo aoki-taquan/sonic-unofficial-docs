@@ -28,6 +28,26 @@ related:
 
 VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。`VNET` が VNI と VXLAN tunnel の対応を持ち、`VNET_ROUTE` と `VNET_ROUTE_TUNNEL` が VNET スコープの静的経路を表す[^1]。`schema.h` では APPL_DB 側の `VNET_TABLE` / `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` と、CONFIG_DB 側の `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` 定数が定義されている[^2]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>VNET")]
+  DM["vrfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VNET_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_virtual_router_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

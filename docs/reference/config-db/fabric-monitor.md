@@ -24,6 +24,24 @@ related:
 
 `FABRIC_MONITOR` テーブルは VOQ chassis のファブリックリンク監視 (`FABRIC_PORT` の自動 isolate/include) 用パラメータを CONFIG_DB に保持する[^1]。単一エントリ `FABRIC_MONITOR_DATA` を持ち、CRC エラー閾値や検出/復旧ポーリング数を定義する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>FABRIC_MONITOR")]
+  DM["fabricmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_FABRIC_MONITOR_DATA_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

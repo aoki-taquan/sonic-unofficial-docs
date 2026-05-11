@@ -27,6 +27,22 @@ related:
 ECMP / LAG ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル[^1]。
 `orchagent` が CONFIG_DB から読んで SAI `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*` / `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*` 系属性として SAI に push する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>SWITCH_HASH")]
+  DM["SwitchOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_hash_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

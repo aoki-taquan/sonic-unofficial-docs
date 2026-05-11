@@ -24,6 +24,26 @@ related:
 
 ルータ ID やサービス IP として使う仮想ループバック IF を定義する[^1]。`Loopback0` は通常 BGP の router-id / source として使われる。`intfmgrd` が Linux 上の dummy IF を生成し、`orchagent` `IntfsOrch` が SAI ルータ IF を作る。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>LOOPBACK_INTERFACE")]
+  DM["intfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_router_intf_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```
