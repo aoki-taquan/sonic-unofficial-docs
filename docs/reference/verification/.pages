@@ -2,4 +2,5 @@ title: 裏取り
 nav:
   - index.md
   - discrepancy-index.md
+  - stale-verified.md
   - sources-freshness.md
