@@ -1,24 +1,32 @@
 ---
 title: config qos サブコマンド
-description: "config qos サブコマンド — config qos は QoS と buffer 関連テンプレートを再生成して CONFIG_DB に反映する CLI グループ。"
+description: config qos サブコマンド — config qos は QoS と buffer 関連テンプレートを再生成して CONFIG_DB
+  に反映する CLI グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - PORT_QOS_MAP
-    - BUFFER_PORT_INGRESS_PROFILE_LIST
-    - BUFFER_PORT_EGRESS_PROFILE_LIST
-    - BUFFER_PG
-    - BUFFER_QUEUE
-    - DEVICE_METADATA
+  - PORT_QOS_MAP
+  - BUFFER_PORT_INGRESS_PROFILE_LIST
+  - BUFFER_PORT_EGRESS_PROFILE_LIST
+  - BUFFER_PG
+  - BUFFER_QUEUE
+  - DEVICE_METADATA
   cli:
-    - config qos
-  yang: []
+  - config qos
+  yang:
+  - sonic-port-qos-map
+  - sonic-dscp-tc-map
+  - sonic-tc-queue-map
+  - sonic-tc-priority-group-map
+  - sonic-dot1p-tc-map
+  - sonic-scheduler
+  - sonic-wred-profile
 ---
 
 # config qos サブコマンド

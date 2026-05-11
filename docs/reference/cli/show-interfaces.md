@@ -1,27 +1,31 @@
 ---
 title: show interfaces サブコマンド
-description: "show interfaces サブコマンド — show interfaces は物理ポート・PortChannel・SubInterface の 状態 / 速度 / FEC / Auto-Negotiation / Breakout / トランシーバ / カウンタ を一覧表示する。"
+description: show interfaces サブコマンド — show interfaces は物理ポート・PortChannel・SubInterface
+  の 状態 / 速度 / FEC / Auto-Negotiation / Breakout / トランシーバ / カウンタ を一覧表示する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/interfaces/__init__.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/interfaces/portchannel.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/interfaces/__init__.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/interfaces/portchannel.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - PORT
-    - PORTCHANNEL
-    - BREAKOUT_CFG
+  - PORT
+  - PORTCHANNEL
+  - BREAKOUT_CFG
   cli:
-    - show interfaces
-  yang: []
+  - show interfaces
+  yang:
+  - sonic-interface
+  - sonic-port
+  - sonic-portchannel
 ---
 
 # show interfaces サブコマンド

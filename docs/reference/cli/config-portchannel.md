@@ -1,20 +1,22 @@
 ---
 title: config portchannel サブコマンド
-description: "config portchannel サブコマンド — config portchannel は LACP ベースの Link Aggregation (LAG) を設定する。"
+description: config portchannel サブコマンド — config portchannel は LACP ベースの Link Aggregation
+  (LAG) を設定する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - PORTCHANNEL
-    - PORTCHANNEL_MEMBER
+  - PORTCHANNEL
+  - PORTCHANNEL_MEMBER
   cli:
-    - config portchannel
-  yang: []
+  - config portchannel
+  yang:
+  - sonic-portchannel
 ---
 
 # config portchannel サブコマンド

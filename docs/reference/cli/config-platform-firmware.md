@@ -1,22 +1,25 @@
 ---
 title: config platform firmware サブコマンド
-description: "config platform firmware サブコマンド — config platform firmware は platform firmware 操作を fwutil に委譲する CLI グループ。install と update は未知オプションを Click で解釈せず、そのまま fwutil へ渡す。"
+description: config platform firmware サブコマンド — config platform firmware は platform
+  firmware 操作を fwutil に委譲する CLI グループ。install と update は未知オプションを Click で解釈せず、そのまま fwutil
+  へ渡す。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/platform.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/platform.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - config platform firmware
-    - show platform firmware
-  yang: []
+  - config platform firmware
+  - show platform firmware
+  yang:
+  - sonic-device_metadata
 ---
 
 # config platform firmware サブコマンド

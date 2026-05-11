@@ -1,23 +1,27 @@
 ---
 title: sonic-installer コマンド
-description: "sonic-installer コマンド — sonic-installer は SONiC のイメージ管理（install / list / set-default / set-next-boot / remove / cleanup / verify-next-image）と、Docker コンテナ単位での up…"
+description: sonic-installer コマンド — sonic-installer は SONiC のイメージ管理（install / list
+  / set-default / set-next-boot / remove / cleanup / verify-next-image）と、Docker コンテナ単位での
+  up…
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: sonic_installer/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: sonic_installer/bootloader/__init__.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: sonic_installer/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: sonic_installer/bootloader/__init__.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - WARM_RESTART_ENABLE_TABLE
-    - WARM_RESTART_TABLE
+  - WARM_RESTART_ENABLE_TABLE
+  - WARM_RESTART_TABLE
   cli:
-    - sonic-installer
-  yang: []
+  - sonic-installer
+  yang:
+  - sonic-device_metadata
+  - sonic-versions
 ---
 
 # sonic-installer コマンド

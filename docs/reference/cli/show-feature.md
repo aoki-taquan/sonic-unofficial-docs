@@ -1,23 +1,25 @@
 ---
 title: show feature サブコマンド
-description: "show feature サブコマンド — show feature グループは SONiC の feature (= 個別 docker コンテナ単位の機能) の現在状態と設定値を表示する。実装は show/feature.py の @click.group(name='feature')。"
+description: show feature サブコマンド — show feature グループは SONiC の feature (= 個別 docker
+  コンテナ単位の機能) の現在状態と設定値を表示する。実装は show/feature.py の @click.group(name='feature')。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/feature.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: config/feature.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/feature.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/feature.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - FEATURE
+  - FEATURE
   cli:
-    - show feature
-    - config feature
-  yang: []
+  - show feature
+  - config feature
+  yang:
+  - sonic-feature
 ---
 
 # show feature サブコマンド

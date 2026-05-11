@@ -1,22 +1,24 @@
 ---
 title: config vnet サブコマンド
-description: "config vnet サブコマンド — config vnet は overlay VNET と VNET route を CONFIG_DB に作成・削除する CLI グループ。multi-ASIC では --namespace で対象 namespace を選択できる。"
+description: config vnet サブコマンド — config vnet は overlay VNET と VNET route を CONFIG_DB
+  に作成・削除する CLI グループ。multi-ASIC では --namespace で対象 namespace を選択できる。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - VNET
-    - VNET_ROUTE_TUNNEL
-    - VNET_ROUTE
+  - VNET
+  - VNET_ROUTE_TUNNEL
+  - VNET_ROUTE
   cli:
-    - config vnet
-    - show vnet
-  yang: []
+  - config vnet
+  - show vnet
+  yang:
+  - sonic-vnet
 ---
 
 # config vnet サブコマンド

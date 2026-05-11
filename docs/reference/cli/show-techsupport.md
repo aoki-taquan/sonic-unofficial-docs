@@ -1,18 +1,20 @@
 ---
 title: show techsupport コマンド
-description: "show techsupport コマンド — show techsupport は障害解析用の techsupport ダンプ を生成する。実態は sudo generate_dump -v ... のラッパで、システム情報・ログ・config・SAI/syncd データなどを 1 つの tar.gz にまとめる。"
+description: show techsupport コマンド — show techsupport は障害解析用の techsupport ダンプ を生成する。実態は
+  sudo generate_dump -v ... のラッパで、システム情報・ログ・config・SAI/syncd データなどを 1 つの tar.gz にまとめる。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show techsupport
-  yang: []
+  - show techsupport
+  yang:
+  - sonic-auto_techsupport
 ---
 
 # show techsupport コマンド

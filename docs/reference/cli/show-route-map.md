@@ -1,21 +1,24 @@
 ---
 title: show route-map コマンド
-description: "show route-map コマンド — show route-map は FRR の route-map 設定（policy / match / set 句）をそのまま表示するコマンドで、CONFIG_DB は読まず vtysh -c \"show route-map []\" を sudo で実行する単純なラッパで…"
+description: show route-map コマンド — show route-map は FRR の route-map 設定（policy / match
+  / set 句）をそのまま表示するコマンドで、CONFIG_DB は読まず vtysh -c "show route-map []" を sudo で実行する単純なラッパで…
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: utilities_common/constants.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: utilities_common/constants.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show route-map
-  yang: []
+  - show route-map
+  yang:
+  - sonic-route-map
+  - sonic-routing-policy-sets
 ---
 
 # show route-map コマンド

@@ -1,19 +1,21 @@
 ---
 title: show snmpagentaddress サブコマンド
-description: "show snmpagentaddress サブコマンド — show snmpagentaddress は SNMP エージェント（snmpd）がリッスンする IP/ポート/VRF の設定を表示する CLI グループ。"
+description: show snmpagentaddress サブコマンド — show snmpagentaddress は SNMP エージェント（snmpd）がリッスンする
+  IP/ポート/VRF の設定を表示する CLI グループ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_AGENT_ADDRESS_CONFIG
   cli:
-    - show snmpagentaddress
-  yang: []
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 # show snmpagentaddress サブコマンド

@@ -1,28 +1,33 @@
 ---
 title: config aaa / tacacs / radius サブコマンド
-description: "config aaa / tacacs / radius サブコマンド — AAA (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。"
+description: config aaa / tacacs / radius サブコマンド — AAA (Authentication / Authorization
+  / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/aaa.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/aaa.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - AAA
-    - TACPLUS
-    - TACPLUS_SERVER
-    - RADIUS
-    - RADIUS_SERVER
+  - AAA
+  - TACPLUS
+  - TACPLUS_SERVER
+  - RADIUS
+  - RADIUS_SERVER
   cli:
-    - config aaa
-    - config tacacs
-    - config radius
-  yang: []
+  - config aaa
+  - config tacacs
+  - config radius
+  yang:
+  - sonic-system-aaa
+  - sonic-system-tacacs
+  - sonic-system-radius
+  - sonic-system-ldap
 ---
 
 # config aaa / tacacs / radius サブコマンド

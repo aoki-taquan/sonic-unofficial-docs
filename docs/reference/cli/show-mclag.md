@@ -1,24 +1,25 @@
 ---
 title: show mclag (mclagdctl) コマンド
-description: "show mclag (mclagdctl) コマンド — SONiC には show mclag という Click サブコマンドは存在しない。"
+description: show mclag (mclagdctl) コマンド — SONiC には show mclag という Click サブコマンドは存在しない。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: dockers/docker-iccpd/base_image_files/mclagdctl
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
-  - repo: sonic-net/sonic-buildimage
-    path: src/iccpd/src/mclagdctl/mclagdctl.c
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: dockers/docker-iccpd/base_image_files/mclagdctl
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/iccpd/src/mclagdctl/mclagdctl.c
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
-    - MCLAG_DOMAIN
-    - MCLAG_INTERFACE
+  - MCLAG_DOMAIN
+  - MCLAG_INTERFACE
   cli:
-    - mclagdctl
-    - show mclag
-  yang: []
+  - mclagdctl
+  - show mclag
+  yang:
+  - sonic-mclag
 ---
 
 # show mclag (mclagdctl) コマンド

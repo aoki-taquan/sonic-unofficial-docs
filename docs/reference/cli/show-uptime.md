@@ -1,19 +1,21 @@
 ---
 title: show uptime サブコマンド
-description: "show uptime サブコマンド — show uptime は システムの稼働時間を uptime -p で「pretty 形式」で表示する click コマンド。出力例: up 3 weeks, 2 days, 4 hours, 15 minutes。"
+description: 'show uptime サブコマンド — show uptime は システムの稼働時間を uptime -p で「pretty 形式」で表示する
+  click コマンド。出力例: up 3 weeks, 2 days, 4 hours, 15 minutes。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show uptime
-    - show version
-  yang: []
+  - show uptime
+  - show version
+  yang:
+  - sonic-device_metadata
 ---
 
 # show uptime サブコマンド

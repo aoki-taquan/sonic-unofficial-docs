@@ -1,18 +1,20 @@
 ---
 title: show platform サブコマンド
-description: "show platform サブコマンド — show platform はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・SSD・PCIe・syseeprom・firmware・BMC・leakage）を表示する。"
+description: show platform サブコマンド — show platform はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・SSD・PCIe・syseeprom・firmware・BMC・leakage）を表示する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/platform.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/platform.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show platform
-  yang: []
+  - show platform
+  yang:
+  - sonic-device_metadata
+  - sonic-chassis-module
 ---
 
 # show platform サブコマンド

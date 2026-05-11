@@ -1,24 +1,27 @@
 ---
 title: config route サブコマンド（static route）
-description: "config route サブコマンド（static route） — config route は CONFIG_DB の STATIC_ROUTE テーブルに対する static route の add / del を行う。"
+description: config route サブコマンド（static route） — config route は CONFIG_DB の STATIC_ROUTE
+  テーブルに対する static route の add / del を行う。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - STATIC_ROUTE
-    - VRF
-    - PORTCHANNEL
-    - VLAN_INTERFACE
-    - INTERFACE
-    - VLAN_SUB_INTERFACE
+  - STATIC_ROUTE
+  - VRF
+  - PORTCHANNEL
+  - VLAN_INTERFACE
+  - INTERFACE
+  - VLAN_SUB_INTERFACE
   cli:
-    - config route
-  yang: []
+  - config route
+  yang:
+  - sonic-static-route
+  - sonic-route-common
 ---
 
 # config route サブコマンド（static route）

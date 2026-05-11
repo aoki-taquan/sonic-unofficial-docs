@@ -1,21 +1,24 @@
 ---
 title: config muxcable サブコマンド
-description: "config muxcable サブコマンド — config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。"
+description: config muxcable サブコマンド — config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC
+  ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/muxcable.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: config/muxcable.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - MUX_CABLE
-    - XCVRD_LOG
-    - MUX_LINKMGR
+  - MUX_CABLE
+  - XCVRD_LOG
+  - MUX_LINKMGR
   cli:
-    - config muxcable
-  yang: []
+  - config muxcable
+  yang:
+  - sonic-mux-cable
+  - sonic-mux-linkmgr
 ---
 
 # config muxcable サブコマンド

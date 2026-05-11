@@ -1,21 +1,24 @@
 ---
 title: show muxcable サブコマンド
-description: "show muxcable サブコマンド — show muxcable は Dual-ToR Y-Cable の運用情報を確認する CLI で、show/muxcable.py の @click.group(name='muxcable') がエントリポイントとなる。"
+description: show muxcable サブコマンド — show muxcable は Dual-ToR Y-Cable の運用情報を確認する CLI
+  で、show/muxcable.py の @click.group(name='muxcable') がエントリポイントとなる。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/muxcable.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/muxcable.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - MUX_CABLE
-    - MUX_LINKMGR
+  - MUX_CABLE
+  - MUX_LINKMGR
   cli:
-    - show muxcable
-    - config muxcable
-  yang: []
+  - show muxcable
+  - config muxcable
+  yang:
+  - sonic-mux-cable
+  - sonic-mux-linkmgr
 ---
 
 # show muxcable サブコマンド

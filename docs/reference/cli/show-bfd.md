@@ -1,19 +1,21 @@
 ---
 title: show bfd サブコマンド
-description: "show bfd サブコマンド — show bfd は BFD (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は STATE_DB の BFD_SESSION_TABLE||| であり、CONFIG_DB ではない。"
+description: show bfd サブコマンド — show bfd は BFD (Bidirectional Forwarding Detection)
+  セッションの状態を表示するグループ。データ源は STATE_DB の BFD_SESSION_TABLE||| であり、CONFIG_DB ではない。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - BFD_SESSION_TABLE
+  - BFD_SESSION_TABLE
   cli:
-    - show bfd
-  yang: []
+  - show bfd
+  yang:
+  - sonic-interface
 ---
 
 # show bfd サブコマンド

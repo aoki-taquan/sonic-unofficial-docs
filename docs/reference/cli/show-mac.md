@@ -1,18 +1,21 @@
 ---
 title: show mac サブコマンド
-description: "show mac サブコマンド — show mac は FDB (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は fdbshow スクリプトの薄いラッパで、CLI 側はオプションを fdbshow の引数に machine-translate するだけ。"
+description: show mac サブコマンド — show mac は FDB (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は
+  fdbshow スクリプトの薄いラッパで、CLI 側はオプションを fdbshow の引数に machine-translate するだけ。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show mac
-  yang: []
+  - show mac
+  yang:
+  - sonic-vlan
+  - sonic-port
 ---
 
 # show mac サブコマンド

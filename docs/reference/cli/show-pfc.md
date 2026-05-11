@@ -1,19 +1,23 @@
 ---
 title: show pfc サブコマンド
-description: "show pfc サブコマンド — show pfc は PFC counter と PFC priority mapping を表示する CLI グループ。show pfcwd は同じ領域の watchdog 表示 wrapper で、pfcwd show ... に委譲する。"
+description: show pfc サブコマンド — show pfc は PFC counter と PFC priority mapping を表示する
+  CLI グループ。show pfcwd は同じ領域の watchdog 表示 wrapper で、pfcwd show ... に委譲する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: []
   cli:
-    - show pfc
-    - show pfcwd
-  yang: []
+  - show pfc
+  - show pfcwd
+  yang:
+  - sonic-pfcwd
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
 ---
 
 # show pfc サブコマンド
