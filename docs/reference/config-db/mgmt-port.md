@@ -67,3 +67,23 @@ MGMT_PORT|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-mgmt_port.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_port.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MGMT_PORT|eth0`。
+- `admin_status`: `up`、`alias`: `eth0`、`description`: 任意の説明。
+
+### よくある誤設定
+
+- MGMT_PORT を down にすると SSH 経由で復旧不能になり物理 console が必要になる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'MGMT_PORT|eth0'
+show management_interface address
+```
+<!-- /ops-hint -->

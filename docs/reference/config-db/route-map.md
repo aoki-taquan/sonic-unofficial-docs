@@ -92,3 +92,23 @@ ROUTE_MAP|<name>|<stmt_name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-route-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-route-map.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `ROUTE_MAP|<name>|<seq>`。
+- `route_operation`: `permit`、`match_*` で条件、`set_*` で属性変更。BGP で in/out に適用。
+
+### よくある誤設定
+
+- 末尾の暗黙 deny を忘れて意図せず全 prefix を drop する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'ROUTE_MAP|*'
+vtysh -c 'show route-map'
+```
+<!-- /ops-hint -->

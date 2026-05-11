@@ -167,6 +167,26 @@ CONFIG_DB の `BGP_AGGREGATE_ADDRESS` テーブルを直接読み出し、各エ
 | FRR runtime (vtysh) | `route` / `prefix-list` / `protocol` / `bgp ...` |
 | Linux FIB + APPL_DB sync (`fibshow`) | `fib` |
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show ip"]
+  CDB0[("CONFIG_DB<br/>INTERFACE")]
+  CDB0 --> CLI
+  CDB1[("CONFIG_DB<br/>VLAN_INTERFACE")]
+  CDB1 --> CLI
+  CDB2[("CONFIG_DB<br/>PORTCHANNEL_INTERFACE")]
+  CDB2 --> CLI
+  CDB3[("CONFIG_DB<br/>VLAN_SUB_INTERFACE")]
+  CDB3 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

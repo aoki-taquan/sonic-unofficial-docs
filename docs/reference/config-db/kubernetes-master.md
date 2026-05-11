@@ -64,3 +64,23 @@ KUBERNETES_MASTER|SERVER
 ## 引用元
 
 [^1]: YANG 定義: `sonic-kubernetes_master.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-kubernetes_master.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `KUBERNETES_MASTER|SERVER`。
+- `ip`: master VIP、`disable`: `false`、`insecure`: `false`。
+
+### よくある誤設定
+
+- ip を hostname にすると DNS 未解決時に kubelet が起動しない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'KUBERNETES_MASTER|SERVER'
+show kube server config
+```
+<!-- /ops-hint -->

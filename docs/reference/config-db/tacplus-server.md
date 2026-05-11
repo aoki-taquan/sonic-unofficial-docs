@@ -91,3 +91,23 @@ TACPLUS|global
 - [Topics: Security / AAA / FIPS / Hardening](../../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `TACPLUS_SERVER|<ip>`。
+- `priority`: 1〜、`tcp_port`: `49`、`timeout`: `5`、`auth_type`: `pap`、`vrf`: `mgmt`。
+
+### よくある誤設定
+
+- passkey を平文で複数台にバラつかせて一部サーバだけ 401 になる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'TACPLUS_SERVER|*'
+show tacacs
+```
+<!-- /ops-hint -->

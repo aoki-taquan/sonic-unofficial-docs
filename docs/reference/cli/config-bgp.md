@@ -265,6 +265,28 @@ excerpt: |
 - `shutdown all` / `startup all`: **`front_ns` のみ**（外部 EBGP 隣接側）
 - `shutdown neighbor` / `startup neighbor` / `remove neighbor`: `front_ns` + `back_ns` 両方を走査
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config bgp"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>BGP_NEIGHBOR")]
+  SC --> CDB0
+  DM0["bgpcfgd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>BGP_DEVICE_GLOBAL")]
+  SC --> CDB1
+  DM1["BgpGlobalStateOrch"]
+  CDB1 --> DM1
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

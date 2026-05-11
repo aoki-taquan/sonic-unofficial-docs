@@ -120,6 +120,26 @@ all       10.0.0.1     ---           192.168.1.1        ---
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show nat"]
+  CDB0[("CONFIG_DB<br/>STATIC_NAT")]
+  CDB0 --> CLI
+  CDB1[("CONFIG_DB<br/>STATIC_NAPT")]
+  CDB1 --> CLI
+  CDB2[("CONFIG_DB<br/>NAT_POOL")]
+  CDB2 --> CLI
+  CDB3[("CONFIG_DB<br/>NAT_BINDINGS")]
+  CDB3 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

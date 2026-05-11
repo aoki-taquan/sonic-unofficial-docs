@@ -119,6 +119,22 @@ Peer IP      : 10.0.0.2
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["mclagdctl"]
+  CDB0[("CONFIG_DB<br/>MCLAG_DOMAIN")]
+  CDB0 --> CLI
+  CDB1[("CONFIG_DB<br/>MCLAG_INTERFACE")]
+  CDB1 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

@@ -77,3 +77,24 @@ AAA|<type>
 ## 関連ページ
 - [CONFIG_DB: TACPLUS_SERVER](tacplus-server.md)
 - [CONFIG_DB: LDAP_SERVER](ldap-server.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `AAA|<service>` (service = `authentication` / `authorization` / `accounting`)`。
+- `authentication.login`: `local` または `tacacs+,local` のチェイン。
+- `failthrough`: `True` で前段失敗時に次の方式へフォールバック。
+
+### よくある誤設定
+
+- `tacacs+` 単独設定で全 TACACS+ サーバ到達不可になると login 不能。必ず `local` を末尾に残す。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'AAA|authentication'
+show aaa
+```
+<!-- /ops-hint -->

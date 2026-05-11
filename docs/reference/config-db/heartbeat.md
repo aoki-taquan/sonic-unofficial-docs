@@ -59,3 +59,22 @@ HEARTBEAT|<name>
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `HEARTBEAT|<key>`。
+- `interval`: 秒単位の hearbeat 間隔。デフォルトはイメージ依存。
+
+### よくある誤設定
+
+- interval を極端に短くすると CPU 負荷が上がり他デーモン処理が遅延する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
+```
+<!-- /ops-hint -->

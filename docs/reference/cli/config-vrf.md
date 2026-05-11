@@ -127,6 +127,32 @@ excerpt: |
 - ManagementVRF と Data VRF は内部の格納先テーブルが異なるが、CLI 上では同じ `config vrf add` で透過に扱える。
 - `del` は IP・SYSLOG・DHCPv4 relay から参照されている VRF を拒否する（依存解消が先）。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config vrf"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>VRF")]
+  SC --> CDB0
+  DM0["vrfmgrd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>MGMT_VRF_CONFIG")]
+  SC --> CDB1
+  DM1["vrfmgrd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>VXLAN_TUNNEL_MAP")]
+  SC --> CDB2
+  DM2["vxlanmgrd"]
+  CDB2 --> DM2
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

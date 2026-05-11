@@ -165,6 +165,24 @@ show vlan dhcp-relay
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show vlan"]
+  CDB0[("CONFIG_DB<br/>VLAN")]
+  CDB0 --> CLI
+  CDB1[("CONFIG_DB<br/>VLAN_INTERFACE")]
+  CDB1 --> CLI
+  CDB2[("CONFIG_DB<br/>VLAN_MEMBER")]
+  CDB2 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

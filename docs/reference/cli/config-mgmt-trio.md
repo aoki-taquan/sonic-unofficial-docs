@@ -116,6 +116,24 @@ target file には **完全な config 全体** を渡す必要がある (`**WARN
 - `config replace` の `--format SONICYANG` 指定時は YANG モデルバリデーションが有効で、不適合な値は `--ignore-non-yang-tables` 等で個別に逃がす必要がある。
 - `config load` は merge なので、**削除した設定は CONFIG_DB に残る**。クリーンな状態にしたいなら必ず `config reload` を使う。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config save"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>DEVICE_METADATA")]
+  SC --> CDB0
+  DM0["SwitchOrch"]
+  CDB0 --> DM0
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

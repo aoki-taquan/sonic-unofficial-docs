@@ -67,3 +67,23 @@ KDUMP|config
 ## 関連ページ
 - [HLD: kdump](../../system/kdump.md)
 - [CLI: config kdump](../cli/config-kdump.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `KDUMP|config`。
+- `enabled`: `true`、`memory`: `0M-2G:256M,2G-:512M`、`num_dumps`: `3`。
+
+### よくある誤設定
+
+- memory が小さすぎると kdump kernel が起動できず crash dump が取れない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'KDUMP|config'
+show kdump config
+```
+<!-- /ops-hint -->

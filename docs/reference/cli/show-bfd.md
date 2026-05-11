@@ -118,6 +118,20 @@ show bfd peer <peer_ip> [-n|--namespace <ns>]
 - BFD セッションの **生成・削除** は `show bfd` のスコープ外。BGP/static route 側の設定や `bfdsyncd` の動作による
 - `local_discriminator` は古い実装では存在しないため `NA` に置換するガードがある
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show bfd"]
+  CDB0[("CONFIG_DB<br/>BFD_SESSION_TABLE")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

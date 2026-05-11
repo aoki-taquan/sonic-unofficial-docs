@@ -62,3 +62,23 @@ BANNER_MESSAGE|global
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BANNER_MESSAGE|global`。
+- `state`: `enabled`、`login` / `motd` / `logout` に短い文字列を設定。
+
+### よくある誤設定
+
+- 改行を含めるときに JSON エスケープを忘れて適用が失敗する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BANNER_MESSAGE|global'
+show banner
+```
+<!-- /ops-hint -->

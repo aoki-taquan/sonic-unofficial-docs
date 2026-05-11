@@ -104,6 +104,20 @@ excerpt: |
 - key は SNMP バージョンを文字列で表現する固定値 (`v1TrapDest`, `v2TrapDest`, `v3TrapDest`)。各バージョンにつき 1 エントリしか保持できない構造になっている。
 - v3 では `Community` フィールドは SNMPv3 ユーザ名/コンテキストとは別の意味で運用されるため、実環境では空文字や placeholder の場合がある。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show snmptrap"]
+  CDB0[("CONFIG_DB<br/>SNMP_TRAP_CONFIG")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

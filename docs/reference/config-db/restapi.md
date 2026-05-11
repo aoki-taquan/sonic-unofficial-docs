@@ -79,3 +79,23 @@ container `RESTAPI` の下に固定キー `certs` / `config` の 2 シングル�
 
 ## 関連ページ
 - [CONFIG_DB: FEATURE](feature.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `RESTAPI|certs / config`。
+- `client_auth`: `true`、`log_level`: `info`、`server_crt`/`server_key`: パス。
+
+### よくある誤設定
+
+- client_auth=true で client CA を入れ忘れると 401 が出続ける。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'RESTAPI|*'
+systemctl status restapi
+```
+<!-- /ops-hint -->

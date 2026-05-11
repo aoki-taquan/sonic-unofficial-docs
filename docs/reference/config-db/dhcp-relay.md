@@ -89,3 +89,23 @@ DHCP_RELAY|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-dhcpv6-relay.yang` (revision 2021-10-30). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-dhcpv6-relay.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DHCP_RELAY|<vlan>`。
+- `dhcp_servers`: relay 先サーバ IP の list、`rfc3046_compatibility`: `true`。
+
+### よくある誤設定
+
+- dhcp_relay デーモンが対象 VLAN に SVI を持たないと relay されない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DHCP_RELAY|*'
+show dhcprelay_helper ipv4
+```
+<!-- /ops-hint -->

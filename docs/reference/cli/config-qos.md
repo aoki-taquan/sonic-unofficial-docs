@@ -107,6 +107,36 @@ QoS reload completed.
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config qos"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>PORT_QOS_MAP")]
+  SC --> CDB0
+  DM0["QosOrch"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>BUFFER_PORT_INGRESS_PROFILE_LIST")]
+  SC --> CDB1
+  DM1["buffermgrd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>BUFFER_PORT_EGRESS_PROFILE_LIST")]
+  SC --> CDB2
+  DM2["buffermgrd"]
+  CDB2 --> DM2
+  CDB3[("CONFIG_DB<br/>BUFFER_PG")]
+  SC --> CDB3
+  DM3["buffermgrd"]
+  CDB3 --> DM3
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

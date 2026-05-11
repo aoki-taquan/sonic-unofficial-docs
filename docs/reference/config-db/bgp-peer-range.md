@@ -84,3 +84,23 @@ BGP_PEER_RANGE_TEMPLATE|<peer_range_name>        # template
 ## 関連ページ
 - [CONFIG_DB: BGP_NEIGHBOR](bgp-neighbor.md)
 - [CONFIG_DB: BGP_PEER_GROUP](bgp-peer-group.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_PEER_RANGE|<vrf>|<range-name>`。
+- `ip_range`: CIDR、`peer_asn`: 対向 AS、`name`: 識別子。dynamic neighbor 用途。
+
+### よくある誤設定
+
+- `listen limit` を超えると新規 dynamic neighbor が拒否される。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_PEER_RANGE|*'
+vtysh -c 'show bgp listen range'
+```
+<!-- /ops-hint -->

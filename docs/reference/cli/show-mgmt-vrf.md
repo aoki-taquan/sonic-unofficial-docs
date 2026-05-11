@@ -101,6 +101,20 @@ excerpt: |
 - `is_mgmt_vrf_enabled` は `MGMT_VRF_CONFIG|vrf_global` の `mgmtVrfEnabled` を参照する
 - 管理 VRF の有効化・無効化は `config vrf add mgmt` / `config vrf del mgmt` 系コマンドで行う（本コマンドは表示のみ）
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show mgmt-vrf"]
+  CDB0[("CONFIG_DB<br/>MGMT_VRF_CONFIG")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

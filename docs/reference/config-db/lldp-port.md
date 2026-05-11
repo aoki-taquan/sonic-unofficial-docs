@@ -77,3 +77,23 @@ LLDP_PORT|<ifname>
 
 ## 関連ページ
 - [YANG: sonic-lldp](../yang/sonic-lldp.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `LLDP_PORT|<Ethernet>`。
+- `admin_status`: `rx_and_tx`。`description` を物理配線管理用に活用する。
+
+### よくある誤設定
+
+- LLDP を `disabled` にしている port は DEVICE_NEIGHBOR 自動学習されないため minigraph と乖離する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'LLDP_PORT|*'
+show lldp table
+```
+<!-- /ops-hint -->

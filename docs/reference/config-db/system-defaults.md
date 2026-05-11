@@ -61,3 +61,22 @@ SYSTEM_DEFAULTS|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-system-defaults.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-defaults.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SYSTEM_DEFAULTS|<feature>`。
+- `tunnel_qos_remap` / `synchronous_mode` 等のフラグを `enabled`/`disabled` で制御。
+
+### よくある誤設定
+
+- synchronous_mode=enabled のままで遅い orchagent と組み合わせると config push 全体が詰まる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
+```
+<!-- /ops-hint -->

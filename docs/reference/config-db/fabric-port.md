@@ -92,3 +92,23 @@ FABRIC_PORT|<name>
 
 ## 関連ページ
 - 関連 CONFIG_DB ページ: `FABRIC_MONITOR`（本バッチで追加）
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `FABRIC_PORT|<Fabric>`。
+- `admin_status`: `up`、`isolate_status`: `False`、`lanes`: プラットフォーム既定値。
+
+### よくある誤設定
+
+- isolate_status=True のままにすると VOQ chassis 内で fabric リンクが trunk から外れたまま戻らない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'FABRIC_PORT|*'
+show fabric counters port
+```
+<!-- /ops-hint -->

@@ -64,3 +64,23 @@ BMP|table
 
 ## 関連ページ
 - [CONFIG_DB: BGP_MONITORS](bgp-monitors.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BMP|table`。
+- `bgp_neighbor_table`: `true`、`bgp_rib_in_table`: `true`、`bgp_rib_out_table`: `false`（負荷軽減）。
+
+### よくある誤設定
+
+- rib_out まで `true` にすると BMP collector への帯域が想定以上に膨らむ。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BMP|table'
+show bmp
+```
+<!-- /ops-hint -->

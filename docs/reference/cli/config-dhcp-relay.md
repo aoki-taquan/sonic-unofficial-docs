@@ -133,6 +133,28 @@ IPv4 helper と対称、`VLAN|Vlan<vid>` の `dhcpv6_servers` リストを更新
 
 [^3]: `restart_dhcp_relay_service` (同 plugin L51-L62) が `systemctl restart dhcp_relay.service` を呼ぶ。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config dhcp_relay"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>VLAN")]
+  SC --> CDB0
+  DM0["vlanmgrd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>DHCP_RELAY")]
+  SC --> CDB1
+  DM1["dhcrelay"]
+  CDB1 --> DM1
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

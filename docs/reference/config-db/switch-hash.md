@@ -91,3 +91,23 @@ SWITCH_HASH|GLOBAL
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SWITCH_HASH|GLOBAL`。
+- `ecmp_hash`: `DST_MAC,SRC_MAC,ETHERTYPE,IP_PROTOCOL,SRC_IP,DST_IP,L4_SRC_PORT,L4_DST_PORT`。LAG hash も同類。
+
+### よくある誤設定
+
+- hash 設定変更後 `config save` を忘れて reboot 後に既定値へ戻る。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'SWITCH_HASH|GLOBAL'
+show switch-hash global
+```
+<!-- /ops-hint -->

@@ -64,6 +64,32 @@ config vnet add <vnet_name> <vni> <vxlan_tunnel>
 
 `<prefix>` 指定時は該当 route だけを削除する。省略時は対象 VNET に紐づく route をまとめて削除する。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config vnet"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>VNET")]
+  SC --> CDB0
+  DM0["vrfmgrd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>VNET_ROUTE_TUNNEL")]
+  SC --> CDB1
+  DM1["VNetCfgRouteOrch"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>VNET_ROUTE")]
+  SC --> CDB2
+  DM2["VNetCfgRouteOrch"]
+  CDB2 --> DM2
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

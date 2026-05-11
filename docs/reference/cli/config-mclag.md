@@ -88,6 +88,28 @@ related:
 | `MCLAG_INTERFACE` | `<domain_id>\|<portchannel>` | `if_type` | `member add` / `del` |
 | `MCLAG_UNIQUE_IP` | `<vlan_interface>` | `unique_ip` | `unique-ip add` / `del` |
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config mclag"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>MCLAG_DOMAIN")]
+  SC --> CDB0
+  DM0["MlagOrch"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>MCLAG_INTERFACE")]
+  SC --> CDB1
+  DM1["MlagOrch"]
+  CDB1 --> DM1
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

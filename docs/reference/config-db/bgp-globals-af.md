@@ -111,3 +111,23 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 [^1]: YANG 定義: `sonic-bgp-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang>
 [^2]: テーブル名定数参照: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_GLOBALS_AF|<vrf>|<af>` (af = `ipv4_unicast` / `ipv6_unicast` / `l2vpn_evpn` 等)`。
+- `max_ebgp_paths` / `max_ibgp_paths`: 64（ECMP 上限）。`network_import_check`: `true`。
+
+### よくある誤設定
+
+- `l2vpn_evpn` AF を有効化しても `advertise-all-vni` を入れ忘れ Type-3 が広告されない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF|*'
+vtysh -c 'show bgp l2vpn evpn summary'
+```
+<!-- /ops-hint -->

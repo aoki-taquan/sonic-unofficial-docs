@@ -105,6 +105,20 @@ excerpt: |
 
 `storm_type` は `broadcast` / `unknown-multicast` / `unknown-unicast` の 3 種。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show storm-control"]
+  CDB0[("CONFIG_DB<br/>PORT_STORM_CONTROL")]
+  CDB0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -121,6 +121,36 @@ excerpt: |
 - `dev null` 経路は `blackhole=true` として登録される。
 - `distance`（admin distance）は CLI 引数として直接は受けない。コードは `,0` をデフォルトで埋めるため、現状 CLI からは distance のカスタマイズは不可。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config route"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>STATIC_ROUTE")]
+  SC --> CDB0
+  DM0["fpmsyncd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>VRF")]
+  SC --> CDB1
+  DM1["vrfmgrd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>PORTCHANNEL")]
+  SC --> CDB2
+  DM2["teammgrd"]
+  CDB2 --> DM2
+  CDB3[("CONFIG_DB<br/>VLAN_INTERFACE")]
+  SC --> CDB3
+  DM3["intfmgrd"]
+  CDB3 --> DM3
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -87,3 +87,23 @@ BGP_NEIGHBOR_AF|<vrf_name>|<neighbor>|<afi_safi>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-neighbor.yang` の `BGP_NEIGHBOR_AF` リスト. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang#L112-L131>; AF 共通 leaf 群は `sonic-bgp-common.yang` の `grouping sonic-bgp-cmn-af`
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_NEIGHBOR_AF|<vrf>|<peer>|<af>`。
+- `admin_status`: `up`、`send_community`: `both`、`soft_reconfiguration_in`: `true`（debug 用途）。
+
+### よくある誤設定
+
+- `activate` を入れ忘れて該当 AF で経路交換が始まらない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_NEIGHBOR_AF|*'
+vtysh -c 'show bgp neighbor <ip>'
+```
+<!-- /ops-hint -->

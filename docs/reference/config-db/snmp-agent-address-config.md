@@ -72,3 +72,23 @@ SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 
 ## 関連ページ
 - [CONFIG_DB: SNMP](snmp.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SNMP_AGENT_ADDRESS_CONFIG|<ip>|<port>|<vrf>`。
+- port=`161`、vrf=`mgmt` でマネジメント面のみ listen。
+
+### よくある誤設定
+
+- vrf 指定を空にして default VRF で listen し続け、front-panel から SNMP が抜ける。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SNMP_AGENT_ADDRESS_CONFIG|*'
+show runningconfiguration snmp
+```
+<!-- /ops-hint -->
