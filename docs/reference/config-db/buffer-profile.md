@@ -25,6 +25,26 @@ related:
 
 バッファプロファイル（プール参照、reserved size、admission threshold、PFC xon/xoff など）を名前付きで定義する[^1]。`buffermgrd` がこのテーブルを APPL_DB の `BUFFER_PROFILE_TABLE` に転送し、`orchagent` `BufferOrch` が SAI buffer profile を生成する。`BUFFER_PG` / `BUFFER_QUEUE` から leafref で参照される。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BUFFER_PROFILE")]
+  DM["buffermgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_BUFFER_PROFILE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_buffer_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

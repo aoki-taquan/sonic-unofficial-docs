@@ -24,6 +24,26 @@ related:
 
 ポートの egress queue ごとにバッファプロファイルを割り当てる[^1]。non-VOQ 用と VOQ シャーシ用で list が分かれる。`buffermgrd` が APPL_DB に転送、`orchagent` `BufferOrch` が SAI egress queue buffer profile を反映する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BUFFER_QUEUE")]
+  DM["buffermgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_BUFFER_QUEUE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_buffer_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 非 VOQ:

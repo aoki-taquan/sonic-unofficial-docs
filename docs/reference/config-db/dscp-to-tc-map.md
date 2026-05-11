@@ -23,6 +23,22 @@ related:
 
 DSCP 値 (0..63) を Traffic Class へマップする ingress QoS 分類定義[^1]。`qosorch` が SAI QoS map (`SAI_QOS_MAP_TYPE_DSCP_TO_TC`) を生成し、ポートにバインドする (`PORT_QOS_MAP.dscp_to_tc_map`)。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>DSCP_TO_TC_MAP")]
+  DM["QosOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_qos_map_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

@@ -23,6 +23,22 @@ related:
 
 Fine-Grained ECMP (FG ECMP) の next-hop group 定義。プレフィックスやネクストホップ単位で、固定サイズのハッシュバケットを使ったフロー安定化 ECMP を提供する[^1]。`orchagent` の `FgNhgOrch` が CONFIG_DB を購読する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>FG_NHG")]
+  DM["FgNhgOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_next_hop_group_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 関連 3 テーブル
 
 ```

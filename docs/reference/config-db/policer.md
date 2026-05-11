@@ -30,6 +30,22 @@ related:
 
 SAI policer (sai_policer) を CONFIG_DB から作成・更新するためのテーブル。`policerorch` (orchagent) が CONFIG_DB の `POLICER` を読み出し、CIR/PIR の更新は SET、その他属性は create-only として扱う[^1]。実利用は ACL ルール、COPP、ストーム制御、ミラーセッション、ポートスケジューラ等の指し先として参照される。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>POLICER")]
+  DM["PolicerOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_policer_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

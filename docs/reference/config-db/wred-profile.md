@@ -24,6 +24,22 @@ related:
 
 Weighted Random Early Detection (WRED) と ECN マーキングの設定プロファイルを定義する。`QUEUE` テーブルの `wred_profile` から名前で参照される[^1]。orchagent の `QosOrch` が CONFIG_DB を購読し、SAI WRED オブジェクトに変換する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>WRED_PROFILE")]
+  DM["QosOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_wred_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

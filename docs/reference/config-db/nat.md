@@ -28,6 +28,26 @@ related:
 
 `NAT_GLOBAL` は NAT feature の admin mode と timeout を保持するグローバル設定、`NAT_POOL` は dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する CONFIG_DB テーブル[^1]。同じ YANG モジュールには `NAT_BINDINGS`、`STATIC_NAT`、`STATIC_NAPT` も定義される。`schema.h` では APPL_DB 側に `NAT_GLOBAL_TABLE` と pool 系 table の定数がある[^2]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
+  DM["natmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_switch_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

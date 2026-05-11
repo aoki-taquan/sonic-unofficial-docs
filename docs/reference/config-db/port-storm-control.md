@@ -23,6 +23,22 @@ related:
 物理ポートで BUM (broadcast / unknown-unicast / unknown-multicast) トラフィックのレート制限 (storm control) を設定するテーブル[^1]。
 3 種類のトラフィックに対して個別にレートを指定でき、`orchagent` が SAI `SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID` 系で SAI policer を作って attach する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>PORT_STORM_CONTROL")]
+  DM["PolicerOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_policer_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

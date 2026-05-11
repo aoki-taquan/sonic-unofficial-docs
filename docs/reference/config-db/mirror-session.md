@@ -25,6 +25,22 @@ related:
 
 ポートミラーリング (SPAN / ERSPAN) セッションを CONFIG_DB で定義するテーブル。`MirrorOrch` が CONFIG_DB を購読し、SAI MIRROR_SESSION オブジェクトに変換する[^1]。ERSPAN では outer GRE/IP ヘッダ用パラメータ (src_ip / dst_ip / dscp / ttl / gre_type) を伴い、SPAN では `dst_port` (ローカル物理ポートまたは `CPU`) を指定する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>MIRROR_SESSION")]
+  DM["MirrorOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_mirror_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

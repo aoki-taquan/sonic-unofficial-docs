@@ -24,6 +24,22 @@ related:
 
 スイッチ全体（VRF 横断）の BGP 動作スイッチを保持する。`BGP_GLOBALS` が VRF 単位なのに対し、`BGP_DEVICE_GLOBAL` は装置全体スコープ。TSA (Traffic-Shift-Away)、W-ECMP (BGP link-bandwidth ベース重み付き ECMP)、IDF (Inter-DC Fabric) 隔離状態、confederation の代表設定を持つ[^1]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BGP_DEVICE_GLOBAL")]
+  DM["BgpGlobalStateOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_switch_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

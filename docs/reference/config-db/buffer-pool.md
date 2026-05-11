@@ -25,6 +25,26 @@ related:
 
 ASIC 上の共有 / 専用バッファプールを CONFIG_DB で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` (orchagent) または `buffermgrd` (dynamic buffer model) が CONFIG_DB を購読し、SAI BUFFER_POOL に変換する[^1]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BUFFER_POOL")]
+  DM["buffermgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_BUFFER_POOL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_buffer_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

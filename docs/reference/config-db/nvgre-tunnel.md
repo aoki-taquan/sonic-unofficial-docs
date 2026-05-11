@@ -25,6 +25,22 @@ related:
 
 NVGRE (Network Virtualization using GRE, RFC 7637) のトンネル端点と VLAN ↔ VSID マップを CONFIG_DB に保持する[^1]。`vxlanorch` 系（NVGRE は VXLAN orch と一部実装を共有）が SAI 経由でカプセル化/デカプセル化を構成する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>NVGRE_TUNNEL")]
+  DM["NvgreTunnelOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_tunnel_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

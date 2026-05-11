@@ -24,6 +24,26 @@ related:
 
 ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する[^1]。lossless トラフィックの xon/xoff 閾値、PFC 動作の根本となる設定。`buffermgrd` が APPL_DB に転送、`orchagent` `BufferOrch` が SAI ingress PG buffer profile を設定する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BUFFER_PG")]
+  DM["buffermgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_BUFFER_PG_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_buffer_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```
