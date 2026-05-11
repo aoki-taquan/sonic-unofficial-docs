@@ -14,49 +14,36 @@ related:
 ---
 
 !!! note "裏取りステータス: code-verified"
-    verifier-batch-18 で確認:
-
-    - `sonic-sairedis/syncd/FlexCounter.h:43-` に `class BaseCounterContext` を定義、`std::map<std::string, std::shared_ptr<BaseCounterContext>> m_counterContext;`（223 行目）も実装済
-    - `sonic-sairedis/syncd/FlexCounter.cpp:1664-` に `template ... class AttrContext : public CounterContext<AttrType>` を定義、派生として `PortPhyAttrContext`（1769）・`PortPhySerdesAttrContext`（2204）等を実装
-    - `getCounterContext` / `createCounterContext` / `removeCounterContext` / `hasCounterContext` の API も `FlexCounter.h:162-172` に存在し、HLD POC が master に取り込まれていることを確認
+    `sonic-sairedis/syncd/FlexCounter.h:43-` に `class BaseCounterContext`、`std::map<std::string, std::shared_ptr<BaseCounterContext>> m_counterContext;` (L223) を確認。`FlexCounter.cpp:1664-` に `template ... class AttrContext : public CounterContext<AttrType>`、派生 `PortPhyAttrContext` (L1769) / `PortPhySerdesAttrContext` (L2204) を確認。`getCounterContext` / `createCounterContext` / `removeCounterContext` / `hasCounterContext` の API も `FlexCounter.h:162-172` に存在し、HLD PoC が master 取り込み済みであることを確認。
 
 # FlexCounter リファクタ（CounterContext テンプレート化）
 
-## 概要
+## 読み手が知りたいこと
 
-`syncd` の `FlexCounter` クラスは、port / queue / buffer pool / priority group など **多数の統計・属性タイプ** を扱う巨大クラスである。port counter / queue counter / queue attribute… ごとに `setXXXCounterList`, `removeXXX`, `collectXXXCounters`, `collectXXXAttr` といった **ほぼ同じロジックの関数群** が独立して実装されており、`FlexCounter.cpp` だけで約 4000 行・`FlexCounter.h` で約 600 行に膨らんでいる[^1]。
+- 旧 `FlexCounter` クラスの何が問題で、なぜリファクタが要るのか
+- SAI 統計型がバラバラなのに、どうやってテンプレ化したのか
+- 公開 API は変わるのか
+- 新しい counter type を追加する手数はどう減るのか
 
-この HLD は、SAI 側の型が異なる（`sai_port_stat_t` / `sai_queue_stat_t` / `sai_port_attr_t` ...）ため一見テンプレ化しにくいこの構造を、**`CounterContext<T>` / `AttrContext<T>` というテンプレートクラス** に集約してコードを大幅に圧縮するリファクタを定義している。POC では `FlexCounter.cpp` が 1000 行・`.h` が 200 行まで縮み、新しい統計タイプを追加する際の手数が劇的に減るとされる[^1]。
+## なぜリファクタが要るか（旧構造の問題）
 
-公開 API（`FlexCounter` の interface）は **不変** とすることが要件。他コンポーネントから見るとリファクタは透過[^1]。
-
-## 動作仕様
-
-### スコープと要件
-
-HLD が明示する制約[^1]:
-
-- 変更は **`FlexCounter` クラス内** に閉じる。
-- **public interface の機能は同一** に保つ。
-- 他のクラス・コンポーネントから見て **透過** であること。
-
-つまり呼び出し側コードに手を入れない。リファクタ対象は `sonic-sairedis` の `FlexCounter.cpp` / `FlexCounter.h` のみ[^1]。
-
-### 旧構造の問題
+`syncd` の `FlexCounter` は port / queue / buffer pool / priority group など **多数の統計・属性タイプ** を扱う巨大クラス。port counter / queue counter / queue attribute … ごとに `setXXXCounterList` / `removeXXX` / `collectXXXCounters` / `collectXXXAttr` が独立実装されていて `FlexCounter.cpp` 約 4000 行、`.h` 約 600 行に膨らんでいる[^1]。
 
 旧来は統計種別ごとに 3 系統のデータを別々に持っていた[^1]:
 
 | データ種別 | 旧メンバ例 |
 |------------|------------|
-| Counter IDs map（vid + rid + 取得する counter ID の集合）| `m_portCounterIdsMap`, `m_queueCounterIdsMap` ... |
-| Plugins（Redis 側で実行する Lua の SHA）| `m_portPlugins`, `m_queuePlugins` ... |
-| Supported counters（SAI が対応している counter ID の集合）| `m_supportedPortCounters`, `m_supportedQueueCounters` ... |
+| Counter IDs map | `m_portCounterIdsMap`, `m_queueCounterIdsMap` ... |
+| Plugins（Redis Lua の SHA）| `m_portPlugins`, `m_queuePlugins` ... |
+| Supported counters | `m_supportedPortCounters`, `m_supportedQueueCounters` ... |
 
-加えて種別ごとの構造体（`PortCounterIds`, `QueueCounterIds`, `BufferPoolCounterIds` ...）と関数群（`setXXXCounterList`, `collectXXXCounters` ...）も一式存在。**ロジックはほぼ同一だが SAI 統計型が違うので C++ の同じコンテナに入れられない** という制約が、重複を温存していた[^1]。
+加えて種別ごとに `PortCounterIds` / `QueueCounterIds` / `BufferPoolCounterIds` 等の構造体と関数群が一式存在。**ロジックはほぼ同一だが SAI 統計型が違うため C++ の同じコンテナに入らない** という制約が重複を温存していた[^1]。
 
-### 新構造: CounterContext テンプレート
+公開 API（`FlexCounter` の interface）は **不変** であることが要件。呼出し側コードに手を入れない[^1]。
 
-新設計では各統計/属性タイプは **`CounterContext<T>` / `AttrContext<T>` のインスタンス** で代表され、`FlexCounter` 内では **`counter_context_map`（種別 → context のマップ）** に格納される[^1]。先述の 3 系統のデータは context のメンバに移動する:
+## 何に置き換えるか（新構造）
+
+各統計/属性タイプを **`CounterContext<T>` / `AttrContext<T>` のインスタンス** で代表し、`FlexCounter` 内では **`m_counterContext`（種別 → context のマップ）** に格納する。3 系統のデータは context のメンバへ移動[^1]:
 
 | 旧 | 新（context 内）|
 |----|----------------|
@@ -80,24 +67,14 @@ classDiagram
         + removeObject(vid)
         + addPlugin(sha)
     }
-    class CounterContext~T~ {
-        - object_ids_map
-        - plugins
-        - supported_counters
-    }
-    class AttrContext~T~ {
-        - object_ids_map
-        - plugins
-        - supported_counters
-    }
-    BaseCounterContext <|-- CounterContext
-    BaseCounterContext <|-- AttrContext
+    BaseCounterContext <|-- CounterContext~T~
+    BaseCounterContext <|-- AttrContext~T~
     FlexCounter --> BaseCounterContext : owns N
 ```
 
-### CounterIds 構造のテンプレ化
+### CounterIds のテンプレ化
 
-旧来 `PortCounterIds` / `QueueCounterIds` / `BufferPoolCounterIds` などが個別定義されていたところを、**型パラメータ付き 1 つの `CounterIds<StatType>`** に集約する。`buffer_pool` のみ per-instance の `stats_mode` を持つので、SFINAE / `enable_if` で **specialization** を使い分ける[^1]:
+旧 `PortCounterIds` / `QueueCounterIds` / `BufferPoolCounterIds` を 1 つの `CounterIds<StatType>` に集約。`buffer_pool` のみ per-instance の `stats_mode` を持つので **specialization** で吸収[^1]:
 
 ```cpp
 template <typename StatType, typename Enable = void>
@@ -106,8 +83,6 @@ struct CounterIds {
     std::vector<StatType> counter_ids;
 };
 
-// buffer_pool は instance 単位の stats_mode を持つので
-// 特殊化で stats_mode を増やす
 template <typename StatType>
 struct CounterIds<StatType,
                   typename std::enable_if<std::is_same<StatType,
@@ -118,118 +93,70 @@ struct CounterIds<StatType,
 };
 ```
 
-これで「instance 単位の stats_mode 有無」がコードベースで一元管理される[^1]。
-
 ### 統計種別ごとの差異の吸収
 
-統計種別ごとにフローは似ていても **完全に同一ではない** ため、`BaseCounterContext` にフラグを置いて差異を吸収する[^1]:
+`BaseCounterContext` にフラグを置いて分岐させる[^1]:
 
 | 差異 | 吸収方法 |
 |------|---------|
-| SAI 経由で statistic capability を query するか否か | `BaseCounterContext` 内 flag |
-| capability query を毎回行うか初回のみか | `BaseCounterContext` 内 flag |
-| `getStats` か `getStatsExt` か | `BaseCounterContext` 内 flag |
-| per-object の stats_mode をサポートするか | `if constexpr` で型に応じて分岐 |
+| SAI capability query を行うか | `BaseCounterContext` フラグ |
+| capability query を毎回 / 初回のみ | `BaseCounterContext` フラグ |
+| `getStats` か `getStatsExt` か | `BaseCounterContext` フラグ |
+| per-object の stats_mode をサポートするか | `if constexpr` で型分岐 |
 
-これにより派生クラスは振る舞い flag を設定するだけで、共通実装が分岐する形になる[^1]。
+派生クラスは振る舞いフラグを設定するだけで共通実装が分岐する。
 
-### Add/Update カウンタオブジェクト
+## API レベルの変化
 
-旧フロー[^1]:
+公開 API は不変。内部のみ次のように整理[^1]:
 
-```text
-FlexCounterManager → FlexCounter::addCounter
-   → setXXXCounterList
-       → updateXXXSupportedCounters (SAI capability query)
-           → 失敗時 fallback: getXXXSupportedCounters (実値で query)
-       → supported が空でなければ XXXCounterIdsMap に登録
-```
-
-新フロー: 上の `setXXXCounterList` 以降が **`CounterContext` に丸ごと移動**。`FlexCounter::addCounter` は対応する context を引いて context 側のメソッドを呼ぶだけになる[^1]。フロー自体は同じだが、**実装が context 内に閉じる** のが核心。
-
-### Remove カウンタオブジェクト
-
-旧来は `FlexCounter` が直接 `m_XXXCounterIdsMap` から消していた。新設計では `CounterContext` / `AttrContext` の `removeObject(vid)` に委譲する[^1]。
-
-### Plugin 追加
-
-Lua plugin の SHA を `m_XXXPlugins` に積む処理も `BaseCounterContext::addPlugin` に移動する[^1]。
-
-### 統計収集ループの簡略化
-
-旧来は `collectXXXCounters` の関数ポインタをマップに登録してループする構造だった。新設計では `m_counterContext` を素朴に走査して各 context の `collectData` を呼ぶだけになる[^1]:
+- **Add/Update**: `FlexCounter::addCounter` は対応する context を引いて context 側メソッドを呼ぶだけ。`setXXXCounterList` 以降のロジックが **context に丸ごと移動**
+- **Remove**: 旧来 `FlexCounter` が直接 `m_XXXCounterIdsMap` から消していたのを `CounterContext::removeObject(vid)` に委譲
+- **Plugin 追加**: `m_XXXPlugins` への push を `BaseCounterContext::addPlugin` に移動
+- **統計収集ループ**: 関数ポインタマップを廃し、`m_counterContext` を素朴に走査:
 
 ```cpp
-void FlexCounter::collectCounters(swss::Table &countersTable)
-{
-    for (const auto &it : m_counterContext) {
+void FlexCounter::collectCounters(swss::Table &countersTable) {
+    for (const auto &it : m_counterContext)
         it->second->collectData(countersTable);
-    }
     countersTable.flush();
-}
-
-void FlexCounter::runPlugins(swss::DBConnector& counters_db)
-{
-    const std::vector<std::string> argv = {
-        std::to_string(counters_db.getDbId()),
-        COUNTERS_TABLE,
-        std::to_string(m_pollInterval)
-    };
-    for (const auto &it : m_counterContext) {
-        it->second->runPlugin(counters_db, argv);
-    }
 }
 ```
 
-関数ポインタマップが不要になるのと、新統計タイプの追加が **`CounterContext<NewType>` の登録 1 行** で済むのが効果。
+新統計タイプの追加は **`CounterContext<NewType>` の登録 1 行** で済む。
 
-<!-- evidence:
-source: sonic-net/SONiC/doc/flex_counter/flex_counter_refactor.md#L36-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Code lines of FlexCounter.cpp change from ~4000 to ~1000
-  Code lines of FlexCounter.h change from ~600 to ~200
-  Supporting new flex counter would requires only change a few places instead of implementing all those setXXXCounterList/removeXXX/collectXXXCounter and so on
-reasoning: 行数削減と「新統計タイプ追加コスト低減」が本リファクタの主要動機である根拠。
--->
+## 効果（PoC）
 
-### 効果（POC）
-
-POC レベルでの効果[^1]:
-
-- `FlexCounter.cpp`: 約 4000 行 → 約 1000 行
-- `FlexCounter.h`: 約 600 行 → 約 200 行
-- 新しい flex counter タイプを追加する際の改修箇所が **数か所** に削減
+| 項目 | 旧 | 新 |
+|------|-----|-----|
+| `FlexCounter.cpp` 行数 | 約 4000 | **約 1000** |
+| `FlexCounter.h` 行数 | 約 600 | **約 200** |
+| 新統計タイプ追加 | `setXXXCounterList` 等を一式実装 | context 登録 + 振舞フラグ設定 |
 
 ## 設定
 
-このリファクタはユーザ可視の振る舞いを変えない。CONFIG_DB / CLI / YANG への影響は HLD 上 **N/A**[^1]。
-
-### 関連する CONFIG_DB
-
-該当なし。`FLEX_COUNTER_TABLE` 自体のスキーマは変わらず、syncd 内部実装のみが変わる。
-
-### 関連する CLI
-
-該当なし。
+CONFIG_DB / CLI / YANG への影響は HLD 上 **N/A**[^1]。`FLEX_COUNTER_TABLE` スキーマは不変、syncd 内部実装のみ変更。
 
 ## 制限事項
 
-HLD は `Restrictions/Limitations` を **N/A** と明記している[^1]。  
-ただし C++ テンプレートと SFINAE / `if constexpr` を多用するため、コンパイラ要件（C++17 以降相当）が事実上の前提となる点に注意。HLD には言及がない。
+HLD は `Restrictions/Limitations` を **N/A** と明記[^1]。事実上の前提として C++ テンプレートと SFINAE / `if constexpr` を多用するため C++17 以降相当のコンパイラが必要（HLD には言及なし）。
 
 ## 干渉する機能
 
-- **`FlexCounterManager`**: 呼び出し側として変更不要。`FlexCounter::addCounter` の signature と意味は維持されるため、上位ロジックの改修なし[^1]。
-- **既存の Lua plugin (Watermark / RATES / WRED 等)**: plugin の SHA 登録経路と `runPlugins` の挙動は同等。Plugin 側の Lua スクリプトには変更不要。
-- **warmboot / fastboot**: HLD は影響を **N/A** と記載している[^1]。public interface 不変が前提なので、起動再構成のセマンティクスは変わらない想定。
-- **新規 SAI 統計の追加**: 拡張容易性が向上する側面。`CounterContext<NewSaiStatType>` を登録すれば既存ロジックを継承できる。
+- **`FlexCounterManager`**: 呼出し側として変更不要。`FlexCounter::addCounter` の signature と意味は維持
+- **既存 Lua plugin (Watermark / RATES / WRED 等)**: SHA 登録経路と `runPlugins` 挙動は同等、Lua 側は不変
+- **warmboot / fastboot**: HLD は影響 N/A。public interface 不変が前提[^1]
+- **新規 SAI 統計の追加**: 拡張容易性が向上
 
 ## トラブルシューティング
 
-リファクタは振る舞い不変が要件のため、新たに増えるトラブル類型は基本的に無い。観点としては:
+- 特定種別だけ counter が取れない → `BaseCounterContext` の差異吸収フラグ（capability query 有無、`getStats` / `getStatsExt` 切替）の設定誤りを疑う
+- HLD 内コード断片は **デモンストレーション用** と明記。最終実装と完全一致は保証されない[^1]
 
-- リファクタ後の syncd で **特定種別の counter だけ取れない** 事象が起きた場合、`BaseCounterContext` の差異吸収 flag（capability query 有無、`getStats` / `getStatsExt` 切替）の設定誤りを疑う。
-- POC コードと production コードの差分。HLD 内のコード断片は **デモンストレーション用** と明記されており、最終実装と完全一致は保証されない[^1]。
+## 関連 Topics
+
+- [Topic 20 SWSS/SAI/Redis - internals](../topics/20-swss-sai-redis/internals.md)
+- [Topic 09 Telemetry/SNMP - internals](../topics/09-telemetry-snmp/internals.md)
 
 ## 引用元
 
