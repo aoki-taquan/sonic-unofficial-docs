@@ -1,8 +1,8 @@
 ---
 title: Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）
 area: routing
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/flow_counters/routes_flow_counters.md
@@ -139,3 +139,11 @@ CLI 文法は HLD 例示ベース。実際の sonic-utilities 取り込み形は
 - VNET ケースでの (vnet, prefix) キー処理の実装確認
 - max_match_count 超過時の選定アルゴリズム（reboot 後の不一致）の実装挙動確認
 -->
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+- `sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp` に `FlowCounterRouteOrch` クラスが完全実装されている（コンストラクタ line 28、`doTask(Consumer&)` / `doTask(SelectableTimer&)` line 55/99、`initRouteFlowCounterCapability()` line 166、`generateRouteFlowStats()` / `clearRouteFlowStats()` / `addRoutePattern()` / `removeRoutePattern()` / `onAddMiscRouteEntry()` / `onAddVR()` / `bindFlowCounter()` / `removeRouteFlowCounter()` / `pendingUpdateFlexDb()` 等。Route Pattern Orch が master に存在。
+- `sonic-utilities/config/flow_counters.py:4-90` で `from flow_counter_util.route import FLOW_COUNTER_ROUTE_PATTERN_TABLE` を import し、`@click.group('flowcnt-route')` でグループ定義、`cfgdb.mod_entry(FLOW_COUNTER_ROUTE_PATTERN_TABLE, ...)` / `cfgdb.set_entry(...)` で CRUD を実装。
+- `sonic-utilities/show/flow_counters.py:30-53` で `def flowcnt_route()` の show 側グループも実装済み。
+
+`FLOW_COUNTER_ROUTE_PATTERN` テーブル / Route Pattern Orch / `config flowcnt-route` CLI のいずれも HLD どおり master に取り込み済み。`code-verified` に昇格。

@@ -1,8 +1,8 @@
 ---
 title: 分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）
 area: switching
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/voq/lag_hld.md
@@ -267,3 +267,11 @@ config portchannel member add PortChannel001 Ethernet4
 - Port struct への system_lag_name / system_lag_id / switch_id 追加確認
 - VOQ system port object の OID と alias 表現が SYSTEM_LAG_MEMBER_TABLE と整合しているか確認
 -->
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+- `sonic-swss/orchagent/portsorch.cpp` に VoQ LAG 用の CHASSIS_APP_DB 連携が実装されている: `7988` 行 `attr.id = SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID;` で system 全体一意な lag_id を SAI に渡す処理、`8037, 8114` 行 `// Sync to SYSTEM_LAG_TABLE of CHASSIS_APP_DB`、`6354, 8212, 8260` 行 `// Sync to SYSTEM_LAG_MEMBER_TABLE of CHASSIS_APP_DB` のコメントと付随コードが本 HLD の主張（全 ASIC で LAG create / system_lag_id 一致 / member sync）を裏取り。
+- `sonic-swss/orchagent/lagids.lua` には Lua atomic スクリプトが完全実装されており、`SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` を redis から読み、`SYSTEM_LAG_ID_TABLE` / `SYSTEM_LAG_IDS_FREE_LIST` / `SYSTEM_LAG_ID_SET` を hset/lpos/lrem で atomic に操作する `add` / `del` / `get` を提供。HLD 記載の `lag_id_add` / `lag_id_delete` / `lag_id_get` 相当が裏取り。
+- `sonic-swss/tests/test_virtual_chassis.py` に SYSTEM_LAG_TABLE 関連の VS テストが存在し、機能が CI で回されている。
+
+`SYSTEM_LAG_TABLE` / `SYSTEM_LAG_MEMBER_TABLE` / `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` / Lua atomic スクリプトいずれも master に取り込み済み。`code-verified` に昇格。

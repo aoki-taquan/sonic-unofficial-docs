@@ -1,8 +1,8 @@
 ---
 title: VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）
 area: routing
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/vrf/vrf-ansible-test-plan.md
@@ -104,3 +104,12 @@ VRF 跨ぎリダイレクトでは **outgoing interface も明示** が必要[^1
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/vrf/vrf-ansible-test-plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/vrf/vrf-ansible-test-plan.md)
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+本ページは sonic-mgmt 配下の Ansible テストプラン記述で、対象実装側 (SONiC NOS) の確認ポイント:
+
+- `sonic-swss/cfgmgr/vrfmgr.cpp:12-26` で `VRF_TABLE_START 1001` / `VRF_TABLE_END 5097` / `MGMT_VRF_TABLE_ID 6000` を持ち、`m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)` / `m_appVxlanVrfTableProducer(appDb, APP_VXLAN_VRF_TABLE_NAME)` / `m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)` / `m_stateVrfObjectTable(stateDb, STATE_VRF_OBJECT_TABLE_NAME)` を open。テストプランが要求する `config vrf` → CONFIG_DB → vrfmgrd → APPL_DB / Linux kernel の流路は cfgmgr に実装済み。
+- 4096 VRF（VRF_TABLE_START=1001, END=5097）のレンジが定義されており、HLD/プランの「1000 VRF スケール」記述と整合。
+
+テストプラン自体は記述で、現行 master の vrfmgrd 実装と整合。`code-verified` に昇格。

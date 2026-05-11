@@ -1,8 +1,8 @@
 ---
 title: 拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
 area: platform
-verification: hld-only
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md
@@ -109,3 +109,7 @@ elif vendor_name == 'Arista' and re.match(ARISTA_ENHANCED_LPO, vendor_pn):
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md)
+
+## 裏取りメモ (batch 30, 2026-05-11) — discrepancy-found
+
+`sonic-platform-common` を grep した結果、本 HLD が前提とする `CmisEnhancedLpoApi` / `CmisEnhancedLpoCodes` / `CmisEnhancedLpoMemMap` クラス、`xcvr_api_factory.py` での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、`LPOTxHostInputVMA*` / `LPORxInputOMA*` フィールドのいずれも HEAD に取り込まれていない（`grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/` でヒット 0）。HLD は 2025 年 2 月 Arista 提案 (Rev 1.0) の段階で、現行 master には未着手の **提案文書**。本ページは設計の解説として残すが、`code-verified` には昇格できない。

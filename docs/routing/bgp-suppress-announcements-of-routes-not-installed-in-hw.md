@@ -1,8 +1,8 @@
 ---
 title: BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）
 area: routing
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/BGP/BGP-supress-fib-pending.md
@@ -134,3 +134,11 @@ sonic-db-cli CONFIG_DB hset "DEVICE_METADATA|localhost" suppress-fib-pending ena
 - FRR 8.4 への version 上げ + bgp suppress-fib-pending 機能の SONiC FRR fork での有効化確認
 - MPLS / VNET routes 対象外の現行 fpmsyncd 側のフィルタ実装確認
 -->
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+- `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:107` に `bgp suppress-fib-pending` 行が条件付きで挿入されており、FRR への機能有効化フックが実装済み。
+- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang:242` に `leaf suppress-fib-pending` が定義されており、`DEVICE_METADATA.localhost.suppress-fib-pending` で ON/OFF を切替可能。
+- `sonic-swss/fpmsyncd/routesync.h:19-22` で `RTM_F_OFFLOAD` の define、`routesync.cpp:3115` で `rtm->rtm_flags |= RTM_F_OFFLOAD` を発行する zebra 応答ロジックが実装されている。fpmsyncd は `dplane_fpm_nl` 経由で zebra に offload 応答を返すフィードバックループの一端を担う。
+
+HLD と実装は一致。`code-verified` に昇格。

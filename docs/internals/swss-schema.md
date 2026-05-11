@@ -1,8 +1,8 @@
 ---
 title: swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）
 area: internals
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-swss
     path: doc/swss-schema.md
@@ -122,3 +122,12 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 ## 引用元
 
 [^1]: `sonic-net/sonic-swss` `doc/swss-schema.md` @ `4305596145e57e15e4c6a1a3902c0bc6c44a09c5`
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+実コードと突合し本ページが指す `sonic-swss/doc/swss-schema.md` 内の主要 APPL_DB テーブル群が現行 master に実在することを確認:
+
+- `sonic-swss/doc/swss-schema.md` には `### PORT_TABLE` / `### INTF_TABLE` / `### VLAN_TABLE` / `### LAG_TABLE` / `### ROUTE_TABLE` / `### NEXTHOP_GROUP_TABLE` / `### CLASS_BASED_NEXT_HOP_GROUP_TABLE` / `### FC_TO_NHG_INDEX_MAP_TABLE` / `### NEIGH_TABLE` / `### SRV6_SID_LIST_TABLE` / `### SRV6_MY_SID_TABLE` / `### FDB_TABLE` / `### QUEUE_TABLE` 等のセクションが定義されており、本ページが主張する「ABNF による APPL_DB / STATE_DB 中心スキーマの集約」と一致。
+- `APP_NEXTHOP_GROUP_TABLE_NAME` は `sonic-swss/fpmsyncd/routesync.cpp:157` で実際に ProducerStateTable として open されており、HLD と実装の双方が NEXTHOP_GROUP_TABLE を APPL_DB の正規エントリとして扱っている裏取り。
+
+本ページは個別テーブルへの入口として位置付けられたリファレンスで、実テーブル詳細はリンク先の生きた HLD を参照する旨を冒頭で明示しており、参照ドキュメントとしての記述は実体と整合する。
