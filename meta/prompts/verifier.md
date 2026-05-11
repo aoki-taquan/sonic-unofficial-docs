@@ -50,3 +50,31 @@ Writer バッチが並走している場合、Bash の作業ディレクトリ�
 ## worktree 動作ルール（isolation: worktree で動いている場合）
 
 writer.md と同じ。**`cd /home/coder/sonic-unofficial-docs` 禁止**、起動直後に `WT=$(pwd)` を控えて以降は `git -C "$WT"` か `cd "$WT"` で自 worktree を対象にする。
+
+## 定期見直し（discrepancy-found ページの再裏取り）
+
+`verification: discrepancy-found` のページは「動的なメタデータ」として継続メンテナンスが必要。Verifier は新規裏取りに加えて、以下の再裏取りトリガを担う。詳細手順は [`meta/discrepancy-operations.md`](../discrepancy-operations.md) を参照。
+
+### 再裏取りトリガ
+
+| トリガ | 対象ページ | 頻度 |
+|--------|-----------|------|
+| 四半期サイクル | `monitor` が `not_implemented` / `partially_implemented` / `evolved_beyond_hld` のページ全件 | quarterly |
+| 半年サイクル | `monitor: deprecated` のページ | biannual |
+| `last_verified` から 90 日以上経過 | 該当ページ全件 | 検知次第 |
+| 該当 HLD に紐づく新規 PR / issue を観測 | 該当ページ | 都度 |
+
+### 再裏取りのアクション分岐
+
+1. **HLD と実装が一致するようになっていた**: `discrepancy-found` → `code-verified` に昇格（monitor フィールドを削除、`sources[].ref` を最新 SHA に更新、本文の差分セクションを「一致確認」に書き換え）。詳細は `meta/discrepancy-operations.md` 第 3 節
+2. **monitor 区分が変わった**: 例えば `not_implemented` だった機能の一部が取り込まれた場合は `partially_implemented` に変更。判定フローは `meta/discrepancy-operations.md` 第 2 節の mermaid を参照
+3. **状態に変化なし**: `last_verified` だけ更新し、`sources[].ref` も最新化（HEAD を取り直して同一結論が得られたことを確認）
+4. **後発別機能で置換された**: `monitor: deprecated` に切り替え、本文先頭に置換先リンクを追記
+
+### per-page queue 投入
+
+再裏取り対象は per-page queue に `meta/queue/verification-recheck/<area>-<slug>.json` 形式で投入する（または既存の `meta/queue/<area>-<slug>.json` を `priority: low` で復活させる）。集約は `aggregate_queue.py` で。
+
+### discrepancy-index 再生成
+
+再裏取り後は `meta/scripts/gen_discrepancy_index.py` を走らせて `docs/reference/verification/discrepancy-index.md` を更新する（昇格したページは消え、新規に discrepancy 判定されたページは追加される）。
