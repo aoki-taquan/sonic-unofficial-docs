@@ -28930,15 +28930,15 @@
 </tr>
 <tr>
 <td><code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化）</td>
-<td style="text-align: right;">24</td>
+<td style="text-align: right;">21</td>
 </tr>
 <tr>
 <td><code>not_implemented</code>（未実装）</td>
-<td style="text-align: right;">18</td>
+<td style="text-align: right;">11</td>
 </tr>
 <tr>
 <td><code>partially_implemented</code>（partially_implemented）</td>
-<td style="text-align: right;">17</td>
+<td style="text-align: right;">27</td>
 </tr>
 </tbody>
 </table>
@@ -28946,7 +28946,7 @@
 <h3 id="acl-qos">acl-qos<a class="headerlink" href="#acl-qos" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../acl-qos/dhcp-dos-mitigation-in-sonic/">DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05 時点で <code>.cache/sonic-sources/</code> を裏取りした結果、本機能は <strong>データ層 + CLI のみ取り込み済み、肝心の TC 投入経路が未実装</strong> な部分実装状態。</p>
 <ul>
@@ -29000,28 +29000,28 @@
 <p>2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（<code>SsdBase</code> / <code>SsdUtil</code>）と CLI（<code>show platform ssdhealth</code>）は概ね素直に取り込まれているが、HLD で Open Question として残されていた <strong>常時監視デーモン <code>ssdmond</code> は現状実装が見当たらない</strong>。</p>
 <ul>
 <li><a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p><code>sonic-swss-common/common/schema.h</code> で HA Set / HA Scope / Global Config の APP / CFG / STATE 系テーブルは取り込み済（L180-182, L391, L454 付近）。一方で <code>DASH_HA_DPU_STATE</code> / <code>DASH_HA_VDPU_STATE</code> / <code>VDPU_TABLE</code> は <strong>未定義</strong>。さらに <strong><code>hamgrd</code> バイナリは community master に存在しない</strong> ため、本ページのスキーマに書き込んでも consumer が居ない状態（schema 層のみ先行採用）。詳細は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-ava…</p>
+<p><code>sonic-swss-common/common/schema.h</code> で HA Set / HA Scope / Global Config の APP / CFG / STATE 系テーブルは取り込み済（L180-182, L391, L454 付近）。一方で <code>DASH_HA_DPU_STATE</code> / <code>DASH_HA_VDPU_STATE</code> / <code>VDPU_TABLE</code> は <strong>未定義</strong>。さらに <strong><code>hamgrd</code> バイナリは community master に存在しない</strong> ため、本ページのスキーマに書き込んでも consumer が居ない状態（schema 層のみ先行採用された一部のみの部分実装）。詳細は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswi…</p>
 <ul>
 <li><a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-internals/">SmartSwitch HA HAMgrD 内部実装（actor workflow / DPU-Driven 詳細）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>本ページに記述した actor workflow / DPU-Driven シーケンスは <strong>HLD v0.1 を元にした将来仕様の参考</strong>。<code>hamgrd</code> バイナリ・actor framework・swbus・<code>DASH_HA_DPU_STATE</code> / <code>VDPU_TABLE</code> の schema は community master に未取り込みで、Switch-Driven mode は HLD 上 TBD のまま。実コードでの裏取り結果と回避策は <a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> を参照。</p>
+<p>本ページに記述した actor workflow / DPU-Driven シーケンスは <strong>HLD v0.1 を元にした将来仕様の参考</strong>。schema 層（HA Set / HA Scope の APP/CFG/STATE table 名）は一部のみ取り込み済の部分実装状態である一方、<code>hamgrd</code> バイナリ・actor framework・swbus・<code>DASH_HA_DPU_STATE</code> / <code>VDPU_TABLE</code> の schema は community master に未取り込みで、Switch-Driven mode は HLD 上 TBD のまま。実コードでの裏取り結果と回避策は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-ava…</p>
 <ul>
 <li>
 <p><a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">SmartSwitch HA HAMgrD 制限事項と実装乖離</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
 <p><a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/">SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
-<p><code>hamgrd</code> バイナリは community master に未取り込み（<code>grep -ri hamgrd .cache/sonic-sources/sonic-swss/</code> でコメントのみヒット）。actor framework / vDPU 抽象 / swbus も実装されていない。本ページの概念記述は HLD v0.1 (2025-02) を元にした <strong>将来仕様の参考</strong> であり、現行 community master で「動かす」ことは不可能。詳細は <a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> を参照。</p>
+<p>schema 層（HA Set / HA Scope の APP/CFG/STATE table 名）は一部のみ先行採用済み（部分実装）。一方で <code>hamgrd</code> バイナリは community master に未取り込み（<code>grep -ri hamgrd .cache/sonic-sources/sonic-swss/</code> でコメントのみヒット）。actor framework / vDPU 抽象 / swbus も実装されていない。本ページの概念記述は HLD v0.1 (2025-02) を元にした <strong>将来仕様の参考</strong> であり、現行 community master で「動かす」ことは不可能。詳細は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high…</p>
 <ul>
 <li><a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05 時点で <strong>schema 層（HA Set / HA Scope の table 名）は先行採用済みだが、hamgrd バイナリ・actor framework・swbus・VDPU / DPU_STATE は未取り込み</strong>。HLD の半分弱までが master に入っている部分実装状態。</p>
 <ul>
@@ -29076,7 +29076,7 @@
 <p>2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / <a href="../../glossary/#term-config_db">CONFIG_DB</a> スキーマのいずれにも入っていない。</p>
 <ul>
 <li><a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、<strong><code>sonic-buildimage</code> 側の yang-models と <code>sonic-mgmt-common</code> 側で取り込み状況が分裂している</strong>点が最大の罠。</p>
 <ul>
@@ -29086,7 +29086,7 @@
 <p>HLD が要件として掲げる以下の構成要素を現行 master の <code>sonic-gnmi</code> に確認できなかった。</p>
 <ul>
 <li><a href="../../../management/tacacs-passkey-encryption/">TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
 <ul>
@@ -29096,9 +29096,9 @@
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b7679b260c3fd0786a6d0734fc8e82c9a22</code>）:</p>
 <ul>
 <li><a href="../../../management/gnsi-hld/">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）:</p>
+<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという <strong>一部のみの部分実装</strong> 状態:</p>
 <h3 id="overlay">overlay<a class="headerlink" href="#overlay" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）</a><br />
@@ -29146,7 +29146,7 @@
 <p>2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は <strong>いずれも採用されていない</strong>。</p>
 <ul>
 <li><a href="../../../platform/smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
@@ -29204,9 +29204,9 @@
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
 <li><a href="../../../switching/wake-on-lan-in-sonic/">Wake-on-LAN（wol CLI と SonicWolService gNOI）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-09</code></li>
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-09</code></li>
 </ul>
-<p>2026-05-11 時点の現行 master を裏取り。</p>
+<p>2026-05-11 時点の現行 master を裏取り。CLI 本体は完備だが gNOI 経路は未統合で、HLD 全体としては一部のみ取り込まれた部分実装状態。</p>
 <ul>
 <li><a href="../../../switching/link-event-damping-hld/">リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）</a><br />
   monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-09</code></li>

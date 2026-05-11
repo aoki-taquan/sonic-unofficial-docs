@@ -28830,7 +28830,7 @@
 <!-- diff-admonition -->
 <div class="admonition diff">
 <p class="admonition-title">HLD と実装の差分</p>
-<p><code>sonic-swss-common/common/schema.h</code> で HA Set / HA Scope / Global Config の APP / CFG / STATE 系テーブルは取り込み済（L180-182, L391, L454 付近）。一方で <code>DASH_HA_DPU_STATE</code> / <code>DASH_HA_VDPU_STATE</code> / <code>VDPU_TABLE</code> は <strong>未定義</strong>。さらに <strong><code>hamgrd</code> バイナリは community master に存在しない</strong> ため、本ページのスキーマに書き込んでも consumer が居ない状態（schema 層のみ先行採用）。詳細は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> を参照。</p>
+<p><code>sonic-swss-common/common/schema.h</code> で HA Set / HA Scope / Global Config の APP / CFG / STATE 系テーブルは取り込み済（L180-182, L391, L454 付近）。一方で <code>DASH_HA_DPU_STATE</code> / <code>DASH_HA_VDPU_STATE</code> / <code>VDPU_TABLE</code> は <strong>未定義</strong>。さらに <strong><code>hamgrd</code> バイナリは community master に存在しない</strong> ため、本ページのスキーマに書き込んでも consumer が居ない状態（schema 層のみ先行採用された一部のみの部分実装）。詳細は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> を参照。</p>
 </div>
 <!-- /diff-admonition -->
 

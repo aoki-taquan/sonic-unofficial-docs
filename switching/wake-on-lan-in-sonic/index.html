@@ -29285,7 +29285,7 @@ reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれて�
 <!-- diff-admonition -->
 <div class="admonition diff">
 <p class="admonition-title">HLD と実装の差分</p>
-<p>2026-05-11 時点の現行 master を裏取り。</p>
+<p>2026-05-11 時点の現行 master を裏取り。CLI 本体は完備だが gNOI 経路は未統合で、HLD 全体としては一部のみ取り込まれた部分実装状態。</p>
 <h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>取り込み済み（CLI 本体）</strong>: <code>sonic-net/sonic-buildimage</code> <code>src/sonic-nettools/wol/src/wol.rs</code> L47-L75（<code>broadcast</code> / <code>udp</code> / <code>ip_address</code> / <code>udp_port</code> / <code>password</code> / <code>count</code> / <code>interval</code> の各 clap 引数）、<code>src/sonic-nettools/wol/src/wol.rs</code> L128（magic packet 組立）、<code>src/sonic-nettools/wol/src/wol.rs</code> L328-L332（raw / udp socket 分岐）。</li>

@@ -15045,6 +15045,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用入口
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用入口">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29120,6 +29148,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用入口
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用入口">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 YANG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29412,7 +29468,7 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <!-- diff-admonition -->
 <div class="admonition diff">
 <p class="admonition-title">HLD と実装の差分</p>
-<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）:</p>
+<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという <strong>一部のみの部分実装</strong> 状態:</p>
 <ul>
 <li><strong>Credentialz handler の gNMI server 実装は未取り込み</strong>: HLD は Authz / Certz / Pathz / Credentialz の 4 サービスを並べて記述するが、現行 master の <code>sonic-gnmi/gnmi_server/</code> には <code>gnsi_authz.go</code> / <code>gnsi_certz.go</code> / <code>gnsi_pathz.go</code> のみが存在し、<code>gnsi_credentialz.go</code> 相当のサーバ側ハンドラは無い。Credentialz 関連は <code>sonic-gnmi/sonic_service_client/dbus_client.go:53-</code> の <strong>dbus client 補助コード</strong>として準備されているのみ（<code>TestCredentialzDbusMethods</code> 等のテストが存在）。</li>
 <li><strong>gNMI server フラグ名の差異</strong>: HLD で言及された <code>EnableAuthzPolicy</code> / <code>EnablePathzPolicy</code> という flag 名ではなく、<code>sonic-gnmi/gnmi_server/server.go:240,243</code> では <code>AuthzPolicy bool</code> / <code>PathzPolicy bool</code> という config 構造体フィールドとして実装されている。ポリシーファイルパスは <code>AuthzPolicyFile</code> / <code>PathzPolicyFile</code>、CRL は <code>CertCRLConfig</code>（HLD の表記と差異あり）。</li>
@@ -29483,6 +29539,18 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <!-- /next-action -->
 
 <!-- glossary-links-injected: bd7e9f303d6c -->
+
+<!-- ops-entry -->
+<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
+<h3 id="yang_1">関連 YANG<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>openconfig-gnsi-certz</code></li>
+<li><code>openconfig-gnsi-authz</code></li>
+<li><code>openconfig-gnsi-pathz</code></li>
+<li><code>openconfig-gnsi-credentialz</code></li>
+</ul>
+<!-- /ops-entry -->
 
 <div class="footnote">
 <hr />
