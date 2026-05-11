@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -8530,18 +8532,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -8578,7 +8569,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -8622,7 +8613,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8633,7 +8624,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28992,18 +28983,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29040,7 +29020,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -29084,7 +29064,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29095,7 +29075,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29299,7 +29279,9 @@ reasoning: link-local シナリオでの inject-down モード要件と、MAC �
 <li>セッションは UP だが <code>show bfd peer</code> の remote 値がすべて 0 → SDK が remote 系 SAI 属性を未対応の可能性。BfdOrch のログに get_attribute エラーが出ていないか確認。</li>
 <li>IPv6 link-local 経由で BGP/BFD が上がらない → 実装が neighbor table から宛先 MAC を取れているかを <code>ip -6 neigh</code> で確認する。</li>
 </ul>
-<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <h3 id="1-bfdsyncd">1. <code>bfdsyncd</code> プロセスは未取り込み<a class="headerlink" href="#1-bfdsyncd" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29335,7 +29317,7 @@ reasoning: link-local シナリオでの inject-down モード要件と、MAC �
 <li>peer 側のネゴ結果が必要なら <code>vtysh -c "show bfd peer"</code> を使う（SW BFD の値で代用）。</li>
 <li>監視ツールは STATE_DB の <code>BFD_SESSION_TABLE</code> の <code>local_*</code> フィールドと <code>state</code>（UP/DOWN）のみを利用する想定で書く。</li>
 </ul>
-<h3 id="_10">結論<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_9">結論<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <p>本ページの記述は <strong>HLD の Proposal 仕様</strong> であり、現行 master では <code>bfdsyncd</code> / <code>bfd_hw_offload</code> / remote 系 SAI get 経路のいずれも実装されていない。SAI 側に HW BFD 機能はあるため、static route 用 HW BFD HLD の経路を経由してマニュアルにセッションを張ることは可能。</p>
 <h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
 <p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
@@ -29355,9 +29337,12 @@ reasoning: link-local シナリオでの inject-down モード要件と、MAC �
 <li><a href="https://github.com/sonic-net/sonic-swss/pull/4511">sonic-swss #4511: [bfd] Honour software_bfd config to force software BFD over HW offload (open)</a> — 上記 issue の対応 PR。</li>
 <li><a href="https://github.com/sonic-net/sonic-swss/pull/3515">sonic-swss #3515: [swss] add bfd session deletion handling in acceleration logic (open)</a> — HW offload セッション削除パスの欠落補修 PR。HLD の bfdsyncd 経路に齟齬が残ることを示す。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

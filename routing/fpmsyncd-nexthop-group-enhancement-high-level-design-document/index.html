@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -9062,18 +9064,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#batch-30-2026-05-11-discrepancy-found" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離（裏取りメモ (batch 30, 2026-05-11) — discrepancy-found）
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ (batch 30, 2026-05-11) — discrepancy-found）">
+    <nav class="md-nav" aria-label="引用元">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28970,18 +28961,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#batch-30-2026-05-11-discrepancy-found" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離（裏取りメモ (batch 30, 2026-05-11) — discrepancy-found）
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ (batch 30, 2026-05-11) — discrepancy-found）">
+    <nav class="md-nav" aria-label="引用元">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29213,7 +29193,9 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 - Fine-Grained / Ordered NHG との共存時の優先順位の実装挙動確認
 -->
 
-<h2 id="batch-30-2026-05-11-discrepancy-found">実装との乖離（裏取りメモ (batch 30, 2026-05-11) — discrepancy-found）<a class="headerlink" href="#batch-30-2026-05-11-discrepancy-found" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p><code>sonic-swss/fpmsyncd/routesync.cpp</code> と <code>sonic-swss/fpmsyncd/routesync.h</code> を確認。HLD のコア部分は master に取り込み済み:</p>
 <ul>
 <li><code>RouteSync::onNextHopMsg(struct nlmsghdr *h, int len)</code> (<code>routesync.cpp:2309</code>) で <code>RTM_NEWNEXTHOP</code> / <code>RTM_DELNEXTHOP</code> を処理。</li>
@@ -29277,6 +29259,9 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 </ul>
 <h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
+</div>
+<!-- /diff-admonition -->
+
 <!-- next-action -->
 <h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">

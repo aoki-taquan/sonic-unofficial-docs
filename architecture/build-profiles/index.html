@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -7139,18 +7141,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -7231,7 +7222,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -7242,7 +7233,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28959,18 +28950,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29051,7 +29031,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29062,7 +29042,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29255,7 +29235,9 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <li>値が <code>rules/config</code> で上書きされる: 優先順位は <code>config &lt; config.user &lt; profiles/$PROFILE.mk</code>。プロファイルで指定したのに効いていない場合は、コマンドラインの個別指定や make の override 挙動を疑う。</li>
 <li>ビルド再現性が取れない: <code>rules/config.user</code> がコミット外で残っていないか確認。プロファイル運用に統一する場合は <code>config.user</code> を空にしてプロファイルだけで賄う。</li>
 </ul>
-<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05 時点で本機能は <strong>HLD は提案されたが master にコードが入っていない</strong>、純粋な未実装状態である。</p>
 <h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29297,7 +29279,10 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <ul>
 <li>[GitHub Issue / PR の関連リンクは未確認] — <code>rules/config</code> のビルドフラグ群は構造上 HLD と直接 1:1 紐づくものではなく、トラッキング Issue は確認できず。各フラグの導入は個別の機能 PR（INCLUDE_KUBERNETES / ENABLE_AUTO_TECH_SUPPORT 等）に紐づく形で混在しているため、各機能ページの GitHub リンクを参照のこと。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - sonic-buildimage/rules/profiles/ ディレクトリは存在しない (find で確認)
 - sonic-buildimage/Makefile.work:155 include rules/config; :156 -include rules/config.user のみで profiles/$(PROFILE).mk を取り込むロジックは未実装
@@ -29305,7 +29290,7 @@ reasoning: 取り込み順位と後方互換性の根拠。
 -->
 
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

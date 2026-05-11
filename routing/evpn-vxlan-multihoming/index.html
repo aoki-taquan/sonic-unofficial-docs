@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -9567,18 +9569,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -9615,7 +9606,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -9648,7 +9639,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -9659,7 +9650,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28804,18 +28795,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28852,7 +28832,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -28885,7 +28865,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28896,7 +28876,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29043,7 +29023,9 @@
 <li>DF が両側で active → Type-4 受信の確認、<code>show evpn ethernet-segment</code> の DF 状態</li>
 <li>aliasing で trafic が偏る → ECMP hash 設定、remote leaf の Type-1 受信状況</li>
 </ul>
-<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない</strong>。</p>
 <h3 id="1-evpn_ethernet_segment-orch">1. <code>EVPN_ETHERNET_SEGMENT</code> テーブル / orch が未実装<a class="headerlink" href="#1-evpn_ethernet_segment-orch" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29070,7 +29052,7 @@
 <li><strong>読者への影響</strong>: ASIC vendor が SAI 経由で ESI 機能を露出していないため、たとえ orch を自前実装してもベンダー SAI 側が受け付けない可能性が高い。</li>
 <li><strong>回避策</strong>: ASIC ベンダーに ESI 対応 SAI 拡張のサポートを問い合わせる。現状は SONiC コミュニティ master では非対応と認識する。</li>
 </ul>
-<h3 id="_8">結論<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_7">結論<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p><strong>本ページの記述は HLD 提案レベルで、現行 master では機能として利用できない</strong>。dual-attached host を扱う実運用構成では MC-LAG を選択する。本 HLD は将来的な機能ロードマップとして参考に留める。</p>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
@@ -29079,7 +29061,10 @@
 <li><a href="https://github.com/sonic-net/sonic-swss/pull/4039">sonic-swss #4039: Fdbsyncd changes for EVPN MH feature (open)</a> — MH 向け <a href="../../reference/glossary/#term-fdbsyncd">fdbsyncd</a> 改修 PR。</li>
 <li>いずれも 2026-05 時点で open であり、ESI / DF election / split-horizon の master 取り込みは未完了。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - VxlanOrch / EvpnOrch の MH 拡張（ESI / DF / Type-1/Type-4）の現行実装存在確認
 - CONFIG_DB EVPN_ETHERNET_SEGMENT スキーマと sonic-yang-models 取り込み確認
@@ -29090,7 +29075,7 @@
 -->
 
 <!-- next-action -->
-<h2 id="_10">このページを読んだ後の次アクション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">このページを読んだ後の次アクション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

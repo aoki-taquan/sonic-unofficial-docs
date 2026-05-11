@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -15506,18 +15508,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離（裏取りメモ（Verifier batch 29））
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ（Verifier batch 29））">
+    <nav class="md-nav" aria-label="引用元">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28920,18 +28911,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離（裏取りメモ（Verifier batch 29））
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ（Verifier batch 29））">
+    <nav class="md-nav" aria-label="引用元">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29153,7 +29133,9 @@
 - USB serial 挿抜時の TTY 番号安定化機構の現行実装確認
 -->
 
-<h2 id="verifier-batch-29">実装との乖離（裏取りメモ（Verifier batch 29））<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:</p>
 <ul>
 <li><code>consutil</code> CLI: <code>.cache/sonic-sources/sonic-utilities/consutil/{__init__.py,lib.py,main.py}</code> に存在 → 取り込み済み</li>
@@ -29165,6 +29147,9 @@
 <ul>
 <li>[GitHub Issue / PR の関連リンクは未確認] — Console Switch（serial hub の reverse SSH 集約）構成は専用 platform / image 設定の積み重ねで実現されており、HLD 単独で追跡可能な GitHub Issue / PR は確認できず。</li>
 </ul>
+</div>
+<!-- /diff-admonition -->
+
 <!-- next-action -->
 <h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">

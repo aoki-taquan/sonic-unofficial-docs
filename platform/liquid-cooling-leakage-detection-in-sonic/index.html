@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -16531,18 +16533,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -16612,7 +16603,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -16623,7 +16614,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28959,18 +28950,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29040,7 +29020,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29051,7 +29031,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29261,7 +29241,9 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 <li>gNMI イベント未着: STATE_DB は更新されているのに event が来ない場合、<code>system-health</code> の <code>_check_liquid_cooling_status</code> が登録されているか、<code>EVENTS_PUBLISHER_TAG</code> の購読側設定を確認。</li>
 <li>液冷非対応機で Updater が走っている: <code>enable_liquid_cooling</code> が誤って true になっていないか確認。</li>
 </ul>
-<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <h3 id="1-state_db-liquid_cooling_device-liquid_cooling_info">1. STATE_DB テーブル名が <code>LIQUID_COOLING_DEVICE</code> ではなく <code>LIQUID_COOLING_INFO</code><a class="headerlink" href="#1-state_db-liquid_cooling_device-liquid_cooling_info" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29317,9 +29299,12 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 <li><a href="https://github.com/sonic-net/sonic-platform-daemons/pull/690">sonic-platform-daemons #690: Add support for liquid cooling leakage detection (merged)</a> — <code>LiquidCoolingBase</code> + <code>thermalctld</code> 連携の本体取り込み PR。</li>
 <li>system-health gNMI イベント公開は本 PR では未取り込みで、追加の gNMI / system-health 側 PR が必要。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_10">このページを読んだ後の次アクション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

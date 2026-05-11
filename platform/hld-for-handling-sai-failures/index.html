@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -15932,18 +15934,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -16013,7 +16004,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -16024,7 +16015,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28926,18 +28917,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29007,7 +28987,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29018,7 +28998,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29234,7 +29214,9 @@ reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシュー
 <li>orchagent が頻繁に再起動する: <code>exit(EXIT_FAILURE)</code> 経路を踏んでいる。<code>NOT_SUPPORTED</code> 等の crash 条件が立っていないか SAI status を syslog で確認。</li>
 <li>同じエントリで <code>counter</code> が増え続ける: <code>task_need_retry</code> で再試行ループに入っている可能性。条件が解消しないなら <code>task_failed</code> 化を検討。</li>
 </ul>
-<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <h3 id="1-handlesaistatus-orch-base-virtual">1. <code>handleSai*Status</code> は Orch base の virtual 関数ではない<a class="headerlink" href="#1-handlesaistatus-orch-base-virtual" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29289,9 +29271,12 @@ reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシュー
 <ul>
 <li>[GitHub Issue / PR の関連リンクは未確認] — <code>handleSai*Status</code> virtual / ERROR_DB ハンドリングは <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。<a href="../../reference/glossary/#term-crm">CRM</a> (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -16733,18 +16735,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="干渉する機能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -16825,7 +16816,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -16836,7 +16827,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28870,18 +28861,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="干渉する機能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28962,7 +28942,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28973,7 +28953,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29190,7 +29170,9 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <li><strong>Independent DPU Upgrade</strong>: shutdown 経路を再利用する可能性</li>
 <li><strong>gNOI / <a href="../../reference/glossary/#term-gnmi">gNMI</a></strong>: HALT を含む reboot RPC の依存</li>
 </ul>
-<h2 id="_6">実装との乖離<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <h3 id="1-gnoi_reboot_daemonpy">1. 独立 <code>gnoi_reboot_daemon.py</code> は実装されていない<a class="headerlink" href="#1-gnoi_reboot_daemonpy" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29254,7 +29236,10 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/25554">sonic-buildimage #25554: Bug: gnoi-shutdown service blocks SYSTEM_READY on non-SmartSwitch platforms (closed)</a> — <code>gnoi_reboot_daemon</code> (gnoi-shutdown service) が SmartSwitch 以外で SYSTEM_READY を阻害する bug。HLD と現実装の境界条件の齟齬を示す。</li>
 <li>HALT 機能本体（DPU 個別停止）の取り込み PR は明示的に紐づくものが確認できず、SmartSwitch 系の複数 PR にまたがる。</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - sonic-platform-common/sonic_platform_base/module_base.py L429 set_admin_state_gracefully(up), L468 _graceful_shutdown_handler() (private), L588- gnoi_halt_in_progress フラグで制御
 - sonic-platform-common/sonic_platform_base/module_base.py L624 set_module_state_transition() は CHASSIS_MODULE_TABLE|<name> に transition_in_progress / transition_type / start_time を hset (HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress とは別キー)
@@ -29273,7 +29258,7 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 -->
 
 <!-- next-action -->
-<h2 id="_8">このページを読んだ後の次アクション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">このページを読んだ後の次アクション<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

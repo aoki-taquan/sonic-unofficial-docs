@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -9584,18 +9586,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -9643,7 +9634,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -9676,7 +9667,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -9687,7 +9678,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28793,18 +28784,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28852,7 +28832,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -28885,7 +28865,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28896,7 +28876,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29039,7 +29019,9 @@
 <li>順序逆転 → idle window が小さすぎないか</li>
 <li>カウンタが進まない → <code>show ars</code> の active flowlet 数を確認、SAI debug counter で ARS reroute 統計を確認</li>
 </ul>
-<h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了</strong>。</p>
 <h3 id="1-arsorch-orch">1. <code>ArsOrch</code> 等の orch 未実装<a class="headerlink" href="#1-arsorch-orch" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29075,13 +29057,16 @@
 <li><strong>読者への影響</strong>: ASIC ベンダーが SAI ARS をサポートしていても SONiC からは触れない。</li>
 <li><strong>回避策</strong>: 自前で orch を実装すれば SAI 経由で叩ける（実装労力大）。あるいは ASIC ベンダーが提供する out-of-tree のプラグインを利用する。</li>
 </ul>
-<h3 id="_6">結論<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_5">結論<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p><strong>Local ARS は SAI 層まで来ているが SONiC 上位層が未着手</strong>。AI / HPC 向けの adaptive routing が必要な場合はベンダー版 SONiC 採用か community 実装の登場を待つ。本ページの記述は仕様理解と将来取り込みに備えた参考資料。</p>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
 <li><a href="https://github.com/sonic-net/sonic-swss/pull/3597">sonic-swss #3597: Local ARS (Adaptive Routing and Switching) (open)</a> — 本 HLD の本体取り込み PR。2026-05 時点で open であり master 未取り込み。</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - SAI ARS 拡張 API（SAI_OBJECT_TYPE_ARS / SAI_ARS_ATTR_*）の community SAI 取り込み確認
 - ARSOrch（または NextHopOrch 拡張）の現行実装存在確認
@@ -29092,7 +29077,7 @@
 -->
 
 <!-- next-action -->
-<h2 id="_8">このページを読んだ後の次アクション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">このページを読んだ後の次アクション<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

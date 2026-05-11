@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -14952,18 +14954,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離（裏取りメモ（Verifier batch 29））
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ（Verifier batch 29））">
+    <nav class="md-nav" aria-label="引用元">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28876,18 +28867,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離（裏取りメモ（Verifier batch 29））
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ（Verifier batch 29））">
+    <nav class="md-nav" aria-label="引用元">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29143,7 +29123,9 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <li>Subscribe が初回データを返さない: gNMI Server の subscribe 登録時のスナップショット取得処理を確認。</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="verifier-batch-29">実装との乖離（裏取りメモ（Verifier batch 29））<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>HLD が要件として掲げる以下の構成要素を現行 master の <code>sonic-gnmi</code> に確認できなかった。</p>
 <ul>
 <li><code>version_id</code> フィールドを必須にする gNMI スキーマ拡張: <code>sonic-gnmi</code> 配下に <code>version_id</code> の参照なし</li>
@@ -29156,6 +29138,9 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <ul>
 <li>[GitHub Issue / PR の関連リンクは未確認] — SmartSwitch DPU 側 APPL_STATE_DB と version_id フィードバック機構は SmartSwitch 全体の HA / gNMI 改修 PR 群に取り込まれており、本 HLD 単独のトラッキング Issue / PR は確認できず。</li>
 </ul>
+</div>
+<!-- /diff-admonition -->
+
 <!-- next-action -->
 <h2 id="_8">このページを読んだ後の次アクション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">

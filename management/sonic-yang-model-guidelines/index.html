@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -14744,18 +14746,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="干渉する機能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -14792,7 +14783,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -14803,7 +14794,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28981,18 +28972,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="干渉する機能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29029,7 +29009,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29040,7 +29020,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29325,7 +29305,9 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 <li><strong>CVL</strong>: 本ガイドライン準拠 YANG が無いと <code>must</code> / <code>when</code> の検証が効かない</li>
 <li><strong>SONiC Management Framework</strong>: 同 YANG を NB のスキーマとして再利用するため、命名・階層の食い違いは NB API のブレに直結</li>
 </ul>
-<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、<strong><code>sonic-buildimage</code> 側の yang-models と <code>sonic-mgmt-common</code> 側で取り込み状況が分裂している</strong>点が最大の罠。</p>
 <table>
 <thead>
@@ -29414,7 +29396,10 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/10386">sonic-buildimage #10386: [YANG]sonic-dot1p-tc-map.yang would cause failed deployment via mgmt-framework (open)</a> — ガイドライン違反が運用障害となった具体例。</li>
 <li>ABNF.json → sonic-*.yang 変換規約全体の包括的 issue は確認できず、個別の YANG 追加 PR (例 #13314, #10786, #9116) で慣行が蓄積されている。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-buildimage `src/sonic-yang-models/yang-models/` に `sonic-*.yang` が 130 件以上存在（命名規約 #1 整合）
 - `src/sonic-yang-models/yang-templates/sonic-extension.yang.j2` で定義済の拡張は `db-name`（l.18）のみ。`{% if yang_model_type == "cvl" %}` ブロックで `custom-validation-cvl`, `dependent-on` 等が条件付き追加
@@ -29431,7 +29416,7 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 -->
 
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

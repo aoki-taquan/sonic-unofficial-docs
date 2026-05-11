@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -7990,18 +7992,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="干渉する機能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -8082,7 +8073,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8093,7 +8084,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28925,18 +28916,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="干渉する機能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29017,7 +28997,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29028,7 +29008,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29293,7 +29273,9 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 <li><strong><code>syslog</code> rate limit / redirect</strong> 系の各 HLD（critical log 抽出は本 framework と連動）</li>
 <li><strong>OrchAgent 全般</strong>: RouteOrch / NeighborOrch / 他 Orch が個別に dump を登録する想定</li>
 </ul>
-<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05 時点で本 framework は <strong>master に取り込まれておらず、HLD のみ</strong>（2019-07 v0.3 から 6 年以上停滞）。</p>
 <h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29332,7 +29314,10 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 <li><a href="https://github.com/sonic-net/sonic-utilities/pull/1669">[sonic-utilities](../reference/glossary.md#term-sonic-utilities) #1669: [debug dump util] Techsupport addition (merged)</a> — <code>debug dump</code> ユーティリティ自体の取り込み PR。HLD の「コンポーネント dump 登録 / assert 拡張」のうち、<code>show techsupport</code> 連携部分はここに収束した。</li>
 <li>HLD が想定した汎用 assert 拡張・自動 dump 登録機構の包括的トラッキング Issue は <strong>未確認</strong>。実装は機能ごとの個別 PR に分散している。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-18, discrepancy):
 - sonic-swss-common: `Debugframework` / `linkWithFramework` / `SWSS_DEBUG_PRINT` 検索 0 件
 - sonic-swss/orchagent/natorch.cpp:40-42, 138-142: `#ifdef DEBUG_FRAMEWORK` 内の dead code のみ（マクロは未定義）
@@ -29348,7 +29333,7 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 -->
 
 <!-- next-action -->
-<h2 id="_9">このページを読んだ後の次アクション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">このページを読んだ後の次アクション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

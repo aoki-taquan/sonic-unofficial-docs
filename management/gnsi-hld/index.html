@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -14985,18 +14987,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -15033,7 +15024,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15044,7 +15035,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29071,18 +29062,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29119,7 +29099,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29130,7 +29110,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29429,7 +29409,9 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <li>sshd が再起動ループ: <code>ssh_mgmt.set</code> で投入した <code>authorized_keys</code> / <code>sshd_config</code> が壊れている。<code>restore_checkpoint</code> で巻き戻す</li>
 <li><code>Pathz</code> の評価が遅い: gNMI request 冒頭で policy processor が呼ばれる仕様。policy 規模に対するレイテンシを観測</li>
 </ul>
-<h2 id="_8">実装との乖離<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）:</p>
 <ul>
 <li><strong>Credentialz handler の gNMI server 実装は未取り込み</strong>: HLD は Authz / Certz / Pathz / Credentialz の 4 サービスを並べて記述するが、現行 master の <code>sonic-gnmi/gnmi_server/</code> には <code>gnsi_authz.go</code> / <code>gnsi_certz.go</code> / <code>gnsi_pathz.go</code> のみが存在し、<code>gnsi_credentialz.go</code> 相当のサーバ側ハンドラは無い。Credentialz 関連は <code>sonic-gnmi/sonic_service_client/dbus_client.go:53-</code> の <strong>dbus client 補助コード</strong>として準備されているのみ（<code>TestCredentialzDbusMethods</code> 等のテストが存在）。</li>
@@ -29468,7 +29450,10 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 <li><a href="https://github.com/sonic-net/sonic-gnmi/issues/616">sonic-gnmi #616: TestGnsiCertzServer/Rotate_ConcurrentRPC_ReturnsAborted is flaky (open)</a> — Certz Rotate の並行 RPC 試験 flaky issue。実装の成熟度を示す。</li>
 <li>gNSI Authz / Pathz / Credentialz の包括的トラッキング Issue は確認できず、各サブシステムは個別 PR で順次取り込まれている。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-gnmi / sonic-mgmt-common の Certz/Authz/Pathz/Credentialz handler 実装存否
 - console_mgmt / ssh_mgmt host service モジュール実装存否
@@ -29479,7 +29464,7 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 -->
 
 <!-- next-action -->
-<h2 id="_10">このページを読んだ後の次アクション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">このページを読んだ後の次アクション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

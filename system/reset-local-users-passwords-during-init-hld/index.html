@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -12927,18 +12929,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離（裏取りメモ（Verifier batch 29））
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ（Verifier batch 29））">
+    <nav class="md-nav" aria-label="引用元">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28842,18 +28833,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離（裏取りメモ（Verifier batch 29））
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ（Verifier batch 29））">
+    <nav class="md-nav" aria-label="引用元">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29020,7 +29000,9 @@
 <li>vendor 実装の <code>should_trigger()</code> の実体 (例: GPIO 経由の long reset 判定) を vendor specific docker または <code>sonic_platform</code> 配下に確認</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h2 id="verifier-batch-29">実装との乖離（裏取りメモ（Verifier batch 29））<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>per-page queue で既出の通り、<a href="../../reference/glossary/#term-hld">HLD</a> が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
 <ul>
 <li><code>reset-local-users-passwords.service</code> / <code>LOCAL_USERS_PASSWORDS_RESET</code> テーブル / <code>config local-users-passwords-reset</code> CLI / <code>sonic-local-users-passwords-reset.yang</code> / <code>ENABLE_LOCAL_USERS_PASSWORDS_RESET</code> ビルドフラグ: いずれも検出できず</li>
@@ -29032,6 +29014,9 @@
 <ul>
 <li>[GitHub Issue / PR の関連リンクは未確認] — <code>reset-local-users-passwords.service</code> と long reset button トリガの取り込みは個別 image_config PR で進行しているが、HLD と直接紐づくトラッキング Issue は確認できず（検索結果 #24867 は無関係な doc refactor link issue）。</li>
 </ul>
+</div>
+<!-- /diff-admonition -->
+
 <!-- next-action -->
 <h2 id="_9">このページを読んだ後の次アクション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">

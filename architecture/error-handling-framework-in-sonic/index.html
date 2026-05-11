@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -8007,18 +8009,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="干渉する機能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -8071,7 +8062,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8106,7 +8097,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -8117,7 +8108,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -8139,7 +8130,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -8160,7 +8151,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28953,18 +28944,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="干渉する機能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29017,7 +28997,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29052,7 +29032,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -29063,7 +29043,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -29085,7 +29065,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -29106,7 +29086,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29355,7 +29335,9 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <li><strong><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / <a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a></strong>: route 失敗の receiver 候補</li>
 <li><strong>debug-framework</strong>: 同時期の framework と機能境界が曖昧（debug は dump 中心、本 framework は failure 通知）</li>
 </ul>
-<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05 時点で本 framework は <strong>エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装</strong> な部分採用状態。</p>
 <h3 id="1">1. どこで乖離が確認されたか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29380,7 +29362,10 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <li><strong>RIB/FIB 乖離検知</strong>: <code>show ip route</code> と <code>show ip fib</code> の突合スクリプトを別途運用ツール側で実装。<a href="../../reference/glossary/#term-frr">FRR</a> の <code>show bgp ipv4 unicast detail</code> と <code>sonic-cli show ip route</code> を突合する。</li>
 <li>上流取り込みを望む場合は HLD 自体を現行 master 構造（<code>Producer/ConsumerStateTable</code>、<code>status_code_util.h</code> の enum 活用）に合わせて再ドラフトする必要がある。本ページの記述は仕様参考扱い。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-18, discrepancy):
 - sonic-swss-common/common/status_code_util.h: `SWSS_RC_SUCCESS|INVALID_PARAM|DEADLINE_EXCEEDED|UNAVAIL|NOT_FOUND|NO_MEMORY|EXISTS|PERMISSION_DENIED` 等の enum 確認済
 - sonic-swss-common, sonic-swss: `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` の table 名は未登録
@@ -29424,14 +29409,14 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>$<span class="w"> </span>grep<span class="w"> </span>-rn<span class="w"> </span><span class="s2">&quot;error-database\|error_database&quot;</span><span class="w"> </span>.cache/sonic-sources/sonic-utilities/
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># 0 件</span>
 </span></code></pre></div>
-<h4 id="_9">読者への影響<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<h4 id="_8">読者への影響<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
 <ul>
 <li>BGP が経路追加を要求し、ASIC FIB がそれを <code>SAI_STATUS_TABLE_FULL</code> で reject した場合、fpmsyncd / bgpd は <strong>失敗を知らない</strong>ため、<code>show ip route</code> には経路が見えるが <code>show ip fib</code> には無い、というサイレントな乖離が発生する。</li>
 <li>HLD 通りに <code>show error-database</code> を期待する自動化スクリプトは即座に失敗する。</li>
 <li>retry / rollback ロジックが実装されないため、ASIC リソース不足（TCAM full 等）の状態は手動介入が必要。</li>
 <li>一時的回避として OrchAgent のログを syslog で grep する以外に体系的な検知手段が無い。</li>
 </ul>
-<h4 id="_10">回避策の実コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<h4 id="_9">回避策の実コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># 1) SAI 失敗の発見</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;SAI_STATUS_(TABLE_FULL|INSUFFICIENT_RESOURCES|FAILURE|NOT_SUPPORTED|OBJECT_IN_USE)&quot;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
@@ -29457,10 +29442,10 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <li>本 HLD（2019-05 v0.1）の実装着手 PR は <strong>見つからない</strong>。<code>SWSS_RC_*</code> enum を導入した PR (<code>sonic-swss-common</code> 経由) のみが部分採用の痕跡。</li>
 <li>代替の retry/recovery 機構は <a href="../../reference/glossary/#term-crm">CRM</a> (Critical Resource Monitor: <code>sonic-swss/orchagent/crmorch.cpp</code>) で部分的にカバーされており、こちらは production で稼働中。<code>show crm resources</code> / <code>CRM_TABLE</code> 経由でリソース閾値監視が可能。HLD ベースではなく CRM ベースで運用設計する方が現実的。</li>
 </ul>
-<h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<h4 id="_10">検証日<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

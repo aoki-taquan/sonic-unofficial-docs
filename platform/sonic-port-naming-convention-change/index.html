@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -16447,18 +16449,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -16495,7 +16486,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -16539,7 +16530,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -16550,7 +16541,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28970,18 +28961,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29018,7 +28998,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -29062,7 +29042,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29073,7 +29053,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29311,7 +29291,9 @@ reasoning: 4 段階移行プランの根拠。
 <li>新命名と従来命名の混在で alias 解決が壊れる場合、CLI と内部名のどちらを参照しているかを確認</li>
 <li>chassis で <code>ets0p1</code> が <code>ets1p1</code> と衝突する場合、line card の slot 番号が想定どおりに振られているか確認</li>
 </ul>
-<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は <strong>いずれも採用されていない</strong>。</p>
 <h3 id="1-port_configini-alias-hld">1. <code>port_config.ini</code> の alias 列は HLD 提案命名に切替わっていない<a class="headerlink" href="#1-port_configini-alias-hld" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29344,7 +29326,7 @@ reasoning: 4 段階移行プランの根拠。
 <li><strong>読者への影響</strong>: HLD で「未解決」と読んで独自命名を試みると CONFIG_DB スキーマと衝突。</li>
 <li><strong>回避策</strong>: PortChannel 名は <code>PortChannel&lt;数値&gt;</code> の慣行に従う。</li>
 </ul>
-<h3 id="_12">結論<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_11">結論<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <p><strong>本 HLD は採用されなかった</strong>。現行 master は従来通り <code>EthernetN</code>（内部）+ <code>Ethernet&lt;panel&gt;/&lt;sub&gt;</code>（alias）の 2 階層命名で安定しており、本ページの記述は「提案として残った歴史的設計」として読むこと。実運用で参照すべきは各 SKU の <code>port_config.ini</code> および <code>CONFIG_DB.PORT</code> の実値。</p>
 <h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
 <p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
@@ -29363,7 +29345,10 @@ reasoning: 4 段階移行プランの根拠。
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/22577">sonic-buildimage #22577: sonic-buildimage: update quicksilver-512 port names (merged)</a> — 同上、512 ポート版。</li>
 <li>命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の <a href="../../reference/glossary/#term-port-config-ini">port_config.ini</a> 更新で部分採用。</li>
 </ul>
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - 本提案がどの Stage まで実装されたか（master では未だ EthernetN が主流）
 - port_config.ini alias 列の運用ガイドライン
@@ -29373,7 +29358,7 @@ reasoning: 4 段階移行プランの根拠。
 -->
 
 <!-- next-action -->
-<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

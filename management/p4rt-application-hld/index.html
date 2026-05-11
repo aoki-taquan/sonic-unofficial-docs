@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -15265,18 +15267,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -15313,7 +15304,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15324,7 +15315,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28970,18 +28961,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29018,7 +28998,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29029,7 +29009,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29207,7 +29187,9 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <li>Write が ASIC に反映されない: <code>APPL_STATE_DB</code> に成功が書かれているか確認。書かれていなければ <code>P4Orch</code> 側で失敗してロールバックされている可能性<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>P4Info push が reject される: PacketIO メタデータと SAI フィールド型の互換性を確認。</li>
 </ul>
-<h2 id="_8">実装との乖離<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:</p>
 <ul>
 <li><strong>HashOrch は独立コンポーネントではない</strong>: HLD は OrchAgent に「<code>HashOrch</code> を新規追加し、P4Info から渡されたハッシュフィールド/アルゴリズムを <code>SWITCH_TABLE</code> の SAI ハッシュ属性に書く」と記載しているが、現行 master では独立した <code>HashOrch</code> クラスは存在しない。代わりに既存の <code>SwitchOrch</code> が <code>CFG_SWITCH_HASH_TABLE_NAME</code> を消費し、<code>sonic-swss/orchagent/switch/switch_helper.cpp:24-</code> の <code>SWITCH_HASH_FIELD_*</code> ↔ <code>SAI_NATIVE_HASH_FIELD_*</code> マップを通じて SAI 属性を設定する (<code>orchagent/switchorch.cpp:1507</code>、<code>orchdaemon.cpp:199</code>)。HLD の論理（P4RT App → <a href="../../reference/glossary/#term-orchagent">orchagent</a> → SAI hash 属性）は同等だが、責務が <code>HashOrch</code> ではなく <code>SwitchOrch</code> 側にある。</li>
@@ -29249,9 +29231,12 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <li><a href="https://github.com/sonic-net/sonic-pins/issues/232">sonic-pins #232: Device ID for SONiC Virtual Switch with P4RT (open)</a> — Virtual Switch 環境での P4RT device ID 扱いに関する未解決 issue。</li>
 <li><a href="https://github.com/sonic-net/sonic-pins/pull/1647">sonic-pins #1647: [PDPI] Move from <code>third_party/pins_infra/p4_pdpi</code> to <code>third_party/pins_infra/p4_infra/p4_pdpi</code> (open)</a> — PINS 内 P4 PDPI のリファクタ進行中 PR。本 HLD の gRPC port 9559 サービス取り込みは sonic-pins 側で進行中だが SONiC 本体への統合トラッキングは未整理。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_10">このページを読んだ後の次アクション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">このページを読んだ後の次アクション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

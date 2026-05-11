@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -7857,7 +7859,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離
+        関連ページ
       
     </span>
   </a>
@@ -7868,17 +7870,6 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -7887,7 +7878,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28754,7 +28745,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離
+        関連ページ
       
     </span>
   </a>
@@ -28765,17 +28756,6 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -28784,7 +28764,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28877,18 +28857,23 @@
 <p>詳細は <code>smart-switch-ha-dpu-scope-dpu-driven-setup.md</code> 参照<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="5-switch-driven-mode">5. Switch-Driven mode<a class="headerlink" href="#5-switch-driven-mode" title="Permanent link">&para;</a></h2>
 <p>TBD（HLD で未確定）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。NPU が能動的に HA state machine を駆動するモード。</p>
-<h2 id="_4">実装との乖離<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>本ページに記述した actor workflow / DPU-Driven シーケンスは <strong>HLD v0.1 を元にした将来仕様の参考</strong>。<code>hamgrd</code> バイナリ・actor framework・swbus・<code>DASH_HA_DPU_STATE</code> / <code>VDPU_TABLE</code> の schema は community master に未取り込みで、Switch-Driven mode は HLD 上 TBD のまま。実コードでの裏取り結果と回避策は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> を参照。</p>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../smartswitch-high-availability-manager-daemon-hamgrd-design/">HAMgrD（概要ハブ）</a></li>
 <li><a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/">smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md</a> — 概念</li>
 <li><a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md</a> — スキーマ</li>
 <li><a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> — 実装乖離</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_7">このページを読んだ後の次アクション<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">このページを読んだ後の次アクション<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

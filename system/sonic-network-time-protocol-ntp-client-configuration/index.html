@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -12967,18 +12969,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -13031,7 +13022,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13066,7 +13057,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -13077,7 +13068,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -13099,7 +13090,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -13120,7 +13111,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28876,18 +28867,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28940,7 +28920,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28975,7 +28955,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -28986,7 +28966,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -29008,7 +28988,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -29029,7 +29009,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29182,7 +29162,9 @@
 <li>時刻が大きくずれる → 起動直後のステップ調整有無、<code>tinker step</code> 等の設定</li>
 <li>認証エラー → key id と鍵値が一致しているか、daemon 種別による hash アルゴリズム差</li>
 </ul>
-<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <h3 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29246,7 +29228,10 @@
 <li>NTS / 認証を使う場合は chrony のディレクティブを参照し、本 HLD ではなく <code>doc/ntp/migration-to-chrony.md</code> を参照する。</li>
 <li>mgmt VRF 経路は chrony 側で <code>bindcmdaddress</code> / <code>bindaddress</code> を mgmt VRF 内に固定する設定が必要（<code>chrony-config.sh</code> の VRF 分岐を参照）。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - 現行 master の NTP daemon（ntpd vs chrony）の選定状況確認
 - hostcfgd の NTP config rendering 経路（jinja テンプレート）の現行実装確認
@@ -29271,14 +29256,14 @@
 <li><code>NTP_SERVER|&lt;host&gt;</code> の hash field は <code>admin_state</code> / <code>association_type</code> (<code>server</code>/<code>pool</code>) / <code>resolve_as</code> / <code>iburst</code> 等。HLD が言及する旧 <code>NTP_SERVER</code> の field 名（minpoll / maxpoll / key 等）は形が異なる。</li>
 <li><code>ntp.conf.j2</code> および <code>ntpd.service</code> は <strong>存在しない</strong>。</li>
 </ul>
-<h4 id="_9">読者への影響<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<h4 id="_8">読者への影響<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
 <ul>
 <li><code>ntpq -p</code> / <code>service ntp status</code> を期待しても <code>command not found</code> / <code>Unit ntp.service not found</code>。</li>
 <li><code>/etc/ntp.conf</code> を編集しても効かない。<code>/etc/chrony/chrony.conf</code> (jinja 生成) が真の設定。</li>
 <li>HLD どおりに MD5 key を <code>/etc/ntp.keys</code> に書いても chrony は読まない（chrony は <code>keyfile</code> ディレクティブで <code>/etc/chrony/chrony.keys</code> を見る）。</li>
 <li>mgmt VRF 経由で NTP 同期したい場合、HLD には書かれていない <code>bindcmdaddress</code> / <code>bindaddress</code> の VRF 分岐処理が <code>chrony-config.sh</code> 側にあり、それを知らずに <code>iburst</code> 設定だけ書くと <strong>同期しない</strong>（issue #24333）。</li>
 </ul>
-<h4 id="_10">回避策の実コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<h4 id="_9">回避策の実コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 1) NTP サーバ追加（CLI 表面は維持）</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>ntp<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.1
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>ntp<span class="w"> </span>add<span class="w"> </span>pool.ntp.org
@@ -29307,10 +29292,10 @@
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/23904">sonic-buildimage #23904: Failed to restart chrony.service on NTP server add (open, NVIDIA)</a> — server add 直後の reload race。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/25863">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #25863: [chrony] NTP not synchronized when MGMT_INTERFACE IP is not static (open)</a> — DHCP mgmt IP 利用時の起動順問題。</li>
 </ul>
-<h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<h4 id="_10">検証日<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

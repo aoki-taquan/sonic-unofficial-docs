@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -15187,18 +15189,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -15235,7 +15226,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15246,7 +15237,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28926,18 +28917,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28974,7 +28954,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28985,7 +28965,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29248,7 +29228,9 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <li><code>common-auth-sonic</code> に書かれた passkey が暗号化のままになっていないか確認（書き込み直前の復号で失敗している可能性）</li>
 <li><code>key_encrypt=true</code> のまま平文 <code>passkey</code> が混在しているケースは復号失敗で PAM が動かなくなる。一旦 <code>key_encrypt=false</code> で平文に揃えてから再暗号化する</li>
 </ul>
-<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
 <table>
 <thead>
@@ -29329,7 +29311,10 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/17201">sonic-buildimage #17201: Adding support of common security cipher module for encryption and decryption of a passkey (merged)</a> — 共通暗号モジュール (master key /etc/cipher_pass 基盤) の取り込み PR。</li>
 <li><a href="https://github.com/sonic-net/sonic-utilities/pull/3027">sonic-utilities #3027: TACACSPLUS_PASSKEY_ENCRYPTION support Part - I (closed)</a> — CLI / hostcfgd 連携の Part-I PR。closed のため後続 PR が必要。</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - hostcfgd の暗号化 passkey 復号 + master key 読み込みパスの実装
 - /etc/cipher_pass のパーミッション・パッケージング (sonic-buildimage)
@@ -29341,7 +29326,7 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 -->
 
 <!-- next-action -->
-<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

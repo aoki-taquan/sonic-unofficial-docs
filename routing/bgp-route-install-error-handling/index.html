@@ -53,6 +53,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -8609,18 +8611,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -8657,7 +8648,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -8690,7 +8681,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -8701,7 +8692,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -28904,18 +28895,7 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
+    <nav class="md-nav" aria-label="トラブルシューティング">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28952,7 +28932,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         結論
@@ -28985,7 +28965,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28996,7 +28976,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29162,7 +29142,9 @@ reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 <li><code>show ip route</code> に <code>#</code> が増えない → <code>BGP_ERROR_CFG_TABLE.enable=true</code> 確認、fpmsyncd のログで subscribe 完了確認</li>
 <li>enable した直後の既存 route には適用されない → BGP session を <code>clear bgp *</code> で reset</li>
 </ul>
-<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- diff-admonition -->
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
 <p>2026-05-09 時点の現行 master を裏取り。<strong>本 HLD は採用されず、後発の BGP Suppress FIB Pending に置き換えられている</strong>。</p>
 <h3 id="1-error_db-error_route_table">1. <code>ERROR_DB</code> / <code>ERROR_ROUTE_TABLE</code> は未実装<a class="headerlink" href="#1-error_db-error_route_table" title="Permanent link">&para;</a></h3>
 <ul>
@@ -29193,13 +29175,16 @@ reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 <li>「どの prefix が pending か」を知りたいときは <code>vtysh -c "show ip route &lt;prefix&gt;"</code> の <code>T&gt;</code> / <code>&gt;</code> flag（installed/offloaded）を確認するか、<code>show bgp ipv4 unicast</code> の status code を見る。</li>
 <li>詳細は <a href="../bgp-suppress-announcements-of-routes-not-installed-in-hw/">routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md</a> を参照。</li>
 </ul>
-<h3 id="_11">結論<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_10">結論<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <p><strong>本 HLD（2019）は採用されなかった</strong>。設計意図は後発の BGP Suppress FIB Pending（FRR <code>bgp suppress-fib-pending</code> + RTM_F_OFFLOAD）に引き継がれており、ERROR_DB 経由の仕組みは実装されていない。本ページは設計史としての参考。</p>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
 <li>[GitHub Issue / PR の関連リンクは未確認] — <code>ERROR_ROUTE_TABLE</code> / FIB-install pending の HLD 取り込みは fpmsyncd / orchagent の個別 PR に分散しており、HLD と直接紐づくトラッキング Issue / PR は確認できず。</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+</div>
+<!-- /diff-admonition -->
+
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - ERROR_ROUTE_TABLE / ERROR_DB スキーマの現行 master 取り込み確認
 - fpmsyncd 側 ERROR_ROUTE_TABLE subscriber と Zebra への送信ロジック実装確認
@@ -29210,7 +29195,7 @@ reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 -->
 
 <!-- next-action -->
-<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
