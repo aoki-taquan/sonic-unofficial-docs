@@ -1,17 +1,36 @@
 ---
 title: FRR 用 sysctl チューニングのデフォルト
-description: "FRR 用 sysctl チューニングのデフォルト — SONiC の制御プレーンでは FRR を使ってルーティングプロトコル（BGP / OSPF / 等）を回す。"
+description: FRR 用 sysctl チューニングのデフォルト — SONiC の制御プレーンでは FRR を使ってルーティングプロトコル（BGP /
+  OSPF / 等）を回す。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-frr
-    path: doc/user/Useful_Sysctl_Settings.md
-    ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
+- repo: sonic-net/sonic-frr
+  path: doc/user/Useful_Sysctl_Settings.md
+  ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VRF
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  cli:
+  - show arp
+  - config vrf
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vrf
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
 ---
 
 !!! note "裏取りステータス: code-verified（SONiC 側実値の所在）"

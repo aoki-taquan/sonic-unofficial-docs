@@ -1,18 +1,21 @@
 ---
 title: 拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
-description: "拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開） — LPO (Linear Pluggable Optic) は DSP を持たない optic。"
+description: 拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開） — LPO (Linear Pluggable
+  Optic) は DSP を持たない optic。
 area: platform
 verification: discrepancy-found
 monitor: not_implemented
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - DEBUG_COUNTER
   cli: []
-  yang: []
+  yang:
+  - sonic-debug-counter
 ---
 
 <!-- topics-tip -->

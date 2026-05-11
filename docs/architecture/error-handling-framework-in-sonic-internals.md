@@ -1,19 +1,27 @@
 ---
-title: Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）
-description: "Error Handling Framework HLD の内部実装。OrchAgent が SAI 失敗を ASIC_DB notification channel 経由で受け取り ERROR_DB へ producer として書き込む経路、ErrorListener の register API と pub/sub 受信、SAI 失敗から SWSS_RC への翻訳点を解説する。"
+title: Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB
+  notification）
+description: Error Handling Framework HLD の内部実装。OrchAgent が SAI 失敗を ASIC_DB notification
+  channel 経由で受け取り ERROR_DB へ producer として書き込む経路、ErrorListener の register API と pub/sub
+  受信、SAI 失敗から SWSS_RC への翻訳点を解説する。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: partially_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/error-handling/error_handling_design_spec.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/error-handling/error_handling_design_spec.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CRM
+  - PORT
+  - AUTONEG_PORT
   cli: []
-  yang: []
+  yang:
+  - sonic-crm
+  - sonic-port
 ---
 
 # Error Handling Framework 内部実装

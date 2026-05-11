@@ -1,16 +1,37 @@
 ---
 title: 設定
-description: "設定 — SRv6 / MPLS / Path Tracing の設定は、いずれも CONFIG_DB のテーブルに置けば最小構成が組めます。"
+description: 設定 — SRv6 / MPLS / Path Tracing の設定は、いずれも CONFIG_DB のテーブルに置けば最小構成が組めます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/static-configuration-of-srv6-in-sonic-hld.md
-  - docs/routing/segment-routing-over-ipv6-srv6-hld.md
-  - docs/routing/mpls-for-sonic-high-level-design-document.md
-  - docs/routing/mpls-tc-to-tc-map.md
-  - docs/routing/path-tracing-midpoint.md
-  - docs/reference/yang/sonic-route-common.md
+- docs/routing/static-configuration-of-srv6-in-sonic-hld.md
+- docs/routing/segment-routing-over-ipv6-srv6-hld.md
+- docs/routing/mpls-for-sonic-high-level-design-document.md
+- docs/routing/mpls-tc-to-tc-map.md
+- docs/routing/path-tracing-midpoint.md
+- docs/reference/yang/sonic-route-common.md
+related:
+  cli:
+  - config interface
+  - show platform
+  - config vrf
+  config_db:
+  - PORT_QOS_MAP
+  - VRF
+  - INTERFACE
+  - VLAN_INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - PORT
+  - CRM
+  yang:
+  - sonic-route-common
+  - sonic-srv6
+  - sonic-interface
+  - sonic-port-qos-map
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-vrf
 ---
 
 # 設定

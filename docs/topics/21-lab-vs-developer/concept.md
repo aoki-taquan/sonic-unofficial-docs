@@ -1,17 +1,38 @@
 ---
 title: 概念
-description: "概念 — 「lab」と一口に言っても、SONiC では大きく次の 3 つの面が混ざっています。読み手の役割と目的で使い分けを決めると迷いません。"
+description: 概念 — 「lab」と一口に言っても、SONiC では大きく次の 3 つの面が混ざっています。読み手の役割と目的で使い分けを決めると迷いません。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
 keywords:
-  - Lab
-  - Virtual SONiC
-  - 概念
-  - vs container
-  - developer
-  - testbed
+- Lab
+- Virtual SONiC
+- 概念
+- vs container
+- developer
+- testbed
+related:
+  cli:
+  - config vrf
+  - show pfc
+  - config vxlan
+  config_db:
+  - VRF
+  - PFC_WD
+  - VXLAN_TUNNEL
+  - VXLAN_EVPN_NVO
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - VXLAN_TUNNEL_MAP
+  - DASH_ENI_TABLE
+  yang:
+  - sonic-vxlan
+  - sonic-vrf
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-bgp-global
+  - sonic-pfcwd
+  - sonic-buffer-pool
 ---
 
 # 概念

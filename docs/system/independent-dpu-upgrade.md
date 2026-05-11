@@ -1,15 +1,24 @@
 ---
-title: "Smart Switch: DPU 独立アップグレード（gNOI 経路）"
-description: "Smart Switch: DPU 独立アップグレード（gNOI 経路） — SmartSwitch では NPU 1 台に複数 DPU が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を NPU に offload している。"
+title: 'Smart Switch: DPU 独立アップグレード（gNOI 経路）'
+description: 'Smart Switch: DPU 独立アップグレード（gNOI 経路） — SmartSwitch では NPU 1 台に複数 DPU
+  が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を NPU に offload
+  している。'
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/upgrade/dpu-upgrade-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/upgrade/dpu-upgrade-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - SWITCH_TRIMMING
+  - SWITCH_HASH
+  - DPUS
+  - TELEMETRY
   cli: []
   yang: []
 ---

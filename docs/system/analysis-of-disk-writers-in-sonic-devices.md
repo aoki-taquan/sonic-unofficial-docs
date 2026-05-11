@@ -1,17 +1,34 @@
 ---
 title: SONiC Disk I/O 削減（writer 分析と tmpfs 化）
-description: "SONiC Disk I/O 削減（writer 分析と tmpfs 化） — SONiC スイッチの一部が 過剰な disk write で SSD が劣化し read-only file system に陥る 問題が顕在化している。"
+description: SONiC Disk I/O 削減（writer 分析と tmpfs 化） — SONiC スイッチの一部が 過剰な disk write
+  で SSD が劣化し read-only file system に陥る 問題が顕在化している。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  cli:
+  - show bgp
+  - config bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
+  - sonic-bgp-monitor
 ---
 
 !!! info "裏取りステータス: code-verified"

@@ -1,13 +1,26 @@
 ---
 title: 内部実装
-description: "内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_ の Write 連動更新、最後に APPL_STATE_DB を介した同期応答 の 3 点です。"
+description: 内部実装 — PINS の中身を読むときに、まず押さえるのは P4Orch の Manager 群と P4OidMapper、次に entity_cache_
+  の Write 連動更新、最後に APPL_STATE_DB を介した同期応答 の 3 点です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/internals/p4-orchagent.md
-  - docs/management/p4rt-read-cache-hld.md
-  - docs/management/p4rt-application-hld.md
+- docs/internals/p4-orchagent.md
+- docs/management/p4rt-read-cache-hld.md
+- docs/management/p4rt-application-hld.md
+related:
+  cli: []
+  config_db:
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPUS
+  - CRM
+  - P4RT_TABLE
+  - DEVICE_METADATA
+  yang:
+  - sonic-crm
 ---
 
 # 内部実装

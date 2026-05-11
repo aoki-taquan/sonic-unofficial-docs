@@ -1,16 +1,21 @@
 ---
 title: Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
-description: "Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS） — SONiC のテレメトリエージェント（gNMI / gNOI ストリーミング）から プロセス毎の CPU/メモリ使用量 および docker コンテナ毎のリソース消費 を購読できるようにする…"
+description: Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS） — SONiC
+  のテレメトリエージェント（gNMI / gNOI ストリーミング）から プロセス毎の CPU/メモリ使用量 および docker コンテナ毎のリソース消費 を購読できるようにする…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/system-telemetry/process-docker-stats.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/system-telemetry/process-docker-stats.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - TELEMETRY_CLIENT
+  - TELEMETRY
+  - GNMI
+  cli:
+  - show techsupport
   yang: []
 ---
 

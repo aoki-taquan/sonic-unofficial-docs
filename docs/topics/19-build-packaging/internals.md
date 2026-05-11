@@ -1,10 +1,18 @@
 ---
 title: 内部実装
-description: "内部実装 — build / packaging / application extension の内部実装は「sonic-buildimage は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockeriz…"
+description: 内部実装 — build / packaging / application extension の内部実装は「sonic-buildimage
+  は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockeriz…
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli: []
+  config_db:
+  - FEATURE
+  - CRM
+  yang:
+  - sonic-crm
 ---
 
 # 内部実装

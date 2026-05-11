@@ -1,16 +1,25 @@
 ---
 title: 新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
-description: "新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層） — 旧設計では psuutil.py / sfputil.py / eeprom.py 等を 独立した Python plugin としてベンダーが個別に実装していたが、新設計で…"
+description: 新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
+  — 旧設計では psuutil.py / sfputil.py / eeprom.py 等を 独立した Python plugin としてベンダーが個別に実装していたが、新設計で…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/platform_api/new_platform_api.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/platform_api/new_platform_api.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - PORT
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  cli:
+  - show platform
+  - show interfaces
   yang: []
 ---
 

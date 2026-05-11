@@ -1,13 +1,31 @@
 ---
 title: 運用
-description: "運用 — PINS の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。"
+description: 運用 — PINS の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to
+  Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources:
-  - docs/management/packetio.md
-  - docs/management/send-to-ingress-hld.md
-  - docs/management/p4rt-read-cache-hld.md
+- docs/management/packetio.md
+- docs/management/send-to-ingress-hld.md
+- docs/management/p4rt-read-cache-hld.md
+related:
+  cli:
+  - show platform
+  - show ip
+  - show acl
+  - config acl
+  config_db:
+  - ACL_RULE
+  - ACL_TABLE
+  - COPP_GROUP
+  - COPP_TRAP
+  - CRM
+  - P4RT_TABLE
+  - DEVICE_METADATA
+  yang:
+  - sonic-copp
+  - sonic-crm
 ---
 
 # 運用

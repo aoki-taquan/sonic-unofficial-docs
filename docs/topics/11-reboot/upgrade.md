@@ -1,15 +1,24 @@
 ---
 title: Upgrade lifecycle
-description: "Upgrade lifecycle — upgrade は reboot と同じではありません。upgrade は「どの image / package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。"
+description: Upgrade lifecycle — upgrade は reboot と同じではありません。upgrade は「どの image /
+  package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/sonic-installer.md
-  - docs/system/secure-upgrade.md
-  - docs/system/sonic-debian-upgrade-cadence.md
-  - docs/system/sonic-os-sonic-docker-images-versioning.md
-  - docs/system/independent-dpu-upgrade.md
+- docs/reference/cli/sonic-installer.md
+- docs/system/secure-upgrade.md
+- docs/system/sonic-debian-upgrade-cadence.md
+- docs/system/sonic-os-sonic-docker-images-versioning.md
+- docs/system/independent-dpu-upgrade.md
+related:
+  cli: []
+  config_db:
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPUS
+  yang: []
 ---
 
 # Upgrade lifecycle

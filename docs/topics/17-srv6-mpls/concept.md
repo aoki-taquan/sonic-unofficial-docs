@@ -1,23 +1,47 @@
 ---
 title: 概念
-description: "概念 — SRv6、MPLS、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。"
+description: 概念 — SRv6、MPLS、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/segment-routing-over-ipv6-srv6-hld.md
-  - docs/routing/sonic-usid.md
-  - docs/routing/srv6-sid-l3adj.md
-  - docs/routing/srv6-vpn-hld.md
-  - docs/routing/mpls-for-sonic-high-level-design-document.md
-  - docs/routing/path-tracing-midpoint.md
+- docs/routing/segment-routing-over-ipv6-srv6-hld.md
+- docs/routing/sonic-usid.md
+- docs/routing/srv6-sid-l3adj.md
+- docs/routing/srv6-vpn-hld.md
+- docs/routing/mpls-for-sonic-high-level-design-document.md
+- docs/routing/path-tracing-midpoint.md
 keywords:
-  - SRv6
-  - MPLS
-  - 概念
-  - segment routing
-  - label
-  - Path Tracing
+- SRv6
+- MPLS
+- 概念
+- segment routing
+- label
+- Path Tracing
+related:
+  cli:
+  - show arp
+  - config vxlan
+  - config vrf
+  - config qos
+  - config bgp
+  - show bgp
+  config_db:
+  - VRF
+  - CRM
+  - INTERFACE
+  - VLAN_INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - PORT_QOS_MAP
+  - PORT
+  yang:
+  - sonic-vxlan
+  - sonic-crm
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-srv6
+  - sonic-vrf
+  - sonic-bgp-bbr
 ---
 
 # 概念

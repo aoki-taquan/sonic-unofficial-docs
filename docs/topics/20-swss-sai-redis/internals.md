@@ -1,10 +1,29 @@
 ---
 title: 内部実装
-description: "内部実装 — ここでは「SAI / syncd 層の整合性」「counter 系の性能改善」「debug / dump 基盤」を、改善が狙っている問題で比較する。機能章で「flex counter が…」「bulk counter が…」「CRM が…」と単発で出てきた話を、内部実装側で並べると棲み分けが見える。"
+description: 内部実装 — ここでは「SAI / syncd 層の整合性」「counter 系の性能改善」「debug / dump 基盤」を、改善が狙っている問題で比較する。機能章で「flex
+  counter が…」「bulk counter が…」「CRM が…」と単発で出てきた話を、内部実装側で並べると棲み分けが見える。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - show techsupport
+  - show bfd
+  - show acl
+  - config acl
+  - config vnet
+  config_db:
+  - CRM
+  - VNET
+  - ACL_RULE
+  - ACL_TABLE
+  - DASH_ENI_TABLE
+  - DASH_VNET
+  - DASH_APPLIANCE
+  yang:
+  - sonic-crm
+  - sonic-vnet
 ---
 
 # 内部実装

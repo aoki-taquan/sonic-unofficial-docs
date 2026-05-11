@@ -1,10 +1,36 @@
 ---
 title: 内部実装
-description: "内部実装 — 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。"
+description: 内部実装 — 22 章はリファレンス索引のメタ章ですが、ここでは「索引が指している先の内部構造」を一段下げて、CLI / CONFIG_DB
+  / YANG の三系統がどう実装で結ばれているかをまとめます。各リファレンスページが個別に持っている断片を一望できるようにするのが狙いです。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - config vlan
+  - config interface
+  - config bgp
+  - config qos
+  - show interfaces
+  - show ip
+  - show platform
+  config_db:
+  - VLAN
+  - PORT
+  - ACL_TABLE
+  - NAT
+  - VLAN_MEMBER
+  - VLAN_INTERFACE
+  - PORTCHANNEL
+  yang:
+  - sonic-port
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-bgp-neighbor
+  - sonic-vrf
+  - sonic-vxlan
+  - sonic-nat
 ---
 
 # 内部実装

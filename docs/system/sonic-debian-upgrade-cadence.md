@@ -1,17 +1,22 @@
 ---
 title: SONiC Debian アップグレード方針（base / container / 廃止 cadence）
-description: "SONiC Debian アップグレード方針（base / container / 廃止 cadence） — SONiC は Debian-based Linux の上に立つため、新 Debian release を取り込む cadence を明文化することが本ドキュメントの目的。"
+description: SONiC Debian アップグレード方針（base / container / 廃止 cadence） — SONiC は Debian-based
+  Linux の上に立つため、新 Debian release を取り込む cadence を明文化することが本ドキュメントの目的。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - FEATURE
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-feature
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

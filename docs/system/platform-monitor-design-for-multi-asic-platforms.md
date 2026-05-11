@@ -1,17 +1,30 @@
 ---
 title: PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）
-description: "PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担） — Multi-ASIC SONiC では、システム共通の DB が host 上の \"global database\" container に居て、ASIC 毎の DB は 各 ASIC names…"
+description: PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担） — Multi-ASIC
+  SONiC では、システム共通の DB が host 上の "global database" container に居て、ASIC 毎の DB は 各 ASIC
+  names…
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pmon/pmon_multiasic_design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pmon/pmon_multiasic_design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - SNMP
+  - VOQ_INBAND_INTERFACE
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - PORT
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
+  - sonic-port
 ---
 
 <!-- topics-tip -->

@@ -1,18 +1,22 @@
 ---
 title: SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
-description: "SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP） — SAI 呼び出しが失敗すると orchagent は abort し、syncd を含む各 service が再起動される。"
+description: SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+  — SAI 呼び出しが失敗すると orchagent は abort し、syncd を含む各 service が再起動される。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/SAI_failure_handling/dump_on_sai_failure.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/SAI_failure_handling/dump_on_sai_failure.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - CRM
+  cli:
+  - show techsupport
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

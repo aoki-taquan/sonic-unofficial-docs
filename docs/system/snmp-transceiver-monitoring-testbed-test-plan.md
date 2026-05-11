@@ -1,17 +1,29 @@
 ---
 title: SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）
-description: "SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB） — 光トランシーバの DOM（Digital Optical Monitoring）情報—TX power / RX power / TX bias / temperature / v…"
+description: SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB） —
+  光トランシーバの DOM（Digital Optical Monitoring）情報—TX power / RX power / TX bias / temperature
+  / v…
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/xrcvd/xcvrd-snmp-testbed-test-plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/xrcvd/xcvrd-snmp-testbed-test-plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  cli:
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 <!-- topics-tip -->

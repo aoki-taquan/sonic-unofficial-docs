@@ -1,19 +1,38 @@
 ---
 title: Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）
-description: "Error Handling Framework HLD の概念整理。SAI 失敗を fatal 扱いせず ERROR_DB 経由で app に伝搬する設計思想、framework 自体は report のみで retry/rollback を担わない責務分担、対象 table と SWSS error code 体系を解説する。"
+description: Error Handling Framework HLD の概念整理。SAI 失敗を fatal 扱いせず ERROR_DB 経由で app
+  に伝搬する設計思想、framework 自体は report のみで retry/rollback を担わない責務分担、対象 table と SWSS error
+  code 体系を解説する。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: partially_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/error-handling/error_handling_design_spec.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/error-handling/error_handling_design_spec.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  cli:
+  - clear
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
+  - sonic-bgp-monitor
 ---
 
 # Error Handling Framework 概念

@@ -1,18 +1,31 @@
 ---
 title: Active-Standby Dual ToR 概念（構成と要件）
-description: "Active-Standby Dual ToR の構成と要件、y-cable + linkmgrd の役割分担、ToR↔NIC 方向の振る舞いを整理する。"
+description: Active-Standby Dual ToR の構成と要件、y-cable + linkmgrd の役割分担、ToR↔NIC 方向の振る舞いを整理する。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/dualtor_active_standby_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dualtor/dualtor_active_standby_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VLAN
+  - VLAN_MEMBER
+  - VLAN_SUB_INTERFACE
+  - VLAN_INTERFACE
+  - MUX_LINKMGR
+  - MUX_CABLE
+  - PORT
+  cli:
+  - config vlan
+  - show vlan
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-mux-cable
+  - sonic-port
 ---
 
 # Active-Standby Dual ToR 概念

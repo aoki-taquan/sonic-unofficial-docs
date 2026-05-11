@@ -1,17 +1,20 @@
 ---
 title: Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）
-description: "Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定） — T0 配下に flow state を持つ appliance（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。"
+description: Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance
+  に固定） — T0 配下に flow state を持つ appliance（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ecmp/ordered_ecmp_next_hop_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ecmp/ordered_ecmp_next_hop_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 !!! success "裏取りステータス: Code-verified"

@@ -1,19 +1,32 @@
 ---
 title: L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）
-description: "L3 Scaling と Performance 強化 HLD の制限事項。kernel メモリ消費と CPU 負荷のトレードオフ、AS7712 計測の他 ASIC への一般化不可、そして HLD 提案の gc_thresh / CoPP 値が現行 master の保守的 default と乖離している部分採用状況をまとめる。"
+description: L3 Scaling と Performance 強化 HLD の制限事項。kernel メモリ消費と CPU 負荷のトレードオフ、AS7712
+  計測の他 ASIC への一般化不可、そして HLD 提案の gc_thresh / CoPP 値が現行 master の保守的 default と乖離している部分採用状況をまとめる。
 area: internals
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: partially_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VNET
+  - COPP_GROUP
+  - COPP_TRAP
+  - NEIGH
+  - VLAN_INTERFACE
+  - INTERFACE
+  - VNET_ROUTE_TUNNEL
+  cli:
+  - show arp
+  - show ndp
+  - config vnet
+  yang:
+  - sonic-copp
+  - sonic-vnet
 ---
 
 # L3 Scaling と Performance 強化 制限事項と HLD との乖離

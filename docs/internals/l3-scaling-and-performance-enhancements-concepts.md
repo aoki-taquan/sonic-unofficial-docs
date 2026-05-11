@@ -1,19 +1,29 @@
 ---
 title: L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
-description: "L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / sairedis bulk / fpmsyncd 最適化 / show arp の 4 系統の改善ポイントの位置づけ。"
+description: L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route
+  programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / sairedis bulk / fpmsyncd
+  最適化 / show arp の 4 系統の改善ポイントの位置づけ。
 area: internals
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: partially_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - COPP_GROUP
+  - COPP_TRAP
+  - NEIGH
+  - VLAN_INTERFACE
+  - INTERFACE
+  cli:
+  - show arp
+  - show ndp
+  yang:
+  - sonic-copp
 ---
 
 # L3 Scaling と Performance 強化 概念

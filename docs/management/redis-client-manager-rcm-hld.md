@@ -1,15 +1,19 @@
 ---
-title: "Redis Client Manager（RCM: connection pool / transactional client）"
-description: "Redis Client Manager（RCM: connection pool / transactional client） — sonic-mgmt-common の translib（gNMI GET/SET/SUBSCRIBE 処理）は内部で 大量の Redis client を作成し、Redis TCP…"
+title: 'Redis Client Manager（RCM: connection pool / transactional client）'
+description: 'Redis Client Manager（RCM: connection pool / transactional client） —
+  sonic-mgmt-common の translib（gNMI GET/SET/SUBSCRIBE 処理）は内部で 大量の Redis client を作成し、Redis
+  TCP…'
 area: management
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/redis_client_manager.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/redis_client_manager.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - TELEMETRY
+  - GNMI
   cli: []
   yang: []
 ---

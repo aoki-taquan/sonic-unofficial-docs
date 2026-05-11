@@ -1,15 +1,22 @@
 ---
 title: リファレンス設計の考え方
-description: "リファレンス設計の考え方 — このページでは、docs/reference/ 配下の辞書ページ群が機能章 (docs/topics/) およびカテゴリページ (docs/categories/) とどう棲み分けているかを整理する。"
+description: リファレンス設計の考え方 — このページでは、docs/reference/ 配下の辞書ページ群が機能章 (docs/topics/) およびカテゴリページ
+  (docs/categories/) とどう棲み分けているかを整理する。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 keywords:
-  - Reference
-  - 概念
-  - 横断索引
-  - CLI / CONFIG_DB / YANG
-  - 情報設計
+- Reference
+- 概念
+- 横断索引
+- CLI / CONFIG_DB / YANG
+- 情報設計
+related:
+  cli: []
+  config_db:
+  - CRM
+  yang:
+  - sonic-crm
 ---
 
 # リファレンス設計の考え方

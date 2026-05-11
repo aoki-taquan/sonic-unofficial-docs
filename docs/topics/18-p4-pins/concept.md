@@ -1,19 +1,42 @@
 ---
 title: 概念
-description: "概念 — PINS は SONiC に「外部の SDN コントローラが P4Runtime gRPC を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。"
+description: 概念 — PINS は SONiC に「外部の SDN コントローラが P4Runtime gRPC を経由して forwarding を直接書く」経路を
+  opt-in で足す仕組みです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/management/pins-hld.md
-  - docs/management/p4rt-application-hld.md
+- docs/management/pins-hld.md
+- docs/management/p4rt-application-hld.md
 keywords:
-  - P4
-  - PINS
-  - 概念
-  - プログラマブル
-  - p4runtime
-  - pipeline
+- P4
+- PINS
+- 概念
+- プログラマブル
+- p4runtime
+- pipeline
+related:
+  cli:
+  - show acl
+  - config acl
+  - config bgp
+  - show bgp
+  config_db:
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
+  - sonic-bgp-monitor
 ---
 
 # 概念

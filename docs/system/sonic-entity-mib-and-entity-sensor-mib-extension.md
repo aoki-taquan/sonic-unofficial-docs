@@ -1,17 +1,29 @@
 ---
 title: Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）
-description: "Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加） — SONiC の SNMP Entity MIB（RFC 2737）実装は当初、entityPhysical グループの transceiver と DOM sensor だけ…"
+description: Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）
+  — SONiC の SNMP Entity MIB（RFC 2737）実装は当初、entityPhysical グループの transceiver と DOM
+  sensor だけ…
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/snmp/extension-to-physical-entity-mib.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/snmp/extension-to-physical-entity-mib.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - VOQ_INBAND_INTERFACE
+  - SNMP_COMMUNITY
+  cli:
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 <!-- topics-tip -->

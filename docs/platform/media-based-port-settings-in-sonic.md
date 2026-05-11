@@ -1,17 +1,27 @@
 ---
 title: Media-based Port Settings（media_settings.json による SerDes プロファイル）
-description: "Media-based Port Settings（media_settings.json による SerDes プロファイル） — vendor / media type / cable length ごとに 異なる SerDes 設定（preemphasis / idriver / ipredriver 等）を必…"
+description: Media-based Port Settings（media_settings.json による SerDes プロファイル） — vendor
+  / media type / cable length ごとに 異なる SerDes 設定（preemphasis / idriver / ipredriver
+  等）を必…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/media-settings/Media-based-Port-settings.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/media-settings/Media-based-Port-settings.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - PORT_TABLE
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

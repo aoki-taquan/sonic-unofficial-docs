@@ -1,15 +1,20 @@
 ---
 title: Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
-description: "Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module） — SONiC モジュラー chassis では、各 line card（LC）が 独立した SONiC インスタンスとして動作 する。"
+description: Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module） — SONiC
+  モジュラー chassis では、各 line card（LC）が 独立した SONiC インスタンスとして動作 する。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - VOQ_INBAND_INTERFACE
   cli: []
   yang: []
 ---

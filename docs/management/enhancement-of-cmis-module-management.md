@@ -1,17 +1,22 @@
 ---
 title: CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）
-description: "CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期） — ASIC 側 SerDes は SWSS の PortsOrch（→ vendor SAI）が、CMIS モジュール側は PMON の xcvrd が制御するという二段構成だが、両者を 「ASIC が high-…"
+description: CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期） — ASIC 側 SerDes は
+  SWSS の PortsOrch（→ vendor SAI）が、CMIS モジュール側は PMON の xcvrd が制御するという二段構成だが、両者を 「ASIC
+  が high-…
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/cmis-module-enhancement/cmis-module-enhancement.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/cmis-module-enhancement/cmis-module-enhancement.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - PORT
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 !!! success "裏取りステータス: Code-verified"

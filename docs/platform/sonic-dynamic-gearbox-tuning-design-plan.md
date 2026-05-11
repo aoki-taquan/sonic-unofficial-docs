@@ -1,17 +1,24 @@
 ---
 title: Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json）
-description: "Gearbox 動的チューニング（gb_line_ / gb_system_ in media_settings.json） — Gearbox は ASIC 内部レーンとフロントポート速度を変換する 外付け PHY（例: ASIC 4×10G → フロント 1×40G）。"
+description: 'Gearbox 動的チューニング（gb_line_ / gb_system_ in media_settings.json） — Gearbox
+  は ASIC 内部レーンとフロントポート速度を変換する 外付け PHY（例: ASIC 4×10G → フロント 1×40G）。'
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/media-settings/Dynamic-gearbox-tuning.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/media-settings/Dynamic-gearbox-tuning.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - PORT
+  - CRM
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  cli:
+  - show interfaces
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

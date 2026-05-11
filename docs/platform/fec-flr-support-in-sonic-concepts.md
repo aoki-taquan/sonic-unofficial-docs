@@ -1,19 +1,25 @@
 ---
 title: FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）
-description: "FEC FLR (Frame Loss Ratio) 機能の概念整理。Codeword Error Ratio との関係、interleaving factor の役割、observed FLR と predicted FLR の使い分け、FEC counter から FLR を導出する基本式をまとめる。"
+description: FEC FLR (Frame Loss Ratio) 機能の概念整理。Codeword Error Ratio との関係、interleaving
+  factor の役割、observed FLR と predicted FLR の使い分け、FEC counter から FLR を導出する基本式をまとめる。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port_fec_flr/port_fec_flr.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port_fec_flr/port_fec_flr.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - PORT
+  - TRANSCEIVER_INFO
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-port
+  - sonic-crm
 ---
 
 # FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）

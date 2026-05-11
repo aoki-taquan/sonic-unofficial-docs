@@ -1,18 +1,43 @@
 ---
 title: 概要
-description: "概要 — SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを Redis 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。"
+description: 概要 — SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを Redis
+  上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
 keywords:
-  - SWSS
-  - SAI
-  - Redis
-  - 概要
-  - orchagent
-  - syncd
-  - ProducerStateTable
+- SWSS
+- SAI
+- Redis
+- 概要
+- orchagent
+- syncd
+- ProducerStateTable
+related:
+  cli:
+  - show acl
+  - config acl
+  - config vxlan
+  - config vrf
+  - config bgp
+  - show bgp
+  config_db:
+  - VRF
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vxlan
+  - sonic-vrf
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
 ---
 
 # 概要

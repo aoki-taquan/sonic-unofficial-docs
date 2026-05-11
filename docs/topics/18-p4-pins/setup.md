@@ -1,13 +1,35 @@
 ---
 title: 設定
-description: "設定 — PINS は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で ASIC を直接制御できるようにする機能です。"
+description: 設定 — PINS は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC
+  で ASIC を直接制御できるようにする機能です。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources:
-  - docs/management/pins-hld.md
-  - docs/management/p4rt-application-hld.md
-  - docs/management/send-to-ingress-hld.md
+- docs/management/pins-hld.md
+- docs/management/p4rt-application-hld.md
+- docs/management/send-to-ingress-hld.md
+related:
+  cli:
+  - config route
+  - show platform
+  - show feature
+  - config acl
+  - show interfaces
+  - config vrf
+  - show acl
+  config_db:
+  - VRF
+  - ACL_RULE
+  - ACL_TABLE
+  - COPP_GROUP
+  - COPP_TRAP
+  - CRM
+  - TELEMETRY
+  yang:
+  - sonic-copp
+  - sonic-vrf
+  - sonic-crm
 ---
 
 # 設定

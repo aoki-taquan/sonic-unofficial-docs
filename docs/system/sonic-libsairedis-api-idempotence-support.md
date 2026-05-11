@@ -1,18 +1,29 @@
 ---
 title: libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）
-description: "libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） — orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent にし、orc…"
+description: libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） —
+  orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent
+  にし、orc…
 area: system
 verification: discrepancy-found
 monitor: deprecated
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/warm-reboot/sai_redis_api_idempotence.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/warm-reboot/sai_redis_api_idempotence.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - WARM_RESTART
+  - BGP_DEVICE_GLOBAL
+  - DEVICE_METADATA
+  - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - FLEX_COUNTER_TABLE
   cli: []
-  yang: []
+  yang:
+  - sonic-warm-restart
+  - sonic-crm
 ---
 
 !!! danger "裏取りステータス: discrepancy-found"

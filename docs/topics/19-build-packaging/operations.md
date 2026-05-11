@@ -1,10 +1,18 @@
 ---
 title: 設定 / 運用
-description: "設定 / 運用 — Application Extension は、3rd party / 任意の docker を inbox 機能と同じ管理面で扱うための枠組みである。"
+description: 設定 / 運用 — Application Extension は、3rd party / 任意の docker を inbox 機能と同じ管理面で扱うための枠組みである。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - show feature
+  - show techsupport
+  config_db:
+  - FEATURE
+  - WARM_RESTART
+  yang: []
 ---
 
 # 設定 / 運用
