@@ -120,6 +120,25 @@ excerpt: |
 reasoning: SAI 属性追加と timestamp template 4 種の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L80-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L80-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Every interface of the PT Midpoint is assigned an interface ID and timestamp template.
+    The SAI Port object has been extended with two new attributes for the Interface ID and the timestamp template.
+    template1: bits 08-15 / template2: bits 12-19 / template3: bits 16-23 / template4: bits 20-27
+    ```
+
+    **判断根拠**: SAI 属性追加と timestamp template 4 種の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### YANG
 
 `sonic-port.yang` に 2 leaf を追加[^1]: `pt_interface_id` (uint16), `pt_timestamp_template` (enum)。

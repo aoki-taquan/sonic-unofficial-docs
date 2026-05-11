@@ -74,6 +74,28 @@ excerpt: |
               _change_bgp_session_status_by_addr(config_db, ipaddress, 'down', verbose)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L4939-L4959 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L4939-L4959 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @shutdown.command()
+    def all(verbose):
+        ...
+        for namespace in namespaces:
+            config_db = ConfigDBConnector(...)
+            ...
+            for ipaddress in bgp_neighbor_ip_list:
+                _change_bgp_session_status_by_addr(config_db, ipaddress, 'down', verbose)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config bgp shutdown neighbor <ipaddr_or_hostname>`
 
 **用法**:
@@ -113,6 +135,25 @@ excerpt: |
       if _remove_bgp_neighbor_config(config_db, neighbor_ip_or_hostname):
           removed_neighbor = True
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L5052-L5074 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L5052-L5074 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @remove.command('neighbor')
+    def remove_neighbor(neighbor_ip_or_hostname):
+        ...
+        if _remove_bgp_neighbor_config(config_db, neighbor_ip_or_hostname):
+            removed_neighbor = True
+    ```
+
+<!-- evidence-rendered:end -->
 
 ### `config bgp device-global tsa enabled` / `disabled`
 
@@ -177,6 +218,32 @@ excerpt: |
       }
       db.cfgdb.set_entry(table, key, data)
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/bgp_cli.py#L255-L286 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/bgp_cli.py#L255-L286 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    def AGGREGATE_ADDRESS_ADD(ctx, db, address, bbr_required, summary_only, as_set, ...):
+        table = CFG_BGP_AGGREGATE_ADDRESS  # = "BGP_AGGREGATE_ADDRESS"
+        key = address
+        ...
+        if table in cfg and key in cfg[table]:
+            ctx.fail("Aggregate address '{}' already exists".format(key))
+        data = {
+            "bbr-required": ..., "summary-only": ..., "as-set": ...,
+            "aggregate-address-prefix-list": ...,
+            "contributing-address-prefix-list": ...,
+        }
+        db.cfgdb.set_entry(table, key, data)
+    ```
+
+<!-- evidence-rendered:end -->
 
 ### `config bgp aggregate-address remove <address>`
 

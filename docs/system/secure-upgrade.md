@@ -110,6 +110,25 @@ excerpt: |
 reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/secure_upgrade/secure_upgrade.md#L83-L97 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/secure_upgrade/secure_upgrade.md#L83-L97 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Sign sonic image during build process in build_image.sh script ...
+    When SECURE_UPGRADE_MODE == 'no_sign' no change will be made to the current build process.
+    In case of SECURE_UPGRADE_MODE == 'dev', image will be signed by development script and when SECURE_UPGRADE_MODE == 'prod' - image will be signed by production script.
+    ```
+
+    **判断根拠**: build 時 dev/prod/no_sign の 3 モード切替の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - UEFI / Secure Boot を含む arch サポートが必要

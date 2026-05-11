@@ -127,6 +127,24 @@ excerpt: |
 reasoning: 起動コマンドとデフォルト認証情報の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md#L86-L129 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/test/Bring-up_Sonic-VS_on_Cloud_top.md#L86-L129 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    sudo virsh create sonic1-vs.xml
+    ... telnet localhost 7000 ; User: admin ; Passwd: YourPaSsWoRd
+    ```
+
+    **判断根拠**: 起動コマンドとデフォルト認証情報の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB / CLI / YANG

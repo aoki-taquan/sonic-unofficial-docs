@@ -59,6 +59,26 @@ excerpt: |
       run_command(cmd, display_cmd=verbose)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1266-L1274 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L1266-L1274 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @cli.command('route-map')
+    def route_map(route_map_name, verbose):
+        cmd = ['sudo', constants.RVTYSH_COMMAND, '-c', 'show route-map']
+        if route_map_name is not None:
+            cmd[-1] += ' {}'.format(route_map_name)
+        run_command(cmd, display_cmd=verbose)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ## 出力
 
 FRR の `show route-map` 出力をそのまま表示する。フィールド整形・JSON 化は SONiC 側では行わない。出力形式は FRR のバージョンに従う。

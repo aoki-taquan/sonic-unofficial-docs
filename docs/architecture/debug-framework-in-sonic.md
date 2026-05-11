@@ -151,6 +151,27 @@ excerpt: |
 reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/debug-framework/debug_framework_design_spec.md#L96-L168 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/debug-framework/debug_framework_design_spec.md#L96-L168 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Debug Framework provides an API for components to register with the framework. ...
+    Framework uses Redis notifications for communicating the trigger message ...
+    Components register dump routine with debug framework using the API:
+      Debugframework::linkWithFramework(...)
+      Debugframework::linkWithFrameworkNoThread(...)
+    ```
+
+    **判断根拠**: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## tech-support 拡張・補助スクリプト
 
 `show techsupport` は本 HLD の延長で **STATE_DB dump、ASIC 固有 dump、critical log の persistent log 切り出し** を追加[^1]。さらに次のヘルパーが付随する:

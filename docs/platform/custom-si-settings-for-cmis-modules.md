@@ -148,6 +148,25 @@ excerpt: |
 reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回までリトライ」のフロー根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sfp-cmis/CMIS-custom-SI-settings.md#L218-L246 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sfp-cmis/CMIS-custom-SI-settings.md#L218-L246 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    4. After applying the application code to the configuration with Explicit Control (EC) = 0, and committed to the activate state, now read and cache the default or active TX/RX SI settings... If we only apply the new values in Staged Control Set, the other values will be set to 0 in the Active Control Set.
+    ...
+    7. Validate the config_status code, if the status is not config success, then force CMIS to reinit and retry. If the configuration fails after 3 retry attempts, print an error message and exit from initializing this port.
+    ```
+
+    **判断根拠**: 「キャッシュ→差分マージ→staged→commit」「3 回までリトライ」のフロー根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

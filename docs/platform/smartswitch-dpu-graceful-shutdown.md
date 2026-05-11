@@ -106,6 +106,25 @@ excerpt: |
 reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/graceful-shutdown/graceful-shutdown.md#L93-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/smart-switch/graceful-shutdown/graceful-shutdown.md#L93-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    This design enables the chassisd process running in the PMON container to invoke a gNOI-based reboot
+    when it triggers the "set_admin_state(down)" API of a DPU module, without relying on docker, bash,
+    or hostexec within the container.
+    ```
+
+    **判断根拠**: PMON 制限下での実装方針と Redis pub/sub への分離の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## CLI / CONFIG_DB / YANG
 
 - CLI: `config chassis module shutdown DPUx`（既存 chassis CLI 流用）[^1]

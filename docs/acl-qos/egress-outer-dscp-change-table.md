@@ -85,6 +85,24 @@ excerpt: |
 reasoning: 採用案 Option-C と SAI 要件の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/acl/egress_outer_dscp_change_table.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/acl/egress_outer_dscp_change_table.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Option-C: Create a dummy table type which translates into MARK_META/V6 and EGR_SET_DSCP as in the approach mentioned above. Manage the metadata internally
+    ... requires ASICs to support the SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA and SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META fields.
+    ```
+
+    **判断根拠**: 採用案 Option-C と SAI 要件の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CLI

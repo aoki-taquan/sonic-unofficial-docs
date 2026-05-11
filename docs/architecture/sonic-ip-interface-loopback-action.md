@@ -118,6 +118,23 @@ excerpt: |
 reasoning: ドロップ計上先が TX_ERR である根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md#L276-L286 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md#L276-L286 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Packets that are dropped due to loopback action will be counted in TX_ERR in IP interface statistics.
+    ```
+
+    **判断根拠**: ドロップ計上先が TX_ERR である根拠。
+
+<!-- evidence-rendered:end -->
+
 ### CLI バリデーション
 
 CLI は次を拒否する[^1]:

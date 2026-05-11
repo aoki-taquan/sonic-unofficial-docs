@@ -135,6 +135,29 @@ excerpt: |
 reasoning: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成功」、BE は独立実行という記述の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/gnoi_system_hld.md#L176-L188 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/gnmi/gnoi_system_hld.md#L176-L188 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The gNOI server performs sanity checks after receiving the requests, and rejects if it fails (and `force` is not set).
+    ...
+    The Reboot Request Succeeds when:
+    - The gNOI server validates the request,
+    - checks that no requests are pending/ active, and
+    - writes the data successfully to the DB.
+    - Once notified, the back end will act on the operation independently.
+    ```
+
+    **判断根拠**: 受理条件が「validation OK + 既存 reboot 無し + DB 書込成功」、BE は独立実行という記述の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

@@ -74,6 +74,32 @@ excerpt: |
       run_command(cmd, display_cmd=verbose)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1199-L1244 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L1199-L1244 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @cli.group(cls=clicommon.AliasedGroup, invoke_without_command="true")
+    def mac(ctx, vlan, port, address, type, count, verbose, namespace):
+        if ctx.invoked_subcommand is not None:
+            return
+        cmd = ["fdbshow"]
+        if vlan is not None:    cmd += ['-v', str(vlan)]
+        if port is not None:    cmd += ['-p', str(port)]
+        if address is not None: cmd += ['-a', str(address)]
+        if type is not None:    cmd += ['-t', str(type)]
+        if count:               cmd += ["-c"]
+        if namespace is not None: cmd += ['-n', str(namespace)]
+        run_command(cmd, display_cmd=verbose)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show mac aging-time`
 
 **用法**:
@@ -97,6 +123,28 @@ excerpt: |
           fdb_aging_time = app_db.get(app_db.APPL_DB, key, 'fdb_aging_time')
           ...
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1245-L1262 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L1245-L1262 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @mac.command('aging-time')
+    def aging_time(ctx):
+        app_db = SonicV2Connector()
+        app_db.connect(app_db.APPL_DB)
+        keys = app_db.keys(app_db.APPL_DB, "SWITCH_TABLE*")
+        for key in keys:
+            fdb_aging_time = app_db.get(app_db.APPL_DB, key, 'fdb_aging_time')
+            ...
+    ```
+
+<!-- evidence-rendered:end -->
 
 ## 補足
 

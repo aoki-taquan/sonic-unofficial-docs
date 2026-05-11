@@ -69,6 +69,29 @@ excerpt: |
               values = db.db_clients[ns].get_all(db.db.STATE_DB, key)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L2682-L2710 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L2682-L2710 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @bfd.command()
+    def summary(db, namespace):
+        ...
+        for ns in namespace_list:
+            bfd_keys = db.db_clients[ns].keys(db.db.STATE_DB, "BFD_SESSION_TABLE|*")
+            ...
+            for key in bfd_keys:
+                key_values = key.split('|')
+                values = db.db_clients[ns].get_all(db.db.STATE_DB, key)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show bfd peer <peer_ip>`
 
 **用法**:

@@ -85,6 +85,23 @@ excerpt: |
 reasoning: 一元化の動機が「platform.json への移行容易化」にあることの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port-config-refactor/port-config-refactor-design.md#L13-L15 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port-config-refactor/port-config-refactor-design.md#L13-L15 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    There are also open PRs to begin transitioning from the "port_config.ini" file to a new "platform.json" file. So if we keep all parse logic in portconfig.py, it will be easy to keep backward compatible.
+    ```
+
+    **判断根拠**: 一元化の動機が「platform.json への移行容易化」にあることの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 依存関係
 
 `portconfig.py` 自体は `sonic-buildimage/src/sonic-config-engine` パッケージに属する。これを他モジュールから再利用するために、HLD は次の 2 点を要求している[^1]:
@@ -150,7 +167,6 @@ HLD が示すテスト計画[^1]:
 - sonic-utilities/show/interfaces/__init__.py:14 from portconfig import get_child_ports
 - platform.json: sonic-buildimage/device/{supermicro,ragile,...}/.../platform.json 配布済
 -->
-
 
 <!-- topics-back-ref -->
 ## 関連 Topics

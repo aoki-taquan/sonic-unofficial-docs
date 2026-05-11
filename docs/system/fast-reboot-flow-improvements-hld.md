@@ -77,6 +77,25 @@ excerpt: |
 reasoning: finalizer 流用と新 flag 導入の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md#L40-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md#L40-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In addition to the recover mechanism, the warmboot-finalizer can be enhanced to finalize fast-reboot as well
+    and introduce a new flag indicating the process is done.
+    This new flag can be used later on for any functionality, we want to start only after init flow finished
+    ```
+
+    **判断根拠**: finalizer 流用と新 flag 導入の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### vendor NOS → SONiC ISSU
 
 dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC→SONiC と同じ flow。渡されなくても起動は完了するが、neighbor / FDB を slow path で再学習するため downtime が伸びる[^1]。

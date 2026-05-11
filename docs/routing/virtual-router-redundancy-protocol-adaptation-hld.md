@@ -117,6 +117,26 @@ excerpt: |
 reasoning: 要件 (v2/v3, IF 種別, uplink tracking, VRF) の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/vrrp/VRRP_Adaptation_HLD.md#L51-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/vrrp/VRRP_Adaptation_HLD.md#L51-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Support VRRPv2(IPv4) and VRRPv3(IPv4 and IPv6)
+    Support VRRP on Ethernet, VLAN, sub-interfaces and PortChannel interfaces
+    Support uplink interface tracking feature
+    Support VRRP working on non-default VRF
+    ```
+
+    **判断根拠**: 要件 (v2/v3, IF 種別, uplink tracking, VRF) の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CONFIG_DB

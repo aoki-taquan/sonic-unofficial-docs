@@ -142,6 +142,26 @@ excerpt: |
 reasoning: 「フォールバックしない」「不在は true 扱い」という本設計の中核ルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/macsec-gearbox/macsec_backend_gearbox.md#L78-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/macsec-gearbox/macsec_backend_gearbox.md#L78-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    For each port:
+    - If `macsec_supported == false`: use NPU/global switch for MACsec
+    - If `macsec_supported == true` OR field is absent: use PHY switch for MACsec (default, preserves existing behavior)
+    No runtime fallback. If PHY SAI does not implement MACsec and the field is true/absent, the operation fails and is logged.
+    ```
+
+    **判断根拠**: 「フォールバックしない」「不在は true 扱い」という本設計の中核ルールの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Warm boot / Fast boot
 
 バックエンド選定は決定論的（`gearbox_config.json` 由来）であり、再起動後も同じ結果になる。Warm/Fast boot に対する追加処理は不要[^1]。

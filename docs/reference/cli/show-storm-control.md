@@ -74,6 +74,29 @@ excerpt: |
           ctx.fail('-n/--namespace option required. ...')
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L499-L533 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L499-L533 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @cli.group('storm-control', invoke_without_command=True)
+    def storm_control(ctx, namespace, display):
+        header = ['Interface Name', 'Storm Type', 'Rate (kbps)']
+        ...
+    @storm_control.command('interface')
+    def interface(ctx, interface):
+        namespace = ctx.parent.params.get('namespace')
+        if multi_asic.is_multi_asic() and namespace not in multi_asic.get_namespace_list():
+            ctx.fail('-n/--namespace option required. ...')
+    ```
+
+<!-- evidence-rendered:end -->
+
 ## 関連する CONFIG_DB
 
 | テーブル | キー | フィールド |

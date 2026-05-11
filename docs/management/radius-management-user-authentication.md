@@ -136,6 +136,25 @@ excerpt: |
 reasoning: 多サーバ priority + 8 上限 + passphrase 不一致を unreachable 扱いの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/aaa/radius_authentication.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/aaa/radius_authentication.md#L92-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Support multiple RADIUS servers, with server priority configuration.
+    ... if an incorrect RADIUS passphrase ... has been configured ... is treated as an "unreachable" RADIUS server,
+    ... Support configuring a maximum of 8 servers
+    ```
+
+    **判断根拠**: 多サーバ priority + 8 上限 + passphrase 不一致を unreachable 扱いの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

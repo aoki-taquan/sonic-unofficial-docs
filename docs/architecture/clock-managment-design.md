@@ -127,6 +127,27 @@ excerpt: |
 reasoning: 「NTP 有効時に timezone は OK / date は拒否」という分岐ルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/Clock commands/clock_managment_hld.md#L70-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/Clock commands/clock_managment_hld.md#L70-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    config clock timezone <timezone> ...
+    In case NTP is enabled -> timezone configuration is allowed and overrides the current time.
+    ...
+    config clock date <YYYY-MM-DD> <HH:MM:SS> ...
+    In case NTP is enabled -> time/date set is NOT allowed and being blocked
+    ```
+
+    **判断根拠**: 「NTP 有効時に timezone は OK / date は拒否」という分岐ルールの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

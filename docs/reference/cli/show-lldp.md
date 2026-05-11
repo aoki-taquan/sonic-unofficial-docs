@@ -59,6 +59,29 @@ excerpt: |
       run_command(cmd, display_cmd=verbose)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1654-L1668 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L1654-L1668 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @lldp.command()
+    @click.argument('interfacename', required=False)
+    def neighbors(interfacename, verbose):
+        cmd = ['sudo', 'lldpshow', '-d']
+        if interfacename is not None:
+            if clicommon.get_interface_naming_mode() == "alias":
+                interfacename = iface_alias_converter.alias_to_name(interfacename)
+            cmd += ['-p', str(interfacename)]
+        run_command(cmd, display_cmd=verbose)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show lldp table`
 
 **用法**:

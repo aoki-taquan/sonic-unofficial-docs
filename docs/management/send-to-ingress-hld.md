@@ -120,6 +120,25 @@ excerpt: |
 reasoning: 「ベンダー SAI 拡張が前提」という最重要の制約の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pins/send_to_ingress_hld.md#L130-L138 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pins/send_to_ingress_hld.md#L130-L138 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Vendor work is needed to enable the creation of the "SEND_TO_INGRESS" port and allow packets in the CPU port.
+    Current support of the creation of netdev type hostif is only for physical port, vlan or LAG interface,
+    vendors need to extend the SAI hostif create API to allow creation of a netdev port associated with the CPU port.
+    ```
+
+    **判断根拠**: 「ベンダー SAI 拡張が前提」という最重要の制約の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

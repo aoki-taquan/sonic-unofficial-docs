@@ -85,6 +85,25 @@ excerpt: |
       config_db.set_entry("ACL_TABLE", table_name, table_info)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L8076-L8096 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L8076-L8096 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @add.command('table')
+    def add_table(ctx, table_name, table_type, description, ports, stage, namespace):
+        ...
+        table_info = parse_acl_table_info(table_name, table_type, description, ports, stage, namespace)
+        config_db.set_entry("ACL_TABLE", table_name, table_info)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config acl remove table <table_name> [-n <namespace>]`
 
 **動作**:

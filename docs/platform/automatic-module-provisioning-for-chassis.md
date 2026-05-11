@@ -159,6 +159,25 @@ excerpt: |
 reasoning: sonic-provisiond の責務（STATE_DB 購読のみ・ProvisionReady で provision_module() 呼び出し）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md#L96-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md#L96-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    A new pmon daemon will be introduced which will be responsible for triggering provisioning / calling this new API.
+    This daemon will simply subscribe to all `CHASSIS_MODULE_TABLE|*` tables, and listen to changes to the `oper_state` field.
+    If `oper_state` switches to `'ProvisionReady'`, it will call provision_module() on the corresponding module.
+    ```
+
+    **判断根拠**: sonic-provisiond の責務（STATE_DB 購読のみ・ProvisionReady で provision_module() 呼び出し）の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

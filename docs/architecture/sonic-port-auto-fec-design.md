@@ -92,6 +92,25 @@ excerpt: |
 reasoning: 新 SAI 属性と FEC=auto 値の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port_auto_neg/auto-fec.md#L56-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port_auto_neg/auto-fec.md#L56-L98 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In order to facilitate the behavior of FEC when autoneg is enabled, the SAI attribute SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE was introduced.
+    ... A new FEC mode called 'auto' is introduced.
+    ... If FEC is configured as 'auto' by the user SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE will be set to false.
+    ```
+
+    **判断根拠**: 新 SAI 属性と FEC=auto 値の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

@@ -147,6 +147,25 @@ excerpt: |
 reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md#L40-L51 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md#L40-L51 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    | Actor | Description | ... | Config DB Table | State DB Table |
+    | Global Config | Monitor global HA configurations. ...
+    | HA Scope | The scope to drive the HA state machine ...
+    ```
+
+    **判断根拠**: actor と CONFIG_DB / STATE_DB table 対応の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - v0.1 (2025-02) Initial Proposal。詳細仕様（特に Switch-Driven mode）は未確定

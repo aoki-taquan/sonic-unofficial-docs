@@ -119,6 +119,27 @@ excerpt: |
 reasoning: collect → poll → ready の DBUS 経路と persistent_storage フラグの存在の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/gnoi_healthz_hld.md#L181-L186 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/gnmi/gnoi_healthz_hld.md#L181-L186 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    1. The Get RPC handler translates the incoming gNMI Path in the Get request to the correct component...
+    2. For the above supported paths, a call to HealthzCollect is made through the DBUS client with the component name, log level, and a persistent_storage flag...
+    3. The host service module debug_info.collect collects all the artifacts...
+    4. In. the meantime, the frontend keeps polling for the artifact to be ready with a call to HealthzCheck through the DBUS client debug_info.check.
+    5. Once the artifact tar file is ready, the artifact details (filename, size, checksum) with the unique ID string are sent in the Get response back to the client.
+    ```
+
+    **判断根拠**: collect → poll → ready の DBUS 経路と persistent_storage フラグの存在の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### コンポーネントステータスのデータモデル
 
 `ComponentStatus`（HLD と OpenConfig 共通）[^1]:

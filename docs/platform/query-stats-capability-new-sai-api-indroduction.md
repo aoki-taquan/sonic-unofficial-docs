@@ -112,6 +112,27 @@ excerpt: |
 reasoning: 改修対象関数とフォールバック動作の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md#L20-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md#L20-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The affected functions with this new API will take place on FlexCounter.cpp:
+    - void updateSupportedPortCounters(_In_ sai_object_id_t portRid)
+    - void updateSupportedQueueCounters(...)
+    ...
+    The implementation will support backwards compatibility, so if a SAI vendor is currently not supporting this API it will fall back to the legacy approach.
+    ```
+
+    **判断根拠**: 改修対象関数とフォールバック動作の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB / CLI / YANG

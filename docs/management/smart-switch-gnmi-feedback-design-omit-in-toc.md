@@ -131,6 +131,26 @@ excerpt: |
 reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md#L42-L134 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md#L42-L134 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    GS --) AD: Insert object
+    GS ->> ZMQ: Update command
+    ... SW ->> ASD: Update command result
+    Note over ZMQ: Include result code and version ID (If it's non-child object)
+    ```
+
+    **判断根拠**: 非同期反映 + version_id 付き結果書き戻しの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### DPU APPL_STATE_DB スキーマ
 
 APPL_STATE_DB の各エントリは APPL_DB のエントリ **同名 key にマップ** される。値は親オブジェクトなら `result` + `version_id`、子なら `result` のみ[^1]。

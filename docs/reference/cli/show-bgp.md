@@ -77,6 +77,25 @@ excerpt: |
       entry = table.get(BGP_DEVICE_GLOBAL_KEY, {})
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/bgp_cli.py#L57-L130 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/bgp_cli.py#L57-L130 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @BGP.command(name="device-global")
+    def DEVICE_GLOBAL(ctx, db, json_format):
+        ...
+        table = db.cfgdb.get_table(CFG_BGP_DEVICE_GLOBAL)
+        entry = table.get(BGP_DEVICE_GLOBAL_KEY, {})
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show bgp aggregate-address <ipv4|ipv6>`
 
 `BGP_AGGREGATE_ADDRESS` テーブルから該当 family のエントリを抽出し、`bbr-required` / `summary-only` / `as-set` / `aggregate-address-prefix-list` / `contributing-address-prefix-list` をテーブル表示する。

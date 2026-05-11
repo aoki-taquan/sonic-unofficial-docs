@@ -103,6 +103,26 @@ excerpt: |
 reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pic/hld_fpmsyncd.md#L46-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pic/hld_fpmsyncd.md#L46-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Scope of this change is to extend `fpmsyncd` to handle `RTM_NEWNEXTHOP` and `RTM_DELNEXTHOP` messages from FPM.
+    This change is backward compatible. ... this feature is disabled by default.
+    ... (1) config zebra to use `dplane_fpm_nl` instead of `fpm` module
+    (2) set `fpm use-nexthop-groups` option (this is disabled by default and enabled via `CONFIG_DB`)
+    ```
+
+    **判断根拠**: 拡張のスコープ・既存互換性・有効化スイッチの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CONFIG_DB

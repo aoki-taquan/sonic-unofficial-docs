@@ -98,6 +98,24 @@ excerpt: |
 reasoning: 11 月 release で base 取り込み目標の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md#L37-L43 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md#L37-L43 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Given Debian release info, and the fact that the current SONiC release trend is to have a release in May and November,
+    the goal should be to target the base image upgrade to the new Debian version for the November release.
+    ```
+
+    **判断根拠**: 11 月 release で base 取り込み目標の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - Debian の公式 release schedule が無いため最終的にはタイムラインが流動的

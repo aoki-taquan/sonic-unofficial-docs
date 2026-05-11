@@ -91,6 +91,24 @@ excerpt: |
 reasoning: 仕様の path 規約と permission 表記の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/s3ip_sysfs/s3ip_sysfs_specification.md#L33-L74 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/s3ip_sysfs/s3ip_sysfs_specification.md#L33-L74 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    /sys_switch/temp_sensor/number RO int Total number of temperature sensors
+    /sys_switch/temp_sensor/temp[n]/max R/W int Alarm threshold, unit: millidegree Celsius
+    ```
+
+    **判断根拠**: 仕様の path 規約と permission 表記の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## SONiC との関係
 
 - **`s3ip_sysfs_framework_hld.md`** が SONiC platform API plugin 側の取込み方を扱う（本仕様と対）

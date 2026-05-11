@@ -112,6 +112,25 @@ excerpt: |
 reasoning: 2-container 構成と各 container の役割の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/alpine/alpine_hld.md#L101-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/alpine/alpine_hld.md#L101-L150 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    At a high level, the Alpine Virtual Switch (ALViS) is composed of 2 foundational Docker containers:
+    1. SwitchStack Container which runs a SONiC VM, and
+    2. ASIC Simulation Container which runs the virtual ASIC.
+    ```
+
+    **判断根拠**: 2-container 構成と各 container の役割の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## SAI
 
 SAI 仕様自体への変更は無い[^1]。dataplane への接続方式は vendor 実装次第。Lucius の場合は **gRPC 経由で SAI 呼び出しを auto-generated client が転送** する（[lemming の protoforsai](https://github.com/openconfig/lemming/blob/main/dataplane/docs/protoforsai.md) 参照）。

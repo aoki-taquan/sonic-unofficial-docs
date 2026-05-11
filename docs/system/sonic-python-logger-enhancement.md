@@ -142,6 +142,26 @@ excerpt: |
 reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設計の核となるルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/syslog/python-logger-enhancement.md#L36-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/syslog/python-logger-enhancement.md#L36-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    - SysLogger class shall be changed to a singleton.
+    - SysLogger instance shall load log level configuration from DB during initialization stage if DB configuration is available.
+    - SysLogger instance shall save log level configuration to DB during initialization stage if DB configuration is not available.
+    - Logger configuration shall be refreshed by CLI which send a SIGHUP signal to the daemon.
+    ```
+
+    **判断根拠**: 「singleton + 初期化時 load/save + SIGHUP refresh」という設計の核となるルールの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Scope の限定
 
 `sonic_py_common.logger.Logger` は **deprecate 予定** のため、本機能の対象外[^1]。本 HLD は **`SysLogger` のみ** を拡張対象とする。

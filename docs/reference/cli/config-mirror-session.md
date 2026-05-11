@@ -86,6 +86,24 @@ excerpt: |
       config_db.set_entry("MIRROR_SESSION", session_name, session_info)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L3213-L3313 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L3213-L3313 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    def add_erspan(session_name, src_ip, dst_ip, dscp, ttl, gre_type, queue, policer, src_port=None, direction=None):
+        session_info = {"type": "ERSPAN", "src_ip": src_ip, "dst_ip": dst_ip, "dscp": dscp, "ttl": ttl}
+        ...
+        config_db.set_entry("MIRROR_SESSION", session_name, session_info)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config mirror_session span add`
 
 **用法**:
@@ -125,6 +143,25 @@ excerpt: |
       ...
       config_db.set_entry("MIRROR_SESSION", session_name, None)
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L3418-L3445 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L3418-L3445 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @mirror_session.command()
+    @click.argument('session_name', required=True)
+    def remove(session_name):
+        ...
+        config_db.set_entry("MIRROR_SESSION", session_name, None)
+    ```
+
+<!-- evidence-rendered:end -->
 
 ## 関連する CONFIG_DB
 

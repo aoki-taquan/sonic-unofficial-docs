@@ -131,6 +131,25 @@ excerpt: |
 reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/media-settings/Media-based-Port-settings.md#L24-L34 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/media-settings/Media-based-Port-settings.md#L24-L34 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    When a media is detected, the front panel port is identified and index number is derived.
+    First the global level is looked up ... If vendor key doesn't match, then media key
+    ... A no-match on vendor and media keys will make the search fall back to individual port based block.
+    ```
+
+    **判断根拠**: GLOBAL → PORT、各内で Vendor → Media → Default の検索順の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## CLI / CONFIG_DB / YANG
 
 CLI / CONFIG_DB / YANG への追加は無し[^1]。`media_settings.json` は image build 時に platform tree に同梱される静的 file。

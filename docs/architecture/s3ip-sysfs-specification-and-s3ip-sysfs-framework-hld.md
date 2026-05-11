@@ -118,6 +118,25 @@ excerpt: |
 reasoning: vendor driver の install/uninstall に追従して /sys/s3ip/ 配下を動的に作る方式の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/s3ip_sysfs/s3ip_sysfs_hld.md#L137-L160 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/s3ip_sysfs/s3ip_sysfs_hld.md#L137-L160 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    s3ip_sysfs.ko provided the following features:
+    1. Register/unregister mechanisms to interact with the s3ip_sysfs.ko.
+    2. Dynamically generate/destroy the corresponding directory when a driver that uses s3ip_sysfs.ko is installed/uninstalled.
+    ```
+
+    **判断根拠**: vendor driver の install/uninstall に追従して /sys/s3ip/ 配下を動的に作る方式の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### `s3ip-sysfs.service` の起動フロー
 
 `/etc/s3ip/s3ip_sysfs_conf.json` を読み、`/sys_switch/` を作る workflow[^1]:

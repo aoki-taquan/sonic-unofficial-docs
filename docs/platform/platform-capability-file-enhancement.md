@@ -139,6 +139,29 @@ excerpt: |
 reasoning: capabilities フィールドの仕様（controllable + 属性別 colors / minimum / maximum）と既定値 true の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/platform-json/platform_json_enhancement.md#L40-L49 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/platform-json/platform_json_enhancement.md#L40-L49 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    For each component's attribute, the defined `capabilities` fields are as follows:
+    - "controllable" : A boolean, 'true' if the given attribute can be controlled from the NOS, 'false' otherwise. Defaults to 'true'.
+    - Attribute specific fields:
+        - status led - "color" - A list of the supported colors.
+        - speed
+            - "minimum" - Minimum recommended fan speed that can be set.
+            - "maximum" - Maximum recommended fan speed that can be set.
+    ```
+
+    **判断根拠**: capabilities フィールドの仕様（controllable + 属性別 colors / minimum / maximum）と既定値 true の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 想定ユースケース
 
 - **status LED 色のバリデーション**: ユーザが `config platform led set <color>` のような操作を試みた際、`platform.json` の `colors` リストに無い色なら CLI が拒否する。

@@ -192,6 +192,30 @@ excerpt: |
 reasoning: SAIREDIS で port 単位の damping 設定を伝搬する API の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/link_event_damping/Link-event-damping-HLD.md#L294-L356 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/link_event_damping/Link-event-damping-HLD.md#L294-L356 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    typedef struct _sai_redis_link_event_damping_algo_aied_config_t {
+      sai_uint32_t max_suppress_time;
+      ...
+    } ;
+    typedef enum _sai_redis_port_attr_t {
+      SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGORITHM = SAI_PORT_ATTR_CUSTOM_RANGE_START,
+      SAI_REDIS_PORT_ATTR_LINK_EVENT_DAMPING_ALGO_AIED_CONFIG,
+    } ;
+    ```
+
+    **判断根拠**: SAIREDIS で port 単位の damping 設定を伝搬する API の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

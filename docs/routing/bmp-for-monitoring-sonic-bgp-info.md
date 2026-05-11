@@ -115,6 +115,24 @@ excerpt: |
 reasoning: bmp container 構成と 2 daemon の役割の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/bmp/bmp.md#L82-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/bmp/bmp.md#L82-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Add new bmp container, it has two daemons: bmpcfgd to monitor config db change and control corresponding table that openbmpd populates;
+    openbmpd to accept connection from FRR and do bgp related table specific population.
+    ```
+
+    **判断根拠**: bmp container 構成と 2 daemon の役割の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## CLI
 
 `config bmp <table-name> <enable|disable>` 系で table 単位 on/off、`show bmp <table>` で表示する想定（HLD で詳細な引数定義はまだ）[^1]。

@@ -95,6 +95,25 @@ excerpt: |
 reasoning: 後方互換のための j2 内分岐が HLD で明示されている根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/snmp/snmp-schema-addition.md#L114-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/snmp/snmp-schema-addition.md#L114-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In repo *sonic-buildimage*:
+    * *dockers/docker-snmp-v2/snmpd.conf.j2*:
+      * verify the existence of the SNMP table in the datatbase and fork behavior if present, if not continue using old method.
+    ```
+
+    **判断根拠**: 後方互換のための j2 内分岐が HLD で明示されている根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

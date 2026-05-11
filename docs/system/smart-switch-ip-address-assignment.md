@@ -143,6 +143,25 @@ excerpt: |
 reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md#L80-L104 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md#L80-L104 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    DHCP server on the switch side shall be used. ... port-based which guarantees the deterministic behavior,
+    the same DPU shall always receive the same IP address on request.
+    ... bridge interface ("midplane bridge") shall be used. ... IPv4 link-local subnetwork is chosen.
+    ```
+
+    **判断根拠**: midplane bridge + DHCP port-based + link-local subnet 採用の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - DPU PCIe netdev 命名 `dpu<N>` を vendor が遵守する必要

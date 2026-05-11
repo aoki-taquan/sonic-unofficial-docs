@@ -110,6 +110,23 @@ excerpt: |
 reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/acl/ACL-High-Level-Design.md#L83-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/acl/ACL-High-Level-Design.md#L83-L91 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    | 1.1 | 08-Apr-2025 | Anish Narsian | VXLAN inner src mac rewrite support |
+    ```
+
+    **判断根拠**: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定例とトラブルシューティング
 
 ```bash

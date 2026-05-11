@@ -89,6 +89,23 @@ excerpt: |
 reasoning: pps→bps 換算と TC コマンドフローの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/Dhcp_Mitigation/DHCP Mitigation.md#L148-L151 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/Dhcp_Mitigation/DHCP Mitigation.md#L148-L151 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Since traffic control(TC) only supports rates in the form of bytes per second, this value is multiplied by 406 (number of bytes that make up a DHCP discover packet).
+    ```
+
+    **判断根拠**: pps→bps 換算と TC コマンドフローの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 関連する CLI
 
 | Command | 用途 |

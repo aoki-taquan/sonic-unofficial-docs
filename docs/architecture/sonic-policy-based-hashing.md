@@ -106,6 +106,24 @@ excerpt: |
 reasoning: スコープと field-only 更新（v0.3）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pbh/pbh-design.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pbh/pbh-design.md#L70-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In scope: PBH for NVGRE/VxLAN packets based on inner 5-tuple
+    ... PBH | PBH update flow ... introduce field set/del
+    ```
+
+    **判断根拠**: スコープと field-only 更新（v0.3）の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

@@ -88,6 +88,24 @@ excerpt: |
 reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両方を担うという責務の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/optional-feature-control/Optional-Feature-Control.md#L13-L19 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/optional-feature-control/Optional-Feature-Control.md#L13-L19 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Add feature in hostcfgd to listen for Config DB FEATURE table entry changes, and enable & start or stop & disable the respective service as appropriate.
+    When hostcfgd first starts, it reads all entries in the FEATURE table and compares with current status of each service. If there is mismatch, hostcfgd will enable & start or stop & disable as appropriate.
+    ```
+
+    **判断根拠**: hostcfgd が「変更購読」と「起動時の現状突合」の両方を担うという責務の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### CLI
 
 | Command | 用途 |

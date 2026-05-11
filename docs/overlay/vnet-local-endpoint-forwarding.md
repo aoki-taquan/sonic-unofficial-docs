@@ -121,6 +121,24 @@ excerpt: |
 reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM match を使う中核ロジックの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md#L31-L34 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/smart-switch/high-availability/vnet_local_endpoint_forwarding.md#L31-L34 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    During an HA failover, the HA pair briefly enters a transient state...
+    To handle this scenario, **high-priority** ACL rules matching tunnel termination flag are used to ensure redirects always go to the local nexthop.
+    ```
+
+    **判断根拠**: failover transient 対策として high-priority ACL + TUNNEL_TERM match を使う中核ロジックの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CONFIG_DB

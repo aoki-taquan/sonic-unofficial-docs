@@ -107,6 +107,25 @@ excerpt: |
 reasoning: alphabetical 順と per-table フローの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/config-generic-update-rollback/Json_Change_Application_Design.md#L229-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/config-generic-update-rollback/Json_Change_Application_Design.md#L229-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    We will update "Table" by "Table" in alphabetical order. Each table update will
+    take care of updating table entries in ConfigDB, restarting services if needed
+    and verifying services have absorbed.
+    ```
+
+    **判断根拠**: alphabetical 順と per-table フローの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## CLI
 
 `config apply-patch` 経由で呼ばれる（詳細は親 HLD `Generic Config Update and Rollback`）[^1]。

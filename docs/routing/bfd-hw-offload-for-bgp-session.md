@@ -85,6 +85,25 @@ excerpt: |
 reasoning: link-local シナリオでの inject-down モード要件と、MAC 取得が HLD スコープ外であることの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/bfd/BFD HW Offload for BGP session HLD.md#L419-L439 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/bfd/BFD HW Offload for BGP session HLD.md#L419-L439 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    When bgp use link local address to peer with remote system, it needs to specify interface index (and interface name) when create the bfd session. 
+    ...
+    How to get source mac address and destination mac address for IPv6 link local address is outside of the scope of this HLD, the implementation need to find a way to get these information.
+    ```
+
+    **判断根拠**: link-local シナリオでの inject-down モード要件と、MAC 取得が HLD スコープ外であることの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### デフォルト値とスケール
 
 | Attribute | Value |

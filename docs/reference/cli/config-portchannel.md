@@ -83,6 +83,31 @@ excerpt: |
   db.set_entry('PORTCHANNEL', portchannel_name, fvs)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L2832-L2867 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L2832-L2867 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    fvs = {
+        'admin_status': 'up',
+        'mtu': '9100',
+        'lacp_key': 'auto',
+        'fast_rate': fast_rate.lower(),
+    }
+    if min_links != 0:
+        fvs['min_links'] = str(min_links)
+    if fallback != 'false':
+        fvs['fallback'] = 'true'
+    db.set_entry('PORTCHANNEL', portchannel_name, fvs)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config portchannel del <portchannel_name>`
 
 **動作**:

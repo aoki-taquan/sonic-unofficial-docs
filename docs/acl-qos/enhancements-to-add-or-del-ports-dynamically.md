@@ -171,6 +171,25 @@ excerpt: |
 reasoning: buffer ref counter による delete ガードと lldp host-i/f チェックの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port-add-del-dynamically/dynamic_port_add_del_hld.md#L240-L284 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port-add-del-dynamically/dynamic_port_add_del_hld.md#L240-L284 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Need to add to orchagent the ability to add the buffer configuration of a port and increase a reference counter for each port,
+    in the same way ACL cfg on port is working.
+    ... when a port is added - the lldpcli execution can failed since the host interface is not yet up.
+    ```
+
+    **判断根拠**: buffer ref counter による delete ガードと lldp host-i/f チェックの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

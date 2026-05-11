@@ -182,6 +182,26 @@ excerpt: |
 reasoning: 公開 API と更新セマンティクスの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/acl/ACL-Table-Type-HLD.md#L308-L362 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/acl/ACL-Table-Type-HLD.md#L308-L362 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The create/update/remove methods are protected allowing the child classes to be overwritten for custom behavior...
+    bool addAclTable(shared_ptr<AclTable> aclTable); ...
+    NOTE: Updating ACL table allows only for updating ports bound to it.
+    NOTE: ACL rules coming from CONFIG DB are updated by removal and re-creation, an updateAclRule is mostly used for other orch's use cases.
+    ```
+
+    **判断根拠**: 公開 API と更新セマンティクスの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### フロー
 
 | フロー | 概要 |

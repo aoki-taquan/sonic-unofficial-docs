@@ -105,6 +105,26 @@ excerpt: |
 reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md#L93-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md#L93-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    A new class is added in fpmsyncd to subscribe to ERROR_ROUTE_TABLE present inside the ERROR_DB.
+    Subscription to this table is sufficient to handle the errors in route installation.
+    Currently, fpmsyncd has a TCP socket with Zebra listening on FPM_DEFAULT_PORT. ... We will reuse the same socket
+    to send information back to Zebra.
+    ```
+
+    **判断根拠**: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

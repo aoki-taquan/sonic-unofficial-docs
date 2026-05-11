@@ -99,6 +99,24 @@ excerpt: |
 reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/ntp/migration-to-chrony.md#L34-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/ntp/migration-to-chrony.md#L34-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    When slewing the time, ntpd disables the kernel time discipline. ... thus will not update the hardware clock/RTC on the board with the correct time.
+    When the kernel knows that the system time is synchronized, every 11 minutes, it will write the current system time to the hardware clock/RTC.
+    ```
+
+    **判断根拠**: ntpd の kernel time discipline 無効化と RTC 同期欠落の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - 既存 ntpd 互換 CLI を完全には保証できないため、運用スクリプトの書換が必要になる場合あり

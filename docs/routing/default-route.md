@@ -60,6 +60,26 @@ excerpt: |
 reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用という設計事実の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-linkmgrd/doc/default_route.md#L1-L6 (sha: 65f563308c689e3225fdf3fc249a132350e9879b)"
+
+    **出典**:
+
+    `sonic-net/sonic-linkmgrd/doc/default_route.md#L1-L6 (sha: 65f563308c689e3225fdf3fc249a132350e9879b)`
+
+    **抜粋**:
+
+    ```text
+    Orchagent will update both IPv4 and Ipv6 default route status to state db entries.
+    If there is a valid default route, it shall be updated as `state:ok`.
+    If there isn't a valid default route, it shall be updated as `state:na`.
+    For now we only care about IPv4, but state db notification handler should be properly defined for both entries.
+    ```
+
+    **判断根拠**: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用という設計事実の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 要件（Active-Standby）
 
 Active-Standby 構成における要件は次のとおり整理される。

@@ -132,6 +132,25 @@ excerpt: |
 reasoning: 2 段閾値ヒステリシスの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/psud/PSU_daemon_design.md#L80-L110 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/psud/PSU_daemon_design.md#L80-L110 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    We use asymmetric thresholds between raising and clearing the alarm for the purpose of creating a hysteresis ...
+    - an alarm will be raised when a PSU's power is rising across the critical threshold
+    - an alarm will be cleared when a PSU's power is dropping across the warning-suppress threshold
+    ```
+
+    **判断根拠**: 2 段閾値ヒステリシスの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - `psuutil` は state を持たないため `WARNING` を表示しない

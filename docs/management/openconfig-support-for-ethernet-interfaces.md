@@ -150,6 +150,29 @@ excerpt: |
 reasoning: transformer の attribute mapping ルールの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/OpenConfig_Interfaces.md#L271-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/OpenConfig_Interfaces.md#L271-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Mapping attributes between OpenConfig YANG and SONiC YANG:
+    | OpenConfig YANG | Sonic-port YANG |
+    | name | name |
+    | auto-negotiate | autoneg |
+    | port-speed | speed |
+    ...
+    | enabled | ipv6_use_link_local_only |
+    ```
+
+    **判断根拠**: transformer の attribute mapping ルールの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Negative ケース（仕様上は禁止）
 
 HLD の Negative Test Cases から派生する不可操作[^1]:

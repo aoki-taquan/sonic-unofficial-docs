@@ -74,6 +74,25 @@ excerpt: |
 reasoning: 「bgp_router_id があれば常にそれを使う」「未設定時は従来動作維持」という設計の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/BGP/BGP-router-id.md#L70-L84 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/BGP/BGP-router-id.md#L70-L84 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Add a field bgp_router_id in CONFIG_DB["DEVICE_METADATA"]["localhost"]...
+    If CONFIG_DB["DEVICE_METADATA"]["localhost"]["bgp_router_id"] configured, always use it as BGP router id.
+    ... When bgp_router_id doesn't be configured, the behavior is totally same as previously.
+    ```
+
+    **判断根拠**: 「bgp_router_id があれば常にそれを使う」「未設定時は従来動作維持」という設計の根拠。
+
+<!-- evidence-rendered:end -->
+
 #### BGP ピア追加ロジック（単一 ASIC）
 
 | 状況 | Loopback0 IPv4 あり | Loopback0 IPv4 なし |

@@ -66,6 +66,33 @@ excerpt: |
                        traptable[row]['vrf'], traptable[row]['Community']])
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L606-L624 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L606-L624 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @cli.group('snmptrap', invoke_without_command=True)
+    def snmptrap(ctx):
+        config_db = ConfigDBConnector()
+        config_db.connect()
+        traptable = config_db.get_table('SNMP_TRAP_CONFIG')
+        header = ['Version', 'TrapReceiverIP', 'Port', 'VRF', 'Community']
+        body = []
+        for row in traptable:
+            if row == "v1TrapDest":   ver=1
+            elif row == "v2TrapDest": ver=2
+            else:                     ver=3
+            body.append([ver, traptable[row]['DestIp'], traptable[row]['DestPort'],
+                         traptable[row]['vrf'], traptable[row]['Community']])
+    ```
+
+<!-- evidence-rendered:end -->
+
 ## 関連する CONFIG_DB
 
 | テーブル | キー | フィールド |

@@ -58,6 +58,30 @@ excerpt: |
       click.echo(tabulate(body, header))
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L588-L600 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L588-L600 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @cli.group('snmpagentaddress', invoke_without_command=True)
+    def snmpagentaddress(ctx):
+        config_db = ConfigDBConnector()
+        config_db.connect()
+        agenttable = config_db.get_table('SNMP_AGENT_ADDRESS_CONFIG')
+        header = ['ListenIP', 'ListenPort', 'ListenVrf']
+        body = []
+        for agent in agenttable:
+            body.append([agent[0], agent[1], agent[2]])
+        click.echo(tabulate(body, header))
+    ```
+
+<!-- evidence-rendered:end -->
+
 ## 関連する CONFIG_DB
 
 | テーブル | キー | フィールド |

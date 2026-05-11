@@ -83,6 +83,27 @@ excerpt: |
           ifs_action.append([iface, all_tables[iface]['loopback_action']])
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1416-L1441 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L1416-L1441 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    def loopback_action():
+        ...
+        for tbl in [if_tbl, vlan_if_tbl, po_if_tbl, sub_if_tbl]:
+            all_tables.update(tbl)
+        ...
+        if 'loopback_action' in all_tables[iface]:
+            ifs_action.append([iface, all_tables[iface]['loopback_action']])
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show ip route [<args>]`
 
 **用法**:
@@ -177,7 +198,6 @@ flowchart LR
 ## 引用元
 
 [^1]: `ip` グループ定義は `show/main.py` L1386-L1389。BGP の動的アタッチは L1567-L1581。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1387>
-
 
 <!-- usage-example -->
 ## 実行例

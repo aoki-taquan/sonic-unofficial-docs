@@ -109,6 +109,24 @@ excerpt: |
 reasoning: ベンダ依存の counter 集約方式（合算 vs 分離）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md#L98-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md#L98-L102 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    As different vendors can have diferent drop counters calculation, for example L2 and L3 drop counters can be combined and L2 drop counter will be increased for all ingress discards.
+    So for valid drop counters verification there is a need to distinguish whether drop counters are combined or not for current vendor.
+    ```
+
+    **判断根拠**: ベンダ依存の counter 集約方式（合算 vs 分離）の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

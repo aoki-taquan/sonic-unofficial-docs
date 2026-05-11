@@ -58,6 +58,25 @@ excerpt: |
                           {'state': state})
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L10012-L10020 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L10012-L10020 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @banner.command()
+    @click.argument('state', type=click.Choice(['enabled', 'disabled']))
+    def state(state):
+        config_db.mod_entry(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, 'global',
+                            {'state': state})
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config banner login <message>`
 
 **動作**:

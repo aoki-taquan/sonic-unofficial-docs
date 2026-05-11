@@ -112,6 +112,26 @@ excerpt: |
 reasoning: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得る、という設計判断の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/voq/everflow.md#L75-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/voq/everflow.md#L75-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    This option can be implemented with minimal changes to SAI as long as a recycle port can be created.
+    ... mirrororch needs to use the recycle port as the mirror destination port and the router mac as the destination MAC address.
+    ... When the mirror destination port is a local port, it's recommended to recycle mirror packets too
+    for the following reasons: The implementation of mirrororch is simplified ... mirrored packets can be load-balanced
+    ```
+
+    **判断根拠**: Option 2 が SAI 変更を抑えつつ ECMP LB のメリットを得る、という設計判断の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 対象 orchagent の責務
 
 | 役割 | コンポーネント | 拡張 |

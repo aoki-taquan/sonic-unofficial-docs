@@ -104,6 +104,24 @@ excerpt: |
 reasoning: lossless PG は削除、それ以外は zero_profile という分担の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/qos/reclaim-reserved-buffer.md#L66-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/qos/reclaim-reserved-buffer.md#L66-L96 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    - For lossless buffer priority groups, SONiC should remove them from SAI when the port is admin down.
+    - For other buffer objects: Introduce a new type of buffer profiles - `zero profile`.
+    ```
+
+    **判断根拠**: lossless PG は削除、それ以外は zero_profile という分担の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

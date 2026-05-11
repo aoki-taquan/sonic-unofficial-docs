@@ -104,6 +104,25 @@ excerpt: |
 reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In current implementation when user try to fetch switch peripheral devices related data with CLI,
+    underneath it will directly access hardware via platform plugins, in some case it could be very slow
+    ... CLI/SNMP will access cached data(DB) instead, which will be much faster.
+    ```
+
+    **判断根拠**: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - 共通 daemon への移行期は platform plugin 互換のため両系統が並存する可能性

@@ -159,6 +159,25 @@ excerpt: |
 reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/gnsi.md#L168-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/gnmi/gnsi.md#L168-L298 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Credentialz is for managing SSH and Console access. Changes are made through dbus calls to appropiate host service modules.
+    ...
+    When this type of message is received the back-end will replace the content of /home/<account>/.ssh/authorized_keys file and restart the sshd daemon.
+    ```
+
+    **判断根拠**: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### gNMI / sonic-gnmi 側のフラグ追加
 
 HLD は gNMI server に以下のフラグを追加する想定[^1]:

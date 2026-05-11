@@ -198,6 +198,27 @@ excerpt: |
 reasoning: MLACP FSM の 4 状態と各状態の責務の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mclag/iccpd-code-introduction.md#L70-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mclag/iccpd-code-introduction.md#L70-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    There are four states in MCLAG finite state machine:
+    - MLACP_STATE_INIT: Peer connection is not established.
+    - MLACP_STATE_STAGE1: ... first sync up ARP and MAC info with peer ...
+    - MLACP_STATE_STAGE2: ...
+    - MLACP_STATE_EXCHANGE: This is the steady state. Function mlacp_exchange_handler() handle some events in this switch.
+    ```
+
+    **判断根拠**: MLACP FSM の 4 状態と各状態の責務の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

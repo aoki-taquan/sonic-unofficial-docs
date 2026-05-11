@@ -136,6 +136,24 @@ excerpt: |
 reasoning: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/gnmi/gnoi_os_hld.md#L161-L180 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/gnmi/gnoi_os_hld.md#L161-L180 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    There is an existing interface to sonic-installer ... host_modules/image_service.py which can be used to consolidate all OS operations in one place.
+    func ActivateOS / VerifyOS / InstallOS ... HostQuery("image_service.activate"|"image_service.verify"|"image_service.install", reqStr)
+    ```
+
+    **判断根拠**: 3 RPC が image_service の 3 DBUS endpoint に 1:1 対応する根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

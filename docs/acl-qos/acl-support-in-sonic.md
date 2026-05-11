@@ -170,6 +170,24 @@ excerpt: |
 reasoning: 設定フローと full / partial モードの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/acl/acl.md#L103-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/acl/acl.md#L103-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    User generate json based configuration file based on the schema defined above, and then use the swssconfig to configure the ACl table and rules.
+    swssconfig should have two configuration mode, full and partial. In full configuration mode, all existing acl rules and table are removed and replaced by the new configuration. In partial configuration mode, new configuration are delta to current configuration.
+    ```
+
+    **判断根拠**: 設定フローと full / partial モードの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### カウンタ
 
 - ルール毎の **packet counter は Must Have**（必須機能）。

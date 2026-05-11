@@ -134,6 +134,26 @@ excerpt: |
 reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notification) の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/grpc_client/design_doc.md#L36-L54 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/grpc_client/design_doc.md#L36-L54 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    provide a service/daemon in SONiC to run in DualToR mode, which can interact with Platform API as well interact with state machine (aka Linkmgr) and orchagent to provide capability for it to get/set Link State/Forwarding State etc. from SoC(gRPC server listening to the client)
+    ... over a secure channel
+    ... using a loopback IP as source IP
+    ... interface for SoC to notify this gRPC client about going to maintainence/shutdown via an asynchronous method
+    ```
+
+    **判断根拠**: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notification) の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB
