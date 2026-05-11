@@ -78,7 +78,13 @@ markdown_extensions:
 plugins:
   - search:
       lang: ja
+      separator: '[\s\-、。・]+'
   - awesome-pages
+
+copyright: >
+  &copy; 2024–2026 sonic-unofficial-docs contributors —
+  本ドキュメントは <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> の下で提供されます。
+  SONiC 本体および公式ドキュメントとは無関係の非公式資料です。
 
 extra:
   social:

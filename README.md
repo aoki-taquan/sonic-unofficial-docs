@@ -13,6 +13,26 @@
 
 詳しい運用ルールは [`CONTRIBUTING.md`](./CONTRIBUTING.md) を参照。
 
+## 公開状態
+
+現在の公開ステータス: **β リリース可（v1.0 未到達）**
+
+品質指標 (2026-05-11 時点):
+
+| 指標 | 値 |
+|------|----|
+| 総ページ数 | 779 |
+| `code-verified` ページ | 545 |
+| `discrepancy-found` ページ | 48 |
+| `hld-only` 本文ページ | 0 |
+| 監査平均評価 (round 6) | 4.978 / 5.0 |
+| CLI Reference | 63 ページ |
+| CONFIG_DB Reference | 110 ページ |
+| YANG Reference | 70 ページ |
+| Runbooks | 31 ページ |
+
+v1.0 昇格までの残作業は [`meta/release-checklist-v1.md`](./meta/release-checklist-v1.md) を参照。GitHub Pages の Source 設定手順は [`meta/github-pages-setup.md`](./meta/github-pages-setup.md) を参照。
+
 ## ローカルでのプレビュー
 
 ```bash
