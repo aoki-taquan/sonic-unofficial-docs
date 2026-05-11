@@ -10505,6 +10505,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このページを読んだ後の次アクション
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -10533,7 +10544,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28835,6 +28846,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このページを読んだ後の次アクション
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28863,7 +28885,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29023,6 +29045,28 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>saidump<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span>SAI_FDB
 </span></code></pre></div>
 <p>port が VLAN メンバでない間に投入した static は orchagent ログで saved に積まれているか確認。</p>
+<!-- next-action -->
+<h2 id="_6">このページを読んだ後の次アクション<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">読み手向け</p>
+<ul>
+<li><strong>本機能を実運用で使う場合</strong>: 取り込み済の部分のみ運用可能。欠落部分の利用は不可なので本文「実装との乖離」を確認した上で適用範囲を限定する</li>
+<li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
+<li><strong>代替手段 / 関連 reference</strong>:<ul>
+<li><a href="../../reference/cli/show-mac/">CLI: <code>show mac</code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">本ドキュメントの追跡</p>
+<ul>
+<li>monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
+<li>次回再裏取りトリガ: quarterly。一覧は <a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照（運用詳細は repo の <code>meta/discrepancy-operations.md</code>）</li>
+</ul>
+</div>
+<!-- /next-action -->
+
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/06-l2-vlan-lag/operations/">06-l2-vlan-lag/operations</a>: FDB / VLAN 運用</li>
@@ -29033,7 +29077,7 @@
 <ul>
 <li>[GitHub Issue / PR の関連リンクは未確認] — FDB flush / aging / static MAC / VLAN range 拡張は L2 系の小粒 PR が継続的に追加されており、HLD 全体を束ねるトラッキング Issue / PR は確認できず。</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>

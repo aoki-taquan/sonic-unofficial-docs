@@ -14983,6 +14983,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このページを読んだ後の次アクション
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28896,6 +28907,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このページを読んだ後の次アクション
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29134,6 +29156,31 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <ul>
 <li>[GitHub Issue / PR の関連リンクは未確認] — SmartSwitch DPU 側 APPL_STATE_DB と version_id フィードバック機構は SmartSwitch 全体の HA / gNMI 改修 PR 群に取り込まれており、本 HLD 単独のトラッキング Issue / PR は確認できず。</li>
 </ul>
+<!-- next-action -->
+<h2 id="_8">このページを読んだ後の次アクション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">読み手向け</p>
+<ul>
+<li><strong>本機能を実運用で使う場合</strong>: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する</li>
+<li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
+<li><strong>代替手段 / 関連 reference</strong>:<ul>
+<li><a href="../../reference/config-db/vnet/">CONFIG_DB: VNET</a></li>
+<li><a href="../../reference/config-db/switch-trimming/">CONFIG_DB: SWITCH_TRIMMING</a></li>
+<li><a href="../../reference/config-db/switch-hash/">CONFIG_DB: SWITCH_HASH</a></li>
+<li><a href="../../reference/cli/show-version/">CLI: <code>show version</code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">本ドキュメントの追跡</p>
+<ul>
+<li>monitor: <code>not_implemented</code> / last_verified: <code>2026-05-11</code></li>
+<li>次回再裏取りトリガ: quarterly。一覧は <a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照（運用詳細は repo の <code>meta/discrepancy-operations.md</code>）</li>
+</ul>
+</div>
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
