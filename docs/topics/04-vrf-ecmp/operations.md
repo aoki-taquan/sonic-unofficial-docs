@@ -154,6 +154,41 @@ crm: CRM Counter NEIGHBOR EXCEEDED HIGH threshold(85) used 8700 available 1500
 - Dual-ToR 上の default route と nexthop は [Dual-ToR 章 運用](../05-dual-tor/operations.md)。
 - L2 SVI（VLAN_INTERFACE）の up/down 前提は [L2 章 運用](../06-l2-vlan-lag/operations.md)。
 
+## 追加の show 出力例
+
+`show vrf` は CONFIG_DB の `VRF` テーブルと `INTERFACE`/`VLAN_INTERFACE`/`PORTCHANNEL_INTERFACE` の `vrf_name` を結合して表示します。
+
+```text
+VRF        Interfaces
+---------  -------------------------
+Vrf_red    Ethernet8
+           Vlan100
+Vrf_blue   Ethernet12
+           PortChannel201
+```
+
+VRF が定義されているが Interface 欄が空の場合、bind 漏れか、bind 直後で APPL_DB:INTF_TABLE が未反映の過渡状態です。`config interface vrf bind` の順序、または `swssconfig` の流入を確認します。
+
+`show interfaces counters rif` は RIF（router interface）単位の RX/TX を表示します。
+
+```text
+    IFACE    RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    TX_PPS    TX_ERR
+---------  -------  --------  --------  --------  -------  --------  --------  --------
+Ethernet0   12,453  12.34 KB     8.2/s         0    9,832  10.21 KB     6.4/s         0
+Ethernet4   45,210  41.22 KB    28.7/s         3   32,109  31.55 KB    21.0/s         0
+Vlan1000   180,512 155.40 KB   120.3/s         0  120,330 110.11 KB    85.7/s         2
+```
+
+`RX_ERR` / `TX_ERR` の増加は MTU / TTL / loopback-action drop を疑い、CRM 閾値超過と合わせて切り分けます。
+
+## 典型的な運用シナリオ
+
+1. **新規 VRF 払い出し** — `config vrf add Vrf_red` → 対象 Interface に `config interface vrf bind <intf> Vrf_red` → `show vrf` で member 確認 → 必要なら BGP / static route を VRF 配下に投入。bind 順序を誤ると IP 設定が消えるので、IP 設定前に bind するのが安全です。
+2. **VRF leak / import の検証** — `show ip bgp vrf <vrf>` の RT import で予期する prefix を確認し、`show ip route vrf <vrf>` に `>` `*` が付いているかを見ます。leak 経路は RT mismatch が原因の大半です。
+3. **ECMP 偏りの調査** — `show interfaces counters rif` で各 member の TX 偏りを確認、`crm show summary` で NHG / NEXTHOP の使用量を確認、必要なら hash-seed / hash-field を見直します。
+4. **MTU mismatch 切り分け** — `RX_ERR` の急増と TTL exceed の syslog を見て、両端 MTU を `show interfaces status` で揃え、jumbo 設定とパス MTU を確認します。
+5. **loopback-action 設計確認** — `show ip interfaces loopback-action` で `drop` 設定の interface を一覧化し、設計外の interface に `drop` がついて legitimate な return traffic が落ちていないかを確認します。
+
 ## 関連ページ
 
 - [CLI: show ip](../../reference/cli/show-ip.md)

@@ -160,6 +160,39 @@ May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 - 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — save-on-set と再起動を跨ぐ永続化
 - 章 [02 BGP](../02-bgp/operations.md) — BGP Graceful Restart の運用
 
+## 異常検出パターン
+
+| 観測 | 疑う状態 | 一次切り分け |
+|---|---|---|
+| `show reboot-cause` が `Unknown` | `/host/reboot-cause/` の更新失敗、または初回 boot | ファイル mtime、`determine-reboot-cause.service` の journal |
+| warm-reboot 後 `restore_count` が 0 | warm path に入らず cold boot した | `/var/log/syslog` の warm-reboot 実行ログ、`pre-shutdown` 失敗 |
+| reconciliation が `restored` で止まる | EOIU 未受領、または依存 service 未起動 | 該当 component の syslog、`show warm_restart state` の他 component |
+| warm-reboot 中に LAG が落ちる | LACP retry 拡張未対応、peer 側 timeout 短 | teamd ログ、peer 側 LACP rate |
+| warm-reboot 中に BGP session が落ちる | peer の Graceful Restart が `Disable` | `show bgp neighbor X graceful-restart` の `Remote GR Mode` |
+| `Kernel Panic` 直後の boot で kdump が無い | kdump 無効、または `/var/crash/` 空き不足 | `show kdump status`、`/var/crash/` 容量 |
+| fast-reboot 後 BGP neighbor が `never` | image 切替で config drift、または `config_db.json` 破損 | `config_db.json` の `BGP_NEIGHBOR`、`bgpcfgd` ログ |
+
+## 典型的な運用シナリオ
+
+1. **計画 warm-reboot（minor update）** — `show warm_restart config` で対象 service が enable で timer が適切か確認 → peer の Graceful Restart 設定確認 → `sudo warm-reboot` → 起動後 `show warm_restart state` が全て `reconciled` を確認。
+2. **計画外の Kernel Panic 解析** — `/host/reboot-cause/previous-reboot-cause.json` と `/var/crash/` の vmcore を保全 → `show techsupport` で全 log 収集 → `dmesg` で MCE / OOM / driver oops を確認。
+3. **multi-ASIC で一部 ASIC のみ再起動** — 対象 namespace を特定 → `warm-reboot -m <namespace>` または該当 namespace の `swss`/`syncd` を `systemctl restart` → 残り ASIC が影響を受けていないことを `show interfaces counters` の連続性で確認。
+4. **fast-reboot で image 切替** — `sonic-installer set-default <image>` → `fast-reboot` → 起動後 `show version` で image を確認 → BGP/LAG/route 件数が事前メモと合っているかを確認。
+5. **reboot 履歴の定期点検** — `show reboot-cause history` を週次で確認し、`Watchdog` / `Hardware - reason` が一度でも出ていれば platform team に escalate、`Kernel Panic` が複数回なら同 stack trace を比較。
+
+## 対応コマンド追加
+
+| 目的 | コマンド |
+|---|---|
+| 直近 cause の生ファイル | `cat /host/reboot-cause/reboot-cause.txt` |
+| 前回 cause（JSON） | `cat /host/reboot-cause/previous-reboot-cause.json` |
+| reboot 一覧履歴 | `show reboot-cause history` |
+| warm-restart 設定 | `show warm_restart config` |
+| warm-restart 状態 | `show warm_restart state` |
+| Graceful Restart 状態（BGP） | `vtysh -c "show bgp neighbor <ip> graceful-restart"` |
+| kdump 状態 | `show kdump status`、`ls /var/crash/` |
+| reconciliation log | `grep -i reconcil /var/log/syslog` |
+
 ## 関連ページ
 
 - [Reboot-cause 履歴の STATE_DB / テレメトリ公開](../../system/reboot-cause-information-via-telemetry-agent.md)

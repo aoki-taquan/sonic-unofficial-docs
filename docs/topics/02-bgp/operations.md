@@ -141,6 +141,43 @@ syncd: :- processQuadEvent: api SAI_API_ROUTE failed in syncd mode: SAI_STATUS_I
 - EVPN underlay: [Overlay 章 運用](../03-vxlan-evpn/operations.md) の BGP-EVPN session 観察。
 - Dual-ToR 上流 BGP の BFD offload: [Dual-ToR 章 運用](../05-dual-tor/operations.md)。
 
+## 追加の show 出力例
+
+`show ip bgp neighbor 10.0.0.1` の主要部抜粋です。Established 確認時はまず `BGP state` と `Last reset` を見ます。
+
+```text
+BGP neighbor is 10.0.0.1, remote AS 65200, local AS 65100, external link
+  Description: ARISTA01T2
+  BGP version 4, remote router ID 10.1.0.1
+  BGP state = Established, up for 1d21h11m
+  Last read 00:00:01, Last write 00:00:00
+  Hold time is 180, keepalive interval is 60 seconds
+  Neighbor capabilities:
+    4 Byte AS: advertised and received
+    Route refresh: advertised and received(old & new)
+    Graceful Restart Capability: advertised and received
+      Remote Restart timer is 120 seconds
+  Graceful restart information:
+    End-of-RIB send: IPv4 Unicast
+    End-of-RIB received: IPv4 Unicast
+  Message statistics:
+                         Sent       Rcvd
+    Opens:                  1          1
+    Notifications:          0          0
+    Updates:              641       3204
+    Keepalives:          2074       2713
+```
+
+`Last reset` 行が無いケースは初回 Established 維持中です。`Dropped` カウンタが増えている場合は session が一度落ちてから再確立されています。
+
+## 典型的な運用シナリオ
+
+1. **新規 peer 追加** — `config bgp ...` または GCU patch で `BGP_NEIGHBOR` を追加し、`show ip bgp summary` で `Up/Down` が `never` から時刻に切り替わるかを観察します。`Active` のまま停滞するなら ACL / source IP / MD5 を疑います。
+2. **メンテナンスモード移行** — `sudo TSA`（Traffic Shift Away）で community-based route policy を切り替え、上流に低 LOCAL_PREF を広告して traffic を引き受けないようにしてから、debug や upgrade を行います。復旧は `sudo TSB`。
+3. **peer flap の調査** — `show ip bgp neighbor X` の `Dropped` と `Last reset reason` を見て、hold-timer expired か NOTIFICATION 受信か、TCP RST かを切り分けます。`bgpd` syslog の `%ADJCHANGE` の連続を時系列で並べると周期が見えます。
+4. **policy 変更後の収束確認** — `vtysh -c "clear ip bgp <ip> soft"` で再 advertise を促し、`received-routes` / `advertised-routes` 数の変化を見ます。`clear ip bgp *` は全 peer に影響するので避けます。
+5. **route leak 疑い** — VRF 内 BGP の `show ip bgp vrf <vrf>` と `show ip route vrf <vrf>` を突き合わせ、想定外の prefix がどの peer / route-map / import から来たかを調べます。`show bgp ipv4 unicast <prefix> bestpath` で attribute も確認します。
+
 ## 関連ページ
 
 - [CLI: show bgp](../../reference/cli/show-bgp.md)
