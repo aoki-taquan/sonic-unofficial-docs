@@ -21,6 +21,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: discrepancy-found"
     orchagent 側（`fdborch.cpp` / `switchorch.cpp`）は HLD のとおり実装済み。一方で **`config mac` / `config vlan range` CLI は sonic-utilities 現行 master に存在しない**。詳細は本文末尾の「実装との乖離」を参照（verified at: 2026-05-09）。
 

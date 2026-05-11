@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     本ページは公式 HLD（コードイントロドキュメント）のみを根拠に書かれている。各ファイルの関数名・状態遷移名は記載時点のもので、現行 master の `sonic-buildimage/dockers/docker-iccp/` 以下の実コードとは差異がある可能性がある。
 

@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     `sonic-platform-daemons/sonic-psud/scripts/psud` で `PSU_INFO_UPDATE_PERIOD_SECS = 3`、`PSU_INFO_POWER_OVERLOAD = 'power_overload'`、`PSU_INFO_POWER_WARNING_SUPPRESS_THRESHOLD` / `PSU_INFO_POWER_CRITICAL_THRESHOLD` の定数と判定ロジックが確認できた。`sonic-platform-common/sonic_platform_base/psu_base.py` の `get_psu_power_warning_suppress_threshold` / `get_psu_power_critical_threshold` / `get_input_voltage` / `get_input_current` 抽象 API も実在。`sonic-utilities/scripts/psushow` で `power_overload` を読み取り `WARNING` / `OK` を表示。
 

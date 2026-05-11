@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     `sonic-platform-common/sonic_platform_base/sonic_xcvr/` 配下に `api/` `mem_maps/` `codes/` `fields/` `cdb/` `utils/` および `xcvr_api_factory.py` `xcvr_eeprom.py` `sfp_optoe_base.py` を確認。`api/public/` に `cmis.py` `c_cmis.py` `sff8472.py` 等が実装され、`xcvr_api_factory.py:51 class XcvrApiFactory` が `id_mapping` で identifier → API クラスを切り替える。`sonic-platform-daemons/sonic-xcvrd/xcvrd/` は `sfp.get_xcvr_api()` を全面使用。
 

@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     `sonic-swss/orchagent/crmorch.h` で `CRM_EXT_TABLE` enum (l.37)、`incCrmExtTableUsedCounter(...)` (l.88)、`decCrmExtTableUsedCounter(...)` (l.90) を確認。`crmorch.cpp` (l.51) `{ CrmResourceType::CRM_EXT_TABLE, "EXTENSION_TABLE" }` の resource name 登録。`tests/p4rt/test_viplb.py` で `EXT_TABLE_STATS:<TBL_NAME>` の `crm_stats_extension_table_used` / `crm_stats_extension_table_available` を P4Orch test が参照しており命名規則も整合。
 

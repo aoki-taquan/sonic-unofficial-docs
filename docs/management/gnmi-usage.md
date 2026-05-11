@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     `sonic-gnmi/patches/gnmi_get.patch` L25 で `pathTarget = flag.String("xpath_target", "", "name of the target for which the path is a member")` を確認（`gnmi_set.patch` / `gnmi_cli.all.patch` も同等）。サーバ側 `sonic-gnmi/gnmi_server/server.go` L975-988 で `target == "OPERATIONAL" / "OTHERS" / "SHOW"` の特殊分岐と `sdc.IsTargetDb(target)` による `CONFIG_DB / COUNTERS_DB` 等 SONiC DB 名分岐を確認。`sonic-gnmi/sonic_data_client/db_client.go` L647 で `COUNTERS_DB` 専用処理を確認 (verified at: 2026-05-09)。
 

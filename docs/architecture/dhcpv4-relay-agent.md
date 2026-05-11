@@ -18,6 +18,11 @@ related:
     - sonic-dhcp-relay
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。dhcpmon / dhcrelay: sonic-buildimage/dockers/docker-dhcp-relay/dhcp-relay.monitors.j2 で program:dhcpmon-{vlan} と /usr/sbin/dhcpmon -id <vlan> を確認。yang: sonic-dhcpv4-relay.yang。
 

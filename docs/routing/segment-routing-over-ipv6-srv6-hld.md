@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-swss/orchagent/srv6orch.cpp` / `srv6orch.h` を master で確認。`SRV6_MY_SID_TABLE` / `SRV6_SID_LIST` 等のスキーマ定数は `sonic-swss-common/common/schema.h` に取り込み済み。
 

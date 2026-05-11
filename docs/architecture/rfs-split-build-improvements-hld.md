@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 19 章: Build / Packaging / Debian](../topics/19-build-packaging/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified（フラグ名は RFS_SPLIT_FIRST_STAGE / LAST_STAGE）"
     HLD で言及される `ENABLE_RFS_SPLIT_BUILD` 単一フラグは現行 `rules/config` には存在せず、代わりに `slave.mk` から `build_debian.sh` に **`RFS_SPLIT_FIRST_STAGE` / `RFS_SPLIT_LAST_STAGE` の 2 段フラグ**を `export` して制御している (`slave.mk:1439-1440, 1701-1702`)。`build_debian.sh:63 [[ $RFS_SPLIT_LAST_STAGE != y ]]`、`:605 [[ $RFS_SPLIT_FIRST_STAGE == y ]]`、`:622 [[ $RFS_SPLIT_LAST_STAGE == y ]]` で Stage 分岐。
 

@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: discrepancy-found"
     HLD は v0.1 (2025-12) Initial Proposal。実装は **HLD と乖離**。`sonic-platform-common` `module_base.py` の `set_admin_state_gracefully()` / `_graceful_shutdown_handler()` および `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` の `submit_dpu_callback()` は実在するが、HLD で提案されている独立した `gnoi_reboot_daemon.py` は **sonic-platform-daemons に未取り込み**。STATE_DB のフラグも HLD の `CHASSIS_MODULE_INFO_TABLE` / `state_transition_in_progress` ではなく `CHASSIS_MODULE_TABLE` の `transition_in_progress` (`set_module_state_transition`) と独立した `gnoi_halt_in_progress` フラグの 2 系統で実装されている。chassisd が直接 `module.set_admin_state_gracefully` を呼ぶ構成で、独立した gNOI 経路は実体がない。
 

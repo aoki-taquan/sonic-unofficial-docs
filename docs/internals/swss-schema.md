@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified / リファレンス文書"
     本ファイルは sonic-swss リポジトリ内の **生きたスキーマ参照ドキュメント** で、APPL_DB / STATE_DB の中心テーブルの ABNF 定義を集約している。本ページは概観のみで、最新の各テーブル詳細は [sonic-swss/doc/swss-schema.md](https://github.com/sonic-net/sonic-swss/blob/master/doc/swss-schema.md) を参照することを推奨する。54KB 超のため要点のみ抜粋。
 

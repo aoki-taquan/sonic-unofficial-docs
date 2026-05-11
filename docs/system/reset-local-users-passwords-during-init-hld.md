@@ -18,6 +18,11 @@ related:
     - sonic-local-users-passwords-reset
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: HLD-only"
     HLD は 2024 年 1〜2 月版 (Rev 2.1)。`reset-local-users-passwords.service`、`sonic-platform-common` の `LocalUsersConfigurationResetBase`、各 vendor 実装、`/etc/sonic/default_users.json` のフォーマット、`ENABLE_LOCAL_USERS_PASSWORDS_RESET` ビルドフラグの現行 master 取り込みは未裏取り。
 

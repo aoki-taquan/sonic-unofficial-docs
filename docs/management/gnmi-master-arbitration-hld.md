@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: Discrepancy-found"
     現行 master (`sonic-gnmi` @ eb635b76) で `--with-master-arbitration` フラグおよび `ReqFromMasterEnabledMA` の主要ロジック（128-bit EID 比較・末尾 MA 採用・PermissionDenied 返却）は実装済み。ただし HLD と実装の間で **(1) Role 指定時の挙動 (2) CONFIG_DB 駆動の有効化** に関して 2 点の乖離があり、本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 

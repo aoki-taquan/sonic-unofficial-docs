@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     `sonic-swss/orchagent/portsorch.cpp` で `sai_port_api->create_ports(...)` (l.1445) と `sai_port_api->remove_ports(...)` (l.1549) を bulk 呼出。`sonic-sairedis/syncd/CommandLineOptionsParser.cpp` に `-l --enableBulk` オプションあり（`unittest/syncd/TestCommandLineOptions.cpp` も同オプションをテスト）。SAI 側 `create_ports` / `remove_ports` シンボルは sonic-sairedis SAI submodule 経由で利用可能。
 

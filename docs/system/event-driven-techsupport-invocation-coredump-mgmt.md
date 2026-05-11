@@ -18,6 +18,11 @@ related:
     - sonic-auto-techsupport
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: code-verified"
     coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は未確認。
 

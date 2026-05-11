@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 19 章: Build / Packaging / Debian](../topics/19-build-packaging/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-utilities/sonic_package_manager/` に `manifest.py`（`ManifestSchema` / un-marshal / 検証）、`manager.py`、`metadata.py`、`database.py`、`dockerapi.py`、`main.py`、`constraint.py` が master に存在。マニフェスト形式と `sonic-package-manager` CLI 経路は master 取り込み済み。コア HLD（`sonic-application-extention-hld.md`）と整合。
 

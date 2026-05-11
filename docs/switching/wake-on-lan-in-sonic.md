@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: discrepancy-found"
     HLD と現行 master 実装に齟齬がある。
     

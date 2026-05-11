@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     DTel feature は Barefoot 系 ASIC 主体。`SAI_OBJECT_TYPE_DTEL_*` の community SAI 取り込み状況、`DTEL_*` テーブルの CONFIG_DB スキーマ、sonic-mgmt 配下 DTel テストの現行カバレッジは未裏取り。
 

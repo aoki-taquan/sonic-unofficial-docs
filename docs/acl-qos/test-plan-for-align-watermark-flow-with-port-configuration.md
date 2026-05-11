@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: `sonic-swss/orchagent/flexcounterorch.cpp:76-95` で `QUEUE → QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP`, `QUEUE_WATERMARK → QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP`, `PG_WATERMARK → PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP`, `PG_DROP → PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP`, `WRED_ECN_QUEUE → WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` のマッピングを確認。テストプランの 4 種 counter group が現行 FlexCounterOrch に揃って実装されており、`counterpoll <type> enable/disable` 経路と整合する。
 

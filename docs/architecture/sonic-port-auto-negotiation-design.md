@@ -20,6 +20,11 @@ related:
     - sonic-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-swss/orchagent/portsorch.cpp:3525 getPortAdvSpeeds` / `:3613 SAI_PORT_ATTR_ADVERTISED_INTERFACE_TYPE` / `:5080-5108` adv_speeds incremental update が実装。STATE_DB の `rmt_adv_speeds` (peer から学習) も `:4862` で扱う。CLI は `sonic-utilities/config/main.py:5372 def advertised_speeds()` で実装済み。HLD どおり autoneg / advertised-speeds / interface-type の組合せがランタイム反映される。
 

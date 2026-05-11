@@ -19,6 +19,11 @@ related:
     - sonic-vlan-sub-interface
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `IntfMgr` の sub-port 拡張を `sonic-swss/cfgmgr/intfmgr.cpp` で確認: L14 `#include "subintf.h"`, L331 `addHostSubIntf()`, L407-L446 `updateSubIntfMtu()` / `setHostSubIntfMtu()`, L464-L532 `updateSubIntfAdminStatus()` / `setHostSubIntfAdminStatus()`, L533 `removeHostSubIntf()`, L542 `setSubIntfStateOk()`, L557 `removeSubIntfState()`。`SubIntf` クラス本体は `sonic-swss/lib/subintf.cpp` / `subintf.h` に独立実装されている。`intfsorch.cpp` も sub-port を取り込み済み。
 

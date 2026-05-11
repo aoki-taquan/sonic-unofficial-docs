@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp` で `FlowCounterRouteOrch` クラス完全実装（`:28` ctor、`:55/:99` `doTask`、`:166` `initRouteFlowCounterCapability`、`addRoutePattern` / `removeRoutePattern` / `bindFlowCounter` 等）。`sonic-utilities/config/flow_counters.py:4-90` で `@click.group('flowcnt-route')`、`show/flow_counters.py:30-53` で show 側を確認（verified at: 2026-05-11）。
 

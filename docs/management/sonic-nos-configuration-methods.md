@@ -20,6 +20,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified / 概観文書"
     `sonic-utilities/config/main.py` で `apply-patch` / `replace` / `rollback` の 3 サブコマンドと `--dry-run` / `--ignore-non-yang-tables` / `--ignore-path` オプションを確認。`generic_config_updater/`、`sonic-buildimage/src/sonic-ztp`、`bgpcfgd` の存在も確認済み。本 HLD は概観文書で各機構の詳細は別 HLD に委ねる。
 

@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     YANG モデル `sonic-mgmt-common/models/yang/sonic/sonic-show-techsupport.yang` に `rpc sonic-show-techsupport-info` が定義され、annotations `sonic-showtech-annot.yang` で transformer に紐付け済み。tarball 採取本体は `sonic-utilities/scripts/generate_dump` (techsupport_cleanup.py / bmc_techsupport.py が呼ぶ) で従来どおり。`sonic-buildimage` には `sonic-auto_techsupport.yang` も存在。RPC 起動経路は HLD どおり実装。
 

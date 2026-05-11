@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: HLD-only"
     `fpmsyncd` の `RTM_NEWNEXTHOP` ハンドラ、`NEXTHOP_GROUP_TABLE` の APPL_DB スキーマ、`NhgOrch` の multipath 拡張、`fpm use-nexthop-groups` の有効化フローは現行 master 未裏取り。
 

@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 19 章: Build / Packaging / Debian](../topics/19-build-packaging/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: discrepancy-found"
     HLD で提案されている `rules/profiles/` ディレクトリと Makefile での `PROFILE` 変数取り込みは現行 master に **取り込まれていない**。`sonic-buildimage/Makefile.work` は `include rules/config` と `-include rules/config.user` のみで、`profiles/$(PROFILE).mk` を後段で取り込む実装は無い。HLD は将来的な提案 / 別 fork での運用としてのみ参考にすべき。
 

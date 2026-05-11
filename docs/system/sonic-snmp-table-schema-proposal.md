@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-snmp.yang` で SNMP/CONTACT/LOCATION コンテナ定義を確認。`sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2` で `SNMP_COMMUNITY` の RO/RW、`SNMP_USER` の RO/RW + auth/encryption、`SNMP.LOCATION.Location` / `SNMP.CONTACT` 取り込みを確認。SNMP_USER 側の `SNMP_USER_PERMISSION=RW` は実装済（`rwuser` 行で生成）。
 

@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified（提案段階・実装未着手であることを再確認）"
     2026-05-09 時点で `sonic-platform-common/sonic_platform_base/module_base.py` を直読し、`MODULE_STATUS_EMPTY` / `_OFFLINE` / `_POWERED_DOWN` / `_PRESENT` / `_FAULT` / `_ONLINE` の 6 定数のみを確認（HLD 提案の `MODULE_STATUS_PROVISION_READY` / `_PENDING` / `MODULE_STATUS_PROVISIONED` は **未追加**）。`sonic-platform-daemons` 直下にも `sonic-provisiond` ディレクトリは存在せず、`sonic-buildimage` で `provision_module` の文字列もヒットしない。HLD は Rev 1.0 (2026-03) と新しく、**設計通り「提案段階」のままコード未反映** であることを実コードで再確認した。本ページは HLD の設計意図を写したもので、現行 SONiC の実機能ではない。
 

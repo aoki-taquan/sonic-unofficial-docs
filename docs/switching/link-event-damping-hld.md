@@ -18,6 +18,11 @@ related:
     - sonic-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: Discrepancy-found（CLI 未実装）"
     swss 側は実装あり: `sonic-swss/orchagent/port/portschema.h` L101 で `PORT_DAMPING_ALGO = "link_event_damping_algorithm"`、`port.h` L288 / `portcnt.h` L251-282 / `portsorch.cpp` L3736 で `sai_redis_link_event_damping_algorithm_t` と AIED config 反映ロジックを確認、`tests/test_port.py` L437-482 でも `link_event_damping_algorithm = "aied" / "disabled"` の VS テストを確認。一方、**`sonic-utilities` 配下に `link_event_damping` をキーとする `config interface link_event_damping_algorithm` CLI のヒットが 0 件**、`sonic-buildimage` 配下にも対応する CLI plugin が見当たらず、HLD で要件化された CLI は現行 master 未取り込みである（verified at: 2026-05-09）。設定経路は `CONFIG_DB.PORT|<port>` への直接書き込み、または上位のマネジメントフレームワーク（YANG/REST）経由が必要となる可能性が高い。
 

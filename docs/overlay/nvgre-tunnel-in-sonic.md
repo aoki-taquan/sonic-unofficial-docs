@@ -20,6 +20,11 @@ related:
     - sonic-nvgre-tunnel
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 03 章: VXLAN / EVPN とオーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     verifier-batch-18 で確認: `sonic-swss/orchagent/orchdaemon.cpp:361-` で `NvgreTunnelOrch` / `NvgreTunnelMapOrch` を生成、`sonic-swss/orchagent/nvgreorch.{cpp,h}` 実体、`sonic-utilities/config/plugins/nvgre_tunnel.py` の自動生成 CLI を確認。
 

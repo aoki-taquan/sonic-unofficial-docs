@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 19 章: Build / Packaging / Debian](../topics/19-build-packaging/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified（プロセス文書 / ビルド変数で確認）"
     `sonic-buildimage/Makefile` で `NOSTRETCH ?= 1` / `NOBUSTER ?= 1` / `NOBULLSEYE ?= 1` / `NOBOOKWORM ?= 0` / `NOTRIXIE ?= 0`、それに対応する `BUILD_STRETCH=1` / `BUILD_BUSTER=1` / `BUILD_BULLSEYE` 等の分岐を確認（HLD のリリース cadence 通り Bookworm/Trixie が活きていて Stretch/Buster/Bullseye が deprecated default）。`sonic-buildimage/dockers/` 配下に `docker-config-engine-stretch` / `-buster` / `-bullseye` / `-bookworm` / `-trixie` の 5 系列の Dockerfile.j2 が並列維持されている。プロセス文書だが、ビルド変数定義が HLD 通りに実装されていることを直接確認した。
 

@@ -21,6 +21,11 @@ related:
     - sonic-console
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: HLD-only / 古い HLD"
     本 HLD は 2020-12 Rev 1.1。`consoled` / `consutil` の現行 master 取り込み、CONSOLE_PORT の TTY device mapping、reverse SSH の port/IP forwarding ルールは未確認。`priority=medium`。
 

@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: `sonic-gnmi/dialout/dialout_client_cli/dialout_client_cli.go` バイナリと `dialout/dialout_client/dialout_client.go` 内の `TELEMETRY_CLIENT|Global` / `TELEMETRY_CLIENT|DestinationGroup_<name>` / `TELEMETRY_CLIENT|Subscription_<name>` 各キー定義（同ファイル L414, L421, L428）、`proto/dial_out.proto` (`gNMIDialOut.Publish`)、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-telemetry_client.yang` を確認。OpenConfig 互換は YANG 単独では未確認だがテーブル定義は HLD と整合。
 

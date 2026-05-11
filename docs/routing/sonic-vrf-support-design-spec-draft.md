@@ -24,6 +24,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/vrforch.cpp` / `cfgmgr/vrfmgrd.cpp` 実装、`sonic-yang-models/yang-models/sonic-vrf.yang:24/27` (`container VRF` / `list VRF_LIST`)、`sonic-utilities/config/main.py` の `config vrf` CLI を確認。SAI Virtual Router + Linux VRF master device 連携は現行 master でも維持（verified at: 2026-05-09）。
 

@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     `warmboot-finalizer` の fast-reboot 兼用、`restore_neighbors.py`、enable_counters の遅延ロジックなどは現行 master の実装と差分の可能性。
 

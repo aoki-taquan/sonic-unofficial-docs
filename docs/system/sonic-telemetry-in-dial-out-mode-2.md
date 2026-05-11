@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-gnmi/dialout/{dialout_client,dialout_client_cli,dialout_server,dialout_server_cli}/` の Go 実装と `dialout_client.go`（`TELEMETRY_CLIENT` 読み出し / DestinationGroup / Subscription 走査）、および `sonic_data_client/{db_client,mixed_db_client}.go` を確認。openconfig telemetry YANG との完全 mapping は範囲外（実装は SONiC 独自 schema 中心）。
 

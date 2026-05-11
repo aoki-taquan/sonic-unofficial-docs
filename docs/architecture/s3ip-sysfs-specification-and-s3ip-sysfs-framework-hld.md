@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-buildimage/platform/s3ip-sysfs/` に host package source があり (`build.sh` / `debian/` / `s3ip_sysfs_frame/{cpld,fan,psu,sysled,...}_sysfs.c` / `scripts/s3ip-sysfs.service`)、`/sys_switch/` 仕様準拠ドライバが取り込まれている。Tencent (`platform/broadcom/sonic-platform-modules-tencent/tcs9400/s3ip_config`) と Micas (`...modules-micas/m2-w6940-64oc/s3ip_sysfs_cfg`) の 2 拠点プラットフォームで利用中。HLD どおり kernel/sysfs 層完結で CONFIG_DB は使わない。
 

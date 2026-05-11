@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。gearbox: sonic-swss/orchagent/portsorch.cpp の m_gearboxTable / m_gearboxEnabled 経路 + tests/mock_tests/portsorch_ut.cpp:1711-1721 (gb_line_pre1..3, gb_line_main, gb_line_post1..3, gb_system_*) で 7 種 attr を確認。
 

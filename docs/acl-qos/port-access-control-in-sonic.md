@@ -21,6 +21,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `sonic-buildimage/src/sonic-pac/` 配下に PAC のコンポーネント (`authmgr`, `mab`, `mabmgr`, `hostapdmgr`, `pacmgr`, `paccfg`, `pacoper`, `fpinfra`, `json_lib`) が取り込み済みであることを確認。`hostapdmgr.cpp` L43-L46 で `CFG_PAC_PORT_CONFIG_TABLE` / `CFG_PAC_HOSTAPD_GLOBAL_CONFIG_TABLE` / `RADIUS_SERVER` / `RADIUS` 4 テーブルを subscribe する経路を確認。SAI Bridge port learning モード変更詳細・host interface trap の詳細は sai_redis / vendor SAI スコープのため別途。
 

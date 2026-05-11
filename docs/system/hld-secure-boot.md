@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: discrepancy-found (2026-05-10)"
     実装は HLD と少し異なる: ① 署名スクリプトは `.py` ではなく **bash 版** `sonic-buildimage/scripts/signing_secure_boot_dev.sh` (検証は `secure_boot_signature_verification.sh`)。② build flag は `SB_BUILD` ではなく `SECURE_UPGRADE_MODE` (`build_image.sh` で `!= "no_sign"` 判定) と `SECURE_UPGRADE_DEV_SIGNING_KEY` (`rules/config:287-294`)。③ Production 用は固定スクリプトではなく `SECURE_UPGRADE_PROD_SIGNING_TOOL` 変数で外部ツール経路を指定 (`Makefile.work:376-383`)。Boot chain (shim/grub/vmlinuz/KO) の検証思想自体は HLD どおり。
 

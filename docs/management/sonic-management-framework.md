@@ -15,6 +15,11 @@ related:
     - sonic-*
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。docker-sonic-mgmt-framework: sonic-buildimage/dockers/docker-sonic-mgmt-framework / sonic-mgmt-common/translib/transformer/* (interfaces / portchannel / sflow openconfig + sonic test) で確認。
 

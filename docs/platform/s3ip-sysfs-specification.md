@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/platform/s3ip-sysfs/` 直下に kernel module フレームワーク (`s3ip_sysfs_frame/`: `cpld_sysfs.c`, `temp_sensor_sysfs.c`, `vol_sensor_sysfs.c`, `curr_sensor_sysfs.c`, `fan_sysfs.c`, `psu_sysfs.c`, `transceiver_sysfs.c`, `sysled_sysfs.c`, `slot_sysfs.c`, `watchdog_sysfs.c`, `fpga_sysfs.c`, `switch.c`)、リファレンス driver (`demo_driver/`)、Makefile、init スクリプト (`scripts/s3ip-sysfs.service`, `s3ip_load.py`, `s3ip_sysfs_conf.json`) を確認。PDDF 経由でも `pddf_s3ip.py` が `/sys_switch/temp_sensor` 等を作成する。S3IP 仕様の `/sys_switch/` ツリー設計は SONiC 側に取り込み済み。
 

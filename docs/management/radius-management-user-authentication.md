@@ -18,6 +18,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified / 古い HLD"
     本 HLD は 2019-2020 年（Rev 0.12）の RADIUS authentication 設計。後発の AAA Improvements HLD で多重 role・remote_user 共有・nsswitch.conf 動的変更などの根本問題が指摘されている。`priority=high`。
 

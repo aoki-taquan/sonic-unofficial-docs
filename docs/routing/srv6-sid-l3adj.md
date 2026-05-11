@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/srv6orch.h:189` で `createUpdateMysidEntry(my_sid_string, vrf, adj, end_action)`、`:277` で `m_pendingSRv6MySIDEntries: map<NextHopKey, set<tuple<...>>>` を確認。`srv6orch.cpp:1227-1259` で Neighbor 確定時の pending 解決、`:1341/:1533/:1541` で未解決時の queue 投入、`:1544` で `SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` を SAI に渡す経路を確認（verified at: 2026-05-09）。
 

@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     `sonic-utilities/generic_config_updater/change_applier.py` で `for tbl in sorted(...)` の alphabetical 適用、`gcu_services_validator.conf.json` / `gcu_field_operation_validators.conf.json`、`generic_updater.py` の `ChangeApplier` / `DryRunChangeApplier` 切替、`config/main.py` からの `apply_patch_from_file` 呼出しを確認。
 

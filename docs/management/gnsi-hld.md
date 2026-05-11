@@ -18,6 +18,11 @@ related:
     - openconfig-gnsi-credentialz
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: Discrepancy-found"
     主要 gNSI サービス（Authz / Certz / Pathz）の handler 実装と host service モジュール（`gnsi_console.py` / `ssh_mgmt.py`）は確認済み。一方で **Credentialz の gNMI server 側 handler は未実装**（dbus client 経由の補助のみ）であり、gNMI server フラグ名も HLD 提案と若干異なる。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 

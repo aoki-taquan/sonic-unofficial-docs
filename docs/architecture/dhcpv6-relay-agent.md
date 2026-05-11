@@ -17,6 +17,11 @@ related:
     - sonic-dhcpv6-relay
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` で `DHCP_RELAY|<intf>` の `dhcpv6_servers` / `dhcpv6_option|rfc6939_support` 解釈、`dockers/docker-dhcp-relay/cli/clear/plugins/clear_dhcp_relay.py` で `DHCPV6_COUNTER_TABLE_PREFIX` と `sonic-clear dhcp6relay_counters` 定義、`dhcp6relay/src/{main.cpp, sender.h}` 等の存在を確認。dual ToR loopback / linkmgrd 連動 / CoPP 動的切替の細部は別 repo 追跡（要 follow-up）。
 

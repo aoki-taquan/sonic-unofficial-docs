@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-utilities/sfputil/main.py` の `eeprom-hexdump` (L731-) で `-p/--port` と `-n/--page` を確認、内部で `eeprom_hexdump_single_port` → `eeprom_hexdump_pages_general` / `_pages_sff8472` 経路を実装。`sonic-utilities/scripts/generate_dump` L2603 で `save_cmd "sfputil show eeprom-hexdump" "interface.xcvrs.eeprom.raw" &` を確認、show techsupport の dump tarball に SFP EEPROM ページが自動的に含まれる。
 

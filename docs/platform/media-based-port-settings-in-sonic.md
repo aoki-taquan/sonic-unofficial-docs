@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     `sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/media_settings_parser.py` に `CUSTOM_SERDES_ATTR_PREFIX = 'CUSTOM:'` (l.175) と `CUSTOM_SERDES_ATTRS_KEY_IN_DB = 'custom_serdes_attrs'` (l.177) を確認。`sonic-swss/orchagent/port/portschema.h` に `PORT_CUSTOM_SERDES_ATTRS = "custom_serdes_attrs"` (l.94)。`portsorch.cpp` line 559 で `map[SAI_PORT_SERDES_ATTR_CUSTOM_COLLECTION] = SerdesValue(serdes.custom_collection.value)` の pass-through 実装あり。`tests/test_xcvrd.py` で `CUSTOM:XYZ` / `CUSTOM:ABC` 例も網羅。
 

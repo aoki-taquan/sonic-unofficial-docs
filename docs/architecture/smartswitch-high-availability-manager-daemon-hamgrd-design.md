@@ -19,6 +19,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: discrepancy-found（部分実装）"
     `sonic-swss-common/common/schema.h` に `APP_DASH_HA_SET_CONFIG_TABLE` / `APP_DASH_HA_SET_TABLE` / `APP_DASH_HA_SCOPE_CONFIG_TABLE` / `APP_DASH_HA_SCOPE_TABLE` / `STATE_DASH_HA_SET_STATE_TABLE` / `STATE_DASH_HA_SCOPE_STATE_TABLE` および `CFG_DASH_HA_GLOBAL_CONFIG_TABLE` (`DASH_HA_GLOBAL_CONFIG`) は定義済。一方で **`hamgrd` バイナリは sonic-swss / sonic-buildimage には存在しない**（mock test の dashenifwdorch コメント言及のみ）。**`DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` table も swss-common schema には未定義** で、HLD で示される DPU / vDPU の STATE_DB エントリは現時点で実装されていない。`swbus` ローカルメッセージバスの実装も本リポ群には見当たらず、HLD は v0.1 (2025-02 Initial Proposal) のため大半が未着手。
 

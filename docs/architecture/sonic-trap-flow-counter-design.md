@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-swss/orchagent/flexcounterorch.cpp:58 FLOW_CNT_TRAP_KEY` と `:87 {FLOW_CNT_TRAP_KEY, HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP}` で flex counter group が登録され、`copporch.cpp:196,1452,1494` で `COUNTERS_TRAP_NAME_MAP` への trap 名 ↔ OID マップが管理される。CLI は `sonic-utilities/show/flow_counters.py:11-15 flowcnt_trap` で実装。HLD どおりに沿っている。
 

@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: HLD-only"
     HLD は Rev 0.1 のみで日付未記載。`gnmi-server` の SmartSwitch 拡張、DPU APPL_STATE_DB スキーマ、ZMQ 経由の swss 連携実装は要裏取り。
 

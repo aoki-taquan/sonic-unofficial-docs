@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: HLD-only"
     HLD は 2025 年 2 月 (Rev 1.0) Arista 提案。`CmisEnhancedLpoApi` クラスと `xcvr_api_factory.py` の vendor 分岐、`TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_DOM_THRESHOLD` / `TRANSCEIVER_DOM_FLAG*` への新キー追加の現行実装は未裏取り。
 

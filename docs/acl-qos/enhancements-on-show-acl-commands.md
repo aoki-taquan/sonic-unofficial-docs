@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/aclorch.cpp` L4201-4202 で `m_aclTableStateTable(stateDb, STATE_ACL_TABLE_TABLE_NAME)` / `m_aclRuleStateTable(stateDb, STATE_ACL_RULE_TABLE_NAME)` を確認、`sonic-swss-common/common/schema.h` L514-515 で `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` / `STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"` を確認。`sonic-utilities/show/acl.py` の `show acl table` / `show acl rule` が `acl-loader show table/rule` を呼び、`sonic-utilities/acl_loader/main.py` L76-80/L324-340 で STATE_DB の `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` ステータスを参照することを確認（verified at: 2026-05-09）。
 

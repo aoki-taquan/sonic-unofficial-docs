@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-platform-common/sonic_platform_base/sonic_pcie/` に `pcie_base.py`（抽象 `PcieBase`）と `pcie_common.py`（共通実装）を確認。`sonic-platform-daemons/sonic-pcied/` に PCIe 監視デーモン（pcied）も存在。本ページの設計（pcie.yaml をリファレンスとした PCIe デバイス検査と `pcie_generate` で yaml 自動生成）は実装に取り込み済み。HLD は改訂日付が無く Open Questions のまま終わっているが、実コードは安定している。
 

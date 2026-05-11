@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: Discrepancy-found（HLD 提案は現行 master に取り込まれていない）"
     `ERROR_ROUTE_TABLE` / `BGP_ERROR_CFG_TABLE` / `config bgp error-handling` CLI を `sonic-swss` / `sonic-utilities` / `sonic-buildimage` / `sonic-frr` / `sonic-buildimage/src/sonic-yang-models/` 全体に対して grep ヒット **0 件**（verified 2026-05-09）。本 HLD で提案された `ERROR_ROUTE_TABLE` 経由の FIB-install pending 機構は採用されず、後発の **[BGP Suppress FIB Pending](./bgp-suppress-announcements-of-routes-not-installed-in-hw.md)**（`dplane_fpm_nl` + `bgp suppress-fib-pending` コマンド）に置き換えられている。`sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2` L107 で `bgp suppress-fib-pending` のデフォルト有効化を確認。本 HLD は歴史的設計提案として残し、実装裏取りは BGP Suppress FIB Pending ページで継続。
 

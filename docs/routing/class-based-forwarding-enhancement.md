@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/cbf/cbfnhgorch.h` `CbfNhgOrch : public NhgOrchCommon<CbfNhg>`、`sonic-swss-common/common/schema.h` `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME` / `APP_FC_TO_NHG_INDEX_MAP_TABLE_NAME`、`qosorch.cpp` で `DSCP_TO_FC_MAP_TABLE_NAME` / `EXP_TO_FC_MAP_TABLE_NAME` ハンドラ登録、`sonic-sairedis/vslib/SwitchStateBase.cpp` で `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` 確認（verified at: 2026-05-09）。
 

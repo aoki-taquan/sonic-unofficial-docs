@@ -17,6 +17,11 @@ related:
     - sonic-platform
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: code-verified"
     BMC 経由 pmon の現行 master 実装、Redfish / IPMI トランスポート差は未確認。
 

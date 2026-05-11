@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 05 章: Dual ToR / MUX / アクティブ冗長](../topics/05-dual-tor/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py` L8 `ChassisAppDbMgr` が L20 で `CONFIG_DB BGP_DEVICE_GLOBAL.tsa_enabled` を subscribe し、L44 で `dev_cfg_mgr.isolate_unisolate_device` を呼ぶ経路を確認。`main.py` L113 で `ChassisAppDbMgr(common_objs, "CHASSIS_APP_DB", "BGP_DEVICE_GLOBAL")` 登録、`managers_device_global.py` L91-104 / L246-247 で `CHASSIS_APP_DB` への `tsa_enabled` 書き込みと `BGP_DEVICE_GLOBAL|STATE` 読み出しを確認。`sonic-buildimage/dockers/docker-fpm-frr/base_image_files/TSA` / `TSB` / `TS` で `CHASSIS_APP_DB HMSET "BGP_DEVICE_GLOBAL|STATE" tsa_enabled` を行うこと、`files/build_templates/startup_tsa_tsb.service` と `files/scripts/startup_tsa_tsb.py` 存在を確認（verified at: 2026-05-09）。
 

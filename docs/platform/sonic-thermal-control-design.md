@@ -13,6 +13,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み。`thermalctld`: `sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld`（`POLICY_FILE = /usr/share/sonic/platform/thermal_policy.json:1291`）/ `ThermalBase` / `FanBase`: `sonic-platform-common/sonic_platform_base/{thermal_base.py,fan_base.py,fan_drawer_base.py,sonic_thermal_control/}`。
 
