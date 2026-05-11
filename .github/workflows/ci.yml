@@ -39,13 +39,15 @@ jobs:
 
       - run: pip install PyYAML
 
-      - name: Run frontmatter linter
+      - name: Run frontmatter linter (v2)
         run: python meta/scripts/frontmatter_lint.py
 
-      - name: Upload lint report
+      - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: frontmatter-lint-report
-          path: meta/frontmatter-lint-report.md
+          path: |
+            meta/frontmatter-lint-report.md
+            meta/frontmatter-lint-report-v2.md
           if-no-files-found: ignore

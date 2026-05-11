@@ -7,9 +7,6 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-device_metadata.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-types.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
     - DEVICE_METADATA
@@ -122,7 +119,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 
 - 関連 CONFIG_DB: `BGP_DEVICE_GLOBAL`（`bgp_asn` と独立した装置全体 BGP スイッチ）、`MGMT_PORT`（管理ポート設定）、`FEATURE`（docker on/off）
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md)、`config hostname`
-- 関連 YANG: `sonic-device_metadata`、`sonic-types`（`hostname`、`hwsku`、`mode-status` などの typedef）
+- 関連 YANG: `sonic-device_metadata`（`hostname`、`hwsku`、`mode-status` などの typedef を当該モジュール内で定義）
 
 ## 引用元
 
