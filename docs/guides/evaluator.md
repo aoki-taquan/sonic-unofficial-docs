@@ -37,3 +37,9 @@ last_verified: 2026-05-10
 - 「ラボ評価 30 分チュートリアル」がありません。起動、初期ログイン、管理 IP、NTP / DNS、ポート up、VLAN、BGP neighbor、確認コマンドまでの直線的なページが必要です。
 - 既存ページはリファレンスとして強い一方で、評価者がそのまま打てる最小構成例が不足しています。
 - GNS3 / VS bring-up と実機評価の分岐が明示されていません。仮想評価、単体スイッチ評価、ToR 評価で reading path を少し変える案が必要です。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)

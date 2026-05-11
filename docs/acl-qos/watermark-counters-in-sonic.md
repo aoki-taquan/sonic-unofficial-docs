@@ -168,3 +168,8 @@ Ethernet0           0  1092     0   380     0     0     0     0
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/buffer-watermark/watermarks_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)

@@ -114,3 +114,8 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)

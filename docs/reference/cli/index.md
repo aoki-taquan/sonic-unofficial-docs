@@ -103,3 +103,8 @@ config.add_command(vxlan.vxlan)
 [^1]: `sonic-utilities` の `setup.py` に `entry_points` が定義されており、`config` / `show` / `sonic-clear` / `sonic-installer` / `sonic-package-manager` が同時インストールされる。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/setup.py>
 
 [^2]: `config/main.py` の `multi_asic.is_multi_asic()` 分岐を参照。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)

@@ -60,3 +60,8 @@ related:
 [^1]: `config warm_restart` グループは CONFIG_DB と STATE_DB connector を namespace ごとに初期化する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940>
 
 [^2]: `enable` / `disable` は `WARM_RESTART_ENABLE_TABLE|<module>` の `enable` フィールドを書き込む。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3973>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../../topics/11-reboot/index.md)

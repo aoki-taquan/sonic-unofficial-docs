@@ -1,0 +1,83 @@
+---
+title: SAI table full (route / nexthop / FDB 上限到達)
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-swss
+    path: orchagent/crmorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-sairedis
+    path: syncd/Syncd.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+related:
+  config_db: [CRM]
+  cli: [crm show resources, show ip route summary]
+  yang: [sonic-crm]
+---
+
+# Runbook: SAI table full (route / nexthop / FDB 上限到達)
+
+!!! danger "実行前提"
+    table full は data plane で「新規 route が programming されない」状態を生む。直接的に新規通信が黒落ちする可能性がある。CRM threshold 越えと同時に発生していることが多く [crm-threshold-exceeded.md](crm-threshold-exceeded.md) と併読のこと。`config reload` は問題を悪化させうる（再 program 中の race）ので、まずは投入 prefix を絞る方向で対処する。
+
+## 症状
+
+- syslog に `SAI_STATUS_TABLE_FULL` / `SAI_STATUS_INSUFFICIENT_RESOURCES`
+- 新規 BGP route が `Inactive` のまま
+- `crm show resources` で `used / available` 比が 95%+
+
+## 想定原因（優先度順）
+
+1. **route prefix の過剰投入**: peer から default + specific の二重広告
+2. **next-hop group の枯渇**: ECMP メンバー組み合わせが爆発
+3. **FDB age out 不足**: aging 0 で MAC が滞留
+4. **ACL TCAM 競合**: 同 stage の table が ACL リソースを奪い合う
+
+## 切り分け手順
+
+### 1. CRM
+
+```bash
+crm show resources all
+```
+
+- 期待: 80% 以下
+- 異常: ipv4_route / ipv4_nexthop / fdb_entry が 95%+
+
+### 2. syncd ログ
+
+```bash
+docker logs syncd 2>&1 | grep -iE "TABLE_FULL|INSUFFICIENT" | tail
+```
+
+### 3. RIB のサイズ
+
+```bash
+show ip route summary
+docker exec bgp vtysh -c "show ip bgp summary" | tail
+```
+
+### 4. FDB
+
+```bash
+show mac | wc -l
+```
+
+## 対処方法
+
+- BGP inbound filter で prefix を絞る: `neighbor <peer> prefix-list PL_IN in`
+- ECMP grouping を縮小: `crm config polling interval 60` で観測しつつ調整
+- FDB aging を有効化: `sudo config mac aging-time 600`
+- 不要 ACL table 削除
+
+## 関連ページ
+
+- [crm-threshold-exceeded.md](crm-threshold-exceeded.md)
+- [sai-failure.md](sai-failure.md)
+- [acl-rule-no-hit.md](acl-rule-no-hit.md)
+
+## 引用元
+
+[^1]: sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp
+[^2]: sonic-net/sonic-sairedis @ 4305596 — syncd/Syncd.cpp

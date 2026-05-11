@@ -250,3 +250,8 @@ if clicommon.get_interface_naming_mode() == "alias":
 - [CONFIG_DB: PORT](../config-db/port.md)
 - [CONFIG_DB: INTERFACE](../config-db/interface.md)
 - [YANG: sonic-interface](../yang/sonic-interface.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)

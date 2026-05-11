@@ -75,3 +75,8 @@ CONFIG_DB のテーブル数は YANG モジュール 100 超に対し 200 以上
 ## 引用元
 
 CONFIG_DB の正本は YANG モデル群 (`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-*.yang`) と、初期値テンプレート (`sonic-buildimage/dockers/*/init_cfg.json.j2`)、CLI 配下の入力検証 (`sonic-utilities/config/`)、Orch 側のテーブル名定数 (`sonic-swss-common/common/schema.h`) で構成される。各ページの frontmatter `sources` に commit SHA で固定して記載する。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)

@@ -62,6 +62,21 @@ related:
 | 28 | EVPN Type-2 route が広告されない | [evpn-type2-not-advertised.md](evpn-type2-not-advertised.md) |
 | 29 | MCLAG sync 不能 | [mclag-sync-failure.md](mclag-sync-failure.md) |
 | 30 | show techsupport の size 肥大化対策 | [techsupport-size-bloat.md](techsupport-size-bloat.md) |
+| 31 | PortChannel メンバーで LACP が確立しない | [portchannel-lacp-not-established.md](portchannel-lacp-not-established.md) |
+| 32 | SNMP polling が timeout する | [snmp-polling-timeout.md](snmp-polling-timeout.md) |
+| 33 | BGP route が広告されない | [bgp-route-not-advertised.md](bgp-route-not-advertised.md) |
+| 34 | ACL ルールが効かない / counter が増えない | [acl-rule-no-hit.md](acl-rule-no-hit.md) |
+| 35 | Interface MTU mismatch によるドロップ | [interface-mtu-mismatch.md](interface-mtu-mismatch.md) |
+| 36 | Routing loop が発生している | [routing-loop-detected.md](routing-loop-detected.md) |
+| 37 | minigraph 適用後に reload が固まる | [minigraph-reload-stuck.md](minigraph-reload-stuck.md) |
+| 38 | T0/T1 リンクが flap し続ける | [link-flapping.md](link-flapping.md) |
+| 39 | CONFIG_DB の永続化が失敗する | [config-db-persistence-failure.md](config-db-persistence-failure.md) |
+| 40 | コンテナ memory limit 超過 / OOM kill | [container-memory-limit-exceeded.md](container-memory-limit-exceeded.md) |
+| 41 | config save 後に予期しない diff が出る | [config-save-diff-unexpected.md](config-save-diff-unexpected.md) |
+| 42 | SAI table full (route / nexthop / FDB) | [sai-table-full.md](sai-table-full.md) |
+| 43 | SmartSwitch DPU image install 失敗 | [smartswitch-dpu-image-install-failure.md](smartswitch-dpu-image-install-failure.md) |
+| 44 | show platform fan / psu 異常値 | [platform-fan-psu-anomaly.md](platform-fan-psu-anomaly.md) |
+| 45 | show interfaces counters が突然リセット | [interface-counters-reset.md](interface-counters-reset.md) |
 
 ## 使い方の前提
 
