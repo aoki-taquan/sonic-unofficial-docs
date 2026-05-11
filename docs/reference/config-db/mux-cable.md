@@ -1,5 +1,6 @@
 ---
 title: MUX_CABLE テーブル
+description: "MUX_CABLE テーブル — Dual-ToR (active-active / active-standby) 構成で各 server-facing port に紐付く mux cable の状態と接続先サーバ情報を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -71,3 +72,5 @@ MUX_CABLE|<ifname>
 ## 関連 Topics
 
 - [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

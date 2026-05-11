@@ -1,5 +1,6 @@
 ---
 title: Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）
+description: "Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） — 本 HLD は Midpoint の SONiC 実装を扱う。Source / Sink の HLD は別。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10
@@ -17,6 +18,11 @@ related:
   yang:
     - sonic-port
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 18 章: P4 / PINS](../topics/18-p4-pins/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。Path Tracing: sonic-swss/doc/swss-schema.md:30,1026 (pt_interface_id, pt_timestamp_template) / sonic-swss/tests/test_port.py:310-412 (test_PortPathTracing, SAI_PORT_ATTR_PATH_TRACING_INTF, SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE, SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_12_19) で確認。
@@ -179,3 +185,5 @@ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_PORT:*" | head
 ## 関連 Topics
 
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

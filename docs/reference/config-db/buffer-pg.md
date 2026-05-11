@@ -1,5 +1,6 @@
 ---
 title: BUFFER_PG テーブル
+description: "BUFFER_PG テーブル — ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する。lossless トラフィックの xon/xoff 閾値、PFC 動作の根本となる設定。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -61,3 +62,10 @@ BUFFER_PG|<port>|<pg_num>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-buffer-pg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pg.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

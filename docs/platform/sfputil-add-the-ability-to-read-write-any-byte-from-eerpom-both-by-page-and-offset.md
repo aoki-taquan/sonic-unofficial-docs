@@ -1,5 +1,6 @@
 ---
 title: sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）
+description: "sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作） — 既存 platform API sfp.read_eeprom / sfp.write_eeprom は 「全体 offset」 しか取らず、ユーザは規格毎に page/of…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
     - sfputil write-eeprom
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-utilities/sfputil/main.py` で `read-eeprom` (L1812-) / `write-eeprom` (L1862-) サブコマンドを確認。`--page (-n)` / `--offset (-o)` / `--size` / `--no-format` / `--wire-addr`（sff8472 用）/ `--verify`（write 後リードバック比較）の各オプション、および `get_overall_offset_sff8472` ヘルパによる sff8472 wire-addr ハンドリング、`sfp.read_eeprom(flat_offset, size)` / `sfp.write_eeprom(overall_offset, len(bytes), bytes)` 経路をすべて確認。`sfp.read_eeprom() is currently not implemented for this platform` の ERROR_NOT_IMPLEMENTED 経路もエラー処理として実装されている。

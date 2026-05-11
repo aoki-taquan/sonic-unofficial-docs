@@ -1,5 +1,6 @@
 ---
 title: Multi-ASIC で namespace 間通信できない
+description: "Runbook: Multi-ASIC で namespace 間通信できない — : sonic-net/sonic-utilities @ 39732bceb — multi_asic.py : sonic-net/sonic-swss @ 4305596 — orchdaemon の namespace 認識"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

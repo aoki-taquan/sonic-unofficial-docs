@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
+description: "VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring） — VOQ シャーシは forwarding ASIC（front panel を持つ NPU）を fabric ASIC（cell ベースの内部 fabric）で相互接続する。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
@@ -16,6 +17,11 @@ related:
     - clear fabric counters
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み。`switch_type=fabric`: `sonic-yang-models/yang-models/sonic-port.yang:75` / `APP_FABRIC_PORT_TABLE_NAME`: `sonic-swss-common/common/schema.h:40,549` / `FabricPortsOrch`: `sonic-swss/orchagent/fabricportsorch.{cpp,h}` / `show fabric`: `sonic-utilities/show/fabric.py` + `scripts/fabricstat` + `config/fabric.py`。
@@ -165,3 +171,10 @@ docker logs swss-fabric0 2>&1 | grep -i isolate    # 自動 isolate されたか
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/fabric.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

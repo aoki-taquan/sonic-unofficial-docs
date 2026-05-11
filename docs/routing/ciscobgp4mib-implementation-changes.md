@@ -1,5 +1,6 @@
 ---
 title: CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）
+description: "CiscoBgp4MIB の STATE_DB 経由化 — CiscoBgp4MIB（OID 1.3.6.1.4.1.9.9.187）は従来、snmp_ax_impl が bgpd の vty ソケットに直結 し show をパースしていた。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `bgpcfgd/bgpmon/bgpmon.py` L15-17 で 15 秒ポーリング + `/var/log/frr/frr.log` mtime 監視、L51/131-179/203 で `STATE_DB.NEIGH_STATE_TABLE|<peer_ip>` への `state` 書き込み。supervisord 登録は `docker-fpm-frr/frr/supervisord/supervisord.conf.j2` L198-199。読み手は `sonic-snmpagent/.../cisco/bgp4.py` L22/L30 で `Namespace.init_namespace_dbs()` + 全 namespace の `NEIGH_STATE_TABLE|*` を束ねる実装 (verified at: 2026-05-09)。

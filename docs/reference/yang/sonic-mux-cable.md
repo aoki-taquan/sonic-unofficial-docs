@@ -1,5 +1,6 @@
 ---
 title: sonic-mux-cable YANG
+description: "sonic-mux-cable YANG — DualToR 構成における MUX cable のポート別状態（cable type, prober, neighbor, server/SoC IP, MUX state）を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -87,3 +87,15 @@ jobs:
 
       - name: Check docs/_meta/coverage.md is up to date
         run: python3 meta/scripts/gen_coverage.py --check
+
+  topics-back-ref:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check area-page Topics back-ref blocks are up to date
+        run: python3 meta/scripts/gen_cross_ref.py --check

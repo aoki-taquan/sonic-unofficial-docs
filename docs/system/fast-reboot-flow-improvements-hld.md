@@ -1,5 +1,6 @@
 ---
 title: Fast-reboot Flow Improvements（finalizer / reconciliation）
+description: "Fast-reboot Flow Improvements（finalizer / reconciliation） — SONiC fast-reboot を「dataplane downtime < 30s, control plane < 90s」に収めるための既存フロー改善 HLD。中身は次の 2 軸:"
 area: system
 verification: code-verified
 last_verified: 2026-05-11
@@ -13,6 +14,11 @@ related:
     - fast-reboot
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `warmboot-finalizer` の fast-reboot 兼用、`restore_neighbors.py`、enable_counters の遅延ロジックなどは現行 master の実装と差分の可能性。
@@ -118,3 +124,10 @@ fast-reboot Flow Improvements の中核 (`warmboot-finalizer` の fast-reboot �
 - `restore_neighbors.py` 相当の neighbor 復元: `sonic-buildimage/files/image_config/` 配下に `restore_neighbors` 系スクリプトが存在（fast-reboot 経路の dataplane downtime 削減のために neighbor を ARP/ND の前に復元）
 
 HLD が掲げる「fast-reboot / warm-reboot で finalizer を共通化し、各 orch から WARM_RESTART_TABLE で reconcile 完了を通知する」構造は現行 master で稼働しているため `code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張
+description: "Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張 — 「Overlay ECMP with BFD monitoring」HLD（SONiC/doc/vxlan/Overlay ECMP with BFD.md）の 後付け拡張 で、VxLAN VNET ルートに 4…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 03 章: VXLAN / EVPN とオーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/vnetorch.cpp:445/477-479` で `overlay_dmac`、`:1029-1067` で `nexthops_primary` / `nexthops_secondary` / `tx/rx_monitor_timer` / `monitor_addr_to_pinned_state`、`:1013-1015` で `PINNED_STATE_UP/DOWN`、`sonic-swss-common/common/schema.h:133/500` で `APP/STATE_VNET_MONITOR_TABLE_NAME` を確認。`overlay_dmac` は `sonic-vnet.yang` 取り込み済み（verified at: 2026-05-09）。
@@ -144,3 +150,10 @@ sonic-db-cli APPL_DB hgetall 'VNET_ROUTE_TUNNEL_TABLE:Vnet_3000:100.100.2.1/32'
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Overlay ECMP ehancements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
+
+<!-- /topics-back-ref -->

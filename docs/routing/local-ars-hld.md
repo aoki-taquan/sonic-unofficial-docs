@@ -1,5 +1,6 @@
 ---
 title: Local ARS（Adaptive Routing & Switching の local 完結版）
+description: "Local ARS（Adaptive Routing & Switching の local 完結版） — Local ARS は ECMP の next-hop 選択を 静的ハッシュではなく、出力キューの瞬時負荷や link 利用率に応じて動的に変える 機能。"
 area: routing
 verification: discrepancy-found
 monitor: not_implemented
@@ -19,6 +20,11 @@ related:
   yang:
     - sonic-ars
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: discrepancy-found"
     Local ARS は AI/HPC 向けの adaptive routing 機能。

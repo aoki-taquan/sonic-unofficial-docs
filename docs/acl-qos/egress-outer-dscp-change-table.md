@@ -1,5 +1,6 @@
 ---
 title: Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
+description: "Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP） — encapsulated 後の outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
@@ -15,6 +16,11 @@ related:
     - config acl add table
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `UNDERLAY_SET_DSCP` / `MARK_META` / `EGR_SET_DSCP` の table type 定数は `sonic-swss/orchagent/acltable.h` L38-L42 に定義済み (`TABLE_TYPE_MARK_META`, `TABLE_TYPE_MARK_META_V6`, `TABLE_TYPE_EGR_SET_DSCP`, `TABLE_TYPE_UNDERLAY_SET_DSCP`, `TABLE_TYPE_UNDERLAY_SET_DSCPV6`)。AclOrch 内部の MARK_META → EGR_SET_DSCP 連動展開 (`EGR_SET_DSCP_TABLE_ID = "EgressSetDSCP"` 定数, `isUsingEgrSetDscp()` 判定) を `aclorch.cpp` L51 / L1815 / L2485-L2490 / L3936-L3964 で確認した。
@@ -148,3 +154,10 @@ CLI 文法は HLD 例示。実装側で `--stage` の解釈差異がある可能
 - sonic-yang-models 側の ACL_TABLE_TYPE への追加確認
 - 提案 HLD（2024-07 初版）であり master 取り込み状況の確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

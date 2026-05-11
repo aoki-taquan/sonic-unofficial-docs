@@ -1,5 +1,6 @@
 ---
 title: ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）
+description: "ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR） — LT は CR/KR 系で送受信が 動的に FIR の等化係数を擦り合わせる IEEE 802.3 clause 72/93 のプロトコル。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
@@ -16,6 +17,11 @@ related:
   yang:
     - sonic-port
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-swss/orchagent/portsorch.cpp:3709` の `setPortLinkTraining()`、`link_training_failure_map` / `link_training_rx_status_map`、`SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` 参照 (L3199)、`m_lt_cfg` / `m_link_training` 更新 (L4872-4909) を確認。CLI 側は `sonic-utilities/scripts/intfutil` の `display_link_training_status()` / `generate_link_training_status()`、`port/porthlpr.cpp` の `getLinkTrainingStr()` を確認。`sonic-yang-models/yang-models/sonic-port.yang:112` に `leaf link_training` を確認。
@@ -164,3 +170,10 @@ config interface autoneg Ethernet0 off    # AN を切って LT 単独で再評�
 - [Topic: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
 - [CLI: config-interface](../reference/cli/config-interface.md)
 - [CLI: show-interfaces](../reference/cli/show-interfaces.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: RIF / ACL counter が 0 のまま
+description: "Runbook: RIF / ACL counter が 0 のまま — : sonic-net/sonic-swss @ 4305596 — aclorch / intfsorch : sonic-net/sonic-utilities @ 39732bceb — acl_loader / aclshow"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

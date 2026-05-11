@@ -1,5 +1,6 @@
 ---
 title: Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）
+description: "Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6） — Everflow（SAI mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく 本番に近い構成での functional / negati…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
@@ -19,6 +20,11 @@ related:
     - aclshow
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     テストプラン本体は `sonic-mgmt` 側の Ansible / PTF テストスクリプトに対する仕様だが、被テストの mirror 機能 (`MIRROR_SESSION` 制御パス: src/dst IP / DSCP / TTL / GRE type / next-hop / queue / status) は `sonic-swss/orchagent/mirrororch.cpp` L15-L24 ほか 1611 行に渡って実装されている。P4 mirror manager 系も `orchagent/p4orch/mirror_session_manager.cpp` で存在を確認。`sonic-mgmt` ツリーはローカルキャッシュ未取り込みのためテストスクリプト本体の文言一致は別バッチに委ねる。
@@ -138,3 +144,11 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 - ICMP type/code マッチの SAI ACL field 取り込み確認
 - IPv6 Everflow の collector encap（IPv6-in-IPv6 / GRE 6to6）対応確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

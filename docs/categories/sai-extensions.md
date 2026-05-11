@@ -1,5 +1,6 @@
 ---
 title: SAI 拡張属性追加系
+description: "SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。"
 area: categories
 verification: meta
 last_verified: 2026-05-10
@@ -67,3 +68,5 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 ## 関連 Topics
 
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

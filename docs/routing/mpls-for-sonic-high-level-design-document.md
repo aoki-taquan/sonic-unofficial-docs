@@ -1,5 +1,6 @@
 ---
 title: SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）
+description: "SONiC の MPLS 基盤 — SONiC の初期 MPLS 対応は 静的 LSP を前提に、IPv4/IPv6 routing インフラを MPLS にも拡げる方針:"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10
@@ -22,6 +23,11 @@ related:
     - sonic-portchannel
     - sonic-crm
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     fpmsyncd MPLS: `sonic-swss/fpmsyncd/routesync.cpp` L158 (`APP_LABEL_ROUTE_TABLE_NAME` ProducerStateTable), L2066 (`AF_MPLS`), L2914 (`LWTUNNEL_ENCAP_MPLS`), L2936 (`RTA_NEWDST` = MPLS NH label stack) を確認。
@@ -190,3 +196,5 @@ crm show resources mpls
 ## 関連 Topics
 
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

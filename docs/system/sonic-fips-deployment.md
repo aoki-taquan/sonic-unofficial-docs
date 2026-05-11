@@ -1,5 +1,6 @@
 ---
 title: SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
+description: "SONiC FIPS 140-3 デプロイ — データセンタ用途で FIPS 140-3 適合 が要求される場合の、SONiC 上での有効化設計を規定する。設計の中核:"
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld
@@ -131,3 +132,10 @@ CONFIG_DB の `FIPS|global` 表記は HLD どおりで問題なし。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

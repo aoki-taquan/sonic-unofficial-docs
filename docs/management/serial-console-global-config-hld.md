@@ -1,5 +1,6 @@
 ---
 title: シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
+description: "シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES） — シリアル（tty）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、自動ログアウトのタイマー と SysRq カパビリティ を運用ポリシーに合わせて設定したいという要件がある。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
   yang:
     - sonic-serial-console
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     `sonic-buildimage/files/image_config/cli_sessions/` 配下に `serial-config.service`, `serial-config.sh`, `tmout-env.sh.j2`, `sysrq-sysctl.conf.j2` が存在。`sonic-host-services/scripts/hostcfgd` 内 `serial_console_config_handler`（`config_db.subscribe('SERIAL_CONSOLE', ...)` を含む）と `init_data.get('SERIAL_CONSOLE', {})` 初期化を確認。
@@ -196,3 +202,10 @@ config save
 - init_cfg.json.j2 に既定値が入っているか確認 → 別途要確認
 - inactivity_timeout=0 の扱い (無効化か即ログアウトか) の動作確認 → 実機検証要
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

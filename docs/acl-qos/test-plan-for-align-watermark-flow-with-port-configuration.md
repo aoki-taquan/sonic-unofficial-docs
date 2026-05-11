@@ -1,5 +1,6 @@
 ---
 title: counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン
+description: "counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン — SONiC の counterpoll CLI は queue / watermark / pg-drop の 3 種を個別に enable/disable できる。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
     - config reload
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: `sonic-swss/orchagent/flexcounterorch.cpp:76-95` で `QUEUE → QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP`, `QUEUE_WATERMARK → QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP`, `PG_WATERMARK → PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP`, `PG_DROP → PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP`, `WRED_ECN_QUEUE → WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` のマッピングを確認。テストプランの 4 種 counter group が現行 FlexCounterOrch に揃って実装されており、`counterpoll <type> enable/disable` 経路と整合する。
@@ -109,3 +115,10 @@ reasoning: 本テストの整合性判定基準を直接表化
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/buffer-watermark/align_watermark_flow_with_port_configuration_test_plan.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

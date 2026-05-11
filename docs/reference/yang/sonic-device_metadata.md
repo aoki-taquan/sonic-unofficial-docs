@@ -1,5 +1,6 @@
 ---
 title: sonic-device_metadata YANG
+description: "sonic-device_metadata YANG — DEVICE_METADATA YANG Module for SONiC OS"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

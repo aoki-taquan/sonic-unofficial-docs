@@ -1,5 +1,6 @@
 ---
 title: NPU MDIO アクセスと gbsyncd 単一 docker 化
+description: "NPU MDIO アクセスと gbsyncd 単一 docker 化 — 外部 PHY (gearbox) を制御するために gbsyncd は PAI library を使う。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified（命名差分あり）"
     `sonic-sairedis/syncd/MdioIpcServer.{h,cpp}` と `Syncd.cpp` での `m_mdioIpcServer = std::make_shared<MdioIpcServer>(m_vendorSai, m_commandLineOptions->m_globalContext)` を確認済み。HLD の `VendorPai` 相当は `sonic-sairedis/syncd/VendorSai.h` (class VendorSai) として実装。`gearbox_config.json` の `phys[].lib_name` も device 配下に存在（Arista 等）。**ただし**: `phy_access_lib_name` / `mdio_cl22_only` は HLD 文書のみで device 側 JSON には未浸透。単一 gbsyncd docker の方針も `sonic-buildimage/platform/components/docker-gbsyncd-{credo,broncos,agera2,milleniob}` のように **vendor 別 docker** が並存しており、HLD の "single gbsyncd docker" は完全には達成されていない。
@@ -147,3 +153,10 @@ reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
 - SAI switch api の clause 22 read/write 拡張の opencomputeproject/SAI 取り込み確認
 - 単一 gbsyncd docker での vendor 別 PAI/MDIO lib 同梱方針の現行 build 構成確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: show snmpagentaddress サブコマンド
+description: "show snmpagentaddress サブコマンド — show snmpagentaddress は SNMP エージェント（snmpd）がリッスンする IP/ポート/VRF の設定を表示する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

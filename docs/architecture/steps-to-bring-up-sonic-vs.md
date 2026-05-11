@@ -1,5 +1,6 @@
 ---
 title: SONiC-VS のビルドと libvirt 起動手順
+description: "SONiC-VS のビルドと libvirt 起動手順 — SONiC-VS（Virtual Switch）は ASIC を SAI VS バックエンドで模した仮想イメージで、KVM/libvirt 上で起動して機能テストやトポロジ実験に使う。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 21 章: Lab / SONiC-VS / 開発者](../topics/21-lab-vs-developer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified（手順書ベース）"
     `sonic-buildimage` master の `Makefile` / `Makefile.work` で `NOJESSIE` / `NOSTRETCH` / `NOBUSTER` / `NOBULLSEYE` / `NOBOOKWORM` の no-* ビルドスイッチ群と `make NOJESSIE=1 KEEP_SLAVE_ON=yes` の使用例を確認。VS 経路も `platform/vs/docker-sonic-vs.{mk,dep}` 等で生きている。手順書としての主張は master と整合。実機ビルドでは現行リリース 1 種だけを残す（古い distro はスキップ）運用が前提。
@@ -150,3 +156,10 @@ reasoning: 起動コマンドとデフォルト認証情報の根拠。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/test/Bring-up_Sonic-VS_on_Cloud_top.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

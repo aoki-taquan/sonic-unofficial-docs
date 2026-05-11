@@ -1,5 +1,6 @@
 ---
 title: Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
+description: "Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT） — SmartSwitch では DPU の graceful reboot に続き graceful shutdown をサポートする。"
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -14,6 +15,11 @@ related:
     - config chassis module shutdown
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! danger "裏取りステータス: discrepancy-found"
     HLD は v0.1 (2025-12) Initial Proposal。実装は **HLD と乖離**。`sonic-platform-common` `module_base.py` の `set_admin_state_gracefully()` / `_graceful_shutdown_handler()` および `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` の `submit_dpu_callback()` は実在するが、HLD で提案されている独立した `gnoi_reboot_daemon.py` は **sonic-platform-daemons に未取り込み**。STATE_DB のフラグも HLD の `CHASSIS_MODULE_INFO_TABLE` / `state_transition_in_progress` ではなく `CHASSIS_MODULE_TABLE` の `transition_in_progress` (`set_module_state_transition`) と独立した `gnoi_halt_in_progress` フラグの 2 系統で実装されている。chassisd が直接 `module.set_admin_state_gracefully` を呼ぶ構成で、独立した gNOI 経路は実体がない。
@@ -207,3 +213,10 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 - DPU sysmgr の gNOI HALT 受信 → DBUS → reboot -p 経路の実装確認
 - v0.1 2025-12 Initial Proposal、master への取り込み・採否未確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

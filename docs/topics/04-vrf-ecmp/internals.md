@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — VRF / ECMP / RIB-FIB パイプラインの内部実装は、「route が FRR で best になった瞬間」から「ASIC に program され、peer に advertise される瞬間」までの長いパイプラインに、どこに非対称性や遅延が入るかを意識すると整理しやすいです。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

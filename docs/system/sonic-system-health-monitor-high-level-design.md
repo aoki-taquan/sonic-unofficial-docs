@@ -1,5 +1,6 @@
 ---
 title: System Health Monitor（critical service / Monit / peripheral）
+description: "System Health Monitor（critical service / Monit / peripheral） — SONiC の 「system は健全か」 を一元判定する monitor。"
 area: system
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: config route サブコマンド（static route）
+description: "config route サブコマンド（static route） — config route は CONFIG_DB の STATIC_ROUTE テーブルに対する static route の add / del を行う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

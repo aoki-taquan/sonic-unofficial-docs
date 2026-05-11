@@ -1,5 +1,6 @@
 ---
 title: オーバーレイ
+description: "オーバーレイ — VXLAN / VNet、DASH、Dual ToR、NVGRE など overlay と SmartSwitch 周辺を扱う章。"
 verification: stub
 ---
 

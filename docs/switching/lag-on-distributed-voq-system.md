@@ -1,5 +1,6 @@
 ---
 title: 分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）
+description: "分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id） — 分散 VOQ シャシは 複数 ASIC が独立した SONiC instance で動き、ASIC 間情報共有は supervisor 上の CHASSIS_APP_DB で行う。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-11
@@ -15,6 +16,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `portsorch.cpp` で `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID = system_lag_id` の付与（L7988）、`SYSTEM_LAG_TABLE` / `SYSTEM_LAG_MEMBER_TABLE` への sync（L8037/L8114/L6354/L8212/L8260 のコメント＋コード）を確認。`orchagent/lagids.lua` に `add` / `del` / `get` の Lua atomic 実装と `SYSTEM_LAG_ID_START/END` の redis 読み込みを確認。`tests/test_virtual_chassis.py` の VS テストが CI で回っている（verified at: 2026-05-11）。
@@ -205,3 +211,11 @@ redis-cli -h <supervisor> -n CHASSIS_APP_DB hgetall 'SYSTEM_LAG_TABLE:<host>|<as
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/lag_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: KUBERNETES_MASTER テーブル
+description: "KUBERNETES_MASTER テーブル — SONiC ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

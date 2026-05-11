@@ -1,5 +1,6 @@
 ---
 title: Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）
+description: "Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot） — multi-ASIC platform では各 ASIC が 独自の swss / syncd / FRR インスタンス を持つ。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -15,6 +16,11 @@ related:
   yang:
     - sonic-warm-restart
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: code-verified"
     各 namespace の swss / syncd の協調 shutdown 順序が現行スクリプトでどうなっているかは未確認。
@@ -89,3 +95,10 @@ going up は逆順を namespace ごとに走らせ、orchagent compare 完了後
 - multi-asic single-json と warm restart 設定の互換性確認
 - HLD と現行 multi-asic warm reboot CI テストカバレッジの差異確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

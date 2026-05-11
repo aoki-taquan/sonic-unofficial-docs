@@ -1,5 +1,6 @@
 ---
 title: Reboot-cause 履歴の STATE_DB / テレメトリ公開
+description: "Reboot-cause 履歴の STATE_DB / テレメトリ公開 — SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は STATE_DB にも反映する仕組み。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
     - show reboot-cause history
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     現行 master で実装存在を確認。`sonic-host-services/scripts/determine-reboot-cause` および `scripts/process-reboot-cause` が systemd unit (`sonic-host-services-data.{determine,process}-reboot-cause.service`) として配置されている。`process-reboot-cause:27-34` で `REBOOT_CAUSE_DIR=/host/reboot-cause/`、`REBOOT_CAUSE_HISTORY_DIR=/host/reboot-cause/history/`、`PREVIOUS_REBOOT_CAUSE_FILE=previous-reboot-cause.json`、`REBOOT_CAUSE_TABLE_NAME="REBOOT_CAUSE"`、`MAX_HISTORY_FILES=10` を確認。`process-reboot-cause:62` で `min(MAX_HISTORY_FILES, ...)` の 10 件 cap も確認。CLI は `sonic-utilities/show/reboot_cause.py` の `fetch_reboot_cause_history_from_db` で `REBOOT_CAUSE|*` 走査を確認（verified at: 2026-05-09）。
@@ -142,3 +148,10 @@ show reboot-cause history
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/system-telemetry/reboot-cause.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: 動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）
+description: "動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成） — 1 つの物理 cage（QSFP-DD 等）を 複数の論理 port に切り分ける / 1 つに戻す 操作を、reload 不要・稼働中の SONiC で 行えるようにする。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -17,6 +18,11 @@ related:
   yang:
     - sonic-port
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-utilities/config/main.py` の `breakout_cfg_file` / `_validate_interface_mode`、`sonic-buildimage/.../sonic-breakout_cfg.yang` の `BREAKOUT_CFG` スキーマで動的 breakout 実装を確認（Verifier 2026-05-10）。
@@ -106,3 +112,10 @@ flowchart LR
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dynamic-port-breakout/sonic-dynamic-port-breakout-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

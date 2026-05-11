@@ -1,5 +1,6 @@
 ---
 title: port_config.ini パーサ統合（portconfig.py 一元化）
+description: "port_config.ini パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     `sonic-buildimage/src/sonic-config-engine/portconfig.py` に `get_port_config` / `parse_port_config_file` / `get_child_ports` / `get_breakout_mode` / `get_fabric_port_config` / `get_fabric_monitor_config` が一本化されている。これを `sonic-cfggen` (`:35 from portconfig import get_port_config`)、`minigraph.py` (`:18`)、`sonic-platform-common/sonic_platform_base/sonic_sfp/sfputilhelper.py` (`from portconfig import get_port_config`)、`sonic-utilities/show/interfaces/__init__.py` (`from portconfig import get_child_ports`) が呼び出しており、import 経路の一元化は達成。device 側 `platform.json` も既に多数の vendor で配布済 (Supermicro / Ragile / Arista 等)。
@@ -142,3 +148,10 @@ HLD が示すテスト計画[^1]:
 - platform.json: sonic-buildimage/device/{supermicro,ragile,...}/.../platform.json 配布済
 -->
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

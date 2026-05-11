@@ -1,5 +1,6 @@
 ---
 title: Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
+description: "Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート） — Express Reboot は SONiC の再起動シーケンスを拡張し、サブ秒のデータプレーン断 で SW アップグレードを行うためのモード。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
     - show reboot-cause
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     sonic-sairedis `syncd/CommandLineOptions.h` L13 `STRING_SAI_START_TYPE_EXPRESS_BOOT="express"` / L36 `SAI_START_TYPE_EXPRESS_BOOT=4`、`CommandLineOptions.cpp` L105-106 で文字列 "express" → enum マッピング、`RequestShutdownCommandLineOptions.cpp` L59/L88 で `SYNCD_RESTART_TYPE_EXPRESS`、`RequestShutdownCommandLineOptionsParser.cpp` L65 で setRestartType(SYNCD_RESTART_TYPE_EXPRESS) を確認。`Syncd.h` L111 `setPreShutdownOnAllSwitches()`、`Syncd.cpp` L282 / L4566-L4570 で start_type==EXPRESS_BOOT 分岐、L4772/L5665 で `SAI_SWITCH_ATTR_FAST_API_ENABLE` 操作、L5690 `setPreShutdownOnAllSwitches` 実装、L5946 で fail 時 cold restart fallback、L5956 で setPreShutdownOnAllSwitches 呼び出し、L6058-L6072 で SYNCD_RESTART_TYPE_EXPRESS の shutdown 分岐を確認。sonic-utilities `scripts/express-reboot` symlink、`scripts/fast-reboot` L375 / L402-403 / L454 / L749 / L795 / L883-884 / L931 / L965-967 (BOOT_TYPE_ARG="express") / L1167 / L1182 で express-reboot 経路を確認。sonic-host-services `scripts/determine-reboot-cause` L43 `REBOOT_TYPE_KEXEC_PATTERN_EXPRESS` / L68 `'express-reboot'` 認識を確認（verified at: 2026-05-09）。
@@ -148,3 +154,10 @@ sudo express-reboot
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/express-reboot/Cisco_8000_Express_Reboot_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
+
+<!-- /topics-back-ref -->

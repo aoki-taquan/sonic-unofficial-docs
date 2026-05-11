@@ -1,5 +1,6 @@
 ---
 title: Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）
+description: "Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計） — ホストインタフェース trap（CoPP で ASIC から CPU へ punt されるパケット種別。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
@@ -16,6 +17,11 @@ related:
     - show flowcnt trap
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-swss/orchagent/flexcounterorch.cpp:58 FLOW_CNT_TRAP_KEY` と `:87 {FLOW_CNT_TRAP_KEY, HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP}` で flex counter group が登録され、`copporch.cpp:196,1452,1494` で `COUNTERS_TRAP_NAME_MAP` への trap 名 ↔ OID マップが管理される。CLI は `sonic-utilities/show/flow_counters.py:11-15 flowcnt_trap` で実装。HLD どおりに沿っている。
@@ -166,3 +172,10 @@ redis-cli -n 2 HGETALL "COUNTERS:<counter_oid>"
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/flow_counters/flow_counters.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

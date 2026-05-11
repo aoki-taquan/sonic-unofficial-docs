@@ -1,5 +1,6 @@
 ---
 title: L2 運用確認
+description: "L2 運用確認 — L2 障害は「VLAN に入っていない」「LAG が期待通り up していない」「MAC 学習が古い」「MC-LAG peer と状態がずれている」「BUM traffic や link flap が制御面を壊している」に分けると追いやすくなります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

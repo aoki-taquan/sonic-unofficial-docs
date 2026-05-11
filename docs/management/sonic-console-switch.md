@@ -1,5 +1,6 @@
 ---
 title: Console Switch（serial hub の reverse SSH 集約）
+description: "Console Switch（serial hub の reverse SSH 集約） — SONiC スイッチを「network 機器を console（serial）経由で管理する集約ホスト」として使うための機能。"
 area: management
 verification: discrepancy-found
 monitor: partially_implemented
@@ -20,6 +21,11 @@ related:
   yang:
     - sonic-console
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: HLD-only / 古い HLD"
     本 HLD は 2020-12 Rev 1.1。`consoled` / `consutil` の現行 master 取り込み、CONSOLE_PORT の TTY device mapping、reverse SSH の port/IP forwarding ルールは未確認。`priority=medium`。
@@ -178,3 +184,10 @@ HLD が想定する「serial hub 機能を備えた switch hub としての reve
 #### 関連 GitHub Issue / PR
 
 - [GitHub Issue / PR の関連リンクは未確認] — Console Switch（serial hub の reverse SSH 集約）構成は専用 platform / image 設定の積み重ねで実現されており、HLD 単独で追跡可能な GitHub Issue / PR は確認できず。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

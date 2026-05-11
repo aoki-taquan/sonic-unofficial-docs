@@ -1,5 +1,6 @@
 ---
 title: IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）
+description: "IP / LAG / MTU の Incremental Update — SONiC の初期実装は port / IP / LAG を /etc/network/interfaces や /etc/teamd/ の 静的ファイル に書き出していた。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -32,6 +33,11 @@ related:
     - config portchannel
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `portmgrd` / `intfmgrd` / `teammgrd` の 3 daemon は現行 master の `sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp` に存在し、HLD の責務分担と一致。`config portchannel add` は `min_links` / `fallback` を受け付ける（`sonic-utilities/config/main.py:2835-2853`）。Phase 1/2（loopback の portmgrd 移管、teamd docker 再起動の状態復元）の現状は別途裏取り。
@@ -160,3 +166,10 @@ config interface PortChannel0001 mtu 9216
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/incremental-update-ip-lag/Incremental IP LAG Update.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

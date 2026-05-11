@@ -1,5 +1,6 @@
 ---
 title: sonic-bmp YANG
+description: "sonic-bmp YANG — BGP Monitoring Protocol (BMP) によるテーブルダンプ送信の有効/無効を制御する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

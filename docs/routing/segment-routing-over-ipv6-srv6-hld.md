@@ -1,5 +1,6 @@
 ---
 title: SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
+description: "SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-swss/orchagent/srv6orch.cpp` / `srv6orch.h` を master で確認。`SRV6_MY_SID_TABLE` / `SRV6_SID_LIST` 等のスキーマ定数は `sonic-swss-common/common/schema.h` に取り込み済み。
@@ -149,3 +155,5 @@ reasoning: Phase 1 のサポート機能の根拠。
 ## 関連 Topics
 
 - [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

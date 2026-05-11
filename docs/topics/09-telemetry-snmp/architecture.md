@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — 観測経路は ASIC 側で値を作り、syncd / orchagent / 各 daemon が Redis に書き、上から SNMP / gNMI / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

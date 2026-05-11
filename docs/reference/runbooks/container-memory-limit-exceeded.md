@@ -1,5 +1,6 @@
 ---
 title: コンテナ memory limit 超過 / OOM kill
+description: "Runbook: コンテナ memory limit 超過 / OOM kill — : sonic-net/sonic-buildimage @ 4305596 — sonic_debian_extension : sonic-net/sonic-host-services @ 4305596 — hostcfgd…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

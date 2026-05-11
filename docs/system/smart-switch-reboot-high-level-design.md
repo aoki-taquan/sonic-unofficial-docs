@@ -1,5 +1,6 @@
 ---
 title: SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）
+description: "SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） — SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は PCIe で NPU 側 CPU に接続される（front panel は NPU の…"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -13,6 +14,11 @@ related:
     - reboot
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。ModuleBase: sonic-platform-common/sonic_platform_base/module_base.py:411 (pci_detach), 420 (pci_reattach), 504 (dpu_reboot_timeout) / reboot script: sonic-utilities/scripts/reboot:55-56 (DPU_MODULE_NAME, REBOOT_DPU), :153 (-d オプション), :223-224, :290 (handle_smart_switch), :298 (smartswitch + REBOOT_DPU=yes), reboot_smartswitch_helper で確認。
@@ -192,3 +198,10 @@ python3 -c "from sonic_platform.module import Module; m = Module(0); print(m.pci
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/reboot/reboot-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

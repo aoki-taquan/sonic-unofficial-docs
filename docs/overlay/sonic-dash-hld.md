@@ -1,5 +1,6 @@
 ---
 title: SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観
+description: "SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観 — DASH（Disaggregated APIs for SONiC Hosts）は、SmartSwitch DPU や appliance card 上で SONiC スタックが多数の ENI (Ela…"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（中核アーキテクチャの抜粋範囲のみ）"
     `sonic-swss/orchagent/dash/dashorch.h` L63 `class DashOrch : public ZmqOrch`、`dashvnetorch.cpp` L49-50 で `APP_DASH_VNET_TABLE_NAME` / `APP_DASH_VNET_MAPPING_TABLE_NAME` 操作、`dashaclorch.cpp` / `dashmeterorch.cpp` / `dashhaorch.cpp` / `dashhafloworch.cpp` / `dashenifwdorch.cpp` / `dashcounter.cpp` で各 Orch を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang` L36 `container DASH_VNET` / L119 `container DASH_ENI` で YANG を確認、`sonic-buildimage/src/sonic-dash-api` を確認（verified 2026-05-09）。**詳細仕様（FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG）は本ページの抜粋範囲外であり完全な裏取りではない**。章単位分割は別 issue で実施。
@@ -144,3 +150,5 @@ DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の YANG 反�
 ## 関連 Topics
 
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

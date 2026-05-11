@@ -1,5 +1,6 @@
 ---
 title: gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
+description: "gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli） — SONiC の telemetry コンテナには 3 つの gNMI クライアントツール が /usr/bin に同梱されており、運用検証や疎通確認に使う:"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -15,6 +16,11 @@ related:
     - gnmi_cli
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-gnmi/patches/gnmi_get.patch` L25 で `pathTarget = flag.String("xpath_target", "", "name of the target for which the path is a member")` を確認（`gnmi_set.patch` / `gnmi_cli.all.patch` も同等）。サーバ側 `sonic-gnmi/gnmi_server/server.go` L975-988 で `target == "OPERATIONAL" / "OTHERS" / "SHOW"` の特殊分岐と `sdc.IsTargetDb(target)` による `CONFIG_DB / COUNTERS_DB` 等 SONiC DB 名分岐を確認。`sonic-gnmi/sonic_data_client/db_client.go` L647 で `COUNTERS_DB` 専用処理を確認 (verified at: 2026-05-09)。
@@ -165,3 +171,10 @@ sequenceDiagram
 - sonic-mgmt-common transformer の現行 OpenConfig モデル対応状況
 - TLS / 証明書認証経路の標準的な手順（このドキュメントは insecure 例のみ）
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
+
+<!-- /topics-back-ref -->

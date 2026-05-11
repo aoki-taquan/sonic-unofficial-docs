@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — ここでは、port 設定と platform 関連設定を、CLI / CONFIG_DB / YANG のどれから入るかという観点で整理します。全オプションは個別リファレンスに任せ、この章では入口の対応関係を示します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

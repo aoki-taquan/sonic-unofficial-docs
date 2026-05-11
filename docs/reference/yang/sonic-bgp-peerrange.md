@@ -1,5 +1,6 @@
 ---
 title: sonic-bgp-peerrange YANG
+description: "sonic-bgp-peerrange YANG — SONIC BGP Peer Range YANG。 BGP dynamic neighbor (listen range) 設定を VRF/VNET 別、 およびテンプレートとして保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

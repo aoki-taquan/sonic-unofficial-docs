@@ -1,5 +1,6 @@
 ---
 title: CONFIG_DB リファレンス
+description: "CONFIG_DB リファレンス — CONFIG_DB は SONiC における 中央設定 DB。Redis instance の DB 4 上に置かれ、CLI (config ...) や gNMI / REST API、config_db.json のロードによって書き込まれる。"
 area: reference
 verification: meta
 last_verified: 2026-05-09
@@ -80,3 +81,5 @@ CONFIG_DB の正本は YANG モデル群 (`sonic-buildimage/src/sonic-yang-model
 ## 関連 Topics
 
 - [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)
+
+<!-- /topics-back-ref -->

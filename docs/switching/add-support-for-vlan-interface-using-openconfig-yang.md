@@ -1,5 +1,6 @@
 ---
 title: VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
+description: "VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか REST / gNMI 公開していなかった。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -17,6 +18,11 @@ related:
     - openconfig-interfaces
     - openconfig-vlan
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-mgmt-common/translib/transformer/sw_vlan.go` / `xfmr_intf.go` / `vlan_openconfig_test.go` で OpenConfig VLAN transformer を確認。`Subscribe_routed_vlan_ip_addr_xfmr`, `YangToDb_intf_routed_vlan_name_xfmr`, `routed_vlan_ip_addr_del`, `VLAN_INTERFACE_TN` が switched-vlan / routed-vlan を CONFIG_DB の `VLAN` / `VLAN_INTERFACE` / `VLAN_MEMBER` にマップする実装あり（verified at: 2026-05-09）。
@@ -123,3 +129,10 @@ PATCH が 4xx → パス表記 (`Vlan<id>`)、モード組合せ、leaf 名を�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/OpenConfig_VLAN_Interface.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

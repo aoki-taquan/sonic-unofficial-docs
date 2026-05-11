@@ -1,5 +1,6 @@
 ---
 title: BGP_PEER_GROUP テーブル
+description: "BGP_PEER_GROUP テーブル — BGP peer-group の VRF スコープでの定義テーブル。BGP_NEIGHBOR_LIST.peer_group_name から参照される。sonic-bgp-cmn grouping を uses し、BGP_NEIGHBOR と同じ共通フィールドを持つ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

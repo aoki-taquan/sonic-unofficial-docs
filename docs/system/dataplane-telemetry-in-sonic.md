@@ -1,5 +1,6 @@
 ---
 title: Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）
+description: "Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report） — 全モード共通で switch_id と report session（src/dst IP, UDP port） が必須。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -17,6 +18,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-swss/orchagent/dtelorch.cpp` / `dtelorch.h` を master で確認。`DTEL_REPORT_SESSION` / `DTEL_INT_SESSION` 系のスキーマ定数は `sonic-swss-common/common/schema.h` に存在。CLI 未提供は HLD 通り。
@@ -146,3 +152,10 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 - ACL_TABLE_DTEL_FLOW_WATCHLIST / ACL_TABLE_DTEL_DROP_WATCHLIST の扱い確認
 - euclid Python モジュールの取り込みと利用例の確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

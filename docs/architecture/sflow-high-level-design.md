@@ -1,5 +1,6 @@
 ---
 title: sFlow（hsflowd / sflowmgrd / SAI sample-packet）
+description: "sFlow（hsflowd / sflowmgrd / SAI sample-packet） — sFlow は ASIC が一定 sampling-rate でパケットをサンプリングし、収集サーバ（collector）に UDP でフォワードする統計プロトコル。"
 area: architecture
 verification: discrepancy-found
 monitor: evolved_beyond_hld
@@ -19,6 +20,11 @@ related:
   yang:
     - sonic-sflow
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! danger "裏取りステータス: discrepancy-found"
     実装側裏取り済み（`sonic-swss/cfgmgr/sflowmgr.cpp` の `SflowMgr` および `orchagent/sfloworch.cpp` の `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` 設定経路、`sonic-buildimage/files/build_templates/sflow.service.j2`、`sonic-yang-models/yang-models/sonic-sflow.yang`、`sonic-utilities/config/main.py` の `config sflow`）。ただし下記「sample_rate 既定値」表は HLD と乖離あり: HLD (`sonic-net/SONiC` `doc/sflow/sflow_hld.md` L492-501) は `(ifSpeed / 1e6)` ＝ 1G→1000 / 10G→10000 / 40G→40000 / 50G→50000 / 100G→100000 / 400G→400000 と定義しており、実装も `sflowmgr.cpp::findSamplingRate()` で `oper_speed` (Mbps) を返すだけ。本ページが書いていた「100G→50000 / 50G→30000 / 40G→30000 / 25G→10000」は誤り。
@@ -184,3 +190,10 @@ config sflow interface sample-rate Ethernet0 10000
 - 自動 sample_rate 算出ロジック（speed→rate）の現行実装値確認
 - collector 上限 2 件の現行実装での restriction 確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

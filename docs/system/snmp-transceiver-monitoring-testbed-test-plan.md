@@ -1,5 +1,6 @@
 ---
 title: SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）
+description: "SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB） — 光トランシーバの DOM（Digital Optical Monitoring）情報—TX power / RX power / TX bias / temperature / v…"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified（test plan）"
     検査対象 MIB の sonic-snmpagent 実装（`src/sonic_ax_impl/mibs/ietf/rfc2737.py` Entity MIB、`rfc3433.py` Entity Sensor MIB、`physical_entity_sub_oid_generator.py`、`sensor_data.py`）の存在を確認。sonic-mgmt 側のテストコードは本サイト裏取り対象外（test plan の網羅性のみ確認）。down/未挿入 port の MIB 出力やセンサ単位（dBm vs uW）は実装/ベンダ依存。
@@ -116,3 +122,10 @@ snmpwalk -v2c -c public localhost 1.3.6.1.2.1.99.1.1.1.4 | head    # entPhySenso
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/xrcvd/xcvrd-snmp-testbed-test-plan.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

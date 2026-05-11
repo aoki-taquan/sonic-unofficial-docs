@@ -1,5 +1,6 @@
 ---
 title: sonic-bgp-bbr YANG
+description: "sonic-bgp-bbr YANG — SONiC の BGP Border Router (BBR) を有効化/無効化する小さなグローバル設定モジュール。all 単一インスタンスのコンテナ配下に status リーフを持つ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

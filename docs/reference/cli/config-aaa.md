@@ -1,5 +1,6 @@
 ---
 title: config aaa / tacacs / radius サブコマンド
+description: "config aaa / tacacs / radius サブコマンド — AAA (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -176,3 +177,10 @@ excerpt: |
 - [HLD: TACACS+ 認証](../../management/tacacs-authentication.md)
 - [CONFIG_DB: TACPLUS_SERVER](../config-db/tacplus-server.md)
 - [YANG: sonic-system-aaa](../yang/sonic-system-aaa.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

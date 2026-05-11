@@ -1,5 +1,6 @@
 ---
 title: DASH 関連
+description: "DASH 関連 — このカテゴリは、area の壁を越えて DASH に関わる SONiC 側のページを横断で見られるようにします。"
 area: categories
 verification: meta
 last_verified: 2026-05-10
@@ -54,3 +55,5 @@ DASH は実装が `sonic-dash-api` / `dash-pipeline` / `swss-common` に分散�
 ## 関連 Topics
 
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

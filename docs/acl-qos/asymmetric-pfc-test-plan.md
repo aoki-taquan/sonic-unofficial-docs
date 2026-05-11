@@ -1,5 +1,6 @@
 ---
 title: Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
+description: "Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその 機能テスト計画 を扱う。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     Asymmetric PFC 本体機能の swss 取り込みを `sonic-swss/orchagent/portsorch.cpp` L2519-L2573 `PortsOrch::setPortPfcAsym()` で確認した（`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE` に `SEPARATE` / `COMBINED` を切り替える経路、CONFIG_DB.PORT.pfc_asym のパースは L5407-L5434）。本テストプランは機能 HLD ではなく **テスト仕様**であり、`sonic-mgmt` 配下のテストスクリプト一致は確認スコープ外（ローカル `.cache` に sonic-mgmt が含まれていないため）。
@@ -147,3 +153,10 @@ pytest pfc_asym/pfc_asym.py --topology=t0
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pfc_asym/PFC_Asymmetric_Test_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

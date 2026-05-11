@@ -1,5 +1,6 @@
 ---
 title: show nat サブコマンド
+description: "show nat サブコマンド — show nat は SONiC の NAT 機能の 動的な変換テーブル および 静的な設定 を表示する CLI で、show/nat.py の @click.group() がエントリポイントとなる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -87,3 +88,10 @@ related:
 ## 引用元
 
 [^1]: `nat` グループは `show/nat.py` L9-L12。`config/nat.py` 側は CONFIG_DB を書き、`show/nat.py` は別 binary 経由で読むという分担。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/nat.py#L9>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: sonic-tc-queue-map YANG
+description: "sonic-tc-queue-map YANG — TC_TO_QUEUE_MAP yang Module for SONiC OS"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -70,3 +71,10 @@ module: sonic-tc-queue-map
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

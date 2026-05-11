@@ -1,5 +1,6 @@
 ---
 title: 未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス
+description: "未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス — SONiC のバッファ管理は buffer pool / profile / PG / queue で構成され、各ポートに priority group (PG) と queue ごとの 予約バッファ（reserved +…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,6 +20,11 @@ related:
     - config load-minigraph
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/cfgmgr/buffermgrd.cpp` L26/L98-121 で `-z zero_profiles.json` オプションを確認。`buffermgrdyn.cpp` L245-275 で `pgs_to_apply_zero_profile` / `ingress_zero_profile` / `queues_to_apply_zero_profile` / `egress_zero_profile` のパースと zero profile 適用ロジックを確認。`buffermgrdyn.h` L33 で `zero_profile_name` メンバを確認。`sonic-swss-common/common/schema.h` L480 で `STATE_BUFFER_MAXIMUM_VALUE_TABLE = "BUFFER_MAX_PARAM_TABLE"` を確認（verified at: 2026-05-09）。
@@ -198,3 +204,10 @@ redis-cli -n 6 hgetall 'BUFFER_MAX_PARAM_TABLE|<port>'   # 最大 PG/queue が�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/reclaim-reserved-buffer-images/reclaim-reserved-buffer-sequence-flow.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

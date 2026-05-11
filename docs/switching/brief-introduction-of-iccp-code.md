@@ -1,5 +1,6 @@
 ---
 title: ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+description: "ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ） — SONiC の MC-LAG（Multi-Chassis LAG）は専用デーモン ICCPd（ICCP daemon、docker-iccp コンテナ内）で実装されている。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-11
@@ -13,6 +14,11 @@ related:
     - mclagdctl
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     本ページは公式 HLD（コードイントロドキュメント）のみを根拠に書かれている。各ファイルの関数名・状態遷移名は記載時点のもので、現行 master の `sonic-buildimage/dockers/docker-iccp/` 以下の実コードとは差異がある可能性がある。
@@ -247,3 +253,10 @@ ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MC_LAG_DOMAIN`, `MC_LAG_I
 - HLD の章番号と src ファイル名はほぼ 1:1 で対応。FSM 関数名（`app_csm_transit`、`mlacp_fsm_transit`）も HLD 記載どおり。
 
 ICCPd 内部構成マップは現行 master と整合。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
+description: "ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP） — ACL ルール per packet/byte counter の polling を orchagent から syncd の flex counter へ移譲 し、pol…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -17,6 +18,11 @@ related:
   yang:
     - sonic-flex-counter
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（命名差分あり）"
     現行 master で実装を確認: `sonic-swss/orchagent/aclorch.cpp` に `COUNTERS_ACL_COUNTER_RULE_MAP` 定義 (L45)、`ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS=10000`, `ACL_COUNTER_FLEX_COUNTER_GROUP` 経由の登録 (L4209)、SAI ACL counter 属性マッピング (L517-518)、CRM 連動 (L1940/L1982)。`sonic-utilities/counterpoll/main.py` に `counterpoll acl` グループと `acl interval/enable/disable` (L361-)、`sonic-utilities/scripts/aclshow` も存在。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-flex_counter.yang` L363 に `container ACL`（コメントで `ACL_STAT_COUNTER_FLEX_COUNTER_GROUP` を明示）。**HLD で言及される `m_acl_fc_mgr` メンバ名は実装上は generic な `m_flex_counter_manager`** (verified at: 2026-05-09)。
@@ -227,3 +233,10 @@ sonic-clear acl
 - mirror deactivate 時の counter detach ロジック実装確認
 - sonic-flex-counter YANG の ACL container 取り込み状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

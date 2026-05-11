@@ -1,5 +1,6 @@
 ---
 title: Bulk Counter（sai_bulk_object_get_stats / chunk size）
+description: "Bulk Counter（sai_bulk_object_get_stats / chunk size） — SAI に追加された bulk stats API（sai_bulk_object_get_stats / sai_bulk_object_clear_stats、SAI PR #1352）を SONiC の…"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `BulkStatsContext` の実装を `sonic-sairedis/syncd/FlexCounter.cpp` L208-L211 で確認。SAI bulk API は `sonic-sairedis/syncd/VendorSai.cpp` L41 `.bulk_object_get_stats = &sai_bulk_object_get_stats` で取り込み済み。chunk size の per-prefix 設定 (`m_counterChunkSizeMapFromPrefix`) も同 `FlexCounter.cpp` L544-L671 で `default_bulk_chunk_size` および partition prefix 別の chunk 計算を確認。

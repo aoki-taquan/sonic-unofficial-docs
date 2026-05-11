@@ -1,5 +1,6 @@
 ---
 title: BGP_GLOBALS_AF_NETWORK テーブル
+description: "BGP_GLOBALS_AF_NETWORK テーブル — BGP_GLOBALS_AF_AGGREGATE_ADDR が複数の動的ルートを 集約 するのに対し、こちらは管理者が 明示的に広告したいプレフィックス を列挙する用途。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

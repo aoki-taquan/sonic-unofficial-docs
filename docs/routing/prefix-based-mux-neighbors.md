@@ -1,5 +1,6 @@
 ---
 title: プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
+description: "プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化） — Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサーバ向けネイバエントリを 追加・削除 する必要があり、ネイバ数が多い ToR では切替時の処理量と SAI コール回数が線形に増えていく。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -15,6 +16,11 @@ related:
     - dualtor_neighbor_check
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 05 章: Dual ToR / MUX / アクティブ冗長](../topics/05-dual-tor/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/muxorch.h` L205 で MUX_CABLE の `neighbor_mode` フィールドが `REQ_T_STRING` で受け付けられ、`muxorch.cpp` L1172 `MuxPrefixBasedNbrHandler` クラス、L2238-2286 で `neighbor_mode` 値を読み取り `MuxNbrHandlerType::NBR_HANDLER_PREFIX_BASED / HOST_ROUTE` に分岐し、STATE_DB `MUX_CABLE_TABLE` に `neighbor_mode = "prefix-route" / "host-route"` を反映することを確認。`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` は `sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp` L154 ほかで使用済み (verified at: 2026-05-09)。
@@ -153,3 +159,10 @@ NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_R
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/mux_neighbors_using_prefix_route.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

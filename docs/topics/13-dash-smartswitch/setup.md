@@ -1,5 +1,6 @@
 ---
 title: DPU の IP 割当・gNMI 連携・KVM 検証
+description: "DPU の IP 割当・gNMI 連携・KVM 検証 — SmartSwitch / DASH の設定は「DPU の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の 3 つに分けて考えると見通しが良くなります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

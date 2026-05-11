@@ -1,5 +1,6 @@
 ---
 title: Reboot 運用と障害調査
+description: "Reboot 運用と障害調査 — reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

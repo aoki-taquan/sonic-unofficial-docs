@@ -1,5 +1,6 @@
 ---
 title: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
+description: "gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check） — gnoi.system.System のうち SONiC が初期サポートする RPC は Reboot / RebootStatus / CancelReb…"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
     - gnoi_client
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-gnmi/gnmi_server/gnoi_system.go` L34 `ValidateRebootRequest`、L116 `sendRebootReqOnNotifCh`（DB notification 経由で reboot 要求を書き込む）、L193 `Server.Reboot`、L241 `Server.RebootStatus`、L270 `Server.CancelReboot` のハンドラ実装を確認。`sonic-gnmi/pkg/gnoi/system/system.go` L22 `HandleReboot`、L180 `HandleDPUReboot` で DPU 対応も確認。`sonic-gnmi/gnoi_client/system/reboot.go` L13/25/42 で client 側 Reboot / CancelReboot / RebootStatus の 3 RPC を確認（verified at: 2026-05-09）。
@@ -197,3 +203,10 @@ gnoi_client system cancel_reboot --message "delayed by SRE"
 - Warmboot Manager HLD（別 HLD）と本 HLD の連携経路実装確認
 - gnoi_client の system サブコマンド実装状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

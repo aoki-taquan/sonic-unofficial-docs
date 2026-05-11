@@ -1,5 +1,6 @@
 ---
 title: SONiC Management Framework（REST / gNMI / Translib / Transformer）
+description: "SONiC Management Framework（REST / gNMI / Translib / Transformer） — sonic-mgmt-framework は外部 API（REST / gNMI / CLI）と内部 CONFIG_DB / 各種 daemon 間の モデル翻訳層 を担う。"
 area: management
 verification: code-verified
 last_verified: 2026-05-10
@@ -14,6 +15,11 @@ related:
     - openconfig
     - sonic-*
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。docker-sonic-mgmt-framework: sonic-buildimage/dockers/docker-sonic-mgmt-framework / sonic-mgmt-common/translib/transformer/* (interfaces / portchannel / sflow openconfig + sonic test) で確認。
@@ -117,3 +123,10 @@ sequenceDiagram
 - HLD は 170KB の包括設計書のため章ごとに別ページ化の検討（telemetry / openconfig 別 HLD と整理）
 - GCU / JSON Patch ordering との transactional 統合確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
+
+<!-- /topics-back-ref -->

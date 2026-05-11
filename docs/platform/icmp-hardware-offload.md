@@ -1,5 +1,6 @@
 ---
 title: ICMP Hardware Offload（DualToR link prober の NPU 化）
+description: "ICMP Hardware Offload（DualToR link prober の NPU 化） — SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を ICMP echo の往復 で監視している。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -17,6 +18,11 @@ related:
     - show icmp summary
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     現行 master の `sonic-swss/orchagent/icmporch.cpp`（`IcmpOrch::create_icmp_session` 等、`sai_icmp_echo_api` 利用）、`sonic-linkmgrd/src/link_prober/LinkProberBase.cpp:702-729` の GUID 生成、`SAI_ICMP_ECHO_SESSION_ATTR_GUID`（icmporch.cpp:457）の使用を確認済み（verified at: 2026-05-09）。
@@ -219,3 +225,10 @@ HLD には専用 YANG モジュール定義の記述がない（既存 `sonic-mu
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

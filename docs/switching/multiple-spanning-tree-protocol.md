@@ -1,5 +1,6 @@
 ---
 title: Multiple Spanning Tree Protocol (MSTP) on SONiC
+description: "Multiple Spanning Tree Protocol (MSTP) on SONiC — IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し 「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」 のが特徴。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,6 +20,11 @@ related:
     - show spanning-tree
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（基本構成のみ）"
     現行 master の `sonic-swss/cfgmgr/stpmgrd.cpp:47-49` で `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` テーブルを TableConnector に登録、`stpmgr` クラスが存在することを確認。`sonic-yang-models` の `sonic-spanning-tree.yang` も存在。CLI / IS-IS のような MSTP 専用 CLI 詳細は元 HLD 参照（verified at: 2026-05-09）。
@@ -166,3 +172,10 @@ MSTI 数の上限は `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/MSTP/MSTP.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

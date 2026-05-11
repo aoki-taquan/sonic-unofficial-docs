@@ -1,5 +1,6 @@
 ---
 title: 概念
+description: "概念 — SONiC の observability は、用途ごとに別のサブシステムが担当します。読み解くときは「いま何が起きているか」「変化点をどう受け取るか」「障害時に何を残すか」の 3 つに分けると迷いません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

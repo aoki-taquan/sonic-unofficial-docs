@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — 機能章を読む上で必要な「SAI 失敗時の見方」「内部 dump の取り方」「health/system ready の解釈」をここに集める。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

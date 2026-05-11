@@ -1,5 +1,6 @@
 ---
 title: sonic-fips YANG
+description: "sonic-fips YANG — Federal Information Processing Standards (FIPS) 140-3 compliance YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

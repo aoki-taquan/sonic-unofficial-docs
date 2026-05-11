@@ -1,5 +1,6 @@
 ---
 title: CoPP Neighbor Miss trap と enum capability query（show copp configuration）
+description: "CoPP Neighbor Miss trap と enum capability query（show copp configuration） — CoPP に neighbor_miss trap（ARP/ND 未解決 IP パケット用）を追加し、SAI enum capability query で対応 tra…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
   yang:
     - sonic-copp
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     現行 master の `sonic-swss/orchagent/copporch.cpp:99` で `neighbor_miss → SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS` マップ、line 106 の `default_supported_trap_ids`、line 199 の `STATE_COPP_TRAP_CAPABILITY_TABLE_NAME`、line 222-235 の `updateTrapOperStatus` (`hw_status` 公開)、line 239-287 の `query_objecttype_implementation`/`enum_values_capability` クエリ、`sonic-buildimage/files/image_config/copp/copp_cfg.j2:66,135` の `queue1_group3` / `neighbor_miss` 追加、`sonic-utilities/show/copp.py:189-206` の `show copp configuration` CLI を確認済み（verified at: 2026-05-09）。
@@ -188,3 +194,10 @@ show copp configuration detailed --group queue1_group3
 - show copp configuration CLI の sonic-utilities 取り込み
 - SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS のベンダー実装状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

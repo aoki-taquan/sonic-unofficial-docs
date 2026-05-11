@@ -1,5 +1,6 @@
 ---
 title: DEBUG_COUNTER テーブル
+description: "DEBUG_COUNTER テーブル — SAI debug counter（パケットドロップ要因別の汎用カウンタ）を CONFIG_DB から定義するテーブル。debugcounterorch (orchagent) が消費し、SAI debug counter オブジェクトを作成する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

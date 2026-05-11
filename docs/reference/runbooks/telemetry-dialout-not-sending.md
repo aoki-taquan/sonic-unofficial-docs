@@ -1,5 +1,6 @@
 ---
 title: Telemetry が送信されない (gNMI dial-out)
+description: "Runbook: Telemetry dial-out が collector に届かない — : sonic-net/sonic-telemetry @ master — dialout_client.go : sonic-net/sonic-gnmi @ master — gNMI server"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

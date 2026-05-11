@@ -1,5 +1,6 @@
 ---
 title: show bfd サブコマンド
+description: "show bfd サブコマンド — show bfd は BFD (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は STATE_DB の BFD_SESSION_TABLE||| であり、CONFIG_DB ではない。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

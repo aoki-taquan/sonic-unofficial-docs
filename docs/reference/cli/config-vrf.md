@@ -1,5 +1,6 @@
 ---
 title: config vrf サブコマンド
+description: "config vrf サブコマンド — config vrf は VRF (Virtual Routing and Forwarding) インスタンスの作成・削除と、L3 VNI マッピング（VXLAN EVPN 用）を提供する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

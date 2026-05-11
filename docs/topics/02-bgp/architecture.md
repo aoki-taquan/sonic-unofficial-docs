@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — BGP route が転送可能になるまでの主経路は、FRR 内の bgpd/zebra から FPM 経由で fpmsyncd に渡り、APPL_DB、orchagent、syncd、SAI/ASIC へ進む。設定反映の経路と、学習 route の転送面反映の経路を分けて見ることが重要である。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

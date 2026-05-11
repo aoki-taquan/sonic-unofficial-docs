@@ -1,5 +1,6 @@
 ---
 title: Syslog Source IP（SSIP / rsyslog omfwd / VRF / IP_FREEBIND）
+description: "Syslog Source IP — SONiC の syslog forwarding に source IP / VRF / port / protocol / filter / severity を設定できるようにする HLD（2022, v0.2 で大幅拡張）。"
 area: system
 verification: code-verified
 last_verified: 2026-05-11

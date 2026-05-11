@@ -1,5 +1,6 @@
 ---
 title: VLAN_INTERFACE テーブル
+description: "VLAN_INTERFACE テーブル — VLAN を L3 IF (SVI) として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local、grat ARP / proxy ARP、loopback action、MAC を持つ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -82,3 +83,10 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 ## 引用元
 
 [^1]: YANG 定義: `sonic-vlan.yang` 内 `VLAN_INTERFACE`。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L71>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

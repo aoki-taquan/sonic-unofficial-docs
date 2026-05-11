@@ -1,5 +1,6 @@
 ---
 title: SmartSwitch DPU graceful shutdown が失敗する
+description: "Runbook: SmartSwitch DPU の graceful shutdown が完了しない — : sonic-net/sonic-platform-daemons @ master — chassisd : sonic-net/sonic-utilities @ master — chassis_mod…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: clear (sonic-clear) コマンド
+description: "clear (sonic-clear) コマンド — 実行ファイル名は sonic-clear だが click のエントリ名は cli（/usr/local/bin/sonic-clear 経由で呼ばれる）。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

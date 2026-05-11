@@ -1,5 +1,6 @@
 ---
 title: config banner サブコマンド
+description: "config banner サブコマンド — config banner はシステムバナー（ログイン前/後メッセージ、MOTD）を CONFIG_DB の BANNER_MESSAGE|global テーブルに書き込む CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）
+description: "gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED） — gNMI Subscribe は YANG path に紐づくデータを stream / poll / once モードでクライアントに push する仕組み。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10
@@ -15,6 +16,11 @@ related:
     - openconfig-*
     - sonic-*
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: code-verified"
     本 HLD は `area=routing` の backlog だが内容は telemetry 全般に関わる。location は backlog 由来のまま。

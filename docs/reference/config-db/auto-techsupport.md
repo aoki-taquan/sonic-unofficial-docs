@@ -1,5 +1,6 @@
 ---
 title: AUTO_TECHSUPPORT テーブル
+description: "AUTO_TECHSUPPORT テーブル — イベント駆動 (core dump 生成) で show techsupport を自動実行・古いダンプを掃除する機能の設定。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -76,3 +77,10 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-auto_techsupport.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-auto_techsupport.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: MPLS TC → TC map（MPLS パケットの QoS classification）
+description: "MPLS TC → TC map（MPLS パケットの QoS classification） — SONiC の QoS は DSCP / DOT1P / TC の各値間でマップを定義し、CONFIG_DB の _TO__MAP テーブルとポート毎の PORT_QOS_MAP を介して SAI に降ろす設計を取って…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
     - config clear
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     verifier-batch-18 で確認:
@@ -190,3 +196,11 @@ HLD で明示されている制限[^1]:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/mpls_tc_to_tc_map.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

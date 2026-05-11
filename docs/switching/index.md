@@ -1,5 +1,6 @@
 ---
 title: スイッチング
+description: "スイッチング — VLAN、LAG、MCLAG、STP、MACsec、L2 forwarding など L2 制御面を扱う章。"
 verification: stub
 ---
 

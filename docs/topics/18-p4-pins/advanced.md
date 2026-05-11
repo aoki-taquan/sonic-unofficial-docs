@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると 状態取得 / config push の管理面（gNMI / OpenConfig）と組で読む のが自然です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

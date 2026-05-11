@@ -1,5 +1,6 @@
 ---
 title: BGP_GLOBALS_AF テーブル
+description: "BGP_GLOBALS_AF テーブル — BGP_GLOBALS_AF は BGP_GLOBALS の VRF ごとに、address-family / subsequent address-family 単位の BGP 設定を保持する CONFIG_DB テーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

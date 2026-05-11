@@ -1,5 +1,6 @@
 ---
 title: PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
+description: "PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル — PFC_PRIORITY_TO_PRIORITY_GROUP_MAP は PFC priority 0..7 を ingress priority group 0..7 に対応付ける named QoS map テーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
@@ -70,3 +71,10 @@ YANG 上は map 名を key にする outer list と、`pfc_priority` を key に
 
 [^1]: YANG 定義: `sonic-pfc-priority-priority-group-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pfc-priority-priority-group-map.yang>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

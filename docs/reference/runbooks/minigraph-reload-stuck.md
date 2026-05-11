@@ -1,5 +1,6 @@
 ---
 title: minigraph 適用後に reload が完了しない / 起動が固まる
+description: "Runbook: minigraph 適用後に reload が完了しない / 起動が固まる — : sonic-net/sonic-utilities @ 39732bceb — config/main.py : sonic-net/sonic-buildimage @ 4305596 — sonic-config…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

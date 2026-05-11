@@ -1,5 +1,6 @@
 ---
 title: CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
+description: "CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用） — QSFP-DD / OSFP / QSFP の高速モジュールでは、プラットフォーム × モジュール組み合わせ毎に Signal Integrity (SI) 値を再調整 しないと link…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     sonic-platform-daemons `sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py` L139 `get_optics_si_settings_value` / L179 `fetch_optics_si_setting` / L195 `load_optics_si_settings`、L199-205 で HWSKU フォルダ → platform フォルダの順で `optics_si_settings.json` を探すロジックを確認。`xcvrd/cmis/cmis_manager_task.py` L1131-1146 で AP_CONFIGURED フェーズで `optics_si_parser.optics_si_present()` 確認 → `fetch_optics_si_setting` 取得 → `api.stage_custom_si_settings(host_lanes_mask, optics_si_dict)` の経路、L1161-1162 で続く `CMIS_STATE_DP_INIT` 遷移を確認。`xcvrd_utilities/common.py` L27 `CMIS_STATE_AP_CONF` / L29 `CMIS_STATE_DP_INIT` の状態定義を確認（verified at: 2026-05-09）。
@@ -195,3 +201,10 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 - 既存 active SI のキャッシュ + 差分マージ実装確認
 - 3 回リトライ後に当該ポート初期化を中止する実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

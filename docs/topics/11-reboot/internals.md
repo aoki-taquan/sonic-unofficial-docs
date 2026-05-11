@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — reboot / upgrade / lifecycle の内部実装は「どこまで data plane を生かしたまま control plane を入れ替えるか」を決める warmboot / fastboot のステートマシン、そして config migration / image install…"
 area: topics
 verification: meta
 last_verified: 2026-05-11

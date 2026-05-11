@@ -1,5 +1,6 @@
 ---
 title: JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）
+description: "JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割） — config apply-patch で投入された JsonPatch (RFC6902) を、SONiC YANG モデル制約を満たしつつ任意の中間状態が valid となるように複数 JsonChange…"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
   yang:
     - sonic-extension
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-utilities/generic_config_updater/patch_sorter.py` L2129 `PatchSorterPath` / L2178 `DfsSorter` / L2229 `BfsSorter` / L2268 `MemoizationSorter` / L2349 `StrictPatchSorter` / L2543 `NonStrictPatchSorter` で patch orderer 実装を確認。`sonic-buildimage/src/sonic-yang-mgmt/sonic_yang.py` L283 `validate_data_tree` / L676 `find_data_dependencies` で libyang ラッパーを確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-common.yang` L39 ほかで `import sonic-extension` を確認（verified 2026-05-09）。

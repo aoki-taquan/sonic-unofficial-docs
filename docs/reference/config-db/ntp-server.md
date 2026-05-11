@@ -1,5 +1,6 @@
 ---
 title: NTP_SERVER テーブル
+description: "NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpHandler が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -83,3 +84,10 @@ NTP_SERVER|<server_address>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-ntp.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-ntp.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

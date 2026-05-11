@@ -1,5 +1,6 @@
 ---
 title: SONiC Container Hardening（capability / read-only / privileged 削減）
+description: "SONiC Container Hardening（capability / read-only / privileged 削減） — SONiC の docker は歴史的に多くが --privileged で動いていた。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: code-verified"
     各 docker の現行 supervisor / docker_image_ctl テンプレートでの cap-drop / read-only 適用状況は未確認。
@@ -95,3 +101,5 @@ flowchart LR
 ## 関連 Topics
 
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

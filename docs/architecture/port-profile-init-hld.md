@@ -1,5 +1,6 @@
 ---
 title: Port Profile Init（SAI bulk port API による fast-boot 高速化）
+description: "Port Profile Init（SAI bulk port API による fast-boot 高速化） — 従来の port 構成は SAI profile から事前作成 → PortsOrch が CONFIG_DB と比較し不一致 port を 個別に削除→再作成 する 2 phase。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     `sonic-swss/orchagent/portsorch.cpp` で `sai_port_api->create_ports(...)` (l.1445) と `sai_port_api->remove_ports(...)` (l.1549) を bulk 呼出。`sonic-sairedis/syncd/CommandLineOptionsParser.cpp` に `-l --enableBulk` オプションあり（`unittest/syncd/TestCommandLineOptions.cpp` も同オプションをテスト）。SAI 側 `create_ports` / `remove_ports` シンボルは sonic-sairedis SAI submodule 経由で利用可能。
@@ -135,3 +141,10 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 - 空 list 呼び出しの SAI_STATUS_NOT_IMPLEMENTED 判定の vendor 互換性確認 → vendor SAI 側
 - Dynamic Port Breakout (DPB) 経路と bulk port 操作の互換性確認 → 別途調査
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

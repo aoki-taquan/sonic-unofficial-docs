@@ -1,5 +1,6 @@
 ---
 title: ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
+description: "ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics） — QSFP-DD ZR / ZR+ のような coherent optics は従来の grey optics と比べ:"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
@@ -17,6 +18,11 @@ related:
   yang:
     - sonic-port
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: code-verified / 大規模 HLD"
     HLD は 97KB。本ページは ZR/ZR+ で SONiC の transceiver 管理（CMIS 状態機械、coherent optics 拡張）にどんな差が出るかに絞る。詳細レジスタ / state machine 完全網羅は HLD 本文を参照。
@@ -116,3 +122,10 @@ C-CMIS 拡張[^1]:
 - ZR module Application Select マッピング（100G/400G / FEC mode）の per-vendor 差分確認
 - port auto-FEC / autoneg / fast-link-up との挙動整合確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

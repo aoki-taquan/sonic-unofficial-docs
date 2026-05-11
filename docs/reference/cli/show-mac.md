@@ -1,5 +1,6 @@
 ---
 title: show mac サブコマンド
+description: "show mac サブコマンド — show mac は FDB (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は fdbshow スクリプトの薄いラッパで、CLI 側はオプションを fdbshow の引数に machine-translate するだけ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

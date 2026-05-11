@@ -1,5 +1,6 @@
 ---
 title: VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
+description: "VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール） — VOQ ベースのシャシでは 入口 chip（ingress ASIC） と 出口 chip（egress ASIC） が異なることがあり、両 chip の rewrite 設定を協調プログラムする必要がある。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
     - show interfaces status
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     sonic-swss `orchagent/port.h` L158-167 で `enum Role { Ext, Int, Inb, Rec, Dpc }` を確認。`portsorch.h` L600 で `map<string, Port::Role> m_recircPortRole` メンバを確認、`portsorch.cpp` L4250-4252 で `role == Port::Role::Rec || role == Port::Role::Inb` のとき m_recircPortRole に登録、L10846-10857 `getRecircPort(Port&, Port::Role)` を確認。minigraph 側は sonic-buildimage `src/sonic-config-engine/minigraph.py` L126 で `role.lower() == 'inb' or role.lower() == 'rec'` 受理（VOQ intf 属性抽出）、L2509-2512 で `port_role == 'Rec'` の port を admin_status=up + INTERFACE テーブル登録（routed 化）する経路を確認。Mirror 側は `mirrororch.cpp` L594/L964/L1195 で `getRecircPort(port, Port::Role::Rec)` 呼び出しを確認（verified at: 2026-05-09）。
@@ -199,3 +205,10 @@ show interfaces status | grep -E 'Recirc|Ether-(Rec|IB)'
 - Everflow / mirror が Rec role port を選択するロジックの実装確認
 - VOQ inband port (Inb role) を消費する VOQ inband 機能側の実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

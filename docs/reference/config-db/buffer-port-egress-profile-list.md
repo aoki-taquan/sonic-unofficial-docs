@@ -1,5 +1,6 @@
 ---
 title: BUFFER_PORT_EGRESS_PROFILE_LIST テーブル
+description: "BUFFER_PORT_EGRESS_PROFILE_LIST テーブル — BUFFER_QUEUE テーブル (queue 単位の buffer profile) と並ぶ別レベルで、こちらはポート全体としての egress プロファイル群の集約。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

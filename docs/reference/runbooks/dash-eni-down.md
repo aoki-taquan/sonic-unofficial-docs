@@ -1,5 +1,6 @@
 ---
 title: DASH ENI が down する / トラフィック止まる
+description: "Runbook: DASH ENI が admin_state=up に遷移しない / トラフィック断 — : sonic-net/sonic-dash-api @ master — dash_eni.proto : sonic-net/sonic-swss @ master — dashorch.cpp"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

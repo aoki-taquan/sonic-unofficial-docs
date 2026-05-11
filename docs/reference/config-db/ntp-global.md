@@ -1,5 +1,6 @@
 ---
 title: NTP テーブル (global)
+description: "NTP テーブル (global) — NTP クライアントのグローバル設定を保持するシングルトン的テーブル。YANG 上は sonic-ntp.yang の container NTP 配下 container global として定義され、CONFIG_DB 上は NTP|global の単一エントリで現れる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -73,3 +74,10 @@ NTP|global
 ## 引用元
 
 [^1]: YANG 定義: `sonic-ntp.yang` の `container global`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-ntp.yang#L86-L165>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

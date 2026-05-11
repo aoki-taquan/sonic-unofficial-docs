@@ -1,5 +1,6 @@
 ---
 title: kdump リモート転送（SSH）
+description: "kdump リモート転送（SSH） — SONiC のカーネルクラッシュダンプは従来 ローカル /var/crash/ にしか保存できなかった。スイッチ側ストレージが小さい / 圧迫されると core を取り逃す。本機能は SSH 経由でリモートサーバへ core dump を転送 し、専用サーバへ集約するためのもの。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,11 @@ related:
   yang:
     - sonic-kdump
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-yang-models/yang-models/sonic-kdump.yang` L57-71 で `remote / ssh_string / ssh_path` の leaf を確認。`sonic-utilities/scripts/sonic-kdump-config` L261/283-294/346-357/429-444 で同フィールドの読み書きと kdump-tools への反映、`sonic-utilities/show/kdump.py` L88-95 で `show kdump config` 拡張、`sonic-host-services/scripts/hostcfgd` L1166-1270 でハンドラ、`sonic-buildimage/build_debian.sh` L426-433 で `network_setup.sh` / hook の initramfs 配置を確認 (verified at: 2026-05-09)。
@@ -110,3 +116,10 @@ show kdump config
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/kdump/kdump_Remote_SSH_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
+description: "SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
@@ -17,6 +18,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/dash/dashenifwdorch.h:69` で `TABLE_TYPE = "ENI_REDIRECT"`、L92 で `class DashEniFwdOrch : public Orch2, public Observer`、L51-58 で `DpuRegistry / EniNH / LocalEniNH / RemoteEniNH / EniAclRule / EniInfo / EniFwdCtx*` を確認。`dashenifwdinfo.cpp:6` で `EniAclRule::BASE_PRIORITY = 9996`、L194 で `BASE_PRIORITY + type_` により通常 9996 / TUNN_TERM 9997 を生成。`orchdaemon.{h,cpp}` への組み込み、mock `dashenifwdorch_ut.cpp` も確認（verified at: 2026-05-09）。
@@ -193,3 +199,10 @@ reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ル�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/eni-based-forwarding.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: P4RT アプリケーション（PINS の gRPC サービス、port 9559）
+description: "P4RT アプリケーション（PINS の gRPC サービス、port 9559） — P4RT アプリケーションは PINS（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、P4Runtime v1.3.0 を実装する gRPC サービスとして TCP…"
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -14,6 +15,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: Discrepancy-found"
     `p4rt-app` Docker、`P4Orch`、`APP_P4RT_TABLE_NAME` / `APPL_STATE_DB` は実装済みを確認した一方、HLD で言及された **HashOrch（OrchAgent 新規追加）** は現行 master では独立コンポーネントとして存在せず、ハッシュ属性は既存の `SwitchOrch` (`switch_helper.cpp` の `SWITCH_HASH_FIELD_*` マップ) が `CFG_SWITCH_HASH_TABLE_NAME` 経由で扱う形になっている。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
@@ -211,3 +217,5 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は c
 ## 関連 Topics
 
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: config acl サブコマンド
+description: "config acl サブコマンド — config acl は ACL テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（acl-loader 起動）を提供する。個別 ACL ルールを CLI フラグで追加するインタフェースは無い。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -123,3 +124,10 @@ excerpt: |
 - [CONFIG_DB: ACL_TABLE](../config-db/acl-table.md)
 - [CONFIG_DB: ACL_RULE](../config-db/acl-rule.md)
 - [CLI: show acl](show-acl.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

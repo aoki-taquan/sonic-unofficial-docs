@@ -1,5 +1,6 @@
 ---
 title: ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
+description: "ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType） — 従来の ACL は L3 / L3V6 / MIRROR / PFC_WD 等の 事前定義テーブルタイプ を AclOrch 内に持っており、新機能追加のたびに orchagent を改修する必要があった。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -18,6 +19,11 @@ related:
   yang:
     - sonic-acl
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     現行 master で実装済みを確認。`sonic-swss/orchagent/aclorch.h:214-292` で `AclTableType` / `AclTableTypeBuilder` / `AclTableTypeParser`、`aclorch.h:591-609` で `addAclTable` / `addAclTableType` / `addAclRule` / `updateAclRule` API、`sonic-swss-common/common/schema.h:95` で `APP_ACL_TABLE_TYPE_TABLE_NAME`、`schema.h:418` で `STATE_ACL_STAGE_CAPABILITY_TABLE_NAME`、`aclorch.cpp:42,4014,4067` で `is_action_list_mandatory` フィールドの扱いを確認（verified at: 2026-05-09）。
@@ -224,3 +230,10 @@ sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/acl/ACL-Table-Type-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

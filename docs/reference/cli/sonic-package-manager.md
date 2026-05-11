@@ -1,5 +1,6 @@
 ---
 title: sonic-package-manager コマンド
+description: "sonic-package-manager コマンド — sonic-package-manager（短縮 spm）は SONiC が拡張機能を コンテナ化された 'package' として動的に追加・削除・アップグレードするための CLI。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

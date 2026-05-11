@@ -1,5 +1,6 @@
 ---
 title: sonic-tc-priority-group-map YANG
+description: "sonic-tc-priority-group-map YANG — TC_TO_PRIORITY_GROUP_MAP yang Module for SONiC OS. Traffic Class を ingress priority group へマップしバッファ受入制御に使う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: gNOI 連携と他章との境界
+description: "gNOI 連携と他章との境界 — DASH / SmartSwitch は単独で完結する機能ではなく、管理面 (gNMI / gNOI)、Multi-ASIC / VOQ、Platform 章と境界を持ちます。ここでは「どこから先は別の章が主」かを整理します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

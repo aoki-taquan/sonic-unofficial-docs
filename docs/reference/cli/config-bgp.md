@@ -1,5 +1,6 @@
 ---
 title: config bgp サブコマンド
+description: "config bgp サブコマンド — config bgp は BGP セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-ECMP、および aggregate-address (集約広告) の操作を提供する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

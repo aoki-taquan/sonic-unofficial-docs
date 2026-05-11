@@ -1,5 +1,6 @@
 ---
 title: Weighted ECMP（WCMP / BGP link-bandwidth ext community）
+description: "Weighted ECMP（WCMP） — 各 ToR-Spine リンクが部分故障した際、通常 ECMP は 生存リンクの容量差を反映できず 均等分散して輻輳する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -15,6 +16,11 @@ related:
     - show bgp device-global
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `bgpcfgd/managers_device_global.py` で `wcmp_template = ... bgpd/wcmp/bgpd.wcmp.conf.j2`、`wcmp_enabled` キー処理、`configure_wcmp(data)` を master で確認。`docker-fpm-frr/frr/bgpd/wcmp/` テンプレートディレクトリも存在。
@@ -149,3 +155,10 @@ Disabled   Enabled
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/wcmp/wcmp-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
+
+<!-- /topics-back-ref -->

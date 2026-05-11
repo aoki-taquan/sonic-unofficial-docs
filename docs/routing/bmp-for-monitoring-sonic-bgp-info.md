@@ -1,5 +1,6 @@
 ---
 title: BMP（BGP Monitoring Protocol / BMP_STATE_DB）
+description: "BMP（BGP Monitoring Protocol / BMP_STATE_DB） — SONiC の Redis ROUTE_TABLE には neighbor / nexthop しかなく、BGP の deeper view（capabilities、graceful_restart、AS path、in/o…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/dockers/docker-sonic-bmp/`（bmp container）、`sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py`、`sonic-buildimage/src/sonic-bmp/`（openbmpd fork）、および `sonic-swss-common/common/schema.h` の `BMP_STATE_DB` 定義を master で確認済み。`docker-bmp-watchdog` も併存。

@@ -1,5 +1,6 @@
 ---
 title: Lab / Virtual SONiC / Developer Entry
+description: "Lab / Virtual SONiC / Developer Entry — この章は、SONiC を「実機を触らずに、あるいは小さな lab で」評価・開発・検証するための入口を整理する章です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

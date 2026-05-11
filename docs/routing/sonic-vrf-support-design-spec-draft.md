@@ -1,5 +1,6 @@
 ---
 title: VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
+description: "VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrfo…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -23,6 +24,11 @@ related:
     - show vrf
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/vrforch.cpp` / `cfgmgr/vrfmgrd.cpp` 実装、`sonic-yang-models/yang-models/sonic-vrf.yang:24/27` (`container VRF` / `list VRF_LIST`)、`sonic-utilities/config/main.py` の `config vrf` CLI を確認。SAI Virtual Router + Linux VRF master device 連携は現行 master でも維持（verified at: 2026-05-09）。
@@ -151,3 +157,10 @@ show vrf
 - [CONFIG_DB: VRF](../reference/config-db/vrf.md)
 - [CONFIG_DB: INTERFACE](../reference/config-db/interface.md)
 - [YANG: sonic-vrf](../reference/yang/sonic-vrf.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
+
+<!-- /topics-back-ref -->

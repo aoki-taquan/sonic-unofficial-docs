@@ -1,5 +1,6 @@
 ---
 title: トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
+description: "トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避） — Dual-ToR（Active / Standby）でサーバ側輻輳が起きると upper / lower 両 ToR に PFC pause が同時に伝搬 する。"
 area: overlay
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -21,6 +22,11 @@ related:
     - sonic-tc-dscp
     - sonic-port-qos-map
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 05 章: Dual ToR / MUX / アクティブ冗長](../topics/05-dual-tor/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: Discrepancy-found"
     実装は概ね HLD どおりだが、PFC watchdog フィールド名が `pfc_wd_sw_enable`（HLD）→ `pfcwd_sw_enable`（実装）と異なる。詳細は末尾「実装との乖離」を参照（verified at: 2026-05-09）。
@@ -196,3 +202,11 @@ redis-cli -n 4 keys 'PORT_QOS_MAP|*' \
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/tunnel_dscp_remapping.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

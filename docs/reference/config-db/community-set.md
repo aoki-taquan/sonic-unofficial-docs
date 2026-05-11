@@ -1,5 +1,6 @@
 ---
 title: COMMUNITY_SET テーブル
+description: "COMMUNITY_SET テーブル — BGP コミュニティ集合を CONFIG_DB に登録するテーブル。sonic-routing-policy-sets.yang の COMMUNITY_SET コンテナで定義され、ROUTE_MAP の match community 等から参照される。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

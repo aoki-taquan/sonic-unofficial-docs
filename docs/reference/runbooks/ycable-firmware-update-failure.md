@@ -1,5 +1,6 @@
 ---
 title: Y-cable firmware 更新が失敗する
+description: "Runbook: Y-cable firmware download / activate が失敗 — : sonic-net/sonic-platform-common @ master — y_cable_base.py : sonic-net/sonic-platform-daemons @ master —…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

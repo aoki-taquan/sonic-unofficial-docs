@@ -1,5 +1,6 @@
 ---
 title: config qos サブコマンド
+description: "config qos サブコマンド — config qos は QoS と buffer 関連テンプレートを再生成して CONFIG_DB に反映する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
@@ -76,3 +77,10 @@ config qos reload [--ports <port[,port...]>]
 [^2]: `_qos_update_ports()` の対象 table。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3715>
 
 [^3]: `reload()` 内の buffer template 選択と `DEVICE_METADATA` 更新。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3666>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

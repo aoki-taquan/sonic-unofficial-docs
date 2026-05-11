@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — ACL の最小設定は、table を作り、rule JSON を流し、show で確認する流れです。config acl は table の作成・削除と JSON の一括投入を提供しますが、個別 rule を CLI 引数で追加するインタフェースではありません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

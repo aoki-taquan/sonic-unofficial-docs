@@ -1,5 +1,6 @@
 ---
 title: show buffer サブコマンド
+description: "show buffer サブコマンド — show buffer は buffer 設定・状態の表示を mmuconfig に委譲する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
@@ -58,3 +59,10 @@ mmuconfig -l [-n <namespace>] [-vv]
 ## 引用元
 
 [^1]: `show buffer` と `configuration` command の定義。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2466>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

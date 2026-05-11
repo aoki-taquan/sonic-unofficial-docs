@@ -1,5 +1,6 @@
 ---
 title: L2 / VLAN / LAG / MC-LAG
+description: "L2 / VLAN / LAG / MC-LAG — この章は、SONiC を L2 switch として読むときに最初に迷う「VLAN、VLAN interface、switchport、sub-port、LAG、MC-LAG はどの順番で理解すればよいか」を整理する入口です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

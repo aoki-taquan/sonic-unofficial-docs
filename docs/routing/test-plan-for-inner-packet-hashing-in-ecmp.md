@@ -1,5 +1,6 @@
 ---
 title: ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
+description: "ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ） — ECMP nexthop の選択を outer ヘッダではなく inner パケットの 5-tuple（src/dst IP、L4 port、IP proto）でハッシュさせ…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
     - config pbh
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: `sonic-swss/orchagent/pbhorch.{cpp,h}` と `sonic-swss/orchagent/pbh/pbhmgr.cpp` を確認。`pbhmgr.cpp:36-42` で `INNER_DST_IPV4` / `INNER_SRC_IPV4` / `INNER_DST_IPV6` / `INNER_SRC_IPV6` / `INNER_L4_DST_PORT` / `INNER_L4_SRC_PORT` / `INNER_IP_PROTOCOL` の `SAI_NATIVE_HASH_FIELD_*` マッピングと VxLAN/NVGRE 用 case が実装済み。CLI は `sonic-utilities/config/plugins/pbh.py` および `utilities_common.helper.get_port_pbh_binding` で取り込み済み。HLD と整合。

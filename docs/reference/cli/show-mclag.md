@@ -1,5 +1,6 @@
 ---
 title: show mclag (mclagdctl) コマンド
+description: "show mclag (mclagdctl) コマンド — SONiC には show mclag という Click サブコマンドは存在しない。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -89,3 +90,10 @@ iccpd 内部のログレベル切替。値は iccpd の syslog 等でデバッ�
 [^2]: ホスト側ラッパは `dockers/docker-iccpd/base_image_files/mclagdctl`。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-iccpd/base_image_files/mclagdctl>
 
 [^3]: コマンドテーブルは `command_types[]` (`src/iccpd/src/mclagdctl/mclagdctl.c` L64-L160)。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mclagdctl/mclagdctl.c#L64>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

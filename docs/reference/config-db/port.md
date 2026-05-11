@@ -1,5 +1,6 @@
 ---
 title: PORT テーブル
+description: "PORT テーブル — 物理スイッチポートの設定を保持するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -105,4 +106,7 @@ PORT|<name>
 <!-- topics-back-ref -->
 ## 関連 Topics
 
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 - [Topics: Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

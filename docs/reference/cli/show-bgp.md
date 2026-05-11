@@ -1,5 +1,6 @@
 ---
 title: show bgp / show ip bgp / show ipv6 bgp サブコマンド
+description: "show bgp / show ip bgp / show ipv6 bgp サブコマンド — show bgp グループは show/main.py 末尾で cli.add_command(bgp_cli.BGP) の形で登録されるため、cli.json の機械抽出には現れない。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: sonic-wred-profile YANG
+description: "sonic-wred-profile YANG — Weighted Random Early Detection (WRED) プロファイルを名前付きで保持する。色 (green/yellow/red) 毎の min/max 閾値、ドロップ確率、 ECN 有効化、 WRED 有効化を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

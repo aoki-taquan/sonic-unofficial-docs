@@ -1,5 +1,6 @@
 ---
 title: システム
+description: "システム — reboot、warm restart、telemetry、logging、security、techsupport など装置共通の運用機能を扱う章。"
 verification: stub
 ---
 

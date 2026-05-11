@@ -1,5 +1,6 @@
 ---
 title: 概念
+description: "概念 — PINS は SONiC に「外部の SDN コントローラが P4Runtime gRPC を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

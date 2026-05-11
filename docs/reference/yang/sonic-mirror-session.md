@@ -1,5 +1,6 @@
 ---
 title: sonic-mirror-session YANG
+description: "sonic-mirror-session YANG — SONiC Mirror session yang model"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -89,3 +90,10 @@ module: sonic-mirror-session
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mirror-session.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

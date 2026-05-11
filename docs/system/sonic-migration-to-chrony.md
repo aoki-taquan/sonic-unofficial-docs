@@ -1,5 +1,6 @@
 ---
 title: ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
+description: "ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） — SONiC 既存の ntpd（202405 以降は NTPsec、ntpd の security-hardened fork）には次の問題があった:"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -124,3 +125,10 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 - HW RTC 自動 sync が kernel time discipline 経由で動いていることの確認
 - config ntp 系 CLI の chronyc 経由実装への切替確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

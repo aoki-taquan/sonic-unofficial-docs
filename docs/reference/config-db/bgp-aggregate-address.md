@@ -1,5 +1,6 @@
 ---
 title: BGP_AGGREGATE_ADDRESS テーブル
+description: "BGP_AGGREGATE_ADDRESS テーブル — BGP aggregate-address (集約広告) の設定テーブル。frr-mgmt-framework または bgpcfgd テンプレ経路で aggregate-address [summary-only] [as-set] ... に変換される。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

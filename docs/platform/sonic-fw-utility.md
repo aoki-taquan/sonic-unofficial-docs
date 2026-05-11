@@ -1,5 +1,6 @@
 ---
 title: fwutil（platform component firmware の install / update / show）
+description: "fwutil（platform component firmware の install / update / show） — BIOS、CPLD、FPGA、BMC、SSD などのプラットフォームコンポーネントの ファームウェアを統一 CLI から操作 するためのユーティリティ。狙い:"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
@@ -14,6 +15,11 @@ related:
     - show platform firmware
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"
     `sonic-utilities/fwutil/{main,lib,log}.py` と `sonic-platform-common/sonic_platform_base/component_base.py`（`get_firmware_version` / `install_firmware` 等）の存在を確認。各 platform plugin と `platform_components.json` の正確な記述差はベンダ依存のため範囲外。
@@ -90,3 +96,10 @@ flowchart LR
 - smart-switch / DPU 環境での fwutil 拡張（DPU 個別更新）の現行実装確認
 - ASIC 本体 firmware の扱い境界（fwutil / SAI / vendor SDK）の整理状況確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

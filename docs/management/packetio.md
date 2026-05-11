@@ -1,5 +1,6 @@
 ---
 title: P4Runtime PacketIO（generic netlink + send_to_ingress）
+description: "P4Runtime PacketIO — 通常 netdev では すべての punt パケット が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要:"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（SONiC 共通基盤）"
     `copporch` の `genetlink_name` / `genetlink_mcgrp_name` フィールドと `createGenetlinkHostIf()`、`portsorch` の `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` 登録と `addSendToIngressHostIf()`、`copp_cfg.j2` の `queue2_group1` に `genetlink_mcgrp_name: "packets"` / `genetlink_name: "psample"` を確認。kernel `genl_packet` filter のベンダ側実装はリポジトリ外でスコープ外 (verified at: 2026-05-09)。
@@ -178,3 +184,5 @@ graph LR
 ## 関連 Topics
 
 - [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
+
+<!-- /topics-back-ref -->

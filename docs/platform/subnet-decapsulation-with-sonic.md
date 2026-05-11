@@ -1,5 +1,6 @@
 ---
 title: VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）
+description: "VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル） — Azure Netscan は IPinIP プローブ（outer DIP=デバイス Loopback、inner DIP=Netscan 送信元）でネットワーク経路の blackhole を検知する。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-11
@@ -15,6 +16,11 @@ related:
     - show tunnel decap
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     HLD は 2024 年 3 月版 (Rev 0.1)。`TunnelDecapOrch` の `SUBNET_DECAP` / `TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` 取り込み、`MP2MP` 形式の decap term の SAI 実装、`IPINIP_SUBNET` / `IPINIP_V6_SUBNET` 自動生成、warm-reboot 対応 (`swssconfig.sh` 拡張) は未裏取り。
@@ -144,3 +150,10 @@ Dst IP         Src IP         Tunnel Name    Decap Term Type
 - `sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2` / `swssconfig.sh` と `sonic-config-engine/tests/sample_output/py3/ipinip_subnet_decap_enable.json` に subnet decap 用の自動生成テンプレート / サンプルが存在し、warm-reboot 対応の swssconfig 経路も裏取り。
 
 HLD と実装は一致。`SUBNET_DECAP` table、`MP2MP` term、自動生成された `IPINIP_SUBNET` / `IPINIP_V6_SUBNET` tunnel いずれも master に取り込み済み。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — リリース直前で気にする観点を 3 つ並べる。ARM 向け移植、container hardening、feature quality 定義はそれぞれ別 HLD だが、リリース時にまとめて満たしておきたい条件 という共通点がある。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

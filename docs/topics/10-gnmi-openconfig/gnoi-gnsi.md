@@ -1,5 +1,6 @@
 ---
 title: gNOI / gNSI
+description: "gNOI / gNSI — gNOI (gRPC Network Operations Interface) は、設定読み書き (gNMI) の隣で「操作」を担当する。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

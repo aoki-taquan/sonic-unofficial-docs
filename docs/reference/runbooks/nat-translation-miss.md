@@ -1,5 +1,6 @@
 ---
 title: NAT translation が一部漏れる
+description: "Runbook: NAT translation が一部のフローで効かない — : sonic-net/sonic-swss @ master — natorch.cpp : sonic-net/sonic-swss @ master — natsyncd.cpp"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

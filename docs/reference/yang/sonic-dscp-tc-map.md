@@ -1,5 +1,6 @@
 ---
 title: sonic-dscp-tc-map YANG
+description: "sonic-dscp-tc-map YANG — DSCP_TO_TC_MAP yang Module for SONiC OS"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

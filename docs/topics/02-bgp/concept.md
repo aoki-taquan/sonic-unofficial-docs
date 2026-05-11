@@ -1,5 +1,6 @@
 ---
 title: 概要
+description: "概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか が見えづらいことです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

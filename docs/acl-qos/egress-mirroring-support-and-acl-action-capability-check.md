@@ -1,5 +1,6 @@
 ---
 title: ACL の egress mirror 対応と SAI ベース action capability 問い合わせ
+description: "ACL の egress mirror 対応と SAI ベース action capability 問い合わせ — ACL は ASIC ごとに ingress / egress stage で使えるアクションが異なる。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -27,6 +28,11 @@ related:
     - acl-loader
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     HLD の主要要素は master に取り込み済: `ACTION_MIRROR_{INGRESS,EGRESS}_ACTION` 定数（`aclorch.h:70-71`）、`AclOrch::queryAclActionCapability()` / `putAclActionCapabilityInDB()`（`aclorch.cpp:3975`,`4056`）、`SWITCH_CAPABILITY` への `ACL_ACTIONS|<stage>` 書き込み（`aclorch.cpp:4061`）、`acl-loader full --mirror_stage {ingress,egress}`（`acl_loader/main.py:1209,1238`）、libsairedis の `queryAttributeEnumValuesCapability`（`RedisRemoteSaiInterface.cpp:1245`）。詳細は末尾「実装との乖離」。
@@ -188,3 +194,10 @@ master（2026-05 時点）での裏取り結果:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/acl/acl_stage_capability.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

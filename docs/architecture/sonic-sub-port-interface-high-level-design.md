@@ -1,5 +1,6 @@
 ---
 title: Sub-port Interface（dot1q encap / VRF RIF / 命名規則）
+description: "Sub-port Interface（dot1q encap / VRF RIF / 命名規則） — 物理 port または PortChannel に . 付きの 802.1Q encap sub-interface を作成し、VRF binding した L3 router interface（RIF）として使う…"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11
@@ -18,6 +19,11 @@ related:
   yang:
     - sonic-vlan-sub-interface
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `IntfMgr` の sub-port 拡張を `sonic-swss/cfgmgr/intfmgr.cpp` で確認: L14 `#include "subintf.h"`, L331 `addHostSubIntf()`, L407-L446 `updateSubIntfMtu()` / `setHostSubIntfMtu()`, L464-L532 `updateSubIntfAdminStatus()` / `setHostSubIntfAdminStatus()`, L533 `removeHostSubIntf()`, L542 `setSubIntfStateOk()`, L557 `removeSubIntfState()`。`SubIntf` クラス本体は `sonic-swss/lib/subintf.cpp` / `subintf.h` に独立実装されている。`intfsorch.cpp` も sub-port を取り込み済み。
@@ -162,3 +168,10 @@ show subinterface status
 - v0.2 (2020-12, Broadcom) の命名規則拡張取り込み確認
 - PortChannel 上 sub-port の LAG hash 連携の現行実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

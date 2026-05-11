@@ -1,5 +1,6 @@
 ---
 title: APP_DB → ASIC_DB の反映が遅延・停止する
+description: "Runbook: APPL_DB の更新が ASIC_DB（syncd）に反映されない — : sonic-net/sonic-swss @ master — orchdaemon.cpp : sonic-net/sonic-sairedis @ master — Syncd.cpp"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）
+description: "PortChannel (LAG) の OpenConfig YANG サポート — SONiC の PortChannel は REST/gNMI で操作できるが、SONiC 独自 YANG（sonic-portchannel 等）に縛られる。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
@@ -15,6 +16,11 @@ related:
     - openconfig-if-aggregate
     - openconfig-if-ethernet
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-mgmt-common/translib/transformer/sw_portchannel.go` で PortChannel transformer を確認。`portchannel_openconfig_test.go` L54-73 で `interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/config/openconfig-if-aggregate:aggregate-id` の PATCH と `interface[name=PortChannel111]/openconfig-if-aggregate:aggregation/config/min-links` の設定 REST テストを確認。`openconfig-interfaces-annot.yang` L87-90 で `min-links → min_links` の `lag_min_links_xfmr` field-transformer、`sonic-portchannel.yang` L51 で SONiC 側 `min_links` 定義を確認。subinterface は本 HLD のスコープ外。
@@ -136,3 +142,10 @@ gNMI も `Capabilities` で同 YANG を公開し `Get` / `Set` で同等[^1]。
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/OpenConfig_PortChannel_Interface.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

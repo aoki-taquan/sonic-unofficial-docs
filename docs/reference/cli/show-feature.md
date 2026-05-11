@@ -1,5 +1,6 @@
 ---
 title: show feature サブコマンド
+description: "show feature サブコマンド — show feature グループは SONiC の feature (= 個別 docker コンテナ単位の機能) の現在状態と設定値を表示する。実装は show/feature.py の @click.group(name='feature')。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

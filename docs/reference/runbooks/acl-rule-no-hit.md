@@ -1,5 +1,6 @@
 ---
 title: ACL ルールが効かない / counter が増えない
+description: "Runbook: ACL ルールが効かない / counter が増えない — : sonic-net/sonic-swss @ 4305596 — orchagent/aclorch.cpp : sonic-net/sonic-utilities @ 39732bceb — acl_loader"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: sonic-versions YANG
+description: "sonic-versions YANG — VERSIONS YANG Module for SONiC OS. CONFIG_DB のスキーマバージョンを記録し、db_migrator.py がマイグレーションの判定に使う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

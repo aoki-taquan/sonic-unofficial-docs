@@ -1,5 +1,6 @@
 ---
 title: Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）
+description: "Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加） — SONiC の SNMP Entity MIB（RFC 2737）実装は当初、entityPhysical グループの transceiver と DOM sensor だけ…"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。rfc2737 (Entity MIB): sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc2737.py:241,672,822,1144 (entPhysicalContainedIn, FAN_INFO map) / rfc3433 (Entity Sensor MIB): rfc3433.py に RFC 3433 link / sub_oid: physical_entity_sub_oid_generator.py で確認。
@@ -169,3 +175,11 @@ redis-cli -n 6 KEYS "FAN_INFO|*"
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/snmp/extension-to-physical-entity-mib.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

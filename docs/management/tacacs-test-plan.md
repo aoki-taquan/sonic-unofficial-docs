@@ -1,5 +1,6 @@
 ---
 title: TACACS+ 認証テストプラン（pam_tacplus + ssh login）
+description: "TACACS+ 認証テストプラン（pam_tacplus + ssh login） — SONiC の TACACS+ 認証（Authentication）を ssh login 経由で検証するテストプラン。"
 area: management
 verification: code-verified
 last_verified: 2026-05-11
@@ -19,6 +20,11 @@ related:
     - show tacacs
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     本テストプランの設計記述。`hostcfgd` による PAM (`/etc/pam.d/common-auth-sonic`) 生成、`config tacacs` CLI、failthrough オプション、loopback source IP の挙動の現行 master 実装は未裏取り。
@@ -151,3 +157,10 @@ flowchart LR
 - `/etc/pam.d/common-auth-sonic` 経由の include 切替: L748-L752
 
 テストプランの主要観点（PAM 経由 ssh login、failthrough、passkey、server priority、NSS 共有）はすべて hostcfgd で実装済み。`code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

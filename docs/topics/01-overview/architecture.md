@@ -1,5 +1,6 @@
 ---
 title: 設定データフロー
+description: "設定データフロー — SONiC の設定を読むときは、まず CONFIG_DB を起点にします。CONFIG_DB はユーザや controller が投入した意図を保持し、各 daemon がそれを購読して自分の担当する実行状態へ変換します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

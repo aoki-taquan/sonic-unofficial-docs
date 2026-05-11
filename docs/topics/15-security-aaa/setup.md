@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — ここでは AAA バックエンドと管理面ポリシーの最小構成を、どの reference を引いて投入すればよいかという観点でまとめます。詳細な CLI / DB スキーマは個別 reference ページに既に存在するため、本ページはあくまで導線として機能します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

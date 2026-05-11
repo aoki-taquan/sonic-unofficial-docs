@@ -1,5 +1,6 @@
 ---
 title: シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
+description: "シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future） — このドキュメントはシャーシ型 SONiC（Supervisor + Linecards + Fabric Cards）における PMON 関連の必須要件と将来要件 を箇条書きで挙げたチェックリスト形式の…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -15,6 +16,11 @@ related:
     - show reboot-cause
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified（要件チェックリスト）"
     `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` master に `CHASSIS_MODULE_TABLE` / `CHASSIS_ASIC_TABLE` の生成と `CHASSIS_MODULE_HOSTNAME_TABLE` (= `CHASSIS_MODULE_TABLE`) の hostname フィールド処理を確認（要件 #21 の hostname 表示拡張）。`sonic-psud` / `sonic-thermalctld` も同 daemon repo に存在。要件で挙がった Mandatory 項目は master 取り込み済み。Future 項目（LED 統一 / sensors 移行 / Generic console）は別途追跡。
@@ -141,3 +147,10 @@ reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィ�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon-chassis-requirements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

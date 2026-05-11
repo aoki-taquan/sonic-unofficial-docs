@@ -1,5 +1,6 @@
 ---
 title: 静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）
+description: "静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携） — SONiC は管理インタフェース経由で DHCP から DNS リゾルバ情報を動的に受け取る のが既定挙動である。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -191,3 +192,10 @@ CONFIG_DB JSON:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/static-dns/static_dns.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

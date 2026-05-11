@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — NAT / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと ASIC ハードウェアパスの両方を含むため、調査時はまず「どの daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

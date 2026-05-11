@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — gNMI / REST のリクエストが CONFIG_DB に到達するまでの経路は、入口の transport が違っても中間層 (Translib / Transformer) で合流する。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

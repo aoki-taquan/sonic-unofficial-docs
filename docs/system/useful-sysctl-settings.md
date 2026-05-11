@@ -1,5 +1,6 @@
 ---
 title: FRR 用 sysctl チューニングのデフォルト
+description: "FRR 用 sysctl チューニングのデフォルト — SONiC の制御プレーンでは FRR を使ってルーティングプロトコル（BGP / OSPF / 等）を回す。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

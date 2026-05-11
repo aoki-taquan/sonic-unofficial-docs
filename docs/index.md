@@ -1,5 +1,6 @@
 ---
 title: SONiC 非公式ドキュメント
+description: "SONiC 非公式ドキュメント — 目的別に「最初に開くべきページ」をまとめました。読み進める順番に並んでいます。"
 verification: meta
 ---
 
@@ -15,7 +16,7 @@ verification: meta
 !!! success "最新の品質状態"
     - **code-verified ページ**: 597 件（HLD と実コードを照合済み）
     - **discrepancy-found ページ**: 46 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: 9.83 / 10（quality-audit round 10）
+    - **監査平均評価**: 9.87 / 10（quality-audit round 11）
     - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
 <!-- quality-banner-end -->
 

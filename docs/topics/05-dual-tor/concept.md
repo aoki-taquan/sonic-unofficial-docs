@@ -1,5 +1,6 @@
 ---
 title: Dual-ToR の考え方
+description: "Dual-ToR の考え方 — Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続する」ための構成です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

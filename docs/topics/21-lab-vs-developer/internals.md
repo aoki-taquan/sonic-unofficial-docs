@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — 仮想 lab とテストフレームワークの内部構造で、章本文を読むときに前提として知っておくと便利な点を集めます。SAI VS や PTF の中身を全部書き下すのではなく、HLD ページへの導線を整理する位置付けです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+description: "VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が 内部ファブリック で繋がれた 1 つの論理ルータとして動く。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified（骨格のみ）"
     `sonic-swss-common/common/database_config.json` L8-11 で `redis_chassis` インスタンス（hostname `redis_chassis.server`、`/var/run/redis/redis_chassis.sock`）、L80-88 で `CHASSIS_APP_DB` が `redis_chassis` インスタンスに紐付くこと、`sonic-buildimage/dockers/docker-database/docker-database-init.sh` L85-86 で `database-chassis` 用の docker init 経路を確認（verified at: 2026-05-09）。詳細な FSI/SSI 制御プレーンや LAG / 内部データプレーンは別 HLD 領域。
@@ -205,3 +211,10 @@ chassis_db_address=127.100.0.1
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/architecture.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

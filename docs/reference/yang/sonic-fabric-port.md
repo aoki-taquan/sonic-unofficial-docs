@@ -1,5 +1,6 @@
 ---
 title: sonic-fabric-port YANG
+description: "sonic-fabric-port YANG — VOQ chassis におけるラインカード間ファブリックリンクの port 設定を保持する。隔離状態、 alias、 lanes、強制 unisolate 状態などを定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

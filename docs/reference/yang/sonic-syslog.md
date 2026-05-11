@@ -1,5 +1,6 @@
 ---
 title: sonic-syslog YANG
+description: "sonic-syslog YANG — Remote syslog server and logging configuration YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -102,3 +103,10 @@ module: sonic-syslog
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-syslog.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

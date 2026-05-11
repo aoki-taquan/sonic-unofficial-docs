@@ -1,5 +1,6 @@
 ---
 title: ポートの動的 add / del（zero-port 起動と post-init 操作）
+description: "ポートの動的 add / del（zero-port 起動と post-init 操作） — SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。"
 area: acl-qos
 verification: discrepancy-found
 monitor: partially_implemented
@@ -324,3 +325,11 @@ orchagent 側に上記前処理が無いため、**運用側で全部やりき�
 #### 検証日
 
 2026-05-11 (q3-disc-detail batch)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

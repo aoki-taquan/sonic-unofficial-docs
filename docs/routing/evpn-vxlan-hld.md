@@ -1,5 +1,6 @@
 ---
 title: EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）
+description: "EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5） — EVPN は MAC / IP の到達情報を BGP で広告 し、VXLAN は L2 over L3 のデータプレーン として traffic を運ぶ。"
 area: routing
 verification: discrepancy-found
 monitor: evolved_beyond_hld
@@ -23,6 +24,11 @@ related:
     - sonic-vxlan
     - sonic-evpn
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 03 章: VXLAN / EVPN とオーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: discrepancy-found / 大規模 HLD"
     HLD は 70KB。本ページは EVPN VXLAN の中核（control plane = BGP-EVPN、data plane = VXLAN、Type-2 host route と Type-5 IP prefix の役割境界）に絞る。multihoming は別 HLD（同 area）。
@@ -167,3 +173,11 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 - Type-5 + VRF + L3 VNI の installation path（SAI VRF + tunnel decap）確認
 - multihoming HLD との重複 / 境界整理確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: HEARTBEAT テーブル
+description: "HEARTBEAT テーブル — システムプロセスの heartbeat 監視 (生存確認) のインターバルとアラート間隔をプロセスごとに設定するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

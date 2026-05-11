@@ -1,5 +1,6 @@
 ---
 title: Reboot family の選び方
+description: "Reboot family の選び方 — SONiC の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判断しやすくなります。通常の cold reboot は最も単純で、OS と container をすべて落として再起動します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

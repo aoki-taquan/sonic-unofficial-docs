@@ -1,5 +1,6 @@
 ---
 title: config muxcable サブコマンド
+description: "config muxcable サブコマンド — config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -113,3 +114,10 @@ linkmgrd を経由せず xcvrd 経由で **直接 Y-Cable の HW state を切り
 [^2]: `update_and_get_response_for_xcvr_cmd` (`config/muxcable.py` L71-L207) が CMD/RSP テーブルを使った xcvrd RPC の実装。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/muxcable.py#L71>
 
 [^3]: `prbs.enable` (`config/muxcable.py` L597-L644)。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

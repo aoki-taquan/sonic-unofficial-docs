@@ -1,5 +1,6 @@
 ---
 title: VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
+description: "VOQ カウンタ集約（chassis supervisor からの aggregate 表示） — distributed VOQ アーキテクチャでは、ある 出力 VOQ に対応する VOQ が システム内のすべての ASIC に存在する。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -13,6 +14,11 @@ related:
     - show queue counters --voq
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified"
     `sonic-buildimage/files/build_templates/docker_image_ctl.j2` で `midplane_ip` 取得（chassis 系）と `redis-cli ... config set bind "$bound_ips $midplane_ip"` (l.370-373) を確認。`sonic-utilities/scripts/queuestat` に `voq` モード（`QUEUE_TYPE_VOQ`, `voq_header`, `voq_counter_bucket_dict`）あり。`sonic-swss-common/common/dbconnector.h` に `DBConnector(int dbId, const std::string &hostname, int port, ...)` の hostname/port 引数コンストラクタが存在し、midplane IP 経由接続に使える。
@@ -157,3 +163,10 @@ HLD が明示している制限[^1]:
 - sonic-utilities `scripts/queuestat` に `QUEUE_TYPE_VOQ='VOQ'`, `SAI_QUEUE_TYPE_UNICAST_VOQ`, `COUNTERS_VOQ_NAME_MAP`, `voq_header` テーブル、`Queuestat(... voq=...)` 引数 (l.71-206)
 - sonic-swss-common `common/dbconnector.h` に `DBConnector(int dbId, const std::string &hostname, int port, unsigned int timeout_ms);` (l.217) の hostname/port 直指定コンストラクタあり
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

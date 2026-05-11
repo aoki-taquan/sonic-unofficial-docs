@@ -1,5 +1,6 @@
 ---
 title: show techsupport コマンド
+description: "show techsupport コマンド — show techsupport は障害解析用の techsupport ダンプ を生成する。実態は sudo generate_dump -v ... のラッパで、システム情報・ログ・config・SAI/syncd データなどを 1 つの tar.gz にまとめる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -106,3 +107,10 @@ excerpt: |
 ## 引用元
 
 [^1]: `show techsupport` 実装は `show/main.py` L1780-L1814。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1780>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

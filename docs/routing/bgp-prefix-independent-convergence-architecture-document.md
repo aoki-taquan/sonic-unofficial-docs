@@ -1,5 +1,6 @@
 ---
 title: BGP PIC（Prefix Independent Convergence / NHG 階層）
+description: "BGP PIC（Prefix Independent Convergence / NHG 階層） — BGP overlay の数百万 route 規模で 影響を受けた N prefix を 1 件ずつ再プログラムする とパケットロスが膨らむ。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,6 +13,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! note "裏取りステータス: code-verified（FAST/SLOW DOWNLOAD は warm-restart 経由）"
     `sonic-swss/orchagent/nhgorch.{h,cpp}` で `NextHopGroup::m_is_recursive` / `setRecursive(bool)` / `isRecursive()` と `is_recursive` フラグによる hierarchical NHG 制御が確認できた。`fpmsyncd` 側の **FAST/SLOW DOWNLOAD** という用語は実装に存在せず、`fpmsyncd/fpmsyncd.cpp` で `WarmRestartHelper` 経由の **warm-restart timer** 区別として実装されている。SAI vendor 側の hitless update 動作と FRR zebra→FPM 経路は本 cache では未確認。

@@ -1,5 +1,6 @@
 ---
 title: gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
+description: "gNOI OS API（Install / Activate / Verify と sonic-installer 連携） — gNOI OS は スイッチの OS イメージを gRPC ストリームで配布・有効化・検証する ための API である。3 つの RPC で構成される:"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -17,6 +18,11 @@ related:
     - sonic-installer
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `sonic-gnmi/gnmi_server/gnoi_os.go` L25-441 で `OSServer.processTransferReq` / `processTransferEnd` / `Activate` / `Verify` のサーバ実装を確認。`sonic-gnmi/gnoi_client/os/os.go` L20-72 で OS Verify / Activate / Install のクライアント実装を、`sonic-gnmi/gnoi_client/gnoi_client.go` L73-77 で `--module OS --rpc {Verify,Activate,Install}` ディスパッチを確認。`sonic-host-services/host_modules/image_service.py` L81-99 で DBUS の `install` メソッド（`/usr/local/bin/sonic-installer install -y` 呼び出し）と L165 `set_next_boot` 実装を確認（verified at: 2026-05-09）。HostModule 側の gNOI 統合（L229-251 `installos`）は現行 master では `ERROR_UNIMPLEMENTED` だが、別経路の `OSServer` （sonic-gnmi 側）で機能する。
@@ -200,3 +206,10 @@ gnoi_client os verify
 - 起動失敗時のロールバック挙動 (sonic-installer next image pointer)
 - HLD 2025-01 v0.1 と現行 master の差分有無
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

@@ -1,5 +1,6 @@
 ---
 title: NAT / DHCP Relay / Time-DNS Services
+description: "NAT / DHCP Relay / Time-DNS Services — この章は、SONiC が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり NAT、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や…"
 area: topics
 verification: meta
 last_verified: 2026-05-10

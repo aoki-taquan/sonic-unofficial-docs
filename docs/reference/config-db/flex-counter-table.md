@@ -1,5 +1,6 @@
 ---
 title: FLEX_COUNTER_TABLE テーブル
+description: "FLEX_COUNTER_TABLE テーブル — orchagent / syncd に対し、各種ハードウェアカウンタのポーリング有効化と周期、bulk API のチャンクサイズを指定するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -96,3 +97,10 @@ FLEX_COUNTER_TABLE|<group>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-flex_counter.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-flex_counter.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

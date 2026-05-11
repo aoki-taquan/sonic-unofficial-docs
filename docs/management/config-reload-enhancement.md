@@ -1,5 +1,6 @@
 ---
 title: config reload の event-driven 化（FEATURE.delayed + PortInitDone）
+description: "config reload の event-driven 化（FEATURE.delayed + PortInitDone） — 従来の config reload は systemctl restart sonic.target で sonic.target 配下の全サービスをまとめて再起動 する実装だった。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,11 @@ related:
   yang:
     - sonic-feature
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     現行 master の `sonic-host-services/scripts/featured`（`delayed` フィールド処理 / `enable_delayed_services` / PORT_TABLE 購読 + PortInitDone ハンドラ / `handle_port_table_timeout` / `waitAdvancedBootDone`）、`sonic-utilities/scripts/db_migrator.py:719-726` の `has_timer`→`delayed` 移行、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang:67` の `delayed` leaf、`sonic-swss/portsyncd/portsyncd.cpp:134` の `PortInitDone` publish を確認済み（verified at: 2026-05-09）。

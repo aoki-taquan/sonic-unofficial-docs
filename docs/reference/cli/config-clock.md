@@ -1,5 +1,6 @@
 ---
 title: config clock サブコマンド
+description: "config clock サブコマンド — config clock はシステムのタイムゾーンと日時を設定する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

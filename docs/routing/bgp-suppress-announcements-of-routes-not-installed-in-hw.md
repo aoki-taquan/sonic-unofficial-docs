@@ -1,5 +1,6 @@
 ---
 title: BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）
+description: "BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD） — T1 リブート直後に「FIB に乗っていない prefix を BGP がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / PFC…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-11
@@ -13,6 +14,11 @@ related:
   cli: []
   yang: []
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
     `dplane_fpm_nl` 移行、`RTM_F_OFFLOAD` 通知、`fpmsyncd` の応答チャネル、consistency monitoring script の現行 master 取り込みは未裏取り。

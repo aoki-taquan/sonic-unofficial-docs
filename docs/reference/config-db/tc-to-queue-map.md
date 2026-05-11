@@ -1,5 +1,6 @@
 ---
 title: TC_TO_QUEUE_MAP テーブル
+description: "TC_TO_QUEUE_MAP テーブル — Traffic Class (TC) を egress queue インデックスへマップする。DSCP_TO_TC_MAP で TC 化された値が、このマップで物理キューに振り分けられる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -60,3 +61,10 @@ TC_TO_QUEUE_MAP|<name>|<tc>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-tc-queue-map.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

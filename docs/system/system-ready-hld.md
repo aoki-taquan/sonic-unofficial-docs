@@ -1,5 +1,6 @@
 ---
 title: System Ready（sysmonitor + per-app closest UP status の event 集約）
+description: "System Ready — SONiC の起動は 非同期。systemd の service が active でも、その内部の SWSS 系 daemon が CONFIG_DB を消化して ASIC に届くまで時間が掛かる。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -118,3 +119,5 @@ journalctl -u system-health 2>/dev/null
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

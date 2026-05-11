@@ -1,5 +1,6 @@
 ---
 title: show interfaces サブコマンド
+description: "show interfaces サブコマンド — show interfaces は物理ポート・PortChannel・SubInterface の 状態 / 速度 / FEC / Auto-Negotiation / Breakout / トランシーバ / カウンタ を一覧表示する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: sonic-pfc-priority-queue-map YANG
+description: "sonic-pfc-priority-queue-map YANG — PFC_PRIORITY_TO_QUEUE_MAP yang Module for SONiC OS. PFC 優先度 (0-7) を egress queue index にマッピングする。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

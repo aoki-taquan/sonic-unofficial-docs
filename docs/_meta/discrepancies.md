@@ -1,5 +1,6 @@
 ---
 title: 実装との乖離（移動済み）
+description: "実装との乖離（移動済み） — このページは リファレンス → 裏取り → discrepancy-index に移動しました。"
 verification: meta
 last_verified: 2026-05-11
 ---

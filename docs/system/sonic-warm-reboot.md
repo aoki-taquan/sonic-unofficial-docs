@@ -1,5 +1,6 @@
 ---
 title: SONiC Warm Reboot（要件・順序・docker 別 warm restart）
+description: "SONiC Warm Reboot（要件・順序・docker 別 warm restart） — cold / fast / express との関係は 11-reboot を参照。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -16,6 +17,11 @@ related:
   yang:
     - sonic-warm-restart
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
     `sonic-utilities/scripts/warm-reboot` の warm reboot script、`sonic-buildimage/.../sonic-warm-restart.yang` の `WARM_RESTART` スキーマで HLD の going-down / going-up シーケンスと整合を確認（Verifier 2026-05-10）。詳細な going down / up path は [`system-wide-warmboot.md`](system-wide-warmboot.md) を併読。
@@ -117,3 +123,10 @@ CONFIG_DB:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/SONiC_Warmboot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
+
+<!-- /topics-back-ref -->

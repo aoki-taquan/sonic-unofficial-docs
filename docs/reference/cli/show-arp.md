@@ -1,5 +1,6 @@
 ---
 title: show arp サブコマンド
+description: "show arp サブコマンド — show arp は IPv4 の 隣接テーブル（ARP テーブル）を表示する click コマンド。実装は単なる薄いラッパで、内部では scripts/nbrshow を -4 付きで起動する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

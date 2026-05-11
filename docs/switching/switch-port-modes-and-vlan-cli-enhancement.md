@@ -1,5 +1,6 @@
 ---
 title: Switchport モード（access / trunk / routed）と VLAN CLI 拡張
+description: "Switchport モード（access / trunk / routed）と VLAN CLI 拡張 — SONiC のレガシー VLAN CLI は config vlan add 10 / config vlan member add 10 Ethernet0 -u のように VLAN ID 単発操作 を強い…"
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented
@@ -22,6 +23,11 @@ related:
     - sonic-port
     - sonic-portchannel
 ---
+
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
 
 !!! warning "裏取りステータス: Discrepancy-found"
     sonic-utilities `config/switchport.py` L17 で `mode_type` enum `["access", "trunk", "routed"]` を、L57-78 で `port_data["mode"]` への書き込みを確認、`config/main.py` L119 で `PORT_MODE = "switchport_mode"` 定数定義、L1787 `config.add_command(switchport.switchport)` 登録、L5777 で `interface_mode == "trunk" or interface_mode == "access"` 判定を確認。YANG 側は sonic-yang-models `yang-models/sonic-port.yang` L86-89 / `sonic-portchannel.yang` L71 で `leaf mode { type stypes:switchport_mode; }`、`sonic-types.yang.j2` L244 で `typedef switchport_mode` を確認。
@@ -336,3 +342,5 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->
