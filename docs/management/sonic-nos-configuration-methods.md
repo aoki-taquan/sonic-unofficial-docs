@@ -204,3 +204,20 @@ flowchart LR
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 32fbe70babcc -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config`
+- `show`
+- [`sonic-cfggen`](../reference/cli/sonic-cfggen.md)
+- `config save`
+- `config reload`
+- `config apply-patch`
+- `vtysh`
+
+<!-- /ops-entry -->

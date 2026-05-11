@@ -183,3 +183,14 @@ gnoi_client factory_reset start --factory_os=false --zero_fill=false --retain_ce
 - [HLD: SONiC gNMI Server インタフェース設計](sonic-gnmi-server-interface-design.md)
 
 <!-- glossary-links-injected: b4b6b56d361a -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `gnoi_client`
+
+<!-- /ops-entry -->

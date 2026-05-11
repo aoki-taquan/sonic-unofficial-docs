@@ -173,3 +173,27 @@ Bad responses: 1
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 20dbc11976b6 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config aaa authorization`
+- `config aaa accounting`
+- `show tacacs+ counter`
+- `sonic-clear tacacscounters`
+
+### 関連 CONFIG_DB
+
+- `TACPLUS`
+- [TACPLUS_SERVER](../reference/config-db/tacplus-server.md)
+- [AAA](../reference/config-db/aaa.md)
+
+### 関連 YANG
+
+- [sonic-system-aaa](../reference/yang/sonic-system-aaa.md)
+
+<!-- /ops-entry -->

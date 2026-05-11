@@ -290,3 +290,21 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 <!-- /next-action -->
 
 <!-- glossary-links-injected: f83beef3850a -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 YANG
+
+- `sonic-acl`
+- [sonic-vlan](../reference/yang/sonic-vlan.md)
+- [sonic-port](../reference/yang/sonic-port.md)
+- [sonic-interface](../reference/yang/sonic-interface.md)
+
+### 関連 Runbook
+
+- [config-save-diff-unexpected](../reference/runbooks/config-save-diff-unexpected.md)
+
+<!-- /ops-entry -->

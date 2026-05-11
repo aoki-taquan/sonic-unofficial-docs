@@ -240,3 +240,14 @@ gnoi_client system cancel_reboot --message "delayed by SRE"
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 809619d7ad9f -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `gnoi_client`
+
+<!-- /ops-entry -->

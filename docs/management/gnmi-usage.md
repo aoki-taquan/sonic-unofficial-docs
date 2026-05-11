@@ -183,3 +183,20 @@ sequenceDiagram
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: c3f4e76fa339 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `gnmi_get`
+- `gnmi_set`
+- `gnmi_cli`
+
+### 関連 Runbook
+
+- [gnmi-subscribe-disconnect](../reference/runbooks/gnmi-subscribe-disconnect.md)
+
+<!-- /ops-entry -->

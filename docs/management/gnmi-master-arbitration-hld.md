@@ -299,3 +299,18 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 <!-- /next-action -->
 
 <!-- glossary-links-injected: edc6102d5d8f -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CONFIG_DB
+
+- [TELEMETRY](../reference/config-db/telemetry.md)
+
+### 関連 Runbook
+
+- [gnmi-subscribe-disconnect](../reference/runbooks/gnmi-subscribe-disconnect.md)
+
+<!-- /ops-entry -->

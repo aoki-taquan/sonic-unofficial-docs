@@ -204,3 +204,14 @@ graph LR
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 334f0ec53f10 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CONFIG_DB
+
+- `SEND_TO_INGRESS_PORT`
+
+<!-- /ops-entry -->

@@ -220,3 +220,23 @@ sudo config reload -y
 [^1]: `sonic-net/SONiC` `doc/config_reload/config_reload_enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- glossary-links-injected: 50471caccd14 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CONFIG_DB
+
+- [FEATURE](../reference/config-db/feature.md)
+
+### 関連 YANG
+
+- [sonic-feature](../reference/yang/sonic-feature.md)
+
+### 関連 Runbook
+
+- [config-reload-stuck](../reference/runbooks/config-reload-stuck.md)
+- [config-save-load](../reference/runbooks/config-save-load.md)
+
+<!-- /ops-entry -->

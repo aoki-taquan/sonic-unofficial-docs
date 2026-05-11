@@ -222,3 +222,18 @@ config save
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: ff031fbb8bc1 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CONFIG_DB
+
+- `SSH_SERVER`
+
+### 関連 YANG
+
+- [sonic-ssh-server](../reference/yang/sonic-ssh-server.md)
+
+<!-- /ops-entry -->

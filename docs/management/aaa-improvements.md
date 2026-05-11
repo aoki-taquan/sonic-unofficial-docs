@@ -168,3 +168,24 @@ HLD は提案中心のため、[CONFIG_DB](../reference/glossary.md#term-config_
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: a9c18564f33f -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- [`config aaa`](../reference/cli/config-aaa.md)
+- `config radius`
+- `config tacacs`
+
+### 関連 CONFIG_DB
+
+- [AAA](../reference/config-db/aaa.md)
+- [RADIUS](../reference/config-db/radius.md)
+- `RADIUS_SERVER`
+- `TACPLUS`
+- [TACPLUS_SERVER](../reference/config-db/tacplus-server.md)
+
+<!-- /ops-entry -->

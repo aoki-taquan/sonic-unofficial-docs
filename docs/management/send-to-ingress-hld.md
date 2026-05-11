@@ -224,3 +224,14 @@ ip link show send_to_ingress
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 112ecb18e1f8 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CONFIG_DB
+
+- `SEND_TO_INGRESS_PORT`
+
+<!-- /ops-entry -->

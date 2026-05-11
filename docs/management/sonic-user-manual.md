@@ -110,3 +110,16 @@ flowchart LR
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 1103f073f6d0 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `show`
+- `config`
+- `sonic-cli`
+
+<!-- /ops-entry -->

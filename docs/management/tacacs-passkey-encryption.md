@@ -307,3 +307,23 @@ TACPLUS global passkey configured Yes
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 5491cc477cce -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config tacacs passkey`
+- `show tacacs`
+
+### 関連 CONFIG_DB
+
+- `TACPLUS`
+
+### 関連 YANG
+
+- [sonic-system-tacacs](../reference/yang/sonic-system-tacacs.md)
+
+<!-- /ops-entry -->

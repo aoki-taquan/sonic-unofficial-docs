@@ -188,3 +188,14 @@ PI 形式キャッシュのメモリ占有[^1]:
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: f235cb0ee2df -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 Runbook
+
+- [pins-grpc-unresponsive](../reference/runbooks/pins-grpc-unresponsive.md)
+
+<!-- /ops-entry -->

@@ -261,3 +261,14 @@ DASH_ROUTE_GROUP_TABLE:{group_id}
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: e6fe2bd4ede5 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 Runbook
+
+- [gnmi-subscribe-disconnect](../reference/runbooks/gnmi-subscribe-disconnect.md)
+
+<!-- /ops-entry -->

@@ -192,3 +192,27 @@ config dhcp_server ipv4 enable Vlan1000
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 987cec9fd0c5 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- `config dhcp_server ipv4`
+- `show dhcp_server ipv4`
+
+### 関連 CONFIG_DB
+
+- [DHCP_SERVER_IPV4](../reference/config-db/dhcp-server-ipv4.md)
+- `DHCP_SERVER_IPV4_RANGE`
+- `DHCP_SERVER_IPV4_PORT`
+- `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS`
+- [FEATURE](../reference/config-db/feature.md)
+
+### 関連 YANG
+
+- `sonic-dhcp-server-ipv4`
+
+<!-- /ops-entry -->

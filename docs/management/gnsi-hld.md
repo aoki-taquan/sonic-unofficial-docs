@@ -316,3 +316,17 @@ gnsi_client credentialz rotate-account \
 <!-- /next-action -->
 
 <!-- glossary-links-injected: bd7e9f303d6c -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 YANG
+
+- `openconfig-gnsi-certz`
+- `openconfig-gnsi-authz`
+- `openconfig-gnsi-pathz`
+- `openconfig-gnsi-credentialz`
+
+<!-- /ops-entry -->

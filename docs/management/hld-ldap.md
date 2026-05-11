@@ -167,3 +167,26 @@ sudo config aaa authentication login ldap local
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: 6674ed3c9f67 -->
+
+<!-- ops-entry -->
+## 運用入口
+
+この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。
+
+### 関連 CLI
+
+- [`config aaa`](../reference/cli/config-aaa.md)
+- `config ldap`
+- `show ldap`
+
+### 関連 CONFIG_DB
+
+- `LDAP_TABLE`
+- [LDAP_SERVER](../reference/config-db/ldap-server.md)
+- [AAA](../reference/config-db/aaa.md)
+
+### 関連 YANG
+
+- [sonic-system-ldap](../reference/yang/sonic-system-ldap.md)
+
+<!-- /ops-entry -->
