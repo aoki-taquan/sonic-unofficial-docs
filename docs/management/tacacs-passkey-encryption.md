@@ -283,6 +283,21 @@ YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json
 - 暗号化アルゴリズム (AES-CBC? AES-GCM?) の確定
 -->
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [YANG: `sonic-system-tacacs`](../reference/yang/sonic-system-tacacs.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `evolved_beyond_hld` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

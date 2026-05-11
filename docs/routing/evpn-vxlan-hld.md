@@ -174,6 +174,24 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 - multihoming HLD との重複 / 境界整理確認
 -->
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [CONFIG_DB: VXLAN_TUNNEL](../reference/config-db/vxlan-tunnel.md)
+        - [CONFIG_DB: VXLAN_TUNNEL_MAP](../reference/config-db/vxlan-tunnel-map.md)
+        - [CONFIG_DB: VRF](../reference/config-db/vrf.md)
+        - [CONFIG_DB: VLAN](../reference/config-db/vlan.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `evolved_beyond_hld` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

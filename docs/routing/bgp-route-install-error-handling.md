@@ -209,4 +209,18 @@ config bgp error-handling disable
 - 2019 年 HLD のため現行実装乖離リスク（priority=high）
 -->
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 本 HLD は採用見送り。後継機能 (下記リンク) を参照
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `deprecated` / last_verified: `2026-05-09`
+    - 次回再裏取りトリガ: biannual。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- glossary-links-injected: 514a896aa279 -->

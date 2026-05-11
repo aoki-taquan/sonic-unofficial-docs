@@ -221,4 +221,20 @@ arping -I Vlan100 10.0.100.1   # 自身に対する ARP 応答が安定するか
 
 2026-05-11 (q3-disc-detail batch)
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [CONFIG_DB: VLAN_INTERFACE](../reference/config-db/vlan-interface.md)
+        - [YANG: `sonic-vlan`](../reference/yang/sonic-vlan.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `not_implemented` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- glossary-links-injected: 7335cacf02a5 -->
