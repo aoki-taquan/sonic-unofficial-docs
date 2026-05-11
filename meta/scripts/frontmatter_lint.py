@@ -19,6 +19,10 @@ v2 additions:
   i) description field is optional but recommended (warn-only). Used by
      mkdocs-material to populate the `<meta name="description">` tag for SEO.
      Generate missing values with `python meta/scripts/gen_descriptions.py`.
+  j) page_kind is optional; when present, must be in VALID_PAGE_KINDS
+     ({chapter-index}). Chapter-index pages (22 章扉) are evaluated on a
+     different quality-audit rubric (relaxed body-volume / per-claim
+     verification requirements); this linter only enforces the enum value.
 
 Output: meta/frontmatter-lint-report.md     (v1-compatible, hard violations only)
         meta/frontmatter-lint-report-v2.md  (v2 enhanced: hard + warnings)
@@ -52,6 +56,12 @@ VERIFICATIONS_REQUIRING_SOURCES = {"hld-only", "code-verified", "discrepancy-fou
 VALID_MONITORS = {
     "not_implemented", "evolved_beyond_hld", "partially_implemented", "deprecated",
 }
+# page_kind: optional tag distinguishing chapter index (gateway) pages from
+# regular explanatory pages. Quality-audit round 14+ uses this to apply a
+# different rubric to chapter indices (relaxed body-volume / per-claim
+# verification requirements). The linter accepts it as optional and only
+# validates the enum value when present.
+VALID_PAGE_KINDS = {"chapter-index"}
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n(.*)\Z", re.DOTALL)
 
@@ -197,6 +207,16 @@ def lint_file(path: Path, *, check_paths: bool):
             violations.append(f"f: monitor '{mm}' not in valid enum")
     elif verification == "discrepancy-found":
         violations.append("f: discrepancy-found page missing 'monitor' field")
+
+    # page_kind enum check (optional field; only validate value if present).
+    # Chapter-index pages are scored on a different rubric by quality-audit
+    # round 14+: body-volume and per-claim verification axes are relaxed,
+    # but frontmatter / link-coverage axes are still enforced here.
+    page_kind = fm.get("page_kind")
+    if page_kind is not None and str(page_kind).strip():
+        pk = str(page_kind).strip()
+        if pk not in VALID_PAGE_KINDS:
+            violations.append(f"page_kind '{pk}' not in valid enum {sorted(VALID_PAGE_KINDS)}")
 
     # i) description recommended (warn-only)
     description = fm.get("description")

@@ -18,6 +18,16 @@
 | `related.cli` | optional | list | 関連 CLI コマンド |
 | `related.yang` | optional | list | 関連 YANG モジュール |
 | `monitor` | conditional | enum | `not_implemented` / `evolved_beyond_hld` / `partially_implemented` / `deprecated`。`verification: discrepancy-found` のとき **必須**。それ以外は optional |
+| `page_kind` | optional | enum | `chapter-index` のみ定義。22 章扉 (`docs/topics/NN-slug/index.md`) に付与する。品質監査の評価軸を区別するためのタグ。未指定 = 通常の解説ページ |
+
+## page_kind の意味（品質監査での扱い）
+
+`page_kind: chapter-index` は章扉（導線ページ）であることを示す。章扉は配下ページへのリンク集が本体であり、本文の厚みや個別主張ごとの裏取りは通常ページと評価軸が異なる。
+
+- **章扉に対して緩和される軸**: 完結性（本文ボリューム）、裏取り（個別主張ごとの脚注 / evidence コメント）
+- **章扉でも維持される軸**: タイトル / description / keywords の整備、配下リンクの網羅性、frontmatter スキーマ準拠
+
+`frontmatter_lint.py` は `page_kind` を optional フィールドとして受理する（hard violation 対象外）。次世代の品質監査ロール (round 14 以降) は `page_kind` を参照して軸別の評価を行う想定。
 
 `related.*` は **空配列でも合格**。HLD で言及されていない実装由来の項目を推測で書いてはならない。確実なもののみ列挙し、不明なら空配列にして本文側に「該当する CLI / CONFIG_DB は HLD では未定義」等を注記する。
 

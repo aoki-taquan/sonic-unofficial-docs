@@ -3,6 +3,7 @@ title: SWSS / SAI / Redis 内部実装
 description: "SWSS / SAI / Redis 内部実装 — この章は、SONiC の機能章を読み解くときに何度も出てくる「Redis DB」「orchagent」「syncd」「SAI」の関係を、機能横断の内部実装としてまとめ直すための入口である。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources: []
 keywords:

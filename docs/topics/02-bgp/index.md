@@ -3,6 +3,7 @@ title: BGP と FRR 制御プレーン
 description: "BGP と FRR 制御プレーン — この章は、SONiC の BGP を「設定を書く場所」「FRR へ渡る経路」「ASIC に入るまでの経路」「運用中に見る場所」の順に読み直すための入口である。既存ページは HLD 単位で詳しいが、BGP を運用する人が最初に知りたい境界は HLD の境界ではない。"
 area: topics
 verification: meta
+page_kind: chapter-index
 last_verified: 2026-05-10
 sources: []
 keywords:
