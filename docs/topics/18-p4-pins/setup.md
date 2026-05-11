@@ -2,7 +2,7 @@
 title: 設定
 area: topics
 verification: meta
-last_verified: 2026-05-10
+last_verified: 2026-05-11
 sources:
   - docs/management/pins-hld.md
   - docs/management/p4rt-application-hld.md
@@ -11,49 +11,223 @@ sources:
 
 # 設定
 
-PINS の設定は「P4RT サービスを起動する」「controller 接続の認証 / port を確認する」「PacketIO / Send to Ingress 用のポートを宣言する」の 3 段で読みます。CLI / CONFIG_DB の reference ページが現時点で薄いため、ここでは HLD と既存実装を起点に最小構成を示し、足りない参照は後続章とリンクします。
+PINS は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で ASIC を直接制御できるようにする機能です。本ページでは、PINS を実用的に動かすための設定フローを「P4RT を起動する」「コントローラ接続を許可する」「Send to Ingress / PacketIO を有効化する」の 3 フェーズで示し、よくある詰まりどころと対処も併記します。
 
-## P4RT サービスの起動
+CLI / CONFIG_DB の reference 整備が PINS では他機能より薄いため (後述の「現時点で不足している reference」節を参照)、本ページの CONFIG_DB スキーマは HLD と既存実装（`sonic-buildimage/dockers/docker-sonic-p4rt`、`sonic-pins/`）から推定したものを示します。実機では必ず `redis-cli HGETALL` で実際のキーを確認してから運用に組み込んでください。
 
-p4rt-app は専用 Docker（`docker-sonic-p4rt`）で動き、`p4rt.service.j2` から systemd unit が生成されます。デフォルトでは TCP port **9559** で gRPC を待ち受け、SDN コントローラからの接続を受け付けます。`p4rt.sh` / `p4rt_vars.j2` で port や TLS 関連の起動引数を制御します。
-
-設定の起点になる項目:
-
-- gRPC port（既定 9559）
-- TLS 証明書 / mTLS（コントローラ認証）
-- AppDb / APPL_STATE_DB の接続先（同一ホスト上の Redis）
-
-詳細は [P4RT App HLD](../../management/p4rt-application-hld.md) を参照してください。
-
-## P4RT CONFIG_DB エントリ
-
-`P4RT` table は controller との接続パラメータ系で、p4rt-app の起動引数として読まれます。schema は [P4RT App HLD](../../management/p4rt-application-hld.md) の `related.config_db` に示されています。SONiC 標準の `config db` CLI から P4RT 専用のサブコマンドは現時点で薄く、reference 章が追従していないため、運用では `redis-cli -n 4 HGETALL "P4RT|..."` で直接確認するのが現実的です。
-
-## Send to Ingress ポート
-
-ASIC の ingress pipeline 再注入を有効化するには、`SEND_TO_INGRESS_PORT` を APPL_DB に宣言します。
+## 全体フロー
 
 ```
-APP_SEND_TO_INGRESS_PORT_TABLE:send_to_ingress
-    NULL = NULL
+1. FEATURE.p4rt.state = enabled で p4rt container を起動
+2. P4RT_TABLE で gRPC port / TLS / 認証パラメータを設定
+3. (任意) APPL_DB に SEND_TO_INGRESS_PORT を投入し再注入 hostif を作成
+4. (任意) COPP_TRAP_GROUP の genetlink_* を設定し PacketIO Receive を有効化
+5. controller から P4Runtime で接続、ForwardingPipelineConfig を流し込み
 ```
 
-`PortsOrch` がこのエントリを検出すると `addSendToIngressHostIf()` で `SAI_HOSTIF_TYPE_NETDEV` 属性を設定した hostif を作成し、`send_to_ingress` netdev がホスト側に現れます。CONFIG_DB → APPL_DB の経路は `cfgmgr/portmgrd.cpp` 側でも扱われます。詳細は [Send to Ingress HLD](../../management/send-to-ingress-hld.md) を参照してください。
+## シナリオ 1: 単一コントローラ + plaintext gRPC (lab)
 
-## CoPP の generic netlink trap group
+評価環境で、認証なし TCP gRPC でコントローラを 1 台つなぐ最小構成です。本番では使わないこと。
 
-PacketIO Receive はベンダ kernel module（`genl_packet` 系）と CoPP trap group の `genetlink_name` / `genetlink_mcgrp_name` 設定で動きます。`copp_cfg.j2` の `queue2_group1` には次のような設定が入っています:
+### 設定手順
 
+```bash
+# p4rt feature を有効化
+sudo config feature state p4rt enabled
+
+# config reload で container を起動 (または systemctl で個別起動)
+sudo systemctl start p4rt
+
+# 起動を確認
+docker ps | grep p4rt
+sudo docker exec p4rt netstat -lnt | grep 9559
 ```
-"queue2_group1": {
-    "genetlink_mcgrp_name": "packets",
-    "genetlink_name": "psample",
-    ...
+
+### CONFIG_DB (P4RT|p4rt)
+
+```json
+{
+  "P4RT|p4rt": {
+    "grpc_port": "9559",
+    "use_genetlink": "true",
+    "tls": "false"
+  }
 }
 ```
 
-controller 側で punt flow を install すると、対応する trap group が hostif type `SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK` で作成され、p4rt-app に generic netlink でパケットが届きます。詳細は [PacketIO HLD](../../management/packetio.md) を参照してください。
+```bash
+# redis-cli で直接投入する例 (CLI が未整備のため)
+redis-cli -n 4 HSET "P4RT|p4rt" grpc_port 9559 use_genetlink true tls false
+sudo systemctl restart p4rt
+```
+
+### 確認
+
+```bash
+# gRPC port が listen しているか
+sudo ss -lntp | grep 9559
+
+# p4rt-app のログ
+docker logs p4rt 2>&1 | tail -50
+
+# CONFIG_DB の現在値
+redis-cli -n 4 HGETALL "P4RT|p4rt"
+```
+
+## シナリオ 2: 二重化コントローラ + mTLS (本番想定)
+
+複数 SDN コントローラから election ID で master/standby を切り替える本番運用。mTLS で証明書認証を行います。
+
+### 証明書配備
+
+```bash
+# /etc/sonic/credentials/ に CA 証明書とサーバ証明書を配置
+sudo mkdir -p /etc/sonic/credentials
+sudo cp ca.crt server.crt server.key /etc/sonic/credentials/
+sudo chmod 600 /etc/sonic/credentials/server.key
+```
+
+### CONFIG_DB
+
+```json
+{
+  "P4RT|p4rt": {
+    "grpc_port": "9559",
+    "tls": "true",
+    "server_cert": "/etc/sonic/credentials/server.crt",
+    "server_key": "/etc/sonic/credentials/server.key",
+    "ca_cert": "/etc/sonic/credentials/ca.crt",
+    "client_auth": "require",
+    "use_genetlink": "true"
+  }
+}
+```
+
+### controller 接続テスト
+
+```bash
+# gRPC reflection が拒否されることを確認 (mTLS 必須)
+grpcurl -plaintext switch:9559 list  # → 失敗するはず
+
+# クライアント証明書を提示すれば応答する
+grpcurl -cacert ca.crt -cert client.crt -key client.key \
+  switch:9559 list
+```
+
+二重化時の election ID 競合と arbitration の振る舞いは [P4RT App HLD](../../management/p4rt-application-hld.md) の "Master arbitration" 節を参照してください。SONiC 側で election ID を強制する CONFIG_DB エントリは現在無く、コントローラ側の SetMasterArbitrationUpdate に委ねる設計です。
+
+## シナリオ 3: PacketIO + Send to Ingress を有効化
+
+PINS でデータプレーン punt (PacketIn) と CPU 注入 (PacketOut / Send to Ingress) を使う場合の追加設定です。
+
+### Send to Ingress hostif
+
+`SEND_TO_INGRESS_PORT` を APPL_DB に宣言すると `PortsOrch` が `send_to_ingress` netdev を生成します。CONFIG_DB ではなく APPL_DB なので注意:
+
+```bash
+# APPL_DB は db number 0
+redis-cli -n 0 HSET "SEND_TO_INGRESS_PORT_TABLE:send_to_ingress" NULL NULL
+
+# hostif が作られたか確認
+ip link show send_to_ingress
+```
+
+`ip link show send_to_ingress` で `state UP` の netdev が見えれば、`PortsOrch::addSendToIngressHostIf()` が `SAI_HOSTIF_TYPE_NETDEV` で hostif を作成済みです。
+
+### CoPP trap group (genetlink)
+
+`copp_cfg.j2` の `queue2_group1` を再利用するか、独自の trap group を作って `genetlink_name` / `genetlink_mcgrp_name` を設定します:
+
+```json
+{
+  "COPP_GROUP|p4rt_punt": {
+    "queue": "2",
+    "trap_action": "trap",
+    "trap_priority": "2",
+    "genetlink_name": "psample",
+    "genetlink_mcgrp_name": "packets",
+    "meter_type": "packets",
+    "mode": "sr_tcm",
+    "cir": "6000",
+    "cbs": "6000",
+    "red_action": "drop"
+  }
+}
+```
+
+```bash
+redis-cli -n 4 HSET "COPP_GROUP|p4rt_punt" \
+  queue 2 trap_action trap trap_priority 2 \
+  genetlink_name psample genetlink_mcgrp_name packets \
+  meter_type packets mode sr_tcm cir 6000 cbs 6000 red_action drop
+```
+
+詳細は [PacketIO HLD](../../management/packetio.md) と [Send to Ingress HLD](../../management/send-to-ingress-hld.md) を参照してください。
+
+## show / 確認コマンド
+
+PINS 固有の show CLI は未整備のため、汎用 SONiC コマンド + redis-cli + docker exec で代替します。
+
+```bash
+# p4rt container の health
+docker inspect p4rt --format '{{.State.Health.Status}}'
+
+# CONFIG_DB の P4RT 系
+redis-cli -n 4 KEYS 'P4RT*'
+redis-cli -n 4 KEYS 'COPP_*' | grep -i p4rt
+
+# APPL_DB の SEND_TO_INGRESS / hostif
+redis-cli -n 0 KEYS 'SEND_TO_INGRESS*'
+redis-cli -n 0 KEYS 'HOSTIF_TABLE*'
+
+# ASIC_DB の hostif object (実際に SAI に降りたか)
+redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*'
+
+# CoPP trap group の SAI 反映
+redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF_TRAP_GROUP:*'
+
+# 統計
+show platform summary
+show interfaces counters
+```
+
+## よくある設定エラーと対処
+
+| 症状 | 原因 | 対処 |
+| --- | --- | --- |
+| `docker ps` に p4rt がいない | `FEATURE\|p4rt` が `disabled` または image に同梱されていない | `config feature state p4rt enabled` + `config save -y` + image が `INCLUDE_P4RT=y` でビルドされているか確認 |
+| controller から `Unavailable: Connection refused` | gRPC port が listen していない / container 内で bind 失敗 | `docker logs p4rt`、`grpc_port` の重複、ACL で 9559 が落ちていないか確認 |
+| controller から `Unauthenticated` | TLS 不一致、CA chain の検証失敗 | `server_cert` / `ca_cert` パスが container に mount されているか、`docker exec p4rt openssl x509 -in /etc/sonic/credentials/server.crt -noout -dates` で期限確認 |
+| `send_to_ingress` netdev が現れない | APPL_DB エントリが反映されていない / VS で SAI 対応外 | `redis-cli -n 0 KEYS 'SEND_TO_INGRESS*'`、`PortsOrch` ログ、ASIC が SAI_HOSTIF_TYPE_NETDEV + send_to_ingress を実装しているか確認 |
+| PacketIn が来ない | CoPP trap が install されていない、policer drop | `redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF_TRAP:*'`、`show platform copp` (実装あれば)、`tcpdump -i psample` でカーネル側 genl の到達確認 |
+| `swssconfig` が COPP_GROUP の `genetlink_*` を無視する | キー名 typo / hostif table channel 未対応 | `genetlink_name` `genetlink_mcgrp_name` のスペルと、ASIC ベンダの SAI capability `SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK` 対応有無を確認 |
+| ForwardingPipelineConfig push で `INVALID_ARGUMENT` | P4Info と SAI capability の不整合 | controller 側で対象 SKU 向け P4Info を使用、p4rt-app の `--p4info` ログを確認 |
+
+## reference との対応
+
+PINS 系の reference 整備は他機能より薄く、ここで使った CONFIG_DB / APPL_DB スキーマは HLD と実装から推定したものです。CI で機械的に裏取りされていないため、必ず実機の `redis-cli` 出力と突き合わせてください。間接的に参照できる reference:
+
+- [reference/config-db/port.md](../../reference/config-db/port.md) — hostif / netdev 関連
+- [reference/config-db/copp-group.md](../../reference/config-db/copp-group.md) — CoPP の trap group
+- [reference/config-db/copp-trap.md](../../reference/config-db/copp-trap.md) — trap 個別
+- [reference/yang/sonic-copp.md](../../reference/yang/sonic-copp.md) — CoPP YANG (schema 側の正本)
 
 ## 現時点で不足している reference
 
-PINS 系は `reference/cli/*`、`reference/config-db/*`、`reference/yang/*` の整備が他機能より薄く、`config_db: []` / `cli: []` / `yang: []` のままの HLD が多い状況です。reference を引きたい場合は、`docs/reference/config-db/` の `port.md`、`copp-group.md`、`copp-trap.md`、および `docs/reference/yang/` の `sonic-copp.md` が間接的な参照として使えます。
+PINS 系は `reference/cli/*`、`reference/config-db/p4rt.md`、`reference/yang/sonic-p4rt.md` が未整備で、HLD の `config_db: []` / `cli: []` / `yang: []` が空のまま残っています。今後の reference batch で以下を補完予定:
+
+- `reference/config-db/p4rt.md`: `P4RT` テーブルの key / field 一覧
+- `reference/cli/p4rt.md`: `config feature state p4rt` 以外の専用 CLI (現状ほぼ無し)
+- `reference/yang/sonic-p4rt.md`: YANG が定義されたら追従
+
+それまでは本ページと HLD 群 ([PINS HLD](../../management/pins-hld.md)、[P4RT App HLD](../../management/p4rt-application-hld.md)、[PacketIO HLD](../../management/packetio.md)、[Send to Ingress HLD](../../management/send-to-ingress-hld.md)) を一次資料として運用してください。
+
+## 関連ページ
+
+- [PINS の概要](concept.md)
+- [PINS のアーキテクチャ](architecture.md)
+- [PINS の運用](operations.md)
+- [PINS の internals](internals.md)
+- [P4RT App HLD](../../management/p4rt-application-hld.md)
+- [PacketIO HLD](../../management/packetio.md)
+- [Send to Ingress HLD](../../management/send-to-ingress-hld.md)
