@@ -63,7 +63,7 @@ def parse_map() -> dict[str, dict[str, Optional[str]]]:
 def extract_daemon(subscriber: str) -> Optional[str]:
     """Pick the first daemon/orch identifier from subscriber cell."""
     # patterns: `portmgrd` → `PortsOrch`, `AclOrch` (直接 CFG)
-    m = re.search(r"`([A-Za-z][A-Za-z0-9_]*)`", subscriber)
+    m = re.search(r"`([A-Za-z][A-Za-z0-9_-]*)`", subscriber)
     if m:
         return m.group(1)
     m = re.search(r"([A-Z][A-Za-z0-9]*Orch)", subscriber)

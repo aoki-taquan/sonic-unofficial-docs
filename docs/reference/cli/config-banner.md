@@ -103,6 +103,24 @@ excerpt: |
 - `state` が `disabled` の場合、`login` / `logout` / `motd` の文字列が設定されていても表示されない（hostcfgd 側のテンプレート分岐）。
 - `<message>` は単一文字列の click argument のため、複数語のメッセージは引用符でくくる必要がある。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config banner"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>BANNER_MESSAGE")]
+  SC --> CDB0
+  DM0["hostcfgd"]
+  CDB0 --> DM0
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

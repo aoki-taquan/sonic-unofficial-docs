@@ -149,6 +149,10 @@ flowchart LR
   SC --> CDB1
   DM1["dhcrelay"]
   CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>DHCPV4_RELAY")]
+  SC --> CDB2
+  DM2["dhcprelayd"]
+  CDB2 --> DM2
 ```
 
 !!! note "凡例"

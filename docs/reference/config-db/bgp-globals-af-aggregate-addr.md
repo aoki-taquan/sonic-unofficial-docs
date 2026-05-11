@@ -30,6 +30,20 @@ related:
 
 なお、似た名前の `BGP_AGGREGATE_ADDRESS` テーブル (YANG `sonic-bgp-aggregate-address`) は **AF/VRF を持たないフラットな** aggregate 定義で、別経路 (bgpcfgd テンプレ) で利用される。両者は実装パスが異なる点に注意。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BGP_GLOBALS_AF_AGGREGATE_ADDR")]
+  DM["bgpcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

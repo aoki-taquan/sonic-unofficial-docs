@@ -281,6 +281,10 @@ flowchart LR
   SC --> CDB1
   DM1["BgpGlobalStateOrch"]
   CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>BGP_AGGREGATE_ADDRESS")]
+  SC --> CDB2
+  DM2["bgpcfgd"]
+  CDB2 --> DM2
 ```
 
 !!! note "凡例"

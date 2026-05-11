@@ -83,6 +83,21 @@ show pfc asymmetric
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show pfc"]
+  SRC0[("COUNTERS_DB<br/>COUNTERS:Ethernet*")]
+  V0["pfcstat / pfcwd show"]
+  SRC0 --> V0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (データソース → ラッパスクリプト → CLI) のミニ図。CONFIG_DB は経由しない。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

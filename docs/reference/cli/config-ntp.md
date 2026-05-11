@@ -124,6 +124,24 @@ config ntp del <ntp_ip_address>
 - 既存 IP に再度 `add` してもオプションは更新されない（早期 return する）。オプション変更は一度 `del` してから再 `add` する。
 - chrony 再起動が伴うため、SSH や BGP 等が NTP に依存している場合は短時間のタイムスタンプ揺らぎがありうる。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config ntp"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>NTP_SERVER")]
+  SC --> CDB0
+  DM0["ntp-config"]
+  CDB0 --> DM0
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

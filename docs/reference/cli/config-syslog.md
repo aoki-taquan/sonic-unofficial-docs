@@ -156,6 +156,32 @@ Restarting rsyslog-config service ...
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["config syslog"]
+  SC["sonic-cfggen<br/>(config CLI のみ)"]
+  CLI --> SC
+  CDB0[("CONFIG_DB<br/>SYSLOG_SERVER")]
+  SC --> CDB0
+  DM0["hostcfgd"]
+  CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>SYSLOG_CONFIG")]
+  SC --> CDB1
+  DM1["hostcfgd"]
+  CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>SYSLOG_CONFIG_FEATURE")]
+  SC --> CDB2
+  DM2["hostcfgd"]
+  CDB2 --> DM2
+```
+
+!!! note "凡例"
+    config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

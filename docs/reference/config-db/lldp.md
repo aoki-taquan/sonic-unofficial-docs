@@ -25,6 +25,20 @@ related:
 
 `LLDP` テーブルはシステム全体の LLDP 設定 (`GLOBAL` キー) を、`LLDP_PORT` テーブルはポート単位の LLDP 有効化 / モードを保持する[^1]。`lldp-syncd` および `docker-lldp` 内の `lldpd` が CONFIG_DB を読み出して動作する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>LLDP")]
+  DM["lldp-syncd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

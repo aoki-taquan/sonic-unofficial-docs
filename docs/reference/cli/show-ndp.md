@@ -62,6 +62,21 @@ cmd += ['-d', str(display)]
 
 NDP テーブルは **kernel の IPv6 neighbor table** および swss/neighsyncd で APPL_DB に同期されるもので、CONFIG_DB を読まない。
 
+<!-- cli-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CLI["show ndp"]
+  SRC0[("APP_DB<br/>NEIGH_TABLE")]
+  V0["nbrshow (-6)"]
+  SRC0 --> V0 --> CLI
+```
+
+!!! note "凡例"
+    show 系 (データソース → ラッパスクリプト → CLI) のミニ図。CONFIG_DB は経由しない。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -103,6 +103,10 @@ flowchart LR
   SC --> CDB0
   DM0["fpmsyncd"]
   CDB0 --> DM0
+  CDB1[("CONFIG_DB<br/>MGMT_INTERFACE")]
+  SC --> CDB1
+  DM1["interfaces-config"]
+  CDB1 --> DM1
 ```
 
 !!! note "凡例"

@@ -25,6 +25,22 @@ related:
 
 PFC Watchdog の設定テーブル。port ごとに `detection_time` / `restoration_time` / `action` を持ち、PFC pause storm を検出して指定アクションを取る。`GLOBAL` という特別キーでシステム全体のポーリング間隔を設定する[^1]。`pfcwd` ツール / `pfcwdorch` (orchagent) が購読する。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>PFC_WD")]
+  DM["pfcwd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_acl_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

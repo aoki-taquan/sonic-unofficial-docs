@@ -22,6 +22,20 @@ related:
 SSH / コンソールログイン時の login バナー、MOTD、logout バナーを設定するテーブル[^1]。
 `hostcfgd` が CONFIG_DB を購読し、`/etc/issue` / `/etc/motd` / `/etc/issue.net` を書き換える。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BANNER_MESSAGE")]
+  DM["hostcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```

@@ -147,6 +147,10 @@ flowchart LR
   SC --> CDB2
   DM2["vxlanmgrd"]
   CDB2 --> DM2
+  CDB3[("CONFIG_DB<br/>SYSLOG_SERVER")]
+  SC --> CDB3
+  DM3["hostcfgd"]
+  CDB3 --> DM3
 ```
 
 !!! note "凡例"
