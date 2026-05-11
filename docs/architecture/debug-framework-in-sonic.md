@@ -2,7 +2,8 @@
 title: Debug Framework（コンポーネント dump 登録 / assert 拡張）
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: not_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/debug-framework/debug_framework_design_spec.md
@@ -194,6 +195,17 @@ HLD は「コンポーネントが `linkWithFramework` で自身の dump callbac
 - **dump 取得は `show techsupport` で代替**: `/var/dump/` に techsupport tarball が落ちる。OrchAgent 内部状態は `swssloglevel -l DEBUG -c <component>` でログレベルを上げて syslog に吐かせる。
 - **特定 Orch の internal dump**: `docker exec swss debugsh -c 'show <subsystem>'` 系の swss-side CLI を直接叩く。HLD 経由ではなく各 Orch の hand-crafted dump が個別に存在する。
 - 本 framework の取り込みを推進する場合、HLD 自体を現行 master 構造（`swss-common` の `ConfigDBConnector` / `Producer/ConsumerStateTable` 前提）に合わせて再ドラフトする必要がある。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `sonic-swss-common` master HEAD で `Debugframework` クラス・`linkWithFramework` シンボルともに 0 件 (`grep -rn 'class Debugframework\|linkWithFramework' .cache/sonic-sources/sonic-swss-common/`)。
+- `sonic-swss/orchagent/natorch.cpp` の `#ifdef DEBUG_FRAMEWORK` ブロック (L40-42, L138-142, L4591 付近) は HLD 当時の死コード。マクロ定義側 (`Makefile.am` / `configure.ac`) で `DEBUG_FRAMEWORK` を立てる箇所は存在しない。
+- 関連 Issue/PR: HLD 自体が 2019-07 v0.3 で停滞しており、フォローアップ PR の提出無し。代替として個別 Orch 単位の `debugsh` / `swssloglevel` で運用するのが既定線。
+- **追加回避策コマンド**: 全 Orch のログレベル一括引き上げ — `docker exec swss swssloglevel -l DEBUG -a`、syslog 抽出は `docker logs swss 2>&1 | grep -E '<component-name>'`。
+
+> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
 ## 引用元
 

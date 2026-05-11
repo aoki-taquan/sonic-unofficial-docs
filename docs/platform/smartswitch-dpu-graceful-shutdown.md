@@ -2,7 +2,8 @@
 title: Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
 area: platform
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: not_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/smart-switch/graceful-shutdown/graceful-shutdown.md
@@ -168,6 +169,18 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 ### 4. HLD は v0.1 (2025-12) Initial Proposal で master 取り込み未確認
 
 - 上記乖離は HLD の v0.1 と現行実装の間で構造そのものがリファクタされたことを示唆する。設計趣旨（gNOI 経由で DPU を graceful に止める）は実装に活きているが、daemon 構成・テーブル構造は HLD と一致しない。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `gnoi_reboot_daemon.py` は未実装 (`find .cache/sonic-sources/sonic-platform-daemons -iname '*gnoi*'` 結果 0)。
+- 代替実装: `sonic-chassisd/scripts/chassisd` L256/L1362 で `module.set_admin_state_gracefully(admin_state)` を直接呼び、L1373 で `module.clear_module_gnoi_halt_in_progress()`。
+- gNOI Reboot RPC 発行サイトは `sonic_platform_base/module_base.py:601` 前後の `_set_module_gnoi_halt_in_progress` 周辺。platform 派生クラスが `set_admin_state_gracefully` を override。
+- 関連 PR: smartswitch DPU graceful shutdown の chassisd 統合は merge 済み。独立 daemon 案は採用せず chassisd に統合された設計変更。
+- **追加デバッグコマンド**: shutdown フロー追跡 — `docker logs pmon 2>&1 | grep -E 'chassisd.*(graceful|halt|admin_state)'`、`redis-cli -n 6 hgetall 'CHASSIS_MODULE_INFO_TABLE|DPU0'` で current state、`redis-cli psubscribe '__keyspace@6__:CHASSIS_MODULE_INFO_TABLE*'` で遷移を監視。
+
+> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
 ## 引用元
 

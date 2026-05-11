@@ -2,7 +2,8 @@
 title: BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
 area: routing
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: not_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/bfd/BFD HW Offload for BGP session HLD.md
@@ -187,6 +188,18 @@ show bfd summary
 ### 結論
 
 本ページの記述は **HLD の Proposal 仕様** であり、現行 master では `bfdsyncd` / `bfd_hw_offload` / remote 系 SAI get 経路のいずれも実装されていない。SAI 側に HW BFD 機能はあるため、static route 用 HW BFD HLD の経路を経由してマニュアルにセッションを張ることは可能。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `bfdsyncd` プロセスは未実装 (`find .cache/sonic-sources/sonic-buildimage/dockers/docker-fpm-frr -name '*bfdsync*'` 結果 0)。
+- BGP container `supervisord.conf.j2` に `bfdsyncd` プログラムエントリ無し。FRR-bfdd → APPL_DB の翻訳役が居ない。
+- `FEATURE.bgp.bfd_hw_offload` フラグも未配線 (`grep -rn 'bfd_hw_offload' .cache/sonic-sources/sonic-buildimage/dockers/docker-fpm-frr/` ヒット 0)。
+- 関連 PR: HW BFD for static route の HLD は別途取り込み済みで `BFD_SESSION_TABLE` 経路は機能するが、BGP 連動部分は未提出。
+- **追加回避策コマンド**: BGP セッション向け HW BFD を強制したい場合 — bfdd の出力を外部スクリプトで監視し、`sonic-db-cli APPL_DB hset 'BFD_SESSION_TABLE:default:default:<peer-ip>' multihop true type async_active local_addr <local-ip>` で APPL_DB を直接書く（FRR との連動は手動）。SW BFD で要件を満たせるなら FRR `neighbor X bfd` のみで運用。
+
+> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
 ## 引用元
 

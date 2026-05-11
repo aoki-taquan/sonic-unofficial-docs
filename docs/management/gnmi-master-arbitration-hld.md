@@ -2,7 +2,8 @@
 title: gNMI Master Arbitration（election ID と SetRequest 拡張）
 area: management
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/mgmt/gnmi/master_arbitration.md
@@ -217,6 +218,18 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 - クライアント側は `MasterArbitration` 拡張に Role フィールドを付けず、`ElectionId` のみで送る実装にする。
 - 機能を有効化したい場合は `/etc/sonic/telemetry/` 系の設定または systemd unit を変更し、`--with-master-arbitration` を付与した状態で telemetry を再起動する。動的切替が必要な場合は上流に CONFIG_DB 駆動の有効化パスを PR する必要がある。
 - マルチ ASIC 構成では `masterEID` がプロセスごとに揮発するため、ASIC ごとに別 telemetry が立つ場合はコントローラ側で各 ASIC への `Set` ごとに EID を主張し直す。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `sonic-gnmi/gnmi_server/server.go:1329-1331` で `ma.Role != nil` → `codes.Unimplemented`。HLD は「無視」と記載するが実装は **明示拒否**。
+- `--with-master-arbitration` 起動フラグ (`telemetry/telemetry.go:62, 188, 587-588`) でのみ有効化。CONFIG_DB 駆動の動的 ON/OFF は未実装。
+- `masterEID` は gnmi server プロセス内メモリに保持 (`server.go:1310-1351`)。プロセス再起動で揮発。
+- 関連 Issue/PR: `sonic-gnmi` の Master Arbitration 取り込み PR は 2024 年前半に merge。Role 拒否挙動は当該 PR で固定化されており、HLD 側更新待ち。
+- **追加回避策コマンド**: クライアント側 — gNMI `SetRequest` の `extension` には `MasterArbitration{ElectionId: <uint128>}` のみを設定し、`Role` フィールドは空にする。Go gNMI client 例 — `req.Extension = []*gnmi_ext.Extension{{Ext: &gnmi_ext.Extension_MasterArbitration{MasterArbitration: &gnmi_ext.MasterArbitration{ElectionId: &gnmi_ext.Uint128{High: hi, Low: lo}}}}}`。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

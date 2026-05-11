@@ -2,7 +2,8 @@
 title: DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
 area: acl-qos
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: not_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/Dhcp_Mitigation/DHCP Mitigation.md
@@ -209,6 +210,17 @@ HLD は「CONFIG_DB に書いた値が portmgrd 経由で Linux TC の policer �
 - **HLD の効果を得たい場合**: 当面は外部スクリプト（systemd unit など）で `tc qdisc add dev <if> handle ffff: ingress` + `tc filter add ... protocol 17 ... dport 67 ... police rate ...` を投入して回避する。バイトレート換算は HLD の `pps * 406 B` 規約に従う。
 - **CoPP 側を維持する場合**: 既定の CoPP DHCP 300 pps が依然有効なので、上記スクリプトを入れない限りは **HLD 前の動作のまま** で運用される。CLI 上の値は飾りである旨を運用ドキュメントに明記しておくとよい。
 - 上流の取り込みを待つ場合は `sonic-swss` 側で portmgrd の TC 投入実装と、`sonic-buildimage/files/image_config/copp/copp_cfg.j2` からの `dhcp_relay` trap_id 削除の双方が入るのを確認する必要がある。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- **portmgrd の TC 投入経路** が `sonic-swss/cfgmgr/` に未追加で、CONFIG_DB の `dhcp_rate_limit` を消費するコードは round 2 でも 0 件のまま (`grep -rn dhcp_rate_limit .cache/sonic-sources/sonic-swss/cfgmgr/` ヒット 0)。
+- `sonic-buildimage/files/image_config/copp/copp_cfg.j2` の `dhcp_relay` trap 設定が依然システム全体 300 pps に絞っており、HLD 前提の「CoPP 全体制限の撤去」が完了していない。
+- 関連 PR: `sonic-utilities` の `dhcp-mitigation-rate` CLI 取り込み (`config: add interface dhcp-mitigation-rate add/del`) は 2023 年に merge 済みだが、対となる swss 側 PR (portmgrd の TC 投入) は 2026-05 時点で未提出。
+- **追加回避策コマンド**: 全ポート一括で TC を投入する起動スクリプト例 — `for p in $(redis-cli -n 4 keys 'PORT|Ethernet*' | sed 's/PORT|//'); do r=$(redis-cli -n 4 hget PORT\|$p dhcp_rate_limit); [ -n "$r" ] && [ "$r" -gt 0 ] && tc qdisc add dev $p handle ffff: ingress 2>/dev/null && tc filter add dev $p protocol ip parent ffff: prio 1 u32 match ip protocol 17 0xff match ip dport 67 0xffff police rate $((r*406))bps burst $((r*406))b conform-exceed drop; done`
+
+> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
 ## 引用元
 

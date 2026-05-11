@@ -2,7 +2,8 @@
 title: Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
 area: management
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: not_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/console/Portable-Console-Device-High-Level-Design.md
@@ -153,6 +154,18 @@ sudo config console-switch model simulator
 
 - 動的 USB console 追加が必要な場合は、ホスト側 udev rule（`/etc/udev/rules.d/`）で `ttyUSB*` を固定 path にバインドし、`CONSOLE_PORT` テーブルに静的に登録する（`config console add <line>`）。
 - HLD 提案フィールドを使った設定は、上流に PR が取り込まれるまでは独自パッチでの運用となる。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang` L79-90 の `console_mgmt` には `enabled` と `default_escape_char` のみ。`autodetect` / `vendor_name` / `model_name` フィールドは未追加。
+- `sonic-utilities/config/console.py` L22 (`enable_console_switch`) / L43 (`disable_console_switch`) は `CONSOLE_SWITCH|console_mgmt:enabled` を yes/no で操作するのみ。`autodetect` 系サブコマンド無し。
+- `sonic-platform-common` にポータブル console-switch 用の抽象基底クラスは無い (`grep -rn 'console_switch\|portable_console' .cache/sonic-sources/sonic-platform-common/` 関連クラス 0 件)。
+- 関連 Issue/PR: HLD は提案段階で対応する PR の提出無し。
+- **追加回避策コマンド**: 静的に USB console を登録 — `udevadm info -q all -n /dev/ttyUSB0` で属性確認後 `/etc/udev/rules.d/99-console.rules` に `SUBSYSTEM=="tty", ATTRS{idVendor}=="<vid>", SYMLINK+="console-<n>"` を書き、`sudo config console add <n> --baud 9600` で `CONSOLE_PORT` table に挿入。
+
+> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
 ## 引用元
 

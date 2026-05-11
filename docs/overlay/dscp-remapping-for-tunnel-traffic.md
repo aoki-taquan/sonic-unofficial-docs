@@ -2,7 +2,8 @@
 title: トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
 area: overlay
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/qos/tunnel_dscp_remapping.md
@@ -232,6 +233,17 @@ HLD 上に新規 SONiC CLI の追加記述は無い。設定は `qos_config.j2` 
 - フィールド名は **常に `pfcwd_sw_enable`（アンダースコア 2 ヶ所）** を使う。`grep -r pfc_wd_sw_enable` で旧表記が混在していないか確認する。
 - upgrade 環境では `sonic-utilities/scripts/db_migrator.py` の最新版を実行し、`PORT_QOS_MAP|<port>:pfcwd_sw_enable` が生成されているか CONFIG_DB を確認する。生成されていなければ手動で投入する。
 - HLD 由来のドキュメントやテンプレートは新表記に書き換える。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- フィールド名差異: HLD `pfc_wd_sw_enable` → 実装 `pfcwd_sw_enable`（アンダースコア位置違い）。`sonic-utilities/scripts/db_migrator.py:1186-1193` で `pfc_enable` から派生。
+- HLD の主要パスは取り込み済み: `tunneldecaporch.cpp:834,1084` で `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` / `..._TC_TO_PRIORITY_GROUP_MAP`、`muxorch.cpp:259,2347` で `SAI_TUNNEL_PEER_MODE_P2P`、`files/build_templates/qos_config.j2:441` で Dual-ToR 限定 `AZURE_TUNNEL` テンプレート出力。
+- 関連 PR: db_migrator 改修 PR で `pfcwd_sw_enable` への移行が確定。旧名は migrator 経由で自動置換される。
+- **追加検証コマンド**: 過去 upgrade 環境の確認 — `redis-cli -n 4 keys 'PORT_QOS_MAP|*' | while read k; do redis-cli -n 4 hgetall "$k" | grep -E 'pfc(wd)?_sw_enable'; done` で旧名残骸を検出、見つかれば `db_migrator.py` を最新で実行。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

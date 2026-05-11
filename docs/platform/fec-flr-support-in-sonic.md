@@ -2,7 +2,8 @@
 title: FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
 area: platform
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/port_fec_flr/port_fec_flr.md
@@ -249,6 +250,18 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 - poll 周期を 120 秒以下にしたい場合は、`sonic-swss/orchagent/port_flr.lua` L31 を書き換えて image をリビルド。
 - 計算閾値の調整も同様に lua スクリプトレベル。動的にはチューニング不可。
 - 動的設定を求めるなら、`counterpoll port flr-interval-factor` CLI の上流 PR 追跡が必要。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- コアロジックと表示は取り込み済み: `sonic-swss/orchagent/port_flr.lua` L1-460、`sonic-swss/crates/countersyncd/src/sai/saiport.rs` L766-782 で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16 列挙、`sonic-utilities/utilities_common/portstat.py` L50/L271-273/L671-673 で表示列追加。
+- ハードコード値: `port_flr.lua` L29-32 で `BIN_FILTER_VALUE=10` / `MIN_SIGNIFICANT_BINS=2` / `MFC=8`、L31 で `FEC_FLR_POLL_INTERVAL=120`（秒固定）。
+- `counterpoll port flr-interval-factor` サブコマンドは `sonic-utilities/counterpoll/` 配下に未追加（`grep -rn 'flr-interval\|flr_interval' .cache/sonic-sources/sonic-utilities/counterpoll/` ヒット 0）。
+- 関連 PR: port_flr.lua + portstat 表示は 2024 年に merge。チューニング CLI は未提出。
+- **追加回避策コマンド**: ポール周期を変えたい場合 — `docker exec swss sed -i 's/FEC_FLR_POLL_INTERVAL = 120/FEC_FLR_POLL_INTERVAL = 60/' /usr/share/swss/port_flr.lua` で in-place 編集後 `docker restart swss`（恒久化には buildimage への patch 必須）。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

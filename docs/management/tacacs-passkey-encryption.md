@@ -2,7 +2,8 @@
 title: TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
 area: management
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md
@@ -221,6 +222,19 @@ YANG と共通暗号インフラ（`security_cipher.py` + `/etc/cipher_pass.json
 - 現状は `--encrypt` を使わず、`/etc/sonic/config_db.json` のパーミッション（root:root, 0644 → 0600 に絞る等）と config save の管理権限で機密性を担保する運用が現実的。
 - master key インフラを使った暗号化を試したい場合は、`security_cipher.py` の `encrypt`/`decrypt` API を直接呼んで passkey を加工し、独自スクリプトで hostcfgd の代わりに `/etc/pam.d/common-auth-sonic` に注入する独自経路を組む必要がある（保守性は低い）。
 - 上流の CLI / hostcfgd 取り込み PR を待つのが本筋。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- master key ファイル名差異: HLD `/etc/cipher_pass` → 実装 `/etc/cipher_pass.json` (`sonic_py_common/security_cipher.py:18`)。JSON 構造で暗号化ペイロードを保持する設計に進化。
+- YANG `key_encrypt` leaf は取り込み済み (`sonic-system-tacacs.yang` L47/L100-101/L148-149)。
+- CLI 側未実装: `sonic-utilities/config/aaa.py` L248-256 は平文 secret をそのまま CONFIG_DB に書き込み、`--encrypt` フラグの分岐無し。
+- hostcfgd 側の復号処理も未実装 (`grep -rn 'key_encrypt\|security_cipher' .cache/sonic-sources/sonic-buildimage/files/image_config/hostcfgd/` で復号呼出 0 件)。
+- 関連 PR: `sonic_py_common` への `security_cipher` API 追加は merge 済みだが、aaa.py / hostcfgd 側の利用 PR は未マージ。
+- **追加回避策コマンド**: 暗号化を強制したい場合 — `python3 -c 'from sonic_py_common.security_cipher import master_key_mgr; m=master_key_mgr(); print(m.encrypt_passkey("<plain>", "TACPLUS"))'` で encrypt 出力を得て、`config tacacs passkey <encrypted>` で書き込み、`redis-cli -n 4 hset 'TACPLUS|global' key_encrypt true` を手動で立てる（ただし hostcfgd 復号無しのため PAM 認証は失敗する点に注意）。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

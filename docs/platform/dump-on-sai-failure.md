@@ -2,7 +2,8 @@
 title: SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
 area: platform
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/SAI_failure_handling/dump_on_sai_failure.md
@@ -184,6 +185,18 @@ sudo show techsupport
 - 監視・ランブックで参照するスクリプトパスは **`/usr/bin/sai_failure_dump.sh`** に統一する。
 - ベンダードッカーに `platform_syncd_dump.sh` を追加する場合のレイアウトは HLD のままで OK。
 - HLD 由来の手順書は「syncd_dump.sh」を grep して全て「sai_failure_dump.sh」に置換することを推奨。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- スクリプトパス改名: HLD `/usr/bin/syncd_dump.sh` → 実装 `/usr/bin/sai_failure_dump.sh` (`sonic-sairedis/syncd/Syncd.cpp:45` の `#define SAI_FAILURE_DUMP_SCRIPT`)。
+- 実体スクリプト: `sonic-sairedis/syncd/scripts/sai_failure_dump.sh` L8/L10/L12 で `/var/log/sai_failure_dump/` 出力先、`SAI_MAX_FAILURE_DUMPS=10` ローテーション既定、`/usr/bin/platform_syncd_dump.sh` の有無確認 → 呼び出し。
+- ディスパッチ経路 `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` は `Syncd.cpp:4493` で HLD どおり。
+- 関連 PR: スクリプト改名は dump-on-sai-failure 取り込み PR で同時実施。HLD 文書側は古い名前のまま。
+- **追加検証コマンド**: dump 有効性確認 — `ls -la /usr/bin/sai_failure_dump.sh /usr/bin/platform_syncd_dump.sh` で両者の存在を確認、`ls -la /var/log/sai_failure_dump/` で過去 dump の世代数を確認、`grep SAI_FAILURE_DUMP /var/log/syslog` で発火履歴を見る。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 
