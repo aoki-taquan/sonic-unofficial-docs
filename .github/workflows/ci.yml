@@ -88,6 +88,9 @@ jobs:
       - name: Check docs/_meta/coverage.md is up to date
         run: python3 meta/scripts/gen_coverage.py --check
 
+      - name: Report stale-verified pages (informational)
+        run: python3 meta/scripts/check_stale_verified.py --check
+
   topics-back-ref:
     runs-on: ubuntu-latest
     steps:
