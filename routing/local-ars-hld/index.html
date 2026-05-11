@@ -23042,7 +23042,7 @@
 <h3 id="1-arsorch-orch">1. <code>ArsOrch</code> 等の orch 未実装<a class="headerlink" href="#1-arsorch-orch" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>HLD 記述</strong>: <code>ArsOrch</code>（または <code>NextHopGroupOrch</code> 拡張）が <code>ARS</code> / <code>ARS_PROFILE</code> / <code>ARS_INTERFACE</code> テーブルを subscribe して SAI ARS object に反映する。</li>
-<li><strong>実装位置</strong>: <code>sonic-swss/orchagent/</code> に <code>arsorch.cpp</code> / <code>arsorch.h</code> 相当ファイル無し（grep ヒット 0）。<code>nexthopgrouporch.cpp</code> にも ARS 連携コードは存在しない。</li>
+<li><strong>実装位置</strong>: <code>sonic-swss/orchagent/</code> に <code>arsorch.cpp</code> / <code>arsorch.h</code> 相当ファイル無し（grep ヒット 0）。<code>nhgorch.cpp</code> (NhgOrch) にも ARS 連携コードは存在しない。</li>
 <li><strong>差分の中身</strong>: orch 層の処理が無いため CONFIG_DB に <code>ARS|*</code> を書いても何も起きない。<code>gDirectory</code> への ArsOrch 登録も無い。</li>
 <li><strong>読者への影響</strong>: 設定しても ASIC への反映経路が存在しないため、ARS は機能しない。</li>
 <li><strong>回避策</strong>:</li>

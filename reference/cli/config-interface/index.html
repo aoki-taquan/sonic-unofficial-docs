@@ -23461,7 +23461,7 @@ excerpt: |
 <h3 id="config-interface-ipv6-enable-use-link-local-only-interface-disable-use-link-local-only-interface"><code>config interface ipv6 enable use-link-local-only &lt;interface&gt;</code> / <code>disable use-link-local-only &lt;interface&gt;</code><a class="headerlink" href="#config-interface-ipv6-enable-use-link-local-only-interface-disable-use-link-local-only-interface" title="Permanent link">&para;</a></h3>
 <p>該当インタフェイスの IP テーブルに <code>ipv6_use_link_local_only</code> フィールドを <code>enable</code> / <code>disable</code> で書き込む。</p>
 <h3 id="config-interface-mpls-add-interface-remove-interface"><code>config interface mpls add &lt;interface&gt;</code> / <code>remove &lt;interface&gt;</code><a class="headerlink" href="#config-interface-mpls-add-interface-remove-interface" title="Permanent link">&para;</a></h3>
-<p>該当インタフェイス IP テーブルの <code>mpls</code> フィールドを <code>enable</code> / <code>disable</code> で書き込み、<code>mplsmgrd</code> が L3 MPLS を有効化する。</p>
+<p>該当インタフェイス IP テーブルの <code>mpls</code> フィールドを <code>enable</code> / <code>disable</code> で書き込み、<code>intfmgrd</code> (sonic-swss/cfgmgr/intfmgr.cpp) が L3 MPLS を有効化する。</p>
 <h3 id="config-interface-buffer-priority-group-lossless-addremoveset"><code>config interface buffer priority-group lossless add/remove/set</code> 等<a class="headerlink" href="#config-interface-buffer-priority-group-lossless-addremoveset" title="Permanent link">&para;</a></h3>
 <p><code>BUFFER_PG</code> テーブルを操作し、ロスレス priority-group のバッファプロファイルをアサイン。</p>
 <h3 id="config-interface-transceiver-lpmode-interface-onoff"><code>config interface transceiver lpmode &lt;interface&gt; &lt;on|off&gt;</code><a class="headerlink" href="#config-interface-transceiver-lpmode-interface-onoff" title="Permanent link">&para;</a></h3>

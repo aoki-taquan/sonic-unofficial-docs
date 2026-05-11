@@ -22729,8 +22729,7 @@
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosmgrd</code>: CONFIG_DB の QoS map binding を APPL_DB <code>PORT_QOS_MAP_TABLE</code> へ展開する。</li>
-<li><code>orchagent</code> / <code>QosOrch</code>: APPL_DB の QoS map binding を SAI QoS map、scheduler、PFC 設定として port に反映する。</li>
+<li><code>orchagent</code> の <code>QosOrch</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>): CONFIG_DB の QoS map binding を直接 subscribe し、SAI QoS map、scheduler、PFC 設定として port に反映する（master には独立した <code>qosmgrd</code> プロセスは存在せず、CONFIG_DB → APPL_DB の中間段は無い）。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>

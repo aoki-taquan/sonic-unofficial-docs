@@ -22693,8 +22693,7 @@
 </ul>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosmgrd</code>: CONFIG_DB の PFC priority to PG map を APPL_DB QoS map へ展開する。</li>
-<li><code>orchagent</code> / <code>QosOrch</code>: APPL_DB の map を SAI QoS map (<code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP</code>) として作成し、port QoS binding に利用する。</li>
+<li><code>orchagent</code> の <code>QosOrch</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>): CONFIG_DB の QoS map を直接 subscribe し、SAI QoS map (<code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP</code>) として作成、port QoS binding に利用する（master には独立した <code>qosmgrd</code> プロセスは存在しない）。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>

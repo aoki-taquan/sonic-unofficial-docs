@@ -23050,7 +23050,7 @@
 <h3 id="debug-bgp-updates-inoutprefix-prefix"><code>debug bgp updates [in|out|prefix] [&lt;prefix&gt;]</code><a class="headerlink" href="#debug-bgp-updates-inoutprefix-prefix" title="Permanent link">&para;</a></h3>
 <p>引数 <code>direction</code> は <code>click.Choice(['in', 'out', 'prefix'])</code> で、3 番目を選んだ場合に <code>&lt;prefix&gt;</code> を併用する。<code>prefix</code> は前述の正規表現バリデーション。生成される vtysh 文字列は引数によって <code>debug bgp updates</code>, <code>debug bgp updates in 10.0.0.0/8</code>, <code>debug bgp updates prefix fe80::/10</code> 等。</p>
 <h3 id="debug-spanning_tree"><code>debug spanning_tree</code><a class="headerlink" href="#debug-spanning_tree" title="Permanent link">&para;</a></h3>
-<p>サブコマンド無しで実行すると <code>sudo stpctl dbg enable</code> を起動し、<code>stpsyncd</code> / <code>stpd</code> のデバッグ出力を有効化する。<code>dump global</code> / <code>vlan</code> / <code>interface</code> は内部状態のスナップショット表示。</p>
+<p>サブコマンド無しで実行すると <code>sudo stpctl dbg enable</code> を起動し、<code>stpd</code> / <code>stpmgrd</code>（docker-stp の critical_processes に登録されている 2 プロセス）のデバッグ出力を有効化する。<code>dump global</code> / <code>vlan</code> / <code>interface</code> は内部状態のスナップショット表示。</p>
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>debug.main</code> の <strong>import 時に <code>subprocess.check_output(['sudo', 'vtysh', '-c', 'show version'])</code> が走る</strong>。これは tab 補完のような副次的な呼び出しでも実行されるため、bgp コンテナが起動していない環境で <code>debug</code> コマンドの help を見るだけでもエラーで終了する場合がある。</li>
