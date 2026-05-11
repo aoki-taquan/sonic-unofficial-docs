@@ -11,9 +11,40 @@ sources:
 
 # Dual-ToR の考え方
 
-Dual-ToR は、1 台のサーバを 2 台の ToR に接続し、ToR / リンク / ケーブルの障害でもサーバ到達性を維持するための構成です。SONiC ではこの冗長性を `MUX_CABLE`、`linkmgrd`、`MuxOrch`、Y-cable または SoC NIC との制御経路で実現します。
+Dual-ToR は「サーバを 2 台の ToR に二重接続して、ToR / リンク / ケーブルの片側障害でもサービスを継続する」ための構成です。MC-LAG とよく混同されますが、Dual-ToR は **クラウド事業者の大規模 ToR 冗長を念頭に置いた SONiC 固有の構成** で、特殊なケーブル / NIC とそれを制御する SONiC daemon を組み合わせている点が異なります。
 
-まず分けて考えるべき点は、サーバに向かう下り方向を「片側だけが受け持つ」のか「両側が同時に受け持つ」のかです。これが Active-Standby と Active-Active の違いです。
+## Dual-ToR は何の問題を解決するか
+
+データセンタ ToR の冗長化要件は次のとおりです。
+
+- サーバ NIC は単一の LAG / bond ではなく、**個別に 2 本のリンク** を持っているケースが多い（特に NIC SDK の都合）。
+- ToR の faulty 切り戻しや upgrade の際に、**サーバ側を巻き込まずに片側だけを抜く** ことが求められる。
+- 障害時の切替時間は **mlag より厳しい SLO**（秒未満〜数十 ms 級）が要求されることがある。
+- 大量サーバを擁する CSP では、**ToR 状態を集中管理 / SDN controller から制御** したい。
+
+Dual-ToR は smart Y-cable や SoC NIC を使い、サーバ NIC に切替の責任を持たせない（あるいは ToR と協調させる）ことで、これらを解こうとしています。
+
+## SONiC の中での位置
+
+| 軸 | 担当 |
+| --- | --- |
+| Management plane | `MUX_CABLE` CONFIG_DB、`config muxcable`、ycabled (Active-Standby) |
+| Control plane | linkmgrd、MuxOrch、icmp_responder、SoC との gRPC channel (Active-Active) |
+| Data plane | MuxTunnel (IPinIP)、neighbor / route nexthop の active/standby 切替、SAI tunnel |
+
+`linkmgrd` がリンク健全性を判断し、`MuxOrch` が forwarding（neighbor / route の nexthop）を直接サーバ向け / tunnel 向けに切り替える、というのが Dual-ToR 中核の流れです。
+
+## まず分けて考えること
+
+| 観点 | Active-Standby | Active-Active |
+|---|---|---|
+| 通常時の帯域 | 片側リンク分 | 両リンク分 |
+| ケーブル / NIC 制御 | smart Y-cable、I2C、ycabled | SoC NIC、gRPC |
+| 障害時の基本動作 | standby が active へ昇格 | 不健全な側だけ forwarding を止める |
+| 下りの standby 経路 | IPinIP tunnel で peer へ戻す | NIC 側の分散 / forwarding state が中心 |
+| 設計上の注意 | tunnel、neighbor、route 更新の整合 | gRPC channel、SoC state、peer link state |
+
+サーバに向かう下り方向を「片側だけが受け持つ」か「両側が同時に受け持つ」かが、Active-Standby と Active-Active の本質的な違いです。
 
 ## Active-Standby は何を解くか
 
@@ -27,17 +58,40 @@ Active-Active では、両 ToR が常時トラフィックを処理します。�
 
 Active-Active でも `linkmgrd` はリンク健全性を見ますが、状態判断は各 ToR がより独立に行います。障害を検知した側だけが standby 相当の forwarding state に倒れ、復旧後に active へ戻る、という整理になります。
 
-## どちらを選ぶか
+## 典型的な使用シーン
 
-| 観点 | Active-Standby | Active-Active |
-|---|---|---|
-| 通常時の帯域 | 片側リンク分 | 両リンク分 |
-| ケーブル / NIC 制御 | smart Y-cable、I2C、ycabled | SoC NIC、gRPC |
-| 障害時の基本動作 | standby が active へ昇格 | 不健全な側だけ forwarding を止める |
-| 下りの standby 経路 | IPinIP tunnel で peer へ戻す | NIC 側の分散 / forwarding state が中心 |
-| 設計上の注意 | tunnel、neighbor、route 更新の整合 | gRPC channel、SoC state、peer link state |
+### シーン 1: Active-Standby + Y-cable
 
-既存の Active-Standby は「片側 active」を前提にした経路制御が多く、tunnel、prefix-based neighbor、multi-nexthop route のループ回避が重要です。Active-Active は帯域効率を上げますが、NIC / SoC 側の制御と観測点が増えるため、gRPC client と forwarding state の切り分けが必要になります。
+```mermaid
+flowchart TB
+  Server((Server NIC))
+  Server === Yc[Smart Y-cable<br/>I2C 制御]
+  Yc --- ToR1[ToR 1<br/>active]
+  Yc --- ToR2[ToR 2<br/>standby]
+  ToR1 ==>|下りトラフィック| Server
+  ToR2 -.->|IPinIP tunnel| ToR1
+  ToR1 --- Spine
+  ToR2 --- Spine
+```
+
+下り方向は常に active ToR が受け、standby は IPinIP で peer に戻すだけです。
+
+### シーン 2: Active-Active + SoC NIC
+
+```mermaid
+flowchart TB
+  Server((Server NIC + SoC))
+  Server --- ToR1[ToR 1<br/>active]
+  Server --- ToR2[ToR 2<br/>active]
+  ToR1 -. gRPC forwarding state .-> Server
+  ToR2 -. gRPC forwarding state .-> Server
+  ToR1 ==> Server
+  ToR2 ==> Server
+  ToR1 --- Spine
+  ToR2 --- Spine
+```
+
+両 ToR が同時に下りを送り、各 ToR と SoC が gRPC で forwarding state を交換します。
 
 ## まず押さえる用語
 
@@ -48,6 +102,30 @@ Active-Active でも `linkmgrd` はリンク健全性を見ますが、状態判
 | link prober | サーバ NIC への ICMP heartbeat で self / peer の到達性を見る `linkmgrd` の機能 |
 | MuxTunnel | standby ToR がサーバ宛トラフィックを peer ToR へ戻す IPinIP tunnel |
 | prefix-based neighbor | neighbor を残したまま `/32` / `/128` route の nexthop だけを切り替える方式 |
+| Y-cable | サーバ - ToR 間で I2C 制御の mux を持つ特殊ケーブル |
+| SoC NIC | サーバ側に小型コンピュータを持ち、ToR と gRPC でやり取りできる NIC |
+| ycabled | Y-cable を扱う SONiC daemon |
+| icmp_responder | サーバへの heartbeat に応える / 発生させる daemon |
+
+## 似た / 混同しやすい機能との違い
+
+| 比較対象 | 違い |
+| --- | --- |
+| MC-LAG | 2 台の ToR を 1 つの LAG として見せる。サーバ NIC 側は標準 LACP。Dual-ToR より物理層の特殊要件が小さい |
+| VRRP / FHRP | gateway IP の冗長化が目的。物理リンクの選び替えはしない |
+| BGP ECMP unnumbered | Spine - Leaf に向く設計。サーバ - ToR の冗長化には別の仕組みが要る |
+| 単純な NIC bonding | サーバ OS 側に依存。ToR から能動的に切り替えを誘導できない |
+
+## どちらを選ぶか
+
+通常時の帯域、ケーブル / NIC 制約、障害時 SLO の 3 軸で決めます。Active-Standby は smart Y-cable と I2C 周りに特殊ハードウェアが要り、Active-Active は SoC NIC と gRPC スタックを前提にします。既存の Active-Standby は「片側 active」を前提にした経路制御が多く、tunnel、prefix-based neighbor、multi-nexthop route のループ回避が重要です。Active-Active は帯域効率を上げますが、NIC / SoC 側の制御と観測点が増えるため、gRPC client と forwarding state の切り分けが必要になります。
+
+## 読み終わったあとにできるようになること
+
+- Dual-ToR を MC-LAG や VRRP と区別して説明できる。
+- Active-Standby と Active-Active の trade-off を、帯域 / ハードウェア / SLO の観点で比較できる。
+- 下り方向のパスが何によって決まるか（mux state / SoC forwarding state）を意識して切り分けに臨める。
+- `linkmgrd` と `MuxOrch` が neighbor / route の nexthop をどう書き換えるかをイメージできる。
 
 ## 関連ページ
 

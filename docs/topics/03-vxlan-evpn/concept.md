@@ -12,7 +12,27 @@ sources:
 
 # VXLAN / VNET / EVPN の概要
 
-SONiC の overlay は、1 つの機能名ではなく複数の層の組み合わせです。VXLAN はパケットを運ぶ tunnel、VNET は SONiC 内で tenant / virtual network を表す設定単位、EVPN は BGP で MAC/IP/prefix の到達情報を配る control plane です。
+SONiC の overlay 周りは、「VXLAN」「VNET」「EVPN」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。VXLAN は data plane の encapsulation、VNET は SONiC 内部の設定オブジェクト、EVPN はその上に乗る control plane です。
+
+## SONiC overlay は何の問題を解決するか
+
+データセンタや CSP は、物理ネットワークの上に **テナントごとの仮想ネットワーク** を載せたい、L3 fabric の上で **L2 が必要なホストを越境させたい**、という要件を抱えます。SONiC overlay はこれを以下の道具で解きます。
+
+- **VXLAN**: L2 / L3 トラフィックを UDP/IP に encapsulate して L3 fabric 上を運ぶ。
+- **VNET**: SONiC が tenant / VRF / VNI を 1 つのオブジェクトとして扱うための設定単位。controller 直書きにも EVPN 学習にも使える。
+- **EVPN**: BGP の AFI として MAC / IP / prefix の到達情報を配り、VXLAN tunnel を自動的に張る。
+
+「VXLAN を有効化する」と言うとき、実際には VTEP を作るだけの場合、VLAN-VNI を作る場合、VNET route を作る場合、EVPN で経路を受ける場合があります。最初にどの層を触っているかを分けると、設定の迷子になりにくくなります。
+
+## SONiC の中での位置
+
+| 軸 | 担当 |
+| --- | --- |
+| Management plane | `config vxlan`, `config vnet`, FRR vty, `VXLAN_*` / `VNET_*` CONFIG_DB |
+| Control plane | FRR bgpd (l2vpn evpn AFI)、vxlanmgrd、VNetOrch、VNetRouteOrch |
+| Data plane | orchagent (TunnelOrch / VxlanTunnelOrch)、syncd、SAI tunnel / bridge-port |
+
+VXLAN は data plane、EVPN は control plane、VNET は management/control の境界にいる、という整理が役に立ちます。
 
 ## まず分けて考える
 
@@ -23,8 +43,8 @@ SONiC の overlay は、1 つの機能名ではなく複数の層の組み合わ
 | EVPN | BGP で overlay 到達性を配る control plane | FRR BGP-EVPN, `VXLAN_EVPN_NVO`, `show evpn ...` |
 | VTEP | VXLAN を終端する tunnel endpoint | `VXLAN_TUNNEL.src_ip` |
 | VNI | tenant / segment を識別する 24 bit ID | VLAN-VNI map、VRF-VNI map、VNET.vni |
-
-「VXLAN を有効化する」と言うとき、実際には VTEP を作るだけの場合、VLAN-VNI を作る場合、VNET route を作る場合、EVPN で経路を受ける場合があります。最初にどの層を触っているかを分けると、設定の迷子になりにくくなります。
+| NVO | Network Virtualization Overlay。EVPN が VXLAN を使うことを宣言する設定 | `VXLAN_EVPN_NVO` |
+| L2VNI / L3VNI | MAC を運ぶ VNI / prefix を運ぶ VNI | EVPN Type-2 / Type-5 で対応 |
 
 ## L2 overlay と L3 overlay
 
@@ -41,17 +61,62 @@ flowchart LR
   LeafB --> HostB[Remote Host / Prefix]
 ```
 
+## 典型的な使用シーン
+
+### シーン 1: EVPN-VXLAN multi-tenant fabric
+
+```mermaid
+flowchart LR
+  subgraph Tenant_A
+    HA1[Host A1<br/>VRF-A] --- L1[Leaf 1]
+    HA2[Host A2<br/>VRF-A] --- L2[Leaf 2]
+  end
+  subgraph Tenant_B
+    HB1[Host B1<br/>VRF-B] --- L1
+    HB2[Host B2<br/>VRF-B] --- L2
+  end
+  L1 ===|VXLAN: VNI-A / VNI-B<br/>EVPN Type-2/5| L2
+```
+
+各 Leaf が VTEP になり、VRF-A は VNI-A、VRF-B は VNI-B にマップされます。EVPN がない場合は controller が VNET / VNET_ROUTE_TUNNEL を直接書きます（次のシーン）。
+
+### シーン 2: SDN controller 直書きの VNET (DASH / SmartSwitch 系)
+
+```mermaid
+flowchart LR
+  Ctrl[SDN Controller] -->|gNMI/CONFIG_DB| VNet[(VNET / VNET_ROUTE / VNET_ROUTE_TUNNEL)]
+  VNet --> Orch[VNetOrch / VNetRouteOrch]
+  Orch --> ASIC[(ASIC_DB)]
+```
+
+FRR EVPN を介さず、controller が直接 VNET route を書く構成です。EVPN を使わないことで control plane の挙動が単純になり、tenant 規模を集中管理しやすくなります。
+
 ## VNET は EVPN の別名ではない
 
 VNET は SONiC の configuration / orchestration 単位です。`VNET` は `vxlan_tunnel` と `vni` を持ち、`VNET_ROUTE` は local / subnet route、`VNET_ROUTE_TUNNEL` は remote endpoint へ encapsulate する route を表します。EVPN がある場合は control plane からこれらに相当する情報が供給されますが、VNET 自体は EVPN に限定されません。
 
 このため、コントローラが直接 VNET route を書く設計と、FRR EVPN が Type-2 / Type-5 を受けて SONiC 側へ反映する設計は、同じ VXLAN data plane に収束しても、運用上の入口が異なります。
 
-## NVGRE と subnet decap の位置づけ
+## 似た / 混同しやすい機能との違い
 
-NVGRE は VXLAN と同じ「L2 over L3」系の overlay ですが、カプセル化に GRE と VSID を使います。SONiC の NVGRE HLD は decap 受信側を主対象にしており、VXLAN/VNET の EVPN control plane とは別系統です。詳細は [NVGRE トンネル](../../overlay/nvgre-tunnel-in-sonic.md) を参照してください。
+| 比較対象 | 違い |
+| --- | --- |
+| NVGRE | encapsulation が GRE + VSID。SONiC NVGRE HLD は decap 受信側中心で、EVPN control plane を持たない |
+| Subnet decap | VLAN subnet 宛 IPinIP を T0 が decap して Netscan へ戻す platform 機能。tenant overlay ではない |
+| GENEVE | SONiC では encapsulation 対象として一般には扱っていない |
+| MPLS L3VPN | control plane に BGP-VPNv4/v6、data plane に MPLS label を使う。SONiC では限定的 |
+| VLAN trunk のみ | L2 を物理リンクで運ぶ。fabric を越えられない |
+
+NVGRE は VXLAN と同じ「L2 over L3」系の overlay ですが、カプセル化に GRE と VSID を使います。詳細は [NVGRE トンネル](../../overlay/nvgre-tunnel-in-sonic.md) を参照してください。
 
 Subnet decap は overlay tenant を作る機能ではなく、VLAN subnet 宛の IPinIP probe を T0 が decap して Netscan へ戻す platform 機能です。tunnel decap object を使うため同じ章で触れますが、VXLAN/VNET の data plane とは目的が違います。
+
+## 読み終わったあとにできるようになること
+
+- 「VXLAN を設定する」という曖昧な要求を、VTEP / VLAN-VNI / VNET / EVPN のどの層の話かに分解できる。
+- EVPN を使う構成と controller 直書きの構成の使い分けがイメージできる。
+- NVGRE や subnet decap が overlay tenant とは別の話だと区別できる。
+- BGP-EVPN のセッションがあるのに data plane が来ない問題を「FRR EVPN」「VxlanTunnelOrch」「SAI tunnel」のどこで止まったかで切れる。
 
 ## 関連ページ
 

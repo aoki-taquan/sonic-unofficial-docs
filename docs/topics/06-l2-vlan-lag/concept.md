@@ -17,7 +17,26 @@ sources:
 
 # L2 機能の考え方
 
-SONiC の L2 を読むときは、まず「どの interface がどの forwarding domain に属するか」と「その interface を L2 として使うのか、L3 として使うのか」を分けると理解しやすくなります。
+SONiC で L2 を読むときは、最初に「どの interface がどの forwarding domain に属するか」と「その interface を L2 として使うのか、L3 として使うのか」を分けて整理すると、その後の設定や運用が追いやすくなります。同じ `Ethernet0` でも、VLAN_MEMBER に入れれば L2、`INTERFACE` テーブルに入れれば L3、`VLAN_SUB_INTERFACE` で `Ethernet0.100` を作れば dot1q L3 になります。
+
+## SONiC の L2 は何の問題を解決するか
+
+データセンタの leaf-spine fabric では L2 を極力使わず L3 ECMP に寄せるのが王道ですが、現実にはサーバ - ToR 間の VLAN、management VLAN、ストレージ系の broadcast 要件、L2 over VXLAN を運ぶための L2 bridge など、L2 は完全には消えません。SONiC の L2 機能は以下を引き受けます。
+
+- VLAN bridge domain、tagged / untagged のメンバシップ、SVI を提供する。
+- 複数物理リンクを LAG (PortChannel) として束ねる。
+- FDB、STP、storm control、link event damping など L2 周りの保護機能を持つ。
+- MC-LAG、sub-port interface など、L2 と L3 の境界にいる機能をサポートする。
+
+## SONiC の中での位置
+
+| 軸 | 担当 |
+| --- | --- |
+| Management plane | `config vlan`, `config interface`, `config portchannel`, `CONFIG_DB.VLAN / VLAN_MEMBER / PORTCHANNEL` |
+| Control plane | vlanmgrd, intfmgrd, teammgrd / Linux teamd, fdb sync, STP daemon |
+| Data plane | VlanMgr / VlanMgrOrch, LagOrch, FdbOrch, SAI bridge-port / LAG |
+
+LAG の責務は Linux 側の `teamd` と SONiC の `teammgrd` / `LagOrch` に分かれており、最終的に SAI LAG object に落ちます。VLAN は Linux bridge を使わずに SAI bridge-port で扱う点が、一般的な Linux distribution と違う部分です。
 
 ## 最初に押さえる単位
 
@@ -32,6 +51,34 @@ SONiC の L2 を読むときは、まず「どの interface がどの forwarding
 | Sub-port | `VLAN_SUB_INTERFACE` | 親 `Ethernet` / `PortChannel` 上に `.<vlan-id>` の L3 sub-interface を作る |
 
 VLAN は L2 の入れ物です。`VLAN_MEMBER` はその入れ物にポートを入れる設定です。`VLAN_INTERFACE` は同じ VLAN 名を L3 の gateway interface として扱う設定で、L2 メンバとは別の役割を持ちます。
+
+## 典型的な使用シーン
+
+### シーン 1: サーバアクセス VLAN + uplink LAG
+
+```mermaid
+flowchart LR
+  S1((Server 1)) -. untagged Vlan100 .- E1[Ethernet0]
+  S2((Server 2)) -. untagged Vlan100 .- E2[Ethernet1]
+  E1 --- ToR[ToR Switch]
+  E2 --- ToR
+  ToR -->|LACP| PC[PortChannel1]
+  PC --- Up[Aggregation]
+```
+
+サーバ向けポートを `Vlan100` の untagged member にし、uplink を PortChannel として束ねる典型構成です。`Vlan100` を SVI 化（`VLAN_INTERFACE`）すればサーバの gateway になります。
+
+### シーン 2: trunk + sub-interface mix
+
+```mermaid
+flowchart LR
+  Peer((Router)) ==|trunk: Vlan10/20/30| Eth[Ethernet5]
+  Eth --- Br10[Vlan10 bridge]
+  Eth --- Br20[Vlan20 bridge]
+  Eth -. dot1q .100 .- Sub[Ethernet5.100<br/>L3 sub-port]
+```
+
+同じ物理ポートで、ある VLAN は L2 bridge に入れ、別の VLAN は dot1q L3 sub-port として終端する、という構成も可能です。bridge と sub-port の使い分けは VLAN ごとに別になる点に注意します。
 
 ## Access / trunk / routed の見方
 
@@ -62,6 +109,23 @@ MC-LAG は 2 台のスイッチが peer になり、下流ホストから 1 つ�
 FDB は VLAN 内で MAC address と出力 port を結び付ける学習テーブルです。ポート down、VLAN member 削除、STP topology change、PortChannel down では FDB flush の範囲が変わります。
 
 STP / MSTP は L2 ループを避ける制御面です。Storm control はループや誤接続で BUM traffic が増えたときに物理ポート単位でレート制限します。Link event damping はポート up/down の連続発生を抑え、L2 / L3 の制御面へイベントを流しすぎないための保護です。
+
+## 似た / 混同しやすい機能との違い
+
+| 比較対象 | 違い |
+| --- | --- |
+| VLAN_INTERFACE vs sub-port | 前者は VLAN bridge 全体の SVI。後者は親 interface + dot1q tag を直接 L3 化 |
+| LAG vs MC-LAG | 前者は 1 台内、後者は 2 台の協調。ICCP / peer-link が必要 |
+| L2 bridge VXLAN vs sub-port | VXLAN は VLAN-VNI map で bridge、sub-port は L3 のみ |
+| Linux bridge vs SAI bridge-port | SONiC は kernel bridge をデータパスに使わない。SAI bridge-port が ASIC で forwarding |
+| STP vs storm control | 前者はループ回避のためのトポロジ計算、後者は BUM のレート制限 |
+
+## 読み終わったあとにできるようになること
+
+- 同じ物理ポートを L2 / L3 / sub-port のどれとして扱っているか、CONFIG_DB のテーブルだけで判定できる。
+- `Vlan100` の L2 メンバシップと L3 SVI を別の話として扱える。
+- LAG の振る舞いを `teamd` / `teammgrd` / `LagOrch` の責務に分けられる。
+- MC-LAG を「2 台の制御面同期」として読み、通常 LAG の延長と誤解しない。
 
 ## 関連ページ
 
