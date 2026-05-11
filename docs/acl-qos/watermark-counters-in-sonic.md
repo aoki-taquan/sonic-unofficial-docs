@@ -23,15 +23,15 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified（キー名は TELEMETRY_INTERVAL）"
-    `sonic-swss/orchagent/watermarkorch.{h,cpp}` で `WatermarkOrch` クラスの存在、`DEFAULT_TELEMETRY_INTERVAL=120` (cpp L9) と CFG_WATERMARK_TABLE 連動 `handleWmConfigUpdate` の `TELEMETRY_INTERVAL` キー処理 (cpp L97) を確認。Lua plugin として `orchagent/watermark_bufferpool.lua`, `watermark_pg.lua`, `watermark_queue.lua` を確認。`STATS_MODE_READ_AND_CLEAR` は `bufferorch.cpp` L334 / `portsorch.cpp` L868/L874 で利用、`hftelutils.cpp` で `SAI_STATS_MODE_READ_AND_CLEAR` が SAI 側へ受け渡し。**HLD で混在していた `TELEMETRY_PERIOD` ではなく実装は `TELEMETRY_INTERVAL`** (verified at: 2026-05-09)。
+    `sonic-swss/orchagent/watermarkorch.{h,cpp}` で `WatermarkOrch` 実装、`DEFAULT_TELEMETRY_INTERVAL=120` (cpp L9)、`CFG_WATERMARK_TABLE.TELEMETRY_INTERVAL` キー処理 (cpp L97) を確認。Lua plugin `watermark_bufferpool.lua` / `watermark_pg.lua` / `watermark_queue.lua` あり。`STATS_MODE_READ_AND_CLEAR` は `bufferorch.cpp` L334 / `portsorch.cpp` L868/L874 で利用。**HLD の `TELEMETRY_PERIOD` 表記は実装では `TELEMETRY_INTERVAL`** (verified at: 2026-05-09)。
 
 # バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
 
-## 概要
+読み手の関心は「**何を watermark として記録するのか**」「**telemetry / 手動 / 永続の 3 系統がなぜ要るのか**」「**clear を打つと何が起きるのか**」の 3 点に集約される。順に答える。
 
-バッファ占有量はマイクロバースト解析や輻輳調査の主要な観測量だが、瞬時値は刻一刻変動するため、**サンプリング期間中の最大値（watermark）** をハードウェアで保持し、ソフトウェアから読み出して使うのが一般的である。本機能は SONiC の COUNTERS_DB と CLI から、入力 PG (Priority Group) と egress queue の watermark を観測 / リセットできるようにするためのもので、3 種類の用途（**telemetry 用**、**ユーザ手動**、**永続的最大値**）を干渉なく並走させる設計を導入する[^1]。
+## 何を watermark として記録するのか
 
-対象 SAI カウンタは次の 3 つ[^1]。
+対象 SAI カウンタは 3 つ[^1]。
 
 | 用途 | SAI 属性 |
 |------|----------|
@@ -39,162 +39,131 @@ related:
 | Ingress shared 占有 per PG | `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` |
 | Egress shared 占有 per queue (UC/MC 共通) | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` |
 
-## 動作仕様
+これらを Flex Counter が **既定 1 秒間隔で `STATS_MODE_READ_AND_CLEAR`** で取り、ハードウェア側も同時にクリアする[^1]。新規拡張として syncd の FC 設定スキーマに `STATS_MODE` 行が追加される。
 
-### 全体アーキテクチャ
+```text
+"POLL_INTERVAL"  -> "1000"
+"STATS_MODE"     -> "STATS_MODE_READ_AND_CLEAR"
+```
+
+## なぜ 3 系統に分けるのか
+
+「telemetry の周期リセットがユーザ観測を破壊する」「他ユーザの clear で誤って消える」を避けるため、3 系統の独立 watermark テーブルを並走させる[^1]。
 
 ```mermaid
 flowchart LR
-    SAI[SAI watermark stats] -->|read_and_clear 1s| FC[Flex Counter]
-    FC --> CDB[(COUNTERS_DB\nCOUNTERS:queue/pg)]
-    FC -->|Lua plugin per tick| PERI[(PERIODIC_WATERMARKS)]
-    FC -->|Lua plugin per tick| USER[(USER_WATERMARKS)]
-    FC -->|Lua plugin per tick| PERSIST[(PERSISTENT_WATERMARKS)]
-    WMORCH[watermarkorch] -->|TELEMETRY_INTERVAL タイマで\nPERIODIC_WATERMARKS をクリア| PERI
-    WMORCH -->|CLEAR 通知| USER
-    WMORCH -->|CLEAR 通知| PERSIST
-    CLI[show / clear CLI] --> USER
+    SAI[SAI watermark] -->|read_and_clear 1s| FC[Flex Counter]
+    FC --> CDB[(COUNTERS<br/>per-vid)]
+    FC -->|Lua| PERI[(PERIODIC_WATERMARKS)]
+    FC -->|Lua| USER[(USER_WATERMARKS)]
+    FC -->|Lua| PERSIST[(PERSISTENT_WATERMARKS)]
+    WMO[watermarkorch] -->|TELEMETRY_INTERVAL タイマで 0 化| PERI
+    CLI[clear CLI] --> USER
     CLI --> PERSIST
-    GRPC[sonic-telemetry] -->|virtual path| PERI
-    GRPC -->|virtual path| PERSIST
+    GRPC[sonic-telemetry] --> PERI
 ```
 
-### Flex counter とハードウェアからのクリア
-
-Watermark カウンタは Flex Counter で **既定 1 秒間隔で読み取り、同時にハードウェア側もクリア** する `STATS_MODE_READ_AND_CLEAR` モードを使う[^1]。これは新規拡張であり、`syncd` の Flex Counter 設定スキーマに `STATS_MODE` 行が追加される。
-
-```text
-"POLL_INTERVAL"        -> "1000"
-"STATS_MODE"           -> "STATS_MODE_READ_AND_CLEAR"
-"FLEX_COUNTER_STATUS"  -> "disable"  (default; 有効化は別経路)
-```
-
-SAI 側は `sai_get_queue_stats_ext()` / `sai_get_ingress_priority_group_stats_ext()` の `_ext` 系で stats mode を渡せる API を要求する。
-
-### 3 系統の watermark テーブル
-
-Lua プラグインは Flex Counter の毎周期で起動し、`COUNTERS:<vid>` から読み取った値を 3 つの watermark テーブルそれぞれと **max 比較** して上書きする[^1]。
-
-```lua
-PERIODIC_WATERMARKS [vid][stat] = max(COUNTERS[vid][stat], PERIODIC_WATERMARKS [vid][stat])
-USER_WATERMARKS    [vid][stat] = max(COUNTERS[vid][stat], USER_WATERMARKS    [vid][stat])
-PERSISTENT_WATERMARKS[vid][stat]= max(COUNTERS[vid][stat], PERSISTENT_WATERMARKS[vid][stat])
-```
-
-各テーブルの寿命は次のとおり整理される。
+Lua plugin が毎周期 `max(COUNTERS, table)` で 3 テーブルそれぞれを更新する。
 
 | テーブル | クリア主体 | 用途 |
 |----------|-----------|------|
-| `COUNTERS` | Flex Counter（1 秒ごとに HW から再取得して上書き） | 内部処理用。直接ユーザに見せない |
-| `PERIODIC_WATERMARKS` | `watermarkorch` のタイマが TELEMETRY_INTERVAL ごとに 0 化 | streaming telemetry 用 |
-| `USER_WATERMARKS` | `clear` CLI で 0 化 | 通常ユーザの「ある時点からの最大」用 |
-| `PERSISTENT_WATERMARKS` | `clear persistent-watermark` CLI で 0 化 | 起動以来 / 前回 clear 以来の最大 |
+| `COUNTERS` | Flex Counter（HW から再取得で上書き） | 内部処理用 |
+| `PERIODIC_WATERMARKS` | `watermarkorch` の `TELEMETRY_INTERVAL` タイマ | streaming telemetry |
+| `USER_WATERMARKS` | `clear` CLI | ユーザの「ある時点からの最大」 |
+| `PERSISTENT_WATERMARKS` | `clear persistent-watermark` CLI | 起動以来 / 前回 clear 以来の最大 |
 
-3 系統が独立しているため「telemetry の周期リセットがユーザの観測を破壊する」「他ユーザの clear で誤ってリセットされる」事態を避けられる[^1]。
+## clear を打つと何が起きるのか
 
-<!-- evidence:
-source: sonic-net/SONiC/doc/buffer-watermark/watermarks_HLD.md#L99-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  Streaming telemetry is only interested in periodic watermark, i.e., it queries the watermark at regular intervals.
-  ... When one regular user and the streaming telemetry coexist, they do not interfere with each other.
-reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根拠。
--->
+`watermarkorch` が CLEAR 通知を受け、該当行の値を **0 にするだけ**。次の Lua 周期で `COUNTERS` から max 比較で再充填されるため、トラフィックがあれば即座に非ゼロに戻る[^1]。これは仕様（バグではない）。
 
-### COUNTERS_DB スキーマ
+clear CLI は **sudo 必須**。watermark は全ユーザ共有資源で、複数 SSH セッションでの同時観測を尊重するための制限[^1]。
 
-各 watermark テーブルは VID をキーに次のフィールドを持つ[^1]。
+## COUNTERS_DB スキーマと補助マップ
 
 ```text
 COUNTERS / PERIODIC_WATERMARKS / USER_WATERMARKS / PERSISTENT_WATERMARKS
-  : queue_vid
-       SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES
-  : pg_vid
-       SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES
-       SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES
+  : queue_vid -> SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES
+  : pg_vid    -> SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES
+                 SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES
 ```
 
-加えて以下の補助マップが追加される。
-
-| マップ | 用途 |
+| 補助マップ | 用途 |
 |--------|------|
 | `COUNTERS_PG_PORT_MAP` | PG OID → ポート OID |
 | `COUNTERS_PG_NAME_MAP` | PG OID → PG 名 |
 | `COUNTERS_PG_INDEX_MAP` | PG OID → PG インデックス (0..7) |
 
-### `watermarkorch`
+## `watermarkorch` の責務
 
-新規 orch エージェント `watermarkorch` を追加する。責務は次の 3 点[^1]。
+3 点だけ[^1]:
 
-1. `WATERMARK_TABLE`（CONFIG_DB、`TELEMETRY_PERIOD` 等）の購読と反映。
-2. PERIODIC_WATERMARKS を `TELEMETRY_INTERVAL` ごとに 0 化するタイマー管理。**新インターバルは現行タイマー満了時にのみ反映** される（途中で短くなって即発火しない）[^1]。
-3. `CLEAR_WATERMARK` 通知チャネルの購読。クリア要求は単に該当行の値を 0 にするだけで、Lua プラグインの次回サイクルで再充填される。
+1. `WATERMARK_TABLE`（CONFIG_DB）の subscribe
+2. `PERIODIC_WATERMARKS` を `TELEMETRY_INTERVAL` ごとに 0 化（**新値は現行タイマー満了時にのみ反映**）
+3. `CLEAR_WATERMARK` 通知の受信処理
 
-### Telemetry 経由の参照
+<!-- evidence:
+source: sonic-net/SONiC/doc/buffer-watermark/watermarks_HLD.md#L99-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  When one regular user and the streaming telemetry coexist, they do not interfere with each other.
+reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根拠。
+-->
 
-`sonic-telemetry` は `WATERMARKS/...` 系の virtual path から PG / queue の watermark を読める。完全な構文は HLD では「TBD」とされているが、例として次が挙げられている[^1]。
+## Telemetry 経由の参照
+
+`sonic-telemetry` は `WATERMARKS/...` virtual path から読める[^1]:
 
 | Virtual Path | 意味 |
 |--------------|------|
 | `WATERMARKS/Ethernet*/Queues/PERIODIC_WATERMARKS` | 全ポートの queue periodic |
 | `WATERMARKS/Ethernet<N>/PriorityGroups/PERSISTENT_WATERMARKS` | 単一ポートの PG persistent |
 
-### `clear` の権限
+## 関連する CONFIG_DB / CLI
 
-`clear` 系 CLI は **sudo を要求** する。watermark は全ユーザで共有されるため、SSH で複数人が繋いでいる状況でクリアすると他の観測も巻き込むためである[^1]。
-
-## 設定
-
-### 関連する CONFIG_DB
-
-| Table | Key | フィールド | 説明 |
-|-------|-----|-----------|------|
-| `WATERMARK_TABLE` | `TELEMETRY_INTERVAL`（HLD では `TELEMETRY_PERIOD` の表記もあり） | 値 | streaming telemetry 用の周期クリア間隔 |
-
-### 関連する CLI
+| Table | Key | フィールド |
+|-------|-----|-----------|
+| `WATERMARK_TABLE` | `TELEMETRY_INTERVAL`（HLD では `TELEMETRY_PERIOD` 表記あり） | streaming telemetry の周期クリア間隔 |
 
 | Command | 用途 |
 |---------|------|
-| `show priority-group watermark headroom` | PG headroom の user watermark |
-| `show priority-group watermark shared` | PG shared 占有の user watermark |
-| `show priority-group persistent-watermark headroom` | persistent 版 |
-| `show priority-group persistent-watermark shared` | persistent 版 |
-| `show queue watermark unicast` | UC queue shared 占有の user watermark |
-| `show queue watermark multicast` | MC queue shared 占有の user watermark |
-| `show queue persistent-watermark unicast/multicast` | persistent 版 |
-| `clear priority-group {watermark\|persistent-watermark} {headroom\|shared}` | クリア（sudo 必須） |
-| `clear queue {watermark\|persistent-watermark} {unicast\|multicast}` | クリア（sudo 必須） |
-| `show watermark telemetry interval` | TELEMETRY_INTERVAL の表示 |
-| `config watermark telemetry interval <value>` | TELEMETRY_INTERVAL の更新（次回満了から有効） |
+| `show priority-group watermark {headroom\|shared}` | user watermark |
+| `show priority-group persistent-watermark {headroom\|shared}` | persistent 版 |
+| `show queue watermark {unicast\|multicast}` | UC/MC queue user watermark |
+| `show queue persistent-watermark {unicast\|multicast}` | persistent 版 |
+| `clear priority-group {watermark\|persistent-watermark} {headroom\|shared}` | sudo 必須 |
+| `clear queue {watermark\|persistent-watermark} {unicast\|multicast}` | sudo 必須 |
+| `show watermark telemetry interval` / `config watermark telemetry interval <v>` | 表示 / 更新 |
 
-### 表示例
+表示例:
 
 ```text
 $ show priority-group watermark shared
-Ingress shared pool occupancy per PG:
 Interface         PG0   PG1   PG2   PG3   PG4   PG5   PG6   PG7
 Ethernet0           0  1092     0   380     0     0     0     0
-...
-Ethernet128         0     0     0     0     0     0     0     0
 ```
-
-### 関連する YANG
-
-HLD 上で YANG モデル定義の記述は無い。`WATERMARK_TABLE` 用 YANG は実装側で別途定義される想定で、本 HLD では未明記。
 
 ## 干渉する機能
 
-- **PFC watchdog (PFC WD)**: HLD の Open Question として「PG watermark を Flex Counter に追加すると PFC WD カウンタの性能に影響しないか?」が残されている[^1]。同じ Flex Counter 系を使うため、ポーリング負荷の競合に留意。
-- **`STATS_MODE_READ_AND_CLEAR`**: ハードウェアから読むタイミングで HW 側もクリアするモード。これに対応していない SAI 実装では本機能は意図どおり動かない。
-- **3 系統の watermark テーブル**: `clear` を打っても直近で max 比較される値次第ですぐに非ゼロに戻る。これはバグではなく Lua プラグインの設計意図。
-- **TELEMETRY_INTERVAL 短縮反映**: 設定変更直後ではなく、現行タイマー満了時に反映される非同期挙動に注意。
+- **PFC watchdog**: 同じ FC 系を使うためポーリング負荷の競合に留意（HLD の Open Question）[^1]
+- **`STATS_MODE_READ_AND_CLEAR`**: 非対応 SAI 実装では意図どおりに動かない
+- **`clear` の即時 0 観測**: トラフィック停止状態でしか純粋な 0 は得られない
+- **`TELEMETRY_INTERVAL` の遅延反映**: 現行タイマー満了まで新値は効かない
 
 ## トラブルシューティング
 
-- watermark がいつもゼロ: SAI / ASIC が `_WATERMARK_BYTES` 系をサポートしていないか、Flex Counter group が `STATS_MODE_READ_AND_CLEAR` で開始されていない可能性。`syncd` 起動ログと Flex Counter group 設定を確認。
-- `clear` を打っても値が戻る: 仕様。COUNTERS から再充填されるため、本当に 0 を観測したい場合はトラフィック停止状態でクリア → ただちに read。
-- TELEMETRY_INTERVAL を短くしたが反映されない: 現行タイマー満了まで待つ。
-- PG OID と物理ポートの対応がわからない: `COUNTERS_PG_PORT_MAP` / `COUNTERS_PG_INDEX_MAP` を redis から直接読む。
-- `clear` で他ユーザの観測値が消えた: 仕様。watermark は全ユーザ共有資源で、`clear` には sudo が必要なのもこのため。
+- 値がいつもゼロ: SAI / ASIC が `_WATERMARK_BYTES` 未対応か `STATS_MODE_READ_AND_CLEAR` 未開始。`syncd` ログと FC group 設定を確認
+- `clear` で 0 に戻らない: 仕様。トラフィック停止 → 即 read で確認
+- `TELEMETRY_INTERVAL` を短くしても効かない: 現行タイマー満了待ち
+- PG OID と物理 port の対応不明: `COUNTERS_PG_PORT_MAP` / `COUNTERS_PG_INDEX_MAP` を redis から
+- `clear` で他人の観測値が消えた: 仕様。sudo を要求しているのもこのため
+
+## 関連トピック
+
+- [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)
+
+## 関連ページ
+
+- [Align Watermark Flow with Port Configuration](./align-watermark-flow-with-port-configuration-hld.md)
+- [PFC Historical Statistics](./pfc-historical-statistics.md)
 
 ## 引用元
 
