@@ -20,41 +20,41 @@ related:
 !!! success "裏取りステータス: Code-verified"
     `sonic-swss/orchagent/aclorch.cpp` L4201-4202 で `m_aclTableStateTable(stateDb, STATE_ACL_TABLE_TABLE_NAME)` / `m_aclRuleStateTable(stateDb, STATE_ACL_RULE_TABLE_NAME)` を確認、`sonic-swss-common/common/schema.h` L514-515 で `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` / `STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"` を確認。`sonic-utilities/show/acl.py` の `show acl table` / `show acl rule` が `acl-loader show table/rule` を呼び、`sonic-utilities/acl_loader/main.py` L76-80/L324-340 で STATE_DB の `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` ステータスを参照することを確認（verified at: 2026-05-09）。
 
-# show acl 強化（`STATE_DB.ACL_TABLE_TABLE` / `ACL_RULE_TABLE` の status）
+# `show acl` 強化（`STATE_DB.ACL_TABLE_TABLE` / `ACL_RULE_TABLE` の status）
 
-## 概要
+## これは何か（一行で）
 
-SONiC の ACL 設定は CONFIG_DB（または APP_DB）に投入し、`acl-loader` で食わせる。問題は **「投入は成功扱いだが ASIC リソース不足等で実際には作られていない」** ケースを `show acl table` / `show acl rule` から判別できない点。両 CLI は CONFIG_DB / APP_DB を直接読むだけで、ASIC 反映状態を映していなかった[^1]。
+ACL 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。それを `show acl table` / `show acl rule` の **`Status` 列**（Active / Inactive）で見えるようにする[^1]。
 
-本 HLD は STATE_DB に **`ACL_TABLE_TABLE` / `ACL_RULE_TABLE`** を新設し、`aclorch` が SAI 戻り値を反映する。`show acl table` / `show acl rule` の出力に **`Status`（Active / Inactive）** 列を追加する。本 HLD は **データプレーン ACL 専用**。コントロールプレーン ACL は別ドキュメント[^1]。
+## どんなときに使うか
 
-## 動作仕様
+- 投入は通っているのに、`acl` が効いてない（trap されない / hit カウンタが上がらない）ときの一次切り分け
+- 大量 ACL を入れた直後に「どこまで反映されたか」を一目で見たい
 
-### 旧フローと新フロー
+本機能は **データプレーン ACL 専用**。コントロールプレーン ACL は別 HLD[^1]。
+
+## 旧フロー vs 新フロー
 
 ```mermaid
 flowchart TB
     subgraph 旧
-      U[user] --> AL[acl-loader]
-      AL --> CFG[(CONFIG_DB)]
-      AL -->|常に success| OK
-      CFG --> AO[aclorch]
-      AO --> SAI
+      U[user] --> AL[acl-loader] --> CFG[(CONFIG_DB)]
+      AL --> OK[常に success]
+      CFG --> AO[aclorch] --> SAI
       AO -.->|失敗時 syslog のみ| LOG[syslog]
-      SHOW[show acl table/rule] --> CFG
+      SHOW[show acl] --> CFG
     end
     subgraph 新
-      CFG2[(CONFIG_DB)] --> AO2[aclorch]
-      AO2 --> SAI2[SAI]
-      AO2 -->|status| ST[(STATE_DB\nACL_TABLE_TABLE\nACL_RULE_TABLE)]
-      SHOW2[show acl table/rule] --> CFG2
+      CFG2[(CONFIG_DB)] --> AO2[aclorch] --> SAI2[SAI]
+      AO2 -->|status 反映| ST[(STATE_DB\nACL_TABLE_TABLE\nACL_RULE_TABLE)]
+      SHOW2[show acl] --> CFG2
       SHOW2 --> ST
     end
 ```
 
-ACL の **設定経路（add/update/delete）は変えず**、`aclorch` が SAI 戻り値で `STATE_DB` の status を Active / Inactive に更新する。`show` 側は CONFIG_DB と STATE_DB を join する形に変更[^1]。
+設定経路（add/update/delete）は変えず、`aclorch` が SAI 戻り値で STATE_DB を Active / Inactive に更新する。`show` 側は CONFIG_DB と STATE_DB を join する[^1]。
 
-### STATE_DB スキーマ
+## STATE_DB スキーマ
 
 ```
 ACL_TABLE_TABLE|<acl_table_name>
@@ -64,71 +64,46 @@ ACL_RULE_TABLE|<acl_table_name>|<acl_rule_name>
     status : "Active" | "Inactive"
 ```
 
+`aclorch` の動作:
+
+- SAI が create 成功 → 該当エントリの STATE_DB を `status=Active`
+- 失敗 → `status=Inactive`
+- delete 時に STATE_DB の対応エントリも削除
+
+!!! note "HLD 内表記揺れ"
+    HLD 本文ではルール側のキーが `ACL_RULE_TABLE|...` と `ACL_RULE|...` の両方で書かれている[^1]。実装は `STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"` で確定（schema.h L515）。
+
 例:
 
-```
-$ redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATA_ACL'
+```text
+$ redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATAACL'
 1) "status"
 2) "Active"
-
-$ redis-cli -n 6 hgetall 'ACL_RULE|DATAACL|RULE_1'
-1) "status"
-2) "Inactive"
 ```
 
-> HLD 本文中の表記には揺れがあり、ルール側のキーが `ACL_RULE_TABLE|...` と `ACL_RULE|...` の両方で書かれている[^1]。実装側でどちらが採用されたかは要確認。
+## CLI 出力例
 
-### `aclorch` の責務追加
-
-- ACL table / rule create で SAI が成功 → 該当エントリの STATE_DB を `status=Active`
-- 失敗 → `status=Inactive`
-- delete 時には STATE_DB の対応エントリも削除
-
-### CLI 出力例
-
-```
+```text
 $ show acl table DATAACL
 Name     Type    Binding      Description    Stage      Status
 -------  ------  -----------  -------------  -------    -------
 DATAACL  L3      Ethernet0    DATAACL        ingress    Active
                  Ethernet4
-                 Ethernet8
-                 Ethernet12
 
 $ show acl rule
 Table    Rule    Priority  Action    Match                Status
 -------  ------  --------  --------  -------------------  --------
 DATAACL  RULE_1  9999      DROP      DST_IP: 9.5.9.3/32   Inactive
-                                     ETHER_TYPE: 2048
 DATAACL  RULE_2  9998      FORWARD   DST_IP: 10.2.1.2/32  Inactive
-                                     ETHER_TYPE: 2048
-                                     IP_PROTOCOL: 6
-                                     L4_DST_PORT: 22
 ```
 
-`show` 側は CONFIG_DB から既存列、STATE_DB から `Status` 列を取って `Status` を末尾に追加する[^1]。
-
-<!-- evidence:
-source: sonic-net/SONiC/doc/acl/ACL-enhancements-on-show-command.md#L37-L46 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  In the proposed design, we introduce a new table to `STATE_DB`, and `orchagent` will write the return status to the `STATE_DB` table.
-  The user can check the status of ACL table or ACL rule creation with CLI `show acl table` or `show acl rule`.
-reasoning: 「STATE_DB を増やして aclorch が反映、show が join」設計の根拠。
--->
-
-### 内部生成 ACL は対象外
-
-PFC handler や dual-ToR の Mux handler が **内部的に** 作る ACL table / rule は本 HLD の対象外。これらは CONFIG_DB に対応行が無いため `show` で結合できない[^1]。
-
-### Warmboot / Fastboot
-
-新規 STATE_DB テーブルは warm/fast boot を跨いで保持しない。よって warm/fast boot に追加の影響は無い[^1]。
+`Status` 列が末尾に追加されるだけで、既存列は不変[^1]。
 
 ## 設定
 
 ### 関連する CONFIG_DB
 
-既存の `ACL_TABLE` / `ACL_RULE` テーブルを使う。スキーマ変更なし。
+既存 `ACL_TABLE` / `ACL_RULE` を使う。スキーマ変更なし。
 
 ### 関連する CLI
 
@@ -139,38 +114,44 @@ PFC handler や dual-ToR の Mux handler が **内部的に** 作る ACL table /
 
 ### 関連する YANG
 
-該当 YANG モジュールは HLD で言及されていない。
+HLD で言及なし。
 
 ### 確認例
 
 ```bash
-# テーブル作成確認
 config load <acl.json>
-show acl table DATAACL    # Status 列で Active/Inactive を見る
-
-# 失敗していたら redis で詳細確認
+show acl table DATAACL          # Status 列で Active/Inactive を見る
 redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATAACL'
 ```
 
-## 制限事項
+## 対象外・制限
 
-- **データプレーン ACL のみ** が対象。コントロールプレーン ACL は別 HLD[^1]
-- PFC / Mux 等が内部生成する ACL は対象外（CONFIG_DB に対応行が無いため）
-- `Status` 列の値は `Active` / `Inactive` の 2 値のみ。失敗理由の詳細は出ない（syslog 参照）
-- 既存の sonic-mgmt テストで syslog をパースして成否判定していたものは、新 CLI を使う形にリファクタ可能[^1]
+- **データプレーン ACL のみ**。コントロールプレーン ACL は別 HLD[^1]
+- **PFC / dual-ToR Mux handler が内部生成する ACL は対象外**（CONFIG_DB に対応行が無いため join できない）[^1]
+- `Status` 値は `Active` / `Inactive` の 2 値のみ。失敗理由の詳細は syslog 参照
+- **warm/fast boot を跨いで保持しない**。boot 後に `aclorch` が再書きするため追加の影響は無い[^1]
 
 ## 干渉する機能
 
-- **`aclorch`**: 主要変更箇所。SAI 戻り値の解釈と STATE_DB 反映ロジックが追加
-- **`acl-loader`**: 投入後の確認手段が CLI ベースになるため、自動化スクリプトが分かりやすくなる
-- **PFC / dual-ToR Mux handler**: 内部生成 ACL は本機能の対象外なので、運用上の混乱に注意
-- **sonic-mgmt 既存テスト**: syslog 監視ベースから新 CLI ベースへ移行できる
+- **`aclorch`**: 主要変更箇所。SAI 戻り値の解釈と STATE_DB 反映が追加
+- **`acl-loader`**: 投入後の確認が CLI ベースになり、自動化が書きやすい
+- **PFC / dual-ToR Mux**: 内部生成 ACL は出ない（運用上の混乱要注意）
+- **sonic-mgmt 既存テスト**: syslog 監視ベースから新 CLI ベースへ移行可能[^1]
 
 ## トラブルシューティング
 
-- `show acl table` で `Inactive` が出る場合、`syslog` で `aclorch` の SAI エラー（リソース不足・属性不一致など）を確認
-- `Status` 列が空の場合、STATE_DB に対応エントリが書かれていない可能性。`aclorch` がまだ処理していない or 内部生成 ACL の可能性
+- `Inactive` → syslog の `aclorch` SAI エラー（リソース不足 / 属性不一致）を確認
+- `Status` 列が空 → STATE_DB に書かれていない（`aclorch` 未処理 or 内部生成 ACL）
 - `redis-cli -n 6 hgetall 'ACL_RULE_TABLE|DATAACL|RULE_1'` で実値を直接確認
+
+## 関連トピック
+
+- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
+
+## 関連ページ
+
+- [ACL in SONiC](./acl-in-sonic.md)
+- [ACL Flex Counters Support](./acl-flex-counters-support.md)
 
 ## 引用元
 
