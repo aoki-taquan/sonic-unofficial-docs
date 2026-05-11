@@ -129,6 +129,43 @@ config sflow interface sample-rate Ethernet0 10000
 - sample_rate が想定と違う → port speed 変更直後の追従、`sample-rate` 明示設定の有無を確認
 - agent_id が更新されない → `Loopback0` 等の interface 状態と `config sflow agent-id` を確認
 
+## 実装との乖離
+
+2026-05 時点で本機能の **全体取り込みは完了している** が、HLD 文書中の「sample_rate の既定値テーブル」だけが実装と不一致である。
+
+### 1. どこで乖離が確認されたか
+
+- **取り込み済み（一致）**:
+  - `sonic-swss/cfgmgr/sflowmgr.cpp:103-212, 280, 353` で `SflowMgr` が CONFIG_DB / STATE_DB を購読し、APP_DB に sample_rate を書く経路。
+  - `sonic-swss/orchagent/sfloworch.cpp:120, 164, 227` で `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` を SAI に投入。
+  - `sonic-buildimage/files/build_templates/sflow.service.j2`、`sonic-yang-models/yang-models/sonic-sflow.yang`、`sonic-utilities/config/main.py` の `config sflow` は実装済。
+- **実装と HLD の不一致（既定 sample_rate）**:
+  - `sonic-swss/cfgmgr/sflowmgr.cpp:385-401` の `SflowMgr::findSamplingRate()` 本体:
+    ```cpp
+    string oper_speed = m_sflowPortConfMap[alias].oper_speed;
+    string cfg_speed  = m_sflowPortConfMap[alias].speed;
+    if (!oper_speed.empty() && oper_speed != NA_SPEED) return oper_speed;
+    return cfg_speed;
+    ```
+    つまり既定 sample_rate は **port speed (Mbps) そのもの**（1G→1000、10G→10000、40G→40000、100G→100000、400G→400000）。これは HLD 本文 `doc/sflow/sflow_hld.md` L492-501 の `(ifSpeed / 1e6)` 規定と一致する。
+- 過去の本ページ表「100G→50000 / 50G→30000 / 40G→30000 / 25G→10000」は HLD・実装の双方に存在しない値で、ドキュメント記述側のミス。
+
+### 2. HLD と実装の差分の中身
+
+実装と HLD は一致しているが、**本ページ初版の sample_rate 表が両者から乖離していた**。これは「ドキュメント vs 実装の乖離」というより「本ページ過去版の誤記」だが、`verification: discrepancy-found` のステータスはこの誤記を発見した時点で付けられた経緯であり、現状の本文（ページ上部の danger admonition）で訂正済み。
+
+### 3. 読者への影響
+
+- 過去版の表を参照した運用者が「100G port の既定 sample_rate は 50000 」と信じて検算すると、実機の `show sflow` 表示（`100000`）と食い違って混乱する。サンプル件数の見積もりが 2 倍ズレる。
+- 実装ロジックは「speed Mbps 値そのまま」なので、運用上の安全策としては `sample-rate` を**明示設定する**のが確実。
+
+### 4. 回避策 / 対応方法
+
+- **既定値に頼らず明示**: 100G port で 1/50000 サンプリングしたい場合、`config sflow interface sample-rate Ethernet0 50000` のように明示。port speed 変更後の自動追従も無効化されるため、運用としてはこちらが推奨。
+- **既定値挙動を確認**: `redis-cli -n 0 hgetall "SFLOW_SESSION_TABLE:Ethernet0"` で `sample_rate` フィールドを確認。speed 通り（例: 100G なら 100000）になっているはず。
+- **port speed 変更時**: `findSamplingRate()` が `STATE_DB` の `oper_speed` 変更を契機に再計算する（`sflowmgr.cpp:194-212`）ため、明示設定していない場合は新 speed の Mbps 値に切り替わる。HLD どおり。
+- 本ページの仕様記述に古い sample_rate 表が残っていないか、編集時には `sonic-swss/cfgmgr/sflowmgr.cpp::findSamplingRate()` を再参照すること。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sflow/sflow_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

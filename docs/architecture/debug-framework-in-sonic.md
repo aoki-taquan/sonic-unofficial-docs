@@ -168,6 +168,33 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 - **`syslog` rate limit / redirect** 系の各 HLD（critical log 抽出は本 framework と連動）
 - **OrchAgent 全般**: RouteOrch / NeighborOrch / 他 Orch が個別に dump を登録する想定
 
+## 実装との乖離
+
+2026-05 時点で本 framework は **master に取り込まれておらず、HLD のみ**（2019-07 v0.3 から 6 年以上停滞）。
+
+### 1. どこで乖離が確認されたか
+
+- `sonic-swss-common/common/` 配下に `Debugframework` クラス、`linkWithFramework` 関数、`SWSS_DEBUG_PRINT` マクロのいずれも存在しない（`grep -rn 'Debugframework\|linkWithFramework\|SWSS_DEBUG_PRINT' .cache/sonic-sources/sonic-swss-common/common/` 0 件）。
+- `sonic-swss/orchagent/natorch.cpp:40-42, 138-142, 4591-` に `#ifdef DEBUG_FRAMEWORK` 内の dead code は残っているが、`DEBUG_FRAMEWORK` マクロを定義する場所が無く、現行ビルドでは到達不能。
+- `sonic-utilities/show/` 配下に `show debug` / `show interfaces pktdrop` 等のフレームワーク CLI ハンドラが存在しない。
+- APPL_DB の `Dump table` / `Dump done table` も `sonic-swss-common/common/schema.h` と `sonic-buildimage/src/sonic-yang-models/yang-models/` に登録されていない。
+
+### 2. HLD と実装の差分の中身
+
+HLD は「コンポーネントが `linkWithFramework` で自身の dump callback を登録 → CLI が APPL_DB の Dump table へリクエスト → 各コンポーネントが Dump done table に応答」というプロトコルを定義しているが、**`linkWithFramework` のシンボルすら存在せず、プロトコルの送信側・受信側のいずれも未実装**。残骸の `#ifdef DEBUG_FRAMEWORK` ブロックは HLD 時代の試作の痕跡で、有効化される経路は無い。
+
+### 3. 読者への影響
+
+- HLD どおりに `show debug component <name>` を期待しても、CLI そのものが存在せず `No such command` で終わる。
+- コンポーネント側で dump を提供する形（HLD 推奨）も無いため、現状の障害解析は **`show techsupport` の一括採取と各 `redis-cli` / `swssloglevel` への手作業ログ抽出** に依存している。
+- 将来この framework が master に入った場合、HLD と CLI / table 名が**変わる可能性が高い**（v0.3 から長期停滞）。本ページの記述は仕様参考扱い。
+
+### 4. 回避策 / 対応方法
+
+- **dump 取得は `show techsupport` で代替**: `/var/dump/` に techsupport tarball が落ちる。OrchAgent 内部状態は `swssloglevel -l DEBUG -c <component>` でログレベルを上げて syslog に吐かせる。
+- **特定 Orch の internal dump**: `docker exec swss debugsh -c 'show <subsystem>'` 系の swss-side CLI を直接叩く。HLD 経由ではなく各 Orch の hand-crafted dump が個別に存在する。
+- 本 framework の取り込みを推進する場合、HLD 自体を現行 master 構造（`swss-common` の `ConfigDBConnector` / `Producer/ConsumerStateTable` 前提）に合わせて再ドラフトする必要がある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/debug-framework/debug_framework_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

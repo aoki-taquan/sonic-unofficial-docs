@@ -180,6 +180,36 @@ config interface dhcp-mitigation-rate delete Ethernet0 1000
 - システム全体で DHCP が通らない場合: 本 HLD 適用後 CoPP の DHCP 制限が削除されているはずだが、CoPP 側ルールが残っていると ASIC で先に絞られる可能性がある。
 - 値変更が反映されない場合: 同ポートに既存の rate がある状態で新たに add しようとすると CLI が拒否する仕様。先に delete してから add する。
 
+## 実装との乖離
+
+2026-05 時点で `.cache/sonic-sources/` の master を裏取りした結果、本機能は **データ層 + CLI のみが取り込み済みで、肝心の TC qdisc / filter 投入経路が未実装** な部分実装状態である。
+
+### 1. どこで乖離が確認されたか
+
+- **取り込み済み**:
+  - `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:106` で `leaf dhcp_rate_limit` が定義されている（`uint32 range 0..8000`）。
+  - `sonic-utilities/scripts/db_migrator.py:514-524` (`migrate_config_db_port_table_for_dhcp_rate_limit`) が既存ポートに既定値 `300` を埋め、`db_migrator.py:1142` から呼ばれる。
+  - `sonic-utilities/config/main.py:5908-5990` に `config interface dhcp-mitigation-rate add/del` の CLI ハンドラが存在し、`PORT` テーブルへ `dhcp_rate_limit` を mod_entry する。
+- **未取り込み（HLD との乖離）**:
+  - `sonic-swss/cfgmgr/` 配下に `dhcp_rate_limit` を subscribe する portmgrd ロジックが**存在しない**（`grep -rn dhcp_rate_limit sonic-swss/cfgmgr/` 0 件）。`tc qdisc add ... ingress` / `tc filter add ... police rate ...` を発行するコードも見つからない。
+  - `sonic-buildimage/files/image_config/copp/copp_cfg.j2:109-110` には依然として `"dhcp_relay": { "trap_ids": "dhcp,dhcpv6" ... }` が残っており、HLD が前提とする「CoPP 上のシステム全体 DHCP 制限の削除」も実施されていない。
+
+### 2. HLD と実装の差分の中身
+
+HLD は「CONFIG_DB に書いた値が portmgrd 経由で Linux TC の policer に展開され、CoPP のシステム全体 DHCP 制限と置き換えられる」と述べているが、現行 master では **CONFIG_DB に値を書き込めるだけで、カーネル側に何も投入されない**。CoPP も従来どおりシステム全体で 300 pps に絞っている。HLD のうち「データモデル / CLI / migration」だけが先行採用された格好で、データプレーン側は HLD 通りに動かない。
+
+### 3. 読者への影響
+
+- `config interface dhcp-mitigation-rate add Ethernet0 1000` を投入しても **ポート単位のレート制限は効かない**。`tc -s qdisc show dev Ethernet0 handle ffff:` をしても ingress qdisc は存在しない。
+- 攻撃ポートからの flood は、依然として CoPP の 300 pps システム全体制限に集約され、同 VLAN の正規 DISCOVER までドロップされる従来挙動になる。HLD のセキュリティ価値は得られない。
+- DB migrator により既存ポートに `dhcp_rate_limit=300` が**勝手に**埋まる副作用だけは発生する（運用上の害は無いが、`show runningconfiguration` 等に値が現れることに注意）。
+
+### 4. 回避策 / 対応方法
+
+- **HLD の効果を得たい場合**: 当面は外部スクリプト（systemd unit など）で `tc qdisc add dev <if> handle ffff: ingress` + `tc filter add ... protocol 17 ... dport 67 ... police rate ...` を投入して回避する。バイトレート換算は HLD の `pps * 406 B` 規約に従う。
+- **CoPP 側を維持する場合**: 既定の CoPP DHCP 300 pps が依然有効なので、上記スクリプトを入れない限りは **HLD 前の動作のまま** で運用される。CLI 上の値は飾りである旨を運用ドキュメントに明記しておくとよい。
+- 上流の取り込みを待つ場合は `sonic-swss` 側で portmgrd の TC 投入実装と、`sonic-buildimage/files/image_config/copp/copp_cfg.j2` からの `dhcp_relay` trap_id 削除の双方が入るのを確認する必要がある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/Dhcp_Mitigation/DHCP Mitigation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
