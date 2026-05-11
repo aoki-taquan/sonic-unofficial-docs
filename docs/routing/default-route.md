@@ -1,8 +1,8 @@
 ---
 title: linkmgrd のデフォルトルート連動（DualToR mux 制御）
 area: routing
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/sonic-linkmgrd
     path: doc/default_route.md
@@ -178,3 +178,10 @@ linkmgrd --default_route
 ## 引用元
 
 [^1]: `sonic-net/sonic-linkmgrd` `doc/default_route.md` @ `65f563308c689e3225fdf3fc249a132350e9879b`
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+- `sonic-linkmgrd/src/MuxManager.cpp:104` の `void MuxManager::initialize(bool enable_feature_measurement, bool enable_feature_default_route)` と続く `mMuxConfig.enableDefaultRouteFeature(enable_feature_default_route)` (line 121) で、デフォルトルート連動機能が **起動引数によるオプトイン** として実装されていることを確認。`MuxManager.h:298,302` のヘッダコメントにも「shutdowns link prober & avoid switching active when default route is missing」と機能の主旨が明記。
+- `sonic-swss/orchagent/routeorch.cpp:127` で `m_stateDefaultRouteTb = unique_ptr<swss::Table>(new Table(m_stateDb.get(), STATE_ROUTE_TABLE_NAME))` として STATE_DB 上の ROUTE state テーブルを open しており、orchagent がデフォルトルート状態を STATE_DB に書く経路が実装済み。
+
+HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd が購読してオプトインで mux 健全性に反映）は実装と整合。`code-verified` に昇格。

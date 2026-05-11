@@ -1,8 +1,8 @@
 ---
 title: fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
 area: routing
-verification: hld-only
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/pic/hld_fpmsyncd.md
@@ -139,3 +139,18 @@ HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集また�
 - warm/fast boot での NEXTHOP_GROUP_TABLE 復元の実装状況確認
 - Fine-Grained / Ordered NHG との共存時の優先順位の実装挙動確認
 -->
+
+## 裏取りメモ (batch 30, 2026-05-11) — discrepancy-found
+
+`sonic-swss/fpmsyncd/routesync.cpp` と `sonic-swss/fpmsyncd/routesync.h` を確認。HLD のコア部分は master に取り込み済み:
+
+- `RouteSync::onNextHopMsg(struct nlmsghdr *h, int len)` (`routesync.cpp:2309`) で `RTM_NEWNEXTHOP` / `RTM_DELNEXTHOP` を処理。
+- `routesync.h:291` で `ProducerStateTable m_nexthop_groupTable;` を持ち、`routesync.cpp:157` で `APP_NEXTHOP_GROUP_TABLE_NAME` を open。
+- `routesync.cpp:3370` の `m_nexthop_groupTable.del(key)`、`routesync.cpp:1011,1031,1851,1882,1884` 等で `ROUTE_TABLE` 側の `nexthop_group` フィールド書込を実装。
+
+ただし **HLD と本文が前提とする有効化 key が実装と一致しない**:
+
+- 本ページは `DEVICE_METADATA.localhost.fpm_use_nexthop_groups = "enabled"` を要求すると記述しているが、現行 `sonic-buildimage/dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2:18-29` を見ると **`DEVICE_METADATA.localhost.nexthop_group == 'enabled'`** が `fpm use-next-hop-groups` のトリガになっている。さらに `zebra.conf.j2:9-16` には別途 `DEVICE_METADATA.localhost.zebra_nexthop` で `zebra nexthop kernel enable` の有無を制御する仕組みがある。
+- すなわち実装 key 名は `nexthop_group` / `zebra_nexthop` の 2 つに分かれており、本文の `fpm_use_nexthop_groups` という単一キー名は **HLD 段階の表記がそのまま残った乖離**。本文の CONFIG_DB スニペットおよび設定例は将来 Writer に戻して key 名を実装に揃える必要がある。
+
+実装の存在自体は確認できたが key 名の不整合があるため `discrepancy-found` のまま据え置き。

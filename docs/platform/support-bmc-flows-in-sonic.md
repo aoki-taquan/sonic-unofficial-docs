@@ -1,8 +1,8 @@
 ---
 title: BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）
 area: platform
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/bmc/bmc_hld.md
@@ -226,3 +226,12 @@ sudo show techsupport
 - show platform bmc summary / eeprom / config platform firmware install の sonic-utilities 取り込み確認
 - 202605 branch の platform common API 統合フェーズ（phase 2）の進捗確認
 -->
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+- `sonic-platform-common/sonic_platform_base/redfish_client.py` に `RedfishClient` クラスが存在（cURL ラッパで Redfish API を叩く、`REDFISH_URI_FW_INVENTORY = '/redfish/v1/UpdateService/FirmwareInventory'` を定数で持つ）。HLD 提案の RedfishClient は master に取り込み済み。
+- 同階層に `bmc_base.py` (`ComponentBMC` / `BmcBase` の基底) と `tests/redfish_client_test.py` / `bmc_base_test.py` が同梱。
+- `sonic-utilities/show/platform.py:75-110` に `def bmc()` / `def bmc_summary()` の Click グループが定義されており、`chassis.get_bmc().get_eeprom() / get_version()` を呼び出して `show platform bmc summary` を実装している。HLD 提示の CLI が sonic-utilities に取り込み済み。
+- `sonic-utilities/scripts/generate_dump` に BMC dump 取り込み経路が存在し、`show techsupport` 統合の裏取り。
+
+実装と HLD は一致。`code-verified` に昇格可。

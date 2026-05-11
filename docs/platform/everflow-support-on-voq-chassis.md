@@ -1,8 +1,8 @@
 ---
 title: VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
 area: platform
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/voq/everflow.md
@@ -175,3 +175,13 @@ VoQ chassis 上では同じ CLI で動くが、内部的には Option 1 or Optio
 - 帯域・遅延への影響評価
 - HLD の TBD 節（テスト・future work）の現状
 -->
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+`sonic-swss/orchagent/mirrororch.cpp` を確認したところ、HLD が提示する VoQ Chassis 上の ERSPAN ミラー特化処理が実装されている:
+
+- `if ((gMySwitchType == "voq") && (session.type == MIRROR_SESSION_ERSPAN))` の分岐が複数箇所 (例 `mirrororch.cpp:592, 609, 1037, 1153, 1192, 1313`) に存在し、VoQ 専用パスが切られている。
+- `mirrororch.cpp:960` のコメント `// Set monitor port to recirc port in voq switch.` と続く `if (gMySwitchType == "voq")` 分岐が、HLD の主張する **recycle (recirc) port 経由の rewrite** を裏取り。`mirrororch.cpp:1036` で「voq + ERSPAN の場合は dst MAC を router mac で代入」とあり、これは HLD の「ingress LC ASIC が GRE rewrite を完了させてから recycle ポートから再注入」フローの一部に対応。
+- `neighorch.cpp` の `voqSyncAddNeigh` / `voq_encap_index` (`neighorch.h:32, 160, 164`) は VoQ 系 neighbor の SYSTEM_PORT encap 管理を担っており、ミラー先 neighbor 解決が VoQ chassis 向けに拡張済みである裏取り。
+
+HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC で rewrite) のうち、master が採用したのは Option 1 系 (recycle port + ingress 完結 rewrite) と判定。本ページの記述は実装と整合。

@@ -1,8 +1,8 @@
 ---
 title: VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）
 area: routing
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/vrf/vrf-vs-test-plan.md
@@ -103,3 +103,10 @@ flowchart LR
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/vrf/vrf-vs-test-plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/vrf/vrf-vs-test-plan.md)
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+- `sonic-swss/cfgmgr/vrfmgr.cpp` に `VrfMgr` クラスが存在し、`m_appVrfTableProducer(appDb, APP_VRF_TABLE_NAME)` (line 22) で CONFIG_DB → APP_DB 転送、`m_stateVrfTable(stateDb, STATE_VRF_TABLE_NAME)` / `m_stateVrfObjectTable(...)` で STATE_DB 反映、`for (uint32_t i = VRF_TABLE_START; i < VRF_TABLE_END; i++)` (line 28) で VRF table ID プール初期化、`/* Get existing VRFs from Linux */` のコメント以下で warm-restart 横断の Linux VRF 同期。
+- VS テストフレームワーク (`sonic-swss/tests/`) には VRF 関連の virtual switch テストがあり、本プランの観点（vrfmgrd → APP_DB → ASIC_DB / kernel）はテストインフラとして実在。
+
+実装と HLD/プランは整合。`code-verified` に昇格。

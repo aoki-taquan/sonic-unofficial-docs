@@ -1,8 +1,8 @@
 ---
 title: SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
 area: switching
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md
@@ -175,3 +175,11 @@ sonic-cfggen -a '{"SYSTEM_DEFAULTS": {"tunnel_qos_remap": {"status": "enabled"}}
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang` が master に存在し、`container SYSTEM_DEFAULTS` 下に `list SYSTEM_DEFAULTS_LIST { key "name"; leaf name; leaf status; }` を定義。HLD の「キー = `feature_name`、必須フィールド = `status`」というスキーマと完全一致。
+- `sonic-buildimage/src/sonic-yang-models/tests/yang_model_tests/tests/system_defaults.json` / `tests_config/system_defaults.json` / `sample_config_db.json` にテストデータが整備され、`SYSTEM_DEFAULTS` テーブルが正式に sonic-yang-models で配信されていることを裏取り。
+- `sonic-utilities` 配下も含めて当該 YANG が `SYSTEM_DEFAULTS` を CONFIG_DB スキーマとして公開する経路が成立している。
+
+HLD と実装は一致。`code-verified` に昇格。

@@ -1,8 +1,8 @@
 ---
 title: ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
 area: switching
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/mclag/iccpd-code-introduction.md
@@ -237,3 +237,13 @@ ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MC_LAG_DOMAIN`, `MC_LAG_I
 - mclagdctl CLI の sonic-utilities 取り込み状況
 - Warm-reboot シグナル経路 (SIGUSR1) の現行実装
 -->
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+`sonic-buildimage/src/iccpd/src/` を確認したところ、HLD が説明するファイル群が現行 master に実在することを裏取り:
+
+- `app_csm.c` / `iccp_cli.c` / `iccp_cmd.c` / `iccp_cmd_show.c` / `iccp_consistency_check.c` / `iccp_csm.c` / `iccp_ifm.c` / `iccp_main.c` / `iccp_netlink.c` / `logger.c` / `mlacp_fsm.c` / `mlacp_link_handler.c` / `mlacp_sync_prepare.c` / `mlacp_sync_update.c` / `port.c` / `scheduler.c` / `system.c` の 17 ファイル（HLD と同じ構成）。
+- 追加で `cmd_option.c` / `mclagdctl/` サブディレクトリ / `openbsd_tree.c` が master に存在し、HLD には未記載の補助ファイル。`mclagdctl` CLI も `mclagdctl/` 配下に同梱されており、関連 CLI 欄と整合。
+- HLD の章番号と src ファイル名はほぼ 1:1 で対応。FSM 関数名（`app_csm_transit`、`mlacp_fsm_transit`）も HLD 記載どおり。
+
+ICCPd 内部構成マップは現行 master と整合。`code-verified` に昇格。
