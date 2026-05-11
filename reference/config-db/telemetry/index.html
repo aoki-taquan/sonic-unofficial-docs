@@ -28896,7 +28896,7 @@
 
 <h1 id="telemetry">TELEMETRY テーブル<a class="headerlink" href="#telemetry" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>gRPC ストリーミングテレメトリ / <a href="../../glossary/#term-gnmi">gNMI</a> サーバの設定。TLS 証明書パスと gNMI ランタイムオプションを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>telemetry</code> コンテナ (<code>docker-telemetry</code>、<code>docker-gnmi</code>) が起動時に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み込む。</p>
+<p>gRPC ストリーミングテレメトリ / <a href="../../glossary/#term-gnmi">gNMI</a> サーバの設定。TLS 証明書パスと <a href="../../glossary/#term-gnmi">gNMI</a> ランタイムオプションを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>telemetry</code> コンテナ (<code>docker-telemetry</code>、<code>docker-gnmi</code>) が起動時に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み込む。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28958,7 +28958,7 @@
 <tr>
 <td><code>log_level</code></td>
 <td>uint8 (0..100)</td>
-<td>gNMI ログレベル</td>
+<td><a href="../../glossary/#term-gnmi">gNMI</a> ログレベル</td>
 </tr>
 <tr>
 <td><code>port</code></td>
@@ -28993,7 +28993,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>GNMI_CLIENT_CERT</code> (gNMI クライアント証明書 fingerprint)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>GNMI_CLIENT_CERT</code> (gNMI クライアント証明書 fingerprint)</li>
 <li>関連 CLI: <code>config telemetry config-db</code>、<code>config telemetry server</code>、<code>gnoi-system reboot</code> 等</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-telemetry</code>、<code>sonic-gnmi</code></li>
 </ul>
@@ -29001,7 +29001,7 @@
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <code>sonic-telemetry</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-telemetry</code></li>
 <li>CLI: <code>config telemetry</code></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29031,13 +29031,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4c576d9c7fa6 -->
+<!-- glossary-links-injected: 41d5238b3a97 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-telemetry.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-telemetry.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

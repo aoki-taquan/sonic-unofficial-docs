@@ -28830,7 +28830,7 @@
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><code>add</code> 時に <code>-u</code> (untagged) フラグの付け忘れ / 余計</strong>: デフォルトは tagged 動作</li>
-<li><strong>既存の Untagged <a href="../../glossary/#term-vlan">VLAN</a> 多重設定</strong>: ポートが既に別 VLAN の untagged member であるため新規 untagged 追加に失敗（silently fallback）</li>
+<li><strong>既存の Untagged <a href="../../glossary/#term-vlan">VLAN</a> 多重設定</strong>: ポートが既に別 <a href="../../glossary/#term-vlan">VLAN</a> の untagged member であるため新規 untagged 追加に失敗（silently fallback）</li>
 <li><strong>VLAN_MEMBER の <code>tagging_mode</code> が <code>priority_tagged</code> になっている</strong>: 0 priority tag 付与で意図と違う動作</li>
 <li><strong>対向側がトランクではなく access ポート</strong>: 自機側が tagged 送出しても対向で drop / strip</li>
 <li><strong><a href="../../glossary/#term-portchannel">PortChannel</a> メンバーに対する add 操作</strong>: 物理ポートではなく <a href="../../glossary/#term-lag">LAG</a> 名で追加する必要がある</li>
@@ -28875,7 +28875,7 @@
 </span></code></pre></div>
 <ul>
 <li>期待: <code>Vlan100</code> master、<code>PVID Egress Untagged</code> がセットされる</li>
-<li>異常: PVID 設定がない → vlanmgrd の反映漏れ。<code>config save</code> → swss コンテナ restart</li>
+<li>異常: PVID 設定がない → <a href="../../glossary/#term-vlanmgrd">vlanmgrd</a> の反映漏れ。<code>config save</code> → swss コンテナ restart</li>
 </ul>
 <h3 id="5">5. キャプチャで実フレーム確認<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>Ethernet8<span class="w"> </span>-nn<span class="w"> </span>-e<span class="w"> </span>-c<span class="w"> </span><span class="m">20</span><span class="w"> </span>vlan
@@ -28907,13 +28907,13 @@
 <li><a href="../../config-db/vlan-member/">../config-db/vlan-member.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 0e99457f44c0 -->
+<!-- glossary-links-injected: f57fec79b708 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — vlanmgrd&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-vlanmgrd">vlanmgrd</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ 39732bceb — config vlan member&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

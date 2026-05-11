@@ -28725,7 +28725,7 @@
 <p>このページは <a href="../fec-flr-support-in-sonic/">FEC FLR Support in SONiC（概要ハブ）</a> の派生で、<strong>制限事項と実装乖離</strong> に絞る。概念は <a href="../fec-flr-support-in-sonic-concepts/">fec-flr-support-in-sonic-concepts.md</a>、設定 / CLI は <a href="../fec-flr-support-in-sonic-operations/">fec-flr-support-in-sonic-operations.md</a>、内部実装は <a href="../fec-flr-support-in-sonic-internals/">fec-flr-support-in-sonic-internals.md</a> を参照。</p>
 <h2 id="1-hld">1. HLD レベルの制限事項<a class="headerlink" href="#1-hld" title="Permanent link">&para;</a></h2>
 <ul>
-<li>必要な SAI counter（<code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si</code> 等）が <strong>未サポートの interface は <code>N/A</code></strong> 表示<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>必要な <a href="../../reference/glossary/#term-sai">SAI</a> counter（<code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si</code> 等）が <strong>未サポートの interface は <code>N/A</code></strong> 表示<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>非ゼロ bin が 2 個未満で回帰できない場合は <code>FLR(P) = 0</code><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>interleaving factor X は <strong>port speed × lane 数の固定テーブル</strong> で代替。新 SAI 属性が追加されればそちらに置換予定<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>100G × 1 lane の場合 X は <strong>autonegotiated</strong>（1 or 2）。誤った X を使うと FLR が 2 倍ずれる<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -28737,7 +28737,7 @@
 <thead>
 <tr>
 <th>項目</th>
-<th>HLD</th>
+<th><a href="../../reference/glossary/#term-hld">HLD</a></th>
 <th>現行 master</th>
 <th>結果</th>
 </tr>
@@ -28792,7 +28792,7 @@
 </blockquote>
 <h2 id="3">3. 読者への影響<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>高頻度に FLR を見たい場合（例: 30 秒周期）、CONFIG_DB / CLI で周期を縮められない。</li>
+<li>高頻度に FLR を見たい場合（例: 30 秒周期）、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI で周期を縮められない。</li>
 <li>計算ロジック（<code>BIN_FILTER_VALUE</code> 等）の調整は <strong>lua スクリプトを直接書き換えてビルドし直す</strong> しか手段が無い。</li>
 <li>一方、コア機能（FLR / FLR_PREDICTED の計算と表示）は最初から使えるので、観測自体には支障なし。</li>
 </ul>
@@ -28834,6 +28834,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 5440b86e15ed -->
 
 <div class="footnote">
 <hr />

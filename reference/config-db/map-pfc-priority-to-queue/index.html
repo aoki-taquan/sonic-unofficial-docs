@@ -28953,9 +28953,9 @@
 <h1 id="map_pfc_priority_to_queue">MAP_PFC_PRIORITY_TO_QUEUE テーブル<a class="headerlink" href="#map_pfc_priority_to_queue" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><strong><a href="../../glossary/#term-pfc">PFC</a> priority (0..7) → 出力キュー (qindex 0..7) のマッピング</strong> を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>PORT_QOS_MAP.pfc_to_queue_map</code> から参照され、<code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE</code> として ASIC に反映される。</p>
-<p>PFC frame の Priority 値から、どの egress queue を一時停止対象とするかを決めるためのマップ。<code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> (ingress 側 PG マップ) と対になる egress 側の表。</p>
+<p><a href="../../glossary/#term-pfc">PFC</a> frame の Priority 値から、どの egress queue を一時停止対象とするかを決めるためのマップ。<code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> (ingress 側 PG マップ) と対になる egress 側の表。</p>
 <blockquote>
-<p>テーブル名は <a href="../../glossary/#term-yang">YANG</a> container 名そのまま <code>MAP_PFC_PRIORITY_TO_QUEUE</code> で、<code>PFC_PRIORITY_TO_QUEUE_MAP</code> ではない点に注意。CONFIG_DB key にもこの名前が使われる。</p>
+<p>テーブル名は <a href="../../glossary/#term-yang">YANG</a> container 名そのまま <code>MAP_PFC_PRIORITY_TO_QUEUE</code> で、<code>PFC_PRIORITY_TO_QUEUE_MAP</code> ではない点に注意。<a href="../../glossary/#term-config_db">CONFIG_DB</a> key にもこの名前が使われる。</p>
 </blockquote>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -28980,7 +28980,7 @@
 <p>内側エントリ:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>MAP_PFC_PRIORITY_TO_QUEUE|&lt;name&gt;|&lt;pfc_priority&gt;
 </span></code></pre></div>
-<p>ただし CONFIG_DB の慣習として、外側 hash の field-value に直接 <code>pfc_priority → qindex</code> の対を保存する実装もある（<code>{"name": "AZURE", "0": "0", "1": "1", ...}</code> のような形式）。実体は <code>swssconfig</code> / <code>sonic-cfggen</code> がいずれかに正規化する。</p>
+<p>ただし <a href="../../glossary/#term-config_db">CONFIG_DB</a> の慣習として、外側 hash の field-value に直接 <code>pfc_priority → qindex</code> の対を保存する実装もある（<code>{"name": "AZURE", "0": "0", "1": "1", ...}</code> のような形式）。実体は <code>swssconfig</code> / <code>sonic-cfggen</code> がいずれかに正規化する。</p>
 <h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="list-map_pfc_priority_to_queue_list">外側 list (<code>MAP_PFC_PRIORITY_TO_QUEUE_LIST</code>)<a class="headerlink" href="#list-map_pfc_priority_to_queue_list" title="Permanent link">&para;</a></h3>
 <table>
@@ -29012,7 +29012,7 @@
 <tr>
 <td><code>pfc_priority</code> (key)</td>
 <td>string pattern <code>[0-7]?</code></td>
-<td>PFC priority 値 (0..7)</td>
+<td><a href="../../glossary/#term-pfc">PFC</a> priority 値 (0..7)</td>
 </tr>
 <tr>
 <td><code>qindex</code></td>
@@ -29025,7 +29025,7 @@
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>マップ名の長さは 1..32 文字、英数字スタートで <code>[-_]</code> 含む。</li>
-<li>pfc_priority / qindex は単一の 0..7 数字（範囲外は YANG validation で拒否）。</li>
+<li>pfc_priority / qindex は単一の 0..7 数字（範囲外は <a href="../../glossary/#term-yang">YANG</a> validation で拒否）。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29036,7 +29036,7 @@
 <ul>
 <li>関連 CONFIG_DB: <code>PORT_QOS_MAP</code> (バインド)、<code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> (ingress 側)、<code>TC_TO_QUEUE_MAP</code>, <code>TC_TO_PRIORITY_GROUP_MAP</code>, <code>DSCP_TO_TC_MAP</code></li>
 <li>関連 CLI: <code>config qos</code>、<code>config qos reload</code></li>
-<li>関連 YANG: <code>sonic-pfc-priority-queue-map</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-pfc-priority-queue-map</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -29072,7 +29072,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3dadbe92257e -->
+<!-- glossary-links-injected: 08955b0b376e -->
 
 <div class="footnote">
 <hr />

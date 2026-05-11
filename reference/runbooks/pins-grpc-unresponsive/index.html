@@ -28854,7 +28854,7 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;PORT_TABLE:Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>id
 </span></code></pre></div>
 <ul>
-<li>期待: <code>id</code> フィールドが空でない（PINS では required）</li>
+<li>期待: <code>id</code> フィールドが空でない（<a href="../../glossary/#term-pins">PINS</a> では required）</li>
 </ul>
 <h3 id="3-appl_db-asic_db">3. APPL_DB / ASIC_DB の滞留<a class="headerlink" href="#3-appl_db-asic_db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
@@ -28874,7 +28874,7 @@
 <li>container down: <code>docker start p4rt</code>、原因は <code>docker logs p4rt --tail 500</code> で追跡</li>
 <li>PORT_ID 未割当: <code>config interface portchannel/port id &lt;port&gt; &lt;id&gt;</code> で割当（実装に依る）</li>
 <li>election ID 衝突: controller 側で election_id を一意に</li>
-<li>滞留: orchagent restart は影響大なので、まず <code>sonic-db-cli APPL_STATE_DB</code> で何が pending か確認</li>
+<li>滞留: <a href="../../glossary/#term-orchagent">orchagent</a> restart は影響大なので、まず <code>sonic-db-cli APPL_STATE_DB</code> で何が pending か確認</li>
 <li>証明書: 旧証明書を退避 → 新証明書配置 → <code>docker restart p4rt</code>。<strong>ロールバック</strong>: 退避から戻す</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -28882,7 +28882,7 @@
 <li><a href="../../../topics/18-p4-pins/concept/">../../topics/18-p4-pins/concept.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 2dcef9a41725 -->
+<!-- glossary-links-injected: c16fb11ac157 -->
 
 <div class="footnote">
 <hr />

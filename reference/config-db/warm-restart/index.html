@@ -28875,7 +28875,7 @@
 <td><code>bgp_timer</code></td>
 <td>uint16 (1..3600)</td>
 <td>module=bgp のみ</td>
-<td>BGP の再収束待ちタイマ [秒]</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> の再収束待ちタイマ [秒]</td>
 </tr>
 <tr>
 <td><code>teamsyncd_timer</code></td>
@@ -28891,7 +28891,7 @@
 </tr>
 </tbody>
 </table>
-<p>なお <code>STATE_DB:WARM_RESTART_TABLE</code> (state DB) は restart 進捗のランタイム表現で、CONFIG_DB のこのテーブルとは別物。<code>enable</code> フラグなどシステム全体の制御は <code>STATE_DB</code> 側の <code>WARM_RESTART_ENABLE_TABLE</code> および <code>config warm_restart enable</code> で扱う実装が多い。</p>
+<p>なお <code>STATE_DB:WARM_RESTART_TABLE</code> (state DB) は restart 進捗のランタイム表現で、<a href="../../glossary/#term-config_db">CONFIG_DB</a> のこのテーブルとは別物。<code>enable</code> フラグなどシステム全体の制御は <code>STATE_DB</code> 側の <code>WARM_RESTART_ENABLE_TABLE</code> および <code>config warm_restart enable</code> で扱う実装が多い。</p>
 <h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>各タイマには <code>must</code> 句でモジュールとの整合性チェックがかかる（例: <code>bgp_timer</code> は <code>module = 'bgp'</code> でないと許可されない）。</li>
@@ -28901,20 +28901,20 @@
 <ul>
 <li><code>bgpcfgd</code>: <code>bgp_timer</code> / <code>bgp_eoiu</code> を vtysh の <code>bgp graceful-restart</code> 系設定に変換</li>
 <li><code>teamd</code> (<a href="../../glossary/#term-lacp">LACP</a>): <code>teamsyncd_timer</code> を読み、<a href="../../glossary/#term-lag">LAG</a> 再収束タイムアウトとして使用</li>
-<li><code>orchagent</code> / <code>neighsyncd</code> / <code>fpmsyncd</code>: <code>neighsyncd_timer</code> を ARP/route の reconciliation 待ちに使用</li>
+<li><code>orchagent</code> / <code>neighsyncd</code> / <code>fpmsyncd</code>: <code>neighsyncd_timer</code> を <a href="../../glossary/#term-arp">ARP</a>/route の reconciliation 待ちに使用</li>
 <li><code>warmboot-finalizer.sh</code>: <code>WARM_RESTART_TABLE</code> 状態を見ながら最終的に dataplane を unfreeze</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>DEVICE_METADATA</code> (<code>synchronous_mode</code>, <code>warm-restart</code> enable 補助)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>DEVICE_METADATA</code> (<code>synchronous_mode</code>, <code>warm-restart</code> enable 補助)</li>
 <li>関連 CLI: <code>config warm_restart enable</code>, <code>config warm_restart bgp_timer</code>, <code>config warm_restart neighsyncd_timer</code>, <code>show warm_restart</code></li>
-<li>関連 YANG: <code>sonic-warm-restart</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-warm-restart</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-warm-restart/"><code>sonic-warm-restart</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-warm-restart/"><code>sonic-warm-restart</code></a></li>
 <li>CLI: <a href="../../cli/config-warm_restart/"><code>config warm_restart</code></a> / <code>show warm_restart</code></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28939,7 +28939,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3dac597a98ae -->
+<!-- glossary-links-injected: ddc022697593 -->
 
 <div class="footnote">
 <hr />

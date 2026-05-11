@@ -28712,9 +28712,9 @@
 
 
 <h1 id="active-standby-dual-tor">Active-Standby Dual ToR 概念<a class="headerlink" href="#active-standby-dual-tor" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../active-standby-dual-tor/">Active-Standby Dual ToR（概要ハブ）</a> の派生ページで、<strong>構成・要件・linkmgrd サブモジュール</strong> に絞って整理する。設定・運用は <a href="../active-standby-dual-tor-operations/">active-standby-dual-tor-operations.md</a>、内部実装は <a href="../active-standby-dual-tor-internals/">active-standby-dual-tor-internals.md</a>、制限事項は <a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> を参照。</p>
+<p>このページは <a href="../active-standby-dual-tor/">Active-Standby Dual ToR（概要ハブ）</a> の派生ページで、<strong>構成・要件・<a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> サブモジュール</strong> に絞って整理する。設定・運用は <a href="../active-standby-dual-tor-operations/">active-standby-dual-tor-operations.md</a>、内部実装は <a href="../active-standby-dual-tor-internals/">active-standby-dual-tor-internals.md</a>、制限事項は <a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> を参照。</p>
 <h2 id="1">1. 構成と要件<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p><strong>2 台の ToR (UTO / LTO) と 1 台のサーバ NIC を smart y-cable で接続</strong> し、片側を active、もう片側を standby として運用する構成<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>linkmgrd</code> が link health を監視し、不健全を検知すると <strong>standby 側が自発的に active へ昇格</strong> する。standby 側で受けたトラフィックは <strong>IPinIP tunnel</strong> で peer ToR に転送する。</p>
+<p><strong>2 台の ToR (UTO / LTO) と 1 台のサーバ NIC を smart y-cable で接続</strong> し、片側を active、もう片側を standby として運用する構成<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>linkmgrd</code> が link health を監視し、不健全を検知すると <strong>standby 側が自発的に active へ昇格</strong> する。standby 側で受けたトラフィックは <strong><a href="../../reference/glossary/#term-ipinip">IPinIP</a> tunnel</strong> で peer ToR に転送する。</p>
 <p>要件は <strong>「リンク or ToR 障害時に健全な側へ切り替えられること」</strong> に尽きる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ToR ↔ NIC の動作<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -28726,7 +28726,7 @@
 </ul>
 <p>routing 側<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>両 ToR は <strong>同じ VLAN 設定 + 同じ virtual MAC</strong> を保持し T1 に同じ prefix を広告</li>
+<li>両 ToR は <strong>同じ <a href="../../reference/glossary/#term-vlan">VLAN</a> 設定 + 同じ virtual MAC</strong> を保持し T1 に同じ prefix を広告</li>
 <li>同じ port が <strong>両 ToR で active / standby</strong> に分かれる</li>
 <li>standby ToR で受けた server 宛 traffic は <strong>L3 IPinIP tunnel</strong> で peer ToR に転送</li>
 </ul>
@@ -28772,7 +28772,7 @@
 </table>
 <p>IPv4 / IPv6 双方を送るが <strong>判定は IPv4 のみ</strong>。IPv6 はモニタ用で interval が長い<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="muxstate-i2c">MuxState (I2C 経由)<a class="headerlink" href="#muxstate-i2c" title="Permanent link">&para;</a></h3>
-<p>y-cable の I2C レジスタ（例: Credo の <code>B132 @ page 4</code>）から MUX 方向を取得<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>MuxActive</code> / <code>MuxStandby</code> / <code>MuxUnknown</code>（I2C 応答なし = cable 故障 / 電源 OFF）。</p>
+<p>y-cable の I2C レジスタ（例: Credo の <code>B132 @ page 4</code>）から <a href="../../reference/glossary/#term-mux">MUX</a> 方向を取得<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: <code>MuxActive</code> / <code>MuxStandby</code> / <code>MuxUnknown</code>（I2C 応答なし = cable 故障 / 電源 OFF）。</p>
 <h3 id="linkmanager">LinkManager（合成状態機械）<a class="headerlink" href="#linkmanager" title="Permanent link">&para;</a></h3>
 <p>LinkProber + LinkState + MuxState の合成状態。<strong>standby ToR が能動的に switchover を駆動</strong> する設計（両 ToR が同時に切替を試みるのを防ぐ）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。詳細な遷移表は <a href="../active-standby-dual-tor-internals/">active-standby-dual-tor-internals.md</a> を参照。</p>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -28783,6 +28783,8 @@
 <li><a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> — 制限事項</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: de79ad2c6d94 -->
+
 <div class="footnote">
 <hr />
 <ol>

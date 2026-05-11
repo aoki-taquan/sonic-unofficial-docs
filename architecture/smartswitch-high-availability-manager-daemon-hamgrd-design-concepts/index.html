@@ -28702,10 +28702,10 @@
 <h1 id="smartswitch-ha-hamgrd">SmartSwitch HA HAMgrD 概念<a class="headerlink" href="#smartswitch-ha-hamgrd" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design/">HAMgrD（概要ハブ）</a> の派生ページで、<strong>概念と用語（actor / vDPU / HA Set / HA Scope）</strong> に絞って整理する。設定経路は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md</a>、内部実装は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-internals/">smartswitch-high-availability-manager-daemon-hamgrd-design-internals.md</a>、制限事項と乖離は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> を参照。</p>
 <h2 id="1-hamgrd">1. HAMgrD とは<a class="headerlink" href="#1-hamgrd" title="Permanent link">&para;</a></h2>
-<p><code>hamgrd</code> は SmartSwitch の <strong>NPU 側 HA container 内で動く管理デーモン</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HA 状態機械の駆動、failover 調整、SDN controller config の DPU 配信、DPU/vDPU の health 集約、BFD responder プログラミングを担う。actor model で機能を分割し、各 actor は <strong>swbus ローカルメッセージバス</strong> で通信し state は STATE_DB の対応 table に書く。</p>
+<p><code>hamgrd</code> は <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> の <strong><a href="../../reference/glossary/#term-npu">NPU</a> 側 HA container 内で動く管理デーモン</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HA 状態機械の駆動、failover 調整、SDN controller config の <a href="../../reference/glossary/#term-dpu">DPU</a> 配信、DPU/vDPU の health 集約、<a href="../../reference/glossary/#term-bfd">BFD</a> responder プログラミングを担う。actor model で機能を分割し、各 actor は <strong>swbus ローカルメッセージバス</strong> で通信し state は <a href="../../reference/glossary/#term-state_db">STATE_DB</a> の対応 table に書く。</p>
 <p>動作モードは 2 種類:</p>
 <ul>
-<li><strong>DPU-Driven mode</strong>: DPU 側で HA 状態機械を駆動。HAMgrD は config 配信と監視に徹する。本 HLD はこちら中心</li>
+<li><strong>DPU-Driven mode</strong>: DPU 側で HA 状態機械を駆動。HAMgrD は config 配信と監視に徹する。本 <a href="../../reference/glossary/#term-hld">HLD</a> はこちら中心</li>
 <li><strong>Switch-Driven mode</strong>: NPU が能動的に HA 状態機械を駆動。HLD では <strong>TBD</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="2-vdpu">2. vDPU 抽象<a class="headerlink" href="#2-vdpu" title="Permanent link">&para;</a></h2>
@@ -28716,7 +28716,7 @@
 <tr>
 <th>Actor</th>
 <th>resource path</th>
-<th>CONFIG_DB</th>
+<th><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a></th>
 <th>STATE_DB</th>
 </tr>
 </thead>
@@ -28813,6 +28813,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 0d9097158907 -->
 
 <div class="footnote">
 <hr />

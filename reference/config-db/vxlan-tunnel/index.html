@@ -28896,7 +28896,7 @@
 
 <h1 id="vxlan_tunnel">VXLAN_TUNNEL テーブル<a class="headerlink" href="#vxlan_tunnel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-vxlan">VXLAN</a> VTEP (Virtual Tunnel End Point) を定義するテーブル。source / destination IP と decap TTL モードを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>VxlanOrch</code> / <code>VxlanTunnelOrch</code> が <a href="../../glossary/#term-sai">SAI</a> VXLAN tunnel と SAI tunnel termination を生成する。<a href="../../glossary/#term-evpn">EVPN</a> ベースのオーバーレイでは destination は省略され、<code>VXLAN_EVPN_NVO</code> で NVO がバインドされる。</p>
+<p><a href="../../glossary/#term-vxlan">VXLAN</a> VTEP (Virtual Tunnel End Point) を定義するテーブル。source / destination IP と decap TTL モードを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>VxlanOrch</code> / <code>VxlanTunnelOrch</code> が <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-vxlan">VXLAN</a> tunnel と <a href="../../glossary/#term-sai">SAI</a> tunnel termination を生成する。<a href="../../glossary/#term-evpn">EVPN</a> ベースのオーバーレイでは destination は省略され、<code>VXLAN_EVPN_NVO</code> で NVO がバインドされる。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28918,7 +28918,7 @@
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VXLAN_TUNNEL|&lt;name&gt;
 </span></code></pre></div>
-<p><a href="../../glossary/#term-yang">YANG</a> <code>max-elements 2</code> 制約により最大 2 トンネルまで（実装的に EVPN 用 1 + 静的 1 を想定）。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> <code>max-elements 2</code> 制約により最大 2 トンネルまで（実装的に <a href="../../glossary/#term-evpn">EVPN</a> 用 1 + 静的 1 を想定）。</p>
 <h2 id="_3">フィールド一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28963,27 +28963,27 @@
 <li><code>vni</code> (<code>vnid_type</code>, mandatory)</li>
 </ul>
 </li>
-<li><code>VXLAN_EVPN_NVO</code> (key: <code>name</code>, max-elements 1): EVPN NVO インスタンス<ul>
+<li><code>VXLAN_EVPN_NVO</code> (key: <code>name</code>, max-elements 1): <a href="../../glossary/#term-evpn">EVPN</a> NVO インスタンス<ul>
 <li><code>source_vtep</code> (leafref <code>VXLAN_TUNNEL.name</code>, mandatory)</li>
 </ul>
 </li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> <code>VxlanTunnelOrch</code> / <code>VxlanTunnelMapOrch</code> / <code>EvpnNvoOrch</code>: SAI tunnel / tunnel-map / NVO を生成</li>
+<li><code>orchagent</code> <code>VxlanTunnelOrch</code> / <code>VxlanTunnelMapOrch</code> / <code>EvpnNvoOrch</code>: <a href="../../glossary/#term-sai">SAI</a> tunnel / tunnel-map / NVO を生成</li>
 <li><code>bgpcfgd</code> (EVPN type-2 / type-3 advertise との連携)</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VXLAN_TUNNEL_MAP</code>、<code>VXLAN_EVPN_NVO</code>、<code>VLAN</code>、<code>VNET</code>、<code>VLAN_INTERFACE</code></li>
 <li>関連 CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
-<li>関連 YANG: <code>sonic-vxlan</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vxlan</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29016,7 +29016,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 936f7984210e -->
+<!-- glossary-links-injected: f45d7ede5f79 -->
 
 <div class="footnote">
 <hr />

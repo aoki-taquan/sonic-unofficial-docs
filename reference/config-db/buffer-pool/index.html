@@ -28896,7 +28896,7 @@
 
 <h1 id="buffer_pool">BUFFER_POOL テーブル<a class="headerlink" href="#buffer_pool" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ASIC 上の共有 / 専用バッファプールを <a href="../../glossary/#term-config_db">CONFIG_DB</a> で定義するテーブル。<code>BUFFER_PROFILE.pool</code> から leafref で参照される。<code>bufferorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) または <code>buffermgrd</code> (dynamic buffer model) が CONFIG_DB を購読し、<a href="../../glossary/#term-sai">SAI</a> BUFFER_POOL に変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>ASIC 上の共有 / 専用バッファプールを <a href="../../glossary/#term-config_db">CONFIG_DB</a> で定義するテーブル。<code>BUFFER_PROFILE.pool</code> から leafref で参照される。<code>bufferorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) または <code>buffermgrd</code> (dynamic buffer model) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<a href="../../glossary/#term-sai">SAI</a> BUFFER_POOL に変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28970,7 +28970,7 @@
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>traditional buffer model</strong>: <code>orchagent</code> の <code>BufferOrch</code></li>
-<li><strong>dynamic buffer model</strong>: <code>buffermgrd</code> (<code>docker-swss</code>) が CONFIG_DB → <a href="../../glossary/#term-appl_db">APPL_DB</a> に展開し、<code>bufferorch</code> が SAI 反映</li>
+<li><strong>dynamic buffer model</strong>: <code>buffermgrd</code> (<code>docker-swss</code>) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <a href="../../glossary/#term-appl_db">APPL_DB</a> に展開し、<code>bufferorch</code> が <a href="../../glossary/#term-sai">SAI</a> 反映</li>
 <li>ベンダ固有のテンプレ (<code>buffers_*.json.j2</code>) でハードウェア依存初期値が生成される</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -28983,7 +28983,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-buffer-pool/"><code>sonic-buffer-pool</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-buffer-pool/"><code>sonic-buffer-pool</code></a></li>
 <li>CLI: <a href="../../cli/config-buffer/"><code>config buffer</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29016,13 +29016,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ce2315bef392 -->
+<!-- glossary-links-injected: 44ea702536a5 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-buffer-pool.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pool.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pool.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-buffer-pool.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pool.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-pool.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

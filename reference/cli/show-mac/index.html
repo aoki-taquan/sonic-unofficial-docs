@@ -28908,7 +28908,7 @@
 
 <h1 id="show-mac">show mac サブコマンド<a class="headerlink" href="#show-mac" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show mac</code> は <a href="../../glossary/#term-fdb">FDB</a> (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は <code>fdbshow</code> スクリプトの薄いラッパで、CLI 側はオプションを <code>fdbshow</code> の引数に machine-translate するだけ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>invoke_without_command="true"</code> の Click group なので、サブコマンドなしで呼ぶと FDB を、<code>aging-time</code> を指定すると別系統 (<a href="../../glossary/#term-appl_db">APPL_DB</a>) を読みに行く。</p>
+<p><code>show mac</code> は <a href="../../glossary/#term-fdb">FDB</a> (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は <code>fdbshow</code> スクリプトの薄いラッパで、CLI 側はオプションを <code>fdbshow</code> の引数に machine-translate するだけ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>invoke_without_command="true"</code> の Click group なので、サブコマンドなしで呼ぶと <a href="../../glossary/#term-fdb">FDB</a> を、<code>aging-time</code> を指定すると別系統 (<a href="../../glossary/#term-appl_db">APPL_DB</a>) を読みに行く。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28920,7 +28920,7 @@
 <tbody>
 <tr>
 <td><code>show mac [options]</code></td>
-<td>FDB エントリの表示</td>
+<td><a href="../../glossary/#term-fdb">FDB</a> エントリの表示</td>
 </tr>
 <tr>
 <td><code>show mac aging-time</code></td>
@@ -28995,7 +28995,7 @@ excerpt: |
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show mac aging-time
 </span></code></pre></div>
 <p><strong>動作</strong>:
-<strong>FDB 表示とは別系統</strong> で、<code>SonicV2Connector</code> 経由で <strong>APPL_DB</strong> の <code>SWITCH_TABLE*</code> を列挙し、各キーから <code>fdb_aging_time</code> を取得して表示する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。設定されていなければ <code>Aging time not configured for the switch</code> を出力。</p>
+<strong>FDB 表示とは別系統</strong> で、<code>SonicV2Connector</code> 経由で <strong><a href="../../glossary/#term-appl_db">APPL_DB</a></strong> の <code>SWITCH_TABLE*</code> を列挙し、各キーから <code>fdb_aging_time</code> を取得して表示する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。設定されていなければ <code>Aging time not configured for the switch</code> を出力。</p>
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/main.py#L1245-L1262 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
@@ -29029,7 +29029,7 @@ excerpt: |
 
 <h2 id="_4">補足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>fdbshow</code> 自体は APPL_DB / <a href="../../glossary/#term-asic_db">ASIC_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> を読み合わせて FDB を組み立てる。<a href="../../glossary/#term-config_db">CONFIG_DB</a> は使わない</li>
+<li><code>fdbshow</code> 自体は <a href="../../glossary/#term-appl_db">APPL_DB</a> / <a href="../../glossary/#term-asic_db">ASIC_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> を読み合わせて FDB を組み立てる。<a href="../../glossary/#term-config_db">CONFIG_DB</a> は使わない</li>
 <li>aging time の <strong>設定</strong> は <code>config mac aging_time &lt;seconds&gt;</code> 等が存在する場合に行う（本ページは表示系のみ）</li>
 </ul>
 <!-- cli-mermaid -->
@@ -29078,7 +29078,7 @@ excerpt: |
 <li><a href="../show-vlan/">reference/CLI: show vlan</a></li>
 <li><a href="../show-interfaces/">reference/CLI: show interfaces</a></li>
 </ul>
-<!-- glossary-links-injected: b36cf35fd34f -->
+<!-- glossary-links-injected: a6254d2db350 -->
 
 <div class="footnote">
 <hr />

@@ -28896,7 +28896,7 @@
 
 <h1 id="buffer_queue">BUFFER_QUEUE テーブル<a class="headerlink" href="#buffer_queue" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ポートの egress queue ごとにバッファプロファイルを割り当てる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。non-<a href="../../glossary/#term-voq">VOQ</a> 用と VOQ シャーシ用で list が分かれる。<code>buffermgrd</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> に転送、<code>orchagent</code> <code>BufferOrch</code> が <a href="../../glossary/#term-sai">SAI</a> egress queue buffer profile を反映する。</p>
+<p>ポートの egress queue ごとにバッファプロファイルを割り当てる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。non-<a href="../../glossary/#term-voq">VOQ</a> 用と <a href="../../glossary/#term-voq">VOQ</a> シャーシ用で list が分かれる。<code>buffermgrd</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> に転送、<code>orchagent</code> <code>BufferOrch</code> が <a href="../../glossary/#term-sai">SAI</a> egress queue buffer profile を反映する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28916,7 +28916,7 @@
 <!-- /cdb-mermaid -->
 
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<p>非 VOQ:
+<p>非 <a href="../../glossary/#term-voq">VOQ</a>:
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BUFFER_QUEUE|&lt;port&gt;|&lt;qindex&gt;
 </span></code></pre></div></p>
 <p>VOQ chassis:
@@ -29005,8 +29005,8 @@
 <p><code>when</code> 条件: <code>switch_type = voq</code>。</p>
 <h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>buffermgrd</code>: APPL_DB へ転送</li>
-<li><code>orchagent</code> <code>BufferOrch</code>: SAI egress queue buffer profile を反映</li>
+<li><code>buffermgrd</code>: <a href="../../glossary/#term-appl_db">APPL_DB</a> へ転送</li>
+<li><code>orchagent</code> <code>BufferOrch</code>: <a href="../../glossary/#term-sai">SAI</a> egress queue buffer profile を反映</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29018,7 +29018,7 @@
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-buffer-queue/"><code>sonic-buffer-queue</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-buffer-queue/"><code>sonic-buffer-queue</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29047,13 +29047,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6ee095ec571 -->
+<!-- glossary-links-injected: efbc9015e957 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-buffer-queue.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-queue.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-queue.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-buffer-queue.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-queue.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-queue.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

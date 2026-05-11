@@ -29007,12 +29007,12 @@
 </tr>
 <tr>
 <td><code>DASH_METER</code></td>
-<td>DASH メーター統計</td>
+<td><a href="../../glossary/#term-dash">DASH</a> メーター統計</td>
 <td>○</td>
 </tr>
 <tr>
 <td><code>HA_SET</code></td>
-<td>DASH HA セット統計</td>
+<td><a href="../../glossary/#term-dash">DASH</a> HA セット統計</td>
 <td>○</td>
 </tr>
 <tr>
@@ -29097,7 +29097,7 @@
 </tr>
 <tr>
 <td><code>WRED_ECN_PORT</code></td>
-<td>WRED/ECN ポート統計</td>
+<td><a href="../../glossary/#term-wred">WRED</a>/ECN ポート統計</td>
 <td>○</td>
 </tr>
 <tr>
@@ -29135,7 +29135,7 @@
 </tr>
 <tr>
 <td><code>bulk_chunk_size</code></td>
-<td><code>uint32</code> range 1..4294967295（SAI bulk counter API 呼び出しごとのエントリ数）</td>
+<td><code>uint32</code> range 1..4294967295（<a href="../../glossary/#term-sai">SAI</a> bulk counter API 呼び出しごとのエントリ数）</td>
 </tr>
 <tr>
 <td><code>bulk_chunk_size_per_prefix</code></td>
@@ -29172,7 +29172,7 @@
 </tbody>
 </table>
 <h2 id="flow_counter_route_pattern"><code>FLOW_COUNTER_ROUTE_PATTERN</code><a class="headerlink" href="#flow_counter_route_pattern" title="Permanent link">&para;</a></h2>
-<p>ルート単位のフローカウンタを動的に紐付けるためのプレフィックスパターン。デフォルト <a href="../../glossary/#term-vrf">VRF</a> 用 <code>FLOW_COUNTER_ROUTE_PATTERN_LIST</code> と VRF/<a href="../../glossary/#term-vnet">VNET</a> スコープ用 <code>FLOW_COUNTER_ROUTE_PATTERN_VRF_LIST</code> の 2 リストを持つ。<code>vrf_name</code> は leafref ではなく文字列（VNET 名も受け入れる、<a href="../../glossary/#term-orchagent">orchagent</a> が後で解決する）。</p>
+<p>ルート単位のフローカウンタを動的に紐付けるためのプレフィックスパターン。デフォルト <a href="../../glossary/#term-vrf">VRF</a> 用 <code>FLOW_COUNTER_ROUTE_PATTERN_LIST</code> と <a href="../../glossary/#term-vrf">VRF</a>/<a href="../../glossary/#term-vnet">VNET</a> スコープ用 <code>FLOW_COUNTER_ROUTE_PATTERN_VRF_LIST</code> の 2 リストを持つ。<code>vrf_name</code> は leafref ではなく文字列（<a href="../../glossary/#term-vnet">VNET</a> 名も受け入れる、<a href="../../glossary/#term-orchagent">orchagent</a> が後で解決する）。</p>
 <table>
 <thead>
 <tr>
@@ -29198,8 +29198,8 @@
 <tr>
 <td><code>vrf_name</code></td>
 <td><code>string</code> (length 0..16)</td>
-<td>yes (VRF list のみ)</td>
-<td>VRF または VNET 名</td>
+<td>yes (<a href="../../glossary/#term-vrf">VRF</a> list のみ)</td>
+<td>VRF または <a href="../../glossary/#term-vnet">VNET</a> 名</td>
 </tr>
 </tbody>
 </table>
@@ -29220,7 +29220,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a> / <code>FLOW_COUNTER_ROUTE_PATTERN</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a> / <code>FLOW_COUNTER_ROUTE_PATTERN</code></li>
 <li>CLI: <code>counterpoll</code></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29229,11 +29229,11 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Flex counter polling 制御。<code>FLEX_COUNTER_TABLE|&lt;group&gt;</code> を flex counter orch が SAI に渡す。</li>
+<li>Flex counter polling 制御。<code>FLEX_COUNTER_TABLE|&lt;group&gt;</code> を flex counter orch が <a href="../../glossary/#term-sai">SAI</a> に渡す。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>POLL_INTERVAL</code> を極端に小さく (&lt; 1000ms) すると <a href="../../glossary/#term-syncd">syncd</a> CPU が張り付き、orchagent の他処理が遅延する。</li>
+<li><code>POLL_INTERVAL</code> を極端に小さく (&lt; 1000ms) すると <a href="../../glossary/#term-syncd">syncd</a> CPU が張り付き、<a href="../../glossary/#term-orchagent">orchagent</a> の他処理が遅延する。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FLEX_COUNTER_TABLE|*&#39;</span>
@@ -29242,7 +29242,7 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: d2ce881d0d90 -->
+<!-- glossary-links-injected: 96c812df0832 -->
 
 <div class="footnote">
 <hr />

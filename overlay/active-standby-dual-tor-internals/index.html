@@ -28890,7 +28890,7 @@
 
 
 <h1 id="active-standby-dual-tor">Active-Standby Dual ToR 内部実装<a class="headerlink" href="#active-standby-dual-tor" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../active-standby-dual-tor/">Active-Standby Dual ToR（概要ハブ）</a> の派生ページで、<strong>state machine / orchagent / neighbor 取扱い / I2C スイッチオーバ</strong> の内部実装に絞って整理する。概念は <a href="../active-standby-dual-tor-concepts/">active-standby-dual-tor-concepts.md</a>、設定は <a href="../active-standby-dual-tor-operations/">active-standby-dual-tor-operations.md</a>、制限事項は <a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> を参照。</p>
+<p>このページは <a href="../active-standby-dual-tor/">Active-Standby Dual ToR（概要ハブ）</a> の派生ページで、<strong>state machine / <a href="../../reference/glossary/#term-orchagent">orchagent</a> / neighbor 取扱い / I2C スイッチオーバ</strong> の内部実装に絞って整理する。概念は <a href="../active-standby-dual-tor-concepts/">active-standby-dual-tor-concepts.md</a>、設定は <a href="../active-standby-dual-tor-operations/">active-standby-dual-tor-operations.md</a>、制限事項は <a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> を参照。</p>
 <h2 id="1-linkmanager">1. LinkManager 状態遷移表<a class="headerlink" href="#1-linkmanager" title="Permanent link">&para;</a></h2>
 <p>LinkProber + LinkState + MuxState の合成状態。<strong>standby ToR が能動的に switchover を駆動</strong> する設計（両 ToR が同時に切替を試みるのを防ぐ）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>LinkUp 時:</p>
@@ -28971,22 +28971,22 @@
 <h2 id="2-tunnelorch">2. TunnelOrch<a class="headerlink" href="#2-tunnelorch" title="Permanent link">&para;</a></h2>
 <p><code>CONFIG_DB.TUNNEL</code> の <code>MUX_TUNNEL</code> entry を購読し<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>IPinIP tunnel object 作成（<code>tunnel_type=IPINIP</code>、<code>dst_ip=Loopback0</code>、<code>dscp_mode=uniform</code>、<code>encap_ecn_mode=standard</code>、<code>ecn_mode=copy_from_outer</code>、<code>ttl_mode=pipe</code>）</li>
+<li><a href="../../reference/glossary/#term-ipinip">IPinIP</a> tunnel object 作成（<code>tunnel_type=IPINIP</code>、<code>dst_ip=Loopback0</code>、<code>dscp_mode=uniform</code>、<code>encap_ecn_mode=standard</code>、<code>ecn_mode=copy_from_outer</code>、<code>ttl_mode=pipe</code>）</li>
 <li>decap entry / tunnel termination 作成</li>
 <li><code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code> を MuxOrch の next hop として供給</li>
 </ul>
 <h2 id="3-muxorch">3. MuxOrch<a class="headerlink" href="#3-muxorch" title="Permanent link">&para;</a></h2>
-<p>linkmgrd の状態変化を購読し<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> の状態変化を購読し<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
 <li>tunnel route 追加 / 削除</li>
-<li><strong>standby port での ingress drop ACL</strong> 追加 / 削除</li>
+<li><strong>standby port での ingress drop <a href="../../reference/glossary/#term-acl">ACL</a></strong> 追加 / 削除</li>
 <li>neighbor entry の取り扱い（後述）</li>
 </ol>
-<p>HLD は neighbor 取扱い 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）を比較するが最終採用案を明示していない。<strong>現行 master は「neighbor + standalone tunnel route」併用案</strong> を採用（<code>sonic-swss/orchagent/muxorch.cpp:2444-2460</code> の <code>createStandaloneTunnelRoute()</code> / <code>removeStandaloneTunnelRoute()</code>）。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> は neighbor 取扱い 3 案（route+neighbor 共存 / orchagent delete / ACL redirect）を比較するが最終採用案を明示していない。<strong>現行 master は「neighbor + standalone tunnel route」併用案</strong> を採用（<code>sonic-swss/orchagent/muxorch.cpp:2444-2460</code> の <code>createStandaloneTunnelRoute()</code> / <code>removeStandaloneTunnelRoute()</code>）。</p>
 <h3 id="rollback">Rollback 動作<a class="headerlink" href="#rollback" title="Permanent link">&para;</a></h3>
-<p>orchagent が遷移失敗した場合<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: 元状態に rollback → APP_DB に新状態 → ycabled が STATE_DB に書き戻し → orchagent が STATE_DB に <code>unknown</code> を書く → linkmgrd が再判定。orchagent は state 変化に対して <strong>idempotent</strong> であること。</p>
+<p>orchagent が遷移失敗した場合<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: 元状態に rollback → APP_DB に新状態 → ycabled が <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に書き戻し → orchagent が STATE_DB に <code>unknown</code> を書く → linkmgrd が再判定。orchagent は state 変化に対して <strong>idempotent</strong> であること。</p>
 <h2 id="4-neighbor">4. neighbor の特殊扱い<a class="headerlink" href="#4-neighbor" title="Permanent link">&para;</a></h2>
-<p>standby ToR では ARP request が drop されるため、通常の neighbor 学習が成立しない。次の仕掛けを併用する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>standby ToR では <a href="../../reference/glossary/#term-arp">ARP</a> request が drop されるため、通常の neighbor 学習が成立しない。次の仕掛けを併用する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <h3 id="proxy-arpipv4">Proxy ARP（IPv4）<a class="headerlink" href="#proxy-arpipv4" title="Permanent link">&para;</a></h3>
 <p>server-to-server traffic を必ず L3 経路に乗せるため <code>proxy_arp</code> を有効化し、server 発トラフィックに <code>dst_mac = ToR router MAC</code> を強制する。standby ToR で受けたパケットを encap して active ToR に流せる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="proxy-ndpipv6">Proxy NDP（IPv6）<a class="headerlink" href="#proxy-ndpipv6" title="Permanent link">&para;</a></h3>
@@ -29008,7 +29008,7 @@
 <li><strong>standby で IPv6 neighbor が FAILED 化</strong>: <code>accept_untracked_na=1</code> + <code>arp_update</code> script が <code>FAILED</code> を <code>INCOMPLETE</code> に書き換え、active 側 NA で resolve<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ol>
 <h2 id="5-y-cable-i2c-ycabled">5. y-cable I2C 障害（ycabled）<a class="headerlink" href="#5-y-cable-i2c-ycabled" title="Permanent link">&para;</a></h2>
-<p>旧 <code>xcvrd</code> を <code>ycabled</code> に改名<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>APP_DB.HW_MUX_CABLE</code> を購読し I2C 経由で MUX を toggle する。<code>i2c_retry_count</code> 回失敗で <code>MUX_FAIL</code> を <code>STATE_DB.HW_MUX_CABLE_TABLE</code> に書く。報告状態: <code>MUX_XCVRD_ACTIVE</code> / <code>MUX_XCVRD_STANDBY</code> / <code>MUX_XCVRD_FAIL</code>。</p>
+<p>旧 <code>xcvrd</code> を <code>ycabled</code> に改名<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>APP_DB.HW_MUX_CABLE</code> を購読し I2C 経由で <a href="../../reference/glossary/#term-mux">MUX</a> を toggle する。<code>i2c_retry_count</code> 回失敗で <code>MUX_FAIL</code> を <code>STATE_DB.HW_MUX_CABLE_TABLE</code> に書く。報告状態: <code>MUX_XCVRD_ACTIVE</code> / <code>MUX_XCVRD_STANDBY</code> / <code>MUX_XCVRD_FAIL</code>。</p>
 <h3 id="switchover-standby-active">switchover シーケンス（standby → active）<a class="headerlink" href="#switchover-standby-active" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
     participant LM as linkmgrd (standby)
@@ -29047,6 +29047,8 @@
 <li><a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> — 制限事項</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 3dc47e5d23ad -->
+
 <div class="footnote">
 <hr />
 <ol>

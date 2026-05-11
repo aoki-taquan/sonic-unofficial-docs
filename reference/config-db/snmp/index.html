@@ -28952,7 +28952,7 @@
 
 <h1 id="snmp">SNMP テーブル<a class="headerlink" href="#snmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-snmp">SNMP</a> エージェント (<code>snmpd</code> in <code>docker-snmp</code>) のシステム情報 (Contact / Location) を保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>docker-snmp</code> 内の起動スクリプトと <code>hostcfgd</code> の SNMP ハンドラが <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み、<code>/etc/snmp/snmpd.conf</code> のテンプレ展開で <code>sysContact</code> / <code>sysLocation</code> 行に反映される。</p>
+<p><a href="../../glossary/#term-snmp">SNMP</a> エージェント (<code>snmpd</code> in <code>docker-snmp</code>) のシステム情報 (Contact / Location) を保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>docker-snmp</code> 内の起動スクリプトと <code>hostcfgd</code> の <a href="../../glossary/#term-snmp">SNMP</a> ハンドラが <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み、<code>/etc/snmp/snmpd.conf</code> のテンプレ展開で <code>sysContact</code> / <code>sysLocation</code> 行に反映される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28984,7 +28984,7 @@
 <tr>
 <td><code>Contact</code></td>
 <td>string (1..255 chars, 改行不可)</td>
-<td>SNMP <code>sysContact</code></td>
+<td><a href="../../glossary/#term-snmp">SNMP</a> <code>sysContact</code></td>
 </tr>
 </tbody>
 </table>
@@ -29012,12 +29012,12 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>docker-snmp</code> の <code>snmpd</code> 起動テンプレ: CONFIG_DB → <code>/etc/snmp/snmpd.conf</code></li>
+<li><code>docker-snmp</code> の <code>snmpd</code> 起動テンプレ: <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <code>/etc/snmp/snmpd.conf</code></li>
 <li><code>hostcfgd</code> の SNMP ハンドラ (<code>sonic-host-services</code>)</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>SNMP_COMMUNITY</code> (v1/v2c), <code>SNMP_USER</code> (v3), <a href="../snmp-agent-address-config/"><code>SNMP_AGENT_ADDRESS_CONFIG</code></a></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>SNMP_COMMUNITY</code> (v1/v2c), <code>SNMP_USER</code> (v3), <a href="../snmp-agent-address-config/"><code>SNMP_AGENT_ADDRESS_CONFIG</code></a></li>
 <li>関連 CLI: <code>config snmp contact { add | modify | del }</code> / <code>config snmp location { add | modify | del }</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-snmp</code></li>
 </ul>
@@ -29025,7 +29025,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-snmp/"><code>sonic-snmp</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-snmp/"><code>sonic-snmp</code></a></li>
 <li>CLI: <a href="../../cli/config-snmp/"><code>config snmp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29052,7 +29052,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c344938db88f -->
+<!-- glossary-links-injected: 1d5df4cb0a92 -->
 
 <div class="footnote">
 <hr />

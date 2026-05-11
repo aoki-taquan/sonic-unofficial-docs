@@ -28874,7 +28874,7 @@
 
 <h1 id="device_runtime_metadata">DEVICE_RUNTIME_METADATA テーブル<a class="headerlink" href="#device_runtime_metadata" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> に永続化されない、起動時に計算で組み立てられる <strong>仮想テーブル</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic_py_common.device_info.get_device_runtime_metadata()</code> が hwsku / chassis / port-config 情報から生成し、<code>sonic-cfggen</code> の Jinja 環境に投入される。<code>FEATURE.has_per_asic_scope</code> などのテンプレ条件式から <code>DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']</code> のように参照される。CONFIG_DB ファイルには通常永続化されない。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> に永続化されない、起動時に計算で組み立てられる <strong>仮想テーブル</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic_py_common.device_info.get_device_runtime_metadata()</code> が hwsku / chassis / port-config 情報から生成し、<code>sonic-cfggen</code> の Jinja 環境に投入される。<code>FEATURE.has_per_asic_scope</code> などのテンプレ条件式から <code>DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']</code> のように参照される。<a href="../../glossary/#term-config_db">CONFIG_DB</a> ファイルには通常永続化されない。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28888,7 +28888,7 @@
 <!-- /cdb-mermaid -->
 
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB テーブル形式の慣習に従うが、実体は <code>sonic-cfggen</code> のテンプレ変数辞書である。論理的には:</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル形式の慣習に従うが、実体は <code>sonic-cfggen</code> のテンプレ変数辞書である。論理的には:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DEVICE_RUNTIME_METADATA|CHASSIS_METADATA
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>DEVICE_RUNTIME_METADATA|ETHERNET_PORTS_PRESENT
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
@@ -28969,7 +28969,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->
 
 <div class="footnote">
 <hr />

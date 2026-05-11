@@ -28689,11 +28689,11 @@
 </thead>
 <tbody>
 <tr>
-<td>BGP EVPN 統合</td>
+<td><a href="../../reference/glossary/#term-bgp">BGP</a> <a href="../../reference/glossary/#term-evpn">EVPN</a> 統合</td>
 <td>Phase 1 ではなし。経路は外部から <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> に直接投入する前提<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
-<td>L2 VXLAN（タグ・無タグ）</td>
+<td>L2 <a href="../../reference/glossary/#term-vxlan">VXLAN</a>（タグ・無タグ）</td>
 <td>Phase 2 で導入予定</td>
 </tr>
 <tr>
@@ -28702,15 +28702,15 @@
 </tr>
 <tr>
 <td>CLI 整備</td>
-<td>Phase 2 で拡充。Phase 1 では CONFIG_DB 直接編集</td>
+<td>Phase 2 で拡充。Phase 1 では <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 直接編集</td>
 </tr>
 <tr>
 <td>Warm restart</td>
-<td>Phase 1 で非対応。SAI VR オブジェクトが warm restart 非互換のため Phase 2 で再検討<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>Phase 1 で非対応。<a href="../../reference/glossary/#term-sai">SAI</a> VR オブジェクトが warm restart 非互換のため Phase 2 で再検討<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
-<td>Kernel VRF programming</td>
-<td>HLD スコープ外</td>
+<td>Kernel <a href="../../reference/glossary/#term-vrf">VRF</a> programming</td>
+<td><a href="../../reference/glossary/#term-hld">HLD</a> スコープ外</td>
 </tr>
 </tbody>
 </table>
@@ -28726,18 +28726,18 @@
 <ul>
 <li>BGP EVPN 統合 (Phase 2) の現状</li>
 <li>Warm restart 対応状況（Phase 2 で再検討予定だった）</li>
-<li><code>VXLAN_TUNNEL_MAP</code> の最終スキーマ（VNI ↔ VLAN / VNI ↔ VRF）</li>
+<li><code>VXLAN_TUNNEL_MAP</code> の最終スキーマ（VNI ↔ <a href="../../reference/glossary/#term-vlan">VLAN</a> / VNI ↔ VRF）</li>
 <li><code>FdbOrch</code> と <code>VxlanOrch</code> の協調実装（HLD で TBD だった部分）</li>
 <li>HER（head-end replication）の現行実装</li>
-<li>CLI（<code>config vxlan</code> / <code>show vxlan</code>）の sonic-utilities への取り込み形</li>
+<li>CLI（<code>config vxlan</code> / <code>show vxlan</code>）の <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> への取り込み形</li>
 </ul>
 <h2 id="4">4. 干渉する機能<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>BGP EVPN（Phase 2）</strong>: 経路供給源として <code>VNET_ROUTE_TUNNEL_TABLE</code> を埋める</li>
 <li><strong>VLAN / VLAN_MEMBER</strong>: L2 VXLAN は VLAN ↔ VNI mapping 前提</li>
 <li><strong>VRF（通常 VRF）</strong>: <code>VrfOrch</code> 経由</li>
-<li><strong>DASH / SmartSwitch</strong>: 新しい HLD（<a href="../smartswitch-eni-based-forwarding/">ENI Based Forwarding</a>）は本 HLD の VxLAN tunnel を利用</li>
-<li><strong>MC-LAG / dual-ToR</strong>: 拡張あり</li>
+<li><strong><a href="../../reference/glossary/#term-dash">DASH</a> / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a></strong>: 新しい HLD（<a href="../smartswitch-eni-based-forwarding/">ENI Based Forwarding</a>）は本 HLD の VxLAN tunnel を利用</li>
+<li><strong>MC-<a href="../../reference/glossary/#term-lag">LAG</a> / dual-ToR</strong>: 拡張あり</li>
 </ul>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28747,6 +28747,8 @@
 <li><a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a> — 内部実装</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 3c8f190a1c06 -->
+
 <div class="footnote">
 <hr />
 <ol>

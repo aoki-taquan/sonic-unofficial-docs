@@ -28926,7 +28926,7 @@
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosorch</code>: SAI <a href="../../glossary/#term-qos">QoS</a> map 生成</li>
+<li><code>qosorch</code>: <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-qos">QoS</a> map 生成</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28938,7 +28938,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-tc-queue-map/"><code>sonic-tc-queue-map</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-tc-queue-map/"><code>sonic-tc-queue-map</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28959,7 +28959,7 @@
 </ul>
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li>TC→queue を 0..7 範囲外に書くと SAI が拒否し、マップ全体が install されない。</li>
+<li>TC→queue を 0..7 範囲外に書くと <a href="../../glossary/#term-sai">SAI</a> が拒否し、マップ全体が install されない。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;TC_TO_QUEUE_MAP|AZURE&#39;</span>
@@ -28967,13 +28967,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 75132586f6c7 -->
+<!-- glossary-links-injected: 16a5b728a75a -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-tc-queue-map.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-tc-queue-map.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

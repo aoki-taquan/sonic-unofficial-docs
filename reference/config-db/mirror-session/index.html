@@ -28896,7 +28896,7 @@
 
 <h1 id="mirror_session">MIRROR_SESSION テーブル<a class="headerlink" href="#mirror_session" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ポートミラーリング (SPAN / ERSPAN) セッションを <a href="../../glossary/#term-config_db">CONFIG_DB</a> で定義するテーブル。<code>MirrorOrch</code> が CONFIG_DB を購読し、<a href="../../glossary/#term-sai">SAI</a> MIRROR_SESSION オブジェクトに変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ERSPAN では outer GRE/IP ヘッダ用パラメータ (src_ip / dst_ip / dscp / ttl / gre_type) を伴い、SPAN では <code>dst_port</code> (ローカル物理ポートまたは <code>CPU</code>) を指定する。</p>
+<p>ポートミラーリング (SPAN / ERSPAN) セッションを <a href="../../glossary/#term-config_db">CONFIG_DB</a> で定義するテーブル。<code>MirrorOrch</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<a href="../../glossary/#term-sai">SAI</a> MIRROR_SESSION オブジェクトに変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ERSPAN では outer GRE/IP ヘッダ用パラメータ (src_ip / dst_ip / dscp / ttl / gre_type) を伴い、SPAN では <code>dst_port</code> (ローカル物理ポートまたは <code>CPU</code>) を指定する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29019,7 +29019,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>POLICER</code>、<code>PORT</code>、<code>PORTCHANNEL</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>POLICER</code>、<code>PORT</code>、<code>PORTCHANNEL</code></li>
 <li>関連 CLI: <code>config mirror_session add/remove</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mirror-session</code>、<code>sonic-policer</code></li>
 </ul>
@@ -29027,7 +29027,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-mirror-session/"><code>sonic-mirror-session</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-mirror-session/"><code>sonic-mirror-session</code></a></li>
 <li>CLI: <a href="../../cli/config-mirror-session/"><code>config mirror_session</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29062,13 +29062,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: adfb05b6fe02 -->
+<!-- glossary-links-injected: 32758c44ab11 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-mirror-session.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mirror-session.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mirror-session.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-mirror-session.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mirror-session.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mirror-session.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

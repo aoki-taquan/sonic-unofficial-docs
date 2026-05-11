@@ -28833,7 +28833,7 @@
 <li><strong>system mac 衝突 / 設定ミス</strong></li>
 <li><strong>iccpd プロセス未起動 / crash loop</strong></li>
 <li><strong>domain ID / peer IP 不整合</strong></li>
-<li><strong><a href="../../glossary/#term-mclag">MCLAG</a> interface 設定漏れ</strong>: PortChannel が <code>MCLAG_INTERFACE</code> に登録されていない</li>
+<li><strong><a href="../../glossary/#term-mclag">MCLAG</a> interface 設定漏れ</strong>: <a href="../../glossary/#term-portchannel">PortChannel</a> が <code>MCLAG_INTERFACE</code> に登録されていない</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
@@ -28873,7 +28873,7 @@
 <ul>
 <li>keepalive 経路修正: routing / <a href="../../glossary/#term-vlan">VLAN</a> を確認</li>
 <li>iccpd 再起動: <code>docker restart iccpd</code> （<strong>注意</strong>: 片系のみ。<strong>ロールバック</strong>: peer 側との設定整合性は <code>config_db.json</code> 退避から復元）</li>
-<li>MCLAG interface 追加: <code>sudo config mclag member add &lt;domain_id&gt; &lt;PortChannelN&gt;</code>（<strong>ロールバック</strong>: <code>config mclag member del</code>）</li>
+<li><a href="../../glossary/#term-mclag">MCLAG</a> interface 追加: <code>sudo config mclag member add &lt;domain_id&gt; &lt;PortChannelN&gt;</code>（<strong>ロールバック</strong>: <code>config mclag member del</code>）</li>
 <li>system_mac 設定: <code>DEVICE_METADATA|localhost</code> の <code>mac</code> を peer と一致させる（注意: 通常変更不要）</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -28882,7 +28882,7 @@
 <li><a href="../../config-db/mclag-domain/">../config-db/mclag-domain.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 0fb60525e68d -->
+<!-- glossary-links-injected: bebcd3486125 -->
 
 <div class="footnote">
 <hr />

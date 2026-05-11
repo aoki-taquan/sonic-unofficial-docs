@@ -28924,7 +28924,7 @@
 </table>
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="enable-disable">enable / disable<a class="headerlink" href="#enable-disable" title="Permanent link">&para;</a></h3>
-<p><code>&lt;module&gt;</code> を省略すると <code>system</code>。<code>module != system</code> の場合は CONFIG_DB <code>FEATURE</code> テーブルに存在する feature 名だけを受け付ける。namespace 指定が無い場合、single-ASIC では default namespace、multi-ASIC では default + ASIC namespace 群に反映する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>&lt;module&gt;</code> を省略すると <code>system</code>。<code>module != system</code> の場合は <a href="../../glossary/#term-config_db">CONFIG_DB</a> <code>FEATURE</code> テーブルに存在する feature 名だけを受け付ける。namespace 指定が無い場合、single-ASIC では default namespace、multi-ASIC では default + ASIC namespace 群に反映する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="timer">timer 系<a class="headerlink" href="#timer" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>neighsyncd_timer</code> は <code>WARM_RESTART|swss</code> の <code>neighsyncd_timer</code> を更新する。adhoc validation が有効な場合は 1-9998 秒。</li>
@@ -28936,7 +28936,7 @@
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/warm-restart/"><code>WARM_RESTART</code></a> / <a href="../../config-db/feature/"><code>FEATURE</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/warm-restart/"><code>WARM_RESTART</code></a> / <a href="../../config-db/feature/"><code>FEATURE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28972,7 +28972,7 @@
 <h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="_8">典型的な利用シーン<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BGP / <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / swss / <a href="../../glossary/#term-syncd">syncd</a> の warm-restart 有効化と timer 調整。</li>
+<li><a href="../../glossary/#term-bgp">BGP</a> / <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / swss / <a href="../../glossary/#term-syncd">syncd</a> の warm-restart 有効化と timer 調整。</li>
 <li>ソフト再起動前の安全弁としての有効化。</li>
 </ul>
 <h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
@@ -28987,13 +28987,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4836d1c1f005 -->
+<!-- glossary-links-injected: 2659d47ccbe6 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>config warm_restart</code> グループは CONFIG_DB と STATE_DB connector を namespace ごとに初期化する。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>config warm_restart</code> グループは CONFIG_DB と <a href="../../glossary/#term-state_db">STATE_DB</a> connector を namespace ごとに初期化する。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3940</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p><code>enable</code> / <code>disable</code> は <code>WARM_RESTART_ENABLE_TABLE|&lt;module&gt;</code> の <code>enable</code> フィールドを書き込む。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3973">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3973</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

@@ -29118,7 +29118,7 @@
 
 <h1 id="config-mclag">config mclag サブコマンド<a class="headerlink" href="#config-mclag" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config mclag</code> は <a href="../../glossary/#term-mclag">MCLAG</a> (Multi-Chassis <a href="../../glossary/#term-lag">LAG</a>) ドメイン・メンバ <a href="../../glossary/#term-portchannel">PortChannel</a>・Vlan インタフェース単位の unique IP を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込む CLI で、<code>config/mclag.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB の更新先テーブルは <code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code> の 3 つで、ICCPd (<code>iccpd</code> コンテナ) がこれを購読して MCLAG ピアリングを起動する。</p>
+<p><code>config mclag</code> は <a href="../../glossary/#term-mclag">MCLAG</a> (Multi-Chassis <a href="../../glossary/#term-lag">LAG</a>) ドメイン・メンバ <a href="../../glossary/#term-portchannel">PortChannel</a>・Vlan インタフェース単位の unique IP を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込む CLI で、<code>config/mclag.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の更新先テーブルは <code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code> の 3 つで、ICCPd (<code>iccpd</code> コンテナ) がこれを購読して <a href="../../glossary/#term-mclag">MCLAG</a> ピアリングを起動する。</p>
 <p><code>MCLAG_DOMAIN</code> は <strong>デバイス内に 1 つしか持てない</strong> (既存 domain がある状態で別 ID を <code>add</code> するとエラー)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -29131,7 +29131,7 @@
 <tbody>
 <tr>
 <td><code>config mclag add &lt;domain_id&gt; &lt;source_ip&gt; &lt;peer_ip&gt; [&lt;peer_ifname&gt;]</code></td>
-<td>MCLAG ドメイン作成</td>
+<td><a href="../../glossary/#term-mclag">MCLAG</a> ドメイン作成</td>
 </tr>
 <tr>
 <td><code>config mclag del &lt;domain_id&gt;</code></td>
@@ -29147,7 +29147,7 @@
 </tr>
 <tr>
 <td><code>config mclag member add &lt;domain_id&gt; &lt;portchannels&gt;</code></td>
-<td>MCLAG メンバ PortChannel を追加</td>
+<td>MCLAG メンバ <a href="../../glossary/#term-portchannel">PortChannel</a> を追加</td>
 </tr>
 <tr>
 <td><code>config mclag member del &lt;domain_id&gt; &lt;portchannels&gt;</code></td>
@@ -29242,7 +29242,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/mclag-domain/"><code>MCLAG_DOMAIN</code></a> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/mclag-domain/"><code>MCLAG_DOMAIN</code></a> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29270,12 +29270,12 @@
 <h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <h3 id="_12">典型的な利用シーン<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
-<li>MC-LAG ドメイン作成、ピアリンク・peer IP・keepalive 設定。</li>
+<li>MC-<a href="../../glossary/#term-lag">LAG</a> ドメイン作成、ピアリンク・peer IP・keepalive 設定。</li>
 <li>Unique IP / system MAC の同期設定。</li>
 </ul>
 <h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
-<li>両端で system_mac を一致させないと LAG メンバが flap し続ける。</li>
+<li>両端で system_mac を一致させないと <a href="../../glossary/#term-lag">LAG</a> メンバが flap し続ける。</li>
 <li>keepalive <a href="../../glossary/#term-vlan">VLAN</a> を tagged で通すと一部 NIC で MTU 差により断続するため、専用 L3 リンク推奨。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29285,7 +29285,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 2141742a9664 -->
+<!-- glossary-links-injected: 0bf15a09bb5d -->
 
 <div class="footnote">
 <hr />

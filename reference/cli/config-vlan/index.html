@@ -29085,7 +29085,7 @@
 <h1 id="config-vlan">config vlan サブコマンド<a class="headerlink" href="#config-vlan" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>config vlan</code> は <a href="../../glossary/#term-vlan">VLAN</a> の作成・削除、メンバ追加・削除、Proxy-<a href="../../glossary/#term-arp">ARP</a> のオン／オフを担当する。<code>config/vlan.py</code> に実装が分離されており、<code>config/main.py</code> 末尾の <code>config.add_command(vlan.vlan)</code> で登録される構造<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>新規 VLAN 作成時は <code>VLAN</code> テーブルだけでなく <strong><code>DHCP_RELAY</code> テーブルにも空エントリを書き込む</strong>仕様。これは <code>dhcp_relay</code> の対象 VLAN が <code>VLAN</code> テーブルではなく <code>DHCP_RELAY</code> テーブルから引かれるための互換的な設計。</p>
+<p>新規 <a href="../../glossary/#term-vlan">VLAN</a> 作成時は <code>VLAN</code> テーブルだけでなく <strong><code>DHCP_RELAY</code> テーブルにも空エントリを書き込む</strong>仕様。これは <code>dhcp_relay</code> の対象 <a href="../../glossary/#term-vlan">VLAN</a> が <code>VLAN</code> テーブルではなく <code>DHCP_RELAY</code> テーブルから引かれるための互換的な設計。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29105,7 +29105,7 @@
 </tr>
 <tr>
 <td><code>config vlan proxy_arp &lt;vid&gt; &lt;enabled\|disabled&gt;</code></td>
-<td>VLAN_INTERFACE の proxy ARP を切替</td>
+<td>VLAN_INTERFACE の proxy <a href="../../glossary/#term-arp">ARP</a> を切替</td>
 </tr>
 <tr>
 <td><code>config vlan member add &lt;vid&gt; &lt;port&gt;</code></td>
@@ -29315,7 +29315,7 @@ excerpt: |
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d992aca97f65 -->
+<!-- glossary-links-injected: a90586777d5a -->
 
 <div class="footnote">
 <hr />

@@ -29339,11 +29339,11 @@
 <h3 id="sonic-clear-flowcnt-route-pattern-prefix-pattern-route-prefix"><code>sonic-clear flowcnt-route [pattern &lt;prefix-pattern&gt;] [route &lt;prefix&gt;]</code><a class="headerlink" href="#sonic-clear-flowcnt-route-pattern-prefix-pattern-route-prefix" title="Permanent link">&para;</a></h3>
 <p>サブコマンド省略時は全 route flow counter をクリア。<code>pattern &lt;pattern&gt;</code> でワイルドカード絞り、<code>route &lt;prefix&gt;</code> で 1 prefix 指定。<code>--vrf</code> で <a href="../../glossary/#term-vrf">VRF</a>/<a href="../../glossary/#term-vnet">VNET</a> 指定可能。</p>
 <h3 id="sonic-clear-asic-sdk-health-event-n-namespace"><code>sonic-clear asic-sdk-health-event [-n &lt;namespace&gt;]</code><a class="headerlink" href="#sonic-clear-asic-sdk-health-event-n-namespace" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB ではなく <strong><a href="../../glossary/#term-state_db">STATE_DB</a> の <code>ASIC_SDK_HEALTH_EVENT_TABLE*</code> キーを namespace ごとに delete</strong> する。multi-ASIC 時に <code>-n</code> 指定で対象 namespace のみ。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> ではなく <strong><a href="../../glossary/#term-state_db">STATE_DB</a> の <code>ASIC_SDK_HEALTH_EVENT_TABLE*</code> キーを namespace ごとに delete</strong> する。multi-ASIC 時に <code>-n</code> 指定で対象 namespace のみ。</p>
 <h3 id="sonic-clear-spanning-tree"><code>sonic-clear spanning-tree</code><a class="headerlink" href="#sonic-clear-spanning-tree" title="Permanent link">&para;</a></h3>
 <p><code>clear/stp.py</code> 由来の BPDU 統計クリア / 学習エントリリセット用サブグループ。</p>
 <h2 id="ip-ipv6">ip / ipv6 サブグループ<a class="headerlink" href="#ip-ipv6" title="Permanent link">&para;</a></h2>
-<p><code>cli.add_command(arp)</code> と <code>ip.add_command(arp)</code> の <strong>両方</strong>が呼ばれており、<code>sonic-clear arp</code> と <code>sonic-clear ip arp</code> がエイリアス的に同じ機能を提供する（NDP も同様）。<a href="../../glossary/#term-bgp">BGP</a> セッションリセット系は <code>routing_stack</code> の値に応じて <code>clear/bgp_quagga_v4.py</code> または <code>clear/bgp_frr_v6.py</code> 等が動的に <code>ip.add_command(bgp)</code> / <code>ipv6.add_command(bgp)</code> を実行する。</p>
+<p><code>cli.add_command(arp)</code> と <code>ip.add_command(arp)</code> の <strong>両方</strong>が呼ばれており、<code>sonic-clear arp</code> と <code>sonic-clear ip arp</code> がエイリアス的に同じ機能を提供する（<a href="../../glossary/#term-ndp">NDP</a> も同様）。<a href="../../glossary/#term-bgp">BGP</a> セッションリセット系は <code>routing_stack</code> の値に応じて <code>clear/bgp_quagga_v4.py</code> または <code>clear/bgp_frr_v6.py</code> 等が動的に <code>ip.add_command(bgp)</code> / <code>ipv6.add_command(bgp)</code> を実行する。</p>
 <h2 id="state_db-config_db">STATE_DB / CONFIG_DB との接点<a class="headerlink" href="#state_db-config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29355,18 +29355,18 @@
 </thead>
 <tbody>
 <tr>
-<td>STATE_DB <code>ASIC_SDK_HEALTH_EVENT_TABLE*</code></td>
+<td><a href="../../glossary/#term-state_db">STATE_DB</a> <code>ASIC_SDK_HEALTH_EVENT_TABLE*</code></td>
 <td>delete</td>
 <td><code>asic-sdk-health-event</code></td>
 </tr>
 <tr>
-<td>各 COUNTERS_DB スナップショット</td>
+<td>各 <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> スナップショット</td>
 <td>外部ツール経由</td>
 <td><code>counters</code> 系全般</td>
 </tr>
 </tbody>
 </table>
-<p>それ以外のコマンドは <strong>kernel neighbor table</strong> や <strong><a href="../../glossary/#term-sai">SAI</a> 経由の SDK 状態</strong> を操作するもので CONFIG_DB は触らない。</p>
+<p>それ以外のコマンドは <strong>kernel neighbor table</strong> や <strong><a href="../../glossary/#term-sai">SAI</a> 経由の SDK 状態</strong> を操作するもので <a href="../../glossary/#term-config_db">CONFIG_DB</a> は触らない。</p>
 <!-- cli-mermaid -->
 <h3 id="_4">データフロー (手動作成)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29396,7 +29396,7 @@
 <h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="_8">典型的な利用シーン<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li>counters / ARP / FDB / BGP セッションの状態をリセットする。</li>
+<li>counters / <a href="../../glossary/#term-arp">ARP</a> / <a href="../../glossary/#term-fdb">FDB</a> / <a href="../../glossary/#term-bgp">BGP</a> セッションの状態をリセットする。</li>
 <li>障害解析前のベースラインクリア。</li>
 </ul>
 <h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
@@ -29411,7 +29411,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 14dca49aeb7d -->
+<!-- glossary-links-injected: cd64f6828d1b -->
 
 <div class="footnote">
 <hr />

@@ -28830,7 +28830,7 @@
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><a href="../../glossary/#term-crm">CRM</a> (Critical Resource Monitor) で table 枯渇</strong>: <a href="../../glossary/#term-fdb">FDB</a> / ROUTE / NEXTHOP / <a href="../../glossary/#term-acl">ACL</a> のいずれかが ASIC 容量を超過</li>
-<li><strong><a href="../../glossary/#term-sai">SAI</a> 属性の未対応</strong>: SDK バージョンが古く、orchagent が新属性を打って失敗</li>
+<li><strong><a href="../../glossary/#term-sai">SAI</a> 属性の未対応</strong>: SDK バージョンが古く、<a href="../../glossary/#term-orchagent">orchagent</a> が新属性を打って失敗</li>
 <li><strong>同名 object の重複作成 / 削除順序ミス</strong>: 古い参照を残したまま親 object を削除</li>
 <li><strong>メモリ / shared memory 不足</strong>: redis / <a href="../../glossary/#term-syncd">syncd</a> が OOM kill</li>
 <li><strong>HW 側の障害</strong>: ASIC reset、PCIe link down、Fabric link error</li>
@@ -28867,7 +28867,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;SAI_STATUS|sai_api|sai_create|sai_remove&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-100
 </span></code></pre></div>
 <ul>
-<li><code>SAI_STATUS_TABLE_FULL</code> → CRM 枯渇</li>
+<li><code>SAI_STATUS_TABLE_FULL</code> → <a href="../../glossary/#term-crm">CRM</a> 枯渇</li>
 <li><code>SAI_STATUS_NOT_SUPPORTED</code> → SDK 非対応属性</li>
 <li><code>SAI_STATUS_INVALID_OBJECT_ID</code> → object 削除順序の問題</li>
 </ul>
@@ -28884,8 +28884,8 @@
 </span></code></pre></div>
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CRM 枯渇: 容量設計を見直す（FDB aging を短く、ACL の <code>match_in_ports</code> を集約、route summarization）</li>
-<li>syncd / swss の単発復旧: <code>sudo systemctl restart swss</code> → syncd も連動再起動</li>
+<li><a href="../../glossary/#term-crm">CRM</a> 枯渇: 容量設計を見直す（<a href="../../glossary/#term-fdb">FDB</a> aging を短く、<a href="../../glossary/#term-acl">ACL</a> の <code>match_in_ports</code> を集約、route summarization）</li>
+<li><a href="../../glossary/#term-syncd">syncd</a> / swss の単発復旧: <code>sudo systemctl restart swss</code> → <a href="../../glossary/#term-syncd">syncd</a> も連動再起動</li>
 <li>重大障害（PCIe 等）の疑い時: techsupport を取得して保守問い合わせ</li>
 <li>SDK のバグの場合: 該当 image にバックポートされた fix を持つ build に更新</li>
 </ul>
@@ -28896,7 +28896,7 @@
 <li><a href="../../config-db/crm/">../config-db/crm.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 39cba99ab9f2 -->
+<!-- glossary-links-injected: 00adaba8804d -->
 
 <div class="footnote">
 <hr />
@@ -28905,7 +28905,7 @@
 <p>sonic-net/<a href="../../glossary/#term-sonic-sairedis">sonic-sairedis</a> @ 88bc51a — syncd 本体&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — orchagent&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ 4305596 — <a href="../../glossary/#term-orchagent">orchagent</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

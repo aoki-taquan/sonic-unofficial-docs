@@ -29221,7 +29221,7 @@
 <p><a href="../../glossary/#term-bgp">BGP</a> 状態表示用の CLI は <strong>3 系統に分かれている</strong>:</p>
 <ol>
 <li><code>show bgp ...</code> ... <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>BGP_DEVICE_GLOBAL</code> / <code>BGP_AGGREGATE_ADDRESS</code> を <code>show/bgp_cli.py</code> が直接 dump（<a href="../../glossary/#term-frr">FRR</a> を経由しない）。</li>
-<li><code>show ip bgp ...</code> / <code>show ipv6 bgp ...</code> ... <code>show/bgp_frr_v4.py</code> / <code>bgp_frr_v6.py</code> が <code>vtysh -c "show ip bgp ..."</code> を内部実行して FRR の出力を整形。</li>
+<li><code>show ip bgp ...</code> / <code>show ipv6 bgp ...</code> ... <code>show/bgp_frr_v4.py</code> / <code>bgp_frr_v6.py</code> が <code>vtysh -c "show ip bgp ..."</code> を内部実行して <a href="../../glossary/#term-frr">FRR</a> の出力を整形。</li>
 <li><code>show running-configuration bgp</code> ... <code>show/main.py</code> が <code>vtysh -c "show running-config"</code> を実行（別ページ「show running-config」を参照）。</li>
 </ol>
 <p><code>show bgp</code> グループは <code>show/main.py</code> 末尾で <code>cli.add_command(bgp_cli.BGP)</code> の形で登録される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>ため、cli.json の機械抽出には現れない。本ページではこの隠れたサブグループを含めて整理する。</p>
@@ -29237,7 +29237,7 @@
 <tbody>
 <tr>
 <td><code>show bgp device-global [-j\|--json]</code></td>
-<td>TSA / W-<a href="../../glossary/#term-ecmp">ECMP</a> の現在状態を CONFIG_DB から表示</td>
+<td>TSA / W-<a href="../../glossary/#term-ecmp">ECMP</a> の現在状態を <a href="../../glossary/#term-config_db">CONFIG_DB</a> から表示</td>
 </tr>
 <tr>
 <td><code>show bgp aggregate-address ipv4 [-j\|--json]</code></td>
@@ -29260,7 +29260,7 @@
 <tbody>
 <tr>
 <td><code>show ip bgp summary [-n NS] [--display NS_OR_ALL]</code></td>
-<td>IPv4 BGP セッションサマリ</td>
+<td>IPv4 <a href="../../glossary/#term-bgp">BGP</a> セッションサマリ</td>
 </tr>
 <tr>
 <td><code>show ip bgp neighbors [&lt;ipaddress&gt;] [routes\|advertised-routes\|received-routes] [-n NS]</code></td>
@@ -29276,7 +29276,7 @@
 </tr>
 <tr>
 <td><code>show ip bgp vrf &lt;vrf&gt; summary</code> / <code>neighbors ...</code> / <code>network ...</code></td>
-<td><a href="../../glossary/#term-vrf">VRF</a> 配下の BGP 情報（パラメータは default VRF と同じ）</td>
+<td><a href="../../glossary/#term-vrf">VRF</a> 配下の <a href="../../glossary/#term-bgp">BGP</a> 情報（パラメータは default <a href="../../glossary/#term-vrf">VRF</a> と同じ）</td>
 </tr>
 <tr>
 <td><code>show ipv6 bgp summary / neighbors / network / vrf ...</code></td>
@@ -29286,7 +29286,7 @@
 </table>
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="show-bgp-device-global-j"><code>show bgp device-global [-j]</code><a class="headerlink" href="#show-bgp-device-global-j" title="Permanent link">&para;</a></h3>
-<p><code>db.cfgdb.get_table(BGP_DEVICE_GLOBAL)['STATE']</code> を読み、<code>tsa_enabled</code> / <code>wcmp_enabled</code> を <code>to_str</code> で <code>Yes/No</code> 形式に変換して表示する。<code>--json</code> で <code>{"tsa": ..., "w-ecmp": ...}</code> の dict 出力。CONFIG_DB に未設定なら <code>No configuration is present in CONFIG DB</code> と表示して exit 0<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>db.cfgdb.get_table(BGP_DEVICE_GLOBAL)['STATE']</code> を読み、<code>tsa_enabled</code> / <code>wcmp_enabled</code> を <code>to_str</code> で <code>Yes/No</code> 形式に変換して表示する。<code>--json</code> で <code>{"tsa": ..., "w-ecmp": ...}</code> の dict 出力。<a href="../../glossary/#term-config_db">CONFIG_DB</a> に未設定なら <code>No configuration is present in CONFIG DB</code> と表示して exit 0<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/bgp_cli.py#L57-L130 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
@@ -29317,12 +29317,12 @@ excerpt: |
 <h3 id="show-ip-bgp-summary-n-display"><code>show ip bgp summary [-n] [--display]</code><a class="headerlink" href="#show-ip-bgp-summary-n-display" title="Permanent link">&para;</a></h3>
 <p><code>bgp_util.get_bgp_summary_from_all_bgp_instances(IPV4, namespace, display, vrf=default)</code> で各 namespace の <code>bgpd</code> から取得した summary を集約。multi-ASIC では <code>--display</code> が <code>frontend</code>（external 隣接）/ <code>all</code>（internal 隣接含む）を切り替える<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="show-ip-bgp-neighbors-ipaddress-info_type"><code>show ip bgp neighbors [&lt;ipaddress&gt;] [&lt;info_type&gt;]</code><a class="headerlink" href="#show-ip-bgp-neighbors-ipaddress-info_type" title="Permanent link">&para;</a></h3>
-<p>内部で <code>vtysh -c "show ip bgp vrf default neighbor [&lt;ip&gt; [routes|advertised-routes|received-routes]]"</code> を組み立てて FRR コンテナ内で実行する。引数の <code>&lt;info_type&gt;</code> は <code>&lt;ipaddress&gt;</code> を指定したときのみ意味を持つ。</p>
+<p>内部で <code>vtysh -c "show ip bgp vrf default neighbor [&lt;ip&gt; [routes|advertised-routes|received-routes]]"</code> を組み立てて <a href="../../glossary/#term-frr">FRR</a> コンテナ内で実行する。引数の <code>&lt;info_type&gt;</code> は <code>&lt;ipaddress&gt;</code> を指定したときのみ意味を持つ。</p>
 <p><code>&lt;ipaddress&gt;</code> を指定すると <code>bgp_util.get_namespace_for_bgp_neighbor</code> が当該 IP を持つ namespace を逆引きし、<code>-n</code> の値と矛盾していれば警告して <strong>実 namespace を優先</strong> する。</p>
 <h3 id="show-ip-bgp-network-ipprefix-info_type"><code>show ip bgp network [&lt;ip|prefix&gt;] [&lt;info_type&gt;]</code><a class="headerlink" href="#show-ip-bgp-network-ipprefix-info_type" title="Permanent link">&para;</a></h3>
 <p><code>info_type</code> は <code>bestpath</code> / <code>json</code> / <code>longer-prefixes</code> / <code>multipath</code> の Choice。<code>longer-prefixes</code> は <strong>prefix（<code>/</code> を含む）指定時のみ</strong> 有効で、IP 単独で渡すと <code>Abort</code> する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。chassis supervisor では <code>rexec all</code> 経由で全ライン カードで実行される。</p>
 <h3 id="show-ip-bgp-vrf-vrf-summaryneighborsnetwork"><code>show ip bgp vrf &lt;vrf&gt; {summary|neighbors|network}</code><a class="headerlink" href="#show-ip-bgp-vrf-vrf-summaryneighborsnetwork" title="Permanent link">&para;</a></h3>
-<p><code>vrf</code> を click context の親 group から取り出し、ヘルパに <code>vrf=&lt;name&gt;</code> を渡して default と同じパスを通す。VNet 名も VRF として扱う。</p>
+<p><code>vrf</code> を click context の親 group から取り出し、ヘルパに <code>vrf=&lt;name&gt;</code> を渡して default と同じパスを通す。VNet 名も <a href="../../glossary/#term-vrf">VRF</a> として扱う。</p>
 <h3 id="ipv6-show-ipv6-bgp">IPv6 (<code>show ipv6 bgp ...</code>)<a class="headerlink" href="#ipv6-show-ipv6-bgp" title="Permanent link">&para;</a></h3>
 <p><code>bgp_frr_v6.py</code> の構造は v4 と完全に対称で、内部で組み立てる FRR コマンドが <code>show ipv6 bgp ...</code> になるだけ。bestpath / longer-prefixes 等の制約も同じ。</p>
 <h2 id="_4">内部呼び出し<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -29436,7 +29436,7 @@ excerpt: |
 <li><a href="../config-bgp/">CLI: config bgp</a></li>
 <li><a href="../../config-db/bgp-neighbor/">CONFIG_DB: BGP_NEIGHBOR</a></li>
 </ul>
-<!-- glossary-links-injected: 498fa165fc57 -->
+<!-- glossary-links-injected: 8ae95ab15728 -->
 
 <div class="footnote">
 <hr />

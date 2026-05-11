@@ -28774,7 +28774,7 @@
 </span></code></pre></div>
 <p><strong>動作</strong>:</p>
 <ol>
-<li>CONFIG_DB に接続</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a> に接続</li>
 <li><code>get_table('SNMP_AGENT_ADDRESS_CONFIG')</code> でテーブルを取得（key は tuple <code>(ip, port, vrf)</code>）</li>
 <li>各 key を <code>[ip, port, vrf]</code> として <code>body</code> に追加</li>
 <li>tabulate で <code>ListenIP | ListenPort | ListenVrf</code> ヘッダ付きで表示</li>
@@ -28833,7 +28833,7 @@ excerpt: |
 </table>
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>key は <code>tuple</code> 形式 <code>(ip, port, vrf)</code> を直接 split せず、CONFIG_DB の table key parser がすでに分解した形を受ける。</li>
+<li>key は <code>tuple</code> 形式 <code>(ip, port, vrf)</code> を直接 split せず、<a href="../../glossary/#term-config_db">CONFIG_DB</a> の table key parser がすでに分解した形を受ける。</li>
 <li><code>invoke_without_command=True</code> で実装されているが、サブコマンドは存在しない（group として宣言されているのは将来拡張の名残）。</li>
 </ul>
 <!-- cli-mermaid -->
@@ -28857,7 +28857,7 @@ excerpt: |
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: ad6993c42691 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->
 
 <div class="footnote">
 <hr />

@@ -29075,7 +29075,7 @@
 </span></code></pre></div>
 <p>すべての <code>_high_threshold</code> は対応する <code>_low_threshold</code> より大きいことが must 制約で要求される。<code>PERCENTAGE</code> 系では値 &lt; 100 制約も付く。</p>
 <h2 id="_4">リソースクラス一覧<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>CRM が監視する論理リソース（<code>&lt;class&gt;_threshold_type</code> / <code>_high_threshold</code> / <code>_low_threshold</code> の 3 リーフが定義されているもの）:</p>
+<p><a href="../../glossary/#term-crm">CRM</a> が監視する論理リソース（<code>&lt;class&gt;_threshold_type</code> / <code>_high_threshold</code> / <code>_low_threshold</code> の 3 リーフが定義されているもの）:</p>
 <h3 id="acl">ACL 系<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h3>
 <p><code>acl_counter</code>, <code>acl_entry</code>, <code>acl_group</code>, <code>acl_table</code></p>
 <h3 id="fdb-neighbor-nexthop-route">FDB / Neighbor / Nexthop / Route 系<a class="headerlink" href="#fdb-neighbor-nexthop-route" title="Permanent link">&para;</a></h3>
@@ -29111,7 +29111,7 @@
 <td><code>uint32</code></td>
 <td></td>
 <td></td>
-<td>CRM ポーリング間隔（秒）</td>
+<td><a href="../../glossary/#term-crm">CRM</a> ポーリング間隔（秒）</td>
 </tr>
 <tr>
 <td><code>&lt;resource&gt;_threshold_type</code></td>
@@ -29139,7 +29139,7 @@
 </tr>
 </tbody>
 </table>
-<p>完全な leaf 一覧は YANG ソース（37 リソースクラス × 3 + <code>polling_interval</code> ＝ 約 112 リーフ）を直接参照のこと。</p>
+<p>完全な leaf 一覧は <a href="../../glossary/#term-yang">YANG</a> ソース（37 リソースクラス × 3 + <code>polling_interval</code> ＝ 約 112 リーフ）を直接参照のこと。</p>
 <h2 id="must">must / 制約<a class="headerlink" href="#must" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>&lt;resource&gt;_high_threshold &gt; &lt;resource&gt;_low_threshold</code> を全リソースに対して要求</li>
@@ -29162,7 +29162,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/crm/"><code>CRM</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/crm/"><code>CRM</code></a></li>
 <li>CLI: <code>crm config</code> / <code>crm show</code></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29185,7 +29185,7 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 9e946ae6784c -->
+<!-- glossary-links-injected: dd676255be82 -->
 
 <div class="footnote">
 <hr />

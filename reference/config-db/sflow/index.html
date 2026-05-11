@@ -29049,12 +29049,12 @@
 <p>最大 2 コレクタ (<code>max-elements 2</code>)。<code>collector_vrf = 'mgmt'</code> は <code>MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled = 'true'</code> のときのみ許容 (<code>must</code>)。</p>
 <h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>sflowmgrd</code> (<code>docker-sflow</code>): CONFIG_DB → <code>hsflowd</code> 設定生成</li>
+<li><code>sflowmgrd</code> (<code>docker-sflow</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <code>hsflowd</code> 設定生成</li>
 <li><code>hsflowd</code>: sampling / counter export 実体</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORT</code>、<code>PORTCHANNEL</code>、<code>MGMT_PORT</code>、<code>MGMT_VRF_CONFIG</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORT</code>、<code>PORTCHANNEL</code>、<code>MGMT_PORT</code>、<code>MGMT_VRF_CONFIG</code></li>
 <li>関連 CLI: <code>config sflow enable/disable/polling-interval/agent-id/collector/interface</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-sflow</code></li>
 </ul>
@@ -29062,7 +29062,7 @@
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-sflow/"><code>sonic-sflow</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-sflow/"><code>sonic-sflow</code></a></li>
 <li>CLI: <a href="../../cli/config-sflow/"><code>config sflow</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29094,13 +29094,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: 32758c44ab11 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-sflow.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-sflow.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

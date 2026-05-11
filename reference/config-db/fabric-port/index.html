@@ -28981,7 +28981,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>FABRIC_MONITOR</code>、<code>SYSTEM_PORT</code>、<code>CHASSIS_MODULE</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>FABRIC_MONITOR</code>、<code>SYSTEM_PORT</code>、<code>CHASSIS_MODULE</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-fabric-port</code>、<code>sonic-fabric-monitor</code></li>
 <li>関連 CLI: <code>config fabric</code>、<code>show fabric</code></li>
 </ul>
@@ -28989,7 +28989,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-fabric-port/"><code>sonic-fabric-port</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-fabric-port/"><code>sonic-fabric-port</code></a></li>
 <li>CLI: <code>config fabric</code></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28997,7 +28997,7 @@
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB ページ: <code>FABRIC_MONITOR</code>（本バッチで追加）</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a> ページ: <code>FABRIC_MONITOR</code>（本バッチで追加）</li>
 </ul>
 <!-- ops-hint -->
 <h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
@@ -29008,7 +29008,7 @@
 </ul>
 <h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li>isolate_status=True のままにすると VOQ chassis 内で fabric リンクが trunk から外れたまま戻らない。</li>
+<li>isolate_status=True のままにすると <a href="../../glossary/#term-voq">VOQ</a> chassis 内で fabric リンクが trunk から外れたまま戻らない。</li>
 </ul>
 <h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FABRIC_PORT|*&#39;</span>
@@ -29016,13 +29016,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d9fa2505af9c -->
+<!-- glossary-links-injected: e6a80f23a9fa -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-fabric-port.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fabric-port.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fabric-port.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-fabric-port.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fabric-port.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-fabric-port.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

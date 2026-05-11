@@ -29206,7 +29206,7 @@
 
 <h1 id="show-ip">show ip サブコマンド<a class="headerlink" href="#show-ip" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show ip</code> は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、<a href="../../glossary/#term-bgp">BGP</a> 関連表示を集約する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BGP 系は <strong>routing-stack の選択結果に応じて動的にロード</strong>される（<a href="../../glossary/#term-frr">FRR</a> / Quagga / supervisor 環境）。</p>
+<p><code>show ip</code> は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、<a href="../../glossary/#term-bgp">BGP</a> 関連表示を集約する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-bgp">BGP</a> 系は <strong>routing-stack の選択結果に応じて動的にロード</strong>される（<a href="../../glossary/#term-frr">FRR</a> / Quagga / supervisor 環境）。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># show/main.py L1567-L1581</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">if</span> <span class="n">routing_stack</span> <span class="o">==</span> <span class="s2">&quot;frr&quot;</span><span class="p">:</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">.bgp_frr_v4</span><span class="w"> </span><span class="kn">import</span> <span class="n">bgp</span>
@@ -29233,11 +29233,11 @@
 </tr>
 <tr>
 <td><code>show ip route [&lt;args&gt;]</code></td>
-<td>IPv4 RIB（FRR vtysh <code>show ip route</code>）</td>
+<td>IPv4 RIB（<a href="../../glossary/#term-frr">FRR</a> vtysh <code>show ip route</code>）</td>
 </tr>
 <tr>
 <td><code>show ip prefix-list [&lt;name&gt;]</code></td>
-<td>FRR の prefix-list 表示</td>
+<td><a href="../../glossary/#term-frr">FRR</a> の prefix-list 表示</td>
 </tr>
 <tr>
 <td><code>show ip protocol</code></td>
@@ -29249,7 +29249,7 @@
 </tr>
 <tr>
 <td><code>show ip bgp summary</code></td>
-<td>BGP セッション summary (FRR)</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> セッション summary (FRR)</td>
 </tr>
 <tr>
 <td><code>show ip bgp neighbors [&lt;ip&gt;] [&lt;info_type&gt;]</code></td>
@@ -29387,7 +29387,7 @@ FRR <code>vtysh -c 'show bgp ipv4 summary'</code> 風のコマンドを <code>su
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/interface/"><code>INTERFACE</code></a> / <a href="../../config-db/vlan-interface/"><code>VLAN_INTERFACE</code></a> / <a href="../../config-db/portchannel-interface/"><code>PORTCHANNEL_INTERFACE</code></a> / <a href="../../config-db/vlan-sub-interface/"><code>VLAN_SUB_INTERFACE</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/interface/"><code>INTERFACE</code></a> / <a href="../../config-db/vlan-interface/"><code>VLAN_INTERFACE</code></a> / <a href="../../config-db/portchannel-interface/"><code>PORTCHANNEL_INTERFACE</code></a> / <a href="../../config-db/vlan-sub-interface/"><code>VLAN_SUB_INTERFACE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29421,11 +29421,11 @@ FRR <code>vtysh -c 'show bgp ipv4 summary'</code> 風のコマンドを <code>su
 <h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>経路テーブル、BGP / OSPF 状態、static route 確認。</li>
-<li>VRF 別経路の確認。</li>
+<li><a href="../../glossary/#term-vrf">VRF</a> 別経路の確認。</li>
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>show ip route</code> は default VRF。VRF 切替は <code>show ip route vrf &lt;name&gt;</code>。</li>
+<li><code>show ip route</code> は default <a href="../../glossary/#term-vrf">VRF</a>。VRF 切替は <code>show ip route vrf &lt;name&gt;</code>。</li>
 <li>FRR と kernel routing table のズレ。<code>vtysh -c 'show ip route'</code> と <code>ip route</code> を比較。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29435,7 +29435,7 @@ FRR <code>vtysh -c 'show bgp ipv4 summary'</code> 風のコマンドを <code>su
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 63ea0bb417b1 -->
+<!-- glossary-links-injected: 1d7d649e3359 -->
 
 <div class="footnote">
 <hr />

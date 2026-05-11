@@ -28944,13 +28944,13 @@
 <td><code>default_bgp_status</code></td>
 <td>enum <code>up</code> / <code>down</code></td>
 <td><code>up</code></td>
-<td>起動時の BGP daemon 既定状態</td>
+<td>起動時の <a href="../../glossary/#term-bgp">BGP</a> daemon 既定状態</td>
 </tr>
 <tr>
 <td><code>docker_routing_config_mode</code></td>
 <td>string <code>separated</code>/<code>unified</code>/<code>split</code>/<code>split-unified</code></td>
 <td><code>unified</code></td>
-<td>FRR 設定生成モード</td>
+<td><a href="../../glossary/#term-frr">FRR</a> 設定生成モード</td>
 </tr>
 <tr>
 <td><code>hostname</code></td>
@@ -28980,7 +28980,7 @@
 <td><code>bgp_asn</code></td>
 <td>as-number</td>
 <td>-</td>
-<td>BGP 自律システム番号</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> 自律システム番号</td>
 </tr>
 <tr>
 <td><code>deployment_id</code></td>
@@ -29004,7 +29004,7 @@
 <td><code>frr_mgmt_framework_config</code></td>
 <td>boolean</td>
 <td><code>false</code></td>
-<td>true で <code>sonic-frr-mgmt-framework</code> が FRR 設定を担当、false で <code>bgpcfgd</code> がテンプレ展開</td>
+<td>true で <code>sonic-frr-mgmt-framework</code> が <a href="../../glossary/#term-frr">FRR</a> 設定を担当、false で <code>bgpcfgd</code> がテンプレ展開</td>
 </tr>
 <tr>
 <td><code>synchronous_mode</code></td>
@@ -29016,7 +29016,7 @@
 <td><code>yang_config_validation</code></td>
 <td>enum <code>enable</code>/<code>disable</code></td>
 <td><code>disable</code></td>
-<td><code>config_db.json</code> 直接ロード時の YANG 検証</td>
+<td><code>config_db.json</code> 直接ロード時の <a href="../../glossary/#term-yang">YANG</a> 検証</td>
 </tr>
 <tr>
 <td><code>cloudtype</code></td>
@@ -29124,7 +29124,7 @@
 <td><code>async_swss_rec</code></td>
 <td>enum <code>enabled</code>/<code>disabled</code></td>
 <td><code>disabled</code></td>
-<td>orchagent の swss.rec 非同期記録</td>
+<td><a href="../../glossary/#term-orchagent">orchagent</a> の swss.rec 非同期記録</td>
 </tr>
 <tr>
 <td><code>rack_mgmt_map</code></td>
@@ -29142,7 +29142,7 @@
 <td><code>create_only_config_db_buffers</code></td>
 <td>boolean</td>
 <td>-</td>
-<td>true で CONFIG_DB のバッファ設定通り、false で SAI から読んだ最大バッファを生成</td>
+<td>true で <a href="../../glossary/#term-config_db">CONFIG_DB</a> のバッファ設定通り、false で <a href="../../glossary/#term-sai">SAI</a> から読んだ最大バッファを生成</td>
 </tr>
 <tr>
 <td><code>supporting_bulk_counter_groups</code></td>
@@ -29208,7 +29208,7 @@
 <td><code>orch_northbond_route_zmq_enabled</code></td>
 <td>boolean</td>
 <td><code>false</code></td>
-<td>APPL_DB ROUTE テーブル ZMQ</td>
+<td><a href="../../glossary/#term-appl_db">APPL_DB</a> ROUTE テーブル ZMQ</td>
 </tr>
 <tr>
 <td><code>syslog_with_osversion</code></td>
@@ -29236,7 +29236,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>type</code> の取りうる値は YANG の正規表現で 30 種以上が列挙されている (<code>ToRRouter|LeafRouter|SpineChassisFrontendRouter|...|UpperRegionalHub</code>)。詳細は <code>sonic-device_metadata.yang</code> を直接参照<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>type</code> の取りうる値は <a href="../../glossary/#term-yang">YANG</a> の正規表現で 30 種以上が列挙されている (<code>ToRRouter|LeafRouter|SpineChassisFrontendRouter|...|UpperRegionalHub</code>)。詳細は <code>sonic-device_metadata.yang</code> を直接参照<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="bmc">フィールド一覧 (bmc)<a class="headerlink" href="#bmc" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29285,7 +29285,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB テーブル / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BGP_DEVICE_GLOBAL</code>（<code>bgp_asn</code> と独立した装置全体 BGP スイッチ）、<code>MGMT_PORT</code>（管理ポート設定）、<code>FEATURE</code>（docker on/off）</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_DEVICE_GLOBAL</code>（<code>bgp_asn</code> と独立した装置全体 BGP スイッチ）、<code>MGMT_PORT</code>（管理ポート設定）、<code>FEATURE</code>（docker on/off）</li>
 <li>関連 CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a>、<code>config hostname</code></li>
 <li>関連 YANG: <code>sonic-device_metadata</code>（<code>hostname</code>、<code>hwsku</code>、<code>mode-status</code> などの typedef を当該モジュール内で定義）</li>
 </ul>
@@ -29334,7 +29334,7 @@ reasoning: フィールド一覧と型・デフォルト・enum 値はこのモ�
 </ul>
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>hwsku</code> を実機と異なる値にすると <a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> 起動時に platform plugin が読み込まれず orchagent が起動しない。</li>
+<li><code>hwsku</code> を実機と異なる値にすると <a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> 起動時に platform plugin が読み込まれず <a href="../../glossary/#term-orchagent">orchagent</a> が起動しない。</li>
 <li><code>type</code> を誤ると generic_config_updater のチェックや MC-<a href="../../glossary/#term-lag">LAG</a> の role 判定で誤動作。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
@@ -29343,7 +29343,7 @@ reasoning: フィールド一覧と型・デフォルト・enum 値はこのモ�
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0a77174b97b9 -->
+<!-- glossary-links-injected: aa8ce067a4a1 -->
 
 <div class="footnote">
 <hr />

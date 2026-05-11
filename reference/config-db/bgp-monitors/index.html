@@ -28896,7 +28896,7 @@
 
 <h1 id="bgp_monitors">BGP_MONITORS テーブル<a class="headerlink" href="#bgp_monitors" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>BGP_MONITORS</code> テーブルは <a href="../../glossary/#term-bgp">BGP</a> Monitoring Protocol (BMP) ではなく、BGP モニター用の特殊隣接（route-monitor）を定義する。<code>bgpcfgd</code> がテンプレ展開して <code>bgpd</code> の <code>neighbor</code> 設定を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各エントリは BGP 隣接共通プロパティ (<code>sonic-bgp-cmn-neigh</code> grouping) を流用する。</p>
+<p><code>BGP_MONITORS</code> テーブルは <a href="../../glossary/#term-bgp">BGP</a> Monitoring Protocol (BMP) ではなく、<a href="../../glossary/#term-bgp">BGP</a> モニター用の特殊隣接（route-monitor）を定義する。<code>bgpcfgd</code> がテンプレ展開して <code>bgpd</code> の <code>neighbor</code> 設定を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。各エントリは <a href="../../glossary/#term-bgp">BGP</a> 隣接共通プロパティ (<code>sonic-bgp-cmn-neigh</code> grouping) を流用する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28978,14 +28978,14 @@
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_NEIGHBOR</code>、<code>BGP_GLOBALS</code></li>
-<li>関連 YANG: <code>sonic-bgp-monitor</code>、<code>sonic-bgp-common</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-monitor</code>、<code>sonic-bgp-common</code></li>
 <li>関連 CLI: <code>config bgp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-bgp-monitor/"><code>sonic-bgp-monitor</code></a> / <code>sonic-bgp-common</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-bgp-monitor/"><code>sonic-bgp-monitor</code></a> / <code>sonic-bgp-common</code></li>
 <li>CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29012,7 +29012,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3aa2902e22d8 -->
+<!-- glossary-links-injected: a1dd9e34d62e -->
 
 <div class="footnote">
 <hr />

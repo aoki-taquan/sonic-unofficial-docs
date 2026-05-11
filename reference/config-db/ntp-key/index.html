@@ -28896,7 +28896,7 @@
 
 <h1 id="ntp_key">NTP_KEY テーブル<a class="headerlink" href="#ntp_key" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>NTP 認証 (symmetric key) で使用する鍵を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に蓄積するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>ntp-config.service</code> (<code>/usr/share/sonic/templates/ntp.keys.j2</code> テンプレ展開) が CONFIG_DB を読み出し、chrony / ntpd の keyfile (<code>/etc/chrony/chrony.keys</code> 等) を生成する。<code>NTP_SERVER_LIST.key</code> から leafref で参照される。</p>
+<p>NTP 認証 (symmetric key) で使用する鍵を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に蓄積するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>ntp-config.service</code> (<code>/usr/share/sonic/templates/ntp.keys.j2</code> テンプレ展開) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み出し、chrony / ntpd の keyfile (<code>/etc/chrony/chrony.keys</code> 等) を生成する。<code>NTP_SERVER_LIST.key</code> から leafref で参照される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28958,7 +28958,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>ntp-config.service</code> (host): CONFIG_DB → <code>/etc/chrony/chrony.keys</code> (または <code>ntp.keys</code>)</li>
+<li><code>ntp-config.service</code> (host): <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <code>/etc/chrony/chrony.keys</code> (または <code>ntp.keys</code>)</li>
 <li>chrony / ntpd: keyfile から鍵を読み込み</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -28971,7 +28971,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-ntp/"><code>sonic-ntp</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-ntp/"><code>sonic-ntp</code></a></li>
 <li>CLI: <a href="../../cli/config-ntp/"><code>config ntp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28999,7 +28999,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 4b3b3fd0739b -->
 
 <div class="footnote">
 <hr />

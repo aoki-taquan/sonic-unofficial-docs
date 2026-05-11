@@ -28854,7 +28854,7 @@
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">}</span>
 </span></code></pre></div>
 <ol>
-<li>CONFIG_DB 側に <code>authentication</code> / <code>authorization</code> / <code>accounting</code> 各 row があれば、それで上記辞書を <code>update()</code> で上書き。</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a> 側に <code>authentication</code> / <code>authorization</code> / <code>accounting</code> 各 row があれば、それで上記辞書を <code>update()</code> で上書き。</li>
 <li><code>AAA &lt;function&gt; &lt;key&gt; &lt;value&gt;</code> の形式で 1 行ずつ <code>click.echo()</code> する。</li>
 </ol>
 <p>例:</p>
@@ -28863,7 +28863,7 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>AAA authorization login tacacs+
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>AAA accounting login tacacs+
 </span></code></pre></div>
-<p>CONFIG_DB に該当キーが無ければ <code>(default)</code> 表記のまま出る（実装上、上書きされなかった項目に対しては default 文字列がそのまま残る）。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> に該当キーが無ければ <code>(default)</code> 表記のまま出る（実装上、上書きされなかった項目に対しては default 文字列がそのまま残る）。</p>
 <h2 id="config_db">CONFIG_DB との接点<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28913,7 +28913,7 @@
 </ul>
 <h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>local</code> を fallback に含めないと AAA server 不達時に全員ログインできなくなる。</li>
+<li><code>local</code> を fallback に含めないと <a href="../../glossary/#term-aaa">AAA</a> server 不達時に全員ログインできなくなる。</li>
 <li>TACACS+ 共有鍵が syslog に出力されてしまう古いビルドあり。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -28923,7 +28923,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ec4ea08af950 -->
+<!-- glossary-links-injected: 5b719dba66a4 -->
 
 <div class="footnote">
 <hr />

@@ -28974,7 +28974,7 @@
 
 <h1 id="config-vrf">config vrf サブコマンド<a class="headerlink" href="#config-vrf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config vrf</code> は <a href="../../glossary/#term-vrf">VRF</a> (Virtual Routing and Forwarding) インスタンスの作成・削除と、L3 VNI マッピング（<a href="../../glossary/#term-vxlan">VXLAN</a> <a href="../../glossary/#term-evpn">EVPN</a> 用）を提供する。<code>config/main.py</code> 内に二重定義があり、上段（L6569）の <code>vrf</code> グループは古い定義で実際の <code>config</code> 直下に登録されているのは後段（L7673）の <code>@config.group(cls=clicommon.AbbreviationGroup, name='vrf')</code>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>VRF</code> テーブルに対する add/del と、<code>MGMT_VRF_CONFIG</code> に対する管理 VRF の有効化を扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config vrf</code> は <a href="../../glossary/#term-vrf">VRF</a> (Virtual Routing and Forwarding) インスタンスの作成・削除と、L3 VNI マッピング（<a href="../../glossary/#term-vxlan">VXLAN</a> <a href="../../glossary/#term-evpn">EVPN</a> 用）を提供する。<code>config/main.py</code> 内に二重定義があり、上段（L6569）の <code>vrf</code> グループは古い定義で実際の <code>config</code> 直下に登録されているのは後段（L7673）の <code>@config.group(cls=clicommon.AbbreviationGroup, name='vrf')</code>。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>VRF</code> テーブルに対する add/del と、<code>MGMT_VRF_CONFIG</code> に対する管理 <a href="../../glossary/#term-vrf">VRF</a> の有効化を扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ManagementVRF (<code>mgmt</code> / <code>management</code>) は通常データプレーン用の <code>Vrf&lt;name&gt;</code> とは扱いが異なり、<code>vrf_add_management_vrf</code> / <code>vrf_delete_management_vrf</code> が <code>MGMT_VRF_CONFIG</code> を直接操作する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -28987,7 +28987,7 @@
 <tbody>
 <tr>
 <td><code>config vrf add &lt;vrf_name&gt;</code></td>
-<td>データ VRF または management VRF を追加</td>
+<td>データ <a href="../../glossary/#term-vrf">VRF</a> または management VRF を追加</td>
 </tr>
 <tr>
 <td><code>config vrf del &lt;vrf_name&gt;</code></td>
@@ -29140,7 +29140,7 @@ excerpt: |
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/vrf/"><code>VRF</code></a> / <a href="../../config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code></a> / <a href="../../config-db/vxlan-tunnel-map/"><code>VXLAN_TUNNEL_MAP</code></a> / <a href="../../config-db/syslog-server/"><code>SYSLOG_SERVER</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/vrf/"><code>VRF</code></a> / <a href="../../config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code></a> / <a href="../../config-db/vxlan-tunnel-map/"><code>VXLAN_TUNNEL_MAP</code></a> / <a href="../../config-db/syslog-server/"><code>SYSLOG_SERVER</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29171,7 +29171,7 @@ excerpt: |
 <li><a href="../../config-db/mgmt-vrf-config/">CONFIG_DB: MGMT_VRF_CONFIG</a></li>
 <li><a href="../../yang/sonic-vrf/">YANG: sonic-vrf</a></li>
 </ul>
-<!-- glossary-links-injected: e9411ffbc438 -->
+<!-- glossary-links-injected: daea650a90b0 -->
 
 <div class="footnote">
 <hr />

@@ -28803,11 +28803,11 @@
 <ul>
 <li><code>sonic-installer install --dpu &lt;DPU0&gt; &lt;image.bin&gt;</code> が exit code 非 0</li>
 <li><a href="../../glossary/#term-dpu">DPU</a> が <code>installing</code> 状態で固まる</li>
-<li>再起動後 <code>show chassis modules</code> で DPU が DOWN</li>
+<li>再起動後 <code>show chassis modules</code> で <a href="../../glossary/#term-dpu">DPU</a> が DOWN</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>image の DPU platform 不一致</strong>: <a href="../../glossary/#term-npu">NPU</a> 用 image を DPU に流した</li>
+<li><strong>image の <a href="../../glossary/#term-dpu">DPU</a> platform 不一致</strong>: <a href="../../glossary/#term-npu">NPU</a> 用 image を DPU に流した</li>
 <li><strong>空き flash 不足</strong>: DPU の SSD 使用率 90%+</li>
 <li><strong>PCIe / chassisd 通信失敗</strong>: DPU 側 control plane に届かない</li>
 <li><strong>DPU が graceful shutdown できていない</strong></li>
@@ -28848,7 +28848,7 @@
 <li><a href="../smartswitch-dpu-graceful-shutdown-failure/">smartswitch-dpu-graceful-shutdown-failure.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 0999bc110a44 -->
+<!-- glossary-links-injected: f4b4be230bca -->
 
 <div class="footnote">
 <hr />

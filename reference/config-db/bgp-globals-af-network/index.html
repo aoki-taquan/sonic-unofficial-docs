@@ -28931,7 +28931,7 @@
 <tr>
 <td><code>vrf_name</code> (key)</td>
 <td>leafref → <code>BGP_GLOBALS.vrf_name</code></td>
-<td>所属 VRF</td>
+<td>所属 <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 <tr>
 <td><code>afi_safi</code> (key)</td>
@@ -28951,33 +28951,33 @@
 <tr>
 <td><code>backdoor</code></td>
 <td>boolean</td>
-<td>backdoor ルートとして指定 (RFC 1771 / FRR 拡張)</td>
+<td>backdoor ルートとして指定 (RFC 1771 / <a href="../../glossary/#term-frr">FRR</a> 拡張)</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>3 つのキーで一意。</li>
-<li>対応する VRF の BGP インスタンスが先に必要 (leafref)。</li>
-<li><code>network</code> で広告するためには、<strong>実際にそのプレフィックスが RIB (ルーティングテーブル) に存在する</strong> ことが BGP の動作上の前提（<code>BGP_GLOBALS.network_import_check = true</code> の場合）。</li>
+<li>対応する <a href="../../glossary/#term-vrf">VRF</a> の <a href="../../glossary/#term-bgp">BGP</a> インスタンスが先に必要 (leafref)。</li>
+<li><code>network</code> で広告するためには、<strong>実際にそのプレフィックスが RIB (ルーティングテーブル) に存在する</strong> ことが <a href="../../glossary/#term-bgp">BGP</a> の動作上の前提（<code>BGP_GLOBALS.network_import_check = true</code> の場合）。</li>
 <li><code>backdoor</code> は IGP と BGP の同一プレフィックスで IGP を優先させたいときに使う。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>frr-mgmt-framework</code>: vtysh の <code>network &lt;prefix&gt; [route-map &lt;name&gt;] [backdoor]</code> コマンドに変換</li>
-<li><code>bgpd</code> (FRR): network 経由で BGP UPDATE に該当プレフィックスを注入</li>
+<li><code>bgpd</code> (<a href="../../glossary/#term-frr">FRR</a>): network 経由で BGP UPDATE に該当プレフィックスを注入</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>, <code>BGP_GLOBALS_AF</code>, <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code>, <code>ROUTE_MAP_SET</code>, <code>STATIC_ROUTE</code></li>
-<li>関連 CLI: vtysh の <code>network &lt;prefix&gt;</code> (<code>frr-mgmt-framework</code> 経路では CONFIG_DB 投入)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_GLOBALS</code>, <code>BGP_GLOBALS_AF</code>, <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code>, <code>ROUTE_MAP_SET</code>, <code>STATIC_ROUTE</code></li>
+<li>関連 CLI: vtysh の <code>network &lt;prefix&gt;</code> (<code>frr-mgmt-framework</code> 経路では <a href="../../glossary/#term-config_db">CONFIG_DB</a> 投入)</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-global</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-bgp-global/"><code>sonic-bgp-global</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-bgp-global/"><code>sonic-bgp-global</code></a></li>
 <li>CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29007,13 +29007,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 07040282b44e -->
+<!-- glossary-links-injected: fcbe746ecf8b -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-bgp-global.yang</code> (<code>BGP_GLOBALS_AF_NETWORK</code> container). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-bgp-global.yang</code> (<code>BGP_GLOBALS_AF_NETWORK</code> container). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

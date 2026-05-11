@@ -28678,7 +28678,7 @@
 
 
 <h1 id="active-standby-dual-tor">Active-Standby Dual ToR 設定と運用<a class="headerlink" href="#active-standby-dual-tor" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../active-standby-dual-tor/">Active-Standby Dual ToR（概要ハブ）</a> の派生ページで、<strong>CONFIG_DB / APP_DB / STATE_DB スキーマと CLI、トラブルシューティング</strong> に絞って整理する。概念は <a href="../active-standby-dual-tor-concepts/">active-standby-dual-tor-concepts.md</a>、内部実装は <a href="../active-standby-dual-tor-internals/">active-standby-dual-tor-internals.md</a>、制限事項は <a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> を参照。</p>
+<p>このページは <a href="../active-standby-dual-tor/">Active-Standby Dual ToR（概要ハブ）</a> の派生ページで、<strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> スキーマと CLI、トラブルシューティング</strong> に絞って整理する。概念は <a href="../active-standby-dual-tor-concepts/">active-standby-dual-tor-concepts.md</a>、内部実装は <a href="../active-standby-dual-tor-internals/">active-standby-dual-tor-internals.md</a>、制限事項は <a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> を参照。</p>
 <h2 id="1-config_db">1. CONFIG_DB<a class="headerlink" href="#1-config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28694,13 +28694,13 @@
 <td><code>MUX_LINKMGR</code></td>
 <td><code>LINK_PROBE</code></td>
 <td><code>interval_v4</code> / <code>interval_v6</code> / <code>timeout</code> / <code>suspend_timer</code> / <code>positive_signal_count</code> / <code>negative_signal_count</code></td>
-<td>linkmgrd チューニング</td>
+<td><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> チューニング</td>
 </tr>
 <tr>
 <td><code>localhost MUX_DRIVER</code></td>
 <td>-</td>
 <td><code>i2c_retry_count</code></td>
-<td>ycabled の MUX 失敗判定回数</td>
+<td>ycabled の <a href="../../reference/glossary/#term-mux">MUX</a> 失敗判定回数</td>
 </tr>
 <tr>
 <td><code>MUX_CABLE</code></td>
@@ -28718,7 +28718,7 @@
 <td><code>TUNNEL</code></td>
 <td><code>MUX_TUNNEL</code></td>
 <td><code>tunnel_type=IPINIP</code>, <code>dst_ip</code>, <code>dscp_mode</code>, <code>encap_ecn_mode</code>, <code>ecn_mode</code>, <code>ttl_mode</code></td>
-<td>IPinIP tunnel 定義</td>
+<td><a href="../../reference/glossary/#term-ipinip">IPinIP</a> tunnel 定義</td>
 </tr>
 <tr>
 <td><code>DEVICE_METADATA</code></td>
@@ -28746,7 +28746,7 @@
 <tr>
 <td><code>APP_DB.HW_MUX_CABLE</code></td>
 <td><code>state ∈ {active, standby}</code></td>
-<td>orchagent ↔ ycabled</td>
+<td><a href="../../reference/glossary/#term-orchagent">orchagent</a> ↔ ycabled</td>
 </tr>
 <tr>
 <td><code>APP_DB.MUX_CABLE_COMMAND</code></td>
@@ -28883,6 +28883,8 @@
 <li><a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> — 制限事項</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: d61f8c399306 -->
+
 <div class="footnote">
 <hr />
 <ol>

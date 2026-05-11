@@ -28741,10 +28741,10 @@
 <li><strong>物理リンクの瞬断</strong> — FEC error / SFP 接触不良。<code>link-flapping.md</code> 参照</li>
 <li><strong>対向の <a href="../../glossary/#term-lldp">LLDP</a> tx-interval が長く、hold-time を超過</strong> — 既定 30 秒、hold-multiplier 4 が標準</li>
 <li><strong>lldp container の OOM / 再起動</strong> — <code>container-memory-limit-exceeded.md</code> 参照</li>
-<li><strong>中継機の LLDP BPDU フィルタ</strong> — DAC 直結ではなく Hub / Tap 経由で frame が間引かれる</li>
-<li><strong>port admin down/up の運用スクリプト</strong> — 監視スクリプトが LLDP-MED の都合で port toggle している</li>
+<li><strong>中継機の <a href="../../glossary/#term-lldp">LLDP</a> BPDU フィルタ</strong> — DAC 直結ではなく Hub / Tap 経由で frame が間引かれる</li>
+<li><strong>port admin down/up の運用スクリプト</strong> — 監視スクリプトが <a href="../../glossary/#term-lldp">LLDP</a>-MED の都合で port toggle している</li>
 </ol>
-<p>SONiC の LLDP は専用 <code>docker-lldp</code> コンテナ内で <code>lldpd</code> を実行し、<code>lldp_syncd</code> が隣接情報を APPL_DB に書き出す構成のため、container の再起動や supervisord の異常もコントロールプレーン側 flap の原因になる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の LLDP は専用 <code>docker-lldp</code> コンテナ内で <code>lldpd</code> を実行し、<code>lldp_syncd</code> が隣接情報を <a href="../../glossary/#term-appl_db">APPL_DB</a> に書き出す構成のため、container の再起動や supervisord の異常もコントロールプレーン側 flap の原因になる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../link-flapping/">link-flapping.md</a></li>
@@ -28752,7 +28752,7 @@
 <li><a href="../container-memory-limit-exceeded/">container-memory-limit-exceeded.md</a></li>
 <li><a href="../../cli/show-lldp/">../cli/show-lldp.md</a></li>
 </ul>
-<!-- glossary-links-injected: 512d9ffb4e12 -->
+<!-- glossary-links-injected: 0124332555fc -->
 
 <div class="footnote">
 <hr />

@@ -28974,7 +28974,7 @@
 
 <h1 id="nat_global-nat_pool">NAT_GLOBAL / NAT_POOL テーブル<a class="headerlink" href="#nat_global-nat_pool" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>NAT_GLOBAL</code> は <a href="../../glossary/#term-nat">NAT</a> feature の admin mode と timeout を保持するグローバル設定、<code>NAT_POOL</code> は dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。同じ <a href="../../glossary/#term-yang">YANG</a> モジュールには <code>NAT_BINDINGS</code>、<code>STATIC_NAT</code>、<code>STATIC_NAPT</code> も定義される。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側に <code>NAT_GLOBAL_TABLE</code> と pool 系 table の定数がある<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>NAT_GLOBAL</code> は <a href="../../glossary/#term-nat">NAT</a> feature の admin mode と timeout を保持するグローバル設定、<code>NAT_POOL</code> は dynamic <a href="../../glossary/#term-nat">NAT</a> で利用する変換アドレス / port 範囲の named pool を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。同じ <a href="../../glossary/#term-yang">YANG</a> モジュールには <code>NAT_BINDINGS</code>、<code>STATIC_NAT</code>、<code>STATIC_NAPT</code> も定義される。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側に <code>NAT_GLOBAL_TABLE</code> と pool 系 table の定数がある<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28998,7 +28998,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>NAT_POOL|&lt;name&gt;
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>NAT_BINDINGS|&lt;name&gt;
 </span></code></pre></div>
-<p><code>NAT_GLOBAL</code> は YANG 上 <code>container Values</code> を持つ singleton 的な形。<code>NAT_POOL</code> と <code>NAT_BINDINGS</code> は <code>name</code> が key。</p>
+<p><code>NAT_GLOBAL</code> は <a href="../../glossary/#term-yang">YANG</a> 上 <code>container Values</code> を持つ singleton 的な形。<code>NAT_POOL</code> と <code>NAT_BINDINGS</code> は <code>name</code> が key。</p>
 <h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="nat_global">NAT_GLOBAL<a class="headerlink" href="#nat_global" title="Permanent link">&para;</a></h3>
 <table>
@@ -29015,7 +29015,7 @@
 <td><code>admin_mode</code></td>
 <td><code>admin_mode</code></td>
 <td><code>disabled</code></td>
-<td>NAT feature の有効 / 無効</td>
+<td><a href="../../glossary/#term-nat">NAT</a> feature の有効 / 無効</td>
 </tr>
 <tr>
 <td><code>nat_timeout</code></td>
@@ -29103,14 +29103,14 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>natmgrd</code>: CONFIG_DB の NAT 設定を読み、APPL_DB NAT table 群へ反映する。</li>
-<li><code>orchagent</code> / <code>NatOrch</code>: APPL_DB の NAT global / pool / binding / static entry を消費し、<a href="../../glossary/#term-sai">SAI</a> NAT object や kernel / ASIC 設定へ反映する。</li>
+<li><code>natmgrd</code>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> の NAT 設定を読み、<a href="../../glossary/#term-appl_db">APPL_DB</a> NAT table 群へ反映する。</li>
+<li><code>orchagent</code> / <code>NatOrch</code>: <a href="../../glossary/#term-appl_db">APPL_DB</a> の NAT global / pool / binding / static entry を消費し、<a href="../../glossary/#term-sai">SAI</a> NAT object や kernel / ASIC 設定へ反映する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>STATIC_NAT</code>、<code>STATIC_NAPT</code>、<code>NAT_BINDINGS</code>、<code>ACL_TABLE</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>STATIC_NAT</code>、<code>STATIC_NAPT</code>、<code>NAT_BINDINGS</code>、<code>ACL_TABLE</code></li>
 <li>関連 CLI: <code>config nat</code></li>
-<li>関連 YANG: <code>sonic-nat</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-nat</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -29147,7 +29147,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 871223ce15ad -->
+<!-- glossary-links-injected: a6fe2efe021a -->
 
 <div class="footnote">
 <hr />

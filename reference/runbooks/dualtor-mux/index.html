@@ -28852,7 +28852,7 @@
 </span></code></pre></div>
 <ul>
 <li>期待: <code>state: active</code> (admin side) / <code>linkmgrd</code> view と HW view が一致</li>
-<li>異常: <code>linkmgrd: standby</code>, <code>hw: active</code> などの不一致 → linkmgrd が peer と整合できていない</li>
+<li>異常: <code>linkmgrd: standby</code>, <code>hw: active</code> などの不一致 → <a href="../../glossary/#term-linkmgrd">linkmgrd</a> が peer と整合できていない</li>
 </ul>
 <h3 id="2-linkmgrd-muxcabled-xcvrd">2. linkmgrd / muxcabled / xcvrd<a class="headerlink" href="#2-linkmgrd-muxcabled-xcvrd" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;mux|linkmgrd|pmon&quot;</span>
@@ -28879,7 +28879,7 @@
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>一時的に手動切替: <code>sudo config muxcable mode standby &lt;port&gt;</code> → 再度 <code>active</code></li>
-<li>linkmgrd を再起動: <code>sudo docker restart mux</code>（または platform 別 service）</li>
+<li><a href="../../glossary/#term-linkmgrd">linkmgrd</a> を再起動: <code>sudo docker restart mux</code>（または platform 別 service）</li>
 <li>LinkProber heartbeat 経路を Loopback0 で確認・修正</li>
 <li>不整合の根本対策として <code>config reload -y</code> で全テーブル再注入</li>
 <li>firmware up-to-date 化 (<code>config muxcable firmware download/activate</code>)</li>
@@ -28893,7 +28893,7 @@
 <li><a href="../../config-db/mux-cable/">../config-db/mux-cable.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: eac8b54205e6 -->
+<!-- glossary-links-injected: 269bb3f69ef2 -->
 
 <div class="footnote">
 <hr />

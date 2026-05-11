@@ -28910,7 +28910,7 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC の <code>debug</code> および <code>undebug</code> コマンドは、<code>config</code> / <code>show</code> とは別の独立した Click root として実装される (<code>debug = debug.main:cli</code>、<code>undebug = undebug.main:cli</code>)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>対象は主に <strong><a href="../../glossary/#term-frr">FRR</a> (<a href="../../glossary/#term-bgp">BGP</a> / <a href="../../glossary/#term-zebra">zebra</a>)</strong> と <strong>STP (<code>stpctl</code>)</strong> の動的デバッグスイッチで、いずれも実体は <code>vtysh</code> または <code>stpctl</code> のラッパー。<a href="../../glossary/#term-config_db">CONFIG_DB</a> は触らず、対象プロセスの runtime ログレベルや trace を切り替えるだけ。<code>undebug</code> は <code>debug</code> のミラーで、各 <code>debug ...</code> コマンドに対応する <code>no debug ...</code> を vtysh に投げる。</p>
-<p><code>debug.main</code> は <strong>import 時に <code>sudo vtysh -c 'show version'</code> を実行して FRR か Quagga かを判定</strong>し、コマンドツリーを動的に切り替える点が特徴的<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。本ドキュメントでは現役の FRR ブランチを中心に記述する。</p>
+<p><code>debug.main</code> は <strong>import 時に <code>sudo vtysh -c 'show version'</code> を実行して <a href="../../glossary/#term-frr">FRR</a> か Quagga かを判定</strong>し、コマンドツリーを動的に切り替える点が特徴的<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。本ドキュメントでは現役の <a href="../../glossary/#term-frr">FRR</a> ブランチを中心に記述する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="debug-bgp-frr"><code>debug bgp</code> (FRR)<a class="headerlink" href="#debug-bgp-frr" title="Permanent link">&para;</a></h3>
 <table>
@@ -29077,7 +29077,7 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: dbd756d1e010 -->
+<!-- glossary-links-injected: 31afda1b3222 -->
 
 <div class="footnote">
 <hr />

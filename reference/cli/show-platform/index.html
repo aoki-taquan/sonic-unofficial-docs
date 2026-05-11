@@ -29122,7 +29122,7 @@
 <li><code>get_chassis_info()</code> で Serial / Model / Hardware Revision を取得</li>
 <li><code>--json</code> 指定時は両者をマージして JSON 出力</li>
 </ul>
-<p>CONFIG_DB は触らず、<code>/host/machine.conf</code> 由来の environment variables や <code>device_info</code> で参照される <code>platform.json</code> / <code>hwsku.json</code> を経由する。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> は触らず、<code>/host/machine.conf</code> 由来の environment variables や <code>device_info</code> で参照される <code>platform.json</code> / <code>hwsku.json</code> を経由する。</p>
 <h3 id="show-platform-syseeprom"><code>show platform syseeprom</code><a class="headerlink" href="#show-platform-syseeprom" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
 <code>sudo decode-syseeprom -d</code> を実行して、ONIE の TLV フォーマット syseeprom を表示する。</p>
@@ -29145,7 +29145,7 @@
 <code>sonic_platform.platform.Platform().get_chassis().get_bmc()</code> を取得し、<code>bmc.get_eeprom()</code> 結果と <code>bmc.get_version()</code> を表示。プラットフォーム実装が BMC をサポートしていなければ "BMC is not available on this platform" を出す。</p>
 <h3 id="show-platform-leakage-status"><code>show platform leakage status</code><a class="headerlink" href="#show-platform-leakage-status" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-<code>leakageshow</code> コマンドを起動。<code>leakageshow</code> は STATE_DB の <code>LIQUID_COOLING_LEAKAGE</code> 系テーブルを読み出して整形表示するユーティリティ。液冷モデル限定。</p>
+<code>leakageshow</code> コマンドを起動。<code>leakageshow</code> は <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>LIQUID_COOLING_LEAKAGE</code> 系テーブルを読み出して整形表示するユーティリティ。液冷モデル限定。</p>
 <h2 id="state_db">関連する STATE_DB / 一次情報<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29168,7 +29168,7 @@
 </tr>
 <tr>
 <td>PSU 状態</td>
-<td>STATE_DB <code>PSU_INFO</code> (psud)</td>
+<td><a href="../../glossary/#term-state_db">STATE_DB</a> <code>PSU_INFO</code> (psud)</td>
 <td><code>psustatus</code></td>
 </tr>
 <tr>
@@ -29254,7 +29254,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: a13f05370620 -->
 
 <div class="footnote">
 <hr />

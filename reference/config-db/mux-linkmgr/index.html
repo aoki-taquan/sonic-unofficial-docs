@@ -29149,18 +29149,18 @@
 </table>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>全フィールドは YANG 上 mandatory ではなく、未指定なら <code>linkmgrd</code> の組み込み既定が使われる</li>
+<li>全フィールドは <a href="../../glossary/#term-yang">YANG</a> 上 mandatory ではなく、未指定なら <code>linkmgrd</code> の組み込み既定が使われる</li>
 <li>container 名 <code>MUX_LINKMGR</code>、内部 container 名は上記 4 つに固定</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>linkmgrd</code> (<code>docker-mux</code> 内): CONFIG_DB → 起動時 / <code>notification</code> 経由で動的反映</li>
+<li><code>linkmgrd</code> (<code>docker-mux</code> 内): <a href="../../glossary/#term-config_db">CONFIG_DB</a> → 起動時 / <code>notification</code> 経由で動的反映</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <a href="../mux-cable/"><code>MUX_CABLE</code></a>, <a href="../peer-switch/"><code>PEER_SWITCH</code></a></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../mux-cable/"><code>MUX_CABLE</code></a>, <a href="../peer-switch/"><code>PEER_SWITCH</code></a></li>
 <li>関連 CLI: <code>config mux</code> 系 (一部のみ。多くは init_cfg / CONFIG_DB 直接)</li>
-<li>関連 YANG: <code>sonic-mux-linkmgr</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mux-linkmgr</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -29186,7 +29186,7 @@
 </ul>
 <h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li>interval を短くしすぎて linkmgrd が CPU を消費し ToR の Mux state oscillation を誘発する。</li>
+<li>interval を短くしすぎて <a href="../../glossary/#term-linkmgrd">linkmgrd</a> が CPU を消費し ToR の Mux state oscillation を誘発する。</li>
 </ul>
 <h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;MUX_LINKMGR|*&#39;</span>
@@ -29194,7 +29194,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7bd19c5684ed -->
+<!-- glossary-links-injected: be53736dfd16 -->
 
 <div class="footnote">
 <hr />

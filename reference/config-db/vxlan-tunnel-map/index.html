@@ -28874,7 +28874,7 @@
 
 <h1 id="vxlan_tunnel_map">VXLAN_TUNNEL_MAP テーブル<a class="headerlink" href="#vxlan_tunnel_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-vxlan">VXLAN</a> tunnel に対し、ローカル <a href="../../glossary/#term-vlan">VLAN</a> と VNI (VXLAN Network Identifier) のマッピングを与える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>VxlanTunnelMapOrch</code> がこのテーブルを購読し、<a href="../../glossary/#term-sai">SAI</a> tunnel-map (<code>SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI</code> / <code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID</code>) のエントリを生成する。</p>
+<p><a href="../../glossary/#term-vxlan">VXLAN</a> tunnel に対し、ローカル <a href="../../glossary/#term-vlan">VLAN</a> と VNI (<a href="../../glossary/#term-vxlan">VXLAN</a> Network Identifier) のマッピングを与える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>VxlanTunnelMapOrch</code> がこのテーブルを購読し、<a href="../../glossary/#term-sai">SAI</a> tunnel-map (<code>SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI</code> / <code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID</code>) のエントリを生成する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28924,7 +28924,7 @@
 <td><code>vlan</code></td>
 <td>string <code>Vlan&lt;id&gt;</code> (パターン)</td>
 <td>✅</td>
-<td>対応 VLAN</td>
+<td>対応 <a href="../../glossary/#term-vlan">VLAN</a></td>
 </tr>
 <tr>
 <td><code>vni</code></td>
@@ -28937,8 +28937,8 @@
 <p>備考: <code>vlan</code> 本来は <code>VLAN.name</code> への leafref が望ましいが、libyang の back-link 問題により暫定的に文字列パターン化されている (<code>sonic-vxlan.yang</code> のコメント参照)。</p>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> <code>VxlanTunnelMapOrch</code>: SAI tunnel-map エントリ生成</li>
-<li><a href="../../glossary/#term-evpn">EVPN</a> フローでは <code>VxlanMgr</code> がここから VLAN-VNI を引き、type-2/3 経路と紐付ける</li>
+<li><code>orchagent</code> <code>VxlanTunnelMapOrch</code>: <a href="../../glossary/#term-sai">SAI</a> tunnel-map エントリ生成</li>
+<li><a href="../../glossary/#term-evpn">EVPN</a> フローでは <code>VxlanMgr</code> がここから <a href="../../glossary/#term-vlan">VLAN</a>-VNI を引き、type-2/3 経路と紐付ける</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28950,7 +28950,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28981,13 +28981,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4bb5ab6e6a64 -->
+<!-- glossary-links-injected: 7111763d84c2 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-vxlan.yang</code> 内 <code>VXLAN_TUNNEL_MAP</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang#L66">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang#L66</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vxlan.yang</code> 内 <code>VXLAN_TUNNEL_MAP</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang#L66">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang#L66</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

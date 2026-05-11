@@ -28959,13 +28959,13 @@
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PREFIX_LIST</code> / <code>PREFIX_NOSEQ_LIST</code>、<a href="../community-set/"><code>COMMUNITY_SET</code></a>、<a href="../as-path-set/"><code>AS_PATH_SET</code></a>、<code>ROUTE_MAP</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-routing-policy-sets</code></li>
-<li>関連 CLI: なし（<code>config_db.json</code> 投入。FRR 側の <code>ip prefix-list</code> 等に最終的に変換される）</li>
+<li>関連 CLI: なし（<code>config_db.json</code> 投入。<a href="../../glossary/#term-frr">FRR</a> 側の <code>ip prefix-list</code> 等に最終的に変換される）</li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <code>sonic-routing-policy-sets</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-routing-policy-sets</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28979,7 +28979,7 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>IPv6 entry を IPv4 set に混在させて FRR が syntax エラーで読み込めない。</li>
+<li>IPv6 entry を IPv4 set に混在させて <a href="../../glossary/#term-frr">FRR</a> が syntax エラーで読み込めない。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PREFIX_SET|*&#39;</span>
@@ -28987,13 +28987,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f7bde22b7495 -->
+<!-- glossary-links-injected: 5e2adc70a663 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-routing-policy-sets.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-routing-policy-sets.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

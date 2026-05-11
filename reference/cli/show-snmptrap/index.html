@@ -28764,7 +28764,7 @@
 <tbody>
 <tr>
 <td><code>show snmptrap</code></td>
-<td>SNMP Trap 送信先設定の表示</td>
+<td><a href="../../glossary/#term-snmp">SNMP</a> Trap 送信先設定の表示</td>
 </tr>
 </tbody>
 </table>
@@ -28774,8 +28774,8 @@
 </span></code></pre></div>
 <p><strong>動作</strong>:</p>
 <ol>
-<li>CONFIG_DB に接続し、<code>get_table('SNMP_TRAP_CONFIG')</code> でテーブルを取得</li>
-<li>テーブルの key（<code>v1TrapDest</code> / <code>v2TrapDest</code> / <code>v3TrapDest</code>）から SNMP バージョン番号を決定</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a> に接続し、<code>get_table('SNMP_TRAP_CONFIG')</code> でテーブルを取得</li>
+<li>テーブルの key（<code>v1TrapDest</code> / <code>v2TrapDest</code> / <code>v3TrapDest</code>）から <a href="../../glossary/#term-snmp">SNMP</a> バージョン番号を決定</li>
 <li>各エントリの <code>DestIp</code>, <code>DestPort</code>, <code>vrf</code>, <code>Community</code> を読み出し、tabulate で出力</li>
 </ol>
 <p>表示ヘッダ:</p>
@@ -28860,12 +28860,12 @@ excerpt: |
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/snmp/"><code>SNMP_TRAP_CONFIG</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/snmp/"><code>SNMP_TRAP_CONFIG</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 3985b6dcd352 -->
+<!-- glossary-links-injected: 33ad7ce5b321 -->
 
 <div class="footnote">
 <hr />

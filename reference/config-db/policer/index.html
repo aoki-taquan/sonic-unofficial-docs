@@ -28922,7 +28922,7 @@
 <p><code>POLICER</code> 単独の YANG モジュールは <code>sonic-yang-models</code> に存在しない。<code>COPP_GROUP</code> (sonic-copp.yang)、<code>ACL_RULE</code> (sonic-acl.yang)、<code>PORT_STORM_CONTROL</code> (sonic-storm-control.yang)、<code>SCHEDULER</code> (sonic-scheduler.yang)、<code>MIRROR_SESSION</code> (sonic-mirror-session.yang) 等から「policer 名」あるいは個別フィールドが参照される形でのみ規定される。本ページは <code>policerorch.cpp</code> の実装を一次情報とする。</p>
 </div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-sai">SAI</a> policer (sai_policer) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> から作成・更新するためのテーブル。<code>policerorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が CONFIG_DB の <code>POLICER</code> を読み出し、CIR/PIR の更新は SET、その他属性は create-only として扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実利用は <a href="../../glossary/#term-acl">ACL</a> ルール、COPP、ストーム制御、ミラーセッション、ポートスケジューラ等の指し先として参照される。</p>
+<p><a href="../../glossary/#term-sai">SAI</a> policer (sai_policer) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> から作成・更新するためのテーブル。<code>policerorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>POLICER</code> を読み出し、CIR/PIR の更新は SET、その他属性は create-only として扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実利用は <a href="../../glossary/#term-acl">ACL</a> ルール、COPP、ストーム制御、ミラーセッション、ポートスケジューラ等の指し先として参照される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28941,16 +28941,16 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>POLICER|&lt;name&gt;
 </span></code></pre></div>
 <ul>
-<li><code>&lt;name&gt;</code>: 任意の文字列（COPP / ACL の policer 名と一致させる）</li>
+<li><code>&lt;name&gt;</code>: 任意の文字列（COPP / <a href="../../glossary/#term-acl">ACL</a> の policer 名と一致させる）</li>
 </ul>
 <h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p><code>policerorch.cpp</code> の field 定数および参照される SAI 属性は以下:</p>
+<p><code>policerorch.cpp</code> の field 定数および参照される <a href="../../glossary/#term-sai">SAI</a> 属性は以下:</p>
 <table>
 <thead>
 <tr>
 <th>フィールド</th>
 <th>値</th>
-<th>SAI 属性 / 説明</th>
+<th><a href="../../glossary/#term-sai">SAI</a> 属性 / 説明</th>
 </tr>
 </thead>
 <tbody>
@@ -29014,7 +29014,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>policerorch</code> (orchagent): SAI policer オブジェクトを作成・更新</li>
+<li><code>policerorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>): SAI policer オブジェクトを作成・更新</li>
 </ul>
 <h2 id="_6">利用先（参照テーブル例）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29025,8 +29025,8 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>ACL_RULE</code>、<code>COPP_GROUP</code>、<code>PORT_STORM_CONTROL</code>、<code>MIRROR_SESSION</code></li>
-<li>関連 <a href="../../glossary/#term-yang">YANG</a>: 直接の YANG モジュールは無し（参照側 YANG が個別フィールドを持つ）</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>ACL_RULE</code>、<code>COPP_GROUP</code>、<code>PORT_STORM_CONTROL</code>、<code>MIRROR_SESSION</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: 直接の <a href="../../glossary/#term-yang">YANG</a> モジュールは無し（参照側 <a href="../../glossary/#term-yang">YANG</a> が個別フィールドを持つ）</li>
 <li>関連 CLI: なし（<code>config_db.json</code> で投入）</li>
 </ul>
 <!-- ref-triangle:start -->
@@ -29064,7 +29064,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 279debef0278 -->
+<!-- glossary-links-injected: 849eee828f8c -->
 
 <div class="footnote">
 <hr />

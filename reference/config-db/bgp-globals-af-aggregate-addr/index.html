@@ -28896,9 +28896,9 @@
 
 <h1 id="bgp_globals_af_aggregate_addr">BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル<a class="headerlink" href="#bgp_globals_af_aggregate_addr" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong><a href="../../glossary/#term-vrf">VRF</a> × アドレスファミリ単位の <a href="../../glossary/#term-bgp">BGP</a> aggregate-address 設定</strong> を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>frr-mgmt-framework</code> (DEVICE_METADATA の <code>frr_mgmt_framework_config = true</code> 経路) が CONFIG_DB から読み、<a href="../../glossary/#term-frr">FRR</a> <code>bgpd</code> の <code>router bgp &lt;as&gt;</code> → <code>address-family &lt;afi&gt; &lt;safi&gt;</code> → <code>aggregate-address &lt;prefix&gt;</code> 系コマンドに反映する。</p>
+<p><strong><a href="../../glossary/#term-vrf">VRF</a> × アドレスファミリ単位の <a href="../../glossary/#term-bgp">BGP</a> aggregate-address 設定</strong> を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>frr-mgmt-framework</code> (DEVICE_METADATA の <code>frr_mgmt_framework_config = true</code> 経路) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読み、<a href="../../glossary/#term-frr">FRR</a> <code>bgpd</code> の <code>router bgp &lt;as&gt;</code> → <code>address-family &lt;afi&gt; &lt;safi&gt;</code> → <code>aggregate-address &lt;prefix&gt;</code> 系コマンドに反映する。</p>
 <p><code>BGP_GLOBALS_AF</code> で AF レベルの設定（multipath、route distance、L2VPN advertise-all-vni 等）を行い、その AF 配下の <strong>aggregate prefix</strong> をこのテーブルで列挙する。</p>
-<p>なお、似た名前の <code>BGP_AGGREGATE_ADDRESS</code> テーブル (<a href="../../glossary/#term-yang">YANG</a> <code>sonic-bgp-aggregate-address</code>) は <strong>AF/VRF を持たないフラットな</strong> aggregate 定義で、別経路 (<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> テンプレ) で利用される。両者は実装パスが異なる点に注意。</p>
+<p>なお、似た名前の <code>BGP_AGGREGATE_ADDRESS</code> テーブル (<a href="../../glossary/#term-yang">YANG</a> <code>sonic-bgp-aggregate-address</code>) は <strong>AF/<a href="../../glossary/#term-vrf">VRF</a> を持たないフラットな</strong> aggregate 定義で、別経路 (<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> テンプレ) で利用される。両者は実装パスが異なる点に注意。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28932,7 +28932,7 @@
 <tr>
 <td><code>vrf_name</code> (key)</td>
 <td>leafref → <code>BGP_GLOBALS.vrf_name</code></td>
-<td>所属 VRF</td>
+<td>所属 <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 <tr>
 <td><code>afi_safi</code> (key)</td>
@@ -28964,26 +28964,26 @@
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>3 つのキー (<code>vrf_name</code> / <code>afi_safi</code> / <code>ip_prefix</code>) で一意。</li>
-<li><code>vrf_name</code> は <code>BGP_GLOBALS_LIST.vrf_name</code> への leafref のため、対応する VRF の BGP インスタンスが先に存在している必要がある。</li>
-<li><code>summary_only = true</code> を指定すると aggregate に含まれる more-specific ルートは BGP UPDATE から抑制される（FRR の <code>aggregate-address ... summary-only</code> 相当）。</li>
+<li><code>vrf_name</code> は <code>BGP_GLOBALS_LIST.vrf_name</code> への leafref のため、対応する VRF の <a href="../../glossary/#term-bgp">BGP</a> インスタンスが先に存在している必要がある。</li>
+<li><code>summary_only = true</code> を指定すると aggregate に含まれる more-specific ルートは <a href="../../glossary/#term-bgp">BGP</a> UPDATE から抑制される（<a href="../../glossary/#term-frr">FRR</a> の <code>aggregate-address ... summary-only</code> 相当）。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>frr-mgmt-framework</code>: 本テーブルを vtysh の <code>aggregate-address</code> コマンドに変換し <code>bgpd</code> に投入</li>
-<li><code>bgpd</code> (FRR): RIB から該当プレフィックス配下のルートを集約し、設定に応じて抑制・AS_SET 生成・route-map 適用を行う</li>
+<li><code>bgpd</code> (<a href="../../glossary/#term-frr">FRR</a>): RIB から該当プレフィックス配下のルートを集約し、設定に応じて抑制・AS_SET 生成・route-map 適用を行う</li>
 </ul>
 <p><code>bgpcfgd</code> (テンプレベース) ではこのテーブルではなく <code>BGP_AGGREGATE_ADDRESS</code> を使う。設定経路を明確にするため、両方を併用するのは避ける。</p>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>, <code>BGP_GLOBALS_AF</code>, <code>BGP_GLOBALS_AF_NETWORK</code>, <code>BGP_AGGREGATE_ADDRESS</code>, <code>ROUTE_MAP_SET</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_GLOBALS</code>, <code>BGP_GLOBALS_AF</code>, <code>BGP_GLOBALS_AF_NETWORK</code>, <code>BGP_AGGREGATE_ADDRESS</code>, <code>ROUTE_MAP_SET</code></li>
 <li>関連 CLI: <code>config bgp</code> (<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> 経由)、vtysh の <code>aggregate-address</code> (直接)</li>
-<li>関連 YANG: <code>sonic-bgp-global</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-global</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-bgp-global/"><code>sonic-bgp-global</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-bgp-global/"><code>sonic-bgp-global</code></a></li>
 <li>CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29014,7 +29014,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ded86831ff84 -->
+<!-- glossary-links-injected: fcbe746ecf8b -->
 
 <div class="footnote">
 <hr />

@@ -28724,7 +28724,7 @@
 <h1 id="l3-scaling-performance">L3 Scaling と Performance 強化 概念<a class="headerlink" href="#l3-scaling-performance" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a> の派生で、<strong>スケール目標・性能目標・改善対象の全体マップ</strong> に絞る。設定 / CLI は <a href="../l3-scaling-and-performance-enhancements-operations/">l3-scaling-and-performance-enhancements-operations.md</a>、内部実装は <a href="../l3-scaling-and-performance-enhancements-internals/">l3-scaling-and-performance-enhancements-internals.md</a>、制限事項と乖離は <a href="../l3-scaling-and-performance-enhancements-limitations/">l3-scaling-and-performance-enhancements-limitations.md</a> を参照。</p>
 <h2 id="1">1. なぜスケールと性能を別個に扱うか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>旧 SONiC は ARP/ND ~2400 entry が上限で、route programming も <code>1 経路 = 1 sairedis call</code> でレイテンシが大きかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これを改善するには <strong>kernel cache 拡大</strong> と <strong>app→ASIC データパス bulk 化</strong> の 2 つを同時にやる必要がある。スケールと性能をそれぞれ独立軸として目標値を設定したのが本 HLD のスタンス。</p>
+<p>旧 SONiC は <a href="../../reference/glossary/#term-arp">ARP</a>/ND ~2400 entry が上限で、route programming も <code>1 経路 = 1 sairedis call</code> でレイテンシが大きかった<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これを改善するには <strong>kernel cache 拡大</strong> と <strong>app→ASIC データパス bulk 化</strong> の 2 つを同時にやる必要がある。スケールと性能をそれぞれ独立軸として目標値を設定したのが本 <a href="../../reference/glossary/#term-hld">HLD</a> のスタンス。</p>
 <h2 id="2">2. スケール目標<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28751,7 +28751,7 @@
 <td>65k</td>
 </tr>
 <tr>
-<td>ECMP</td>
+<td><a href="../../reference/glossary/#term-ecmp">ECMP</a></td>
 <td>512×32, 256×64, 128×128</td>
 </tr>
 </tbody>
@@ -28782,17 +28782,17 @@
 <td>スケール（entry 上限）</td>
 </tr>
 <tr>
-<td>CoPP ARP/ND 上限</td>
+<td><a href="../../reference/glossary/#term-copp">CoPP</a> ARP/ND 上限</td>
 <td><code>COPP_TABLE</code> ARP/ND group</td>
 <td>スケール（学習速度）</td>
 </tr>
 <tr>
 <td>sairedis bulk route</td>
 <td><code>RouteOrch</code> / sairedis meta</td>
-<td>性能（Redis message 数）</td>
+<td>性能（<a href="../../reference/glossary/#term-redis">Redis</a> message 数）</td>
 </tr>
 <tr>
-<td>fpmsyncd 最適化</td>
+<td><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 最適化</td>
 <td>master device lookup スキップ</td>
 <td>性能（APP_DB 投入時間）</td>
 </tr>
@@ -28802,15 +28802,15 @@
 <td>性能（dump 時間）</td>
 </tr>
 <tr>
-<td><code>show arp/ndp</code> 個別 FDB lookup</td>
-<td>sonic-utilities CLI</td>
+<td><code>show arp/ndp</code> 個別 <a href="../../reference/glossary/#term-fdb">FDB</a> lookup</td>
+<td><a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> CLI</td>
 <td>UX（応答時間）</td>
 </tr>
 </tbody>
 </table>
 <p>詳細な算術と実装ファイル位置は <a href="../l3-scaling-and-performance-enhancements-internals/">l3-scaling-and-performance-enhancements-internals.md</a> を参照。</p>
 <h2 id="5-cli-config_db-yang">5. 新規 CLI / CONFIG_DB / YANG<a class="headerlink" href="#5-cli-config_db-yang" title="Permanent link">&para;</a></h2>
-<p><strong>新規 CLI / CONFIG_DB / YANG なし</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。kernel sysctl と <code>COPP_TABLE</code> 値の見直しと内部実装の改善が中心。読者にとって明示的な設定変更は通常不要だが、HLD 提案値が現行 default と乖離している点には注意（<a href="../l3-scaling-and-performance-enhancements-limitations/">limitations</a>）。</p>
+<p><strong>新規 CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> なし</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。kernel sysctl と <code>COPP_TABLE</code> 値の見直しと内部実装の改善が中心。読者にとって明示的な設定変更は通常不要だが、HLD 提案値が現行 default と乖離している点には注意（<a href="../l3-scaling-and-performance-enhancements-limitations/">limitations</a>）。</p>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a></li>
@@ -28837,6 +28837,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 2f323c022692 -->
 
 <div class="footnote">
 <hr />

@@ -28912,7 +28912,7 @@
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DHCPV4_RELAY|&lt;name&gt;
 </span></code></pre></div>
-<p><code>&lt;name&gt;</code> は <code>Vlan&lt;id&gt;</code> 形式（VLAN 名）。</p>
+<p><code>&lt;name&gt;</code> は <code>Vlan&lt;id&gt;</code> 形式（<a href="../../glossary/#term-vlan">VLAN</a> 名）。</p>
 <h2 id="_3">フィールド一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28930,7 +28930,7 @@
 <td>string <code>Vlan&lt;id&gt;</code></td>
 <td>✅</td>
 <td>-</td>
-<td>VLAN 名</td>
+<td><a href="../../glossary/#term-vlan">VLAN</a> 名</td>
 </tr>
 <tr>
 <td><code>dhcpv4_servers</code></td>
@@ -28944,7 +28944,7 @@
 <td>leafref <code>VRF.name</code></td>
 <td>-</td>
 <td>-</td>
-<td>サーバ側 VRF。設定時は <code>link_selection</code>、<code>server_id_override</code>、<code>vrf_selection</code> が <code>enable</code> 必須 (<code>must</code>)</td>
+<td>サーバ側 <a href="../../glossary/#term-vrf">VRF</a>。設定時は <code>link_selection</code>、<code>server_id_override</code>、<code>vrf_selection</code> が <code>enable</code> 必須 (<code>must</code>)</td>
 </tr>
 <tr>
 <td><code>source_interface</code></td>
@@ -28972,7 +28972,7 @@
 <td><code>mode-status</code></td>
 <td>-</td>
 <td><code>disable</code></td>
-<td>RFC 6607 VRF selection</td>
+<td>RFC 6607 <a href="../../glossary/#term-vrf">VRF</a> selection</td>
 </tr>
 <tr>
 <td>その他</td>
@@ -28997,13 +28997,13 @@
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VLAN</code>、<code>VLAN_INTERFACE</code>、<code>VRF</code>、<code>LOOPBACK_INTERFACE</code>、<code>DEVICE_METADATA</code> (<code>has_sonic_dhcpv4_relay</code>)</li>
 <li>関連 CLI: <code>config dhcp_relay ipv4 add/del</code></li>
-<li>関連 YANG: <code>sonic-dhcpv4-relay</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-dhcpv4-relay</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <code>sonic-dhcpv4-relay</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-dhcpv4-relay</code></li>
 <li>CLI: <a href="../../cli/config-dhcp-relay/"><code>config dhcp_relay</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29033,7 +29033,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: cbb901eb2b24 -->
+<!-- glossary-links-injected: 46a21a7d2d5c -->
 
 <div class="footnote">
 <hr />

@@ -28645,10 +28645,10 @@
 <h1 id="yang">YANG リファレンス<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h1>
 <p><code>sonic-yang-models</code> (<a href="../glossary/#term-sonic-buildimage">sonic-buildimage</a> repo の <code>src/sonic-yang-models/yang-models/</code>) に同梱される SONiC <a href="../glossary/#term-yang">YANG</a> モデルのリファレンス。</p>
 <h2 id="sonic-yang">SONiC YANG の位置付け<a class="headerlink" href="#sonic-yang" title="Permanent link">&para;</a></h2>
-<p>SONiC の YANG モデルは <strong><a href="../glossary/#term-config_db">CONFIG_DB</a> スキーマの正本</strong>として機能する。具体的には:</p>
+<p>SONiC の <a href="../glossary/#term-yang">YANG</a> モデルは <strong><a href="../glossary/#term-config_db">CONFIG_DB</a> スキーマの正本</strong>として機能する。具体的には:</p>
 <ul>
-<li><strong>CLI 経由 (<code>config</code> / <code>sonic-cfggen</code> / minigraph)</strong> で書き込まれた CONFIG_DB の値は、<code>sonic-yang-mgmt</code> (<code>sonic-buildimage/src/sonic-yang-mgmt/</code>) によって YANG モデルに対してバリデーションされる</li>
-<li><strong><a href="../glossary/#term-gnmi">gNMI</a> / REST 経由</strong>の管理アクセスは <code>sonic-mgmt-common</code> の <strong>translib / transformer</strong> レイヤを通る。translib は OpenConfig / IETF YANG をクライアント向けに公開し、transformer がそれを SONiC 内部の <code>sonic-*</code> YANG（= CONFIG_DB スキーマ）に変換する</li>
+<li><strong>CLI 経由 (<code>config</code> / <code>sonic-cfggen</code> / minigraph)</strong> で書き込まれた <a href="../glossary/#term-config_db">CONFIG_DB</a> の値は、<code>sonic-yang-mgmt</code> (<code>sonic-buildimage/src/sonic-yang-mgmt/</code>) によって <a href="../glossary/#term-yang">YANG</a> モデルに対してバリデーションされる</li>
+<li><strong><a href="../glossary/#term-gnmi">gNMI</a> / REST 経由</strong>の管理アクセスは <code>sonic-mgmt-common</code> の <strong>translib / transformer</strong> レイヤを通る。translib は OpenConfig / IETF YANG をクライアント向けに公開し、transformer がそれを SONiC 内部の <code>sonic-*</code> YANG（= <a href="../glossary/#term-config_db">CONFIG_DB</a> スキーマ）に変換する</li>
 <li>一部のテーブルは YANG が無いか中途半端な状態。新規テーブルは原則 YANG 必須だが、歴史的経緯で未追従のものもある</li>
 </ul>
 <p>つまり「SONiC YANG ＝ CONFIG_DB の型定義 + 整合性制約」と理解して良い。CONFIG_DB リファレンス（<code>docs/reference/config-db/</code>）と相互参照する。</p>
@@ -28740,7 +28740,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6396c716f97e -->
+<!-- glossary-links-injected: 32758c44ab11 -->
 
 
 

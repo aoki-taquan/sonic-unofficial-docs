@@ -28940,7 +28940,7 @@
 
 <h1 id="config-qos">config qos サブコマンド<a class="headerlink" href="#config-qos" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config qos</code> は <a href="../../glossary/#term-qos">QoS</a> と buffer 関連テンプレートを再生成して <a href="../../glossary/#term-config_db">CONFIG_DB</a> に反映する CLI グループ。<code>clear</code> は既存 QoS 設定を削除し、<code>reload</code> は platform/HWSKU の <code>qos.json.j2</code> と <code>buffers*.json.j2</code> を <code>sonic-cfggen</code> で展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config qos</code> は <a href="../../glossary/#term-qos">QoS</a> と buffer 関連テンプレートを再生成して <a href="../../glossary/#term-config_db">CONFIG_DB</a> に反映する CLI グループ。<code>clear</code> は既存 <a href="../../glossary/#term-qos">QoS</a> 設定を削除し、<code>reload</code> は platform/HWSKU の <code>qos.json.j2</code> と <code>buffers*.json.j2</code> を <code>sonic-cfggen</code> で展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28952,7 +28952,7 @@
 <tbody>
 <tr>
 <td><code>config qos clear [--verbose]</code></td>
-<td>QoS 設定を削除</td>
+<td><a href="../../glossary/#term-qos">QoS</a> 設定を削除</td>
 </tr>
 <tr>
 <td><code>config qos reload [options]</code></td>
@@ -28970,7 +28970,7 @@
 </span></code></pre></div>
 <p><code>--ports</code> がある場合は、対象 port に関連する table だけを再計算する <code>_qos_update_ports()</code> に進む。対象 table は port 単独 key の <code>PORT_QOS_MAP</code>, <code>BUFFER_PORT_INGRESS_PROFILE_LIST</code>, <code>BUFFER_PORT_EGRESS_PROFILE_LIST</code> と、複合 key の <code>QUEUE</code>, <code>BUFFER_PG</code>, <code>BUFFER_QUEUE</code><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <p><code>--ports</code> がない場合、既存 QoS を clear してから HWSKU 配下の template を展開する。Mellanox/Barefoot で <code>--no-dynamic-buffer</code> が無い場合は <code>buffers_dynamic.json.j2</code> を使い、<code>DEVICE_METADATA|localhost</code> の <code>buffer_model</code> を <code>dynamic</code> に更新する。そうでない場合は <code>buffers.json.j2</code> を使い、対応 ASIC では <code>traditional</code> に更新する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
-<p><code>--dry_run</code> を指定すると CONFIG_DB に書かず、展開後 JSON をファイルへ出力する。</p>
+<p><code>--dry_run</code> を指定すると <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書かず、展開後 JSON をファイルへ出力する。</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29006,7 +29006,7 @@
 
 <h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/port-qos-map/"><code>PORT_QOS_MAP</code></a> / <a href="../../config-db/buffer-port-ingress-profile-list/"><code>BUFFER_PORT_INGRESS_PROFILE_LIST</code></a> / <a href="../../config-db/buffer-port-egress-profile-list/"><code>BUFFER_PORT_EGRESS_PROFILE_LIST</code></a> / <a href="../../config-db/buffer-pg/"><code>BUFFER_PG</code></a> / <a href="../../config-db/buffer-queue/"><code>BUFFER_QUEUE</code></a> / <a href="../../config-db/device-metadata/"><code>DEVICE_METADATA</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/port-qos-map/"><code>PORT_QOS_MAP</code></a> / <a href="../../config-db/buffer-port-ingress-profile-list/"><code>BUFFER_PORT_INGRESS_PROFILE_LIST</code></a> / <a href="../../config-db/buffer-port-egress-profile-list/"><code>BUFFER_PORT_EGRESS_PROFILE_LIST</code></a> / <a href="../../config-db/buffer-pg/"><code>BUFFER_PG</code></a> / <a href="../../config-db/buffer-queue/"><code>BUFFER_QUEUE</code></a> / <a href="../../config-db/device-metadata/"><code>DEVICE_METADATA</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29085,7 +29085,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 87f89dd63737 -->
+<!-- glossary-links-injected: 5026cb7f9a38 -->
 
 <div class="footnote">
 <hr />

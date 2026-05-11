@@ -28874,7 +28874,7 @@
 
 <h1 id="dhcp_relay">DHCP_RELAY テーブル<a class="headerlink" href="#dhcp_relay" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>DHCPv6 relay agent</strong> の <a href="../../glossary/#term-vlan">VLAN</a> インタフェース単位設定を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>dhcp6relay</code> プロセス (sonic-dhcp-relay リポ) が CONFIG_DB から読み、IPv6 リレー対象 VLAN と上流サーバを構築する。</p>
+<p><strong>DHCPv6 relay agent</strong> の <a href="../../glossary/#term-vlan">VLAN</a> インタフェース単位設定を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>dhcp6relay</code> プロセス (sonic-dhcp-relay リポ) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読み、IPv6 リレー対象 <a href="../../glossary/#term-vlan">VLAN</a> と上流サーバを構築する。</p>
 <blockquote>
 <p>注: 名前は単に <code>DHCP_RELAY</code> だが、<a href="../../glossary/#term-yang">YANG</a> モジュール名 <code>sonic-dhcpv6-relay</code> の通り <strong>IPv6 リレー専用</strong>。IPv4 リレーは <code>VLAN</code> テーブルの <code>dhcp_servers</code> フィールド（旧仕様）または <code>DHCP_SERVER_IPV4</code> (新仕様の DHCP サーバ機能) を参照。</p>
 </blockquote>
@@ -28894,7 +28894,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DHCP_RELAY|&lt;name&gt;
 </span></code></pre></div>
 <ul>
-<li><code>&lt;name&gt;</code>: DHCPv6 リレー対象の VLAN インタフェース名 (例: <code>Vlan100</code>)。YANG では <code>type string</code> だが、実運用上は VLAN 名を入れる。</li>
+<li><code>&lt;name&gt;</code>: DHCPv6 リレー対象の <a href="../../glossary/#term-vlan">VLAN</a> インタフェース名 (例: <code>Vlan100</code>)。<a href="../../glossary/#term-yang">YANG</a> では <code>type string</code> だが、実運用上は VLAN 名を入れる。</li>
 </ul>
 <h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
@@ -28929,7 +28929,7 @@
 </tbody>
 </table>
 <p><code>dhcpv6_servers</code> は <code>ordered-by user</code> で <strong>設定順を維持</strong> する。<code>dhcp6relay</code> は順序通りに upstream をスキャンする。</p>
-<p><code>rfc6939_support</code> / <code>interface_id</code> は YANG 上 <code>pattern "false|true"</code> の string 型（boolean ではない）。CONFIG_DB の慣習で文字列リテラル。</p>
+<p><code>rfc6939_support</code> / <code>interface_id</code> は <a href="../../glossary/#term-yang">YANG</a> 上 <code>pattern "false|true"</code> の string 型（boolean ではない）。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の慣習で文字列リテラル。</p>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>name</code> キーは leafref ではないので任意の文字列が許されるが、対応する <code>VLAN</code> エントリが存在しなければ実環境では機能しない。</li>
@@ -28973,7 +28973,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 30c76eee774c -->
+<!-- glossary-links-injected: 11715e560dc6 -->
 
 <div class="footnote">
 <hr />

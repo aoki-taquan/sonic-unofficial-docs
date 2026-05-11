@@ -29166,7 +29166,7 @@
 <tbody>
 <tr>
 <td><code>show runningconfiguration all</code></td>
-<td>host + 各 namespace の CONFIG_DB JSON ダンプ + bgpraw</td>
+<td>host + 各 namespace の <a href="../../glossary/#term-config_db">CONFIG_DB</a> JSON ダンプ + bgpraw</td>
 <td><code>get_config_json_by_namespace</code> + <code>vtysh -c "show running-config"</code></td>
 </tr>
 <tr>
@@ -29202,7 +29202,7 @@
 <tr>
 <td><code>show runningconfiguration snmp community</code></td>
 <td>community のみテーブル表示</td>
-<td>CONFIG_DB</td>
+<td><a href="../../glossary/#term-config_db">CONFIG_DB</a></td>
 </tr>
 <tr>
 <td><code>show runningconfiguration snmp contact</code></td>
@@ -29344,7 +29344,7 @@ excerpt: |
 <td><code>show runningconfiguration syslog</code></td>
 </tr>
 <tr>
-<td>FRR (<code>vtysh</code>)</td>
+<td><a href="../../glossary/#term-frr">FRR</a> (<code>vtysh</code>)</td>
 <td><code>show runningconfiguration bgp</code> / <code>all</code>（添付の <code>bgpraw</code>）</td>
 </tr>
 <tr>
@@ -29421,7 +29421,7 @@ excerpt: |
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>show runningconfiguration all</code> は JSON 出力で巨大。区分ごとのサブコマンドが実用的。</li>
-<li>FRR 側 (bgp / <a href="../../glossary/#term-zebra">zebra</a>) は CONFIG_DB に同期されていない部分がある。</li>
+<li><a href="../../glossary/#term-frr">FRR</a> 側 (bgp / <a href="../../glossary/#term-zebra">zebra</a>) は CONFIG_DB に同期されていない部分がある。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all
@@ -29430,7 +29430,7 @@ excerpt: |
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 34d76fce17e7 -->
+<!-- glossary-links-injected: 84ca04c9cab5 -->
 
 <div class="footnote">
 <hr />

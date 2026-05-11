@@ -28915,7 +28915,7 @@
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DOT1P_TO_TC_MAP|&lt;name&gt;             # マップ全体（hash で dot1p→tc の dict）
 </span></code></pre></div>
-<p>CONFIG_DB 上は <code>DOT1P_TO_TC_MAP|&lt;name&gt;</code> の単一ハッシュで <code>dot1p</code> → <code>tc</code> の対応を保持する（一般的な SONiC QoS map と同形式）。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> 上は <code>DOT1P_TO_TC_MAP|&lt;name&gt;</code> の単一ハッシュで <code>dot1p</code> → <code>tc</code> の対応を保持する（一般的な SONiC <a href="../../glossary/#term-qos">QoS</a> map と同形式）。</p>
 <table>
 <thead>
 <tr>
@@ -28962,20 +28962,20 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosorch</code> (sonic-swss) — SAI QoS Map オブジェクト生成</li>
+<li><code>qosorch</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>) — <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-qos">QoS</a> Map オブジェクト生成</li>
 <li><code>PORT_QOS_MAP</code> の <code>dot1p_to_tc_map</code> leaf から参照</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORT_QOS_MAP</code>、<code>DSCP_TO_TC_MAP</code>、<code>TC_TO_QUEUE_MAP</code></li>
-<li>関連 YANG: <code>sonic-dot1p-tc-map</code>、<code>sonic-port-qos-map</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORT_QOS_MAP</code>、<code>DSCP_TO_TC_MAP</code>、<code>TC_TO_QUEUE_MAP</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-dot1p-tc-map</code>、<code>sonic-port-qos-map</code></li>
 <li>関連 CLI: <code>config qos</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-dot1p-tc-map/"><code>sonic-dot1p-tc-map</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-dot1p-tc-map/"><code>sonic-dot1p-tc-map</code></a></li>
 <li>CLI: <a href="../../cli/config-qos/"><code>config qos</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29002,7 +29002,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7e2c6e652020 -->
+<!-- glossary-links-injected: 05824a330e9e -->
 
 <div class="footnote">
 <hr />

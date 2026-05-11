@@ -28955,8 +28955,8 @@
 <p>ここでは SONiC の <strong>config 永続化と全体差し替え</strong> の中核となる以下の 5 コマンドをまとめる:</p>
 <ul>
 <li><code>config save</code> ... 現 <a href="../../glossary/#term-config_db">CONFIG_DB</a> を JSON ファイルに dump</li>
-<li><code>config load</code> ... ファイルを CONFIG_DB に書く (既存の状態を保持しつつ merge)</li>
-<li><code>config reload</code> ... CONFIG_DB をクリアしてからファイルを再ロード (services 再起動含む)</li>
+<li><code>config load</code> ... ファイルを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書く (既存の状態を保持しつつ merge)</li>
+<li><code>config reload</code> ... <a href="../../glossary/#term-config_db">CONFIG_DB</a> をクリアしてからファイルを再ロード (services 再起動含む)</li>
 <li><code>config replace</code> ... 現在の config と target config の <strong>差分のみ</strong> を当てる minimum-disruption replace</li>
 <li><code>config qos reload</code> ... <a href="../../glossary/#term-qos">QoS</a> 関連 (buffer / scheduler / queue / wred 等) を再生成</li>
 </ul>
@@ -28998,12 +28998,12 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 <p>target file には <strong>完全な config 全体</strong> を渡す必要がある (<code>**WARNING** The target config file should be the whole config, not just the part intended to be updated.</code>)。</p>
 <h3 id="config-qos-reload-ports-list-no-dynamic-buffer-no-delay-dry_run-file-json-data-json-verbose"><code>config qos reload [--ports &lt;list&gt;] [--no-dynamic-buffer] [--no-delay] [--dry_run &lt;file&gt;] [--json-data &lt;json&gt;] [--verbose]</code><a class="headerlink" href="#config-qos-reload-ports-list-no-dynamic-buffer-no-delay-dry_run-file-json-data-json-verbose" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-1. <code>--ports</code> 指定時は <code>_qos_update_ports</code> が指定 port のみ QoS 設定を再描画 (差分 reload)。
+1. <code>--ports</code> 指定時は <code>_qos_update_ports</code> が指定 port のみ <a href="../../glossary/#term-qos">QoS</a> 設定を再描画 (差分 reload)。
 2. 通常は <code>_clear_qos</code> で <code>BUFFER_*</code> / <code>QUEUE</code> / <code>SCHEDULER</code> / <code>PORT_QOS_MAP</code> / <code>WRED_PROFILE</code> 等を一旦削除。
 3. namespace ごとに <code>buffers_dynamic.json.j2</code> / <code>buffers.json.j2</code> + <code>qos.json.j2</code> を <code>sonic-cfggen</code> で render し、CONFIG_DB に書き戻す。
 4. <code>--no-dynamic-buffer</code> を付けると mellanox / barefoot 系でも static buffer に固定し、<code>DEVICE_METADATA.localhost.buffer_model</code> を <code>traditional</code> 相当に書き換える。
 5. <code>--dry_run &lt;file&gt;</code> でファイルに書き出して終わり (CONFIG_DB は変更しない)。<code>--json-data</code> で render 入力に追加情報を渡せる。</p>
-<p><strong><code>config reload</code> の最後に <code>config qos reload --no-dynamic-buffer --no-delay</code> が呼ばれる</strong>ため、<code>reload</code> 後は QoS が必ずテンプレートから再生成される。</p>
+<p><strong><code>config reload</code> の最後に <code>config qos reload --no-dynamic-buffer --no-delay</code> が呼ばれる</strong>ため、<code>reload</code> 後は <a href="../../glossary/#term-qos">QoS</a> が必ずテンプレートから再生成される。</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29067,7 +29067,7 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 </ul>
 <h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Mgmt VRF を有効化すると SSH/<a href="../../glossary/#term-snmp">SNMP</a>/NTP も VRF コンテキストへ切り替わる。</li>
+<li>Mgmt <a href="../../glossary/#term-vrf">VRF</a> を有効化すると SSH/<a href="../../glossary/#term-snmp">SNMP</a>/NTP も <a href="../../glossary/#term-vrf">VRF</a> コンテキストへ切り替わる。</li>
 <li>Mgmt route を消すと自分の SSH が切れる可能性。console 経由で作業する。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29077,7 +29077,7 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ea618b0f5027 -->
+<!-- glossary-links-injected: 33504219f563 -->
 
 <div class="footnote">
 <hr />

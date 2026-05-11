@@ -28898,14 +28898,14 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BGP_ALLOWED_PREFIXES|&lt;deployment&gt;|&lt;id&gt;[|&lt;neighbor&gt;|&lt;neighbor_type&gt;][|&lt;community&gt;]
 </span></code></pre></div>
 <ul>
-<li><code>&lt;deployment&gt;</code> は固定文字列 <code>DEPLOYMENT_ID</code> (YANG <code>pattern "DEPLOYMENT_ID"</code>)</li>
+<li><code>&lt;deployment&gt;</code> は固定文字列 <code>DEPLOYMENT_ID</code> (<a href="../../glossary/#term-yang">YANG</a> <code>pattern "DEPLOYMENT_ID"</code>)</li>
 <li><code>&lt;id&gt;</code> は uint32 の deployment id</li>
 <li><code>&lt;neighbor&gt;</code> は固定文字列 <code>NEIGHBOR_TYPE</code> (<code>pattern "NEIGHBOR_TYPE"</code>)</li>
 <li><code>&lt;neighbor_type&gt;</code> は任意の neighbor タイプ名</li>
 <li><code>&lt;community&gt;</code> は community 文字列</li>
 </ul>
 <blockquote>
-<p>パターンが固定文字列に見えるが、これは bgpcfgd テンプレ側で <code>DEPLOYMENT_ID</code> / <code>NEIGHBOR_TYPE</code> という文字列キーをそのまま使う構造になっているため。<code>&lt;id&gt;</code> などの可変部分で deployment を区別する。</p>
+<p>パターンが固定文字列に見えるが、これは <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> テンプレ側で <code>DEPLOYMENT_ID</code> / <code>NEIGHBOR_TYPE</code> という文字列キーをそのまま使う構造になっているため。<code>&lt;id&gt;</code> などの可変部分で deployment を区別する。</p>
 </blockquote>
 <h2 id="_3">フィールド（共通）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>各 list は次の共通フィールドを持つ:</p>
@@ -28938,20 +28938,20 @@
 <p><code>bgp-allowed-ipv4-prefix</code> / <code>bgp-allowed-ipv6-prefix</code> は <strong><code>&lt;prefix&gt; [le|ge &lt;len&gt;]</code></strong> という <a href="../../glossary/#term-frr">FRR</a>-like の構文を許す独自 typedef。例: <code>10.0.0.0/8 le 32</code>。</p>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>&lt;deployment&gt;</code> キーは固定パターン <code>DEPLOYMENT_ID</code> / <code>NEIGHBOR_TYPE</code> に縛られるため、CONFIG_DB に書き込む際は必ずこのリテラルを使う。</li>
+<li><code>&lt;deployment&gt;</code> キーは固定パターン <code>DEPLOYMENT_ID</code> / <code>NEIGHBOR_TYPE</code> に縛られるため、<a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込む際は必ずこのリテラルを使う。</li>
 <li>prefix の <code>le</code> / <code>ge</code> 修飾子は IPv4 では 0..32、IPv6 では 0..128 の範囲のみ許可。</li>
 <li>4 種類の list は同じ container 配下にあるが、key の組合せが異なるので区別される。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>bgpcfgd</code> (<code>docker-fpm-frr</code>): deployment id ごとに <code>BGP_ALLOWED_PREFIXES_*</code> を読み、Jinja テンプレで <code>ip prefix-list</code> / <code>route-map</code> 文を vtysh に流す</li>
-<li><code>bgpd</code> (FRR): 生成された prefix-list / route-map を <a href="../../glossary/#term-bgp">BGP</a> neighbor / peer-group に適用</li>
+<li><code>bgpd</code> (<a href="../../glossary/#term-frr">FRR</a>): 生成された prefix-list / route-map を <a href="../../glossary/#term-bgp">BGP</a> neighbor / peer-group に適用</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BGP_NEIGHBOR</code>, <code>BGP_PEER_GROUP</code>, <code>ROUTE_MAP_SET</code>, <code>DEVICE_METADATA</code> (<code>deployment_id</code>)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_NEIGHBOR</code>, <code>BGP_PEER_GROUP</code>, <code>ROUTE_MAP_SET</code>, <code>DEVICE_METADATA</code> (<code>deployment_id</code>)</li>
 <li>関連 CLI: 専用 CLI なし。<code>sonic-cfggen</code> / minigraph 経由で投入されるのが通常</li>
-<li>関連 YANG: <code>sonic-bgp-allowed-prefix</code>, <code>sonic-routing-policy-sets</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-allowed-prefix</code>, <code>sonic-routing-policy-sets</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -28971,7 +28971,7 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>prefix-list 名と表記揺れがあると FRR 側に反映されず広告フィルタが効かない。</li>
+<li>prefix-list 名と表記揺れがあると <a href="../../glossary/#term-frr">FRR</a> 側に反映されず広告フィルタが効かない。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_ALLOWED_PREFIXES|*&#39;</span>
@@ -28979,7 +28979,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0a371cf7e1da -->
+<!-- glossary-links-injected: 43ff039eae38 -->
 
 <div class="footnote">
 <hr />

@@ -28660,31 +28660,31 @@
 <h2 id="1">1. 設計上の制約<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ToR → NIC 方向 switchover で <strong>数パケットの破損 / drop</strong> あり<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>standby ToR は ARP request drop で <strong>GARP / unsolicited NA に依存</strong></li>
+<li>standby ToR は <a href="../../reference/glossary/#term-arp">ARP</a> request drop で <strong>GARP / unsolicited NA に依存</strong></li>
 <li>IPv6 neighbor <code>FAILED</code> 問題は kernel patch + <code>arp_update</code> 修正に依存</li>
-<li>HLD では neighbor 取扱い 3 案の最終採用案を明示していない（実コード裏取りで確定: standalone tunnel route 案）</li>
+<li><a href="../../reference/glossary/#term-hld">HLD</a> では neighbor 取扱い 3 案の最終採用案を明示していない（実コード裏取りで確定: standalone tunnel route 案）</li>
 <li>directed broadcast は HLD 上 TBD</li>
 <li>y-cable I2C 失敗時の MUX_FAIL 復旧シナリオは HLD 上限定的</li>
 <li>LinkManager は LinkProber より低頻度（hysteresis 抑制）</li>
 </ul>
 <h2 id="2-verifier-hint">2. 既知の懸念点（Verifier hint）<a class="headerlink" href="#2-verifier-hint" title="Permanent link">&para;</a></h2>
 <ul>
-<li>linkmgrd の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認 — 実装の構成は <code>link_prober/</code> / <code>mux_state/</code> / <code>link_manager/</code> の 3 ディレクトリ + <code>DbInterface.cpp</code> で概ね一致を確認済</li>
+<li><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認 — 実装の構成は <code>link_prober/</code> / <code>mux_state/</code> / <code>link_manager/</code> の 3 ディレクトリ + <code>DbInterface.cpp</code> で概ね一致を確認済</li>
 <li>MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認 — <code>createStandaloneTunnelRoute</code> / <code>removeStandaloneTunnelRoute</code> 案で確定</li>
 <li>ycabled の I2C リトライ + MUX_FAIL 報告ロジック実装確認</li>
 <li>6.3.5.1 の Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認</li>
-<li>6.3.5.2 の zero mac neighbor + tunnel route 自動 install の neighsyncd / muxorch 実装確認</li>
+<li>6.3.5.2 の zero mac neighbor + tunnel route 自動 install の <a href="../../reference/glossary/#term-neighsyncd">neighsyncd</a> / muxorch 実装確認</li>
 <li>arp_update の FAILED → INCOMPLETE 書き換えの取り込み確認</li>
 <li>accept_untracked_na の kernel backport 状況確認</li>
 </ul>
 <h2 id="3">3. 干渉する機能<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>linkmgrd</code></strong>: state machine 主体</li>
-<li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>MuxOrch</code> / <code>TunnelOrch</code>)</strong>: SAI 反映 + tunnel + ACL drop</li>
-<li><strong><code>ycabled</code> (旧 <code>xcvrd</code>)</strong>: I2C 経由の MUX 制御</li>
-<li><strong><code>nbrmgrd</code> / <code>arp_update</code> / kernel sysctl</strong>: proxy ARP / GARP / NDP / proxy_ndp / accept_untracked_na</li>
+<li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>MuxOrch</code> / <code>TunnelOrch</code>)</strong>: <a href="../../reference/glossary/#term-sai">SAI</a> 反映 + tunnel + <a href="../../reference/glossary/#term-acl">ACL</a> drop</li>
+<li><strong><code>ycabled</code> (旧 <code>xcvrd</code>)</strong>: I2C 経由の <a href="../../reference/glossary/#term-mux">MUX</a> 制御</li>
+<li><strong><code>nbrmgrd</code> / <code>arp_update</code> / kernel sysctl</strong>: proxy ARP / GARP / <a href="../../reference/glossary/#term-ndp">NDP</a> / proxy_ndp / accept_untracked_na</li>
 <li><strong>decap-after-tunnel CPU trap 対策の Python service</strong>: 6.3.5.1 の neighbor miss 解消用</li>
-<li><strong><code>bgpd</code></strong>: 両 ToR が同じ VLAN を広告</li>
+<li><strong><code>bgpd</code></strong>: 両 ToR が同じ <a href="../../reference/glossary/#term-vlan">VLAN</a> を広告</li>
 </ul>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28694,6 +28694,8 @@
 <li><a href="../active-standby-dual-tor-internals/">active-standby-dual-tor-internals.md</a> — 内部実装</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 899526be8f4a -->
+
 <div class="footnote">
 <hr />
 <ol>

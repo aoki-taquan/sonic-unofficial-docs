@@ -28731,7 +28731,7 @@
 </span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>NEIGH_TABLE|&lt;intf&gt;|&lt;ip&gt;
 </span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    family : IPv4 | IPv6
 </span></code></pre></div>
-<p><code>VXLAN_TUNNEL</code> に <code>src_ip</code> 必須、<code>dst_ip</code> は P2P 用にオプション。<code>VXLAN_TUNNEL_MAP</code> で VLAN ↔ VNI を関連付ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>VXLAN_TUNNEL</code> に <code>src_ip</code> 必須、<code>dst_ip</code> は P2P 用にオプション。<code>VXLAN_TUNNEL_MAP</code> で <a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ VNI を関連付ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2-app_db">2. APP_DB スキーマ<a class="headerlink" href="#2-app_db" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>VNET_ROUTE_TABLE:&lt;vnet&gt;:&lt;prefix&gt;
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    nexthop : &lt;ip&gt;      (OPTIONAL)
@@ -28775,7 +28775,7 @@
 </tr>
 <tr>
 <td><code>show vxlan &lt;name&gt;</code></td>
-<td>VXLAN tunnel 情報</td>
+<td><a href="../../reference/glossary/#term-vxlan">VXLAN</a> tunnel 情報</td>
 </tr>
 <tr>
 <td><code>show mac vxlan &lt;name&gt; &lt;vni&gt;</code></td>
@@ -28783,7 +28783,7 @@
 </tr>
 </tbody>
 </table>
-<p>VNet ピアリングの CLI は無く、CONFIG_DB を直接編集する想定<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>VNet ピアリングの CLI は無く、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を直接編集する想定<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="4-vnet">4. 設定例（VNet ピアリング）<a class="headerlink" href="#4-vnet" title="Permanent link">&para;</a></h2>
 <p><code>Vnet_2000</code>（VNI 2000、ベアメタル <code>Ethernet1</code>）と <code>Vnet_3000</code>（VNI 3000、<code>Vlan2000</code>、<code>Vnet_2000</code> をピア）:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
@@ -28825,14 +28825,14 @@
 <td><code>VNET_ROUTE_TUNNEL_TABLE.endpoint</code> が remote VTEP IP と一致</td>
 </tr>
 <tr>
-<td>VRF が SAI に作られない</td>
-<td><code>VrfMgrD</code> の STATE_DB 更新が間に合っているか</td>
+<td><a href="../../reference/glossary/#term-vrf">VRF</a> が <a href="../../reference/glossary/#term-sai">SAI</a> に作られない</td>
+<td><code>VrfMgrD</code> の <a href="../../reference/glossary/#term-state_db">STATE_DB</a> 更新が間に合っているか</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> — 元 HLD ページ</li>
+<li><a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> — 元 <a href="../../reference/glossary/#term-hld">HLD</a> ページ</li>
 <li><a href="../vxlan-sonic-concepts/">vxlan-sonic-concepts.md</a> — 概念・用語</li>
 <li><a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a> — Orch 内部実装</li>
 <li><a href="../vxlan-sonic-limitations/">vxlan-sonic-limitations.md</a> — 制限事項</li>
@@ -28841,6 +28841,8 @@
 <li><a href="../../reference/config-db/vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: f111235af114 -->
+
 <div class="footnote">
 <hr />
 <ol>

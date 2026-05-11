@@ -28912,7 +28912,7 @@
 <tr>
 <td><code>tunnel_type</code></td>
 <td>enum <code>IPINIP</code></td>
-<td>カプセル化方式。Dual-ToR では IPinIP 固定</td>
+<td>カプセル化方式。Dual-ToR では <a href="../../glossary/#term-ipinip">IPinIP</a> 固定</td>
 </tr>
 <tr>
 <td><code>src_ip</code></td>
@@ -28973,20 +28973,20 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>tunnelmgrd</code> (cfgmgr): CONFIG_DB→APPL_DB へ橋渡し</li>
-<li><code>tunneldecaporch</code> (orchagent): APPL_DB <code>TUNNEL_DECAP_TABLE</code> 経由で SAI へ反映</li>
+<li><code>tunnelmgrd</code> (cfgmgr): <a href="../../glossary/#term-config_db">CONFIG_DB</a>→<a href="../../glossary/#term-appl_db">APPL_DB</a> へ橋渡し</li>
+<li><code>tunneldecaporch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>): <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>TUNNEL_DECAP_TABLE</code> 経由で <a href="../../glossary/#term-sai">SAI</a> へ反映</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PEER_SWITCH</code>、<code>MUX_CABLE</code>、<code>TUNNEL_DECAP_TABLE</code> (派生は <code>docs/reference/config-db/tunnel-decap-table.md</code>)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PEER_SWITCH</code>、<code>MUX_CABLE</code>、<code>TUNNEL_DECAP_TABLE</code> (派生は <code>docs/reference/config-db/tunnel-decap-table.md</code>)</li>
 <li>関連 CLI: 直接の CLI は無く <code>config_db.json</code> で投入</li>
-<li>関連 YANG: <code>sonic-tunnel</code>、<code>sonic-peer-switch</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-tunnel</code>、<code>sonic-peer-switch</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-tunnel/"><code>sonic-tunnel</code></a> / <code>sonic-peer-switch</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-tunnel/"><code>sonic-tunnel</code></a> / <code>sonic-peer-switch</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29009,13 +29009,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 1f724ed8975d -->
+<!-- glossary-links-injected: 7e370733bdf6 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-tunnel.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang</a>; orchagent 側パース: <code>tunneldecaporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>YANG 定義: <code>sonic-tunnel.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang</a>; <a href="../../glossary/#term-orchagent">orchagent</a> 側パース: <code>tunneldecaporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -28746,7 +28746,7 @@
 <h1 id="error-handling-framework">Error Handling Framework 概念<a class="headerlink" href="#error-handling-framework" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../error-handling-framework-in-sonic/">Error Handling Framework（概要ハブ）</a> の派生で、<strong>設計思想と概念</strong> に絞る。CLI / ERROR_DB 確認は <a href="../error-handling-framework-in-sonic-operations/">error-handling-framework-in-sonic-operations.md</a>、producer/consumer 内部実装は <a href="../error-handling-framework-in-sonic-internals/">error-handling-framework-in-sonic-internals.md</a>、制限事項と乖離は <a href="../error-handling-framework-in-sonic-limitations/">error-handling-framework-in-sonic-limitations.md</a> を参照。</p>
 <h2 id="1">1. 旧挙動と問題意識<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>従来 syncd は SAI CREATE/SET 失敗を一律 fatal 扱いし orchagent に shutdown を要求していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これは BGP が出した route のうち 1 本だけが ASIC リソース不足で reject されたケースでも全体を巻き込んで再起動するという、運用上著しく粗い挙動だった。</p>
+<p>従来 <a href="../../reference/glossary/#term-syncd">syncd</a> は <a href="../../reference/glossary/#term-sai">SAI</a> CREATE/SET 失敗を一律 fatal 扱いし <a href="../../reference/glossary/#term-orchagent">orchagent</a> に shutdown を要求していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これは <a href="../../reference/glossary/#term-bgp">BGP</a> が出した route のうち 1 本だけが ASIC リソース不足で reject されたケースでも全体を巻き込んで再起動するという、運用上著しく粗い挙動だった。</p>
 <h2 id="2">2. 設計の責務境界<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <p>本 framework の責務は <strong>「SAI 失敗を app に伝える経路」</strong> までで、retry / rollback / withdraw はあくまで app 側の責務<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。framework は次の 2 点だけを保証する:</p>
 <ol>
@@ -28841,6 +28841,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: c861ead3a521 -->
 
 <div class="footnote">
 <hr />

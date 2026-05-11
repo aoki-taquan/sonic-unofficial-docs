@@ -28952,8 +28952,8 @@
 
 <h1 id="config-route-static-route">config route サブコマンド（static route）<a class="headerlink" href="#config-route-static-route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config route</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>STATIC_ROUTE</code> テーブルに対する static route の add / del を行う。<a href="../../glossary/#term-frr">FRR</a> の Zebra に対しては <code>bgpcfgd</code> 経由で反映される（CLI は CONFIG_DB のみを書く）。コマンドは <code>cli_sroute_to_config</code> という共通パーサで CLI トークンを解析し、<code>STATIC_ROUTE</code> テーブルのキー (<code>vrf|prefix</code> または <code>prefix</code>) と value 辞書 (<code>nexthop</code> / <code>nexthop-vrf</code> / <code>ifname</code> / <code>distance</code> / <code>blackhole</code>) に展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>multi-ASIC 対応として <code>-n / --namespace</code> を持ち、対象 namespace の CONFIG_DB に書く。</p>
+<p><code>config route</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>STATIC_ROUTE</code> テーブルに対する static route の add / del を行う。<a href="../../glossary/#term-frr">FRR</a> の Zebra に対しては <code>bgpcfgd</code> 経由で反映される（CLI は <a href="../../glossary/#term-config_db">CONFIG_DB</a> のみを書く）。コマンドは <code>cli_sroute_to_config</code> という共通パーサで CLI トークンを解析し、<code>STATIC_ROUTE</code> テーブルのキー (<code>vrf|prefix</code> または <code>prefix</code>) と value 辞書 (<code>nexthop</code> / <code>nexthop-vrf</code> / <code>ifname</code> / <code>distance</code> / <code>blackhole</code>) に展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>multi-ASIC 対応として <code>-n / --namespace</code> を持ち、対象 namespace の <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書く。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28994,7 +28994,7 @@
 <li>nexthop が <code>,</code> 区切り複数の場合、<code>distance</code> / <code>blackhole</code> も同じ要素数に揃えてカラム化する。<code>distance</code> が省略されたら <code>'0'</code>、<code>blackhole</code> は <code>ifname=='null'</code> を見て <code>'true'</code> / <code>'false'</code> を埋める。</li>
 <li>既存エントリがある場合は <strong>値を merge</strong> して <code>set_entry</code> で書く（同じ prefix への追加 nexthop は既存に対して append される）。</li>
 </ol>
-<p>書き込み先: <code>STATIC_ROUTE|&lt;vrf&gt;|&lt;prefix&gt;</code> または <code>STATIC_ROUTE|&lt;prefix&gt;</code>（VRF 指定なし）。</p>
+<p>書き込み先: <code>STATIC_ROUTE|&lt;vrf&gt;|&lt;prefix&gt;</code> または <code>STATIC_ROUTE|&lt;prefix&gt;</code>（<a href="../../glossary/#term-vrf">VRF</a> 指定なし）。</p>
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L7812-L7889 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
 excerpt: |
@@ -29025,7 +29025,7 @@ excerpt: |
 <ol>
 <li><code>cli_sroute_to_config(strict_nh=False)</code> で同じ語句を解析（<code>nexthop</code> の省略可）。</li>
 <li><code>nexthop</code> も <code>ifname</code> も指定されない場合は <strong>エントリ全削除</strong>（<code>set_entry(..., None)</code>）。</li>
-<li>指定された場合は既存エントリの ECMP nexthop リストから当該 tuple を <code>index</code> で探して 1 件抜き、残りを再書き込みする。残ゼロなら全削除。</li>
+<li>指定された場合は既存エントリの <a href="../../glossary/#term-ecmp">ECMP</a> nexthop リストから当該 tuple を <code>index</code> で探して 1 件抜き、残りを再書き込みする。残ゼロなら全削除。</li>
 <li>一度に 1 nexthop しか削除できない（<code>,</code> 区切り複数を渡すと <code>Only one nexthop can be deleted at a time</code> でエラー）。</li>
 </ol>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
@@ -29058,11 +29058,11 @@ excerpt: |
 <h2 id="multi-asic">multi-ASIC<a class="headerlink" href="#multi-asic" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>-n / --namespace</code> 必須（multi-ASIC 環境）。</li>
-<li>各 namespace の CONFIG_DB に対して個別に書く。FRR への反映は namespace 内の <code>bgpcfgd</code> が担当する。</li>
+<li>各 namespace の CONFIG_DB に対して個別に書く。<a href="../../glossary/#term-frr">FRR</a> への反映は namespace 内の <code>bgpcfgd</code> が担当する。</li>
 </ul>
 <h2 id="_5">制限・癖<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ECMP の表現は <strong>CLI 1 行に <code>,</code> 区切りで詰め込む</strong> 方式で、設定ファイル系統からは扱いにくい。</li>
+<li><a href="../../glossary/#term-ecmp">ECMP</a> の表現は <strong>CLI 1 行に <code>,</code> 区切りで詰め込む</strong> 方式で、設定ファイル系統からは扱いにくい。</li>
 <li><code>dev null</code> 経路は <code>blackhole=true</code> として登録される。</li>
 <li><code>distance</code>（admin distance）は CLI 引数として直接は受けない。コードは <code>,0</code> をデフォルトで埋めるため、現状 CLI からは distance のカスタマイズは不可。</li>
 </ul>
@@ -29111,7 +29111,7 @@ excerpt: |
 </ul>
 <h3 id="_11">よくある落とし穴<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>config route add</code> は CONFIG_DB の STATIC_ROUTE に書く。FRR の <a href="../../glossary/#term-zebra">zebra</a> に渡るまで 1〜2 秒遅延あり。</li>
+<li><code>config route add</code> は CONFIG_DB の STATIC_ROUTE に書く。<a href="../../glossary/#term-frr">FRR</a> の <a href="../../glossary/#term-zebra">zebra</a> に渡るまで 1〜2 秒遅延あり。</li>
 <li>nexthop が unreachable な route は kernel route table に出ない。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29121,13 +29121,13 @@ excerpt: |
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7581dd9b8477 -->
+<!-- glossary-links-injected: fd604cf789eb -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>cli_sroute_to_config</code> の実装は <code>config/main.py</code> L1395-L1481。<code>prefix</code> / <code>nexthop</code> キーを基準に分割し、IP / VRF / interface の存在を検証する。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1395">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1395</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>cli_sroute_to_config</code> の実装は <code>config/main.py</code> L1395-L1481。<code>prefix</code> / <code>nexthop</code> キーを基準に分割し、IP / <a href="../../glossary/#term-vrf">VRF</a> / interface の存在を検証する。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1395">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L1395</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

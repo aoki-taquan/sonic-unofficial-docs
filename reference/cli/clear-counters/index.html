@@ -28864,10 +28864,10 @@
 <p>ここで言う「クリア」は <strong><a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の値を 0 に戻すわけではなく</strong>、<code>portstat</code> 等が「前回 clear 時の値」をディスク上のスナップショットファイル（<code>/tmp/portstat-&lt;uid&gt;</code> 等）に書き出して、<strong>次回表示時の差分計算用ベースライン</strong>として使う、という意味<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <p>つまり:</p>
 <ol>
-<li><code>sonic-clear counters</code> → <code>portstat -c</code> → <code>/tmp/portstat-&lt;uid&gt;</code> を現在の COUNTERS_DB 値で上書き。</li>
-<li><code>show interfaces counters</code> → COUNTERS_DB の現在値 − スナップショットの差分を表示。</li>
+<li><code>sonic-clear counters</code> → <code>portstat -c</code> → <code>/tmp/portstat-&lt;uid&gt;</code> を現在の <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 値で上書き。</li>
+<li><code>show interfaces counters</code> → <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の現在値 − スナップショットの差分を表示。</li>
 </ol>
-<p>スイッチ ASIC 側 <a href="../../glossary/#term-sai">SAI</a> カウンタや <a href="../../glossary/#term-orchagent">orchagent</a> のカウンタリングは触らないため、<code>sonic-clear counters</code> を打っても <strong>SAI レイヤから見た累計値は残り続ける</strong>。</p>
+<p>スイッチ ASIC 側 <a href="../../glossary/#term-sai">SAI</a> カウンタや <a href="../../glossary/#term-orchagent">orchagent</a> のカウンタリングは触らないため、<code>sonic-clear counters</code> を打っても <strong><a href="../../glossary/#term-sai">SAI</a> レイヤから見た累計値は残り続ける</strong>。</p>
 <h2 id="queuecounters-voq"><code>queuecounters</code> の VoQ 二段呼び出し<a class="headerlink" href="#queuecounters-voq" title="Permanent link">&para;</a></h2>
 <p><code>queuecounters</code> は通常スイッチでは <code>queuestat -c</code> を呼び、その後 <strong>常に <code>queuestat -c --voq</code> も追加で呼ぶ</strong>。Supervisor デバイス (<code>device_info.is_supervisor()</code> が True) の場合は前者をスキップし VoQ のみ。Supervisor は line card 側でしか通常 queue を持たないため。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@cli</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
@@ -28909,7 +28909,7 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 21a43ad654bd -->
+<!-- glossary-links-injected: c463a977c0b8 -->
 
 <div class="footnote">
 <hr />

@@ -29084,8 +29084,8 @@
 
 <h1 id="config-portchannel">config portchannel サブコマンド<a class="headerlink" href="#config-portchannel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config portchannel</code> は <a href="../../glossary/#term-lacp">LACP</a> ベースの Link Aggregation (<a href="../../glossary/#term-lag">LAG</a>) を設定する。LAG 本体の作成・削除（<code>add</code> / <code>del</code>）、メンバー Ethernet ポートの追加・削除、<code>teamd</code> の retry-count パラメータ取得・設定の 3 グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>LACP の実体は <strong><code>teamd</code> (libteam)</strong> で、SONiC の <code>teammgrd</code> が <code>PORTCHANNEL</code> テーブルを <a href="../../glossary/#term-appl_db">APPL_DB</a> へ反映し、<a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> 設定ファイルを生成する。<code>config portchannel</code> は <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> テーブルを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に直接書き込む役割を担う。</p>
+<p><code>config portchannel</code> は <a href="../../glossary/#term-lacp">LACP</a> ベースの Link Aggregation (<a href="../../glossary/#term-lag">LAG</a>) を設定する。<a href="../../glossary/#term-lag">LAG</a> 本体の作成・削除（<code>add</code> / <code>del</code>）、メンバー Ethernet ポートの追加・削除、<code>teamd</code> の retry-count パラメータ取得・設定の 3 グループ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../glossary/#term-lacp">LACP</a> の実体は <strong><code>teamd</code> (libteam)</strong> で、SONiC の <code>teammgrd</code> が <code>PORTCHANNEL</code> テーブルを <a href="../../glossary/#term-appl_db">APPL_DB</a> へ反映し、<a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> 設定ファイルを生成する。<code>config portchannel</code> は <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> テーブルを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に直接書き込む役割を担う。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29097,7 +29097,7 @@
 <tbody>
 <tr>
 <td><code>config portchannel add &lt;name&gt; [--min-links N] [--fallback true\|false] [--fast-rate true\|false]</code></td>
-<td>LAG を作成</td>
+<td><a href="../../glossary/#term-lag">LAG</a> を作成</td>
 </tr>
 <tr>
 <td><code>config portchannel del &lt;name&gt;</code></td>
@@ -29113,7 +29113,7 @@
 </tr>
 <tr>
 <td><code>config portchannel retry-count get &lt;name&gt;</code></td>
-<td>LACP retry-count 取得 (teamdctl)</td>
+<td><a href="../../glossary/#term-lacp">LACP</a> retry-count 取得 (teamdctl)</td>
 </tr>
 <tr>
 <td><code>config portchannel retry-count set &lt;name&gt; &lt;3-10&gt;</code></td>
@@ -29235,11 +29235,11 @@ excerpt: |
 <p><code>PORTCHANNEL_MEMBER|&lt;portchannel&gt;|&lt;port&gt;</code> を削除。</p>
 <h3 id="config-portchannel-retry-count-get-portchannel_name"><code>config portchannel retry-count get &lt;portchannel_name&gt;</code><a class="headerlink" href="#config-portchannel-retry-count-get-portchannel_name" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-CONFIG_DB ではなく <code>teamdctl &lt;portchannel_name&gt; state item get runner.retry_count</code> を実行する。multi-ASIC 時は <code>-n asic&lt;N&gt;</code> を <code>teamdctl</code> に転送（<code>asic</code> プレフィックスは除去して数値のみを渡す）。</p>
+<a href="../../glossary/#term-config_db">CONFIG_DB</a> ではなく <code>teamdctl &lt;portchannel_name&gt; state item get runner.retry_count</code> を実行する。multi-ASIC 時は <code>-n asic&lt;N&gt;</code> を <code>teamdctl</code> に転送（<code>asic</code> プレフィックスは除去して数値のみを渡す）。</p>
 <p><code>runner.enable_retry_count_feature</code> が <code>false</code> の場合は機能未有効でエラー。</p>
 <h3 id="config-portchannel-retry-count-set-portchannel_name-3-10"><code>config portchannel retry-count set &lt;portchannel_name&gt; &lt;3-10&gt;</code><a class="headerlink" href="#config-portchannel-retry-count-set-portchannel_name-3-10" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-<code>teamdctl &lt;name&gt; state item set runner.retry_count &lt;N&gt;</code> を実行。範囲は <code>IntRange(3, 10)</code> で click が事前検証。CONFIG_DB は更新されず、teamd ランタイム上でのみ適用される（再起動後は config 由来のデフォルトに戻る）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<code>teamdctl &lt;name&gt; state item set runner.retry_count &lt;N&gt;</code> を実行。範囲は <code>IntRange(3, 10)</code> で click が事前検証。<a href="../../glossary/#term-config_db">CONFIG_DB</a> は更新されず、<a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> ランタイム上でのみ適用される（再起動後は config 由来のデフォルトに戻る）<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29338,7 +29338,7 @@ CONFIG_DB ではなく <code>teamdctl &lt;portchannel_name&gt; state item get ru
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 38d67752c4a9 -->
+<!-- glossary-links-injected: 6e531ba7782c -->
 
 <div class="footnote">
 <hr />
@@ -29347,7 +29347,7 @@ CONFIG_DB ではなく <code>teamdctl &lt;portchannel_name&gt; state item get ru
 <p><code>portchannel</code> グループは <code>config/main.py</code> L2817-L2830 で定義される。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L2817">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L2817</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>retry-count</code> は teamd ランタイム上の値であり CONFIG_DB に保存されない。L3072-L3140 を参照。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>retry-count</code> は <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> ランタイム上の値であり CONFIG_DB に保存されない。L3072-L3140 を参照。<a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3072</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -28833,7 +28833,7 @@
 <li><strong><a href="../../glossary/#term-bgp">BGP</a> graceful restart の対向側未対応 / capability 未交換</strong>: GR helper として動作するために対向 peer も GR 対応が必要</li>
 <li><strong>dataplane object 量が大きすぎて reconciliation が間に合わない</strong> (Route 数十万件 + <a href="../../glossary/#term-acl">ACL</a> 大量) → restore_count に至らずタイムアウト</li>
 <li><strong><code>pre-shutdown</code> のチェックで pending operation あり</strong> (<code>COUNTERS_DB</code> の queue / port が busy)</li>
-<li><strong>platform / SAI が warm boot 非対応</strong> (Mellanox/Broadcom SDK バージョン依存)</li>
+<li><strong>platform / <a href="../../glossary/#term-sai">SAI</a> が warm boot 非対応</strong> (Mellanox/Broadcom SDK バージョン依存)</li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
@@ -28883,7 +28883,7 @@
 <ul>
 <li>不足 module の enable: <code>config warm_restart enable swss</code>, <code>bgp</code>, <code>teamd</code>, <code>nat</code>, <code>dhcp_relay</code> を順に</li>
 <li>大量経路で reconciliation がタイムアウトする場合: <code>WARM_RESTART|&lt;module&gt;</code> の <code>bgp_timer</code> / <code>neighsyncd_timer</code> / <code>fpmsyncd_timer</code> 等を拡張</li>
-<li>BGP 側で <code>bgp graceful-restart</code> を双方で有効化</li>
+<li><a href="../../glossary/#term-bgp">BGP</a> 側で <code>bgp graceful-restart</code> を双方で有効化</li>
 <li>それでも warm boot が断続する場合: <code>fast-reboot</code> （control plane reset / data plane preserved）にフォールバックする運用へ変更</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -28893,7 +28893,7 @@
 <li><a href="../../cli/reboot-fast-warm/">../cli/reboot-fast-warm.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 2c3c04148df7 -->
+<!-- glossary-links-injected: da64d9ca9c4c -->
 
 <div class="footnote">
 <hr />

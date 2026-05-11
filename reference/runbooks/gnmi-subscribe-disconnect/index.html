@@ -28829,7 +28829,7 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>TCP keepalive / <a href="../../glossary/#term-nat">NAT</a> timeout</strong>: 中間機器（LB / NAT / firewall）のセッション TTL が telemetry の heartbeat 間隔より短い</li>
+<li><strong>TCP keepalive / <a href="../../glossary/#term-nat">NAT</a> timeout</strong>: 中間機器（LB / <a href="../../glossary/#term-nat">NAT</a> / firewall）のセッション TTL が telemetry の heartbeat 間隔より短い</li>
 <li><strong>TLS handshake failure / 証明書期限切れ</strong>: re-handshake 時に失敗してセッション drop</li>
 <li><strong>server 側 goroutine が CPU bound</strong>: 多数の path を低 interval で subscribe して queue が溢れる</li>
 <li><strong>REDIS subscriber が遅延</strong>: <code>COUNTERS_DB</code> の更新頻度に <a href="../../glossary/#term-gnmi">gNMI</a> publisher が追いつかない</li>
@@ -28873,7 +28873,7 @@
 <h3 id="5-keepalive">5. 中間機器の keepalive<a class="headerlink" href="#5-keepalive" title="Permanent link">&para;</a></h3>
 <ul>
 <li>中間 LB / firewall のセッション TTL を 5 分以上に設定</li>
-<li>gNMI client 側の <code>keepalive</code> を 30 秒に設定</li>
+<li><a href="../../glossary/#term-gnmi">gNMI</a> client 側の <code>keepalive</code> を 30 秒に設定</li>
 </ul>
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>

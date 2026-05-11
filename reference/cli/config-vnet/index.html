@@ -28896,7 +28896,7 @@
 
 <h1 id="config-vnet">config vnet サブコマンド<a class="headerlink" href="#config-vnet" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config vnet</code> は overlay <a href="../../glossary/#term-vnet">VNET</a> と VNET route を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に作成・削除する CLI グループ。multi-ASIC では <code>--namespace</code> で対象 namespace を選択できる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config vnet</code> は overlay <a href="../../glossary/#term-vnet">VNET</a> と <a href="../../glossary/#term-vnet">VNET</a> route を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に作成・削除する CLI グループ。multi-ASIC では <code>--namespace</code> で対象 namespace を選択できる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28912,7 +28912,7 @@
 </tr>
 <tr>
 <td><code>config vnet del &lt;vnet_name&gt;</code></td>
-<td>VNET と関連 interface/route を削除</td>
+<td><a href="../../glossary/#term-vnet">VNET</a> と関連 interface/route を削除</td>
 </tr>
 <tr>
 <td><code>config vnet add-route &lt;vnet_name&gt; &lt;prefix&gt; &lt;endpoint&gt; [options]</code></td>
@@ -28970,7 +28970,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/vnet/"><code>VNET</code></a> / <a href="../../config-db/vnet/"><code>VNET_ROUTE_TUNNEL</code></a> / <a href="../../config-db/vnet/"><code>VNET_ROUTE</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/vnet/"><code>VNET</code></a> / <a href="../../config-db/vnet/"><code>VNET_ROUTE_TUNNEL</code></a> / <a href="../../config-db/vnet/"><code>VNET_ROUTE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28984,7 +28984,7 @@
 </ul>
 <h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li>VNET に紐付ける VxLAN tunnel が未作成だと CONFIG_DB に入っても <code>vnetorch</code> が起動できない。</li>
+<li>VNET に紐付ける VxLAN tunnel が未作成だと <a href="../../glossary/#term-config_db">CONFIG_DB</a> に入っても <code>vnetorch</code> が起動できない。</li>
 <li>guid / scope を変えると既存 route が無効化される。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -28994,7 +28994,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f503aac56e20 -->
+<!-- glossary-links-injected: 2acdb695c264 -->
 
 <div class="footnote">
 <hr />

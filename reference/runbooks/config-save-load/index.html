@@ -28833,7 +28833,7 @@
 <li><strong>multi-asic 環境で host 側だけ save し、<code>config_db&lt;N&gt;.json</code> が更新されていない</strong></li>
 <li><strong><a href="../../glossary/#term-yang">YANG</a> / <a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a> 検証で reject されたが ユーザが気付いていない</strong></li>
 <li><strong>db_migrator のバージョン不整合</strong>: ファイル format version と SONiC ビルドの期待バージョン不一致</li>
-<li><strong>minigraph.xml を編集したのに <code>load_minigraph</code> を打たず <code>reload</code> だけしている</strong></li>
+<li><strong><a href="../../glossary/#term-minigraph.xml">minigraph.xml</a> を編集したのに <code>load_minigraph</code> を打たず <code>reload</code> だけしている</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
@@ -28865,7 +28865,7 @@
 </span></code></pre></div>
 <ul>
 <li>期待: <code>Running command:</code> が無事 0 で終わる</li>
-<li>異常: YANG validation エラー → 出力中の table / field を CONFIG_DB から修正</li>
+<li>異常: <a href="../../glossary/#term-yang">YANG</a> validation エラー → 出力中の table / field を <a href="../../glossary/#term-config_db">CONFIG_DB</a> から修正</li>
 </ul>
 <h3 id="4-db_migrator">4. db_migrator のバージョン<a class="headerlink" href="#4-db_migrator" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;VERSIONS|DATABASE&quot;</span>
@@ -28900,7 +28900,7 @@
 <li><a href="../../cli/sonic-cfggen/">../cli/sonic-cfggen.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 9a543bc5900d -->
+<!-- glossary-links-injected: 250244b14646 -->
 
 <div class="footnote">
 <hr />

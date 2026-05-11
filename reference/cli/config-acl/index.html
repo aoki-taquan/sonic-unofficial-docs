@@ -29062,8 +29062,8 @@
 
 <h1 id="config-acl">config acl サブコマンド<a class="headerlink" href="#config-acl" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config acl</code> は <a href="../../glossary/#term-acl">ACL</a> テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（<code>acl-loader</code> 起動）を提供する。<strong>個別 ACL ルールを CLI フラグで追加するインタフェースは無い</strong>。ルールは JSON ファイルに記述して <code>config acl update full|incremental</code> で投入する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>ACL の実体は <code>aclorch</code>（swss）が <code>ACL_TABLE</code> / <code>ACL_RULE</code> を <a href="../../glossary/#term-appl_db">APPL_DB</a> → <a href="../../glossary/#term-asic_db">ASIC_DB</a> へ反映する。<code>config acl</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>ACL_TABLE</code> のみ直接書き換え、ルール側は外部ツール <code>acl-loader</code> が CONFIG_DB と直接対話する。</p>
+<p><code>config acl</code> は <a href="../../glossary/#term-acl">ACL</a> テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（<code>acl-loader</code> 起動）を提供する。<strong>個別 <a href="../../glossary/#term-acl">ACL</a> ルールを CLI フラグで追加するインタフェースは無い</strong>。ルールは JSON ファイルに記述して <code>config acl update full|incremental</code> で投入する設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../glossary/#term-acl">ACL</a> の実体は <code>aclorch</code>（swss）が <code>ACL_TABLE</code> / <code>ACL_RULE</code> を <a href="../../glossary/#term-appl_db">APPL_DB</a> → <a href="../../glossary/#term-asic_db">ASIC_DB</a> へ反映する。<code>config acl</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>ACL_TABLE</code> のみ直接書き換え、ルール側は外部ツール <code>acl-loader</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> と直接対話する。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29172,7 +29172,7 @@ excerpt: |
 
 <h3 id="config-acl-remove-table-table_name-n-namespace"><code>config acl remove table &lt;table_name&gt; [-n &lt;namespace&gt;]</code><a class="headerlink" href="#config-acl-remove-table-table_name-n-namespace" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-<code>ACL_TABLE|&lt;table_name&gt;</code> を <code>set_entry(..., None)</code> で削除する。<strong>配下の ACL_RULE 自動削除は CLI 側ではしない</strong>（aclorch が <code>ACL_TABLE</code> 不在になった時点で APPL_DB → SAI から rule を取り除く）。</p>
+<code>ACL_TABLE|&lt;table_name&gt;</code> を <code>set_entry(..., None)</code> で削除する。<strong>配下の ACL_RULE 自動削除は CLI 側ではしない</strong>（aclorch が <code>ACL_TABLE</code> 不在になった時点で <a href="../../glossary/#term-appl_db">APPL_DB</a> → <a href="../../glossary/#term-sai">SAI</a> から rule を取り除く）。</p>
 <h3 id="config-acl-update-full-file_name"><code>config acl update full &lt;file_name&gt;</code><a class="headerlink" href="#config-acl-update-full-file_name" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
 <code>acl-loader update full &lt;file&gt;</code> を <code>subprocess</code> で起動。<code>acl-loader</code> は引数 JSON から <code>ACL_RULE</code> テーブル全行を<strong>置き換え</strong>る（既存の rule は一旦削除されてから再登録）。</p>
@@ -29205,7 +29205,7 @@ excerpt: |
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/acl-table/"><code>ACL_TABLE</code></a> / <a href="../../config-db/acl-rule/"><code>ACL_RULE</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/acl-table/"><code>ACL_TABLE</code></a> / <a href="../../config-db/acl-rule/"><code>ACL_RULE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29219,7 +29219,7 @@ excerpt: |
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>config acl add table</code> で stage を間違えると aclorch が SAI でテーブルを作れず syslog にエラー。</li>
+<li><code>config acl add table</code> で stage を間違えると aclorch が <a href="../../glossary/#term-sai">SAI</a> でテーブルを作れず syslog にエラー。</li>
 <li><code>ports</code> を空にすると CONFIG_DB には載るが ASIC には降りない。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29282,7 +29282,7 @@ excerpt: |
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ad637fdc1d57 -->
+<!-- glossary-links-injected: 73668e28bc19 -->
 
 <div class="footnote">
 <hr />

@@ -28874,7 +28874,7 @@
 
 <h1 id="bgp_device_global">BGP_DEVICE_GLOBAL テーブル<a class="headerlink" href="#bgp_device_global" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>スイッチ全体（<a href="../../glossary/#term-vrf">VRF</a> 横断）の <a href="../../glossary/#term-bgp">BGP</a> 動作スイッチを保持する。<code>BGP_GLOBALS</code> が VRF 単位なのに対し、<code>BGP_DEVICE_GLOBAL</code> は装置全体スコープ。TSA (Traffic-Shift-Away)、W-<a href="../../glossary/#term-ecmp">ECMP</a> (BGP link-bandwidth ベース重み付き ECMP)、IDF (Inter-DC Fabric) 隔離状態、confederation の代表設定を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>スイッチ全体（<a href="../../glossary/#term-vrf">VRF</a> 横断）の <a href="../../glossary/#term-bgp">BGP</a> 動作スイッチを保持する。<code>BGP_GLOBALS</code> が <a href="../../glossary/#term-vrf">VRF</a> 単位なのに対し、<code>BGP_DEVICE_GLOBAL</code> は装置全体スコープ。TSA (Traffic-Shift-Away)、W-<a href="../../glossary/#term-ecmp">ECMP</a> (<a href="../../glossary/#term-bgp">BGP</a> link-bandwidth ベース重み付き <a href="../../glossary/#term-ecmp">ECMP</a>)、IDF (Inter-DC Fabric) 隔離状態、confederation の代表設定を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28915,7 +28915,7 @@
 <td><code>wcmp_enabled</code></td>
 <td>boolean</td>
 <td><code>false</code></td>
-<td>BGP link-bandwidth W-ECMP 有効化</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> link-bandwidth W-<a href="../../glossary/#term-ecmp">ECMP</a> 有効化</td>
 </tr>
 <tr>
 <td><code>idf_isolation_state</code></td>
@@ -28963,7 +28963,7 @@
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-bgp-device-global/"><code>sonic-bgp-device-global</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-bgp-device-global/"><code>sonic-bgp-device-global</code></a></li>
 <li>CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28989,13 +28989,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: aeea2bd728de -->
+<!-- glossary-links-injected: 029bff240b1b -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-bgp-device-global.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-bgp-device-global.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -29515,7 +29515,7 @@
 </tr>
 <tr>
 <td><code>config interface vrf</code></td>
-<td>VRF バインド (<code>bind</code> / <code>unbind</code>)</td>
+<td><a href="../../glossary/#term-vrf">VRF</a> バインド (<code>bind</code> / <code>unbind</code>)</td>
 </tr>
 <tr>
 <td><code>config interface mpls</code></td>
@@ -29535,7 +29535,7 @@
 </tr>
 <tr>
 <td><code>config interface pfc</code></td>
-<td>PFC 設定 (<code>asymmetric</code> / <code>priority</code>)</td>
+<td><a href="../../glossary/#term-pfc">PFC</a> 設定 (<code>asymmetric</code> / <code>priority</code>)</td>
 </tr>
 <tr>
 <td><code>config interface storm-control</code></td>
@@ -29640,7 +29640,7 @@ excerpt: |
 </tr>
 </tbody>
 </table>
-<p><code>cable-length</code> はサブプロセスではなく、CONFIG_DB の <code>CABLE_LENGTH</code> テーブルを直接書き換える。</p>
+<p><code>cable-length</code> はサブプロセスではなく、<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>CABLE_LENGTH</code> テーブルを直接書き換える。</p>
 <h3 id="config-interface-breakout-interface-mode"><code>config interface breakout &lt;interface&gt; &lt;mode&gt;</code><a class="headerlink" href="#config-interface-breakout-interface-mode" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
 <code>BREAKOUT_CFG</code> テーブルを更新し、関連 <code>PORT</code> エントリの再生成を内部で実施。dynamic breakout を有効にする hwsku のみで動作する。</p>
@@ -29680,16 +29680,16 @@ excerpt: |
 <p><strong>特殊扱い</strong>:</p>
 <ul>
 <li><code>eth0</code> は <strong>IPv4 / IPv6 各 1 件のみ</strong>保持。既存の同 family 行は削除して上書き</li>
-<li><code>--secondary</code> が <code>True</code> の場合、CONFIG_DB エントリに <code>secondary: "true"</code> が付く</li>
+<li><code>--secondary</code> が <code>True</code> の場合、<a href="../../glossary/#term-config_db">CONFIG_DB</a> エントリに <code>secondary: "true"</code> が付く</li>
 </ul>
 <h3 id="config-interface-ip-remove-interface-ip_addr"><code>config interface ip remove &lt;interface&gt; &lt;ip_addr&gt;</code><a class="headerlink" href="#config-interface-ip-remove-interface-ip_addr" title="Permanent link">&para;</a></h3>
 <p>該当テーブルから <code>set_entry(key, None)</code> で削除。</p>
 <h3 id="config-interface-vrf-bind-interface-vrf_name-vrf-unbind-interface"><code>config interface vrf bind &lt;interface&gt; &lt;vrf_name&gt;</code> / <code>vrf unbind &lt;interface&gt;</code><a class="headerlink" href="#config-interface-vrf-bind-interface-vrf_name-vrf-unbind-interface" title="Permanent link">&para;</a></h3>
-<p><code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> 等のエントリの <code>vrf_name</code> フィールドを書き換える。bind 後は当該インタフェイスの IP は VRF にひも付き、<code>VRF</code> テーブルが先に存在する必要がある。</p>
+<p><code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> 等のエントリの <code>vrf_name</code> フィールドを書き換える。bind 後は当該インタフェイスの IP は <a href="../../glossary/#term-vrf">VRF</a> にひも付き、<code>VRF</code> テーブルが先に存在する必要がある。</p>
 <h3 id="config-interface-ipv6-enable-use-link-local-only-interface-disable-use-link-local-only-interface"><code>config interface ipv6 enable use-link-local-only &lt;interface&gt;</code> / <code>disable use-link-local-only &lt;interface&gt;</code><a class="headerlink" href="#config-interface-ipv6-enable-use-link-local-only-interface-disable-use-link-local-only-interface" title="Permanent link">&para;</a></h3>
 <p>該当インタフェイスの IP テーブルに <code>ipv6_use_link_local_only</code> フィールドを <code>enable</code> / <code>disable</code> で書き込む。</p>
 <h3 id="config-interface-mpls-add-interface-remove-interface"><code>config interface mpls add &lt;interface&gt;</code> / <code>remove &lt;interface&gt;</code><a class="headerlink" href="#config-interface-mpls-add-interface-remove-interface" title="Permanent link">&para;</a></h3>
-<p>該当インタフェイス IP テーブルの <code>mpls</code> フィールドを <code>enable</code> / <code>disable</code> で書き込み、<code>intfmgrd</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>/cfgmgr/intfmgr.cpp) が L3 MPLS を有効化する。</p>
+<p>該当インタフェイス IP テーブルの <code>mpls</code> フィールドを <code>enable</code> / <code>disable</code> で書き込み、<code>intfmgrd</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>/cfgmgr/intfmgr.cpp) が L3 <a href="../../glossary/#term-mpls">MPLS</a> を有効化する。</p>
 <h3 id="config-interface-buffer-priority-group-lossless-addremoveset"><code>config interface buffer priority-group lossless add/remove/set</code> 等<a class="headerlink" href="#config-interface-buffer-priority-group-lossless-addremoveset" title="Permanent link">&para;</a></h3>
 <p><code>BUFFER_PG</code> テーブルを操作し、ロスレス priority-group のバッファプロファイルをアサイン。</p>
 <h3 id="config-interface-transceiver-lpmode-interface-onoff"><code>config interface transceiver lpmode &lt;interface&gt; &lt;on|off&gt;</code><a class="headerlink" href="#config-interface-transceiver-lpmode-interface-onoff" title="Permanent link">&para;</a></h3>
@@ -29857,7 +29857,7 @@ excerpt: |
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: bb400b8b9471 -->
+<!-- glossary-links-injected: cc62f0a293fd -->
 
 <div class="footnote">
 <hr />

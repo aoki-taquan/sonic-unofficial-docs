@@ -28870,7 +28870,7 @@
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ログレベル正常化: <code>sonic-db-cli CONFIG_DB hset "LOGGER|&lt;comp&gt;" LOGLEVEL NOTICE</code>（<strong>ロールバック</strong>: 元の LOGLEVEL を控えて hset で戻す）</li>
-<li>FRR debug 解除: <code>vtysh -c "no debug bgp updates"</code></li>
+<li><a href="../../glossary/#term-frr">FRR</a> debug 解除: <code>vtysh -c "no debug bgp updates"</code></li>
 <li>古い dump 削除: <code>sudo find /var/dump/ -name "sonic_dump_*.tar.gz" -mtime +14 -print</code> で確認後、<strong>退避済みであることを確認してから</strong> <code>-delete</code></li>
 <li>core dump: <code>sudo find /var/core/ -mtime +14 -print</code> で確認、退避後に削除</li>
 <li>logrotate 強化: <code>/etc/logrotate.d/rsyslog</code> で <code>rotate</code> / <code>size</code> / <code>compress</code> を調整</li>
@@ -28881,7 +28881,7 @@
 <li><a href="../container-not-starting/">./container-not-starting.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: fb213a7a73e6 -->
+<!-- glossary-links-injected: 3887c0ea65db -->
 
 <div class="footnote">
 <hr />
@@ -28890,7 +28890,7 @@
 <p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ master — generate_dump&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-utilities @ master — show/main.py&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-utilities">sonic-utilities</a> @ master — show/main.py&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

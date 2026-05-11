@@ -29141,11 +29141,11 @@
 <tbody>
 <tr>
 <td><code>config muxcable mode &lt;state&gt; &lt;port&gt;</code></td>
-<td>mux 状態 (<code>active</code> / <code>auto</code> / <code>manual</code> / <code>standby</code> / <code>detach</code>) を CONFIG_DB に書く</td>
+<td>mux 状態 (<code>active</code> / <code>auto</code> / <code>manual</code> / <code>standby</code> / <code>detach</code>) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書く</td>
 </tr>
 <tr>
 <td><code>config muxcable probertype &lt;hardware\|software&gt; &lt;port&gt;</code></td>
-<td>linkmgrd の probe 方式を切替</td>
+<td><a href="../../glossary/#term-linkmgrd">linkmgrd</a> の probe 方式を切替</td>
 </tr>
 <tr>
 <td><code>config muxcable kill_radv &lt;enable\|disable&gt;</code></td>
@@ -29173,7 +29173,7 @@
 </tr>
 <tr>
 <td><code>config muxcable hwmode state &lt;active\|standby&gt; &lt;port&gt;</code></td>
-<td>HW レベルの mux 切替 (linkmgrd 介さず)</td>
+<td>HW レベルの mux 切替 (<a href="../../glossary/#term-linkmgrd">linkmgrd</a> 介さず)</td>
 </tr>
 <tr>
 <td><code>config muxcable hwmode setswitchmode &lt;auto\|manual&gt; &lt;port&gt;</code></td>
@@ -29219,7 +29219,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config muxcable mode {active|auto|manual|standby|detach} &lt;port_name|all&gt; [--json]
 </span></code></pre></div>
 <p><strong>動作</strong>:
-<code>MUX_CABLE</code> テーブルから対象ポートの STATE_DB エントリを引いて遷移可能性を判断し、<code>MUX_CABLE|&lt;port&gt;</code> の <code>state</code> フィールドを書き換える。<code>port = "all"</code> の場合は <code>MUX_CABLE</code> に登録されている全ポートを順に処理する。<code>detach</code> は <a href="../../glossary/#term-mux">MUX</a> 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は <code>--json</code> で JSON、無指定で表形式。</p>
+<code>MUX_CABLE</code> テーブルから対象ポートの <a href="../../glossary/#term-state_db">STATE_DB</a> エントリを引いて遷移可能性を判断し、<code>MUX_CABLE|&lt;port&gt;</code> の <code>state</code> フィールドを書き換える。<code>port = "all"</code> の場合は <code>MUX_CABLE</code> に登録されている全ポートを順に処理する。<code>detach</code> は <a href="../../glossary/#term-mux">MUX</a> 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は <code>--json</code> で JSON、無指定で表形式。</p>
 <h3 id="config-muxcable-probertype-hardwaresoftware-port"><code>config muxcable probertype &lt;hardware|software&gt; &lt;port&gt;</code><a class="headerlink" href="#config-muxcable-probertype-hardwaresoftware-port" title="Permanent link">&para;</a></h3>
 <p><code>MUX_LINKMGR</code> テーブル相当 (<code>prober_type</code> フィールド) を更新する。<code>update_configdb_prober_type</code> ヘルパが該当ポートの設定を merge する。</p>
 <h3 id="config-muxcable-prbs-enable-port-target-mode_value-lane_mask-prbs_direction"><code>config muxcable prbs enable &lt;port&gt; &lt;target&gt; &lt;mode_value&gt; &lt;lane_mask&gt; [&lt;prbs_direction&gt;]</code><a class="headerlink" href="#config-muxcable-prbs-enable-port-target-mode_value-lane_mask-prbs_direction" title="Permanent link">&para;</a></h3>
@@ -29253,7 +29253,7 @@
 <td><code>probertype</code> / <code>kill_radv</code></td>
 </tr>
 <tr>
-<td><code>XCVRD_*_CMD</code> / <code>XCVRD_*_RSP</code> (APPL_DB / STATE_DB)</td>
+<td><code>XCVRD_*_CMD</code> / <code>XCVRD_*_RSP</code> (<a href="../../glossary/#term-appl_db">APPL_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a>)</td>
 <td>xcvrd RPC</td>
 <td><code>prbs</code> / <code>loopback</code> / <code>firmware ...</code> / <code>reset</code> / <code>set_anlt</code> / <code>set_fec</code> / <code>packetloss reset</code></td>
 </tr>
@@ -29261,7 +29261,7 @@
 </table>
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>大半の low-level コマンド (PRBS / loopback / FW / FEC / ANLT) は <strong>CONFIG_DB を直接書き換えるのではなく xcvrd への async RPC</strong> で動く。タイムアウト時のリトライや RSP 不整合の検出は CLI 側のフォールバック実装を読む必要がある。</li>
+<li>大半の low-level コマンド (PRBS / loopback / FW / FEC / ANLT) は <strong><a href="../../glossary/#term-config_db">CONFIG_DB</a> を直接書き換えるのではなく xcvrd への async RPC</strong> で動く。タイムアウト時のリトライや RSP 不整合の検出は CLI 側のフォールバック実装を読む必要がある。</li>
 <li><code>port = "all"</code> 指定をサポートするコマンドと、しないコマンドが混在する。CLI 引数の <code>default=None</code> と <code>MUX_CABLE</code> 全件ループ実装の有無を要確認。</li>
 </ul>
 <!-- ref-triangle:start -->
@@ -29333,7 +29333,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 23e2562f0d36 -->
+<!-- glossary-links-injected: 449be12facf1 -->
 
 <div class="footnote">
 <hr />

@@ -28973,16 +28973,16 @@
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>tunnel_type</code> は <code>IPINIP</code> のみ受け入れる（<code>tunneldecaporch.cpp</code> でハードコード）</li>
-<li><code>ecn_mode</code> は SAI <code>SAI_TUNNEL_ATTR_DECAP_ECN_MODE</code> が create-only のため、生成後の更新はスキップされる旨が WARN ログで残る</li>
+<li><code>ecn_mode</code> は <a href="../../glossary/#term-sai">SAI</a> <code>SAI_TUNNEL_ATTR_DECAP_ECN_MODE</code> が create-only のため、生成後の更新はスキップされる旨が WARN ログで残る</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>tunneldecaporch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>): SAI tunnel / tunnel-term オブジェクト作成</li>
+<li><code>tunneldecaporch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>): <a href="../../glossary/#term-sai">SAI</a> tunnel / tunnel-term オブジェクト作成</li>
 <li><code>STATE_DB</code> 側はモニタリング用ミラー</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <a href="../tunnel/"><code>TUNNEL</code></a>（CONFIG_DB 側のソース）</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../tunnel/"><code>TUNNEL</code></a>（<a href="../../glossary/#term-config_db">CONFIG_DB</a> 側のソース）</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: なし</li>
 <li>関連 CLI: なし（テーブルは内部）</li>
 </ul>
@@ -29011,7 +29011,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e3a65a1701e9 -->
+<!-- glossary-links-injected: 6f36db8074ad -->
 
 <div class="footnote">
 <hr />

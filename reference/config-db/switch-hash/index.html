@@ -28875,7 +28875,7 @@
 <h1 id="switch_hash">SWITCH_HASH テーブル<a class="headerlink" href="#switch_hash" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-ecmp">ECMP</a> / <a href="../../glossary/#term-lag">LAG</a> ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
-<code>orchagent</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読んで <a href="../../glossary/#term-sai">SAI</a> <code>SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*</code> / <code>SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*</code> 系属性として SAI に push する。</p>
+<code>orchagent</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読んで <a href="../../glossary/#term-sai">SAI</a> <code>SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_*</code> / <code>SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_*</code> 系属性として <a href="../../glossary/#term-sai">SAI</a> に push する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28907,22 +28907,22 @@
 <tr>
 <td><code>ecmp_hash</code></td>
 <td>leaf-list of <code>hash-field</code> enum</td>
-<td>ECMP パケットを分散させるためのハッシュフィールド集合</td>
+<td><a href="../../glossary/#term-ecmp">ECMP</a> パケットを分散させるためのハッシュフィールド集合</td>
 </tr>
 <tr>
 <td><code>lag_hash</code></td>
 <td>leaf-list of <code>hash-field</code> enum</td>
-<td>LAG メンバ間分散用のハッシュフィールド集合</td>
+<td><a href="../../glossary/#term-lag">LAG</a> メンバ間分散用のハッシュフィールド集合</td>
 </tr>
 <tr>
 <td><code>ecmp_hash_algorithm</code></td>
 <td><code>hash-algorithm</code> enum</td>
-<td>ECMP に使うハッシュアルゴリズム (CRC / XOR / Random / CRC_32LO 等、<code>sonic-types</code>)</td>
+<td><a href="../../glossary/#term-ecmp">ECMP</a> に使うハッシュアルゴリズム (CRC / XOR / Random / CRC_32LO 等、<code>sonic-types</code>)</td>
 </tr>
 <tr>
 <td><code>lag_hash_algorithm</code></td>
 <td><code>hash-algorithm</code> enum</td>
-<td>LAG に使うハッシュアルゴリズム</td>
+<td><a href="../../glossary/#term-lag">LAG</a> に使うハッシュアルゴリズム</td>
 </tr>
 </tbody>
 </table>
@@ -28936,14 +28936,14 @@
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CLI: <code>config switch-hash global ecmp</code> / <code>config switch-hash global lag</code></li>
-<li>関連 YANG: <code>sonic-hash</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-hash</code></li>
 <li>関連: <code>FG_NHG</code>（fine-grained ECMP）, <code>PORT.lag_hash</code> 等の per-port ハッシュは別経路</li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-hash/"><code>sonic-hash</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-hash/"><code>sonic-hash</code></a></li>
 <li>CLI: <code>config switch-hash</code></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28970,7 +28970,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a4763c04a26b -->
+<!-- glossary-links-injected: 37a4890848e2 -->
 
 <div class="footnote">
 <hr />

@@ -28998,11 +28998,11 @@
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>intfmgrd</code> / <code>intfsyncd</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>)</li>
-<li><code>bgpcfgd</code> / <code>bgpd</code> — BGP internal neighbor のソース interface として使う場合</li>
+<li><code>bgpcfgd</code> / <code>bgpd</code> — <a href="../../glossary/#term-bgp">BGP</a> internal neighbor のソース interface として使う場合</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>SYSTEM_PORT</code>、<code>BGP_INTERNAL_NEIGHBOR</code>、<code>BGP_VOQ_CHASSIS_NEIGHBOR</code>、<code>CHASSIS_MODULE</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>SYSTEM_PORT</code>、<code>BGP_INTERNAL_NEIGHBOR</code>、<code>BGP_VOQ_CHASSIS_NEIGHBOR</code>、<code>CHASSIS_MODULE</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-voq-inband-interface</code>、<code>sonic-bgp-internal-neighbor</code>、<code>sonic-bgp-voq-chassis-neighbor</code></li>
 <li>関連 CLI: <code>config interface</code></li>
 </ul>
@@ -29010,7 +29010,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <code>sonic-voq-inband-interface</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-voq-inband-interface</code></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29030,7 +29030,7 @@
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>name</code> が <code>Ethernet-IB&lt;n&gt;</code> パターンに一致しない命名で YANG validation エラー。</li>
-<li>VOQ chassis 以外の単体スイッチで設定して効果が無い (VOQ 専用)。</li>
+<li><a href="../../glossary/#term-voq">VOQ</a> chassis 以外の単体スイッチで設定して効果が無い (<a href="../../glossary/#term-voq">VOQ</a> 専用)。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VOQ_INBAND_INTERFACE|*&#39;</span>
@@ -29039,13 +29039,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 5542a4a1928e -->
+<!-- glossary-links-injected: ad5cec746880 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-voq-inband-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-voq-inband-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

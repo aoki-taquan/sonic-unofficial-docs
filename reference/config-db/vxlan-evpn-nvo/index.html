@@ -28896,7 +28896,7 @@
 
 <h1 id="vxlan_evpn_nvo">VXLAN_EVPN_NVO テーブル<a class="headerlink" href="#vxlan_evpn_nvo" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>VXLAN_EVPN_NVO</code> テーブルは <a href="../../glossary/#term-evpn">EVPN</a> ベースの Network Virtualization Overlay (NVO) インスタンスを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。EVPN コントロールプレーン (<a href="../../glossary/#term-frr">FRR</a> + bgpd の <code>l2vpn evpn</code>) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (<code>max-elements 1</code>)。</p>
+<p><code>VXLAN_EVPN_NVO</code> テーブルは <a href="../../glossary/#term-evpn">EVPN</a> ベースの Network Virtualization Overlay (NVO) インスタンスを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-evpn">EVPN</a> コントロールプレーン (<a href="../../glossary/#term-frr">FRR</a> + bgpd の <code>l2vpn evpn</code>) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (<code>max-elements 1</code>)。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28928,7 +28928,7 @@
 <tr>
 <td><code>name</code></td>
 <td>string</td>
-<td>EVPN NVO インスタンス名</td>
+<td><a href="../../glossary/#term-evpn">EVPN</a> NVO インスタンス名</td>
 </tr>
 </tbody>
 </table>
@@ -28964,7 +28964,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>VXLAN_TUNNEL</code>、<code>VXLAN_TUNNEL_MAP</code>、<code>VNET</code>、<code>BGP_GLOBALS_AF</code> (l2vpn evpn)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VXLAN_TUNNEL</code>、<code>VXLAN_TUNNEL_MAP</code>、<code>VNET</code>、<code>BGP_GLOBALS_AF</code> (l2vpn evpn)</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vxlan</code></li>
 <li>関連 CLI: <code>config vxlan evpn_nvo</code></li>
 </ul>
@@ -28972,7 +28972,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29000,13 +29000,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9d75cd71afa3 -->
+<!-- glossary-links-injected: 5d51c067a00b -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-vxlan.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vxlan.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vxlan.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

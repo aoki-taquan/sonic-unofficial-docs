@@ -28830,7 +28830,7 @@
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><a href="../../glossary/#term-nat">NAT</a> zone 設定漏れ</strong>: interface に <code>nat_zone</code> が未設定 / inside/outside の組合せ不正</li>
-<li><strong><a href="../../glossary/#term-crm">CRM</a> NAT table の枯渇</strong>: dynamic NAT で空きエントリなし</li>
+<li><strong><a href="../../glossary/#term-crm">CRM</a> <a href="../../glossary/#term-nat">NAT</a> table の枯渇</strong>: dynamic <a href="../../glossary/#term-nat">NAT</a> で空きエントリなし</li>
 <li><strong>timeout 短すぎ</strong>: idle timeout / udp_timeout で先に削除</li>
 <li><strong>protocol 別 binding ない</strong>: TCP のみ pool に bind され UDP / ICMP は通らない</li>
 <li><strong>conntrack 連携の不整合</strong>: <code>nf_conntrack</code> が ASIC 側 NAT と乖離</li>
@@ -28873,7 +28873,7 @@
 <li>zone 設定: <code>sudo config nat add interface &lt;if&gt; -nat_zone &lt;0|1&gt;</code> （<strong>ロールバック</strong>: 元 zone に同コマンドで戻す）</li>
 <li>timeout 拡張: <code>sudo config nat set timeout 600</code> / <code>udp-timeout</code> / <code>tcp-timeout</code> 調整</li>
 <li>protocol binding 追加: <code>sudo config nat add binding &lt;name&gt; -pool &lt;pool&gt; -acl &lt;acl&gt;</code></li>
-<li>CRM 枯渇: pool 拡張 / static NAT の整理</li>
+<li><a href="../../glossary/#term-crm">CRM</a> 枯渇: pool 拡張 / static NAT の整理</li>
 <li>conntrack 不整合: <code>sudo conntrack -F</code> は全フロー消失する破壊的操作。実施前に <strong>トラフィック断を許容できるメンテ枠</strong>で実行</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -28883,7 +28883,7 @@
 <li><a href="../../../topics/16-nat-dhcp-dns/operations/">../../topics/16-nat-dhcp-dns/operations.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 6132e8ff8c52 -->
+<!-- glossary-links-injected: 8bdc0c514210 -->
 
 <div class="footnote">
 <hr />
@@ -28892,7 +28892,7 @@
 <p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ master — natorch.cpp&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>sonic-net/sonic-swss @ master — natsyncd.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>sonic-net/<a href="../../glossary/#term-sonic-swss">sonic-swss</a> @ master — natsyncd.cpp&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

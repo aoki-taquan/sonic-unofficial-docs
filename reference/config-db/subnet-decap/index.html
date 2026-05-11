@@ -28874,7 +28874,7 @@
 
 <h1 id="subnet_decap">SUBNET_DECAP テーブル<a class="headerlink" href="#subnet_decap" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-ipinip">IPinIP</a> トンネルの <strong>サブネット単位の decapsulation ルール</strong> を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>TUNNEL_DECAP_TABLE</code> が個別の outer IP を起点とした decap を扱うのに対し、<code>SUBNET_DECAP</code> は <strong>outer source IP がプレフィックス内に該当する場合に decap を行う</strong> という、より広範な一致条件を表す。<a href="../../glossary/#term-smartswitch">SmartSwitch</a> / <a href="../../glossary/#term-dash">DASH</a> や DualToR 系のシナリオで、ToR 配下のサーバ群から発した IPinIP encapsulated トラフィックを decap するために導入された。</p>
+<p><a href="../../glossary/#term-ipinip">IPinIP</a> トンネルの <strong>サブネット単位の decapsulation ルール</strong> を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>TUNNEL_DECAP_TABLE</code> が個別の outer IP を起点とした decap を扱うのに対し、<code>SUBNET_DECAP</code> は <strong>outer source IP がプレフィックス内に該当する場合に decap を行う</strong> という、より広範な一致条件を表す。<a href="../../glossary/#term-smartswitch">SmartSwitch</a> / <a href="../../glossary/#term-dash">DASH</a> や DualToR 系のシナリオで、ToR 配下のサーバ群から発した <a href="../../glossary/#term-ipinip">IPinIP</a> encapsulated トラフィックを decap するために導入された。</p>
 <p><a href="../../glossary/#term-yang">YANG</a> リビジョン 2024-12-19 で追加された比較的新しいテーブル。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -28944,19 +28944,19 @@
 <p><code>status</code> は <code>sonic-types:mode-status</code> (<code>enable</code>/<code>disable</code>) で、最小権限の原則からデフォルトは <code>disable</code>。</p>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>src_ip</code> / <code>src_ip_v6</code> は YANG で <code>mandatory true</code>。片方だけの設定は validation で拒否される。</li>
+<li><code>src_ip</code> / <code>src_ip_v6</code> は <a href="../../glossary/#term-yang">YANG</a> で <code>mandatory true</code>。片方だけの設定は validation で拒否される。</li>
 <li><code>status = enable</code> でない限りデータプレーンには反映されない。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>swss</code> の tunnel-decap オーチェストレータが <code>SUBNET_DECAP</code> を読み、<a href="../../glossary/#term-sai">SAI</a> の tunnel term entry を生成する（subnet ベースの match）。</li>
-<li>DualToR / DASH のサブシステムが補助的に参照する。</li>
+<li>DualToR / <a href="../../glossary/#term-dash">DASH</a> のサブシステムが補助的に参照する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>TUNNEL_DECAP_TABLE</code> (個別 IP の decap)、<code>MUX_CABLE</code> (DualToR)</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>TUNNEL_DECAP_TABLE</code> (個別 IP の decap)、<code>MUX_CABLE</code> (DualToR)</li>
 <li>関連 CLI: 現状 dedicated CLI コマンドは無く <code>sonic-cfggen</code> / <code>config load</code> 経由で投入することが多い</li>
-<li>関連 YANG: <code>sonic-subnet-decap</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-subnet-decap</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -28983,7 +28983,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: de257f859a08 -->
+<!-- glossary-links-injected: 5bccf4824bce -->
 
 <div class="footnote">
 <hr />

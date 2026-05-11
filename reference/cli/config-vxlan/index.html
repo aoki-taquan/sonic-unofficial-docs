@@ -29163,7 +29163,7 @@
 <h1 id="config-vxlan">config vxlan サブコマンド<a class="headerlink" href="#config-vxlan" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>config vxlan</code> は <a href="../../glossary/#term-vxlan">VXLAN</a> VTEP (<code>VXLAN_TUNNEL</code>)、<a href="../../glossary/#term-evpn">EVPN</a> NVO (<code>VXLAN_EVPN_NVO</code>)、および <a href="../../glossary/#term-vlan">VLAN</a>-VNI マッピング (<code>VXLAN_TUNNEL_MAP</code>) を管理する。<code>config/vxlan.py</code> に分離されており、<code>config/main.py</code> 末尾の <code>config.add_command(vxlan.vxlan)</code> で登録される構造<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>VTEP <strong>1 デバイスにつき 1 つだけ</strong>しか作れない（<code>vxlan add</code> 時に既存件数 &gt; 0 でエラー）。EVPN NVO も 1 つだけ。</p>
+<p>VTEP <strong>1 デバイスにつき 1 つだけ</strong>しか作れない（<code>vxlan add</code> 時に既存件数 &gt; 0 でエラー）。<a href="../../glossary/#term-evpn">EVPN</a> NVO も 1 つだけ。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29183,7 +29183,7 @@
 </tr>
 <tr>
 <td><code>config vxlan evpn_nvo add &lt;nvo_name&gt; &lt;vxlan_name&gt;</code></td>
-<td>EVPN NVO を作成</td>
+<td><a href="../../glossary/#term-evpn">EVPN</a> NVO を作成</td>
 </tr>
 <tr>
 <td><code>config vxlan evpn_nvo del &lt;nvo_name&gt;</code></td>
@@ -29191,11 +29191,11 @@
 </tr>
 <tr>
 <td><code>config vxlan map add &lt;vxlan_name&gt; &lt;vlan_id&gt; &lt;vni&gt;</code></td>
-<td>VLAN-VNI マップを 1 つ作成</td>
+<td><a href="../../glossary/#term-vlan">VLAN</a>-VNI マップを 1 つ作成</td>
 </tr>
 <tr>
 <td><code>config vxlan map del &lt;vxlan_name&gt; &lt;vlan_id&gt; &lt;vni&gt;</code></td>
-<td>VLAN-VNI マップを 1 つ削除</td>
+<td><a href="../../glossary/#term-vlan">VLAN</a>-VNI マップを 1 つ削除</td>
 </tr>
 <tr>
 <td><code>config vxlan map_range add &lt;vxlan_name&gt; &lt;vlan_start&gt; &lt;vlan_end&gt; &lt;vni_start&gt;</code></td>
@@ -29278,7 +29278,7 @@ excerpt: |
 <p><strong>動作</strong>:
 <code>vlan_start..vlan_end</code> まで連続的にループし、各 <code>vid</code> に対して <code>vni_start + (vid - vlan_start)</code> の VNI を割り当てる。VLAN が存在しなかったり VNI / VLAN がすでにマップ済みの行はスキップ（エラーではない）。各成功エントリは <code>&lt;vxlan_name&gt;|map_&lt;vni&gt;_Vlan&lt;vid&gt;</code> で作成。</p>
 <h3 id="config-vxlan-map_range-del-vxlan_name-vlan_start-vlan_end-vni_start"><code>config vxlan map_range del &lt;vxlan_name&gt; &lt;vlan_start&gt; &lt;vlan_end&gt; &lt;vni_start&gt;</code><a class="headerlink" href="#config-vxlan-map_range-del-vxlan_name-vlan_start-vlan_end-vni_start" title="Permanent link">&para;</a></h3>
-<p>範囲内の各 (vlan, vni) について、<strong><code>is_vni_vrf_mapped</code> が真</strong>（VRF に VNI 紐付け済み）の行のみ削除する仕様<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。それ以外の行はスキップしてメッセージを出すだけ。</p>
+<p>範囲内の各 (vlan, vni) について、<strong><code>is_vni_vrf_mapped</code> が真</strong>（<a href="../../glossary/#term-vrf">VRF</a> に VNI 紐付け済み）の行のみ削除する仕様<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。それ以外の行はスキップしてメッセージを出すだけ。</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29310,7 +29310,7 @@ excerpt: |
 <h2 id="_4">注意点<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VTEP / NVO は <strong>デバイス 1 つあたり 1 つ限定</strong></li>
-<li><code>map_range del</code> は VRF 紐付けがある VNI のみ削除する仕様で、削除されない行があっても警告は print のみ。完全削除には <code>map del</code> を使う</li>
+<li><code>map_range del</code> は <a href="../../glossary/#term-vrf">VRF</a> 紐付けがある VNI のみ削除する仕様で、削除されない行があっても警告は print のみ。完全削除には <code>map del</code> を使う</li>
 </ul>
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -29393,7 +29393,7 @@ excerpt: |
 <li><a href="../../config-db/vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 <li><a href="../../yang/sonic-vxlan/">YANG: sonic-vxlan</a></li>
 </ul>
-<!-- glossary-links-injected: 4459c49968d1 -->
+<!-- glossary-links-injected: 30b3c32e2ff3 -->
 
 <div class="footnote">
 <hr />

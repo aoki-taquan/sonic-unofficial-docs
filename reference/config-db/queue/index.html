@@ -28912,10 +28912,10 @@
 <!-- /cdb-mermaid -->
 
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<p>非 VOQ:
+<p>非 <a href="../../glossary/#term-voq">VOQ</a>:
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>QUEUE|&lt;ifname&gt;|&lt;qindex&gt;
 </span></code></pre></div></p>
-<p>VOQ chassis:
+<p><a href="../../glossary/#term-voq">VOQ</a> chassis:
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>QUEUE|&lt;hostname&gt;|&lt;asic_name&gt;|&lt;ifname&gt;|&lt;qindex&gt;
 </span></code></pre></div></p>
 <p><code>&lt;ifname&gt;</code> は <code>PORT.name</code> への leafref または文字列 <code>CPU</code>。<code>&lt;qindex&gt;</code> はプラットフォーム依存（物理 0-7、CPU 0-48 等）、範囲表現も可。</p>
@@ -28952,7 +28952,7 @@
 <td><code>wred_profile</code></td>
 <td>leafref <code>WRED_PROFILE.name</code></td>
 <td>-</td>
-<td>WRED プロファイル参照</td>
+<td><a href="../../glossary/#term-wred">WRED</a> プロファイル参照</td>
 </tr>
 </tbody>
 </table>
@@ -29002,14 +29002,14 @@
 <td><code>wred_profile</code></td>
 <td>leafref <code>WRED_PROFILE.name</code></td>
 <td>-</td>
-<td>WRED プロファイル</td>
+<td><a href="../../glossary/#term-wred">WRED</a> プロファイル</td>
 </tr>
 </tbody>
 </table>
 <p><code>when</code> 条件: <code>switch_type = voq</code>。</p>
 <h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosorch</code>: SAI queue scheduler / WRED を生成</li>
+<li><code>qosorch</code>: <a href="../../glossary/#term-sai">SAI</a> queue scheduler / WRED を生成</li>
 <li><code>bufferorch</code> と協調</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -29022,7 +29022,7 @@
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-queue/"><code>sonic-queue</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-queue/"><code>sonic-queue</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29044,7 +29044,7 @@
 </ul>
 <h3 id="_8">よくある誤設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../glossary/#term-pfc">PFC</a> 対応 queue に <code>wred_profile</code> を当てて ECN を有効にしないと、輻輳時に PFC が連続発火する。</li>
+<li><a href="../../glossary/#term-pfc">PFC</a> 対応 queue に <code>wred_profile</code> を当てて ECN を有効にしないと、輻輳時に <a href="../../glossary/#term-pfc">PFC</a> が連続発火する。</li>
 </ul>
 <h3 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;QUEUE|Ethernet0|*&#39;</span>
@@ -29052,13 +29052,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 74fd06c02dcc -->
+<!-- glossary-links-injected: 2ae60ae29e92 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-queue.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-queue.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

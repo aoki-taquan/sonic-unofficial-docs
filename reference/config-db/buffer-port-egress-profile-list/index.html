@@ -28944,19 +28944,19 @@
 </tr>
 </tbody>
 </table>
-<p><code>ordered-by user</code> のため、設定順がそのまま SAI への bind 順となる。</p>
+<p><code>ordered-by user</code> のため、設定順がそのまま <a href="../../glossary/#term-sai">SAI</a> への bind 順となる。</p>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>port</code> / <code>profile_list</code> 要素は leafref。実体が無いと validation で拒否される。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>buffermgrd</code>: CONFIG_DB → <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE</code></li>
-<li><code>orchagent</code> (BufferOrch): SAI 側 port egress profile list 設定</li>
+<li><code>buffermgrd</code>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE</code></li>
+<li><code>orchagent</code> (BufferOrch): <a href="../../glossary/#term-sai">SAI</a> 側 port egress profile list 設定</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BUFFER_PROFILE</code>, <code>BUFFER_POOL</code>, <code>BUFFER_QUEUE</code>, <code>PORT</code>, <code>BUFFER_PORT_INGRESS_PROFILE_LIST</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BUFFER_PROFILE</code>, <code>BUFFER_POOL</code>, <code>BUFFER_QUEUE</code>, <code>PORT</code>, <code>BUFFER_PORT_INGRESS_PROFILE_LIST</code></li>
 <li>関連 CLI: <code>config buffer profile</code> 系</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-buffer-port-egress-profile-list</code>, <code>sonic-buffer-profile</code></li>
 </ul>
@@ -28964,7 +28964,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <code>sonic-buffer-port-egress-profile-list</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-buffer-port-egress-profile-list</code></li>
 <li>CLI: <a href="../../cli/config-buffer/"><code>config buffer</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28996,13 +28996,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 77766b59392d -->
+<!-- glossary-links-injected: 5ad0ecc20ddb -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-buffer-port-egress-profile-list.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-egress-profile-list.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-egress-profile-list.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-buffer-port-egress-profile-list.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-egress-profile-list.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-buffer-port-egress-profile-list.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

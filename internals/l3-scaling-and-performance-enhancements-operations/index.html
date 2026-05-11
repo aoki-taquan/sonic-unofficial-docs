@@ -28768,7 +28768,7 @@
 <h1 id="l3-scaling-performance">L3 Scaling と Performance 強化 設定・運用<a class="headerlink" href="#l3-scaling-performance" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a> の派生で、<strong>設定 / CLI / 確認手順</strong> に絞る。概念は <a href="../l3-scaling-and-performance-enhancements-concepts/">l3-scaling-and-performance-enhancements-concepts.md</a>、内部実装は <a href="../l3-scaling-and-performance-enhancements-internals/">l3-scaling-and-performance-enhancements-internals.md</a>、制限事項と乖離は <a href="../l3-scaling-and-performance-enhancements-limitations/">l3-scaling-and-performance-enhancements-limitations.md</a> を参照。</p>
 <h2 id="1-cli-config_db-yang">1. CLI / CONFIG_DB / YANG<a class="headerlink" href="#1-cli-config_db-yang" title="Permanent link">&para;</a></h2>
-<p>新規 CLI / CONFIG_DB / YANG なし<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定は <strong>kernel sysctl</strong> と <strong><code>COPP_TABLE</code></strong> 値、CLI 改修（<code>show arp</code> 高速化）に閉じる。</p>
+<p>新規 CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> なし<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定は <strong>kernel sysctl</strong> と <strong><code>COPP_TABLE</code></strong> 値、CLI 改修（<code>show arp</code> 高速化）に閉じる。</p>
 <h2 id="2-config_db">2. 関連する CONFIG_DB<a class="headerlink" href="#2-config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28781,8 +28781,8 @@
 <tbody>
 <tr>
 <td><code>COPP_TABLE</code></td>
-<td>ARP/ND group の <code>cir</code> / <code>cbs</code></td>
-<td>600 → 8000 pps（HLD 提案。現行 master は 600 のまま）</td>
+<td><a href="../../reference/glossary/#term-arp">ARP</a>/ND group の <code>cir</code> / <code>cbs</code></td>
+<td>600 → 8000 pps（<a href="../../reference/glossary/#term-hld">HLD</a> 提案。現行 master は 600 のまま）</td>
 </tr>
 <tr>
 <td>(<code>/etc/sysctl.d/...</code>)</td>
@@ -28821,7 +28821,7 @@
 <td>4096</td>
 </tr>
 <tr>
-<td>CoPP ARP/ND <code>cir</code></td>
+<td><a href="../../reference/glossary/#term-copp">CoPP</a> ARP/ND <code>cir</code></td>
 <td>8000 pps</td>
 <td>8000 pps</td>
 <td>600 pps</td>
@@ -28855,7 +28855,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">time</span><span class="w"> </span>show<span class="w"> </span>arp
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">time</span><span class="w"> </span>show<span class="w"> </span>ndp
 </span></code></pre></div>
-<p>旧版（VLAN L3 上 ARP の outgoing IF 解決で FDB 全件 fetch）では entry が大量だと秒〜分単位。新版は個別 FDB lookup でほぼ即時に近い応答<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>旧版（<a href="../../reference/glossary/#term-vlan">VLAN</a> L3 上 ARP の outgoing IF 解決で <a href="../../reference/glossary/#term-fdb">FDB</a> 全件 fetch）では entry が大量だと秒〜分単位。新版は個別 FDB lookup でほぼ即時に近い応答<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="7-bulk-route-programming">7. bulk route programming の動作確認<a class="headerlink" href="#7-bulk-route-programming" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># RouteOrch のログ詳細化</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>INFO<span class="w"> </span>-c<span class="w"> </span>routeorch
@@ -28894,6 +28894,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: f0f6af0a12c5 -->
 
 <div class="footnote">
 <hr />

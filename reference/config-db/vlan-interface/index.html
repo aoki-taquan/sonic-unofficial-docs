@@ -28896,7 +28896,7 @@
 
 <h1 id="vlan_interface">VLAN_INTERFACE テーブル<a class="headerlink" href="#vlan_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-vlan">VLAN</a> を L3 IF (SVI) として扱う設定を保持する。<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding、IP アサイン、<a href="../../glossary/#term-nat">NAT</a> zone、<a href="../../glossary/#term-mpls">MPLS</a>、IPv6 link-local、grat <a href="../../glossary/#term-arp">ARP</a> / proxy ARP、loopback action、MAC を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../glossary/#term-vlan">VLAN</a> を L3 IF (SVI) として扱う設定を保持する。<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding、IP アサイン、<a href="../../glossary/#term-nat">NAT</a> zone、<a href="../../glossary/#term-mpls">MPLS</a>、IPv6 link-local、grat <a href="../../glossary/#term-arp">ARP</a> / proxy <a href="../../glossary/#term-arp">ARP</a>、loopback action、MAC を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28937,42 +28937,42 @@
 <td>leafref <code>VLAN.name</code></td>
 <td>✅</td>
 <td>-</td>
-<td>VLAN 名</td>
+<td><a href="../../glossary/#term-vlan">VLAN</a> 名</td>
 </tr>
 <tr>
 <td><code>vrf_name</code></td>
 <td>leafref <code>VRF.name</code></td>
 <td>-</td>
 <td>-</td>
-<td>バインドする VRF</td>
+<td>バインドする <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 <tr>
 <td><code>vnet_name</code></td>
 <td>leafref <code>VNET.name</code></td>
 <td>-</td>
 <td>-</td>
-<td>バインドする VNET</td>
+<td>バインドする <a href="../../glossary/#term-vnet">VNET</a></td>
 </tr>
 <tr>
 <td><code>nat_zone</code></td>
 <td>uint8 (0..3)</td>
 <td>-</td>
 <td><code>0</code></td>
-<td>NAT zone</td>
+<td><a href="../../glossary/#term-nat">NAT</a> zone</td>
 </tr>
 <tr>
 <td><code>mpls</code></td>
 <td>enum <code>enable</code>/<code>disable</code></td>
 <td>-</td>
 <td>-</td>
-<td>MPLS routing</td>
+<td><a href="../../glossary/#term-mpls">MPLS</a> routing</td>
 </tr>
 <tr>
 <td><code>grat_arp</code></td>
 <td>string <code>enabled</code>/<code>disabled</code></td>
 <td>-</td>
 <td>-</td>
-<td>gratuitous ARP</td>
+<td>gratuitous <a href="../../glossary/#term-arp">ARP</a></td>
 </tr>
 <tr>
 <td><code>proxy_arp</code></td>
@@ -29019,7 +29019,7 @@
 <td><code>name</code> (key)</td>
 <td>leafref <code>VLAN.name</code></td>
 <td>✅</td>
-<td>VLAN 名（<code>VLAN_INTERFACE_LIST</code> に存在することを <code>must</code> で要求）</td>
+<td><a href="../../glossary/#term-vlan">VLAN</a> 名（<code>VLAN_INTERFACE_LIST</code> に存在することを <code>must</code> で要求）</td>
 </tr>
 <tr>
 <td><code>ip-prefix</code> (key)</td>
@@ -29049,7 +29049,7 @@
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>intfmgrd</code>: VRF / MAC / MPLS / IPv6 LL / proxy_arp / grat_arp を Linux に反映</li>
+<li><code>intfmgrd</code>: <a href="../../glossary/#term-vrf">VRF</a> / MAC / <a href="../../glossary/#term-mpls">MPLS</a> / IPv6 LL / proxy_arp / grat_arp を Linux に反映</li>
 <li><code>orchagent</code> <code>IntfsOrch</code>: <a href="../../glossary/#term-sai">SAI</a> ルータインタフェースを生成</li>
 <li><code>arpresponder</code> 等: proxy ARP / grat ARP を扱う</li>
 </ul>
@@ -29063,7 +29063,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-vlan/"><code>sonic-vlan</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vlan/"><code>sonic-vlan</code></a></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29094,13 +29094,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9a96ec343525 -->
+<!-- glossary-links-injected: c4023422f31d -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-vlan.yang</code> 内 <code>VLAN_INTERFACE</code>。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L71">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L71</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vlan.yang</code> 内 <code>VLAN_INTERFACE</code>。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L71">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L71</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

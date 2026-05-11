@@ -28680,15 +28680,15 @@
 <h1 id="vxlan-vnet">VXLAN / VNet 概念<a class="headerlink" href="#vxlan-vnet" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> の派生ページで、<strong>概念・用語・スコープ</strong> に絞って整理する。設定・運用は <a href="../vxlan-sonic-operations/">vxlan-sonic-operations.md</a>、Orch 群の内部実装は <a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a>、制限事項は <a href="../vxlan-sonic-limitations/">vxlan-sonic-limitations.md</a> を参照。</p>
 <h2 id="1-vtep-vnet">1. VTEP と VNet の関係<a class="headerlink" href="#1-vtep-vnet" title="Permanent link">&para;</a></h2>
-<p>SONiC の VXLAN は <strong>VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ</strong> で実装される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。VTEP は VXLAN encap/decap を行う物理エンドポイント、VNet は <strong>同一 VTEP 内に複数並立する仮想ネットワーク</strong> を識別する論理境界である。1 つの VTEP が複数 VNet を保持し、各 VNet が独自の VRF または BRIDGE として動作する。</p>
-<p>HLD のスコープ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>SONiC の <a href="../../reference/glossary/#term-vxlan">VXLAN</a> は <strong>VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ</strong> で実装される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。VTEP は VXLAN encap/decap を行う物理エンドポイント、VNet は <strong>同一 VTEP 内に複数並立する仮想ネットワーク</strong> を識別する論理境界である。1 つの VTEP が複数 VNet を保持し、各 VNet が独自の <a href="../../reference/glossary/#term-vrf">VRF</a> または BRIDGE として動作する。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> のスコープ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>Phase 1</strong>: VTEP として動作。顧客 VM ↔ ベアメタルサーバ間の VNet ピアリング、Symmetric IRB（RIOT）の分散 VXLAN ルーティング</li>
-<li><strong>Phase 2</strong>: BGP EVPN 統合、L2 VXLAN（タグ・無タグ）、HER（Head End Replication）、CLI 整備</li>
+<li><strong>Phase 2</strong>: <a href="../../reference/glossary/#term-bgp">BGP</a> <a href="../../reference/glossary/#term-evpn">EVPN</a> 統合、L2 VXLAN（タグ・無タグ）、HER（Head End Replication）、CLI 整備</li>
 </ul>
 <p>Kernel VRF（L3mdev）の programming は <strong>本 HLD のスコープ外</strong><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2-l2-vxlan-l3-vxlan">2. L2 VXLAN と L3 VXLAN の作り分け<a class="headerlink" href="#2-l2-vxlan-l3-vxlan" title="Permanent link">&para;</a></h2>
-<p><code>VxlanOrch</code> は <code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> から <strong>L2 VXLAN（VLAN ↔ VNI）</strong> と <strong>L3 VXLAN（VRF ↔ VNI）</strong> を <strong>別トンネル</strong> として作る<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それぞれに encap/decap mapper を attach。</p>
+<p><code>VxlanOrch</code> は <code>VXLAN_TUNNEL</code> / <code>VXLAN_TUNNEL_MAP</code> から <strong>L2 VXLAN（<a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ VNI）</strong> と <strong>L3 VXLAN（VRF ↔ VNI）</strong> を <strong>別トンネル</strong> として作る<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。それぞれに encap/decap mapper を attach。</p>
 <table>
 <thead>
 <tr>
@@ -28749,10 +28749,12 @@
 <ul>
 <li><a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> — 元 HLD ページ</li>
 <li><a href="../vxlan-sonic-operations/">vxlan-sonic-operations.md</a> — 設定 / CLI / 確認手順</li>
-<li><a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a> — Orch 内部実装と SAI 属性</li>
+<li><a href="../vxlan-sonic-internals/">vxlan-sonic-internals.md</a> — Orch 内部実装と <a href="../../reference/glossary/#term-sai">SAI</a> 属性</li>
 <li><a href="../vxlan-sonic-limitations/">vxlan-sonic-limitations.md</a> — 制限事項と既知の課題</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: a0525547b964 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -28831,7 +28831,7 @@
 <ol>
 <li><strong><a href="../../glossary/#term-orchagent">orchagent</a> が特定 task で詰まる</strong>: <a href="../../glossary/#term-acl">ACL</a> / Nexthop group 再計算で長時間ロック</li>
 <li><strong><a href="../../glossary/#term-syncd">syncd</a> ↔ <a href="../../glossary/#term-sai">SAI</a> 呼び出しでベンダ SDK がブロック</strong></li>
-<li><strong><a href="../../glossary/#term-crm">CRM</a> 枯渇による SAI 書込失敗</strong>: <code>SAI_STATUS_TABLE_FULL</code> で retry ループ</li>
+<li><strong><a href="../../glossary/#term-crm">CRM</a> 枯渇による <a href="../../glossary/#term-sai">SAI</a> 書込失敗</strong>: <code>SAI_STATUS_TABLE_FULL</code> で retry ループ</li>
 <li><strong>redis broken pipe / slow consumer</strong>: PUB/SUB チャネルで詰まり</li>
 <li><strong>multi-asic namespace の reflection 遅延</strong></li>
 </ol>
@@ -28862,8 +28862,8 @@
 </span></code></pre></div>
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CRM 枯渇: 容量再見積もり / route summarization</li>
-<li>orchagent ハング: まずは原因 task を log から特定。restart は最後の手段（<strong>ロールバック</strong>: <code>config_db.json</code> 退避済みなら <code>config reload</code>）</li>
+<li><a href="../../glossary/#term-crm">CRM</a> 枯渇: 容量再見積もり / route summarization</li>
+<li><a href="../../glossary/#term-orchagent">orchagent</a> ハング: まずは原因 task を log から特定。restart は最後の手段（<strong>ロールバック</strong>: <code>config_db.json</code> 退避済みなら <code>config reload</code>）</li>
 <li>ベンダ SDK ブロック: vendor support と stack を共有</li>
 <li>multi-asic: 該当 namespace で <code>sudo ip netns exec asic0 docker logs swss</code></li>
 </ul>
@@ -28874,7 +28874,7 @@
 <li><a href="../flex-counter-stuck/">./flex-counter-stuck.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 867f28b4b211 -->
+<!-- glossary-links-injected: 96956d572342 -->
 
 <div class="footnote">
 <hr />

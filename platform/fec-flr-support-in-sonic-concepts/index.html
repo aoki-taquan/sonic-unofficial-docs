@@ -28722,7 +28722,7 @@
 
 
 <h1 id="fec-flr-flr-cer-interleaving-observed-vs-predicted">FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）<a class="headerlink" href="#fec-flr-flr-cer-interleaving-observed-vs-predicted" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../fec-flr-support-in-sonic/">FEC FLR Support in SONiC（概要ハブ）</a> の派生ページで、<strong>概念・指標・公式</strong> に絞って整理する。CONFIG_DB / CLI / 確認手順は <a href="../fec-flr-support-in-sonic-operations/">fec-flr-support-in-sonic-operations.md</a>、<code>port_flr.lua</code> プラグインと FlexCounterOrch の内部実装は <a href="../fec-flr-support-in-sonic-internals/">fec-flr-support-in-sonic-internals.md</a>、制限事項は <a href="../fec-flr-support-in-sonic-limitations/">fec-flr-support-in-sonic-limitations.md</a> を参照。</p>
+<p>このページは <a href="../fec-flr-support-in-sonic/">FEC FLR Support in SONiC（概要ハブ）</a> の派生ページで、<strong>概念・指標・公式</strong> に絞って整理する。<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI / 確認手順は <a href="../fec-flr-support-in-sonic-operations/">fec-flr-support-in-sonic-operations.md</a>、<code>port_flr.lua</code> プラグインと FlexCounterOrch の内部実装は <a href="../fec-flr-support-in-sonic-internals/">fec-flr-support-in-sonic-internals.md</a>、制限事項は <a href="../fec-flr-support-in-sonic-limitations/">fec-flr-support-in-sonic-limitations.md</a> を参照。</p>
 <h2 id="1-flr">1. FLR の定義<a class="headerlink" href="#1-flr" title="Permanent link">&para;</a></h2>
 <p><code>Frame Loss Ratio (FLR)</code> は <strong>送信フレームに対する欠落フレームの割合</strong> で、リンク品質の代表指標<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FLR = (Total TX Frames - Total RX Frames) / Total TX Frames
@@ -28740,7 +28740,7 @@
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  X=4 → FLR = 4.125 * CER
 </span></code></pre></div>
 <h2 id="3-interleaving-factor-x">3. interleaving factor X<a class="headerlink" href="#3-interleaving-factor-x" title="Permanent link">&para;</a></h2>
-<p>X は <strong>複数 codeword を時間軸で交織し、バーストエラーを 1 codeword に集中させない</strong> ための係数。port speed × lane 数で決まる固定テーブルが HLD に示されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>X は <strong>複数 codeword を時間軸で交織し、バーストエラーを 1 codeword に集中させない</strong> ための係数。port speed × lane 数で決まる固定テーブルが <a href="../../reference/glossary/#term-hld">HLD</a> に示されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -28792,7 +28792,7 @@
 </tr>
 </tbody>
 </table>
-<p>理想的には SAI 属性で取得したいが新 SAI 属性が無いため、当面は表で代替する設計<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>理想的には <a href="../../reference/glossary/#term-sai">SAI</a> 属性で取得したいが新 SAI 属性が無いため、当面は表で代替する設計<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="4-observed-flr-predicted-flr">4. Observed FLR と Predicted FLR<a class="headerlink" href="#4-observed-flr-predicted-flr" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Observed FLR (<code>FLR(O)</code>)</strong>: 直近 interval の CER 実測値から導出。エラーがほぼ無い健全なリンクでは <code>0</code> に張り付きやすい。</li>
@@ -28833,6 +28833,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 5440b86e15ed -->
 
 <div class="footnote">
 <hr />

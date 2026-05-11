@@ -28868,7 +28868,7 @@
 </span></code></pre></div>
 <ul>
 <li>期待: 数値が更新されている（前後で diff あり）</li>
-<li>異常: 値固定 → syncd の counter スレッド停止</li>
+<li>異常: 値固定 → <a href="../../glossary/#term-syncd">syncd</a> の counter スレッド停止</li>
 </ul>
 <h3 id="4-syncd-cpu-log">4. syncd CPU と log<a class="headerlink" href="#4-syncd-cpu-log" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>top<span class="w"> </span>-n1<span class="w"> </span>-b<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;syncd|orchagent&quot;</span>
@@ -28881,7 +28881,7 @@
 <ul>
 <li>counter 有効化: <code>counterpoll port enable</code> / <code>counterpoll queue enable</code> / <code>counterpoll pfcwd enable</code></li>
 <li>interval 調整: <code>counterpoll port interval 1000</code></li>
-<li>救命的 reset: <code>sudo systemctl restart swss</code>（syncd / counter thread も再生成）</li>
+<li>救命的 reset: <code>sudo systemctl restart swss</code>（<a href="../../glossary/#term-syncd">syncd</a> / counter thread も再生成）</li>
 <li>個別 group のみ問題なら、<code>config save -y</code> 後に group を disable → enable</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -28891,7 +28891,7 @@
 <li><a href="../../config-db/flex-counter-table/">../config-db/flex-counter-table.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: ce96ade25a61 -->
+<!-- glossary-links-injected: 85508c73d0d3 -->
 
 <div class="footnote">
 <hr />

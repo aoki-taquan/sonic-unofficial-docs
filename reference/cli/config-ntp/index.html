@@ -29073,7 +29073,7 @@
 <ol>
 <li><code>ADHOC_VALIDATION</code> が真のとき、IP 検証を実施 (<code>association_type != "pool"</code> の場合)</li>
 <li>既存 <code>NTP_SERVER</code> テーブルを取得し、同 IP が既存なら <code>NTP server &lt;ip&gt; is already configured</code> で no-op return</li>
-<li>options を辞書化（version / association_type / iburst）し、<code>db.set_entry('NTP_SERVER', &lt;ip&gt;, opts)</code> で CONFIG_DB に書く</li>
+<li>options を辞書化（version / association_type / iburst）し、<code>db.set_entry('NTP_SERVER', &lt;ip&gt;, opts)</code> で <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書く</li>
 <li><code>systemctl restart chrony</code> を実行。失敗時は <code>ctx.fail</code></li>
 </ol>
 <!-- evidence:
@@ -29162,7 +29162,7 @@ excerpt: |
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-ntp/"><code>sonic-ntp</code></a></li>
-<li>CONFIG_DB: <a href="../../config-db/ntp-server/"><code>NTP_SERVER</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/ntp-server/"><code>NTP_SERVER</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29192,7 +29192,7 @@ excerpt: |
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
-<li>mgmt VRF を使う環境で <code>config ntp add</code> に VRF オプションを忘れると到達できない。</li>
+<li>mgmt <a href="../../glossary/#term-vrf">VRF</a> を使う環境で <code>config ntp add</code> に <a href="../../glossary/#term-vrf">VRF</a> オプションを忘れると到達できない。</li>
 <li>chronyc / ntpq の出力差で「同期済み」判定がズレる。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29206,7 +29206,7 @@ excerpt: |
 <ul>
 <li><a href="../../yang/sonic-ntp/">YANG: sonic-ntp</a></li>
 </ul>
-<!-- glossary-links-injected: 3f1a66b76c8d -->
+<!-- glossary-links-injected: a7c87bab11c9 -->
 
 <div class="footnote">
 <hr />

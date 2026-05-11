@@ -28914,14 +28914,14 @@
 <td>string <code>Vrf&lt;...&gt;</code></td>
 <td>✅</td>
 <td>-</td>
-<td>VRF 名</td>
+<td><a href="../../glossary/#term-vrf">VRF</a> 名</td>
 </tr>
 <tr>
 <td><code>fallback</code></td>
 <td>boolean</td>
 <td>-</td>
 <td><code>false</code></td>
-<td>指定 VRF からデフォルト経路へフォールバック</td>
+<td>指定 <a href="../../glossary/#term-vrf">VRF</a> からデフォルト経路へフォールバック</td>
 </tr>
 <tr>
 <td><code>vni</code></td>
@@ -28949,7 +28949,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-vrf/"><code>sonic-vrf</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vrf/"><code>sonic-vrf</code></a></li>
 <li>CLI: <a href="../../cli/config-vrf/"><code>config vrf</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28967,13 +28967,13 @@
 <h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VRF|Vrf&lt;name&gt;</code> (例 <code>VRF|VrfRed</code>)。</li>
-<li><code>vni</code>: L3 VNI（VXLAN EVPN tenant L3）。</li>
+<li><code>vni</code>: L3 VNI（<a href="../../glossary/#term-vxlan">VXLAN</a> <a href="../../glossary/#term-evpn">EVPN</a> tenant L3）。</li>
 <li><code>fallback</code>: <code>true</code> で default VRF にフォールバック。</li>
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>VRF 名が <code>Vrf</code> で始まらないと <a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a> / <a href="../../glossary/#term-orchagent">orchagent</a> が認識しない。</li>
-<li><code>vni</code> を tenant 間で重複させると EVPN route が混線する。</li>
+<li><code>vni</code> を tenant 間で重複させると <a href="../../glossary/#term-evpn">EVPN</a> route が混線する。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VRF|*&#39;</span>
@@ -28982,13 +28982,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 9ad2e5233a04 -->
+<!-- glossary-links-injected: fb18b738b957 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-vrf.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vrf.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

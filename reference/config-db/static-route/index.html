@@ -28874,7 +28874,7 @@
 
 <h1 id="static_route">STATIC_ROUTE テーブル<a class="headerlink" href="#static_route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>STATIC_ROUTE</code> は静的経路を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持するテーブル。<a href="../../glossary/#term-yang">YANG</a> では template 形式 (<code>STATIC_ROUTE|&lt;prefix&gt;</code>) と <a href="../../glossary/#term-vrf">VRF</a>-aware 形式 (<code>STATIC_ROUTE|&lt;vrf_name&gt;|&lt;prefix&gt;</code>) の 2 つの list が定義されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。nexthop、出力 interface、<a href="../../glossary/#term-bgp">BGP</a> への advertise、<a href="../../glossary/#term-bfd">BFD</a>、administrative distance、nexthop VRF、blackhole 指定を扱う。テーブル名の実装側定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>STATIC_ROUTE</code> は静的経路を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持するテーブル。<a href="../../glossary/#term-yang">YANG</a> では template 形式 (<code>STATIC_ROUTE|&lt;prefix&gt;</code>) と <a href="../../glossary/#term-vrf">VRF</a>-aware 形式 (<code>STATIC_ROUTE|&lt;vrf_name&gt;|&lt;prefix&gt;</code>) の 2 つの list が定義されている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。nexthop、出力 interface、<a href="../../glossary/#term-bgp">BGP</a> への advertise、<a href="../../glossary/#term-bfd">BFD</a>、administrative distance、nexthop <a href="../../glossary/#term-vrf">VRF</a>、blackhole 指定を扱う。テーブル名の実装側定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28925,19 +28925,19 @@
 <td><code>advertise</code></td>
 <td>comma-separated boolean string</td>
 <td><code>false</code></td>
-<td>BGP へ広告するか。nexthop ごとに指定可能</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> へ広告するか。nexthop ごとに指定可能</td>
 </tr>
 <tr>
 <td><code>bfd</code></td>
 <td>comma-separated boolean string</td>
 <td><code>false</code></td>
-<td>nexthop ごとの BFD 監視有効化。template 形式のみ</td>
+<td>nexthop ごとの <a href="../../glossary/#term-bfd">BFD</a> 監視有効化。template 形式のみ</td>
 </tr>
 <tr>
 <td><code>distance</code></td>
 <td>comma-separated uint8 string</td>
 <td><code>0</code></td>
-<td>administrative distance。VRF-aware 形式のみ</td>
+<td>administrative distance。<a href="../../glossary/#term-vrf">VRF</a>-aware 形式のみ</td>
 </tr>
 <tr>
 <td><code>nexthop-vrf</code></td>
@@ -28958,19 +28958,19 @@
 <li><code>advertise</code>、<code>bfd</code>、<code>blackhole</code> は <code>true</code> / <code>false</code> のカンマ区切り文字列。</li>
 <li><code>distance</code> は 0..255 のカンマ区切り文字列。</li>
 <li><code>nexthop-vrf</code> は <code>default</code>、<code>mgmt</code>、<code>Vrf...</code> のカンマ区切り文字列。</li>
-<li>YANG の VRF-aware key は <code>vrf_name prefix</code>。template 形式には <code>vrf_name</code> が無い。</li>
+<li><a href="../../glossary/#term-yang">YANG</a> の VRF-aware key は <code>vrf_name prefix</code>。template 形式には <code>vrf_name</code> が無い。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>staticd</code> / <code>zebra</code> (<a href="../../glossary/#term-frr">FRR</a>): SONiC の設定生成パスを通じて static route を FRR に反映する。</li>
-<li><code>bgpcfgd</code> / routing config パス: <code>advertise</code> が有効な static route を BGP 広告対象として扱う。</li>
-<li><code>orchagent</code> / route orch: kernel / FRR から <a href="../../glossary/#term-appl_db">APPL_DB</a> 経由で転送経路を <a href="../../glossary/#term-sai">SAI</a> route へ反映する。</li>
+<li><code>staticd</code> / <code>zebra</code> (<a href="../../glossary/#term-frr">FRR</a>): SONiC の設定生成パスを通じて static route を <a href="../../glossary/#term-frr">FRR</a> に反映する。</li>
+<li><code>bgpcfgd</code> / routing config パス: <code>advertise</code> が有効な static route を <a href="../../glossary/#term-bgp">BGP</a> 広告対象として扱う。</li>
+<li><code>orchagent</code> / route orch: kernel / <a href="../../glossary/#term-frr">FRR</a> から <a href="../../glossary/#term-appl_db">APPL_DB</a> 経由で転送経路を <a href="../../glossary/#term-sai">SAI</a> route へ反映する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>VRF</code>、<code>INTERFACE</code>、<code>PORTCHANNEL_INTERFACE</code>、<code>VLAN_INTERFACE</code>、<code>LOOPBACK_INTERFACE</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>VRF</code>、<code>INTERFACE</code>、<code>PORTCHANNEL_INTERFACE</code>、<code>VLAN_INTERFACE</code>、<code>LOOPBACK_INTERFACE</code></li>
 <li>関連 CLI: <code>config route</code></li>
-<li>関連 YANG: <code>sonic-static-route</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-static-route</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -29003,7 +29003,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 442d405f5e26 -->
+<!-- glossary-links-injected: 75289c2d3439 -->
 
 <div class="footnote">
 <hr />

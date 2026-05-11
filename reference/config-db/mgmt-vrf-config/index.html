@@ -28874,7 +28874,7 @@
 
 <h1 id="mgmt_vrf_config">MGMT_VRF_CONFIG テーブル<a class="headerlink" href="#mgmt_vrf_config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>管理 <a href="../../glossary/#term-vrf">VRF</a>（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> が監視し、有効化されると Linux カーネル側に <code>mgmt</code> という名前の VRF を作成し、management port (<code>eth0</code>) を所属させる。</p>
+<p>管理 <a href="../../glossary/#term-vrf">VRF</a>（OOB 管理トラフィックをデータプレーンから分離する）のグローバル ON/OFF を保持するシングルトンテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> が監視し、有効化されると Linux カーネル側に <code>mgmt</code> という名前の <a href="../../glossary/#term-vrf">VRF</a> を作成し、management port (<code>eth0</code>) を所属させる。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28906,7 +28906,7 @@
 <td><code>mgmtVrfEnabled</code></td>
 <td>boolean</td>
 <td><code>false</code></td>
-<td>管理 VRF を有効化するか</td>
+<td>管理 <a href="../../glossary/#term-vrf">VRF</a> を有効化するか</td>
 </tr>
 </tbody>
 </table>
@@ -28929,7 +28929,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-mgmt_vrf/"><code>sonic-mgmt_vrf</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-mgmt_vrf/"><code>sonic-mgmt_vrf</code></a></li>
 <li>CLI: <a href="../../cli/config-vrf/"><code>config vrf</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28952,13 +28952,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 60a02696c221 -->
+<!-- glossary-links-injected: ca16c59f26d9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-mgmt_vrf.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-mgmt_vrf.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -28802,7 +28802,7 @@
 <h1 id="l3-scaling-performance">L3 Scaling と Performance 強化 内部実装<a class="headerlink" href="#l3-scaling-performance" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a> の派生で、<strong><code>RouteOrch</code> / <code>fpmsyncd</code> / <code>sairedis</code> / CLI 改修の内部実装</strong> に絞る。概念は <a href="../l3-scaling-and-performance-enhancements-concepts/">l3-scaling-and-performance-enhancements-concepts.md</a>、CLI / sysctl 設定は <a href="../l3-scaling-and-performance-enhancements-operations/">l3-scaling-and-performance-enhancements-operations.md</a>、制限事項と乖離は <a href="../l3-scaling-and-performance-enhancements-limitations/">l3-scaling-and-performance-enhancements-limitations.md</a> を参照。</p>
 <h2 id="1-kernel-arpnd-cache">1. kernel ARP/ND の cache 拡大<a class="headerlink" href="#1-kernel-arpnd-cache" title="Permanent link">&para;</a></h2>
-<p>旧 SONiC は ~2400 entry が上限だった。kernel ARP cache の garbage collector 閾値を HLD は次のように引き上げる提案<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>旧 SONiC は ~2400 entry が上限だった。kernel <a href="../../reference/glossary/#term-arp">ARP</a> cache の garbage collector 閾値を <a href="../../reference/glossary/#term-hld">HLD</a> は次のように引き上げる提案<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -28833,7 +28833,7 @@
 </tr>
 </tbody>
 </table>
-<p>burst 時の add/remove ループで entry が満杯にならない問題の解消が主眼。CoPP では ARP/ND の最大 600 pps → <strong>8000 pps</strong> に引き上げる提案<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>burst 時の add/remove ループで entry が満杯にならない問題の解消が主眼。<a href="../../reference/glossary/#term-copp">CoPP</a> では ARP/ND の最大 600 pps → <strong>8000 pps</strong> に引き上げる提案<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2-route-programming">2. Route programming 時間短縮<a class="headerlink" href="#2-route-programming" title="Permanent link">&para;</a></h2>
 <p>旧時計値（AS7712 / Tomahawk 上）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -28868,7 +28868,7 @@
 </tbody>
 </table>
 <h3 id="21-sairedis-bulk-route-api">2.1 sairedis bulk route API の利用<a class="headerlink" href="#21-sairedis-bulk-route-api" title="Permanent link">&para;</a></h3>
-<p>旧: <code>RouteOrch</code> は 1 経路ごとに sairedis API を呼ぶ。Redis pipelining でいくらかバルク化はされるが <strong>1 経路 = 1 Redis message</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>旧: <code>RouteOrch</code> は 1 経路ごとに sairedis API を呼ぶ。<a href="../../reference/glossary/#term-redis">Redis</a> pipelining でいくらかバルク化はされるが <strong>1 経路 = 1 Redis message</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>新:</p>
 <ul>
 <li><code>RouteOrch</code> は 64 件まとめて bulk API に渡す</li>
@@ -28892,14 +28892,14 @@
     end</code></pre>
 <h3 id="22-fpmsyncd">2.2 <code>fpmsyncd</code> の最適化<a class="headerlink" href="#22-fpmsyncd" title="Permanent link">&para;</a></h3>
 <p>旧: 各経路の処理で <strong><code>rt_table</code> 属性から master device 名を kernel から取得</strong>。VNET_ROUTE_TABLE 判定のため<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>問題: VNET が無い環境でも lookup が <strong>常に失敗 → cache 更新を毎経路で行う</strong>。これが route 投入を遅くする。</p>
+<p>問題: <a href="../../reference/glossary/#term-vnet">VNET</a> が無い環境でも lookup が <strong>常に失敗 → cache 更新を毎経路で行う</strong>。これが route 投入を遅くする。</p>
 <p>修正: <strong><code>route.rt_table == 0</code>（global routing table）</strong> なら lookup を <strong>skip</strong>。10k 経路の APP_DB 投入が <strong>7-8s → 4-5s</strong> に短縮<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="23-sairedis-json">2.3 sairedis 内 JSON ライブラリ更新<a class="headerlink" href="#23-sairedis-json" title="Permanent link">&para;</a></h3>
 <p><code>nlohmann/json</code> ライブラリの <strong>v2.0 → v3.6</strong> への更新で <code>dump()</code> 系最適化を取り込む<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_1">期待効果<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <p>上記合算で <strong>route programming 時間 30% 削減</strong> を目標<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="3-show-arp-show-ndp">3. <code>show arp</code> / <code>show ndp</code> の高速化<a class="headerlink" href="#3-show-arp-show-ndp" title="Permanent link">&para;</a></h2>
-<p>旧: VLAN L3 interface 上の ARP の <strong>outgoing interface を求めるため FDB 全件を fetch</strong>。エントリが大量だと show が秒〜分単位かかる<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>旧: <a href="../../reference/glossary/#term-vlan">VLAN</a> L3 interface 上の ARP の <strong>outgoing interface を求めるため <a href="../../reference/glossary/#term-fdb">FDB</a> 全件を fetch</strong>。エントリが大量だと show が秒〜分単位かかる<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>修正: 該当 ARP/ND <strong>特定エントリだけの FDB lookup</strong> に変更。CLI スクリプト側の改修。</p>
 <pre class="mermaid"><code>flowchart LR
     OLD[show arp 旧] --&gt;|FDB 全件取得| F1[1 entry 解決]
@@ -28918,7 +28918,7 @@
 <td><code>sonic-swss/orchagent/routeorch.cpp:41</code> で <code>gRouteBulker(sai_route_api, gMaxBulkSize)</code>、L626-1116 で add/remove と flush</td>
 </tr>
 <tr>
-<td>fpmsyncd master device lookup skip</td>
+<td><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> master device lookup skip</td>
 <td><code>sonic-swss/fpmsyncd/routesync.cpp:2077-2082</code></td>
 </tr>
 <tr>
@@ -28958,6 +28958,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 992dc79d863a -->
 
 <div class="footnote">
 <hr />

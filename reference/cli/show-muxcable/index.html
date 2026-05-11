@@ -29023,7 +29023,7 @@
 </tr>
 <tr>
 <td><code>show muxcable config [&lt;port&gt;] [--json]</code></td>
-<td>CONFIG_DB の <a href="../../glossary/#term-mux">MUX</a> 設定一覧</td>
+<td><a href="../../glossary/#term-config_db">CONFIG_DB</a> の <a href="../../glossary/#term-mux">MUX</a> 設定一覧</td>
 </tr>
 <tr>
 <td><code>show muxcable berinfo &lt;port&gt; &lt;target&gt; [--json]</code></td>
@@ -29067,7 +29067,7 @@
 </tr>
 <tr>
 <td><code>show muxcable metrics &lt;port&gt; [--json]</code></td>
-<td>linkmgrd 由来のメトリクス</td>
+<td><a href="../../glossary/#term-linkmgrd">linkmgrd</a> 由来のメトリクス</td>
 </tr>
 <tr>
 <td><code>show muxcable event_log &lt;port&gt; [--json]</code></td>
@@ -29109,9 +29109,9 @@
 </table>
 <h2 id="_3">各コマンドの詳細 (抜粋)<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="show-muxcable-status-port-json"><code>show muxcable status [&lt;port&gt;] [--json]</code><a class="headerlink" href="#show-muxcable-status-port-json" title="Permanent link">&para;</a></h3>
-<p><code>MUX_CABLE</code> テーブルから対象ポートの <code>state</code> と STATE_DB の <code>MUX_CABLE_TABLE|&lt;port&gt;</code> を統合表示する。<code>port</code> 省略で全ポート。<code>--json</code> 指定で JSON 出力。</p>
+<p><code>MUX_CABLE</code> テーブルから対象ポートの <code>state</code> と <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>MUX_CABLE_TABLE|&lt;port&gt;</code> を統合表示する。<code>port</code> 省略で全ポート。<code>--json</code> 指定で JSON 出力。</p>
 <h3 id="show-muxcable-config-port-json"><code>show muxcable config [&lt;port&gt;] [--json]</code><a class="headerlink" href="#show-muxcable-config-port-json" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB の <code>MUX_CABLE</code> 設定 (server_ipv4 / server_ipv6 / soc_ipv4 / state) と <code>MUX_LINKMGR</code> の prober_type 等を統合表示する。Active-Active / Active-Standby のトポロジに応じて出力列が分岐する (<code>create_active_active_mux_direction_*</code> / <code>create_active_standby_mux_direction_*</code>)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>MUX_CABLE</code> 設定 (server_ipv4 / server_ipv6 / soc_ipv4 / state) と <code>MUX_LINKMGR</code> の prober_type 等を統合表示する。Active-Active / Active-Standby のトポロジに応じて出力列が分岐する (<code>create_active_active_mux_direction_*</code> / <code>create_active_standby_mux_direction_*</code>)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="show-muxcable-berinfoeyeinfofecstatisticspcsstatistics-port-target"><code>show muxcable berinfo|eyeinfo|fecstatistics|pcsstatistics &lt;port&gt; &lt;target&gt;</code><a class="headerlink" href="#show-muxcable-berinfoeyeinfofecstatisticspcsstatistics-port-target" title="Permanent link">&para;</a></h3>
 <p><code>update_and_get_response_for_xcvr_cmd</code> 経由で xcvrd に RPC を送り、結果を <code>MUX_INFO</code> 等の RSP テーブルから読む。<code>&lt;target&gt;</code> は <code>NIC</code> / <code>TORA</code> / <code>TORB</code> / <code>LOCAL</code>。</p>
 <h3 id="show-muxcable-firmware-version-port-active"><code>show muxcable firmware version &lt;port&gt; [--active]</code><a class="headerlink" href="#show-muxcable-firmware-version-port-active" title="Permanent link">&para;</a></h3>
@@ -29141,8 +29141,8 @@
 <td><code>config</code></td>
 </tr>
 <tr>
-<td><code>MUX_CABLE_TABLE</code> (STATE_DB)</td>
-<td>xcvrd / linkmgrd 経由の動的状態</td>
+<td><code>MUX_CABLE_TABLE</code> (<a href="../../glossary/#term-state_db">STATE_DB</a>)</td>
+<td>xcvrd / <a href="../../glossary/#term-linkmgrd">linkmgrd</a> 経由の動的状態</td>
 <td>ほぼ全コマンド</td>
 </tr>
 <tr>
@@ -29207,7 +29207,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: eab46fcbaad8 -->
+<!-- glossary-links-injected: f050aad25177 -->
 
 <div class="footnote">
 <hr />

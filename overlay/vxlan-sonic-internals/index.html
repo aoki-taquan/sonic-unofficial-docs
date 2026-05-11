@@ -28722,7 +28722,7 @@
 
 
 <h1 id="vxlan-vnet">VXLAN / VNet 内部実装<a class="headerlink" href="#vxlan-vnet" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> の派生ページで、<strong>Orch 群と SAI 連携の内部実装</strong> に絞って整理する。概念は <a href="../vxlan-sonic-concepts/">vxlan-sonic-concepts.md</a>、運用は <a href="../vxlan-sonic-operations/">vxlan-sonic-operations.md</a>、制限事項は <a href="../vxlan-sonic-limitations/">vxlan-sonic-limitations.md</a> を参照。</p>
+<p>このページは <a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> の派生ページで、<strong>Orch 群と <a href="../../reference/glossary/#term-sai">SAI</a> 連携の内部実装</strong> に絞って整理する。概念は <a href="../vxlan-sonic-concepts/">vxlan-sonic-concepts.md</a>、運用は <a href="../vxlan-sonic-operations/">vxlan-sonic-operations.md</a>、制限事項は <a href="../vxlan-sonic-limitations/">vxlan-sonic-limitations.md</a> を参照。</p>
 <h2 id="1-orchagent">1. orchagent 役割分担<a class="headerlink" href="#1-orchagent" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28734,11 +28734,11 @@
 <tbody>
 <tr>
 <td><code>VxlanOrch</code>（実コードは <code>VxlanTunnelOrch</code> 等に分割）</td>
-<td>VXLAN tunnel object、encap/decap mapper、tunnel termination</td>
+<td><a href="../../reference/glossary/#term-vxlan">VXLAN</a> tunnel object、encap/decap mapper、tunnel termination</td>
 </tr>
 <tr>
 <td><code>VnetOrch</code> / <code>VnetRouteOrch</code></td>
-<td>VNet 単位の VRF / BRIDGE、ピアリング、VNet 経路</td>
+<td>VNet 単位の <a href="../../reference/glossary/#term-vrf">VRF</a> / BRIDGE、ピアリング、VNet 経路</td>
 </tr>
 <tr>
 <td><code>VrfMgrD</code> / <code>VrfOrch</code></td>
@@ -28746,7 +28746,7 @@
 </tr>
 <tr>
 <td><code>IntfMgrD</code> / <code>IntfsOrch</code></td>
-<td>VNet 配下の RIF</td>
+<td>VNet 配下の <a href="../../reference/glossary/#term-rif">RIF</a></td>
 </tr>
 <tr>
 <td><code>FdbOrch</code></td>
@@ -28781,7 +28781,7 @@
     VXO --&gt; SAI
     FDB[FdbOrch] --&gt; VXO</code></pre>
 <h2 id="2-vxlanorch-vxlantunnelorch">2. VxlanOrch（実装は VxlanTunnelOrch 等に分割）<a class="headerlink" href="#2-vxlanorch-vxlantunnelorch" title="Permanent link">&para;</a></h2>
-<p>VXLAN の中核。tunnel オブジェクト + mapper + termination を作る。EVPN remote VTEP の動的生成も <code>vxlanorch.cpp</code> 内（<code>TNL_CREATION_SRC_EVPN</code>）。実コードでは下記のクラスに分割されている:</p>
+<p>VXLAN の中核。tunnel オブジェクト + mapper + termination を作る。<a href="../../reference/glossary/#term-evpn">EVPN</a> remote VTEP の動的生成も <code>vxlanorch.cpp</code> 内（<code>TNL_CREATION_SRC_EVPN</code>）。実コードでは下記のクラスに分割されている:</p>
 <ul>
 <li><code>VxlanTunnelOrch</code> (<code>sonic-swss/orchagent/vxlanorch.h:268</code>)</li>
 <li><code>VxlanTunnelMapOrch</code> (<code>vxlanorch.h:414</code>)</li>
@@ -28805,7 +28805,7 @@
     ADB--&gt;&gt;VO: SET
     VO-&gt;&gt;VO: SAI VRF / Bridge 作成</code></pre>
 <ul>
-<li><code>VrfMgrD</code>: VNet 設定から kernel L3mdev を作成 + STATE_DB に状態出力</li>
+<li><code>VrfMgrD</code>: VNet 設定から kernel L3mdev を作成 + <a href="../../reference/glossary/#term-state_db">STATE_DB</a> に状態出力</li>
 <li><code>VrfOrch</code>: 通常 VRF を APP_DB から SAI に投入（RouteOrch が利用）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="4-vnetorch-vnetrouteorch">4. VnetOrch / VnetRouteOrch<a class="headerlink" href="#4-vnetorch-vnetrouteorch" title="Permanent link">&para;</a></h2>
@@ -28861,12 +28861,14 @@
 </table>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> — 元 HLD ページ</li>
+<li><a href="../vxlan-sonic/">VXLAN / VNet 全体設計（概要ハブ）</a> — 元 <a href="../../reference/glossary/#term-hld">HLD</a> ページ</li>
 <li><a href="../vxlan-sonic-concepts/">vxlan-sonic-concepts.md</a> — 概念・用語</li>
 <li><a href="../vxlan-sonic-operations/">vxlan-sonic-operations.md</a> — 設定・運用</li>
 <li><a href="../vxlan-sonic-limitations/">vxlan-sonic-limitations.md</a> — 制限事項</li>
 </ul>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: feffe0589983 -->
+
 <div class="footnote">
 <hr />
 <ol>

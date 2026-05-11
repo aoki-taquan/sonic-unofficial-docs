@@ -28874,7 +28874,7 @@
 
 <h1 id="dscp_to_tc_map">DSCP_TO_TC_MAP テーブル<a class="headerlink" href="#dscp_to_tc_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DSCP 値 (0..63) を Traffic Class へマップする ingress <a href="../../glossary/#term-qos">QoS</a> 分類定義<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> QoS map (<code>SAI_QOS_MAP_TYPE_DSCP_TO_TC</code>) を生成し、ポートにバインドする (<code>PORT_QOS_MAP.dscp_to_tc_map</code>)。</p>
+<p>DSCP 値 (0..63) を Traffic Class へマップする ingress <a href="../../glossary/#term-qos">QoS</a> 分類定義<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-qos">QoS</a> map (<code>SAI_QOS_MAP_TYPE_DSCP_TO_TC</code>) を生成し、ポートにバインドする (<code>PORT_QOS_MAP.dscp_to_tc_map</code>)。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28927,20 +28927,20 @@
 <p><a href="../../glossary/#term-yang">YANG</a> 上は親子 list 構造。<a href="../../glossary/#term-redis">Redis</a> に展開すると <code>DSCP_TO_TC_MAP|&lt;name&gt;</code> の hash field として <code>&lt;dscp&gt;: &lt;tc&gt;</code> ペアが格納される。</p>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>qosorch</code>: SAI QoS map 生成</li>
+<li><code>qosorch</code>: <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-qos">QoS</a> map 生成</li>
 <li><code>bufferorch</code> 経由でポート PG への影響あり</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORT_QOS_MAP</code>、<code>TC_TO_QUEUE_MAP</code>、<code>TC_TO_PRIORITY_GROUP_MAP</code></li>
 <li>関連 CLI: なし</li>
-<li>関連 YANG: <code>sonic-dscp-tc-map</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-dscp-tc-map</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-dscp-tc-map/"><code>sonic-dscp-tc-map</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-dscp-tc-map/"><code>sonic-dscp-tc-map</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28969,7 +28969,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 863a6fa10ec3 -->
+<!-- glossary-links-injected: 1024efc8dead -->
 
 <div class="footnote">
 <hr />

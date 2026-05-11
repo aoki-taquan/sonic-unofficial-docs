@@ -28756,7 +28756,7 @@
     RATES --&gt; CLI[portstat -f / show fec-stats]
     RATES --&gt; TEL[telemetry]</code></pre>
 <h2 id="2-sai-counter">2. 利用する SAI counter<a class="headerlink" href="#2-sai-counter" title="Permanent link">&para;</a></h2>
-<p>すべて既存の SAI port counter<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>すべて既存の <a href="../../reference/glossary/#term-sai">SAI</a> port counter<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES</code></li>
 <li><code>SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES</code></li>
@@ -28794,7 +28794,7 @@
 <p>実行間隔<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 </span></code></pre></div>
-<p><code>FLR_INTERVAL_FACTOR</code> は <strong><code>FLEX_COUNTER_DB</code></strong> から読む。<code>FlexCounterOrch</code> が CONFIG_DB の <code>counterpoll port flr-interval-factor</code> を伝搬する。デフォルト <code>120</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>FLR_INTERVAL_FACTOR</code> は <strong><code>FLEX_COUNTER_DB</code></strong> から読む。<code>FlexCounterOrch</code> が <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>counterpoll port flr-interval-factor</code> を伝搬する。デフォルト <code>120</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>つまり port_stat poll が <code>1000ms</code> であれば FLR 計算は <code>120</code> 秒に 1 回。</p>
 <h2 id="6-swss-master">6. 関連 swss ファイル（現行 master 確認結果）<a class="headerlink" href="#6-swss-master" title="Permanent link">&para;</a></h2>
 <table>
@@ -28815,7 +28815,7 @@
 </tr>
 <tr>
 <td><code>sonic-swss/orchagent/flexcounterorch.cpp</code></td>
-<td><code>FLR_INTERVAL_FACTOR</code> 伝搬経路（HLD 提案）</td>
+<td><code>FLR_INTERVAL_FACTOR</code> 伝搬経路（<a href="../../reference/glossary/#term-hld">HLD</a> 提案）</td>
 </tr>
 <tr>
 <td><code>sonic-swss/crates/countersyncd/src/sai/saiport.rs</code></td>
@@ -28861,6 +28861,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 5440b86e15ed -->
 
 <div class="footnote">
 <hr />

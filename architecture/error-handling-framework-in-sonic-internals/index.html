@@ -28726,7 +28726,7 @@
 <h2 id="1-producerorchagent">1. Producer（OrchAgent）<a class="headerlink" href="#1-producerorchagent" title="Permanent link">&para;</a></h2>
 <p>OrchAgent が <strong>唯一の ERROR_DB producer</strong> として位置づけられる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li>SAI 呼び出し失敗を <strong>ASIC_DB の notification channel</strong> 経由で syncd から受領</li>
+<li><a href="../../reference/glossary/#term-sai">SAI</a> 呼び出し失敗を <strong><a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> の notification channel</strong> 経由で <a href="../../reference/glossary/#term-syncd">syncd</a> から受領</li>
 <li>SAI status → SWSS_RC のマッピングテーブルで翻訳</li>
 <li>対象 table 名（<code>ROUTE_TABLE</code> / <code>NEIGH_TABLE</code> 等）と key を引いて ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE のキーを生成</li>
 <li>ERROR_DB に SET し、pub/sub channel に publish</li>
@@ -28790,7 +28790,7 @@
 <td><code>sonic-utilities/</code> に該当無し</td>
 </tr>
 <tr>
-<td>代替: CRM</td>
+<td>代替: <a href="../../reference/glossary/#term-crm">CRM</a></td>
 <td>✓ production 稼働中</td>
 <td><code>sonic-swss/orchagent/crmorch.cpp</code>、<code>show crm resources</code></td>
 </tr>
@@ -28823,6 +28823,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 562a036f4d4a -->
 
 <div class="footnote">
 <hr />

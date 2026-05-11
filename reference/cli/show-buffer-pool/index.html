@@ -28901,7 +28901,7 @@ excerpt: |
 <code>watermarkstat -t headroom_pool</code> / <code>watermarkstat -p -t headroom_pool</code> を実行。ヘッドルームプール（<a href="../../glossary/#term-pfc">PFC</a> 用ロスレストラフィックの予約バッファ）専用の WM 集計。</p>
 <h2 id="_4">補足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>watermarkstat</code> は COUNTERS_DB の <code>USER_WATERMARKS</code> / <code>PERSISTENT_WATERMARKS</code> テーブルを読みに行く。WM の更新周期は <code>WATERMARK_TABLE|TELEMETRY_INTERVAL</code> で設定可能（<code>config watermark telemetry interval</code>）</li>
+<li><code>watermarkstat</code> は <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の <code>USER_WATERMARKS</code> / <code>PERSISTENT_WATERMARKS</code> テーブルを読みに行く。WM の更新周期は <code>WATERMARK_TABLE|TELEMETRY_INTERVAL</code> で設定可能（<code>config watermark telemetry interval</code>）</li>
 <li>WM のクリアは <code>sonic-clear</code> 系のコマンド (<code>sonic-clear queuewatermark</code>、<code>sonic-clear pgheadroom</code> など) で個別に行う</li>
 <li>persistent WM はクリア不可。電源 OFF まで保持される、いわば「歴代最大値」を保存する仕組み</li>
 </ul>
@@ -28921,7 +28921,7 @@ excerpt: |
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/buffer-pool/"><code>BUFFER_POOL</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/buffer-pool/"><code>BUFFER_POOL</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28932,7 +28932,7 @@ excerpt: |
 <li><a href="../show-pfc/">reference/CLI: show pfc</a></li>
 <li><a href="../show-priority-group/">reference/CLI: show priority-group</a></li>
 </ul>
-<!-- glossary-links-injected: abeaefab6cb2 -->
+<!-- glossary-links-injected: 2fb486a7acc8 -->
 
 <div class="footnote">
 <hr />

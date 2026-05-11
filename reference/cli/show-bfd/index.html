@@ -28930,7 +28930,7 @@
 
 <h1 id="show-bfd">show bfd サブコマンド<a class="headerlink" href="#show-bfd" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show bfd</code> は <a href="../../glossary/#term-bfd">BFD</a> (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は <strong><a href="../../glossary/#term-state_db">STATE_DB</a></strong> の <code>BFD_SESSION_TABLE|&lt;vrf&gt;|&lt;interface&gt;|&lt;peer&gt;</code> であり、<a href="../../glossary/#term-config_db">CONFIG_DB</a> ではない<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BFD セッションは <a href="../../glossary/#term-bgp">BGP</a> や static route との連動で動的に生成・破棄されるため、状態は STATE_DB のみが正となる。</p>
+<p><code>show bfd</code> は <a href="../../glossary/#term-bfd">BFD</a> (Bidirectional Forwarding Detection) セッションの状態を表示するグループ。データ源は <strong><a href="../../glossary/#term-state_db">STATE_DB</a></strong> の <code>BFD_SESSION_TABLE|&lt;vrf&gt;|&lt;interface&gt;|&lt;peer&gt;</code> であり、<a href="../../glossary/#term-config_db">CONFIG_DB</a> ではない<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-bfd">BFD</a> セッションは <a href="../../glossary/#term-bgp">BGP</a> や static route との連動で動的に生成・破棄されるため、状態は <a href="../../glossary/#term-state_db">STATE_DB</a> のみが正となる。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28942,7 +28942,7 @@
 <tbody>
 <tr>
 <td><code>show bfd summary</code></td>
-<td>全 BFD セッションの一覧</td>
+<td>全 <a href="../../glossary/#term-bfd">BFD</a> セッションの一覧</td>
 </tr>
 <tr>
 <td><code>show bfd peer &lt;peer_ip&gt;</code></td>
@@ -28960,7 +28960,7 @@
 <li><code>-n / --namespace</code> ... multi-ASIC 環境での namespace 指定（<code>multi_asic_namespace_validation_callback</code> で検証）</li>
 </ul>
 <p><strong>動作</strong>:
-multi-ASIC 環境では <code>multi_asic.get_namespace_list()</code> を全走査、それ以外は <code>DEFAULT_NAMESPACE</code> のみ。各 namespace の STATE_DB から <code>BFD_SESSION_TABLE|*</code> の全キーを列挙し、<code>local_discriminator</code> が無い場合は <code>NA</code> を補って表示する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+multi-ASIC 環境では <code>multi_asic.get_namespace_list()</code> を全走査、それ以外は <code>DEFAULT_NAMESPACE</code> のみ。各 namespace の <a href="../../glossary/#term-state_db">STATE_DB</a> から <code>BFD_SESSION_TABLE|*</code> の全キーを列挙し、<code>local_discriminator</code> が無い場合は <code>NA</code> を補って表示する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <p><strong>表示カラム</strong>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Peer Addr | Interface | Vrf | State | Type | Local Addr |
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>TX Interval | RX Interval | Multiplier | Multihop | Local Discriminator
@@ -29026,7 +29026,7 @@ excerpt: |
 </table>
 <h2 id="_4">補足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BFD セッションの <strong>生成・削除</strong> は <code>show bfd</code> のスコープ外。BGP/static route 側の設定や <code>bfdsyncd</code> の動作による</li>
+<li>BFD セッションの <strong>生成・削除</strong> は <code>show bfd</code> のスコープ外。<a href="../../glossary/#term-bgp">BGP</a>/static route 側の設定や <code>bfdsyncd</code> の動作による</li>
 <li><code>local_discriminator</code> は古い実装では存在しないため <code>NA</code> に置換するガードがある</li>
 </ul>
 <!-- cli-mermaid -->
@@ -29045,7 +29045,7 @@ excerpt: |
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <code>BFD_SESSION_TABLE</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BFD_SESSION_TABLE</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29054,12 +29054,12 @@ excerpt: |
 <h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="_9">典型的な利用シーン<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BGP/Static の高速断検知で BFD セッションが UP しているかを確認する。</li>
+<li><a href="../../glossary/#term-bgp">BGP</a>/Static の高速断検知で BFD セッションが UP しているかを確認する。</li>
 <li>障害時に session state と TX/RX interval、multiplier を確認して片側設定漏れを検出する。</li>
 </ul>
 <h3 id="_10">よくある落とし穴<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>show bfd summary</code> は STATE_DB ベースで、CONFIG_DB に session があっても peer 未到達なら DOWN のまま。</li>
+<li><code>show bfd summary</code> は STATE_DB ベースで、<a href="../../glossary/#term-config_db">CONFIG_DB</a> に session があっても peer 未到達なら DOWN のまま。</li>
 <li>multi-hop BFD は別グループ。<code>show bfd peer &lt;ip&gt; multihop</code> を使う必要がある。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29074,7 +29074,7 @@ excerpt: |
 <li><a href="../show-bgp/">reference/CLI: show bgp</a></li>
 <li><a href="../show-ip/">reference/CLI: show ip</a></li>
 </ul>
-<!-- glossary-links-injected: ad3b2006b1d9 -->
+<!-- glossary-links-injected: ad591bd6c032 -->
 
 <div class="footnote">
 <hr />

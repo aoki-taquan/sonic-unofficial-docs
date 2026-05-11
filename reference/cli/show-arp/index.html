@@ -28998,7 +28998,7 @@
 <p><code>show ip arp</code> も同じ <code>arp</code> コマンドを <code>show ip</code> グループに <code>add_command</code> した結果として動く（cli 直下と <code>ip</code> サブ両方に同じ関数が登録される）。</p>
 <p>クリア側は <code>sonic-clear arp [&lt;ipaddress&gt;] [-n &lt;ns&gt;]</code> が対称。詳細は <a href="../clear/">clear (sonic-clear) コマンド</a> を参照。</p>
 <h2 id="config_db">CONFIG_DB との接点<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
-<p>ARP テーブルは <strong>kernel の neighbor table</strong>（および swss/<a href="../../glossary/#term-neighsyncd">neighsyncd</a> 経由で APPL_DB の <code>NEIGH_TABLE</code> に同期）で管理されるため、<code>show arp</code> 自体は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読まない。</p>
+<p><a href="../../glossary/#term-arp">ARP</a> テーブルは <strong>kernel の neighbor table</strong>（および swss/<a href="../../glossary/#term-neighsyncd">neighsyncd</a> 経由で <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>NEIGH_TABLE</code> に同期）で管理されるため、<code>show arp</code> 自体は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読まない。</p>
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29046,11 +29046,11 @@
 <h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>L3 隣接の MAC 解決状況、aging 状態の確認。</li>
-<li>MC-<a href="../../glossary/#term-lag">LAG</a> / VRRP 構成での ARP 同期検証。</li>
+<li>MC-<a href="../../glossary/#term-lag">LAG</a> / VRRP 構成での <a href="../../glossary/#term-arp">ARP</a> 同期検証。</li>
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>show arp</code> は default <a href="../../glossary/#term-vrf">VRF</a>。VRF 内 ARP は <code>show arp -V &lt;vrf&gt;</code> または <code>ip neigh show vrf &lt;vrf&gt;</code>。</li>
+<li><code>show arp</code> は default <a href="../../glossary/#term-vrf">VRF</a>。<a href="../../glossary/#term-vrf">VRF</a> 内 ARP は <code>show arp -V &lt;vrf&gt;</code> または <code>ip neigh show vrf &lt;vrf&gt;</code>。</li>
 <li><a href="../../glossary/#term-state_db">STATE_DB</a> の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29060,7 +29060,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 5edea368a8c3 -->
+<!-- glossary-links-injected: 2a3b0952d27c -->
 
 <div class="footnote">
 <hr />

@@ -28928,7 +28928,7 @@
 <p>このテーブルは key のみで、付加フィールドを持たない。</p>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>teammgrd</code>: メンバの追加・削除を teamd に伝達</li>
+<li><code>teammgrd</code>: メンバの追加・削除を <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> に伝達</li>
 <li><code>orchagent</code> <code>LagOrch</code>: <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-lag">LAG</a> member を生成・削除</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -28941,7 +28941,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-portchannel/"><code>sonic-portchannel</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-portchannel/"><code>sonic-portchannel</code></a></li>
 <li>CLI: <a href="../../cli/config-portchannel/"><code>config portchannel member</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28964,7 +28964,7 @@
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>VLAN_MEMBER に同じ Ethernet が残ったまま PORTCHANNEL_MEMBER に追加すると <a href="../../glossary/#term-orchagent">orchagent</a> エラー。</li>
-<li>L3 IP を持つポートを LAG メンバに入れると INTERFACE 側が孤立。</li>
+<li>L3 IP を持つポートを <a href="../../glossary/#term-lag">LAG</a> メンバに入れると INTERFACE 側が孤立。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL_MEMBER|PortChannel0001|*&#39;</span>
@@ -28972,13 +28972,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ad8e612d9a21 -->
+<!-- glossary-links-injected: 38b4c0ae7d80 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-portchannel.yang</code> 内 <code>PORTCHANNEL_MEMBER</code>。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-portchannel.yang</code> 内 <code>PORTCHANNEL_MEMBER</code>。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L130</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

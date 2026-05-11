@@ -29079,7 +29079,7 @@
 <li><strong>ERSPAN</strong> ... GRE カプセル化して remote analyzer に転送</li>
 <li><strong>SPAN</strong> ... 同一スイッチ内の特定ポートに複製出力</li>
 </ul>
-<p>実装は <code>config/main.py</code> のみ（独立モジュールではない）に集約されており、<code>add_erspan</code> / <code>add_span</code> ヘルパが CONFIG_DB の <code>MIRROR_SESSION|&lt;session_name&gt;</code> を <code>set_entry</code> で書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。multi-ASIC 環境では front_ns 全てに同じセッションを複製書き込みし、<code>src_port</code> が指定された場合は <strong>該当ポートが属する namespace にのみ</strong> <code>src_port</code> を書く設計になっている。</p>
+<p>実装は <code>config/main.py</code> のみ（独立モジュールではない）に集約されており、<code>add_erspan</code> / <code>add_span</code> ヘルパが <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>MIRROR_SESSION|&lt;session_name&gt;</code> を <code>set_entry</code> で書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。multi-ASIC 環境では front_ns 全てに同じセッションを複製書き込みし、<code>src_port</code> が指定された場合は <strong>該当ポートが属する namespace にのみ</strong> <code>src_port</code> を書く設計になっている。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29121,7 +29121,7 @@
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
-<li><code>&lt;session_name&gt;</code> ... ASCII 任意。CONFIG_DB のキーになる</li>
+<li><code>&lt;session_name&gt;</code> ... ASCII 任意。<a href="../../glossary/#term-config_db">CONFIG_DB</a> のキーになる</li>
 <li><code>&lt;src_ip&gt;</code> / <code>&lt;dst_ip&gt;</code> ... IPv4 のみ（<code>validate_ipv4_address</code> callback）</li>
 <li><code>&lt;dscp&gt;</code> ... <code>DSCP_RANGE</code> (0-63)</li>
 <li><code>&lt;ttl&gt;</code> ... <code>TTL_RANGE</code> (1-255)</li>
@@ -29294,7 +29294,7 @@ excerpt: |
 <li><a href="../config-acl/">reference/CLI: config acl</a></li>
 <li><a href="../show-acl/">reference/CLI: show acl</a></li>
 </ul>
-<!-- glossary-links-injected: 1a8357632541 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->
 
 <div class="footnote">
 <hr />

@@ -28874,7 +28874,7 @@
 
 <h1 id="prefix_list-bgp">PREFIX_LIST テーブル (BGP)<a class="headerlink" href="#prefix_list-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-bgp">BGP</a> のルートフィルタ用 prefix リストを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に持たせるための簡易テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code> テンプレートで <a href="../../glossary/#term-frr">FRR</a> の <code>ip prefix-list</code> / <code>ipv6 prefix-list</code> に展開される。共通ルーティングポリシ用の汎用 <a href="../prefix-set/"><code>PREFIX_SET</code></a> / <code>PREFIX_LIST</code> (sonic-routing-policy-sets) とは別物（こちらは BGP 限定の簡易 entry）。</p>
+<p><a href="../../glossary/#term-bgp">BGP</a> のルートフィルタ用 prefix リストを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に持たせるための簡易テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>bgpcfgd</code> テンプレートで <a href="../../glossary/#term-frr">FRR</a> の <code>ip prefix-list</code> / <code>ipv6 prefix-list</code> に展開される。共通ルーティングポリシ用の汎用 <a href="../prefix-set/"><code>PREFIX_SET</code></a> / <code>PREFIX_LIST</code> (sonic-routing-policy-sets) とは別物（こちらは <a href="../../glossary/#term-bgp">BGP</a> 限定の簡易 entry）。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28928,19 +28928,19 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>bgpcfgd</code> (<code>docker-fpm-frr</code>): テンプレート展開で FRR vtysh <code>ip prefix-list &lt;prefix_type&gt; seq N permit &lt;prefix&gt;</code> を生成</li>
+<li><code>bgpcfgd</code> (<code>docker-fpm-frr</code>): テンプレート展開で <a href="../../glossary/#term-frr">FRR</a> vtysh <code>ip prefix-list &lt;prefix_type&gt; seq N permit &lt;prefix&gt;</code> を生成</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <a href="../prefix-set/"><code>PREFIX_SET</code></a> / <code>PREFIX_LIST</code> (sonic-routing-policy-sets), <code>BGP_NEIGHBOR_AF</code>, <code>BGP_PEER_GROUP_AF</code>, <code>ROUTE_MAP</code></li>
-<li>関連 YANG: <code>sonic-bgp-prefix-list</code>、<code>sonic-routing-policy-sets</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../prefix-set/"><code>PREFIX_SET</code></a> / <code>PREFIX_LIST</code> (sonic-routing-policy-sets), <code>BGP_NEIGHBOR_AF</code>, <code>BGP_PEER_GROUP_AF</code>, <code>ROUTE_MAP</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-prefix-list</code>、<code>sonic-routing-policy-sets</code></li>
 <li>関連 CLI: なし（<code>config_db.json</code> 投入）</li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <code>sonic-bgp-prefix-list</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-prefix-list</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28962,7 +28962,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3aa2902e22d8 -->
+<!-- glossary-links-injected: 830f3e5569ea -->
 
 <div class="footnote">
 <hr />

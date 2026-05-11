@@ -28896,7 +28896,7 @@
 
 <h1 id="debug_counter">DEBUG_COUNTER テーブル<a class="headerlink" href="#debug_counter" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-sai">SAI</a> debug counter（パケットドロップ要因別の汎用カウンタ）を <a href="../../glossary/#term-config_db">CONFIG_DB</a> から定義するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>debugcounterorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が消費し、SAI debug counter オブジェクトを作成する。各カウンタには別テーブル <code>DEBUG_COUNTER_DROP_REASON</code> でドロップ理由 (<code>L3_ANY</code>、<code>SMAC_EQUALS_DMAC</code> 等) が紐付く。</p>
+<p><a href="../../glossary/#term-sai">SAI</a> debug counter（パケットドロップ要因別の汎用カウンタ）を <a href="../../glossary/#term-config_db">CONFIG_DB</a> から定義するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>debugcounterorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>) が消費し、<a href="../../glossary/#term-sai">SAI</a> debug counter オブジェクトを作成する。各カウンタには別テーブル <code>DEBUG_COUNTER_DROP_REASON</code> でドロップ理由 (<code>L3_ANY</code>、<code>SMAC_EQUALS_DMAC</code> 等) が紐付く。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28987,7 +28987,7 @@
 <ul>
 <li><code>DEBUG_COUNTER_DROP_REASON_LIST</code> (key: <code>name reason</code>)</li>
 <li><code>name</code>: 親 <code>DEBUG_COUNTER_LIST.name</code> 存在チェック付き (<code>must</code> 制約)</li>
-<li><code>reason</code>: <code>stypes:counter_drop_reason</code> 列挙（SAI のドロップ理由一覧）</li>
+<li><code>reason</code>: <code>stypes:counter_drop_reason</code> 列挙（<a href="../../glossary/#term-sai">SAI</a> のドロップ理由一覧）</li>
 <li><code>DEBUG_DROP_MONITOR/CONFIG/status</code>: 永続的ドロップ監視機能のグローバル ON/OFF（admin_mode、既定 <code>disabled</code>）</li>
 </ul>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -28997,19 +28997,19 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>debugcounterorch</code> (orchagent): SAI debug counter (sai_debug_counter) を作成し、ドロップ理由のセットを反映</li>
+<li><code>debugcounterorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>): SAI debug counter (sai_debug_counter) を作成し、ドロップ理由のセットを反映</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>COUNTERS_DEBUG_NAME_MAP</code> (<a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 側)</li>
-<li>関連 YANG: <code>sonic-debug-counter</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>COUNTERS_DEBUG_NAME_MAP</code> (<a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 側)</li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-debug-counter</code></li>
 <li>関連 CLI: <code>config debug counter</code> / <code>show debug counter</code> 系</li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-debug-counter/"><code>sonic-debug-counter</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-debug-counter/"><code>sonic-debug-counter</code></a></li>
 <li>CLI: <code>config debug counter</code> / <code>show debug counter</code></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29032,7 +29032,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 447a5e337bb2 -->
+<!-- glossary-links-injected: d2c490dcfe8c -->
 
 <div class="footnote">
 <hr />

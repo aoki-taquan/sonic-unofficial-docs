@@ -28978,7 +28978,7 @@
 <td>yes</td>
 <td></td>
 <td>pattern <code>PortChannel[0-9]{1,4}</code></td>
-<td>PortChannel interface name (e.g. PortChannel0001)</td>
+<td><a href="../../glossary/#term-portchannel">PortChannel</a> interface name (e.g. PortChannel0001)</td>
 </tr>
 <tr>
 <td><code>min_links</code></td>
@@ -28987,7 +28987,7 @@
 <td></td>
 <td></td>
 <td>range 1..1024</td>
-<td>Minimum number of active member links required for the PortChannel to be operationally up</td>
+<td>Minimum number of active member links required for the <a href="../../glossary/#term-portchannel">PortChannel</a> to be operationally up</td>
 </tr>
 <tr>
 <td><code>mode</code></td>
@@ -29032,7 +29032,7 @@
 <td></td>
 <td></td>
 <td>union(string, uint16)</td>
-<td>LACP aggregation key; 'auto' derives it from the PortChannel name, or specify a value from 1 to 65535</td>
+<td><a href="../../glossary/#term-lacp">LACP</a> aggregation key; 'auto' derives it from the PortChannel name, or specify a value from 1 to 65535</td>
 </tr>
 <tr>
 <td><code>tpid</code></td>
@@ -29050,7 +29050,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Enable LACP fallback feature</td>
+<td>Enable <a href="../../glossary/#term-lacp">LACP</a> fallback feature</td>
 </tr>
 <tr>
 <td><code>fast_rate</code></td>
@@ -29095,7 +29095,7 @@
 <td></td>
 <td></td>
 <td>/vrf:sonic-vrf/vrf:<a href="../../glossary/#term-vrf">VRF</a>/vrf:VRF_LIST/vrf:name</td>
-<td>VRF instance to which this PortChannel interface is bound</td>
+<td><a href="../../glossary/#term-vrf">VRF</a> instance to which this PortChannel interface is bound</td>
 </tr>
 <tr>
 <td><code>loopback_action</code></td>
@@ -29177,8 +29177,8 @@
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORTCHANNEL</code></li>
-<li>CONFIG_DB: <code>PORTCHANNEL_INTERFACE</code></li>
-<li>CONFIG_DB: <code>PORTCHANNEL_MEMBER</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORTCHANNEL_INTERFACE</code></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORTCHANNEL_MEMBER</code></li>
 <li>CLI: <code>config portchannel</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -29194,11 +29194,11 @@
 <h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
-<li>LAG (port-channel) 設定。<code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> を teammgrd が <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> に反映。</li>
+<li><a href="../../glossary/#term-lag">LAG</a> (port-channel) 設定。<code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> を teammgrd が <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> に反映。</li>
 </ul>
 <h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>min_links</code> を member 数より大きく設定すると LAG が常に down 扱いになる。CLI からの値入力ミスで頻発。</li>
+<li><code>min_links</code> を member 数より大きく設定すると <a href="../../glossary/#term-lag">LAG</a> が常に down 扱いになる。CLI からの値入力ミスで頻発。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL*&#39;</span>
@@ -29214,7 +29214,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e6e9b89b13b9 -->
+<!-- glossary-links-injected: 1fa299f553b4 -->
 
 <div class="footnote">
 <hr />

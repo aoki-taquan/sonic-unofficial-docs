@@ -28896,7 +28896,7 @@
 
 <h1 id="port_qos_map">PORT_QOS_MAP テーブル<a class="headerlink" href="#port_qos_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>PORT_QOS_MAP</code> は <a href="../../glossary/#term-qos">QoS</a> map、<a href="../../glossary/#term-pfc">PFC</a> enable bitmap、PFC watchdog software enable bitmap、scheduler profile を port または global default に bind する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>PORT_QOS_MAP_TABLE</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>PORT_QOS_MAP</code> は <a href="../../glossary/#term-qos">QoS</a> map、<a href="../../glossary/#term-pfc">PFC</a> enable bitmap、<a href="../../glossary/#term-pfc">PFC</a> watchdog software enable bitmap、scheduler profile を port または global default に bind する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>PORT_QOS_MAP_TABLE</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28939,7 +28939,7 @@
 <tr>
 <td><code>pfc_enable</code></td>
 <td>string pattern <code>([0-7](,[0-7])*)?</code></td>
-<td>PFC を有効にする queue / priority のカンマ区切り。空文字は全無効</td>
+<td><a href="../../glossary/#term-pfc">PFC</a> を有効にする queue / priority のカンマ区切り。空文字は全無効</td>
 </tr>
 <tr>
 <td><code>pfcwd_sw_enable</code></td>
@@ -28981,12 +28981,12 @@
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>ifname</code> は <code>global</code> または既存 <code>PORT</code> への leafref。</li>
-<li>各 map field は対応する QoS map table への leafref。</li>
+<li>各 map field は対応する <a href="../../glossary/#term-qos">QoS</a> map table への leafref。</li>
 <li><code>pfc_enable</code> と <code>pfcwd_sw_enable</code> は 0..7 のカンマ区切り、または空文字。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> の <code>QosOrch</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>): CONFIG_DB の QoS map binding を直接 subscribe し、<a href="../../glossary/#term-sai">SAI</a> QoS map、scheduler、PFC 設定として port に反映する（master には独立した <code>qosmgrd</code> プロセスは存在せず、CONFIG_DB → APPL_DB の中間段は無い）。</li>
+<li><code>orchagent</code> の <code>QosOrch</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <a href="../../glossary/#term-qos">QoS</a> map binding を直接 subscribe し、<a href="../../glossary/#term-sai">SAI</a> QoS map、scheduler、PFC 設定として port に反映する（master には独立した <code>qosmgrd</code> プロセスは存在せず、<a href="../../glossary/#term-config_db">CONFIG_DB</a> → <a href="../../glossary/#term-appl_db">APPL_DB</a> の中間段は無い）。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28998,7 +28998,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-port-qos-map/"><code>sonic-port-qos-map</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-port-qos-map/"><code>sonic-port-qos-map</code></a></li>
 <li>CLI: <a href="../../cli/config-qos/"><code>config qos</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29029,13 +29029,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 13283933a7dc -->
+<!-- glossary-links-injected: e3877cf541b2 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-port-qos-map.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-port-qos-map.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-port-qos-map.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-port-qos-map.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-port-qos-map.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-port-qos-map.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

@@ -28875,7 +28875,7 @@
 <h1 id="bmp">BMP テーブル<a class="headerlink" href="#bmp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-bgp">BGP</a> Monitoring Protocol (BMP, RFC 7854) の <strong>テーブルダンプ機能のオンオフ</strong>を設定するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
-BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<code>BMP</code> テーブルは「どのテーブルダンプ (BGP neighbor / Adj-RIB-In / Adj-RIB-Out) を送るか」のフラグだけを持つ。</p>
+BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<code>BMP</code> テーブルは「どのテーブルダンプ (<a href="../../glossary/#term-bgp">BGP</a> neighbor / Adj-RIB-In / Adj-RIB-Out) を送るか」のフラグだけを持つ。</p>
 <p><code>openbmpd</code>（BMP collector 側）ではなく、SONiC スイッチ側の BMP exporter を制御する想定。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -28908,7 +28908,7 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 <td><code>bgp_neighbor_table</code></td>
 <td>boolean</td>
 <td><code>true</code></td>
-<td>BGP neighbor テーブルダンプを送る</td>
+<td><a href="../../glossary/#term-bgp">BGP</a> neighbor テーブルダンプを送る</td>
 </tr>
 <tr>
 <td><code>bgp_rib_in_table</code></td>
@@ -28930,14 +28930,14 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BGP_MONITORS</code>（BMP collector 接続定義）</li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_MONITORS</code>（BMP collector 接続定義）</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bmp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-bmp/"><code>sonic-bmp</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-bmp/"><code>sonic-bmp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28963,13 +28963,13 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3aa2902e22d8 -->
+<!-- glossary-links-injected: 9e5a57a09d49 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-bmp.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bmp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bmp.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-bmp.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bmp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bmp.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

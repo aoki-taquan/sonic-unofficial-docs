@@ -29236,11 +29236,11 @@
 </tr>
 <tr>
 <td><code>-d &lt;DPU&gt;</code></td>
-<td>smart switch の特定 <a href="../../glossary/#term-dpu">DPU</a> module 名を指定して DPU だけ reboot</td>
+<td>smart switch の特定 <a href="../../glossary/#term-dpu">DPU</a> module 名を指定して <a href="../../glossary/#term-dpu">DPU</a> だけ reboot</td>
 </tr>
 <tr>
 <td><code>-p</code></td>
-<td>DPU 上での pre-shutdown 段階</td>
+<td><a href="../../glossary/#term-dpu">DPU</a> 上での pre-shutdown 段階</td>
 </tr>
 <tr>
 <td><code>-b</code></td>
@@ -29337,13 +29337,13 @@
 </tbody>
 </table>
 <h3 id="_6">動作<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><code>kexec</code> ベースで kernel を切り替えてダウンタイムを数秒〜十数秒に抑える。warm 系とは異なり data plane / control plane も停止するが、syncd の DB を保存して新カーネル起動後に <code>wb</code> 復元する経路を持つ。</p>
+<p><code>kexec</code> ベースで kernel を切り替えてダウンタイムを数秒〜十数秒に抑える。warm 系とは異なり data plane / control plane も停止するが、<a href="../../glossary/#term-syncd">syncd</a> の DB を保存して新カーネル起動後に <code>wb</code> 復元する経路を持つ。</p>
 <h2 id="warm-reboot"><code>warm-reboot</code><a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h2>
 <p><code>fast-reboot</code> への symlink。スクリプト先頭で <code>REBOOT_SCRIPT_NAME=$(basename $0)</code> を取り、<code>warm-reboot</code> の場合は warm モード (<code>pre-shutdown</code> / <code>request_pre_shutdown</code> / <code>init_warm_reboot_states</code> / data plane を保ったままの <code>kexec</code>) に分岐する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
 <p>オプションは <code>fast-reboot</code> と共通。warm-specific な制御 (<code>-m</code> での ASIC スキップ、<code>-N</code> での peer 検査強化など) も同じ getopts で受け付ける。</p>
 <h3 id="warm-reboot_1">warm-reboot で増える動作<a class="headerlink" href="#warm-reboot_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>initialize_pre_shutdown</code> … syncd / <a href="../../glossary/#term-orchagent">orchagent</a> に warm-shutdown 準備を要求。</li>
+<li><code>initialize_pre_shutdown</code> … <a href="../../glossary/#term-syncd">syncd</a> / <a href="../../glossary/#term-orchagent">orchagent</a> に warm-shutdown 準備を要求。</li>
 <li><code>request_pre_shutdown</code> + <code>wait_for_pre_shutdown_complete_or_fail</code> … pre-shutdown ACK を 待つ。</li>
 <li><code>setup_control_plane_assistant</code> … <code>-c</code> で指定された外部 CPA に対して <a href="../../glossary/#term-arp">ARP</a>/ND を打ち、データ平面のスチール先 (黒穴) を作って fail-open を防ぐ。</li>
 <li><code>backup_database</code> … <a href="../../glossary/#term-state_db">STATE_DB</a> / <a href="../../glossary/#term-appl_db">APPL_DB</a> のスナップショット保存 (warm boot 時の差分 reconcile 用)。</li>
@@ -29386,7 +29386,7 @@
 </table>
 <h2 id="_8">注意<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>warm-reboot</code> で BGP セッションを保持するには <strong>GR (<a href="../../glossary/#term-graceful-restart">Graceful Restart</a>) が peer 側で有効</strong> なことが前提。</li>
+<li><code>warm-reboot</code> で <a href="../../glossary/#term-bgp">BGP</a> セッションを保持するには <strong>GR (<a href="../../glossary/#term-graceful-restart">Graceful Restart</a>) が peer 側で有効</strong> なことが前提。</li>
 <li><code>fast-reboot</code> / <code>warm-reboot</code> は <strong>data plane traffic loss</strong> をゼロにするものではない。SONiC 標準実装でも数秒〜数百ミリ秒の packet drop は出る。<code>-c</code> の CPA 構成と GR をきちんと組まないと L3 セッションが切れる。</li>
 <li>chassis (multi-asic + supervisor + linecard) では <code>reboot</code> が CHASSIS_STATE_DB に通知を出すため、ラインカード単独 reboot とシステム全体 reboot で挙動が変わる。</li>
 </ul>
@@ -29464,7 +29464,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4be05789576d -->
+<!-- glossary-links-injected: c419e969e873 -->
 
 <div class="footnote">
 <hr />

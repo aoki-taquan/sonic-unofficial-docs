@@ -28830,7 +28830,7 @@
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><code>advertise-all-vni</code> 未設定</strong>: <a href="../../glossary/#term-frr">FRR</a> の <code>address-family l2vpn evpn</code> で <code>advertise-all-vni</code> がない</li>
-<li><strong>VLAN-VNI mapping 欠落</strong>: <code>VXLAN_TUNNEL_MAP</code> が未作成 / VNI 重複</li>
+<li><strong><a href="../../glossary/#term-vlan">VLAN</a>-VNI mapping 欠落</strong>: <code>VXLAN_TUNNEL_MAP</code> が未作成 / VNI 重複</li>
 <li><strong><a href="../../glossary/#term-fdb">FDB</a> が学習されていない</strong>: 対象 MAC が <code>show mac</code> に出ない</li>
 <li><strong>route-target import/export 不整合</strong></li>
 <li><strong><code>type-2 prefix</code> の filter / route-map で drop</strong></li>
@@ -28872,9 +28872,9 @@
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>advertise-all-vni</code> 追加: <code>vtysh -c "conf t" -c "router bgp &lt;asn&gt;" -c "address-family l2vpn evpn" -c "advertise-all-vni"</code> の後 <code>config save</code>（<strong>ロールバック</strong>: <code>no advertise-all-vni</code> を同経路で）</li>
-<li>VLAN-VNI mapping 作成: <code>sudo config vxlan map add &lt;tunnel&gt; &lt;vlan&gt; &lt;vni&gt;</code>（<strong>ロールバック</strong>: <code>config vxlan map del</code>）</li>
+<li><a href="../../glossary/#term-vlan">VLAN</a>-VNI mapping 作成: <code>sudo config vxlan map add &lt;tunnel&gt; &lt;vlan&gt; &lt;vni&gt;</code>（<strong>ロールバック</strong>: <code>config vxlan map del</code>）</li>
 <li>RT 不一致: <code>route-target import/export</code> を対向と揃える</li>
-<li>FDB が学習されない: MAC learning enable、port が trunk として正しいか確認</li>
+<li><a href="../../glossary/#term-fdb">FDB</a> が学習されない: MAC learning enable、port が trunk として正しいか確認</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28883,7 +28883,7 @@
 <li><a href="../../config-db/vxlan-tunnel/">../config-db/vxlan-tunnel.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: cd052884780b -->
+<!-- glossary-links-injected: 164802a4df0c -->
 
 <div class="footnote">
 <hr />

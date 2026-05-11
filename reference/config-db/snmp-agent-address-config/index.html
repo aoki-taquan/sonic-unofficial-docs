@@ -28896,7 +28896,7 @@
 
 <h1 id="snmp_agent_address_config">SNMP_AGENT_ADDRESS_CONFIG テーブル<a class="headerlink" href="#snmp_agent_address_config" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>snmpd</code> のリッスンアドレスと UDP ポートを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に登録するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>docker-snmp</code> 起動スクリプトが CONFIG_DB を読み、<code>snmpd.conf</code> の <code>agentaddress</code> 行を生成する。複数エントリで複数アドレス / ポート / <a href="../../glossary/#term-vrf">VRF</a> を同時に bind できる。</p>
+<p><code>snmpd</code> のリッスンアドレスと UDP ポートを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に登録するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>docker-snmp</code> 起動スクリプトが <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み、<code>snmpd.conf</code> の <code>agentaddress</code> 行を生成する。複数エントリで複数アドレス / ポート / <a href="../../glossary/#term-vrf">VRF</a> を同時に bind できる。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28936,18 +28936,18 @@
 <tr>
 <td><code>vrf_name</code></td>
 <td>enum: 空文字 / <code>mgmt</code> / <code>Vrf&lt;name&gt;</code> (<code>Vrf[a-zA-Z0-9_-]+</code>)</td>
-<td>bind VRF。空文字は default</td>
+<td>bind <a href="../../glossary/#term-vrf">VRF</a>。空文字は default</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>key の 3 要素のうち <code>port</code>/<code>vrf_name</code> は空文字パターン (<code>pattern ''</code>) を許容しており、空文字は「未指定 = 既定 (161 / default VRF)」を意味する</li>
+<li>key の 3 要素のうち <code>port</code>/<code>vrf_name</code> は空文字パターン (<code>pattern ''</code>) を許容しており、空文字は「未指定 = 既定 (161 / default <a href="../../glossary/#term-vrf">VRF</a>)」を意味する</li>
 <li><code>unique "agent_ip port"</code> により、同一の (ip, port) を異なる VRF に重複登録することはできない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>docker-snmp</code> の <code>snmpd</code> テンプレ: CONFIG_DB → <code>agentaddress udp:&lt;ip&gt;:&lt;port&gt;[%vrf]</code> 行を生成</li>
+<li><code>docker-snmp</code> の <code>snmpd</code> テンプレ: <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <code>agentaddress udp:&lt;ip&gt;:&lt;port&gt;[%vrf]</code> 行を生成</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28959,7 +28959,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-snmp/"><code>sonic-snmp</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-snmp/"><code>sonic-snmp</code></a></li>
 <li>CLI: <a href="../../cli/config-snmp/"><code>config snmp agentaddress</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28978,7 +28978,7 @@
 </ul>
 <h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li>vrf 指定を空にして default VRF で listen し続け、front-panel から SNMP が抜ける。</li>
+<li>vrf 指定を空にして default VRF で listen し続け、front-panel から <a href="../../glossary/#term-snmp">SNMP</a> が抜ける。</li>
 </ul>
 <h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;SNMP_AGENT_ADDRESS_CONFIG|*&#39;</span>
@@ -28986,7 +28986,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 60a02696c221 -->
+<!-- glossary-links-injected: f02106101ebd -->
 
 <div class="footnote">
 <hr />

@@ -28918,7 +28918,7 @@
 
 <h1 id="lldp-lldp_port">LLDP / LLDP_PORT テーブル<a class="headerlink" href="#lldp-lldp_port" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>LLDP</code> テーブルはシステム全体の <a href="../../glossary/#term-lldp">LLDP</a> 設定 (<code>GLOBAL</code> キー) を、<code>LLDP_PORT</code> テーブルはポート単位の LLDP 有効化 / モードを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp-syncd</code> および <code>docker-lldp</code> 内の <code>lldpd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み出して動作する。</p>
+<p><code>LLDP</code> テーブルはシステム全体の <a href="../../glossary/#term-lldp">LLDP</a> 設定 (<code>GLOBAL</code> キー) を、<code>LLDP_PORT</code> テーブルはポート単位の <a href="../../glossary/#term-lldp">LLDP</a> 有効化 / モードを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp-syncd</code> および <code>docker-lldp</code> 内の <code>lldpd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み出して動作する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29008,7 +29008,7 @@
 <td><code>enabled</code></td>
 <td>boolean (grouping <code>lldp_mode_config</code>)</td>
 <td>true</td>
-<td>LLDP 有効化</td>
+<td><a href="../../glossary/#term-lldp">LLDP</a> 有効化</td>
 </tr>
 <tr>
 <td><code>mode</code></td>
@@ -29056,15 +29056,15 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORT</code>、<code>DEVICE_NEIGHBOR</code>、<code>DEVICE_NEIGHBOR_METADATA</code></li>
-<li>関連 YANG: <code>sonic-lldp</code>、<code>sonic-port</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORT</code>、<code>DEVICE_NEIGHBOR</code>、<code>DEVICE_NEIGHBOR_METADATA</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-lldp</code>、<code>sonic-port</code></li>
 <li>関連 CLI: <code>config lldp</code>、<code>show lldp</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-lldp/"><code>sonic-lldp</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-lldp/"><code>sonic-lldp</code></a></li>
 <li>CLI: <code>config lldp</code></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29092,7 +29092,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4f72b3e79b97 -->
+<!-- glossary-links-injected: 9d2a20a8f03b -->
 
 <div class="footnote">
 <hr />

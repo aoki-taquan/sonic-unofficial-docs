@@ -28944,7 +28944,7 @@
 <td>leafref <code>VRF.name</code></td>
 <td>-</td>
 <td>-</td>
-<td>バインドする VRF</td>
+<td>バインドする <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 <tr>
 <td><code>loopback_action</code></td>
@@ -28998,7 +28998,7 @@
 <td><code>name</code> (key)</td>
 <td>leafref <code>PORTCHANNEL.name</code></td>
 <td>✅</td>
-<td>LAG 名</td>
+<td><a href="../../glossary/#term-lag">LAG</a> 名</td>
 </tr>
 <tr>
 <td><code>ip_prefix</code> (key)</td>
@@ -29024,7 +29024,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-portchannel/"><code>sonic-portchannel</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-portchannel/"><code>sonic-portchannel</code></a></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29046,7 +29046,7 @@
 </ul>
 <h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li>メンバが 1 本も up していない LAG に IP を載せても route がアクティブにならない。</li>
+<li>メンバが 1 本も up していない <a href="../../glossary/#term-lag">LAG</a> に IP を載せても route がアクティブにならない。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL_INTERFACE|*&#39;</span>
@@ -29054,13 +29054,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 73a5cc24f249 -->
+<!-- glossary-links-injected: e41770dcd7bc -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-portchannel.yang</code> 内 <code>PORTCHANNEL_INTERFACE</code>。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L158">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L158</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-portchannel.yang</code> 内 <code>PORTCHANNEL_INTERFACE</code>。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L158">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang#L158</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -28952,7 +28952,7 @@
 
 <h1 id="vlan_sub_interface">VLAN_SUB_INTERFACE テーブル<a class="headerlink" href="#vlan_sub_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>VLAN_SUB_INTERFACE</code> は物理 port または <a href="../../glossary/#term-portchannel">PortChannel</a> 上の 802.1Q sub-interface を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。<code>Ethernet0.100</code> や <code>PortChannel10.100</code> のような親 interface + <a href="../../glossary/#term-vlan">VLAN</a> ID 形式をキーに、admin state、<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding、loopback action、encapsulation VLAN、IP prefix を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では CONFIG_DB テーブル名として <code>CFG_VLAN_SUB_INTF_TABLE_NAME</code> が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>VLAN_SUB_INTERFACE</code> は物理 port または <a href="../../glossary/#term-portchannel">PortChannel</a> 上の 802.1Q sub-interface を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。<code>Ethernet0.100</code> や <code>PortChannel10.100</code> のような親 interface + <a href="../../glossary/#term-vlan">VLAN</a> ID 形式をキーに、admin state、<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding、loopback action、encapsulation <a href="../../glossary/#term-vlan">VLAN</a>、IP prefix を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル名として <code>CFG_VLAN_SUB_INTF_TABLE_NAME</code> が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28995,12 +28995,12 @@
 <tr>
 <td><code>vrf_name</code></td>
 <td>leafref <code>VRF.name</code></td>
-<td>binding する VRF</td>
+<td>binding する <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 <tr>
 <td><code>vnet_name</code></td>
 <td>leafref <code>VNET.name</code></td>
-<td>binding する VNET</td>
+<td>binding する <a href="../../glossary/#term-vnet">VNET</a></td>
 </tr>
 <tr>
 <td><code>loopback_action</code></td>
@@ -29010,7 +29010,7 @@
 <tr>
 <td><code>vlan</code></td>
 <td>uint16 1..4094</td>
-<td>short-name 形式で明示する encapsulation VLAN</td>
+<td>short-name 形式で明示する encapsulation <a href="../../glossary/#term-vlan">VLAN</a></td>
 </tr>
 </tbody>
 </table>
@@ -29041,8 +29041,8 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>intfmgrd</code>: CONFIG_DB の sub-interface と IP prefix を <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の interface 設定へ展開する。</li>
-<li><code>orchagent</code> / <code>intfsorch</code>: APPL_DB 経由で router interface、IP address、VRF / VNET binding を <a href="../../glossary/#term-sai">SAI</a> / kernel へ反映する。</li>
+<li><code>intfmgrd</code>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> の sub-interface と IP prefix を <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の interface 設定へ展開する。</li>
+<li><code>orchagent</code> / <code>intfsorch</code>: <a href="../../glossary/#term-appl_db">APPL_DB</a> 経由で router interface、IP address、<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding を <a href="../../glossary/#term-sai">SAI</a> / kernel へ反映する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29054,7 +29054,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-vlan-sub-interface/"><code>sonic-vlan-sub-interface</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vlan-sub-interface/"><code>sonic-vlan-sub-interface</code></a></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29084,13 +29084,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f53f85ca209b -->
+<!-- glossary-links-injected: 8acafc795b83 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-vlan-sub-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vlan-sub-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

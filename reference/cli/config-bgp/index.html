@@ -29162,7 +29162,7 @@
 
 <h1 id="config-bgp">config bgp サブコマンド<a class="headerlink" href="#config-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config bgp</code> は <a href="../../glossary/#term-bgp">BGP</a> セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-<a href="../../glossary/#term-ecmp">ECMP</a>、および aggregate-address (集約広告) の操作を提供する。BGP データプレーン本体は <a href="../../glossary/#term-frr">FRR</a> が握っているが、SONiC はその設定状態を <strong><a href="../../glossary/#term-config_db">CONFIG_DB</a></strong> に保存し、<code>bgpcfgd</code> が CONFIG_DB → FRR (vtysh) に反映する。<code>config bgp</code> は CONFIG_DB を直接書き換える役割を担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config bgp</code> は <a href="../../glossary/#term-bgp">BGP</a> セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-<a href="../../glossary/#term-ecmp">ECMP</a>、および aggregate-address (集約広告) の操作を提供する。<a href="../../glossary/#term-bgp">BGP</a> データプレーン本体は <a href="../../glossary/#term-frr">FRR</a> が握っているが、SONiC はその設定状態を <strong><a href="../../glossary/#term-config_db">CONFIG_DB</a></strong> に保存し、<code>bgpcfgd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <a href="../../glossary/#term-frr">FRR</a> (vtysh) に反映する。<code>config bgp</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を直接書き換える役割を担う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>config/main.py</code> 末尾で <code>config.commands['bgp'].add_command(bgp_cli.DEVICE_GLOBAL)</code> <code>add_command(bgp_cli.AGGREGATE_ADDRESS)</code> の形で <code>config/bgp_cli.py</code> のサブグループが追加される構造のため、cli.json (機械抽出) には <code>device-global</code> / <code>aggregate-address</code> 配下が現れない。本ページでは両方を統合して扱う。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -29175,7 +29175,7 @@
 <tbody>
 <tr>
 <td><code>config bgp shutdown all</code></td>
-<td>すべての BGP セッションをダウン</td>
+<td>すべての <a href="../../glossary/#term-bgp">BGP</a> セッションをダウン</td>
 </tr>
 <tr>
 <td><code>config bgp shutdown neighbor &lt;ipaddr_or_hostname&gt;</code></td>
@@ -29203,11 +29203,11 @@
 </tr>
 <tr>
 <td><code>config bgp device-global w-ecmp enabled</code></td>
-<td>W-ECMP (Weighted-Cost Multi-Path) を有効化</td>
+<td>W-<a href="../../glossary/#term-ecmp">ECMP</a> (Weighted-Cost Multi-Path) を有効化</td>
 </tr>
 <tr>
 <td><code>config bgp device-global w-ecmp disabled</code></td>
-<td>W-ECMP を無効化</td>
+<td>W-<a href="../../glossary/#term-ecmp">ECMP</a> を無効化</td>
 </tr>
 <tr>
 <td><code>config bgp aggregate-address add &lt;address&gt; [options]</code></td>
@@ -29478,7 +29478,7 @@ excerpt: |
 </ul>
 <h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>config bgp shutdown neighbor</code> は FRR には即反映だが CONFIG_DB 上は <code>admin_status</code> が変わるのみ。<code>config save</code> を忘れると再起動で戻る。</li>
+<li><code>config bgp shutdown neighbor</code> は <a href="../../glossary/#term-frr">FRR</a> には即反映だが CONFIG_DB 上は <code>admin_status</code> が変わるのみ。<code>config save</code> を忘れると再起動で戻る。</li>
 <li>TSA は AS-Path prepend で実現するため、対向側の bestpath ロジック次第では退避が遅延する。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
@@ -29495,7 +29495,7 @@ excerpt: |
 <li><a href="../../config-db/bgp-neighbor/">CONFIG_DB: BGP_NEIGHBOR</a></li>
 <li><a href="../../yang/sonic-bgp-neighbor/">YANG: sonic-bgp-neighbor</a></li>
 </ul>
-<!-- glossary-links-injected: 33c50b5734df -->
+<!-- glossary-links-injected: 22dc76970f48 -->
 
 <div class="footnote">
 <hr />

@@ -28918,7 +28918,7 @@
 
 <h1 id="vlan_member">VLAN_MEMBER テーブル<a class="headerlink" href="#vlan_member" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-vlan">VLAN</a> とポート (PORT または PORTCHANNEL) のメンバ関係、および各メンバが tagged / untagged のいずれで参加するかを保持する。VLAN_MEMBER のエントリ追加で <code>vlanmgrd</code> が Linux bridge にメンバを add し、<code>orchagent</code> が <a href="../../glossary/#term-sai">SAI</a> VLAN member を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../glossary/#term-vlan">VLAN</a> とポート (PORT または PORTCHANNEL) のメンバ関係、および各メンバが tagged / untagged のいずれで参加するかを保持する。VLAN_MEMBER のエントリ追加で <code>vlanmgrd</code> が Linux bridge にメンバを add し、<code>orchagent</code> が <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-vlan">VLAN</a> member を生成する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28958,7 +28958,7 @@
 <td>leafref <code>VLAN.name</code></td>
 <td>✅</td>
 <td>-</td>
-<td>親 VLAN</td>
+<td>親 <a href="../../glossary/#term-vlan">VLAN</a></td>
 </tr>
 <tr>
 <td><code>port</code> (key)</td>
@@ -28986,7 +28986,7 @@
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>vlanmgrd</code>: Linux bridge へのメンバ操作</li>
-<li><code>orchagent</code> の <code>VlanMgr</code>: SAI VLAN member を生成</li>
+<li><code>orchagent</code> の <code>VlanMgr</code>: <a href="../../glossary/#term-sai">SAI</a> VLAN member を生成</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28998,7 +28998,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-vlan/"><code>sonic-vlan</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vlan/"><code>sonic-vlan</code></a></li>
 <li>CLI: <a href="../../cli/config-vlan/"><code>config vlan member</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29028,7 +29028,7 @@
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>tagging_mode: untagged</code> を 1 ポート上の複数 VLAN に重複指定すると先勝ちで残りが silently 反映されない。</li>
-<li><a href="../../glossary/#term-portchannel">PortChannel</a> メンバを VLAN_MEMBER に直付けすると L2 が壊れる。LAG 親 (<code>PortChannelN</code>) を入れる。</li>
+<li><a href="../../glossary/#term-portchannel">PortChannel</a> メンバを VLAN_MEMBER に直付けすると L2 が壊れる。<a href="../../glossary/#term-lag">LAG</a> 親 (<code>PortChannelN</code>) を入れる。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VLAN_MEMBER|Vlan100|Ethernet0&#39;</span>
@@ -29036,13 +29036,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 55a84469f079 -->
+<!-- glossary-links-injected: e1bfad0ce64c -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-vlan.yang</code> 内 <code>VLAN_MEMBER</code> コンテナ。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L273">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L273</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vlan.yang</code> 内 <code>VLAN_MEMBER</code> コンテナ。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L273">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan.yang#L273</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

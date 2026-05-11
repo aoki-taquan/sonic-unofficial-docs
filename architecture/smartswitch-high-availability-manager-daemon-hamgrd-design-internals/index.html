@@ -28800,14 +28800,14 @@
 
 
 <h1 id="smartswitch-ha-hamgrd">SmartSwitch HA HAMgrD 内部実装<a class="headerlink" href="#smartswitch-ha-hamgrd" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design/">HAMgrD（概要ハブ）</a> の派生ページで、<strong>actor の workflow と DPU-Driven mode の詳細</strong> に絞って整理する。概念は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/">smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md</a>、設定は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md</a>、制限事項は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> を参照。</p>
+<p>このページは <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design/">HAMgrD（概要ハブ）</a> の派生ページで、<strong>actor の workflow と <a href="../../reference/glossary/#term-dpu">DPU</a>-Driven mode の詳細</strong> に絞って整理する。概念は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-concepts/">smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md</a>、設定は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-operations/">smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md</a>、制限事項は <a href="../smartswitch-high-availability-manager-daemon-hamgrd-design-limitations/">smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md</a> を参照。</p>
 <div class="admonition warning">
 <p class="admonition-title">現状未実装</p>
 <p>本ページの記述は HLD v0.1 を元にした <strong>将来仕様の参考</strong>。<code>hamgrd</code> バイナリは community master に未取り込みで、actor framework / swbus / DPU/vDPU の STATE 系テーブルは欠落している。</p>
 </div>
 <h2 id="1-actor">1. Actor 起動と動的変動<a class="headerlink" href="#1-actor" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>hamgrd</code> 起動直後に CONFIG_DB / APPL_DB の既存 table から <strong>初期 actor 群（global config / dpu / vdpu / ha set / ha scope）を作成</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>hamgrd</code> 起動直後に <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の既存 table から <strong>初期 actor 群（global config / dpu / vdpu / ha set / ha scope）を作成</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>APPL_DB は SDN controller から動的更新されるため、新規 HA set 等の create/delete 時に actor を生成・破棄</li>
 </ul>
 <h2 id="2-dpu-vdpu">2. DPU と vDPU の状態集約<a class="headerlink" href="#2-dpu-vdpu" title="Permanent link">&para;</a></h2>
@@ -28818,7 +28818,7 @@
 <li>HA Set actor は <code>DASH_HA_SET_CONFIG_TABLE</code> の vDPU リストを subscribe</li>
 <li><code>DASH_HA_GLOBAL_CONFIG</code> と vDPU 状態を集約して自分の state を更新</li>
 <li>scope が <code>dpu</code> なら DPU 単位の forwarding rule を設定</li>
-<li>ローカル vDPU が含まれる HA Set では <strong>DPU 側 HA Set table</strong> を program して ENI から参照可能にする</li>
+<li>ローカル vDPU が含まれる HA Set では <strong>DPU 側 HA Set table</strong> を program して <a href="../../reference/glossary/#term-eni">ENI</a> から参照可能にする</li>
 </ul>
 <h2 id="4-ha-scope-workflowdpu-driven-mode">4. HA Scope workflow（DPU-Driven mode）<a class="headerlink" href="#4-ha-scope-workflowdpu-driven-mode" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
@@ -28848,15 +28848,15 @@
 <li>SDN controller が enable を立てると HAMgrD が DPU に転送</li>
 <li>DPU の状態遷移を監視</li>
 <li>DPU からの role activation 要求を扱う</li>
-<li>DPU が最終 state に達したとき DPU actor が <strong>BFD responder を program</strong></li>
+<li>DPU が最終 state に達したとき DPU actor が <strong><a href="../../reference/glossary/#term-bfd">BFD</a> responder を program</strong></li>
 </ul>
 <h3 id="_3">削除時<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li>HA Scope actor を pending deletion マーク → DPU 側削除 → 完了後 actor 自体と STATE_DB エントリを削除</li>
+<li>HA Scope actor を pending deletion マーク → DPU 側削除 → 完了後 actor 自体と <a href="../../reference/glossary/#term-state_db">STATE_DB</a> エントリを削除</li>
 </ul>
 <p>詳細は <code>smart-switch-ha-dpu-scope-dpu-driven-setup.md</code> 参照<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="5-switch-driven-mode">5. Switch-Driven mode<a class="headerlink" href="#5-switch-driven-mode" title="Permanent link">&para;</a></h2>
-<p>TBD（HLD で未確定）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。NPU が能動的に HA state machine を駆動するモード。</p>
+<p>TBD（<a href="../../reference/glossary/#term-hld">HLD</a> で未確定）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-npu">NPU</a> が能動的に HA state machine を駆動するモード。</p>
 <!-- diff-admonition -->
 <div class="admonition diff">
 <p class="admonition-title">HLD と実装の差分</p>
@@ -28890,6 +28890,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: f7ac8418d6a5 -->
 
 <div class="footnote">
 <hr />

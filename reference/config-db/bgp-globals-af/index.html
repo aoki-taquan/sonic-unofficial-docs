@@ -28952,7 +28952,7 @@
 
 <h1 id="bgp_globals_af">BGP_GLOBALS_AF テーブル<a class="headerlink" href="#bgp_globals_af" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>BGP_GLOBALS_AF</code> は <code>BGP_GLOBALS</code> の <a href="../../glossary/#term-vrf">VRF</a> ごとに、address-family / subsequent address-family 単位の <a href="../../glossary/#term-bgp">BGP</a> 設定を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。multipath、VRF import、route download filter、distance、route flap dampening、<a href="../../glossary/#term-evpn">EVPN</a>/<a href="../../glossary/#term-vxlan">VXLAN</a> 関連フラグを扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。派生テーブルとして、aggregate-address を定義する <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> と、network statement を定義する <code>BGP_GLOBALS_AF_NETWORK</code> がある。実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>BGP_GLOBALS_AF</code> は <code>BGP_GLOBALS</code> の <a href="../../glossary/#term-vrf">VRF</a> ごとに、address-family / subsequent address-family 単位の <a href="../../glossary/#term-bgp">BGP</a> 設定を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。multipath、<a href="../../glossary/#term-vrf">VRF</a> import、route download filter、distance、route flap dampening、<a href="../../glossary/#term-evpn">EVPN</a>/<a href="../../glossary/#term-vxlan">VXLAN</a> 関連フラグを扱う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。派生テーブルとして、aggregate-address を定義する <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> と、network statement を定義する <code>BGP_GLOBALS_AF_NETWORK</code> がある。実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28999,7 +28999,7 @@
 <td><code>import_vrf</code></td>
 <td><code>default</code> or leafref <code>BGP_GLOBALS.vrf_name</code></td>
 <td>-</td>
-<td>route import 元 VRF</td>
+<td>route import 元 <a href="../../glossary/#term-vrf">VRF</a></td>
 </tr>
 <tr>
 <td><code>import_vrf_route_map</code></td>
@@ -29155,13 +29155,13 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>bgpcfgd</code>: CONFIG_DB の BGP global AF 設定を <a href="../../glossary/#term-frr">FRR</a> address-family 設定へ変換する。</li>
-<li><code>frr-mgmt-framework</code>: <code>DEVICE_METADATA.frr_mgmt_framework_config = true</code> のときに generic BGP model として処理する。</li>
-<li><code>bgpd</code> (FRR): vtysh / mgmt framework 経由で最終的な AF 設定を保持する。</li>
+<li><code>bgpcfgd</code>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <a href="../../glossary/#term-bgp">BGP</a> global AF 設定を <a href="../../glossary/#term-frr">FRR</a> address-family 設定へ変換する。</li>
+<li><code>frr-mgmt-framework</code>: <code>DEVICE_METADATA.frr_mgmt_framework_config = true</code> のときに generic <a href="../../glossary/#term-bgp">BGP</a> model として処理する。</li>
+<li><code>bgpd</code> (<a href="../../glossary/#term-frr">FRR</a>): vtysh / mgmt framework 経由で最終的な AF 設定を保持する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>BGP_GLOBALS</code>、<code>BGP_NEIGHBOR_AF</code>、<code>BGP_PEER_GROUP_AF</code>、<code>ROUTE_MAP_SET</code>、<code>VRF</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BGP_GLOBALS</code>、<code>BGP_NEIGHBOR_AF</code>、<code>BGP_PEER_GROUP_AF</code>、<code>ROUTE_MAP_SET</code>、<code>VRF</code></li>
 <li>関連 CLI: <code>config bgp</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-global</code></li>
 </ul>
@@ -29169,7 +29169,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-bgp-global/"><code>sonic-bgp-global</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-bgp-global/"><code>sonic-bgp-global</code></a></li>
 <li>CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29192,13 +29192,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: a2e09729dbfd -->
+<!-- glossary-links-injected: 803f36c2634d -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-bgp-global.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-bgp-global.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>テーブル名定数参照: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

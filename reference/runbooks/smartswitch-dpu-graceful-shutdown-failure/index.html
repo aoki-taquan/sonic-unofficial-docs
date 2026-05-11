@@ -28830,7 +28830,7 @@
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>active <a href="../../glossary/#term-eni">ENI</a> / flow 残存</strong>: drain 完了前に shutdown 要求</li>
-<li><strong>chassisd ↔ DPU 内部 RPC タイムアウト</strong></li>
+<li><strong>chassisd ↔ <a href="../../glossary/#term-dpu">DPU</a> 内部 RPC タイムアウト</strong></li>
 <li><strong><a href="../../glossary/#term-state_db">STATE_DB</a> の状態遷移が遅延</strong>: <code>CHASSIS_MODULE_TABLE</code> 更新詰まり</li>
 <li><strong>PCIe / power 制御コマンドの失敗</strong>: platform plugin の異常</li>
 <li><strong>暴走プロセスが SIGTERM を無視</strong></li>
@@ -28867,7 +28867,7 @@
 </span></code></pre></div>
 <h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ENI 残: controller 側で migration を実行、完了後に再 shutdown</li>
+<li><a href="../../glossary/#term-eni">ENI</a> 残: controller 側で migration を実行、完了後に再 shutdown</li>
 <li>chassisd 詰まり: <code>docker restart pmon</code> （<strong>注意</strong>: 他センサ / fan / xcvrd も再起動される）</li>
 <li>強制 shutdown: <code>config chassis modules shutdown DPU0 -f</code> （対応 utilities 版でのみ。<strong>ロールバック</strong>: <code>config chassis modules startup DPU0</code>、ただしフロー復元不可）</li>
 <li>platform plugin 異常: ベンダ提供 plugin の log と GitHub Issue で確認</li>
@@ -28878,7 +28878,7 @@
 <li><a href="../dash-eni-down/">./dash-eni-down.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: d32d5a339f26 -->
+<!-- glossary-links-injected: 4353e5992ae2 -->
 
 <div class="footnote">
 <hr />

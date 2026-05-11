@@ -28896,7 +28896,7 @@
 
 <h1 id="wred_profile">WRED_PROFILE テーブル<a class="headerlink" href="#wred_profile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Weighted Random Early Detection (<a href="../../glossary/#term-wred">WRED</a>) と ECN マーキングの設定プロファイルを定義する。<code>QUEUE</code> テーブルの <code>wred_profile</code> から名前で参照される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-orchagent">orchagent</a> の <code>QosOrch</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<a href="../../glossary/#term-sai">SAI</a> WRED オブジェクトに変換する。</p>
+<p>Weighted Random Early Detection (<a href="../../glossary/#term-wred">WRED</a>) と ECN マーキングの設定プロファイルを定義する。<code>QUEUE</code> テーブルの <code>wred_profile</code> から名前で参照される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-orchagent">orchagent</a> の <code>QosOrch</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-wred">WRED</a> オブジェクトに変換する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28930,7 +28930,7 @@
 <td><code>green_min_threshold</code> / <code>yellow_min_threshold</code> / <code>red_min_threshold</code></td>
 <td>uint64 (bytes)</td>
 <td>-</td>
-<td>カラー別の WRED 開始閾値</td>
+<td>カラー別の <a href="../../glossary/#term-wred">WRED</a> 開始閾値</td>
 </tr>
 <tr>
 <td><code>green_max_threshold</code> / <code>yellow_max_threshold</code> / <code>red_max_threshold</code></td>
@@ -28965,11 +28965,11 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>orchagent</code> (<code>QosOrch</code>): CONFIG_DB → SAI WRED → <code>QUEUE</code> への bind</li>
+<li><code>orchagent</code> (<code>QosOrch</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <a href="../../glossary/#term-sai">SAI</a> WRED → <code>QUEUE</code> への bind</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>QUEUE</code>、<code>SCHEDULER</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>QUEUE</code>、<code>SCHEDULER</code></li>
 <li>関連 CLI: <code>config qos clear</code>、テンプレート起点の生成 (<code>buffers.json.j2</code>)</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-wred-profile</code></li>
 </ul>
@@ -28977,7 +28977,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-wred-profile/"><code>sonic-wred-profile</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-wred-profile/"><code>sonic-wred-profile</code></a></li>
 <li>CLI: <a href="../../cli/config-qos/"><code>config qos</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29000,7 +29000,7 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>min &gt; max に設定すると SAI がエラーを返し、profile が hardware に下りない。</li>
+<li>min &gt; max に設定すると <a href="../../glossary/#term-sai">SAI</a> がエラーを返し、profile が hardware に下りない。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WRED_PROFILE|AZURE_LOSSY&#39;</span>
@@ -29008,13 +29008,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c7fb233bdfb1 -->
+<!-- glossary-links-injected: 7c1942297ce7 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-wred-profile.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-wred-profile.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

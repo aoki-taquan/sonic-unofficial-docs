@@ -28812,12 +28812,12 @@
 <p>エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装な <strong>部分採用状態</strong>。</p>
 <h3 id="_1">取り込み済み<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>sonic-swss-common/common/status_code_util.h:11-</code> で <code>SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED</code> 等の enum 群が定義されている。HLD の <code>SWSS_RC_*</code> 体系の最低限は libswsscommon 側に入った。</li>
+<li><code>sonic-swss-common/common/status_code_util.h:11-</code> で <code>SWSS_RC_SUCCESS / INVALID_PARAM / DEADLINE_EXCEEDED / UNAVAIL / NOT_FOUND / NO_MEMORY / EXISTS / PERMISSION_DENIED</code> 等の enum 群が定義されている。<a href="../../reference/glossary/#term-hld">HLD</a> の <code>SWSS_RC_*</code> 体系の最低限は libswsscommon 側に入った。</li>
 </ul>
 <h3 id="_2">未取り込み<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>ERROR_DB</code> / <code>ERROR_ROUTE_TABLE</code> / <code>ERROR_NEIGH_TABLE</code> のテーブル名 define は <code>sonic-swss-common/common/schema.h</code> に <strong>存在しない</strong>（<code>grep -n "ERROR_DB\|ERROR_ROUTE_TABLE" schema.h</code> 0 件。<code>lagid.h:16</code> の <code>LAG_ID_ALLOCATOR_ERROR_DB_ERROR</code> は別物の戻り値定数）。</li>
-<li><code>sonic-swss/orchagent/</code> 配下に <code>ErrorListener</code> / <code>ErrorReporter</code> クラスは未定義。RouteOrch / NeighOrch の SAI 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。</li>
+<li><code>sonic-swss/orchagent/</code> 配下に <code>ErrorListener</code> / <code>ErrorReporter</code> クラスは未定義。RouteOrch / NeighOrch の <a href="../../reference/glossary/#term-sai">SAI</a> 失敗は内部ロギングだけで、専用 ERROR_DB 通知経路は無い。</li>
 <li><code>sonic-utilities/</code> に <code>show error-database</code> / <code>sonic-clear error-database</code> CLI が無い。</li>
 </ul>
 <h2 id="3">3. 行番号付きエビデンス<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
@@ -28849,7 +28849,7 @@
 </span></code></pre></div>
 <h2 id="4">4. 読者への影響<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>BGP が経路追加を要求し、ASIC FIB がそれを <code>SAI_STATUS_TABLE_FULL</code> で reject した場合、fpmsyncd / bgpd は <strong>失敗を知らない</strong>ため、<code>show ip route</code> には経路が見えるが <code>show ip fib</code> には無い、というサイレントな乖離が発生する。</li>
+<li><a href="../../reference/glossary/#term-bgp">BGP</a> が経路追加を要求し、ASIC FIB がそれを <code>SAI_STATUS_TABLE_FULL</code> で reject した場合、<a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / bgpd は <strong>失敗を知らない</strong>ため、<code>show ip route</code> には経路が見えるが <code>show ip fib</code> には無い、というサイレントな乖離が発生する。</li>
 <li>HLD 通りに <code>show error-database</code> を期待する自動化スクリプトは即座に失敗する。</li>
 <li>retry / rollback ロジックが実装されないため、ASIC リソース不足（TCAM full 等）の状態は手動介入が必要。</li>
 <li>一時的回避として OrchAgent のログを syslog で grep する以外に体系的な検知手段が無い。</li>
@@ -28877,7 +28877,7 @@
 </span></code></pre></div>
 <h2 id="6-crm">6. 代替設計: CRM ベース運用<a class="headerlink" href="#6-crm" title="Permanent link">&para;</a></h2>
 <p>本 HLD の実装着手 PR は <strong>見つからない</strong>。<code>SWSS_RC_*</code> enum を導入した PR (<code>sonic-swss-common</code> 経由) のみが部分採用の痕跡。</p>
-<p>代替の retry/recovery 機構は CRM (Critical Resource Monitor: <code>sonic-swss/orchagent/crmorch.cpp</code>) で部分的にカバーされており、こちらは production で稼働中。<code>show crm resources</code> / <code>CRM_TABLE</code> 経由でリソース閾値監視が可能。HLD ベースではなく <strong>CRM ベースで運用設計する方が現実的</strong>。</p>
+<p>代替の retry/recovery 機構は <a href="../../reference/glossary/#term-crm">CRM</a> (Critical Resource Monitor: <code>sonic-swss/orchagent/crmorch.cpp</code>) で部分的にカバーされており、こちらは production で稼働中。<code>show crm resources</code> / <code>CRM_TABLE</code> 経由でリソース閾値監視が可能。HLD ベースではなく <strong>CRM ベースで運用設計する方が現実的</strong>。</p>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../error-handling-framework-in-sonic/">Error Handling Framework（概要ハブ）</a></li>
@@ -28904,6 +28904,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 9b9babc63251 -->
 
 <div class="footnote">
 <hr />

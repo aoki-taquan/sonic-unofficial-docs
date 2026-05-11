@@ -28931,7 +28931,7 @@
 <h1 id="show-feature">show feature サブコマンド<a class="headerlink" href="#show-feature" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>show feature</code> グループは SONiC の <strong>feature</strong> (= 個別 docker コンテナ単位の機能) の現在状態と設定値を表示する。実装は <code>show/feature.py</code> の <code>@click.group(name='feature')</code><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FEATURE</code> テーブル (Writer 側は <code>config/feature.py</code>) と <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>FEATURE|&lt;name&gt;</code> を組み合わせて表示する。STATE_DB のキーは <code>hostcfgd</code> / <code>featured</code> が container 起動状況を逐次書き込む側。</p>
+<p><a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FEATURE</code> テーブル (Writer 側は <code>config/feature.py</code>) と <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>FEATURE|&lt;name&gt;</code> を組み合わせて表示する。<a href="../../glossary/#term-state_db">STATE_DB</a> のキーは <code>hostcfgd</code> / <code>featured</code> が container 起動状況を逐次書き込む側。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28958,9 +28958,9 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="show-feature-status-feature_name"><code>show feature status [&lt;feature_name&gt;]</code><a class="headerlink" href="#show-feature-status-feature_name" title="Permanent link">&para;</a></h3>
 <p><strong>動作</strong>:
-CONFIG_DB の <code>FEATURE</code> テーブル全件を <code>natsorted</code> で並べ、各 feature について STATE_DB の <code>FEATURE|&lt;name&gt;</code> を取得して merge する。表示列は以下の組み合わせのうち、データに存在するフィールドのみ自動選別される (空文字列がデフォルト)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FEATURE</code> テーブル全件を <code>natsorted</code> で並べ、各 feature について <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>FEATURE|&lt;name&gt;</code> を取得して merge する。表示列は以下の組み合わせのうち、データに存在するフィールドのみ自動選別される (空文字列がデフォルト)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
 <ul>
-<li><code>State</code> ... <code>state</code> (CONFIG_DB)。<code>enabled</code> / <code>disabled</code> / <code>always_enabled</code>。</li>
+<li><code>State</code> ... <code>state</code> (<a href="../../glossary/#term-config_db">CONFIG_DB</a>)。<code>enabled</code> / <code>disabled</code> / <code>always_enabled</code>。</li>
 <li><code>AutoRestart</code> ... <code>auto_restart</code>。</li>
 <li><code>SystemState</code> ... STATE_DB から。systemd 視点の状態 (<code>up</code> / <code>down</code>)。</li>
 <li><code>UpdateTime</code> ... STATE_DB の更新時刻。</li>
@@ -29043,7 +29043,7 @@ CONFIG_DB の <code>FEATURE</code> テーブル全件を <code>natsorted</code> 
 </span></code></pre></div>
 <!-- /usage-example -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: f158364c3005 -->
 
 <div class="footnote">
 <hr />

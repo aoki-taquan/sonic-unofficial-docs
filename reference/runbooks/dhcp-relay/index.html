@@ -28868,7 +28868,7 @@
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>&lt;upstream&gt;<span class="w"> </span>-nn<span class="w"> </span>-e<span class="w"> </span>port<span class="w"> </span><span class="m">67</span><span class="w"> </span>and<span class="w"> </span>host<span class="w"> </span>&lt;helper-ip&gt;
 </span></code></pre></div>
 <ul>
-<li>期待: VLAN 側で broadcast DISCOVER、上流で unicast を helper に relay</li>
+<li>期待: <a href="../../glossary/#term-vlan">VLAN</a> 側で broadcast DISCOVER、上流で unicast を helper に relay</li>
 <li>異常: 上流に出ない → relay daemon の判断で drop。<code>docker logs dhcp_relay</code> を確認</li>
 </ul>
 <h3 id="4-l3">4. L3 到達性<a class="headerlink" href="#4-l3" title="Permanent link">&para;</a></h3>
@@ -28876,7 +28876,7 @@
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ip<span class="w"> </span>route<span class="w"> </span>get<span class="w"> </span>&lt;helper-ip&gt;
 </span></code></pre></div>
 <ul>
-<li>異常: VRF 違いで route なし → <code>mgmt_vrf</code> から <code>default</code> への route leaking 構成を見直し</li>
+<li>異常: <a href="../../glossary/#term-vrf">VRF</a> 違いで route なし → <code>mgmt_vrf</code> から <code>default</code> への route leaking 構成を見直し</li>
 </ul>
 <h3 id="5-statistics-counter">5. statistics / counter<a class="headerlink" href="#5-statistics-counter" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>counters
@@ -28900,7 +28900,7 @@
 <li><a href="../../config-db/dhcpv4-relay/">../config-db/dhcpv4-relay.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 7693efbae10f -->
+<!-- glossary-links-injected: ad07899a32d7 -->
 
 <div class="footnote">
 <hr />

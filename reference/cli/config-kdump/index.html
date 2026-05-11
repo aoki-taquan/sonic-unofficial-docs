@@ -29029,7 +29029,7 @@
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>いずれの操作も <strong><code>config save</code> + reboot を経ないと実機には効かない</strong>。<code>echo_reboot_warning</code> が enable / disable / memory / num_dumps の各コマンドで明示的に警告を出すのはこのため。</li>
-<li><code>config kdump</code> は CONFIG_DB しか触らない。<code>/etc/default/kdump-tools</code> や initramfs の rebuild は <code>hostcfgd</code> が担当する。</li>
+<li><code>config kdump</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> しか触らない。<code>/etc/default/kdump-tools</code> や initramfs の rebuild は <code>hostcfgd</code> が担当する。</li>
 </ul>
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -29051,7 +29051,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/kdump/"><code>KDUMP</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/kdump/"><code>KDUMP</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -29061,7 +29061,7 @@
 <li><a href="../../../system/kdump/">HLD: kdump</a></li>
 <li><a href="../../config-db/kdump/">CONFIG_DB: KDUMP</a></li>
 </ul>
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: a35f1b1cdfa7 -->
 
 <div class="footnote">
 <hr />

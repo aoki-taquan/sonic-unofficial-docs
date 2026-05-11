@@ -28786,7 +28786,7 @@
 
 <h1 id="show-mgmt-vrf">show mgmt-vrf サブコマンド<a class="headerlink" href="#show-mgmt-vrf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show mgmt-vrf</code> は管理 <a href="../../glossary/#term-vrf">VRF</a> (<code>mgmt</code>) の有効・無効状態、Linux 上の VRF デバイス情報、ルーティングテーブルを表示する。<code>invoke_without_command=True</code> の Click group として実装されており、サブコマンドを指定しなくても本体ロジックが動く特殊な構造になっている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>show mgmt-vrf</code> は管理 <a href="../../glossary/#term-vrf">VRF</a> (<code>mgmt</code>) の有効・無効状態、Linux 上の <a href="../../glossary/#term-vrf">VRF</a> デバイス情報、ルーティングテーブルを表示する。<code>invoke_without_command=True</code> の Click group として実装されており、サブコマンドを指定しなくても本体ロジックが動く特殊な構造になっている<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -28798,7 +28798,7 @@
 <tbody>
 <tr>
 <td><code>show mgmt-vrf</code></td>
-<td>管理 VRF の状態 + <code>ip link show</code> を表示</td>
+<td>管理 <a href="../../glossary/#term-vrf">VRF</a> の状態 + <code>ip link show</code> を表示</td>
 </tr>
 <tr>
 <td><code>show mgmt-vrf routes</code></td>
@@ -28885,7 +28885,7 @@ excerpt: |
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mgmt-vrf</code></li>
-<li>CONFIG_DB: <a href="../../config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -28895,7 +28895,7 @@ excerpt: |
 <li><a href="../../config-db/mgmt-vrf-config/">CONFIG_DB: MGMT_VRF_CONFIG</a></li>
 <li><a href="../show-ip/">reference/CLI: show ip</a></li>
 </ul>
-<!-- glossary-links-injected: a6c6612be307 -->
+<!-- glossary-links-injected: daea650a90b0 -->
 
 <div class="footnote">
 <hr />

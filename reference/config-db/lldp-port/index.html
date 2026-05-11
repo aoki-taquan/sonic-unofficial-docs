@@ -28896,7 +28896,7 @@
 
 <h1 id="lldp_port">LLDP_PORT テーブル<a class="headerlink" href="#lldp_port" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>LLDP_PORT</code> は <strong>ポート単位の <a href="../../glossary/#term-lldp">LLDP</a> 設定</strong> を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp</code> (lldpd / lldpmgrd) コンテナが CONFIG_DB から読み、各物理ポートで LLDP を有効化するか、また RX / TX どちらのモードで動かすかを決める。</p>
+<p><code>LLDP_PORT</code> は <strong>ポート単位の <a href="../../glossary/#term-lldp">LLDP</a> 設定</strong> を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp</code> (lldpd / lldpmgrd) コンテナが <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読み、各物理ポートで <a href="../../glossary/#term-lldp">LLDP</a> を有効化するか、また RX / TX どちらのモードで動かすかを決める。</p>
 <p><code>LLDP</code> (グローバル) テーブルが <code>hello_time</code> / <code>multiplier</code> / <code>system_name</code> / <code>system_description</code> 等のシャーシ全体の設定を持つのに対し、本テーブルはポート単位の上書き設定。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -28937,7 +28937,7 @@
 <td><code>enabled</code></td>
 <td>boolean</td>
 <td><code>true</code></td>
-<td>このポートで LLDP を有効化するか</td>
+<td>このポートで <a href="../../glossary/#term-lldp">LLDP</a> を有効化するか</td>
 </tr>
 <tr>
 <td><code>mode</code></td>
@@ -28955,7 +28955,7 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>lldpmgrd</code> (<code>docker-lldp</code>): CONFIG_DB → <code>lldpcli</code> コマンドに変換し <code>lldpd</code> に投入</li>
+<li><code>lldpmgrd</code> (<code>docker-lldp</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <code>lldpcli</code> コマンドに変換し <code>lldpd</code> に投入</li>
 <li><code>lldpd</code>: 実際の LLDPDU 送受信</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -28968,7 +28968,7 @@
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-lldp/"><code>sonic-lldp</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-lldp/"><code>sonic-lldp</code></a></li>
 <li>CLI: <code>config lldp</code> / <a href="../../cli/show-lldp/"><code>show lldp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -28995,13 +28995,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e5ca7b6a3d0f -->
+<!-- glossary-links-injected: 1c2f663967b9 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-lldp.yang</code> (revision 2021-07-08). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-lldp.yang</code> (revision 2021-07-08). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

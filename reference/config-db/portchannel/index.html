@@ -28874,7 +28874,7 @@
 
 <h1 id="portchannel">PORTCHANNEL テーブル<a class="headerlink" href="#portchannel" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-lacp">LACP</a> ベースの Link Aggregation Group (<a href="../../glossary/#term-lag">LAG</a>) を定義する。<code>teamd</code> がこのテーブルから設定を読み、Linux <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> 経由で物理ポートを bond する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>PortsOrch</code> / <code>LagOrch</code> が <a href="../../glossary/#term-sai">SAI</a> LAG オブジェクトを構成する。</p>
+<p><a href="../../glossary/#term-lacp">LACP</a> ベースの Link Aggregation Group (<a href="../../glossary/#term-lag">LAG</a>) を定義する。<code>teamd</code> がこのテーブルから設定を読み、Linux <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> 経由で物理ポートを bond する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>orchagent</code> の <code>PortsOrch</code> / <code>LagOrch</code> が <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-lag">LAG</a> オブジェクトを構成する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28914,7 +28914,7 @@
 <td>string <code>PortChannel\d{1,4}</code></td>
 <td>✅</td>
 <td>-</td>
-<td>LAG 名</td>
+<td><a href="../../glossary/#term-lag">LAG</a> 名</td>
 </tr>
 <tr>
 <td><code>min_links</code></td>
@@ -28956,7 +28956,7 @@
 <td><code>auto</code> | uint16 (1..65535)</td>
 <td>-</td>
 <td>-</td>
-<td>LACP 集約キー。<code>auto</code> で名前末尾から導出</td>
+<td><a href="../../glossary/#term-lacp">LACP</a> 集約キー。<code>auto</code> で名前末尾から導出</td>
 </tr>
 <tr>
 <td><code>tpid</code></td>
@@ -28970,7 +28970,7 @@
 <td>boolean</td>
 <td>-</td>
 <td>-</td>
-<td>LACP fallback</td>
+<td><a href="../../glossary/#term-lacp">LACP</a> fallback</td>
 </tr>
 <tr>
 <td><code>fast_rate</code></td>
@@ -28983,8 +28983,8 @@
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>teammgrd</code>: PORTCHANNEL を読み、Linux teamd を spawn</li>
-<li><code>orchagent</code> <code>LagOrch</code>: SAI LAG を生成、<code>min_links</code> でアップ判定</li>
+<li><code>teammgrd</code>: PORTCHANNEL を読み、Linux <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> を spawn</li>
+<li><code>orchagent</code> <code>LagOrch</code>: <a href="../../glossary/#term-sai">SAI</a> LAG を生成、<code>min_links</code> でアップ判定</li>
 <li><code>intfmgrd</code>: <code>mtu</code>、<code>admin_status</code> 変化を Linux カーネルに反映</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
@@ -28997,7 +28997,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-portchannel/"><code>sonic-portchannel</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-portchannel/"><code>sonic-portchannel</code></a></li>
 <li>CLI: <a href="../../cli/config-portchannel/"><code>config portchannel</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29024,7 +29024,7 @@
 <ul>
 <li><code>min_links</code> をメンバ総数以上にすると LAG が常時 down。</li>
 <li><code>fallback: true</code> を未設定で対向が LACP 未対応だと <a href="../../glossary/#term-portchannel">PortChannel</a> が永遠に down。</li>
-<li>メンバ間で <code>speed</code>/<code>mtu</code> を揃えないと teamd が LAG を組まない。</li>
+<li>メンバ間で <code>speed</code>/<code>mtu</code> を揃えないと <a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> が LAG を組まない。</li>
 </ul>
 <h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORTCHANNEL|PortChannel0001&#39;</span>
@@ -29033,13 +29033,13 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 70a8686d90f5 -->
+<!-- glossary-links-injected: 7c180e687fe7 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-portchannel.yang</code> (sha <code>9ea932ec</code>). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-portchannel.yang</code> (sha <code>9ea932ec</code>). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

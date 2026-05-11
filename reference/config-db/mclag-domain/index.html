@@ -28918,11 +28918,11 @@
 
 <h1 id="mclag_domain-mclag_interface-mclag_unique_ip">MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル<a class="headerlink" href="#mclag_domain-mclag_interface-mclag_unique_ip" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>MC-<a href="../../glossary/#term-lag">LAG</a> (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持する 3 テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>iccpd</code> (<code>docker-iccpd</code>) がこれらを購読し、ICCP セッションと MC-LAG メンバー LAG の同期を制御する。</p>
+<p>MC-<a href="../../glossary/#term-lag">LAG</a> (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に保持する 3 テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>iccpd</code> (<code>docker-iccpd</code>) がこれらを購読し、ICCP セッションと MC-<a href="../../glossary/#term-lag">LAG</a> メンバー <a href="../../glossary/#term-lag">LAG</a> の同期を制御する。</p>
 <ul>
 <li><code>MCLAG_DOMAIN</code> — 1 ドメインの基本パラメータ（最大 1 エントリ）</li>
 <li><code>MCLAG_INTERFACE</code> — ドメインに紐づく MC-LAG メンバー <a href="../../glossary/#term-portchannel">PortChannel</a></li>
-<li><code>MCLAG_UNIQUE_IP</code> — MC-LAG ピア間で <a href="../../glossary/#term-vlan">VLAN</a> インターフェースに <strong>異なる IP</strong> を持たせる対象 VLAN</li>
+<li><code>MCLAG_UNIQUE_IP</code> — MC-LAG ピア間で <a href="../../glossary/#term-vlan">VLAN</a> インターフェースに <strong>異なる IP</strong> を持たせる対象 <a href="../../glossary/#term-vlan">VLAN</a></li>
 </ul>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -29034,7 +29034,7 @@
 <tr>
 <td><code>if_name</code> (key)</td>
 <td>string パターン <code>Vlan&lt;id&gt;</code></td>
-<td>unique-ip を許可する VLAN インターフェース名</td>
+<td>unique-ip を許可する <a href="../../glossary/#term-vlan">VLAN</a> インターフェース名</td>
 </tr>
 <tr>
 <td><code>unique_ip</code></td>
@@ -29048,19 +29048,19 @@
 <h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>iccpd</code> (<code>docker-iccpd</code>) — MC-LAG 制御プレーン</li>
-<li>間接的に <code>teamd</code> (PortChannel のメンバー同期)</li>
+<li>間接的に <code>teamd</code> (<a href="../../glossary/#term-portchannel">PortChannel</a> のメンバー同期)</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PORTCHANNEL</code>、<code>PORTCHANNEL_MEMBER</code>、<code>VLAN</code>、<code>VLAN_INTERFACE</code>、<code>PORT</code></li>
-<li>関連 YANG: <code>sonic-mclag</code>、<code>sonic-portchannel</code>、<code>sonic-port</code></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>PORTCHANNEL</code>、<code>PORTCHANNEL_MEMBER</code>、<code>VLAN</code>、<code>VLAN_INTERFACE</code>、<code>PORT</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-mclag</code>、<code>sonic-portchannel</code>、<code>sonic-port</code></li>
 <li>関連 CLI: <code>config mclag</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>YANG: <a href="../../yang/sonic-mclag/"><code>sonic-mclag</code></a></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-mclag/"><code>sonic-mclag</code></a></li>
 <li>CLI: <a href="../../cli/config-mclag/"><code>config mclag</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -29092,7 +29092,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3bd44109ce5a -->
+<!-- glossary-links-injected: f50d4e92baed -->
 
 <div class="footnote">
 <hr />

@@ -28995,14 +28995,14 @@
 </table>
 <h2 id="_4">注意点<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>set / counter / history 系のサブコマンドは <code>show acl</code> 配下に存在しない</strong>。ACL カウンタは <code>aclshow</code> という別ユーティリティ（<code>show/main.py</code> から <code>aclshow</code> コマンドに直接バインド）で取得する設計</li>
+<li><strong>set / counter / history 系のサブコマンドは <code>show acl</code> 配下に存在しない</strong>。<a href="../../glossary/#term-acl">ACL</a> カウンタは <code>aclshow</code> という別ユーティリティ（<code>show/main.py</code> から <code>aclshow</code> コマンドに直接バインド）で取得する設計</li>
 <li>ルール定義の入力側 (<code>config acl update full</code>) と表示側 (<code>show acl rule</code>) は両方とも <code>acl-loader</code> を経由する一貫した設計</li>
 </ul>
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/acl-table/"><code>ACL_TABLE</code></a> / <a href="../../config-db/acl-rule/"><code>ACL_RULE</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/acl-table/"><code>ACL_TABLE</code></a> / <a href="../../config-db/acl-rule/"><code>ACL_RULE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 

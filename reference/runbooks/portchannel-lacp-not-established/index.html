@@ -28830,8 +28830,8 @@
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>物理リンク oper down</strong>: メンバーポートが L1 で UP していない</li>
-<li><strong>対向側の LACP mode 不一致</strong>: 一方が <code>active</code> / 他方が <code>off</code>（static）</li>
-<li><strong>speed / duplex mismatch</strong>: メンバーごとに速度が異なると LACP は member を eligible にしない</li>
+<li><strong>対向側の <a href="../../glossary/#term-lacp">LACP</a> mode 不一致</strong>: 一方が <code>active</code> / 他方が <code>off</code>（static）</li>
+<li><strong>speed / duplex mismatch</strong>: メンバーごとに速度が異なると <a href="../../glossary/#term-lacp">LACP</a> は member を eligible にしない</li>
 <li><strong><code>min_links</code> 未達</strong>: PORTCHANNEL の <code>min_links</code> を満たすメンバーが UP していない</li>
 <li><strong><a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> / teammgrd の異常</strong>: <code>teamd@&lt;PortChannel&gt;.service</code> が crash ループ</li>
 </ol>
@@ -28883,7 +28883,7 @@
 <li>speed mismatch: <code>config interface speed Ethernet0 &lt;speed&gt;</code> で揃える</li>
 <li>LACP mode 不一致: 対向と協調し <code>mode active</code> で揃える</li>
 <li><code>min_links</code> の見直し: <code>config portchannel &lt;name&gt; --min-links &lt;N&gt;</code></li>
-<li>teamd crash: <code>sudo systemctl restart teamd@PortChannel0001</code></li>
+<li><a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> crash: <code>sudo systemctl restart teamd@PortChannel0001</code></li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -28892,7 +28892,7 @@
 <li><a href="../../config-db/portchannel/">../config-db/portchannel.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 12d931c88dd6 -->
+<!-- glossary-links-injected: 50d40ad47ab6 -->
 
 <div class="footnote">
 <hr />

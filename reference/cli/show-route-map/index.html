@@ -28774,7 +28774,7 @@
 
 <h1 id="show-route-map">show route-map コマンド<a class="headerlink" href="#show-route-map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>show route-map</code> は <a href="../../glossary/#term-frr">FRR</a> の <code>route-map</code> 設定（policy / match / set 句）をそのまま表示するコマンドで、<a href="../../glossary/#term-config_db">CONFIG_DB</a> は読まず <strong><code>vtysh -c "show route-map [&lt;name&gt;]"</code> を <code>sudo</code> で実行する単純なラッパ</strong>である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC では route-map は <code>bgpcfgd</code> が CONFIG_DB の <code>ROUTE_MAP</code> テーブル等から FRR config を生成しており、CLI で見えるのは生成後の vtysh 側の状態。</p>
+<p><code>show route-map</code> は <a href="../../glossary/#term-frr">FRR</a> の <code>route-map</code> 設定（policy / match / set 句）をそのまま表示するコマンドで、<a href="../../glossary/#term-config_db">CONFIG_DB</a> は読まず <strong><code>vtysh -c "show route-map [&lt;name&gt;]"</code> を <code>sudo</code> で実行する単純なラッパ</strong>である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC では route-map は <code>bgpcfgd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>ROUTE_MAP</code> テーブル等から <a href="../../glossary/#term-frr">FRR</a> config を生成しており、CLI で見えるのは生成後の vtysh 側の状態。</p>
 <h2 id="_2">用法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show route-map [&lt;route_map_name&gt;] [--verbose]
 </span></code></pre></div>
@@ -28838,9 +28838,9 @@ excerpt: |
 <!-- evidence-rendered:end -->
 
 <h2 id="_5">出力<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>FRR の <code>show route-map</code> 出力をそのまま表示する。フィールド整形・JSON 化は SONiC 側では行わない。出力形式は FRR のバージョンに従う。</p>
+<p><a href="../../glossary/#term-frr">FRR</a> の <code>show route-map</code> 出力をそのまま表示する。フィールド整形・JSON 化は SONiC 側では行わない。出力形式は FRR のバージョンに従う。</p>
 <h2 id="config_db">関連 CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
-<p><code>show route-map</code> 自体は CONFIG_DB を参照しない。SONiC で route-map を定義するには <code>ROUTE_MAP</code> / <code>ROUTE_MAP_SET</code> などのテーブルか、または FRR config を直接書く方法のみで、<code>config route-map</code> 系の CLI は <strong>コミュニティ版 master には存在しない</strong>（<code>config/main.py</code> 上では <code>route-map</code> グループは未定義）。</p>
+<p><code>show route-map</code> 自体は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を参照しない。SONiC で route-map を定義するには <code>ROUTE_MAP</code> / <code>ROUTE_MAP_SET</code> などのテーブルか、または FRR config を直接書く方法のみで、<code>config route-map</code> 系の CLI は <strong>コミュニティ版 master には存在しない</strong>（<code>config/main.py</code> 上では <code>route-map</code> グループは未定義）。</p>
 <!-- cli-mermaid -->
 <h3 id="_6">データフロー (自動生成)<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28863,7 +28863,7 @@ excerpt: |
 <!-- ref-triangle:end -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 87299d91c8a4 -->
+<!-- glossary-links-injected: 84ca04c9cab5 -->
 
 <div class="footnote">
 <hr />

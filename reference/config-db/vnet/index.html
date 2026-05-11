@@ -28952,7 +28952,7 @@
 
 <h1 id="vnet-vnet_route">VNET / VNET_ROUTE テーブル<a class="headerlink" href="#vnet-vnet_route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-vnet">VNET</a> は <a href="../../glossary/#term-vxlan">VXLAN</a> overlay 上の仮想ネットワークを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義するテーブル群。<code>VNET</code> が VNI と VXLAN tunnel の対応を持ち、<code>VNET_ROUTE</code> と <code>VNET_ROUTE_TUNNEL</code> が VNET スコープの静的経路を表す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> と、CONFIG_DB 側の <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><a href="../../glossary/#term-vnet">VNET</a> は <a href="../../glossary/#term-vxlan">VXLAN</a> overlay 上の仮想ネットワークを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義するテーブル群。<code>VNET</code> が VNI と <a href="../../glossary/#term-vxlan">VXLAN</a> tunnel の対応を持ち、<code>VNET_ROUTE</code> と <code>VNET_ROUTE_TUNNEL</code> が <a href="../../glossary/#term-vnet">VNET</a> スコープの静的経路を表す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> と、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 側の <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -28993,7 +28993,7 @@
 <td><code>vxlan_tunnel</code></td>
 <td>leafref <code>VXLAN_TUNNEL.name</code></td>
 <td>yes</td>
-<td>この VNET が使う VXLAN tunnel</td>
+<td>この <a href="../../glossary/#term-vnet">VNET</a> が使う <a href="../../glossary/#term-vxlan">VXLAN</a> tunnel</td>
 </tr>
 <tr>
 <td><code>vni</code></td>
@@ -29112,18 +29112,18 @@
 <li><code>VNET.vxlan_tunnel</code> は <code>VXLAN_TUNNEL</code> への leafref。</li>
 <li><code>VNET.vni</code> と <code>VNET_ROUTE.nexthop</code> / <code>ifname</code>、<code>VNET_ROUTE_TUNNEL.endpoint</code> は mandatory。</li>
 <li><code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> の <code>vnet_name</code> は既存 <code>VNET</code> への leafref。</li>
-<li>YANG 上の prefix 型は IPv4 prefix に限定されている。</li>
+<li><a href="../../glossary/#term-yang">YANG</a> 上の prefix 型は IPv4 prefix に限定されている。</li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>vxlanmgrd</code> / <code>vnetorch</code> 系: CONFIG_DB の VNET 設定を APPL_DB <code>VNET_TABLE</code> 系へ投影し、<a href="../../glossary/#term-orchagent">orchagent</a> 側で <a href="../../glossary/#term-sai">SAI</a> overlay / route に反映する。</li>
-<li><code>orchagent</code>: APPL_DB <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> を消費する。</li>
+<li><code>vxlanmgrd</code> / <code>vnetorch</code> 系: <a href="../../glossary/#term-config_db">CONFIG_DB</a> の VNET 設定を <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>VNET_TABLE</code> 系へ投影し、<a href="../../glossary/#term-orchagent">orchagent</a> 側で <a href="../../glossary/#term-sai">SAI</a> overlay / route に反映する。</li>
+<li><code>orchagent</code>: <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> を消費する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <code>VXLAN_TUNNEL</code>、<code>VXLAN_TUNNEL_MAP</code>、<code>INTERFACE</code>、<code>VLAN_INTERFACE</code>、<code>VLAN_SUB_INTERFACE</code></li>
 <li>関連 CLI: <code>config vxlan</code></li>
-<li>関連 YANG: <code>sonic-vnet</code>、<code>sonic-vxlan</code></li>
+<li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vnet</code>、<code>sonic-vxlan</code></li>
 </ul>
 <!-- ref-triangle:start -->
 
@@ -29148,7 +29148,7 @@
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>vxlan_tunnel</code> が <code>VXLAN_TUNNEL</code> に未存在だと VNet が active にならない。</li>
-<li><code>vni</code> を同一 device 内で重複させると orchagent が後勝ちで上書きし silent に壊れる。</li>
+<li><code>vni</code> を同一 device 内で重複させると <a href="../../glossary/#term-orchagent">orchagent</a> が後勝ちで上書きし silent に壊れる。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VNET|Vnet_1000&#39;</span>
@@ -29157,7 +29157,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f21bcbaa368c -->
+<!-- glossary-links-injected: ef122063da90 -->
 
 <div class="footnote">
 <hr />

@@ -28740,10 +28740,10 @@
 <li><strong>片側でしか graceful-restart が有効化されていない</strong> — <code>bgp graceful-restart</code> が router bgp 配下に無い</li>
 <li><strong>Restart Time が短すぎる</strong> — bgpd 再起動が完了する前に対向が stale path を破棄</li>
 <li><strong>GR-Notification capability の非互換</strong> — RFC 8538 対応版とそれ以前で挙動が異なる</li>
-<li><strong><a href="../../glossary/#term-bfd">BFD</a> と併用時の即 down</strong> — BFD が即 session down を通知するため GR をスキップする</li>
+<li><strong><a href="../../glossary/#term-bfd">BFD</a> と併用時の即 down</strong> — <a href="../../glossary/#term-bfd">BFD</a> が即 session down を通知するため GR をスキップする</li>
 <li><strong>TCP セッションが MD5 / MSS で再確立できない</strong> — control plane の再ハンドシェイクが失敗</li>
 </ol>
-<p>GR capability の交換は BGP OPEN メッセージ中の Capability Optional Parameter で行われ、FRR は <code>bgpd/bgp_open.c</code> でエンコード/デコードする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>GR capability の交換は <a href="../../glossary/#term-bgp">BGP</a> OPEN メッセージ中の Capability Optional Parameter で行われ、<a href="../../glossary/#term-frr">FRR</a> は <code>bgpd/bgp_open.c</code> でエンコード/デコードする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../bgp-session-down/">bgp-session-down.md</a></li>
@@ -28757,7 +28757,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/sonic-frr</code> <code>bgpd/bgp_open.c</code> における Graceful Restart capability (Type 64) のパース。Restart Time / Flags / AFI-SAFI の対称性が両端で合っていなければ GR は片側だけ "advertised" 表示となり実際には機能しない。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/sonic-frr</code> <code>bgpd/bgp_open.c</code> における <a href="../../glossary/#term-graceful-restart">Graceful Restart</a> capability (Type 64) のパース。Restart Time / Flags / AFI-SAFI の対称性が両端で合っていなければ GR は片側だけ "advertised" 表示となり実際には機能しない。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
