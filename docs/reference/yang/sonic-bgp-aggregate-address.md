@@ -82,6 +82,25 @@ module: sonic-bgp-aggregate-address
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BGP の aggregate-address (経路集約) 設定。`BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブル経由で FRR の `aggregate-address` コマンドへ展開。
+
+### よくある落とし穴
+
+- `ip_prefix` のキー型 (string vs ip-prefix typedef) に注意。CLI 由来で zero-padded prefix を入れると重複キー扱いされる例あり。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF_AGGREGATE_ADDR|*'
+vtysh -c 'show ip bgp summary'
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

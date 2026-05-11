@@ -100,6 +100,25 @@ module: sonic-queue
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- queue ごとの scheduler / wred 紐付け。`QUEUE|<port>|<index>` を qosorch が処理。
+
+### よくある落とし穴
+
+- `scheduler` / `wred_profile` leafref を持つため、SCHEDULER / WRED_PROFILE を先に作る必要がある。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'QUEUE|*'
+show queue counters
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-queue.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

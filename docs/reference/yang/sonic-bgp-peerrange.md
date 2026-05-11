@@ -84,6 +84,25 @@ module: sonic-bgp-peerrange
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BGP dynamic neighbor 用 prefix range 設定。`BGP_PEER_RANGE` テーブルが bgpcfgd で FRR `bgp listen range` に変換される。
+
+### よくある落とし穴
+
+- `ip_range` は leaf-list (string)。typedef ではないため CIDR 妥当性は CLI 側で弾く必要あり。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BGP_PEER_RANGE|<name>'
+vtysh -c 'show bgp summary'
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-peerrange.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -76,6 +76,25 @@ module: sonic-mgmt_port
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- Management port (eth0) 設定。`MGMT_PORT|eth0` を networking restart / interfacecfgd が処理。
+
+### よくある落とし穴
+
+- `autoneg` を `off` で speed 未設定だとリンクダウンする。ovsdb 等で外部管理する場合に頻発。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'MGMT_PORT|eth0'
+show management_interface
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_port.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

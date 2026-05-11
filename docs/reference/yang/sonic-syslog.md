@@ -99,6 +99,25 @@ module: sonic-syslog
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- syslog (rsyslog) リモートサーバ設定。`SYSLOG_SERVER|<host>` を hostcfgd が `/etc/rsyslog.d/` に反映。
+
+### よくある落とし穴
+
+- `vrf` leaf で `mgmt` 指定したのに mgmt-vrf 未有効だと rsyslog 起動失敗。両方の整合が必要。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'SYSLOG_SERVER|*'
+show syslog
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-syslog.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

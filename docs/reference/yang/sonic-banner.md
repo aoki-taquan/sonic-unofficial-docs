@@ -70,6 +70,25 @@ module: sonic-banner
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- ログインバナー / MOTD 設定。`BANNER_MESSAGE|global` を hostcfgd が `/etc/issue` `/etc/motd` に書き出す。
+
+### よくある落とし穴
+
+- `motd` は複数行文字列。改行を含む値を CLI から渡す場合の YANG 側 string 制約 (1024 文字) に注意。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BANNER_MESSAGE|global'
+show banner
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-banner.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

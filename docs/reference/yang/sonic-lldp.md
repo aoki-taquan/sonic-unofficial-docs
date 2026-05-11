@@ -93,6 +93,25 @@ module: sonic-lldp
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- LLDP デーモン設定。`LLDP` / `LLDP_PORT|<port>` を lldpmgrd が `lldpcli configure` に反映。
+
+### よくある落とし穴
+
+- `tx_hold` / `tx_interval` の組み合わせで TTL が決まる。整数 typedef だが範囲制約が緩く、過小値で隣接が flapping する。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'LLDP|GLOBAL'
+show lldp table
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-lldp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

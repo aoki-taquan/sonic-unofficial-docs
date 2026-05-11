@@ -89,6 +89,25 @@ module: sonic-bgp-device-global
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BGP のデバイス全体パラメータ。`BGP_DEVICE_GLOBAL|STATE` を介して FRR の `bgp` グローバル設定 (TCP-AO 等) を制御する。
+
+### よくある落とし穴
+
+- `tcp_ao_enabled` を true にする場合は対向ルータ側との鍵設定整合を要する。leafref で keychain 名を参照する派生実装あり。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BGP_DEVICE_GLOBAL|STATE'
+vtysh -c 'show bgp summary'
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

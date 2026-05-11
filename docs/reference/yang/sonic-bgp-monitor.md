@@ -79,6 +79,25 @@ module: sonic-bgp-monitor
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BMP / BGP モニタリング neighbor 設定。`BGP_MONITORS` テーブルが bgpcfgd 経由で FRR に流し込まれる。
+
+### よくある落とし穴
+
+- `name` (neighbor address) は IPv4/IPv6 union。文字列でホスト名を入れると leafref 解決が失敗する。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_MONITORS|*'
+show bgp summary
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-monitor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

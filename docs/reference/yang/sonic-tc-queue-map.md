@@ -83,6 +83,25 @@ module: sonic-tc-queue-map
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- TC → output queue マッピング。`TC_TO_QUEUE_MAP|<name>` を qosorch が SAI qos map に反映。
+
+### よくある落とし穴
+
+- key は TC 番号 (0-7) string。範囲外を入れると orchagent が map を skip するためサイレント不適用になる。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'TC_TO_QUEUE_MAP|*'
+show qos map tc-queue
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

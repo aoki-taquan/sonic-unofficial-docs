@@ -100,6 +100,25 @@ module: sonic-feature
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- feature コンテナの有効化 / 自動起動制御。`FEATURE|<name>` を hostcfgd が systemd unit にマッピング。
+
+### よくある落とし穴
+
+- `state` を `disabled` に変更すると docker 停止のみで CONFIG_DB の関連エントリは残る。意図せず再有効化時に古い設定が復活する。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'FEATURE|*'
+show feature status
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-feature.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

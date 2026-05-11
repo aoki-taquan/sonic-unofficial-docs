@@ -162,6 +162,25 @@ module: sonic-nat
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- NAT (static / dynamic) 設定。`STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` 等を natmgrd / natorch が処理。
+
+### よくある落とし穴
+
+- `nat_type` の `snat` / `dnat` 取り違えと、`twice_nat_id` leaf-list の双方向整合が頻出落とし穴。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'STATIC_NAT*'
+show nat translations
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-nat.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

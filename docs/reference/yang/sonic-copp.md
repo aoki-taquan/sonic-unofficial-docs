@@ -124,6 +124,25 @@ module: sonic-copp
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- Control Plane Policing。`COPP_GROUP` / `COPP_TRAP` を copporch が SAI hostif trap policer に反映。
+
+### よくある落とし穴
+
+- `trap_ids` leaf-list の値は SAI trap 名と一致が必要。typo すると orchagent が trap 全体を skip する。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'COPP_*'
+show copp config
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-copp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

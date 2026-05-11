@@ -223,6 +223,25 @@ module: sonic-bgp-global
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BGP グローバル / AF 設定。`BGP_GLOBALS` `BGP_GLOBALS_AF` を bgpcfgd が FRR テンプレに流し込む。
+
+### よくある落とし穴
+
+- `router_id` leafref が `LOOPBACK_INTERFACE` を参照する派生がある。loopback 未定義状態で router_id を設定すると commit 失敗。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BGP_GLOBALS|default'
+vtysh -c 'show bgp summary'
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-global.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

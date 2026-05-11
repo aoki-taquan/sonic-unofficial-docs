@@ -95,6 +95,25 @@ module: sonic-buffer-queue
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- QoS queue のバッファ割り当て。`BUFFER_QUEUE|<port>|<queue-range>` を bufferorch が処理する。
+
+### よくある落とし穴
+
+- queue index は `0-7` のような range 文字列。単一値と range を混在させると key 重複検出が漏れる例あり。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BUFFER_QUEUE|*'
+show queue persistent-watermark unicast
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-buffer-queue.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

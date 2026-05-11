@@ -104,6 +104,25 @@ module: sonic-ntp
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- NTP / chrony 設定。`NTP_SERVER|<host>` / `NTP|global` を hostcfgd が chrony.conf に反映。
+
+### よくある落とし穴
+
+- VRF 配下に NTP server を置く場合、`NTP|global` の `vrf` leaf 設定漏れで mgmt-vrf 内パケットが起こらない。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'NTP*'
+show ntp
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-ntp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

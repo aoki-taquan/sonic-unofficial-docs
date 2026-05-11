@@ -69,6 +69,25 @@ module: sonic-bgp-sentinel
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BGP Sentinel (route monitor) 用 neighbor 定義。BMP 系と独立した経路で `BGP_SENTINELS` テーブルに書かれる。
+
+### よくある落とし穴
+
+- 通常の BGP neighbor と key 空間が異なるため `show bgp neighbors` には現れない。bgpcfgd のテンプレ確認が必要。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_SENTINELS|*'
+show runningconfiguration bgp
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-sentinel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

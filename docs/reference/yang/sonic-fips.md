@@ -66,6 +66,25 @@ module: sonic-fips
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- FIPS モード (連邦暗号規格) 制御。`FIPS|global` を hostcfgd が openssl / kernel crypto に反映。
+
+### よくある落とし穴
+
+- FIPS 有効化後は md5 ベース TACACS+ 認証が拒否される。事前に SHA 系へ移行が必要。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'FIPS|global'
+show fips status
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fips.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

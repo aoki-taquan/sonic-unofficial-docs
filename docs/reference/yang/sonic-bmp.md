@@ -68,6 +68,25 @@ module: sonic-bmp
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BGP Monitoring Protocol (RFC 7854) コレクタ向け設定。openbmp / sonic-bmp コンテナで参照される。
+
+### よくある落とし穴
+
+- `bgp_neighbor_table` / `bgp_rib_*_table` のブール群を一度に切り替えると BMP セッション再確立で経路再送が発生する。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'BMP|table'
+docker logs bmp
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -249,6 +249,25 @@ module: sonic-bgp-neighbor
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BGP neighbor の静的設定。`BGP_NEIGHBOR|<addr>` を bgpcfgd が FRR neighbor stanza に展開。
+
+### よくある落とし穴
+
+- `peer_group_name` leafref 解決失敗で commit がサイレントに無視されるケースあり。先に peer-group を定義すること。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_NEIGHBOR|*'
+show ip bgp summary
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -96,6 +96,25 @@ module: sonic-buffer-profile
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- buffer profile (size, xon/xoff threshold) 定義。`BUFFER_PROFILE|<name>` を bufferorch が SAI に渡す。
+
+### よくある落とし穴
+
+- `pool` leafref が `BUFFER_POOL` を参照。`BUFFER_PG` / `BUFFER_QUEUE` から再参照されるため、削除順序ミスで残骸エントリが残る。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BUFFER_PROFILE|*'
+show buffer profile
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-buffer-profile.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

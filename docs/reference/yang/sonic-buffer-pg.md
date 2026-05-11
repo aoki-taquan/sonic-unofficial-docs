@@ -82,6 +82,25 @@ module: sonic-buffer-pg
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- QoS priority-group のバッファ割り当て。`BUFFER_PG|<port>|<pg-index>` を `swss/orchagent` の bufferorch が SAI へ反映する。
+
+### よくある落とし穴
+
+- `profile` leafref で BUFFER_PROFILE を参照。先に profile を消すと leafref エラーで CONFIG_DB 書き込みが失敗する。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BUFFER_PG|*'
+show priority-group persistent-watermark headroom
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-buffer-pg.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

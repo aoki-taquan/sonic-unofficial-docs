@@ -237,6 +237,25 @@ module: sonic-bgp-peergroup
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- BGP peer-group 設定。`BGP_PEER_GROUP|<name>` を bgpcfgd が FRR `neighbor <pg> peer-group` に展開。
+
+### よくある落とし穴
+
+- neighbor 側から leafref 参照されるため、peer-group を消す前に依存 neighbor の解除が必要。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_PEER_GROUP|*'
+vtysh -c 'show bgp peer-group'
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -106,6 +106,25 @@ module: sonic-interface
 
 <!-- ref-triangle:end -->
 
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型的なデプロイ位置
+
+- L3 interface (sub-IP) 設定。`INTERFACE|<port>` / `INTERFACE|<port>|<prefix>` を intfmgrd が処理。
+
+### よくある落とし穴
+
+- `vrf_name` leafref を後から付け替えると IP プレフィクスエントリが孤立する。VRF 変更前に IP を削除するのが安全。
+
+### 関連する config / show コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'INTERFACE|*'
+show ip interface
+```
+<!-- /ops-hint -->
+
 ## 引用元
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
