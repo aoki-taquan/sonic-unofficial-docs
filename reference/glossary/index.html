@@ -28389,8 +28389,8 @@
 </ul>
 <h3 id="bgp"><a href="#term-bgp">BGP</a><a class="headerlink" href="#bgp" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../yang/sonic-bgp-neighbor/">sonic-bgp-neighbor YANG</a> (239)</li>
-<li><a href="../yang/sonic-bgp-peergroup/">sonic-bgp-peergroup YANG</a> (227)</li>
+<li><a href="../yang/sonic-bgp-neighbor/">sonic-bgp-neighbor YANG</a> (240)</li>
+<li><a href="../yang/sonic-bgp-peergroup/">sonic-bgp-peergroup YANG</a> (228)</li>
 <li><a href="../yang/sonic-bgp-global/">sonic-bgp-global YANG</a> (208)</li>
 <li><a href="../../routing/bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）</a> (58)</li>
 <li><a href="../../topics/02-bgp/internals/">内部実装</a> (58)</li>
@@ -28449,7 +28449,7 @@
 <li><a href="../../system/critical-resource-monitoring/">クリティカルリソースモニタリング (CRM) 要件</a> (19)</li>
 <li><a href="../../topics/09-telemetry-snmp/architecture/">アーキテクチャ</a> (17)</li>
 <li><a href="../../topics/09-telemetry-snmp/concept/">概念</a> (14)</li>
-<li><a href="../yang/sonic-crm/">sonic-crm YANG</a> (10)</li>
+<li><a href="../yang/sonic-crm/">sonic-crm YANG</a> (11)</li>
 </ul>
 <h3 id="dash"><a href="#term-dash">DASH</a><a class="headerlink" href="#dash" title="Permanent link">&para;</a></h3>
 <ul>
@@ -28585,7 +28585,7 @@
 <li><a href="../../switching/sonic-ip-lag-incremental-update/">IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）</a> (5)</li>
 <li><a href="../../routing/vrf-vs-test-plan/">VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）</a> (4)</li>
 <li><a href="../../architecture/sonic-ip-interface-loopback-action/">IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）</a> (3)</li>
-<li><a href="../../topics/04-vrf-ecmp/concept/">L3 基盤と VRF</a> (3)</li>
+<li><a href="../config-db/loopback-interface/">LOOPBACK_INTERFACE テーブル</a> (3)</li>
 </ul>
 <h3 id="intfsyncd"><a href="#term-intfsyncd">intfsyncd</a><a class="headerlink" href="#intfsyncd" title="Permanent link">&para;</a></h3>
 <ul>
@@ -28598,12 +28598,12 @@
 <li><a href="../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/">Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）</a> (10)</li>
 <li><a href="../runbooks/portchannel-lacp-not-established/">PortChannel メンバーで LACP が確立しない</a> (9)</li>
 <li><a href="../../topics/11-reboot/operations/">Reboot 運用と障害調査</a> (9)</li>
-<li><a href="../../categories/reboot/">Warm-Reboot / Fast-Reboot 関連</a> (6)</li>
+<li><a href="../cli/config-portchannel/">config portchannel サブコマンド</a> (7)</li>
 </ul>
 <h3 id="lag"><a href="#term-lag">LAG</a><a class="headerlink" href="#lag" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../switching/lag-on-distributed-voq-system/">分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）</a> (63)</li>
-<li><a href="../yang/sonic-mclag/">sonic-mclag YANG</a> (58)</li>
+<li><a href="../yang/sonic-mclag/">sonic-mclag YANG</a> (60)</li>
 <li><a href="../../topics/06-l2-vlan-lag/internals/">内部実装</a> (50)</li>
 <li><a href="../../switching/mclag-enhancements/">MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）</a> (33)</li>
 <li><a href="../../platform/sonictpidsettinghld1/">ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）</a> (29)</li>
@@ -28619,18 +28619,18 @@
 <h3 id="lldp"><a href="#term-lldp">LLDP</a><a class="headerlink" href="#lldp" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../yang/sonic-lldp/">sonic-lldp YANG</a> (27)</li>
-<li><a href="../config-db/lldp/">LLDP / LLDP_PORT テーブル</a> (15)</li>
+<li><a href="../config-db/lldp/">LLDP / LLDP_PORT テーブル</a> (18)</li>
 <li><a href="../config-db/lldp-port/">LLDP_PORT テーブル</a> (10)</li>
+<li><a href="../cli/show-lldp/">show lldp サブコマンド</a> (6)</li>
 <li><a href="../runbooks/lldp-neighbor-flapping/">LLDP 隣接が頻繁に up/down する</a> (6)</li>
-<li><a href="../../overlay/dash-sonic-kvm/">DASH SONiC KVM（BMv2 ベース仮想 DPU）</a> (5)</li>
 </ul>
 <h3 id="mclag"><a href="#term-mclag">MCLAG</a><a class="headerlink" href="#mclag" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../yang/sonic-mclag/">sonic-mclag YANG</a> (58)</li>
+<li><a href="../yang/sonic-mclag/">sonic-mclag YANG</a> (60)</li>
 <li><a href="../../switching/mclag-enhancements/">MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）</a> (27)</li>
-<li><a href="../cli/config-mclag/">config mclag サブコマンド</a> (23)</li>
-<li><a href="../config-db/mclag-domain/">MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル</a> (15)</li>
-<li><a href="../cli/show-mclag/">show mclag (mclagdctl) コマンド</a> (10)</li>
+<li><a href="../cli/config-mclag/">config mclag サブコマンド</a> (26)</li>
+<li><a href="../config-db/mclag-domain/">MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル</a> (18)</li>
+<li><a href="../cli/show-mclag/">show mclag (mclagdctl) コマンド</a> (11)</li>
 </ul>
 <h3 id="minigraphxml"><a href="#term-minigraph.xml">minigraph.xml</a><a class="headerlink" href="#minigraphxml" title="Permanent link">&para;</a></h3>
 <ul>
@@ -28643,18 +28643,18 @@
 <h3 id="mux"><a href="#term-mux">MUX</a><a class="headerlink" href="#mux" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../overlay/active-standby-dual-tor/">Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）</a> (43)</li>
-<li><a href="../yang/sonic-mux-cable/">sonic-mux-cable YANG</a> (29)</li>
+<li><a href="../yang/sonic-mux-cable/">sonic-mux-cable YANG</a> (30)</li>
 <li><a href="../../topics/05-dual-tor/setup/">Dual-ToR の設定</a> (20)</li>
 <li><a href="../config-db/mux-linkmgr/">MUX_LINKMGR テーブル</a> (17)</li>
 <li><a href="../cli/show-muxcable/">show muxcable サブコマンド</a> (14)</li>
 </ul>
 <h3 id="nat"><a href="#term-nat">NAT</a><a class="headerlink" href="#nat" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../yang/sonic-nat/">sonic-nat YANG</a> (77)</li>
+<li><a href="../yang/sonic-nat/">sonic-nat YANG</a> (81)</li>
 <li><a href="../../topics/16-nat-dhcp-dns/internals/">内部実装</a> (58)</li>
 <li><a href="../../architecture/nat-in-sonic/">NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）</a> (44)</li>
-<li><a href="../config-db/nat/">NAT_GLOBAL / NAT_POOL テーブル</a> (37)</li>
-<li><a href="../../topics/16-nat-dhcp-dns/setup/">設定</a> (32)</li>
+<li><a href="../config-db/nat/">NAT_GLOBAL / NAT_POOL テーブル</a> (44)</li>
+<li><a href="../cli/config-nat/">config nat サブコマンド</a> (33)</li>
 </ul>
 <h3 id="natmgrd-natsyncd"><a href="#term-natmgrd-natsyncd">natmgrd / natsyncd</a><a class="headerlink" href="#natmgrd-natsyncd" title="Permanent link">&para;</a></h3>
 <ul>
@@ -28663,7 +28663,7 @@
 </ul>
 <h3 id="neighsyncd"><a href="#term-neighsyncd">neighsyncd</a><a class="headerlink" href="#neighsyncd" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../config-db/warm-restart/">WARM_RESTART テーブル</a> (6)</li>
+<li><a href="../config-db/warm-restart/">WARM_RESTART テーブル</a> (7)</li>
 <li><a href="../../topics/11-reboot/setup/">Reboot / warm restart の設定</a> (6)</li>
 <li><a href="../cli/config-warm_restart/">config warm_restart サブコマンド</a> (4)</li>
 <li><a href="../runbooks/arp-entry-stuck/">ARP / Neighbor エントリが古い IP-MAC を保持し続ける</a> (4)</li>
@@ -28734,9 +28734,9 @@
 <h3 id="qos"><a href="#term-qos">QoS</a><a class="headerlink" href="#qos" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../topics/08-qos-buffer/concept/">QoS / Buffer の概念地図</a> (14)</li>
+<li><a href="../cli/config-qos/">config qos サブコマンド</a> (9)</li>
 <li><a href="../../routing/mpls-tc-to-tc-map/">MPLS TC → TC map（MPLS パケットの QoS classification）</a> (8)</li>
 <li><a href="../../acl-qos/sonic-qos-scheduler-and-shaping/">QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）</a> (7)</li>
-<li><a href="../cli/config-qos/">config qos サブコマンド</a> (7)</li>
 <li><a href="../../topics/05-dual-tor/advanced/">Dual-ToR の発展トピック</a> (7)</li>
 </ul>
 <h3 id="redis"><a href="#term-redis">Redis</a><a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
@@ -28861,33 +28861,33 @@
 </ul>
 <h3 id="tunnelmgrd"><a href="#term-tunnelmgrd">tunnelmgrd</a><a class="headerlink" href="#tunnelmgrd" title="Permanent link">&para;</a></h3>
 <ul>
+<li><a href="../config-db/tunnel/">TUNNEL テーブル</a> (3)</li>
 <li><a href="../config-db-orch-map/">CONFIG_DB ↔ orchagent クラス対応表</a> (2)</li>
-<li><a href="../config-db/tunnel/">TUNNEL テーブル</a> (2)</li>
+<li><a href="../config-db/tunnel-decap-table/">TUNNEL_DECAP_TABLE (APPL_DB)</a> (2)</li>
 <li><a href="../config-db/peer-switch/">PEER_SWITCH テーブル</a> (1)</li>
-<li><a href="../config-db/tunnel-decap-table/">TUNNEL_DECAP_TABLE (APPL_DB)</a> (1)</li>
-<li><a href="../../system/persistent-log-level-hld/">ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）</a> (1)</li>
+<li><a href="../yang/sonic-tunnel/">sonic-tunnel YANG</a> (1)</li>
 </ul>
 <h3 id="vlan"><a href="#term-vlan">VLAN</a><a class="headerlink" href="#vlan" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../yang/sonic-vlan/">sonic-vlan YANG</a> (108)</li>
+<li><a href="../yang/sonic-vlan/">sonic-vlan YANG</a> (111)</li>
 <li><a href="../../topics/06-l2-vlan-lag/setup/">L2 設定パターン</a> (55)</li>
-<li><a href="../yang/sonic-spanning-tree/">sonic-spanning-tree YANG</a> (52)</li>
+<li><a href="../yang/sonic-spanning-tree/">sonic-spanning-tree YANG</a> (54)</li>
 <li><a href="../../switching/switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> (49)</li>
-<li><a href="../cli/config-vlan/">config vlan サブコマンド</a> (44)</li>
+<li><a href="../cli/config-vlan/">config vlan サブコマンド</a> (46)</li>
 </ul>
 <h3 id="vlanmgrd"><a href="#term-vlanmgrd">vlanmgrd</a><a class="headerlink" href="#vlanmgrd" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../config-db-orch-map/">CONFIG_DB ↔ orchagent クラス対応表</a> (4)</li>
+<li><a href="../config-db/vlan-member/">VLAN_MEMBER テーブル</a> (3)</li>
 <li><a href="../runbooks/vlan-tagging/">VLAN メンバーを追加してもタグが付かない</a> (3)</li>
 <li><a href="../../topics/06-l2-vlan-lag/internals/">内部実装</a> (3)</li>
-<li><a href="../config-db/vlan-member/">VLAN_MEMBER テーブル</a> (2)</li>
-<li><a href="../../topics/20-swss-sai-redis/architecture/">アーキテクチャ</a> (2)</li>
+<li><a href="../config-db/vlan/">VLAN テーブル</a> (2)</li>
 </ul>
 <h3 id="vnet"><a href="#term-vnet">VNET</a><a class="headerlink" href="#vnet" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../yang/sonic-vnet/">sonic-vnet YANG</a> (82)</li>
+<li><a href="../yang/sonic-vnet/">sonic-vnet YANG</a> (85)</li>
 <li><a href="../../topics/03-vxlan-evpn/concept/">VXLAN / VNET / EVPN の概要</a> (47)</li>
-<li><a href="../config-db/vnet/">VNET / VNET_ROUTE テーブル</a> (36)</li>
+<li><a href="../config-db/vnet/">VNET / VNET_ROUTE テーブル</a> (40)</li>
 <li><a href="../../overlay/vxlan-sonic/">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）</a> (26)</li>
 <li><a href="../../topics/03-vxlan-evpn/internals/">内部実装</a> (22)</li>
 </ul>
@@ -28895,8 +28895,8 @@
 <ul>
 <li><a href="../../topics/04-vrf-ecmp/concept/">L3 基盤と VRF</a> (86)</li>
 <li><a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/">VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）</a> (45)</li>
+<li><a href="../cli/config-vrf/">config vrf サブコマンド</a> (43)</li>
 <li><a href="../../routing/vrf-vs-test-plan/">VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）</a> (41)</li>
-<li><a href="../cli/config-vrf/">config vrf サブコマンド</a> (39)</li>
 <li><a href="../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）</a> (38)</li>
 </ul>
 <h3 id="vrfmgrd"><a href="#term-vrfmgrd">vrfmgrd</a><a class="headerlink" href="#vrfmgrd" title="Permanent link">&para;</a></h3>
@@ -28904,12 +28904,12 @@
 <li><a href="../../routing/vrf-vs-test-plan/">VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）</a> (9)</li>
 <li><a href="../config-db-orch-map/">CONFIG_DB ↔ orchagent クラス対応表</a> (5)</li>
 <li><a href="../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）</a> (5)</li>
+<li><a href="../config-db/vrf/">VRF テーブル</a> (3)</li>
 <li><a href="../../routing/">ルーティング</a> (3)</li>
-<li><a href="../../topics/04-vrf-ecmp/concept/">L3 基盤と VRF</a> (3)</li>
 </ul>
 <h3 id="vxlan"><a href="#term-vxlan">VXLAN</a><a class="headerlink" href="#vxlan" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../yang/sonic-vxlan/">sonic-vxlan YANG</a> (53)</li>
+<li><a href="../yang/sonic-vxlan/">sonic-vxlan YANG</a> (56)</li>
 <li><a href="../../overlay/vxlan-sonic/">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）</a> (52)</li>
 <li><a href="../../routing/evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）</a> (41)</li>
 <li><a href="../../topics/03-vxlan-evpn/concept/">VXLAN / VNET / EVPN の概要</a> (33)</li>
@@ -28926,7 +28926,7 @@
 <h3 id="wred"><a href="#term-wred">WRED</a><a class="headerlink" href="#wred" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../acl-qos/wred-and-ecn-statistics/">WRED / ECN 統計（per-queue / per-port、capability ベース）</a> (48)</li>
-<li><a href="../yang/sonic-wred-profile/">sonic-wred-profile YANG</a> (45)</li>
+<li><a href="../yang/sonic-wred-profile/">sonic-wred-profile YANG</a> (46)</li>
 <li><a href="../../topics/08-qos-buffer/concept/">QoS / Buffer の概念地図</a> (20)</li>
 <li><a href="../../topics/08-qos-buffer/internals/">QoS / Buffer の内部実装</a> (13)</li>
 <li><a href="../yang/sonic-queue/">sonic-queue YANG</a> (12)</li>
