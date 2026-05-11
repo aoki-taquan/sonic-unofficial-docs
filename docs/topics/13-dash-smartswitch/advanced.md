@@ -63,3 +63,37 @@ DPU の PCIe / midplane / 電源 / リセットといった物理層は Platform
 - [DPU 独立アップグレード](../../system/independent-dpu-upgrade.md)
 - [SmartSwitch reboot 順序](../../system/smart-switch-reboot-high-level-design.md)
 - [DPU Graceful Shutdown](../../platform/smartswitch-dpu-graceful-shutdown.md)
+
+## 発展トピック
+
+- **DASH ENI scale**: 単一 DPU あたり数万〜数十万 ENI を扱うため、flow table / connection tracking / metering の memory 設計が要点。SAI DASH API の `SAI_OBJECT_TYPE_ENI` と pipeline 構造が論点。
+- **flow HA / connection sync**: ENI ごとの flow state を peer DPU と同期する HA 設計。SmartSwitch HA HLD で議論。
+- **gNMI による DASH 設定 push**: 大量 ENI を controller から流し込む使い方で、gRPC streaming と batch update の最適化が必要。
+- **DPU の P4 pipeline 拡張**: DASH pipeline 自体は P4 に近い形で書かれ、新規 service (ELB、stateful FW など) の追加が pipeline 拡張で行われる。
+- **NPU / DPU 連携の ACL**: NPU 側 `ENI_REDIRECT` ACL と DPU 側 ACL が二段で動く。redirect 判定の責務分割と order が運用上の注意点。
+
+## 既知の制約と回避方法
+
+- **DPU と NPU の独立 reboot 順序**: DPU 単独 reboot 中の flow 切替を peer DPU が引き受けるための graceful shutdown 手順が必須。順序を間違えると connection drop が発生する。
+- **per-DPU Redis のメモリ消費**: ENI scale が大きいと per-DPU redis が膨らむ。`SDN_APPL_DB` の TTL / eviction を SDN controller 側でも考慮。
+- **DASH counter export の遅延**: per-flow counter は数が多く、export pipeline で遅延が出やすい。`DashCounter` の aggregation 粒度を controller 側で調整する。
+- **VNET tunnel との競合**: ENI redirect が VNET tunnel nexthop と組合せる場合、優先度を ACL priority で明示しないと意図と異なる経路に乗る。
+
+## 将来計画 / ロードマップ
+
+- DASH SAI API の SAI 標準化が進行中。`dash-pipeline` の P4 ベースモデルが community SAI に統合される方向。
+- SmartSwitch HA / flow sync の HLD は段階的に拡充される予定 (`smart-switch-ha-*` 系)。
+- DPU 独立 upgrade と NPU upgrade の orchestration を統合するモデルが議論中。
+
+## 関連 RFC / 仕様書
+
+- [P4 Language Specification](https://p4.org/specs/) — DASH pipeline の表現
+- [RFC 8174](https://datatracker.ietf.org/doc/html/rfc8174) — keyword 規約 (DASH HLD で参照)
+- [RFC 5575](https://datatracker.ietf.org/doc/html/rfc5575) — BGP Flow Spec (DASH ACL の参考モデル)
+- [SAI DASH proposal](https://github.com/opencomputeproject/SAI) — Open Compute Project SAI repo
+
+## upstream 開発の最新動向
+
+- `sonic-dash-api` repo で proto / pipeline 定義の拡張が続く。controller との互換は proto バージョンで管理。
+- `sonic-buildimage` の SmartSwitch 関連 PR が活発で、independent DPU upgrade、graceful shutdown、reboot 順序、health monitoring など分野が広がる。
+- DASH P4 reference implementation (DASH repo) と SONiC sai 実装の bridging が継続して進む。

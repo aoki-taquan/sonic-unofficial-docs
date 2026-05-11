@@ -65,3 +65,40 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - [sonic-dns YANG](../../reference/yang/sonic-dns.md)
 - [TWAMP Light HLD](../../system/twamp-light-hld.md)
 - [terminal server udev rules](../../architecture/1-udev-rules-design-for-terminal-server.md)
+
+## 発展トピック
+
+- **NAT64 / DNS64**: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と SAI 対応が前提。
+- **DHCPv4 / v6 server (in-box)**: 通常は relay 用途だが、lab / mgmt 用途で in-box DHCP server を動かす構成が議論される (`dnsmasq` ベース)。
+- **NTP 精度向上 (PTP との比較)**: 1ms 級の同期が必要なら PTP (IEEE 1588) を使うが、SONiC PTP は HLD 段階の機能が多い。chrony で得られる精度の限界を理解しておく。
+- **DHCP server identifier override**: 複数 DHCP relay 装置で同じ subnet を扱うとき、server identifier override (RFC 5107) を使って応答の経路を制御する。
+- **TWAMP Light の SAI offload**: control 接続なし双方向遅延測定を ASIC で実行する。SONiC への取り込みは段階的。
+
+## 既知の制約と回避方法
+
+- **NAT セッション TCAM 上限**: NAT セッション数は ASIC TCAM に依存する。`SAI_OBJECT_TYPE_NAT_ENTRY` の capacity を `sai capability` で確認し、aging timer で session 数を制御する。
+- **DHCP DoS 緩和との競合**: 章 07 の DHCP DoS 緩和と DHCP relay の rate-limit が二重にかかると、正規 DHCP も落ちる。レイヤを 1 つに揃える。
+- **chrony の VRF bind**: mgmt VRF を使う場合、chrony 設定の `bindaddress` / `bindacqaddress` を mgmt 側に固定しないと data plane に漏れる。
+- **resolv.conf の container 同期遅延**: `update-containers` 実行が遅れると container 内で古い DNS server が残る。手動 restart の手順を運用 runbook に残す。
+
+## 将来計画 / ロードマップ
+
+- TWAMP Light の community master 取り込み（SAI 拡張と orch / CLI）が future work。
+- NAT64 / DNS64 の正式サポート議論が断続的にある。
+- DHCP relay の YANG モデル整備と Option 79 / Option 82 の細分化拡張。
+
+## 関連 RFC / 仕索書
+
+- [RFC 5357](https://datatracker.ietf.org/doc/html/rfc5357) — TWAMP / TWAMP-Light
+- [RFC 8186](https://datatracker.ietf.org/doc/html/rfc8186) — TWAMP-Light Reflector roles
+- [RFC 5107](https://datatracker.ietf.org/doc/html/rfc5107) — DHCP Server Identifier Override
+- [RFC 3022](https://datatracker.ietf.org/doc/html/rfc3022) — Traditional NAT
+- [RFC 6146](https://datatracker.ietf.org/doc/html/rfc6146) / [RFC 6147](https://datatracker.ietf.org/doc/html/rfc6147) — NAT64 / DNS64
+- [RFC 5905](https://datatracker.ietf.org/doc/html/rfc5905) — NTPv4
+- [IEEE 1588-2008](https://standards.ieee.org/ieee/1588/4355/) — PTP
+
+## upstream 開発の最新動向
+
+- `sonic-buildimage` の chrony 移行関連 PR は完了側に入り、test plan 拡充と timezone まわりの細部修正が継続。
+- NAT 関連は `natorch` / `natsyncd` で aging / counter / scale 改善 PR が散発的に入る。
+- TWAMP Light は HLD のみで community PR は限定的。SAI extension の議論待ちが続く状況。

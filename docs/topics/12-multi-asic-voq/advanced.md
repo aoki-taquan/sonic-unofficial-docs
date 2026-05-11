@@ -83,3 +83,36 @@ reboot 系の章本文は [11 Reboot](../11-reboot/index.md) を参照し、VOQ 
 ## まとめ
 
 VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG、Mirror、Reboot）に属しつつ、namespace 跨ぎ / line card 跨ぎ / Chassis DB との協調という観点を持ちます。各章本文で機能の中身を読み、本章の [概念](concept.md) と [アーキテクチャ](architecture.md) で「どこが namespace を超えるか」を意識すると、HLD を縦横に往復しやすくなります。
+
+## 発展トピック
+
+- **Fabric link telemetry**: VOQ chassis では fabric link 自体が監視対象。`FABRIC_PORT_TABLE` の counter / error / link state を telemetry agent から export し、cell drop の兆候を早期検出する。
+- **VOQ scheduling と credit loop**: ingress VOQ が egress credit を受けて送出する仕組みで、credit return が遅延すると HOL blocking が出る。SAI 側 `SAI_QUEUE_ATTR_PFC_DLR_INIT_TYPE` などで dead-lock 検出と復旧を行う。
+- **Chassis DB の scale**: line card / port / nexthop が増えると Chassis DB の Redis サイズが伸びる。memory pressure と replication 遅延が運用課題になる。
+- **packet trim (truncate)**: drop されるパケットの header だけ collector に送って visibility を確保する手法。chassis 級 drop 解析で有効。
+- **Multi-ASIC host のテスト**: VS テストで multi-ASIC を再現する場合 ([21 Lab](../21-lab-vs-developer/index.md))、namespace ごとの sonic-vs を立ち上げる手順がある。
+
+## 既知の制約と回避方法
+
+- **LAG メンバ line card 跨ぎの制約**: ASIC によっては line card 跨ぎ LAG メンバの hash が偏る / 未サポート。`lag-on-distributed-voq-system` の制約を SKU 別に確認する。
+- **TSA 部分適用**: 一部 line card だけ TSA 適用済みの状態が長く続くと traffic がループする。Chassis DB の TSA state を全 line card で揃える運用ガイドが必要。
+- **Warm reboot per line card vs. chassis**: line card 単独の warm reboot 中に Supervisor が fabric 状態を維持する。Supervisor 側だけ reboot するシナリオは要件が限定的。
+- **Chassis DB schema 変更時の互換性**: Supervisor と line card の SONiC バージョン差で Chassis DB schema 互換が崩れる。staged upgrade ガイドラインに従う。
+
+## 将来計画 / ロードマップ
+
+- VOQ chassis の disaggregated software model (Supervisor と Line card の独立バージョン) が中長期テーマ。
+- Multi-ASIC 単一 host (pizza box の multi-ASIC switch) と分散 chassis を同じ orchestration で扱う統一が進行中。
+- DASH / SmartSwitch 構成と VOQ chassis を組合せる構成 ([13 DASH](../13-dash-smartswitch/index.md)) の議論が早期段階で進む。
+
+## 関連 RFC / 仕様書
+
+- [IEEE 802.1Qcz](https://1.ieee802.org/dcb/) — Congestion Isolation (fabric 内 PFC のヒント)
+- [RFC 7567](https://datatracker.ietf.org/doc/html/rfc7567) — AQM (VOQ credit と組合せ参考)
+- VOQ アーキテクチャは商用 ASIC ベンダー仕様書に依存し、IETF/IEEE 標準は限定的。
+
+## upstream 開発の最新動向
+
+- `sonic-buildimage` で `chassis_db` / `database-chassis` 関連の修正が継続。replication 安定性とスキーマ拡張が主軸。
+- `sonic-swss` の `vrforch` / `routeorch` / `lagorch` で system port / system LAG 周りの race fix が散発的に入る。
+- VOQ chassis のテスト基盤 (sonic-mgmt) で multi-DUT scenario の coverage 拡張 PR が定期的にある。

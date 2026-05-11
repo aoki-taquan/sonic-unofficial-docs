@@ -46,3 +46,39 @@ ALViS / KNE は、多数ノードを軽量にデプロイしたい場合の選�
 3. test plan で要求される topology / PTF（[DIP=SIP PTF validation HLD](../../architecture/dip-sip-ptf-validation-high-level-design.md) など共通設計）
 
 CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非公式ドキュメントの対象外です。upstream SONiC repo の `.github` と `azure-pipelines.yml` が一次資料になります。
+
+## 発展トピック
+
+- **Multi-DUT topology in sonic-mgmt**: 複数 DUT を仮想で組み、Dual-ToR / MC-LAG / Chassis シナリオを CI で回す。ansible inventory と PTF docker を組合せる。
+- **kvm 仮想 SONiC chassis**: 仮想 supervisor + 仮想 line card 構成を kvm 上で動かす。chassis_db の挙動を VS で検証できる。
+- **ptf-py3 と scapy 拡張**: data plane 検証で複雑 packet を生成。Path Tracing、SRv6、VXLAN、EVPN などで重宝。
+- **Code coverage と gcov**: SONiC binary を gcov-enabled で build し、CI 経路で coverage を集計する取り組み。orch の race condition 検出に役立つ。
+- **fuzz testing**: gNMI / gNOI server や CLI parser に対する fuzz テスト。security 章 ([15](../15-security-aaa/index.md)) と相互参照。
+
+## 既知の制約と回避方法
+
+- **VS と実機の SAI 差**: SAI VS は CPU 実装で、ASIC 固有の制約 (TCAM / buffer / pipeline depth) を再現しない。機能合格 ≠ 実機合格。
+- **CI 時間と並列化**: 全 test plan を回すと CI が長い。差分テスト (changed area のみ) と nightly full の二段運用が現実的。
+- **PTF environment dependency**: PTF docker のバージョンと test plan の整合が崩れると失敗する。pin versioning を CI で固定する。
+- **DASH KVM の性能限界**: BMv2 ベースなので scale / throughput は限定的。機能テスト専用と割り切る。
+
+## 将来計画 / ロードマップ
+
+- multi-DUT / multi-ASIC topology の CI 標準化拡大。
+- KNE / ALViS と SONiC-VS の機能ギャップ整理と互換 layer 整備。
+- Code coverage / mutation testing の標準化。
+- DASH KVM の HLD 完成と community 投入。
+
+## 関連 RFC / 仕様書
+
+- [P4 Behavioral Model (BMv2)](https://github.com/p4lang/behavioral-model) — DASH KVM の data plane
+- [KNE (Kubernetes Network Emulation)](https://github.com/openconfig/kne) — topology orchestration
+- [RFC 2544](https://datatracker.ietf.org/doc/html/rfc2544) — benchmark methodology (実機テスト参考)
+- [RFC 6815](https://datatracker.ietf.org/doc/html/rfc6815) — IETF テスト共通フォーマット
+
+## upstream 開発の最新動向
+
+- `sonic-mgmt` で multi-DUT topology、PTF docker、test plan の拡張 PR が継続。
+- `sonic-buildimage` で VS 構成と DASH KVM の整備 PR が散発的。
+- KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。
+- CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。

@@ -27,3 +27,41 @@ EVPN/VXLAN では FRR BGP-EVPN が Type-2/Type-5 route を扱い、VTEP、VRF、
 - [VoQ シャーシでの BGP 構成](../../routing/bgp-setup-for-voq-chassis.md)
 - [BGP セッション向け BFD ハードウェアオフロード](../../routing/bfd-hw-offload-for-bgp-session.md)
 - [EVPN VXLAN](../../routing/evpn-vxlan-hld.md)
+
+## 発展トピック
+
+基本の peer/policy 設定を超えた領域では、SONiC は FRR の機能を Redis スキーマ経由で順次取り込んでいる。代表的なものを挙げる。
+
+- **BGP Suppress FIB Pending**: FIB 未投入の prefix を peer に広告しないことで、ASIC が経路を持っていない状態で advertise してトラフィックブラックホールになるのを防ぐ。SONiC では `bgpcfgd` テンプレートと FRR の `bgp suppress-fib-pending` を組み合わせる。
+- **BGP PIC (Prefix Independent Convergence) Core/Edge**: edge link 障害時の収束を nexthop group レベルで行い、prefix 数に依存しない切替を実現する。SONiC では nexthop group 構造 (`NEXT_HOP_GROUP_TABLE`) と orchagent の対応で表現される。
+- **BMP (BGP Monitoring Protocol, RFC 7854)**: FRR の `bmpd` を Redis 経由で利用し、Adj-RIB-In / Adj-RIB-Out を外部 collector に流す。複数 station への並走 export を SONiC schema が `BGP_BMP` で表現する。
+- **Dynamic Neighbor / Listen Range**: 大規模 ToR で peer 数を事前列挙したくない場合に有効。bgpcfgd で `BGP_PEER_RANGE` を組み立てる流れがある。
+- **大規模経路ロード最適化**: `bgp-loading-optimization` HLD が、起動直後の peer 受信を加速するための queue tuning と `bgpd` の起動引数を扱う。経路投入のスループットが warm/cold reboot の収束時間を支配する。
+
+## 既知の制約と回避方法
+
+- **bgpcfgd テンプレート差分が見えにくい**: `/etc/sonic/frr/*.j2` をベースに `vtysh -c "show running-config"` で実際の FRR 設定を確認する。CONFIG_DB の `BGP_NEIGHBOR` だけ見ても FRR 側の最終形は分からないので、両方を照合する。
+- **graceful restart と FRR upgrade の組み合わせ**: FRR メジャー版アップグレードでは GR 互換性が保証されない場合がある。`docker-fpm-frr` の再起動と warm reboot の境界を意識し、可能なら同じ FRR バージョン同士の peer に揃える。
+- **multipath relax と AS path 比較の落とし穴**: `bestpath as-path multipath-relax` を有効にしないと iBGP 経路の ECMP が成立しないケースがある。検証は `show bgp ipv4 unicast <prefix>` で multipath 印を確認するのが速い。
+- **BFD と BGP keepalive の二重判定**: BFD hardware offload を使うときは BGP keepalive を緩めにし、BFD で先に倒す設計にする。両方を短くすると flap が増える。
+
+## 将来計画 / ロードマップ
+
+- FRR と SONiC の通信チャネルは長らく zebra FPM (`fpmsyncd`) 経由だが、`frr-zebra-dplane-sonic` の議論が継続しており、SAI に近い形での経路 push が将来テーマになっている。
+- IETF SR-MPLS / SRv6 の FRR 対応が進むなかで、SONiC 側の `srv6orch` と BGP signaling の統合は [17 SRv6 / MPLS](../17-srv6-mpls/index.md) の発展トピックと交差する。
+- BMP の Local-RIB / Loc-RIB monitoring (RFC 9069) は FRR 側で順次入っており、SONiC schema 拡張が見込まれる。
+
+## 関連 RFC / 仕様書
+
+- [RFC 4271](https://datatracker.ietf.org/doc/html/rfc4271) — BGP-4 本体
+- [RFC 7911](https://datatracker.ietf.org/doc/html/rfc7911) — Add-Path
+- [RFC 4456](https://datatracker.ietf.org/doc/html/rfc4456) — Route Reflector
+- [RFC 7854](https://datatracker.ietf.org/doc/html/rfc7854) / [RFC 9069](https://datatracker.ietf.org/doc/html/rfc9069) — BMP / Loc-RIB
+- [RFC 5880](https://datatracker.ietf.org/doc/html/rfc5880) — BFD
+- [RFC 7432](https://datatracker.ietf.org/doc/html/rfc7432) / [RFC 9136](https://datatracker.ietf.org/doc/html/rfc9136) — EVPN / IP Prefix Route
+
+## upstream 開発の最新動向
+
+- sonic-buildimage の `dockers/docker-fpm-frr` 配下では FRR バージョン更新と graceful restart 周りの修正が継続している。FRR バージョンを上げる PR は warm reboot の影響範囲が広いので CI matrix を確認する。
+- `sonic-bgpcfgd` (sonic-swss-common 配下) で BGP テンプレートの YANG 化が進んでおり、`sonic-bgp-*` の YANG モジュールに合わせて Jinja2 が縮小される傾向。
+- 大規模経路下の起動時間短縮を狙った PR が `bgp-loading-optimization` 関連で複数 merge されており、`zebra` の FPM queue サイズや `bgpd` の `bgp listen limit` チューニングが議題になりやすい。

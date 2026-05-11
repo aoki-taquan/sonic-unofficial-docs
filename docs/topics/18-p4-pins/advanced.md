@@ -43,3 +43,38 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、SAI pipeline を P4 �
 - 管理面の入口は [10. gNMI / gNOI / OpenConfig / YANG](../../topics/index.md) 系の章で押さえる（章番号は読み物計画側を参照）。
 - ACL / mirror / counter は [07. ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md) と同じ部品を P4Orch 側でも使うため、`acl_table_manager` / `acl_rule_manager` / `mirror_session_manager` が共通点になる。
 - ECMP / next-hop の振る舞いは [04. VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md) で読んだものが P4Orch の `wcmp_manager` でも前提になる。
+
+## 発展トピック
+
+- **gRIBI と PINS の組合せ**: gRIBI で RIB を直接 push しつつ、P4Runtime で forwarding 細部を補完する組合せ。Google 系 SDN controller での標準パターン。
+- **P4 program upgrade**: pipeline 更新時の atomic swap。`SetForwardingPipelineConfig` の VERIFY / SAVE / COMMIT / RECONCILE_AND_COMMIT モードの違いを理解する。
+- **WCMP 大規模化**: 数万 nexthop の WCMP group を扱う性能テスト。`wcmp_manager` の resize と SAI hash optimization が論点。
+- **PacketIO scale**: punt → CPU → controller の経路で、PacketIO rate が CoPP / hostif queue / gRPC stream の各層で制限される。
+- **PINS と SONiC standard ACL の共存**: 同じ ASIC TCAM を分け合うため、resource allocation を deployment で固定する必要がある。
+
+## 既知の制約と回避方法
+
+- **HashOrch HLD と現実の差分**: HLD どおりの `HashOrch` は無く `SwitchOrch` 経由。controller 側で HashOrch 名前を前提にすると壊れる。
+- **vendor SAI 依存の透明性**: P4 program と SAI pipeline の対応は vendor 依存で、SONiC リポだけ読んでも全体像にならない。vendor SDK docs を併読する。
+- **PacketIO の遅延**: punt rate が高いと controller 到達まで数 ms 級遅延が出る。重要 control trap は CoPP の専用 policer に分離する。
+- **gNMI と P4RT の整合性**: gNMI で port を down にした場合、P4RT 側 table 状態は残る。controller 側で両 API を協調させるアプリ層が必要。
+
+## 将来計画 / ロードマップ
+
+- PINS のコミュニティリリース整理と、PINS-only / PINS+SONiC standard 構成の使い分けガイドライン整備。
+- gRIBI / P4RT / gNMI を統一した SDN controller framework (Google PINS, ONF Stratum 系) との互換性向上。
+- vendor SAI と P4 model の bridging を SAI 標準で固める作業が継続。
+
+## 関連 RFC / 仕様書
+
+- [P4 Language Specification](https://p4.org/specs/) — P4_16 spec
+- [P4Runtime Specification](https://p4.org/p4-spec/p4runtime/) — Controller-to-data plane API
+- [OpenConfig models](https://github.com/openconfig/public)
+- [gRIBI Specification](https://github.com/openconfig/gribi)
+- [Stratum project](https://opennetworking.org/stratum/) — P4Runtime + gNMI + gNOI 標準実装
+
+## upstream 開発の最新動向
+
+- `sonic-pins` (and `pins-infra`) で Manager 群の機能拡張と test coverage 拡充の PR が継続。
+- `sonic-swss` で P4Orch と既存 orch (SwitchOrch, AclOrch) の境界整理 PR が散発。
+- P4Runtime gRPC server (`p4rt-app`) の認証・TLS 周りの強化、PacketIO scale 改善の PR が議題化。

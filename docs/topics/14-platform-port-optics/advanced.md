@@ -40,3 +40,38 @@ dynamic add / delete を多用する運用 (ZTP や検証ラボなど) では、
 - [1.6T support in SONiC](../../platform/1-6t-support-in-sonic.md)
 - [SONiC port naming convention change](../../platform/sonic-port-naming-convention-change.md)
 - [enhancements to add or del ports dynamically](../../acl-qos/enhancements-to-add-or-del-ports-dynamically.md)
+
+## 発展トピック
+
+- **CMIS 5.x optics**: 400G/800G ZR / ZR+ など coherent optics の管理は CMIS で行い、SONiC `xcvrd` が state machine を実装する。Application select、re-provisioning、firmware download などが要点。
+- **Optics firmware upgrade**: `gnoi.os.Install` の概念に近く、optics 内 firmware を host から書き換える。途中で reboot を挟まない hot upgrade 対応が ASIC / optics で異なる。
+- **Linkmgrd と link prober**: Dual-ToR の link prober 以外にも、汎用 link healthcheck 機能が `linkmgrd` 系で拡張されつつある。SAI sub-second link state notification が前提。
+- **Breakout dynamic**: port breakout (4x25G / 2x50G など) の動的切替は `dynamic-port-breakout` HLD と組合せ、buffer / QoS / ACL を全部 reprovision する。
+- **PoE / 外部給電**: 一部 platform で PoE 機能 (`POE` schema 提案) があり、port lifecycle と組合せる。
+
+## 既知の制約と回避方法
+
+- **mixed-lane optics の制限**: 一部 platform で同じ port group 内に異速度 optics を入れると lane assignment が動かない。SKU docs を必ず参照する。
+- **xcvrd の polling 間隔**: DOM polling は 60s 程度がデフォルトで、瞬時の異常を逃すことがある。SNMP / gNMI からの query との同期を考える。
+- **port naming 変更の運用影響**: スクリプトや監視 dashboard が `Ethernet*` 直接参照だと壊れる。`PORT` table key を動的に取得する書き方に揃える。
+- **dynamic add/del のリソースリーク**: ACL bind / buffer profile / counter object が delete 時に残る不具合事例がある。`show acl`、`COUNTERS_DB` を保守時に確認する。
+
+## 将来計画 / ロードマップ
+
+- 1.6T と coherent ZR+ への対応拡張で、`PORT` schema / SAI attribute が継続的に拡張される。
+- Port naming 規約の改定は community 議題で、deprecation 期間設計が論点。
+- Linecard / Module hot-swap の改善 ([12 VOQ](../12-multi-asic-voq/index.md)) と組み合わせて platform lifecycle 全体を再整理する流れ。
+
+## 関連 RFC / 仕様書
+
+- [CMIS spec (OIF)](https://www.oiforum.com/) — Common Management Interface Specification
+- [SFF-8636 / SFF-8472](https://www.snia.org/) — QSFP / SFP+ management interface
+- [IEEE 802.3 series](https://standards.ieee.org/) — Ethernet PHY/MAC
+- [RFC 3635](https://datatracker.ietf.org/doc/html/rfc3635) — Ethernet-Like Interface MIB (port stats 参考)
+- [RFC 8343](https://datatracker.ietf.org/doc/html/rfc8343) — IETF interface YANG (OpenConfig との比較)
+
+## upstream 開発の最新動向
+
+- `sonic-platform-common` / `sonic-platform-daemons` で CMIS state machine、PM (Performance Monitoring)、firmware upgrade の PR が定期的に入る。
+- `pmon` docker (xcvrd / psud / thermalctld / ledd 等) の安定化と SKU 拡張が継続。
+- 1.6T / 800G 対応 PR がコア component (port management, buffer model, sai profile) に分散して入っており、追跡には複数 repo を横断する必要がある。
