@@ -1,63 +1,88 @@
 ---
 title: QoS / Buffer / PFC / Watermark
-description: "QoS / Buffer / PFC / Watermark — この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混んだら誰に止まってもらうか」「混み具合をどう測るか」を、読み手の質問順にまとめ直したものです。"
+description: QoS / Buffer / PFC / Watermark — この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混んだら誰に止まってもらうか」「混み具合をどう測るか」を、読み手の質問順にまとめ直したものです。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/sonic-qos-scheduler-and-shaping.md
-  - docs/acl-qos/wred-and-ecn-statistics.md
-  - docs/acl-qos/asymmetric-pfc-test-plan.md
-  - docs/acl-qos/watermark-counters-in-sonic.md
-  - docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
-  - docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md
-  - docs/acl-qos/pfc-historical-statistics.md
-  - docs/acl-qos/reclaim-reserved-buffer.md
-  - docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md
-  - docs/acl-qos/dynamically-headroom-calculation.md
-  - docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
-  - docs/acl-qos/port-buffer-drop-counters-in-sonic.md
-  - docs/reference/cli/config-buffer.md
-  - docs/reference/cli/config-qos.md
-  - docs/reference/cli/config-pfcwd.md
-  - docs/reference/cli/show-buffer.md
-  - docs/reference/cli/show-queue.md
-  - docs/reference/cli/show-pfc.md
-  - docs/reference/cli/show-priority-group.md
-  - docs/reference/config-db/buffer-pool.md
-  - docs/reference/config-db/buffer-profile.md
-  - docs/reference/config-db/buffer-pg.md
-  - docs/reference/config-db/buffer-queue.md
-  - docs/reference/config-db/queue.md
-  - docs/reference/config-db/scheduler.md
-  - docs/reference/config-db/wred-profile.md
-  - docs/reference/config-db/dscp-to-tc-map.md
-  - docs/reference/config-db/tc-to-queue-map.md
-  - docs/reference/config-db/port-qos-map.md
-  - docs/reference/config-db/pfc-priority-to-priority-group-map.md
-  - docs/reference/config-db/pfc-wd.md
-  - docs/reference/yang/sonic-buffer-pool.md
-  - docs/reference/yang/sonic-buffer-profile.md
-  - docs/reference/yang/sonic-buffer-pg.md
-  - docs/reference/yang/sonic-buffer-queue.md
-  - docs/reference/yang/sonic-queue.md
-  - docs/reference/yang/sonic-scheduler.md
-  - docs/reference/yang/sonic-pfcwd.md
-  - docs/reference/yang/sonic-port-qos-map.md
-  - docs/reference/yang/sonic-tc-queue-map.md
-  - docs/routing/mpls-tc-to-tc-map.md
+- docs/acl-qos/sonic-qos-scheduler-and-shaping.md
+- docs/acl-qos/wred-and-ecn-statistics.md
+- docs/acl-qos/asymmetric-pfc-test-plan.md
+- docs/acl-qos/watermark-counters-in-sonic.md
+- docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
+- docs/acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md
+- docs/acl-qos/pfc-historical-statistics.md
+- docs/acl-qos/reclaim-reserved-buffer.md
+- docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md
+- docs/acl-qos/dynamically-headroom-calculation.md
+- docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
+- docs/acl-qos/port-buffer-drop-counters-in-sonic.md
+- docs/reference/cli/config-buffer.md
+- docs/reference/cli/config-qos.md
+- docs/reference/cli/config-pfcwd.md
+- docs/reference/cli/show-buffer.md
+- docs/reference/cli/show-queue.md
+- docs/reference/cli/show-pfc.md
+- docs/reference/cli/show-priority-group.md
+- docs/reference/config-db/buffer-pool.md
+- docs/reference/config-db/buffer-profile.md
+- docs/reference/config-db/buffer-pg.md
+- docs/reference/config-db/buffer-queue.md
+- docs/reference/config-db/queue.md
+- docs/reference/config-db/scheduler.md
+- docs/reference/config-db/wred-profile.md
+- docs/reference/config-db/dscp-to-tc-map.md
+- docs/reference/config-db/tc-to-queue-map.md
+- docs/reference/config-db/port-qos-map.md
+- docs/reference/config-db/pfc-priority-to-priority-group-map.md
+- docs/reference/config-db/pfc-wd.md
+- docs/reference/yang/sonic-buffer-pool.md
+- docs/reference/yang/sonic-buffer-profile.md
+- docs/reference/yang/sonic-buffer-pg.md
+- docs/reference/yang/sonic-buffer-queue.md
+- docs/reference/yang/sonic-queue.md
+- docs/reference/yang/sonic-scheduler.md
+- docs/reference/yang/sonic-pfcwd.md
+- docs/reference/yang/sonic-port-qos-map.md
+- docs/reference/yang/sonic-tc-queue-map.md
+- docs/routing/mpls-tc-to-tc-map.md
 keywords:
-  - QoS
-  - Buffer
-  - PFC
-  - Watermark
-  - scheduler
-  - WRED
-  - ECN
-  - queue
-  - PG
-  - lossless
+- QoS
+- Buffer
+- PFC
+- Watermark
+- scheduler
+- WRED
+- ECN
+- queue
+- PG
+- lossless
+related:
+  cli:
+  - config buffer
+  - config qos
+  - show buffer
+  - show buffer pool
+  - show pfc
+  - show queue
+  - config interface
+  config_db:
+  - BUFFER_PROFILE
+  - BUFFER_POOL
+  - BUFFER_PG
+  - BUFFER_QUEUE
+  - SCHEDULER
+  - DSCP_TO_TC_MAP
+  - QUEUE
+  yang:
+  - sonic-buffer-pg
+  - sonic-buffer-pool
+  - sonic-buffer-profile
+  - sonic-buffer-queue
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-wred-profile
 ---
 
 # QoS / Buffer / PFC / Watermark

@@ -1,39 +1,64 @@
 ---
 title: Lab / Virtual SONiC / Developer Entry
-description: "Lab / Virtual SONiC / Developer Entry — この章は、SONiC を「実機を触らずに、あるいは小さな lab で」評価・開発・検証するための入口を整理する章です。"
+description: Lab / Virtual SONiC / Developer Entry — この章は、SONiC を「実機を触らずに、あるいは小さな lab で」評価・開発・検証するための入口を整理する章です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/guides/beginner.md
-  - docs/guides/developer.md
-  - docs/guides/evaluator.md
-  - docs/guides/operator.md
-  - docs/architecture/steps-to-bring-up-sonic-vs.md
-  - docs/architecture/sonic-on-gns3-vm.md
-  - docs/architecture/alpine-high-level-design.md
-  - docs/overlay/dash-sonic-kvm.md
-  - docs/architecture/1-udev-rules-design-for-terminal-server.md
-  - docs/management/sonic-console-switch.md
-  - docs/management/portable-console-device-design.md
-  - docs/routing/vrf-vs-test-plan.md
-  - docs/routing/vrf-feature-ansible-test-plan-omit-in-toc.md
-  - docs/acl-qos/acl-ingress-egress-test-plan.md
-  - docs/acl-qos/everflow-test-plan.md
-  - docs/system/dataplane-telemetry-test-plan.md
-  - docs/platform/thermal-control-test-plan.md
-  - docs/architecture/dip-sip-ptf-validation-high-level-design.md
+- docs/guides/beginner.md
+- docs/guides/developer.md
+- docs/guides/evaluator.md
+- docs/guides/operator.md
+- docs/architecture/steps-to-bring-up-sonic-vs.md
+- docs/architecture/sonic-on-gns3-vm.md
+- docs/architecture/alpine-high-level-design.md
+- docs/overlay/dash-sonic-kvm.md
+- docs/architecture/1-udev-rules-design-for-terminal-server.md
+- docs/management/sonic-console-switch.md
+- docs/management/portable-console-device-design.md
+- docs/routing/vrf-vs-test-plan.md
+- docs/routing/vrf-feature-ansible-test-plan-omit-in-toc.md
+- docs/acl-qos/acl-ingress-egress-test-plan.md
+- docs/acl-qos/everflow-test-plan.md
+- docs/system/dataplane-telemetry-test-plan.md
+- docs/platform/thermal-control-test-plan.md
+- docs/architecture/dip-sip-ptf-validation-high-level-design.md
 keywords:
-  - Lab
-  - Virtual SONiC
-  - VS
-  - developer
-  - sonic-mgmt
-  - vlab
-  - testbed
-  - 開発環境
-  - GNS3
+- Lab
+- Virtual SONiC
+- VS
+- developer
+- sonic-mgmt
+- vlab
+- testbed
+- 開発環境
+- GNS3
+related:
+  cli:
+  - config acl
+  - config bgp
+  - config vlan
+  - config vrf
+  - config vxlan
+  - show acl
+  - show bgp
+  config_db:
+  - VRF
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_NEIGHBOR
+  - PFC_WD
+  - VXLAN_TUNNEL
+  - BGP_GLOBALS
+  yang:
+  - sonic-bgp-global
+  - sonic-vrf
+  - sonic-bgp-neighbor
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-vxlan
+  - sonic-buffer-pool
 ---
 
 # Lab / Virtual SONiC / Developer Entry

@@ -1,28 +1,53 @@
 ---
 title: Reboot / Upgrade / Lifecycle
-description: "Reboot / Upgrade / Lifecycle — この章は、SONiC の reboot family と upgrade lifecycle を「どれを選ぶか」「何が保持されるか」「運用時にどこを見るか」の順で読むための入口です。"
+description: Reboot / Upgrade / Lifecycle — この章は、SONiC の reboot family と upgrade lifecycle を「どれを選ぶか」「何が保持されるか」「運用時にどこを見るか」の順で読むための入口です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/system/sonic-warm-reboot.md
-  - docs/system/fast-reboot-flow-improvements-hld.md
-  - docs/system/sonic-express-reboot-hld-spec.md
-  - docs/system/system-wide-warmboot.md
-  - docs/reference/cli/reboot-fast-warm.md
-  - docs/reference/cli/config-warm_restart.md
-  - docs/reference/cli/sonic-installer.md
+- docs/system/sonic-warm-reboot.md
+- docs/system/fast-reboot-flow-improvements-hld.md
+- docs/system/sonic-express-reboot-hld-spec.md
+- docs/system/system-wide-warmboot.md
+- docs/reference/cli/reboot-fast-warm.md
+- docs/reference/cli/config-warm_restart.md
+- docs/reference/cli/sonic-installer.md
 keywords:
-  - Reboot
-  - Upgrade
-  - Lifecycle
-  - warm reboot
-  - fast reboot
-  - cold reboot
-  - image install
-  - SONiC firmware
-  - 再起動
+- Reboot
+- Upgrade
+- Lifecycle
+- warm reboot
+- fast reboot
+- cold reboot
+- image install
+- SONiC firmware
+- 再起動
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - show bfd
+  - show interfaces
+  - show ip
+  - show techsupport
+  - show version
+  config_db:
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_PEER_GROUP
+  - BGP_PEER_GROUP_AF
+  - BGP_NEIGHBOR_AF
+  - BGP_NEIGHBOR
+  yang:
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-bbr
+  - sonic-bgp-global
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-sentinel
 ---
 
 # Reboot / Upgrade / Lifecycle

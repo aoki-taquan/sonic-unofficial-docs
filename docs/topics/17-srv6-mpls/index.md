@@ -1,33 +1,58 @@
 ---
 title: SRv6 / MPLS / Path Tracing
-description: "SRv6 / MPLS / Path Tracing — この章は、SONiC で SRv6（Segment Routing over IPv6）、MPLS、そして経路観測のための Path Tracing をまとめて読むための入口です。"
+description: SRv6 / MPLS / Path Tracing — この章は、SONiC で SRv6（Segment Routing over IPv6）、MPLS、そして経路観測のための Path Tracing をまとめて読むための入口です。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources:
-  - docs/routing/segment-routing-over-ipv6-srv6-hld.md
-  - docs/routing/sonic-usid.md
-  - docs/routing/srv6-sid-l3adj.md
-  - docs/routing/srv6-vpn-hld.md
-  - docs/routing/static-configuration-of-srv6-in-sonic-hld.md
-  - docs/routing/mpls-for-sonic-high-level-design-document.md
-  - docs/routing/mpls-tc-to-tc-map.md
-  - docs/routing/path-tracing-midpoint.md
-  - docs/routing/router-interface-counters-in-sonic.md
-  - docs/routing/evpn-vxlan-hld.md
-  - docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md
-  - docs/reference/yang/sonic-route-common.md
+- docs/routing/segment-routing-over-ipv6-srv6-hld.md
+- docs/routing/sonic-usid.md
+- docs/routing/srv6-sid-l3adj.md
+- docs/routing/srv6-vpn-hld.md
+- docs/routing/static-configuration-of-srv6-in-sonic-hld.md
+- docs/routing/mpls-for-sonic-high-level-design-document.md
+- docs/routing/mpls-tc-to-tc-map.md
+- docs/routing/path-tracing-midpoint.md
+- docs/routing/router-interface-counters-in-sonic.md
+- docs/routing/evpn-vxlan-hld.md
+- docs/routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md
+- docs/reference/yang/sonic-route-common.md
 keywords:
-  - SRv6
-  - MPLS
-  - Path Tracing
-  - segment routing
-  - label switching
-  - SID
-  - uSID
-  - transit
-  - underlay
+- SRv6
+- MPLS
+- Path Tracing
+- segment routing
+- label switching
+- SID
+- uSID
+- transit
+- underlay
+related:
+  cli:
+  - config bgp
+  - config qos
+  - config vrf
+  - show bgp
+  - config vxlan
+  - clear counters
+  - config interface
+  config_db:
+  - CRM
+  - PORT_QOS_MAP
+  - VRF
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_PEER_GROUP_AF
+  - INTERFACE
+  yang:
+  - sonic-srv6
+  - sonic-crm
+  - sonic-bgp-bbr
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peerrange
+  - sonic-interface
 ---
 
 # SRv6 / MPLS / Path Tracing

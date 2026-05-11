@@ -1,22 +1,47 @@
 ---
 title: BGP と FRR 制御プレーン
-description: "BGP と FRR 制御プレーン — この章は、SONiC の BGP を「設定を書く場所」「FRR へ渡る経路」「ASIC に入るまでの経路」「運用中に見る場所」の順に読み直すための入口である。既存ページは HLD 単位で詳しいが、BGP を運用する人が最初に知りたい境界は HLD の境界ではない。"
+description: BGP と FRR 制御プレーン — この章は、SONiC の BGP を「設定を書く場所」「FRR へ渡る経路」「ASIC に入るまでの経路」「運用中に見る場所」の順に読み直すための入口である。既存ページは HLD 単位で詳しいが、BGP を運用する人が最初に知りたい境界は HLD の境界ではない。
 area: topics
 verification: meta
 page_kind: chapter-index
 last_verified: 2026-05-10
 sources: []
 keywords:
-  - BGP
-  - FRR
-  - bgpcfgd
-  - frrcfgd
-  - fpmsyncd
-  - ピアリング
-  - ルーティング
-  - ASN
-  - EBGP unnumbered
-  - route-map
+- BGP
+- FRR
+- bgpcfgd
+- frrcfgd
+- fpmsyncd
+- ピアリング
+- ルーティング
+- ASN
+- EBGP unnumbered
+- route-map
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - show bfd
+  - show ip
+  - clear
+  - config vrf
+  - config vxlan
+  config_db:
+  - BGP_NEIGHBOR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_PEER_RANGE
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-bbr
+  - sonic-bgp-sentinel
 ---
 
 # BGP と FRR 制御プレーン
