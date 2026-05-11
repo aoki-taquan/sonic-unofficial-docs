@@ -23427,10 +23427,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         ツリー
@@ -23496,7 +23513,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23507,7 +23524,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23519,7 +23536,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的なデプロイ位置
@@ -23530,7 +23547,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある落とし穴
@@ -23557,7 +23574,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23602,7 +23619,21 @@
 <li>top container: <code>sonic-bgp-bbr</code></li>
 </ul>
 <p>SONiC の BGP Border Router (BBR) を有効化/無効化する小さなグローバル設定モジュール<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>all</code> 単一インスタンスのコンテナ配下に <code>status</code> リーフを持つ。</p>
-<h2 id="_2">ツリー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- yang-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  Y["sonic-bgp-bbr"]
+  C1[("CONFIG_DB&lt;br/&gt;BGP_BBR")]
+  Y --&gt; C1
+  D1["bgpcfgd"]
+  C1 --&gt; D1</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文を参照。</p>
+</div>
+<!-- /yang-mermaid -->
+
+<h2 id="_3">ツリー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: sonic-bgp-bbr
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  +--rw sonic-bgp-bbr
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     +--rw BGP_BBR
@@ -23667,7 +23698,7 @@
 <p><code>status=enabled</code> のとき、<code>BGP_AGGREGATE_ADDRESS</code> の BBR 連動ロジック（<code>suppress-map</code> の動的切替）が <code>bgpcfgd</code> の Jinja テンプレートで生成される。<code>disabled</code> に切り替えても <code>aggregate-address</code> 設定自体は残るため、FRR 側の <code>running-config</code> 差分で「BBR 機能のみが OFF」を確認するのがポイント。</p>
 <!-- ref-triangle:start -->
 
-<h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <code>BGP_BBR</code></li>
 <li>CLI: <a href="../../cli/config-bgp/"><code>config bgp bbr</code></a></li>
@@ -23675,12 +23706,12 @@
 <!-- ref-triangle:end -->
 
 <!-- ops-hint -->
-<h2 id="_4">運用ヒント<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="_5">典型的なデプロイ位置<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
 <li>FRR の BGP BBR (Best-path Backup Routing) 機能。sonic-mgmt-framework 経由で <code>BGP_BBR</code> テーブルに書かれ、FRR <code>bgpd</code> の vtysh コマンドへ変換される。</li>
 </ul>
-<h3 id="_6">よくある落とし穴<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>status</code> は string enum (<code>enabled</code>/<code>disabled</code>)。typedef ではなく直書きされているため、CLI から不正値を渡してもバリデーション漏れする例がある。</li>
 </ul>
@@ -23690,7 +23721,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -23427,10 +23427,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         ツリー
@@ -23485,7 +23502,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23496,7 +23513,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23508,7 +23525,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的なデプロイ位置
@@ -23519,7 +23536,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある落とし穴
@@ -23546,7 +23563,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23591,7 +23608,21 @@
 <li>top container: <code>sonic-bmp</code></li>
 </ul>
 <p>BGP Monitoring Protocol (BMP) によるテーブルダンプ送信の有効/無効を制御する YANG モジュール<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_2">ツリー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- yang-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  Y["sonic-bmp"]
+  C1[("CONFIG_DB&lt;br/&gt;BMP")]
+  Y --&gt; C1
+  D1["bmpcfgd"]
+  C1 --&gt; D1</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文を参照。</p>
+</div>
+<!-- /yang-mermaid -->
+
+<h2 id="_3">ツリー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: sonic-bmp
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  +--rw sonic-bmp
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     +--rw BMP
@@ -23658,7 +23689,7 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/bmp/"><code>BMP</code></a></li>
 <li>CLI: <code>config bmp</code></li>
@@ -23666,12 +23697,12 @@
 <!-- ref-triangle:end -->
 
 <!-- ops-hint -->
-<h2 id="_4">運用ヒント<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h3 id="_5">典型的なデプロイ位置<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_6">典型的なデプロイ位置<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ul>
 <li>BGP Monitoring Protocol (RFC 7854) コレクタ向け設定。openbmp / sonic-bmp コンテナで参照される。</li>
 </ul>
-<h3 id="_6">よくある落とし穴<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_7">よくある落とし穴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>bgp_neighbor_table</code> / <code>bgp_rib_*_table</code> のブール群を一度に切り替えると BMP セッション再確立で経路再送が発生する。</li>
 </ul>
@@ -23681,7 +23712,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

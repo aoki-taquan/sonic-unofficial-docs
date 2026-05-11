@@ -20381,21 +20381,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#frr-daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        管理プレーン / FRR / その他 daemon 系
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        経路パターンまとめ
+        管理 / システムサービス / セキュリティ
       
     </span>
   </a>
@@ -20406,7 +20395,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        経路パターンまとめ
       
     </span>
   </a>
@@ -20415,6 +20404,17 @@
       
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23794,21 +23794,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#frr-daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        管理プレーン / FRR / その他 daemon 系
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        経路パターンまとめ
+        管理 / システムサービス / セキュリティ
       
     </span>
   </a>
@@ -23819,7 +23808,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        経路パターンまとめ
       
     </span>
   </a>
@@ -23828,6 +23817,17 @@
       
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -24923,8 +24923,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="frr-daemon">管理プレーン / FRR / その他 daemon 系<a class="headerlink" href="#frr-daemon" title="Permanent link">&para;</a></h2>
-<p>orchagent / cfgmgr の経路ではなく、独立した systemd サービスまたは FRR が CONFIG_DB を購読する系統。SAI には到達しないため SAI 列は <code>—</code>。</p>
+<h2 id="_3">管理 / システムサービス / セキュリティ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>これらは orchagent / SAI 経路を持たず、ホスト側 daemon (<code>hostcfgd</code> / 専用 daemon / FRR) が CONFIG_DB を直接 subscribe して Linux / FRR / 外部サービスへ反映する。<strong>ASIC を直接プログラムしない</strong> 設定群。</p>
 <table>
 <thead>
 <tr>
@@ -24936,410 +24936,278 @@
 </thead>
 <tbody>
 <tr>
-<td><code>AAA</code></td>
-<td><code>hostcfgd</code> (pam_aaa)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>TACPLUS</code></td>
-<td><code>hostcfgd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>TACPLUS_SERVER</code></td>
-<td><code>hostcfgd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>RADIUS_SERVER</code></td>
-<td><code>hostcfgd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>LDAP</code></td>
-<td><code>hostcfgd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>LDAP_SERVER</code></td>
-<td><code>hostcfgd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
 <td><code>BANNER_MESSAGE</code></td>
 <td><code>hostcfgd</code></td>
 <td>—</td>
+<td>(sshd banner)</td>
+</tr>
+<tr>
+<td><code>BMP</code></td>
+<td><code>bmpcfgd</code></td>
 <td>—</td>
+<td>(FRR BMP)</td>
+</tr>
+<tr>
+<td><code>BGP_AGGREGATE_ADDRESS</code></td>
+<td><code>bgpcfgd</code></td>
+<td>—</td>
+<td>(FRR)</td>
+</tr>
+<tr>
+<td><code>BGP_BBR</code></td>
+<td><code>bgpcfgd</code></td>
+<td>—</td>
+<td>(FRR)</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS</code></td>
+<td><code>bgpcfgd</code></td>
+<td>—</td>
+<td>(FRR)</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS_AF</code></td>
+<td><code>bgpcfgd</code></td>
+<td>—</td>
+<td>(FRR)</td>
+</tr>
+<tr>
+<td><code>BGP_MONITORS</code></td>
+<td><code>bgpcfgd</code></td>
+<td>—</td>
+<td>(FRR)</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_RANGE</code></td>
+<td><code>bgpcfgd</code></td>
+<td>—</td>
+<td>(FRR dynamic peer)</td>
+</tr>
+<tr>
+<td><code>BGP_SENTINELS</code></td>
+<td><code>bgpcfgd</code></td>
+<td>—</td>
+<td>(FRR)</td>
+</tr>
+<tr>
+<td><code>BREAKOUT_CFG</code></td>
+<td><code>xcvrd</code> / <code>portsyncd</code></td>
+<td>—</td>
+<td><code>sai_port_api</code> (port breakout)</td>
+</tr>
+<tr>
+<td><code>DHCP_SERVER</code></td>
+<td><code>dhcpservd</code></td>
+<td>—</td>
+<td>(kernel L4)</td>
+</tr>
+<tr>
+<td><code>DNS_NAMESERVER</code></td>
+<td><code>hostcfgd</code></td>
+<td>—</td>
+<td>(/etc/resolv.conf)</td>
+</tr>
+<tr>
+<td><code>DNS_OPTIONS</code></td>
+<td><code>hostcfgd</code></td>
+<td>—</td>
+<td>(/etc/resolv.conf)</td>
+</tr>
+<tr>
+<td><code>FIPS</code></td>
+<td><code>hostcfgd</code></td>
+<td>—</td>
+<td>(openssl FIPS mode)</td>
 </tr>
 <tr>
 <td><code>KDUMP</code></td>
 <td><code>hostcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(kdump-tools)</td>
 </tr>
 <tr>
-<td><code>FIPS</code></td>
-<td><code>hostcfgd</code> (fips-config)</td>
+<td><code>LDAP</code></td>
+<td><code>hostcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(nslcd / PAM)</td>
 </tr>
 <tr>
-<td><code>NTP_GLOBAL</code></td>
-<td><code>ntp-config</code></td>
+<td><code>LDAP_SERVER</code></td>
+<td><code>hostcfgd</code></td>
 <td>—</td>
+<td>(nslcd)</td>
+</tr>
+<tr>
+<td><code>LLDP</code></td>
+<td><code>lldpmgrd</code></td>
 <td>—</td>
+<td>(lldpd)</td>
+</tr>
+<tr>
+<td><code>LLDP_PORT</code></td>
+<td><code>lldpmgrd</code></td>
+<td>—</td>
+<td>(lldpd)</td>
+</tr>
+<tr>
+<td><code>MACSEC_PROFILE</code></td>
+<td><code>macsecmgrd</code></td>
+<td>✓ (<code>APP_MACSEC_*</code>)</td>
+<td><code>sai_macsec_api</code></td>
+</tr>
+<tr>
+<td><code>MAP_PFC_PRIORITY_TO_QUEUE</code></td>
+<td><code>QosOrch</code> (直接 CFG)</td>
+<td>—</td>
+<td><code>sai_qos_map_api</code></td>
+</tr>
+<tr>
+<td><code>MGMT_INTERFACE</code></td>
+<td><code>mgmt-framework</code> / <code>interfaces-config</code></td>
+<td>—</td>
+<td>(kernel netlink)</td>
+</tr>
+<tr>
+<td><code>MGMT_PORT</code></td>
+<td><code>mgmt-framework</code> / <code>interfaces-config</code></td>
+<td>—</td>
+<td>(kernel netlink)</td>
 </tr>
 <tr>
 <td><code>NTP_KEY</code></td>
 <td><code>ntp-config</code></td>
 <td>—</td>
-<td>—</td>
+<td>(chrony key)</td>
 </tr>
 <tr>
 <td><code>NTP_SERVER</code></td>
 <td><code>ntp-config</code></td>
 <td>—</td>
-<td>—</td>
+<td>(chrony server)</td>
 </tr>
 <tr>
-<td><code>SNMP</code></td>
-<td><code>snmpd</code> (snmpmgr)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>SNMP_COMMUNITY</code></td>
-<td><code>snmpd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>SNMP_USER</code></td>
-<td><code>snmpd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>SNMP_AGENT_ADDRESS_CONFIG</code></td>
-<td><code>snmpd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>LLDP</code></td>
-<td><code>lldp-syncd</code> (<code>lldpd</code>)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>LLDP_PORT</code></td>
-<td><code>lldp-syncd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>SYSLOG_SERVER</code></td>
-<td><code>hostcfgd</code> (rsyslog)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>SYSLOG_CONFIG</code></td>
-<td><code>hostcfgd</code> (rsyslog)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>SYSLOG_CONFIG_FEATURE</code></td>
+<td><code>PASSW_HARDENING</code></td>
 <td><code>hostcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(PAM pwquality)</td>
 </tr>
 <tr>
-<td><code>TELEMETRY</code></td>
-<td><code>telemetry</code> (gNMI)</td>
+<td><code>PFC_WD</code></td>
+<td><code>PfcWdSwOrch</code></td>
 <td>—</td>
-<td>—</td>
+<td><code>sai_acl_api</code> + <code>sai_queue_api</code></td>
 </tr>
 <tr>
-<td><code>TELEMETRY_CLIENT</code></td>
-<td><code>telemetry</code></td>
+<td><code>RADIUS</code></td>
+<td><code>hostcfgd</code></td>
 <td>—</td>
+<td>(PAM radius)</td>
+</tr>
+<tr>
+<td><code>RADIUS_SERVER</code></td>
+<td><code>hostcfgd</code></td>
 <td>—</td>
+<td>(PAM radius)</td>
 </tr>
 <tr>
 <td><code>RESTAPI</code></td>
 <td><code>restapi</code></td>
 <td>—</td>
-<td>—</td>
+<td>(REST server cert/listen)</td>
 </tr>
 <tr>
-<td><code>KUBERNETES_MASTER</code></td>
-<td><code>ctrmgrd</code> (kube_commands)</td>
+<td><code>ROUTE_MAP</code></td>
+<td><code>bgpcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(FRR route-map)</td>
 </tr>
 <tr>
-<td><code>DEVICE_NEIGHBOR</code></td>
-<td><code>lldpmgrd</code> (<code>bgpcfgd</code>)</td>
+<td><code>ROUTE_MAP_SET</code></td>
+<td><code>bgpcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(FRR prefix/community list)</td>
 </tr>
 <tr>
-<td><code>DEVICE_NEIGHBOR_METADATA</code></td>
-<td><code>bgpcfgd</code> (peer metadata)</td>
+<td><code>SNMP</code></td>
+<td><code>snmp-config</code></td>
 <td>—</td>
-<td>—</td>
+<td>(snmpd)</td>
 </tr>
 <tr>
-<td><code>DEVICE_RUNTIME_METADATA</code></td>
-<td><code>hostcfgd</code> (各 daemon)</td>
+<td><code>SNMP_AGENT_ADDRESS_CONFIG</code></td>
+<td><code>snmp-config</code></td>
 <td>—</td>
-<td>—</td>
+<td>(snmpd)</td>
 </tr>
 <tr>
-<td><code>BREAKOUT_CFG</code></td>
-<td><code>portmgrd</code> (init)</td>
+<td><code>SNMP_COMMUNITY</code></td>
+<td><code>snmp-config</code></td>
 <td>—</td>
-<td><code>sai_port_api</code> (init only)</td>
+<td>(snmpd)</td>
 </tr>
 <tr>
-<td><code>MGMT_INTERFACE</code></td>
-<td><code>interfaces-config</code> (kernel netlink)</td>
+<td><code>SNMP_USER</code></td>
+<td><code>snmp-config</code></td>
 <td>—</td>
-<td>—</td>
+<td>(snmpd v3)</td>
 </tr>
 <tr>
-<td><code>MGMT_PORT</code></td>
-<td><code>interfaces-config</code></td>
+<td><code>SSH_SERVER</code></td>
+<td><code>hostcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(sshd_config)</td>
 </tr>
 <tr>
-<td><code>MGMT_VRF_CONFIG</code></td>
-<td><code>vrfmgrd</code> (mgmt VRF)</td>
+<td><code>SYSLOG_CONFIG</code></td>
+<td><code>hostcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(rsyslog)</td>
 </tr>
 <tr>
-<td><code>CONSOLE_PORT</code></td>
-<td><code>consutil</code> (console-config)</td>
+<td><code>SYSLOG_SERVER</code></td>
+<td><code>hostcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(rsyslog)</td>
 </tr>
 <tr>
-<td><code>CONSOLE_SWITCH</code></td>
-<td><code>consutil</code></td>
+<td><code>SYSTEM_DEFAULTS</code></td>
+<td><code>db_migrator</code> (起動時参照)</td>
 <td>—</td>
-<td>—</td>
+<td>(機能フラグ)</td>
 </tr>
 <tr>
-<td><code>AUTO_TECHSUPPORT</code></td>
-<td><code>auto-techsupport</code></td>
+<td><code>TACPLUS</code></td>
+<td><code>hostcfgd</code></td>
 <td>—</td>
-<td>—</td>
+<td>(PAM tacplus)</td>
 </tr>
 <tr>
-<td><code>AUTO_TECHSUPPORT_FEATURE</code></td>
-<td><code>auto-techsupport</code></td>
+<td><code>TACPLUS_SERVER</code></td>
+<td><code>hostcfgd</code></td>
+<td>—</td>
+<td>(PAM tacplus)</td>
+</tr>
+<tr>
+<td><code>AAA</code></td>
+<td><code>hostcfgd</code></td>
+<td>—</td>
+<td>(PAM/NSS 切替)</td>
+</tr>
+<tr>
+<td><code>VERSIONS</code></td>
+<td><code>db_migrator</code> (sonic-installer / メタ)</td>
 <td>—</td>
 <td>—</td>
 </tr>
 <tr>
 <td><code>WARM_RESTART</code></td>
-<td><code>warm-restart-cli</code> (各 Orch warmrestart hint)</td>
+<td><code>warmrestart</code> (各 Orch / daemon hint)</td>
 <td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_GLOBALS</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_GLOBALS_AF</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_GLOBALS_AF_NETWORK</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_AGGREGATE_ADDRESS</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_ALLOWED_PREFIXES</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_NEIGHBOR_AF</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_PEER_GROUP_AF</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_PEER_RANGE</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BGP_MONITORS</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>BMP</code></td>
-<td><code>bmpcfgd</code> (FRR BMP)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>ROUTE_MAP</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>ROUTE_MAP_SET</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>PREFIX_LIST</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>PREFIX_SET</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>COMMUNITY_SET</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>AS_PATH_SET</code></td>
-<td><code>bgpcfgd</code> (FRR)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>DHCPV4_RELAY</code></td>
-<td><code>dhcprelayd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>MUX_LINKMGR</code></td>
-<td><code>linkmgrd</code></td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>MACSEC_PROFILE</code></td>
-<td><code>macsecmgrd</code> (<code>MACsecOrch</code>)</td>
-<td>✓</td>
-<td><code>sai_macsec_api</code></td>
-</tr>
-<tr>
-<td><code>PFC_WD</code></td>
-<td><code>pfcwd</code> (<code>PfcWdOrch</code>)</td>
-<td>—</td>
-<td><code>sai_acl_api</code> (pfc-wd)</td>
-</tr>
-<tr>
-<td><code>MAP_PFC_PRIORITY_TO_QUEUE</code></td>
-<td><code>qosorch</code> (<code>QosOrch</code>)</td>
-<td>—</td>
-<td><code>sai_qos_map_api</code></td>
-</tr>
-<tr>
-<td><code>LOSSLESS_TRAFFIC_PATTERN</code></td>
-<td><code>buffermgrdyn</code> (dynamic buffer)</td>
-<td>—</td>
-<td><code>sai_buffer_api</code></td>
-</tr>
-<tr>
-<td><code>FLEX_COUNTER_TABLE</code></td>
-<td><code>flexcounterorch</code> (<code>FlexCounterOrch</code>)</td>
-<td>—</td>
-<td>(counter group)</td>
-</tr>
-<tr>
-<td><code>SUBNET_DECAP</code></td>
-<td><code>subnetdecapmgrd</code> (<code>TunnelDecapOrch</code>)</td>
-<td>✓</td>
-<td><code>sai_tunnel_api</code></td>
-</tr>
-<tr>
-<td><code>HEARTBEAT</code></td>
-<td><code>linkmgrd</code> (heartbeat agent)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>SYSTEM_DEFAULTS</code></td>
-<td><code>hostcfgd</code> (boot defaults)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>SSH_SERVER</code></td>
-<td><code>hostcfgd</code> (sshd)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>WARM_RESTART_ENABLE_TABLE</code></td>
-<td>各 daemon (warm restart hint)</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>WARM_RESTART_TABLE</code></td>
-<td>各 daemon (warm restart state)</td>
-<td>—</td>
-<td>—</td>
+<td>(warm-reboot 制御)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_3">経路パターンまとめ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">経路パターンまとめ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   user[CLI / gNMI / config_db.json] --&gt; CDB[(CONFIG_DB)]
   CDB --&gt; cfgmgr["*mgrd (intfmgrd / portmgrd / vlanmgrd / teammgrd / nbrmgrd / vrfmgrd / vxlanmgrd / tunnelmgrd / buffermgrd / sflowmgrd / coppmgrd / natmgrd / stpmgrd / macsecmgrd / fabricmgrd)"]
@@ -25354,13 +25222,13 @@
 <li>「orchagent が CONFIG_DB を直接 subscribe」: QoS/ACL/Policer/Mirror/Mux/Pbh/Dtel/DebugCounter/Mlag/Crm/Twamp/PfcWd/FgNhg/FlexCounter/HFTel/NvgreTunnel/Switch(一部)</li>
 <li>「FRR / kernel daemon が中継」: BGP/OSPF/Static route(<code>fpmsyncd</code>)、VRRP、NTP、Mgmt VRF、DHCP</li>
 </ul>
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../config-db/">CONFIG_DB リファレンス index</a>: テーブル単位の詳細</li>
 <li><a href="../../internals/">SAI / orchagent 内部</a>: Orch クラスごとの内部設計と SAI コール</li>
 <li><a href="../../topics/">Topics 横断</a>: 機能横断的にこの対応を組み合わせた説明</li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- evidence: orchagent の全 Orch 生成は orchdaemon.cpp::OrchDaemon::init() に集約 -->
 <!-- source: sonic-net/sonic-swss/orchagent/orchdaemon.cpp (commit 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 
