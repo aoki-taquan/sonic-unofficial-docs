@@ -23506,6 +23506,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23587,6 +23637,25 @@
 <li><a href="../default-lossless-buffer-parameter/">CONFIG_DB: DEFAULT_LOSSLESS_BUFFER_PARAMETER</a></li>
 <li><a href="../buffer-profile/">CONFIG_DB: BUFFER_PROFILE</a></li>
 </ul>
+<!-- ops-hint -->
+<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>key: <code>LOSSLESS_TRAFFIC_PATTERN|AZURE</code> (通常 1 件のみ)。</li>
+<li><code>mtu</code>: <code>1500</code> または <code>9216</code> (jumbo)。</li>
+<li><code>small_packet_percentage</code>: 経験的に <code>50</code> 程度。</li>
+</ul>
+<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>mtu</code> を実 MTU と乖離した値にし、ヘッドルームが過小/過大になる。</li>
+<li>dynamic-buffer モード以外でこのテーブルを変更しても効かない (<code>buffermgrd</code> の動的モードのみ参照)。</li>
+</ul>
+<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;LOSSLESS_TRAFFIC_PATTERN|AZURE&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>buffer<span class="w"> </span>profile
+</span></code></pre></div>
+<!-- /ops-hint -->
+
 <div class="footnote">
 <hr />
 <ol>
