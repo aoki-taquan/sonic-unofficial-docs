@@ -11,11 +11,13 @@ verification: meta
     このドキュメントは有志による非公式ドキュメントです。SONiC プロジェクトおよび SONiC Foundation とは関係ありません。
     内容の正確性についてはベストエフォートで管理していますが、最新の正確な情報は [公式リポジトリ](https://github.com/sonic-net/SONiC) を参照してください。
 
+<!-- quality-banner-start -->
 !!! success "最新の品質状態"
-    - **code-verified ページ**: 545 件（HLD と実コードを照合済み）
-    - **discrepancy-found ページ**: 48 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: 4.97 / 5.0（quality-audit 系レポート）
+    - **code-verified ページ**: 581 件（HLD と実コードを照合済み）
+    - **discrepancy-found ページ**: 46 件（HLD と実装の乖離を明示）
+    - **監査平均評価**: 9.65 / 10（quality-audit round 7）
     - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
+<!-- quality-banner-end -->
 
 ## 初めての方はここから
 
