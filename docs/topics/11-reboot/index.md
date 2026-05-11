@@ -83,6 +83,38 @@ related:
 - [config warm_restart サブコマンド](../../reference/cli/config-warm_restart.md)
 - [sonic-installer コマンド](../../reference/cli/sonic-installer.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: Reboot family の選び方](concept.md)
+- [アーキテクチャ: Warm path の内部構造](architecture.md)
+- [設定: Reboot / warm restart の設定](setup.md)
+- [運用: Reboot 運用と障害調査](operations.md)
+- [内部実装](internals.md)
+- [発展トピック: Reboot / Upgrade の発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [System-wide Warmboot（going down / up path / SAI 期待値）](../../system/system-wide-warmboot.md)
+- [Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）](../../system/what-are-the-development-phases-and-scope-for-warm-reboot.md)
+- [SONiC Disk I/O 削減（writer 分析と tmpfs 化）](../../system/analysis-of-disk-writers-in-sonic-devices.md)
+- [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)
+- [FRR 用 sysctl チューニングのデフォルト](../../system/useful-sysctl-settings.md)
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
+- [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../../management/sonic-config-update-validation-via-yang.md)
+
+**関連トラブルシュート 5 件**
+
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

@@ -69,6 +69,38 @@ related:
 
 この章は management の HLD 派生ページ 14 件、system の telemetry 関連 2 件、switching の OpenConfig 関連 2 件、routing の subscription 関連 2 件、categories の入口 1 件、reference の YANG 参照を横断している。細部のスキーマ・操作・実装裏取りは各サブページ末尾の「関連ページ」から参照する。
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック: gNMI / OpenConfig の発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
+- [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../../management/sonic-config-update-validation-via-yang.md)
+- [OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）](../../management/openconfig-support-for-ethernet-interfaces.md)
+- [SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）](../../management/sonic-gnmi-server-interface-design.md)
+- [gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）](../../management/gnmi-usage.md)
+- [gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）](../../management/gnoi-hld-for-healthz-api.md)
+- [JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）](../../management/json-patch-ordering-using-yang-models.md)
+
+**関連トラブルシュート 5 件**
+
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

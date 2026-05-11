@@ -51,6 +51,37 @@ related:
 
 この章は architecture / system / management / categories の build・package 系ページ 13 件を横断している。各サブページ末尾の「関連ページ」から原文の HLD と裏取りステータスへ辿れる。
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要](concept.md)
+- [アーキテクチャ](architecture.md)
+- [運用: 設定 / 運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [SONiC Application Extension Infrastructure（sonic-package-manager / SPM）](../../architecture/sonic-application-extension-infrastructure.md)
+- [SWSS docker の Warm Restart 実装メモ（開発時リファレンス）](../../system/swss-docker-warm-restart-code-reference.md)
+- [SWSS docker warm restart（state restore / consistency / sync up）](../../system/sonic-swss-docker-warm-restart.md)
+- [Fast-reboot Flow Improvements（finalizer / reconciliation）](../../system/fast-reboot-flow-improvements-hld.md)
+- [SONiC Container Hardening（capability / read-only / privileged 削減）](../../system/sonic-container-hardening.md)
+- [SONiC Debian アップグレード方針（base / container / 廃止 cadence）](../../system/sonic-debian-upgrade-cadence.md)
+- [Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）](../../system/sonic-express-reboot-hld-spec.md)
+
+**関連トラブルシュート 5 件**
+
+- [show techsupport が timeout する](../../reference/runbooks/techsupport-timeout.md)
+- [コンテナ memory limit 超過 / OOM kill](../../reference/runbooks/container-memory-limit-exceeded.md)
+- [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
+- [SAI failure / syncd リスタート多発](../../reference/runbooks/sai-failure.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

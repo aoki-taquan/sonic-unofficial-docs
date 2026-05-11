@@ -118,6 +118,38 @@ related:
 - 上流章 [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) — packet classification と action の前段。
 - 下流章 [Telemetry / SNMP / Observability](../../topics/index.md) — counter / watermark の収集ルート。
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: QoS / Buffer の概念地図](concept.md)
+- [アーキテクチャ: QoS / Buffer のアーキテクチャ](architecture.md)
+- [設定: QoS / Buffer の設定](setup.md)
+- [運用: QoS / Buffer の運用](operations.md)
+- [内部実装: QoS / Buffer の内部実装](internals.md)
+- [発展トピック: QoS / Buffer の発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [Dynamic Headroom Calculation（buffer_model = dynamic）](../../acl-qos/dynamically-headroom-calculation.md)
+- [Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）](../../acl-qos/asymmetric-pfc-test-plan.md)
+- [未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス](../../acl-qos/reclaim-reserved-buffer-sequence-flow.md)
+- [Reclaim Reserved Buffer（admin-down ポートの zero_profile）](../../acl-qos/reclaim-reserved-buffer.md)
+- [バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）](../../acl-qos/watermark-counters-in-sonic.md)
+- [設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）](../../acl-qos/configurable-drop-counters-in-sonic.md)
+- [show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）](../../acl-qos/enhancements-on-show-acl-commands.md)
+
+**関連トラブルシュート 5 件**
+
+- [PFC で帯域が出ない / Buffer overflow](../../reference/runbooks/pfc-bandwidth.md)
+- [counter が更新されない (FLEX_COUNTER)](../../reference/runbooks/flex-counter-stuck.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](../../reference/runbooks/arp-entry-stuck.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

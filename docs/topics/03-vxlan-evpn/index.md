@@ -78,6 +78,38 @@ related:
 
 この章は overlay / routing / platform / architecture / reference の既存ページ 22 件を横断しています。各ページの末尾に、深掘り用の関連ページを置いています。
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: VXLAN / VNET / EVPN の概要](concept.md)
+- [アーキテクチャ: Overlay アーキテクチャ](architecture.md)
+- [設定: Overlay 設定](setup.md)
+- [運用: Overlay 運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック: Overlay 発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）](../../overlay/vxlan-sonic-concepts.md)
+- [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../../overlay/vxlan-sonic.md)
+- [VXLAN / VNet 内部実装（VxlanTunnelOrch / VnetOrch / SAI 属性）](../../overlay/vxlan-sonic-internals.md)
+- [VXLAN / VNet 設定と運用（CONFIG_DB / APP_DB / CLI）](../../overlay/vxlan-sonic-operations.md)
+- [Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）](../../overlay/active-active-dual-tor.md)
+- [VXLAN / VNet 制限事項と既知の課題](../../overlay/vxlan-sonic-limitations.md)
+- [Active-Standby Dual ToR 制限事項と既知の課題](../../overlay/active-standby-dual-tor-limitations.md)
+
+**関連トラブルシュート 5 件**
+
+- [EVPN Type-2 route が広告されない](../../reference/runbooks/evpn-type2-not-advertised.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 

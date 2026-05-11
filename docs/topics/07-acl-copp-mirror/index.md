@@ -103,6 +103,38 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 - [ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
 - [SAI 拡張属性追加系](../../categories/sai-extensions.md)
 
+<!-- next-reads -->
+## 次に読むべき記事
+
+**この章を読み進める順**
+
+- [概要: 概念](concept.md)
+- [アーキテクチャ](architecture.md)
+- [設定](setup.md)
+- [運用](operations.md)
+- [内部実装](internals.md)
+- [発展トピック](advanced.md)
+
+**関連する HLD 7 件**
+
+- [Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）](../../acl-qos/everflow-test-plan.md)
+- [CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）](../../acl-qos/copp-manager-redesign-test-plan.md)
+- [ingress discards テスト計画（21 ケースで drop counter を検証）](../../acl-qos/sonic-test-ingress-discards-hld.md)
+- [ACL の egress mirror 対応と SAI ベース action capability 問い合わせ](../../acl-qos/egress-mirroring-support-and-acl-action-capability-check.md)
+- [SONiC Port Mirroring（SPAN / ERSPAN）](../../acl-qos/sonic-port-mirroring-hld.md)
+- [ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）](../../acl-qos/acl-support-in-sonic.md)
+- [Port Access Control（PAC: 802.1x / MAB / RADIUS）](../../acl-qos/port-access-control-in-sonic.md)
+
+**関連トラブルシュート 5 件**
+
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
+- [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+
+<!-- /next-reads -->
+
 <!-- xref-related-chapters -->
 ## 関連する章
 
