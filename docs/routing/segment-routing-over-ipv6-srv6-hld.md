@@ -82,7 +82,7 @@ ROUTE_TABLE:<vrf>:<prefix>: {  ... + segment list  }
 
 ```mermaid
 flowchart LR
-  CFG[CONFIG_DB SRV6_*] --> CFGD[srv6cfgd or<br/>swss script]
+  CFG[CONFIG_DB SRV6_*] --> CFGD[swss script / Translib<br/>※ master に独立した srv6cfgd 等のプロセスは未実装]
   CFGD --> APP[(APPL_DB SRV6_*)]
   FRR[FRR srv6 (将来)] --> FPM[fpmsyncd] --> APP
   APP --> ORCH[Srv6Orch]
@@ -137,7 +137,7 @@ reasoning: Phase 1 のサポート機能の根拠。
 [^1]: `sonic-net/SONiC` `doc/srv6/srv6_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- concerns hint:
-- Srv6Orch / srv6cfgd の sonic-swss / sonic-buildimage 取り込み確認
+- Srv6Orch / srv6cfgd 相当の取り込み確認（master に独立した srv6cfgd プロセスは未実装、Srv6Orch のみ実在）
 - SRV6_SID_LIST / SRV6_MY_SID_TABLE / SRV6_POLICY / SRV6_STEER の sonic-yang-models 取り込み確認
 - SAI SRv6 attribute (SAI_MY_SID_ENTRY 等) の sonic-sairedis 取り込み確認
 - ROUTE_TABLE への SID list 拡張の swss-common 反映確認

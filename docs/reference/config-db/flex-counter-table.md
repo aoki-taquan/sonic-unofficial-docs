@@ -75,7 +75,7 @@ FLEX_COUNTER_TABLE|<group>
 ## 購読者
 
 - `syncd` の `FlexCounter`: SAI bulk counter API スケジュール
-- `flex_counter_orch` (orchagent 内)
+- `FlexCounterOrch` (orchagent 内)
 - `pfcwd`、`watermarkmgr` 等のカウンタ依存モジュール
 
 ## 関連 CONFIG_DB / YANG / CLI

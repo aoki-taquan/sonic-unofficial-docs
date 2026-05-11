@@ -176,7 +176,7 @@ excerpt: |
 
 ### `config interface mpls add <interface>` / `remove <interface>`
 
-該当インタフェイス IP テーブルの `mpls` フィールドを `enable` / `disable` で書き込み、`mplsmgrd` が L3 MPLS を有効化する。
+該当インタフェイス IP テーブルの `mpls` フィールドを `enable` / `disable` で書き込み、`intfmgrd` (sonic-swss/cfgmgr/intfmgr.cpp) が L3 MPLS を有効化する。
 
 ### `config interface buffer priority-group lossless add/remove/set` 等
 
