@@ -42,6 +42,22 @@ related:
 
 [QoS](../../reference/glossary.md#term-qos) / Buffer / [PFC](../../reference/glossary.md#term-pfc) の基本（scheduler、queue map、PG、watermark）を押さえた後は、PFC の運用整合性と buffer pool の設計が次の論点になる。本ページでは、章本文で扱った機能の延長と、他章 (Dual-ToR / 02 [BGP](../../reference/glossary.md#term-bgp) / [VOQ](../../reference/glossary.md#term-voq)) との境界を整理する。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と area HLD [sonic-qos-scheduler-and-shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md), [watermark-counters-in-sonic](../../acl-qos/watermark-counters-in-sonic.md) に集約されている。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config qos` / `config buffer` / `show buffer pool` 系、[reference/config_db/BUFFER_*](../../reference/config-db/index.md), `SCHEDULER`, `PORT_QOS_MAP` に集約されている。
+- **本ページ**は、scheduler / buffer の基本パスを押さえた読者に対し、Asymmetric PFC, 動的 buffer model, PFC watchdog のチューニング、headroom pool 設計などの発展領域だけを扱う。
+
+## 動的 buffer model の運用詳細
+
+動的 buffer model (`buffermgrd` が dynamic) では、`BUFFER_PROFILE` を手書きせず alpha (dynamic threshold) と pool size のみ指定する。alpha は ASIC の `SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH` に直接マップされ、共有 pool 残量に応じて per-PG/queue の使用上限が自動調整される。alpha = 1/8 を基準に、congestion 多めの ToR では alpha を大きくして burst 吸収を優先し、tail-drop 厳しめの構成では小さくする。
+
+ポートアップ / ダウン時には `buffermgrd` が `BUFFER_PG`, `BUFFER_QUEUE` を再計算し、`speed`, `cable-length` の変化を `pg_lossless_<speed>_<cable>_profile` という profile キーで参照する。pg-headroom 計算式は `headroom = 2 * (delay * BW + MTU)` ベース。手動上書きは原則しない。
+
+## PFC watchdog のチューニング
+
+`PFC_WD_TABLE|GLOBAL` の `POLL_INTERVAL` と `DETECTION_TIME` / `RESTORATION_TIME` は per-queue 単位で個別に上書き可能 (`PFC_WD_TABLE|<port>`)。短すぎる detection (100ms) は legitimate な burst を storm と誤検知し、長すぎる (1s 超) と head-of-line block が広がる。fabric 規模が大きいほど、detection を 200ms, restoration を 200ms 程度に揃え、storm 確定後は `forward` ではなく `drop` action にして局所封じ込め、を推奨する。
+
 ## 発展トピック
 
 - **Asymmetric PFC**: 上流と下流で PFC enable bitmap を非対称に運用するモデル。lossless TC を一方向だけ pause 対象とする使い方で、`PORT_QOS_MAP|<port>.pfc_to_queue_map` と peer ToR の設定整合が要点。
@@ -79,6 +95,38 @@ related:
 - `sonic-buildimage` 配下の `buffermgrd` で動的 buffer model のチューニング PR が継続。alpha 値の自動計算ロジックが SKU 別に分岐していくため、platform 依存が増える傾向。
 - `sonic-swss` の `qosorch` で WRED profile attribute 更新と PFC watchdog の storm detection 改善 PR が定期的に入る。
 - Streaming telemetry 側 ([10 gNMI](../10-gnmi-openconfig/index.md)) で `COUNTERS_DB` の watermark / queue / PG 数値を export する設定例が拡張中。
+
+## トラブルシュート観点
+
+- lossless TC で drop が出る場合、(1) `BUFFER_PG` の headroom が不足、(2) PFC watchdog の `forward` action で storm を素通りさせている、(3) peer 側で PFC を送出していない、の 3 つを順に切り分ける。`show pfc counters` で peer から PFC frame を受信しているかを確認。
+- buffer pool exhaust は `sonic-clear watermark queue` + `sonic-clear watermark pg` で baseline を取り直し、`show buffer pool` の `XOFF used` を観察する。
+- WRED が機能しない場合、`SCHEDULER` の `type` が `WRR`/`DWRR` であり、queue に WRED profile が bind されていることを `QUEUE` table で確認する。`WRED_PROFILE` の `ecn` 設定 (`ecn_all`, `ecn_none`) も要点。
+
+## 検証パスとラボ要件
+
+- PFC end-to-end の検証は `sonic-mgmt` の `qos/test_qos_sai.py` で行う。SAI 側 attribute と Redis 設定の整合確認が含まれる。
+- 動的 buffer model の alpha チューニングは、合成 burst (microburst injector) を流して `BUFFER_POOL_WATERMARK_STAT_COUNTER` の peak を観察する手順が標準。
+
+## 関連ページ (追補)
+
+- [Asymmetric PFC test plan](../../acl-qos/asymmetric-pfc-test-plan.md)
+- [Dynamically headroom calculation](../../acl-qos/dynamically-headroom-calculation.md)
+- [Align watermark flow with port configuration HLD](../../acl-qos/align-watermark-flow-with-port-configuration-hld.md)
+- [Egress outer DSCP change table](../../acl-qos/egress-outer-dscp-change-table.md)
+- [WRED and ECN statistics](../../acl-qos/wred-and-ecn-statistics.md)
+- [Watermark counters in SONiC](../../acl-qos/watermark-counters-in-sonic.md)
+- [SONiC QoS scheduler and shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md)
+- [Configurable drop counters in SONiC](../../acl-qos/configurable-drop-counters-in-sonic.md)
+- [DSCP remapping for tunnel traffic](../../overlay/dscp-remapping-for-tunnel-traffic.md)
+- [Distributed forwarding in a VOQ architecture](../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md)
+- [DASH ACL tags](../../acl-qos/dash-acl-tags.md)
+- [05 Dual-ToR: tunnel decap と DSCP の組合せ](../05-dual-tor/advanced.md)
+- [12 Multi-ASIC / VOQ: chassis 全体の buffer 設計](../12-multi-asic-voq/index.md)
+- [09 Telemetry / SNMP: watermark / drop telemetry の配信](../09-telemetry-snmp/index.md)
+- [07 ACL / CoPP / Mirror: ACL action と PFC/QoS の交差](../07-acl-copp-mirror/index.md)
+- [Egress mirroring support and ACL action capability check](../../acl-qos/egress-mirroring-support-and-acl-action-capability-check.md)
+- [Enhancements on show acl commands](../../acl-qos/enhancements-on-show-acl-commands.md)
+- [Everflow test plan (mirror counter 観点)](../../acl-qos/everflow-test-plan.md)
 
 ## 関連ページ
 
