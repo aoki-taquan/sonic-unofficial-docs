@@ -1845,10 +1845,60 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-tenant-vrf-l3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: tenant VRF を新規作成して L3 サブインタフェースに割り当てる
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: tenant VRF を新規作成して L3 サブインタフェースに割り当てる">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI 例
+        CLI で打つ場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB で投入する場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show コマンドで確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ecmp-static-route-2-nexthop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: ECMP static route を 2 nexthop で組む
       
     </span>
   </a>
@@ -1856,7 +1906,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#3-vrf-leaking-blackhole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: VRF leaking と blackhole
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         CONFIG_DB で見る形
@@ -1901,6 +1962,17 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21395,10 +21467,60 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-tenant-vrf-l3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: tenant VRF を新規作成して L3 サブインタフェースに割り当てる
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: tenant VRF を新規作成して L3 サブインタフェースに割り当てる">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI 例
+        CLI で打つ場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB で投入する場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show コマンドで確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ecmp-static-route-2-nexthop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: ECMP static route を 2 nexthop で組む
       
     </span>
   </a>
@@ -21406,7 +21528,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
+  <a href="#3-vrf-leaking-blackhole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: VRF leaking と blackhole
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         CONFIG_DB で見る形
@@ -21453,6 +21586,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -21496,36 +21640,147 @@
 <li>必要なら nexthop VRF、blackhole、FG ECMP を加える。</li>
 </ol>
 <p>CLI の詳細な引数は <a href="../../../reference/cli/config-vrf/">config vrf</a> と <a href="../../../reference/cli/config-route/">config route</a> を参照してください。</p>
-<h2 id="cli">CLI 例<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
-<div class="language-console highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">sudo config vrf add Vrf_blue</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="go">sudo config interface vrf bind Ethernet0 Vrf_blue</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="go">sudo config interface ip add Ethernet0 192.0.2.1/31</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="go">sudo config route add prefix vrf Vrf_blue 198.51.100.0/24 nexthop 192.0.2.0 dev Ethernet0</span>
+<h2 id="1-tenant-vrf-l3">典型シナリオ 1: tenant VRF を新規作成して L3 サブインタフェースに割り当てる<a class="headerlink" href="#1-tenant-vrf-l3" title="Permanent link">&para;</a></h2>
+<p>「multi-tenant の青 VRF を作って、<code>Ethernet0</code> をその VRF の uplink にして、上位 router 向け static default を入れたい」というケース。</p>
+<h3 id="cli">CLI で打つ場合<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1. VRF を作成</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vrf<span class="w"> </span>add<span class="w"> </span>Vrf_blue
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 2. interface を VRF に bind (この瞬間に IP が剥がれるので注意)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>vrf<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>Ethernet0<span class="w"> </span>Vrf_blue
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 3. IP を付け直す</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">192</span>.0.2.1/31
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># 4. VRF 内の default route</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>route<span class="w"> </span>add<span class="w"> </span>prefix<span class="w"> </span>vrf<span class="w"> </span>Vrf_blue<span class="w"> </span><span class="m">0</span>.0.0.0/0<span class="w"> </span>nexthop<span class="w"> </span><span class="m">192</span>.0.2.0
 </span></code></pre></div>
-<p>この例では、<code>Vrf_blue</code> を作り、<code>Ethernet0</code> をその VRF の L3 interface にし、VRF 内の static route を追加します。実際の構文と制約は SONiC バージョンや interface 種別で変わり得るため、CLI reference 側を正にしてください。</p>
-<h2 id="config_db">CONFIG_DB で見る形<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<p><code>bind</code> の瞬間に kernel netlink で interface が VRF table に紐づき直されるため、既存の IP は一度落ちます。順序を逆にすると <code>Interface ... has IP address ...</code> のような warning が出るバージョンもあるので、空にしてから bind するのが安全です。</p>
+<h3 id="config_db">CONFIG_DB で投入する場合<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;VRF&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;Vrf_blue&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">&quot;NULL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NULL&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">&quot;INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="nt">&quot;vrf_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vrf_blue&quot;</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="nt">&quot;Ethernet0|192.0.2.1/31&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="nt">&quot;NULL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NULL&quot;</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="nt">&quot;STATIC_ROUTE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="nt">&quot;Vrf_blue|0.0.0.0/0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="nt">&quot;nexthop&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">      </span><span class="nt">&quot;ifname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet0&quot;</span><span class="p">,</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">      </span><span class="nt">&quot;distance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">      </span><span class="nt">&quot;blackhole&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>VRF|&lt;name&gt;</code> 行は属性なしの marker、<code>INTERFACE|&lt;name&gt;</code> 行は VRF binding を持ち、<code>INTERFACE|&lt;name&gt;|&lt;ip/prefix&gt;</code> 行は IP 割り当てです。3 行は別々の key であり、削除時もこの順序を逆に外します。</p>
+<p><code>sonic-cfggen</code> で部分適用:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>cat<span class="w"> </span>vrf_patch.json<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>--write-to-db
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span></code></pre></div>
+<h3 id="show">show コマンドで確認<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>vrf
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>vrf<span class="w"> </span>Vrf_blue
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>show<span class="w"> </span>interfaces<span class="w"> </span>vrf
+</span></code></pre></div>
+<p><code>show vrf</code> の典型出力:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>VRF        Interfaces
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>---------  ------------
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Vrf_blue   Ethernet0
+</span></code></pre></div>
+<p><code>show ip route vrf Vrf_blue</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>VRF Vrf_blue:
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>S&gt;* 0.0.0.0/0 [1/0] via 192.0.2.0, Ethernet0, weight 1, 00:00:12
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>C&gt;* 192.0.2.0/31 is directly connected, Ethernet0, 00:00:30
+</span></code></pre></div>
+<p><code>S&gt;*</code> が static、<code>C&gt;*</code> が connected。<code>&gt;</code> が無いと FIB に入っていない (RIB のみ) ことを示します。</p>
+<h2 id="2-ecmp-static-route-2-nexthop">典型シナリオ 2: ECMP static route を 2 nexthop で組む<a class="headerlink" href="#2-ecmp-static-route-2-nexthop" title="Permanent link">&para;</a></h2>
+<p>WAN 側に 2 本の uplink がある場合の冗長化。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>route<span class="w"> </span>add<span class="w"> </span>prefix<span class="w"> </span>vrf<span class="w"> </span>Vrf_blue<span class="w"> </span><span class="m">203</span>.0.113.0/24<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>nexthop<span class="w"> </span><span class="m">192</span>.0.2.0<span class="w"> </span>nexthop<span class="w"> </span><span class="m">192</span>.0.2.2
+</span></code></pre></div>
+<p>CONFIG_DB 表現 (カンマ区切り、index で揃える):</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;STATIC_ROUTE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">&quot;Vrf_blue|203.0.113.0/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">      </span><span class="nt">&quot;nexthop&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0,192.0.2.2&quot;</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">      </span><span class="nt">&quot;ifname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet0,Ethernet4&quot;</span><span class="p">,</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">      </span><span class="nt">&quot;distance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0,0&quot;</span><span class="p">,</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">      </span><span class="nt">&quot;blackhole&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false,false&quot;</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>vrf<span class="w"> </span>Vrf_blue<span class="w"> </span><span class="m">203</span>.0.113.0/24
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Routing entry for 203.0.113.0/24
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  Known via &quot;static&quot;, distance 1, metric 0
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  Last update 00:00:05 ago
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  * 192.0.2.0, via Ethernet0, weight 1
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  * 192.0.2.2, via Ethernet4, weight 1
+</span></code></pre></div>
+<p>両 nexthop に <code>*</code> が出れば両方 active。片方だけなら ARP / next-hop reachability を疑います。</p>
+<h2 id="3-vrf-leaking-blackhole">典型シナリオ 3: VRF leaking と blackhole<a class="headerlink" href="#3-vrf-leaking-blackhole" title="Permanent link">&para;</a></h2>
+<p>「青 VRF から赤 VRF の loopback (10.99.0.1/32) を見えるようにする」。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>route<span class="w"> </span>add<span class="w"> </span>prefix<span class="w"> </span>vrf<span class="w"> </span>Vrf_blue<span class="w"> </span><span class="m">10</span>.99.0.1/32<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>nexthop<span class="w"> </span>vrf<span class="w"> </span>Vrf_red<span class="w"> </span><span class="m">10</span>.99.0.1
+</span></code></pre></div>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">&quot;STATIC_ROUTE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="nt">&quot;Vrf_blue|10.99.0.1/32&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">      </span><span class="nt">&quot;nexthop&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.99.0.1&quot;</span><span class="p">,</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">      </span><span class="nt">&quot;nexthop-vrf&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vrf_red&quot;</span><span class="p">,</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">      </span><span class="nt">&quot;distance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">      </span><span class="nt">&quot;blackhole&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>blackhole route (流入 packet を破棄):</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">&quot;STATIC_ROUTE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="nt">&quot;Vrf_blue|192.168.100.0/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">      </span><span class="nt">&quot;nexthop&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">      </span><span class="nt">&quot;blackhole&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">      </span><span class="nt">&quot;distance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>blackhole=true</code> の場合 <code>nexthop</code> は空でよい (orchagent が null route を installs)。</p>
+<h2 id="config_db_1">CONFIG_DB で見る形<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h2>
 <p>VRF は <code>VRF|&lt;name&gt;</code>、物理 L3 interface は <code>INTERFACE|&lt;name&gt;</code>、static route は <code>STATIC_ROUTE|&lt;vrf&gt;|&lt;prefix&gt;</code> を見ます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>VRF|Vrf_blue
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    NULL = NULL
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>INTERFACE|Ethernet0
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    vrf_name = Vrf_blue
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>INTERFACE|Ethernet0|192.0.2.1/31
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>STATIC_ROUTE|Vrf_blue|198.51.100.0/24
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    nexthop = 192.0.2.0
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    ifname = Ethernet0
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    distance = 0
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>VRF|Vrf_blue
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    NULL = NULL
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>INTERFACE|Ethernet0
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    vrf_name = Vrf_blue
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>INTERFACE|Ethernet0|192.0.2.1/31
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>STATIC_ROUTE|Vrf_blue|198.51.100.0/24
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    nexthop = 192.0.2.0
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    ifname = Ethernet0
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    distance = 0
 </span></code></pre></div>
 <p>Loopback を使う場合は <code>LOOPBACK_INTERFACE</code> を読みます。BGP の router-id や per-VRF loopback を扱うときは <a href="../../../reference/config-db/loopback-interface/">LOOPBACK_INTERFACE テーブル</a> が入口です。</p>
 <h2 id="ecmp-static-route">ECMP static route の表現<a class="headerlink" href="#ecmp-static-route" title="Permanent link">&para;</a></h2>
 <p>複数 next hop はカンマ区切りの同じ index で揃えます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>STATIC_ROUTE|Vrf_blue|203.0.113.0/24
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    nexthop = 192.0.2.0,192.0.2.2
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    ifname = Ethernet0,Ethernet4
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    distance = 0,0
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    blackhole = false,false
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>STATIC_ROUTE|Vrf_blue|203.0.113.0/24
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    nexthop = 192.0.2.0,192.0.2.2
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    ifname = Ethernet0,Ethernet4
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    distance = 0,0
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    blackhole = false,false
 </span></code></pre></div>
 <p><code>nexthop-vrf</code> を使うと VRF leaking を表現できます。blackhole route は <code>blackhole=true</code> で一致パケットを破棄する経路として扱います。詳細な key とフィールドは <a href="../../../reference/config-db/static-route/">STATIC_ROUTE テーブル</a> と <a href="../../../reference/yang/sonic-static-route/">sonic-static-route YANG</a> を確認してください。</p>
 <h2 id="fg_nhg-route">FG_NHG は通常 route 設定とは別に読む<a class="headerlink" href="#fg_nhg-route" title="Permanent link">&para;</a></h2>
@@ -21559,7 +21814,55 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">よくある設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>sonic-utilities/config/main.py</code> の <code>ctx.fail()</code> から抜粋:</p>
+<table>
+<thead>
+<tr>
+<th>エラーメッセージ</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF &lt;name&gt; does not exist!</code></td>
+<td>route で参照した VRF 未作成</td>
+<td>先に <code>config vrf add &lt;name&gt;</code></td>
+</tr>
+<tr>
+<td><code>Nexthop VRF &lt;vrf&gt; does not exist!</code></td>
+<td><code>nexthop-vrf</code> 指定先が未作成</td>
+<td>leaking 先の VRF を先に作成</td>
+</tr>
+<tr>
+<td><code>interface &lt;name&gt; does not exist.</code></td>
+<td>route の <code>ifname</code> 未作成</td>
+<td>先に物理 / VLAN / PortChannel interface を確認</td>
+</tr>
+<tr>
+<td><code>portchannel does not exist.</code></td>
+<td>LAG ifname を指定したが LAG 未作成</td>
+<td><code>config portchannel add</code></td>
+</tr>
+<tr>
+<td><code>vlan interface does not exist.</code></td>
+<td>VLAN ifname を指定したが VLAN_INTERFACE 未作成</td>
+<td><code>config interface ip add Vlan&lt;id&gt;</code></td>
+</tr>
+<tr>
+<td><code>argument is not in pattern prefix [vrf ...] &lt;A.B.C.D/M&gt; nexthop [vrf ...] ...</code></td>
+<td><code>config route add</code> の引数順誤り</td>
+<td>reference の構文に厳密に従う</td>
+</tr>
+</tbody>
+</table>
+<p>bind 系の暗黙挙動:</p>
+<ul>
+<li><code>config interface vrf bind</code> は対象 interface の IP を kernel 側で一度落とします。bind 後に <code>ip add</code> し直す</li>
+<li>VRF 削除は配下 interface を全て unbind してから。残っていると <code>VRF still has interfaces bound</code> 系の警告</li>
+</ul>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/config-vrf/">CLI: config vrf</a></li>
 <li><a href="../../../reference/cli/config-route/">CLI: config route</a></li>

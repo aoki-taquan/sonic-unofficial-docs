@@ -3548,6 +3548,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#1-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 1: warm reboot を初めて使えるようにする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 2: 実際に warm-reboot を実行する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-blocking-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 3: blocking mode で自動化する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#os-reboot" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3595,7 +3628,18 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21362,6 +21406,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#1-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 1: warm reboot を初めて使えるようにする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 2: 実際に warm-reboot を実行する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-blocking-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 3: blocking mode で自動化する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#os-reboot" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21409,7 +21486,18 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21443,6 +21531,97 @@
 
 <h1 id="reboot-warm-restart">Reboot / warm restart の設定<a class="headerlink" href="#reboot-warm-restart" title="Permanent link">&para;</a></h1>
 <p>設定で最初に分けるのは、OS 全体の reboot を実行するのか、service warm restart を許可するのかです。<code>reboot</code>、<code>fast-reboot</code>、<code>warm-reboot</code> は実行コマンドであり、<code>config warm_restart</code> は module ごとの warm restart capability と timer を設定します。</p>
+<h2 id="1-warm-reboot">シナリオ 1: warm reboot を初めて使えるようにする<a class="headerlink" href="#1-warm-reboot" title="Permanent link">&para;</a></h2>
+<p>「box の OS upgrade を data plane 無停止でやりたい」のが大抵の目的。box ごとに有効化する手順は次のとおり。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1. system レベルで warm restart を有効化</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 2. 主要 module を warm 対応にする</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>swss
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>bgp
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>teamd
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 3. timer をデフォルト (60s/120s/30s) より長めに振る (chassis や大規模 FIB ほど長く)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>neighsyncd_timer<span class="w"> </span><span class="m">120</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>bgp_timer<span class="w">        </span><span class="m">180</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>teamsyncd_timer<span class="w">  </span><span class="m">60</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>config<span class="w"> </span>warm_restart<span class="w"> </span>bgp_eoiu<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># 4. 設定保存 (warm boot script は永続設定を期待する)</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span></code></pre></div>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;WARM_RESTART&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;system&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;enable&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">},</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;swss&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="nt">&quot;enable&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="nt">&quot;neighsyncd_timer&quot;</span><span class="p">:</span><span class="s2">&quot;120&quot;</span><span class="p">},</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">&quot;bgp&quot;</span><span class="p">:</span><span class="w">    </span><span class="p">{</span><span class="nt">&quot;enable&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="nt">&quot;bgp_timer&quot;</span><span class="p">:</span><span class="s2">&quot;180&quot;</span><span class="p">,</span><span class="nt">&quot;bgp_eoiu&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">},</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">&quot;teamd&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;enable&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="nt">&quot;teamsyncd_timer&quot;</span><span class="p">:</span><span class="s2">&quot;60&quot;</span><span class="p">}</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>show<span class="w"> </span>warm_restart<span class="w"> </span>config
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>name<span class="w">              </span><span class="nb">enable</span><span class="w">    </span>timer_name<span class="w">           </span>timer_duration
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>----------------<span class="w">  </span>--------<span class="w">  </span>-------------------<span class="w">  </span>----------------
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>system<span class="w">            </span><span class="nb">true</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>swss<span class="w">              </span><span class="nb">true</span><span class="w">      </span>neighsyncd_timer<span class="w">     </span><span class="m">120</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>bgp<span class="w">               </span><span class="nb">true</span><span class="w">      </span>bgp_timer<span class="w">            </span><span class="m">180</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>bgp<span class="w">               </span><span class="nb">true</span><span class="w">      </span>bgp_eoiu<span class="w">             </span><span class="nb">true</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>teamd<span class="w">             </span><span class="nb">true</span><span class="w">      </span>teamsyncd_timer<span class="w">      </span><span class="m">60</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>$<span class="w"> </span>show<span class="w"> </span>warm_restart<span class="w"> </span>state
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>name<span class="w">              </span>restore_count<span class="w">  </span>state
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>----------------<span class="w">  </span>-------------<span class="w">  </span>--------
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>orchagent<span class="w">         </span><span class="m">0</span><span class="w">              </span>reconciled
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>neighsyncd<span class="w">        </span><span class="m">0</span><span class="w">              </span>reconciled
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>bgp<span class="w">               </span><span class="m">0</span><span class="w">              </span>reconciled
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>teamsyncd<span class="w">         </span><span class="m">0</span><span class="w">              </span>reconciled
+</span></code></pre></div>
+<p><code>state</code> が <code>reconciled</code> で揃っていれば次回 <code>warm-reboot</code> は data plane 無停止で抜けられる目安になります。</p>
+<h2 id="2-warm-reboot">シナリオ 2: 実際に warm-reboot を実行する<a class="headerlink" href="#2-warm-reboot" title="Permanent link">&para;</a></h2>
+<p>事前 check、実行、復帰確認まで。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 事前: 次の image を確認</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>sonic-installer<span class="w"> </span>list
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>sonic-installer<span class="w"> </span>verify-next-image
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 事前: 隣接の BGP graceful restart capability を確認</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip bgp neighbors 10.0.0.1&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span><span class="s1">&#39;Graceful Restart&#39;</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># 事前: 全 FRR daemon が helper として動く準備</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp memory&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-5
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># 実行 (warm-reboot)</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>sudo<span class="w"> </span>warm-reboot
+</span></code></pre></div>
+<p>復帰直後の確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span>show<span class="w"> </span>reboot-cause
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Cause:<span class="w"> </span>warm-reboot
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Time:<span class="w">  </span>Mon<span class="w"> </span>May<span class="w"> </span><span class="m">11</span><span class="w"> </span><span class="m">03</span>:25:11<span class="w"> </span>UTC<span class="w"> </span><span class="m">2026</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>User:<span class="w">  </span>admin
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>$<span class="w"> </span>show<span class="w"> </span>warm_restart<span class="w"> </span>state
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>name<span class="w">              </span>restore_count<span class="w">  </span>state
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>orchagent<span class="w">         </span><span class="m">1</span><span class="w">              </span>reconciled
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>bgp<span class="w">               </span><span class="m">1</span><span class="w">              </span>reconciled
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>teamsyncd<span class="w">         </span><span class="m">1</span><span class="w">              </span>reconciled
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>$<span class="w"> </span>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span>Established
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="m">12</span><span class="w">   </span><span class="c1"># 期待値</span>
+</span></code></pre></div>
+<p><code>restore_count</code> がインクリメントされていて、全 module が <code>reconciled</code> に到達していれば warm-reboot は成功。<code>state</code> が <code>restored</code> のまま止まる module があれば、timer 超過で reconciliation が間に合っていません。</p>
+<h2 id="3-blocking-mode">シナリオ 3: blocking mode で自動化する<a class="headerlink" href="#3-blocking-mode" title="Permanent link">&para;</a></h2>
+<p>自動運用 (CI、orchestrator) から呼ぶときは blocking mode で進捗・失敗を呼び出し元に返す方が扱いやすい。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 非対話、進捗を stdout に出しつつ完了まで戻ってこない</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>reboot<span class="w"> </span>-b<span class="w"> </span>-v
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># /etc/sonic/reboot.conf で default 動作を指定可能</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>cat<span class="w"> </span>/etc/sonic/reboot.conf
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># blocking=yes</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># verbose=yes</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># timeout=600</span>
+</span></code></pre></div>
+<p><code>-b</code> を付けると reboot script が systemd 側の停止進行を待ち、終了コードで失敗を表現します。詳細は <a href="../../../system/reboot-support-blockingmode-in-sonic/"><code>reboot</code> コマンドの blocking mode</a> を参照。</p>
 <h2 id="os-reboot">OS reboot の入口<a class="headerlink" href="#os-reboot" title="Permanent link">&para;</a></h2>
 <p>通常 reboot は <code>reboot</code>、短時間 reboot は <code>fast-reboot</code>、data plane 継続を狙う reboot は <code>warm-reboot</code> を使います。<code>warm-reboot</code> は実装上 <code>fast-reboot</code> script への symlink で、script 名により warm mode に分岐します。オプションや終了コードの詳細は <a href="../../../reference/cli/reboot-fast-warm/">reboot / fast-reboot / warm-reboot コマンド</a> を参照します。</p>
 <p>運用上は次の順に確認します。</p>
@@ -21491,11 +21670,65 @@
 <h2 id="blocking-mode">blocking mode を使う場面<a class="headerlink" href="#blocking-mode" title="Permanent link">&para;</a></h2>
 <p>通常の <code>reboot</code> は非 blocking で呼び出し元に戻る設計でしたが、blocking mode では reboot script が systemd 側の停止進行を待ち、進捗や失敗を呼び出し元に返しやすくします。自動運用から reboot を実行し、pre-check や停止処理の失敗をその場で扱いたい場合に有用です。</p>
 <p>blocking mode の詳細は <a href="../../../system/reboot-support-blockingmode-in-sonic/"><code>reboot</code> コマンドの blocking mode</a> にあります。<code>-b</code> と <code>reboot.conf</code> の関係、verbose 出力、タイムアウトの扱いを確認します。</p>
-<h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="_1">よくある設定エラーと対処<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>典型的な原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>warm-reboot: command not found</code></td>
+<td>warm-reboot symlink が存在しない (古い image)</td>
+<td><code>which fast-reboot</code> で実体を確認、<code>sudo ln -s fast-reboot /usr/local/bin/warm-reboot</code></td>
+</tr>
+<tr>
+<td>warm-reboot 後 <code>state</code> が <code>restored</code> のまま reconcile しない</td>
+<td>timer が短すぎて FIB 復元が間に合わない</td>
+<td><code>bgp_timer</code> / <code>neighsyncd_timer</code> を 2 倍に延ばして再試行</td>
+</tr>
+<tr>
+<td>warm-reboot 中に BGP session が flap する</td>
+<td>peer 側 GR helper が無効 / 未交渉</td>
+<td>peer 側で <code>bgp graceful-restart</code> を有効化、<code>show ip bgp neighbors</code> で Restart Time が見えるか確認</td>
+</tr>
+<tr>
+<td><code>sonic-installer verify-next-image</code> 失敗</td>
+<td>image hash / signature mismatch、disk 不足</td>
+<td>image を再ダウンロード、<code>/host</code> の空きを確認</td>
+</tr>
+<tr>
+<td>fast-reboot は通るが warm-reboot だけ失敗</td>
+<td>swss / teamd の warm capability が未 enable</td>
+<td><code>config warm_restart enable swss teamd</code> を確認</td>
+</tr>
+<tr>
+<td>multi-ASIC で 一部 ASIC namespace だけ reconcile しない</td>
+<td>namespace 別の WARM_RESTART 設定漏れ</td>
+<td><code>sudo config warm_restart enable -n asic0 swss</code> 等で個別に設定</td>
+</tr>
+<tr>
+<td><code>reboot.conf</code> を書いたのに blocking にならない</td>
+<td><code>-b</code> 未指定、<code>reboot.conf</code> の文法誤り</td>
+<td><code>reboot.conf</code> を最小形式に戻して再試行、または明示的に <code>reboot -b</code></td>
+</tr>
+<tr>
+<td>warm-reboot 後 LACP partner が timeout で外す</td>
+<td><code>teamsyncd_timer</code> が短い、peer の lacp_short_timeout 設定</td>
+<td><code>teamsyncd_timer</code> を 90s 以上、peer 側を long timeout に</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">関連リファレンス<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/reboot-fast-warm/">reboot / fast-reboot / warm-reboot コマンド</a></li>
 <li><a href="../../../reference/cli/config-warm_restart/">config warm_restart サブコマンド</a></li>
 <li><a href="../../../system/reboot-support-blockingmode-in-sonic/"><code>reboot</code> コマンドの blocking mode</a></li>
+<li>CONFIG_DB: <code>WARM_RESTART</code> table</li>
+<li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a> / <a href="../upgrade/">upgrade</a></li>
 </ul>
 
 

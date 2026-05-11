@@ -1370,6 +1370,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-tor-leaf-spine-ebgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: ToR 上で leaf-spine eBGP を立ち上げる
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: ToR 上で leaf-spine eBGP を立ち上げる">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI で打つ場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB JSON で投入する場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show コマンドで設定確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-route-map-prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: route-map で受信 prefix を絞る
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-aggregate-address-24-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: aggregate address で /24 を /16 に集約
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#aggregate-address-bbr" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1395,7 +1467,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        参照表
+        よくある設定エラーと対処
       
     </span>
   </a>
@@ -1404,6 +1476,17 @@
       
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21395,6 +21478,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-tor-leaf-spine-ebgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: ToR 上で leaf-spine eBGP を立ち上げる
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: ToR 上で leaf-spine eBGP を立ち上げる">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI で打つ場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB JSON で投入する場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show コマンドで設定確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-route-map-prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: route-map で受信 prefix を絞る
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-aggregate-address-24-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: aggregate address で /24 を /16 に集約
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#aggregate-address-bbr" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21420,7 +21575,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        参照表
+        よくある設定エラーと対処
       
     </span>
   </a>
@@ -21429,6 +21584,17 @@
       
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照表
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21507,11 +21673,182 @@
 <li>route aggregation を使う場合は <code>BGP_AGGREGATE_ADDRESS</code> を確認する。</li>
 </ol>
 <p>この順番は FRR CLI の見た目ではなく、CONFIG_DB で依存関係をほどく順番である。peer group を使う構成では、neighbor に直接設定された値と peer group から継承される値を混同しない。</p>
+<h2 id="1-tor-leaf-spine-ebgp">典型シナリオ 1: ToR 上で leaf-spine eBGP を立ち上げる<a class="headerlink" href="#1-tor-leaf-spine-ebgp" title="Permanent link">&para;</a></h2>
+<p>「新しい ToR を箱出しして、上位 spine 2 台と eBGP unnumbered を張りたい」という最頻出シナリオである。読み手の質問は (1) 何を順に打つか、(2) CONFIG_DB に何が落ちるか、(3) どの show で確認するか、の 3 つに集約される。</p>
+<h3 id="cli">CLI で打つ場合<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1. 自 AS と router-id を入れる</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>autonomous-system<span class="w"> </span><span class="m">65001</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Loopback0<span class="w"> </span><span class="m">10</span>.1.0.1/32
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># 2. spine 2 台と eBGP を張る (numbered)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>neighbor<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.0<span class="w"> </span><span class="m">65000</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>neighbor<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.2<span class="w"> </span><span class="m">65000</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 3. peer group を使う場合 (推奨)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>peer-group<span class="w"> </span>add<span class="w"> </span>SPINE<span class="w"> </span><span class="m">65000</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>neighbor<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.0<span class="w"> </span>--peer-group<span class="w"> </span>SPINE
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>neighbor<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.2<span class="w"> </span>--peer-group<span class="w"> </span>SPINE
+</span></code></pre></div>
+<p>引数や <code>--peer-group</code> などのオプション展開は SONiC バージョンによって差分がある。実コマンドは <a href="../../../reference/cli/config-bgp/">CLI: config bgp</a> を正にすること。実機では vtysh 直叩きで FRR 側を触る運用も残っているが、CONFIG_DB と vtysh を混ぜると <code>frrcfgd</code> 再描画時に上書きが起きるので避ける。</p>
+<h3 id="config_db-json">CONFIG_DB JSON で投入する場合<a class="headerlink" href="#config_db-json" title="Permanent link">&para;</a></h3>
+<p><code>/etc/sonic/config_db.json</code> に書き込み <code>config reload -y</code> で反映するか、<code>sonic-cfggen</code> で部分パッチを当てる。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;DEVICE_METADATA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;localhost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">&quot;bgp_asn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;65001&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">&quot;BGP_GLOBALS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="nt">&quot;router_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1.0.1&quot;</span><span class="p">,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="nt">&quot;local_asn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;65001&quot;</span><span class="p">,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="nt">&quot;load_balance_mp_relax&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="nt">&quot;always_compare_med&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="nt">&quot;BGP_PEER_GROUP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="nt">&quot;default|SPINE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="nt">&quot;asn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;65000&quot;</span><span class="p">,</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">      </span><span class="nt">&quot;ebgp_multihop_ttl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">      </span><span class="nt">&quot;keepalive&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3&quot;</span><span class="p">,</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">      </span><span class="nt">&quot;holdtime&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9&quot;</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">  </span><span class="nt">&quot;BGP_NEIGHBOR&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">    </span><span class="nt">&quot;default|10.0.0.0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">      </span><span class="nt">&quot;peer_group_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SPINE&quot;</span><span class="p">,</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">      </span><span class="nt">&quot;asn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;65000&quot;</span><span class="p">,</span>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">      </span><span class="nt">&quot;local_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.0.1&quot;</span><span class="p">,</span>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="w">      </span><span class="nt">&quot;admin_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="w">    </span><span class="nt">&quot;default|10.0.0.2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a><span class="w">      </span><span class="nt">&quot;peer_group_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SPINE&quot;</span><span class="p">,</span>
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a><span class="w">      </span><span class="nt">&quot;asn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;65000&quot;</span><span class="p">,</span>
+</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="w">      </span><span class="nt">&quot;local_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.0.3&quot;</span><span class="p">,</span>
+</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a><span class="w">      </span><span class="nt">&quot;admin_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span>
+</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a><span class="w">  </span><span class="nt">&quot;BGP_PEER_GROUP_AF&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a><span class="w">    </span><span class="nt">&quot;default|SPINE|ipv4_unicast&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a><span class="w">      </span><span class="nt">&quot;admin_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a><span class="w">      </span><span class="nt">&quot;soft_reconfiguration_in&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-42"><a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-43"><a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>sonic-cfggen</code> で部分パッチを当てる場合は次の形になる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>cat<span class="w"> </span>patch.json<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>--write-to-db
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span></code></pre></div>
+<p><code>config save -y</code> を忘れると reboot で消える。本番はこの 2 段が要る。</p>
+<h3 id="show">show コマンドで設定確認<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>neighbors<span class="w"> </span><span class="m">10</span>.0.0.0
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>bgp
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>show<span class="w"> </span>running-configuration<span class="w"> </span>bgp
+</span></code></pre></div>
+<p><code>show ip bgp summary</code> の典型出力:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>IPv4 Unicast Summary:
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>BGP router identifier 10.1.0.1, local AS number 65001 vrf-id 0
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>BGP table version 12
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>RIB entries 23, using 4 KiB of memory
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Peers 2, using 1 KiB of memory
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Neighbor        V    AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>10.0.0.0        4 65000        15        18        0    0    0 00:00:42           10
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>10.0.0.2        4 65000        15        18        0    0    0 00:00:42           10
+</span></code></pre></div>
+<p><code>State/PfxRcd</code> が数字でなく <code>Idle</code> / <code>Active</code> / <code>Connect</code> のままなら confederation か router-id 不一致を疑う。</p>
+<h2 id="2-route-map-prefix">典型シナリオ 2: route-map で受信 prefix を絞る<a class="headerlink" href="#2-route-map-prefix" title="Permanent link">&para;</a></h2>
+<p>「上位から送られてくる default 以外を全部捨てたい」というケース。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>route-map<span class="w"> </span>add<span class="w"> </span>ONLY_DEFAULT<span class="w"> </span><span class="m">10</span><span class="w"> </span>permit<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--match-prefix-list<span class="w"> </span>DEFAULT_ONLY
+</span></code></pre></div>
+<p>CONFIG_DB では次のような形になる。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;PREFIX_LIST&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;DEFAULT_ONLY|10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">      </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;permit&quot;</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">      </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.0.0/0&quot;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="nt">&quot;ROUTE_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="nt">&quot;ONLY_DEFAULT|10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">      </span><span class="nt">&quot;route_operation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;permit&quot;</span><span class="p">,</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">      </span><span class="nt">&quot;match_prefix_set&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DEFAULT_ONLY&quot;</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">  </span><span class="nt">&quot;BGP_NEIGHBOR_AF&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">    </span><span class="nt">&quot;default|10.0.0.0|ipv4_unicast&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">      </span><span class="nt">&quot;admin_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">      </span><span class="nt">&quot;route_map_in&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ONLY_DEFAULT&quot;</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>soft_reconfiguration_in</code> が無いと <code>clear ip bgp 10.0.0.0 soft in</code> で再評価できない。policy 変更時は必ず確認する。</p>
+<h2 id="3-aggregate-address-24-16">典型シナリオ 3: aggregate address で /24 を /16 に集約<a class="headerlink" href="#3-aggregate-address-24-16" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>bgp<span class="w"> </span>aggregate-address<span class="w"> </span>add<span class="w"> </span>default<span class="w"> </span><span class="m">10</span>.10.0.0/16<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span>--as-set<span class="w"> </span>--summary-only
+</span></code></pre></div>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;BGP_AGGREGATE_ADDRESS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&quot;default|10.10.0.0/16|ipv4_unicast&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nt">&quot;as_set&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nt">&quot;summary_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>as_set</code> は集約に含まれる AS_PATH を merge する。<code>summary_only</code> は contributing route を広告しない。BBR 連動の挙動は別ページで扱う。</p>
 <h2 id="aggregate-address-bbr">aggregate address と BBR 連動<a class="headerlink" href="#aggregate-address-bbr" title="Permanent link">&para;</a></h2>
 <p>aggregate address は単に FRR に summary を入れるだけではなく、BBR awareness や prefix-list 連携を含む設計がある。CONFIG_DB では <code>BGP_AGGREGATE_ADDRESS</code> を使い、bgpcfgd が FRR 設定へ反映する。細かいスキーマと挙動は <a href="../../../routing/bgp-route-aggregation-with-bbr-awareness/">BBR 連動の BGP ルート集約</a> を参照する。</p>
 <h2 id="openconfigmanagement-framework">OpenConfig/Management Framework を使う場合<a class="headerlink" href="#openconfigmanagement-framework" title="Permanent link">&para;</a></h2>
 <p>OpenConfig BGP 経由で広い範囲を扱う場合、<code>frrcfgd</code> が有効かどうかが前提になる。<code>frrcfgd</code> は CONFIG_DB 差分から FRR vty コマンドを生成する設計で、state/statistics は必要時に FRR から取得する。従来の template ベース運用と混ぜる場合は、同じ設定対象を vtysh 直叩き、CONFIG_DB、OpenConfig の複数入口で更新しない。</p>
-<h2 id="_4">参照表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">よくある設定エラーと対処<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>neighbor 追加で <code>Peer does not exist</code> 等</td>
+<td>local_addr の interface に IP 未設定</td>
+<td>先に <code>config interface ip add</code> を済ませる</td>
+</tr>
+<tr>
+<td><code>State/PfxRcd</code> が <code>Active</code> のまま</td>
+<td>TCP 179 が片道 ACL で drop / route-map で reject</td>
+<td><code>show ip route &lt;peer&gt;</code> と CoPP / data ACL を確認</td>
+</tr>
+<tr>
+<td><code>Connect</code> で止まる</td>
+<td>router-id 重複、両 ToR が同じ loopback IP</td>
+<td><code>BGP_GLOBALS.router_id</code> を確認</td>
+</tr>
+<tr>
+<td>MD5 password mismatch</td>
+<td><code>BGP_NEIGHBOR.auth_password</code> 不一致</td>
+<td>両側で同じ平文を入れる (vtysh 表示は encrypted)</td>
+</tr>
+<tr>
+<td><code>OpenSent</code> のまま</td>
+<td>ASN 不一致 (eBGP 期待だが iBGP 設定)</td>
+<td><code>BGP_NEIGHBOR.asn</code> を確認</td>
+</tr>
+<tr>
+<td>設定したのに FRR に入らない</td>
+<td><code>frrcfgd</code> 未起動 / template モードと混在</td>
+<td><code>docker exec bgp supervisorctl status</code></td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB の値は文字列であって boolean ではない (<code>"true"</code> / <code>"false"</code> のクオート必須)。<code>sonic-cfggen</code> で生成するとき numeric / boolean を入れると schema validation で弾かれる。</p>
+<h2 id="_5">参照表<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -21522,7 +21859,7 @@
 <tbody>
 <tr>
 <td>CLI</td>
-<td><a href="../../../reference/cli/config-bgp/">config bgp</a></td>
+<td><a href="../../../reference/cli/config-bgp/">config bgp</a>、<a href="../../../reference/cli/show-bgp/">show bgp</a></td>
 </tr>
 <tr>
 <td>CONFIG_DB global</td>
@@ -21541,14 +21878,19 @@
 <td><a href="../../../reference/config-db/route-map/">ROUTE_MAP</a>、<a href="../../../reference/config-db/prefix-list/">PREFIX_LIST</a>、<a href="../../../reference/config-db/prefix-set/">PREFIX_SET</a></td>
 </tr>
 <tr>
+<td>CONFIG_DB aggregate</td>
+<td><a href="../../../reference/config-db/bgp-aggregate-address/">BGP_AGGREGATE_ADDRESS</a></td>
+</tr>
+<tr>
 <td>YANG</td>
 <td><a href="../../../reference/yang/sonic-bgp-global/">sonic-bgp-global</a>、<a href="../../../reference/yang/sonic-bgp-neighbor/">sonic-bgp-neighbor</a>、<a href="../../../reference/yang/sonic-bgp-peergroup/">sonic-bgp-peergroup</a>、<a href="../../../reference/yang/sonic-bgp-aggregate-address/">sonic-bgp-aggregate-address</a>、<a href="../../../reference/yang/sonic-route-map/">sonic-route-map</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/config-bgp/">CLI: config bgp</a></li>
+<li><a href="../../../reference/cli/show-bgp/">CLI: show bgp</a></li>
 <li><a href="../../../reference/config-db/bgp-aggregate-address/">CONFIG_DB: BGP_AGGREGATE_ADDRESS</a></li>
 <li><a href="../../../routing/bgp-route-aggregation-with-bbr-awareness/">BBR 連動の BGP ルート集約</a></li>
 <li><a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR-BGP Unified Mgmt Framework</a></li>

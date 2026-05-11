@@ -1626,6 +1626,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-evpn-vxlan-leaf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: EVPN VXLAN を有効化する (leaf として参加)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: EVPN VXLAN を有効化する (leaf として参加)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI で打つ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB で投入する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show コマンドで確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-vnet-controller-driven-overlay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: VNET (controller driven overlay) を設定する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ipinip-decap-dual-tor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: IPinIP decap を Dual-ToR 用に設定する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-appl_db" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1660,6 +1732,17 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21395,6 +21478,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-evpn-vxlan-leaf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: EVPN VXLAN を有効化する (leaf として参加)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: EVPN VXLAN を有効化する (leaf として参加)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI で打つ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB で投入する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show コマンドで確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-vnet-controller-driven-overlay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: VNET (controller driven overlay) を設定する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ipinip-decap-dual-tor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: IPinIP decap を Dual-ToR 用に設定する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-appl_db" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21429,6 +21584,17 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21485,6 +21651,122 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config vnet add-route Vnet1000 192.0.2.10/32 203.0.113.10 --vni 1000
 </span></code></pre></div>
 <p>実際の引数、依存チェック、削除時の順序は <a href="../../../reference/cli/config-vxlan/">config vxlan</a> と <a href="../../../reference/cli/config-vnet/">config vnet</a> を確認してください。</p>
+<h2 id="1-evpn-vxlan-leaf">典型シナリオ 1: EVPN VXLAN を有効化する (leaf として参加)<a class="headerlink" href="#1-evpn-vxlan-leaf" title="Permanent link">&para;</a></h2>
+<p>「underlay BGP は既に動いている。leaf として L2VPN EVPN family を有効化し、VLAN100 を VNI 100100 で広告したい」というケース。</p>
+<h3 id="cli_1">CLI で打つ<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 1. loopback を VTEP source として使う</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Loopback1<span class="w"> </span><span class="m">10</span>.1.0.1/32
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 2. VTEP を作成</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">10</span>.1.0.1
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 3. EVPN NVO を有効化</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>evpn_nvo<span class="w"> </span>add<span class="w"> </span>nvo1<span class="w"> </span>vtep1
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># 4. VLAN を作る</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span><span class="m">100</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>Ethernet0<span class="w"> </span>-u
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1"># 5. VLAN-VNI map を作る</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>map<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">100100</span>
+</span></code></pre></div>
+<p><code>vtep1</code> という名前はインスタンス名で、内部的に <code>VXLAN_TUNNEL|vtep1</code> になります。同一 box で複数 VTEP を持つことは想定されないため通常は単一です。</p>
+<h3 id="config_db">CONFIG_DB で投入する<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>config_db.json</code> 抜粋:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;VXLAN_TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;vtep1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="nt">&quot;src_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1.0.1&quot;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nt">&quot;VXLAN_EVPN_NVO&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">&quot;nvo1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">      </span><span class="nt">&quot;source_vtep&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vtep1&quot;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="nt">&quot;VXLAN_TUNNEL_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="nt">&quot;vtep1|map_100_Vlan100&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">      </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100100&quot;</span><span class="p">,</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">      </span><span class="nt">&quot;vlan&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vlan100&quot;</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">  </span><span class="nt">&quot;VLAN&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">    </span><span class="nt">&quot;Vlan100&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="w">      </span><span class="nt">&quot;vlanid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100&quot;</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="w">  </span><span class="nt">&quot;VLAN_MEMBER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="w">    </span><span class="nt">&quot;Vlan100|Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="w">      </span><span class="nt">&quot;tagging_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;untagged&quot;</span>
+</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>VXLAN_TUNNEL_MAP</code> のキーは <code>&lt;tunnel&gt;|&lt;map_name&gt;</code> で、<code>map_name</code> の命名は慣例的に <code>map_&lt;vni&gt;_&lt;vlan&gt;</code> 形式が使われます。<code>vlan</code> フィールドは <code>Vlan&lt;id&gt;</code> 形式で書く必要があります (数字単独ではエラー)。</p>
+<p><code>sonic-cfggen</code> で部分パッチを当てる場合:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>cat<span class="w"> </span>vxlan_patch.json<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>--write-to-db
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span></code></pre></div>
+<h3 id="show">show コマンドで確認<a class="headerlink" href="#show" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>vlanvnimap
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>vxlan<span class="w"> </span>name<span class="w"> </span>vtep1
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>show<span class="w"> </span>vxlan<span class="w"> </span>remotevtep
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>show<span class="w"> </span>vxlan<span class="w"> </span>remotemac<span class="w"> </span>all
+</span></code></pre></div>
+<p><code>show vxlan tunnel</code> の典型出力:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>vxlan tunnel name    source ip    destination ip    tunnel map name    tunnel map mapping(s)
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>-------------------  -----------  ----------------  -----------------  --------------------
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>vtep1                10.1.0.1                       map_100_Vlan100    Vlan100 -&gt; 100100
+</span></code></pre></div>
+<p><code>destination ip</code> 列は EVPN モードでは空欄になります (動的学習)。EVPN BGP neighbor 確認は <code>show bgp l2vpn evpn summary</code> で別経路です。</p>
+<h2 id="2-vnet-controller-driven-overlay">典型シナリオ 2: VNET (controller driven overlay) を設定する<a class="headerlink" href="#2-vnet-controller-driven-overlay" title="Permanent link">&para;</a></h2>
+<p>DASH 系や Mellanox SmartNIC 系の controller が VNET route を流し込むケース。EVPN を使わず、controller が <code>VNET_ROUTE_TUNNEL</code> を直接 APPL_DB / CONFIG_DB に書きます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">10</span>.1.0.1
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vnet<span class="w"> </span>add<span class="w"> </span>Vnet1000<span class="w"> </span><span class="m">1000</span><span class="w"> </span>vtep1
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vnet<span class="w"> </span>add-route<span class="w"> </span>Vnet1000<span class="w"> </span><span class="m">192</span>.0.2.10/32<span class="w"> </span><span class="m">203</span>.0.113.10<span class="w"> </span>--vni<span class="w"> </span><span class="m">1000</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span>--mac<span class="w"> </span><span class="m">00</span>:11:22:33:44:55
+</span></code></pre></div>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;VNET&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&quot;Vnet1000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nt">&quot;vxlan_tunnel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vtep1&quot;</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">      </span><span class="nt">&quot;peer_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span><span class="nt">&quot;VNET_ROUTE_TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span><span class="nt">&quot;Vnet1000|192.0.2.10/32&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">      </span><span class="nt">&quot;endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;203.0.113.10&quot;</span><span class="p">,</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">      </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1000&quot;</span><span class="p">,</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">      </span><span class="nt">&quot;mac_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;00:11:22:33:44:55&quot;</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>show<span class="w"> </span>vnet<span class="w"> </span>brief
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>show<span class="w"> </span>vnet<span class="w"> </span>routes<span class="w"> </span>all
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>show<span class="w"> </span>vnet<span class="w"> </span>endpoint
+</span></code></pre></div>
+<h2 id="3-ipinip-decap-dual-tor">典型シナリオ 3: IPinIP decap を Dual-ToR 用に設定する<a class="headerlink" href="#3-ipinip-decap-dual-tor" title="Permanent link">&para;</a></h2>
+<p><code>TUNNEL</code> テーブルは IPinIP decap term を表現します。Dual-ToR の standby → active 折り返しに使われる構成例:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">&quot;TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">&quot;MuxTunnel0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">      </span><span class="nt">&quot;tunnel_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPINIP&quot;</span><span class="p">,</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">      </span><span class="nt">&quot;src_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1.0.32&quot;</span><span class="p">,</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">      </span><span class="nt">&quot;dst_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1.0.33&quot;</span><span class="p">,</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">      </span><span class="nt">&quot;dscp_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">      </span><span class="nt">&quot;encap_ecn_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">      </span><span class="nt">&quot;ecn_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;copy_from_outer&quot;</span><span class="p">,</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">      </span><span class="nt">&quot;ttl_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pipe&quot;</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>TUNNEL_DECAP_TABLE</code> は APPL_DB に書かれる ephemeral state で、CONFIG_DB から書く対象ではありません。orchagent が <code>TUNNEL</code> を見て APPL_DB に派生する流れです。</p>
 <h2 id="config_db-appl_db">CONFIG_DB / APPL_DB の見方<a class="headerlink" href="#config_db-appl_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -21532,12 +21814,77 @@
 <p><code>VXLAN_EVPN_NVO</code> は EVPN NVO インスタンスと source VTEP を結びます。ただし、BGP neighbor、address-family l2vpn evpn、route-target、VRF などの control plane 設定は FRR 側の領域です。SONiC 側で VXLAN tunnel と map が存在していても、FRR EVPN が Type-2 / Type-5 を交換していなければ remote MAC / prefix は学習されません。</p>
 <h2 id="pbh-inner-hash">PBH inner hash<a class="headerlink" href="#pbh-inner-hash" title="Permanent link">&para;</a></h2>
 <p>VXLAN / NVGRE の外側 header だけで ECMP / LAG hash すると、複数 flow が同じ tunnel endpoint へ偏ることがあります。Policy Based Hashing は ACL match した encapsulated packet に対して inner 5-tuple ベースの hash を適用する機能です。設定単位は <code>PBH_TABLE</code>、<code>PBH_RULE</code>、<code>PBH_HASH</code>、<code>PBH_HASH_FIELD</code> で、VXLAN/VNET そのものの設定とは別です。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">よくある設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>sonic-utilities/config/vxlan.py</code> の <code>ctx.fail()</code> から抜粋した実エラーメッセージ:</p>
+<table>
+<thead>
+<tr>
+<th>エラーメッセージ</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VTEP already configured.</code></td>
+<td>既に別名で VTEP が存在</td>
+<td><code>show vxlan tunnel</code> で確認し、不要なら削除</td>
+</tr>
+<tr>
+<td><code>EVPN NVO already configured</code></td>
+<td>NVO は 1 box 1 個</td>
+<td>既存 NVO を削除してから再作成</td>
+</tr>
+<tr>
+<td><code>VTEP &lt;name&gt; not configured</code></td>
+<td>map / NVO の追加で VTEP 未作成</td>
+<td>先に <code>config vxlan add</code></td>
+</tr>
+<tr>
+<td><code>Please delete the EVPN NVO configuration.</code></td>
+<td>VTEP 削除で NVO 残存</td>
+<td><code>config vxlan evpn_nvo del</code> 先行</td>
+</tr>
+<tr>
+<td><code>Please delete all VLAN VNI mappings.</code></td>
+<td>VTEP 削除で map 残存</td>
+<td><code>config vxlan map del</code> 先行</td>
+</tr>
+<tr>
+<td><code>Vlan Id already mapped</code></td>
+<td>同一 VLAN を別 VNI に二重 map</td>
+<td>既存 map を確認して削除</td>
+</tr>
+<tr>
+<td><code>VNI Id already mapped</code></td>
+<td>同一 VNI を別 VLAN に二重 map</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>Invalid Vlan Id , Valid Range : 1 to 4094</code></td>
+<td>VLAN ID 範囲外</td>
+<td>入力値を見直す</td>
+</tr>
+<tr>
+<td><code>Invalid VNI &lt;vni&gt;. Valid range [1 to 16777215].</code></td>
+<td>VNI 範囲外</td>
+<td>24bit 範囲に収める</td>
+</tr>
+<tr>
+<td><code>VNI mapped to vrf &lt;vrf&gt;, Please remove VRF VNI mapping</code></td>
+<td>VRF-VNI 結びつきあり</td>
+<td><code>config vrf del_vrf_vni_map</code> 先行</td>
+</tr>
+</tbody>
+</table>
+<p>削除順序は <strong>add の逆順</strong> が原則: <code>(rule) → map → NVO → VTEP</code>。途中に VLAN_MEMBER / VLAN が残っていると VTEP 削除はできますが VLAN 側の clean-up は別途必要です。</p>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/config-vxlan/">config vxlan</a></li>
 <li><a href="../../../reference/cli/config-vnet/">config vnet</a></li>
 <li><a href="../../../reference/config-db/vxlan-tunnel/">VXLAN_TUNNEL テーブル</a></li>
 <li><a href="../../../reference/config-db/vxlan-tunnel-map/">VXLAN_TUNNEL_MAP テーブル</a></li>
+<li><a href="../../../reference/config-db/vxlan-evpn-nvo/">VXLAN_EVPN_NVO テーブル</a></li>
 <li><a href="../../../reference/config-db/vnet/">VNET / VNET_ROUTE テーブル</a></li>
 <li><a href="../../../reference/config-db/tunnel/">TUNNEL テーブル</a></li>
 <li><a href="../../../reference/config-db/tunnel-decap-table/">TUNNEL_DECAP_TABLE</a></li>

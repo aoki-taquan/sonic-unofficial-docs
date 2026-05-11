@@ -5776,62 +5776,229 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#redis-instance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Redis instance のレイアウト
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#multi-asic-namespace" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Multi-ASIC と namespace
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#feature-daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FEATURE による daemon 制御
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#config-reload-portinitdone" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config reload と PortInitDone
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#probe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        健全性 probe
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定対象ファイルとテーブル一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-asic-redis-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 1: 単一 ASIC + 単一 Redis instance (既定)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="シナリオ 1: 単一 ASIC + 単一 Redis instance (既定)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database_configjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        database_config.json (既定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-counters_db-redis-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 2: COUNTERS_DB を別 Redis instance に切り出す
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="シナリオ 2: COUNTERS_DB を別 Redis instance に切り出す">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database_configjson_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        database_config.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        反映手順
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-multi-asic-voq-chassis-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 3: Multi-ASIC / VOQ chassis (namespace 切り替え)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="シナリオ 3: Multi-ASIC / VOQ chassis (namespace 切り替え)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database_globaljson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        database_global.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace-redis-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        namespace を指定した redis-cli
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-feature-daemon-config-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 4: FEATURE による daemon 制御と config reload 遅延
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="シナリオ 4: FEATURE による daemon 制御と config reload 遅延">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-reload-delayed-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config reload と delayed container
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-container-health-probe-k8s-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 5: container health probe (k8s readiness)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#show-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認に使う show / redis コマンドまとめ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21373,62 +21540,229 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#redis-instance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Redis instance のレイアウト
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#multi-asic-namespace" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Multi-ASIC と namespace
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#feature-daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FEATURE による daemon 制御
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#config-reload-portinitdone" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config reload と PortInitDone
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#probe" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        健全性 probe
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定対象ファイルとテーブル一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-asic-redis-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 1: 単一 ASIC + 単一 Redis instance (既定)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="シナリオ 1: 単一 ASIC + 単一 Redis instance (既定)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database_configjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        database_config.json (既定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-counters_db-redis-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 2: COUNTERS_DB を別 Redis instance に切り出す
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="シナリオ 2: COUNTERS_DB を別 Redis instance に切り出す">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database_configjson_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        database_config.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        反映手順
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-multi-asic-voq-chassis-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 3: Multi-ASIC / VOQ chassis (namespace 切り替え)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="シナリオ 3: Multi-ASIC / VOQ chassis (namespace 切り替え)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database_globaljson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        database_global.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace-redis-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        namespace を指定した redis-cli
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-feature-daemon-config-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 4: FEATURE による daemon 制御と config reload 遅延
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="シナリオ 4: FEATURE による daemon 制御と config reload 遅延">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB スキーマ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-reload-delayed-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config reload と delayed container
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-container-health-probe-k8s-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 5: container health probe (k8s readiness)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#show-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認に使う show / redis コマンドまとめ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21464,35 +21798,297 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>内部実装側にも「設定」がある。機能 CLI ではなく、Redis instance のレイアウト、Multi-ASIC 向け namespace、FEATURE による daemon 起動の有効/無効、起動の遅延制御などが該当する。</p>
-<h2 id="redis-instance">Redis instance のレイアウト<a class="headerlink" href="#redis-instance" title="Permanent link">&para;</a></h2>
-<p>歴史的には全 DB が単一の Redis instance に同居していたが、性能や障害分離のために、DB を複数 Redis instance に分ける設計が入った。割り当ては <code>database_config.json</code>（Multi-ASIC では <code>database_global.json</code>）で持ち、各 DB は <code>db_name → instance</code> のマッピングで決まる。</p>
+<p>SWSS / SAI / Redis レイヤの「設定」は、機能 CLI のように <code>config bgp</code> で投入できる対象ではなく、SONiC の起動構成そのものを決めるファイル群です。具体的には Redis instance のレイアウト、Multi-ASIC namespace、FEATURE による daemon 起動制御、event-driven な config reload、container health probe の 5 つで、いずれも <code>/etc/sonic/</code> 配下のファイルと CONFIG_DB の <code>FEATURE</code> テーブルで制御されます。</p>
+<p>本ページでは「単一 ASIC」「COUNTERS_DB の Redis 分割」「Multi-ASIC / VOQ chassis」「FEATURE と config reload 遅延」「container health probe」の 5 シナリオで、ファイル例 + CLI + 確認手順をまとめます。</p>
+<h2 id="_2">設定対象ファイルとテーブル一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>対象</th>
+<th>場所</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>database_config.json</code></td>
+<td><code>/var/run/redis/sonic-db/database_config.json</code></td>
+<td>DB 名 → Redis instance / socket / db_number のマッピング</td>
+</tr>
+<tr>
+<td><code>database_global.json</code></td>
+<td><code>/etc/sonic/database_global.json</code> (Multi-ASIC)</td>
+<td>namespace ごとの <code>database_config.json</code> の集約</td>
+</tr>
+<tr>
+<td><code>FEATURE</code> テーブル</td>
+<td>CONFIG_DB</td>
+<td>container 単位の state / auto_restart / delayed</td>
+</tr>
+<tr>
+<td><code>init_cfg.json</code></td>
+<td><code>/etc/sonic/init_cfg.json</code></td>
+<td>工場出荷時の CONFIG_DB 初期値</td>
+</tr>
+<tr>
+<td><code>config_db.json</code></td>
+<td><code>/etc/sonic/config_db.json</code></td>
+<td>永続化された運用 CONFIG_DB</td>
+</tr>
+<tr>
+<td>systemd unit</td>
+<td><code>/etc/systemd/system/*.service</code></td>
+<td>container 起動順 / dependency / probe</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-asic-redis-instance">シナリオ 1: 単一 ASIC + 単一 Redis instance (既定)<a class="headerlink" href="#1-asic-redis-instance" title="Permanent link">&para;</a></h2>
+<p>ホワイトボックス 1 台に SONiC を入れたときの既定構成です。何もしなくてもこの形になります。</p>
+<h3 id="database_configjson">database_config.json (既定)<a class="headerlink" href="#database_configjson" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis/redis.sock&quot;</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="nt">&quot;persistence_for_warm_boot&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">&quot;DATABASES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="nt">&quot;APPL_DB&quot;</span><span class="p">:</span><span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="nt">&quot;ASIC_DB&quot;</span><span class="p">:</span><span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="nt">&quot;COUNTERS_DB&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="nt">&quot;LOGLEVEL_DB&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="nt">&quot;CONFIG_DB&quot;</span><span class="p">:</span><span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="nt">&quot;PFC_WD_DB&quot;</span><span class="p">:</span><span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="nt">&quot;FLEX_COUNTER_DB&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="nt">&quot;STATE_DB&quot;</span><span class="p">:</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="nt">&quot;SNMP_OVERLAY_DB&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="nt">&quot;RESTAPI_DB&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;|&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="nt">&quot;GB_ASIC_DB&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;separator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">  </span><span class="nt">&quot;VERSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_3">確認<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Redis instance の状態</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>redis-cli<span class="w"> </span>ping
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>redis-cli<span class="w"> </span>INFO<span class="w"> </span>server<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>^redis_version
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># 各 DB が見えるか</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|*&#39;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>DBSIZE
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>DBSIZE
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># DB マッピングの確認</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>cat<span class="w"> </span>/var/run/redis/sonic-db/database_config.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.DATABASES | keys&#39;</span>
+</span></code></pre></div>
+<h2 id="2-counters_db-redis-instance">シナリオ 2: COUNTERS_DB を別 Redis instance に切り出す<a class="headerlink" href="#2-counters_db-redis-instance" title="Permanent link">&para;</a></h2>
+<p>大規模 SKU で COUNTERS_DB の書き込みが他 DB の応答時間を圧迫するときに使う構成です。設計の前提は <a href="../../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義</a> を読んでください。</p>
+<h3 id="database_configjson_1">database_config.json<a class="headerlink" href="#database_configjson_1" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis/redis.sock&quot;</span><span class="p">,</span><span class="w">          </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6379</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;redis_counters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;unix_socket_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/var/run/redis/redis_counters.sock&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6380</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nt">&quot;DATABASES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">&quot;APPL_DB&quot;</span><span class="p">:</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">&quot;ASIC_DB&quot;</span><span class="p">:</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">&quot;COUNTERS_DB&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis_counters&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">&quot;FLEX_COUNTER_DB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis_counters&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="nt">&quot;CONFIG_DB&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">&quot;STATE_DB&quot;</span><span class="p">:</span><span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;instance&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;redis&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="nt">&quot;VERSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_4">反映手順<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 編集後に database container 再起動</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>database
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># ソケットが両方できているか</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>ls<span class="w"> </span>-l<span class="w"> </span>/var/run/redis/redis.sock<span class="w"> </span>/var/run/redis/redis_counters.sock
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># COUNTERS_DB が新 instance に来ているか</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>redis-cli<span class="w"> </span>-s<span class="w"> </span>/var/run/redis/redis_counters.sock<span class="w"> </span>DBSIZE
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>redis-cli<span class="w"> </span>-s<span class="w"> </span>/var/run/redis/redis.sock<span class="w"> </span>DBSIZE
+</span></code></pre></div>
+<p>DB 名で参照する API (<code>SonicDBConfig::getDbInst()</code>) は変わらないため、ユーザ daemon は instance 構成を意識せずに済みます。</p>
+<h2 id="3-multi-asic-voq-chassis-namespace">シナリオ 3: Multi-ASIC / VOQ chassis (namespace 切り替え)<a class="headerlink" href="#3-multi-asic-voq-chassis-namespace" title="Permanent link">&para;</a></h2>
+<p>VOQ chassis や 2 ASIC SKU では、ASIC ごとに別の Redis 名前空間を持ちます。詳細は <a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis</a> を読んでください。</p>
+<h3 id="database_globaljson">database_global.json<a class="headerlink" href="#database_globaljson" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;INCLUDES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;include&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;database_config.json&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;asic0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;include&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;asic0/database_config.json&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;asic1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;include&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;asic1/database_config.json&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nt">&quot;VERSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="namespace-redis-cli">namespace を指定した redis-cli<a class="headerlink" href="#namespace-redis-cli" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># host namespace</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># asic0 の Redis socket は別ファイル</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sudo<span class="w"> </span>ip<span class="w"> </span>netns<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>asic0<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>sudo<span class="w"> </span>ip<span class="w"> </span>netns<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>asic1<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>DBSIZE
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># sonic-cfggen を namespace 付きで使う</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>sonic-cfggen<span class="w"> </span>-d<span class="w"> </span>-v<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA[&quot;localhost&quot;][&quot;asic_id&quot;]&#39;</span><span class="w"> </span>-n<span class="w"> </span>asic0
+</span></code></pre></div>
+<h3 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>show<span class="w"> </span>platform<span class="w"> </span>summary<span class="w">           </span><span class="c1"># Multi-ASIC platform か</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary<span class="w"> </span>-n<span class="w"> </span>asic0<span class="w">    </span><span class="c1"># namespace 付き CLI</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>ip<span class="w"> </span>netns<span class="w"> </span>list<span class="w">                   </span><span class="c1"># asic0 asic1 が存在</span>
+</span></code></pre></div>
+<h2 id="4-feature-daemon-config-reload">シナリオ 4: FEATURE による daemon 制御と config reload 遅延<a class="headerlink" href="#4-feature-daemon-config-reload" title="Permanent link">&para;</a></h2>
+<p><code>FEATURE</code> テーブルは container 単位の有効/無効、自動再起動、起動遅延を一元管理します。</p>
+<h3 id="config_db">CONFIG_DB スキーマ<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;FEATURE|bgp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">&quot;auto_restart&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">&quot;delayed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="p">,</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="nt">&quot;has_global_scope&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="p">,</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="nt">&quot;has_per_asic_scope&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;False&quot;</span><span class="p">,</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="nt">&quot;high_mem_alert&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="nt">&quot;set_owner&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="nt">&quot;support_syslog_rate_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="nt">&quot;FEATURE|telemetry&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">    </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">    </span><span class="nt">&quot;auto_restart&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">    </span><span class="nt">&quot;delayed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;False&quot;</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># state 切り替え</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>feature<span class="w"> </span>state<span class="w"> </span>bgp<span class="w"> </span>enabled
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>feature<span class="w"> </span>state<span class="w"> </span>telemetry<span class="w"> </span>disabled
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># auto restart</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>feature<span class="w"> </span>autorestart<span class="w"> </span>bgp<span class="w"> </span>enabled
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># 永続化</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>sudo<span class="w"> </span>config<span class="w"> </span>save<span class="w"> </span>-y
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="c1"># 確認</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>show<span class="w"> </span>feature<span class="w"> </span>status
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>show<span class="w"> </span>feature<span class="w"> </span>autorestart
+</span></code></pre></div>
+<h3 id="config-reload-delayed-container">config reload と delayed container<a class="headerlink" href="#config-reload-delayed-container" title="Permanent link">&para;</a></h3>
+<p><code>delayed: True</code> の container は、PortInitDone を待ってから起動されます。これは BGP などが「ASIC 上の port がまだない」状態で route を流し始めることを避ける設計です。詳細は <a href="../../../management/config-reload-enhancement/">config reload の event-driven 化</a> を読んでください。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># config reload を投げる</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># STATE_DB で PortInitDone を待つ</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT_TABLE|PortInitDone&quot;</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># delayed container がその後に起動したか</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>systemctl<span class="w"> </span>status<span class="w"> </span>bgp
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>bgp<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span>
+</span></code></pre></div>
+<h2 id="5-container-health-probe-k8s-readiness">シナリオ 5: container health probe (k8s readiness)<a class="headerlink" href="#5-container-health-probe-k8s-readiness" title="Permanent link">&para;</a></h2>
+<p>各機能 container は <code>monit</code> 検査結果を 1 つの判定に集約する health-check を持ちます。k8s に乗せた SONiC では readiness probe としても使われます。意義は <a href="../../../internals/why-need-health-check/">コンテナ health-check</a> を読んでください。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># container の health 状態</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>docker<span class="w"> </span>inspect<span class="w"> </span>bgp<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.State.Health.Status}}&#39;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>docker<span class="w"> </span>inspect<span class="w"> </span>swss<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{json .State.Health}}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># monit の状態</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>sudo<span class="w"> </span>monit<span class="w"> </span>status
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="c1"># health-check スクリプトの直接実行</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>/usr/bin/healthcheck.sh
+</span></code></pre></div>
+<p><code>Health.Status</code> は <code>starting</code> / <code>healthy</code> / <code>unhealthy</code> を返します。<code>unhealthy</code> が継続すると <code>auto_restart=enabled</code> 時に container が再起動されます。</p>
+<h2 id="_6">よくある設定エラーと対処<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>redis-cli</code> が <code>Connection refused</code></td>
+<td><code>database</code> container が落ちている / socket 権限</td>
+<td><code>systemctl status database</code>、<code>ls -l /var/run/redis/*.sock</code>、<code>/var/run/redis-chassis/</code> パーミッション確認</td>
+</tr>
+<tr>
+<td><code>database_config.json</code> 変更が反映されない</td>
+<td>container 再起動忘れ / JSON 構文エラー</td>
+<td><code>jq . /var/run/redis/sonic-db/database_config.json</code>、<code>systemctl restart database</code>、<code>config reload -y</code></td>
+</tr>
+<tr>
+<td>新 instance を追加したが daemon が古い socket を掴む</td>
+<td>daemon プロセスが既にロード済みの SonicDBConfig をキャッシュ</td>
+<td>影響 daemon を再起動 (<code>systemctl restart swss</code> 等)、必要なら <code>config reload -y</code></td>
+</tr>
+<tr>
+<td>Multi-ASIC で <code>redis-cli</code> が host を見てしまう</td>
+<td><code>ip netns exec</code> 無しで実行</td>
+<td><code>sudo ip netns exec asic0 redis-cli ...</code> か、<code>-n asic0</code> 付き sonic-cli を使う</td>
+</tr>
+<tr>
+<td><code>config feature state</code> の変更が次回起動で消える</td>
+<td><code>config save</code> 忘れ</td>
+<td><code>sudo config save -y</code> で <code>config_db.json</code> を永続化</td>
+</tr>
+<tr>
+<td>delayed container が起動しない</td>
+<td>PortInitDone が来ていない / portmgrd 異常</td>
+<td><code>redis-cli -n 6 KEYS 'PORT_TABLE*'</code>、<code>journalctl -u portmgrd</code>、<code>show interfaces status</code> で port が UP か</td>
+</tr>
+<tr>
+<td><code>docker inspect</code> で <code>Health.Status</code> 欄が空</td>
+<td>healthcheck が Dockerfile に未定義の古い image</td>
+<td>image を最新化、または <code>monit</code> 経由の判定にフォールバック</td>
+</tr>
+<tr>
+<td>Multi-ASIC で APPL_DB の更新が片側 ASIC にしか反映されない</td>
+<td>書き手が namespace を指定せず host Redis を更新</td>
+<td><code>swsscommon.SonicV2Connector(namespace='asic0')</code> を使う、scripts は <code>-n asic&lt;N&gt;</code> フラグを通す</td>
+</tr>
+<tr>
+<td>COUNTERS_DB を別 instance に分けたら CLI が値を返さない</td>
+<td>CLI 側が socket をハードコード</td>
+<td><code>swsscommon</code> 経由の CLI を使う、<code>database_config.json</code> の socket と CLI の参照先を一致</td>
+</tr>
+</tbody>
+</table>
+<h2 id="show-redis">確認に使う show / redis コマンドまとめ<a class="headerlink" href="#show-redis" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Redis レイアウト</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>cat<span class="w"> </span>/var/run/redis/sonic-db/database_config.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>cat<span class="w"> </span>/etc/sonic/database_global.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># FEATURE</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>show<span class="w"> </span>feature<span class="w"> </span>status
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>show<span class="w"> </span>feature<span class="w"> </span>autorestart
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;FEATURE|*&#39;</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="c1"># container 健全性</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;table {{.Names}}\t{{.Status}}&#39;</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>sudo<span class="w"> </span>monit<span class="w"> </span>summary
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="c1"># Multi-ASIC</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>ip<span class="w"> </span>netns<span class="w"> </span>list
+</span></code></pre></div>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>DB を別 instance に出すと、巨大な DB（例: COUNTERS_DB）の処理が他 DB の応答性に影響しにくくなる。</li>
-<li>DB 名で参照する API は変わらないため、ユーザ daemon は instance 構成を意識せずに済む。</li>
-<li>設計と運用上の注意は <a href="../../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）</a> を読む。</li>
-</ul>
-<h2 id="multi-asic-namespace">Multi-ASIC と namespace<a class="headerlink" href="#multi-asic-namespace" title="Permanent link">&para;</a></h2>
-<p>Multi-ASIC や VOQ chassis では、ASIC ごとに別の Redis 名前空間を持つ。<code>SonicDBConfig</code> のロード対象を、<code>database_config.json</code> から <code>database_global.json</code> 経由の複数 namespace に拡張する設計である。namespace 切り替えにより、同じ DB 名（例: <code>ASIC_DB</code>）が ASIC ごとに独立した instance を指す。</p>
-<ul>
-<li>設計の前提は <a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis</a> を読む。</li>
-<li>機能側の見え方（特に [Multi-ASIC 章への接続]）は今後の章で受ける。</li>
-</ul>
-<h2 id="feature-daemon">FEATURE による daemon 制御<a class="headerlink" href="#feature-daemon" title="Permanent link">&para;</a></h2>
-<p><code>FEATURE</code> テーブルは、container（=機能 daemon 群）の有効/無効、自動再起動、依存関係を一元管理する。Optional Feature Control は、CLI から <code>config feature state</code> で切り替え、 config reload 後の一貫した起動順を保証する設計である。</p>
-<p>設定の入口や CLI 規約は <a href="../../../system/sonic-optional-feature-control-enhancement/">FEATURE テーブルによるオプショナル機能の有効/無効制御</a> を読む。</p>
-<h2 id="config-reload-portinitdone">config reload と PortInitDone<a class="headerlink" href="#config-reload-portinitdone" title="Permanent link">&para;</a></h2>
-<p><code>config reload</code> の event-driven 化により、port 初期化完了（<code>PortInitDone</code>）など特定イベントを待ってから依存 daemon を起動できる。<code>FEATURE.&lt;container&gt;.delayed</code> で遅延 container を識別し、PortInitDone 後にまとめて起動する。これにより BGP 等が「ASIC 上の port がまだ無い」状態で route を流し始める問題を避ける。</p>
-<p>詳細は <a href="../../../management/config-reload-enhancement/">config reload の event-driven 化（FEATURE.delayed + PortInitDone）</a> を読む。</p>
-<h2 id="probe">健全性 probe<a class="headerlink" href="#probe" title="Permanent link">&para;</a></h2>
-<p>各機能 container は健全性確認のための probe を持つ。k8s に乗せた SONiC では readiness probe としても使うため、container 内で <code>monit</code> 系の検査結果を 1 つの判定に集約する設計が必要になる。意義と境界条件は <a href="../../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a> を読む。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）</a></li>
-<li><a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）</a></li>
+<li><a href="../../../internals/support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義 (database_config.json で DB を分散)</a></li>
+<li><a href="../../../internals/support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis (database_global.json と SonicDBConfig)</a></li>
 <li><a href="../../../system/sonic-optional-feature-control-enhancement/">FEATURE テーブルによるオプショナル機能の有効/無効制御</a></li>
-<li><a href="../../../management/config-reload-enhancement/">config reload の event-driven 化（FEATURE.delayed + PortInitDone）</a></li>
-<li><a href="../../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a></li>
+<li><a href="../../../management/config-reload-enhancement/">config reload の event-driven 化 (FEATURE.delayed + PortInitDone)</a></li>
+<li><a href="../../../internals/why-need-health-check/">コンテナ health-check (k8s readiness probe)</a></li>
+<li><a href="../concept/">SWSS / SAI / Redis の概要</a></li>
+<li><a href="../architecture/">SWSS / SAI / Redis のアーキテクチャ</a></li>
+<li><a href="../operations/">SWSS / SAI / Redis の運用</a></li>
+<li><a href="../internals/">SWSS / SAI / Redis の internals</a></li>
 </ul>
 
 

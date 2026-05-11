@@ -4612,7 +4612,84 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        設定の入口の対応
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-tacacs-local-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 1: TACACS+ を主、local を fallback とする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ldapad-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 2: LDAP（AD）統合 + SSH 制限
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-banner-serial-console" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 3: banner と serial console の最小ハードニング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-radius-per-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 4: RADIUS で per-command 認可
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         最小構成のチェックリスト
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21387,7 +21464,84 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        設定の入口の対応
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-tacacs-local-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 1: TACACS+ を主、local を fallback とする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ldapad-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 2: LDAP（AD）統合 + SSH 制限
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-banner-serial-console" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 3: banner と serial console の最小ハードニング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-radius-per-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 4: RADIUS で per-command 認可
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         最小構成のチェックリスト
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21473,7 +21627,200 @@
 <p>SSH の listen address、port、ciphers、login grace time、max auth tries などは <code>SSH_SERVER</code> テーブルにまとめ、<code>hostcfgd</code> 経由で <code>sshd_config</code> に展開されます。詳細フィールドと意図は <a href="../../../management/ssh-server-global-config-hld/">SSH server global config HLD</a> を参照してください。</p>
 <p>serial console 側は inactivity timeout、login banner との組み合わせ、root login の可否などを <code>SERIAL_CONSOLE</code> テーブルで制御します。設計意図は <a href="../../../management/serial-console-global-config-hld/">serial console global config HLD</a> にあります。</p>
 <p>banner メッセージ（login 前と login 後）は <code>BANNER_MESSAGE</code> テーブルで管理され、<code>/etc/issue</code> と <code>/etc/motd</code> に反映されます。詳細は <a href="../../../system/banner-messages-hld/">banner messages HLD</a> を参照してください。</p>
-<h2 id="_3">最小構成のチェックリスト<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">設定の入口の対応<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>やりたいこと</th>
+<th>CLI</th>
+<th>CONFIG_DB</th>
+<th>YANG / HLD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>login_method の順序付け</td>
+<td><code>config aaa authentication login ...</code></td>
+<td><code>AAA\|authentication</code></td>
+<td><a href="../../../reference/yang/sonic-system-aaa/">sonic-system-aaa</a></td>
+</tr>
+<tr>
+<td>TACACS+ サーバ追加</td>
+<td><code>config tacacs add/delete</code></td>
+<td><a href="../../../reference/config-db/tacplus-server/"><code>TACPLUS_SERVER</code></a></td>
+<td><a href="../../../management/tacacs-authentication/">TACACS+ HLD</a></td>
+</tr>
+<tr>
+<td>RADIUS サーバ追加</td>
+<td><code>config aaa ...</code></td>
+<td><code>RADIUS_SERVER</code></td>
+<td><a href="../../../management/radius-management-user-authentication/">RADIUS HLD</a></td>
+</tr>
+<tr>
+<td>LDAP サーバ追加</td>
+<td><code>config ldap add/global</code></td>
+<td><a href="../../../reference/config-db/ldap-server/"><code>LDAP_SERVER</code></a></td>
+<td><a href="../../../management/hld-ldap/">LDAP HLD</a></td>
+</tr>
+<tr>
+<td>SSH 強化</td>
+<td><code>config ssh-server ...</code></td>
+<td><code>SSH_SERVER</code></td>
+<td><a href="../../../management/ssh-server-global-config-hld/">SSH HLD</a></td>
+</tr>
+<tr>
+<td>serial console policy</td>
+<td><code>config serial-console ...</code></td>
+<td><code>SERIAL_CONSOLE</code></td>
+<td><a href="../../../management/serial-console-global-config-hld/">serial console HLD</a></td>
+</tr>
+<tr>
+<td>banner</td>
+<td><code>config banner ...</code></td>
+<td><code>BANNER_MESSAGE</code></td>
+<td><a href="../../../system/banner-messages-hld/">banner HLD</a></td>
+</tr>
+</tbody>
+</table>
+<p>CLI ラッパが用意されていないフィールドは <code>sonic-cfggen -a '{...}' -w</code> で CONFIG_DB に直接書きます。<code>hostcfgd</code> が <code>pam_*.conf</code> / <code>nsswitch.conf</code> / <code>sshd_config</code> / <code>/etc/issue</code> / <code>/etc/motd</code> に展開します。</p>
+<h2 id="1-tacacs-local-fallback">設定シナリオ 1: TACACS+ を主、local を fallback とする<a class="headerlink" href="#1-tacacs-local-fallback" title="Permanent link">&para;</a></h2>
+<p>最も多い構成です。<code>tac_plus</code> を 2 台立て、<code>config aaa</code> で順序付け、ロックアウト回避のため末尾に必ず <code>local</code> を残します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># サーバー登録（passkey は CLI 上は平文 → CONFIG_DB では暗号化保存）</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.10.11<span class="w"> </span>-k<span class="w"> </span>MyS3cret<span class="w"> </span>-t<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>tacacs<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.10.12<span class="w"> </span>-k<span class="w"> </span>MyS3cret<span class="w"> </span>-t<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># 認証フロー</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>login<span class="w"> </span>tacacs+<span class="w"> </span><span class="nb">local</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>failthrough<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># 認可・accounting（任意）</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span><span class="s2">&quot;tacacs+ local&quot;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>accounting<span class="w">    </span><span class="s2">&quot;tacacs+ local&quot;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># 確認</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>show<span class="w"> </span>tacacs
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>show<span class="w"> </span>aaa
+</span></code></pre></div>
+<p>このとき CONFIG_DB は次のような形になります。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;AAA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;authentication&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tacacs+,local&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;failthrough&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="p">},</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;authorization&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tacacs+,local&quot;</span><span class="p">},</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="nt">&quot;accounting&quot;</span><span class="p">:</span><span class="w">     </span><span class="p">{</span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tacacs+,local&quot;</span><span class="p">}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="nt">&quot;TACPLUS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="nt">&quot;global&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;auth_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pap&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;passkey&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;U2FsdGVk...&quot;</span><span class="p">}</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nt">&quot;TACPLUS_SERVER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">        </span><span class="nt">&quot;10.0.10.11&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tcp_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;49&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5&quot;</span><span class="p">},</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">        </span><span class="nt">&quot;10.0.10.12&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tcp_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;49&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;5&quot;</span><span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>show aaa</code> の典型出力:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>AAA authentication login          : tacacs+ local
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>AAA authentication failthrough    : True
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>AAA authorization login           : tacacs+ local
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>AAA accounting login              : tacacs+ local
+</span></code></pre></div>
+<h2 id="2-ldapad-ssh">設定シナリオ 2: LDAP（AD）統合 + SSH 制限<a class="headerlink" href="#2-ldapad-ssh" title="Permanent link">&para;</a></h2>
+<p>社内 AD に user を寄せ、ssh は cipher / kex を絞り、root login を禁止する例です。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># LDAP server とベース DN</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>ldap<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.20.0.50<span class="w"> </span>--port<span class="w"> </span><span class="m">389</span><span class="w"> </span>--priority<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>ldap<span class="w"> </span>global<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--base<span class="w"> </span><span class="s2">&quot;dc=corp,dc=example,dc=com&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--bind-dn<span class="w"> </span><span class="s2">&quot;cn=sonic,ou=ServiceAccounts,dc=corp,dc=example,dc=com&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>--bind-password<span class="w"> </span><span class="s1">&#39;AppPass123!&#39;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>login<span class="w"> </span>ldap<span class="w"> </span><span class="nb">local</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># SSH 強化</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>sudo<span class="w"> </span>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s1">  &quot;SSH_SERVER&quot;:{&quot;POLICIES&quot;:{</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s1">     &quot;permit_root_login&quot;:&quot;no&quot;,</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s1">     &quot;max_auth_tries&quot;:&quot;3&quot;,</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="s1">     &quot;login_grace_time&quot;:&quot;60&quot;,</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="s1">     &quot;ciphers&quot;:&quot;aes256-gcm@openssh.com,aes256-ctr&quot;,</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="s1">     &quot;kex_algorithms&quot;:&quot;curve25519-sha256,diffie-hellman-group16-sha512&quot;</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="s1">  }}</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="s1">}&#39;</span><span class="w"> </span>-w
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>hostcfgd
+</span></code></pre></div>
+<p>確認は次の通り。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>ldap-server
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>ssh-server
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>sshd<span class="w"> </span>-T<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-Ei<span class="w"> </span><span class="s1">&#39;permitrootlogin|ciphers|kex|maxauthtries&#39;</span>
+</span></code></pre></div>
+<h2 id="3-banner-serial-console">設定シナリオ 3: banner と serial console の最小ハードニング<a class="headerlink" href="#3-banner-serial-console" title="Permanent link">&para;</a></h2>
+<p>法的要件 + 置き忘れセッション切断:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>banner<span class="w"> </span>login<span class="w">    </span><span class="s2">&quot;Authorized access only. Activity is logged.&quot;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>banner<span class="w"> </span>motd<span class="w">     </span><span class="s2">&quot;SONiC NOS - production fabric&quot;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>serial-console<span class="w"> </span>inactivity-timeout<span class="w"> </span><span class="m">600</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>serial-console<span class="w"> </span>sysrq-capabilities<span class="w"> </span>disabled
+</span></code></pre></div>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="nt">&quot;BANNER_MESSAGE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;global&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="s2">&quot;Authorized access only. Activity is logged.&quot;</span><span class="p">,</span><span class="nt">&quot;motd&quot;</span><span class="p">:</span><span class="s2">&quot;SONiC NOS - production fabric&quot;</span><span class="p">}},</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;SERIAL_CONSOLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;POLICIES&quot;</span><span class="p">:{</span><span class="nt">&quot;inactivity_timeout&quot;</span><span class="p">:</span><span class="s2">&quot;600&quot;</span><span class="p">,</span><span class="nt">&quot;sysrq_capabilities&quot;</span><span class="p">:</span><span class="s2">&quot;disabled&quot;</span><span class="p">}}</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>show banner</code> / <code>show serial-console</code> で投入結果を確認します。</p>
+<h2 id="4-radius-per-command">設定シナリオ 4: RADIUS で per-command 認可<a class="headerlink" href="#4-radius-per-command" title="Permanent link">&para;</a></h2>
+<p>RADIUS で <code>service-type</code> / <code>Cisco-AVPair</code> ベースの per-command 認可を入れる例。<code>freeradius</code> 側で <code>cisco-avpair="shell:priv-lvl=15"</code> のような属性を返す前提で、SONiC 側は次のように設定します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>authentication<span class="w"> </span>login<span class="w"> </span>radius<span class="w"> </span><span class="nb">local</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span><span class="s2">&quot;radius local&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>aaa<span class="w"> </span>accounting<span class="w">    </span><span class="s2">&quot;radius local&quot;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;RADIUS|global&#39;</span><span class="w"> </span>auth_type<span class="w"> </span>pap<span class="w"> </span>timeout<span class="w"> </span><span class="m">5</span><span class="w"> </span>retransmit<span class="w"> </span><span class="m">3</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>sudo<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;RADIUS_SERVER|10.0.10.21&#39;</span><span class="w"> </span>priority<span class="w"> </span><span class="m">1</span><span class="w"> </span>auth_port<span class="w"> </span><span class="m">1812</span><span class="w"> </span>passkey<span class="w"> </span><span class="s1">&#39;R@diusPass&#39;</span>
+</span></code></pre></div>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="nt">&quot;AAA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;authentication&quot;</span><span class="p">:{</span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="s2">&quot;radius,local&quot;</span><span class="p">},</span><span class="nt">&quot;authorization&quot;</span><span class="p">:{</span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="s2">&quot;radius,local&quot;</span><span class="p">},</span><span class="nt">&quot;accounting&quot;</span><span class="p">:{</span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="s2">&quot;radius,local&quot;</span><span class="p">}},</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&quot;RADIUS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;global&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;auth_type&quot;</span><span class="p">:</span><span class="s2">&quot;pap&quot;</span><span class="p">,</span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="s2">&quot;5&quot;</span><span class="p">,</span><span class="nt">&quot;retransmit&quot;</span><span class="p">:</span><span class="s2">&quot;3&quot;</span><span class="p">}},</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="nt">&quot;RADIUS_SERVER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="nt">&quot;10.0.10.21&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;priority&quot;</span><span class="p">:</span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="nt">&quot;auth_port&quot;</span><span class="p">:</span><span class="s2">&quot;1812&quot;</span><span class="p">,</span><span class="nt">&quot;passkey&quot;</span><span class="p">:</span><span class="s2">&quot;&lt;encrypted&gt;&quot;</span><span class="p">}</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>show aaa</code> と <code>show radius</code> で反映を確認、テスト user で <code>tail -f /var/log/auth.log</code> を見つつログインして <code>Accept</code> が返ることを確認します。</p>
+<h2 id="_4">設定エラーと対処<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>外部 AAA 設定後にコンソール / SSH からも入れない</td>
+<td><code>login_method</code> の末尾に <code>local</code> が無い</td>
+<td>recovery USB / シリアル → ONIE rescue → <code>/etc/sonic/config_db.json</code> の <code>AAA</code> を直接修正</td>
+</tr>
+<tr>
+<td>TACACS+ で認証が遅い（10s 超）</td>
+<td>1 台目がダウン、<code>timeout</code> が長い、<code>failthrough</code> 無効</td>
+<td><code>config aaa authentication failthrough enable</code>、<code>timeout</code> を 2-3s に、サーバー priority を見直す</td>
+</tr>
+<tr>
+<td><code>show tacacs</code> で passkey が <code>*****</code> のまま投入が反映されない</td>
+<td><code>config tacacs add</code> のオプション順序を誤った</td>
+<td><code>-k</code> の値が空白を含む場合は引用、<code>config tacacs delete</code> してから再追加</td>
+</tr>
+<tr>
+<td>LDAP bind が <code>Invalid credentials</code></td>
+<td>bind-dn か password の typo、または AD 側 sAMAccountName / userPrincipalName mismatch</td>
+<td><code>ldapsearch -x -D ... -W -b ...</code> で素のクエリを検証</td>
+</tr>
+<tr>
+<td>SSH の cipher を絞った後 windows クライアントから繋がらない</td>
+<td>クライアント側に modern cipher が無い</td>
+<td>クライアント側を更新、または <code>ciphers</code> リストに <code>aes128-ctr</code> を一時的に追加</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">最小構成のチェックリスト<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ol>
 <li>外部 AAA を入れる前に、<code>admin</code> 相当の local user のパスワードを十分長いものへ更新する。詳細は <a href="../operations/">運用</a> で扱う <a href="../../../architecture/pw-hardening-design/">password hardening</a> を参照。</li>
 <li>TACACS+ / RADIUS / LDAP のサーバーを最低 2 台登録し、<code>login_method</code> の末尾に <code>local</code> を残す。</li>
@@ -21482,6 +21829,13 @@
 <li>serial console の <code>inactivity_timeout</code> を有効にし、置き忘れセッションを切る。</li>
 </ol>
 <p>これ以降の運用面（password reset、default credential、トラブルシュート）は <a href="../operations/">運用</a> に続きます。</p>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li>CLI: <code>config aaa</code>、<code>config tacacs</code>、<code>config ldap</code>、<code>config banner</code>、<code>config serial-console</code>、<code>show aaa</code>、<code>show tacacs</code>、<code>show ldap-server</code>、<code>show ssh-server</code>、<code>show banner</code></li>
+<li>CONFIG_DB: <code>AAA</code>、<code>TACPLUS</code>、<code>TACPLUS_SERVER</code>、<code>RADIUS</code>、<code>RADIUS_SERVER</code>、<code>LDAP</code>、<code>LDAP_SERVER</code>、<code>SSH_SERVER</code>、<code>SERIAL_CONSOLE</code>、<code>BANNER_MESSAGE</code></li>
+<li>YANG: <a href="../../../reference/yang/sonic-system-aaa/"><code>sonic-system-aaa</code></a>、<code>sonic-system-tacacs</code>、<code>sonic-system-ldap</code>、<code>sonic-ssh-server</code>、<code>sonic-system-banner</code></li>
+<li>関連 HLD: <a href="../../../management/tacacs-authentication/">TACACS+ HLD</a>、<a href="../../../management/radius-management-user-authentication/">RADIUS HLD</a>、<a href="../../../management/hld-ldap/">LDAP HLD</a>、<a href="../../../management/ssh-server-global-config-hld/">SSH server global config HLD</a>、<a href="../../../management/serial-console-global-config-hld/">serial console HLD</a>、<a href="../../../system/banner-messages-hld/">banner messages HLD</a></li>
+</ul>
 
 
 

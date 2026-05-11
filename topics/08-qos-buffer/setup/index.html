@@ -2815,10 +2815,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#lossy" class="md-nav__link">
+  <a href="#1-lossy-tor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        最小構成: lossy のみのスイッチ
+        シナリオ 1: 最小構成 — lossy のみ ToR
       
     </span>
   </a>
@@ -2826,10 +2826,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#roce-lossless" class="md-nav__link">
+  <a href="#2-rocev2-lossless-tc3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        RoCE 向け lossless の追加
+        シナリオ 2: RoCEv2 用 lossless (TC3) を追加する
       
     </span>
   </a>
@@ -2837,10 +2837,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pfcwd" class="md-nav__link">
+  <a href="#3-pfcwd-queue" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PFCWD の有効化
+        シナリオ 3: PFCWD を有効化して queue を保護する
       
     </span>
   </a>
@@ -2863,6 +2863,28 @@
     <span class="md-ellipsis">
       
         YANG / gNMI から触る場合
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21384,10 +21406,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#lossy" class="md-nav__link">
+  <a href="#1-lossy-tor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        最小構成: lossy のみのスイッチ
+        シナリオ 1: 最小構成 — lossy のみ ToR
       
     </span>
   </a>
@@ -21395,10 +21417,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#roce-lossless" class="md-nav__link">
+  <a href="#2-rocev2-lossless-tc3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        RoCE 向け lossless の追加
+        シナリオ 2: RoCEv2 用 lossless (TC3) を追加する
       
     </span>
   </a>
@@ -21406,10 +21428,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pfcwd" class="md-nav__link">
+  <a href="#3-pfcwd-queue" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PFCWD の有効化
+        シナリオ 3: PFCWD を有効化して queue を保護する
       
     </span>
   </a>
@@ -21432,6 +21454,28 @@
     <span class="md-ellipsis">
       
         YANG / gNMI から触る場合
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21543,53 +21587,191 @@
 </tr>
 </tbody>
 </table>
-<h2 id="lossy">最小構成: lossy のみのスイッチ<a class="headerlink" href="#lossy" title="Permanent link">&para;</a></h2>
-<p>たとえば「lossy トラフィックだけで、queue 0 を strict、その他を DWRR、shaping は無し」の構成は次のような構造になります。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;BUFFER_POOL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;ingress_lossy_pool&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;ingress&quot;</span><span class="p">,</span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="s2">&quot;static&quot;</span><span class="p">,</span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;....&quot;</span><span class="p">},</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;egress_lossy_pool&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;egress&quot;</span><span class="p">,</span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="s2">&quot;static&quot;</span><span class="p">,</span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;....&quot;</span><span class="p">}</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;BUFFER_PROFILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">&quot;ingress_lossy_profile&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;pool&quot;</span><span class="p">:</span><span class="s2">&quot;ingress_lossy_pool&quot;</span><span class="p">,</span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="nt">&quot;dynamic_th&quot;</span><span class="p">:</span><span class="s2">&quot;3&quot;</span><span class="p">},</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="nt">&quot;q_lossy_profile&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="nt">&quot;pool&quot;</span><span class="p">:</span><span class="s2">&quot;egress_lossy_pool&quot;</span><span class="p">,</span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="nt">&quot;dynamic_th&quot;</span><span class="p">:</span><span class="s2">&quot;3&quot;</span><span class="p">}</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">&quot;BUFFER_PG&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="nt">&quot;Ethernet0|0&quot;</span><span class="p">:{</span><span class="nt">&quot;profile&quot;</span><span class="p">:</span><span class="s2">&quot;ingress_lossy_profile&quot;</span><span class="p">}},</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nt">&quot;BUFFER_QUEUE&quot;</span><span class="p">:{</span><span class="nt">&quot;Ethernet0|0-7&quot;</span><span class="p">:{</span><span class="nt">&quot;profile&quot;</span><span class="p">:</span><span class="s2">&quot;q_lossy_profile&quot;</span><span class="p">}},</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="nt">&quot;SCHEDULER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="nt">&quot;scheduler.0&quot;</span><span class="p">:{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;STRICT&quot;</span><span class="p">},</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="nt">&quot;scheduler.1&quot;</span><span class="p">:{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;DWRR&quot;</span><span class="p">,</span><span class="nt">&quot;weight&quot;</span><span class="p">:</span><span class="s2">&quot;15&quot;</span><span class="p">}</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">  </span><span class="nt">&quot;QUEUE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="nt">&quot;Ethernet0|0&quot;</span><span class="p">:{</span><span class="nt">&quot;scheduler&quot;</span><span class="p">:</span><span class="s2">&quot;scheduler.0&quot;</span><span class="p">},</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="nt">&quot;Ethernet0|1&quot;</span><span class="p">:{</span><span class="nt">&quot;scheduler&quot;</span><span class="p">:</span><span class="s2">&quot;scheduler.1&quot;</span><span class="p">}</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">  </span><span class="nt">&quot;PORT_QOS_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;dscp_to_tc_map&quot;</span><span class="p">:</span><span class="s2">&quot;AZURE&quot;</span><span class="p">,</span><span class="nt">&quot;tc_to_queue_map&quot;</span><span class="p">:</span><span class="s2">&quot;AZURE&quot;</span><span class="p">}</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><code>AZURE</code> は SONiC の標準サンプル名で、テンプレ展開後にこの名前で参照されることが多い、というだけの慣例です。</p>
-<h2 id="roce-lossless">RoCE 向け lossless の追加<a class="headerlink" href="#roce-lossless" title="Permanent link">&para;</a></h2>
-<p>lossless TC（例: TC3）を 1 本足すには以下を増やします。</p>
+<h2 id="1-lossy-tor">シナリオ 1: 最小構成 — lossy のみ ToR<a class="headerlink" href="#1-lossy-tor" title="Permanent link">&para;</a></h2>
+<p>「100G lossy だけのアクセス ToR」を想定して、queue 0 を strict、queue 1–7 を DWRR (weight 15) で並べる例です。テンプレ展開を待たずに最低限手で組むなら、pool / profile / scheduler / port_qos_map の 4 つを作って 1 ポートに当てるところまでが必要最小限です。</p>
+<p>操作の順番は次のとおり。</p>
 <ol>
-<li>PFC headroom 付きの <code>BUFFER_PROFILE</code> を作る（<code>xon</code>/<code>xoff</code>/<code>xon_offset</code> を持たせ、<code>pool</code> は ingress_lossless_pool を指す）。</li>
-<li><code>BUFFER_PG:Ethernet0|3</code> にその profile を当てる。</li>
-<li><code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> で priority 3 → PG 3 を張る。</li>
-<li><code>PORT_QOS_MAP:Ethernet0:pfc_enable</code> に <code>3</code> を加える。</li>
-<li><code>WRED_PROFILE</code> で ECN を有効にし、<code>QUEUE:Ethernet0|3:wred_profile</code> で参照する。</li>
+<li><code>BUFFER_POOL</code> を ingress / egress で 1 本ずつ定義する。</li>
+<li>profile を 2 種（ingress lossy / egress lossy）作って pool を指す。</li>
+<li>PG 0、queue 0–7 にそれぞれ profile を当てる。</li>
+<li><code>SCHEDULER</code> を 2 種（STRICT / DWRR）作って <code>QUEUE</code> から指す。</li>
+<li><code>PORT_QOS_MAP</code> でポートに DSCP→TC、TC→queue を当てる。</li>
 </ol>
-<p>DSCP 値の振り分けは <code>DSCP_TO_TC_MAP</code> を編集して TC3 に対応する DSCP を増やすだけです。</p>
-<h2 id="pfcwd">PFCWD の有効化<a class="headerlink" href="#pfcwd" title="Permanent link">&para;</a></h2>
-<p>PFCWD は「PFC が長時間止まり続けたら queue を強制で外す」運用安全装置です。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>pfcwd<span class="w"> </span>start<span class="w"> </span>--action<span class="w"> </span>drop<span class="w"> </span>ports<span class="w"> </span>Ethernet0,Ethernet1<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>detection-time<span class="w"> </span><span class="m">200</span><span class="w"> </span>--restoration-time<span class="w"> </span><span class="m">200</span>
+<p><code>config</code> CLI を使う場合の組み立て例です。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>buffer<span class="w"> </span>profile<span class="w"> </span>add<span class="w"> </span>ingress_lossy_profile<span class="w"> </span>--pool<span class="w"> </span>ingress_lossy_pool<span class="w"> </span>--xon<span class="w"> </span><span class="m">0</span><span class="w"> </span>--xoff<span class="w"> </span><span class="m">0</span><span class="w"> </span>--size<span class="w"> </span><span class="m">0</span><span class="w"> </span>--dynamic_th<span class="w"> </span><span class="m">3</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>buffer<span class="w"> </span>profile<span class="w"> </span>add<span class="w"> </span>q_lossy_profile<span class="w">       </span>--pool<span class="w"> </span>egress_lossy_pool<span class="w">  </span>--size<span class="w"> </span><span class="m">0</span><span class="w"> </span>--dynamic_th<span class="w"> </span><span class="m">3</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>config<span class="w"> </span>buffer<span class="w"> </span>priority-group<span class="w"> </span>lossy<span class="w"> </span>add<span class="w">  </span>Ethernet0<span class="w"> </span><span class="m">0</span><span class="w">    </span>ingress_lossy_profile
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>config<span class="w"> </span>buffer<span class="w"> </span>queue<span class="w"> </span>add<span class="w">                 </span>Ethernet0<span class="w"> </span><span class="m">0</span>-7<span class="w">  </span>q_lossy_profile
 </span></code></pre></div>
-<p>詳細なオプションと内部動作は <a href="../../../reference/cli/config-pfcwd/"><code>config pfcwd</code></a> と <a href="../../../reference/config-db/pfc-wd/"><code>PFC_WD</code></a> を参照。</p>
+<p>CONFIG_DB に直接書くなら次のような構造になります。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;BUFFER_POOL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;ingress_lossy_pool&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;ingress&quot;</span><span class="p">,</span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="s2">&quot;static&quot;</span><span class="p">,</span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;10485760&quot;</span><span class="p">},</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;egress_lossy_pool&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;egress&quot;</span><span class="p">,</span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="s2">&quot;static&quot;</span><span class="p">,</span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;10485760&quot;</span><span class="p">}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">&quot;BUFFER_PROFILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="nt">&quot;ingress_lossy_profile&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;pool&quot;</span><span class="p">:</span><span class="s2">&quot;ingress_lossy_pool&quot;</span><span class="p">,</span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="nt">&quot;dynamic_th&quot;</span><span class="p">:</span><span class="s2">&quot;3&quot;</span><span class="p">},</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="nt">&quot;q_lossy_profile&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="nt">&quot;pool&quot;</span><span class="p">:</span><span class="s2">&quot;egress_lossy_pool&quot;</span><span class="p">,</span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="nt">&quot;dynamic_th&quot;</span><span class="p">:</span><span class="s2">&quot;3&quot;</span><span class="p">}</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="nt">&quot;BUFFER_PG&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="nt">&quot;Ethernet0|0&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="nt">&quot;profile&quot;</span><span class="p">:</span><span class="s2">&quot;ingress_lossy_profile&quot;</span><span class="p">}},</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="nt">&quot;BUFFER_QUEUE&quot;</span><span class="p">:{</span><span class="nt">&quot;Ethernet0|0-7&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;profile&quot;</span><span class="p">:</span><span class="s2">&quot;q_lossy_profile&quot;</span><span class="p">}},</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="nt">&quot;SCHEDULER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="nt">&quot;scheduler.0&quot;</span><span class="p">:{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;STRICT&quot;</span><span class="p">},</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="nt">&quot;scheduler.1&quot;</span><span class="p">:{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;DWRR&quot;</span><span class="p">,</span><span class="nt">&quot;weight&quot;</span><span class="p">:</span><span class="s2">&quot;15&quot;</span><span class="p">}</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">  </span><span class="nt">&quot;QUEUE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="nt">&quot;Ethernet0|0&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">{</span><span class="nt">&quot;scheduler&quot;</span><span class="p">:</span><span class="s2">&quot;scheduler.0&quot;</span><span class="p">},</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="nt">&quot;Ethernet0|1-7&quot;</span><span class="p">:{</span><span class="nt">&quot;scheduler&quot;</span><span class="p">:</span><span class="s2">&quot;scheduler.1&quot;</span><span class="p">}</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">  </span><span class="nt">&quot;PORT_QOS_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;dscp_to_tc_map&quot;</span><span class="p">:</span><span class="s2">&quot;AZURE&quot;</span><span class="p">,</span><span class="nt">&quot;tc_to_queue_map&quot;</span><span class="p">:</span><span class="s2">&quot;AZURE&quot;</span><span class="p">}</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>AZURE</code> は SONiC の標準サンプル map 名で、テンプレ展開後にこの名前で参照されるのが慣例です。別名で揃えても動きますが、<code>config qos reload</code> の再展開で踏み直されるので、長期運用なら <code>AZURE</code> を残して同名で上書きする方が安全です。</p>
+<p>確認は次の通り。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>show<span class="w"> </span>queue<span class="w"> </span>counters<span class="w"> </span>Ethernet0
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">       </span>Port<span class="w">    </span>TxQ<span class="w">    </span>Counter/pkts<span class="w">    </span>Counter/bytes<span class="w">    </span>Drop/pkts<span class="w">    </span>Drop/bytes
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>-----------<span class="w">  </span>-----<span class="w">  </span>-------------<span class="w">    </span>-------------<span class="w">   </span>----------<span class="w">   </span>-----------
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>Ethernet0<span class="w">    </span>UC0<span class="w">       </span><span class="m">1</span>,234,567<span class="w">      </span><span class="m">987</span>,654,321<span class="w">            </span><span class="m">0</span><span class="w">             </span><span class="m">0</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>Ethernet0<span class="w">    </span>UC1<span class="w">         </span><span class="m">234</span>,567<span class="w">      </span><span class="m">198</span>,765,432<span class="w">            </span><span class="m">0</span><span class="w">             </span><span class="m">0</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>...
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>$<span class="w"> </span>show<span class="w"> </span>priority-group<span class="w"> </span>persistent-watermark<span class="w"> </span>headroom
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span>Port<span class="w">    </span>PG0<span class="w">    </span>PG1<span class="w">    </span>PG2<span class="w">    </span>PG3<span class="w">    </span>PG4<span class="w">    </span>PG5<span class="w">    </span>PG6<span class="w">    </span>PG7
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>-----------<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span>Ethernet0<span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span>
+</span></code></pre></div>
+<p><code>show queue counters</code> の <code>Drop/pkts</code> が常に増えていれば queue 容量不足、あるいは scheduler weight の不均衡を疑います。</p>
+<h2 id="2-rocev2-lossless-tc3">シナリオ 2: RoCEv2 用 lossless (TC3) を追加する<a class="headerlink" href="#2-rocev2-lossless-tc3" title="Permanent link">&para;</a></h2>
+<p>既存の lossy ToR に「RoCEv2 だけ lossless で運ぶ」要件を被せるパターンです。lossless は DSCP 26（IEEE 802.1 で RoCEv2 の慣例）を TC3 にマップし、PG3 / queue 3 を PFC headroom 付き profile にし、ECN を入れる流れです。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. lossless pool (xoff 領域を含む) と profile</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>buffer<span class="w"> </span>profile<span class="w"> </span>add<span class="w"> </span>ingress_lossless_profile<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--pool<span class="w"> </span>ingress_lossless_pool<span class="w"> </span>--xon<span class="w"> </span><span class="m">19456</span><span class="w"> </span>--xoff<span class="w"> </span><span class="m">36352</span><span class="w"> </span>--size<span class="w"> </span><span class="m">55808</span><span class="w"> </span>--dynamic_th<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>config<span class="w"> </span>buffer<span class="w"> </span>priority-group<span class="w"> </span>lossless<span class="w"> </span>add<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">3</span><span class="w"> </span>ingress_lossless_profile
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># 2. PFC を priority 3 で enable</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>config<span class="w"> </span>interface<span class="w"> </span>pfc<span class="w"> </span>asymmetric<span class="w"> </span>off<span class="w"> </span>Ethernet0
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;PORT_QOS_MAP|Ethernet0&#39;</span><span class="w"> </span>pfc_enable<span class="w"> </span><span class="s1">&#39;3&#39;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># 3. PFC priority -&gt; PG マップ</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|AZURE&#39;</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1"># 4. ECN/WRED を queue 3 に当てる</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>config<span class="w"> </span>ecn<span class="w"> </span>-profile<span class="w"> </span>AZURE_LOSSLESS<span class="w"> </span>-rmax<span class="w"> </span><span class="m">2097152</span><span class="w"> </span>-rmin<span class="w"> </span><span class="m">1048576</span><span class="w"> </span>-gmax<span class="w"> </span><span class="m">5242880</span><span class="w"> </span>-gmin<span class="w"> </span><span class="m">2621440</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;QUEUE|Ethernet0|3&#39;</span><span class="w"> </span>wred_profile<span class="w"> </span><span class="s1">&#39;AZURE_LOSSLESS&#39;</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="c1"># 5. DSCP 26 -&gt; TC3 を確実に</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;DSCP_TO_TC_MAP|AZURE&#39;</span><span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">3</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span>show<span class="w"> </span>pfc<span class="w"> </span>priority<span class="w"> </span>Ethernet0
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Interface<span class="w">    </span>Lossless<span class="w"> </span>priorities
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>-----------<span class="w">  </span>---------------------
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Ethernet0<span class="w">    </span><span class="m">3</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>$<span class="w"> </span>show<span class="w"> </span>queue<span class="w"> </span>watermark<span class="w"> </span>unicast
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span>Port<span class="w">    </span>UC0<span class="w">    </span>UC1<span class="w">    </span>UC2<span class="w">    </span>UC3<span class="w">    </span>UC4<span class="w">    </span>UC5<span class="w">    </span>UC6<span class="w">    </span>UC7
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>-----------<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>-----
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span>Ethernet0<span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">8192</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="m">0</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>$<span class="w"> </span>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>--period<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Ethernet0
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>Ethernet0<span class="w">    </span>U<span class="w">     </span><span class="m">12</span>.50<span class="w"> </span>MB/s<span class="w">    </span>...<span class="w">    </span><span class="m">0</span><span class="w"> </span>RX_DRP<span class="w">    </span><span class="m">0</span><span class="w"> </span>RX_OVR<span class="w">    </span><span class="m">0</span><span class="w"> </span>TX_ERR
+</span></code></pre></div>
+<p><code>show queue watermark unicast</code> の UC3 が増えるが drop が出ない、<code>show pfc counters</code> で peer に向けて PFC pause が送られている、<code>show priority-group persistent-watermark headroom</code> で PG3 の headroom が xoff 領域内に収まっている、の 3 つが揃っていれば lossless が機能しています。</p>
+<h2 id="3-pfcwd-queue">シナリオ 3: PFCWD を有効化して queue を保護する<a class="headerlink" href="#3-pfcwd-queue" title="Permanent link">&para;</a></h2>
+<p>PFCWD は「PFC pause が長時間止まったままになり、ASIC の buffer が消費され続ける状態」を検出して queue を強制 drop または forward に切り替える運用安全装置です。lossless を有効にした以上は必須と考えて差し支えありません。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 推奨デフォルトでまとめて enable</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config<span class="w"> </span>pfcwd<span class="w"> </span>start_default
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># ポート単位で個別 chunk チューニング</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>config<span class="w"> </span>pfcwd<span class="w"> </span>start<span class="w"> </span>--action<span class="w"> </span>drop<span class="w"> </span>ports<span class="w"> </span>Ethernet0,Ethernet1<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>detection-time<span class="w"> </span><span class="m">200</span><span class="w"> </span>--restoration-time<span class="w"> </span><span class="m">200</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># polling interval を変える (デフォルト 200ms)</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>config<span class="w"> </span>pfcwd<span class="w"> </span>interval<span class="w"> </span><span class="m">100</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>$<span class="w"> </span>show<span class="w"> </span>pfcwd<span class="w"> </span>config
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">       </span>Port<span class="w">    </span>Action<span class="w">    </span>Detection<span class="w"> </span><span class="nb">time</span><span class="w">    </span>Restoration<span class="w"> </span><span class="nb">time</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>-----------<span class="w">  </span>--------<span class="w">  </span>----------------<span class="w">  </span>------------------
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>Ethernet0<span class="w">      </span>drop<span class="w">               </span><span class="m">200</span><span class="w">                 </span><span class="m">200</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span>Ethernet1<span class="w">      </span>drop<span class="w">               </span><span class="m">200</span><span class="w">                 </span><span class="m">200</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>$<span class="w"> </span>show<span class="w"> </span>pfcwd<span class="w"> </span>stats
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">       </span>Queue<span class="w">    </span>Storm<span class="w"> </span>detected<span class="w">    </span>Restored<span class="w">    </span>Tx<span class="w"> </span>OK<span class="w">    </span>Rx<span class="w"> </span>OK
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>------------<span class="w">  </span>----------------<span class="w">  </span>----------<span class="w">  </span>-------<span class="w">  </span>-------
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>Ethernet0:3<span class="w">                  </span><span class="m">0</span><span class="w">           </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w">        </span><span class="m">0</span>
+</span></code></pre></div>
+<p><code>Storm detected</code> が立ち上がるのは実際に PFC storm が起きたとき。<code>detection-time</code> を 100ms 未満にすると正常 micro-burst を storm と誤検知することがあるため、200ms を出発点に運用負荷を見て調整します。詳細は <a href="../../../reference/cli/config-pfcwd/"><code>config pfcwd</code></a> と <a href="../../../reference/config-db/pfc-wd/"><code>PFC_WD</code></a> を参照。</p>
 <h2 id="qos">QoS テンプレートの再展開<a class="headerlink" href="#qos" title="Permanent link">&para;</a></h2>
-<p>設定を初期テンプレートに戻したいときは <code>config qos reload</code>、map 系をクリアしたいときは <code>config qos clear</code> です。プラットフォーム固有テンプレートが <code>device/&lt;vendor&gt;/&lt;sku&gt;/qos.json.j2</code> にあり、interface speed / cable length / mode を入力にして展開されます。</p>
+<p>設定を初期テンプレートに戻したいときは <code>config qos reload</code>、map 系だけクリアしたいときは <code>config qos clear</code> です。プラットフォーム固有テンプレートは <code>device/&lt;vendor&gt;/&lt;sku&gt;/qos.json.j2</code> にあり、interface speed / cable length / mode を入力にして展開されます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># 全体再展開 (BUFFER_*, QUEUE, SCHEDULER, *_TO_*_MAP 系を含む)</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>config<span class="w"> </span>qos<span class="w"> </span>reload<span class="w"> </span>--no-dynamic-buffer
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># 特定 namespace だけ</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>config<span class="w"> </span>qos<span class="w"> </span>reload<span class="w"> </span>-n<span class="w"> </span>asic0
+</span></code></pre></div>
+<p><code>--no-dynamic-buffer</code> を付けるとテンプレ依存の dynamic buffer calculator (<code>buffermgrd</code>) を起動しません。手で BUFFER 系を細かく調整しているスイッチでは付けておくと、起動時の自動再計算で踏まれるのを防げます。</p>
 <h2 id="yang-gnmi">YANG / gNMI から触る場合<a class="headerlink" href="#yang-gnmi" title="Permanent link">&para;</a></h2>
-<p>OpenConfig には QoS 系もありますが、SONiC の native YANG では上表の sonic-* YANG が一次情報です。gNMI から <code>BUFFER_PROFILE</code> / <code>QUEUE</code> / <code>SCHEDULER</code> を操作するときは map 整合（参照される profile が存在するか）を YANG validation が見ているので、profile 削除前に PG / queue の参照を外す手順を踏みます。</p>
+<p>OpenConfig には QoS 系もありますが、SONiC の native YANG では上表の <code>sonic-*</code> YANG が一次情報です。gNMI から <code>BUFFER_PROFILE</code> / <code>QUEUE</code> / <code>SCHEDULER</code> を操作するときは map 整合（参照される profile が存在するか）を YANG validation が見ているので、profile 削除前に PG / queue の参照を外す手順を踏みます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>gnmi_set<span class="w"> </span>--replace<span class="o">=</span><span class="s1">&#39;/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST[name=q_lossy_profile]:::JSON_IETF:::@/tmp/q_lossy_profile.json&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-insecure
+</span></code></pre></div>
+<h2 id="_1">よくある設定エラーと対処<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>典型的な原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config buffer profile add</code> が <code>pool does not exist</code> で失敗</td>
+<td>テンプレ非展開状態で profile 先に作った</td>
+<td><code>config qos reload</code> で pool を含むテンプレを展開してから profile を上書き</td>
+</tr>
+<tr>
+<td>lossless 設定後に link は up だが PFC pause が流れない</td>
+<td><code>PORT_QOS_MAP.pfc_enable</code> が <code>3</code> を含まない、または <code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> 未設定</td>
+<td><code>redis-cli -n 4 HGETALL 'PORT_QOS_MAP|Ethernet0'</code> と <code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|*</code> を両方確認</td>
+</tr>
+<tr>
+<td><code>show queue counters</code> で全ての queue が UC0 に偏る</td>
+<td><code>DSCP_TO_TC_MAP</code> または <code>TC_TO_QUEUE_MAP</code> が <code>PORT_QOS_MAP</code> から参照されていない</td>
+<td><code>PORT_QOS_MAP|Ethernet0</code> に <code>dscp_to_tc_map</code> / <code>tc_to_queue_map</code> が設定されているか確認</td>
+</tr>
+<tr>
+<td><code>Drop/pkts</code> が増え続ける</td>
+<td>queue size 不足、または scheduler の極端な weight 差</td>
+<td><code>BUFFER_PROFILE.size</code> 増、または DWRR weight を再配分</td>
+</tr>
+<tr>
+<td>再起動後に設定が消える</td>
+<td><code>config save</code> 忘れ、または <code>config qos reload</code> で上書きされた</td>
+<td><code>config save -y</code> を実行、テンプレと衝突する場合は Golden Config 側に反映</td>
+</tr>
+<tr>
+<td>PFCWD が <code>start_default</code> で何も起動しない</td>
+<td>lossless priority 未定義（<code>PORT_QOS_MAP.pfc_enable</code> 空）</td>
+<td>先に PFC 有効化、その後 <code>start_default</code> を再実行</td>
+</tr>
+<tr>
+<td>dynamic buffer 環境で <code>BUFFER_PROFILE.size</code> が無視される</td>
+<td><code>buffermgrd</code> が dynamic mode で再計算</td>
+<td><code>DEVICE_METADATA.localhost.buffer_model</code> を <code>traditional</code> に切替、または <code>--no-dynamic-buffer</code> で reload</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">関連リファレンス<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../reference/cli/config-buffer/"><code>config buffer</code></a>、<a href="../../../reference/cli/config-qos/"><code>config qos</code></a>、<a href="../../../reference/cli/config-pfcwd/"><code>config pfcwd</code></a></li>
+<li>CONFIG_DB: <a href="../../../reference/config-db/buffer-pool/"><code>BUFFER_POOL</code></a> / <a href="../../../reference/config-db/buffer-profile/"><code>BUFFER_PROFILE</code></a> / <a href="../../../reference/config-db/scheduler/"><code>SCHEDULER</code></a> / <a href="../../../reference/config-db/port-qos-map/"><code>PORT_QOS_MAP</code></a></li>
+<li>YANG: <a href="../../../reference/yang/sonic-buffer-pool/">sonic-buffer-pool</a> / <a href="../../../reference/yang/sonic-buffer-profile/">sonic-buffer-profile</a> / <a href="../../../reference/yang/sonic-pfcwd/">sonic-pfcwd</a></li>
+<li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a></li>
+</ul>
 
 
 

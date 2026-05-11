@@ -2603,7 +2603,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-uplink-source-ip-filter-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: 上位 uplink で source IP filter ACL を入れる
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: 上位 uplink で source IP filter ACL を入れる">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI と JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-erspan-mirror-session-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: ERSPAN mirror session を ACL から起動する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-bgp-control-plane-traffic-copp-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: BGP control-plane traffic の CoPP rate を上げる
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-cfggen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-cfggen で投入する場合
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21428,7 +21511,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-uplink-source-ip-filter-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: 上位 uplink で source IP filter ACL を入れる
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: 上位 uplink で source IP filter ACL を入れる">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI と JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-erspan-mirror-session-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: ERSPAN mirror session を ACL から起動する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-bgp-control-plane-traffic-copp-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: BGP control-plane traffic の CoPP rate を上げる
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-cfggen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-cfggen で投入する場合
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21498,10 +21664,231 @@
 <h2 id="copp">CoPP<a class="headerlink" href="#copp" title="Permanent link">&para;</a></h2>
 <p>CoPP は <code>COPP_TRAP</code> が trap ID 群を定義し、<code>COPP_GROUP</code> が CPU queue と policer を定義します。<code>COPP_TRAP.trap_group</code> が <code>COPP_GROUP</code> を参照し、<code>coppmgr</code> が APPL_DB の <code>COPP_TABLE</code> に変換し、<code>CoppOrch</code> が SAI hostif trap / trap group / policer に反映します。</p>
 <p>YANG の正本は <code>sonic-copp</code> で、<code>COPP_GROUP</code> と <code>COPP_TRAP</code> の tree、leaf、leafref を確認できます。mirror session の YANG は <code>sonic-mirror-session</code> で、ERSPAN / SPAN の必須条件や <code>POLICER</code> への leafref を確認できます。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="1-uplink-source-ip-filter-acl">典型シナリオ 1: 上位 uplink で source IP filter ACL を入れる<a class="headerlink" href="#1-uplink-source-ip-filter-acl" title="Permanent link">&para;</a></h2>
+<p>「上位 spine から特定 prefix (10.0.0.0/8) しか受け取らない」というケース。</p>
+<h3 id="cli-json">CLI と JSON<a class="headerlink" href="#cli-json" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. ingress ACL table を作る</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>table<span class="w"> </span>UPLINK_FILTER<span class="w"> </span>L3<span class="w"> </span>-p<span class="w"> </span>PortChannel10,PortChannel20<span class="w"> </span>-s<span class="w"> </span>ingress
+</span></code></pre></div>
+<p>rule JSON (<code>/tmp/uplink_filter.json</code>):</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;UPLINK_FILTER|ALLOW_10_8&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">      </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9999&quot;</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">      </span><span class="nt">&quot;SRC_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.0.0/8&quot;</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">      </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FORWARD&quot;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="nt">&quot;UPLINK_FILTER|DENY_ANY&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">      </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">      </span><span class="nt">&quot;SRC_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.0.0/0&quot;</span><span class="p">,</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">      </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DROP&quot;</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>投入:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>acl-loader<span class="w"> </span>update<span class="w"> </span>incremental<span class="w"> </span>/tmp/uplink_filter.json
+</span></code></pre></div>
+<p>CONFIG_DB の表現:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;UPLINK_FILTER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;L3&quot;</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">      </span><span class="nt">&quot;stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ingress&quot;</span><span class="p">,</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">      </span><span class="nt">&quot;ports@&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PortChannel10,PortChannel20&quot;</span><span class="p">,</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">      </span><span class="nt">&quot;policy_desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uplink prefix filter&quot;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="nt">&quot;UPLINK_FILTER|ALLOW_10_8&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">      </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9999&quot;</span><span class="p">,</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">      </span><span class="nt">&quot;SRC_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.0.0/8&quot;</span><span class="p">,</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">      </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FORWARD&quot;</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">    </span><span class="nt">&quot;UPLINK_FILTER|DENY_ANY&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">      </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">      </span><span class="nt">&quot;SRC_IP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.0.0/0&quot;</span><span class="p">,</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">      </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DROP&quot;</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>ports@</code> の末尾の <code>@</code> は ConfigDB の list 型表記です。CLI 経由なら自動付与されます。</p>
+<h3 id="_2">確認<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>show<span class="w"> </span>acl<span class="w"> </span>table<span class="w"> </span>UPLINK_FILTER
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>show<span class="w"> </span>acl<span class="w"> </span>rule<span class="w"> </span>UPLINK_FILTER
+</span></code></pre></div>
+<p><code>show acl table</code> の典型出力:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Name            Type    Binding             Description           Stage
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>--------------  ------  ------------------  --------------------  -------
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>UPLINK_FILTER   L3      PortChannel10       uplink prefix filter  ingress
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>                        PortChannel20
+</span></code></pre></div>
+<p><code>show acl rule UPLINK_FILTER</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Table          Rule          Priority    Action    Match
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>-------------  ------------  ----------  --------  -------------------
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>UPLINK_FILTER  ALLOW_10_8    9999        FORWARD   SRC_IP: 10.0.0.0/8
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>UPLINK_FILTER  DENY_ANY      1           DROP      SRC_IP: 0.0.0.0/0
+</span></code></pre></div>
+<p><code>show acl rule</code> の counter 列 (<code>Packets</code>/<code>Bytes</code>) は <code>aclshow</code> を使うと数値で見えます。</p>
+<h2 id="2-erspan-mirror-session-acl">典型シナリオ 2: ERSPAN mirror session を ACL から起動する<a class="headerlink" href="#2-erspan-mirror-session-acl" title="Permanent link">&para;</a></h2>
+<p>特定 TCP flag が立った flow だけを collector に飛ばす。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">&quot;MIRROR_SESSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">&quot;investig8&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">      </span><span class="nt">&quot;src_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1.0.1&quot;</span><span class="p">,</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">      </span><span class="nt">&quot;dst_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.99.0.10&quot;</span><span class="p">,</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">      </span><span class="nt">&quot;gre_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0x88be&quot;</span><span class="p">,</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">      </span><span class="nt">&quot;dscp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;8&quot;</span><span class="p">,</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">      </span><span class="nt">&quot;ttl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;64&quot;</span><span class="p">,</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">      </span><span class="nt">&quot;queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">  </span><span class="nt">&quot;ACL_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">    </span><span class="nt">&quot;MIRROR_ACL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MIRROR&quot;</span><span class="p">,</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">      </span><span class="nt">&quot;stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ingress&quot;</span><span class="p">,</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">      </span><span class="nt">&quot;ports@&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet0&quot;</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">  </span><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">    </span><span class="nt">&quot;MIRROR_ACL|TCP_SYN&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">      </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9000&quot;</span><span class="p">,</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">      </span><span class="nt">&quot;IP_PROTOCOL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6&quot;</span><span class="p">,</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">      </span><span class="nt">&quot;TCP_FLAGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0x02/0x02&quot;</span><span class="p">,</span>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">      </span><span class="nt">&quot;MIRROR_INGRESS_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;investig8&quot;</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>show<span class="w"> </span>mirror_session
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>ERSPAN Sessions
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>Name        Status    SRC IP     DST IP       GRE     DSCP    TTL    Queue
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>----------  --------  ---------  -----------  ------  ------  -----  ------
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>investig8   active    10.1.0.1   10.99.0.10   0x88be  8       64     0
+</span></code></pre></div>
+<p><code>Status: error</code> の場合は dst_ip への route 未到達か、underlay reachability の問題。</p>
+<h2 id="3-bgp-control-plane-traffic-copp-rate">典型シナリオ 3: BGP control-plane traffic の CoPP rate を上げる<a class="headerlink" href="#3-bgp-control-plane-traffic-copp-rate" title="Permanent link">&para;</a></h2>
+<p>default の BGP CoPP rate を引き上げて、フラップ復旧時の neighbor 再収束を速くする。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">&quot;COPP_GROUP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="nt">&quot;queue4_group2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">      </span><span class="nt">&quot;queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;4&quot;</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">      </span><span class="nt">&quot;trap_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;trap&quot;</span><span class="p">,</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">      </span><span class="nt">&quot;trap_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;4&quot;</span><span class="p">,</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">      </span><span class="nt">&quot;cbs&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6000&quot;</span><span class="p">,</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">      </span><span class="nt">&quot;cir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6000&quot;</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">  </span><span class="nt">&quot;COPP_TRAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">    </span><span class="nt">&quot;bgp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">      </span><span class="nt">&quot;trap_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bgp,bgpv6&quot;</span><span class="p">,</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">      </span><span class="nt">&quot;trap_group&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;queue4_group2&quot;</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>show<span class="w"> </span>copp<span class="w"> </span>-t<span class="w"> </span>bgp
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>show<span class="w"> </span>copp<span class="w"> </span>config
+</span></code></pre></div>
+<p><code>COPP_TRAP.trap_ids</code> の値は <code>coppmgr</code> が認識する hostif trap 名のリストです (<code>arp,bgp,bgpv6,dhcp,...</code>)。誤った trap 名は無視されるため、<code>docker logs swss</code> で <code>Unknown trap id</code> を確認できます。</p>
+<h2 id="sonic-cfggen">sonic-cfggen で投入する場合<a class="headerlink" href="#sonic-cfggen" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>cat<span class="w"> </span>copp_patch.json<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>--write-to-db
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span></code></pre></div>
+<p><code>acl-loader</code> 経由でない <code>config_db.json</code> 直接書き換えは reboot しないと swss が認識しません。runtime 反映には <code>acl-loader update incremental</code> を使う方が安全です。</p>
+<h2 id="_3">よくある設定エラーと対処<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><code>sonic-utilities/acl_loader/main.py</code> の <code>AclLoaderException</code> から抜粋:</p>
+<table>
+<thead>
+<tr>
+<th>エラーメッセージ</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Table &lt;name&gt; does not exist</code></td>
+<td>rule の table 名が table 未作成</td>
+<td>先に <code>config acl add table</code></td>
+</tr>
+<tr>
+<td><code>Session &lt;name&gt; does not exist</code></td>
+<td>mirror action から未存在 session を参照</td>
+<td>先に MIRROR_SESSION を作成</td>
+</tr>
+<tr>
+<td><code>Invalid input file &lt;path&gt;</code></td>
+<td>JSON の構文 / schema 不正</td>
+<td>jq で構文を確認</td>
+</tr>
+<tr>
+<td><code>Unknown rule action &lt;action&gt; in table &lt;t&gt;, rule &lt;r&gt;</code></td>
+<td>action 名 typo</td>
+<td>reference の action 一覧を確認</td>
+</tr>
+<tr>
+<td><code>Rule action &lt;action&gt; is not supported in table &lt;t&gt;, rule &lt;r&gt;</code></td>
+<td>table type と action 不整合 (例: L3 table に mirror action)</td>
+<td>table type を <code>MIRROR</code> 系に変更</td>
+</tr>
+<tr>
+<td><code>Mirroring session does not exist</code></td>
+<td>mirror action 参照先 不在</td>
+<td>先に session 作成</td>
+</tr>
+<tr>
+<td><code>Invalid mirror stage passed &lt;stage&gt;</code></td>
+<td>stage 値 typo</td>
+<td><code>ingress</code> / <code>egress</code> のいずれか</td>
+</tr>
+<tr>
+<td><code>IP_PROTOCOL=&lt;n&gt; is not TCP, but TCP flags were provided</code></td>
+<td>protocol 不一致</td>
+<td><code>IP_PROTOCOL=6</code> か TCP_FLAGS 削除</td>
+</tr>
+<tr>
+<td><code>IP_PROTOCOL=&lt;n&gt; is not ICMP, but ICMP fields were provided</code></td>
+<td>protocol 不一致</td>
+<td><code>IP_PROTOCOL=1</code> か ICMP field 削除</td>
+</tr>
+<tr>
+<td><code>IP_PROTOCOL=&lt;n&gt; is not ICMPV6, but ICMPV6 fields were provided</code></td>
+<td>protocol 不一致</td>
+<td><code>IP_PROTOCOL=58</code> か ICMPV6 field 削除</td>
+</tr>
+<tr>
+<td><code>VLAN ID &lt;n&gt; is out of bounds (0, 4096)</code></td>
+<td>match の VLAN_ID 範囲外</td>
+<td>1〜4094 に修正</td>
+</tr>
+<tr>
+<td><code>ICMP type/code &lt;n&gt; is out of bounds [0, 255]</code></td>
+<td>match の ICMP 値範囲外</td>
+<td>0〜255 に修正</td>
+</tr>
+<tr>
+<td><code>l2:ethertype must be provided for rule in table type L3V4V6</code></td>
+<td>dual family table で ethertype 必須</td>
+<td><code>ETHER_TYPE</code> を追加</td>
+</tr>
+<tr>
+<td><code>ethertype=&lt;n&gt; is neither ETHERTYPE_IPV4 nor ETHERTYPE_IPV6 for IP rule</code></td>
+<td>ethertype 値が IPv4/IPv6 外</td>
+<td><code>0x0800</code> または <code>0x86dd</code> を指定</td>
+</tr>
+</tbody>
+</table>
+<p>action / match 制約は ASIC capability に依存する部分があるため、SAI レイヤで弾かれた場合は <code>swss</code> syslog に <code>SAI_STATUS_NOT_SUPPORTED</code> が出ます。</p>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/config-acl/">config acl サブコマンド</a></li>
 <li><a href="../../../reference/cli/show-acl/">show acl サブコマンド</a></li>
+<li><a href="../../../reference/cli/config-mirror-session/">config mirror_session サブコマンド</a></li>
 <li><a href="../../../reference/config-db/acl-table/">ACL_TABLE テーブル</a></li>
 <li><a href="../../../reference/config-db/acl-rule/">ACL_RULE テーブル</a></li>
 <li><a href="../../../reference/config-db/policer/">POLICER テーブル</a></li>

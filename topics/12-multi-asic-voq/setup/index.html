@@ -3853,10 +3853,65 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-2-asic-pizza-box-single-json-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 1: 2 ASIC pizza-box の single JSON config を書く
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-voq-chassis-line-card-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 2: VOQ chassis line card の onboarding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-1-asic-fixed-voq-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 3: 1 ASIC fixed VOQ system
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asic-namespace-config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC namespace と CONFIG_DB の見取り図 (改めて)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21472,10 +21527,65 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-2-asic-pizza-box-single-json-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 1: 2 ASIC pizza-box の single JSON config を書く
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-voq-chassis-line-card-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 2: VOQ chassis line card の onboarding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-1-asic-fixed-voq-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 3: 1 ASIC fixed VOQ system
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asic-namespace-config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC namespace と CONFIG_DB の見取り図 (改めて)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21543,12 +21653,188 @@
 <li>VOQ counter、scheduler 設定は通常の pizza-box と異なる counter naming を持つ。</li>
 </ul>
 <p>通常運用では pizza-box と同じ感覚で扱えますが、CLI の <code>show queue</code> 系で system port 由来の出力が混じる点だけ注意します。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="1-2-asic-pizza-box-single-json-config">シナリオ 1: 2 ASIC pizza-box の single JSON config を書く<a class="headerlink" href="#1-2-asic-pizza-box-single-json-config" title="Permanent link">&para;</a></h2>
+<p><code>asic.conf</code> で <code>NUM_ASIC=2</code> の box を例に、Golden Config を 1 ファイルで作って <code>config load</code> する流れ。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># asic.conf の確認 (platform 由来、これは触らない)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span>cat<span class="w"> </span>/usr/share/sonic/device/x86_64-vendor_box-r0/asic.conf
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nv">NUM_ASIC</span><span class="o">=</span><span class="m">2</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nv">NUM_FABRIC_ASIC</span><span class="o">=</span><span class="m">0</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Golden Config (single JSON 形式)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span><span class="s">&lt;&lt;&#39;JSON&#39;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s">{</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="s">  &quot;localhost&quot;: {</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="s">    &quot;DEVICE_METADATA&quot;: {&quot;localhost&quot;: {&quot;hostname&quot;:&quot;sonic-2asic-01&quot;,&quot;platform&quot;:&quot;x86_64-vendor_box-r0&quot;,&quot;mac&quot;:&quot;00:11:22:33:44:55&quot;}},</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="s">    &quot;MGMT_INTERFACE&quot;: {&quot;eth0|10.0.0.10/24&quot;: {&quot;gwaddr&quot;:&quot;10.0.0.1&quot;}}</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="s">  },</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="s">  &quot;asic0&quot;: {</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="s">    &quot;DEVICE_METADATA&quot;: {&quot;localhost&quot;: {&quot;hostname&quot;:&quot;sonic-2asic-01-asic0&quot;,&quot;sub_role&quot;:&quot;FrontEnd&quot;,&quot;switch_type&quot;:&quot;npu&quot;}},</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="s">    &quot;PORT&quot;:  {&quot;Ethernet0&quot;: {&quot;admin_status&quot;:&quot;up&quot;,&quot;speed&quot;:&quot;100000&quot;,&quot;lanes&quot;:&quot;0,1,2,3&quot;}},</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="s">    &quot;BGP_NEIGHBOR&quot;: {&quot;10.1.0.1&quot;: {&quot;asn&quot;:65001,&quot;local_addr&quot;:&quot;10.1.0.0&quot;}}</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="s">  },</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="s">  &quot;asic1&quot;: {</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="s">    &quot;DEVICE_METADATA&quot;: {&quot;localhost&quot;: {&quot;hostname&quot;:&quot;sonic-2asic-01-asic1&quot;,&quot;sub_role&quot;:&quot;FrontEnd&quot;,&quot;switch_type&quot;:&quot;npu&quot;}},</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="s">    &quot;PORT&quot;:  {&quot;Ethernet32&quot;: {&quot;admin_status&quot;:&quot;up&quot;,&quot;speed&quot;:&quot;100000&quot;,&quot;lanes&quot;:&quot;32,33,34,35&quot;}},</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="s">    &quot;BGP_NEIGHBOR&quot;: {&quot;10.2.0.1&quot;: {&quot;asn&quot;:65002,&quot;local_addr&quot;:&quot;10.2.0.0&quot;}}</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="s">  }</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="s">}</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="s">JSON</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="c1"># 適用 (各 namespace に分配される)</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>config<span class="w"> </span>load<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>-y
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$<span class="w"> </span>show<span class="w"> </span>platform<span class="w"> </span>summary
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Platform:<span class="w"> </span>x86_64-vendor_box-r0
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>HwSKU:<span class="w">    </span>Vendor-2ASIC-100G
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>ASIC:<span class="w">     </span>vendor
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>ASIC<span class="w"> </span>Count:<span class="w"> </span><span class="m">2</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>$<span class="w"> </span>ip<span class="w"> </span>netns<span class="w"> </span>list
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>asic1<span class="w"> </span><span class="o">(</span>id:<span class="w"> </span><span class="m">1</span><span class="o">)</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>asic0<span class="w"> </span><span class="o">(</span>id:<span class="w"> </span><span class="m">0</span><span class="o">)</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>$<span class="w"> </span>sudo<span class="w"> </span>ip<span class="w"> </span>netns<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>asic0<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;PORT|*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>PORT<span class="p">|</span>Ethernet0
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>PORT<span class="p">|</span>Ethernet4
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>...
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>$<span class="w"> </span>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w"> </span>-n<span class="w"> </span>asic0<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-5
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">  </span>Interface<span class="w">    </span>Lanes<span class="w">    </span>Speed<span class="w">    </span>MTU<span class="w">    </span>FEC<span class="w">    </span>Alias<span class="w">    </span>Vlan<span class="w">    </span>Oper<span class="w">    </span>Admin<span class="w">    </span>Type<span class="w">    </span>Asym<span class="w"> </span>PFC
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>-----------<span class="w">  </span>-------<span class="w">  </span>-------<span class="w">  </span>-----<span class="w">  </span>-----<span class="w">  </span>--------<span class="w">  </span>------<span class="w">  </span>------<span class="w">  </span>-------<span class="w">  </span>------<span class="w">  </span>---------
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">  </span>Ethernet0<span class="w">   </span><span class="m">0</span>,1,2,3<span class="w">  </span>100G<span class="w">    </span><span class="m">9100</span><span class="w">   </span>rs<span class="w">     </span>eth0/1<span class="w">    </span>routed<span class="w">  </span>up<span class="w">      </span>up<span class="w">       </span>QSFP28<span class="w">  </span>off
+</span></code></pre></div>
+<p>CLI で host / namespace を呼び分けるときは <code>-n asic0</code> を付けます。付けないと host namespace が暗黙の対象です。</p>
+<h2 id="2-voq-chassis-line-card-onboarding">シナリオ 2: VOQ chassis line card の onboarding<a class="headerlink" href="#2-voq-chassis-line-card-onboarding" title="Permanent link">&para;</a></h2>
+<p>supervisor + 複数 line card 構成で、新しい line card を slot1 に挿入したときの自動構成。Chassis DB は supervisor 上に存在し、line card は inband 経由で読みに行きます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># supervisor 側: Chassis DB が稼働しているか</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>database-chassis
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>abc1...<span class="w">   </span>docker-database:latest<span class="w">   </span>...<span class="w">   </span>Up<span class="w"> </span><span class="m">2</span><span class="w"> </span>days<span class="w">    </span>database-chassis
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># supervisor 側: chassis 全体の view</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>$<span class="w"> </span>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span>Name<span class="w">          </span>Description<span class="w">    </span>Physical-Slot<span class="w">    </span>Oper-Status<span class="w">    </span>Admin-Status
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>------------<span class="w">  </span>-----------------<span class="w"> </span>----------------<span class="w">  </span>-------------<span class="w">  </span>--------------
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">   </span>SUPERVISOR0<span class="w">   </span>Supervisor<span class="w"> </span>card<span class="w">               </span><span class="m">17</span><span class="w">        </span>Online<span class="w">         </span>up
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">   </span>LINE-CARD0<span class="w">    </span>100G<span class="w"> </span>line<span class="w"> </span>card<span class="w">                 </span><span class="m">1</span><span class="w">        </span>Online<span class="w">         </span>up
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">   </span>LINE-CARD1<span class="w">    </span>100G<span class="w"> </span>line<span class="w"> </span>card<span class="w">                 </span><span class="m">2</span><span class="w">        </span>Empty<span class="w">          </span>up
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1"># line card 側: 自分の sub_role / hwsku を Chassis DB から読んだか</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="o">[</span>lc1<span class="o">]</span><span class="w"> </span>$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;sub_role|chassis_hostname|switch_type&#39;</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>sub_role<span class="w">         </span>LineCard
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>chassis_hostname<span class="w"> </span>sonic-chassis-01
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>switch_type<span class="w">      </span>voq
+</span></code></pre></div>
+<p>CONFIG_DB の <code>CHASSIS_MODULE</code> table で個別に admin shutdown も可能:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>shutdown<span class="w"> </span>LINE-CARD1
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># CONFIG_DB:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># &quot;CHASSIS_MODULE&quot;: {&quot;LINE-CARD1&quot;: {&quot;admin_status&quot;:&quot;down&quot;}}</span>
+</span></code></pre></div>
+<h2 id="3-1-asic-fixed-voq-system">シナリオ 3: 1 ASIC fixed VOQ system<a class="headerlink" href="#3-1-asic-fixed-voq-system" title="Permanent link">&para;</a></h2>
+<p>1 ASIC pizza-box ながら VOQ architecture を使う box の最小設定差分。<code>switch_type = voq</code> を付けるのが核心で、他は通常の pizza-box と同じ。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># DEVICE_METADATA に VOQ 印</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>switch_type<span class="w"> </span>voq<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>switch_id<span class="w">   </span><span class="m">0</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>max_cores<span class="w">   </span><span class="m">1</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># system port table を自前で持つ</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/tmp/system_port.json<span class="w"> </span><span class="s">&lt;&lt;&#39;JSON&#39;</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="s">{</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="s">  &quot;SYSTEM_PORT&quot;: {</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="s">    &quot;sonic-fixed-voq-01|Ethernet0&quot;:   {&quot;system_port_id&quot;:&quot;1&quot;,&quot;switch_id&quot;:&quot;0&quot;,&quot;core_index&quot;:&quot;0&quot;,&quot;core_port_index&quot;:&quot;0&quot;,&quot;speed&quot;:&quot;100000&quot;},</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="s">    &quot;sonic-fixed-voq-01|Ethernet4&quot;:   {&quot;system_port_id&quot;:&quot;2&quot;,&quot;switch_id&quot;:&quot;0&quot;,&quot;core_index&quot;:&quot;0&quot;,&quot;core_port_index&quot;:&quot;1&quot;,&quot;speed&quot;:&quot;100000&quot;}</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="s">  }</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="s">}</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="s">JSON</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>sonic-cfggen<span class="w"> </span>-j<span class="w"> </span>/tmp/system_port.json<span class="w"> </span>--write-to-db
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGET<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span><span class="w"> </span>switch_type
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>voq
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>$<span class="w"> </span>show<span class="w"> </span>system-port
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">                       </span>System<span class="w"> </span>Port<span class="w"> </span>Name<span class="w">    </span>Port<span class="w"> </span>Id<span class="w">    </span>Switch<span class="w"> </span>Id<span class="w">    </span>Core<span class="w">    </span>Core<span class="w"> </span>Port<span class="w">    </span>Speed
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>---------------------------------------<span class="w">  </span>---------<span class="w">  </span>-----------<span class="w">  </span>------<span class="w">  </span>-----------<span class="w">  </span>-------
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>sonic-fixed-voq-01<span class="p">|</span>Ethernet0<span class="w">                     </span><span class="m">1</span><span class="w">            </span><span class="m">0</span><span class="w">       </span><span class="m">0</span><span class="w">            </span><span class="m">0</span><span class="w">    </span>100G
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>sonic-fixed-voq-01<span class="p">|</span>Ethernet4<span class="w">                     </span><span class="m">2</span><span class="w">            </span><span class="m">0</span><span class="w">       </span><span class="m">0</span><span class="w">            </span><span class="m">1</span><span class="w">    </span>100G
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>$<span class="w"> </span>show<span class="w"> </span>queue<span class="w"> </span>counters<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;system|MC&#39;</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>sonic-fixed-voq-01<span class="p">|</span>Ethernet0<span class="w">  </span>MC0<span class="w">   </span>...
+</span></code></pre></div>
+<p>通常の <code>show queue</code> 出力に system port 由来の queue が混じる点だけ意識します。</p>
+<h2 id="asic-namespace-config_db_1">ASIC namespace と CONFIG_DB の見取り図 (改めて)<a class="headerlink" href="#asic-namespace-config_db_1" title="Permanent link">&para;</a></h2>
+<p>CLI / DB アクセスの分担を改めて図にする。</p>
+<pre class="mermaid"><code>flowchart LR
+  C[config CLI] -- "--namespace asic0" --&gt; A0
+  C -- "no flag" --&gt; H
+  H[(host CONFIG_DB&lt;br&gt;DEVICE_METADATA / MGMT_INTERFACE / SNMP)]
+  A0[(asic0 CONFIG_DB&lt;br&gt;PORT / VLAN / BGP_NEIGHBOR)]
+  A1[(asic1 CONFIG_DB&lt;br&gt;PORT / VLAN / BGP_NEIGHBOR)]
+  CH[(Chassis DB&lt;br&gt;SYSTEM_PORT / SYSTEM_NEIGH&lt;br&gt;supervisor 上)]
+  A0 -.inband.-&gt; CH
+  A1 -.inband.-&gt; CH</code></pre>
+<h2 id="_2">よくある設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>典型的な原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config load</code> で <code>KeyError: 'asic0'</code></td>
+<td>single JSON のトップキーが <code>localhost</code>/<code>asic0</code>/... になっていない</td>
+<td><code>localhost</code> キーを必ず含める、ASIC は 0-indexed</td>
+</tr>
+<tr>
+<td><code>config -n asic0</code> で <code>unknown namespace</code></td>
+<td><code>asic.conf</code> の <code>NUM_ASIC</code> が実機より小さい</td>
+<td><code>/usr/share/sonic/device/&lt;platform&gt;/asic.conf</code> を platform に合致させる (基本変更不可)</td>
+</tr>
+<tr>
+<td>全 ASIC namespace の <code>show</code> が同じ port を表示</td>
+<td>host namespace で <code>show interface</code> を叩いた</td>
+<td><code>show interface -n asic0</code> のように namespace 明示</td>
+</tr>
+<tr>
+<td>line card が Chassis DB に登録されない</td>
+<td>inband interface 未到達、supervisor 側の <code>INTER_ASIC_VLAN</code> 未設定</td>
+<td>supervisor ⇔ line card 間の inband 疎通 (ping)、<code>PORT_NAME_MAP</code> 確認</td>
+</tr>
+<tr>
+<td>VOQ chassis で system port が増えない</td>
+<td><code>switch_type=voq</code> を <code>DEVICE_METADATA</code> に書き忘れ</td>
+<td><code>redis-cli -n 4 HSET 'DEVICE_METADATA|localhost' switch_type voq</code> を全 namespace</td>
+</tr>
+<tr>
+<td>line card 起動後に <code>sub_role</code> が未設定</td>
+<td>Chassis DB との sync 前に CONFIG_DB を save した</td>
+<td><code>config save</code> 前に <code>show chassis modules status</code> で Online を確認</td>
+</tr>
+<tr>
+<td>BGP neighbor が片方の ASIC でしか上がらない</td>
+<td>single JSON の asic0/asic1 で <code>local_addr</code> が分かれていない</td>
+<td>各 ASIC の正しい local IP を namespace 別に持たせる</td>
+</tr>
+<tr>
+<td>Golden Config を更新したのに line card 側に反映されない</td>
+<td>line card は Chassis DB 由来の data を優先</td>
+<td>supervisor の Golden Config を更新し、<code>config reload</code> を line card 側でも実行</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/multi-asic-single-json-configuration-design/">Multi-ASIC Single JSON Configuration</a></li>
 <li><a href="../../../platform/db-design-for-multi-asic-scenarios/">DB Design for Multi-ASIC Scenarios</a></li>
 <li><a href="../../../platform/automatic-module-provisioning-for-chassis/">Automatic Module Provisioning for Chassis</a></li>
 <li><a href="../../../platform/single-asic-voq-fixed-system-sonic/">Single-ASIC VOQ Fixed System</a></li>
+<li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a> / <a href="../advanced/">advanced</a></li>
 </ul>
 
 

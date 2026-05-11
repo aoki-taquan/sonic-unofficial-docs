@@ -3292,6 +3292,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#1-gnmi-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 1: gNMI server 立ち上げ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-openconfig-path-interface-get-set-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 2: OpenConfig path で interface を Get / Set / Subscribe する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-sonic-native-yang-bgp-neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 3: SONiC native YANG で BGP neighbor を作る
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#get-set-subscribe" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3386,10 +3419,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db-telemetry-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / TELEMETRY 関連 table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21412,6 +21467,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#1-gnmi-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 1: gNMI server 立ち上げ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-openconfig-path-interface-get-set-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 2: OpenConfig path で interface を Get / Set / Subscribe する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-sonic-native-yang-bgp-neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        シナリオ 3: SONiC native YANG で BGP neighbor を作る
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#get-set-subscribe" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21506,10 +21594,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#config_db-telemetry-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / TELEMETRY 関連 table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
       
     </span>
   </a>
@@ -21543,6 +21653,98 @@
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>gNMI からの Get / Set / Subscribe は、対象の YANG path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。ここでは代表機能 (interface, VLAN, PortChannel, BGP) について OpenConfig 側のマップを起点にする。実コマンド例と容量は <a href="../../../management/gnmi-usage/">gNMI usage</a> にまとまっている。</p>
+<h2 id="1-gnmi-server">シナリオ 1: gNMI server 立ち上げ<a class="headerlink" href="#1-gnmi-server" title="Permanent link">&para;</a></h2>
+<p>DUT 側 (telemetry container) の起動と、client 側からの疎通確認まで。証明書は <code>/etc/sonic/telemetry/</code> 配下に置く。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># DUT 側</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>telemetry
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>telemetry
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;TELEMETRY|gnmi&#39;</span><span class="w"> </span>port<span class="w"> </span><span class="m">50051</span><span class="w"> </span>client_auth<span class="w"> </span><span class="nb">true</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;TELEMETRY|certs&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span>server_crt<span class="w"> </span>/etc/sonic/telemetry/dut.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span>server_key<span class="w"> </span>/etc/sonic/telemetry/dut.key<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span>ca_crt<span class="w">     </span>/etc/sonic/telemetry/ca.crt
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># client 側 (gNMI tools)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>gnmi_capabilities<span class="w"> </span>-target_addr<span class="w"> </span>dut.example.com:50051<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt
+</span></code></pre></div>
+<p>期待出力（一部）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>supported_models: &lt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  name: &quot;openconfig-interfaces&quot;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  organization: &quot;OpenConfig working group&quot;
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  version: &quot;2.5.0&quot;
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>&gt;
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>supported_encodings: JSON_IETF
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>supported_encodings: PROTO
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>gNMI_version: &quot;0.7.0&quot;
+</span></code></pre></div>
+<p>設定後の確認。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>ss<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">50051</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>LISTEN<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">128</span><span class="w"> </span>*:50051<span class="w"> </span>*:*<span class="w"> </span>users:<span class="o">((</span><span class="s2">&quot;telemetry&quot;</span>,pid<span class="o">=</span><span class="m">12345</span>,fd<span class="o">=</span><span class="m">7</span><span class="o">))</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>telemetry<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-3
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>INFO<span class="o">[</span><span class="m">2026</span>-05-11T03:14:21Z<span class="o">]</span><span class="w"> </span>Starting<span class="w"> </span>gNMI<span class="w"> </span>server<span class="w"> </span>on<span class="w"> </span>:50051
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>INFO<span class="o">[</span><span class="m">2026</span>-05-11T03:14:21Z<span class="o">]</span><span class="w"> </span>Loaded<span class="w"> </span>server<span class="w"> </span>cert<span class="w"> </span>from<span class="w"> </span>/etc/sonic/telemetry/dut.crt
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>INFO<span class="o">[</span><span class="m">2026</span>-05-11T03:14:21Z<span class="o">]</span><span class="w"> </span>Loaded<span class="w"> </span>CA<span class="w"> </span>cert<span class="w"> </span>from<span class="w"> </span>/etc/sonic/telemetry/ca.crt
+</span></code></pre></div>
+<h2 id="2-openconfig-path-interface-get-set-subscribe">シナリオ 2: OpenConfig path で interface を Get / Set / Subscribe する<a class="headerlink" href="#2-openconfig-path-interface-get-set-subscribe" title="Permanent link">&para;</a></h2>
+<p><code>Ethernet0</code> の MTU / admin-status を OpenConfig path 経由で読み書きする例。SONiC では <code>Ethernet0</code> のような物理ポート命名がそのまま name キーとして使われる。</p>
+<p>Get:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gnmi_get<span class="w"> </span>-target_addr<span class="w"> </span>dut:50051<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-xpath<span class="w"> </span><span class="s1">&#39;/interfaces/interface[name=Ethernet0]/state&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-encoding<span class="w"> </span>JSON_IETF
+</span></code></pre></div>
+<p>出力（抜粋）。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;openconfig-interfaces:state&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet0&quot;</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&quot;mtu&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9100</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="nt">&quot;admin-status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UP&quot;</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="nt">&quot;oper-status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UP&quot;</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="nt">&quot;ifindex&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Set (MTU 変更、replace モード):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gnmi_set<span class="w"> </span>-target_addr<span class="w"> </span>dut:50051<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>-replace<span class="w"> </span><span class="s1">&#39;/interfaces/interface[name=Ethernet0]/config/mtu:::JSON_IETF:::9216&#39;</span>
+</span></code></pre></div>
+<p>Subscribe (ON_CHANGE で oper-status):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>gnmi_cli<span class="w"> </span>-address<span class="w"> </span>dut:50051<span class="w"> </span>-tls<span class="w"> </span>-client_crt<span class="w"> </span>client.crt<span class="w"> </span>-client_key<span class="w"> </span>client.key<span class="w"> </span>-ca_crt<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>-query_type<span class="w"> </span>s<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>-query<span class="w"> </span><span class="s1">&#39;interfaces/interface[name=Ethernet0]/state/oper-status&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>-streaming_type<span class="w"> </span>ON_CHANGE
+</span></code></pre></div>
+<h2 id="3-sonic-native-yang-bgp-neighbor">シナリオ 3: SONiC native YANG で BGP neighbor を作る<a class="headerlink" href="#3-sonic-native-yang-bgp-neighbor" title="Permanent link">&para;</a></h2>
+<p>OpenConfig がカバーしない、または運用上 native のほうが薄く済む典型例として BGP neighbor 作成。<code>sonic-bgp-neighbor</code> を使う。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/tmp/bgp_nbr.json<span class="w"> </span><span class="s">&lt;&lt;&#39;JSON&#39;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="s">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="s">  &quot;sonic-bgp-neighbor:BGP_NEIGHBOR&quot;: {</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="s">    &quot;BGP_NEIGHBOR_LIST&quot;: [</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="s">      {</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="s">        &quot;neighbor&quot;: &quot;10.0.0.1&quot;,</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="s">        &quot;asn&quot;: 65001,</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="s">        &quot;local_addr&quot;: &quot;10.0.0.0&quot;,</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="s">        &quot;admin_status&quot;: &quot;up&quot;,</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="s">        &quot;name&quot;: &quot;spine-01&quot;</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="s">      }</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="s">    ]</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="s">  }</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="s">}</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="s">JSON</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>gnmi_set<span class="w"> </span>-target_addr<span class="w"> </span>dut:50051<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">  </span>-update<span class="w"> </span><span class="s1">&#39;/sonic-bgp-neighbor:sonic-bgp-neighbor/BGP_NEIGHBOR:::JSON_IETF:::@/tmp/bgp_nbr.json&#39;</span>
+</span></code></pre></div>
+<p>確認 (DUT 側)。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;BGP_NEIGHBOR|*&#39;</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;BGP_NEIGHBOR|10.0.0.1&quot;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>$<span class="w"> </span>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>Neighbor<span class="w">        </span>V<span class="w">    </span>AS<span class="w">    </span>MsgRcvd<span class="w">    </span>MsgSent<span class="w">   </span>TblVer<span class="w">  </span>InQ<span class="w"> </span>OutQ<span class="w">  </span>Up/Down<span class="w"> </span>State/PfxRcd
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="m">10</span>.0.0.1<span class="w">        </span><span class="m">4</span><span class="w"> </span><span class="m">65001</span><span class="w">         </span><span class="m">12</span><span class="w">         </span><span class="m">12</span><span class="w">        </span><span class="m">0</span><span class="w">    </span><span class="m">0</span><span class="w">    </span><span class="m">0</span><span class="w"> </span><span class="m">00</span>:00:42<span class="w">            </span><span class="m">5</span>
+</span></code></pre></div>
 <h2 id="get-set-subscribe">Get / Set / Subscribe の典型<a class="headerlink" href="#get-set-subscribe" title="Permanent link">&para;</a></h2>
 <p>gNMI の主要 RPC を SONiC 観点で短く整理する。</p>
 <ul>
@@ -21565,7 +21767,66 @@
 <p>機能章別の YANG モジュール一覧は <a href="../yang-reference/">YANG リファレンス</a> を参照する。</p>
 <h2 id="cli-gnmi">CLI と gNMI の混在<a class="headerlink" href="#cli-gnmi" title="Permanent link">&para;</a></h2>
 <p>CLI と gNMI を併用する運用では、同じノードを CLI で書いて gNMI で読むケースが多い。CLI が YANG から自動生成される機能領域では、両者の表現が一致するため <code>gnmi_get</code> の結果と <code>show</code> 出力を相互参照できる。自動生成範囲外の機能では、CLI が CONFIG_DB を直接更新するケースもあり、その場合 gNMI subscribe で「設定変更があった」と通知される。自動生成の仕組みは <a href="../../../management/sonic-cli-auto-generation-tool/">CLI auto-generation tool</a> を参照する。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="config_db-telemetry-table">CONFIG_DB / TELEMETRY 関連 table<a class="headerlink" href="#config_db-telemetry-table" title="Permanent link">&para;</a></h2>
+<p>gNMI server の起動制御に使う table。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;TELEMETRY&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;gnmi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="s2">&quot;50051&quot;</span><span class="p">,</span><span class="nt">&quot;client_auth&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="nt">&quot;log_level&quot;</span><span class="p">:</span><span class="s2">&quot;2&quot;</span><span class="p">},</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">&quot;certs&quot;</span><span class="p">:{</span><span class="nt">&quot;server_crt&quot;</span><span class="p">:</span><span class="s2">&quot;/etc/sonic/telemetry/dut.crt&quot;</span><span class="p">,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">             </span><span class="nt">&quot;server_key&quot;</span><span class="p">:</span><span class="s2">&quot;/etc/sonic/telemetry/dut.key&quot;</span><span class="p">,</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">             </span><span class="nt">&quot;ca_crt&quot;</span><span class="p">:</span><span class="s2">&quot;/etc/sonic/telemetry/ca.crt&quot;</span><span class="p">}</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>client_auth=true</code> で mTLS、<code>false</code> で server 認証のみ。<code>log_level</code> は 0–9 で大きいほど詳細。</p>
+<h2 id="_2">よくある設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>典型的な原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gnmi_capabilities</code> が <code>transport: authentication handshake failed</code></td>
+<td>DUT cert の SAN/CN が接続 FQDN と不一致</td>
+<td><code>openssl x509 -in dut.crt -text -noout</code> で SAN を確認、cert 再発行</td>
+</tr>
+<tr>
+<td><code>client_auth=true</code> で <code>peer certificate not provided</code></td>
+<td>client 側に <code>-cert/-key</code> を渡していない</td>
+<td>client 側に DUT が信頼する CA 由来の cert/key を渡す</td>
+</tr>
+<tr>
+<td><code>Set</code> が <code>unknown path</code> で拒否される</td>
+<td>OpenConfig path のうち SONiC 未対応の field</td>
+<td>SONiC native YANG (<code>sonic-*</code>) に切り替えるか、CLI 経由で設定</td>
+</tr>
+<tr>
+<td><code>Subscribe ON_CHANGE</code> が初回 sync 後に止まる</td>
+<td>対象 path が STATE_DB/COUNTERS_DB ではなく CONFIG_DB のみ</td>
+<td><code>SAMPLE</code> に切替、または STATE_DB 側の sibling path に変更</td>
+</tr>
+<tr>
+<td><code>Set replace</code> で意図しないノードまで消える</td>
+<td>replace の意味論 (部分木全置換)</td>
+<td>親 path を狭くする、または <code>update</code> を使う</td>
+</tr>
+<tr>
+<td>FRR の BGP 設定が gNMI から反映されない</td>
+<td><code>frr_mgmt_framework_config</code> が無効</td>
+<td><code>redis-cli -n 4 HSET 'DEVICE_METADATA|localhost' frr_mgmt_framework_config true</code></td>
+</tr>
+<tr>
+<td>gNMI server が起動しない (port LISTEN なし)</td>
+<td>cert / key の permission または path 誤り</td>
+<td><code>docker logs telemetry</code> で読込エラーを確認、<code>chmod 600 dut.key</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../management/gnmi-usage/">gNMI usage</a></li>
 <li><a href="../../../management/model-based-replace-delete-in-mgmt-framework-transformer/">Model-based replace/delete in Transformer</a></li>
@@ -21575,6 +21836,7 @@
 <li><a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">BGP / FRR Unified Mgmt Framework</a></li>
 <li><a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG model guidelines</a></li>
 <li><a href="../../../management/sonic-cli-auto-generation-tool/">SONiC CLI auto-generation tool</a></li>
+<li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a> / <a href="../yang-reference/">yang-reference</a></li>
 </ul>
 
 

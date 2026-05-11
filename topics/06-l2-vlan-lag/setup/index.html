@@ -2395,7 +2395,101 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-access-port-vlan-100-untagged" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: サーバ access port (VLAN 100 untagged)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: サーバ access port (VLAN 100 untagged)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-lacp-lag-trunk-switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: LACP LAG を作って trunk として上位 switch に上げる
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-vlan-interface-ip-svi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: VLAN interface に IP を付けて SVI として使う
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-cfggen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-cfggen で部分パッチを当てる
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21472,7 +21566,101 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-access-port-vlan-100-untagged" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 1: サーバ access port (VLAN 100 untagged)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型シナリオ 1: サーバ access port (VLAN 100 untagged)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-lacp-lag-trunk-switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 2: LACP LAG を作って trunk として上位 switch に上げる
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-vlan-interface-ip-svi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シナリオ 3: VLAN interface に IP を付けて SVI として使う
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic-cfggen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-cfggen で部分パッチを当てる
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21565,13 +21753,206 @@
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>config<span class="w"> </span>interface<span class="w"> </span>tpid<span class="w"> </span>PortChannel0002<span class="w"> </span>0x9200
 </span></code></pre></div>
 <p>TPID は Q-in-Q 全体を提供する機能ではなく、「どの TPID を VLAN tag として認識するか」を設定する機能として扱います。</p>
-<h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="1-access-port-vlan-100-untagged">典型シナリオ 1: サーバ access port (VLAN 100 untagged)<a class="headerlink" href="#1-access-port-vlan-100-untagged" title="Permanent link">&para;</a></h2>
+<p>最も基本的な構成。</p>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span><span class="m">100</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>Ethernet0<span class="w"> </span>-u
+</span></code></pre></div>
+<h3 id="config_db-json">CONFIG_DB JSON<a class="headerlink" href="#config_db-json" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;VLAN&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;Vlan100&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="nt">&quot;vlanid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100&quot;</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="nt">&quot;VLAN_MEMBER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="nt">&quot;Vlan100|Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">      </span><span class="nt">&quot;tagging_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;untagged&quot;</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_1">確認<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>+-----------+-----------------+-----------------+----------------+-------------+
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>|   VLAN ID | IP Address      | Ports           | Port Tagging   | Proxy ARP   |
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>+===========+=================+=================+================+=============+
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>|       100 |                 | Ethernet0       | untagged       | disabled    |
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>+-----------+-----------------+-----------------+----------------+-------------+
+</span></code></pre></div>
+<h2 id="2-lacp-lag-trunk-switch">典型シナリオ 2: LACP LAG を作って trunk として上位 switch に上げる<a class="headerlink" href="#2-lacp-lag-trunk-switch" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>portchannel<span class="w"> </span>add<span class="w"> </span>PortChannel10<span class="w"> </span>--min-links<span class="w"> </span><span class="m">1</span><span class="w"> </span>--fallback<span class="w"> </span><span class="nb">false</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>portchannel<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span>PortChannel10<span class="w"> </span>Ethernet0
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>portchannel<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span>PortChannel10<span class="w"> </span>Ethernet4
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>PortChannel10
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">200</span><span class="w"> </span>PortChannel10
+</span></code></pre></div>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">&quot;PORTCHANNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="nt">&quot;PortChannel10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">      </span><span class="nt">&quot;admin_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">      </span><span class="nt">&quot;mtu&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9100&quot;</span><span class="p">,</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">      </span><span class="nt">&quot;min_links&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">      </span><span class="nt">&quot;fallback&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="p">,</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">      </span><span class="nt">&quot;lacp_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">  </span><span class="nt">&quot;PORTCHANNEL_MEMBER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">    </span><span class="nt">&quot;PortChannel10|Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;NULL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NULL&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">    </span><span class="nt">&quot;PortChannel10|Ethernet4&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;NULL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NULL&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">  </span><span class="nt">&quot;VLAN_MEMBER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">    </span><span class="nt">&quot;Vlan100|PortChannel10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;tagging_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tagged&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="w">    </span><span class="nt">&quot;Vlan200|PortChannel10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;tagging_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tagged&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-13-19"><a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>  No.  Team Dev         Protocol     Ports
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>-----  ---------------  -----------  ---------------------------
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>   10  PortChannel10    LACP(A)(Up)  Ethernet4(S) Ethernet0(S)
+</span></code></pre></div>
+<p><code>(S)</code> selected、<code>(D)</code> deselected。<code>Up</code> 状態でないと VLAN member であっても traffic は流れません。</p>
+<h2 id="3-vlan-interface-ip-svi">典型シナリオ 3: VLAN interface に IP を付けて SVI として使う<a class="headerlink" href="#3-vlan-interface-ip-svi" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span><span class="m">100</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>Ethernet0<span class="w"> </span>-u
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span>Ethernet4<span class="w"> </span>-u
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>ip<span class="w"> </span>add<span class="w"> </span>Vlan100<span class="w"> </span><span class="m">192</span>.168.100.1/24
+</span></code></pre></div>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="p">{</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="nt">&quot;VLAN_INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">    </span><span class="nt">&quot;Vlan100&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;NULL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NULL&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="nt">&quot;Vlan100|192.168.100.1/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;NULL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NULL&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
+</span></code></pre></div>
+<p><code>show ip interfaces</code> の出力で <code>Vlan100</code> に IP が付き、<code>Oper</code> が <code>up</code> になれば SVI として動作。<code>down</code> の場合は VLAN 配下に operational up な member が無い可能性が高いです (member が全 link down)。</p>
+<h2 id="sonic-cfggen">sonic-cfggen で部分パッチを当てる<a class="headerlink" href="#sonic-cfggen" title="Permanent link">&para;</a></h2>
+<p>deployment template ではなく、運用中に config_db.json の小規模変更を行うときの典型パタン:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/tmp/vlan_patch.json<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="s">{</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="s">  &quot;VLAN&quot;: { &quot;Vlan300&quot;: { &quot;vlanid&quot;: &quot;300&quot; } },</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="s">  &quot;VLAN_MEMBER&quot;: { &quot;Vlan300|Ethernet8&quot;: { &quot;tagging_mode&quot;: &quot;tagged&quot; } }</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="s">}</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="s">EOF</span>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>sudo<span class="w"> </span>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>cat<span class="w"> </span>/tmp/vlan_patch.json<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>--write-to-db
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>sudo<span class="w"> </span>config<span class="w"> </span>save<span class="w"> </span>-y
+</span></code></pre></div>
+<p><code>config save -y</code> を打たないと reboot で揮発します。</p>
+<h2 id="_2">よくある設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>sonic-utilities/config/vlan.py</code> と <code>config/main.py</code> の <code>ctx.fail()</code> から抜粋:</p>
+<table>
+<thead>
+<tr>
+<th>エラーメッセージ</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Invalid VLAN ID &lt;vid&gt; (2-4094)</code></td>
+<td>1 や 4095 以上を指定</td>
+<td>範囲内に修正 (1 は default VLAN で reserved)</td>
+</tr>
+<tr>
+<td><code>&lt;vlan&gt; is default VLAN</code></td>
+<td>Vlan1 を作成/削除</td>
+<td>default VLAN は対象外</td>
+</tr>
+<tr>
+<td><code>&lt;vlan&gt; already exists.</code></td>
+<td>二重作成</td>
+<td>既存を確認</td>
+</tr>
+<tr>
+<td><code>&lt;vlan&gt; does not exist</code></td>
+<td>未作成の VLAN への member add</td>
+<td>先に <code>config vlan add</code></td>
+</tr>
+<tr>
+<td><code>VLAN ID &lt;vid&gt; can not be removed. First remove all members assigned to this VLAN.</code></td>
+<td>member 残存で VLAN 削除</td>
+<td>先に member を削除</td>
+</tr>
+<tr>
+<td><code>&lt;vlan&gt; can not be removed. First remove IP addresses assigned to this VLAN</code></td>
+<td>VLAN_INTERFACE に IP あり</td>
+<td>先に <code>config interface ip remove</code></td>
+</tr>
+<tr>
+<td><code>&lt;port&gt; cannot have more than one untagged Vlan.</code></td>
+<td>同一物理 port を 2 VLAN の untagged に追加</td>
+<td>tagged にするか、片方を削除</td>
+</tr>
+<tr>
+<td><code>&lt;port&gt; is already a member of &lt;vlan&gt;</code></td>
+<td>同じ port を二重追加</td>
+<td>既存 member を確認</td>
+</tr>
+<tr>
+<td><code>&lt;port&gt; is configured as mirror destination port</code></td>
+<td>mirror dst の port を VLAN に入れた</td>
+<td>mirror session を先に解除</td>
+</tr>
+<tr>
+<td><code>&lt;portchannel&gt; already exists!</code></td>
+<td>LAG 二重作成</td>
+<td>既存を確認</td>
+</tr>
+<tr>
+<td><code>&lt;portchannel&gt; is invalid! name should have prefix 'PortChannel' and suffix '&lt;digits&gt;'</code></td>
+<td>命名規則違反</td>
+<td><code>PortChannel&lt;NNNN&gt;</code> 形式に従う</td>
+</tr>
+<tr>
+<td><code>Error: Portchannel &lt;name&gt; contains members. Remove members before deleting Portchannel!</code></td>
+<td>member 残存で LAG 削除</td>
+<td>先に member 削除</td>
+</tr>
+<tr>
+<td><code>&lt;port&gt; has subinterfaces configured</code></td>
+<td>sub-port 親を VLAN member に入れた</td>
+<td>先に subinterface を削除</td>
+</tr>
+<tr>
+<td><code>&lt;port&gt; Interface configured as VLAN_MEMBER under vlan : &lt;vid&gt;</code></td>
+<td>LAG member 化したい port が VLAN member</td>
+<td>先に VLAN_MEMBER 解除</td>
+</tr>
+<tr>
+<td><code>&lt;port&gt; Interface is already member of &lt;portchannel&gt;</code></td>
+<td>LAG 二重所属</td>
+<td>既存 LAG から削除</td>
+</tr>
+<tr>
+<td><code>Port speed of &lt;port&gt; is different than the other members of the portchannel &lt;name&gt;</code></td>
+<td>LAG member の speed 不一致</td>
+<td>同一 speed の port を揃える</td>
+</tr>
+</tbody>
+</table>
+<p>LAG 削除順序: <code>VLAN_MEMBER (LAG)</code> → <code>PORTCHANNEL_MEMBER</code> → <code>PORTCHANNEL</code>。途中をスキップすると上記の <code>contains members</code> などで止まります。</p>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/config-vlan/">CLI: config vlan</a></li>
 <li><a href="../../../reference/cli/config-portchannel/">CLI: config portchannel</a></li>
 <li><a href="../../../reference/cli/config-interface/">CLI: config interface</a></li>
+<li><a href="../../../reference/config-db/vlan/">CONFIG_DB: VLAN</a></li>
 <li><a href="../../../reference/config-db/vlan-member/">CONFIG_DB: VLAN_MEMBER</a></li>
+<li><a href="../../../reference/config-db/vlan-interface/">CONFIG_DB: VLAN_INTERFACE</a></li>
+<li><a href="../../../reference/config-db/portchannel/">CONFIG_DB: PORTCHANNEL</a></li>
 <li><a href="../../../reference/config-db/portchannel-member/">CONFIG_DB: PORTCHANNEL_MEMBER</a></li>
+<li><a href="../../../reference/config-db/portchannel-interface/">CONFIG_DB: PORTCHANNEL_INTERFACE</a></li>
 <li><a href="../../../platform/sonictpidsettinghld1/">TPID 設定 HLD</a></li>
 </ul>
 

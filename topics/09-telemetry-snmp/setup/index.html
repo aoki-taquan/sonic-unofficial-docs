@@ -3034,10 +3034,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#snmp" class="md-nav__link">
+  <a href="#1-snmp-v2c-read-only-v3-priv-user" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SNMP
+        シナリオ 1: SNMP v2c read-only と v3 priv user の併設
       
     </span>
   </a>
@@ -3045,10 +3045,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sflow" class="md-nav__link">
+  <a href="#2-sflow-2-collector" class="md-nav__link">
     <span class="md-ellipsis">
       
-        sFlow
+        シナリオ 2: sFlow を 2 collector に同時に送る
       
     </span>
   </a>
@@ -3056,10 +3056,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#syslog" class="md-nav__link">
+  <a href="#3-syslog-mgmt-vrf-2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Syslog
+        シナリオ 3: Syslog を mgmt VRF 越しに 2 台へ転送
       
     </span>
   </a>
@@ -3067,10 +3067,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#telemetry-gnmi-server" class="md-nav__link">
+  <a href="#4-telemetry-gnmi-server" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Telemetry (gNMI server)
+        シナリオ 4: Telemetry (gNMI server) を有効化する
       
     </span>
   </a>
@@ -3078,10 +3078,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#auto-techsupport" class="md-nav__link">
+  <a href="#5-auto-techsupport-coredump" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Auto-techsupport
+        シナリオ 5: Auto-techsupport を coredump トリガで起動する
       
     </span>
   </a>
@@ -3092,7 +3092,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定が刺さらないとき
+        設定が刺さらないときの切り分け
       
     </span>
   </a>
@@ -3101,6 +3101,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21384,10 +21395,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#snmp" class="md-nav__link">
+  <a href="#1-snmp-v2c-read-only-v3-priv-user" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SNMP
+        シナリオ 1: SNMP v2c read-only と v3 priv user の併設
       
     </span>
   </a>
@@ -21395,10 +21406,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sflow" class="md-nav__link">
+  <a href="#2-sflow-2-collector" class="md-nav__link">
     <span class="md-ellipsis">
       
-        sFlow
+        シナリオ 2: sFlow を 2 collector に同時に送る
       
     </span>
   </a>
@@ -21406,10 +21417,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#syslog" class="md-nav__link">
+  <a href="#3-syslog-mgmt-vrf-2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Syslog
+        シナリオ 3: Syslog を mgmt VRF 越しに 2 台へ転送
       
     </span>
   </a>
@@ -21417,10 +21428,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#telemetry-gnmi-server" class="md-nav__link">
+  <a href="#4-telemetry-gnmi-server" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Telemetry (gNMI server)
+        シナリオ 4: Telemetry (gNMI server) を有効化する
       
     </span>
   </a>
@@ -21428,10 +21439,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#auto-techsupport" class="md-nav__link">
+  <a href="#5-auto-techsupport-coredump" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Auto-techsupport
+        シナリオ 5: Auto-techsupport を coredump トリガで起動する
       
     </span>
   </a>
@@ -21442,7 +21453,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定が刺さらないとき
+        設定が刺さらないときの切り分け
       
     </span>
   </a>
@@ -21451,6 +21462,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21486,47 +21508,226 @@
 
 
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここでは最小限の入口だけを示し、項目の意味は参照ページに任せます。</p>
-<h2 id="snmp">SNMP<a class="headerlink" href="#snmp" title="Permanent link">&para;</a></h2>
-<p>SNMP は historically <code>snmp.yml</code> で設定していましたが、現在は CONFIG_DB の <code>SNMP</code> / <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> table に移行しています。CLI は <code>config snmp ...</code> で操作します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>snmp<span class="w"> </span>community<span class="w"> </span>add<span class="w"> </span>public<span class="w"> </span>ro
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>snmp<span class="w"> </span>user<span class="w"> </span>add<span class="w"> </span>monitor<span class="w"> </span>priv<span class="w"> </span>aes<span class="w"> </span><span class="s1">&#39;A!&#39;</span><span class="w"> </span>auth<span class="w"> </span>sha<span class="w"> </span><span class="s1">&#39;S!&#39;</span><span class="w"> </span>ro
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>config<span class="w"> </span>snmp<span class="w"> </span>location<span class="w"> </span><span class="s2">&quot;Tokyo DC1 Rack 5&quot;</span>
+<p>監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の <code>show</code> 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。</p>
+<h2 id="1-snmp-v2c-read-only-v3-priv-user">シナリオ 1: SNMP v2c read-only と v3 priv user の併設<a class="headerlink" href="#1-snmp-v2c-read-only-v3-priv-user" title="Permanent link">&para;</a></h2>
+<p>社内監視は v2c community で読ませ、外部 SaaS から触らせるアクセスだけ v3 priv で絞る、という典型構成。<code>snmp.yml</code> ベースの古い設定は廃止経路にあり、現状は CONFIG_DB の <code>SNMP</code> / <code>SNMP_COMMUNITY</code> / <code>SNMP_USER</code> を CLI 経由で更新します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># v2c read-only</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>snmp<span class="w"> </span>community<span class="w"> </span>add<span class="w"> </span>public<span class="w"> </span>ro
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># v3 priv user (auth=SHA, priv=AES)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>snmp<span class="w"> </span>user<span class="w"> </span>add<span class="w"> </span>monitor<span class="w"> </span>priv<span class="w"> </span>AES<span class="w"> </span><span class="s1">&#39;PrivPass!2026&#39;</span><span class="w"> </span>SHA<span class="w"> </span><span class="s1">&#39;AuthPass!2026&#39;</span><span class="w"> </span>ro
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 監視メタデータ</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>config<span class="w"> </span>snmp<span class="w"> </span>location<span class="w"> </span><span class="s2">&quot;Tokyo DC1 Rack 5&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>config<span class="w"> </span>snmp<span class="w"> </span>contact<span class="w"> </span>admin<span class="w"> </span>admin@example.com
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># AgentAddress を mgmt VRF 内の管理 IP に限定</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>config<span class="w"> </span>snmp<span class="w"> </span>agentaddress<span class="w"> </span>add<span class="w"> </span>-p<span class="w"> </span><span class="m">161</span><span class="w"> </span>-v<span class="w"> </span>mgmt<span class="w"> </span><span class="m">10</span>.0.0.10
 </span></code></pre></div>
-<p>community / user / contact / location の追加削除と AgentAddress の制御が CLI 入口です。古い <code>snmp.yml</code> から CONFIG_DB への移行は SNMP migration で扱われており、<code>config load_minigraph</code> 時に再生成されます。</p>
-<h2 id="sflow">sFlow<a class="headerlink" href="#sflow" title="Permanent link">&para;</a></h2>
-<p>sFlow は <code>SFLOW</code> global、<code>SFLOW_SESSION</code> per-port、<code>SFLOW_COLLECTOR</code> の 3 系統で設定します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>sflow<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>sflow<span class="w"> </span>collector<span class="w"> </span>add<span class="w"> </span>c0<span class="w"> </span><span class="m">192</span>.0.2.10<span class="w"> </span><span class="m">6343</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>config<span class="w"> </span>sflow<span class="w"> </span>interface<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>Ethernet0
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config<span class="w"> </span>sflow<span class="w"> </span>polling-interval<span class="w"> </span><span class="m">20</span>
+<p>CONFIG_DB 側はこういう構造になります。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;SNMP_COMMUNITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;public&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RO&quot;</span><span class="p">}},</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;SNMP_USER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;monitor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">&quot;SNMP_USER_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Priv&quot;</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">&quot;SNMP_USER_PERMISSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RO&quot;</span><span class="p">,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="nt">&quot;SNMP_USER_AUTH_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA&quot;</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="nt">&quot;SNMP_USER_AUTH_PASSWORD&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AuthPass!2026&quot;</span><span class="p">,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="nt">&quot;SNMP_USER_ENCRYPTION_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AES&quot;</span><span class="p">,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="nt">&quot;SNMP_USER_ENCRYPTION_PASSWORD&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PrivPass!2026&quot;</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">  </span><span class="nt">&quot;SNMP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;LOCATION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Tokyo DC1 Rack 5&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;CONTACT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;admin@example.com&quot;</span><span class="p">}},</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="nt">&quot;SNMP_AGENT_ADDRESS_CONFIG&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;10.0.0.10|161|mgmt&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}}</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>SFLOW.global.sample_direction</code> の <code>rx</code> / <code>tx</code> / <code>both</code> と、interface の <code>sample_rate</code> / <code>admin_state</code> が動作を決めます。エージェントは hsflowd で、collector 設定が消えると datagram は止まります。</p>
-<h2 id="syslog">Syslog<a class="headerlink" href="#syslog" title="Permanent link">&para;</a></h2>
-<p><code>SYSLOG_SERVER</code> に外部 syslog 転送先を登録します。VRF（management VRF など）を選べる点が特徴です。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>syslog<span class="w"> </span>add<span class="w"> </span><span class="m">192</span>.0.2.20<span class="w"> </span>--vrf<span class="w"> </span>mgmt
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>show<span class="w"> </span>snmp<span class="w"> </span>community
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Communities:
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>Community<span class="w">         </span>Type
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>----------------<span class="w">  </span>------
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>public<span class="w">            </span>RO
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>$<span class="w"> </span>show<span class="w"> </span>snmp<span class="w"> </span>user
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>User<span class="w">              </span>Permission<span class="w">    </span>Type<span class="w">    </span>Auth<span class="w">    </span>Encrypt
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>monitor<span class="w">           </span>RO<span class="w">            </span>Priv<span class="w">    </span>SHA<span class="w">     </span>AES
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>snmpwalk<span class="w"> </span>-v3<span class="w"> </span>-u<span class="w"> </span>monitor<span class="w"> </span>-l<span class="w"> </span>authPriv<span class="w"> </span>-a<span class="w"> </span>SHA<span class="w"> </span>-A<span class="w"> </span><span class="s1">&#39;AuthPass!2026&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span>-x<span class="w"> </span>AES<span class="w"> </span>-X<span class="w"> </span><span class="s1">&#39;PrivPass!2026&#39;</span><span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>sysName.0
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>SNMPv2-MIB::sysName.0<span class="w"> </span><span class="o">=</span><span class="w"> </span>STRING:<span class="w"> </span>sonic-tor-01
 </span></code></pre></div>
-<p><code>SYSLOG_CONFIG</code> で global rate limit や severity を制御し、<code>SYSLOG_CONFIG_FEATURE</code> で container 単位の severity を切り替えられます。YANG model は <code>sonic-syslog.yang</code> で定義されます。</p>
-<h2 id="telemetry-gnmi-server">Telemetry (gNMI server)<a class="headerlink" href="#telemetry-gnmi-server" title="Permanent link">&para;</a></h2>
-<p>gNMI server の設定は <code>TELEMETRY</code> / <code>GNMI</code> table が持ちます。デフォルトでは port 8080 で起動し、<code>certs</code> 配下の証明書を読みます。<code>TELEMETRY|gnmi.port</code>、<code>TELEMETRY|certs.*</code> の値を変更し、<code>systemctl restart telemetry</code> または <code>systemctl restart gnmi</code> で反映します。</p>
-<p>gNMI 側の運用（OpenConfig path、subscribe mode、authentication）は管理プレーン側の章（gNMI / gNOI / OpenConfig / YANG）で扱う想定です。ここでは server を起動するための最小設定として参照します。</p>
-<h2 id="auto-techsupport">Auto-techsupport<a class="headerlink" href="#auto-techsupport" title="Permanent link">&para;</a></h2>
-<p><code>AUTO_TECHSUPPORT|global</code> で機能の有効化、coredump や critical event をトリガにした <code>show techsupport</code> の自動実行を設定します。<code>AUTO_TECHSUPPORT_FEATURE|&lt;feature&gt;</code> で機能単位の閾値や rate limit を分離できます。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>state<span class="w"> </span>enabled
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>max-techsupport-limit<span class="w"> </span><span class="m">10</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>since<span class="w"> </span><span class="s2">&quot;2 days ago&quot;</span>
+<p>古い <code>snmp.yml</code> から CONFIG_DB への移行は SNMP migration で扱われ、<code>config load_minigraph</code> 時に再生成されます。詳細は <a href="../../../system/snmp-migration-from-snmp-yml-to-configdb/">SNMP migration</a> を参照。</p>
+<h2 id="2-sflow-2-collector">シナリオ 2: sFlow を 2 collector に同時に送る<a class="headerlink" href="#2-sflow-2-collector" title="Permanent link">&para;</a></h2>
+<p>flow ベースの可視化（NDR、Kentik など）と長期 packet sampling の両方を並行運用するパターン。SONiC の sFlow は global、collector、per-port の 3 段で構成され、collector は最大 2 つまで登録できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>sflow<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>sflow<span class="w"> </span>collector<span class="w"> </span>add<span class="w"> </span>primary<span class="w">   </span><span class="m">192</span>.0.2.10<span class="w"> </span><span class="m">6343</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config<span class="w"> </span>sflow<span class="w"> </span>collector<span class="w"> </span>add<span class="w"> </span>secondary<span class="w"> </span><span class="m">192</span>.0.2.11<span class="w"> </span><span class="m">6343</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>config<span class="w"> </span>sflow<span class="w"> </span>polling-interval<span class="w"> </span><span class="m">20</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># 全ポート default で enable、上り回線だけ sample_rate を下げる</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>config<span class="w"> </span>sflow<span class="w"> </span>interface<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>Ethernet0
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>config<span class="w"> </span>sflow<span class="w"> </span>interface<span class="w"> </span>sample-rate<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">1024</span>
 </span></code></pre></div>
-<p>ディスクの圧迫を避けるため、<code>max-techsupport-limit</code> と <code>available-mem-threshold</code> を実機の容量に合わせます。</p>
-<h2 id="_2">設定が刺さらないとき<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;SFLOW&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;global&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;admin_state&quot;</span><span class="p">:</span><span class="s2">&quot;up&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;polling_interval&quot;</span><span class="p">:</span><span class="s2">&quot;20&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;sample_direction&quot;</span><span class="p">:</span><span class="s2">&quot;both&quot;</span><span class="p">}},</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">&quot;SFLOW_COLLECTOR&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&quot;primary&quot;</span><span class="p">:</span><span class="w">   </span><span class="p">{</span><span class="nt">&quot;collector_ip&quot;</span><span class="p">:</span><span class="s2">&quot;192.0.2.10&quot;</span><span class="p">,</span><span class="nt">&quot;collector_port&quot;</span><span class="p">:</span><span class="s2">&quot;6343&quot;</span><span class="p">},</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="nt">&quot;secondary&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;collector_ip&quot;</span><span class="p">:</span><span class="s2">&quot;192.0.2.11&quot;</span><span class="p">,</span><span class="nt">&quot;collector_port&quot;</span><span class="p">:</span><span class="s2">&quot;6343&quot;</span><span class="p">}</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nt">&quot;SFLOW_SESSION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;admin_state&quot;</span><span class="p">:</span><span class="s2">&quot;up&quot;</span><span class="p">,</span><span class="nt">&quot;sample_rate&quot;</span><span class="p">:</span><span class="s2">&quot;1024&quot;</span><span class="p">}}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span>show<span class="w"> </span>sflow
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sFlow<span class="w"> </span>Global<span class="w"> </span>Information:
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>sFlow<span class="w"> </span>Admin<span class="w"> </span>State:<span class="w">          </span>up
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>sFlow<span class="w"> </span>Polling<span class="w"> </span>Interval:<span class="w">     </span><span class="m">20</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span>sFlow<span class="w"> </span>AgentID:<span class="w">              </span>eth0
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="m">2</span><span class="w"> </span>Collectors<span class="w"> </span>configured:
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span>Name:<span class="w"> </span>primary<span class="w">    </span>IP<span class="w"> </span>addr:<span class="w"> </span><span class="m">192</span>.0.2.10<span class="w">  </span>UDP<span class="w"> </span>port:<span class="w"> </span><span class="m">6343</span><span class="w">  </span>VRF:<span class="w"> </span>default
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span>Name:<span class="w"> </span>secondary<span class="w">  </span>IP<span class="w"> </span>addr:<span class="w"> </span><span class="m">192</span>.0.2.11<span class="w">  </span>UDP<span class="w"> </span>port:<span class="w"> </span><span class="m">6343</span><span class="w">  </span>VRF:<span class="w"> </span>default
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>$<span class="w"> </span>show<span class="w"> </span>sflow<span class="w"> </span>interface
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>sFlow<span class="w"> </span>interface<span class="w"> </span>configurations
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">  </span>Interface<span class="w">     </span>Admin<span class="w"> </span>State<span class="w">    </span>Sampling<span class="w"> </span>Rate
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">  </span>------------<span class="w">  </span>-------------<span class="w">  </span>---------------
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">  </span>Ethernet0<span class="w">     </span>up<span class="w">             </span><span class="m">1024</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">  </span>Ethernet1<span class="w">     </span>up<span class="w">             </span><span class="m">50000</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">  </span>...
+</span></code></pre></div>
+<p><code>sample_direction</code> の <code>rx</code> / <code>tx</code> / <code>both</code> と、interface の <code>sample_rate</code> / <code>admin_state</code> が動作を決めます。エージェントは hsflowd で、collector 設定が消えると datagram は止まります。</p>
+<h2 id="3-syslog-mgmt-vrf-2">シナリオ 3: Syslog を mgmt VRF 越しに 2 台へ転送<a class="headerlink" href="#3-syslog-mgmt-vrf-2" title="Permanent link">&para;</a></h2>
+<p>mgmt VRF 経由で外部 SIEM に syslog を送る構成。management VRF を有効にしてある box では <code>--vrf mgmt</code> 指定が必須で、忘れると default VRF から DNS lookup が走って到達不能になります。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config<span class="w"> </span>syslog<span class="w"> </span>add<span class="w"> </span><span class="m">192</span>.0.2.20<span class="w"> </span>--vrf<span class="w"> </span>mgmt
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>config<span class="w"> </span>syslog<span class="w"> </span>add<span class="w"> </span><span class="m">192</span>.0.2.21<span class="w"> </span>--vrf<span class="w"> </span>mgmt
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># global rate limit (msg/sec)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;SYSLOG_CONFIG|GLOBAL&#39;</span><span class="w"> </span>rate_limit_interval<span class="w"> </span><span class="m">5</span><span class="w"> </span>rate_limit_burst<span class="w"> </span><span class="m">100</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># container 単位で severity を変える (例: bgp container だけ debug)</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;SYSLOG_CONFIG_FEATURE|bgp&#39;</span><span class="w"> </span>severity<span class="w"> </span>debug
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>$<span class="w"> </span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>syslog
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Syslog<span class="w"> </span>Servers
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span>Server<span class="w"> </span>IP<span class="w">       </span>Source<span class="w">      </span>Port<span class="w">    </span>VRF
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span>--------------<span class="w">  </span>----------<span class="w">  </span>------<span class="w">  </span>----
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="m">192</span>.0.2.20<span class="w">      </span>N/A<span class="w">         </span><span class="m">514</span><span class="w">     </span>mgmt
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="m">192</span>.0.2.21<span class="w">      </span>N/A<span class="w">         </span><span class="m">514</span><span class="w">     </span>mgmt
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>logger<span class="w"> </span>-t<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="s2">&quot;syslog-egress-check&quot;</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>$<span class="w"> </span>tcpdump<span class="w"> </span>-n<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-c<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="s1">&#39;udp port 514&#39;</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="m">13</span>:24:15.001<span class="w"> </span>IP<span class="w"> </span><span class="m">10</span>.0.0.10.43210<span class="w"> </span>&gt;<span class="w"> </span><span class="m">192</span>.0.2.20.514:<span class="w"> </span>SYSLOG<span class="w"> </span>...
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="m">13</span>:24:15.001<span class="w"> </span>IP<span class="w"> </span><span class="m">10</span>.0.0.10.43211<span class="w"> </span>&gt;<span class="w"> </span><span class="m">192</span>.0.2.21.514:<span class="w"> </span>SYSLOG<span class="w"> </span>...
+</span></code></pre></div>
+<p>YANG model は <code>sonic-syslog.yang</code>、CONFIG_DB は <a href="../../../reference/config-db/syslog-server/"><code>SYSLOG_SERVER</code></a>。</p>
+<h2 id="4-telemetry-gnmi-server">シナリオ 4: Telemetry (gNMI server) を有効化する<a class="headerlink" href="#4-telemetry-gnmi-server" title="Permanent link">&para;</a></h2>
+<p>dial-in / dial-out 両方をサポートする gNMI server を立ち上げます。証明書は通常 <code>/etc/sonic/telemetry/</code> 配下に置きます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 証明書配置</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>cp<span class="w"> </span>dut.crt<span class="w"> </span>dut.key<span class="w"> </span>ca.crt<span class="w"> </span>/etc/sonic/telemetry/
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/sonic/telemetry/dut.key
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># CONFIG_DB に server 設定</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;TELEMETRY|gnmi&#39;</span><span class="w">  </span>port<span class="w"> </span><span class="m">50051</span><span class="w"> </span>client_auth<span class="w"> </span><span class="nb">true</span><span class="w"> </span>log_level<span class="w"> </span><span class="m">2</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;TELEMETRY|certs&#39;</span><span class="w"> </span>server_crt<span class="w"> </span>/etc/sonic/telemetry/dut.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">                                       </span>server_key<span class="w"> </span>/etc/sonic/telemetry/dut.key<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">                                       </span>ca_crt<span class="w">     </span>/etc/sonic/telemetry/ca.crt
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>$<span class="w"> </span>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>telemetry
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>abcd...<span class="w">   </span>docker-sonic-telemetry:latest<span class="w">   </span>...<span class="w">   </span>Up<span class="w"> </span><span class="m">30</span><span class="w"> </span>seconds<span class="w">   </span>telemetry
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>$<span class="w"> </span>ss<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">50051</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>LISTEN<span class="w"> </span><span class="m">0</span><span class="w">  </span><span class="m">128</span><span class="w">  </span>*:50051<span class="w">  </span>*:*<span class="w">  </span>users:<span class="o">((</span><span class="s2">&quot;telemetry&quot;</span>,pid<span class="o">=</span><span class="m">12345</span>,fd<span class="o">=</span><span class="m">7</span><span class="o">))</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>$<span class="w"> </span>gnmi_capabilities<span class="w"> </span>-target_addr<span class="w"> </span>localhost:50051<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span>-cert<span class="w"> </span>/etc/sonic/telemetry/dut.crt<span class="w"> </span>-key<span class="w"> </span>/etc/sonic/telemetry/dut.key<span class="w"> </span>-ca<span class="w"> </span>/etc/sonic/telemetry/ca.crt
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>supported_models:<span class="w"> </span>&lt;name:<span class="w"> </span><span class="s2">&quot;openconfig-interfaces&quot;</span><span class="w"> </span>...&gt;
+</span></code></pre></div>
+<p>gNMI client 側の使い方は <a href="../../10-gnmi-openconfig/setup/">gNMI / OpenConfig 章</a> を参照。</p>
+<h2 id="5-auto-techsupport-coredump">シナリオ 5: Auto-techsupport を coredump トリガで起動する<a class="headerlink" href="#5-auto-techsupport-coredump" title="Permanent link">&para;</a></h2>
+<p>container の coredump や critical event をトリガに <code>show techsupport</code> を自動取得する仕組み。ディスクを食い潰さないように <code>max-techsupport-limit</code> をパーセントで制限します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>state<span class="w"> </span>enabled
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>max-techsupport-limit<span class="w"> </span><span class="m">10</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>since<span class="w"> </span><span class="s2">&quot;2 days ago&quot;</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>config<span class="w"> </span>auto-techsupport<span class="w"> </span>global<span class="w"> </span>available-mem-threshold<span class="w"> </span><span class="m">10</span>.0
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># feature 単位の閾値</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>config<span class="w"> </span>auto-techsupport-feature<span class="w"> </span>update<span class="w"> </span>bgp<span class="w"> </span>--rate-limit-interval<span class="w"> </span><span class="m">600</span><span class="w"> </span>--state<span class="w"> </span>enabled
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>$<span class="w"> </span>show<span class="w"> </span>auto-techsupport<span class="w"> </span>global
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>State<span class="w">                         </span>enabled
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>Rate<span class="w"> </span>Limit<span class="w"> </span>Interval<span class="w"> </span><span class="o">(</span>sec<span class="o">)</span><span class="w">     </span><span class="m">180</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>Max<span class="w"> </span>Techsupport<span class="w"> </span>Limit<span class="w"> </span><span class="o">(</span>%<span class="o">)</span><span class="w">     </span><span class="m">10</span>.0
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>Min<span class="w"> </span>Available<span class="w"> </span>Memory<span class="w"> </span><span class="o">(</span>%<span class="o">)</span><span class="w">      </span><span class="m">10</span>.0
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>Available<span class="w"> </span>Mem<span class="w"> </span>Threshold<span class="w"> </span><span class="o">(</span>%<span class="o">)</span><span class="w">   </span><span class="m">10</span>.0
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>Since<span class="w">                         </span><span class="m">2</span><span class="w"> </span>days<span class="w"> </span>ago
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>$<span class="w"> </span>ls<span class="w"> </span>-lh<span class="w"> </span>/var/dump/
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>total<span class="w"> </span>24M
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>-rw-r--r--<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span>12M<span class="w"> </span>May<span class="w"> </span><span class="m">11</span><span class="w"> </span><span class="m">02</span>:14<span class="w"> </span>sonic_dump_sonic-tor-01_20260511_021412.tar.gz
+</span></code></pre></div>
+<h2 id="_2">設定が刺さらないときの切り分け<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>設定は CONFIG_DB に入っているが効いていないとき、確認順は次のとおりです。</p>
 <ol>
 <li><code>redis-cli -n 4 KEYS '&lt;TABLE&gt;|*'</code> で CONFIG_DB の entry が存在するか。</li>
-<li>対応 daemon (<code>snmpd</code> / <code>hsflowd</code> / <code>telemetry</code> / <code>rsyslogd</code>) が running か（<code>systemctl status</code>、<code>docker ps</code>）。</li>
-<li>APPL_DB / STATE_DB に反映があるか（<code>show &lt;feature&gt;</code> か <code>redis-cli -n 0/6</code>）。</li>
-<li>syslog の該当 container に reject や parse error が出ていないか。</li>
+<li>対応 daemon (<code>snmpd</code> / <code>hsflowd</code> / <code>telemetry</code> / <code>rsyslogd</code>) が running か (<code>systemctl status</code>、<code>docker ps</code>)。</li>
+<li>APPL_DB / STATE_DB に反映があるか (<code>show &lt;feature&gt;</code> か <code>redis-cli -n 0/6</code>)。</li>
+<li>syslog の該当 container に reject や parse error が出ていないか (<code>docker logs snmp 2&gt;&amp;1 | tail -50</code>)。</li>
 </ol>
-<p>機能ごとの specifics（SNMP MIB、sFlow datagram、telemetry path）は次以降のページで扱います。</p>
-<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">よくある設定エラーと対処<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>典型的な原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config snmp community add</code> 後も <code>snmpwalk</code> が timeout</td>
+<td>snmp container が古い <code>snmp.yml</code> を読んだまま</td>
+<td><code>systemctl restart snmp</code> または <code>config save -y &amp;&amp; config reload -y</code></td>
+</tr>
+<tr>
+<td>v3 user が <code>Unknown user name</code> で拒否される</td>
+<td>auth/priv passphrase が 8 文字未満 (RFC 制約)</td>
+<td>passphrase を 8 文字以上で再作成</td>
+</tr>
+<tr>
+<td>sFlow datagram が出ない</td>
+<td><code>SFLOW.global.admin_state=down</code> のまま、または collector 0 件</td>
+<td><code>config sflow enable</code>、<code>show sflow</code> で collector 確認</td>
+</tr>
+<tr>
+<td><code>show sflow</code> で polling は正常だが flow sample が来ない</td>
+<td><code>sample_rate</code> が大きすぎ (1 が最頻、10 億は事実上停止)</td>
+<td>port の <code>sample_rate</code> を 4096 以下に調整</td>
+</tr>
+<tr>
+<td>syslog 転送先に届かない</td>
+<td>mgmt VRF を使っているのに <code>--vrf</code> 未指定</td>
+<td><code>config syslog del &lt;ip&gt;</code> のあと <code>--vrf mgmt</code> 付きで再追加</td>
+</tr>
+<tr>
+<td>gNMI server が起動するが TLS handshake が失敗</td>
+<td>cert chain が CA 込みでない、または <code>CN</code> が DUT FQDN と不一致</td>
+<td><code>openssl x509 -in dut.crt -text</code> で SAN/CN を確認、CA を含めて再発行</td>
+</tr>
+<tr>
+<td>auto-techsupport が disk full で停止</td>
+<td><code>max-techsupport-limit</code> が容量に対して大きい</td>
+<td>値を下げ、<code>/var/dump/</code> を手で剪定</td>
+</tr>
+</tbody>
+</table>
+<p>機能ごとの specifics（SNMP MIB、sFlow datagram の中身、telemetry path）は次以降のページで扱います。</p>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../reference/cli/config-snmp/">config snmp CLI</a></li>
 <li><a href="../../../reference/cli/config-sflow/">config sflow CLI</a></li>

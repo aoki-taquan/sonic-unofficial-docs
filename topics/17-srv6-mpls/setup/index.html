@@ -5123,6 +5123,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-vrf-vrf01-srv6-enddt46-sid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 1: VRF "Vrf01" 向け SRv6 End.DT46 SID の最小投入
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-per-rif-mpls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 2: per-RIF で MPLS を有効化し、ラベル付き経路を受ける
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-path-tracing-midpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 3: Path Tracing Midpoint の最小投入
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reference" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5134,7 +5178,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21451,6 +21506,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-vrf-vrf01-srv6-enddt46-sid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 1: VRF "Vrf01" 向け SRv6 End.DT46 SID の最小投入
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-per-rif-mpls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 2: per-RIF で MPLS を有効化し、ラベル付き経路を受ける
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-path-tracing-midpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定シナリオ 3: Path Tracing Midpoint の最小投入
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定エラーと対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reference" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21462,7 +21561,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -21565,6 +21675,122 @@
 </span></code></pre></div>
 <p><code>pt_interface_id</code> は MCD に刻まれる interface 識別、<code>pt_timestamp_template</code> は timestamp のビット切り出し方（例: <code>12_19</code> 系テンプレート）を決めます。SAI 側で対応する属性は <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> と <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> です。</p>
 <p>PT Source / Sink / Regional Collector は SONiC 外側で構築するため、SONiC 単体としては Midpoint 設定だけで完結します。</p>
+<h2 id="1-vrf-vrf01-srv6-enddt46-sid">設定シナリオ 1: VRF "Vrf01" 向け SRv6 End.DT46 SID の最小投入<a class="headerlink" href="#1-vrf-vrf01-srv6-enddt46-sid" title="Permanent link">&para;</a></h2>
+<p><code>fcbb:bbbb::/48</code> を locator として、<code>fcbb:bbbb:1::/64</code> を <code>Vrf01</code> 向けの <code>End.DT46</code> SID として宣言します。<code>sonic-cfggen</code> 経由か <code>redis-cli</code> 直叩きで CONFIG_DB に書きます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>sonic-cfggen<span class="w"> </span>-a<span class="w"> </span><span class="s1">&#39;{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="s1">  &quot;SRV6_MY_LOCATORS&quot;: {</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="s1">    &quot;loc1&quot;: {&quot;prefix&quot;:&quot;fcbb:bbbb::/48&quot;,&quot;block_len&quot;:&quot;40&quot;,&quot;node_len&quot;:&quot;24&quot;,&quot;func_len&quot;:&quot;16&quot;,&quot;arg_len&quot;:&quot;0&quot;}</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="s1">  },</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="s1">  &quot;SRV6_MY_SIDS&quot;: {</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="s1">    &quot;fcbb:bbbb:1::/64&quot;: {&quot;locator&quot;:&quot;loc1&quot;,&quot;behavior&quot;:&quot;end.dt46&quot;,&quot;vrf&quot;:&quot;Vrf01&quot;}</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="s1">  }</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="s1">}&#39;</span><span class="w"> </span>-w
+</span></code></pre></div>
+<p>確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># CONFIG_DB</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;SRV6_MY_*&#39;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;SRV6_MY_SIDS|fcbb:bbbb:1::/64&#39;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># FRR への流し込み（SRv6Mgr 経由）</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show segment-routing srv6 locator&quot;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show segment-routing srv6 sid&quot;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1"># データプレーン</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>show<span class="w"> </span>ipv6<span class="w"> </span>route<span class="w"> </span>fcbb:bbbb:1::/64
+</span></code></pre></div>
+<p><code>vtysh</code> 期待出力:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Locator:
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Name                 ID      Prefix                   Status
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>-------------------- ------- ------------------------ --------
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>loc1                 1       fcbb:bbbb::/48           Up
+</span></code></pre></div>
+<h2 id="2-per-rif-mpls">設定シナリオ 2: per-RIF で MPLS を有効化し、ラベル付き経路を受ける<a class="headerlink" href="#2-per-rif-mpls" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>mpls<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>Ethernet0
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>mpls<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>PortChannel10
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>show<span class="w"> </span>mpls<span class="w"> </span>interface
+</span></code></pre></div>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="nt">&quot;INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;mpls&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enable&quot;</span><span class="p">}},</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;PORTCHANNEL_INTERFACE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;PortChannel10&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;mpls&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enable&quot;</span><span class="p">}}</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>show mpls interface</code> の典型出力:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Interface       MPLS State
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>--------------  ------------
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>Ethernet0       enable
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>PortChannel10   enable
+</span></code></pre></div>
+<p>FRR 側で静的 LSP を引いて確認します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>configure terminal
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>mpls label local-pool min-label 1000 max-label 1999
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>mpls lsp 1001 10.0.0.2 Ethernet0 nexthop-label 2001
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>end
+</span></code></pre></div>
+<p>データプレーン確認:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>ip<span class="w"> </span>-f<span class="w"> </span>mpls<span class="w"> </span>route<span class="w"> </span>show
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>show<span class="w"> </span>mpls<span class="w"> </span>ldp<span class="w"> </span>neighbor<span class="w">   </span><span class="c1"># LDP を使う場合</span>
+</span></code></pre></div>
+<h2 id="3-path-tracing-midpoint">設定シナリオ 3: Path Tracing Midpoint の最小投入<a class="headerlink" href="#3-path-tracing-midpoint" title="Permanent link">&para;</a></h2>
+<p><code>Ethernet0</code> を Midpoint として動作させ、ID <code>1234</code> を MCD に刻み、<code>template_3</code> でタイムスタンプを切り出します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>pt-interface-id<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">1234</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>pt-timestamp-template<span class="w"> </span>Ethernet0<span class="w"> </span>template_3
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>show<span class="w"> </span>interface<span class="w"> </span>path-tracing
+</span></code></pre></div>
+<p>CONFIG_DB:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">        </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;pt_interface_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1234&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;pt_timestamp_template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;template_3&quot;</span><span class="p">}</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>show interface path-tracing</code> 期待出力:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Interface     PT Interface ID    Timestamp Template
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>------------  ----------------  --------------------
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Ethernet0     1234              template_3
+</span></code></pre></div>
+<h2 id="_2">設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SRV6_MY_SIDS</code> を入れても FRR に降りない</td>
+<td><code>bgpcfgd</code> 側で SRv6Mgr が無効 / FRR バージョンが古い</td>
+<td><code>docker logs bgp</code> で <code>SRv6Mgr</code> のログを確認、FRR 9.x 以上が必要</td>
+</tr>
+<tr>
+<td><code>End.DT46</code> SID で trafic が drop される</td>
+<td><code>vrf</code> 指定の typo、または VRF が未作成</td>
+<td><code>show vrf</code>、<code>sonic-db-cli CONFIG_DB HGETALL VRF\|Vrf01</code> を確認</td>
+</tr>
+<tr>
+<td><code>config interface mpls enable</code> が <code>Not supported on platform</code></td>
+<td>SAI capability に MPLS なし</td>
+<td><code>show platform syseeprom</code> / <code>sai_redis_record</code> で <code>SAI_OBJECT_TYPE_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE</code> をチェック</td>
+</tr>
+<tr>
+<td>MPLS_TC_TO_TC_MAP 設定後も DSCP マップ動作のまま</td>
+<td><code>PORT_QOS_MAP|&lt;port&gt;</code> で <code>mpls_tc_to_tc_map</code> を未参照</td>
+<td>当該 port の <code>PORT_QOS_MAP</code> 行を確認</td>
+</tr>
+<tr>
+<td>Path Tracing で MCD が刻まれない</td>
+<td>ASIC が Path Tracing 未対応、または FEC / speed 不一致</td>
+<td>capability、<code>sairedis.rec</code> のエラーを確認</td>
+</tr>
+<tr>
+<td>FRR で <code>segment-routing srv6 sid</code> 投入後も <code>Down</code> のまま</td>
+<td>locator と SID の重複 / encap-source-address 未設定</td>
+<td><code>vtysh -c "show ipv6 route fcbb:bbbb::/48"</code>、<code>segment-routing srv6 encapsulation source-address ...</code> を投入</td>
+</tr>
+</tbody>
+</table>
 <h2 id="reference">reference の不足を把握する<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <p>SRv6 / MPLS / Path Tracing は CLI / CONFIG_DB / YANG の reference が他の章ほど揃っていません。設定する前に以下を確認しておくと、ドキュメントとコードの乖離に悩まされにくくなります。</p>
 <ul>
@@ -21572,7 +21798,15 @@
 <li><strong>CONFIG_DB</strong> — <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> は <code>sonic-srv6</code> YANG に、<code>INTERFACE.mpls</code> 等は <code>sonic-interface</code> / <code>sonic-vlan</code> / <code>sonic-portchannel</code>、<code>MPLS_TC_TO_TC_MAP</code> は <code>sonic-port-qos-map</code> 系に定義があります。SRv6 base スキーマ（<code>SRV6_MY_SID_TABLE</code> 等）は YANG モデル化が進行中で、CONFIG_DB 直接投入が前提です。</li>
 <li><strong>YANG</strong> — 共通の <code>sonic-route-common</code> は MPLS / SRv6 のラベル / SID 表現で参照されます。</li>
 </ul>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li>CLI: <code>config interface mpls</code>、<code>show mpls interface</code>、<code>config interface pt-interface-id</code>、<code>config interface pt-timestamp-template</code>、<code>show interface path-tracing</code>、<code>vtysh -c "show segment-routing srv6 ..."</code></li>
+<li>CONFIG_DB: <code>SRV6_MY_LOCATORS</code>、<code>SRV6_MY_SIDS</code>、<code>SRV6_SID_LIST</code>、<code>SRV6_MY_SID_TABLE</code>、<code>SRV6_POLICY</code>、<code>SRV6_STEER</code>、<code>INTERFACE.mpls</code>、<code>VLAN_INTERFACE.mpls</code>、<code>PORTCHANNEL_INTERFACE.mpls</code>、<code>MPLS_TC_TO_TC_MAP</code>、<code>PORT_QOS_MAP</code>、<code>PORT</code>（PT 用フィールド）</li>
+<li>APPL_DB / ASIC_DB: <code>LABEL_ROUTE_TABLE</code>、<code>SRV6_*</code> 系、<code>SAI_OBJECT_TYPE_INSEG_ENTRY</code>、<code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code>、<code>SAI_PORT_ATTR_PATH_TRACING_*</code></li>
+<li>YANG: <a href="../../../reference/yang/sonic-route-common/"><code>sonic-route-common</code></a>、<code>sonic-srv6</code>、<code>sonic-interface</code>、<code>sonic-port-qos-map</code></li>
+<li>HLD: <a href="../../../routing/static-configuration-of-srv6-in-sonic-hld/">SRv6 静的設定 HLD</a>、<a href="../../../routing/segment-routing-over-ipv6-srv6-hld/">SRv6 over IPv6 HLD</a>、<a href="../../../routing/mpls-for-sonic-high-level-design-document/">MPLS HLD</a>、<a href="../../../routing/mpls-tc-to-tc-map/">MPLS TC → TC map</a>、<a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
+</ul>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/static-configuration-of-srv6-in-sonic-hld/">SRv6 Static SID / Locator 設定</a></li>
 <li><a href="../../../routing/mpls-for-sonic-high-level-design-document/">MPLS HLD</a></li>
