@@ -3,8 +3,8 @@ title: ACL の egress mirror 対応と SAI ベース action capability 問い合
 description: ACL の egress mirror 対応と SAI ベース action capability 問い合わせ — ACL は ASIC
   ごとに ingress / egress stage で使えるアクションが異なる。
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
 - repo: sonic-net/SONiC
   path: doc/acl/acl_stage_capability.md
