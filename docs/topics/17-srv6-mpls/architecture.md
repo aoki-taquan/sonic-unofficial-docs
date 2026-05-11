@@ -1,17 +1,27 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent → SAI → ASIC」「FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に…"
+description: アーキテクチャ — SRv6 / MPLS / Path Tracing は別機能ですが、SONiC 内部では「CONFIG_DB → orchagent
+  → SAI → ASIC」「FRR/netlink → fpmsyncd → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に…
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/segment-routing-over-ipv6-srv6-hld.md
-  - docs/routing/sonic-usid.md
-  - docs/routing/srv6-sid-l3adj.md
-  - docs/routing/srv6-vpn-hld.md
-  - docs/routing/static-configuration-of-srv6-in-sonic-hld.md
-  - docs/routing/mpls-for-sonic-high-level-design-document.md
-  - docs/routing/path-tracing-midpoint.md
+- docs/routing/segment-routing-over-ipv6-srv6-hld.md
+- docs/routing/sonic-usid.md
+- docs/routing/srv6-sid-l3adj.md
+- docs/routing/srv6-vpn-hld.md
+- docs/routing/static-configuration-of-srv6-in-sonic-hld.md
+- docs/routing/mpls-for-sonic-high-level-design-document.md
+- docs/routing/path-tracing-midpoint.md
+related:
+  cli: []
+  config_db:
+  - CRM
+  yang:
+  - sonic-srv6
+  - sonic-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 # アーキテクチャ

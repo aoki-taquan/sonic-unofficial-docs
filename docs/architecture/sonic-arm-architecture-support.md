@@ -1,17 +1,21 @@
 ---
 title: SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static）
-description: "SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static） — SONiC ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer が…"
+description: SONiC の ARM (armhf / arm64) ビルドサポート（PLATFORM_ARCH と qemu-static） — SONiC
+  ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer
+  が…
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-multi-architecture/sonic_arm_support.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-multi-architecture/sonic_arm_support.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - STATIC_ROUTE
   cli: []
-  yang: []
+  yang:
+  - sonic-static-route
 ---
 
 <!-- topics-tip -->

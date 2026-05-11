@@ -1,14 +1,34 @@
 ---
 title: 内部実装
-description: "内部実装 — このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。"
+description: 内部実装 — このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/internals/sonic-flexcounter-refactor.md
-  - docs/internals/sonic-counter-initialization-optimization.md
-  - docs/internals/byte-packet-rates-port-utilization-in-sonic.md
-  - docs/system/sonic-logging-system-dumps-arch-spec.md
+- docs/internals/sonic-flexcounter-refactor.md
+- docs/internals/sonic-counter-initialization-optimization.md
+- docs/internals/byte-packet-rates-port-utilization-in-sonic.md
+- docs/system/sonic-logging-system-dumps-arch-spec.md
+related:
+  cli:
+  - show interfaces
+  - show techsupport
+  - config snmp
+  - show lldp
+  - show acl
+  - config acl
+  config_db:
+  - SNMP
+  - LLDP
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG_FEATURE
+  - COPP_GROUP
+  - COPP_TRAP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  yang:
+  - sonic-copp
+  - sonic-snmp
+  - sonic-lldp
 ---
 
 # 内部実装

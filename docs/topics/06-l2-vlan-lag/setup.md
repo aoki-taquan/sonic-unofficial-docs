@@ -1,28 +1,49 @@
 ---
 title: L2 設定パターン
-description: "L2 設定パターン — ここでは、個別 CLI の全引数ではなく、L2 を組むときの代表的な順序を示します。詳細なオプション、制約、実装との乖離は各参照ページで確認してください。"
+description: L2 設定パターン — ここでは、個別 CLI の全引数ではなく、L2 を組むときの代表的な順序を示します。詳細なオプション、制約、実装との乖離は各参照ページで確認してください。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-vlan.md
-  - docs/reference/cli/config-portchannel.md
-  - docs/reference/cli/config-interface.md
-  - docs/reference/config-db/vlan.md
-  - docs/reference/config-db/vlan-member.md
-  - docs/reference/config-db/vlan-interface.md
-  - docs/reference/config-db/vlan-sub-interface.md
-  - docs/reference/config-db/portchannel.md
-  - docs/reference/config-db/portchannel-member.md
-  - docs/reference/config-db/portchannel-interface.md
-  - docs/reference/config-db/port.md
-  - docs/reference/config-db/interface.md
-  - docs/reference/yang/sonic-vlan.md
-  - docs/reference/yang/sonic-vlan-sub-interface.md
-  - docs/reference/yang/sonic-portchannel.md
-  - docs/reference/yang/sonic-port.md
-  - docs/architecture/sonic-sub-port-interface-high-level-design.md
-  - docs/platform/sonictpidsettinghld1.md
+- docs/reference/cli/config-vlan.md
+- docs/reference/cli/config-portchannel.md
+- docs/reference/cli/config-interface.md
+- docs/reference/config-db/vlan.md
+- docs/reference/config-db/vlan-member.md
+- docs/reference/config-db/vlan-interface.md
+- docs/reference/config-db/vlan-sub-interface.md
+- docs/reference/config-db/portchannel.md
+- docs/reference/config-db/portchannel-member.md
+- docs/reference/config-db/portchannel-interface.md
+- docs/reference/config-db/port.md
+- docs/reference/config-db/interface.md
+- docs/reference/yang/sonic-vlan.md
+- docs/reference/yang/sonic-vlan-sub-interface.md
+- docs/reference/yang/sonic-portchannel.md
+- docs/reference/yang/sonic-port.md
+- docs/architecture/sonic-sub-port-interface-high-level-design.md
+- docs/platform/sonictpidsettinghld1.md
+related:
+  cli:
+  - config vlan
+  - config portchannel
+  - config interface
+  - show vlan
+  - show ip
+  - show interfaces
+  - show arp
+  config_db:
+  - PORTCHANNEL
+  - VLAN
+  - VLAN_SUB_INTERFACE
+  - INTERFACE
+  - PORT
+  - VLAN_INTERFACE
+  - PORTCHANNEL_INTERFACE
+  yang:
+  - sonic-portchannel
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # L2 設定パターン

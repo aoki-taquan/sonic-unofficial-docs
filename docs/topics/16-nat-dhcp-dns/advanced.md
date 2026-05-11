@@ -1,19 +1,39 @@
 ---
 title: 発展トピック
-description: "発展トピック — この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP / terminal server を同じ章でまとめて読みます。OS daemon と CONFIG_DB のテンプレート生成パスを共通言語にすると、各機能が並列に見えてきます。"
+description: 発展トピック — この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP /
+  terminal server を同じ章でまとめて読みます。OS daemon と CONFIG_DB のテンプレート生成パスを共通言語にすると、各機能が並列に見えてきます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/sonic-network-time-protocol-ntp-client-configuration.md
-  - docs/system/sonic-migration-to-chrony.md
-  - docs/system/static-dns-configuration.md
-  - docs/reference/config-db/ntp-global.md
-  - docs/reference/config-db/ntp-server.md
-  - docs/reference/yang/sonic-ntp.md
-  - docs/reference/yang/sonic-dns.md
-  - docs/system/twamp-light-hld.md
-  - docs/architecture/1-udev-rules-design-for-terminal-server.md
+- docs/system/sonic-network-time-protocol-ntp-client-configuration.md
+- docs/system/sonic-migration-to-chrony.md
+- docs/system/static-dns-configuration.md
+- docs/reference/config-db/ntp-global.md
+- docs/reference/config-db/ntp-server.md
+- docs/reference/yang/sonic-ntp.md
+- docs/reference/yang/sonic-dns.md
+- docs/system/twamp-light-hld.md
+- docs/architecture/1-udev-rules-design-for-terminal-server.md
+related:
+  cli:
+  - show nat
+  - config nat
+  - config vrf
+  - config qos
+  config_db:
+  - NAT
+  - VRF
+  - STATIC_NAT
+  - STATIC_NAPT
+  - NAT_POOL
+  - NAT_BINDINGS
+  - NAT_GLOBAL
+  yang:
+  - sonic-ntp
+  - sonic-dns
+  - sonic-nat
+  - sonic-vrf
 ---
 
 # 発展トピック

@@ -1,19 +1,32 @@
 ---
 title: 発展トピック
-description: "発展トピック — このページは、基本の observability 経路（CLI / counter / SNMP / gNMI / techsupport）から外れる、専門観測機能と最近の telemetry 拡張をまとめます。設計判断に直結する局面以外は深追い不要です。"
+description: 発展トピック — このページは、基本の observability 経路（CLI / counter / SNMP / gNMI / techsupport）から外れる、専門観測機能と最近の
+  telemetry 拡張をまとめます。設計判断に直結する局面以外は深追い不要です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/dataplane-telemetry-in-sonic.md
-  - docs/system/dataplane-telemetry-test-plan.md
-  - docs/architecture/sflow-high-level-design.md
-  - docs/architecture/sflow-test-plan.md
-  - docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
-  - docs/system/snmp-transceiver-monitoring-testbed-test-plan.md
-  - docs/system/process-and-docker-stats-availability-via-telemetry-agent.md
-  - docs/system/memory-statistics-feature-in-sonic.md
-  - docs/system/reboot-cause-information-via-telemetry-agent.md
+- docs/system/dataplane-telemetry-in-sonic.md
+- docs/system/dataplane-telemetry-test-plan.md
+- docs/architecture/sflow-high-level-design.md
+- docs/architecture/sflow-test-plan.md
+- docs/system/sonic-entity-mib-and-entity-sensor-mib-extension.md
+- docs/system/snmp-transceiver-monitoring-testbed-test-plan.md
+- docs/system/process-and-docker-stats-availability-via-telemetry-agent.md
+- docs/system/memory-statistics-feature-in-sonic.md
+- docs/system/reboot-cause-information-via-telemetry-agent.md
+related:
+  cli:
+  - config snmp
+  config_db:
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_TRAP_CONFIG
+  - MGMT_VRF_CONFIG
+  yang:
+  - sonic-snmp
 ---
 
 # 発展トピック

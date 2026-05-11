@@ -1,10 +1,36 @@
 ---
 title: 運用
-description: "運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。"
+description: 運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector
+  へ push する dial-out telemetry、subscription の安定性が課題になる。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - show nat
+  - config nat
+  - config bgp
+  - show bgp
+  - config portchannel
+  - config qos
+  - show acl
+  config_db:
+  - TELEMETRY_CLIENT
+  - NAT
+  - VLAN
+  - TELEMETRY
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-port
+  - sonic-nat
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
 ---
 
 # 運用

@@ -1,17 +1,20 @@
 ---
 title: ProducerStateTable の view switching（warm reboot 用の差分適用）
-description: "ProducerStateTable view switching — warm reboot では、各 daemon が 新しい状態を一気に作って consumer に届ける 必要がある。"
+description: ProducerStateTable view switching — warm reboot では、各 daemon が 新しい状態を一気に作って
+  consumer に届ける 必要がある。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/warm-reboot/view_switch.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/warm-reboot/view_switch.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - WARM_RESTART
   cli: []
-  yang: []
+  yang:
+  - sonic-warm-restart
 ---
 
 <!-- topics-tip -->

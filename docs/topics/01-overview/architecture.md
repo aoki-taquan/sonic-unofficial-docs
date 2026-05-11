@@ -1,15 +1,41 @@
 ---
 title: 設定データフロー
-description: "設定データフロー — SONiC の設定を読むときは、まず CONFIG_DB を起点にします。CONFIG_DB はユーザや controller が投入した意図を保持し、各 daemon がそれを購読して自分の担当する実行状態へ変換します。"
+description: 設定データフロー — SONiC の設定を読むときは、まず CONFIG_DB を起点にします。CONFIG_DB はユーザや controller
+  が投入した意図を保持し、各 daemon がそれを購読して自分の担当する実行状態へ変換します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/internals/swss-schema.md
-  - docs/internals/zmq-producer-consumer-state-table-design.md
-  - docs/management/redis-client-manager-rcm-hld.md
-  - docs/reference/config-db/device-metadata.md
-  - docs/reference/config-db/feature.md
+- docs/internals/swss-schema.md
+- docs/internals/zmq-producer-consumer-state-table-design.md
+- docs/management/redis-client-manager-rcm-hld.md
+- docs/reference/config-db/device-metadata.md
+- docs/reference/config-db/feature.md
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config qos
+  - show acl
+  - config acl
+  - config vlan
+  - show vlan
+  config_db:
+  - DEVICE_METADATA
+  - FEATURE
+  - VLAN
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 設定データフロー

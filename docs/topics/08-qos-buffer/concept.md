@@ -1,33 +1,58 @@
 ---
 title: QoS / Buffer の概念地図
-description: "QoS / Buffer の概念地図 — QoS の話は語彙が多くて、どこから読めばよいかが見えづらいです。ここでは「パケットが入ってから出るまで、どこで何が決まるか」を一本道で並べ、それぞれの設定テーブルがどの段階に作用するかを示します。"
+description: QoS / Buffer の概念地図 — QoS の話は語彙が多くて、どこから読めばよいかが見えづらいです。ここでは「パケットが入ってから出るまで、どこで何が決まるか」を一本道で並べ、それぞれの設定テーブルがどの段階に作用するかを示します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/sonic-qos-scheduler-and-shaping.md
-  - docs/acl-qos/wred-and-ecn-statistics.md
-  - docs/acl-qos/watermark-counters-in-sonic.md
-  - docs/reference/config-db/buffer-pool.md
-  - docs/reference/config-db/buffer-profile.md
-  - docs/reference/config-db/buffer-pg.md
-  - docs/reference/config-db/buffer-queue.md
-  - docs/reference/config-db/queue.md
-  - docs/reference/config-db/scheduler.md
-  - docs/reference/config-db/wred-profile.md
-  - docs/reference/config-db/dscp-to-tc-map.md
-  - docs/reference/config-db/tc-to-queue-map.md
-  - docs/reference/config-db/port-qos-map.md
-  - docs/reference/config-db/pfc-priority-to-priority-group-map.md
+- docs/acl-qos/sonic-qos-scheduler-and-shaping.md
+- docs/acl-qos/wred-and-ecn-statistics.md
+- docs/acl-qos/watermark-counters-in-sonic.md
+- docs/reference/config-db/buffer-pool.md
+- docs/reference/config-db/buffer-profile.md
+- docs/reference/config-db/buffer-pg.md
+- docs/reference/config-db/buffer-queue.md
+- docs/reference/config-db/queue.md
+- docs/reference/config-db/scheduler.md
+- docs/reference/config-db/wred-profile.md
+- docs/reference/config-db/dscp-to-tc-map.md
+- docs/reference/config-db/tc-to-queue-map.md
+- docs/reference/config-db/port-qos-map.md
+- docs/reference/config-db/pfc-priority-to-priority-group-map.md
 keywords:
-  - QoS
-  - Buffer
-  - 概念
-  - buffer pool
-  - PFC
-  - scheduler
-  - DSCP
-  - TC
+- QoS
+- Buffer
+- 概念
+- buffer pool
+- PFC
+- scheduler
+- DSCP
+- TC
+related:
+  cli:
+  - show queue
+  - show pfc
+  - config qos
+  - config buffer
+  - show buffer
+  - show buffer pool
+  - show arp
+  config_db:
+  - SCHEDULER
+  - BUFFER_PROFILE
+  - DSCP_TO_TC_MAP
+  - QUEUE
+  - WRED_PROFILE
+  - PORT_QOS_MAP
+  - BUFFER_PG
+  yang:
+  - sonic-buffer-queue
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-buffer-pg
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-wred-profile
 ---
 
 # QoS / Buffer の概念地図

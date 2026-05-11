@@ -1,15 +1,39 @@
 ---
 title: gNOI 連携と他章との境界
-description: "gNOI 連携と他章との境界 — DASH / SmartSwitch は単独で完結する機能ではなく、管理面 (gNMI / gNOI)、Multi-ASIC / VOQ、Platform 章と境界を持ちます。ここでは「どこから先は別の章が主」かを整理します。"
+description: gNOI 連携と他章との境界 — DASH / SmartSwitch は単独で完結する機能ではなく、管理面 (gNMI / gNOI)、Multi-ASIC
+  / VOQ、Platform 章と境界を持ちます。ここでは「どこから先は別の章が主」かを整理します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/management/gnoi-hld-for-system-apis.md
-  - docs/management/gnoi-hld-for-os-apis.md
-  - docs/system/independent-dpu-upgrade.md
-  - docs/system/smart-switch-reboot-high-level-design.md
-  - docs/platform/smartswitch-dpu-graceful-shutdown.md
+- docs/management/gnoi-hld-for-system-apis.md
+- docs/management/gnoi-hld-for-os-apis.md
+- docs/system/independent-dpu-upgrade.md
+- docs/system/smart-switch-reboot-high-level-design.md
+- docs/platform/smartswitch-dpu-graceful-shutdown.md
+related:
+  cli:
+  - config vnet
+  - config bgp
+  - show bgp
+  - show acl
+  - config acl
+  config_db:
+  - VNET
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-vnet
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # gNOI 連携と他章との境界

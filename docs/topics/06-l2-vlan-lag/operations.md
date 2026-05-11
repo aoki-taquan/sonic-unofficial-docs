@@ -1,16 +1,38 @@
 ---
 title: L2 運用確認
-description: "L2 運用確認 — L2 障害は「VLAN に入っていない」「LAG が期待通り up していない」「MAC 学習が古い」「MC-LAG peer と状態がずれている」「BUM traffic や link flap が制御面を壊している」に分けると追いやすくなります。"
+description: L2 運用確認 — L2 障害は「VLAN に入っていない」「LAG が期待通り up していない」「MAC 学習が古い」「MC-LAG
+  peer と状態がずれている」「BUM traffic や link flap が制御面を壊している」に分けると追いやすくなります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/show-vlan.md
-  - docs/reference/cli/show-mclag.md
-  - docs/switching/sonic-bum-storm-control.md
-  - docs/switching/link-event-damping-hld.md
-  - docs/switching/layer-2-forwarding-enhancements.md
-  - docs/switching/mclag-enhancements.md
+- docs/reference/cli/show-vlan.md
+- docs/reference/cli/show-mclag.md
+- docs/switching/sonic-bum-storm-control.md
+- docs/switching/link-event-damping-hld.md
+- docs/switching/layer-2-forwarding-enhancements.md
+- docs/switching/mclag-enhancements.md
+related:
+  cli:
+  - show vlan
+  - show interfaces
+  - config vlan
+  - config portchannel
+  - config interface
+  - show mclag
+  - clear
+  config_db:
+  - VLAN_MEMBER
+  - VLAN
+  - VLAN_INTERFACE
+  - PORTCHANNEL
+  - PORTCHANNEL_MEMBER
+  - PORT_STORM_CONTROL
+  - PORTCHANNEL_INTERFACE
+  yang:
+  - sonic-portchannel
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # L2 運用確認

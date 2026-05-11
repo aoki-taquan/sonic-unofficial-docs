@@ -1,20 +1,41 @@
 ---
 title: L2 のアーキテクチャ
-description: "L2 のアーキテクチャ — L2 設定は、CONFIG_DB のテーブルごとに担当 daemon が決まり、APPL_DB や orchagent を通って ASIC に反映されます。"
+description: L2 のアーキテクチャ — L2 設定は、CONFIG_DB のテーブルごとに担当 daemon が決まり、APPL_DB や orchagent
+  を通って ASIC に反映されます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/switching/mclag-enhancements.md
-  - docs/switching/brief-introduction-of-iccp-code.md
-  - docs/switching/multiple-spanning-tree-protocol.md
-  - docs/switching/sonic-ip-lag-incremental-update.md
-  - docs/switching/layer-2-forwarding-enhancements.md
-  - docs/reference/config-db/vlan.md
-  - docs/reference/config-db/vlan-member.md
-  - docs/reference/config-db/portchannel.md
-  - docs/reference/config-db/portchannel-member.md
-  - docs/reference/config-db/vlan-interface.md
+- docs/switching/mclag-enhancements.md
+- docs/switching/brief-introduction-of-iccp-code.md
+- docs/switching/multiple-spanning-tree-protocol.md
+- docs/switching/sonic-ip-lag-incremental-update.md
+- docs/switching/layer-2-forwarding-enhancements.md
+- docs/reference/config-db/vlan.md
+- docs/reference/config-db/vlan-member.md
+- docs/reference/config-db/portchannel.md
+- docs/reference/config-db/portchannel-member.md
+- docs/reference/config-db/vlan-interface.md
+related:
+  cli:
+  - show mclag
+  - config mclag
+  - config portchannel
+  - config vlan
+  - show vlan
+  config_db:
+  - VLAN
+  - VLAN_MEMBER
+  - VLAN_INTERFACE
+  - PORTCHANNEL
+  - PORTCHANNEL_MEMBER
+  - MCLAG_DOMAIN
+  - PORTCHANNEL_INTERFACE
+  yang:
+  - sonic-mclag
+  - sonic-portchannel
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # L2 のアーキテクチャ

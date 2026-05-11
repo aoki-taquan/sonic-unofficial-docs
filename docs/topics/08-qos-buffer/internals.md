@@ -1,16 +1,42 @@
 ---
 title: QoS / Buffer の内部実装
-description: "QoS / Buffer の内部実装 — ここでは「設定が変わるたびに buffer がどう再計算されるか」「ポートを足したり消したりしたとき何が起きるか」「使われていない reserved 領域はどう返却されるか」といった、動的バッファモード固有の話を扱います。"
+description: QoS / Buffer の内部実装 — ここでは「設定が変わるたびに buffer がどう再計算されるか」「ポートを足したり消したりしたとき何が起きるか」「使われていない
+  reserved 領域はどう返却されるか」といった、動的バッファモード固有の話を扱います。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/reclaim-reserved-buffer.md
-  - docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md
-  - docs/acl-qos/dynamically-headroom-calculation.md
-  - docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
-  - docs/acl-qos/port-buffer-drop-counters-in-sonic.md
-  - docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
+- docs/acl-qos/reclaim-reserved-buffer.md
+- docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md
+- docs/acl-qos/dynamically-headroom-calculation.md
+- docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
+- docs/acl-qos/port-buffer-drop-counters-in-sonic.md
+- docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
+related:
+  cli:
+  - config interface
+  - show queue
+  - show interfaces
+  - config qos
+  - config buffer
+  - show buffer
+  - show buffer pool
+  config_db:
+  - BUFFER_PROFILE
+  - DEFAULT_LOSSLESS_BUFFER_PARAMETER
+  - BUFFER_QUEUE
+  - BUFFER_PORT_EGRESS_PROFILE_LIST
+  - BUFFER_PG
+  - BUFFER_PORT_INGRESS_PROFILE_LIST
+  - BUFFER_POOL
+  yang:
+  - sonic-buffer-queue
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-buffer-pg
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-wred-profile
 ---
 
 # QoS / Buffer の内部実装

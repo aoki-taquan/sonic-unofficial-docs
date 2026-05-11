@@ -1,15 +1,41 @@
 ---
 title: Overlay 発展トピック
-description: "Overlay 発展トピック — ここでは、基本の VXLAN / VNET / EVPN の延長に見えるが、別の前提や別の orch を持つ機能を整理します。設計検討では同じ overlay として並びますが、運用手順や実装成熟度は同一ではありません。"
+description: Overlay 発展トピック — ここでは、基本の VXLAN / VNET / EVPN の延長に見えるが、別の前提や別の orch を持つ機能を整理します。設計検討では同じ
+  overlay として並びますが、運用手順や実装成熟度は同一ではありません。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/evpn-vxlan-multihoming.md
-  - docs/overlay/smartswitch-eni-based-forwarding.md
-  - docs/overlay/nvgre-tunnel-in-sonic.md
-  - docs/platform/subnet-decapsulation-with-sonic.md
-  - docs/overlay/vnet-local-endpoint-forwarding.md
+- docs/routing/evpn-vxlan-multihoming.md
+- docs/overlay/smartswitch-eni-based-forwarding.md
+- docs/overlay/nvgre-tunnel-in-sonic.md
+- docs/platform/subnet-decapsulation-with-sonic.md
+- docs/overlay/vnet-local-endpoint-forwarding.md
+related:
+  cli:
+  - config vlan
+  - show vlan
+  - config vnet
+  - show bfd
+  - show arp
+  - show acl
+  - config acl
+  config_db:
+  - SUBNET_DECAP
+  - VNET
+  - VLAN
+  - VRF
+  - NVGRE_TUNNEL
+  - TUNNEL_DECAP_TABLE
+  - VXLAN_TUNNEL_MAP
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-vnet
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
 ---
 
 # Overlay 発展トピック

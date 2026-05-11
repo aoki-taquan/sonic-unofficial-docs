@@ -1,14 +1,31 @@
 ---
 title: Dual-ToR の設定
-description: "Dual-ToR の設定 — Dual-ToR の設定は、port ごとの MUX_CABLE と peer ToR を表す PEER_SWITCH を起点に読みます。"
+description: Dual-ToR の設定 — Dual-ToR の設定は、port ごとの MUX_CABLE と peer ToR を表す PEER_SWITCH
+  を起点に読みます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-muxcable.md
-  - docs/reference/cli/show-muxcable.md
-  - docs/reference/config-db/mux-cable.md
-  - docs/reference/config-db/peer-switch.md
+- docs/reference/cli/config-muxcable.md
+- docs/reference/cli/show-muxcable.md
+- docs/reference/config-db/mux-cable.md
+- docs/reference/config-db/peer-switch.md
+related:
+  cli:
+  - show muxcable
+  - config muxcable
+  - show ip
+  config_db:
+  - MUX_CABLE
+  - PEER_SWITCH
+  - TUNNEL
+  - MUX_LINKMGR
+  - XCVRD_LOG
+  - INTERFACE
+  - VLAN_INTERFACE
+  yang:
+  - sonic-mux-cable
+  - sonic-tunnel
 ---
 
 # Dual-ToR の設定

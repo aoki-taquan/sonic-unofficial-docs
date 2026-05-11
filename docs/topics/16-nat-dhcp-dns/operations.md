@@ -1,15 +1,38 @@
 ---
 title: 運用
-description: "運用 — NAT / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと ASIC ハードウェアパスの両方を含むため、調査時はまず「どの daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。"
+description: 運用 — NAT / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと ASIC ハードウェアパスの両方を含むため、調査時はまず「どの
+  daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/show-nat.md
-  - docs/routing/dhcp-relay-per-interface-counter.md
-  - docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
-  - docs/architecture/dhcpv4-relay-agent.md
-  - docs/architecture/dhcpv6-relay-agent.md
+- docs/reference/cli/show-nat.md
+- docs/routing/dhcp-relay-per-interface-counter.md
+- docs/acl-qos/dhcp-dos-mitigation-in-sonic.md
+- docs/architecture/dhcpv4-relay-agent.md
+- docs/architecture/dhcpv6-relay-agent.md
+related:
+  cli:
+  - show nat
+  - clear
+  - show feature
+  - show vlan
+  - config nat
+  - show acl
+  - config acl
+  config_db:
+  - NAT
+  - VLAN
+  - PORT
+  - FEATURE
+  - COPP_GROUP
+  - COPP_TRAP
+  - ACL_RULE
+  yang:
+  - sonic-nat
+  - sonic-copp
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # 運用

@@ -1,14 +1,40 @@
 ---
 title: RIB-FIB と Route Object 生成
-description: "RIB-FIB と Route Object 生成 — SONiC の L3 pipeline は、FRR が持つ RIB と、orchagent / syncd / ASIC が持つ FIB を分けて読むと理解しやすくなります。"
+description: RIB-FIB と Route Object 生成 — SONiC の L3 pipeline は、FRR が持つ RIB と、orchagent
+  / syncd / ASIC が持つ FIB を分けて読むと理解しやすくなります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/routing-and-next-hop-table-enhancement.md
-  - docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md
-  - docs/routing/new-frr-sonic-communication-channel.md
-  - docs/internals/l3-scaling-and-performance-enhancements.md
+- docs/routing/routing-and-next-hop-table-enhancement.md
+- docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md
+- docs/routing/new-frr-sonic-communication-channel.md
+- docs/internals/l3-scaling-and-performance-enhancements.md
+related:
+  cli:
+  - show arp
+  - show ndp
+  - show route map
+  - config route
+  - config bgp
+  - show bgp
+  - config vrf
+  config_db:
+  - VRF
+  - ROUTE_MAP
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  yang:
+  - sonic-route-common
+  - sonic-route-map
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
 ---
 
 # RIB-FIB と Route Object 生成

@@ -1,18 +1,43 @@
 ---
 title: QoS / Buffer のアーキテクチャ
-description: "QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、そしてどの daemon が橋渡しをしているかをまとめます。"
+description: QoS / Buffer のアーキテクチャ — ConfigDB の QoS / buffer テーブルが、最終的に SAI のどのオブジェクトに対応するか、そしてどの
+  daemon が橋渡しをしているかをまとめます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/acl-qos/sonic-qos-scheduler-and-shaping.md
-  - docs/acl-qos/watermark-counters-in-sonic.md
-  - docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
-  - docs/acl-qos/pfc-historical-statistics.md
-  - docs/acl-qos/port-buffer-drop-counters-in-sonic.md
-  - docs/reference/config-db/buffer-pool.md
-  - docs/reference/config-db/buffer-profile.md
-  - docs/reference/config-db/pfc-wd.md
+- docs/acl-qos/sonic-qos-scheduler-and-shaping.md
+- docs/acl-qos/watermark-counters-in-sonic.md
+- docs/acl-qos/align-watermark-flow-with-port-configuration-hld.md
+- docs/acl-qos/pfc-historical-statistics.md
+- docs/acl-qos/port-buffer-drop-counters-in-sonic.md
+- docs/reference/config-db/buffer-pool.md
+- docs/reference/config-db/buffer-profile.md
+- docs/reference/config-db/pfc-wd.md
+related:
+  cli:
+  - config interface
+  - config qos
+  - config buffer
+  - show buffer
+  - show buffer pool
+  - show pfc
+  config_db:
+  - BUFFER_PROFILE
+  - PFC_WD
+  - BUFFER_POOL
+  - BUFFER_PG
+  - BUFFER_QUEUE
+  - QUEUE
+  - SCHEDULER
+  yang:
+  - sonic-buffer-queue
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-buffer-pg
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-wred-profile
 ---
 
 # QoS / Buffer のアーキテクチャ

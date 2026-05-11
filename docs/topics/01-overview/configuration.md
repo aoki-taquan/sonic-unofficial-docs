@@ -1,16 +1,40 @@
 ---
 title: 設定変更の選び方
-description: "設定変更の選び方 — SONiC には設定変更の入口が複数あります。選び方の軸は「変更範囲」「停止影響」「検証と rollback が必要か」「永続化するか」です。"
+description: 設定変更の選び方 — SONiC には設定変更の入口が複数あります。選び方の軸は「変更範囲」「停止影響」「検証と rollback が必要か」「永続化するか」です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/architecture/sonic-generic-configuration-update-and-rollback.md
-  - docs/architecture/json-change-application.md
-  - docs/management/json-patch-ordering-using-yang-models.md
-  - docs/management/config-reload-enhancement.md
-  - docs/reference/cli/config-mgmt-trio.md
-  - docs/reference/cli/sonic-cfggen.md
+- docs/architecture/sonic-generic-configuration-update-and-rollback.md
+- docs/architecture/json-change-application.md
+- docs/management/json-patch-ordering-using-yang-models.md
+- docs/management/config-reload-enhancement.md
+- docs/reference/cli/config-mgmt-trio.md
+- docs/reference/cli/sonic-cfggen.md
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - config vlan
+  - show vlan
+  - show acl
+  - config acl
+  config_db:
+  - VLAN
+  - PORT
+  - VLAN_MEMBER
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 設定変更の選び方

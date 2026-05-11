@@ -1,17 +1,35 @@
 ---
 title: SONiC における FRR upgrade の手順とパッチ管理
-description: "SONiC における FRR upgrade の手順とパッチ管理 — SONiC は upstream frrouting/frr を branch スナップショット + per-release patch 集 という形で取り込んでいる。"
+description: SONiC における FRR upgrade の手順とパッチ管理 — SONiC は upstream frrouting/frr を branch
+  スナップショット + per-release patch 集 という形で取り込んでいる。
 area: routing
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/frr_maintainer/sonic-frr_upgrade_process.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/frr_maintainer/sonic-frr_upgrade_process.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VRF
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  cli:
+  - config bgp
+  - show bgp
+  - config vrf
+  yang:
+  - sonic-srv6
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 <!-- topics-tip -->

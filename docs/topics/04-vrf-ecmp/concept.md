@@ -1,22 +1,48 @@
 ---
 title: L3 基盤と VRF
-description: "L3 基盤と VRF — SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞いは VRF と interface に強く依存し、next hop の解決もリンク状態と隣接探索に依存するためです。"
+description: L3 基盤と VRF — SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route
+  の振る舞いは VRF と interface に強く依存し、next hop の解決もリンク状態と隣接探索に依存するためです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/sonic-vrf-support-design-spec-draft.md
-  - docs/routing/static-ip-route-configuration.md
-  - docs/routing/ipv6-link-local-enhancements.md
-  - docs/routing/sonic-management-vrf-design-document-201911-release.md
+- docs/routing/sonic-vrf-support-design-spec-draft.md
+- docs/routing/static-ip-route-configuration.md
+- docs/routing/ipv6-link-local-enhancements.md
+- docs/routing/sonic-management-vrf-design-document-201911-release.md
 keywords:
+- VRF
+- L3
+- 概念
+- ルーティングテーブル
+- namespace
+- ip rule
+- 管理VRF
+related:
+  cli:
+  - config vrf
+  - config route
+  - show ip
+  - config interface
+  - config vlan
+  - show vlan
+  - config vnet
+  config_db:
   - VRF
-  - L3
-  - 概念
-  - ルーティングテーブル
-  - namespace
-  - ip rule
-  - 管理VRF
+  - VLAN_INTERFACE
+  - MGMT_VRF_CONFIG
+  - INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - LOOPBACK_INTERFACE
+  - STATIC_ROUTE
+  yang:
+  - sonic-fine-grained-ecmp
+  - sonic-vrf
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-vnet
+  - sonic-snmp
+  - sonic-portchannel
 ---
 
 # L3 基盤と VRF

@@ -1,17 +1,41 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — この章は NAT、DHCP relay、DHCP server の内部構造を「container → daemon → 設定生成 → packet path」の順に並べます。time / DNS と TWAMP Light は OS / SAI 寄りなので発展トピックに分けました。"
+description: アーキテクチャ — この章は NAT、DHCP relay、DHCP server の内部構造を「container → daemon →
+  設定生成 → packet path」の順に並べます。time / DNS と TWAMP Light は OS / SAI 寄りなので発展トピックに分けました。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/architecture/nat-in-sonic.md
-  - docs/architecture/dhcpv4-relay-agent.md
-  - docs/architecture/dhcpv6-relay-agent.md
-  - docs/routing/dhcp-relay-for-ipv6-hld.md
-  - docs/routing/dhcp-relay-per-interface-counter.md
-  - docs/management/ipv4-port-based-dhcp-server-in-sonic.md
-  - docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md
+- docs/architecture/nat-in-sonic.md
+- docs/architecture/dhcpv4-relay-agent.md
+- docs/architecture/dhcpv6-relay-agent.md
+- docs/routing/dhcp-relay-for-ipv6-hld.md
+- docs/routing/dhcp-relay-per-interface-counter.md
+- docs/management/ipv4-port-based-dhcp-server-in-sonic.md
+- docs/management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md
+related:
+  cli:
+  - config interface
+  - show nat
+  - config nat
+  - show arp
+  - config portchannel
+  - show acl
+  - config acl
+  config_db:
+  - NAT
+  - VLAN
+  - DHCP_SERVER_IPV4
+  - FEATURE
+  - PORT
+  - COPP_GROUP
+  - COPP_TRAP
+  yang:
+  - sonic-nat
+  - sonic-copp
+  - sonic-portchannel
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # アーキテクチャ

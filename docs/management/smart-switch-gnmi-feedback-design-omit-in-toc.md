@@ -1,18 +1,27 @@
 ---
 title: SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
-description: "SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が NPU 上の gNMI サーバ を介して各 DPU を設定する。"
+description: SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch
+  アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が NPU 上の gNMI サーバ を介して各 DPU を設定する。
 area: management
 verification: discrepancy-found
 monitor: not_implemented
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VNET
+  - SWITCH_TRIMMING
+  - SWITCH_HASH
+  - VNET_ROUTE_TUNNEL
+  - VNET_ROUTE
+  cli:
+  - show version
+  - config vnet
+  yang:
+  - sonic-vnet
 ---
 
 <!-- topics-tip -->

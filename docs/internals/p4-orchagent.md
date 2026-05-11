@@ -1,17 +1,28 @@
 ---
 title: P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）
-description: "P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network Stack) は SONiC を P4 / P4Runtime で遠隔制御 する。"
+description: P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network
+  Stack) は SONiC を P4 / P4Runtime で遠隔制御 する。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pins/p4orch_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pins/p4orch_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VRF
+  - ACL_RULE
+  - ACL_TABLE
+  - MGMT_VRF_CONFIG
+  - VXLAN_TUNNEL_MAP
+  - SYSLOG_SERVER
+  cli:
+  - config vrf
+  - show acl
+  - config acl
+  yang:
+  - sonic-vrf
 ---
 
 <!-- topics-tip -->

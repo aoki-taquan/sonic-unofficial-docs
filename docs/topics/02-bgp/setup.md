@@ -1,17 +1,43 @@
 ---
 title: 設定
-description: "設定 — BGP の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら CONFIG_DB、外部 controller から投入するなら YANG/OpenConfig を見る。重要なのは、最終的に FRR に入る設定と CONFIG_DB の状態を分離しないことである。"
+description: 設定 — BGP の設定入口は複数ある。運用コマンドで触るなら CLI、宣言的に管理するなら CONFIG_DB、外部 controller
+  から投入するなら YANG/OpenConfig を見る。重要なのは、最終的に FRR に入る設定と CONFIG_DB の状態を分離しないことである。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-bgp.md
-  - docs/reference/config-db/bgp-globals.md
-  - docs/reference/config-db/bgp-neighbor.md
-  - docs/reference/config-db/bgp-peer-group.md
-  - docs/reference/config-db/bgp-neighbor-af.md
-  - docs/reference/config-db/bgp-peer-group-af.md
-  - docs/reference/config-db/bgp-aggregate-address.md
+- docs/reference/cli/config-bgp.md
+- docs/reference/config-db/bgp-globals.md
+- docs/reference/config-db/bgp-neighbor.md
+- docs/reference/config-db/bgp-peer-group.md
+- docs/reference/config-db/bgp-neighbor-af.md
+- docs/reference/config-db/bgp-peer-group-af.md
+- docs/reference/config-db/bgp-aggregate-address.md
+related:
+  cli:
+  - config bgp
+  - show ip
+  - config interface
+  - show bgp
+  - clear
+  - config vrf
+  - show acl
+  config_db:
+  - BGP_GLOBALS
+  - BGP_NEIGHBOR
+  - BGP_PEER_GROUP
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_NEIGHBOR_AF
+  - BGP_PEER_GROUP_AF
+  - ROUTE_MAP
+  yang:
+  - sonic-route-map
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-monitor
+  - sonic-bgp-peerrange
 ---
 
 # 設定

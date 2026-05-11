@@ -1,17 +1,26 @@
 ---
 title: SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）
-description: "SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） — SONiC の SRv6 サポートは別 HLD（srv6_hld.md）で定義済みだが、cross-connect 系 behavior（uA / End.X / uDX4 / uDX6…"
+description: SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） — SONiC
+  の SRv6 サポートは別 HLD（srv6_hld.md）で定義済みだが、cross-connect 系 behavior（uA / End.X / uDX4
+  / uDX6…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/srv6/srv6_sid_l3adj.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/srv6/srv6_sid_l3adj.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VRF
+  - MGMT_VRF_CONFIG
+  - VXLAN_TUNNEL_MAP
+  - SYSLOG_SERVER
+  cli:
+  - config vrf
+  yang:
+  - sonic-srv6
+  - sonic-vrf
 ---
 
 <!-- topics-tip -->

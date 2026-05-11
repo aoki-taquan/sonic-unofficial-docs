@@ -1,18 +1,30 @@
 ---
 title: VXLAN / VNet 制限事項と既知の課題
-description: "VXLAN / VNet 全体設計の制限事項。Phase 1 のスコープ外項目（BGP EVPN 統合、Warm restart など）、L2 と L3 を別トンネルとして扱う設計上の制約、干渉する機能との関係を整理する。"
+description: VXLAN / VNet 全体設計の制限事項。Phase 1 のスコープ外項目（BGP EVPN 統合、Warm restart など）、L2
+  と L3 を別トンネルとして扱う設計上の制約、干渉する機能との関係を整理する。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vxlan/Vxlan_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vxlan/Vxlan_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VXLAN_TUNNEL_MAP
+  - VXLAN_TUNNEL
+  - VXLAN_EVPN_NVO
+  - VNET
+  - VLAN
+  - VRF
+  - VNET_ROUTE_TUNNEL
+  cli:
+  - config vxlan
+  - config vnet
+  yang:
+  - sonic-vxlan
+  - sonic-vnet
 ---
 
 # VXLAN / VNet 制限事項と既知の課題

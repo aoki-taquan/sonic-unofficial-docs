@@ -1,13 +1,23 @@
 ---
 title: 内部実装
-description: "内部実装 — 設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。"
+description: 内部実装 — 設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace
+  をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/sonic-configuration-setup-service.md
-  - docs/internals/support-multiple-user-defined-redis-database-instances.md
-  - docs/internals/support-redis-databases-in-multiple-namespaces.md
+- docs/system/sonic-configuration-setup-service.md
+- docs/internals/support-multiple-user-defined-redis-database-instances.md
+- docs/internals/support-redis-databases-in-multiple-namespaces.md
+related:
+  cli:
+  - config vnet
+  config_db:
+  - VNET
+  - VNET_ROUTE_TUNNEL
+  - VNET_ROUTE
+  yang:
+  - sonic-vnet
 ---
 
 # 内部実装

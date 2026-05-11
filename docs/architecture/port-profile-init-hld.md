@@ -1,17 +1,23 @@
 ---
 title: Port Profile Init（SAI bulk port API による fast-boot 高速化）
-description: "Port Profile Init（SAI bulk port API による fast-boot 高速化） — 従来の port 構成は SAI profile から事前作成 → PortsOrch が CONFIG_DB と比較し不一致 port を 個別に削除→再作成 する 2 phase。"
+description: Port Profile Init（SAI bulk port API による fast-boot 高速化） — 従来の port 構成は
+  SAI profile から事前作成 → PortsOrch が CONFIG_DB と比較し不一致 port を 個別に削除→再作成 する 2 phase。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port-profile-init/port-profile-init-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port-profile-init/port-profile-init-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
   cli: []
-  yang: []
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
 ---
 
 <!-- topics-tip -->

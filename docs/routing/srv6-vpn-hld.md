@@ -1,17 +1,35 @@
 ---
 title: SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）
-description: "SRv6 VPN（L3VPN over SRv6 と SRv6 Policy） — Alibaba がエッジルータ用ホワイトボックス SONiC で運用している実機ベースの提案 HLD。"
+description: SRv6 VPN（L3VPN over SRv6 と SRv6 Policy） — Alibaba がエッジルータ用ホワイトボックス SONiC
+  で運用している実機ベースの提案 HLD。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/srv6/srv6_vpn.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/srv6/srv6_vpn.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VRF
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  cli:
+  - config bgp
+  - show bgp
+  - config vrf
+  yang:
+  - sonic-srv6
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 <!-- topics-tip -->

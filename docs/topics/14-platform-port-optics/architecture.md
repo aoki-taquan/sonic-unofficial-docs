@@ -1,19 +1,33 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — ここでは、ポート 1 本がリンクアップに至るまでに通る要素を、SONiC 内部のコンポーネント単位で並べ直します。"
+description: アーキテクチャ — ここでは、ポート 1 本がリンクアップに至るまでに通る要素を、SONiC 内部のコンポーネント単位で並べ直します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/architecture/port-profile-init-hld.md
-  - docs/system/sonic-dynamic-port-breakout-feature-high-level-design.md
-  - docs/architecture/sonic-port-auto-negotiation-design.md
-  - docs/architecture/sonic-port-link-training-design.md
-  - docs/architecture/sonic-port-auto-fec-design.md
-  - docs/platform/sonic-port-fec-ber.md
-  - docs/platform/fec-flr-support-in-sonic.md
-  - docs/platform/sonic-fast-link-up.md
-  - docs/architecture/sonic-port-configuration-refactor-design.md
+- docs/architecture/port-profile-init-hld.md
+- docs/system/sonic-dynamic-port-breakout-feature-high-level-design.md
+- docs/architecture/sonic-port-auto-negotiation-design.md
+- docs/architecture/sonic-port-link-training-design.md
+- docs/architecture/sonic-port-auto-fec-design.md
+- docs/platform/sonic-port-fec-ber.md
+- docs/platform/fec-flr-support-in-sonic.md
+- docs/platform/sonic-fast-link-up.md
+- docs/architecture/sonic-port-configuration-refactor-design.md
+related:
+  cli:
+  - config qos
+  - show acl
+  - config acl
+  config_db:
+  - PORT
+  - ACL_RULE
+  - ACL_TABLE
+  - PORT_QOS_MAP
+  - BUFFER_PORT_INGRESS_PROFILE_LIST
+  - BUFFER_PORT_EGRESS_PROFILE_LIST
+  - BUFFER_PG
+  yang: []
 ---
 
 # アーキテクチャ

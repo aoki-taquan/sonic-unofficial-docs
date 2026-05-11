@@ -1,20 +1,39 @@
 ---
 title: 設定
-description: "設定 — ここでは AAA バックエンドと管理面ポリシーの最小構成を、どの reference を引いて投入すればよいかという観点でまとめます。詳細な CLI / DB スキーマは個別 reference ページに既に存在するため、本ページはあくまで導線として機能します。"
+description: 設定 — ここでは AAA バックエンドと管理面ポリシーの最小構成を、どの reference を引いて投入すればよいかという観点でまとめます。詳細な
+  CLI / DB スキーマは個別 reference ページに既に存在するため、本ページはあくまで導線として機能します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-aaa.md
-  - docs/reference/config-db/tacplus-server.md
-  - docs/reference/config-db/ldap-server.md
-  - docs/reference/yang/sonic-system-aaa.md
-  - docs/management/tacacs-authentication.md
-  - docs/management/radius-management-user-authentication.md
-  - docs/management/hld-ldap.md
-  - docs/management/ssh-server-global-config-hld.md
-  - docs/management/serial-console-global-config-hld.md
-  - docs/system/banner-messages-hld.md
+- docs/reference/cli/config-aaa.md
+- docs/reference/config-db/tacplus-server.md
+- docs/reference/config-db/ldap-server.md
+- docs/reference/yang/sonic-system-aaa.md
+- docs/management/tacacs-authentication.md
+- docs/management/radius-management-user-authentication.md
+- docs/management/hld-ldap.md
+- docs/management/ssh-server-global-config-hld.md
+- docs/management/serial-console-global-config-hld.md
+- docs/system/banner-messages-hld.md
+related:
+  cli:
+  - config aaa
+  - config banner
+  - show aaa
+  config_db:
+  - AAA
+  - TACPLUS_SERVER
+  - LDAP_SERVER
+  - BANNER_MESSAGE
+  - RADIUS
+  - TACPLUS
+  - RADIUS_SERVER
+  yang:
+  - sonic-system-aaa
+  - sonic-system-tacacs
+  - sonic-system-ldap
+  - sonic-ssh-server
 ---
 
 # 設定

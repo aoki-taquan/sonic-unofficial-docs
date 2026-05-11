@@ -1,14 +1,32 @@
 ---
 title: DPU の IP 割当・gNMI 連携・KVM 検証
-description: "DPU の IP 割当・gNMI 連携・KVM 検証 — SmartSwitch / DASH の設定は「DPU の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の 3 つに分けて考えると見通しが良くなります。"
+description: DPU の IP 割当・gNMI 連携・KVM 検証 — SmartSwitch / DASH の設定は「DPU の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の
+  3 つに分けて考えると見通しが良くなります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/smart-switch-ip-address-assignment.md
-  - docs/management/smart-switch-gnmi-feedback-design-omit-in-toc.md
-  - docs/overlay/dash-sonic-kvm.md
-  - docs/architecture/smart-switch-database-design.md
+- docs/system/smart-switch-ip-address-assignment.md
+- docs/management/smart-switch-gnmi-feedback-design-omit-in-toc.md
+- docs/overlay/dash-sonic-kvm.md
+- docs/architecture/smart-switch-database-design.md
+related:
+  cli:
+  - show feature
+  - show platform
+  - config vnet
+  - show acl
+  - config acl
+  config_db:
+  - VNET
+  - DEVICE_METADATA
+  - ACL_RULE
+  - ACL_TABLE
+  - FEATURE
+  - VNET_ROUTE_TUNNEL
+  - VNET_ROUTE
+  yang:
+  - sonic-vnet
 ---
 
 # DPU の IP 割当・gNMI 連携・KVM 検証

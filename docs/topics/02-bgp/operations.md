@@ -1,10 +1,36 @@
 ---
 title: 運用
-description: "運用 — BGP の運用確認は、neighbor の状態確認だけでは足りない。route が FRR で選ばれているか、SONiC に渡っているか、ASIC に入ったか、外部監視に見えているかを分けて確認する。"
+description: 運用 — BGP の運用確認は、neighbor の状態確認だけでは足りない。route が FRR で選ばれているか、SONiC に渡っているか、ASIC
+  に入ったか、外部監視に見えているかを分けて確認する。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - show bgp
+  - show ip
+  - clear
+  - config bgp
+  - show bfd
+  - config snmp
+  - show acl
+  config_db:
+  - BMP
+  - SNMP
+  - VRF
+  - CRM
+  - BGP_NEIGHBOR
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - ACL_RULE
+  yang:
+  - sonic-crm
+  - sonic-snmp
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
 ---
 
 # 運用

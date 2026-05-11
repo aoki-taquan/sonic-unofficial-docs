@@ -1,17 +1,33 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — 観測経路は ASIC 側で値を作り、syncd / orchagent / 各 daemon が Redis に書き、上から SNMP / gNMI / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。"
+description: アーキテクチャ — 観測経路は ASIC 側で値を作り、syncd / orchagent / 各 daemon が Redis に書き、上から
+  SNMP / gNMI / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/internals/sonic-flexcounter-refactor.md
-  - docs/internals/sonic-counter-initialization-optimization.md
-  - docs/system/critical-resource-monitoring.md
-  - docs/system/critical-resource-monitoring-in-sonic.md
-  - docs/system/generic-sai-extension-critical-resource-monitoring-crm.md
-  - docs/reference/config-db/crm.md
-  - docs/reference/config-db/flex-counter-table.md
+- docs/internals/sonic-flexcounter-refactor.md
+- docs/internals/sonic-counter-initialization-optimization.md
+- docs/system/critical-resource-monitoring.md
+- docs/system/critical-resource-monitoring-in-sonic.md
+- docs/system/generic-sai-extension-critical-resource-monitoring-crm.md
+- docs/reference/config-db/crm.md
+- docs/reference/config-db/flex-counter-table.md
+related:
+  cli:
+  - show techsupport
+  - config snmp
+  config_db:
+  - CRM
+  - FLEX_COUNTER_TABLE
+  - SNMP
+  - SYSLOG_SERVER
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  yang:
+  - sonic-crm
+  - sonic-snmp
 ---
 
 # アーキテクチャ

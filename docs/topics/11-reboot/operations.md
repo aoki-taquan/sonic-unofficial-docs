@@ -1,16 +1,40 @@
 ---
 title: Reboot 運用と障害調査
-description: "Reboot 運用と障害調査 — reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。"
+description: Reboot 運用と障害調査 — reboot 運用で重要なのは、実行前に peer と platform の前提を揃えること、実行中に
+  warm shutdown / restore の境界を見失わないこと、実行後に原因と復元結果を確認することです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/reboot-cause-information-via-telemetry-agent.md
-  - docs/switching/increasing-lacp-pdu-timeout-during-warm-reboot.md
-  - docs/system/multi-asic-warm-reboot.md
-  - docs/system/warmboot-manager-hld.md
-  - docs/system/sonic-swss-docker-warm-restart.md
-  - docs/system/swss-docker-warm-restart-code-reference.md
+- docs/system/reboot-cause-information-via-telemetry-agent.md
+- docs/switching/increasing-lacp-pdu-timeout-during-warm-reboot.md
+- docs/system/multi-asic-warm-reboot.md
+- docs/system/warmboot-manager-hld.md
+- docs/system/sonic-swss-docker-warm-restart.md
+- docs/system/swss-docker-warm-restart-code-reference.md
+related:
+  cli:
+  - show bgp
+  - show interfaces
+  - show techsupport
+  - show version
+  - config bgp
+  config_db:
+  - BGP_NEIGHBOR
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # Reboot 運用と障害調査

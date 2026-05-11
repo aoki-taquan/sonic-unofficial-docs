@@ -1,10 +1,35 @@
 ---
 title: 内部実装
-description: "内部実装 — VRF / ECMP / RIB-FIB パイプラインの内部実装は、「route が FRR で best になった瞬間」から「ASIC に program され、peer に advertise される瞬間」までの長いパイプラインに、どこに非対称性や遅延が入るかを意識すると整理しやすいです。"
+description: 内部実装 — VRF / ECMP / RIB-FIB パイプラインの内部実装は、「route が FRR で best になった瞬間」から「ASIC
+  に program され、peer に advertise される瞬間」までの長いパイプラインに、どこに非対称性や遅延が入るかを意識すると整理しやすいです。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - config bgp
+  - show bgp
+  - show bfd
+  - show arp
+  - config vrf
+  - config vxlan
+  config_db:
+  - VRF
+  - SWITCH_HASH
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  yang:
+  - sonic-fine-grained-ecmp
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # 内部実装

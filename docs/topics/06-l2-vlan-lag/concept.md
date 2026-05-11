@@ -1,28 +1,53 @@
 ---
 title: L2 機能の考え方
-description: "L2 機能の考え方 — SONiC で L2 を読むときは、最初に「どの interface がどの forwarding domain に属するか」と「その interface を L2 として使うのか、L3 として使うのか」を分けて整理すると、その後の設定や運用が追いやすくなります。"
+description: L2 機能の考え方 — SONiC で L2 を読むときは、最初に「どの interface がどの forwarding domain
+  に属するか」と「その interface を L2 として使うのか、L3 として使うのか」を分けて整理すると、その後の設定や運用が追いやすくなります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/switching/layer-2-forwarding-enhancements.md
-  - docs/switching/sonic-basic-l2-mode-test-plan.md
-  - docs/switching/switch-port-modes-and-vlan-cli-enhancement.md
-  - docs/reference/config-db/vlan.md
-  - docs/reference/config-db/vlan-member.md
-  - docs/reference/config-db/vlan-interface.md
-  - docs/reference/config-db/port.md
-  - docs/reference/config-db/portchannel.md
-  - docs/architecture/sonic-sub-port-interface-high-level-design.md
+- docs/switching/layer-2-forwarding-enhancements.md
+- docs/switching/sonic-basic-l2-mode-test-plan.md
+- docs/switching/switch-port-modes-and-vlan-cli-enhancement.md
+- docs/reference/config-db/vlan.md
+- docs/reference/config-db/vlan-member.md
+- docs/reference/config-db/vlan-interface.md
+- docs/reference/config-db/port.md
+- docs/reference/config-db/portchannel.md
+- docs/architecture/sonic-sub-port-interface-high-level-design.md
 keywords:
-  - L2
+- L2
+- VLAN
+- LAG
+- 概念
+- bridge
+- port channel
+- MC-LAG
+- STP
+related:
+  cli:
+  - config vlan
+  - config interface
+  - config portchannel
+  - show mclag
+  - config mclag
+  - show arp
+  - config vrf
+  config_db:
+  - PORTCHANNEL
+  - VLAN_INTERFACE
   - VLAN
-  - LAG
-  - 概念
-  - bridge
-  - port channel
-  - MC-LAG
-  - STP
+  - VLAN_SUB_INTERFACE
+  - PORT
+  - VLAN_MEMBER
+  - PORTCHANNEL_MEMBER
+  yang:
+  - sonic-mclag
+  - sonic-portchannel
+  - sonic-vrf
+  - sonic-vxlan
+  - sonic-vlan
+  - sonic-vlan-sub-interface
 ---
 
 # L2 機能の考え方

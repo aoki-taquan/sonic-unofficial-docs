@@ -1,16 +1,26 @@
 ---
 title: HA / PMON / reboot / upgrade の運用
-description: "HA / PMON / reboot / upgrade の運用 — SmartSwitch の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。NPU / DPU で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。"
+description: HA / PMON / reboot / upgrade の運用 — SmartSwitch の運用観点は「どの障害をどの daemon
+  が見て」「どの順序で再起動 / アップグレードするか」に集約されます。NPU / DPU で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md
-  - docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md
-  - docs/platform/smartswitch-pmon-high-level-design.md
-  - docs/system/smart-switch-reboot-high-level-design.md
-  - docs/platform/smartswitch-dpu-graceful-shutdown.md
-  - docs/system/independent-dpu-upgrade.md
+- docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md
+- docs/architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md
+- docs/platform/smartswitch-pmon-high-level-design.md
+- docs/system/smart-switch-reboot-high-level-design.md
+- docs/platform/smartswitch-dpu-graceful-shutdown.md
+- docs/system/independent-dpu-upgrade.md
+related:
+  cli:
+  - show platform
+  - show acl
+  - config acl
+  config_db:
+  - ACL_RULE
+  - ACL_TABLE
+  yang: []
 ---
 
 # HA / PMON / reboot / upgrade の運用

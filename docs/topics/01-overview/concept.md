@@ -1,28 +1,53 @@
 ---
 title: 概念と読み始め方
-description: "概念と読み始め方 — この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。"
+description: 概念と読み始め方 — この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/guides/index.md
-  - docs/guides/beginner.md
-  - docs/guides/operator.md
-  - docs/guides/developer.md
-  - docs/guides/evaluator.md
-  - docs/categories/index.md
-  - docs/management/sonic-user-manual.md
-  - docs/management/sonic-nos-configuration-methods.md
+- docs/guides/index.md
+- docs/guides/beginner.md
+- docs/guides/operator.md
+- docs/guides/developer.md
+- docs/guides/evaluator.md
+- docs/categories/index.md
+- docs/management/sonic-user-manual.md
+- docs/management/sonic-nos-configuration-methods.md
 keywords:
-  - SONiC
-  - 概念
-  - 読み始め
-  - swss
-  - syncd
-  - SAI
-  - コンテナ構成
-  - 設定フロー
-  - Redis DB
+- SONiC
+- 概念
+- 読み始め
+- swss
+- syncd
+- SAI
+- コンテナ構成
+- 設定フロー
+- Redis DB
+related:
+  cli:
+  - config bgp
+  - show pfc
+  - show lldp
+  - show acl
+  - config acl
+  - show bgp
+  - config qos
+  config_db:
+  - LLDP
+  - PFC_WD
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - LLDP_PORT
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
+  yang:
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-lldp
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
 ---
 
 # 概念と読み始め方

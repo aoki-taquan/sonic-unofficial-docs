@@ -1,22 +1,41 @@
 ---
 title: 概要
-description: "概要 — SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。"
+description: 概要 — SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/platform/global-platform-specific-psuutil-class-instance.md
-  - docs/architecture/sonic-port-configuration-refactor-design.md
-  - docs/reference/config-db/port.md
-  - docs/reference/yang/sonic-port.md
+- docs/platform/global-platform-specific-psuutil-class-instance.md
+- docs/architecture/sonic-port-configuration-refactor-design.md
+- docs/reference/config-db/port.md
+- docs/reference/yang/sonic-port.md
 keywords:
-  - Platform
-  - Port
-  - Optics
-  - 概要
-  - transceiver
-  - pmon
-  - platform API
+- Platform
+- Port
+- Optics
+- 概要
+- transceiver
+- pmon
+- platform API
+related:
+  cli:
+  - show platform
+  - show interfaces
+  - config snmp
+  - config qos
+  - show acl
+  - config acl
+  config_db:
+  - PORT
+  - SNMP
+  - DEVICE_METADATA
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - ACL_RULE
+  - ACL_TABLE
+  - PORTCHANNEL
+  yang:
+  - sonic-port
+  - sonic-snmp
 ---
 
 # 概要

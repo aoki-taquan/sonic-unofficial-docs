@@ -1,10 +1,32 @@
 ---
 title: 内部実装
-description: "内部実装 — BGP の内部実装トピックは、同じ「BGP の改善」でも狙っている問題が違う。大量 route 投入を速くするもの、障害時の収束を速くするもの、FIB 未導入 route の advertise を止めるもの、peer 変更を再起動なしで扱うものに分けて読む。"
+description: 内部実装 — BGP の内部実装トピックは、同じ「BGP の改善」でも狙っている問題が違う。大量 route 投入を速くするもの、障害時の収束を速くするもの、FIB
+  未導入 route の advertise を止めるもの、peer 変更を再起動なしで扱うものに分けて読む。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - show bgp
+  - config bgp
+  - show bfd
+  config_db:
+  - BGP_PEER_RANGE
+  - BGP_AGGREGATE_ADDRESS
+  - CRM
+  - DEVICE_METADATA
+  - WARM_RESTART
+  - BGP_NEIGHBOR
+  - BGP_MONITORS
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 # 内部実装

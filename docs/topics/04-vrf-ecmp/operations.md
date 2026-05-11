@@ -1,15 +1,41 @@
 ---
 title: Route / Interface / Counter の確認
-description: "Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。"
+description: Route / Interface / Counter の確認 — L3 の障害調査では、最初に route だけを見ても原因を絞れません。VRF、interface、RIB、FIB、RIF
+  counter、flow counter の順に、control-plane と data-plane の差を分けて確認します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/show-ip.md
-  - docs/reference/cli/show-interfaces.md
-  - docs/routing/router-interface-counters-in-sonic.md
-  - docs/routing/sonic-route-flow-counter-design.md
-  - docs/architecture/sonic-ip-interface-loopback-action.md
+- docs/reference/cli/show-ip.md
+- docs/reference/cli/show-interfaces.md
+- docs/routing/router-interface-counters-in-sonic.md
+- docs/routing/sonic-route-flow-counter-design.md
+- docs/architecture/sonic-ip-interface-loopback-action.md
+related:
+  cli:
+  - show ip
+  - show interfaces
+  - config interface
+  - clear
+  - show vlan
+  - clear counters
+  - config vrf
+  config_db:
+  - VLAN_INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - VRF
+  - INTERFACE
+  - LOOPBACK_INTERFACE
+  - VLAN
+  - CRM
+  yang:
+  - sonic-route-common
+  - sonic-route-map
+  - sonic-interface
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
 ---
 
 # Route / Interface / Counter の確認

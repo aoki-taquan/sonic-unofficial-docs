@@ -1,17 +1,22 @@
 ---
 title: FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
-description: "FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE） — FIPS 140-3 準拠を維持するには、暗号機構（MACsec ハードウェアエンジンを含む）が 動作開始前に Pre-Operational Self-Test (POST) を通っていなければならない。"
+description: FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE） — FIPS 140-3 準拠を維持するには、暗号機構（MACsec
+  ハードウェアエンジンを含む）が 動作開始前に Pre-Operational Self-Test (POST) を通っていなければならない。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/fips/SONiC-SAI-POST.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/fips/SONiC-SAI-POST.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - FIPS
+  - MACSEC_PROFILE
   cli: []
-  yang: []
+  yang:
+  - sonic-fips
+  - sonic-macsec
 ---
 
 <!-- topics-tip -->

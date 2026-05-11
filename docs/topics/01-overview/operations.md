@@ -1,15 +1,38 @@
 ---
 title: 運用入口
-description: "運用入口 — 運用時の設定基盤は、日常変更、起動時の既定値、feature service の制御、復旧操作に分けて読むと判断しやすくなります。ここでは「何を確認してから変更するか」と「戻し方をどう考えるか」を中心に整理します。"
+description: 運用入口 — 運用時の設定基盤は、日常変更、起動時の既定値、feature service の制御、復旧操作に分けて読むと判断しやすくなります。ここでは「何を確認してから変更するか」と「戻し方をどう考えるか」を中心に整理します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/system/sonic-optional-feature-control-enhancement.md
-  - docs/switching/control-sonic-behaviors-with-system-defaults-table.md
-  - docs/architecture/reset-factory-design.md
-  - docs/reference/cli/show-feature.md
-  - docs/reference/config-db/system-defaults.md
+- docs/system/sonic-optional-feature-control-enhancement.md
+- docs/switching/control-sonic-behaviors-with-system-defaults-table.md
+- docs/architecture/reset-factory-design.md
+- docs/reference/cli/show-feature.md
+- docs/reference/config-db/system-defaults.md
+related:
+  cli:
+  - show feature
+  - config vnet
+  - config bgp
+  - show bgp
+  - config vxlan
+  config_db:
+  - SYSTEM_DEFAULTS
+  - FEATURE
+  - VNET
+  - DEVICE_METADATA
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-vnet
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # 運用入口

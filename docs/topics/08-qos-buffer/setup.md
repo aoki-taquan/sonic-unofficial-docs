@@ -1,34 +1,60 @@
 ---
 title: QoS / Buffer の設定
-description: "QoS / Buffer の設定 — 設定は「pool / profile を作る → port に classification を当てる → queue に scheduler / WRED を当てる → 必要なら PFC / PFCWD を有効化」の順で組むのが筋が良いです。"
+description: QoS / Buffer の設定 — 設定は「pool / profile を作る → port に classification を当てる
+  → queue に scheduler / WRED を当てる → 必要なら PFC / PFCWD を有効化」の順で組むのが筋が良いです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-buffer.md
-  - docs/reference/cli/config-qos.md
-  - docs/reference/cli/config-pfcwd.md
-  - docs/reference/config-db/buffer-pool.md
-  - docs/reference/config-db/buffer-profile.md
-  - docs/reference/config-db/buffer-pg.md
-  - docs/reference/config-db/buffer-queue.md
-  - docs/reference/config-db/queue.md
-  - docs/reference/config-db/scheduler.md
-  - docs/reference/config-db/wred-profile.md
-  - docs/reference/config-db/dscp-to-tc-map.md
-  - docs/reference/config-db/tc-to-queue-map.md
-  - docs/reference/config-db/port-qos-map.md
-  - docs/reference/config-db/pfc-priority-to-priority-group-map.md
-  - docs/reference/config-db/pfc-wd.md
-  - docs/reference/yang/sonic-buffer-pool.md
-  - docs/reference/yang/sonic-buffer-profile.md
-  - docs/reference/yang/sonic-buffer-pg.md
-  - docs/reference/yang/sonic-buffer-queue.md
-  - docs/reference/yang/sonic-queue.md
-  - docs/reference/yang/sonic-scheduler.md
-  - docs/reference/yang/sonic-pfcwd.md
-  - docs/reference/yang/sonic-port-qos-map.md
-  - docs/reference/yang/sonic-tc-queue-map.md
+- docs/reference/cli/config-buffer.md
+- docs/reference/cli/config-qos.md
+- docs/reference/cli/config-pfcwd.md
+- docs/reference/config-db/buffer-pool.md
+- docs/reference/config-db/buffer-profile.md
+- docs/reference/config-db/buffer-pg.md
+- docs/reference/config-db/buffer-queue.md
+- docs/reference/config-db/queue.md
+- docs/reference/config-db/scheduler.md
+- docs/reference/config-db/wred-profile.md
+- docs/reference/config-db/dscp-to-tc-map.md
+- docs/reference/config-db/tc-to-queue-map.md
+- docs/reference/config-db/port-qos-map.md
+- docs/reference/config-db/pfc-priority-to-priority-group-map.md
+- docs/reference/config-db/pfc-wd.md
+- docs/reference/yang/sonic-buffer-pool.md
+- docs/reference/yang/sonic-buffer-profile.md
+- docs/reference/yang/sonic-buffer-pg.md
+- docs/reference/yang/sonic-buffer-queue.md
+- docs/reference/yang/sonic-queue.md
+- docs/reference/yang/sonic-scheduler.md
+- docs/reference/yang/sonic-pfcwd.md
+- docs/reference/yang/sonic-port-qos-map.md
+- docs/reference/yang/sonic-tc-queue-map.md
+related:
+  cli:
+  - config buffer
+  - config qos
+  - config pfcwd
+  - show queue
+  - show pfc
+  - config interface
+  - show interfaces
+  config_db:
+  - SCHEDULER
+  - PORT_QOS_MAP
+  - BUFFER_POOL
+  - BUFFER_PROFILE
+  - QUEUE
+  - DSCP_TO_TC_MAP
+  - TC_TO_QUEUE_MAP
+  yang:
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-pfcwd
+  - sonic-buffer-pg
+  - sonic-buffer-queue
+  - sonic-queue
+  - sonic-scheduler
 ---
 
 # QoS / Buffer の設定

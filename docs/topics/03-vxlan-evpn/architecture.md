@@ -1,16 +1,42 @@
 ---
 title: Overlay アーキテクチャ
-description: "Overlay アーキテクチャ — Overlay を読むときの中心は、設定テーブルそのものではなく「誰がどの table を見て、最終的にどの SAI object を作るか」です。"
+description: Overlay アーキテクチャ — Overlay を読むときの中心は、設定テーブルそのものではなく「誰がどの table を見て、最終的にどの
+  SAI object を作るか」です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/overlay/vxlan-sonic.md
-  - docs/routing/evpn-vxlan-hld.md
-  - docs/routing/evpn-vxlan-multihoming.md
-  - docs/overlay/vnet-local-endpoint-forwarding.md
-  - docs/routing/overlay-ecmp-with-bfd-monitoring.md
-  - docs/routing/overlay-ecmp-enhancements.md
+- docs/overlay/vxlan-sonic.md
+- docs/routing/evpn-vxlan-hld.md
+- docs/routing/evpn-vxlan-multihoming.md
+- docs/overlay/vnet-local-endpoint-forwarding.md
+- docs/routing/overlay-ecmp-with-bfd-monitoring.md
+- docs/routing/overlay-ecmp-enhancements.md
+related:
+  cli:
+  - config vnet
+  - config bgp
+  - show bgp
+  - show bfd
+  - show arp
+  - config vrf
+  - config vxlan
+  config_db:
+  - VNET
+  - VRF
+  - VLAN
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  yang:
+  - sonic-vnet
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
 ---
 
 # Overlay アーキテクチャ

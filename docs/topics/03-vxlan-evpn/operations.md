@@ -1,16 +1,42 @@
 ---
 title: Overlay 運用
-description: "Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS / hash の順に見ると無駄が少なくなります。"
+description: Overlay 運用 — Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、QoS
+  / hash の順に見ると無駄が少なくなります。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/overlay-ecmp-with-bfd-monitoring.md
-  - docs/routing/overlay-ecmp-enhancements.md
-  - docs/overlay/dscp-remapping-for-tunnel-traffic.md
-  - docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md
-  - docs/routing/local-ars-hld.md
-  - docs/architecture/sonic-policy-based-hashing.md
+- docs/routing/overlay-ecmp-with-bfd-monitoring.md
+- docs/routing/overlay-ecmp-enhancements.md
+- docs/overlay/dscp-remapping-for-tunnel-traffic.md
+- docs/routing/test-plan-for-inner-packet-hashing-in-ecmp.md
+- docs/routing/local-ars-hld.md
+- docs/architecture/sonic-policy-based-hashing.md
+related:
+  cli:
+  - show bgp
+  - show ip
+  - show mac
+  - show muxcable
+  - show bfd
+  - clear
+  - show pfc
+  config_db:
+  - VNET
+  - VXLAN_TUNNEL
+  - TUNNEL_DECAP_TABLE
+  - VLAN
+  - VRF
+  - VXLAN_TUNNEL_MAP
+  - TUNNEL
+  yang:
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-vnet
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
 ---
 
 # Overlay 運用

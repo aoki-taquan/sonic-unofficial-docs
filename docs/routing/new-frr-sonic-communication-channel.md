@@ -1,17 +1,19 @@
 ---
 title: 新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）
-description: "新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール） — SONiC の routing は FRR に依存し、zebra daemon が経路を計算して内蔵 FPM (Forwarding Plane Manager) モジュール dplane_fpm_nl が Netlink で…"
+description: 新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール） — SONiC の routing は FRR に依存し、zebra
+  daemon が経路を計算して内蔵 FPM (Forwarding Plane Manager) モジュール dplane_fpm_nl が Netlink で…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-fpm-module/frr_sonic_communication_channel.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-fpm-module/frr_sonic_communication_channel.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli: []
-  yang: []
+  yang:
+  - sonic-srv6
 ---
 
 <!-- topics-tip -->

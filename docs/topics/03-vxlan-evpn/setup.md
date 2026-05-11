@@ -1,20 +1,46 @@
 ---
 title: Overlay 設定
-description: "Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。"
+description: Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN
+  の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-vxlan.md
-  - docs/reference/cli/config-vnet.md
-  - docs/reference/config-db/vxlan-tunnel.md
-  - docs/reference/config-db/vxlan-tunnel-map.md
-  - docs/reference/config-db/vnet.md
-  - docs/reference/config-db/tunnel.md
-  - docs/reference/config-db/tunnel-decap-table.md
-  - docs/reference/yang/sonic-vxlan.md
-  - docs/reference/yang/sonic-vnet.md
-  - docs/architecture/sonic-policy-based-hashing.md
+- docs/reference/cli/config-vxlan.md
+- docs/reference/cli/config-vnet.md
+- docs/reference/config-db/vxlan-tunnel.md
+- docs/reference/config-db/vxlan-tunnel-map.md
+- docs/reference/config-db/vnet.md
+- docs/reference/config-db/tunnel.md
+- docs/reference/config-db/tunnel-decap-table.md
+- docs/reference/yang/sonic-vxlan.md
+- docs/reference/yang/sonic-vnet.md
+- docs/architecture/sonic-policy-based-hashing.md
+related:
+  cli:
+  - config vxlan
+  - config vnet
+  - config vlan
+  - config interface
+  - show bgp
+  - config vrf
+  - config bgp
+  config_db:
+  - TUNNEL_DECAP_TABLE
+  - VNET
+  - VXLAN_TUNNEL_MAP
+  - TUNNEL
+  - VXLAN_TUNNEL
+  - VXLAN_EVPN_NVO
+  - VLAN
+  yang:
+  - sonic-vxlan
+  - sonic-vnet
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
 ---
 
 # Overlay 設定

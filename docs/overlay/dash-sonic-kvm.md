@@ -1,17 +1,35 @@
 ---
 title: DASH SONiC KVM（BMv2 ベース仮想 DPU）
-description: "DASH SONiC KVM（BMv2 ベース仮想 DPU） — 物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ:"
+description: 'DASH SONiC KVM（BMv2 ベース仮想 DPU） — 物理 DPU を持たずに DASH（Disaggregated APIs
+  for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ:'
 area: overlay
 verification: hld-only
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dash/dash-sonic-kvm.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dash/dash-sonic-kvm.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - LLDP
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  - BGP_NEIGHBOR_AF
+  cli:
+  - config bgp
+  - show bgp
+  - show lldp
+  yang:
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
+  - sonic-bgp-bbr
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

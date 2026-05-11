@@ -1,17 +1,21 @@
 ---
 title: FlexCounter リファクタ（CounterContext テンプレート化）
-description: "FlexCounter リファクタ（CounterContext テンプレート化） — syncd の FlexCounter は port / queue / buffer pool / priority group など 多数の統計・属性タイプ を扱う巨大クラス。"
+description: FlexCounter リファクタ（CounterContext テンプレート化） — syncd の FlexCounter は port
+  / queue / buffer pool / priority group など 多数の統計・属性タイプ を扱う巨大クラス。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/flex_counter/flex_counter_refactor.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/flex_counter/flex_counter_refactor.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - FLEX_COUNTER_TABLE
+  - WRED_PROFILE
   cli: []
-  yang: []
+  yang:
+  - sonic-wred-profile
 ---
 
 <!-- topics-tip -->

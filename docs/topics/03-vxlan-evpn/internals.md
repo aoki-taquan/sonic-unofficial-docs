@@ -1,10 +1,36 @@
 ---
 title: 内部実装
-description: "内部実装 — VXLAN / EVPN / VNET の内部実装は「FRR (bgpd) が EVPN type-2/type-5 を学習し、zebra が kernel/fpmsyncd に渡し、orchagent が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて…"
+description: 内部実装 — VXLAN / EVPN / VNET の内部実装は「FRR (bgpd) が EVPN type-2/type-5 を学習し、zebra
+  が kernel/fpmsyncd に渡し、orchagent が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて…
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - config vlan
+  - show vlan
+  - config vnet
+  - show bfd
+  - show arp
+  - config bgp
+  - show bgp
+  config_db:
+  - VNET
+  - VLAN
+  - VRF
+  - VXLAN_TUNNEL
+  - DEVICE_METADATA
+  - VXLAN_TUNNEL_MAP
+  - VXLAN_EVPN_NVO
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-vnet
+  - sonic-bgp-monitor
+  - sonic-bgp-peergroup
+  - sonic-bgp-peerrange
+  - sonic-bgp-global
 ---
 
 # 内部実装

@@ -1,17 +1,38 @@
 ---
 title: 設定
-description: "設定 — ここでは、port 設定と platform 関連設定を、CLI / CONFIG_DB / YANG のどれから入るかという観点で整理します。全オプションは個別リファレンスに任せ、この章では入口の対応関係を示します。"
+description: 設定 — ここでは、port 設定と platform 関連設定を、CLI / CONFIG_DB / YANG のどれから入るかという観点で整理します。全オプションは個別リファレンスに任せ、この章では入口の対応関係を示します。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/reference/cli/config-interface.md
-  - docs/reference/cli/config-platform-firmware.md
-  - docs/reference/cli/show-platform.md
-  - docs/platform/sonic-fw-utility.md
-  - docs/platform/platform-capability-file-enhancement.md
-  - docs/reference/config-db/port.md
-  - docs/reference/yang/sonic-port.md
+- docs/reference/cli/config-interface.md
+- docs/reference/cli/config-platform-firmware.md
+- docs/reference/cli/show-platform.md
+- docs/platform/sonic-fw-utility.md
+- docs/platform/platform-capability-file-enhancement.md
+- docs/reference/config-db/port.md
+- docs/reference/yang/sonic-port.md
+related:
+  cli:
+  - config interface
+  - show interfaces
+  - config platform firmware
+  - show platform
+  - config snmp
+  - config qos
+  - show acl
+  config_db:
+  - PORT
+  - DEVICE_METADATA
+  - SNMP
+  - BREAKOUT_CFG
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - ACL_RULE
+  - ACL_TABLE
+  yang:
+  - sonic-port
+  - sonic-portchannel
+  - sonic-snmp
 ---
 
 # 設定
