@@ -174,3 +174,8 @@ ip link show send_to_ingress
 - CoPP との相互作用 (CPU 起点パケットの policer)
 - HLD 後の追加属性（rate-limit 等）の有無
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)

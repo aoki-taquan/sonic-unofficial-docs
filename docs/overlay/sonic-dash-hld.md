@@ -139,3 +139,8 @@ DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の YANG 反�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dash/dash-sonic-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)

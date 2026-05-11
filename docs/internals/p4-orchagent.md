@@ -253,3 +253,8 @@ sonic-db-cli APPL_STATE_DB keys '*'
 - 同期 syncd モード + APPL_STATE_DB 応答経路の現行確認
 - warm boot / fast boot サポート (HLD は次フェーズと記載) の現行ステータス確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)

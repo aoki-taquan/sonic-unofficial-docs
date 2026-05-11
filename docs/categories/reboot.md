@@ -66,3 +66,8 @@ last_verified: 2026-05-10
 - [Container / Build system 関連](container-build.md)
 - [SmartSwitch 関連](smartswitch.md)
 - [SAI 拡張属性追加系](sai-extensions.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)

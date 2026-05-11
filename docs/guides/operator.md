@@ -39,3 +39,9 @@ last_verified: 2026-05-10
 - 障害別の逆引き導線が不足しています。例: 「BGP が上がらない」「ポートが down」「VLAN に疎通しない」「CPU / memory / disk を見たい」から CLI、CONFIG_DB、関連 HLD に飛ぶページが必要です。
 - CLI と CONFIG_DB の相互参照は各リファレンスで整備されつつありますが、運用手順として「確認、変更、保存、rollback、再起動影響」をまとめた runbook 形式のページがありません。
 - `show techsupport`、system health、ログ、カウンタ、platform health をまとめたトラブルシュート入口が必要です。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)

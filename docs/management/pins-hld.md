@@ -112,3 +112,8 @@ P4Orch は **同一 ASIC table への複数 writer（RouteOrch 等）** を扱�
 - [HLD: P4Runtime PacketIO](packetio.md)
 - [HLD: P4RT Application](p4rt-application-hld.md)
 - [HLD: send_to_ingress](send-to-ingress-hld.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)

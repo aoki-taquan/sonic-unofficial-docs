@@ -70,3 +70,8 @@ SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが Redis ベ
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 - [Warm-Reboot / Fast-Reboot 関連](reboot.md)
 - [Container / Build system 関連](container-build.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)

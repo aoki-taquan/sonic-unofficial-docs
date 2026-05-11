@@ -71,3 +71,8 @@ PORTCHANNEL|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-portchannel.yang` (sha `9ea932ec`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-portchannel.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)

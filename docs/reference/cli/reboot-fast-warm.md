@@ -152,3 +152,8 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 [^4]: `fast-reboot` の `parseOptions` (`scripts/fast-reboot` L253-L307) と `showHelpAndExit` (L229-L251)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/fast-reboot#L229>
 
 [^5]: warm 専用の補助関数 `initialize_pre_shutdown` / `request_pre_shutdown` / `wait_for_pre_shutdown_complete_or_fail` (`scripts/fast-reboot` L385-L449)。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../../topics/11-reboot/index.md)

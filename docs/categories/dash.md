@@ -49,3 +49,8 @@ DASH は実装が `sonic-dash-api` / `dash-pipeline` / `swss-common` に分散�
 - [SmartSwitch 関連](smartswitch.md)
 - [SAI 拡張属性追加系](sai-extensions.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
