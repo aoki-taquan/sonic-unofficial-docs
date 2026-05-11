@@ -1,0 +1,87 @@
+---
+title: コンテナ memory limit 超過 / OOM kill
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: files/build_templates/sonic_debian_extension.j2
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-host-services
+    path: scripts/hostcfgd
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+related:
+  config_db: [FEATURE]
+  cli: [docker stats, show feature status]
+  yang: [sonic-feature]
+---
+
+# Runbook: コンテナ memory limit 超過 / OOM kill
+
+!!! danger "実行前提"
+    OOM された container は systemd で自動 restart されるが、その間 control plane (BGP / LLDP / SNMP) は不通。原因 container を特定する前に乱暴に limit を上げると swap を消費して host 自体が不安定になる。`sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)` を必ず取得し、limit 変更は段階的に。
+
+## 症状
+
+- syslog に `Out of memory: Killed process` / `oom-killer`
+- `docker stats` で memory が `LIMIT` ぎりぎり
+- 該当 container (bgp / snmp / lldp 等) が無限 restart
+
+## 想定原因（優先度順）
+
+1. **特定 container の memory leak**: 長時間稼働で増加
+2. **大規模 config (1000+ route / ACL) で初期化が memory を食う**
+3. **container limit のチューニング不足**: default 512MB で足りない
+4. **host 側の swap 無効 + free 不足**
+
+## 切り分け手順
+
+### 1. 各 container の使用量
+
+```bash
+docker stats --no-stream
+```
+
+### 2. OOM 履歴
+
+```bash
+sudo dmesg | grep -i "killed process" | tail
+sudo journalctl -u docker | grep -i oom | tail
+```
+
+### 3. 該当プロセス内訳
+
+```bash
+docker exec <container> top -b -n 1 | head -20
+```
+
+### 4. host memory
+
+```bash
+free -h
+cat /proc/meminfo | head -10
+```
+
+### 5. limit 設定
+
+```bash
+docker inspect <container> | jq '.[].HostConfig.Memory'
+sonic-db-cli CONFIG_DB hgetall "FEATURE|<feature>"
+```
+
+## 対処方法
+
+- container 再起動: `sudo systemctl restart <feature>`
+- limit 引き上げ: `/usr/share/sonic/templates/<container>/docker-image-create.sh` 見直し（要 build）
+- leak 疑い → memory profiling し upstream issue
+- 不要 feature 無効化: `sudo config feature state <feat> disabled`
+
+## 関連ページ
+
+- [container-not-starting.md](container-not-starting.md)
+- [sai-failure.md](sai-failure.md)
+
+## 引用元
+
+[^1]: sonic-net/sonic-buildimage @ 4305596 — sonic_debian_extension
+[^2]: sonic-net/sonic-host-services @ 4305596 — hostcfgd feature mgr
