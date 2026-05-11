@@ -40,6 +40,18 @@ related:
 
 [VRF](../../reference/glossary.md#term-vrf) / [RIF](../../reference/glossary.md#term-rif) / route / NHG の読み方を押さえると、周辺機能の設計意図が追いやすくなります。このページでは、章 04 から次に読む候補を整理します。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [sonic-vrf-support-design-spec-draft](../../routing/sonic-vrf-support-design-spec-draft.md), [sonic-management-vrf-design-document-201911-release](../../routing/sonic-management-vrf-design-document-201911-release.md), [sonic-weighted-ecmp](../../routing/sonic-weighted-ecmp.md) で完結する。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config vrf` 系コマンド、[reference/config_db/VRF](../../reference/config-db/index.md), `MGMT_VRF_CONFIG`, `INTERFACE`, `ROUTE` に集約されている。
+- **本ページ**は基本 VRF/RIF/route を押さえた読者向けに、VRRP / SAG / TSA / NHG scale / WCMP / VRF leaking / fine-grained ECMP といった発展領域だけを扱う。
+
+## Fine-Grained ECMP と Weighted ECMP
+
+`fine-grained-ecmp` HLD は、L4 ヘッダのハッシュ入力を変えずに、特定 nexthop bucket への偏りを管理者が制御するための仕組み。具体的には `FG_NHG_PREFIX`, `FG_NHG_MEMBER` テーブルで bucket → member の bind を細粒度に変更し、特定 server 群への traffic を warm-take-down できる。NHG bucket 数は power-of-two で、SAI `SAI_NEXT_HOP_GROUP_ATTR_HASH_BUCKET_COUNT` に直接対応する。
+
+Weighted ECMP (`sonic-weighted-ecmp`) は member ごとに weight を持つ点が fine-grained と異なり、SAI 側で `SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_UNORDERED_ECMP` を要求するため platform 対応が分かれる。
+
 ## VRRP は interface と VRF の冗長化
 
 VRRP は、複数ルータが 1 つの仮想 router address を共有し、Master 障害時に Backup が引き継ぐ L3 冗長プロトコルです。SONiC では Ethernet、[VLAN](../../reference/glossary.md#term-vlan)、sub-interface、[PortChannel](../../reference/glossary.md#term-portchannel)、non-default VRF が関係します。
@@ -110,5 +122,16 @@ VRF / NHG / route の基本動作を超えた領域では、scale 改善と障�
 - `sonic-swss` の `vrforch` / `routeorch` で NHG 共有の最適化と memory 削減 PR が継続的に入っている。
 - FRR の VRF leaking 周りは IPv6 source address selection と `set src` のバグ修正が時折入る。SONiC 側は FRR バージョン更新でこれを取り込む。
 - mgmt VRF を前提とした `host-system` 系 daemon (chrony, snmpd, gnmi server) の bind 設定改善 PR が散発的にあり、deployment ガイドラインの変化につながる。
+
+## トラブルシュート観点
+
+- VRF 削除が hang する場合、`ip vrf show` と `redis-cli -n 4 hgetall "VRF|<name>"` の差分を確認する。RIF が残っているなら、対応 interface の `vrf_name` を unset してから削除する。
+- ECMP path が偏るときは、ASIC hash seed (`SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_SEED`) と hash-field 設定を `redis-cli -n 1 hgetall "SAI_OBJECT_TYPE_HASH:..."` で確認。inner header をハッシュ入力に入れていない platform は ECMP 偏り易い。
+- mgmt VRF からの telemetry が届かない場合、`ip vrf exec mgmt curl ...` で経路自体を切り分け、`gnmi-server` の `--bind-vrf` または `host-system` 起動引数で VRF 指定が抜けていないか確認する。
+
+## 検証パスとラボ要件
+
+- VRF leaking の検証は `sonic-mgmt` の `vrf` test suite で network namespace を分けたシナリオを再現できる。leak 経路の `next-hop-vrf <other>` 設定と FIB 上の経路存在を `show ip route vrf <name>` で確認する。
+- WCMP の動作は `wcmp_manager` の weight 反映遅延を計測することで実機差を見える化できる。SAI vendor によっては bucket resize が atomic でなく数 ms の transient loss を伴う。
 
 <!-- glossary-links-injected: 0e4b2dbde8e1 -->

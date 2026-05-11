@@ -35,6 +35,12 @@ related:
 
 ここでは、port / platform 章の中でも比較的新しい、または運用上の影響が大きい設計を 3 つ取り上げます。詳細は元 [HLD](../../reference/glossary.md#term-hld) に従い、本章では「ほかの章と何が変わるか」に絞ります。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [1-6t-support-in-sonic](../../platform/1-6t-support-in-sonic.md), [cmis-and-c-cmis-support-for-zr](../../platform/cmis-and-c-cmis-support-for-zr.md), [fec-flr-support-in-sonic](../../platform/fec-flr-support-in-sonic.md) で完結する。pmon daemon 群 (xcvrd, psud, thermalctld, ledd) の責務分担はそこに詳細がある。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config interface` / `show interfaces transceiver` 系、[reference/config_db/PORT](../../reference/config-db/index.md), `INTERFACE`, `BREAKOUT_CFG` に集約されている。
+- **本ページ**は基本 port lifecycle を押さえた読者向けに、1.6T 対応, port naming 改革, dynamic add/del, CMIS 5.x, optics firmware, breakout dynamic などの発展領域だけを扱う。
+
 ## 1.6T 対応
 
 [1.6T support in SONiC](../../platform/1-6t-support-in-sonic.md) は、1.6Tbps クラスの port をサポートするための拡張設計です。speed 値、lanes、FEC、buffer profile、optics、Gearbox など、port 章のほぼ全要素が影響を受けます。既存の `PORT` テーブルや [YANG](../../reference/glossary.md#term-yang) の制約値を見直す必要があるため、設定面・運用面の双方を再点検する観点で読むのが安全です。
@@ -97,5 +103,33 @@ dynamic add / delete を多用する運用 ([ZTP](../../reference/glossary.md#te
 - `sonic-platform-common` / `sonic-platform-daemons` で CMIS state machine、PM (Performance Monitoring)、firmware upgrade の PR が定期的に入る。
 - `pmon` docker (xcvrd / psud / thermalctld / ledd 等) の安定化と SKU 拡張が継続。
 - 1.6T / 800G 対応 PR がコア component (port management, buffer model, sai profile) に分散して入っており、追跡には複数 repo を横断する必要がある。
+
+## トラブルシュート観点
+
+- link up しない場合、(1) FEC 設定 (`port admin_status up` 時の `fec` 値) と peer 側設定一致、(2) `xcvrd` の DOM 値で受光レベルが reference 内、(3) `STATE_DB|TRANSCEIVER_INFO` の vendor/part が認識できているか、を順に確認する。
+- breakout 後に古い port が残るときは、`config_db.json` 上の `PORT|Ethernet*` と `BREAKOUT_CFG` 整合を確認し、`config reload` で再同期する。
+- CMIS module の application select 失敗は `pmon` docker の `xcvrd` log で `CMIS_REINIT` の繰り返しが手がかりになる。module の host management 設定 (`HOST_MGMT_INTF`) と CMIS profile の MaxPower mismatch が原因のことが多い。
+
+## 検証パスとラボ要件
+
+- 1.6T サポートは現状 vendor SDK + 対応 SKU が前提で、community VS lab では速度シミュレーションのみ。SAI profile の `port-config.ini` を実機準拠で用意して機能テストする流れになる。
+- dynamic breakout の検証は `sonic-mgmt` の `platform/test_port_toggle.py` 系で再現可能。breakout 時の ACL/QoS reprovision が抜けると次の機能テストで露見する。
+
+## 関連ページ (追補)
+
+- [CMIS and C-CMIS support for ZR](../../platform/cmis-and-c-cmis-support-for-zr.md)
+- [Custom SI settings for CMIS modules](../../platform/custom-si-settings-for-cmis-modules.md)
+- [Enhancement of CMIS module management](../../management/enhancement-of-cmis-module-management.md)
+- [FEC FLR support in SONiC](../../platform/fec-flr-support-in-sonic.md)
+- [Automatic module provisioning for chassis](../../platform/automatic-module-provisioning-for-chassis.md)
+- [Enhancements to add or del ports dynamically](../../acl-qos/enhancements-to-add-or-del-ports-dynamically.md)
+- [1.6T support in SONiC](../../platform/1-6t-support-in-sonic.md)
+- [SONiC port naming convention change](../../platform/sonic-port-naming-convention-change.md)
+- [Enhanced LPO debug registers HLD](../../platform/enhanced-lpo-debug-registers-hld.md)
+- [Global platform-specific psuutil class instance](../../platform/global-platform-specific-psuutil-class-instance.md)
+- [Handle ASIC SDK health event](../../platform/handle-asic-sdk-health-event.md)
+- [06 L2 / VLAN / LAG: port を VLAN / LAG メンバとして組み込む](../06-l2-vlan-lag/index.md)
+- [07 ACL / CoPP / Mirror: port lifecycle と ACL bind の付け替え](../07-acl-copp-mirror/index.md)
+- [12 Multi-ASIC / VOQ: chassis 内 module hot-swap](../12-multi-asic-voq/index.md)
 
 <!-- glossary-links-injected: f7c82909d898 -->

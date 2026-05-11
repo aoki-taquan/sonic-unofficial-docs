@@ -42,6 +42,12 @@ related:
 
 ここでは、基本の [VXLAN](../../reference/glossary.md#term-vxlan) / [VNET](../../reference/glossary.md#term-vnet) / [EVPN](../../reference/glossary.md#term-evpn) の延長に見えるが、別の前提や別の orch を持つ機能を整理します。設計検討では同じ overlay として並びますが、運用手順や実装成熟度は同一ではありません。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [vxlan-sonic](../../overlay/vxlan-sonic.md), [sonic-dash-hld](../../overlay/sonic-dash-hld.md), [evpn-vxlan-multihoming](../../routing/evpn-vxlan-multihoming.md) に集約されている。tunnel orchagent と FRR EVPN の協調は area HLD 側で詳細化されている。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config vxlan` / `config vnet` 系コマンド、[reference/config_db/VXLAN_TUNNEL](../../reference/config-db/index.md), `VNET`, `VNET_INTERFACE`, `EVPN_NVO` に集約されている。
+- **本ページ** は基本 VXLAN/VNET/EVPN を踏まえた読者向けに、EVPN MH, NVGRE, Subnet decap, Overlay ECMP w/ BFD, DASH 連携といった発展領域だけを扱う。
+
 ## EVPN multihoming
 
 EVPN multihoming は、host を複数 leaf に接続し、[BGP](../../reference/glossary.md#term-bgp)-EVPN の Type-1 / Type-4、ESI、DF election、split-horizon で重複転送とループを避ける機能です。通常の EVPN VXLAN が Type-2 / Type-5 で MAC/IP/prefix を配るのに対し、multihoming は Ethernet Segment の制御を追加します。
@@ -110,5 +116,24 @@ Subnet decap は VXLAN overlay ではなく、[VLAN](../../reference/glossary.md
 - FRR 側の EVPN 機能拡張に追従して `bgpcfgd` の Jinja2 と YANG モジュールが更新されることが多い。EVPN MH の SONiC 対応は段階的で、PR 単位で SAI 側依存を確認する必要がある。
 - `sonic-swss` 配下の `vnetorch` / `vxlanorch` は tunnel nexthop group の扱いに関する PR が継続しており、scale 改善と memory 削減が主軸。
 - SmartSwitch / DASH 関連で `vnet-local-endpoint-forwarding` のような近接最適化 HLD が追加されており、VNET の用途が DC overlay から DASH service へ広がっている。
+
+## トラブルシュート観点
+
+- VTEP の `show vxlan tunnel` で remote VTEP が学習されない場合は、BGP-EVPN のセッションと Type-3 (Inclusive Multicast Ethernet Tag) の advertise 状況を `vtysh -c "show bgp l2vpn evpn"` で確認する。
+- MAC 学習が片寄っている場合、Type-2 経路の VNI と local VLAN-VNI mapping の整合を `VXLAN_TUNNEL_MAP` で点検。FRR 側 `evpn vni <id>` も必須。
+- inner hash の偏りは `show interfaces counters` の per-port 分布で見える。ASIC SAI の `SAI_SWITCH_ATTR_LAG_HASH_IPV4` に inner 5-tuple が含まれていない場合、SAI vendor docs と platform `hash.json` の見直しが必要。
+
+## 検証パスとラボ要件
+
+- KVM-based VS lab (`sonic-mgmt` ansible playbook 中の `vxlan-evpn` topology) で EVPN Type-2/3/5 の基本動作を再現できる。`virsh` で VTEP を 3 台立て、leaf-spine で `bgp l2vpn evpn` を運用する。
+- DASH/SmartSwitch 系の検証は DPU sim (`sonic-dash-kvm` HLD 参照) を併用する。VNET tunnel と ENI redirect の責務分担を観察できる。
+
+## 関連ページ (追補)
+
+- [Overlay ECMP enhancements](../../routing/overlay-ecmp-enhancements.md)
+- [Overlay ECMP with BFD monitoring](../../routing/overlay-ecmp-with-bfd-monitoring.md)
+- [DSCP remapping for tunnel traffic](../../overlay/dscp-remapping-for-tunnel-traffic.md)
+- [SONiC DASH HLD](../../overlay/sonic-dash-hld.md)
+- [VXLAN SONiC concepts/internals/operations](../../overlay/vxlan-sonic.md)
 
 <!-- glossary-links-injected: 4f24af8e8ba5 -->

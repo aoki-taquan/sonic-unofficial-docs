@@ -30,6 +30,12 @@ related:
 
 [PINS](../../reference/glossary.md#term-pins) は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると **状態取得 / config push の管理面（[gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig）と組で読む** のが自然です。SONiC 標準の管理章と PINS の境界、および [HLD](../../reference/glossary.md#term-hld) と実装のあいだに残っている乖離をここでまとめます。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [pins-hld](../../management/pins-hld.md), [p4rt-application-hld](../../management/p4rt-application-hld.md), [p4-orchagent](../../internals/p4-orchagent.md) で完結する。P4Runtime gRPC server と P4Orch の責務分担はそこに詳細がある。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `p4rt` 系コマンド (限定的)、[reference/config_db](../../reference/config-db/index.md) の `CFG_SWITCH_HASH_TABLE`, `COPP_TRAP` に集約されている。
+- **本ページ**は PINS 基本 (P4Runtime → P4Orch → SAI) を押さえた読者向けに、gNMI と PINS の二系統管理、HashOrch の HLD 乖離、gRIBI 統合、WCMP scale, PacketIO scale, PINS と standard ACL の TCAM 共存などの発展領域だけを扱う。
+
 ## gNMI / OpenConfig との関係
 
 SONiC の管理面は [YANG](../../reference/glossary.md#term-yang)（OpenConfig + sonic-yang）→ translib → ConfigDB / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework という構成で、これとは別ラインで gNMI server が gNMI / [gNOI](../../reference/glossary.md#term-gnoi) を提供します。PINS は **データプレーンの forwarding テーブル書き換え** を P4Runtime で受けますが、port admin、interface address、[ACL](../../reference/glossary.md#term-acl) の宣言的設定といった **管理面の config / state** は gNMI 側を使うのが想定です。
@@ -96,4 +102,31 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 - `sonic-swss` で P4Orch と既存 orch (SwitchOrch, AclOrch) の境界整理 PR が散発。
 - P4Runtime gRPC server (`p4rt-app`) の認証・TLS 周りの強化、PacketIO scale 改善の PR が議題化。
 
+## トラブルシュート観点
+
+- `Write` RPC が `INVALID_ARGUMENT` を返すときは、(1) P4Info とコントローラ側の match-field 解釈一致、(2) `P4RT_TABLE` に既存 entry と key 衝突、(3) `wcmp_manager` の group ID 範囲外、を確認する。
+- PacketIO で controller に届かない場合、(1) `CoPP` の `trap_group` が PINS 用 queue を保有、(2) `hostif_trap` が SAI 側で attach、(3) gRPC stream の back-pressure (controller 側で stall) を順に切り分け。
+- HashOrch 期待で動かない controller は、`CFG_SWITCH_HASH_TABLE` 経由で SwitchOrch が処理する現実に合わせて、`/set_hash` style の RPC ではなく gNMI Set で `openconfig-load-balancing` を投入する形に書き換える。
+
+## 検証パスとラボ要件
+
+- `sonic-pins` の `pins_ondatra` (Google OnDatra fork) が integration test として available。VS lab で P4Orch を起こし、controller 側で P4Info push → table entry write → PacketIO の往復を観察できる。
+- P4Orch と SwitchOrch / AclOrch の境界が不明確なとき、ASIC_DB を `redis-cli MONITOR` で観察すると、両 orch が同じ SAI object に対して update を出すケースが識別できる。
+
+## 関連ページ (追補)
+
+- [PINS HLD](../../management/pins-hld.md)
+- [P4Runtime application HLD](../../management/p4rt-application-hld.md)
+- [P4Runtime read cache HLD](../../management/p4rt-read-cache-hld.md)
+- [P4 Orchagent](../../internals/p4-orchagent.md)
+- [SONiC management framework](../../management/sonic-management-framework.md)
+- [gNMI usage](../../management/gnmi-usage.md)
+- [gNMI master arbitration HLD](../../management/gnmi-master-arbitration-hld.md)
+- [SONiC gNMI server interface design](../../management/sonic-gnmi-server-interface-design.md)
+- [04 VRF / ECMP: nexthop と WCMP の前提](../04-vrf-ecmp/index.md)
+- [07 ACL / CoPP / Mirror: P4Orch と AclOrch の共通部品](../07-acl-copp-mirror/index.md)
+- [10 gNMI / OpenConfig: 管理面 API との二系統運用](../10-gnmi-openconfig/index.md)
+
 <!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: 8c23ac0ed680 -->
+
