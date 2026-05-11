@@ -155,6 +155,28 @@ Tar file: /var/dump/sonic_dump_<host>_<timestamp>.tar.gz
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show techsupport"]
+  GD["sudo generate_dump -v"]
+  LOG["/var/log / syslog / docker logs"]
+  CFG["config_db.json / running config"]
+  SAI["SAI dump / syncd state"]
+  TAR["techsupport-*.tar.gz"]
+  CLI --> GD
+  GD --> LOG
+  GD --> CFG
+  GD --> SAI
+  GD --> TAR
+```
+
+!!! note "凡例"
+    techsupport (CLI → generate_dump → tar.gz) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

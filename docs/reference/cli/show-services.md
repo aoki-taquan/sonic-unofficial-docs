@@ -74,6 +74,22 @@ def services():
 
 なし（docker daemon の API のみ）。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show services"]
+  DK["docker ps + docker exec ps aux"]
+  CN["各 SONiC コンテナ<br/>(swss / syncd / bgp / 等)"]
+  CLI --> DK
+  DK --> CN
+```
+
+!!! note "凡例"
+    show 系 (CLI → docker → 各コンテナ) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -84,6 +84,24 @@ show platform firmware [fwutil args...]
 
 [^2]: `show platform firmware` は `sudo fwutil show` を実行する。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/platform.py#L290>
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["config platform firmware"]
+  FW["fwutil install / update"]
+  PA["platform_api<br/>(Component.install_firmware)"]
+  HW["フラッシュデバイス / BIOS / BMC"]
+  CLI --> FW
+  FW --> PA
+  PA --> HW
+```
+
+!!! note "凡例"
+    platform 系 (CLI → fwutil → platform_api → HW) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

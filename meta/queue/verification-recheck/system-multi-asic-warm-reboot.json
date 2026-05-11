@@ -1,0 +1,15 @@
+{
+  "page": "docs/system/multi-asic-warm-reboot.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが本文に 未確認 キーワードが残存し、namespace 横断の協調 shutdown / boot 順序の裏取り網羅が不明",
+    "sources が SONiC HLD doc のみで、sonic-utilities scripts/fast-reboot / scripts/warm-reboot 実装側 SHA pin が欠落",
+    "WARM_RESTART テーブル (system / swss / bgp / teamd 等のキー) の最新スキーマと restore_count / state 取り扱いの一致確認",
+    "multi-ASIC 固有の per-namespace 順序制御 (sonic-py-common multi_asic.py) の最新実装裏取り"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}

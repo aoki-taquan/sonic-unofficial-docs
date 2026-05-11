@@ -102,6 +102,22 @@ current の `debug.main` ツリーには `bgp` / `zebra` / `spanning_tree` の�
 - `debug` の効果は **プロセス再起動で消える**。永続化したい場合は FRR 側 (`/etc/frr/frr.conf` 内 `debug ...` 行) に書く運用となる。
 - Quagga ブランチ (legacy) のコマンド集合は FRR ブランチと部分的に異なる (`debug bgp filters` / `fsm` などは Quagga のみ)。`vtysh -c 'show version'` で判定するため、現役 SONiC では FRR 経路のみが効く。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["debug / undebug"]
+  DT["vtysh / frr / 各 daemon CLI<br/>(syslog レベル設定)"]
+  SVC["zebra / bgpd / ospfd / pim / 他"]
+  CLI --> DT
+  DT --> SVC
+```
+
+!!! note "凡例"
+    debug 系 (CLI → vtysh/daemon CLI → 各 daemon) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

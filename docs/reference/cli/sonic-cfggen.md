@@ -112,6 +112,24 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 - `show runningconfiguration <table>` 系は内部で `sonic-cfggen -d --var-json <TABLE>` を呼ぶ薄いラッパ。
 - multi-ASIC では NAMESPACE_ID 環境変数や `-n` 引数で per-namespace 動作が切り替わる。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["sonic-cfggen"]
+  J2["Jinja2 テンプレート / Python args"]
+  IN["入力: minigraph.xml / config_db.json<br/>YANG / hwsku / platform.json"]
+  CDB[("CONFIG_DB / 出力 JSON / レンダ結果")]
+  IN --> CLI
+  J2 --> CLI
+  CLI --> CDB
+```
+
+!!! note "凡例"
+    設定生成 (CLI ← 入力 → CONFIG_DB / レンダ) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

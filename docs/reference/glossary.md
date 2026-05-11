@@ -1218,8 +1218,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (6)
 - [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (6)
 - [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](../switching/control-sonic-behaviors-with-system-defaults-table.md) (5)
+- [sonic-cfggen コマンド](cli/sonic-cfggen.md) (4)
 - [SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像](../management/sonic-user-manual.md) (3)
-- [sonic-cfggen コマンド](cli/sonic-cfggen.md) (3)
 
 ### [MUX](#term-mux)
 
@@ -1424,7 +1424,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [sonic-cfggen](#term-sonic-cfggen)
 
-- [sonic-cfggen コマンド](cli/sonic-cfggen.md) (12)
+- [sonic-cfggen コマンド](cli/sonic-cfggen.md) (13)
 - [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (7)
 - [DEVICE_RUNTIME_METADATA テーブル](config-db/device-runtime-metadata.md) (6)
 - [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (6)
@@ -1617,7 +1617,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [zebra](#term-zebra)
 
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (30)
-- [debug / undebug コマンド群](cli/debug-group.md) (24)
+- [debug / undebug コマンド群](cli/debug-group.md) (25)
 - [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](../routing/new-frr-sonic-communication-channel.md) (12)
 - [BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）](../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) (10)
 - [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../routing/bgp-route-install-error-handling.md) (9)

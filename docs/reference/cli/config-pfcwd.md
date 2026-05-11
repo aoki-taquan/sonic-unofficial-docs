@@ -76,6 +76,24 @@ config pfcwd start [--action drop|forward|alert]
 
 [^2]: `start` は Click の range/choice 検証後、`pfcwd start` に引数を渡す。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454>
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["config pfcwd"]
+  PW["pfcwd<br/>(scripts/pfcwd)"]
+  CDB[("CONFIG_DB<br/>PFC_WD")]
+  DM["pfcwd_orch / pfc_actions"]
+  CLI --> PW
+  PW --> CDB
+  CDB --> DM
+```
+
+!!! note "凡例"
+    config 系 (CLI → pfcwd → CONFIG_DB → daemon) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

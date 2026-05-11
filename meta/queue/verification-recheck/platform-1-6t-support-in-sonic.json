@@ -1,0 +1,15 @@
+{
+  "page": "docs/platform/1-6t-support-in-sonic.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが本文に 未確認 キーワードが残存し、200G SerDes / SFF-8024 / xcvrd の取り込み実装到達度を再精査要",
+    "sources が SONiC HLD doc のみで sonic-platform-common / sonic-platform-daemons (xcvrd) の実装側 SHA pin が欠落",
+    "PORT.speed enum の 1600000 (1.6T) 受け付けが sonic-utilities / sonic-swss / sonic-yang-models で揃っているか裏取り",
+    "SFF-8024 identifier extension に対する transceiver_info テーブルのフィールド変更状況 (sonic-platform-common/sonic_platform_base/sonic_xcvr/) 確認"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}

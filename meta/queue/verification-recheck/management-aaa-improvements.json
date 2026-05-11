@@ -1,0 +1,15 @@
+{
+  "page": "docs/management/aaa-improvements.md",
+  "verification": "code-verified",
+  "kind": "recheck",
+  "concerns": [
+    "自称 code-verified だが本文に 要確認 キーワードが残存し、PAM / NSS / D-Bus 多重ロール RBAC の実装到達度を再精査要",
+    "sources が HLD doc のみで、sonic-buildimage の files/image_config/aaa/ 配下や hostcfgd の AAA / RADIUS / TACPLUS handler 実装側 SHA pin が欠落",
+    "CONFIG_DB AAA / RADIUS / TACPLUS テーブルのフィールド差分 (例: src_intf, retransmit) が最新 schema.h と一致するか再確認",
+    "gNOI / REST 認可と Linux ローカルユーザ RBAC との二重実装の現状を裏取り"
+  ],
+  "verified_concerns": [],
+  "priority": "medium",
+  "last_verified": "2026-05-11",
+  "notes": "audit round 18 提言由来。code-verified ページの再精査バッチ。"
+}

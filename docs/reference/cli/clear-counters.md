@@ -90,6 +90,22 @@ def queuecounters():
 
 なし。COUNTERS_DB を直接書き換えるのではなく、`/tmp` 配下のスナップショットファイルだけが書き換わる。
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["sonic-clear counters / *counters"]
+  UT["portstat / queuestat / pfcstat<br/>dropstat / tunnelstat / etc. (-c)"]
+  CNT[("COUNTERS_DB<br/>カウンタ値・LAST_CLEAR")]
+  CLI --> UT
+  UT --> CNT
+```
+
+!!! note "凡例"
+    clear 系 (CLI → ユーティリティ → COUNTERS_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
