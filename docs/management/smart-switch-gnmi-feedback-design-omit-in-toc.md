@@ -234,6 +234,24 @@ HLD は Rev 0.1（日付未記載）で、現行 master の SmartSwitch 統合�
 
 - [GitHub Issue / PR の関連リンクは未確認] — SmartSwitch DPU 側 APPL_STATE_DB と version_id フィードバック機構は SmartSwitch 全体の HA / gNMI 改修 PR 群に取り込まれており、本 HLD 単独のトラッキング Issue / PR は確認できず。
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [CONFIG_DB: VNET](../reference/config-db/vnet.md)
+        - [CONFIG_DB: SWITCH_TRIMMING](../reference/config-db/switch-trimming.md)
+        - [CONFIG_DB: SWITCH_HASH](../reference/config-db/switch-hash.md)
+        - [CLI: `show version`](../reference/cli/show-version.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `not_implemented` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

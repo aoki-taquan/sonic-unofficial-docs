@@ -301,6 +301,24 @@ ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest te
 - ansible/roles/test/vars/testcases.yml は size 11721 byte で実在
 -->
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [CONFIG_DB: LLDP](../reference/config-db/lldp.md)
+        - [CONFIG_DB: VLAN](../reference/config-db/vlan.md)
+        - [CONFIG_DB: LLDP_PORT](../reference/config-db/lldp-port.md)
+        - [CONFIG_DB: ACL_RULE](../reference/config-db/acl-rule.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `evolved_beyond_hld` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

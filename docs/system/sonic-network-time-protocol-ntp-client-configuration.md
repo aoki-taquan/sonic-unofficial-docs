@@ -212,6 +212,24 @@ sudo systemctl restart chrony
 
 2026-05-11 (q3-disc-detail batch)
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 本 HLD は採用見送り。後継機能 (下記リンク) を参照
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [CONFIG_DB: NTP_SERVER](../reference/config-db/ntp-server.md)
+        - [CONFIG_DB: NTP_KEY](../reference/config-db/ntp-key.md)
+        - [CONFIG_DB: MGMT_VRF_CONFIG](../reference/config-db/mgmt-vrf-config.md)
+        - [CLI: `config ntp`](../reference/cli/config-ntp.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `deprecated` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: biannual。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

@@ -211,6 +211,23 @@ config sflow interface sample-rate Ethernet0 10000
 - collector 上限 2 件の現行実装での restriction 確認
 -->
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [CONFIG_DB: SFLOW](../reference/config-db/sflow.md)
+        - [CLI: `config sflow`](../reference/cli/config-sflow.md)
+        - [YANG: `sonic-sflow`](../reference/yang/sonic-sflow.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `evolved_beyond_hld` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

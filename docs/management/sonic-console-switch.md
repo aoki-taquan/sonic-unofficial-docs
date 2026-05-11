@@ -185,6 +185,21 @@ HLD が想定する「serial hub 機能を備えた switch hub としての reve
 
 - [GitHub Issue / PR の関連リンクは未確認] — Console Switch（serial hub の reverse SSH 集約）構成は専用 platform / image 設定の積み重ねで実現されており、HLD 単独で追跡可能な GitHub Issue / PR は確認できず。
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 取り込み済の部分のみ運用可能。欠落部分の利用は不可なので本文「実装との乖離」を確認した上で適用範囲を限定する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [CONFIG_DB: CONSOLE_PORT](../reference/config-db/console-port.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `partially_implemented` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

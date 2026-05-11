@@ -896,9 +896,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (24)
 - [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (23)
+- [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (21)
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (20)
 - [リファレンス](index.md) (20)
-- [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (19)
 
 ### [config_db.json](#term-config_db.json)
 
@@ -1111,10 +1111,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [HLD](#term-hld)
 
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (64)
-- [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (32)
-- [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (27)
-- [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (27)
-- [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (25)
+- [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (33)
+- [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (29)
+- [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (29)
+- [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (27)
 
 ### [hostcfgd](#term-hostcfgd)
 
@@ -1542,7 +1542,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-spanning-tree YANG](yang/sonic-spanning-tree.md) (55)
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (55)
 - [config vlan サブコマンド](cli/config-vlan.md) (54)
-- [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (51)
+- [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (53)
 
 ### [vlanmgrd](#term-vlanmgrd)
 
@@ -1580,7 +1580,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-vxlan YANG](yang/sonic-vxlan.md) (56)
 - [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../overlay/vxlan-sonic.md) (52)
-- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (41)
+- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (43)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (33)
 - [config vxlan サブコマンド](cli/config-vxlan.md) (30)
 
@@ -1613,8 +1613,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (52)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (35)
 - [OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）](../management/openconfig-support-for-ethernet-interfaces.md) (24)
+- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../management/sonic-yang-model-guidelines.md) (23)
 - [gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）](../management/gnmi-usage.md) (21)
-- [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../management/sonic-config-update-validation-via-yang.md) (21)
 
 ### [zebra](#term-zebra)
 

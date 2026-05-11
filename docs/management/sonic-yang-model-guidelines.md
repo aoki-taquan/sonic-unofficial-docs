@@ -260,4 +260,21 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 - ABNF.json と sonic-yang-models のドリフト検出ツールの存在確認 → 別途
 -->
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [YANG: `sonic-vlan`](../reference/yang/sonic-vlan.md)
+        - [YANG: `sonic-port`](../reference/yang/sonic-port.md)
+        - [YANG: `sonic-interface`](../reference/yang/sonic-interface.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `evolved_beyond_hld` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- glossary-links-injected: f83beef3850a -->

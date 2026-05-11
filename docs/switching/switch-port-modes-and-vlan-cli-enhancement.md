@@ -357,6 +357,24 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 
 2026-05-11 (q3-disc-detail batch)
 
+<!-- next-action -->
+## このページを読んだ後の次アクション
+
+!!! tip "読み手向け"
+    - **本機能を実運用で使う場合**: 取り込み済の部分のみ運用可能。欠落部分の利用は不可なので本文「実装との乖離」を確認した上で適用範囲を限定する
+    - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
+    - **代替手段 / 関連 reference**:
+        - [CONFIG_DB: PORT](../reference/config-db/port.md)
+        - [CONFIG_DB: PORTCHANNEL](../reference/config-db/portchannel.md)
+        - [CONFIG_DB: VLAN](../reference/config-db/vlan.md)
+        - [CONFIG_DB: VLAN_MEMBER](../reference/config-db/vlan-member.md)
+
+!!! note "本ドキュメントの追跡"
+    - monitor: `partially_implemented` / last_verified: `2026-05-11`
+    - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
+
+<!-- /next-action -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
