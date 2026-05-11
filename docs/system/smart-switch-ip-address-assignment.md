@@ -164,3 +164,10 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 - DPU PCIe netdev 名 dpu<N> の vendor init での確立方法と整合確認
 - DHCP server container (sonic-net/SONiC#1282) の master 取り込み確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

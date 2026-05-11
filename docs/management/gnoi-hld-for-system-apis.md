@@ -197,3 +197,10 @@ gnoi_client system cancel_reboot --message "delayed by SRE"
 - Warmboot Manager HLD（別 HLD）と本 HLD の連携経路実装確認
 - gnoi_client の system サブコマンド実装状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

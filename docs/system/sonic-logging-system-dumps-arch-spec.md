@@ -134,3 +134,5 @@ reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

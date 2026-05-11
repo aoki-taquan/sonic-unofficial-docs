@@ -200,3 +200,10 @@ _GEARBOX_TABLE:phy:<phy_id>
 - APP_DB _GEARBOX_TABLE スキーマの最終形
 - HWSKU 側 gearbox_config.json サンプルの存在
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

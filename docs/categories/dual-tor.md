@@ -75,3 +75,5 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 ## 関連 Topics
 
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

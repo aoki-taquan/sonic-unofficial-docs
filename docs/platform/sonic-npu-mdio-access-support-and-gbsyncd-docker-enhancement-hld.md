@@ -147,3 +147,10 @@ reasoning: Unix socket IPC + MdioIpcServer 採用の根拠。
 - SAI switch api の clause 22 read/write 拡張の opencomputeproject/SAI 取り込み確認
 - 単一 gbsyncd docker での vendor 別 PAI/MDIO lib 同梱方針の現行 build 構成確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

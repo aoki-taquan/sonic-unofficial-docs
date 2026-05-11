@@ -186,3 +186,10 @@ RADIUS authentication の PAM/NSS 実装の現行 master 取り込みを `hostcf
 - multi server priority / passkey / auth_type / timeout は AaaCfg の RADIUS 部に存在
 
 HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh login → PAM → RADIUS、user lookup → NSS → radius_nss）は実装と一致。後発 AAA Improvements HLD で指摘された多重 role 共有問題は別途残課題で、本ページ自体の主張は実装に追随しているため `code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

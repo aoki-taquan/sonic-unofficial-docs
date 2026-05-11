@@ -156,3 +156,5 @@ cir / cbs / pir / pbs = 1..11 DIGIT
 ## 関連 Topics
 
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

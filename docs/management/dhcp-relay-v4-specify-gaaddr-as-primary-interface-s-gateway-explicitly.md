@@ -163,3 +163,10 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/DHCPv4_Gateway/DHCPv4_gateway.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

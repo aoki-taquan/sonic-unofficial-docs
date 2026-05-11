@@ -116,3 +116,10 @@ snmpwalk -v2c -c public localhost 1.3.6.1.2.1.99.1.1.1.4 | head    # entPhySenso
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/xrcvd/xcvrd-snmp-testbed-test-plan.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

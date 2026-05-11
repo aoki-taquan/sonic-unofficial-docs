@@ -219,3 +219,10 @@ HLD には専用 YANG モジュール定義の記述がない（既存 `sonic-mu
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/ICMP_Hardware_Offload_and_Protecion.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

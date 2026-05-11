@@ -281,3 +281,10 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 - SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si の community SAI / vendor SAI 対応状況
 - interleaving factor X 取得用の新 SAI 属性提案 / 進捗
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

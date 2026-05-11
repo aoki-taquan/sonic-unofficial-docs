@@ -166,3 +166,10 @@ show switch-trimming counters
 - v0.2 Asymmetric DSCP / v0.3 Drop counter の現行 master 取り込み確認
 - vendor 別 PT capability（Mellanox/Broadcom 等）と STATE_DB capability 公開確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

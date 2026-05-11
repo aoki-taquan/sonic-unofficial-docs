@@ -75,3 +75,10 @@ module: sonic-route-common
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-route-common.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SRv6 / MPLS / Path Tracing](../../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

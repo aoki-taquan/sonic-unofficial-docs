@@ -141,3 +141,10 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 ## 関連ページ
 - [CLI: config kdump](../reference/cli/config-kdump.md)
 - [CONFIG_DB: KDUMP](../reference/config-db/kdump.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->

@@ -85,3 +85,10 @@ INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 - [CLI: config interface](../cli/config-interface.md)
 - [CONFIG_DB: PORT](port.md)
 - [YANG: sonic-interface](../yang/sonic-interface.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

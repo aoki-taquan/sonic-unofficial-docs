@@ -143,3 +143,10 @@ DEVICE_METADATA|localhost:
 - [CONFIG_DB: BGP_GLOBALS](../reference/config-db/bgp-globals.md)
 - [CONFIG_DB: BGP_NEIGHBOR](../reference/config-db/bgp-neighbor.md)
 - [YANG: sonic-bgp-neighbor](../reference/yang/sonic-bgp-neighbor.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+
+<!-- /topics-back-ref -->

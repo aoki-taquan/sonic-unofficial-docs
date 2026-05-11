@@ -129,3 +129,11 @@ DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
 - SAI side: Barefoot 由来の `SAI_OBJECT_TYPE_DTEL_*` は community SAI ヘッダに取り込み済み（dtelorch.cpp の include 依存）
 
 テストプランが対象とする CONFIG_DB スキーマ (`DTEL_*`) と orch 動作は現行 master でカバーされており、Barefoot 系 ASIC 向けの DTel feature として実装が継続している。本ページの主張は実装と整合するため `code-verified` に昇格。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+
+<!-- /topics-back-ref -->

@@ -142,3 +142,10 @@ HLD が示すテスト計画[^1]:
 - platform.json: sonic-buildimage/device/{supermicro,ragile,...}/.../platform.json 配布済
 -->
 
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

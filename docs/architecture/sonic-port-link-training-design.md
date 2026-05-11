@@ -164,3 +164,10 @@ config interface autoneg Ethernet0 off    # AN を切って LT 単独で再評�
 - [Topic: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
 - [CLI: config-interface](../reference/cli/config-interface.md)
 - [CLI: show-interfaces](../reference/cli/show-interfaces.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

@@ -135,3 +135,10 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 - 空 list 呼び出しの SAI_STATUS_NOT_IMPLEMENTED 判定の vendor 互換性確認 → vendor SAI 側
 - Dynamic Port Breakout (DPB) 経路と bulk port 操作の互換性確認 → 別途調査
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

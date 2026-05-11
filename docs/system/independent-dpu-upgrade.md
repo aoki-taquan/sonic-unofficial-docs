@@ -121,3 +121,10 @@ reasoning: gNOI API 系列と各 phase の根拠。
 - v0.1 (2025-01) Initial Proposal、master への取り込み・採否未確認
 - DPU graceful shutdown / HA との race condition の整合確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+
+<!-- /topics-back-ref -->

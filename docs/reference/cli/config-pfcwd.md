@@ -74,3 +74,10 @@ config pfcwd start [--action drop|forward|alert]
 [^1]: `config pfcwd` グループと各 command は `config/main.py` の PFC watchdog セクションで定義される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3450>
 
 [^2]: `start` は Click の range/choice 検証後、`pfcwd start` に引数を渡す。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3454>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
+
+<!-- /topics-back-ref -->

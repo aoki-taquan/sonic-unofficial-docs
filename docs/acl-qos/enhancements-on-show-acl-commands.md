@@ -164,3 +164,10 @@ redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATAACL'
 - PFC / Mux 内部生成 ACL の扱いの将来計画
 - sonic-mgmt の test_acl.py 更新状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->

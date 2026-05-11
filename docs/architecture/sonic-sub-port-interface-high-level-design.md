@@ -162,3 +162,10 @@ show subinterface status
 - v0.2 (2020-12, Broadcom) の命名規則拡張取り込み確認
 - PortChannel 上 sub-port の LAG hash 連携の現行実装確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

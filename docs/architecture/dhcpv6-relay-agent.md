@@ -145,4 +145,7 @@ reasoning: ISC 置換動機と Option 79 採用の根拠。
 <!-- topics-back-ref -->
 ## 関連 Topics
 
+- [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
+
+<!-- /topics-back-ref -->

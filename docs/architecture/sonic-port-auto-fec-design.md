@@ -143,3 +143,10 @@ PORT|<if>:
 - 旧 image からの upgrade 時の後方互換挙動の実装確認
 - vendor SAI（Mellanox/Broadcom/Cisco）の override 属性対応状況
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

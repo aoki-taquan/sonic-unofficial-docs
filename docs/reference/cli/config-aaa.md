@@ -176,3 +176,10 @@ excerpt: |
 - [HLD: TACACS+ 認証](../../management/tacacs-authentication.md)
 - [CONFIG_DB: TACPLUS_SERVER](../config-db/tacplus-server.md)
 - [YANG: sonic-system-aaa](../yang/sonic-system-aaa.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

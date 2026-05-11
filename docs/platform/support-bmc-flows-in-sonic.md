@@ -193,3 +193,10 @@ sudo show techsupport     # BMC dump 自動同梱
 - sonic-platform-common の RedfishClient / ComponentBMC 取り込みは確認済み (2026-05-11)
 - 202605 branch の platform common API 統合 phase 2 の進捗確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

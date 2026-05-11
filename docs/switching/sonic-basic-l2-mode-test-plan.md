@@ -65,3 +65,10 @@ sonic-cfggen -H -p -k $HWSKU --preset l2
 - 同 `tests/test_j2files.py` l.308, 379 で `--preset l2` 引数のテスト
 - sonic-mgmt fdb / vlan / snmp テストカバレッジは別 repo (本 cache 未取得) で未裏取り
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+
+<!-- /topics-back-ref -->

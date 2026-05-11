@@ -185,3 +185,10 @@ VoQ chassis 上では同じ CLI で動くが、内部的には Option 1 or Optio
 - `neighorch.cpp` の `voqSyncAddNeigh` / `voq_encap_index` (`neighorch.h:32, 160, 164`) は VoQ 系 neighbor の SYSTEM_PORT encap 管理を担っており、ミラー先 neighbor 解決が VoQ chassis 向けに拡張済みである裏取り。
 
 HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC で rewrite) のうち、master が採用したのは Option 1 系 (recycle port + ingress 完結 rewrite) と判定。本ページの記述は実装と整合。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

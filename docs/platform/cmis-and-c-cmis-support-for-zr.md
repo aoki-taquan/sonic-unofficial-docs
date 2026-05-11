@@ -116,3 +116,10 @@ C-CMIS 拡張[^1]:
 - ZR module Application Select マッピング（100G/400G / FEC mode）の per-vendor 差分確認
 - port auto-FEC / autoneg / fast-link-up との挙動整合確認
 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

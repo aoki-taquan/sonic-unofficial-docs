@@ -324,3 +324,11 @@ orchagent 側に上記前処理が無いため、**運用側で全部やりき�
 #### 検証日
 
 2026-05-11 (q3-disc-detail batch)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
+- [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
+
+<!-- /topics-back-ref -->

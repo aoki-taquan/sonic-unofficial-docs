@@ -106,3 +106,10 @@ gNMI 経由で server (NIC) 側からキャッシュされた状態を読む経�
 [^1]: `muxcable` グループ定義は `show/muxcable.py` L441-L443。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/muxcable.py#L441>
 
 [^2]: `config` サブコマンドの実装は `show/muxcable.py` L837-L970。Active-Active / Active-Standby の場合分けは `create_active_active_mux_direction_result` / `create_active_standby_mux_direction_result` (同 L1353-L1387)。
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->

@@ -73,3 +73,10 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 ## 引用元
 
 [^1]: YANG 定義: `sonic-system-ldap.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-ldap.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Security / AAA / FIPS / Hardening](../../topics/15-security-aaa/index.md)
+
+<!-- /topics-back-ref -->

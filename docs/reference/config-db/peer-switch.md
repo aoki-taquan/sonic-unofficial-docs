@@ -64,3 +64,10 @@ PEER_SWITCH|<peer_switch>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-peer-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-peer-switch.yang>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)
+
+<!-- /topics-back-ref -->
