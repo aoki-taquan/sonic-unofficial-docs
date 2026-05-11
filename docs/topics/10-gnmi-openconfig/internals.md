@@ -76,6 +76,39 @@ SUBSCRIBE は target が `STATE_DB` か `COUNTERS_DB` かによって on_change�
 - gNSI の certz は `sonic-host-service` に証明書ローテーションを依頼する経路で、OS 側 `/etc/sonic/telemetry/` のファイル更新まで含めて atomicity を担保する設計です（途中失敗で telemetry が起動できなくなる事故が過去 issue にあります）。
 - Subscribe の `sample` mode で interval を極端に短く（例: 100ms）すると、counter 読み出し（flexcounter polling は通常 10s）と整合せず、同じ値を返し続けることがあります。
 
+## 認証 / 認可の内部経路
+
+gNMI server の認証は CONFIG_DB の `TELEMETRY` / `GNMI` / `TELEMETRY_CLIENT` テーブルを起点に、複数経路で行われます。
+
+| 認証方式 | 入口 | 確認先 |
+| --- | --- | --- |
+| TLS client cert | mTLS handshake | `/etc/sonic/telemetry/dsmsroot.cer` 等 |
+| `password` | gRPC metadata | `/etc/sonic/dsms_users` または PAM |
+| `cert_username` | TLS CN / SAN | gNSI authz policy で確認 |
+| JWT | gRPC metadata | `gnsi/authz` の policy 評価 |
+
+`gnsi/authz` の policy は protobuf テキストで、`SetRequest` の rotate API でローテーションする設計です。policy が壊れていると gNMI 自体が起動できない fail-closed 設計です。
+
+## 性能観点
+
+- **subscribe sample interval** の下限は flexcounter polling と整合させるのが安全で、port counter は 10s、queue / PG は 10s、buffer pool は 60s が標準です。100ms 等は無意味（同じ値を返す）です。
+- **GET の最大サブツリー深さ**には実質制限が無く、`/interfaces` 全体を 1 度に取ると数千 OID の Redis 読み出しが直列で走り、数秒〜数十秒かかります。client 側でリスト要素を絞るのが定石です。
+- **dial-out** は collector への gRPC で QoS / retry の制御が薄く、collector 側がオフラインのときに gNMI server のメモリが膨らむ報告があります。`TELEMETRY_CLIENT` の `queue_size` で抑えます。
+
+## translib transformer の責務分担
+
+`translib/transformer/` 配下の per-module ファイル（`xfmr_<module>.go`）は、OpenConfig YANG path を SONiC YANG path に変換する mapping を提供します。
+
+| transformer | 対象 |
+| --- | --- |
+| `xfmr_interfaces.go` | `/openconfig-interfaces/interfaces` ↔ `PORT` / `PORT_TABLE` |
+| `xfmr_network_instance.go` | `/openconfig-network-instance` ↔ `VRF` / `BGP_NEIGHBOR` / etc |
+| `xfmr_acl.go` | `/openconfig-acl` ↔ `ACL_TABLE` / `ACL_RULE` |
+| `xfmr_qos.go` | `/openconfig-qos` ↔ `QUEUE` / `SCHEDULER` / `WRED_PROFILE` |
+| `xfmr_system.go` | `/openconfig-system` ↔ `DEVICE_METADATA` / `SYSLOG` / etc |
+
+未実装の transformer がある OC path に対して GET / SET を投げると、translib 層で `NotFound` を返す動作で、HLD と実装の乖離が出やすいポイントです。
+
 ## 関連ページ
 
 - [SONiC gNMI server interface design](../../management/sonic-gnmi-server-interface-design.md)

@@ -98,6 +98,23 @@ OpenConfig YANG は translib transformer が間に入って SONiC YANG / Redis �
 - YANG / CONFIG_DB / CLI の三者は一対一ではない（同じ機能を複数 CLI が触る、別 CLI が同じテーブルを上書きする等）。書き込み順序による race は 22 章索引では追えないので、各機能章 internals.md を当たる必要があります。
 - gNMI / sonic-mgmt-common を経由する書き込みは、`*mgrd` / `*Orch` の処理を待たずに完了応答を返すため、即時の SAI 反映を確認したい場合は別途 STATE_DB 上の対応 key を polling する設計になります。
 
+## 索引生成パイプライン
+
+`meta/index/*.json` は SONiC ソースリポを `.cache/sonic-sources/` 配下に shallow clone し、Indexer が走査して生成します。
+
+| 索引 | ソース | 生成内容 |
+| --- | --- | --- |
+| `meta/index/hld.json` | `SONiC/doc/` `.md` ファイル | HLD タイトル / area / file path / verification target |
+| `meta/index/cli.json` | `sonic-utilities/config/`、`show/` | Click のコマンドツリーを解析 |
+| `meta/index/yang.json` | `sonic-yang-models/yang-models/*.yang` | module / container / leaf の階層 |
+| `meta/index/repos.json` | 15 リポの clone | name / SHA / branch（master 固定） |
+
+Indexer は AST 解析（Click は ast.parse、YANG は pyang）を使い、生成物は `meta/templates/SCHEMA.md` の frontmatter 規約に従う形で .md ページからリンクされます。
+
+## quality-gaps の運用
+
+`quality-gaps.md` は HLD と実装の乖離（discrepancy-found）を一覧化する meta ページです。各機能章の internals.md / runbook.md で `discrepancy-found` ステータスを付けた箇所が集約されます。Verifier が `meta/verification-queue.json`（または per-page `meta/queue/<area>-<slug>.json`）の懸念点を裏取りした結果が、quality-gaps に積み上がっていく形で、読者は「どこが信用できないか」を 1 ページで把握できます。
+
 ## 関連ページ
 
 - [CLI index](./cli-index.md)

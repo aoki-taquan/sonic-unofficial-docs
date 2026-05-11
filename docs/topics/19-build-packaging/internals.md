@@ -88,6 +88,38 @@ STATE_DB:
 - `sonic-buildimage` のターゲット platform は `PLATFORM=<vendor>` 環境変数で切替えますが、複数 platform を同時にビルドする supported workflow は無いに等しく、CI 側で逐次 build しています。
 - application extension の docker image は SONiC の base layer に依存していると更新時にサイズが膨らみ、`/host` の空き容量に注意が必要です。
 
+## ビルドキャッシュと incremental build
+
+`sonic-buildimage` は package ごとに `.flag` ファイルでビルド完了を記録します。submodule の HEAD SHA が変わると、その submodule 由来のすべての `.deb` と参照する docker image が rebuild 対象になります。incremental 化のために以下が用意されています。
+
+| 機構 | 目的 |
+| --- | --- |
+| `SONIC_DPKG_CACHE_METHOD=cache` | `.deb` の hash-key ベースキャッシュ（`/sonic/target/cache/`） |
+| `BLDENV` の固定 | slave 側 OS バージョン（bullseye / bookworm）を固定して再利用 |
+| `SONIC_BUILD_JOBS` | 並列度の制御。host CPU/RAM に応じて調整 |
+| `NOSTRETCH` 等の Make 変数 | 不要 platform deb のスキップ |
+
+キャッシュは個別開発者環境では効果が大きい一方、PR build（GitHub Actions）では基本クリーンビルドであり、CI 時間の大半は slave docker の起動と deb の sequential build に費やされます。
+
+## docker image の階層
+
+ランタイムの SONiC docker image は階層を持ちます。
+
+```
+docker-base-<bullseye/bookworm>
+  └─ docker-config-engine
+       └─ docker-swss
+       └─ docker-syncd-<vendor>
+       └─ docker-bgp
+       └─ docker-teamd
+       └─ docker-pmon
+       └─ docker-snmp
+       └─ docker-telemetry
+       └─ docker-mux
+```
+
+`docker-config-engine` が共通の python / sonic-py-common / supervisord 設定を持ち、機能 container はそれを base にして個別バイナリと supervisord conf を足します。新規 extension は `docker-base-<os>` から派生させる選択も可能ですが、サイズ削減のためには既存階層への mount が推奨されます。
+
 ## 関連ページ
 
 - [Build profiles](../../architecture/build-profiles.md)

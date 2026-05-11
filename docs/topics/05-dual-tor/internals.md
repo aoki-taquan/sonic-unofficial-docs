@@ -110,6 +110,19 @@ ASIC_DB:
 - Active-Active で SoC NIC が応答しない場合、`linkmgrd` 側は admin forwarding state を変えても operational state が追従しないため、observability が不十分という指摘が PR レビューで複数挙がっている。
 - gRPC channel が切断中は `linkmgrd` が default の "active" 想定で進む傾向があり、両 ToR で active になる split-brain 風の状態を運用で監視する必要がある。
 
+## linkmgrd 状態機械の遷移
+
+`linkmgrd` は per-port の有限状態機械を持ち、ICMP probe（ToR ↔ SoC NIC）と gRPC（SoC NIC API）の二系統入力で遷移します。
+
+| 状態 | 意味 | 主な遷移条件 |
+| --- | --- | --- |
+| Active | 自 ToR が forwarding 担当 | probe 応答正常、peer は standby |
+| Standby | 対向 ToR が forwarding 担当 | peer が active を主張、自分はバックアップ |
+| Unknown | probe failure | ICMP 連続失敗、grace 期間中 |
+| Wait | 切替判定中 | switchover 中の transition |
+
+状態は `STATE_DB.MUX_CABLE_TABLE|<port>.state` に publish され、`MuxOrch` がそれを受けて SAI の neighbor / route を切替えます。split-brain（両側 active）の検出は HLD で peer 状態を追加チェックする設計ですが、運用上は監視で網を張る必要があります。
+
 ## 関連ページ
 
 - [gRPC client](../../management/design-doc.md)

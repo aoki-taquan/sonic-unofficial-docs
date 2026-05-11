@@ -81,6 +81,39 @@ STATE_DB:WARM_RESTART_TABLE|<comp>
 - `fast-reboot` は data plane が ~30s 切れる前提で設計されており、warm-reboot より要求 SAI 機能が少なく対応 ASIC が広い一方、BGP の収束待ちが入ります。
 - ONIE / image install 系（`sonic-installer`）は SONiC の docker image を持ち回るためサイズが大きく、`/host` パーティションの空き容量が問題になりやすいです。HLD の `image dir 構造`を運用で意識する必要があります。
 
+## fast-reboot タイムライン
+
+fast-reboot は data plane が一時的に切れる前提で、warm-reboot より要求 SAI 機能が少ない代わりに以下の順序で進みます。
+
+```mermaid
+sequenceDiagram
+  participant CLI as fast-reboot CLI
+  participant FR as scripts/fast-reboot
+  participant SWSS as swss container
+  participant BGP as bgp container
+  participant K as kernel
+  CLI->>FR: invoke
+  FR->>BGP: send graceful shutdown
+  FR->>SWSS: stop orchagent / syncd
+  FR->>K: kexec into new image
+  K->>SWSS: start (warm-start framework reuses saved state)
+  SWSS->>BGP: notify warm-restart
+  BGP->>BGP: graceful restart (re-establish peers)
+```
+
+`scripts/fast-reboot-dump.py` が ASIC/FDB の dump を取り、`/host/fast-reboot/` に保存します。新 image 起動後の `fast-reboot-finalizer` が dump と比較して route / neighbor の差分を打ち消します。
+
+## sonic-installer の内部
+
+`sonic-installer` は `/host/image-<version>/` 配下に新 image を展開する CLI です。
+
+- `install`: `.bin` または `.swi` を展開、GRUB / aboot のエントリを追加
+- `set-next-boot`: GRUB default または aboot `boot-config` を変更
+- `set-default`: 永続デフォルトを設定
+- `cleanup`: 起動失敗 / rollback 用に古い image を保持しつつ、定義数を超えたら削除
+
+`/host` パーティションのサイズ（通常 数 GB）が image の数を制約します。docker image をホスト側で持ち回るため、image 1 つで 1〜2GB 消費します。
+
 ## 関連ページ
 
 - [SONiC warm reboot](../../system/sonic-warm-reboot.md)

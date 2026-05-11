@@ -120,3 +120,21 @@ ASIC_DB:
 - SAI POST は MACsec engine の起動確認のみで、運用中の rekey 失敗や cipher suite mismatch は捕捉しない。
 - TACACS+ の `command` authorization は host CLI 経由のみで、`gnmi` / REST API 経路では別途 RBAC 設定が必要。
 - FIPS モードは OpenSSL の library 切替に依存し、libssl のバージョン整合と FIPS module の有無で「FIPS にしたつもりが効いていない」事故が起きやすい。
+
+## AAA の認証フロー詳細
+
+SONiC の AAA は **PAM + NSS** を起点に、TACACS+ / RADIUS / LDAP / local を順序通り問い合わせます。
+
+```mermaid
+flowchart LR
+  USER[ssh / CLI login] --> SSHD[sshd / login]
+  SSHD --> PAM[PAM]
+  PAM --> AAACTL[hostcfgd 生成<br/>/etc/pam.d/* + /etc/nsswitch.conf]
+  PAM -->|primary| TACACS[libpam-tacplus]
+  PAM -->|fallback| LOCAL[/etc/shadow]
+  TACACS -->|fail| RADIUS[libpam-radius-auth]
+  TACACS -->|authz| TACAUTHZ[command authorization]
+  TACAUTHZ --> AUDIT[(STATE_DB / journald)]
+```
+
+順序と authz policy は `CONFIG_DB:AAA` テーブルから `hostcfgd` が `/etc/pam.d/common-auth-sonic` 等を render することで反映されます。`gnmi` や REST API の認証は PAM を経由しない別経路（gNSI authz、token-based）であり、TACACS+ の `command` authorization は host CLI のみに効きます。

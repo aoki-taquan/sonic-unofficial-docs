@@ -89,6 +89,29 @@ ASIC_DB:
 - LAG member の dynamic add/remove は SAI 側で `EGRESS_DISABLE` を切り替えるだけの実装と、`LAG_MEMBER` を作り直す実装があり、ベンダで挙動が違います。`PortsOrch::setLagMemberEgressDisable` 経路を取れない ASIC では一瞬パケットロスが入ります。
 - STP は SONiC では PVST / RPVST の制御プレーンが limited で、`stp` モジュール ([sonic-stp](https://github.com/sonic-net/sonic-stp)) が有効になっている場合のみ動きます。
 
+## MC-LAG (iccpd) の内部状態機械
+
+iccpd は peer 2 台間で ICCP セッションを張り、以下の状態を同期します。
+
+| 状態 | 同期内容 | 反映先 |
+| --- | --- | --- |
+| LAG member status | local / remote の port-channel member 健全性 | `MCLAG_LOCAL_INTF_TABLE`、`MCLAG_REMOTE_INTF_TABLE` |
+| FDB | learned MAC | `MCLAG_REMOTE_FDB_TABLE` → FdbOrch |
+| ARP / ND | neighbor entry | `MCLAG_NEIGH_TABLE` → NeighOrch |
+| IPv4/IPv6 route | route leak（オプション） | APPL_DB 経由 |
+
+`MCLAG_DOMAIN` テーブルの `peer_ip` / `source_ip` / `keepalive_interval` / `session_timeout` が ICCP TCP セッションを定義します。session timeout 超過で active/standby が切替り、standby 側 LAG member は `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE = true` になります。
+
+## kernel ↔ ASIC 同期の race
+
+L2 系は kernel 状態と ASIC 状態の二重管理であり、以下の race が頻出します。
+
+- VLAN member 追加直後の FDB learn が、bridge fdb 反映前に ASIC notification として届くと `FdbOrch` が `BRIDGE_PORT_ID` を解決できず drop する
+- LAG member 追加で teamd が kernel bond に member を入れた直後、portsyncd の netlink 通知より先に LACP packet が flow しはじめ、orchagent が `LAG_MEMBER` を作る前に `EGRESS_DISABLE` の初期値で短時間ロスする
+- portchannel down → up のフラップで `LAG_MEMBER_TABLE` の delete/add がペアにならず、`PortsOrch::removeLagMember` が orphan member を残すケース
+
+これらは ASIC 通知に対する orchagent の reentrancy 設計上避けにくく、頻発する場合は teamd の `runner.tx_hash` や `lacp_rate` を調整します。
+
 ## 関連ページ
 
 - [L2 basic mode test plan](../../switching/sonic-basic-l2-mode-test-plan.md)
