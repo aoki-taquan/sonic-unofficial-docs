@@ -58,6 +58,128 @@ SONiC では front-panel port は data VRF（default や user VRF）にあり、
 
 TWAMP Light（RFC 5357）は data plane の測定プロトコルで、本来は QoS / observability 寄りですが、サービス系として「control 接続を持たない軽量サービス」枠でこの章の発展トピックに置きます。terminal server は udev rules で `/dev/ttyUSB*` を安定 symlink にする platform 寄りの話で、management 装置として SONiC を使うときの周辺機能です。
 
+## まず読み手の質問に答える
+
+### この章はそもそも何をまとめているか
+
+「Edge / management services」は **forwarding ではないが ToR / management スイッチの上に必ず乗る付帯サービス** の集合です。NAT・DHCP relay・DHCP server・NTP・DNS が中心で、共通点は次の 3 つです。
+
+- 専用 container 単位で daemon が隔離されている（`docker-nat` / `docker-dhcp-relay` / `docker-dhcp-server` ほか）
+- CONFIG_DB の数テーブルを読んで OS 側ファイル（iptables / kea / chrony / resolv.conf）を生成する
+- 外向き通信は **management VRF** を経由するか、front-panel VRF を経由するかで差が出る
+
+### 何を解決するか
+
+データセンター ToR / management スイッチ運用で実際に困るのは次のような場面です。
+
+- 管理 IP のために v4 アドレスを節約したい → outbound NAT / port forward
+- サーバへ IP を配布したいが central DHCP に届かせたい → DHCP relay（VLAN per ToR）
+- 小規模 lab で DHCP server を ToR に直接置きたい → kea ベース DHCP server
+- dual-ToR で client が active 側に確実に届くようにしたい → Option 82 と giaddr 固定
+- 装置の時刻が揃わないと log と TLS 検証が壊れる → chrony + management VRF
+- DNS 名前解決を ToR から打ちたいが out-of-band で出したい → static resolv.conf + mgmt VRF
+
+これらは個別 HLD としてバラバラに見えても、運用ではセットで設計されます。
+
+### SONiC 内での位置
+
+```mermaid
+flowchart LR
+    subgraph CFG[(CONFIG_DB)]
+        NATC[NAT_*]
+        DHC[DHCP_RELAY / VLAN]
+        DHS[DHCP_SERVER_IPV4*]
+        NTP[NTP|*]
+        DNS[DNS_NAMESERVER]
+    end
+    subgraph NATD[docker-nat]
+        NM[natmgrd]
+        NS[natsyncd]
+        IPT[iptables / conntrack]
+    end
+    subgraph DRD[docker-dhcp-relay]
+        DR[dhcrelay v4/v6]
+        DM[dhcpmon]
+    end
+    subgraph DSD[docker-dhcp-server]
+        DS[dhcpservd]
+        KEA[kea-dhcp4]
+        DRD2[dhcprelayd]
+    end
+    subgraph HOST[host OS]
+        CHR[chrony]
+        RESV[resolv.conf]
+        MGMT[mgmt VRF]
+    end
+    NATC --> NM --> IPT
+    NM --> NS --> SAI[(SAI NAT object)]
+    DHC --> DR
+    DR --> COUNT[(COUNTERS_DB)]
+    DM --> COUNT
+    DHS --> DS --> KEA
+    NTP --> CHR --> MGMT
+    DNS --> RESV --> MGMT
+```
+
+レイヤ的には L3 forwarding の **横（付帯）** であって、上下関係ではありません。
+
+### 用語の最短整理
+
+- **`natmgrd`**: CONFIG_DB の `STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` / `NAT_BINDINGS` / `NAT_GLOBAL` を読んで iptables と APP_DB に展開する
+- **`natsyncd`**: conntrack エントリを観測し APP_DB と STATE_DB に同期する
+- **SAI NAT object**: ASIC 側 NAT エントリ。fast path に乗せるためのもの
+- **`dhcrelay`**: ISC dhcp 由来。VLAN 1 本に 1 process が標準
+- **`dhcpmon`**: relay のヘルスとパケット counter を取る別 process。`COUNTERS_DB` に書く
+- **`dhcpservd`**: kea ベース DHCP server の管理 daemon。CONFIG_DB から `kea-dhcp4.conf` を生成
+- **`dhcprelayd`**: DHCP server と同居する relay 補助。Option 82 や `giaddr` を server 側と協調させる
+- **Option 82 / `circuit-id`**: DHCPv4 relay agent info。downstream port を server に伝える
+- **Option 79**: DHCPv6 client link-layer address option（RFC 6939）
+- **`giaddr`**: DHCPv4 の gateway IP address。server が pool を選ぶ key
+- **management VRF (`mgmt`)**: 管理通信専用 VRF。front-panel VRF と分離
+- **chrony**: NTP client / server 実装。ntpd の後継
+- **TWAMP Light**: RFC 5357。data plane 測定プロトコル。本章では control 接続を持たない軽量 service として扱う
+
+### 典型シーン: ToR 配下のサーバが DHCP で IP を取る
+
+```mermaid
+sequenceDiagram
+    participant SRV as Server (VLAN 100)
+    participant TOR as ToR (dhcrelay)
+    participant DM as dhcpmon
+    participant DHCP as Upstream DHCP server
+
+    SRV->>TOR: DISCOVER (bcast)
+    TOR->>DM: count rx_DISCOVER
+    TOR->>DHCP: DISCOVER (unicast, giaddr=ToR VLAN100 IP, Option82=Ethernet8)
+    DHCP-->>TOR: OFFER (unicast)
+    TOR->>DM: count tx_OFFER
+    TOR-->>SRV: OFFER (bcast back via VLAN)
+    SRV->>TOR: REQUEST
+    TOR->>DHCP: REQUEST
+    DHCP-->>TOR: ACK
+    TOR-->>SRV: ACK
+```
+
+ここでサーバが IP を取れない場合、`dhcpmon` の counter（rx_DISCOVER / tx_DISCOVER / rx_OFFER）を順に見ていけば「broadcast が ToR まで届いていない / relay が unicast を出していない / server から応答がない」のどこで止まっているか判定できます。
+
+### 似ているが別物のもの
+
+| 比較対象 | この章との違い |
+| --- | --- |
+| L3 forwarding 章（[02 BGP](../02-bgp/index.md) / [04 VRF/ECMP](../04-vrf-ecmp/index.md)） | route 決定そのもの。NAT / DHCP は route 決定の前後で動く付帯 |
+| [QoS / Buffer](../08-qos-buffer/index.md) | TWAMP Light は本来 QoS / observability 寄りだが、control 接続を持たない軽量 service としてこの章で扱う |
+| [Security / AAA](../15-security-aaa/index.md) | 管理通信の経路（mgmt VRF）はこの章。認証は 15 章 |
+| [Dual-ToR](../05-dual-tor/index.md) | Option 82 や giaddr 固定が dual-ToR でなぜ必要かは 05 章の文脈、設定そのものは本章 |
+| ホスト Linux の DHCP / NAT 単体 | SONiC では CONFIG_DB → 各 container daemon → OS / SAI の二段で動く点が違う |
+| [DASH / SmartSwitch](../13-dash-smartswitch/index.md) | DASH NAT は overlay tenant 単位の NAT で、本章の管理 / edge NAT とはスケール感が違う |
+
+### 読了後にできるようになること
+
+- 「ping は通るが NTP / DNS / DHCP が動かない」事象を VRF / iptables / kea / relay の切り分けで追える
+- NAT が hardware path に乗っているか CPU 経由かを `NatOrch` ↔ SAI ↔ iptables の構造で判別できる
+- dual-ToR で Option 82 / giaddr 固定が必要な理由を 05 章とつないで説明できる
+- TWAMP Light や terminal server がなぜこの章にあるかが分かる
+
 ## 関連ページ
 
 - [NAT in SONiC](../../architecture/nat-in-sonic.md)

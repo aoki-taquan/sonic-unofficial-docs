@@ -78,6 +78,89 @@ SmartSwitch HA は「DPU レベルで active / standby のペアを作り、フ�
 | HAMgrD | NPU 側 HA actor daemon |
 | `has_per_dpu_scope` | FEATURE テーブルの leaf。DPU 数分の instance を起動するかを示す |
 
+## まず読み手の質問に答える
+
+### この機能はそもそも何か
+
+DASH は「VM / コンテナ単位のオーバーレイ処理を、ホスト CPU ではなく専用ハードウェア（DPU や appliance）に下ろすための SONiC データプレーン API」です。SmartSwitch は「その DPU を 1 〜数台ぶら下げた物理スイッチを SONiC として制御する箱」です。前者がソフトウェア契約、後者が箱の話です。
+
+エンドユーザー視点では、「テナント単位の VNet ルーティング・ACL・metering・Service Tunnel をパブリッククラウド規模（数万 ENI 級）で 1 装置にまとめたい」というニーズに応えます。これを SONiC ノースバウンド API（gNMI / Redis）で投入すると、ノースバウンド側は DPU を意識せず、SmartSwitch 内部の NPU/DPU 分担は SONiC 側が引き受けます。
+
+### 何を解決するか
+
+従来の VxLAN gateway や software ロードバランサで「テナント数が増えると CPU が詰まる / フロー数が増えると state table が破綻する」問題が起きていました。DASH は次のように分解して解決します。
+
+- ENI ごとの per-tenant 状態（VNet route、ACL、metering）を **DPU の専用テーブル** に積み、線形にスケールさせる
+- VxLAN / NSH / Service Tunnel の encap/decap を **DPU のパケット処理パイプライン** に固定し、CPU 経由を回避する
+- スイッチ単位の VIP で受けて ENI 単位で DPU に振り分ける（ENI ベース転送）ことで、テナント追加に伴う VIP 消費を抑える
+
+### SONiC 全体での位置
+
+DASH は **オーバーレイ転送のスキーマ拡張**、SmartSwitch は **箱の構成プロファイル** という関係です。
+
+| 層 | 関係する SONiC コンポーネント | 役割 |
+| --- | --- | --- |
+| ノースバウンド | gNMI / Redis CONFIG_DB / `DASH_*` テーブル | テナント / ENI / VNet 設定の投入口 |
+| NPU 制御面 | `swss`、`bgpd`（FRR）、`HAMgrD`、`pmon`、`featured` | underlay 経路、DPU 管理、HA actor |
+| NPU データ面 | `syncd`、SAI、ACL（ENI Redirect）、midplane bridge | ENI ベース転送、underlay VxLAN |
+| DPU 制御面 | DPU 側 SONiC OS、`DashOrch` 系 | DASH オブジェクトの SAI への落とし込み |
+| DPU データ面 | DASH 対応 SAI 実装（ベンダー）、DPU パイプライン | overlay encap/decap、ACL、metering |
+| ストレージ | NPU 上の `redisdpu0..N` container | DPU 用 overlay DB の host |
+
+### 用語定義（章内で繰り返し出るもの）
+
+- **ENI**: Elastic Network Interface。テナント／VM の接続点を表す論理単位。1 ENI = 1 MAC + (任意の) VNet 紐付き。
+- **VNet**: VxLAN VNI で識別されるテナント仮想 L3 ネットワーク。`DASH_VNET` テーブルが定義する。
+- **DPU**: Data Processing Unit。DASH パイプラインを持つ SoC ないし SmartNIC。
+- **NPU**: Network Processing Unit。従来の SONiC スイッチ ASIC。
+- **midplane bridge**: NPU と DPU を繋ぐ内部 L2 ネットワーク（`169.254.200.x` 系）。管理 IP、HA、redis 通信に使う。
+- **`redisdpuN`**: NPU 上に立つ DPU 専用 redis container。DPU は自分の overlay 状態をここに書く。
+- **ENI ベース転送**: スイッチ単位の VIP で受け、ACL の `ENI_REDIRECT` 型で ENI 別 DPU に振る方式。
+- **HAMgrD**: NPU 側に立つ HA actor。DPU ペアの active/standby を駆動する。
+- **`has_per_dpu_scope`**: `FEATURE` テーブルの leaf。`true` の feature は DPU 数だけ instance を起動する。
+- **Service Tunnel / Private Link**: テナントが Azure 系の SaaS や PrivateLink endpoint に抜けるための named tunnel 機能。
+- **Outbound / Inbound 方向**: ENI を中心に「VM → 外」が Outbound、「外 → VM」が Inbound。ルーティングテーブルが別建て。
+
+### 典型シーン
+
+```mermaid
+sequenceDiagram
+    participant CTRL as Controller (gNMI)
+    participant NPU as NPU CONFIG_DB
+    participant ROUT as DashOrch (NPU/DPU)
+    participant RDPU as redisdpuN (on NPU)
+    participant DPU as DPU SAI
+    participant LB as ENI Redirect ACL
+
+    CTRL->>NPU: DASH_VNET / DASH_ENI / DASH_ROUTE 投入
+    NPU->>ROUT: subscribe 通知
+    ROUT->>RDPU: ASIC_DB 相当を DPU 用 redis に書く
+    RDPU->>DPU: SAI 経由でパイプラインに反映
+    ROUT->>LB: ENI_REDIRECT ACL を NPU に投入
+    Note over LB: VIP 宛パケットを ENI 単位で<br/>local/remote DPU の nexthop へ
+    LB->>DPU: トラフィック到着
+    DPU-->>LB: encap/ACL/metering 適用後 egress
+```
+
+ポイントは「制御は NPU 側 redis を一意の入口にする」「データプレーンの分岐は NPU 上 ACL で済ます」の二段で、ノースバウンドからは DPU の存在が透けて見えにくい点です。
+
+### 似ているが別物のもの
+
+| 比較対象 | DASH / SmartSwitch との違い |
+| --- | --- |
+| 通常の SONiC VxLAN / EVPN ゲートウェイ（[03 章](../03-vxlan-evpn/index.md)） | テナント数・per-ENI state が増えると CPU/TCAM が破綻する。DASH は per-ENI state を DPU 側に押し込む |
+| Multi-ASIC chassis（[12 章](../12-multi-asic-voq/index.md)） | 複数 ASIC を 1 装置に積む点は似るが、Multi-ASIC は単一スイッチング機能、SmartSwitch は NPU + 別役割の DPU |
+| 単体 SmartNIC（DPU 単独） | SmartNIC は server NIC 側に DPU を載せる発想。SmartSwitch は ToR 側に集約 |
+| ホストベースの仮想 router（OVS / VPP） | CPU 上で動かす分柔軟だが、per-flow CPU コストが線形に効く。DASH はパイプライン処理 |
+| MPLS / SRv6 ベース L3VPN（[17 章](../17-srv6-mpls/index.md)） | DASH は ENI 単位の policy / metering まで含む。MPLS / SRv6 はラベル経路提供が主 |
+
+### 読了後にできるようになること
+
+- HLD のどれが「DASH スキーマ側」でどれが「SmartSwitch 物理側」なのかを切り分けて読める
+- `DASH_*` テーブルや `redisdpuN` container の役割を見て「どのレイヤの問題か」を判定できる
+- HA や DPU 障害時の駆動主体が NPU 側（HAMgrD）であることを前提に [運用](operations.md) を組める
+- 他社 SmartSwitch / DPU 製品との比較で SONiC / DASH 採用範囲を質問できる
+
 ## 関連ページ
 
 - [SONiC-DASH アーキテクチャ概観](../../overlay/sonic-dash-hld.md)

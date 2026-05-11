@@ -67,6 +67,123 @@ flowchart LR
 - VRF / VPN の一般的な構造は [04 VRF / ECMP](../04-vrf-ecmp/index.md) で、SRv6 VPN による L3VPN の SID マッピングはこの章です。
 - EVPN-VXLAN は [03 VXLAN-EVPN](../03-vxlan-evpn/index.md) で、SRv6 を underlay にする方向は本章の発展トピックから辿ります。
 
+## まず読み手の質問に答える
+
+### この章はそもそも何の章か
+
+「SRv6 / MPLS / Path Tracing」は **IPv4/IPv6 forwarding の上に「ラベル」「セグメント」「観測メタデータ」を積む 3 種類の機能** をまとめた章です。
+
+- **SRv6**: IPv6 アドレスを SID（Segment Identifier）として使い、経路 / VPN / Policy を表現する
+- **MPLS**: 4 byte ラベルを別 address family（AF_MPLS）として扱い、静的 LSP / L3VPN underlay に使う
+- **Path Tracing**: IPv6 HbH オプション（HbH-PT）に各 transit が MCD を書き加え、経路と遅延を観測する
+
+通常の routing が「どこ宛か」を決めるのに対し、この章は「どのラベル / セグメント / 観測メタを積むか」を扱います。
+
+### 何を解決するか
+
+- **テナント / SLA 別の経路指定** → SRv6 Policy / Binding SID で「この trafic は東経路、別 traffic は西経路」のような明示経路を作る
+- **L3VPN / L2VPN underlay の現代化** → SRv6 で IPv6 だけの underlay に L3VPN を載せる（MPLS underlay を畳む）
+- **既存 MPLS 網との接続** — SONiC を MPLS LSR として配置し、静的 LSP で連携する
+- **障害観測の解像度向上** → Path Tracing で経路上の各 hop の通過時刻と nexthop を probe 単位で取る
+
+純粋な BGP / ECMP では表現できない「経路の制御」「経路の可観測性」を担うのがこの章です。
+
+### SONiC 内での位置
+
+```mermaid
+flowchart TB
+    subgraph CFG[(CONFIG_DB)]
+        IF[INTERFACE.mpls]
+        LOC[SRV6_MY_LOCATORS]
+        SID[SRV6_MY_SIDS]
+        POL[SRV6_POLICY]
+        STR[SRV6_STEER]
+        PT[PORT.pt_*]
+    end
+    subgraph CTRL[制御面]
+        FRR[FRR<br/>bgpd / zebra / staticd]
+        BCFG[bgpcfgd / SRv6Mgr]
+        FPM[fpmsyncd]
+    end
+    subgraph SWSS[swss]
+        SRORC[srv6orch]
+        MORC[MplsOrch / RouteOrch]
+        PORTORC[PortOrch]
+    end
+    subgraph SAI[SAI / syncd]
+        MYSID[MY_SID_ENTRY]
+        SIDLIST[SRV6_SIDLIST]
+        LBL[INSEG_ENTRY]
+        PTATTR[port PT attrs]
+    end
+    LOC --> BCFG --> FRR --> FPM --> SRORC --> MYSID
+    SID --> SRORC --> SIDLIST
+    POL --> SRORC
+    IF --> MORC --> LBL
+    PT --> PORTORC --> PTATTR
+    FRR -.AF_MPLS netlink.-> FPM
+```
+
+「経路の決定」は FRR、「ラベル / SID の生成と SAI への落とし込み」は SONiC 内 orchagent と分担しています。
+
+### 用語の最短整理
+
+- **SID**: Segment Identifier。SRv6 では 128bit IPv6 アドレス相当
+- **uSID**: SID を 16 / 32bit 単位に圧縮し 1 つの IPv6 アドレスに最大 6 個積む方式
+- **Locator**: SID のうち「装置を指す prefix」部分。SRv6 では 1 装置の SID 群が同じ Locator を共有する
+- **Function**: SID の挙動を示す部分（`uN` / `uA` / `uDT4` / `uDX6` 等）
+- **`END.X` / `End.DT4` / `End.DT46`**: SRv6 endpoint behavior。例えば `End.DT4` は SID から VRF を抜く挙動
+- **`SRV6_MY_SID_TABLE`**: 自装置が処理するべき SID を保持する APP_DB テーブル
+- **`SRV6_SID_LIST` / `SRV6_POLICY` / `SRV6_STEER`**: encap 側 SID list / Policy bind / steering rule
+- **`srv6orch`**: SRv6 関連の orchagent
+- **`LABEL_ROUTE_TABLE`**: MPLS in-segment entry の APP_DB 表現
+- **AF_MPLS**: Linux の MPLS address family。netlink で route が流れる
+- **PHP / explicit-null / implicit-null**: penultimate hop popping と end-of-LSP のラベル挙動
+- **`MPLS_TC_TO_TC_MAP`**: MPLS パケットの TC（traffic class）を SONiC 内部 TC に変換する QoS map
+- **HbH-PT / MCD**: IPv6 Hop-by-Hop Path Tracing Option / Midpoint Compressed Data
+- **SRC / Midpoint / SINK**: Path Tracing の役割。SONiC は Midpoint を実装
+- **Regional Collector**: SINK が集めた MCD を時系列で再構築する外部システム（HLD 外）
+
+### 典型シーン: SRv6 L3VPN 着信ノードでの SID 解決
+
+```mermaid
+sequenceDiagram
+    participant SRC as Ingress PE
+    participant TR as Transit Router (uN)
+    participant DST as Egress PE (this switch)
+    participant ORC as srv6orch
+    participant VRF as VRF route table
+
+    SRC->>TR: IPv6 + SRH (SID=...:eDT4:...)
+    TR->>DST: forward by uN
+    Note over DST: SAI MY_SID_ENTRY match
+    DST->>ORC: lookup End.DT4 SID
+    ORC->>VRF: SRH 剥がす + VRF X で IPv4 lookup
+    VRF-->>DST: nexthop = customer side
+    DST->>DST: SRv6 decap して IPv4 forward
+```
+
+ここで Neighbor 未解決の `uA` / `End.X` 系は `srv6orch` の pending queue で待ち、Neighbor 解決後に SAI への push がリトライされます。設定したのに動かない場合は ARP/ND 状態と pending queue の双方を確認します。
+
+### 似ているが別物のもの
+
+| 比較対象 | この章との違い |
+| --- | --- |
+| [BGP](../02-bgp/index.md) | 経路情報の交換そのもの。SRv6/MPLS で追加される BGP family（SR-MPLS / SRv6 L3VPN）の挙動は本章 |
+| [VRF / ECMP](../04-vrf-ecmp/index.md) | VRF 一般構造は 04 章。SRv6 SID と VRF の紐付けは本章 |
+| [VXLAN / EVPN](../03-vxlan-evpn/index.md) | overlay は UDP encap 主体。SRv6 / MPLS は IPv6 / AF_MPLS native |
+| [DASH / SmartSwitch](../13-dash-smartswitch/index.md) | DASH は per-ENI overlay。SRv6 / MPLS は装置間 fabric の話 |
+| [Telemetry / SNMP](../09-telemetry-snmp/index.md) | counter / event の収集。Path Tracing は data plane に観測ヘッダを埋める点で別軸 |
+| LDP / RSVP-TE | 動的 MPLS シグナリング。SONiC は初期 scope 外、本章は静的 LSP + bulk programming のみ |
+
+### 読了後にできるようになること
+
+- 機能ごとの HLD（SRv6 base / uSID / static SID / L3 隣接 / VPN / MPLS / Path Tracing）が **どの phase の話か** を識別できる
+- `SRV6_MY_SID_TABLE` の `action` と SAI MY_SID_ENTRY の attribute の対応が読める
+- 「MPLS が forward しない」事象で per-RIF `mpls` 属性、AF_MPLS netlink、`INSEG_ENTRY` の順に切り分けできる
+- Path Tracing を有効化するときの `pt_interface_id` / `pt_timestamp_template` の意味と SAI 対応 attribute が答えられる
+- 自社の網設計に SRv6 / MPLS / Path Tracing のどれを採用するか、設定範囲と必要 HLD を提示できる
+
 ## 関連ページ
 
 - [SRv6 HLD](../../routing/segment-routing-over-ipv6-srv6-hld.md)
