@@ -201,6 +201,31 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 - `Temperature: 0` と `N/A` の区別: API の戻り値仕様上、温度の取得不可は `0` となる。`0℃` と取得不可が見分けにくい点は HLD の制約[^1]。
 - `show platform ssdhealth` が `command not found`: `show/main.py` の `platform` メニューに項目が登録されているか、`ssdhealth` スクリプトが PATH にあるかを確認。
 
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（`SsdBase` / `SsdUtil`）と CLI（`show platform ssdhealth`）は概ね素直に取り込まれているが、HLD で Open Question として残されていた **常時監視デーモン `ssdmond` は現状実装が見当たらない**。
+
+| 項目 | HLD | 現行 master | 結果 |
+|------|-----|------|------|
+| `SsdBase` 基底クラス | 必須 | `sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py` に基底定義 | ✓ |
+| `SsdUtil` ベンダー派生 | 必須 | `device/{vendor}/platform/plugins/ssdutil.py` の plugin 取り込み | ✓ |
+| `show platform ssdhealth [verbose\|vendor]` | 必須 | `sonic-utilities/show/platform.py` のサブコマンドに該当 | ✓ |
+| `ssdmond` 常時監視デーモン | Open Question | 現行 `sonic-platform-daemons/` 配下に `ssdmond` 名のデーモン無し | ⚠️ 未取り込み |
+| SNMP MIB への露出 | Open Question | 未取り込み（HLD 上もスコープ外と明記） | ⚠️ スコープ外 |
+
+**差分の中身**: 常時バックグラウンドで SSD 健全性を polling し、閾値割れ時に syslog / SNMP trap を発火する `ssdmond` は HLD で「optional」扱いのまま、コミュニティ master には取り込まれていない。健全性確認は **on-demand な `show platform ssdhealth` 実行** に依存する。
+
+**読者への影響**:
+
+- SSD 寿命警告を「壊れた後に techsupport で気づく」運用になるリスク。連続監視には外部ツール（cron 化、telemetry、Prometheus exporter 等）が必要。
+- `Temperature: 0 ℃` を見たときに「冷えている」のか「取得不可」なのか API 戻り値だけでは判別できない。
+
+**回避策 / 対応方法**:
+
+- 常時監視が必要なら、`show platform ssdhealth` を cron + syslog で wrap するか、`smartctl` を直接 polling する独自 exporter を用意する。
+- 温度 `0` を観測したら、必ず `smartctl -A /dev/sdX | grep -i temperature` で raw 値を併読する運用にする。
+- ベンダープラグインが無い platform で `vendor` モードが空になる場合は、`device/<vendor>/platform/plugins/ssdutil.py` の存在を `dpkg -L sonic-platform-<vendor>` 等で確認。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

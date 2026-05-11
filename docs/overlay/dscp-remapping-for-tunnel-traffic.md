@@ -220,6 +220,19 @@ HLD 上に新規 SONiC CLI の追加記述は無い。設定は `qos_config.j2` 
 - **PFCWD フィールド名**: HLD は `pfc_wd_sw_enable` と表記しているが、現行 master では `pfcwd_sw_enable`（アンダースコアの位置が異なる）として実装されている。`sonic-utilities/scripts/db_migrator.py:1186-1193` で `pfc_enable` から `pfcwd_sw_enable` を派生している。CONFIG_DB / YANG (`sonic-port-qos-map`) を読む際は実装側の名称に合わせる必要がある。
 - 一方、`tunneldecaporch.cpp:834,1084`（`SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` / `..._TC_TO_PRIORITY_GROUP_MAP`）、`muxorch.cpp:259,2347`（MuxTunnel の `SAI_TUNNEL_PEER_MODE_P2P`）、`files/build_templates/qos_config.j2:441` の Dual-ToR 限定 `AZURE_TUNNEL` 出力は HLD どおり実装されていることを確認した。
 
+**差分の中身**: フィールド名は `pfc_wd_sw_enable`（HLD 表記）→ `pfcwd_sw_enable`（実装）でアンダースコアの位置が異なる。`db_migrator.py:1186-1193` で `pfc_enable` の値から自動派生される。YANG モジュール `sonic-port-qos-map` 上のフィールド名も実装側 (`pfcwd_sw_enable`) を正とする。
+
+**読者への影響**:
+
+- HLD の表記そのままで `config interface pfc-wd ...` 系のコマンドや config_db.json テンプレートを書くと、**フィールドが反映されない**（YANG validation で弾かれるか、orchagent が無視する）。
+- PFCWD の動作対象キューが「PFC 有効キュー全てではなく、明示指定したキューのみ」になる挙動を期待していた場合、`pfcwd_sw_enable` が migrator により自動生成される **新規 ToR では正しく動く** が、過去バージョンから upgrade した環境では `db_migrator` を走らせていないと旧挙動（PFC 有効キュー = WD 対象）になる。
+
+**回避策 / 対応方法**:
+
+- フィールド名は **常に `pfcwd_sw_enable`（アンダースコア 2 ヶ所）** を使う。`grep -r pfc_wd_sw_enable` で旧表記が混在していないか確認する。
+- upgrade 環境では `sonic-utilities/scripts/db_migrator.py` の最新版を実行し、`PORT_QOS_MAP|<port>:pfcwd_sw_enable` が生成されているか CONFIG_DB を確認する。生成されていなければ手動で投入する。
+- HLD 由来のドキュメントやテンプレートは新表記に書き換える。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/tunnel_dscp_remapping.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

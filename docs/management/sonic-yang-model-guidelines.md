@@ -169,6 +169,35 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 - **CVL**: 本ガイドライン準拠 YANG が無いと `must` / `when` の検証が効かない
 - **SONiC Management Framework**: 同 YANG を NB のスキーマとして再利用するため、命名・階層の食い違いは NB API のブレに直結
 
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、**`sonic-buildimage` 側の yang-models と `sonic-mgmt-common` 側で取り込み状況が分裂している**点が最大の罠。
+
+| 項目 | HLD ガイドライン | 現行 master | 結果 |
+|------|------------|------|------|
+| `sonic-ext:db-name` 拡張 | 推奨 | `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-extension.yang.j2` L18-22 で定義済（southbound 用） | ✓ 整合 |
+| `sonic-ext:map-list` 拡張 | 必須 | **`sonic-buildimage` 側の sonic-extension モジュールには存在せず**。一方 `sonic-mgmt-common/models/yang/sonic/common/sonic-extension.yang` L38- には定義あり（NB 用） | ⚠️ リポ間分裂 |
+| `sonic-ext:key-delim` 拡張 | 必須 | 同様に `sonic-buildimage` の `sonic-extension.yang.j2` には未定義、`sonic-mgmt-common/models/yang/sonic/common/sonic-extension.yang` L26 のみで定義 | ⚠️ リポ間分裂 |
+| `custom-validation-cvl` / `dependent-on` 拡張 | 必須 | `sonic-extension.yang.j2` L24-39 で `{% if yang_model_type == "cvl" %}` ブロックで条件付き定義 | ✓ ただし非 CVL ビルドでは消える |
+| 1 ファイル 1 機能 / `sonic-{feature}` 命名 / namespace / revision | 必須 | `sonic-yang-models/yang-models/` に sonic-*.yang が 130 件以上、命名・分割は概ね整合 | ✓ |
+| ガイドライン #14: `must` / `when` 違反時の `error-app-tag` | 必須 | サンプリングした `sonic-acl.yang` 等で未付与のものが多数 | ⚠️ 部分実装 |
+| ガイドライン #18: list 分割時のキー衝突回避（Rev 1.1 / 2023-12） | 必須 | 個別 yang に対する pyang バリデータでの強制チェックは未確認 | △ |
+
+**差分の中身**:
+
+- `map-list` / `key-delim` は元来 sonic-mgmt-common（NB 側）で導入された拡張で、southbound 側の `sonic-buildimage/sonic-yang-models` には取り込まれていない。両リポでガイドラインの「正」を取り違えると、southbound yang をマッピングする際に拡張未定義エラーになる。
+- `error-app-tag` の未付与は機能上は致命的でないが、NB クライアント (gNMI / REST) でのエラー応答可読性が落ちる。
+
+**読者への影響**:
+
+- 新規 yang を書く際に `sonic-ext:map-list` を southbound 用 yang に書くと、`sonic-buildimage` のビルド時に extension 未定義としてバリデーション失敗するケースがある。NB 用 yang（mgmt-common 配下）には書ける。
+- ガイドライン準拠を CI で機械的に強制したい場合、`error-app-tag` 等の必須項目を pyang プラグインで lint する仕組みは現状無く、レビューでの目視に依存する。
+
+**回避策 / 対応方法**:
+
+- southbound yang（`sonic-buildimage/src/sonic-yang-models/yang-models/`）では `map-list` / `key-delim` を使わず、`sonic-mgmt-common` 側の同名 yang でのみ使う（責務分担を意識）。
+- ガイドライン #14（`error-app-tag`）/ #18（list 分割キー衝突）は既存 yang への遡及修正がほぼ進んでいないため、新規 yang のレビュー時にチェックリスト化するのが現実的。
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/mgmt/SONiC_YANG_Model_Guidelines.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/mgmt/SONiC_YANG_Model_Guidelines.md)

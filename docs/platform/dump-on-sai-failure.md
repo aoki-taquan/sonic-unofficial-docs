@@ -171,6 +171,20 @@ sudo show techsupport
 - **現行 master**: `sonic-sairedis/syncd/Syncd.cpp` L45 / `tests.cpp` L46 の `#define SAI_FAILURE_DUMP_SCRIPT "/usr/bin/sai_failure_dump.sh"`、`sonic-sairedis/syncd/scripts/sai_failure_dump.sh` L8/L10/L12 で確認したとおり、汎用スクリプトは **`/usr/bin/sai_failure_dump.sh`** にリネームされている。`SAI_MAX_FAILURE_DUMPS=10` の既定値、`/var/log/sai_failure_dump/` 出力先、`platform_syncd_dump.sh` の有無確認 → 呼び出しという挙動は HLD のとおり。
 - 上記以外の HLD 表現（`SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 列挙値、`SAI_REDIS_SWITCH_ATTR_NOTIFY_SYNCD` 経由のディスパッチ）は `Syncd.cpp` L4493 で確認済みで一致。
 
+**差分の中身**: 汎用 dump 起点スクリプトのパスが、HLD 記載の `/usr/bin/syncd_dump.sh` から **`/usr/bin/sai_failure_dump.sh`** にリネーム済み。`sonic-sairedis/syncd/Syncd.cpp:45` の `#define SAI_FAILURE_DUMP_SCRIPT "/usr/bin/sai_failure_dump.sh"` がコード上の正。プラットフォーム固有スクリプト名は `/usr/bin/platform_syncd_dump.sh` で HLD と同じ。
+
+**読者への影響**:
+
+- ベンダードキュメントやランブックで「`/usr/bin/syncd_dump.sh` の有無を確認」と書かれていると **常に「存在しない」になる** ため、機能の有効性判定を誤る。
+- techsupport / 監視スクリプトで「汎用 dump スクリプトの最終更新時刻」を見ているケースは、参照パスを更新しないと SAI dump 機能の死活が誤判定される。
+- 一方、出力ディレクトリ `/var/log/sai_failure_dump/`、ローテーション上限 `SAI_MAX_FAILURE_DUMPS=10`、プラットフォーム固有 `/usr/bin/platform_syncd_dump.sh` の呼び分けは HLD どおりで動く。
+
+**回避策 / 対応方法**:
+
+- 監視・ランブックで参照するスクリプトパスは **`/usr/bin/sai_failure_dump.sh`** に統一する。
+- ベンダードッカーに `platform_syncd_dump.sh` を追加する場合のレイアウトは HLD のままで OK。
+- HLD 由来の手順書は「syncd_dump.sh」を grep して全て「sai_failure_dump.sh」に置換することを推奨。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/SAI_failure_handling/dump_on_sai_failure.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

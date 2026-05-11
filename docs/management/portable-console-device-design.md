@@ -132,6 +132,28 @@ sudo config console-switch model simulator
 - 異なるモデル混在時に動かない → 仕様。1 種類だけプラグインするか、autodetect を disable にして手動指定する。
 - daisy-chain で奥のデバイスが見えない → ベンダー実装の最大段数を確認。
 
+## 実装との乖離
+
+2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / CONFIG_DB スキーマのいずれにも入っていない。
+
+| 項目 | HLD | 現行 master | 結果 |
+|------|-----|------|------|
+| `CONSOLE_SWITCH` テーブルに `autodetect` / `vendor_name` / `model_name` フィールド追加 | 必須 | `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang` L79-90 では `console_mgmt` 配下に `enabled` と `default_escape_char` のみ。`autodetect` / `vendor_name` / `model_name` フィールドは未定義 | ⚠️ 未取り込み |
+| `config console-switch autodetect enable/disable` CLI | 必須 | `sonic-utilities/config/console.py` L22 `enable_console_switch` / L43 `disable_console_switch` は `CONSOLE_SWITCH\|console_mgmt:enabled` を yes/no で操作するのみ。`autodetect` / `vendor_name` / `model_name` のサブコマンドは存在しない | ⚠️ 未取り込み |
+| `sonic-platform-common` へのベンダー実装統合 | 想定 | `sonic-platform-common` にポータブル console-switch 用の抽象基底クラスは見当たらない | ⚠️ 未取り込み |
+
+**差分の中身**: HLD は USB 抜き挿しに反応して line を動的に追加する設計だが、現行実装の `config console` グループは **静的な console line（CONSOLE_PORT table）の baud / flow control / remote_device 設定** に限定される。autodetect モードに対応する hostd / udev rule も搭載されていない。
+
+**読者への影響**:
+
+- HLD 設定例（`sudo config console-switch autodetect enable` 等）は **そのまま打ってもエラーになる**。CLI として存在しない。
+- ポータブル USB console-switch を SONiC 上で正式サポートする経路は、現状ではベンダー側で udev rule + 独自スクリプトを bake する必要がある。
+
+**回避策 / 対応方法**:
+
+- 動的 USB console 追加が必要な場合は、ホスト側 udev rule（`/etc/udev/rules.d/`）で `ttyUSB*` を固定 path にバインドし、`CONSOLE_PORT` テーブルに静的に登録する（`config console add <line>`）。
+- HLD 提案フィールドを使った設定は、上流に PR が取り込まれるまでは独自パッチでの運用となる。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/console/Portable-Console-Device-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
