@@ -14,22 +14,21 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    sonic-sairedis `configure.ac` L49-50 で `--with-dashsai`（DASH SAI ビルド切替）、`debian/rules` L40-41 で `dashsai` build profile による configure 引数追加を確認。BMv2 は sonic-buildimage `sonic-slave-trixie/Dockerfile.j2` L583 / `sonic-slave-bullseye/Dockerfile.j2` L438・L622、`docker-syncd-vs` / `docker-gbsyncd-vs` / `docker-ptf` の versions-deb で `p4lang-bmv2==1.15.0-9` を確認。`vms-kvm-dpu` トポロジは `sonic-net/SONiC` `doc/dash/dash-sonic-kvm.md` L117-118 / L132 で testbed-cli.sh コマンドラインを確認（verified at: 2026-05-09）。
-    
-    ただし HLD §「DPU SONiC KVM image with dataplane will be released at the next stage」「5.2 DPU+VPP NPU testbed (TBD)」の通り、データプレーン同梱イメージ・VPP NPU testbed は明示的に TBD 段階。本ページもその TBD を反映したアスピレーショナルな記述として読むべき。
+    `sonic-sairedis` `configure.ac:49-50` / `debian/rules:40-41` で `--with-dashsai` / `dashsai` build profile を確認。BMv2 は `sonic-slave-trixie/Dockerfile.j2:583`, `sonic-slave-bullseye/Dockerfile.j2:438,622`, `docker-syncd-vs` / `docker-gbsyncd-vs` / `docker-ptf` versions-deb で `p4lang-bmv2==1.15.0-9` を確認。`vms-kvm-dpu` トポロジは HLD L117-118 / L132 で `testbed-cli.sh` コマンドを確認（verified at: 2026-05-09）。
+    HLD §「DPU SONiC KVM image with dataplane will be released at the next stage」「5.2 DPU+VPP NPU testbed (TBD)」のとおり、データプレーン同梱イメージ・VPP NPU testbed は TBD。
 
 # DASH SONiC KVM（BMv2 ベース仮想 DPU）
 
-## 概要
+## 何のための機能か
 
-DASH SONiC KVM は **物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）の検証ができる仮想スイッチイメージ** である。目的は 2 つ[^1]:
+物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ[^1]:
 
-1. **POC 兼検証用**: 物理ハードウェアを用意せずに DASH のコントロールプレーン・データプレーンを開発・テストできる testbed を提供
-2. **CI**: `sonic-buildimage` / `sonic-swss` などの SONiC 系リポジトリの Azure Pipelines CI に DASH を組み込む
+1. **POC / 開発**: 物理 HW なしで DASH のコントロール・データプレーンを開発・テスト
+2. **CI**: `sonic-buildimage` / `sonic-swss` の Azure Pipelines に DASH を組み込む
 
-データプレーンは **BMv2（P4 simple_switch）** をベースに、フロー作成や resimulation など BMv2 単体では弱い部分を **VPP** で補強する構成。SAI 互換は `dashsai`（リモート shim サーバ + クライアント）で sairedis から見えるようにしている。
+データプレーンは **BMv2 (P4 simple_switch)** を中核に、フロー作成・resimulation 等で BMv2 が苦手な部分を **VPP** で補強。SAI 互換は `dashsai`（remote shim サーバ + クライアント）が担う。
 
-## 動作仕様
+## どう動くか
 
 ### モジュール構成
 
@@ -37,89 +36,69 @@ DASH SONiC KVM は **物理 DPU を持たずに DASH（Disaggregated APIs for SO
 flowchart TB
     subgraph DPU_KVM[DPU SONiC KVM]
       direction TB
-      ETH0[Ethernet0,1,...\nsystem port] --> DAPP[Dataplane APP\n(VPP + saidash.so)]
-      LINE[eth1, eth2, ...\nline port] --> BMV2
-      DAPP -- DPDK / CPU port --> BMV2[BMv2 simple_switch\n(P4 dataplane)]
+      ETH0[Ethernet0..N<br/>system port] --> DAPP[Dataplane APP<br/>VPP + saidash.so]
+      LINE[eth1, eth2..<br/>line port] --> BMV2
+      DAPP -- DPDK / CPU port --> BMV2[BMv2 simple_switch]
       DAPP -- gRPC --> BMV2
-      DAPP -- shim --> SAIRED[SAIRedis\n(remote dashsai client)]
-      SAIRED --> SWSS[SWSS]
-      SWSS --> APPDB[(APP_DB)]
-      GNMI[GNMI] --> APPDB
-      OTHER[BGP / LLDP / etc.]
+      DAPP -- shim --> SAIRED[SAIRedis<br/>remote dashsai client]
+      SAIRED --> SWSS --> APPDB[(APP_DB)]
+      GNMI --> APPDB
     end
     EXT[gNMI client]<-->|midplane / mgmt port| GNMI
 ```
 
 | モジュール | 役割 |
 |----------|------|
-| BMv2 | P4 でデータプレーン処理。元々ハードウェア DPU が担う層 |
-| Dataplane APP | VPP フレームワーク + `saidash` 共有ライブラリ。BMv2 と gRPC で会話。BMv2 が苦手なフロー処理を VPP で補う |
-| `saidash` / `dashsai` | SAI の DASH 部分を BMv2 にマッピングする実装。**dashsai client/server は shim** で sairedis を BMv2 に繋ぐ |
-| SAIRedis | 物理仮想 SONiC では `saivs` を読むが、本構成では **remote dashsai client** をロードする[^1] |
-| SWSS | 物理 DPU と **ほぼ同一**[^1]。特別変更不要 |
-| GNMI / APP_DB | 物理 DPU と同一構造。後述の 2 モードで動作 |
-| その他 | BGP, LLDP, etc. を物理 DPU と同じ構成で残す[^1] |
+| BMv2 | P4 でデータプレーン処理。元来 HW DPU が担う層 |
+| Dataplane APP | VPP + `saidash` 共有 lib。BMv2 と gRPC、フロー処理を VPP で補う |
+| `saidash` / `dashsai` | SAI の DASH 部分を BMv2 にマップする shim |
+| SAIRedis | 通常の vs は `saivs` だが、本構成は **remote dashsai client** をロード |
+| SWSS / GNMI / APP_DB | 物理 DPU と同一構造 |
 
 ### ポート種別
 
-KVM 内のインタフェースは 3 種類に分かれる[^1]:
+| 種別 | 用途 |
+|-----|------|
+| `Ethernet0..` | system port（BGP/LLDP 等プロトコル用） |
+| `eth1, eth2..` | line port。KVM 実 IF。Ethernet と 1 対 1 対応 |
+| CPU port (DPDK) | Dataplane APP 用。BMv2 ↔ CPU パス |
 
-| 種別 | 用途 | 備考 |
-|-----|------|------|
-| `Ethernet0`, `Ethernet1`, ... | system port | BGP / LLDP 等のプロトコルが send/recv に使う |
-| `eth1`, `eth2`, ... | line port | KVM の実 IF。Ethernet と **1 対 1 対応** |
-| CPU port (DPDK) | Dataplane APP 用 | BMv2 から CPU パスでパケットが上がる |
+### 動作モード
 
-### モード（DPU mode / single device mode）
-
-GNMI と APP_DB は物理デバイスと同一だが、KVM では 2 つの動かし方が想定される[^1]:
-
-- **DPU モード**: 物理 SmartSwitch と同様、設定は外部 NPU の GNMI 経由で midplane（`eth-midplane`）に流れる
-- **Single device モード**: KVM 内に GNMI サーバを立てて、外部から直接 set すれば SWSS にローカル forward される
+- **DPU モード**: 物理 SmartSwitch と同様、外部 NPU が `eth-midplane` 経由で GNMI Set
+- **Single device モード**: KVM 内 GNMI に直接接続し SWSS へローカル forward
 
 ### データプレーン経路
-
-BMv2 上の P4 logic がパケットの出口を決める。HLD 例[^1]:
 
 ```mermaid
 flowchart TB
     eth1 --> PD{Packet dispatcher}
-    PD -->|LLDP| Eth0[Ethernet0]
-    Eth0 --> LLDPP[LLDP プロセス]
+    PD -->|LLDP| Eth0[Ethernet0] --> LLDPP[LLDP プロセス]
     PD -->|DASH| DP{DASH Pipeline}
     DP -->|VNet| eth2
-    DP -->|TCP SYN| CPU0[CPU0]
-    CPU0 --> DAPP[Dataplane APP]
-    DAPP --> CPU0
-    CPU0 --> DP
+    DP -->|TCP SYN| CPU0[CPU0] --> DAPP[Dataplane APP] --> CPU0 --> DP
 ```
 
-ポイント:
-
-- 通常 VNet トラフィックは BMv2 内の DASH Pipeline で完結し `eth2` に出る
-- TCP SYN など **フロー作成が必要なパケット** は CPU0 で Dataplane APP に上がり、VPP 側でフローを作って戻す
-- LLDP のような制御プレーン向けは Ethernet ポートに dispatch して上位プロセスに渡す
+- 通常 VNet トラフィックは BMv2 内 DASH Pipeline で完結し `eth2` に出る
+- フロー作成が必要な TCP SYN は CPU0 経由で Dataplane APP に上がり VPP がフローを作って戻す
+- LLDP 等の制御プレーンは Ethernet ポートへ dispatch
 
 ### コントロールプレーン経路
 
 ```mermaid
 sequenceDiagram
     participant CL as gNMI client
-    participant MID as eth-midplane
     participant GN as gnmi (KVM)
     participant DB as APP_DB
     participant SW as SWSS
     participant SR as SAIRedis (remote dashsai)
     participant BM as BMv2 + Dataplane APP
-    CL->>MID: gNMI Set
-    MID->>GN: gNMI request
+    CL->>GN: gNMI Set (DPU mode は midplane 経由)
     GN->>DB: APP_DB 更新
     DB-->>SW: 通知
     SW->>SR: SAI 呼び出し
     SR->>BM: dashsai shim 経由
 ```
-
-Single device モードでは `MID` を経由せず、KVM 内の GNMI に直接接続する経路もある[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/dash/dash-sonic-kvm.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -127,37 +106,29 @@ excerpt: |
   Due to the P4 and BMv2 limitation, such as flow creation, flow resimulation and etc, in this virtual DPU,
   our implementation is based on the VPP framework with the CPU interface to enhance the dataplane engine ...
   this dataplane APP loads the generated shared library, saidash, which communicates with BMv2 via GRPC.
-reasoning: 「BMv2 単体では DASH 機能が足りないので VPP + saidash で補う」「SAIRedis は remote dashsai client をロードする」という構成根拠。
+reasoning: BMv2 単体では足りないので VPP + saidash で補い、SAIRedis は remote dashsai client をロードする構成根拠。
 -->
 
-### KVM testbed セットアップ（single device モード）
+## どう使うか
 
-`sonic-mgmt` を使って `vms-kvm-dpu` トポロジを立てる[^1]。
+### testbed セットアップ（single device モード）
 
 ```bash
 # sonic-mgmt コンテナ内
 cd /data/sonic-mgmt/ansible
-
 ./testbed-cli.sh -t vtestbed.yaml -m veos_vtb add-topo  vms-kvm-dpu password.txt
 ./testbed-cli.sh -t vtestbed.yaml -m veos_vtb deploy-mg vms-kvm-dpu veos_vtb password.txt
 ```
 
-DPU への SSH:
+デフォルト管理 IP `10.250.0.101` / パスワード `password`。SSH:
 
 ```bash
-sshpass -p 'password' ssh \
-  -o TCPKeepAlive=yes -o ServerAliveInterval=30 \
-  -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-  admin@10.250.0.101
+sshpass -p 'password' ssh -o StrictHostKeyChecking=no admin@10.250.0.101
 ```
-
-デフォルト管理 IP は `10.250.0.101`、デフォルトパスワードは `password`。
 
 ### gNMI クライアント
 
-DASH テスト実行時、`sonic-mgmt` 内の `/tmp/<UUID>/` に CA / クライアント証明書が生成される[^1]。クライアントとして `gnmi_cli_py`（Python 2 依存）を使い、PTF コンテナにデフォルトでインストールされている。
-
-DUT 側では gnmi-native を停止して証明書付きで起動し直す必要がある:
+`sonic-mgmt` 内 `/tmp/<UUID>/` に CA / クライアント証明書が生成される。`gnmi_cli_py`（**Python 2 依存**）が PTF コンテナにプリインストール。DUT で gnmi-native を停止し証明書付きで再起動が必要[^1]:
 
 ```bash
 docker exec gnmi supervisorctl stop gnmi-native
@@ -168,7 +139,7 @@ docker exec gnmi bash -c "/usr/sbin/telemetry -logtostderr --port 50052 \
   -gnmi_native_write=true -v=10 >/root/gnmi.log 2>&1 &"
 ```
 
-クライアント例（DASH テーブル更新）:
+クライアント例:
 
 ```bash
 python2 /root/gnxi/gnmi_cli_py/py_gnmicli.py \
@@ -180,56 +151,36 @@ python2 /root/gnxi/gnmi_cli_py/py_gnmicli.py \
   --value $/root/update1 $/root/update2
 ```
 
-`update1`, `update2` は対応 protobuf。
-
-### DPU + VPP NPU testbed
-
-HLD では `5.2 DPU with VPP NPU testbed` 節は **TBD**[^1]。
-
 ## 設定
 
-### 関連する CONFIG_DB
-
-KVM 自体の追加 CONFIG_DB スキーマは無い。物理 DPU と同じ DASH 系テーブル（`DASH_VNET_TABLE`, `DASH_APPLIANCE_TABLE` 等）を APP_DB / CONFIG_DB に投入する。
-
-### 関連する CLI
-
-KVM testbed 用の CLI は `testbed-cli.sh`（sonic-mgmt 側）。SONiC 内部の DASH CLI は本 HLD のスコープ外。
-
-### 関連する YANG
-
-該当なし（KVM 環境固有のスキーマは無い）。
+KVM 自体には追加 CONFIG_DB スキーマ・CLI・YANG は無い。物理 DPU と同じ DASH テーブル（`DASH_VNET_TABLE`, `DASH_APPLIANCE_TABLE` 等）を APP_DB / CONFIG_DB に投入する。testbed 操作は `testbed-cli.sh`（sonic-mgmt）。
 
 ## 制限事項
 
-- **データプレーン付き DPU SONiC KVM image は HLD 時点で未公開**。通常の `sonic-vs.img.gz` のみ取得可能[^1]
-- BMv2 の限界（フロー作成・resimulation）を VPP で補う実装は **dashsai に強く依存**。dashsai 未対応の SAI API は **mock 実装**される（`DTEL` 等）[^1]
-- gNMI クライアント `gnmi_cli_py` は **Python 2 依存**。PTF 以外の環境ではインストールが面倒[^1]
-- DPU + VPP NPU testbed は HLD 時点で **TBD**
+- **データプレーン付き DPU SONiC KVM image は HLD 時点で未公開**（通常 `sonic-vs.img.gz` のみ）。
+- `dashsai` 未対応 SAI API（`DTEL` 等）は **mock 実装**[^1]。
+- `gnmi_cli_py` が Python 2 依存。
+- **DPU + VPP NPU testbed (HLD §5.2) は TBD**。
 
 ## 干渉する機能
 
-- **物理 SmartSwitch**: SWSS / GNMI / APP_DB は物理 DPU と互換のため、両者でテスト共通化が可能
-- **`sonic-mgmt`**: `vms-kvm-dpu` トポロジが必要。EOS コンテナや veos_vtb の前提条件あり
-- **CI（Azure Pipelines）**: 本 KVM が CI のターゲット。BMv2 / VPP の build 時間が CI に影響する
-- **DASH 系 HLD（VNet, ENI Forwarding 等）**: 本 KVM はそれらの検証実装
+- **物理 SmartSwitch**: SWSS / GNMI / APP_DB が互換のため、テスト共通化可能。
+- **sonic-mgmt**: `vms-kvm-dpu` トポロジ・cEOS image・SSH 鍵が前提。
+- **CI**: BMv2 / VPP の build 時間が CI 全体に影響。
+- **DASH 系 HLD（VNet, ENI Forwarding 等）**: 本 KVM はそれらの検証実装。
 
 ## トラブルシューティング
 
-- testbed 起動が失敗する場合、`sonic-mgmt` の前提（cEOS イメージ・SSH 鍵）が揃っているか確認
-- DPU に SSH できない場合、デフォルト IP `10.250.0.101` と `password` を確認
-- `gnmi_cli_py` がエラーになる場合、Python 2 環境で実行しているか確認
-- DASH テーブル更新が反映されない場合、KVM 内の GNMI が証明書付きで再起動されているかを確認
+- testbed 起動失敗: `sonic-mgmt` 前提（cEOS, SSH 鍵）の確認。
+- DPU に SSH 不可: IP `10.250.0.101` / pw `password` の確認。
+- `gnmi_cli_py` エラー: Python 2 環境で実行しているか確認。
+- DASH テーブル更新が反映されない: KVM 内 GNMI を証明書付きで再起動しているか確認。
+
+## 関連トピック
+
+- [Topics: GNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md) — gNMI 経由の DASH 設定
+- [sonic-dash-hld](sonic-dash-hld.md) — DASH の全体像
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dash/dash-sonic-kvm.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
-
-<!-- concerns hint:
-- BMv2 / VPP / saidash / dashsai server-client の現行 master 取り込み状況
-- vms-kvm-dpu トポロジ ansible playbook の所在
-- gnmi_cli_py の Python 2 依存（移行計画）
-- DPU SONiC KVM image (with dataplane) のリリース有無
-- DPU + VPP NPU testbed (5.2) の進捗
-- saivs / dashsai client の SAIRedis ロード切替の実装
--->
