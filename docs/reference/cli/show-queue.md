@@ -102,6 +102,22 @@ show queue persistent-watermark multicast
 ```
 <!-- /usage-example -->
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show queue (counters / wred / watermark)"]
+  UT["queuestat / wredstat / watermarkstat"]
+  CNT[("COUNTERS_DB<br/>QUEUE_STAT / WRED_STAT<br/>USER_WATERMARK_QUEUE")]
+  CLI --> UT
+  CNT --> UT
+```
+
+!!! note "凡例"
+    show 系 (CLI → *stat ← COUNTERS_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

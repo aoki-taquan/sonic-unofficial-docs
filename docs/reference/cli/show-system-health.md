@@ -151,6 +151,22 @@ excerpt: |
 
 [^2]: 整形は `display_system_health_summary` (`show/system_health.py` L44-L74)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/system_health.py#L44>
 
+<!-- cli-mermaid -->
+### データフロー (手動作成)
+
+```mermaid
+flowchart LR
+  CLI["show system-health"]
+  SH["system-health daemon<br/>(HealthCheckerManager)"]
+  ST[("STATE_DB<br/>SYSTEM_HEALTH_INFO / DPU_STATE")]
+  CLI --> SH
+  ST --> CLI
+```
+
+!!! note "凡例"
+    show 系 (CLI ← STATE_DB ← system-health daemon) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+<!-- /cli-mermaid -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
