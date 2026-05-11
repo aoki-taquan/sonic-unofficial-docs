@@ -171,6 +171,12 @@ ls /etc/sonic/ /host/ 2>/dev/null | head
 systemctl is-enabled updategraph
 ```
 
+## 関連 reference
+
+- [CLI: sonic-cfggen](../reference/cli/sonic-cfggen.md)
+- [Topics: Overview](../topics/01-overview/index.md)
+- [Runbook: config-reload-stuck](../reference/runbooks/config-reload-stuck.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ztp/SONiC-config-setup.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

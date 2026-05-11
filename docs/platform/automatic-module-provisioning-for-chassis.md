@@ -218,6 +218,12 @@ HLD では新しい [CONFIG_DB](../reference/glossary.md#term-config_db) スキ�
 - `ProvisionPending` で固まる場合、ベンダー provisioning スクリプトのログを確認
 - `Provisioned` から `Online` に戻らない場合、chassis 再起動が必要なケース
 
+## 関連 reference
+
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [HLD: custom-si-settings-for-cmis-modules](custom-si-settings-for-cmis-modules.md)
+- [HLD: cmis-and-c-cmis-support-for-zr](cmis-and-c-cmis-support-for-zr.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/chassis/module-provisioning/chassis-linecard-provisioning-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

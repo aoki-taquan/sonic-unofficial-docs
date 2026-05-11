@@ -131,6 +131,12 @@ reasoning: 仕様の path 規約と permission 表記の根拠。
 - **system-eeprom / decode-syseeprom**: `/sys_switch/syseeprom` の ONIE 形式を共有
 - **vendor 既存 sysfs**: 移行期間に併存
 
+## 関連 reference
+
+- [HLD: s3ip-sysfs-specification-and-framework](../architecture/s3ip-sysfs-specification-and-s3ip-sysfs-framework-hld.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [CLI: show platform](../reference/cli/show-platform.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/s3ip_sysfs/s3ip_sysfs_specification.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

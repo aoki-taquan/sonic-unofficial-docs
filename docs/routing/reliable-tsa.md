@@ -216,6 +216,13 @@ Supervisor で全体 TSA、LC2 だけ独立に TSB:
 - LC ローカルが FALSE なのに TSA のままなら Supervisor 側 TRUE が原因
 - Supervisor 再起動で TSA が解除される場合、Supervisor の `config_db.json` に `tsa_enabled` が保存されているか確認
 
+## 参考リンク
+
+- [CLI: config bgp](../reference/cli/config-bgp.md)
+- [CLI: show bgp](../reference/cli/show-bgp.md)
+- [YANG: sonic-bgp-device-global](../reference/yang/sonic-bgp-device-global.md)
+- [Topics: BGP](../topics/02-bgp/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/Reliable_TSA.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

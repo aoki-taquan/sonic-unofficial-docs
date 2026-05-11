@@ -182,6 +182,13 @@ redis-cli -n 6 HGETALL "VOLTAGE_INFO|<key>" | grep -E "high_threshold|warning_st
 journalctl --since "1 hour ago" | grep -iE "voltage|current.*alarm"
 ```
 
+## 関連 reference
+
+- [HLD: transceiver-and-sensor-monitoring](transceiver-and-sensor-monitoring-hld.md)
+- [HLD: platform-monitor-enhancement-design](platform-monitor-enhancement-design.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [CLI: show platform](../reference/cli/show-platform.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon-sensormon.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

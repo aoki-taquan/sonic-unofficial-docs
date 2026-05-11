@@ -219,6 +219,13 @@ gnoi_client system cancel_reboot --message "delayed by SRE"
 - `Reboot` 受理後に `RebootStatus.active=false`: 既に reboot 完了したか、BE が DB 書き込みを処理しなかった
 - `CancelReboot` が効かない: subcomponents 指定が unmatched、または既に reboot が走り始めている
 
+## 参考リンク
+
+- [Topics: gNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md)
+- [Topics: Reboot](../topics/11-reboot/index.md)
+- [CLI: reboot / fast / warm](../reference/cli/reboot-fast-warm.md)
+- [HLD: gnsi-hld](gnsi-hld.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnoi_system_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

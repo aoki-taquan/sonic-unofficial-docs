@@ -134,6 +134,14 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 - **HW RTC / `hwclock`**: 起動 / 再起動時の sync 経路
 - **secure-boot / kdump**: 起動 timing 上の依存
 
+## 関連 reference
+
+- [CLI: config ntp](../reference/cli/config-ntp.md)
+- [YANG: sonic-ntp](../reference/yang/sonic-ntp.md)
+- [Reference index](../reference/index.md)
+- [Glossary](../reference/glossary.md)
+- [Topics: Overview](../topics/01-overview/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ntp/migration-to-chrony.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

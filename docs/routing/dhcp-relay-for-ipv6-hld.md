@@ -219,6 +219,12 @@ CLI 操作後は `Restarting DHCP relay service...` と表示され、コンテ�
 - リレー先追加で短時間断: `Restarting DHCP relay service...` が出る挙動どおり。コンテナ再起動分のダウンタイムが発生[^1]。
 - `show vlan brief` の `DHCP Helper Address` に v6 が出ない: CLI または `show` 側が当該機能未対応の可能性。実装確認は裏取り課題。
 
+## 関連 reference
+
+- [CLI: config dhcp-relay](../reference/cli/config-dhcp-relay.md)
+- [Runbook: dhcp-relay](../reference/runbooks/dhcp-relay.md)
+- [Topics: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -156,6 +156,12 @@ VM は qemu で `-m 32768`（32GB RAM）`-smp 12`（12 vCPU）で起動する[^1
 - **sonic-vs**: 同じ仮想スイッチ枠だが、`sonic-vs` は SAI に bcm 等の実装無しの単純 sim。ALViS は SAI を gRPC で外出しする点が異なる
 - **KNE / ondatra**: トポロジ・テスト用 control framework として直接連携
 
+## 関連 reference
+
+- [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
+- [HLD: build-system-improvements](build-system-improvements.md)
+- [HLD: build-profiles](build-profiles.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/alpine/alpine_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

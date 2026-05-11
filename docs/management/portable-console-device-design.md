@@ -184,6 +184,12 @@ sudo config console-switch model simulator
     - [GitHub Issue / PR の関連リンクは未確認] — USB ベンダー console デバイスの抽象化は実機 platform plugin の追加に伴って段階的に取り込まれており、HLD 個別の上流 Issue / PR は確認できず。
 <!-- /diff-admonition -->
 
+## 参考リンク
+
+- [CONFIG_DB: CONSOLE_PORT](../reference/config-db/console-port.md)
+- [Topics: Reference index](../topics/22-reference-index/index.md)
+- [Reference 索引](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/console/Portable-Console-Device-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

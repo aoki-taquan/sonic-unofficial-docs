@@ -236,6 +236,13 @@ show ip interfaces loopback-action
 - 設定が再起動で消える: `config save` 漏れ。CONFIG_DB は永続化していないと cold/fast boot で揮発する。
 - SAI 側未対応: ベンダー SAI 実装で `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` をサポートしていないと `set_router_interface_attribute` が失敗する。`syslog` の SWSS / SAI ログを確認。
 
+## 関連 reference
+
+- [CLI: config interface](../reference/cli/config-interface.md)
+- [YANG: sonic-interface](../reference/yang/sonic-interface.md)
+- [CONFIG_DB: INTERFACE](../reference/config-db/interface.md)
+- [Runbook: route not installed in FIB](../reference/runbooks/route-not-installed-in-fib.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

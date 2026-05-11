@@ -154,6 +154,17 @@ reasoning: スクリプトのパスと二段階チェック構成の根拠。
 - アップグレードが post-check でループする: controller のタイムアウト前に readiness probe が安定しないケース。`start.sh` がまだ走っている場合は単に時間が足りていない。サービス初期化が遅いコンテナで起こりやすい。
 - `start.sh` が exit していない: supervisor の他サービスが起動失敗している可能性。`supervisorctl status` と `/var/log/supervisor/` を確認。
 
+## 参考リンク
+
+- [CLI: show system-health](../reference/cli/show-system-health.md)
+- [HLD: sonic-system-health-monitor](../system/sonic-system-health-monitor-high-level-design.md)
+- [Topics: Reference index](../topics/22-reference-index/index.md)
+
+## 関連 reference
+
+- [Topics: Telemetry / SNMP](../topics/09-telemetry-snmp/index.md)
+- [Reference index](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/kubernetes/health-check.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

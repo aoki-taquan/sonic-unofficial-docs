@@ -228,6 +228,13 @@ swssloglevel -d
 - warm upgrade 後にロスト: `db_migrator` が走っているか、`swss-common` のバージョンに `del` がエクスポートされているか確認。
 - `swssloglevel -p` の出力に出てこないコンポーネント: そのコンポーネントが Logger シングルトン経由でない、または listener thread が未対応。HLD 列挙コンポーネント以外は本機能の対象外。
 
+## 参考リンク
+
+- [CLI: config syslog](../reference/cli/config-syslog.md)
+- [YANG: sonic-syslog](../reference/yang/sonic-syslog.md)
+- [CONFIG_DB: SYSLOG_CONFIG](../reference/config-db/syslog-config.md)
+- [HLD: sonic-python-logger-enhancement](sonic-python-logger-enhancement.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/logging/persistent_logger/persistent_loglevel.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -193,6 +193,12 @@ sudo show techsupport     # BMC dump 自動同梱
 - techsupport に BMC dump が無い → `generate-dump` log の trigger / collect 各 stage 結果
 - session 枯渇 → CLI ごとに logout が走っているか、decorator が外れていないか
 
+## 関連 reference
+
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [HLD: s3ip-sysfs-specification](s3ip-sysfs-specification.md)
+- [Reference index](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bmc/bmc_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

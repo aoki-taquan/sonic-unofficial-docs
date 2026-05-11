@@ -196,6 +196,12 @@ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_PORT:*" | head
 # (Path Tracing Wireshark dissector 利用)
 ```
 
+## 関連 reference
+
+- [Topics: BGP](../topics/02-bgp/index.md)
+- [Topics: SRv6 / MPLS](../topics/17-srv6-mpls/index.md)
+- [CLI: show ip](../reference/cli/show-ip.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/path_tracing/path_tracing_midpoint.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

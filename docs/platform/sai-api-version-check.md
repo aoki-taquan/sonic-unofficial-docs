@@ -205,6 +205,12 @@ int main(void) {
 - 検査をスキップしたい（緊急ビルド）: HLD では明示されていないが、`AC_TRY_RUN` 検査は configure フラグでスキップ可能なように作るのが一般的。実装裏取り対象。
 - Runtime での挙動が怪しい: ビルド検査は通っても、ベンダー libsai が `SAI_API_VERSION` を **実態と異なる値で返す** バグがあると検知できない。属性 ID / enum 値の異常は依然として可能性がある。
 
+## 関連 reference
+
+- [Reference: SAI attributes](../reference/sai-attributes.md)
+- [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
+- [Runbook: SAI failure](../reference/runbooks/sai-failure.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/saiversioncheck.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

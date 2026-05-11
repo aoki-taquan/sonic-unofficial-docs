@@ -215,6 +215,12 @@ gnoi_client healthz acknowledge \
 - `Artifact` がストリーム途中で切れる: gRPC max message size と DBUS chunk サイズの不整合
 - `Acknowledge` が冪等にならない: host service 側の id 管理（GC 順序）を確認
 
+## 参考リンク
+
+- [Topics: gNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md)
+- [CLI: show system-health](../reference/cli/show-system-health.md)
+- [HLD: gnoi-hld-for-system-apis](gnoi-hld-for-system-apis.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnoi_healthz_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

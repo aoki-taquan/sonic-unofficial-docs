@@ -186,6 +186,13 @@ NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_R
 - prefix route の nexthop が更新されない: `MuxOrch` のログ、SAI route attribute の最新値（`saidump` 等）を確認。
 - `dualtor_neighbor_check` の出力で `PREFIX_ROUTE=no`: prefix_route モードのはずなのに作られていない → NeighborOrch 側のフォールバック分岐を確認。
 
+## 参考リンク
+
+- [CLI: show muxcable](../reference/cli/show-muxcable.md)
+- [YANG: sonic-mux-cable](../reference/yang/sonic-mux-cable.md)
+- [Topics: Dual-ToR](../topics/05-dual-tor/index.md)
+- [Runbook: dualtor mux](../reference/runbooks/dualtor-mux.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/mux_neighbors_using_prefix_route.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

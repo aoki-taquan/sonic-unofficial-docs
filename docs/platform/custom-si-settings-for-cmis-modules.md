@@ -212,6 +212,12 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 - `config_status` が `Config Success` 以外で 3 回リトライ → スキップ: モジュール側 advertisement と書込値の組合せが不正
 - 既存 SI 値が 0 にリセットされた: キャッシュ→マージステップを飛ばしている可能性
 
+## 参考リンク
+
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [HLD: CMIS and C-CMIS support for ZR](cmis-and-c-cmis-support-for-zr.md)
+- [CLI: show interfaces](../reference/cli/show-interfaces.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sfp-cmis/CMIS-custom-SI-settings.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

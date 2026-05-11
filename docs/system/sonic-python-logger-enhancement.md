@@ -259,6 +259,18 @@ HLD 自体は YANG 言及なし。`LOGGER` テーブルは `sonic-buildimage/src
     - [GitHub Issue / PR の関連リンクは未確認] — `SysLogger` 拡張 (runtime log level / `require_manual_refresh` / SIGHUP) は `sonic-py-common` の小規模機能追加として段階的に取り込まれており、HLD と 1:1 で紐づくトラッキング Issue / PR は確認できず。
 <!-- /diff-admonition -->
 
+## 参考リンク
+
+- [CLI: config syslog](../reference/cli/config-syslog.md)
+- [YANG: sonic-syslog](../reference/yang/sonic-syslog.md)
+- [CONFIG_DB: SYSLOG_CONFIG](../reference/config-db/syslog-config.md)
+- [HLD: persistent-log-level](persistent-log-level-hld.md)
+
+## 関連 reference
+
+- [CONFIG_DB: SYSLOG_CONFIG](../reference/config-db/syslog-config.md)
+- [HLD: persistent-log-level](persistent-log-level-hld.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/syslog/python-logger-enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

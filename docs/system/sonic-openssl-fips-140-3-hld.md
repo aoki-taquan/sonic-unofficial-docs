@@ -151,6 +151,12 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 - **container hardening**: 暗号方針の整合
 - **build system (`INCLUDE_FIPS` / `ENABLE_FIPS`)**: image 構成全体に波及
 
+## 関連 reference
+
+- [YANG: sonic-fips](../reference/yang/sonic-fips.md)
+- [Topics: Security / AAA](../topics/15-security-aaa/index.md)
+- [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fips/SONiC-OpenSSL-FIPS-140-3.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -199,6 +199,13 @@ VoQ chassis 上では同じ CLI で動くが、内部的には Option 1 or Optio
 - mirror destination が remote のとき `mirrororch` ログで MONITOR_PORT に何（SYSTEM_PORT / recycle）が選ばれているかを確認
 - パケットは出るが宛先で受からない場合、`neighorch` の remote neighbor 情報が正しいか確認
 
+## 参考リンク
+
+- [CLI: config mirror-session](../reference/cli/config-mirror-session.md)
+- [YANG: sonic-mirror-session](../reference/yang/sonic-mirror-session.md)
+- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
+- [Topics: Multi-ASIC / VOQ](../topics/12-multi-asic-voq/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/everflow.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

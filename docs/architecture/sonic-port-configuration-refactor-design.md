@@ -162,6 +162,14 @@ HLD が示すテスト計画[^1]:
 - pmon が起動失敗: `sonic-config-engine` が docker 内に配置されていない。`portconfig.py` を import できないため[^1]。
 - ベンダ固有 daemon で `port_config.ini` が見つからない: vendor 側 のリファクタが追従していない可能性[^1]。
 
+## 参考リンク
+
+- [YANG: sonic-port](../reference/yang/sonic-port.md)
+- [CONFIG_DB: device-neighbor](../reference/config-db/device-neighbor.md)
+- [CLI: config interface](../reference/cli/config-interface.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [Runbook: port admin up oper down](../reference/runbooks/port-admin-up-oper-down.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-config-refactor/port-config-refactor-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

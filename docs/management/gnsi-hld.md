@@ -288,6 +288,13 @@ gnsi_client credentialz rotate-account \
     - gNSI Authz / Pathz / Credentialz の包括的トラッキング Issue は確認できず、各サブシステムは個別 PR で順次取り込まれている。
 <!-- /diff-admonition -->
 
+## 参考リンク
+
+- [Reference 索引](../reference/index.md)
+- [CLI: show aaa](../reference/cli/show-aaa.md)
+- [Topics: gNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md)
+- [Topics: Security / AAA](../topics/15-security-aaa/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -207,6 +207,12 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 - PSU の LED 制御が無視される: 仕様どおり。BMC 管理のため `controllable=false`。NOS から触らない設計[^1]。
 - 古いプラットフォームで動かない: `capabilities` セクション未記述でも `controllable` の既定 `true` で従来挙動になる[^1]。それでも動かない場合は他の HLD（dynamic port breakout 等）の互換性問題を疑う。
 
+## 参考リンク
+
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [CLI: show platform](../reference/cli/show-platform.md)
+- [HLD: s3ip-sysfs-specification](s3ip-sysfs-specification.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/platform-json/platform_json_enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

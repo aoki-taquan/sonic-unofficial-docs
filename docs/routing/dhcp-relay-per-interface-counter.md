@@ -181,6 +181,13 @@ sonic-clear dhcp_relay ipv6 counters [--dir TX|RX] [--type <type>] [<vlan>]
 - **Dual-ToR**: standby IF drop、Loopback ベース送受信、Option 18 (Vlan LLA)
 - **VLAN_MEMBER / PORTCHANNEL_MEMBER**: 初期化対象 IF の決定根拠
 
+## 関連 reference
+
+- [CLI: config dhcp-relay](../reference/cli/config-dhcp-relay.md)
+- [HLD: dhcp-relay-for-ipv6](dhcp-relay-for-ipv6-hld.md)
+- [Runbook: dhcp-relay](../reference/runbooks/dhcp-relay.md)
+- [Topics: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md)
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/dhcp_relay/DHCP-per-interface-counter.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_relay/DHCP-per-interface-counter.md)

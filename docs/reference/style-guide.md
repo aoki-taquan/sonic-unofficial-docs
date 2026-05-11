@@ -64,8 +64,8 @@ frontmatter のフィールド定義は [`meta/templates/SCHEMA.md`](https://git
 
 - `flowchart LR` — パケット経路・データプレーンの流れ・状態の左→右遷移
 - `flowchart TD` — レイヤ構造・コンポーネント階層・「上位 → 下位」関係
-- `sequenceDiagram` — orchagent / syncd / SAI / kernel をまたぐ呼び出し順序
-- `stateDiagram-v2` — BGP / LACP / BFD などのプロトコル状態機械
+- `sequenceDiagram` — [orchagent](../reference/glossary.md#term-orchagent) / [syncd](../reference/glossary.md#term-syncd) / [SAI](../reference/glossary.md#term-sai) / kernel をまたぐ呼び出し順序
+- `stateDiagram-v2` — [BGP](../reference/glossary.md#term-bgp) / [LACP](../reference/glossary.md#term-lacp) / [BFD](../reference/glossary.md#term-bfd) などのプロトコル状態機械
 
 ノードラベル内では絵文字を使わない（PDF / 一部レンダラで文字化けする）。代わりに `[警告: ...]` のような括弧表記を使う。色指定 (`classDef`) は最小限にとどめる。
 
@@ -77,7 +77,7 @@ MkDocs Material の admonition は次の用途に絞って使う。
 - `!!! tip` — 運用 Tips / コツ
 - `!!! warning` — 既知の落とし穴・設定ミスしやすい点
 - `!!! danger` — データ損失・ループ・サービス停止に直結する操作
-- `!!! diff` — HLD と実装の乖離を示す専用ブロック (`discrepancy-found` ページのみ)
+- `!!! diff` — [HLD](../reference/glossary.md#term-hld) と実装の乖離を示す専用ブロック (`discrepancy-found` ページのみ)
 
 `!!! diff` は必ず HLD 側の主張・現行 master の状態・読み手への影響を 3 段で書く。
 
@@ -115,7 +115,7 @@ MkDocs Material の admonition は次の用途に絞って使う。
 
 - 文体は「である調」で統一する。「ですます調」は本ガイドおよび README 等の対人向けページに限定する
 - 技術用語は原則カタカナ表記とする。例: ルータ / スイッチ / オーケストレータ / オーバーレイ
-- 固有名詞・プロダクト名・コマンド名は原綴のままにする。例: SONiC / orchagent / syncd / FRR / Mellanox
+- 固有名詞・プロダクト名・コマンド名は原綴のままにする。例: SONiC / orchagent / syncd / [FRR](../reference/glossary.md#term-frr) / Mellanox
 - 助詞「は / が / を / に」の重複を避ける。長い修飾句は読点で区切る
 - 半角英数字と日本語の間にスペースは入れない（MkDocs の表示で間延びするため）
 - 箇条書きは「、」「。」を統一する。文の集まりは句点で終え、語句の列挙は句読点なしで揃える
@@ -141,3 +141,11 @@ MkDocs Material の admonition は次の用途に絞って使う。
 ## 引用
 
 本ページはプロジェクト内ルールを集約した `meta` ページであり、SONiC 一次情報源を持たない。スキーマ・テンプレートの正本は `meta/templates/` 配下のファイルである。
+
+## 関連 reference
+
+- [Reference index](index.md)
+- [Glossary](glossary.md)
+- [Topics: Reference index](../topics/22-reference-index/index.md)
+
+<!-- glossary-links-injected: 779e8be0b8c1 -->

@@ -166,6 +166,13 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 - 同じリソースの WARNING が一度出てから止まったように見える場合、**10 回で抑止** されている可能性が高い。一旦リソースを下げるか、process を再起動して抑止カウンタをリセットする運用を検討する。
 - 「使用数は増えているのに空き数が減らない」など整合が崩れて見える場合、`orchagent` 側の自己追跡（使用数）と SAI 側の available count の更新タイミングがズレている可能性がある。
 
+## 参考リンク
+
+- [CONFIG_DB: CRM](../reference/config-db/crm.md)
+- [YANG: sonic-crm](../reference/yang/sonic-crm.md)
+- [Runbook: CRM threshold exceeded](../reference/runbooks/crm-threshold-exceeded.md)
+- [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/crm/CRM_requirements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
