@@ -14,10 +14,10 @@ verification: meta
 
 <!-- quality-banner-start -->
 !!! success "最新の品質状態"
-    - **code-verified ページ**: 597 件（HLD と実コードを照合済み）
+    - **code-verified ページ**: 598 件（HLD と実コードを照合済み）
     - **discrepancy-found ページ**: 46 件（HLD と実装の乖離を明示）
     - **監査平均評価**: 9.87 / 10（quality-audit round 11）
-    - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
+    - **hld-only ページ**: 7 件（裏取り待ち）
 <!-- quality-banner-end -->
 
 ## 初めての方はここから

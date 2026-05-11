@@ -85,4 +85,3 @@ sysctl -a 2>/dev/null | grep -E "gc_thresh|gc_stale|gc_interval"
 - [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md)
 - [routing-loop-detected.md](routing-loop-detected.md)
 - [../cli/show-arp.md](../cli/show-arp.md)
-- [../config-db/neigh.md](../config-db/neigh.md)
