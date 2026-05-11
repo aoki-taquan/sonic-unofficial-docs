@@ -176,3 +176,16 @@ python3 meta/scripts/gen_changelog.py --check --strict  # drift 時 exit 1
 ```
 
 実行タイミングの目安: 四半期サイクル開始時、または「merged PR が 50 件溜まった」あたり。CI には組み込まず、main 変更後に手で commit する運用とする（CI 自動 push は権限と複雑度の都合で見送り）。
+
+### 7.2 `refresh_sources_sha.py`
+
+`.cache/sonic-sources/<repo>/` の HEAD SHA に合わせて、各ページの frontmatter `sources[].ref` を一括更新する保守スクリプト。`verification` は触らず、更新したページのみ `last_verified` を当日に進める。`.cache/` が必須なのでオフライン環境では空動作。
+
+```bash
+# まず .cache/sonic-sources/<repo>/ を `git pull` などで最新化してから:
+python3 meta/scripts/refresh_sources_sha.py --dry-run              # 対象一覧確認 (デフォルト: SONiC, 最大 30 ページ)
+python3 meta/scripts/refresh_sources_sha.py --repos SONiC --max-pages 30
+python3 meta/scripts/refresh_sources_sha.py --repos all --max-pages 50  # 全リポ対象
+```
+
+実行タイミングの目安: 四半期サイクル開始時に `7.1 / check_sources_freshness.py` を回した後、pinned SHA をローカル cache HEAD まで進めたい時に少量ずつバッチで回す。1 回で全ページを書き換えると PR 衝突が爆発するので、`--repos` と `--max-pages` を絞って小バッチで回すこと。
