@@ -50,6 +50,15 @@ SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベ�
 - [内部実装](internals/index.md)
 - [リファレンス](reference/index.md)
 
+## フィードバック歓迎
+
+本ドキュメントは AI が再構成して書いている非公式資料です。誤情報・記述漏れ・改善要望は歓迎します。
+
+- 誤情報の報告・改善要望: [GitHub Issues](https://github.com/aoki-taquan/sonic-unofficial-docs/issues/new/choose)（`feedback` テンプレを用意しています）
+- 雑談・質問・運用相談: [GitHub Discussions](https://github.com/aoki-taquan/sonic-unofficial-docs/discussions)
+
+各ページの裏取りステータスは [カバレッジ](_meta/coverage.md) / [実装との乖離](_meta/discrepancies.md) で一覧できます。
+
 ## ライセンス
 
 本ドキュメントの内容は、特に断りのない限り [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) のもとで提供されます。

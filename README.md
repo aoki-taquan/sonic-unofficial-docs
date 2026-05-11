@@ -32,6 +32,15 @@ mkdocs build
 
 `site/` ディレクトリに静的ファイルが出力されます。
 
+## フィードバック歓迎
+
+本ドキュメントは AI が再構成して書いている非公式資料です。誤情報・記述漏れ・改善要望はぜひお寄せください。
+
+- 誤情報の報告・改善要望: [GitHub Issues](https://github.com/aoki-taquan/sonic-unofficial-docs/issues/new/choose)（`feedback` テンプレあり）
+- 雑談・質問・運用相談: [GitHub Discussions](https://github.com/aoki-taquan/sonic-unofficial-docs/discussions)
+
+フィードバックの処理方針は [`meta/feedback.md`](./meta/feedback.md) を参照。
+
 ## ライセンス
 
 ドキュメントの内容は [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja)。
