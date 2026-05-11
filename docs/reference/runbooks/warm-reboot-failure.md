@@ -21,6 +21,9 @@ related:
 
 # Runbook: Warm Reboot が失敗 / 通信断が長引く
 
+!!! danger "実行前提"
+    `warm-reboot` 自体が失敗すると cold reboot にフォールバックし、data plane が数十秒～数分中断する（ASIC 再初期化 + neighbor relearn）。実行前に: (1) `sudo show warm_restart config` で warm_restart enable を確認、(2) `sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.warmreboot.$(date +%s)` で backup、(3) `bgp` neighbor 側 で graceful-restart helper が有効か対向と合意、(4) ECMP redundancy がある状態で 1 ToR ずつ実施。失敗時は `fast-reboot` / 通常 `reboot` での復旧、または backup 戻し + `config reload -y`。
+
 ## 症状
 
 - `warm-reboot` 実行後に Data plane の通信が想定（< 1s）を超えて 30s 〜 数分断する

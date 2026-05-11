@@ -21,6 +21,9 @@ related:
 
 # Runbook: PFC で帯域が出ない / Buffer overflow
 
+!!! danger "実行前提"
+    `pfcwd stop` / `pfcwd start` および `BUFFER_*` テーブル変更は lossless queue の watchdog action を一旦解除するため、PFC storm が再発すると HoL blocking で全 priority に影響が波及する可能性がある。実行前に `redis-cli -n 4 --rdb /tmp/cfgdb.bak.$(date +%s).rdb` で CONFIG_DB の snapshot を取り、buffer profile 変更時は `sonic-cfggen -d -v "BUFFER_PROFILE"` で現値を保存。誤設定時は backup から該当テーブルのみ `redis-cli -n 4 HMSET ...` で戻すか、`config reload -y` で全体ロールバック。
+
 ## 症状
 
 - RoCE / lossless トラフィックでスループットが想定の数 % にとどまる

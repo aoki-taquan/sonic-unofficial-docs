@@ -21,6 +21,9 @@ related:
 
 # Runbook: FEC エラーが多発する
 
+!!! danger "実行前提"
+    `config interface fec` / `config interface speed` で FEC mode や speed を変更すると当該ポートが down → 再 up し、リンク学習に数秒～数十秒かかる。LAG メンバーや ECMP path の最後の 1 本でないことを確認し、対向側と FEC モード・speed を必ず揃えてから一致タイミングで変更する。誤設定でリンクが上がらなくなった場合は `config interface fec <if> <旧モード>` で即時戻す（CONFIG_DB のみの変更で再起動は不要）。
+
 ## 症状
 
 - `show interfaces counters errors` で `RX_ERR` / `SYMBOL_ERR` が継続的に増加

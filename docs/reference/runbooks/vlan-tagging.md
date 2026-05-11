@@ -18,6 +18,9 @@ related:
 
 # Runbook: VLAN メンバーを追加してもタグが付かない
 
+!!! danger "実行前提"
+    `systemctl restart swss` は L2 全 forwarding を 5～30 秒中断する（FDB / port / vlan / lag テーブルが orchagent 再生成される間）。実行前に `sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)` で backup、可能なら redundant ToR 側に traffic を寄せてから実施する。誤設定が原因の場合は backup を戻して `config reload -y` でロールバック。
+
 ## 症状
 
 - `config vlan member add` 実行後、通信は流れるがフレームのタグが期待と異なる

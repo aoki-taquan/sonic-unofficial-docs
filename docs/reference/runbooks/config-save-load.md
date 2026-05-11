@@ -18,6 +18,9 @@ related:
 
 # Runbook: CONFIG_DB save / load が反映されない
 
+!!! danger "実行前提"
+    `config reload -y` / `config load_minigraph -y` は **全 swss / syncd / bgp を再起動** し、data plane が 30 秒～数分中断する（cold restart 相当）。実行前に必ず多段 backup を取る: (1) `sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)`、(2) `redis-cli -n 4 --rdb /tmp/cfgdb.rdb.bak.$(date +%s)`、(3) multi-asic は各 namespace 分も同様に。`db_migrator.py` は schema version を変更するため、失敗時は backup から `cp` で戻して `systemctl restart database` 後 `config reload -y` で復旧。Minigraph 投入時は `/etc/sonic/minigraph.xml` も同様に backup。
+
 ## 症状
 
 - `config save -y` 後の再起動で設定が古いまま戻る

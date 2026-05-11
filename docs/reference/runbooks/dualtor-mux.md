@@ -18,6 +18,9 @@ related:
 
 # Runbook: Dual-ToR mux が切り替わらない
 
+!!! danger "実行前提"
+    `docker restart mux` / `config reload -y` は **対向 ToR の状態確認なしに mux state を再評価する** ため、両 ToR で同時実施すると両側 standby となり server 通信が完全断する。必ず片側 ToR の linkmgrd / mux state が `active` 確定後にもう一方を操作すること。実行前に `show muxcable status -j > /tmp/mux.bak.$(date +%s).json` で現状 dump、`sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)`。誤って両側 standby になった場合は `config muxcable mode active <port>` でいずれかを強制 active に。
+
 ## 症状
 
 - `config muxcable mode active <port>` 実行後に `show muxcable status` の state が `unknown` / `standby` のまま

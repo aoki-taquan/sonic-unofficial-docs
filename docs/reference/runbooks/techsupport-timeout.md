@@ -18,6 +18,9 @@ related:
 
 # Runbook: show techsupport が timeout する
 
+!!! danger "実行前提"
+    `show techsupport` は CPU と I/O を大量消費し、コアな control plane プロセス（orchagent / bgpd / syncd）を一時的に block する可能性がある。実行前に `df -h /var/dump` で空き容量を確認（最低 2 GB 推奨）、`/var/core` の旧 core file は別途退避。`AUTO_TECHSUPPORT` の `rate_limit_interval` を一時的に伸ばす場合は元値を `redis-cli -n 4 HGETALL "AUTO_TECHSUPPORT|GLOBAL" > /tmp/at.bak` で保存し、終了後に戻す。途中中断したい場合は `Ctrl+C` ではなく別 session から `sudo pkill -f generate_dump` で停止（partial dump は `/var/dump/` に残る）。
+
 ## 症状
 
 - `show techsupport` 実行が長時間（> 30 分）終わらない

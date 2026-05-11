@@ -18,6 +18,9 @@ related:
 
 # Runbook: DHCP Relay で IP が払い出されない
 
+!!! danger "実行前提"
+    `systemctl restart dhcp_relay` / `docker restart dhcp_relay` は当該 VLAN の新規 DHCP 取得を 5～15 秒中断する（既存リースには影響しないが、リース更新タイミングのクライアントは再 DISCOVER に落ちる）。helper 変更時は `sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)` で backup、誤設定時は backup を戻して `config reload -y` でロールバック。`sonic-clear dhcp_relay ipv4 counters` は統計のみで通信に影響しない。
+
 ## 症状
 
 - VLAN 配下のクライアントが DHCP DISCOVER を出すが OFFER を受け取れない

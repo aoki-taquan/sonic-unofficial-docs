@@ -21,6 +21,9 @@ related:
 
 # Runbook: RIF / ACL counter が 0 のまま
 
+!!! danger "実行前提"
+    `aclshow -c` (clear) や `counterpoll acl disable && counterpoll acl enable` は統計のみで forwarding には影響しない。一方 `config load <file>` / `acl-loader update full` で ACL rule を再投入すると、**rule 入れ替え瞬間に該当 ACL table が一時的に空** になり、deny rule が消える時間窓が発生する。実行前に `aclshow -a > /tmp/aclshow.bak.$(date +%s)` と該当 ACL rule の JSON を `sonic-cfggen -d --var-json "ACL_RULE" > /tmp/acl_rule.bak.json` で退避。誤った rule 投入時は `acl-loader update full` で退避 JSON を戻して即時復旧。
+
 ## 症状
 
 - トラフィックは流れているのに `aclshow -a` が全 rule 0 のまま

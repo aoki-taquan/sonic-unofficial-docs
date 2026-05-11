@@ -18,6 +18,9 @@ related:
 
 # Runbook: Multi-ASIC で namespace 間通信できない
 
+!!! danger "実行前提"
+    `systemctl restart swss@N` は当該 ASIC namespace の forwarding を 10～30 秒中断する。`config reload -y -f` は **全 namespace を一度に再構成** するため chassis 全体が数分間 down する（cold reboot に近い）。実行前に各 namespace の `config_db.json` を `for ns in asic0 asic1 host; do sudo cp /etc/sonic/$ns/config_db.json /etc/sonic/$ns/config_db.json.bak.$(date +%s); done` で backup（host は `/etc/sonic/config_db.json`）。`config reload -y -f` は最後の手段とし、まずは個別 namespace `systemctl restart swss@<n>` から試す。
+
 ## 症状
 
 - VoQ Chassis / multi-ASIC platform で内部 fabric link は UP しているが iBGP が立たない
