@@ -1,8 +1,8 @@
 ---
 title: クリティカルリソースモニタリング (CRM) 要件
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/crm/CRM_requirements.md
@@ -139,3 +139,13 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/crm/CRM_requirements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+## 裏取りメモ（Verifier batch 29）
+
+CRM 要件 HLD の実装は `sonic-swss` の `orchagent` と `sonic-utilities` の `crm` CLI に取り込み済み。
+
+- CRM Orch 実装: `.cache/sonic-sources/sonic-swss/orchagent/crmorch.cpp` / `crmorch.h`（Route / Nexthop / Neighbor / NextHop Group / ACL Table / ACL Group / ACL Counter / FDB / IPMC / SNAT / DNAT 等の resource 使用量を SAI 経由でポーリングし、threshold 超過時 syslog WARNING を出す）
+- CRM CLI: `.cache/sonic-sources/sonic-utilities/crm/` ディレクトリ、テスト `sonic-utilities/tests/crm_test.py`
+- DASH 拡張: `sonic-swss/orchagent/p4orch/tests/fake_crmorch.cpp` および `sonic-utilities/tests/crm_dash_test.py` で DASH ACL 系 resource を CRM に追加
+
+HLD の主要要件（SAI 経由のポーリング・しきい値超過時の syslog 通知・CLI 表示）はすべて実装済み。`code-verified` に昇格。

@@ -1,8 +1,8 @@
 ---
 title: Console Switch（serial hub の reverse SSH 集約）
 area: management
-verification: hld-only
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/console/SONiC-Console-Switch-High-Level-Design.md
@@ -163,3 +163,13 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 - AAA / PAM 経路で console session が RADIUS / TACACS で認証されるかの実装確認
 - USB serial 挿抜時の TTY 番号安定化機構の現行実装確認
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:
+
+- `consutil` CLI: `.cache/sonic-sources/sonic-utilities/consutil/{__init__.py,lib.py,main.py}` に存在 → 取り込み済み
+- `sonic-console.yang` (CONSOLE_PORT / CONSOLE_SWITCH の YANG): `.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang` に存在（revision 2026-02-12 `escape_char` 追加 / 2022-08-22 First Revision）
+- `consoled` デーモン本体・`ser2net` 連携・reverse SSH の port/IP forwarding ロジック: `sonic-buildimage` / `sonic-host-services` のいずれにも検出できず
+
+HLD が想定する「serial hub 機能を備えた switch hub としての reverse SSH 集約」までは未統合のため、`discrepancy-found` を維持。

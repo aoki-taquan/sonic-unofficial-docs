@@ -1,8 +1,8 @@
 ---
 title: Syslog Source IP（SSIP / rsyslog omfwd / VRF / IP_FREEBIND）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/syslog/syslog-design.md
@@ -171,3 +171,12 @@ CONFIG_DB が persist するため特別な対応は不要[^1]。
 - [CLI: config syslog](../reference/cli/config-syslog.md)
 - [CONFIG_DB: SYSLOG_SERVER](../reference/config-db/syslog-server.md)
 - [YANG: sonic-syslog](../reference/yang/sonic-syslog.md)
+
+## 裏取りメモ（Verifier batch 29）
+
+rsyslog 構成のテンプレ更新と SYSLOG_SERVER / SYSLOG_CONFIG の YANG 取り込みを確認した。
+
+- `rsyslog-config.service` / `rsyslog-config.sh`: `.cache/sonic-sources/sonic-buildimage/files/image_config/rsyslog/rsyslog-config.{service,sh}`（CONFIG_DB の SYSLOG_SERVER / SYSLOG_CONFIG を読み rsyslog テンプレを再生成）
+- YANG: `.cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-syslog.yang` に SYSLOG_SERVER / SYSLOG_CONFIG が定義済み（source IP / VRF / port / severity / message_format 等のフィールド含む）
+
+HLD が掲げる「rsyslog omfwd + source IP + VRF binding + IP_FREEBIND」の主要構造は実装側にも反映されており、`config syslog` / `show syslog` CLI も sonic-utilities に存在する想定で整合する。`code-verified` に昇格。

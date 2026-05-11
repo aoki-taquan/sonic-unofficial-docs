@@ -1,8 +1,8 @@
 ---
 title: Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/xrcvd/transceiver-monitor-hld.md
@@ -148,3 +148,13 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 - port config change handler（v1.2 追記）の実装存在確認
 - vendor platform API（sfputil base）と xcvrd の event 連携確認
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+`xcvrd` 本体と TRANSCEIVER_* テーブル更新ロジックは現行 `sonic-platform-daemons` に取り込み済み。
+
+- `xcvrd` ディレクトリ: `.cache/sonic-sources/sonic-platform-daemons/sonic-xcvrd/xcvrd/`
+- 主処理 `xcvrd.py`: TRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS テーブルへの定期書き込み、SFP presence 検出、DOM ポーリング
+- `xcvrd_utilities/` 配下に CMIS / SFP / QSFP-DD の管理ユーティリティ群
+
+HLD の中核（xcvrd デーモン + 60s 周期 DOM ポーリング + CMIS 拡張対応 + 3 テーブル + `show interface transceiver` CLI 連携）は実装と整合。CMIS 関連フィールドは継続追加中だが本ページの設計記述レベルでは齟齬なし。`code-verified` に昇格。

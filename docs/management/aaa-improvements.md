@@ -1,8 +1,8 @@
 ---
 title: AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
 area: management
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/aaa/AAA Improvements/AAA Improvements.md
@@ -121,3 +121,14 @@ HLD は提案中心のため、CONFIG_DB / CLI の最終形は具体化されて
 - Aruba ClearPass などの実 RADIUS server との互換性検証状況
 - container 内認証の現行解決策確認
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+実コードを照合し、HLD が提起する多重 role / PAM / NSS / nss-mapper 構成のうち、現行 master の `hostcfgd` 内 `AaaCfg` クラスで以下の要素が実装されていることを確認した。
+
+- `class AaaCfg` 本体: `.cache/sonic-sources/sonic-host-services/scripts/hostcfgd` L354 以降
+- PAM テンプレート / NSS 切替: 同ファイル L28-L51 で `PAM_AUTH_CONF=/etc/pam.d/common-auth-sonic`、`PAM_AUTH_CONF_TEMPLATE=/usr/share/sonic/templates/common-auth-sonic.j2`、`NSS_TACPLUS_CONF=/etc/tacplus_nss.conf`、`NSS_RADIUS_CONF=/etc/radius_nss.conf`、`NSS_CONF=/etc/nsswitch.conf` が定義され、TACACS+/RADIUS 有効化時に nsswitch.conf を書き換える (L754 付近) 処理が存在
+- `/etc/pam.d/sshd` / `/etc/pam.d/login` への `@include common-auth-sonic` 切替: L748-L752 で `sed` 相当の置換を実装
+- 認証順序（PAM auth stack）と NSS 並べ替えは `failthrough` / `login` / `auth_type` 設定により AaaCfg が動的生成
+
+ただし HLD が掲げる「nss-mapper による remote_user 共有 / D-Bus 経由の RBAC 多重ロール」の発展拡張は、現行 master の `hostcfgd` 単体実装ではまだ統合されていない（`nss-mapper` という独立コンポーネントは検出できず、`remote_user` 共有は `tacplus_nss.conf` / `radius_nss.conf` 経由の素朴な実装）。本ページの主たる主張（PAM + NSS による AAA 統合の現状）は実コードと一致するため `code-verified` に昇格。
