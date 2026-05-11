@@ -32,6 +32,14 @@ TOPICS_DIR = DOCS / "topics"
 OPEN_MARKER = "<!-- topics-back-ref -->"
 CLOSE_MARKER = "<!-- /topics-back-ref -->"
 
+# Auto-generated pages must NOT receive a back-ref block (their generator
+# scripts would overwrite or mark them dirty in CI).
+EXCLUDED_TARGETS = {
+    "reference/verification/discrepancy-index.md",
+    "_meta/coverage.md",
+    "index.md",
+}
+
 LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
 
@@ -134,7 +142,7 @@ def _is_area_page(p: Path) -> bool:
     if not p.exists():
         return False
     try:
-        p.relative_to(DOCS)
+        rel = p.relative_to(DOCS)
     except ValueError:
         return False
     try:
@@ -142,6 +150,8 @@ def _is_area_page(p: Path) -> bool:
         return False  # inside topics/ — not an area page
     except ValueError:
         pass
+    if rel.as_posix() in EXCLUDED_TARGETS:
+        return False
     return p.suffix == ".md"
 
 
