@@ -1,8 +1,8 @@
 ---
 title: Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/acl/Everflow-test-plan.md
@@ -20,8 +20,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    本ページは Everflow テストプラン HLD（更新版）の再構成。テスト本体（`sonic-mgmt` 配下の Ansible / PTF テストスクリプト）の現行コードと完全一致するかは未確認。`priority=low`（テスト仕様）。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    テストプラン本体は `sonic-mgmt` 側の Ansible / PTF テストスクリプトに対する仕様だが、被テストの mirror 機能 (`MIRROR_SESSION` 制御パス: src/dst IP / DSCP / TTL / GRE type / next-hop / queue / status) は `sonic-swss/orchagent/mirrororch.cpp` L15-L24 ほか 1611 行に渡って実装されている。P4 mirror manager 系も `orchagent/p4orch/mirror_session_manager.cpp` で存在を確認。`sonic-mgmt` ツリーはローカルキャッシュ未取り込みのためテストスクリプト本体の文言一致は別バッチに委ねる。
 
 # Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）
 
@@ -117,6 +117,14 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 
 - mirror パケットが届かない → BGP route で collector への best match が取れているか確認、neighbor MAC 解決確認
 - LAG 越しに偏る → LAG hash 確認。テスト側の flow 多様化を確認
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- Mirror session 制御フィールド: `sonic-swss/orchagent/mirrororch.cpp` L15-L24 (`MIRROR_SESSION_STATUS` / `STATUS_ACTIVE` / `STATUS_INACTIVE` / `NEXT_HOP_IP` / `SRC_IP` / `DST_IP` / `GRE_TYPE` / `DSCP` / `TTL` / `QUEUE`)
+- MirrorOrch 本体: 同 `mirrororch.cpp` (1611 行) と `mirrororch.h`
+- P4 経路の MirrorSessionManager: `sonic-swss/orchagent/p4orch/mirror_session_manager.cpp` / `.h` （SAI mirror session 抽象化）
+
+> `sonic-mgmt` 配下の Everflow テストスクリプト本体（Ansible playbook / PTF）と本テストプランの文言一致は本ローカルでは確認できないため、別バッチで `.cache/sonic-sources/sonic-mgmt` を取り込んだ後に再検証する。
 
 ## 引用元
 

@@ -1,8 +1,8 @@
 ---
 title: Warmboot Manager（shutdown orchestration / reconciliation 統一）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/warm-reboot/Warmboot_Manager_HLD.md
@@ -111,3 +111,12 @@ HLD で具体の CLI / CONFIG_DB は提示されていない。実装時に専�
 - 各 critical container（orchagent / syncd / teamd / xcvrd）への freeze プロトコル取り込み確認
 - 採否不明な提案 HLD のため master 取り込み有無の最終確認（priority=high）
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+per-page queue で既出の通り提案 HLD は未採用。再走査でも:
+
+- `warmboot-manager` / `warmbootmgr` / `warmbootmgrd` を名乗る daemon は `sonic-buildimage` / `sonic-swss` のどこにも検出できず
+- 既存の warm shutdown orchestration は `warmboot-finalizer.service` + `finalize-warmboot.sh` (`.cache/sonic-sources/sonic-buildimage/files/image_config/warmboot-finalizer/`) のシェルベースのまま
+
+HLD は Google による 2023-09 Rev 0.1 提案で「co-exist」を明記しており、現行 master の方向性としては既存 orchestration 維持。`discrepancy-found` を維持。

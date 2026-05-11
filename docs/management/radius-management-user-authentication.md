@@ -1,8 +1,8 @@
 ---
 title: RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）
 area: management
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/aaa/radius_authentication.md
@@ -176,3 +176,13 @@ reasoning: 多サーバ priority + 8 上限 + passphrase 不一致を unreachabl
 - DNS name サーバ指定 (v0.9 WIP) の現行 master 取り込み確認
 - 古い HLD（2019-2020）のため AAA Improvements との関係確認（priority=high）
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+RADIUS authentication の PAM/NSS 実装の現行 master 取り込みを `hostcfgd` で確認した。
+
+- `PAM_RADIUS_AUTH_CONF_TEMPLATE = "/usr/share/sonic/templates/pam_radius_auth.conf.j2"`、`RADIUS_PAM_AUTH_CONF_DIR = "/etc/pam_radius_auth.d/"`、`NSS_RADIUS_CONF = "/etc/radius_nss.conf"`: `.cache/sonic-sources/sonic-host-services/scripts/hostcfgd` L38-L97
+- `AaaCfg.pick_src_intf_ipaddrs()` で `src_intf` 指定時の RADIUS server bind 元 IP を解決 (L444 以降)、`src_intf` を RADIUS グローバル / per-server から拾う処理 (L497-L501)
+- multi server priority / passkey / auth_type / timeout は AaaCfg の RADIUS 部に存在
+
+HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh login → PAM → RADIUS、user lookup → NSS → radius_nss）は実装と一致。後発 AAA Improvements HLD で指摘された多重 role 共有問題は別途残課題で、本ページ自体の主張は実装に追随しているため `code-verified` に昇格。

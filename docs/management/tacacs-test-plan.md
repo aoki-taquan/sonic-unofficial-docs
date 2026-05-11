@@ -1,8 +1,8 @@
 ---
 title: TACACS+ 認証テストプラン（pam_tacplus + ssh login）
 area: management
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/aaa/TACACS+ Test Plan.md
@@ -139,3 +139,15 @@ flowchart LR
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/aaa/TACACS+ Test Plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/aaa/TACACS%2B%20Test%20Plan.md)
+
+## 裏取りメモ（Verifier batch 29）
+
+テストプランが前提とする TACACS+ 認証経路の各実装を `hostcfgd` で確認した。
+
+- TACACS+ 既定値: `.cache/sonic-sources/sonic-host-services/scripts/hostcfgd` L87-L89 (`TACPLUS_SERVER_PASSKEY_DEFAULT=""`, `TACPLUS_SERVER_TIMEOUT_DEFAULT="5"`, `TACPLUS_SERVER_AUTH_TYPE_DEFAULT="pap"`)
+- AaaCfg の TACPLUS server 反映: L367-L369 で `auth_type` / `timeout` / `passkey` のデフォルト適用
+- `failthrough` オプション: L422-L423 で `if 'failthrough' in data: self.authentication['failthrough'] = is_true(data['failthrough'])`
+- NSS TACACS+ 設定: L34-L35 (`NSS_TACPLUS_CONF=/etc/tacplus_nss.conf`, `NSS_TACPLUS_CONF_TEMPLATE=...j2`)、L801-L813 で `tacplus_nss.conf` をテンプレ生成
+- `/etc/pam.d/common-auth-sonic` 経由の include 切替: L748-L752
+
+テストプランの主要観点（PAM 経由 ssh login、failthrough、passkey、server priority、NSS 共有）はすべて hostcfgd で実装済み。`code-verified` に昇格。

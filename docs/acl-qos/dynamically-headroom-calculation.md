@@ -1,8 +1,8 @@
 ---
 title: Dynamic Headroom Calculation（buffer_model = dynamic）
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/qos/dynamically-headroom-calculation.md
@@ -23,11 +23,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `buffermgrd` の dynamic クラス、Lua plugin（vendor 提供）、`buffer_model` フィールド、`asic_table.json` / `peripheral_table.json` 経由の STATE_DB 公開、`SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE` の community SAI 取り込みは未確認。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `buffermgrd` の dynamic クラスの主要パスを `sonic-swss/cfgmgr/buffermgrdyn.cpp` で確認した。`default_dynamic_th` の `LOSSLESS_TRAFFIC_PATTERN` 読み込み (L148-L153)、`dynamic_size` プールの size 計算ループ (L676-L782)、`dynamic_calculated` プロファイル管理 (L1297, L1429-L1483)、shared headroom pool による dynamic profile 更新 (L1609-L1681)、PG 適用時の dynamic 計算チェック (L1737-L1757) が現行 master に取り込まれていることを確認。Lua plugin / vendor 提供 asic_table.json 自体は vendor binary 配布相当のため非確認。
 
 # Dynamic Headroom Calculation（buffer_model = dynamic）
 
@@ -178,6 +175,14 @@ LOSSLESS_BUFFER_PARAM:
 
 - speed 変更後 headroom が更新されない → `buffermgrd` ログで Lua plugin invoke を確認、`BUFFER_MAX_PARAM` legality check で reject されていないか確認
 - shared pool の sum が合わない → `xoff` の有無、independent vs shared headroom モデルを確認
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- `default_dynamic_th` 読み込み: `sonic-swss/cfgmgr/buffermgrdyn.cpp` L148-L153 (`LOSSLESS_TRAFFIC_PATTERN` から `default_dynamic_th` を hget)
+- dynamic pool size 計算ループ: 同 L676-L782 (`poolRef.second.dynamic_size` を条件に size 再計算 → APPL_DB push)
+- dynamic_calculated profile 管理: 同 L1027-L1028, L1297, L1429-L1515 (alpha 付き静的閾値プロファイルを保持しつつ自動生成プロファイルを掃除)
+- shared headroom pool 更新時の profile 再計算: 同 L1609-L1681 (`Updating dynamic buffer profiles due to shared headroom pool state updated`)
+- PG への適用ガード: 同 L1737-L1757 (`dynamic_calculated` PG に port 情報が揃わない間は適用スキップ)
 
 ## 引用元
 

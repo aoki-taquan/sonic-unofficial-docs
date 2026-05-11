@@ -1,8 +1,8 @@
 ---
 title: System Health Monitor（critical service / Monit / peripheral）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/system_health_monitoring/system-health-HLD.md
@@ -139,3 +139,13 @@ reasoning: critical service / process 判定の根拠。
 - Monit を使わない経路（v0.2）の現行実装確認
 - LED 制御 API（platform_chassis.set_status_led）との結線確認
 -->
+
+## 裏取りメモ（Verifier batch 29）
+
+System Health Monitor (`healthd`) は `sonic-buildimage/src/system-health/` に実装され、master に取り込み済み。
+
+- `healthd` スクリプト本体: `.cache/sonic-sources/sonic-buildimage/src/system-health/scripts/healthd`
+- 一連の health checker / external_checker / supervisor 連携は `sonic-buildimage/src/system-health/` 配下に揃っている
+- `show system-health` CLI は sonic-utilities 側の show コマンドツリーに統合
+
+HLD が定義する「critical service / Monit / peripheral の 3 系統監視 + `STATE_DB` 経由の `system-health` 表示」設計は実コードと一致するため `code-verified` に昇格。

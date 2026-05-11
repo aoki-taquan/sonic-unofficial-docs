@@ -1,8 +1,8 @@
 ---
 title: Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/barefoot_dtel/Dtel-test-plan.md
@@ -119,3 +119,13 @@ queue depth/latency 閾値超過時に report:
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/barefoot_dtel/Dtel-test-plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/barefoot_dtel/Dtel-test-plan.md)
+
+## 裏取りメモ（Verifier batch 29）
+
+DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
+
+- DTel Orch: `.cache/sonic-sources/sonic-swss/orchagent/dtelorch.cpp` / `dtelorch.h`（INT source/sink/transit、Postcard、Drop / Queue Report の SAI_DTEL_* 属性ハンドリング）
+- swss-level テスト: `.cache/sonic-sources/sonic-swss/tests/test_dtel.py`
+- SAI side: Barefoot 由来の `SAI_OBJECT_TYPE_DTEL_*` は community SAI ヘッダに取り込み済み（dtelorch.cpp の include 依存）
+
+テストプランが対象とする CONFIG_DB スキーマ (`DTEL_*`) と orch 動作は現行 master でカバーされており、Barefoot 系 ASIC 向けの DTel feature として実装が継続している。本ページの主張は実装と整合するため `code-verified` に昇格。

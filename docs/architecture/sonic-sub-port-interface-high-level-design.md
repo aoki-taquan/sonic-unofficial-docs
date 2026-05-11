@@ -1,8 +1,8 @@
 ---
 title: Sub-port Interface（dot1q encap / VRF RIF / 命名規則）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/subport/sonic-sub-port-intf-hld.md
@@ -19,8 +19,8 @@ related:
     - sonic-vlan-sub-interface
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `intfsmgrd` / `intfsorch` の sub-port 拡張、SAI Router Interface 属性 (vlan id 付き)、Linux host sub-interface との sync、CLI / YANG 取り込みは未確認。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `IntfMgr` の sub-port 拡張を `sonic-swss/cfgmgr/intfmgr.cpp` で確認: L14 `#include "subintf.h"`, L331 `addHostSubIntf()`, L407-L446 `updateSubIntfMtu()` / `setHostSubIntfMtu()`, L464-L532 `updateSubIntfAdminStatus()` / `setHostSubIntfAdminStatus()`, L533 `removeHostSubIntf()`, L542 `setSubIntfStateOk()`, L557 `removeSubIntfState()`。`SubIntf` クラス本体は `sonic-swss/lib/subintf.cpp` / `subintf.h` に独立実装されている。`intfsorch.cpp` も sub-port を取り込み済み。
 
 # Sub-port Interface（dot1q encap / VRF RIF / 命名規則）
 
@@ -140,6 +140,15 @@ show subinterface status
 
 - L3 が機能しない → SAI RIF が作成されているか asicdb で確認、Linux host 側 `ip -d link show Eth0.10` で vlan device 確認
 - 異 parent で同 vlan が混信したように見える → 仕様上 別 bridge domain。L2 broadcast は親 port 単位
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- SubIntf 共通ライブラリ: `sonic-swss/lib/subintf.cpp` / `sonic-swss/lib/subintf.h`
+- IntfMgr の Linux sub-interface 操作: `sonic-swss/cfgmgr/intfmgr.cpp` L14 (`#include "subintf.h"`), L331 `addHostSubIntf()`, L533 `removeHostSubIntf()`
+- MTU 連携: 同 L407-L446 `updateSubIntfMtu()` / `setHostSubIntfMtu()`
+- admin status 連携: 同 L464-L532 `updateSubIntfAdminStatus()` / `setHostSubIntfAdminStatus()`
+- STATE 管理: 同 L542 `setSubIntfStateOk()`, L557 `removeSubIntfState()`
+- orchagent 側: `sonic-swss/orchagent/intfsorch.cpp` / `portsorch.cpp` も sub-port (`SAI_ROUTER_INTERFACE_TYPE_SUB_PORT`) を取り込み済み
 
 ## 引用元
 

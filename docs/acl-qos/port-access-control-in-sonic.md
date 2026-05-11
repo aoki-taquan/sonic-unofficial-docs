@@ -1,8 +1,8 @@
 ---
 title: Port Access Control（PAC: 802.1x / MAB / RADIUS）
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/pac/Port Access Control.md
@@ -21,11 +21,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `Authentication Manager` / `mabd` / `hostapdmgrd` の現行 master 取り込み、SAI Bridge port learning モード変更、PAC 用 host interface trap、各 CONFIG_DB スキーマ・CLI の sonic-utilities 取り込みは未確認。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `sonic-buildimage/src/sonic-pac/` 配下に PAC のコンポーネント (`authmgr`, `mab`, `mabmgr`, `hostapdmgr`, `pacmgr`, `paccfg`, `pacoper`, `fpinfra`, `json_lib`) が取り込み済みであることを確認。`hostapdmgr.cpp` L43-L46 で `CFG_PAC_PORT_CONFIG_TABLE` / `CFG_PAC_HOSTAPD_GLOBAL_CONFIG_TABLE` / `RADIUS_SERVER` / `RADIUS` 4 テーブルを subscribe する経路を確認。SAI Bridge port learning モード変更詳細・host interface trap の詳細は sai_redis / vendor SAI スコープのため別途。
 
 # Port Access Control（PAC: 802.1x / MAB / RADIUS）
 
@@ -163,6 +160,17 @@ CLI 文法は HLD ベース。実装は v0.2 / v0.3 で見直されているた�
 - 認証が通らない → `show authentication interface` でセッション状態確認、RADIUS server reachable 確認
 - VLAN が変わらない → RADIUS Accept に VLAN attribute（Tunnel-Type / Tunnel-Medium-Type / Tunnel-Private-Group-ID）が来ているか抽出ログ確認
 - MAB が誤判定 → `mabd` ログで MAC 学習契機と RADIUS リクエスト送出を確認
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- PAC コンポーネントツリー: `sonic-buildimage/src/sonic-pac/` 配下の `authmgr/`, `mab/`, `mabmgr/`, `hostapdmgr/`, `pacmgr/`, `paccfg/`, `pacoper/`, `fpinfra/`, `json_lib/` を確認
+- hostapdmgr のテーブル subscribe: `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.cpp` L43-L46（`CFG_PAC_PORT_CONFIG_TABLE`, `CFG_PAC_HOSTAPD_GLOBAL_CONFIG_TABLE`, `RADIUS_SERVER`, `RADIUS`）
+- PAC_PORT_CONFIG_TABLE イベント処理: 同 L107, L231（`Received an table config event on PAC_PORT_CONFIG_TABLE table` ログ + DEL 操作の warn）
+- HOSTAPD_GLOBAL_CONFIG_TABLE イベント処理: 同 L242, L342
+- RADIUS / RADIUS_SERVER イベント処理: 同 L502-L623（DEL warn, hostapd への RADIUS 設定再計算）
+- pacmgr daemon entry: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr_main.cpp` / `pacmgr.cpp`
+
+> SAI bridge port learning モード制御や host-bound EAPoL trap の vendor SAI 取り込み度合いは別バッチで sairedis / sai-headers 側を裏取りする。
 
 ## 引用元
 

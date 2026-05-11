@@ -1,8 +1,8 @@
 ---
 title: ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
 area: system
-verification: hld-only
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/password-reset/SONiC_local_users_password_reset_hld.md
@@ -116,3 +116,13 @@ enabled
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/password-reset/SONiC_local_users_password_reset_hld.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/password-reset/SONiC_local_users_password_reset_hld.md)
+
+## 裏取りメモ（Verifier batch 29）
+
+per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
+
+- `reset-local-users-passwords.service` / `LOCAL_USERS_PASSWORDS_RESET` テーブル / `config local-users-passwords-reset` CLI / `sonic-local-users-passwords-reset.yang` / `ENABLE_LOCAL_USERS_PASSWORDS_RESET` ビルドフラグ: いずれも検出できず
+- `sonic-platform-common` 配下に `LocalUsersConfigurationResetBase` 抽象クラスなし
+- 一方、reset-factory script (`sonic-buildimage/files/image_config/reset-factory/reset-factory`) は **`/etc/sonic/default_users.json` 経由でローカルユーザのパスワードを既定値に戻す** 処理を実装しており（L14, L88-L104）、`build_debian.sh` L579 で `default_users.json` を j2 テンプレから生成している
+
+つまり「default_users.json で復元」という基礎部品は採用されたが、HLD が要求する **long reset button トリガ + 専用 systemd service + plat 抽象 + 設定 YANG** の枠組みは取り込まれていない。`discrepancy-found` を維持。

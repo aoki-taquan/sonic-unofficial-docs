@@ -1,8 +1,8 @@
 ---
 title: VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）
 area: platform
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/decap/subnet_decap_HLD.md
@@ -133,3 +133,14 @@ Dst IP         Src IP         Tunnel Name    Decap Term Type
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/decap/subnet_decap_HLD.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/decap/subnet_decap_HLD.md)
+
+## 裏取りメモ (batch 30, 2026-05-11)
+
+`sonic-swss/orchagent/tunneldecaporch.cpp` を確認:
+
+- `CFG_SUBNET_DECAP_TABLE_NAME` を SubscriberStateTable として登録するロジックが `tunneldecaporch.cpp:39, 48, 69` に存在。
+- `TUNNEL_TERM_TYPE_MP2MP` の文字列マッピングと SAI 対応が `tunneldecaporch.cpp:345, 446, 451, 461, 474, 504, 934, 936, 948, 965, 1546` に実装され、`MP2MP` term の SAI 設定 (`SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP`) や src/dst IP mask の制御も含まれる。
+- `is_subnet_decap_term` フラグで「subnet decap tunnel に紐づく term は MP2MP のみ許容」のバリデーション (line 446-453) が入っており、HLD の「`IPINIP_SUBNET` / `IPINIP_V6_SUBNET` 自動生成は MP2MP 形式」と整合。
+- `sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2` / `swssconfig.sh` と `sonic-config-engine/tests/sample_output/py3/ipinip_subnet_decap_enable.json` に subnet decap 用の自動生成テンプレート / サンプルが存在し、warm-reboot 対応の swssconfig 経路も裏取り。
+
+HLD と実装は一致。`SUBNET_DECAP` table、`MP2MP` term、自動生成された `IPINIP_SUBNET` / `IPINIP_V6_SUBNET` tunnel いずれも master に取り込み済み。

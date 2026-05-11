@@ -1,0 +1,59 @@
+name: フィードバック（誤情報報告・改善要望）
+description: 読者からのフィードバック。ドキュメント本文の誤り・分かりにくさ・改善要望など
+title: "[feedback] <内容を一言で>"
+labels:
+  - type/feedback
+body:
+  - type: markdown
+    attributes:
+      value: |
+        本ドキュメントは AI が再構成して書いている非公式資料です。誤情報・記述漏れ・改善要望はぜひお寄せください。
+
+        - 雑談・質問は [Discussions](https://github.com/aoki-taquan/sonic-unofficial-docs/discussions) を推奨します。
+        - フィードバックの処理方針は [`meta/feedback.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/feedback.md) を参照。
+  - type: dropdown
+    id: kind
+    attributes:
+      label: フィードバック種別
+      options:
+        - 誤情報の報告（実装と異なる記述）
+        - 記述漏れ・追加要望（このトピックも書いてほしい）
+        - 分かりにくさの指摘・改善要望
+        - リンク切れ・ビルド不具合
+        - その他
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: 対象ページ
+      description: 該当ページの URL もしくは docs/ からの相対パス
+      placeholder: docs/routing/bgp-unnumbered.md もしくは https://...
+    validations:
+      required: false
+  - type: textarea
+    id: detail
+    attributes:
+      label: 内容
+      description: |
+        誤情報の場合は「どこが」「実際はどうか」を可能な範囲で具体的に。
+        参照可能な一次情報（SONiC リポの該当パス・PR 番号・issue 番号など）があれば添えてください。
+      placeholder: |
+        - 該当箇所: 「○○は△△で動作する」
+        - 実際の挙動 / 根拠: sonic-net/sonic-buildimage の ... を見ると ...
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 修正案・追加要望（任意）
+      description: 「こう直してほしい」「このトピックを書いてほしい」などあれば
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 確認事項
+      options:
+        - label: 既存の Issue / Discussion に同等の報告がないことを軽く確認した
+          required: false
+        - label: 本ドキュメントが非公式であることを理解している
+          required: true

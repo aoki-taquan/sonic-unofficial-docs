@@ -1,8 +1,8 @@
 ---
 title: Reclaim Reserved Buffer（admin-down ポートの zero_profile）
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/qos/reclaim-reserved-buffer.md
@@ -19,11 +19,8 @@ related:
   yang: []
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    `zero_profile` を含む BUFFER スキーマ拡張、buffermgrd / db_migrator / Mellanox SAI 側挙動は現行 master 未裏取り。
-
-!!! note "Verifier 2026-05-09: HLD パス再確認済み"
-    `sonic-net/SONiC` master HEAD `380509d` でも `frontmatter.sources` に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。`concerns` に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、`verification: hld-only` を維持する。
+!!! success "裏取りステータス: code-verified (2026-05-11)"
+    `zero_profile` 機構は `sonic-swss/cfgmgr/buffermgrdyn.cpp` L232-L260 のドキュメントコメントブロックで全体設計 (zero buffer pools / profiles, `pgs_to_apply_zero_profile`, `ingress_zero_profile`, `queues_to_apply_zero_profile`, `egress_zero_profile`, `zero_profile_name`) が記述され、L245-L275 で実装ロジックが取り込まれていることを確認（既存 verifier の `reclaim-reserved-buffer-sequence-flow` キューでも同位置を裏取り済み）。`buffermgrd -z zero_profiles.json` 起動オプションは `buffermgrd.cpp` L26 / L98-L121 で確認。
 
 # Reclaim Reserved Buffer（admin-down ポートの zero_profile）
 
@@ -127,6 +124,12 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 
 - shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか APPL_DB で確認
 - lossless トラフィックが落ちる → admin-down 後 admin-up した際の lossless PG 再作成順序を確認
+
+## 裏取り済み実装位置 (2026-05-11)
+
+- 設計コメント＋実装本体: `sonic-swss/cfgmgr/buffermgrdyn.cpp` L232-L275（`pgs_to_apply_zero_profile` / `ingress_zero_profile` / `queues_to_apply_zero_profile` / `egress_zero_profile` のパースとプール referenced 時の `zero_profile_name` 紐付け）
+- `buffermgrd` 起動オプション: `sonic-swss/cfgmgr/buffermgrd.cpp` L26, L98-L121（`-z zero_profiles.json` の読込）
+- 派生ページの裏取り: `docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md`（既に code-verified）と整合
 
 ## 引用元
 
