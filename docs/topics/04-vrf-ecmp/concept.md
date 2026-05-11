@@ -132,3 +132,12 @@ VRF 付き static route では key が `STATIC_ROUTE|<vrf>|<prefix>` になり�
 - [Static IP Route 設定](../../routing/static-ip-route-configuration.md)
 - [IPv6 Link-Local アドレス管理](../../routing/ipv6-link-local-enhancements.md)
 - [Management VRF 設計](../../routing/sonic-management-vrf-design-document-201911-release.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

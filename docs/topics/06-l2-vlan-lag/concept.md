@@ -133,3 +133,12 @@ STP / MSTP は L2 ループを避ける制御面です。Storm control はルー
 - [Basic L2 モードテストプラン](../../switching/sonic-basic-l2-mode-test-plan.md)
 - [Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
 - [Sub-port Interface HLD](../../architecture/sonic-sub-port-interface-high-level-design.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
+

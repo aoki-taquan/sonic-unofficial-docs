@@ -46,3 +46,22 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 - [SRv6 HLD](../../routing/segment-routing-over-ipv6-srv6-hld.md)
 - [SONiC の MPLS 基盤](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [BGP と FRR 制御プレーン](../02-bgp/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+
+**派生で読むべき章**
+
+- [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
+
+**補完的に読む章**
+
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
+

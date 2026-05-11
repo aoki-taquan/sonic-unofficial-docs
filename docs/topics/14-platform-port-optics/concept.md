@@ -170,3 +170,11 @@ sequenceDiagram
 - [port configuration refactor design](../../architecture/sonic-port-configuration-refactor-design.md)
 - [PORT テーブル](../../reference/config-db/port.md)
 - [sonic-port YANG](../../reference/yang/sonic-port.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+

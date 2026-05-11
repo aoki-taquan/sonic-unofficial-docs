@@ -51,3 +51,23 @@ DASH 系と SmartSwitch 系の既存 HLD は、NPU 側 / DPU 側 / HA / 管理�
 - [SmartSwitch 関連](../../categories/smartswitch.md)
 - [SONiC-DASH アーキテクチャ概観](../../overlay/sonic-dash-hld.md)
 - [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+
+**派生で読むべき章**
+
+- [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
+
+**補完的に読む章**
+
+- [ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md)
+- [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
+- [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
+

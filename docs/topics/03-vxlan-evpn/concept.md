@@ -124,3 +124,13 @@ Subnet decap は overlay tenant を作る機能ではなく、VLAN subnet 宛の
 - [EVPN VXLAN](../../routing/evpn-vxlan-hld.md)
 - [NVGRE トンネル](../../overlay/nvgre-tunnel-in-sonic.md)
 - [VLAN Subnet Decap](../../platform/subnet-decapsulation-with-sonic.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [BGP と FRR 制御プレーン](../02-bgp/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+

@@ -29,3 +29,25 @@ sources: []
 ## 統合した既存ページ
 
 この章は internals / architecture / platform / system 配下の HLD 派生ページを横断する。スキーマや SAI 呼び出しの詳細は各サブページ末尾の「関連ページ」から、機能固有の話は当該機能章（[BGP](../02-bgp/index.md)、[L2 VLAN LAG](../06-l2-vlan-lag/index.md)、[ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) など）から参照する。
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+
+**派生で読むべき章**
+
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+- [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
+- [ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md)
+- [QoS / Buffer / PFC / Watermark](../08-qos-buffer/index.md)
+
+**補完的に読む章**
+
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
+- [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
+- [リファレンス横断索引](../22-reference-index/index.md)
+

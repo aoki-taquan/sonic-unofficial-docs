@@ -65,3 +65,23 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 - [ACL in SONiC](../../acl-qos/acl-in-sonic.md)
 - [ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
 - [SAI 拡張属性追加系](../../categories/sai-extensions.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+
+**派生で読むべき章**
+
+- [QoS / Buffer / PFC / Watermark](../08-qos-buffer/index.md)
+- [DASH と SmartSwitch](../13-dash-smartswitch/index.md)
+
+**補完的に読む章**
+
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
+- [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
+

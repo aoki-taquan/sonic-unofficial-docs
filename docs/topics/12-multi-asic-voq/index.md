@@ -54,3 +54,23 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 - [SONiC on Multi-ASIC Platforms](../../platform/1-sonic-on-multi-asic-platforms.md)
 - [VOQ SONiC](../../platform/voq-sonic.md)
 - [Multi-ASIC カテゴリ](../../categories/multi-asic.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+- [BGP と FRR 制御プレーン](../02-bgp/index.md)
+
+**派生で読むべき章**
+
+- [DASH と SmartSwitch](../13-dash-smartswitch/index.md)
+
+**補完的に読む章**
+
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+- [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
+- [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
+

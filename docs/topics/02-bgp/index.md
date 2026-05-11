@@ -29,3 +29,23 @@ sources: []
 ## 統合した既存ページ
 
 この章は routing の HLD 派生ページ 20 件と reference ページ 19 件を横断している。細部のスキーマ、CLI、実装裏取りは各サブページ末尾の「関連ページ」から参照する。
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+
+**派生で読むべき章**
+
+- [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
+- [SRv6 / MPLS / Path Tracing](../17-srv6-mpls/index.md)
+- [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
+
+**補完的に読む章**
+
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
+

@@ -81,3 +81,22 @@ sources:
 - [sonic-port YANG](../../reference/yang/sonic-port.md)
 - [show platform](../../reference/cli/show-platform.md)
 - [config interface](../../reference/cli/config-interface.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+
+**派生で読むべき章**
+
+- [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
+- [QoS / Buffer / PFC / Watermark](../08-qos-buffer/index.md)
+
+**補完的に読む章**
+
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+- [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

@@ -159,3 +159,9 @@ flowchart LR
 - [SONiC NOS の設定手段一覧](../../management/sonic-nos-configuration-methods.md)
 - [読み手別ガイド](../../guides/index.md)
 - [カテゴリ一覧](../../categories/index.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章は SONiC ドキュメント全体の入口に位置するため、特段の前提章はない。`docs/topics/index.md` の読み進め方マップを参照すること。
+

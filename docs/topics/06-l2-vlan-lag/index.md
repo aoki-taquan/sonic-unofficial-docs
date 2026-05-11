@@ -69,3 +69,23 @@ sources:
 - [MCLAG Enhancements](../../switching/mclag-enhancements.md)
 - [CONFIG_DB: VLAN](../../reference/config-db/vlan.md)
 - [CONFIG_DB: PORTCHANNEL](../../reference/config-db/portchannel.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
+
+**派生で読むべき章**
+
+- [Dual-ToR と Mux 制御](../05-dual-tor/index.md)
+- [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
+
+**補完的に読む章**
+
+- [ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md)
+- [QoS / Buffer / PFC / Watermark](../08-qos-buffer/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

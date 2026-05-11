@@ -135,3 +135,12 @@ SONiC の CLI は YANG モデルから自動生成される仕組みを持つ。
 - [gnmi-openconfig カテゴリ](../../categories/gnmi-openconfig.md)
 - [SONiC YANG model guidelines](../../management/sonic-yang-model-guidelines.md)
 - [SONiC CLI auto-generation tool](../../management/sonic-cli-auto-generation-tool.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
+

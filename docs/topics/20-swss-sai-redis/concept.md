@@ -154,3 +154,11 @@ DB と daemon の地図がほしい人は [アーキテクチャ](architecture.m
 - [swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）](../../internals/swss-schema.md)
 - [コンテナ health-check（k8s readiness probe）](../../internals/why-need-health-check.md)
 - [ZMQ ProducerStateTable / ConsumerStateTable 設計](../../internals/zmq-producer-consumer-state-table-design.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+

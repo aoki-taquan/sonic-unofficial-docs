@@ -27,3 +27,22 @@ sources: []
 ## 統合した既存ページ
 
 この章は architecture / system / management / categories の build・package 系ページ 13 件を横断している。各サブページ末尾の「関連ページ」から原文の HLD と裏取りステータスへ辿れる。
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
+
+**派生で読むべき章**
+
+- [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
+- [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
+
+**補完的に読む章**
+
+- [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

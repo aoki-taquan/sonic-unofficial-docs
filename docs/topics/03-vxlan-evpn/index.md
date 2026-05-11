@@ -38,3 +38,23 @@ sources:
 ## 統合した既存ページ
 
 この章は overlay / routing / platform / architecture / reference の既存ページ 22 件を横断しています。各ページの末尾に、深掘り用の関連ページを置いています。
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [BGP と FRR 制御プレーン](../02-bgp/index.md)
+- [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
+
+**派生で読むべき章**
+
+- [DASH と SmartSwitch](../13-dash-smartswitch/index.md)
+- [Dual-ToR と Mux 制御](../05-dual-tor/index.md)
+
+**補完的に読む章**
+
+- [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

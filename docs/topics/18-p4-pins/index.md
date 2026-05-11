@@ -44,3 +44,23 @@ PINS の中心は 4 点です。コントローラと話す **P4RT App**（gRPC 
 - [P4RT App の Read キャッシュ](../../management/p4rt-read-cache-hld.md)
 - [P4Runtime PacketIO（generic netlink + send_to_ingress）](../../management/packetio.md)
 - [Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）](../../management/send-to-ingress-hld.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+- [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
+
+**派生で読むべき章**
+
+- [DASH と SmartSwitch](../13-dash-smartswitch/index.md)
+
+**補完的に読む章**
+
+- [ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md)
+- [SRv6 / MPLS / Path Tracing](../17-srv6-mpls/index.md)
+- [Build / Packaging / Application Extension](../19-build-packaging/index.md)
+

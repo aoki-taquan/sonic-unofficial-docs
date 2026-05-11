@@ -72,3 +72,22 @@ sources:
 - [show techsupport](../../system/show-techsupport.md)
 - [Dump utility](../../internals/dump-utility-for-easy-debugging.md)
 - [System ready](../../system/system-ready-hld.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+
+**派生で読むべき章**
+
+- [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
+
+**補完的に読む章**
+
+- [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
+- [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
+- [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
+

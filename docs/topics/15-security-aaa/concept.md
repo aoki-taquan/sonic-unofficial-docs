@@ -153,3 +153,11 @@ sequenceDiagram
 - 「ssh は通るのに sudo が通らない」を NSS / PAM / sudoers / TACACS+ の切り分けで追える
 - MACsec を入れるとどの daemon・どの SAI object・どの CONFIG_DB テーブルが増えるかが分かる
 - secure boot 系を採用するかを「攻撃モデルと OPEX 増分」で議論できる
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+

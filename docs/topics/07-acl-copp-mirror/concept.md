@@ -127,3 +127,12 @@ DASH ACL は通常の `ACL_TABLE` / `ACL_RULE` と同じ名前空間ではなく
 - [ACL in SONiC](../../acl-qos/acl-in-sonic.md)
 - [ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
 - [SAI 拡張属性追加系](../../categories/sai-extensions.md)
+
+<!-- xref-prereq -->
+## この章の前提知識
+
+この章を読み進める前に、次の章を押さえておくと迷子になりにくい。
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+

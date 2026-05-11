@@ -53,3 +53,21 @@ sources:
 - [開発者向けガイド](../../guides/developer.md)
 - [評価者向けガイド](../../guides/evaluator.md)
 - [運用者向けガイド](../../guides/operator.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**前提として読むべき章**
+
+- [SONiC 全体像と設定基盤](../01-overview/index.md)
+
+**派生で読むべき章**
+
+- [Build / Packaging / Application Extension](../19-build-packaging/index.md)
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+
+**補完的に読む章**
+
+- [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
+- [リファレンス横断索引](../22-reference-index/index.md)
+

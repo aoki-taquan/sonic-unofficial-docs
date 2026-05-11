@@ -45,3 +45,18 @@ sources:
 - [評価者向けガイド](../../guides/evaluator.md)
 - [SONiC User Manual の位置づけ](../../management/sonic-user-manual.md)
 - [SONiC NOS の設定手段一覧](../../management/sonic-nos-configuration-methods.md)
+
+<!-- xref-related-chapters -->
+## 関連する章
+
+**派生で読むべき章**
+
+- [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
+- [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
+- [リファレンス横断索引](../22-reference-index/index.md)
+
+**補完的に読む章**
+
+- [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
+- [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
+
