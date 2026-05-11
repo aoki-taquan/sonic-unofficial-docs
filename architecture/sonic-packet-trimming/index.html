@@ -7000,6 +7000,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21582,6 +21593,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21617,9 +21639,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>SwitchOrch</code> の trimming 拡張、<code>BufferOrch</code> での per-buffer-profile trimming 制御、ACL <code>DISABLE_TRIMMING</code> action、symmetric / asymmetric DSCP の SAI capability、Drop counter（v0.3）の取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>SwitchOrch</code> の packet trimming 取り込みを <code>sonic-swss/orchagent/switchorch.cpp</code> L1004-L1260 で確認。<code>SAI_SWITCH_ATTR_PACKET_TRIM_SIZE</code> (L1004), <code>_DSCP_RESOLUTION_MODE</code> (L1015), <code>_DSCP_VALUE</code> (L1026), <code>_TC_VALUE</code> (L1037), <code>_QUEUE_RESOLUTION_MODE</code> (L1048), <code>_QUEUE_INDEX</code> (L1059) を SAI に書き込む 6 経路を確認。capability エラーハンドリングと symmetric DSCP モード時の TC skip ロジック (L1190 <code>Skip setting switch trimming TC value for symmetric DSCP mode</code>) も実装済み。BufferOrch / ACL <code>DISABLE_TRIMMING</code> 側は別バッチで深堀予定。</p>
 </div>
 <h1 id="packet-trimmingsymmetric-asymmetric-dscp-acl-disable">Packet Trimming（symmetric / asymmetric DSCP / ACL disable）<a class="headerlink" href="#packet-trimmingsymmetric-asymmetric-dscp-acl-disable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21730,6 +21752,17 @@ reasoning: スコープと per-buffer + ACL disable の根拠。
 <li>trim が起きない → buffer profile の <code>packet_trimming=enabled</code>、ACL で disable していないか確認</li>
 <li>受信 NIC で trim 判別ができない → asymmetric DSCP 設定で受信側に signal するよう運用</li>
 </ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Trim size 設定: <code>sonic-swss/orchagent/switchorch.cpp</code> L1004 (<code>SAI_SWITCH_ATTR_PACKET_TRIM_SIZE</code>)</li>
+<li>DSCP resolution / value: 同 L1015 (<code>PACKET_TRIM_DSCP_RESOLUTION_MODE</code>), L1026 (<code>PACKET_TRIM_DSCP_VALUE</code>)</li>
+<li>TC value: 同 L1037 (<code>PACKET_TRIM_TC_VALUE</code>), L1190 で symmetric DSCP 時の skip</li>
+<li>Queue resolution / index: 同 L1048 (<code>PACKET_TRIM_QUEUE_RESOLUTION_MODE</code>), L1059 (<code>PACKET_TRIM_QUEUE_INDEX</code>)</li>
+<li>capability チェック＆エラーログ: 同 L1083, L1093-L1260 全体（<code>Switch trimming configuration is not supported: skipping ...</code> ほか）</li>
+</ul>
+<blockquote>
+<p>BufferOrch 側の per-profile trimming と ACL <code>DISABLE_TRIMMING</code> action、<code>SWITCH_TRIMMING_CAPABILITY</code> の STATE_DB 公開は別バッチで深掘り予定。</p>
+</blockquote>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - SwitchOrch の trimming 拡張と SAI switch trimming 属性の community SAI 取り込み確認

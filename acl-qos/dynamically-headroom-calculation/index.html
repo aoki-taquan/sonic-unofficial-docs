@@ -10909,6 +10909,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21648,6 +21659,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21683,13 +21705,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>buffermgrd</code> の dynamic クラス、Lua plugin（vendor 提供）、<code>buffer_model</code> フィールド、<code>asic_table.json</code> / <code>peripheral_table.json</code> 経由の STATE_DB 公開、<code>SAI_PORT_ATTR_MAXIMUM_HEADROOM_SIZE</code> の community SAI 取り込みは未確認。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>buffermgrd</code> の dynamic クラスの主要パスを <code>sonic-swss/cfgmgr/buffermgrdyn.cpp</code> で確認した。<code>default_dynamic_th</code> の <code>LOSSLESS_TRAFFIC_PATTERN</code> 読み込み (L148-L153)、<code>dynamic_size</code> プールの size 計算ループ (L676-L782)、<code>dynamic_calculated</code> プロファイル管理 (L1297, L1429-L1483)、shared headroom pool による dynamic profile 更新 (L1609-L1681)、PG 適用時の dynamic 計算チェック (L1737-L1757) が現行 master に取り込まれていることを確認。Lua plugin / vendor 提供 asic_table.json 自体は vendor binary 配布相当のため非確認。</p>
 </div>
 <h1 id="dynamic-headroom-calculationbuffer_model-dynamic">Dynamic Headroom Calculation（buffer_model = dynamic）<a class="headerlink" href="#dynamic-headroom-calculationbuffer_model-dynamic" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21904,6 +21922,14 @@ reasoning: 入力 → 再計算 → APPL_DB の流れと、CONFIG_DB / APPL_DB /
 <ul>
 <li>speed 変更後 headroom が更新されない → <code>buffermgrd</code> ログで Lua plugin invoke を確認、<code>BUFFER_MAX_PARAM</code> legality check で reject されていないか確認</li>
 <li>shared pool の sum が合わない → <code>xoff</code> の有無、independent vs shared headroom モデルを確認</li>
+</ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>default_dynamic_th</code> 読み込み: <code>sonic-swss/cfgmgr/buffermgrdyn.cpp</code> L148-L153 (<code>LOSSLESS_TRAFFIC_PATTERN</code> から <code>default_dynamic_th</code> を hget)</li>
+<li>dynamic pool size 計算ループ: 同 L676-L782 (<code>poolRef.second.dynamic_size</code> を条件に size 再計算 → APPL_DB push)</li>
+<li>dynamic_calculated profile 管理: 同 L1027-L1028, L1297, L1429-L1515 (alpha 付き静的閾値プロファイルを保持しつつ自動生成プロファイルを掃除)</li>
+<li>shared headroom pool 更新時の profile 再計算: 同 L1609-L1681 (<code>Updating dynamic buffer profiles due to shared headroom pool state updated</code>)</li>
+<li>PG への適用ガード: 同 L1737-L1757 (<code>dynamic_calculated</code> PG に port 情報が揃わない間は適用スキップ)</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

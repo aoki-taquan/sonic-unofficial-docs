@@ -10831,6 +10831,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21660,6 +21671,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21695,9 +21717,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only / テストプラン文書</p>
-<p>この文書は機能 HLD ではなく <strong>テストプラン</strong>。<code>sonic-mgmt</code> の <code>tests/pfc_asym/pfc_asym.py</code> 実装、<code>pfc_gen.py</code> の Mellanox / Arista 配備手順は要裏取り。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p>Asymmetric PFC 本体機能の swss 取り込みを <code>sonic-swss/orchagent/portsorch.cpp</code> L2519-L2573 <code>PortsOrch::setPortPfcAsym()</code> で確認した（<code>SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE</code> に <code>SEPARATE</code> / <code>COMBINED</code> を切り替える経路、CONFIG_DB.PORT.pfc_asym のパースは L5407-L5434）。本テストプランは機能 HLD ではなく <strong>テスト仕様</strong>であり、<code>sonic-mgmt</code> 配下のテストスクリプト一致は確認スコープ外（ローカル <code>.cache</code> に sonic-mgmt が含まれていないため）。</p>
 </div>
 <h1 id="asymmetric-pfc-ptf-sonic-mgmt-fixtures">Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）<a class="headerlink" href="#asymmetric-pfc-ptf-sonic-mgmt-fixtures" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21809,6 +21831,16 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 <li><code>pfc_gen.py</code> が Fanout で見つからない: <code>deploy_pfc_gen</code> fixture のプラットフォーム別ロジック、対象 Fanout の OS / パスを確認。</li>
 <li>ARP responder の応答が無い: 設定ファイルの 1 回生成パッチが当たっているか、ARP responder プロセスのログを確認。</li>
 </ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Asymmetric PFC mode set: <code>sonic-swss/orchagent/portsorch.cpp</code> L2519-L2573 <code>setPortPfcAsym()</code>（<code>SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE</code> を <code>SEPARATE</code>/<code>COMBINED</code> で SAI に書き込む）</li>
+<li>CONFIG_DB.PORT.pfc_asym パース＆適用: 同 <code>portsorch.cpp</code> L5407-L5434（mode の妥当性チェックと <code>setPortPfcAsym()</code> 呼び出し、unsupported 時のスキップログ）</li>
+<li>初期 attribute セット: 同 <code>portsorch.cpp</code> L1347-L1361（<code>SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL</code> への XOFF 値書き込み）</li>
+<li>Port 構造体: <code>sonic-swss/orchagent/port/portcnt.h</code> L89 <code>pfc_asym</code> メンバ</li>
+</ul>
+<blockquote>
+<p><code>sonic-mgmt</code> ツリーは本ローカルキャッシュにクローンされていないため、テストスクリプト本体の一致確認は別バッチで実施する。</p>
+</blockquote>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

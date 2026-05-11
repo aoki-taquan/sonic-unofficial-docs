@@ -7045,6 +7045,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21560,6 +21571,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21595,9 +21617,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>portsorch</code> 側の <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> capability query と FEC=auto の処理、<code>SAI_PORT_ATTR_OPER_PORT_FEC_MODE</code> 読み出しは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> の portsorch 取り込みを確認: <code>sonic-swss/orchagent/portsorch.cpp</code> L991 (capability query), L1325, L2369, L10479, L10556（FEC override 適用 + コメント <code>FEC override will take effect only when autoneg is enabled</code>）。FEC=auto と autoneg の関係チェックは L5334-L5336 (<code>Autoneg must be enabled for port fec mode auto to work</code>) で実装済み。</p>
 </div>
 <h1 id="port-auto-fecsai_port_attr_auto_neg_fec_mode_override-fecauto">Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）<a class="headerlink" href="#port-auto-fecsai_port_attr_auto_neg_fec_mode_override-fecauto" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21727,6 +21749,13 @@ reasoning: 新 SAI 属性と FEC=auto 値の根拠。
 <ul>
 <li><code>auto</code> にしても変わらない → <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> 対応 SAI か portsorch ログで確認</li>
 <li>show 表示と実態が違う → <code>OPER_PORT_FEC_MODE</code> 未対応の可能性</li>
+</ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Capability query: <code>sonic-swss/orchagent/portsorch.cpp</code> L991 (<code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code>)</li>
+<li>初期 attribute セット時の override 適用: 同 L1325, L2369</li>
+<li>FEC=auto と autoneg のガード: 同 L5334-L5336 (<code>Autoneg must be enabled for port fec mode auto to work</code>)</li>
+<li>動的変更経路: 同 L10479, L10553-L10556 (<code>FEC override will take effect only when autoneg is enabled</code>)</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

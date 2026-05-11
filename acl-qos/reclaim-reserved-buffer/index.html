@@ -10921,6 +10921,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21560,6 +21571,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21595,13 +21617,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>zero_profile</code> を含む BUFFER スキーマ拡張、buffermgrd / db_migrator / Mellanox SAI 側挙動は現行 master 未裏取り。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>zero_profile</code> 機構は <code>sonic-swss/cfgmgr/buffermgrdyn.cpp</code> L232-L260 のドキュメントコメントブロックで全体設計 (zero buffer pools / profiles, <code>pgs_to_apply_zero_profile</code>, <code>ingress_zero_profile</code>, <code>queues_to_apply_zero_profile</code>, <code>egress_zero_profile</code>, <code>zero_profile_name</code>) が記述され、L245-L275 で実装ロジックが取り込まれていることを確認（既存 verifier の <code>reclaim-reserved-buffer-sequence-flow</code> キューでも同位置を裏取り済み）。<code>buffermgrd -z zero_profiles.json</code> 起動オプションは <code>buffermgrd.cpp</code> L26 / L98-L121 で確認。</p>
 </div>
 <h1 id="reclaim-reserved-bufferadmin-down-zero_profile">Reclaim Reserved Buffer（admin-down ポートの zero_profile）<a class="headerlink" href="#reclaim-reserved-bufferadmin-down-zero_profile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21703,6 +21721,12 @@ reasoning: lossless PG は削除、それ以外は zero_profile という分担�
 <ul>
 <li>shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか APPL_DB で確認</li>
 <li>lossless トラフィックが落ちる → admin-down 後 admin-up した際の lossless PG 再作成順序を確認</li>
+</ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>設計コメント＋実装本体: <code>sonic-swss/cfgmgr/buffermgrdyn.cpp</code> L232-L275（<code>pgs_to_apply_zero_profile</code> / <code>ingress_zero_profile</code> / <code>queues_to_apply_zero_profile</code> / <code>egress_zero_profile</code> のパースとプール referenced 時の <code>zero_profile_name</code> 紐付け）</li>
+<li><code>buffermgrd</code> 起動オプション: <code>sonic-swss/cfgmgr/buffermgrd.cpp</code> L26, L98-L121（<code>-z zero_profiles.json</code> の読込）</li>
+<li>派生ページの裏取り: <code>docs/acl-qos/reclaim-reserved-buffer-sequence-flow.md</code>（既に code-verified）と整合</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

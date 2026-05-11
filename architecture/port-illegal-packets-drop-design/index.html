@@ -6866,6 +6866,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21538,6 +21549,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21573,9 +21595,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD のみを根拠に書かれている。実コード（<code>sonic-snmpagent</code> / <code>py-swsssdk</code> 等）での裏取りは未済。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>sonic-snmpagent</code> で RIF カウンタを L2 カウンタへ集約する経路を実装で確認した。<code>sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py</code> L34-L38 に <code>RIF_DROPS_AGGR_MAP</code> が定義され、<code>SAI_PORT_STAT_IF_IN_OCTETS</code> 等を <code>SAI_ROUTER_INTERFACE_STAT_IN_OCTETS</code> 系へマップ。<code>rfc1213.py</code> L341-L346 で <code>rif_port_map</code> / <code>port_rif_map</code> を構築し、L427-L440 で <code>sai_lag_rif_id</code> を参照して <code>self.rif_counters[...]</code> から <code>counter_value</code> に加算する集約処理を確認。</p>
 </div>
 <h1 id="interface-mib-l3">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）<a class="headerlink" href="#interface-mib-l3" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21744,6 +21766,14 @@ reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設
 <li>L3 ドロップが SNMP に出てこない場合、まず <code>COUNTERS_DB</code> 上に RIF の COUNTERS エントリが存在するか確認する。存在しない場合は <code>rifcounter</code> flex counter グループが当該プラットフォームで無効。</li>
 <li><code>ifType=136</code> の VLAN エントリが見えない場合、<code>sonic-snmpagent</code> のバージョンが本 HLD 反映前の可能性がある。</li>
 <li>テストは <code>test_snmp_interfaces.py</code> でカバーされている旨が HLD に記載されており、回帰確認の起点として有用<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+</ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>RIF → Port aggregation テーブル: <code>sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py</code> L34-L38, L42 (<code>RIF_DROPS_AGGR_MAP</code>、<code>SAI_PORT_STAT_IF_IN_OCTETS</code> → <code>SAI_ROUTER_INTERFACE_STAT_IN_OCTETS</code> 等)</li>
+<li><code>rif_port_map</code> / <code>port_rif_map</code> 構築: <code>sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py</code> L341-L346</li>
+<li>LAG 経由の RIF カウンタ加算: 同 <code>rfc1213.py</code> L427-L440 (<code>sai_lag_rif_id = self.port_rif_map[sai_lag_id]</code> → <code>self.rif_counters[sai_lag_rif_id].get(rif_table_name, 0)</code> を <code>counter_value</code> に加算)</li>
+<li>関連 RFC2863 拡張ファイル: <code>sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc2863.py</code>（IfX MIB 側の同 aggregation）</li>
+<li>テスト: <code>sonic-snmpagent/tests/test_interfaces.py</code>, <code>tests/namespace/test_interfaces.py</code></li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">

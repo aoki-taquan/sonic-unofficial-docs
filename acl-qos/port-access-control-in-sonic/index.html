@@ -11257,6 +11257,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21560,6 +21571,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21598,8 +21620,8 @@
 <hr />
 <p>title: Port Access Control（PAC: 802.1x / MAB / RADIUS）
 area: acl-qos
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/pac/Port Access Control.md
@@ -21617,13 +21639,9 @@ related:
     - show authentication
   yang: []</p>
 <hr />
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>Authentication Manager</code> / <code>mabd</code> / <code>hostapdmgrd</code> の現行 master 取り込み、SAI Bridge port learning モード変更、PAC 用 host interface trap、各 CONFIG_DB スキーマ・CLI の sonic-utilities 取り込みは未確認。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>sonic-buildimage/src/sonic-pac/</code> 配下に PAC のコンポーネント (<code>authmgr</code>, <code>mab</code>, <code>mabmgr</code>, <code>hostapdmgr</code>, <code>pacmgr</code>, <code>paccfg</code>, <code>pacoper</code>, <code>fpinfra</code>, <code>json_lib</code>) が取り込み済みであることを確認。<code>hostapdmgr.cpp</code> L43-L46 で <code>CFG_PAC_PORT_CONFIG_TABLE</code> / <code>CFG_PAC_HOSTAPD_GLOBAL_CONFIG_TABLE</code> / <code>RADIUS_SERVER</code> / <code>RADIUS</code> 4 テーブルを subscribe する経路を確認。SAI Bridge port learning モード変更詳細・host interface trap の詳細は sai_redis / vendor SAI スコープのため別途。</p>
 </div>
 <h1 id="port-access-controlpac-8021x-mab-radius">Port Access Control（PAC: 802.1x / MAB / RADIUS）<a class="headerlink" href="#port-access-controlpac-8021x-mab-radius" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21787,6 +21805,18 @@ reasoning: 物理 IF 限定・802.1x/MAB 併用・3 種 port mode の根拠。
 <li>VLAN が変わらない → RADIUS Accept に VLAN attribute（Tunnel-Type / Tunnel-Medium-Type / Tunnel-Private-Group-ID）が来ているか抽出ログ確認</li>
 <li>MAB が誤判定 → <code>mabd</code> ログで MAC 学習契機と RADIUS リクエスト送出を確認</li>
 </ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>PAC コンポーネントツリー: <code>sonic-buildimage/src/sonic-pac/</code> 配下の <code>authmgr/</code>, <code>mab/</code>, <code>mabmgr/</code>, <code>hostapdmgr/</code>, <code>pacmgr/</code>, <code>paccfg/</code>, <code>pacoper/</code>, <code>fpinfra/</code>, <code>json_lib/</code> を確認</li>
+<li>hostapdmgr のテーブル subscribe: <code>sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.cpp</code> L43-L46（<code>CFG_PAC_PORT_CONFIG_TABLE</code>, <code>CFG_PAC_HOSTAPD_GLOBAL_CONFIG_TABLE</code>, <code>RADIUS_SERVER</code>, <code>RADIUS</code>）</li>
+<li>PAC_PORT_CONFIG_TABLE イベント処理: 同 L107, L231（<code>Received an table config event on PAC_PORT_CONFIG_TABLE table</code> ログ + DEL 操作の warn）</li>
+<li>HOSTAPD_GLOBAL_CONFIG_TABLE イベント処理: 同 L242, L342</li>
+<li>RADIUS / RADIUS_SERVER イベント処理: 同 L502-L623（DEL warn, hostapd への RADIUS 設定再計算）</li>
+<li>pacmgr daemon entry: <code>sonic-buildimage/src/sonic-pac/pacmgr/pacmgr_main.cpp</code> / <code>pacmgr.cpp</code></li>
+</ul>
+<blockquote>
+<p>SAI bridge port learning モード制御や host-bound EAPoL trap の vendor SAI 取り込み度合いは別バッチで sairedis / sai-headers 側を裏取りする。</p>
+</blockquote>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - Authentication Manager / mabd / hostapdmgrd の現行 master 取り込み確認

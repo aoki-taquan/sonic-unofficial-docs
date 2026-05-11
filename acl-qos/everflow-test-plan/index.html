@@ -10714,6 +10714,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21538,6 +21549,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21573,9 +21595,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>本ページは Everflow テストプラン HLD（更新版）の再構成。テスト本体（<code>sonic-mgmt</code> 配下の Ansible / PTF テストスクリプト）の現行コードと完全一致するかは未確認。<code>priority=low</code>（テスト仕様）。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p>テストプラン本体は <code>sonic-mgmt</code> 側の Ansible / PTF テストスクリプトに対する仕様だが、被テストの mirror 機能 (<code>MIRROR_SESSION</code> 制御パス: src/dst IP / DSCP / TTL / GRE type / next-hop / queue / status) は <code>sonic-swss/orchagent/mirrororch.cpp</code> L15-L24 ほか 1611 行に渡って実装されている。P4 mirror manager 系も <code>orchagent/p4orch/mirror_session_manager.cpp</code> で存在を確認。<code>sonic-mgmt</code> ツリーはローカルキャッシュ未取り込みのためテストスクリプト本体の文言一致は別バッチに委ねる。</p>
 </div>
 <h1 id="everflow-ingress-egress-mirrorlag-ecmp-ipv6">Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）<a class="headerlink" href="#everflow-ingress-egress-mirrorlag-ecmp-ipv6" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21705,6 +21727,15 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 <li>mirror パケットが届かない → BGP route で collector への best match が取れているか確認、neighbor MAC 解決確認</li>
 <li>LAG 越しに偏る → LAG hash 確認。テスト側の flow 多様化を確認</li>
 </ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Mirror session 制御フィールド: <code>sonic-swss/orchagent/mirrororch.cpp</code> L15-L24 (<code>MIRROR_SESSION_STATUS</code> / <code>STATUS_ACTIVE</code> / <code>STATUS_INACTIVE</code> / <code>NEXT_HOP_IP</code> / <code>SRC_IP</code> / <code>DST_IP</code> / <code>GRE_TYPE</code> / <code>DSCP</code> / <code>TTL</code> / <code>QUEUE</code>)</li>
+<li>MirrorOrch 本体: 同 <code>mirrororch.cpp</code> (1611 行) と <code>mirrororch.h</code></li>
+<li>P4 経路の MirrorSessionManager: <code>sonic-swss/orchagent/p4orch/mirror_session_manager.cpp</code> / <code>.h</code> （SAI mirror session 抽象化）</li>
+</ul>
+<blockquote>
+<p><code>sonic-mgmt</code> 配下の Everflow テストスクリプト本体（Ansible playbook / PTF）と本テストプランの文言一致は本ローカルでは確認できないため、別バッチで <code>.cache/sonic-sources/sonic-mgmt</code> を取り込んだ後に再検証する。</p>
+</blockquote>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-mgmt 上の Everflow Ansible / PTF テストスクリプトが本テストプランと一致しているか確認

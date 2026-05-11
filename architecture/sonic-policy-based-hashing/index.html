@@ -7006,6 +7006,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21538,6 +21549,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21576,8 +21598,8 @@
 <hr />
 <p>title: Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
 area: architecture
-verification: hld-only
-last_verified: 2026-05-09
+verification: code-verified
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/pbh/pbh-design.md
@@ -21594,9 +21616,9 @@ related:
   yang:
     - sonic-pbh</p>
 <hr />
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>PbhOrch</code> の現行 master 取り込み、SAI fine-grained hash 関連属性の community SAI 取り込み、<code>PBH_*</code> テーブル / CLI / YANG の取り込み、CRM 連携は未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>PbhOrch</code> は <code>sonic-swss/orchagent/pbhorch.h</code> L13-L19 に class 宣言、<code>orchdaemon.cpp</code> L52 で <code>gPbhOrch</code> 大域インスタンス、L553-L570 で <code>CFG_PBH_TABLE_TABLE_NAME</code> を含む 4 テーブル接続と <code>new PbhOrch(pbhTableConnectorList, gAclOrch, gPortsOrch)</code> 初期化、<code>m_orchList.push_back(gPbhOrch)</code> まで取り込み済みであることを確認。スキーマ定数 <code>PBH_TABLE_INTERFACE_LIST</code> / <code>PBH_TABLE_DESCRIPTION</code> は <code>orchagent/pbh/pbhschema.h</code> L5-L6 を確認。SAI fine-grained hash 属性 / CRM 連携の深掘りは別バッチ。</p>
 </div>
 <h1 id="policy-based-hashingpbh-nvgre-vxlan-inner-5-tuple">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）<a class="headerlink" href="#policy-based-hashingpbh-nvgre-vxlan-inner-5-tuple" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21680,6 +21702,15 @@ reasoning: スコープと field-only 更新（v0.3）の根拠。
 <li>PBH 効かない → ACL rule が hit しているか aclshow で確認、<code>SET_ECMP_HASH</code>/<code>SET_LAG_HASH</code> 設定確認</li>
 <li>双方向で別パスに行く → <code>sequence_id</code> の対称性確認（src/dst が同じ id か）</li>
 </ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>PbhOrch</code> クラス: <code>sonic-swss/orchagent/pbhorch.h</code> L13-L19 (<code>class PbhOrch final : public Orch</code>)</li>
+<li>大域 instance / orch 登録: <code>sonic-swss/orchagent/orchdaemon.cpp</code> L52 (<code>PbhOrch *gPbhOrch</code>), L553 (<code>TableConnector cfgDbPbhTable(m_configDb, CFG_PBH_TABLE_TABLE_NAME)</code>), L565 (<code>gPbhOrch = new PbhOrch(pbhTableConnectorList, gAclOrch, gPortsOrch)</code>), L570 (<code>m_orchList.push_back(gPbhOrch)</code>)</li>
+<li>スキーマ定数: <code>sonic-swss/orchagent/pbh/pbhschema.h</code> L5-L6 (<code>PBH_TABLE_INTERFACE_LIST</code>, <code>PBH_TABLE_DESCRIPTION</code>)</li>
+</ul>
+<blockquote>
+<p>SAI fine-grained hash 属性 (<code>SAI_HASH_ATTR_FINE_GRAINED_HASH_FIELD_LIST</code> 等) の community SAI ヘッダ取り込み度合と CRM 監視は別バッチで深掘り。</p>
+</blockquote>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - PbhOrch の sonic-swss 取り込み確認

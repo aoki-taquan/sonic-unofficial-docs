@@ -7521,6 +7521,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21504,6 +21515,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21539,9 +21561,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>sonic-sairedis</code> の <code>BulkStatsContext</code> 実装、SAI bulk API（<code>sai_bulk_object_get_stats</code> / <code>sai_bulk_object_clear_stats</code>）の community SAI 取り込み、bulk chunk size 設定 (v0.2 追記) のフォーマットは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>BulkStatsContext</code> の実装を <code>sonic-sairedis/syncd/FlexCounter.cpp</code> L208-L211 で確認。SAI bulk API は <code>sonic-sairedis/syncd/VendorSai.cpp</code> L41 <code>.bulk_object_get_stats = &amp;sai_bulk_object_get_stats</code> で取り込み済み。chunk size の per-prefix 設定 (<code>m_counterChunkSizeMapFromPrefix</code>) も同 <code>FlexCounter.cpp</code> L544-L671 で <code>default_bulk_chunk_size</code> および partition prefix 別の chunk 計算を確認。</p>
 </div>
 <h1 id="bulk-countersai_bulk_object_get_stats-chunk-size">Bulk Counter（sai_bulk_object_get_stats / chunk size）<a class="headerlink" href="#bulk-countersai_bulk_object_get_stats-chunk-size" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21624,6 +21646,13 @@ reasoning: 採用判定ルールと fallback の根拠。
 <ul>
 <li>一部 counter が更新されない → fallback 経路に落ちている可能性。syncd ログで bulk capability rejection を確認</li>
 <li>chunk 細分化したが分散しない → counter ID prefix の表記揺れに注意</li>
+</ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>BulkStatsContext</code> 定義: <code>sonic-sairedis/syncd/FlexCounter.cpp</code> L208-L211</li>
+<li>SAI bulk API VendorSai 紐付け: <code>sonic-sairedis/syncd/VendorSai.cpp</code> L41 (<code>.bulk_object_get_stats = &amp;sai_bulk_object_get_stats</code>)</li>
+<li>bulk context 生成と chunk size 適用: <code>sonic-sairedis/syncd/FlexCounter.cpp</code> L544-L671 (<code>typedef BulkStatsContext&lt;StatType&gt; BulkContextType;</code> → <code>default_bulk_chunk_size</code> / <code>m_counterChunkSizeMapFromPrefix[counterPrefix.first]</code> / <code>default_partition</code> を使った <code>getBulkStatsContext()</code> / <code>addBulkStatsContext()</code>)</li>
+<li>関連: <code>sonic-swss/orchagent/flexcounterorch.cpp</code>, <code>sonic-swss/orchagent/saihelper.cpp</code>, テストは <code>sonic-sairedis/syncd/tests/TestSyncdMlnx.cpp</code> と <code>sonic-swss/tests/mock_tests/flexcounter_ut.cpp</code></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

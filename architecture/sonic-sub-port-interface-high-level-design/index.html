@@ -7168,6 +7168,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21582,6 +21593,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21617,9 +21639,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>intfsmgrd</code> / <code>intfsorch</code> の sub-port 拡張、SAI Router Interface 属性 (vlan id 付き)、Linux host sub-interface との sync、CLI / YANG 取り込みは未確認。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>IntfMgr</code> の sub-port 拡張を <code>sonic-swss/cfgmgr/intfmgr.cpp</code> で確認: L14 <code>#include "subintf.h"</code>, L331 <code>addHostSubIntf()</code>, L407-L446 <code>updateSubIntfMtu()</code> / <code>setHostSubIntfMtu()</code>, L464-L532 <code>updateSubIntfAdminStatus()</code> / <code>setHostSubIntfAdminStatus()</code>, L533 <code>removeHostSubIntf()</code>, L542 <code>setSubIntfStateOk()</code>, L557 <code>removeSubIntfState()</code>。<code>SubIntf</code> クラス本体は <code>sonic-swss/lib/subintf.cpp</code> / <code>subintf.h</code> に独立実装されている。<code>intfsorch.cpp</code> も sub-port を取り込み済み。</p>
 </div>
 <h1 id="sub-port-interfacedot1q-encap-vrf-rif">Sub-port Interface（dot1q encap / VRF RIF / 命名規則）<a class="headerlink" href="#sub-port-interfacedot1q-encap-vrf-rif" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21747,6 +21769,15 @@ reasoning: 物理 port / PortChannel + VRF RIF というスコープ限定の根
 <ul>
 <li>L3 が機能しない → SAI RIF が作成されているか asicdb で確認、Linux host 側 <code>ip -d link show Eth0.10</code> で vlan device 確認</li>
 <li>異 parent で同 vlan が混信したように見える → 仕様上 別 bridge domain。L2 broadcast は親 port 単位</li>
+</ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>SubIntf 共通ライブラリ: <code>sonic-swss/lib/subintf.cpp</code> / <code>sonic-swss/lib/subintf.h</code></li>
+<li>IntfMgr の Linux sub-interface 操作: <code>sonic-swss/cfgmgr/intfmgr.cpp</code> L14 (<code>#include "subintf.h"</code>), L331 <code>addHostSubIntf()</code>, L533 <code>removeHostSubIntf()</code></li>
+<li>MTU 連携: 同 L407-L446 <code>updateSubIntfMtu()</code> / <code>setHostSubIntfMtu()</code></li>
+<li>admin status 連携: 同 L464-L532 <code>updateSubIntfAdminStatus()</code> / <code>setHostSubIntfAdminStatus()</code></li>
+<li>STATE 管理: 同 L542 <code>setSubIntfStateOk()</code>, L557 <code>removeSubIntfState()</code></li>
+<li>orchagent 側: <code>sonic-swss/orchagent/intfsorch.cpp</code> / <code>portsorch.cpp</code> も sub-port (<code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code>) を取り込み済み</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

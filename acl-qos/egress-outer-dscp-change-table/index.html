@@ -11033,6 +11033,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21560,6 +21571,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        裏取り済み実装位置 (2026-05-11)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21595,13 +21617,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>UNDERLAY_SET_DSCP</code> / <code>MARK_META</code> / <code>EGR_SET_DSCP</code> の AclOrch 内部展開、SAI metadata 属性の community SAI 取り込み、CLI の sonic-utilities 取り込みは未確認。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 2026-05-09: HLD パス再確認済み</p>
-<p><code>sonic-net/SONiC</code> master HEAD <code>380509d</code> でも <code>frontmatter.sources</code> に列挙された HLD が当該パスに存在し、本ページ記述と乖離が無いことを確認した。<code>concerns</code> に挙げられた community master（sonic-buildimage / sonic-swss / sonic-utilities / sonic-sairedis）への取り込み有無は依然として未裏取りで、<code>verification: hld-only</code> を維持する。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<p><code>UNDERLAY_SET_DSCP</code> / <code>MARK_META</code> / <code>EGR_SET_DSCP</code> の table type 定数は <code>sonic-swss/orchagent/acltable.h</code> L38-L42 に定義済み (<code>TABLE_TYPE_MARK_META</code>, <code>TABLE_TYPE_MARK_META_V6</code>, <code>TABLE_TYPE_EGR_SET_DSCP</code>, <code>TABLE_TYPE_UNDERLAY_SET_DSCP</code>, <code>TABLE_TYPE_UNDERLAY_SET_DSCPV6</code>)。AclOrch 内部の MARK_META → EGR_SET_DSCP 連動展開 (<code>EGR_SET_DSCP_TABLE_ID = "EgressSetDSCP"</code> 定数, <code>isUsingEgrSetDscp()</code> 判定) を <code>aclorch.cpp</code> L51 / L1815 / L2485-L2490 / L3936-L3964 で確認した。</p>
 </div>
 <h1 id="egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp">Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）<a class="headerlink" href="#egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -21703,6 +21721,14 @@ reasoning: 採用案 Option-C と SAI 要件の根拠。
 <ul>
 <li>table 作成失敗 → <code>STATE_DB.ACL_ACTIONS</code> で <code>SET_ACL_META_DATA</code> / <code>ACL_USER_META</code> capability を確認</li>
 <li>DSCP が変わらない → encap が egress の本 ACL より前に走っているか確認、ingress 側の MARK_META rule が hit しているか aclshow で確認</li>
+</ul>
+<h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Table type 定数: <code>sonic-swss/orchagent/acltable.h</code> L38-L42 (<code>TABLE_TYPE_MARK_META</code> / <code>TABLE_TYPE_MARK_META_V6</code> / <code>TABLE_TYPE_EGR_SET_DSCP</code> / <code>TABLE_TYPE_UNDERLAY_SET_DSCP</code> / <code>TABLE_TYPE_UNDERLAY_SET_DSCPV6</code>)</li>
+<li>Built-in table type 定義: <code>sonic-swss/orchagent/aclorch.cpp</code> L387-L412, L488-L489 (MARK_META / MARK_METAV6 / EGR_SET_DSCP のテーブル仕様)</li>
+<li>EgressSetDSCP 内部 table 自動生成と参照: 同 L51 (<code>EGR_SET_DSCP_TABLE_ID = "EgressSetDSCP"</code>), L3936-L3964 (<code>builder.withName(TABLE_TYPE_MARK_META)</code> / <code>TABLE_TYPE_MARK_META_V6</code> / <code>TABLE_TYPE_EGR_SET_DSCP</code>)</li>
+<li>MARK_META action 検証: 同 L2485-L2490 (<code>ACTION_DSCP</code> を MARK_META 系で処理する分岐 + EGR_SET_DSCP table 関連付け検証)</li>
+<li>EgressSetDSCP 連動の table type 判定: 同 L1815 (<code>isUsingEgrSetDscp(table) || table == EGR_SET_DSCP_TABLE_ID</code>)</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
