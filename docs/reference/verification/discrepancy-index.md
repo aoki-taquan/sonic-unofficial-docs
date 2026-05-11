@@ -33,9 +33,10 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 | monitor | 件数 |
 |---------|-----:|
-| `(未指定)`（(未指定)） | 26 |
-| `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 12 |
-| `not_implemented`（未実装） | 8 |
+| `deprecated`（deprecated） | 3 |
+| `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 20 |
+| `not_implemented`（未実装） | 14 |
+| `partially_implemented`（partially_implemented） | 9 |
 
 ## エントリ一覧（area 別）
 
@@ -44,10 +45,10 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../../acl-qos/dhcp-dos-mitigation-in-sonic.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
-  2026-05 時点で `.cache/sonic-sources/` の master を裏取りした結果、本機能は **データ層 + CLI のみが取り込み済みで、肝心の TC qdisc / filter 投入経路が未実装** な部分実装状態である。
+  2026-05 時点で `.cache/sonic-sources/` を裏取りした結果、本機能は **データ層 + CLI のみ取り込み済み、肝心の TC 投入経路が未実装** な部分実装状態。
 
 - [ポートの動的 add / del（zero-port 起動と post-init 操作）](../../acl-qos/enhancements-to-add-or-del-ports-dynamically.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   2026-05 時点の `.cache/sonic-sources/` master を裏取り。
 
@@ -64,12 +65,12 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   2026-05 時点で本 framework は **master に取り込まれておらず、HLD のみ**（2019-07 v0.3 から 6 年以上停滞）。
 
 - [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   2026-05 時点で本 framework は **エラーコード enum だけが先行採用され、ERROR_DB / ErrorListener / CLI は丸ごと未実装** な部分採用状態。
 
 - [SAG（Static Anycast Gateway）for SONiC](../../architecture/sag-high-level-design-for-sonic.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05 時点で **SAG コード / YANG / CLI は community master に取り込まれておらず、HLD 提案段階**。
 
@@ -84,7 +85,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   2026-05 時点で **schema 層（HA Set / HA Scope の table 名）は先行採用済みだが、hamgrd バイナリ・actor framework・swbus・VDPU / DPU_STATE は未取り込み**。HLD の半分弱までが master に入っている部分実装状態。
 
 - [sFlow（hsflowd / sflowmgrd / SAI sample-packet）](../../architecture/sflow-high-level-design.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-10`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-10`
   
   2026-05 時点で本機能の **全体取り込みは完了している** が、HLD 文書中の「sample_rate の既定値テーブル」だけが実装と不一致である。
 
@@ -96,14 +97,14 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 ### internals
 
 - [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）](../../internals/l3-scaling-and-performance-enhancements.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。
 
 ### management
 
 - [Console Switch（serial hub の reverse SSH 集約）](../../management/sonic-console-switch.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:
 
@@ -123,7 +124,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、**`sonic-buildimage` 側の yang-models と `sonic-mgmt-common` 側で取り込み状況が分裂している**点が最大の罠。
 
 - [SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）](../../management/smart-switch-gnmi-feedback-design-omit-in-toc.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   HLD が要件として掲げる以下の構成要素を現行 master の `sonic-gnmi` に確認できなかった。
 
@@ -147,7 +148,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../../overlay/dscp-remapping-for-tunnel-traffic.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
-  実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
+  verified at: 2026-05-09。
 
 ### platform
 
@@ -177,7 +178,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
 - [拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）](../../platform/enhanced-lpo-debug-registers-hld.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   `sonic-platform-common` を grep した結果、本 HLD が前提とする `CmisEnhancedLpoApi` / `CmisEnhancedLpoCodes` / `CmisEnhancedLpoMemMap` クラス、`xcvr_api_factory.py` での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、`LPOTxHostInputVMA*` / `LPORxInputOMA*` フィールドのいずれも HEAD に取り込まれていない（`grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/` でヒット 0）。…
 
@@ -189,7 +190,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 ### routing
 
 - [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../../routing/bgp-route-install-error-handling.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-09`
+  monitor: `deprecated` / last_verified: `2026-05-09`
   
   2026-05-09 時点の現行 master を裏取り。**本 HLD は採用されず、後発の BGP Suppress FIB Pending に置き換えられている**。
 
@@ -199,93 +200,88 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
 - [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../../routing/evpn-vxlan-multihoming.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-10`
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-10`
   
   2026-05-10 時点の現行 master を裏取り。**EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない**。
 
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../../routing/evpn-vxlan-hld.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-10`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-10`
 
 - [Local ARS（Adaptive Routing & Switching の local 完結版）](../../routing/local-ars-hld.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-10`
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-10`
   
   2026-05-10 時点の現行 master を裏取り。**Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了**。
 
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   `sonic-swss/fpmsyncd/routesync.cpp` と `sonic-swss/fpmsyncd/routesync.h` を確認。HLD のコア部分は master に取り込み済み:
 
 ### switching
 
 - [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../../switching/layer-2-forwarding-enhancements.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-09`
+  monitor: `partially_implemented` / last_verified: `2026-05-09`
   
-  実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
+  実コード裏取りで判明（verified at: 2026-05-09）:
 
 - [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   2026-05-11 時点の現行 master を裏取り。
 
 - [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../../switching/wake-on-lan-in-sonic.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-09`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-09`
   
   2026-05-11 時点の現行 master を裏取り。
 
 - [リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）](../../switching/link-event-damping-hld.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-09`
+  monitor: `partially_implemented` / last_verified: `2026-05-09`
   
   2026-05-11 時点の現行 master を裏取り。
 
 ### system
 
 - [SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）](../../system/sonic-fips-deployment.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-09`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-09`
   
-  2026-05-11 時点の現行 master を裏取り。
+  CONFIG_DB の `FIPS|global` 表記は HLD どおりで問題なし。
 
 - [SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）](../../system/sonic-network-time-protocol-ntp-client-configuration.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `deprecated` / last_verified: `2026-05-11`
   
   2026-05-11 時点の現行 master を裏取り。
 
 - [SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）](../../system/hld-secure-boot.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-10`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-10`
   
   2026-05-11 時点の現行 master を裏取り。
 
 - [SWSS docker の Warm Restart 実装メモ（開発時リファレンス）](../../system/swss-docker-warm-restart-code-reference.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   2026-05-11 時点の現行 master を裏取り。
 
 - [SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）](../../system/sonic-python-logger-enhancement.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-09`
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-09`
   
   2026-05-11 時点の現行 master を裏取り。
 
 - [TWAMP Light（Session-Sender / Session-Reflector）](../../system/twamp-light-hld.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   per-page queue で既出の通り部分実装。再走査結果:
 
 - [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-09`
+  monitor: `deprecated` / last_verified: `2026-05-09`
   
   2026-05-11 時点の現行 master を裏取り。
 
 - [ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）](../../system/reset-local-users-passwords-during-init-hld.md)  
-  monitor: `(未指定)` / last_verified: `2026-05-11`
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   per-page queue で既出の通り、HLD が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
-
-<!-- topics-back-ref -->
-## 関連 Topics
-
-- [Topics: リファレンス横断索引](../../topics/22-reference-index/index.md)

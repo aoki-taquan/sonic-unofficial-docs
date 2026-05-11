@@ -9,7 +9,9 @@ Usage:
 """
 from __future__ import annotations
 
+import argparse
 import re
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -136,12 +138,45 @@ def render(matrix: dict[str, dict[str, int]]) -> str:
     return "\n".join(lines)
 
 
-def main() -> None:
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="差分があれば exit 1（CI 用、書き込みはしない）",
+    )
+    args = parser.parse_args()
+
     matrix = collect()
+    new_text = render(matrix)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(render(matrix), encoding="utf-8")
+
+    if args.check:
+        original = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else ""
+        if original != new_text:
+            print(
+                "ERROR: docs/_meta/coverage.md が古い。"
+                "`python3 meta/scripts/gen_coverage.py` を実行して commit すること。",
+                file=sys.stderr,
+            )
+            import difflib
+
+            diff = difflib.unified_diff(
+                original.splitlines(keepends=True),
+                new_text.splitlines(keepends=True),
+                fromfile="coverage.md (現状)",
+                tofile="coverage.md (期待)",
+                n=3,
+            )
+            sys.stderr.writelines(diff)
+            return 1
+        print("OK: coverage は最新")
+        return 0
+
+    OUTPUT.write_text(new_text, encoding="utf-8")
     print(f"wrote {OUTPUT.relative_to(REPO_ROOT)}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
