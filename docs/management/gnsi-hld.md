@@ -5,7 +5,7 @@ description: gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル �
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: evolved_beyond_hld
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/mgmt/gnmi/gnsi.md
@@ -248,7 +248,7 @@ gnsi_client credentialz rotate-account \
 
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
-    実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）:
+    実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
 
     - **Credentialz handler の gNMI server 実装は未取り込み**: HLD は Authz / Certz / Pathz / Credentialz の 4 サービスを並べて記述するが、現行 master の `sonic-gnmi/gnmi_server/` には `gnsi_authz.go` / `gnsi_certz.go` / `gnsi_pathz.go` のみが存在し、`gnsi_credentialz.go` 相当のサーバ側ハンドラは無い。Credentialz 関連は `sonic-gnmi/sonic_service_client/dbus_client.go:53-` の **dbus client 補助コード**として準備されているのみ（`TestCredentialzDbusMethods` 等のテストが存在）。
     - **gNMI server フラグ名の差異**: HLD で言及された `EnableAuthzPolicy` / `EnablePathzPolicy` という flag 名ではなく、`sonic-gnmi/gnmi_server/server.go:240,243` では `AuthzPolicy bool` / `PathzPolicy bool` という config 構造体フィールドとして実装されている。ポリシーファイルパスは `AuthzPolicyFile` / `PathzPolicyFile`、CRL は `CertCRLConfig`（HLD の表記と差異あり）。

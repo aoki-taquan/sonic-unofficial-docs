@@ -4,7 +4,7 @@ description: "DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC 
 area: acl-qos
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: not_implemented
+monitor: partially_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/Dhcp_Mitigation/DHCP Mitigation.md

@@ -4,7 +4,7 @@ description: "TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_p
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: evolved_beyond_hld
+monitor: partially_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md

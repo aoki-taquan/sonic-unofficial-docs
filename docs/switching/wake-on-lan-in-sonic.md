@@ -4,7 +4,7 @@ description: Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (
   Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。
 area: switching
 verification: discrepancy-found
-monitor: evolved_beyond_hld
+monitor: partially_implemented
 last_verified: 2026-05-09
 sources:
 - repo: sonic-net/SONiC
@@ -225,7 +225,7 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
-    2026-05-11 時点の現行 master を裏取り。
+    2026-05-11 時点の現行 master を裏取り。CLI 本体は完備だが gNOI 経路は未統合で、HLD 全体としては一部のみ取り込まれた部分実装状態。
 
     ### 1. ファイル + 行番号
 

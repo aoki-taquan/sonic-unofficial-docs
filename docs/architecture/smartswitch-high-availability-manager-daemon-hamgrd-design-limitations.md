@@ -5,7 +5,7 @@ description: HAMgrD の制限事項と実装乖離。community master 上で ham
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: not_implemented
+monitor: partially_implemented
 page_kind: split-child
 sources:
 - repo: sonic-net/SONiC

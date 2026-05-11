@@ -5,7 +5,7 @@ description: SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: evolved_beyond_hld
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/mgmt/SONiC_YANG_Model_Guidelines.md

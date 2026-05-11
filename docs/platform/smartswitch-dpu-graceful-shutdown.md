@@ -5,7 +5,7 @@ description: Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT） —
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: not_implemented
+monitor: evolved_beyond_hld
 sources:
 - repo: sonic-net/SONiC
   path: doc/smart-switch/graceful-shutdown/graceful-shutdown.md
