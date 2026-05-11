@@ -184,10 +184,9 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
     #### 関連 GitHub Issue / PR
 
     - [GitHub Issue / PR の関連リンクは未確認] — Console Switch（serial hub の reverse SSH 集約）構成は専用 platform / image 設定の積み重ねで実現されており、HLD 単独で追跡可能な GitHub Issue / PR は確認できず。
-
-    <!-- topics-back-ref -->
 <!-- /diff-admonition -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)

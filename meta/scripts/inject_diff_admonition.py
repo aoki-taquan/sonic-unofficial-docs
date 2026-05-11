@@ -29,7 +29,12 @@ MARK_END = "<!-- /diff-admonition -->"
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 # `## 実装との乖離` で始まる H2（後ろに括弧書きや空白を許容）
 SECTION_HEAD_RE = re.compile(r"^## 実装との乖離[^\n]*$", re.MULTILINE)
-NEXT_H2_RE = re.compile(r"^## ", re.MULTILINE)
+# 次のセクション境界: H2 (`## `) または auto-generated block 開始マーカー
+# (`<!-- topics-back-ref -->` / `<!-- topics-tip -->` 等) のいずれか先に来る方
+NEXT_BOUNDARY_RE = re.compile(
+    r"^(?:## |<!-- topics-back-ref -->|<!-- topics-tip -->|<!-- glossary-xref -->)",
+    re.MULTILINE,
+)
 
 
 def is_discrepancy_found(text: str) -> bool:
@@ -52,9 +57,9 @@ def wrap_section(text: str) -> tuple[str, bool]:
     head_end = m.end()
     heading_line = text[head_start:head_end]
 
-    # 次の H2 を探す
+    # 次のセクション境界 (H2 or auto-gen block start marker) を探す
     rest_after = text[head_end:]
-    nxt = NEXT_H2_RE.search(rest_after)
+    nxt = NEXT_BOUNDARY_RE.search(rest_after)
     if nxt:
         body_end = head_end + nxt.start()
     else:

@@ -124,10 +124,9 @@ elif vendor_name == 'Arista' and re.match(ARISTA_ENHANCED_LPO, vendor_pn):
     #### 関連 GitHub Issue / PR
 
     - [GitHub Issue / PR の関連リンクは未確認] — LPO 拡張デバッグレジスタ (VMA / OMA per-lane) の Redis 公開は xcvrd / platform daemon 系の機能拡張 PR で散発的に追加されており、HLD 全体を束ねる上流 Issue は確認できず。
-
-    <!-- topics-back-ref -->
 <!-- /diff-admonition -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)

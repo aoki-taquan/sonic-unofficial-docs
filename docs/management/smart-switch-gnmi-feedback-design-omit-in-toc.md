@@ -233,10 +233,9 @@ DASH_ROUTE_GROUP_TABLE:{group_id}
     #### 関連 GitHub Issue / PR
 
     - [GitHub Issue / PR の関連リンクは未確認] — SmartSwitch DPU 側 APPL_STATE_DB と version_id フィードバック機構は SmartSwitch 全体の HA / gNMI 改修 PR 群に取り込まれており、本 HLD 単独のトラッキング Issue / PR は確認できず。
-
-    <!-- topics-back-ref -->
 <!-- /diff-admonition -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)

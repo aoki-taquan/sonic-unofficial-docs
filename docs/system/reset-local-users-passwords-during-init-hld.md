@@ -137,10 +137,9 @@ enabled
     #### 関連 GitHub Issue / PR
 
     - [GitHub Issue / PR の関連リンクは未確認] — `reset-local-users-passwords.service` と long reset button トリガの取り込みは個別 image_config PR で進行しているが、HLD と直接紐づくトラッキング Issue は確認できず（検索結果 #24867 は無関係な doc refactor link issue）。
-
-    <!-- topics-back-ref -->
 <!-- /diff-admonition -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
