@@ -23606,17 +23606,13 @@
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
-<li>
-<p><a href="../../../platform/dump-on-sai-failure/">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
-</li>
-<li>
-<p><strong>HLD</strong>: 汎用 dump 起点スクリプトを <code>/usr/bin/syncd_dump.sh</code> と表記。 - <strong>現行 master</strong>: <code>sonic-sairedis/syncd/Syncd.cpp</code> L45 / <code>tests.cpp</code> L46 の <code>#define SAI_FAILURE_DUMP_SCRIPT "/usr/bin/sai_failure_dump.sh"</code>、<code>sonic-sairedis/syncd/scripts/sai_failure_dump.sh</code> L8/L10/L12 で確認したとおり、汎用スクリプトは <strong><code>/usr/bin/sai_failure_dump.sh</code></strong> にリネームされている。<code>SAI_MAX_FAILURE_DUMPS=10</code> の既定値、<code>/var/log/sai_failure_dump/</code> 出力先、`platform_sy…</p>
-</li>
-<li>
-<p><a href="../../../platform/sonic-port-naming-convention-change/">SONiC ポート命名規則の変更案（et[sX]pY[abcd]）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
-</li>
+<li><a href="../../../platform/dump-on-sai-failure/">SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+</ul>
+<p><strong>読者への影響</strong>:</p>
+<ul>
+<li><a href="../../../platform/sonic-port-naming-convention-change/">SONiC ポート命名規則の変更案（et[sX]pY[abcd]）</a><br />
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は <strong>いずれも採用されていない</strong>。</p>
 <ul>
@@ -23717,7 +23713,7 @@
 <li><a href="../../../system/twamp-light-hld/">TWAMP Light（Session-Sender / Session-Reflector）</a><br />
   monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
 </ul>
-<p>per-page queue で既出の通り部分実装。再走査結果:</p>
+<p><strong>読者への影響</strong>:</p>
 <ul>
 <li><a href="../../../system/warmboot-manager-hld/">Warmboot Manager（shutdown orchestration / reconciliation 統一）</a><br />
   monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
