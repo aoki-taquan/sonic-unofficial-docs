@@ -108,6 +108,126 @@ PORT|Ethernet0:
 
 PT Source / Sink / Regional Collector は SONiC 外側で構築するため、SONiC 単体としては Midpoint 設定だけで完結します。
 
+## 設定シナリオ 1: VRF "Vrf01" 向け SRv6 End.DT46 SID の最小投入
+
+`fcbb:bbbb::/48` を locator として、`fcbb:bbbb:1::/64` を `Vrf01` 向けの `End.DT46` SID として宣言します。`sonic-cfggen` 経由か `redis-cli` 直叩きで CONFIG_DB に書きます。
+
+```bash
+sudo sonic-cfggen -a '{
+  "SRV6_MY_LOCATORS": {
+    "loc1": {"prefix":"fcbb:bbbb::/48","block_len":"40","node_len":"24","func_len":"16","arg_len":"0"}
+  },
+  "SRV6_MY_SIDS": {
+    "fcbb:bbbb:1::/64": {"locator":"loc1","behavior":"end.dt46","vrf":"Vrf01"}
+  }
+}' -w
+```
+
+確認:
+
+```bash
+# CONFIG_DB
+sonic-db-cli CONFIG_DB KEYS 'SRV6_MY_*'
+sonic-db-cli CONFIG_DB HGETALL 'SRV6_MY_SIDS|fcbb:bbbb:1::/64'
+
+# FRR への流し込み（SRv6Mgr 経由）
+vtysh -c "show segment-routing srv6 locator"
+vtysh -c "show segment-routing srv6 sid"
+
+# データプレーン
+show ipv6 route fcbb:bbbb:1::/64
+```
+
+`vtysh` 期待出力:
+
+```
+Locator:
+Name                 ID      Prefix                   Status
+-------------------- ------- ------------------------ --------
+loc1                 1       fcbb:bbbb::/48           Up
+```
+
+## 設定シナリオ 2: per-RIF で MPLS を有効化し、ラベル付き経路を受ける
+
+```bash
+sudo config interface mpls enable Ethernet0
+sudo config interface mpls enable PortChannel10
+show mpls interface
+```
+
+CONFIG_DB:
+
+```json
+{
+    "INTERFACE": {"Ethernet0": {"mpls": "enable"}},
+    "PORTCHANNEL_INTERFACE": {"PortChannel10": {"mpls": "enable"}}
+}
+```
+
+`show mpls interface` の典型出力:
+
+```
+Interface       MPLS State
+--------------  ------------
+Ethernet0       enable
+PortChannel10   enable
+```
+
+FRR 側で静的 LSP を引いて確認します。
+
+```
+configure terminal
+mpls label local-pool min-label 1000 max-label 1999
+mpls lsp 1001 10.0.0.2 Ethernet0 nexthop-label 2001
+end
+```
+
+データプレーン確認:
+
+```bash
+ip -f mpls route show
+show mpls ldp neighbor   # LDP を使う場合
+```
+
+## 設定シナリオ 3: Path Tracing Midpoint の最小投入
+
+`Ethernet0` を Midpoint として動作させ、ID `1234` を MCD に刻み、`template_3` でタイムスタンプを切り出します。
+
+```bash
+sudo config interface pt-interface-id Ethernet0 1234
+sudo config interface pt-timestamp-template Ethernet0 template_3
+show interface path-tracing
+```
+
+CONFIG_DB:
+
+```json
+{
+    "PORT": {
+        "Ethernet0": {"pt_interface_id": "1234", "pt_timestamp_template": "template_3"}
+    }
+}
+```
+
+`show interface path-tracing` 期待出力:
+
+```
+Interface     PT Interface ID    Timestamp Template
+------------  ----------------  --------------------
+Ethernet0     1234              template_3
+```
+
+## 設定エラーと対処
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| `SRV6_MY_SIDS` を入れても FRR に降りない | `bgpcfgd` 側で SRv6Mgr が無効 / FRR バージョンが古い | `docker logs bgp` で `SRv6Mgr` のログを確認、FRR 9.x 以上が必要 |
+| `End.DT46` SID で trafic が drop される | `vrf` 指定の typo、または VRF が未作成 | `show vrf`、`sonic-db-cli CONFIG_DB HGETALL VRF\|Vrf01` を確認 |
+| `config interface mpls enable` が `Not supported on platform` | SAI capability に MPLS なし | `show platform syseeprom` / `sai_redis_record` で `SAI_OBJECT_TYPE_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` をチェック |
+| MPLS_TC_TO_TC_MAP 設定後も DSCP マップ動作のまま | `PORT_QOS_MAP|<port>` で `mpls_tc_to_tc_map` を未参照 | 当該 port の `PORT_QOS_MAP` 行を確認 |
+| Path Tracing で MCD が刻まれない | ASIC が Path Tracing 未対応、または FEC / speed 不一致 | capability、`sairedis.rec` のエラーを確認 |
+| FRR で `segment-routing srv6 sid` 投入後も `Down` のまま | locator と SID の重複 / encap-source-address 未設定 | `vtysh -c "show ipv6 route fcbb:bbbb::/48"`、`segment-routing srv6 encapsulation source-address ...` を投入 |
+
 ## reference の不足を把握する
 
 SRv6 / MPLS / Path Tracing は CLI / CONFIG_DB / YANG の reference が他の章ほど揃っていません。設定する前に以下を確認しておくと、ドキュメントとコードの乖離に悩まされにくくなります。
@@ -115,6 +235,14 @@ SRv6 / MPLS / Path Tracing は CLI / CONFIG_DB / YANG の reference が他の章
 - **CLI** — `config interface mpls`、`show mpls`、`config interface pt-interface-id`、`config interface pt-timestamp-template`、`show interface path-tracing` は確認済みですが、SRv6 系は `vtysh` 経由が中心で SONiC 独自 CLI は限定的です。
 - **CONFIG_DB** — `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` は `sonic-srv6` YANG に、`INTERFACE.mpls` 等は `sonic-interface` / `sonic-vlan` / `sonic-portchannel`、`MPLS_TC_TO_TC_MAP` は `sonic-port-qos-map` 系に定義があります。SRv6 base スキーマ（`SRV6_MY_SID_TABLE` 等）は YANG モデル化が進行中で、CONFIG_DB 直接投入が前提です。
 - **YANG** — 共通の `sonic-route-common` は MPLS / SRv6 のラベル / SID 表現で参照されます。
+
+## 関連リファレンス
+
+- CLI: `config interface mpls`、`show mpls interface`、`config interface pt-interface-id`、`config interface pt-timestamp-template`、`show interface path-tracing`、`vtysh -c "show segment-routing srv6 ..."`
+- CONFIG_DB: `SRV6_MY_LOCATORS`、`SRV6_MY_SIDS`、`SRV6_SID_LIST`、`SRV6_MY_SID_TABLE`、`SRV6_POLICY`、`SRV6_STEER`、`INTERFACE.mpls`、`VLAN_INTERFACE.mpls`、`PORTCHANNEL_INTERFACE.mpls`、`MPLS_TC_TO_TC_MAP`、`PORT_QOS_MAP`、`PORT`（PT 用フィールド）
+- APPL_DB / ASIC_DB: `LABEL_ROUTE_TABLE`、`SRV6_*` 系、`SAI_OBJECT_TYPE_INSEG_ENTRY`、`SAI_OBJECT_TYPE_MY_SID_ENTRY`、`SAI_PORT_ATTR_PATH_TRACING_*`
+- YANG: [`sonic-route-common`](../../reference/yang/sonic-route-common.md)、`sonic-srv6`、`sonic-interface`、`sonic-port-qos-map`
+- HLD: [SRv6 静的設定 HLD](../../routing/static-configuration-of-srv6-in-sonic-hld.md)、[SRv6 over IPv6 HLD](../../routing/segment-routing-over-ipv6-srv6-hld.md)、[MPLS HLD](../../routing/mpls-for-sonic-high-level-design-document.md)、[MPLS TC → TC map](../../routing/mpls-tc-to-tc-map.md)、[Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
 
 ## 関連ページ
 
