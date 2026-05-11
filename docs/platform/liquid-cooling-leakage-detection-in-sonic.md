@@ -22,6 +22,7 @@ related:
   - show system-health detail
   - show platform
   yang: []
+  _no_yang: true
 ---
 
 <!-- topics-tip -->
