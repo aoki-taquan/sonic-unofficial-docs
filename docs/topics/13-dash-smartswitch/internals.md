@@ -103,6 +103,59 @@ SmartSwitch HA は NPU 側 daemon **HAMgrD** が actor として動きます。H
 
 データプレーンの flow sync は DPU 側 `DashHaFlowOrch` が持ち、HAMgrD が制御メッセージを発行する分業です。NPU 側 / DPU 側で actor を分けるのは、NPU が複数 DPU をまとめて見やすい一方、DPU 側はフロー状態を SAI に近い場所で扱う必要があるためです。HAMgrD は実装上 `discrepancy-found` 扱いの点があるため、[HAMgrD ページ](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md) で個別差分を確認してください。
 
+## SAI 属性使用一覧（DASH 専用 SAI 拡張）
+
+DASH SAI は `sai/experimental/saiexperimentaldash*.h` 系で定義される DASH 専用 object です。
+
+| object | 主属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_DASH_APPLIANCE` | `SAI_DASH_APPLIANCE_ATTR_LOCAL_REGION_ID`、`VM_VNI` |
+| `SAI_OBJECT_TYPE_ENI` | `SAI_ENI_ATTR_VM_VNI`、`MAC_ADDRESS`、`ADMIN_STATE`、`VNET_ID`、`INBOUND_V4_STAGE*` |
+| `SAI_OBJECT_TYPE_ENI_ETHER_ADDRESS_MAP_ENTRY` | inbound 用 MAC → ENI mapping |
+| `SAI_OBJECT_TYPE_VNET` | `SAI_VNET_ATTR_VNI` |
+| `SAI_OBJECT_TYPE_OUTBOUND_ROUTING_ENTRY` | encap 種別、tunnel_id、overlay_ip |
+| `SAI_OBJECT_TYPE_OUTBOUND_CA_TO_PA_ENTRY` | customer addr → provider addr の mapping |
+| `SAI_OBJECT_TYPE_INBOUND_ROUTING_ENTRY` | inbound 側の VNI / VNET 解決 |
+| `SAI_OBJECT_TYPE_DASH_ACL_GROUP` / `DASH_ACL_RULE` | DASH ACL（NSG / SG 用） |
+| `SAI_OBJECT_TYPE_FLOW_TABLE` / `FLOW_ENTRY` | HA flow sync（DPU 側） |
+| `SAI_OBJECT_TYPE_METER_*` | metering / billing |
+
+これらは通常 SAI には無く、DPU 上の SAI 実装でのみ公開されます。NPU 側 SAI（Broadcom / Mellanox 等）は ENI_REDIRECT ACL を通常の `SAI_OBJECT_TYPE_ACL_ENTRY` で実装します。
+
+## Redis テーブル参照関係（per-DPU）
+
+```
+APPL_DB (per-DPU redisdpuN):
+  APP_DASH_APPLIANCE_TABLE, APP_DASH_ENI_TABLE,
+  APP_DASH_VNET_TABLE, APP_DASH_VNET_MAPPING_TABLE,
+  APP_DASH_ROUTE_TABLE, APP_DASH_ROUTE_RULE_TABLE,
+  APP_DASH_PREFIX_TAG_TABLE, APP_DASH_ACL_GROUP_TABLE, APP_DASH_ACL_RULE_TABLE,
+  APP_DASH_HA_SET_TABLE, APP_DASH_HA_SCOPE_TABLE,
+  APP_DASH_FLOW_TABLE, APP_DASH_METER_RULE_TABLE
+DPU_STATE_DB / DPU_APPL_DB / DPU_COUNTERS_DB:
+  DPU 側で観測される counter / state
+CHASSIS_STATE_DB (NPU 側):
+  DPU_TABLE, DPU_STATE_TABLE (HAMgrD / pmon が更新)
+NPU 側 CONFIG_DB / APPL_DB:
+  DASH_ENI_FORWARD_TABLE (NPU EniFwdOrch 用)
+  ACL_TABLE/ACL_RULE (ENI_REDIRECT type)
+```
+
+## ZMQ / SWBUS / Redis pub/sub
+
+- DASH は **ZMQ + SWBUS** を多用します。NPU ↔ DPU 間の制御パスは SONiC 標準の Redis pub/sub ではなく、SWBUS (`sonic-swbus` based。`gnmi-native-write` と並び ZMQ producer/consumer を使う) でメッセージを配送します。これは大量の DASH route / ENI / flow を Redis を介さず直接 orchagent に流すためです。
+- HA flow sync は DPU 間の専用 channel（DASH-HA dataplane channel）で行い、Redis を経由しません。
+- 通常の DASH 設定（ENI / VNET / route）は SWBUS → 各 DPU の APPL_DB に書かれ、`DashOrch` 系が SubscriberStateTable で読み取ります。
+
+## 既知の実装上の制約
+
+- DASH SAI は **experimental** に分類され、SAI ABI が安定していない。DPU SDK の更新で SONiC 側の sai header 同期が必要。
+- ENI 数の上限はベンダ DPU の SDK 制約に依存。HLD 上は「数万 ENI」を想定するが、実機ベンチで上限が変わる。
+- HAMgrD と DashHaOrch / DashHaFlowOrch の通信は実装途中の箇所があり、failure scenario（DPU crash / link down / split brain）のカバレッジは limited。`discrepancy-found` ページに詳細を記録。
+- NPU 側 ENI_REDIRECT ACL は ENI 数に比例して ACL rule 数が増えるため、NPU の TCAM 上限を超える可能性がある。`SAI_ACL_TABLE_ATTR_SIZE` の事前確認が必要。
+- DASH prefix tag の Stage 1（SWSS 展開）は ACL rule 数を `タグメンバ数 × ルール数` に膨らませる。Stage 2（SAI ネイティブ）の計画はあるが未着手。
+- per-DPU redis / orchagent は `featured` で起動し、DPU instance の crash 時に NPU 側の `pmon` が detect → restart する設計だが、HA 切替と orchagent restart の競合は HLD 範囲外。
+
 ## 関連ページ
 
 - [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md)

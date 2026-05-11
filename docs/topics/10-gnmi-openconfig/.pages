@@ -4,5 +4,6 @@ nav:
   - architecture.md
   - setup.md
   - operations.md
+  - internals.md
   - gnoi-gnsi.md
   - yang-reference.md

@@ -50,6 +50,85 @@ Packet Trimming は congestion 時に packet 全体を落とさず、ヘッダ�
 
 このページで扱う機能は ASIC / SAI の対応差が大きく、既存ページの verification も混在しています。egress mirror capability は code-verified、outer DSCP と packet trimming は HLD-only です。設計判断に使う場合は、該当 platform の STATE_DB capability、syslog、orchagent 実装、SAI 実装を必ず合わせて確認します。
 
+## データフロー（ACL / CoPP / Mirror 共通）
+
+```mermaid
+flowchart LR
+  CFG[(CONFIG_DB<br/>ACL_TABLE/ACL_RULE/COPP_TABLE/MIRROR_SESSION)] --> APPL[(APPL_DB)]
+  APPL --> ACLORCH[AclOrch / CoppOrch / MirrorOrch / PolicerOrch]
+  ACLORCH --> ASIC[(ASIC_DB<br/>ACL_TABLE / ACL_ENTRY / POLICER / HOSTIF_TRAP_GROUP)]
+  CAP[(STATE_DB:SWITCH_CAPABILITY<br/>ACL_ACTIONS / ACL_STAGE)] <-- query --> ACLORCH
+  COUNT[(COUNTERS_DB<br/>ACL counter / Trap counter)] <-- populate --> ACLORCH
+```
+
+## 主要 Orch / daemon の責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `AclOrch` (`orchagent/aclorch.cpp`) | `AclOrch::doTask`、`AclTable::create`、`AclRule::create` | ACL table / rule、capability 問い合わせ、counter 登録 |
+| `CoppOrch` (`orchagent/copporch.cpp`) | `CoppOrch::doTask`、`addTrap`、`createGenetlinkHostIf` | hostif trap group / hostif trap、policer の紐付け |
+| `PolicerOrch` (`orchagent/policerorch.cpp`) | `PolicerOrch::doTask` | meter / policer object の作成 |
+| `MirrorOrch` (`orchagent/mirrororch.cpp`) | `MirrorOrch::doTask`、`activateSession` | local / ERSPAN mirror session の作成、nexthop 解決まで pending |
+| `acl-loader` (`sonic-utilities/acl_loader/`) | python CLI | DASH / data-plane ACL の JSON loader |
+
+## SAI 属性使用一覧
+
+ACL:
+
+| object | 属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_ACL_TABLE` | `SAI_ACL_TABLE_ATTR_ACL_STAGE = INGRESS/EGRESS`、`SAI_ACL_TABLE_ATTR_BIND_POINT_TYPE_LIST`、`SAI_ACL_TABLE_ATTR_FIELD_*` |
+| `SAI_OBJECT_TYPE_ACL_ENTRY` | `SAI_ACL_ENTRY_ATTR_FIELD_*`（match）、`SAI_ACL_ENTRY_ATTR_ACTION_PACKET_ACTION / SET_TC / MIRROR_INGRESS / MIRROR_EGRESS / SET_ACL_META_DATA` |
+| `SAI_OBJECT_TYPE_ACL_COUNTER` | counter object（COUNTERS_DB 反映） |
+| `SAI_OBJECT_TYPE_POLICER` | `SAI_POLICER_ATTR_CBS`、`PIR`、`COLOR_SOURCE` |
+
+CoPP / hostif:
+
+| object | 属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_HOSTIF_TRAP_GROUP` | `SAI_HOSTIF_TRAP_GROUP_ATTR_POLICER`、`QUEUE` |
+| `SAI_OBJECT_TYPE_HOSTIF_TRAP` | `SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE = LLDP/BGP/ARP_REQUEST/...`、`PACKET_ACTION`、`TRAP_PRIORITY` |
+| `SAI_OBJECT_TYPE_HOSTIF_USER_DEFINED_TRAP` | `SAI_HOSTIF_USER_DEFINED_TRAP_ATTR_TYPE` |
+
+Mirror:
+
+| object | 属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_MIRROR_SESSION` | `SAI_MIRROR_SESSION_ATTR_TYPE = LOCAL/REMOTE/ERSPAN/SFLOW`、`MONITOR_PORT`、`ERSPAN_*` |
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  ACL_TABLE, ACL_RULE, ACL_TABLE_TYPE,
+  COPP_TABLE, COPP_GROUP, COPP_TRAP,
+  MIRROR_SESSION, EVERFLOW_*,
+  POLICER
+APPL_DB:
+  (CoppOrch は CONFIG_DB を直接読む構造、ACL は CONFIG_DB→AclOrch)
+STATE_DB:
+  SWITCH_CAPABILITY (ACL_ACTIONS|INGRESS / EGRESS)
+COUNTERS_DB:
+  COUNTERS:<acl_oid>, COUNTERS_ACL_NAME_MAP, COUNTERS_TRAP_NAME_MAP
+ASIC_DB:
+  ACL_TABLE, ACL_ENTRY, ACL_COUNTER, POLICER,
+  HOSTIF_TRAP, HOSTIF_TRAP_GROUP, MIRROR_SESSION
+```
+
+## ZMQ / Redis pub/sub
+
+- ACL / CoPP / Mirror は Redis pub/sub のみ。ZMQ は使用しない（DASH 系は別経路、→ 13 章）。
+- ACL counter は `flexcounter` の `ACL_STAT_COUNTER` group が定期 polling し COUNTERS_DB を更新。
+- Mirror session の nexthop 解決待ちは `MirrorOrch` 内 Observer で `NeighOrch` / `RouteOrch` の更新を待つ（プロセス内）。
+
+## 既知の実装上の制約
+
+- ACL の **stage / bind point / action / field** の組み合わせは ASIC の TCAM レイアウト依存で、HLD で書ける組み合わせでも `STATE_DB:SWITCH_CAPABILITY` で許されていないと無効。capability が公開されていない ASIC では確認が困難。
+- `MIRROR_EGRESS` action はベンダ依存が大きく、`MIRROR_INGRESS` のみ実装で `MIRROR_EGRESS` 未対応の ASIC では egress mirror が黙って ingress mirror に倒れる discrepancy が報告されている。
+- CoPP の queue / policer 設定は `copp_cfg.json` のテンプレートに依存し、CONFIG_DB の動的変更が即時反映されない経路がある（`hostcfgd` 経由のものは reload が必要）。
+- ACL counter は ASIC によって entry per counter か rule per counter かが分かれ、SONiC は両方を抽象化するが、counter clear / reset の挙動が ASIC で違う。
+- Mirror session の ERSPAN destination が ECMP の場合、`MirrorOrch` は単一 nexthop のみ採用し、ECMP の動的 rehash には追従しない。
+
 ## 関連ページ
 
 - [ACL の egress mirror 対応と SAI ベース action capability 問い合わせ](../../acl-qos/egress-mirroring-support-and-acl-action-capability-check.md)

@@ -6,4 +6,5 @@ nav:
   - setup.md
   - operations.md
   - ecmp.md
+  - internals.md
   - advanced.md

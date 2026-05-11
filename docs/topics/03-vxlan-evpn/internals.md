@@ -1,0 +1,107 @@
+---
+title: 内部実装
+area: topics
+verification: meta
+last_verified: 2026-05-11
+sources: []
+---
+
+# 内部実装
+
+VXLAN / EVPN / VNET の内部実装は「FRR (bgpd) が EVPN type-2/type-5 を学習し、zebra が kernel/fpmsyncd に渡し、orchagent が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて SAI tunnel 系オブジェクトを ASIC_DB に投入する」という縦の流れと「外部 controller が VNET_TUNNEL / VNET_ROUTE_TUNNEL を直接 APPL_DB に書く」という横の流れに分かれます。HLD の章をまたいで読むときは、この二経路をまず分離します。
+
+## データフロー
+
+```mermaid
+flowchart LR
+  subgraph control[制御プレーン]
+    BGPD[bgpd<br/>EVPN type-2/5]
+    ZEBRA[zebra]
+    CTRL[VNET controller<br/>外部から swssconfig 等]
+  end
+  subgraph swss[swss コンテナ]
+    FPMSYNCD[fpmsyncd]
+    BGPCFGD[bgpcfgd]
+    ORCH[orchagent<br/>VxlanOrch / VNetOrch / VxlanTunnelOrch]
+  end
+  subgraph redis[Redis]
+    CFG[(CONFIG_DB<br/>VXLAN_TUNNEL / VNET)]
+    APP[(APPL_DB<br/>VNET_TUNNEL_TABLE / VNET_ROUTE_TUNNEL_TABLE)]
+    ASIC[(ASIC_DB<br/>SAI_OBJECT_TYPE_TUNNEL)]
+  end
+  BGPD --> ZEBRA --> FPMSYNCD --> APP
+  BGPCFGD --> CFG
+  CTRL --> APP
+  CFG --> ORCH
+  APP --> ORCH
+  ORCH --> ASIC
+```
+
+EVPN 学習経路と VNET API 経路は orchagent の中で同じ tunnel / encap オブジェクトに合流します。重複作成を避けるため、`VxlanTunnelOrch` は tunnel 名を key とした参照カウントを内部で持ちます。
+
+## 主要 Orch / daemon の責務
+
+| コンポーネント | 主なクラス / 実体 | 責務 |
+| --- | --- | --- |
+| `VxlanTunnelOrch` (`orchagent/vxlanorch.cpp`) | `VxlanTunnelOrch::doTask`、`createVxlanTunnel` | `VXLAN_TUNNEL` から SAI tunnel / tunnel-map を生成、underlay/overlay router interface を関連付け |
+| `VxlanTunnelMapOrch` | `VxlanTunnelMapOrch::doTask` | VNI ↔ VLAN / VRF の tunnel-map entry を管理 |
+| `VNetOrch` (`orchagent/vnetorch.cpp`) | `VNetOrch::doTask`、`VNetBitmapObject` / `VNetVrfObject` | `VNET` テーブルから vrf 実体（または bitmap 方式）を作成 |
+| `VNetRouteOrch` | `addRoute`、`addTunnelRoute` | `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を SAI nexthop / nexthop group へ |
+| `EvpnRemoteVnipOrch` / `EvpnNvoOrch` | `orchagent/vxlanorch.cpp` | type-2 で学んだ remote VTEP を tunnel decap 側に登録 |
+| `VRFOrch` | `orchagent/vrforch.cpp` | EVPN type-5 受信 vrf の作成・参照管理 |
+| `IntfsOrch` | `orchagent/intfsorch.cpp` | overlay SVI / router interface の作成 |
+| `bgpcfgd` (`dockers/docker-fpm-frr/bgpcfgd/`) | jinja2 + bgpcfgd | CONFIG_DB の `BGP_*` / `DEVICE_METADATA` から FRR の vtysh config を生成 |
+| `fpmsyncd` (`fpmsyncd/fpmlink.cpp`) | `FpmLink::processFpmMessage` | zebra の FPM netlink を `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` に書き込み |
+
+## SAI 属性の使用一覧
+
+| ステップ | SAI object | 主要属性 |
+| --- | --- | --- |
+| tunnel 作成 | `SAI_OBJECT_TYPE_TUNNEL` | `SAI_TUNNEL_ATTR_TYPE = VXLAN`、`SAI_TUNNEL_ATTR_ENCAP_SRC_IP`、`SAI_TUNNEL_ATTR_DECAP_MAPPERS`、`SAI_TUNNEL_ATTR_ENCAP_MAPPERS` |
+| tunnel map | `SAI_OBJECT_TYPE_TUNNEL_MAP` | `SAI_TUNNEL_MAP_ATTR_TYPE = VNI_TO_VLAN_ID / VNI_TO_VIRTUAL_ROUTER_ID` 等 |
+| tunnel map entry | `SAI_OBJECT_TYPE_TUNNEL_MAP_ENTRY` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_KEY`、`SAI_TUNNEL_MAP_ENTRY_ATTR_VLAN_ID_VALUE` / `VIRTUAL_ROUTER_ID_VALUE` |
+| decap term | `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` | `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_TUNNEL_TYPE = VXLAN`、`DST_IP`、`SRC_IP`（P2P 時） |
+| overlay nexthop | `SAI_OBJECT_TYPE_NEXT_HOP` | `SAI_NEXT_HOP_ATTR_TYPE = TUNNEL_ENCAP`、`SAI_NEXT_HOP_ATTR_TUNNEL_ID`、`SAI_NEXT_HOP_ATTR_TUNNEL_VNI`、`SAI_NEXT_HOP_ATTR_TUNNEL_MAC` |
+
+これら属性のうち `SAI_NEXT_HOP_ATTR_TUNNEL_MAC` は EVPN type-2 由来の inner DMAC を渡すために使われ、ベンダ実装で missing になりやすい点が discrepancy として上がりやすい箇所です。
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  VXLAN_TUNNEL ─┬─> VxlanTunnelOrch
+  VXLAN_TUNNEL_MAP ─> VxlanTunnelMapOrch
+  VNET ─────────> VNetOrch
+  VLAN_INTERFACE / VLAN  ─> IntfsOrch (overlay SVI)
+  BGP_NEIGHBOR (l2vpn evpn AF)  ─> bgpcfgd → FRR
+
+APPL_DB:
+  VNET_TUNNEL_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─> VNetOrch / VNetRouteOrch
+  EVPN_REMOTE_VNI_TABLE ─> EvpnRemoteVnipOrch
+  NEIGH_TABLE (type-2) ─> NeighOrch
+
+STATE_DB:
+  VXLAN_TUNNEL_TABLE / EVPN_REMOTE_VNI_TABLE / BFD_SESSION_TABLE
+ASIC_DB:
+  SAI_OBJECT_TYPE_TUNNEL / TUNNEL_MAP / TUNNEL_TERM_TABLE_ENTRY / NEXT_HOP / ROUTE_ENTRY
+```
+
+VNET monitoring / BFD は `BFD_SESSION_TABLE` 経由で `BfdOrch` に届き、ECMP nexthop の up/down 判定にフィードバックされます。
+
+## ZMQ / pub-sub の使用
+
+- `VNET_ROUTE_TUNNEL_TABLE` は外部 controller からの大量 push を想定し、**ZMQ producer/consumer 経路**で APPL_DB を経由せずに orchagent に直接渡す経路があります（`zmq_server_address` の `ORCHAGENT` 設定）。SDN コントローラ統合 HLD で導入された経路で、Redis pub/sub のスループット限界回避のためです。
+- 通常 EVPN 経路は ProducerStateTable / SubscriberStateTable を使う Redis pub/sub のみで、ZMQ は使いません。
+- `BfdOrch` から `VNetOrch` への通知は orchagent 内 `Observer` パターン（プロセス内 callback）で、Redis を経由しません。
+
+## 既知の実装上の制約
+
+- VxLAN encap source IP は **loopback IP** をひとつ選ぶ設計で、複数 source を SAI 側で同時に持つことは tunnel object 単位では未対応です（HLD で明記）。
+- ベンダ ASIC によっては `SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID`（type-5 用）が未実装で、EVPN type-5 を MAC-VRF + IRB で代替する実装に倒れることがあります。これは discrepancy として記録する典型例です。
+- VNET BGP（VNET 内 BGP セッション）は BGP route の VNET 帰属を nexthop で識別する設計で、同一 nexthop が複数 VNET から指される構成は HLD では除外されています。
+- type-2 で学んだ ARP/ND の老化は kernel ではなく orchagent の `NeighOrch` が tunnel route と一緒に管理するため、tcpdump で aging を観測しても挙動が一致しないことがあります。
+
+## 関連ページ
+
+- [VXLAN SONiC HLD](../../overlay/vxlan-sonic.md)
+- [VNET local endpoint forwarding](../../overlay/vnet-local-endpoint-forwarding.md)

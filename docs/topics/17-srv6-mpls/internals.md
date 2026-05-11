@@ -64,6 +64,72 @@ orchagent 側の処理は port 系で、`sonic-swss/tests/test_port.py` に `tes
 
 SAI 視点では、SRv6 endpoint は `SAI_OBJECT_TYPE_MY_SID_ENTRY` 1 種類でほぼ表現されます。違いは behavior 属性と、cross-connect 系での `NEXT_HOP_ID` の有無です。uSID も SAI レベルでは behavior 値が増えただけで、データ構造の追加はありません。HLD レベルで複数に見えるものが SAI レベルで同じ object なのは、設定や運用で「同じ場所を見ればよい」という指針につながります。
 
+## データフロー（SRv6 / MPLS）
+
+```mermaid
+flowchart LR
+  CFG[(CONFIG_DB<br/>SRV6_MY_LOCATORS / SRV6_MY_SIDS / MPLS_TC_TO_TC_MAP)] --> BGP[bgpcfgd / SRv6Mgr]
+  BGP --> FRR[FRR<br/>zebra / mgmtd]
+  FRR -->|FPM| FPM[fpmsyncd<br/>RouteSync]
+  FPM --> APPL[(APPL_DB<br/>ROUTE_TABLE / LABEL_ROUTE_TABLE)]
+  APPL --> SRV6ORCH[Srv6Orch / RouteOrch]
+  SRV6ORCH --> ASIC[(ASIC_DB<br/>MY_SID_ENTRY / INSEG_ENTRY / SIDLIST)]
+```
+
+## 主要 Orch / daemon の責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `Srv6Orch` (`orchagent/srv6orch.cpp`) | `Srv6Orch::doTask`、`createUpdateMysidEntry`、`createSrv6Vpn` | MY_SID_ENTRY、SID list、VPN encap mapper |
+| `MplsRouteOrch` (`orchagent/routeorch.cpp` 内) | label route 処理 | INSEG_ENTRY 作成、bulk programming |
+| `bgpcfgd::SRv6Mgr` | python | static SID/Locator を vtysh で FRR に投入 |
+| `fpmsyncd::RouteSync` | C++ | AF_MPLS netlink を LABEL_ROUTE_TABLE に変換 |
+| `IntfMgr` | C++ | per-RIF MPLS 有効化 |
+| `QosOrch::handleMplsTcToTcTable` | C++ | MPLS TC ↔ internal TC map |
+
+## SAI 属性使用一覧
+
+| object | 主属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_MY_SID_ENTRY` | `SAI_MY_SID_ENTRY_ATTR_ENDPOINT_BEHAVIOR = END / END_X / END_DT4 / END_DT6 / END_DT46 / UN / UA / UDT4 / UDT6 / UDT46 / UDX4 / UDX6`、`PACKET_ACTION`、`NEXT_HOP_ID`、`VRF` |
+| `SAI_OBJECT_TYPE_SRV6_SIDLIST` | `SAI_SRV6_SIDLIST_ATTR_TYPE`、`SEGMENT_LIST` |
+| `SAI_OBJECT_TYPE_NEXT_HOP` | `SAI_NEXT_HOP_ATTR_TYPE = SRV6_SIDLIST`、`SRV6_SIDLIST_ID` |
+| `SAI_OBJECT_TYPE_INSEG_ENTRY` | `SAI_INSEG_ENTRY_ATTR_NUM_OF_POP`、`PACKET_ACTION`、`NEXT_HOP_ID` |
+| `SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_PATH_TRACING_INTF`、`SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE` |
+| `SAI_OBJECT_TYPE_ROUTER_INTERFACE` | `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` |
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  SRV6_MY_LOCATORS, SRV6_MY_SIDS,
+  MPLS_TC_TO_TC_MAP, TC_TO_DSCP_MAP_MPLS,
+  INTERFACE (mpls = enable)
+APPL_DB:
+  ROUTE_TABLE (SRv6 encap / decap route),
+  LABEL_ROUTE_TABLE (MPLS),
+  SRV6_MY_SID_TABLE, SRV6_SID_LIST_TABLE
+STATE_DB:
+  SRV6_*_STATUS (限定的)
+ASIC_DB:
+  MY_SID_ENTRY, SRV6_SIDLIST, INSEG_ENTRY, NEXT_HOP (TYPE=SRV6_SIDLIST)
+```
+
+## ZMQ / Redis pub/sub
+
+- ZMQ は使わない。
+- bgpcfgd ↔ FRR は **vtysh execve**（プロセス起動）で config を流し込む経路。Redis pub/sub も間接的にしか使われない。
+- fpmsyncd は FPM netlink を受け、ProducerStateTable で LABEL_ROUTE_TABLE に書く。
+
+## 既知の実装上の制約
+
+- SRv6 endpoint behavior の SAI mapping は **ベンダ実装で対応が分かれる**。特に `END_DT46` や `UDT*` は未実装の ASIC がある。
+- SID list は SAI で 1 オブジェクト化されるが、SID 数の上限が ASIC TCAM サイズに律速される。HLD 上の数字より実機が低いケースが多い。
+- MPLS は SONiC core では機能的に古く、`fpmsyncd` の MPLS label 解析は **限定的な netlink encoding** にしか対応していない。L3VPN（VPNv4/VPNv6 over MPLS）の完全サポートは無く、SRv6 経由を推奨。
+- per-port MPLS 有効化は RIF 属性で行うが、`SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` 未対応の ASIC では「kernel は受理するが ASIC が drop」する silent な動作になる。
+- Path Tracing Midpoint は data plane の OAM 拡張で、SONiC では `SAI_PORT_ATTR_PATH_TRACING_*` を介して port 単位設定。midpoint だけで end-to-end が完結するわけではない点に注意。
+- SRv6 VPN の prefix-agg-id は orchagent の内部最適化で、SAI 側では複数 prefix が同じ nexthop （= 同じ vpn_sid）を共有する形になる。`CRM` の prefix 数とは別の集計が必要。
+
 ## 関連ページ
 
 - [SRv6 HLD](../../routing/segment-routing-over-ipv6-srv6-hld.md)

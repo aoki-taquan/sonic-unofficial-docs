@@ -77,3 +77,74 @@ QoS / buffer は「同じ概念をプラットフォーム差を吸収しつつ�
 3. **PG / queue 割当** — ポート×index への適用。
 
 そして「ConfigDB の SCHEDULER / WRED / MAP は SAI のオブジェクトに 1:1」「BUFFER_PROFILE は SAI に 1:1 だが、同じ意味のものは共有」「BUFFER_PG / BUFFER_QUEUE は SAI の port × index の attribute 更新になる」と、それぞれ SAI 側での扱いが違うのが厄介な点です。設定変更時に「参照を外す → 値を変える → 参照を戻す」の順序を守る必要があるのはこのためです。
+
+## データフロー（QoS / Buffer 全体）
+
+```mermaid
+flowchart LR
+  CFG[(CONFIG_DB<br/>BUFFER_POOL/PROFILE/PG/QUEUE<br/>QUEUE/SCHEDULER/WRED/*_MAP)] --> BMG[buffermgrd<br/>+ Lua / Jinja]
+  BMG --> APPL[(APPL_DB<br/>BUFFER_POOL_TABLE/...)]
+  APPL --> BORCH[BufferOrch / QosOrch]
+  BORCH --> ASIC[(ASIC_DB<br/>BUFFER_POOL/PROFILE/QUEUE/SCHEDULER/WRED)]
+  FXC[FlexCounter<br/>QUEUE_STAT_COUNTER / PG_STAT_COUNTER] --> COUNT[(COUNTERS_DB)]
+  WMK[watermarkmgr<br/>periodic / threshold] --> STATE[(STATE_DB)]
+```
+
+## 主要 Orch / daemon の責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `buffermgrd` (`cfgmgr/buffermgr*.cpp`) | `BufferMgrDynamic` / `BufferMgr` | 動的 / 静的モードの分岐、headroom 計算（Lua）、reclaim |
+| `BufferOrch` (`orchagent/bufferorch.cpp`) | `BufferOrch::doTask`、`processBufferPool` 等 | APPL_DB → SAI buffer pool / profile / PG / queue |
+| `QosOrch` (`orchagent/qosorch.cpp`) | `QosMapHandler`、`TcToQueueMapHandler` 等 | QoS の各種 map、scheduler、WRED |
+| `PfcWdSwOrch` (`orchagent/pfcwdorch.cpp`) | `PfcWdOrch::doTask` | PFC watchdog の queue ストーム検知 |
+| `flexcounter` | `syncd/FlexCounter*` | queue / PG / pool の counter polling |
+| `watermarkmgr` (`watermarkmgr/`) | bucket / table 制御 | watermark の telemetry |
+
+## SAI 属性使用一覧
+
+| object | 主要属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_BUFFER_POOL` | `SAI_BUFFER_POOL_ATTR_TYPE = INGRESS/EGRESS`、`SAI_BUFFER_POOL_ATTR_SIZE`、`SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE = DYNAMIC/STATIC` |
+| `SAI_OBJECT_TYPE_BUFFER_PROFILE` | `SAI_BUFFER_PROFILE_ATTR_POOL_ID`、`SAI_BUFFER_PROFILE_ATTR_RESERVED_BUFFER_SIZE`、`SAI_BUFFER_PROFILE_ATTR_THRESHOLD_MODE`、`SAI_BUFFER_PROFILE_ATTR_XON_TH`、`XOFF_TH`、`XON_OFFSET_TH` |
+| `SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP` | `SAI_INGRESS_PRIORITY_GROUP_ATTR_BUFFER_PROFILE`、`SAI_INGRESS_PRIORITY_GROUP_ATTR_PORT` |
+| `SAI_OBJECT_TYPE_QUEUE` | `SAI_QUEUE_ATTR_BUFFER_PROFILE_ID`、`SAI_QUEUE_ATTR_SCHEDULER_PROFILE_ID`、`SAI_QUEUE_ATTR_WRED_PROFILE_ID`、`SAI_QUEUE_ATTR_TYPE` |
+| `SAI_OBJECT_TYPE_SCHEDULER` | `SAI_SCHEDULER_ATTR_SCHEDULING_TYPE = STRICT/WRR/DWRR`、`SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_RATE` |
+| `SAI_OBJECT_TYPE_WRED` | `SAI_WRED_ATTR_GREEN_*_THRESHOLD`、`SAI_WRED_ATTR_ECN_MARK_MODE` |
+| `SAI_OBJECT_TYPE_QOS_MAP` | `SAI_QOS_MAP_ATTR_TYPE = DSCP_TO_TC / TC_TO_QUEUE / TC_TO_PG / PFC_PRIORITY_TO_QUEUE / ...` |
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  BUFFER_POOL, BUFFER_PROFILE, BUFFER_PG, BUFFER_QUEUE,
+  CABLE_LENGTH, DEFAULT_LOSSLESS_BUFFER_PARAMETER,
+  QUEUE, SCHEDULER, WRED_PROFILE,
+  DSCP_TO_TC_MAP, TC_TO_QUEUE_MAP, TC_TO_PRIORITY_GROUP_MAP,
+  PFC_PRIORITY_TO_QUEUE_MAP, PFC_PRIORITY_TO_PRIORITY_GROUP_MAP,
+  PFC_WD
+APPL_DB:
+  BUFFER_POOL_TABLE, BUFFER_PROFILE_TABLE, BUFFER_PG_TABLE, BUFFER_QUEUE_TABLE,
+  QUEUE_TABLE, SCHEDULER_TABLE, WRED_PROFILE_TABLE, *_MAP_TABLE
+STATE_DB:
+  BUFFER_POOL_WATERMARK, BUFFER_PG_WATERMARK, BUFFER_QUEUE_WATERMARK,
+  PFC_WD_TABLE
+COUNTERS_DB:
+  COUNTERS_QUEUE_NAME_MAP, COUNTERS_PG_NAME_MAP, COUNTERS:<oid>
+ASIC_DB:
+  BUFFER_POOL, BUFFER_PROFILE, INGRESS_PRIORITY_GROUP, QUEUE,
+  SCHEDULER, WRED, QOS_MAP
+```
+
+## ZMQ / Redis pub/sub
+
+- ZMQ は使わない。すべて Redis pub/sub と `flexcounter` の polling 経路。
+- PFC watchdog の検出は ASIC からの notification ではなく、`flexcounter` 経由の queue stat polling で stuck queue を検知する仕組み。
+
+## 既知の実装上の制約
+
+- 動的 buffer の計算は `cable_length` の入力が **正確である前提**で、minigraph や CONFIG_DB に古い値が残ると lossless headroom が不足し PFC が誤動作する。
+- `BUFFER_PROFILE` の共有は同一の dimensions（speed / cable / mtu）でのみ。CLI から無理に異なる name を作っても SAI 側 reuse は効かない。
+- reclaim は port admin-down → admin-up の cycle で**毎回 profile 再計算が走る**ため、port flap が多い環境で buffermgrd の CPU を消費する。
+- PFC watchdog は queue 単位の statistical detection で、瞬間的な burst にも反応する設計。`detection_time` / `restoration_time` のチューニングが必要。
+- WRED / ECN の閾値は ASIC で粒度（cell vs byte）が違い、`SAI_WRED_ATTR_*` の単位解釈が SDK ベンダごとに分かれる。

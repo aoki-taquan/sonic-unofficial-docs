@@ -59,3 +59,84 @@ HLD 当初は 7 Manager の構成でしたが、現行 master ではこれらに
 ## warm boot とキャッシュの整合
 
 `warm_boot_state_adapter_` が warm boot 時のキャッシュ復元基盤を提供しており、HLD で挙げられていた事前充填案を踏まえた骨組みになっています。整合は `P4RuntimeImpl::VerifyState()` が `VerifyP4rtTableWithCacheEntities` で確認します。
+
+## データフロー
+
+```mermaid
+flowchart LR
+  CTRL[P4RT controller<br/>gRPC] --> P4RT[p4rt-app<br/>P4Runtime server]
+  P4RT --> CACHE[entity_cache_]
+  P4RT --> APPL[(APPL_DB<br/>P4RT_*_TABLE)]
+  APPL --> P4ORCH[orchagent / P4Orch<br/>Manager 群]
+  P4ORCH --> SAI[SAI]
+  P4ORCH --> ASTATE[(APPL_STATE_DB)]
+  ASTATE --> P4RT
+  P4RT --> CTRL
+```
+
+## 主要 Orch / daemon の責務（補足）
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `p4rt-app` (`sonic-pins/p4rt_app/`) | `P4RuntimeImpl` | gRPC server。Write/Read/StreamChannel、entity_cache_ 維持 |
+| `P4Orch` (`orchagent/p4orch/`) | 各 Manager | APPL_DB → SAI、APPL_STATE_DB へ ack |
+| `P4OidMapper` | shared map | object oid と ref count |
+| `swss-common` | `APPL_STATE_DB=14` schema 拡張 | sync ack 用 |
+
+## SAI 属性使用一覧
+
+P4Orch は通常の SONiC SAI object をそのまま使うが、独自の table を P4 program で定義できる:
+
+| object | 属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_ROUTER_INTERFACE` | 通常と同様 |
+| `SAI_OBJECT_TYPE_NEXT_HOP` | TYPE = IP / TUNNEL / GRE |
+| `SAI_OBJECT_TYPE_NEXT_HOP_GROUP` (WCMP) | TYPE = DYNAMIC_ECMP / DYNAMIC_UNORDERED_ECMP |
+| `SAI_OBJECT_TYPE_ROUTE_ENTRY` | 通常 |
+| `SAI_OBJECT_TYPE_ACL_TABLE` / `ACL_ENTRY` | P4 controller-defined |
+| `SAI_OBJECT_TYPE_MIRROR_SESSION` | local / ERSPAN |
+| `SAI_OBJECT_TYPE_TUNNEL` (GRE) | encap GRE |
+| `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` | decap group |
+| `SAI_OBJECT_TYPE_IPMC_GROUP` / `IPMC_ENTRY` | multicast |
+
+P4 program は `tables_definition_manager` を介して動的に accept される。HLD 当初の static binding を超え、controller が table 定義を push する設計。
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  なし（P4RT は controller 直結が主）
+APPL_DB:
+  P4RT_ROUTER_INTERFACE_TABLE, P4RT_NEIGHBOR_TABLE,
+  P4RT_NEXTHOP_TABLE, P4RT_WCMP_GROUP_TABLE,
+  P4RT_ROUTE_TABLE, P4RT_ACL_TABLE_TABLE / RULE_TABLE,
+  P4RT_MIRROR_SESSION_TABLE, P4RT_L3_ADMIT_TABLE,
+  P4RT_GRE_TUNNEL_TABLE, P4RT_TUNNEL_DECAP_GROUP_TABLE,
+  P4RT_EXT_*_TABLE
+APPL_STATE_DB (DB id=14):
+  各 P4RT_* テーブルの ack（success / failure + reason）
+ASIC_DB:
+  通常の SAI object に展開
+```
+
+## ZMQ / Redis pub/sub
+
+- p4rt-app と orchagent の間は **Redis pub/sub + ProducerStateTable / NotificationConsumer**。
+- ZMQ は使わない。
+- controller との sync は gRPC StreamChannel で、P4RT 上の packet I/O も gRPC stream で行う。
+- APPL_STATE_DB は ack 用専用 DB で、orchagent が SAI 応答後に書き込む（通常 orchagent は APPL_STATE_DB を使わない）。
+
+## 既知の実装上の制約
+
+- P4Orch は SAI 応答を **同期的に待つ**ため、通常の orchagent より write latency が大きい（特に bulk write）。
+- entity_cache_ は in-memory のみで、p4rt-app の restart で消える。controller 側が full reconciliation を行う前提。
+- warm-boot のキャッシュ復元は実装途中の箇所があり、長期間 controller との sync が切れた状態からの復帰には full re-push が必要。
+- table definition の push は P4 program の hash で識別され、program 変更時の rollback / mixed state は HLD 範囲外。
+- WCMP の hash field は `SAI_NEXT_HOP_GROUP_ATTR_HASH_*` に依存し、ASIC で対応が分かれる。
+- p4rt-app と SONiC 標準 orchagent の Manager（`RouteOrch`、`NhgOrch` 等）は同じ SAI object を競合的に作る可能性があり、PINS image では P4Orch のみが正である前提（mixed deployment は HLD 範囲外）。
+
+## 関連ページ
+
+- [P4Orch HLD](../../internals/p4-orchagent.md)
+- [P4RT Read cache HLD](../../management/p4rt-read-cache-hld.md)
+- [P4RT Application HLD](../../management/p4rt-application-hld.md)

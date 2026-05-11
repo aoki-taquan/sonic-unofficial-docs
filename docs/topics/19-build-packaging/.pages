@@ -4,4 +4,5 @@ nav:
   - concept.md
   - architecture.md
   - operations.md
+  - internals.md
   - advanced.md

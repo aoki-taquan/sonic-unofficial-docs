@@ -39,3 +39,56 @@ VS test は「実機なしで何が確認できるか」の上限を、Ansible t
 ## Alpine / KNE の内部差分
 
 ALViS / KNE は容量・依存・起動時間の都合で、Debian ベースの SONiC とは構成が異なります。Pod に同居する docker、init 順序、SAI VS の組み込み方の差は [Alpine 仮想 SONiC](../../architecture/alpine-high-level-design.md) で読みます。CI で多数ノードを並べる動機（topology テスト、KNE 連携、リソース効率）も同 HLD に整理されています。
+
+## データフロー（SAI VS）
+
+```mermaid
+flowchart LR
+  CONF[(CONFIG_DB)] --> ORCH[orchagent / *Orch]
+  ORCH --> ASIC[(ASIC_DB)]
+  ASIC --> SYNCD[syncd<br/>SAI VS backend]
+  SYNCD --> LBRIDGE[Linux bridge]
+  SYNCD --> LROUTE[Linux route table]
+  SYNCD --> LVLAN[Linux VLAN device]
+  SYNCD --> NS[netns / veth pairs]
+  PTFHOST[PTF host container] <-->|veth| NS
+```
+
+## 主要コンポーネントの責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `SAI VS` | `meta/sai_vs_*.cpp`（libsai-vs） | SAI API を Linux netdev / bridge / route で代替 |
+| `syncd` (VS mode) | syncd binary を `--asicType vs` で起動 | SAI VS を load |
+| `sonic-vs.img` build | `sonic-buildimage` の `PLATFORM=vs` target | KVM 用 image |
+| PTF | `ptf` python framework | port-level packet I/O テスト |
+| `sonic-mgmt` testbed | ansible + pytest | KVM / 物理 testbed の orchestration |
+
+## SAI 属性使用
+
+SAI VS は実 ASIC の代替で、表面上は通常の SAI 属性をすべて受理しますが、内部処理は限定的:
+
+- `SAI_OBJECT_TYPE_PORT`：Linux netdev を veth で表現。speed/FEC/autoneg は値を保持するのみ。
+- `SAI_OBJECT_TYPE_FDB_ENTRY`：Linux bridge fdb に反映、または内部 map のみ。
+- `SAI_OBJECT_TYPE_ROUTE_ENTRY`：Linux route に反映。
+- `SAI_OBJECT_TYPE_ACL_TABLE / ACL_ENTRY`：内部 map のみ。packet match の効果は無い。
+- `SAI_OBJECT_TYPE_BUFFER_*` / `QUEUE`：内部 map のみ。
+
+このため counter / drop / WRED は VS では正しい値が出ません。
+
+## Redis テーブル参照関係
+
+VS は通常 SONiC と同じ DB schema を使うため、CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB の構造は完全に同じ。差は ASIC_DB 上の object が ASIC に反映されないことだけ。
+
+## ZMQ / Redis pub/sub
+
+VS でも Redis pub/sub の経路は通常運用と同じ。FDB learn 等の notification は SAI VS が Linux netlink event を変換して `_NOTIFY` channel に流す実装。
+
+## 既知の実装上の制約
+
+- VS は **packet forwarding の datapath が Linux kernel** で、ASIC の能力（hardware tracing、bulk counter、SAI 拡張属性、TCAM 上限）は再現しない。
+- ACL / mirror / WRED / PFC / SRv6 / NAT は VS では「設定は受理されるが効果なし」になることが多い。動作確認は実機 / SimX が必要。
+- VS image は `make PLATFORM=vs` で生成され、`onie-installer-vs.bin` または `sonic-vs.img` を libvirt / qemu で起動。boot だけで 1〜2 分かかる。
+- PTF は veth 経由で SONiC-VS と接続するが、veth の MTU / VLAN / offload 設定によっては想定外の動作になる。`ethtool -K` で TX/RX checksum を無効化する運用がある。
+- KNE 連携は Container Networking 経由で SONiC VS を pod として起動。SAI VS の起動順序や `syncd --asicType vs` の引数が KNE config で生成される。
+- VS test と Ansible test plan の二重化は意図的だが、HLD のうち「VS だけで verify 可能なもの」と「実機が要るもの」の境界が明示されていないテスト項目があり、CI 通過でも HLD と乖離するケースがある。
