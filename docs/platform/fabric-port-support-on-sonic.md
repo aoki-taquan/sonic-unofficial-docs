@@ -18,6 +18,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み。`switch_type=fabric`: `sonic-yang-models/yang-models/sonic-port.yang:75` / `APP_FABRIC_PORT_TABLE_NAME`: `sonic-swss-common/common/schema.h:40,549` / `FabricPortsOrch`: `sonic-swss/orchagent/fabricportsorch.{cpp,h}` / `show fabric`: `sonic-utilities/show/fabric.py` + `scripts/fabricstat` + `config/fabric.py`。
 

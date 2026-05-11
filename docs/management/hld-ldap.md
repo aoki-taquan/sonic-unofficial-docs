@@ -21,6 +21,11 @@ related:
     - sonic-system-ldap
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified（基本構成のみ）"
     現行 master の `sonic-utilities/config/plugins/sonic-system-ldap_yang.py` で `ldap-server` グループ CLI が自動生成、`sonic-yang-models` の `sonic-system-ldap.yang` を確認。`hostcfgd` 内 AAA / LDAP 連携も sonic-host-services 側で対応している。Debian パッケージ (libnss-ldapd 等) のインストール経路は image_config では直接見つからなかったが、後続の host-services レイヤで取り込まれている（verified at: 2026-05-09）。
 

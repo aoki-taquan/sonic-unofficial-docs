@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: discrepancy-found（汎用スクリプト名がリネーム）"
     `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 列挙値、`/var/log/sai_failure_dump/`、`SAI_MAX_FAILURE_DUMPS=10`、`platform_syncd_dump.sh` の存在は実装と一致（`sonic-sairedis/syncd/Syncd.cpp:4493`、`syncd/scripts/sai_failure_dump.sh:8/10/12`）。**ただし HLD の `/usr/bin/syncd_dump.sh` は実装では `/usr/bin/sai_failure_dump.sh` にリネーム**（`Syncd.cpp:45` / `tests.cpp:46` の `SAI_FAILURE_DUMP_SCRIPT`）。HLD 名は当時のもの、現行コードは別名（verified at: 2026-05-09）。
 

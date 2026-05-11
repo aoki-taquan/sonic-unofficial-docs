@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。DASH HA tables: sonic-swss/orchagent/orchdaemon.cpp:1354-1355 で APP_DASH_HA_SET_TABLE_NAME / APP_DASH_HA_SCOPE_TABLE_NAME を確認。SAI ha_set_event / ha_scope_event: sonic-swss/orchagent/notifications.cpp:65,79。
 

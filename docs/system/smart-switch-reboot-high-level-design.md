@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。ModuleBase: sonic-platform-common/sonic_platform_base/module_base.py:411 (pci_detach), 420 (pci_reattach), 504 (dpu_reboot_timeout) / reboot script: sonic-utilities/scripts/reboot:55-56 (DPU_MODULE_NAME, REBOOT_DPU), :153 (-d オプション), :223-224, :290 (handle_smart_switch), :298 (smartswitch + REBOOT_DPU=yes), reboot_smartswitch_helper で確認。
 

@@ -19,6 +19,11 @@ related:
     - sonic-interface
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: discrepancy-found（拡張一部のみ）"
     `sonic-buildimage/src/sonic-yang-models/yang-models/` 配下に `sonic-{feature}.yang` の命名規約に沿った 130+ ファイルが存在することは確認済（rule #1）。一方 `yang-templates/sonic-extension.yang.j2` を読むと、定義されている拡張は `db-name` と CVL 用 `custom-validation-cvl` / `dependent-on` 等のみで、**ガイドラインで言及される `map-list` / `key-delim` 拡張は本リポの sonic-extension モジュールには存在しない**。これらは別実装（mgmt-framework 側 yang-extensions など）に分散している可能性があり、ガイドラインの table 5/11/19 に挙げる構文は本リポ単体のスキーマには適合しない。`error-app-tag` の付与状況も yang-models 配下では限定的で、ガイドライン 14 とは差がある。
 

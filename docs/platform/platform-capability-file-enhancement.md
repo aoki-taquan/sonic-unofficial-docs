@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/device/dell/x86_64-dell_s6000_s1220-r0/platform.json` 等で `chassis.status_led.controllable`、`fans[].speed.controllable` / `minimum`、`status_led.colors` 配列、`status_led.available` のスキーマが実機向け platform.json に既に展開されていることを確認。Marvell / Dell の複数プラットフォームで採用済み。HLD の capabilities 拡張は実装に取り込まれている。
 

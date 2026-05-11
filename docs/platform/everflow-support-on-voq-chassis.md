@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified / 古い HLD"
     本ページは公式 HLD（Rev 1, 2020-12）のみを根拠に書かれている。`mirrororch` / `neighorch` の VoQ 拡張、SYSTEM_PORT 対応の SAI 実装、recycle port のセットアップは未確認。HLD は 2020 年で 3 年以上経過しており、Option 1 / Option 2 のどちらが採用されたかは別途検証が必要。
 

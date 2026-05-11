@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 21 章: Lab / SONiC-VS / 開発者](../topics/21-lab-vs-developer/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified（手順書ベース）"
     `sonic-buildimage` master の `Makefile` / `Makefile.work` で `NOJESSIE` / `NOSTRETCH` / `NOBUSTER` / `NOBULLSEYE` / `NOBOOKWORM` の no-* ビルドスイッチ群と `make NOJESSIE=1 KEEP_SLAVE_ON=yes` の使用例を確認。VS 経路も `platform/vs/docker-sonic-vs.{mk,dep}` 等で生きている。手順書としての主張は master と整合。実機ビルドでは現行リリース 1 種だけを残す（古い distro はスキップ）運用が前提。
 

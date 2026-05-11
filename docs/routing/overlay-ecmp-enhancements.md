@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 03 章: VXLAN / EVPN とオーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/vnetorch.cpp:445/477-479` で `overlay_dmac`、`:1029-1067` で `nexthops_primary` / `nexthops_secondary` / `tx/rx_monitor_timer` / `monitor_addr_to_pinned_state`、`:1013-1015` で `PINNED_STATE_UP/DOWN`、`sonic-swss-common/common/schema.h:133/500` で `APP/STATE_VNET_MONITOR_TABLE_NAME` を確認。`overlay_dmac` は `sonic-vnet.yang` 取り込み済み（verified at: 2026-05-09）。
 

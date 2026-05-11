@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     現行 master の `sonic-swss/orchagent/macsecpost.cpp` (`STATE_FIPS_MACSEC_POST_TABLE_NAME` を読み書き)、`sonic-swss-common/common/schema.h:471` の `STATE_FIPS_MACSEC_POST_TABLE_NAME = "FIPS_MACSEC_POST_TABLE"`、`sonic-buildimage/build_image.sh:214` の `sonic_fips=1` カーネルコマンドライン、`build_debian.sh:691-692` の `/etc/fips/fips_enable` 初期化、`dockers/docker-macsec/cli/show/plugins/show_macsec.py:351-389` の FIPS_MACSEC_POST_TABLE 読み出し CLI を確認済み（verified at: 2026-05-09）。
 

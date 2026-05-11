@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-platform-daemons` master に `sonic-psud`、`sonic-syseepromd`、`sonic-xcvrd`、`sonic-thermalctld` が存在し、HLD で「fand」と呼ばれていた FAN 周期収集は `sonic-thermalctld` (= thermalctld) として実装されている。`scripts/psushow` / `fanshow` (`sonic-utilities`) が `STATE_DB` の `CHASSIS_INFO` / `PSU_INFO` / `FAN_INFO` を直接 read することを確認。HLD の中心方針（CLI/SNMP は STATE_DB のみ参照、daemon 側で plugin 直叩きを集約）は master 取り込み済み。`fand` 単独 daemon は無いという用語差のみ。
 

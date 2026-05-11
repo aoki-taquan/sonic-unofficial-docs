@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-mgmt-common/translib/transformer/` に transformer 本体と `xspec.go:941 case "validate-xfmr"` の処理、`models/yang/annotations/sonic-extensions.yang:78-79 extension validate-xfmr { argument "validate-xfmr-name"; }` で extension 定義公開。テスト用 `openconfig-test-xfmr-annot.yang` でも `sonic-ext:validate-xfmr` を実 annotation として使用。HLD で改名された validate-xfmr 名が現行 master に取り込み済み。
 

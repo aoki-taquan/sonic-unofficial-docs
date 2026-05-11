@@ -18,6 +18,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/files/image_config/midplane-network/` 配下に `bridge-midplane.netdev` / `bridge-midplane.network` / `dummy-midplane.network` / `define-npu-specific-netdevs.sh` を確認。`DHCP_SERVER_IPV4` / `DHCP_SERVER_IPV4_PORT` テーブルは `src/sonic-yang-models/doc/Configuration.md`、`src/sonic-config-engine/config_samples.py`、`src/sonic-dhcp-utilities/` で参照されている。Smart Switch midplane bridge / DHCP server 経路は master 取り込み済み。
 

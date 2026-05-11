@@ -23,6 +23,11 @@ related:
     - sonic-nat
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。natmgrd: sonic-swss/cfgmgr/natmgrd.cpp + natmgr.cpp / natsyncd: sonic-swss/natsyncd/natsyncd.cpp / NatOrch: sonic-swss/orchagent/natorch.cpp で確認。docker-nat: sonic-buildimage/dockers/docker-nat 取り込み済み。CONFIG_DB STATIC_NAT / NAT_POOL / NAT_BINDINGS / NAT_ZONE: sonic-yang-models sonic-nat.yang で確認。config nat / show nat: sonic-utilities/config/nat.py 取り込み済み。
 

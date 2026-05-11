@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。namespace 引数: sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:1285 (DaemonBase) + sonic-xcvrd/xcvrd/xcvrd_utilities/port_event_helper.py:52-86 (namespaces 引数 + daemon_base.db_connect(namespace=ns)) で確認。
 

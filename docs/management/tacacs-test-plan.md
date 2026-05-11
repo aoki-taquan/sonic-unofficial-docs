@@ -21,6 +21,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     本テストプランの設計記述。`hostcfgd` による PAM (`/etc/pam.d/common-auth-sonic`) 生成、`config tacacs` CLI、failthrough オプション、loopback source IP の挙動の現行 master 実装は未裏取り。
 

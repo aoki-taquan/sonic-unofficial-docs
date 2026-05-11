@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified（実装は緩和版）"
     `sonic-sairedis/configure.ac` (l.226-261) で `AC_CHECK_FUNCS(sai_query_api_version, [AC_TRY_RUN([...]) ])` の検査が確認できる。`sonic-sairedis/syncd/VendorSai.cpp` (l.52) で `.query_api_version = &sai_query_api_version` も実装済。ただし HLD 提案の「MAJOR.MINOR 一致」相当ではなく、**`sai_api_version_t minversion = SAI_VERSION(1,9,0)` の floor チェック** に緩和されており、`(version < minversion) || (SAI_API_VERSION < minversion)` だけが失敗条件（PATCH どころか MINOR の上方差も許容）。詳細は configure.ac のコメントで OCP PR 1297/1795 を引用して説明。
 

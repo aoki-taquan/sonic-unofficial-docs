@@ -19,6 +19,11 @@ related:
     - sonic-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: Discrepancy-found（部分実装）"
     `dhcp_rate_limit` の **データ層 + CLI** は取り込み済み（`sonic-yang-models/yang-models/sonic-port.yang` L106、`sonic-utilities/scripts/db_migrator.py` L514-524 で既定 300 を migration、`sonic-utilities/config/main.py` L5948-6002）。一方、HLD が要求する **portmgrd の `tc qdisc` / `tc filter` 投入ロジック** は `sonic-swss/cfgmgr/` に未取り込み（grep ヒット 0）。`sonic-buildimage/files/image_config/copp/copp_cfg.j2` に `dhcp_relay: trap_ids="dhcp,dhcpv6"` が残り、HLD が前提とする「CoPP 全体 DHCP 制限の削除」も未実施。仕様参考扱い（verified at: 2026-05-09）。
 

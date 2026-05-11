@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     現行 master の `sonic-swss/orchagent/bfdorch.cpp`（BfdOrch 本体、`SAI_BFD_SESSION_TYPE_*` / `SAI_BFD_SESSION_STATE_*` 利用）、`sonic-swss-common/common/schema.h:120` の `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"`、line 491 の STATE_DB 同名テーブル、`sonic-utilities/show/main.py:2669` 系の `show bfd` 実装を確認済み（verified at: 2026-05-09）。 Phase 2 以降の CONFIG_DB スキーマや warm reboot 連携は本ページ範囲外として queue に残置。
 

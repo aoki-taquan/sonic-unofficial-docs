@@ -21,6 +21,11 @@ related:
     - sonic-pbh
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `PbhOrch` は `sonic-swss/orchagent/pbhorch.h` L13-L19 に class 宣言、`orchdaemon.cpp` L52 で `gPbhOrch` 大域インスタンス、L553-L570 で `CFG_PBH_TABLE_TABLE_NAME` を含む 4 テーブル接続と `new PbhOrch(pbhTableConnectorList, gAclOrch, gPortsOrch)` 初期化、`m_orchList.push_back(gPbhOrch)` まで取り込み済みであることを確認。スキーマ定数 `PBH_TABLE_INTERFACE_LIST` / `PBH_TABLE_DESCRIPTION` は `orchagent/pbh/pbhschema.h` L5-L6 を確認。SAI fine-grained hash 属性 / CRM 連携の深掘りは別バッチ。
 

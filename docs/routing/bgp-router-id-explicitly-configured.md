@@ -16,6 +16,11 @@ related:
     - sonic-device_metadata
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` L185-189 で「`Loopback*` の IPv4 が無く、かつ `DEVICE_METADATA.localhost.bgp_router_id` も設定されていない場合のみ peer 追加を中断」する分岐を確認。`sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2` L142-149 で `'bgp_router_id' in DEVICE_METADATA['localhost']` のとき `bgp router-id <addr>` をテンプレート出力することを確認 (verified at: 2026-05-09)。
 

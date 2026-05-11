@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-utilities/sfputil/main.py` で `read-eeprom` (L1812-) / `write-eeprom` (L1862-) サブコマンドを確認。`-n/--page` (hex) / `-o/--offset` (`click.IntRange(0, MAX_EEPROM_OFFSET)`) / `--size` / `--no-format` / `--wire-addr` (sff8472 用) / `--verify` (write 後リードバック比較) を実装。`get_overall_offset_sff8472` ヘルパで sff8472 wire-addr (a0h/a2h) を解決し、`sfp.read_eeprom(flat_offset, size)` / `sfp.write_eeprom(overall_offset, len(bytes), bytes)` の platform API を呼ぶ。NotImplementedError 経路も `Sfp.read_eeprom() is currently not implemented for this platform` で返却。
 

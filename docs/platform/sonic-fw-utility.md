@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-utilities/fwutil/{main,lib,log}.py` と `sonic-platform-common/sonic_platform_base/component_base.py`（`get_firmware_version` / `install_firmware` 等）の存在を確認。各 platform plugin と `platform_components.json` の正確な記述差はベンダ依存のため範囲外。
 

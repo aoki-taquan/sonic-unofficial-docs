@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified（要件チェックリスト）"
     `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` master に `CHASSIS_MODULE_TABLE` / `CHASSIS_ASIC_TABLE` の生成と `CHASSIS_MODULE_HOSTNAME_TABLE` (= `CHASSIS_MODULE_TABLE`) の hostname フィールド処理を確認（要件 #21 の hostname 表示拡張）。`sonic-psud` / `sonic-thermalctld` も同 daemon repo に存在。要件で挙がった Mandatory 項目は master 取り込み済み。Future 項目（LED 統一 / sensors 移行 / Generic console）は別途追跡。
 

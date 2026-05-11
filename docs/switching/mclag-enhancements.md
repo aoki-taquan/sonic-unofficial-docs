@@ -19,6 +19,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     iccpd: `sonic-buildimage/src/iccpd` / mclagsyncd: `sonic-swss/mclagsyncd/mclagsyncd.cpp` / schema: `APP_MCLAG_FDB_TABLE_NAME`, `APP_ISOLATION_GROUP_TABLE_NAME`, `CFG_MCLAG_TABLE_NAME` (`MCLAG_DOMAIN`), `CFG_MCLAG_INTF_TABLE_NAME` (`MCLAG_INTERFACE`): `sonic-swss-common/common/schema.h:118,119,378,379` / `sonic-mclag.yang` で確認。
 

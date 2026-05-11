@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。rfc2737 (Entity MIB): sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc2737.py:241,672,822,1144 (entPhysicalContainedIn, FAN_INFO map) / rfc3433 (Entity Sensor MIB): rfc3433.py に RFC 3433 link / sub_oid: physical_entity_sub_oid_generator.py で確認。
 

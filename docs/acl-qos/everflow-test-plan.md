@@ -21,6 +21,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     テストプラン本体は `sonic-mgmt` 側の Ansible / PTF テストスクリプトに対する仕様だが、被テストの mirror 機能 (`MIRROR_SESSION` 制御パス: src/dst IP / DSCP / TTL / GRE type / next-hop / queue / status) は `sonic-swss/orchagent/mirrororch.cpp` L15-L24 ほか 1611 行に渡って実装されている。P4 mirror manager 系も `orchagent/p4orch/mirror_session_manager.cpp` で存在を確認。`sonic-mgmt` ツリーはローカルキャッシュ未取り込みのためテストスクリプト本体の文言一致は別バッチに委ねる。
 

@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-sairedis/syncd/FlexCounter.cpp` master に `querySupportedCounters()` 実装と `use_sai_stats_capa_query` フラグ、`sai_stat_capability_list_t` を使った 2 段呼び出し（count 取得 → list 取り直し）パターン、`SAI_STATUS_NOT_IMPLEMENTED` フォールバックを確認。Port / Queue / PG / RIF / BufferPool で同パターン。HLD の改修は master 取り込み済み。
 

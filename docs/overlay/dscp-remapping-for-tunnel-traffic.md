@@ -23,6 +23,11 @@ related:
     - sonic-port-qos-map
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 05 章: Dual ToR / MUX / アクティブ冗長](../topics/05-dual-tor/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: Discrepancy-found"
     実装は概ね HLD どおりだが、PFC watchdog フィールド名が `pfc_wd_sw_enable`（HLD）→ `pfcwd_sw_enable`（実装）と異なる。詳細は末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 

@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: discrepancy-found（STATE_DB テーブル名が `LIQUID_COOLING_DEVICE` ではなく `LIQUID_COOLING_INFO`）"
     `sonic-platform-common/sonic_platform_base/liquid_cooling_base.py` に `LeakSeverity` enum (`MINOR`/`CRITICAL`)・`LeakageSensorBase` (継承元 `SensorBase`) を確認。`sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld` で `LiquidCoolingUpdater` クラス、`liquid_cooling_update_interval=0.5` 秒のポーラを確認。**ただし STATE_DB のテーブル名は本ページが記述する `LIQUID_COOLING_DEVICE` ではなく実コードでは `LIQUID_COOLING_INFO`**（`LIQUID_COOLING_INFO_TABLE_NAME = 'LIQUID_COOLING_INFO'`）。`mlnx-platform-api/sonic_platform/liquid_cooling.py` にベンダー実装も存在。本ページのスキーマ記述部分は HLD ベースの記述であり、現行 master のテーブル名と差異がある点に注意。
 

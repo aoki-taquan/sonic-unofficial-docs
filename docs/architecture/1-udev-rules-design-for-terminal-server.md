@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified（haliburton platform で実装確認）"
     `sonic-buildimage/platform/broadcom/sonic-platform-modules-cel/haliburton/script/50-ttyUSB-C0.rules` に HLD と一致する `DRIVERS=="cp210x", ATTRS{interface}=="CP2108 Interface N", SYMLINK+="C0-X"` 形式の rules が確認できた。`platform-modules-haliburton.init` で /etc/udev/rules.d/ 配下に配置される。USB hub 故障の syslog / SNMP 通知機構は本 platform では実装なし。
 

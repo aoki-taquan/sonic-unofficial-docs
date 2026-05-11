@@ -18,6 +18,11 @@ related:
     - sonic-asic-sdk-health-event
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     orchagent 側 health event handler は `sonic-swss/orchagent/switchorch.{h,cpp}`、CONFIG_DB suppress スキーマは `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-suppress-asic-sdk-health-event.yang`、CLI は `sonic-utilities/{show,config}/main.py` および `tests/asic_sdk_health_event_test.py` で確認済み。SAI 側の各ベンダ実装の充足度は ASIC 依存。
 

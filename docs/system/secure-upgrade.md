@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage` master の `slave.mk` / `rules/config` / `onie-mk-demo.sh` / `files/build_templates/sonic_version.yml.j2` で `SECURE_UPGRADE_MODE` 分岐を確認。`sign_image_dev` 系の参照も `onie-mk-demo.sh` に存在。`sonic-utilities/sonic_installer/main.py` には `verify_secureboot_image` / `is_secure_upgrade_image_verification_supported` の検証経路が実装されている。secure boot HLD（hld_secure_boot.md）と対をなす。
 

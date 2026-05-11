@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-buildimage/rules/config` に `CHANGE_DEFAULT_PASSWORD ?= n` のオプション、`build_debian.sh` に `[[ "$CHANGE_DEFAULT_PASSWORD" == "y" ]]` 分岐と `password_expire="$( ... && echo true || echo false )"` の export 処理を確認。`Makefile.work` / `slave.mk` でも flag を伝搬。HLD で要求された build flag の sonic-buildimage 取り込みは master で確認できた。
 

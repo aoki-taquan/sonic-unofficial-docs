@@ -17,6 +17,11 @@ related:
     - sonic-console
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: discrepancy-found（HLD のクラス階層は未実装）"
     `sonic-platform-common` master を確認した結果、HLD が提案する `sonic_console/<vendor>/console_<model>.py` ディレクトリ階層、`PortableConsoleDeviceBase` 抽象クラス、`factory.py` は **存在しない**（`sonic_platform_base/` 直下にも console 系の base クラスは無し）。`CONSOLE_SWITCH` テーブル自体は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang`（escape_char 等を含む）と `sonic-utilities/config/console.py` に取り込み済みで、`consutil` / Console-Monitor HLD 系の機能は別 HLD として実装されているが、本ページが扱う「ポータブル console デバイスの抽象化」HLD は提案のみで実装着手されていない。本文の API/ディレクトリ構造記述は **HLD 提案そのもの** として扱うこと。
 

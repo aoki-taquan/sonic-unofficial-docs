@@ -18,6 +18,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: Discrepancy-found（提案値と現行 default が乖離、一部最適化は実装済み）"
     現行 master を裏取りした結果、HLD 提案の **kernel `gc_thresh*` 値**と **CoPP ARP/ND 上限**は採用されておらず、より保守的な default に再設定されている。一方で **`RouteOrch` の bulk route API**（`gRouteBulker`）と **`fpmsyncd` の master device lookup スキップ**は実装済み。詳細は本文末尾の「実装との乖離」を参照（verified at: 2026-05-09）。
 

@@ -21,6 +21,11 @@ related:
     - openconfig-bgp
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` 本体、`rules/sonic-frr-mgmt-framework.{mk,dep}` ビルドルールを確認。`sonic-buildimage/dockers/docker-fpm-frr/docker_init.sh:68` で `MGMT_FRAMEWORK_CONFIG=$(echo $FRR_VARS | jq -r '.frr_mgmt_framework_config')` の分岐により bgpcfgd / frrcfgd を切替えている。YANG は `sonic-bgp-{global,neighbor,peergroup,common,...}.yang` 群が community sonic-yang-models に存在。`bgpcfgd` と `frrcfgd` の併用は `frr_mgmt_framework_config` キーで一元的に制御される構成。HLD と整合。
 

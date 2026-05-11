@@ -19,6 +19,11 @@ related:
     - openconfig-vlan
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     `sonic-mgmt-common/translib/transformer/sw_vlan.go` / `xfmr_intf.go` / `vlan_openconfig_test.go` で OpenConfig VLAN transformer を確認。`Subscribe_routed_vlan_ip_addr_xfmr`, `YangToDb_intf_routed_vlan_name_xfmr`, `routed_vlan_ip_addr_del`, `VLAN_INTERFACE_TN` が switched-vlan / routed-vlan を CONFIG_DB の `VLAN` / `VLAN_INTERFACE` / `VLAN_MEMBER` にマップする実装あり（verified at: 2026-05-09）。
 

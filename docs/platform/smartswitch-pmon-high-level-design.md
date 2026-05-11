@@ -21,6 +21,11 @@ related:
     - sonic-chassis
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     DPU 監視ループは `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` および `tests/test_dpu_chassisd.py`、Module/DPU API は `sonic-platform-common/sonic_platform_base/module_base.py`（`get_dpu_id` ほか）、CLI は `sonic-utilities/show/chassis_modules.py`・`sonic-utilities/config/chassis_modules.py`（`show chassis-modules` / `config chassis modules startup`）で確認済み。
 

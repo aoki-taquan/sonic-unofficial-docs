@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 19 章: Build / Packaging / Debian](../topics/19-build-packaging/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified（部分）"
     `sonic-buildimage` master に `platform/alpinevs` サブモジュール（`url=https://github.com/sonic-net/sonic-alpine/`、`.gitmodules`）と `.azure-pipelines/azure-pipelines-build-alpinevs.yml` が登録され、`build_image.sh` で `TARGET_MACHINE=alpinevs` が分岐される。一方、`libsai-grpc` 等の syncd 連携実体は `sonic-alpine` 配下に集約されており本リポジトリ単体では追跡できない（submodule のため）。`alpinevs-init` サービスや `hwsku=alpine_vs` の記述は HLD 由来であり、buildimage 単体では確認できない。
 

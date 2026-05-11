@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: `sonic-swss/fpmsyncd/fpmsyncd.h:6` `#define ROUTE_SYNC_PPL_SIZE 50000`、`fpmsyncd.cpp:25` `FLUSH_TIMEOUT 500`（500ms）、`SMALL_TRAFFIC 500`、`pipeline.flush()` 経路を確認。`sonic-swss/orchagent/orch.cpp:19-` で `RingBuffer` クラス（`Orch::gRingBuffer` / `Executor::gRingBuffer` の static、`pauseThread` / `notify` / `IsIdle` / `IsFull` / `push`）を確認。`sonic-swss-common/common/performancetimer.h` で `PerformanceTimer` クラスを確認。
 

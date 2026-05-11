@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     `sonic-utilities/dump/` に `main.py` / `match_infra.py` / `helper.py` / `plugins/` を確認。`match_infra.py:35 MatchRequest` / `:346 MatchEngine` / `:454 MatchRequestOptimizer`、`plugins/executor.py:5 class Executor(ABC)` を確認（verified at: 2026-05-09）。
 

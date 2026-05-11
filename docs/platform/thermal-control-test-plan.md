@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-platform-common/sonic_platform_base/sonic_thermal_control/`（`thermal_action_base.py` / `thermal_condition_base.py` / `thermal_json_object.py` / `thermal_policy.py` / `thermal_manager_base.py`）と `sonic-platform-daemons/sonic-thermalctld/` を master で確認。テストプラン側の SONiC-mgmt サンプル JSON は本リポジトリ範囲外（mgmt キャッシュ未配備）。
 

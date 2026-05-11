@@ -19,6 +19,11 @@ related:
     - sonic-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 18 章: P4 / PINS](../topics/18-p4-pins/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。Path Tracing: sonic-swss/doc/swss-schema.md:30,1026 (pt_interface_id, pt_timestamp_template) / sonic-swss/tests/test_port.py:310-412 (test_PortPathTracing, SAI_PORT_ATTR_PATH_TRACING_INTF, SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE, SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_12_19) で確認。
 

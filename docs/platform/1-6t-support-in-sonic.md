@@ -18,6 +18,11 @@ related:
     - sonic-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09: 主要 4 リポジトリへの取り込みを確認。`sonic-platform-daemons/sonic-xcvrd/xcvrd/xcvrd_utilities/common.py:201` `get_interface_speed` で `'1.6T' in ifname → 1600000` 分岐、`sonic-swss/orchagent/port/porthlpr.cpp:32` `static const std::uint32_t maxPortSpeed = 1600000;`、`sonic-swss/orchagent/port_rates.lua:110` `serdes = 212.5e+9`、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang:102,133` で `range 1..1600000`、`sonic-swss/orchagent/port_flr.lua:78` で `['1600000_8'] = 4` まで実装済み。HLD と整合。inner FEC / link training 等の検討点はオープンのまま。
 

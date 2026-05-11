@@ -16,6 +16,11 @@ related:
     - sonic-feature
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `has_per_dpu_scope` を `sonic-yang-models/yang-models/sonic-feature.yang:85` で feature leaf として、`sonic-host-services/scripts/featured:86,415` で per-DPU instance 起動として、`docker-database/database_global.json.j2` の `NUM_DPU` 条件分岐と `docker-database-init.sh:104` の `NUM_DPU > 1` 経路を確認。
 

@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     libteam パッチ `0015-add-support-for-custom-retry.patch` / `0016-block-retry-count-changes.patch`、`sonic-utilities/scripts/teamd_increase_retry_count.py` で `version=0xf1` / `actor_retry_count_type=0x80` / `partner_retry_count_type=0x81`、`sonic-utilities/config/main.py:3052` `portchannel_retry_count` グループを確認（verified at: 2026-05-09）。
 

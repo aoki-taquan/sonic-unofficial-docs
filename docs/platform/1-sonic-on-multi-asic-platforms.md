@@ -21,6 +21,11 @@ related:
     - sonic-device_metadata
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified（大規模 HLD・要点裏取り）"
     HLD は 71KB。本ページは architecturally distinctive な要素（namespace 分離・per-ASIC Redis・internal BGP・sonic-net link）に絞る。裏取り: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang`（`sub_role` / `asic_id` / `switch_id` / `switch_type`）、`sonic-bgp-internal-neighbor.yang`、`sonic-buildimage/files/build_templates/per_namespace/{swss,syncd,bgp}.service.j2`（per-ASIC instanced unit）、`sonic-utilities` の `--namespace`/`-n` オプション（`show/main.py`）。
 

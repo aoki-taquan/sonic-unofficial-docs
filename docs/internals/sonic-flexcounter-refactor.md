@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! note "裏取りステータス: code-verified"
     `sonic-sairedis/syncd/FlexCounter.h:43-` に `class BaseCounterContext`、`std::map<std::string, std::shared_ptr<BaseCounterContext>> m_counterContext;` (L223) を確認。`FlexCounter.cpp:1664-` に `template ... class AttrContext : public CounterContext<AttrType>`、派生 `PortPhyAttrContext` (L1769) / `PortPhySerdesAttrContext` (L2204) を確認。`getCounterContext` / `createCounterContext` / `removeCounterContext` / `hasCounterContext` の API も `FlexCounter.h:162-172` に存在し、HLD PoC が master 取り込み済みであることを確認。
 

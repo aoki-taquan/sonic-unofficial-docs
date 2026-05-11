@@ -18,6 +18,11 @@ related:
     - sonic-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-11)"
     `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` の portsorch 取り込みを確認: `sonic-swss/orchagent/portsorch.cpp` L991 (capability query), L1325, L2369, L10479, L10556（FEC override 適用 + コメント `FEC override will take effect only when autoneg is enabled`）。FEC=auto と autoneg の関係チェックは L5334-L5336 (`Autoneg must be enabled for port fec mode auto to work`) で実装済み。
 

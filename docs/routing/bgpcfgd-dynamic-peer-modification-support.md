@@ -17,6 +17,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     `bgpcfgd/managers_bgp.py` L87 `BGPPeerMgrBase`、L112-115 で `update.conf.j2` / `delete.conf.j2` の searchpath ロード、L287-297 で `STATE_BGP_PEER_CONFIGURED_TABLE_NAME` への CRUD。`sonic-swss-common/common/schema.h` L511 で `STATE_BGP_PEER_CONFIGURED_TABLE_NAME = "BGP_PEER_CONFIGURED_TABLE"`。`docker-fpm-frr/frr/bgpd/templates/dynamic/{update,delete}.conf.j2` の `add_ranges` / `delete_ranges` ロジック。`sonic-utilities/show/bgp_frr_v4.py` L103-168 で `show ip bgp vrf` 系、`utilities_common/bgp_util.py` L304-320 で vtysh 経由の vrf JSON 取得を確認 (verified at: 2026-05-09)。
 

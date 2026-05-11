@@ -19,6 +19,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: Discrepancy-found（CLI 取り込み未済）"
     `sonic-swss/orchagent/port_flr.lua` L31 `FEC_FLR_POLL_INTERVAL = 120` / L443-452 で `FEC_FLR` / `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` を RATES テーブルへ書き込む実装を確認。`sonic-utilities/utilities_common/portstat.py` L48-50 で `FEC_FLR` / `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` / `FEC_MAX_T` カラム取り込み、`utilities_common/netstat.py` L144/L156 で `format_fec_flr` / `format_fec_flr_predicted` フォーマッタを確認。SAI `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15` は `sonic-sairedis/unittest/saidump/dump.json` のサンプル出力に出現を確認（verified at: 2026-05-09）。**HLD と現行 master の差異**: HLD §New CLI で `counterpoll port flr-interval-factor FLR_INTERVAL_FACTOR` のサブコマンド追加が記載されているが、`sonic-utilities/counterpoll/main.py` および `config/` 配下に `flr-interval-factor` / `FLR_INTERVAL_FACTOR` の grep ヒットなし。CLI による polling factor 動的設定は現行 master では未取り込み（lua 側ハードコード `FEC_FLR_POLL_INTERVAL = 120` のみ）。
 

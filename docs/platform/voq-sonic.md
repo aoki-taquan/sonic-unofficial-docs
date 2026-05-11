@@ -24,6 +24,11 @@ related:
     - sonic-system-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified（要点裏取り）"
     `DEVICE_METADATA.{switch_type,switch_id,sub_role}` は `sonic-yang-models/yang-models/sonic-device_metadata.yang`、`SYSTEM_PORT` / `VOQ_INBAND_INTERFACE` / chassis BGP は `sonic-system-port.yang` / `sonic-voq-inband-interface.yang` / `sonic-bgp-voq-chassis-neighbor.yang`、CLI は `sonic-utilities/show/{chassis_modules,fabric}.py` および `chassis_modules.py:system_ports`（`voqutil`）で確認済み。distributed VoQ counter / fabric port などは派生 HLD ページを参照。
 

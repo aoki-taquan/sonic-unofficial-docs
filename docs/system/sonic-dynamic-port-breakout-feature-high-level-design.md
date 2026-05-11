@@ -19,6 +19,11 @@ related:
     - sonic-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     `sonic-utilities/config/main.py` の `breakout_cfg_file` / `_validate_interface_mode`、`sonic-buildimage/.../sonic-breakout_cfg.yang` の `BREAKOUT_CFG` スキーマで動的 breakout 実装を確認（Verifier 2026-05-10）。
 

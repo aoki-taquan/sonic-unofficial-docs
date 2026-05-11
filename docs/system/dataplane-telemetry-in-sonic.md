@@ -19,6 +19,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     `sonic-swss/orchagent/dtelorch.cpp` / `dtelorch.h` を master で確認。`DTEL_REPORT_SESSION` / `DTEL_INT_SESSION` 系のスキーマ定数は `sonic-swss-common/common/schema.h` に存在。CLI 未提供は HLD 通り。
 

@@ -18,6 +18,11 @@ related:
     - sonic-passw-hardening
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     実装裏取り済み（下記コード位置）。PASSW_HARDENING: sonic-host-services/scripts/hostcfgd + tests/hostcfgd/hostcfgd_passwh_test.py / sonic-utilities config/plugins/sonic-passwh_yang.py / sonic-yang-models/yang-models/sonic-passwh.yang で確認。
 

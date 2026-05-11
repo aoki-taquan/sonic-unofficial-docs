@@ -19,6 +19,11 @@ related:
     - sonic-port
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! warning "裏取りステータス: code-verified / 大規模 HLD"
     HLD は 97KB。本ページは ZR/ZR+ で SONiC の transceiver 管理（CMIS 状態機械、coherent optics 拡張）にどんな差が出るかに絞る。詳細レジスタ / state machine 完全網羅は HLD 本文を参照。
 

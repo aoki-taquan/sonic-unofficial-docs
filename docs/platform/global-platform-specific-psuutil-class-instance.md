@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified / 旧設計から現行への移行記述"
     `sonic-platform-common/sonic_platform_base/` を直読して `chassis_base.py` (`class ChassisBase`)、`psu_base.py` (`class PsuBase`)、`fan_base.py` (`class FanBase`)、`sfp_base.py` (`class SfpBase`)、`module_base.py` (`class ModuleBase`)、`component_base.py` (`class ComponentBase`)、`device_base.py`、`fan_drawer_base.py`、`platform_base.py`、`sensor_base.py`、`bmc_base.py`、`liquid_cooling_base.py` 等の基底クラス階層を確認。HLD の "Current Solution" 節は **旧 plugin 形式から新階層への移行時** の説明であり、現行 master では新 API が普及済み。本ページは HLD の設計意図を中心に書かれている点に注意（移行前の細部記述は現行と異なる）。
 

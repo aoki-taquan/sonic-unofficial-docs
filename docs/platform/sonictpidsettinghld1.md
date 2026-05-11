@@ -18,6 +18,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     `sonic-swss/orchagent/switchorch.cpp` で `sai_query_attribute_capability(... SAI_PORT_ATTR_TPID ...)` と `SAI_LAG_ATTR_TPID` の capability query が実装され、`SWITCH_CAPABILITY_TABLE_PORT_TPID_CAPABLE` / `LAG_TPID_CAPABLE` を STATE_DB に書き込み済み (`switchorch.h`)。`portsorch.cpp` で `SAI_PORT_ATTR_TPID` / `SAI_LAG_ATTR_TPID` の `set_*_attribute` を発行。CLI は `sonic-utilities/config/main.py` の `def tpid()` (line 5614) と `show/interfaces/__init__.py` の `def tpid()` (line 175) で実装。HLD どおりに community 取り込み済み。
 

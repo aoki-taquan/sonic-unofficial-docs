@@ -16,6 +16,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: Code-verified"
     sonic-swss `orchagent/portsorch.h` L213 `generateQueueMap` / L223 `generatePriorityGroupMap` 分離、L518 `m_isQueueMapGenerated` / L532 `m_isPriorityGroupMapGenerated` キャッシュフラグ、L519 / L533 の Per-Port ヘルパを確認。`portsorch.cpp` L8391 `generateQueueMap` 本体（L8393 でキャッシュフラグ判定）、L8533 `addQueueFlexCounters` / L8574 `addQueueFlexCountersPerPort` / L8618 `addQueueWatermarkFlexCounters` / L8658 `addQueueWatermarkFlexCountersPerPort` の細分化を確認（verified at: 2026-05-09）。
 

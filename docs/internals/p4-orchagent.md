@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 18 章: P4 / PINS](../topics/18-p4-pins/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! success "裏取りステータス: code-verified"
     Verifier 2026-05-09 で `sonic-swss/orchagent/p4orch/` に `p4orch.cpp` 本体と各 Manager（`router_interface_manager`, `neighbor_manager`, `next_hop_manager`, `wcmp_manager`, `route_manager`, `acl_table_manager`, `acl_rule_manager`, `mirror_session_manager`, `l3_admit_manager`, `gre_tunnel_manager`, `tunnel_decap_group_manager`, `ext_tables_manager`, `tables_definition_manager`, `ip_multicast_manager`, `l3_multicast_manager`）が実装されていることを確認。`object_manager_interface.h` で `enqueue` / `drain` / `drainWithNotExecuted` 抽象を定義、`p4oidmapper.h` の `P4OidMapper` クラスが `(sai_object_type, key) → (oid, ref_count)` を保持。HLD 当初の 7 Manager から実装は更に拡張。
 

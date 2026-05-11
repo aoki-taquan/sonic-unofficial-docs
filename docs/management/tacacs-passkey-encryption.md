@@ -19,6 +19,11 @@ related:
     - sonic-system-tacacs
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: Discrepancy-found（YANG / cipher 基盤のみ取り込み済み、CLI / hostcfgd 取り込みは未完了）"
     取り込み済み: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-tacacs.yang` L47/L100-101/L148-149 で `key_encrypt_type` typedef と `TACPLUS_SERVER` / `TACPLUS|global` への `key_encrypt` leaf を確認。`sonic-buildimage/src/sonic-py-common/sonic_py_common/security_cipher.py` L18 で `CIPHER_PASS_FILE = "/etc/cipher_pass.json"` 定数、L41/L67 で読み書き API、L222/L237 で「`cipher_pass` registry からのパスワード取得」基盤を確認。`/etc/cipher_pass.json` の保全は `sonic-buildimage/files/image_config/config-setup/01-pre-security-cipher` / `01-post-security-cipher` で確認（HLD では `/etc/cipher_pass` と表記、現行実装では **`.json` 拡張子付きの `/etc/cipher_pass.json`**）。未取り込み: `sonic-utilities/config/aaa.py` L248-256 の `tacacs passkey` サブコマンドに `--encrypt` フラグは無い（現状は平文 secret をそのまま `add_table_kv(db, 'TACPLUS', 'global', 'passkey', secret)` する）。`sonic-host-services` 配下の `hostcfgd` にも `cipher_pass` / `key_encrypt` / 復号処理を行う実装は確認できない（grep でヒットなし、`PASSWORD_HARDENING` 関連のみ）。設計の中核である「CLI で `--encrypt` を付けて暗号化保存し hostcfgd で復号して PAM に渡す」フローは現行 master では **未取り込み**。`show tacacs` の passkey マスキング・RADIUS / LDAP の共通化も未確認 (verified at: 2026-05-09)。
 

@@ -14,6 +14,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! info "裏取りステータス: code-verified"
     sonic-gnmi master で DPU Proxy（GNMI/GNOI Splitter）が `pkg/interceptors/dpuproxy/proxy.go` に実装済み（`ForwardToDPU` / `HandleLocally`）。Containerz gNOI は `gnmi_server/gnoi_containerz.go` および `gnoi_client/containerz/` に、`System.SetPackage` 等は `pkg/gnoi/system/system.go` / `gnmi_server/gnoi_system.go` に実装。HLD で言及されている主要ハンドラ群は master に取り込み済み。
 

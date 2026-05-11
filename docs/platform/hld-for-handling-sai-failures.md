@@ -15,6 +15,11 @@ related:
   yang: []
 ---
 
+<!-- topics-tip -->
+!!! tip "Topics で読み物として読む"
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+<!-- /topics-tip -->
+
 !!! danger "裏取りステータス: Discrepancy-found（部分実装、設計と乖離）"
     現行 master では `handleSaiCreateStatus / handleSaiSetStatus / handleSaiRemoveStatus / handleSaiGetStatus` が `sonic-swss/orchagent/saihelper.h:19-22` に **free function** として実装されており、HLD が記述する「`Orch` 基底クラスの virtual 関数」ではない。`ERROR_DB` の枠組み（`ERROR_APPL_*` 形式の独立 Redis DB）は `sonic-swss` / `sonic-swss-common` の両方とも未実装で、HLD 内 TODO セクションの大半が残ったまま。本ページは設計提案の記述として位置づけ、現行実装は `saihelper.cpp` に集約されている個別関数群と読み替える必要がある（verified at: 2026-05-09）。
 
