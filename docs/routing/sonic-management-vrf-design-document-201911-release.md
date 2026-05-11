@@ -24,15 +24,15 @@ related:
 
 # Management VRF 設計（201911 release / l3mdev + cgroups）
 
-## 概要
+## 読者が知りたいこと
 
-SONiC の **管理面トラフィック（mgmt port `eth0`）とデータ面（front panel ports）を別 VRF に分離** する設計。Linux の `l3mdev` を VRF 実装として使い、cgroup `l3mdev:mgmt` を介してアプリケーションを mgmt VRF context で実行する[^1]。
+- mgmt VRF を有効化すると **eth0 と front panel のトラフィックは具体的にどう分かれる** のか
+- **アプリ（ssh / ping / TACACS+ / NTP / SNMP / DHCP）** を mgmt 経由で動かすには何が必要か
+- **CONFIG_DB のキー** と **CLI** はどう触ればいいか
+- **201911 と現行 master の差分**（HLD と実装の乖離）はどこか
+- 落とし穴・トラブルシュートの定石
 
-namespace 方式と比較して、サービス（ssh / lldp 等）を 1 インスタンスで共有できる利点がある。HLD 末尾の比較表で l3mdev を採用する判断根拠が示されている。
-
-## 動作仕様
-
-### トラフィック分離
+## 1. トラフィック分離の挙動
 
 ```mermaid
 flowchart LR
@@ -41,12 +41,14 @@ flowchart LR
     MV -.->|never forwarded| DV
 ```
 
-- mgmt port から入った IP は mgmt VRF テーブル (table 5000) で処理される。
-- front panel から入った IP は default VRF (main table) で処理される。
-- **transit traffic は両 VRF 間で絶対に転送されない**[^1]。
-- スイッチ発の通信は default VRF が暗黙のデフォルト。`cgexec -g l3mdev:mgmt <cmd>` で mgmt VRF コンテキスト実行。
+- mgmt port から入った IP は **mgmt VRF テーブル**（HLD 表記 table 5000、現行実装は 6000）で処理
+- front panel から入った IP は **default VRF**（main table）で処理
+- 両 VRF 間で transit traffic は **絶対に転送されない**[^1]
+- スイッチ発（switch-originated）の通信は default が暗黙のデフォルト。mgmt を使うときは `cgexec -g l3mdev:mgmt <cmd>` で起動
 
-### CONFIG_DB
+## 2. CONFIG_DB / CLI
+
+最小限の触り方。
 
 ```text
 MGMT_INTERFACE|eth0|<ip>/<mask>
@@ -57,17 +59,21 @@ MGMT_VRF_CONFIG|vrf_global
     mgmtVrfEnabled = "true" | "false"
 ```
 
-### 構成手順
+| Command | 用途 |
+|---------|------|
+| `config vrf add mgmt` / `config vrf del mgmt` | mgmt VRF 作成/削除 |
+| `config interface eth0 ip add <ip>/<mask> <gw>` | mgmt IP 設定 |
+| `show mgmt-vrf` / `show mgmt-vrf routes` | 状態と routing table |
+| `show management_interface address` | mgmt IP / GW |
+| `config tacacs add --use-mgmt-vrf <ip>` | tacacs+ を mgmt VRF 経由で |
 
-`config vrf add mgmt` 実行時の挙動[^1]：
+```bash
+sudo config vrf add mgmt
+show mgmt-vrf
+sudo config tacacs add --use-mgmt-vrf 10.11.55.40
+```
 
-1. CONFIG_DB の `MGMT_VRF_CONFIG.mgmtVrfEnabled = true` をセット。
-2. `interfaces-config` サービスを再起動 → `interfaces.j2` から mgmt VRF 用 `/etc/network/interfaces` を生成し、`networking` を再起動。
-3. `mgmt` インタフェース（`type vrf table 5000`）と `lo-m` ダミーループバック（NTP 内部通信用）を作成。
-4. `eth0` を `mgmt` VRF に enslave（`ip link set dev eth0 master mgmt`）。
-5. `l3mdev:mgmt` cgroup を作成。
-
-### アプリケーション挙動
+## 3. アプリごとの mgmt VRF 経由方法
 
 | アプリ | mgmt VRF 通信方法 |
 |--------|-------------------|
@@ -81,58 +87,50 @@ MGMT_VRF_CONFIG|vrf_global
 | DHCP relay | default VRF のみ（front panel）。変更なし |
 | DNS | プロセスが mgmt cgroup 内なら自動で mgmt 経由 |
 
-### tacacs+ の `--use-mgmt-vrf`
+TACACS+ で `config tacacs add --use-mgmt-vrf <ip>` を打つと `TACPLUS_SERVER.<ip>.vrf=mgmt` がセットされ、PAM/NSS が `SO_BINDTODEVICE` で `mgmt` インタフェースに縛った socket を作る[^1]。
 
-`config tacacs add --use-mgmt-vrf <ip>` で `TACPLUS_SERVER.<ip>.vrf=mgmt` がセットされ、PAM/NSS が `SO_BINDTODEVICE` で `mgmt` インタフェースに縛った socket を作る[^1]。
+## 4. 構成手順（内部動作）
 
-## 設定
+`config vrf add mgmt` の挙動[^1]:
 
-### 関連する CONFIG_DB
+1. CONFIG_DB の `MGMT_VRF_CONFIG.mgmtVrfEnabled = true`
+2. `interfaces-config` を再起動 → `interfaces.j2` から `/etc/network/interfaces` を再生成し `networking` を再起動
+3. `mgmt` インタフェース（`type vrf table 5000`）と `lo-m`（NTP 内部通信用ダミーループバック）を作成
+4. `eth0` を `mgmt` VRF に enslave（`ip link set dev eth0 master mgmt`）
+5. `l3mdev:mgmt` cgroup を作成
 
-| Table | 説明 |
-|-------|------|
-| `MGMT_INTERFACE` | mgmt port の IP / GW / VRF |
-| `MGMT_VRF_CONFIG` | mgmt VRF の global 有効化 |
-| `TACPLUS_SERVER` | `vrf=mgmt` フィールド対応 |
+## 5. 201911 と現行 master の差分
 
-### 関連する CLI
+- HLD は **`cgexec -g l3mdev:mgmt` 起動ラッパー方式** を前提にしているが、現行 master は **ifupdown2 の `vrf` キーワード**（Linux VRF master device 方式）に統一されている
+- ルーティングテーブル番号は HLD で `5000`、現行実装では `6000`
+- Buster 以降は mainline kernel の VRF サポートを使用するため、`udp_l3mdev_accept` 等の SONiC 専用カーネルパッチは段階的に不要化されている
+- 201911 由来の `cgexec` 接頭辞は **過去ドキュメント / ベンダー資料を読むときの参考** として残す価値はあるが、master では発火しない
 
-| Command | 用途 |
-|---------|------|
-| `config vrf add mgmt` / `config vrf del mgmt` | mgmt VRF 作成/削除 |
-| `config interface eth0 ip add <ip>/<mask> <gw>` | mgmt IP 設定 |
-| `show mgmt-vrf` / `show mgmt-vrf routes` | 状態と routing table |
-| `show management_interface address` | mgmt IP / GW |
-| `config tacacs add --use-mgmt-vrf <ip>` | tacacs+ サーバを mgmt VRF 経由で |
+## 6. 制限事項
 
-### 設定例
+- 201911 リリース固定の HLD。Buster 以降は別 HLD で更新される予定（未公開）
+- UDP 受信は SONiC 専用カーネルパッチに依存（古い release）
+- スイッチ発のアプリは 201911 では `cgexec` 接頭辞が必要（透過しない）
+- `lo-m` ダミーループバックは NTP `ntpq` 用の workaround
+- 詳細フローと各アプリ改修箇所は HLD `doc/mgmt/sonic_stretch_management_vrf_design.md` を参照
 
-```bash
-sudo config vrf add mgmt
-show mgmt-vrf
-sudo config tacacs add --use-mgmt-vrf 10.11.55.40
-```
+## 7. 干渉する機能
 
-## 制限事項
+- **TACACS+ / RADIUS / LDAP**: `--use-mgmt-vrf` 系オプションで mgmt 経由認証
+- **DHCP**: client は mgmt と data 双方、relay は data 側のみ
+- **NTP**: cgexec ラッパーで起動するため `init.d/ntp` をベンダーパッケージから上書き保守
+- **namespace ベース VRF**: HLD で比較されたが採用されず、l3mdev に統一
 
-- **201911 リリース固定**。Buster カーネル以降は別 HLD で更新される予定。現行 master では大幅に変わっている可能性あり。
-- UDP 受信は SONiC 専用の Linux パッチ（`udp_l3mdev_accept`）に依存。
-- スイッチ発のアプリは `cgexec -g l3mdev:mgmt` 接頭辞が必要（`ssh` / `ping` / `wget` / `apt-get` 等）。透過しない。
-- `lo-m` ダミーループバックは NTP の `ntpq` 用 workaround。
-- 詳細フロー / 各アプリ改修箇所は HLD `doc/mgmt/sonic_stretch_management_vrf_design.md` を参照。
+## 8. トラブルシューティング
 
-## 干渉する機能
+- `cgexec -g l3mdev:mgmt ssh ...` で名前解決が失敗 → `resolv.conf` の DNS が mgmt から到達可能か確認
+- NTP 同期しない → `ps -ef | grep ntpd` で `cgexec` 起動か確認
+- TACACS+ が default VRF 経由になる → `show tacacs` で `vrf mgmt` が出ているか確認
 
-- **TACACS+ / RADIUS / LDAP**: `--use-mgmt-vrf` 系オプションで mgmt 経由認証が可能。
-- **DHCP client / relay**: client は mgmt と data 双方、relay は data 側のみ。
-- **NTP**: cgexec ラッパーで起動するため、SONiC 側で `init.d/ntp` をベンダーパッケージから上書き保守する必要がある。
-- **新しい VRF 機構（namespace ベース）**: HLD で比較されているが採用されず、l3mdev に統一。
+## 9. 次に読む
 
-## トラブルシューティング
-
-- `cgexec -g l3mdev:mgmt ssh ...` で名前解決が失敗 → DNS は mgmt cgroup から自動的に mgmt 経由になる。`resolv.conf` の DNS が mgmt から到達可能か確認。
-- ntp 同期しない → `cgexec` で起動されているか `ps -ef | grep ntpd` を確認。
-- tacacs+ が default VRF 経由になってしまう → `show tacacs` で `vrf mgmt` が出ているか確認。
+- Topics: [VRF / ECMP 概念](../topics/04-vrf-ecmp/concept.md), [VRF / ECMP 構築](../topics/04-vrf-ecmp/setup.md), [VRF / ECMP 運用](../topics/04-vrf-ecmp/operations.md)
+- 関連 HLD: [SONiC VRF Support Design Spec](sonic-vrf-support-design-spec-draft.md)
 
 ## 引用元
 
