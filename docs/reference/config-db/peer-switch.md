@@ -86,3 +86,23 @@ PEER_SWITCH|<peer_switch>
 - [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PEER_SWITCH|<hostname>`。
+- `address_ipv4`: peer ToR の Loopback。`tos_upstream` などはデフォルトのまま運用する。
+
+### よくある誤設定
+
+- Dual-ToR で peer hostname の表記揺れがあると linkmgrd が peer を発見できない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PEER_SWITCH|*'
+show mux status
+```
+<!-- /ops-hint -->

@@ -102,3 +102,22 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 
 [^1]: tunneldecaporch 実装: `tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L49-L50>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `TUNNEL_DECAP_TABLE|<tunnel-name>`。
+- `tunnel_type`: `IPINIP` / `VXLAN`、`dst_ip`: 自 Loopback、`ttl_mode`/`dscp_mode`: `uniform`。
+
+### よくある誤設定
+
+- dst_ip を物理 IF アドレスに向けてしまい、IF down で decap も停止する。Loopback を使う。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'TUNNEL_DECAP_TABLE|*'
+```
+<!-- /ops-hint -->

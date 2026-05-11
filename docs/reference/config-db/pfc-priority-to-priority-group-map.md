@@ -94,3 +94,23 @@ YANG 上は map 名を key にする outer list と、`pfc_priority` を key に
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<map-name>`。
+- lossless 用に dot1p `3`→PG `3`、`4`→PG `4` をマップするのが RoCE v2 の定番。
+
+### よくある誤設定
+
+- PORT_QOS_MAP に紐付け忘れて PFC が効かず head-of-line blocking が継続する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|*'
+show priority-group persistent-watermark
+```
+<!-- /ops-hint -->

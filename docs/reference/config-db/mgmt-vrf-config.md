@@ -80,3 +80,23 @@ container 構造のため key は固定文字列 `vrf_global`。
 ## 引用元
 
 [^1]: YANG 定義: `sonic-mgmt_vrf.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MGMT_VRF_CONFIG|vrf_global`。
+- `mgmtVrfEnabled`: `true` で eth0 を `mgmt` VRF に分離。
+
+### よくある誤設定
+
+- mgmt VRF を有効化したのに NTP/SNMP/SYSLOG 側で vrf 指定を忘れて疎通しない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'MGMT_VRF_CONFIG|vrf_global'
+show mgmt-vrf
+```
+<!-- /ops-hint -->

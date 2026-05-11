@@ -104,3 +104,23 @@ FLEX_COUNTER_TABLE|<group>
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `FLEX_COUNTER_TABLE|<group>` (PORT / QUEUE / PG_WATERMARK / RIF 等)`。
+- `FLEX_COUNTER_STATUS`: `enable`、`POLL_INTERVAL`: 1000〜10000ms。
+
+### よくある誤設定
+
+- POLL_INTERVAL を極端に短く（100ms 等）するとカウンタ集計で CPU が貼り付く。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'FLEX_COUNTER_TABLE|*'
+counterpoll show
+```
+<!-- /ops-hint -->

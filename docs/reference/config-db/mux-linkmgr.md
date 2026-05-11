@@ -99,3 +99,23 @@ MUX_LINKMGR|SERVICE_MGMT
 ## 関連ページ
 - [CONFIG_DB: MUX_CABLE](mux-cable.md)
 - [CONFIG_DB: PEER_SWITCH](peer-switch.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `MUX_LINKMGR|LINK_PROBER` 等`。
+- `interval_v4_in_msec`: 100、`positive_signal_count`: 1、`negative_signal_count`: 3。
+
+### よくある誤設定
+
+- interval を短くしすぎて linkmgrd が CPU を消費し ToR の Mux state oscillation を誘発する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'MUX_LINKMGR|*'
+show mux config
+```
+<!-- /ops-hint -->

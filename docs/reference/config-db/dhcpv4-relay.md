@@ -82,3 +82,23 @@ DHCPV4_RELAY|<name>
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DHCP_RELAY|<vlan>` (DHCPv4 relay)`。
+- `dhcp_servers`: relay 先 IPv4。`source_interface`: 任意の SVI / Loopback。
+
+### よくある誤設定
+
+- source_interface に IP が付いていないと relay packet の giaddr が 0 になりサーバが応答しない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DHCP_RELAY|*'
+show dhcprelay_helper ipv4
+```
+<!-- /ops-hint -->

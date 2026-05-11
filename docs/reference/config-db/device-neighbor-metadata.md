@@ -75,3 +75,23 @@ DEVICE_NEIGHBOR_METADATA|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-device_neighbor_metadata.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-device_neighbor_metadata.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DEVICE_NEIGHBOR_METADATA|<hostname>`。
+- `type`: `LeafRouter` / `SpineRouter` / `ToRRouter` / `Server` 等。`mgmt_addr`、`hwsku` を併記。
+
+### よくある誤設定
+
+- DEVICE_NEIGHBOR と hostname がズレると minigraph 由来の自動 BGP セッションが立ち上がらない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DEVICE_NEIGHBOR_METADATA|*'
+show lldp table
+```
+<!-- /ops-hint -->

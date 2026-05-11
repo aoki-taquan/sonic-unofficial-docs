@@ -77,3 +77,23 @@ RADIUS|global
 
 ## 関連ページ
 - [CONFIG_DB: AAA](aaa.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `RADIUS|global / RADIUS_SERVER|<ip>`。
+- global: `auth_type`: `pap`、`timeout`: `5`、`retransmit`: `3`。server: `priority`, `passkey`, `vrf`。
+
+### よくある誤設定
+
+- auth_type を `chap` にしているのに NAS 側で pap しか喋れず認証が通らない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'RADIUS*'
+show radius
+```
+<!-- /ops-hint -->

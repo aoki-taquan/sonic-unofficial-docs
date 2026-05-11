@@ -98,3 +98,23 @@ DHCP_SERVER_IPV4|<name>
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `DHCP_SERVER_IPV4|<name>`。
+- `state`: `enabled`、`gateway`: subnet GW、`lease_time`: `3600`、`mode`: `PORT`。
+
+### よくある誤設定
+
+- VLAN に紐付けず DHCP_SERVER_IPV4_PORT エントリも無いと DISCOVER が応答されない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'DHCP_SERVER_IPV4|*'
+show dhcp_server ipv4 info
+```
+<!-- /ops-hint -->

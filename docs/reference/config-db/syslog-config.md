@@ -75,3 +75,23 @@ SYSLOG_CONFIG|GLOBAL
 ## 関連ページ
 - [CONFIG_DB: SYSLOG_CONFIG_FEATURE](syslog-config-feature.md)
 - [CONFIG_DB: SYSLOG_SERVER](syslog-server.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `SYSLOG_CONFIG|GLOBAL`。
+- `format`: `standard`、`welf_facility`: 任意、`rate_limit_interval`/`rate_limit_burst` でドロップ閾値。
+
+### よくある誤設定
+
+- rate_limit_burst が小さすぎて障害発生時に重要 syslog が捨てられる。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'SYSLOG_CONFIG|GLOBAL'
+show syslog
+```
+<!-- /ops-hint -->

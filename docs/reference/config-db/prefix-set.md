@@ -77,3 +77,23 @@ PREFIX_SET|<name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `PREFIX_SET|<name>`。
+- `mode`: `IPv4` / `IPv6`、`prefix`: CIDR 列。route-map から `match ip address prefix-list` で参照。
+
+### よくある誤設定
+
+- IPv6 entry を IPv4 set に混在させて FRR が syntax エラーで読み込めない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'PREFIX_SET|*'
+vtysh -c 'show ip prefix-list'
+```
+<!-- /ops-hint -->

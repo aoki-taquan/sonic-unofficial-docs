@@ -75,3 +75,23 @@ NTP_KEY|<id>
 ## 関連ページ
 - [CONFIG_DB: NTP](ntp-global.md)
 - [CONFIG_DB: NTP_SERVER](ntp-server.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `NTP_KEY|<keyid>`。
+- `type`: `SHA1` / `MD5`、`value`: 共有鍵、`trusted`: `true`。
+
+### よくある誤設定
+
+- trusted=false のキーで authenticate しようとして時刻同期が失敗する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'NTP_KEY|*'
+show ntp
+```
+<!-- /ops-hint -->

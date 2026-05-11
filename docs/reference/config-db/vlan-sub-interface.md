@@ -112,3 +112,23 @@ VLAN_SUB_INTERFACE|<name>|<ip-prefix>
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `VLAN_SUB_INTERFACE|<Ethernet|PortChannel>.<vid>`。
+- `admin_status`: `up`、`vlan`: `<vid>`。物理 IF の sub-interface として L3 を運ぶ。
+
+### よくある誤設定
+
+- 親 IF を `switchport` 設定にしたまま sub-interface を生やすと L3 が立ち上がらない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'VLAN_SUB_INTERFACE|*'
+show subinterface status
+```
+<!-- /ops-hint -->

@@ -85,3 +85,23 @@ BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-allowed-prefix.yang` (revision 2022-02-26). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-allowed-prefix.yang>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `BGP_ALLOWED_PREFIXES|<vrf>|<peer>|<af>`。
+- ToR 配下の特定 prefix 集合のみを許可する利用が多い。`prefixes` は CSV または list。
+
+### よくある誤設定
+
+- prefix-list 名と表記揺れがあると FRR 側に反映されず広告フィルタが効かない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB keys 'BGP_ALLOWED_PREFIXES|*'
+vtysh -c 'show running-config bgp'
+```
+<!-- /ops-hint -->
