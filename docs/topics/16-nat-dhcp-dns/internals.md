@@ -105,6 +105,23 @@ ASIC_DB:
 - DNS は SONiC で独自設定はなく、`hostcfgd` が `/etc/resolv.conf` を上書きする単純な実装。DNS-over-TLS や split-DNS は未対応。
 - IPv6 NAT（NAT66 / NPTv6）は SAI で属性は定義されているが、SONiC orchagent の対応が partial で、HLD と実装の discrepancy が出やすい部分です。
 
+## DHCP relay の packet path
+
+DHCP relay (`dhcprelayd` および `kea-dhcp4`/`kea-dhcp6` relay モード) は CoPP 経由で trap された DHCP パケットを処理します。
+
+```mermaid
+flowchart LR
+  CLIENT[DHCP client] -->|broadcast / multicast| PORT[ingress port]
+  PORT -->|CoPP trap| CPU[CPU queue]
+  CPU --> KERNEL[Linux kernel]
+  KERNEL --> RELAY[dhcprelayd / kea]
+  RELAY -->|unicast to server_vip| EGRESS[egress port]
+  RELAY -->|stats| DHCPMON[dhcpmon NFLOG]
+  DHCPMON --> STATE[(STATE_DB<br/>DHCP_COUNTER_TABLE)]
+```
+
+`CoPP` の trap group `dhcp` / `dhcpv6` がデフォルトで設定され、レート制限は `COPP_TABLE` の `cir`/`cbs` で調整されます。dhcpmon の counter は NFLOG ベースで参考値扱いが妥当です。
+
 ## 関連ページ
 
 - [NAT in SONiC](../../architecture/nat-in-sonic.md)

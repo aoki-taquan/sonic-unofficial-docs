@@ -96,6 +96,19 @@ Chassis global:
 - BGP は per-asic で独立した FRR process が走り、internal BGP（iBGP）で ASIC 間を結ぶ構成が一般的。external BGP の view を一つにする abstraction は SONiC master にはありません。
 - `show` 系 CLI は `--namespace` を取らない場合に host namespace から各 namespace に exec する構造で、多 ASIC では出力が長くなり、collect 時にエラーが部分的に出ても全体が成功扱いになる落とし穴があります。
 
+## chassis_db / system port の同期
+
+`chassis_db` は線カード (LC) / supervisor (SUP) 間で system-wide な状態を共有する Redis インスタンスで、各 ASIC namespace の `CONFIG_DB` / `APPL_DB` とは別に SUP 上に置かれます。同期対象は次の通りです。
+
+| テーブル | 役割 |
+| --- | --- |
+| `SYSTEM_PORT_TABLE` | chassis 全体での system port ID 割当（VOQ 設計上の必須） |
+| `SYSTEM_NEIGH_TABLE` | 全 LC 共有の neighbor entry |
+| `SYSTEM_LAG_TABLE` | chassis 跨ぎ LAG（VOQ chassis only） |
+| `SYSTEM_INTERFACE` | router-interface の system-wide view |
+
+`SystemPortOrch` / `SystemNeighOrch` が chassis_db を subscribe して、自 ASIC の `SAI_OBJECT_TYPE_SYSTEM_PORT` を作成 / 更新します。chassis_db 自体は SUP 上の Redis で、LC 側からは TCP で接続します（接続切断時は前述の段階的劣化）。
+
 ## 関連ページ
 
 - [VOQ SONiC](../../platform/voq-sonic.md)

@@ -20,6 +20,68 @@ BGP の内部実装トピックは、同じ「BGP の改善」でも狙ってい
 | BGP aggregate with BBR awareness | 集約 route と BBR/prefix-list の連動 | bgpcfgd、FRR | `BGP_AGGREGATE_ADDRESS` |
 | dynamic peer modification | dynamic peer range の追加/削除を再起動なしで扱う | bgpcfgd、FRR templates、STATE_DB | `BGP_PEER_RANGE` など |
 
+## データフロー
+
+```mermaid
+flowchart LR
+  BGPD[bgpd / FRR] -->|FPM netlink| ZEBRA[zebra]
+  ZEBRA -->|FPM RTM_NEWROUTE| FPMSYNCD[fpmsyncd]
+  FPMSYNCD --> APPL[(APPL_DB<br/>ROUTE_TABLE)]
+  APPL --> ROUTEORCH[RouteOrch<br/>+ NhgOrch]
+  ROUTEORCH --> ASIC[(ASIC_DB<br/>ROUTE_ENTRY / NHG)]
+  STATE[(STATE_DB<br/>ROUTE_TABLE.offloaded)] <-->|offload feedback| ROUTEORCH
+  STATE -->|suppress-fib-pending| BGPD
+  CFG[(CONFIG_DB<br/>BGP_NEIGHBOR / BGP_PEER_RANGE / BGP_AGGREGATE_ADDRESS)] --> BGPCFGD[bgpcfgd]
+  BGPCFGD -->|jinja2 template| FRRCFG[frr.conf]
+  FRRCFG --> BGPD
+  STATECFG[(STATE_DB<br/>BGP_PEER_CONFIGURED_TABLE)] <--> BGPCFGD
+```
+
+## 主要 Orch / daemon の責務
+
+| コンポーネント | 主実体 | 責務 |
+| --- | --- | --- |
+| `bgpd` (FRR) | `frr/bgpd/` | BGP プロトコル実装、best path 計算、graceful restart、suppress-fib-pending |
+| `zebra` (FRR) | `frr/zebra/` + `zebra_fpm.c` | RIB 管理、kernel route 反映、FPM 経由で fpmsyncd へ送信 |
+| `bgpcfgd` (`src/sonic-bgpcfgd/`) | `bgpcfgd/main.py`、`managers_*.py` | CONFIG_DB の BGP 系テーブルを subscribe し、jinja2 template で frr.conf を render |
+| `fpmsyncd` (`fpmsyncd/fpmsyncd.cpp`) | `FpmLink::processFpmMessage`、`RouteSync` | FPM netlink を APPL_DB の ROUTE_TABLE に流す。Loading Optimization の Redis pipeline 入口 |
+| `RouteOrch` (`orchagent/routeorch.cpp`) | `RouteOrch::doTask`、`addRoute` | ROUTE_TABLE から SAI route entry を生成。ring buffer + assistant thread で大量 route を処理 |
+| `NhgOrch` / `CbfNhgOrch` (`orchagent/nhgorch.cpp`) | `NhgOrch::doTask` | shared nexthop group の作成。BGP PIC の階層 NHG (CbfNhg) を提供 |
+| `bgpmon` (`src/sonic-bgpcfgd/bgpmon/`) | `bgpmon.py` | BGP neighbor state を STATE_DB に publish |
+
+## SAI 属性使用
+
+| object | 主要属性 |
+| --- | --- |
+| `SAI_OBJECT_TYPE_ROUTE_ENTRY` | `SAI_ROUTE_ENTRY_ATTR_PACKET_ACTION`、`SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID` |
+| `SAI_OBJECT_TYPE_NEXT_HOP_GROUP` | `SAI_NEXT_HOP_GROUP_ATTR_TYPE = ECMP / DYNAMIC_UNORDERED_ECMP` |
+| `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` | `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT`（PIC で BFD down 時に動的更新）、`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID` |
+
+PIC は member weight の hot update に依存するため、ベンダ SAI 側で WEIGHT のホットスワップが SAI_STATUS_SUCCESS で返るかが分かれ目になります。`offloaded` feedback も同じく ASIC 側の `ROUTE_ENTRY` 設置完了通知に依存します。
+
+## Redis テーブル参照関係
+
+```
+CONFIG_DB:
+  BGP_NEIGHBOR, BGP_PEER_RANGE, BGP_INTERNAL_NEIGHBOR,
+  BGP_AGGREGATE_ADDRESS, BGP_MONITORS, DEVICE_METADATA (suppress-fib-pending flag)
+APPL_DB:
+  ROUTE_TABLE, LABEL_ROUTE_TABLE, NEXTHOP_GROUP_TABLE
+STATE_DB:
+  BGP_PEER_CONFIGURED_TABLE, NEIGH_STATE_TABLE,
+  ROUTE_TABLE (offloaded=true/false)
+ASIC_DB:
+  ROUTE_ENTRY, NEXT_HOP, NEXT_HOP_GROUP, NEXT_HOP_GROUP_MEMBER
+```
+
+`bgpcfgd` は CONFIG_DB の更新を subscribe するときに `BGP_PEER_RANGE` 単位で diff を取り、FRR vtysh に**追加/削除コマンド単位**で投入するため、frr.conf 全体を再書き出しせずに済みます。
+
+## ZMQ / Redis pub/sub
+
+- BGP 系で **ZMQ は使われません**。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と ProducerStateTable です。
+- Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（`gRingBuffer`）+ assistant thread で大量 route 投入の throughput を上げます（→ 04 章参照）。
+- `bgpd` は `fpm` socket（TCP localhost:2620）で zebra と通信し、Redis を介しません。
+
 ## 大量 route loading
 
 BGP Loading Optimization は、BGP 自体の best path 計算ではなく、SONiC に route が流れ込んだ後の処理量を減らす。fpmsyncd の Redis pipeline flush、orchagent の ring buffer/assistant thread、sairedis async 化が主な論点である。小規模経路の即時性と大量経路の throughput のバランスが設計上の注意点になる。詳細は [BGP Loading Optimization](../../routing/bgp-loading-optimization-for-sonic.md) を参照する。
@@ -37,6 +99,14 @@ Suppress FIB Pending は、route が FRR で best になっても ASIC へ入る
 ## dynamic peer はどこが動的か
 
 dynamic peer modification は、peer range や dynamic peer の変更時に FRR container 全体を大きく揺らさず、bgpcfgd が追加/削除用 template を使って反映する設計である。STATE_DB の `BGP_PEER_CONFIGURED_TABLE` により、どの dynamic peer が構成済みかを管理する。頻繁に peer が増減する fabric では、設定反映の粒度と既存 session への影響を確認する。
+
+## 既知の実装上の制約
+
+- **Suppress FIB Pending** は ASIC からの `offloaded` フィードバックが前提で、ベンダ syncd が `STATE_DB.ROUTE_TABLE.offloaded` を更新しない場合は永続的に suppress 状態のままになります。FRR の `show bgp suppress-fib-pending` で詰まった prefix を確認する必要があります。
+- **BGP PIC** は ASIC 側で `NEXT_HOP_GROUP_MEMBER` の weight 動的更新がサポートされている前提です。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ません。
+- **bgpcfgd の jinja2 template** は SONiC 標準 `bgpd.main.conf.j2` 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがあります。
+- **graceful restart / warm restart** は FRR 側で実装されていますが、SONiC の warm-reboot framework (`WARM_RESTART_TABLE|bgp`) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の `WARM_RESTART` で十分に確保する必要があります（→ 11 章）。
+- **大量経路投入時** は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提です。`gBufferOrchEnabled` 系のビルドフラグで挙動が変わります。
 
 ## 関連ページ
 

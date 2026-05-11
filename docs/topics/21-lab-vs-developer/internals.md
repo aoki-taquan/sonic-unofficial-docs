@@ -92,3 +92,20 @@ VS でも Redis pub/sub の経路は通常運用と同じ。FDB learn 等の not
 - PTF は veth 経由で SONiC-VS と接続するが、veth の MTU / VLAN / offload 設定によっては想定外の動作になる。`ethtool -K` で TX/RX checksum を無効化する運用がある。
 - KNE 連携は Container Networking 経由で SONiC VS を pod として起動。SAI VS の起動順序や `syncd --asicType vs` の引数が KNE config で生成される。
 - VS test と Ansible test plan の二重化は意図的だが、HLD のうち「VS だけで verify 可能なもの」と「実機が要るもの」の境界が明示されていないテスト項目があり、CI 通過でも HLD と乖離するケースがある。
+
+## sonic-mgmt testbed の構造
+
+`sonic-mgmt` リポジトリの testbed は ansible + pytest をベースに、以下の層で構成されます。
+
+| 層 | 役割 |
+| --- | --- |
+| `ansible/files/sonic_lab_devices.csv` | DUT / fanout / PTF host の物理 inventory |
+| `ansible/templates/topo_*.j2` | topology（t0、t1、ptf32、ciscovs-7nodes 等） |
+| `tests/common/` | pytest fixture（duthost、ptfhost、nbrhosts） |
+| `tests/<feature>/test_*.py` | 機能別 test case |
+
+`tests/common/plugins/sanity_check/` が各 test 前に DUT のヘルス（BGP up、interface up、critical process）を確認し、failed なら test を skip します。
+
+## SimX / kvm-based 自動化
+
+KVM 上の SONiC-VS は libvirt で起動し、`testbed-cli.sh` が PTF host と組み合わせて topology を構築します。SimX（一部ベンダ提供）は packet forwarding と counter を高精度にシミュレートする商用ツールで、SONiC-VS だけでは検証できない ASIC capability path を埋めるのに使われます。OSS の範囲では SimX は外部依存で、CI 上の代替として `make PLATFORM=vs` の SAI VS が標準です。

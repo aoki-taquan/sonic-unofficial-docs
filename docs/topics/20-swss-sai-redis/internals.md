@@ -103,6 +103,19 @@ Counter 初期化最適化は、`pending_sai_objects` に登録 object を一時
 
 Debug Framework と dump utility はオペレータ目線、SAI failure dump はベンダ調査目線で読むと整理しやすい。
 
+## syncd の処理モデル
+
+`syncd` は SAI を呼び出す唯一のプロセスで、内部で以下のスレッド構成を持ちます。
+
+| スレッド | 役割 |
+| --- | --- |
+| main | `ASIC_DB` の `_temp` key を読み、SAI API 呼び出しを順序通り発行 |
+| notification | SAI からの notification（fdb_event、port_state_change、switch_shutdown）を Redis pub/sub に転送 |
+| flexcounter | counter group ごとに polling し、`COUNTERS_DB` に書き込む（→ 09 章） |
+| dump | `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 受信時に SAI / ASIC_DB を snapshot |
+
+sairedis library 側で async / sync モードが選べ、SONiC master はデフォルト async（pipeline で複数 op をまとめる）を採用しています。sync モードは SAI 失敗の即時検知に有用ですが throughput が落ちます。
+
 ## 関連ページ
 
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../../platform/sai-api-version-check.md)

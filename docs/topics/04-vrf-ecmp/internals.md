@@ -86,6 +86,30 @@ ASIC_DB:
 - `Suppress FIB Pending` の offload-feedback path は、ASIC reject（capacity over や属性 unsupported）の通知を `STATE_DB.ROUTE_TABLE` の `offloaded` field 経由で FRR に返しますが、ベンダ syncd が `offloaded` を更新しない場合に suppress が解除されない discrepancy がよく観測されます。
 - FgNhgOrch は `FG_NHG_PREFIX` テーブルに登録された prefix のみ fine-grained 扱いになり、その範囲外の ECMP は通常の `NhgOrch` 経路を通ります。
 
+## VRF と Linux kernel の連携
+
+SONiC は VRF を Linux kernel の VRF（`l3mdev`）と SAI の `VIRTUAL_ROUTER` の二重で表現します。`IntfMgr` が CONFIG_DB の `INTERFACE|<intf>` の `vrf_name` フィールドを見て、kernel に `ip link set <intf> master Vrf-Red` を発行し、同時に APPL_DB 経路で orchagent に SAI router interface の VRF 属性を更新させます。
+
+| 操作 | kernel 側 | ASIC 側 |
+| --- | --- | --- |
+| VRF 追加 | `ip link add Vrf-Red type vrf table 1001` | `SAI_OBJECT_TYPE_VIRTUAL_ROUTER` 作成 |
+| interface に VRF 割当 | `ip link set Ethernet0 master Vrf-Red` | router_interface の `VIRTUAL_ROUTER_ID` を更新 |
+| route 投入 | `ip route add … vrf Vrf-Red` | ROUTE_ENTRY の `vr_id` に紐付け |
+
+kernel side が遅延し orchagent 側が先に更新されると、`fpmsyncd` が「該当 VRF table が kernel に無い」エラーで route を skip するケースが報告されています（VRF 作成直後の race）。
+
+## ECMP hash の制御
+
+ECMP のハッシュフィールドは `SwitchOrch` が起動時に `SWITCH_HASH` テーブル（`CONFIG_DB`）を読み、SAI に投入します。
+
+```
+CONFIG_DB:SWITCH_HASH|GLOBAL
+  ecmp_hash: "SRC_IP,DST_IP,IP_PROTOCOL,L4_SRC_PORT,L4_DST_PORT,INNER_*"
+  lag_hash:  "..."
+```
+
+これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは VXLAN / SRv6 でしばしば問題になります（→ 03 章、17 章）。
+
 ## 関連ページ
 
 - [BGP Loading Optimization](../../routing/bgp-loading-optimization-for-sonic.md)

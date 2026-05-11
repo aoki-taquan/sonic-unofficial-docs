@@ -101,6 +101,18 @@ VNET monitoring / BFD は `BFD_SESSION_TABLE` 経由で `BfdOrch` に届き、EC
 - VNET BGP（VNET 内 BGP セッション）は BGP route の VNET 帰属を nexthop で識別する設計で、同一 nexthop が複数 VNET から指される構成は HLD では除外されています。
 - type-2 で学んだ ARP/ND の老化は kernel ではなく orchagent の `NeighOrch` が tunnel route と一緒に管理するため、tcpdump で aging を観測しても挙動が一致しないことがあります。
 
+## VNI ↔ VRF / VLAN マッピング
+
+EVPN は VNI を L2（type-2）と L3（type-5）の両方で使うため、VNI の意味を文脈で分ける必要があります。
+
+| 種別 | 用途 | SONiC 実装 |
+| --- | --- | --- |
+| L2 VNI | type-2（MAC / MAC+IP）broadcast domain | `VLAN` ↔ `VXLAN_TUNNEL_MAP` で VLAN にバインド |
+| L3 VNI | type-5（IP prefix）受信側で route lookup | `VRF` ↔ `VXLAN_EVPN_NVO` で VRF にバインド |
+| Symmetric IRB | type-2 でも L3 VNI を経由して inter-subnet ルーティング | type-2 の RT に L3 VNI を含めて広告 |
+
+`fpmsyncd` は FRR からの EVPN route を `EVPN_REMOTE_VNI_TABLE` 系で受け、`VnetOrch` がそれを SAI tunnel / FDB / route に変換します。VNI が L2 と L3 で衝突する設定は CONFIG_DB の整合性チェックで拒否される設計ですが、bgpcfgd 経由でない手動の vtysh 投入では拒否されない既知の隙があります。
+
 ## 関連ページ
 
 - [VXLAN SONiC HLD](../../overlay/vxlan-sonic.md)
