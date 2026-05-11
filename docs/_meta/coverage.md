@@ -21,13 +21,13 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **847** ページ。
+全 **859** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 578 |
+| code-verified | 586 |
 | runbook-verified | 27 |
-| discrepancy-found | 46 |
+| discrepancy-found | 50 |
 | issue-confirmed | 0 |
 | hld-only | 0 |
 | meta | 187 |
@@ -40,12 +40,12 @@ last_verified: 2026-05-11
 | `_meta` | 0 | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
 | `_root` | 0 | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
 | `acl-qos` | 29 | 0 | 2 | 0 | 0 | 0 | 1 | 32 |
-| `architecture` | 33 | 0 | 8 | 0 | 0 | 0 | 1 | 42 |
+| `architecture` | 33 | 0 | 12 | 0 | 0 | 0 | 1 | 46 |
 | `categories` | 0 | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
 | `guides` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
 | `internals` | 11 | 0 | 1 | 0 | 0 | 0 | 1 | 13 |
 | `management` | 35 | 0 | 8 | 0 | 0 | 0 | 1 | 44 |
-| `overlay` | 8 | 0 | 1 | 0 | 0 | 0 | 1 | 10 |
+| `overlay` | 16 | 0 | 1 | 0 | 0 | 0 | 1 | 18 |
 | `platform` | 36 | 0 | 7 | 0 | 0 | 0 | 1 | 44 |
 | `reference` | 305 | 27 | 0 | 0 | 0 | 9 | 0 | 341 |
 | `routing` | 45 | 0 | 6 | 0 | 0 | 0 | 1 | 52 |

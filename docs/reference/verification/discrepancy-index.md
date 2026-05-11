@@ -14,14 +14,14 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - `not_implemented`: HLD 提案が現行 master に取り込まれていない
 - `evolved_beyond_hld`: 取り込まれたが HLD 記述と乖離した形で進化／置換された
 
-全 **46** ページ。
+全 **50** ページ。
 
 ## area 別件数
 
 | area | 件数 |
 |------|-----:|
 | `acl-qos` | 2 |
-| `architecture` | 8 |
+| `architecture` | 12 |
 | `internals` | 1 |
 | `management` | 8 |
 | `overlay` | 1 |
@@ -36,7 +36,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 |---------|-----:|
 | `deprecated`（deprecated） | 3 |
 | `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 20 |
-| `not_implemented`（未実装） | 14 |
+| `not_implemented`（未実装） | 18 |
 | `partially_implemented`（partially_implemented） | 9 |
 
 ## エントリ一覧（area 別）
@@ -79,6 +79,24 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（`SsdBase` / `SsdUtil`）と CLI（`show platform ssdhealth`）は概ね素直に取り込まれているが、HLD で Open Question として残されていた **常時監視デーモン `ssdmond` は現状実装が見当たらない**。
+
+- [SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md)  
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+  
+  `sonic-swss-common/common/schema.h` で HA Set / HA Scope / Global Config の APP / CFG / STATE 系テーブルは取り込み済（L180-182, L391, L454 付近）。一方で `DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` / `VDPU_TABLE` は **未定義**。さらに **`hamgrd` バイナリは community master に存在しない** ため、本ページのスキーマに書き込んでも consumer が居ない状態（schema 層のみ先行採用）。詳細は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](smartswitch-high-ava…
+
+- [SmartSwitch HA HAMgrD 内部実装（actor workflow / DPU-Driven 詳細）](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-internals.md)  
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+  
+  本ページに記述した actor workflow / DPU-Driven シーケンスは **HLD v0.1 を元にした将来仕様の参考**。`hamgrd` バイナリ・actor framework・swbus・`DASH_HA_DPU_STATE` / `VDPU_TABLE` の schema は community master に未取り込みで、Switch-Driven mode は HLD 上 TBD のまま。実コードでの裏取り結果と回避策は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) を参照。
+
+- [SmartSwitch HA HAMgrD 制限事項と実装乖離](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md)  
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+
+- [SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md)  
+  monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+  
+  `hamgrd` バイナリは community master に未取り込み（`grep -ri hamgrd .cache/sonic-sources/sonic-swss/` でコメントのみヒット）。actor framework / vDPU 抽象 / swbus も実装されていない。本ページの概念記述は HLD v0.1 (2025-02) を元にした **将来仕様の参考** であり、現行 community master で「動かす」ことは不可能。詳細は [smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design-limitations.md) を参照。
 
 - [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`

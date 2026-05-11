@@ -216,7 +216,7 @@ flowchart LR
   SC --> CDB2
   DM2["hostcfgd"]
   CDB2 --> DM2
-  CDB3[("CONFIG_DB<br/>RADIUS_SERVER")]
+  CDB3[("CONFIG_DB<br/>RADIUS")]
   SC --> CDB3
   DM3["hostcfgd"]
   CDB3 --> DM3

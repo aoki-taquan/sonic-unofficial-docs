@@ -67,7 +67,7 @@ VALID_MONITORS = {
 # different rubric to chapter indices (relaxed body-volume / per-claim
 # verification requirements). The linter accepts it as optional and only
 # validates the enum value when present.
-VALID_PAGE_KINDS = {"chapter-index"}
+VALID_PAGE_KINDS = {"chapter-index", "split-child"}
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n(.*)\Z", re.DOTALL)
 

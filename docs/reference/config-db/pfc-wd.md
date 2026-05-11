@@ -31,7 +31,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>PFC_WD")]
-  DM["pfcwd"]
+  DM["PfcWdSwOrch"]
   CDB --> DM
   SAI["SAI<br/>sai_acl_api"]
   DM --> SAI

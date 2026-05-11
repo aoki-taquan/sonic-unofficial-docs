@@ -30,7 +30,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>MGMT_PORT")]
-  DM["interfaces-config"]
+  DM["mgmt-framework"]
   CDB --> DM
 ```
 

@@ -35,7 +35,7 @@ PFC frame の Priority 値から、どの egress queue を一時停止対象と�
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>MAP_PFC_PRIORITY_TO_QUEUE")]
-  DM["qosorch"]
+  DM["QosOrch"]
   CDB --> DM
   SAI["SAI<br/>sai_qos_map_api"]
   DM --> SAI
