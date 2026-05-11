@@ -1,21 +1,30 @@
 ---
 title: SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観
-description: "SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観 — DASH（Disaggregated APIs for SONiC Hosts）は、SmartSwitch DPU や appliance card 上で SONiC スタックが多数の ENI (Ela…"
+description: SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観 — DASH（Disaggregated
+  APIs for SONiC Hosts）は、SmartSwitch DPU や appliance card 上で SONiC スタックが多数の ENI (Ela…
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dash/dash-sonic-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dash/dash-sonic-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DASH_VNET
-    - DASH_ENI
-    - DASH_ROUTE
-    - DASH_ACL_GROUP
-  cli: []
-  yang: []
+  - DASH_VNET
+  - DASH_ENI
+  - DASH_ROUTE
+  - DASH_ACL_GROUP
+  - VNET
+  - ACL_RULE
+  - ACL_TABLE
+  cli:
+  - show acl
+  - config acl
+  - config vnet
+  yang:
+  - sonic-vnet
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

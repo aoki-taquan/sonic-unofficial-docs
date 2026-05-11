@@ -1,18 +1,27 @@
 ---
 title: Fast-reboot Flow Improvements（finalizer / reconciliation）
-description: "Fast-reboot Flow Improvements（finalizer / reconciliation） — SONiC fast-reboot を「dataplane downtime < 30s, control plane < 90s」に収めるための既存フロー改善 HLD。中身は次の 2 軸:"
+description: 'Fast-reboot Flow Improvements（finalizer / reconciliation） — SONiC fast-reboot
+  を「dataplane downtime < 30s, control plane < 90s」に収めるための既存フロー改善 HLD。中身は次の 2 軸:'
 area: system
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - WARM_RESTART
+  - CRM
+  - NEIGH
+  - VLAN_INTERFACE
+  - INTERFACE
   cli:
-    - fast-reboot
-  yang: []
+  - fast-reboot
+  - show arp
+  - show ndp
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

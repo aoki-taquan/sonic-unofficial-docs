@@ -1,22 +1,32 @@
 ---
 title: SNMP 設定の snmp.yml → CONFIG_DB 移行
-description: "SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約 するための移行設…"
+description: SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community /
+  location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約
+  するための移行設…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/snmp/snmp-configdb-migration-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/snmp/snmp-configdb-migration-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SNMP
-    - SNMP_COMMUNITY
-    - SNMP_USER
+  - SNMP
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - ACL_RULE
+  - ACL_TABLE
+  - SNMP_TRAP_CONFIG
   cli:
-    - config snmp
-    - show run snmp
-  yang: []
+  - config snmp
+  - show run snmp
+  - show acl
+  - config acl
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 <!-- topics-tip -->

@@ -1,18 +1,33 @@
 ---
 title: Bulk Counter（sai_bulk_object_get_stats / chunk size）
-description: "Bulk Counter（sai_bulk_object_get_stats / chunk size） — SAI に追加された bulk stats API（sai_bulk_object_get_stats / sai_bulk_object_clear_stats、SAI PR #1352）を SONiC の…"
+description: 'Bulk Counter（sai_bulk_object_get_stats / chunk size） — SAI に追加された bulk
+  stats API（sai_bulk_object_get_stats / sai_bulk_object_clear_stats、SAI PR #1352）を
+  SONiC の…'
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bulk_counter/bulk_counter.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bulk_counter/bulk_counter.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FLEX_COUNTER_TABLE
-  cli: []
-  yang: []
+  - FLEX_COUNTER_TABLE
+  - CRM
+  - PFC_WD
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - BUFFER_POOL
+  - BUFFER_PROFILE
+  - BUFFER_PG
+  cli:
+  - show pfc
+  yang:
+  - sonic-crm
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-pfcwd
+  - sonic-buffer-pool
+  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->

@@ -1,37 +1,45 @@
 ---
 title: IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）
-description: "IP / LAG / MTU の Incremental Update — SONiC の初期実装は port / IP / LAG を /etc/network/interfaces や /etc/teamd/ の 静的ファイル に書き出していた。"
+description: IP / LAG / MTU の Incremental Update — SONiC の初期実装は port / IP / LAG を
+  /etc/network/interfaces や /etc/teamd/ の 静的ファイル に書き出していた。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/incremental-update-ip-lag/Incremental IP LAG Update.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-  - repo: sonic-net/sonic-swss
-    path: cfgmgr/portmgr.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss
-    path: cfgmgr/intfmgr.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss
-    path: cfgmgr/teammgr.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/SONiC
+  path: doc/incremental-update-ip-lag/Incremental IP LAG Update.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: cfgmgr/portmgr.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: cfgmgr/intfmgr.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: cfgmgr/teammgr.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db:
-    - PORT
-    - INTERFACE
-    - PORTCHANNEL
-    - PORTCHANNEL_INTERFACE
-    - PORTCHANNEL_MEMBER
-    - VLAN_INTERFACE
+  - PORT
+  - INTERFACE
+  - PORTCHANNEL
+  - PORTCHANNEL_INTERFACE
+  - PORTCHANNEL_MEMBER
+  - VLAN_INTERFACE
+  - VLAN
   cli:
-    - config interface
-    - config portchannel
-  yang: []
+  - config interface
+  - config portchannel
+  - config vlan
+  - show vlan
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

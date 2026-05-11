@@ -1,20 +1,39 @@
 ---
 title: BUM ストームコントロール（PORT_STORM_CONTROL）
-description: "BUM ストームコントロール — BUM（Broadcast / Unknown-unicast / unknown-Multicast）ストームは L2 ドメインを劣化させる典型的障害。本機能は 物理ポート単位で 3 タイプを個別に kbps レート制限 し、SAI policer をポート入力段に紐付ける:"
+description: 'BUM ストームコントロール — BUM（Broadcast / Unknown-unicast / unknown-Multicast）ストームは
+  L2 ドメインを劣化させる典型的障害。本機能は 物理ポート単位で 3 タイプを個別に kbps レート制限 し、SAI policer をポート入力段に紐付ける:'
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bum_storm_control/bum_storm_control_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bum_storm_control/bum_storm_control_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - PORT_STORM_CONTROL
+  - PORT_STORM_CONTROL
+  - VLAN
+  - PORT
+  - VLAN_MEMBER
+  - ACL_RULE
+  - ACL_TABLE
+  - PORTCHANNEL_MEMBER
   cli:
-    - config interface storm-control
-    - show storm-control
-  yang: []
+  - config interface storm-control
+  - show storm-control
+  - config interface
+  - config vlan
+  - show storm control
+  - show vlan
+  - show acl
+  yang:
+  - sonic-port
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-port-qos-map
+  - sonic-storm-control
+  - sonic-vlan-sub-interface
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

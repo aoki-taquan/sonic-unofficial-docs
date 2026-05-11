@@ -1,20 +1,37 @@
 ---
 title: show interfaces counters が突然リセットされる
-description: "Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities @ 39732bceb — scripts/portstat : sonic-net/sonic-swss @ 4305596 — orchagent/flexcoun…"
+description: 'Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities
+  @ 39732bceb — scripts/portstat : sonic-net/sonic-swss @ 4305596 — orchagent/flexcoun…'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: scripts/portstat
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-swss
-    path: orchagent/flexcounterorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-utilities
+  path: scripts/portstat
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss
+  path: orchagent/flexcounterorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: [FLEX_COUNTER_TABLE]
-  cli: [show interfaces counters, portstat, sonic-clear counters]
-  yang: []
+  config_db:
+  - FLEX_COUNTER_TABLE
+  - INTERFACE
+  - PORT
+  - VLAN
+  - PORTCHANNEL
+  - TELEMETRY
+  - GNMI
+  cli:
+  - show interfaces counters
+  - portstat
+  - sonic-clear counters
+  - clear counters
+  - show interfaces
+  - clear
+  - config interface
+  yang:
+  - sonic-interface
+  - sonic-port
 ---
 
 # Runbook: show interfaces counters が突然リセットされる

@@ -1,20 +1,36 @@
 ---
 title: Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
-description: "Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP） — encapsulated 後の outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換…"
+description: Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
+  — encapsulated 後の outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress
+  段階で書き換…
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/acl/egress_outer_dscp_change_table.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/acl/egress_outer_dscp_change_table.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - ACL_TABLE
-    - ACL_RULE
+  - ACL_TABLE
+  - ACL_RULE
+  - VLAN
+  - PORT
+  - VLAN_MEMBER
+  - DSCP_TO_TC_MAP
+  - VLAN_SUB_INTERFACE
   cli:
-    - config acl add table
-  yang: []
+  - config acl add table
+  - config acl
+  - config vlan
+  - show acl
+  - show vlan
+  yang:
+  - sonic-vlan
+  - sonic-dscp-tc-map
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

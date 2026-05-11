@@ -1,23 +1,30 @@
 ---
 title: syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE）
-description: "syslog rate limit のコンテナ単位設定 — SONiC の syslog は コンテナ毎の rsyslogd + host の rsyslogd で構成され、コンテナ rsyslog は従来 ハードコード で:"
+description: 'syslog rate limit のコンテナ単位設定 — SONiC の syslog は コンテナ毎の rsyslogd + host
+  の rsyslogd で構成され、コンテナ rsyslog は従来 ハードコード で:'
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/syslog/syslog-rate-limit-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/syslog/syslog-rate-limit-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SYSLOG_CONFIG
-    - SYSLOG_CONFIG_FEATURE
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
+  - SYSLOG_SERVER
+  - FEATURE
+  - LOGGER
   cli:
-    - config syslog rate-limit-host
-    - config syslog rate-limit-container
-    - show syslog rate-limit-host
-    - show syslog rate-limit-container
-  yang: []
+  - config syslog rate-limit-host
+  - config syslog rate-limit-container
+  - show syslog rate-limit-host
+  - show syslog rate-limit-container
+  - config syslog
+  yang:
+  - sonic-syslog
+  - sonic-feature
 ---
 
 !!! success "裏取りステータス: code-verified"

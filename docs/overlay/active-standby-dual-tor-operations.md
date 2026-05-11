@@ -1,26 +1,31 @@
 ---
 title: Active-Standby Dual ToR 設定と運用（CONFIG_DB / CLI / トラブルシューティング）
-description: "Active-Standby Dual ToR の設定経路。CONFIG_DB / APP_DB / STATE_DB スキーマ、muxcable CLI、switchover 計測と運用時のトラブルシューティング手順を扱う。"
+description: Active-Standby Dual ToR の設定経路。CONFIG_DB / APP_DB / STATE_DB スキーマ、muxcable
+  CLI、switchover 計測と運用時のトラブルシューティング手順を扱う。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/dualtor_active_standby_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dualtor/dualtor_active_standby_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - MUX_LINKMGR
-    - MUX_CABLE
-    - PEER_SWITCH
-    - TUNNEL
-    - DEVICE_METADATA
+  - MUX_LINKMGR
+  - MUX_CABLE
+  - PEER_SWITCH
+  - TUNNEL
+  - DEVICE_METADATA
+  - XCVRD_LOG
   cli:
-    - config muxcable mode
-    - show muxcable config
-    - show muxcable status
-  yang: []
+  - config muxcable mode
+  - show muxcable config
+  - show muxcable status
+  - config muxcable
+  - show muxcable
+  yang:
+  - sonic-mux-cable
 ---
 
 # Active-Standby Dual ToR 設定と運用

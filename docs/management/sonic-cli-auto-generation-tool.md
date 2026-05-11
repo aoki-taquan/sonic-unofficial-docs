@@ -1,18 +1,32 @@
 ---
 title: SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）
-description: "SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成 するユーティリ…"
+description: SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を
+  追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成
+  するユーティリ…
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/cli_auto_generation/cli_auto_generation.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/cli_auto_generation/cli_auto_generation.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - AUTO_TECHSUPPORT_FEATURE
+  - AUTO_TECHSUPPORT
+  - VLAN
+  - VLAN_MEMBER
+  - VLAN_INTERFACE
+  - DHCP_RELAY
+  - STP_VLAN
   cli:
-    - sonic-cli-gen
-  yang: []
+  - sonic-cli-gen
+  - config vlan
+  yang:
+  - sonic-trimming
+  - sonic-hash
+  - sonic-vlan
+  - sonic-port
 ---
 
 <!-- topics-tip -->

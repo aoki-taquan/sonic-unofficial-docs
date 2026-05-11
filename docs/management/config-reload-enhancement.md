@@ -1,19 +1,23 @@
 ---
 title: config reload の event-driven 化（FEATURE.delayed + PortInitDone）
-description: "config reload の event-driven 化（FEATURE.delayed + PortInitDone） — 従来の config reload は systemctl restart sonic.target で sonic.target 配下の全サービスをまとめて再起動 する実装だった。"
+description: config reload の event-driven 化（FEATURE.delayed + PortInitDone） — 従来の
+  config reload は systemctl restart sonic.target で sonic.target 配下の全サービスをまとめて再起動 する実装だった。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/config_reload/config_reload_enhancement.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/config_reload/config_reload_enhancement.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FEATURE
+  - FEATURE
+  - PORT
+  - CRM
   cli: []
   yang:
-    - sonic-feature
+  - sonic-feature
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

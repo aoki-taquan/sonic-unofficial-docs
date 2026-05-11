@@ -24,7 +24,9 @@ related:
   - TACPLUS
   - TACPLUS_SERVER
   - RADIUS_SERVER
-  yang: []
+  - CRM
+  yang:
+  - sonic-crm
 ---
 
 # アーキテクチャ

@@ -1,20 +1,31 @@
 ---
 title: SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
-description: "SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン） — SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、ストレージの寿命と健全性を運用者が把握できる 必要がある。"
+description: SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン） — SONiC が動く NOS
+  は組み込み SSD / mSATA に書き込みを行うため、ストレージの寿命と健全性を運用者が把握できる 必要がある。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ssdhealth/ssdhealth_design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ssdhealth/ssdhealth_design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_TRAP_CONFIG
+  - MGMT_VRF_CONFIG
   cli:
-    - show platform ssdhealth
-    - ssdhealth
-  yang: []
+  - show platform ssdhealth
+  - ssdhealth
+  - show platform
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 !!! danger "裏取りステータス: discrepancy-found"

@@ -1,22 +1,34 @@
 ---
 title: Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）
-description: "Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report） — 全モード共通で switch_id と report session（src/dst IP, UDP port） が必須。"
+description: Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report） — 全モード共通で
+  switch_id と report session（src/dst IP, UDP port） が必須。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/barefoot_dtel/Dtel-SONiC.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/barefoot_dtel/Dtel-SONiC.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DTEL
-    - DTEL_REPORT_SESSION
-    - DTEL_INT_SESSION
-    - DTEL_QUEUE_REPORT
-    - DTEL_EVENT
-  cli: []
-  yang: []
+  - DTEL
+  - DTEL_REPORT_SESSION
+  - DTEL_INT_SESSION
+  - DTEL_QUEUE_REPORT
+  - DTEL_EVENT
+  - TELEMETRY_CLIENT
+  - TELEMETRY
+  cli:
+  - show queue
+  - show pfc
+  yang:
+  - sonic-queue
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-crm
+  - sonic-pfcwd
+  - sonic-buffer-pool
+  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->

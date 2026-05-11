@@ -1,18 +1,35 @@
 ---
 title: ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
-description: "ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ） — SONiC の MC-LAG（Multi-Chassis LAG）は専用デーモン ICCPd（ICCP daemon、docker-iccp コンテナ内）で実装されている。"
+description: ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ） — SONiC の MC-LAG（Multi-Chassis
+  LAG）は専用デーモン ICCPd（ICCP daemon、docker-iccp コンテナ内）で実装されている。
 area: switching
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mclag/iccpd-code-introduction.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mclag/iccpd-code-introduction.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - VLAN_SUB_INTERFACE
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - VXLAN_EVPN_NVO
   cli:
-    - mclagdctl
-  yang: []
+  - mclagdctl
+  - config mclag
+  - config vlan
+  - show arp
+  - show vlan
+  - config vxlan
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-vxlan
+  - sonic-port
 ---
 
 <!-- topics-tip -->

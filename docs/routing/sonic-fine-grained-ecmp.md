@@ -1,23 +1,37 @@
 ---
 title: Fine Grained ECMP（FG_NHG / fgnhgorch）
-description: "Fine Grained ECMP（FG_NHG / fgnhgorch） — 通常 ECMP は next-hop が増減するたびに hash redistribution が全 flow に波及 する。"
+description: Fine Grained ECMP（FG_NHG / fgnhgorch） — 通常 ECMP は next-hop が増減するたびに hash
+  redistribution が全 flow に波及 する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ecmp/fine_grained_next_hop_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ecmp/fine_grained_next_hop_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FG_NHG
-    - FG_NHG_PREFIX
-    - FG_NHG_MEMBER
+  - FG_NHG
+  - FG_NHG_PREFIX
+  - FG_NHG_MEMBER
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
   cli:
-    - config fg-nhg
-    - show fgnhg hash-view
-    - show fgnhg active-hops
-  yang: []
+  - config fg-nhg
+  - show fgnhg hash-view
+  - show fgnhg active-hops
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-fine-grained-ecmp
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

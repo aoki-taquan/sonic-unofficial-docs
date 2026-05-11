@@ -1,21 +1,38 @@
 ---
 title: Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）
-description: "Route Flow Counter（ROUTE_MATCH / Route Pattern Orch） — prefix パターンに一致する route について、ASIC 上の Generic Counter を ECMP NHG / route entry に bind し、hit / byte を CLI で…"
+description: Route Flow Counter（ROUTE_MATCH / Route Pattern Orch） — prefix パターンに一致する
+  route について、ASIC 上の Generic Counter を ECMP NHG / route entry に bind し、hit / byte
+  を CLI で…
 area: routing
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/flow_counters/routes_flow_counters.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/flow_counters/routes_flow_counters.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FLOW_COUNTER_ROUTE_PATTERN
-    - FLEX_COUNTER_TABLE
+  - FLOW_COUNTER_ROUTE_PATTERN
+  - FLEX_COUNTER_TABLE
+  - VNET
+  - VRF
+  - ROUTE_MAP
+  - ROUTE_TABLE
+  - NEXTHOP_GROUP
   cli:
-    - config flowcnt-route
-    - show flowcnt-route stats
-  yang: []
+  - config flowcnt-route
+  - show flowcnt-route stats
+  - clear
+  - show route map
+  - config route
+  - config vrf
+  - config vnet
+  yang:
+  - sonic-route-map
+  - sonic-route-common
+  - sonic-vrf
+  - sonic-vnet
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

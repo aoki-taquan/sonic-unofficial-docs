@@ -1,17 +1,20 @@
 ---
 title: ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
-description: "ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） — SONiC 既存の ntpd（202405 以降は NTPsec、ntpd の security-hardened fork）には次の問題があった:"
+description: 'ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） — SONiC 既存の ntpd（202405
+  以降は NTPsec、ntpd の security-hardened fork）には次の問題があった:'
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ntp/migration-to-chrony.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ntp/migration-to-chrony.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - NTP_SERVER
   cli:
-    - chronyc
+  - chronyc
+  - config ntp
   yang: []
 ---
 

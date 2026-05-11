@@ -1,18 +1,26 @@
 ---
 title: Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
-description: "Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT） — SmartSwitch では DPU の graceful reboot に続き graceful shutdown をサポートする。"
+description: Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT） — SmartSwitch
+  では DPU の graceful reboot に続き graceful shutdown をサポートする。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: not_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/graceful-shutdown/graceful-shutdown.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/graceful-shutdown/graceful-shutdown.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - SWITCH_TRIMMING
+  - SWITCH_HASH
+  - DPUS
+  - TELEMETRY
   cli:
-    - config chassis module shutdown
+  - config chassis module shutdown
   yang: []
 ---
 

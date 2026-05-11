@@ -1,20 +1,27 @@
 ---
 title: 分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）
-description: "分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id） — 分散 VOQ シャシは 複数 ASIC が独立した SONiC instance で動き、ASIC 間情報共有は supervisor 上の CHASSIS_APP_DB で行う。"
+description: 分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id） — 分散 VOQ シャシは 複数 ASIC
+  が独立した SONiC instance で動き、ASIC 間情報共有は supervisor 上の CHASSIS_APP_DB で行う。
 area: switching
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/voq/lag_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/voq/lag_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - PORTCHANNEL
-    - PORTCHANNEL_MEMBER
-    - PORTCHANNEL_INTERFACE
-  cli: []
-  yang: []
+  - PORTCHANNEL
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL_INTERFACE
+  - VOQ_INBAND_INTERFACE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - config portchannel
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

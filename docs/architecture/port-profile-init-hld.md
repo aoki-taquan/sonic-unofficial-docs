@@ -14,10 +14,13 @@ related:
   - PORT
   - PORT_STORM_CONTROL
   - PORT_QOS_MAP
+  - PORT_TABLE
+  - CRM
   cli: []
   yang:
   - sonic-port
   - sonic-port-qos-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

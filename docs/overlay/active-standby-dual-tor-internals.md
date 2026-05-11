@@ -20,8 +20,18 @@ sources:
 related:
   config_db:
   - PEER_SWITCH
-  cli: []
-  yang: []
+  - MUX_CABLE
+  - ACL_RULE
+  - ACL_TABLE
+  - MUX_LINKMGR
+  - NEIGH
+  - VLAN_INTERFACE
+  cli:
+  - show arp
+  - show acl
+  - config acl
+  yang:
+  - sonic-mux-cable
 ---
 
 # Active-Standby Dual ToR 内部実装

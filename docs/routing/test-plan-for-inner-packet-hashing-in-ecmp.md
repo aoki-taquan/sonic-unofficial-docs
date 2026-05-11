@@ -1,18 +1,35 @@
 ---
 title: ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
-description: "ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ） — ECMP nexthop の選択を outer ヘッダではなく inner パケットの 5-tuple（src/dst IP、L4 port、IP proto）でハッシュさせ…"
+description: ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
+  — ECMP nexthop の選択を outer ヘッダではなく inner パケットの 5-tuple（src/dst IP、L4 port、IP proto）でハッシュさせ…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ecmp/inner_packet_hashing_test_plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ecmp/inner_packet_hashing_test_plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VLAN
+  - VLAN_MEMBER
+  - PBH
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - VXLAN_EVPN_NVO
+  - NVGRE_TUNNEL
   cli:
-    - config pbh
-  yang: []
+  - config pbh
+  - config vlan
+  - config vxlan
+  - show vlan
+  yang:
+  - sonic-vlan
+  - sonic-pbh
+  - sonic-vxlan
+  - sonic-nvgre-tunnel
+  - sonic-vlan-sub-interface
+  - sonic-port
 ---
 
 <!-- topics-tip -->

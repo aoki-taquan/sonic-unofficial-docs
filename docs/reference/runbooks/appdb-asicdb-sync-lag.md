@@ -1,20 +1,42 @@
 ---
 title: APP_DB → ASIC_DB の反映が遅延・停止する
-description: "Runbook: APPL_DB の更新が ASIC_DB（syncd）に反映されない — : sonic-net/sonic-swss @ master — orchdaemon.cpp : sonic-net/sonic-sairedis @ master — Syncd.cpp"
+description: 'Runbook: APPL_DB の更新が ASIC_DB（syncd）に反映されない — : sonic-net/sonic-swss
+  @ master — orchdaemon.cpp : sonic-net/sonic-sairedis @ master — Syncd.cpp'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-swss
-    path: orchagent/orchdaemon.cpp
-    ref: master
-  - repo: sonic-net/sonic-sairedis
-    path: syncd/Syncd.cpp
-    ref: master
+- repo: sonic-net/sonic-swss
+  path: orchagent/orchdaemon.cpp
+  ref: master
+- repo: sonic-net/sonic-sairedis
+  path: syncd/Syncd.cpp
+  ref: master
 related:
-  config_db: []
-  cli: [show ip route, sonic-db-cli APPL_DB, sonic-db-cli ASIC_DB]
-  yang: []
+  config_db:
+  - CRM
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  cli:
+  - show ip route
+  - sonic-db-cli APPL_DB
+  - sonic-db-cli ASIC_DB
+  - show ip
+  - config bgp
+  - show bgp
+  - show acl
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-crm
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 # Runbook: APPL_DB の更新が ASIC_DB（syncd）に反映されない

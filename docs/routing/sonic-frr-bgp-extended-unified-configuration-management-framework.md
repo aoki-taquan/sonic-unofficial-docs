@@ -1,24 +1,37 @@
 ---
 title: FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）
-description: "FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP） — SONiC Management Framework（REST / gNMI / IS-CLI）から OpenConfig BGP モデル経由で FRR-BGP を一気通貫に扱えるようにする設計。"
+description: FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP） — SONiC Management
+  Framework（REST / gNMI / IS-CLI）から OpenConfig BGP モデル経由で FRR-BGP を一気通貫に扱えるようにする設計。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEVICE_METADATA
-    - BGP_GLOBALS
-    - BGP_NEIGHBOR
-    - BGP_PEER_GROUP
-    - PREFIX_LIST
-  cli: []
+  - DEVICE_METADATA
+  - BGP_GLOBALS
+  - BGP_NEIGHBOR
+  - BGP_PEER_GROUP
+  - PREFIX_LIST
+  - VRF
+  - BGP_PEER_GROUP_AF
+  cli:
+  - config bgp
+  - show bgp
+  - config mgmt trio
+  - show mgmt vrf
+  - config vrf
   yang:
-    - sonic-bgp
-    - openconfig-bgp
+  - sonic-bgp
+  - openconfig-bgp
+  - sonic-bgp-neighbor
+  - sonic-bgp-global
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

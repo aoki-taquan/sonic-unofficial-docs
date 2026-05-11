@@ -1,21 +1,28 @@
 ---
 title: BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）
-description: "BMC / Redfish 統合 — BMC (Board Management Controller) は switch メインボード上の out-of-band 管理用マイコン。"
+description: BMC / Redfish 統合 — BMC (Board Management Controller) は switch メインボード上の
+  out-of-band 管理用マイコン。
 area: platform
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bmc/bmc_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bmc/bmc_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEVICE_METADATA
+  - DEVICE_METADATA
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
   cli:
-    - show platform bmc summary
-    - show platform bmc eeprom
-    - show platform firmware status
-    - config platform firmware install
+  - show platform bmc summary
+  - show platform bmc eeprom
+  - show platform firmware status
+  - config platform firmware install
+  - show platform
+  - config platform firmware
+  - show techsupport
   yang: []
 ---
 

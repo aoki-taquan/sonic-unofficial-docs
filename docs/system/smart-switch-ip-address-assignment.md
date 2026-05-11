@@ -1,21 +1,27 @@
 ---
 title: Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）
-description: "Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server） — DASH SmartSwitch では NPU と各 DPU が PCIe ベースの control plane interface (netdev) で繋がる。"
+description: Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server） — DASH SmartSwitch
+  では NPU と各 DPU が PCIe ベースの control plane interface (netdev) で繋がる。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEVICE_METADATA
-    - MID_PLANE_BRIDGE
-    - DHCP_SERVER_IPV4
-    - DHCP_SERVER_IPV4_PORT
-  cli: []
-  yang: []
+  - DEVICE_METADATA
+  - MID_PLANE_BRIDGE
+  - DHCP_SERVER_IPV4
+  - DHCP_SERVER_IPV4_PORT
+  - DHCP_RELAY
+  - DPU
+  - CHASSIS_MODULE
+  cli:
+  - config dhcp relay
+  yang:
+  - sonic-dhcp-server
 ---
 
 <!-- topics-tip -->

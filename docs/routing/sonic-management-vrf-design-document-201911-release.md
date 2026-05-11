@@ -1,23 +1,34 @@
 ---
 title: Management VRF 設計（201911 release / l3mdev + cgroups）
-description: "Management VRF 設計（201911 release / l3mdev + cgroups） — TACACS+ で config tacacs add --use-mgmt-vrf を打つと TACPLUS_SERVER..vrf=mgmt がセットされ、PAM/NSS が SO_BINDTODEVIC…"
+description: Management VRF 設計（201911 release / l3mdev + cgroups） — TACACS+ で config
+  tacacs add --use-mgmt-vrf を打つと TACPLUS_SERVER..vrf=mgmt がセットされ、PAM/NSS が SO_BINDTODEVIC…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/sonic_stretch_management_vrf_design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/sonic_stretch_management_vrf_design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - MGMT_VRF_CONFIG
-    - MGMT_INTERFACE
-    - TACPLUS_SERVER
+  - MGMT_VRF_CONFIG
+  - MGMT_INTERFACE
+  - TACPLUS_SERVER
+  - VRF
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_COMMUNITY
   cli:
-    - config vrf add mgmt
-    - config vrf del mgmt
-    - show mgmt-vrf
-  yang: []
+  - config vrf add mgmt
+  - config vrf del mgmt
+  - show mgmt-vrf
+  - config vrf
+  - config interface
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
+  - sonic-vrf
 ---
 
 <!-- topics-tip -->

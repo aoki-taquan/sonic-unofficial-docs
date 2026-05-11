@@ -1,19 +1,23 @@
 ---
 title: SSH サーバ全体設定（SSH_SERVER.POLICIES）
-description: "SSH サーバ全体設定（SSH_SERVER.POLICIES） — SONiC の SSH サーバは Debian 標準 sshd をそのまま使う構成で、運用ポリシーを変えるたびに /etc/ssh/sshd_config を直接書き換える必要があった。"
+description: SSH サーバ全体設定（SSH_SERVER.POLICIES） — SONiC の SSH サーバは Debian 標準 sshd をそのまま使う構成で、運用ポリシーを変えるたびに
+  /etc/ssh/sshd_config を直接書き換える必要があった。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ssh_config/ssh_config.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ssh_config/ssh_config.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SSH_SERVER
-  cli: []
+  - SSH_SERVER
+  - TELEMETRY
+  - GNMI
+  cli:
+  - config ssh
   yang:
-    - sonic-ssh-server
+  - sonic-ssh-server
 ---
 
 <!-- topics-tip -->

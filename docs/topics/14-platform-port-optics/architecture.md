@@ -27,7 +27,8 @@ related:
   - BUFFER_PORT_INGRESS_PROFILE_LIST
   - BUFFER_PORT_EGRESS_PROFILE_LIST
   - BUFFER_PG
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 # アーキテクチャ

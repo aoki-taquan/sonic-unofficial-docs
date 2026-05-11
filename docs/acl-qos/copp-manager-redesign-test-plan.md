@@ -1,21 +1,38 @@
 ---
 title: CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）
-description: "CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled） — CoppMgr は CONFIG_DB の COPP_TRAP と FEATURE を観測し、各 trap (BGP / ARP / LACP / UDLD / IP2ME 等) を SAI host…"
+description: CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled） — CoppMgr は
+  CONFIG_DB の COPP_TRAP と FEATURE を観測し、各 trap (BGP / ARP / LACP / UDLD / IP2ME 等)
+  を SAI host…
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/copp/Copp_Manager_Redesign_test_plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/copp/Copp_Manager_Redesign_test_plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - COPP_TRAP
-    - FEATURE
+  - COPP_TRAP
+  - FEATURE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - COPP_GROUP
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
   cli:
-    - config feature state
-    - config load
-  yang: []
+  - config feature state
+  - config load
+  - show arp
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-copp
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

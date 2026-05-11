@@ -1,21 +1,40 @@
 ---
 title: VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）
-description: "VXLAN / VNet の概念・用語・設計思想。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の関係、L2 VXLAN / L3 VXLAN の作り分け、Phase 1 / Phase 2 スコープを整理する。"
+description: VXLAN / VNet の概念・用語・設計思想。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の関係、L2
+  VXLAN / L3 VXLAN の作り分け、Phase 1 / Phase 2 スコープを整理する。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vxlan/Vxlan_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vxlan/Vxlan_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VXLAN_TUNNEL
-    - VXLAN_TUNNEL_MAP
-    - VNET
-  cli: []
-  yang: []
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - VNET
+  - VRF
+  - VLAN
+  - VXLAN_EVPN_NVO
+  - BGP_NEIGHBOR
+  cli:
+  - config vlan
+  - config vxlan
+  - config vnet
+  - config bgp
+  - show bgp
+  - config vrf
+  - show vlan
+  yang:
+  - sonic-vxlan
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vlan
+  - sonic-vnet
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
 ---
 
 # VXLAN / VNet 概念

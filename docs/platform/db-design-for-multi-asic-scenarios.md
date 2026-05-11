@@ -1,22 +1,32 @@
 ---
 title: multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
-description: "multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...） — SONiC は従来 minigraph を設定の真実の相としており、multi-ASIC 機でも 1 ファイルの minigraph を解釈してホスト + 各 ASIC…"
+description: multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
+  — SONiC は従来 minigraph を設定の真実の相としており、multi-ASIC 機でも 1 ファイルの minigraph を解釈してホスト +
+  各 ASIC…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/multi_asic/DB_Design_for_multi_asic.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/multi_asic/DB_Design_for_multi_asic.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - MACSEC_PROFILE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - VOQ_INBAND_INTERFACE
+  - DEVICE_METADATA
+  - BGP_INTERNAL_NEIGHBOR
   cli:
-    - config reload
-    - config override-config-table
-    - config apply-patch
-    - config save
-    - show runningconfiguration all
-  yang: []
+  - config reload
+  - config override-config-table
+  - config apply-patch
+  - config save
+  - show runningconfiguration all
+  yang:
+  - sonic-port
 ---
 
 <!-- topics-tip -->

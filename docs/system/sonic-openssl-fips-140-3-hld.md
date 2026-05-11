@@ -1,19 +1,23 @@
 ---
 title: OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）
-description: "OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1） — FIPS 140-3 認定済みの cryptographic module だけを使うよう SONiC を組み立てるための HLD。"
+description: OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1） — FIPS 140-3 認定済みの
+  cryptographic module だけを使うよう SONiC を組み立てるための HLD。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/fips/SONiC-OpenSSL-FIPS-140-3.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/fips/SONiC-OpenSSL-FIPS-140-3.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - FIPS
   cli:
-    - sonic-installer set-fips
-    - sonic-installer get-fips
-  yang: []
+  - sonic-installer set-fips
+  - sonic-installer get-fips
+  yang:
+  - sonic-fips
+  - sonic-restapi
 ---
 
 !!! info "裏取りステータス: code-verified"

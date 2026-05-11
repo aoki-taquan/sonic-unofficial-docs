@@ -1,18 +1,23 @@
 ---
 title: gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）
-description: "gNOI File.Remove と FactoryReset.Start — gNOI（gRPC Network Operations Interface）は CLI 代替として gRPC で運用コマンドを実行 する仕様で、protobuf は openconfig/gnoi にある。"
+description: gNOI File.Remove と FactoryReset.Start — gNOI（gRPC Network Operations
+  Interface）は CLI 代替として gRPC で運用コマンドを実行 する仕様で、protobuf は openconfig/gnoi にある。
 area: management
 verification: hld-only
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - TELEMETRY
+  - GNMI
+  - CRM
   cli:
-    - gnoi_client
-  yang: []
+  - gnoi_client
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

@@ -17,10 +17,13 @@ related:
   - TACPLUS_SERVER
   - RADIUS
   - RADIUS_SERVER
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
   cli:
   - config aaa
   - show aaa
-  yang: []
+  yang:
+  - sonic-port
 ---
 
 <!-- topics-tip -->

@@ -13,10 +13,12 @@ related:
   config_db:
   - ACL_RULE
   - ACL_TABLE
+  - CRM
   cli:
   - show acl
   - config acl
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

@@ -1,19 +1,26 @@
 ---
 title: fwutil（platform component firmware の install / update / show）
-description: "fwutil（platform component firmware の install / update / show） — BIOS、CPLD、FPGA、BMC、SSD などのプラットフォームコンポーネントの ファームウェアを統一 CLI から操作 するためのユーティリティ。狙い:"
+description: 'fwutil（platform component firmware の install / update / show） — BIOS、CPLD、FPGA、BMC、SSD
+  などのプラットフォームコンポーネントの ファームウェアを統一 CLI から操作 するためのユーティリティ。狙い:'
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/fwutil/fwutil.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/fwutil/fwutil.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - CRM
   cli:
-    - fwutil
-    - show platform firmware
-  yang: []
+  - fwutil
+  - show platform firmware
+  - show platform
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

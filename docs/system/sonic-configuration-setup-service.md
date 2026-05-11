@@ -1,17 +1,21 @@
 ---
 title: config-setup サービス（first-boot config 生成 / 版間 migration）
-description: "config-setup サービス（first-boot config 生成 / 版間 migration） — SONiC の起動時設定は /etc/sonic/config_db.json に保存され、boot で Config DB に流し込まれる。"
+description: config-setup サービス（first-boot config 生成 / 版間 migration） — SONiC の起動時設定は
+  /etc/sonic/config_db.json に保存され、boot で Config DB に流し込まれる。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ztp/SONiC-config-setup.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ztp/SONiC-config-setup.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - DEVICE_METADATA
+  - PORT
+  - BGP_NEIGHBOR
   cli:
-    - config-setup
+  - config-setup
   yang: []
 ---
 

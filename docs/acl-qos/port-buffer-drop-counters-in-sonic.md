@@ -1,20 +1,39 @@
 ---
 title: ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
-description: "ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group） — ポート単位の SAI バッファドロップカウンタは「なぜ専用 FC グループにしたか」「何を取るのか」「CLI でどう操作するか」の 3 点が分かれば全体像はつかめる。順に答える。"
+description: ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group） — ポート単位の SAI バッファドロップカウンタは「なぜ専用
+  FC グループにしたか」「何を取るのか」「CLI でどう操作するか」の 3 点が分かれば全体像はつかめる。順に答える。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FLEX_COUNTER_TABLE
+  - FLEX_COUNTER_TABLE
+  - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - BUFFER_QUEUE
+  - BUFFER_PORT_EGRESS_PROFILE_LIST
+  - BUFFER_PG
   cli:
-    - counterpoll port-buffer-drop
-    - counterpoll show
-  yang: []
+  - counterpoll port-buffer-drop
+  - counterpoll show
+  - show interfaces
+  - config buffer
+  - show buffer
+  - show buffer pool
+  - clear counters
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-buffer-pg
+  - sonic-buffer-queue
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-wred-profile
 ---
 
 <!-- topics-tip -->

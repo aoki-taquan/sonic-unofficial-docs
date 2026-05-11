@@ -1,23 +1,39 @@
 ---
 title: ingress discards テスト計画（21 ケースで drop counter を検証）
-description: "ingress discards テスト計画（21 ケースで drop counter を検証） — DUT が 特定の不正パケット を ingress で drop し、対応する drop counter が正しく増えるかを検証する sonic-mgmt テストプラン。"
+description: ingress discards テスト計画（21 ケースで drop counter を検証） — DUT が 特定の不正パケット を
+  ingress で drop し、対応する drop counter が正しく増えるかを検証する sonic-mgmt テストプラン。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/ingress-discards-test/SONIC_Test_Ingress_Discards_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VLAN
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - VLAN_MEMBER
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
   cli:
-    - portstat
-    - intfstat
-    - aclshow
-    - counterpoll
-    - sonic-clear counters
-    - sonic-clear rifcounters
-  yang: []
+  - portstat
+  - intfstat
+  - aclshow
+  - counterpoll
+  - sonic-clear counters
+  - sonic-clear rifcounters
+  - clear counters
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vlan
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

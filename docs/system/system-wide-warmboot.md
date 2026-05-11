@@ -1,20 +1,37 @@
 ---
 title: System-wide Warmboot（going down / up path / SAI 期待値）
-description: "System-wide Warmboot（going down / up path / SAI 期待値） — 全 SONiC コンテナを協調 shutdown → kexec で kernel 入れ替え → 再起動後に control plane state を復元、データプレーンを乱さない warmboot の枠組…"
+description: System-wide Warmboot（going down / up path / SAI 期待値） — 全 SONiC コンテナを協調
+  shutdown → kexec で kernel 入れ替え → 再起動後に control plane state を復元、データプレーンを乱さない warmboot
+  の枠組…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/warm-reboot/system-warmboot.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/warm-reboot/system-warmboot.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - WARM_RESTART
+  - WARM_RESTART
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
   cli:
-    - warm-reboot
-    - fast-reboot
-  yang: []
+  - warm-reboot
+  - fast-reboot
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-warm-restart
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 !!! success "裏取りステータス: code-verified"

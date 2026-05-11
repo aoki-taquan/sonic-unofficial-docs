@@ -1,22 +1,38 @@
 ---
 title: DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
-description: "DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化） — 旧設計の DHCPv4 counter は dhcpmon のプロセスメモリ内で VLAN/PortChannel 粒度のみ を持ち、ユーザは syslog からしか可視化できな…"
+description: DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化） —
+  旧設計の DHCPv4 counter は dhcpmon のプロセスメモリ内で VLAN/PortChannel 粒度のみ を持ち、ユーザは syslog からしか可視化できな…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dhcp_relay/DHCP-per-interface-counter.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dhcp_relay/DHCP-per-interface-counter.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VLAN_MEMBER
-    - PORTCHANNEL_MEMBER
+  - VLAN_MEMBER
+  - PORTCHANNEL_MEMBER
+  - VLAN
+  - DHCP_RELAY
+  - VLAN_INTERFACE
+  - PORTCHANNEL
+  - DHCP_SERVER_IPV4
   cli:
-    - show dhcp_relay ipv4 counter
-    - show dhcp_relay ipv6 counters
-    - sonic-clear dhcp_relay
-  yang: []
+  - show dhcp_relay ipv4 counter
+  - show dhcp_relay ipv6 counters
+  - sonic-clear dhcp_relay
+  - clear
+  - config vlan
+  - config dhcp relay
+  - config interface
+  yang:
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-dhcp-server
+  - sonic-interface
+  - sonic-vlan-sub-interface
+  - sonic-port
 ---
 
 <!-- topics-tip -->

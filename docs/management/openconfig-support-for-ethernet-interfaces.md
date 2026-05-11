@@ -1,25 +1,36 @@
 ---
 title: OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
-description: "OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer） — openconfig-interfaces / openconfig-if-ethernet / openconfig-if-ip を REST…"
+description: OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common
+  transformer） — openconfig-interfaces / openconfig-if-ethernet / openconfig-if-ip
+  を REST…
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/OpenConfig_Interfaces.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/OpenConfig_Interfaces.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - PORT
-    - INTERFACE
-  cli: []
+  - PORT
+  - INTERFACE
+  - MGMT_INTERFACE
+  - MGMT_VRF_CONFIG
+  - MGMT_PORT
+  - TELEMETRY
+  - GNMI
+  cli:
+  - config interface
+  - show interfaces
+  - config mgmt trio
+  - show mgmt vrf
   yang:
-    - openconfig-interfaces
-    - openconfig-if-ethernet
-    - openconfig-if-ip
-    - openconfig-if-aggregate
-    - sonic-port
-    - sonic-interface
+  - openconfig-interfaces
+  - openconfig-if-ethernet
+  - openconfig-if-ip
+  - openconfig-if-aggregate
+  - sonic-port
+  - sonic-interface
 ---
 
 <!-- topics-tip -->

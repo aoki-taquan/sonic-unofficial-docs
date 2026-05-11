@@ -1,20 +1,30 @@
 ---
 title: VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
-description: "VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite） — Everflow は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。"
+description: VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite） — Everflow は SONiC
+  のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。
 area: platform
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/voq/everflow.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/voq/everflow.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - MIRROR_SESSION
+  - MIRROR_SESSION
+  - VOQ_INBAND_INTERFACE
+  - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
   cli:
-    - config mirror_session
-    - show mirror_session
-  yang: []
+  - config mirror_session
+  - show mirror_session
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

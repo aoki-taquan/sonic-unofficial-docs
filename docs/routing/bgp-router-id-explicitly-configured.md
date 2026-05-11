@@ -1,19 +1,34 @@
 ---
 title: BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）
-description: "BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id） — SONiC の BGP は長らく Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う 設計になっていた。"
+description: BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id） — SONiC の BGP
+  は長らく Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う 設計になっていた。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/BGP/BGP-router-id.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/BGP/BGP-router-id.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEVICE_METADATA
-  cli: []
+  - DEVICE_METADATA
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  cli:
+  - show bgp
+  - config bgp
   yang:
-    - sonic-device_metadata
+  - sonic-device_metadata
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

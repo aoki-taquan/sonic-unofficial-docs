@@ -1,19 +1,31 @@
 ---
 title: pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
-description: "pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…"
+description: pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/
+  xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pmon/pmon-enhancement-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pmon/pmon-enhancement-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - PORT
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - SNMP_COMMUNITY
   cli:
-    - show platform fanstatus
-    - show platform psustatus
-  yang: []
+  - show platform fanstatus
+  - show platform psustatus
+  - show platform
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 <!-- topics-tip -->

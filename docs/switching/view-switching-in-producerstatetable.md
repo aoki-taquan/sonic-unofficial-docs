@@ -12,9 +12,13 @@ sources:
 related:
   config_db:
   - WARM_RESTART
+  - BGP_DEVICE_GLOBAL
+  - DEVICE_METADATA
+  - CRM
   cli: []
   yang:
   - sonic-warm-restart
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

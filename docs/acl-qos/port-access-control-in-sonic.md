@@ -1,25 +1,38 @@
 ---
-title: "Port Access Control（PAC: 802.1x / MAB / RADIUS）"
-description: "Port Access Control（PAC: 802.1x / MAB / RADIUS） — 物理ポート単位の クライアント認証 （IEEE 802.1x + MAB）を SONiC に持ち込む機能。"
+title: 'Port Access Control（PAC: 802.1x / MAB / RADIUS）'
+description: 'Port Access Control（PAC: 802.1x / MAB / RADIUS） — 物理ポート単位の クライアント認証
+  （IEEE 802.1x + MAB）を SONiC に持ち込む機能。'
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pac/Port Access Control.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pac/Port Access Control.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - PAC_PORT_CONFIG_TABLE
-    - HOSTAPD_GLOBAL_CONFIG_TABLE
-    - RADIUS
-    - RADIUS_SERVER
+  - PAC_PORT_CONFIG_TABLE
+  - HOSTAPD_GLOBAL_CONFIG_TABLE
+  - RADIUS
+  - RADIUS_SERVER
+  - AAA
+  - VLAN
+  - PORT
   cli:
-    - config authentication
-    - config dot1x
-    - config mab
-    - show authentication
-  yang: []
+  - config authentication
+  - config dot1x
+  - config mab
+  - show authentication
+  - clear
+  - config vlan
+  - show vlan
+  yang:
+  - sonic-port
+  - sonic-vlan
+  - sonic-port-qos-map
+  - sonic-vlan-sub-interface
+  - sonic-copp
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

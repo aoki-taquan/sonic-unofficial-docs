@@ -1,18 +1,39 @@
 ---
 title: 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）
-description: "単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐） — VoQ（Virtual Output Queue）アーキテクチャはこれまで マルチ ASIC のシャーシシステム でのみ前提とされ、Chassis DB（chassisdb.conf の有無で識別され…"
+description: 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐） — VoQ（Virtual
+  Output Queue）アーキテクチャはこれまで マルチ ASIC のシャーシシステム でのみ前提とされ、Chassis DB（chassisdb.conf
+  の有無で識別され…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/voq/single_asic_voq.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/voq/single_asic_voq.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - VOQ_INBAND_INTERFACE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
   cli:
-    - show chassis
-  yang: []
+  - show chassis
+  - show ip
+  - config bgp
+  - show bgp
+  - show acl
+  - config acl
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 <!-- topics-tip -->

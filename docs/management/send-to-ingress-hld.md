@@ -1,18 +1,34 @@
 ---
 title: Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
-description: "Send to Ingress（CPU から ingress pipeline へパケット注入する hostif） — PINS（P4 Integrated Network Stack）の Packet I/O では、TX 経路として 2 種類の送信モードが想定される:"
+description: 'Send to Ingress（CPU から ingress pipeline へパケット注入する hostif） — PINS（P4
+  Integrated Network Stack）の Packet I/O では、TX 経路として 2 種類の送信モードが想定される:'
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pins/send_to_ingress_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pins/send_to_ingress_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SEND_TO_INGRESS_PORT
-  cli: []
-  yang: []
+  - SEND_TO_INGRESS_PORT
+  - VLAN
+  - PORT
+  - VLAN_MEMBER
+  - ACL_RULE
+  - ACL_TABLE
+  - VLAN_SUB_INTERFACE
+  cli:
+  - config vlan
+  - show vlan
+  - show acl
+  - config acl
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-copp
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

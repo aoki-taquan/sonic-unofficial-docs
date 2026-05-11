@@ -1,19 +1,32 @@
 ---
 title: ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
-description: "ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO） — スイッチ上の温度センサのうち 外部（オンボード） は既存ドライバで読めるが、ASIC 内部センサは ASIC SDK 経由でしか読めない。"
+description: ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO） — スイッチ上の温度センサのうち
+  外部（オンボード） は既存ドライバで読めるが、ASIC 内部センサは ASIC SDK 経由でしか読めない。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/asic-thermal-monitoring/asic_thermal_monitoring_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/asic-thermal-monitoring/asic_thermal_monitoring_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - ASIC_SENSORS
+  - ASIC_SENSORS
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - PORT
+  - AUTONEG_PORT
+  - CRM
+  - SNMP_COMMUNITY
   cli:
-    - show platform temperature
-  yang: []
+  - show platform temperature
+  - show platform
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

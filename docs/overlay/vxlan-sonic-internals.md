@@ -1,21 +1,34 @@
 ---
 title: VXLAN / VNet 内部実装（VxlanTunnelOrch / VnetOrch / SAI 属性）
-description: "VXLAN / VNet の orchagent と SAI 連携の内部実装。VxlanTunnelOrch / VnetOrch / VrfMgrD / IntfsOrch / FdbOrch の役割分担、SAI tunnel / mapper / termination 属性、APP_DB → SAI までの流れを扱う。"
+description: VXLAN / VNet の orchagent と SAI 連携の内部実装。VxlanTunnelOrch / VnetOrch / VrfMgrD
+  / IntfsOrch / FdbOrch の役割分担、SAI tunnel / mapper / termination 属性、APP_DB → SAI までの流れを扱う。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vxlan/Vxlan_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vxlan/Vxlan_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VXLAN_TUNNEL
-    - VXLAN_TUNNEL_MAP
-    - VNET
-  cli: []
-  yang: []
+  - VXLAN_TUNNEL
+  - VXLAN_TUNNEL_MAP
+  - VNET
+  - VRF
+  - VXLAN_EVPN_NVO
+  - CRM
+  - VLAN
+  cli:
+  - config vxlan
+  - config vnet
+  - config vrf
+  yang:
+  - sonic-vxlan
+  - sonic-vnet
+  - sonic-vrf
+  - sonic-crm
+  - sonic-bgp-global
 ---
 
 # VXLAN / VNet 内部実装

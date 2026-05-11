@@ -1,20 +1,31 @@
 ---
 title: Dual-ToR mux が切り替わらない
-description: "Runbook: Dual-ToR mux が切り替わらない — : sonic-net/sonic-linkmgrd @ 65f5633 — LinkManagerStateMachine : sonic-net/sonic-swss @ 4305596 — muxorch"
+description: 'Runbook: Dual-ToR mux が切り替わらない — : sonic-net/sonic-linkmgrd @ 65f5633
+  — LinkManagerStateMachine : sonic-net/sonic-swss @ 4305596 — muxorch'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-linkmgrd
-    path: src/link_manager/LinkManagerStateMachineActiveStandby.cpp
-    ref: 65f563308c689e3225fdf3fc249a132350e9879b
-  - repo: sonic-net/sonic-swss
-    path: orchagent/muxorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-linkmgrd
+  path: src/link_manager/LinkManagerStateMachineActiveStandby.cpp
+  ref: 65f563308c689e3225fdf3fc249a132350e9879b
+- repo: sonic-net/sonic-swss
+  path: orchagent/muxorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: [MUX_CABLE, PEER_SWITCH]
-  cli: [config muxcable mode, show muxcable status, show muxcable config]
-  yang: []
+  config_db:
+  - MUX_CABLE
+  - PEER_SWITCH
+  - MUX_LINKMGR
+  - XCVRD_LOG
+  cli:
+  - config muxcable mode
+  - show muxcable status
+  - show muxcable config
+  - show muxcable
+  - config muxcable
+  yang:
+  - sonic-mux-cable
 ---
 
 # Runbook: Dual-ToR mux が切り替わらない

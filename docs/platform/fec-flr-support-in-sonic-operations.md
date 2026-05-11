@@ -1,23 +1,32 @@
 ---
 title: FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）
-description: "FEC FLR 機能の設定・CLI・確認手順。`counterpoll port flr-interval-factor` での周期調整（HLD 提案）、`show interfaces counters fec-stats` / `portstat -f` での FLR(O) / FLR(P) 表示、COUNTER_DB:RATES に書かれる entry の確認方法をまとめる。"
+description: FEC FLR 機能の設定・CLI・確認手順。`counterpoll port flr-interval-factor` での周期調整（HLD
+  提案）、`show interfaces counters fec-stats` / `portstat -f` での FLR(O) / FLR(P) 表示、COUNTER_DB:RATES
+  に書かれる entry の確認方法をまとめる。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port_fec_flr/port_fec_flr.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port_fec_flr/port_fec_flr.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FLEX_COUNTER_TABLE
+  - FLEX_COUNTER_TABLE
+  - PORT
+  - TRANSCEIVER_INFO
+  - PORTCHANNEL
+  - BREAKOUT_CFG
   cli:
-    - show interfaces counters fec-stats
-    - counterpoll port flr-interval-factor
-    - portstat -f
-  yang: []
+  - show interfaces counters fec-stats
+  - counterpoll port flr-interval-factor
+  - portstat -f
+  - show interfaces
+  - clear counters
+  yang:
+  - sonic-port
 ---
 
 # FEC FLR 設定・運用

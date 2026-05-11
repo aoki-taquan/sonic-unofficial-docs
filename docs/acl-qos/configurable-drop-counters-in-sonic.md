@@ -1,22 +1,38 @@
 ---
 title: 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）
-description: "設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter） — SAI debug counter を活用し、ユーザがドロップ理由（drop reason）の組み合わせを動的に定義してカウントできるようにする機能。"
+description: 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter） — SAI debug counter
+  を活用し、ユーザがドロップ理由（drop reason）の組み合わせを動的に定義してカウントできるようにする機能。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/drop_counters/drop_counters_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/drop_counters/drop_counters_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEBUG_COUNTER
-    - DEBUG_COUNTER_DROP_REASON
+  - DEBUG_COUNTER
+  - DEBUG_COUNTER_DROP_REASON
+  - CRM
+  - PFC_WD
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - BUFFER_POOL
+  - BUFFER_PROFILE
   cli:
-    - config dropcounters install
-    - show dropcounters counts
-    - show dropcounters capabilities
-  yang: []
+  - config dropcounters install
+  - show dropcounters counts
+  - show dropcounters capabilities
+  - clear
+  - clear counters
+  - show pfc
+  yang:
+  - sonic-debug-counter
+  - sonic-crm
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-pfcwd
+  - sonic-buffer-pool
+  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->

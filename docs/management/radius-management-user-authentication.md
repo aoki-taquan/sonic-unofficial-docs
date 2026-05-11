@@ -1,22 +1,31 @@
 ---
 title: RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）
-description: "RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority） — SONiC 管理ユーザの SSH / console ログインを RADIUS で認証する仕組み。"
+description: RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority） — SONiC 管理ユーザの
+  SSH / console ログインを RADIUS で認証する仕組み。
 area: management
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/aaa/radius_authentication.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/aaa/radius_authentication.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - AAA
-    - RADIUS
-    - RADIUS_SERVER
+  - AAA
+  - RADIUS
+  - RADIUS_SERVER
+  - VRF
+  - TACPLUS
+  - TACPLUS_SERVER
+  - MGMT_VRF_CONFIG
   cli:
-    - config aaa
-    - config radius
-  yang: []
+  - config aaa
+  - config radius
+  - show aaa
+  - show priority group
+  - config vrf
+  yang:
+  - sonic-vrf
 ---
 
 <!-- topics-tip -->

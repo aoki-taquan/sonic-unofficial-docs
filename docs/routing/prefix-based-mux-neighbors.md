@@ -1,20 +1,31 @@
 ---
 title: プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
-description: "プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化） — Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサーバ向けネイバエントリを 追加・削除 する必要があり、ネイバ数が多い ToR では切替時の処理量と SAI コール回数が線形に増えていく。"
+description: プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化） — Dual-ToR トポロジでは ToR 切替（mux
+  state transition）の度にサーバ向けネイバエントリを 追加・削除 する必要があり、ネイバ数が多い ToR では切替時の処理量と SAI コール回数が線形に増えていく。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/mux_neighbors_using_prefix_route.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dualtor/mux_neighbors_using_prefix_route.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - MUX_CABLE
+  - MUX_CABLE
+  - TUNNEL
+  - MUX_LINKMGR
+  - PREFIX_LIST
+  - PREFIX_SET
+  - CRM
+  - NEIGH
   cli:
-    - show muxcable config
-    - dualtor_neighbor_check
-  yang: []
+  - show muxcable config
+  - dualtor_neighbor_check
+  - show muxcable
+  - show arp
+  yang:
+  - sonic-mux-cable
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

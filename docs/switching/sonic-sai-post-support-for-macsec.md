@@ -13,10 +13,13 @@ related:
   config_db:
   - FIPS
   - MACSEC_PROFILE
+  - PORT
+  - CRM
   cli: []
   yang:
   - sonic-fips
   - sonic-macsec
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

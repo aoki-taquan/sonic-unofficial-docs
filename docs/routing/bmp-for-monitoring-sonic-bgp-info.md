@@ -1,19 +1,34 @@
 ---
 title: BMP（BGP Monitoring Protocol / BMP_STATE_DB）
-description: "BMP（BGP Monitoring Protocol / BMP_STATE_DB） — SONiC の Redis ROUTE_TABLE には neighbor / nexthop しかなく、BGP の deeper view（capabilities、graceful_restart、AS path、in/o…"
+description: BMP（BGP Monitoring Protocol / BMP_STATE_DB） — SONiC の Redis ROUTE_TABLE
+  には neighbor / nexthop しかなく、BGP の deeper view（capabilities、graceful_restart、AS path、in/o…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bmp/bmp.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bmp/bmp.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - BMP
-    - FEATURE
-  cli: []
-  yang: []
+  - BMP
+  - FEATURE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  cli:
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bmp
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

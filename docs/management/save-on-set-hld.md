@@ -1,18 +1,22 @@
 ---
 title: gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
-description: "gNMI Save-On-Set（Set ごとの ConfigDB 永続化） — SONiC の gNMI 実装は、gNMI.Set() で受け取った設定変更を メモリ上の CONFIG_DB にしか反映しない。"
+description: gNMI Save-On-Set（Set ごとの ConfigDB 永続化） — SONiC の gNMI 実装は、gNMI.Set()
+  で受け取った設定変更を メモリ上の CONFIG_DB にしか反映しない。
 area: management
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/gnmi/save_on_set.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/gnmi/save_on_set.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - TELEMETRY
+  - TELEMETRY
+  - GNMI
+  - CRM
   cli: []
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

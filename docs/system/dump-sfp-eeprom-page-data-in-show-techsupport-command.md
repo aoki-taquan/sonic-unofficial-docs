@@ -1,18 +1,22 @@
 ---
 title: show techsupport での SFP EEPROM ページダンプ取り込み
-description: "show techsupport での SFP EEPROM ページダンプ取り込み — 光モジュール起因の物理層トラブル解析向けに、show techsupport の出力に モジュール EEPROM の生ダンプ を含めるための拡張。"
+description: show techsupport での SFP EEPROM ページダンプ取り込み — 光モジュール起因の物理層トラブル解析向けに、show
+  techsupport の出力に モジュール EEPROM の生ダンプ を含めるための拡張。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sfputil/dump_sfp_eeprom.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sfputil/dump_sfp_eeprom.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - LOGGER
+  - AUTO_TECHSUPPORT
+  - AUTO_TECHSUPPORT_FEATURE
   cli:
-    - sfputil show eeprom-hexdump
-    - show techsupport
+  - sfputil show eeprom-hexdump
+  - show techsupport
   yang: []
 ---
 

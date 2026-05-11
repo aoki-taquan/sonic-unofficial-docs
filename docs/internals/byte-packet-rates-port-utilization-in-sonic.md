@@ -1,23 +1,33 @@
 ---
 title: バイト/パケットレートとポート使用率（RATES テーブル + EMA）
-description: "バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等のレート列は、長らく CLI 側でカウンタの差分を計算する 方式で実装されていた。問題は次の通り:"
+description: 'バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS
+  / RX_PPS / RX_UTIL 等のレート列は、長らく CLI 側でカウンタの差分を計算する 方式で実装されていた。問題は次の通り:'
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/rates-and-utilization/Rates_and_utilization_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/rates-and-utilization/Rates_and_utilization_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - RATES
-    - FLEX_COUNTER_TABLE
+  - RATES
+  - FLEX_COUNTER_TABLE
+  - PORT
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - PORT_TABLE
+  - ACL_RULE
   cli:
-    - counterpoll
-    - config rate smoothing_interval
-    - portstat
-    - intfstat
-  yang: []
+  - counterpoll
+  - config rate smoothing_interval
+  - portstat
+  - intfstat
+  - clear counters
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

@@ -1,20 +1,36 @@
 ---
 title: PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）
-description: "PortChannel (LAG) の OpenConfig YANG サポート — SONiC の PortChannel は REST/gNMI で操作できるが、SONiC 独自 YANG（sonic-portchannel 等）に縛られる。"
+description: PortChannel (LAG) の OpenConfig YANG サポート — SONiC の PortChannel は REST/gNMI
+  で操作できるが、SONiC 独自 YANG（sonic-portchannel 等）に縛られる。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/OpenConfig_PortChannel_Interface.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/OpenConfig_PortChannel_Interface.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - VLAN
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL
+  - VLAN_MEMBER
+  - PORTCHANNEL_INTERFACE
+  - INTERFACE
+  - VLAN_SUB_INTERFACE
+  cli:
+  - config portchannel
+  - config vlan
+  - config interface
+  - show vlan
   yang:
-    - openconfig-interfaces
-    - openconfig-if-aggregate
-    - openconfig-if-ethernet
+  - openconfig-interfaces
+  - openconfig-if-aggregate
+  - openconfig-if-ethernet
+  - sonic-portchannel
+  - sonic-vlan
+  - sonic-interface
+  - sonic-vlan-sub-interface
 ---
 
 <!-- topics-tip -->

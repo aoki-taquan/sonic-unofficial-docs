@@ -1,21 +1,37 @@
 ---
 title: MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）
-description: "MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI） — IEEE 802.1AE / 802.1X-2010 準拠の Layer 2 暗号化 を実装する設計。"
+description: MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI） — IEEE 802.1AE
+  / 802.1X-2010 準拠の Layer 2 暗号化 を実装する設計。
 area: switching
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/macsec/MACsec_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/macsec/MACsec_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - MACSEC_PROFILE
-    - PORT
+  - MACSEC_PROFILE
+  - PORT
+  - PFC_WD
+  - ACL_RULE
+  - ACL_TABLE
+  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
+  - CRM
   cli:
-    - config macsec
-    - show macsec
-  yang: []
+  - config macsec
+  - show macsec
+  - show pfc
+  - show acl
+  - config acl
+  yang:
+  - sonic-macsec
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-crm
+  - sonic-pfcwd
+  - sonic-buffer-pool
+  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->

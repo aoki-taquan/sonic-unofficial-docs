@@ -1,23 +1,37 @@
 ---
 title: VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）
-description: "VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel） — VRF（Virtual Routing and Forwarding）の SwSS パスを VS テストフレームワークで機械的に検証する。観点は:"
+description: 'VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）
+  — VRF（Virtual Routing and Forwarding）の SwSS パスを VS テストフレームワークで機械的に検証する。観点は:'
 area: routing
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vrf/vrf-vs-test-plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vrf/vrf-vs-test-plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VRF
-    - INTERFACE
-    - PORTCHANNEL_INTERFACE
-    - VLAN_INTERFACE
-    - LOOPBACK_INTERFACE
-  cli: []
+  - VRF
+  - INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - VLAN_INTERFACE
+  - LOOPBACK_INTERFACE
+  - VLAN
+  - VLAN_MEMBER
+  cli:
+  - config vlan
+  - config vrf
+  - show vlan
+  - show acl
+  - config acl
+  - config portchannel
   yang:
-    - sonic-vrf
+  - sonic-vrf
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

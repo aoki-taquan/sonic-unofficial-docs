@@ -20,7 +20,13 @@ related:
   config_db:
   - ACL_RULE
   - ACL_TABLE
-  yang: []
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - DPUS
+  - VOQ_INBAND_INTERFACE
+  yang:
+  - sonic-crm
 ---
 
 # HA / PMON / reboot / upgrade の運用

@@ -1,18 +1,39 @@
 ---
 title: BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）
-description: "BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD） — T1 リブート直後に「FIB に乗っていない prefix を BGP がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / PFC…"
+description: BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD） — T1 リブート直後に「FIB
+  に乗っていない prefix を BGP がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop
+  / PFC…
 area: routing
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/BGP/BGP-supress-fib-pending.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/BGP/BGP-supress-fib-pending.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DEVICE_METADATA
-  cli: []
-  yang: []
+  - DEVICE_METADATA
+  - VNET
+  - CRM
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - PFC_WD
+  - BGP_PEER_GROUP_AF
+  cli:
+  - clear
+  - show arp
+  - config bgp
+  - show bgp
+  - show pfc
+  - config vnet
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-crm
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

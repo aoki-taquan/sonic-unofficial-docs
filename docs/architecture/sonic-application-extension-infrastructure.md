@@ -1,20 +1,25 @@
 ---
 title: SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
-description: "SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱う ためのフレー…"
+description: SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
+  — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱う
+  ためのフレー…
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-application-extension/sonic-application-extention-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-application-extension/sonic-application-extention-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - FEATURE
+  - FEATURE
+  - CRM
   cli:
-    - sonic-package-manager
-    - spm
-  yang: []
+  - sonic-package-manager
+  - spm
+  - show techsupport
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

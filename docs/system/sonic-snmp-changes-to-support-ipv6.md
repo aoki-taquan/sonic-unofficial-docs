@@ -1,19 +1,31 @@
 ---
 title: SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避
-description: "SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避 — SONiC 単一 ASIC 機の SNMP over IPv6 がタイムアウトする バグの設計修正。"
+description: SNMP IPv6 応答の SRC IP 不整合と SNMP_AGENT_ADDRESS_CONFIG による回避 — SONiC 単一
+  ASIC 機の SNMP over IPv6 がタイムアウトする バグの設計修正。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/snmp/snmp-changes-to-support-ipv6.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/snmp/snmp-changes-to-support-ipv6.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL
+  - PORTCHANNEL_INTERFACE
+  - SNMP_COMMUNITY
+  - PORT
   cli:
-    - config snmpagentaddress
-  yang: []
+  - config snmpagentaddress
+  - show snmpagentaddress
+  - config snmp
+  - config portchannel
+  yang:
+  - sonic-snmp
+  - sonic-portchannel
 ---
 
 <!-- topics-tip -->

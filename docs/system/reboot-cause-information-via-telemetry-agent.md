@@ -1,18 +1,22 @@
 ---
 title: Reboot-cause 履歴の STATE_DB / テレメトリ公開
-description: "Reboot-cause 履歴の STATE_DB / テレメトリ公開 — SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は STATE_DB にも反映する仕組み。"
+description: Reboot-cause 履歴の STATE_DB / テレメトリ公開 — SONiC の起動時に「直前の再起動原因」を判定し、JSON
+  ファイルとして履歴保存し、最新分は STATE_DB にも反映する仕組み。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/system-telemetry/reboot-cause.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/system-telemetry/reboot-cause.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - TELEMETRY_CLIENT
+  - TELEMETRY
   cli:
-    - show reboot-cause
-    - show reboot-cause history
+  - show reboot-cause
+  - show reboot-cause history
+  - show techsupport
   yang: []
 ---
 

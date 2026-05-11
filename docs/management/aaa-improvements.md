@@ -1,24 +1,26 @@
 ---
 title: AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
-description: "AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール） — SONiC の AAA（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案:"
+description: 'AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール） — SONiC の AAA（Authentication
+  / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案:'
 area: management
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/aaa/AAA Improvements/AAA Improvements.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/aaa/AAA Improvements/AAA Improvements.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - AAA
-    - RADIUS
-    - RADIUS_SERVER
-    - TACPLUS
-    - TACPLUS_SERVER
+  - AAA
+  - RADIUS
+  - RADIUS_SERVER
+  - TACPLUS
+  - TACPLUS_SERVER
   cli:
-    - config aaa
-    - config radius
-    - config tacacs
+  - config aaa
+  - config radius
+  - config tacacs
+  - show aaa
   yang: []
 ---
 

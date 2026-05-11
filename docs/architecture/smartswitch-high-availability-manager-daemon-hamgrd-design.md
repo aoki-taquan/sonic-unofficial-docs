@@ -1,22 +1,26 @@
 ---
-title: "SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）"
-description: "SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携） — hamgrd は SmartSwitch の NPU 側 HA container 内で動く管理デーモン。"
+title: 'SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）'
+description: 'SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携） — hamgrd は SmartSwitch
+  の NPU 側 HA container 内で動く管理デーモン。'
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: not_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DPU
-    - VDPU
-    - DASH_HA_GLOBAL_CONFIG_TABLE
-    - DASH_HA_SET_CONFIG_TABLE
-    - DASH_HA_SCOPE_CONFIG_TABLE
-  cli: []
+  - DPU
+  - VDPU
+  - DASH_HA_GLOBAL_CONFIG_TABLE
+  - DASH_HA_SET_CONFIG_TABLE
+  - DASH_HA_SCOPE_CONFIG_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  cli:
+  - show bfd
   yang: []
 ---
 

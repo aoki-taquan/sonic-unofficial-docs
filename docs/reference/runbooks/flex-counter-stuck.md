@@ -1,22 +1,33 @@
 ---
 title: counter が更新されない (FLEX_COUNTER)
-description: "Runbook: counter が更新されない (FLEX_COUNTER) — : sonic-net/sonic-swss @ 4305596 — flexcounterorch : sonic-net/sonic-utilities @ 39732bceb — counterpoll CLI"
+description: 'Runbook: counter が更新されない (FLEX_COUNTER) — : sonic-net/sonic-swss @ 4305596
+  — flexcounterorch : sonic-net/sonic-utilities @ 39732bceb — counterpoll CLI'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-swss
-    path: orchagent/flexcounterorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss-common
-    path: common/table.h
-    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
-  - repo: sonic-net/sonic-utilities
-    path: counterpoll/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss
+  path: orchagent/flexcounterorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/table.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-utilities
+  path: counterpoll/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
-  config_db: [FLEX_COUNTER_TABLE]
-  cli: [counterpoll show, counterpoll port disable, counterpoll port enable]
+  config_db:
+  - FLEX_COUNTER_TABLE
+  - PORT
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  cli:
+  - counterpoll show
+  - counterpoll port disable
+  - counterpoll port enable
+  - show interfaces
+  - show queue
+  - show pfc
   yang: []
 ---
 

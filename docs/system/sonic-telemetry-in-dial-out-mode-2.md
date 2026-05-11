@@ -1,18 +1,31 @@
 ---
 title: telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT）
-description: "telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT） — 通常の telemetry（gNMI Subscribe）はコレクタが DUT に 接続を張りに行く「dial-in」型。"
+description: telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT） — 通常の
+  telemetry（gNMI Subscribe）はコレクタが DUT に 接続を張りに行く「dial-in」型。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-gnmi
-    path: doc/dialout.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-gnmi
+  path: doc/dialout.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - TELEMETRY_CLIENT
-  cli: []
-  yang: []
+  - TELEMETRY_CLIENT
+  - NAT
+  - SNMP
+  - TELEMETRY
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - GNMI
+  - SNMP_COMMUNITY
+  cli:
+  - config snmp
+  - show nat
+  - config nat
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
+  - sonic-nat
 ---
 
 <!-- topics-tip -->

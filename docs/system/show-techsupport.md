@@ -1,17 +1,23 @@
 ---
 title: Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）
-description: "Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式） — show techsupport は SONiC のサブシステム横断の診断情報をひとつの tarball に集める既存ツール（sonic-utilities 由来）。"
+description: Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式） —
+  show techsupport は SONiC のサブシステム横断の診断情報をひとつの tarball に集める既存ツール（sonic-utilities 由来）。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/SONiC Management Framework Show Techsupport HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mgmt/SONiC Management Framework Show Techsupport HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - LOGGER
+  - AUTO_TECHSUPPORT
+  - AUTO_TECHSUPPORT_FEATURE
+  - TELEMETRY
+  - GNMI
   cli:
-    - show techsupport
+  - show techsupport
   yang: []
 ---
 

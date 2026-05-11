@@ -1,20 +1,39 @@
 ---
 title: bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）
-description: "bgpcfgd の dynamic BGP peer 動的変更 — 従来 bgpcfgd は BGP_PEER_RANGE を create only で扱い、runtime での range 追加/削除や route-map / prefix-list / peer-group 等の付随設定変更を受け付けなかった。"
+description: bgpcfgd の dynamic BGP peer 動的変更 — 従来 bgpcfgd は BGP_PEER_RANGE を create
+  only で扱い、runtime での range 追加/削除や route-map / prefix-list / peer-group 等の付随設定変更を受け付けなかった。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/BGP/Bgpcfgd-dyn-peer-modification-support.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/BGP/Bgpcfgd-dyn-peer-modification-support.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - BGP_PEER_RANGE
+  - BGP_PEER_RANGE
+  - VNET
+  - VRF
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
   cli:
-    - show ip bgp vrf
-    - show ipv6 bgp vrf
-  yang: []
+  - show ip bgp vrf
+  - show ipv6 bgp vrf
+  - show ip
+  - config bgp
+  - show bgp
+  - config vrf
+  - config vnet
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 <!-- topics-tip -->

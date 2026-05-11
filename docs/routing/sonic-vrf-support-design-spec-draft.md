@@ -1,28 +1,40 @@
 ---
 title: VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
-description: "VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrfo…"
+description: VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux
+  kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd
+  / vrfo…
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/vrf/sonic-vrf-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/vrf/sonic-vrf-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - VRF
-    - INTERFACE
-    - VLAN_INTERFACE
-    - PORTCHANNEL_INTERFACE
-    - LOOPBACK_INTERFACE
-    - STATIC_ROUTE
-    - BGP_NEIGHBOR
+  - VRF
+  - INTERFACE
+  - VLAN_INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - LOOPBACK_INTERFACE
+  - STATIC_ROUTE
+  - BGP_NEIGHBOR
   cli:
-    - config vrf add
-    - config vrf del
-    - config interface vrf bind
-    - show vrf
-  yang: []
+  - config vrf add
+  - config vrf del
+  - config interface vrf bind
+  - show vrf
+  - config vrf
+  - config interface
+  - config route
+  yang:
+  - sonic-vrf
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vlan
+  - sonic-vxlan
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
 ---
 
 <!-- topics-tip -->

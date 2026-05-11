@@ -1,19 +1,30 @@
 ---
 title: PINS gRPC (P4Runtime) が応答しない
-description: "Runbook: PINS p4rt gRPC が応答しない / セッション張れない — : sonic-net/sonic-pins @ master — p4runtime_impl.cc : sonic-net/sonic-pins @ master — app_db_manager.cc"
+description: 'Runbook: PINS p4rt gRPC が応答しない / セッション張れない — : sonic-net/sonic-pins
+  @ master — p4runtime_impl.cc : sonic-net/sonic-pins @ master — app_db_manager.cc'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-pins
-    path: p4rt_app/p4runtime/p4runtime_impl.cc
-    ref: master
-  - repo: sonic-net/sonic-pins
-    path: p4rt_app/sonic/app_db_manager.cc
-    ref: master
+- repo: sonic-net/sonic-pins
+  path: p4rt_app/p4runtime/p4runtime_impl.cc
+  ref: master
+- repo: sonic-net/sonic-pins
+  path: p4rt_app/sonic/app_db_manager.cc
+  ref: master
 related:
-  config_db: [P4RT_TABLE, DEVICE_METADATA]
-  cli: [show feature status p4rt, docker logs p4rt]
+  config_db:
+  - P4RT_TABLE
+  - DEVICE_METADATA
+  - PORT
+  - PORTCHANNEL
+  - VLAN_SUB_INTERFACE
+  - LOOPBACK_INTERFACE
+  - INTERFACE
+  cli:
+  - show feature status p4rt
+  - docker logs p4rt
+  - config interface
   yang: []
 ---
 

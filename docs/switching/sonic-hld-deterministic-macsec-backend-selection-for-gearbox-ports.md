@@ -12,9 +12,12 @@ sources:
 related:
   config_db:
   - MACSEC_PROFILE
+  - PORT
+  - CRM
   cli: []
   yang:
   - sonic-macsec
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

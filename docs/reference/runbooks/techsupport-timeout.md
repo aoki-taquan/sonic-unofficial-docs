@@ -1,20 +1,28 @@
 ---
 title: show techsupport が timeout する
-description: "Runbook: show techsupport が timeout する — : sonic-net/sonic-utilities @ 39732bceb — scripts/generate_dump : sonic-net/sonic-utilities @ 39732bceb — show/main.py"
+description: 'Runbook: show techsupport が timeout する — : sonic-net/sonic-utilities
+  @ 39732bceb — scripts/generate_dump : sonic-net/sonic-utilities @ 39732bceb — show/main.py'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: scripts/generate_dump
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-utilities
-    path: show/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: scripts/generate_dump
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-utilities
+  path: show/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
-  config_db: [AUTO_TECHSUPPORT, AUTO_TECHSUPPORT_FEATURE]
-  cli: [show techsupport, generate_dump]
-  yang: []
+  config_db:
+  - AUTO_TECHSUPPORT
+  - AUTO_TECHSUPPORT_FEATURE
+  - LOGGER
+  - CRM
+  cli:
+  - show techsupport
+  - generate_dump
+  yang:
+  - sonic-crm
 ---
 
 # Runbook: show techsupport が timeout する

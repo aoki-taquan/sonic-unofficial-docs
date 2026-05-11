@@ -1,24 +1,49 @@
 ---
 title: 経路は RIB にあるが FIB / ASIC に降りない
-description: "Runbook: `show ip route` には出るが ASIC に書き込まれず、転送に使われない経路の切り分け"
+description: 'Runbook: `show ip route` には出るが ASIC に書き込まれず、転送に使われない経路の切り分け'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
-tags: [runbook, routing, fib, fpm]
+tags:
+- runbook
+- routing
+- fib
+- fpm
 sources:
-  - repo: sonic-net/sonic-swss
-    path: fpmsyncd/fpmsyncd.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss
-    path: orchagent/routeorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-frr
-    path: zebra/zebra_fpm.c
-    ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
+- repo: sonic-net/sonic-swss
+  path: fpmsyncd/fpmsyncd.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/routeorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-frr
+  path: zebra/zebra_fpm.c
+  ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
 related:
-  config_db: [ROUTE_TABLE, NEXTHOP_GROUP]
-  cli: [show ip route, vtysh, sonic-db-cli]
-  yang: []
+  config_db:
+  - ROUTE_TABLE
+  - NEXTHOP_GROUP
+  - CRM
+  - ROUTE_MAP
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  cli:
+  - show ip route
+  - vtysh
+  - sonic-db-cli
+  - show ip
+  - show arp
+  - show route map
+  - config route
+  yang:
+  - sonic-route-map
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-crm
+  - sonic-route-common
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
 ---
 
 # Runbook: 経路は RIB にあるが FIB / ASIC に降りない

@@ -1,19 +1,23 @@
 ---
 title: config save 後に予期しない diff が出る
-description: "Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb — config save : sonic-net/sonic-swss-common @ 4305596 — configdb get/set"
+description: 'Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities
+  @ 39732bceb — config save : sonic-net/sonic-swss-common @ 4305596 — configdb get/set'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-swss-common
-    path: common/configdb.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss-common
+  path: common/configdb.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: []
-  cli: [config save, show runningconfiguration]
+  config_db:
+  - BUFFER_PG
+  cli:
+  - config save
+  - show runningconfiguration
   yang: []
 ---
 

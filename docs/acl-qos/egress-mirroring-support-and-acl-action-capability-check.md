@@ -1,32 +1,44 @@
 ---
 title: ACL の egress mirror 対応と SAI ベース action capability 問い合わせ
-description: "ACL の egress mirror 対応と SAI ベース action capability 問い合わせ — ACL は ASIC ごとに ingress / egress stage で使えるアクションが異なる。"
+description: ACL の egress mirror 対応と SAI ベース action capability 問い合わせ — ACL は ASIC
+  ごとに ingress / egress stage で使えるアクションが異なる。
 area: acl-qos
 verification: hld-only
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/acl/acl_stage_capability.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-  - repo: sonic-net/sonic-swss
-    path: orchagent/aclorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss
-    path: orchagent/aclorch.h
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-utilities
-    path: acl_loader/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-sairedis
-    path: lib/RedisRemoteSaiInterface.cpp
-    ref: 88bc51ae95df66977601957515e5527119ffd4c5
+- repo: sonic-net/SONiC
+  path: doc/acl/acl_stage_capability.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/sonic-swss
+  path: orchagent/aclorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: orchagent/aclorch.h
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-utilities
+  path: acl_loader/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-sairedis
+  path: lib/RedisRemoteSaiInterface.cpp
+  ref: 88bc51ae95df66977601957515e5527119ffd4c5
 related:
   config_db:
-    - ACL_RULE
-    - SWITCH_CAPABILITY
+  - ACL_RULE
+  - SWITCH_CAPABILITY
+  - CRM
+  - ACL_TABLE
+  - MIRROR_SESSION
+  - COPP_GROUP
+  - COPP_TRAP
   cli:
-    - acl-loader
-  yang: []
+  - acl-loader
+  - show acl
+  - config acl
+  - config mirror session
+  yang:
+  - sonic-crm
+  - sonic-mirror-session
+  - sonic-copp
 ---
 
 <!-- topics-tip -->

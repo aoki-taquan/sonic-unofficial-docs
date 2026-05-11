@@ -1,20 +1,41 @@
 ---
 title: BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
-description: "BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending） — ASIC への route install が（CRM 制限などで）失敗した場合に、その情報を ERROR_DB.ERROR_ROUTE_TABLE 経由で fpms…"
+description: BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
+  — ASIC への route install が（CRM 制限などで）失敗した場合に、その情報を ERROR_DB.ERROR_ROUTE_TABLE 経由で
+  fpms…
 area: routing
 verification: discrepancy-found
 monitor: deprecated
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - BGP_ERROR_CFG_TABLE
+  - BGP_ERROR_CFG_TABLE
+  - CRM
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - ROUTE_MAP
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
   cli:
-    - config bgp error-handling
-  yang: []
+  - config bgp error-handling
+  - config bgp
+  - show ip
+  - show bgp
+  - clear
+  - show route map
+  - config route
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-route-map
+  - sonic-crm
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

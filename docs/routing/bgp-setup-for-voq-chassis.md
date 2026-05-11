@@ -1,22 +1,38 @@
 ---
 title: VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
-description: "VoQ シャーシでの BGP 構成 — VoQ（Virtual Output Queue）シャーシは複数 ASIC を 1 論理ルータに束ねる。転送決定は 入口 ASIC で 1 回だけ 行われ、その後はファブリック経由で出口へ運ばれる。"
+description: VoQ シャーシでの BGP 構成 — VoQ（Virtual Output Queue）シャーシは複数 ASIC を 1 論理ルータに束ねる。転送決定は
+  入口 ASIC で 1 回だけ 行われ、その後はファブリック経由で出口へ運ばれる。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/voq/bgp_voq_chassis.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/voq/bgp_voq_chassis.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - BGP_VOQ_CHASSIS_NEIGHBOR
-    - BGP_NEIGHBOR
+  - BGP_VOQ_CHASSIS_NEIGHBOR
+  - BGP_NEIGHBOR
+  - VOQ_INBAND_INTERFACE
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
   cli:
-    - bgp shutdown all
-    - bgp startup all
-    - show ip bgp summary
-  yang: []
+  - bgp shutdown all
+  - bgp startup all
+  - show ip bgp summary
+  - show ip
+  - show bgp
+  - config bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
+  - sonic-bgp-bbr
 ---
 
 <!-- topics-tip -->

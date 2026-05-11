@@ -1,22 +1,25 @@
 ---
-title: "SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）"
-description: "HAMgrD の設定経路。DASH_HA_GLOBAL_CONFIG / DASH_HA_SET_CONFIG / DASH_HA_SCOPE_CONFIG テーブル、対応する STATE 系テーブル、現状実装で書き込み可能な部分の運用検証コマンド例を扱う。"
+title: SmartSwitch HA HAMgrD CONFIG/APP/STATE_DB スキーマ（設定経路）
+description: HAMgrD の設定経路。DASH_HA_GLOBAL_CONFIG / DASH_HA_SET_CONFIG / DASH_HA_SCOPE_CONFIG
+  テーブル、対応する STATE 系テーブル、現状実装で書き込み可能な部分の運用検証コマンド例を扱う。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: not_implemented
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DPU
-    - VDPU
-    - DASH_HA_GLOBAL_CONFIG_TABLE
-    - DASH_HA_SET_CONFIG_TABLE
-    - DASH_HA_SCOPE_CONFIG_TABLE
+  - DPU
+  - VDPU
+  - DASH_HA_GLOBAL_CONFIG_TABLE
+  - DASH_HA_SET_CONFIG_TABLE
+  - DASH_HA_SCOPE_CONFIG_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
   cli: []
   yang: []
 ---

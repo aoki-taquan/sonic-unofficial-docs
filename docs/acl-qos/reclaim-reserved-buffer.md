@@ -1,23 +1,37 @@
 ---
 title: Reclaim Reserved Buffer（admin-down ポートの zero_profile）
-description: "Reclaim Reserved Buffer（admin-down ポートの zero_profile） — Mellanox プラットフォームで顕著な「admin-down ポートにも default で reserved buffer が割り当てられ、shared pool が圧迫される」問題に対し、zero_…"
+description: Reclaim Reserved Buffer（admin-down ポートの zero_profile） — Mellanox プラットフォームで顕著な「admin-down
+  ポートにも default で reserved buffer が割り当てられ、shared pool が圧迫される」問題に対し、zero_…
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/qos/reclaim-reserved-buffer.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/qos/reclaim-reserved-buffer.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - BUFFER_PG
-    - BUFFER_QUEUE
-    - BUFFER_PROFILE
-    - BUFFER_POOL
-    - BUFFER_PORT_INGRESS_PROFILE_LIST
-    - BUFFER_PORT_EGRESS_PROFILE_LIST
-  cli: []
-  yang: []
+  - BUFFER_PG
+  - BUFFER_QUEUE
+  - BUFFER_PROFILE
+  - BUFFER_POOL
+  - BUFFER_PORT_INGRESS_PROFILE_LIST
+  - BUFFER_PORT_EGRESS_PROFILE_LIST
+  - PFC_WD
+  cli:
+  - config interface
+  - config buffer
+  - show buffer
+  - show buffer pool
+  - show pfc
+  yang:
+  - sonic-buffer-profile
+  - sonic-buffer-pool
+  - sonic-buffer-pg
+  - sonic-buffer-queue
+  - sonic-pfc-priority-priority-group-map
+  - sonic-pfc-priority-queue-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

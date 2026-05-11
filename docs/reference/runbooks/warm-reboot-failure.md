@@ -1,23 +1,45 @@
 ---
 title: Warm Reboot が失敗 / 通信断が長引く
-description: "Runbook: Warm Reboot が失敗 / 通信断が長引く — : sonic-net/sonic-utilities @ 39732bceb — scripts/warm-reboot : sonic-net/sonic-swss @ 4305596 — warm_restart helper"
+description: 'Runbook: Warm Reboot が失敗 / 通信断が長引く — : sonic-net/sonic-utilities @ 39732bceb
+  — scripts/warm-reboot : sonic-net/sonic-swss @ 4305596 — warm_restart helper'
 area: reference
 verification: runbook-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: scripts/warm-reboot
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-swss
-    path: warmrestart/warmRestartHelper.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-frr
-    path: bgpd/bgp_routemap.c
-    ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
+- repo: sonic-net/sonic-utilities
+  path: scripts/warm-reboot
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss
+  path: warmrestart/warmRestartHelper.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-frr
+  path: bgpd/bgp_routemap.c
+  ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
 related:
-  config_db: [WARM_RESTART, BGP_DEVICE_GLOBAL, DEVICE_METADATA]
-  cli: [warm-reboot, config warm_restart enable, show warm_restart]
-  yang: []
+  config_db:
+  - WARM_RESTART
+  - BGP_DEVICE_GLOBAL
+  - DEVICE_METADATA
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - ACL_RULE
+  - ACL_TABLE
+  cli:
+  - warm-reboot
+  - config warm_restart enable
+  - show warm_restart
+  - show bgp
+  - show arp
+  - config bgp
+  - show acl
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-warm-restart
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 # Runbook: Warm Reboot が失敗 / 通信断が長引く

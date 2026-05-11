@@ -22,7 +22,8 @@ related:
   - config default route
   - config aaa
   - show aaa
-  yang: []
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

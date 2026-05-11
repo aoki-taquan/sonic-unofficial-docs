@@ -1,23 +1,38 @@
 ---
 title: QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）
-description: "QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth） — SONiC の QoS には scheduling と shaping の 2 軸がある:"
+description: 'QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth） — SONiC
+  の QoS には scheduling と shaping の 2 軸がある:'
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - SCHEDULER
-    - QUEUE
-    - PORT_QOS_MAP
+  - SCHEDULER
+  - QUEUE
+  - PORT_QOS_MAP
+  - VLAN
+  - VLAN_MEMBER
+  - PORTCHANNEL_MEMBER
+  - PORTCHANNEL
   cli:
-    - config load
-    - show queue counters
-    - config qos clear
-  yang: []
+  - config load
+  - show queue counters
+  - config qos clear
+  - show queue
+  - config qos
+  - config vlan
+  - show vlan
+  yang:
+  - sonic-vlan
+  - sonic-portchannel
+  - sonic-scheduler
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

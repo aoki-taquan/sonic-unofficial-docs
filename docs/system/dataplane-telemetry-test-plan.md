@@ -1,18 +1,32 @@
 ---
-title: Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）
-description: "Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report） — In-band Network Telemetry (INT) と Postcard / Drop / Queue report を含…"
+title: Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue
+  report）
+description: Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard
+  + Drop/Queue report） — In-band Network Telemetry (INT) と Postcard / Drop / Queue
+  report を含…
 area: system
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/barefoot_dtel/Dtel-test-plan.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/barefoot_dtel/Dtel-test-plan.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - DTEL_E_EVENT_TABLE
-  cli: []
-  yang: []
+  - DTEL_E_EVENT_TABLE
+  - TELEMETRY_CLIENT
+  - TELEMETRY
+  - ACL_RULE
+  - ACL_TABLE
+  - QUEUE
+  - CRM
+  cli:
+  - show queue
+  - show acl
+  - config acl
+  yang:
+  - sonic-queue
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

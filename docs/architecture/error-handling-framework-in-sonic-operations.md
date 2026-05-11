@@ -1,20 +1,23 @@
 ---
 title: Error Handling Framework 設定・運用（show / clear error-database / ERROR_DB スキーマ）
-description: "Error Handling Framework HLD の CLI / ERROR_DB スキーマ。`show error-database` / `sonic-clear error-database` の使い方（HLD 提案、現行 master 未実装）、ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE のフィールド、イベント遷移表をまとめる。"
+description: Error Handling Framework HLD の CLI / ERROR_DB スキーマ。`show error-database`
+  / `sonic-clear error-database` の使い方（HLD 提案、現行 master 未実装）、ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE
+  のフィールド、イベント遷移表をまとめる。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: partially_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/error-handling/error_handling_design_spec.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/error-handling/error_handling_design_spec.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli:
-    - show error-database
-    - sonic-clear error-database
+  - show error-database
+  - sonic-clear error-database
+  - clear
   yang: []
 ---
 

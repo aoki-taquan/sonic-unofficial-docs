@@ -1,18 +1,21 @@
 ---
 title: storagemond（SSD / eMMC の health 監視）
-description: "storagemond（SSD / eMMC の health 監視） — storagemond は SSD / eMMC など内部ストレージの health / wear-out を定期監視し、STATE_DB に publish する pmon 系 daemon。狙いは:"
+description: 'storagemond（SSD / eMMC の health 監視） — storagemond は SSD / eMMC など内部ストレージの
+  health / wear-out を定期監視し、STATE_DB に publish する pmon 系 daemon。狙いは:'
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/storagemond/storagemond-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/storagemond/storagemond-hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli:
-    - show platform ssdhealth
-    - show platform storage
+  - show platform ssdhealth
+  - show platform storage
+  - show platform
+  - show techsupport
   yang: []
 ---
 

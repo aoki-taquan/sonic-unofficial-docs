@@ -16,8 +16,10 @@ related:
   config_db:
   - MUX_LINKMGR
   - MUX_CABLE
+  - CRM
   yang:
   - sonic-mux-cable
+  - sonic-crm
 ---
 
 # Mux 制御の内部構造

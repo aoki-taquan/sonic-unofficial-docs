@@ -1,21 +1,40 @@
 ---
 title: Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
-description: "Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬） — 従来 syncd は SAI CREATE/SET 失敗を一律 fatal 扱いし orchagent に shutdown を要求していた。"
+description: Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬） — 従来 syncd は SAI
+  CREATE/SET 失敗を一律 fatal 扱いし orchagent に shutdown を要求していた。
 area: architecture
 verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-11
 page_kind: split-hub
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/error-handling/error_handling_design_spec.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/error-handling/error_handling_design_spec.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - CRM
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
   cli:
-    - show error-database
-    - sonic-clear error-database
-  yang: []
+  - show error-database
+  - sonic-clear error-database
+  - clear
+  - show ip
+  - show bgp
+  - config bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-crm
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
+  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->

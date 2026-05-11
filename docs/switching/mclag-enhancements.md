@@ -1,22 +1,39 @@
 ---
 title: MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）
-description: "MCLAG Enhancements — MCLAG（Multi-Chassis LAG）は 2 台が 互いに peer となり、下流ホストから 1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する:"
+description: 'MCLAG Enhancements — MCLAG（Multi-Chassis LAG）は 2 台が 互いに peer となり、下流ホストから
+  1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する:'
 area: switching
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/mclag/MCLAG_Enhancements_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/mclag/MCLAG_Enhancements_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - MCLAG_DOMAIN
-    - MCLAG_INTERFACE
-    - MCLAG_UNIQUE_IP
+  - MCLAG_DOMAIN
+  - MCLAG_INTERFACE
+  - MCLAG_UNIQUE_IP
+  - VLAN
+  - VLAN_MEMBER
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
   cli:
-    - config mclag
-    - show mclag
-  yang: []
+  - config mclag
+  - show mclag
+  - config vlan
+  - show mac
+  - show vlan
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-mclag
+  - sonic-vlan
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vxlan
+  - sonic-portchannel
+  - sonic-static-route
 ---
 
 <!-- topics-tip -->

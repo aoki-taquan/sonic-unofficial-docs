@@ -1,19 +1,30 @@
 ---
 title: VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
-description: "VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール） — VOQ ベースのシャシでは 入口 chip（ingress ASIC） と 出口 chip（egress ASIC） が異なることがあり、両 chip の rewrite 設定を協調プログラムする必要がある。"
+description: VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール） — VOQ ベースのシャシでは 入口
+  chip（ingress ASIC） と 出口 chip（egress ASIC） が異なることがあり、両 chip の rewrite 設定を協調プログラムする必要がある。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/recirculation-port/recirculation_port.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/recirculation-port/recirculation_port.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - PORT
+  - PORT
+  - VOQ_INBAND_INTERFACE
+  - PORT_STORM_CONTROL
+  - PORT_QOS_MAP
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
   cli:
-    - show interfaces status
-  yang: []
+  - show interfaces status
+  - show interfaces
+  yang:
+  - sonic-port
+  - sonic-port-qos-map
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

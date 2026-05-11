@@ -1,22 +1,38 @@
 ---
-title: L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
-description: "L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp） — SONiC 201908 リリース時に行われた L3 のスケール拡大と性能改善 をまとめた HLD。"
+title: L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show
+  arp）
+description: L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd
+  / show arp） — SONiC 201908 リリース時に行われた L3 のスケール拡大と性能改善 をまとめた HLD。
 area: internals
 verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-11
 page_kind: split-hub
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - COPP_TABLE
+  - COPP_TABLE
+  - VNET
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - VLAN_SUB_INTERFACE
+  - COPP_GROUP
   cli:
-    - show arp
-    - show ndp
-  yang: []
+  - show arp
+  - show ndp
+  - config vlan
+  - show vlan
+  - config vnet
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-copp
+  - sonic-vnet
+  - sonic-port
 ---
 
 <!-- topics-tip -->
