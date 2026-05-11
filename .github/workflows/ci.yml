@@ -45,6 +45,9 @@ jobs:
       - name: Report verification self-consistency suspects (informational)
         run: python3 meta/scripts/check_verification_self_consistency.py || true
 
+      - name: Report monitor-consistency suspects (informational)
+        run: python3 meta/scripts/check_monitor_consistency.py --check || true
+
       - name: Check runbook verification status
         run: python3 meta/scripts/check_runbook_status.py --check
 
