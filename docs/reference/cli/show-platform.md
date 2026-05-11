@@ -116,7 +116,6 @@ CONFIG_DB は触らず、`/host/machine.conf` 由来の environment variables �
 
 [^1]: `platform` グループ全体は `show/platform.py` で定義。`show/main.py` L321 で `cli.add_command(platform.platform)` 登録。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/platform.py>
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -146,6 +145,7 @@ ASIC: broadcom
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)

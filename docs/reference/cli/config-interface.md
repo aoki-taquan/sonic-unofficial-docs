@@ -252,7 +252,6 @@ if clicommon.get_interface_naming_mode() == "alias":
 - [CONFIG_DB: INTERFACE](../config-db/interface.md)
 - [YANG: sonic-interface](../yang/sonic-interface.md)
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -283,6 +282,7 @@ Ethernet0 admin status set to up.
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)

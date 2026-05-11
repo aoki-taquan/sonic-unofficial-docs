@@ -70,6 +70,7 @@ show version [--brief]
 
 [^1]: `version()` 実装は `show/main.py` L1714-L1750。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1714>
 
+
 <!-- usage-example -->
 ## 実行例
 

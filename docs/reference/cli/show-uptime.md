@@ -65,6 +65,7 @@ def uptime(verbose):
 
 [^1]: `uptime` コマンドの実装は `show/main.py` L2211-L2216。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2211>
 
+
 <!-- usage-example -->
 ## 実行例
 

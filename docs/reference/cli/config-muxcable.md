@@ -115,7 +115,6 @@ linkmgrd を経由せず xcvrd 経由で **直接 Y-Cable の HW state を切り
 
 [^3]: `prbs.enable` (`config/muxcable.py` L597-L644)。
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -143,6 +142,7 @@ Success in toggling port Ethernet0 to active
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Dual-ToR と Mux 制御](../../topics/05-dual-tor/index.md)

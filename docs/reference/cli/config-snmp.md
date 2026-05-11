@@ -151,7 +151,6 @@ excerpt: |
 
 [^2]: `add_contact` は `CONTACT` キーが既存なら `Use sudo config snmp contact modify instead` で sys.exit(1)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L4471>
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -181,6 +180,7 @@ Restarting SNMP service...
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)

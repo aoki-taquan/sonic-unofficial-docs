@@ -128,7 +128,6 @@ excerpt: |
 
 [^3]: `add binding` は `config/nat.py` L778-L842。pool 存在チェックと twice_nat_id 整合検査を含む。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/nat.py#L778>
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -158,6 +157,7 @@ NAT feature enabled.
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)

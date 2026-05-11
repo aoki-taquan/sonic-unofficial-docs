@@ -74,6 +74,7 @@ ARP テーブルは **kernel の neighbor table**（および swss/neighsyncd �
 
 [^1]: `arp` の click 定義と `nbrshow -4` 起動部分は `show/main.py` L421-L446。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L421>
 
+
 <!-- usage-example -->
 ## 実行例
 

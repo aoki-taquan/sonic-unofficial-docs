@@ -90,6 +90,7 @@ CONFIG_DB の `FEATURE` テーブルから state / auto_restart / set_owner / no
 
 [^3]: `_negate_bool_str` (`show/feature.py` L92-L98) と `feature_config` (`show/feature.py` L109-L145)。
 
+
 <!-- usage-example -->
 ## 実行例
 

@@ -78,7 +78,6 @@ related:
 - [CONFIG_DB: ACL_TABLE](../config-db/acl-table.md)
 - [CONFIG_DB: ACL_RULE](../config-db/acl-rule.md)
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -105,6 +104,7 @@ DATA_ACL  L3      Ethernet0,Ethernet4  Data plane ingress ACL   ingress
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)

@@ -91,7 +91,6 @@ iccpd 内部のログレベル切替。値は iccpd の syslog 等でデバッ�
 
 [^3]: コマンドテーブルは `command_types[]` (`src/iccpd/src/mclagdctl/mclagdctl.c` L64-L160)。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mclagdctl/mclagdctl.c#L64>
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -120,6 +119,7 @@ Peer IP      : 10.0.0.2
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)

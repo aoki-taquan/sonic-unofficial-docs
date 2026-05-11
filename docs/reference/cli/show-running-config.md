@@ -139,6 +139,7 @@ multi-ASIC では `-n` を必ず単一 namespace 名のいずれかに合わせ�
 
 [^3]: `show runningconfiguration bgp` の multi-ASIC バリデーションは `show/main.py` L1890-L1896。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1890>
 
+
 <!-- usage-example -->
 ## 実行例
 

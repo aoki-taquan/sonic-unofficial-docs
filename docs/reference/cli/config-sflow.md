@@ -124,7 +124,6 @@ interface 用 sample-direction。グローバルと同じ `tx/both` の egress c
 
 [^4]: コレクタ件数チェックは L9354 `len(collector_tbl) == 2` で 2 件固定。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L9354>
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -153,6 +152,7 @@ Enabling sFlow ...
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)

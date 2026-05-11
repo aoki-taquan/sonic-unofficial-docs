@@ -110,7 +110,6 @@ excerpt: |
 - [CLI: config vlan](config-vlan.md)
 - [CONFIG_DB: VLAN](../config-db/vlan.md)
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -140,6 +139,7 @@ show vlan dhcp-relay
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)

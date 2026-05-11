@@ -78,7 +78,6 @@ config qos reload [--ports <port[,port...]>]
 
 [^3]: `reload()` 内の buffer template 選択と `DEVICE_METADATA` 更新。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3666>
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -108,6 +107,7 @@ QoS reload completed.
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: QoS / Buffer / PFC / Watermark](../../topics/08-qos-buffer/index.md)

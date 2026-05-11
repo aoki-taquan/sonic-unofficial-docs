@@ -171,6 +171,7 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 
 [^2]: `breakout` の JSON 出力ロジックは `show/interfaces/__init__.py` L200-L259。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/interfaces/__init__.py#L200>
 
+
 <!-- usage-example -->
 ## 実行例
 

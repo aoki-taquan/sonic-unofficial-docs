@@ -158,6 +158,7 @@ CONFIG_DB の `BGP_AGGREGATE_ADDRESS` テーブルを直接読み出し、各エ
 
 [^1]: `ip` グループ定義は `show/main.py` L1386-L1389。BGP の動的アタッチは L1567-L1581。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1387>
 
+
 <!-- usage-example -->
 ## 実行例
 

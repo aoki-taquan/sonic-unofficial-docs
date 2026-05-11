@@ -107,7 +107,6 @@ related:
 - [CONFIG_DB: SYSLOG_SERVER](../config-db/syslog-server.md)
 - [YANG: sonic-syslog](../yang/sonic-syslog.md)
 
-<!-- topics-back-ref -->
 <!-- usage-example -->
 ## 実行例
 
@@ -135,6 +134,7 @@ Restarting rsyslog-config service ...
 ```
 <!-- /usage-example -->
 
+<!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
