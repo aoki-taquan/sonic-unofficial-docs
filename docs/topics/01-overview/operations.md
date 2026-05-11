@@ -152,6 +152,36 @@ bgp.service: Scheduled restart job, restart counter is at 5.
 - L2 service（teamd、swss）の連動失敗: [L2 章 運用](../06-l2-vlan-lag/operations.md)。
 - Dual-ToR 構成での feature 順序（mux、linkmgrd、telemetry）: [Dual-ToR 章 運用](../05-dual-tor/operations.md)。
 
+## 追加の show 出力例
+
+`show feature config` は CONFIG_DB の `FEATURE` テーブルだけを抜粋表示し、起動時挙動を確認できます。
+
+```text
+Feature     State           AutoRestart     Delayed  HighMemAlert  SetOwner
+----------  --------------  --------------  -------  ------------  --------
+bgp         enabled         enabled         False    disabled      local
+dhcp_relay  enabled         enabled         True     disabled      kube
+lldp        enabled         enabled         False    disabled      kube
+snmp        enabled         enabled         False    disabled      kube
+telemetry   enabled         enabled         True     disabled      kube
+```
+
+`Delayed=True` は systemd の `*-delayed.timer` 経由で遅延起動される feature です。boot 直後に `up` にならないことが正常仕様の場合があるため、`systemctl list-timers '*-delayed.timer'` で次回起動予定時刻を併せて確認します。
+
+```text
+NEXT                          LEFT     LAST  PASSED  UNIT                 ACTIVATES
+Mon 2026-05-11 12:05:43 UTC   2min     n/a   n/a     telemetry-delayed.timer   telemetry-delayed.service
+Mon 2026-05-11 12:08:00 UTC   4min     n/a   n/a     dhcp_relay-delayed.timer  dhcp_relay-delayed.service
+```
+
+## 典型的な運用シナリオ
+
+1. **新規 feature 有効化** — `config feature state <name> enabled` 後に `show feature status` で `SystemState=up` を確認し、当該 container の `docker ps` を見ます。`enabled` だが `down` のまま停滞する場合は `systemctl status <feature>` の Main process exit を見ます。
+2. **設定差分の慎重な適用** — `config apply-patch` で patch を適用する前に `config checkpoint <name>` を取り、失敗時に `config rollback <name>` で戻せる状態を作ります。GCU は YANG 検証を通すため、`config replace` よりも安全側です。
+3. **kube 管理への移行** — `SetOwner` を `kube` に切り替えた直後は `CurrentOwner` が `local` のまま残るのが正常で、kube join 後に一致します。長時間一致しない場合は kube image pull と `acms` connectivity を疑います。
+4. **緊急時の reload と reboot 判断** — service 個別 restart で復旧する見込みがあるなら `systemctl restart <feature>` で局所化します。CONFIG_DB の不整合が広範な場合のみ `config reload -y`、kernel / image 自体の問題なら `fast-reboot` または `reboot` を選びます。
+5. **factory reset の決断** — `config reload` でも復旧しない設定 corruption、または機材払い出し前のサニタイズ用途でのみ `config reset-factory` を選びます。本番投入機ではログとユーザを残すモードを選び、データ消失を最小化します。
+
 ## 関連ページ
 
 - [FEATURE テーブルによるオプショナル機能制御](../../system/sonic-optional-feature-control-enhancement.md)
