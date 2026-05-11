@@ -5530,6 +5530,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#pins-controller-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このページの読み方: PINS は controller-driven 系
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        controller-driven 系のエラー対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22309,6 +22331,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#pins-controller-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このページの読み方: PINS は controller-driven 系
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        controller-driven 系のエラー対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22541,135 +22585,242 @@
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>PINS は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で ASIC を直接制御できるようにする機能です。本ページでは、PINS を実用的に動かすための設定フローを「P4RT を起動する」「コントローラ接続を許可する」「Send to Ingress / PacketIO を有効化する」の 3 フェーズで示し、よくある詰まりどころと対処も併記します。</p>
 <p>CLI / CONFIG_DB の reference 整備が PINS では他機能より薄いため (後述の「現時点で不足している reference」節を参照)、本ページの CONFIG_DB スキーマは HLD と既存実装（<code>sonic-buildimage/dockers/docker-sonic-p4rt</code>、<code>sonic-pins/</code>）から推定したものを示します。実機では必ず <code>redis-cli HGETALL</code> で実際のキーを確認してから運用に組み込んでください。</p>
+<h2 id="pins-controller-driven">このページの読み方: PINS は controller-driven 系<a class="headerlink" href="#pins-controller-driven" title="Permanent link">&para;</a></h2>
+<p>PINS は「運用者が <code>config p4rt ...</code> で 1 ルートずつ ACL / route / nexthop を入れる」プロダクトではありません。<strong>人手で CLI を打つのは P4RT 自体の起動 / 証明書配備 / feature toggle あたりまで</strong>で、データプレーンの設定 (route, ACL, nexthop, mirror, VRF など) は基本的に外部の <strong>P4 controller</strong> が P4Runtime gRPC で直接 ASIC に書き込みます。本ページの CLI / <code>redis-cli</code> 例は「P4RT を立ち上げる側」と「障害時の状態確認」を中心に据え、データプレーンの flow 投入は controller 側の責務であることを念頭に読んでください。</p>
+<p>代表的な設定経路は次の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>用途</th>
+<th>投入先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P4 controller (P4Runtime gRPC)</td>
+<td>本番。ForwardingPipelineConfig + Write RPC で flow を大量投入</td>
+<td><code>p4rt-app</code> 経由で <code>APPL_DB:P4RT_TABLE</code> → SAI</td>
+</tr>
+<tr>
+<td>gNMI (<code>/openconfig-interfaces:interfaces</code> 等)</td>
+<td>port / VRF / interface の基盤側</td>
+<td><code>CONFIG_DB</code> 各種</td>
+</tr>
+<tr>
+<td><code>config feature state p4rt enabled</code> / <code>redis-cli</code></td>
+<td>初期セットアップ、証明書配置、コンテナ起動</td>
+<td><code>CONFIG_DB:FEATURE</code>、<code>CONFIG_DB:P4RT</code></td>
+</tr>
+<tr>
+<td><code>config route</code> 等の通常 SONiC CLI</td>
+<td><strong>PINS と併用するモードでは原則使わない</strong>（P4 controller の所有権と競合）</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>典型的な投入フローは次の形になります。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>P4 Controller
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  └─ SetForwardingPipelineConfig (P4Info + p4_device_config)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>       └─ p4rt-app (P4Runtime server on SONiC)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            └─ APPL_DB:P4RT_TABLE
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                 └─ p4orch
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                      └─ SAI (ACL, route, nexthop, mirror, ...)
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                           └─ ASIC
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  └─ Write RPC (TableEntry / PacketOut)
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>       └─ p4rt-app
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>            └─ (PacketOut の場合) genetlink (psample) → kernel → send_to_ingress hostif → ASIC
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>            └─ (TableEntry の場合) APPL_DB → SAI → ASIC
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>                                    ↑
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>                                 反映エラーは StreamMessageResponse / WriteResponse で controller に返る
+</span></code></pre></div>
+<p>確認も「controller 側で Read RPC を叩いて ForwardingPipelineConfig と TableEntry を取得する」が一次手段で、<code>show</code> CLI は副次的です (そもそも PINS 専用 <code>show</code> CLI はほぼ未整備)。エラーは <strong>gRPC status code (<code>INVALID_ARGUMENT</code>, <code>UNAUTHENTICATED</code>, <code>RESOURCE_EXHAUSTED</code>, <code>FAILED_PRECONDITION</code> 等) と P4Runtime のメッセージ単位エラー</strong> で controller に通知されます。</p>
+<h2 id="controller-driven">controller-driven 系のエラー対処<a class="headerlink" href="#controller-driven" title="Permanent link">&para;</a></h2>
+<p>PINS で controller 側が出すエラーは、層ごとに切り分けると見通しが良くなります。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>代表的な症状 (gRPC status)</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>トランスポート</td>
+<td><code>UNAVAILABLE</code>、<code>DEADLINE_EXCEEDED</code></td>
+<td><code>ss -lntp \| grep 9559</code>、<code>docker ps \| grep p4rt</code>、ファイアウォール / ACL</td>
+</tr>
+<tr>
+<td>認証</td>
+<td><code>UNAUTHENTICATED</code>、<code>PERMISSION_DENIED</code></td>
+<td>mTLS の CA chain、<code>server_cert</code> / <code>client_auth</code>、証明書期限</td>
+</tr>
+<tr>
+<td>仲裁</td>
+<td><code>ALREADY_EXISTS</code> / master 切替後の <code>PERMISSION_DENIED</code></td>
+<td>controller の <code>election_id</code>、<code>p4rt-app</code> ログの "Master arbitration"</td>
+</tr>
+<tr>
+<td>パイプライン</td>
+<td><code>INVALID_ARGUMENT</code> on <code>SetForwardingPipelineConfig</code></td>
+<td>P4Info と SAI capability 不整合、<code>--p4info</code> ログ</td>
+</tr>
+<tr>
+<td>フロー書込</td>
+<td><code>WriteResponse</code> 内の per-entry <code>INVALID_ARGUMENT</code> / <code>RESOURCE_EXHAUSTED</code></td>
+<td>テーブル / アクションが SKU でサポートされているか、テーブル容量</td>
+</tr>
+<tr>
+<td>PacketIO</td>
+<td>PacketIn が来ない、PacketOut が ASIC に届かない</td>
+<td>CoPP trap install、<code>psample</code> genl、<code>send_to_ingress</code> netdev</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># controller 視点に近い確認 (NPU 上で代替)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>p4rt<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-100
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;P4RT_TABLE*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_ACL_ENTRY:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># 反映失敗の SAI status</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SAI_STATUS_(NOT_SUPPORTED|FAILURE|TABLE_FULL)&#39;</span><span class="w"> </span>/var/log/swss/sairedis.rec<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># PacketIO 経路 (kernel 側の genetlink)</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>send_to_ingress
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>psample<span class="w"> </span>-n<span class="w"> </span>-c<span class="w"> </span><span class="m">5</span>
+</span></code></pre></div>
+<p>CLI で「読むだけ」したいときは <code>show feature status p4rt</code> / <code>docker logs p4rt</code> / <code>redis-cli -n 0 HGETALL P4RT_TABLE:...</code> が中心で、<code>config</code> 系は <strong>P4 controller の所有権と競合させない</strong>ことが鉄則です。controller が管理しているテーブルに <code>config route add</code> や <code>config acl add</code> で書き込むと、controller 側の reconciliation で上書きされたり、逆に SONiC 側の view と SAI の view が乖離します。</p>
 <h2 id="_2">全体フロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1. FEATURE.p4rt.state = enabled で p4rt container を起動
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>2. P4RT_TABLE で gRPC port / TLS / 認証パラメータを設定
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>3. (任意) APPL_DB に SEND_TO_INGRESS_PORT を投入し再注入 hostif を作成
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>4. (任意) COPP_TRAP_GROUP の genetlink_* を設定し PacketIO Receive を有効化
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>5. controller から P4Runtime で接続、ForwardingPipelineConfig を流し込み
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1. FEATURE.p4rt.state = enabled で p4rt container を起動
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>2. P4RT_TABLE で gRPC port / TLS / 認証パラメータを設定
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>3. (任意) APPL_DB に SEND_TO_INGRESS_PORT を投入し再注入 hostif を作成
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>4. (任意) COPP_TRAP_GROUP の genetlink_* を設定し PacketIO Receive を有効化
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>5. controller から P4Runtime で接続、ForwardingPipelineConfig を流し込み
 </span></code></pre></div>
 <h2 id="1-plaintext-grpc-lab">シナリオ 1: 単一コントローラ + plaintext gRPC (lab)<a class="headerlink" href="#1-plaintext-grpc-lab" title="Permanent link">&para;</a></h2>
 <p>評価環境で、認証なし TCP gRPC でコントローラを 1 台つなぐ最小構成です。本番では使わないこと。</p>
 <h3 id="_3">設定手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># p4rt feature を有効化</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>feature<span class="w"> </span>state<span class="w"> </span>p4rt<span class="w"> </span>enabled
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># config reload で container を起動 (または systemctl で個別起動)</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>p4rt
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># 起動を確認</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>p4rt
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>p4rt<span class="w"> </span>netstat<span class="w"> </span>-lnt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">9559</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># p4rt feature を有効化</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>feature<span class="w"> </span>state<span class="w"> </span>p4rt<span class="w"> </span>enabled
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># config reload で container を起動 (または systemctl で個別起動)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>p4rt
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 起動を確認</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>p4rt
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>p4rt<span class="w"> </span>netstat<span class="w"> </span>-lnt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">9559</span>
 </span></code></pre></div>
 <h3 id="config_db-p4rtp4rt">CONFIG_DB (P4RT|p4rt)<a class="headerlink" href="#config_db-p4rtp4rt" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;P4RT|p4rt&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;grpc_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9559&quot;</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;use_genetlink&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;tls&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;P4RT|p4rt&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;grpc_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9559&quot;</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&quot;use_genetlink&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="nt">&quot;tls&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># redis-cli で直接投入する例 (CLI が未整備のため)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s2">&quot;P4RT|p4rt&quot;</span><span class="w"> </span>grpc_port<span class="w"> </span><span class="m">9559</span><span class="w"> </span>use_genetlink<span class="w"> </span><span class="nb">true</span><span class="w"> </span>tls<span class="w"> </span><span class="nb">false</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>p4rt
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># redis-cli で直接投入する例 (CLI が未整備のため)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s2">&quot;P4RT|p4rt&quot;</span><span class="w"> </span>grpc_port<span class="w"> </span><span class="m">9559</span><span class="w"> </span>use_genetlink<span class="w"> </span><span class="nb">true</span><span class="w"> </span>tls<span class="w"> </span><span class="nb">false</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>p4rt
 </span></code></pre></div>
 <h3 id="_4">確認<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># gRPC port が listen しているか</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-lntp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">9559</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># p4rt-app のログ</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>docker<span class="w"> </span>logs<span class="w"> </span>p4rt<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># CONFIG_DB の現在値</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;P4RT|p4rt&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># gRPC port が listen しているか</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-lntp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">9559</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># p4rt-app のログ</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>docker<span class="w"> </span>logs<span class="w"> </span>p4rt<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># CONFIG_DB の現在値</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;P4RT|p4rt&quot;</span>
 </span></code></pre></div>
 <h2 id="2-mtls">シナリオ 2: 二重化コントローラ + mTLS (本番想定)<a class="headerlink" href="#2-mtls" title="Permanent link">&para;</a></h2>
 <p>複数 SDN コントローラから election ID で master/standby を切り替える本番運用。mTLS で証明書認証を行います。</p>
 <h3 id="_5">証明書配備<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># /etc/sonic/credentials/ に CA 証明書とサーバ証明書を配置</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/sonic/credentials
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>cp<span class="w"> </span>ca.crt<span class="w"> </span>server.crt<span class="w"> </span>server.key<span class="w"> </span>/etc/sonic/credentials/
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/sonic/credentials/server.key
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># /etc/sonic/credentials/ に CA 証明書とサーバ証明書を配置</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/sonic/credentials
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sudo<span class="w"> </span>cp<span class="w"> </span>ca.crt<span class="w"> </span>server.crt<span class="w"> </span>server.key<span class="w"> </span>/etc/sonic/credentials/
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/sonic/credentials/server.key
 </span></code></pre></div>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;P4RT|p4rt&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;grpc_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9559&quot;</span><span class="p">,</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">&quot;tls&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="nt">&quot;server_cert&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/etc/sonic/credentials/server.crt&quot;</span><span class="p">,</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="nt">&quot;server_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/etc/sonic/credentials/server.key&quot;</span><span class="p">,</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="nt">&quot;ca_cert&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/etc/sonic/credentials/ca.crt&quot;</span><span class="p">,</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="nt">&quot;client_auth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;require&quot;</span><span class="p">,</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="nt">&quot;use_genetlink&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;P4RT|p4rt&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&quot;grpc_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9559&quot;</span><span class="p">,</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="nt">&quot;tls&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="nt">&quot;server_cert&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/etc/sonic/credentials/server.crt&quot;</span><span class="p">,</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="nt">&quot;server_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/etc/sonic/credentials/server.key&quot;</span><span class="p">,</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="nt">&quot;ca_cert&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/etc/sonic/credentials/ca.crt&quot;</span><span class="p">,</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="nt">&quot;client_auth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;require&quot;</span><span class="p">,</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span><span class="nt">&quot;use_genetlink&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="controller">controller 接続テスト<a class="headerlink" href="#controller" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># gRPC reflection が拒否されることを確認 (mTLS 必須)</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>grpcurl<span class="w"> </span>-plaintext<span class="w"> </span>switch:9559<span class="w"> </span>list<span class="w">  </span><span class="c1"># → 失敗するはず</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># クライアント証明書を提示すれば応答する</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>grpcurl<span class="w"> </span>-cacert<span class="w"> </span>ca.crt<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span>switch:9559<span class="w"> </span>list
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># gRPC reflection が拒否されることを確認 (mTLS 必須)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>grpcurl<span class="w"> </span>-plaintext<span class="w"> </span>switch:9559<span class="w"> </span>list<span class="w">  </span><span class="c1"># → 失敗するはず</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># クライアント証明書を提示すれば応答する</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>grpcurl<span class="w"> </span>-cacert<span class="w"> </span>ca.crt<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span>switch:9559<span class="w"> </span>list
 </span></code></pre></div>
 <p>二重化時の election ID 競合と arbitration の振る舞いは <a href="../../../management/p4rt-application-hld/">P4RT App HLD</a> の "Master arbitration" 節を参照してください。SONiC 側で election ID を強制する CONFIG_DB エントリは現在無く、コントローラ側の SetMasterArbitrationUpdate に委ねる設計です。</p>
 <h2 id="3-packetio-send-to-ingress">シナリオ 3: PacketIO + Send to Ingress を有効化<a class="headerlink" href="#3-packetio-send-to-ingress" title="Permanent link">&para;</a></h2>
 <p>PINS でデータプレーン punt (PacketIn) と CPU 注入 (PacketOut / Send to Ingress) を使う場合の追加設定です。</p>
 <h3 id="send-to-ingress-hostif">Send to Ingress hostif<a class="headerlink" href="#send-to-ingress-hostif" title="Permanent link">&para;</a></h3>
 <p><code>SEND_TO_INGRESS_PORT</code> を APPL_DB に宣言すると <code>PortsOrch</code> が <code>send_to_ingress</code> netdev を生成します。CONFIG_DB ではなく APPL_DB なので注意:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># APPL_DB は db number 0</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HSET<span class="w"> </span><span class="s2">&quot;SEND_TO_INGRESS_PORT_TABLE:send_to_ingress&quot;</span><span class="w"> </span>NULL<span class="w"> </span>NULL
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># hostif が作られたか確認</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>send_to_ingress
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># APPL_DB は db number 0</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HSET<span class="w"> </span><span class="s2">&quot;SEND_TO_INGRESS_PORT_TABLE:send_to_ingress&quot;</span><span class="w"> </span>NULL<span class="w"> </span>NULL
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># hostif が作られたか確認</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>send_to_ingress
 </span></code></pre></div>
 <p><code>ip link show send_to_ingress</code> で <code>state UP</code> の netdev が見えれば、<code>PortsOrch::addSendToIngressHostIf()</code> が <code>SAI_HOSTIF_TYPE_NETDEV</code> で hostif を作成済みです。</p>
 <h3 id="copp-trap-group-genetlink">CoPP trap group (genetlink)<a class="headerlink" href="#copp-trap-group-genetlink" title="Permanent link">&para;</a></h3>
 <p><code>copp_cfg.j2</code> の <code>queue2_group1</code> を再利用するか、独自の trap group を作って <code>genetlink_name</code> / <code>genetlink_mcgrp_name</code> を設定します:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;COPP_GROUP|p4rt_punt&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">&quot;trap_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;trap&quot;</span><span class="p">,</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="nt">&quot;trap_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="nt">&quot;genetlink_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;psample&quot;</span><span class="p">,</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="nt">&quot;genetlink_mcgrp_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;packets&quot;</span><span class="p">,</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="nt">&quot;meter_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;packets&quot;</span><span class="p">,</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sr_tcm&quot;</span><span class="p">,</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="nt">&quot;cir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6000&quot;</span><span class="p">,</span>
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">    </span><span class="nt">&quot;cbs&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6000&quot;</span><span class="p">,</span>
-</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">    </span><span class="nt">&quot;red_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;drop&quot;</span>
-</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">&quot;COPP_GROUP|p4rt_punt&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="nt">&quot;queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="nt">&quot;trap_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;trap&quot;</span><span class="p">,</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="nt">&quot;trap_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="nt">&quot;genetlink_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;psample&quot;</span><span class="p">,</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">    </span><span class="nt">&quot;genetlink_mcgrp_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;packets&quot;</span><span class="p">,</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="nt">&quot;meter_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;packets&quot;</span><span class="p">,</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sr_tcm&quot;</span><span class="p">,</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">    </span><span class="nt">&quot;cir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6000&quot;</span><span class="p">,</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span><span class="nt">&quot;cbs&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6000&quot;</span><span class="p">,</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">    </span><span class="nt">&quot;red_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;drop&quot;</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="p">}</span>
 </span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s2">&quot;COPP_GROUP|p4rt_punt&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>queue<span class="w"> </span><span class="m">2</span><span class="w"> </span>trap_action<span class="w"> </span><span class="nb">trap</span><span class="w"> </span>trap_priority<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>genetlink_name<span class="w"> </span>psample<span class="w"> </span>genetlink_mcgrp_name<span class="w"> </span>packets<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span>meter_type<span class="w"> </span>packets<span class="w"> </span>mode<span class="w"> </span>sr_tcm<span class="w"> </span>cir<span class="w"> </span><span class="m">6000</span><span class="w"> </span>cbs<span class="w"> </span><span class="m">6000</span><span class="w"> </span>red_action<span class="w"> </span>drop
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s2">&quot;COPP_GROUP|p4rt_punt&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>queue<span class="w"> </span><span class="m">2</span><span class="w"> </span>trap_action<span class="w"> </span><span class="nb">trap</span><span class="w"> </span>trap_priority<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>genetlink_name<span class="w"> </span>psample<span class="w"> </span>genetlink_mcgrp_name<span class="w"> </span>packets<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span>meter_type<span class="w"> </span>packets<span class="w"> </span>mode<span class="w"> </span>sr_tcm<span class="w"> </span>cir<span class="w"> </span><span class="m">6000</span><span class="w"> </span>cbs<span class="w"> </span><span class="m">6000</span><span class="w"> </span>red_action<span class="w"> </span>drop
 </span></code></pre></div>
 <p>詳細は <a href="../../../management/packetio/">PacketIO HLD</a> と <a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a> を参照してください。</p>
 <h2 id="show">show / 確認コマンド<a class="headerlink" href="#show" title="Permanent link">&para;</a></h2>
 <p>PINS 固有の show CLI は未整備のため、汎用 SONiC コマンド + redis-cli + docker exec で代替します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># p4rt container の health</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>docker<span class="w"> </span>inspect<span class="w"> </span>p4rt<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.State.Health.Status}}&#39;</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># CONFIG_DB の P4RT 系</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;P4RT*&#39;</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;COPP_*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>p4rt
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="c1"># APPL_DB の SEND_TO_INGRESS / hostif</span>
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;SEND_TO_INGRESS*&#39;</span>
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;HOSTIF_TABLE*&#39;</span>
-</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
-</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="c1"># ASIC_DB の hostif object (実際に SAI に降りたか)</span>
-</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*&#39;</span>
-</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>
-</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="c1"># CoPP trap group の SAI 反映</span>
-</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF_TRAP_GROUP:*&#39;</span>
-</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>
-</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="c1"># 統計</span>
-</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
-</span><span id="__span-11-20"><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># p4rt container の health</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>docker<span class="w"> </span>inspect<span class="w"> </span>p4rt<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.State.Health.Status}}&#39;</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># CONFIG_DB の P4RT 系</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;P4RT*&#39;</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;COPP_*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>p4rt
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="c1"># APPL_DB の SEND_TO_INGRESS / hostif</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;SEND_TO_INGRESS*&#39;</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;HOSTIF_TABLE*&#39;</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="c1"># ASIC_DB の hostif object (実際に SAI に降りたか)</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*&#39;</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="c1"># CoPP trap group の SAI 反映</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF_TRAP_GROUP:*&#39;</span>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>
+</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="c1"># 統計</span>
+</span><span id="__span-13-19"><a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
+</span><span id="__span-13-20"><a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters
 </span></code></pre></div>
 <h2 id="_6">よくある設定エラーと対処<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <table>

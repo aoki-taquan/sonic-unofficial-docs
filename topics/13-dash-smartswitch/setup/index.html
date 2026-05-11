@@ -4184,6 +4184,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#dash-controller-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このページの読み方: DASH は controller-driven 系
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        controller-driven 系のエラー対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22247,6 +22269,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#dash-controller-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このページの読み方: DASH は controller-driven 系
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        controller-driven 系のエラー対処
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22416,6 +22460,93 @@
 
 <h1 id="dpu-ip-gnmi-kvm">DPU の IP 割当・gNMI 連携・KVM 検証<a class="headerlink" href="#dpu-ip-gnmi-kvm" title="Permanent link">&para;</a></h1>
 <p>SmartSwitch / DASH の設定は「DPU の管理面をどう立ち上げるか」「コントローラに状態をどう返すか」「実機を持っていない開発者がどう検証するか」の 3 つに分けて考えると見通しが良くなります。</p>
+<h2 id="dash-controller-driven">このページの読み方: DASH は controller-driven 系<a class="headerlink" href="#dash-controller-driven" title="Permanent link">&para;</a></h2>
+<p>DASH / SmartSwitch は「運用者が CLI を叩いて 1 件ずつ ENI / VNET / Route を投入する」プロダクトではありません。<strong>人手で <code>config dash ...</code> のような CLI を打つことはほぼ無く</strong>、外部の DASH appliance controller（典型的には Microsoft Azure SDN のような大規模 SDN コントローラ）が gNMI / gRPC で <code>DASH_*</code> テーブルを送り込みます。本ページの CLI 例は「コントローラ無しで開発・検証する際のショートカット」「障害時の確認手段」として読んでください。</p>
+<p>代表的な設定経路は次の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>用途</th>
+<th>投入先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DASH appliance controller (gNMI / gRPC)</td>
+<td>本番。ENI / VNET / Route / ACL を大量 push</td>
+<td><code>APPL_DB</code> の <code>DASH_*_TABLE</code>（NPU 側 gNMI server 経由）</td>
+</tr>
+<tr>
+<td><code>swssconfig</code> で JSON 流し込み</td>
+<td>lab / CI、controller 不在時のスモークテスト</td>
+<td><code>APPL_DB</code> の <code>DASH_*_TABLE</code>（直接）</td>
+</tr>
+<tr>
+<td><code>redis-cli</code> / <code>sonic-db-cli</code> 手打ち</td>
+<td>障害切り分け、1 件だけ試す</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>config dash ...</code> CLI</td>
+<td><strong>基本存在しない</strong>。show 系は一部あり</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>典型的な投入フローは次の形になります。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DASH Controller
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  └─ gNMI Set (version_id 付き)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>       └─ NPU 側 gNMI server
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            └─ APPL_DB:DASH_*_TABLE
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                 └─ dashorch (NPU)
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                      └─ DPU redisdpuN / dashha (DPU 側)
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                           └─ SAI (DASH SAI)
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>                                └─ DPU データプレーン (実 ASIC または BMv2)
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>                                     ↑ 反映完了
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>                                APPL_STATE_DB に version_id を書く
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>                                     └─ gNMI server が subscribe で controller へ返す
+</span></code></pre></div>
+<p>確認も「controller 側で gNMI subscribe してフィードバックを受ける」が一次手段で、<code>show</code> CLI は副次的です。エラーも基本は <strong>gRPC status code / APPL_STATE_DB の version mismatch</strong> という形で controller に通知されます。後半の「設定エラーと対処」節で CLI 側の症状と合わせて整理しています。</p>
+<h2 id="controller-driven">controller-driven 系のエラー対処<a class="headerlink" href="#controller-driven" title="Permanent link">&para;</a></h2>
+<p>CLI を打たない運用では、エラーは大きく分けて次の 3 層で出ます。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>代表的な症状</th>
+<th>一次切り分け</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gRPC / gNMI トランスポート</td>
+<td><code>UNAVAILABLE</code>、<code>UNAUTHENTICATED</code>、<code>DEADLINE_EXCEEDED</code></td>
+<td>NPU 側 gNMI server の起動 (<code>show feature status gnmi</code>)、TLS 証明書、ファイアウォール</td>
+</tr>
+<tr>
+<td>スキーマ / バリデーション</td>
+<td>gNMI <code>SetResponse</code> で <code>INVALID_ARGUMENT</code>、<code>NOT_FOUND</code></td>
+<td>path が <code>/sonic-db:APPL_DB/DASH_*</code> の規約通りか、YANG 定義との突き合わせ</td>
+</tr>
+<tr>
+<td>反映遅延 / 不一致</td>
+<td><code>version_id</code> が <code>APPL_STATE_DB</code> に降りない、controller subscribe が古い version で stuck</td>
+<td><code>dashorch</code> ログ、<code>sairedis.rec</code> の SAI status、DPU 側 <code>database-dpu.service</code> 生死</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># controller 視点で「どの version まで適用済みか」を見る (NPU 上で代替確認)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;DASH_ENI_TABLE:F4939FEFC47E&#39;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># gNMI server の現状</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>show<span class="w"> </span>feature<span class="w"> </span>status<span class="w"> </span>gnmi
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># SAI レベルの戻り値 (反映失敗時に NOT_SUPPORTED / FAILURE が見える)</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SAI_STATUS_(NOT_SUPPORTED|FAILURE)&#39;</span><span class="w"> </span>/var/log/swss/sairedis.rec<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span></code></pre></div>
+<p>CLI で確認だけしたいときは、後述の <code>show chassis modules status</code> / <code>show platform dpu-status</code> / <code>sonic-db-cli</code> 系を使います。これらは「controller の代わりに状態を書く」用途ではなく、あくまで read-only な health check に留めてください。</p>
 <h2 id="_1">全体像<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SmartSwitch を立ち上げて DASH を回すまでに必要な操作は次の 5 ステップに整理できます。</p>
 <ol>
@@ -22463,52 +22594,52 @@
 <li>NPU 側で <code>dhcp_server</code> / <code>dhcrelay</code> ではなく <strong>midplane 専用の dnsmasq</strong> か等価な DHCP が起動し、DPU MAC とリースを払い出します。</li>
 <li>DPU 側の boot 後、<code>ip -4 addr show eth0-midplane</code> 相当で <code>169.254.200.10</code> のようなアドレスを取得していることを確認します。</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># NPU 上から DPU の生存確認</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>redis-cli<span class="w"> </span>-h<span class="w"> </span>redisdpu0<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>PING
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># NPU 上から DPU の生存確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>redis-cli<span class="w"> </span>-h<span class="w"> </span>redisdpu0<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>PING
 </span></code></pre></div>
 <p>期待される出力イメージ:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Name      Description     Physical-Slot   Oper-Status    Admin-Status
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>--------  --------------  --------------  -------------  --------------
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>DPU0      Pensando DPU    N/A             Online         up
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>DPU1      Pensando DPU    N/A             Online         up
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Name      Description     Physical-Slot   Oper-Status    Admin-Status
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>--------  --------------  --------------  -------------  --------------
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>DPU0      Pensando DPU    N/A             Online         up
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>DPU1      Pensando DPU    N/A             Online         up
 </span></code></pre></div>
 <p><code>redis-cli</code> 側は <code>PONG</code> が返れば NPU から DPU の Redis インスタンスへ到達できています。Online にならない場合は、まず midplane bridge の link、次に DHCP リース、最後に DPU 側の <code>database-dpu.service</code> の起動順で切り分けます。</p>
 <h2 id="2-dash-eni-vnet">設定シナリオ 2: DASH ENI と VNET の最小投入<a class="headerlink" href="#2-dash-eni-vnet" title="Permanent link">&para;</a></h2>
 <p>DPU が Online になったら、コントローラなしでも CONFIG_DB に直接書いて DASH のスモークテストができます。<code>APPL_DB</code> の <code>DASH_*</code> テーブルへ <code>swssconfig</code> で投入する形式を取ります。</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;DASH_VNET_TABLE:Vnet1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;45654&quot;</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="nt">&quot;guid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;559c6ce8-26ab-4193-b946-ccc6e8f930b2&quot;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">&quot;DASH_ENI_TABLE:F4939FEFC47E&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="nt">&quot;mac_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;F4:93:9F:EF:C4:7E&quot;</span><span class="p">,</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="nt">&quot;qos&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;qos-1&quot;</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="nt">&quot;underlay_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;25.1.1.1&quot;</span><span class="p">,</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="nt">&quot;admin_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="nt">&quot;vnet&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vnet1&quot;</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">&quot;DASH_VNET_TABLE:Vnet1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;45654&quot;</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="nt">&quot;guid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;559c6ce8-26ab-4193-b946-ccc6e8f930b2&quot;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="nt">&quot;DASH_ENI_TABLE:F4939FEFC47E&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="nt">&quot;mac_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;F4:93:9F:EF:C4:7E&quot;</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="nt">&quot;qos&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;qos-1&quot;</span><span class="p">,</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="nt">&quot;underlay_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;25.1.1.1&quot;</span><span class="p">,</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="nt">&quot;admin_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="nt">&quot;vnet&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vnet1&quot;</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>このファイルを <code>swssconfig dash_eni.json</code> で適用すると、<code>dashorch</code> が SAI の <code>create_eni()</code> / <code>create_vnet()</code> を呼び、DPU 側 BMv2 ないし実 ASIC にプログラムされます。確認は次の通りです。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;DASH_ENI_TABLE:*&#39;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;DASH_ENI_TABLE:F4939FEFC47E&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;DASH_ENI_TABLE:*&#39;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;DASH_ENI_TABLE:F4939FEFC47E&#39;</span>
 </span></code></pre></div>
 <p><code>APPL_STATE_DB</code> 側に <code>version_id</code> と <code>status: applied</code> 相当のエントリが現れれば、コントローラへのフィードバックも閉じています。</p>
 <h2 id="3-gnmi">設定シナリオ 3: gNMI を介したコントローラ連携<a class="headerlink" href="#3-gnmi" title="Permanent link">&para;</a></h2>
 <p>外部 SDN コントローラから設定を投げる場合は、NPU 側 gNMI server を有効化し、<code>gnmi-set</code> で <code>version_id</code> 付きの transaction を送ります。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># NPU 側で gNMI server を有効化（既定で 8080）</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>feature<span class="w"> </span>state<span class="w"> </span>gnmi<span class="w"> </span>enabled
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>feature<span class="w"> </span>status<span class="w"> </span>gnmi
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># クライアントから set</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>&lt;npu&gt;:8080<span class="w"> </span>--insecure<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>--update-path<span class="w"> </span>/sonic-db:APPL_DB/DASH_ROUTE_TABLE/F4939FEFC47E:10.1.0.0/24<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span>--update-value<span class="w"> </span><span class="s1">&#39;{&quot;action_type&quot;:&quot;vnet&quot;,&quot;vnet&quot;:&quot;Vnet1&quot;,&quot;version&quot;:&quot;v3&quot;}&#39;</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># コントローラへのフィードバック確認</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>&lt;npu&gt;:8080<span class="w"> </span>--insecure<span class="w"> </span>subscribe<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span>--path<span class="w"> </span>/sonic-db:APPL_STATE_DB/DASH_ROUTE_TABLE/F4939FEFC47E:10.1.0.0/24/version
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># NPU 側で gNMI server を有効化（既定で 8080）</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>feature<span class="w"> </span>state<span class="w"> </span>gnmi<span class="w"> </span>enabled
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>show<span class="w"> </span>feature<span class="w"> </span>status<span class="w"> </span>gnmi
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># クライアントから set</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>&lt;npu&gt;:8080<span class="w"> </span>--insecure<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span>--update-path<span class="w"> </span>/sonic-db:APPL_DB/DASH_ROUTE_TABLE/F4939FEFC47E:10.1.0.0/24<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span>--update-value<span class="w"> </span><span class="s1">&#39;{&quot;action_type&quot;:&quot;vnet&quot;,&quot;vnet&quot;:&quot;Vnet1&quot;,&quot;version&quot;:&quot;v3&quot;}&#39;</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># コントローラへのフィードバック確認</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>&lt;npu&gt;:8080<span class="w"> </span>--insecure<span class="w"> </span>subscribe<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span>--path<span class="w"> </span>/sonic-db:APPL_STATE_DB/DASH_ROUTE_TABLE/F4939FEFC47E:10.1.0.0/24/version
 </span></code></pre></div>
 <p><code>subscribe</code> が <code>version: v3</code> を返した時点で「DPU が SAI まで適用完了」と解釈できます。タイムアウトする場合は、DPU 側 <code>dashorch</code> のログ (<code>/var/log/swss/sairedis.rec</code>) で SAI 呼び出しが成功しているかを確認します。</p>
 <h2 id="_2">設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -22588,33 +22719,33 @@
 <p>lab 検証はスキーマや状態遷移の確認に使い、性能・HA フェイルオーバー時間・障害シナリオは実機で確認するのが基本方針になります。</p>
 <h2 id="4-dash-sonic-kvm-bmv2">設定シナリオ 4: dash-sonic-kvm で BMv2 をスモークテスト<a class="headerlink" href="#4-dash-sonic-kvm-bmv2" title="Permanent link">&para;</a></h2>
 <p>物理が無い開発者向け。<code>dash-sonic-kvm</code> リポジトリの <code>Makefile</code> 経由で KVM 上に SONiC + BMv2 DPU を立てます。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sonic-net/dash-sonic-kvm
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>dash-sonic-kvm
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>make<span class="w"> </span>all-debian-bullseye
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>make<span class="w"> </span>start<span class="w">                       </span><span class="c1"># KVM 上の sonic-vs を起動</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>make<span class="w"> </span>dash-bmv2-attach<span class="w">            </span><span class="c1"># BMv2 DPU を midplane 相当に接続</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sonic-net/dash-sonic-kvm
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">cd</span><span class="w"> </span>dash-sonic-kvm
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>make<span class="w"> </span>all-debian-bullseye
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>make<span class="w"> </span>start<span class="w">                       </span><span class="c1"># KVM 上の sonic-vs を起動</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>make<span class="w"> </span>dash-bmv2-attach<span class="w">            </span><span class="c1"># BMv2 DPU を midplane 相当に接続</span>
 </span></code></pre></div>
 <p>立ち上がったら、ホスト側から SSH で sonic-vs に入り、シナリオ 2 と同じ JSON を <code>swssconfig</code> で投入します。BMv2 側は <code>simple_switch_CLI</code> で flow table を確認できます。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>bmv2<span class="w"> </span>simple_switch_CLI<span class="w"> </span>--thrift-port<span class="w"> </span><span class="m">9090</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>RuntimeCmd:<span class="w"> </span>table_dump<span class="w"> </span>dash_eni
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>bmv2<span class="w"> </span>simple_switch_CLI<span class="w"> </span>--thrift-port<span class="w"> </span><span class="m">9090</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>RuntimeCmd:<span class="w"> </span>table_dump<span class="w"> </span>dash_eni
 </span></code></pre></div>
 <p><code>dash_eni</code> テーブルに ENI が一覧されれば、APPL_DB → SAI → BMv2 のループが閉じています。</p>
 <h2 id="5-ha-dpu-1-1">設定シナリオ 5: HA ペアを意識した DPU 1-1 構成<a class="headerlink" href="#5-ha-dpu-1-1" title="Permanent link">&para;</a></h2>
 <p>DPU 1 台が単独で稼働する形では HA の検証ができないため、本番投入前に最低限のペア（同一シャーシ内の DPU0 / DPU1、ないし対向シャーシの DPU）を組んで、ENI 跨ぎのフェイルオーバーを試します。CONFIG_DB の <code>DASH_HA_*</code> 系を直接入れる場合の輪郭:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nt">&quot;DASH_HA_SET_TABLE:ha-set-1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">        </span><span class="nt">&quot;vip_v4&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;203.0.113.100&quot;</span><span class="p">,</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">        </span><span class="nt">&quot;owner&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;switch&quot;</span><span class="p">,</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">        </span><span class="nt">&quot;scope&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eni&quot;</span><span class="p">,</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">        </span><span class="nt">&quot;local_npu_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;25.1.1.1&quot;</span><span class="p">,</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">        </span><span class="nt">&quot;peer_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;25.1.1.2&quot;</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="nt">&quot;DASH_HA_SCOPE_TABLE:ha-scope-1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">        </span><span class="nt">&quot;ha_set_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ha-set-1&quot;</span><span class="p">,</span>
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">        </span><span class="nt">&quot;ha_role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;active&quot;</span>
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="nt">&quot;DASH_HA_SET_TABLE:ha-set-1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">        </span><span class="nt">&quot;vip_v4&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;203.0.113.100&quot;</span><span class="p">,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">        </span><span class="nt">&quot;owner&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;switch&quot;</span><span class="p">,</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">        </span><span class="nt">&quot;scope&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eni&quot;</span><span class="p">,</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">        </span><span class="nt">&quot;local_npu_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;25.1.1.1&quot;</span><span class="p">,</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">        </span><span class="nt">&quot;peer_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;25.1.1.2&quot;</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="nt">&quot;DASH_HA_SCOPE_TABLE:ha-scope-1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="nt">&quot;ha_set_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ha-set-1&quot;</span><span class="p">,</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">        </span><span class="nt">&quot;ha_role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;active&quot;</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>これを片側 DPU で <code>active</code>、対向 DPU で <code>standby</code> として入れ、<code>vip_v4</code> への traffic が active 側に集中し、active 側を <code>admin_state=disabled</code> にした際に standby が引き取ることを確認します。動作の細部は <a href="../advanced/">advanced</a> の HA 章を参照。</p>
 <h2 id="_3">関連リファレンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
