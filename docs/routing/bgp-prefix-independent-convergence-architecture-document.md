@@ -18,21 +18,30 @@ related:
 
 # BGP PIC（Prefix Independent Convergence / NHG 階層）
 
-## 概要
+## 読者が知りたいこと
 
-ネットワーク障害時、影響を受けた **N 個の prefix を 1 件ずつ再プログラム** していると BGP overlay の数百万 route 規模で巨大なパケットロスが発生する。**Prefix Independent Convergence (PIC)** は障害復帰のコストを **prefix 数 N に依存させず** 一定時間で完了させる仕組みで、ECMP / primary-backup multipath を多段の **level of indirection (NHG)** で共有することで実現する[^1]。IETF `draft-ietf-rtgwg-bgp-pic` を SONiC で実装するアーキテクチャ。本ページは PIC Core / PIC Edge / PIC Local の 3 形態と SONiC での call flow を整理する。
+- なぜ PIC が必要か（N に依存する収束の何が悪いのか）
+- **PIC Core / PIC Edge / PIC Local** の 3 形態は **何で起動し** 何を切替えるか
+- **NHG 階層**（service / underlay）の絵
+- **FAST DOWNLOAD / SLOW DOWNLOAD** とは具体的に何の経路か
+- SONiC の **どのファイル** に hierarchical NHG が入っているか
+- 何ができないか（hitless 要件、HW resource、HLD と実装の差）
 
-## 動作仕様
+## 1. なぜ PIC が必要か
 
-### 3 形態
+BGP overlay の数百万 route 規模で **影響を受けた N prefix を 1 件ずつ再プログラムする** とパケットロスが膨らむ。**PIC は収束コストを prefix 数 N に依存させず**、ECMP / primary-backup multipath を多段の **level of indirection (NHG)** で共有することで一定時間に抑える[^1]。
+
+IETF `draft-ietf-rtgwg-bgp-pic` を SONiC で実装するアーキテクチャ。本 HLD は protocol-independent（EVPN / MPLS / SRv6 のどれでも同じ枠組み）。
+
+## 2. 3 形態と発火条件
 
 | 形態 | トリガ | 検出 | 補助 |
 |------|--------|------|------|
-| **PIC Core** | underlay (IGP) 内部の故障 | local interface down / BFD | NHG 更新だけで全 prefix 影響 |
+| **PIC Core** | underlay (IGP) 内部の故障 | local intf down / BFD | NHG 更新だけで全 prefix 影響 |
 | **PIC Edge** | overlay (BGP nexthop) の喪失 | nexthop tracking via IGP/BGP | 別 PE への切替を NHG レベルで |
-| **PIC Local (FRR)** | local 接続 link の故障 | local interface down / BFD | egress 側 backup path に切替、ingress 通知までの繋ぎ |
+| **PIC Local (FRR)** | local 接続 link 故障 | local intf down / BFD | egress 側 backup path に切替、ingress 通知までの繋ぎ |
 
-### 階層 NHG（Concept）
+## 3. NHG 階層
 
 ```mermaid
 flowchart LR
@@ -42,21 +51,20 @@ flowchart LR
   NHGU --> IFB[Intf-B]
 ```
 
-- **Prefix → service NHG（remote PE loopbacks）→ underlay NHG（physical intf list）** の 2 段で多重化
-- N 個の prefix を共有する level of indirection を更新するだけで全 prefix の経路が切替わる
-- SONiC では NHG が **`nexthop group` object**
+- **Prefix → service NHG（remote PE loopbacks）→ underlay NHG（physical intf list）** の 2 段
+- N prefix が共有する level of indirection を 1 度更新するだけで全 prefix が切替わる
+- SONiC では NHG = **`nexthop group` object**
+- ECMP HW resource を消費するため、**single-path のみの prefix では NHG を作らない**[^1]
 
-NHG は ECMP hardware resource を消費するため、**single-path のみの prefix では NHG を作らない**（resource 節約）[^1]。
+設計要件:
 
-### Requirements
+- 階層 forwarding chain を **複数 route で共有**（per-prefix にしない）
+- HW は階層 NHG を **事前に program**
+- Local 故障時は LL software / HW が **NHG を pruning して 1 update に圧縮** し上位に通知
+- Remote 故障時は control plane が **まず NHG だけ更新**、後で full update
+- 全 transition（single↔multi、NHG↔NHG、direct↔NHG）が **hitless（zero packet loss）**
 
-- 階層 forwarding chain は複数 route で **共有**（per-prefix にしない）
-- HW は階層 NHG を **事前に program** する
-- Local 故障時は LL software / HW が **NHG を pruning して 1 update に圧縮**、上位ソフトに通知
-- Remote 故障時は control plane が **まず NHG だけ更新**、後で reachability を full update
-- 全 transition は **hitless（zero packet loss）**: single↔multi、NHG↔NHG、direct↔NHG の遷移すべて
-
-### FAST DOWNLOAD / SLOW DOWNLOAD
+## 4. FAST DOWNLOAD / SLOW DOWNLOAD
 
 > BGP PIC works with the concept of **FAST DOWNLOAD** and **SLOW DOWNLOAD** updates.[^1]
 
@@ -65,9 +73,9 @@ NHG は ECMP hardware resource を消費するため、**single-path のみの p
 | **FAST DOWNLOAD** | NHG 1 オブジェクトの HW 更新（パス削除）。検出から ms オーダー |
 | **SLOW DOWNLOAD** | control plane (zebra/bgpd) の本来の収束結果を反映。route 個別更新 |
 
-FAST が先、SLOW が後。FAST で被害を最小化し、SLOW で正規化する。
+FAST で被害最小化、SLOW で正規化、の二段。
 
-### SONiC Core Local Failure call flow
+### Core Local Failure の call flow
 
 ```mermaid
 sequenceDiagram
@@ -90,46 +98,39 @@ sequenceDiagram
     FPM->>OA: SLOW DOWNLOAD
 ```
 
-[^1] FAST 経路は **0-5 ステップで HW 1 update を完了**、6 以降が SLOW（kernel netlink → zebra → bgpd → fpmsyncd → ASIC_DB の通常経路）。
+0-5 ステップで **HW 1 update を完了**、6 以降が SLOW（kernel netlink → zebra → bgpd → fpmsyncd → ASIC_DB の通常経路）[^1]。
 
-### 検出契機まとめ
+## 5. 実装の所在（裏取り）
 
-- **PIC Core**: local intf down / BFD
-- **PIC Edge**: nexthop tracking via IGP withdraw / BGP update
-- **PIC Local (FRR)**: local intf down / BFD
+- `sonic-swss/orchagent/nhgorch.h:50` `class NextHopGroup`、`:86` `isRecursive()`、`:88` `setRecursive()`、`m_is_recursive` メンバ
+- `sonic-swss/orchagent/nhgorch.cpp:65` `is_recursive=false`、`:118` `if (is_recursive)`、`:292` `nhg->setRecursive(is_recursive)`、`:691` ctor で `m_is_recursive(false)`
+- `sonic-swss/fpmsyncd/fpmsyncd.cpp:12` `#include "warmRestartHelper.h"`、`:153` `WarmRestartHelper::checkAndStart`（FAST/SLOW は warm-restart timer に対応）
 
-### NHG ライフサイクルの注意
+HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal では存在しない** が、warm-restart の早期/通常区別として実装される。
 
-- N 要素 NHG が 1 要素に減る場合、**NHG を消して直接 NH ID を使う**形にも遷移する。これも hitless で行う必要がある[^1]
-- 逆に single path から multipath への昇格時に新 NHG を作って差し替える際も hitless
+## 6. CLI / CONFIG_DB / YANG
 
-<!-- evidence:
-source: sonic-net/SONiC/doc/pic/bgp_pic_arch_doc.md#L236-L262 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  BGP PIC works with the concept of FAST DOWNLOAD and SLOW DOWNLOAD updates.
-  ... 0. LOSS detection done by the ASIC; a notification is sent to syncd
-  ... 5. single NHG object update done in hardware via SDK + Kernel update
-reasoning: FAST/SLOW DOWNLOAD 二段収束の根拠と call flow ステップの根拠。
--->
+本 HLD は **アーキテクチャ文書** で個別 CLI / CONFIG_DB / YANG の定義はない[^1]。具体的設定は zebra の `nexthop-group` 設定や BGP `bestpath` 系で表現される（HLD 未明記）。
 
-## CLI / CONFIG_DB / YANG
+## 7. 制限事項
 
-本 HLD は **アーキテクチャ文書**であり個別 CLI / CONFIG_DB / YANG の定義はしていない[^1]。具体的な FRR / SONiC 設定は zebra の `nexthop-group` 設定や BGP `bestpath` 系で表現される（HLD では未明記）。
+- ECMP HW resource は限られるため、**NHG 利用は multipath 成立時に限定**
+- per-prefix table 更新は SLOW DOWNLOAD 側に残るので「N 非依存」は **FAST 部のみ**
+- nexthop tracking が過渡的に機能しないと PIC Edge が動かない可能性
+- FRR (PIC Local) と PIC Edge は **別タイミング**で動くため、両者の干渉を設計上避ける必要
 
-## 制限事項
-
-- ECMP HW resource は限られるため NHG 利用は **multipath が成立するときに限定**
-- per-prefix の per-route table 更新は SLOW DOWNLOAD 側に残るので「N に依存しない」のは FAST 部のみ
-- nexthop tracking が機能しない過渡期には PIC Edge が動かない可能性
-- FRR (PIC Local) と PIC Edge は **別の収束タイミング**で動くため、両者が干渉しない設計が必要
-
-## 干渉する機能
+## 8. 干渉する機能
 
 - **FRR zebra / bgpd**: NHG (`nexthop-group`) の生成と FPM 連携
 - **fpmsyncd / orchagent (nhgorch)**: APPL_DB → ASIC_DB の NHG 経路
 - **BFD**: 高速検出
-- **EVPN / MPLS / SRv6**: overlay service の付加。本 HLD は protocol independent
+- **EVPN / MPLS / SRv6**: overlay service の付加（PIC は protocol-independent）
 - **`sonic-weighted-ecmp` / `local-ars-hld`**: NHG を共有する隣接機能
+
+## 9. 次に読む
+
+- Topics: [BGP 概念](../topics/02-bgp/concept.md), [BGP アーキテクチャ](../topics/02-bgp/architecture.md), [BGP 内部実装](../topics/02-bgp/internals.md), [VRF / ECMP 内部実装](../topics/04-vrf-ecmp/internals.md)
+- 関連 HLD: [SONiC Weighted ECMP](sonic-weighted-ecmp.md), [Local ARS HLD](local-ars-hld.md), [Routing and Nexthop Table Enhancement](routing-and-next-hop-table-enhancement.md), [fpmsyncd Nexthop Group Enhancement](fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)
 
 ## 引用元
 

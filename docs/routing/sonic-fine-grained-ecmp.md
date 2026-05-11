@@ -24,17 +24,21 @@ related:
 
 # Fine Grained ECMP（FG_NHG / fgnhgorch）
 
-## 概要
+## 読者が知りたいこと
 
-Fine Grained ECMP（FG ECMP）は、loadbalanced VM / firewall 群のように **next-hop 単位で flow stickiness と bank（共有状態グループ）を保つ必要があるトポロジ** 向けに、通常の ECMP next-hop group の外側に「ハッシュバケット展開」を被せる仕組みである[^1]。
+- 通常 ECMP と何が違うのか、**いつ FG ECMP を選ぶ** べきか
+- **3 つの match_mode**（route-based / nexthop-based / prefix-based）の違い
+- **CONFIG_DB のキー** と **bucket_size の決め方**
+- 内部で **どの orch / SAI 属性** が動くか、warm boot で何が残るか
+- スケールと既知の落とし穴
 
-通常の ECMP は next-hop が増減するたびに hash redistribution が全 flow に波及する。FG ECMP は hash bucket（`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX`）を ASIC 側に明示的に作成し、消えた next-hop が占めていたバケットだけを同 bank 内の生存 next-hop で埋め直すことで、bank 内 consistent hashing を実現する。
+## 1. いつ FG ECMP を使うか
 
-## 動作仕様
+通常 ECMP は next-hop が増減するたびに **hash redistribution が全 flow に波及** する。loadbalanced VM / firewall 群のように **next-hop 単位で flow stickiness と bank（共有状態グループ）を保つ必要があるトポロジ** では、これが致命的になる。
 
-### マッチモード
+FG ECMP は ASIC 上に hash bucket（`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX`）を明示的に作り、**消えた next-hop が占めていたバケットだけを同 bank 内の生存 next-hop で埋め直す** ことで bank 内 consistent hashing を実現する[^1]。
 
-3 つのマッチモードを持つ[^1]。
+## 2. match_mode 3 種
 
 | match_mode | FG ECMP の発火条件 |
 |------------|--------------------|
@@ -42,31 +46,11 @@ Fine Grained ECMP（FG ECMP）は、loadbalanced VM / firewall 群のように *
 | `nexthop-based` | next-hop IP が `FG_NHG_MEMBER` のサブセット |
 | `prefix-based` | route prefix が `FG_NHG_PREFIX` に一致（next-hop は route 学習で動的） |
 
-`prefix-based` は Rev 1.5 で追加され、FG_NHG 側に `max_next_hops` を持つ。`FG_NHG_MEMBER` は使わない[^1]。
+`prefix-based` は Rev 1.5 で追加され、`FG_NHG.max_next_hops` を持つ。`FG_NHG_MEMBER` は使わない[^1]。
 
-### コンポーネントとデータフロー
+## 3. CONFIG_DB と CLI
 
-```mermaid
-flowchart LR
-    USER[(CONFIG_DB\nFG_NHG /\nFG_NHG_PREFIX /\nFG_NHG_MEMBER)] --> FGORCH[fgnhgorch]
-    BGP[FRR / bgpd] --> APP[(APPL_DB\nROUTE_TABLE)]
-    APP --> ROUTEORCH[routeorch]
-    ROUTEORCH -- match した route を委譲 --> FGORCH
-    PORTS[portsorch] -- SUBJECT_TYPE_PORT_OPER_STATE_CHANGE --> FGORCH
-    FGORCH -->|hash bucket 配置決定| SAI[(SAI NHG\nFINE_GRAIN_ECMP)]
-    FGORCH -->|hash バケット ↔ NH| STATE[(STATE_DB\nFG_ROUTE_TABLE)]
-    STATE --> CLI[show fgnhg hash-view / active-hops]
-```
-
-要点:
-
-- `routeorch` は通常通り APP_DB の route 更新を処理するが、FG ECMP 設定にマッチする route について `fgnhgorch` に redirect する[^1]
-- `fgnhgorch` は portsorch の `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` を購読し、`FG_NHG_MEMBER.link` で紐づく link down/up 時に next-hop の出し入れを行う[^1]
-- ASIC 上の hash bucket 配置は `STATE_DB.FG_ROUTE_TABLE` にミラーされ、warm reboot 復元と show CLI 用に使う[^1]
-
-### CONFIG_DB スキーマ（要点）
-
-```
+```text
 FG_NHG|<group>:
     bucket_size      = <int>
     match_mode       = route-based | nexthop-based | prefix-based
@@ -81,42 +65,7 @@ FG_NHG_MEMBER|<nexthop-ip>:
     link   = <ifname>       # OPTIONAL: link down で nh withdraw
 ```
 
-`bucket_size` のガイドラインは「想定する次ホップ数の組み合わせの最小公倍数」。例: 2 bank × 各 3 NH なら `LCM(1,2,3) * 2 = 12`[^1]。
-
-### SAI 属性
-
-```
-SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP
-SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE
-SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE
-SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID
-SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX     # bucket index
-```
-
-通常 ECMP の NHG 型ではなく **`FINE_GRAIN_ECMP` 型** を使う点と、member に `INDEX` を明示する点が SAI 上の差分[^1]。
-
-### Bank 内 consistent hashing の挙動
-
-- next-hop down 時: 同 bank 内の生存 NH に「down した NH のバケットだけ」を均等再配布。bank 内に生存者ゼロのときのみ、対向 bank に流す（"entire VM set down" シナリオ）[^1]
-- next-hop add 時: bank 内に生存 NH があれば、新規 NH に均等にバケットを返す。bank 内ゼロ → 1 へ復活した場合は対向 bank から戻す
-- prefix-based では BGP route 経由で動的に学習された NH のうち先着 `max_next_hops` までを対象とする[^1]
-
-<!-- evidence:
-source: sonic-net/SONiC/doc/ecmp/fine_grained_next_hop_hld.md#L344-L352 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  A key idea ... is the creation of many hash buckets ... having a next-hop repeated multiple times within it.
-  ... in the route/nexthop match modes, by pushing configuration with next-hop bank membership, we can ensure
-  that we only refill the affected hash buckets with those next-hops within the same bank.
-reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原則の根拠。
--->
-
-### Warm boot
-
-`STATE_DB.FG_ROUTE_TABLE` を fast-reboot 用 dump に含めて保存し、起動後に同一の bucket → NH マッピングで ECMP group を再構築する[^1]。これがないと NH 追加順序の非決定性により bucket index がぶれて flow が乱れる。
-
-## 設定
-
-### 関連する CLI
+**`bucket_size` の決め方**: 「想定する次ホップ数の組み合わせの最小公倍数」。例: 2 bank × 各 3 NH → `LCM(1,2,3) * 2 = 12`[^1]。
 
 | Command | 用途 |
 |---------|------|
@@ -139,26 +88,82 @@ reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原�
 }
 ```
 
-## 制限事項
+## 4. データフローと bank 動作
+
+```mermaid
+flowchart LR
+    USER[(CONFIG_DB\nFG_NHG /\nFG_NHG_PREFIX /\nFG_NHG_MEMBER)] --> FGORCH[fgnhgorch]
+    BGP[FRR / bgpd] --> APP[(APPL_DB\nROUTE_TABLE)]
+    APP --> ROUTEORCH[routeorch]
+    ROUTEORCH -- match した route を委譲 --> FGORCH
+    PORTS[portsorch] -- SUBJECT_TYPE_PORT_OPER_STATE_CHANGE --> FGORCH
+    FGORCH -->|hash bucket 配置決定| SAI[(SAI NHG\nFINE_GRAIN_ECMP)]
+    FGORCH -->|hash バケット ↔ NH| STATE[(STATE_DB\nFG_ROUTE_TABLE)]
+    STATE --> CLI[show fgnhg hash-view / active-hops]
+```
+
+要点:
+
+- `routeorch` は通常通り APP_DB route 更新を処理しつつ、FG ECMP 設定にマッチする route を **`fgnhgorch` に redirect**[^1]
+- `fgnhgorch` は portsorch の `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` を購読し、`FG_NHG_MEMBER.link` 紐付き link down/up で NH を出し入れ[^1]
+- ASIC 上の bucket 配置は `STATE_DB.FG_ROUTE_TABLE` にミラー（warm reboot 復元と show CLI 用）[^1]
+
+**bank 内 consistent hashing**:
+
+- **next-hop down**: 同 bank 内の生存 NH に「down した NH のバケットだけ」を均等再配布。bank 内ゼロのときのみ対向 bank に流す（"entire VM set down" シナリオ）[^1]
+- **next-hop add**: bank 内に生存 NH があれば新規 NH に均等にバケットを返す。ゼロ → 1 復活時は対向 bank から戻す
+- **prefix-based**: BGP 学習で動的に取得した NH のうち先着 `max_next_hops` までを対象[^1]
+
+## 5. SAI とのインタフェース
+
+```
+SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP
+SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE
+SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE
+SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID
+SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX     # bucket index
+```
+
+通常 ECMP NHG 型ではなく **`FINE_GRAIN_ECMP` 型** を使い、member に **`INDEX` を明示** する点が SAI 上の差分[^1]。
+
+## 6. Warm boot
+
+`STATE_DB.FG_ROUTE_TABLE` を fast-reboot dump に含めて保存し、起動後に **同一の bucket → NH マッピング** で ECMP group を再構築する[^1]。これが無いと NH 追加順序の非決定性で bucket index がぶれ、flow が乱れる。
+
+## 7. 制限事項
 
 - スケール: グループ数 8、bucket size は HW 依存（最大 4k）[^1]
-- 全プレフィックスに consistent ECMP を効かせる「動的有効化」は HLD スコープ外[^1]
-- route/nexthop モードでは `FG_NHG_MEMBER` に存在しない next-hop は **黙って ASIC に伝播されない**（syslog エラーは出る）[^1]
+- 全 prefix に consistent ECMP を効かせる「動的有効化」は HLD スコープ外[^1]
+- route/nexthop モードでは `FG_NHG_MEMBER` 未定義の NH は **黙って ASIC に伝播されない**（syslog エラーのみ）[^1]
 
-## 干渉する機能
+## 8. 干渉する機能
 
-- **routeorch / NHG**: 通常 ECMP NHG 型と排他。同一 prefix を両方で扱おうとすると、FG 側が優先する
-- **portsorch**: `link` フィールドありの member は port oper state に従って NH 出し入れされる
-- **warm reboot**: `FG_ROUTE_TABLE` の永続化が前提。fast-reboot dump 経路に依存
+- **routeorch / NHG**: 通常 ECMP NHG 型と排他。同一 prefix を両方で扱おうとすると FG 側が優先
+- **portsorch**: `link` 付き member は port oper state に従って NH を出し入れ
+- **warm reboot**: `FG_ROUTE_TABLE` 永続化が前提
 
-## トラブルシューティング
+## 9. トラブルシューティング
 
-- 期待する NH が ASIC に出ていない → `show fgnhg active-hops` で `FG_NHG_MEMBER` 定義と一致するか確認。route/nexthop モードでは未定義 NH は無視される
-- bucket がぶれる → `STATE_DB.FG_ROUTE_TABLE` を直接見る。warm reboot 後に空ならダンプ経路の不整合を疑う
+- 期待する NH が ASIC に出ていない → `show fgnhg active-hops` で `FG_NHG_MEMBER` 定義と一致するか確認。route/nexthop モードでは未定義 NH は無視
+- bucket がぶれる → `STATE_DB.FG_ROUTE_TABLE` を直接確認。warm reboot 後に空ならダンプ経路の不整合
+
+## 10. 次に読む
+
+- Topics: [VRF / ECMP 概念](../topics/04-vrf-ecmp/concept.md), [ECMP 詳細](../topics/04-vrf-ecmp/ecmp.md), [VRF / ECMP 内部実装](../topics/04-vrf-ecmp/internals.md), [VRF / ECMP 運用](../topics/04-vrf-ecmp/operations.md)
+- 関連 HLD: [SONiC Weighted ECMP](sonic-weighted-ecmp.md), [Local ARS HLD](local-ars-hld.md), [Overlay ECMP Enhancements](overlay-ecmp-enhancements.md), [Multiple Nexthop Route HLD](multiple-nexthop-route-hld.md)
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ecmp/fine_grained_next_hop_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- evidence:
+source: sonic-net/SONiC/doc/ecmp/fine_grained_next_hop_hld.md#L344-L352 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+excerpt: |
+  A key idea ... is the creation of many hash buckets ... having a next-hop repeated multiple times within it.
+  ... in the route/nexthop match modes, by pushing configuration with next-hop bank membership, we can ensure
+  that we only refill the affected hash buckets with those next-hops within the same bank.
+reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原則の根拠。
+-->
 
 <!-- concerns hint:
 - fgnhgorch の現行 master 実装存在確認
