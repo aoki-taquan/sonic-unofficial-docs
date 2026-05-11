@@ -83,6 +83,10 @@ ip neigh | grep <nexthop_ip>
 6. **同一 prefix を別 source が上書き** — static route と [BGP](../../reference/glossary.md#term-bgp) route の admin distance
 7. **Blackhole / Null route** — `null0` が選択されていて意図せず DROP
 
+FRR zebra → FPM → fpmsyncd → APPL_DB → routeorch → ASIC_DB のパイプライン構造は `sonic-frr` の `zebra_fpm.c` と `sonic-swss` の `fpmsyncd.cpp` / `routeorch.cpp` の組合せで実装される[^1]。
+
+[^1]: `sonic-net/sonic-frr` `zebra/zebra_fpm.c` (FPM client / Netlink encoding) と `sonic-net/sonic-swss` `fpmsyncd/fpmsyncd.cpp` (FPM server / APPL_DB writer)、`orchagent/routeorch.cpp` (APPL_DB → ASIC_DB) で経路が伝播する。
+
 ## 関連 reference / topics
 
 - [bgp-route-not-advertised.md](bgp-route-not-advertised.md)

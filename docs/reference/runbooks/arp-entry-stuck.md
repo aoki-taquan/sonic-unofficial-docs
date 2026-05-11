@@ -80,6 +80,10 @@ sysctl -a 2>/dev/null | grep -E "gc_thresh|gc_stale|gc_interval"
 5. **[VLAN](../../reference/glossary.md#term-vlan)/MAC table の inconsistency** — fdb の port が古く、[ARP](../../reference/glossary.md#term-arp) は更新されても転送が誤る
 6. **proxy_arp 有効化による偽の応答** — 別 host が応答を返している
 
+`neighsyncd` が Netlink で Linux neighbor table の変化を監視して APPL_DB の `NEIGH_TABLE` を書き換え、`neighorch` がそれを SAI neighbor entry に変換する[^1]。Linux 側で STALE のまま残ると当然 ASIC 側も更新されない。
+
+[^1]: `sonic-net/sonic-swss` `neighsyncd/neighsync.cpp` (Netlink → APPL_DB) と `orchagent/neighorch.cpp` (APPL_DB → SAI) の組合せ。MAC が変わったかどうかは Linux neighbor subsystem 側の判定に依存する。
+
 ## 関連 reference / topics
 
 - [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md)

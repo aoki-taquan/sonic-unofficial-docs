@@ -89,6 +89,10 @@ sudo sonic-cfggen -j /etc/sonic/config_db.json --print-data > /dev/null && echo 
 3. それでも詰まる場合は `sudo reboot`（fast-reboot ではなく完全 reboot）
 4. backup から `cp /etc/sonic/config_db.json.bak.* /etc/sonic/config_db.json` で巻き戻し
 
+`config reload` の実装は `sonic-utilities` の `config/main.py` にあり、`stop services → load config_db → start services` の各段で待ち合わせる[^1]。
+
+[^1]: `sonic-net/sonic-utilities` の `config/main.py` における `reload` コマンド実装。停止と起動の各サブステップが順次 systemd を叩くため、いずれか 1 つでも応答しなければ全体が hang する。
+
 ## 関連 reference / topics
 
 - [swss-orchagent-busy-loop.md](swss-orchagent-busy-loop.md)
