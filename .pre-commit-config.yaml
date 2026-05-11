@@ -6,12 +6,20 @@
 #   pre-commit run --all-files
 #
 # Hooks:
+#   - docs-drift-check: meta/scripts/run_all_checks.sh で全 generator の
+#     --check（派生 artifact が source-of-truth と一致しているか）を実行
 #   - frontmatter-lint: meta/scripts/frontmatter_lint.py で docs/**/*.md の
 #     frontmatter を検証（CI と同じチェック）
 #   - mkdocs-build: mkdocs build --strict で静的サイトのビルドを検証
 repos:
   - repo: local
     hooks:
+      - id: docs-drift-check
+        name: docs drift check (gen_*.py --check)
+        entry: bash meta/scripts/run_all_checks.sh
+        language: system
+        pass_filenames: false
+
       - id: frontmatter-lint
         name: frontmatter linter (docs/**/*.md)
         entry: python meta/scripts/frontmatter_lint.py

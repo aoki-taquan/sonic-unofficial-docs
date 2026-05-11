@@ -66,6 +66,20 @@ mkdocs build --strict
 
 `--strict` で警告もエラー扱いになる。Reviewer はこれを必須条件とする。
 
+### pre-commit フック（任意・推奨）
+
+ローカル開発で派生 artifact の drift を取りこぼさないため [pre-commit](https://pre-commit.com/) を導入している。
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+これで `git commit` 前に `meta/scripts/run_all_checks.sh`（全 `gen_*.py --check`）と
+`frontmatter_lint.py`、`mkdocs build --strict` が自動で走る。手動で全部叩く場合は
+`bash meta/scripts/run_all_checks.sh` か `pre-commit run --all-files`。
+derived artifact を再生成したいときは `bash meta/scripts/run_all_generators.sh`。
+
 ## ブランチ命名
 
 - `page/<area>/<slug>` ... Writer
