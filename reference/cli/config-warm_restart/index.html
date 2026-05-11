@@ -23667,10 +23667,14 @@
   CLI["config warm_restart"]
   SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
   CLI --&gt; SC
-  CDB0[("CONFIG_DB&lt;br/&gt;FEATURE")]
+  CDB0[("CONFIG_DB&lt;br/&gt;WARM_RESTART")]
   SC --&gt; CDB0
-  DM0["coppmgrd"]
-  CDB0 --&gt; DM0</code></pre>
+  DM0["warm-restart-cli"]
+  CDB0 --&gt; DM0
+  CDB1[("CONFIG_DB&lt;br/&gt;FEATURE")]
+  SC --&gt; CDB1
+  DM1["coppmgrd"]
+  CDB1 --&gt; DM1</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>

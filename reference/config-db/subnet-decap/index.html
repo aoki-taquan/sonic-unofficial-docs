@@ -23427,6 +23427,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -23441,7 +23458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド
@@ -23452,7 +23469,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -23463,7 +23480,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23485,7 +23502,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23496,7 +23513,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23507,7 +23524,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23519,7 +23536,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23530,7 +23547,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23541,7 +23558,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23585,11 +23602,29 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>IPinIP トンネルの <strong>サブネット単位の decapsulation ルール</strong> を定義する CONFIG_DB テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>TUNNEL_DECAP_TABLE</code> が個別の outer IP を起点とした decap を扱うのに対し、<code>SUBNET_DECAP</code> は <strong>outer source IP がプレフィックス内に該当する場合に decap を行う</strong> という、より広範な一致条件を表す。SmartSwitch / DASH や DualToR 系のシナリオで、ToR 配下のサーバ群から発した IPinIP encapsulated トラフィックを decap するために導入された。</p>
 <p>YANG リビジョン 2024-12-19 で追加された比較的新しいテーブル。</p>
+<!-- cdb-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CDB[("CONFIG_DB&lt;br/&gt;SUBNET_DECAP")]
+  DM["subnetdecapmgrd"]
+  CDB --&gt; DM
+  APPDB[("APP_DB&lt;br/&gt;APP_DB")]
+  DM --&gt; APPDB
+  SYNCD["syncd"]
+  APPDB --&gt; SYNCD
+  SAI["SAI&lt;br/&gt;sai_tunnel_api"]
+  SYNCD --&gt; SAI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
+</div>
+<!-- /cdb-mermaid -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SUBNET_DECAP|&lt;name&gt;
 </span></code></pre></div>
 <p><code>&lt;name&gt;</code> はルール名 (任意文字列)。</p>
-<h2 id="_2">フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -23633,12 +23668,12 @@
 </table>
 <p>両プレフィックスとも <code>mandatory true</code> で、IPv4 と IPv6 の両方を必ず設定する必要がある（DualStack を前提とした設計）。</p>
 <p><code>status</code> は <code>sonic-types:mode-status</code> (<code>enable</code>/<code>disable</code>) で、最小権限の原則からデフォルトは <code>disable</code>。</p>
-<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>src_ip</code> / <code>src_ip_v6</code> は YANG で <code>mandatory true</code>。片方だけの設定は validation で拒否される。</li>
 <li><code>status = enable</code> でない限りデータプレーンには反映されない。</li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>swss</code> の tunnel-decap オーチェストレータが <code>SUBNET_DECAP</code> を読み、SAI の tunnel term entry を生成する（subnet ベースの match）。</li>
 <li>DualToR / DASH のサブシステムが補助的に参照する。</li>
@@ -23651,25 +23686,25 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <code>sonic-subnet-decap</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>SUBNET_DECAP|&lt;vrf&gt;</code>。</li>
 <li><code>status</code>: <code>enable</code>、<code>src_ip</code>/<code>dst_ip</code>: T1 ToR ペアの管理サブネット。</li>
 </ul>
-<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>VxLAN decap ルールと subnet decap の優先順位を誤解して期待した decap が起きない。</li>
 </ul>
-<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;SUBNET_DECAP|*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->

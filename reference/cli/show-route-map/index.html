@@ -17869,10 +17869,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="関連 CONFIG_DB">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -17883,7 +17900,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23617,10 +23634,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="関連 CONFIG_DB">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23631,7 +23665,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23735,15 +23769,28 @@ excerpt: |
 <p>FRR の <code>show route-map</code> 出力をそのまま表示する。フィールド整形・JSON 化は SONiC 側では行わない。出力形式は FRR のバージョンに従う。</p>
 <h2 id="config_db">関連 CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <p><code>show route-map</code> 自体は CONFIG_DB を参照しない。SONiC で route-map を定義するには <code>ROUTE_MAP</code> / <code>ROUTE_MAP_SET</code> などのテーブルか、または FRR config を直接書く方法のみで、<code>config route-map</code> 系の CLI は <strong>コミュニティ版 master には存在しない</strong>（<code>config/main.py</code> 上では <code>route-map</code> グループは未定義）。</p>
+<!-- cli-mermaid -->
+<h3 id="_6">データフロー (自動生成)<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CLI["show route-map"]
+  SRC0[("FRR (vtysh)")]
+  V0["show route-map [name]"]
+  SRC0 --&gt; V0 --&gt; CLI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>show 系 (データソース → ラッパスクリプト → CLI) のミニ図。CONFIG_DB は経由しない。</p>
+</div>
+<!-- /cli-mermaid -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>(関連リンクなし)</li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

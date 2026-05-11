@@ -23427,6 +23427,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -23441,7 +23458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド
@@ -23480,7 +23497,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -23491,7 +23508,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23513,7 +23530,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23524,7 +23541,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23535,7 +23552,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23546,7 +23563,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23558,7 +23575,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23569,7 +23586,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23580,7 +23597,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23627,6 +23644,20 @@
 <blockquote>
 <p>テーブル名は YANG container 名そのまま <code>MAP_PFC_PRIORITY_TO_QUEUE</code> で、<code>PFC_PRIORITY_TO_QUEUE_MAP</code> ではない点に注意。CONFIG_DB key にもこの名前が使われる。</p>
 </blockquote>
+<!-- cdb-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CDB[("CONFIG_DB&lt;br/&gt;MAP_PFC_PRIORITY_TO_QUEUE")]
+  DM["qosorch"]
+  CDB --&gt; DM
+  SAI["SAI&lt;br/&gt;sai_qos_map_api"]
+  DM --&gt; SAI</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
+</div>
+<!-- /cdb-mermaid -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>MAP_PFC_PRIORITY_TO_QUEUE|&lt;name&gt;
 </span></code></pre></div>
@@ -23637,7 +23668,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>MAP_PFC_PRIORITY_TO_QUEUE|&lt;name&gt;|&lt;pfc_priority&gt;
 </span></code></pre></div>
 <p>ただし CONFIG_DB の慣習として、外側 hash の field-value に直接 <code>pfc_priority → qindex</code> の対を保存する実装もある（<code>{"name": "AZURE", "0": "0", "1": "1", ...}</code> のような形式）。実体は <code>swssconfig</code> / <code>sonic-cfggen</code> がいずれかに正規化する。</p>
-<h2 id="_2">フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="list-map_pfc_priority_to_queue_list">外側 list (<code>MAP_PFC_PRIORITY_TO_QUEUE_LIST</code>)<a class="headerlink" href="#list-map_pfc_priority_to_queue_list" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23678,12 +23709,12 @@
 </tbody>
 </table>
 <p><code>pattern "[0-7]?"</code> は空文字も許容するパターンで、実運用では必ず数値を入れる。</p>
-<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>マップ名の長さは 1..32 文字、英数字スタートで <code>[-_]</code> 含む。</li>
 <li>pfc_priority / qindex は単一の 0..7 数字（範囲外は YANG validation で拒否）。</li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>qosorch</code> (<code>docker-swss</code>): CONFIG_DB → SAI <code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE</code> オブジェクト生成</li>
 <li>反映先は <code>PORT_QOS_MAP.pfc_to_queue_map</code> 経由でポートにバインドされる</li>
@@ -23696,32 +23727,32 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-pfc-priority-queue-map/"><code>sonic-pfc-priority-queue-map</code></a></li>
 <li>CLI: <a href="../../cli/config-qos/"><code>config qos</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../pfc-priority-to-priority-group-map/">CONFIG_DB: PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</a></li>
 <li><a href="../port-qos-map/">CONFIG_DB: PORT_QOS_MAP</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>MAP_PFC_PRIORITY_TO_QUEUE|&lt;name&gt;</code> (例 <code>MAP_PFC_PRIORITY_TO_QUEUE|AZURE</code>)。</li>
 <li>典型マップ: PFC priority 3 → queue 3、4 → 4 (ロスレスキュー)。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>PFC priority と queue の対応が <code>TC_TO_QUEUE_MAP</code> などと整合しておらず、PFC pause が想定外の queue に作用する。</li>
 <li>範囲外 (0..7 以外) の値を入れて YANG validation で reject される。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MAP_PFC_PRIORITY_TO_QUEUE|AZURE&#39;</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT_QOS_MAP|Ethernet0&#39;</span><span class="w"> </span>pfc_to_queue_map
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>queue<span class="w"> </span>counters

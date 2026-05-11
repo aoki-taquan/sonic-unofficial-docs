@@ -24053,7 +24053,11 @@ excerpt: |
   CDB2[("CONFIG_DB&lt;br/&gt;VXLAN_TUNNEL_MAP")]
   SC --&gt; CDB2
   DM2["vxlanmgrd"]
-  CDB2 --&gt; DM2</code></pre>
+  CDB2 --&gt; DM2
+  CDB3[("CONFIG_DB&lt;br/&gt;SYSLOG_SERVER")]
+  SC --&gt; CDB3
+  DM3["hostcfgd"]
+  CDB3 --&gt; DM3</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>config 系 (CLI → CONFIG_DB → daemon) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
