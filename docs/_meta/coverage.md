@@ -11,7 +11,7 @@ last_verified: 2026-05-11
 
 各状態の意味は次のとおりです。
 
-- **code-verified**: [HLD](../reference/glossary.md#term-hld) と現行 master 実装を突き合わせて整合が取れているページ
+- **code-verified**: HLD と現行 master 実装を突き合わせて整合が取れているページ
 - **runbook-verified**: Runbook 専用ステータス。実運用で症状再現性が確認されており、HLD 一致は副次的
 - **discrepancy-found**: 実装と HLD の間に乖離が確認されたページ（[一覧](discrepancies.md)）
 - **issue-confirmed**: GitHub issue / PR で裏取り済みだが実コード突き合わせ未完了のページ
@@ -26,10 +26,10 @@ last_verified: 2026-05-11
 | 状態 | 件数 |
 |------|-----:|
 | code-verified | 578 |
-| runbook-verified | 20 |
+| runbook-verified | 27 |
 | discrepancy-found | 46 |
 | issue-confirmed | 0 |
-| hld-only | 7 |
+| hld-only | 0 |
 | meta | 187 |
 | stub | 9 |
 
@@ -47,12 +47,10 @@ last_verified: 2026-05-11
 | `management` | 35 | 0 | 8 | 0 | 0 | 0 | 1 | 44 |
 | `overlay` | 8 | 0 | 1 | 0 | 0 | 0 | 1 | 10 |
 | `platform` | 36 | 0 | 7 | 0 | 0 | 0 | 1 | 44 |
-| `reference` | 305 | 20 | 0 | 0 | 7 | 9 | 0 | 341 |
+| `reference` | 305 | 27 | 0 | 0 | 0 | 9 | 0 | 341 |
 | `routing` | 45 | 0 | 6 | 0 | 0 | 0 | 1 | 52 |
 | `switching` | 15 | 0 | 4 | 0 | 0 | 0 | 1 | 20 |
 | `system` | 61 | 0 | 9 | 0 | 0 | 1 | 1 | 72 |
 | `topics` | 0 | 0 | 0 | 0 | 0 | 155 | 0 | 155 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。
-
-<!-- glossary-links-injected: 167700005048 -->

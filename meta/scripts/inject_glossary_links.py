@@ -339,10 +339,22 @@ def process_file(
 
 
 def iter_target_files() -> list[Path]:
+    # Auto-generated pages (rewritten by other meta/scripts/gen_*.py jobs).
+    # Their content is reproduced from source pages with original-depth
+    # relative links, so any glossary links we inject here would be either
+    # wiped on next regeneration or end up with the wrong relative depth.
+    SKIP_EXACT = {
+        "reference/glossary.md",
+        "reference/verification/discrepancy-index.md",
+        "reference/verification/stale-verified.md",
+        "_meta/coverage.md",
+        "_meta/changelog.md",
+        "_meta/discrepancies.md",
+    }
     out: list[Path] = []
     for p in sorted(DOCS.rglob("*.md")):
         rel = p.relative_to(DOCS).as_posix()
-        if rel == "reference/glossary.md":
+        if rel in SKIP_EXACT:
             continue
         if rel.startswith("reference/glossary/"):
             continue

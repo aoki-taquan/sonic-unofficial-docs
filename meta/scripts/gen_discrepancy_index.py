@@ -58,6 +58,17 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
     return fm, m.group(2)
 
 
+_GLOSSARY_LINK_RE = re.compile(
+    r"\((?:\.\./)*(?:\./)?reference/glossary\.md(#term-[A-Za-z0-9._-]+)?\)"
+)
+
+
+def _rewrite_glossary_links_for_depth2(text: str) -> str:
+    """Rewrite ``(./|../|../../)reference/glossary.md#...`` to the depth-2
+    form used by ``docs/reference/verification/discrepancy-index.md``."""
+    return _GLOSSARY_LINK_RE.sub(lambda m: f"(../../reference/glossary.md{m.group(1) or ''})", text)
+
+
 def extract_disc_summary(body: str) -> str:
     """「実装との乖離」セクションの最初の段落を返す。
 
@@ -83,6 +94,8 @@ def extract_disc_summary(body: str) -> str:
         # 長すぎる場合は途中で切る
         if len(text) > 400:
             text = text[:400].rstrip() + "…"
+        # 相対 link のうち glossary 参照は本ページ (depth 2) からの形に書き換える
+        text = _rewrite_glossary_links_for_depth2(text)
         return text
     return ""
 
