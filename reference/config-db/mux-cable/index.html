@@ -18936,6 +18936,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23675,6 +23725,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23808,6 +23908,28 @@
 <li><a href="../../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>key 形式: <code>MUX_CABLE|Ethernet0</code>（dual-ToR の Active-Standby 用）。</li>
+<li><code>state</code>: <code>auto</code> / <code>active</code> / <code>standby</code> / <code>manual</code>。</li>
+<li><code>server_ipv4</code> / <code>server_ipv6</code>: ぶら下がるサーバ IP。</li>
+<li><code>soc_ipv4</code>: SmartCable SoC IP。</li>
+</ul>
+<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>state: manual</code> のまま放置すると linkmgrd が自動フェイルオーバしない。</li>
+<li>ToR 間で <code>server_ipv4</code> が不一致だと両 ToR が active になり tunnel ループ。</li>
+</ul>
+<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MUX_CABLE|Ethernet0&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MUX_CABLE_TABLE|Ethernet0&#39;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>mux<span class="w"> </span>status
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show<span class="w"> </span>mux<span class="w"> </span>config
+</span></code></pre></div>
+<!-- /ops-hint -->
 
 <div class="footnote">
 <hr />

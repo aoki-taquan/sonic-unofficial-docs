@@ -18908,6 +18908,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23675,6 +23725,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23790,6 +23890,26 @@
 <li><a href="../../cli/config-interface/">CLI: config interface</a></li>
 <li><a href="../../yang/sonic-vrf/">YANG: sonic-vrf</a></li>
 </ul>
+<!-- ops-hint -->
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>key 形式: <code>VRF|Vrf&lt;name&gt;</code> (例 <code>VRF|VrfRed</code>)。</li>
+<li><code>vni</code>: L3 VNI（VXLAN EVPN tenant L3）。</li>
+<li><code>fallback</code>: <code>true</code> で default VRF にフォールバック。</li>
+</ul>
+<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>VRF 名が <code>Vrf</code> で始まらないと sonic-cfggen / orchagent が認識しない。</li>
+<li><code>vni</code> を tenant 間で重複させると EVPN route が混線する。</li>
+</ul>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VRF|*&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vrf
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ip<span class="w"> </span>vrf<span class="w"> </span>show
+</span></code></pre></div>
+<!-- /ops-hint -->
+
 <div class="footnote">
 <hr />
 <ol>

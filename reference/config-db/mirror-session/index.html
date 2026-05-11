@@ -19479,6 +19479,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23697,6 +23747,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23867,6 +23967,28 @@
 <li><a href="../../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>key 形式: <code>MIRROR_SESSION|&lt;session-name&gt;</code> (例 <code>everflow0</code>)。</li>
+<li><code>type</code>: <code>SPAN</code>（L2 ローカル）または <code>ERSPAN</code>（L3 遠隔）。</li>
+<li>ERSPAN 必須: <code>src_ip</code> / <code>dst_ip</code> / <code>gre_type</code> (<code>0x88be</code> / <code>0x8949</code>) / <code>dscp</code> / <code>ttl</code>。</li>
+<li><code>policer</code>: 制限する場合のみ。</li>
+</ul>
+<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>dst_ip</code> が経路解決できないと session は <code>inactive</code> のまま hardware に降りない。</li>
+<li><code>src_ip</code> を 0.0.0.0 にすると <code>mirror_session</code> は作成されても ASIC が drop する。</li>
+<li><code>gre_type</code> を <code>0x88be</code> (Cisco) と <code>0x8949</code> (Broadcom) の対向ミスマッチで mirror パケットが収集側で parse できない。</li>
+</ul>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MIRROR_SESSION|everflow0&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MIRROR_SESSION_TABLE|everflow0&#39;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>mirror_session
+</span></code></pre></div>
+<!-- /ops-hint -->
 
 <div class="footnote">
 <hr />

@@ -23534,6 +23534,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23675,6 +23725,24 @@
 <li><a href="../../../topics/08-qos-buffer/">Topics: QoS / Buffer / PFC / Watermark</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>key 形式: <code>PORT_QOS_MAP|&lt;port&gt;</code>。</li>
+<li><code>dscp_to_tc_map</code>、<code>tc_to_queue_map</code>、<code>tc_to_pg_map</code>、<code>pfc_to_queue_map</code>、<code>pfc_enable: 3,4</code>。</li>
+</ul>
+<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>pfc_enable</code> で指定した priority と <code>BUFFER_PG</code> の lossless 範囲が不一致だと PFC が機能しない。</li>
+<li>map 名を <code>AZURE</code> 以外に変えると初期 SKU 設定との整合が崩れる。</li>
+</ul>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT_QOS_MAP|Ethernet0&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>qos<span class="w"> </span>map
+</span></code></pre></div>
+<!-- /ops-hint -->
 
 <div class="footnote">
 <hr />

@@ -23545,6 +23545,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23725,6 +23775,27 @@
 <li><a href="../portchannel/">CONFIG_DB: PORTCHANNEL</a></li>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>
 </ul>
+<!-- ops-hint -->
+<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>key 形式: <code>MCLAG_DOMAIN|&lt;domain-id&gt;</code> (1..4095)。</li>
+<li><code>source_ip</code> / <code>peer_ip</code>: keepalive 用 IP（Loopback 推奨）。</li>
+<li><code>peer_link</code>: <code>PortChannel0001</code> 等の ICL/peer-link。</li>
+<li><code>mclag_system_mac</code>: 両 ToR で同一 MAC。</li>
+</ul>
+<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>mclag_system_mac</code> を両 ToR で別値にすると LACP system-id が異なり MC-LAG が組まれない。</li>
+<li><code>peer_link</code> を VLAN trunk にしないと peer 間の MAC 同期が動かない。</li>
+</ul>
+<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MCLAG_DOMAIN|1&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>mclagdctl<span class="w"> </span>-i<span class="w"> </span><span class="m">1</span><span class="w"> </span>dump<span class="w"> </span>state
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>mclag<span class="w"> </span>brief
+</span></code></pre></div>
+<!-- /ops-hint -->
+
 <div class="footnote">
 <hr />
 <ol>

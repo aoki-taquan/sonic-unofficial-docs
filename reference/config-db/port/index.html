@@ -18723,6 +18723,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23697,6 +23747,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ヒント
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="運用ヒント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        よくある誤設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -24008,6 +24108,31 @@
 <li><a href="../../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>Ethernet0</code> 等の <code>EthernetN</code> 形式キー。<code>N</code> は port_config.ini 由来の lane base。</li>
+<li><code>speed</code>: 10000 / 25000 / 40000 / 100000 / 400000 (Mbps)。</li>
+<li><code>mtu</code>: 9100（jumbo を有効にする一般運用値）。</li>
+<li><code>admin_status</code>: <code>up</code>（運用ポート）。</li>
+<li><code>fec</code>: <code>rs</code> (100G+) / <code>fc</code> (25G) / <code>none</code>。</li>
+<li><code>autoneg</code>: <code>on</code>/<code>off</code>（25G/100G の対向と合わせる）。</li>
+</ul>
+<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>speed</code> を <code>lanes</code> 数と不整合な値にすると SAI が <code>SAI_STATUS_INVALID_PARAMETER</code> を返してポートが down のまま。</li>
+<li>対向と <code>fec</code> が不一致だと PHY は up しても link 不安定。両端を同じ FEC モードに揃える。</li>
+<li><code>mtu</code> を VLAN/PortChannel メンバ間で揃えないと L2 で巨大フレームがドロップされる。</li>
+<li>Breakout 中の親ポートに <code>admin_status: up</code> を残すと subport と二重設定で orchagent エラー。</li>
+</ul>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>eeprom<span class="w"> </span>Ethernet0
+</span></code></pre></div>
+<!-- /ops-hint -->
 
 <div class="footnote">
 <hr />
