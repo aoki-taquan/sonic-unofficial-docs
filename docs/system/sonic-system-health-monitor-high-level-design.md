@@ -78,6 +78,24 @@ excerpt: |
 reasoning: critical service / process 判定の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/system_health_monitoring/system-health-HLD.md#L19-L52 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/system_health_monitoring/system-health-HLD.md#L19-L52 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Read FEATURE table in CONFIG_DB, any service whose "STATE" field was configured with "enabled" or "always_enabled" is expected to run in the system
+    ... For each container, use "supervisorctl status" to get its critical process status, any critical process is not in "RUNNING" status will be considered as fault condition.
+    ```
+
+    **判断根拠**: critical service / process 判定の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 3. 除外 / 拡張: `system_health_monitoring_config.json`
 
 `/usr/share/sonic/device/<platform>/system_health_monitoring_config.json` で platform 別に plugin と除外対象を注入[^1]:

@@ -91,6 +91,25 @@ excerpt: |
 reasoning: 単一/複数メンバ分岐・暫定モード・参照カウントの設計根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/ip/next_hop_group_hld.md#L106-L137 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/ip/next_hop_group_hld.md#L106-L137 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    A new orchestration agent will be written to handle the new NEXT_HOP_GROUP_TABLE in APP_DB.
+    ... If the group has a single next hop, the next hop group orchagent will simply get the SAI identifier...
+    ... If a next hop group cannot be programmed because the data plane limit has been reached, one next hop will be picked to be temporarily used for that group.
+    ```
+
+    **判断根拠**: 単一/複数メンバ分岐・暫定モード・参照カウントの設計根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 APP_DB スキーマ拡張のため **CONFIG_DB / CLI 変更なし**。書き込むのは外部ルーティングアプリ（カスタム fpmsyncd 等）。`show ip route` / `show ipv6 route` は **出力フォーマット不変** が要件で、CLI 側が `nexthop_group` を解決する[^1]。

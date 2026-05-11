@@ -87,6 +87,24 @@ excerpt: |
   add_table_kv(db, 'AAA', 'authentication', 'login', val)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/aaa.py#L120-L155 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/aaa.py#L120-L155 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    if good_ap == True:
+        val += ',' + val2
+    ...
+    add_table_kv(db, 'AAA', 'authentication', 'login', val)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config aaa authorization <protocol>` / `accounting <protocol>`
 
 `AAA|authorization` または `AAA|accounting` の `login` フィールドに `tacacs+` / `local` / `tacacs+,local` を設定する。`accounting disable` のみ `del_table_key` で削除する。

@@ -118,6 +118,24 @@ excerpt: |
 reasoning: スコープと per-buffer + ACL disable の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/packet_trimming/packet-trimming-design.md#L72-L80 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/packet_trimming/packet-trimming-design.md#L72-L80 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In scope: Global PT configuration with per buffer profile control
+    Fine-grained PT control via ACL disable trimming action
+    ```
+
+    **判断根拠**: スコープと per-buffer + ACL disable の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

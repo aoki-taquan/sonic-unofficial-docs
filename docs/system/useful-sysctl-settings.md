@@ -156,6 +156,28 @@ excerpt: |
 reasoning: 推奨デフォルト群の出典・キー名の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-frr/doc/user/Useful_Sysctl_Settings.md#L1-L60 (sha: 799f47f215e4266063c4ebde0041a0c7dd2d11d0)"
+
+    **出典**:
+
+    `sonic-net/sonic-frr/doc/user/Useful_Sysctl_Settings.md#L1-L60 (sha: 799f47f215e4266063c4ebde0041a0c7dd2d11d0)`
+
+    **抜粋**:
+
+    ```text
+    # /etc/sysctl.d/99frr_defaults.conf
+    net.ipv6.route.max_size=131072
+    net.ipv4.conf.all.rp_filter = 0
+    net.ipv6.conf.all.keep_addr_on_down=1
+    net.ipv4.fib_multipath_use_neigh=1
+    net.ipv4.tcp_l3mdev_accept=1
+    ```
+
+    **判断根拠**: 推奨デフォルト群の出典・キー名の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

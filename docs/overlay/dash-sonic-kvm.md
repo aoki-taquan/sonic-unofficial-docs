@@ -115,6 +115,25 @@ excerpt: |
 reasoning: BMv2 単体では足りないので VPP + saidash で補い、SAIRedis は remote dashsai client をロードする構成根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/dash/dash-sonic-kvm.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/dash/dash-sonic-kvm.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Due to the P4 and BMv2 limitation, such as flow creation, flow resimulation and etc, in this virtual DPU,
+    our implementation is based on the VPP framework with the CPU interface to enhance the dataplane engine ...
+    this dataplane APP loads the generated shared library, saidash, which communicates with BMv2 via GRPC.
+    ```
+
+    **判断根拠**: BMv2 単体では足りないので VPP + saidash で補い、SAIRedis は remote dashsai client をロードする構成根拠。
+
+<!-- evidence-rendered:end -->
+
 ## どう使うか
 
 ### testbed セットアップ（single device モード）

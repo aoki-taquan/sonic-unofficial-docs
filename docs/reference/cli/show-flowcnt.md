@@ -65,6 +65,26 @@ excerpt: |
       clicommon.run_command(cmd, display_cmd=verbose)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/flow_counters.py#L19-L27 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/flow_counters.py#L19-L27 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @flowcnt_trap.command()
+    def stats(verbose, namespace):
+        cmd = ['flow_counters_stat', '-t', 'trap']
+        if namespace is not None:
+            cmd += ['-n', str(namespace)]
+        clicommon.run_command(cmd, display_cmd=verbose)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show flowcnt-route config`
 
 **用法**:
@@ -109,6 +129,31 @@ excerpt: |
   def route(prefix, vrf, verbose, namespace):
       command = ['flow_counters_stat', '-t', 'route', '--prefix', str(prefix)]
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/flow_counters.py#L53-L93 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/flow_counters.py#L53-L93 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @flowcnt_route.group(invoke_without_command=True)
+    def stats(ctx, verbose, namespace):
+        if ctx.invoked_subcommand is None:
+            command = ['flow_counters_stat', '-t', 'route']
+            ...
+    @stats.command()
+    def pattern(prefix_pattern, vrf, verbose, namespace):
+        command = ['flow_counters_stat', '-t', 'route', '--prefix_pattern', str(prefix_pattern)]
+    @stats.command()
+    def route(prefix, vrf, verbose, namespace):
+        command = ['flow_counters_stat', '-t', 'route', '--prefix', str(prefix)]
+    ```
+
+<!-- evidence-rendered:end -->
 
 ## 関連する CONFIG_DB
 

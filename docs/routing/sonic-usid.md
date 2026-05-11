@@ -86,6 +86,24 @@ excerpt: |
 reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最小実装方針の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/srv6/SRv6_uSID.md#L34-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/srv6/SRv6_uSID.md#L34-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Changes in orchagent,
+    - While processing MYSID entries, from SRV6_MY_SID_TABLE off of APPDB, handling of new actions uN, uA, uDT and uDX added in srv6orch. No APPDB schema changes required.
+    ```
+
+    **判断根拠**: APPL_DB スキーマ無変更・マップ追加だけ、という最小実装方針の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### uSID carrier のフォーマット
 
 128bit IPv6 アドレスは次のレイアウトで uSID を詰める[^1]。

@@ -94,6 +94,26 @@ excerpt: |
 reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/acl/Everflow-test-plan.md#L60-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/acl/Everflow-test-plan.md#L60-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The test is targeting a running SONIC system with fully functioning configuration.
+    The purpose of the test is not to test specific SAI API, but functional testing of Everflow on SONiC system,
+    making sure that traffic flows correctly, according to BGP routes advertised by BGP peers of SONIC switch,
+    and the LAG configuration.
+    ```
+
+    **判断根拠**: テストの目的（SAI 単体ではなく end-to-end 機能）の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CLI

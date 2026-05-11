@@ -90,6 +90,25 @@ excerpt: |
 reasoning: NO_HOST_ROUTE 属性とプレフィックスルート差し替えによる状態遷移最適化の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/dualtor/mux_neighbors_using_prefix_route.md#L62-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/dualtor/mux_neighbors_using_prefix_route.md#L62-L106 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The neighbor entry is created with SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true,
+    which prevents implicit host route creation in SDK/ASIC.
+    ... During active to standby transition: The prefix route's nexthop is updated from the direct neighbor nexthop to the tunnel nexthop ...
+    ```
+
+    **判断根拠**: NO_HOST_ROUTE 属性とプレフィックスルート差し替えによる状態遷移最適化の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Capability チェックと後方互換
 
 ASIC が `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` をサポートしない場合、自動的に **host_route 方式へフォールバック** する[^1]。さらに per-port の config knob `neighbor_mode` で強制的に host_route に戻すこともできる。これによりプラットフォーム間の混在配備と新旧比較デバッグを許す。

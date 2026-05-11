@@ -124,6 +124,24 @@ excerpt: |
 reasoning: 2 インスタンス分割の実測効果の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/database/multi_database_instances.md#L4-L6 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/database/multi_database_instances.md#L4-L6 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    We tried to create two database instances and separate the huge write into two database instances.
+    The test result shows the performance (time) improved 20-30%.
+    ```
+
+    **判断根拠**: 2 インスタンス分割の実測効果の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Upgrade / Downgrade
 
 - **Upgrade**: 旧イメージ → 新イメージで、ユーザが `/etc/sonic/database_config.json` を置いていれば反映、なければ既定（単一インスタンス）。挙動は後方互換[^1]。

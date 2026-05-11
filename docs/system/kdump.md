@@ -116,6 +116,24 @@ excerpt: |
 reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/kdump/SONiC-kdump.md#L137-L160 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/kdump/SONiC-kdump.md#L137-L160 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In case of a system crash, kdump uses kexec to boot into a second kernel (a capture kernel).
+    ... The capture kernel uses makedumpfile system utility to collect crash information and create a compressed core dump file.
+    ```
+
+    **判断根拠**: kexec + capture kernel + makedumpfile という基本構造の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - enable/disable / memory 変更は **reboot 必須**（kernel cmdline を弄るため）

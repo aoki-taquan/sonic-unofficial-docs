@@ -132,6 +132,24 @@ excerpt: |
 reasoning: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通過の差別化の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port_auto_neg/port-auto-negotiation-design.md#L96-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port_auto_neg/port-auto-negotiation-design.md#L96-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    If autoneg is enabled, the administrative port speed updates should not disable the autoneg. The configured speed should be cached in swss#orchagent and gets replayed when autoneg is transitioned from enabled to disabled.
+    If autoneg is enabled, while the administrative interface type updates via CONFIG_DB should be blocked, the dynamic interface type updates from pmon#xcvrd via APPL_DB should be delivered to the SAI to update the autoneg advertisement.
+    ```
+
+    **判断根拠**: orchagent 内 cache/replay と CONFIG_DB ブロック / APPL_DB 通過の差別化の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### DB Migrator
 
 既存 `PORT.autoneg` の値が boolean 表記から enum 表記へ変わる場合などに DB migrator が一括変換する[^1]。レガシー設定との後方互換性は migrator 側で吸収する。

@@ -139,6 +139,26 @@ excerpt: |
 reasoning: gNMI イベント仕様と双方向通知の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/bmc/leakage_detection_hld.md#L108-L122 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/bmc/leakage_detection_hld.md#L108-L122 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    A new function named `_check_liquid_cooling_status(self, config)` will be added to the system health monitor hardware_chekcer.py
+    ... It worth to note that both change from NOTleak to leak and leak to NOTleak will trigger an event.
+    EVENTS_PUBLISHER_SOURCE = "sonic-events-host"
+    EVENTS_PUBLISHER_TAG = "liquid-cooling-leak"
+    ```
+
+    **判断根拠**: gNMI イベント仕様と双方向通知の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB / YANG

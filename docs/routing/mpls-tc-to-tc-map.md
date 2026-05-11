@@ -123,6 +123,29 @@ excerpt: |
 reasoning: 新テーブルのスキーマと PORT_QOS_MAP への field 追加・SAI 対応 type の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/qos/mpls_tc_to_tc_map.md#L62-L83 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/qos/mpls_tc_to_tc_map.md#L62-L83 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    MPLS_TC_TO_TC_MAP
+     SAI mapping - qos_map object with SAI_QOS_MAP_ATTR_TYPE == sai_qos_map_type_t::SAI_QOS_MAP_MPLS_EXP_TO_TC
+     key        = "MPLS_TC_TO_TC_MAP|"name
+     field    value
+     mpls_tc_value = 1*DIGIT
+     tc_value      = 1*DIGIT
+    In order to allow a user to bind such a map to a port, the existing PORT_QOS_MAP table will be enhanced to allow a new field-value pair, where the field is going to be named mpls_tc_to_tc_map
+    ```
+
+    **判断根拠**: 新テーブルのスキーマと PORT_QOS_MAP への field 追加・SAI 対応 type の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

@@ -151,6 +151,30 @@ excerpt: |
 reasoning: PortsOrch maxPortSpeed 引き上げと port_rates.lua 200G レーン対応の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port-1.6t-support/port-1.6t-support.md#L114-L145 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port-1.6t-support/port-1.6t-support.md#L114-L145 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    - Orchagent will need to update the FLR calculation to support SerDes rates of 212.50.
+    - PortsOrch will need to define 1.6T as the maximum allowed speed for config parsing.
+    ...
+    - static const std::uint32_t maxPortSpeed = 800000;
+    + static const std::uint32_t maxPortSpeed = 1600000;
+    ...
+    + elseif lane_speed == 200000 then
+    +    serdes = 212.5e+9
+    ```
+
+    **判断根拠**: PortsOrch maxPortSpeed 引き上げと port_rates.lua 200G レーン対応の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

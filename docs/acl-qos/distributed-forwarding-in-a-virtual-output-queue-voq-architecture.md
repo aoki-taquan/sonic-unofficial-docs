@@ -158,6 +158,25 @@ excerpt: |
 reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/voq/architecture.md#L218-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/voq/architecture.md#L218-L233 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Loss of connectivity to the Chassis DB can prevent forwarding state from other FSIs from being propagated.
+    To avoid traffic impact, The FSI must take defensive action to disconnect from the outside world
+    (for example by ceasing protocol sessions) with neighbors to avoid any traffic flows through the FSI.
+    ```
+
+    **判断根拠**: Chassis DB 切断時の防御的シャットダウン動作の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 将来課題（HLD §4）
 
 - **Dynamic system ports**: 走行中の FSI 追加 / SKU 変更カードへの差し替え。SAI に `create_port` / `remove_port` のサポートが必要[^1]。

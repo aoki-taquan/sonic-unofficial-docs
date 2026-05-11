@@ -61,6 +61,29 @@ excerpt: |
       display_system_health_summary(stat, chassis.get_status_led())
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/system_health.py#L113-L131 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/system_health.py#L113-L131 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @click.group(name='system-health', cls=clicommon.AliasedGroup)
+    def system_health():
+        """Show system-health information"""
+        return
+    
+    @system_health.command()
+    def summary():
+        _, chassis, stat = get_system_health_status()
+        display_system_health_summary(stat, chassis.get_status_led())
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show system-health detail`
 
 `summary` の出力に加えて、

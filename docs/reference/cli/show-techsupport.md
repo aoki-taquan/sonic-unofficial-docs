@@ -76,6 +76,25 @@ excerpt: |
       ...
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1780-L1814 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L1780-L1814 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @cli.command()
+    def techsupport(since, global_timeout, cmd_timeout, verbose, allow_process_stop, silent, debug_dump, redirect_stderr):
+        """Gather information for troubleshooting"""
+        cmd = ["sudo"]
+        ...
+    ```
+
+<!-- evidence-rendered:end -->
+
 ## 出力
 
 `/var/dump/sonic_dump_<hostname>_<timestamp>.tar.gz`。各ノードで生成される。chassis 構成では LC ごとに個別のファイルが出る。

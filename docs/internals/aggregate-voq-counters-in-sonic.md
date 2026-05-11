@@ -112,6 +112,26 @@ excerpt: |
 reasoning: midplane IP に Redis を公開してから supervisor の queuestat が aggregate するという中核手順の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/voq/aggregate_voq_counters.md#L34-L44 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/voq/aggregate_voq_counters.md#L34-L44 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    We can leverage this property to expose redis instances that correspond to each ASIC over midplane IP addresses
+    redis-cli -h $ip -p $port config set bind "$bound_ips $midplane_ip"
+    redis-cli -h $ip -p $port config rewrite
+    Then queuestat script can access the counters data and provide the user an aggregated view of the VOQ counters.
+    ```
+
+    **判断根拠**: midplane IP に Redis を公開してから supervisor の queuestat が aggregate するという中核手順の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 このページの機能はビルド時のテンプレ変更と CLI 拡張で完結する。エンドユーザ向け設定インターフェースは HLD では定義されていない。

@@ -87,6 +87,26 @@ excerpt: |
 reasoning: フラグ名と実装ファイル分担の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sonic-build-system/rfs-split-build-improvement.md#L67-L84 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sonic-build-system/rfs-split-build-improvement.md#L67-L84 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    ENABLE_RFS_SPLIT_BUILD ?= n
+    The implementation consists of 2 parts:
+    1) Generating and processing new targets for RFS squashfs files (slave.mk)
+    2) Adding support of a 2-stage run for build_debian.sh
+    ```
+
+    **判断根拠**: フラグ名と実装ファイル分担の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB / CLI / YANG

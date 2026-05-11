@@ -96,6 +96,25 @@ excerpt: |
 reasoning: dplane_fpm_nl 移行が機能の前提条件である根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/BGP/BGP-supress-fib-pending.md#L97-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/BGP/BGP-supress-fib-pending.md#L97-L103 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    This feature is implemented as part of new *dplane_fpm_nl* zebra plugin in FRR 8.4 and a backport patch must be created
+    for current FRR 8.2 SONiC is using. SONiC is still using old *fpm* plugin which isn't developed anymore and thus SONiC
+    must migrate to the new implementation as part of this change.
+    ```
+
+    **判断根拠**: dplane_fpm_nl 移行が機能の前提条件である根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CLI

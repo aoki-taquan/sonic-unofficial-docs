@@ -115,6 +115,26 @@ excerpt: |
 reasoning: 2 ポリシーの値域・既定値・初期化経路の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/console/serial-console-HLD.md#L82-L113 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/console/serial-console-HLD.md#L82-L113 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    | inactivity timeout | Inactivity timeout for serial-console session                         | 0-35000 (minutes)   | 15           |
+    | sysrq capabilities | Enabling or disabling SysRq functionality for serial-consoles         | enabled/disabled    | disabled     |
+    ...
+    Default values will be added to init_cfg.json.j2
+    ```
+
+    **判断根拠**: 2 ポリシーの値域・既定値・初期化経路の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

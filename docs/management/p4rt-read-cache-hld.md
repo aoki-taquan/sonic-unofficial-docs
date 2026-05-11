@@ -96,6 +96,25 @@ excerpt: |
 reasoning: Write 連動更新ルールと検証ロジックの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pins/p4rt_app_read_cache_hld.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pins/p4rt_app_read_cache_hld.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The cache will be updated for each P4RT App write request based on the P4Orch agents response.
+    ... INSERT/SUCCESS -> Create a new PI entry; MODIFY/SUCCESS -> Update; DELETE/SUCCESS -> Remove
+    ... we will also implement verification logic that ensures the cache and AppDb entries are in sync.
+    ```
+
+    **判断根拠**: Write 連動更新ルールと検証ロジックの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 性能測定（HLD 添付）
 
 | 実験 | 内容 | Read 時間 |

@@ -108,6 +108,25 @@ excerpt: |
 reasoning: 採用判定ルールと fallback の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/bulk_counter/bulk_counter.md#L30-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/bulk_counter/bulk_counter.md#L30-L48 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Syncd shall use bulk stats APIs based on object type.
+    ... For a certain object in a counter group, it shall use bulk stats only if all counter IDs support bulk API
+    ... Syncd shall automatically fall back to old way if bulk stats APIs are not supported
+    ```
+
+    **判断根拠**: 採用判定ルールと fallback の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 CLI / CONFIG_DB の **新規追加なし**（Phase 1）[^1]。FLEX_COUNTER_TABLE 既存スキーマの `STATS_MODE` から bulk mode を導出するのみ。

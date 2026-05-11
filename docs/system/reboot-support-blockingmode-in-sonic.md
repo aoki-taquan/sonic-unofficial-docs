@@ -136,6 +136,27 @@ excerpt: |
 reasoning: 「-b と reboot.conf のいずれか」「timeout で deadloop からの脱出を保証」という設計の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/reboot/Reboot_BlockingMode_HLD.md#L60-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/reboot/Reboot_BlockingMode_HLD.md#L60-L75 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    We don't want to make a break change to SONIC reboot command, so we introduce 2 options ...
+    - Parameter: Use command optional parameter `-b` to enable blocking mode for reboot script.
+    - Config file: ... `blocking_mode` is enabled in `reboot.conf` config file.
+    ... If the systemctl reboot failed, the deadloop might block the console thread.
+    So we introduce the timeout config to exit when reboot takes too long.
+    ```
+
+    **判断根拠**: 「-b と reboot.conf のいずれか」「timeout で deadloop からの脱出を保証」という設計の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Platform reboot との関係
 
 **Platform reboot が有効なときは blocking mode が効かない**[^1]。プラットフォーム固有のフローに従う。

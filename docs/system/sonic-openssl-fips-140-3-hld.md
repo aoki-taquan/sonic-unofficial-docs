@@ -114,6 +114,25 @@ excerpt: |
 reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/fips/SONiC-OpenSSL-FIPS-140-3.md#L93-L108 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/fips/SONiC-OpenSSL-FIPS-140-3.md#L93-L108 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    When fips=1 is set in /proc/cmdline, the OpenSSL default config file is changed to "/usr/lib/ssl/openssl-fips.cnf",
+    otherwise, the config file "/usr/lib/ssl/openssl.cnf" is used.
+    ... Provide SymCrypt OpenSSL debian package. Package name: symcrypt-openssl
+    ```
+
+    **判断根拠**: kernel cmdline 切替と debian 同梱パッケージの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - Linux Kernel crypto / Libgcrypt は scope 外（FIPS 140-3 認定対象外）

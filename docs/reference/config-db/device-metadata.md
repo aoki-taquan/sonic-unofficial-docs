@@ -161,6 +161,26 @@ excerpt: |
 reasoning: フィールド一覧と型・デフォルト・enum 値はこのモジュールの leaf 宣言から抽出
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang#L37-L411 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)"
+
+    **出典**:
+
+    `sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang#L37-L411 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)`
+
+    **抜粋**:
+
+    ```text
+    container DEVICE_METADATA {
+        container localhost { ... 50+ leafs ... }
+        container bmc { bmc_if_name, bmc_if_addr, bmc_addr, bmc_net_mask }
+    }
+    ```
+
+    **判断根拠**: フィールド一覧と型・デフォルト・enum 値はこのモジュールの leaf 宣言から抽出
+
+<!-- evidence-rendered:end -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 

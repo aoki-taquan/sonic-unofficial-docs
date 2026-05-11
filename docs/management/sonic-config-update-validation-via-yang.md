@@ -125,6 +125,24 @@ excerpt: |
 reasoning: 緊急時の検証バイパスフラグの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/config_yang_validation/config_db_yang_validation.md#L196-L219 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/config_yang_validation/config_db_yang_validation.md#L196-L219 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In some cases, we may need to disable YANG validation prior to modifying ConfigDB.
+    ... we add a field to ConfigDB: `yangValidateEnabled` ... This field never undergoes any YANG validation.
+    ```
+
+    **判断根拠**: 緊急時の検証バイパスフラグの根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 例外メッセージの保持
 
 GCU が標準で吐く例外メッセージはユーザに分かりにくいため、各 CLI の呼び出し元で例外型を捕捉して **既存のエラーメッセージを再出力** する。複数のエラーが同じ例外型に集約される場合は統合メッセージを出す。YANG モデル側で `yang-error-msg` を設定可能なら、それで具体的な制約名を区別する[^1]。

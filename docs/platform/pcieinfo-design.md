@@ -108,6 +108,24 @@ excerpt: |
 reasoning: API シグネチャと設定ファイル配置の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pcie-mon/pcieinfo_design.md#L36-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pcie-mon/pcieinfo_design.md#L36-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Common API ... get_pcie_device(), get_pcie_check(), dump_conf_yaml()
+    Config file Location: device/Platform/plugins/pcie.yaml
+    ```
+
+    **判断根拠**: API シグネチャと設定ファイル配置の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 出力例
 
 ```

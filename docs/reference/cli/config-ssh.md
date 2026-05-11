@@ -56,6 +56,25 @@ excerpt: |
                           {'inactivity_timeout': inactivity_timeout})
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L9979-L9988 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L9979-L9988 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @ssh.command('inactivity-timeout')
+    @click.argument('inactivity_timeout', type=click.IntRange(0, 35000))
+    def inactivity_timeout_ssh(inactivity_timeout):
+        config_db.mod_entry("SSH_SERVER", 'POLICIES',
+                            {'inactivity_timeout': inactivity_timeout})
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config ssh max-sessions <max-sessions>`
 
 **用法**:

@@ -76,6 +76,24 @@ excerpt: |
 reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md#L52-L60 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port_buffer_drop_counters/sonic_port_buffer_drop_counters.md#L52-L60 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    3. The polling interval is 60s by default
+    3.2 Users can set the polling interval in range from 30s to 5m
+    ```
+
+    **判断根拠**: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 関連する CONFIG_DB / CLI
 
 | Table | Key | フィールド | 用途 |

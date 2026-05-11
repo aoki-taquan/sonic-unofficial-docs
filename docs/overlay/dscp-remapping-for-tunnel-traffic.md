@@ -140,6 +140,25 @@ excerpt: |
 reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/qos/tunnel_dscp_remapping.md#L283-L302 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/qos/tunnel_dscp_remapping.md#L283-L302 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Bounced back traffic from Standby ToR to T1 ... outer DSCP is rewritten to 2 ...
+    Traffic is delivered in Queue 2 ...
+    At Active ToR ... DSCP_TO_TC_MAP|AZURE_TUNNEL ... TC_TO_PRIORITY_GROUP_MAP|AZURE_TUNNEL ... PG 2
+    ```
+
+    **判断根拠**: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CONFIG_DB

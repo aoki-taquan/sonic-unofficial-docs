@@ -114,6 +114,24 @@ excerpt: |
 reasoning: 入力 → 再計算 → APPL_DB の流れと CONFIG_DB / APPL_DB / STATE_DB の責務分担。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/qos/dynamically-headroom-calculation.md#L102-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/qos/dynamically-headroom-calculation.md#L102-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    - When a port's cable length, speed or MTU is updated, headroom of all lossless priority groups will be updated according to the well-known formula
+    - All the statically configured data will be stored in `CONFIG_DB` and all dynamically data in `APPL_DB`.
+    ```
+
+    **判断根拠**: 入力 → 再計算 → APPL_DB の流れと CONFIG_DB / APPL_DB / STATE_DB の責務分担。
+
+<!-- evidence-rendered:end -->
+
 ## Headroom override（式から外す）
 
 特定 port の headroom を式から外して固定値にする運用も可能。`BUFFER_PROFILE` を直接指定して `BUFFER_PG` に当てる[^1]。

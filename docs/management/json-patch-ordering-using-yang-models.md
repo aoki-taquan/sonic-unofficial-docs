@@ -147,6 +147,26 @@ excerpt: |
 reasoning: create-only 拡張のセマンティクスを直接引用
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/config-generic-update-rollback/Json_Patch_Ordering_using_YANG_Models_Design.md#L395-L480 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/config-generic-update-rollback/Json_Patch_Ordering_using_YANG_Models_Design.md#L395-L480 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The new extension `create-only` will be added ...
+    1. Fail validation for `replace` move that is updating a field marked with `create-only`.
+    2. Fail validation for `replace` move that is updating parent of a field that is marked with `create-only` and the `create-only` field is itself different.
+    3. Pass validation for `replace` move that is updating parent of a field that is marked with `create-only` and the `create-only` field is itself the same.
+    ```
+
+    **判断根拠**: create-only 拡張のセマンティクスを直接引用
+
+<!-- evidence-rendered:end -->
+
 ## 関連 CLI
 
 | Command | 用途 |

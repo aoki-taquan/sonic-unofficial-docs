@@ -68,6 +68,33 @@ excerpt: |
               run_command(['ip', 'route', 'show', 'table', '6000'])
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L540-L561 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L540-L561 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @cli.group('mgmt-vrf', invoke_without_command=True)
+    @click.argument('routes', required=False, type=click.Choice(["routes"]))
+    def mgmt_vrf(ctx, routes):
+        if is_mgmt_vrf_enabled(ctx) is False:
+            click.echo("\nManagementVRF : Disabled")
+            return
+        else:
+            if routes is None:
+                click.echo("\nManagementVRF : Enabled")
+                run_command(['ip', '-d', 'link', 'show', 'mgmt'])
+                run_command(['ip', 'link', 'show', 'vrf', 'mgmt'])
+            else:
+                run_command(['ip', 'route', 'show', 'table', '6000'])
+    ```
+
+<!-- evidence-rendered:end -->
+
 ## 補足
 
 - 管理 VRF のルーティングテーブル ID は SONiC で **6000 固定**。`ip rule` の優先度で標準テーブル経路と分離されている

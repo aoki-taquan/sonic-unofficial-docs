@@ -88,6 +88,25 @@ excerpt: |
 reasoning: 推奨リソースとデフォルト認証情報の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sonic-gns3/GNS3 VM for SONiC.md#L75-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sonic-gns3/GNS3 VM for SONiC.md#L75-L107 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    In the QEMU VM template configuration window, under the General Settings tab,
+    change the RAM size to 8192 MB (8GB) and the vCPU number to 4.
+    ... default username admin and the default password YourPaSsWoRd.
+    ```
+
+    **判断根拠**: 推奨リソースとデフォルト認証情報の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### ホスト要件
 
 GNS3 公式の Windows インストールガイドの推奨条件（VT-x / EPT または AMD-V/RVI 対応 CPU）を満たすこと。物理ホスト 1 台で SONiC ノードを多数立てる場合は RAM が律速[^1]。
@@ -131,7 +150,6 @@ GNS3 GUI 操作の代替として CLI で扱う場合、`gns3server` の REST AP
 - sonic-buildimage/rules/config:81 DEFAULT_PASSWORD = YourPaSsWoRd
 - sonic-buildimage/check_install.py:13 default password='YourPaSsWoRd'
 -->
-
 
 <!-- topics-back-ref -->
 ## 関連 Topics

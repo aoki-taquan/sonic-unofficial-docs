@@ -81,6 +81,26 @@ excerpt: |
       host_config['bgpraw'] = bgp_util.run_bgp_show_command(bgpraw_cmd, exit_on_fail=False)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1828-L1850 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L1828-L1850 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @runningconfiguration.command()
+    def all(verbose):
+        output = {}
+        bgpraw_cmd = "show running-config"
+        ...
+        host_config['bgpraw'] = bgp_util.run_bgp_show_command(bgpraw_cmd, exit_on_fail=False)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show runningconfiguration ports [<portname>]`
 
 `sonic-cfggen -d --var-json PORT [--key <portname>]` を `run_command` で起動。1 ポート指定で当該エントリのみ JSON 出力。
@@ -138,7 +158,6 @@ multi-ASIC では `-n` を必ず単一 namespace 名のいずれかに合わせ�
 [^2]: `startupconfiguration bgp` は `show/main.py` L2167 〜。bgp コンテナ名を `docker ps` で動的に取得する。
 
 [^3]: `show runningconfiguration bgp` の multi-ASIC バリデーションは `show/main.py` L1890-L1896。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1890>
-
 
 <!-- usage-example -->
 ## 実行例

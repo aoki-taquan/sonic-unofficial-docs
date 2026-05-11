@@ -85,6 +85,26 @@ excerpt: |
 reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設定）を述べている。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sflow/sflow_hld.md#L1-L400 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sflow/sflow_hld.md#L1-L400 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    sflowmgrd reads CONFIG_DB SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR tables
+    and translates them to APP_DB SFLOW_TABLE entries that SflowOrch consumes.
+    hsflowd (the open-source Host sFlow daemon) is the actual collector-facing process;
+    sflowmgrd renders /etc/hsflowd.conf and reloads hsflowd.
+    ```
+
+    **判断根拠**: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設定）を述べている。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

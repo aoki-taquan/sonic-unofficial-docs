@@ -64,6 +64,24 @@ excerpt: |
   config_db.set_entry('VXLAN_TUNNEL', vxlan_name, fvs)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/vxlan.py#L19-L51 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/vxlan.py#L19-L51 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    if(vxlan_count > 0):
+        ctx.fail("VTEP already configured.")
+    fvs = {'src_ip': src_ip}
+    config_db.set_entry('VXLAN_TUNNEL', vxlan_name, fvs)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config vxlan del <vxlan_name>`
 
 **動作**:

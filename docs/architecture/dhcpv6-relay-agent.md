@@ -118,6 +118,24 @@ excerpt: |
 reasoning: ISC 置換動機と Option 79 採用の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/DHCPv6_relay/DHCPv6-relay-agent-High-Level-Design.md#L42-L45 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/DHCPv6_relay/DHCPv6-relay-agent-High-Level-Design.md#L42-L45 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Providing option 79 in DHCPv6 Relay-Forward messages will help carry the client link-layer address explicitly. ...
+    ISC DHCP currently has no support for option 79.
+    ```
+
+    **判断根拠**: ISC 置換動機と Option 79 採用の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - DHCP packet 到着頻度は低く CPU 経由でも転送性能影響は小さいと想定[^1]

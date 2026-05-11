@@ -152,6 +152,32 @@ excerpt: |
 reasoning: テストの判定ロジック（DIP=SIP のままルーティングされ TTL が 1 減る）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/dip-sip/DIP=SIP_HLD.md#L120-L143 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/dip-sip/DIP=SIP_HLD.md#L120-L143 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Default values:
+    * pkt_ttl_hlim=64
+    Values:
+    * dst_host_ipv4_ipv6=<dst_router_ipv4_ipv6>+1
+    * src_host_ipv4_ipv6=<src_router_ipv4_ipv6>+1
+    Data packet:
+    * DST_IPv4_IPv6=<dst_host_ipv4_ipv6>
+    * SRC_IPv4_IPv6=<dst_host_ipv4_ipv6>
+    Expected packet:
+    * TTL_HL=<pkt_ttl_hlim>-1
+    ```
+
+    **判断根拠**: テストの判定ロジック（DIP=SIP のままルーティングされ TTL が 1 減る）の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 判定
 
 期待パケットが destination port のいずれかで観測されれば pass、それ以外は fail。fail 時は **expected / received のパケットダンプを含むエラーメッセージ** が出力される[^1]。
@@ -258,7 +284,6 @@ ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest te
 - ansible/roles/test/files/ptftests/dip_sip.py は GitHub 検索でヒットせず -> 削除済
 - ansible/roles/test/vars/testcases.yml は size 11721 byte で実在
 -->
-
 
 <!-- topics-back-ref -->
 ## 関連 Topics

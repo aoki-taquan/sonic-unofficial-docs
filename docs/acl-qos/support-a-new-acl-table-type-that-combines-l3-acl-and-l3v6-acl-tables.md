@@ -93,6 +93,24 @@ excerpt: |
 reasoning: orchagent 側エントリポイントと STATE_DB capability キー名を引用
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/acl/Extend-L3V6ACLs.md#L256-L325 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/acl/Extend-L3V6ACLs.md#L256-L325 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    AclOrch::init() -> initDefaultTableTypes() -> addAclTableType(TABLE_TYPE_L3V4V6)
+    ... A new field called `supported_L3V4V6` is added to the ACL capability in STATE_DB ...
+    ```
+
+    **判断根拠**: orchagent 側エントリポイントと STATE_DB capability キー名を引用
+
+<!-- evidence-rendered:end -->
+
 ### YANG / CLI
 
 `sonic-acl` の `ACL_TABLE.type` enum に `L3V4V6` を追加[^1]。CLI:

@@ -101,6 +101,24 @@ excerpt: |
 reasoning: gNOI API 系列と各 phase の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/smart-switch/upgrade/dpu-upgrade-hld.md#L74-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/smart-switch/upgrade/dpu-upgrade-hld.md#L74-L100 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Prepare Relevant Images: ... GNOI API: 'System.SetPackage', 'OS.Activate', 'Containerz.Deploy'
+    Upgrade DPU: ... 'System.Reboot', 'System.RebootStatus', 'Containerz.ListImage', 'Containerz.StopContainer', 'Containerz.StartContainer'
+    ```
+
+    **判断根拠**: gNOI API 系列と各 phase の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - DPU / NPU の SONiC Host Services / GNMI が **健全な状態** が前提

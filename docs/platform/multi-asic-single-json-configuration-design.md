@@ -105,6 +105,24 @@ excerpt: |
 reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/golden_config/Multi-Asic_Single_JSON_Configuration_Design.md#L83-L97 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/golden_config/Multi-Asic_Single_JSON_Configuration_Design.md#L83-L97 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    This design provides another layer of Host and ASIC as keys ...
+    "localhost": { ... }, "asic0": { ... }, "asic1": { ... }
+    ```
+
+    **判断根拠**: namespace layer 1 段追加でスキーマ拡張する設計の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 制限事項
 
 - 全体 YANG validate 不可、namespace 単位 validate に留まる

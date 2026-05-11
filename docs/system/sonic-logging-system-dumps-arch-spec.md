@@ -103,6 +103,25 @@ excerpt: |
 reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/logging/Logging_and_sysdump_arch_spec.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/logging/Logging_and_sysdump_arch_spec.md#L40-L58 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    All modules should use the same common API for logging and dumps (provided by libswss-common).
+    ... User can change logging configuration via sonic-mgmt, which takes care of deploying configs.
+    Sysdump should be available through sonic-mgmt.
+    ```
+
+    **判断根拠**: 共通 API と sonic-mgmt 経由運用の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB / CLI / YANG

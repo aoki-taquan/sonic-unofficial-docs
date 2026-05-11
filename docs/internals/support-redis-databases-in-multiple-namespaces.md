@@ -188,6 +188,27 @@ excerpt: |
 reasoning: 異 namespace への接続が Unix socket 必須であることの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/database/multi_namespace_db_instances.md#L341-L372 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/database/multi_namespace_db_instances.md#L341-L372 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    class SonicV2Connector(DBInterface):
+      def __init__(self, use_unix_socket_path=False, namespace='', **kwargs):
+        ...
+        if namespace != '' and use_unix_socket_path == False:
+          raise NotImplementedError("TCP connectivity to ... different namespace is not implemented!")
+    ```
+
+    **判断根拠**: 異 namespace への接続が Unix socket 必須であることの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB / CLI / YANG

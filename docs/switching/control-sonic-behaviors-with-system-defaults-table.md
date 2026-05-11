@@ -67,6 +67,25 @@ excerpt: |
 reasoning: スキーマ定義（キー一意性・status の自由度・custom_field 拡張性）の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md#L52-L79 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md#L52-L79 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    key  = SYSTEM_DEFAULTS|feature_name; feature name must bt unique
+    field = status ; The value is a string, which can be 'enable'/'disable', 'down'/'up' or any string.
+    custom_field = ... ; The name of custom_field can be any custom string.
+    ```
+
+    **判断根拠**: スキーマ定義（キー一意性・status の自由度・custom_field 拡張性）の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 既定値の供給経路
 
 `SYSTEM_DEFAULTS` の値は次の 3 経路で書き込まれる。経路の優先順位（後勝ち）は **イメージビルド < minigraph < ランタイム書き込み** という直感に沿う。

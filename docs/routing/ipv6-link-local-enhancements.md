@@ -99,6 +99,23 @@ excerpt: |
 reasoning: NeighOrch の next-hop key 拡張が link-local ECMP のキー要件である根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/ipv6/ipv6_link_local.md#L271-L300 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/ipv6/ipv6_link_local.md#L271-L300 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Add the interface parameter to the next hop object key. This allows to add multiple IPv6 link local next hops with same IPv6 address.
+    ```
+
+    **判断根拠**: NeighOrch の next-hop key 拡張が link-local ECMP のキー要件である根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### CONFIG_DB

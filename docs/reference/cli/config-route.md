@@ -74,6 +74,25 @@ excerpt: |
       config_db.set_entry("STATIC_ROUTE", key, current_entry)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L7812-L7889 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L7812-L7889 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @route.command('add', context_settings={"ignore_unknown_options": True})
+    def add_route(ctx, command_str):
+        key, route, vrf = cli_sroute_to_config(ctx, command_str)
+        ...
+        config_db.set_entry("STATIC_ROUTE", key, current_entry)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config route del prefix ...`
 
 **動作**:

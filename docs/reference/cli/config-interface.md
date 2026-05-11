@@ -118,6 +118,31 @@ excerpt: |
       lo_list = config_db.get_table("LOOPBACK_INTERFACE")
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L5187-L5226 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L5187-L5226 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @interface.command()
+    def startup(ctx, interface_name):
+        ...
+        for port_name in port_dict:
+            if port_name in intf_fs:
+                config_db.mod_entry("PORT", port_name, {"admin_status": "up"})
+        portchannel_list = config_db.get_table("PORTCHANNEL")
+        ...
+        subport_list = config_db.get_table("VLAN_SUB_INTERFACE")
+        ...
+        lo_list = config_db.get_table("LOOPBACK_INTERFACE")
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config interface speed <interface_name> <speed>`
 
 **動作**:

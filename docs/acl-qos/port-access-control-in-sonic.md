@@ -132,6 +132,25 @@ excerpt: |
 reasoning: 物理 IF 限定・802.1x/MAB 併用・3 種 port mode の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pac/Port Access Control.md#L120-L160 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pac/Port Access Control.md#L120-L160 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    PAC should be supported on physical interfaces only.
+    PAC should enforce access control for clients ... using ... 802.1x, MAB.
+    ... The following PAC port modes should be supported: Auto / Force Authorized / Force Unauthorized
+    ```
+
+    **判断根拠**: 物理 IF 限定・802.1x/MAB 併用・3 種 port mode の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CLI（HLD で言及）

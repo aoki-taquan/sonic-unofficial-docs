@@ -65,6 +65,27 @@ excerpt: |
           config_db.set_entry('VRF', vrf_name, {"NULL": "NULL"})
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/main.py#L7682-L7700 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/main.py#L7682-L7700 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @vrf.command('add')
+    def add_vrf(ctx, vrf_name):
+        ...
+        elif (vrf_name == 'mgmt' or vrf_name == 'management'):
+            vrf_add_management_vrf(config_db)
+        else:
+            config_db.set_entry('VRF', vrf_name, {"NULL": "NULL"})
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config vrf del <vrf_name>`
 
 **動作**:

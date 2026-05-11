@@ -56,6 +56,25 @@ excerpt: |
 reasoning: 集約処理および「RIF FC が無効でも MIB は動く」という挙動の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L37-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L37-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The l3 counters are polled to the COUNTERS_DB by the rifcounter flex counter groups.
+    The RIF counters is not enabled/supported for every vendor (expected that l3 drops are counted in l2 drops for these platforms).
+    The MIB should work regardsless of RIF FC group is enabled or not.
+    ```
+
+    **判断根拠**: 集約処理および「RIF FC が無効でも MIB は動く」という挙動の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### MIB エントリと SAI カウンタの対応
 
 RFC1213 の各エントリは、ポート側 (L2) と RIF 側 (L3) の SAI カウンタを次のとおりマッピングする。L3 列が空欄のエントリは、加算対象が存在しないため L2 のみが反映される。
@@ -101,6 +120,25 @@ excerpt: |
   Vlan interface entry is introduced, with IANA ifType 136
 reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設という 2 点の設計判断の根拠。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L74-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L74-L92 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Interface MIB's `InterfacesUpdater` will contain port to rif map. When counters are updated if RIF oid is present in the "COUNTERS" table of COUNTERS_DB,
+    the counters are aggredated according to Table 3.
+    Vlan interface entry is introduced, with IANA ifType 136
+    ```
+
+    **判断根拠**: RIF→ポート集約と VLAN インタフェースエントリ新設という 2 点の設計判断の根拠。
+
+<!-- evidence-rendered:end -->
 
 ## 設定
 

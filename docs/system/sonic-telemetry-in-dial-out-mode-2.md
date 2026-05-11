@@ -140,6 +140,25 @@ excerpt: |
 reasoning: dialout_client_cli の起動方法と DestinationGroup フェイルオーバ動作の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/doc/dialout.md#L100-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/doc/dialout.md#L100-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    dialout_client_cli is the program running inside SONiC system to collect telemetry data based on the configuration and stream data to collectors.
+    /usr/sbin/dialout_client_cli -insecure -logtostderr -v 1
+    ... Dialout connection for {30.57.186.214:8081} failed: ... cs.conTryCnt Dial to ... timeout 30s: context deadline exceeded
+    ```
+
+    **判断根拠**: dialout_client_cli の起動方法と DestinationGroup フェイルオーバ動作の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### `dialout_server_cli`
 
 開発・検証用の **コレクタ側** ダミー実装[^1]。`dialout_server_cli -allow_no_client_auth -logtostderr -port 8081 -insecure` で起動し、DUT からの dial-out を受ける。本番コレクタ実装の代替。

@@ -98,6 +98,26 @@ excerpt: |
 reasoning: --since の IETF date-time 形式制約と sonic-hostservices 依存の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/SONiC Management Framework Show Techsupport HLD.md#L74-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/SONiC Management Framework Show Techsupport HLD.md#L74-L88 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Provide Management Framework functionality to process the "show techsupport" command
+    Support reduction of aggregated log file information via an optional "--since" parameter
+    ... The "since <date>" option available through these interfaces, however, is restricted to the IETF/YANG date/time format.
+    DEPENDENCY ON SONIC-HOSTSERVICES
+    ```
+
+    **判断根拠**: --since の IETF date-time 形式制約と sonic-hostservices 依存の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Warm-boot 影響
 
 特になし[^1]。techsupport は **観測専用** の機能。

@@ -161,6 +161,24 @@ excerpt: |
 reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避ルール
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/SONiC_YANG_Model_Guidelines.md#L500-L600 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/SONiC_YANG_Model_Guidelines.md#L500-L600 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    ### 18. In some cases it may be required to split an ABNF table into multiple YANG lists ...
+    Strategies for Ensuring Unique and Unambiguous Keys: Utilize composite keys that have a different number of key elements ...
+    ```
+
+    **判断根拠**: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避ルール
+
+<!-- evidence-rendered:end -->
+
 ## 関連ファイル
 
 - 共通型: `sonic-head` / `sonic-common` 等の include 元

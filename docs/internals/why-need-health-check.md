@@ -98,6 +98,29 @@ excerpt: |
 reasoning: スクリプトのパスと二段階チェック構成の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/kubernetes/health-check.md#L21-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/kubernetes/health-check.md#L21-L33 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Script path and name
+        /usr/bin/readiness_probe.sh
+    Health-Check logic in the script(two steps for now)
+        Do common checks which are same for all containers
+            Currently, one common check is that if the supervisor start.sh exists, we need to ensure that it exits with code 0.
+        Call container self-related specific executable script if exists
+            /usr/bin/readiness_probe_hook
+    ```
+
+    **判断根拠**: スクリプトのパスと二段階チェック構成の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 このページの機能はコンテナ内の固定パススクリプトと k8s 設定で完結する。CONFIG_DB / CLI のエンドユーザ向けインターフェースは HLD では定義されていない。

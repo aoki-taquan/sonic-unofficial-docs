@@ -109,6 +109,25 @@ excerpt: |
 reasoning: table の global / per-ASIC 振り分けと port_config.ini の ASIC ごとディレクトリ構成の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/pmon/pmon_multiasic_design.md#L19-L29 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/pmon/pmon_multiasic_design.md#L19-L29 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    - The interface related platform tables like TRANSCEIVER_INFO, TRANSCEIVER_STATUS etc. will be stored in the STATE_DB instance of Asic database (the database docker running in asic network namespace)
+    - The system wide platform tables like PSU_INFO, FAN_INFO, EEPROM_INFO etc. will be kept in the STATE_DB instance of Global database
+    - In multi-asic platform there are port_config.ini files per ASIC. They will be present in the directories named with the asic_index under the device/platform/hwsku directory.
+    ```
+
+    **判断根拠**: table の global / per-ASIC 振り分けと port_config.ini の ASIC ごとディレクトリ構成の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Mellanox 例外
 
 Mellanox プラットフォームでは transceiver plug in/out イベントが **mlnx SDK 経由 syncd 内** で出る。multi-ASIC では **syncd は per-namespace** になるので、xcvrd の plugin が namespace 別に SDK と通信する形に変える必要がある[^1]。

@@ -122,6 +122,25 @@ excerpt: |
 reasoning: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md#L62-L82 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/DHCPv6_Relay/DHCPv6_Relay_HLD.md#L62-L82 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    - DHCPv6 trap should be enabled through the COPP manager when the DHCP relay feature is enabled and vice versa.
+    - Downstream network is the VLAN interface with the relay configuration. Global IPv6 address is required to be configured on that interface.
+    "dhcpv6_servers": [ "21da:d3:0:2f3b::7", "21da:d3:0:2f3b::6" ]
+    ```
+
+    **判断根拠**: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ### 関連する CONFIG_DB

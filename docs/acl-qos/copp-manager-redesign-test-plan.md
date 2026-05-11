@@ -66,6 +66,26 @@ excerpt: |
 reasoning: HLD 本文 4 ルールをそのまま判定フローに転写
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/copp/Copp_Manager_Redesign_test_plan.md#L10-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/copp/Copp_Manager_Redesign_test_plan.md#L10-L30 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    + If the feature is disabled or does not have an entry in te features table, don't install the trap.
+    + If the trap name does not exist in the features table, but the trap has a field which called "always_enabled" and it's value is "true", install the trap.
+    + If there is a feature in the features table that is enabled, install the associated trap.
+    + If there is a feature which is in state 'disabled', but the associated trap has "always_enabled": "true" field, install the trap.
+    ```
+
+    **判断根拠**: HLD 本文 4 ルールをそのまま判定フローに転写
+
+<!-- evidence-rendered:end -->
+
 ### `COPP_TRAP` のサンプル（`/etc/sonic/copp_cfg.json`）
 
 ```json

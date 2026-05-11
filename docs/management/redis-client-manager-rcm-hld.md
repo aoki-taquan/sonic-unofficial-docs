@@ -104,6 +104,25 @@ excerpt: |
 reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/redis_client_manager.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/mgmt/redis_client_manager.md#L40-L66 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Redis Clients with a connection pool must be reused wherever possible instead of creating a new Redis Client each time one is needed.
+    ... a cache of Redis Clients that are initialized during the Go init process. One client is created for each DBNum and stored in a map.
+    ... max pool size is set to 20
+    ```
+
+    **判断根拠**: 共有 client + DBNum cache + PoolSize 20 の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 ユーザに公開される CONFIG_DB / CLI は無い。`sonic-mgmt-common` 内部 API。

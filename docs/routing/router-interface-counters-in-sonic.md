@@ -94,6 +94,25 @@ excerpt: |
 reasoning: BPS / PPS の計算式と表示形式の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/rif-counters/RIF_counters.md#L70-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/rif-counters/RIF_counters.md#L70-L78 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    BPS = (new_*_OCTETS - old_*_OCTETS) / delta,
+    Where delta is the period specified. The BPS is printed in MB/s, KB/s or B/s depending on the value.
+    PPS = (new_*_PACKETS - old_*_PACKETS) / delta
+    ```
+
+    **判断根拠**: BPS / PPS の計算式と表示形式の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### Telemetry 経由の参照
 
 `sonic-telemetry` 経由でも参照できる。スキーマ直叩きでは VID をキーとするため、HLD は **virtual path** 経由の参照を推奨している[^1]。

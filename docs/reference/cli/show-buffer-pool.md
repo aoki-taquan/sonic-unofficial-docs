@@ -58,6 +58,26 @@ excerpt: |
       run_command(command)
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/show/main.py#L1119-L1132 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/show/main.py#L1119-L1132 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @buffer_pool.command('watermark')
+    def wm_buffer_pool(namespace):
+        command = ['watermarkstat', '-t', 'buffer_pool']
+        if namespace is not None:
+            command += ['-n', str(namespace)]
+        run_command(command)
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `show buffer_pool persistent-watermark`
 
 **動作**:

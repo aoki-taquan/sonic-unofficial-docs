@@ -120,6 +120,25 @@ excerpt: |
 reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシューム責務の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/SAI_failure_handling/SAI_failure_handling.md#L66-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/SAI_failure_handling/SAI_failure_handling.md#L66-L99 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    An ERROR_DB will be introduced to escalate the failures from orchagent to upper layers such as fpmsyncd.
+    ... The table and key in ERROR_DB correspond to the DB, table, and key where SAI failures happen
+    ... The upstream processes are expected to consume the ERROR_DB entries and remove the handled failures
+    ```
+
+    **判断根拠**: ERROR_DB のキー命名規則と上位プロセス側コンシューム責務の根拠。
+
+<!-- evidence-rendered:end -->
+
 ### 上位プロセス側の責務
 
 ERROR_DB は **上位プロセスが消費して削除する** 前提で設計される。fpmsyncd 等が処理ロジックを実装すれば ERROR_DB は溜まり続けない。ただし HLD は **「現時点で上位プロセスはこれを消費するロジックを持っていないため、別途追加が必要」** と明記している[^1]。

@@ -114,6 +114,25 @@ excerpt: |
 reasoning: identifier-based spec 判定への切替の根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/sfp-refactor/sfp-refactor.md#L150-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/sfp-refactor/sfp-refactor.md#L150-L154 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The correct specification abstraction needs to be selected at runtime to interpret a xcvr's memory map correctly.
+    This should be done by reading the first byte in the xcvr's EEPROM ...
+    This approach is in contrast to what's currently done with selecting parsers based on the xcvr's port number.
+    ```
+
+    **判断根拠**: identifier-based spec 判定への切替の根拠。
+
+<!-- evidence-rendered:end -->
+
 ## In Scope / Out of Scope
 
 | Scope | 内容 |

@@ -93,6 +93,25 @@ excerpt: |
 reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/warm-reboot/system-warmboot.md#L40-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/warm-reboot/system-warmboot.md#L40-L70 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    Application sets switch attribute SAI_SWITCH_ATTR_RESTART_WARM to true before calling remove_switch().
+    Application sets profile value SAI_KEY_BOOT_TYPE to 1 to indicate WARM BOOT.
+    Application re-register all callbacks/notificaions. These function points are not retained by SAI across warm boot.
+    ```
+
+    **判断根拠**: SAI 側 warm shutdown / recovery の API 契約根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 4. 設定
 
 `config warm_restart enable system` で `WARM_RESTART_TABLE` を有効化。docker 別の有効化や CLI 一覧は [`sonic-warm-reboot.md`](sonic-warm-reboot.md) を参照。

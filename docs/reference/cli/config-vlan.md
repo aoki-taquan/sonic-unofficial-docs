@@ -75,6 +75,25 @@ excerpt: |
       set_dhcp_relay_table('VLAN', config_db, vlan, {'vlanid': str(vid)})
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-utilities/config/vlan.py#L95-L141 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)"
+
+    **出典**:
+
+    `sonic-net/sonic-utilities/config/vlan.py#L95-L141 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)`
+
+    **抜粋**:
+
+    ```text
+    @vlan.command('add')
+    def add_vlan(ctx, vid, multiple):
+        ...
+        stp.vlan_enable_stp(config_db, vlan)
+        set_dhcp_relay_table('VLAN', config_db, vlan, {'vlanid': str(vid)})
+    ```
+
+<!-- evidence-rendered:end -->
+
 ### `config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]`
 
 **用法**:

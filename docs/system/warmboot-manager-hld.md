@@ -79,6 +79,24 @@ excerpt: |
 reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/warm-reboot/Warmboot_Manager_HLD.md#L100-L113 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/warm-reboot/Warmboot_Manager_HLD.md#L100-L113 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The proposal is to introduce a new component called Warmboot Manager that will be responsible for both shutdown orchestration and reconciliation monitoring during warm reboot.
+    ... Warmboot Manager will be an alternative to the existing SONiC warm-boot orchestation scripts and thus both these orchestration frameworks will co-exist in SONiC.
+    ```
+
+    **判断根拠**: 共存方針と「warm shutdown のみ」スコープの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 設定
 
 HLD で具体の CLI / CONFIG_DB は提示されていない。実装時に専用設定が入る可能性あり。
