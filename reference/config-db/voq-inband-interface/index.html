@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/pbh/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/voq-inband-interface/">
       
       
-        <link rel="prev" href="../nvgre-tunnel/">
+        <link rel="prev" href="../vnet/">
       
       
-        <link rel="next" href="../peer-switch/">
+        <link rel="next" href="../vrf/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>PBH_TABLE / PBH_RULE テーブル - SONiC 非公式ドキュメント</title>
+        <title>VOQ_INBAND_INTERFACE テーブル - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pbh_table-pbh_rule" class="md-skip">
+        <a href="#voq_inband_interface" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PBH_TABLE / PBH_RULE テーブル
+              VOQ_INBAND_INTERFACE テーブル
             
           </span>
         </div>
@@ -21225,46 +21225,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#voq_inband_interface_list" class="md-nav__link">
     <span class="md-ellipsis">
       
-        主要フィールド
+        VOQ_INBAND_INTERFACE_LIST フィールド
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="主要フィールド">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pbh_table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PBH_TABLE
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pbh_rule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PBH_RULE
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#voq_inband_interface_ipprefix_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ_INBAND_INTERFACE_IPPREFIX_LIST フィールド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -21275,7 +21258,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -21297,10 +21280,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -21324,7 +21318,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/pbh.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/voq-inband-interface.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -21332,142 +21326,90 @@
   
 
 
-<h1 id="pbh_table-pbh_rule">PBH_TABLE / PBH_RULE テーブル<a class="headerlink" href="#pbh_table-pbh_rule" title="Permanent link">&para;</a></h1>
+<h1 id="voq_inband_interface">VOQ_INBAND_INTERFACE テーブル<a class="headerlink" href="#voq_inband_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Policy Based Hashing (PBH) は、packet match 条件ごとに ECMP / LAG hash profile を切り替えるための CONFIG_DB テーブル群。<code>PBH_TABLE</code> が適用 interface の集合を定義し、<code>PBH_RULE</code> が table 内の match 条件、priority、適用する <code>PBH_HASH</code> を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。hash profile と hash field は同じ YANG モジュールの <code>PBH_HASH</code> / <code>PBH_HASH_FIELD</code> で定義され、実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PBH_TABLE|&lt;table_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>PBH_RULE|&lt;table_name&gt;|&lt;rule_name&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>PBH_HASH|&lt;hash_name&gt;
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>PBH_HASH_FIELD|&lt;hash_field_name&gt;
-</span></code></pre></div>
-<p><code>PBH_RULE.table_name</code> は <code>PBH_TABLE.table_name</code> への leafref。</p>
-<h2 id="_2">主要フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="pbh_table">PBH_TABLE<a class="headerlink" href="#pbh_table" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>型</th>
-<th>必須</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>interface_list</code></td>
-<td>ordered leaf-list <code>PORT</code> / <code>PORTCHANNEL</code> leafref</td>
-<td>yes</td>
-<td>PBH table を適用する interface 群</td>
-</tr>
-<tr>
-<td><code>description</code></td>
-<td>string 1..255</td>
-<td>yes</td>
-<td>table の説明</td>
-</tr>
-</tbody>
-</table>
-<h3 id="pbh_rule">PBH_RULE<a class="headerlink" href="#pbh_rule" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>型</th>
-<th>既定値</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>priority</code></td>
-<td>uint32</td>
-<td>-</td>
-<td>rule priority。mandatory</td>
-</tr>
-<tr>
-<td><code>gre_key</code></td>
-<td>hex value/mask</td>
-<td>-</td>
-<td>GRE key match</td>
-</tr>
-<tr>
-<td><code>ether_type</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>EtherType match</td>
-</tr>
-<tr>
-<td><code>ip_protocol</code></td>
-<td>hex uint8 string</td>
-<td>-</td>
-<td>IPv4 protocol match</td>
-</tr>
-<tr>
-<td><code>ipv6_next_header</code></td>
-<td>hex uint8 string</td>
-<td>-</td>
-<td>IPv6 next-header match</td>
-</tr>
-<tr>
-<td><code>l4_dst_port</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>L4 destination port match</td>
-</tr>
-<tr>
-<td><code>inner_ether_type</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>inner EtherType match</td>
-</tr>
-<tr>
-<td><code>hash</code></td>
-<td>leafref <code>PBH_HASH.hash_name</code></td>
-<td>-</td>
-<td>適用する hash。mandatory</td>
-</tr>
-<tr>
-<td><code>packet_action</code></td>
-<td>enum</td>
-<td><code>SET_ECMP_HASH</code></td>
-<td>rule action</td>
-</tr>
-<tr>
-<td><code>flow_counter</code></td>
-<td>enum</td>
-<td><code>DISABLED</code></td>
-<td>packet / byte counter の有効化</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><code>VOQ_INBAND_INTERFACE</code> テーブルは VOQ chassis におけるラインカード間のインバンド通信用論理インターフェース (<code>Ethernet-IB&lt;n&gt;</code>) を CONFIG_DB に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。BGP internal-neighbor などのコントロールプレーン通信に使われる。テーブルは 2 段構造:</p>
 <ul>
-<li><code>PBH_TABLE.interface_list</code> は 1 要素以上で、<code>PORT</code> または <code>PORTCHANNEL</code> への leafref。</li>
-<li><code>PBH_TABLE.description</code>、<code>PBH_RULE.priority</code>、<code>PBH_RULE.hash</code> は mandatory。</li>
-<li>match field の多くは <code>0x...</code> 形式、または <code>0x.../0x...</code> 形式の文字列 pattern で検証される。</li>
-<li><code>PBH_RULE.hash</code> は <code>PBH_HASH</code>、<code>PBH_HASH.hash_field_list</code> は <code>PBH_HASH_FIELD</code> への leafref。</li>
+<li><code>VOQ_INBAND_INTERFACE_LIST</code> (key: name)</li>
+<li><code>VOQ_INBAND_INTERFACE_IPPREFIX_LIST</code> (key: name, ip-prefix)</li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VOQ_INBAND_INTERFACE|&lt;name&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>VOQ_INBAND_INTERFACE|&lt;name&gt;|&lt;ip-prefix&gt;
+</span></code></pre></div>
+<h2 id="voq_inband_interface_list">VOQ_INBAND_INTERFACE_LIST フィールド<a class="headerlink" href="#voq_inband_interface_list" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>型</th>
+<th>デフォルト</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> (key)</td>
+<td>string パターン <code>Ethernet-IB[0-9]+</code></td>
+<td>—</td>
+<td>インバンド IF 名</td>
+</tr>
+<tr>
+<td><code>inband_type</code></td>
+<td>string パターン <code>port\|Port</code></td>
+<td><code>port</code></td>
+<td>インバンドタイプ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="voq_inband_interface_ipprefix_list">VOQ_INBAND_INTERFACE_IPPREFIX_LIST フィールド<a class="headerlink" href="#voq_inband_interface_ipprefix_list" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>型</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> (key)</td>
+<td>leafref → <code>VOQ_INBAND_INTERFACE_LIST.name</code></td>
+<td>親インターフェース</td>
+</tr>
+<tr>
+<td><code>ip-prefix</code> (key)</td>
+<td><code>sonic-ip-prefix</code></td>
+<td>アサイン IP プレフィックス</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>pbhmgrd</code>: CONFIG_DB の PBH table / rule / hash / hash-field を検証し APPL_DB へ展開する。</li>
-<li><code>orchagent</code> / PBH orch: APPL_DB の PBH 設定を SAI hash / ACL 相当のオブジェクトへ反映する。</li>
+<li><code>name</code> は <code>Ethernet-IB&lt;数値&gt;</code> パターン</li>
+<li><code>inband_type</code> は <code>port</code> または <code>Port</code></li>
+</ul>
+<h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>intfmgrd</code> / <code>intfsyncd</code> (sonic-swss)</li>
+<li><code>bgpcfgd</code> / <code>bgpd</code> — BGP internal neighbor のソース interface として使う場合</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PBH_HASH</code>、<code>PBH_HASH_FIELD</code>、<code>PORT</code>、<code>PORTCHANNEL</code></li>
-<li>関連 CLI: <code>config pbh</code></li>
-<li>関連 YANG: <code>sonic-pbh</code></li>
+<li>関連 CONFIG_DB: <code>SYSTEM_PORT</code>、<code>BGP_INTERNAL_NEIGHBOR</code>、<code>BGP_VOQ_CHASSIS_NEIGHBOR</code>、<code>CHASSIS_MODULE</code></li>
+<li>関連 YANG: <code>sonic-voq-inband-interface</code>、<code>sonic-bgp-internal-neighbor</code>、<code>sonic-bgp-voq-chassis-neighbor</code></li>
+<li>関連 CLI: <code>config interface</code></li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../interface/">CONFIG_DB: INTERFACE</a></li>
+</ul>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-pbh.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p>テーブル名定数参照: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>YANG 定義: <code>sonic-voq-inband-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

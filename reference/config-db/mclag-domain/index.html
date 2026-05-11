@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/pbh/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/mclag-domain/">
       
       
-        <link rel="prev" href="../nvgre-tunnel/">
+        <link rel="prev" href="../map-pfc-priority-to-queue/">
       
       
-        <link rel="next" href="../peer-switch/">
+        <link rel="next" href="../mgmt-interface/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>PBH_TABLE / PBH_RULE テーブル - SONiC 非公式ドキュメント</title>
+        <title>MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pbh_table-pbh_rule" class="md-skip">
+        <a href="#mclag_domain-mclag_interface-mclag_unique_ip" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PBH_TABLE / PBH_RULE テーブル
+              MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル
             
           </span>
         </div>
@@ -21225,57 +21225,40 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#mclag_domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_DOMAIN フィールド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mclag_interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_INTERFACE フィールド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mclag_unique_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_UNIQUE_IP フィールド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        主要フィールド
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="主要フィールド">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pbh_table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PBH_TABLE
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pbh_rule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PBH_RULE
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制約
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -21297,10 +21280,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -21324,7 +21318,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/pbh.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/mclag-domain.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -21332,142 +21326,143 @@
   
 
 
-<h1 id="pbh_table-pbh_rule">PBH_TABLE / PBH_RULE テーブル<a class="headerlink" href="#pbh_table-pbh_rule" title="Permanent link">&para;</a></h1>
+<h1 id="mclag_domain-mclag_interface-mclag_unique_ip">MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル<a class="headerlink" href="#mclag_domain-mclag_interface-mclag_unique_ip" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Policy Based Hashing (PBH) は、packet match 条件ごとに ECMP / LAG hash profile を切り替えるための CONFIG_DB テーブル群。<code>PBH_TABLE</code> が適用 interface の集合を定義し、<code>PBH_RULE</code> が table 内の match 条件、priority、適用する <code>PBH_HASH</code> を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。hash profile と hash field は同じ YANG モジュールの <code>PBH_HASH</code> / <code>PBH_HASH_FIELD</code> で定義され、実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PBH_TABLE|&lt;table_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>PBH_RULE|&lt;table_name&gt;|&lt;rule_name&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>PBH_HASH|&lt;hash_name&gt;
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>PBH_HASH_FIELD|&lt;hash_field_name&gt;
-</span></code></pre></div>
-<p><code>PBH_RULE.table_name</code> は <code>PBH_TABLE.table_name</code> への leafref。</p>
-<h2 id="_2">主要フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="pbh_table">PBH_TABLE<a class="headerlink" href="#pbh_table" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>型</th>
-<th>必須</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>interface_list</code></td>
-<td>ordered leaf-list <code>PORT</code> / <code>PORTCHANNEL</code> leafref</td>
-<td>yes</td>
-<td>PBH table を適用する interface 群</td>
-</tr>
-<tr>
-<td><code>description</code></td>
-<td>string 1..255</td>
-<td>yes</td>
-<td>table の説明</td>
-</tr>
-</tbody>
-</table>
-<h3 id="pbh_rule">PBH_RULE<a class="headerlink" href="#pbh_rule" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>型</th>
-<th>既定値</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>priority</code></td>
-<td>uint32</td>
-<td>-</td>
-<td>rule priority。mandatory</td>
-</tr>
-<tr>
-<td><code>gre_key</code></td>
-<td>hex value/mask</td>
-<td>-</td>
-<td>GRE key match</td>
-</tr>
-<tr>
-<td><code>ether_type</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>EtherType match</td>
-</tr>
-<tr>
-<td><code>ip_protocol</code></td>
-<td>hex uint8 string</td>
-<td>-</td>
-<td>IPv4 protocol match</td>
-</tr>
-<tr>
-<td><code>ipv6_next_header</code></td>
-<td>hex uint8 string</td>
-<td>-</td>
-<td>IPv6 next-header match</td>
-</tr>
-<tr>
-<td><code>l4_dst_port</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>L4 destination port match</td>
-</tr>
-<tr>
-<td><code>inner_ether_type</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>inner EtherType match</td>
-</tr>
-<tr>
-<td><code>hash</code></td>
-<td>leafref <code>PBH_HASH.hash_name</code></td>
-<td>-</td>
-<td>適用する hash。mandatory</td>
-</tr>
-<tr>
-<td><code>packet_action</code></td>
-<td>enum</td>
-<td><code>SET_ECMP_HASH</code></td>
-<td>rule action</td>
-</tr>
-<tr>
-<td><code>flow_counter</code></td>
-<td>enum</td>
-<td><code>DISABLED</code></td>
-<td>packet / byte counter の有効化</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>MC-LAG (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を CONFIG_DB に保持する 3 テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>iccpd</code> (<code>docker-iccpd</code>) がこれらを購読し、ICCP セッションと MC-LAG メンバー LAG の同期を制御する。</p>
 <ul>
-<li><code>PBH_TABLE.interface_list</code> は 1 要素以上で、<code>PORT</code> または <code>PORTCHANNEL</code> への leafref。</li>
-<li><code>PBH_TABLE.description</code>、<code>PBH_RULE.priority</code>、<code>PBH_RULE.hash</code> は mandatory。</li>
-<li>match field の多くは <code>0x...</code> 形式、または <code>0x.../0x...</code> 形式の文字列 pattern で検証される。</li>
-<li><code>PBH_RULE.hash</code> は <code>PBH_HASH</code>、<code>PBH_HASH.hash_field_list</code> は <code>PBH_HASH_FIELD</code> への leafref。</li>
+<li><code>MCLAG_DOMAIN</code> — 1 ドメインの基本パラメータ（最大 1 エントリ）</li>
+<li><code>MCLAG_INTERFACE</code> — ドメインに紐づく MC-LAG メンバー PortChannel</li>
+<li><code>MCLAG_UNIQUE_IP</code> — MC-LAG ピア間で VLAN インターフェースに <strong>異なる IP</strong> を持たせる対象 VLAN</li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>MCLAG_DOMAIN|&lt;domain_id&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>MCLAG_INTERFACE|&lt;domain_id&gt;|&lt;if_name&gt;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>MCLAG_UNIQUE_IP|&lt;if_name&gt;
+</span></code></pre></div>
+<h2 id="mclag_domain">MCLAG_DOMAIN フィールド<a class="headerlink" href="#mclag_domain" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>型</th>
+<th>デフォルト</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>domain_id</code> (key)</td>
+<td>uint16 (1..4095)</td>
+<td>—</td>
+<td>MC-LAG ドメイン ID</td>
+</tr>
+<tr>
+<td><code>source_ip</code></td>
+<td>inet:ipv4-address</td>
+<td>—</td>
+<td>ICCP セッションのソース IP</td>
+</tr>
+<tr>
+<td><code>peer_ip</code></td>
+<td>inet:ipv4-address</td>
+<td>—</td>
+<td>ICCP セッションのピア IP</td>
+</tr>
+<tr>
+<td><code>peer_link</code></td>
+<td>union leafref → <code>PORT.name</code> または <code>PORTCHANNEL.name</code></td>
+<td>—</td>
+<td>ピアリンク（バックアップデータパス）</td>
+</tr>
+<tr>
+<td><code>keepalive_interval</code></td>
+<td>uint16 (1..60) [秒]</td>
+<td>1</td>
+<td>ICCP keepalive 間隔</td>
+</tr>
+<tr>
+<td><code>session_timeout</code></td>
+<td>uint16 (1..3600) [秒]</td>
+<td>30</td>
+<td>ICCP セッションタイムアウト</td>
+</tr>
+</tbody>
+</table>
+<p><strong>must 制約</strong>: <code>keepalive_interval * 3 &lt;= session_timeout</code></p>
+<p><strong>max-elements: 1</strong> — ドメインは 1 件のみ</p>
+<h2 id="mclag_interface">MCLAG_INTERFACE フィールド<a class="headerlink" href="#mclag_interface" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>型</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>domain_id</code> (key)</td>
+<td>leafref → <code>MCLAG_DOMAIN.domain_id</code></td>
+<td>所属ドメイン</td>
+</tr>
+<tr>
+<td><code>if_name</code> (key)</td>
+<td>leafref → <code>PORTCHANNEL.name</code></td>
+<td>MC-LAG メンバー LAG</td>
+</tr>
+<tr>
+<td><code>if_type</code></td>
+<td>string</td>
+<td>プレースホルダ（インスタンス作成用）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="mclag_unique_ip">MCLAG_UNIQUE_IP フィールド<a class="headerlink" href="#mclag_unique_ip" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>型</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>if_name</code> (key)</td>
+<td>string パターン <code>Vlan&lt;id&gt;</code></td>
+<td>unique-ip を許可する VLAN インターフェース名</td>
+</tr>
+<tr>
+<td><code>unique_ip</code></td>
+<td>enum <code>enable</code></td>
+<td>有効化フラグ（無効時はエントリ削除）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>must 制約</strong>: <code>MCLAG_DOMAIN_LIST</code> が少なくとも 1 つ存在すること</p>
+<p>YANG コメントによれば、本来 <code>MCLAG_UNIQUE_IP.if_name</code> は <code>VLAN.name</code> への leafref にしたいが libyang back-links の制約で plain string になっている。</p>
+<h2 id="_2">購読者<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>pbhmgrd</code>: CONFIG_DB の PBH table / rule / hash / hash-field を検証し APPL_DB へ展開する。</li>
-<li><code>orchagent</code> / PBH orch: APPL_DB の PBH 設定を SAI hash / ACL 相当のオブジェクトへ反映する。</li>
+<li><code>iccpd</code> (<code>docker-iccpd</code>) — MC-LAG 制御プレーン</li>
+<li>間接的に <code>teamd</code> (PortChannel のメンバー同期)</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PBH_HASH</code>、<code>PBH_HASH_FIELD</code>、<code>PORT</code>、<code>PORTCHANNEL</code></li>
-<li>関連 CLI: <code>config pbh</code></li>
-<li>関連 YANG: <code>sonic-pbh</code></li>
+<li>関連 CONFIG_DB: <code>PORTCHANNEL</code>、<code>PORTCHANNEL_MEMBER</code>、<code>VLAN</code>、<code>VLAN_INTERFACE</code>、<code>PORT</code></li>
+<li>関連 YANG: <code>sonic-mclag</code>、<code>sonic-portchannel</code>、<code>sonic-port</code></li>
+<li>関連 CLI: <code>config mclag</code></li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../portchannel/">CONFIG_DB: PORTCHANNEL</a></li>
+<li><a href="../vlan/">CONFIG_DB: VLAN</a></li>
+</ul>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-pbh.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p>テーブル名定数参照: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>YANG 定義: <code>sonic-mclag.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

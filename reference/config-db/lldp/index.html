@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/pbh/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/lldp/">
       
       
-        <link rel="prev" href="../nvgre-tunnel/">
+        <link rel="prev" href="../lldp-port/">
       
       
-        <link rel="next" href="../peer-switch/">
+        <link rel="next" href="../loopback-interface/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>PBH_TABLE / PBH_RULE テーブル - SONiC 非公式ドキュメント</title>
+        <title>LLDP / LLDP_PORT テーブル - SONiC 非公式ドキュメント</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pbh_table-pbh_rule" class="md-skip">
+        <a href="#lldp-lldp_port" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PBH_TABLE / PBH_RULE テーブル
+              LLDP / LLDP_PORT テーブル
             
           </span>
         </div>
@@ -21225,46 +21225,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#lldpglobal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        主要フィールド
+        フィールド (LLDP|GLOBAL)
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="主要フィールド">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pbh_table" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PBH_TABLE
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pbh_rule" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PBH_RULE
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#lldp_portifname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド (LLDP_PORT|&lt;ifname&gt;)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -21275,7 +21258,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -21297,10 +21280,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -21324,7 +21318,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/pbh.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/reference/config-db/lldp.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -21332,142 +21326,149 @@
   
 
 
-<h1 id="pbh_table-pbh_rule">PBH_TABLE / PBH_RULE テーブル<a class="headerlink" href="#pbh_table-pbh_rule" title="Permanent link">&para;</a></h1>
+<h1 id="lldp-lldp_port">LLDP / LLDP_PORT テーブル<a class="headerlink" href="#lldp-lldp_port" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Policy Based Hashing (PBH) は、packet match 条件ごとに ECMP / LAG hash profile を切り替えるための CONFIG_DB テーブル群。<code>PBH_TABLE</code> が適用 interface の集合を定義し、<code>PBH_RULE</code> が table 内の match 条件、priority、適用する <code>PBH_HASH</code> を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。hash profile と hash field は同じ YANG モジュールの <code>PBH_HASH</code> / <code>PBH_HASH_FIELD</code> で定義され、実装側のテーブル名定数は <code>schema.h</code> も参照する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>LLDP</code> テーブルはシステム全体の LLDP 設定 (<code>GLOBAL</code> キー) を、<code>LLDP_PORT</code> テーブルはポート単位の LLDP 有効化 / モードを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>lldp-syncd</code> および <code>docker-lldp</code> 内の <code>lldpd</code> が CONFIG_DB を読み出して動作する。</p>
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PBH_TABLE|&lt;table_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>PBH_RULE|&lt;table_name&gt;|&lt;rule_name&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>PBH_HASH|&lt;hash_name&gt;
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>PBH_HASH_FIELD|&lt;hash_field_name&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>LLDP|GLOBAL
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>LLDP_PORT|&lt;ifname&gt;
 </span></code></pre></div>
-<p><code>PBH_RULE.table_name</code> は <code>PBH_TABLE.table_name</code> への leafref。</p>
-<h2 id="_2">主要フィールド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="pbh_table">PBH_TABLE<a class="headerlink" href="#pbh_table" title="Permanent link">&para;</a></h3>
+<p><code>LLDP</code> テーブルは <code>GLOBAL</code> 単一エントリ（YANG では <code>container GLOBAL</code> 直下のスカラー leaf 群）。<code>LLDP_PORT</code> は <code>PORT</code> への leafref をキーに持つリスト。</p>
 <table>
 <thead>
 <tr>
-<th>フィールド</th>
+<th>キー</th>
 <th>型</th>
-<th>必須</th>
 <th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>interface_list</code></td>
-<td>ordered leaf-list <code>PORT</code> / <code>PORTCHANNEL</code> leafref</td>
-<td>yes</td>
-<td>PBH table を適用する interface 群</td>
+<td><code>GLOBAL</code></td>
+<td>固定</td>
+<td>システム全体設定</td>
 </tr>
 <tr>
-<td><code>description</code></td>
-<td>string 1..255</td>
-<td>yes</td>
-<td>table の説明</td>
+<td><code>ifname</code></td>
+<td>leafref → <code>PORT.name</code></td>
+<td>ポート単位設定</td>
 </tr>
 </tbody>
 </table>
-<h3 id="pbh_rule">PBH_RULE<a class="headerlink" href="#pbh_rule" title="Permanent link">&para;</a></h3>
+<h2 id="lldpglobal">フィールド (<code>LLDP|GLOBAL</code>)<a class="headerlink" href="#lldpglobal" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>フィールド</th>
 <th>型</th>
-<th>既定値</th>
+<th>デフォルト</th>
 <th>説明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>priority</code></td>
-<td>uint32</td>
-<td>-</td>
-<td>rule priority。mandatory</td>
+<td><code>hello_time</code></td>
+<td>uint8 (5..254) [秒]</td>
+<td>30</td>
+<td>周期 hello の間隔</td>
 </tr>
 <tr>
-<td><code>gre_key</code></td>
-<td>hex value/mask</td>
-<td>-</td>
-<td>GRE key match</td>
+<td><code>multiplier</code></td>
+<td>uint8 (1..10)</td>
+<td>4</td>
+<td><code>hello_time × multiplier</code> がネイバー保持時間</td>
 </tr>
 <tr>
-<td><code>ether_type</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>EtherType match</td>
+<td><code>system_name</code></td>
+<td>string</td>
+<td>—</td>
+<td>管理者割当のシステム名</td>
 </tr>
 <tr>
-<td><code>ip_protocol</code></td>
-<td>hex uint8 string</td>
-<td>-</td>
-<td>IPv4 protocol match</td>
+<td><code>system_description</code></td>
+<td>string</td>
+<td>—</td>
+<td>システム説明</td>
 </tr>
 <tr>
-<td><code>ipv6_next_header</code></td>
-<td>hex uint8 string</td>
-<td>-</td>
-<td>IPv6 next-header match</td>
+<td><code>supp_mgmt_address_tlv</code></td>
+<td>boolean</td>
+<td>false</td>
+<td>Management Address TLV 送信抑制</td>
 </tr>
 <tr>
-<td><code>l4_dst_port</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>L4 destination port match</td>
+<td><code>supp_system_capabilities_tlv</code></td>
+<td>boolean</td>
+<td>false</td>
+<td>System Capabilities TLV 送信抑制</td>
 </tr>
 <tr>
-<td><code>inner_ether_type</code></td>
-<td>hex uint16 string</td>
-<td>-</td>
-<td>inner EtherType match</td>
+<td><code>enabled</code></td>
+<td>boolean (grouping <code>lldp_mode_config</code>)</td>
+<td>true</td>
+<td>LLDP 有効化</td>
 </tr>
 <tr>
-<td><code>hash</code></td>
-<td>leafref <code>PBH_HASH.hash_name</code></td>
-<td>-</td>
-<td>適用する hash。mandatory</td>
-</tr>
-<tr>
-<td><code>packet_action</code></td>
-<td>enum</td>
-<td><code>SET_ECMP_HASH</code></td>
-<td>rule action</td>
-</tr>
-<tr>
-<td><code>flow_counter</code></td>
-<td>enum</td>
-<td><code>DISABLED</code></td>
-<td>packet / byte counter の有効化</td>
+<td><code>mode</code></td>
+<td>enum <code>RECEIVE</code> / <code>TRANSMIT</code></td>
+<td>—</td>
+<td>RX/TX モード</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="lldp_portifname">フィールド (<code>LLDP_PORT|&lt;ifname&gt;</code>)<a class="headerlink" href="#lldp_portifname" title="Permanent link">&para;</a></h2>
+<p>grouping <code>lldp_mode_config</code> を <code>uses</code>:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>型</th>
+<th>デフォルト</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>boolean</td>
+<td>true</td>
+<td>ポート単位の LLDP 有効化</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>enum <code>RECEIVE</code> / <code>TRANSMIT</code></td>
+<td>—</td>
+<td>ポート単位の RX/TX モード</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>PBH_TABLE.interface_list</code> は 1 要素以上で、<code>PORT</code> または <code>PORTCHANNEL</code> への leafref。</li>
-<li><code>PBH_TABLE.description</code>、<code>PBH_RULE.priority</code>、<code>PBH_RULE.hash</code> は mandatory。</li>
-<li>match field の多くは <code>0x...</code> 形式、または <code>0x.../0x...</code> 形式の文字列 pattern で検証される。</li>
-<li><code>PBH_RULE.hash</code> は <code>PBH_HASH</code>、<code>PBH_HASH.hash_field_list</code> は <code>PBH_HASH_FIELD</code> への leafref。</li>
+<li><code>hello_time</code> 5..254 秒、<code>multiplier</code> 1..10（hold time = hello × multiplier）</li>
+<li><code>LLDP_PORT.ifname</code> は <code>PORT</code> への leafref（VLAN / PortChannel 等は対象外）</li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>pbhmgrd</code>: CONFIG_DB の PBH table / rule / hash / hash-field を検証し APPL_DB へ展開する。</li>
-<li><code>orchagent</code> / PBH orch: APPL_DB の PBH 設定を SAI hash / ACL 相当のオブジェクトへ反映する。</li>
+<li><code>lldp-syncd</code> (<code>docker-lldp</code>) — <code>lldpd</code> 設定生成、STATE_DB への neighbor 反映</li>
+<li><code>lldpd</code> (open-lldp フォーク)</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 CONFIG_DB: <code>PBH_HASH</code>、<code>PBH_HASH_FIELD</code>、<code>PORT</code>、<code>PORTCHANNEL</code></li>
-<li>関連 CLI: <code>config pbh</code></li>
-<li>関連 YANG: <code>sonic-pbh</code></li>
+<li>関連 CONFIG_DB: <code>PORT</code>、<code>DEVICE_NEIGHBOR</code>、<code>DEVICE_NEIGHBOR_METADATA</code></li>
+<li>関連 YANG: <code>sonic-lldp</code>、<code>sonic-port</code></li>
+<li>関連 CLI: <code>config lldp</code>、<code>show lldp</code></li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../device-neighbor/">CONFIG_DB: DEVICE_NEIGHBOR</a></li>
+<li><a href="../port/">CONFIG_DB: PORT</a></li>
+</ul>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-pbh.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p>テーブル名定数参照: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>YANG 定義: <code>sonic-lldp.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-lldp.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

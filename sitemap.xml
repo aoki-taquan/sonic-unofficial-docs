@@ -1093,6 +1093,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/bgp-monitors/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/bgp-neighbor-af/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -1106,6 +1110,14 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/bgp-peer-group/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/bgp-peer-range/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/breakout-cfg/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1177,7 +1189,19 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/dot1p-to-tc-map/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/dscp-to-tc-map/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/fabric-monitor/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/fabric-port/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1213,11 +1237,19 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/lldp/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/loopback-interface/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/map-pfc-priority-to-queue/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/mclag-domain/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1250,6 +1282,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/ntp-server/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/nvgre-tunnel/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1373,7 +1409,15 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/voq-inband-interface/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/vrf/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/vxlan-evpn-nvo/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
