@@ -26,6 +26,31 @@ related:
 
 PVST / RSTP / MSTP のグローバル・VLAN 別・ポート別・MST instance/port 別の設定を保持する[^1]。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-spanning-tree"]
+  C1[("CONFIG_DB<br/>STP")]
+  Y --> C1
+  D1["stpmgrd"]
+  C1 --> D1
+  C2[("CONFIG_DB<br/>STP_VLAN")]
+  Y --> C2
+  C2 --> D1
+  C3[("CONFIG_DB<br/>STP_VLAN_PORT")]
+  Y --> C3
+  C3 --> D1
+  C4[("CONFIG_DB<br/>STP_PORT")]
+  Y --> C4
+  C4 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```

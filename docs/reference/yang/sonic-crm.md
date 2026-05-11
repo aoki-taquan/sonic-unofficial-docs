@@ -26,6 +26,22 @@ related:
 
 Critical Resource Monitoring (CRM) 設定の YANG モデル[^1]。ASIC 上の各種ハードウェアリソース（ACL カウンタ/エントリ、route、neighbor、nexthop、FDB、NAT、MPLS、SRv6、DASH オブジェクト 等）について `threshold_type` / `high_threshold` / `low_threshold` の 3 リーフをひとセットとして繰り返し定義する大型モジュール。
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-crm"]
+  C1[("CONFIG_DB<br/>CRM")]
+  Y --> C1
+  D1["CrmOrch"]
+  C1 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー（概略）
 
 ```

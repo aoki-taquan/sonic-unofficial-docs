@@ -26,6 +26,34 @@ related:
 
 SONiC NAT yang model[^1]
 
+<!-- yang-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  Y["sonic-nat"]
+  C1[("CONFIG_DB<br/>STATIC_NAPT")]
+  Y --> C1
+  D1["natmgrd"]
+  C1 --> D1
+  C2[("CONFIG_DB<br/>STATIC_NAT")]
+  Y --> C2
+  C2 --> D1
+  C3[("CONFIG_DB<br/>NAT_GLOBAL")]
+  Y --> C3
+  C3 --> D1
+  C4[("CONFIG_DB<br/>NAT_POOL")]
+  Y --> C4
+  C4 --> D1
+  C5[("CONFIG_DB<br/>NAT_BINDINGS")]
+  Y --> C5
+  C5 --> D1
+```
+
+!!! note "凡例"
+    YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
+<!-- /yang-mermaid -->
+
 ## ツリー
 
 ```
