@@ -1,5 +1,6 @@
 ---
 title: NVGRE トンネル（nvgreorch / decap mapper）
+description: "NVGRE トンネル（nvgreorch / decap mapper） — NVGRE (Network Virtualization using Generic Routing Encapsulation) は L3 上に多数の仮想 L2 セグメントを張る方式。"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09

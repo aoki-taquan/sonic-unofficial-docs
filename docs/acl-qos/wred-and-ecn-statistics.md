@@ -1,5 +1,6 @@
 ---
 title: WRED / ECN 統計（per-queue / per-port、capability ベース）
+description: "WRED / ECN 統計（per-queue / per-port、capability ベース） — SAI が出す WRED ドロップ / ECN マーク専用カウンタを Flex Counter で COUNTERS_DB に出し、show queue wredcounters および show interfa…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

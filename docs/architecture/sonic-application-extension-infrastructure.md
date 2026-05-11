@@ -1,5 +1,6 @@
 ---
 title: SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
+description: "SONiC Application Extension Infrastructure（sonic-package-manager / SPM） — 3rd-party / 任意の docker コンテナを「SONiC application extension」として inbox 機能と同じ管理面で扱う ためのフレー…"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

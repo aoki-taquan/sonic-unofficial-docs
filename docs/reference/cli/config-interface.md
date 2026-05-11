@@ -1,5 +1,6 @@
 ---
 title: config interface サブコマンド
+description: "config interface サブコマンド — config interface は物理ポート（PORT）・PortChannel・SubInterface・Loopback の state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

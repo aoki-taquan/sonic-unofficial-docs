@@ -1,5 +1,6 @@
 ---
 title: MUX_LINKMGR テーブル
+description: "MUX_LINKMGR テーブル — DualToR (Active-Standby) 構成で linkmgrd の動作パラメータを CONFIG_DB に保持するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

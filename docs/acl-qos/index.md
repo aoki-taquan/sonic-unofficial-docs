@@ -1,5 +1,6 @@
 ---
 title: ACL & QoS
+description: "ACL & QoS — ACL、CoPP、mirror、buffer、PFC、watermark、scheduler などパケット制御と QoS を扱う章。"
 verification: stub
 ---
 

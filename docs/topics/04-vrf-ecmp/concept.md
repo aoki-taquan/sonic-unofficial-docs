@@ -1,5 +1,6 @@
 ---
 title: L3 基盤と VRF
+description: "L3 基盤と VRF — SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞いは VRF と interface に強く依存し、next hop の解決もリンク状態と隣接探索に依存するためです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）
+description: "SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang） — SONiC の YANG モデルは ABNF.json で表現された Redis スキーマを RFC 7950 準拠の YANG に写像したもの。"
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11

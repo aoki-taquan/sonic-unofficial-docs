@@ -1,5 +1,6 @@
 ---
 title: Reboot-cause 履歴の STATE_DB / テレメトリ公開
+description: "Reboot-cause 履歴の STATE_DB / テレメトリ公開 — SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は STATE_DB にも反映する仕組み。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

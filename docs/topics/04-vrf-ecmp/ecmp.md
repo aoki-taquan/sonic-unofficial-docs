@@ -1,5 +1,6 @@
 ---
 title: ECMP Family
+description: "ECMP Family — ECMP は「複数 next hop に分散する」だけなら単純ですが、SONiC には用途に応じて複数の拡張があります。まず通常 ECMP を基準にし、重み、bucket 安定性、順序、hash 入力、traffic class による path 選択を別々の問題として分けます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

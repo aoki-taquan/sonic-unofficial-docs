@@ -1,5 +1,6 @@
 ---
 title: SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
+description: "SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net） — 1 台の chassis 内に複数 ASIC を持つ platform で SONiC を動かすための設計:"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

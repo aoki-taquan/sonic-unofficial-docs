@@ -1,5 +1,6 @@
 ---
 title: パスワード強化（password hardening / aging / complexity / history）
+description: "パスワード強化（password hardening / aging / complexity / history） — ローカルユーザのパスワードに対して エイジング（強制更新）、複雑度要件、履歴禁止、ロックアウト を Linux 標準の PAM スタックを通じて適用する仕組み。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

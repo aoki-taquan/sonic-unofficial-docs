@@ -1,5 +1,6 @@
 ---
 title: SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）
+description: "SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust） — UEFI Secure Boot を SONiC のブートチェーンに適用する。"
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld

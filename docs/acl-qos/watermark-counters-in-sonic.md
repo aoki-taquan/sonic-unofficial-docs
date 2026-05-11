@@ -1,5 +1,6 @@
 ---
 title: バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
+description: "バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡） — 読み手の関心は「何を watermark として記録するのか」「telemetry / 手動 / 永続の 3 系統がなぜ要るのか」「clear を打つと何が起きるのか」の 3 点に集約される。順に答える。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

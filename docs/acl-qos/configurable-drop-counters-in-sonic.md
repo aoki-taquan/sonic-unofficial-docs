@@ -1,5 +1,6 @@
 ---
 title: 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）
+description: "設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter） — SAI debug counter を活用し、ユーザがドロップ理由（drop reason）の組み合わせを動的に定義してカウントできるようにする機能。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

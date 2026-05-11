@@ -1,5 +1,6 @@
 ---
 title: L2 機能の考え方
+description: "L2 機能の考え方 — SONiC で L2 を読むときは、最初に「どの interface がどの forwarding domain に属するか」と「その interface を L2 として使うのか、L3 として使うのか」を分けて整理すると、その後の設定や運用が追いやすくなります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

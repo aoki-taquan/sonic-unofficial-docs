@@ -1,5 +1,6 @@
 ---
 title: Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）
+description: "Route Flow Counter（ROUTE_MATCH / Route Pattern Orch） — prefix パターンに一致する route について、ASIC 上の Generic Counter を ECMP NHG / route entry に bind し、hit / byte を CLI で…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: sonic-cfggen コマンド
+description: "sonic-cfggen コマンド — sonic-cfggen は SONiC 設定生成エンジンの汎用 CLI。click ベースの config / show とは別系統で、argparse で定義された引数を取る Python スクリプト。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

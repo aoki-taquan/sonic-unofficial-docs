@@ -1,5 +1,6 @@
 ---
 title: QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）
+description: "QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth） — SONiC の QoS には scheduling と shaping の 2 軸がある:"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

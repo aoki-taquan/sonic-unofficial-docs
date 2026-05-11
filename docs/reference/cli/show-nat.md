@@ -1,5 +1,6 @@
 ---
 title: show nat サブコマンド
+description: "show nat サブコマンド — show nat は SONiC の NAT 機能の 動的な変換テーブル および 静的な設定 を表示する CLI で、show/nat.py の @click.group() がエントリポイントとなる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

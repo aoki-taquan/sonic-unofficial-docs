@@ -1,5 +1,6 @@
 ---
 title: config portchannel サブコマンド
+description: "config portchannel サブコマンド — config portchannel は LACP ベースの Link Aggregation (LAG) を設定する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: Wake-on-LAN（wol CLI と SonicWolService gNOI）
+description: "Wake-on-LAN（wol CLI と SonicWolService gNOI） — Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。"
 area: switching
 verification: discrepancy-found
 monitor: evolved_beyond_hld

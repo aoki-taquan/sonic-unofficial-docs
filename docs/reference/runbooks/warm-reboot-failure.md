@@ -1,5 +1,6 @@
 ---
 title: Warm Reboot が失敗 / 通信断が長引く
+description: "Runbook: Warm Reboot が失敗 / 通信断が長引く — : sonic-net/sonic-utilities @ 39732bceb — scripts/warm-reboot : sonic-net/sonic-swss @ 4305596 — warm_restart helper"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

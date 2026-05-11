@@ -1,5 +1,6 @@
 ---
 title: config reload の event-driven 化（FEATURE.delayed + PortInitDone）
+description: "config reload の event-driven 化（FEATURE.delayed + PortInitDone） — 従来の config reload は systemctl restart sonic.target で sonic.target 配下の全サービスをまとめて再起動 する実装だった。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

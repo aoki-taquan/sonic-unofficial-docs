@@ -1,5 +1,6 @@
 ---
 title: SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+description: "SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン） — SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、ストレージの寿命と健全性を運用者が把握できる 必要がある。"
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）
+description: "IPv6 Link-Local アドレス管理（自動生成と use-link-local-only） — IPv6 link-local (fe80::/64 + EUI-64 ベース interface ID) を SONiC が扱えるようにする拡張。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

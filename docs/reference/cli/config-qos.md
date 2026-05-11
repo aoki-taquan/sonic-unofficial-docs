@@ -1,5 +1,6 @@
 ---
 title: config qos サブコマンド
+description: "config qos サブコマンド — config qos は QoS と buffer 関連テンプレートを再生成して CONFIG_DB に反映する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

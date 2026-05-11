@@ -1,5 +1,6 @@
 ---
 title: Port Profile Init（SAI bulk port API による fast-boot 高速化）
+description: "Port Profile Init（SAI bulk port API による fast-boot 高速化） — 従来の port 構成は SAI profile から事前作成 → PortsOrch が CONFIG_DB と比較し不一致 port を 個別に削除→再作成 する 2 phase。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

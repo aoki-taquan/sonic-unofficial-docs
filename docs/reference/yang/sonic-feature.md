@@ -1,5 +1,6 @@
 ---
 title: sonic-feature YANG
+description: "sonic-feature YANG — SONiC service/feature enable, disable, and auto-restart control YANG module."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

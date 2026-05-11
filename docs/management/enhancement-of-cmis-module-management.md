@@ -1,5 +1,6 @@
 ---
 title: CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期）
+description: "CMIS モジュール管理拡張（host_tx_signal / host_tx_ready の同期） — ASIC 側 SerDes は SWSS の PortsOrch（→ vendor SAI）が、CMIS モジュール側は PMON の xcvrd が制御するという二段構成だが、両者を 「ASIC が high-…"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

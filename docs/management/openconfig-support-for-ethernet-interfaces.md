@@ -1,5 +1,6 @@
 ---
 title: OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）
+description: "OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer） — openconfig-interfaces / openconfig-if-ethernet / openconfig-if-ip を REST…"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

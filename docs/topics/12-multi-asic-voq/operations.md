@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — Multi-ASIC / VOQ chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から見るか、line card から見るか、ASIC namespace から見るか。ここでは典型的な確認順を整理します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

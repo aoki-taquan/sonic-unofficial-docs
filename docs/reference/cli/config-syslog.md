@@ -1,5 +1,6 @@
 ---
 title: config syslog サブコマンド
+description: "config syslog サブコマンド — config syslog は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を CONFIG_DB に書き込む CLI で、config/syslog.py の @click.group()…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

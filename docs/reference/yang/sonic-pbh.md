@@ -1,5 +1,6 @@
 ---
 title: sonic-pbh YANG
+description: "sonic-pbh YANG — PBH YANG Module for SONiC OS: hashing for NVGRE & VxLAN with IPv4/IPv6 inner 5-tuple"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

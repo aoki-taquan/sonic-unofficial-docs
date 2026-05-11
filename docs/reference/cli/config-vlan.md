@@ -1,5 +1,6 @@
 ---
 title: config vlan サブコマンド
+description: "config vlan サブコマンド — config vlan は VLAN の作成・削除、メンバ追加・削除、Proxy-ARP のオン／オフを担当する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

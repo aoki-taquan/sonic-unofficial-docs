@@ -1,5 +1,6 @@
 ---
 title: Overlay 設定
+description: "Overlay 設定 — Overlay の設定は、最初に「L2 VLAN-VNI を作るのか」「VNET route を作るのか」「EVPN の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる VXLAN tunnel が先に必要です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

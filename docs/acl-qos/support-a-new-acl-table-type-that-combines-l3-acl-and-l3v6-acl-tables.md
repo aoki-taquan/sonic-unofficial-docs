@@ -1,5 +1,6 @@
 ---
 title: L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）
+description: "L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居） — 従来 SONiC は IPv4 用 L3 と IPv6 用 L3V6 を 別々の SAI ACL テーブル として作成していた。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

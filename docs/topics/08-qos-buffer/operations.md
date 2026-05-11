@@ -1,5 +1,6 @@
 ---
 title: QoS / Buffer の運用
+description: "QoS / Buffer の運用 — 「アプリが詰まる」「PFC で止まった」「キューが捨てている」と言われたときに、どのコマンドをどの順番で叩くか、を整理します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

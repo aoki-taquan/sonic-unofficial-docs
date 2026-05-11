@@ -1,5 +1,6 @@
 ---
 title: CONSOLE_PORT / CONSOLE_SWITCH テーブル
+description: "CONSOLE_PORT / CONSOLE_SWITCH テーブル — SONiC を console switch として動かすときの、シリアル/コンソールポートの設定テーブル群。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

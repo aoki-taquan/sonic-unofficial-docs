@@ -1,5 +1,6 @@
 ---
 title: BGP セッションが UP しない
+description: "Runbook: BGP セッションが UP しない — : sonic-net/sonic-frr @ 799f47f — bgpd FSM : sonic-net/sonic-swss @ 4305596 — bfdorch / fpmsyncd : sonic-net/sonic-utilities @ 397…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

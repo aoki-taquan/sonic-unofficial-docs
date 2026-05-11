@@ -1,5 +1,6 @@
 ---
 title: ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）
+description: "ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR） — LT は CR/KR 系で送受信が 動的に FIR の等化係数を擦り合わせる IEEE 802.3 clause 72/93 のプロトコル。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

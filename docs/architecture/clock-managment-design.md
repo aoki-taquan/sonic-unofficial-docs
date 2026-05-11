@@ -1,5 +1,6 @@
 ---
 title: Clock 設定（config clock date/timezone, DEVICE_METADATA.timezone）
+description: "Clock 設定（config clock date/timezone, DEVICE_METADATA.timezone） — SONiC のシステム時刻 / タイムゾーン操作を timedatectl の薄いラッパー として CLI 化する HLD。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

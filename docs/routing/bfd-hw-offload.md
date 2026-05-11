@@ -1,5 +1,6 @@
 ---
 title: BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）
+description: "BFD ハードウェアオフロード（BfdOrch / BFD_SESSION） — BFD（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

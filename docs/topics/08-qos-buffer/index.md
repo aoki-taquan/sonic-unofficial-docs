@@ -1,5 +1,6 @@
 ---
 title: QoS / Buffer / PFC / Watermark
+description: "QoS / Buffer / PFC / Watermark — この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混んだら誰に止まってもらうか」「混み具合をどう測るか」を、読み手の質問順にまとめ直したものです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

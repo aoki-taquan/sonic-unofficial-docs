@@ -1,5 +1,6 @@
 ---
 title: config mclag サブコマンド
+description: "config mclag サブコマンド — config mclag は MCLAG (Multi-Chassis LAG) ドメイン・メンバ PortChannel・Vlan インタフェース単位の unique IP を CONFIG_DB に書き込む CLI で、config/mclag.py の @click.…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

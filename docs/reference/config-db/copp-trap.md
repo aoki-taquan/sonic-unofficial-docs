@@ -1,5 +1,6 @@
 ---
 title: COPP_TRAP テーブル
+description: "COPP_TRAP テーブル — CoPP の trap エントリを定義し、SAI hostif trap ID 群を COPP_GROUP に束ねる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

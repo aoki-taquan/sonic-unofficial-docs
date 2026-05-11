@@ -1,5 +1,6 @@
 ---
 title: BUFFER_QUEUE テーブル
+description: "BUFFER_QUEUE テーブル — ポートの egress queue ごとにバッファプロファイルを割り当てる。non-VOQ 用と VOQ シャーシ用で list が分かれる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

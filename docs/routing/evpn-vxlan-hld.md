@@ -1,5 +1,6 @@
 ---
 title: EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）
+description: "EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5） — EVPN は MAC / IP の到達情報を BGP で広告 し、VXLAN は L2 over L3 のデータプレーン として traffic を運ぶ。"
 area: routing
 verification: discrepancy-found
 monitor: evolved_beyond_hld

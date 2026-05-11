@@ -1,5 +1,6 @@
 ---
 title: HLD と実装の乖離 一覧（discrepancy-index）
+description: "HLD と実装の乖離 一覧（discrepancy-index） — このページは、verification: discrepancy-found が付いた全ページを自動収集して並べたものです。meta/scripts/gen_discrepancy_index.py で生成されます。"
 verification: meta
 last_verified: 2026-05-11
 ---

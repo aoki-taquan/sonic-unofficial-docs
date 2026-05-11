@@ -1,5 +1,6 @@
 ---
 title: debug / undebug コマンド群
+description: "debug / undebug コマンド群 — SONiC の debug および undebug コマンドは、config / show とは別の独立した Click root として実装される (debug = debug.main:cli、undebug = undebug.main:cli)。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

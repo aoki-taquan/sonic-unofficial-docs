@@ -1,5 +1,6 @@
 ---
 title: ProducerStateTable の view switching（warm reboot 用の差分適用）
+description: "ProducerStateTable view switching — warm reboot では、各 daemon が 新しい状態を一気に作って consumer に届ける 必要がある。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

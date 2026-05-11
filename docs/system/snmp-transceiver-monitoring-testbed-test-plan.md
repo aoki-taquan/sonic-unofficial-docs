@@ -1,5 +1,6 @@
 ---
 title: SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）
+description: "SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB） — 光トランシーバの DOM（Digital Optical Monitoring）情報—TX power / RX power / TX bias / temperature / v…"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

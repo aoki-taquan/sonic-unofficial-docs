@@ -1,5 +1,6 @@
 ---
 title: Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張）
+description: "Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） — ポートの FEC（Forward Error Correction）統計 から Pre / Post FEC BER を計算し、show interface counter fec-stat に列を 2 つ追…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

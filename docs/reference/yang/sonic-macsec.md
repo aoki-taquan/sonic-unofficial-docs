@@ -1,5 +1,6 @@
 ---
 title: sonic-macsec YANG
+description: "sonic-macsec YANG — IEEE 802.1AE MACsec のプロファイル（CAK/CKN、cipher、replay protection、rekey 等）を保持する YANG モジュール。ポートへの紐付けは sonic-port の macsec リーフ側で行う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

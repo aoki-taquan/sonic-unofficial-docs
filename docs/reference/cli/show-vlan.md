@@ -1,5 +1,6 @@
 ---
 title: show vlan サブコマンド
+description: "show vlan サブコマンド — show vlan は VLAN とそのメンバーポート、L3 SVI 状態（IP アドレス・proxy_arp）を 2 種類の表で表示する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

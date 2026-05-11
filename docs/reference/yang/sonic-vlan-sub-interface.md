@@ -1,5 +1,6 @@
 ---
 title: sonic-vlan-sub-interface YANG
+description: "sonic-vlan-sub-interface YANG — VLAN sub-interface configuration for dot1q encapsulated sub-ports on physical or PortChannel interfaces"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

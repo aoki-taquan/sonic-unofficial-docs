@@ -1,5 +1,6 @@
 ---
 title: sonic-banner YANG
+description: "sonic-banner YANG — Login, MOTD, and logout banner message YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

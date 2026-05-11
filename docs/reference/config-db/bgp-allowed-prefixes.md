@@ -1,5 +1,6 @@
 ---
 title: BGP_ALLOWED_PREFIXES テーブル
+description: "BGP_ALLOWED_PREFIXES テーブル — BGP_ALLOWED_PREFIXES は deployment ID 単位の prefix 許可リスト を CONFIG_DB に格納するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

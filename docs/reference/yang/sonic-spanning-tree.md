@@ -1,5 +1,6 @@
 ---
 title: sonic-spanning-tree YANG
+description: "sonic-spanning-tree YANG — PVST / RSTP / MSTP のグローバル・VLAN 別・ポート別・MST instance/port 別の設定を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

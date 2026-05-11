@@ -1,5 +1,6 @@
 ---
 title: 発展トピックへの橋渡し
+description: "発展トピックへの橋渡し — VRF / RIF / route / NHG の読み方を押さえると、周辺機能の設計意図が追いやすくなります。このページでは、章 04 から次に読む候補を整理します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

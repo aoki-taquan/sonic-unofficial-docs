@@ -1,5 +1,6 @@
 ---
 title: DASH 関連
+description: "DASH 関連 — このカテゴリは、area の壁を越えて DASH に関わる SONiC 側のページを横断で見られるようにします。"
 area: categories
 verification: meta
 last_verified: 2026-05-10

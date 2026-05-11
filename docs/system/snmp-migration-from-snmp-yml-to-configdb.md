@@ -1,5 +1,6 @@
 ---
 title: SNMP 設定の snmp.yml → CONFIG_DB 移行
+description: "SNMP 設定の snmp.yml → CONFIG_DB 移行 — /etc/sonic/snmp.yml には community / location が、CONFIG_DB には ACL のみが入る、という分散した SNMP 設定状態を解消し、全 SNMP 設定を CONFIG_DB に集約 するための移行設…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

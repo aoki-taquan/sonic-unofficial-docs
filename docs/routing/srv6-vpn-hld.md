@@ -1,5 +1,6 @@
 ---
 title: SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）
+description: "SRv6 VPN（L3VPN over SRv6 と SRv6 Policy） — Alibaba がエッジルータ用ホワイトボックス SONiC で運用している実機ベースの提案 HLD。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）
+description: "SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP） — SAI 呼び出しが失敗すると orchagent は abort し、syncd を含む各 service が再起動される。"
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11

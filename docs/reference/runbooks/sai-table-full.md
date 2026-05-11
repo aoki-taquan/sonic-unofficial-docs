@@ -1,5 +1,6 @@
 ---
 title: SAI table full (route / nexthop / FDB 上限到達)
+description: "Runbook: SAI table full (route / nexthop / FDB 上限到達) — : sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp : sonic-net/sonic-sairedis @ 4305596 — syncd/Sy…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

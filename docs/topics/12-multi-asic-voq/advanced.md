@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — VOQ chassis 固有の機能は、BGP・LAG・Everflow・TSA・warm reboot のような既存機能領域ごとに別 HLD として書かれています。ここでは「他章で読むべきテーマ」と「VOQ chassis 視点で押さえるポイント」を対応付け、各章への橋渡しに徹します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

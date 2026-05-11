@@ -1,5 +1,6 @@
 ---
 title: config nat サブコマンド
+description: "config nat サブコマンド — config nat は SONiC の NAT44 (NAT / NAPT) 機能の CONFIG_DB を直接操作する CLI で、config/nat.py の @click.group('nat') がエントリポイントとなる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

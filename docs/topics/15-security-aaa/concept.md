@@ -1,5 +1,6 @@
 ---
 title: 概念
+description: "概念 — SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と SONiC 固有のデーモン（hostcfgd、macsecmgr、SAI）に薄く重なって実装されています。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

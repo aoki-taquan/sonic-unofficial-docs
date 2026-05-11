@@ -1,5 +1,6 @@
 ---
 title: DHCP_SERVER_IPV4 テーブル
+description: "DHCP_SERVER_IPV4 テーブル — 組み込み DHCPv4 サーバ機能の VLAN/IF 単位設定を保持する。dhcpservd（sonic-dhcp-server パッケージ）が kea-dhcp4 の設定を生成、起動する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

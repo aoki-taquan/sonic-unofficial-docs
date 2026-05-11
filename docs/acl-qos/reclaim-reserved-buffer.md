@@ -1,5 +1,6 @@
 ---
 title: Reclaim Reserved Buffer（admin-down ポートの zero_profile）
+description: "Reclaim Reserved Buffer（admin-down ポートの zero_profile） — Mellanox プラットフォームで顕著な「admin-down ポートにも default で reserved buffer が割り当てられ、shared pool が圧迫される」問題に対し、zero_…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11

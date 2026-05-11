@@ -1,5 +1,6 @@
 ---
 title: RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）
+description: "RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority） — SONiC 管理ユーザの SSH / console ログインを RADIUS で認証する仕組み。"
 area: management
 verification: code-verified
 last_verified: 2026-05-11

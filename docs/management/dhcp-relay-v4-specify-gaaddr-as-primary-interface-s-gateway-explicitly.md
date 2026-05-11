@@ -1,5 +1,6 @@
 ---
 title: DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）
+description: "DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary） — VLAN に 複数のサブネット を載せたい運用は珍しくない。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

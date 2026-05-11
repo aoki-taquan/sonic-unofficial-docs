@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — 評価・初学を超えて、CI / 大規模 lab / DPU 検証まで踏み込むときに開く話題を集めます。基本的にはここのリンク先 HLD を直接読むのが早く、本ページは「どれを開くか」のしおりです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

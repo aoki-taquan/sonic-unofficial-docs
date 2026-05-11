@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — Multi-ASIC / VOQ chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」…"
 area: topics
 verification: meta
 last_verified: 2026-05-10

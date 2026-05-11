@@ -1,5 +1,6 @@
 ---
 title: VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）
+description: "VLAN インタフェースの OpenConfig YANG 対応 — SONiC は従来 VLAN を SONiC 独自 YANG 経由でしか REST / gNMI 公開していなかった。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

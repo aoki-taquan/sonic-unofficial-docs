@@ -1,5 +1,6 @@
 ---
 title: show route-map コマンド
+description: "show route-map コマンド — show route-map は FRR の route-map 設定（policy / match / set 句）をそのまま表示するコマンドで、CONFIG_DB は読まず vtysh -c \"show route-map []\" を sudo で実行する単純なラッパで…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
+description: "SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB） — orchagent は APPL_DB 経由で受けた要求を SAI コール列に展開して syncd / SAI に投げる。"
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11

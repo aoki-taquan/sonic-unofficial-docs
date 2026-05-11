@@ -1,5 +1,6 @@
 ---
 title: ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）
+description: "ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service） — Boot 時に long reset button (>=15 秒押下) が検知されたら、非デフォルトユーザを削除しデフォルトユーザのパスワードを工場出…"
 area: system
 verification: discrepancy-found
 monitor: partially_implemented

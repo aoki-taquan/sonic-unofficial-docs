@@ -1,5 +1,6 @@
 ---
 title: TACACS+ 認証テストプラン（pam_tacplus + ssh login）
+description: "TACACS+ 認証テストプラン（pam_tacplus + ssh login） — SONiC の TACACS+ 認証（Authentication）を ssh login 経由で検証するテストプラン。"
 area: management
 verification: code-verified
 last_verified: 2026-05-11

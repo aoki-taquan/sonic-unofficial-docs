@@ -1,5 +1,6 @@
 ---
 title: HA / PMON / reboot / upgrade の運用
+description: "HA / PMON / reboot / upgrade の運用 — SmartSwitch の運用観点は「どの障害をどの daemon が見て」「どの順序で再起動 / アップグレードするか」に集約されます。NPU / DPU で責務が分かれているため、コマンドを叩く前に経路を意識する必要があります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

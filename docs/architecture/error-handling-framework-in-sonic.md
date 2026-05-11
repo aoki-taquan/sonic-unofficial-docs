@@ -1,5 +1,6 @@
 ---
 title: Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
+description: "Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬） — 従来 syncd は SAI CREATE/SET 失敗を一律 fatal 扱いし orchagent に shutdown を要求していた。"
 area: architecture
 verification: discrepancy-found
 monitor: partially_implemented

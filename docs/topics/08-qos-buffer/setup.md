@@ -1,5 +1,6 @@
 ---
 title: QoS / Buffer の設定
+description: "QoS / Buffer の設定 — 設定は「pool / profile を作る → port に classification を当てる → queue に scheduler / WRED を当てる → 必要なら PFC / PFCWD を有効化」の順で組むのが筋が良いです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report）
+description: "Dataplane Telemetry (DTel) テストプラン（INT source/sink/transit + Postcard + Drop/Queue report） — In-band Network Telemetry (INT) と Postcard / Drop / Queue report を含…"
 area: system
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: gNOI OS API（Install / Activate / Verify と sonic-installer 連携）
+description: "gNOI OS API（Install / Activate / Verify と sonic-installer 連携） — gNOI OS は スイッチの OS イメージを gRPC ストリームで配布・有効化・検証する ための API である。3 つの RPC で構成される:"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

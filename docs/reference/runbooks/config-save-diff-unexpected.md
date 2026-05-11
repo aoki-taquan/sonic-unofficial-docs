@@ -1,5 +1,6 @@
 ---
 title: config save 後に予期しない diff が出る
+description: "Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb — config save : sonic-net/sonic-swss-common @ 4305596 — configdb get/set"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

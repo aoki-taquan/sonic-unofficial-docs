@@ -1,5 +1,6 @@
 ---
 title: FEATURE テーブルによるオプショナル機能の有効/無効制御
+description: "FEATURE テーブルによるオプショナル機能の有効/無効制御 — SONiC には telemetry agent 等、デバイスによっては不要な オプショナルなコンテナ/サービス がある。本 HLD（2019 年の初期提案）はこれらを CONFIG_DB.FEATURE テーブルで一括制御する仕組みを定義した。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

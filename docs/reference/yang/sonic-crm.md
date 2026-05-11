@@ -1,5 +1,6 @@
 ---
 title: sonic-crm YANG
+description: "sonic-crm YANG — Critical Resource Monitoring (CRM) 設定の YANG モデル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

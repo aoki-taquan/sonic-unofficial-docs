@@ -1,5 +1,6 @@
 ---
 title: L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
+description: "L2 Forwarding 強化 — SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する HLD:"
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented

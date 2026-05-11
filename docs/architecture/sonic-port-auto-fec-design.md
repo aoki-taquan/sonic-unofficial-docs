@@ -1,5 +1,6 @@
 ---
 title: Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）
+description: "Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto） — ポートの autoneg と FEC モードの組み合わせの挙動を決定論的にする ための設計。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11

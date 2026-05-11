@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — ここでは login が成立するまでの経路と、CONFIG_DB から /etc/ 配下のサービス設定ファイルへ反映が走る経路を、SONiC 固有部分に絞って示します。Linux 標準の PAM / NSS の挙動そのものは扱わず、SONiC が「どこで何を差し込んでいるか」に焦点を当てます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: Reboot / warm restart の設定
+description: "Reboot / warm restart の設定 — 設定で最初に分けるのは、OS 全体の reboot を実行するのか、service warm restart を許可するのかです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

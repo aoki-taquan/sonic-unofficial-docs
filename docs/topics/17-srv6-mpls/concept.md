@@ -1,5 +1,6 @@
 ---
 title: 概念
+description: "概念 — SRv6、MPLS、Path Tracing はいずれも「IPv4/IPv6 forwarding の上に、追加のラベルまたはオプションを積んで経路や挙動を決める」仕組みです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

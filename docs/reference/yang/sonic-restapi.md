@@ -1,5 +1,6 @@
 ---
 title: sonic-restapi YANG
+description: "sonic-restapi YANG — RESTAPI YANG Module for SONiC OS。REST API サーバの TLS 証明書 (certs) と connection 設定 (config) を持つ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

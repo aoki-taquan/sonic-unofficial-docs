@@ -1,5 +1,6 @@
 ---
 title: gNMI / OpenConfig の発展トピック
+description: "gNMI / OpenConfig の発展トピック — gNMI / gNOI / Translib / Transformer の基本パスを押さえた後は、telemetry の規模拡張、認証境界 (gNSI)、新しい RPC への対応が次の論点になる。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

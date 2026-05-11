@@ -1,5 +1,6 @@
 ---
 title: 概要
+description: "概要 — SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

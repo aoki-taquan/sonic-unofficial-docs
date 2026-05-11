@@ -1,5 +1,6 @@
 ---
 title: sonic-hash YANG
+description: "sonic-hash YANG — ECMP および LAG パケットハッシングに使用するフィールドとアルゴリズムをグローバルに指定する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

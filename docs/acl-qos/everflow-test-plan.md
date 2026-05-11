@@ -1,5 +1,6 @@
 ---
 title: Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）
+description: "Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6） — Everflow（SAI mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく 本番に近い構成での functional / negati…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11

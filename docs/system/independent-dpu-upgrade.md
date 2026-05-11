@@ -1,5 +1,6 @@
 ---
 title: "Smart Switch: DPU 独立アップグレード（gNOI 経路）"
+description: "Smart Switch: DPU 独立アップグレード（gNOI 経路） — SmartSwitch では NPU 1 台に複数 DPU が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を NPU に offload している。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

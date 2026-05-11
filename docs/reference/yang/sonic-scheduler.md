@@ -1,5 +1,6 @@
 ---
 title: sonic-scheduler YANG
+description: "sonic-scheduler YANG — SCHEDULER yang Module for SONiC OS"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

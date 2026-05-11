@@ -1,5 +1,6 @@
 ---
 title: SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）
+description: "SONiC gNMI Server インタフェース設計 — sonic-restapi は case-by-case な API で汎用性が無く、sonic-telemetry は 読み取り (gRPC) 専用 だった。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

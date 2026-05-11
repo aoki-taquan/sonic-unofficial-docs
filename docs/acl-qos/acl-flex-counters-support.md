@@ -1,5 +1,6 @@
 ---
 title: ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）
+description: "ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP） — ACL ルール per packet/byte counter の polling を orchagent から syncd の flex counter へ移譲 し、pol…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

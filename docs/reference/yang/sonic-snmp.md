@@ -1,5 +1,6 @@
 ---
 title: sonic-snmp YANG
+description: "sonic-snmp YANG — Simple Network Management Protocol (SNMP) agent configuration YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: SONiC CLI 自動生成ツール（YANG → click plugin 自動生成）
+description: "SONiC CLI 自動生成ツール — SONiC Application Extension (SAE) として 3rd party 機能を 追加 docker で持ち込む際に、CLI を都度書く工数を減らすため、YANG モデルから show / config click plugin を自動生成 するユーティリ…"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

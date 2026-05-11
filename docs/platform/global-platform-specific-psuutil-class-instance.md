@@ -1,5 +1,6 @@
 ---
 title: 新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）
+description: "新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層） — 旧設計では psuutil.py / sfputil.py / eeprom.py 等を 独立した Python plugin としてベンダーが個別に実装していたが、新設計で…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

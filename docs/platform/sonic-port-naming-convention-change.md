@@ -1,5 +1,6 @@
 ---
 title: SONiC ポート命名規則の変更案（et[sX]pY[abcd]）
+description: "SONiC ポート命名規則の変更案（et[sX]pY[abcd]） — SONiC は伝統的に Ethernet0 / Ethernet4 / ... のような Ethernet プレフィクス + ASIC レーン番号 をポート名に使ってきた。"
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11

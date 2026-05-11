@@ -1,5 +1,6 @@
 ---
 title: config snmp / snmpagentaddress / snmptrap サブコマンド
+description: "config snmp / snmpagentaddress / snmptrap サブコマンド — SNMP 関連の CLI は 3 つの独立したトップレベルグループ に分かれている: config snmp、config snmpagentaddress、config snmptrap。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

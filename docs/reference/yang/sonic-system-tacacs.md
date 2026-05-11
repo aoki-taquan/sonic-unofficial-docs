@@ -1,5 +1,6 @@
 ---
 title: sonic-system-tacacs YANG
+description: "sonic-system-tacacs YANG — Terminal Access Controller Access-Control System Plus (TACACS+) YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

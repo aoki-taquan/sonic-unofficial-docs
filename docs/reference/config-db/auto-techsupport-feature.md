@@ -1,5 +1,6 @@
 ---
 title: AUTO_TECHSUPPORT_FEATURE テーブル
+description: "AUTO_TECHSUPPORT_FEATURE テーブル — AUTO_TECHSUPPORT (GLOBAL) で定義したイベント駆動 techsupport の挙動を、FEATURE (docker) 単位でオーバーライドするテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

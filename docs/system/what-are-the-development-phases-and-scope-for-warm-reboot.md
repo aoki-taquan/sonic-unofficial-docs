@@ -1,5 +1,6 @@
 ---
 title: Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）
+description: "Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison） — SONiC の Warm Reboot 設計に関する open issues / 設計の選択肢 を整理した文書。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

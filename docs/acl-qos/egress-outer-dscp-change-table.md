@@ -1,5 +1,6 @@
 ---
 title: Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）
+description: "Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP） — encapsulated 後の outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11

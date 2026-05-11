@@ -1,5 +1,6 @@
 ---
 title: ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）
+description: "ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張） — SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11

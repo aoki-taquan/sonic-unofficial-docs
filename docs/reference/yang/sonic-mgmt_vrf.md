@@ -1,5 +1,6 @@
 ---
 title: sonic-mgmt_vrf YANG
+description: "sonic-mgmt_vrf YANG — マネジメント VRF (mgmt traffic を data-plane と分離する VRF) のグローバル有効/無効を保持する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

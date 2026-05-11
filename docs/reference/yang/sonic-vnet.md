@@ -1,5 +1,6 @@
 ---
 title: sonic-vnet YANG
+description: "sonic-vnet YANG — Virtual Network (VNET) configuration for overlay networking using VxLAN tunnels"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

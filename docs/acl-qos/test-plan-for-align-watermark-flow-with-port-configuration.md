@@ -1,5 +1,6 @@
 ---
 title: counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン
+description: "counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン — SONiC の counterpoll CLI は queue / watermark / pg-drop の 3 種を個別に enable/disable できる。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

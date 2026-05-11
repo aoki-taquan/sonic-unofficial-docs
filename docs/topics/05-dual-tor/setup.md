@@ -1,5 +1,6 @@
 ---
 title: Dual-ToR の設定
+description: "Dual-ToR の設定 — Dual-ToR の設定は、port ごとの MUX_CABLE と peer ToR を表す PEER_SWITCH を起点に読みます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: Telemetry / SNMP / Observability
+description: "Telemetry / SNMP / Observability — この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

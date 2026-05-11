@@ -1,5 +1,6 @@
 ---
 title: VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）
+description: "VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール） — VOQ ベースのシャシでは 入口 chip（ingress ASIC） と 出口 chip（egress ASIC） が異なることがあり、両 chip の rewrite 設定を協調プログラムする必要がある。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

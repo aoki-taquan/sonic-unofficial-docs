@@ -1,5 +1,6 @@
 ---
 title: BGP_GLOBALS テーブル
+description: "BGP_GLOBALS テーブル — VRF 単位の BGP 全体パラメータ（router-id、local AS、graceful restart、route reflector、bestpath 比較ルール、confederation、keepalive/holdtime、max-med、max delay 等）…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

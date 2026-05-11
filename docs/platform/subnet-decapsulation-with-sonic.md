@@ -1,5 +1,6 @@
 ---
 title: VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）
+description: "VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル） — Azure Netscan は IPinIP プローブ（outer DIP=デバイス Loopback、inner DIP=Netscan 送信元）でネットワーク経路の blackhole を検知する。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-11

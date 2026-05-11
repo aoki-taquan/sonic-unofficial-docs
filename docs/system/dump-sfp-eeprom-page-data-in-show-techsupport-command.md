@@ -1,5 +1,6 @@
 ---
 title: show techsupport での SFP EEPROM ページダンプ取り込み
+description: "show techsupport での SFP EEPROM ページダンプ取り込み — 光モジュール起因の物理層トラブル解析向けに、show techsupport の出力に モジュール EEPROM の生ダンプ を含めるための拡張。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

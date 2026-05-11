@@ -1,5 +1,6 @@
 ---
 title: VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）
+description: "VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking） — VRRP (RFC 5798) は 複数ルータが 1 つの仮想ルータ (VIP + VMAC) を演じ、Master 障害時に Backup が自動引き継ぐ L3 冗長プロトコル。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10

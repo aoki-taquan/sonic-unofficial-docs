@@ -1,5 +1,6 @@
 ---
 title: P4RT アプリケーション（PINS の gRPC サービス、port 9559）
+description: "P4RT アプリケーション（PINS の gRPC サービス、port 9559） — P4RT アプリケーションは PINS（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、P4Runtime v1.3.0 を実装する gRPC サービスとして TCP…"
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11

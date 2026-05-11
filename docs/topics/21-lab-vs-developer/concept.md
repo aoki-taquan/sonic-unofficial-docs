@@ -1,5 +1,6 @@
 ---
 title: 概念
+description: "概念 — 「lab」と一口に言っても、SONiC では大きく次の 3 つの面が混ざっています。読み手の役割と目的で使い分けを決めると迷いません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

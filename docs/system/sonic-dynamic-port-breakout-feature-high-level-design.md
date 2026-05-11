@@ -1,5 +1,6 @@
 ---
 title: 動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）
+description: "動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成） — 1 つの物理 cage（QSFP-DD 等）を 複数の論理 port に切り分ける / 1 つに戻す 操作を、reload 不要・稼働中の SONiC で 行えるようにする。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

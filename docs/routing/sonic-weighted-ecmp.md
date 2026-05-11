@@ -1,5 +1,6 @@
 ---
 title: Weighted ECMP（WCMP / BGP link-bandwidth ext community）
+description: "Weighted ECMP（WCMP） — 各 ToR-Spine リンクが部分故障した際、通常 ECMP は 生存リンクの容量差を反映できず 均等分散して輻輳する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

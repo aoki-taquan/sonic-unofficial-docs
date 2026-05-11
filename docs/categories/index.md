@@ -1,5 +1,6 @@
 ---
 title: 横断カテゴリ
+description: "横断カテゴリ — このドキュメントの本体は architecture / overlay / routing / switching / platform / management / system / acl-qos / internals / reference という area 階層 で構成されていますが、機能…"
 area: categories
 verification: meta
 last_verified: 2026-05-10

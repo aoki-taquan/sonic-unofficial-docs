@@ -1,5 +1,6 @@
 ---
 title: 拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）
+description: "拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開） — LPO (Linear Pluggable Optic) は DSP を持たない optic。"
 area: platform
 verification: discrepancy-found
 monitor: not_implemented

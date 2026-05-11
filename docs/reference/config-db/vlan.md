@@ -1,5 +1,6 @@
 ---
 title: VLAN テーブル
+description: "VLAN テーブル — IEEE 802.1Q VLAN を CONFIG_DB で定義するテーブル。VLAN 名 (Vlan100 形式) をキーに、VLAN ID、DHCP リレーサーバ、MTU、admin status、MAC、エイリアスを保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

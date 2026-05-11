@@ -1,5 +1,6 @@
 ---
 title: show buffer サブコマンド
+description: "show buffer サブコマンド — show buffer は buffer 設定・状態の表示を mmuconfig に委譲する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

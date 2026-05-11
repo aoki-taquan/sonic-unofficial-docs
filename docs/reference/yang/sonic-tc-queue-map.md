@@ -1,5 +1,6 @@
 ---
 title: sonic-tc-queue-map YANG
+description: "sonic-tc-queue-map YANG — TC_TO_QUEUE_MAP yang Module for SONiC OS"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

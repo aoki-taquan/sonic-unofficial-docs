@@ -1,5 +1,6 @@
 ---
 title: CRM テーブル
+description: "CRM テーブル — Critical Resource Monitoring (CRM) は ASIC の HW リソース使用率 (route / nexthop / FDB / ACL / NAT / MPLS / SRv6 / DASH) をポーリング監視し、閾値超過時に THRESHOLD_EXCEEDED…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

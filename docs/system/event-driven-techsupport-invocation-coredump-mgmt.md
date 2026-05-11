@@ -1,5 +1,6 @@
 ---
 title: Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）
+description: "Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota） — SONiC の docker 内プロセスが crash すると、core ファイルが生成される。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: sonic-queue YANG
+description: "sonic-queue YANG — QUEUE yang Module for SONiC OS"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

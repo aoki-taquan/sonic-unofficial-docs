@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — NAT / DHCP / DNS の内部実装は「SONiC は何を ASIC に任せ、何を Linux user space daemon に任せているか」の切り分けを意識すると整理しやすいです。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

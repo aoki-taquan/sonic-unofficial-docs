@@ -1,5 +1,6 @@
 ---
 title: TWAMP Light（Session-Sender / Session-Reflector）
+description: "TWAMP Light（Session-Sender / Session-Reflector） — RFC 5357 に基づく軽量な双方向性能測定（latency / jitter / packet loss）を SONiC ASIC offload で実装する HLD（2023-06）。"
 area: system
 verification: discrepancy-found
 monitor: partially_implemented

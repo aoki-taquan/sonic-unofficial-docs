@@ -1,5 +1,6 @@
 ---
 title: L2 設定パターン
+description: "L2 設定パターン — ここでは、個別 CLI の全引数ではなく、L2 を組むときの代表的な順序を示します。詳細なオプション、制約、実装との乖離は各参照ページで確認してください。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

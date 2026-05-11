@@ -1,5 +1,6 @@
 ---
 title: ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
+description: "ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） — SONiC 既存の ntpd（202405 以降は NTPsec、ntpd の security-hardened fork）には次の問題があった:"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

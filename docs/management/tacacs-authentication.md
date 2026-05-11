@@ -1,5 +1,6 @@
 ---
 title: TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
+description: "TACACS+ 認証 — CONFIG_DB を真実の相とし、hostcfgd の AAA モジュールが PAM/NSS 設定ファイルを書き換える。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

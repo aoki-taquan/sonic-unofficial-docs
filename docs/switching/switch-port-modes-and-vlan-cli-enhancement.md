@@ -1,5 +1,6 @@
 ---
 title: Switchport モード（access / trunk / routed）と VLAN CLI 拡張
+description: "Switchport モード（access / trunk / routed）と VLAN CLI 拡張 — SONiC のレガシー VLAN CLI は config vlan add 10 / config vlan member add 10 Ethernet0 -u のように VLAN ID 単発操作 を強い…"
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented

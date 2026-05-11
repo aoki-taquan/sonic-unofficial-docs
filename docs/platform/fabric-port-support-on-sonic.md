@@ -1,5 +1,6 @@
 ---
 title: VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）
+description: "VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring） — VOQ シャーシは forwarding ASIC（front panel を持つ NPU）を fabric ASIC（cell ベースの内部 fabric）で相互接続する。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

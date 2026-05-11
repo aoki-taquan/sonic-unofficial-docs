@@ -1,5 +1,6 @@
 ---
 title: ポートの動的 add / del（zero-port 起動と post-init 操作）
+description: "ポートの動的 add / del（zero-port 起動と post-init 操作） — SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。"
 area: acl-qos
 verification: discrepancy-found
 monitor: partially_implemented

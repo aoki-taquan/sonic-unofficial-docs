@@ -1,5 +1,6 @@
 ---
 title: DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）
+description: "DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス） — SONiC の DHCPv4 リレーは dhcp-relay docker 内の isc-dhcp ベースの dhcrelay プロセスで実装されている。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

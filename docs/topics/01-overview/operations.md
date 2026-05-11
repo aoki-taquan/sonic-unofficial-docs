@@ -1,5 +1,6 @@
 ---
 title: 運用入口
+description: "運用入口 — 運用時の設定基盤は、日常変更、起動時の既定値、feature service の制御、復旧操作に分けて読むと判断しやすくなります。ここでは「何を確認してから変更するか」と「戻し方をどう考えるか」を中心に整理します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

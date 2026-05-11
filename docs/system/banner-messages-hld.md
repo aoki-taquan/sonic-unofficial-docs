@@ -1,5 +1,6 @@
 ---
 title: バナーメッセージ（login / motd / logout）
+description: "バナーメッセージ（login / motd / logout） — 業務スイッチには、ログイン前後やログアウト時に 法的注意文・運用情報・MOTD を表示する要件が頻繁にある。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）
+description: "TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus） — TACACS+ Authentication（既存）の上に コマンド単位の authorization と accounting を追加する HLD:"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

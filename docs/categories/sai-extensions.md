@@ -1,5 +1,6 @@
 ---
 title: SAI 拡張属性追加系
+description: "SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。"
 area: categories
 verification: meta
 last_verified: 2026-05-10

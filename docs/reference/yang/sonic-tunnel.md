@@ -1,5 +1,6 @@
 ---
 title: sonic-tunnel YANG
+description: "sonic-tunnel YANG — DualToR 構成における MuxTunnel (IPinIP encap/decap) のパラメータを保持する。DSCP / ECN / TTL の handling mode、 encap/decap QoS map などを定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

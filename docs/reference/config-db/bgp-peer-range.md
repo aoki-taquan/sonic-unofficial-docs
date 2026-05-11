@@ -1,5 +1,6 @@
 ---
 title: BGP_PEER_RANGE テーブル
+description: "BGP_PEER_RANGE テーブル — BGP_PEER_RANGE テーブルは BGP の dynamic neighbor 用 listen-range / peer-range を CONFIG_DB に定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）
+description: "SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携） — 「BMC 付き SONiC platform」では、PSU・fan・温度センサ・電圧などの physical inventory が BMC（OpenBMC 等）配下 にあり、CPU 直結ではない。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: BGP PIC（Prefix Independent Convergence / NHG 階層）
+description: "BGP PIC（Prefix Independent Convergence / NHG 階層） — BGP overlay の数百万 route 規模で 影響を受けた N prefix を 1 件ずつ再プログラムする とパケットロスが膨らむ。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

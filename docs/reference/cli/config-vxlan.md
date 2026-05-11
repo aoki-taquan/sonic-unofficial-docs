@@ -1,5 +1,6 @@
 ---
 title: config vxlan サブコマンド
+description: "config vxlan サブコマンド — config vxlan は VXLAN VTEP (VXLAN_TUNNEL)、EVPN NVO (VXLAN_EVPN_NVO)、および VLAN-VNI マッピング (VXLAN_TUNNEL_MAP) を管理する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

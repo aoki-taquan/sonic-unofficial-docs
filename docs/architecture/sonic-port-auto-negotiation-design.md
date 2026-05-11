@@ -1,5 +1,6 @@
 ---
 title: ポート Auto-Negotiation（advertised-speeds / interface-type）
+description: "ポート Auto-Negotiation（advertised-speeds / interface-type） — IEEE 802.3 の auto-negotiation はリンクの両端で 複数の speed / interface type を同時に提示 し、ネゴで最良の組合せを選ぶ仕組み。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

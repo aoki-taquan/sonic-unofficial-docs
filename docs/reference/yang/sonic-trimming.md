@@ -1,5 +1,6 @@
 ---
 title: sonic-trimming YANG
+description: "sonic-trimming YANG — パケットトリミング（輻輳テレメトリ用にパケットを縮小して送信）のグローバル設定を保持する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

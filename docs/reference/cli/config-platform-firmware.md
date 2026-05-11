@@ -1,5 +1,6 @@
 ---
 title: config platform firmware サブコマンド
+description: "config platform firmware サブコマンド — config platform firmware は platform firmware 操作を fwutil に委譲する CLI グループ。install と update は未知オプションを Click で解釈せず、そのまま fwutil へ渡す。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

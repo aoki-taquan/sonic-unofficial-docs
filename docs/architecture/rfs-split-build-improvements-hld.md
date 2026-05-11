@@ -1,5 +1,6 @@
 ---
 title: RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備）
+description: "RFS Split build（build_debian.sh の 2 段化と squashfs 中間配備） — SONiC の installer ビルドの最終ステップ（SONIC_INSTALLERS ターゲット）は build_debian.sh を一気に走らせる単一ルール で構成され、debootstrap…"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

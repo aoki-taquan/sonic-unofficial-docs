@@ -1,5 +1,6 @@
 ---
 title: CiscoBgp4MIB の STATE_DB 経由化（bgpmon / NEIGH_STATE_TABLE）
+description: "CiscoBgp4MIB の STATE_DB 経由化 — CiscoBgp4MIB（OID 1.3.6.1.4.1.9.9.187）は従来、snmp_ax_impl が bgpd の vty ソケットに直結 し show をパースしていた。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

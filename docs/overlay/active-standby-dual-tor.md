@@ -1,5 +1,6 @@
 ---
 title: Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）
+description: "Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel） — 要件は 「リンク or ToR 障害時に健全な側へ切り替えられること」 に尽きる。"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09

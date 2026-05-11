@@ -1,5 +1,6 @@
 ---
 title: FlexCounter リファクタ（CounterContext テンプレート化）
+description: "FlexCounter リファクタ（CounterContext テンプレート化） — syncd の FlexCounter は port / queue / buffer pool / priority group など 多数の統計・属性タイプ を扱う巨大クラス。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09

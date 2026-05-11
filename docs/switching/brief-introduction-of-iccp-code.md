@@ -1,5 +1,6 @@
 ---
 title: ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）
+description: "ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ） — SONiC の MC-LAG（Multi-Chassis LAG）は専用デーモン ICCPd（ICCP daemon、docker-iccp コンテナ内）で実装されている。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-11

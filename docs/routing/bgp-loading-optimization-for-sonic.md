@@ -1,5 +1,6 @@
 ---
 title: BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）
+description: "BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis） — 2M routes 級の BGP loading を end-to-end で 50% 高速化することを狙った最適化 HLD（2023-2024）。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

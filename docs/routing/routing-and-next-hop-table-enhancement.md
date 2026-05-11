@@ -1,5 +1,6 @@
 ---
 title: NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離
+description: "NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離 — 従来の SONiC は APP_DB.ROUTE_TABLE 各エントリにネクストホップ情報 (nexthop / ifname) を 直接埋め込んで いた。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

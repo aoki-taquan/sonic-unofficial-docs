@@ -1,5 +1,6 @@
 ---
 title: 読み手別ガイド
+description: "読み手別ガイド — SONiC ドキュメントを読む目的に応じて、既存ページを読む順番をまとめた入口です。area 別の章構成はそのままに、初回に見るべきページや次に深掘りするページを読み手別に整理しています。"
 area: guides
 verification: meta
 last_verified: 2026-05-10

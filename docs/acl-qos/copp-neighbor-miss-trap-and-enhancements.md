@@ -1,5 +1,6 @@
 ---
 title: CoPP Neighbor Miss trap と enum capability query（show copp configuration）
+description: "CoPP Neighbor Miss trap と enum capability query（show copp configuration） — CoPP に neighbor_miss trap（ARP/ND 未解決 IP パケット用）を追加し、SAI enum capability query で対応 tra…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

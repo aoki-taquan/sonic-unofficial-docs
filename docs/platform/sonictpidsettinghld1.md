@@ -1,5 +1,6 @@
 ---
 title: ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）
+description: "ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8） — TPID（Tag Protocol Identifier）は VLAN tag を識別する Ethernet frame 内の 16-bit 値。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

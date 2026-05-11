@@ -1,5 +1,6 @@
 ---
 title: ACL Ingress / Egress テストプラン（DATAINGRESS / DATAEGRESS テーブル）
+description: "ACL Ingress / Egress テストプラン（DATAINGRESS / DATAEGRESS テーブル） — 既存 ACL テストは ingress 側のみ・FORWARD 偏重・カウンタ未確認・ルール衝突（RULE_12/13 が RULE_1 にマッチして hit しない）等の問題があった。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

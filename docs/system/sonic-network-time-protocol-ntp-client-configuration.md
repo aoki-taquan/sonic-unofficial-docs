@@ -1,5 +1,6 @@
 ---
 title: SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）
+description: "SONiC NTP client（chrony / NTP_SERVER / mgmt VRF） — SONiC のシステム時刻は外部 NTP サーバから同期する。"
 area: system
 verification: discrepancy-found
 monitor: deprecated

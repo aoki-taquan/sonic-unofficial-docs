@@ -1,5 +1,6 @@
 ---
 title: sFlow（hsflowd / sflowmgrd / SAI sample-packet）
+description: "sFlow（hsflowd / sflowmgrd / SAI sample-packet） — sFlow は ASIC が一定 sampling-rate でパケットをサンプリングし、収集サーバ（collector）に UDP でフォワードする統計プロトコル。"
 area: architecture
 verification: discrepancy-found
 monitor: evolved_beyond_hld

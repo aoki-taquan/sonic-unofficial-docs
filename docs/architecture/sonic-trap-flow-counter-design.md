@@ -1,5 +1,6 @@
 ---
 title: Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）
+description: "Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計） — ホストインタフェース trap（CoPP で ASIC から CPU へ punt されるパケット種別。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

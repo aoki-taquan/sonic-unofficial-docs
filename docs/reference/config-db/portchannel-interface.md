@@ -1,5 +1,6 @@
 ---
 title: PORTCHANNEL_INTERFACE テーブル
+description: "PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

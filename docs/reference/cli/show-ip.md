@@ -1,5 +1,6 @@
 ---
 title: show ip サブコマンド
+description: "show ip サブコマンド — show ip は IPv4 ネットワーク情報の照会用サブグループ。インタフェイスの IPv4 状態、ルーティングテーブル、FIB、prefix-list、protocol、BGP 関連表示を集約する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

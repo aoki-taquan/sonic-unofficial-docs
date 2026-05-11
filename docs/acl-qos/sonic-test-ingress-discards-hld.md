@@ -1,5 +1,6 @@
 ---
 title: ingress discards テスト計画（21 ケースで drop counter を検証）
+description: "ingress discards テスト計画（21 ケースで drop counter を検証） — DUT が 特定の不正パケット を ingress で drop し、対応する drop counter が正しく増えるかを検証する sonic-mgmt テストプラン。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-10

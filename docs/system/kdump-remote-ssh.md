@@ -1,5 +1,6 @@
 ---
 title: kdump リモート転送（SSH）
+description: "kdump リモート転送（SSH） — SONiC のカーネルクラッシュダンプは従来 ローカル /var/crash/ にしか保存できなかった。スイッチ側ストレージが小さい / 圧迫されると core を取り逃す。本機能は SSH 経由でリモートサーバへ core dump を転送 し、専用サーバへ集約するためのもの。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: AAA テーブル
+description: "AAA テーブル — ログイン認証 (authentication) / 認可 (authorization) / アカウンティング (accounting) の手段優先順序を CONFIG_DB に保持するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

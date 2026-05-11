@@ -1,5 +1,6 @@
 ---
 title: SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）
+description: "SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張） — uSID（micro-SID）は IETF Compressed SRv6 Segment List Encoding と SRv6 uSID instructions で定義される、SRv6 SID を 16 bit などに圧縮 する…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

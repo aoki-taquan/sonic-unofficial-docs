@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — ACL action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、SAI capability と orchagent の実装が揃っているかを確認する必要があります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: SONiC Logging & System Dumps（要件レベル仕様）
+description: "SONiC Logging & System Dumps（要件レベル仕様） — このドキュメントは SONiC におけるロギングとシステムダンプの 要件と概念設計 を記述する。実装ファイル名・関数名は与えられず、各機能要件のチェックリスト的な体裁になっている。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

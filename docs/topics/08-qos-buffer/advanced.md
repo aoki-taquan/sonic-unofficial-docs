@@ -1,5 +1,6 @@
 ---
 title: QoS / Buffer の発展トピック
+description: "QoS / Buffer の発展トピック — QoS / Buffer / PFC の基本（scheduler、queue map、PG、watermark）を押さえた後は、PFC の運用整合性と buffer pool の設計が次の論点になる。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

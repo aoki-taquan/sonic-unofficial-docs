@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — この章は NAT、DHCP relay、DHCP server の内部構造を「container → daemon → 設定生成 → packet path」の順に並べます。time / DNS と TWAMP Light は OS / SAI 寄りなので発展トピックに分けました。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

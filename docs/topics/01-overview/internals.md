@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — 設定基盤の内部実装は、起動時に設定をどう作るか、Redis をどう配置するか、Multi-ASIC で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

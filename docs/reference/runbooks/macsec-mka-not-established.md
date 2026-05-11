@@ -1,5 +1,6 @@
 ---
 title: MACsec MKA セッションが確立しない
+description: "Runbook: MACsec が UP しない / MKA セッション確立失敗 — : sonic-net/sonic-swss @ master — macsecorch.cpp : sonic-net/wpa_supplicant @ master — ieee802_1x_kay.c"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: Media-based Port Settings（media_settings.json による SerDes プロファイル）
+description: "Media-based Port Settings（media_settings.json による SerDes プロファイル） — vendor / media type / cable length ごとに 異なる SerDes 設定（preemphasis / idriver / ipredriver 等）を必…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

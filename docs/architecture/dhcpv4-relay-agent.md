@@ -1,5 +1,6 @@
 ---
 title: DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）
+description: "DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id） — ToR スイッチが downstream client から受けた DHCPDISCOVER / REQUEST broadcast を、upstream の DHCP サーバ群へ un…"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

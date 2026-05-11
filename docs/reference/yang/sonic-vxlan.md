@@ -1,5 +1,6 @@
 ---
 title: sonic-vxlan YANG
+description: "sonic-vxlan YANG — VXLAN tunnel and EVPN NVO configuration for SONiC."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

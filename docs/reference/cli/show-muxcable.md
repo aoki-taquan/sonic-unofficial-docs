@@ -1,5 +1,6 @@
 ---
 title: show muxcable サブコマンド
+description: "show muxcable サブコマンド — show muxcable は Dual-ToR Y-Cable の運用情報を確認する CLI で、show/muxcable.py の @click.group(name='muxcable') がエントリポイントとなる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

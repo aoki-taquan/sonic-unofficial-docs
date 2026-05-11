@@ -1,5 +1,6 @@
 ---
 title: Management VRF 設計（201911 release / l3mdev + cgroups）
+description: "Management VRF 設計（201911 release / l3mdev + cgroups） — TACACS+ で config tacacs add --use-mgmt-vrf を打つと TACPLUS_SERVER..vrf=mgmt がセットされ、PAM/NSS が SO_BINDTODEVIC…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

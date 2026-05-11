@@ -1,5 +1,6 @@
 ---
 title: QoS / Buffer の概念地図
+description: "QoS / Buffer の概念地図 — QoS の話は語彙が多くて、どこから読めばよいかが見えづらいです。ここでは「パケットが入ってから出るまで、どこで何が決まるか」を一本道で並べ、それぞれの設定テーブルがどの段階に作用するかを示します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

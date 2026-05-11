@@ -1,5 +1,6 @@
 ---
 title: マネジメント
+description: "マネジメント — CLI 以外の設定・管理経路、gNMI / REST / YANG / AAA / P4RT など管理プレーンを扱う章。"
 verification: stub
 ---
 

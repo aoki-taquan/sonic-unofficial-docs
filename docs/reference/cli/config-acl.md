@@ -1,5 +1,6 @@
 ---
 title: config acl サブコマンド
+description: "config acl サブコマンド — config acl は ACL テーブルの作成・削除と、ルール定義 JSON ファイルの一括ロード（acl-loader 起動）を提供する。個別 ACL ルールを CLI フラグで追加するインタフェースは無い。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

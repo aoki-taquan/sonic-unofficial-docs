@@ -1,5 +1,6 @@
 ---
 title: Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）
+description: "Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE） — CRM（Critical Resource Monitoring）は SONiC で ASIC リソースの利用状況 を COUNTERS_DB に publish する仕組みで、ACL / FDB / IP route…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

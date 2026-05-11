@@ -1,5 +1,6 @@
 ---
 title: gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish）
+description: "gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish） — 通常の gNMI subscribe は collector → device の方向で接続するが、ファイアウォール / NAT 越しや stateless collector の場面では de…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

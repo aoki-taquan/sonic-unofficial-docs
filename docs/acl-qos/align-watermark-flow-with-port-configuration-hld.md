@@ -1,5 +1,6 @@
 ---
 title: flexcounter の queue/PG map 生成と watermark 有効化の整合
+description: "flexcounter の queue/PG map 生成と watermark 有効化の整合 — SONiC の flex counter には queue counter / PG-drop counter / watermark counter (queue / PG / buffer-pool) が並列に存在…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

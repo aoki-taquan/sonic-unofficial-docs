@@ -1,5 +1,6 @@
 ---
 title: DASH と SmartSwitch の考え方
+description: "DASH と SmartSwitch の考え方 — DASH と SmartSwitch は混同されやすい言葉ですが、別レイヤのものです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: SONiC Disk I/O 削減（writer 分析と tmpfs 化）
+description: "SONiC Disk I/O 削減（writer 分析と tmpfs 化） — SONiC スイッチの一部が 過剰な disk write で SSD が劣化し read-only file system に陥る 問題が顕在化している。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

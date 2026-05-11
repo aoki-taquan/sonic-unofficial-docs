@@ -1,5 +1,6 @@
 ---
 title: telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT）
+description: "telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT） — 通常の telemetry（gNMI Subscribe）はコレクタが DUT に 接続を張りに行く「dial-in」型。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

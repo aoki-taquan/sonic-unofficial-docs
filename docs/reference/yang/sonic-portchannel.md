@@ -1,5 +1,6 @@
 ---
 title: sonic-portchannel YANG
+description: "sonic-portchannel YANG — Link Aggregation Group (LAG/PortChannel) configuration using LACP"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

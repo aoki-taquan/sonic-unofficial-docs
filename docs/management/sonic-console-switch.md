@@ -1,5 +1,6 @@
 ---
 title: Console Switch（serial hub の reverse SSH 集約）
+description: "Console Switch（serial hub の reverse SSH 集約） — SONiC スイッチを「network 機器を console（serial）経由で管理する集約ホスト」として使うための機能。"
 area: management
 verification: discrepancy-found
 monitor: partially_implemented

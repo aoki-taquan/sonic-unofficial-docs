@@ -1,5 +1,6 @@
 ---
 title: Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加）
+description: "Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加） — SONiC の SNMP Entity MIB（RFC 2737）実装は当初、entityPhysical グループの transceiver と DOM sensor だけ…"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

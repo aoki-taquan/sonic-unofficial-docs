@@ -1,5 +1,6 @@
 ---
 title: dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）
+description: "dump state utility — SONiC の機能は 複数 DB（CONFIG_DB / APPL_DB / ASIC_DB / STATE_DB / COUNTERS_DB / 設定 JSON）に状態が分散する。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09

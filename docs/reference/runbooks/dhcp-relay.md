@@ -1,5 +1,6 @@
 ---
 title: DHCP Relay で IP が払い出されない
+description: "Runbook: DHCP Relay で IP が払い出されない — : sonic-net/sonic-dhcp-relay @ 7316417 — relay.cpp : sonic-net/sonic-utilities @ 39732bceb — config vlan dhcp_relay"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

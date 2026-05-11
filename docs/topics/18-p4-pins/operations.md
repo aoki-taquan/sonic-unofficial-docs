@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — PINS の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

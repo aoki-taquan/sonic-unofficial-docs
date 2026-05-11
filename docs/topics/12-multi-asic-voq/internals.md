@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — Multi-ASIC / VOQ chassis の内部実装は「namespace で分けられた Redis / orchagent / syncd インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: DASH SONiC KVM（BMv2 ベース仮想 DPU）
+description: "DASH SONiC KVM（BMv2 ベース仮想 DPU） — 物理 DPU を持たずに DASH（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ:"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09

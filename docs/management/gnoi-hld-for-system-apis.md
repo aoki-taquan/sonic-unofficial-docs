@@ -1,5 +1,6 @@
 ---
 title: gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）
+description: "gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check） — gnoi.system.System のうち SONiC が初期サポートする RPC は Reboot / RebootStatus / CancelReb…"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: BUFFER_PROFILE テーブル
+description: "BUFFER_PROFILE テーブル — バッファプロファイル（プール参照、reserved size、admission threshold、PFC xon/xoff など）を名前付きで定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

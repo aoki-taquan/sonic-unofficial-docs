@@ -1,5 +1,6 @@
 ---
 title: BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）
+description: "BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD） — T1 リブート直後に「FIB に乗っていない prefix を BGP がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / PFC…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-11

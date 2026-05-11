@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — ここでは lab を「日常的にどう回すか」を、persona 別と test plan 別に整理します。実機運用の章本文ではなく、lab 環境の運用に閉じた話だけを書きます。"
 area: topics
 verification: meta
 last_verified: 2026-05-11

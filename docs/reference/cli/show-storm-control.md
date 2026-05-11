@@ -1,5 +1,6 @@
 ---
 title: show storm-control サブコマンド
+description: "show storm-control サブコマンド — show storm-control は Storm Control（ブロードキャスト/マルチキャスト/不明ユニキャスト過剰トラフィックの抑制機能）の設定を表示する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

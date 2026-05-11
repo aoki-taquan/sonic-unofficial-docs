@@ -1,5 +1,6 @@
 ---
 title: 概念と読み始め方
+description: "概念と読み始め方 — この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

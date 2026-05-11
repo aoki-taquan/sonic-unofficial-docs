@@ -1,5 +1,6 @@
 ---
 title: BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）
+description: "BMC / Redfish 統合 — BMC (Board Management Controller) は switch メインボード上の out-of-band 管理用マイコン。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-11

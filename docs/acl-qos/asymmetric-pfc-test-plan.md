@@ -1,5 +1,6 @@
 ---
 title: Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）
+description: "Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures） — Asymmetric PFC は SONiC 機能だが、本ドキュメントはその 機能テスト計画 を扱う。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
+description: "SWSS docker の Warm Restart 実装メモ（開発時リファレンス） — sonic-installer upgrade_docker で SWSS docker をデータプレーンに影響を与えずアップグレードするために必要な変更点を、開発当時の作業メモとしてまとめたもの。"
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld

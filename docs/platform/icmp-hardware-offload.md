@@ -1,5 +1,6 @@
 ---
 title: ICMP Hardware Offload（DualToR link prober の NPU 化）
+description: "ICMP Hardware Offload（DualToR link prober の NPU 化） — SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を ICMP echo の往復 で監視している。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

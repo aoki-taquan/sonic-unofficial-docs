@@ -1,5 +1,6 @@
 ---
 title: TACPLUS_SERVER テーブル
+description: "TACPLUS_SERVER テーブル — TACACS+ 認証サーバの一覧と global TACACS+ クライアント設定を保持する。最大 8 サーバ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

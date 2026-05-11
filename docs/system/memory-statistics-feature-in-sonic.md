@@ -1,5 +1,6 @@
 ---
 title: メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）
+description: "メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル） — OS レベルの メモリ使用量（total / used / free / available / cached / shared / buffers） を SONiC ネイティブで定期サンプリングし、CLI から履歴クエ…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

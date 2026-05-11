@@ -1,5 +1,6 @@
 ---
 title: sonic-syslog YANG
+description: "sonic-syslog YANG — Remote syslog server and logging configuration YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

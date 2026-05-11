@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — この章のメインは NAT / DHCP ですが、付帯する管理系サービスとして time / DNS / TWAMP / terminal server を同じ章でまとめて読みます。OS daemon と CONFIG_DB のテンプレート生成パスを共通言語にすると、各機能が並列に見えてきます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

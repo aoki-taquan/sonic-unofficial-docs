@@ -1,5 +1,6 @@
 ---
 title: ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
+description: "ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics） — QSFP-DD ZR / ZR+ のような coherent optics は従来の grey optics と比べ:"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

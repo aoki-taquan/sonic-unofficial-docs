@@ -1,5 +1,6 @@
 ---
 title: MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）
+description: "MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI） — IEEE 802.1AE / 802.1X-2010 準拠の Layer 2 暗号化 を実装する設計。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

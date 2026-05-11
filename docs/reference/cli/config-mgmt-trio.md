@@ -1,5 +1,6 @@
 ---
 title: config save / load / reload / replace / qos reload
+description: "config save / load / reload / replace / qos reload — ここでは SONiC の config 永続化と全体差し替え の中核となる以下の 5 コマンドをまとめる:"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

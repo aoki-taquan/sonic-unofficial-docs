@@ -1,5 +1,6 @@
 ---
 title: IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）
+description: "IP / LAG / MTU の Incremental Update — SONiC の初期実装は port / IP / LAG を /etc/network/interfaces や /etc/teamd/ の 静的ファイル に書き出していた。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

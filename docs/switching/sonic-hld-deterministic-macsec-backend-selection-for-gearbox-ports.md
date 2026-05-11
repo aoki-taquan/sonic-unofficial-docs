@@ -1,5 +1,6 @@
 ---
 title: Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
+description: "Gearbox PHY ごとの MACsec backend 決定（macsec_supported） — 外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 SAI（gbsyncd）の switch_id に紐づいて管理されている。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）
+description: "BBR 連動の BGP ルート集約 — SONiC は従来 CONFIG_DB / CLI で集約広告（aggregate-address）を設定できず、FRR を直接編集する必要があった。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

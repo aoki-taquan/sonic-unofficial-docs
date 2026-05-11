@@ -1,5 +1,6 @@
 ---
 title: Multiple Spanning Tree Protocol (MSTP) on SONiC
+description: "Multiple Spanning Tree Protocol (MSTP) on SONiC — IEEE 802.1Q-2014 準拠の Spanning Tree。RSTP / PVST に対し 「VLAN 群を 1 つの MSTI（インスタンス）にまとめてインスタンス単位でトポロジを計算する」 のが特徴。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

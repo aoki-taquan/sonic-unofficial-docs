@@ -1,5 +1,6 @@
 ---
 title: EVPN VXLAN Multihoming（ESI / DF election / split-horizon）
+description: "EVPN VXLAN Multihoming（ESI / DF election / split-horizon） — EVPN multihoming（MH）は MC-LAG / vPC を使わず、BGP-EVPN だけで host を複数 leaf にマルチホーム接続する RFC 7432 / RFC 8365…"
 area: routing
 verification: discrepancy-found
 monitor: not_implemented
