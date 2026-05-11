@@ -14582,6 +14582,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22398,6 +22415,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22692,6 +22726,19 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <li>master key インフラを使った暗号化を試したい場合は、<code>security_cipher.py</code> の <code>encrypt</code>/<code>decrypt</code> API を直接呼んで passkey を加工し、独自スクリプトで hostcfgd の代わりに <code>/etc/pam.d/common-auth-sonic</code> に注入する独自経路を組む必要がある（保守性は低い）。</li>
 <li>上流の CLI / hostcfgd 取り込み PR を待つのが本筋。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li>master key ファイル名差異: HLD <code>/etc/cipher_pass</code> → 実装 <code>/etc/cipher_pass.json</code> (<code>sonic_py_common/security_cipher.py:18</code>)。JSON 構造で暗号化ペイロードを保持する設計に進化。</li>
+<li>YANG <code>key_encrypt</code> leaf は取り込み済み (<code>sonic-system-tacacs.yang</code> L47/L100-101/L148-149)。</li>
+<li>CLI 側未実装: <code>sonic-utilities/config/aaa.py</code> L248-256 は平文 secret をそのまま CONFIG_DB に書き込み、<code>--encrypt</code> フラグの分岐無し。</li>
+<li>hostcfgd 側の復号処理も未実装 (<code>grep -rn 'key_encrypt\|security_cipher' .cache/sonic-sources/sonic-buildimage/files/image_config/hostcfgd/</code> で復号呼出 0 件)。</li>
+<li>関連 PR: <code>sonic_py_common</code> への <code>security_cipher</code> API 追加は merge 済みだが、aaa.py / hostcfgd 側の利用 PR は未マージ。</li>
+<li><strong>追加回避策コマンド</strong>: 暗号化を強制したい場合 — <code>python3 -c 'from sonic_py_common.security_cipher import master_key_mgr; m=master_key_mgr(); print(m.encrypt_passkey("&lt;plain&gt;", "TACPLUS"))'</code> で encrypt 出力を得て、<code>config tacacs passkey &lt;encrypted&gt;</code> で書き込み、<code>redis-cli -n 4 hset 'TACPLUS|global' key_encrypt true</code> を手動で立てる（ただし hostcfgd 復号無しのため PAM 認証は失敗する点に注意）。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
+</blockquote>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - hostcfgd の暗号化 passkey 復号 + master key 読み込みパスの実装

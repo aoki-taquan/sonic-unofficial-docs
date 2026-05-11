@@ -5446,6 +5446,72 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章は何のためにあるか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の整理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#p4-p4runtime-pins" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5483,6 +5549,39 @@
     <span class="md-ellipsis">
       
         Send to Ingress と PacketIO の違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他章との境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
       
     </span>
   </a>
@@ -22148,6 +22247,72 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章は何のためにあるか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の整理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似た機能との違い
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#p4-p4runtime-pins" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22191,6 +22356,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他章との境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできること
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22218,6 +22416,137 @@
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>PINS は SONiC に「外部の SDN コントローラが <strong>P4Runtime gRPC</strong> を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。BGP や orchagent といった従来の制御パスは残ったままで、コントローラが必要なテーブルだけを上書きする設計のため、<code>APPL_DB</code> の従来テーブル群と並んで <code>P4RT_TABLE</code> 系が増えると考えると掴みやすくなります。</p>
+<h2 id="_2">この章は何のためにあるか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>通常の SONiC ではコントロールプレーンは「switch 内部の daemon が CONFIG_DB / APPL_DB を埋める」前提です。PINS はその前提を一部だけひっくり返し、「外部コントローラが P4Runtime で直接エントリを書く」面を opt-in で追加します。本章は、その違いがどこで効くのか、既存 SONiC とどう同居するのか、どこで責任分界線が引かれるのかを読み解くために用意しています。</p>
+<p>読み手が最初に持つ疑問は次の 5 つです。本章はこの順で答えます。</p>
+<ol>
+<li>P4 / P4Runtime / PINS は、それぞれ言語・API・実装のどれにあたるのか</li>
+<li>PINS を入れると SONiC のどこが「変わる／変わらない」のか</li>
+<li>P4Orch が同期書き込みで <code>APPL_STATE_DB</code> を使う理由は何か</li>
+<li>PacketIO と Send-to-Ingress の責務はどう違うのか</li>
+<li>PINS と通常 SONiC を併用するときの設計上の落とし穴は何か</li>
+</ol>
+<h2 id="_3">何を解決するか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>SAI 実装差の縮小</strong>: P4 で pipeline を表現することで、ベンダ間 SAI 実装差を「P4Info に対する整合性」として明示化する。</li>
+<li><strong>コントローラ駆動の forwarding</strong>: hyperscaler の SDN コントローラ（例: ONF SD-Fabric、Google 内部コントローラ）が SONiC を SAI ASIC の汎用 backend として扱えるようにする。</li>
+<li><strong>CRUD の確実性</strong>: P4Runtime は CRUD を同期 API として規定する。orchagent の非同期書き込みでは応答に乗らなかった「ASIC に書き込まれた／失敗した」が、<code>APPL_STATE_DB</code> 経由でコントローラに正しく返る。</li>
+</ul>
+<h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+  CTRL[SDN Controller] -- P4Runtime gRPC --&gt; P4RT[p4rt-app&lt;br/&gt;Docker]
+  P4RT -- write --&gt; APPLDB[(APPL_DB&lt;br/&gt;P4RT_TABLE)]
+  APPLDB --&gt; P4ORCH[P4Orch]
+  P4ORCH -- 同期 SAI 呼び出し --&gt; SYNCD[syncd / SAI]
+  SYNCD -- 結果 --&gt; APPLSTATE[(APPL_STATE_DB)]
+  APPLSTATE --&gt; P4RT
+  P4RT -- ack --&gt; CTRL
+  subgraph 既存制御パス
+    BGPD[FRR bgpd] --&gt; FPMSYNCD[fpmsyncd] --&gt; ROUTEORCH[routeorch] --&gt; SYNCD
+  end</code></pre>
+<p><code>P4Orch</code> は orchagent 内に組み込まれた sub-Orch ですが、他の sub-Orch と違って <strong>SAI の応答を待ち</strong>、結果を <code>APPL_STATE_DB</code> に書き戻します。これにより P4RT App はコントローラへ正確な結果を返せます。</p>
+<h2 id="_4">用語の整理<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>用語</th>
+<th>意味</th>
+<th>関連箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P4</td>
+<td>forwarding pipeline を記述するデータプレーン言語</td>
+<td>P4Info、<code>.p4</code> ファイル</td>
+</tr>
+<tr>
+<td>P4Info</td>
+<td>pipeline 構造（table / match / action）を protobuf にした external 表現</td>
+<td><code>SetForwardingPipelineConfig</code></td>
+</tr>
+<tr>
+<td>P4Runtime</td>
+<td>コントローラと switch 間の gRPC API（v1.3.0）</td>
+<td><code>p4rt-app</code> の listener</td>
+</tr>
+<tr>
+<td>P4RT App</td>
+<td>gRPC を終端する SONiC docker</td>
+<td><code>p4rt-app</code></td>
+</tr>
+<tr>
+<td>P4Orch</td>
+<td>APPL_DB を読み、SAI を同期呼びする sub-Orch</td>
+<td>orchagent の中</td>
+</tr>
+<tr>
+<td>APPL_STATE_DB</td>
+<td>SAI 結果を書き戻す DB（DB 14）</td>
+<td>コントローラ ack の源</td>
+</tr>
+<tr>
+<td>PacketIO</td>
+<td>controller との packet 送受信機構（generic netlink）</td>
+<td>hostif + punt flow</td>
+</tr>
+<tr>
+<td>Send to Ingress</td>
+<td>PacketIO Transmit のうち、ASIC ingress に再注入する経路</td>
+<td><code>SEND_TO_INGRESS_PORT</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_5">典型シーン<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>sequenceDiagram
+  participant C as Controller
+  participant P as p4rt-app
+  participant A as APPL_DB
+  participant O as P4Orch
+  participant S as SAI
+  participant T as APPL_STATE_DB
+  C-&gt;&gt;P: SetForwardingPipelineConfig(P4Info)
+  C-&gt;&gt;P: WriteRequest(INSERT route)
+  P-&gt;&gt;A: write P4RT_TABLE entry
+  A--&gt;&gt;O: notify
+  O-&gt;&gt;S: 同期 SAI call
+  S--&gt;&gt;O: status
+  O-&gt;&gt;T: write APPL_STATE_DB
+  T--&gt;&gt;P: status
+  P--&gt;&gt;C: WriteResponse(OK)</code></pre>
+<p>通常の SONiC では「APPL_DB に書く -&gt; 非同期で SAI に行く -&gt; 応答は別 channel」となり、コントローラから見ると「いつ書き終わったか」が曖昧でした。PINS はこの曖昧さを解消する設計です。</p>
+<h2 id="_6">似た機能との違い<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>比較</th>
+<th>共通点</th>
+<th>違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenFlow との違い</td>
+<td>controller -&gt; switch のフロー書き込み</td>
+<td>OpenFlow は fixed pipeline。P4Runtime は P4Info で pipeline 自体を表現できる。</td>
+</tr>
+<tr>
+<td>gNMI / OpenConfig との違い</td>
+<td>gRPC で switch を制御</td>
+<td>gNMI は <strong>設定 / 状態 / telemetry</strong>、P4Runtime は <strong>forwarding テーブルそのもの</strong>。</td>
+</tr>
+<tr>
+<td>通常 orchagent との違い</td>
+<td>APPL_DB を読んで SAI を呼ぶ</td>
+<td>orchagent は非同期、P4Orch は同期で <code>APPL_STATE_DB</code> に結果を書く。</td>
+</tr>
+<tr>
+<td>sFlow / Everflow との違い</td>
+<td>パケットを CPU に上げる</td>
+<td>sFlow はサンプリング、PacketIO は controller との <strong>双方向</strong> punt/inject。</td>
+</tr>
+</tbody>
+</table>
 <h2 id="p4-p4runtime-pins">P4 / P4Runtime / PINS の関係<a class="headerlink" href="#p4-p4runtime-pins" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>P4</strong>: forwarding pipeline を記述するデータプレーン言語。pipeline の構造（テーブル、match、action、metadata）を <code>P4Info</code> として外部化できる。</li>
@@ -22235,6 +22564,29 @@
 <li><strong>Send to Ingress</strong>: PacketIO の Transmit のうち、<strong>ASIC の ingress pipeline にパケットを再注入する</strong> モード。ECMP / WCMP の判定を ASIC に任せたいケースで使う。専用の <code>SEND_TO_INGRESS_PORT</code> テーブルと SAI hostif で実現する。</li>
 </ul>
 <p>詳細は <a href="../../../management/packetio/">PacketIO HLD</a> と <a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a> を参照してください。</p>
+<h2 id="_7">他章との境界<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>BGP / 静的 route の通常パスは <a href="../../02-bgp/">02 BGP</a> と <a href="../../04-vrf-ecmp/">04 VRF / ECMP</a> で扱います。本章は同じ宛先を P4Runtime で上書きする場合の責務分界線を示すに留めます。</li>
+<li>ACL / mirror の SONiC ネイティブ実装は <a href="../../07-acl-copp-mirror/">07 ACL / CoPP / Mirror</a> を参照してください。PINS では <code>ACL_TABLE_DEFINITION</code> を P4Info から派生させますが、本章は API 面の違いに集中します。</li>
+<li>gNMI / OpenConfig は <a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig</a> の章に置きます。「PINS は forwarding テーブル」「gNMI は config/state/telemetry」と覚えると棲み分けが明確です。</li>
+<li>orchagent や SAI の共通設計は <a href="../../20-swss-sai-redis/">20 SWSS / SAI / Redis</a> に集めています。<code>APPL_STATE_DB</code> の位置づけはそちらと合わせて読むと立体的になります。</li>
+</ul>
+<h2 id="_8">読了後にできること<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>「PINS は SONiC を置き換えるか？」に対して「opt-in で機能追加する」と即答できる。</li>
+<li>P4Orch が <code>APPL_STATE_DB</code> を使う理由を、orchagent の非同期書き込みとの違いから説明できる。</li>
+<li>PacketIO と Send-to-Ingress の責務差を、generic netlink と SAI hostif の観点で言える。</li>
+<li>BGP route と P4 route の優先関係が <strong>pipeline の P4 定義</strong> に依存することを意識した上で運用設計に進める。</li>
+<li>続く <a href="../architecture/">アーキテクチャ</a> / <a href="../setup/">設定</a> / <a href="../operations/">運用</a> で出てくる <code>p4rt-app</code> / <code>P4Orch</code> / <code>APPL_STATE_DB</code> を、迷わず「どの層の話か」分類できる。</li>
+</ul>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../management/pins-hld/">PINS HLD</a></li>
+<li><a href="../../../management/p4rt-application-hld/">P4RT Application HLD</a></li>
+<li><a href="../../../internals/p4-orchagent/">P4Orch HLD</a></li>
+<li><a href="../../../management/packetio/">PacketIO HLD</a></li>
+<li><a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a></li>
+</ul>
 
 
 

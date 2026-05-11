@@ -4197,6 +4197,100 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        まず読み手の質問に答える
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="まず読み手の質問に答える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この機能はそもそも何か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 全体での位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語定義（章内で繰り返し出るもの）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似ているが別物のもの
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできるようになること
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22250,6 +22344,100 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        まず読み手の質問に答える
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="まず読み手の質問に答える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この機能はそもそも何か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 全体での位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語定義（章内で繰り返し出るもの）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似ているが別物のもの
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできるようになること
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22383,7 +22571,131 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">まず読み手の質問に答える<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">この機能はそもそも何か<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>DASH は「VM / コンテナ単位のオーバーレイ処理を、ホスト CPU ではなく専用ハードウェア（DPU や appliance）に下ろすための SONiC データプレーン API」です。SmartSwitch は「その DPU を 1 〜数台ぶら下げた物理スイッチを SONiC として制御する箱」です。前者がソフトウェア契約、後者が箱の話です。</p>
+<p>エンドユーザー視点では、「テナント単位の VNet ルーティング・ACL・metering・Service Tunnel をパブリッククラウド規模（数万 ENI 級）で 1 装置にまとめたい」というニーズに応えます。これを SONiC ノースバウンド API（gNMI / Redis）で投入すると、ノースバウンド側は DPU を意識せず、SmartSwitch 内部の NPU/DPU 分担は SONiC 側が引き受けます。</p>
+<h3 id="_4">何を解決するか<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>従来の VxLAN gateway や software ロードバランサで「テナント数が増えると CPU が詰まる / フロー数が増えると state table が破綻する」問題が起きていました。DASH は次のように分解して解決します。</p>
+<ul>
+<li>ENI ごとの per-tenant 状態（VNet route、ACL、metering）を <strong>DPU の専用テーブル</strong> に積み、線形にスケールさせる</li>
+<li>VxLAN / NSH / Service Tunnel の encap/decap を <strong>DPU のパケット処理パイプライン</strong> に固定し、CPU 経由を回避する</li>
+<li>スイッチ単位の VIP で受けて ENI 単位で DPU に振り分ける（ENI ベース転送）ことで、テナント追加に伴う VIP 消費を抑える</li>
+</ul>
+<h3 id="sonic">SONiC 全体での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
+<p>DASH は <strong>オーバーレイ転送のスキーマ拡張</strong>、SmartSwitch は <strong>箱の構成プロファイル</strong> という関係です。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>関係する SONiC コンポーネント</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ノースバウンド</td>
+<td>gNMI / Redis CONFIG_DB / <code>DASH_*</code> テーブル</td>
+<td>テナント / ENI / VNet 設定の投入口</td>
+</tr>
+<tr>
+<td>NPU 制御面</td>
+<td><code>swss</code>、<code>bgpd</code>（FRR）、<code>HAMgrD</code>、<code>pmon</code>、<code>featured</code></td>
+<td>underlay 経路、DPU 管理、HA actor</td>
+</tr>
+<tr>
+<td>NPU データ面</td>
+<td><code>syncd</code>、SAI、ACL（ENI Redirect）、midplane bridge</td>
+<td>ENI ベース転送、underlay VxLAN</td>
+</tr>
+<tr>
+<td>DPU 制御面</td>
+<td>DPU 側 SONiC OS、<code>DashOrch</code> 系</td>
+<td>DASH オブジェクトの SAI への落とし込み</td>
+</tr>
+<tr>
+<td>DPU データ面</td>
+<td>DASH 対応 SAI 実装（ベンダー）、DPU パイプライン</td>
+<td>overlay encap/decap、ACL、metering</td>
+</tr>
+<tr>
+<td>ストレージ</td>
+<td>NPU 上の <code>redisdpu0..N</code> container</td>
+<td>DPU 用 overlay DB の host</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">用語定義（章内で繰り返し出るもの）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ENI</strong>: Elastic Network Interface。テナント／VM の接続点を表す論理単位。1 ENI = 1 MAC + (任意の) VNet 紐付き。</li>
+<li><strong>VNet</strong>: VxLAN VNI で識別されるテナント仮想 L3 ネットワーク。<code>DASH_VNET</code> テーブルが定義する。</li>
+<li><strong>DPU</strong>: Data Processing Unit。DASH パイプラインを持つ SoC ないし SmartNIC。</li>
+<li><strong>NPU</strong>: Network Processing Unit。従来の SONiC スイッチ ASIC。</li>
+<li><strong>midplane bridge</strong>: NPU と DPU を繋ぐ内部 L2 ネットワーク（<code>169.254.200.x</code> 系）。管理 IP、HA、redis 通信に使う。</li>
+<li><strong><code>redisdpuN</code></strong>: NPU 上に立つ DPU 専用 redis container。DPU は自分の overlay 状態をここに書く。</li>
+<li><strong>ENI ベース転送</strong>: スイッチ単位の VIP で受け、ACL の <code>ENI_REDIRECT</code> 型で ENI 別 DPU に振る方式。</li>
+<li><strong>HAMgrD</strong>: NPU 側に立つ HA actor。DPU ペアの active/standby を駆動する。</li>
+<li><strong><code>has_per_dpu_scope</code></strong>: <code>FEATURE</code> テーブルの leaf。<code>true</code> の feature は DPU 数だけ instance を起動する。</li>
+<li><strong>Service Tunnel / Private Link</strong>: テナントが Azure 系の SaaS や PrivateLink endpoint に抜けるための named tunnel 機能。</li>
+<li><strong>Outbound / Inbound 方向</strong>: ENI を中心に「VM → 外」が Outbound、「外 → VM」が Inbound。ルーティングテーブルが別建て。</li>
+</ul>
+<h3 id="_6">典型シーン<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant CTRL as Controller (gNMI)
+    participant NPU as NPU CONFIG_DB
+    participant ROUT as DashOrch (NPU/DPU)
+    participant RDPU as redisdpuN (on NPU)
+    participant DPU as DPU SAI
+    participant LB as ENI Redirect ACL
+
+    CTRL-&gt;&gt;NPU: DASH_VNET / DASH_ENI / DASH_ROUTE 投入
+    NPU-&gt;&gt;ROUT: subscribe 通知
+    ROUT-&gt;&gt;RDPU: ASIC_DB 相当を DPU 用 redis に書く
+    RDPU-&gt;&gt;DPU: SAI 経由でパイプラインに反映
+    ROUT-&gt;&gt;LB: ENI_REDIRECT ACL を NPU に投入
+    Note over LB: VIP 宛パケットを ENI 単位で&lt;br/&gt;local/remote DPU の nexthop へ
+    LB-&gt;&gt;DPU: トラフィック到着
+    DPU--&gt;&gt;LB: encap/ACL/metering 適用後 egress</code></pre>
+<p>ポイントは「制御は NPU 側 redis を一意の入口にする」「データプレーンの分岐は NPU 上 ACL で済ます」の二段で、ノースバウンドからは DPU の存在が透けて見えにくい点です。</p>
+<h3 id="_7">似ているが別物のもの<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>比較対象</th>
+<th>DASH / SmartSwitch との違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通常の SONiC VxLAN / EVPN ゲートウェイ（<a href="../../03-vxlan-evpn/">03 章</a>）</td>
+<td>テナント数・per-ENI state が増えると CPU/TCAM が破綻する。DASH は per-ENI state を DPU 側に押し込む</td>
+</tr>
+<tr>
+<td>Multi-ASIC chassis（<a href="../../12-multi-asic-voq/">12 章</a>）</td>
+<td>複数 ASIC を 1 装置に積む点は似るが、Multi-ASIC は単一スイッチング機能、SmartSwitch は NPU + 別役割の DPU</td>
+</tr>
+<tr>
+<td>単体 SmartNIC（DPU 単独）</td>
+<td>SmartNIC は server NIC 側に DPU を載せる発想。SmartSwitch は ToR 側に集約</td>
+</tr>
+<tr>
+<td>ホストベースの仮想 router（OVS / VPP）</td>
+<td>CPU 上で動かす分柔軟だが、per-flow CPU コストが線形に効く。DASH はパイプライン処理</td>
+</tr>
+<tr>
+<td>MPLS / SRv6 ベース L3VPN（<a href="../../17-srv6-mpls/">17 章</a>）</td>
+<td>DASH は ENI 単位の policy / metering まで含む。MPLS / SRv6 はラベル経路提供が主</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">読了後にできるようになること<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HLD のどれが「DASH スキーマ側」でどれが「SmartSwitch 物理側」なのかを切り分けて読める</li>
+<li><code>DASH_*</code> テーブルや <code>redisdpuN</code> container の役割を見て「どのレイヤの問題か」を判定できる</li>
+<li>HA や DPU 障害時の駆動主体が NPU 側（HAMgrD）であることを前提に <a href="../operations/">運用</a> を組める</li>
+<li>他社 SmartSwitch / DPU 製品との比較で SONiC / DASH 採用範囲を質問できる</li>
+</ul>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../overlay/sonic-dash-hld/">SONiC-DASH アーキテクチャ概観</a></li>
 <li><a href="../../../architecture/smart-switch-database-design/">Smart Switch のデータベース構成</a></li>

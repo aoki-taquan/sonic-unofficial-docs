@@ -14660,6 +14660,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22442,6 +22459,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22616,6 +22650,18 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <li>設計ドキュメントを書く際は HashOrch ではなく <strong>SwitchOrch のハッシュ責務</strong> として記述する。</li>
 <li>ハッシュフィールド名の対応は <code>switch_helper.cpp:24-</code> のテーブルを正として参照。新規フィールド追加時はこのマップに対応エントリを足す必要がある。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li><code>HashOrch</code> クラスは存在せず、<code>SwitchOrch</code> が <code>CFG_SWITCH_HASH_TABLE_NAME</code> を消費 (<code>sonic-swss/orchagent/switchorch.cpp:1507</code>, <code>orchdaemon.cpp:199</code>)。</li>
+<li><code>switch_helper.cpp:24-</code> に <code>SWITCH_HASH_FIELD_*</code> → <code>SAI_NATIVE_HASH_FIELD_*</code> の対応マップ。</li>
+<li><code>sonic-swss/orchagent/p4orch/p4orch.h:46</code> に <code>class P4Orch : public ZmqOrch</code>。HLD の主要パスは P4Orch 経由で取り込み済み。</li>
+<li>関連 PR: <code>sonic-pins</code> 系の P4Orch 取り込みは 2022-2024 年に段階的 merge。HashOrch は当初設計から SwitchOrch 統合に方針変更（PR description で <code>Reusing existing SwitchOrch</code> の旨記載多数）。</li>
+<li><strong>追加コード追跡コマンド</strong>: ハッシュ責務の所在 — <code>grep -rn 'SAI_NATIVE_HASH_FIELD\|setSwitchHash' .cache/sonic-sources/sonic-swss/orchagent/switch/</code>。デバッグ時の attach 先は <code>SwitchOrch::doTask</code>（switchorch.cpp:1507 周辺）。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
+</blockquote>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

@@ -10231,7 +10231,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -10239,60 +10239,48 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#1-active-standby" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クラスタトポロジ
+        1. active-standby との違い（要約）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#nic" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#2-nic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サーバ NIC 側要件
+        2. NIC 側の役割（パケット振り分け）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db-app_db-state_db" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#3-cable-grpc-transceiver-daemon" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB / APP_DB / STATE_DB 拡張
+        3. cable 制御が gRPC な理由（Transceiver Daemon）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#linkmgrd" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#4-linkmgrd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        linkmgrd の役割
+        4. linkmgrd の状態判定
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="linkmgrd の役割">
+    <nav class="md-nav" aria-label="4. linkmgrd の状態判定">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -10307,40 +10295,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#admin-operational-forwarding-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        admin / operational forwarding state
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#active-active" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        active-active 状態決定
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#default-route" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        default route 監視
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         状態決定表
@@ -10354,62 +10309,35 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#5-prefix-based-neighbor-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchagent 側
+        5. prefix-based neighbor architecture
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Orchagent 側">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 縮退ケース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. 縮退ケース">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ipinip-tunnel-muxorch" class="md-nav__link">
+  <a href="#tor-standby" class="md-nav__link">
     <span class="md-ellipsis">
       
-        IPinIP tunnel + MuxOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prefix-based-neighbor-architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        prefix-based neighbor architecture
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#transceiver-daemon-grpc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Transceiver Daemon と gRPC
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#grpc-traffic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gRPC traffic の特殊扱い
+        両 ToR が standby
       
     </span>
   </a>
@@ -10438,21 +10366,32 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#grpc-unreachable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gRPC unreachable
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#7-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        7. 設定と CLI
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
+    <nav class="md-nav" aria-label="7. 設定と CLI">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -10467,10 +10406,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#app_db-state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        新規 APP_DB / STATE_DB
       
     </span>
   </a>
@@ -10478,7 +10417,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -10494,7 +10444,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -10505,29 +10466,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -10538,7 +10477,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22360,7 +22310,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読み手が知りたいこと
       
     </span>
   </a>
@@ -22368,60 +22318,48 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#1-active-standby" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クラスタトポロジ
+        1. active-standby との違い（要約）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#nic" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#2-nic" class="md-nav__link">
     <span class="md-ellipsis">
       
-        サーバ NIC 側要件
+        2. NIC 側の役割（パケット振り分け）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db-app_db-state_db" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#3-cable-grpc-transceiver-daemon" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB / APP_DB / STATE_DB 拡張
+        3. cable 制御が gRPC な理由（Transceiver Daemon）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#linkmgrd" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#4-linkmgrd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        linkmgrd の役割
+        4. linkmgrd の状態判定
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="linkmgrd の役割">
+    <nav class="md-nav" aria-label="4. linkmgrd の状態判定">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -22436,40 +22374,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#admin-operational-forwarding-state" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        admin / operational forwarding state
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#active-active" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        active-active 状態決定
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#default-route" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        default route 監視
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         状態決定表
@@ -22483,62 +22388,35 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#orchagent" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#5-prefix-based-neighbor-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchagent 側
+        5. prefix-based neighbor architecture
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Orchagent 側">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 縮退ケース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. 縮退ケース">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ipinip-tunnel-muxorch" class="md-nav__link">
+  <a href="#tor-standby" class="md-nav__link">
     <span class="md-ellipsis">
       
-        IPinIP tunnel + MuxOrch
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prefix-based-neighbor-architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        prefix-based neighbor architecture
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#transceiver-daemon-grpc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Transceiver Daemon と gRPC
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#grpc-traffic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        gRPC traffic の特殊扱い
+        両 ToR が standby
       
     </span>
   </a>
@@ -22567,21 +22445,32 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#grpc-unreachable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gRPC unreachable
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#7-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        設定
+        7. 設定と CLI
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="設定">
+    <nav class="md-nav" aria-label="7. 設定と CLI">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -22596,10 +22485,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#app_db-state_db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連する CLI
+        新規 APP_DB / STATE_DB
       
     </span>
   </a>
@@ -22607,7 +22496,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -22623,7 +22523,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -22634,29 +22545,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -22667,7 +22556,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連トピック
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22707,9 +22607,18 @@
 <p><code>sonic-linkmgrd</code> に active-active 専用の state machine 一式 (<code>src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}</code>、<code>src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}</code>) が存在し、<code>MuxOrch</code> は <code>cable_type == "active-active"</code>（<code>muxorch.cpp:2233</code>）で active-active 系処理を分岐する。新規 APP_DB / STATE_DB テーブル（<code>FORWARDING_STATE_COMMAND</code> / <code>FORWARDING_STATE_RESPONSE</code> / <code>HW_FORWARDING_STATE_PEER</code> / <code>HW_MUX_CABLE_TABLE_PEER</code>）は <code>sonic-swss-common/common/schema.h:145-149,465</code> に登録済み。<code>config mux mode detach</code> も <code>sonic-utilities/config/muxcable.py:351</code> の <code>click.Choice</code> に追加済み。warm reboot 対応は HLD 上 TBD のままで本ページの裏取り範囲外。</p>
 </div>
 <h1 id="active-active-dual-torgrpc-cable-control-prefix-based-neighbor">Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）<a class="headerlink" href="#active-active-dual-torgrpc-cable-control-prefix-based-neighbor" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>active-active dual ToR は <strong>active-standby dual ToR の進化形</strong> であり、<strong>両 ToR が常時トラフィックを処理する</strong> 設計である。サーバ NIC は 2 本の 100Gbps DAC を介して上下 2 つの ToR (UT0 / LT0) と接続し、ToR は同じ VLAN IP / MAC を提示する。NIC は 5-tuple 単位でフローを 2 リンクに分散し、ToR から <code>gRPC</code> 経由で「どのリンクを active にするか」の指示を受ける<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>active-standby との主な違い<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ol>
+<li>active-standby と何が違うのか？ <strong>なぜ「両方 active」が可能</strong> なのか？</li>
+<li>両 ToR が同じ VLAN IP / MAC を出して <strong>NIC はどうトラフィックを分けている</strong> のか？</li>
+<li>cable 制御が y-cable I2C ではなく <strong>gRPC</strong> になったのはなぜか？</li>
+<li><strong>linkmgrd の状態判定</strong> は active-standby とどう違うのか？</li>
+<li><strong>prefix-based neighbor architecture</strong> とは何で、何が嬉しいのか？</li>
+<li><strong>両 ToR が standby に落ちる</strong> ような縮退時に何が起きるか？</li>
+<li>設定とトラブルシュートで最低限見るものは？</li>
+</ol>
+<h2 id="1-active-standby">1. active-standby との違い（要約）<a class="headerlink" href="#1-active-standby" title="Permanent link">&para;</a></h2>
+<p>active-active は <strong>両 ToR が常時トラフィックを処理する</strong> 設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。サーバ NIC は 2 本の 100Gbps DAC で UT0 / LT0 に接続し、ToR は同じ VLAN IP / MAC を提示する。NIC が 5-tuple でフローを分散し、ToR から gRPC 経由で active リンクの指示を受ける。</p>
 <table>
 <thead>
 <tr>
@@ -22746,8 +22655,6 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="_3">クラスタトポロジ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>graph TD
     T1A[T1] &amp; T1B[T1] &amp; T1C[T1] &amp; T1D[T1]
     UT0[ToR UT0] --&gt;|VLAN 同じ IP/MAC| T1A &amp; T1B &amp; T1C &amp; T1D
@@ -22755,9 +22662,9 @@
     UT0 ---|100G DAC| NIC[Server NIC&lt;br/&gt;200G に見える]
     LT0 ---|100G DAC| NIC
     NIC --- HOST[Server Host]</code></pre>
-<p>両 ToR が <strong>同じ VLAN IP / MAC</strong> を T1 に広告し、T1 から見ると 2 つの ECMP next hop が存在する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="nic">サーバ NIC 側要件<a class="headerlink" href="#nic" title="Permanent link">&para;</a></h3>
-<p>NIC は <strong>同一 IP / MAC を 2 リンクで受ける</strong> 前提で southbound を上位スタックに渡し、northbound は <strong>5-tuple ベースで 2 リンクへ分散</strong> する。一部のパケットは <strong>両リンクへ複製</strong> する必要がある<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>T1 から見ると 2 つの ECMP next hop が存在する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="2-nic">2. NIC 側の役割（パケット振り分け）<a class="headerlink" href="#2-nic" title="Permanent link">&para;</a></h2>
+<p>NIC は同一 IP / MAC を 2 リンクで受け、northbound は <strong>5-tuple で 2 リンクに分散</strong> する。一部パケットは <strong>両リンクへ複製</strong> が必要<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -22776,73 +22683,34 @@
 </tr>
 <tr>
 <td>gRPC reply (Loopback3_Port0_IP / Port1_IP 宛)</td>
-<td><strong>対応ポートにのみ送信</strong>（Port が UP の場合）</td>
+<td><strong>対応ポートにのみ送信</strong></td>
 </tr>
 <tr>
 <td>その他</td>
-<td>NIC が任意のリンクを選択</td>
+<td>NIC が任意リンクを選択</td>
 </tr>
 </tbody>
 </table>
-<p>各 ToR は <strong>個別の loopback IP</strong> を持ち、NIC はそれを基に gRPC 応答先を決定する。</p>
-<h3 id="config_db-app_db-state_db">CONFIG_DB / APP_DB / STATE_DB 拡張<a class="headerlink" href="#config_db-app_db-state_db" title="Permanent link">&para;</a></h3>
-<p>新規スキーマ<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Key</th>
-<th>フィールド</th>
-<th>役割</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>CONFIG_DB.MUX_CABLE</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>cable_type: active-standby \| active-active</code></td>
-<td>cable 種別</td>
-</tr>
-<tr>
-<td><code>APP_DB.FORWARDING_STATE_COMMAND</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>command: probe / set_active_self / set_standby_self / set_standby_peer</code></td>
-<td>linkmgrd → xcvrd への問い合わせ・設定要求</td>
-</tr>
-<tr>
-<td><code>APP_DB.FORWARDING_STATE_RESPONSE</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>response</code>, <code>response_peer ∈ {active, standby, unknown, error}</code></td>
-<td>xcvrd の応答</td>
-</tr>
-<tr>
-<td><code>APP_DB.PORT_TABLE_PEER</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>oper_status: up/down</code></td>
-<td>xcvrd が peer link 状態を linkmgrd に通知</td>
-</tr>
-<tr>
-<td><code>APP_DB.HW_FORWARDING_STATE_PEER</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>state: active/standby/unknown</code></td>
-<td>linkmgrd → xcvrd: peer の admin forwarding state 設定要求</td>
-</tr>
-<tr>
-<td><code>STATE_DB.HW_MUX_CABLE_TABLE_PEER</code></td>
-<td><code>&lt;PORT&gt;</code></td>
-<td><code>state</code></td>
-<td>xcvrd が peer の admin forwarding state を linkmgrd に書き戻し</td>
-</tr>
-</tbody>
-</table>
-<h3 id="linkmgrd">linkmgrd の役割<a class="headerlink" href="#linkmgrd" title="Permanent link">&para;</a></h3>
-<p>linkmgrd は active-standby から <strong>link prober</strong> をそのまま流用する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>各 ToR は別の loopback IP を持ち、NIC は gRPC 応答先をそれで決める。</p>
+<h2 id="3-cable-grpc-transceiver-daemon">3. cable 制御が gRPC な理由（Transceiver Daemon）<a class="headerlink" href="#3-cable-grpc-transceiver-daemon" title="Permanent link">&para;</a></h2>
+<p>SoC NIC 側で gRPC server が動作。linkmgrd は xcvrd 経由で以下の RPC を発行<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>default 100ms</strong> で ICMP heartbeat を送出（src MAC = SVI MAC、payload TLV に ToR GUID を載せる）</li>
-<li><strong>3 連続損失</strong> で unhealthy と判定</li>
+<li><code>DualToRActive</code><ul>
+<li>port 単位で self / peer の forwarding state を query / set</li>
+<li>port 単位で self / peer のサーバ側 link state を query</li>
+</ul>
+</li>
+<li><code>GracefulRestart</code>: SoC からの shutdown / restart 通知</li>
+</ul>
+<p>ToR は NIC に <strong>admin forwarding state</strong> (active/standby) を gRPC で通知する。NIC 側は別途 <strong>operational forwarding state</strong> を持ち、自身が link down を検知した場合は admin=active でも送信を停止する。<strong>ToR の制御権と NIC の即時反応を両立</strong> する仕組み<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="4-linkmgrd">4. linkmgrd の状態判定<a class="headerlink" href="#4-linkmgrd" title="Permanent link">&para;</a></h2>
+<p>active-standby と異なり、active-active では <strong>self と peer をそれぞれ独立に判定</strong> する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。link prober は流用:</p>
+<ul>
+<li>default 100ms で ICMP heartbeat を送出（payload TLV に ToR GUID）</li>
+<li>3 連続損失で unhealthy</li>
 <li>ICMP reply は NIC が両 ToR に複製するため <strong>peer の health も観測可能</strong></li>
 </ul>
-<h4 id="link-prober-4">Link Prober の 4 状態<a class="headerlink" href="#link-prober-4" title="Permanent link">&para;</a></h4>
+<h3 id="link-prober-4">Link Prober の 4 状態<a class="headerlink" href="#link-prober-4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -22861,7 +22729,7 @@
 </tr>
 <tr>
 <td><code>LinkProberPeerUnknown</code></td>
-<td>peer ToR ID 入りの reply 未受信（peer link 不調の可能性）</td>
+<td>peer ToR ID 入りの reply 未受信</td>
 </tr>
 <tr>
 <td><code>LinkProberPeerActive</code></td>
@@ -22869,18 +22737,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="admin-operational-forwarding-state">admin / operational forwarding state<a class="headerlink" href="#admin-operational-forwarding-state" title="Permanent link">&para;</a></h4>
-<p>ToR は NIC に <strong>admin forwarding state</strong> (active/standby) を gRPC で通知する。NIC 側は別途 <strong>operational forwarding state</strong> を持ち、自身が link down を検知した場合は admin が <code>active</code> であってもそのリンクへの送信を停止する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これで「ToR 側の制御権」と「NIC の即時反応」を両立する。</p>
-<h4 id="active-active">active-active 状態決定<a class="headerlink" href="#active-active" title="Permanent link">&para;</a></h4>
-<p>active-standby のように y-cable 方向で同期せず、<strong>self / peer をそれぞれ独立に判定</strong> する<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>self: link prober が active かつ link state が up → admin = active、それ以外 → standby</li>
-<li>peer rescue: 自身 active かつ peer の heartbeat reply が無い → peer を standby と判定</li>
-<li>gRPC unreachable: forwarding は止めず、定期的に gRPC server health を確認しつつ admin state を再同期</li>
-</ul>
-<h4 id="default-route">default route 監視<a class="headerlink" href="#default-route" title="Permanent link">&para;</a></h4>
-<p>T1 への default route が消えると northbound パケロスが起きるため、<strong>linkmgrd は default route 監視を行い、消失中は ICMP probing を停止し unhealthy を fake する</strong>（無効化可）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h4 id="_4">状態決定表<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<h3 id="_2">状態決定表<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -22941,21 +22798,14 @@
 </tr>
 </tbody>
 </table>
-<h3 id="orchagent">Orchagent 側<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
-<h4 id="ipinip-tunnel-muxorch">IPinIP tunnel + MuxOrch<a class="headerlink" href="#ipinip-tunnel-muxorch" title="Permanent link">&para;</a></h4>
-<p>orchagent 起動時に <strong>peer ToR への IPinIP tunnel</strong> を作る。<code>MuxOrch</code> は linkmgrd の状態変化を購読し、neighbor prefix route の next hop を <strong>直接 next hop ↔ tunnel next hop</strong> で切り替える<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><strong>default route 監視</strong>: T1 への default route が消えると northbound パケロスが起きるため、linkmgrd は default route 消失中は ICMP probing を停止し unhealthy を fake する（無効化可）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="5-prefix-based-neighbor-architecture">5. prefix-based neighbor architecture<a class="headerlink" href="#5-prefix-based-neighbor-architecture" title="Permanent link">&para;</a></h2>
+<p>active-standby の旧設計では SAI neighbor + nexthop で <strong>暗黙 host route (/32 or /128)</strong> が SDK 内に作られ、active/standby 切替で neighbor を add/remove していた。これを変更<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><code>MuxCfgOrch</code>: <code>MUX_CABLE</code> を読み port ↔ server IP マップを <code>MuxOrch</code> に渡す</li>
-<li><code>TunnelOrch</code>: <code>MUX_TUNNEL</code> を購読し、tunnel object と termination / decap entry を作成（<code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code> を MuxOrch が next hop として参照）</li>
-<li><code>MuxOrch</code>: linkmgrd の state 変化に応じ neighbor prefix route の next hop を更新</li>
-</ul>
-<h4 id="prefix-based-neighbor-architecture">prefix-based neighbor architecture<a class="headerlink" href="#prefix-based-neighbor-architecture" title="Permanent link">&para;</a></h4>
-<p>従来は SAI neighbor + nexthop で <strong>暗黙的 host route (/32 or /128)</strong> が SDK に作られ、active/standby 切替で neighbor を <strong>add/remove</strong> していた。これを以下に変更する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>neighbor entry は <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE = true</code> で作る（<strong>暗黙 host route なし</strong>）</li>
-<li>別途 <code>server_ip/32</code> (または <code>/128</code>) <strong>prefix route</strong> を明示的に作る</li>
-<li>prefix route の next hop を直接 neighbor next hop ↔ tunnel next hop で <strong>更新するだけ</strong> にする</li>
-<li>neighbor entry 自体は <strong>永続化</strong> され、状態遷移で削除しない</li>
+<li>neighbor entry は <code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true</code> で作る（<strong>暗黙 host route なし</strong>）</li>
+<li>別途 <code>server_ip/32</code> (or <code>/128</code>) <strong>prefix route</strong> を明示的に作る</li>
+<li>切替は <strong>prefix route の next hop を直接 neighbor next hop ↔ tunnel next hop で更新するだけ</strong></li>
+<li>neighbor entry 自体は <strong>永続化</strong>（状態遷移で削除しない）</li>
 </ul>
 <pre class="mermaid"><code>flowchart LR
     subgraph Active
@@ -22969,29 +22819,18 @@
       S3 --&gt; S4[IPinIP encap → Peer ToR]
       S4 --&gt; S5[Server]
     end</code></pre>
-<p>利点<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li>状態遷移で neighbor add/remove を行わないため <strong>stability + 性能</strong> 改善</li>
-<li>next hop 変更だけなので <strong>mux toggle latency が短い</strong></li>
-</ul>
-<h3 id="transceiver-daemon-grpc">Transceiver Daemon と gRPC<a class="headerlink" href="#transceiver-daemon-grpc" title="Permanent link">&para;</a></h3>
-<p>SoC NIC 側で gRPC server が動作。linkmgrd は xcvrd 経由で以下の RPC を発行する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><code>DualToRActive</code><ul>
-<li>port 単位で self / peer の forwarding state を query</li>
-<li>port 単位で self / peer のサーバ側 link state を query</li>
-<li>port 単位で self / peer の forwarding state を set</li>
-</ul>
-</li>
-<li><code>GracefulRestart</code>: SoC からの shutdown / restart 通知</li>
-</ul>
-<h3 id="grpc-traffic">gRPC traffic の特殊扱い<a class="headerlink" href="#grpc-traffic" title="Permanent link">&para;</a></h3>
-<p>両 ToR が standby になると gRPC traffic も tunnel 経由で投げられ blackhole する。これを防ぐため <code>MuxOrch</code> は <strong>neighbor が NIC IP の場合 Tunnelmgrd への通知を skip</strong> し、kernel route を tunnel 化させない。これで standby 中でも <strong>gRPC 制御プレーン traffic は local で送出</strong> され、NIC に到達できる<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>利点: <strong>stability + 性能</strong> 改善、<strong>mux toggle latency が短い</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>MuxCfgOrch</code> が <code>MUX_CABLE</code> を読み、<code>TunnelOrch</code> が <code>MUX_TUNNEL</code> を購読して IPinIP tunnel を作成し、<code>MuxOrch</code> が prefix route の next hop を更新する。</p>
+<h2 id="6">6. 縮退ケース<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
+<h3 id="tor-standby">両 ToR が standby<a class="headerlink" href="#tor-standby" title="Permanent link">&para;</a></h3>
+<p>両 ToR が standby になると <strong>gRPC traffic も tunnel 経由</strong> で投げられ blackhole する。<code>MuxOrch</code> は <strong>neighbor が NIC IP の場合 Tunnelmgrd 通知を skip</strong> し、kernel route を tunnel 化しない。standby 中でも <strong>gRPC 制御プレーン traffic は local で送出</strong> され NIC に到達する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="bgp-update-delay">BGP update delay<a class="headerlink" href="#bgp-update-delay" title="Permanent link">&para;</a></h3>
-<p>active-active T0 は BGP セッション確立後、T1 に default route が広告される前に T1 から traffic が降りてくる時期がある。standby T0 は tunnel 経由で peer に投げるが、自身に default route が無ければ tunnel 経路自体が解決できず blackhole する。対策として <strong>BGP update delay 10 秒</strong> を導入し、T0 が T1 から default を学習する時間を確保する<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>BGP セッション確立直後、T0 が default route を学習する前に T1 から traffic が降りる時期がある。standby T0 は tunnel 経由で peer に投げるが、default route が無いと tunnel 経路自体が解決できず blackhole する。対策として <strong>BGP update delay 10 秒</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="ingress-drop-acl-skip">ingress drop ACL の skip<a class="headerlink" href="#ingress-drop-acl-skip" title="Permanent link">&para;</a></h3>
-<p>旧設計では standby 移行時に <code>MuxOrch</code> が <strong>ingress drop ACL</strong> を貼っていたが、NIC 側の admin state 切替が gRPC 経由で完了する前に upstream traffic が drop される間隙が問題だった。新設計では <strong>standby 切替時の ingress drop ACL を貼らない</strong> ことで、その間隙でも best effort で forwarding する<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_5">設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>active-standby では standby 移行時に MuxOrch が ingress drop ACL を貼っていたが、NIC 側の admin state 切替が gRPC で完了する前に upstream traffic が drop される間隙が問題。active-active では <strong>standby 切替時の ingress drop ACL を貼らない</strong>（best effort forwarding）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h3 id="grpc-unreachable">gRPC unreachable<a class="headerlink" href="#grpc-unreachable" title="Permanent link">&para;</a></h3>
+<p>forwarding は止めず、定期的に gRPC server health を確認しつつ admin state を再同期<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="7-cli">7. 設定と CLI<a class="headerlink" href="#7-cli" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -23014,7 +22853,44 @@
 </tr>
 </tbody>
 </table>
-<h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<h3 id="app_db-state_db">新規 APP_DB / STATE_DB<a class="headerlink" href="#app_db-state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Key</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_DB.FORWARDING_STATE_COMMAND</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td>linkmgrd → xcvrd: <code>probe / set_active_self / set_standby_self / set_standby_peer</code></td>
+</tr>
+<tr>
+<td><code>APP_DB.FORWARDING_STATE_RESPONSE</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td>xcvrd の応答（<code>response_peer ∈ {active, standby, unknown, error}</code>）</td>
+</tr>
+<tr>
+<td><code>APP_DB.PORT_TABLE_PEER</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td>xcvrd が peer link 状態を linkmgrd に通知</td>
+</tr>
+<tr>
+<td><code>APP_DB.HW_FORWARDING_STATE_PEER</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td>linkmgrd → xcvrd: peer の admin forwarding state</td>
+</tr>
+<tr>
+<td><code>STATE_DB.HW_MUX_CABLE_TABLE_PEER</code></td>
+<td><code>&lt;PORT&gt;</code></td>
+<td>xcvrd が peer の admin forwarding state を書き戻し</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -23033,68 +22909,78 @@
 </tr>
 <tr>
 <td><code>show mux tunnel-route [--json] &lt;port&gt;</code></td>
-<td>server_ipv4 / server_ipv6 / soc_ipv4 の tunnel route が kernel / asic に存在するか</td>
+<td>tunnel route の kernel / asic 存在確認</td>
 </tr>
 <tr>
 <td><code>config mux mode &lt;auto\|manual\|active\|standby\|detach&gt; &lt;port&gt;</code></td>
-<td>mux 動作モード設定</td>
+<td>mux 動作モード</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 既定動作（auto: self / peer 双方の failover を有効化）</span>
+<h3 id="_3">設定例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 既定（auto: self / peer 双方の failover を有効化）</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>auto<span class="w"> </span>Ethernet4
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># メンテナンス時に self の failover のみ有効・peer 側を触らない</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># メンテナンス時に self の failover のみ・peer 側を触らない</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>detach<span class="w"> </span>Ethernet4
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 強制 active 化（toggle 後 manual モードで固定）</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 強制 active 化（manual 固定）</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>config<span class="w"> </span>mux<span class="w"> </span>mode<span class="w"> </span>active<span class="w"> </span>Ethernet4
 </span></code></pre></div>
-<p><code>show mux status</code> 例<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>show mux status</code> 例<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>PORT        STATUS    SERVER_STATUS    HEALTH    HWSTATUS    LAST_SWITCHOVER_TIME
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:43
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Ethernet8   active    active           healthy   consistent  2023-Mar-27 07:59:33
 </span></code></pre></div>
-<p><code>HEALTH</code> は以下を満たすと <code>healthy</code><sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>HEALTH=healthy</code> の条件: port up + self link probe reply 受信 + <code>STATUS == SERVER_STATUS</code>（または <code>SERVER_STATUS=unknown</code>） + T1 default route 存在<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="8">8. トラブルシューティング<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>最初に見る場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HEALTH=unhealthy</code></td>
+<td>port up / link probe reply / default route の順に確認</td>
+</tr>
+<tr>
+<td><code>HWSTATUS=inconsistent</code></td>
+<td>ToR 側 admin state と NIC 側 admin state の乖離 → gRPC 通信ログ / xcvrd ログ</td>
+</tr>
+<tr>
+<td>standby 切替で traffic 断</td>
+<td><code>show mux tunnel-route &lt;port&gt;</code> で prefix route の next hop を確認</td>
+</tr>
+<tr>
+<td>両 ToR standby で通信不能</td>
+<td>linkmgrd の rescue ロジックと default route 状態</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>port status が up</li>
-<li>self link probe の reply 受信</li>
-<li><code>STATUS</code> と <code>SERVER_STATUS</code> 一致 or <code>SERVER_STATUS=unknown</code></li>
-<li>T1 への default route 存在</li>
+<li><strong>warm reboot</strong> は HLD で TBD</li>
+<li>gRPC server / ToR の認証は HLD で詳細未定</li>
+<li>両 ToR standby 時の tunneled control plane traffic は NIC IP 局所送出に依存</li>
+<li>BGP update delay 10 秒は active-active 専用。session 確立後 routing convergence が遅延</li>
+<li>ingress drop ACL 不在のため standby 期の上り traffic がベストエフォート</li>
 </ul>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>warm reboot</strong> は HLD で TBD<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>gRPC server (SoC) と ToR の信頼関係 / 認証は HLD では詳細未定</li>
-<li><strong>両 ToR が standby</strong> の状況では tunneled control plane traffic も blackhole する。NIC IP 宛 traffic を local で送る特別扱いに依存</li>
-<li>BGP update delay (10 秒) は active-active 専用設定。session 確立後の routing convergence が遅延する</li>
-<li>ingress drop ACL を貼らない方針は <strong>standby 期の上り traffic が ToR に届く</strong> ため、ベストエフォート前提</li>
-</ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>linkmgrd</code> (sonic-linkmgrd)</strong>: state machine + link prober + default route 監視</li>
-<li><strong><code>xcvrd</code> (transceiver daemon)</strong>: gRPC client / server の橋渡し</li>
-<li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>TunnelOrch</code> / <code>MuxOrch</code>)</strong>: prefix route と tunnel next hop の切替</li>
-<li><strong><code>bgpd</code></strong>: 両 ToR が同じ VLAN を広告。update delay の追加</li>
-<li><strong>NIC ファームウェア</strong>: 5-tuple 分散 + ARP/NDP 複製 + gRPC reply 振り分けの仕様遵守</li>
-</ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>show mux status</code> の <code>HEALTH=unhealthy</code> → port up / link probe reply / default route の有無を順に確認</li>
-<li><code>HWSTATUS=inconsistent</code> → ToR 側 admin state と NIC 側 admin state が乖離。gRPC 通信ログ / xcvrd ログ確認</li>
-<li>standby 切替で traffic 断 → prefix route の next hop が tunnel に切り替わっているか <code>show mux tunnel-route &lt;port&gt;</code> で確認</li>
-<li>両 ToR が standby 化して通信不能 → linkmgrd の rescue ロジック / default route 状態を確認</li>
-</ul>
-<h2 id="_10">実装との乖離 / 補足<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_5">実装との乖離 / 補足<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>現行 master（2026-05 時点）の実コード裏取り結果:</p>
 <ul>
-<li><strong>linkmgrd active-active state machine</strong>: <code>sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}</code> および <code>src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}</code> が active-standby 系と並列に存在。<code>PeerActiveState</code> / <code>PeerUnknownState</code> / <code>PeerWaitState</code> も <code>src/link_prober/</code> に追加されており、HLD のとおり self / peer 独立判定が実装されている。</li>
+<li><strong>linkmgrd active-active state machine</strong>: <code>sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}</code> および <code>src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}</code> が active-standby と並列に存在。<code>PeerActiveState</code> / <code>PeerUnknownState</code> / <code>PeerWaitState</code> も <code>src/link_prober/</code> に追加されており、self / peer 独立判定が実装されている。</li>
 <li><strong>MuxOrch の active-active 分岐</strong>: <code>sonic-swss/orchagent/muxorch.cpp:2233</code> で <code>cable_type_str == "active-active"</code> 判定。prefix-based neighbor の SAI 属性（<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code>）と prefix route の組合せは muxorch / neighorch 内で扱う。</li>
-<li><strong>新規 APP_DB / STATE_DB テーブル</strong>: <code>sonic-swss-common/common/schema.h</code> に <code>APP_FORWARDING_STATE_COMMAND_TABLE_NAME = "FORWARDING_STATE_COMMAND"</code> (145行)、<code>APP_FORWARDING_STATE_RESPONSE_TABLE_NAME = "FORWARDING_STATE_RESPONSE"</code> (146行)、<code>APP_PEER_HW_FORWARDING_STATE_TABLE_NAME = "HW_FORWARDING_STATE_PEER"</code> (149行)、<code>STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME = "HW_MUX_CABLE_TABLE_PEER"</code> (465行) が定義されている。</li>
+<li><strong>新規 APP_DB / STATE_DB テーブル</strong>: <code>sonic-swss-common/common/schema.h</code> に <code>APP_FORWARDING_STATE_COMMAND_TABLE_NAME</code> (145行)、<code>APP_FORWARDING_STATE_RESPONSE_TABLE_NAME</code> (146行)、<code>APP_PEER_HW_FORWARDING_STATE_TABLE_NAME</code> (149行)、<code>STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME</code> (465行) が定義済み。</li>
 <li><strong><code>config mux mode detach</code></strong>: <code>sonic-utilities/config/muxcable.py:351</code> で <code>click.Choice(["active","auto","manual","standby","detach"])</code> として <code>detach</code> を受け付ける。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連トピック<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../topics/05-dual-tor/">Topics: Dual ToR</a> — Dual ToR 全体像と active-standby との対比</li>
+<li><a href="../active-standby-dual-tor/">active-standby dual ToR</a></li>
+</ul>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - linkmgrd の active-active state machine 実装存在確認（sonic-linkmgrd）
 - MuxOrch の prefix-based neighbor (SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE=true + prefix route) 実装確認
@@ -23108,7 +22994,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/dualtor/active_active_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/dualtor/active_active_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

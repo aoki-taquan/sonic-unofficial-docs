@@ -4999,6 +4999,100 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        まず読み手の質問に答える
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="まず読み手の質問に答える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章はそもそも何をまとめているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の最短整理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tor-dhcp-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: ToR 配下のサーバが DHCP で IP を取る
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似ているが別物のもの
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできるようになること
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22250,6 +22344,100 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        まず読み手の質問に答える
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="まず読み手の質問に答える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章はそもそも何をまとめているか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の最短整理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tor-dhcp-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: ToR 配下のサーバが DHCP で IP を取る
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似ているが別物のもの
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできるようになること
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22315,7 +22503,139 @@
 <p>SONiC では front-panel port は data VRF（default や user VRF）にあり、外向き management 通信は通常 management VRF（<code>mgmt</code>）から出ます。chrony / resolved / static resolv.conf 系はこの VRF を経由する必要があり、<code>NTP|global</code> の <code>vrf</code> フィールドや <code>MGMT_VRF_CONFIG</code> の設定が前提になります。VRF を意識しない設定だと「装置から ping は通るのに ntp が同期しない」事象になります。</p>
 <h2 id="twamp-light-terminal-server">TWAMP Light と terminal server の置き場所<a class="headerlink" href="#twamp-light-terminal-server" title="Permanent link">&para;</a></h2>
 <p>TWAMP Light（RFC 5357）は data plane の測定プロトコルで、本来は QoS / observability 寄りですが、サービス系として「control 接続を持たない軽量サービス」枠でこの章の発展トピックに置きます。terminal server は udev rules で <code>/dev/ttyUSB*</code> を安定 symlink にする platform 寄りの話で、management 装置として SONiC を使うときの周辺機能です。</p>
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">まず読み手の質問に答える<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3">この章はそもそも何をまとめているか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>「Edge / management services」は <strong>forwarding ではないが ToR / management スイッチの上に必ず乗る付帯サービス</strong> の集合です。NAT・DHCP relay・DHCP server・NTP・DNS が中心で、共通点は次の 3 つです。</p>
+<ul>
+<li>専用 container 単位で daemon が隔離されている（<code>docker-nat</code> / <code>docker-dhcp-relay</code> / <code>docker-dhcp-server</code> ほか）</li>
+<li>CONFIG_DB の数テーブルを読んで OS 側ファイル（iptables / kea / chrony / resolv.conf）を生成する</li>
+<li>外向き通信は <strong>management VRF</strong> を経由するか、front-panel VRF を経由するかで差が出る</li>
+</ul>
+<h3 id="_4">何を解決するか<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>データセンター ToR / management スイッチ運用で実際に困るのは次のような場面です。</p>
+<ul>
+<li>管理 IP のために v4 アドレスを節約したい → outbound NAT / port forward</li>
+<li>サーバへ IP を配布したいが central DHCP に届かせたい → DHCP relay（VLAN per ToR）</li>
+<li>小規模 lab で DHCP server を ToR に直接置きたい → kea ベース DHCP server</li>
+<li>dual-ToR で client が active 側に確実に届くようにしたい → Option 82 と giaddr 固定</li>
+<li>装置の時刻が揃わないと log と TLS 検証が壊れる → chrony + management VRF</li>
+<li>DNS 名前解決を ToR から打ちたいが out-of-band で出したい → static resolv.conf + mgmt VRF</li>
+</ul>
+<p>これらは個別 HLD としてバラバラに見えても、運用ではセットで設計されます。</p>
+<h3 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    subgraph CFG[(CONFIG_DB)]
+        NATC[NAT_*]
+        DHC[DHCP_RELAY / VLAN]
+        DHS[DHCP_SERVER_IPV4*]
+        NTP[NTP|*]
+        DNS[DNS_NAMESERVER]
+    end
+    subgraph NATD[docker-nat]
+        NM[natmgrd]
+        NS[natsyncd]
+        IPT[iptables / conntrack]
+    end
+    subgraph DRD[docker-dhcp-relay]
+        DR[dhcrelay v4/v6]
+        DM[dhcpmon]
+    end
+    subgraph DSD[docker-dhcp-server]
+        DS[dhcpservd]
+        KEA[kea-dhcp4]
+        DRD2[dhcprelayd]
+    end
+    subgraph HOST[host OS]
+        CHR[chrony]
+        RESV[resolv.conf]
+        MGMT[mgmt VRF]
+    end
+    NATC --&gt; NM --&gt; IPT
+    NM --&gt; NS --&gt; SAI[(SAI NAT object)]
+    DHC --&gt; DR
+    DR --&gt; COUNT[(COUNTERS_DB)]
+    DM --&gt; COUNT
+    DHS --&gt; DS --&gt; KEA
+    NTP --&gt; CHR --&gt; MGMT
+    DNS --&gt; RESV --&gt; MGMT</code></pre>
+<p>レイヤ的には L3 forwarding の <strong>横（付帯）</strong> であって、上下関係ではありません。</p>
+<h3 id="_5">用語の最短整理<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>natmgrd</code></strong>: CONFIG_DB の <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <code>NAT_POOL</code> / <code>NAT_BINDINGS</code> / <code>NAT_GLOBAL</code> を読んで iptables と APP_DB に展開する</li>
+<li><strong><code>natsyncd</code></strong>: conntrack エントリを観測し APP_DB と STATE_DB に同期する</li>
+<li><strong>SAI NAT object</strong>: ASIC 側 NAT エントリ。fast path に乗せるためのもの</li>
+<li><strong><code>dhcrelay</code></strong>: ISC dhcp 由来。VLAN 1 本に 1 process が標準</li>
+<li><strong><code>dhcpmon</code></strong>: relay のヘルスとパケット counter を取る別 process。<code>COUNTERS_DB</code> に書く</li>
+<li><strong><code>dhcpservd</code></strong>: kea ベース DHCP server の管理 daemon。CONFIG_DB から <code>kea-dhcp4.conf</code> を生成</li>
+<li><strong><code>dhcprelayd</code></strong>: DHCP server と同居する relay 補助。Option 82 や <code>giaddr</code> を server 側と協調させる</li>
+<li><strong>Option 82 / <code>circuit-id</code></strong>: DHCPv4 relay agent info。downstream port を server に伝える</li>
+<li><strong>Option 79</strong>: DHCPv6 client link-layer address option（RFC 6939）</li>
+<li><strong><code>giaddr</code></strong>: DHCPv4 の gateway IP address。server が pool を選ぶ key</li>
+<li><strong>management VRF (<code>mgmt</code>)</strong>: 管理通信専用 VRF。front-panel VRF と分離</li>
+<li><strong>chrony</strong>: NTP client / server 実装。ntpd の後継</li>
+<li><strong>TWAMP Light</strong>: RFC 5357。data plane 測定プロトコル。本章では control 接続を持たない軽量 service として扱う</li>
+</ul>
+<h3 id="tor-dhcp-ip">典型シーン: ToR 配下のサーバが DHCP で IP を取る<a class="headerlink" href="#tor-dhcp-ip" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant SRV as Server (VLAN 100)
+    participant TOR as ToR (dhcrelay)
+    participant DM as dhcpmon
+    participant DHCP as Upstream DHCP server
+
+    SRV-&gt;&gt;TOR: DISCOVER (bcast)
+    TOR-&gt;&gt;DM: count rx_DISCOVER
+    TOR-&gt;&gt;DHCP: DISCOVER (unicast, giaddr=ToR VLAN100 IP, Option82=Ethernet8)
+    DHCP--&gt;&gt;TOR: OFFER (unicast)
+    TOR-&gt;&gt;DM: count tx_OFFER
+    TOR--&gt;&gt;SRV: OFFER (bcast back via VLAN)
+    SRV-&gt;&gt;TOR: REQUEST
+    TOR-&gt;&gt;DHCP: REQUEST
+    DHCP--&gt;&gt;TOR: ACK
+    TOR--&gt;&gt;SRV: ACK</code></pre>
+<p>ここでサーバが IP を取れない場合、<code>dhcpmon</code> の counter（rx_DISCOVER / tx_DISCOVER / rx_OFFER）を順に見ていけば「broadcast が ToR まで届いていない / relay が unicast を出していない / server から応答がない」のどこで止まっているか判定できます。</p>
+<h3 id="_6">似ているが別物のもの<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>比較対象</th>
+<th>この章との違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L3 forwarding 章（<a href="../../02-bgp/">02 BGP</a> / <a href="../../04-vrf-ecmp/">04 VRF/ECMP</a>）</td>
+<td>route 決定そのもの。NAT / DHCP は route 決定の前後で動く付帯</td>
+</tr>
+<tr>
+<td><a href="../../08-qos-buffer/">QoS / Buffer</a></td>
+<td>TWAMP Light は本来 QoS / observability 寄りだが、control 接続を持たない軽量 service としてこの章で扱う</td>
+</tr>
+<tr>
+<td><a href="../../15-security-aaa/">Security / AAA</a></td>
+<td>管理通信の経路（mgmt VRF）はこの章。認証は 15 章</td>
+</tr>
+<tr>
+<td><a href="../../05-dual-tor/">Dual-ToR</a></td>
+<td>Option 82 や giaddr 固定が dual-ToR でなぜ必要かは 05 章の文脈、設定そのものは本章</td>
+</tr>
+<tr>
+<td>ホスト Linux の DHCP / NAT 単体</td>
+<td>SONiC では CONFIG_DB → 各 container daemon → OS / SAI の二段で動く点が違う</td>
+</tr>
+<tr>
+<td><a href="../../13-dash-smartswitch/">DASH / SmartSwitch</a></td>
+<td>DASH NAT は overlay tenant 単位の NAT で、本章の管理 / edge NAT とはスケール感が違う</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">読了後にできるようになること<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>「ping は通るが NTP / DNS / DHCP が動かない」事象を VRF / iptables / kea / relay の切り分けで追える</li>
+<li>NAT が hardware path に乗っているか CPU 経由かを <code>NatOrch</code> ↔ SAI ↔ iptables の構造で判別できる</li>
+<li>dual-ToR で Option 82 / giaddr 固定が必要な理由を 05 章とつないで説明できる</li>
+<li>TWAMP Light や terminal server がなぜこの章にあるかが分かる</li>
+</ul>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../architecture/nat-in-sonic/">NAT in SONiC</a></li>
 <li><a href="../../../architecture/dhcpv4-relay-agent/">DHCPv4 Relay Agent</a></li>

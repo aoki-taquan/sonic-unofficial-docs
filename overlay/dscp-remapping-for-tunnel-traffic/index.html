@@ -10564,6 +10564,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22442,6 +22459,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22763,6 +22797,17 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 <li>upgrade 環境では <code>sonic-utilities/scripts/db_migrator.py</code> の最新版を実行し、<code>PORT_QOS_MAP|&lt;port&gt;:pfcwd_sw_enable</code> が生成されているか CONFIG_DB を確認する。生成されていなければ手動で投入する。</li>
 <li>HLD 由来のドキュメントやテンプレートは新表記に書き換える。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li>フィールド名差異: HLD <code>pfc_wd_sw_enable</code> → 実装 <code>pfcwd_sw_enable</code>（アンダースコア位置違い）。<code>sonic-utilities/scripts/db_migrator.py:1186-1193</code> で <code>pfc_enable</code> から派生。</li>
+<li>HLD の主要パスは取り込み済み: <code>tunneldecaporch.cpp:834,1084</code> で <code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> / <code>..._TC_TO_PRIORITY_GROUP_MAP</code>、<code>muxorch.cpp:259,2347</code> で <code>SAI_TUNNEL_PEER_MODE_P2P</code>、<code>files/build_templates/qos_config.j2:441</code> で Dual-ToR 限定 <code>AZURE_TUNNEL</code> テンプレート出力。</li>
+<li>関連 PR: db_migrator 改修 PR で <code>pfcwd_sw_enable</code> への移行が確定。旧名は migrator 経由で自動置換される。</li>
+<li><strong>追加検証コマンド</strong>: 過去 upgrade 環境の確認 — <code>redis-cli -n 4 keys 'PORT_QOS_MAP|*' | while read k; do redis-cli -n 4 hgetall "$k" | grep -E 'pfc(wd)?_sw_enable'; done</code> で旧名残骸を検出、見つかれば <code>db_migrator.py</code> を最新で実行。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
+</blockquote>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

@@ -7980,6 +7980,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22517,6 +22528,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22803,6 +22825,18 @@ reasoning: テストの判定ロジック（DIP=SIP のままルーティング�
 <li><strong>テストを読み解く</strong>: 本体ロジックは <code>sonic-mgmt/tests/ipfwd/test_dip_sip.py</code> を <code>grep -n</code> で参照する。クラス名 / log 名のドキュメント不一致は本ページの記述ではなくコード側を真として扱う。</li>
 <li><strong>新規 topology / RIF を追加する</strong>: pytest 側の parametrize / fixture を編集し、必要なら <code>dip_sip.yml</code> の <code>test_node</code> 指定とは別経路で <code>pytestmark</code> の設定を変える。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li>旧 PTF スクリプト <code>ansible/roles/test/files/ptftests/dip_sip.py</code> は GitHub <code>sonic-net/sonic-mgmt</code> master でヒット 0（削除確定）。</li>
+<li>現行本体 <code>tests/ipfwd/test_dip_sip.py</code> は pytest 形式で、<code>DipSipTest</code> 同等のテストが pytest case にリファクタされている。</li>
+<li><code>ansible/roles/test/tasks/dip_sip.yml</code> (114 B) は pytest_runner ラッパに縮退。HLD の前処理／後処理ステップは pytest fixture (<code>tests/common/fixtures/duthosts.py</code> 等) に移行。</li>
+<li>関連 PR: <code>sonic-mgmt</code> における ansible→pytest 移行は 2021-2023 年に複数 PR で段階実施済み（特定 PR ID は HLD では未参照）。</li>
+<li><strong>追加実行コマンド</strong>: 現行で走らせる場合 — <code>cd sonic-mgmt/tests &amp;&amp; pytest ipfwd/test_dip_sip.py --topology=t0 --testbed=&lt;tb&gt;</code>。旧 <code>ansible-playbook ... -e testcase_name=dip_sip</code> 経路もラッパ越しに動作する。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
+</blockquote>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - gh api search/code: sonic-net/sonic-mgmt 配下に tests/ipfwd/test_dip_sip.py (pytest) が現存

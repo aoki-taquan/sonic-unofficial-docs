@@ -11520,6 +11520,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22517,6 +22528,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22739,6 +22761,17 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 <li><strong>CoPP 側を維持する場合</strong>: 既定の CoPP DHCP 300 pps が依然有効なので、上記スクリプトを入れない限りは <strong>HLD 前の動作のまま</strong> で運用される。CLI 上の値は飾りである旨を運用ドキュメントに明記しておくとよい。</li>
 <li>上流の取り込みを待つ場合は <code>sonic-swss</code> 側で portmgrd の TC 投入実装と、<code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> からの <code>dhcp_relay</code> trap_id 削除の双方が入るのを確認する必要がある。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li><strong>portmgrd の TC 投入経路</strong> が <code>sonic-swss/cfgmgr/</code> に未追加で、CONFIG_DB の <code>dhcp_rate_limit</code> を消費するコードは round 2 でも 0 件のまま (<code>grep -rn dhcp_rate_limit .cache/sonic-sources/sonic-swss/cfgmgr/</code> ヒット 0)。</li>
+<li><code>sonic-buildimage/files/image_config/copp/copp_cfg.j2</code> の <code>dhcp_relay</code> trap 設定が依然システム全体 300 pps に絞っており、HLD 前提の「CoPP 全体制限の撤去」が完了していない。</li>
+<li>関連 PR: <code>sonic-utilities</code> の <code>dhcp-mitigation-rate</code> CLI 取り込み (<code>config: add interface dhcp-mitigation-rate add/del</code>) は 2023 年に merge 済みだが、対となる swss 側 PR (portmgrd の TC 投入) は 2026-05 時点で未提出。</li>
+<li><strong>追加回避策コマンド</strong>: 全ポート一括で TC を投入する起動スクリプト例 — <code>for p in $(redis-cli -n 4 keys 'PORT|Ethernet*' | sed 's/PORT|//'); do r=$(redis-cli -n 4 hget PORT\|$p dhcp_rate_limit); [ -n "$r" ] &amp;&amp; [ "$r" -gt 0 ] &amp;&amp; tc qdisc add dev $p handle ffff: ingress 2&gt;/dev/null &amp;&amp; tc filter add dev $p protocol ip parent ffff: prio 1 u32 match ip protocol 17 0xff match ip dport 67 0xffff police rate $((r*406))bps burst $((r*406))b conform-exceed drop; done</code></li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: not_implemented</code> — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。</p>
+</blockquote>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

@@ -4737,6 +4737,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まず読み手の質問に答える
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="まず読み手の質問に答える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章はそもそも何の章か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の最短整理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tacacs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: TACACS+ 認証でログインしてコマンドを打つ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似ているが別物のもの
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできるようになること
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22235,6 +22329,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まず読み手の質問に答える
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="まず読み手の質問に答える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この章はそもそも何の章か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 内での位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語の最短整理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tacacs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: TACACS+ 認証でログインしてコマンドを打つ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似ているが別物のもの
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできるようになること
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22312,6 +22500,120 @@
 <ul>
 <li>管理プレーン向け CoPP（Control Plane Policing）は本章ではなく <a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror</a> で扱います。本章は「誰が触れるか」の認証面、CoPP 章は「触ってよいパケットの帯域」の制御面と切り分けます。</li>
 <li>secure upgrade はライフサイクル全体の <a href="../../11-reboot/">Reboot / Upgrade / Lifecycle</a> と重複しますが、本章では「信頼チェーン」の観点に限定し、warm/fast/SONiC-To-SONiC の手順は 11 章に委ねます。</li>
+</ul>
+<h2 id="_5">まず読み手の質問に答える<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_6">この章はそもそも何の章か<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>「Security / AAA」は単一機能ではなく、<strong>SONiC を「誰がどう触れ、どんなコードが動き、どのリンクが盗聴されないか」 を担保する一群の機能</strong> をまとめた章です。Linux 標準スタック（PAM / NSS / sudoers / OpenSSL）と SONiC 固有 daemon（<code>hostcfgd</code> / <code>macsecmgr</code> / SAI 上の MACsec object）の組み合わせで実装されている点に注意します。</p>
+<h3 id="_7">何を解決するか<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>ネットワーク機器を運用するうえで避けられない次のリスクを、層ごとに薄く重ねて押さえます。</p>
+<ul>
+<li><strong>本人なりすまし</strong>: 共有パスワード / 弱いパスワード / 退職者アカウント残置 → AAA + password hardening + default credential 管理</li>
+<li><strong>権限逸脱</strong>: 全員 root / sudo 全開 → TACACS+ per-command 認可 + role-based sudoers</li>
+<li><strong>証跡欠落</strong>: 誰が何を打ったか後から追えない → TACACS+ accounting + syslog 集約</li>
+<li><strong>リンク盗聴 / 改竄</strong>: 隣接機器との物理リンクが untrusted → MACsec / MKA</li>
+<li><strong>コード改竄</strong>: ブート中・実行中バイナリの差し替え → secure boot + container hardening + SAI POST</li>
+<li><strong>暗号弱化</strong>: TLS / SSH の弱 cipher 使用 → OpenSSL FIPS provider + sshd policy</li>
+</ul>
+<h3 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    subgraph CP[Control Plane]
+        SSH[SSH / serial&lt;br/&gt;+ banner]
+        PAM[PAM/NSS&lt;br/&gt;local/TACACS+/RADIUS/LDAP]
+        SUDO[sudoers / role]
+        HOSTCFG[hostcfgd]
+    end
+    subgraph DP[Data Plane]
+        MACSEC[MACsec / MKA&lt;br/&gt;macsecmgr + wpa_supplicant]
+        SAIM[SAI MACsec / PHY MACsec]
+    end
+    subgraph PL[Platform]
+        SBOOT[secure boot / shim / GRUB]
+        FIPS[OpenSSL FIPS provider]
+        DOCK[container hardening]
+        POST[SAI POST]
+    end
+    CFG[(CONFIG_DB&lt;br/&gt;AAA / TACPLUS / MACSEC_PROFILE / SSH_SERVER)] --&gt; HOSTCFG
+    HOSTCFG --&gt; SSH
+    HOSTCFG --&gt; PAM
+    PAM --&gt; SUDO
+    CFG --&gt; MACSEC --&gt; SAIM</code></pre>
+<p>入口は概ね CONFIG_DB と OS 設定ファイルで、出口は PAM スタック、<code>/etc/ssh/sshd_config</code>、<code>wpa_supplicant.conf</code>、SAI MACsec object です。</p>
+<h3 id="_8">用語の最短整理<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>AAA</strong>: Authentication（誰か）/ Authorization（何をできるか）/ Accounting（何をしたか）</li>
+<li><strong>PAM</strong>: Pluggable Authentication Modules。Linux の認証フレームワーク</li>
+<li><strong>NSS</strong>: Name Service Switch。<code>/etc/nsswitch.conf</code> 経由で user / group lookup を AAA バックエンドに振る</li>
+<li><strong><code>hostcfgd</code></strong>: CONFIG_DB を購読し、<code>/etc/ssh/sshd_config</code> などホスト OS 側ファイルを生成 / reload する daemon</li>
+<li><strong>TACACS+</strong>: Cisco 由来の AAA プロトコル。per-command 認可と詳細 accounting が強み</li>
+<li><strong>RADIUS</strong>: もう一つの AAA プロトコル。認証と粗い accounting 向き</li>
+<li><strong>MACsec / MKA</strong>: IEEE 802.1AE / 802.1X-2010。L2 リンク暗号化と鍵管理プロトコル</li>
+<li><strong>MKA peer / CKN / CAK</strong>: MKA セッション識別子（CKN）と鍵（CAK）</li>
+<li><strong>secure boot</strong>: shim → GRUB → kernel の署名チェーン</li>
+<li><strong>FIPS 140</strong>: 暗号モジュールの認定。SONiC は OpenSSL FIPS provider 切替で対応</li>
+<li><strong>SAI POST</strong>: Power-On Self Test。起動時に SAI レベルで MACsec 機能の健全性を確認</li>
+<li><strong>password hardening</strong>: 最低長 / 履歴 / 期限 / 複雑さの強制。<code>PASSW_HARDENING|POLICIES</code> で制御</li>
+</ul>
+<h3 id="tacacs">典型シーン: TACACS+ 認証でログインしてコマンドを打つ<a class="headerlink" href="#tacacs" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as 運用者
+    participant SSH as sshd
+    participant PAM as PAM stack
+    participant TAC as TACACS+ server
+    participant SUDO as sudoers
+    participant CLI as config / show
+
+    U-&gt;&gt;SSH: ssh user@switch
+    SSH-&gt;&gt;PAM: auth (pam_tacplus + pam_unix)
+    PAM-&gt;&gt;TAC: AUTHEN ID/PW
+    TAC--&gt;&gt;PAM: ACCEPT, priv-lvl=15
+    PAM--&gt;&gt;SSH: session up
+    U-&gt;&gt;CLI: sudo config interface ip add ...
+    CLI-&gt;&gt;SUDO: validate
+    SUDO-&gt;&gt;TAC: AUTHOR cmd=config ...
+    TAC--&gt;&gt;SUDO: ACCEPT
+    CLI-&gt;&gt;TAC: ACCT START / STOP</code></pre>
+<p>ポイントは「認証だけ pass しても per-command 認可で弾ける」「accounting は CLI ラッパー側で発火する」の二点で、これにより local user 不要・全コマンドログという運用が成立します。</p>
+<h3 id="_9">似ているが別物のもの<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>比較対象</th>
+<th>この章との違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../07-acl-copp-mirror/">ACL / CoPP / Mirror</a></td>
+<td>パケット流入帯域の制限。「誰が」ではなく「どのパケットを」</td>
+</tr>
+<tr>
+<td><a href="../../04-vrf-ecmp/">VRF / management VRF</a></td>
+<td>管理通信の経路隔離。AAA の到達経路に影響するが認証自体はこの章</td>
+</tr>
+<tr>
+<td><a href="../../10-gnmi-openconfig/">GNMI / OpenConfig</a></td>
+<td>gNMI 側 client 認証は TLS + cert 中心で、本章の PAM とは独立した認証経路</td>
+</tr>
+<tr>
+<td><a href="../../11-reboot/">Reboot / Lifecycle</a></td>
+<td>secure upgrade の手順は 11 章。「信頼チェーン」の理屈は本章</td>
+</tr>
+<tr>
+<td>データ暗号化（IPSec / TLS）</td>
+<td>SONiC でユーザーが直接設定する範囲では大きくない。MACsec はリンク単位の L2 暗号で別物</td>
+</tr>
+<tr>
+<td>Linux 一般の hardening（kernel / sysctl）</td>
+<td>SONiC では SAI / orchagent のセキュリティが上に乗るためここで補強する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">読了後にできるようになること<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>各 HLD（AAA improvements / password hardening / MACsec / secure boot / container hardening）が三層のどこを守るかを即答できる</li>
+<li>「ssh は通るのに sudo が通らない」を NSS / PAM / sudoers / TACACS+ の切り分けで追える</li>
+<li>MACsec を入れるとどの daemon・どの SAI object・どの CONFIG_DB テーブルが増えるかが分かる</li>
+<li>secure boot 系を採用するかを「攻撃モデルと OPEX 増分」で議論できる</li>
 </ul>
 
 

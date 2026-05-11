@@ -14145,6 +14145,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22420,6 +22437,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22632,6 +22666,18 @@ reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 
 <li>機能を有効化したい場合は <code>/etc/sonic/telemetry/</code> 系の設定または systemd unit を変更し、<code>--with-master-arbitration</code> を付与した状態で telemetry を再起動する。動的切替が必要な場合は上流に CONFIG_DB 駆動の有効化パスを PR する必要がある。</li>
 <li>マルチ ASIC 構成では <code>masterEID</code> がプロセスごとに揮発するため、ASIC ごとに別 telemetry が立つ場合はコントローラ側で各 ASIC への <code>Set</code> ごとに EID を主張し直す。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li><code>sonic-gnmi/gnmi_server/server.go:1329-1331</code> で <code>ma.Role != nil</code> → <code>codes.Unimplemented</code>。HLD は「無視」と記載するが実装は <strong>明示拒否</strong>。</li>
+<li><code>--with-master-arbitration</code> 起動フラグ (<code>telemetry/telemetry.go:62, 188, 587-588</code>) でのみ有効化。CONFIG_DB 駆動の動的 ON/OFF は未実装。</li>
+<li><code>masterEID</code> は gnmi server プロセス内メモリに保持 (<code>server.go:1310-1351</code>)。プロセス再起動で揮発。</li>
+<li>関連 Issue/PR: <code>sonic-gnmi</code> の Master Arbitration 取り込み PR は 2024 年前半に merge。Role 拒否挙動は当該 PR で固定化されており、HLD 側更新待ち。</li>
+<li><strong>追加回避策コマンド</strong>: クライアント側 — gNMI <code>SetRequest</code> の <code>extension</code> には <code>MasterArbitration{ElectionId: &lt;uint128&gt;}</code> のみを設定し、<code>Role</code> フィールドは空にする。Go gNMI client 例 — <code>req.Extension = []*gnmi_ext.Extension{{Ext: &amp;gnmi_ext.Extension_MasterArbitration{MasterArbitration: &amp;gnmi_ext.MasterArbitration{ElectionId: &amp;gnmi_ext.Uint128{High: hi, Low: lo}}}}}</code>。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
+</blockquote>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-gnmi の telemetry サーバに ReqFromMasterEnabledMA が実装されているか

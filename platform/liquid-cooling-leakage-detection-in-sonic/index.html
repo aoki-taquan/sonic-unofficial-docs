@@ -15842,6 +15842,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22473,6 +22484,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22694,6 +22716,19 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 <li><strong>読者への影響</strong>: HLD だけ読むと「実装責務はベンダー」で終わるが、実機検証では platform 側の対応が前提で、対応 SKU は限られる。</li>
 <li><strong>回避策</strong>: 対応プラットフォームかどうかは <code>mlnx-platform-api/sonic_platform/liquid_cooling.py</code> 相当のベンダー実装が <code>LiquidCoolingBase</code> を継承しているかで判断する。未対応 platform では <code>enable_liquid_cooling</code> を立てても sensor 検出に至らない。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li>STATE_DB テーブル名差異: HLD <code>LIQUID_COOLING_DEVICE</code> → 実装 <code>LIQUID_COOLING_INFO</code> (<code>sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526, 547</code>)。</li>
+<li>追加テーブル: HLD に無い <code>SYSTEM_LEAK_STATUS</code> (L548) / <code>LEAK_PROFILE</code> (L551) が追加実装。</li>
+<li><code>liquid_cooling_update_interval</code> は CLI 引数で渡る（CONFIG_DB ではない）。</li>
+<li>system-health 側 hardware_checker も <code>LIQUID_COOLING_INFO</code> を見る前提で書かれている。</li>
+<li>関連 PR: liquid cooling 機能取り込み PR で table 名がリネーム。HLD 文書側は旧名のまま。</li>
+<li><strong>追加検証コマンド</strong>: 全関連 STATE_DB key 確認 — <code>redis-cli -n 6 keys 'LIQUID_COOLING_INFO*' 'SYSTEM_LEAK_STATUS*' 'LEAK_PROFILE*'</code>、各 value は <code>redis-cli -n 6 hgetall &lt;key&gt;</code> で展開。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
+</blockquote>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

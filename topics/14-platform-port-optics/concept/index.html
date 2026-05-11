@@ -4405,6 +4405,100 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        まず読み手の質問に答える
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="まず読み手の質問に答える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この機能はそもそも何か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 全体での位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語定義
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: ポート 1 本のリンクアップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似ているが別物のもの
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできるようになること
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22206,6 +22300,100 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        まず読み手の質問に答える
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="まず読み手の質問に答える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        この機能はそもそも何か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        何を解決するか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC 全体での位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        用語定義
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型シーン: ポート 1 本のリンクアップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        似ているが別物のもの
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読了後にできるようになること
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連ページ
       
     </span>
@@ -22264,7 +22452,130 @@
 <p>スキーマ詳細は <a href="../../../reference/config-db/port/">PORT テーブル</a> と <a href="../../../reference/yang/sonic-port/">sonic-port YANG</a> が一次資料です。</p>
 <h2 id="health">装置 health の系統<a class="headerlink" href="#health" title="Permanent link">&para;</a></h2>
 <p>ポートの上下とは独立に、装置側の状態 (thermal、PSU、fan、SSD、PCIe、BMC) も常時監視されます。これらは pmon コンテナ内の各 daemon が STATE_DB を更新し、CLI / SNMP / Redfish が同じ DB を見ます。port 章と切り離しても良いように見えますが、thermal shutdown は port を強制 down させるため、運用上は同じ章で読むのが楽です。</p>
-<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">まず読み手の質問に答える<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">この機能はそもそも何か<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>「Platform / Port / Optics」は単独の機能名ではなく、<strong>SONiC が一台のスイッチ装置として動くために最低限必要な物理層・装置層の抽象化</strong> をまとめた章です。具体的には次の 3 系統です。</p>
+<ol>
+<li><strong>Platform abstraction</strong> — ベンダー固有 HW（PSU / FAN / 温度センサ / EEPROM / LED / BMC / PCIe / SSD）を <code>sonic_platform</code> パッケージで包む層</li>
+<li><strong>Port lifecycle</strong> — <code>port_config.ini</code> から <code>PORT</code> テーブル、PortMgr、orchagent、SAI 経由で ASIC に届くまでの設定経路</li>
+<li><strong>Optics / Transceiver</strong> — SFP / QSFP / OSFP モジュールの EEPROM 読み出し、DOM 監視、CMIS（Common Management Interface Spec）対応、Y-Cable など特殊光モジュール</li>
+</ol>
+<h3 id="_5">何を解決するか<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>NOS としての SONiC は数十のベンダースイッチで動く必要があります。ここで放置すると次の問題が起きます。</p>
+<ul>
+<li>ベンダーごとに <code>show platform fan</code> の挙動が違って CLI が分裂する</li>
+<li>port breakout / FEC / auto-neg の組み合わせがハードコードで散らばる</li>
+<li>光モジュールの DOM 値（温度・Tx/Rx power）の読み方がベンダー固有 daemon に閉じる</li>
+<li>装置 health（温度シャットダウン、PSU 障害）が監視に届かない</li>
+</ul>
+<p>このため SONiC は「<code>sonic_platform</code> の共通 API」「<code>PORT</code> テーブルを唯一の port 定義入口にする refactor」「<code>xcvrd</code> を中心とした optics の標準化」で、装置差を CLI / DB レイヤから消しに行きます。</p>
+<h3 id="sonic">SONiC 全体での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TB
+    subgraph CTL[制御面]
+        CFG[(CONFIG_DB&lt;br/&gt;PORT, DEVICE_METADATA)]
+        APP[(APP_DB)]
+        STATE[(STATE_DB&lt;br/&gt;TRANSCEIVER_DOM, PSU, FAN)]
+    end
+    subgraph SWSS[swss container]
+        PM[PortMgr]
+        PSY[portsyncd]
+        ORC[orchagent / PortOrch]
+    end
+    subgraph PMON[pmon container]
+        XC[xcvrd]
+        TH[thermalctld]
+        PS[psud]
+        PC[pcied]
+        SS[ssdmon]
+    end
+    subgraph PLAT[sonic_platform / HW]
+        SAI[(SAI / syncd)]
+        EE[EEPROM / DOM / FAN / PSU / BMC]
+    end
+
+    CFG --&gt; PM --&gt; PSY --&gt; APP --&gt; ORC --&gt; SAI
+    PMON --&gt; EE
+    PMON --&gt; STATE
+    SAI --&gt; PLAT</code></pre>
+<p>データ面ではなく <strong>「装置を成り立たせるための骨格」</strong> で、上位の switching / routing / overlay / observability すべてが暗黙にこの章に依存します。</p>
+<h3 id="_6">用語定義<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>sonic_platform</code></strong>: Python パッケージ。各ベンダー platform 実装が継承する base クラス群（Chassis / Module / PSU / Fan / Thermal / Sfp / Eeprom）を提供。</li>
+<li><strong><code>pmon</code></strong>: Platform MONitor container。<code>thermalctld</code> / <code>psud</code> / <code>pcied</code> / <code>ledd</code> / <code>xcvrd</code> / <code>ssdmon</code> / <code>chassisd</code> を抱える。</li>
+<li><strong><code>xcvrd</code></strong>: Transceiver daemon。SFP/QSFP/OSFP の EEPROM 読み出し、CMIS state machine、DOM 監視、PM（performance monitoring）を STATE_DB に書く。</li>
+<li><strong>PortMgr / <code>portsyncd</code></strong>: CONFIG_DB の <code>PORT</code> を読んで APP_DB に流す側と、Linux netdev 状態を APP_DB に同期する側。</li>
+<li><strong>PortOrch</strong>: orchagent 内の port object responsible。SAI port を生成 / 設定する。</li>
+<li><strong>port_config.ini</strong>: HwSKU ごとの port lane / speed の初期マップ。CONFIG_DB が無い起動初期に PortMgr が参照する。</li>
+<li><strong>breakout</strong>: 1 物理ケージから複数 <code>PORT</code> を生やす機能（例 400G OSFP → 4×100G）。</li>
+<li><strong>CMIS</strong>: Common Management Interface Specification（OIF）。400G/800G 世代の optics 標準。state machine を <code>xcvrd</code> が回す。</li>
+<li><strong>DOM</strong>: Digital Optical Monitoring。Tx/Rx power、温度、Vcc、bias current。</li>
+<li><strong>Y-Cable</strong>: Dual-ToR 用の active L1 切替モジュール。<code>xcvrd</code> の Y-Cable サブモジュールが状態遷移を持つ。</li>
+<li><strong>BMC</strong>: Baseboard Management Controller。一部 platform で thermal / PSU を BMC 経由で吸う。</li>
+<li><strong>FEC</strong>: Forward Error Correction。25G / 100G / 400G で必要な誤り訂正設定（RS / FC / none）。</li>
+</ul>
+<h3 id="1">典型シーン: ポート 1 本のリンクアップ<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as 運用者
+    participant CFG as CONFIG_DB
+    participant PM as PortMgr
+    participant PO as PortOrch
+    participant SAI as syncd/SAI
+    participant XC as xcvrd
+    participant ST as STATE_DB
+
+    U-&gt;&gt;CFG: PORT|Ethernet0 admin_status=up
+    CFG-&gt;&gt;PM: notify
+    PM-&gt;&gt;PO: APP_DB:PORT_TABLE 書き込み
+    PO-&gt;&gt;SAI: SAI_PORT_ATTR_ADMIN_STATE=true
+    Note over XC: ケージに光が刺さる
+    XC-&gt;&gt;ST: TRANSCEIVER_INFO / DOM 更新
+    SAI--&gt;&gt;PO: port oper up notify
+    PO-&gt;&gt;ST: PORT_TABLE|Ethernet0 oper_status=up
+    U-&gt;&gt;ST: show interfaces status で確認</code></pre>
+<p>光が刺さらない / DOM が読めない場合、<code>xcvrd</code> 側の vendor SFP 実装か EEPROM 読み出しエラーを疑うのが先で、PortOrch ではないことが分かります。</p>
+<h3 id="_7">似ているが別物のもの<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>比較対象</th>
+<th>この章との違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../08-qos-buffer/">QoS / Buffer</a></td>
+<td>ポート上のキュー・バッファ・FEC は QoS 章。物理層の存在そのものはこの章</td>
+</tr>
+<tr>
+<td><a href="../../07-acl-copp-mirror/">ACL / CoPP</a></td>
+<td>ACL は port を入力として参照するが、port 定義そのものはこの章</td>
+</tr>
+<tr>
+<td><a href="../../05-dual-tor/">Dual-ToR</a></td>
+<td>Y-Cable の状態管理は xcvrd 側だがロジックは Dual-ToR で、ここでは「Y-Cable はそういうモジュールがある」までを扱う</td>
+</tr>
+<tr>
+<td><a href="../../11-reboot/">Reboot / Lifecycle</a></td>
+<td>warm reboot 時の port flap 回避は reboot 章。port のフロー定義はこの章</td>
+</tr>
+<tr>
+<td><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis</a></td>
+<td>SAI そのものの抽象は 20 章。ここでは port object 周りの SAI 属性に絞る</td>
+</tr>
+<tr>
+<td><a href="../../09-telemetry-snmp/">Telemetry / SNMP</a></td>
+<td>DOM 値の収集経路は 09 章、データ源と STATE_DB スキーマは本章</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">読了後にできるようになること<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>「port が up しない」事象に対し、PortMgr / PortOrch / SAI / xcvrd / EEPROM のどれを最初に見るかを判断できる</li>
+<li>platform 移植時に最低限触る <code>sonic_platform</code> クラスと <code>port_config.ini</code> の関係が説明できる</li>
+<li>breakout / FEC / auto-neg の変更がどの DB / どの daemon を経由するか追える</li>
+<li>BMC 経由の platform と直接 sysfs 駆動の platform の差を意識して運用設計できる</li>
+</ul>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/global-platform-specific-psuutil-class-instance/">global platform specific psuutil class instance</a></li>
 <li><a href="../../../architecture/sonic-port-configuration-refactor-design/">port configuration refactor design</a></li>

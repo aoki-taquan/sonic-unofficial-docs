@@ -9075,7 +9075,134 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読者が知りたいこと
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 役割分担と全体像
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-evpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. EVPN ルートタイプの使い分け
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-config_db-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. CONFIG_DB と CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-2026-05-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 実装との乖離（2026-05-10 裏取り）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 実装との乖離（2026-05-10 裏取り）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-config_db-evpn_nvo-vxlan_evpn_nvo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 CONFIG_DB テーブル名は EVPN_NVO ではなく VXLAN_EVPN_NVO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-evpn-orch-vxlanorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 EVPN 中核 orch は vxlanorch.cpp 内クラス群
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-frr-bgp-evpn-frrconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 FRR BGP-EVPN 連携は frr.conf テンプレート経由
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 次に読む
       
     </span>
   </a>
@@ -9084,161 +9211,6 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        構成
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="構成">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#type-2-type-5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Type-2 / Type-5 の使い分け
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#anycast-symmetric-irb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Anycast / Symmetric IRB
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CLI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-config_db-evpn_nvo-vxlan_evpn_nvo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. CONFIG_DB テーブル名は EVPN_NVO ではなく VXLAN_EVPN_NVO
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-evpn-orch-vxlanorchcpp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. EVPN 中核 orch は vxlanorch.cpp 内クラス群
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-frr-bgp-evpn-frrconf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. FRR 側 BGP-EVPN 連携は frr.conf テンプレート経由
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        結論
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22216,7 +22188,134 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概要
+        読者が知りたいこと
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 役割分担と全体像
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-evpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. EVPN ルートタイプの使い分け
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-config_db-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. CONFIG_DB と CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-2026-05-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 実装との乖離（2026-05-10 裏取り）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 実装との乖離（2026-05-10 裏取り）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-config_db-evpn_nvo-vxlan_evpn_nvo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 CONFIG_DB テーブル名は EVPN_NVO ではなく VXLAN_EVPN_NVO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-evpn-orch-vxlanorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 EVPN 中核 orch は vxlanorch.cpp 内クラス群
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-frr-bgp-evpn-frrconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 FRR BGP-EVPN 連携は frr.conf テンプレート経由
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 次に読む
       
     </span>
   </a>
@@ -22225,161 +22324,6 @@
       
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        構成
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="構成">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#type-2-type-5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Type-2 / Type-5 の使い分け
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#anycast-symmetric-irb" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Anycast / Symmetric IRB
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定例
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CLI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        実装との乖離
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="実装との乖離">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-config_db-evpn_nvo-vxlan_evpn_nvo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. CONFIG_DB テーブル名は EVPN_NVO ではなく VXLAN_EVPN_NVO
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-evpn-orch-vxlanorchcpp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. EVPN 中核 orch は vxlanorch.cpp 内クラス群
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-frr-bgp-evpn-frrconf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. FRR 側 BGP-EVPN 連携は frr.conf テンプレート経由
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        結論
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22423,15 +22367,16 @@
 <p>実コード裏取り: <code>sonic-swss/orchagent/vxlanorch.cpp</code> に <code>VxlanOrch / VxlanTunnelOrch / VxlanTunnelMapOrch / EvpnNvoOrch</code> 系の実装存在を確認。yang は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang</code> に <code>VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO</code> を確認。CLI は <code>sonic-utilities/show/vxlan.py</code> に存在。<strong>ただし</strong> CONFIG_DB の NVO テーブル名は <code>VXLAN_EVPN_NVO</code>（実装・yang）であり、本ページが冒頭で <code>EVPN_NVO</code> と表記している部分は <code>VXLAN_EVPN_NVO</code> の略記である点に注意。実装で <code>CFG_VXLAN_EVPN_NVO_TABLE_NAME</code> (<code>sonic-swss/cfgmgr/vxlanmgr.cpp:189</code>) を確認。</p>
 </div>
 <h1 id="evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）<a class="headerlink" href="#evpn-vxlanfrr-bgp-evpn-vtep-vrf-type-2type-5" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>EVPN は <strong>MAC / IP の到達情報を BGP で広告</strong> し、VXLAN は <strong>L2 over L3 のデータプレーン</strong> として trafic を運ぶ。SONiC は FRR の BGP-EVPN を control plane に、SAI VXLAN を data plane に使ってこの組合せを実現する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>代表的なタイプ:</p>
+<h2 id="_1">読者が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Type-2 (MAC/IP advertisement)</strong>: ホスト MAC（必要なら IP も）を VTEP で広告。Layer-2 VNI / Layer-3 VNI に対応</li>
-<li><strong>Type-3 (Inclusive Multicast)</strong>: VTEP の所属 VNI を通知（BUM 用 ingress replication）</li>
-<li><strong>Type-5 (IP Prefix)</strong>: VRF 内の IP prefix を VTEP 越しに広告</li>
+<li>EVPN VXLAN の <strong>control plane / data plane の分業</strong> はどうなっているか</li>
+<li><strong>Type-2 / Type-3 / Type-5</strong> をどう使い分けるか</li>
+<li><strong>CONFIG_DB のテーブルと CLI</strong> で最小限の設定をどう書くか</li>
+<li>実装と HLD が食い違っているのは具体的にどこか（<code>EVPN_NVO</code> vs <code>VXLAN_EVPN_NVO</code> ほか）</li>
+<li>multihoming や MC-LAG とどう干渉するか</li>
 </ul>
-<h2 id="_2">構成<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="1">1. 役割分担と全体像<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p>EVPN は <strong>MAC / IP の到達情報を BGP で広告</strong> し、VXLAN は <strong>L2 over L3 のデータプレーン</strong> として traffic を運ぶ。SONiC は FRR の BGP-EVPN を control plane、SAI VXLAN を data plane に使う<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     HOST1[Host A\nMAC/IP] --- LEAF1[Leaf 1\nVTEP loopback]
     HOST2[Host B] --- LEAF2[Leaf 2\nVTEP loopback]
@@ -22439,20 +22384,13 @@
     LEAF2 --- SP
     LEAF1 -.BGP-EVPN.-&gt; LEAF2
     LEAF1 -.VXLAN data.-&gt; LEAF2</code></pre>
-<p>主要 CONFIG_DB 要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<ul>
-<li><strong><code>VXLAN_TUNNEL|&lt;name&gt;</code></strong>: source IP（自身の VTEP loopback）を持つトンネル</li>
-<li><strong><code>VXLAN_TUNNEL_MAP|&lt;tunnel&gt;|&lt;map&gt;</code></strong>: VLAN ↔ VNI、VRF ↔ VNI のマッピング</li>
-<li><strong><code>EVPN_NVO</code></strong>: NVO（Network Virtualization Overlay）対象 tunnel 指定</li>
-<li><strong><code>VRF</code></strong>: L3 VNI を扱うときの VRF</li>
-<li><strong><code>VLAN</code></strong>: L2 VNI と紐づく VLAN</li>
-</ul>
-<h3 id="type-2-type-5">Type-2 / Type-5 の使い分け<a class="headerlink" href="#type-2-type-5" title="Permanent link">&para;</a></h3>
+<h2 id="2-evpn">2. EVPN ルートタイプの使い分け<a class="headerlink" href="#2-evpn" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th></th>
 <th>Type-2</th>
+<th>Type-3</th>
 <th>Type-5</th>
 </tr>
 </thead>
@@ -22460,23 +22398,33 @@
 <tr>
 <td>広告対象</td>
 <td>host MAC（任意で IP）</td>
+<td>VTEP の所属 VNI</td>
 <td>IP prefix（subnet）</td>
 </tr>
 <tr>
 <td>主用途</td>
 <td>L2 stretch、host-route 流通</td>
+<td>BUM ingress replication 用 VTEP 通知</td>
 <td>L3 ルーティング、外部接続</td>
 </tr>
 <tr>
 <td>L2/L3 VNI</td>
 <td>両方</td>
+<td>L2 VNI</td>
 <td>L3 VNI</td>
 </tr>
 </tbody>
 </table>
-<h3 id="anycast-symmetric-irb">Anycast / Symmetric IRB<a class="headerlink" href="#anycast-symmetric-irb" title="Permanent link">&para;</a></h3>
-<p>Anycast Gateway を VTEP 全台で共有（共通 MAC/IP）し、Symmetric IRB（route-then-bridge）で leaf 間 VRF を貫く構成が標準的。具体的な仕組みは HLD の図を参照。</p>
-<h2 id="_3">設定例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>Symmetric IRB（route-then-bridge）+ Anycast Gateway（VTEP 全台で MAC/IP 共有）の構成が標準。具体的な絵は HLD を参照。</p>
+<h2 id="3-config_db-cli">3. CONFIG_DB と CLI<a class="headerlink" href="#3-config_db-cli" title="Permanent link">&para;</a></h2>
+<p>主要 CONFIG_DB<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<ul>
+<li><strong><code>VXLAN_TUNNEL|&lt;name&gt;</code></strong>: source IP（自身の VTEP loopback）を持つトンネル</li>
+<li><strong><code>VXLAN_TUNNEL_MAP|&lt;tunnel&gt;|&lt;map&gt;</code></strong>: VLAN ↔ VNI、VRF ↔ VNI のマッピング</li>
+<li><strong><code>VXLAN_EVPN_NVO|&lt;nvo&gt;</code></strong>: NVO 対象 tunnel 指定（HLD の <code>EVPN_NVO</code> は略記。後述の差分参照）</li>
+<li><strong><code>VRF</code></strong>: L3 VNI 用 VRF</li>
+<li><strong><code>VLAN</code></strong>: L2 VNI と紐づく VLAN</li>
+</ul>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># VXLAN tunnel (VTEP loopback)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>vxlan<span class="w"> </span>add<span class="w"> </span>vtep<span class="w"> </span><span class="m">10</span>.0.0.1
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># L2 mapping</span>
@@ -22484,9 +22432,8 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># L3 mapping</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>config<span class="w"> </span>vxlan<span class="w"> </span>map_range<span class="w"> </span>add<span class="w"> </span>vtep<span class="w"> </span>Vrf-RED<span class="w"> </span><span class="m">5000</span><span class="w"> </span><span class="m">5000</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># FRR 側 BGP-EVPN は frr.conf / templates 経由</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># FRR 側 BGP-EVPN は frr.conf / template 経由</span>
 </span></code></pre></div>
-<h2 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -22517,64 +22464,61 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="4-2026-05-10">4. 実装との乖離（2026-05-10 裏取り）<a class="headerlink" href="#4-2026-05-10" title="Permanent link">&para;</a></h2>
+<p>EVPN VXLAN 中核は実装されているが、HLD と実装の <strong>名称・配置</strong> に乖離がある。</p>
+<h3 id="41-config_db-evpn_nvo-vxlan_evpn_nvo">4.1 CONFIG_DB テーブル名は <code>EVPN_NVO</code> ではなく <code>VXLAN_EVPN_NVO</code><a class="headerlink" href="#41-config_db-evpn_nvo-vxlan_evpn_nvo" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>下位 ASIC 機能依存</strong>: VXLAN encap/decap、Tunnel Termination の SAI 機能サポート要</li>
-<li><strong>MTU</strong>: VXLAN ヘッダ 50 byte 増。MTU 不足は黙ってドロップする傾向</li>
-<li><strong>EVPN multihoming</strong>: 別 HLD（同 area の <code>evpn-vxlan-multihoming.md</code>）で扱う</li>
-<li><strong>BUM</strong>: ingress replication 前提。multicast underlay は範囲外/オプション</li>
+<li><strong>HLD 記述</strong>: CONFIG_DB に <code>EVPN_NVO</code> テーブルを置く</li>
+<li><strong>実装</strong>:</li>
+<li><code>sonic-swss/cfgmgr/vxlanmgr.cpp:189</code> <code>m_appEvpnNvoTable(appDb, APP_VXLAN_EVPN_NVO_TABLE_NAME)</code></li>
+<li><code>sonic-swss/cfgmgr/vxlanmgr.cpp:239</code> <code>else if (table_name == CFG_VXLAN_EVPN_NVO_TABLE_NAME)</code></li>
+<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang:106</code> <code>container VXLAN_EVPN_NVO</code></li>
+<li><strong>読者への影響</strong>: <code>sonic-db-cli CONFIG_DB KEYS 'EVPN_NVO*'</code> は <strong>空</strong>。</li>
+<li><strong>回避</strong>: <code>sonic-db-cli CONFIG_DB KEYS 'VXLAN_EVPN_NVO*'</code> を使う。yang model 編集時は <code>container VXLAN_EVPN_NVO</code> を参照</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="42-evpn-orch-vxlanorchcpp">4.2 EVPN 中核 orch は <code>vxlanorch.cpp</code> 内クラス群<a class="headerlink" href="#42-evpn-orch-vxlanorchcpp" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: 複数 orch（VxlanOrch / VxlanTunnelOrch / VxlanMapOrch / EvpnNvoOrch / EvpnRouteOrch）に分散</li>
+<li><strong>実装</strong>:</li>
+<li><code>sonic-swss/orchagent/vxlanorch.h:541</code> <code>class EvpnNvoOrch : public Orch2</code></li>
+<li><code>vxlanorch.cpp:1678,1733,1795</code> <code>gDirectory.get&lt;EvpnNvoOrch*&gt;()</code></li>
+<li><code>routeorch.cpp:3048,3068</code> で EvpnNvoOrch 連携（Type-5 install 経路）</li>
+<li><code>fdborch.cpp:847</code> で EvpnNvoOrch 経由の MAC 学習通知</li>
+<li><strong>回避</strong>: EVPN コードは <strong><code>vxlanorch.{h,cpp}</code> 起点</strong> で追う。Type-5 route は <code>routeorch.cpp</code>、Type-2 MAC は <code>fdborch.cpp</code> の EvpnNvoOrch 参照部分を見る</li>
+</ul>
+<h3 id="43-frr-bgp-evpn-frrconf">4.3 FRR BGP-EVPN 連携は frr.conf テンプレート経由<a class="headerlink" href="#43-frr-bgp-evpn-frrconf" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>HLD 記述</strong>: FRR の BGP-EVPN は frr.conf / template 経由</li>
+<li><strong>実装位置</strong>: <code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code>、および <code>sonic-frr/bgpd/bgp_evpn.c</code>。Type-5/Type-2 受け取りは fpmsyncd 経由 netlink + 専用 FPM channel</li>
+<li><strong>読者への影響</strong>: SONiC CLI だけで EVPN 設定が完結すると誤解しやすい</li>
+<li><strong>回避</strong>: 実運用では <code>frr.conf</code> template 差し替え、または <code>vtysh</code> で <code>address-family l2vpn evpn</code> を直接設定する</li>
+</ul>
+<h2 id="5">5. 制限事項<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>下位 ASIC 依存</strong>: VXLAN encap/decap、Tunnel Termination の SAI サポート要</li>
+<li><strong>MTU</strong>: VXLAN ヘッダ 50 byte 増。不足は黙ってドロップ傾向</li>
+<li><strong>multihoming</strong>: 別 HLD（同 area <code>evpn-vxlan-multihoming.md</code>）</li>
+<li><strong>BUM</strong>: ingress replication 前提。multicast underlay は範囲外</li>
+</ul>
+<h2 id="6">6. 干渉する機能<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>MC-LAG / multihoming</strong>: ESI / DF election と組合せると挙動が複雑化</li>
 <li><strong>VRF / underlay BGP</strong>: VTEP loopback 到達性は underlay BGP に依存</li>
-<li><strong>DSCP remarking for tunnel traffic</strong>: encapsulated パケットの DSCP 維持・書換え</li>
-<li><strong>fpmsyncd / nexthop group</strong>: EVPN Type-5 の next-hop group インストール</li>
+<li><strong>DSCP remarking</strong>: encap パケットの DSCP 維持/書換え</li>
+<li><strong>fpmsyncd / nexthop group</strong>: Type-5 の next-hop group インストール</li>
 </ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="7">7. トラブルシューティング<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>対向 VTEP に届かない → underlay reachability、<code>show vxlan tunnel</code> の oper status</li>
+<li>対向 VTEP に届かない → underlay reachability と <code>show vxlan tunnel</code> の oper status</li>
 <li>MAC が学習されない → BGP-EVPN session、<code>show evpn mac vni</code>、Type-2 受信</li>
-<li>Type-5 ルートが入らない → L3 VNI ↔ VRF マッピング、<code>show evpn vni detail</code></li>
+<li>Type-5 ルートが入らない → L3 VNI ↔ VRF マッピングと <code>show evpn vni detail</code></li>
 </ul>
-<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>2026-05-10 時点の現行 master を裏取り。EVPN VXLAN 中核機能は実装されているが、本ページの HLD ベース記述と実装名称・配置に次の乖離がある。</p>
-<h3 id="1-config_db-evpn_nvo-vxlan_evpn_nvo">1. CONFIG_DB テーブル名は <code>EVPN_NVO</code> ではなく <code>VXLAN_EVPN_NVO</code><a class="headerlink" href="#1-config_db-evpn_nvo-vxlan_evpn_nvo" title="Permanent link">&para;</a></h3>
+<h2 id="8">8. 次に読む<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>HLD 記述</strong>: CONFIG_DB に <code>EVPN_NVO</code> テーブルを置く。</li>
-<li><strong>実装位置</strong>:</li>
-<li><code>sonic-swss/cfgmgr/vxlanmgr.cpp:189</code> <code>m_appEvpnNvoTable(appDb, APP_VXLAN_EVPN_NVO_TABLE_NAME)</code></li>
-<li><code>sonic-swss/cfgmgr/vxlanmgr.cpp:239</code> <code>else if (table_name == CFG_VXLAN_EVPN_NVO_TABLE_NAME)</code></li>
-<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang:106</code> <code>container VXLAN_EVPN_NVO { ... list VXLAN_EVPN_NVO_LIST { ... } }</code></li>
-<li><strong>差分の中身</strong>: 実装上のフルネームは <code>VXLAN_EVPN_NVO</code>。<code>schema.h</code> の <code>CFG_VXLAN_EVPN_NVO_TABLE_NAME</code> / <code>APP_VXLAN_EVPN_NVO_TABLE_NAME</code> 定数で参照される。HLD の <code>EVPN_NVO</code> 表記は省略形であり、実 CONFIG_DB キーや yang コンテナ名としては誤り。</li>
-<li><strong>読者への影響</strong>: <code>sonic-db-cli CONFIG_DB KEYS 'EVPN_NVO*'</code> は何も返さない。<code>VXLAN_EVPN_NVO|&lt;nvo_name&gt;</code> がキー実体。</li>
-<li><strong>回避策</strong>:</li>
-<li>CONFIG_DB アクセス: <code>sonic-db-cli CONFIG_DB KEYS 'VXLAN_EVPN_NVO*'</code> と <code>sonic-db-cli CONFIG_DB HGETALL 'VXLAN_EVPN_NVO|&lt;name&gt;'</code> を使う。</li>
-<li>yang model 編集時は <code>sonic-vxlan.yang</code> の <code>container VXLAN_EVPN_NVO</code> を参照。</li>
+<li>Topics: <a href="../../topics/03-vxlan-evpn/concept/">VXLAN/EVPN 概念</a>, <a href="../../topics/03-vxlan-evpn/setup/">VXLAN/EVPN 構築</a>, <a href="../../topics/03-vxlan-evpn/internals/">VXLAN/EVPN 内部実装</a>, <a href="../../topics/03-vxlan-evpn/operations/">VXLAN/EVPN 運用</a></li>
+<li>関連 HLD: <a href="../evpn-vxlan-multihoming/">EVPN VXLAN Multihoming</a>, <a href="../overlay-ecmp-with-bfd-monitoring/">Overlay ECMP with BFD Monitoring</a></li>
 </ul>
-<h3 id="2-evpn-orch-vxlanorchcpp">2. EVPN 中核 orch は <code>vxlanorch.cpp</code> 内クラス群<a class="headerlink" href="#2-evpn-orch-vxlanorchcpp" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>HLD 記述</strong>: VxlanOrch / VxlanTunnelOrch / VxlanMapOrch / EvpnNvoOrch / EvpnRouteOrch 等を分散実装。</li>
-<li><strong>実装位置</strong>:</li>
-<li><code>sonic-swss/orchagent/vxlanorch.h:541</code> <code>class EvpnNvoOrch : public Orch2</code></li>
-<li><code>sonic-swss/orchagent/vxlanorch.cpp:1678,1733,1795</code> で <code>gDirectory.get&lt;EvpnNvoOrch*&gt;()</code> を多用</li>
-<li><code>sonic-swss/orchagent/routeorch.cpp:3048,3068</code> で EvpnNvoOrch 連携（Type-5 route のインストール経路）</li>
-<li><code>sonic-swss/orchagent/fdborch.cpp:847</code> で EvpnNvoOrch 経由の MAC 学習通知</li>
-<li><strong>差分の中身</strong>: HLD で別 orch のように描かれる EvpnNvoOrch は <code>vxlanorch.h</code> / <code>.cpp</code> の中の 1 クラスで、tunnel / map と密結合している。route と FDB 側は <code>gDirectory</code> 経由で参照。</li>
-<li><strong>読者への影響</strong>: HLD 図に従って「EvpnNvoOrch のソースファイル」を探すと迷う。</li>
-<li><strong>回避策</strong>: EVPN コードは <code>sonic-swss/orchagent/vxlanorch.{h,cpp}</code> を起点に追う。Type-5 route の install は <code>routeorch.cpp</code> の EvpnNvoOrch 参照部分、Type-2 MAC は <code>fdborch.cpp</code> の参照部分を見る。</li>
-</ul>
-<h3 id="3-frr-bgp-evpn-frrconf">3. FRR 側 BGP-EVPN 連携は frr.conf テンプレート経由<a class="headerlink" href="#3-frr-bgp-evpn-frrconf" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>HLD 記述</strong>: FRR の BGP-EVPN は frr.conf / template 経由。</li>
-<li><strong>実装位置</strong>: <code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code> および <code>sonic-frr/bgpd/bgp_evpn.c</code> などにある。Type-5 / Type-2 の SONiC 側受け取りは <code>fpmsyncd</code> 経由 netlink + 専用 FPM channel。</li>
-<li><strong>差分の中身</strong>: 設定 CLI として SONiC 側で <code>show evpn vni</code> 等は提供されるが、BGP-EVPN の主要構成は frr.conf を直接編集するか template <code>j2</code> に手を入れる運用。CONFIG_DB の <code>BGP_NEIGHBOR</code> だけでは EVPN AF を有効化できないケースがある。</li>
-<li><strong>読者への影響</strong>: SONiC CLI だけで EVPN 設定が完結すると誤解する。</li>
-<li><strong>回避策</strong>: 実運用では <code>frr.conf</code> テンプレート差し替えか、<code>vtysh</code> で <code>address-family l2vpn evpn</code> を直接設定する。SONiC 側 CONFIG_DB は VXLAN tunnel / map のみで、EVPN AF の neighbor 設定は frr 側に置く。</li>
-</ul>
-<h3 id="_8">結論<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<p>実装は概ね HLD の意図に沿うが、テーブル名（<code>VXLAN_EVPN_NVO</code>）と orch のファイル配置（<code>vxlanorch.h</code> に集約）が大きなポイント。本ページ前段の <code>EVPN_NVO</code> 表記は実装名 <code>VXLAN_EVPN_NVO</code> の略記として読むこと。</p>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - VxlanOrch / VxlanTunnelOrch / VxlanMapOrch の現行実装存在確認
 - CONFIG_DB VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / EVPN_NVO スキーマの現行 sonic-yang-models 取り込み確認

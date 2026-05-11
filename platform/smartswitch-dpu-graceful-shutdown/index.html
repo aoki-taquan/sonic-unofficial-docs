@@ -16055,6 +16055,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22395,6 +22406,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22633,6 +22655,18 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <ul>
 <li>上記乖離は HLD の v0.1 と現行実装の間で構造そのものがリファクタされたことを示唆する。設計趣旨（gNOI 経由で DPU を graceful に止める）は実装に活きているが、daemon 構成・テーブル構造は HLD と一致しない。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li><code>gnoi_reboot_daemon.py</code> は未実装 (<code>find .cache/sonic-sources/sonic-platform-daemons -iname '*gnoi*'</code> 結果 0)。</li>
+<li>代替実装: <code>sonic-chassisd/scripts/chassisd</code> L256/L1362 で <code>module.set_admin_state_gracefully(admin_state)</code> を直接呼び、L1373 で <code>module.clear_module_gnoi_halt_in_progress()</code>。</li>
+<li>gNOI Reboot RPC 発行サイトは <code>sonic_platform_base/module_base.py:601</code> 前後の <code>_set_module_gnoi_halt_in_progress</code> 周辺。platform 派生クラスが <code>set_admin_state_gracefully</code> を override。</li>
+<li>関連 PR: smartswitch DPU graceful shutdown の chassisd 統合は merge 済み。独立 daemon 案は採用せず chassisd に統合された設計変更。</li>
+<li><strong>追加デバッグコマンド</strong>: shutdown フロー追跡 — <code>docker logs pmon 2&gt;&amp;1 | grep -E 'chassisd.*(graceful|halt|admin_state)'</code>、<code>redis-cli -n 6 hgetall 'CHASSIS_MODULE_INFO_TABLE|DPU0'</code> で current state、<code>redis-cli psubscribe '__keyspace@6__:CHASSIS_MODULE_INFO_TABLE*'</code> で遷移を監視。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: not_implemented</code> — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。</p>
+</blockquote>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - sonic-platform-common/sonic_platform_base/module_base.py L429 set_admin_state_gracefully(up), L468 _graceful_shutdown_handler() (private), L588- gnoi_halt_in_progress フラグで制御

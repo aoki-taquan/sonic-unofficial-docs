@@ -14845,6 +14845,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22420,6 +22437,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -22599,6 +22633,18 @@
 <li>動的 USB console 追加が必要な場合は、ホスト側 udev rule（<code>/etc/udev/rules.d/</code>）で <code>ttyUSB*</code> を固定 path にバインドし、<code>CONSOLE_PORT</code> テーブルに静的に登録する（<code>config console add &lt;line&gt;</code>）。</li>
 <li>HLD 提案フィールドを使った設定は、上流に PR が取り込まれるまでは独自パッチでの運用となる。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang</code> L79-90 の <code>console_mgmt</code> には <code>enabled</code> と <code>default_escape_char</code> のみ。<code>autodetect</code> / <code>vendor_name</code> / <code>model_name</code> フィールドは未追加。</li>
+<li><code>sonic-utilities/config/console.py</code> L22 (<code>enable_console_switch</code>) / L43 (<code>disable_console_switch</code>) は <code>CONSOLE_SWITCH|console_mgmt:enabled</code> を yes/no で操作するのみ。<code>autodetect</code> 系サブコマンド無し。</li>
+<li><code>sonic-platform-common</code> にポータブル console-switch 用の抽象基底クラスは無い (<code>grep -rn 'console_switch\|portable_console' .cache/sonic-sources/sonic-platform-common/</code> 関連クラス 0 件)。</li>
+<li>関連 Issue/PR: HLD は提案段階で対応する PR の提出無し。</li>
+<li><strong>追加回避策コマンド</strong>: 静的に USB console を登録 — <code>udevadm info -q all -n /dev/ttyUSB0</code> で属性確認後 <code>/etc/udev/rules.d/99-console.rules</code> に <code>SUBSYSTEM=="tty", ATTRS{idVendor}=="&lt;vid&gt;", SYMLINK+="console-&lt;n&gt;"</code> を書き、<code>sudo config console add &lt;n&gt; --baud 9600</code> で <code>CONSOLE_PORT</code> table に挿入。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: not_implemented</code> — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。</p>
+</blockquote>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

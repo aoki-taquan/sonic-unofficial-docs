@@ -7695,6 +7695,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22395,6 +22406,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#round-2-2026-05-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        監査 round 2 追補（2026-05-11）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -22440,7 +22462,8 @@
 <p>title: SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: not_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
@@ -22636,6 +22659,18 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 <li><strong>ベンダー版 SmartSwitch を採用</strong>: NVIDIA Spectrum-X / 等の vendor SmartSwitch では hamgrd 相当が動く可能性。ただし community SONiC のスコープ外（本サイトの対象外）。</li>
 <li>上流取り込み推進: hamgrd 実装本体（C++/Rust 何れか）+ swbus + <code>DASH_HA_DPU_STATE</code> / <code>VDPU_TABLE</code> の schema 追加 + CLI の 4 点セットが必要。</li>
 </ul>
+<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<ul>
+<li><code>hamgrd</code> バイナリは community master の <code>sonic-buildimage/dockers/</code> 配下に存在しない (<code>find .cache/sonic-sources/sonic-buildimage/dockers -name '*hamgr*'</code> 結果 0)。<code>sonic-swss/orchagent/dash/</code> にも hamgrd 相当の actor framework は未取り込み。</li>
+<li>schema は <code>sonic-swss-common/common/schema.h</code> L180-454 周辺に <code>DASH_HA_SET_CONFIG_TABLE</code> / <code>DASH_HA_SCOPE_CONFIG_TABLE</code> / <code>DASH_HA_GLOBAL_CONFIG</code> / <code>STATE_DASH_HA_SCOPE_STATE_TABLE</code> が定義され先行採用。一方 <code>DASH_HA_DPU_STATE</code> / <code>VDPU_TABLE</code> は未定義。</li>
+<li>swbus（actor 間メッセージバス）の文字列は community master 全リポで 0 件。<code>sonic-dash-api</code> / vendor 側に切出される計画と推測。</li>
+<li>関連 Issue/PR: <code>sonic-net/DASH</code> リポに HA HLD ドラフトと一部 reference 実装が存在するが、community SONiC への merge は段階的。Switch-Driven mode は HLD で TBD のまま。</li>
+<li><strong>追加検証コマンド</strong>: schema 層のみ確認 — <code>redis-cli -n 0 hset 'DASH_HA_SET_CONFIG_TABLE:hs1' ha_owner 'switch'</code> で書込は通るが、consumer 不在のため STATE_DB に反映されないことを <code>redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'</code> で確認。</li>
+</ul>
+<blockquote>
+<p>分類: <code>monitor: not_implemented</code> — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。</p>
+</blockquote>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-swss-common `common/schema.h` の HA 関連 table 定義（実装済）:
